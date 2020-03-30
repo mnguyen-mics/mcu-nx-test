@@ -72,7 +72,7 @@ module.exports = function (grunt) {
     // Project settings
     yeoman: {
       // configurable paths
-      app: require('./bower.json').appPath || 'app',
+      app: 'app',
       dist: 'dist'
     },
 
@@ -109,13 +109,6 @@ module.exports = function (grunt) {
 
     // Watches files for changes and runs tasks based on the changed files
     watch: {
-      js: {
-        files: ['<%= yeoman.app %>/angular/src/**/*.js'],
-        tasks: ['newer:jshint:all'],
-        options: {
-          livereload: true
-        }
-      },
       compass: { 
         files: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass}'], 
         tasks: ['compass:server', 'autoprefixer'] 
@@ -135,7 +128,6 @@ module.exports = function (grunt) {
         },
         files: [
           '<%= yeoman.app %>/*.html',
-          '<%= yeoman.app %>/angular/src/**/*.html',
           '.tmp/styles/{,*/}*.css',
           '<%= yeoman.app %>/images/**/*.{png,jpg,jpeg,gif,webp,svg}'
         ]
@@ -188,7 +180,6 @@ module.exports = function (grunt) {
       },
       all: [
         'Gruntfile.js',
-        '<%= yeoman.app %>/angular/src/**/*.js'
       ],
       test: {
         options: {
@@ -221,10 +212,6 @@ module.exports = function (grunt) {
     bowerInstall: {
       target: {
         src: ['<%= yeoman.app %>/index.html'],
-        exclude: [
-          'angular/bower_components/bootstrap/dist/css/bootstrap.css', // this is `@import`ed in the scss file
-          'angular/bower_components/bootstrap-sass/assets/javascripts/bootstrap/*' // already included in the file angular/bower_components/bootstrap/dist/js/bootstrap.js
-        ]
       }
     },
 
@@ -233,7 +220,6 @@ module.exports = function (grunt) {
     filerev: {
       files: {
         src: [
-          '<%= yeoman.dist %>/angular/src/**/*.js',
           '<%= yeoman.dist %>/scripts/**/*.js',
           '<%= yeoman.dist %>/styles/**/*.css',
           '<%= yeoman.dist %>/images/**/*.{png,jpg,jpeg,gif,webp,svg}',
@@ -256,7 +242,6 @@ module.exports = function (grunt) {
     // Performs rewrites based on rev and the useminPrepare configuration
     usemin: {
       html: [
-        '<%= yeoman.dist %>/angular/src/**/*.html',
         '<%= yeoman.dist %>/*.html'
       ],
       css: ['<%= yeoman.dist %>/styles/**/*.css'],
@@ -311,7 +296,7 @@ module.exports = function (grunt) {
           {
             expand: true,
             cwd: '<%= yeoman.dist %>',
-            src: ['*.html', 'angular/src/**/*.html'],
+            src: ['*.html'],
             dest: '<%= yeoman.dist %>'
           }
         ]
@@ -337,7 +322,6 @@ module.exports = function (grunt) {
       dist: {
         options: {
           waitSeconds: 0,
-          baseUrl: "app/angular/src",
           mainConfigFile: "app/main.js",
           name: "navigator",
           optimize: "none",
@@ -369,14 +353,6 @@ module.exports = function (grunt) {
       }
     },
 
-    shell: {
-      iab_placeholder: {
-        command: function () {
-          return "<%= yeoman.app %>/images/generate_iab_placeholders.sh <%= yeoman.app %>/images/flash/Adobe-swf_icon.png";
-        }
-      }
-    },
-
     // Replace Google CDN references
     cdnify: {
       dist: {
@@ -397,9 +373,6 @@ module.exports = function (grunt) {
               '*.{ico,png,txt}',
               '.htaccess',
               '*.html',
-              'angular/src/**/*.html',
-              'angular/bower_components/**/*',
-              'angular/src/**/*.{jpe?g,png}',
               'fonts/*'
             ]
           },
@@ -417,7 +390,6 @@ module.exports = function (grunt) {
           },
           {
             expand: true,
-            cwd: '<%= yeoman.app %>/angular/bower_components/video.js/dist/video-js/font/',
             dest: '<%= yeoman.dist %>/styles/font',
             src: '*'
           }
@@ -436,16 +408,6 @@ module.exports = function (grunt) {
           }
         ]
       },
-      // TODO : Find why this doesn't work
-//      require: {
-//        files: [{
-//          expand: true,
-//            dot: true,
-//            cwd: '<%= yeoman.app %>',
-//            dest: '<%= yeoman.dist %>/scripts/vendor',
-//            src: [ 'angular/bower_components/require/require.js']
-//        }]
-//      },
       styles: {
         expand: true,
         cwd: '<%= yeoman.app %>/styles',
@@ -472,7 +434,6 @@ module.exports = function (grunt) {
         ]
       },
       appConfig: {
-        src: ['./app/conf/app-configuration.js'],
         actions: [
           {
             name: 'WS_URL',
@@ -511,9 +472,7 @@ module.exports = function (grunt) {
         cssDir: '.tmp/styles',
         generatedImagesDir: '.tmp/images/generated',
         imagesDir: '<%= yeoman.app %>/images',
-        javascriptsDir: '<%= yeoman.app %>/angular/src',
         fontsDir: '<%= yeoman.app %>/styles/fonts',
-        importPath: '<%= yeoman.app %>/angular/bower_components',
         httpImagesPath: '/images',
         httpGeneratedImagesPath: '/images/generated',
         httpFontsPath: '/styles/fonts',
@@ -548,29 +507,9 @@ module.exports = function (grunt) {
       ]
     },
 
-    // By default, your `index.html`'s <!-- Usemin block --> will take care of
-    // minification. These next options are pre-configured if you do not wish
-    // to use the Usemin blocks.
-    // cssmin: {
-    //   dist: {
-    //     files: {
-    //       '<%= yeoman.dist %>/styles/main.css': [
-    //         '.tmp/styles/{,*/}*.css',
-    //         '<%= yeoman.app %>/styles/{,*/}*.css'
-    //       ]
-    //     }
-    //   }
-    // },
-
-
     genRequireJsFiles: {
       config: {
-        src: '<%= yeoman.app %>/angular/src/**/module.json',
         template: 'define([{{{requires}}}],function(){});',
-        templateModule: 'define(["angular"],function(){' +
-        '"use strict";' +
-        'return angular.module("{{{name}}}", [{{{dependencies}}}]);' +
-        '});'
       }
     },
 
@@ -635,7 +574,6 @@ module.exports = function (grunt) {
       'setEnvVariablesConfig',
       'clean:server',
       'jshint:all',
-      'shell:iab_placeholder',
       'genRequireJsFiles:config',
       'concurrent:server',
       'connect:livereload',
@@ -665,7 +603,6 @@ module.exports = function (grunt) {
   grunt.registerTask('build', [
     'clean:dist',
     'jshint:all',
-    'shell:iab_placeholder',
     'useminPrepare',
     'genRequireJsFiles:config',
     'requirejs',

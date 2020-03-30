@@ -27,7 +27,6 @@ export interface IAudienceSegmentFormService {
     organisationId: string,
     audienceSegmentFormData: AudienceSegmentFormData,
     queryLanguage?: QueryLanguage,
-    queryContainer?: any,
   ) => Promise<DataResponse<AudienceSegmentShape> | void>;
 
   getProcessingSelectionsByAudienceSegment: (
@@ -119,7 +118,6 @@ export class AudienceSegmentFormService implements IAudienceSegmentFormService {
     organisationId: string,
     audienceSegmentFormData: AudienceSegmentFormData,
     queryLanguage?: QueryLanguage,
-    queryContainer?: any,
   ): Promise<DataResponse<AudienceSegmentShape> | void> {
     switch (audienceSegmentFormData.audienceSegment.type) {
       case 'USER_LOOKALIKE':
@@ -133,7 +131,6 @@ export class AudienceSegmentFormService implements IAudienceSegmentFormService {
               organisationId,
               audienceSegmentFormData,
               queryLanguage as QueryLanguage,
-              queryContainer,
             )
           : this.createOrUpdateAudienceSegmentUserList(
               organisationId,
@@ -144,7 +141,6 @@ export class AudienceSegmentFormService implements IAudienceSegmentFormService {
           organisationId,
           audienceSegmentFormData,
           queryLanguage as QueryLanguage,
-          queryContainer,
         );
       default:
         return Promise.resolve();
@@ -194,10 +190,8 @@ export class AudienceSegmentFormService implements IAudienceSegmentFormService {
     organisationId: string,
     audienceSegmentFormData: AudienceSegmentFormData,
     queryLanguage: QueryLanguage,
-    queryContainer: any,
   ) => {
     return this.createOrUpdateQuery(
-      queryContainer,
       queryLanguage,
       audienceSegmentFormData,
     ).then(query => {
@@ -215,7 +209,6 @@ export class AudienceSegmentFormService implements IAudienceSegmentFormService {
   };
 
   createOrUpdateQuery = (
-    queryContainer: any,
     queryLanguage: QueryLanguage,
     audienceSegmentFormData: AudienceSegmentFormData,
   ) => {

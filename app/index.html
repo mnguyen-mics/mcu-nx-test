@@ -20,22 +20,9 @@
   <link rel="icon" href="react/src/assets/images/favicon.ico" type="image/x-icon" />
 
   <!-- CSS -->
-  <!-- build:css styles/vendor.css -->
-  <link rel="stylesheet" href="angular/bower_components/ng-table/dist/ng-table.css" />
-  <link rel="stylesheet" href="angular/bower_components/bootstrap-tokenfield/dist/css/tokenfield-typeahead.css" />
-  <link rel="stylesheet" href="angular/bower_components/bootstrap-tokenfield/dist/css/bootstrap-tokenfield.css" />
-  <link rel="stylesheet" href="angular/bower_components/nvd3/build/nv.d3.css">
-  <link rel="stylesheet" href="angular/bower_components/joint/dist/joint.min.css">
-  <link rel="stylesheet" href="angular/bower_components/bootstrap-daterangepicker/daterangepicker-bs3.css">
 
   <!-- endbuild -->
-  <!-- build:css styles/video.css -->
-  <link rel="stylesheet" href="angular/bower_components/videojs-contrib-ads/src/videojs.ads.css">
-  <link rel="stylesheet" href="angular/bower_components/videojs-vast/videojs.vast.css">
-  <link rel="stylesheet" href="angular/bower_components/video.js/dist/video-js/video-js.css">
   <!-- endbuild -->
-  <!-- build:css({.tmp,app}) styles/main.css -->
-  <link rel="stylesheet" href="styles/main.css">
   <!-- endbuild -->
 </head>
 
@@ -57,12 +44,6 @@
     <div class="mcs-highlight"></div>
     <div class="mcs-warning"></div>
   </div>
-
-
-  <!--[if lt IE 9]>
-<script src="angular/bower_components/es5-shim/es5-shim.js"></script>
-<script src="angular/bower_components/json3/lib/json3.min.js"></script>
-<![endif]-->
 
   <noscript>
     <h1>Mediarithmics navigator</h1>
@@ -93,68 +74,19 @@
     </svg>
   </div>
   
-
-
-
-  <!-- Scripts -->
-  <!-- The scripts included below are used for video support. The production minification,
-and the videojs-vast plugin expecting from the vast-client plugin to to always be globally declared,
-are two of the factors making these dependencies injections impossible. -->
-  <!-- build:js scripts/video.js -->
-  <script src="angular/bower_components/video.js/dist/video-js/video.js"></script>
-  <script src="angular/bower_components/videojs-contrib-ads/src/videojs.ads.js"></script>
-  <script src="angular/bower_components/vast-client-js/vast-client.js"></script>
-  <script src="angular/bower_components/videojs-vast/videojs.vast.js"></script>
-  <!-- The xlsx lib checks if jszip exists before anything. AGAIN we need jszip and then xlsx after minification.-->
-  <script src="angular/bower_components/js-xlsx/jszip.js"></script>
   <!-- endbuild -->
   <script>
-    var require = {
-      waitSeconds: 60,
-      paths: { 'core/configuration': '../../conf/app-configuration' }
-    };
 
   </script>
   <script src="conf/plugins-configuration.js"></script>
   <script src="conf/react-configuration.js"></script>
-  <script src="angular/bower_components/requirejs/require.js"></script>
   <script>document.title = window.MCS_CONSTANTS.SITE_NAME</script>
-  <script>
-    require.onResourceLoad = function (context, map, depArray) {
-      var elt = document.getElementById("mics_loading_progress_current");
-
-      if (elt) {
-        elt.innerHTML = "Loaded " + map.name;
-      }
-    };
-    // This warning is for developers : if a plugin can't load a dependency, I don't really want to throw an `alert`...
-    requirejs.onError = function (err) {
-      if (!err.requireModules) {
-        // happens when a dependency tries to load an other dependency with requirejs: some libs does a "try{require("my_dep")} catch () {window.my_dep}"
-        // which triggers an error here. This is not a fatal error, just a warning.
-        console.warn(err);
-        return;
-      }
-      console.error("the scripts " + err.requireModules + " couldn't be loaded. Do you have an ad blocker ?", err);
-
-      var progressElt = document.getElementById("mics_loading_progress");
-      var errorElt = document.getElementById("mics_loading_error");
-      if (progressElt && errorElt) {
-        progressElt.style.display = "none";
-        errorElt.style.display = "block";
-      }
-
-      throw err;
-    };
-
-  </script>
   <script type="text/javascript">
     if (window.MCS_CONSTANTS && window.MCS_CONSTANTS.ENABLE_TRACKING === true) {
       !function(a,b,c){"use strict";function d(a){var b=e[c]||{};e[c]=b,b[a]||(b[a]=function(){e._queue[c].push({method:a,args:Array.prototype.slice.apply(arguments)})})}var e=a.scimhtiraidem||{},f="init call config push pushDefault addProperties addProperty onFinish onStart _reset".split(" ");e._queue=e._queue||{},e._names=e._names||[],e._names.push(c),e._queue[c]=e._queue[c]||[],e._startTime=(new Date).getTime(),e._snippetVersion="2.0";for(var g=0;g<f.length;g++)d(f[g]);a.scimhtiraidem=e,a[c]=e[c];var h=b.createElement("script");h.setAttribute("type","text/javascript"),h.setAttribute("src","https://static.mediarithmics.com/tag/1/tag.min.js"),h.setAttribute("async","true"),b.getElementsByTagName("script")[0].parentNode.appendChild(h)}(window,document,"mics");
       mics.init("navigator18")
     }
   </script>
-  <script>window.angularLoaded = false</script>
   <script>window.mainRev='main.js'</script>
 
 </body>

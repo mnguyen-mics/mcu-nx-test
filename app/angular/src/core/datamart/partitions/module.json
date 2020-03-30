@@ -1,3 +1,0 @@
-{"name": "core/datamart/partitions", "dependencies": [
-  "restangular"
-]}

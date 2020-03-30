@@ -20,11 +20,11 @@ const { Content, Sider } = Layout;
 const messages = defineMessages({
   switchOrg: {
     id: 'navigator.layout.mainLayout.sideMenu.switchOrg.label',
-    defaultMessage: 'Switch Org.'
+    defaultMessage: 'Switch Org.',
   },
   collapse: {
     id: 'navigator.layout.mainLayout.sideMenu.collapse',
-    defaultMessage: 'Collapse'
+    defaultMessage: 'Collapse',
   },
 });
 
@@ -39,7 +39,7 @@ export interface MainLayoutProps {
 interface MainLayoutStoreProps {
   collapsed: boolean;
   mode: MenuMode;
-  openCloseMenu: (a: { collapsed: boolean, mode: MenuMode }) => void;
+  openCloseMenu: (a: { collapsed: boolean; mode: MenuMode }) => void;
 }
 
 interface MainLayoutState {
@@ -48,7 +48,9 @@ interface MainLayoutState {
   rightColumnSize: number;
 }
 
-type Props = MainLayoutProps & RouteComponentProps<{ organisationId: string }> & MainLayoutStoreProps;
+type Props = MainLayoutProps &
+  RouteComponentProps<{ organisationId: string }> &
+  MainLayoutStoreProps;
 
 const LayoutId = Layout as any;
 const ColAny = Col as any;
@@ -56,12 +58,13 @@ const ColAny = Col as any;
 // waiting for https://github.com/ant-design/ant-design/commit/518c424ca4a023f3faebce0adf64219989be0018 to be released to remove any
 
 class MainLayout extends React.Component<Props, MainLayoutState> {
-
-  public static defaultProps: Partial<MainLayoutProps & MainLayoutStoreProps> = {
+  public static defaultProps: Partial<
+    MainLayoutProps & MainLayoutStoreProps
+  > = {
     actionBarComponent: null,
     collapsed: false,
-    mode: 'inline'
-  }
+    mode: 'inline',
+  };
 
   constructor(props: Props) {
     super(props);
@@ -83,7 +86,7 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
     const event = new Event('redraw');
 
     window.dispatchEvent(event);
-  }
+  };
 
   onMenuItemClick = () => {
     const { collapsed } = this.props;
@@ -91,13 +94,10 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
     if (collapsed === true) {
       this.onCollapse(false);
     }
-  }
+  };
 
   renderTrigger = () => {
-
-    const {
-      showOrgSelector
-    } = this.props;
+    const { showOrgSelector } = this.props;
 
     const orgSelector = () => {
       this.setState({ isSelectorOpen: !this.state.isSelectorOpen });
@@ -120,27 +120,69 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
 
     return showOrgSelector ? (
       <Row>
-        <ColAny span={this.state.leftColumnSize} className="left" onMouseEnter={resizeBox('left')} onMouseLeave={resizeBox()} >
+        <ColAny
+          span={this.state.leftColumnSize}
+          className="left"
+          onMouseEnter={resizeBox('left')}
+          onMouseLeave={resizeBox()}
+        >
           <ButtonStyleless onClick={orgSelector} style={{ width: '100%' }}>
-            <span><Icon type="bars" /> <span className={this.state.leftColumnSize > 12 && !this.props.collapsed ? 'visible' : 'hidden'}><FormattedMessage {...messages.switchOrg} /></span></span>
+            <React.Fragment>
+              <Icon type="bars" />{' '}
+              {this.state.leftColumnSize > 12 && !this.props.collapsed && (
+                <FormattedMessage {...messages.switchOrg} />
+              )}
+            </React.Fragment>
           </ButtonStyleless>
         </ColAny>
-        <ColAny span={this.state.rightColumnSize} className="right" onMouseEnter={resizeBox('right')} onMouseLeave={resizeBox()}>
+        <ColAny
+          span={this.state.rightColumnSize}
+          className="right"
+          onMouseEnter={resizeBox('right')}
+          onMouseLeave={resizeBox()}
+        >
           <ButtonStyleless onClick={onCollapse} style={{ width: '100%' }}>
-            {this.props.collapsed ? <Icon type="right" /> : <span><Icon type="left" /> <span className={this.state.rightColumnSize > 12 ? 'visible' : 'hidden'}><FormattedMessage {...messages.collapse} /></span></span>}
+            {this.props.collapsed ? (
+              <Icon type="right" />
+            ) : (
+              <React.Fragment>
+                <Icon type="left" />{' '}
+                {this.state.rightColumnSize > 12 && (
+                  <FormattedMessage {...messages.collapse} />
+                )}
+              </React.Fragment>
+            )}
           </ButtonStyleless>
         </ColAny>
       </Row>
     ) : (
       <Row>
         <Col span={24} className="all">
-          <ButtonStyleless onClick={onCollapse} style={{ width: '100%' }} onMouseEnter={resizeBox('right')} onMouseLeave={resizeBox()}>
-            {this.props.collapsed ? <Icon type="right" /> : <span><Icon type="left" /> <span className={this.state.rightColumnSize > 12 ? 'visible' : 'hidden'}><FormattedMessage {...messages.collapse} /></span></span>}
+          <ButtonStyleless
+            onClick={onCollapse}
+            style={{ width: '100%' }}
+            onMouseEnter={resizeBox('right')}
+            onMouseLeave={resizeBox()}
+          >
+            {this.props.collapsed ? (
+              <Icon type="right" />
+            ) : (
+              <span>
+                <Icon type="left" />{' '}
+                <span
+                  className={
+                    this.state.rightColumnSize > 12 ? 'visible' : 'hidden'
+                  }
+                >
+                  <FormattedMessage {...messages.collapse} />
+                </span>
+              </span>
+            )}
           </ButtonStyleless>
         </Col>
       </Row>
     );
-  }
+  };
 
   render() {
     const {
@@ -152,8 +194,9 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
       orgSelectorSize,
     } = this.props;
 
-    const onStateChange = (state: State) => this.setState({ isSelectorOpen: state.isOpen })
-    const onClick = () => this.setState({ isSelectorOpen: false })
+    const onStateChange = (state: State) =>
+      this.setState({ isSelectorOpen: state.isOpen });
+    const onClick = () => this.setState({ isSelectorOpen: false });
     return (
       <div id="mcs-full-page" className="mcs-fullscreen">
         <PushMenu
@@ -163,37 +206,36 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
           onStateChange={onStateChange}
           width={orgSelectorSize}
         >
-          { this.state.isSelectorOpen && <OrganisationSelector size={orgSelectorSize} onItemClick={onClick} /> }
+          {this.state.isSelectorOpen && (
+            <OrganisationSelector
+              size={orgSelectorSize}
+              onItemClick={onClick}
+            />
+          )}
         </PushMenu>
 
         <LayoutId id="mcs-main-layout" className="mcs-fullscreen">
-
           <Sider
             collapsible={true}
             collapsed={collapsed}
             trigger={this.renderTrigger()}
           >
             <Logo mode={mode} />
-            <NavigatorMenu
-              mode={mode}
-              onMenuItemClick={this.onMenuItemClick}
-            />
+            <NavigatorMenu mode={mode} onMenuItemClick={this.onMenuItemClick} />
           </Sider>
           <Layout>
             <NavigatorHeader />
-            { ActionBarComponent ? <ActionBarComponent /> : null }
-            { ActionBarComponent
-              ? (
-                <div className="ant-layout">
-                  <Content className="mcs-content-container">
-                    <ContentComponent />
-                  </Content>
-                </div>
-              )
-              : <ContentComponent />
-            }
+            {ActionBarComponent ? <ActionBarComponent /> : null}
+            {ActionBarComponent ? (
+              <div className="ant-layout">
+                <Content className="mcs-content-container">
+                  <ContentComponent />
+                </Content>
+              </div>
+            ) : (
+              <ContentComponent />
+            )}
           </Layout>
-
         </LayoutId>
       </div>
     );
@@ -209,11 +251,7 @@ const mapDispatchToProps = {
   openCloseMenu: MenuActions.openCloseMenu,
 };
 
-
 export default compose<Props, MainLayoutProps>(
   withRouter,
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  )
+  connect(mapStateToProps, mapDispatchToProps),
 )(MainLayout);

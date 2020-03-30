@@ -14,7 +14,6 @@
   "trailing": true,
   "smarttabs": true,
   "globals": {
-    "angular": false,
     "define": false,
     "requirejs": false,
     "require": false

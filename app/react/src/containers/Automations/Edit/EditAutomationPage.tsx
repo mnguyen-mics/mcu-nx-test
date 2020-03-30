@@ -28,7 +28,6 @@ import { MicsReduxState } from '../../../utils/ReduxHelper';
 interface State {
   automationFormData: AutomationFormData;
   loading: boolean;
-  scenarioContainer: any;
   datamart?: DatamartResource;
 }
 
@@ -42,15 +41,6 @@ type Props = InjectedIntlProps &
   RouteComponentProps<EditAutomationParam>;
 
 class EditAutomationPage extends React.Component<Props, State> {
-  scenarioContainer = (window as any).angular
-    .element(document.body)
-    .injector()
-    .get('core/scenarios/ScenarioContainer');
-
-  AngularSession = (window as any).angular
-    .element(document.body)
-    .injector()
-    .get('core/common/auth/Session');
 
   @lazyInject(TYPES.IAutomationFormService)
   private _automationFormService: IAutomationFormService;
@@ -66,11 +56,6 @@ class EditAutomationPage extends React.Component<Props, State> {
     this.state = {
       loading: true,
       automationFormData: INITIAL_AUTOMATION_DATA,
-      scenarioContainer: {
-        scenario: {
-          id: undefined,
-        },
-      },
     };
   }
 
@@ -87,14 +72,9 @@ class EditAutomationPage extends React.Component<Props, State> {
       this.loadData(organisationId, automationId)
     }
     if (!automationId && datamartId) {
-      const ScenarioContainer = this.scenarioContainer;
-      this.AngularSession.init(organisationId).then(() => {
-        this.setState({
-          scenarioContainer: new ScenarioContainer(),
-        })
-      }).then(() => {
+     
         this.fetchDatamart(datamartId)
-      })
+   
       
     }
   }
@@ -120,14 +100,7 @@ class EditAutomationPage extends React.Component<Props, State> {
     const datamartId = queryString.parse(search).datamartId;
     const preDatamartId = queryString.parse(prevSearch).datamartId;
     if (!automationId && automationId !== prevAutomationId && datamartId !== preDatamartId) {
-      const ScenarioContainer = this.scenarioContainer;
-      this.AngularSession.init(organisationId).then(() => {
-        this.setState({
-          scenarioContainer: new ScenarioContainer(),
-        })
-      }).then(() => {
-        this.fetchDatamart(datamartId)
-      })
+      this.fetchDatamart(datamartId)
     }
   }
 
@@ -145,15 +118,12 @@ class EditAutomationPage extends React.Component<Props, State> {
       .then(r => {
         const datafarmVersion = r.data.storage_model_version;
         if (datafarmVersion === 'v201506') {
-          const ScenarioContainer = this.scenarioContainer;
-          this.AngularSession.init(organisationId)
           return this._automationFormService.loadInitialAutomationValues(automationId, 'v201506')
             .then(data => {
               this.setState({
                 datamart: r.data,
                 automationFormData: data,
                 loading: false,
-                scenarioContainer: new ScenarioContainer(automationId)
               })
             })
         }
@@ -254,7 +224,6 @@ class EditAutomationPage extends React.Component<Props, State> {
             close={this.onClose}
             breadCrumbPaths={breadcrumbPaths}
             onSubmitFail={this.onSubmitFail}
-            scenarioContainer={this.state.scenarioContainer}
             datamart={datamart}
           />
         )
@@ -303,7 +272,6 @@ class EditAutomationPage extends React.Component<Props, State> {
         close={this.onClose}
         breadCrumbPaths={[]}
         onSubmitFail={this.onSubmitFail}
-        scenarioContainer={this.state.scenarioContainer}
         datamart={datamart}
       />)
     }

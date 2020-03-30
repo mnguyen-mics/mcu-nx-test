@@ -1,8 +1,0 @@
-{
-  "name": "core/adgroups",
-  "dependencies": [
-    "restangular",
-    "checklist-model",
-    "core/creatives/plugins/display-ad/basic-editor"
-  ]
-}

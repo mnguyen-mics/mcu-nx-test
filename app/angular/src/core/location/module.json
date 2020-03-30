@@ -1,4 +1,0 @@
-{"name": "core/location", "dependencies": [
-    "restangular",
-    "core/common"
-  ]}

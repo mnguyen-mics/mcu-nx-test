@@ -1,8 +1,0 @@
-{
-  "name": "core/settings/mobileapplications",
-  "dependencies": [
-    "core/common",
-    "core/visitanalysers",
-    "restangular"
-  ]
-}

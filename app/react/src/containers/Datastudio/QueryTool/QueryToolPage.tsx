@@ -90,10 +90,6 @@ class QueryToolPage extends React.Component<Props> {
 
     const OTQLActionbar = (query: string, datamartId: string) => {
       const saveAsUserQuery = (segmentFormData: NewUserQuerySimpleFormData) => {
-        if (!query)
-          return Promise.reject(
-            new Error("angular query container isn't loaded correctly"),
-          );
         return this._queryService.createQuery(datamartId, {
           query_language: "OTQL",
           query_text: query

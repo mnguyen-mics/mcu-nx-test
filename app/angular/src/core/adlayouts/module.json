@@ -1,6 +1,0 @@
-{
-  "name": "core/adlayouts",
-  "dependencies": [
-    "restangular"
-  ]
-}

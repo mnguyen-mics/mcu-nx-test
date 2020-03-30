@@ -1,6 +1,0 @@
-{
-  "name": "core/creatives/plugins/display-ad/default-editor",
-  "dependencies": [
-    "restangular"
-  ]
-}

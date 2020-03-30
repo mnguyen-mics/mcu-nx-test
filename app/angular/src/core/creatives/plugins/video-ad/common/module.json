@@ -1,7 +1,0 @@
-{
-  "name": "core/creatives/plugins/video-ad/common",
-  "dependencies": [
-    "restangular"
-  ]
-}
-

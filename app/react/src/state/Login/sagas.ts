@@ -34,16 +34,6 @@ function* authorize(credentialsOrRefreshToken: any) {
   const { access_token, expires_in, refresh_token } = response.data;
   yield call(_authService.setAccessToken, access_token);
   yield call(_authService.setAccessTokenExpirationDate, expires_in);
-  if (
-    (window as any).angular &&
-    (window as any).angular.element((global as any).document.body).injector()
-  ) {
-    (window as any).angular
-      .element((global as any).document.body)
-      .injector()
-      .get('Restangular')
-      .setDefaultHeaders({ Authorization: access_token });
-  }
   // Update refresh token if API sent a new one
   if (refresh_token) {
     log.debug(`Store refresh token ${refresh_token}`);
@@ -174,7 +164,6 @@ function* authorizeLoop(
       }
     }
 
-    // set global variable used by angular to run Session.init(organisationId) on stateChangeStart ui router hook
   } catch (e) {
     log.error('Authorize error : ', e);
     yield call(_authService.deleteCredentials);

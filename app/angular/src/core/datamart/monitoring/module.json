@@ -1,3 +1,0 @@
-{"name": "core/datamart/monitoring", "dependencies": [
-  "core/datamart/common"
-]}
