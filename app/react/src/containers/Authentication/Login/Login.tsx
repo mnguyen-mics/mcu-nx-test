@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { ActionFunctionAny, ActionMeta } from 'redux-actions';
 import { compose } from 'recompose';
 import { withRouter, Link, RouteComponentProps } from 'react-router-dom';
 import {
@@ -12,11 +13,11 @@ import { Form, Input, Button, Alert, Switch, Divider } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 
 import log from '../../../utils/Logger';
-
 import { logIn } from '../../../state/Login/actions';
 import { Credentials } from '../../../services/AuthService';
 import { UserProfileResource } from '../../../models/directory/UserProfileResource';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
+import LocalStorage from '../../../services/LocalStorage';
 
 const logoUrl = require('../../../assets/images/logo.png');
 const FormItem = Form.Item;
@@ -29,7 +30,8 @@ const messages = defineMessages({
   },
   expiredPassword: {
     id: 'authentication.login.expired.password',
-    defaultMessage: 'Your password has expired. Please create a new one by clicking on Forgot password.',
+    defaultMessage:
+      'Your password has expired. Please create a new one by clicking on Forgot password.',
   },
   forgotPassword: {
     id: 'authentication.login.forgot.password',
@@ -79,7 +81,7 @@ interface MapDispatchToProps {
   logInRequest: (
     payloadCreator: Credentials & { remember: boolean },
     metaCreator: { redirect: () => void },
-  ) => Promise<void>;
+  ) => ActionFunctionAny<ActionMeta<any, any>>;
 }
 
 type Props = MapStateToProps &
@@ -96,14 +98,29 @@ class Login extends React.Component<Props, State> {
     };
   }
 
-  handleSubmit = (e: React.FormEvent<any>) => {
+  componentDidMount() {
+    let storageEvents: StorageEvent[] = [];
+    let loggedIn = false;
+    window.addEventListener('storage', (e: StorageEvent) => {
+      storageEvents.push(e);
+      const loginEvent = storageEvents.find(
+        ev =>
+          ev.storageArea &&
+          ev.storageArea.isLogged &&
+          ev.storageArea.isLogged === 'true',
+      );
+      if (!!loginEvent && !loggedIn) {
+        location.reload();
+        loggedIn = true;
+        storageEvents = [];
+      }
+    });
+  }
+
+  handleSubmit = (e: React.FormEvent<any> | StorageEvent) => {
     e.preventDefault();
     const { from } = this.props.location.state || { from: { pathname: '/' } };
     const { match } = this.props;
-
-    this.setState({
-      isRequesting: true,
-    });
 
     const redirect = () => {
       log.debug(`Redirect from ${match.url} to ${from.pathname}`);
@@ -115,26 +132,16 @@ class Login extends React.Component<Props, State> {
         this.setState({
           isRequesting: true,
         });
-        this.props
-          .logInRequest(
-            {
-              email: values.email,
-              password: values.password,
-              remember: values.remember,
-            },
-            { redirect },
-          )
-          .then(() => {
-            this.setState({
-              isRequesting: false,
-            });
-          })
-          .catch(error => {
-            this.setState({
-              isRequesting: false,
-            });
-            log.error(error);
-          });
+        this.props.logInRequest(
+          {
+            email: values.email,
+            password: values.password,
+            remember: values.remember,
+          },
+          { redirect },
+        );
+        // logInRequest is not a Promise so
+        // there is no.then() and no .catch()
       }
     });
   };
@@ -149,6 +156,11 @@ class Login extends React.Component<Props, State> {
     } = this.props;
 
     const { isRequesting } = this.state;
+
+    const getRememberMe = () => {
+      const rememberMe = LocalStorage.getItem('remember_me');
+      return rememberMe === 'true';
+    };
 
     const hasFetchedConnectedUser = connectedUser && connectedUser.id;
 
@@ -225,7 +237,7 @@ class Login extends React.Component<Props, State> {
               <FormItem>
                 {getFieldDecorator('remember', {
                   valuePropName: 'checked',
-                  initialValue: false,
+                  initialValue: getRememberMe(),
                 })(<Switch size="small" />)}
                 <div className="login-text-remember-me">
                   <FormattedMessage {...messages.rememberMe} />
@@ -256,9 +268,6 @@ const mapDispatchToProps = {
 export default compose(
   injectIntl,
   withRouter,
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   Form.create(),
 )(Login);

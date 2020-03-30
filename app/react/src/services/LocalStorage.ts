@@ -69,7 +69,6 @@ const removeItem = (property: string) => {
 
 export default {
   LANGUAGE_KEY,
-
   getItem,
   setItem,
   removeItem,

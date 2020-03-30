@@ -56,7 +56,7 @@ export interface Notification {
     error: string;
     error_id: string;
   };
-  newVersion: string;
+  newVersion: boolean;
   onClose: () => void;
   intlMessage: FormattedMessage.MessageDescriptor;
   intlDescription: FormattedMessage.MessageDescriptor;

@@ -39,6 +39,7 @@ function* authorize(credentialsOrRefreshToken: any) {
     log.debug(`Store refresh token ${refresh_token}`);
     yield call(_authService.setRefreshToken, refresh_token);
     yield call(_authService.setRefreshTokenExpirationDate, expires_in);
+    yield call(_authService.setIsLogged, true);
   }
 
   yield put(logIn.success(access_token));
@@ -115,7 +116,7 @@ function* authorizeLoop(
       };
 
       yield put(setOrgFeature((global as any).window.MCS_CONSTANTS.FEATURES));
-      
+
       const clientPromise = () =>
         new Promise((resolve, reject) => {
           const factory = SplitFactory({
@@ -185,9 +186,8 @@ function* authentication() {
     if (!isAuthenticated && !canAuthenticate && LOG_IN.REQUEST) {
       // Wait for LOG_IN.REQUEST
       const { payload } = yield take(LOG_IN.REQUEST);
-      if (payload.remember) {
-        yield call(_authService.setRememberMe, { rememberMe: true });
-      }
+
+      yield call(_authService.setRememberMe, !!payload.remember);
 
       credentialsOrRefreshToken = {
         email: payload.email,
@@ -216,6 +216,7 @@ function* authentication() {
       const _persistedStoreService = yield getContext('persistedStoreService');
       yield call(_authService.revokeRefreshToken);
       yield call(_authService.deleteCredentials);
+      yield call(_authService.setIsLogged, false);
       _persistedStoreService.removeStringItem('store');
       if (signOutAction.meta && signOutAction.meta.redirectCb) {
         signOutAction.meta.redirectCb();
