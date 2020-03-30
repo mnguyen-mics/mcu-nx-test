@@ -105,7 +105,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
           'unauthorizedEvent',
           e => {
             this._authService.deleteCredentials();
-            this.props.history.push({ pathname: '/' });
+            this.props.history.push({ pathname: '/', state: this.props.location.state });
           },
           false,
         );
@@ -176,7 +176,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
       }
 
       log.debug(`Redirect from ${match.url}  to ${redirectToUrl}`);
-      return <Redirect to={redirectToUrl} />;
+      return <Redirect to={{ pathname: redirectToUrl, state: this.props.location.state }} />;
     };
     const loginRouteRender = () => {
       const authenticated =
