@@ -141,8 +141,9 @@ class MapboxGl extends React.Component<JoinedProps, State> {
 
   checkIfValidGeoJSON = (content: any): boolean => {
     try {
-      const contentParsed = JSON.parse(content)
-      return !!require("geojson-validation").valid(contentParsed)
+      // const contentParsed = JSON.parse(content)
+      // TODO: validate the json
+      return true;
     } catch(e) {
       return false;
     }
