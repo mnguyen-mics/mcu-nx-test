@@ -209,7 +209,7 @@ class AudienceExperimentationForm extends React.Component<Props, State> {
       fetchAudiencePartition,
       fetchAudiencePartitions,
       formValues,
-      closeNextDrawer
+      closeNextDrawer,
     } = this.props;
     this.props.openNextDrawer<TableSelectorProps<AudiencePartitionResource>>(
       PartitionTableSelector,
