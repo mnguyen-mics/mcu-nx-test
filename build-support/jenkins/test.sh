@@ -11,9 +11,6 @@ nvm use v8.6.0
 
 npm install
 
-bower install
-bower update
-
 npm run test:lint
 npm run i18n
 #npm test
