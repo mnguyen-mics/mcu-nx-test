@@ -3,7 +3,6 @@ import KeywordList from '../containers/Library/Keyword/List';
 import PlacementList from '../containers/Library/Placement/List';
 import Catalog from '../containers/Library/Catalog';
 import PlacementListPage from '../containers/Library/Placement/Edit/PlacementListPage';
-import ZoneBuilderPage from '../containers/Library/Zones/ZoneBuilderPage'
 
 import KeywordListPage from '../containers/Library/Keyword/Edit/KeywordListPage';
 import DealListPage from '../containers/Library/Deal/Edit/DealListPage';
@@ -97,16 +96,6 @@ export const libraryDefinition: NavigatorDefinition = {
     actionBarComponent: Catalog.actionBarComponent,
     contentComponent: Catalog.contentComponent,
     requiredFeature: 'library-catalog',
-    requireDatamart: true,
-  },
-  // ========================================
-  //           ZONE
-  // ========================================
-  libraryZoneCreation: {
-    path: '/library/zone/create',
-    layout: 'edit',
-    editComponent: ZoneBuilderPage,
-    requiredFeature: 'library-zone',
     requireDatamart: true,
   },
 }
