@@ -3,4 +3,3 @@ karma*
 test/
 dist/
 app/conf/
-app/main.js

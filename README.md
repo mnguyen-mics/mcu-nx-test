@@ -41,7 +41,6 @@ System:
 
 Node packages:
 * grunt-cli (-g)
-* bower (-g)
 
 Ruby gems:
 * compass
@@ -92,7 +91,6 @@ export GEM_HOME=~/.gem
 #### install project dependencies
 
 ```
-npm install -g bower
 npm install -g grunt-cli
 gem install compass
 ```

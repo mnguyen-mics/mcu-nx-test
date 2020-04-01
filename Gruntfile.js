@@ -208,14 +208,6 @@ module.exports = function (grunt) {
     },
 
 
-    // Automatically inject Bower components into the app
-    bowerInstall: {
-      target: {
-        src: ['<%= yeoman.app %>/index.html'],
-      }
-    },
-
-
     // Renames files for browser caching purposes
     filerev: {
       files: {
@@ -226,7 +218,6 @@ module.exports = function (grunt) {
           '<%= yeoman.dist %>/styles/fonts/*'
         ]
       }
-
     },
 
     // Reads HTML for usemin blocks to enable smart builds that automatically
@@ -303,37 +294,6 @@ module.exports = function (grunt) {
       }
     },
 
-// Allow the use of non-minsafe AngularJS files. Automatically makes it
-// minsafe compatible so Uglify does not destroy the ng references
-//    ngmin: {
-//      dist: {
-//        files: [{
-//          expand: true,
-//          cwd: '.tmp/concat/scripts',
-//          src: '*.js',
-//          dest: '.tmp/ngmin/scripts'
-////          dest: '<%= yeoman.dist %>/scripts'
-//        }]
-//      }
-//    },
-
-
-    requirejs: {
-      dist: {
-        options: {
-          waitSeconds: 0,
-          mainConfigFile: "app/main.js",
-          name: "navigator",
-          optimize: "none",
-          insertRequire: ['app'],
-          paths: {
-            'core/configuration': 'empty:'
-          },
-          out: ".tmp/concat/scripts/main.js"
-        }
-      }
-    },
-
     uglify: {
       options: {
         mangle: false,
@@ -350,13 +310,6 @@ module.exports = function (grunt) {
           }
         ]
 
-      }
-    },
-
-    // Replace Google CDN references
-    cdnify: {
-      dist: {
-        html: ['<%= yeoman.dist %>/*.html']
       }
     },
 
@@ -426,7 +379,8 @@ module.exports = function (grunt) {
             replace: function (match) {
               var regex = /window.mainRev=\'(.*)\'/;
               var result = regex.exec(match);
-              var revFileName = grunt.filerev.summary['dist/scripts/' + result[1]].replace('dist', '');
+              var fileName = grunt && grunt.filerev && grunt.filerev.summary['dist/scripts/' + result[1]] ? grunt.filerev.summary['dist/scripts/' + result[1]] : '';
+              var revFileName = fileName.replace('dist', '');
               return "window.mainRev='"+ revFileName +"'";
             }
 
@@ -605,12 +559,8 @@ module.exports = function (grunt) {
     'jshint:all',
     'useminPrepare',
     'genRequireJsFiles:config',
-    'requirejs',
     'concurrent:dist',
-    'concat',
     'copy:dist',
-    'cdnify',
-    'cssmin',
     'uglify',
     'filerev',
     'regex-replace:dist',
