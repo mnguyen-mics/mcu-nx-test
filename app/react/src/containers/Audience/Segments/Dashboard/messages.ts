@@ -65,6 +65,10 @@ export default defineMessages({
     defaultMessage:
       'An unexpected error happened running your overlap. Please retry.',
   },
+  experimentationCreation: {
+    id: 'audience.segments.experimentation.creation',
+    defaultMessage: 'Create Experimentation',
+  },
   lookAlikeCreation: {
     id: 'audience.segments.lookalike.button.create',
     defaultMessage: 'Create Lookalike',

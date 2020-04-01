@@ -56,7 +56,7 @@ export interface UserListSegment extends AudienceSegmentResource {
   feed_type: FeedType;
   type: 'USER_LIST';
   query_id?: string;
-  subtype: 'STANDARD' | 'USER_PIXEL' | 'USER_CLIENT'
+  subtype: 'STANDARD' | 'USER_PIXEL' | 'USER_CLIENT';
 }
 
 export interface UserLookalikeSegment extends AudienceSegmentResource {
@@ -102,7 +102,14 @@ export interface OverlapJobResult extends PublicJobExecutionResource {
 export interface UserQuerySegment extends AudienceSegmentResource {
   query_id?: string;
   type: 'USER_QUERY';
+  subtype?: 'STANDARD' | 'AB_TESTING_CONTROL_GROUP' | 'AB_TESTING_EXPERIMENT';
+  weight?: number;
+  control_group_id?: string;
+  control_group?: boolean;
+  target_metric: Engagement;
 }
+
+export type Engagement = 'E_COMMERCE_ENGAGEMENT' | 'CHANNEL_ENGAGEMENT';
 
 export interface SegmentOverlapResult {
   segment_id: number;
