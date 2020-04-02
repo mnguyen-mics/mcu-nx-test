@@ -17,7 +17,7 @@ type Props = UserScenarioActivityCardProps &
   RouteComponentProps<TimelinePageParams>;
 
 interface CardElements {
-  title: string,
+  title: React.ReactNode,
   intlMsg: React.ReactNode,
 }
 
@@ -27,7 +27,7 @@ class UserScenarioActivityCard extends React.Component<Props> {
     switch (activity.$type) {
       case 'USER_SCENARIO_START':
         return {
-          title: 'SCENARIO START',
+          title: <FormattedMessage {...messages.userScenarioStartTitle}/>,
           intlMsg:
             <FormattedMessage {...messages.userScenarioStartContent}
               values={{ scenarioName: <b>{activity.$scenario_name}</b> }}
@@ -35,15 +35,21 @@ class UserScenarioActivityCard extends React.Component<Props> {
         }
       case 'USER_SCENARIO_STOP':
         return {
-          title: 'SCENARIO STOP',
-          intlMsg:
-            <FormattedMessage {...messages.userScenarioStopContent}
+          title: activity.$scenario_exit_condition_id ? (
+            <FormattedMessage {...messages.userScenarioStopOnExitConditionTitle} />
+          ) : (
+            <FormattedMessage {...messages.userScenarioStopTitle} />
+          ),
+          intlMsg: (
+            <FormattedMessage
+              {...messages.userScenarioStopContent}
               values={{ scenarioName: <b>{activity.$scenario_name}</b> }}
             />
-        }
+          ),
+        };
       case 'USER_SCENARIO_NODE_ENTER':
         return {
-          title: 'SCENARIO NODE ENTER',
+          title: <FormattedMessage {...messages.userScenarioNodeEnterTitle}/>,
           intlMsg:
             <FormattedMessage {...messages.userScenarioNodeEnterContent}
               values={{
@@ -54,7 +60,7 @@ class UserScenarioActivityCard extends React.Component<Props> {
         }
       case 'USER_SCENARIO_NODE_EXIT':
         return {
-          title: 'SCENARIO NODE EXIT',
+          title: <FormattedMessage {...messages.userScenarioNodeExitTitle}/>,
           intlMsg:
             <FormattedMessage {...messages.userScenarioNodeExitContent}
               values={{
@@ -65,7 +71,7 @@ class UserScenarioActivityCard extends React.Component<Props> {
         }
       case 'USER_SCENARIO_NODE_MOVEMENT':
         return {
-          title: 'SCENARIO NODE MOVEMENT',
+          title: <FormattedMessage {...messages.userScenarioNodeMovementTitle}/>,
           intlMsg:
             <FormattedMessage {...messages.userScenarioNodeMovementContent}
               values={{
