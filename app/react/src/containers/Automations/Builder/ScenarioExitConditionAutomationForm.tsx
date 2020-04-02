@@ -176,7 +176,7 @@ class ScenarioExitConditionAutomationForm extends React.Component<
       paths: [{ name: messages.title }],
       message: messages.save,
       onClose: close,
-      disabled: !disabled && isLoading,
+      disabled: disabled || isLoading,
     };
 
     const fetchListMethod = (k: string) => {
@@ -216,6 +216,7 @@ class ScenarioExitConditionAutomationForm extends React.Component<
                   validate={isRequired}
                   selectProps={{
                     mode: 'tags',
+                    disabled: disabled,
                   }}
                   loadOnlyOnce={true}
                 />
