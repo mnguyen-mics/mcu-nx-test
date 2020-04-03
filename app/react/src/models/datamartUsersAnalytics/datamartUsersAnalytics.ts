@@ -4,7 +4,7 @@ import { DimensionFilterClause } from "../ReportRequestBody";
 
 type ChartType = 'PIE' | 'AREA' | 'WORLD_MAP' | 'STACKED_BAR' | 'COUNT' | 'TABS' | 'SINGLE_STAT' | 'COLUMN';
 
-export type Dataset = { [key: string]: string | number | Date | undefined };
+export type Dataset = { [key: string]: string | number | undefined };
 
 export interface Chart {
   type: ChartType;

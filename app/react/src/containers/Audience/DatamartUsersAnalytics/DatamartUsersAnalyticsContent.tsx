@@ -18,7 +18,12 @@ export interface DashboardConfig {
   layout: Layout;
   charts: Chart[];
   color: string;
-  segmentId?: string;
+  segments?: SegmentFilter;
+}
+
+interface SegmentFilter {
+  baseSegmentId: string;
+  segmentIdToCompareWith?: string;
 }
 
 interface DatamartUsersAnalyticsContentProps {
@@ -84,7 +89,9 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
           for (const configItem of config) {
             const currentConfigItem = {
               ...configItem,
-              segmentId: filter.segments[filters.length],
+              segments: { 
+                baseSegmentId: filter.segments[filters.length] 
+              },
               color: this._colors[filters.length]
             };
             currentConfigItem.layout.y += 3;
@@ -95,7 +102,7 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
         else {
           const thedifference = difference(filters, filter.segments);
           // Remove segment filter
-          newDashboardConfig = formattedConfig.filter(item => item.segmentId !== thedifference[0]);
+          newDashboardConfig = formattedConfig.filter(item => !item.segments || (item.segments && item.segments.baseSegmentId !== thedifference[0]));
         }
 
         return {
@@ -108,7 +115,7 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
     if (!isEqual(filter.allusers, allUsers)) {
       this.setState(state => {
         const formattedConfig = state.formattedConfig.slice();
-        const newDashboardConfig = !filter.allusers ? formattedConfig.filter(item => item.segmentId) : formattedConfig.concat(config);
+        const newDashboardConfig = !filter.allusers ? formattedConfig.filter(item => item.segments) : formattedConfig.concat(config);
         return {
           formattedConfig: newDashboardConfig,
           allUsers: filter.allusers
@@ -116,6 +123,7 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
       });
     }
   }
+
 
   generateDOM(dashboardConfig: DashboardConfig[], datamartId: string, dateRange: McsDateRangeValue, onChange: (isLoading: boolean) => void) {
     return dashboardConfig.map((comp: DashboardConfig, i) => {
@@ -133,7 +141,8 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
               datamartId={datamartId}
               dateRange={dateRange}
               onChange={onChange}
-              segmentId={comp.segmentId}
+              segmentId={comp.segments ? comp.segments.baseSegmentId : undefined}
+              compareWithSegmentId={comp.segments ? comp.segments.segmentIdToCompareWith : undefined}
             />
           })}
         </CardFlex>
@@ -162,4 +171,4 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
   }
 }
 
-export default compose<DatamartUsersAnalyticsContentProps, DatamartUsersAnalyticsContentProps>(withRouter)(DatamartUsersAnalyticsContent)
+export default compose<DatamartUsersAnalyticsContentProps, DatamartUsersAnalyticsContentProps>(withRouter)(DatamartUsersAnalyticsContent);

@@ -10,7 +10,7 @@ import {
   updateSearch
 } from '../../../utils/LocationSearchHelper';
 import McsMoment from '../../../utils/McsMoment';
-import SegmentFilter from './components/segmentFilter';
+// import SegmentFilter from './components/SegmentFilter';
 import { DATAMART_USERS_ANALYTICS_SETTING } from '../Segments/Dashboard/constants';
 
 interface DatamartAnalysisProps {
@@ -118,7 +118,7 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
       showFilter,
       location: { search } } = this.props;
 
-    const { isLoading } = this.state;
+    // const { isLoading } = this.state;
 
     const filter = parseSearch(search, DATAMART_USERS_ANALYTICS_SETTING) as McsDateRangeValue;
 
@@ -135,11 +135,11 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
           </Col>
         </Row>
         { showFilter && <Row>
-          <SegmentFilter 
+          {/* <SegmentFilter 
             className={ isLoading ? 'mcs-datamartUsersAnalytics_segmentFilter _is_disabled' : 'mcs-datamartUsersAnalytics_segmentFilter'} 
             onChange={this.onSegmentFilterChange}
             onToggleAllUsersFilter={this.onAllUserFilterChange}
-          />
+          /> */}
           <Col className="text-right" offset={6}>
               {this.renderDatePicker()}
           </Col>

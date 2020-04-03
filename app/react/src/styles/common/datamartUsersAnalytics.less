@@ -33,7 +33,9 @@
   }
 }
 
-.mcs-datamartUsersAnalytics {
+.mcs-datamartUsersAnalytics_charts_singleStat {
+  float: left;
+
   .mcs-metricCounter_title {
     color: @primary-color;
     font-size: 16px;
@@ -48,11 +50,16 @@
   }
 
 
-  .ant-btn {
-    color: @primary-color;
-    font-size: 14px;
-    letter-spacing: 0.5px;
-    text-transform: capitalize;
+}
+
+.mcs-datamartUsersAnalytics_charts_trend {
+  .ant-statistic-content-value,
+  .ant-statistic-content-value-decimal,
+  .ant-statistic-content-suffix,
+  .ant-statistic-content-prefix {
+
+    font-size: 24px;
+    font-family: "LLCircularWeb-Book";
   }
 }
 
@@ -84,6 +91,8 @@
     left: -3px;
     margin: 0 10px;
   }
+
+
 }
 
 .mcs-datamartUsersAnalytics .ant-btn.appliedSegmentName {
@@ -127,6 +136,13 @@
   &._is_disabled {
     opacity: 0.3;
     pointer-events: none;
+  }
+
+  .ant-btn {
+    color: @primary-color;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    text-transform: capitalize;
   }
 }
 
