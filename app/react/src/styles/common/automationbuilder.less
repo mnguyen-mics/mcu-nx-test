@@ -1,4 +1,5 @@
 .automation-builder {
+  position: relative;
   width: 100%;
   height: inherit;
   overflow: hidden;
@@ -117,6 +118,10 @@
   }
 
   .available-nodes-visualizer {
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    right: 0px;
     overflow-y: auto;
     overflow-x: hidden;
     height: inherit;
@@ -150,51 +155,57 @@
     margin-left: 25px;
   }
 
-  .available-node-visualizer-row {
-    margin-top: 25px;
-    .ant-tree-node-selected,
-    .ant-tree-node-content-wrapper {
-      font-size: 13px;
-      font-weight: 700;
-      &:hover {
-        background-color: #ffffff !important;
-      }
-    }
-    .ant-tree li ul {
-      padding: 0px;
-    }
-    .ant-tree ul li {
-      padding: 0px;
-      margin-top: 25px;
-      float: left;
-      width: 50%;
-      @media(max-width: 1650px) {
-        width: 100%
-      }
-      span[draggable],
-      span[draggable='true'] {
-        border: 0px #ffffff solid;
-      }
-    }
-    .ant-tree-node-content-wrapper {
-      height: 100%;
-      width: 80%;
-      padding: 0px;
-    }
-  }
+  .mcs-availableNodeVisualizer {
+    margin-bottom: 25px;
 
-  .available-node-visualizer-header {
-    margin-top: 10px;
-    padding: 10px 10px 0px 10px;
-    font-size: 13px;
-    .available-node-visualizer-title {
-      font-size: 1.3em;
-      font-weight: bold;
-      color: rgba(0, 0, 0, 0.65);
+    .mcs-availableNodeVisualizer_header {
+      margin-top: 10px;
+      padding: 10px 10px 0px 10px;
+      font-size: 13px;
+  
+      .mcs-availableNodeVisualizer_title {
+        font-size: 1.3em;
+        font-weight: bold;
+        color: rgba(0, 0, 0, 0.65);
+      }
+      
+      .mcs-availableNodeVisualizer_subtitle {
+        color: #7e7e7e;
+        font-size: 1em;
+      }
     }
-    .available-node-visualizer-subtitle {
-      color: #7e7e7e;
-      font-size: 1em;
+
+    .mcs-availableNodeVisualizer_row {
+      margin-top: 25px;
+      .ant-tree-node-selected,
+      .ant-tree-node-content-wrapper {
+        font-size: 13px;
+        font-weight: 700;
+        &:hover {
+          background-color: #ffffff !important;
+        }
+      }
+      .ant-tree li ul {
+        padding: 0px;
+      }
+      .ant-tree ul li {
+        padding: 0px;
+        margin-top: 25px;
+        float: left;
+        width: 50%;
+        @media(max-width: 1650px) {
+          width: 100%
+        }
+        span[draggable],
+        span[draggable='true'] {
+          border: 0px #ffffff solid;
+        }
+      }
+      .ant-tree-node-content-wrapper {
+        height: 100%;
+        width: 80%;
+        padding: 0px;
+      }
     }
   }
 

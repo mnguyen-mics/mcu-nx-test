@@ -167,19 +167,19 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
   render() {
     const { intl } = this.props;
     return (
-      <div>
-        <Row className="available-node-visualizer-header">
-          <div className="available-node-visualizer-title">
+      <div className="mcs-availableNodeVisualizer">
+        <Row className="mcs-availableNodeVisualizer_header">
+          <div className="mcs-availableNodeVisualizer_title">
             {intl.formatMessage(messages.availableNodeTitle)}
           </div>
-          <div className="available-node-visualizer-subtitle">
+          <div className="mcs-availableNodeVisualizer_subtitle">
             {intl.formatMessage(messages.availableNodeSubtitle)}
           </div>
         </Row>
-        <Row className="available-node-visualizer-row">
+        <Row className="mcs-availableNodeVisualizer_row">
           {this.createNodeGrid('Actions', this.state.actionNodes)}
         </Row>
-        <Row className="available-node-visualizer-row">
+        <Row className="mcs-availableNodeVisualizer_row">
           {this.createNodeGrid('Conditions', this.state.conditionNodes)}
         </Row>
       </div>
