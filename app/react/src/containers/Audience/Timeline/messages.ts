@@ -248,6 +248,30 @@ const messages: {
     defaultMessage:
       'There is no user linked to your browser, please select a user to continue',
   },
+  userScenarioStartTitle: {
+    id: 'audience.monitoring.timeline.activity.scenario.start.title',
+    defaultMessage: 'Scenario Start',
+  },
+  userScenarioStopTitle: {
+    id: 'audience.monitoring.timeline.activity.scenario.stop.title',
+    defaultMessage: 'Scenario Stop',
+  },
+  userScenarioStopOnExitConditionTitle: {
+    id: 'audience.monitoring.timeline.activity.scenario.stop.on.exit.condition.title',
+    defaultMessage: 'Scenario Stop on Exit Condition',
+  },
+  userScenarioNodeEnterTitle: {
+    id: 'audience.monitoring.timeline.activity.scenario.node.enter.title',
+    defaultMessage: 'Scenario Node Enter',
+  },
+  userScenarioNodeExitTitle: {
+    id: 'audience.monitoring.timeline.activity.scenario.node.exit.title',
+    defaultMessage: 'Scenario Node Exit',
+  },
+  userScenarioNodeMovementTitle: {
+    id: 'audience.monitoring.timeline.activity.scenario.node.movement.title',
+    defaultMessage: 'Scenario Node Movement',
+  },
   userScenarioStartContent: {
     id: 'audience.monitoring.timeline.activity.scenario.start.content',
     defaultMessage: 'Entered {scenarioName}',
