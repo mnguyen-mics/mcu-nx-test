@@ -29,7 +29,6 @@ type Props = SegmentReachProps &
   RouteComponentProps<EditEmailBlastRouteMatchParam>;
 
 class SegmentReach extends React.Component<Props, State> {
-
   @lazyInject(TYPES.IEmailCampaignService)
   private _emailCampaignService: IEmailCampaignService;
 
@@ -51,13 +50,11 @@ class SegmentReach extends React.Component<Props, State> {
     const datamartId = defaultDatamart(organisationId).id;
 
     if (segmentIds && segmentIds.length > 0) {
-      this._emailCampaignService.computeSegmentReach(
-        datamartId,
-        segmentIds,
-        providerTechnicalNames,
-      ).then(count => {
-        this.setState({ count: count });
-      });
+      this._emailCampaignService
+        .computeSegmentReach(datamartId, segmentIds, providerTechnicalNames)
+        .then(count => {
+          this.setState({ count: count });
+        });
     } else {
       this.setState({ count: 0 });
     }
@@ -67,8 +64,19 @@ class SegmentReach extends React.Component<Props, State> {
     this.computeSegmentReach(this.props);
   }
 
-  componentWillReceiveProps(nextProps: Props) {
-    this.computeSegmentReach(nextProps);
+  compareArrays = (fistArray: string[], secondArray: string[]): boolean => {
+    return fistArray.length === secondArray.length
+      ? !fistArray.map(element => secondArray.includes(element)).includes(false)
+      : false;
+  };
+
+  componentDidUpdate(previousProps: Props) {
+    const { segmentIds: previousSegmentIds } = previousProps;
+    const { segmentIds } = this.props;
+
+    if (!this.compareArrays(segmentIds, previousSegmentIds)) {
+      this.computeSegmentReach(this.props);
+    }
   }
 
   render() {

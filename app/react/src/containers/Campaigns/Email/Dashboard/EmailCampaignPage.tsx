@@ -114,40 +114,40 @@ class EmailCampaign extends React.Component<Props, State> {
     }
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate(previousProps: Props) {
     const {
-      location: { search },
+      location: { pathname, search },
       match: {
-        params: { campaignId },
+        params: { campaignId, organisationId },
       },
       history,
     } = this.props;
 
     const {
-      location: { pathname: nextPathname, search: nextSearch },
+      location: { search: previousSearch },
       match: {
         params: {
-          campaignId: nextCampaignId,
-          organisationId: nextOrganisationId,
+          campaignId: previousCampaignId,
         },
       },
-    } = nextProps;
-    if (!compareSearches(search, nextSearch) || campaignId !== nextCampaignId) {
-      if (!isSearchValid(nextSearch, EMAIL_DASHBOARD_SEARCH_SETTINGS)) {
+    } = previousProps;
+
+    if (!compareSearches(search, previousSearch) || campaignId !== previousCampaignId) {
+      if (!isSearchValid(search, EMAIL_DASHBOARD_SEARCH_SETTINGS)) {
         history.replace({
-          pathname: nextPathname,
+          pathname: pathname,
           search: buildDefaultSearch(
-            nextSearch,
+            search,
             EMAIL_DASHBOARD_SEARCH_SETTINGS,
           ),
         });
       } else {
         const filter = parseSearch<EmailDashboardSearchSettings>(
-          nextSearch,
+          search,
           EMAIL_DASHBOARD_SEARCH_SETTINGS,
         );
-        this.loadCampaign(nextCampaignId);
-        this.refreshStats(nextOrganisationId, nextCampaignId, filter);
+        this.loadCampaign(campaignId);
+        this.refreshStats(organisationId, campaignId, filter);
       }
     }
   }

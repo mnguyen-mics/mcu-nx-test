@@ -111,9 +111,9 @@ class GoalsTable extends React.Component<Props, State> {
     }
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate(previousProps: Props) {
     const {
-      location: { search },
+      location: { pathname, search, state },
       match: {
         params: { organisationId },
       },
@@ -121,28 +121,28 @@ class GoalsTable extends React.Component<Props, State> {
     } = this.props;
 
     const {
-      location: { pathname: nextPathname, search: nextSearch, state },
+      location: { search: previousSearch },
       match: {
-        params: { organisationId: nextOrganisationId },
+        params: { organisationId: previousOrganisationId },
       },
-    } = nextProps;
+    } = previousProps;
 
     const checkEmptyDataSource = state && state.reloadDataSource;
 
     if (
-      !compareSearches(search, nextSearch) ||
-      organisationId !== nextOrganisationId
+      !compareSearches(search, previousSearch) ||
+      organisationId !== previousOrganisationId
     ) {
-      if (!isSearchValid(nextSearch, GOAL_SEARCH_SETTINGS)) {
+      if (!isSearchValid(search, GOAL_SEARCH_SETTINGS)) {
         history.replace({
-          pathname: nextPathname,
-          search: buildDefaultSearch(nextSearch, GOAL_SEARCH_SETTINGS),
-          state: { reloadDataSource: organisationId !== nextOrganisationId },
+          pathname: pathname,
+          search: buildDefaultSearch(search, GOAL_SEARCH_SETTINGS),
+          state: { reloadDataSource: organisationId !== previousOrganisationId },
         });
       } else {
-        const filter = parseSearch(nextSearch, GOAL_SEARCH_SETTINGS);
+        const filter = parseSearch(search, GOAL_SEARCH_SETTINGS);
         this.loadGoalsDataSource(
-          nextOrganisationId,
+          organisationId,
           filter,
           checkEmptyDataSource,
         );

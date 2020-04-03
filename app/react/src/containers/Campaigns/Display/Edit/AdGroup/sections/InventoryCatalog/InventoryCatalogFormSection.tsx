@@ -9,9 +9,7 @@ import provideInventoryCatalog, {
   DataLoadingContainer,
 } from './provideInventoryCatalog';
 
-import {
-  InventoryCatalFieldsModel,
-} from '../../domain';
+import { InventoryCatalFieldsModel } from '../../domain';
 import FormSection from '../../../../../../../components/Form/FormSection';
 import messages from '../../../messages';
 import inventoryCatalogMsgs from './messages';
@@ -41,13 +39,11 @@ import {
 import { AdExchangeSelectionCreateRequest } from '../../../../../../../models/adexchange/adexchange';
 import { DisplayNetworkSelectionCreateRequest } from '../../../../../../../models/displayNetworks/displayNetworks';
 
-export interface InventoryCatalogFormSectionProps
-  extends 
-    ReduxFormChangeProps {
-      small?: boolean;
-      disabled?: boolean;
-      isScenario?: boolean;
-    }
+export interface InventoryCatalogFormSectionProps extends ReduxFormChangeProps {
+  small?: boolean;
+  disabled?: boolean;
+  isScenario?: boolean;
+}
 
 type Props = WrappedFieldArrayProps<InventoryCatalFieldsModel> &
   InjectedIntlProps &
@@ -76,25 +72,39 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
     };
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate(previousProps: Props) {
     const {
       inventoryCategoryTree,
       keywordList,
       dealList,
       placementList,
-    } = nextProps;
+    } = this.props;
 
-    this.buildIncludedDataSet(
-      placementList,
-      keywordList,
-      dealList,
-      inventoryCategoryTree,
-    );
-    this.buildExcludedDataSet(
-      placementList,
-      keywordList,
-      inventoryCategoryTree,
-    );
+    const {
+      inventoryCategoryTree: previousInventoryCategoryTree,
+      keywordList: previousKeywordList,
+      dealList: previousDealList,
+      placementList: previousPlacementList,
+    } = previousProps;
+
+    if (
+      inventoryCategoryTree !== previousInventoryCategoryTree ||
+      keywordList !== previousKeywordList ||
+      dealList !== previousDealList ||
+      placementList !== previousPlacementList
+    ) {
+      this.buildIncludedDataSet(
+        placementList,
+        keywordList,
+        dealList,
+        inventoryCategoryTree,
+      );
+      this.buildExcludedDataSet(
+        placementList,
+        keywordList,
+        inventoryCategoryTree,
+      );
+    }
   }
 
   buildIncludedDataSet = (
@@ -162,7 +172,7 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
     const { intl } = this.props;
 
     const placementListTree =
-      placementList.data.length > 0 
+      placementList.data.length > 0
         ? // add datamart's segments to tree if any
           this.buildTreeDataFromOwnSegments(
             placementList.data,
@@ -172,7 +182,7 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
         : [];
 
     const keywordListTree =
-      keywordList.data.length > 0 
+      keywordList.data.length > 0
         ? // add datamart's segments to tree if any
           this.buildTreeDataFromOwnSegments(
             keywordList.data,
@@ -210,9 +220,7 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
     const selectedInventoryIds: string[] = [];
     this.props.fields.getAll().forEach(field => {
       if (field.model.type === 'DEAL_LIST' && !excluded) {
-        selectedInventoryIds.push(
-          `dealList_${field.model.data.deal_list_id}`,
-        );
+        selectedInventoryIds.push(`dealList_${field.model.data.deal_list_id}`);
       } else if (
         field.model.type === 'KEYWORD_LIST' &&
         field.model.data.exclude === excluded
@@ -234,7 +242,10 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
         selectedInventoryIds.push(
           `adExchange_${field.model.data.ad_exchange_id}`,
         );
-      } else if (field.model.type === 'DISPLAY_NETWORK' && field.model.data.exclude === excluded) {
+      } else if (
+        field.model.type === 'DISPLAY_NETWORK' &&
+        field.model.data.exclude === excluded
+      ) {
         selectedInventoryIds.push(
           `displayNetwork_${field.model.data.display_network_id}`,
         );
@@ -250,9 +261,7 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
     const { fields } = this.props;
 
     fields.getAll().some((field, index) => {
-      if (
-        this.getId(field) === inventoryId
-      ) {
+      if (this.getId(field) === inventoryId) {
         fields.remove(index);
         return true;
       }
@@ -268,7 +277,6 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
     exclude: boolean = false,
   ) => (inventoryIds: string[]) => {
     const { fields, formChange } = this.props;
-
 
     const allFields = fields.getAll() || [];
 
@@ -327,29 +335,36 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
       });
 
       if (!found) {
-
-        const newField = this.generateField(inventory.type, inventory.value, inventoryCategoryTree, exclude);
+        const newField = this.generateField(
+          inventory.type,
+          inventory.value,
+          inventoryCategoryTree,
+          exclude,
+        );
 
         if (newField) {
-          newFields.push(newField)
+          newFields.push(newField);
         }
       }
     });
 
     // Don't add those that are not checked anymore
-    allFields
-      .forEach(field => {
-        const found = inventoryIds.includes(this.getId(field));
-        if (found) {
-          newFields.push({ ...field });
-        }
-      });
+    allFields.forEach(field => {
+      const found = inventoryIds.includes(this.getId(field));
+      if (found) {
+        newFields.push({ ...field });
+      }
+    });
 
     formChange((fields as any).name, newFields);
   };
 
-  generateField = (type: string, value: string, inventoryCategoryTree: ServiceCategoryTree[], exclude: boolean = false): InventoryCatalFieldsModel | undefined => {
-
+  generateField = (
+    type: string,
+    value: string,
+    inventoryCategoryTree: ServiceCategoryTree[],
+    exclude: boolean = false,
+  ): InventoryCatalFieldsModel | undefined => {
     switch (type) {
       case 'keywordList':
         return {
@@ -384,27 +399,48 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
           },
         };
       default:
-        return this.generateFieldBasedOnService(type, value, inventoryCategoryTree, exclude)
+        return this.generateFieldBasedOnService(
+          type,
+          value,
+          inventoryCategoryTree,
+          exclude,
+        );
     }
-  }
+  };
 
-  generateFieldBasedOnService = (type: string, value: string, inventoryCategoryTree: ServiceCategoryTree[], exclude: boolean = false): InventoryCatalFieldsModel | undefined => {
+  generateFieldBasedOnService = (
+    type: string,
+    value: string,
+    inventoryCategoryTree: ServiceCategoryTree[],
+    exclude: boolean = false,
+  ): InventoryCatalFieldsModel | undefined => {
     const foundService = getServices(inventoryCategoryTree).find(s => {
-      switch(type) {
+      switch (type) {
         case 'displayNetwork':
-          return s.type === 'inventory_access_display_network' && s.display_network_id === value;
+          return (
+            s.type === 'inventory_access_display_network' &&
+            s.display_network_id === value
+          );
         case 'adExchange':
-          return s.type === 'inventory_access_ad_exchange' && s.ad_exchange_id === value;
+          return (
+            s.type === 'inventory_access_ad_exchange' &&
+            s.ad_exchange_id === value
+          );
         case 'placementList':
-          return s.type === 'inventory_access_placement_list' && s.placement_list_id === value;
+          return (
+            s.type === 'inventory_access_placement_list' &&
+            s.placement_list_id === value
+          );
         case 'dealList':
-          return s.type === 'inventory_access_deal_list' && s.deal_list_id === value;
+          return (
+            s.type === 'inventory_access_deal_list' && s.deal_list_id === value
+          );
       }
       return false;
-    })
+    });
 
     if (foundService) {
-      switch(foundService.type) {
+      switch (foundService.type) {
         case 'inventory_access_ad_exchange':
           return {
             key: cuid(),
@@ -415,7 +451,7 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
               },
               type: 'AD_EXCHANGE',
             },
-          }
+          };
         case 'inventory_access_display_network':
           return {
             key: cuid(),
@@ -426,7 +462,7 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
               },
               type: 'DISPLAY_NETWORK',
             },
-          }
+          };
         case 'inventory_access_deal_list':
           return {
             key: cuid(),
@@ -436,7 +472,7 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
               },
               type: 'DEAL_LIST',
             },
-          }
+          };
         case 'inventory_access_placement_list':
           return {
             key: cuid(),
@@ -447,11 +483,11 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
               },
               type: 'PLACEMENT_LIST',
             },
-          }
+          };
       }
     }
     return undefined;
-  }
+  };
 
   getId = (field: InventoryCatalFieldsModel) => {
     switch (field.model.type) {
@@ -499,7 +535,7 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
       dealList,
       placementList,
       small,
-      disabled
+      disabled,
     } = this.props;
 
     const otherData = [
