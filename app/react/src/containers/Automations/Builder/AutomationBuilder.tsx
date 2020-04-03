@@ -69,6 +69,10 @@ export const messages = defineMessages({
     id: 'automation.builder.exitCondition.new',
     defaultMessage: 'Add Exit condition',
   },
+  noGlobalExitCondition: {
+    id: 'automation.builder.exitCondition.empty',
+    defaultMessage: 'No exit condition',
+  },
   deleteGlobalExitConditionTitle: {
     id: 'automation.builder.exitCondition.delete.info',
     defaultMessage: 'Are you sure you want to delete the exit condition ?',
@@ -435,13 +439,14 @@ class AutomationBuilder extends React.Component<Props, State> {
       closeNextDrawer,
       exitCondition,
       datamartId,
+      viewer,
     } = this.props;
 
     if (exitCondition) {
       openNextDrawer<{}>(ScenarioExitConditionAutomationForm, {
         additionalProps: {
           exitCondition: exitCondition,
-          disabled: false,
+          disabled: viewer,
           initialValues: {
             ...exitCondition.formData,
             datamart_id: datamartId,
@@ -475,6 +480,46 @@ class AutomationBuilder extends React.Component<Props, State> {
       exitCondition,
     } = this.props;
 
+    const exitConditionButton = hasFeature(
+      'automations-global-exit-condition',
+    ) && (
+      <div className="button-helpers bottom">
+        <div className="helper exit-condition">
+          <div
+            className={'edit'}
+            onClick={
+              viewer && (!exitCondition || !exitCondition.formData.query_text)
+                ? undefined
+                : this.onGlobalExitConditionSelect
+            }
+          >
+            {exitCondition && exitCondition.formData.query_text ? (
+              <FormattedMessage {...messages.eventGlobalExitCondition} />
+            ) : viewer ? (
+              <FormattedMessage {...messages.noGlobalExitCondition} />
+            ) : (
+              <FormattedMessage {...messages.addGlobalExitCondition} />
+            )}
+          </div>
+          {!viewer && exitCondition && exitCondition.formData.query_text && (
+            <Popconfirm
+              title={formatMessage(messages.deleteGlobalExitConditionTitle)}
+              onConfirm={this.onGlobalExitConditionDelete}
+              placement={'topRight'}
+              okText={formatMessage(messages.deleteGlobalExitConditionConfirm)}
+              cancelText={formatMessage(
+                messages.deleteGlobalExitConditionCancel,
+              )}
+            >
+              <div className={'delete'}>
+                <McsIcon type={'close'} />
+              </div>
+            </Popconfirm>
+          )}
+        </div>
+      </div>
+    );
+
     let content = (
       <div className={`automation-builder`} ref={this.div}>
         <Col span={viewNodeSelector ? 18 : 24} className={'diagram'}>
@@ -505,40 +550,8 @@ class AutomationBuilder extends React.Component<Props, State> {
               />{' '}
             </ButtonStyleless>
           </div>
-
-          {hasFeature('automations-global-exit-condition') && (
-            <div className="button-helpers bottom">
-              <div className="helper exit-condition">
-                <div
-                  className={'edit'}
-                  onClick={this.onGlobalExitConditionSelect}
-                >
-                  {exitCondition && exitCondition.formData.query_text ? (
-                    <FormattedMessage {...messages.eventGlobalExitCondition} />
-                  ) : (
-                    <FormattedMessage {...messages.addGlobalExitCondition} />
-                  )}
-                </div>
-                <Popconfirm
-                  title={formatMessage(messages.deleteGlobalExitConditionTitle)}
-                  onConfirm={this.onGlobalExitConditionDelete}
-                  placement={'topRight'}
-                  okText={formatMessage(
-                    messages.deleteGlobalExitConditionConfirm,
-                  )}
-                  cancelText={formatMessage(
-                    messages.deleteGlobalExitConditionCancel,
-                  )}
-                >
-                  {exitCondition && exitCondition.formData.query_text && (
-                    <div className={'delete'}>
-                      <McsIcon type={'close'} />
-                    </div>
-                  )}
-                </Popconfirm>
-              </div>
-            </div>
-          )}
+          
+          {exitConditionButton}
         </Col>
         <Col
           span={viewNodeSelector ? 6 : 24}
@@ -561,6 +574,7 @@ class AutomationBuilder extends React.Component<Props, State> {
               // allowCanvasTranslation={true}
               inverseZoom={true}
             />
+            {exitConditionButton}
           </Col>
         </div>
       );
