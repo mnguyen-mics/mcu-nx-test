@@ -22,10 +22,6 @@ export default defineMessages({
     id: 'menu.audience.feeds',
     defaultMessage: 'Feeds',
   },
-  audiencePartitions: {
-    id: 'menu.audience.partitions',
-    defaultMessage: 'Partitions',
-  },
   audienceSegmentBuilder: {
     id: 'menu.audience.segmentBuilder',
     defaultMessage: 'Segment Builder',
@@ -187,6 +183,10 @@ export default defineMessages({
   channelsSettingsTitle: {
     id: 'menu.datamart.channels',
     defaultMessage: 'Channels',
+  },
+  audiencePartitionsSettingsTitle: {
+    id: 'menu.datamart.partitions',
+    defaultMessage: 'Partitions',
   },
   compartmentsSettingsTitle: {
     id: 'menu.datamart.compartments',

@@ -31,6 +31,12 @@ const datamartSettingsDefinition: NavigatorMenuDefinition = {
   subMenuItems: [
     {
       ...generateMissingdefinitionItemFromRoute(
+        settingsDefinition.settingsDatamartAudiencePartitionsList
+      ),
+      translation: messages.audiencePartitionsSettingsTitle
+    },
+    {
+      ...generateMissingdefinitionItemFromRoute(
         settingsDefinition.settingsDatamartSitesList,
       ),
       translation: messages.siteSettingsTitle,

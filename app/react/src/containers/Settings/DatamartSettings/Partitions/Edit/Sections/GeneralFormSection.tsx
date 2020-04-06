@@ -5,17 +5,17 @@ import queryString from 'query-string';
 
 import withValidators, {
   ValidatorProps,
-} from '../../../../../components/Form/withValidators';
+} from '../../../../../../components/Form/withValidators';
 import withNormalizer, {
   NormalizerProps,
-} from '../../../../../components/Form/withNormalizer';
+} from '../../../../../../components/Form/withNormalizer';
 import {
   FormInput,
   FormSection,
   FormInputField,
   FormSelectField,
-} from '../../../../../components/Form';
-import DefaultSelect from '../../../../../components/Form/FormSelect/DefaultSelect';
+} from '../../../../../../components/Form';
+import DefaultSelect from '../../../../../../components/Form/FormSelect/DefaultSelect';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { AudiencePartitionFormData } from '../domain';
 

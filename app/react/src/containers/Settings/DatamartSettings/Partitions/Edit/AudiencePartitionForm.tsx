@@ -6,16 +6,16 @@ import { compose } from 'recompose';
 import { BasicProps } from 'antd/lib/layout/layout';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
-} from '../../../../components/Layout/FormLayoutActionbar';
-import { Path } from '../../../../components/ActionBar';
+} from '../../../../../components/Layout/FormLayoutActionbar';
+import { Path } from '../../../../../components/ActionBar';
 
 import ScrollspySider, {
   SidebarWrapperProps,
-} from '../../../../components/Layout/ScrollspySider';
-import { McsFormSection } from '../../../../utils/FormHelper';
+} from '../../../../../components/Layout/ScrollspySider';
+import { McsFormSection } from '../../../../../utils/FormHelper';
 import GeneralFormSection from './Sections/GeneralFormSection';
 import { AudiencePartitionFormData } from './domain';
-import { Omit } from '../../../../utils/Types';
+import { Omit } from '../../../../../utils/Types';
 
 const Content = Layout.Content as React.ComponentClass<
   BasicProps & { id: string }

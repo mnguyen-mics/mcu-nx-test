@@ -1,4 +1,4 @@
-import { AudiencePartitionResource } from '../../../../models/audiencePartition/AudiencePartitionResource';
+import { AudiencePartitionResource } from '../../../../../models/audiencePartition/AudiencePartitionResource';
 
 export interface AudiencePartitionFormData extends AudiencePartitionResource {}
 
