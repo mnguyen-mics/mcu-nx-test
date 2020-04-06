@@ -3,6 +3,10 @@ import { Button } from 'antd';
 import SegmentByNameSelector from './SegmentByNameSelector';
 import chroma from 'chroma-js';
 import { LabeledValue } from 'antd/lib/select';
+import injectThemeColors, {
+  InjectedThemeColorsProps,
+} from '../../../Helpers/injectThemeColors';
+import { compose } from 'recompose';
 
 interface SegmentFilterProps {
   className: string;
@@ -12,44 +16,52 @@ interface SegmentFilterProps {
 interface SegmentFilterState {
   segmentSearchDisplayed: boolean;
   appliedSegmentFilters: AppliedSegmentFilter[];
-  colors: string[];
   allUsersEnabled: boolean;
+  filterColors: string[];
+  allUsersFilterColor: string;
+  lastFilterColor: string;
 }
 
 interface AppliedSegmentFilter extends LabeledValue {
   color: string;
 }
 
-class SegmentFilter extends React.Component<SegmentFilterProps, SegmentFilterState> {
 
-  private _firstFilterColor = '#00a1df';
+type JoinedProp = SegmentFilterProps & InjectedThemeColorsProps;
+
+class SegmentFilter extends React.Component<JoinedProp, SegmentFilterState> {
+
   private _lastFilterColor = '#000';
-  private _allUserFilterColor = '#003056';
 
-  constructor(props: SegmentFilterProps) {
+  constructor(props: JoinedProp) {
     super(props);
     this.state = {
       segmentSearchDisplayed: false,
       appliedSegmentFilters: [],
-      colors: chroma.scale([this._firstFilterColor, this._lastFilterColor]).mode('lch').colors(3),
-      allUsersEnabled: true
+      filterColors: [],
+      allUsersEnabled: true,
+      allUsersFilterColor: props.colors['mcs-primary'],
+      lastFilterColor: this._lastFilterColor
     };
-    this.showSegmentSearch = this.showSegmentSearch.bind(this);
-    this.onSegmentByNameSelectorChange = this.onSegmentByNameSelectorChange.bind(this);
-    this.removeFilter = this.removeFilter.bind(this);
-    this.toggleAllUserFilter = this.toggleAllUserFilter.bind(this);
-    this.handleOnSegmentNameFilterClick = this.handleOnSegmentNameFilterClick.bind(this);
-    this.handleOnAllUserFilterToggle = this.handleOnAllUserFilterToggle.bind(this);
   }
 
-  showSegmentSearch() {
+  componentDidMount() {
+
+    const { colors } = this.props;
+    const { lastFilterColor } = this.state;
+    this.setState({
+      filterColors: chroma.scale([colors['mcs-info'], lastFilterColor]).mode('lch').colors(3)
+    });
+  }
+
+  showSegmentSearch = () => {
     this.setState({
       segmentSearchDisplayed: true
     })
   }
 
-  onSegmentByNameSelectorChange(newValue: AppliedSegmentFilter) {
-    const { colors, appliedSegmentFilters } = this.state;
+  onSegmentByNameSelectorChange = (newValue: AppliedSegmentFilter) => {
+    const { filterColors, appliedSegmentFilters } = this.state;
     const { onChange } = this.props;
 
 
@@ -58,7 +70,7 @@ class SegmentFilter extends React.Component<SegmentFilterProps, SegmentFilterSta
       this.setState(state => {
         const newAppliedSegmentFilters = state.appliedSegmentFilters
           .concat({
-            color: colors[state.appliedSegmentFilters.length],
+            color: filterColors[state.appliedSegmentFilters.length],
             ...newValue
           });
 
@@ -72,7 +84,7 @@ class SegmentFilter extends React.Component<SegmentFilterProps, SegmentFilterSta
     }
   }
 
-  removeFilter(segmentId: string) {
+  removeFilter = (segmentId: string) => {
     const { onChange } = this.props;
     this.setState(state => {
       const appliedSegmentFilters = state.appliedSegmentFilters.filter((item: AppliedSegmentFilter) => item.key !== segmentId);
@@ -84,7 +96,7 @@ class SegmentFilter extends React.Component<SegmentFilterProps, SegmentFilterSta
     });
   }
 
-  toggleAllUserFilter() {
+  toggleAllUserFilter = () => {
     const { onToggleAllUsersFilter } = this.props;
     const { allUsersEnabled } = this.state;
     onToggleAllUsersFilter(!allUsersEnabled);
@@ -98,12 +110,12 @@ class SegmentFilter extends React.Component<SegmentFilterProps, SegmentFilterSta
   handleOnAllUserFilterToggle = () => this.toggleAllUserFilter();
 
   render() {
-    const { segmentSearchDisplayed, appliedSegmentFilters, allUsersEnabled } = this.state;
+    const { segmentSearchDisplayed, appliedSegmentFilters, allUsersEnabled, allUsersFilterColor } = this.state;
     const { className } = this.props;
     return (
       <div className={className}>
-        <Button className={allUsersEnabled ? 'appliedSegmentName' : 'appliedSegmentName _is_disable' } ghost={true} style={{ border: `1px solid ${this._allUserFilterColor}` }} onClick={this.handleOnAllUserFilterToggle}>
-          <span className="oval" style={{ border: `5px solid ${this._allUserFilterColor}` }} /><span className="name">All Users {allUsersEnabled}</span>
+        <Button className={allUsersEnabled ? 'appliedSegmentName' : 'appliedSegmentName _is_disable' } ghost={true} style={{ border: `1px solid ${allUsersFilterColor}` }} onClick={this.handleOnAllUserFilterToggle}>
+          <span className="oval" style={{ border: `5px solid ${allUsersFilterColor}` }} /><span className="name">All Users {allUsersEnabled}</span>
         </Button>
         {appliedSegmentFilters.map((item: AppliedSegmentFilter) =>
           <Button key={item.key} className="appliedSegmentName" ghost={true} style={{ border: `1px solid ${item.color}` }} onClick={this.handleOnSegmentNameFilterClick.bind(this, item.key)}>
@@ -120,4 +132,7 @@ class SegmentFilter extends React.Component<SegmentFilterProps, SegmentFilterSta
   }
 }
 
-export default SegmentFilter;
+
+export default compose<SegmentFilterProps, SegmentFilterProps>(
+  injectThemeColors
+)(SegmentFilter);

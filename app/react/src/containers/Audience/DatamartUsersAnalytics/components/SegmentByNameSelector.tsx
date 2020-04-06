@@ -10,7 +10,7 @@ import { LabeledValue } from 'antd/lib/select';
 
 interface SegmentByNameSelectorState {
   segmentsList: LabeledValue[];
-  value: any;
+  value?: LabeledValue;
   fetching: boolean;
 }
 
@@ -27,7 +27,6 @@ class SegmentByNameSelector extends React.Component<SegmentByNameSelectorProps, 
     super(props);
     this.state = {
       segmentsList: [],
-      value: [],
       fetching: false,
     };
     this.fetchListMethod = this._debounce(this.fetchListMethod.bind(this), 800);

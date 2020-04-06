@@ -201,6 +201,14 @@ export interface DateSearchSettings {
   to: McsMoment;
 }
 
+export interface SegmentsSearchSettings { 
+  segments: string[];
+} 
+
+export interface AllUsersSettings { 
+  allusers: boolean; 
+}
+
 export const ARCHIVED_SEARCH_SETTINGS: SearchSetting[] = [
   {
     paramName: 'archived',

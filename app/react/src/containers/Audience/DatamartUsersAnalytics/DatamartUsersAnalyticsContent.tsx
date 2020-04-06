@@ -9,7 +9,9 @@ import { DATAMART_USERS_ANALYTICS_SETTING } from '../Segments/Dashboard/constant
 import { withRouter, RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
 import chroma from 'chroma-js';
-
+import injectThemeColors, {
+  InjectedThemeColorsProps,
+} from '../../Helpers/injectThemeColors';
 import { isEqual, difference } from 'lodash';
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -37,16 +39,16 @@ interface DatamartUsersAnalyticsContentStates {
   formattedConfig: DashboardConfig[];
   filters: string[];
   allUsers: boolean;
+  filterColors: string[];
+  allUsersFilterColor: string;
+  lastFilterColor: string;
 }
 
-type JoinedProp = RouteComponentProps & DatamartUsersAnalyticsContentProps;
+type JoinedProp = RouteComponentProps & DatamartUsersAnalyticsContentProps & InjectedThemeColorsProps;
 
 class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, DatamartUsersAnalyticsContentStates> {
 
-  private _firstColor = '#00a1df';
   private _lastFilterColor = '#000';
-  private _allUserFilterColor = '#003056';
-  private _colors = chroma.scale([this._firstColor, this._lastFilterColor]).mode('lch').colors(3);
 
   constructor(props: JoinedProp) {
     super(props);
@@ -54,33 +56,38 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
     this.state = {
       formattedConfig: [],
       filters: [],
-      allUsers: true
+      allUsers: true,
+      filterColors: [],
+      allUsersFilterColor: props.colors['mcs-primary'],
+      lastFilterColor: this._lastFilterColor
     }
   }
 
   componentDidMount() {
-    const { config } = this.props;
+    const { config, colors } = this.props;
+    const { allUsersFilterColor, lastFilterColor } = this.state;
 
     for (const configItem of config) {
       const currentConfigItem = { ...configItem };
-      configItem.color = this._allUserFilterColor;
+      configItem.color = allUsersFilterColor;
       config.concat(currentConfigItem);
     }
 
     this.setState({
-      formattedConfig: config
+      formattedConfig: config,
+      filterColors: chroma.scale([colors['mcs-info'], lastFilterColor]).mode('lch').colors(3)
     });
   }
 
   componentDidUpdate(previousProps: DatamartUsersAnalyticsContentProps) {
     const { location: { search }, config } = this.props;
-    const { filters, allUsers } = this.state;
+    const { filters, allUsers, filterColors } = this.state;
 
     const filter = parseSearch(search, DATAMART_USERS_ANALYTICS_SETTING);
 
     if (!isEqual(filter.segments, filters)) {
-      const tmpDashboardConfig = [] as DashboardConfig[];
-      let newDashboardConfig = [] as DashboardConfig[];
+      const tmpDashboardConfig: DashboardConfig[] = [];
+      let newDashboardConfig: DashboardConfig[] = [];
 
       this.setState(state => {
         const formattedConfig = state.formattedConfig.slice();
@@ -89,10 +96,10 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
           for (const configItem of config) {
             const currentConfigItem = {
               ...configItem,
-              segments: { 
-                baseSegmentId: filter.segments[filters.length] 
+              segments: {
+                baseSegmentId: filter.segments[filters.length]
               },
-              color: this._colors[filters.length]
+              color: filterColors[filters.length]
             };
             currentConfigItem.layout.y += 3;
             tmpDashboardConfig.push(currentConfigItem);
@@ -171,4 +178,7 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
   }
 }
 
-export default compose<DatamartUsersAnalyticsContentProps, DatamartUsersAnalyticsContentProps>(withRouter)(DatamartUsersAnalyticsContent);
+export default compose<DatamartUsersAnalyticsContentProps, DatamartUsersAnalyticsContentProps>(
+  withRouter,
+  injectThemeColors
+)(DatamartUsersAnalyticsContent);

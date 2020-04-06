@@ -7,7 +7,10 @@ import { compose } from 'recompose';
 import { RouteComponentProps, withRouter } from 'react-router';
 import {
   parseSearch,
-  updateSearch
+  updateSearch,
+  DateSearchSettings,
+  SegmentsSearchSettings,
+  AllUsersSettings
 } from '../../../utils/LocationSearchHelper';
 import McsMoment from '../../../utils/McsMoment';
 // import SegmentFilter from './components/SegmentFilter';
@@ -26,6 +29,9 @@ interface State {
   isLoading: boolean;
 }
 
+
+type FILTERS = DateSearchSettings | SegmentsSearchSettings | AllUsersSettings
+
 type JoinedProp = RouteComponentProps & DatamartAnalysisProps;
 
 class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
@@ -35,9 +41,6 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
       layout: [], 
       isLoading: false,
     };
-    this.onSegmentFilterChange = this.onSegmentFilterChange.bind(this);
-    this.updateLocationSearch = this.updateLocationSearch.bind(this);
-    this.onAllUserFilterChange = this.onAllUserFilterChange.bind(this);
   }
 
   componentWillMount() {
@@ -49,11 +52,7 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
     });
   }
 
-  onLayoutChange(layout: Layout[]) {
-    this.setState({ layout: layout });
-  }
-
-  updateLocationSearch(params: any) {
+  updateLocationSearch = (params: FILTERS) => {
     const {
       history,
       location: { search: currentSearch, pathname },
@@ -94,13 +93,13 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
     return <McsDateRangePicker values={values} onChange={onChange} disabled={isLoading} excludeToday={true} />;
   }
 
-  onSegmentFilterChange(newValues: string[]) {
+  onSegmentFilterChange = (newValues: string[]) => {
     this.updateLocationSearch({
       segments: newValues
     });
   }
 
-  onAllUserFilterChange(status: boolean) {
+  onAllUserFilterChange = (status: boolean) => {
     this.updateLocationSearch({
       allusers: status
     });
