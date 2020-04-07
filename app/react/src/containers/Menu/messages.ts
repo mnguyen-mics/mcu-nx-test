@@ -200,6 +200,10 @@ export default defineMessages({
     id: 'menu.datamart.ml_functions',
     defaultMessage: 'ML Functions',
   },
+  cleaningRulesSettingsTitle: {
+    id: 'menu.datamart.cleaningRules',
+    defaultMessage: 'Cleaning Rules',
+  },
   myDatamartSettingsTitle: {
     id: 'menu.datamart.myDatamart',
     defaultMessage: 'Datamarts',

@@ -5,7 +5,6 @@ import { MobileApplicationsListPage } from '../../MobileApplications/List';
 import { SitesListPage } from '../../Sites/List';
 import { PaginationSearchSettings } from '../../../../../utils/LocationSearchHelper';
 import CompartmentsContainer from '../../Compartments/List/CompartmentsContainer';
-import CleaningRulesContainer from '../../CleaningRules/List/CleaningRulesContainer';
 import { injectFeatures, InjectedFeaturesProps } from '../../../../Features';
 
 export interface DatamartConfigTabProps {
@@ -13,7 +12,6 @@ export interface DatamartConfigTabProps {
 }
 
 interface State {
-  cleaningRulesFilter: PaginationSearchSettings;
   compartmentsFilter: PaginationSearchSettings;
 }
 
@@ -23,29 +21,12 @@ class DatamartConfigTab extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      cleaningRulesFilter: {
-        currentPage: 1,
-        pageSize: 10,
-      },
       compartmentsFilter: {
         currentPage: 1,
         pageSize: 10,
       },
     };
   }
-
-  onCleaningRulesFilterChange = (newFilter: PaginationSearchSettings) => {
-    const { currentPage, pageSize } = newFilter;
-
-    const cleaningRulesFilter = {
-      currentPage: currentPage,
-      pageSize: pageSize,
-    };
-
-    this.setState({
-      cleaningRulesFilter: cleaningRulesFilter,
-    });
-  };
 
   onCompartmentsFilterChange = (newFilter: PaginationSearchSettings) => {
     const { currentPage, pageSize } = newFilter;
@@ -63,7 +44,7 @@ class DatamartConfigTab extends React.Component<Props, State> {
   public render() {
     const { datamartId } = this.props;
 
-    const { compartmentsFilter, cleaningRulesFilter } = this.state;
+    const { compartmentsFilter } = this.state;
 
     return (
       <div>
@@ -83,15 +64,6 @@ class DatamartConfigTab extends React.Component<Props, State> {
               datamartId={datamartId}
               filter={compartmentsFilter}
               onFilterChange={this.onCompartmentsFilterChange}
-            />
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <CleaningRulesContainer
-              datamartId={datamartId}
-              filter={cleaningRulesFilter}
-              onFilterChange={this.onCleaningRulesFilterChange}
             />
           </Col>
         </Row>

@@ -1,3 +1,4 @@
+import { ExtendedCleaningRuleResource, UserEventContentFilterResource } from './../models/cleaningRules/CleaningRules';
 import { ProcessingSelectionResource } from './../models/consent/UserConsentResource';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import {
@@ -6,7 +7,6 @@ import {
   UserAccountCompartmentResource,
 } from '../models/datamart/DatamartResource';
 import { EventRules } from '../models/settings/settings';
-import { UserEventCleaningRuleResource } from '../models/cleaningRules/CleaningRules';
 import { injectable } from 'inversify';
 
 export interface IDatamartService {
@@ -91,7 +91,12 @@ export interface IDatamartService {
   getCleaningRules: (
     datamartId: string,
     options?: object,
-  ) => Promise<DataListResponse<UserEventCleaningRuleResource>>;
+  ) => Promise<DataListResponse<ExtendedCleaningRuleResource>>;
+
+  getContentFilter: (
+    datamartId: string,
+    ruleId: string,
+  ) => Promise<DataResponse<UserEventContentFilterResource>>;
 
   getProcessingSelectionsByCompartment: (
     datamartId: string,
@@ -251,15 +256,18 @@ export class DatamartService implements IDatamartService {
   getCleaningRules(
     datamartId: string,
     options: object = {},
-  ): Promise<DataListResponse<UserEventCleaningRuleResource>> {
+  ): Promise<DataListResponse<ExtendedCleaningRuleResource>> {
     const endpoint = `datamarts/${datamartId}/cleaning_rules`;
+    return ApiService.getRequest(endpoint, options);
+  }
 
-    const calculatedOptions = {
-      type: 'USER_EVENT_CLEANING_RULE',
-      ...options,
-    };
+  getContentFilter(
+    datamartId: string,
+    ruleId: string,
+  ): Promise<DataResponse<UserEventContentFilterResource>> {
+    const endpoint = `datamarts/${datamartId}/cleaning_rules/${ruleId}/content_filter`;
+    return ApiService.getRequest(endpoint);
 
-    return ApiService.getRequest(endpoint, calculatedOptions);
   }
 
   getProcessingSelectionsByCompartment(

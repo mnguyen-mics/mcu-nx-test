@@ -57,6 +57,7 @@ import ChannelsListPage from '../containers/Settings/DatamartSettings/Channels/L
 import { AudiencePartitionsPage } from '../containers/Settings/DatamartSettings/Partitions/List';
 import Partition from '../containers/Settings/DatamartSettings/Partitions/Dashboard/Partition';
 import AudiencePartitionPage from '../containers/Settings/DatamartSettings/Partitions/Edit/AudiencePartitionPage';
+import CleaningRulesDashboardPage from '../containers/Settings/DatamartSettings/CleaningRules/Dashboard/CleaningRulesDashboardPage';
 
 export const settingsDefinition: NavigatorDefinition = {
   /*
@@ -112,6 +113,7 @@ export const settingsDefinition: NavigatorDefinition = {
     requiredFeature: 'datamartSettings-mobile_applications',
     requireDatamart: true,
   },
+
   // Channels
   settingsDatamartChannelsList: {
     path: '/settings/datamart/channels',
@@ -120,6 +122,7 @@ export const settingsDefinition: NavigatorDefinition = {
     requiredFeature: 'datamartSettings-channels',
     requireDatamart: true,
   },
+
   // Compartments
   settingsDatamartCompartments: {
     path: '/settings/datamart/compartments',
@@ -170,6 +173,13 @@ export const settingsDefinition: NavigatorDefinition = {
     layout: 'settings',
     contentComponent: Partition,
     requiredFeature: 'datamartSettings-audience_partitions',
+  },
+  // cleaning rules
+  settingsDatamartCleaningRulesList: {
+    path: '/settings/datamart/cleaning_rules',
+    layout: 'settings',
+    contentComponent: CleaningRulesDashboardPage,
+    requiredFeature: 'datamartSettings-cleaning_rules',
     requireDatamart: true,
   },
 

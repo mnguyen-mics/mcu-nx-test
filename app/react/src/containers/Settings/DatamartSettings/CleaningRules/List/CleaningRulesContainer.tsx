@@ -4,142 +4,257 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { TableViewFilters } from '../../../../../components/TableView';
 import messages from './messages';
-import { UserEventCleaningRuleResource } from '../../../../../models/cleaningRules/CleaningRules';
+import {
+  ExtendedCleaningRuleResource,
+  ExtendedCleaningRuleResourceWithFilter,
+  UserEventCleaningRuleResourceWithFilter,
+} from '../../../../../models/cleaningRules/CleaningRules';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { IDatamartService } from '../../../../../services/DatamartService';
-import { PaginationSearchSettings } from '../../../../../utils/LocationSearchHelper';
-import { Layout, Row } from 'antd';
-import * as moment from 'moment';
+import { Layout, Row, Icon } from 'antd';
 import 'moment-duration-format';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
+import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../../Notifications/injectNotifications';
+import { MicsReduxState } from '../../../../../utils/ReduxHelper';
+import { connect } from 'react-redux';
+import { CleaningRulesFilter } from '../domain';
+import { MultiSelectProps } from '../../../../../components/MultiSelect';
+import { getWorkspace } from '../../../../../redux/Session/selectors';
 
 const { Content } = Layout;
 
-interface CleaningRulesContainerState {
-  loading: boolean;
-  data: UserEventCleaningRuleResource[];
-  total: number;
+interface MapStateToProps {
+  workspace: (organisationId: string) => UserWorkspaceResource;
 }
 
-export interface CleaningRulesContainerProps {
-  filter: PaginationSearchSettings;
-  onFilterChange: (newFilter: PaginationSearchSettings) => void;
-  datamartId: string;
+interface CleaningRulesContainerProps {
+  filter: CleaningRulesFilter;
+  onFilterChange: (newFilter: Partial<CleaningRulesFilter>) => void;
+  isFetchingCleaningRules: boolean;
+  cleaningRules: ExtendedCleaningRuleResourceWithFilter[];
+  total: number;
 }
 
 type Props = CleaningRulesContainerProps &
   RouteComponentProps<{ organisationId: string }> &
-  InjectedIntlProps;
+  InjectedIntlProps &
+  MapStateToProps &
+  InjectedNotificationProps;
 
-class CleaningRulesContainer extends React.Component<Props, CleaningRulesContainerState> {
-
+class CleaningRulesContainer extends React.Component<
+  Props> {
   @lazyInject(TYPES.IDatamartService)
   private _datamartService: IDatamartService;
 
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      loading: false,
-      data: [],
-      total: 0,
-    };
-  }
 
-  componentDidMount() {
-    const {
-      datamartId,
-      filter
-    } = this.props;
+  // componentDidMount() {
+  //   const { filter } = this.props;
 
-    this.fetchCleaningRules(datamartId, filter);
-  }
+  //   this.fetchCleaningRules(filter);
+  // }
 
-  componentWillReceiveProps(nextProps: Props) {
-    const {
-      datamartId,
-      filter,
-    } = this.props;
+  // componentDidUpdate(previousProps: Props, previousState: CleaningRulesContainerState) {
+  //   const { filter } = this.props;
 
-    const {
-      datamartId: nextDatamartId,
-      filter: nextFilter,
-    } = nextProps;
+  //   const { filter: previousFilter } = previousProps;
 
-    if (
-      (filter !== nextFilter) ||
-      (datamartId !== nextDatamartId)
-    ) {
-      this.fetchCleaningRules(nextDatamartId, nextFilter);
-    }
-  }
+  //   const { isFetchingCleaningRules } = this.state;
 
-  fetchCleaningRules = (datamartId: string, filter: PaginationSearchSettings) => {
-    this.setState({ loading: true, }, () => {
-      const options = {
-        ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
-      };
-      this._datamartService.getCleaningRules(datamartId, options).then(results => {
-        this.setState({
-          loading: false,
-          data: results.data,
-          total: results.total || results.count,
-        });
-      });
-    });
-  }
+  //   if (filter !== previousFilter && !isFetchingCleaningRules) {
+  //     this.fetchCleaningRules(filter);
+  //   }
+  // }
+
+  fetchCleaningRules = (filter: CleaningRulesFilter) => {
+    const { notifyError } = this.props;
+    this.setState(
+      {
+        isFetchingCleaningRules: true,
+      },
+      () => {
+        const options = {
+          ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
+          type: filter.type,
+        };
+        this._datamartService
+          .getCleaningRules(filter.datamartId, options)
+          .then(results => {
+            const cleaningRulesP: Array<Promise<
+              ExtendedCleaningRuleResourceWithFilter
+            >> = results.data.map(cleaningRule => {
+              return filter.type === 'USER_EVENT_CLEANING_RULE'
+                ? this._datamartService
+                    .getContentFilter(filter.datamartId, cleaningRule.id)
+                    .then(resFilter => {
+                      const contentFilter = resFilter.data;
+
+                      const cleaningRuleWithFilter: ExtendedCleaningRuleResourceWithFilter = {
+                        ...cleaningRule,
+                        ...contentFilter,
+                      };
+
+                      return cleaningRuleWithFilter;
+                    })
+                    .catch(err => {
+                      return Promise.resolve(cleaningRule);
+                    })
+                : Promise.resolve(cleaningRule);
+            });
+
+            Promise.all(cleaningRulesP).then(cleaningRules => {
+              this.setState({
+                isFetchingCleaningRules: false,
+                cleaningRules: cleaningRules,
+                total: results.total || results.count,
+              });
+            });
+          })
+          .catch(err => {
+            notifyError(err);
+            this.setState({ isFetchingCleaningRules: false });
+          });
+      },
+    );
+  };
 
   render() {
-
     const {
+      match: {
+        params: { organisationId },
+      },
       filter,
       onFilterChange,
+      cleaningRules,
+      isFetchingCleaningRules,
+      total,
+      workspace,
+      intl,
     } = this.props;
 
-    const {
-      data,
-      loading,
-    } = this.state;
+    const datamartItems = workspace(organisationId).datamarts.map(d => ({
+      key: d.id,
+      value: d.name || d.token,
+    }));
 
-    const dataColumns = [
-      {
-        intlMessage: messages.id,
-        key: 'id',
-        isHideable: false,
-        render: (text: string, record: UserEventCleaningRuleResource) => (<span>{text}</span>),
-      },
+    const filtersOptions: Array<MultiSelectProps<any>> = [];
+
+    if (datamartItems.length > 1) {
+      const datamartFilter = {
+        displayElement: (
+          <div>
+            <FormattedMessage {...messages.datamartFilter} />
+            <Icon type="down" />
+          </div>
+        ),
+        selectedItems: filter.datamartId
+          ? [datamartItems.find(di => di.key === filter.datamartId)]
+          : [datamartItems[0]],
+        items: datamartItems,
+        singleSelectOnly: true,
+        getKey: (item: any) => (item && item.key ? item.key : ''),
+        display: (item: any) => item.value,
+        handleItemClick: (datamartItem: { key: string; value: string }) => {
+          onFilterChange({
+            datamartId: datamartItem.key,
+            currentPage: 1,
+          });
+        },
+      };
+
+      filtersOptions.push(datamartFilter);
+    }
+
+    const eventBasedAddedDataColumns = [
       {
         intlMessage: messages.lifeDuration,
         key: 'life_duration',
         isHideable: false,
-        render: (text: string, record: UserEventCleaningRuleResource) => (
-          <span>
-            {moment.duration(text).format()}
-          </span>
-        ),
+        render: (
+          text: string,
+          record: UserEventCleaningRuleResourceWithFilter,
+        ) => <span>{record.life_duration}</span>,
       },
       {
-        intlMessage: messages.type,
-        key: 'type',
+        intlMessage: messages.channelFilter,
+        key: 'channel_filter',
         isHideable: false,
-        render: (text: string, record: UserEventCleaningRuleResource) => (<span>{text}</span>),
+        render: (
+          text: string,
+          record: UserEventCleaningRuleResourceWithFilter,
+        ) => (
+          <span>
+            {record.channel_filter
+              ? record.channel_filter
+              : intl.formatMessage(messages.all)}
+          </span>
+        ),
       },
       {
         intlMessage: messages.activityTypeFilter,
         key: 'activity_type_filter',
         isHideable: false,
-        render: (text: string, record: UserEventCleaningRuleResource) => {
-          return record.activity_type_filter && (
-            <span>{record.activity_type_filter}</span>
-          )
-        },
+        render: (
+          text: string,
+          record: UserEventCleaningRuleResourceWithFilter,
+        ) => (
+          <span>
+            {record.activity_type_filter
+              ? record.activity_type_filter
+              : intl.formatMessage(messages.all)}
+          </span>
+        ),
+      },
+      // No other content_type is implemented for the moment, that  
+      {
+        intlMessage: messages.contentFilterValue,
+        key: 'filter',
+        isHideable: false,
+        render: (
+          text: string,
+          record: UserEventCleaningRuleResourceWithFilter,
+        ) => (
+          <span>
+            {record.filter
+              ? record.filter
+              : intl.formatMessage(messages.noFilter)}
+          </span>
+        ),
       },
     ];
+
+    const baseDataColumns = [
+      {
+        intlMessage: messages.status,
+        key: 'status',
+        isHideable: false,
+        render: (text: string, record: ExtendedCleaningRuleResource) => (
+          <span>{record.status}</span>
+        ),
+      },
+      {
+        intlMessage: messages.action,
+        key: 'action',
+        isHideable: false,
+        render: (text: string, record: ExtendedCleaningRuleResource) => (
+          <span>{record.action}</span>
+        ),
+      },
+    ];
+
+    const dataColumns = baseDataColumns.concat(
+      filter.type === 'USER_EVENT_CLEANING_RULE'
+        ? eventBasedAddedDataColumns
+        : [],
+    );
 
     const pagination = {
       current: filter.currentPage,
       pageSize: filter.pageSize,
-      total: this.state.total,
+      total: total,
       onChange: (page: number, size: number) =>
         onFilterChange({
           currentPage: page,
@@ -165,19 +280,26 @@ class CleaningRulesContainer extends React.Component<Props, CleaningRulesContain
               <hr className="mcs-separator" />
               <TableViewFilters
                 columns={dataColumns}
-                dataSource={data}
-                loading={loading}
+                dataSource={cleaningRules}
+                loading={isFetchingCleaningRules}
                 pagination={pagination}
+                filtersOptions={filtersOptions}
               />
             </div>
           </Row>
         </Content>
       </div>
-    )
+    );
   }
 }
+
+const mapStateToProps = (state: MicsReduxState) => ({
+  workspace: getWorkspace(state),
+});
 
 export default compose<Props, CleaningRulesContainerProps>(
   withRouter,
   injectIntl,
+  injectNotifications,
+  connect(mapStateToProps),
 )(CleaningRulesContainer);
