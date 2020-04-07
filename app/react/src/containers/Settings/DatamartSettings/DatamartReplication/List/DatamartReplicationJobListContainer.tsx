@@ -63,7 +63,7 @@ class DatamartReplicationJobListContainer extends React.Component<Props> {
       intl: { formatMessage },
     } = this.props;
     const lastExecutionIsLessThan7days = jobExecutions.find(
-      execution => execution.creation_date > Date.now() - 7 * 24 * 3600 * 1000,
+      execution => execution.status === 'SUCCEEDED' && execution.creation_date > Date.now() - 7 * 24 * 3600 * 1000,
     );
     const onClick = () => {
       const {
@@ -74,9 +74,9 @@ class DatamartReplicationJobListContainer extends React.Component<Props> {
         location: { search },
       } = this.props;
 
-      const liveReplication = replications.find(rep => rep.status === 'ACTIVE');
+      const liveReplications = replications.filter(rep => rep.status === 'ACTIVE');
 
-      if (liveReplication) {
+      if (liveReplications.length >= 1) {
         const filter = parseSearch(
           search,
           DATAMART_REPLICATION_SEARCH_SETTINGS,
@@ -89,8 +89,8 @@ class DatamartReplicationJobListContainer extends React.Component<Props> {
           title: formatMessage(messages.executionModalTitle),
           content: (
             <React.Fragment>
-              {replications.map(replication => {
-                return <div key={replication.id}>- {replication.name}</div>;
+              {liveReplications.map(replication => {
+                return <div key={replication.id}> - {replication.name}</div>;
               })}
               <br />
               {formatMessage(messages.executionModalContent)}
