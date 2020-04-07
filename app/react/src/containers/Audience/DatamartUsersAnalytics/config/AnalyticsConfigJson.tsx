@@ -84,7 +84,7 @@ export const averageSessionDurationConfig = [
       'i': '0',
       'h': 1,
       'static': false,
-      'w': 3,
+      'w': 4,
       'x': 0,
       'y': 0
     },
@@ -119,8 +119,8 @@ export const averageSessionDurationConfig = [
       'i': '0',
       'h': 1,
       'static': false,
-      'w': 3,
-      'x': 3,
+      'w': 4,
+      'x': 4,
       'y': 0
     },
     charts: [
@@ -153,8 +153,8 @@ export const averageSessionDurationConfig = [
       'i': '0',
       'h': 1,
       'static': false,
-      'w': 3,
-      'x': 6,
+      'w': 4,
+      'x': 8,
       'y': 0
     },
     charts: [
@@ -165,6 +165,114 @@ export const averageSessionDurationConfig = [
         },
         unit: '%',
         metricNames: ['conversion_rate'],
+        dimensionFilterClauses: {
+          'operator': 'OR',
+          'filters': [
+            {
+              'dimension_name': 'type',
+              'not': false,
+              'operator': 'IN_LIST',
+              'expressions': [
+                'SITE_VISIT',
+                'APP_VISIT'
+              ],
+              'case_sensitive': false
+            }
+          ]
+        },
+      }
+    ]
+  },
+];
+
+
+export const ecommerceEngagementConfig = [
+  {
+    layout: {
+      'i': '0',
+      'h': 1,
+      'static': false,
+      'w': 4,
+      'x': 0,
+      'y': 0
+    },
+    charts: [
+      {
+        type: 'SINGLE_STAT',
+        options: {
+          title: 'Number Of Transactions'
+        },
+        unit: 'number',
+        metricNames: ['number_of_transaction'],
+        dimensionFilterClauses: {
+          'operator': 'OR',
+          'filters': [
+            {
+              'dimension_name': 'type',
+              'not': false,
+              'operator': 'IN_LIST',
+              'expressions': [
+                'SITE_VISIT',
+                'APP_VISIT'
+              ],
+              'case_sensitive': false
+            }
+          ]
+        },
+      }
+    ]
+  },
+  {
+    layout: {
+      'i': '0',
+      'h': 1,
+      'static': false,
+      'w': 4,
+      'x': 4,
+      'y': 0
+    },
+    charts: [
+      {
+        type: 'SINGLE_STAT',
+        options: {
+          title: 'Average Transaction Amount',
+        },
+        metricNames: ['avg_transaction_amount'],
+        dimensionFilterClauses: {
+          'operator': 'OR',
+          'filters': [
+            {
+              'dimension_name': 'type',
+              'not': false,
+              'operator': 'IN_LIST',
+              'expressions': [
+                'SITE_VISIT',
+                'APP_VISIT'
+              ],
+              'case_sensitive': false
+            }
+          ]
+        },
+      }
+    ]
+  },
+  {
+    layout: {
+      'i': '0',
+      'h': 1,
+      'static': false,
+      'w': 4,
+      'x': 8,
+      'y': 0
+    },
+    charts: [
+      {
+        type: 'SINGLE_STAT',
+        options: {
+          title: 'Revenue',
+        },
+        unit: '€',
+        metricNames: ['revenue'],
         dimensionFilterClauses: {
           'operator': 'OR',
           'filters': [

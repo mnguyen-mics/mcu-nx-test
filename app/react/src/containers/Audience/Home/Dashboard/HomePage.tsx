@@ -24,7 +24,7 @@ import Error from '../../../../components/Error';
 import DatamartUsersAnalyticsWrapper from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 import { DashboardConfig } from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsContent';
-import { averageSessionDurationConfig, channelEngagementConfig, acquisitionEngagementConfig } from '../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
+import { averageSessionDurationConfig, channelEngagementConfig, acquisitionEngagementConfig, ecommerceEngagementConfig } from '../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
 
 const { Content } = Layout;
 
@@ -36,6 +36,10 @@ const messages = defineMessages({
   channelEngagementsAnalyticsTitle: {
     id: 'audience.home.channelEngagementsAnalyticsTitle',
     defaultMessage: 'Channel Engagement',
+  },
+  ecommerceEngagementTitle: {
+    id: 'audience.home.ecommerceEngagementTitle',
+    defaultMessage: 'Ecommerce Engagement',
   },
   comingSoon: {
     id: 'audience.home.dashboard',
@@ -112,6 +116,11 @@ class Partition extends React.Component<JoinedProps, HomeState> {
         organisationId: organisationId,
         config: averageSessionDurationConfig as any,
         showFilter: true
+      },
+      {
+        title: intl.formatMessage(messages.ecommerceEngagementTitle),
+        datamartId: datamartId,
+        config: ecommerceEngagementConfig as any
       },
       {
         title: intl.formatMessage(messages.channelEngagementsAnalyticsTitle),

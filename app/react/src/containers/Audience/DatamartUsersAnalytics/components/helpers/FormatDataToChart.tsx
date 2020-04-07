@@ -23,6 +23,7 @@ import {
 import { ReportView } from '../../../../../models/ReportView';
 import { AREA_OPACITY } from '../../../../../components/Charts/domain';
 import moment from 'moment';
+import numeral from 'numeral';
 
 export interface FormatDataProps {
   apiResponse: ReportView;
@@ -260,18 +261,21 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
         else if (chart.unit === '%') {
           statValue = (data[0][chart.metricNames[0]] as number * 100).toFixed(2);
         }
+        else if (chart.unit === '€') {
+          statValue = numeral(1253).format('0.00a');
+        }
         else {
           statValue = data[0][chart.metricNames[0]] as number;
         }
         // const original = data[0][chart.metricNames[0]] as number
         // const newValue = dataToCompareWith ? dataToCompareWith[0][chart.metricNames[0]] : undefined;
         const originalValue = 10;
-        const newValue = 15 ;
+        const newValue = 15;
         let trend;
         if (dataToCompareWith) {
-          trend = ((((originalValue as number) - (newValue as number)) / originalValue) * 100);  
+          trend = ((((originalValue as number) - (newValue as number)) / originalValue) * 100);
         }
-        
+
         return (
           <div className="mcs-metricCounter">
             <div className="mcs-metricCounter_title">
@@ -280,11 +284,11 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
             <div className="mcs-metricCounter_result">
               <Statistic className={'mcs-datamartUsersAnalytics_charts_singleStat'}
                 value={statValue}
-                precision={2}
-                suffix={chart.unit === '%' ? chart.unit : undefined} />
+                precision={chart.unit !== 'number' ? 2 : undefined}
+                suffix={chart.unit !== 'time' && chart.unit !== 'number' ? chart.unit : undefined} />
 
-                {trend && 
-                  <Statistic
+              {trend &&
+                <Statistic
                   className={'mcs-datamartUsersAnalytics_charts_trend'}
                   value={Math.abs(trend)}
                   precision={2}
@@ -292,8 +296,9 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
                   prefix={<Icon type={Math.sign(trend) > -1 ? 'caret-down' : 'caret-up'} />}
                   suffix="%"
                 />
-                }
-       
+              }
+
+
             </div>
           </div>
         )
@@ -306,7 +311,7 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
     const { chart, apiResponse, apiResponseToCompareWith } = this.props;
     const normalizedData = normalizeReportView(apiResponse);
     const normalizedDataToCompareWith = apiResponseToCompareWith ? normalizeReportView(apiResponseToCompareWith) : undefined;
-    
+
     return (<div>{this.generateCharElements(chart, normalizedData, normalizedDataToCompareWith)}</div>)
   }
 }
