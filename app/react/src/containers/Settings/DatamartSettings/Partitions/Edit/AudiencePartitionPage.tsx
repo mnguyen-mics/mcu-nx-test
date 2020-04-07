@@ -5,7 +5,7 @@ import { message } from 'antd';
 import AudiencePartitionForm from './AudiencePartitionForm';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { Loading } from '../../../../components/index';
+import { Loading } from '../../../../../components/index';
 import {
   AudiencePartitionFormData,
   INITIAL_AUDIENCE_PARTITION_FORM_DATA,
@@ -13,16 +13,16 @@ import {
 import {
   injectWorkspace,
   InjectedWorkspaceProps,
-} from '../../../Datamart/index';
+} from '../../../../Datamart/index';
 import injectNotifications, {
   InjectedNotificationProps,
-} from '../../../Notifications/injectNotifications';
-import { EditContentLayout } from '../../../../components/Layout';
-import DatamartSelector from './../../Common/DatamartSelector';
-import { DatamartResource } from '../../../../models/datamart/DatamartResource';
-import { IAudiencePartitionsService } from '../../../../services/AudiencePartitionsService';
-import { TYPES } from '../../../../constants/types';
-import { lazyInject } from '../../../../config/inversify.config';
+} from '../../../../Notifications/injectNotifications';
+import { EditContentLayout } from '../../../../../components/Layout';
+import DatamartSelector from '../../../../Audience/Common/DatamartSelector';
+import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
+import { IAudiencePartitionsService } from '../../../../../services/AudiencePartitionsService';
+import { TYPES } from '../../../../../constants/types';
+import { lazyInject } from '../../../../../config/inversify.config';
 
 const messages = defineMessages({
   editPartition: {
@@ -136,7 +136,7 @@ class AudiencePartitionPage extends React.Component<
       this._audiencePartitionsService
         .createPartition(organisationId, datamartId, formData)
         .then(newAudiencePartition => {
-          const url = `/v2/o/${organisationId}/audience/partitions/${
+          const url = `/v2/o/${organisationId}/settings/datamart/audience/partitions/${
             newAudiencePartition.data.id
           }`;
           location.pathname
@@ -167,7 +167,7 @@ class AudiencePartitionPage extends React.Component<
       },
       location,
     } = this.props;
-    const defaultRedirectUrl = `/v2/o/${organisationId}/audience/partitions${
+    const defaultRedirectUrl = `/v2/o/${organisationId}/settings/datamart/audience/partitions${
       partitionId ? `/${partitionId}` : ''
     }`;
 
@@ -210,7 +210,7 @@ class AudiencePartitionPage extends React.Component<
       const breadcrumbPaths = [
         {
           name: intl.formatMessage(messages.partitions),
-          path: `/v2/o/${organisationId}/audience/partitions`,
+          path: `/v2/o/${organisationId}/settings/datamart/audience/partitions`,
         },
         {
           name: placementListName,

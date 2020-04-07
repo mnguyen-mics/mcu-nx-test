@@ -3,8 +3,8 @@ import { Button } from 'antd';
 import { Link } from 'react-router-dom';
 import { compose } from 'recompose';
 
-import McsIcon from '../../../../components/McsIcon';
-import Actionbar from '../../../../components/ActionBar';
+import McsIcon from '../../../../../components/McsIcon';
+import Actionbar from '../../../../../components/ActionBar';
 import {
   FormattedMessage,
   defineMessages,
@@ -12,7 +12,7 @@ import {
   injectIntl,
 } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { AudiencePartitionResource } from '../../../../models/audiencePartition/AudiencePartitionResource';
+import { AudiencePartitionResource } from '../../../../../models/audiencePartition/AudiencePartitionResource';
 
 const messages = defineMessages({
   edit: {
@@ -66,7 +66,7 @@ class PartitionActionBar extends React.Component<
     const breadcrumbPaths = [
       {
         name: intl.formatMessage(messages.partitions),
-        path: `/v2/o/${organisationId}/audience/partitions`,
+        path: `/v2/o/${organisationId}/settings/datamart/audience/partitions`,
       },
       {
         name: partitionName,
@@ -86,7 +86,7 @@ class PartitionActionBar extends React.Component<
         <Link
           to={
             partition
-              ? `/v2/o/${organisationId}/audience/partitions/${
+              ? `/v2/o/${organisationId}/settings/datamart/audience/partitions/${
                   partition.id
                 }/edit`
               : ''

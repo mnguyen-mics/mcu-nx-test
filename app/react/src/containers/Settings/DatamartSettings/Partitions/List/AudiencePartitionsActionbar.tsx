@@ -9,13 +9,13 @@ import {
   injectIntl,
 } from 'react-intl';
 import { compose } from 'recompose';
-import { Dropdown } from '../../../../components/PopupContainers/index';
+import { Dropdown } from '../../../../../components/PopupContainers/index';
 
-import Actionbar from '../../../../components/ActionBar';
-import McsIcon from '../../../../components/McsIcon';
-import { getDefaultDatamart } from '../../../../state/Session/selectors';
-import { DatamartResource } from '../../../../models/datamart/DatamartResource';
-import { MicsReduxState } from '../../../../utils/ReduxHelper';
+import Actionbar from '../../../../../components/ActionBar';
+import McsIcon from '../../../../../components/McsIcon';
+import { getDefaultDatamart } from '../../../../../state/Session/selectors';
+import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
+import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 
 const messages = defineMessages({
   AUDIENCE_PARTITIONS: {
@@ -47,7 +47,7 @@ class AudiencePartitionsActionbar extends React.Component<Props> {
       <Menu>
         <Menu.Item key="RANDOM_SPLIT">
           <Link
-            to={`/v2/o/${organisationId}/audience/partitions/create?datamarts=${datamartId}&type=RANDOM_SPLIT`}
+            to={`/v2/o/${organisationId}/settings/datamart/audience/partitions/create?datamarts=${datamartId}&type=RANDOM_SPLIT`}
           >
             <FormattedMessage
               id="audience.partitions.list.actionbar.menu.randomSplit"
@@ -59,7 +59,7 @@ class AudiencePartitionsActionbar extends React.Component<Props> {
         TODO: Add the proper support in the backend
         <Menu.Item key="CLUSTERING">
           <Link
-            to={`/v2/o/${organisationId}/audience/partitions/create?datamarts=${datamartId}&type=CLUSTERING`}
+            to={`/v2/o/${organisationId}/settings/datamart/audience/partitions/create?datamarts=${datamartId}&type=CLUSTERING`}
           >
             <FormattedMessage
               id="audience.partitions.list.actionbar.menu.clustering"
@@ -73,7 +73,7 @@ class AudiencePartitionsActionbar extends React.Component<Props> {
     const breadcrumbPaths = [
       {
         name: intl.formatMessage(messages.AUDIENCE_PARTITIONS),
-        path: `/v2/o/${organisationId}/audience/partitions`,
+        path: `/v2/o/${organisationId}/settings/datamart/audience/partitions`,
       },
     ];
 

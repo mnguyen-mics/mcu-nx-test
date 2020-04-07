@@ -54,6 +54,9 @@ import CompartmentsListPage from '../containers/Settings/DatamartSettings/Compar
 import CompartmentEditPage from '../containers/Settings/DatamartSettings/Compartments/Edit/CompartmentEditPage';
 import DatamartReplicationEditPage from '../containers/Settings/DatamartSettings/DatamartReplication/Edit/DatamartReplicationEditPage';
 import ChannelsListPage from '../containers/Settings/DatamartSettings/Channels/List/ChannelsListPage';
+import { AudiencePartitionsPage } from '../containers/Settings/DatamartSettings/Partitions/List';
+import Partition from '../containers/Settings/DatamartSettings/Partitions/Dashboard/Partition';
+import AudiencePartitionPage from '../containers/Settings/DatamartSettings/Partitions/Edit/AudiencePartitionPage';
 
 export const settingsDefinition: NavigatorDefinition = {
   /*
@@ -137,6 +140,36 @@ export const settingsDefinition: NavigatorDefinition = {
     layout: 'edit',
     editComponent: CompartmentEditPage,
     requiredFeature: 'datamartSettings-compartments',
+    requireDatamart: true,
+  },
+
+  // audience partitions
+  settingsDatamartAudiencePartitionsList: {
+    path: '/settings/datamart/audience/partitions',
+    layout: 'settings',
+    contentComponent: AudiencePartitionsPage,
+    requiredFeature: 'datamartSettings-audience_partitions',
+    requireDatamart: true,
+  },
+  settingsDatamartAudiencePartitionsEdit: {
+    path: '/settings/datamart/audience/partitions/:partitionId/edit',
+    layout: 'edit',
+    editComponent: AudiencePartitionPage,
+    requiredFeature: 'datamartSettings-audience_partitions',
+    requireDatamart: true,
+  },
+  settingsDatamartAudiencePartitionsCreate: {
+    path: '/settings/datamart/audience/partitions/create',
+    layout: 'edit',
+    editComponent: AudiencePartitionPage,
+    requiredFeature: 'datamartSettings-audience_partitions',
+    requireDatamart: true,
+  },
+  settingsDatamartAudiencePartitionsDashboard: {
+    path: '/settings/datamart/audience/partitions/:partitionId',
+    layout: 'settings',
+    contentComponent: Partition,
+    requiredFeature: 'datamartSettings-audience_partitions',
     requireDatamart: true,
   },
 

@@ -29,10 +29,6 @@ const audienceMenuDefinition: NavigatorMenuDefinition = {
       translation: messages.audienceFeeds
     },
     {
-      ...generateMissingdefinitionItemFromRoute(audienceDefinition.audiencePartitionsList),
-      translation: messages.audiencePartitions
-    },
-    {
       ...generateMissingdefinitionItemFromRoute(audienceDefinition.audienceSegmentBuilder),
       translation: messages.audienceSegmentBuilder
     },

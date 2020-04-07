@@ -9,17 +9,17 @@ import {
   InjectedIntlProps,
   injectIntl,
 } from 'react-intl';
-import { TableViewFilters } from '../../../../components/TableView/index';
-import { getWorkspace } from '../../../../state/Session/selectors';
-import { AudiencePartitionResource } from '../../../../models/audiencePartition/AudiencePartitionResource';
-import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
-import { DataListResponse } from '../../../../services/ApiService';
+import { TableViewFilters } from '../../../../../components/TableView/index';
+import { getWorkspace } from '../../../../../state/Session/selectors';
+import { AudiencePartitionResource } from '../../../../../models/audiencePartition/AudiencePartitionResource';
+import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
+import { DataListResponse } from '../../../../../services/ApiService';
 import { PartitionFilterParams } from './AudiencePartitionsPage';
 import {
   DataColumnDefinition,
   ActionsColumnDefinition,
-} from '../../../../components/TableView/TableView';
-import { MicsReduxState } from '../../../../utils/ReduxHelper';
+} from '../../../../../components/TableView/TableView';
+import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 
 interface MapStateToProps {
   workspace: (organisationId: string) => UserWorkspaceResource;
@@ -131,7 +131,7 @@ class AudiencePartitionsTable extends React.Component<Props> {
         render: (text, partition) => (
           <Link
             className="mcs-campaigns-link"
-            to={`/v2/o/${organisationId}/audience/partitions/${partition.id}`}
+            to={`/v2/o/${organisationId}/settings/datamart/audience/partitions/${partition.id}`}
           >
             {text}
           </Link>

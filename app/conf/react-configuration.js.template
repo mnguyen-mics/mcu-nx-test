@@ -4,7 +4,6 @@
  const defaultFeatures = [
     'audience-segments',
     'audience-feeds',
-    'audience-partitions',
     'audience-segment_builder',
     'audience-monitoring',
     'campaigns-display',
@@ -49,7 +48,8 @@
     // 'servicesSettings-my_service_catalog',
     // 'servicesSettings-my_offers',
     'audience-dashboards-datamart_users_analytics',
-    'datamart-user_choices'
+    'datamart-user_choices',
+    'datamartSettings-audience_partitions'
   ];
 
  const gravityFeatures = [

@@ -3,20 +3,20 @@ import { Layout } from 'antd';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { defineMessages } from 'react-intl';
-import { DataListResponse } from '../../../../services/ApiService';
+import { DataListResponse } from '../../../../../services/ApiService';
 import {
   GetPartitionOption,
   IAudiencePartitionsService,
-} from '../../../../services/AudiencePartitionsService';
+} from '../../../../../services/AudiencePartitionsService';
 import {
   AudiencePartitionResource,
   AudiencePartitionType,
-} from '../../../../models/audiencePartition/AudiencePartitionResource';
-import { Loading } from '../../../../components';
+} from '../../../../../models/audiencePartition/AudiencePartitionResource';
+import { Loading } from '../../../../../components';
 import injectNotifications, {
   InjectedNotificationProps,
-} from '../../../Notifications/injectNotifications';
-import { EmptyTableView } from '../../../../components/TableView';
+} from '../../../../Notifications/injectNotifications';
+import { EmptyTableView } from '../../../../../components/TableView';
 import AudiencePartitionsTable from './AudiencePartitionsTable';
 import AudiencePartitionsActionbar from './AudiencePartitionsActionbar';
 import {
@@ -28,11 +28,11 @@ import {
   parseSearch,
   compareSearches,
   updateSearch,
-} from '../../../../utils/LocationSearchHelper';
+} from '../../../../../utils/LocationSearchHelper';
 import { PARTITIONS_SEARCH_SETTINGS } from './constants';
-import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
-import { lazyInject } from '../../../../config/inversify.config';
-import { TYPES } from '../../../../constants/types';
+import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
+import { lazyInject } from '../../../../../config/inversify.config';
+import { TYPES } from '../../../../../constants/types';
 
 const { Content } = Layout;
 
@@ -135,7 +135,7 @@ class AudiencePartitionsPage extends React.Component<Props, State> {
       location,
     } = this.props;
 
-    const editUrl = `/v2/o/${organisationId}/audience/partitions/${
+    const editUrl = `/v2/o/${organisationId}/settings/datamart/audience/partitions/${
       partition.id
     }/edit`;
 

@@ -3,36 +3,36 @@ import * as React from 'react';
 import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
-import Card from '../../../../components/Card/Card';
-import ContentHeader from '../../../../components/ContentHeader';
+import Card from '../../../../../components/Card/Card';
+import ContentHeader from '../../../../../components/ContentHeader';
 import TableView, {
   DataColumnDefinition,
   TableViewProps,
-} from '../../../../components/TableView/TableView';
+} from '../../../../../components/TableView/TableView';
 import {
   AudiencePartitionResource,
   AudiencePartitionStatus,
-} from '../../../../models/audiencePartition/AudiencePartitionResource';
-import { UserPartitionSegment } from '../../../../models/audiencesegment/AudienceSegmentResource';
-import { DatamartResource } from '../../../../models/datamart/DatamartResource';
-import ReportService from '../../../../services/ReportService';
-import { Index } from '../../../../utils';
-import McsMoment from '../../../../utils/McsMoment';
-import { normalizeReportView } from '../../../../utils/MetricHelper';
-import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
+} from '../../../../../models/audiencePartition/AudiencePartitionResource';
+import { UserPartitionSegment } from '../../../../../models/audiencesegment/AudienceSegmentResource';
+import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
+import ReportService from '../../../../../services/ReportService';
+import { Index } from '../../../../../utils';
+import McsMoment from '../../../../../utils/McsMoment';
+import { normalizeReportView } from '../../../../../utils/MetricHelper';
+import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
 import {
   InjectedWorkspaceProps,
   injectWorkspace,
-} from '../../../Datamart/index';
+} from '../../../../Datamart/index';
 import injectNotifications, {
   InjectedNotificationProps,
-} from '../../../Notifications/injectNotifications';
+} from '../../../../Notifications/injectNotifications';
 import PartitionActionBar from './PartitionActionBar';
-import { IAudiencePartitionsService } from '../../../../services/AudiencePartitionsService';
-import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
-import { TYPES } from '../../../../constants/types';
-import { lazyInject } from '../../../../config/inversify.config';
-import { IQueryService } from '../../../../services/QueryService';
+import { IAudiencePartitionsService } from '../../../../../services/AudiencePartitionsService';
+import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
+import { TYPES } from '../../../../../constants/types';
+import { lazyInject } from '../../../../../config/inversify.config';
+import { IQueryService } from '../../../../../services/QueryService';
 
 const { Content } = Layout;
 
@@ -162,7 +162,7 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
       audiencePartition.organisation_id !== organisationId
     ) {
       history.push(
-        `/v2/o/${organisationId}/audience/partitions`,
+        `/v2/o/${organisationId}/settings/datamart/audience/partitions`,
       );
     }
 
