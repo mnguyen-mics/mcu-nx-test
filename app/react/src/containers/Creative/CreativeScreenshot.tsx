@@ -40,13 +40,13 @@ class CreativeScreenshot extends React.Component<
     this.fetchData(item.id);
   }
 
-  componentWillReceiveProps(nextProps: CreativeScreenshotProps) {
+  componentDidUpdate(previousProps: CreativeScreenshotProps) {
     const { item } = this.props;
 
-    const { item: nextItem } = nextProps;
+    const { item: previousItem } = previousProps;
 
-    if (item.id !== nextItem.id) {
-      this.fetchData(nextItem.id);
+    if (item.id !== previousItem.id) {
+      this.fetchData(item.id);
     }
   }
 
