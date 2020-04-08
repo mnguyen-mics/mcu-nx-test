@@ -630,7 +630,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
           )}
         {this.state.focus && (
           <WindowBodyPortal>
-            <div className="automation-builder">
+            <div className="automation-builder focus">
               <div
                 onClick={onFocus}
                 style={{
