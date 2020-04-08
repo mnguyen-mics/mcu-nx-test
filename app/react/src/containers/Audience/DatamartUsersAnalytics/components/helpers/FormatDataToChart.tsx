@@ -8,7 +8,7 @@ import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import GenericWorldMap from '../charts/GenericWorldMap';
 import GenericStackedBar from '../charts/GenericStackedBar';
 import GenericColumn from '../charts/GenericColumn';
-import { Tabs, Statistic } from 'antd';
+import { Tabs, Statistic, Icon } from 'antd';
 import { McsIconType } from '../../../../../components/McsIcon';
 import * as Highcharts from 'highcharts';
 import {
@@ -26,6 +26,7 @@ import moment from 'moment';
 
 export interface FormatDataProps {
   apiResponse: ReportView;
+  apiResponseToCompareWith?: ReportView;
   chart: Chart;
 }
 
@@ -165,7 +166,7 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
     }
   }
 
-  
+
 
   formatSeriesForCounters = (chart: Chart, dataset: Dataset[]): CounterProps[] => {
     return dataset.reduce((acc: CounterProps[], d: Dataset) => {
@@ -200,7 +201,7 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
       .valueOf();
   };
 
-  generateCharElements = (chart: Chart, data: Dataset[]): React.ReactNode => {
+  generateCharElements = (chart: Chart, data: Dataset[], dataToCompareWith?: Dataset[]): React.ReactNode => {
     switch (chart.type) {
       case 'AREA':
         if (!chart.dimensions || chart.dimensions.length === 0) return null
@@ -244,7 +245,7 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
               _.map(chart.tabs, (tab: TabItem, e: number) => {
                 return (
                   <Tabs.TabPane tab={tab.title} key={e.toString()}>
-                    {this.generateCharElements(tab, data)}
+                    {this.generateCharElements(tab, data, dataToCompareWith)}
                   </Tabs.TabPane>
                 )
               })
@@ -255,12 +256,20 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
 
         if (chart.unit === 'time') {
           statValue = moment.duration(data[0][chart.metricNames[0]] as number, "second").format("h[hr] m[min] s[s]");
-        } 
+        }
         else if (chart.unit === '%') {
           statValue = (data[0][chart.metricNames[0]] as number * 100).toFixed(2);
         }
         else {
           statValue = data[0][chart.metricNames[0]] as number;
+        }
+        // const original = data[0][chart.metricNames[0]] as number
+        // const newValue = dataToCompareWith ? dataToCompareWith[0][chart.metricNames[0]] : undefined;
+        const originalValue = 10;
+        const newValue = 15 ;
+        let trend;
+        if (dataToCompareWith) {
+          trend = ((((originalValue as number) - (newValue as number)) / originalValue) * 100);  
         }
         
         return (
@@ -269,10 +278,22 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
               {chart.options.title}
             </div>
             <div className="mcs-metricCounter_result">
-                <Statistic className={'datamartUsersAnalytics_charts_singleStat'} 
-                           value={statValue} 
-                           precision={2} 
-                           suffix={chart.unit === '%' ? chart.unit : undefined}/>
+              <Statistic className={'mcs-datamartUsersAnalytics_charts_singleStat'}
+                value={statValue}
+                precision={2}
+                suffix={chart.unit === '%' ? chart.unit : undefined} />
+
+                {trend && 
+                  <Statistic
+                  className={'mcs-datamartUsersAnalytics_charts_trend'}
+                  value={Math.abs(trend)}
+                  precision={2}
+                  valueStyle={{ color: Math.sign(trend) > -1 ? '#ff4d5c' : '#4ea500' }}
+                  prefix={<Icon type={Math.sign(trend) > -1 ? 'caret-down' : 'caret-up'} />}
+                  suffix="%"
+                />
+                }
+       
             </div>
           </div>
         )
@@ -282,10 +303,11 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
   };
 
   render() {
-    const { chart, apiResponse } = this.props;
+    const { chart, apiResponse, apiResponseToCompareWith } = this.props;
     const normalizedData = normalizeReportView(apiResponse);
-
-    return (<div>{this.generateCharElements(chart, normalizedData)}</div>)
+    const normalizedDataToCompareWith = apiResponseToCompareWith ? normalizeReportView(apiResponseToCompareWith) : undefined;
+    
+    return (<div>{this.generateCharElements(chart, normalizedData, normalizedDataToCompareWith)}</div>)
   }
 }
 

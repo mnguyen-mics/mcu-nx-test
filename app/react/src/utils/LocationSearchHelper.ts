@@ -146,6 +146,27 @@ export interface FiltersSearchSettings extends KeywordSearchSettings {
   statuses: string[];
 }
 
+
+export const SEGMENTS_FILTERS_SEARCH_SETTINGS: SearchSetting[] = [
+  {
+    paramName: 'segments',
+    defaultValue: [],
+    deserialize: (query: Index<string>) => {
+      if (query.segments) {
+        return query.segments.split(',');
+      }
+      return [];
+    },
+    serialize: (value: string[]) => value.join(','),
+    isValid: (query: Index<string>) =>
+      !query.segments || query.segments.split(',').length > 0,
+  }
+];
+
+export interface SegmentsFiltersSearchSettings extends KeywordSearchSettings {
+  segments: string[];
+}
+
 export const DATE_SEARCH_SETTINGS: SearchSetting[] = [
   {
     paramName: 'from',
@@ -180,6 +201,14 @@ export interface DateSearchSettings {
   to: McsMoment;
 }
 
+export interface SegmentsSearchSettings { 
+  segments: string[];
+} 
+
+export interface AllUsersSettings { 
+  allusers: boolean; 
+}
+
 export const ARCHIVED_SEARCH_SETTINGS: SearchSetting[] = [
   {
     paramName: 'archived',
@@ -188,6 +217,18 @@ export const ARCHIVED_SEARCH_SETTINGS: SearchSetting[] = [
     serialize: (value: boolean) => value.toString(),
     isValid: (query: Index<string>) => {
       return query.archived === 'true' || query.archived === 'false';
+    },
+  },
+];
+
+export const ALL_USERS: SearchSetting[] = [
+  {
+    paramName: 'allusers',
+    defaultValue: true,
+    deserialize: (query: Index<string>) => query.allusers === 'true',
+    serialize: (value: boolean) => value.toString(),
+    isValid: (query: Index<string>) => {
+      return query.allusers === 'true' || query.allusers === 'false';
     },
   },
 ];
@@ -279,6 +320,7 @@ export const updateSearch = (
     }
     return newAcc;
   }, {});
+
   return queryString.stringify({
     ...query,
     ...serializedParams,

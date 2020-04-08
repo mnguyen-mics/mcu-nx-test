@@ -8,14 +8,19 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import {
   parseSearch,
   updateSearch,
-  DATE_SEARCH_SETTINGS
+  DateSearchSettings,
+  SegmentsSearchSettings,
+  AllUsersSettings
 } from '../../../utils/LocationSearchHelper';
 import McsMoment from '../../../utils/McsMoment';
+// import SegmentFilter from './components/SegmentFilter';
+import { DATAMART_USERS_ANALYTICS_SETTING } from '../Segments/Dashboard/constants';
 
 interface DatamartAnalysisProps {
   title?: string;
   subTitle?: string;
   datamartId: string;
+  organisationId: string;
   config: DashboardConfig[];
   showFilter?: boolean;
 }
@@ -25,27 +30,30 @@ interface State {
   isLoading: boolean;
 }
 
+
+type FILTERS = DateSearchSettings | SegmentsSearchSettings | AllUsersSettings
+
 type JoinedProp = RouteComponentProps & DatamartAnalysisProps;
 
 class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
   constructor(props: JoinedProp) {
     super(props);
-    this.state = { layout: [], isLoading: false };
-    this.onLayoutChange = this.onLayoutChange.bind(this);
+    this.state = { 
+      layout: [], 
+      isLoading: false,
+    };
   }
 
   componentWillMount() {
     this.updateLocationSearch({
       from: new McsMoment('now-8d'),
-      to: new McsMoment('now-1d')
+      to: new McsMoment('now-1d'),
+      segments: [],
+      allusers: true
     });
   }
 
-  onLayoutChange(layout: Layout[]) {
-    this.setState({ layout: layout });
-  }
-
-  updateLocationSearch(params: McsDateRangeValue) {
+  updateLocationSearch = (params: FILTERS) => {
     const {
       history,
       location: { search: currentSearch, pathname },
@@ -56,7 +64,7 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
       search: updateSearch(
         currentSearch,
         params,
-        DATE_SEARCH_SETTINGS,
+        DATAMART_USERS_ANALYTICS_SETTING,
       ),
     };
 
@@ -70,7 +78,7 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
 
     const { isLoading } = this.state;
 
-    const filter = parseSearch(search, DATE_SEARCH_SETTINGS);
+    const filter = parseSearch(search, DATAMART_USERS_ANALYTICS_SETTING);
 
     const values = {
       from: filter.from,
@@ -86,18 +94,34 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
     return <McsDateRangePicker values={values} onChange={onChange} disabled={isLoading} excludeToday={true} />;
   }
 
+  onSegmentFilterChange = (newValues: string[]) => {
+    this.updateLocationSearch({
+      segments: newValues
+    });
+  }
+
+  onAllUserFilterChange = (status: boolean) => {
+    this.updateLocationSearch({
+      allusers: status
+    });
+  }
+
   getLoadingState = (isLoading: boolean) => this.setState({isLoading})
+
 
   render() {
     const { 
       title, 
       subTitle, 
-      datamartId, 
+      datamartId,
+      // organisationId, 
       config, 
       showFilter,
       location: { search } } = this.props;
 
-    const filter = parseSearch(search, DATE_SEARCH_SETTINGS) as McsDateRangeValue;
+    // const { isLoading } = this.state;
+
+    const filter = parseSearch(search, DATAMART_USERS_ANALYTICS_SETTING) as McsDateRangeValue;
 
     return (
 
@@ -112,7 +136,14 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
           </Col>
         </Row>
         { showFilter && <Row>
-          <Col className="text-right">
+          {/* <SegmentFilter 
+            className={ isLoading ? 'mcs-datamartUsersAnalytics_segmentFilter _is_disabled' : 'mcs-datamartUsersAnalytics_segmentFilter'} 
+            onChange={this.onSegmentFilterChange}
+            onToggleAllUsersFilter={this.onAllUserFilterChange}
+            datamartId={datamartId}
+            organisationId={organisationId}
+          /> */}
+          <Col className="text-right" offset={6}>
               {this.renderDatePicker()}
           </Col>
         </Row>}

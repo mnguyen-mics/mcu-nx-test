@@ -29,12 +29,15 @@ export interface ApiQueryWrapperProps {
   chart: Chart;
   datamartId: string;
   dateRange: McsDateRangeValue;
+  segmentId?: string;
+  compareWithSegmentId?: string;
   onChange: (isLoading: boolean) => void;
 }
 
 interface State {
   loading: boolean;
-  reportViewApiResponse?: ReportView
+  reportViewApiResponse?: ReportView;
+  reportViewApiResponseToCompareWith?: ReportView;
 }
 
 class ApiQueryWrapper extends React.Component<Props, State> {
@@ -44,15 +47,16 @@ class ApiQueryWrapper extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      loading: true,
-      reportViewApiResponse: undefined
+      loading: true
     };
   }
   componentDidMount() {
     const { 
       datamartId, 
       chart,
-      onChange
+      onChange,
+      segmentId,
+      compareWithSegmentId
     } = this.props;
       this.fetchAnalytics(
         onChange,
@@ -61,8 +65,23 @@ class ApiQueryWrapper extends React.Component<Props, State> {
         new McsMoment('now-8d'), 
         new McsMoment('now-1d'), 
         chart.dimensions, 
-        chart.dimensionFilterClauses
+        chart.dimensionFilterClauses,
+        segmentId
       );
+      if (compareWithSegmentId) {
+        this.fetchAnalytics(
+          onChange,
+          datamartId, 
+          chart.metricNames, 
+          new McsMoment('now-8d'), 
+          new McsMoment('now-1d'), 
+          chart.dimensions, 
+          chart.dimensionFilterClauses,
+          segmentId,
+          compareWithSegmentId
+        );
+      }
+
   }
 
   componentDidUpdate(prevProps: ApiQueryWrapperProps) {
@@ -70,7 +89,9 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       datamartId, 
       chart, 
       dateRange,
-      onChange
+      onChange,
+      segmentId,
+      compareWithSegmentId
     } = this.props;
     if (
       (prevProps.dateRange.from.value && prevProps.dateRange.to.value) && 
@@ -83,7 +104,22 @@ class ApiQueryWrapper extends React.Component<Props, State> {
         dateRange.to, 
         chart.dimensions, 
         chart.dimensionFilterClauses,
+        segmentId
       );
+
+      if (compareWithSegmentId) {
+        this.fetchAnalytics(
+          onChange,
+          datamartId, 
+          chart.metricNames, 
+          dateRange.from, 
+          dateRange.to, 
+          chart.dimensions, 
+          chart.dimensionFilterClauses,
+          segmentId,
+          compareWithSegmentId
+        );
+      }
     }
   }
   
@@ -95,18 +131,27 @@ class ApiQueryWrapper extends React.Component<Props, State> {
     to: McsMoment,
     dimensions?: DatamartUsersAnalyticsDimension[],
     dimensionFilterClauses?: DimensionFilterClause,
-
+    segmentId?: string,
+    compareWithSegmentId?: string
   ) => {
     this.setState({
       loading: true
     });
     onChange(true);
-    return this._datamartUsersAnalyticsService.getAnalytics(datamartId, metric, from, to, dimensions, dimensionFilterClauses)
+    this._datamartUsersAnalyticsService.getAnalytics(datamartId, metric, from, to, dimensions, dimensionFilterClauses, compareWithSegmentId || segmentId)
       .then(res => {
-        this.setState({
-          loading: false,
-          reportViewApiResponse: res.data.report_view
-        });
+        if (!compareWithSegmentId) {
+          this.setState({
+            loading: false,
+            reportViewApiResponse: res.data.report_view
+          });
+        }
+        else {
+          this.setState({
+            loading: false,
+            reportViewApiResponseToCompareWith: res.data.report_view
+          });
+        }
         onChange(false);
       })
       .catch(e => {
@@ -124,14 +169,18 @@ class ApiQueryWrapper extends React.Component<Props, State> {
 
   render() {
     const { chart, intl } = this.props;
-    const { loading, reportViewApiResponse } = this.state;
+    const { loading, reportViewApiResponse, reportViewApiResponseToCompareWith } = this.state;
 
     if (loading) return chart.type !== 'SINGLE_STAT' ? <LoadingChart /> : <MetricCounterLoader />
 
     return (
       <div className={'mcs-datamartUsersAnalytics_component_charts'}>
         {reportViewApiResponse && reportViewApiResponse.total_items > 0 ?
-          <FormatDataToChart apiResponse={reportViewApiResponse} chart={chart} /> : this.getEmptyDataComponent(chart.type, intl.formatMessage(messages.noData))}
+          <FormatDataToChart 
+            apiResponse={reportViewApiResponse} 
+            apiResponseToCompareWith={reportViewApiResponseToCompareWith} 
+            chart={chart} /> 
+            : this.getEmptyDataComponent(chart.type, intl.formatMessage(messages.noData))}
       </div>
     )
   }
