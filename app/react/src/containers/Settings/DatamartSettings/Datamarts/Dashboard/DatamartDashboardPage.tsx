@@ -120,7 +120,7 @@ class DatamartDashboardPage extends React.Component<Props, State> {
     const {
       intl,
       match: {
-        params: { datamartId },
+        params: { datamartId, organisationId },
       },
       hasFeature,
       location: { state },
@@ -168,6 +168,7 @@ class DatamartDashboardPage extends React.Component<Props, State> {
           <Content className="mcs-content-container">
             <DatamartUsersAnalyticsWrapper
               datamartId={datamart.id}
+              organisationId={organisationId}
               config={sessionInTimeJsonConfig as any}
             />
           </Content>

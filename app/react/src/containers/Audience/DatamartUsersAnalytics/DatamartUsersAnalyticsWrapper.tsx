@@ -20,6 +20,7 @@ interface DatamartAnalysisProps {
   title?: string;
   subTitle?: string;
   datamartId: string;
+  organisationId: string;
   config: DashboardConfig[];
   showFilter?: boolean;
 }
@@ -112,7 +113,8 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
     const { 
       title, 
       subTitle, 
-      datamartId, 
+      datamartId,
+      // organisationId, 
       config, 
       showFilter,
       location: { search } } = this.props;
@@ -138,6 +140,8 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
             className={ isLoading ? 'mcs-datamartUsersAnalytics_segmentFilter _is_disabled' : 'mcs-datamartUsersAnalytics_segmentFilter'} 
             onChange={this.onSegmentFilterChange}
             onToggleAllUsersFilter={this.onAllUserFilterChange}
+            datamartId={datamartId}
+            organisationId={organisationId}
           /> */}
           <Col className="text-right" offset={6}>
               {this.renderDatePicker()}

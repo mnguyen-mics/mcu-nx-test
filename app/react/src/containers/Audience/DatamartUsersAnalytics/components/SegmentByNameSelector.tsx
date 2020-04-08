@@ -15,7 +15,9 @@ interface SegmentByNameSelectorState {
 }
 
 interface SegmentByNameSelectorProps {
-  onchange: (value: LabeledValue) => void
+  datamartId: string;
+  organisationId: string;
+  onchange: (value: LabeledValue) => void;
 }
 
 class SegmentByNameSelector extends React.Component<SegmentByNameSelectorProps, SegmentByNameSelectorState> {
@@ -33,12 +35,14 @@ class SegmentByNameSelector extends React.Component<SegmentByNameSelectorProps, 
   }
 
   componentDidMount() {
-    this.fetchListMethod("");
+
+    this.fetchListMethod('');
   }
 
-  fetchListMethod(keywords: string) {
+  fetchListMethod( keywords: string) {
+    const { datamartId, organisationId } = this.props;
     this.setState({ segmentsList: [], fetching: true });
-    return this._audienceSegmentService.getSegments("1185", { keywords: keywords, datamart_id: "1139" })
+    return this._audienceSegmentService.getSegments(organisationId, { keywords: keywords, datamart_id: datamartId })
       .then(res => {
         this.setState({
           segmentsList: res.data.map(r => ({ key: r.id, label: <SegmentNameDisplay audienceSegmentResource={r} /> })),
@@ -57,17 +61,19 @@ class SegmentByNameSelector extends React.Component<SegmentByNameSelectorProps, 
 
   render() {
     const { segmentsList, fetching, value } = this.state;
-
+    const getPopupContainer = () => document.getElementById("mcs-segmentFilter")!
     return (<Select
       showSearch={true}
       labelInValue={true}
       value={value}
       className="mcs-segmentByNameSelector"
       placeholder="Search segment by name"
+      filterOption={false}
       onSearch={this.fetchListMethod}
       onChange={this.handleChange}
       notFoundContent={fetching ? <Spin size="small" className="text-center" />: null}
       suffixIcon={<McsIcon type="magnifier" />}
+      getPopupContainer={getPopupContainer}
     >
       {segmentsList.map((item: LabeledValue, index: number) => <Select.Option value={item.key} key={index.toString()}>{item.label}</Select.Option>)}
     </Select>);

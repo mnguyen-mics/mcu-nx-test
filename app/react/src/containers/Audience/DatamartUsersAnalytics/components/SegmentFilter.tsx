@@ -10,6 +10,8 @@ import { compose } from 'recompose';
 
 interface SegmentFilterProps {
   className: string;
+  datamartId: string;
+  organisationId: string;
   onChange: (values: string[]) => void;
   onToggleAllUsersFilter: (allUsersEnabled: boolean) => void;
 }
@@ -110,10 +112,15 @@ class SegmentFilter extends React.Component<JoinedProp, SegmentFilterState> {
   handleOnAllUserFilterToggle = () => this.toggleAllUserFilter();
 
   render() {
-    const { segmentSearchDisplayed, appliedSegmentFilters, allUsersEnabled, allUsersFilterColor } = this.state;
-    const { className } = this.props;
+    const { 
+      segmentSearchDisplayed, 
+      appliedSegmentFilters, 
+      allUsersEnabled, 
+      allUsersFilterColor 
+    } = this.state;
+    const { className, datamartId, organisationId } = this.props;
     return (
-      <div className={className}>
+      <div className={className} id='mcs-segmentFilter'>
         <Button className={allUsersEnabled ? 'appliedSegmentName' : 'appliedSegmentName _is_disable' } ghost={true} style={{ border: `1px solid ${allUsersFilterColor}` }} onClick={this.handleOnAllUserFilterToggle}>
           <span className="oval" style={{ border: `5px solid ${allUsersFilterColor}` }} /><span className="name">All Users {allUsersEnabled}</span>
         </Button>
@@ -126,7 +133,7 @@ class SegmentFilter extends React.Component<JoinedProp, SegmentFilterState> {
           <Button type="dashed" ghost={true} className="segmentFilter" icon="plus" onClick={this.showSegmentSearch}>
             <span className="placeholder">Select a segment to compare with</span>
           </Button>
-          : <SegmentByNameSelector onchange={this.onSegmentByNameSelectorChange} />)}
+          : <SegmentByNameSelector datamartId={datamartId} organisationId={organisationId} onchange={this.onSegmentByNameSelectorChange} />)}
       </div>
     )
   }

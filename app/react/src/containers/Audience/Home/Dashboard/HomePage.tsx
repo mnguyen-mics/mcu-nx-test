@@ -57,6 +57,7 @@ interface HomeDashboardConfig {
   title?: string;
   subTitle?: string;
   datamartId: string;
+  organisationId: string;
   config: DashboardConfig[];
   showFilter?: boolean;
 }
@@ -83,42 +84,45 @@ class Partition extends React.Component<JoinedProps, HomeState> {
   }
 
   componentDidMount() {
-    const { selectedDatamartId, intl } = this.props;
+    const { selectedDatamartId, intl, match: { params: { organisationId } }  } = this.props;
     this.setState({
-      datamartAnalyticsDashboardConfig: this.getDatamartAnaylicsDashboardConfig(selectedDatamartId, intl)
+      datamartAnalyticsDashboardConfig: this.getDatamartAnaylicsDashboardConfig(organisationId, selectedDatamartId, intl)
     });
     this.loadData(selectedDatamartId);
   }
 
   componentDidUpdate(prevProps: JoinedProps) {
-    const { selectedDatamartId, intl } = this.props;
+    const { selectedDatamartId, intl, match: { params: { organisationId } } } = this.props;
 
     const { selectedDatamartId: prevSelectedDatamart } = prevProps;
 
     if (selectedDatamartId !== prevSelectedDatamart) {
       this.loadData(selectedDatamartId);
       this.setState({
-        datamartAnalyticsDashboardConfig: this.getDatamartAnaylicsDashboardConfig(selectedDatamartId, intl)
+        datamartAnalyticsDashboardConfig: this.getDatamartAnaylicsDashboardConfig(organisationId, selectedDatamartId, intl)
       });
     }
   }
 
-  getDatamartAnaylicsDashboardConfig = (datamartId: string, intl: InjectedIntl) => {
+  getDatamartAnaylicsDashboardConfig = (organisationId: string, datamartId: string, intl: InjectedIntl) => {
     return [
       {
         title: intl.formatMessage(messages.homeTitle),
         datamartId: datamartId,
+        organisationId: organisationId,
         config: averageSessionDurationConfig as any,
         showFilter: true
       },
       {
         title: intl.formatMessage(messages.channelEngagementsAnalyticsTitle),
         datamartId: datamartId,
+        organisationId: organisationId,
         config: channelEngagementConfig as any
       },
       {
         title: intl.formatMessage(messages.acquisitionEngagementTitle),
         datamartId: datamartId,
+        organisationId: organisationId,
         config: acquisitionEngagementConfig as any
       }
     ];
@@ -193,6 +197,7 @@ class Partition extends React.Component<JoinedProps, HomeState> {
                     title={conf.title}
                     subTitle={conf.subTitle}
                     datamartId={conf.datamartId}
+                    organisationId={conf.organisationId}
                     config={conf.config}
                     showFilter={conf.showFilter}
                   />
