@@ -7,8 +7,23 @@ import {
 } from '../models/ReportRequestBody';
 import McsMoment from './McsMoment';
 
-export type DatamartUsersAnalyticsDimension = 'date_yyyy_mm_dd' | 'channel_id' | 'channel_name';
-export type DatamartUsersAnalyticsMetric = 'users'| 'sessions' | 'avg_session_duration' | 'avg_number_of_user_events';
+export type DatamartUsersAnalyticsDimension = 'date_yyyy_mm_dd' 
+                                              | 'channel_id' 
+                                              | 'channel_name' 
+                                              | 'device_form_factor' 
+                                              | 'device_browser_family' 
+                                              | 'device_os_family'
+                                              | 'origin_source'
+                                              | 'origin_channel';
+
+export type DatamartUsersAnalyticsMetric = 'users'
+                                            | 'sessions' 
+                                            | 'avg_session_duration' 
+                                            | 'avg_number_of_user_events' 
+                                            | 'conversion_rate' 
+                                            | 'number_of_transaction'
+                                            | 'avg_transaction_amount'
+                                            | 'revenue';
 
 export function buildDatamartUsersAnalyticsRequestBody(
   datamartId: string,

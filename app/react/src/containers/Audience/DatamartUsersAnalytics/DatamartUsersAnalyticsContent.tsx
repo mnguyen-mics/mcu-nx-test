@@ -16,10 +16,10 @@ import { isEqual, difference } from 'lodash';
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 export interface DashboardConfig {
-  title: string;
+  title?: string;
   layout: Layout;
   charts: Chart[];
-  color: string;
+  color?: string;
   segments?: SegmentFilter;
 }
 

@@ -40,6 +40,9 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
   }
 
   formatSeriesForChart = (chart: Chart, dataset: Dataset[]) => {
+
+    const dimensionName = chart.dimensions ? chart.dimensions[0] : '';
+
     switch (chart.type) {
       case 'PIE':
         return [
@@ -49,7 +52,7 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
             innerSize: '65%',
             data: dataset.map((data: Dataset) => {
               return {
-                name: data[chart.dimensions[0]] || 'null',
+                name: data[dimensionName] || 'null',
                 y: data[chart.metricNames[0]],
               }
             })
@@ -57,13 +60,16 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
         ];
       case 'AREA':
         return dataset.reduce((acc: AreaSeriesDataOptions[], d: Dataset) => {
-          const found = acc.find((a: AreaSeriesDataOptions) => a.name === d[chart.dimensions[0]]);
+          const found = acc.find((a: AreaSeriesDataOptions) => a.name === d[dimensionName]);
           const value = d[chart.metricNames[0]];
-          const xValue = chart.dimensions[chart.dimensions.length - 1] === 'date_yyyy_mm_dd' ? this.formatDateToTs(d[chart.dimensions[chart.dimensions.length - 1]] as string) : d[chart.dimensions[chart.dimensions.length - 1]];
+          let xValue;
+          if (chart.dimensions) {
+            xValue =  chart.dimensions[chart.dimensions.length - 1] === 'date_yyyy_mm_dd' ? this.formatDateToTs(d[chart.dimensions[chart.dimensions.length - 1]] as string) : d[chart.dimensions[chart.dimensions.length - 1]];
+          }
           if (!found) {
             acc.push({
               visible: acc.length < 4,
-              name: d[chart.dimensions[0]] as string,
+              name: d[dimensionName] as string,
               data: [[xValue, value]] as number[][],
               fillOpacity: 0.5,
               fillColor: {
@@ -100,11 +106,11 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
         }, []);
       case 'COUNT':
         return dataset.reduce((acc: any, d: any) => {
-          const found = acc.find((a: any) => a.title === d[chart.yKey]);
+          const found = acc.find((a: any) => a.title === d[dimensionName]);
           const value = d[chart.metricNames[0]];
           if (!found) {
             acc.push({
-              title: d[chart.yKey],
+              title: d[dimensionName],
               iconType: chart.icons && chart.icons.length > 0 ? chart.icons[0] : undefined,
               value, unit: "%",
               iconStyle: {
@@ -123,11 +129,11 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
         }, []);
       case 'WORLD_MAP':
         return dataset.reduce((acc: MapSeriesDataOptions[], d: Dataset) => {
-          const found = acc.find((a: MapSeriesDataOptions) => a.code3 === d[chart.yKey]);
+          const found = acc.find((a: MapSeriesDataOptions) => a.code3 === d[dimensionName]);
           const value = d[chart.metricNames[0]];
           if (!found) {
             acc.push({
-              code3: d[chart.yKey] as string,
+              code3: d[dimensionName] as string,
               value: d[chart.metricNames[0]] as number,
             })
           }
@@ -170,12 +176,15 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
 
 
   formatSeriesForCounters = (chart: Chart, dataset: Dataset[]): CounterProps[] => {
+
+    const dimensionName = chart.dimensions ? chart.dimensions[0] : '';
+
     return dataset.reduce((acc: CounterProps[], d: Dataset) => {
-      const found = acc.find((a: CounterProps) => a.title === d[chart.yKey]);
+      const found = acc.find((a: CounterProps) => a.title === d[dimensionName]);
       const value = d[chart.metricNames[0]];
       if (!found) {
         acc.push({
-          title: d[chart.yKey],
+          title: d[dimensionName],
           iconType: chart.icons ? chart.icons[0] as McsIconType : 'data',
           value: value as number,
           unit: '%',
@@ -202,7 +211,10 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
       .valueOf();
   };
 
+
   generateCharElements = (chart: Chart, data: Dataset[], dataToCompareWith?: Dataset[]): React.ReactNode => {
+    const dimensionName = chart.dimensions ? chart.dimensions[0] : '';
+
     switch (chart.type) {
       case 'AREA':
         if (!chart.dimensions || chart.dimensions.length === 0) return null
@@ -233,7 +245,7 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
         if (!chart.dimensions) return null
         chart.options.series = this.formatSeriesForChart(chart, data) as Highcharts.SeriesMapOptions[];
         chart.options.xAxis = {
-          categories: this.getXAxisValues(data, chart.dimensions[0])
+          categories: this.getXAxisValues(data, dimensionName)
         }
 
         return (
@@ -269,8 +281,8 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
         }
         // const original = data[0][chart.metricNames[0]] as number
         // const newValue = dataToCompareWith ? dataToCompareWith[0][chart.metricNames[0]] : undefined;
-        const originalValue = 10;
-        const newValue = 15;
+        const originalValue = 15;
+        const newValue = 10;
         let trend;
         if (dataToCompareWith) {
           trend = ((((originalValue as number) - (newValue as number)) / originalValue) * 100);
@@ -279,7 +291,7 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
         return (
           <div className="mcs-metricCounter">
             <div className="mcs-metricCounter_title">
-              {chart.options.title}
+              {chart.options.title && chart.options.title.text}
             </div>
             <div className="mcs-metricCounter_result">
               <Statistic className={'mcs-datamartUsersAnalytics_charts_singleStat'}
@@ -292,7 +304,7 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
                   className={'mcs-datamartUsersAnalytics_charts_trend'}
                   value={Math.abs(trend)}
                   precision={2}
-                  valueStyle={{ color: Math.sign(trend) > -1 ? '#ff4d5c' : '#4ea500' }}
+                  valueStyle={{ color: Math.sign(trend) > -1 ? '#ff4d5c' : '#00a963' }}
                   prefix={<Icon type={Math.sign(trend) > -1 ? 'caret-down' : 'caret-up'} />}
                   suffix="%"
                 />

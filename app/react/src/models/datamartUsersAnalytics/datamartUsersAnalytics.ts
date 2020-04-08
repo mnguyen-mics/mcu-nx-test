@@ -9,8 +9,7 @@ export type Dataset = { [key: string]: string | number | undefined };
 export interface Chart {
   type: ChartType;
   options: Highcharts.Options;
-  dimensions: DatamartUsersAnalyticsDimension[];
-  yKey: string | number;
+  dimensions?: DatamartUsersAnalyticsDimension[];
   metricNames: DatamartUsersAnalyticsMetric[];
   dimensionFilterClauses?: DimensionFilterClause;
   icons?: string[];
@@ -21,7 +20,7 @@ export interface Chart {
   Highcharts.SeriesMapDataOptions[] | 
   Highcharts.SeriesBarDataOptions[] |
   Highcharts.SeriesColumnDataOptions[] ;
-  tabs: TabItem[];
+  tabs?: TabItem[];
   unit?: 'time' | '%' | 'number' | '€';
 }
 

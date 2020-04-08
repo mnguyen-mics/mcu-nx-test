@@ -4,8 +4,9 @@ import {
   generateTooltip,
 } from '../../../../components/Charts/domain';
 import chroma from 'chroma-js';
+import { DashboardConfig } from '../DatamartUsersAnalyticsContent';
 
-export const sessionInTimeJsonConfig = [
+export const sessionInTimeJsonConfig: DashboardConfig[] = [
   {
     title: 'Session in time',
     layout: {
@@ -21,7 +22,6 @@ export const sessionInTimeJsonConfig = [
         type: 'AREA',
         options: {
           title: undefined,
-          height: 300,
           colors: chroma.scale(['#00a1df','#003056']).mode('lch').colors(5),
           credits: {
             enabled: false
@@ -78,7 +78,7 @@ export const sessionInTimeJsonConfig = [
   },
 ];
 
-export const averageSessionDurationConfig = [
+export const averageSessionDurationConfig: DashboardConfig[] = [
   {
     layout: {
       'i': '0',
@@ -92,7 +92,7 @@ export const averageSessionDurationConfig = [
       {
         type: 'SINGLE_STAT',
         options: {
-          title: 'Average session duration'
+          title: { text: 'Average session duration' }
         },
         unit: 'time',
         metricNames: ['avg_session_duration'],
@@ -127,7 +127,7 @@ export const averageSessionDurationConfig = [
       {
         type: 'SINGLE_STAT',
         options: {
-          title: 'Average Events per Session',
+          title: { text: 'Average Events per Session' },
         },
         metricNames: ['avg_number_of_user_events'],
         dimensionFilterClauses: {
@@ -161,7 +161,7 @@ export const averageSessionDurationConfig = [
       {
         type: 'SINGLE_STAT',
         options: {
-          title: 'Average Conversion Rate',
+          title: { text: 'Average Conversion Rate' },
         },
         unit: '%',
         metricNames: ['conversion_rate'],
@@ -186,7 +186,7 @@ export const averageSessionDurationConfig = [
 ];
 
 
-export const ecommerceEngagementConfig = [
+export const ecommerceEngagementConfig: DashboardConfig[] = [
   {
     layout: {
       'i': '0',
@@ -200,7 +200,7 @@ export const ecommerceEngagementConfig = [
       {
         type: 'SINGLE_STAT',
         options: {
-          title: 'Number Of Transactions'
+          title: { text: 'Number Of Transactions' }
         },
         unit: 'number',
         metricNames: ['number_of_transaction'],
@@ -235,7 +235,7 @@ export const ecommerceEngagementConfig = [
       {
         type: 'SINGLE_STAT',
         options: {
-          title: 'Average Transaction Amount',
+          title: { text: 'Average Transaction Amount' },
         },
         metricNames: ['avg_transaction_amount'],
         dimensionFilterClauses: {
@@ -269,7 +269,7 @@ export const ecommerceEngagementConfig = [
       {
         type: 'SINGLE_STAT',
         options: {
-          title: 'Revenue',
+          title: { text: 'Revenue'},
         },
         unit: '€',
         metricNames: ['revenue'],
@@ -294,7 +294,7 @@ export const ecommerceEngagementConfig = [
 ];
 
 
-export const channelEngagementConfig = [
+export const channelEngagementConfig: DashboardConfig[] = [
   {
     title: 'Session in time',
     layout: {
@@ -310,7 +310,6 @@ export const channelEngagementConfig = [
         type: 'AREA',
         options: {
           title: undefined,
-          height: 300,
           colors: chroma.scale(['#00a1df','#003056']).mode('lch').colors(5),
           credits: {
             enabled: false
@@ -380,7 +379,6 @@ export const channelEngagementConfig = [
         type: 'COLUMN',
         options: {
           title: undefined,
-          height: 300,
           colors: chroma.scale(['#00a1df','#003056']).mode('lch').colors(5),
           credits: {
             enabled: false
@@ -389,8 +387,7 @@ export const channelEngagementConfig = [
             reflow: true
           },
           xAxis: {
-            ...generateXAxisGridLine(),
-            type: 'column'
+            ...generateXAxisGridLine()
           },
           time: { timezoneOffset: -60, useUTC: true },
           yAxis: {
@@ -444,9 +441,7 @@ export const channelEngagementConfig = [
       {
         type: 'PIE',
         options: {
-          title: '',
-          innerRadius: true,
-          isHalf: false,
+          title: undefined,
           colors: chroma.scale(['#003056', '#00a1df']).mode('lch').colors(7),
           plotOptions: {
             pie: {
@@ -459,17 +454,10 @@ export const channelEngagementConfig = [
               }
             },
           },
-          text: {
-            text: '',
-            value: '',
-          },
-          showTooltip: true,
           tooltip: {
             shared: true,
             ...generateTooltip()
           },
-          height: 300,
-          showLabels: true,
           credits: {
             enabled: false,
           },
@@ -508,9 +496,7 @@ export const channelEngagementConfig = [
       {
         type: 'PIE',
         options: {
-          title: '',
-          innerRadius: true,
-          isHalf: false,
+          title: undefined,
           colors: chroma.scale(['#003056', '#00a1df']).mode('lch').colors(7),
           plotOptions: {
             pie: {
@@ -523,17 +509,10 @@ export const channelEngagementConfig = [
               }
             },
           },
-          text: {
-            text: '',
-            value: '',
-          },
-          showTooltip: true,
           tooltip: {
             shared: true,
             ...generateTooltip()
           },
-          height: 300,
-          showLabels: true,
           credits: {
             enabled: false,
           },
@@ -572,9 +551,7 @@ export const channelEngagementConfig = [
       {
         type: 'PIE',
         options: {
-          title: '',
-          innerRadius: true,
-          isHalf: false,
+          title: undefined,
           colors: chroma.scale(['#003056', '#00a1df']).mode('lch').colors(7),
           plotOptions: {
             pie: {
@@ -587,17 +564,10 @@ export const channelEngagementConfig = [
               }
             },
           },
-          text: {
-            text: '',
-            value: '',
-          },
-          showTooltip: true,
           tooltip: {
             shared: true,
             ...generateTooltip()
           },
-          height: 300,
-          showLabels: true,
           credits: {
             enabled: false,
           },
@@ -637,7 +607,6 @@ export const channelEngagementConfig = [
         type: 'AREA',
         options: {
           title: undefined,
-          height: 300,
           colors: chroma.scale(['#00a1df','#003056']).mode('lch').colors(5),
           credits: {
             enabled: false
@@ -694,7 +663,7 @@ export const channelEngagementConfig = [
   }
 ];
 
-export const acquisitionEngagementConfig = [
+export const acquisitionEngagementConfig: DashboardConfig[] = [
   {
     title: 'Sessions by Source in Time',
     layout: {
@@ -710,7 +679,6 @@ export const acquisitionEngagementConfig = [
         type: 'AREA',
         options: {
           title: undefined,
-          height: 300,
           colors: chroma.scale(['#00a1df','#003056']).mode('lch').colors(5),
           credits: {
             enabled: false
@@ -780,7 +748,6 @@ export const acquisitionEngagementConfig = [
         type: 'COLUMN',
         options: {
           title: undefined,
-          height: 300,
           colors: chroma.scale(['#00a1df','#003056']).mode('lch').colors(5),
           credits: {
             enabled: false
@@ -789,8 +756,7 @@ export const acquisitionEngagementConfig = [
             reflow: true
           },
           xAxis: {
-            ...generateXAxisGridLine(),
-            type: 'column'
+            ...generateXAxisGridLine()
           },
           time: { timezoneOffset: -60, useUTC: true },
           yAxis: {
@@ -844,7 +810,6 @@ export const acquisitionEngagementConfig = [
         type: 'AREA',
         options: {
           title: undefined,
-          height: 300,
           colors: chroma.scale(['#00a1df','#003056']).mode('lch').colors(5),
           credits: {
             enabled: false
@@ -914,7 +879,6 @@ export const acquisitionEngagementConfig = [
         type: 'COLUMN',
         options: {
           title: undefined,
-          height: 300,
           colors: chroma.scale(['#00a1df','#003056']).mode('lch').colors(5),
           credits: {
             enabled: false
@@ -923,8 +887,7 @@ export const acquisitionEngagementConfig = [
             reflow: true
           },
           xAxis: {
-            ...generateXAxisGridLine(),
-            type: 'column'
+            ...generateXAxisGridLine()
           },
           time: { timezoneOffset: -60, useUTC: true },
           yAxis: {
@@ -978,7 +941,6 @@ export const acquisitionEngagementConfig = [
         type: 'COLUMN',
         options: {
           title: undefined,
-          height: 300,
           colors: chroma.scale(['#00a1df','#003056']).mode('lch').colors(5),
           credits: {
             enabled: false
@@ -988,7 +950,6 @@ export const acquisitionEngagementConfig = [
           },
           xAxis: {
             ...generateXAxisGridLine(),
-            type: 'column'
           },
           time: { timezoneOffset: -60, useUTC: true },
           yAxis: {
@@ -1028,4 +989,3 @@ export const acquisitionEngagementConfig = [
     ]
   },
 ];
-
