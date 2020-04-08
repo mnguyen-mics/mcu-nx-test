@@ -13,6 +13,7 @@ export interface GetPartitionOption extends PaginatedApiParam {
   status?: AudiencePartitionStatus[];
   keywords?: string;
   name?: string;
+  archived?: boolean;
 }
 
 export interface IAudiencePartitionsService {

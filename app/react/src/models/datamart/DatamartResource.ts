@@ -9,6 +9,7 @@ export interface DatamartResource {
   datafarm: string;
   region: string;
   storage_model_version: string;
+  archived: boolean;
 }
 
 export interface DatamartWithMetricResource extends DatamartResource{

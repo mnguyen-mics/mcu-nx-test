@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Icon } from 'antd';
 import { compose } from 'recompose';
@@ -10,20 +9,14 @@ import {
   injectIntl,
 } from 'react-intl';
 import { TableViewFilters } from '../../../../../components/TableView/index';
-import { getWorkspace } from '../../../../../redux/Session/selectors';
 import { AudiencePartitionResource } from '../../../../../models/audiencePartition/AudiencePartitionResource';
-import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
 import { DataListResponse } from '../../../../../services/ApiService';
 import { PartitionFilterParams } from './AudiencePartitionsPage';
 import {
   DataColumnDefinition,
   ActionsColumnDefinition,
 } from '../../../../../components/TableView/TableView';
-import { MicsReduxState } from '../../../../../utils/ReduxHelper';
-
-interface MapStateToProps {
-  workspace: (organisationId: string) => UserWorkspaceResource;
-}
+import { DatamartWithMetricResource } from '../../../../../models/datamart/DatamartResource';
 
 export interface AudiencePartitionsTableProps {
   organisationId: string;
@@ -33,9 +26,10 @@ export interface AudiencePartitionsTableProps {
   onChange: (filter: Partial<PartitionFilterParams>) => void;
   onArchive: (partition: AudiencePartitionResource) => void;
   onEdit: (partition: AudiencePartitionResource) => void;
+  datamarts: DatamartWithMetricResource[];
 }
 
-type Props = MapStateToProps & AudiencePartitionsTableProps & InjectedIntlProps;
+type Props = AudiencePartitionsTableProps & InjectedIntlProps;
 
 class AudiencePartitionTable extends TableViewFilters<
   AudiencePartitionResource
@@ -43,11 +37,11 @@ class AudiencePartitionTable extends TableViewFilters<
 
 class AudiencePartitionsTable extends React.Component<Props> {
   getFiltersOptions = () => {
-    const { workspace, filter, organisationId, onChange } = this.props;
+    const { datamarts, filter, onChange } = this.props;
 
-    if (workspace(organisationId).datamarts.length > 1) {
-      const datamartItems = workspace(organisationId)
-        .datamarts.map(d => ({
+    if (datamarts.length > 1) {
+      const datamartItems = datamarts
+        .map(d => ({
           key: d.id,
           value: d.name || d.token,
         }))
@@ -62,7 +56,10 @@ class AudiencePartitionsTable extends React.Component<Props> {
         {
           displayElement: (
             <div>
-              <FormattedMessage id="audience.partitions.list.datamartFilter" defaultMessage="Datamart" />{' '}
+              <FormattedMessage
+                id="audience.partitions.list.datamartFilter"
+                defaultMessage="Datamart"
+              />{' '}
               <Icon type="down" />
             </div>
           ),
@@ -122,9 +119,9 @@ class AudiencePartitionsTable extends React.Component<Props> {
         }),
     };
 
-    const dataColumns: Array<
-      DataColumnDefinition<AudiencePartitionResource>
-    > = [
+    const dataColumns: Array<DataColumnDefinition<
+      AudiencePartitionResource
+    >> = [
       {
         intlMessage: messageMap.columnName,
         key: 'name',
@@ -157,9 +154,9 @@ class AudiencePartitionsTable extends React.Component<Props> {
       },
     ];
 
-    const actionColumns: Array<
-      ActionsColumnDefinition<AudiencePartitionResource>
-    > = [
+    const actionColumns: Array<ActionsColumnDefinition<
+      AudiencePartitionResource
+    >> = [
       {
         key: 'action',
         actions: () => [
@@ -192,14 +189,9 @@ class AudiencePartitionsTable extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = (state: MicsReduxState) => ({
-  workspace: getWorkspace(state),
-});
-
-export default compose<Props, AudiencePartitionsTableProps>(
-  injectIntl,
-  connect(mapStateToProps),
-)(AudiencePartitionsTable);
+export default compose<Props, AudiencePartitionsTableProps>(injectIntl)(
+  AudiencePartitionsTable,
+);
 
 const messageMap = defineMessages({
   columnName: {

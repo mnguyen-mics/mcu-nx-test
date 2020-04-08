@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Layout } from 'antd';
+import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { defineMessages } from 'react-intl';
-import { DataListResponse } from '../../../../../services/ApiService';
 import {
   GetPartitionOption,
   IAudiencePartitionsService,
@@ -33,10 +33,16 @@ import { PARTITIONS_SEARCH_SETTINGS } from './constants';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
+import { MicsReduxState } from '../../../../../utils/ReduxHelper';
+import { getWorkspace } from '../../../../../redux/Session/selectors';
+import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
+import { DataListResponse } from '../../../../../services/ApiService';
 
 const { Content } = Layout;
 
-export interface AudiencePartitionsPageProps {}
+interface MapStateToProps {
+  workspace: (organisationId: string) => UserWorkspaceResource;
+}
 
 interface State {
   audiencePartitions?: DataListResponse<AudiencePartitionResource>;
@@ -45,7 +51,7 @@ interface State {
   hasAudiencePartitions: boolean;
 }
 
-type Props = AudiencePartitionsPageProps &
+type Props = MapStateToProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }>;
 
@@ -54,6 +60,7 @@ export interface PartitionFilterParams
     KeywordSearchSettings,
     DatamartSearchSettings {
   type?: AudiencePartitionType[];
+  archived?: boolean;
 }
 
 class AudiencePartitionsPage extends React.Component<Props, State> {
@@ -120,7 +127,7 @@ class AudiencePartitionsPage extends React.Component<Props, State> {
         this.fetchPartitions(
           params.organisationId,
           filter,
-          params.organisationId !== previousParams.organisationId
+          params.organisationId !== previousParams.organisationId,
         );
       }
     }
@@ -201,14 +208,18 @@ class AudiencePartitionsPage extends React.Component<Props, State> {
       };
     }
 
-    let promise;
+    options = {
+      ...options,
+      archived: false,
+    };
+
+    let promise: Promise<DataListResponse<AudiencePartitionResource>>;
     if (initialFetch) {
       promise = this._audiencePartitionsService
         .getPartitions(organisationId, getPaginatedApiParam(1, 1))
         .then(res => {
           if (res.total === 0 || res.count === 0) {
             this.setState({ hasAudiencePartitions: false });
-            return Promise.resolve(undefined);
           }
           this.setState({ hasAudiencePartitions: true });
           return this._audiencePartitionsService.getPartitions(
@@ -246,6 +257,7 @@ class AudiencePartitionsPage extends React.Component<Props, State> {
     const {
       match: { params },
       location: { search },
+      workspace,
     } = this.props;
     const {
       hasAudiencePartitions,
@@ -280,6 +292,7 @@ class AudiencePartitionsPage extends React.Component<Props, State> {
             onChange={this.updateLocationSearch}
             onArchive={handleOnArchive}
             onEdit={this.editPartition}
+            datamarts={workspace(params.organisationId).datamarts}
           />
         )}
       </Content>
@@ -294,9 +307,15 @@ class AudiencePartitionsPage extends React.Component<Props, State> {
     );
   }
 }
+
+const mapStateToProps = (state: MicsReduxState) => ({
+  workspace: getWorkspace(state),
+});
+
 export default compose(
   withRouter,
   injectNotifications,
+  connect(mapStateToProps),
 )(AudiencePartitionsPage);
 
 const messageMap = defineMessages({
