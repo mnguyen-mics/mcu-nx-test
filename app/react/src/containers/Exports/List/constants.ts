@@ -1,0 +1,9 @@
+import {
+  PAGINATION_SEARCH_SETTINGS,
+  KEYWORD_SEARCH_SETTINGS,
+} from '../../../utils/LocationSearchHelper';
+
+export const EXPORT_SEARCH_SETTINGS = [
+  ...PAGINATION_SEARCH_SETTINGS,
+  ...KEYWORD_SEARCH_SETTINGS,
+];

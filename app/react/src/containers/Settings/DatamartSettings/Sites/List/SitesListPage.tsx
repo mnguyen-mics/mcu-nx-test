@@ -23,7 +23,7 @@ import {
 } from '../../../../../utils/LocationSearchHelper';
 import { Index } from '../../../../../utils';
 import { MultiSelectProps } from '../../../../../components/MultiSelect';
-import { getWorkspace } from '../../../../../state/Session/selectors';
+import { getWorkspace } from '../../../../../redux/Session/selectors';
 import { connect } from 'react-redux';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { IChannelService } from '../../../../../services/ChannelService';

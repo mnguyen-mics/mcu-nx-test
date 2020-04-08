@@ -31,7 +31,7 @@ import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDraw
 import ResourceTimelinePage, {
   ResourceTimelinePageProps,
 } from '../../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
-import formatDisplayCampaignProperty from '../../../../../messages/campaign/display/displayCampaignMessages';
+import { formatDisplayCampaignProperty } from '../../../Display/messages';
 import resourceHistoryMessages from '../../../../ResourceHistory/ResourceTimeline/messages';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';

@@ -33,7 +33,11 @@ import { MicsReduxState } from '../../../utils/ReduxHelper';
 import { Loading } from '../../../components';
 import ActionBar from '../../../components/ActionBar';
 import { injectFeatures, InjectedFeaturesProps } from '../../Features';
-import { wizardValidObjectTypes, getValidObjectTypesForWizardReactToEvent, getValidFieldsForWizardReactToEvent } from './domain';
+import {
+  wizardValidObjectTypes,
+  getValidObjectTypesForWizardReactToEvent,
+  getValidFieldsForWizardReactToEvent,
+} from './domain';
 import { reducePromises } from '../../../utils/PromiseHelper';
 import { IRuntimeSchemaService } from '../../../services/RuntimeSchemaService';
 
@@ -119,8 +123,8 @@ class AutomationBuilderPage extends React.Component<Props, State> {
 
     if (
       queryString.parse(location.search).datamartId !==
-      queryString.parse(prevLocation.search).datamartId
-      && hasFeature('automations-wizard-react-to-event')
+        queryString.parse(prevLocation.search).datamartId &&
+      hasFeature('automations-wizard-react-to-event')
     )
       this.checkReactToEvent();
 
@@ -151,12 +155,13 @@ class AutomationBuilderPage extends React.Component<Props, State> {
       disableReactToEvent: true,
       isCheckingReactToEventAvailable: true,
     });
-    
+
     const selectedDatamart = this.getSelectedDatamart();
 
     if (!selectedDatamart) return;
 
-    this._runtimeSchemaService.getRuntimeSchemas(selectedDatamart.id)
+    this._runtimeSchemaService
+      .getRuntimeSchemas(selectedDatamart.id)
       .then(schemasResponse => {
         const runtimeSchema = schemasResponse.data.find(
           schema => schema.status === 'LIVE',
@@ -164,44 +169,57 @@ class AutomationBuilderPage extends React.Component<Props, State> {
 
         if (!runtimeSchema) return;
 
-        return this._runtimeSchemaService.getObjectTypes(
-          selectedDatamart.id,
-          runtimeSchema.id,
-        ).then(({ data: objectTypes }) => {
-          return reducePromises(
-            getValidObjectTypesForWizardReactToEvent(objectTypes).map(validObjectType => {
-              return this._runtimeSchemaService.getFields(
-                selectedDatamart.id,
-                runtimeSchema.id, 
-                validObjectType.id,
-              ).then(({ data: fields }) => {
-                return { objectType: validObjectType, validFields: getValidFieldsForWizardReactToEvent(validObjectType, fields)};
-              });
-            })
-          )
-          .then(validObjectTypes => {
-            /*
+        return this._runtimeSchemaService
+          .getObjectTypes(selectedDatamart.id, runtimeSchema.id)
+          .then(({ data: objectTypes }) => {
+            return reducePromises(
+              getValidObjectTypesForWizardReactToEvent(objectTypes).map(
+                validObjectType => {
+                  return this._runtimeSchemaService
+                    .getFields(
+                      selectedDatamart.id,
+                      runtimeSchema.id,
+                      validObjectType.id,
+                    )
+                    .then(({ data: fields }) => {
+                      return {
+                        objectType: validObjectType,
+                        validFields: getValidFieldsForWizardReactToEvent(
+                          validObjectType,
+                          fields,
+                        ),
+                      };
+                    });
+                },
+              ),
+            ).then(validObjectTypes => {
+              /*
             Here we need to find a WizardValidObjectTypeField
             For each WizardValidObjectTypeField we check if we have an objectType with 
             the same WizardValidObjectTypeField.objectTypeName in validObjectTypes and if 
             its fields contain at least one with the WizardValidObjectTypeField.fieldName.
             */
-            const validResult = wizardValidObjectTypes.find(
-              automationWizardValidObjectType =>
-              !!validObjectTypes.find(validObjectType =>
-                validObjectType.objectType.name === automationWizardValidObjectType.objectTypeName &&
-                !!validObjectType.validFields.find(of => of.name === automationWizardValidObjectType.fieldName),
-              ),
-            );
+              const validResult = wizardValidObjectTypes.find(
+                automationWizardValidObjectType =>
+                  !!validObjectTypes.find(
+                    validObjectType =>
+                      validObjectType.objectType.name ===
+                        automationWizardValidObjectType.objectTypeName &&
+                      !!validObjectType.validFields.find(
+                        of =>
+                          of.name === automationWizardValidObjectType.fieldName,
+                      ),
+                  ),
+              );
 
-            if(validResult) {
-              this.setState({
-                disableReactToEvent: false,
-                isCheckingReactToEventAvailable: false,
-              });
-            }
+              if (validResult) {
+                this.setState({
+                  disableReactToEvent: false,
+                  isCheckingReactToEventAvailable: false,
+                });
+              }
+            });
           });
-        });
       })
       .then(() => {
         this.setState({ isCheckingReactToEventAvailable: false });
@@ -231,25 +249,33 @@ class AutomationBuilderPage extends React.Component<Props, State> {
       isLoading: true,
     });
 
-    this._automationFormService.validateAutomation(formData.automationTreeData).then(() => 
-      this._automationFormService
-        .saveOrCreateAutomation(organisationId, 'v201709', formData, automationFormData)
-        .then(automation => {
-          hideSaveInProgress();
-          this.setState({ isLoading: false });
-          this.redirect(automation.data.id);
-          message.success(intl.formatMessage(messages.automationSaved));
-        })
-        .catch(err => {
-          this.setState({ isLoading: false });
-          notifyError(err);        
-          hideSaveInProgress();
-        })
-    ).catch(err => {
-      this.setState({ isLoading: false });
-      message.error(intl.formatMessage(err)) 
-      hideSaveInProgress();
-    })
+    this._automationFormService
+      .validateAutomation(formData.automationTreeData)
+      .then(() =>
+        this._automationFormService
+          .saveOrCreateAutomation(
+            organisationId,
+            'v201709',
+            formData,
+            automationFormData,
+          )
+          .then(automation => {
+            hideSaveInProgress();
+            this.setState({ isLoading: false });
+            this.redirect(automation.data.id);
+            message.success(intl.formatMessage(messages.automationSaved));
+          })
+          .catch(err => {
+            this.setState({ isLoading: false });
+            notifyError(err);
+            hideSaveInProgress();
+          }),
+      )
+      .catch(err => {
+        this.setState({ isLoading: false });
+        message.error(intl.formatMessage(err));
+        hideSaveInProgress();
+      });
   };
 
   redirect = (automationId?: string) => {
@@ -343,7 +369,7 @@ class AutomationBuilderPage extends React.Component<Props, State> {
     if (!selectedDatamart) {
       return (
         <DatamartSelector
-          onSelectDatamart={handleOnSelectDatamart}
+          onSelect={handleOnSelectDatamart}
           actionbarProps={{
             paths: [
               {
@@ -351,6 +377,7 @@ class AutomationBuilderPage extends React.Component<Props, State> {
               },
             ],
           }}
+          isMainlayout={true}
         />
       );
     }

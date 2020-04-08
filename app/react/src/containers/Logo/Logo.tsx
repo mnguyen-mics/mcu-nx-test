@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 
-import { getLogo } from '../../state/Session/actions';
+import { getLogo } from '../../redux/Session/actions';
 import { MenuMode } from 'antd/lib/menu';
 import { MicsReduxState } from '../../utils/ReduxHelper';
 

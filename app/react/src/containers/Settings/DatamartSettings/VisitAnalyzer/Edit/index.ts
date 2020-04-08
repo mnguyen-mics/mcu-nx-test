@@ -1,4 +1,4 @@
-import CreateEditVisitAnalyzer from './CreateEditVisitAnalyzer';
+import CreateEditVisitAnalyzer from './EditVisitAnalyzerPage';
 
 export {
     CreateEditVisitAnalyzer,

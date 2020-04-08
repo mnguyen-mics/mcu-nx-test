@@ -1,4 +1,4 @@
-import CreateEditEmailRouter from './CreateEditEmailRouter';
+import CreateEditEmailRouter from './EditEmailRouterPage';
 
 export {
     CreateEditEmailRouter,

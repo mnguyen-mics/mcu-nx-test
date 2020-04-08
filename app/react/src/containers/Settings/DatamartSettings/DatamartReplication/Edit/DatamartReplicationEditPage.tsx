@@ -3,7 +3,7 @@ import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import * as FeatureSelectors from '../../../../../state/Features/selectors';
+import * as FeatureSelectors from '../../../../../redux/Features/selectors';
 import {
   DatamartReplicationRouteMatchParam,
   DatamartReplicationFormData,
@@ -14,7 +14,7 @@ import Loading from '../../../../../components/Loading';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
-import { getWorkspace } from '../../../../../state/Session/selectors';
+import { getWorkspace } from '../../../../../redux/Session/selectors';
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 import { Layout, message, Row, Col } from 'antd';
 import { FormLayoutActionbar } from '../../../../../components/Layout';
@@ -26,7 +26,7 @@ import DatamartReplicationCard from './DatamartReplicationCard';
 import DatamartReplicationEditForm from './DatamartReplicationEditForm';
 import { ReplicationType } from '../../../../../models/settings/settings';
 import { FormTitle } from '../../../../../components/Form';
-import DatamartSelector from '../../../../Audience/Common/DatamartSelector';
+import DatamartSelector from '../../../../Datamart/DatamartSelector';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
 
 interface State {
@@ -270,7 +270,18 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
     };
 
     return !datamartId ? (
-      <DatamartSelector onSelect={this.onDatamartSelect} />
+      <DatamartSelector
+        onSelect={this.onDatamartSelect}
+        isMainlayout={true}
+        actionbarProps={{
+          paths: [
+            {
+              name: messages.datamartReplications,
+              path: this.getPreviousUrl(),
+            },
+          ],
+        }}
+      />
     ) : selectedType ? (
       <DatamartReplicationEditForm
         initialValues={datamartReplicationData}

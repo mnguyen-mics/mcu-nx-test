@@ -10,7 +10,7 @@ import {
 import { compose } from 'recompose';
 import { Upload, Icon } from 'antd';
 
-import { getLogo, putLogo } from '../../state/Session/actions';
+import { getLogo, putLogo } from '../../redux/Session/actions';
 import { MenuMode } from 'antd/lib/menu';
 import injectNotifications, {
   InjectedNotificationProps,

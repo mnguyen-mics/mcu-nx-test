@@ -10,7 +10,7 @@ import {
   injectIntl,
 } from 'react-intl';
 import { TableViewFilters } from '../../../../../components/TableView/index';
-import { getWorkspace } from '../../../../../state/Session/selectors';
+import { getWorkspace } from '../../../../../redux/Session/selectors';
 import { AudiencePartitionResource } from '../../../../../models/audiencePartition/AudiencePartitionResource';
 import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
 import { DataListResponse } from '../../../../../services/ApiService';

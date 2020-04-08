@@ -5,7 +5,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { message } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 
-import * as FeatureSelectors from '../../../../state/Features/selectors';
+import * as FeatureSelectors from '../../../../redux/Features/selectors';
 import {
   DisplayCampaignFormData,
   EditDisplayCampaignRouteMatchParam,

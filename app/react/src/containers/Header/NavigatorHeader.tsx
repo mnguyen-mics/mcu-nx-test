@@ -4,7 +4,7 @@ import { withRouter, Link, RouteComponentProps } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import { Layout, Menu, Row, Col, Icon } from 'antd';
 import { Dropdown } from '../../components/PopupContainers';
-import * as SessionHelper from '../../state/Session/selectors';
+import * as SessionHelper from '../../redux/Session/selectors';
 import McsIcon from '../../components/McsIcon';
 import messages from './messages';
 import { compose } from 'recompose';

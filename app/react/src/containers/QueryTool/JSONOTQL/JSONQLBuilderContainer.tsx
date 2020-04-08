@@ -11,7 +11,7 @@ import {
 } from '../../../models/datamart/graphdb/QueryDocument';
 import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/RuntimeSchema';
 import { Loading } from '../../../components';
-import * as SessionHelper from '../../../state/Session/selectors';
+import * as SessionHelper from '../../../redux/Session/selectors';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';

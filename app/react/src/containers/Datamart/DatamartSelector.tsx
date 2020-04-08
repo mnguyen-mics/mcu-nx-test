@@ -7,16 +7,21 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { DatamartResource } from '../../models/datamart/DatamartResource';
 import { FormTitle } from '../../components/Form';
 import { MenuList } from '../../components/FormMenu';
-import ActionBar, { ActionBarProps } from '../../components/ActionBar';
 import { MicsReduxState } from '../../utils/ReduxHelper';
+import { UserProfileResource } from '../../models/directory/UserProfileResource';
+import FormLayoutActionbar, {
+  FormLayoutActionbarProps,
+} from '../../components/Layout/FormLayoutActionbar';
+import ActionBar from '../../components/ActionBar';
 
 export interface DatamartSelectorProps {
-  onSelectDatamart: (datamart: DatamartResource) => void;
-  actionbarProps: ActionBarProps;
+  onSelect: (datamart: DatamartResource) => void;
+  actionbarProps: FormLayoutActionbarProps;
+  isMainlayout?: boolean;
 }
 
 interface MapStateToProps {
-  connectedUser: any;
+  connectedUser: UserProfileResource;
 }
 
 type Props = DatamartSelectorProps &
@@ -26,10 +31,13 @@ type Props = DatamartSelectorProps &
 class DatamartSelector extends React.Component<Props> {
   render() {
     const {
-      onSelectDatamart,
+      onSelect,
       connectedUser,
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       actionbarProps,
+      isMainlayout,
     } = this.props;
 
     let datamarts: DatamartResource[] = [];
@@ -42,15 +50,23 @@ class DatamartSelector extends React.Component<Props> {
 
     return (
       <Layout>
-        <ActionBar {...actionbarProps} />
+        {isMainlayout ? (
+          <ActionBar {...actionbarProps} />
+        ) : (
+          <FormLayoutActionbar {...actionbarProps} />
+        )}
         <Layout.Content className="mcs-content-container mcs-form-container text-center">
           <FormTitle title={messages.title} subtitle={messages.subTitle} />
           <Row className="mcs-selector_container">
             <Row className="menu">
               {datamarts.map(d => {
-                const handleSelect = () => onSelectDatamart(d);
+                const handleSelect = () => onSelect(d);
                 return (
-                  <MenuList key={d.id} title={d.name || d.token} select={handleSelect} />
+                  <MenuList
+                    key={d.id}
+                    title={d.name || d.token}
+                    select={handleSelect}
+                  />
                 );
               })}
             </Row>
@@ -70,11 +86,11 @@ export default compose<Props, DatamartSelectorProps>(
 
 const messages = defineMessages({
   title: {
-    id: 'datamart-selector-title',
+    id: 'datamart.selector.title',
     defaultMessage: 'Datamarts',
   },
   subTitle: {
-    id: 'datamart-selector-subtitle',
+    id: 'datamart.selector.subtitle',
     defaultMessage: 'Choose your datamart',
   },
 });

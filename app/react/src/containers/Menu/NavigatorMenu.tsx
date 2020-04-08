@@ -6,7 +6,7 @@ import { FormattedMessage } from 'react-intl';
 
 import {
   getDefaultDatamart,
-} from '../../state/Session/selectors';
+} from '../../redux/Session/selectors';
 import McsIcon, { McsIconType } from '../../components/McsIcon';
 
 import { menuDefinitions } from '../../routes/menuDefinition';

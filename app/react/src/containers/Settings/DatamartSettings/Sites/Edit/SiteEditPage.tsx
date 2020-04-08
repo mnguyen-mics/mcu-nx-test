@@ -2,10 +2,10 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { Layout, message, Modal } from 'antd';
+import { message, Modal } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 
-import * as FeatureSelectors from '../../../../../state/Features/selectors';
+import * as FeatureSelectors from '../../../../../redux/Features/selectors';
 import {
   EditSiteRouteMatchParam,
   INITIAL_SITE_FORM_DATA,
@@ -24,12 +24,10 @@ import {
   EventRules,
 } from '../../../../../models/settings/settings';
 import { VisitAnalyzerFieldModel } from '../../Common/domain';
-import DatamartSelector from '../../../../../containers/Audience/Common/DatamartSelector';
+import DatamartSelector from '../../../../../containers/Datamart/DatamartSelector';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
-import { getWorkspace } from '../../../../../state/Session/selectors';
-import FormLayoutActionbar, {
-  FormLayoutActionbarProps,
-} from '../../../../../components/Layout/FormLayoutActionbar';
+import { getWorkspace } from '../../../../../redux/Session/selectors';
+import { FormLayoutActionbarProps } from '../../../../../components/Layout/FormLayoutActionbar';
 import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { IChannelService } from '../../../../../services/ChannelService';
@@ -560,10 +558,10 @@ class SiteEditPage extends React.Component<Props, State> {
         }
       />
     ) : (
-      <Layout className="edit-layout">
-        <FormLayoutActionbar {...actionBarProps} />
-        <DatamartSelector onSelect={this.onDatamartSelect} />
-      </Layout>
+      <DatamartSelector
+        onSelect={this.onDatamartSelect}
+        actionbarProps={actionBarProps}
+      />
     );
   }
 }

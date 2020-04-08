@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { Layout, message, Modal } from 'antd';
+import { message, Modal } from 'antd';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import queryString from 'query-string';
@@ -12,8 +12,7 @@ import {
   DatamartResource,
   UserAccountCompartmentResource,
 } from '../../../../../models/datamart/DatamartResource';
-import { FormLayoutActionbar } from '../../../../../components/Layout';
-import DatamartSelector from '../../../../Audience/Common/DatamartSelector';
+import DatamartSelector from '../../../../Datamart/DatamartSelector';
 import { FormLayoutActionbarProps } from '../../../../../components/Layout/FormLayoutActionbar';
 import messages from './messages';
 import CompartmentEditForm, { FORM_ID } from './CompartmentEditForm';
@@ -447,10 +446,10 @@ class CompartmentEditPage extends React.Component<Props, State> {
         }
       />
     ) : (
-      <Layout className="edit-layout">
-        <FormLayoutActionbar {...actionBarProps} />
-        <DatamartSelector onSelect={this.onSelectDatamart} />
-      </Layout>
+      <DatamartSelector
+        onSelect={this.onSelectDatamart}
+        actionbarProps={actionBarProps}
+      />
     );
   }
 }

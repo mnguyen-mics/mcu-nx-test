@@ -2,7 +2,7 @@ import { compose, mapProps } from 'recompose';
 import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import log from '../../utils/Logger';
-import * as SessionHelper from '../../state/Session/selectors';
+import * as SessionHelper from '../../redux/Session/selectors';
 import { UserWorkspaceResource } from '../../models/directory/UserProfileResource';
 import { MicsReduxState } from '../../utils/ReduxHelper';
 

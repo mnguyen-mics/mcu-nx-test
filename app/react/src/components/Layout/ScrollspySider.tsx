@@ -20,7 +20,7 @@ export interface SideBarItem {
 
 export interface SidebarWrapperProps {
   items: SideBarItem[];
-  scrollId: string;
+  scrollId?: string;
 }
 
 type Props = SidebarWrapperProps & RouteComponentProps<{}> & InjectedIntlProps;

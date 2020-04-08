@@ -30,7 +30,7 @@ import {
   DisplayCampaignResource,
 } from '../../../../models/campaign/display/DisplayCampaignResource';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
-import messages from '../messages';
+import { messages } from '../messages';
 import { IDisplayCampaignFormService } from '../Edit/DisplayCampaignFormService';
 import { CampaignStatus } from '../../../../models/campaign/constants/index';
 import { UpdateMessage } from '../Dashboard/ProgrammaticCampaign/DisplayCampaignAdGroupTable';

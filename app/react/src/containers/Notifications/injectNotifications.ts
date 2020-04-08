@@ -6,7 +6,7 @@ import {
   notifyInfo,
   removeNotification,
   resetNotifications,
-} from '../../state/Notifications/actions';
+} from '../../redux/Notifications/actions';
 import { Action } from 'redux-actions';
 
 // TODO type any ( goes with notif action creators)

@@ -1,7 +1,7 @@
 import XLSX from 'xlsx';
 import { defineMessages } from 'react-intl';
-import displayCampaignMessages from '../containers/Campaigns/Display/messages.ts';
-import emailCampaignMessages from '../containers/Campaigns/Email/messages.ts';
+import displayCampaignMessages from '../containers/Campaigns/Display/messages.tsx';
+import emailCampaignMessages from '../containers/Campaigns/Email/messages.tsx';
 import segmentMessages from '../containers/Audience/Segments/Dashboard/messages.ts';
 import feedMessages from '../containers/Audience/Feeds/messages.ts';
 import dateMessages from '../common/messages/dateMessages.ts';

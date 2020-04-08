@@ -3,7 +3,7 @@ import { DatamartsListPage } from '../containers/Settings/DatamartSettings/Datam
 import { MobileApplicationsListPage } from '../containers/Settings/DatamartSettings/MobileApplications/List';
 
 import { LabelsListPage } from '../containers/Settings/OrganisationSettings/Labels';
-import UserListPage from '../containers/Settings/OrganisationSettings/Users/List/UserPage';
+import UserListPage from '../containers/Settings/OrganisationSettings/Users/List/UsersListsList';
 import OrganisationAccount from '../containers/Settings/OrganisationSettings/OrganisationAccount/OrganisationAccount';
 
 import { ProfileSettingsPage } from '../containers/Settings/ProfileSettings/Profile';
@@ -12,7 +12,7 @@ import MobileApplicationEditPage from '../containers/Settings/DatamartSettings/M
 import SiteEditPage from '../containers/Settings/DatamartSettings/Sites/Edit/SiteEditPage';
 import DatamartEditPage from '../containers/Settings/DatamartSettings/Datamarts/Edit/DatamartEditPage';
 
-import { BidOptimizerContent } from '../containers/Settings/CampaignSettings/BidOptimizer/List';
+import { BidOptimizersList } from '../containers/Settings/CampaignSettings/BidOptimizer/List';
 import { CreateEditBidOptimizer } from '../containers/Settings/CampaignSettings/BidOptimizer/Edit';
 
 import { AttributionModelContent } from '../containers/Settings/CampaignSettings/AttributionModel/List';
@@ -40,7 +40,7 @@ import SubscribedOffersListPage from '../containers/Settings/ServicesSettings/Su
 import MyOffersPage from '../containers/Settings/ServicesSettings/MyOffers/MyOffersPage';
 import SubscribedOfferServiceItemListPage from '../containers/Settings/ServicesSettings/SubscribedOffers/List/SubscribedOfferServiceItemListPage';
 import MyOfferServiceItemListPage from '../containers/Settings/ServicesSettings/MyOffers/MyOfferServiceItemListPage';
-import CreateOfferPage from '../containers/Settings/ServicesSettings/MyOffers/CreateOfferPage';
+import CreateOfferPage from '../containers/Settings/ServicesSettings/MyOffers/EditOfferPage';
 import SourcesListPage from '../containers/Settings/DatamartSettings/Sources/List/SourcesListPage';
 import DatamartViewPage from '../containers/Settings/DatamartSettings/Datamarts/Dashboard/DatamartDashboardPage';
 import MlAlgorithmsPage from '../containers/Settings/DatamartSettings/MlAlgorithms/List/MlAlgorithmsPage';
@@ -48,7 +48,7 @@ import MlAlgorithmEditPage from '../containers/Settings/DatamartSettings/MlAlgor
 import MlAlgorithmModelsPage from '../containers/Settings/DatamartSettings/MlAlgorithms/MlAlgorithmModels/MlAlgorithmModelsPage';
 import { MlFunctionsContent } from '../containers/Settings/DatamartSettings/MlFunctions/List';
 import CreateEditMlFunction from '../containers/Settings/DatamartSettings/MlFunctions/Edit/EditMlFunctionPage';
-import ProcessingPage from '../containers/Settings/OrganisationSettings/Processings/List/ProcessingsPage';
+import ProcessingPage from '../containers/Settings/OrganisationSettings/Processings/List/ProcessingsList';
 import ProcessingEditPage from '../containers/Settings/OrganisationSettings/Processings/Edit/ProcessingEditPage';
 import CompartmentsListPage from '../containers/Settings/DatamartSettings/Compartments/CompartmentsListPage';
 import CompartmentEditPage from '../containers/Settings/DatamartSettings/Compartments/Edit/CompartmentEditPage';
@@ -397,7 +397,7 @@ export const settingsDefinition: NavigatorDefinition = {
   settingsCampaignBidOptimizerList: {
     path: '/settings/campaigns/bid_optimizer',
     layout: 'settings',
-    contentComponent: BidOptimizerContent,
+    contentComponent: BidOptimizersList,
     requiredFeature: 'campaignsSettings-bid_optimizers',
   },
 

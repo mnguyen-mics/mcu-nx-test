@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { FormattedMessage } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { getDefaultDatamart } from '../../../../state/Session/selectors';
+import { getDefaultDatamart } from '../../../../redux/Session/selectors';
 import { EditEmailBlastRouteMatchParam } from './domain';
 import { formatMetric } from '../../../../utils/MetricHelper';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';

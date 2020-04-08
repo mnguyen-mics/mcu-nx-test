@@ -14,7 +14,7 @@ import withValidators, {
 import withNormalizer, {
   NormalizerProps,
 } from '../../../../../../components/Form/withNormalizer';
-import formatDisplayCampaignProperty from '../../../../../../messages/campaign/display/displayCampaignMessages';
+import { formatDisplayCampaignProperty } from '../../../../../Campaigns/Display/messages';
 import messages from '../../../../../Campaigns/Display/Edit/messages';
 import { Spin } from 'antd';
 import { EmailRouterResource } from '../../../../../../models/campaign/email';

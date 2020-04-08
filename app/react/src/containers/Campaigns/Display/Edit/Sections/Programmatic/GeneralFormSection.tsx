@@ -23,7 +23,7 @@ import {
   EditDisplayCampaignRouteMatchParam,
   DisplayCampaignFormData,
 } from '../../domain';
-import formatDisplayCampaignProperty from '../../../../../../messages/campaign/display/displayCampaignMessages';
+import { formatDisplayCampaignProperty } from '../../../../Display/messages';
 
 interface MapStateToProps {
   initialFormValues: Partial<DisplayCampaignFormData>;
@@ -71,7 +71,9 @@ class GeneralFormSection extends React.Component<Props, State> {
             component={FormInput}
             validate={[isRequired]}
             formItemProps={{
-              label: formatMessage(formatDisplayCampaignProperty('name').message),
+              label: formatMessage(
+                formatDisplayCampaignProperty('name').message,
+              ),
               required: true,
             }}
             inputProps={{
@@ -91,7 +93,8 @@ class GeneralFormSection extends React.Component<Props, State> {
             validate={[isValidInteger]}
             formItemProps={{
               label: formatMessage(
-                formatDisplayCampaignProperty('total_impression_capping').message,
+                formatDisplayCampaignProperty('total_impression_capping')
+                  .message,
               ),
             }}
             inputProps={{
@@ -113,7 +116,8 @@ class GeneralFormSection extends React.Component<Props, State> {
             validate={[isValidInteger]}
             formItemProps={{
               label: formatMessage(
-                formatDisplayCampaignProperty('per_day_impression_capping').message,
+                formatDisplayCampaignProperty('per_day_impression_capping')
+                  .message,
               ),
             }}
             inputProps={{
@@ -168,15 +172,24 @@ class GeneralFormSection extends React.Component<Props, State> {
                   options={[
                     {
                       value: 'DAY',
-                      children: formatDisplayCampaignProperty('max_budget_period', 'DAY').formattedValue,
+                      children: formatDisplayCampaignProperty(
+                        'max_budget_period',
+                        'DAY',
+                      ).formattedValue,
                     },
                     {
                       value: 'WEEK',
-                      children: formatDisplayCampaignProperty('max_budget_period', 'WEEK').formattedValue,
+                      children: formatDisplayCampaignProperty(
+                        'max_budget_period',
+                        'WEEK',
+                      ).formattedValue,
                     },
                     {
                       value: 'MONTH',
-                      children: formatDisplayCampaignProperty('max_budget_period', 'MONTH').formattedValue,
+                      children: formatDisplayCampaignProperty(
+                        'max_budget_period',
+                        'MONTH',
+                      ).formattedValue,
                     },
                   ]}
                 />

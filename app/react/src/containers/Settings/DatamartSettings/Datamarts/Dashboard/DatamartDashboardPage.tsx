@@ -8,7 +8,7 @@ import { DatamartResource } from '../../../../../models/datamart/DatamartResourc
 import DatamartHeader from './DatamartHeader';
 import { IDatamartService } from '../../../../../services/DatamartService';
 import { Row, Col, Layout } from 'antd';
-import { notifyError } from '../../../../../state/Notifications/actions';
+import { notifyError } from '../../../../../redux/Notifications/actions';
 import McsTabs from '../../../../../components/McsTabs';
 import DatamartConfigTab from './DatamartConfigTab';
 import DatamartObjectViewTab from './DatamartObjectViewTab';

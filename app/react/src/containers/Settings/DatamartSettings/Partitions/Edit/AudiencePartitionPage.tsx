@@ -17,8 +17,7 @@ import {
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
-import { EditContentLayout } from '../../../../../components/Layout';
-import DatamartSelector from '../../../../Audience/Common/DatamartSelector';
+import DatamartSelector from './../../../../Datamart/DatamartSelector';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
 import { IAudiencePartitionsService } from '../../../../../services/AudiencePartitionsService';
 import { TYPES } from '../../../../../constants/types';
@@ -192,10 +191,6 @@ class AudiencePartitionPage extends React.Component<
     } = this.props;
     const { partitionFormData, isLoading, selectedDatamart } = this.state;
 
-    const actionbarProps = {
-      onClose: this.redirect,
-      formId: 'audienceSegmentForm',
-    };
     if (isLoading) {
       return <Loading className="loading-full-screen" />;
     } else {
@@ -216,6 +211,11 @@ class AudiencePartitionPage extends React.Component<
           name: placementListName,
         },
       ];
+      const actionbarProps = {
+        onClose: this.redirect,
+        formId: 'audienceSegmentForm',
+        paths: breadcrumbPaths,
+      };
       return partitionId ||
         workspace.datamarts.length === 1 ||
         selectedDatamart ? (
@@ -226,9 +226,10 @@ class AudiencePartitionPage extends React.Component<
           breadCrumbPaths={breadcrumbPaths}
         />
       ) : (
-        <EditContentLayout paths={breadcrumbPaths} {...actionbarProps}>
-          <DatamartSelector onSelect={this.onDatamartSelect} />
-        </EditContentLayout>
+        <DatamartSelector
+          onSelect={this.onDatamartSelect}
+          actionbarProps={actionbarProps}
+        />
       );
     }
   }

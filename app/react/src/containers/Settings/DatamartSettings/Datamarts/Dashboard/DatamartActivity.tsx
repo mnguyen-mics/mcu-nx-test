@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Row, Col } from 'antd';
-import { ImportFilterParams } from '../../../../Datastudio/Imports/List/ImportsContent';
-import ImportsContentContainer from '../../../../Datastudio/Imports/List/ImportsContentContainer';
+import { ImportFilterParams } from '../../../../Imports/List/ImportsContent';
+import ImportsContentContainer from '../../../../Imports/List/ImportsContentContainer';
 
 export interface DatamartConfigTabProps {
   datamartId: string;

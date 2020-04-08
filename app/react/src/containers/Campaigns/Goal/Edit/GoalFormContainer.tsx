@@ -8,11 +8,14 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { DatamartResource, QueryLanguage } from '../../../../models/datamart/DatamartResource';
+import {
+  DatamartResource,
+  QueryLanguage,
+} from '../../../../models/datamart/DatamartResource';
 import { Omit } from '../../../../utils/Types';
 import { Path } from '../../../../components/ActionBar';
 import { EditContentLayout } from '../../../../components/Layout';
-import DatamartSelector from '../../../../containers/Audience/Common/DatamartSelector';
+import DatamartSelector from '../../../../containers/Datamart/DatamartSelector';
 import {
   injectWorkspace,
   InjectedWorkspaceProps,
@@ -52,7 +55,9 @@ class GoalFormContainer extends React.Component<Props, State> {
     super(props);
     this.state = {
       selectedDatamart: undefined,
-      initialValues: this.props.match.params.goalId ? this.props.initialValues : INITIAL_GOAL_FORM_DATA,
+      initialValues: this.props.match.params.goalId
+        ? this.props.initialValues
+        : INITIAL_GOAL_FORM_DATA,
       loading: false,
       showTriggerTypeSelector: true,
     };
@@ -63,13 +68,14 @@ class GoalFormContainer extends React.Component<Props, State> {
 
     if (initialValues.goal && isGoalResource(initialValues.goal)) {
       this.setState({ loading: true });
-      this._datamartService.getDatamart(initialValues.goal.datamart_id)
-        .then(resp => {          
-          this.setState({ 
-            loading: false, 
+      this._datamartService
+        .getDatamart(initialValues.goal.datamart_id)
+        .then(resp => {
+          this.setState({
+            loading: false,
             showTriggerTypeSelector: false,
             selectedDatamart: resp.data,
-           });
+          });
         })
         .catch(err => {
           this.props.notifyError(err);
@@ -95,36 +101,38 @@ class GoalFormContainer extends React.Component<Props, State> {
     });
   };
 
-  handleTriggerTypeSelect = (triggerType: GoalTriggerType, queryLanguage?: QueryLanguage) => {
-    this.setState((prevState) => ({
+  handleTriggerTypeSelect = (
+    triggerType: GoalTriggerType,
+    queryLanguage?: QueryLanguage,
+  ) => {
+    this.setState(prevState => ({
       ...prevState,
       showTriggerTypeSelector: false,
       initialValues: {
         ...prevState.initialValues,
         triggerType: triggerType,
         queryLanguage,
-      }
+      },
     }));
-  }
+  };
 
   render() {
-    const {
-      save,
-      close,
-      onSubmitFail,
-      breadCrumbPaths,
-      onSubmit,
-    } = this.props;
+    const { save, close, onSubmitFail, breadCrumbPaths, onSubmit } = this.props;
 
-    const { selectedDatamart, initialValues, loading, showTriggerTypeSelector } = this.state;
+    const {
+      selectedDatamart,
+      initialValues,
+      loading,
+      showTriggerTypeSelector,
+    } = this.state;
 
     if (loading) return <Loading className="loading-full-screen" />;
 
     const resetTriggerType = () => {
       this.setState({ showTriggerTypeSelector: true });
-    }
+    };
 
-    return (!showTriggerTypeSelector && selectedDatamart) ? (
+    return !showTriggerTypeSelector && selectedDatamart ? (
       <GoalForm
         initialValues={initialValues}
         onSubmit={save ? save : onSubmit}
@@ -134,18 +142,26 @@ class GoalFormContainer extends React.Component<Props, State> {
         datamart={selectedDatamart}
         goToTriggerTypeSelection={resetTriggerType}
       />
-    ) : (
+    ) : showTriggerTypeSelector && selectedDatamart ? (
       <EditContentLayout
         paths={breadCrumbPaths}
         formId={FORM_ID}
         onClose={close}
       >
-        { showTriggerTypeSelector && selectedDatamart ? 
-          <GoalTriggerTypeSelector onSelect={this.handleTriggerTypeSelect} datamart={selectedDatamart} />
-          : <DatamartSelector onSelect={this.onDatamartSelect} />
-        }
-        
+        (
+        <GoalTriggerTypeSelector
+          onSelect={this.handleTriggerTypeSelect}
+          datamart={selectedDatamart}
+        />
       </EditContentLayout>
+    ) : (
+      <DatamartSelector
+        onSelect={this.onDatamartSelect}
+        actionbarProps={{
+          onClose: close,
+          paths: breadCrumbPaths,
+        }}
+      />
     );
   }
 }

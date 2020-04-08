@@ -12,7 +12,7 @@ import { DataListResponse, DataResponse } from '../../services/ApiService';
 import { SearchFilter, SelectableItem } from './';
 import SelectorLayout from './SelectorLayout';
 import { MultiSelectProps } from '../MultiSelect';
-import { getWorkspace } from '../../state/Session/selectors';
+import { getWorkspace } from '../../redux/Session/selectors';
 import { UserWorkspaceResource } from '../../models/directory/UserProfileResource';
 import { RouteComponentProps, withRouter } from 'react-router';
 import {

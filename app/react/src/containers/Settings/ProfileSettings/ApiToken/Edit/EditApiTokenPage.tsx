@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { Loading } from '../../../../../components/index';
 import { UserProfileResource } from '../../../../../models/directory/UserProfileResource';
 import ApiTokenResource from '../../../../../models/directory/ApiTokenResource';
-import { notifyError } from '../../../../../state/Notifications/actions';
+import { notifyError } from '../../../../../redux/Notifications/actions';
 import EditApiTokenForm from './EditApiTokenForm';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';

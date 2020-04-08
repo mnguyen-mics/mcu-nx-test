@@ -41,7 +41,7 @@ import {
   getPaginatedApiParam,
   CancelablePromise,
 } from '../../../../utils/ApiHelper';
-import { getWorkspace } from '../../../../state/Session/selectors';
+import { getWorkspace } from '../../../../redux/Session/selectors';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 import { MultiSelectProps } from '../../../../components/MultiSelect';
 import {
@@ -52,7 +52,7 @@ import { IAudienceSegmentService } from '../../../../services/AudienceSegmentSer
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
 import SegmentNameDisplay from '../../Common/SegmentNameDisplay';
-import { notifyError } from '../../../../state/Notifications/actions';
+import { notifyError } from '../../../../redux/Notifications/actions';
 import { ButtonStyleless, McsIcon } from '../../../../components';
 import { Label } from '../../../Labels/Labels';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';

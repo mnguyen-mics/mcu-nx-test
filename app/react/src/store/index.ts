@@ -3,7 +3,7 @@ import thunkMiddleware from 'redux-thunk';
 import createSagaMiddleware from 'redux-saga';
 import { apiRequest, logoutListener } from '../middleware';
 import rootReducer from '../reducers';
-import sagas from '../state/sagas';
+import sagas from '../redux/sagas';
 import container from '../config/inversify.config';
 import { TYPES } from '../constants/types';
 import { INavigatorService } from '../services/NavigatorService';

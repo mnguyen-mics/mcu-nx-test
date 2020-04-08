@@ -19,7 +19,7 @@ import {
 } from '../../../../../components/TableView';
 import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
-import { getWorkspace } from '../../../../../state/Session/selectors';
+import { getWorkspace } from '../../../../../redux/Session/selectors';
 import { connect } from 'react-redux';
 import { SearchProps } from 'antd/lib/input';
 

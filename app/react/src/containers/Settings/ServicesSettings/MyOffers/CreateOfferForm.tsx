@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
-import { OfferType } from './CreateOfferPage';
+import { OfferType } from './EditOfferPage';
 import { Layout } from 'antd';
 import { FormLayoutActionbar, ScrollspySider } from '../../../../components/Layout';
 import { Form, InjectedFormProps, reduxForm, ConfigProps, FieldArray, GenericFieldArray, Field } from 'redux-form';

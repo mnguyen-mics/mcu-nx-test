@@ -1,5 +1,5 @@
-;import BidOptimizerContent from './BidOptimizerContent';
+;import BidOptimizersList from './BidOptimizersList';
 
 export {
-  BidOptimizerContent,
+  BidOptimizersList,
 };

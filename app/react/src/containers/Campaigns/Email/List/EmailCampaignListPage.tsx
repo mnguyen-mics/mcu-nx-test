@@ -19,7 +19,7 @@ import { normalizeReportView } from '../../../../utils/MetricHelper';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import { EMAIL_SEARCH_SETTINGS } from './constants';
 import ReportService from '../../../../services/ReportService';
-import * as notifyActions from '../../../../state/Notifications/actions';
+import * as notifyActions from '../../../../redux/Notifications/actions';
 import { RouteComponentProps, withRouter } from 'react-router';
 import injectNotifications, {
   InjectedNotificationProps,

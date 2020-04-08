@@ -1,28 +1,26 @@
 import * as React from 'react';
-import {connect, DispatchProp} from 'react-redux';
-import {FormAction, isSubmitting, submit} from 'redux-form';
-import {FormattedMessage} from 'react-intl';
-import {Button} from 'antd';
-import {ButtonProps} from 'antd/lib/button/button';
-import {compose} from 'recompose';
+import { connect, DispatchProp } from 'react-redux';
+import { FormAction, isSubmitting, submit } from 'redux-form';
+import { FormattedMessage } from 'react-intl';
+import { Button } from 'antd';
+import { ButtonProps } from 'antd/lib/button/button';
+import { compose } from 'recompose';
 
 import McsIcon from '../McsIcon';
 import ActionBar, { ActionBarProps } from '../ActionBar';
 import { Omit } from '../../utils/Types';
 
-export interface FormLayoutActionbarProps extends Omit<ActionBarProps, 'edition'> {
-
-  formId: string;
-
+export interface FormLayoutActionbarProps
+  extends Omit<ActionBarProps, 'edition'> {
+  formId?: string;
   message?: FormattedMessage.MessageDescriptor;
-
-  onClose: React.MouseEventHandler<HTMLSpanElement>;
+  onClose?: React.MouseEventHandler<HTMLSpanElement>;
   disabled?: boolean;
 }
 
 interface FormLayoutActionbarProvidedProps
   extends FormLayoutActionbarProps,
-  DispatchProp<FormAction> {
+    DispatchProp<FormAction> {
   submitting: boolean;
 }
 
@@ -31,46 +29,42 @@ interface FormLayoutActionbarProvidedProps
  * See example at http://redux-form.com/6.8.0/examples/remoteSubmit/
  */
 const FormLayoutActionbar: React.SFC<FormLayoutActionbarProvidedProps> = props => {
-
-  const {
-    dispatch,
-    formId,
-    message,
-    onClose,
-    submitting,
-    disabled
-  } = props;
+  const { dispatch, formId, message, onClose, submitting, disabled } = props;
 
   const submitButtonProps: ButtonProps = {
     disabled: submitting,
     htmlType: 'submit',
-    onClick: () => dispatch && dispatch(submit(formId)),
+    onClick: () => dispatch && formId && dispatch(submit(formId)),
     type: 'primary',
   };
 
   return (
     <ActionBar edition={true} {...props}>
-      { message && !disabled ? <Button {...submitButtonProps} className="mcs-primary">
-        <McsIcon type="plus"/>
-        <FormattedMessage {...message} />
-      </Button> : null }
+      {message && !disabled ? (
+        <Button {...submitButtonProps} className="mcs-primary">
+          <McsIcon type="plus" />
+          <FormattedMessage {...message} />
+        </Button>
+      ) : null}
 
       <McsIcon
         type="close"
         className="close-icon"
-        style={{cursor: 'pointer'}}
+        style={{ cursor: 'pointer' }}
         onClick={onClose}
       />
     </ActionBar>
   );
 };
 
-export default compose<FormLayoutActionbarProvidedProps, FormLayoutActionbarProps>(
+export default compose<
+  FormLayoutActionbarProvidedProps,
+  FormLayoutActionbarProps
+>(
   connect((state, ownProps: FormLayoutActionbarProps) => ({
-      /* For additional redux-form selectors, such as "pristine" or "form errors",
-       * check http://redux-form.com/6.8.0/docs/api/Selectors.md/
-       */
-      submitting: isSubmitting(ownProps.formId)(state),
-    }),
-  ),
+    /* For additional redux-form selectors, such as "pristine" or "form errors",
+     * check http://redux-form.com/6.8.0/docs/api/Selectors.md/
+     */
+    submitting: isSubmitting(ownProps.formId!)(state),
+  })),
 )(FormLayoutActionbar);

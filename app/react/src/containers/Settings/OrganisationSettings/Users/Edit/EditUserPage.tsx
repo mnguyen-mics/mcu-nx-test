@@ -7,7 +7,7 @@ import { Loading } from '../../../../../components/index';
 import EditUserForm from './EditUserForm';
 import { INITIAL_USER_FORM_DATA } from './domain';
 import UserResource from '../../../../../models/directory/UserResource';
-import { notifyError } from '../../../../../state/Notifications/actions';
+import { notifyError } from '../../../../../redux/Notifications/actions';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IUsersService } from '../../../../../services/UsersService';

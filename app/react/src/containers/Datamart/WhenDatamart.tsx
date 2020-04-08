@@ -3,7 +3,7 @@ import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router-dom'
 
-import * as SessionHelper from '../../state/Session/selectors';
+import * as SessionHelper from '../../redux/Session/selectors';
 import { MicsReduxState } from '../../utils/ReduxHelper';
 
 export interface WhenDatamartProps {

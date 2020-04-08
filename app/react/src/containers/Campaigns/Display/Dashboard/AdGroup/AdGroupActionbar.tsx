@@ -16,7 +16,7 @@ import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDraw
 import ResourceTimelinePage, {
   ResourceTimelinePageProps,
 } from '../../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
-import formatAdGroupProperty from '../../../../../messages/campaign/display/adgroupMessages';
+import { formatAdGroupProperty } from '../../../Display/messages';
 import resourceHistoryMessages from '../../../../ResourceHistory/ResourceTimeline/messages';
 import { creativeIsDisplayAdResource } from '../../../../Creative/DisplayAds/Edit/domain';
 import { TYPES } from '../../../../../constants/types';

@@ -26,7 +26,7 @@ import log from '../../../../utils/Logger';
 import injectDrawer, {
   InjectedDrawerProps,
 } from '../../../../components/Drawer/injectDrawer';
-import formatCampaignProperty from '../../../../messages/campaign/email/emailCampaignMessages';
+import { formatCampaignProperty } from '../../Email/messages';
 import ResourceTimelinePage, {
   ResourceTimelinePageProps,
 } from '../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
@@ -60,7 +60,7 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
 
   @lazyInject(TYPES.IResourceHistoryService)
   private _resourceHistoryService: IResourceHistoryService;
-  
+
   @lazyInject(TYPES.IEmailCampaignService)
   private _emailCampaignService: IEmailCampaignService;
 
@@ -132,7 +132,10 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
     const pauseCampaignElement = (
       <Button className="mcs-primary" type="primary" onClick={pauseCampaign}>
         <McsIcon type="pause" />
-        <FormattedMessage id="email.campaign.dashboard.actionbar.pauseCampaign" defaultMessage="Pause Campaign" />
+        <FormattedMessage
+          id="email.campaign.dashboard.actionbar.pauseCampaign"
+          defaultMessage="Pause Campaign"
+        />
       </Button>
     );
 
@@ -193,11 +196,11 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
                       );
                     },
                     getName: (id: string) => {
-                      return this._emailCampaignService.getBlast(campaignId, id).then(
-                        response => {
-                          return response.data.blast_name || id;
-                        },
-                      );
+                      return this._emailCampaignService
+                        .getBlast(campaignId, id)
+                        .then(response => {
+                          return response.data.blast_name || id;
+                        });
                     },
                     goToResource: (id: string) => {
                       history.push(
@@ -215,30 +218,34 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
                       );
                     },
                     getName: (id: string) => {
-                      return this._resourceHistoryService.getLinkedResourceIdInSelection(
-                        organisationId,
-                        'EMAIL_ROUTER_SELECTION',
-                        id,
-                        'EMAIL_ROUTER',
-                      ).then(emailRouterId => {
-                        return this._emailRoutersService
-                          .getEmailRouter(emailRouterId)
-                          .then(response => {
-                            return response.data.name;
-                          });
-                      });
+                      return this._resourceHistoryService
+                        .getLinkedResourceIdInSelection(
+                          organisationId,
+                          'EMAIL_ROUTER_SELECTION',
+                          id,
+                          'EMAIL_ROUTER',
+                        )
+                        .then(emailRouterId => {
+                          return this._emailRoutersService
+                            .getEmailRouter(emailRouterId)
+                            .then(response => {
+                              return response.data.name;
+                            });
+                        });
                     },
                     goToResource: (id: string) => {
-                      return this._resourceHistoryService.getLinkedResourceIdInSelection(
-                        organisationId,
-                        'EMAIL_ROUTER_SELECTION',
-                        id,
-                        'EMAIL_ROUTER',
-                      ).then(emailRouterId => {
-                        history.push(
-                          `/v2/o/${organisationId}/settings/campaigns/email_routers/${emailRouterId}/edit`,
-                        );
-                      });
+                      return this._resourceHistoryService
+                        .getLinkedResourceIdInSelection(
+                          organisationId,
+                          'EMAIL_ROUTER_SELECTION',
+                          id,
+                          'EMAIL_ROUTER',
+                        )
+                        .then(emailRouterId => {
+                          history.push(
+                            `/v2/o/${organisationId}/settings/campaigns/email_routers/${emailRouterId}/edit`,
+                          );
+                        });
                     },
                   },
                 },
@@ -260,7 +267,10 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
           <FormattedMessage {...messages.history} />
         </Menu.Item>
         <Menu.Item key="ARCHIVED">
-          <FormattedMessage id="email.campaign.dashboard.actionbar.archive" defaultMessage="Archive" />
+          <FormattedMessage
+            id="email.campaign.dashboard.actionbar.archive"
+            defaultMessage="Archive"
+          />
         </Menu.Item>
       </Menu>
     );
@@ -312,12 +322,18 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
           }
         >
           <McsIcon type="download" />
-          <FormattedMessage id="email.campaign.dashboard.actionbar.export" defaultMessage="Export" />
+          <FormattedMessage
+            id="email.campaign.dashboard.actionbar.export"
+            defaultMessage="Export"
+          />
         </Button>
         <Link to={`/v2/o/${organisationId}/campaigns/email/${campaignId}/edit`}>
           <Button>
             <Icon type="edit" />
-            <FormattedMessage id="email.campaign.dashboard.actionbar.edit" defaultMessage="Edit" />
+            <FormattedMessage
+              id="email.campaign.dashboard.actionbar.edit"
+              defaultMessage="Edit"
+            />
           </Button>
         </Link>
         <Dropdown overlay={menu} trigger={['click']}>

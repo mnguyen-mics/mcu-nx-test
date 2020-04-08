@@ -14,7 +14,7 @@ import {
   LayoutablePlugin,
 } from '../../../models/Plugins';
 import { IPluginInstanceService } from '../../../services/PluginInstanceService';
-import * as actions from '../../../state/Notifications/actions';
+import * as actions from '../../../redux/Notifications/actions';
 import { EditContentLayout } from '../../../components/Layout';
 import Loading from '../../../components/Loading';
 import messages from './messages';

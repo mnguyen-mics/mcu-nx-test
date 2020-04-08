@@ -31,10 +31,10 @@ import {
   AudienceSegmentType,
 } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import { Loading } from '../../../../components';
-import DatamartSelector from './../../Common/DatamartSelector';
+import DatamartSelector from './../../../Datamart/DatamartSelector';
 import { EditContentLayout } from '../../../../components/Layout';
 import SegmentTypeSelector from '../../Common/SegmentTypeSelector';
-import { getWorkspace } from '../../../../state/Session/selectors';
+import { getWorkspace } from '../../../../redux/Session/selectors';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 import { IDatamartService } from '../../../../services/DatamartService';
 import { lazyInject } from '../../../../config/inversify.config';
@@ -630,15 +630,17 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
           initialProcessingSelectionsForWarning
         }
       />
+    ) : displayDatamartSelector ? (
+      <DatamartSelector
+        onSelect={this.onDatamartSelect}
+        actionbarProps={{ paths: breadcrumbPaths, onClose: this.onClose }}
+      />
     ) : (
       <EditContentLayout paths={breadcrumbPaths} {...actionbarProps}>
-        {displayDatamartSelector ? (
-          <DatamartSelector onSelect={this.onDatamartSelect} />
-        ) : (
-          <SegmentTypeSelector
-            onSelect={this.onSegmentTypeSelect}
-            segmentTypesToDisplay={this.getSegmentTypesToDisplay()}
-          />
+        <SegmentTypeSelector
+          onSelect={this.onSegmentTypeSelect}
+          segmentTypesToDisplay={this.getSegmentTypesToDisplay()}
+        />
         )}
       </EditContentLayout>
     );

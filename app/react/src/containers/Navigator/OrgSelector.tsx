@@ -9,7 +9,7 @@ import _ from 'lodash';
 import pathToRegexp from 'path-to-regexp';
 import pAll from 'p-all';
 
-import * as SessionHelper from '../../state/Session/selectors';
+import * as SessionHelper from '../../redux/Session/selectors';
 import OrgLogo from '../Logo/OrgLogo';
 import { ButtonStyleless } from '../../components/index';
 import Search from 'antd/lib/input/Search';

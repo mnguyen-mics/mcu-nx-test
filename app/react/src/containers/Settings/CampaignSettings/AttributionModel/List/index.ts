@@ -1,4 +1,4 @@
-import AttributionModelContent from './AttributionModelContent';
+import AttributionModelContent from './AttributionModelsList';
 
 export {
   AttributionModelContent,

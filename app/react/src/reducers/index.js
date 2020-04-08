@@ -1,13 +1,13 @@
 import { combineReducers } from 'redux';
 import FormReducer from './FormReducer';
-import AppReducer from '../state/App/reducer.ts';
-import ThemeReducer from '../state/Theme/reducer.ts';
-import FeaturesReducer from '../state/Features/reducer.ts';
-import NotificationsReducers from '../state/Notifications/reducer.ts';
-import LoginReducers from '../state/Login/reducer.ts';
-import SessionReducers from '../state/Session/reducer.ts';
-import LabelsReducers from '../state/Labels/reducer.ts';
-import MenuReducers from '../state/Menu/reducer.ts';
+import AppReducer from '../redux/App/reducer.ts';
+import ThemeReducer from '../redux/Theme/reducer.ts';
+import FeaturesReducer from '../redux/Features/reducer.ts';
+import NotificationsReducers from '../redux/Notifications/reducer.ts';
+import LoginReducers from '../redux/Login/reducer.ts';
+import SessionReducers from '../redux/Session/reducer.ts';
+import LabelsReducers from '../redux/Labels/reducer.ts';
+import MenuReducers from '../redux/Menu/reducer.ts';
 import { drawerReducer } from '../components/Drawer/DrawerStore.ts';
 
 const allReducers = Object.assign(
