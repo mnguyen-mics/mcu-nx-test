@@ -21,7 +21,7 @@ export class NavigatorService implements INavigatorService {
   };
 
   isAdBlockOn: () => Promise<void> = () => {
-    const endpoint = 'conf/adblock/display-ads/beacon.html';
+    const endpoint = 'ads.html';
     const options = {
       localUrl: true,
     };
