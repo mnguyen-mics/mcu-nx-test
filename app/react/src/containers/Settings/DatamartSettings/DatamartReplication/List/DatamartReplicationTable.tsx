@@ -139,7 +139,7 @@ class DatamartReplicationTable extends React.Component<Props> {
             >
               <Switch
                 className="mcs-table-switch"
-                checked={lastExecutionIsRunning ? true : text === 'ACTIVE'}
+                checked={text === 'ACTIVE'}
                 disabled={text === 'ERROR' || lastExecutionIsRunning}
                 onChange={onChange}
                 checkedChildren={
