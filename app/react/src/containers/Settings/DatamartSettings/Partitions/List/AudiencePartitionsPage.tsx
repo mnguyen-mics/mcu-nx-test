@@ -34,7 +34,7 @@ import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
-import { getWorkspace } from '../../../../../state/Session/selectors';
+import { getWorkspace } from '../../../../../redux/Session/selectors';
 import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
 import { DataListResponse } from '../../../../../services/ApiService';
 
