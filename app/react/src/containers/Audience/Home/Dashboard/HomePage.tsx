@@ -57,7 +57,7 @@ interface HomeState {
   datamartAnalyticsDashboardConfig: HomeDashboardConfig[];
 }
 
-interface HomeDashboardConfig {
+export interface HomeDashboardConfig {
   title?: string;
   subTitle?: string;
   datamartId: string;

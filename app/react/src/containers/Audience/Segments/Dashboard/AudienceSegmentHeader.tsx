@@ -15,6 +15,7 @@ import {
 } from 'react-intl';
 import { compose } from 'recompose';
 import SegmentNameDisplay from '../../Common/SegmentNameDisplay';
+import { isUserQuerySegment } from '../Edit/domain';
 
 export interface AudienceSegmentHeaderProps {
   segment?: AudienceSegmentShape;
@@ -54,6 +55,14 @@ export const localMessages: {
     id: 'audience.segments.dashboard.header.type.USER_CLIENT',
     defaultMessage: 'Edge',
   },
+  AB_TESTING_CONTROL_GROUP: {
+    id: 'audience.segments.dashboard.header.subtype.AB_TESTING_CONTROL_GROUP',
+    defaultMessage: '(AB Testing Control Group)',
+  },
+  AB_TESTING_EXPERIMENT: {
+    id: 'audience.segments.dashboard.header.subtype.AB_TESTING_EXPERIMENT',
+    defaultMessage: '(AB Testing Experiment)',
+  },
 });
 
 class AudienceSegmentHeader extends React.Component<Props> {
@@ -87,11 +96,17 @@ class AudienceSegmentHeader extends React.Component<Props> {
       }
       return;
     };
-
     const segmentType = segment ? (
-      <span>
+      <React.Fragment>
         <Icon type={iconType} /> {renderName()}
-      </span>
+        {isUserQuerySegment(segment) &&
+          segment.subtype &&
+          segment.subtype !== 'STANDARD' && (
+            <div style={{ paddingLeft: '5px' }}>
+              <FormattedMessage {...localMessages[segment.subtype]} />
+            </div>
+          )}
+      </React.Fragment>
     ) : (
       <span />
     );

@@ -213,7 +213,7 @@ class FeedCardList extends React.Component<Props, FeedCardListState> {
 
     return (
       <div ref={this.getRef}>
-        {hasFeature('audience-dashboards') && feeds.length > 1 && (
+        {hasFeature('audience-dashboards') && feeds.length >= 1 && (
           <ContentHeader title={`Feed Card List`} size={`medium`} />
         )}
         <Row gutter={24}>

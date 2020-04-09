@@ -278,18 +278,17 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       });
     } else if (
       // Changing the sort field : new API call with current
-        !compareSearches(prevSearch, search) ||
-        prevOrganisationId !== organisationId ||
-        prevFilter.pageSize !== filter.pageSize ||
-        prevFilter.currentPage !== filter.currentPage ||
-        prevFilter.keywords !== filter.keywords ||
-        !_.isEqual(prevFilter.type, filter.type) ||
-        (prevFilter.orderBy !== filter.orderBy &&
-          filter.pageSize < this.state.list.total)
-      ) {
-        this.fetchAudienceSegments(organisationId, datamartId, filter);
-      }
-    
+      !compareSearches(prevSearch, search) ||
+      prevOrganisationId !== organisationId ||
+      prevFilter.pageSize !== filter.pageSize ||
+      prevFilter.currentPage !== filter.currentPage ||
+      prevFilter.keywords !== filter.keywords ||
+      !_.isEqual(prevFilter.type, filter.type) ||
+      (prevFilter.orderBy !== filter.orderBy &&
+        filter.pageSize < this.state.list.total)
+    ) {
+      this.fetchAudienceSegments(organisationId, datamartId, filter);
+    }
   }
 
   componentWillUnmount() {
@@ -379,6 +378,9 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         type: filter.type,
       };
     }
+
+    formattedFilters.subtype = ['STANDARD', 'AB_TESTING_EXPERIMENT'];
+
     return formattedFilters;
   };
 

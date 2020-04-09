@@ -20,6 +20,11 @@ import { UserWorkspaceResource } from '../../../../models/directory/UserProfileR
 import * as SessionHelper from '../../../../redux/Session/selectors';
 import { connect } from 'react-redux';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
+import { isUserQuerySegment } from '../Edit/domain';
+import { UserQuerySegment } from '../../../../models/audiencesegment/AudienceSegmentResource';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../Notifications/injectNotifications';
 
 const { Content } = Layout;
 
@@ -38,12 +43,15 @@ type Props = RouteComponentProps<{
   segmentId: string;
 }> &
   InjectedIntlProps &
+  InjectedNotificationProps &
   MapStateToProps;
 
 interface State {
   segment?: AudienceSegmentShape;
   isLoading: boolean;
   datamarts: DatamartWithMetricResource[];
+  controlGroupSegment?: UserQuerySegment;
+  isLoadingControlGroupSegment: boolean;
 }
 
 class AudienceSegmentPage extends React.Component<Props, State> {
@@ -54,9 +62,9 @@ class AudienceSegmentPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      segment: undefined,
       isLoading: true,
       datamarts: [],
+      isLoadingControlGroupSegment: false,
     };
   }
 
@@ -126,9 +134,29 @@ class AudienceSegmentPage extends React.Component<Props, State> {
   };
 
   fetchAudienceSegment = (segmentId: string) => {
-    return this._audienceSegmentService
-      .getSegment(segmentId)
-      .then(res => this.setState({ isLoading: false, segment: res.data }));
+    return this._audienceSegmentService.getSegment(segmentId).then(res => {
+      const segment = res.data;
+      this.setState({ isLoading: false, segment: segment });
+      if (segment && isUserQuerySegment(segment) && segment.control_group_id) {
+        this.setState({
+          isLoadingControlGroupSegment: true,
+        });
+        this._audienceSegmentService
+          .getSegment(segmentId)
+          .then(resp => {
+            this.setState({
+              controlGroupSegment: resp.data as UserQuerySegment,
+              isLoadingControlGroupSegment: false,
+            });
+          })
+          .catch(error => {
+            this.props.notifyError(error);
+            this.setState({
+              isLoadingControlGroupSegment: false,
+            });
+          });
+      }
+    });
   };
 
   componentWillReceiveProps(nextProps: Props) {
@@ -172,8 +200,13 @@ class AudienceSegmentPage extends React.Component<Props, State> {
   }
 
   render() {
-    const { isLoading, segment } = this.state;
-    const { datamarts } = this.state;
+    const {
+      isLoading,
+      segment,
+      datamarts,
+      controlGroupSegment,
+      isLoadingControlGroupSegment,
+    } = this.state;
     return (
       <div className="ant-layout">
         <AudienceSegmentActionbar
@@ -188,6 +221,8 @@ class AudienceSegmentPage extends React.Component<Props, State> {
               isLoading={isLoading}
               segment={segment}
               datamarts={datamarts}
+              controlGroupSegment={controlGroupSegment}
+              isLoadingControlGroupSegment={isLoadingControlGroupSegment}
             />
           </Content>
         </div>
@@ -199,5 +234,6 @@ class AudienceSegmentPage extends React.Component<Props, State> {
 export default compose<Props, {}>(
   withRouter,
   injectIntl,
+  injectNotifications,
   connect(mapStateToProps, undefined),
 )(AudienceSegmentPage);
