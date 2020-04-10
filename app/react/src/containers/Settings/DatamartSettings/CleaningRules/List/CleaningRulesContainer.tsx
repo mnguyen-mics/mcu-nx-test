@@ -9,12 +9,8 @@ import {
   ExtendedCleaningRuleResourceWithFilter,
   UserEventCleaningRuleResourceWithFilter,
 } from '../../../../../models/cleaningRules/CleaningRules';
-import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
-import { IDatamartService } from '../../../../../services/DatamartService';
 import { Layout, Row, Icon } from 'antd';
 import 'moment-duration-format';
-import { TYPES } from '../../../../../constants/types';
-import { lazyInject } from '../../../../../config/inversify.config';
 import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -26,6 +22,11 @@ import { MultiSelectProps } from '../../../../../components/MultiSelect';
 import { getWorkspace } from '../../../../../redux/Session/selectors';
 
 const { Content } = Layout;
+
+interface DatamartItems {
+  key: string;
+  value: string;
+}
 
 interface MapStateToProps {
   workspace: (organisationId: string) => UserWorkspaceResource;
@@ -45,100 +46,65 @@ type Props = CleaningRulesContainerProps &
   MapStateToProps &
   InjectedNotificationProps;
 
-class CleaningRulesContainer extends React.Component<
-  Props> {
-  @lazyInject(TYPES.IDatamartService)
-  private _datamartService: IDatamartService;
+interface State {
+  datamartItems: DatamartItems[];
+}
 
+class CleaningRulesContainer extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
 
-  // componentDidMount() {
-  //   const { filter } = this.props;
-
-  //   this.fetchCleaningRules(filter);
-  // }
-
-  // componentDidUpdate(previousProps: Props, previousState: CleaningRulesContainerState) {
-  //   const { filter } = this.props;
-
-  //   const { filter: previousFilter } = previousProps;
-
-  //   const { isFetchingCleaningRules } = this.state;
-
-  //   if (filter !== previousFilter && !isFetchingCleaningRules) {
-  //     this.fetchCleaningRules(filter);
-  //   }
-  // }
-
-  fetchCleaningRules = (filter: CleaningRulesFilter) => {
-    const { notifyError } = this.props;
-    this.setState(
-      {
-        isFetchingCleaningRules: true,
-      },
-      () => {
-        const options = {
-          ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
-          type: filter.type,
-        };
-        this._datamartService
-          .getCleaningRules(filter.datamartId, options)
-          .then(results => {
-            const cleaningRulesP: Array<Promise<
-              ExtendedCleaningRuleResourceWithFilter
-            >> = results.data.map(cleaningRule => {
-              return filter.type === 'USER_EVENT_CLEANING_RULE'
-                ? this._datamartService
-                    .getContentFilter(filter.datamartId, cleaningRule.id)
-                    .then(resFilter => {
-                      const contentFilter = resFilter.data;
-
-                      const cleaningRuleWithFilter: ExtendedCleaningRuleResourceWithFilter = {
-                        ...cleaningRule,
-                        ...contentFilter,
-                      };
-
-                      return cleaningRuleWithFilter;
-                    })
-                    .catch(err => {
-                      return Promise.resolve(cleaningRule);
-                    })
-                : Promise.resolve(cleaningRule);
-            });
-
-            Promise.all(cleaningRulesP).then(cleaningRules => {
-              this.setState({
-                isFetchingCleaningRules: false,
-                cleaningRules: cleaningRules,
-                total: results.total || results.count,
-              });
-            });
-          })
-          .catch(err => {
-            notifyError(err);
-            this.setState({ isFetchingCleaningRules: false });
-          });
-      },
-    );
-  };
-
-  render() {
     const {
       match: {
         params: { organisationId },
       },
+    } = this.props;
+
+    this.state = {
+      datamartItems: this.getDatamartItemsFromOrganisationId(organisationId),
+    };
+  }
+
+  getDatamartItemsFromOrganisationId = (organisationId: string) => {
+    const { workspace } = this.props;
+
+    return workspace(organisationId).datamarts.map(d => ({
+      key: d.id,
+      value: d.name || d.token,
+    }));
+  };
+
+  componentDidUpdate(previousProps: Props) {
+    const {
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
+
+    const {
+      match: {
+        params: { organisationId: previousOrganisationId },
+      },
+    } = previousProps;
+
+    if (organisationId !== previousOrganisationId) {
+      this.setState({
+        datamartItems: this.getDatamartItemsFromOrganisationId(organisationId),
+      });
+    }
+  }
+
+  render() {
+    const {
       filter,
       onFilterChange,
       cleaningRules,
       isFetchingCleaningRules,
       total,
-      workspace,
       intl,
     } = this.props;
 
-    const datamartItems = workspace(organisationId).datamarts.map(d => ({
-      key: d.id,
-      value: d.name || d.token,
-    }));
+    const { datamartItems } = this.state;
 
     const filtersOptions: Array<MultiSelectProps<any>> = [];
 
@@ -208,7 +174,7 @@ class CleaningRulesContainer extends React.Component<
           </span>
         ),
       },
-      // No other content_type is implemented for the moment, that  
+      // No other content_type is implemented for the moment, that
       {
         intlMessage: messages.contentFilterValue,
         key: 'filter',

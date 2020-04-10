@@ -181,10 +181,10 @@ class CleaningRulesDashboardPage extends React.Component<Props, State> {
       };
       this._datamartService
         .getCleaningRules(filter.datamartId, options)
-        .then(results => {
+        .then(resultCleaningRules => {
           const cleaningRulesP: Array<Promise<
             ExtendedCleaningRuleResourceWithFilter
-          >> = results.data.map(cleaningRule => {
+          >> = resultCleaningRules.data.map(cleaningRule => {
             return filter.type === 'USER_EVENT_CLEANING_RULE'
               ? this._datamartService
                   .getContentFilter(filter.datamartId, cleaningRule.id)
@@ -206,7 +206,7 @@ class CleaningRulesDashboardPage extends React.Component<Props, State> {
               this.setState({
                 isFetchingCleaningRules: false,
                 cleaningRules,
-                totalCleaningRules: results.total || results.count,
+                totalCleaningRules: resultCleaningRules.total || resultCleaningRules.count,
               });
             })
             .catch(err => {
@@ -255,7 +255,6 @@ class CleaningRulesDashboardPage extends React.Component<Props, State> {
           <Row>
             <McsTabs
               items={items}
-              tabBarStyle={{ margin: '20px 40px' }}
               activeKey={cleaningRuleType}
               onChange={this.onChangeCleaningRuleType}
             />

@@ -179,7 +179,6 @@ export const settingsDefinition: NavigatorDefinition = {
     path: '/settings/datamart/cleaning_rules',
     layout: 'settings',
     contentComponent: CleaningRulesDashboardPage,
-    requiredFeature: 'datamartSettings-cleaning_rules',
     requireDatamart: true,
   },
 
