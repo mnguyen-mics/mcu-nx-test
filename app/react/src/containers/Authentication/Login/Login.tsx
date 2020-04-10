@@ -98,20 +98,15 @@ class Login extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    let storageEvents: StorageEvent[] = [];
     let loggedIn = false;
     window.addEventListener('storage', (e: StorageEvent) => {
-      storageEvents.push(e);
-      const loginEvent = storageEvents.find(
-        ev =>
-          ev.storageArea &&
-          ev.storageArea.isLogged &&
-          ev.storageArea.isLogged === 'true',
-      );
+      const loginEvent = 
+          e.storageArea &&
+          e.storageArea.isLogged &&
+          e.storageArea.isLogged === 'true';
       if (!!loginEvent && !loggedIn) {
-        location.reload();
+        this.handleSubmit(e);
         loggedIn = true;
-        storageEvents = [];
       }
     });
   }
