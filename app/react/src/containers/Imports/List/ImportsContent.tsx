@@ -63,24 +63,20 @@ class ImportContent extends React.Component<Props, ImportContentState> {
     const {
       history,
       location: { search, pathname },
-      match: {
-        params: { organisationId },
-      },
     } = this.props;
 
-    if (!isSearchValid(search, this.getSearchSetting(organisationId))) {
+    if (!isSearchValid(search, this.getSearchSetting())) {
       history.push({
         pathname: pathname,
         search: buildDefaultSearch(
           search,
-          this.getSearchSetting(organisationId),
-        ),
-        state: { reloadDataSource: true },
+          this.getSearchSetting(),
+        )
       });
     } else {
       const { currentPage, pageSize, datamartId, keywords } = parseSearch(
         search,
-        this.getSearchSetting(organisationId),
+        this.getSearchSetting(),
       );
       const selectedDatamartId = datamartId
         ? datamartId
@@ -96,9 +92,9 @@ class ImportContent extends React.Component<Props, ImportContentState> {
     }
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate(previousProps: Props) {
     const {
-      location: { search },
+      location: { pathname, search },
       match: {
         params: { organisationId },
       },
@@ -106,47 +102,41 @@ class ImportContent extends React.Component<Props, ImportContentState> {
     } = this.props;
 
     const {
-      location: {
-        pathname: nextPathname,
-        search: nextSearch,
-        state: nextState,
-      },
+      location: { search: previousSearch },
       match: {
-        params: { organisationId: nextOrganisationId },
+        params: { organisationId: previousOrganisationId },
       },
-    } = nextProps;
+    } = previousProps;
 
     if (
-      !compareSearches(search, nextSearch) ||
-      organisationId !== nextOrganisationId ||
-      (nextState && nextState.reloadDataSource === true)
+      !compareSearches(search, previousSearch) ||
+      organisationId !== previousOrganisationId
     ) {
       if (
-        !isSearchValid(nextSearch, this.getSearchSetting(nextOrganisationId))
+        !isSearchValid(search, this.getSearchSetting())
       ) {
         history.replace({
-          pathname: nextPathname,
+          pathname: pathname,
           search: buildDefaultSearch(
-            nextSearch,
-            this.getSearchSetting(nextOrganisationId),
-          ),
-          state: { reloadDataSource: organisationId !== nextOrganisationId },
+            search,
+            this.getSearchSetting(),
+          )
         });
       } else {
         const { currentPage, pageSize, datamartId, keywords } = parseSearch(
-          nextSearch,
-          this.getSearchSetting(organisationId),
+          search,
+          this.getSearchSetting(),
         );
         const selectedDatamartId = datamartId
           ? datamartId
           : this.state.selectedDatamartId;
         this.setState({
           filter: {
-            currentPage: currentPage,
-            pageSize: pageSize,
-            keywords: keywords,
+            currentPage,
+            pageSize,
+            keywords,
           },
-          selectedDatamartId: selectedDatamartId,
+          selectedDatamartId,
         });
       }
     }
@@ -155,9 +145,6 @@ class ImportContent extends React.Component<Props, ImportContentState> {
   updateLocationSearch = (params: Index<any>) => {
     const {
       history,
-      match: {
-        params: { organisationId },
-      },
       location: { search: currentSearch, pathname },
     } = this.props;
 
@@ -166,7 +153,7 @@ class ImportContent extends React.Component<Props, ImportContentState> {
       search: updateSearch(
         currentSearch,
         params,
-        this.getSearchSetting(organisationId),
+        this.getSearchSetting(),
       ),
     };
 
@@ -186,7 +173,7 @@ class ImportContent extends React.Component<Props, ImportContentState> {
     });
   };
 
-  getSearchSetting(organisationId: string): SearchSetting[] {
+  getSearchSetting(): SearchSetting[] {
     return [...IMPORTS_SEARCH_SETTINGS];
   }
 

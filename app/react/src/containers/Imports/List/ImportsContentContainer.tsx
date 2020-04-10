@@ -111,7 +111,7 @@ class ImportsContentContainer extends React.Component<
     this.fetchImport(datamartId, filter);
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate(previousProps: Props) {
     const {
       filter,
       datamartId,
@@ -123,23 +123,23 @@ class ImportsContentContainer extends React.Component<
     } = this.props;
 
     const {
-      filter: nextFilter,
-      datamartId: nextDatamartId,
+      filter: previousFilter,
+      datamartId: previousDatamartId,
       match: {
-        params: { organisationId: nextOrganisationId },
+        params: { organisationId: previousOrganisationId },
       },
-      location: { search: nextSearch },
-    } = nextProps;
+      location: { search: previousSearch },
+    } = previousProps;
 
-    const keywords = queryString.parse(nextSearch).keywords;
+    const keywords = queryString.parse(search).keywords;
 
     if (
-      filter.currentPage !== nextFilter.currentPage ||
-      filter.pageSize !== nextFilter.pageSize ||
-      filter.keywords !== nextFilter.keywords ||
-      datamartId !== nextDatamartId ||
-      organisationId !== nextOrganisationId ||
-      !compareSearches(search, nextSearch)
+      filter.currentPage !== previousFilter.currentPage ||
+      filter.pageSize !== previousFilter.pageSize ||
+      filter.keywords !== previousFilter.keywords ||
+      datamartId !== previousDatamartId ||
+      organisationId !== previousOrganisationId ||
+      !compareSearches(search, previousSearch)
     ) {
       const options = {
         allow_administrator: true,
@@ -147,18 +147,18 @@ class ImportsContentContainer extends React.Component<
       };
 
       const newFilter = {
-        ...nextFilter,
+        ...filter,
         keywords: keywords,
       };
       if (!noFilterDatamart) {
-        this._datamartService.getDatamarts(nextOrganisationId, options).then(res => {
+        this._datamartService.getDatamarts(organisationId, options).then(res => {
           this.setState({
             datamarts: res.data,
           });
         });
       }
 
-      this.fetchImport(nextDatamartId, newFilter);
+      this.fetchImport(datamartId, newFilter);
     }
   }
 
