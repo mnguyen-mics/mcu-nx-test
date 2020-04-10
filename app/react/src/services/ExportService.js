@@ -1,7 +1,8 @@
 import XLSX from 'xlsx';
 import { defineMessages } from 'react-intl';
-import displayCampaignMessages from '../containers/Campaigns/Display/messages.tsx';
-import emailCampaignMessages from '../containers/Campaigns/Email/messages.tsx';
+import * as FileSaver from 'file-saver';
+import { messages as displayCampaignMessages } from '../containers/Campaigns/Display/messages.tsx';
+import { messages as emailCampaignMessages } from '../containers/Campaigns/Email/messages.tsx';
 import segmentMessages from '../containers/Audience/Segments/Dashboard/messages.ts';
 import feedMessages from '../containers/Audience/Feeds/messages.ts';
 import dateMessages from '../common/messages/dateMessages.ts';
@@ -177,7 +178,7 @@ const exportData = (sheets, fileName, extension) => {
     }
 
     const output = XLSX.write(workBook, { bookType: 'xlsx', bookSST: false, type: 'binary' }); // eslint-disable-line
-    saveAs(new Blob([s2ab(output)], { type: 'application/octet-stream' }), `${fileName}.${newExtension}`); // eslint-disable-line
+    FileSaver.saveAs(new Blob([s2ab(output)], { type: 'application/octet-stream' }), `${fileName}.${newExtension}`); // eslint-disable-line
   } catch (error) {
     log.error(error);
   }
