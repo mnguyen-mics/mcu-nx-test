@@ -64,6 +64,8 @@ export interface AudienceSegmentExportJobExecutionResource
   job_type: 'AUDIENCE_SEGMENT_EXPORT';
 }
 
+export type UserListFeedType = 'FILE_IMPORT' | 'TAG' | 'SCENARIO';
+
 export interface GetSegmentsOption extends PaginatedApiParam {
   name?: string;
   technical_name?: string;
@@ -75,6 +77,7 @@ export interface GetSegmentsOption extends PaginatedApiParam {
   persisted?: boolean;
   datamart_id?: string;
   keywords?: string;
+  feed_type?: UserListFeedType;
 }
 
 export interface IAudienceSegmentService {
