@@ -47,24 +47,24 @@ class Labels extends React.Component<LabelsProps, LabelsState> {
     this.fetchLabbellableLables(organisationId, labellableId, labellableType);
   }
 
-  componentWillReceiveProps(nextProps: LabelsProps) {
+  componentDidUpdate(previousProps: LabelsProps) {
     const { organisationId, labellableId, labellableType } = this.props;
 
     const {
-      organisationId: nextOrganisationId,
-      labellableId: nextLabellableId,
-      labellableType: nextLabellableType,
-    } = nextProps;
+      organisationId: previousOrganisationId,
+      labellableId: previousLabellableId,
+      labellableType: previousLabellableType,
+    } = previousProps;
 
     if (
-      labellableId !== nextLabellableId ||
-      organisationId !== nextOrganisationId ||
-      labellableType !== nextLabellableType
+      labellableId !== previousLabellableId ||
+      organisationId !== previousOrganisationId ||
+      labellableType !== previousLabellableType
     ) {
       this.fetchLabbellableLables(
-        nextOrganisationId,
-        nextLabellableId,
-        nextLabellableType,
+        organisationId,
+        labellableId,
+        labellableType,
       );
     }
   }

@@ -27,7 +27,7 @@ class Datalayer extends React.Component<Props> {
       this.buildFinalDatalayer(organisationId, pathname, datalayer),
     );
   }
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate(previousProps: Props) {
     const {
       datalayer,
       match: {
@@ -37,23 +37,23 @@ class Datalayer extends React.Component<Props> {
     } = this.props;
 
     const {
-      datalayer: nextDatalayer,
+      datalayer: previousDatalayer,
       match: {
-        params: { organisationId: nextOrganisationId },
+        params: { organisationId: previousOrganisationId },
       },
-      location: { pathname: nextPathname },
-    } = nextProps;
+      location: { pathname: previousPathname },
+    } = previousProps;
 
     if (
-      datalayer !== nextDatalayer ||
-      nextPathname !== pathname ||
-      organisationId !== nextOrganisationId
+      datalayer !== previousDatalayer ||
+      previousPathname !== pathname ||
+      organisationId !== previousOrganisationId
     ) {
       this.pushEvent(
         this.buildFinalDatalayer(
-          nextOrganisationId,
-          nextPathname,
-          nextDatalayer,
+          organisationId,
+          pathname,
+          datalayer,
         ),
       );
     }

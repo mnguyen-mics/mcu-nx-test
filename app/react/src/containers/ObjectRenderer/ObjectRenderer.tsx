@@ -27,8 +27,13 @@ export default class ObjectRenderer<T> extends React.Component<
     this.fetchObject(this.props.id);
   }
 
-  componentWillReceiveProps(nextProps: ObjectRendererProps<T>) {
-    this.fetchObject(this.props.id);
+  componentDidUpdate(previousProps: ObjectRendererProps<T>) {
+    const { id } = this.props;
+    const { id: previousId } = previousProps;
+
+    if (id !== previousId) {
+      this.fetchObject(id);
+    }
   }
 
   componentWillUnmount() {

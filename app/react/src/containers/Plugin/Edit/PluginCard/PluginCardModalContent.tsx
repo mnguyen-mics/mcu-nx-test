@@ -90,21 +90,20 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
   }
 
 
-  componentWillReceiveProps(nextProps: Props<T>) {
+  componentDidUpdate(previousProps: Props<T>) {
     const {
       pluginLayout
     } = this.props;
 
     const {
-      pluginLayout: nextPluginLayout
-    } = nextProps;
+      pluginLayout: previousPluginLayout
+    } = previousProps;
 
-    if (nextPluginLayout && nextPluginLayout.metadata && nextPluginLayout.metadata.small_icon_asset_url) {
-      if (pluginLayout && nextPluginLayout.metadata && pluginLayout.metadata.small_icon_asset_url !== nextPluginLayout.metadata.small_icon_asset_url || !pluginLayout && !!nextPluginLayout) {
-        this.getData(nextPluginLayout.metadata.small_icon_asset_url);
+    if (pluginLayout && pluginLayout.metadata && pluginLayout.metadata.small_icon_asset_url) {
+      if ((previousPluginLayout && previousPluginLayout.metadata && previousPluginLayout.metadata.small_icon_asset_url !== pluginLayout.metadata.small_icon_asset_url) || (!previousPluginLayout && !!pluginLayout)) {
+        this.getData(pluginLayout.metadata.small_icon_asset_url);
       }
     }
-    
   }
 
   componentWillUnmount() {

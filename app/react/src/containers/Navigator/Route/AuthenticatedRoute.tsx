@@ -75,28 +75,28 @@ class AuthenticatedRoute extends React.Component<Props> {
     getLabels(organisationId);
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate(previousProps: Props) {
 
     const {
       computedMatch: {
         params: { organisationId },
       },
+      getWorkspaceRequest
     } = this.props;
 
     const {
       computedMatch: {
-        params: { organisationId: nextOrganisationId },
+        params: { organisationId: previousOrganisationId },
       },
-      getWorkspaceRequest
-    } = nextProps;
+    } = previousProps;
 
     // TO BE REMOVED WHEN HOME PAGE IS AVAILABLE
     // if (nextOrganisationId !== organisationId) {
     //   window.location.href = `/v2/o/${nextOrganisationId}/campaigns/display`; // eslint-disable-line
     //   window.location.reload(true); // eslint-disable-line
     // }
-    if (nextOrganisationId !== organisationId) {
-      getWorkspaceRequest(nextOrganisationId);
+    if (previousOrganisationId !== organisationId) {
+      getWorkspaceRequest(organisationId);
     }
   }
 
