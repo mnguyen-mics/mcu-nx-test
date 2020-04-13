@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Layout, Tag } from 'antd';
+import { Layout, Tag, Button } from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { connect } from 'react-redux';
 import {
@@ -46,6 +46,8 @@ import {
 import { ExperimentationFormData } from './AudienceExperimentationEditPage';
 import { ScrollspySider } from '../../../../../components/Layout';
 import { SidebarWrapperProps } from '../../../../../components/Layout/ScrollspySider';
+import { injectDrawer } from '../../../../../components/Drawer';
+import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 
 export const messagesMap: {
   [key: string]: FormattedMessage.MessageDescriptor;
@@ -109,7 +111,7 @@ export const messagesMap: {
   successfullyCreated: {
     id: 'audience.segments.experimentation.form.successfullyCreated',
     defaultMessage: 'Experimentation Successfully created!',
-  }
+  },
 });
 
 const PartitionTableSelector: React.ComponentClass<TableSelectorProps<
@@ -147,6 +149,7 @@ type Props = AudienceExperimentationFormProps &
   RouteComponentProps<{ organisationId: string; segmentId: string }> &
   InjectedIntlProps &
   MapStateToProps &
+  InjectedDrawerProps &
   ReduxFormChangeProps &
   InjectedFormProps<ExperimentationFormData, AudienceExperimentationFormProps> &
   InjectedNotificationProps &
@@ -171,6 +174,7 @@ class AudienceExperimentationForm extends React.Component<Props, State> {
     partitions: AudiencePartitionResource[],
   ) => {
     this.props.change('selectedPartition', partitions[0]);
+    this.props.closeNextDrawer();
   };
 
   getColumns = () => {
@@ -199,6 +203,39 @@ class AudienceExperimentationForm extends React.Component<Props, State> {
     ];
   };
 
+  openPartitionSelector = () => {
+    const {
+      intl,
+      fetchAudiencePartition,
+      fetchAudiencePartitions,
+      formValues,
+      closeNextDrawer
+    } = this.props;
+    this.props.openNextDrawer<TableSelectorProps<AudiencePartitionResource>>(
+      PartitionTableSelector,
+      {
+        additionalProps: {
+          actionBarTitle: intl.formatMessage(
+            messagesMap.partitionSelectorTitle,
+          ),
+          displayFiltering: true,
+          searchPlaceholder: intl.formatMessage(
+            messagesMap.segmentSelectorSearchPlaceholder,
+          ),
+          fetchDataList: fetchAudiencePartitions,
+          fetchData: fetchAudiencePartition,
+          columnsDefinitions: this.getColumns(),
+          save: this.addPartitions,
+          close: closeNextDrawer,
+          displayDatamartSelector: true,
+          singleSelection: true,
+          selectedIds: formValues &&
+            formValues.selectedPartition && [formValues.selectedPartition.id],
+        },
+      },
+    );
+  };
+
   render() {
     const {
       intl,
@@ -206,8 +243,6 @@ class AudienceExperimentationForm extends React.Component<Props, State> {
       breadCrumbPaths,
       close,
       formValues,
-      fetchAudiencePartition,
-      fetchAudiencePartitions,
     } = this.props;
 
     const actionBarProps: FormLayoutActionbarProps = {
@@ -222,9 +257,6 @@ class AudienceExperimentationForm extends React.Component<Props, State> {
         {
           sectionId: 'section-partition',
           title: intl.formatMessage(messagesMap.selectPartition),
-          onClick: () => {
-            this.props.change('selectedPartition', {});
-          },
         },
         {
           sectionId: 'section-experimentation',
@@ -233,27 +265,26 @@ class AudienceExperimentationForm extends React.Component<Props, State> {
       ],
       scrollId: FORM_ID,
     };
-
-    if (
+    const maxControl =
       formValues &&
       formValues.selectedPartition &&
-      formValues.selectedPartition.id
-    ) {
-      const maxControl =
-        formValues.selectedPartition.part_count !== undefined
-          ? formValues.selectedPartition.part_count
-          : 1;
-      return (
-        <Layout className="edit-layout">
-          <FormLayoutActionbar {...actionBarProps} />
-          <Layout>
-            <ScrollspySider {...sideBarProps} />
-            <Form onSubmit={handleSubmit} className={'edit-layout ant-layout'}>
-              <Content
-                id={FORM_ID}
-                className="mcs-content-container mcs-form-container"
-              >
-                <div id="section-experimentation" className="m-t-20 m-b-20">
+      formValues.selectedPartition.part_count !== undefined
+        ? formValues.selectedPartition.part_count
+        : 0;
+    return (
+      <Layout className="edit-layout">
+        <FormLayoutActionbar {...actionBarProps} />
+        <Layout>
+          <ScrollspySider {...sideBarProps} />
+          <Form onSubmit={handleSubmit} className={'edit-layout ant-layout'}>
+            <Content
+              id={FORM_ID}
+              className="mcs-content-container mcs-form-container"
+            >
+              <div id="section-partition" className="m-t-20 m-b-20">
+                {formValues &&
+                formValues.selectedPartition &&
+                formValues.selectedPartition.name ? (
                   <FormattedMessage
                     id="audience.segments.experimentation.form.title"
                     defaultMessage={`You have select the following partition: {partitionName}.
@@ -264,7 +295,23 @@ class AudienceExperimentationForm extends React.Component<Props, State> {
                       ),
                     }}
                   />
+                ) : (
+                  <FormattedMessage
+                    id="audience.segments.experimentation.form.noPartitionSelected.title"
+                    defaultMessage={`You have not selected a partition yet. click on the button below to select one partition.`}
+                  />
+                )}
+                <div className="text-center mcs-audience-segment-experimentation_select_partition_button">
+                  <Button onClick={this.openPartitionSelector}>
+                    {this.props.intl.formatMessage({
+                      id:
+                        'audience.segments.experimentation.form.slectPartitionButton',
+                      defaultMessage: 'Select Partition',
+                    })}
+                  </Button>
                 </div>
+              </div>
+              <div id="section-experimentation">
                 <FormFieldWrapper
                   label={intl.formatMessage(messagesMap.engagement)}
                   helpToolTipProps={{
@@ -304,36 +351,18 @@ class AudienceExperimentationForm extends React.Component<Props, State> {
                   inputProps={{
                     min: 1,
                     max: Math.round(100 / maxControl),
+                    disabled: maxControl === 0,
                   }}
                   helpToolTipProps={{
                     title: intl.formatMessage(messagesMap.tooltipControl),
                   }}
                 />
-              </Content>
-            </Form>
-          </Layout>
+              </div>
+            </Content>
+          </Form>
         </Layout>
-      );
-    } else {
-      return (
-        <PartitionTableSelector
-          actionBarTitle={intl.formatMessage(
-            messagesMap.partitionSelectorTitle,
-          )}
-          displayFiltering={true}
-          searchPlaceholder={intl.formatMessage(
-            messagesMap.segmentSelectorSearchPlaceholder,
-          )}
-          fetchDataList={fetchAudiencePartitions}
-          fetchData={fetchAudiencePartition}
-          columnsDefinitions={this.getColumns()}
-          save={this.addPartitions}
-          close={close}
-          displayDatamartSelector={true}
-          singleSelection={true}
-        />
-      );
-    }
+      </Layout>
+    );
   }
 }
 
@@ -341,6 +370,7 @@ export default compose<Props, AudienceExperimentationFormProps>(
   withRouter,
   withValidators,
   injectIntl,
+  injectDrawer,
   injectNotifications,
   connect(mapStateToProps),
   reduxForm<ExperimentationFormData, AudienceExperimentationFormProps>({

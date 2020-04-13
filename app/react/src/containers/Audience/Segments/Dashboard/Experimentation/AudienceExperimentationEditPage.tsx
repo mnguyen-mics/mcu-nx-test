@@ -126,6 +126,7 @@ class AudienceExperimentationEditPage extends React.Component<Props, State> {
       segment,
       intl,
       notifyError,
+      history,
     } = this.props;
     this.setState({
       isSaving: true,
@@ -209,6 +210,9 @@ class AudienceExperimentationEditPage extends React.Component<Props, State> {
                                     messagesMap.successfullyCreated,
                                   ),
                                   3,
+                                );
+                                history.push(
+                                  `v2/o/${organisationId}/audience/segments`,
                                 );
                               });
                           });
