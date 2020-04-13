@@ -135,109 +135,91 @@ class AudienceExperimentationEditPage extends React.Component<Props, State> {
       0,
     );
 
+    const excludingQuery = (exclude: boolean) => (
+      acc: string,
+      val: UserPartitionSegment,
+      index: number,
+    ) => {
+      const not = exclude ? 'NOT ' : '';
+      const and = index !== 0 ? 'AND ' : '';
+      return acc.concat(`${and}${not}segments { id = "${val.id}"} `);
+    };
+
     const datamartId = segment.datamart_id;
     const partitionId =
       formData.selectedPartition && formData.selectedPartition.id;
     const queryId = segment.query_id;
     if (partitionId && queryId) {
-      this._audienceSegmentService
-        .getSegments(organisationId, {
-          audience_partition_id: partitionId,
-          type: 'USER_PARTITION',
-          max_results: 500,
-        })
-        .then(segmentsRes => {
-          const excludingQuery = (exclude: boolean) => (
-            acc: string,
-            val: UserPartitionSegment,
-            index: number,
-          ) => {
-            const not = exclude ? 'NOT ' : '';
-            const and = index !== 0 ? 'AND ' : '';
-            return acc.concat(`${and}${not}segments { id = "${val.id}"} `);
-          };
-          const controlGroupQuery = segmentsRes.data.reduce(
-            excludingQuery(false),
-            'WHERE ',
-          );
-          const experimentationQuery = segmentsRes.data.reduce(
-            excludingQuery(true),
-            'WHERE ',
-          );
-          this._queryService
-            .getQuery(datamartId, queryId)
-            .then(querySegmentRes => {
-              this._queryService
-                .createQuery(datamartId, {
-                  datamart_id: datamartId,
-                  query_language: 'OTQL',
-                  query_text: `${querySegmentRes.data.query_text} ${controlGroupQuery}`,
-                })
-                .then(queryRes => {
-                  // Control Group Segment Creation
-                  this._audienceSegmentService
-                    .createAudienceSegment(organisationId, {
-                      name: `${segment.name}-control-group`,
-                      type: 'USER_QUERY',
-                      datamart_id: datamartId,
-                      subtype: 'AB_TESTING_CONTROL_GROUP',
-                      weight: formData.control,
-                      query_id: queryRes.data.id,
-                    })
-                    .then(segmentRes => {
-                      // Experimentation Creation
-                      this._queryService
-                        .updateQuery(datamartId, queryId, {
-                          query_text: `${querySegmentRes.data.query_text} ${experimentationQuery}`,
-                        })
-                        .then(queryResponse => {
-                          this._audienceSegmentService
-                            .updateAudienceSegment(segment.id, {
-                              ...segment,
-                              query_id: queryResponse.data.id,
-                              weight: formData.control,
-                              target_metric: formData.engagement,
-                              control_group_id: segmentRes.data.id,
-                              subtype: 'AB_TESTING_EXPERIMENT',
-                            })
-                            .then(res => {
-                              hideSaveInProgress();
-                              message.success(
-                                intl.formatMessage(
-                                  messagesMap.successfullyCreated,
-                                ),
-                                3,
-                              );
-                            })
-                            .catch(err => {
-                              notifyError(err);
-                              hideSaveInProgress();
-                            });
-                        })
-                        .catch(err => {
-                          notifyError(err);
-                          hideSaveInProgress();
-                        });
-                    })
-                    .catch(err => {
-                      notifyError(err);
-                      hideSaveInProgress();
-                    });
-                })
-                .catch(err => {
-                  notifyError(err);
-                  hideSaveInProgress();
-                });
-            })
-            .catch(err => {
-              notifyError(err);
-              hideSaveInProgress();
-            });
-        })
-        .catch(err => {
-          notifyError(err);
-          hideSaveInProgress();
-        });
+      try {
+        this._audienceSegmentService
+          .getSegments(organisationId, {
+            audience_partition_id: partitionId,
+            type: 'USER_PARTITION',
+            max_results: 500,
+          })
+          .then(segmentsRes => {
+            const controlGroupQuery = segmentsRes.data.reduce(
+              excludingQuery(false),
+              'WHERE ',
+            );
+            const experimentationQuery = segmentsRes.data.reduce(
+              excludingQuery(true),
+              'WHERE ',
+            );
+            this._queryService
+              .getQuery(datamartId, queryId)
+              .then(querySegmentRes => {
+                this._queryService
+                  .createQuery(datamartId, {
+                    datamart_id: datamartId,
+                    query_language: 'OTQL',
+                    query_text: `${querySegmentRes.data.query_text} ${controlGroupQuery}`,
+                  })
+                  .then(queryRes => {
+                    // Control Group Segment Creation
+                    this._audienceSegmentService
+                      .createAudienceSegment(organisationId, {
+                        name: `${segment.name}-control-group`,
+                        type: 'USER_QUERY',
+                        datamart_id: datamartId,
+                        subtype: 'AB_TESTING_CONTROL_GROUP',
+                        weight: formData.control,
+                        query_id: queryRes.data.id,
+                      })
+                      .then(segmentRes => {
+                        // Experimentation Creation
+                        this._queryService
+                          .updateQuery(datamartId, queryId, {
+                            query_text: `${querySegmentRes.data.query_text} ${experimentationQuery}`,
+                          })
+                          .then(queryResponse => {
+                            this._audienceSegmentService
+                              .updateAudienceSegment(segment.id, {
+                                ...segment,
+                                query_id: queryResponse.data.id,
+                                weight: formData.control,
+                                target_metric: formData.engagement,
+                                control_group_id: segmentRes.data.id,
+                                subtype: 'AB_TESTING_EXPERIMENT',
+                              })
+                              .then(res => {
+                                hideSaveInProgress();
+                                message.success(
+                                  intl.formatMessage(
+                                    messagesMap.successfullyCreated,
+                                  ),
+                                  3,
+                                );
+                              });
+                          });
+                      });
+                  });
+              });
+          });
+      } catch (error) {
+        notifyError(error);
+        hideSaveInProgress();
+      }
     }
   };
 
