@@ -203,7 +203,7 @@ export const ecommerceEngagementConfig: DashboardConfig[] = [
           title: { text: 'Number Of Transactions' }
         },
         unit: 'number',
-        metricNames: ['number_of_transaction'],
+        metricNames: ['number_of_transactions'],
         dimensionFilterClauses: {
           'operator': 'OR',
           'filters': [

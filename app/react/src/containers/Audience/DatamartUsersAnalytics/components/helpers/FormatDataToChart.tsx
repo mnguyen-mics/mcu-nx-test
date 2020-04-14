@@ -24,14 +24,21 @@ import { ReportView } from '../../../../../models/ReportView';
 import { AREA_OPACITY } from '../../../../../components/Charts/domain';
 import moment from 'moment';
 import numeral from 'numeral';
+import injectThemeColors, {
+  InjectedThemeColorsProps,
+} from '../../../../Helpers/injectThemeColors';
 
+import { compose } from 'recompose';
 export interface FormatDataProps {
   apiResponse: ReportView;
   apiResponseToCompareWith?: ReportView;
   chart: Chart;
 }
 
-class FormatDataToChart extends React.Component<FormatDataProps, {}> {
+
+type JoinedProp = FormatDataProps & InjectedThemeColorsProps;
+
+class FormatDataToChart extends React.Component<JoinedProp, {}> {
 
   getXAxisValues = (dataset: Dataset[], xKey: string) => {
     return dataset.map(d => {
@@ -104,29 +111,29 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
           }
           return acc;
         }, []);
-      case 'COUNT':
-        return dataset.reduce((acc: any, d: any) => {
-          const found = acc.find((a: any) => a.title === d[dimensionName]);
-          const value = d[chart.metricNames[0]];
-          if (!found) {
-            acc.push({
-              title: d[dimensionName],
-              iconType: chart.icons && chart.icons.length > 0 ? chart.icons[0] : undefined,
-              value, unit: "%",
-              iconStyle: {
-                color: chart.options.colors ? chart.options.colors[0] : undefined
-              },
-              loading: false
-            });
-            if (chart.options.colors && chart.options.colors.length > 0) chart.options.colors.splice(0, 1);
-            if (chart.icons && chart.icons.length > 0) chart.icons.splice(0, 1);
+      // case 'COUNT':
+      //   return dataset.reduce((acc: any, d: any) => {
+      //     const found = acc.find((a: any) => a.title === d[dimensionName]);
+      //     const value = d[chart.metricNames[0]];
+      //     if (!found) {
+      //       acc.push({
+      //         title: d[dimensionName],
+      //         iconType: chart.icons && chart.icons.length > 0 ? chart.icons[0] : undefined,
+      //         value, unit: "%",
+      //         iconStyle: {
+      //           color: chart.options.colors ? chart.options.colors[0] : undefined
+      //         },
+      //         loading: false
+      //       });
+      //       if (chart.options.colors && chart.options.colors.length > 0) chart.options.colors.splice(0, 1);
+      //       if (chart.icons && chart.icons.length > 0) chart.icons.splice(0, 1);
 
-          }
-          else {
-            found.value += value
-          }
-          return acc;
-        }, []);
+      //     }
+      //     else {
+      //       found.value += value
+      //     }
+      //     return acc;
+      //   }, []);
       case 'WORLD_MAP':
         return dataset.reduce((acc: MapSeriesDataOptions[], d: Dataset) => {
           const found = acc.find((a: MapSeriesDataOptions) => a.code3 === d[dimensionName]);
@@ -213,6 +220,8 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
 
 
   generateCharElements = (chart: Chart, data: Dataset[], dataToCompareWith?: Dataset[]): React.ReactNode => {
+
+    const { colors } = this.props;
     const dimensionName = chart.dimensions ? chart.dimensions[0] : '';
 
     switch (chart.type) {
@@ -281,8 +290,8 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
         }
         // const original = data[0][chart.metricNames[0]] as number
         // const newValue = dataToCompareWith ? dataToCompareWith[0][chart.metricNames[0]] : undefined;
-        const originalValue = 15;
-        const newValue = 10;
+        const originalValue = 10;
+        const newValue = 15;
         let trend;
         if (dataToCompareWith) {
           trend = ((((originalValue as number) - (newValue as number)) / originalValue) * 100);
@@ -304,13 +313,11 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
                   className={'mcs-datamartUsersAnalytics_charts_trend'}
                   value={Math.abs(trend)}
                   precision={2}
-                  valueStyle={{ color: Math.sign(trend) > -1 ? '#ff4d5c' : '#00a963' }}
+                  valueStyle={{ color: Math.sign(trend) > -1 ? colors["mcs-error"] : colors["mcs-success"] }}
                   prefix={<Icon type={Math.sign(trend) > -1 ? 'caret-down' : 'caret-up'} />}
                   suffix="%"
                 />
               }
-
-
             </div>
           </div>
         )
@@ -328,4 +335,7 @@ class FormatDataToChart extends React.Component<FormatDataProps, {}> {
   }
 }
 
-export default FormatDataToChart;
+
+export default compose<FormatDataProps, FormatDataProps>(
+  injectThemeColors
+)(FormatDataToChart);
