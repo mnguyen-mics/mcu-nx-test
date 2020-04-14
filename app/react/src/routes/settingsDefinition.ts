@@ -79,6 +79,12 @@ const datamartSettingsDefinition: NavigatorMenuDefinition = {
     },
     {
       ...generateMissingdefinitionItemFromRoute(
+        settingsDefinition.settingsDatamartCleaningRulesList,
+      ),
+      translation: messages.cleaningRulesSettingsTitle,
+    },
+    {
+      ...generateMissingdefinitionItemFromRoute(
         settingsDefinition.settingsDatamartDatamartList,
       ),
       translation: messages.myDatamartSettingsTitle,

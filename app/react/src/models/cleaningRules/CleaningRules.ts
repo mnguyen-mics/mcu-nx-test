@@ -1,10 +1,17 @@
+export type CleaningRuleType = 'USER_EVENT_CLEANING_RULE' | 'USER_PROFILE_CLEANING_RULE';
+
+export type CleaningRuleAction = 'KEEP' | 'DELETE';
+
+export type CleaningRuleStatus = 'DRAFT' | 'LIVE' | 'ARCHIVED';
+
 export interface CleaningRuleResource {
   type: CleaningRuleType;
   id: string;
+  datamart_id: string;
+  action: CleaningRuleAction;
+  status: CleaningRuleStatus;
   archived: boolean;
 };
-
-export type CleaningRuleType = 'USER_ACTIVITY_CLEANING_RULE';
 
 export type UserActivityType =
   'ALL' |
@@ -22,9 +29,26 @@ export type UserActivityType =
   'USER_SCENARIO_NODE_ENTER' |
   'USER_SCENARIO_NODE_EXIT';
 
-export interface UserEventCleaningRuleResource extends CleaningRuleResource{
-  datamart_id: number;
+export interface UserEventCleaningRuleResource extends CleaningRuleResource {
   channel_filter?: string;
   activity_type_filter?: UserActivityType;
-  life_duration: string;
+  life_duration?: string;
 };
+
+export interface UserProfileCleaningRuleResource extends CleaningRuleResource {
+  compartment_filter?: string;
+  life_duration?: string;
+}
+
+export type ExtendedCleaningRuleResource = UserEventCleaningRuleResource | UserProfileCleaningRuleResource;
+
+export type ContentFilterType = 'EVENT_NAME_FILTER' | 'OBJECT_TREE_EXPRESSION_FILTER';
+
+export interface UserEventContentFilterResource {
+  content_type: ContentFilterType;
+  filter: string;
+}
+
+export interface UserEventCleaningRuleResourceWithFilter extends UserEventCleaningRuleResource, Partial<UserEventContentFilterResource> {}
+
+export type ExtendedCleaningRuleResourceWithFilter = UserEventCleaningRuleResourceWithFilter | UserProfileCleaningRuleResource;
