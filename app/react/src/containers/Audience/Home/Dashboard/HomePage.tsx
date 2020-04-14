@@ -24,7 +24,7 @@ import Error from '../../../../components/Error';
 import DatamartUsersAnalyticsWrapper from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 import { DashboardConfig } from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsContent';
-import { averageSessionDurationConfig, channelEngagementConfig, acquisitionEngagementConfig } from '../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
+import { averageSessionDurationConfig, channelEngagementConfig, acquisitionEngagementConfig, /*ecommerceEngagementConfig*/ } from '../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
 
 const { Content } = Layout;
 
@@ -36,6 +36,10 @@ const messages = defineMessages({
   channelEngagementsAnalyticsTitle: {
     id: 'audience.home.channelEngagementsAnalyticsTitle',
     defaultMessage: 'Channel Engagement',
+  },
+  ecommerceEngagementTitle: {
+    id: 'audience.home.ecommerceEngagementTitle',
+    defaultMessage: 'E-commerce Engagement',
   },
   comingSoon: {
     id: 'audience.home.dashboard',
@@ -104,26 +108,32 @@ class Partition extends React.Component<JoinedProps, HomeState> {
     }
   }
 
-  getDatamartAnaylicsDashboardConfig = (organisationId: string, datamartId: string, intl: InjectedIntl) => {
+  getDatamartAnaylicsDashboardConfig = (organisationId: string, datamartId: string, intl: InjectedIntl) : HomeDashboardConfig[] => {
     return [
       {
         title: intl.formatMessage(messages.homeTitle),
         datamartId: datamartId,
         organisationId: organisationId,
-        config: averageSessionDurationConfig as any,
+        config: averageSessionDurationConfig,
         showFilter: true
       },
+      // {
+      //   title: intl.formatMessage(messages.ecommerceEngagementTitle),
+      //   datamartId: datamartId,
+      //   organisationId: organisationId,
+      //   config: ecommerceEngagementConfig
+      // },
       {
         title: intl.formatMessage(messages.channelEngagementsAnalyticsTitle),
         datamartId: datamartId,
         organisationId: organisationId,
-        config: channelEngagementConfig as any
+        config: channelEngagementConfig
       },
       {
         title: intl.formatMessage(messages.acquisitionEngagementTitle),
         datamartId: datamartId,
         organisationId: organisationId,
-        config: acquisitionEngagementConfig as any
+        config: acquisitionEngagementConfig
       }
     ];
   };

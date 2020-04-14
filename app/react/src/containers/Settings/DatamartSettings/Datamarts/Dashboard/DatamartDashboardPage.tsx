@@ -71,7 +71,7 @@ class DatamartDashboardPage extends React.Component<Props, State> {
     super(props);
     this.state = {
       isLoading: true,
-      datamartAnalyticsConfig: sessionInTimeJsonConfig as any,
+      datamartAnalyticsConfig: sessionInTimeJsonConfig,
     };
   }
 
@@ -169,7 +169,7 @@ class DatamartDashboardPage extends React.Component<Props, State> {
             <DatamartUsersAnalyticsWrapper
               datamartId={datamart.id}
               organisationId={organisationId}
-              config={sessionInTimeJsonConfig as any}
+              config={sessionInTimeJsonConfig}
             />
           </Content>
         ),
