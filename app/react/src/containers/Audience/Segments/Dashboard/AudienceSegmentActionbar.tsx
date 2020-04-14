@@ -22,6 +22,8 @@ import { injectDatamart, InjectedDatamartProps } from '../../../Datamart';
 import {
   UserLookalikeSegment,
   UserListSegment,
+  AudienceSegmentShape,
+  UserQuerySegment,
 } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import { SEGMENT_QUERY_SETTINGS, OverlapData } from './constants';
 import ReportService, { Filter } from '../../../../services/ReportService';
@@ -32,9 +34,14 @@ import { ClickParam } from 'antd/lib/menu';
 import { IOverlapInterval } from './OverlapServices';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
+import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
+import AudienceExperimentationEditPage, {
+  AudienceExperimentationEditPageProps,
+} from './Experimentation/AudienceExperimentationEditPage';
+import { isUserQuerySegment } from '../Edit/domain';
 
 export interface AudienceSegmentActionbarProps {
-  segment?: AudienceSegmentResource;
+  segment?: AudienceSegmentShape;
   isLoading: boolean;
   onCalibrationClick: () => void;
   datamarts: DatamartWithMetricResource[];
@@ -45,6 +52,7 @@ type Props = AudienceSegmentActionbarProps &
   InjectedIntlProps &
   InjectedNotificationProps &
   InjectedDrawerProps &
+  InjectedFeaturesProps &
   InjectedDatamartProps;
 
 interface State {
@@ -220,6 +228,31 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
     });
   };
 
+  onCreateExperimentationClick = () => {
+    const {
+      segment,
+      intl: { formatMessage },
+    } = this.props;
+    if (segment && isUserQuerySegment(segment))
+      this.props.openNextDrawer<AudienceExperimentationEditPageProps>(
+        AudienceExperimentationEditPage,
+        {
+          additionalProps: {
+            close: this.props.closeNextDrawer,
+            breadCrumbPaths: [
+              {
+                name: (segment as AudienceSegmentResource).name || '',
+              },
+              {
+                name: formatMessage(segmentMessages.experimentationCreation),
+              },
+            ],
+            segment: segment as UserQuerySegment,
+          },
+        },
+      );
+  };
+
   render() {
     const {
       match: {
@@ -228,6 +261,7 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
       intl: { formatMessage },
       segment,
       onCalibrationClick,
+      hasFeature,
     } = this.props;
 
     const exportIsRunning = this.state.exportIsRunning;
@@ -345,6 +379,8 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
       switch (event.key) {
         case 'LOOKALIKE':
           return onClick();
+        case 'EXPERIMENTATION':
+          return this.onCreateExperimentationClick();
         default:
           return () => ({});
       }
@@ -355,6 +391,13 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
         <Menu.Item key="LOOKALIKE">
           <FormattedMessage {...segmentMessages.lookAlikeCreation} />
         </Menu.Item>
+        {segment &&
+          segment.type === 'USER_QUERY' &&
+          hasFeature('audience-segment_uplift') && (
+            <Menu.Item key="EXPERIMENTATION">
+              <FormattedMessage {...segmentMessages.experimentationCreation} />
+            </Menu.Item>
+          )}
       </Menu>
     );
 
@@ -411,4 +454,5 @@ export default compose<Props, AudienceSegmentActionbarProps>(
   injectNotifications,
   injectDrawer,
   injectDatamart,
+  injectFeatures,
 )(AudienceSegmentActionbar);
