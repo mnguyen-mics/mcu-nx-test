@@ -134,29 +134,41 @@ class AudienceSegmentPage extends React.Component<Props, State> {
   };
 
   fetchAudienceSegment = (segmentId: string) => {
-    return this._audienceSegmentService.getSegment(segmentId).then(res => {
-      const segment = res.data;
-      this.setState({ isLoading: false, segment: segment });
-      if (segment && isUserQuerySegment(segment) && segment.control_group_id) {
-        this.setState({
-          isLoadingControlGroupSegment: true,
-        });
-        this._audienceSegmentService
-          .getSegment(segmentId)
-          .then(resp => {
-            this.setState({
-              controlGroupSegment: resp.data as UserQuerySegment,
-              isLoadingControlGroupSegment: false,
-            });
-          })
-          .catch(error => {
-            this.props.notifyError(error);
-            this.setState({
-              isLoadingControlGroupSegment: false,
-            });
+    return this._audienceSegmentService
+      .getSegment(segmentId)
+      .then(res => {
+        const segment = res.data;
+        this.setState({ isLoading: false, segment: segment });
+        if (
+          segment &&
+          isUserQuerySegment(segment) &&
+          segment.control_group_id
+        ) {
+          this.setState({
+            isLoadingControlGroupSegment: true,
           });
-      }
-    });
+          this._audienceSegmentService
+            .getSegment(segmentId)
+            .then(resp => {
+              this.setState({
+                controlGroupSegment: resp.data as UserQuerySegment,
+                isLoadingControlGroupSegment: false,
+              });
+            })
+            .catch(error => {
+              this.props.notifyError(error);
+              this.setState({
+                isLoadingControlGroupSegment: false,
+              });
+            });
+        }
+      })
+      .catch(error => {
+        this.props.notifyError(error);
+        this.setState({
+          isLoadingControlGroupSegment: false,
+        });
+      });
   };
 
   componentWillReceiveProps(nextProps: Props) {

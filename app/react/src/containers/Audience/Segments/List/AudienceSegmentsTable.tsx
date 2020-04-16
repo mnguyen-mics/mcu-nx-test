@@ -280,10 +280,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       // Changing the sort field : new API call with current
       !compareSearches(prevSearch, search) ||
       prevOrganisationId !== organisationId ||
-      prevFilter.pageSize !== filter.pageSize ||
-      prevFilter.currentPage !== filter.currentPage ||
-      prevFilter.keywords !== filter.keywords ||
-      !_.isEqual(prevFilter.type, filter.type) ||
+      !_.isEqual(prevFilter, filter) ||
       (prevFilter.orderBy !== filter.orderBy &&
         filter.pageSize < this.state.list.total)
     ) {

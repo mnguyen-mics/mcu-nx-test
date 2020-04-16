@@ -95,7 +95,7 @@ class AudienceSegment extends React.Component<Props> {
     if (
       segment &&
       isUserQuerySegment(segment) &&
-      segment.subtype !== 'STANDARD'
+      segment.subtype === 'AB_TESTING_EXPERIMENT'
     ) {
       return <McsTabs items={this.buildExperimentationItems(segment)} />;
     }
@@ -126,7 +126,9 @@ class AudienceSegment extends React.Component<Props> {
           organisationId={organisationId}
         />
         {segment && segment.short_description && (
-          <div style={{ marginBottom: 20 }}>{segment.short_description}</div>
+          <div className="mcs-audienceSegmentDashboard_description">
+            {segment.short_description}
+          </div>
         )}
         <LookalikeStatusWarning isFetching={isLoading} segment={segment} />
         {this.renderDashboard()}

@@ -101,8 +101,8 @@ class AudienceSegmentHeader extends React.Component<Props> {
         <Icon type={iconType} /> {renderName()}
         {isUserQuerySegment(segment) &&
           segment.subtype &&
-          segment.subtype !== 'STANDARD' && (
-            <div style={{ paddingLeft: '5px' }}>
+          segment.subtype === 'AB_TESTING_EXPERIMENT' && (
+            <div className="mcs-audienceSegmentDashboard_subtype">
               <FormattedMessage {...localMessages[segment.subtype]} />
             </div>
           )}
