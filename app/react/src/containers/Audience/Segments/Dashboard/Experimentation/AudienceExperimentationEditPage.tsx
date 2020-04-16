@@ -15,13 +15,11 @@ import {
   GetPartitionOption,
 } from '../../../../../services/AudiencePartitionsService';
 import { Omit } from '../../../../../utils/Types';
-// import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
 import { AudiencePartitionResource } from '../../../../../models/audiencePartition/AudiencePartitionResource';
 import { ReduxFormChangeProps } from '../../../../../utils/FormHelper';
 import AudienceExperimentationForm, {
   messagesMap,
 } from './AudienceExperimentationForm';
-import { SearchFilter } from '../../../../../components/ElementSelector';
 import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
 import { IQueryService } from '../../../../../services/QueryService';
 import {
@@ -83,40 +81,37 @@ class AudienceExperimentationEditPage extends React.Component<Props, State> {
     };
   }
 
-  fetchAudiencePartitions = (filter?: SearchFilter) => {
+  componentDidMount() {
     const {
       match: {
         params: { organisationId },
       },
+      segment,
     } = this.props;
-
     const options: GetPartitionOption = {
       first_result: 0,
-      max_results: 10,
+      max_results: 100,
       status: ['PUBLISHED'],
+      datamart_id: segment.datamart_id,
     };
-    if (filter && filter.pageSize) {
-      options.max_results = filter.pageSize;
-    }
-    if (filter && filter.keywords) {
-      options.keywords = filter.keywords;
-    }
-    if (filter && filter.keywords) {
-      options.keywords = filter.keywords;
-    }
-    if (filter && filter.datamartId) {
-      options.datamart_id = filter.datamartId;
-    }
+    this.setState({
+      loadingPartitions: true,
+    });
+    return this._audiencePartitionService
+      .getPartitions(organisationId, options)
+      .then(res => {
+        this.setState({
+          partitions: res.data,
+          loadingPartitions: false,
+        });
+      })
 
-    return this._audiencePartitionService.getPartitions(
-      organisationId,
-      options,
-    );
-  };
-
-  fetchAudiencePartition = (id: string) => {
-    return this._audiencePartitionService.getPartition(id);
-  };
+      .catch(error => {
+        this.setState({
+          loadingPartitions: false,
+        });
+      });
+  }
 
   save = (formData: ExperimentationFormData) => {
     const {
@@ -151,85 +146,104 @@ class AudienceExperimentationEditPage extends React.Component<Props, State> {
       formData.selectedPartition && formData.selectedPartition.id;
     const queryId = segment.query_id;
     if (partitionId && queryId) {
-      try {
-        this._audienceSegmentService
-          .getSegments(organisationId, {
-            audience_partition_id: partitionId,
-            type: 'USER_PARTITION',
-            max_results: 500,
-          })
-          .then(segmentsRes => {
-            const controlGroupQuery = segmentsRes.data.reduce(
-              excludingQuery(false),
-              'WHERE ',
-            );
-            const experimentationQuery = segmentsRes.data.reduce(
-              excludingQuery(true),
-              'WHERE ',
-            );
-            this._queryService
-              .getQuery(datamartId, queryId)
-              .then(querySegmentRes => {
-                this._queryService
-                  .createQuery(datamartId, {
-                    datamart_id: datamartId,
-                    query_language: 'OTQL',
-                    query_text: `${querySegmentRes.data.query_text} ${controlGroupQuery}`,
-                  })
-                  .then(queryRes => {
-                    // Control Group Segment Creation
-                    this._audienceSegmentService
-                      .createAudienceSegment(organisationId, {
-                        name: `${segment.name}-control-group`,
-                        type: 'USER_QUERY',
-                        datamart_id: datamartId,
-                        subtype: 'AB_TESTING_CONTROL_GROUP',
-                        weight: formData.control,
-                        query_id: queryRes.data.id,
-                      })
-                      .then(segmentRes => {
-                        // Experimentation Creation
-                        this._queryService
-                          .updateQuery(datamartId, queryId, {
-                            query_text: `${querySegmentRes.data.query_text} ${experimentationQuery}`,
-                          })
-                          .then(queryResponse => {
-                            this._audienceSegmentService
-                              .updateAudienceSegment(segment.id, {
-                                ...segment,
-                                query_id: queryResponse.data.id,
-                                weight: formData.control,
-                                target_metric: formData.engagement,
-                                control_group_id: segmentRes.data.id,
-                                subtype: 'AB_TESTING_EXPERIMENT',
-                              })
-                              .then(res => {
-                                hideSaveInProgress();
-                                message.success(
-                                  intl.formatMessage(
-                                    messagesMap.successfullyCreated,
-                                  ),
-                                  3,
-                                );
-                                history.push(
-                                  `v2/o/${organisationId}/audience/segments`,
-                                );
-                              });
-                          });
-                      });
-                  });
-              });
-          });
-      } catch (error) {
-        notifyError(error);
-        hideSaveInProgress();
-      }
+      this._audienceSegmentService
+        .getSegments(organisationId, {
+          audience_partition_id: partitionId,
+          type: 'USER_PARTITION',
+          max_results: 500,
+        })
+        .then(segmentsRes => {
+          const controlGroupQuery = segmentsRes.data.reduce(
+            excludingQuery(false),
+            'WHERE ',
+          );
+          const experimentationQuery = segmentsRes.data.reduce(
+            excludingQuery(true),
+            'WHERE ',
+          );
+          this._queryService
+            .getQuery(datamartId, queryId)
+            .then(querySegmentRes => {
+              this._queryService
+                .createQuery(datamartId, {
+                  datamart_id: datamartId,
+                  query_language: 'OTQL',
+                  query_text: `${querySegmentRes.data.query_text} ${controlGroupQuery}`,
+                })
+                .then(queryRes => {
+                  // Control Group Segment Creation
+                  this._audienceSegmentService
+                    .createAudienceSegment(organisationId, {
+                      name: `${segment.name}-control-group`,
+                      type: 'USER_QUERY',
+                      datamart_id: datamartId,
+                      subtype: 'AB_TESTING_CONTROL_GROUP',
+                      weight: formData.control,
+                      query_id: queryRes.data.id,
+                    })
+                    .then(segmentRes => {
+                      // Experimentation Creation
+                      this._queryService
+                        .updateQuery(datamartId, queryId, {
+                          query_text: `${querySegmentRes.data.query_text} ${experimentationQuery}`,
+                        })
+                        .then(queryResponse => {
+                          this._audienceSegmentService
+                            .updateAudienceSegment(segment.id, {
+                              ...segment,
+                              query_id: queryResponse.data.id,
+                              weight: formData.control,
+                              target_metric: formData.engagement,
+                              control_group_id: segmentRes.data.id,
+                              subtype: 'AB_TESTING_EXPERIMENT',
+                            })
+                            .then(res => {
+                              hideSaveInProgress();
+                              message.success(
+                                intl.formatMessage(
+                                  messagesMap.successfullyCreated,
+                                ),
+                                3,
+                              );
+                              history.push(
+                                `v2/o/${organisationId}/audience/segments`,
+                              );
+                            })
+                            .catch(error => {
+                              notifyError(error);
+                              hideSaveInProgress();
+                            });
+                        })
+                        .catch(error => {
+                          notifyError(error);
+                          hideSaveInProgress();
+                        });
+                    })
+                    .catch(error => {
+                      notifyError(error);
+                      hideSaveInProgress();
+                    });
+                })
+                .catch(error => {
+                  notifyError(error);
+                  hideSaveInProgress();
+                });
+            })
+            .catch(error => {
+              notifyError(error);
+              hideSaveInProgress();
+            });
+        })
+        .catch(error => {
+          notifyError(error);
+          hideSaveInProgress();
+        });
     }
   };
 
   render() {
     const { breadCrumbPaths, close } = this.props;
-    const { formData } = this.state;
+    const { formData, partitions, loadingPartitions } = this.state;
 
     return (
       <AudienceExperimentationForm
@@ -237,8 +251,8 @@ class AudienceExperimentationEditPage extends React.Component<Props, State> {
         close={close}
         onSubmit={this.save}
         breadCrumbPaths={breadCrumbPaths}
-        fetchAudiencePartitions={this.fetchAudiencePartitions}
-        fetchAudiencePartition={this.fetchAudiencePartition}
+        partitions={partitions}
+        loadingPartitions={loadingPartitions}
       />
     );
   }
