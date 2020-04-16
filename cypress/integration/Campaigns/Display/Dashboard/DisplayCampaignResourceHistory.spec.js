@@ -23,7 +23,7 @@ context('Display Campaign - Resource history', () => {
     cy.get(".ant-menu-item").contains("Display").click({force : true})
 
     // Create campaign
-    cy.get('.mcs-actionbar').contains("New Campaign").click({force: true})
+    cy.get('.mcs-actionbar').contains("New Campaign").click()
     cy.contains("Programmatic").click()
 
 

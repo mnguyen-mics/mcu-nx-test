@@ -44,10 +44,10 @@ describe("Audience Segment Form", function() {
 
 function createSegment(type, datamart) {
   //Click on "new Segment"
-  cy.contains("New Segment").click({ force: true });
+  cy.contains("New Segment").click();
 
   //Select one Datamarts
-  cy.contains(datamart).click({ force: true });
+  cy.contains(datamart).click();
 
   //Select Segment Types
   cy.contains(type).click();
@@ -55,15 +55,10 @@ function createSegment(type, datamart) {
   //Fill the name of the segement
   cy.get(
     '[id="audienceSegment.name"]'
-  ).type("Test Audience Segment Form - Test " + type, { force: true });
+  ).type("Test Audience Segment Form - Test " + type);
 
   //Fill the descritpion
-  cy.get('[id="audienceSegment.short_description"]').type(
-    "This segment was created to test the creation of segment.",
-    {
-      force: true
-    }
-  );
+  cy.get('[id="audienceSegment.short_description"]').type("This segment was created to test the creation of segment.");
 
   //click on advanced
   cy.get('[class="button-styleless optional-section-title"]').click();
@@ -84,8 +79,8 @@ function createSegment(type, datamart) {
     cy.get('[id="brace-editor"]')
       .find('[class="ace_text-input"]')
       .type(`SELECT {id} FROM UserPoint WHERE creation_date <= "now-120d/d"`, {
-        parseSpecialCharSequences: false,
-        force: true
+        force: true,
+        parseSpecialCharSequences: false
       });
   }
 

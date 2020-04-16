@@ -46,15 +46,13 @@ describe("Datamart Replication edition on all fields", function() {
 
 function createDatamartReplication(type, token) {
   //Click on "new Segment"
-  cy.contains("New Datamart Replication").click({ force: true });
+  cy.contains("New Datamart Replication").click();
 
   //Select the replication type
-  cy.contains(type).click({ force: true });
+  cy.contains(type).click();
 
   //Fill the name of the replication
-  cy.get('[id="name"]').type("Cypress Test " + token, {
-    force: true
-  });
+  cy.get('[id="name"]').type("Cypress Test " + token);
 
   // select file
   cy.contains("Select a File").click();
@@ -76,8 +74,7 @@ function createDatamartReplication(type, token) {
           fileName,
           mimeType: "text/plain",
           encoding: "utf8"
-        },
-        { force: true }
+        }
       )
     );
 

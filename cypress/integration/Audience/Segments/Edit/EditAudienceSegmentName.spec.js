@@ -50,7 +50,7 @@ context("Edit Audience Segment name", () => {
     cy.get(".mcs-campaigns-link").first().click();
     cy.get(".mcs-actionbar")
       .contains("Edit")
-      .click({ force: true });
+      .click();
     // Edit its name
     cy.get('[id="audienceSegment.name"]').type(segmentName);
 

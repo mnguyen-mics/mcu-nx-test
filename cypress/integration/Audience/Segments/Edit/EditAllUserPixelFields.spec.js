@@ -48,25 +48,18 @@ describe("User Pixel Segment edition on all fields", function() {
 */
 function createSegment(type, datamart, token) {
   //Click on "new Segment"
-  cy.contains("New Segment").click({ force: true });
+  cy.contains("New Segment").click();
 
   //Select one Datamarts
-  cy.contains(datamart).click({ force: true });
+  cy.contains(datamart).click();
 
   //Select Segment Types
   cy.contains(type).click();
 
   //Fill the name of the segement
-  cy.get('[id="audienceSegment.name"]').type("Cypress Test " + token, {
-    force: true
-  });
+  cy.get('[id="audienceSegment.name"]').type("Cypress Test " + token, );
   //Fill the descritpion
-  cy.get('[id="audienceSegment.short_description"]').type(
-    "This segment was created to test the creation of segment.",
-    {
-      force: true
-    }
-  );
+  cy.get('[id="audienceSegment.short_description"]').type("This segment was created to test the creation of segment.");
 
   //click on advanced
   cy.get('[class="button-styleless optional-section-title"]').click();
@@ -111,14 +104,12 @@ function editSegment(type, token) {
     .click();
   cy.get(".mcs-actionbar")
     .contains("Edit")
-    .click({ force: true });
+    .click();
 
   // Edit its name
   cy.get('[id="audienceSegment.name"]').type(" -edited");
   //Fill the descritpion
-  cy.get('[id="audienceSegment.short_description"]').type(" -edited", {
-    force: true
-  });
+  cy.get('[id="audienceSegment.short_description"]').type(" -edited");
 
   //click on advanced
   cy.get('[class="button-styleless optional-section-title"]').click();
