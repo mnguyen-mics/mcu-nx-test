@@ -6,10 +6,6 @@ describe("Job executions", function() {
   const organisationName = "yellow velvet";
   const datamartName = "YV Pionus";
 
-  before(() => {
-    cy.viewport(1920, 1080);
-  });
-
   beforeEach(() => {
     // Login
     cy.login();
@@ -37,7 +33,7 @@ describe("Job executions", function() {
 
   // it("Table should contains one execution", function() {});
 
-  it("Dashboard should displays executions", function() {
+  it("Dashboard should display executions", function() {
     // This is a test with 5 mocked execution data
     // To modify when dashboard view is enabled
     cy.visit(

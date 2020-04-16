@@ -12,7 +12,6 @@ describe("Datamart Replication edition on all fields", function() {
   const datamartName = "YV Pionus";
 
   before(() => {
-    cy.viewport(1920, 1080);
     // Login
     cy.login();
     cy.url({ timeout: 10 * second }).should(

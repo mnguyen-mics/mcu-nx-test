@@ -30,7 +30,7 @@ describe('AudienceExperimentation Form Test', () => {
     cy.contains(datamartName).click()
     cy.contains('User Expert Query').click()
 
-    cy.fillExpertQuerySegmentForm(segmentName)
+    cy.fillExpertQuerySegmentForm(segmentName, 'SELECT {id} FROM UserPoint')
 
     cy.contains('Save').click({ force: true })
     cy.url({ timeout: 5000 }).should('match', /.*audience\/segments\/\d*\?/)

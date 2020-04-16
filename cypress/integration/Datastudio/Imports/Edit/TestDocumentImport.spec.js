@@ -1,5 +1,7 @@
 /// <reference types="Cypress" />
-/// <reference path="../support/index.d.ts" />
+/// <reference path="../../../../support/index.d.ts" />
+
+
 
 /*
     Cypress e2e Activities test 
@@ -22,7 +24,6 @@ describe("User Profile Import Test", function() {
 
   // Before each test, local storage is restored and document import is initiated
   beforeEach(() => {
-    cy.viewport(1920, 1080);
     cy.restoreLocalStorageCache();
     cy.contains("Data Studio").click();
     cy.contains("Imports").click();
@@ -70,7 +71,10 @@ describe("User Profile Import Test", function() {
     uploadFile("00-testProfiles.ndjson");
     cy.contains("Ok").click();
     cy.get(".ant-table-row > td")
-      .eq(1, { timeout: 5 * minutes })
+    .eq(1, { timeout: 1 * minutes })
+    .should("contain", "RUNNING");
+    cy.get(".ant-table-row > td")
+      .eq(1, { timeout: 1 * minutes })
       .should("contain", "SUCCEEDED");
   });
 
@@ -79,7 +83,10 @@ describe("User Profile Import Test", function() {
     uploadFile("01-testActivities.ndjson");
     cy.contains("Ok").click();
     cy.get(".ant-table-row > td")
-      .eq(1, { timeout: 5 * minutes })
+    .eq(1, { timeout: 1 * minutes })
+    .should("contain", "RUNNING");
+    cy.get(".ant-table-row > td")
+      .eq(1, { timeout: 1 * minutes })
       .should("contain", "SUCCEEDED");
   });
 

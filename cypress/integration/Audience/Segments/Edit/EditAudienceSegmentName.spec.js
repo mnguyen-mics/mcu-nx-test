@@ -7,7 +7,6 @@ context("Edit Audience Segment name", () => {
   const segmentName = " " + (Math.random() * 100).toFixed(0);
 
   before(() => {
-    cy.viewport(1920, 1080);
     // Login
     cy.login();
     cy.url({ timeout: 10 * second }).should("contain", Cypress.config().baseUrl +"/#/v2/o/1/campaigns/display");
@@ -47,7 +46,6 @@ context("Edit Audience Segment name", () => {
       .type(value)
       .type("{enter}");
 
-    cy.wait(5*second);
     // get the first segment in list
     cy.get(".mcs-campaigns-link").first().click();
     cy.get(".mcs-actionbar")

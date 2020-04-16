@@ -1,6 +1,7 @@
-import cuid from "cuid";
 /// <reference types="Cypress" />
 /// <reference path="../../../../support/index.d.ts" />
+
+import cuid from "cuid";
 
 describe("Audience Segment Form", function() {
   const second = 1000;
@@ -12,7 +13,6 @@ describe("Audience Segment Form", function() {
       "access_token",
       "access_token_expiration_date"
     );
-    cy.viewport(1920, 1080);
     // Login
     cy.login();
     cy.url({ timeout: 10 * second }).should(
@@ -79,11 +79,12 @@ function createSegment(type, datamart) {
 
   cy.contains("Days").click();
 
-  //In the case that we are in user expert query, we have to write a moke query to validate
-  if (type == "User Expert Query") {
+  //In the case that we are in user expert query, we have to write a mock query to validate
+  if (type === "User Expert Query") {
     cy.get('[id="brace-editor"]')
       .find('[class="ace_text-input"]')
-      .type('SELECT @count {} FROM ActivityEvent WHERE date <= "now-120d/d"', {
+      .type(`SELECT {id} FROM UserPoint WHERE creation_date <= "now-120d/d"`, {
+        parseSpecialCharSequences: false,
         force: true
       });
   }
@@ -91,11 +92,5 @@ function createSegment(type, datamart) {
   //Save the new segment
   cy.contains("Save").click();
 
-  if (type === "User Expert Query") {
-    // max acceptable time to wait for a form submission
-    cy.wait(10000);
-  } else {
-    cy.wait(2000);
-  }
-  cy.url().should("not.contain", "create");
+  cy.url({timeout: 10000}).should("not.contain", "create");
 }

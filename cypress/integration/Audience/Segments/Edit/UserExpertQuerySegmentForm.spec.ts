@@ -16,7 +16,6 @@ describe('User Expert Query Segment Form Test', () => {
   })
 
   beforeEach(() => {
-    cy.viewport(1920, 1080)
     cy.restoreLocalStorageCache()
     cy.contains('Segments').click()
   })
@@ -30,26 +29,27 @@ describe('User Expert Query Segment Form Test', () => {
     cy.contains(datamartName).click()
     cy.contains('User Expert Query').click()
 
-    cy.fillExpertQuerySegmentForm(segmentName)
+    cy.fillExpertQuerySegmentForm(segmentName, 'SELECT {id} FROM UserPoint')
 
     cy.contains('Save').click({ force: true })
     cy.url({ timeout: 5000 }).should('match', /.*audience\/segments\/\d*\?/)
   })
 
   it('should edit User Query Segment', () => {
-    cy.get('.mcs-campaigns-link')
-    cy.contains('Type').click({ force: true })
+    // For some reason, the 'click' on the Type filter doesn't show the dropdown box with the segment types when segments are being fetched.
+    // So we make sure that the segments are fetched first.
+    cy.get('.mcs-campaigns-link').should('have.length.gte', 1)
+    cy.contains('Type').click()
     cy.contains('USER_QUERY').click({ force: true })
+    cy.get('.mcs-search-input').type(segmentName + '{enter}')
     cy.get('[class="anticon anticon-database"]', { timeout: 5000 })
-    // pick the first USER_QUERY segment found
-    cy.get('.mcs-campaigns-link')
-      .first()
-      .click()
+    // pick the created segment
+    cy.get('.mcs-campaigns-link').should('have.length', 1).click()
     cy.get('.mcs-actionbar')
       .contains('Edit')
       .click({ force: true })
 
-      cy.fillExpertQuerySegmentForm(segmentName)
+      cy.fillExpertQuerySegmentForm(segmentName, ' WHERE creation_date <= "now-120d/d')
 
     cy.contains('Save').click({ force: true })
     cy.url({ timeout: 5000 }).should('match', /.*audience\/segments\/\d*\?/)

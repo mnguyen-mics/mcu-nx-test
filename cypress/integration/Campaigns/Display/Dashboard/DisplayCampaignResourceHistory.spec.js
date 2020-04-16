@@ -9,7 +9,6 @@ context('Display Campaign - Resource history', () => {
   
 
   before(() => {
-    cy.viewport(1920, 1080)
     // Login
     cy.login()
     cy.url({timeout: 10*second}).should('contain', Cypress.config().baseUrl + '/#/v2/o/1/campaigns/display')
@@ -20,7 +19,6 @@ context('Display Campaign - Resource history', () => {
 
   it('Campaign history', () => {
     //Move to campaign page
-    if (cy.get(".ant-menu-item").contains("Display") )
     cy.get(".ant-menu-submenu").contains("Campaigns").click()
     cy.get(".ant-menu-item").contains("Display").click({force : true})
 
@@ -28,64 +26,46 @@ context('Display Campaign - Resource history', () => {
     cy.get('.mcs-actionbar').contains("New Campaign").click({force: true})
     cy.contains("Programmatic").click()
 
-    // cy.get('[id="campaign.total_impression_capping"]').type('111')
-    
 
     cy.get('[id="campaign.name"]').type(campaignName) // or get '#campaign\.name'
 
     // Add ad group to the campaign
-    // cy.get('[id="adGroups"] .ant-btn').click()
+    cy.get('[id="adGroups"] .ant-btn').click()
 
-    // cy.get('.drawer .mcs-actionbar-edit button').click()
+    cy.get('.drawer .mcs-actionbar-edit button').click()
     
-    // cy.get('[id="adGroup.name"]').type(adGroupName + '{enter}')
+    cy.get('[id="adGroup.name"]').type(adGroupName + '{enter}')
 
     // Submit form
     cy.get('form').submit()
-    // OR cy.get('.mcs-actionbar-edit [type="submit"]').click()
+    // We could also do, for instance : cy.get('.mcs-actionbar-edit [type="submit"]').click()
 
     
-    
-    // assert campaign name in header
-    
-    // E/S index refresh
-    cy.wait(10*second)
+    // The Elasticsearch index can take up to 30 seconds to refresh,so we might not see the data before this.
+    // To be sure, we wait 30 seconds before opening the 'History' drawer.
+    cy.wait(30*second);
 
     // Open history
     cy.get('.mcs-actionbar').find('.ant-dropdown-trigger').click()
     cy.get('.ant-dropdown-menu-item').contains('History').parent().click()
     
     // Check history
-    //cy.get('.ant-timeline-item').should('have.length', 3).as('timeline_items')
-    //cy.get('@timeline_items').first().should('have.text', 'Today')
-    //cy.get('@timeline_items').last().should('have.text', 'No Events Left')
-    //cy.get('@timeline_items').eq(1).should('contain', 'dev  created the ').as('creation_card') // use .within ?
+    cy.get('.ant-timeline-item').should('have.length', 4).as('timeline_items')
+    cy.get('@timeline_items').first().should('have.text', 'Today')
+    cy.get('@timeline_items').last().should('have.text', 'No Events Left')
+    cy.get('@timeline_items').eq(-2).should('contain', 'dev  created the ').as('creation_card')
 
-    //cy.get('@creation_card').find('.mcs-card-inner-action').as('see_more_button')
-    //cy.get('@see_more_button').should('have.text', 'see more').click()
-    //cy.get('.mcs-breadcrumb-edit > :nth-child(1) > .ant-breadcrumb-link').should('have.text', 'Display Campaign History') // obtained by the selector playground
+    cy.get('@creation_card').find('.mcs-card-inner-action').as('see_more_button')
+    cy.get('@see_more_button').should('have.text', 'see more').click()
+    cy.get('.mcs-breadcrumb-edit > :nth-child(1) > .ant-breadcrumb-link').should('have.text', 'Display Campaign History') // obtained by the selector playground
 
-    //cy.get('.value').first().should('have.text', campaignName)
-      //.siblings('.name').should('have.text', ' Campaign Name ');
-// tester le nb de champs modifiés
-    //cy.get('@see_more_button').should('have.text', 'see less').click()
+    cy.get('.value').last().should('have.text', campaignName)
+      .siblings('.name').should('have.text', ' Campaign Name ');
+    // tester le nb de champs modifiés
+    cy.get('@see_more_button').should('have.text', 'see less').click()
 
   })
 
-  // it('Monitoring - cookies', () => {
-  //   cy.clearCookie('mics_vid')
-  //   cy.wait(3*second)
-  //   cy.clearCookie('mics_vid')
-  //   cy.wait(3*second)
-  //   cy.setCookie('mics_vid', '3983593884', {'domain': 'navigator.mediarithmics.com'})
-  //   cy.setCookie('mics_vid', '3983593884', {'domain': 'navigator.mediarithmics.local'})
-  //   cy.getCookie('mics_vid').should('have.property', 'value', '3983593884');
-
-  //   cy.get('.mcs-users').click()
-  //   cy.get('[id="users$Menu"]').contains('Monitoring').parent().click()
-
-  //   cy.get('.content.alone').contains('YV Pionus').click()
-  // })
 
   // it('cmd-line authentication', () => {
     

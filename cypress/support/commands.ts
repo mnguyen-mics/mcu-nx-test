@@ -9,8 +9,9 @@
 // ***********************************************
 //
 //
-import LoginPage from '../integration/Authentication/Login/LoginPage'
 import faker from 'faker'
+import 'cypress-file-upload'
+import LoginPage from '../integration/components/LoginPage'
 
 // -- This is a parent command --
 Cypress.Commands.add(
@@ -47,7 +48,7 @@ Cypress.Commands.add('switchOrg', organisationName => {
     .trigger('mouseout')
 })
 
-Cypress.Commands.add('fillExpertQuerySegmentForm', (segmentName: string) => {
+Cypress.Commands.add('fillExpertQuerySegmentForm', (segmentName: string, queryText: string) => {
     cy.contains('Save', { timeout: 5000 })
     cy.get('input[name="audienceSegment.name"]')
       .clear()
@@ -67,8 +68,7 @@ Cypress.Commands.add('fillExpertQuerySegmentForm', (segmentName: string) => {
     cy.get('[id="properties"').within(() => {
       cy.get('[id="brace-editor"]')
         .get('textarea[class="ace_text-input"]')
-        .clear({ force: true })
-        .type('SELECT {id} FROM UserPoint', {
+        .type(queryText, {
           force: true,
           parseSpecialCharSequences: false,
           delay: 0,

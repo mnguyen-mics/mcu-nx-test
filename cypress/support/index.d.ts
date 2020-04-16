@@ -32,6 +32,11 @@ declare namespace Cypress {
      */
     restoreLocalStorageCache(): void;
 
-    fillExpertQuerySegmentForm(segmentName: string): void;
+    /**
+     * Fill the form of an Expert Query Segment?
+     * 
+     * /!\ The queryText field will not be emptied -> queryText is appended to the already existing query text !
+     */
+    fillExpertQuerySegmentForm(segmentName: string, queryText: string): void;
   }
 }

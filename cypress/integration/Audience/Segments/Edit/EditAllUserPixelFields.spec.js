@@ -1,6 +1,7 @@
-import cuid from "cuid";
 /// <reference types="Cypress" />
 /// <reference path="../../../../support/index.d.ts" />
+
+import cuid from "cuid";
 
 describe("User Pixel Segment edition on all fields", function() {
   const second = 1000;
@@ -9,10 +10,6 @@ describe("User Pixel Segment edition on all fields", function() {
   const token = cuid();
 
   const datamartName = "YV Pionus";
-
-  before(() => {
-    cy.viewport(1920, 1080);
-  });
 
   beforeEach(() => {
     Cypress.Cookies.preserveOnce(
@@ -87,26 +84,16 @@ function createSegment(type, datamart, token) {
 
   cy.contains("Days").click();
 
-  //In the case that we are in user expert query, we have to write a moke query to validate
-  if (type == "User Expert Query") {
-    cy.get('[id="brace-editor"]')
-      .find('[class="ace_text-input"]')
-      .type('SELECT @count {} FROM ActivityEvent WHERE date <= "now-120d/d"', {
-        force: true
-      });
-  }
-
   //Save the new segment
   cy.contains("Save").click();
   //Get back on the main page
-  cy.contains("Audience").click();
+  cy.contains("Audience", {timeout: 10000}).click();
 
   cy.contains("Segments")
     .first()
     .click();
 
   cy.url().should("include", "audience/segments");
-  cy.wait(2000);
 }
 
 function editSegment(type, token) {
@@ -118,7 +105,6 @@ function editSegment(type, token) {
   cy.get('[placeholder="Search Segments"]')
     .type(token)
     .type("{enter}");
-  cy.wait(1000);
   // get the first segment in list
   cy.get(".mcs-campaigns-link")
     .first()
@@ -153,7 +139,6 @@ function editSegment(type, token) {
 
   //Save the new segment
   cy.contains("Save").click();
-  cy.wait(2000);
 
   cy.url().should("include", "audience/segments");
 }
