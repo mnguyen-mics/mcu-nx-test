@@ -209,7 +209,7 @@ class AudienceExperimentationForm extends React.Component<Props, State> {
       fetchAudiencePartition,
       fetchAudiencePartitions,
       formValues,
-      closeNextDrawer
+      closeNextDrawer,
     } = this.props;
     this.props.openNextDrawer<TableSelectorProps<AudiencePartitionResource>>(
       PartitionTableSelector,
@@ -301,7 +301,7 @@ class AudienceExperimentationForm extends React.Component<Props, State> {
                     defaultMessage={`You have not selected a partition yet. click on the button below to select one partition.`}
                   />
                 )}
-                <div className="text-center mcs-audience-segment-experimentation_select_partition_button">
+                <div className="text-center mcs-audienceSegmentExperimentation_selectPartitionButton">
                   <Button onClick={this.openPartitionSelector}>
                     {this.props.intl.formatMessage({
                       id:

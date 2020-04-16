@@ -232,25 +232,26 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
     const {
       segment,
       intl: { formatMessage },
+      openNextDrawer,
     } = this.props;
-    if (segment && isUserQuerySegment(segment))
-      this.props.openNextDrawer<AudienceExperimentationEditPageProps>(
-        AudienceExperimentationEditPage,
-        {
-          additionalProps: {
-            close: this.props.closeNextDrawer,
-            breadCrumbPaths: [
-              {
-                name: (segment as AudienceSegmentResource).name || '',
-              },
-              {
-                name: formatMessage(segmentMessages.experimentationCreation),
-              },
-            ],
-            segment: segment as UserQuerySegment,
-          },
+
+    openNextDrawer<AudienceExperimentationEditPageProps>(
+      AudienceExperimentationEditPage,
+      {
+        additionalProps: {
+          close: this.props.closeNextDrawer,
+          breadCrumbPaths: [
+            {
+              name: (segment as AudienceSegmentResource).name || '',
+            },
+            {
+              name: formatMessage(segmentMessages.experimentationCreation),
+            },
+          ],
+          segment: segment as UserQuerySegment,
         },
-      );
+      },
+    );
   };
 
   render() {
@@ -380,7 +381,11 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
         case 'LOOKALIKE':
           return onClick();
         case 'EXPERIMENTATION':
-          return this.onCreateExperimentationClick();
+          return (
+            segment &&
+            isUserQuerySegment(segment) &&
+            this.onCreateExperimentationClick()
+          );
         default:
           return () => ({});
       }
