@@ -167,7 +167,7 @@ class AudienceExperimentationEditPage extends React.Component<Props, State> {
               this._queryService
                 .createQuery(datamartId, {
                   datamart_id: datamartId,
-                  query_language: 'OTQL',
+                  query_language: querySegmentRes.data.query_language,
                   query_text: `${querySegmentRes.data.query_text} ${controlGroupQuery}`,
                 })
                 .then(queryRes => {
