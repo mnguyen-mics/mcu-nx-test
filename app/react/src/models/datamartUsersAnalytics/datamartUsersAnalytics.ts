@@ -22,6 +22,7 @@ export interface Chart {
   Highcharts.SeriesColumnDataOptions[] ;
   tabs?: TabItem[];
   unit?: 'time' | '%' | 'number' | '€';
+  samplingRatio?: number;
 }
 
 export interface TabItem extends Chart {

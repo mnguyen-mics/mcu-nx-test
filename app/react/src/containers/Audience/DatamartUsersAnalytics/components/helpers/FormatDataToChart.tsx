@@ -288,13 +288,12 @@ class FormatDataToChart extends React.Component<JoinedProp, {}> {
         else {
           statValue = data[0][chart.metricNames[0]] as number;
         }
-        // const original = data[0][chart.metricNames[0]] as number
-        // const newValue = dataToCompareWith ? dataToCompareWith[0][chart.metricNames[0]] : undefined;
-        const originalValue = 10;
-        const newValue = 15;
+        const originalValue = data[0][chart.metricNames[0]];
+        const newValue = dataToCompareWith ? dataToCompareWith[0][chart.metricNames[0]] : undefined;
+
         let trend;
-        if (dataToCompareWith) {
-          trend = ((((originalValue as number) - (newValue as number)) / originalValue) * 100);
+        if (dataToCompareWith && chart.samplingRatio) {
+          trend = ((((originalValue as number)  - (newValue as number)) / (originalValue as number)) * 100) * chart.samplingRatio;
         }
 
         return (
