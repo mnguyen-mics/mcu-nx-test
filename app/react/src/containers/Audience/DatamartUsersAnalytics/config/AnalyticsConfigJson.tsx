@@ -95,6 +95,7 @@ export const averageSessionDurationConfig: DashboardConfig[] = [
           title: { text: 'Average session duration' }
         },
         unit: 'time',
+        // samplingRatio: 1,
         metricNames: ['avg_session_duration'],
         dimensionFilterClauses: {
           'operator': 'OR',
