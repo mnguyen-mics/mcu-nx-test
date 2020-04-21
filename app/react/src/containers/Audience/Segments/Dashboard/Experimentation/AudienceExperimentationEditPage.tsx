@@ -148,7 +148,7 @@ class AudienceExperimentationEditPage extends React.Component<Props, State> {
             queryId,
             this._queryService,
             segmentsRes.data as UserPartitionSegment[],
-            false,
+            true,
           )
             .then(controlGroupQueryResource => {
               this._queryService
@@ -175,7 +175,7 @@ class AudienceExperimentationEditPage extends React.Component<Props, State> {
                         queryId,
                         this._queryService,
                         segmentsRes.data as UserPartitionSegment[],
-                        true,
+                        false,
                       ).then(experimentationQueryResource => {
                         this._queryService
                           .createQuery(datamartId, {

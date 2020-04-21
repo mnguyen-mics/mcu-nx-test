@@ -11,27 +11,30 @@ export const getFormattedExperimentationQuery = (
   segments: UserPartitionSegment[],
   intersectOperator: boolean,
 ): Promise<QueryResource> => {
-  const excludingQuery = (exclude: boolean) => (
+  const buildQueryFragment = () => (
     acc: string,
     val: UserPartitionSegment,
     index: number,
   ) => {
-    const not = exclude ? 'NOT ' : '';
-    const and = index !== 0 ? 'AND ' : '';
-    return acc.concat(`${and}${not}segments { id = "${val.id}"} `);
+    const or = index !== segments.length - 1 ? 'OR ' : '';
+    return acc.concat(`segments { id = "${val.id}"} ${or}`);
   };
 
-  const additionnalQuery = segments.reduce(
-    excludingQuery(intersectOperator),
-    '',
-  );
+  const innerQuery = segments.reduce(buildQueryFragment(), '');
+
+  const buildAdditionnalQuery = (query: string) => {
+    const operator = intersectOperator ? '' : 'NOT ';
+    return `${operator}(${query})`;
+  };
 
   return queryService.getQuery(datamartId, queryId).then(querySegmentRes => {
     const queryResource = querySegmentRes.data;
 
     switch (queryResource.query_language) {
       case 'OTQL':
-        return Promise.resolve(formatQuery(queryResource, additionnalQuery));
+        return Promise.resolve(
+          formatQuery(queryResource, buildAdditionnalQuery(innerQuery)),
+        );
 
       case 'JSON_OTQL':
         return queryService
@@ -39,7 +42,7 @@ export const getFormattedExperimentationQuery = (
           .then(otqlQ => otqlQ.data)
           .then(otqlQ => {
             return Promise.resolve(
-              formatQuery(otqlQ, additionnalQuery),
+              formatQuery(otqlQ, buildAdditionnalQuery(innerQuery)),
             );
           });
       default:
