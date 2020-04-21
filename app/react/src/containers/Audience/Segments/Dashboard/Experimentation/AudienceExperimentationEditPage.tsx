@@ -27,6 +27,7 @@ import {
   UserPartitionSegment,
 } from '../../../../../models/audiencesegment/AudienceSegmentResource';
 import { message } from 'antd';
+import { getFormattedExperimentationQuery } from '../../../Dashboard/domain';
 
 type Engagement = 'E_COMMERCE_ENGAGEMENT' | 'CHANNEL_ENGAGEMENT';
 
@@ -130,17 +131,6 @@ class AudienceExperimentationEditPage extends React.Component<Props, State> {
       intl.formatMessage(messagesMap.savingInProgress),
       0,
     );
-
-    const excludingQuery = (exclude: boolean) => (
-      acc: string,
-      val: UserPartitionSegment,
-      index: number,
-    ) => {
-      const not = exclude ? 'NOT ' : '';
-      const and = index !== 0 ? 'AND ' : '';
-      return acc.concat(`${and}${not}segments { id = "${val.id}"} `);
-    };
-
     const datamartId = segment.datamart_id;
     const partitionId =
       formData.selectedPartition && formData.selectedPartition.id;
@@ -153,24 +143,21 @@ class AudienceExperimentationEditPage extends React.Component<Props, State> {
           max_results: 500,
         })
         .then(segmentsRes => {
-          const controlGroupQuery = segmentsRes.data.reduce(
-            excludingQuery(false),
-            'WHERE ',
-          );
-          const experimentationQuery = segmentsRes.data.reduce(
-            excludingQuery(true),
-            'WHERE ',
-          );
-          this._queryService
-            .getQuery(datamartId, queryId)
-            .then(querySegmentRes => {
+          getFormattedExperimentationQuery(
+            datamartId,
+            queryId,
+            this._queryService,
+            segmentsRes.data as UserPartitionSegment[],
+            false,
+          )
+            .then(controlGroupQueryResource => {
               this._queryService
                 .createQuery(datamartId, {
-                  datamart_id: datamartId,
-                  query_language: querySegmentRes.data.query_language,
-                  query_text: `${querySegmentRes.data.query_text} ${controlGroupQuery}`,
+                  ...controlGroupQueryResource,
+                  query_text: controlGroupQueryResource.query_text,
                 })
-                .then(queryRes => {
+
+                .then(controlGroupqQeryRes => {
                   // Control Group Segment Creation
                   this._audienceSegmentService
                     .createAudienceSegment(organisationId, {
@@ -179,45 +166,54 @@ class AudienceExperimentationEditPage extends React.Component<Props, State> {
                       datamart_id: datamartId,
                       subtype: 'AB_TESTING_CONTROL_GROUP',
                       weight: formData.control,
-                      query_id: queryRes.data.id,
+                      query_id: controlGroupqQeryRes.data.id,
                     })
                     .then(segmentRes => {
                       // Experimentation Creation
-                      this._queryService
-                        .updateQuery(datamartId, queryId, {
-                          query_text: `${querySegmentRes.data.query_text} ${experimentationQuery}`,
-                        })
-                        .then(queryResponse => {
-                          this._audienceSegmentService
-                            .updateAudienceSegment(segment.id, {
-                              ...segment,
-                              query_id: queryResponse.data.id,
-                              weight: formData.control,
-                              target_metric: formData.engagement,
-                              control_group_id: segmentRes.data.id,
-                              subtype: 'AB_TESTING_EXPERIMENT',
-                            })
-                            .then(res => {
-                              hideSaveInProgress();
-                              message.success(
-                                intl.formatMessage(
-                                  messagesMap.successfullyCreated,
-                                ),
-                                3,
-                              );
-                              history.push(
-                                `v2/o/${organisationId}/audience/segments`,
-                              );
-                            })
-                            .catch(error => {
-                              notifyError(error);
-                              hideSaveInProgress();
-                            });
-                        })
-                        .catch(error => {
-                          notifyError(error);
-                          hideSaveInProgress();
-                        });
+                      getFormattedExperimentationQuery(
+                        datamartId,
+                        queryId,
+                        this._queryService,
+                        segmentsRes.data as UserPartitionSegment[],
+                        true,
+                      ).then(experimentationQueryResource => {
+                        this._queryService
+                          .createQuery(datamartId, {
+                            ...experimentationQueryResource,
+                            query_text: experimentationQueryResource.query_text,
+                          })
+                          .then(queryResponse => {
+                            this._audienceSegmentService
+                              .updateAudienceSegment(segment.id, {
+                                ...segment,
+                                query_id: queryResponse.data.id,
+                                weight: formData.control,
+                                target_metric: formData.engagement,
+                                control_group_id: segmentRes.data.id,
+                                subtype: 'AB_TESTING_EXPERIMENT',
+                              })
+                              .then(res => {
+                                hideSaveInProgress();
+                                message.success(
+                                  intl.formatMessage(
+                                    messagesMap.successfullyCreated,
+                                  ),
+                                  3,
+                                );
+                                history.push(
+                                  `v2/o/${organisationId}/audience/segments`,
+                                );
+                              })
+                              .catch(error => {
+                                notifyError(error);
+                                hideSaveInProgress();
+                              });
+                          })
+                          .catch(error => {
+                            notifyError(error);
+                            hideSaveInProgress();
+                          });
+                      });
                     })
                     .catch(error => {
                       notifyError(error);

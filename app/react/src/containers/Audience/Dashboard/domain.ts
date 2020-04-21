@@ -1,10 +1,52 @@
+import { UserPartitionSegment } from './../../../models/audiencesegment/AudienceSegmentResource';
 import { AudienceSegmentShape } from '../../../models/audiencesegment';
 import { isUserQuerySegment } from '../Segments/Edit/domain';
 import { QueryResource } from '../../../models/datamart/DatamartResource';
 import { IQueryService } from '../../../services/QueryService';
 
+export const getFormattedExperimentationQuery = (
+  datamartId: string,
+  queryId: string,
+  queryService: IQueryService,
+  segments: UserPartitionSegment[],
+  intersectOperator: boolean,
+): Promise<QueryResource> => {
+  const excludingQuery = (exclude: boolean) => (
+    acc: string,
+    val: UserPartitionSegment,
+    index: number,
+  ) => {
+    const not = exclude ? 'NOT ' : '';
+    const and = index !== 0 ? 'AND ' : '';
+    return acc.concat(`${and}${not}segments { id = "${val.id}"} `);
+  };
 
+  const additionnalQuery = segments.reduce(
+    excludingQuery(intersectOperator),
+    '',
+  );
 
+  return queryService.getQuery(datamartId, queryId).then(querySegmentRes => {
+    const queryResource = querySegmentRes.data;
+
+    switch (queryResource.query_language) {
+      case 'OTQL':
+        return Promise.resolve(formatQuery(queryResource, additionnalQuery));
+
+      case 'JSON_OTQL':
+        return queryService
+          .convertJsonOtql2Otql(datamartId, queryResource)
+          .then(otqlQ => otqlQ.data)
+          .then(otqlQ => {
+            return Promise.resolve(
+              formatQuery(otqlQ, additionnalQuery),
+            );
+          });
+      default:
+        return queryResource;
+    }
+  });
+};
 export const getFormattedQuery = (
   datamartId: string,
   queryService: IQueryService,
@@ -15,44 +57,57 @@ export const getFormattedQuery = (
     return Promise.resolve(dashboardQuery);
   }
   if (isUserQuerySegment(segment) && segment.query_id) {
-    return queryService.getQuery(datamartId, segment.query_id)
+    return queryService
+      .getQuery(datamartId, segment.query_id)
       .then(q => q.data)
       .then(q => {
         switch (q.query_language) {
-          case "OTQL":
-            return Promise.resolve(formatQuery(dashboardQuery, extractOtqlWhereClause(q.query_text)));
-          case "JSON_OTQL":
-            return queryService.convertJsonOtql2Otql(datamartId, q)
+          case 'OTQL':
+            return Promise.resolve(
+              formatQuery(dashboardQuery, extractOtqlWhereClause(q.query_text)),
+            );
+          case 'JSON_OTQL':
+            return queryService
+              .convertJsonOtql2Otql(datamartId, q)
               .then(otqlQ => otqlQ.data)
               .then(otqlQ => {
-                return Promise.resolve(formatQuery(dashboardQuery, extractOtqlWhereClause(otqlQ.query_text)))
-              })
+                return Promise.resolve(
+                  formatQuery(
+                    dashboardQuery,
+                    extractOtqlWhereClause(otqlQ.query_text),
+                  ),
+                );
+              });
           default:
-            return dashboardQuery
+            return dashboardQuery;
         }
-      })
+      });
   }
-  return Promise.resolve(formatQuery(dashboardQuery, `segments { id = \"${segment.id}\"}`) );
+  return Promise.resolve(
+    formatQuery(dashboardQuery, `segments { id = \"${segment.id}\"}`),
+  );
 };
 
 export const formatQuery = (
   query: QueryResource,
-  additionnalQuery: string
+  additionnalQuery: string,
 ): QueryResource => {
   return {
     ...query,
-    query_language: "OTQL",
-    query_text: hasWhereClause(query.query_text) ? `${query.query_text} AND ${additionnalQuery}` : `${query.query_text} WHERE ${additionnalQuery}`
-  }
-}
+    query_language: 'OTQL',
+    query_text: hasWhereClause(query.query_text)
+      ? `${query.query_text} AND ${additionnalQuery}`
+      : `${query.query_text} WHERE ${additionnalQuery}`,
+  };
+};
 
 export const extractOtqlWhereClause = (text: string) => {
   const formattedText = text.toLowerCase();
-  const wherePosition = formattedText.indexOf("where");
+  const wherePosition = formattedText.indexOf('where');
   const whereClause = text.substr(wherePosition + 5, formattedText.length);
   return whereClause;
-}
+};
 
 export const hasWhereClause = (text: string) => {
-  return text.toLowerCase().indexOf("where") > -1
-}
+  return text.toLowerCase().indexOf('where') > -1;
+};
