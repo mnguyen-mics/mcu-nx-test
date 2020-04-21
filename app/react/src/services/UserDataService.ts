@@ -115,7 +115,7 @@ export class UserDataService implements IUserDataService {
   ): Promise<DataListResponse<UserProfileResource> | undefined> {
 
     if (identifier.type !== 'user_point_id') {
-      throw new Error(`Only the 'user_point_id' identifier is currently supported by the backend.`);
+      return Promise.reject(new Error(`Only the 'user_point_id' identifier is currently supported by the backend.`));
     }
 
     const endpoint =
