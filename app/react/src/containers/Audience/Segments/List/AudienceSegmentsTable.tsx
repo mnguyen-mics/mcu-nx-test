@@ -56,6 +56,7 @@ import { notifyError } from '../../../../redux/Notifications/actions';
 import { ButtonStyleless, McsIcon } from '../../../../components';
 import { Label } from '../../../Labels/Labels';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
+import { localMessages } from '../Dashboard/AudienceSegmentHeader';
 
 const messages = defineMessages({
   filterByLabel: {
@@ -147,6 +148,10 @@ const messages = defineMessages({
     id: 'audience.segments.list.editSegment',
     defaultMessage: 'Edit',
   },
+  more: {
+    id: 'audience.segments.list.typeFilter.more',
+    defaultMessage: 'More ...',
+  }
 });
 
 const messageMap: {
@@ -786,10 +791,13 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       },
     ];
 
-    const typeItems = [
+    const typeItems = ['USER_LIST', 'USER_QUERY'].map(type => ({
+      key: type,
+      value: type,
+    }));
+
+    const typeSubItems = [
       'USER_ACTIVATION',
-      'USER_LIST',
-      'USER_QUERY',
       'USER_PARTITION',
       'USER_LOOKALIKE',
     ].map(type => ({ key: type, value: type }));
@@ -818,8 +826,11 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
           value: type,
         })),
         items: typeItems,
+        subItems: typeSubItems,
+        subItemsTitle: intl.formatMessage(messages.more),
         getKey: (item: { key: string; value: string }) => item.key,
-        display: (item: { key: string; value: string }) => item.value,
+        display: (item: { key: string; value: string }) =>
+          intl.formatMessage(localMessages[item.value]),
         handleMenuClick: (values: Array<{ key: string; value: string }>) =>
           this.updateLocationSearch({
             type: values.map(v => v.value),
