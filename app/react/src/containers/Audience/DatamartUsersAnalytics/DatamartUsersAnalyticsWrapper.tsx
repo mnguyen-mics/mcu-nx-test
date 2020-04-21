@@ -13,7 +13,7 @@ import {
   AllUsersSettings
 } from '../../../utils/LocationSearchHelper';
 import McsMoment from '../../../utils/McsMoment';
-// import SegmentFilter from './components/SegmentFilter';
+import SegmentFilter from './components/SegmentFilter';
 import { DATAMART_USERS_ANALYTICS_SETTING } from '../Segments/Dashboard/constants';
 
 interface DatamartAnalysisProps {
@@ -114,15 +114,14 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
       title, 
       subTitle, 
       datamartId,
-      // organisationId, 
+      organisationId, 
       config, 
       showFilter,
       location: { search } } = this.props;
 
-    // const { isLoading } = this.state;
+    const { isLoading } = this.state;
 
-    const filter = parseSearch(search, DATAMART_USERS_ANALYTICS_SETTING) as McsDateRangeValue;
-
+    const filter = parseSearch(search, DATAMART_USERS_ANALYTICS_SETTING);
     return (
 
       <div className={'mcs-datamartUsersAnalytics'}>
@@ -136,18 +135,18 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
           </Col>
         </Row>
         { showFilter && <Row>
-          {/* <SegmentFilter 
+          <SegmentFilter 
             className={ isLoading ? 'mcs-datamartUsersAnalytics_segmentFilter _is_disabled' : 'mcs-datamartUsersAnalytics_segmentFilter'} 
             onChange={this.onSegmentFilterChange}
             onToggleAllUsersFilter={this.onAllUserFilterChange}
             datamartId={datamartId}
             organisationId={organisationId}
-          /> */}
+          />
           <Col className="text-right" offset={6}>
               {this.renderDatePicker()}
           </Col>
         </Row>}
-        <DatamartUsersAnalyticsContent datamartId={datamartId} config={config} dateRange={filter} onChange={this.getLoadingState} />
+        <DatamartUsersAnalyticsContent datamartId={datamartId} config={config} dateRange={{from: filter.from, to: filter.to}} onChange={this.getLoadingState} />
       </div>
     );
   }

@@ -56,14 +56,15 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       chart,
       onChange,
       segmentId,
-      compareWithSegmentId
+      compareWithSegmentId,
+      dateRange
     } = this.props;
       this.fetchAnalytics(
         onChange,
         datamartId, 
         chart.metricNames, 
-        new McsMoment('now-8d'), 
-        new McsMoment('now-1d'), 
+        dateRange.from,
+        dateRange.to, 
         chart.dimensions, 
         chart.dimensionFilterClauses,
         segmentId
@@ -73,8 +74,8 @@ class ApiQueryWrapper extends React.Component<Props, State> {
           onChange,
           datamartId, 
           chart.metricNames, 
-          new McsMoment('now-8d'), 
-          new McsMoment('now-1d'), 
+          dateRange.from,
+          dateRange.to,  
           chart.dimensions, 
           chart.dimensionFilterClauses,
           segmentId,

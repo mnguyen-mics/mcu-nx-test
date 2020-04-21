@@ -275,18 +275,20 @@ class FormatDataToChart extends React.Component<JoinedProp, {}> {
           </Tabs>)
       case 'SINGLE_STAT':
         let statValue;
+        
+        const apiMetricValue = data[0][chart.metricNames[0]] === null || data[0][chart.metricNames[0]] === "NaN" ? 0 : data[0][chart.metricNames[0]];
 
         if (chart.unit === 'time') {
-          statValue = moment.duration(data[0][chart.metricNames[0]] as number, "second").format("h[hr] m[min] s[s]");
+          statValue = moment.duration(apiMetricValue, "second").format("h[hr] m[min] s[s]");
         }
         else if (chart.unit === '%') {
-          statValue = (data[0][chart.metricNames[0]] as number * 100).toFixed(2);
+          statValue = (apiMetricValue as number * 100).toFixed(2);
         }
         else if (chart.unit === '€') {
-          statValue = numeral(1253).format('0.00a');
+          statValue = numeral(apiMetricValue).format('0.00a');
         }
         else {
-          statValue = data[0][chart.metricNames[0]] as number;
+          statValue = apiMetricValue;
         }
         const originalValue = data[0][chart.metricNames[0]];
         const newValue = dataToCompareWith ? dataToCompareWith[0][chart.metricNames[0]] : undefined;

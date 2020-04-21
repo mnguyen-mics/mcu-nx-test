@@ -13,6 +13,8 @@ import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../Helpers/injectThemeColors';
 import { isEqual, difference } from 'lodash';
+import cuid from 'cuid';
+
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 export interface DashboardConfig {
@@ -37,113 +39,137 @@ interface DatamartUsersAnalyticsContentProps {
 
 interface DatamartUsersAnalyticsContentStates {
   formattedConfig: DashboardConfig[];
-  filters: string[];
-  allUsers: boolean;
+  segmentsFilters: string[];
+  allUsersFilter: boolean;
   filterColors: string[];
   allUsersFilterColor: string;
   lastFilterColor: string;
+  generatedDom: JSX.Element[];
 }
 
 type JoinedProp = RouteComponentProps & DatamartUsersAnalyticsContentProps & InjectedThemeColorsProps;
 
 class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, DatamartUsersAnalyticsContentStates> {
-
+  private _cuid = cuid;
   private _lastFilterColor = '#000';
 
   constructor(props: JoinedProp) {
     super(props);
-
     this.state = {
       formattedConfig: [],
-      filters: [],
-      allUsers: true,
+      segmentsFilters: [],
+      allUsersFilter: true,
       filterColors: [],
       allUsersFilterColor: props.colors['mcs-primary'],
-      lastFilterColor: this._lastFilterColor
+      lastFilterColor: this._lastFilterColor,
+      generatedDom: []
     }
   }
 
   componentDidMount() {
-    const { config, colors } = this.props;
+    const { config, colors, datamartId, onChange, dateRange } = this.props;
     const { allUsersFilterColor, lastFilterColor } = this.state;
 
     for (const configItem of config) {
       const currentConfigItem = { ...configItem };
       configItem.color = allUsersFilterColor;
+      configItem.layout.i = this._cuid();
       config.concat(currentConfigItem);
     }
 
     this.setState({
       formattedConfig: config,
-      filterColors: chroma.scale([colors['mcs-info'], lastFilterColor]).mode('lch').colors(3)
+      filterColors: chroma.scale([colors['mcs-info'], lastFilterColor]).mode('lch').colors(3),
+      generatedDom: this.generateDOM(config, datamartId, dateRange, onChange)
     });
   }
 
-  componentDidUpdate(previousProps: DatamartUsersAnalyticsContentProps) {
-    const { location: { search }, config } = this.props;
-    const { filters, allUsers, filterColors } = this.state;
+  componentDidUpdate(prevProps: DatamartUsersAnalyticsContentProps) {
+    const { location: { search }, config, datamartId, onChange, dateRange } = this.props;
+    const { segmentsFilters, allUsersFilter, filterColors, formattedConfig, generatedDom } = this.state;
 
     const filter = parseSearch(search, DATAMART_USERS_ANALYTICS_SETTING);
+    const currentFormattedConfig = formattedConfig.slice();
 
-    if (!isEqual(filter.segments, filters)) {
+    if (!isEqual(filter.segments, segmentsFilters)) {
       const tmpDashboardConfig: DashboardConfig[] = [];
+      const newGeneratedDom: JSX.Element[] = [];
       let newDashboardConfig: DashboardConfig[] = [];
 
-      this.setState(state => {
-        const formattedConfig = state.formattedConfig.slice();
-        if (filters.length < filter.segments.length) {
-          // Add segment filter
-          for (const configItem of config) {
-            const currentConfigItem = {
-              ...configItem,
-              segments: {
-                baseSegmentId: filter.segments[filters.length]
-              },
-              color: filterColors[filters.length]
-            };
-            currentConfigItem.layout.y += 3;
-            tmpDashboardConfig.push(currentConfigItem);
-          }
-          newDashboardConfig = formattedConfig.concat(tmpDashboardConfig);
-        }
-        else {
-          const thedifference = difference(filters, filter.segments);
-          // Remove segment filter
-          newDashboardConfig = formattedConfig.filter(item => !item.segments || (item.segments && item.segments.baseSegmentId !== thedifference[0]));
-        }
+      if (segmentsFilters.length < filter.segments.length) {
 
+        const usedColors = currentFormattedConfig.map(item => item.color);
+
+        // Add segment filter
+        for(const configItem of config) {
+
+          const currentConfigItem = {
+            layout: {
+              ...configItem.layout,
+              i: this._cuid()
+            },
+            title: configItem.title,
+            charts: configItem.charts.slice(),
+            segments: {
+              baseSegmentId: filter.segments[segmentsFilters.length]
+            },
+            color: usedColors.includes(filterColors[0]) ? filterColors[1] : filterColors[0]
+          };
+
+          tmpDashboardConfig.push(currentConfigItem);
+        }
+        newDashboardConfig = currentFormattedConfig.concat(tmpDashboardConfig);
+      }
+      else {
+        const thedifference = difference(segmentsFilters, filter.segments);
+        // Remove segment filter
+        newDashboardConfig = currentFormattedConfig.filter(item => !item.segments || (item.segments && item.segments.baseSegmentId !== thedifference[0]));
+        const newDashboardConfigKeys = newDashboardConfig.map(item => item.layout.i);
+        newGeneratedDom.concat(generatedDom.filter((item: JSX.Element) => newDashboardConfigKeys.includes(item.key as string | undefined)))
+      }
+
+      this.setState({
+        formattedConfig: newDashboardConfig,
+        segmentsFilters: filter.segments,
+        generatedDom: newGeneratedDom.length > 0 ? newGeneratedDom : this.generateDOM(newDashboardConfig, datamartId, dateRange, onChange)
+      });
+    }
+
+    if (!isEqual(filter.allusers, allUsersFilter)) {
+      this.setState(state => {
+
+        const newDashboardConfig = !filter.allusers ? currentFormattedConfig.filter(item => item.segments) : currentFormattedConfig.concat(config);
+        const newDashboardConfigKeys = newDashboardConfig.map(item => item.layout.i);
+        const newGeneratedDom = filter.allusers ? this.generateDOM(newDashboardConfig, datamartId, dateRange, onChange) : generatedDom.filter((item: JSX.Element) => newDashboardConfigKeys.includes(item.key as string | undefined));
         return {
           formattedConfig: newDashboardConfig,
-          filters: filter.segments
+          allUsersFilter: filter.allusers,
+          generatedDom: newGeneratedDom
         }
       });
     }
 
-    if (!isEqual(filter.allusers, allUsers)) {
-      this.setState(state => {
-        const formattedConfig = state.formattedConfig.slice();
-        const newDashboardConfig = !filter.allusers ? formattedConfig.filter(item => item.segments) : formattedConfig.concat(config);
-        return {
-          formattedConfig: newDashboardConfig,
-          allUsers: filter.allusers
-        }
-      });
-    }
+    if (
+      (prevProps.dateRange.from.value && prevProps.dateRange.to.value) && 
+      (prevProps.dateRange.from.value !== dateRange.from.value || prevProps.dateRange.to.value !== dateRange.to.value)) {
+        this.setState({
+          generatedDom: this.generateDOM(formattedConfig, datamartId, dateRange, onChange)
+        });
+      }
   }
-
 
   generateDOM(dashboardConfig: DashboardConfig[], datamartId: string, dateRange: McsDateRangeValue, onChange: (isLoading: boolean) => void) {
     return dashboardConfig.map((comp: DashboardConfig, i) => {
       return (
         <CardFlex
           title={comp.title}
-          key={i.toString()}
+          key={comp.layout.i && comp.layout.i.toString()}
           className={comp.layout.static ? 'static mcs-datamartUsersAnalytics_card' : 'mcs-datamartUsersAnalytics_card'}
           style={{ borderLeft: `5px solid ${comp.color}` }}
         >
-          {comp.charts.map((chart: Chart, index) => {
+          {comp.charts.map((chart: Chart) => {
             return <ApiQueryWrapper
-              key={index.toString()}
+              key={comp.layout.i && comp.layout.i.toString()}
               chart={chart}
               datamartId={datamartId}
               dateRange={dateRange}
@@ -158,10 +184,8 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
   }
 
   render() {
-    const { formattedConfig } = this.state;
-    const { datamartId, dateRange, onChange } = this.props;
-
-    const layouts = formattedConfig.map((cl, i) => ({ ...cl.layout, i: i.toString() }));
+    const { formattedConfig, generatedDom } = this.state;
+    const layouts = formattedConfig.map((cl) => ({ ...cl.layout }));
 
     return (
       <ResponsiveGridLayout className="layout mcs-datamartUsersAnalytics_components"
@@ -170,9 +194,7 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
         isDraggable={false}
         isResizable={false}
         measureBeforeMount={false}>
-        {
-          this.generateDOM(formattedConfig, datamartId, dateRange, onChange)
-        }
+        { generatedDom }
       </ResponsiveGridLayout>
     );
   }
