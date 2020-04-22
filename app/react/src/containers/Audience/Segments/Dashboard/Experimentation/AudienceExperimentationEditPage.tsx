@@ -123,6 +123,7 @@ class AudienceExperimentationEditPage extends React.Component<Props, State> {
       intl,
       notifyError,
       history,
+      close
     } = this.props;
     this.setState({
       isSaving: true,
@@ -201,8 +202,9 @@ class AudienceExperimentationEditPage extends React.Component<Props, State> {
                                   3,
                                 );
                                 history.push(
-                                  `v2/o/${organisationId}/audience/segments`,
+                                  `/v2/o/${organisationId}/audience/segments/${res.data.id}`,
                                 );
+                                close();
                               })
                               .catch(error => {
                                 notifyError(error);
