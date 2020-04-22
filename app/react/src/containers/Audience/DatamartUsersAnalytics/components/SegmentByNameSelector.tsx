@@ -65,6 +65,7 @@ class SegmentByNameSelector extends React.Component<SegmentByNameSelectorProps, 
     return (<Select
       showSearch={true}
       labelInValue={true}
+      autoFocus={true}
       value={value}
       className="mcs-segmentByNameSelector"
       placeholder="Search segment by name"
