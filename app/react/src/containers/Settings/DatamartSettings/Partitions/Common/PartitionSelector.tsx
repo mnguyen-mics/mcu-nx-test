@@ -1,6 +1,11 @@
 import * as React from 'react';
 import { Layout, Row } from 'antd';
-import { defineMessages, injectIntl, InjectedIntlProps } from 'react-intl';
+import {
+  defineMessages,
+  injectIntl,
+  InjectedIntlProps,
+  FormattedMessage,
+} from 'react-intl';
 import { FormTitle } from '../../../../../components/Form';
 import { MenuList } from '../../../../../components/FormMenu';
 import FormLayoutActionbar, {
@@ -53,18 +58,25 @@ class PartitionSelector extends React.Component<Props> {
           <FormTitle title={messages.title} subtitle={messages.subTitle} />
           <Row className="mcs-selector_container">
             <Row className="menu">
-              {partitions.map(p => {
-                const handleSelect = () => onSelect(p);
-                const partitionName =
-                  p.name || intl.formatMessage(messages.noName);
-                return (
-                  <MenuList
-                    key={p.id}
-                    title={`${partitionName} (Type: ${p.type}, Count: ${p.part_count})`}
-                    select={handleSelect}
-                  />
-                );
-              })}
+              {partitions.length === 0 ? (
+                <FormattedMessage
+                  id="audience.segments.experimentation.form.noPartition"
+                  defaultMessage="You need a partition to create a Experimentation, please contact your support to create one."
+                />
+              ) : (
+                partitions.map(p => {
+                  const handleSelect = () => onSelect(p);
+                  const partitionName =
+                    p.name || intl.formatMessage(messages.noName);
+                  return (
+                    <MenuList
+                      key={p.id}
+                      title={`${partitionName} (Type: ${p.type}, Count: ${p.part_count})`}
+                      select={handleSelect}
+                    />
+                  );
+                })
+              )}
             </Row>
           </Row>
         </Layout.Content>
