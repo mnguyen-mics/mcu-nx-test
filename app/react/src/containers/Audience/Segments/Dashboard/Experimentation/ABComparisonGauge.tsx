@@ -29,9 +29,8 @@ class ABComparisonGauge extends React.Component<Props> {
   };
 
   render() {
-    const { intl } = this.props;
-    // const percent = weight && Math.round(weight * 100) / 100;
-    const percent = 74;
+    const { intl, weight } = this.props;
+    const percent = weight && Math.round(weight * 100) / 100;
     return (
       percent && (
         <div className="mcs-audienceSegmentDashboard_abGauge">
