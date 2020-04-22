@@ -58,6 +58,7 @@ import { AudiencePartitionsPage } from '../containers/Settings/DatamartSettings/
 import Partition from '../containers/Settings/DatamartSettings/Partitions/Dashboard/Partition';
 import AudiencePartitionPage from '../containers/Settings/DatamartSettings/Partitions/Edit/AudiencePartitionPage';
 import CleaningRulesDashboardPage from '../containers/Settings/DatamartSettings/CleaningRules/Dashboard/CleaningRulesDashboardPage';
+import UserEventCleaningRuleEditPage from '../containers/Settings/DatamartSettings/CleaningRules/Edit/UserEventCleaningRuleEditPage';
 
 export const settingsDefinition: NavigatorDefinition = {
   /*
@@ -179,6 +180,18 @@ export const settingsDefinition: NavigatorDefinition = {
     path: '/settings/datamart/cleaning_rules',
     layout: 'settings',
     contentComponent: CleaningRulesDashboardPage,
+    requireDatamart: true,
+  },
+  settingsDatamartCleaningRulesCreation: {
+    path: '/settings/datamart/cleaning_rules/create',
+    layout: 'edit',
+    editComponent: UserEventCleaningRuleEditPage,
+    requireDatamart: true,
+  },
+  settingsDatamartCleaningRulesEdition: {
+    path: '/settings/datamart/:datamartId/cleaning_rules/:cleaningRuleId/edit',
+    layout: 'edit',
+    editComponent: UserEventCleaningRuleEditPage,
     requireDatamart: true,
   },
 

@@ -7,7 +7,7 @@ import {
   TableViewFilters,
 } from '../../../../../components/TableView';
 import messages from './messages';
-import { ChannelResource } from '../../../../../models/settings/settings';
+import { ChannelResourceShape } from '../../../../../models/settings/settings';
 import { Filter } from '../../Common/domain';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { compose } from 'recompose';
@@ -17,12 +17,12 @@ import { ButtonStyleless } from '../../../../../components';
 
 export interface MobileApplicationsTableProps {
   isFetchingMobileApplications: boolean;
-  dataSource: ChannelResource[];
+  dataSource: ChannelResourceShape[];
   totalMobileApplications: number;
   noMobileApplicationYet: boolean;
   onFilterChange: (a: Partial<Filter>) => void;
-  onArchiveMobileApplication: (a: ChannelResource) => void;
-  onEditMobileApplication: (a: ChannelResource) => void;
+  onArchiveMobileApplication: (a: ChannelResourceShape) => void;
+  onEditMobileApplication: (a: ChannelResourceShape) => void;
   filter: Filter;
   filtersOptions?: Array<MultiSelectProps<any>>;
 }
@@ -72,7 +72,7 @@ class MobileApplicationsTable extends React.Component<Props> {
         intlMessage: messages.mobileApplicationName,
         key: 'name',
         isHideable: false,
-        render: (text: string, record: ChannelResource) => {
+        render: (text: string, record: ChannelResourceShape) => {
 
           const handleEditSite = () => {
             history.push({
@@ -103,7 +103,7 @@ class MobileApplicationsTable extends React.Component<Props> {
       },
     ];
 
-    const actionColumns: Array<ActionsColumnDefinition<ChannelResource>> = [
+    const actionColumns: Array<ActionsColumnDefinition<ChannelResourceShape>> = [
       {
         key: 'action',
         actions: () => [

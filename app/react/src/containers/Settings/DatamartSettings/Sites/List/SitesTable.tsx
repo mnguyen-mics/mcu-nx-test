@@ -5,7 +5,7 @@ import {
   TableViewFilters,
 } from '../../../../../components/TableView';
 import messages from './messages';
-import { ChannelResource } from '../../../../../models/settings/settings';
+import { ChannelResourceShape } from '../../../../../models/settings/settings';
 import { Filter } from '../../Common/domain';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
@@ -15,12 +15,12 @@ import { ButtonStyleless } from '../../../../../components';
 
 export interface SitesTableProps {
   isFetchingSites: boolean;
-  dataSource: ChannelResource[];
+  dataSource: ChannelResourceShape[];
   totalSites: number;
   noSiteYet: boolean;
   onFilterChange: (a: Partial<Filter>) => void;
-  onDeleteSite: (a: ChannelResource) => void;
-  onEditSite: (a: ChannelResource) => void;
+  onDeleteSite: (a: ChannelResourceShape) => void;
+  onEditSite: (a: ChannelResourceShape) => void;
   filter: Filter;
   filtersOptions: Array<MultiSelectProps<any>>;
 }
@@ -70,7 +70,7 @@ class SitesTable extends React.Component<Props> {
         intlMessage: messages.siteName,
         key: 'name',
         isHideable: false,
-        render: (text: string, record: ChannelResource) => {
+        render: (text: string, record: ChannelResourceShape) => {
 
           const handleEditSite = () => {
             history.push({
@@ -101,7 +101,7 @@ class SitesTable extends React.Component<Props> {
       },
     ];
 
-    const actionColumns: Array<ActionsColumnDefinition<ChannelResource>> = [
+    const actionColumns: Array<ActionsColumnDefinition<ChannelResourceShape>> = [
       {
         key: 'action',
         actions: () => [
