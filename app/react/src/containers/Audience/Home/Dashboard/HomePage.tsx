@@ -24,7 +24,7 @@ import Error from '../../../../components/Error';
 import DatamartUsersAnalyticsWrapper from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 import { DashboardConfig } from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsContent';
-import { averageSessionDurationConfig, channelEngagementConfig, acquisitionEngagementConfig, /*ecommerceEngagementConfig*/ } from '../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
+import { averageSessionDurationConfig, channelEngagementConfig, acquisitionEngagementConfig, ecommerceEngagementConfig } from '../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
 
 const { Content } = Layout;
 
@@ -109,7 +109,7 @@ class Partition extends React.Component<JoinedProps, HomeState> {
   }
 
   getDatamartAnaylicsDashboardConfig = (organisationId: string, datamartId: string, intl: InjectedIntl) : HomeDashboardConfig[] => {
-    return [
+    const config = [
       {
         title: intl.formatMessage(messages.homeTitle),
         datamartId: datamartId,
@@ -117,12 +117,12 @@ class Partition extends React.Component<JoinedProps, HomeState> {
         config: averageSessionDurationConfig,
         showFilter: true
       },
-      // {
-      //   title: intl.formatMessage(messages.ecommerceEngagementTitle),
-      //   datamartId: datamartId,
-      //   organisationId: organisationId,
-      //   config: ecommerceEngagementConfig
-      // },
+      {
+        title: intl.formatMessage(messages.ecommerceEngagementTitle),
+        datamartId: datamartId,
+        organisationId: organisationId,
+        config: ecommerceEngagementConfig
+      },
       {
         title: intl.formatMessage(messages.channelEngagementsAnalyticsTitle),
         datamartId: datamartId,
@@ -136,6 +136,8 @@ class Partition extends React.Component<JoinedProps, HomeState> {
         config: acquisitionEngagementConfig
       }
     ];
+    
+    return config
   };
 
   loadData = (selectedDatamartId: string) => {

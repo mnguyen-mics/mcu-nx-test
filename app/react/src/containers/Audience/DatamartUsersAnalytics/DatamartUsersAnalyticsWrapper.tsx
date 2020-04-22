@@ -10,10 +10,11 @@ import {
   updateSearch,
   DateSearchSettings,
   SegmentsSearchSettings,
-  AllUsersSettings
+  AllUsersSettings,
+  isSearchValid
 } from '../../../utils/LocationSearchHelper';
 import McsMoment from '../../../utils/McsMoment';
-// import SegmentFilter from './components/SegmentFilter';
+import SegmentFilter from './components/SegmentFilter';
 import { DATAMART_USERS_ANALYTICS_SETTING } from '../Segments/Dashboard/constants';
 
 interface DatamartAnalysisProps {
@@ -27,6 +28,7 @@ interface DatamartAnalysisProps {
 
 interface State {
   layout: Layout[];
+  refresh: boolean;
   isLoading: boolean;
 }
 
@@ -39,7 +41,8 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
   constructor(props: JoinedProp) {
     super(props);
     this.state = { 
-      layout: [], 
+      layout: [],
+      refresh: false, 
       isLoading: false,
     };
   }
@@ -51,6 +54,25 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
       segments: [],
       allusers: true
     });
+  }
+
+  componentDidUpdate() {
+    const {
+      location: { search }
+    } = this.props;
+    if (!isSearchValid(search, DATAMART_USERS_ANALYTICS_SETTING)) {
+      this.setState({refresh: true});
+      this.updateLocationSearch({
+        from: new McsMoment('now-8d'),
+        to: new McsMoment('now-1d'),
+        segments: [],
+        allusers: true
+      });
+
+      setTimeout(()=> {
+        this.setState({refresh: false})
+      }, 500);
+    }
   }
 
   updateLocationSearch = (params: FILTERS) => {
@@ -114,15 +136,14 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
       title, 
       subTitle, 
       datamartId,
-      // organisationId, 
+      organisationId, 
       config, 
       showFilter,
       location: { search } } = this.props;
 
-    // const { isLoading } = this.state;
+    const { isLoading, refresh } = this.state;
 
-    const filter = parseSearch(search, DATAMART_USERS_ANALYTICS_SETTING) as McsDateRangeValue;
-
+    const filter = parseSearch(search, DATAMART_USERS_ANALYTICS_SETTING);
     return (
 
       <div className={'mcs-datamartUsersAnalytics'}>
@@ -135,19 +156,19 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
               </div>}
           </Col>
         </Row>
-        { showFilter && <Row>
-          {/* <SegmentFilter 
+        { !refresh && showFilter && <Row>
+          <SegmentFilter 
             className={ isLoading ? 'mcs-datamartUsersAnalytics_segmentFilter _is_disabled' : 'mcs-datamartUsersAnalytics_segmentFilter'} 
             onChange={this.onSegmentFilterChange}
             onToggleAllUsersFilter={this.onAllUserFilterChange}
             datamartId={datamartId}
             organisationId={organisationId}
-          /> */}
+          />
           <Col className="text-right" offset={6}>
               {this.renderDatePicker()}
           </Col>
         </Row>}
-        <DatamartUsersAnalyticsContent datamartId={datamartId} config={config} dateRange={filter} onChange={this.getLoadingState} />
+        {!refresh && <DatamartUsersAnalyticsContent datamartId={datamartId} config={config} dateRange={{from: filter.from, to: filter.to}} onChange={this.getLoadingState} />}
       </div>
     );
   }

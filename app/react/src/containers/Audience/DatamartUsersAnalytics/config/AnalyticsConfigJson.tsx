@@ -92,7 +92,7 @@ export const averageSessionDurationConfig: DashboardConfig[] = [
       {
         type: 'SINGLE_STAT',
         options: {
-          title: { text: 'Average session duration' }
+          title: { text: 'Average Session Duration' }
         },
         unit: 'time',
         // samplingRatio: 1,

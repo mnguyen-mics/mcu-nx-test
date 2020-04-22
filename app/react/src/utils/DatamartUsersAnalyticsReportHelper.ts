@@ -66,27 +66,28 @@ function buildReport(
     return { expression: metric };
   });
 
-  // const dimensionFilterClausesCopy = Object.assign({}, dimensionFilterClauses);
-  // if (dimensionFilterClausesCopy && segmentId) {
-  //   dimensionFilterClausesCopy.operator = 'AND';
-  //   const filters = dimensionFilterClausesCopy.filters.slice();
-  //   filters.push({
-  //     dimension_name: 'segment_id',
-  //     not: false,
-  //     operator: 'EXACT',
-  //     expressions: [
-  //       segmentId
-  //     ],
-  //     case_sensitive: false
-  //   });
+  const dimensionFilterClausesCopy  = dimensionFilterClauses ? {...dimensionFilterClauses} : undefined;
+
+  if (dimensionFilterClausesCopy && segmentId) {
+    dimensionFilterClausesCopy.operator = 'AND';
+    const filters = dimensionFilterClausesCopy.filters.slice();
+    filters.push({
+      dimension_name: 'segment_id',
+      not: false,
+      operator: 'EXACT',
+      expressions: [
+        segmentId
+      ],
+      case_sensitive: false
+    });
     
-  //   dimensionFilterClausesCopy.filters = filters;
-  // }
+    dimensionFilterClausesCopy.filters = filters;
+  }
 
   const report: ReportRequestBody = {
     date_ranges: dateRanges,
     dimensions: dimensions,
-    dimension_filter_clauses: dimensionFilterClauses,
+    dimension_filter_clauses: dimensionFilterClausesCopy,
     metrics: metrics,
   };
   return report;
