@@ -87,7 +87,14 @@ class ABComparisonDashboard extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { controlGroupSegment, experimentationSegment } = this.props;
+    const {
+      controlGroupSegment,
+      experimentationSegment,
+      intl,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
     const {
       controlGroupSegment: prevControlGroupSegment,
       experimentationSegment: prevExperimentationSegment,
@@ -100,20 +107,23 @@ class ABComparisonDashboard extends React.Component<Props, State> {
       experimentationSegment &&
       experimentationSegment.id
     ) {
-      this.setState(prevState => {
-        const nexState = {
-          ...prevState,
-          config: averageSessionDurationConfig.map(config => {
-            return {
-              ...config,
-              segments: {
-                baseSegmentId: controlGroupSegment.id,
-                segmentIdToCompareWith: experimentationSegment.id,
-              },
-            };
-          }),
-        };
-        return nexState;
+      this.setState({
+        ABComparisonDashboardConfig: [
+          {
+            title: intl.formatMessage(messagesMap.channelEngagement),
+            datamartId: experimentationSegment.datamart_id,
+            config: averageSessionDurationConfig.map(config => {
+              return {
+                ...config,
+                segments: {
+                  baseSegmentId: controlGroupSegment.id,
+                  segmentIdToCompareWith: experimentationSegment.id,
+                },
+              };
+            }),
+            organisationId: organisationId,
+          },
+        ],
       });
     }
   }
