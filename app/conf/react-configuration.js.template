@@ -6,6 +6,7 @@
     'audience-feeds',
     'audience-segment_builder',
     'audience-monitoring',
+    'audience-segment_uplift',
     'campaigns-display',
     'campaigns-email',
     'campaigns-goals',

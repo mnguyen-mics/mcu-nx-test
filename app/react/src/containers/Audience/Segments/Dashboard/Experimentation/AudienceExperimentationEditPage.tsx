@@ -15,13 +15,11 @@ import {
   GetPartitionOption,
 } from '../../../../../services/AudiencePartitionsService';
 import { Omit } from '../../../../../utils/Types';
-// import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
 import { AudiencePartitionResource } from '../../../../../models/audiencePartition/AudiencePartitionResource';
 import { ReduxFormChangeProps } from '../../../../../utils/FormHelper';
 import AudienceExperimentationForm, {
   messagesMap,
 } from './AudienceExperimentationForm';
-import { SearchFilter } from '../../../../../components/ElementSelector';
 import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
 import { IQueryService } from '../../../../../services/QueryService';
 import {
@@ -29,6 +27,7 @@ import {
   UserPartitionSegment,
 } from '../../../../../models/audiencesegment/AudienceSegmentResource';
 import { message } from 'antd';
+import { getFormattedExperimentationQuery } from '../../../Dashboard/domain';
 
 type Engagement = 'E_COMMERCE_ENGAGEMENT' | 'CHANNEL_ENGAGEMENT';
 
@@ -83,40 +82,37 @@ class AudienceExperimentationEditPage extends React.Component<Props, State> {
     };
   }
 
-  fetchAudiencePartitions = (filter?: SearchFilter) => {
+  componentDidMount() {
     const {
       match: {
         params: { organisationId },
       },
+      segment,
     } = this.props;
-
     const options: GetPartitionOption = {
       first_result: 0,
-      max_results: 10,
+      max_results: 100,
       status: ['PUBLISHED'],
+      datamart_id: segment.datamart_id,
     };
-    if (filter && filter.pageSize) {
-      options.max_results = filter.pageSize;
-    }
-    if (filter && filter.keywords) {
-      options.keywords = filter.keywords;
-    }
-    if (filter && filter.keywords) {
-      options.keywords = filter.keywords;
-    }
-    if (filter && filter.datamartId) {
-      options.datamart_id = filter.datamartId;
-    }
+    this.setState({
+      loadingPartitions: true,
+    });
+    return this._audiencePartitionService
+      .getPartitions(organisationId, options)
+      .then(res => {
+        this.setState({
+          partitions: res.data,
+          loadingPartitions: false,
+        });
+      })
 
-    return this._audiencePartitionService.getPartitions(
-      organisationId,
-      options,
-    );
-  };
-
-  fetchAudiencePartition = (id: string) => {
-    return this._audiencePartitionService.getPartition(id);
-  };
+      .catch(error => {
+        this.setState({
+          loadingPartitions: false,
+        });
+      });
+  }
 
   save = (formData: ExperimentationFormData) => {
     const {
@@ -127,6 +123,7 @@ class AudienceExperimentationEditPage extends React.Component<Props, State> {
       intl,
       notifyError,
       history,
+      close
     } = this.props;
     this.setState({
       isSaving: true,
@@ -135,63 +132,56 @@ class AudienceExperimentationEditPage extends React.Component<Props, State> {
       intl.formatMessage(messagesMap.savingInProgress),
       0,
     );
-
-    const excludingQuery = (exclude: boolean) => (
-      acc: string,
-      val: UserPartitionSegment,
-      index: number,
-    ) => {
-      const not = exclude ? 'NOT ' : '';
-      const and = index !== 0 ? 'AND ' : '';
-      return acc.concat(`${and}${not}segments { id = "${val.id}"} `);
-    };
-
     const datamartId = segment.datamart_id;
     const partitionId =
       formData.selectedPartition && formData.selectedPartition.id;
     const queryId = segment.query_id;
     if (partitionId && queryId) {
-      try {
-        this._audienceSegmentService
-          .getSegments(organisationId, {
-            audience_partition_id: partitionId,
-            type: 'USER_PARTITION',
-            max_results: 500,
-          })
-          .then(segmentsRes => {
-            const controlGroupQuery = segmentsRes.data.reduce(
-              excludingQuery(false),
-              'WHERE ',
-            );
-            const experimentationQuery = segmentsRes.data.reduce(
-              excludingQuery(true),
-              'WHERE ',
-            );
-            this._queryService
-              .getQuery(datamartId, queryId)
-              .then(querySegmentRes => {
-                this._queryService
-                  .createQuery(datamartId, {
-                    datamart_id: datamartId,
-                    query_language: 'OTQL',
-                    query_text: `${querySegmentRes.data.query_text} ${controlGroupQuery}`,
-                  })
-                  .then(queryRes => {
-                    // Control Group Segment Creation
-                    this._audienceSegmentService
-                      .createAudienceSegment(organisationId, {
-                        name: `${segment.name}-control-group`,
-                        type: 'USER_QUERY',
-                        datamart_id: datamartId,
-                        subtype: 'AB_TESTING_CONTROL_GROUP',
-                        weight: formData.control,
-                        query_id: queryRes.data.id,
-                      })
-                      .then(segmentRes => {
-                        // Experimentation Creation
+      this._audienceSegmentService
+        .getSegments(organisationId, {
+          audience_partition_id: partitionId,
+          type: 'USER_PARTITION',
+          max_results: 500,
+        })
+        .then(segmentsRes => {
+          getFormattedExperimentationQuery(
+            datamartId,
+            queryId,
+            this._queryService,
+            segmentsRes.data as UserPartitionSegment[],
+            true,
+          )
+            .then(controlGroupQueryResource => {
+              this._queryService
+                .createQuery(datamartId, {
+                  ...controlGroupQueryResource,
+                  query_text: controlGroupQueryResource.query_text,
+                })
+
+                .then(controlGroupqQeryRes => {
+                  // Control Group Segment Creation
+                  this._audienceSegmentService
+                    .createAudienceSegment(organisationId, {
+                      name: `${segment.name}-control-group`,
+                      type: 'USER_QUERY',
+                      datamart_id: datamartId,
+                      subtype: 'AB_TESTING_CONTROL_GROUP',
+                      weight: formData.control,
+                      query_id: controlGroupqQeryRes.data.id,
+                    })
+                    .then(segmentRes => {
+                      // Experimentation Creation
+                      getFormattedExperimentationQuery(
+                        datamartId,
+                        queryId,
+                        this._queryService,
+                        segmentsRes.data as UserPartitionSegment[],
+                        false,
+                      ).then(experimentationQueryResource => {
                         this._queryService
-                          .updateQuery(datamartId, queryId, {
-                            query_text: `${querySegmentRes.data.query_text} ${experimentationQuery}`,
+                          .createQuery(datamartId, {
+                            ...experimentationQueryResource,
+                            query_text: experimentationQueryResource.query_text,
                           })
                           .then(queryResponse => {
                             this._audienceSegmentService
@@ -212,24 +202,46 @@ class AudienceExperimentationEditPage extends React.Component<Props, State> {
                                   3,
                                 );
                                 history.push(
-                                  `v2/o/${organisationId}/audience/segments`,
+                                  `/v2/o/${organisationId}/audience/segments/${res.data.id}`,
                                 );
+                                close();
+                              })
+                              .catch(error => {
+                                notifyError(error);
+                                hideSaveInProgress();
                               });
+                          })
+                          .catch(error => {
+                            notifyError(error);
+                            hideSaveInProgress();
                           });
                       });
-                  });
-              });
-          });
-      } catch (error) {
-        notifyError(error);
-        hideSaveInProgress();
-      }
+                    })
+                    .catch(error => {
+                      notifyError(error);
+                      hideSaveInProgress();
+                    });
+                })
+                .catch(error => {
+                  notifyError(error);
+                  hideSaveInProgress();
+                });
+            })
+            .catch(error => {
+              notifyError(error);
+              hideSaveInProgress();
+            });
+        })
+        .catch(error => {
+          notifyError(error);
+          hideSaveInProgress();
+        });
     }
   };
 
   render() {
     const { breadCrumbPaths, close } = this.props;
-    const { formData } = this.state;
+    const { formData, partitions, loadingPartitions } = this.state;
 
     return (
       <AudienceExperimentationForm
@@ -237,8 +249,8 @@ class AudienceExperimentationEditPage extends React.Component<Props, State> {
         close={close}
         onSubmit={this.save}
         breadCrumbPaths={breadCrumbPaths}
-        fetchAudiencePartitions={this.fetchAudiencePartitions}
-        fetchAudiencePartition={this.fetchAudiencePartition}
+        partitions={partitions}
+        loadingPartitions={loadingPartitions}
       />
     );
   }

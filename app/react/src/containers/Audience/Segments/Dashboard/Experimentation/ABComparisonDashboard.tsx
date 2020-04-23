@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
+import _ from 'lodash';
 import { withRouter, RouteComponentProps } from 'react-router';
 // import { Card } from '../../../../../components/Card';
 // import McsTabs from '../../../../../components/McsTabs';
@@ -70,38 +71,62 @@ class ABComparisonDashboard extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
+      intl,
     } = this.props;
     if (experimentationSegment)
       this.setState({
-        ABComparisonDashboardConfig: this.getABComparisonDashboardCOnfig(
-          experimentationSegment.datamart_id,
-          organisationId,
-        ),
+        ABComparisonDashboardConfig: [
+          {
+            title: intl.formatMessage(messagesMap.channelEngagement),
+            datamartId: experimentationSegment.datamart_id,
+            config: averageSessionDurationConfig,
+            organisationId: organisationId,
+          },
+        ],
       });
   }
 
-  getABComparisonDashboardCOnfig = (
-    datamartId: string,
-    organisationId: string,
-  ) => {
-    const { intl } = this.props;
-    // TODO add segmentFilter property
-    return [
-      // {
-      //   title: intl.formatMessage(messagesMap.eCommerceEngagement), 
-      //   datamartId: datamartId,
-      //   config: ecommerceEngagementConfig as any, 
-      //   organisationId: organisationId,
-      //   showFilter: true,
-      // },
-      {
-        title: intl.formatMessage(messagesMap.channelEngagement),
-        datamartId: datamartId,
-        config: averageSessionDurationConfig as any,
-        organisationId: organisationId,
+  componentDidUpdate(prevProps: Props) {
+    const {
+      controlGroupSegment,
+      experimentationSegment,
+      intl,
+      match: {
+        params: { organisationId },
       },
-    ];
-  };
+    } = this.props;
+    const {
+      controlGroupSegment: prevControlGroupSegment,
+      experimentationSegment: prevExperimentationSegment,
+    } = prevProps;
+    if (
+      (!_.isEqual(prevControlGroupSegment, controlGroupSegment) ||
+        !_.isEqual(prevExperimentationSegment, experimentationSegment)) &&
+      controlGroupSegment &&
+      controlGroupSegment.id &&
+      experimentationSegment &&
+      experimentationSegment.id
+    ) {
+      this.setState({
+        ABComparisonDashboardConfig: [
+          {
+            title: intl.formatMessage(messagesMap.channelEngagement),
+            datamartId: experimentationSegment.datamart_id,
+            config: averageSessionDurationConfig.map(config => {
+              return {
+                ...config,
+                segments: {
+                  baseSegmentId: controlGroupSegment.id,
+                  segmentIdToCompareWith: experimentationSegment.id,
+                },
+              };
+            }),
+            organisationId: organisationId,
+          },
+        ],
+      });
+    }
+  }
 
   buildItems = () => {
     const { intl } = this.props;
