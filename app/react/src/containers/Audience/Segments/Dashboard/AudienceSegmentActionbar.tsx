@@ -398,7 +398,8 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
         </Menu.Item>
         {segment &&
           segment.type === 'USER_QUERY' &&
-          hasFeature('audience-segment_uplift') && (
+          hasFeature('audience-segment_uplift') &&
+          segment.subtype === 'STANDARD' && (
             <Menu.Item key="EXPERIMENTATION">
               <FormattedMessage {...segmentMessages.experimentationCreation} />
             </Menu.Item>
