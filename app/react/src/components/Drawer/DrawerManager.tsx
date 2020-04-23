@@ -31,7 +31,7 @@ class DrawerManager extends React.Component<
     super(props);
     this.state = {
       drawerMaxWidth: this.getDimensions('large'),
-      viewportWidth: window.innerWidth,
+      viewportWidth: Math.round(window.innerWidth),
     };
   }
 
@@ -60,12 +60,12 @@ class DrawerManager extends React.Component<
   }
 
   getDimensions = (size: DrawerSize) =>
-    window.innerWidth * viewportDrawerRatio[size];
+    Math.round(window.innerWidth * viewportDrawerRatio[size]);
 
   getDrawerStyle(xPos: number, size: DrawerSize = 'large') {
     return {
       transform: `translate(${xPos}px, 0px)`,
-      maxWidth: `${window.innerWidth * viewportDrawerRatio[size]}px`,
+      maxWidth: `${Math.round(window.innerWidth * viewportDrawerRatio[size])}px`,
     };
   }
 
@@ -102,7 +102,7 @@ class DrawerManager extends React.Component<
 
     this.setState({
       drawerMaxWidth: this.getDimensions(foregroundContentSize),
-      viewportWidth: window.innerWidth,
+      viewportWidth: Math.round(window.innerWidth),
     });
   };
 
