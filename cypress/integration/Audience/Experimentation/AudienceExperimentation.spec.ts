@@ -1,6 +1,6 @@
 import faker from 'faker'
 
-describe('User Expert Query Segment Form Test', () => {
+describe('AudienceExperimentation Form Test', () => {
   const organisationName = 'yellow velvet'
   const datamartName = 'YV Pionus'
   const segmentName = `${Date.now()}-${faker.random.words(2)}`
@@ -36,22 +36,27 @@ describe('User Expert Query Segment Form Test', () => {
     cy.url({ timeout: 5000 }).should('match', /.*audience\/segments\/\d*\?/)
   })
 
-  it('should edit User Query Segment', () => {
+  it('should create an experimentation form', () => {
+    // search the test segment we just created
+    cy.get('[placeholder="Search Segments"]').type(segmentName).type('{enter}')
+    cy.wait(500)
+    // get the first segment in list
     cy.get('.mcs-campaigns-link')
-    cy.contains('Type').click({ force: true })
-    cy.contains('USER_QUERY').click({ force: true })
-    cy.get('[class="anticon anticon-database"]', { timeout: 5000 })
-    // pick the first USER_QUERY segment found
-    cy.get('.mcs-campaigns-link')
-      .first()
-      .click()
-    cy.get('.mcs-actionbar')
-      .contains('Edit')
-      .click({ force: true })
+    .first()
+    .click()
 
-      cy.fillExpertQuerySegmentForm(segmentName)
+    cy.get('.ant-dropdown-trigger > .compact')
+    .click({ force: true })
+
+    cy.contains('Create Experimentation')
+    .click({ force: true })
+
+    cy.get('.menu-item')
+    .first()
+    .click()
 
     cy.contains('Save').click({ force: true })
-    cy.url({ timeout: 5000 }).should('match', /.*audience\/segments\/\d*\?/)
+
   })
+
 })

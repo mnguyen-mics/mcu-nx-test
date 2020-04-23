@@ -10,6 +10,7 @@
 //
 //
 import LoginPage from '../integration/Authentication/Login/LoginPage'
+import faker from 'faker'
 
 // -- This is a parent command --
 Cypress.Commands.add(
@@ -44,6 +45,35 @@ Cypress.Commands.add('switchOrg', organisationName => {
   cy.get('.button-styleless')
     .first()
     .trigger('mouseout')
+})
+
+Cypress.Commands.add('fillExpertQuerySegmentForm', (segmentName: string) => {
+    cy.contains('Save', { timeout: 5000 })
+    cy.get('input[name="audienceSegment.name"]')
+      .clear()
+      .type(segmentName)
+    cy.get('textarea[name="audienceSegment.short_description"]')
+      .clear()
+      .type(faker.random.words(6))
+    cy.contains('Advanced').click()
+    cy.get('input[name="audienceSegment.technical_name"]')
+      .clear()
+      .type(faker.random.words(2))
+    cy.get('input[name="audienceSegment.defaultLiftime"]')
+      .clear()
+      .type('1')
+    cy.get('[id="audienceSegment.defaultLiftimeUnit"]').click()
+    cy.contains('Days').click()
+    cy.get('[id="properties"').within(() => {
+      cy.get('[id="brace-editor"]')
+        .get('textarea[class="ace_text-input"]')
+        .clear({ force: true })
+        .type('SELECT {id} FROM UserPoint', {
+          force: true,
+          parseSpecialCharSequences: false,
+          delay: 0,
+        })
+    })
 })
 
 // Storing local storage cache between tests

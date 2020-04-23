@@ -19,5 +19,7 @@ declare namespace Cypress {
     saveLocalStorageCache(): void;
 
     restoreLocalStorageCache(): void;
+
+    fillExpertQuerySegmentForm(segmentName: string): void;
   }
 }
