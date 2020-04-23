@@ -47,7 +47,7 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.updateLocationSearch({
       from: new McsMoment('now-8d'),
       to: new McsMoment('now-1d'),
