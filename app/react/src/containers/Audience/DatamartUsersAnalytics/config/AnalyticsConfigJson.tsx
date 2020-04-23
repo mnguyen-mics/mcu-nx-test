@@ -95,7 +95,7 @@ export const averageSessionDurationConfig: DashboardConfig[] = [
           title: { text: 'Average Session Duration' }
         },
         unit: 'time',
-        // samplingRatio: 1,
+        samplingRatio: 1,
         metricNames: ['avg_session_duration'],
         dimensionFilterClauses: {
           'operator': 'OR',
@@ -130,6 +130,7 @@ export const averageSessionDurationConfig: DashboardConfig[] = [
         options: {
           title: { text: 'Average Events per Session' },
         },
+        samplingRatio: 1,
         metricNames: ['avg_number_of_user_events'],
         dimensionFilterClauses: {
           'operator': 'OR',
@@ -165,6 +166,7 @@ export const averageSessionDurationConfig: DashboardConfig[] = [
           title: { text: 'Average Conversion Rate' },
         },
         unit: '%',
+        samplingRatio: 1,
         metricNames: ['conversion_rate'],
         dimensionFilterClauses: {
           'operator': 'OR',
