@@ -14,7 +14,10 @@ import { UserQuerySegment } from '../../../../../models/audiencesegment/Audience
 import ABComparisonGauge from './ABComparisonGauge';
 import { HomeDashboardConfig } from '../../../Home/Dashboard/HomePage';
 import { messagesMap } from '../Experimentation/AudienceExperimentationForm';
-import { averageSessionDurationConfig } from '../../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
+import {
+  averageSessionDurationConfig,
+  ecommerceEngagementConfig,
+} from '../../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
 import DatamartUsersAnalyticsWrapper from '../../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
 
@@ -66,35 +69,13 @@ class ABComparisonDashboard extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const {
-      experimentationSegment,
-      match: {
-        params: { organisationId },
-      },
-      intl,
-    } = this.props;
-    if (experimentationSegment)
-      this.setState({
-        ABComparisonDashboardConfig: [
-          {
-            title: intl.formatMessage(messagesMap.channelEngagement),
-            datamartId: experimentationSegment.datamart_id,
-            config: averageSessionDurationConfig,
-            organisationId: organisationId,
-          },
-        ],
-      });
+    this.setState({
+      ABComparisonDashboardConfig: this.getABComparisonDashboardConfig(),
+    });
   }
 
   componentDidUpdate(prevProps: Props) {
-    const {
-      controlGroupSegment,
-      experimentationSegment,
-      intl,
-      match: {
-        params: { organisationId },
-      },
-    } = this.props;
+    const { controlGroupSegment, experimentationSegment } = this.props;
     const {
       controlGroupSegment: prevControlGroupSegment,
       experimentationSegment: prevExperimentationSegment,
@@ -108,25 +89,51 @@ class ABComparisonDashboard extends React.Component<Props, State> {
       experimentationSegment.id
     ) {
       this.setState({
-        ABComparisonDashboardConfig: [
-          {
-            title: intl.formatMessage(messagesMap.channelEngagement),
-            datamartId: experimentationSegment.datamart_id,
-            config: averageSessionDurationConfig.map(config => {
-              return {
-                ...config,
-                segments: {
-                  baseSegmentId: controlGroupSegment.id,
-                  segmentIdToCompareWith: experimentationSegment.id,
-                },
-              };
-            }),
-            organisationId: organisationId,
+        ABComparisonDashboardConfig: this.getABComparisonDashboardConfig().map(
+          dashboardConfig => {
+            return {
+              ...dashboardConfig,
+              config: dashboardConfig.config.map(config => {
+                return {
+                  ...config,
+                  segments: {
+                    baseSegmentId: controlGroupSegment.id,
+                    segmentIdToCompareWith: experimentationSegment.id,
+                  },
+                };
+              }),
+            };
           },
-        ],
+        ),
       });
     }
   }
+
+  getABComparisonDashboardConfig = () => {
+    const {
+      experimentationSegment,
+      match: {
+        params: { organisationId },
+      },
+      intl,
+    } = this.props;
+    return experimentationSegment
+      ? [
+          {
+            title: intl.formatMessage(messagesMap.eCommerceEngagement),
+            datamartId: experimentationSegment.datamart_id,
+            config: ecommerceEngagementConfig,
+            organisationId: organisationId,
+          },
+          {
+            title: intl.formatMessage(messagesMap.channelEngagement),
+            datamartId: experimentationSegment.datamart_id,
+            config: averageSessionDurationConfig,
+            organisationId: organisationId,
+          },
+        ]
+      : [];
+  };
 
   buildItems = () => {
     const { intl } = this.props;
