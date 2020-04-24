@@ -117,22 +117,45 @@ class ABComparisonDashboard extends React.Component<Props, State> {
       },
       intl,
     } = this.props;
-    return experimentationSegment
-      ? [
-          {
-            title: intl.formatMessage(messagesMap.eCommerceEngagement),
-            datamartId: experimentationSegment.datamart_id,
-            config: ecommerceEngagementConfig,
-            organisationId: organisationId,
-          },
-          {
-            title: intl.formatMessage(messagesMap.channelEngagement),
-            datamartId: experimentationSegment.datamart_id,
-            config: averageSessionDurationConfig,
-            organisationId: organisationId,
-          },
-        ]
-      : [];
+    if (experimentationSegment) {
+      const eCommerceEngagementDashboardConfig = {
+        title: 'E_COMMERCE_ENGAGEMENT',
+        datamartId: experimentationSegment.datamart_id,
+        config: ecommerceEngagementConfig,
+        organisationId: organisationId,
+      };
+      const averageSessionDurationDashboardConfig = {
+        title: 'CHANNEL_ENGAGEMENT',
+        datamartId: experimentationSegment.datamart_id,
+        config: averageSessionDurationConfig,
+        organisationId: organisationId,
+      };
+
+      const ABComparisonDashboardConfig = [
+        eCommerceEngagementDashboardConfig,
+        averageSessionDurationDashboardConfig,
+      ];
+      // We want to display the config related to the target_metric firstly.
+      // But in a near future there could be more than two engagement configs
+      // Hence the code underneath
+
+      const firstConfig = ABComparisonDashboardConfig.find(
+        c => c.title === experimentationSegment.target_metric,
+      );
+
+      return firstConfig
+        ? [
+            {
+              ...firstConfig,
+              title: intl.formatMessage(messagesMap[firstConfig.title]),
+            },
+          ].concat(
+            ABComparisonDashboardConfig.filter(
+              c => c.title !== experimentationSegment.target_metric,
+            ),
+          )
+        : ABComparisonDashboardConfig;
+    } else return [];
   };
 
   buildItems = () => {
