@@ -148,7 +148,7 @@ class AudienceSegmentPage extends React.Component<Props, State> {
             isLoadingControlGroupSegment: true,
           });
           this._audienceSegmentService
-            .getSegment(segmentId)
+            .getSegment(segment.control_group_id)
             .then(resp => {
               this.setState({
                 controlGroupSegment: resp.data as UserQuerySegment,

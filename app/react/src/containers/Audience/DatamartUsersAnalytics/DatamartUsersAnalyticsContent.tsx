@@ -156,6 +156,17 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
           generatedDom: this.generateDOM(formattedConfig, datamartId, dateRange, onChange)
         });
       }
+
+      if(!isEqual(config, prevProps.config)) {
+        this.setState({
+          generatedDom: this.generateDOM(
+            config,
+            datamartId,
+            dateRange,
+            onChange,
+          ),
+        });
+      }
   }
 
   generateDOM(dashboardConfig: DashboardConfig[], datamartId: string, dateRange: McsDateRangeValue, onChange: (isLoading: boolean) => void) {
