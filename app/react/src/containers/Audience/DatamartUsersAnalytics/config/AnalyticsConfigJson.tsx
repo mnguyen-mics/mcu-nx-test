@@ -206,6 +206,7 @@ export const ecommerceEngagementConfig: DashboardConfig[] = [
           title: { text: 'Number Of Transactions' }
         },
         unit: 'number',
+        samplingRatio: 1,
         metricNames: ['number_of_transactions'],
         dimensionFilterClauses: {
           'operator': 'OR',
@@ -240,6 +241,7 @@ export const ecommerceEngagementConfig: DashboardConfig[] = [
         options: {
           title: { text: 'Average Transaction Amount' },
         },
+        samplingRatio: 1,
         metricNames: ['avg_transaction_amount'],
         dimensionFilterClauses: {
           'operator': 'OR',
@@ -275,6 +277,7 @@ export const ecommerceEngagementConfig: DashboardConfig[] = [
           title: { text: 'Revenue'},
         },
         unit: '€',
+        samplingRatio: 1,
         metricNames: ['revenue'],
         dimensionFilterClauses: {
           'operator': 'OR',

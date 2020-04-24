@@ -70,11 +70,11 @@ export const messagesMap: {
     id: 'audience.segments.experimentation.engagementMetric',
     defaultMessage: 'Engagement metric',
   },
-  eCommerceEngagement: {
+  E_COMMERCE_ENGAGEMENT: {
     id: 'audience.segments.experimentation.eCommerceEngagement',
     defaultMessage: 'E-commerce Engagement',
   },
-  channelEngagement: {
+  CHANNEL_ENGAGEMENT: {
     id: 'audience.segments.experimentation.channelEngagement',
     defaultMessage: 'Channel Engagement',
   },
@@ -236,14 +236,14 @@ class AudienceExperimentationForm extends React.Component<Props, State> {
                         id: 'E_COMMERCE_ENGAGEMENT',
                         value: 'E_COMMERCE_ENGAGEMENT',
                         title: intl.formatMessage(
-                          messagesMap.eCommerceEngagement,
+                          messagesMap.E_COMMERCE_ENGAGEMENT,
                         ),
                       },
                       {
                         id: 'CHANNEL_ENGAGEMENT',
                         value: 'CHANNEL_ENGAGEMENT',
                         title: intl.formatMessage(
-                          messagesMap.channelEngagement,
+                          messagesMap.CHANNEL_ENGAGEMENT,
                         ),
                       },
                     ]}
