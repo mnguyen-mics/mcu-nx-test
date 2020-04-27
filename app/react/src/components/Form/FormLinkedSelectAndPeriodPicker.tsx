@@ -121,17 +121,15 @@ class FormLinkedSelectAndPeriodPicker extends React.Component<JoinedProps> {
               {options}
             </Select>
           </Col>
-          <Col span={1} />
-          <Col span={1}>{separator}</Col>
-          <Col span={1} />
-          <Col span={3}>
+          <Col span={3}>{separator}</Col>
+          <Col span={5}>
             <InputNumber
               value={input.value.periodNumber}
               onChange={this.updatePeriodNumber}
               disabled={true}
             />
           </Col>
-          <Col span={6}>
+          <Col span={3}>
             {periodUnitLabel}
             {/* The Select is removed temporarily. */}
             {/* <Select
