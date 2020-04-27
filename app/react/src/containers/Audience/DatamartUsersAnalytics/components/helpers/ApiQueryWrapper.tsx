@@ -102,7 +102,10 @@ class ApiQueryWrapper extends React.Component<Props, State> {
     } = this.props;
     if (
       (prevProps.dateRange.from.value && prevProps.dateRange.to.value) && 
-      (prevProps.dateRange.from.value !== dateRange.from.value || prevProps.dateRange.to.value !== dateRange.to.value)) {
+      (prevProps.dateRange.from.value !== dateRange.from.value || prevProps.dateRange.to.value !== dateRange.to.value) ||
+      prevProps.compareWithSegmentId !== compareWithSegmentId ||
+      prevProps.segmentId !== segmentId
+      ) {
       this.fetchAnalytics(
         onChange,
         datamartId, 

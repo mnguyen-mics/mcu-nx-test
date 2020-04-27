@@ -296,7 +296,10 @@ class FormatDataToChart extends React.Component<JoinedProp, {}> {
         let trend;
         if (dataToCompareWith && chart.samplingRatio) {
           trend = ((((originalValue as number)  - (newValue as number)) / (originalValue as number)) * 100) * chart.samplingRatio;
-        }
+          if(isNaN(trend)) {
+            trend = undefined;
+          }
+        } else trend = undefined;
 
         return (
           <div className="mcs-metricCounter">
