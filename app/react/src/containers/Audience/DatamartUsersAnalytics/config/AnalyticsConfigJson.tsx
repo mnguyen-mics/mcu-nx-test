@@ -188,6 +188,344 @@ export const averageSessionDurationConfig: DashboardConfig[] = [
   },
 ];
 
+export const graphsConfig: DashboardConfig[] = [
+  {
+    title: 'Revenue',
+    tabMode: true,
+    enhancedManualReportView: true,
+    layout: {
+      'i': '1',
+      'h': 3,
+      'static': false,
+      'w': 12,
+      'x': 0,
+      'y': 0
+    },
+    charts: [
+      {
+        type: 'AREA',
+        options: {
+          title: undefined,
+          colors: chroma.scale(['#00a1df','#003056']).mode('lch').colors(5),
+          credits: {
+            enabled: false
+          },
+          chart: {
+            reflow: true
+          },
+          xAxis: {
+            ...generateXAxisGridLine(),
+            type: 'datetime',
+            dateTimeLabelFormats: {
+              day: '%d %b %Y'    // ex- 01 Jan 2016
+            },
+            title: {
+              text: null
+            }
+          },
+          time: { timezoneOffset: -60, useUTC: true },
+          yAxis: {
+            ...generateYAxisGridLine(),
+            title: {
+              text: null
+            }
+          },
+          legend: {
+            enabled: true,
+            verticalAlign: 'top',
+            itemMarginBottom: 6
+          },
+          tooltip: {
+            shared: true,
+            ...generateTooltip()
+          }
+        },
+        dimensions: ['date_yyyy_mm_dd'],
+        metricNames: ['revenue'],
+      }
+    ]
+  },
+  {
+    title: 'Average Transaction Amount',
+    tabMode: true,
+    enhancedManualReportView: true,
+    layout: {
+      'i': '1',
+      'h': 3,
+      'static': false,
+      'w': 12,
+      'x': 0,
+      'y': 0
+    },
+    charts: [
+      {
+        type: 'AREA',
+        options: {
+          title: undefined,
+          colors: chroma.scale(['#00a1df','#003056']).mode('lch').colors(5),
+          credits: {
+            enabled: false
+          },
+          chart: {
+            reflow: true
+          },
+          xAxis: {
+            ...generateXAxisGridLine(),
+            type: 'datetime',
+            dateTimeLabelFormats: {
+              day: '%d %b %Y'    // ex- 01 Jan 2016
+            },
+            title: {
+              text: null
+            }
+          },
+          time: { timezoneOffset: -60, useUTC: true },
+          yAxis: {
+            ...generateYAxisGridLine(),
+            title: {
+              text: null
+            }
+          },
+          legend: {
+            enabled: true,
+            verticalAlign: 'top',
+            itemMarginBottom: 6
+          },
+          tooltip: {
+            shared: true,
+            ...generateTooltip()
+          }
+        },
+        dimensions: ['date_yyyy_mm_dd'],
+        metricNames: ['avg_transaction_amount'],
+      }
+    ]
+  },
+  {
+    title: 'Number Of Transactions',
+    tabMode: true,
+    enhancedManualReportView: true,
+    layout: {
+      'i': '1',
+      'h': 3,
+      'static': false,
+      'w': 12,
+      'x': 0,
+      'y': 0
+    },
+    charts: [
+      {
+        type: 'AREA',
+        options: {
+          title: undefined,
+          colors: chroma.scale(['#00a1df','#003056']).mode('lch').colors(5),
+          credits: {
+            enabled: false
+          },
+          chart: {
+            reflow: true
+          },
+          xAxis: {
+            ...generateXAxisGridLine(),
+            type: 'datetime',
+            dateTimeLabelFormats: {
+              day: '%d %b %Y'    // ex- 01 Jan 2016
+            },
+            title: {
+              text: null
+            }
+          },
+          time: { timezoneOffset: -60, useUTC: true },
+          yAxis: {
+            ...generateYAxisGridLine(),
+            title: {
+              text: null
+            }
+          },
+          legend: {
+            enabled: true,
+            verticalAlign: 'top',
+            itemMarginBottom: 6
+          },
+          tooltip: {
+            shared: true,
+            ...generateTooltip()
+          }
+        },
+        dimensions: ['date_yyyy_mm_dd'],
+        metricNames: ['number_of_transactions'],
+      }
+    ]
+  },
+  {
+    title: 'Average Session Duration',
+    tabMode: true,
+    enhancedManualReportView: true,
+    layout: {
+      'i': '1',
+      'h': 3,
+      'static': false,
+      'w': 12,
+      'x': 0,
+      'y': 0
+    },
+    charts: [
+      {
+        type: 'AREA',
+        options: {
+          title: undefined,
+          colors: chroma.scale(['#00a1df','#003056']).mode('lch').colors(5),
+          credits: {
+            enabled: false
+          },
+          chart: {
+            reflow: true
+          },
+          xAxis: {
+            ...generateXAxisGridLine(),
+            type: 'datetime',
+            dateTimeLabelFormats: {
+              day: '%d %b %Y'    // ex- 01 Jan 2016
+            },
+            title: {
+              text: null
+            }
+          },
+          time: { timezoneOffset: -60, useUTC: true },
+          yAxis: {
+            ...generateYAxisGridLine(),
+            title: {
+              text: null
+            }
+          },
+          legend: {
+            enabled: true,
+            verticalAlign: 'top',
+            itemMarginBottom: 6
+          },
+          tooltip: {
+            shared: true,
+            ...generateTooltip()
+          }
+        },
+        dimensions: ['date_yyyy_mm_dd'],
+        metricNames: ['avg_session_duration'],
+      }
+    ]
+  },
+  {
+    title: 'Average Events per Session',
+    tabMode: true,
+    enhancedManualReportView: true,
+    layout: {
+      'i': '1',
+      'h': 3,
+      'static': false,
+      'w': 12,
+      'x': 0,
+      'y': 0
+    },
+    charts: [
+      {
+        type: 'AREA',
+        options: {
+          title: undefined,
+          colors: chroma.scale(['#00a1df','#003056']).mode('lch').colors(5),
+          credits: {
+            enabled: false
+          },
+          chart: {
+            reflow: true
+          },
+          xAxis: {
+            ...generateXAxisGridLine(),
+            type: 'datetime',
+            dateTimeLabelFormats: {
+              day: '%d %b %Y'    // ex- 01 Jan 2016
+            },
+            title: {
+              text: null
+            }
+          },
+          time: { timezoneOffset: -60, useUTC: true },
+          yAxis: {
+            ...generateYAxisGridLine(),
+            title: {
+              text: null
+            }
+          },
+          legend: {
+            enabled: true,
+            verticalAlign: 'top',
+            itemMarginBottom: 6
+          },
+          tooltip: {
+            shared: true,
+            ...generateTooltip()
+          }
+        },
+        dimensions: ['date_yyyy_mm_dd'],
+        metricNames: ['avg_number_of_user_events'],
+      }
+    ]
+  }, 
+  {
+    title: 'Average Conversion Rate',
+    tabMode: true,
+    enhancedManualReportView: true,
+    layout: {
+      'i': '1',
+      'h': 3,
+      'static': false,
+      'w': 12,
+      'x': 0,
+      'y': 0
+    },
+    charts: [
+      {
+        type: 'AREA',
+        options: {
+          title: undefined,
+          colors: chroma.scale(['#00a1df','#003056']).mode('lch').colors(5),
+          credits: {
+            enabled: false
+          },
+          chart: {
+            reflow: true
+          },
+          xAxis: {
+            ...generateXAxisGridLine(),
+            type: 'datetime',
+            dateTimeLabelFormats: {
+              day: '%d %b %Y'    // ex- 01 Jan 2016
+            },
+            title: {
+              text: null
+            }
+          },
+          time: { timezoneOffset: -60, useUTC: true },
+          yAxis: {
+            ...generateYAxisGridLine(),
+            title: {
+              text: null
+            }
+          },
+          legend: {
+            enabled: true,
+            verticalAlign: 'top',
+            itemMarginBottom: 6
+          },
+          tooltip: {
+            shared: true,
+            ...generateTooltip()
+          }
+        },
+        dimensions: ['date_yyyy_mm_dd'],
+        metricNames: ['conversion_rate'],
+      }
+    ]
+  },
+];
 
 export const ecommerceEngagementConfig: DashboardConfig[] = [
   {

@@ -64,6 +64,7 @@ export interface HomeDashboardConfig {
   organisationId: string;
   config: DashboardConfig[];
   showFilter?: boolean;
+  showDateRangePicker?: boolean;
 }
 
 type JoinedProps = InjectedWorkspaceProps &

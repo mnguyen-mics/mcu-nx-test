@@ -14,7 +14,7 @@ import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 
 export interface AudienceCountersProps {
   datamarts: DatamartWithMetricResource[];
-  datamartId?: string;
+  segment?: AudienceSegmentShape;
 }
 
 interface State {
@@ -51,13 +51,11 @@ class AudienceCounters extends React.Component<Props, State> {
 
   componentDidMount() {
     const {
-      match: {
-        params: { segmentId },
-      },
+      segment
     } = this.props;
 
-    if (segmentId) {
-      this.fetchCounterView(segmentId);
+    if (segment && segment.id) {
+      this.fetchCounterView(segment.id);
     }
   }
 
@@ -132,7 +130,7 @@ class AudienceCounters extends React.Component<Props, State> {
   };
 
   getCounters = () => {
-    const { datamarts, datamartId, intl } = this.props;
+    const { datamarts, segment, intl } = this.props;
     const counters: CounterProps[] = [];
 
     counters.push({
@@ -140,8 +138,8 @@ class AudienceCounters extends React.Component<Props, State> {
       title: intl.formatMessage(messages.userPoints),
       ...this.getLoadingValue('user_points'),
     });
-    if (datamartId) {
-      const datamart = datamarts.find(dm => dm.id === datamartId);
+    if (segment && segment.datamart_id) {
+      const datamart = datamarts.find(dm => dm.id === segment.datamart_id);
       const otherMetrics =
         datamart && datamart.audience_segment_metrics
           ? datamart.audience_segment_metrics.map(el => {

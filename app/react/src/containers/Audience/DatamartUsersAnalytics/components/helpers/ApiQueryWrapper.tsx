@@ -32,6 +32,7 @@ export interface ApiQueryWrapperProps {
   segmentId?: string;
   compareWithSegmentId?: string;
   onChange: (isLoading: boolean) => void;
+  mergeDataSet?: boolean;
 }
 
 interface State {
@@ -132,6 +133,22 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       }
     }
   }
+
+  formatReportView = (reportView: ReportView, isBaseSegment: boolean, mergeDataSet: boolean= false) => {
+    let newReportView: ReportView; 
+    const newHeaders = ['resource_name'].concat(reportView.columns_headers);
+    const newRows = reportView.rows.map(r => [isBaseSegment ? 'Experimentation Segment' : 'Control Group Segment'].concat(r));
+    if (mergeDataSet) {
+      newReportView = {
+        ...reportView,
+        columns_headers: newHeaders,
+        rows: newRows
+      }
+    } else {
+      newReportView = reportView
+    }
+    return newReportView;
+  }
   
   fetchAnalytics = (
     onChange: (isLoading: boolean) => void,
@@ -144,6 +161,9 @@ class ApiQueryWrapper extends React.Component<Props, State> {
     segmentId?: string,
     compareWithSegmentId?: string
   ) => {
+    const {
+      mergeDataSet
+    } = this.props;
     this.setState({
       loading: true
     });
@@ -153,13 +173,12 @@ class ApiQueryWrapper extends React.Component<Props, State> {
         if (!compareWithSegmentId) {
           this.setState({
             loading: false,
-            reportViewApiResponse: res.data.report_view
+            reportViewApiResponse: this.formatReportView(res.data.report_view, true, mergeDataSet)
           });
-        }
-        else {
+        } else {
           this.setState({
             loading: false,
-            reportViewApiResponseToCompareWith: res.data.report_view
+            reportViewApiResponseToCompareWith: this.formatReportView(res.data.report_view, false, mergeDataSet)
           });
         }
         onChange(false);
@@ -178,18 +197,34 @@ class ApiQueryWrapper extends React.Component<Props, State> {
   }
 
   render() {
-    const { chart, intl } = this.props;
+    const { chart, intl, mergeDataSet } = this.props;
     const { loading, reportViewApiResponse, reportViewApiResponseToCompareWith } = this.state;
 
     if (loading) return chart.type !== 'SINGLE_STAT' ? <LoadingChart /> : <MetricCounterLoader />
+
+    const getMergeApiResponse = (reportView: ReportView) => {
+      return {
+        ...reportView,
+        rows: reportViewApiResponseToCompareWith ? 
+        reportView.rows.concat(reportViewApiResponseToCompareWith.rows):
+        reportView.rows
+      }
+    }
+
+    const newChart: Chart = {
+      ...chart,
+      dimensions: chart.dimensions ?
+      [('resource_name' as DatamartUsersAnalyticsDimension)].concat(chart.dimensions)
+      : []
+    }
 
     return (
       <div className={'mcs-datamartUsersAnalytics_component_charts'}>
         {reportViewApiResponse && reportViewApiResponse.total_items > 0 ?
           <FormatDataToChart 
-            apiResponse={reportViewApiResponse} 
+            apiResponse={mergeDataSet ? getMergeApiResponse(reportViewApiResponse) : reportViewApiResponse} 
             apiResponseToCompareWith={reportViewApiResponseToCompareWith} 
-            chart={chart} /> 
+            chart={mergeDataSet ? newChart : chart} /> 
             : this.getEmptyDataComponent(chart.type, intl.formatMessage(messages.noData))}
       </div>
     )

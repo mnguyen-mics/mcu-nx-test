@@ -22,6 +22,8 @@ export interface DashboardConfig {
   layout: Layout;
   charts: Chart[];
   color?: string;
+  tabMode?: boolean;
+  enhancedManualReportView?: boolean;
   segments?: SegmentFilter;
 }
 
@@ -173,10 +175,10 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
     return dashboardConfig.map((comp: DashboardConfig, i) => {
       return (
         <CardFlex
-          title={comp.title}
+          title={!!comp.tabMode ? '' : comp.title}
           key={comp.layout.i && comp.layout.i.toString()}
           className={comp.layout.static ? 'static mcs-datamartUsersAnalytics_card' : 'mcs-datamartUsersAnalytics_card'}
-          style={{ borderLeft: `5px solid ${comp.color}` }}
+          style={ !comp.tabMode ? { borderLeft: `5px solid ${comp.color}`} : { boxShadow: 'none' }}
         >
           {comp.charts.map((chart: Chart) => {
             return <ApiQueryWrapper
@@ -187,6 +189,7 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
               onChange={onChange}
               segmentId={comp.segments ? comp.segments.baseSegmentId : undefined}
               compareWithSegmentId={comp.segments ? comp.segments.segmentIdToCompareWith : undefined}
+              mergeDataSet={comp.enhancedManualReportView}
             />
           })}
         </CardFlex>
