@@ -11,9 +11,10 @@ import {
   DateSearchSettings,
   SegmentsSearchSettings,
   AllUsersSettings,
-  isSearchValid
+  isSearchValid,
+  buildDefaultSearch,
+  compareSearches
 } from '../../../utils/LocationSearchHelper';
-import McsMoment from '../../../utils/McsMoment';
 import SegmentFilter from './components/SegmentFilter';
 import { DATAMART_USERS_ANALYTICS_SETTING } from '../Segments/Dashboard/constants';
 
@@ -48,33 +49,47 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
   }
 
   componentDidMount() {
-    this.updateLocationSearch({
-      from: new McsMoment('now-8d'),
-      to: new McsMoment('now-1d'),
-      segments: [],
-      allusers: true
-    });
-  }
-
-  componentDidUpdate() {
     const {
-      location: { search }
+      history,
+      location: { search, pathname },
     } = this.props;
-    if (!isSearchValid(search, DATAMART_USERS_ANALYTICS_SETTING)) {
-      this.setState({refresh: true});
-      this.updateLocationSearch({
-        from: new McsMoment('now-8d'),
-        to: new McsMoment('now-1d'),
-        segments: [],
-        allusers: true
-      });
 
-      setTimeout(()=> {
-        this.setState({refresh: false})
-      }, 500);
+    if (!isSearchValid(search, DATAMART_USERS_ANALYTICS_SETTING)) {
+      history.replace({
+        pathname: pathname,
+        search: buildDefaultSearch(search, DATAMART_USERS_ANALYTICS_SETTING),
+      });
     }
   }
 
+  componentWillReceiveProps(nextProps: JoinedProp) {
+    const {
+      location: { search },
+      history,
+    } = this.props;
+
+    const {
+      location: { pathname: nextPathname, search: nextSearch },
+    
+    } = nextProps;
+
+    if (!compareSearches(search, nextSearch)) {
+      if (!isSearchValid(nextSearch, DATAMART_USERS_ANALYTICS_SETTING)) {
+        this.setState({refresh: true});
+        history.replace({
+          pathname: nextPathname,
+          search: buildDefaultSearch(
+            nextSearch,
+            DATAMART_USERS_ANALYTICS_SETTING,
+          ),
+        });
+        setTimeout(()=> {
+          this.setState({refresh: false})
+        }, 500);
+      }
+    }
+  }
+  
   updateLocationSearch = (params: FILTERS) => {
     const {
       history,
