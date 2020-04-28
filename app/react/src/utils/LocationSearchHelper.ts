@@ -159,7 +159,7 @@ export const SEGMENTS_FILTERS_SEARCH_SETTINGS: SearchSetting[] = [
     },
     serialize: (value: string[]) => value.join(','),
     isValid: (query: Index<string>) =>
-      !query.segments || query.segments.split(',').length > 0,
+      !!(query.segments && (query.segments.length === 0 || query.segments.split(',').length > 0)),
   }
 ];
 
@@ -186,6 +186,36 @@ export const DATE_SEARCH_SETTINGS: SearchSetting[] = [
   {
     paramName: 'to',
     defaultValue: defaultToValue,
+    deserialize: (query: Index<string>) => new McsMoment(query.to),
+    serialize: (value: McsMoment) => {
+      setSessionValue(value, 'to');
+      return value.raw() as string;
+    },
+    isValid: (query: Index<string>) =>
+      !!(query.to && query.to.length && new McsMoment(query.to).isValid()),
+  },
+];
+
+// For last 7days filter without current day
+export const DATE_SEARCH_SETTINGS_WITHOUT_CURRENT_DAY: SearchSetting[] = [
+  {
+    paramName: 'from',
+    defaultValue: new McsMoment('now-8d'),
+    deserialize: (query: Index<string>) => new McsMoment(query.from),
+    serialize: (value: McsMoment) => {
+      setSessionValue(value, 'from');
+      return value.raw() as string;
+    },
+    isValid: (query: Index<string>) =>
+      !!(
+        query.from &&
+        query.from.length &&
+        new McsMoment(query.from).isValid()
+      ),
+  },
+  {
+    paramName: 'to',
+    defaultValue: new McsMoment('now-1d'),
     deserialize: (query: Index<string>) => new McsMoment(query.to),
     serialize: (value: McsMoment) => {
       setSessionValue(value, 'to');
