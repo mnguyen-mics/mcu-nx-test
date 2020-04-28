@@ -62,7 +62,8 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
     }
   }
 
-  componentWillReceiveProps(nextProps: JoinedProp) {
+  // Should be replaced by getDerivedStateFromProps hook after react lib update
+  UNSAFE_componentWillReceiveProps(nextProps: JoinedProp) {
     const {
       location: { search },
       history,
