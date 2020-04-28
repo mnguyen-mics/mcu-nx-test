@@ -253,7 +253,7 @@ class MobileApplicationsListPage extends React.Component<
     return this._channelService
       .getChannels({
         channel_type: 'MOBILE_APPLICATION',
-        organisation_Id: organisationId
+        organisation_id: organisationId
       })
       .then(res => {
         if (res.data.length === 0) {
