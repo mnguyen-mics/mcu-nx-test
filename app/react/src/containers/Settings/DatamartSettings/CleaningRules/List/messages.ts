@@ -41,4 +41,28 @@ export default defineMessages({
     id: 'settings.cleaningRules',
     defaultMessage: 'Cleaning rules',
   },
+  editCleaningRule: {
+    id: 'settings.cleaningRules.table.column.action.edit',
+    defaultMessage: 'View'
+  },
+  deleteCleaningRule: {
+    id: 'settings.cleaningRules.table.column.action.delete',
+    defaultMessage: 'Delete'
+  },
+  deleteCleaningRuleModalTitle: {
+    id: 'settings.cleaningRules.delete.modal.title',
+    defaultMessage: 'You are about to delete a cleaning rule. Do you want to proceed anyway?'
+  },
+  deleteCleaningRuleModalOk: {
+    id: 'settings.cleaningRules.delete.modal.ok',
+    defaultMessage: 'Delete now'
+  },
+  deleteCleaningRuleModalCancel: {
+    id: 'settings.cleaningRules.delete.modal.cancel',
+    defaultMessage: 'Cancel'
+  },
+  newCleaningRule: {
+    id: 'settings.cleaningRules.list.new',
+    defaultMessage: 'New Cleaning Rule'
+  }
 });

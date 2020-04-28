@@ -22,7 +22,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
-import { ChannelResource } from '../../../../../models/settings/settings';
+import { ChannelResourceShape } from '../../../../../models/settings/settings';
 import { Filter } from '../../Common/domain';
 import { MultiSelectProps } from '../../../../../components/MultiSelect';
 import { getWorkspace } from '../../../../../redux/Session/selectors';
@@ -42,7 +42,7 @@ interface MapStateToProps {
 }
 
 interface MobileApplicationsListPageState {
-  mobileApplications: ChannelResource[];
+  mobileApplications: ChannelResourceShape[];
   totalMobileApplications: number;
   isFetchingMobileApplications: boolean;
   noMobileApplicationYet: boolean;
@@ -129,7 +129,7 @@ class MobileApplicationsListPage extends React.Component<
 
     this.setState({ isFetchingMobileApplications: true }, () => {
       const fetchPromise = datamartId
-        ? this.fetchMobileApplications(organisationId, datamartId, filter)
+        ? this.fetchMobileApplications(datamartId, filter)
         : this.fetchOrganisationMobileApplications(organisationId);
 
       fetchPromise.then(() => {
@@ -162,7 +162,6 @@ class MobileApplicationsListPage extends React.Component<
         { isFetchingMobileApplications: true, filter: filter },
         () => {
           this.fetchMobileApplications(
-            organisationId,
             localDatamartId,
             filter,
           ).then(() => {
@@ -200,7 +199,7 @@ class MobileApplicationsListPage extends React.Component<
     return Promise.resolve();
   }
 
-  handleEditMobileApplication = (mobileApplication: ChannelResource) => {
+  handleEditMobileApplication = (mobileApplication: ChannelResourceShape) => {
     const {
       match: {
         params: { organisationId },
@@ -217,9 +216,6 @@ class MobileApplicationsListPage extends React.Component<
 
   handleFilterChange = (newFilter: Filter) => {
     const {
-      match: {
-        params: { organisationId },
-      },
       datamartId,
     } = this.props;
     const { filter } = this.state;
@@ -232,7 +228,6 @@ class MobileApplicationsListPage extends React.Component<
       () => {
         if (datamartId) {
           this.fetchMobileApplications(
-            organisationId,
             datamartId,
             computedFilter,
           );
@@ -256,8 +251,9 @@ class MobileApplicationsListPage extends React.Component<
     const { notifyError } = this.props;
     const { filter } = this.state;
     return this._channelService
-      .getChannelsByOrganisation(organisationId, {
+      .getChannels({
         channel_type: 'MOBILE_APPLICATION',
+        organisation_Id: organisationId
       })
       .then(res => {
         if (res.data.length === 0) {
@@ -283,7 +279,7 @@ class MobileApplicationsListPage extends React.Component<
               filter: modifiedFilter,
             },
             () => {
-              this.fetchMobileApplications(organisationId, datamartId, filter);
+              this.fetchMobileApplications(datamartId, filter);
             },
           );
         }
@@ -295,7 +291,6 @@ class MobileApplicationsListPage extends React.Component<
   };
 
   fetchMobileApplications = (
-    organisationId: string,
     datamartId: string,
     filter: Filter,
   ) => {
@@ -303,6 +298,7 @@ class MobileApplicationsListPage extends React.Component<
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
         channel_type: 'MOBILE_APPLICATION',
+        datamart_id: datamartId,
       };
       if (filter.keywords) {
         return {
@@ -316,8 +312,6 @@ class MobileApplicationsListPage extends React.Component<
 
     return this._channelService
       .getChannels(
-        organisationId,
-        datamartId,
         buildGetMobileApplicationsOptions(),
       )
       .then(response => {

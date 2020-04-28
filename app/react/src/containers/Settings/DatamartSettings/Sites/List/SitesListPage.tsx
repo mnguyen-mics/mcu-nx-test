@@ -12,7 +12,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
 import { Filter } from '../../Common/domain';
-import { ChannelResource } from '../../../../../models/settings/settings';
+import { ChannelResourceShape } from '../../../../../models/settings/settings';
 import {
   updateSearch,
   DATAMART_SEARCH_SETTINGS,
@@ -37,7 +37,7 @@ export interface SitesListPageProps {
 }
 
 interface SiteListState {
-  sites: ChannelResource[];
+  sites: ChannelResourceShape[];
   totalSites: number;
   isFetchingSites: boolean;
   noSiteYet: boolean;
@@ -100,7 +100,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
 
     this.setState({ isFetchingSites: true }, () => {
       const fetchPromise = datamartId
-        ? this.fetchSites(organisationId, datamartId, filter)
+        ? this.fetchSites(datamartId, filter)
         : this.fetchOrganisationSites(organisationId);
 
       fetchPromise.then(() => {
@@ -130,7 +130,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
 
     const localFetchSites = (localDatamartId: string) => {
       this.setState({ isFetchingSites: true, filter: filter }, () => {
-        this.fetchSites(organisationId, localDatamartId, filter).then(() => {
+        this.fetchSites(localDatamartId, filter).then(() => {
           this.setState({ isFetchingSites: false });
         });
       });
@@ -157,11 +157,8 @@ class SitesListPage extends React.Component<Props, SiteListState> {
     }
   }
 
-  handleDeleteSite = (site: ChannelResource) => {
+  handleDeleteSite = (site: ChannelResourceShape) => {
     const {
-      match: {
-        params: { organisationId },
-      },
       location: { pathname, state, search },
       history,
       intl: { formatMessage },
@@ -189,7 +186,6 @@ class SitesListPage extends React.Component<Props, SiteListState> {
             return Promise.resolve();
           }
           return this.fetchSites(
-            organisationId,
             site.datamart_id,
             this.state.filter,
           ).then(() => {
@@ -205,7 +201,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
     });
   };
 
-  handleEditSite = (site: ChannelResource) => {
+  handleEditSite = (site: ChannelResourceShape) => {
     const {
       match: {
         params: { organisationId },
@@ -221,12 +217,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
   };
 
   handleFilterChange = (newFilter: Filter) => {
-    const {
-      match: {
-        params: { organisationId },
-      },
-      datamartId,
-    } = this.props;
+    const { datamartId } = this.props;
     const { filter } = this.state;
     const computedFilter: Filter = {
       ...newFilter,
@@ -234,7 +225,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
     };
     this.setState({ isFetchingSites: true, filter: computedFilter }, () => {
       if (datamartId) {
-        this.fetchSites(organisationId, datamartId, computedFilter);
+        this.fetchSites(datamartId, computedFilter);
       } else if (filter.datamartId) {
         this.updateLocationSearch(computedFilter);
       } else {
@@ -247,10 +238,11 @@ class SitesListPage extends React.Component<Props, SiteListState> {
     const { workspace } = this.props;
     const { filter } = this.state;
 
-    const datamart = workspace(organisationId).datamarts.length > 0 && workspace(organisationId).datamarts[0];
+    const datamart =
+      workspace(organisationId).datamarts.length > 0 &&
+      workspace(organisationId).datamarts[0];
 
-    if(!datamart)
-      return Promise.resolve();
+    if (!datamart) return Promise.resolve();
 
     const modifiedFilter: Filter = {
       ...filter,
@@ -258,14 +250,15 @@ class SitesListPage extends React.Component<Props, SiteListState> {
     };
 
     this.setState({ filter: modifiedFilter });
-    return this.fetchSites(organisationId, datamart.id, filter);
+    return this.fetchSites(datamart.id, filter);
   };
 
-  fetchSites = (organisationId: string, datamartId: string, filter: Filter) => {
+  fetchSites = (datamartId: string, filter: Filter) => {
     const buildGetSitesOptions = () => {
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
         channel_type: 'SITE',
+        datamart_id: datamartId,
       };
       if (filter.keywords) {
         return {
@@ -278,7 +271,7 @@ class SitesListPage extends React.Component<Props, SiteListState> {
     };
 
     return this._channelService
-      .getChannels(organisationId, datamartId, buildGetSitesOptions())
+      .getChannels(buildGetSitesOptions())
       .then(response => {
         this.setState({
           isFetchingSites: false,

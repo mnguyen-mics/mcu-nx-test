@@ -1,4 +1,8 @@
-import { ExtendedCleaningRuleResource, UserEventContentFilterResource } from './../models/cleaningRules/CleaningRules';
+import {
+  ExtendedCleaningRuleResource,
+  UserEventContentFilterResource,
+  CleaningRuleType,
+} from './../models/cleaningRules/CleaningRules';
 import { ProcessingSelectionResource } from './../models/consent/UserConsentResource';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import {
@@ -93,10 +97,50 @@ export interface IDatamartService {
     options?: object,
   ) => Promise<DataListResponse<ExtendedCleaningRuleResource>>;
 
+  createCleaningRule: (
+    datamartId: string,
+    cleaningRuleResource: Partial<ExtendedCleaningRuleResource>,
+  ) => Promise<DataResponse<ExtendedCleaningRuleResource>>;
+
+  getCleaningRule: (
+    datamartId: string,
+    cleaningRuleId: string,
+    type?: CleaningRuleType,
+  ) => Promise<DataResponse<ExtendedCleaningRuleResource>>;
+
+  updateCleaningRule: (
+    datamartId: string,
+    cleaningRuleId: string,
+    cleaningRuleResource: Partial<ExtendedCleaningRuleResource>,
+  ) => Promise<DataResponse<ExtendedCleaningRuleResource>>;
+
+  deleteCleaningRule: (
+    datamartId: string,
+    cleaningRuleId: string,
+    type?: CleaningRuleType,
+  ) => Promise<DataResponse<{}>>;
+
   getContentFilter: (
     datamartId: string,
     ruleId: string,
   ) => Promise<DataResponse<UserEventContentFilterResource>>;
+
+  createContentFilter: (
+    datamartId: string,
+    ruleId: string,
+    resource: Partial<UserEventContentFilterResource>,
+  ) => Promise<DataResponse<UserEventContentFilterResource>>;
+
+  updateContentFilter: (
+    datamartId: string,
+    ruleId: string,
+    resource: Partial<UserEventContentFilterResource>,
+  ) => Promise<DataResponse<UserEventContentFilterResource>>;
+
+  deleteContentFilter: (
+    datamartId: string,
+    ruleId: string,
+  ) => Promise<DataResponse<{}>>;
 
   getProcessingSelectionsByCompartment: (
     datamartId: string,
@@ -261,13 +305,73 @@ export class DatamartService implements IDatamartService {
     return ApiService.getRequest(endpoint, options);
   }
 
+  createCleaningRule(
+    datamartId: string,
+    cleaningRuleResource: ExtendedCleaningRuleResource,
+  ): Promise<DataResponse<ExtendedCleaningRuleResource>> {
+    const endpoint = `datamarts/${datamartId}/cleaning_rules`;
+    return ApiService.postRequest(endpoint, cleaningRuleResource);
+  }
+
+  getCleaningRule(
+    datamartId: string,
+    cleaningRuleId: string,
+    type?: CleaningRuleType,
+  ): Promise<DataResponse<ExtendedCleaningRuleResource>> {
+    const endpoint = `datamarts/${datamartId}/cleaning_rules/${cleaningRuleId}`;
+    return ApiService.getRequest(endpoint, { type });
+  }
+
+  updateCleaningRule(
+    datamartId: string,
+    cleaningRuleId: string,
+    cleaningRuleResource: ExtendedCleaningRuleResource,
+  ): Promise<DataResponse<ExtendedCleaningRuleResource>> {
+    const endpoint = `datamarts/${datamartId}/cleaning_rules/${cleaningRuleId}`;
+    return ApiService.putRequest(endpoint, cleaningRuleResource);
+  }
+
+  deleteCleaningRule(
+    datamartId: string,
+    cleaningRuleId: string,
+    type?: CleaningRuleType,
+  ): Promise<DataResponse<{}>> {
+    const endpoint = `datamarts/${datamartId}/cleaning_rules/${cleaningRuleId}`;
+    return ApiService.deleteRequest(endpoint, { type });
+  }
+
   getContentFilter(
     datamartId: string,
     ruleId: string,
   ): Promise<DataResponse<UserEventContentFilterResource>> {
     const endpoint = `datamarts/${datamartId}/cleaning_rules/${ruleId}/content_filter`;
     return ApiService.getRequest(endpoint);
+  }
 
+  createContentFilter(
+    datamartId: string,
+    ruleId: string,
+    resource: Partial<UserEventContentFilterResource>,
+  ): Promise<DataResponse<UserEventContentFilterResource>> {
+    const endpoint = `datamarts/${datamartId}/cleaning_rules/${ruleId}/content_filter`;
+    return ApiService.postRequest(endpoint, resource);
+  }
+
+  updateContentFilter(
+    datamartId: string,
+    ruleId: string,
+    resource: Partial<UserEventContentFilterResource>,
+  ): Promise<DataResponse<UserEventContentFilterResource>> {
+    const endpoint = `datamarts/${datamartId}/cleaning_rules/${ruleId}/content_filter`;
+    return ApiService.putRequest(endpoint, resource);
+  }
+
+  deleteContentFilter(
+    datamartId: string,
+    ruleId: string,
+  ): Promise<DataResponse<{}>> {
+    const endpoint = `datamarts/${datamartId}/cleaning_rules/${ruleId}/content_filter`;
+    return ApiService.deleteRequest(endpoint);
   }
 
   getProcessingSelectionsByCompartment(

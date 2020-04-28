@@ -9,7 +9,7 @@ import {
   ExtendedCleaningRuleResourceWithFilter,
   UserEventCleaningRuleResourceWithFilter,
 } from '../../../../../models/cleaningRules/CleaningRules';
-import { Layout, Row, Icon } from 'antd';
+import { Layout, Row, Icon, Modal, Button } from 'antd';
 import 'moment-duration-format';
 import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
 import injectNotifications, {
@@ -20,6 +20,12 @@ import { connect } from 'react-redux';
 import { CleaningRulesFilter } from '../domain';
 import { MultiSelectProps } from '../../../../../components/MultiSelect';
 import { getWorkspace } from '../../../../../redux/Session/selectors';
+import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
+import { lazyInject } from '../../../../../config/inversify.config';
+import { TYPES } from '../../../../../constants/types';
+import { IDatamartService } from '../../../../../services/DatamartService';
+import { Link } from 'react-router-dom';
+import moment from 'moment';
 
 const { Content } = Layout;
 
@@ -51,6 +57,9 @@ interface State {
 }
 
 class CleaningRulesContainer extends React.Component<Props, State> {
+  @lazyInject(TYPES.IDatamartService)
+  private _datamartService: IDatamartService;
+
   constructor(props: Props) {
     super(props);
 
@@ -94,8 +103,77 @@ class CleaningRulesContainer extends React.Component<Props, State> {
     }
   }
 
+  onEditCleaningRule = (cleaningRule: ExtendedCleaningRuleResource) => {
+    const {
+      match: {
+        params: { organisationId },
+      },
+      location,
+      history,
+    } = this.props;
+
+    history.push({
+      pathname: `/v2/o/${organisationId}/settings/datamart/${cleaningRule.datamart_id}/cleaning_rules/${cleaningRule.id}/edit`,
+      state: { from: `${location.pathname}${location.search}` },
+    });
+  };
+
+  onDeleteCleaningRule = (cleaningRule: ExtendedCleaningRuleResource) => {
+    const {
+      match: {
+        params: { organisationId },
+      },
+      location,
+      history,
+      intl: { formatMessage },
+      notifyError,
+    } = this.props;
+
+    Modal.confirm({
+      iconType: 'exclamation-circle',
+      title: formatMessage(messages.deleteCleaningRuleModalTitle),
+      okText: formatMessage(messages.deleteCleaningRuleModalOk),
+      cancelText: formatMessage(messages.deleteCleaningRuleModalCancel),
+      onOk: () => {
+        this._datamartService
+          .deleteCleaningRule(cleaningRule.datamart_id, cleaningRule.id)
+          .then(() => {
+            history.push({
+              pathname: `/v2/o/${organisationId}/settings/datamart/cleaning_rules`,
+              state: { from: `${location.pathname}${location.search}` },
+            });
+          })
+          .catch(err => {
+            notifyError(err);
+            history.push({
+              pathname: `/v2/o/${organisationId}/settings/datamart/cleaning_rules`,
+              state: { from: `${location.pathname}${location.search}` },
+            });
+          });
+      },
+      onCancel: () => {
+        // Cancel
+      },
+    });
+  };
+
+  buildNewActionElement = (organisationId: string) => {
+    const url = `/v2/o/${organisationId}/settings/datamart/cleaning_rules/create`;
+
+    return (
+      <Link key={messages.newCleaningRule.id} to={url}>
+        <Button key={messages.newCleaningRule.id} type="primary">
+          <FormattedMessage {...messages.newCleaningRule} />
+        </Button>
+      </Link>
+    );
+  };
+
   render() {
     const {
+      match: {
+        params: { organisationId },
+      },
       filter,
       onFilterChange,
       cleaningRules,
@@ -107,6 +185,18 @@ class CleaningRulesContainer extends React.Component<Props, State> {
     const { datamartItems } = this.state;
 
     const filtersOptions: Array<MultiSelectProps<any>> = [];
+
+    // New temporarily disabled
+    const allowNew = false;
+
+    const button =
+      ((filter.type === 'USER_EVENT_CLEANING_RULE') && allowNew) ? (
+        <span className="mcs-card-button">
+          {this.buildNewActionElement(organisationId)}
+        </span>
+      ) : (
+        undefined
+      );
 
     if (datamartItems.length > 1) {
       const datamartFilter = {
@@ -142,7 +232,33 @@ class CleaningRulesContainer extends React.Component<Props, State> {
         render: (
           text: string,
           record: UserEventCleaningRuleResourceWithFilter,
-        ) => <span>{record.life_duration}</span>,
+        ) => {
+          if (record.life_duration) {
+            const duration = moment.duration(record.life_duration);
+            const durationList = [
+              { number: duration.years(), unit: 'year' },
+              { number: duration.months(), unit: 'month' },
+              { number: duration.days(), unit: 'day' },
+            ];
+
+            const durationStr = durationList.reduce(
+              (accumulator, currentValue) => {
+                if (currentValue.number !== 0) {
+                  const prefixCurrentValue =
+                    accumulator !== undefined ? `${accumulator}, ` : '';
+                  const strCurrentValue = `${currentValue.number} ${currentValue.unit}`;
+                  const suffixCurrentValue =
+                    currentValue.number === 1 ? '' : 's';
+                  return `${prefixCurrentValue}${strCurrentValue}${suffixCurrentValue}`;
+                } else return accumulator;
+              },
+              undefined,
+            );
+
+            return <span>{durationStr}</span>;
+          }
+          return <span>{'No duration'}</span>;
+        },
       },
       {
         intlMessage: messages.channelFilter,
@@ -217,6 +333,29 @@ class CleaningRulesContainer extends React.Component<Props, State> {
         : [],
     );
 
+    const actionColumns:
+      | Array<ActionsColumnDefinition<ExtendedCleaningRuleResource>>
+      | undefined =
+      filter.type === 'USER_EVENT_CLEANING_RULE'
+        ? [
+            {
+              key: 'action',
+              actions: (record: ExtendedCleaningRuleResource) => [
+                {
+                  intlMessage: messages.editCleaningRule,
+                  disabled: record.status !== 'DRAFT',
+                  callback: this.onEditCleaningRule,
+                },
+                {
+                  intlMessage: messages.deleteCleaningRule,
+                  disabled: record.status !== 'DRAFT',
+                  callback: this.onDeleteCleaningRule,
+                },
+              ],
+            },
+          ]
+        : undefined;
+
     const pagination = {
       current: filter.currentPage,
       pageSize: filter.pageSize,
@@ -242,10 +381,12 @@ class CleaningRulesContainer extends React.Component<Props, State> {
                 <span className="mcs-card-title">
                   <FormattedMessage {...messages.cleaningRules} />
                 </span>
+                {button}
               </div>
               <hr className="mcs-separator" />
               <TableViewFilters
                 columns={dataColumns}
+                actionsColumnsDefinition={actionColumns}
                 dataSource={cleaningRules}
                 loading={isFetchingCleaningRules}
                 pagination={pagination}
