@@ -121,7 +121,7 @@ class FormLinkedSelectAndPeriodPicker extends React.Component<JoinedProps> {
               {options}
             </Select>
           </Col>
-          <Col span={3}>{separator}</Col>
+          <Col span={3} className={'text-center'}>{separator}</Col>
           <Col span={5}>
             <InputNumber
               value={input.value.periodNumber}

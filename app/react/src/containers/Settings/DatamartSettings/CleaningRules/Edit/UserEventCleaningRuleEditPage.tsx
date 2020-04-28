@@ -173,25 +173,10 @@ class UserEventCleaningRuleEditPage extends React.Component<Props, State> {
 
   getPeriodNumberAndUnit = (lifeDuration: string) => {
     const period = moment.duration(lifeDuration);
-    const days = period.days();
-    const months = period.months();
-    const years = period.years();
-    if (days !== 0) {
-      return {
-        periodNumber: days,
-        periodUnit: 'D',
-      };
-    } else if (months !== 0) {
-      return {
-        periodNumber: months,
-        periodUnit: 'M',
-      };
-    } else {
-      return {
-        periodNumber: years,
-        periodUnit: 'Y',
-      };
-    }
+    return {
+      periodNumber: period.asDays(),
+      periodUnit: 'D',
+    };
   };
 
   saveFetchedDataInState = (
