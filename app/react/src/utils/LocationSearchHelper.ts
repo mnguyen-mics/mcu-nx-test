@@ -281,7 +281,7 @@ export interface DateSearchSettings {
   to: McsMoment;
 }
 
-export interface SegmentsSearchSettings {
+export interface SegmentsSearchSettings { 
   segments: string[];
 }
 

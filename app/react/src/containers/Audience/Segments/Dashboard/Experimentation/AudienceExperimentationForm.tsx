@@ -74,6 +74,10 @@ export const messagesMap: {
     id: 'audience.segments.experimentation.experimentationSegmentName',
     defaultMessage: 'Experimentation',
   },
+  uplift: {
+    id: 'audience.segments.experimentation.uplift',
+    defaultMessage: 'Uplift',
+  },
   engagementMetric: {
     id: 'audience.segments.experimentation.engagementMetric',
     defaultMessage: 'Engagement metric',
@@ -88,7 +92,8 @@ export const messagesMap: {
   },
   tooltipWeight: {
     id: 'audience.segments.experimentation.control.tooltip',
-    defaultMessage: 'Select the datamart percentage on which you want to do your experimentation.',
+    defaultMessage:
+      'Select the datamart percentage on which you want to do your experimentation.',
   },
   tooltipEngagement: {
     id: 'audience.segments.experimentation.engagement.tooltip',
@@ -110,6 +115,10 @@ export const messagesMap: {
     id: 'audience.segments.experimentation.form.successfullyCreated',
     defaultMessage: 'Experimentation Successfully created!',
   },
+  abTestingDetailsTitle: {
+    id: 'audience.segment.dashboard.ABDetailsTable.exportTitle',
+    defaultMessage: 'AB Testing Details',
+  }
 });
 
 const FORM_ID = 'experimentationForm';
