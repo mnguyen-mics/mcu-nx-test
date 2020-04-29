@@ -14,7 +14,7 @@ import { messagesMap } from '../Experimentation/AudienceExperimentationForm';
 import {
   averageSessionDurationConfig,
   ecommerceEngagementConfig,
-  graphsConfig,
+  abTestingDashboardConfig,
 } from '../../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
 import DatamartUsersAnalyticsWrapper, { DatamartUsersAnalyticsWrapperProps } from '../../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
@@ -70,8 +70,8 @@ class ABComparisonDashboard extends React.Component<Props, State> {
                 return {
                   ...config,
                   segments: {
-                    baseSegmentId: controlGroupSegment.id,
-                    segmentIdToCompareWith: experimentationSegment.id,
+                    baseSegmentId: experimentationSegment.id,
+                    segmentIdToCompareWith: controlGroupSegment.id,
                   },
                 };
               }),
@@ -152,14 +152,17 @@ class ABComparisonDashboard extends React.Component<Props, State> {
         params: { organisationId },
       },
       controlGroupSegment,
+      intl
     } = this.props;
     if (experimentationSegment && controlGroupSegment) {
-      return graphsConfig.map((graphConfig, i) => {
+      return abTestingDashboardConfig.map((graphConfig, i) => {
         const newConfig = {
           ...graphConfig,
           segments: {
-            baseSegmentId: controlGroupSegment.id,
-            segmentIdToCompareWith: experimentationSegment.id,
+            baseSegmentId: experimentationSegment.id,
+            segmentIdToCompareWith: controlGroupSegment.id,
+            baseSegmentName: intl.formatMessage(messagesMap.experimentationSegmentName),
+            segmentToCompareWithName: intl.formatMessage(messagesMap.controlGroupSegmentName),
           },
         };
         return {

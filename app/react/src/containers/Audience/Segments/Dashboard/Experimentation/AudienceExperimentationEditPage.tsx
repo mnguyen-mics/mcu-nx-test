@@ -141,15 +141,15 @@ class AudienceExperimentationEditPage extends React.Component<Props, State> {
         .getSegments(organisationId, {
           audience_partition_id: partitionId,
           type: 'USER_PARTITION',
-          max_results: 500,// 
+          max_results: 500,
         })
         .then(segmentsRes => {
-          const limit = (formData.control/100) * segmentsRes.data.length;
+          const numberOfSegments = Math.round((formData.control/100) * segmentsRes.data.length);
           getFormattedExperimentationQuery(
             datamartId,
             queryId,
             this._queryService,
-            segmentsRes.data.slice(0, Math.round(limit)) as UserPartitionSegment[],
+            segmentsRes.data.slice(0, numberOfSegments) as UserPartitionSegment[],
             true,
           )
             .then(controlGroupQueryResource => {

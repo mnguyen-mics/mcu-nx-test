@@ -66,6 +66,14 @@ export const messagesMap: {
     id: 'audience.segments.experimentation.control',
     defaultMessage: 'Control Group %',
   },
+  controlGroupSegmentName: {
+    id: 'audience.segments.experimentation.controlGroupSegmentName',
+    defaultMessage: 'Control Group',
+  },
+  experimentationSegmentName: {
+    id: 'audience.segments.experimentation.experimentationSegmentName',
+    defaultMessage: 'Experimentation',
+  },
   engagementMetric: {
     id: 'audience.segments.experimentation.engagementMetric',
     defaultMessage: 'Engagement metric',

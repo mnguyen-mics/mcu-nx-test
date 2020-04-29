@@ -188,7 +188,7 @@ export const averageSessionDurationConfig: DashboardConfig[] = [
   },
 ];
 
-export const graphsConfig: DashboardConfig[] = [
+export const abTestingDashboardConfig: DashboardConfig[] = [
   {
     title: 'Revenue',
     tabMode: true,
