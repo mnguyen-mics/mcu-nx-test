@@ -263,10 +263,10 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
     const { charts } = this.state
     return (
       <div>
-        <AudienceCounters
+        {segment && <AudienceCounters
           datamarts={datamarts}
-          segment={segment && segment}
-        />
+          segment={segment}
+        />}
         {charts.map(c => <DashboardWrapper key={c.id} layout={c.components} title={c.name} datamartId={c.datamart_id} segment={segment} />)}
         {charts.length ? <ContentHeader size="medium" title="Technical Informations" /> : null}
         <Card>

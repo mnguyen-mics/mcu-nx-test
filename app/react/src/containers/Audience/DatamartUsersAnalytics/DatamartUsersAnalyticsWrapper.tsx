@@ -76,7 +76,7 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
 
     if (!compareSearches(search, nextSearch)) {
       if (!isSearchValid(nextSearch, DATAMART_USERS_ANALYTICS_SETTING)) {
-        this.setState({refresh: true});
+        
         history.replace({
           pathname: nextPathname,
           search: buildDefaultSearch(
@@ -84,9 +84,6 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
             DATAMART_USERS_ANALYTICS_SETTING,
           ),
         });
-        setTimeout(()=> {
-          this.setState({refresh: false})
-        }, 500);
       }
     }
   }

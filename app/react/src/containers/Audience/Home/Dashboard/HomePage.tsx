@@ -105,6 +105,7 @@ class Partition extends React.Component<JoinedProps, HomeState> {
         datamartId: datamartId,
         organisationId: organisationId,
         config: averageSessionDurationConfig,
+        showDateRangePicker: true,
         showFilter: true
       },
       {
@@ -202,6 +203,8 @@ class Partition extends React.Component<JoinedProps, HomeState> {
                     organisationId={conf.organisationId}
                     config={conf.config}
                     showFilter={conf.showFilter}
+                    showDateRangePicker={conf.showDateRangePicker}
+
                   />
                 )
               })

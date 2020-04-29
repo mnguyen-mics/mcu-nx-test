@@ -118,6 +118,10 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       (prevProps.dateRange.from.value !== dateRange.from.value ||
         prevProps.dateRange.to.value !== dateRange.to.value)
     ) {
+      if (!dateRange.from.value || !dateRange.to.value) {
+        dateRange.from = new McsMoment('now-8d');
+        dateRange.to = new McsMoment('now-1d');
+      }
       this.fetchAnalytics(
         onChange,
         datamartId,
