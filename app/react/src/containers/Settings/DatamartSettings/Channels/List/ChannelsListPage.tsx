@@ -176,7 +176,6 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
         channel_type: fixedFilterOpt ? fixedFilterOpt.channelType : filterType,
-        organisation_id: organisationId
       };
       if (filter.keywords) {
         return {
@@ -189,7 +188,7 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
 
     this.setState({ isFetchingChannels: true }, () => {
       this._channelService
-        .getChannels(buildGetChannelsOptions())
+        .getChannelsByOrganisation(organisationId, buildGetChannelsOptions())
         .then(response => {
 
           this.setState({

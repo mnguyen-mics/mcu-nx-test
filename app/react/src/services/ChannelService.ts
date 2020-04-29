@@ -12,6 +12,12 @@ import { injectable } from 'inversify';
 
 export interface IChannelService {
   getChannels: (
+    organisationId: string,
+    datamartId: string,
+    options?: object,
+  ) => Promise<DataListResponse<ChannelResource>>;
+  getChannelsByOrganisation: (
+    organisationId: string,
     options?: object,
   ) => Promise<DataListResponse<ChannelResourceShape>>;
   getChannel: (
@@ -107,11 +113,30 @@ export interface IChannelService {
 @injectable()
 export class ChannelService implements IChannelService {
   getChannels(
+    organisationId: string,
+    datamartId: string,
+    options: object = {},
+  ): Promise<DataListResponse<ChannelResource>> {
+    const endpoint = `datamarts/${datamartId}/channels`;
+
+    const params = {
+      organisation_id: organisationId,
+      ...options,
+    };
+
+    return ApiService.getRequest(endpoint, params);
+  }
+  getChannelsByOrganisation(
+    organisationId: string,
     options: object = {},
   ): Promise<DataListResponse<ChannelResourceShape>> {
     const endpoint = `channels`;
+    const params = {
+      organisation_id: organisationId,
+      ...options,
+    };
 
-    return ApiService.getRequest(endpoint, options);
+    return ApiService.getRequest(endpoint, params);
   }
   getChannel(
     datamartId: string,
