@@ -719,8 +719,8 @@ class FieldNodeForm extends React.Component<Props, State> {
           case 'CHANNELS':
             fetchListMethod = (keywords: string) => {
               return this._channelService
-                .getChannels({
-                  organisation_id: organisationId,
+                .getChannelsByOrganisation(organisationId, {
+                  community_id: organisationId,
                   keywords: keywords,
                   with_source_datamarts: true,
                 })

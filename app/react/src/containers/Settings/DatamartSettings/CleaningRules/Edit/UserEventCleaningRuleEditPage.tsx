@@ -36,7 +36,7 @@ import {
   UserEventContentFilterResource,
 } from '../../../../../models/cleaningRules/CleaningRules';
 import { IChannelService } from '../../../../../services/ChannelService';
-import { ChannelResourceShape } from '../../../../../models/settings/settings';
+import { ChannelResource } from '../../../../../models/settings/settings';
 import { OptionProps } from 'antd/lib/select';
 import moment from 'moment';
 import { DataResponse } from '../../../../../services/ApiService';
@@ -180,7 +180,7 @@ class UserEventCleaningRuleEditPage extends React.Component<Props, State> {
   };
 
   saveFetchedDataInState = (
-    ruleAndChannels: [RuleAndOptionalFilter, ChannelResourceShape[]],
+    ruleAndChannels: [RuleAndOptionalFilter, ChannelResource[]],
   ) => {
     const ruleAndPartialFilter = ruleAndChannels[0];
     const channels = ruleAndChannels[1];
@@ -225,9 +225,10 @@ class UserEventCleaningRuleEditPage extends React.Component<Props, State> {
 
   fetchDatamartChannels = (
     datamartId: string,
-  ): Promise<ChannelResourceShape[]> => {
+  ): Promise<ChannelResource[]> => {
+    const { organisationId } = this.props.match.params
     return this._channelService
-      .getChannels({
+      .getChannels(organisationId, datamartId, {
         datamart_id: datamartId,
         with_source_datamarts: false,
       })
