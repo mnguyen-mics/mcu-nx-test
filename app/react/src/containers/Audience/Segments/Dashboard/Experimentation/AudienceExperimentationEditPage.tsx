@@ -176,7 +176,7 @@ class AudienceExperimentationEditPage extends React.Component<Props, State> {
                         datamartId,
                         queryId,
                         this._queryService,
-                        segmentsRes.data as UserPartitionSegment[],
+                        segmentsRes.data.slice(0, numberOfSegments) as UserPartitionSegment[],
                         false,
                       ).then(experimentationQueryResource => {
                         this._queryService
