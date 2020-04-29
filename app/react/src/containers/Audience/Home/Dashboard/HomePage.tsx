@@ -21,9 +21,8 @@ import {
 import { Loading } from '../../../../components';
 import DashboardWrapper from '../../Dashboard/DashboardWrapper';
 import Error from '../../../../components/Error';
-import DatamartUsersAnalyticsWrapper from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
+import DatamartUsersAnalyticsWrapper, { DatamartUsersAnalyticsWrapperProps } from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
-import { DashboardConfig } from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsContent';
 import { averageSessionDurationConfig, channelEngagementConfig, acquisitionEngagementConfig, ecommerceEngagementConfig } from '../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
 
 const { Content } = Layout;
@@ -54,16 +53,7 @@ const messages = defineMessages({
 interface HomeState {
   dashboards: DashboardResource[];
   isLoading: boolean;
-  datamartAnalyticsDashboardConfig: HomeDashboardConfig[];
-}
-
-export interface HomeDashboardConfig {
-  title?: string;
-  subTitle?: string;
-  datamartId: string;
-  organisationId: string;
-  config: DashboardConfig[];
-  showFilter?: boolean;
+  datamartAnalyticsDashboardConfig: DatamartUsersAnalyticsWrapperProps[];
 }
 
 type JoinedProps = InjectedWorkspaceProps &
@@ -108,13 +98,14 @@ class Partition extends React.Component<JoinedProps, HomeState> {
     }
   }
 
-  getDatamartAnaylicsDashboardConfig = (organisationId: string, datamartId: string, intl: InjectedIntl) : HomeDashboardConfig[] => {
+  getDatamartAnaylicsDashboardConfig = (organisationId: string, datamartId: string, intl: InjectedIntl) : DatamartUsersAnalyticsWrapperProps[] => {
     const config = [
       {
         title: intl.formatMessage(messages.homeTitle),
         datamartId: datamartId,
         organisationId: organisationId,
         config: averageSessionDurationConfig,
+        showDateRangePicker: true,
         showFilter: true
       },
       {
@@ -212,6 +203,8 @@ class Partition extends React.Component<JoinedProps, HomeState> {
                     organisationId={conf.organisationId}
                     config={conf.config}
                     showFilter={conf.showFilter}
+                    showDateRangePicker={conf.showDateRangePicker}
+
                   />
                 )
               })

@@ -144,11 +144,12 @@ class AudienceExperimentationEditPage extends React.Component<Props, State> {
           max_results: 500,
         })
         .then(segmentsRes => {
+          const numberOfSegments = Math.round((formData.control/100) * segmentsRes.data.length);
           getFormattedExperimentationQuery(
             datamartId,
             queryId,
             this._queryService,
-            segmentsRes.data as UserPartitionSegment[],
+            segmentsRes.data.slice(0, numberOfSegments) as UserPartitionSegment[],
             true,
           )
             .then(controlGroupQueryResource => {

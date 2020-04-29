@@ -7,14 +7,11 @@ import { EditAudienceSegmentParam } from '../Edit/domain';
 import { DatamartWithMetricResource } from '../../../../models/datamart/DatamartResource';
 import { McsIconType } from '../../../../components/McsIcon';
 import messages from './messages';
-import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
-import { lazyInject } from '../../../../config/inversify.config';
-import { TYPES } from '../../../../constants/types';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 
 export interface AudienceCountersProps {
   datamarts: DatamartWithMetricResource[];
-  datamartId?: string;
+  segment?: AudienceSegmentShape;
 }
 
 interface State {
@@ -29,17 +26,14 @@ type Props = AudienceCountersProps &
   RouteComponentProps<EditAudienceSegmentParam>;
 
 type AudienceSegmentShapeKey =
-        'user_points_count' |
-        'user_accounts_count' |
-        'emails_count' |
-        'desktop_cookie_ids_count' |
-        'mobile_ad_ids_count' |
-        'mobile_cookie_ids_count'
+  | 'user_points_count'
+  | 'user_accounts_count'
+  | 'emails_count'
+  | 'desktop_cookie_ids_count'
+  | 'mobile_ad_ids_count'
+  | 'mobile_cookie_ids_count';
 
 class AudienceCounters extends React.Component<Props, State> {
-  @lazyInject(TYPES.IAudienceSegmentService)
-  private _audienceSegmentService: IAudienceSegmentService;
-
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -50,68 +44,31 @@ class AudienceCounters extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const {
-      match: {
-        params: { segmentId },
-      },
-    } = this.props;
+    const { segment } = this.props;
 
-    if (segmentId) {
-      this.fetchCounterView(segmentId);
-    }
+    this.setState({
+      counter: {
+        isLoading: false,
+        report: segment,
+      },
+    });
   }
-
-  componentDidUpdate(previousProps: Props) {
-    const {
-      match: {
-        params: { segmentId },
-      },
-    } = this.props;
-    const {
-      match: {
-        params: {
-          segmentId: previousSegmentId,
-        },
-      },
-    } = previousProps;
-
-    if (segmentId !== previousSegmentId) {
-      this.fetchCounterView(segmentId);
-    }
-  }
-
-  fetchCounterView = (segmentId: string) => {
-    this.setState({ counter: { ...this.state.counter, isLoading: true } });
-    return this._audienceSegmentService.getSegment(segmentId).then(res =>
-      this.setState({
-        counter: {
-          isLoading: false,
-          report: res.data
-        },
-      }),
-    );
-  };
-
-  adaptKey(key:
-    | 'user_points'
-    | 'user_accounts'
-    | 'emails'
-    | 'desktop_cookie_ids'
-    | 'mobile_ad_ids'
-    | 'mobile_cookie_ids'): AudienceSegmentShapeKey {
-    if (key === 'user_points')
-      return 'user_points_count'
-    if (key === 'user_accounts')
-      return 'user_accounts_count'
-    if (key === 'emails')
-      return 'emails_count'
-    if (key === 'desktop_cookie_ids')
-      return 'desktop_cookie_ids_count'
-    if (key === 'mobile_ad_ids')
-      return 'mobile_ad_ids_count'
-    if (key === 'mobile_cookie_ids')
-      return 'mobile_cookie_ids_count'
-    return 'user_points_count'
+  adaptKey(
+    key:
+      | 'user_points'
+      | 'user_accounts'
+      | 'emails'
+      | 'desktop_cookie_ids'
+      | 'mobile_ad_ids'
+      | 'mobile_cookie_ids',
+  ): AudienceSegmentShapeKey {
+    if (key === 'user_points') return 'user_points_count';
+    if (key === 'user_accounts') return 'user_accounts_count';
+    if (key === 'emails') return 'emails_count';
+    if (key === 'desktop_cookie_ids') return 'desktop_cookie_ids_count';
+    if (key === 'mobile_ad_ids') return 'mobile_ad_ids_count';
+    if (key === 'mobile_cookie_ids') return 'mobile_cookie_ids_count';
+    return 'user_points_count';
   }
 
   getLoadingValue = (
@@ -124,7 +81,10 @@ class AudienceCounters extends React.Component<Props, State> {
       | 'mobile_cookie_ids',
   ) => {
     const { counter } = this.state;
-    const value = !counter.isLoading && counter.report ? counter.report[this.adaptKey(key)] : undefined
+    const value =
+      !counter.isLoading && counter.report
+        ? counter.report[this.adaptKey(key)]
+        : undefined;
     return {
       value,
       loading: counter.isLoading,
@@ -132,7 +92,7 @@ class AudienceCounters extends React.Component<Props, State> {
   };
 
   getCounters = () => {
-    const { datamarts, datamartId, intl } = this.props;
+    const { datamarts, segment, intl } = this.props;
     const counters: CounterProps[] = [];
 
     counters.push({
@@ -140,8 +100,8 @@ class AudienceCounters extends React.Component<Props, State> {
       title: intl.formatMessage(messages.userPoints),
       ...this.getLoadingValue('user_points'),
     });
-    if (datamartId) {
-      const datamart = datamarts.find(dm => dm.id === datamartId);
+    if (segment && segment.datamart_id) {
+      const datamart = datamarts.find(dm => dm.id === segment.datamart_id);
       const otherMetrics =
         datamart && datamart.audience_segment_metrics
           ? datamart.audience_segment_metrics.map(el => {

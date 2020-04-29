@@ -22,12 +22,22 @@ export interface DashboardConfig {
   layout: Layout;
   charts: Chart[];
   color?: string;
+  tabMode?: boolean;
+  enhancedManualReportView?: boolean;
   segments?: SegmentFilter;
 }
 
+// To Do: Refactor code using the
+// whole resources instead : 
+// interface SegmentFilter {
+//   baseSegment: AudienceSegmentShape;
+//   segmentToCompareWith?: AudienceSegmentShape;
+// }
 interface SegmentFilter {
   baseSegmentId: string;
+  baseSegmentName?: string;
   segmentIdToCompareWith?: string;
+  segmentToCompareWithName?: string;
 }
 
 interface DatamartUsersAnalyticsContentProps {
@@ -173,10 +183,10 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
     return dashboardConfig.map((comp: DashboardConfig, i) => {
       return (
         <CardFlex
-          title={comp.title}
+          title={!!comp.tabMode ? undefined : comp.title}
           key={comp.layout.i && comp.layout.i.toString()}
           className={comp.layout.static ? 'static mcs-datamartUsersAnalytics_card' : 'mcs-datamartUsersAnalytics_card'}
-          style={{ borderLeft: `5px solid ${comp.color}` }}
+          style={ !comp.tabMode ? { borderLeft: `5px solid ${comp.color}`} : { boxShadow: 'none' }}
         >
           {comp.charts.map((chart: Chart) => {
             return <ApiQueryWrapper
@@ -186,7 +196,10 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
               dateRange={dateRange}
               onChange={onChange}
               segmentId={comp.segments ? comp.segments.baseSegmentId : undefined}
+              segmentName={comp.segments ? comp.segments.baseSegmentName : undefined}
+              compareWithSegmentName={comp.segments ? comp.segments.segmentToCompareWithName : undefined}
               compareWithSegmentId={comp.segments ? comp.segments.segmentIdToCompareWith : undefined}
+              enhancedManualReportView={comp.enhancedManualReportView}
             />
           })}
         </CardFlex>

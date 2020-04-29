@@ -2,51 +2,29 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import _ from 'lodash';
 import { withRouter, RouteComponentProps } from 'react-router';
-// import { Card } from '../../../../../components/Card';
-// import McsTabs from '../../../../../components/McsTabs';
 import { EditAudienceSegmentParam } from '../../Edit/domain';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
-import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import { InjectedIntlProps, injectIntl } from 'react-intl';
 import FeedCardList from './../Feeds/FeedCardList';
 import { UserQuerySegment } from '../../../../../models/audiencesegment/AudienceSegmentResource';
 import ABComparisonGauge from './ABComparisonGauge';
-import { HomeDashboardConfig } from '../../../Home/Dashboard/HomePage';
 import { messagesMap } from '../Experimentation/AudienceExperimentationForm';
 import {
   averageSessionDurationConfig,
   ecommerceEngagementConfig,
+  abTestingDashboardConfig,
 } from '../../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
-import DatamartUsersAnalyticsWrapper from '../../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
+import DatamartUsersAnalyticsWrapper, { DatamartUsersAnalyticsWrapperProps } from '../../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
-
-const messages = defineMessages({
-  revenue: {
-    id: 'audience.segments.dashboard.ABComparisonDashboard.revenue',
-    defaultMessage: 'Revenue',
-  },
-  avgTransactionAmount: {
-    id:
-      'audience.segments.dashboard.ABComparisonDashboard.avgTransactionAmount',
-    defaultMessage: 'Avg Transaction Amount',
-  },
-  nbOfTransactions: {
-    id: 'audience.segments.dashboard.ABComparisonDashboard.nbOfTransactions',
-    defaultMessage: '# of transactions',
-  },
-  avgSessionDuration: {
-    id: 'audience.segments.dashboard.ABComparisonDashboard.avgSessionDuration',
-    defaultMessage: 'Avg Session Duration',
-  },
-  eventsPerSession: {
-    id: 'audience.segments.dashboard.ABComparisonDashboard.eventsPerSession',
-    defaultMessage: 'Events Per Session',
-  },
-});
+import { Card } from 'antd';
+import McsTabs from '../../../../../components/McsTabs';
+import { Loading } from '../../../../../components';
 
 interface State {
-  ABComparisonDashboardConfig: HomeDashboardConfig[];
+  ABComparisonDashboardConfig: DatamartUsersAnalyticsWrapperProps[];
+  isLoading: boolean;
 }
 
 export interface ABComparisonDashboardProps {
@@ -65,13 +43,8 @@ class ABComparisonDashboard extends React.Component<Props, State> {
     super(props);
     this.state = {
       ABComparisonDashboardConfig: [],
+      isLoading: true,
     };
-  }
-
-  componentDidMount() {
-    this.setState({
-      ABComparisonDashboardConfig: this.getABComparisonDashboardConfig(),
-    });
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -97,14 +70,15 @@ class ABComparisonDashboard extends React.Component<Props, State> {
                 return {
                   ...config,
                   segments: {
-                    baseSegmentId: controlGroupSegment.id,
-                    segmentIdToCompareWith: experimentationSegment.id,
+                    baseSegmentId: experimentationSegment.id,
+                    segmentIdToCompareWith: controlGroupSegment.id,
                   },
                 };
               }),
             };
           },
         ),
+        isLoading: false,
       });
     }
   }
@@ -118,6 +92,15 @@ class ABComparisonDashboard extends React.Component<Props, State> {
       intl,
     } = this.props;
     if (experimentationSegment) {
+      const getFormattedTitleConfig = (configs: DatamartUsersAnalyticsWrapperProps[]) => {
+        return configs.map(c => {
+          return {
+            ...c,
+            title: c.title ? intl.formatMessage(messagesMap[c.title]) : '',
+          };
+        });
+      };
+
       const eCommerceEngagementDashboardConfig = {
         title: 'E_COMMERCE_ENGAGEMENT',
         datamartId: experimentationSegment.datamart_id,
@@ -135,7 +118,7 @@ class ABComparisonDashboard extends React.Component<Props, State> {
         eCommerceEngagementDashboardConfig,
         averageSessionDurationDashboardConfig,
       ];
-      // We want to display the config related to the target_metric firstly.
+      // Below the graphs, we want to display the config related to the target_metric firstly.
       // But in a near future there could be more than two engagement configs
       // Hence the code underneath
 
@@ -147,56 +130,68 @@ class ABComparisonDashboard extends React.Component<Props, State> {
         ? [
             {
               ...firstConfig,
-              title: intl.formatMessage(messagesMap[firstConfig.title]),
+              title: firstConfig.title
+                ? intl.formatMessage(messagesMap[firstConfig.title])
+                : '',
             },
           ].concat(
-            ABComparisonDashboardConfig.filter(
-              c => c.title !== experimentationSegment.target_metric,
+            getFormattedTitleConfig(
+              ABComparisonDashboardConfig.filter(
+                c => c.title !== experimentationSegment.target_metric,
+              ),
             ),
           )
-        : ABComparisonDashboardConfig;
+        : getFormattedTitleConfig(ABComparisonDashboardConfig);
     } else return [];
   };
 
   buildItems = () => {
-    const { intl } = this.props;
-
-    return [
-      {
-        title: intl.formatMessage(messages.revenue),
-        display: <div>Coming soon...</div>,
+    const {
+      experimentationSegment,
+      match: {
+        params: { organisationId },
       },
-      {
-        title: intl.formatMessage(messages.avgTransactionAmount),
-        display: <div>Coming soon...</div>,
-      },
-      {
-        title: intl.formatMessage(messages.nbOfTransactions),
-        display: <div>Coming soon...</div>,
-      },
-      {
-        title: intl.formatMessage(messages.avgSessionDuration),
-        display: <div>Coming soon...</div>,
-      },
-      {
-        title: intl.formatMessage(messages.eventsPerSession),
-        display: <div>Coming soon...</div>,
-      },
-    ];
+      controlGroupSegment,
+      intl
+    } = this.props;
+    if (experimentationSegment && controlGroupSegment) {
+      return abTestingDashboardConfig.map((graphConfig, i) => {
+        const newConfig = {
+          ...graphConfig,
+          segments: {
+            baseSegmentId: experimentationSegment.id,
+            segmentIdToCompareWith: controlGroupSegment.id,
+            baseSegmentName: intl.formatMessage(messagesMap.experimentationSegmentName),
+            segmentToCompareWithName: intl.formatMessage(messagesMap.controlGroupSegmentName),
+          },
+        };
+        return {
+          title: graphConfig.title || '',
+          display: (
+            <DatamartUsersAnalyticsWrapper
+              key={i.toString()}
+              datamartId={experimentationSegment.datamart_id}
+              organisationId={organisationId}
+              config={[newConfig]}
+              showDateRangePicker={true}
+            />
+          ),
+        };
+      });
+    } else return [];
   };
 
   render() {
     const { experimentationSegment } = this.props;
-    const { ABComparisonDashboardConfig } = this.state;
-    return (
-      <div>
+    const { ABComparisonDashboardConfig, isLoading } = this.state;
+    return !isLoading ? (
+      <React.Fragment>
         <ABComparisonGauge
           weight={experimentationSegment && experimentationSegment.weight}
         />
-        {/* We will need it soon so let's keep it */}
-        {/* <Card>
+        <Card>
           <McsTabs items={this.buildItems()} />
-        </Card> */}
+        </Card>
         {ABComparisonDashboardConfig.map((conf, i) => {
           return (
             <DatamartUsersAnalyticsWrapper
@@ -211,7 +206,9 @@ class ABComparisonDashboard extends React.Component<Props, State> {
           );
         })}
         <FeedCardList />
-      </div>
+      </React.Fragment>
+    ) : (
+      <Loading className="loading-full-screen" />
     );
   }
 }

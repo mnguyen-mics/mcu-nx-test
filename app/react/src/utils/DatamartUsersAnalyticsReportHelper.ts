@@ -14,7 +14,8 @@ export type DatamartUsersAnalyticsDimension = 'date_yyyy_mm_dd'
                                               | 'device_browser_family' 
                                               | 'device_os_family'
                                               | 'origin_source'
-                                              | 'origin_channel';
+                                              | 'origin_channel'
+                                              | 'resource_name';
 
 export type DatamartUsersAnalyticsMetric = 'users'
                                             | 'sessions' 

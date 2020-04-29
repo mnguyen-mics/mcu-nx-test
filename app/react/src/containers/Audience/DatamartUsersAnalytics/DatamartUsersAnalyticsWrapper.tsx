@@ -18,25 +18,25 @@ import {
 import SegmentFilter from './components/SegmentFilter';
 import { DATAMART_USERS_ANALYTICS_SETTING } from '../Segments/Dashboard/constants';
 
-interface DatamartAnalysisProps {
-  title?: string;
-  subTitle?: string;
-  datamartId: string;
-  organisationId: string;
-  config: DashboardConfig[];
-  showFilter?: boolean;
-}
-
 interface State {
   layout: Layout[];
   refresh: boolean;
   isLoading: boolean;
 }
 
+export interface DatamartUsersAnalyticsWrapperProps {	
+  title?: string;	
+  subTitle?: string;	
+  datamartId: string;	
+  organisationId: string;	
+  config: DashboardConfig[];	
+  showFilter?: boolean;
+  showDateRangePicker?: boolean;
+}
 
 type FILTERS = DateSearchSettings | SegmentsSearchSettings | AllUsersSettings
 
-type JoinedProp = RouteComponentProps & DatamartAnalysisProps;
+type JoinedProp = RouteComponentProps & DatamartUsersAnalyticsWrapperProps;
 
 class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
   constructor(props: JoinedProp) {
@@ -76,7 +76,7 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
 
     if (!compareSearches(search, nextSearch)) {
       if (!isSearchValid(nextSearch, DATAMART_USERS_ANALYTICS_SETTING)) {
-        this.setState({refresh: true});
+        
         history.replace({
           pathname: nextPathname,
           search: buildDefaultSearch(
@@ -84,9 +84,6 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
             DATAMART_USERS_ANALYTICS_SETTING,
           ),
         });
-        setTimeout(()=> {
-          this.setState({refresh: false})
-        }, 500);
       }
     }
   }
@@ -155,6 +152,7 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
       organisationId, 
       config, 
       showFilter,
+      showDateRangePicker,
       location: { search } } = this.props;
 
     const { isLoading, refresh } = this.state;
@@ -172,17 +170,20 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
               </div>}
           </Col>
         </Row>
-        { !refresh && showFilter && <Row>
+        { !refresh && <Row> 
+          {showFilter && 
           <SegmentFilter 
             className={ isLoading ? 'mcs-datamartUsersAnalytics_segmentFilter _is_disabled' : 'mcs-datamartUsersAnalytics_segmentFilter'} 
             onChange={this.onSegmentFilterChange}
             onToggleAllUsersFilter={this.onAllUserFilterChange}
             datamartId={datamartId}
             organisationId={organisationId}
-          />
+          />}
+
+        {showDateRangePicker && 
           <Col className="text-right" offset={6}>
-              {this.renderDatePicker()}
-          </Col>
+            {this.renderDatePicker()}
+          </Col>}
         </Row>}
         {!refresh && <DatamartUsersAnalyticsContent datamartId={datamartId} config={config} dateRange={{from: filter.from, to: filter.to}} onChange={this.getLoadingState} />}
       </div>
@@ -190,4 +191,4 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
   }
 }
 
-export default compose<DatamartAnalysisProps, DatamartAnalysisProps>(withRouter)(DatamartUsersAnalyticsWrapper);
+export default compose<DatamartUsersAnalyticsWrapperProps, DatamartUsersAnalyticsWrapperProps>(withRouter)(DatamartUsersAnalyticsWrapper);
