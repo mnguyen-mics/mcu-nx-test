@@ -10,21 +10,20 @@ import { InjectedIntlProps, injectIntl } from 'react-intl';
 import FeedCardList from './../Feeds/FeedCardList';
 import { UserQuerySegment } from '../../../../../models/audiencesegment/AudienceSegmentResource';
 import ABComparisonGauge from './ABComparisonGauge';
-import { HomeDashboardConfig } from '../../../Home/Dashboard/HomePage';
 import { messagesMap } from '../Experimentation/AudienceExperimentationForm';
 import {
   averageSessionDurationConfig,
   ecommerceEngagementConfig,
   graphsConfig,
 } from '../../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
-import DatamartUsersAnalyticsWrapper from '../../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
+import DatamartUsersAnalyticsWrapper, { DatamartUsersAnalyticsWrapperProps } from '../../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
 import { Card } from 'antd';
 import McsTabs from '../../../../../components/McsTabs';
 import { Loading } from '../../../../../components';
 
 interface State {
-  ABComparisonDashboardConfig: HomeDashboardConfig[];
+  ABComparisonDashboardConfig: DatamartUsersAnalyticsWrapperProps[];
   isLoading: boolean;
 }
 
@@ -84,7 +83,7 @@ class ABComparisonDashboard extends React.Component<Props, State> {
     }
   }
 
-  getABComparisonDashboardConfig = (): HomeDashboardConfig[] => {
+  getABComparisonDashboardConfig = () => {
     const {
       experimentationSegment,
       match: {
@@ -93,7 +92,7 @@ class ABComparisonDashboard extends React.Component<Props, State> {
       intl,
     } = this.props;
     if (experimentationSegment) {
-      const getFormattedTitleConfig = (configs: HomeDashboardConfig[]) => {
+      const getFormattedTitleConfig = (configs: DatamartUsersAnalyticsWrapperProps[]) => {
         return configs.map(c => {
           return {
             ...c,
@@ -108,7 +107,7 @@ class ABComparisonDashboard extends React.Component<Props, State> {
         config: ecommerceEngagementConfig,
         organisationId: organisationId,
       };
-      const averageSessionDurationDashboardConfig: HomeDashboardConfig = {
+      const averageSessionDurationDashboardConfig = {
         title: 'CHANNEL_ENGAGEMENT',
         datamartId: experimentationSegment.datamart_id,
         config: averageSessionDurationConfig,

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Layout } from 'react-grid-layout';
-import DatamartUsersAnalyticsContent from './DatamartUsersAnalyticsContent';
+import DatamartUsersAnalyticsContent, { DashboardConfig } from './DatamartUsersAnalyticsContent';
 import { Row, Col } from 'antd';
 import McsDateRangePicker, { McsDateRangeValue } from '../../../components/McsDateRangePicker';
 import { compose } from 'recompose';
@@ -17,7 +17,6 @@ import {
 } from '../../../utils/LocationSearchHelper';
 import SegmentFilter from './components/SegmentFilter';
 import { DATAMART_USERS_ANALYTICS_SETTING } from '../Segments/Dashboard/constants';
-import { HomeDashboardConfig } from '../Home/Dashboard/HomePage';
 
 interface State {
   layout: Layout[];
@@ -25,10 +24,19 @@ interface State {
   isLoading: boolean;
 }
 
+export interface DatamartUsersAnalyticsWrapperProps {	
+  title?: string;	
+  subTitle?: string;	
+  datamartId: string;	
+  organisationId: string;	
+  config: DashboardConfig[];	
+  showFilter?: boolean;
+  showDateRangePicker?: boolean;
+}
 
 type FILTERS = DateSearchSettings | SegmentsSearchSettings | AllUsersSettings
 
-type JoinedProp = RouteComponentProps & HomeDashboardConfig;
+type JoinedProp = RouteComponentProps & DatamartUsersAnalyticsWrapperProps;
 
 class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
   constructor(props: JoinedProp) {
@@ -186,4 +194,4 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
   }
 }
 
-export default compose<HomeDashboardConfig, HomeDashboardConfig>(withRouter)(DatamartUsersAnalyticsWrapper);
+export default compose<DatamartUsersAnalyticsWrapperProps, DatamartUsersAnalyticsWrapperProps>(withRouter)(DatamartUsersAnalyticsWrapper);
