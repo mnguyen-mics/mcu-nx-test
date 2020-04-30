@@ -113,10 +113,12 @@ class ApiQueryWrapper extends React.Component<Props, State> {
     } = this.props;
 
     if (
-      prevProps.dateRange.from.value &&
-      prevProps.dateRange.to.value &&
-      (prevProps.dateRange.from.value !== dateRange.from.value ||
-        prevProps.dateRange.to.value !== dateRange.to.value)
+      (prevProps.dateRange.from.value &&
+        prevProps.dateRange.to.value &&
+        (prevProps.dateRange.from.value !== dateRange.from.value ||
+          prevProps.dateRange.to.value !== dateRange.to.value)) ||
+      prevProps.segmentId !== segmentId ||
+        prevProps.compareWithSegmentId !== compareWithSegmentId
     ) {
       if (!dateRange.from.value || !dateRange.to.value) {
         dateRange.from = new McsMoment('now-8d');

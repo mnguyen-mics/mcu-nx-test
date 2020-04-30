@@ -95,7 +95,6 @@ export const averageSessionDurationConfig: DashboardConfig[] = [
           title: { text: 'Average Session Duration' }
         },
         unit: 'time',
-        samplingRatio: 1,
         metricNames: ['avg_session_duration'],
         dimensionFilterClauses: {
           'operator': 'OR',
@@ -130,7 +129,6 @@ export const averageSessionDurationConfig: DashboardConfig[] = [
         options: {
           title: { text: 'Average Events per Session' },
         },
-        samplingRatio: 1,
         metricNames: ['avg_number_of_user_events'],
         dimensionFilterClauses: {
           'operator': 'OR',
@@ -166,7 +164,6 @@ export const averageSessionDurationConfig: DashboardConfig[] = [
           title: { text: 'Average Conversion Rate' },
         },
         unit: '%',
-        samplingRatio: 1,
         metricNames: ['conversion_rate'],
         dimensionFilterClauses: {
           'operator': 'OR',
@@ -223,7 +220,7 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
               text: null
             }
           },
-          time: { timezoneOffset: -60, useUTC: true },
+          time: { timezoneOffset: -150, useUTC: true },
           yAxis: {
             ...generateYAxisGridLine(),
             title: {
@@ -242,6 +239,10 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
         },
         dimensions: ['date_yyyy_mm_dd'],
         metricNames: ['revenue'],
+        dimensionFilterClauses: {
+          'operator': 'OR',
+          'filters': []
+        },
       }
     ]
   },
@@ -279,7 +280,7 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
               text: null
             }
           },
-          time: { timezoneOffset: -60, useUTC: true },
+          time: { timezoneOffset: -150, useUTC: true },
           yAxis: {
             ...generateYAxisGridLine(),
             title: {
@@ -298,6 +299,10 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
         },
         dimensions: ['date_yyyy_mm_dd'],
         metricNames: ['avg_transaction_amount'],
+        dimensionFilterClauses: {
+          'operator': 'OR',
+          'filters': []
+        },
       }
     ]
   },
@@ -335,7 +340,7 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
               text: null
             }
           },
-          time: { timezoneOffset: -60, useUTC: true },
+          time: { timezoneOffset: -150, useUTC: true },
           yAxis: {
             ...generateYAxisGridLine(),
             title: {
@@ -354,6 +359,10 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
         },
         dimensions: ['date_yyyy_mm_dd'],
         metricNames: ['number_of_transactions'],
+        dimensionFilterClauses: {
+          'operator': 'OR',
+          'filters': []
+        },
       }
     ]
   },
@@ -391,7 +400,7 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
               text: null
             }
           },
-          time: { timezoneOffset: -60, useUTC: true },
+          time: { timezoneOffset: -150, useUTC: true },
           yAxis: {
             ...generateYAxisGridLine(),
             title: {
@@ -410,6 +419,10 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
         },
         dimensions: ['date_yyyy_mm_dd'],
         metricNames: ['avg_session_duration'],
+        dimensionFilterClauses: {
+          'operator': 'OR',
+          'filters': []
+        },
       }
     ]
   },
@@ -447,7 +460,7 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
               text: null
             }
           },
-          time: { timezoneOffset: -60, useUTC: true },
+          time: { timezoneOffset: -150, useUTC: true },
           yAxis: {
             ...generateYAxisGridLine(),
             title: {
@@ -466,6 +479,10 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
         },
         dimensions: ['date_yyyy_mm_dd'],
         metricNames: ['avg_number_of_user_events'],
+        dimensionFilterClauses: {
+          'operator': 'OR',
+          'filters': []
+        },
       }
     ]
   }, 
@@ -503,7 +520,7 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
               text: null
             }
           },
-          time: { timezoneOffset: -60, useUTC: true },
+          time: { timezoneOffset: -150, useUTC: true },
           yAxis: {
             ...generateYAxisGridLine(),
             title: {
@@ -522,9 +539,13 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
         },
         dimensions: ['date_yyyy_mm_dd'],
         metricNames: ['conversion_rate'],
+        dimensionFilterClauses: {
+          'operator': 'OR',
+          'filters': []
+        },
       }
     ]
-  },
+  }
 ];
 
 export const ecommerceEngagementConfig: DashboardConfig[] = [
@@ -579,7 +600,6 @@ export const ecommerceEngagementConfig: DashboardConfig[] = [
         options: {
           title: { text: 'Average Transaction Amount' },
         },
-        samplingRatio: 1,
         metricNames: ['avg_transaction_amount'],
         dimensionFilterClauses: {
           'operator': 'OR',

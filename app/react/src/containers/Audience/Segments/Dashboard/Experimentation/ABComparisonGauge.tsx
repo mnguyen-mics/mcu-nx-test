@@ -35,16 +35,16 @@ class ABComparisonGauge extends React.Component<Props> {
       percent && (
         <div className="mcs-audienceSegmentDashboard_abGauge">
           <div
-            style={{ width: `${this.getGaugeRatio(percent)[1]}%` }}
+            style={{ width: `${this.getGaugeRatio(percent)[0]}%` }}
             className={`mcs-audienceSegmentDashboard_abGaugeLeft`}
           >
-            {intl.formatMessage(messages.experimentation)} ({100 - percent}%)
+            {intl.formatMessage(messages.experimentation)} ({percent}%)
           </div>
           <div
-            style={{ width: `${this.getGaugeRatio(percent)[0]}%` }}
+            style={{ width: `${this.getGaugeRatio(percent)[1]}%` }}
             className={`mcs-audienceSegmentDashboard_abGaugeRight`}
           >
-            {intl.formatMessage(messages.controlGroup)} ({percent}%)
+            {intl.formatMessage(messages.controlGroup)} ({100 - percent}%)
           </div>
         </div>
       )
