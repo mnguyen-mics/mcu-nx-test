@@ -275,8 +275,7 @@ class FormatDataToChart extends React.Component<JoinedProp, {}> {
           </Tabs>)
       case 'SINGLE_STAT':
         let statValue;
-        
-        const apiMetricValue = data[0][chart.metricNames[0]] === null || data[0][chart.metricNames[0]] === "NaN" ? 0 : data[0][chart.metricNames[0]];
+        const apiMetricValue =  data[0][chart.metricNames[0]] === null || data[0][chart.metricNames[0]] === "NaN" ? 0 : dataToCompareWith ? dataToCompareWith[0][chart.metricNames[0]] : data[0][chart.metricNames[0]];
 
         if (chart.unit === 'time') {
           statValue = moment.duration(apiMetricValue, "second").format("h[hr] m[min] s[s]");
@@ -294,8 +293,9 @@ class FormatDataToChart extends React.Component<JoinedProp, {}> {
         const newValue = dataToCompareWith ? dataToCompareWith[0][chart.metricNames[0]] : undefined;
 
         let trend;
-        if (dataToCompareWith && chart.samplingRatio) {
-          trend = ((((originalValue as number)  - (newValue as number)) / (originalValue as number)) * 100) * chart.samplingRatio;
+        if (dataToCompareWith && chart.samplingRatio !== 100 && chart.samplingRatio !== 0) {
+          const ratio = chart.samplingRatio !== undefined ? (chart.samplingRatio/(100-chart.samplingRatio)) : 1;
+          trend = ((((originalValue as number * ratio)  - (newValue as number)) / (originalValue as number * ratio)) * 100) ;
           if(isNaN(trend)) {
             trend = undefined;
           }

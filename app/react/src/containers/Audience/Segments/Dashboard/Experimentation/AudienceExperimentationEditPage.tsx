@@ -33,7 +33,7 @@ type Engagement = 'E_COMMERCE_ENGAGEMENT' | 'CHANNEL_ENGAGEMENT';
 
 export const INITIAL_EXPERIMENTATION_FORM_DATA = {
   engagement: 'E_COMMERCE_ENGAGEMENT' as Engagement,
-  control: 0,
+  weight: 0,
 };
 
 export interface AudienceExperimentationEditPageProps
@@ -46,7 +46,7 @@ export interface AudienceExperimentationEditPageProps
 export interface ExperimentationFormData {
   selectedPartition?: AudiencePartitionResource;
   engagement: Engagement;
-  control: number;
+  weight: number;
 }
 
 interface State {
@@ -144,13 +144,13 @@ class AudienceExperimentationEditPage extends React.Component<Props, State> {
           max_results: 500,
         })
         .then(segmentsRes => {
-          const numberOfSegments = Math.round((formData.control/100) * segmentsRes.data.length);
+          const numberOfSegments = Math.round((formData.weight/100) * segmentsRes.data.length);
           getFormattedExperimentationQuery(
             datamartId,
             queryId,
             this._queryService,
             segmentsRes.data.slice(0, numberOfSegments) as UserPartitionSegment[],
-            true,
+            false,
           )
             .then(controlGroupQueryResource => {
               this._queryService
@@ -167,7 +167,7 @@ class AudienceExperimentationEditPage extends React.Component<Props, State> {
                       type: 'USER_QUERY',
                       datamart_id: datamartId,
                       subtype: 'AB_TESTING_CONTROL_GROUP',
-                      weight: formData.control,
+                      weight: formData.weight,
                       query_id: controlGroupqQeryRes.data.id,
                     })
                     .then(segmentRes => {
@@ -177,7 +177,7 @@ class AudienceExperimentationEditPage extends React.Component<Props, State> {
                         queryId,
                         this._queryService,
                         segmentsRes.data.slice(0, numberOfSegments) as UserPartitionSegment[],
-                        false,
+                        true,
                       ).then(experimentationQueryResource => {
                         this._queryService
                           .createQuery(datamartId, {
@@ -189,7 +189,7 @@ class AudienceExperimentationEditPage extends React.Component<Props, State> {
                               .updateAudienceSegment(segment.id, {
                                 ...segment,
                                 query_id: queryResponse.data.id,
-                                weight: formData.control,
+                                weight: formData.weight,
                                 target_metric: formData.engagement,
                                 control_group_id: segmentRes.data.id,
                                 subtype: 'AB_TESTING_EXPERIMENT',

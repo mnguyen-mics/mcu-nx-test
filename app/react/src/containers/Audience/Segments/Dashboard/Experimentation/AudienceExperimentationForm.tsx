@@ -62,9 +62,9 @@ export const messagesMap: {
     id: 'audience.segments.partitionSelector.partCount',
     defaultMessage: 'Part Count',
   },
-  controlGroup: {
-    id: 'audience.segments.experimentation.control',
-    defaultMessage: 'Control Group %',
+  weight: {
+    id: 'audience.segments.experimentation.weight',
+    defaultMessage: 'Experimentation %',
   },
   controlGroupSegmentName: {
     id: 'audience.segments.experimentation.controlGroupSegmentName',
@@ -86,9 +86,9 @@ export const messagesMap: {
     id: 'audience.segments.experimentation.channelEngagement',
     defaultMessage: 'Channel Engagement',
   },
-  tooltipControl: {
+  tooltipWeight: {
     id: 'audience.segments.experimentation.control.tooltip',
-    defaultMessage: 'Select a control value',
+    defaultMessage: 'Select the datamart percentage on which you want to do your experimentation.',
   },
   tooltipEngagement: {
     id: 'audience.segments.experimentation.engagement.tooltip',
@@ -219,7 +219,7 @@ class AudienceExperimentationForm extends React.Component<Props, State> {
               <FormattedMessage
                 id="audience.segments.experimentation.form.title"
                 defaultMessage={`You have selected the following partition: {partitionName}.
-                    Continue your experimentation creation by selecting an engagement type and a percentage of control group.`}
+                    Continue your experimentation creation by selecting an engagement type and a percentage of experimentation.`}
                 values={{
                   partitionName: <Tag>{formValues.selectedPartition.name}</Tag>,
                 }}
@@ -258,10 +258,10 @@ class AudienceExperimentationForm extends React.Component<Props, State> {
                   />
                 </FormFieldWrapper>
                 <FormSliderField
-                  name="control"
+                  name="weight"
                   component={FormSlider}
                   formItemProps={{
-                    label: intl.formatMessage(messagesMap.controlGroup),
+                    label: intl.formatMessage(messagesMap.weight),
                     required: true,
                     ...fieldGridConfig,
                   }}
@@ -277,7 +277,7 @@ class AudienceExperimentationForm extends React.Component<Props, State> {
                     disabled: !formValues.selectedPartition.part_count,
                   }}
                   helpToolTipProps={{
-                    title: intl.formatMessage(messagesMap.tooltipControl),
+                    title: intl.formatMessage(messagesMap.tooltipWeight),
                   }}
                 />
               </div>

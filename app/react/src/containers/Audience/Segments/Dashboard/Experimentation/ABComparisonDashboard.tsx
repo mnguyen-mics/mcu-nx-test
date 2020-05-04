@@ -16,7 +16,9 @@ import {
   ecommerceEngagementConfig,
   abTestingDashboardConfig,
 } from '../../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
-import DatamartUsersAnalyticsWrapper, { DatamartUsersAnalyticsWrapperProps } from '../../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
+import DatamartUsersAnalyticsWrapper, {
+  DatamartUsersAnalyticsWrapperProps,
+} from '../../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
 import { Card } from 'antd';
 import McsTabs from '../../../../../components/McsTabs';
@@ -69,9 +71,16 @@ class ABComparisonDashboard extends React.Component<Props, State> {
               config: dashboardConfig.config.map(config => {
                 return {
                   ...config,
+                  charts: config.charts.map(c => {
+                    return {
+                      ...c,
+                      samplingRatio:
+                        c.samplingRatio && experimentationSegment.weight,
+                    };
+                  }),
                   segments: {
-                    baseSegmentId: experimentationSegment.id,
-                    segmentIdToCompareWith: controlGroupSegment.id,
+                    segmentIdToCompareWith: experimentationSegment.id,
+                    baseSegmentId: controlGroupSegment.id,
                   },
                 };
               }),
@@ -92,7 +101,9 @@ class ABComparisonDashboard extends React.Component<Props, State> {
       intl,
     } = this.props;
     if (experimentationSegment) {
-      const getFormattedTitleConfig = (configs: DatamartUsersAnalyticsWrapperProps[]) => {
+      const getFormattedTitleConfig = (
+        configs: DatamartUsersAnalyticsWrapperProps[],
+      ) => {
         return configs.map(c => {
           return {
             ...c,
@@ -152,17 +163,21 @@ class ABComparisonDashboard extends React.Component<Props, State> {
         params: { organisationId },
       },
       controlGroupSegment,
-      intl
+      intl,
     } = this.props;
     if (experimentationSegment && controlGroupSegment) {
       return abTestingDashboardConfig.map((graphConfig, i) => {
         const newConfig = {
           ...graphConfig,
           segments: {
-            baseSegmentId: experimentationSegment.id,
-            segmentIdToCompareWith: controlGroupSegment.id,
-            baseSegmentName: intl.formatMessage(messagesMap.experimentationSegmentName),
-            segmentToCompareWithName: intl.formatMessage(messagesMap.controlGroupSegmentName),
+            segmentIdToCompareWith: experimentationSegment.id,
+            baseSegmentId: controlGroupSegment.id,
+            segmentToCompareWithName: intl.formatMessage(
+              messagesMap.experimentationSegmentName,
+            ),
+            baseSegmentName: intl.formatMessage(
+              messagesMap.controlGroupSegmentName,
+            ),
           },
         };
         return {
