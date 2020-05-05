@@ -45,6 +45,7 @@ interface DatamartUsersAnalyticsContentProps {
   config: DashboardConfig[];
   dateRange: McsDateRangeValue;
   onChange: (isLoading: boolean) => void;
+  getApiValue?: (v: string | number | null | undefined) => void;
 }
 
 interface DatamartUsersAnalyticsContentStates {
@@ -82,7 +83,7 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
 
     for (const configItem of config) {
       const currentConfigItem = { ...configItem };
-      configItem.color = allUsersFilterColor;
+      configItem.color =  configItem.color || allUsersFilterColor;
       configItem.layout.i = this._cuid();
       config.concat(currentConfigItem);
     }
@@ -200,6 +201,7 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
               compareWithSegmentName={comp.segments ? comp.segments.segmentToCompareWithName : undefined}
               compareWithSegmentId={comp.segments ? comp.segments.segmentIdToCompareWith : undefined}
               enhancedManualReportView={comp.enhancedManualReportView}
+              getApiValue={this.props.getApiValue}
             />
           })}
         </CardFlex>

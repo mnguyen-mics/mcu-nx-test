@@ -203,7 +203,6 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
         type: 'AREA',
         options: {
           title: undefined,
-          colors: chroma.scale(['#00a1df','#003056']).mode('lch').colors(5),
           credits: {
             enabled: false
           },
@@ -263,7 +262,6 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
         type: 'AREA',
         options: {
           title: undefined,
-          colors: chroma.scale(['#00a1df','#003056']).mode('lch').colors(5),
           credits: {
             enabled: false
           },
@@ -323,7 +321,6 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
         type: 'AREA',
         options: {
           title: undefined,
-          colors: chroma.scale(['#00a1df','#003056']).mode('lch').colors(5),
           credits: {
             enabled: false
           },
@@ -383,7 +380,6 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
         type: 'AREA',
         options: {
           title: undefined,
-          colors: chroma.scale(['#00a1df','#003056']).mode('lch').colors(5),
           credits: {
             enabled: false
           },
@@ -443,7 +439,6 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
         type: 'AREA',
         options: {
           title: undefined,
-          colors: chroma.scale(['#00a1df','#003056']).mode('lch').colors(5),
           credits: {
             enabled: false
           },
@@ -503,7 +498,6 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
         type: 'AREA',
         options: {
           title: undefined,
-          colors: chroma.scale(['#00a1df','#003056']).mode('lch').colors(5),
           credits: {
             enabled: false
           },

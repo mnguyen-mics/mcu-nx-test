@@ -45,6 +45,7 @@ export interface ApiQueryWrapperProps {
   compareWithSegmentName?: string;
   onChange: (isLoading: boolean) => void;
   enhancedManualReportView?: boolean;
+  getApiValue?: (v: string | number | null | undefined) => void;
 }
 
 interface State {
@@ -86,21 +87,23 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       chart.dimensions,
       chart.dimensionFilterClauses,
       segmentId,
-    );
-    if (compareWithSegmentId) {
-      this.fetchAnalytics(
-        onChange,
-        datamartId,
-        chart.metricNames,
-        dateRange.from,
-        dateRange.to,
-        chart.dimensions,
-        chart.dimensionFilterClauses,
-        segmentId,
-        compareWithSegmentId,
-      );
-    }
+    ).then(() => {
+      if (compareWithSegmentId) {
+        this.fetchAnalytics(
+          onChange,
+          datamartId,
+          chart.metricNames,
+          dateRange.from,
+          dateRange.to,
+          chart.dimensions,
+          chart.dimensionFilterClauses,
+          segmentId,
+          compareWithSegmentId,
+        );
+      }
+    });
   }
+
 
   componentDidUpdate(prevProps: ApiQueryWrapperProps) {
     const {
@@ -133,21 +136,21 @@ class ApiQueryWrapper extends React.Component<Props, State> {
         chart.dimensions,
         chart.dimensionFilterClauses,
         segmentId,
-      );
-
-      if (compareWithSegmentId) {
-        this.fetchAnalytics(
-          onChange,
-          datamartId,
-          chart.metricNames,
-          dateRange.from,
-          dateRange.to,
-          chart.dimensions,
-          chart.dimensionFilterClauses,
-          segmentId,
-          compareWithSegmentId,
-        );
-      }
+      ).then(() => {
+        if (compareWithSegmentId) {
+          this.fetchAnalytics(
+            onChange,
+            datamartId,
+            chart.metricNames,
+            dateRange.from,
+            dateRange.to,
+            chart.dimensions,
+            chart.dimensionFilterClauses,
+            segmentId,
+            compareWithSegmentId,
+          );
+        }
+      });
     }
   }
 
@@ -186,12 +189,13 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       enhancedManualReportView,
       segmentName,
       compareWithSegmentName,
+      getApiValue,
     } = this.props;
     this.setState({
       loading: true,
     });
     onChange(true);
-    this._datamartUsersAnalyticsService
+    return this._datamartUsersAnalyticsService
       .getAnalytics(
         datamartId,
         metric,
@@ -220,6 +224,12 @@ class ApiQueryWrapper extends React.Component<Props, State> {
               compareWithSegmentName,
             ),
           });
+        }
+        // This is ugly but there is no quicker solution.
+        // we don't want to display the dashboard if values are not computed yet
+        // so we have to send the value in the higher component.
+        if (getApiValue && !enhancedManualReportView) {
+          getApiValue(res.data.report_view.rows[0][0]);
         }
         onChange(false);
       })

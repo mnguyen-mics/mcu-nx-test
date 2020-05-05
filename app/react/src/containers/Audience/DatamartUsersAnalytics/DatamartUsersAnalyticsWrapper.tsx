@@ -32,6 +32,7 @@ export interface DatamartUsersAnalyticsWrapperProps {
   config: DashboardConfig[];	
   showFilter?: boolean;
   showDateRangePicker?: boolean;
+  getApiValue?: (v: string | number | null | undefined) => void;
 }
 
 type FILTERS = DateSearchSettings | SegmentsSearchSettings | AllUsersSettings
@@ -87,7 +88,8 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
       }
     }
   }
-  
+
+
   updateLocationSearch = (params: FILTERS) => {
     const {
       history,
@@ -153,6 +155,7 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
       config, 
       showFilter,
       showDateRangePicker,
+      getApiValue,
       location: { search } } = this.props;
 
     const { isLoading, refresh } = this.state;
@@ -185,7 +188,14 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
             {this.renderDatePicker()}
           </Col>}
         </Row>}
-        {!refresh && <DatamartUsersAnalyticsContent datamartId={datamartId} config={config} dateRange={{from: filter.from, to: filter.to}} onChange={this.getLoadingState} />}
+        {!refresh &&
+        <DatamartUsersAnalyticsContent
+          datamartId={datamartId}
+          config={config}
+          dateRange={{from: filter.from, to: filter.to}}
+          onChange={this.getLoadingState}
+          getApiValue={getApiValue}
+          />}
       </div>
     );
   }
