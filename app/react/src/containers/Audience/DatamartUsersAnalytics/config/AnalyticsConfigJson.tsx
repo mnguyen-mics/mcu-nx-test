@@ -6,6 +6,9 @@ import {
 import chroma from 'chroma-js';
 import { DashboardConfig } from '../DatamartUsersAnalyticsContent';
 
+
+const timezoneOffset = new Date().getTimezoneOffset();
+
 export const sessionInTimeJsonConfig: DashboardConfig[] = [
   {
     title: 'Session in time',
@@ -39,7 +42,7 @@ export const sessionInTimeJsonConfig: DashboardConfig[] = [
               text: null
             }
           },
-          time: { timezoneOffset: -60, useUTC: true },
+          time: { timezoneOffset, useUTC: true },
           yAxis: {
             ...generateYAxisGridLine(),
             title: {
@@ -220,7 +223,7 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
               text: null
             }
           },
-          time: { timezoneOffset: -150, useUTC: true },
+          time: { timezoneOffset, useUTC: true },
           yAxis: {
             ...generateYAxisGridLine(),
             title: {
@@ -280,7 +283,7 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
               text: null
             }
           },
-          time: { timezoneOffset: -150, useUTC: true },
+          time: { timezoneOffset, useUTC: true },
           yAxis: {
             ...generateYAxisGridLine(),
             title: {
@@ -340,7 +343,7 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
               text: null
             }
           },
-          time: { timezoneOffset: -150, useUTC: true },
+          time: { timezoneOffset, useUTC: true },
           yAxis: {
             ...generateYAxisGridLine(),
             title: {
@@ -400,7 +403,7 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
               text: null
             }
           },
-          time: { timezoneOffset: -150, useUTC: true },
+          time: { timezoneOffset, useUTC: true },
           yAxis: {
             ...generateYAxisGridLine(),
             title: {
@@ -460,7 +463,7 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
               text: null
             }
           },
-          time: { timezoneOffset: -150, useUTC: true },
+          time: { timezoneOffset, useUTC: true },
           yAxis: {
             ...generateYAxisGridLine(),
             title: {
@@ -520,7 +523,7 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
               text: null
             }
           },
-          time: { timezoneOffset: -150, useUTC: true },
+          time: { timezoneOffset, useUTC: true },
           yAxis: {
             ...generateYAxisGridLine(),
             title: {
@@ -691,7 +694,7 @@ export const channelEngagementConfig: DashboardConfig[] = [
               text: null
             }
           },
-          time: { timezoneOffset: -60, useUTC: true },
+          time: { timezoneOffset, useUTC: true },
           yAxis: {
             ...generateYAxisGridLine(),
             title: {
@@ -753,7 +756,7 @@ export const channelEngagementConfig: DashboardConfig[] = [
           xAxis: {
             ...generateXAxisGridLine()
           },
-          time: { timezoneOffset: -60, useUTC: true },
+          time: { timezoneOffset, useUTC: true },
           yAxis: {
             ...generateYAxisGridLine(),
             title: {
@@ -988,7 +991,7 @@ export const channelEngagementConfig: DashboardConfig[] = [
               text: null
             }
           },
-          time: { timezoneOffset: -60, useUTC: true },
+          time: { timezoneOffset, useUTC: true },
           yAxis: {
             ...generateYAxisGridLine(),
             title: {
@@ -1060,7 +1063,7 @@ export const acquisitionEngagementConfig: DashboardConfig[] = [
               text: null
             }
           },
-          time: { timezoneOffset: -60, useUTC: true },
+          time: { timezoneOffset, useUTC: true },
           yAxis: {
             ...generateYAxisGridLine(),
             title: {
@@ -1122,7 +1125,7 @@ export const acquisitionEngagementConfig: DashboardConfig[] = [
           xAxis: {
             ...generateXAxisGridLine()
           },
-          time: { timezoneOffset: -60, useUTC: true },
+          time: { timezoneOffset, useUTC: true },
           yAxis: {
             ...generateYAxisGridLine(),
             title: {
@@ -1191,7 +1194,7 @@ export const acquisitionEngagementConfig: DashboardConfig[] = [
               text: null
             }
           },
-          time: { timezoneOffset: -60, useUTC: true },
+          time: { timezoneOffset, useUTC: true },
           yAxis: {
             ...generateYAxisGridLine(),
             title: {
@@ -1253,7 +1256,7 @@ export const acquisitionEngagementConfig: DashboardConfig[] = [
           xAxis: {
             ...generateXAxisGridLine()
           },
-          time: { timezoneOffset: -60, useUTC: true },
+          time: { timezoneOffset, useUTC: true },
           yAxis: {
             ...generateYAxisGridLine(),
             title: {
@@ -1315,7 +1318,7 @@ export const acquisitionEngagementConfig: DashboardConfig[] = [
           xAxis: {
             ...generateXAxisGridLine(),
           },
-          time: { timezoneOffset: -60, useUTC: true },
+          time: { timezoneOffset, useUTC: true },
           yAxis: {
             ...generateYAxisGridLine(),
             title: {
