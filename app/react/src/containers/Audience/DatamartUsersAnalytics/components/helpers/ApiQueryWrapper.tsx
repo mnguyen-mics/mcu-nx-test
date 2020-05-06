@@ -45,7 +45,7 @@ export interface ApiQueryWrapperProps {
   compareWithSegmentName?: string;
   onChange: (isLoading: boolean) => void;
   enhancedManualReportView?: boolean;
-  getApiValue?: (v: string | number | null | undefined) => void;
+  comparisonStartDate?: number;
 }
 
 interface State {
@@ -103,7 +103,6 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       }
     });
   }
-
 
   componentDidUpdate(prevProps: ApiQueryWrapperProps) {
     const {
@@ -189,7 +188,6 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       enhancedManualReportView,
       segmentName,
       compareWithSegmentName,
-      getApiValue,
     } = this.props;
     this.setState({
       loading: true,
@@ -225,12 +223,6 @@ class ApiQueryWrapper extends React.Component<Props, State> {
             ),
           });
         }
-        // This is ugly but there is no quicker solution.
-        // we don't want to display the dashboard if values are not computed yet
-        // so we have to send the value in the higher component.
-        if (getApiValue && !enhancedManualReportView) {
-          getApiValue(res.data.report_view.rows[0][0]);
-        }
         onChange(false);
       })
       .catch(e => {
@@ -249,6 +241,10 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       <EmptyRecords message={message} />
     );
   }
+
+  areAnalyticsReady = (items: any[]) => {
+    return !(items.includes(null) || items.includes(undefined));
+  };
 
   render() {
     const { chart, intl, enhancedManualReportView } = this.props;
@@ -289,19 +285,30 @@ class ApiQueryWrapper extends React.Component<Props, State> {
         (reportViewApiResponse.total_items > 0 ||
           (reportViewApiResponseToCompareWith &&
             reportViewApiResponseToCompareWith.total_items > 0)) ? (
-          <FormatDataToChart
-            apiResponse={
-              enhancedManualReportView
-                ? getMergedApiResponse(reportViewApiResponse)
-                : reportViewApiResponse
-            }
-            apiResponseToCompareWith={reportViewApiResponseToCompareWith}
-            chart={
-              enhancedManualReportView
-                ? enhancedChartWithDefaultDimension
-                : chart
-            }
-          />
+          this.areAnalyticsReady(reportViewApiResponse.rows) ||
+          (reportViewApiResponseToCompareWith &&
+            this.areAnalyticsReady(reportViewApiResponseToCompareWith.rows)) ? (
+            <FormatDataToChart
+              apiResponse={
+                enhancedManualReportView
+                  ? getMergedApiResponse(reportViewApiResponse)
+                  : reportViewApiResponse
+              }
+              apiResponseToCompareWith={reportViewApiResponseToCompareWith}
+              chart={
+                enhancedManualReportView
+                  ? enhancedChartWithDefaultDimension
+                  : chart
+              }
+            />
+          ) : (
+            // Let's keep this in case we want to display a different
+            // message if datamartUserAnalytics return null/undefined
+            this.getEmptyDataComponent(
+              chart.type,
+              intl.formatMessage(messages.noData),
+            )
+          )
         ) : (
           this.getEmptyDataComponent(
             chart.type,

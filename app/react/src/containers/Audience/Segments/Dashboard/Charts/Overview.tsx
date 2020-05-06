@@ -40,8 +40,7 @@ type Props = OverviewProps &
   InjectedThemeColorsProps &
   InjectedIntlProps &
   RouteComponentProps<{
-    organisationId: string;
-    segmentId: string;
+    organisationId: string
   }>;
 
 class Overview extends React.Component<Props> {

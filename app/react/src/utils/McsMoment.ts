@@ -5,9 +5,16 @@ const DATE_FORMAT = 'YYYY-MM-DD';
 type McsDate = Date | string | number;
 
 export type McsRange = {
-  from: McsMoment,
-  to: McsMoment,
+  from: McsMoment;
+  to: McsMoment;
 };
+
+export function isNowFormat(date: McsDate) {
+  return !!(
+    typeof date === 'string' &&
+    (/^now-(\d+)d$/g.test(date) || date === 'now')
+  );
+}
 
 export function isValidMcsDate(date: McsDate) {
   if (typeof date === 'string' && /^now-(\d+)d$/g.test(date)) {
@@ -34,8 +41,12 @@ export function convertMcsDateToMoment(date: McsDate): moment.Moment {
 
 export function formatMcsDate(range: McsRange, inclusive?: boolean) {
   const from = range.from.toMoment().format(DATE_FORMAT);
-  const to = inclusive ? range.to.toMoment()
-    .add(1, 'day').format(DATE_FORMAT) : range.to.toMoment().format(DATE_FORMAT);
+  const to = inclusive
+    ? range.to
+        .toMoment()
+        .add(1, 'day')
+        .format(DATE_FORMAT)
+    : range.to.toMoment().format(DATE_FORMAT);
   return {
     from: from,
     to: to,

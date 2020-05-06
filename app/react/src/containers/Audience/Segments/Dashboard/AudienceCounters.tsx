@@ -11,7 +11,7 @@ import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 
 export interface AudienceCountersProps {
   datamarts: DatamartWithMetricResource[];
-  segment?: AudienceSegmentShape;
+  segment: AudienceSegmentShape;
 }
 
 interface State {
@@ -100,22 +100,19 @@ class AudienceCounters extends React.Component<Props, State> {
       title: intl.formatMessage(messages.userPoints),
       ...this.getLoadingValue('user_points'),
     });
-    if (segment && segment.datamart_id) {
-      const datamart = datamarts.find(dm => dm.id === segment.datamart_id);
-      const otherMetrics =
-        datamart && datamart.audience_segment_metrics
-          ? datamart.audience_segment_metrics.map(el => {
-              return {
-                iconType: el.icon as McsIconType,
-                title: el.display_name,
-                ...this.getLoadingValue(el.technical_name),
-              };
-            })
-          : [];
-      return counters.concat(otherMetrics);
-    } else {
-      return counters;
-    }
+
+    const datamart = datamarts.find(dm => dm.id === segment.datamart_id);
+    const otherMetrics =
+      datamart && datamart.audience_segment_metrics
+        ? datamart.audience_segment_metrics.map(el => {
+            return {
+              iconType: el.icon as McsIconType,
+              title: el.display_name,
+              ...this.getLoadingValue(el.technical_name),
+            };
+          })
+        : [];
+    return counters.concat(otherMetrics);
   };
 
   getKnownCounters = () => {

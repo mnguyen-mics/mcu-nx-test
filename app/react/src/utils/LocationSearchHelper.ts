@@ -117,7 +117,6 @@ export const SET_PASSWORD_SEARCH_SETTINGS: SearchSetting[] = [
   },
 ];
 
-
 export interface KeywordSearchSettings {
   keywords: string;
 }
@@ -139,13 +138,12 @@ export const FILTERS_SEARCH_SETTINGS: SearchSetting[] = [
     serialize: (value: string[]) => value.join(','),
     isValid: (query: Index<string>) =>
       !query.statuses || query.statuses.split(',').length > 0,
-  }
+  },
 ];
 
 export interface FiltersSearchSettings extends KeywordSearchSettings {
   statuses: string[];
 }
-
 
 export const SEGMENTS_FILTERS_SEARCH_SETTINGS: SearchSetting[] = [
   {
@@ -159,8 +157,11 @@ export const SEGMENTS_FILTERS_SEARCH_SETTINGS: SearchSetting[] = [
     },
     serialize: (value: string[]) => value.join(','),
     isValid: (query: Index<string>) =>
-      !!(query.segments && (query.segments.length === 0 || query.segments.split(',').length > 0)),
-  }
+      !!(
+        query.segments &&
+        (query.segments.length === 0 || query.segments.split(',').length > 0)
+      ),
+  },
 ];
 
 export interface SegmentsFiltersSearchSettings extends KeywordSearchSettings {
@@ -226,17 +227,66 @@ export const DATE_SEARCH_SETTINGS_WITHOUT_CURRENT_DAY: SearchSetting[] = [
   },
 ];
 
+export const convertTimestampToDayNumber = (comparisonStartDate: number) => {
+  const comparisonDurationInSeconds = (Date.now() - comparisonStartDate) / 1000;
+  const comparisonDurationInDays = Math.floor(
+    comparisonDurationInSeconds / (3600 * 24),
+  );
+  return comparisonDurationInDays;
+};
+
+export const getComparisonDateSearchSettings = (
+  comparisonStartDate: number,
+) => {
+  return [
+    {
+      paramName: 'from',
+      defaultValue: new McsMoment(
+        `now-${convertTimestampToDayNumber(comparisonStartDate)}d`,
+      ),
+      deserialize: (query: Index<string>) => new McsMoment(query.from),
+      serialize: (value: McsMoment) => {
+        setSessionValue(value, 'from');
+        return value.raw() as string;
+      },
+      isValid: (query: Index<string>) =>
+        !!(
+          query.from &&
+          query.from.length &&
+          new McsMoment(query.from).isValid() &&
+          new McsMoment(query.from).toMoment() >
+            new McsMoment(
+              `now-${convertTimestampToDayNumber(comparisonStartDate)}d`,
+            ).toMoment()
+        ),
+    },
+    {
+      paramName: 'to',
+      defaultValue: new McsMoment('now-1d'),
+      deserialize: (query: Index<string>) => new McsMoment(query.to),
+      serialize: (value: McsMoment) => {
+        setSessionValue(value, 'to');
+        return value.raw() as string;
+      },
+      isValid: (query: Index<string>) =>
+        !!(query.to && query.to.length && new McsMoment(query.to).isValid()) &&
+        new McsMoment(query.to).toMoment() >
+          new McsMoment(query.from).toMoment(),
+    },
+  ];
+};
+
 export interface DateSearchSettings {
   from: McsMoment;
   to: McsMoment;
 }
 
-export interface SegmentsSearchSettings { 
+export interface SegmentsSearchSettings {
   segments: string[];
-} 
+}
 
-export interface AllUsersSettings { 
-  allusers: boolean; 
+export interface AllUsersSettings {
+  allusers: boolean;
 }
 
 export const ARCHIVED_SEARCH_SETTINGS: SearchSetting[] = [

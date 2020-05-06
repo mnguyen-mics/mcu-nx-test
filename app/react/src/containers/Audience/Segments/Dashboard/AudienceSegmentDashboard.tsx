@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
+import _ from 'lodash';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Card } from '../../../../components/Card';
 import McsTabs from '../../../../components/McsTabs';
@@ -41,7 +42,7 @@ interface State {
     reports: AudienceReport;
     isLoading: boolean;
   };
-  charts: DashboardResource[]
+  charts: DashboardResource[];
 }
 export interface AudienceSegmentDashboardProps {
   segment?: AudienceSegmentShape;
@@ -56,7 +57,6 @@ type Props = AudienceSegmentDashboardProps &
   RouteComponentProps<EditAudienceSegmentParam>;
 
 class AudienceSegmentDashboard extends React.Component<Props, State> {
-
   @lazyInject(TYPES.IDashboardService)
   private _dashboardService: IDashboardService;
 
@@ -68,57 +68,53 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
         isLoading: true,
         reports: [],
       },
-      charts: []
+      charts: [],
     };
   }
 
   componentDidMount() {
     const {
       match: {
-        params: {
-          segmentId,
-          organisationId,
-        },
+        params: { organisationId },
       },
       location: { search },
       segment,
       datamarts,
     } = this.props;
-
-    this.fetchDashboardView(search, organisationId, segmentId, datamarts, segment);
+    if (segment) {
+      this.fetchDashboardView(search, organisationId, segment, datamarts);
+    }
   }
 
   componentDidUpdate(previousProps: Props) {
     const {
       match: {
-        params: { segmentId, organisationId },
+        params: { organisationId },
       },
       location: { search },
       datamarts,
-      segment
+      segment,
     } = this.props;
 
     const {
-      match: {
-        params: {
-          segmentId: previousSegmentId,
-        },
-      },
+      segment: prevSegment,
       location: { search: previousSearch },
-      segment: previousSegment,
     } = previousProps;
 
-    if (!compareSearches(search, previousSearch) || segmentId !== previousSegmentId || segment !== previousSegment) {
-      this.fetchDashboardView(search, organisationId, segmentId, datamarts, segment);
+    if (
+      (!compareSearches(search, previousSearch) ||
+        !_.isEqual(segment, prevSegment)) &&
+      segment
+    ) {
+      this.fetchDashboardView(search, organisationId, segment, datamarts);
     }
   }
 
   fetchDashboardView = (
     search: string,
     organisationId: string,
-    segmentId: string,
+    segment: AudienceSegmentShape,
     datamarts: DatamartWithMetricResource[],
-    segment?: AudienceSegmentShape,
   ) => {
     const nextFilters = parseSearch(search, SEGMENT_QUERY_SETTINGS);
     const metrics: string[] = [
@@ -128,10 +124,8 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
     ];
     let additionalMetrics;
 
-    if (datamarts && segment) {
-      const datamart = datamarts.find(
-        dm => dm.id === segment.datamart_id,
-      );
+    if (datamarts) {
+      const datamart = datamarts.find(dm => dm.id === segment.datamart_id);
       this.fetchDashboardChartView(segment.datamart_id);
 
       additionalMetrics =
@@ -146,26 +140,27 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
       [
         {
           name: 'audience_segment_id',
-          value: segmentId,
+          value: segment.id,
         },
       ],
       additionalMetrics ? metrics.concat(additionalMetrics) : metrics,
     );
-  }
+  };
 
   fetchDashboardChartView = (selectedDatamartId: string) => {
-    this._dashboardService.getDashboards(selectedDatamartId, {
-      type: "SEGMENT"
-    })
-    .then(d => {
-      return d.data
-    })
-    .then(d => {
-      this.setState({ charts: d })
-    })
-    .catch(err => {
-      this.props.notifyError(err);
-    });
+    this._dashboardService
+      .getDashboards(selectedDatamartId, {
+        type: 'SEGMENT',
+      })
+      .then(d => {
+        return d.data;
+      })
+      .then(d => {
+        this.setState({ charts: d });
+      })
+      .catch(err => {
+        this.props.notifyError(err);
+      });
   };
 
   fetchAudienceSegmentReport = (
@@ -206,7 +201,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
   buildItems = () => {
     const { intl, segment, datamarts } = this.props;
     const { dashboard } = this.state;
-    
+
     const items = [
       {
         title: intl.formatMessage(messages.overview),
@@ -234,12 +229,17 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
     if (segment) {
       items.push({
         title: intl.formatMessage(messages.overlap),
-        display: <Overlap datamartId={segment.datamart_id} />,
+        display: <Overlap datamartId={segment.datamart_id} segment={segment} />,
       });
       if (segment.type === 'USER_LIST') {
         items.push({
           title: intl.formatMessage(messages.imports),
-          display: <UserListImportCard datamartId={segment.datamart_id} />,
+          display: (
+            <UserListImportCard
+              datamartId={segment.datamart_id}
+              segmentId={segment.id}
+            />
+          ),
         });
       }
       if (
@@ -250,7 +250,10 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
         items.push({
           title: intl.formatMessage(messages.exports),
           display: (
-            <AudienceSegmentExportsCard datamartId={segment.datamart_id} />
+            <AudienceSegmentExportsCard
+              datamartId={segment.datamart_id}
+              segmentId={segment.id}
+            />
           ),
         });
       }
@@ -260,15 +263,24 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
 
   render() {
     const { segment, datamarts } = this.props;
-    const { charts } = this.state
+    const { charts } = this.state;
     return (
       <div>
-        {segment && <AudienceCounters
-          datamarts={datamarts}
-          segment={segment}
-        />}
-        {charts.map(c => <DashboardWrapper key={c.id} layout={c.components} title={c.name} datamartId={c.datamart_id} segment={segment} />)}
-        {charts.length ? <ContentHeader size="medium" title="Technical Informations" /> : null}
+        {segment && (
+          <AudienceCounters datamarts={datamarts} segment={segment} />
+        )}
+        {charts.map(c => (
+          <DashboardWrapper
+            key={c.id}
+            layout={c.components}
+            title={c.name}
+            datamartId={c.datamart_id}
+            segment={segment}
+          />
+        ))}
+        {charts.length ? (
+          <ContentHeader size="medium" title="Technical Informations" />
+        ) : null}
         <Card>
           <McsTabs items={this.buildItems()} />
         </Card>

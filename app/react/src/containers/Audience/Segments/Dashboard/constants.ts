@@ -5,6 +5,7 @@ import {
   SEGMENTS_FILTERS_SEARCH_SETTINGS,
   ALL_USERS,
   DATE_SEARCH_SETTINGS_WITHOUT_CURRENT_DAY,
+  getComparisonDateSearchSettings,
 } from '../../../../utils/LocationSearchHelper';
 
 type QueryType = { types: string };
@@ -36,6 +37,14 @@ export const DATAMART_USERS_ANALYTICS_SETTING = [
   ...DATE_SEARCH_SETTINGS_WITHOUT_CURRENT_DAY,
   ...ALL_USERS
 ]
+
+export const getComparisonDatamartUsersAnalyticsSetting = (comparisonStartDate: number) => {
+  return [
+    ...SEGMENTS_FILTERS_SEARCH_SETTINGS,
+    ...getComparisonDateSearchSettings(comparisonStartDate),
+    ...ALL_USERS
+  ]
+}
 
 export interface AudienceReportData {
   day: string;

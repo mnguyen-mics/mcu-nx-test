@@ -45,7 +45,7 @@ interface DatamartUsersAnalyticsContentProps {
   config: DashboardConfig[];
   dateRange: McsDateRangeValue;
   onChange: (isLoading: boolean) => void;
-  getApiValue?: (v: string | number | null | undefined) => void;
+  comparisonStartDate?: number;
 }
 
 interface DatamartUsersAnalyticsContentStates {
@@ -180,7 +180,7 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
       }
   }
 
-  generateDOM(dashboardConfig: DashboardConfig[], datamartId: string, dateRange: McsDateRangeValue, onChange: (isLoading: boolean) => void) {
+  generateDOM = (dashboardConfig: DashboardConfig[], datamartId: string, dateRange: McsDateRangeValue, onChange: (isLoading: boolean) => void) => {
     return dashboardConfig.map((comp: DashboardConfig, i) => {
       return (
         <CardFlex
@@ -201,7 +201,7 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
               compareWithSegmentName={comp.segments ? comp.segments.segmentToCompareWithName : undefined}
               compareWithSegmentId={comp.segments ? comp.segments.segmentIdToCompareWith : undefined}
               enhancedManualReportView={comp.enhancedManualReportView}
-              getApiValue={this.props.getApiValue}
+              comparisonStartDate={this.props.comparisonStartDate}
             />
           })}
         </CardFlex>

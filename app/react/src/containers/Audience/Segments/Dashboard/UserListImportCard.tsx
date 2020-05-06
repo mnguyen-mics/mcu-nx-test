@@ -25,7 +25,7 @@ import { defineMessages } from 'react-intl';
 
 export interface UserListImportCardProps {
   datamartId: string;
-  isLoading?: boolean;
+  segmentId: string;
 }
 
 type Props = UserListImportCardProps &
@@ -85,9 +85,7 @@ class UserListImportCard extends React.Component<Props, State> {
   refreshData = () => {
     const {
       datamartId,
-      match: {
-        params: { segmentId },
-      },
+      segmentId
     } = this.props;
     this.setState({ isLoading: true });
     this._audienceSegmentService

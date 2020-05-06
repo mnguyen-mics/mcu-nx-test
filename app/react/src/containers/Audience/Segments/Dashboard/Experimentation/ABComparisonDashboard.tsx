@@ -26,15 +26,15 @@ import { Card, Alert } from 'antd';
 import McsTabs from '../../../../../components/McsTabs';
 import { Loading } from '../../../../../components';
 import { DashboardConfig } from '../../../DatamartUsersAnalytics/DatamartUsersAnalyticsContent';
+import { injectFeatures, InjectedFeaturesProps } from '../../../../Features';
 
 interface State {
   ABComparisonDashboardConfig: DatamartUsersAnalyticsWrapperProps[];
   isLoading: boolean;
-  allApiValues: any[];
 }
 
 export interface ABComparisonDashboardProps {
-  experimentationSegment?: UserQuerySegment;
+  experimentationSegment: UserQuerySegment;
   controlGroupSegment?: UserQuerySegment;
 }
 
@@ -43,6 +43,7 @@ type Props = ABComparisonDashboardProps &
   InjectedNotificationProps &
   InjectedThemeColorsProps &
   InjectedThemeColorsProps &
+  InjectedFeaturesProps &
   RouteComponentProps<EditAudienceSegmentParam>;
 
 class ABComparisonDashboard extends React.Component<Props, State> {
@@ -51,7 +52,6 @@ class ABComparisonDashboard extends React.Component<Props, State> {
     this.state = {
       ABComparisonDashboardConfig: [],
       isLoading: true,
-      allApiValues: [],
     };
   }
 
@@ -65,9 +65,7 @@ class ABComparisonDashboard extends React.Component<Props, State> {
       (!_.isEqual(prevControlGroupSegment, controlGroupSegment) ||
         !_.isEqual(prevExperimentationSegment, experimentationSegment)) &&
       controlGroupSegment &&
-      controlGroupSegment.id &&
-      experimentationSegment &&
-      experimentationSegment.id
+      controlGroupSegment.id
     ) {
       this.setState({
         ABComparisonDashboardConfig: this.getABComparisonDashboardConfig().map(
@@ -99,20 +97,6 @@ class ABComparisonDashboard extends React.Component<Props, State> {
     }
   }
 
-  getApiValue = (value: string | number | null | undefined) => {
-    this.setState({
-      allApiValues: this.state.allApiValues.concat(value),
-    });
-  };
-
-  hideDashboard = () => {
-    const { allApiValues } = this.state;
-    return (
-      allApiValues.length >= 1 &&
-      (allApiValues.includes(undefined) || allApiValues.includes(null))
-    );
-  };
-
   getABComparisonDashboardConfig = () => {
     const {
       experimentationSegment,
@@ -121,60 +105,58 @@ class ABComparisonDashboard extends React.Component<Props, State> {
       },
       intl,
     } = this.props;
-    if (experimentationSegment) {
-      const getFormattedConfigTitle = (
-        configs: DatamartUsersAnalyticsWrapperProps[],
-      ) => {
-        return configs.map(c => {
-          return {
-            ...c,
-            title: c.title ? intl.formatMessage(messagesMap[c.title]) : '',
-          };
-        });
-      };
+    const getFormattedConfigTitle = (
+      configs: DatamartUsersAnalyticsWrapperProps[],
+    ) => {
+      return configs.map(c => {
+        return {
+          ...c,
+          title: c.title ? intl.formatMessage(messagesMap[c.title]) : '',
+        };
+      });
+    };
 
-      const eCommerceEngagementDashboardConfig: DatamartUsersAnalyticsWrapperProps = {
-        title: 'E_COMMERCE_ENGAGEMENT',
-        datamartId: experimentationSegment.datamart_id,
-        config: ecommerceEngagementConfig,
-        organisationId: organisationId,
-      };
-      const averageSessionDurationDashboardConfig: DatamartUsersAnalyticsWrapperProps = {
-        title: 'CHANNEL_ENGAGEMENT',
-        datamartId: experimentationSegment.datamart_id,
-        config: averageSessionDurationConfig,
-        organisationId: organisationId,
-      };
+    const eCommerceEngagementDashboardConfig: DatamartUsersAnalyticsWrapperProps = {
+      title: 'E_COMMERCE_ENGAGEMENT',
+      datamartId: experimentationSegment.datamart_id,
+      config: ecommerceEngagementConfig,
+      organisationId: organisationId,
+    };
+    const averageSessionDurationDashboardConfig: DatamartUsersAnalyticsWrapperProps = {
+      title: 'CHANNEL_ENGAGEMENT',
+      datamartId: experimentationSegment.datamart_id,
+      config: averageSessionDurationConfig,
+      organisationId: organisationId,
+    };
 
-      const ABComparisonDashboardConfig = [
-        eCommerceEngagementDashboardConfig,
-        averageSessionDurationDashboardConfig,
-      ];
-      // Below the graphs, we want to display the config related to the target_metric firstly.
-      // But in a near future there could be more than two engagement configs
-      // Hence the code underneath
+    const ABComparisonDashboardConfig = [
+      eCommerceEngagementDashboardConfig,
+      averageSessionDurationDashboardConfig,
+    ];
+    // Below the graphs, we want to display the config related to the target_metric firstly.
+    // But in a near future there could be more than two engagement configs
+    // Hence the code underneath
 
-      const firstConfig = ABComparisonDashboardConfig.find(
-        c => c.title === experimentationSegment.target_metric,
-      );
+    const firstConfig = ABComparisonDashboardConfig.find(
+      c => c.title === experimentationSegment.target_metric,
+    );
 
-      return firstConfig
-        ? [
-            {
-              ...firstConfig,
-              title: firstConfig.title
-                ? intl.formatMessage(messagesMap[firstConfig.title])
-                : '',
-            },
-          ].concat(
-            getFormattedConfigTitle(
-              ABComparisonDashboardConfig.filter(
-                c => c.title !== experimentationSegment.target_metric,
-              ),
+    return firstConfig
+      ? [
+          {
+            ...firstConfig,
+            title: firstConfig.title
+              ? intl.formatMessage(messagesMap[firstConfig.title])
+              : '',
+          },
+        ].concat(
+          getFormattedConfigTitle(
+            ABComparisonDashboardConfig.filter(
+              c => c.title !== experimentationSegment.target_metric,
             ),
-          )
-        : getFormattedConfigTitle(ABComparisonDashboardConfig);
-    } else return [];
+          ),
+        )
+      : getFormattedConfigTitle(ABComparisonDashboardConfig);
   };
 
   buildItems = () => {
@@ -187,7 +169,7 @@ class ABComparisonDashboard extends React.Component<Props, State> {
       intl,
       colors,
     } = this.props;
-    if (experimentationSegment && controlGroupSegment) {
+    if (controlGroupSegment) {
       return abTestingDashboardConfig.map((config, i) => {
         const enhancedConfig: DashboardConfig = {
           ...config,
@@ -220,6 +202,9 @@ class ABComparisonDashboard extends React.Component<Props, State> {
               organisationId={organisationId}
               config={[enhancedConfig]}
               showDateRangePicker={true}
+              comparisonStartDate={
+                controlGroupSegment && controlGroupSegment.creation_ts
+              }
             />
           ),
         };
@@ -228,41 +213,57 @@ class ABComparisonDashboard extends React.Component<Props, State> {
   };
 
   render() {
-    const { experimentationSegment, controlGroupSegment } = this.props;
+    const {
+      experimentationSegment,
+      controlGroupSegment,
+      hasFeature,
+    } = this.props;
     const { ABComparisonDashboardConfig, isLoading } = this.state;
     if (isLoading) {
       return <Loading className="loading-full-screen" />;
     }
 
-    return controlGroupSegment &&
-      controlGroupSegment.user_points_count === 0 ? (
+    return !experimentationSegment.user_points_count ||
+      (controlGroupSegment && !controlGroupSegment.user_points_count) ? (
       <Alert
         message={
           <FormattedMessage
             id="audience.segments.experimentation.dashboard.noUserPoint"
-            defaultMessage="Your Control Group segment has no User Point. Please contact your support."
+            defaultMessage="Your {segmentName} segment has no data. If you feel this is not normal, please contact support."
+            values={{
+              segmentName: !experimentationSegment.user_points_count
+                ? 'Experimentation'
+                : 'Control Group',
+            }}
           />
         }
         type="warning"
       />
-    ) : this.hideDashboard() ? (
+    ) : experimentationSegment.user_points_count === 0 ||
+      (controlGroupSegment && controlGroupSegment.user_points_count === 0) ? (
       <Alert
         message={
           <FormattedMessage
-            id="audience.segments.experimentation.dashboard.controlGroupSegmentNotComputed"
-            defaultMessage="Your Control Group segment is not yet computed. Please come back when later."
+            id="audience.segments.experimentation.dashboard.zeroUserPoint"
+            defaultMessage="Your {segmentName} segment has 0 User Point. If you feel this is not normal, please contact support."
+            values={{
+              segmentName:
+                experimentationSegment.user_points_count === 0
+                  ? 'Experimentation'
+                  : 'Control Group',
+            }}
           />
         }
         type="warning"
       />
     ) : (
       <React.Fragment>
-        <ABComparisonGauge
-          weight={experimentationSegment && experimentationSegment.weight}
-        />
-        <Card>
-          <McsTabs items={this.buildItems()} />
-        </Card>
+        <ABComparisonGauge weight={experimentationSegment.weight} />
+        {hasFeature('audience-segment_uplift_area_chart') && (
+          <Card>
+            <McsTabs items={this.buildItems()} />
+          </Card>
+        )}
         {ABComparisonDashboardConfig.map((conf, i) => {
           return (
             <DatamartUsersAnalyticsWrapper
@@ -273,7 +274,9 @@ class ABComparisonDashboard extends React.Component<Props, State> {
               organisationId={conf.organisationId}
               config={conf.config}
               showFilter={conf.showFilter}
-              getApiValue={this.getApiValue} // ugly af
+              comparisonStartDate={
+                controlGroupSegment && controlGroupSegment.creation_ts
+              }
             />
           );
         })}
@@ -287,5 +290,6 @@ export default compose<Props, ABComparisonDashboardProps>(
   injectIntl,
   withRouter,
   injectNotifications,
+  injectFeatures,
   injectThemeColors,
 )(ABComparisonDashboard);
