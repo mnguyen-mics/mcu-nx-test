@@ -32,7 +32,7 @@ describe('User Expert Query Segment Form Test', () => {
     cy.fillExpertQuerySegmentForm(segmentName, 'SELECT {id} FROM UserPoint')
 
     cy.contains('Save').click()
-    cy.url({ timeout: 5000 }).should('match', /.*audience\/segments\/\d*\?/)
+    cy.url({ timeout: 10000 }).should('match', /.*audience\/segments\/\d*\?/)
   })
 
   it('should edit User Query Segment', () => {
@@ -40,7 +40,7 @@ describe('User Expert Query Segment Form Test', () => {
     // So we make sure that the segments are fetched first.
     cy.get('.mcs-campaigns-link').should('have.length.gte', 1)
     cy.contains('Type').click()
-    cy.contains('USER_QUERY').click()
+    cy.contains('User Query').click()
     cy.get('.mcs-search-input').type(segmentName + '{enter}')
     cy.get('[class="anticon anticon-database"]', { timeout: 5000 })
     // pick the created segment

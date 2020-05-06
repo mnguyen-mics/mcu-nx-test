@@ -7,7 +7,10 @@ const generator = require('mochawesome-report-generator')
 
 async function runTests() {
   await fse.emptyDir('mochawesome-report') // empty the report folder
-  const { totalFailed } = await cypress.run() // get the number of failed tests
+  const { totalFailed } = await cypress.run({
+    browser: "chrome",
+    headless: true,
+  }) // get the number of failed tests
   const jsonReport = await merge() // generate JSON report
   await generator.create(jsonReport)
   process.exit(totalFailed) // exit with the number of failed tests

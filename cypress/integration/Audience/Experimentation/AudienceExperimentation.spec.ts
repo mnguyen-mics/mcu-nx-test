@@ -7,7 +7,7 @@ describe('AudienceExperimentation Form Test', () => {
 
   before(() => {
     cy.login()
-    cy.url({ timeout: 5000 }).should(
+    cy.url().should(
       'contain',
       Cypress.config().baseUrl + '/#/v2/o/1/campaigns/display',
     )
@@ -16,7 +16,6 @@ describe('AudienceExperimentation Form Test', () => {
   })
 
   beforeEach(() => {
-    cy.viewport(1920, 1080)
     cy.restoreLocalStorageCache()
     cy.contains('Segments').click()
   })
@@ -26,36 +25,35 @@ describe('AudienceExperimentation Form Test', () => {
   })
 
   it('should create User Expert Query Segment', () => {
-    cy.contains('New Segment').click({ force: true })
+    cy.contains('New Segment').click()
     cy.contains(datamartName).click()
     cy.contains('User Expert Query').click()
 
     cy.fillExpertQuerySegmentForm(segmentName, 'SELECT {id} FROM UserPoint')
 
-    cy.contains('Save').click({ force: true })
-    cy.url({ timeout: 5000 }).should('match', /.*audience\/segments\/\d*\?/)
+    cy.contains('Save').click()
+    cy.url({ timeout: 10000 }).should('match', /.*audience\/segments\/\d*\?/)
   })
 
   it('should create an experimentation form', () => {
     // search the test segment we just created
     cy.get('[placeholder="Search Segments"]').type(segmentName).type('{enter}')
-    cy.wait(500)
     // get the first segment in list
     cy.get('.mcs-campaigns-link')
-    .first()
+    .should('have.length', 1)
     .click()
 
     cy.get('.ant-dropdown-trigger > .compact')
     .click({ force: true })
 
     cy.contains('Create Experimentation')
-    .click({ force: true })
+    .click()
 
     cy.get('.menu-item')
     .first()
     .click()
 
-    cy.contains('Save').click({ force: true })
+    cy.contains('Create Experimentation').click()
 
   })
 
