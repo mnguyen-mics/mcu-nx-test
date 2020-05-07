@@ -8,7 +8,7 @@ import { SEGMENT_QUERY_SETTINGS } from './constants';
 import {
   isSearchValid,
   buildDefaultSearch,
-  compareSearches,
+  compareSearches
 } from '../../../../utils/LocationSearchHelper';
 import AudienceSegmentActionbar from './AudienceSegmentActionbar';
 import AudienceSegment from './AudienceSegment';

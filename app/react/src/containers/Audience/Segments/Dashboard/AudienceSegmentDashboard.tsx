@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import _ from 'lodash';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Card } from '@mediarithmics-private/mcs-components-library';
 import McsTabs from '../../../../components/McsTabs';
@@ -10,7 +9,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import UserListImportCard from './UserListImportCard';
-import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import { InjectedIntlProps, injectIntl, defineMessages, InjectedIntl } from 'react-intl';
 import AudienceCounters from './AudienceCounters';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import ReportService, { Filter } from '../../../../services/ReportService';
@@ -35,6 +34,8 @@ import { DashboardResource } from '../../../../models/dashboards/dashboards';
 import DashboardWrapper from '../../Dashboard/DashboardWrapper';
 import ContentHeader from '../../../../components/ContentHeader';
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
+import DatamartUsersAnalyticsWrapper, { DatamartUsersAnalyticsWrapperProps } from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
+import { ecommerceEngagementConfig, averageSessionDurationConfig } from '../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
 
 interface State {
   loading: boolean;
@@ -42,7 +43,8 @@ interface State {
     reports: AudienceReport;
     isLoading: boolean;
   };
-  charts: DashboardResource[];
+  charts: DashboardResource[],
+  datamartAnalyticsDashboardConfig: DatamartUsersAnalyticsWrapperProps[]
 }
 export interface AudienceSegmentDashboardProps {
   segment?: AudienceSegmentShape;
@@ -69,52 +71,60 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
         reports: [],
       },
       charts: [],
+      datamartAnalyticsDashboardConfig: [],
     };
   }
 
   componentDidMount() {
     const {
       match: {
-        params: { organisationId },
+        params: { segmentId, organisationId },
       },
       location: { search },
       segment,
-      datamarts,
+      datamarts
     } = this.props;
-    if (segment) {
-      this.fetchDashboardView(search, organisationId, segment, datamarts);
-    }
+    this.fetchDashboardView(search, organisationId, segmentId, datamarts, segment);
   }
 
   componentDidUpdate(previousProps: Props) {
     const {
       match: {
-        params: { organisationId },
+        params: { segmentId, organisationId },
       },
       location: { search },
       datamarts,
       segment,
+      intl
     } = this.props;
 
     const {
+      match: {
+        params: {
+          segmentId: previousSegmentId,
+        },
+      },
       segment: prevSegment,
       location: { search: previousSearch },
     } = previousProps;
 
-    if (
-      (!compareSearches(search, previousSearch) ||
-        !_.isEqual(segment, prevSegment)) &&
-      segment
-    ) {
-      this.fetchDashboardView(search, organisationId, segment, datamarts);
+    if (!compareSearches(search, previousSearch) || segmentId !== previousSegmentId || segment !== prevSegment) {
+      this.fetchDashboardView(search, organisationId, segmentId, datamarts, segment);
+      if (segment && segment.datamart_id) {
+        this.setState({
+          datamartAnalyticsDashboardConfig: this.getDatamartAnaylicsDashboardConfig(organisationId, segment.datamart_id, intl)
+        });
+      }
+
     }
   }
 
   fetchDashboardView = (
     search: string,
     organisationId: string,
-    segment: AudienceSegmentShape,
+    segmentId: string,
     datamarts: DatamartWithMetricResource[],
+    segment?: AudienceSegmentShape,
   ) => {
     const nextFilters = parseSearch(search, SEGMENT_QUERY_SETTINGS);
     const metrics: string[] = [
@@ -124,7 +134,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
     ];
     let additionalMetrics;
 
-    if (datamarts) {
+    if (datamarts && segment) {
       const datamart = datamarts.find(dm => dm.id === segment.datamart_id);
       this.fetchDashboardChartView(segment.datamart_id);
 
@@ -140,7 +150,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
       [
         {
           name: 'audience_segment_id',
-          value: segment.id,
+          value: segmentId,
         },
       ],
       additionalMetrics ? metrics.concat(additionalMetrics) : metrics,
@@ -261,9 +271,36 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
     return items;
   };
 
+  getDatamartAnaylicsDashboardConfig = (organisationId: string, datamartId: string, intl: InjectedIntl): DatamartUsersAnalyticsWrapperProps[] => {
+    const config = [
+      {
+        title: 'Channel engagment',
+        datamartId: datamartId,
+        organisationId: organisationId,
+        config: averageSessionDurationConfig,
+        allUserFilter: false,
+        showFilter: true,
+      },
+      {
+        title: 'E-commerce engagment',
+        datamartId: datamartId,
+        organisationId: organisationId,
+        config: ecommerceEngagementConfig
+      },
+    ];
+
+    return config;
+  };
+
   render() {
     const { segment, datamarts } = this.props;
-    const { charts } = this.state;
+    const { charts, datamartAnalyticsDashboardConfig } = this.state;
+    const currentSegment = segment ? {
+      key: segment.id.toString(),
+      label: segment.name
+    } : undefined;
+
+
     return (
       <div>
         {segment && (
@@ -284,6 +321,22 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
         <Card>
           <McsTabs items={this.buildItems()} />
         </Card>
+        {datamartAnalyticsDashboardConfig.map((conf, i) => {
+          return (
+            <DatamartUsersAnalyticsWrapper
+              key={i.toString()}
+              title={conf.title}
+              subTitle={conf.subTitle}
+              datamartId={conf.datamartId}
+              organisationId={conf.organisationId}
+              config={conf.config}
+              showFilter={conf.showFilter}
+              showDateRangePicker={conf.showDateRangePicker}
+              disableAllUserFilter={true}
+              defaultSegment={currentSegment}
+            />
+          )
+        })}
         <FeedCardList />
       </div>
     );

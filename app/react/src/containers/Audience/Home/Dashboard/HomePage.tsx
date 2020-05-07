@@ -101,7 +101,7 @@ class Partition extends React.Component<JoinedProps, HomeState> {
   getDatamartAnaylicsDashboardConfig = (organisationId: string, datamartId: string, intl: InjectedIntl) : DatamartUsersAnalyticsWrapperProps[] => {
     const config = [
       {
-        title: intl.formatMessage(messages.homeTitle),
+        pageTitle: intl.formatMessage(messages.homeTitle),
         datamartId: datamartId,
         organisationId: organisationId,
         config: averageSessionDurationConfig,
@@ -195,17 +195,17 @@ class Partition extends React.Component<JoinedProps, HomeState> {
             {shouldDisplayAnalyticsFeature && (
               datamartAnalyticsDashboardConfig.map((conf, i) => {
                 return (
-                  <DatamartUsersAnalyticsWrapper
-                    key={i.toString()}
-                    title={conf.title}
-                    subTitle={conf.subTitle}
-                    datamartId={conf.datamartId}
-                    organisationId={conf.organisationId}
-                    config={conf.config}
-                    showFilter={conf.showFilter}
-                    showDateRangePicker={conf.showDateRangePicker}
-
-                  />
+                    <DatamartUsersAnalyticsWrapper
+                      key={i.toString()}
+                      title={conf.title}
+                      subTitle={conf.subTitle}
+                      datamartId={conf.datamartId}
+                      organisationId={conf.organisationId}
+                      config={conf.config}
+                      showFilter={conf.showFilter}
+                      showDateRangePicker={conf.showDateRangePicker}
+                      pageTitle={conf.pageTitle}
+                    />
                 )
               })
             )}

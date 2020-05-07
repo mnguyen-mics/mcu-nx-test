@@ -20,7 +20,9 @@ import {
   compareSearches,
 } from '../../../utils/LocationSearchHelper';
 import SegmentFilter from './components/SegmentFilter';
-import { DATAMART_USERS_ANALYTICS_SETTING, getComparisonDatamartUsersAnalyticsSetting } from '../Segments/Dashboard/constants';
+import { DATAMART_USERS_ANALYTICS_SETTING } from '../Segments/Dashboard/constants';
+import { LabeledValue } from 'antd/lib/select';
+import ContentHeader from '../../../components/ContentHeader';
 
 interface State {
   layout: Layout[];
@@ -29,6 +31,8 @@ interface State {
 }
 
 export interface DatamartUsersAnalyticsWrapperProps {
+
+  pageTitle?: string;
   title?: string;
   subTitle?: string;
   datamartId: string;
@@ -37,6 +41,8 @@ export interface DatamartUsersAnalyticsWrapperProps {
   showFilter?: boolean;
   showDateRangePicker?: boolean;
   comparisonStartDate?: number;
+  disableAllUserFilter?: boolean;
+  defaultSegment?: LabeledValue;
 }
 
 type FILTERS = DateSearchSettings | SegmentsSearchSettings | AllUsersSettings;
@@ -55,23 +61,31 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
 
   componentDidMount() {
     const {
-      history,
       location: { search, pathname },
+      history,
+      defaultSegment,
+      disableAllUserFilter
     } = this.props;
+    const nextLocation = {
+      pathname: pathname,
+      search: buildDefaultSearch(search, DATAMART_USERS_ANALYTICS_SETTING),
+    };
+    if (!isSearchValid(search, DATAMART_USERS_ANALYTICS_SETTING)) {
+      history.replace(nextLocation);
 
-    if (!isSearchValid(search, this.getDatamartUsersAnalyticsSetting())) {
-      history.replace({
-        pathname: pathname,
-        search: buildDefaultSearch(search, this.getDatamartUsersAnalyticsSetting()),
-      });
+      if (defaultSegment || disableAllUserFilter) {
+        this.updateLocationSearch({
+          allusers: disableAllUserFilter ? false : true,
+          segments: defaultSegment ? [defaultSegment.key] : []
+        });
+      }
     }
   }
 
-  // Should be replaced by getDerivedStateFromProps hook after react lib update
   UNSAFE_componentWillReceiveProps(nextProps: JoinedProp) {
     const {
       location: { search },
-      history,
+      history
     } = this.props;
 
     const {
@@ -79,24 +93,15 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
     } = nextProps;
 
     if (!compareSearches(search, nextSearch)) {
-      if (!isSearchValid(nextSearch, this.getDatamartUsersAnalyticsSetting())) {
+
+      if (!isSearchValid(nextSearch, DATAMART_USERS_ANALYTICS_SETTING)) {
         history.replace({
           pathname: nextPathname,
-          search: buildDefaultSearch(
-            nextSearch,
-            DATAMART_USERS_ANALYTICS_SETTING,
-          ),
+          search: buildDefaultSearch(nextSearch, DATAMART_USERS_ANALYTICS_SETTING),
         });
       }
     }
   }
-
-  getDatamartUsersAnalyticsSetting = () => {
-    const { comparisonStartDate } = this.props;
-    return comparisonStartDate
-      ? getComparisonDatamartUsersAnalyticsSetting(comparisonStartDate)
-      : DATAMART_USERS_ANALYTICS_SETTING;
-  };
 
   updateLocationSearch = (params: FILTERS) => {
     const {
@@ -109,7 +114,7 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
       search: updateSearch(
         currentSearch,
         params,
-        this.getDatamartUsersAnalyticsSetting(),
+        DATAMART_USERS_ANALYTICS_SETTING,
       ),
     };
 
@@ -171,9 +176,11 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
       config,
       showFilter,
       showDateRangePicker,
+      disableAllUserFilter,
+      defaultSegment,
+      pageTitle,
       location: { search },
-      comparisonStartDate
-    } = this.props;
+      comparisonStartDate } = this.props;
 
     const { isLoading, refresh } = this.state;
 
@@ -182,50 +189,37 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
       <div className={'mcs-datamartUsersAnalytics'}>
         <Row>
           <Col span={12}>
-            {title && (
-              <div>
-                <div className={'mcs-datamartUsersAnalytics_title'}>
-                  {title}
-                </div>
-                <div className={'mcs-datamartUsersAnalytics_subTitle'}>
-                  {subTitle}
-                </div>
-              </div>
-            )}
+            {
+              pageTitle && <ContentHeader title={pageTitle} size={'large'} />}
           </Col>
         </Row>
-        {!refresh && (
-          <Row>
-            {showFilter && (
-              <SegmentFilter
-                className={
-                  isLoading
-                    ? 'mcs-datamartUsersAnalytics_segmentFilter _is_disabled'
-                    : 'mcs-datamartUsersAnalytics_segmentFilter'
-                }
-                onChange={this.onSegmentFilterChange}
-                onToggleAllUsersFilter={this.onAllUserFilterChange}
-                datamartId={datamartId}
-                organisationId={organisationId}
-              />
-            )}
+        {!refresh && <Row>
+          {showFilter &&
+            <SegmentFilter
+              className={isLoading ? 'mcs-datamartUsersAnalytics_segmentFilter _is_disabled' : 'mcs-datamartUsersAnalytics_segmentFilter'}
+              onChange={this.onSegmentFilterChange}
+              onToggleAllUsersFilter={this.onAllUserFilterChange}
+              datamartId={datamartId}
+              organisationId={organisationId}
+              disableAllUserFilter={disableAllUserFilter}
+              defaultSegment={defaultSegment}
+            />}
+          {showDateRangePicker &&
+            <Col className="text-right" offset={6}>
+              {this.renderDatePicker()}
+            </Col>}
+        </Row>}
+        <Row>
+          <Col span={12}>
+            {
+              title && <div>
+                <div className={'mcs-datamartUsersAnalytics_title'}>{title}</div>
+                <div className={'mcs-datamartUsersAnalytics_subTitle'}>{subTitle}</div>
+              </div>}
+          </Col>
+        </Row>
+        {!refresh && <DatamartUsersAnalyticsContent datamartId={datamartId} config={config} dateRange={{ from: filter.from, to: filter.to }} onChange={this.getLoadingState} comparisonStartDate={comparisonStartDate} />}
 
-            {showDateRangePicker && (
-              <Col className="text-right" offset={6}>
-                {this.renderDatePicker()}
-              </Col>
-            )}
-          </Row>
-        )}
-        {!refresh && (
-          <DatamartUsersAnalyticsContent
-            datamartId={datamartId}
-            config={config}
-            dateRange={{ from: filter.from, to: filter.to }}
-            onChange={this.getLoadingState}
-            comparisonStartDate={comparisonStartDate}
-          />
-        )}
       </div>
     );
   }

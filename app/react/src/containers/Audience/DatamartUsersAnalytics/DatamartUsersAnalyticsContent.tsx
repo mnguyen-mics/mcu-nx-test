@@ -50,6 +50,7 @@ interface DatamartUsersAnalyticsContentProps {
 
 interface DatamartUsersAnalyticsContentStates {
   formattedConfig: DashboardConfig[];
+  allUsersConfig: DashboardConfig[];
   segmentsFilters: string[];
   allUsersFilter: boolean;
   filterColors: string[];
@@ -69,6 +70,7 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
     this.state = {
       formattedConfig: [],
       segmentsFilters: [],
+      allUsersConfig: [],
       allUsersFilter: true,
       filterColors: [],
       allUsersFilterColor: props.colors['mcs-primary'],
@@ -80,29 +82,39 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
   componentDidMount() {
     const { config, colors, datamartId, onChange, dateRange } = this.props;
     const { allUsersFilterColor, lastFilterColor } = this.state;
-
+    const configItemCopy = [];
     for (const configItem of config) {
-      const currentConfigItem = { ...configItem };
-      configItem.color =  configItem.color || allUsersFilterColor;
-      configItem.layout.i = this._cuid();
-      config.concat(currentConfigItem);
+
+      const currentConfigItemCopy = {
+        ...configItem,
+        color: configItem.color || allUsersFilterColor,
+        layout: {
+          ...configItem.layout,
+          i: this._cuid()
+        }
+      }
+      configItemCopy.push(currentConfigItemCopy);
     }
 
     this.setState({
-      formattedConfig: config,
+      allUsersConfig: configItemCopy.filter(item => !item.segments),
+      formattedConfig: configItemCopy,
       filterColors: chroma.scale([colors['mcs-info'], lastFilterColor]).mode('lch').colors(3),
-      generatedDom: this.generateDOM(config, datamartId, dateRange, onChange)
+      generatedDom: this.generateDOM(configItemCopy, datamartId, dateRange, onChange)
     });
   }
 
   componentDidUpdate(prevProps: DatamartUsersAnalyticsContentProps) {
     const { location: { search }, config, datamartId, onChange, dateRange } = this.props;
-    const { segmentsFilters, allUsersFilter, filterColors, formattedConfig, generatedDom } = this.state;
+    const { segmentsFilters, allUsersFilter, filterColors, formattedConfig, generatedDom, allUsersConfig } = this.state;
 
     const filter = parseSearch(search, DATAMART_USERS_ANALYTICS_SETTING);
-    const currentFormattedConfig = formattedConfig.slice();
+
 
     if (!isEqual(filter.segments, segmentsFilters)) {
+
+
+      const currentFormattedConfig = formattedConfig.slice();
       const tmpDashboardConfig: DashboardConfig[] = [];
       const newGeneratedDom: JSX.Element[] = [];
       let newDashboardConfig: DashboardConfig[] = [];
@@ -110,10 +122,9 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
       if (segmentsFilters.length < filter.segments.length) {
 
         const usedColors = currentFormattedConfig.map(item => item.color);
-
+        
         // Add segment filter
-        for(const configItem of config) {
-
+        for (const configItem of allUsersConfig) {
           const currentConfigItem = {
             layout: {
               ...configItem.layout,
@@ -147,11 +158,14 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
     }
 
     if (!isEqual(filter.allusers, allUsersFilter)) {
-      this.setState(state => {
 
-        const newDashboardConfig = !filter.allusers ? currentFormattedConfig.filter(item => item.segments) : currentFormattedConfig.concat(config);
+ 
+      this.setState(state => {
+        const currentFormattedConfig = state.formattedConfig.slice();
+        const newDashboardConfig = !filter.allusers ? currentFormattedConfig.filter(item => item.segments) : currentFormattedConfig.concat(allUsersConfig);
         const newDashboardConfigKeys = newDashboardConfig.map(item => item.layout.i);
-        const newGeneratedDom = filter.allusers ? this.generateDOM(newDashboardConfig, datamartId, dateRange, onChange) : generatedDom.filter((item: JSX.Element) => newDashboardConfigKeys.includes(item.key as string | undefined));
+
+        const newGeneratedDom = filter.allusers ? this.generateDOM(newDashboardConfig, datamartId, dateRange, onChange) : state.generatedDom.filter((item: JSX.Element) => newDashboardConfigKeys.includes(item.key as string | undefined));
         return {
           formattedConfig: newDashboardConfig,
           allUsersFilter: filter.allusers,
@@ -161,23 +175,23 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
     }
 
     if (
-      (prevProps.dateRange.from.value && prevProps.dateRange.to.value) && 
+      (prevProps.dateRange.from.value && prevProps.dateRange.to.value) &&
       (prevProps.dateRange.from.value !== dateRange.from.value || prevProps.dateRange.to.value !== dateRange.to.value)) {
-        this.setState({
-          generatedDom: this.generateDOM(formattedConfig, datamartId, dateRange, onChange)
-        });
-      }
+      this.setState({
+        generatedDom: this.generateDOM(formattedConfig, datamartId, dateRange, onChange)
+      });
+    }
 
-      if(!isEqual(config, prevProps.config)) {
-        this.setState({
-          generatedDom: this.generateDOM(
-            config,
-            datamartId,
-            dateRange,
-            onChange,
-          ),
-        });
-      }
+    if (!isEqual(config, prevProps.config)) {
+      this.setState({
+        generatedDom: this.generateDOM(
+          config,
+          datamartId,
+          dateRange,
+          onChange,
+        ),
+      });
+    }
   }
 
   generateDOM = (dashboardConfig: DashboardConfig[], datamartId: string, dateRange: McsDateRangeValue, onChange: (isLoading: boolean) => void) => {
@@ -187,7 +201,7 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
           title={!!comp.tabMode ? undefined : comp.title}
           key={comp.layout.i && comp.layout.i.toString()}
           className={comp.layout.static ? 'static mcs-datamartUsersAnalytics_card' : 'mcs-datamartUsersAnalytics_card'}
-          style={ !comp.tabMode ? { borderLeft: `5px solid ${comp.color}`} : { boxShadow: 'none' }}
+          style={!comp.tabMode ? { borderLeft: `5px solid ${comp.color}` } : { boxShadow: 'none' }}
         >
           {comp.charts.map((chart: Chart) => {
             return <ApiQueryWrapper
@@ -220,7 +234,7 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
         isDraggable={false}
         isResizable={false}
         measureBeforeMount={false}>
-        { generatedDom }
+        {generatedDom}
       </ResponsiveGridLayout>
     );
   }
