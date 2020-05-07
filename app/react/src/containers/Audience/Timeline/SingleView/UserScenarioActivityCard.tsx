@@ -35,7 +35,7 @@ class UserScenarioActivityCard extends React.Component<Props> {
         }
       case 'USER_SCENARIO_STOP':
         return {
-          title: activity.$scenario_exit_condition_id ? (
+          title: activity.$matched_exit_condition_id ? (
             <FormattedMessage {...messages.userScenarioStopOnExitConditionTitle} />
           ) : (
             <FormattedMessage {...messages.userScenarioStopTitle} />

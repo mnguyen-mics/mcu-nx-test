@@ -36,7 +36,7 @@ export interface Activity {
   $scenario_id?: number;
   $previous_node_id?: number;
   $previous_node_name?: string;
-  $scenario_exit_condition_id?: string;
+  $matched_exit_condition_id?: string;
 }
 
 export interface UserScenarioActivityCardProps {
