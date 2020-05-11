@@ -41,14 +41,14 @@ const Option = Select.Option;
 
 export interface AudienceSegmentExportsCardProps {
   datamartId: string;
-  isLoading?: boolean;
+  segmentId: string;
 }
 
 type Props = AudienceSegmentExportsCardProps &
   InjectedNotificationProps &
   InjectedThemeColorsProps &
   InjectedIntlProps &
-  RouteComponentProps<{ segmentId: string }>;
+  RouteComponentProps<{}>;
 
 interface AudienceSegmentExportExecutionItems {
   items: AudienceSegmentExportJobExecutionResource[];
@@ -205,9 +205,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
 
   refreshData = (newFilter: Filters) => {
     const {
-      match: {
-        params: { segmentId },
-      },
+      segmentId
     } = this.props;
 
     this.setState({ filter: newFilter });
@@ -286,9 +284,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
 
   submitModal = () => {
     const {
-      match: {
-        params: { segmentId },
-      },
+      segmentId
     } = this.props;
     const { identifierType, selectedCompartmentId } = this.state;
     const exportUserIdentifier =

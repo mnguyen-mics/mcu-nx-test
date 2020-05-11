@@ -45,6 +45,7 @@ export interface ApiQueryWrapperProps {
   compareWithSegmentName?: string;
   onChange: (isLoading: boolean) => void;
   enhancedManualReportView?: boolean;
+  comparisonStartDate?: number;
 }
 
 interface State {
@@ -86,20 +87,21 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       chart.dimensions,
       chart.dimensionFilterClauses,
       segmentId,
-    );
-    if (compareWithSegmentId) {
-      this.fetchAnalytics(
-        onChange,
-        datamartId,
-        chart.metricNames,
-        dateRange.from,
-        dateRange.to,
-        chart.dimensions,
-        chart.dimensionFilterClauses,
-        segmentId,
-        compareWithSegmentId,
-      );
-    }
+    ).then(() => {
+      if (compareWithSegmentId) {
+        this.fetchAnalytics(
+          onChange,
+          datamartId,
+          chart.metricNames,
+          dateRange.from,
+          dateRange.to,
+          chart.dimensions,
+          chart.dimensionFilterClauses,
+          segmentId,
+          compareWithSegmentId,
+        );
+      }
+    });
   }
 
   componentDidUpdate(prevProps: ApiQueryWrapperProps) {
@@ -118,7 +120,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
         (prevProps.dateRange.from.value !== dateRange.from.value ||
           prevProps.dateRange.to.value !== dateRange.to.value)) ||
       prevProps.segmentId !== segmentId ||
-        prevProps.compareWithSegmentId !== compareWithSegmentId
+      prevProps.compareWithSegmentId !== compareWithSegmentId
     ) {
       if (!dateRange.from.value || !dateRange.to.value) {
         dateRange.from = new McsMoment('now-8d');
@@ -133,21 +135,21 @@ class ApiQueryWrapper extends React.Component<Props, State> {
         chart.dimensions,
         chart.dimensionFilterClauses,
         segmentId,
-      );
-
-      if (compareWithSegmentId) {
-        this.fetchAnalytics(
-          onChange,
-          datamartId,
-          chart.metricNames,
-          dateRange.from,
-          dateRange.to,
-          chart.dimensions,
-          chart.dimensionFilterClauses,
-          segmentId,
-          compareWithSegmentId,
-        );
-      }
+      ).then(() => {
+        if (compareWithSegmentId) {
+          this.fetchAnalytics(
+            onChange,
+            datamartId,
+            chart.metricNames,
+            dateRange.from,
+            dateRange.to,
+            chart.dimensions,
+            chart.dimensionFilterClauses,
+            segmentId,
+            compareWithSegmentId,
+          );
+        }
+      });
     }
   }
 
@@ -191,7 +193,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       loading: true,
     });
     onChange(true);
-    this._datamartUsersAnalyticsService
+    return this._datamartUsersAnalyticsService
       .getAnalytics(
         datamartId,
         metric,
@@ -240,6 +242,10 @@ class ApiQueryWrapper extends React.Component<Props, State> {
     );
   }
 
+  areAnalyticsReady = (items: any[]) => {
+    return !(items.includes(null) || items.includes(undefined));
+  };
+
   render() {
     const { chart, intl, enhancedManualReportView } = this.props;
     const {
@@ -275,20 +281,34 @@ class ApiQueryWrapper extends React.Component<Props, State> {
 
     return (
       <div className={'mcs-datamartUsersAnalytics_component_charts'}>
-        {reportViewApiResponse && reportViewApiResponse.total_items > 0 ? (
-          <FormatDataToChart
-            apiResponse={
-              enhancedManualReportView
-                ? getMergedApiResponse(reportViewApiResponse)
-                : reportViewApiResponse
-            }
-            apiResponseToCompareWith={reportViewApiResponseToCompareWith}
-            chart={
-              enhancedManualReportView
-                ? enhancedChartWithDefaultDimension
-                : chart
-            }
-          />
+        {reportViewApiResponse &&
+        (reportViewApiResponse.total_items > 0 ||
+          (reportViewApiResponseToCompareWith &&
+            reportViewApiResponseToCompareWith.total_items > 0)) ? (
+          this.areAnalyticsReady(reportViewApiResponse.rows) ||
+          (reportViewApiResponseToCompareWith &&
+            this.areAnalyticsReady(reportViewApiResponseToCompareWith.rows)) ? (
+            <FormatDataToChart
+              apiResponse={
+                enhancedManualReportView
+                  ? getMergedApiResponse(reportViewApiResponse)
+                  : reportViewApiResponse
+              }
+              apiResponseToCompareWith={reportViewApiResponseToCompareWith}
+              chart={
+                enhancedManualReportView
+                  ? enhancedChartWithDefaultDimension
+                  : chart
+              }
+            />
+          ) : (
+            // Let's keep this in case we want to display a different
+            // message if datamartUserAnalytics return null/undefined
+            this.getEmptyDataComponent(
+              chart.type,
+              intl.formatMessage(messages.noData),
+            )
+          )
         ) : (
           this.getEmptyDataComponent(
             chart.type,

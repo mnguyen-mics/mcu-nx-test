@@ -5,7 +5,7 @@ import {
   Metric,
   DimensionFilterClause,
 } from '../models/ReportRequestBody';
-import McsMoment from './McsMoment';
+import McsMoment, { isNowFormat } from './McsMoment';
 
 export type DatamartUsersAnalyticsDimension = 'date_yyyy_mm_dd' 
                                               | 'channel_id' 
@@ -26,6 +26,8 @@ export type DatamartUsersAnalyticsMetric = 'users'
                                             | 'avg_transaction_amount'
                                             | 'revenue';
 
+
+
 export function buildDatamartUsersAnalyticsRequestBody(
   datamartId: string,
   metrics: DatamartUsersAnalyticsMetric[],
@@ -35,8 +37,9 @@ export function buildDatamartUsersAnalyticsRequestBody(
   dimensionFilterClauses?: DimensionFilterClause,
   segmentId?: string
 ): ReportRequestBody {
-  const startDate: string = new McsMoment(from.value).toMoment().utc(false).startOf('day').format().replace('Z', '');
-  const endDate: string = new McsMoment(to.value).toMoment().utc(false).endOf('day').format().replace('Z', '');
+  const UTC = !(isNowFormat(from.value) && isNowFormat(to.value));
+  const startDate: string = new McsMoment(from.value).toMoment().utc(UTC).startOf('day').format().replace('Z', '');
+  const endDate: string = new McsMoment(to.value).toMoment().utc(UTC).endOf('day').format().replace('Z', '');
   const dimensionsList: DatamartUsersAnalyticsDimension[] = dimensions || [];
   return buildReport(startDate, endDate, dimensionsList, metrics, dimensionFilterClauses, segmentId);
 }

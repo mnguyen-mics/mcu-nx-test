@@ -6,7 +6,7 @@ import { EditAudienceSegmentParam } from '../../Edit/domain';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import FeedCardList from './../Feeds/FeedCardList';
 import { UserQuerySegment } from '../../../../../models/audiencesegment/AudienceSegmentResource';
 import ABComparisonGauge from './ABComparisonGauge';
@@ -19,10 +19,14 @@ import {
 import DatamartUsersAnalyticsWrapper, {
   DatamartUsersAnalyticsWrapperProps,
 } from '../../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
-import { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
-import { Card } from 'antd';
+import injectThemeColors, {
+  InjectedThemeColorsProps,
+} from '../../../../Helpers/injectThemeColors';
+import { Card, Alert } from 'antd';
 import McsTabs from '../../../../../components/McsTabs';
 import { Loading } from '../../../../../components';
+import { DashboardConfig } from '../../../DatamartUsersAnalytics/DatamartUsersAnalyticsContent';
+import { injectFeatures, InjectedFeaturesProps } from '../../../../Features';
 
 interface State {
   ABComparisonDashboardConfig: DatamartUsersAnalyticsWrapperProps[];
@@ -30,7 +34,7 @@ interface State {
 }
 
 export interface ABComparisonDashboardProps {
-  experimentationSegment?: UserQuerySegment;
+  experimentationSegment: UserQuerySegment;
   controlGroupSegment?: UserQuerySegment;
 }
 
@@ -38,6 +42,8 @@ type Props = ABComparisonDashboardProps &
   InjectedIntlProps &
   InjectedNotificationProps &
   InjectedThemeColorsProps &
+  InjectedThemeColorsProps &
+  InjectedFeaturesProps &
   RouteComponentProps<EditAudienceSegmentParam>;
 
 class ABComparisonDashboard extends React.Component<Props, State> {
@@ -50,7 +56,7 @@ class ABComparisonDashboard extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { controlGroupSegment, experimentationSegment } = this.props;
+    const { controlGroupSegment, experimentationSegment, colors } = this.props;
     const {
       controlGroupSegment: prevControlGroupSegment,
       experimentationSegment: prevExperimentationSegment,
@@ -59,9 +65,7 @@ class ABComparisonDashboard extends React.Component<Props, State> {
       (!_.isEqual(prevControlGroupSegment, controlGroupSegment) ||
         !_.isEqual(prevExperimentationSegment, experimentationSegment)) &&
       controlGroupSegment &&
-      controlGroupSegment.id &&
-      experimentationSegment &&
-      experimentationSegment.id
+      controlGroupSegment.id
     ) {
       this.setState({
         ABComparisonDashboardConfig: this.getABComparisonDashboardConfig().map(
@@ -78,6 +82,7 @@ class ABComparisonDashboard extends React.Component<Props, State> {
                         c.samplingRatio && experimentationSegment.weight,
                     };
                   }),
+                  color: colors['mcs-warning'],
                   segments: {
                     segmentIdToCompareWith: experimentationSegment.id,
                     baseSegmentId: controlGroupSegment.id,
@@ -100,60 +105,58 @@ class ABComparisonDashboard extends React.Component<Props, State> {
       },
       intl,
     } = this.props;
-    if (experimentationSegment) {
-      const getFormattedTitleConfig = (
-        configs: DatamartUsersAnalyticsWrapperProps[],
-      ) => {
-        return configs.map(c => {
-          return {
-            ...c,
-            title: c.title ? intl.formatMessage(messagesMap[c.title]) : '',
-          };
-        });
-      };
+    const getFormattedConfigTitle = (
+      configs: DatamartUsersAnalyticsWrapperProps[],
+    ) => {
+      return configs.map(c => {
+        return {
+          ...c,
+          title: c.title ? intl.formatMessage(messagesMap[c.title]) : '',
+        };
+      });
+    };
 
-      const eCommerceEngagementDashboardConfig = {
-        title: 'E_COMMERCE_ENGAGEMENT',
-        datamartId: experimentationSegment.datamart_id,
-        config: ecommerceEngagementConfig,
-        organisationId: organisationId,
-      };
-      const averageSessionDurationDashboardConfig = {
-        title: 'CHANNEL_ENGAGEMENT',
-        datamartId: experimentationSegment.datamart_id,
-        config: averageSessionDurationConfig,
-        organisationId: organisationId,
-      };
+    const eCommerceEngagementDashboardConfig: DatamartUsersAnalyticsWrapperProps = {
+      title: 'E_COMMERCE_ENGAGEMENT',
+      datamartId: experimentationSegment.datamart_id,
+      config: ecommerceEngagementConfig,
+      organisationId: organisationId,
+    };
+    const averageSessionDurationDashboardConfig: DatamartUsersAnalyticsWrapperProps = {
+      title: 'CHANNEL_ENGAGEMENT',
+      datamartId: experimentationSegment.datamart_id,
+      config: averageSessionDurationConfig,
+      organisationId: organisationId,
+    };
 
-      const ABComparisonDashboardConfig = [
-        eCommerceEngagementDashboardConfig,
-        averageSessionDurationDashboardConfig,
-      ];
-      // Below the graphs, we want to display the config related to the target_metric firstly.
-      // But in a near future there could be more than two engagement configs
-      // Hence the code underneath
+    const ABComparisonDashboardConfig = [
+      eCommerceEngagementDashboardConfig,
+      averageSessionDurationDashboardConfig,
+    ];
+    // Below the graphs, we want to display the config related to the target_metric firstly.
+    // But in a near future there could be more than two engagement configs
+    // Hence the code underneath
 
-      const firstConfig = ABComparisonDashboardConfig.find(
-        c => c.title === experimentationSegment.target_metric,
-      );
+    const firstConfig = ABComparisonDashboardConfig.find(
+      c => c.title === experimentationSegment.target_metric,
+    );
 
-      return firstConfig
-        ? [
-            {
-              ...firstConfig,
-              title: firstConfig.title
-                ? intl.formatMessage(messagesMap[firstConfig.title])
-                : '',
-            },
-          ].concat(
-            getFormattedTitleConfig(
-              ABComparisonDashboardConfig.filter(
-                c => c.title !== experimentationSegment.target_metric,
-              ),
+    return firstConfig
+      ? [
+          {
+            ...firstConfig,
+            title: firstConfig.title
+              ? intl.formatMessage(messagesMap[firstConfig.title])
+              : '',
+          },
+        ].concat(
+          getFormattedConfigTitle(
+            ABComparisonDashboardConfig.filter(
+              c => c.title !== experimentationSegment.target_metric,
             ),
-          )
-        : getFormattedTitleConfig(ABComparisonDashboardConfig);
-    } else return [];
+          ),
+        )
+      : getFormattedConfigTitle(ABComparisonDashboardConfig);
   };
 
   buildItems = () => {
@@ -164,11 +167,12 @@ class ABComparisonDashboard extends React.Component<Props, State> {
       },
       controlGroupSegment,
       intl,
+      colors,
     } = this.props;
-    if (experimentationSegment && controlGroupSegment) {
-      return abTestingDashboardConfig.map((graphConfig, i) => {
-        const newConfig = {
-          ...graphConfig,
+    if (controlGroupSegment) {
+      return abTestingDashboardConfig.map((config, i) => {
+        const enhancedConfig: DashboardConfig = {
+          ...config,
           segments: {
             segmentIdToCompareWith: experimentationSegment.id,
             baseSegmentId: controlGroupSegment.id,
@@ -179,16 +183,28 @@ class ABComparisonDashboard extends React.Component<Props, State> {
               messagesMap.controlGroupSegmentName,
             ),
           },
+          charts: config.charts.map(c => {
+            return {
+              ...c,
+              options: {
+                ...c.options,
+                colors: [colors['mcs-primary'], colors['mcs-warning']],
+              },
+            };
+          }),
         };
         return {
-          title: graphConfig.title || '',
+          title: config.title || '',
           display: (
             <DatamartUsersAnalyticsWrapper
               key={i.toString()}
               datamartId={experimentationSegment.datamart_id}
               organisationId={organisationId}
-              config={[newConfig]}
+              config={[enhancedConfig]}
               showDateRangePicker={true}
+              comparisonStartDate={
+                controlGroupSegment && controlGroupSegment.creation_ts
+              }
             />
           ),
         };
@@ -197,16 +213,57 @@ class ABComparisonDashboard extends React.Component<Props, State> {
   };
 
   render() {
-    const { experimentationSegment } = this.props;
+    const {
+      experimentationSegment,
+      controlGroupSegment,
+      hasFeature,
+    } = this.props;
     const { ABComparisonDashboardConfig, isLoading } = this.state;
-    return !isLoading ? (
+    if (isLoading) {
+      return <Loading className="loading-full-screen" />;
+    }
+
+    return !experimentationSegment.user_points_count ||
+      (controlGroupSegment && !controlGroupSegment.user_points_count) ? (
+      <Alert
+        message={
+          <FormattedMessage
+            id="audience.segments.experimentation.dashboard.noUserPoint"
+            defaultMessage="Your {segmentName} segment has no data. If you feel this is not normal, please contact support."
+            values={{
+              segmentName: !experimentationSegment.user_points_count
+                ? 'Experimentation'
+                : 'Control Group',
+            }}
+          />
+        }
+        type="warning"
+      />
+    ) : experimentationSegment.user_points_count === 0 ||
+      (controlGroupSegment && controlGroupSegment.user_points_count === 0) ? (
+      <Alert
+        message={
+          <FormattedMessage
+            id="audience.segments.experimentation.dashboard.zeroUserPoint"
+            defaultMessage="Your {segmentName} segment has 0 User Point. If you feel this is not normal, please contact support."
+            values={{
+              segmentName:
+                experimentationSegment.user_points_count === 0
+                  ? 'Experimentation'
+                  : 'Control Group',
+            }}
+          />
+        }
+        type="warning"
+      />
+    ) : (
       <React.Fragment>
-        <ABComparisonGauge
-          weight={experimentationSegment && experimentationSegment.weight}
-        />
-        <Card>
-          <McsTabs items={this.buildItems()} />
-        </Card>
+        <ABComparisonGauge weight={experimentationSegment.weight} />
+        {hasFeature('audience-segment_uplift_area_chart') && (
+          <Card>
+            <McsTabs items={this.buildItems()} />
+          </Card>
+        )}
         {ABComparisonDashboardConfig.map((conf, i) => {
           return (
             <DatamartUsersAnalyticsWrapper
@@ -217,13 +274,14 @@ class ABComparisonDashboard extends React.Component<Props, State> {
               organisationId={conf.organisationId}
               config={conf.config}
               showFilter={conf.showFilter}
+              comparisonStartDate={
+                controlGroupSegment && controlGroupSegment.creation_ts
+              }
             />
           );
         })}
         <FeedCardList />
       </React.Fragment>
-    ) : (
-      <Loading className="loading-full-screen" />
     );
   }
 }
@@ -232,4 +290,6 @@ export default compose<Props, ABComparisonDashboardProps>(
   injectIntl,
   withRouter,
   injectNotifications,
+  injectFeatures,
+  injectThemeColors,
 )(ABComparisonDashboard);

@@ -20,6 +20,7 @@ export interface AudienceSegmentResource {
   desktop_cookie_ids_count?: number;
   mobile_cookie_ids_count?: number;
   mobile_ad_ids_count?: number;
+  creation_ts?: number;
 }
 
 export type SortField =

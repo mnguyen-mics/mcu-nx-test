@@ -275,7 +275,9 @@ class FormatDataToChart extends React.Component<JoinedProp, {}> {
           </Tabs>)
       case 'SINGLE_STAT':
         let statValue;
-        const apiMetricValue =  data[0][chart.metricNames[0]] === null || data[0][chart.metricNames[0]] === "NaN" ? 0 : dataToCompareWith ? dataToCompareWith[0][chart.metricNames[0]] : data[0][chart.metricNames[0]];
+        const apiMetricValue = dataToCompareWith ?
+          dataToCompareWith[0][chart.metricNames[0]] === null || dataToCompareWith[0][chart.metricNames[0]] === 'NaN' ? 0 : dataToCompareWith[0][chart.metricNames[0]]
+        : data[0][chart.metricNames[0]] === null || data[0][chart.metricNames[0]] === 'NaN' ? 0 : data[0][chart.metricNames[0]];
 
         if (chart.unit === 'time') {
           statValue = moment.duration(apiMetricValue, "second").format("h[hr] m[min] s[s]");

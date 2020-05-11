@@ -17,6 +17,7 @@ export interface McsDateRangePickerProps {
   format?: string;
   disabled?: boolean;
   excludeToday?: boolean;
+  startDate?: number;
 }
 
 interface McsDateRangePickerState {
@@ -73,12 +74,12 @@ class McsDateRangePicker extends React.Component<
     super(props);
     this.state = {
       showRangePicker: false,
-      ranges: []
+      ranges: [],
     };
   }
 
   componentDidMount() {
-    const { excludeToday } = this.props;
+    const { excludeToday, startDate } = this.props;
     const ranges: Range[] = [
       {
         name: 'TODAY',
@@ -90,26 +91,36 @@ class McsDateRangePicker extends React.Component<
         from: 'now-1d',
         to: 'now-1d',
       },
-      {
-        name: 'LAST_7_DAYS',
-        from: excludeToday ? 'now-8d' : 'now-7d',
-        to: excludeToday ? 'now-1d' : 'now'
-      },
-      {
-        name: 'LAST_30_DAYS',
-        from: excludeToday ? 'now-31d' : 'now-30d',
-        to: excludeToday ? 'now-1d' : 'now',
-      },
     ];
 
+    if (!startDate) {
+      ranges.push(
+        {
+          name: 'LAST_7_DAYS',
+          from: excludeToday ? 'now-8d' : 'now-7d',
+          to: excludeToday ? 'now-1d' : 'now',
+        },
+        {
+          name: 'LAST_30_DAYS',
+          from: excludeToday ? 'now-31d' : 'now-30d',
+          to: excludeToday ? 'now-1d' : 'now',
+        },
+      );
+    }
+
     this.setState({
-      ranges
+      ranges,
     });
   }
 
-  disableFutureDates(current: moment.Moment) {
-    return current && current.valueOf() > Date.now();
-  }
+  disableDates = (current: moment.Moment) => {
+    const { startDate } = this.props;
+    return (
+      current &&
+      (current.valueOf() > Date.now() ||
+        (!!startDate && current.valueOf() < startDate))
+    );
+  };
 
   getSelectedPresettedRange() {
     const { values, format, intl } = this.props;
@@ -210,7 +221,7 @@ class McsDateRangePicker extends React.Component<
         allowClear={false}
         onChange={this.handleDatePickerMenuChange}
         defaultValue={[fromMoment, toMoment]}
-        disabledDate={this.disableFutureDates}
+        disabledDate={this.disableDates}
         onOpenChange={this.onDatePickerOpenChange}
         open={showRangePicker}
       />

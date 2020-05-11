@@ -1,4 +1,5 @@
 import * as React from 'react';
+import _ from 'lodash';
 import { withRouter } from 'react-router-dom';
 import { Row, Col, Button, Modal } from 'antd';
 import moment from 'moment';
@@ -25,6 +26,7 @@ import { lazyInject } from '../../../../../config/inversify.config';
 import StackedBarPlot, {
   StackedBarPlotOptions,
 } from '../../../../../components/Charts/CategoryBased/StackedBarPlot';
+import { AudienceSegmentShape } from '../../../../../models/audiencesegment';
 
 interface State {
   data: OverlapData;
@@ -34,11 +36,12 @@ interface State {
 
 export interface OverlapProps {
   datamartId: string;
+  segment: AudienceSegmentShape;
 }
 
 type Props = InjectedThemeColorsProps &
   InjectedDatamartProps &
-  RouteComponentProps<{ organisationId: string; segmentId: string }> &
+  RouteComponentProps<{ organisationId: string }> &
   InjectedIntlProps &
   OverlapProps;
 
@@ -61,15 +64,11 @@ class Overlap extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const {
-      match: {
-        params: { segmentId },
-      },
-    } = this.props;
+    const { segment } = this.props;
 
     this._overlapInterval
-      .fetchOverlapAnalysisLoop(segmentId)
-      .then(() => this._overlapInterval.fetchOverlapAnalysis(segmentId))
+      .fetchOverlapAnalysisLoop(segment.id)
+      .then(() => this._overlapInterval.fetchOverlapAnalysis(segment.id))
       .then(res => this.setState({ data: res, isFetchingOverlap: false }))
       .catch(() =>
         this.setState({ overlapFetchingError: true, isFetchingOverlap: false }),
@@ -77,22 +76,14 @@ class Overlap extends React.Component<Props, State> {
   }
 
   componentDidUpdate(previousProps: Props) {
-    const {
-      match: {
-        params: { segmentId },
-      },
-    } = this.props;
-    const {
-      match: {
-        params: { segmentId: previousSegmentId },
-      },
-    } = previousProps;
+    const { segment } = this.props;
+    const { segment: prevSegment } = previousProps;
 
-    if (segmentId !== previousSegmentId) {
+    if (!_.isEqual(segment, prevSegment)) {
       this.setState({ isFetchingOverlap: true }, () => {
         this._overlapInterval
-          .fetchOverlapAnalysisLoop(segmentId)
-          .then(() => this._overlapInterval.fetchOverlapAnalysis(segmentId))
+          .fetchOverlapAnalysisLoop(segment.id)
+          .then(() => this._overlapInterval.fetchOverlapAnalysis(segment.id))
           .then(res => this.setState({ data: res, isFetchingOverlap: false }));
       });
     }
@@ -150,8 +141,9 @@ class Overlap extends React.Component<Props, State> {
   renderModalExtend = () => {
     const {
       datamartId,
+      segment,
       match: {
-        params: { organisationId, segmentId },
+        params: { organisationId },
       },
       intl: { formatMessage },
     } = this.props;
@@ -159,10 +151,10 @@ class Overlap extends React.Component<Props, State> {
     const createOv = () => {
       this.setState({ isFetchingOverlap: true });
       this._overlapInterval
-        .createOverlapAnalysis(datamartId, segmentId, organisationId)
+        .createOverlapAnalysis(datamartId, segment.id, organisationId)
         .then(() => {
           this._overlapInterval
-            .fetchOverlapAnalysis(segmentId)
+            .fetchOverlapAnalysis(segment.id)
             .then(res =>
               this.setState({ data: res, isFetchingOverlap: false }),
             );
