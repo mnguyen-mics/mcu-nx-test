@@ -243,7 +243,18 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
         metricNames: ['revenue'],
         dimensionFilterClauses: {
           'operator': 'OR',
-          'filters': []
+          'filters': [
+            {
+              'dimension_name': 'type',
+              'not': false,
+              'operator': 'IN_LIST',
+              'expressions': [
+                'SITE_VISIT',
+                'APP_VISIT'
+              ],
+              'case_sensitive': false
+            }
+          ]
         },
       }
     ]
@@ -302,7 +313,18 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
         metricNames: ['avg_transaction_amount'],
         dimensionFilterClauses: {
           'operator': 'OR',
-          'filters': []
+          'filters': [
+            {
+              'dimension_name': 'type',
+              'not': false,
+              'operator': 'IN_LIST',
+              'expressions': [
+                'SITE_VISIT',
+                'APP_VISIT'
+              ],
+              'case_sensitive': false
+            }
+          ]
         },
       }
     ]
@@ -361,7 +383,18 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
         metricNames: ['number_of_transactions'],
         dimensionFilterClauses: {
           'operator': 'OR',
-          'filters': []
+          'filters': [
+            {
+              'dimension_name': 'type',
+              'not': false,
+              'operator': 'IN_LIST',
+              'expressions': [
+                'SITE_VISIT',
+                'APP_VISIT'
+              ],
+              'case_sensitive': false
+            }
+          ]
         },
       }
     ]
@@ -420,7 +453,18 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
         metricNames: ['avg_session_duration'],
         dimensionFilterClauses: {
           'operator': 'OR',
-          'filters': []
+          'filters': [
+            {
+              'dimension_name': 'type',
+              'not': false,
+              'operator': 'IN_LIST',
+              'expressions': [
+                'SITE_VISIT',
+                'APP_VISIT'
+              ],
+              'case_sensitive': false
+            }
+          ]
         },
       }
     ]
@@ -479,7 +523,18 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
         metricNames: ['avg_number_of_user_events'],
         dimensionFilterClauses: {
           'operator': 'OR',
-          'filters': []
+          'filters': [
+            {
+              'dimension_name': 'type',
+              'not': false,
+              'operator': 'IN_LIST',
+              'expressions': [
+                'SITE_VISIT',
+                'APP_VISIT'
+              ],
+              'case_sensitive': false
+            }
+          ]
         },
       }
     ]
