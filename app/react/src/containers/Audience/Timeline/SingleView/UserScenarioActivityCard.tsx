@@ -7,7 +7,7 @@ import {
   Activity,
   UserScenarioActivityCardProps,
 } from '../../../../models/timeline/timeline';
-import { Card } from '../../../../components/Card/index';
+import { Card } from '@mediarithmics-private/mcs-components-library';
 import messages from '../messages';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { TimelinePageParams } from '../TimelinePage';

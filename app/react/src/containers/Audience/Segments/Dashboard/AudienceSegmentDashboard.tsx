@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import _ from 'lodash';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { Card } from '../../../../components/Card';
+import { Card } from '@mediarithmics-private/mcs-components-library';
 import McsTabs from '../../../../components/McsTabs';
 import { Overview, AdditionDeletion, Overlap } from './Charts';
 import { EditAudienceSegmentParam } from '../Edit/domain';

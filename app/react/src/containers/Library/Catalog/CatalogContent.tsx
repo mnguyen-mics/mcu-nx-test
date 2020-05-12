@@ -3,7 +3,7 @@ import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
 import { CatalogRessource, CategoryRessource, ItemRessource } from '../../../models/catalog/catalog';
-import Card from '../../../components/Card/Card'
+import { Card } from '@mediarithmics-private/mcs-components-library';
 import CatalogItemTable from './CatalogItemTable'
 import McsIcon from '../../../components/McsIcon'
 import { ButtonStyleless } from '../../../components'

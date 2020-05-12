@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Card } from '../../../../components/Card';
+import { Card } from '@mediarithmics-private/mcs-components-library';
 import { ButtonStyleless, McsIcon } from '../../../../components';
 import { LayoutablePlugin } from '../../../../models/Plugins';
 import { injectWorkspace, InjectedWorkspaceProps } from '../../../Datamart';

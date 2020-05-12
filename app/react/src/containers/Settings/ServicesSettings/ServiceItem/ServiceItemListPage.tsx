@@ -11,7 +11,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import { InfiniteList } from '@mediarithmics-private/mcs-components-library';
-import { InfiniteListFilters } from '@mediarithmics-private/mcs-components-library/lib/components/InfiniteList';
+import { InfiniteListFilters } from '@mediarithmics-private/mcs-components-library/lib/components/infinite-list';
 import {
   ServiceItemShape,
   ServiceItemOfferResource,

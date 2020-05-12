@@ -17,7 +17,7 @@ import {
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Row, Icon } from 'antd';
-import { Card } from '../../../components/Card';
+import { Card } from '@mediarithmics-private/mcs-components-library';
 import { ButtonStyleless } from '../../../components';
 import messages from './messages';
 import { FormatProperty } from './domain';

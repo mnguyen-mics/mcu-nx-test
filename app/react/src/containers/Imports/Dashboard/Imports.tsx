@@ -5,7 +5,7 @@ import { Layout, Progress, Tooltip } from 'antd';
 import { compose } from 'recompose';
 import moment from 'moment';
 import ImportHeader from './ImportHeader';
-import Card from '../../../components/Card/Card';
+import { Card } from '@mediarithmics-private/mcs-components-library';
 import { Filters } from '../../../components/ItemList';
 import { ImportExecution, Import } from '../../../models/imports/imports';
 import ImportActionbar from './ImportActionbar';

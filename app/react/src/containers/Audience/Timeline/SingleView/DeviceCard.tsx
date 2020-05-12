@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
-import { Card } from '../../../../components/Card/index';
+import { Card } from '@mediarithmics-private/mcs-components-library';
 import Device from './Device';
 import messages from '../messages';
 import { UserAgentIdentifierInfo } from '../../../../models/timeline/timeline';

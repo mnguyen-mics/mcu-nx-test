@@ -1,6 +1,6 @@
 import * as React from 'react';
 import cuid from 'cuid';
-import { Card } from '../../../../../components/Card';
+import { Card } from '@mediarithmics-private/mcs-components-library';
 import {
   AudienceExternalFeedTyped,
   AudienceTagFeedTyped,

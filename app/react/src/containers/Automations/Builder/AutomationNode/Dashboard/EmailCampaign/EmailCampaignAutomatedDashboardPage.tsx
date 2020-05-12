@@ -3,15 +3,12 @@ import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Layout } from 'antd';
-
 import CampaignDashboardHeader from '../../../../../Campaigns/Common/CampaignDashboardHeader';
-import { Card } from '../../../../../../components/Card';
-
+import { Card } from '@mediarithmics-private/mcs-components-library';
 import {
   EMAIL_DASHBOARD_SEARCH_SETTINGS,
   EmailDashboardSearchSettings,
 } from '../../../../../Campaigns/Email/Dashboard/constants';
-
 import {
   parseSearch,
   isSearchValid,

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Row } from 'antd';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import messages from '../messages';
-import { Card } from '../../../../components/Card/index';
+import { Card } from '@mediarithmics-private/mcs-components-library';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
 import injectNotifications, {

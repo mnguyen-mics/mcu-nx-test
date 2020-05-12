@@ -9,14 +9,14 @@ import {
   defineMessages,
 } from 'react-intl';
 import { Dropdown } from '../../../../../components/PopupContainers';
-import { CardProps } from '../../../../../components/Card/Card';
 import { AdInfoResource } from '../../../../../models/campaign/display/DisplayCampaignInfoResource';
 import { AdResource } from '../../../../../models/campaign/display/AdResource';
 import { UpdateMessage } from './DisplayCampaignAdGroupTable';
 
 import { CampaignRouteParams } from '../../../../../models/campaign/CampaignResource';
 import DisplayCampaignAdTable from '../Common/DisplayCampaignAdTable';
-import { Card } from '../../../../../components/Card/index';
+import { Card } from '@mediarithmics-private/mcs-components-library';
+import { CardProps } from '@mediarithmics-private/mcs-components-library/lib/components/card';
 import McsDateRangePicker, {
   McsDateRangeValue,
 } from '../../../../../components/McsDateRangePicker';
@@ -30,7 +30,10 @@ import Slide from '../../../../../components/Transition/Slide';
 import { McsIcon } from '../../../../../components/index';
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import { injectDrawer } from '../../../../../components/Drawer/index';
-import { executeTasksInSequence, Task } from '../../../../../utils/PromiseHelper';
+import {
+  executeTasksInSequence,
+  Task,
+} from '../../../../../utils/PromiseHelper';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';

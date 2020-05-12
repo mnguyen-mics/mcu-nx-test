@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Row, Col } from 'antd';
-import { Card } from '../../../../../components/Card';
+import { Card } from '@mediarithmics-private/mcs-components-library';
 import { AdInfoResource } from '../../../../../models/campaign/display';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';

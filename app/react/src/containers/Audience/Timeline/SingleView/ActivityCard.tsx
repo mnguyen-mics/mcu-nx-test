@@ -9,7 +9,7 @@ import {
   Activity,
   UserAgentIdentifierInfo,
 } from '../../../../models/timeline/timeline';
-import { Card } from '../../../../components/Card/index';
+import { Card } from '@mediarithmics-private/mcs-components-library';
 import EventActivity from './EventActivity';
 import Device from './Device';
 import Origin from './Origin';

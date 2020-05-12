@@ -6,7 +6,7 @@ import { Layout } from 'antd';
 import EmailCampaignActionbar from './EmailCampaignActionbar';
 import CampaignDashboardHeader from '../../Common/CampaignDashboardHeader';
 import { Labels } from '../../../Labels';
-import { Card } from '../../../../components/Card';
+import { Card } from '@mediarithmics-private/mcs-components-library';
 import {
   EMAIL_DASHBOARD_SEARCH_SETTINGS,
   EmailCampaignDashboardRouteMatchParam,

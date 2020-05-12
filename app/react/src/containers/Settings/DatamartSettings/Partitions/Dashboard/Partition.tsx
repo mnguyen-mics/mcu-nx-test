@@ -3,7 +3,7 @@ import * as React from 'react';
 import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
-import Card from '../../../../../components/Card/Card';
+import { Card } from '@mediarithmics-private/mcs-components-library';
 import ContentHeader from '../../../../../components/ContentHeader';
 import TableView, {
   DataColumnDefinition,

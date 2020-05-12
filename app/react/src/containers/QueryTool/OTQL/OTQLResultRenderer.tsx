@@ -7,7 +7,7 @@ import {
   isCountResult,
   isAggregateResult,
 } from '../../../models/datamart/graphdb/OTQLResult';
-import { Card } from '../../../components/Card/index';
+import { Card } from '@mediarithmics-private/mcs-components-library';
 import AggregationRenderer from './AggregationRenderer';
 import  injectThemeColors, { InjectedThemeColorsProps } from '../../Helpers/injectThemeColors';
 import { compose } from 'recompose';

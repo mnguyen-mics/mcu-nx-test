@@ -4,7 +4,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { Layout } from 'antd';
 import { compose } from 'recompose';
 import GoalHeader from './GoalHeader';
-import Card from '../../../../components/Card/Card';
+import { Card } from '@mediarithmics-private/mcs-components-library';
 import {
   GoalResource,
   AttributionSelectionResource,
