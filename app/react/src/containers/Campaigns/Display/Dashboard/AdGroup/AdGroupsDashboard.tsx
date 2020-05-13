@@ -2,11 +2,9 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-
 import McsTabs from '../../../../../components/McsTabs';
-import { Card } from '../../../../../components/Card/index';
+import { Card } from '@mediarithmics-private/mcs-components-library';
 import { DisplayStackedAreaChart, MediaPerformanceTable } from '../Charts';
-
 import messages from '../messages';
 import { OverallStat } from '../Charts/DisplayStackedAreaChart';
 import { MediaPerformance } from '../Charts/MediaPerformanceTable';

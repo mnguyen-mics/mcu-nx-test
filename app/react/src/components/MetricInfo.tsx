@@ -1,5 +1,5 @@
 import * as React from 'react';
-import McsIcon, { McsIconType } from '../McsIcon';
+import McsIcon, { McsIconType } from './McsIcon';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { Tooltip } from 'antd';

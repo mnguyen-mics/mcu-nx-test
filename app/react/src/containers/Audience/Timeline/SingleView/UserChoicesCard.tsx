@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
-import { Card } from '../../../../components/Card';
+import { Card } from '@mediarithmics-private/mcs-components-library';
 import { Row, Col, Tooltip, Modal, Tag } from 'antd';
 import messages from '../messages';
 import { McsIcon } from '../../../../components';

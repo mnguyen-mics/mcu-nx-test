@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Row, Tooltip, Modal, Col, Button } from 'antd';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import moment from 'moment';
-import { Card } from '../../../../components/Card/index';
+import { Card } from '@mediarithmics-private/mcs-components-library';
 import McsIcon from '../../../../components/McsIcon';
 import { TableView } from '../../../../components/TableView/index';
 import messages from '../messages';

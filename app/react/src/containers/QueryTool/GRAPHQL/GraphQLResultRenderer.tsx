@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Spin, Tag } from 'antd';
 import { FormattedMessage } from 'react-intl';
-import { Card } from '../../../components/Card/index';
+import { Card } from '@mediarithmics-private/mcs-components-library';
 import  injectThemeColors, { InjectedThemeColorsProps } from '../../Helpers/injectThemeColors';
 import { compose } from 'recompose';
 import { GraphQLResult } from '../../../models/datamart/graphdb/OTQLResult';

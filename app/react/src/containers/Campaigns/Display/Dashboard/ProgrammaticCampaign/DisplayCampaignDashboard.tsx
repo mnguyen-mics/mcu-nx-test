@@ -4,7 +4,7 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 
 import McsTabs from '../../../../../components/McsTabs';
-import Card from '../../../../../components/Card/Card';
+import { Card } from '@mediarithmics-private/mcs-components-library';
 import {
   DisplayStackedAreaChart,
   MediaPerformanceTable,

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, Switch, Select, Modal } from 'antd';
 import { FormattedMessage } from 'react-intl';
-import { Card } from '../../../components/Card/index';
+import { Card } from '@mediarithmics-private/mcs-components-library';
 import { OtqlConsole, McsIcon } from '../../../components/index';
 import { QueryPrecisionMode } from '../../../models/datamart/graphdb/OTQLResult';
 

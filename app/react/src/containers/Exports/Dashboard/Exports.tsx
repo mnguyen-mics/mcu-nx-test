@@ -5,7 +5,7 @@ import { Button, Layout, message } from 'antd';
 import { compose } from 'recompose';
 import moment from 'moment';
 import ExportHeader from './ExportHeader';
-import Card from '../../../components/Card/Card';
+import { Card } from '@mediarithmics-private/mcs-components-library';
 import { Filters } from '../../../components/ItemList';
 import { Export, ExportExecution } from '../../../models/exports/exports';
 import ExportActionbar from './ExportActionbar';

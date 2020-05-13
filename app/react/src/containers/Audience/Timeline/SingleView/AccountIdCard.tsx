@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Dictionary } from 'lodash';
 import { Tag, Tooltip, Row } from 'antd';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
-import { Card } from '../../../../components/Card/index';
+import { Card } from '@mediarithmics-private/mcs-components-library';
 import messages from '../messages';
 import { UserAccountCompartmentDatamartSelectionResource } from '../../../../models/datamart/DatamartResource';
 import { UserAccountIdentifierInfo } from '../../../../models/timeline/timeline';

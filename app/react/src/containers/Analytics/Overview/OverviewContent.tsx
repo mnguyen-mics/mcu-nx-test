@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Row } from 'antd';
-import Card from '../../../components/Card/Card';
+import { Card } from '@mediarithmics-private/mcs-components-library';
 import VisitAnalysis from '../Charts/VisitAnalysis';
 import ReportService from '../../../services/ReportService';
 import OverviewHeader from '../Common/OverviewHeader';

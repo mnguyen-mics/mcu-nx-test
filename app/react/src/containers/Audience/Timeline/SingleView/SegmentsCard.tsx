@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
-
-import { Card } from '../../../../components/Card/index';
+import { Card } from '@mediarithmics-private/mcs-components-library';
 import SegmentsTag from './SegmentsTag';
 import messages from '../messages';
 import { UserSegmentResource } from '../../../../models/timeline/timeline';

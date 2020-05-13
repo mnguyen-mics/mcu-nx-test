@@ -3,7 +3,7 @@ import { Button } from 'antd';
 import { compose } from 'recompose';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
-import { Card } from '../../../../components/Card';
+import { Card } from '@mediarithmics-private/mcs-components-library';
 import messages from './messages';
 import {
   EMAIL_DASHBOARD_SEARCH_SETTINGS,

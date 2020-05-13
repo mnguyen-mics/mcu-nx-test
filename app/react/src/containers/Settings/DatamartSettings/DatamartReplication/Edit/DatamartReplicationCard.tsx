@@ -9,7 +9,7 @@ import {
 } from 'react-intl';
 import { DatamartReplicationRouteMatchParam } from './domain';
 import { ButtonStyleless } from '../../../../../components';
-import { Card } from '../../../../../components/Card';
+import { Card } from '@mediarithmics-private/mcs-components-library';
 
 const messagesMap: {
   [key: string]: FormattedMessage.MessageDescriptor;

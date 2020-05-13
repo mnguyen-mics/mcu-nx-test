@@ -11,7 +11,8 @@ import {
 import { Dropdown } from '../../../../../components/PopupContainers';
 import messages from '../messages';
 import Slide from '../../../../../components/Transition/Slide';
-import Card, { CardProps } from '../../../../../components/Card/Card';
+import { Card } from '@mediarithmics-private/mcs-components-library';
+import { CardProps } from '@mediarithmics-private/mcs-components-library/lib/components/card/Card';
 import { AdGroupResource } from '../../../../../models/campaign/display/AdGroupResource';
 import DisplayCampaignAdGroupTable, {
   UpdateMessage,
@@ -32,7 +33,10 @@ import EditAdGroupsForm, {
   EditAdGroupsFormProps,
   EditAdGroupsFormData,
 } from '../../Edit/AdGroup/MultiEdit/EditAdGroupsForm';
-import { Task, executeTasksInSequence } from '../../../../../utils/PromiseHelper';
+import {
+  Task,
+  executeTasksInSequence,
+} from '../../../../../utils/PromiseHelper';
 import { AdGroupStatus } from '../../../../../models/campaign/constants/index';
 import injectNotifications, {
   InjectedNotificationProps,
