@@ -12,11 +12,16 @@ import { isUserQuerySegment } from '../Edit/domain';
 import McsTabs from '../../../../components/McsTabs';
 import ABComparisonDashboard from './Experimentation/ABComparisonDashboard';
 import { UserQuerySegment } from '../../../../models/audiencesegment/AudienceSegmentResource';
+import ABDetailsTable from './Experimentation/ABDetailsTable';
 
 export const messages = defineMessages({
   ABComparison: {
     id: 'audience.segments.dashboard.ABComparisonDashboard.title',
     defaultMessage: 'A/B Comparison',
+  },
+  ABDetails: {
+    id: 'audience.segments.dashboard.ABComparisonDashboard.details',
+    defaultMessage: 'A/B Details',
   },
   experimentation: {
     id: 'audience.segments.dashboard.ABComparisonDashboard.experimentation',
@@ -56,12 +61,20 @@ class AudienceSegment extends React.Component<Props> {
       controlGroupSegment,
       isLoadingControlGroupSegment,
     } = this.props;
-    // Segment here has to be a AB_TESTING_EXPERIMENT segment
     return [
       {
         title: intl.formatMessage(messages.ABComparison),
         display: (
           <ABComparisonDashboard
+            experimentationSegment={segment}
+            controlGroupSegment={controlGroupSegment}
+          />
+        ),
+      },
+      {
+        title: intl.formatMessage(messages.ABDetails),
+        display: (
+          <ABDetailsTable
             experimentationSegment={segment}
             controlGroupSegment={controlGroupSegment}
           />

@@ -13,6 +13,7 @@ import McsMoment from '../utils/McsMoment.ts';
 import emailMessages from '../containers/Campaigns/Email/List/messages.ts';
 import goalMessages from '../containers/Campaigns/Goal/Dashboard/messages.ts';
 import { formatUnixTimestamp } from '../utils/DateHelper.ts';
+import { messagesMap as abComparisonMessage } from '../containers/Audience/Segments/Dashboard/Experimentation/AudienceExperimentationForm.tsx';
 
 const exportServiceMessages = defineMessages({
   from: {
@@ -814,6 +815,41 @@ const exportCreativeAdServingSnippet = (organisationId, campaignName, data, form
   }
 };
 
+const exportABComparison = (experimentationSegment, dataSource, formatMessage) => {
+
+  const titleLine = formatMessage(abComparisonMessage.abTestingDetailsTitle);
+  const blankLine = [];
+
+  const dataSheet = [];
+
+  dataSheet.push(titleLine);
+  dataSheet.push(blankLine);
+
+  const headersMap = [
+    { name: 'metricName', translation: '' },
+    { name: 'experimentationMetric', translation: formatMessage(abComparisonMessage.experimentationSegmentName) },
+    { name: 'controlGroupMetric', translation: formatMessage(abComparisonMessage.controlGroupSegmentName) },
+    { name: 'comparison', translation: formatMessage(abComparisonMessage.uplift) },
+  ];
+
+  const headersLine = headersMap.map(header => header.translation);
+
+  dataSheet.push(headersLine);
+
+  dataSource.forEach(row => {
+    const dataLine = headersMap.map(header => {
+      return row[header.name];
+    });
+    dataSheet.push(dataLine);
+  });
+
+  const sheets = [{
+    name: titleLine,
+    data: dataSheet,
+  }];
+  exportData(sheets, `${experimentationSegment.name}_ab-details`, 'xlsx');
+};
+
 export default {
   exportData,
   exportGoals,
@@ -826,5 +862,6 @@ export default {
   exportDisplayCampaignDashboard,
   exportAudienceSegmentDashboard,
   exportServiceUsageReportList,
-  exportCreativeAdServingSnippet
+  exportCreativeAdServingSnippet,
+  exportABComparison
 };
