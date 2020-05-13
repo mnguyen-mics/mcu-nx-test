@@ -289,7 +289,7 @@ class FormatDataToChart extends React.Component<JoinedProp, {}> {
           statValue = numeral(apiMetricValue).format('0.00a');
         }
         else {
-          statValue = apiMetricValue;
+          statValue = (apiMetricValue as number).toFixed(2);
         }
         const originalValue = data[0][chart.metricNames[0]];
         const newValue = dataToCompareWith ? dataToCompareWith[0][chart.metricNames[0]] : undefined;

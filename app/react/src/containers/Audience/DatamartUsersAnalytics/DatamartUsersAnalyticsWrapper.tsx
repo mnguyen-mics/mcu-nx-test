@@ -17,12 +17,13 @@ import {
   AllUsersSettings,
   isSearchValid,
   buildDefaultSearch,
-  compareSearches,
+  convertTimestampToDayNumber
 } from '../../../utils/LocationSearchHelper';
 import SegmentFilter from './components/SegmentFilter';
 import { DATAMART_USERS_ANALYTICS_SETTING } from '../Segments/Dashboard/constants';
 import { LabeledValue } from 'antd/lib/select';
 import ContentHeader from '../../../components/ContentHeader';
+import McsMoment from '../../../utils/McsMoment';
 
 interface State {
   layout: Layout[];
@@ -47,7 +48,7 @@ export interface DatamartUsersAnalyticsWrapperProps {
 
 type FILTERS = DateSearchSettings | SegmentsSearchSettings | AllUsersSettings;
 
-type JoinedProp = RouteComponentProps & DatamartUsersAnalyticsWrapperProps;
+type JoinedProp = RouteComponentProps<{segmentId?: string}> & DatamartUsersAnalyticsWrapperProps;
 
 class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
   constructor(props: JoinedProp) {
@@ -60,46 +61,44 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
   }
 
   componentDidMount() {
+    this.setInitialParams();
+  }
+
+  componentDidUpdate(prevProps: JoinedProp) {
     const {
       location: { search, pathname },
-      history,
-      defaultSegment,
-      disableAllUserFilter
+      history
     } = this.props;
-    const nextLocation = {
-      pathname: pathname,
-      search: buildDefaultSearch(search, DATAMART_USERS_ANALYTICS_SETTING),
-    };
-    if (!isSearchValid(search, DATAMART_USERS_ANALYTICS_SETTING)) {
-      history.replace(nextLocation);
 
-      if (defaultSegment || disableAllUserFilter) {
-        this.updateLocationSearch({
-          allusers: disableAllUserFilter ? false : true,
-          segments: defaultSegment ? [defaultSegment.key] : []
+    if(prevProps.location.search !== search) {
+      if (!isSearchValid(search, DATAMART_USERS_ANALYTICS_SETTING)) {
+        history.replace({
+          pathname: pathname,
+          search: buildDefaultSearch(search, DATAMART_USERS_ANALYTICS_SETTING)
         });
       }
     }
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps: JoinedProp) {
+  setInitialParams = () => {
     const {
-      location: { search },
-      history
+      location: { search, pathname },
+      history,
+      defaultSegment,
+      disableAllUserFilter,
+      comparisonStartDate
     } = this.props;
-
-    const {
-      location: { pathname: nextPathname, search: nextSearch },
-    } = nextProps;
-
-    if (!compareSearches(search, nextSearch)) {
-
-      if (!isSearchValid(nextSearch, DATAMART_USERS_ANALYTICS_SETTING)) {
-        history.replace({
-          pathname: nextPathname,
-          search: buildDefaultSearch(nextSearch, DATAMART_USERS_ANALYTICS_SETTING),
-        });
-      }
+    const nextLocation = {
+      pathname: pathname,
+      search: updateSearch(search, {
+        allusers: disableAllUserFilter ? false : true,
+        segments: defaultSegment ? [defaultSegment.key] : [],
+        from: new McsMoment(`now-${comparisonStartDate ? convertTimestampToDayNumber(comparisonStartDate) : '8'}d`),
+        to: new McsMoment('now-1d'),
+      }),
+    };
+    if (!isSearchValid(search, DATAMART_USERS_ANALYTICS_SETTING)) {
+      history.replace(nextLocation);
     }
   }
 
