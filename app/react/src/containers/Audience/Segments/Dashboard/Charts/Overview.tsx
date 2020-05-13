@@ -76,7 +76,7 @@ class Overview extends React.Component<Props> {
         to: newValues.to,
       });
 
-    return <McsDateRangePicker values={values} onChange={onChange} />;
+    return <McsDateRangePicker values={values} onChange={onChange} excludeToday={true}/>;
   }
 
   renderStackedAreaCharts() {

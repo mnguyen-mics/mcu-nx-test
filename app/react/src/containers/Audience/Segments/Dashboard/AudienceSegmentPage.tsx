@@ -4,11 +4,8 @@ import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { Layout } from 'antd';
 import { compose } from 'recompose';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
-import { SEGMENT_QUERY_SETTINGS } from './constants';
 import {
-  isSearchValid,
-  buildDefaultSearch,
-  compareSearches,
+  compareSearches
 } from '../../../../utils/LocationSearchHelper';
 import AudienceSegmentActionbar from './AudienceSegmentActionbar';
 import AudienceSegment from './AudienceSegment';
@@ -70,8 +67,6 @@ class AudienceSegmentPage extends React.Component<Props, State> {
 
   componentDidMount() {
     const {
-      history,
-      location: { search, pathname },
       match: {
         params: { segmentId, organisationId },
       },
@@ -83,14 +78,8 @@ class AudienceSegmentPage extends React.Component<Props, State> {
       datamarts: workspace ? workspace.datamarts : [],
     });
 
-    if (!isSearchValid(search, SEGMENT_QUERY_SETTINGS)) {
-      history.replace({
-        pathname: pathname,
-        search: buildDefaultSearch(search, SEGMENT_QUERY_SETTINGS),
-      });
-    } else {
-      this.fetchAudienceSegment(segmentId);
-    }
+
+    this.fetchAudienceSegment(segmentId);
   }
 
   refreshAudienceSegment = (segmentId: string) => {
@@ -181,7 +170,7 @@ class AudienceSegmentPage extends React.Component<Props, State> {
     } = this.props;
 
     const {
-      location: { pathname: nextPathname, search: nextSearch },
+      location: { search: nextSearch },
       match: {
         params: {
           segmentId: nextSegmentId,
@@ -199,15 +188,9 @@ class AudienceSegmentPage extends React.Component<Props, State> {
       if (organisationId !== nextOrganisationId) {
         history.push(`/v2/o/${nextOrganisationId}/audience/segments`);
       }
-      if (!isSearchValid(nextSearch, SEGMENT_QUERY_SETTINGS)) {
-        history.replace({
-          pathname: nextPathname,
-          search: buildDefaultSearch(nextSearch, SEGMENT_QUERY_SETTINGS),
-        });
-      } else {
-        this.setState({ isLoading: true });
-        this.fetchAudienceSegment(segmentId);
-      }
+
+      this.setState({ isLoading: true });
+      this.fetchAudienceSegment(segmentId);
     }
   }
 

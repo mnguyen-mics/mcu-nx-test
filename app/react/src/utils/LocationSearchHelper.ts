@@ -148,7 +148,7 @@ export interface FiltersSearchSettings extends KeywordSearchSettings {
 export const SEGMENTS_FILTERS_SEARCH_SETTINGS: SearchSetting[] = [
   {
     paramName: 'segments',
-    defaultValue: [],
+    defaultValue: [''],
     deserialize: (query: Index<string>) => {
       if (query.segments) {
         return query.segments.split(',');

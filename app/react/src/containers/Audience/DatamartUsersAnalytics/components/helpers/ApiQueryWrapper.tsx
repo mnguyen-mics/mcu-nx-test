@@ -23,6 +23,7 @@ import { MetricCounterLoader } from '../MetricCounterLoader';
 import McsMoment from '../../../../../utils/McsMoment';
 import { McsDateRangeValue } from '../../../../../components/McsDateRangePicker';
 import { EmptyRecords } from '../../../../../components';
+import { convertTimestampToDayNumber } from '../../../../../utils/LocationSearchHelper';
 
 const messages = defineMessages({
   noData: {
@@ -72,10 +73,11 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       segmentId,
       compareWithSegmentId,
       dateRange,
+      comparisonStartDate
     } = this.props;
 
     if (!dateRange.from.value || !dateRange.to.value) {
-      dateRange.from = new McsMoment('now-8d');
+      dateRange.from = new McsMoment(`now-${comparisonStartDate ? convertTimestampToDayNumber(comparisonStartDate) : '8'}d`);
       dateRange.to = new McsMoment('now-1d');
     }
     this.fetchAnalytics(
@@ -112,6 +114,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       onChange,
       segmentId,
       compareWithSegmentId,
+      comparisonStartDate
     } = this.props;
 
     if (
@@ -123,7 +126,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       prevProps.compareWithSegmentId !== compareWithSegmentId
     ) {
       if (!dateRange.from.value || !dateRange.to.value) {
-        dateRange.from = new McsMoment('now-8d');
+        dateRange.from = new McsMoment(`now-${comparisonStartDate ? convertTimestampToDayNumber(comparisonStartDate) : '8'}d`);
         dateRange.to = new McsMoment('now-1d');
       }
       this.fetchAnalytics(
@@ -243,7 +246,10 @@ class ApiQueryWrapper extends React.Component<Props, State> {
   }
 
   areAnalyticsReady = (items: any[]) => {
-    return !(items.includes(null) || items.includes(undefined));
+    const isItemNull = items[0][0] === null;
+    const isItemNaN =  items[0][0] === 'NaN';
+    const isReady = !(isItemNull|| isItemNaN);
+    return isReady;
   };
 
   render() {
