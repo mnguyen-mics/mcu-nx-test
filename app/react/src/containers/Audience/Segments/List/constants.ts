@@ -5,6 +5,7 @@ import {
   SearchSetting,
   DATAMART_SEARCH_SETTINGS,
   SORT_SEARCH_SETTINGS,
+  DATE_SEARCH_SETTINGS,
 } from '../../../../utils/LocationSearchHelper';
 import { AudienceSegmentType } from '../../../../models/audiencesegment';
 import { Index } from '../../../../utils';
@@ -34,4 +35,8 @@ export const SEGMENTS_SEARCH_SETTINGS: SearchSetting[] = [
   ...DATAMART_SEARCH_SETTINGS,
   ...SORT_SEARCH_SETTINGS,
   typeSearchSetting,
+];
+
+export const SEGMENT_SETTINGS: SearchSetting[] = [
+  ...DATE_SEARCH_SETTINGS,
 ];
