@@ -293,13 +293,19 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
   };
 
   render() {
-    const { segment, datamarts } = this.props;
+    const { segment, datamarts, hasFeature } = this.props;
     const { charts, datamartAnalyticsDashboardConfig } = this.state;
     const currentSegment = segment ? {
       key: segment.id.toString(),
       label: segment.name
     } : undefined;
 
+    const datamart = segment && datamarts.find(d => d.id === segment.datamart_id);
+    const datafarm = datamart && datamart.datafarm;
+
+    const shouldDisplayAnalyticsFeature =
+    hasFeature('audience-dashboards-datamart_users_analytics') &&
+    (datafarm === 'DF_EU_2017_09' || datafarm === 'DF_EU_DEV');
 
     return (
       <div>
@@ -321,7 +327,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
         <Card>
           <McsTabs items={this.buildItems()} />
         </Card>
-        {datamartAnalyticsDashboardConfig.map((conf, i) => {
+        {shouldDisplayAnalyticsFeature && datamartAnalyticsDashboardConfig.map((conf, i) => {
           return (
             <DatamartUsersAnalyticsWrapper
               key={i.toString()}
