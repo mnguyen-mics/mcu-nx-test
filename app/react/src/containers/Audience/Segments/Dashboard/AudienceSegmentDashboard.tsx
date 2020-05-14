@@ -4,12 +4,17 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { Card } from '@mediarithmics-private/mcs-components-library';
 import McsTabs from '../../../../components/McsTabs';
 import { Overview, AdditionDeletion, Overlap } from './Charts';
-import { EditAudienceSegmentParam } from '../Edit/domain';
+import { EditAudienceSegmentParam, isUserQuerySegment } from '../Edit/domain';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import UserListImportCard from './UserListImportCard';
-import { InjectedIntlProps, injectIntl, defineMessages, InjectedIntl } from 'react-intl';
+import {
+  InjectedIntlProps,
+  injectIntl,
+  defineMessages,
+  InjectedIntl,
+} from 'react-intl';
 import AudienceCounters from './AudienceCounters';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import ReportService, { Filter } from '../../../../services/ReportService';
@@ -18,6 +23,9 @@ import { normalizeReportView } from '../../../../utils/MetricHelper';
 import {
   parseSearch,
   compareSearches,
+  isSearchValid,
+  SearchSetting,
+  buildDefaultSearch,
 } from '../../../../utils/LocationSearchHelper';
 import {
   SEGMENT_QUERY_SETTINGS,
@@ -34,8 +42,13 @@ import { DashboardResource } from '../../../../models/dashboards/dashboards';
 import DashboardWrapper from '../../Dashboard/DashboardWrapper';
 import ContentHeader from '../../../../components/ContentHeader';
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
-import DatamartUsersAnalyticsWrapper, { DatamartUsersAnalyticsWrapperProps } from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
-import { ecommerceEngagementConfig, averageSessionDurationConfig } from '../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
+import DatamartUsersAnalyticsWrapper, {
+  DatamartUsersAnalyticsWrapperProps,
+} from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
+import {
+  ecommerceEngagementConfig,
+  averageSessionDurationConfig,
+} from '../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
 
 interface State {
   loading: boolean;
@@ -43,8 +56,8 @@ interface State {
     reports: AudienceReport;
     isLoading: boolean;
   };
-  charts: DashboardResource[],
-  datamartAnalyticsDashboardConfig: DatamartUsersAnalyticsWrapperProps[]
+  charts: DashboardResource[];
+  datamartAnalyticsDashboardConfig: DatamartUsersAnalyticsWrapperProps[];
 }
 export interface AudienceSegmentDashboardProps {
   segment?: AudienceSegmentShape;
@@ -80,11 +93,24 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
       match: {
         params: { segmentId, organisationId },
       },
-      location: { search },
+      location: { search, pathname },
       segment,
-      datamarts
+      datamarts,
+      history,
     } = this.props;
-    this.fetchDashboardView(search, organisationId, segmentId, datamarts, segment);
+    if (!isSearchValid(search, this.getSearchSetting())) {
+      history.replace({
+        pathname: pathname,
+        search: buildDefaultSearch(search, this.getSearchSetting()),
+      });
+    }
+    this.fetchDashboardView(
+      search,
+      organisationId,
+      segmentId,
+      datamarts,
+      segment,
+    );
   }
 
   componentDidUpdate(previousProps: Props) {
@@ -95,28 +121,43 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
       location: { search },
       datamarts,
       segment,
-      intl
+      intl,
     } = this.props;
 
     const {
       match: {
-        params: {
-          segmentId: previousSegmentId,
-        },
+        params: { segmentId: previousSegmentId },
       },
       segment: prevSegment,
       location: { search: previousSearch },
     } = previousProps;
 
-    if (!compareSearches(search, previousSearch) || segmentId !== previousSegmentId || segment !== prevSegment) {
-      this.fetchDashboardView(search, organisationId, segmentId, datamarts, segment);
+    if (
+      !compareSearches(search, previousSearch) ||
+      segmentId !== previousSegmentId ||
+      segment !== prevSegment
+    ) {
+      this.fetchDashboardView(
+        search,
+        organisationId,
+        segmentId,
+        datamarts,
+        segment,
+      );
       if (segment && segment.datamart_id) {
         this.setState({
-          datamartAnalyticsDashboardConfig: this.getDatamartAnaylicsDashboardConfig(organisationId, segment.datamart_id, intl)
+          datamartAnalyticsDashboardConfig: this.getDatamartAnaylicsDashboardConfig(
+            organisationId,
+            segment.datamart_id,
+            intl,
+          ),
         });
       }
-
     }
+  }
+
+  getSearchSetting(): SearchSetting[] {
+    return [...SEGMENT_QUERY_SETTINGS];
   }
 
   fetchDashboardView = (
@@ -271,7 +312,11 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
     return items;
   };
 
-  getDatamartAnaylicsDashboardConfig = (organisationId: string, datamartId: string, intl: InjectedIntl): DatamartUsersAnalyticsWrapperProps[] => {
+  getDatamartAnaylicsDashboardConfig = (
+    organisationId: string,
+    datamartId: string,
+    intl: InjectedIntl,
+  ): DatamartUsersAnalyticsWrapperProps[] => {
     const config = [
       {
         title: 'Channel engagment',
@@ -285,7 +330,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
         title: 'E-commerce engagment',
         datamartId: datamartId,
         organisationId: organisationId,
-        config: ecommerceEngagementConfig
+        config: ecommerceEngagementConfig,
       },
     ];
 
@@ -295,17 +340,24 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
   render() {
     const { segment, datamarts, hasFeature } = this.props;
     const { charts, datamartAnalyticsDashboardConfig } = this.state;
-    const currentSegment = segment ? {
-      key: segment.id.toString(),
-      label: segment.name
-    } : undefined;
+    const currentSegment = segment
+      ? {
+          key: segment.id.toString(),
+          label: segment.name,
+        }
+      : undefined;
 
-    const datamart = segment && datamarts.find(d => d.id === segment.datamart_id);
+    const datamart =
+      segment && datamarts.find(d => d.id === segment.datamart_id);
     const datafarm = datamart && datamart.datafarm;
 
     const shouldDisplayAnalyticsFeature =
-    hasFeature('audience-dashboards-datamart_users_analytics') &&
-    (datafarm === 'DF_EU_2017_09' || datafarm === 'DF_EU_DEV');
+      hasFeature('audience-dashboards-datamart_users_analytics') &&
+      (datafarm === 'DF_EU_2017_09' || datafarm === 'DF_EU_DEV') &&
+      segment &&
+      isUserQuerySegment(segment) &&
+      segment.subtype !== 'AB_TESTING_CONTROL_GROUP' &&
+      segment.subtype !== 'AB_TESTING_EXPERIMENT';
 
     return (
       <div>
@@ -327,22 +379,23 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
         <Card>
           <McsTabs items={this.buildItems()} />
         </Card>
-        {shouldDisplayAnalyticsFeature && datamartAnalyticsDashboardConfig.map((conf, i) => {
-          return (
-            <DatamartUsersAnalyticsWrapper
-              key={i.toString()}
-              title={conf.title}
-              subTitle={conf.subTitle}
-              datamartId={conf.datamartId}
-              organisationId={conf.organisationId}
-              config={conf.config}
-              showFilter={conf.showFilter}
-              showDateRangePicker={conf.showDateRangePicker}
-              disableAllUserFilter={true}
-              defaultSegment={currentSegment}
-            />
-          )
-        })}
+        {shouldDisplayAnalyticsFeature &&
+          datamartAnalyticsDashboardConfig.map((conf, i) => {
+            return (
+              <DatamartUsersAnalyticsWrapper
+                key={i.toString()}
+                title={conf.title}
+                subTitle={conf.subTitle}
+                datamartId={conf.datamartId}
+                organisationId={conf.organisationId}
+                config={conf.config}
+                showFilter={conf.showFilter}
+                showDateRangePicker={conf.showDateRangePicker}
+                disableAllUserFilter={true}
+                defaultSegment={currentSegment}
+              />
+            );
+          })}
         <FeedCardList />
       </div>
     );
