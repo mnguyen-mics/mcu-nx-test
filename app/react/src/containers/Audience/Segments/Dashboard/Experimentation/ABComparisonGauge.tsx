@@ -1,13 +1,15 @@
 import * as React from 'react';
-// import { Row, Col } from 'antd';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../../Helpers/injectThemeColors';
 import { messages } from '../AudienceSegment';
+import { UserQuerySegment } from '../../../../../models/audiencesegment/AudienceSegmentResource';
 
 export interface ABComparisonGaugeProps {
+  segment: UserQuerySegment;
+  segmentToCompareWith?: UserQuerySegment;
   weight?: number;
 }
 
@@ -29,8 +31,9 @@ class ABComparisonGauge extends React.Component<Props> {
   };
 
   render() {
-    const { intl, weight } = this.props;
+    const { segment, segmentToCompareWith, intl, weight } = this.props;
     const percent = weight && Math.round(weight * 100) / 100;
+
     return (
       percent && (
         <div className="mcs-audienceSegmentDashboard_abGauge">
@@ -39,12 +42,18 @@ class ABComparisonGauge extends React.Component<Props> {
             className={`mcs-audienceSegmentDashboard_abGaugeLeft`}
           >
             {intl.formatMessage(messages.experimentation)} ({percent}%)
+            <span>{` ${segment.user_points_count} U.P.`}</span>
           </div>
+
           <div
             style={{ width: `${this.getGaugeRatio(percent)[1]}%` }}
             className={`mcs-audienceSegmentDashboard_abGaugeRight`}
           >
             {intl.formatMessage(messages.controlGroup)} ({100 - percent}%)
+            <span>
+              {segmentToCompareWith &&
+                ` ${segmentToCompareWith.user_points_count} U.P.`}
+            </span>
           </div>
         </div>
       )

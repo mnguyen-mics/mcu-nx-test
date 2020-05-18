@@ -45,7 +45,7 @@ export interface DatamartUsersAnalyticsWrapperProps {
   defaultSegment?: LabeledValue;
 }
 
-type FILTERS = DateSearchSettings | SegmentsSearchSettings | AllUsersSettings;
+export type FILTERS = DateSearchSettings | SegmentsSearchSettings | AllUsersSettings;
 
 type JoinedProp = RouteComponentProps<{ segmentId?: string }> &
   DatamartUsersAnalyticsWrapperProps;
