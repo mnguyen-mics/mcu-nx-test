@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { Card } from '@mediarithmics-private/mcs-components-library';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { Button, Statistic } from 'antd';
+import { Button } from 'antd';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
@@ -31,6 +31,7 @@ import { FILTERS } from '../../../../../containers/Audience/DatamartUsersAnalyti
 import McsDateRangePicker, {
   McsDateRangeValue,
 } from '../../../../../components/McsDateRangePicker';
+import { formatMetric } from '../../../../../utils/MetricHelper';
 
 const abComparisonMessage: {
   [key: string]: FormattedMessage.MessageDescriptor;
@@ -194,10 +195,9 @@ class ABDetailsTable extends React.Component<Props, State> {
                 typeof controlGroupMetric === 'number' &&
                 controlGroupMetric !== 0
                 ? Math.abs(
-                    ((controlGroupMetric * ratio - experimentationMetric) /
-                      (controlGroupMetric * ratio)) *
-                      100,
-                  ).toFixed(2)
+                    (controlGroupMetric * ratio - experimentationMetric) /
+                      (controlGroupMetric * ratio),
+                  )
                 : '-';
             };
             return {
@@ -258,39 +258,22 @@ class ABDetailsTable extends React.Component<Props, State> {
         intlMessage: messagesMap.experimentationSegmentName,
         key: 'experimentationMetric',
         isHideable: false,
-        render: (text: string) => (
-          <Statistic
-            value={text}
-            precision={2}
-            valueStyle={{ fontSize: '16px' }}
-          />
-        ),
+        render: (text: string) => formatMetric(text, '0,0.00'),
       },
       {
         intlMessage: messagesMap.controlGroupSegmentName,
         key: 'controlGroupMetric',
         isHideable: false,
-        render: (text: string) => (
-          <Statistic
-            value={text}
-            precision={2}
-            valueStyle={{ fontSize: '16px' }}
-          />
-        ),
+        render: (text: string) => formatMetric(text, '0,0.00'),
       },
       {
         intlMessage: messagesMap.uplift,
         key: 'comparison',
         isHideable: false,
         render: (text: string, record: ABDetailsTableDataSource) => {
-          return (
-            <Statistic
-              value={text}
-              precision={2}
-              suffix={record.metricName !== 'User Points' && '%'}
-              valueStyle={{ fontSize: '16px' }}
-            />
-          );
+          return record.metricName !== 'User Points'
+            ? `${formatMetric(text, '0,0.00%')}`
+            : text;
         },
       },
     ];

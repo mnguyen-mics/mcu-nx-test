@@ -170,4 +170,8 @@ export default defineMessages({
     id: 'audience.segments.lookalikeCreation.extension.error',
     defaultMessage: 'Select a partition before choosing an extension factor.',
   },
+  seeToControlGroupDashboard: {
+    id: 'audience.segments.ABComparisonDashboard.controlGroupDashboardButton',
+    defaultMessage: 'See Control Group Dashboard',
+  },
 });

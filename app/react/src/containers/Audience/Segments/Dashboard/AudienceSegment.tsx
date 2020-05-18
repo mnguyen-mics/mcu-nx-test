@@ -38,7 +38,6 @@ export interface AudienceSegmentProps {
   isLoading: boolean;
   datamarts: DatamartWithMetricResource[];
   controlGroupSegment?: UserQuerySegment;
-  isLoadingControlGroupSegment: boolean;
 }
 
 type Props = AudienceSegmentProps &
@@ -59,7 +58,6 @@ class AudienceSegment extends React.Component<Props> {
       isLoading,
       datamarts,
       controlGroupSegment,
-      isLoadingControlGroupSegment,
     } = this.props;
     return [
       {
@@ -89,17 +87,7 @@ class AudienceSegment extends React.Component<Props> {
             datamarts={datamarts}
           />
         ),
-      },
-      {
-        title: intl.formatMessage(messages.controlGroup),
-        display: (
-          <AudienceSegmentDashboard
-            segment={controlGroupSegment}
-            isLoading={isLoadingControlGroupSegment}
-            datamarts={datamarts}
-          />
-        ),
-      },
+      }
     ];
   };
 

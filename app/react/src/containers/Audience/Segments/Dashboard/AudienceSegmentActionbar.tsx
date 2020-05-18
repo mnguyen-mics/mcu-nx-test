@@ -45,6 +45,7 @@ export interface AudienceSegmentActionbarProps {
   isLoading: boolean;
   onCalibrationClick: () => void;
   datamarts: DatamartWithMetricResource[];
+  controlGroupSegment?: UserQuerySegment;
 }
 
 type Props = AudienceSegmentActionbarProps &
@@ -263,6 +264,8 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
       segment,
       onCalibrationClick,
       hasFeature,
+      controlGroupSegment,
+      history,
     } = this.props;
 
     const exportIsRunning = this.state.exportIsRunning;
@@ -386,6 +389,13 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
             isUserQuerySegment(segment) &&
             this.onCreateExperimentationClick()
           );
+        case 'CONTROL_GROUP_SEGMENT':
+          return (
+            controlGroupSegment &&
+            history.push(
+              `/v2/o/${organisationId}/audience/segments/${controlGroupSegment.id}`,
+            )
+          );
         default:
           return () => ({});
       }
@@ -404,6 +414,11 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
               <FormattedMessage {...segmentMessages.experimentationCreation} />
             </Menu.Item>
           )}
+        {controlGroupSegment && (
+          <Menu.Item key="CONTROL_GROUP_SEGMENT">
+            <FormattedMessage {...segmentMessages.seeToControlGroupDashboard} />
+          </Menu.Item>
+        )}
       </Menu>
     );
 

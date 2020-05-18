@@ -356,7 +356,6 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
       (datafarm === 'DF_EU_2017_09' || datafarm === 'DF_EU_DEV') &&
       segment &&
       isUserQuerySegment(segment) &&
-      segment.subtype !== 'AB_TESTING_CONTROL_GROUP' &&
       segment.subtype !== 'AB_TESTING_EXPERIMENT';
 
     return (
