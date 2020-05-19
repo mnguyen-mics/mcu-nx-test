@@ -76,25 +76,25 @@ class CatalogContent extends React.Component<
     this.fetchCatalog(datamart.id);
   }
   
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate(previousProps: Props) {
     const {
       match: {
         params: {
           organisationId
         }
       },
+      datamart
     } = this.props;
 
     const {
       match: {
         params: {
-          organisationId: nextOrganisationId,
+          organisationId: previousOrganisationId,
         }
       },
-      datamart,
-    } = nextProps;
+    } = previousProps;
 
-    if (organisationId !== nextOrganisationId) {
+    if (organisationId !== previousOrganisationId) {
       this.fetchCatalog(datamart.id);
     }
   }
