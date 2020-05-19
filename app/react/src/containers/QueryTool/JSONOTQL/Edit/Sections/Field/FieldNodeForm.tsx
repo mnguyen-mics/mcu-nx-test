@@ -61,6 +61,7 @@ import {
 import { IChannelService } from '../../../../../../services/ChannelService';
 import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
 import { IReferenceTableService } from '../../../../../../services/ReferenceTableService';
+import { injectWorkspace, InjectedWorkspaceProps } from '../../../../../Datamart';
 
 export const FormTagSelectField = Field as new () => GenericField<
   FormTagSelectProps
@@ -100,6 +101,7 @@ type Props = FieldNodeFormProps &
   ValidatorProps &
   NormalizerProps &
   MapStateToProps &
+  InjectedWorkspaceProps &
   RouteComponentProps<{ organisationId: string }>;
 
 type ConditionsOperators =
@@ -668,6 +670,9 @@ class FieldNodeForm extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
+      workspace : {
+        community_id
+      },
     } = this.props;
 
     const field = this.getField(formValues, expressionIndex);
@@ -719,7 +724,8 @@ class FieldNodeForm extends React.Component<Props, State> {
             fetchListMethod = (keywords: string) => {
               return this._channelService
                 .getChannelsByOrganisation(organisationId, {
-                  community_id: organisationId,
+                  community_id:
+                    organisationId === community_id ? community_id : undefined,
                   keywords: keywords,
                   with_source_datamarts: true,
                 })
@@ -898,6 +904,7 @@ const mapStateToProps = (
 export default compose<Props, FieldNodeFormProps>(
   withRouter,
   injectIntl,
+  injectWorkspace,
   withValidators,
   withNormalizer,
   connect(mapStateToProps),
