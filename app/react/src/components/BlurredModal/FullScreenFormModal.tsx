@@ -37,11 +37,14 @@ export default class FullScreenModal extends React.Component<FullScreenFormModal
     }
   }
 
-  componentWillReceiveProps(nextProps: FullScreenFormModalProps) {
-    const {blurred} = nextProps;
-    if (!this.props.opened && nextProps.opened) {
+  componentDidUpdate(previousProps: FullScreenFormModalProps) {
+    const {blurred, opened} = this.props;
+
+    const {opened: previousOpened} = previousProps;
+
+    if (!previousOpened && opened) {
       this.setRootClassName(false, blurred)
-    } else if (this.props.opened && !nextProps.opened) {
+    } else if (previousOpened && !opened) {
       this.setRootClassName(true, blurred)
     }
   }

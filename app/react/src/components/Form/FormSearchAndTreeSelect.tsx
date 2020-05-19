@@ -43,10 +43,14 @@ export default class FormSearchAndTreeSelect extends React.Component<
     this.initTreeLeaves(this.props.datasource);
   }
 
-  componentWillReceiveProps(nextProps: FormSearchAndTreeSelectProps) {
-    if (nextProps.datasource.length !== this.props.datasource.length) {
+  componentDidUpdate(previousProps: FormSearchAndTreeSelectProps) {
+    const { datasource } = this.props;
+
+    const { datasource: previousDatasource } = previousProps;
+    
+    if (datasource.length !== previousDatasource.length) {
       // we don't expect tree to be modified deeply hence the comparison
-      this.initTreeLeaves(nextProps.datasource);
+      this.initTreeLeaves(datasource);
     }
   }
 

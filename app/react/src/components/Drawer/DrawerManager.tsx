@@ -39,16 +39,13 @@ class DrawerManager extends React.Component<
     window.addEventListener('resize', this.updateDimensions.bind(this));
   }
 
-  componentWillReceiveProps(nextProps: DrawerManagerProps) {
-    const prevContents = this.props.drawableContents;
-    const nextContents = nextProps.drawableContents;
+  componentDidUpdate(previousProps: DrawerManagerProps) {
+    const { drawableContents: prevDrawableContents } = previousProps;
+    const { drawableContents } = this.props;
 
-    if (prevContents.length !== nextContents.length) {
-      this.updateDimensions(nextContents);
+    if (prevDrawableContents.length !== drawableContents.length) {
+      this.updateDimensions(drawableContents);
     }
-  }
-
-  componentDidUpdate() {
     // TODO focus blur issue with GoalForm
     if (this.drawerDiv) {
       this.drawerDiv.focus();
@@ -112,13 +109,11 @@ class DrawerManager extends React.Component<
     }
   };
 
-
   generateDrawer(drawersWithOverlay: React.ReactNode[]) {
     return drawersWithOverlay.map((drawer: JSX.Element, i: number) => {
-     return  React.cloneElement(drawer, { key:  i })
+      return React.cloneElement(drawer, { key: i });
     });
   }
-
 
   render() {
     const { drawableContents } = this.props;
@@ -147,14 +142,14 @@ class DrawerManager extends React.Component<
         if (WrappedComponent) {
           const lastElement = index === drawableContents.length - 1;
           const displayInForeground = lastElement;
-  
+
           drawersWithOverlay.push(
             <div
               className={'drawer-overlay'}
               onClick={this.handleClickOnBackground}
             />,
           );
-  
+
           drawersWithOverlay.push(
             <div
               ref={div => {
@@ -175,7 +170,7 @@ class DrawerManager extends React.Component<
       },
     );
 
-    drawersWithOverlay.push(<div className="drawer-overlay"  />);
+    drawersWithOverlay.push(<div className="drawer-overlay" />);
     drawersWithOverlay.push(
       <div className="drawer" style={drawerStyles.ready} />,
     );
