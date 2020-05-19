@@ -60,6 +60,10 @@ const abComparisonMessage: {
     id: 'audience.segment.dashboard.ABDetailsTable.conversionRate',
     defaultMessage: 'Conversion Rate',
   },
+  user_points: {
+    id: 'audience.segment.dashboard.ABDetailsTable.userPoints',
+    defaultMessage: 'User Points',
+  },
   export: {
     id: 'audience.segment.dashboard.ABDetailsTable.export',
     defaultMessage: 'Export',
@@ -120,7 +124,6 @@ class ABDetailsTable extends React.Component<Props, State> {
     const {
       experimentationSegment,
       controlGroupSegment,
-      intl,
       location: { search },
     } = this.props;
 
@@ -134,7 +137,7 @@ class ABDetailsTable extends React.Component<Props, State> {
       this.setState({
         dataSource: [
           {
-            metricName: 'User Points',
+            metricName: 'user_points',
             experimentationMetric: experimentationSegment.user_points_count,
             controlGroupMetric: controlGroupSegment.user_points_count,
             comparison: 'N/A',
@@ -153,9 +156,11 @@ class ABDetailsTable extends React.Component<Props, State> {
           },
         ],
       };
+
       const getPromise = (
         segmentId: string,
         metricName: DatamartUsersAnalyticsMetric,
+        isSegmentToAdd: boolean = false,
       ) => {
         return this._datamartUsersAnalyticsService.getAnalytics(
           experimentationSegment.datamart_id,
@@ -165,6 +170,9 @@ class ABDetailsTable extends React.Component<Props, State> {
           [],
           dimensionFilterClauses,
           segmentId,
+          isSegmentToAdd && filter.segments.length === 1
+            ? filter.segments[0]
+            : undefined,
         );
       };
       const metricList: DatamartUsersAnalyticsMetric[] = [
@@ -177,7 +185,7 @@ class ABDetailsTable extends React.Component<Props, State> {
       ];
       metricList.map(metric => {
         return Promise.all([
-          getPromise(experimentationSegment.id, metric),
+          getPromise(experimentationSegment.id, metric, true),
           getPromise(controlGroupSegment.id, metric),
         ])
           .then(res => {
@@ -201,7 +209,7 @@ class ABDetailsTable extends React.Component<Props, State> {
                 : '-';
             };
             return {
-              metricName: intl.formatMessage(abComparisonMessage[metric]),
+              metricName: metric,
               experimentationMetric: experimentationMetric,
               controlGroupMetric: controlGroupMetric,
               comparison: getComparison(),
@@ -248,23 +256,34 @@ class ABDetailsTable extends React.Component<Props, State> {
   };
 
   buildDataColumns = () => {
+    const { intl } = this.props;
     const dataColumns: Array<DataColumnDefinition<any>> = [
       {
         key: 'metricName',
         isHideable: false,
-        render: (text: string) => text,
+        render: (text: string) => intl.formatMessage(abComparisonMessage[text]),
       },
       {
         intlMessage: messagesMap.experimentationSegmentName,
         key: 'experimentationMetric',
         isHideable: false,
-        render: (text: string) => formatMetric(text, '0,0.00'),
+        render: (text: string, record: ABDetailsTableDataSource) => {
+          return formatMetric(
+            text,
+            `${record.metricName === 'conversion_rate' ? '0,0.00%' : '0,0.00'}`,
+          );
+        },
       },
       {
         intlMessage: messagesMap.controlGroupSegmentName,
         key: 'controlGroupMetric',
         isHideable: false,
-        render: (text: string) => formatMetric(text, '0,0.00'),
+        render: (text: string, record: ABDetailsTableDataSource) => {
+          return formatMetric(
+            text,
+            `${record.metricName === 'conversion_rate' ? '0,0.00%' : '0,0.00'}`,
+          );
+        },
       },
       {
         intlMessage: messagesMap.uplift,

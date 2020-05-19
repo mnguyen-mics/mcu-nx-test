@@ -118,6 +118,10 @@ export const messagesMap: {
   abTestingDetailsTitle: {
     id: 'audience.segment.dashboard.ABDetailsTable.exportTitle',
     defaultMessage: 'AB Testing Details',
+  },
+  abDashboardSegmentFilterPlaceholder: {
+    id: 'audience.segment.dashboard.abDashboard.segmentFilterPlaceholder',
+    defaultMessage: 'Select an activation you want to refine your experimentation with',
   }
 });
 

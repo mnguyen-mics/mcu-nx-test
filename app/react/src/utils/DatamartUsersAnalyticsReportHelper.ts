@@ -35,13 +35,14 @@ export function buildDatamartUsersAnalyticsRequestBody(
   to: McsMoment,
   dimensions?: DatamartUsersAnalyticsDimension[],
   dimensionFilterClauses?: DimensionFilterClause,
-  segmentId?: string
+  segmentId?: string,
+  segmentIdToAdd?: string,
 ): ReportRequestBody {
   const UTC = !(isNowFormat(from.value) && isNowFormat(to.value));
   const startDate: string = new McsMoment(from.value).toMoment().utc(UTC).startOf('day').format().replace('Z', '');
   const endDate: string = new McsMoment(to.value).toMoment().utc(UTC).endOf('day').format().replace('Z', '');
   const dimensionsList: DatamartUsersAnalyticsDimension[] = dimensions || [];
-  return buildReport(startDate, endDate, dimensionsList, metrics, dimensionFilterClauses, segmentId);
+  return buildReport(startDate, endDate, dimensionsList, metrics, dimensionFilterClauses, segmentId, segmentIdToAdd);
 }
 
 function buildReport(
@@ -50,7 +51,8 @@ function buildReport(
   dimensionsList: DatamartUsersAnalyticsDimension[],
   metricsList: DatamartUsersAnalyticsMetric[],
   dimensionFilterClauses?: DimensionFilterClause,
-  segmentId?: string
+  segmentId?: string,
+  segmentIdToAggregate?: string,
 ): ReportRequestBody {
 
   const dateRange: DateRange = {
@@ -84,6 +86,17 @@ function buildReport(
       ],
       case_sensitive: false
     });
+    if(segmentIdToAggregate) {
+      filters.push({
+        dimension_name: 'segment_id',
+        not: false,
+        operator: 'EXACT',
+        expressions: [
+          segmentIdToAggregate
+        ],
+        case_sensitive: false
+      });
+    }
     
     dimensionFilterClausesCopy.filters = filters;
   }

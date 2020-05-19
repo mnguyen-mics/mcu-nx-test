@@ -45,6 +45,7 @@ interface DatamartUsersAnalyticsContentProps {
   config: DashboardConfig[];
   dateRange: McsDateRangeValue;
   onChange: (isLoading: boolean) => void;
+  segmentToAggregate?:boolean;
 }
 
 interface DatamartUsersAnalyticsContentStates {
@@ -214,6 +215,7 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
               compareWithSegmentName={comp.segments ? comp.segments.segmentToCompareWithName : undefined}
               compareWithSegmentId={comp.segments ? comp.segments.segmentIdToCompareWith : undefined}
               enhancedManualReportView={comp.enhancedManualReportView}
+              segmentToAggregate={this.props.segmentToAggregate}
             />
           })}
         </CardFlex>
