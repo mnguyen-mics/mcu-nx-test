@@ -18,7 +18,7 @@ import injectNotifications, {
 } from '../../../../Notifications/injectNotifications';
 import { LegalBasis, ProcessingResource } from '../../../../../models/consent/UserConsentResource';
 
-interface EditProcessingRouteMatchParams {
+export interface EditProcessingRouteMatchParams {
   organisationId: string;
   processingId: string;
 }
