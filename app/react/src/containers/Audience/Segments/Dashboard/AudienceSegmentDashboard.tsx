@@ -97,8 +97,12 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
       segment,
       datamarts,
       history,
+      hasFeature
     } = this.props;
-    if (!isSearchValid(search, this.getSearchSetting())) {
+    if (
+      !isSearchValid(search, this.getSearchSetting()) &&
+      !hasFeature('audience-dashboards-datamart_users_analytics')
+    ) {
       history.replace({
         pathname: pathname,
         search: buildDefaultSearch(search, this.getSearchSetting()),
