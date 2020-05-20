@@ -26,6 +26,8 @@ import { EmptyRecords } from '../../../../../components';
 import { parseSearch } from '../../../../../utils/LocationSearchHelper';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { DATAMART_USERS_ANALYTICS_SETTING } from '../../../Segments/Dashboard/constants';
+import { normalizeReportView } from '../../../../../utils/MetricHelper';
+import { orderBy, intersection, filter } from 'lodash';
 
 const messages = defineMessages({
   noData: {
@@ -194,12 +196,39 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       enhancedManualReportView,
       segmentName,
       compareWithSegmentName,
+      chart
     } = this.props;
 
     this.setState({
       loading: true,
     });
     onChange(true);
+
+    let getTenMostValue: string[] = [];
+
+    if (dimensions && dimensions.includes('date_yyyy_mm_dd')) {
+      const dimensionsWithoutTime = dimensions.slice().filter(d => d !== 'date_yyyy_mm_dd');
+      this._datamartUsersAnalyticsService
+        .getAnalytics(
+          datamartId,
+          metric,
+          from,
+          to,
+          dimensionsWithoutTime,
+          dimensionFilterClauses,
+          compareWithSegmentId || segmentId,
+        )
+        .then(res => {
+          const normalizedData = normalizeReportView(res.data.report_view);
+          const sortedNormalizedData = orderBy(normalizedData, metric, 'desc');
+          if (sortedNormalizedData && chart.filterBy) {
+            getTenMostValue = sortedNormalizedData.slice(0, 10).map(item => {
+              if (chart.filterBy && item[chart.filterBy].length > 0) { return item[chart.filterBy] }
+            });
+          }
+        });
+    }
+
     return this._datamartUsersAnalyticsService
       .getAnalytics(
         datamartId,
@@ -212,6 +241,12 @@ class ApiQueryWrapper extends React.Component<Props, State> {
         this.getSegmentIdToAddToDimensionFilterClause(!!compareWithSegmentId)
       )
       .then(res => {
+
+        if (getTenMostValue && getTenMostValue.length > 0) {
+          const filteredReportRows = filter(res.data.report_view.rows, item => intersection(item, getTenMostValue).length > 0);
+          res.data.report_view.rows = filteredReportRows;
+        }
+
         if (!compareWithSegmentId) {
           this.setState({
             loading: false,
@@ -240,6 +275,9 @@ class ApiQueryWrapper extends React.Component<Props, State> {
         });
         onChange(false);
       });
+
+
+
   };
 
   getSegmentIdToAddToDimensionFilterClause = (isSegmentToAdd: boolean) => {
@@ -259,8 +297,8 @@ class ApiQueryWrapper extends React.Component<Props, State> {
     return chartType !== 'SINGLE_STAT' ? (
       <EmptyCharts title={message} />
     ) : (
-      <EmptyRecords message={message} />
-    );
+        <EmptyRecords message={message} />
+      );
   }
 
   areAnalyticsReady = (items: any[]) => {
@@ -282,8 +320,8 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       return chart.type !== 'SINGLE_STAT' ? (
         <LoadingChart />
       ) : (
-        <MetricCounterLoader />
-      );
+          <MetricCounterLoader />
+        );
 
     const getMergedApiResponse = (reportView: ReportView) => {
       return {
@@ -298,47 +336,47 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       ...chart,
       dimensions: chart.dimensions
         ? ['resource_name' as DatamartUsersAnalyticsDimension].concat(
-            chart.dimensions,
-          )
+          chart.dimensions,
+        )
         : [],
     };
 
     return (
       <div className={'mcs-datamartUsersAnalytics_component_charts'}>
         {reportViewApiResponse &&
-        (reportViewApiResponse.total_items > 0 ||
-          (reportViewApiResponseToCompareWith &&
-            reportViewApiResponseToCompareWith.total_items > 0)) ? (
-          this.areAnalyticsReady(reportViewApiResponse.rows) ||
-          (reportViewApiResponseToCompareWith &&
-            this.areAnalyticsReady(reportViewApiResponseToCompareWith.rows)) ? (
-            <FormatDataToChart
-              apiResponse={
-                enhancedManualReportView
-                  ? getMergedApiResponse(reportViewApiResponse)
-                  : reportViewApiResponse
-              }
-              apiResponseToCompareWith={reportViewApiResponseToCompareWith}
-              chart={
-                enhancedManualReportView
-                  ? enhancedChartWithDefaultDimension
-                  : chart
-              }
-            />
+          (reportViewApiResponse.total_items > 0 ||
+            (reportViewApiResponseToCompareWith &&
+              reportViewApiResponseToCompareWith.total_items > 0)) ? (
+            this.areAnalyticsReady(reportViewApiResponse.rows) ||
+              (reportViewApiResponseToCompareWith &&
+                this.areAnalyticsReady(reportViewApiResponseToCompareWith.rows)) ? (
+                <FormatDataToChart
+                  apiResponse={
+                    enhancedManualReportView
+                      ? getMergedApiResponse(reportViewApiResponse)
+                      : reportViewApiResponse
+                  }
+                  apiResponseToCompareWith={reportViewApiResponseToCompareWith}
+                  chart={
+                    enhancedManualReportView
+                      ? enhancedChartWithDefaultDimension
+                      : chart
+                  }
+                />
+              ) : (
+                // Let's keep this in case we want to display a different
+                // message if datamartUserAnalytics return null/undefined
+                this.getEmptyDataComponent(
+                  chart.type,
+                  intl.formatMessage(messages.noData),
+                )
+              )
           ) : (
-            // Let's keep this in case we want to display a different
-            // message if datamartUserAnalytics return null/undefined
             this.getEmptyDataComponent(
               chart.type,
               intl.formatMessage(messages.noData),
             )
-          )
-        ) : (
-          this.getEmptyDataComponent(
-            chart.type,
-            intl.formatMessage(messages.noData),
-          )
-        )}
+          )}
       </div>
     );
   }
