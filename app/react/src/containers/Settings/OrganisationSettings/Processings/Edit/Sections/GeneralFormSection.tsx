@@ -15,8 +15,10 @@ import {
 } from '../../../../../../components/Form';
 import messages from '../../messages';
 import { ButtonStyleless, McsIcon } from '../../../../../../components';
+import { EditProcessingRouteMatchParams } from '../ProcessingEditPage';
+import { RouteComponentProps, withRouter } from 'react-router';
 
-type Props = InjectedIntlProps & ValidatorProps;
+type Props = InjectedIntlProps & ValidatorProps & RouteComponentProps<EditProcessingRouteMatchParams>;
 
 interface State {
   displayAdvancedSection: boolean;
@@ -36,10 +38,36 @@ class GeneralFormSection extends React.Component<Props, State> {
 
   render() {
     const {
+      match: {
+        params: { processingId },
+      },
       fieldValidators: { isRequired },
       intl: { formatMessage },
     } = this.props;
     const { displayAdvancedSection } = this.state;
+
+    const tokenField = processingId ? (
+      <FormAlertInputField
+        name="token"
+        component={FormAlertInput}
+        formItemProps={{
+          label: formatMessage(messages.generalSectionTokenLabel),
+          required: true,
+        }}
+        inputProps={{
+          placeholder: formatMessage(messages.generalSectionTokenPlaceholder),
+          disabled: true,
+        }}
+        helpToolTipProps={{
+          title: formatMessage(messages.generalSectionTokenTooltip),
+        }}
+        iconType="warning"
+        type="warning"
+        message={formatMessage(messages.warningOnTokenEdition)}
+      />
+    ) : (
+      undefined
+    );
 
     return (
       <div>
@@ -116,25 +144,7 @@ class GeneralFormSection extends React.Component<Props, State> {
                 ),
               }}
             />
-            <FormAlertInputField
-              name="token"
-              component={FormAlertInput}
-              formItemProps={{
-                label: formatMessage(messages.generalSectionTokenLabel),
-                required: true,
-              }}
-              inputProps={{
-                placeholder: formatMessage(
-                  messages.generalSectionTokenPlaceholder,
-                ),
-              }}
-              helpToolTipProps={{
-                title: formatMessage(messages.generalSectionTokenTooltip),
-              }}
-              iconType="warning"
-              type="warning"
-              message={formatMessage(messages.warningOnTokenEdition)}
-            />
+            {tokenField}
           </div>
         </div>
       </div>
@@ -143,6 +153,7 @@ class GeneralFormSection extends React.Component<Props, State> {
 }
 
 export default compose<Props, {}>(
+  withRouter,
   injectIntl,
   withValidators,
 )(GeneralFormSection);
