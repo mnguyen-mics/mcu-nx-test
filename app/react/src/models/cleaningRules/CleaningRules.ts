@@ -74,3 +74,14 @@ export function isUserProfileCleaningRuleResource(
 ): cleaningRule is UserProfileCleaningRuleResource {
   return cleaningRule.type === 'USER_PROFILE_CLEANING_RULE';
 }
+
+export function getNextCleaningRuleStatus(
+  status: CleaningRuleStatus
+): CleaningRuleStatus {
+  switch(status) {
+    case 'DRAFT':
+      return 'LIVE'
+    default:
+      return 'ARCHIVED'
+  }
+}

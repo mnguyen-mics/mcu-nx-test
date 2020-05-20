@@ -20,7 +20,6 @@ import DefaultSelect, { DefaultSelectProps } from './FormSelect/DefaultSelect';
 import AddonSelect, { FormSelectAddonProps } from './FormSelect/AddonSelect';
 import { FormMultiTagProps } from './FormSelect/FormMultiTag';
 import FormDateRangePicker, { FormDateRangePickerProps } from './FormDateRangePicker';
-import FormLinkedSelectAndPeriodPicker, { FormLinkedSelectAndPeriodPickerProps } from './FormLinkedSelectAndPeriodPicker';
 import FormCodeEdit, { FormCodeEditProps } from './FormCodeEdit';
 import FormCodeSnippet from './FormCodeSnippet';
 import TagSelect, { FormTagSelectProps } from './FormSelect/TagSelect';
@@ -40,7 +39,6 @@ export default {
   FormRadio,
   FormRadioGroup,
   FormDateRangePicker,
-  FormLinkedSelectAndPeriodPicker,
   FormSection,
   FormTextArea,
   FormTitle,
@@ -70,7 +68,6 @@ export {
   FormBoolean,
   FormRadioGroup,
   FormDateRangePicker,
-  FormLinkedSelectAndPeriodPicker,
   FormSection,
   FormTitle,
   SwitchInput,
@@ -97,7 +94,6 @@ export const FormMultiTagField = Field as new () => GenericField<FormMultiTagPro
 export const FormAddonSelectField = Field as new () => GenericField<FormSelectAddonProps>;
 export const FormSwitchField = Field as new () => GenericField<FormSwitchProps>;
 export const FormDateRangePickerField = Field as new () => GenericField<FormDateRangePickerProps>;
-export const FormLinkedSelectAndPeriodPickerField = Field as new () => GenericField<FormLinkedSelectAndPeriodPickerProps>;
 export const FormCheckboxField = Field as new () => GenericField<CheckboxProps>;
 export const FormBooleanField = Field as new () => GenericField<FormBooleanProps>;
 export const FormSliderField = Field as new () => GenericField<FormSliderProps>;

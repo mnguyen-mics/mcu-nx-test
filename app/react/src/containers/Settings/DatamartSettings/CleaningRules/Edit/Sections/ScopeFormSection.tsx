@@ -37,7 +37,6 @@ class ScopeFormSection extends React.Component<Props> {
             label: formatMessage(messages.sectionScopeActivityTypeLabel),
             required: false,
           }}
-          disabled={true}
           options={[
             { value: 'SITE_VISIT', title: 'SITE_VISIT' },
             { value: 'APP_VISIT', title: 'APP_VISIT' },
@@ -53,7 +52,6 @@ class ScopeFormSection extends React.Component<Props> {
             label: formatMessage(messages.sectionScopeChannelLabel),
             required: false,
           }}
-          disabled= {true}
           options={channelOptions}
           helpToolTipProps={{
             title: formatMessage(messages.sectionScopeChannelHelper),
@@ -66,7 +64,6 @@ class ScopeFormSection extends React.Component<Props> {
             label: formatMessage(messages.sectionScopeEventNameLabel),
             required: false,
           }}
-          inputProps={{disabled: true}}
           helpToolTipProps={{
             title: formatMessage(messages.sectionScopeEventNameHelper),
           }}

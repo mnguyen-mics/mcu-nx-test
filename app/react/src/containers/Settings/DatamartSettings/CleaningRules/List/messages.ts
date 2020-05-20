@@ -25,6 +25,10 @@ export default defineMessages({
     id: 'settings.cleaningRules.table.column.content_filter.filter',
     defaultMessage: 'Event name filter',
   },
+  updateStatus: {
+    id: 'settings.cleaningRules.table.column.update_status',
+    defaultMessage: 'Update status',
+  },
   all: {
     id: 'settings.cleaningRules.table.value.all',
     defaultMessage: 'All',
@@ -64,5 +68,33 @@ export default defineMessages({
   newCleaningRule: {
     id: 'settings.cleaningRules.list.new',
     defaultMessage: 'New Cleaning Rule'
-  }
+  },
+  updateStatusModalTitle: {
+    id: 'settings.cleaningRules.table.column.updateStatus.modal.title',
+    defaultMessage: 'Update cleaning rule status'
+  },
+  updateStatusModalConfirm: {
+    id: 'settings.cleaningRules.table.column.updateStatus.modal.confirm',
+    defaultMessage: 'Confirm'
+  },
+  updateStatusToLiveButton: {
+    id: 'settings.cleaningRules.table.column.updateStatus.draftToLiveButton',
+    defaultMessage: 'Activate the rule'
+  },
+  updateStatusToArchivedButton: {
+    id: 'settings.cleaningRules.table.column.updateStatus.liveToArchivedButton',
+    defaultMessage: 'Archive the rule'
+  },
+  updateStatusToLiveModalText: {
+    id: 'settings.cleaningRule.updateStatus.modal.draftToLiveText',
+    defaultMessage: 'You are about to activate the cleaning rule. This means that this rule will be applied to all new incoming activities.'
+  },
+  updateStatusToArchivedText: {
+    id: 'settings.cleaningRules.updateStatus.modal.liveToArchivedText',
+    defaultMessage: 'You are about to archive the cleaning rule. This means that this rule will not be applied anymore to all new incoming activites.'
+  },
+  updateCleaningRuleModalCancel: {
+    id: 'settings.cleaningRules.updateStatus.modal.cancel',
+    defaultMessage: 'Cancel'
+  },
 });

@@ -75,5 +75,9 @@ export default defineMessages({
   invalidLifeDuration: {
     id: 'settings.cleaningRules.userEvent.form.invalidLifeDuration',
     defaultMessage: 'Invalid life duration',
+  },
+  cleaningRuleLifeDurationDays: {
+    id: 'settings.cleaningRules.userEvent.form.cleaningRuleLifeDurationDays',
+    defaultMessage: 'Days',
   }
 });

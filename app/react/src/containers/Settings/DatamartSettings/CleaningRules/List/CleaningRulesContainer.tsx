@@ -8,6 +8,8 @@ import {
   ExtendedCleaningRuleResource,
   ExtendedCleaningRuleResourceWithFilter,
   UserEventCleaningRuleResourceWithFilter,
+  CleaningRuleStatus,
+  getNextCleaningRuleStatus,
 } from '../../../../../models/cleaningRules/CleaningRules';
 import { Layout, Row, Icon, Modal, Button } from 'antd';
 import 'moment-duration-format';
@@ -26,6 +28,7 @@ import { TYPES } from '../../../../../constants/types';
 import { IDatamartService } from '../../../../../services/DatamartService';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
+import { McsIcon, ButtonStyleless, Loading } from '../../../../../components';
 
 const { Content } = Layout;
 
@@ -43,6 +46,7 @@ interface CleaningRulesContainerProps {
   onFilterChange: (newFilter: Partial<CleaningRulesFilter>) => void;
   isFetchingCleaningRules: boolean;
   cleaningRules: ExtendedCleaningRuleResourceWithFilter[];
+  onCleaningRuleUpdate: () => void;
   total: number;
 }
 
@@ -54,6 +58,7 @@ type Props = CleaningRulesContainerProps &
 
 interface State {
   datamartItems: DatamartItems[];
+  isLoading: boolean
 }
 
 class CleaningRulesContainer extends React.Component<Props, State> {
@@ -71,6 +76,7 @@ class CleaningRulesContainer extends React.Component<Props, State> {
 
     this.state = {
       datamartItems: this.getDatamartItemsFromOrganisationId(organisationId),
+      isLoading: false
     };
   }
 
@@ -120,13 +126,9 @@ class CleaningRulesContainer extends React.Component<Props, State> {
 
   onDeleteCleaningRule = (cleaningRule: ExtendedCleaningRuleResource) => {
     const {
-      match: {
-        params: { organisationId },
-      },
-      location,
-      history,
       intl: { formatMessage },
       notifyError,
+      onCleaningRuleUpdate
     } = this.props;
 
     Modal.confirm({
@@ -138,17 +140,10 @@ class CleaningRulesContainer extends React.Component<Props, State> {
         this._datamartService
           .deleteCleaningRule(cleaningRule.datamart_id, cleaningRule.id)
           .then(() => {
-            history.push({
-              pathname: `/v2/o/${organisationId}/settings/datamart/cleaning_rules`,
-              state: { from: `${location.pathname}${location.search}` },
-            });
+            onCleaningRuleUpdate()
           })
           .catch(err => {
             notifyError(err);
-            history.push({
-              pathname: `/v2/o/${organisationId}/settings/datamart/cleaning_rules`,
-              state: { from: `${location.pathname}${location.search}` },
-            });
           });
       },
       onCancel: () => {
@@ -169,6 +164,39 @@ class CleaningRulesContainer extends React.Component<Props, State> {
     );
   };
 
+  renderModal = (record: ExtendedCleaningRuleResource) => {
+    const {
+      intl: { formatMessage },
+      onCleaningRuleUpdate,
+      notifyError
+    } = this.props;
+
+    const contentText = this.getUpdateStatusModalText(record.status)
+    
+    Modal.confirm({
+      iconType: 'exclamation-circle',
+      title: formatMessage(messages.updateStatusModalTitle),
+      content: contentText,
+      okText: formatMessage(messages.updateStatusModalConfirm),
+      cancelText: formatMessage(messages.updateCleaningRuleModalCancel),
+      onOk: () => {
+        this.setState({isLoading: true})
+        record.status = getNextCleaningRuleStatus(record.status)
+        this._datamartService.updateCleaningRule(
+          record.datamart_id,
+          record.id,
+          record,
+        ).then(() => {
+          this.setState({isLoading: false})
+          onCleaningRuleUpdate()
+        }).catch(err => {
+          this.setState({isLoading: false});
+          notifyError(err);
+        })
+      }
+    });
+  };
+
   render() {
     const {
       match: {
@@ -182,15 +210,12 @@ class CleaningRulesContainer extends React.Component<Props, State> {
       intl,
     } = this.props;
 
-    const { datamartItems } = this.state;
+    const { datamartItems, isLoading } = this.state;
 
     const filtersOptions: Array<MultiSelectProps<any>> = [];
 
-    // New temporarily disabled
-    const allowNew = false;
-
     const button =
-      ((filter.type === 'USER_EVENT_CLEANING_RULE') && allowNew) ? (
+      ((filter.type === 'USER_EVENT_CLEANING_RULE')) ? (
         <span className="mcs-card-button">
           {this.buildNewActionElement(organisationId)}
         </span>
@@ -290,7 +315,7 @@ class CleaningRulesContainer extends React.Component<Props, State> {
           </span>
         ),
       },
-      // No other content_type is implemented for the moment, that
+      // No other content_type is implemented for the moment
       {
         intlMessage: messages.contentFilterValue,
         key: 'filter',
@@ -305,7 +330,7 @@ class CleaningRulesContainer extends React.Component<Props, State> {
               : intl.formatMessage(messages.noFilter)}
           </span>
         ),
-      },
+      }
     ];
 
     const baseDataColumns = [
@@ -313,9 +338,16 @@ class CleaningRulesContainer extends React.Component<Props, State> {
         intlMessage: messages.status,
         key: 'status',
         isHideable: false,
-        render: (text: string, record: ExtendedCleaningRuleResource) => (
-          <span>{record.status}</span>
-        ),
+        render: (text: string, record: ExtendedCleaningRuleResource) => {
+          const updateStatusButton = this.getUpdateStatusButton(record)
+          return (
+            <span>
+              <McsIcon type="status" className={this.getStatusColor(record.status)} />
+              <span>{record.status}</span>
+              { updateStatusButton !== undefined ?  updateStatusButton : ''}
+            </span>
+          )
+        }
       },
       {
         intlMessage: messages.action,
@@ -372,7 +404,11 @@ class CleaningRulesContainer extends React.Component<Props, State> {
         }),
     };
 
-    return (
+    if (isLoading) {
+      return <Loading className="loading-full-screen" />;
+    }
+
+    else return (
       <div className="ant-layout">
         <Content className="mcs-content-container">
           <Row className="mcs-table-container">
@@ -397,6 +433,51 @@ class CleaningRulesContainer extends React.Component<Props, State> {
         </Content>
       </div>
     );
+  }
+
+  getStatusColor = (status: CleaningRuleStatus) => {
+    switch (status) {
+      case 'LIVE':
+        return 'mcs-cleaning-rules-status-live';
+      case 'DRAFT':
+        return 'mcs-cleaning-rules-status-draft';
+      case 'ARCHIVED':
+        return 'mcs-cleaning-rules-status-archived';
+    }
+  };
+
+  getButtonText = (status: CleaningRuleStatus) => {
+    const {
+      intl,
+    } = this.props;
+
+    switch(status) {
+      case 'DRAFT': return intl.formatMessage(messages.updateStatusToLiveButton);
+      case 'LIVE': return intl.formatMessage(messages.updateStatusToArchivedButton);
+      default: return '';
+    }
+  }
+
+  getUpdateStatusModalText = (status: CleaningRuleStatus) => {
+    const {
+      intl,
+    } = this.props;
+
+    switch(status) {
+      case 'DRAFT': return intl.formatMessage(messages.updateStatusToLiveModalText);
+      case 'LIVE': return intl.formatMessage(messages.updateStatusToArchivedText);
+      default: return '';
+    }
+  }
+
+  getUpdateStatusButton = (record: ExtendedCleaningRuleResource) => {
+    if (record.status !== 'ARCHIVED') {
+      const buttonText = this.getButtonText(record.status)
+      const displayModal = () => this.renderModal(record)
+      return <ButtonStyleless className="update-cleaning-rule-status" onClick={displayModal}>{buttonText}</ButtonStyleless>
+    } else {
+      return undefined
+    }
   }
 }
 
