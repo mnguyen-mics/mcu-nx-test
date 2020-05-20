@@ -34,6 +34,7 @@ import { compose } from 'recompose';
 import {
   AudienceSegmentResource,
   AudienceSegmentShape,
+  UserListSegment,
 } from '../../../../models/audiencesegment';
 import { injectDatamart, InjectedDatamartProps } from '../../../Datamart';
 import { Index } from '../../../../utils';
@@ -84,33 +85,45 @@ const messages = defineMessages({
     id: 'audience.segments.list.search.title',
     defaultMessage: 'Search Segments',
   },
-  userActivation: {
+  USER_ACTIVATION: {
     id: 'audience.segments.list.type.userActivation',
     defaultMessage: 'User Activation',
   },
-  userLookalike: {
+  USER_LOOKALIKE: {
     id: 'audience.segments.list.type.userLookalike',
     defaultMessage: 'User Lookalike',
   },
-  userPartition: {
+  USER_PARTITION: {
     id: 'audience.segments.list.type.userPartition',
     defaultMessage: 'User Partition',
   },
-  userQuery: {
+  USER_QUERY: {
     id: 'audience.segments.list.type.userQuery',
     defaultMessage: 'User Query',
   },
-  userList: {
+  USER_LIST: {
     id: 'audience.segments.list.type.userList',
     defaultMessage: 'User List',
   },
-  userPixel: {
+  FILE_IMPORT: {
+    id: 'audience.segments.list.type.userList.fileImport',
+    defaultMessage: 'File Import',
+  },
+  TAG: {
+    id: 'audience.segments.list.type.userList.tag',
+    defaultMessage: 'Tag',
+  },
+  SCENARIO: {
+    id: 'audience.segments.list.type.userList.scenario',
+    defaultMessage: 'Scenario',
+  },
+  USER_PIXEL: {
     id: 'audience.segments.list.type.userPixel',
     defaultMessage: 'User Pixel',
   },
-  userUnknown: {
-    id: 'audience.segments.list.type.userUnknown',
-    defaultMessage: 'Unknown Type',
+  USER_CLIENT: {
+    id: 'audience.segments.list.type.userClient',
+    defaultMessage: 'User Client',
   },
   filterType: {
     id: 'audience.segments.list.filter.type',
@@ -568,69 +581,56 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         intlMessage: messages.type,
         key: 'type',
         isHideable: false,
-        render: (text: string) => {
+        render: (text: string, record: AudienceSegmentResource) => {
+          let typeIcon = 'database';
+          let subTypeIcon;
+          let subMessage;
           switch (text) {
             case 'USER_ACTIVATION':
-              return (
-                <Tooltip
-                  placement="top"
-                  title={intl.formatMessage(messages.userActivation)}
-                >
-                  <Icon type="rocket" />
-                </Tooltip>
-              );
+              typeIcon = 'rocket';
+              break;
             case 'USER_QUERY':
-              return (
-                <Tooltip
-                  placement="top"
-                  title={intl.formatMessage(messages.userQuery)}
-                >
-                  <Icon type="database" />
-                </Tooltip>
-              );
-            case 'USER_LIST':
-              return (
-                <Tooltip
-                  placement="top"
-                  title={intl.formatMessage(messages.userList)}
-                >
-                  <Icon type="solution" />
-                </Tooltip>
-              );
+              typeIcon = 'database';
+              break;
+            case 'USER_LIST': {
+              typeIcon = 'solution';
+              const feedType = (record as UserListSegment).feed_type;
+              if (feedType === 'FILE_IMPORT') subTypeIcon = "file";
+              if (feedType === 'TAG') subTypeIcon = "file-image";
+              if (feedType === 'SCENARIO') subTypeIcon = "share-alt";
+              subMessage = intl.formatMessage(messages[feedType])
+              break;
+            }
             case 'USER_PIXEL':
-              return (
-                <Tooltip
-                  placement="top"
-                  title={intl.formatMessage(messages.userPixel)}
-                >
-                  <Icon type="global" />
-                </Tooltip>
-              );
+              typeIcon = 'global';
+              break;
             case 'USER_PARTITION':
-              return (
-                <Tooltip
-                  placement="top"
-                  title={intl.formatMessage(messages.userPartition)}
-                >
-                  <Icon type="api" />
-                </Tooltip>
-              );
+              typeIcon = 'api';
+              break;
             case 'USER_LOOKALIKE':
-              return (
-                <Tooltip
-                  placement="top"
-                  title={intl.formatMessage(messages.userLookalike)}
-                >
-                  <Icon type="usergroup-add" />
-                </Tooltip>
-              );
+              typeIcon = 'usergroup-add';
+              break;
             default:
-              return (
-                <Tooltip placement="top" title={text}>
-                  <Icon type="database" />
-                </Tooltip>
-              );
+              typeIcon = 'database';
+              break;
           }
+          return (
+            <div className="mcs-audienceSegmentTable_type">
+              <Tooltip
+                placement="top"
+                title={intl.formatMessage(messages[record.type] || text)}
+              >
+                <Icon type={typeIcon} />
+              </Tooltip>
+              {subTypeIcon && <span>&nbsp;>&nbsp;</span>}
+              {subTypeIcon && <Tooltip
+                placement="top"
+                title={subMessage}
+              >
+                <Icon type={subTypeIcon} />
+              </Tooltip>}
+            </div>
+          )
         },
       },
       {
@@ -888,7 +888,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
     };
 
     return hasItems ? (
-      <div className="mcs-table-container">
+      <div className="mcs-table-container mcs-audienceSegmentTable">
         <TableViewFilters
           columns={this.buildDataColumns()}
           actionsColumnsDefinition={actionColumns}
