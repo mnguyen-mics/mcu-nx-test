@@ -594,7 +594,18 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
         metricNames: ['conversion_rate'],
         dimensionFilterClauses: {
           'operator': 'OR',
-          'filters': []
+          'filters': [
+            {
+              'dimension_name': 'type',
+              'not': false,
+              'operator': 'IN_LIST',
+              'expressions': [
+                'SITE_VISIT',
+                'APP_VISIT'
+              ],
+              'case_sensitive': false
+            },
+          ]
         },
       }
     ]
