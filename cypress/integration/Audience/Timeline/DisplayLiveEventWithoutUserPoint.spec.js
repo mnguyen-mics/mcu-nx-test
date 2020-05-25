@@ -1,10 +1,6 @@
 describe('A Live Event without user point related is correctly displayed on the timeline ', () => {
   const second = 1000;
 
-  beforeEach(() => {
-    cy.viewport(1920, 1080)
-  })
-
   before(() => {
     // Login
     cy.login()
