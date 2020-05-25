@@ -23,7 +23,6 @@ import { MetricCounterLoader } from '../MetricCounterLoader';
 import McsMoment from '../../../../../utils/McsMoment';
 import { McsDateRangeValue } from '../../../../../components/McsDateRangePicker';
 import { EmptyRecords } from '../../../../../components';
-import { convertTimestampToDayNumber } from '../../../../../utils/LocationSearchHelper';
 
 const messages = defineMessages({
   noData: {
@@ -72,20 +71,14 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       onChange,
       segmentId,
       compareWithSegmentId,
-      dateRange,
-      comparisonStartDate
     } = this.props;
 
-    if (!dateRange.from.value || !dateRange.to.value) {
-      dateRange.from = new McsMoment(`now-${comparisonStartDate ? convertTimestampToDayNumber(comparisonStartDate) : '8'}d`);
-      dateRange.to = new McsMoment('now-1d');
-    }
     this.fetchAnalytics(
       onChange,
       datamartId,
       chart.metricNames,
-      dateRange.from,
-      dateRange.to,
+      this.getDataRangeValues()[0],
+      this.getDataRangeValues()[1],
       chart.dimensions,
       chart.dimensionFilterClauses,
       segmentId,
@@ -95,8 +88,8 @@ class ApiQueryWrapper extends React.Component<Props, State> {
           onChange,
           datamartId,
           chart.metricNames,
-          dateRange.from,
-          dateRange.to,
+          this.getDataRangeValues()[0],
+          this.getDataRangeValues()[1],
           chart.dimensions,
           chart.dimensionFilterClauses,
           segmentId,
@@ -114,7 +107,6 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       onChange,
       segmentId,
       compareWithSegmentId,
-      comparisonStartDate
     } = this.props;
 
     if (
@@ -125,16 +117,12 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       prevProps.segmentId !== segmentId ||
       prevProps.compareWithSegmentId !== compareWithSegmentId
     ) {
-      if (!dateRange.from.value || !dateRange.to.value) {
-        dateRange.from = new McsMoment(`now-${comparisonStartDate ? convertTimestampToDayNumber(comparisonStartDate) : '8'}d`);
-        dateRange.to = new McsMoment('now-1d');
-      }
       this.fetchAnalytics(
         onChange,
         datamartId,
         chart.metricNames,
-        dateRange.from,
-        dateRange.to,
+        this.getDataRangeValues()[0],
+        this.getDataRangeValues()[1],
         chart.dimensions,
         chart.dimensionFilterClauses,
         segmentId,
@@ -144,8 +132,8 @@ class ApiQueryWrapper extends React.Component<Props, State> {
             onChange,
             datamartId,
             chart.metricNames,
-            dateRange.from,
-            dateRange.to,
+            this.getDataRangeValues()[0],
+            this.getDataRangeValues()[1],
             chart.dimensions,
             chart.dimensionFilterClauses,
             segmentId,
@@ -155,6 +143,14 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       });
     }
   }
+
+  getDataRangeValues = () => {
+    const { dateRange } = this.props;
+    if (!dateRange.from.value || !dateRange.to.value) {
+      return [new McsMoment('now-8d'), new McsMoment('now-1d')];
+    }
+    return [dateRange.from, dateRange.to];
+  };
 
   formatReportView = (
     reportView: ReportView,
@@ -246,9 +242,9 @@ class ApiQueryWrapper extends React.Component<Props, State> {
   }
 
   areAnalyticsReady = (items: any[]) => {
-    const isItemNull = items[0][0] === null;
-    const isItemNaN =  items[0][0] === 'NaN';
-    const isReady = !(isItemNull|| isItemNaN);
+    const isItemNull = items[0] && items[0][0] === null;
+    const isItemNaN = items[0] && items[0][0] === 'NaN';
+    const isReady = !(isItemNull || isItemNaN);
     return isReady;
   };
 

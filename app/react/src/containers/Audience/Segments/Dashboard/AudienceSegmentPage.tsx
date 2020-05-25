@@ -4,9 +4,7 @@ import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { Layout } from 'antd';
 import { compose } from 'recompose';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
-import {
-  compareSearches
-} from '../../../../utils/LocationSearchHelper';
+import { compareSearches } from '../../../../utils/LocationSearchHelper';
 import AudienceSegmentActionbar from './AudienceSegmentActionbar';
 import AudienceSegment from './AudienceSegment';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
@@ -48,7 +46,6 @@ interface State {
   isLoading: boolean;
   datamarts: DatamartWithMetricResource[];
   controlGroupSegment?: UserQuerySegment;
-  isLoadingControlGroupSegment: boolean;
 }
 
 class AudienceSegmentPage extends React.Component<Props, State> {
@@ -61,7 +58,6 @@ class AudienceSegmentPage extends React.Component<Props, State> {
     this.state = {
       isLoading: true,
       datamarts: [],
-      isLoadingControlGroupSegment: false,
     };
   }
 
@@ -77,7 +73,6 @@ class AudienceSegmentPage extends React.Component<Props, State> {
     this.setState({
       datamarts: workspace ? workspace.datamarts : [],
     });
-
 
     this.fetchAudienceSegment(segmentId);
   }
@@ -133,30 +128,20 @@ class AudienceSegmentPage extends React.Component<Props, State> {
           isUserQuerySegment(segment) &&
           segment.control_group_id
         ) {
-          this.setState({
-            isLoadingControlGroupSegment: true,
-          });
           this._audienceSegmentService
             .getSegment(segment.control_group_id)
             .then(resp => {
               this.setState({
                 controlGroupSegment: resp.data as UserQuerySegment,
-                isLoadingControlGroupSegment: false,
               });
             })
             .catch(error => {
               this.props.notifyError(error);
-              this.setState({
-                isLoadingControlGroupSegment: false,
-              });
             });
         }
       })
       .catch(error => {
         this.props.notifyError(error);
-        this.setState({
-          isLoadingControlGroupSegment: false,
-        });
       });
   };
 
@@ -200,7 +185,6 @@ class AudienceSegmentPage extends React.Component<Props, State> {
       segment,
       datamarts,
       controlGroupSegment,
-      isLoadingControlGroupSegment,
     } = this.state;
     return (
       <div className="ant-layout">
@@ -209,6 +193,7 @@ class AudienceSegmentPage extends React.Component<Props, State> {
           segment={segment}
           onCalibrationClick={this.onCalibrationClick}
           datamarts={datamarts}
+          controlGroupSegment={controlGroupSegment}
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
@@ -217,7 +202,6 @@ class AudienceSegmentPage extends React.Component<Props, State> {
               segment={segment}
               datamarts={datamarts}
               controlGroupSegment={controlGroupSegment}
-              isLoadingControlGroupSegment={isLoadingControlGroupSegment}
             />
           </Content>
         </div>

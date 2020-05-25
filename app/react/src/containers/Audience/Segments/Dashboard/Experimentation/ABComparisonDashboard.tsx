@@ -258,7 +258,10 @@ class ABComparisonDashboard extends React.Component<Props, State> {
       />
     ) : (
       <React.Fragment>
-        <ABComparisonGauge weight={experimentationSegment.weight} />
+        <ABComparisonGauge
+          weight={experimentationSegment.weight}
+          segment={experimentationSegment}
+          segmentToCompareWith={controlGroupSegment}/>
         {hasFeature('audience-segment_uplift_area_chart') && (
           <Card>
             <McsTabs items={this.buildItems()} />

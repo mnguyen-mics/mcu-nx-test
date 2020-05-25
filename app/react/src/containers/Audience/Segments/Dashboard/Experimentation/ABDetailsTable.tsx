@@ -1,5 +1,8 @@
 import * as React from 'react';
 import { compose } from 'recompose';
+import { Card } from '@mediarithmics-private/mcs-components-library';
+import { withRouter, RouteComponentProps } from 'react-router';
+import { Button } from 'antd';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
@@ -16,13 +19,19 @@ import { DataColumnDefinition } from '../../../../../components/TableView/TableV
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IDatamartUsersAnalyticsService } from '../../../../../services/DatamartUsersAnalyticsService';
-import McsMoment from '../../../../../utils/McsMoment';
-import { convertTimestampToDayNumber } from '../../../../../utils/LocationSearchHelper';
+import {
+  parseSearch,
+  updateSearch,
+} from '../../../../../utils/LocationSearchHelper';
 import { DatamartUsersAnalyticsMetric } from '../../../../../utils/DatamartUsersAnalyticsReportHelper';
 import { DimensionFilterClause } from '../../../../../models/ReportRequestBody';
-import { Button } from 'antd';
 import ExportService from '../../../../../services/ExportService';
-import { Card } from '@mediarithmics-private/mcs-components-library';
+import { DATAMART_USERS_ANALYTICS_SETTING } from '../constants';
+import { FILTERS } from '../../../../../containers/Audience/DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
+import McsDateRangePicker, {
+  McsDateRangeValue,
+} from '../../../../../components/McsDateRangePicker';
+import { formatMetric } from '../../../../../utils/MetricHelper';
 
 const abComparisonMessage: {
   [key: string]: FormattedMessage.MessageDescriptor;
@@ -77,7 +86,8 @@ export interface ABDetailsTableProps {
 
 type Props = ABDetailsTableProps &
   InjectedIntlProps &
-  InjectedNotificationProps;
+  InjectedNotificationProps &
+  RouteComponentProps<{}>;
 
 class ABDetailsTable extends React.Component<Props, State> {
   @lazyInject(TYPES.IDatamartUsersAnalyticsService)
@@ -93,7 +103,28 @@ class ABDetailsTable extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { experimentationSegment, controlGroupSegment, intl } = this.props;
+    this.fetchABDetailsDatasource();
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    const {
+      location: { search },
+    } = this.props;
+
+    if (prevProps.location.search !== search) {
+      this.fetchABDetailsDatasource();
+    }
+  }
+
+  fetchABDetailsDatasource = () => {
+    const {
+      experimentationSegment,
+      controlGroupSegment,
+      intl,
+      location: { search },
+    } = this.props;
+
+    const filter = parseSearch(search, DATAMART_USERS_ANALYTICS_SETTING);
 
     if (
       experimentationSegment &&
@@ -129,12 +160,8 @@ class ABDetailsTable extends React.Component<Props, State> {
         return this._datamartUsersAnalyticsService.getAnalytics(
           experimentationSegment.datamart_id,
           [metricName],
-          new McsMoment(
-            `now-${convertTimestampToDayNumber(
-              controlGroupSegment.creation_ts as number,
-            )}d`,
-          ),
-          new McsMoment('now-1d'),
+          filter.from,
+          filter.to,
           [],
           dimensionFilterClauses,
           segmentId,
@@ -148,7 +175,6 @@ class ABDetailsTable extends React.Component<Props, State> {
         'avg_number_of_user_events',
         'conversion_rate',
       ];
-
       metricList.map(metric => {
         return Promise.all([
           getPromise(experimentationSegment.id, metric),
@@ -169,10 +195,9 @@ class ABDetailsTable extends React.Component<Props, State> {
                 typeof controlGroupMetric === 'number' &&
                 controlGroupMetric !== 0
                 ? Math.abs(
-                    ((controlGroupMetric * ratio - experimentationMetric) /
-                      (controlGroupMetric * ratio)) *
-                      100,
-                  ).toFixed(2)
+                    (controlGroupMetric * ratio - experimentationMetric) /
+                      (controlGroupMetric * ratio),
+                  )
                 : '-';
             };
             return {
@@ -199,7 +224,7 @@ class ABDetailsTable extends React.Component<Props, State> {
           });
       });
     }
-  }
+  };
 
   getExport = () => {
     const {
@@ -233,20 +258,22 @@ class ABDetailsTable extends React.Component<Props, State> {
         intlMessage: messagesMap.experimentationSegmentName,
         key: 'experimentationMetric',
         isHideable: false,
-        render: (text: string) => text,
+        render: (text: string) => formatMetric(text, '0,0.00'),
       },
       {
         intlMessage: messagesMap.controlGroupSegmentName,
         key: 'controlGroupMetric',
         isHideable: false,
-        render: (text: string) => text,
+        render: (text: string) => formatMetric(text, '0,0.00'),
       },
       {
         intlMessage: messagesMap.uplift,
         key: 'comparison',
         isHideable: false,
         render: (text: string, record: ABDetailsTableDataSource) => {
-          return record.metricName === 'User Points' ? text : `${text} %`;
+          return record.metricName !== 'User Points'
+            ? `${formatMetric(text, '0,0.00%')}`
+            : text;
         },
       },
     ];
@@ -254,14 +281,73 @@ class ABDetailsTable extends React.Component<Props, State> {
     return dataColumns;
   };
 
+  updateLocationSearch = (params: FILTERS) => {
+    const {
+      history,
+      location: { search: currentSearch, pathname },
+    } = this.props;
+
+    const nextLocation = {
+      pathname,
+      search: updateSearch(
+        currentSearch,
+        params,
+        DATAMART_USERS_ANALYTICS_SETTING,
+      ),
+    };
+
+    history.push(nextLocation);
+  };
+
+  renderDatePicker() {
+    const {
+      location: { search },
+      controlGroupSegment,
+    } = this.props;
+
+    const { isLoading } = this.state;
+
+    const filter = parseSearch(search, DATAMART_USERS_ANALYTICS_SETTING);
+
+    const values = {
+      from: filter.from,
+      to: filter.to,
+    };
+
+    const onChange = (newValues: McsDateRangeValue): void =>
+      this.updateLocationSearch({
+        from: newValues.from,
+        to: newValues.to,
+      });
+
+    return (
+      <McsDateRangePicker
+        values={values}
+        onChange={onChange}
+        disabled={isLoading}
+        excludeToday={true}
+        startDate={controlGroupSegment && controlGroupSegment.creation_ts}
+      />
+    );
+  }
+
   render() {
     const { isLoading, dataSource, isExportLoading } = this.state;
+
     return (
       <Card
         buttons={
-          <Button onClick={this.getExport} loading={isExportLoading}>
-            <FormattedMessage {...abComparisonMessage.export} />
-          </Button>
+          <React.Fragment>
+            <Button
+              onClick={this.getExport}
+              loading={isExportLoading}
+              type="primary"
+              className="mcs-audienceSegmentDashboard_abExportButton"
+            >
+              <FormattedMessage {...abComparisonMessage.export} />
+            </Button>
+            {this.renderDatePicker()}
+          </React.Fragment>
         }
       >
         <TableViewFilters
@@ -275,6 +361,7 @@ class ABDetailsTable extends React.Component<Props, State> {
 }
 
 export default compose<Props, ABDetailsTableProps>(
+  withRouter,
   injectIntl,
   injectNotifications,
 )(ABDetailsTable);
