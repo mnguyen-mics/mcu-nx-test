@@ -26,7 +26,9 @@ import injectThemeColors, {
 import { Card, Alert, Row, Col } from 'antd';
 import McsTabs from '../../../../../components/McsTabs';
 import { Loading } from '../../../../../components';
-import { DashboardConfig } from '../../../DatamartUsersAnalytics/DatamartUsersAnalyticsContent';
+import DatamartUsersAnalyticsContent, {
+  DashboardConfig,
+} from '../../../DatamartUsersAnalytics/DatamartUsersAnalyticsContent';
 import { injectFeatures, InjectedFeaturesProps } from '../../../../Features';
 import SegmentFilter from '../../../DatamartUsersAnalytics/components/SegmentFilter';
 import { DATAMART_USERS_ANALYTICS_SETTING } from '../constants';
@@ -41,6 +43,7 @@ import McsDateRangePicker, {
 interface State {
   ABComparisonDashboardConfig: DatamartUsersAnalyticsWrapperProps[];
   isLoading: boolean;
+  disableFilters: boolean;
 }
 
 export interface ABComparisonDashboardProps {
@@ -62,6 +65,7 @@ class ABComparisonDashboard extends React.Component<Props, State> {
     this.state = {
       ABComparisonDashboardConfig: [],
       isLoading: true,
+      disableFilters: false,
     };
   }
 
@@ -172,9 +176,6 @@ class ABComparisonDashboard extends React.Component<Props, State> {
   buildItems = () => {
     const {
       experimentationSegment,
-      match: {
-        params: { organisationId },
-      },
       controlGroupSegment,
       intl,
       colors,
@@ -206,18 +207,28 @@ class ABComparisonDashboard extends React.Component<Props, State> {
         return {
           title: config.title || '',
           display: (
-            <DatamartUsersAnalyticsWrapper
+            <DatamartUsersAnalyticsContent
               key={i.toString()}
               datamartId={experimentationSegment.datamart_id}
-              organisationId={organisationId}
+              dateRange={{
+                from: this.getFilter().from,
+                to: this.getFilter().to,
+              }}
+              onChange={this.getLoadingState}
               config={[enhancedConfig]}
               segmentToAggregate={true}
-              showFilter={false}
             />
           ),
         };
       });
     } else return [];
+  };
+
+  getFilter = () => {
+    const {
+      location: { search },
+    } = this.props;
+    return parseSearch(search, DATAMART_USERS_ANALYTICS_SETTING);
   };
 
   updateLocationSearch = (params: FILTERS) => {
@@ -239,18 +250,13 @@ class ABComparisonDashboard extends React.Component<Props, State> {
   };
 
   renderDatePicker() {
-    const {
-      controlGroupSegment,
-      location: { search },
-    } = this.props;
+    const { controlGroupSegment } = this.props;
 
-    const { isLoading } = this.state;
-
-    const filter = parseSearch(search, DATAMART_USERS_ANALYTICS_SETTING);
+    const { disableFilters } = this.state;
 
     const values = {
-      from: filter.from,
-      to: filter.to,
+      from: this.getFilter().from,
+      to: this.getFilter().to,
     };
 
     const onChange = (newValues: McsDateRangeValue): void =>
@@ -263,7 +269,7 @@ class ABComparisonDashboard extends React.Component<Props, State> {
       <McsDateRangePicker
         values={values}
         onChange={onChange}
-        disabled={isLoading}
+        disabled={disableFilters}
         excludeToday={true}
         startDate={controlGroupSegment && controlGroupSegment.creation_ts}
       />
@@ -282,15 +288,22 @@ class ABComparisonDashboard extends React.Component<Props, State> {
     });
   };
 
+  getLoadingState = (disableFilters: boolean) =>
+    this.setState({ disableFilters });
+
   render() {
     const {
       experimentationSegment,
       controlGroupSegment,
       hasFeature,
       colors,
-      intl
+      intl,
     } = this.props;
-    const { ABComparisonDashboardConfig, isLoading } = this.state;
+    const {
+      ABComparisonDashboardConfig,
+      isLoading,
+      disableFilters,
+    } = this.state;
     if (isLoading) {
       return <Loading className="loading-full-screen" />;
     }
@@ -330,16 +343,15 @@ class ABComparisonDashboard extends React.Component<Props, State> {
       />
     ) : (
       <React.Fragment>
-        <ABComparisonGauge weight={experimentationSegment.weight}  segment={experimentationSegment}
-          segmentToCompareWith={controlGroupSegment} />
-        {/* SegmentFilter & dateRangePicker have been duplicated
-        from DatamartUsersAnalyticsWrapper here in order to remove them from the tabs.
-        Also in this dashboard, we don't want the allUsers button
-        and we want only one segment to be added with segmentFilter*/}
+        <ABComparisonGauge
+          weight={experimentationSegment.weight}
+          segment={experimentationSegment}
+          segmentToCompareWith={controlGroupSegment}
+        />
         <Row className="mcs-datamartUsersAnalytics m-b-20">
           <SegmentFilter
             className={
-              isLoading
+              disableFilters
                 ? 'mcs-datamartUsersAnalytics_segmentFilter _is_disabled'
                 : 'mcs-datamartUsersAnalytics_segmentFilter'
             }
@@ -351,7 +363,9 @@ class ABComparisonDashboard extends React.Component<Props, State> {
             hideAllUsersButton={true}
             segmentcolors={[colors['mcs-warning']]}
             segmentFiltersLength={1}
-            placeholder={intl.formatMessage(messagesMap.abDashboardSegmentFilterPlaceholder)}
+            placeholder={intl.formatMessage(
+              messagesMap.abDashboardSegmentFilterPlaceholder,
+            )}
             segmentType={'USER_ACTIVATION'}
           />
 

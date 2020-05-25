@@ -112,6 +112,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       segmentId,
       compareWithSegmentId,
       location: { search },
+      segmentToAggregate
     } = this.props;
 
     if (
@@ -121,7 +122,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
           prevProps.dateRange.to.value !== dateRange.to.value)) ||
       prevProps.segmentId !== segmentId ||
       prevProps.compareWithSegmentId !== compareWithSegmentId ||
-      prevProps.location.search !== search
+      (prevProps.location.search !== search && segmentToAggregate)
     ) {
       this.fetchAnalytics(
         onChange,
