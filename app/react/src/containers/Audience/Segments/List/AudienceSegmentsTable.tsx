@@ -394,8 +394,6 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       };
     }
 
-    formattedFilters.subtype = ['STANDARD', 'AB_TESTING_EXPERIMENT'];
-
     return formattedFilters;
   };
 
