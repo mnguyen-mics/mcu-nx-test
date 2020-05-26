@@ -60,6 +60,7 @@ export const sessionInTimeJsonConfig: DashboardConfig[] = [
           }
         },
         dimensions: ['channel_name', 'channel_id', 'date_yyyy_mm_dd'],
+        filterBy: 'channel_name',
         metricNames: ['sessions'],
         dimensionFilterClauses: {
           'operator': 'OR',
@@ -593,7 +594,18 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
         metricNames: ['conversion_rate'],
         dimensionFilterClauses: {
           'operator': 'OR',
-          'filters': []
+          'filters': [
+            {
+              'dimension_name': 'type',
+              'not': false,
+              'operator': 'IN_LIST',
+              'expressions': [
+                'SITE_VISIT',
+                'APP_VISIT'
+              ],
+              'case_sensitive': false
+            },
+          ]
         },
       }
     ]
@@ -761,6 +773,7 @@ export const channelEngagementConfig: DashboardConfig[] = [
           }
         },
         dimensions: ['channel_name', 'channel_id', 'date_yyyy_mm_dd'],
+        filterBy: 'channel_name',
         metricNames: ['sessions'],
         dimensionFilterClauses: {
           'operator': 'OR',
@@ -1058,6 +1071,7 @@ export const channelEngagementConfig: DashboardConfig[] = [
           }
         },
         dimensions: ['channel_name', 'channel_id', 'date_yyyy_mm_dd'],
+        filterBy: 'channel_name',
         metricNames: ['users'],
         dimensionFilterClauses: {
           'operator': 'OR',
@@ -1130,6 +1144,7 @@ export const acquisitionEngagementConfig: DashboardConfig[] = [
           }
         },
         dimensions: ['origin_source', 'date_yyyy_mm_dd'],
+        filterBy: 'origin_source',
         metricNames: ['sessions'],
         dimensionFilterClauses: {
           'operator': 'OR',
@@ -1261,6 +1276,7 @@ export const acquisitionEngagementConfig: DashboardConfig[] = [
           }
         },
         dimensions: ['origin_channel', 'date_yyyy_mm_dd'],
+        filterBy: 'origin_channel',
         metricNames: ['sessions'],
         dimensionFilterClauses: {
           'operator': 'OR',

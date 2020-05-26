@@ -26,6 +26,8 @@ import { EmptyRecords } from '../../../../../components';
 import { parseSearch } from '../../../../../utils/LocationSearchHelper';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { DATAMART_USERS_ANALYTICS_SETTING } from '../../../Segments/Dashboard/constants';
+import { normalizeReportView } from '../../../../../utils/MetricHelper';
+import { orderBy, intersection } from 'lodash';
 
 const messages = defineMessages({
   noData: {
@@ -43,13 +45,15 @@ export interface ApiQueryWrapperProps {
   chart: Chart;
   datamartId: string;
   dateRange: McsDateRangeValue;
-  segmentId?: string;
+  // START: Use resource and resourceToCompareWith
+  segmentId?: string; 
   segmentName?: string;
   compareWithSegmentId?: string;
   compareWithSegmentName?: string;
+  // END: Use resource and resource to compareWith
   onChange: (isLoading: boolean) => void;
-  enhancedManualReportView?: boolean;
-  segmentToAggregate?: boolean;
+  enhancedManualReportView?: boolean; // To remove
+  segmentToAggregate?: boolean; // To remove
 }
 
 interface State {
@@ -115,6 +119,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       segmentToAggregate
     } = this.props;
 
+    // TO DO: Use lodash method whenever it's possible (dateRange object comparison)
     if (
       (prevProps.dateRange.from.value &&
         prevProps.dateRange.to.value &&
@@ -150,7 +155,8 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       });
     }
   }
-
+  
+  // TO DO: date range should not be undefined (useless check) 
   getDataRangeValues = () => {
     const { dateRange } = this.props;
     if (!dateRange.from.value || !dateRange.to.value) {
@@ -159,6 +165,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
     return [dateRange.from, dateRange.to];
   };
 
+  // Move to Format data to chart & create new double axis area type
   formatReportView = (
     reportView: ReportView,
     enhancedManualReportView: boolean = false,
@@ -191,15 +198,81 @@ class ApiQueryWrapper extends React.Component<Props, State> {
     compareWithSegmentId?: string,
   ) => {
     const {
-      enhancedManualReportView,
-      segmentName,
-      compareWithSegmentName,
+      chart
     } = this.props;
 
     this.setState({
       loading: true,
     });
     onChange(true);
+
+    let getTenHigherValues: string[] = [];
+
+    if (dimensions && dimensions.includes('date_yyyy_mm_dd')) {
+      const dimensionsWithoutTime = dimensions.slice().filter(d => d !== 'date_yyyy_mm_dd');
+      return this._datamartUsersAnalyticsService
+        .getAnalytics(
+          datamartId,
+          metric,
+          from,
+          to,
+          dimensionsWithoutTime,
+          dimensionFilterClauses,
+          compareWithSegmentId || segmentId,
+        )
+        .then(res => {
+          const normalizedData = normalizeReportView(res.data.report_view);
+          const sortedNormalizedData = orderBy(normalizedData, metric, 'desc');
+          if (sortedNormalizedData && chart.filterBy) {
+            getTenHigherValues = sortedNormalizedData.slice(0, 11).map(item => {
+              if (chart.filterBy) { return item[chart.filterBy] }
+            });
+          }
+
+          return this.doFetchAnalytics(
+            onChange,
+            datamartId,
+            metric,
+            from,
+            to,
+            dimensions,
+            dimensionFilterClauses,
+            segmentId,
+            compareWithSegmentId,
+            getTenHigherValues);
+        });
+    }
+
+    return this.doFetchAnalytics(
+      onChange,
+      datamartId,
+      metric,
+      from,
+      to,
+      dimensions,
+      dimensionFilterClauses,
+      segmentId,
+      compareWithSegmentId);
+  };
+
+  doFetchAnalytics = (
+    onChange: (isLoading: boolean) => void,
+    datamartId: string,
+    metric: DatamartUsersAnalyticsMetric[],
+    from: McsMoment,
+    to: McsMoment,
+    dimensions?: DatamartUsersAnalyticsDimension[],
+    dimensionFilterClauses?: DimensionFilterClause,
+    segmentId?: string,
+    compareWithSegmentId?: string,
+    tenHigherValues?: string[]
+  ) => {
+
+    const {
+      enhancedManualReportView,
+      segmentName,
+      compareWithSegmentName,
+    } = this.props;
     return this._datamartUsersAnalyticsService
       .getAnalytics(
         datamartId,
@@ -212,6 +285,12 @@ class ApiQueryWrapper extends React.Component<Props, State> {
         this.getSegmentIdToAddToDimensionFilterClause(!!compareWithSegmentId)
       )
       .then(res => {
+
+        if (tenHigherValues && tenHigherValues.length > 0) {
+          const filteredReportRows = res.data.report_view.rows.filter(item => intersection(item, tenHigherValues).length > 0);
+          res.data.report_view.rows = filteredReportRows;
+        }
+
         if (!compareWithSegmentId) {
           this.setState({
             loading: false,
@@ -240,8 +319,9 @@ class ApiQueryWrapper extends React.Component<Props, State> {
         });
         onChange(false);
       });
-  };
-
+  }
+  
+  // TO DO: To remove
   getSegmentIdToAddToDimensionFilterClause = (isSegmentToAdd: boolean) => {
     const {
       segmentToAggregate,
@@ -255,14 +335,16 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       : undefined;
   };
 
+  // TO DO: Move to formatDataToChart
   getEmptyDataComponent(chartType: string, message: string) {
     return chartType !== 'SINGLE_STAT' ? (
       <EmptyCharts title={message} />
     ) : (
-      <EmptyRecords message={message} />
-    );
+        <EmptyRecords message={message} />
+      );
   }
 
+  // TO DO: Move to formatDataToChart
   areAnalyticsReady = (items: any[]) => {
     const isItemNull = items[0] && items[0][0] === null;
     const isItemNaN = items[0] && items[0][0] === 'NaN';
@@ -282,9 +364,10 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       return chart.type !== 'SINGLE_STAT' ? (
         <LoadingChart />
       ) : (
-        <MetricCounterLoader />
-      );
+          <MetricCounterLoader />
+        );
 
+    // Move to Format data to chart & create new double axis area type
     const getMergedApiResponse = (reportView: ReportView) => {
       return {
         ...reportView,
@@ -294,51 +377,52 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       };
     };
 
+    // Move to Format data to chart & create new double axis area type
     const enhancedChartWithDefaultDimension: Chart = {
       ...chart,
       dimensions: chart.dimensions
         ? ['resource_name' as DatamartUsersAnalyticsDimension].concat(
-            chart.dimensions,
-          )
+          chart.dimensions,
+        )
         : [],
     };
 
     return (
       <div className={'mcs-datamartUsersAnalytics_component_charts'}>
-        {reportViewApiResponse &&
-        (reportViewApiResponse.total_items > 0 ||
-          (reportViewApiResponseToCompareWith &&
-            reportViewApiResponseToCompareWith.total_items > 0)) ? (
-          this.areAnalyticsReady(reportViewApiResponse.rows) ||
-          (reportViewApiResponseToCompareWith &&
-            this.areAnalyticsReady(reportViewApiResponseToCompareWith.rows)) ? (
-            <FormatDataToChart
-              apiResponse={
-                enhancedManualReportView
-                  ? getMergedApiResponse(reportViewApiResponse)
-                  : reportViewApiResponse
-              }
-              apiResponseToCompareWith={reportViewApiResponseToCompareWith}
-              chart={
-                enhancedManualReportView
-                  ? enhancedChartWithDefaultDimension
-                  : chart
-              }
-            />
+        {/* TO DO: Move logic to proper function */ reportViewApiResponse &&
+          (reportViewApiResponse.total_items > 0 ||
+            (reportViewApiResponseToCompareWith &&
+              reportViewApiResponseToCompareWith.total_items > 0)) ? (
+            this.areAnalyticsReady(reportViewApiResponse.rows) ||
+              (reportViewApiResponseToCompareWith &&
+                this.areAnalyticsReady(reportViewApiResponseToCompareWith.rows)) ? (
+                <FormatDataToChart
+                  apiResponse={
+                    enhancedManualReportView
+                      ? getMergedApiResponse(reportViewApiResponse)
+                      : reportViewApiResponse
+                  }
+                  apiResponseToCompareWith={reportViewApiResponseToCompareWith}
+                  chart={
+                    enhancedManualReportView
+                      ? enhancedChartWithDefaultDimension
+                      : chart
+                  }
+                />
+              ) : (
+                // TO REMOVE
+                this.getEmptyDataComponent(
+                  chart.type,
+                  intl.formatMessage(messages.noData),
+                )
+              )
           ) : (
-            // Let's keep this in case we want to display a different
-            // message if datamartUserAnalytics return null/undefined
+             // TO REMOVE
             this.getEmptyDataComponent(
               chart.type,
               intl.formatMessage(messages.noData),
             )
-          )
-        ) : (
-          this.getEmptyDataComponent(
-            chart.type,
-            intl.formatMessage(messages.noData),
-          )
-        )}
+          )}
       </div>
     );
   }
