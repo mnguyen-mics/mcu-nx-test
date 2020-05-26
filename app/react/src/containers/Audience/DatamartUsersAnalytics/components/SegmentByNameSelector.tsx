@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { Select, Spin } from 'antd';
 import { lazyInject } from '../../../../config/inversify.config';
-import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
+import { IAudienceSegmentService, GetSegmentsOption } from '../../../../services/AudienceSegmentService';
 import { TYPES } from '../../../../constants/types';
 import SegmentNameDisplay from '../../Common/SegmentNameDisplay';
 import debounce from 'lodash/debounce';
 import { McsIcon } from '../../../../components';
 import { LabeledValue } from 'antd/lib/select';
+import { AudienceSegmentType } from '../../../../models/audiencesegment';
 
 interface SegmentByNameSelectorState {
   segmentsList: LabeledValue[];
@@ -18,6 +19,7 @@ interface SegmentByNameSelectorProps {
   datamartId: string;
   organisationId: string;
   onchange: (value: LabeledValue) => void;
+  segmentType?: AudienceSegmentType
 }
 
 class SegmentByNameSelector extends React.Component<SegmentByNameSelectorProps, SegmentByNameSelectorState> {
@@ -40,9 +42,16 @@ class SegmentByNameSelector extends React.Component<SegmentByNameSelectorProps, 
   }
 
   fetchListMethod( keywords: string) {
-    const { datamartId, organisationId } = this.props;
+    const { datamartId, organisationId, segmentType } = this.props;
     this.setState({ segmentsList: [], fetching: true });
-    return this._audienceSegmentService.getSegments(organisationId, { keywords: keywords, datamart_id: datamartId })
+    const options: GetSegmentsOption = {
+      keywords: keywords,
+      datamart_id: datamartId
+    }
+    if(segmentType) {
+      options.type = segmentType
+    }
+    return this._audienceSegmentService.getSegments(organisationId, options)
       .then(res => {
         this.setState({
           segmentsList: res.data.map(r => ({ key: r.id, label: <SegmentNameDisplay audienceSegmentResource={r} /> })),

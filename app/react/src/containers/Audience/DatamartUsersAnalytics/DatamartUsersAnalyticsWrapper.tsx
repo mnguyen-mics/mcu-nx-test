@@ -43,6 +43,7 @@ export interface DatamartUsersAnalyticsWrapperProps {
   comparisonStartDate?: number;
   disableAllUserFilter?: boolean;
   defaultSegment?: LabeledValue;
+  segmentToAggregate?: boolean;
 }
 
 export type FILTERS = DateSearchSettings | SegmentsSearchSettings | AllUsersSettings;
@@ -184,6 +185,7 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
       disableAllUserFilter,
       defaultSegment,
       pageTitle,
+      segmentToAggregate,
       location: { search },
     } = this.props;
 
@@ -241,6 +243,7 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
             config={config}
             dateRange={{ from: filter.from, to: filter.to }}
             onChange={this.getLoadingState}
+            segmentToAggregate={segmentToAggregate}
           />
         )}
       </div>

@@ -23,6 +23,9 @@ import { MetricCounterLoader } from '../MetricCounterLoader';
 import McsMoment from '../../../../../utils/McsMoment';
 import { McsDateRangeValue } from '../../../../../components/McsDateRangePicker';
 import { EmptyRecords } from '../../../../../components';
+import { parseSearch } from '../../../../../utils/LocationSearchHelper';
+import { withRouter, RouteComponentProps } from 'react-router';
+import { DATAMART_USERS_ANALYTICS_SETTING } from '../../../Segments/Dashboard/constants';
 
 const messages = defineMessages({
   noData: {
@@ -33,6 +36,7 @@ const messages = defineMessages({
 
 type Props = ApiQueryWrapperProps &
   InjectedNotificationProps &
+  RouteComponentProps<{}> &
   InjectedIntlProps;
 
 export interface ApiQueryWrapperProps {
@@ -45,7 +49,7 @@ export interface ApiQueryWrapperProps {
   compareWithSegmentName?: string;
   onChange: (isLoading: boolean) => void;
   enhancedManualReportView?: boolean;
-  comparisonStartDate?: number;
+  segmentToAggregate?: boolean;
 }
 
 interface State {
@@ -81,7 +85,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       this.getDataRangeValues()[1],
       chart.dimensions,
       chart.dimensionFilterClauses,
-      segmentId,
+      segmentId
     ).then(() => {
       if (compareWithSegmentId) {
         this.fetchAnalytics(
@@ -99,7 +103,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
     });
   }
 
-  componentDidUpdate(prevProps: ApiQueryWrapperProps) {
+  componentDidUpdate(prevProps: Props) {
     const {
       datamartId,
       chart,
@@ -107,6 +111,8 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       onChange,
       segmentId,
       compareWithSegmentId,
+      location: { search },
+      segmentToAggregate
     } = this.props;
 
     if (
@@ -115,7 +121,8 @@ class ApiQueryWrapper extends React.Component<Props, State> {
         (prevProps.dateRange.from.value !== dateRange.from.value ||
           prevProps.dateRange.to.value !== dateRange.to.value)) ||
       prevProps.segmentId !== segmentId ||
-      prevProps.compareWithSegmentId !== compareWithSegmentId
+      prevProps.compareWithSegmentId !== compareWithSegmentId ||
+      (prevProps.location.search !== search && segmentToAggregate)
     ) {
       this.fetchAnalytics(
         onChange,
@@ -188,6 +195,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       segmentName,
       compareWithSegmentName,
     } = this.props;
+
     this.setState({
       loading: true,
     });
@@ -201,6 +209,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
         dimensions,
         dimensionFilterClauses,
         compareWithSegmentId || segmentId,
+        this.getSegmentIdToAddToDimensionFilterClause(!!compareWithSegmentId)
       )
       .then(res => {
         if (!compareWithSegmentId) {
@@ -231,6 +240,19 @@ class ApiQueryWrapper extends React.Component<Props, State> {
         });
         onChange(false);
       });
+  };
+
+  getSegmentIdToAddToDimensionFilterClause = (isSegmentToAdd: boolean) => {
+    const {
+      segmentToAggregate,
+      location: { search },
+    } = this.props;
+    const filter = parseSearch(search, DATAMART_USERS_ANALYTICS_SETTING);
+    return segmentToAggregate &&
+      filter.segments.length === 1 &&
+      isSegmentToAdd
+      ? filter.segments[0]
+      : undefined;
   };
 
   getEmptyDataComponent(chartType: string, message: string) {
@@ -325,4 +347,5 @@ class ApiQueryWrapper extends React.Component<Props, State> {
 export default compose<ApiQueryWrapperProps, ApiQueryWrapperProps>(
   injectNotifications,
   injectIntl,
+  withRouter,
 )(ApiQueryWrapper);
