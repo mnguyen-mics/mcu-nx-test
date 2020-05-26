@@ -4,10 +4,10 @@ import { Layout, Row } from 'antd';
 import { defineMessages, FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { FormTitle } from '../../../components/Form';
 import ActionBar, { ActionBarProps } from '../../../components/ActionBar';
-import { MenuPresentational, MenuList } from '../../../components/FormMenu';
 import { QueryInputEvaluationPeriodUnit } from '../../../models/automations/automations';
 import { injectFeatures, InjectedFeaturesProps } from '../../Features';
 import { AutomationSelectedType } from './AutomationBuilderPage';
+import { MenuList } from '@mediarithmics-private/mcs-components-library';
 
 export interface AutomationTemplateSelectorProps {
   onSelectTemplate: (type: AutomationSelectedType, n?: number, p?: QueryInputEvaluationPeriodUnit) => void;
@@ -51,34 +51,27 @@ class AutomationTemplateSelector extends React.Component<Props, State> {
     return (
       <Row className="mcs-selector_container">
         <Row className="menu">
-          <div className="presentation">
-            <MenuPresentational
-              title={
-                hasFeature('automations-wizard-react-to-event')
-                ? formatMessage(messages.reactToAnEvent)
-                : formatMessage(messages.live)
-              }
-              subtitles={
-                hasFeature('automations-wizard-react-to-event') && disableReactToEvent
-                ? [formatMessage(messages.reactToAnEventDisabled)]
-                : undefined
-              }
-              type="user-pixel"
-              select={
-                hasFeature('automations-wizard-react-to-event') 
-                ? onClickOnReactToEvent : 
-                onClickOnLive}
-              disabled={hasFeature('automations-wizard-react-to-event') ? disableReactToEvent : false}
-            />
-            <div className="separator">
-              <FormattedMessage {...messages.or} />
-            </div>
-            <MenuPresentational
-              title={formatMessage(messages.periodic)}
-              type="user-query"
-              select={onClickOnPeriodic}
-            />
-          </div>
+          <MenuList
+            title={
+              hasFeature('automations-wizard-react-to-event')
+              ? formatMessage(messages.reactToAnEvent)
+              : formatMessage(messages.live)
+            }
+            subtitles={
+              hasFeature('automations-wizard-react-to-event') && disableReactToEvent
+              ? [formatMessage(messages.reactToAnEventDisabled)]
+              : undefined
+            }
+            select={
+              hasFeature('automations-wizard-react-to-event') 
+              ? onClickOnReactToEvent : 
+              onClickOnLive}
+            disabled={hasFeature('automations-wizard-react-to-event') ? disableReactToEvent : false}
+          />
+          <MenuList
+            title={formatMessage(messages.periodic)}
+            select={onClickOnPeriodic}
+          />
         </Row>
         {hasFeature('automations-wizard-react-to-event') && 
           <div>
