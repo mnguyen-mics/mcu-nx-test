@@ -72,6 +72,10 @@ class CleaningRulesDashboardPage extends React.Component<Props, State> {
   }
 
   componentDidMount() {
+    this.refreshCleaningRule()
+  }
+
+  refreshCleaningRule = () => {
     const { filter } = this.state;
     this.fetchCleaningRules(filter);
   }
@@ -242,6 +246,7 @@ class CleaningRulesDashboardPage extends React.Component<Props, State> {
               total={totalCleaningRules}
               isFetchingCleaningRules={isFetchingCleaningRules}
               onFilterChange={this.onFilterChange}
+              onCleaningRuleUpdate={this.refreshCleaningRule}
             />
           ),
           key: typeItem.cleaningRuleType,

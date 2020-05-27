@@ -1,9 +1,11 @@
 import * as React from 'react';
+import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { WrappedFieldProps } from 'redux-form';
-import FormFieldWrapper, { FormFieldWrapperProps } from './FormFieldWrapper';
+import FormFieldWrapper, { FormFieldWrapperProps } from '../../../../../../components/Form/FormFieldWrapper';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import Select, { SelectProps } from 'antd/lib/select';
 import { Col, InputNumber, Row } from 'antd';
+import messages from '../messages';
 
 export interface OptionsAndSeparatorProps {
   label: string;
@@ -11,16 +13,16 @@ export interface OptionsAndSeparatorProps {
   separator: string;
 }
 
-export interface FormLinkedSelectAndPeriodPickerProps
+export interface CleaningRuleLifeTimeDurationProps
   extends FormFieldWrapperProps {
   formItemProps: FormItemProps;
   selectProps?: SelectProps;
   optionsAndSeparators: OptionsAndSeparatorProps[];
 }
 
-type JoinedProps = FormLinkedSelectAndPeriodPickerProps & WrappedFieldProps;
+type Props = CleaningRuleLifeTimeDurationProps & WrappedFieldProps & InjectedIntlProps;
 
-class FormLinkedSelectAndPeriodPicker extends React.Component<JoinedProps> {
+class CleaningRuleLifeTimeDuration extends React.Component<Props> {
   updateSelect = (selectedValue: string) => {
     const { input } = this.props;
     input.onChange({ ...input.value, selectedValue: selectedValue });
@@ -30,11 +32,6 @@ class FormLinkedSelectAndPeriodPicker extends React.Component<JoinedProps> {
     const { input } = this.props;
 
     input.onChange({ ...input.value, periodNumber: value });
-  };
-
-  updatePeriodUnit = (selectedPeriodUnit: string) => {
-    const { input } = this.props;
-    input.onChange({ ...input.value, periodUnit: selectedPeriodUnit });
   };
 
   createOptions = () => {
@@ -71,6 +68,7 @@ class FormLinkedSelectAndPeriodPicker extends React.Component<JoinedProps> {
       formItemProps,
       selectProps,
       meta,
+      intl
     } = this.props;
 
     let validateStatus = 'success' as
@@ -86,22 +84,6 @@ class FormLinkedSelectAndPeriodPicker extends React.Component<JoinedProps> {
 
     const separator = this.createSeparator();
 
-    const periodUnits = [
-      { label: 'Days', value: 'D' },
-      { label: 'Months', value: 'M' },
-      { label: 'Years', value: 'Y' },
-    ];
-
-    // The select is removed temporarily.
-
-    // const periodUnitOptions = periodUnits.map(period => (
-    //   <Select.Option key={period.value}>{period.label}</Select.Option>
-    // ));
-
-    const periodUnitOpt = periodUnits.find(periodUnit => input.value.periodUnit === periodUnit.value);
-
-    const periodUnitLabel = periodUnitOpt ? periodUnitOpt.label : periodUnits[0].label;
-
     return (
       <FormFieldWrapper
         help={meta.touched && (meta.warning || meta.error)}
@@ -116,7 +98,6 @@ class FormLinkedSelectAndPeriodPicker extends React.Component<JoinedProps> {
               value={input.value.selectedValue}
               onChange={this.updateSelect}
               {...selectProps}
-              disabled={true}
             >
               {options}
             </Select>
@@ -126,19 +107,10 @@ class FormLinkedSelectAndPeriodPicker extends React.Component<JoinedProps> {
             <InputNumber
               value={input.value.periodNumber}
               onChange={this.updatePeriodNumber}
-              disabled={true}
             />
           </Col>
           <Col span={3}>
-            {periodUnitLabel}
-            {/* The Select is removed temporarily. */}
-            {/* <Select
-              value={input.value.periodUnit}
-              onChange={this.updatePeriodUnit}
-              disabled={true}
-            >
-              {periodUnitOptions}
-            </Select> */}
+            { intl.formatMessage(messages.cleaningRuleLifeDurationDays) }
           </Col>
         </Row>
       </FormFieldWrapper>
@@ -146,4 +118,4 @@ class FormLinkedSelectAndPeriodPicker extends React.Component<JoinedProps> {
   }
 }
 
-export default FormLinkedSelectAndPeriodPicker;
+export default injectIntl(CleaningRuleLifeTimeDuration);

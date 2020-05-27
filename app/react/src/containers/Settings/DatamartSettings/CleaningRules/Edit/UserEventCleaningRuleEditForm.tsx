@@ -49,7 +49,7 @@ type Props = InjectedFormProps<
 class UserEventCleaningRuleEditForm extends React.Component<Props> {
   render() {
     const {
-      // handleSubmit,
+      handleSubmit,
       breadCrumbPaths,
       close,
       goToDatamartSelector,
@@ -59,7 +59,7 @@ class UserEventCleaningRuleEditForm extends React.Component<Props> {
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
       paths: breadCrumbPaths,
-      // message: messages.saveUserEventCleaningRule,
+      message: messages.saveUserEventCleaningRule,
       onClose: close,
     };
 
@@ -112,8 +112,7 @@ class UserEventCleaningRuleEditForm extends React.Component<Props> {
           <ScrollspySider {...sideBarProps} />
           <Form
             className="edit-layout ant-layout"
-            // submit temporarily disabled
-            // onSubmit={handleSubmit as any}
+            onSubmit={handleSubmit as any}
           >
             {/* This button enables submit on enter */}
             <button type="submit" style={{ display: 'none' }} />

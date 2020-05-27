@@ -7,15 +7,14 @@ import { compose } from 'recompose';
 import messages from '../messages';
 import {
   FormSection,
-  FormLinkedSelectAndPeriodPickerField,
-  FormLinkedSelectAndPeriodPicker,
 } from '../../../../../../components/Form';
-import { Validator } from 'redux-form';
+import { Validator, Field, GenericField } from 'redux-form';
 import moment from 'moment';
 import {
   USER_EVENT_CLEANING_RULE_MIN_LIFE_DURATION,
   USER_EVENT_CLEANING_RULE_MAX_LIFE_DURATION,
 } from '../domain';
+import CleaningRuleLifeTimeDuration, { CleaningRuleLifeTimeDurationProps } from './CleaningRuleLifeTimeDuration';
 
 type Props = InjectedIntlProps & ValidatorProps;
 
@@ -61,15 +60,18 @@ class ActionFormSection extends React.Component<Props> {
       },
     ];
 
+
+    const CleaningRuleLifeTimeDurationField = Field as new () => GenericField<CleaningRuleLifeTimeDurationProps>
+
     return (
       <div>
         <FormSection
           subtitle={messages.sectionActionSubTitle}
           title={messages.sectionActionTitle}
         />
-        <FormLinkedSelectAndPeriodPickerField
+        <CleaningRuleLifeTimeDurationField
           name="actionAndPeriod"
-          component={FormLinkedSelectAndPeriodPicker}
+          component={CleaningRuleLifeTimeDuration}
           validate={[isRequired, this.checkLifeDuration()]}
           formItemProps={{
             label: formatMessage(messages.sectionActionLabel),

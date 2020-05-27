@@ -318,95 +318,97 @@ class UserEventCleaningRuleEditPage extends React.Component<Props, State> {
 
     const { selectedDatamartId } = this.state;
 
-    // Save temporarily unauthorized
-    const allowSave = false;
+    this.setState({loading : true})
 
-    if (allowSave) {
-      if (cleaningRuleId && userEventCleaningRuleData.userEventCleaningRule) {
-        // Update cleaning rule
+    if (cleaningRuleId && userEventCleaningRuleData.userEventCleaningRule) {
+      // Update cleaning rule
 
-        const datamartId =
-          userEventCleaningRuleData.userEventCleaningRule.datamart_id;
+      const datamartId =
+        userEventCleaningRuleData.userEventCleaningRule.datamart_id;
 
-        const userEventCleaningRule: UserEventCleaningRuleResource = {
-          ...userEventCleaningRuleData.userEventCleaningRule,
-          action: userEventCleaningRuleData.actionAndPeriod.selectedValue,
-          channel_filter: userEventCleaningRuleData.channelFilter,
-          activity_type_filter: userEventCleaningRuleData.activityTypeFilter,
-          life_duration: `P${userEventCleaningRuleData.actionAndPeriod.periodNumber}${userEventCleaningRuleData.actionAndPeriod.periodUnit}`,
-        };
+      const userEventCleaningRule: UserEventCleaningRuleResource = {
+        ...userEventCleaningRuleData.userEventCleaningRule,
+        action: userEventCleaningRuleData.actionAndPeriod.selectedValue,
+        channel_filter: userEventCleaningRuleData.channelFilter,
+        activity_type_filter: userEventCleaningRuleData.activityTypeFilter,
+        life_duration: `P${userEventCleaningRuleData.actionAndPeriod.periodNumber}${userEventCleaningRuleData.actionAndPeriod.periodUnit}`,
+      };
 
-        const updateCleaningRuleP = this._datamartService.updateCleaningRule(
-          datamartId,
-          cleaningRuleId,
-          userEventCleaningRule,
-        );
+      const updateCleaningRuleP = this._datamartService.updateCleaningRule(
+        datamartId,
+        cleaningRuleId,
+        userEventCleaningRule,
+      );
 
-        const previousContentFilter =
-          userEventCleaningRuleData.userEventContentFilter;
+      const previousContentFilter =
+        userEventCleaningRuleData.userEventContentFilter;
 
-        const nextEventNameFilter = userEventCleaningRuleData.eventNameFilter;
+      const nextEventNameFilter = userEventCleaningRuleData.eventNameFilter;
 
-        const contentFilterP = this.getContentFilterPromise(
-          datamartId,
-          cleaningRuleId,
-          previousContentFilter,
-          nextEventNameFilter,
-        );
+      const contentFilterP = this.getContentFilterPromise(
+        datamartId,
+        cleaningRuleId,
+        previousContentFilter,
+        nextEventNameFilter,
+      );
 
-        Promise.all([updateCleaningRuleP, contentFilterP])
-          .then(_ => {
-            this.onClose();
-          })
-          .catch(err => {
-            notifyError(err);
-            this.onClose();
-          });
-      }
-      if (!cleaningRuleId && selectedDatamartId) {
-        // Create cleaning rule
-
-        const userEventCleaningRule: Partial<UserEventCleaningRuleResource> = {
-          type: 'USER_EVENT_CLEANING_RULE',
-          datamart_id: selectedDatamartId,
-          action: userEventCleaningRuleData.actionAndPeriod.selectedValue,
-          status: 'DRAFT',
-          archived: false,
-          channel_filter: userEventCleaningRuleData.channelFilter,
-          activity_type_filter: userEventCleaningRuleData.activityTypeFilter,
-          life_duration: `P${userEventCleaningRuleData.actionAndPeriod.periodNumber}${userEventCleaningRuleData.actionAndPeriod.periodUnit}`,
-        };
-
-        this._datamartService
-          .createCleaningRule(selectedDatamartId, userEventCleaningRule)
-          .then(resCleaningRule => {
-            const newCleaningRuleId = resCleaningRule.data.id;
-            const eventNameFilter = userEventCleaningRuleData.eventNameFilter;
-
-            const eventNameFilterP: Promise<
-              DataResponse<UserEventContentFilterResource> | undefined
-            > =
-              eventNameFilter && eventNameFilter !== ''
-                ? this._datamartService.createContentFilter(
-                    selectedDatamartId,
-                    newCleaningRuleId,
-                    {
-                      content_type: 'EVENT_NAME_FILTER',
-                      filter: eventNameFilter,
-                    },
-                  )
-                : Promise.resolve(undefined);
-
-            return eventNameFilterP.then(_ => {
-              this.onClose();
-            });
-          })
-          .catch(err => {
-            notifyError(err);
-            this.onClose();
-          });
-      }
+      Promise.all([updateCleaningRuleP, contentFilterP])
+        .then(_ => {
+          this.setState({loading : false})
+          this.onClose();
+        })
+        .catch(err => {
+          this.setState({loading : false})
+          notifyError(err);
+          this.onClose();
+        });
     }
+    if (!cleaningRuleId && selectedDatamartId) {
+      // Create cleaning rule
+
+      const userEventCleaningRule: Partial<UserEventCleaningRuleResource> = {
+        type: 'USER_EVENT_CLEANING_RULE',
+        datamart_id: selectedDatamartId,
+        action: userEventCleaningRuleData.actionAndPeriod.selectedValue,
+        status: 'DRAFT',
+        archived: false,
+        channel_filter: userEventCleaningRuleData.channelFilter,
+        activity_type_filter: userEventCleaningRuleData.activityTypeFilter,
+        life_duration: `P${userEventCleaningRuleData.actionAndPeriod.periodNumber}${userEventCleaningRuleData.actionAndPeriod.periodUnit}`,
+      };
+
+      this._datamartService
+        .createCleaningRule(selectedDatamartId, userEventCleaningRule)
+        .then(resCleaningRule => {
+          const newCleaningRuleId = resCleaningRule.data.id;
+          const eventNameFilter = userEventCleaningRuleData.eventNameFilter;
+
+          const eventNameFilterP: Promise<
+            DataResponse<UserEventContentFilterResource> | undefined
+          > =
+            eventNameFilter && eventNameFilter !== ''
+              ? this._datamartService.createContentFilter(
+                  selectedDatamartId,
+                  newCleaningRuleId,
+                  {
+                    content_type: 'EVENT_NAME_FILTER',
+                    filter: eventNameFilter,
+                  },
+                )
+              : Promise.resolve(undefined);
+
+          return eventNameFilterP.then(_ => {
+            this.onClose();
+            this.setState({loading : false})
+          });
+        })
+        .catch(err => {
+          this.setState({loading : false})
+          notifyError(err);
+          this.onClose();
+        });
+    }
+    
   };
 
   onClose = () => {
@@ -418,7 +420,9 @@ class UserEventCleaningRuleEditPage extends React.Component<Props, State> {
       },
     } = this.props;
 
-    const defaultRedirectUrl = `/v2/o/${organisationId}/settings/datamart/cleaning_rules`;
+    const { selectedDatamartId  }= this.state;
+
+    const defaultRedirectUrl = `/v2/o/${organisationId}/settings/datamart/cleaning_rules?datamartId=${selectedDatamartId}`;
 
     return location.state && location.state.from
       ? history.push(location.state.from)
