@@ -20,9 +20,9 @@ interface State {
   periodic: boolean
 }
 
-type Props = AutomationTemplateSelectorProps 
-& InjectedIntlProps
-& InjectedFeaturesProps;
+type Props = AutomationTemplateSelectorProps
+  & InjectedIntlProps
+  & InjectedFeaturesProps;
 
 class AutomationTemplateSelector extends React.Component<Props, State> {
 
@@ -46,7 +46,9 @@ class AutomationTemplateSelector extends React.Component<Props, State> {
 
     const onClickOnLive = () => onSelectTemplate('LIVE');
     const onClickOnReactToEvent = () => onSelectTemplate('REACT_TO_EVENT');
-    const onClickOnPeriodic = () => this.setState({periodic: true})
+    const onClicOnSegmentEntry = () => onSelectTemplate('ON_SEGMENT_ENTRY');
+    const onClicOnSegmentExit = () => onSelectTemplate('ON_SEGMENT_EXIT');
+    const onClickOnPeriodic = () => this.setState({ periodic: true })
 
     return (
       <Row className="mcs-selector_container">
@@ -54,26 +56,40 @@ class AutomationTemplateSelector extends React.Component<Props, State> {
           <MenuList
             title={
               hasFeature('automations-wizard-react-to-event')
-              ? formatMessage(messages.reactToAnEvent)
-              : formatMessage(messages.live)
+                ? formatMessage(messages.reactToAnEvent)
+                : formatMessage(messages.live)
             }
             subtitles={
               hasFeature('automations-wizard-react-to-event') && disableReactToEvent
-              ? [formatMessage(messages.reactToAnEventDisabled)]
-              : undefined
+                ? [formatMessage(messages.reactToAnEventDisabled)]
+                : undefined
             }
             select={
-              hasFeature('automations-wizard-react-to-event') 
-              ? onClickOnReactToEvent : 
-              onClickOnLive}
+              hasFeature('automations-wizard-react-to-event')
+                ? onClickOnReactToEvent :
+                onClickOnLive}
             disabled={hasFeature('automations-wizard-react-to-event') ? disableReactToEvent : false}
           />
-          <MenuList
-            title={formatMessage(messages.periodic)}
-            select={onClickOnPeriodic}
-          />
+          {
+            this.props.hasFeature('automations-on-segment-entry') &&
+            <div>
+              <MenuList
+                title={formatMessage(messages.onSegmentEntry)}
+                select={onClicOnSegmentEntry}
+              />
+
+            </div>
+          }
+          {
+            this.props.hasFeature('automations-on-segment-exit') &&
+            <MenuList
+              title={formatMessage(messages.onSegmentExit)}
+              select={onClicOnSegmentExit}
+            />
+          }
+
         </Row>
-        {hasFeature('automations-wizard-react-to-event') && 
+        {hasFeature('automations-wizard-react-to-event') &&
           <div>
             <Row className="intermediate-title">
               <FormattedMessage {...messages.advanced} />
@@ -82,6 +98,10 @@ class AutomationTemplateSelector extends React.Component<Props, State> {
               <MenuList
                 title={formatMessage(messages.live)}
                 select={onClickOnLive}
+              />
+              <MenuList
+                title={formatMessage(messages.periodic)}
+                select={onClickOnPeriodic}
               />
             </Row>
           </div>
@@ -99,7 +119,7 @@ class AutomationTemplateSelector extends React.Component<Props, State> {
       }
     } = this.props;
 
-    const onClickOnPeriodic = (n: number, p: QueryInputEvaluationPeriodUnit) => () => onSelectTemplate('PERIODIC', n , p);
+    const onClickOnPeriodic = (n: number, p: QueryInputEvaluationPeriodUnit) => () => onSelectTemplate('PERIODIC', n, p);
 
     return (
       <Row className="mcs-selector_container">
@@ -123,16 +143,16 @@ class AutomationTemplateSelector extends React.Component<Props, State> {
     const {
       periodic
     } = this.state;
-  
+
     return (
       <Layout>
         <ActionBar {...actionbarProps} />
         <Layout.Content className="mcs-content-container mcs-form-container text-center">
           <FormTitle title={messages.title} subtitle={messages.subTitleStep1} />
-            { periodic 
-              ? this.renderSelectionPeriod()
-              : this.renderSelectionAutomationType()
-            }
+          {periodic
+            ? this.renderSelectionPeriod()
+            : this.renderSelectionAutomationType()
+          }
         </Layout.Content>
       </Layout>
     );
@@ -168,6 +188,14 @@ const messages = defineMessages({
   live: {
     id: 'automations-template-selector-live',
     defaultMessage: 'Live',
+  },
+  onSegmentEntry: {
+    id: 'automations-template-selector-on-segment-entry',
+    defaultMessage: 'On Segment Entry',
+  },
+  onSegmentExit: {
+    id: 'automations-template-selector-on-segment-exit',
+    defaultMessage: 'On Segment Exit',
   },
   reactToAnEvent: {
     id: 'automations-template-selector-reactToAnEvent',

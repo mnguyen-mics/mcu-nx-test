@@ -52,7 +52,10 @@ interface MapStateToProps {
 
 export type AutomationSelectedType =
   | QueryInputEvaluationMode
-  | 'REACT_TO_EVENT';
+  | 'REACT_TO_EVENT'
+  | 'ON_SEGMENT_ENTRY'
+  | 'ON_SEGMENT_EXIT';
+
 
 interface State {
   isLoading: boolean;
