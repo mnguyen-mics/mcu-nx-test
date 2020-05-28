@@ -50,7 +50,8 @@
     // 'servicesSettings-my_offers',
     'audience-dashboards-datamart_users_analytics',
     'datamart-user_choices',
-    'datamartSettings-audience_partitions'
+    'datamartSettings-audience_partitions',
+    'datamartSettings-compartments'
   ];
 
  const gravityFeatures = [
