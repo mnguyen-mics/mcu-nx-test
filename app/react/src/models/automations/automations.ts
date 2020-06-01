@@ -50,6 +50,8 @@ export type ScenarioNodeType =
   | 'ADD_TO_SEGMENT_NODE'
   | 'DELETE_FROM_SEGMENT_NODE'
   | 'QUERY_INPUT'
+  | 'ON_SEGMENT_ENTRY_INPUT_NODE'
+  | 'ON_SEGMENT_EXIT_INPUT_NODE'
   | 'ABN_NODE'
   | 'PLUGIN_NODE'
   | 'END_NODE'
@@ -118,6 +120,16 @@ export interface QueryInputNodeResource extends ScenarioNodeResource {
   ui_creation_mode: QueryInputUiCreationMode;
 }
 
+export interface OnSegmentEntryInputNodeResource extends ScenarioNodeResource {
+  type: 'ON_SEGMENT_ENTRY_INPUT_NODE';
+  audience_segment_id: string;
+}
+
+export interface OnSegmentExitInputNodeResource extends ScenarioNodeResource {
+  type: 'ON_SEGMENT_EXIT_INPUT_NODE';
+  audience_segment_id: string;
+}
+
 export interface ABNNodeResource extends ScenarioNodeResource {
   type: 'ABN_NODE';
   edges_selection: { [nodeId: string]: { min: number; max: number } };
@@ -157,6 +169,8 @@ export type ScenarioNodeShape =
   | AddToSegmentNodeResource
   | DeleteFromSegmentNodeResource
   | QueryInputNodeResource
+  | OnSegmentEntryInputNodeResource
+  | OnSegmentExitInputNodeResource
   | ABNNodeResource
   | PluginNodeResource
   | EndNodeResource
