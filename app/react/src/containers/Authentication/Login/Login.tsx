@@ -18,7 +18,6 @@ import { UserProfileResource } from '../../../models/directory/UserProfileResour
 import { MicsReduxState } from '../../../utils/ReduxHelper';
 import LocalStorage from '../../../services/LocalStorage';
 
-const logoUrl = require('../../../assets/images/logo.png');
 const FormItem = Form.Item;
 
 const messages = defineMessages({
@@ -178,7 +177,7 @@ class Login extends React.Component<Props, State> {
       <div className="mcs-login-container">
         <div className="mcs-login-container-left">
           <div className="image-wrapper">
-            <img alt="mics-logo" className="login-logo" src={logoUrl} />
+            <img alt="mics-logo" className="login-logo" src={'/react/src/assets/images/logo.png'} />
           </div>
           <div className="login-frame">
             <Form onSubmit={this.handleSubmit}>
