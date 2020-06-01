@@ -72,13 +72,11 @@ class AutomationTemplateSelector extends React.Component<Props, State> {
           />
           {
             this.props.hasFeature('automations-on-segment-entry') &&
-            <div>
-              <MenuList
-                title={formatMessage(messages.onSegmentEntry)}
-                select={onClicOnSegmentEntry}
-              />
+            <MenuList
+              title={formatMessage(messages.onSegmentEntry)}
+              select={onClicOnSegmentEntry}
+            />
 
-            </div>
           }
           {
             this.props.hasFeature('automations-on-segment-exit') &&
@@ -89,23 +87,24 @@ class AutomationTemplateSelector extends React.Component<Props, State> {
           }
 
         </Row>
-        {hasFeature('automations-wizard-react-to-event') &&
-          <div>
-            <Row className="intermediate-title">
-              <FormattedMessage {...messages.advanced} />
-            </Row>
-            <Row className="menu">
-              <MenuList
-                title={formatMessage(messages.live)}
-                select={onClickOnLive}
-              />
-              <MenuList
-                title={formatMessage(messages.periodic)}
-                select={onClickOnPeriodic}
-              />
-            </Row>
-          </div>
-        }
+
+        <div>
+          <Row className="intermediate-title">
+            <FormattedMessage {...messages.advanced} />
+          </Row>
+          <Row className="menu">
+            {hasFeature('automations-wizard-react-to-event') && <MenuList
+              title={formatMessage(messages.live)}
+              select={onClickOnLive}
+            />
+            }
+            <MenuList
+              title={formatMessage(messages.periodic)}
+              select={onClickOnPeriodic}
+            />
+          </Row>
+        </div>
+
       </Row>
     )
   }
