@@ -74,6 +74,14 @@ const messages = defineMessages({
     id: 'automation.builder.node.goToSegment',
     defaultMessage: 'Go to Segment',
   },
+  onAudienceSegmentEntryNodeSubtitle: {
+    id: 'automation.builder.node.onAudienceSegmentEntry.subtitle',
+    defaultMessage: 'On audience segment entry',
+  },
+  onAudienceSegmentExitNodeSubtitle: {
+    id: 'automation.builder.node.onAudienceSegmentExit.subtitle',
+    defaultMessage: 'On audience segment exit',
+  },
 });
 
 type Props = AutomationNodeProps 
@@ -503,11 +511,17 @@ class AutomationNodeWidget extends React.Component<Props, State> {
   }
 
   renderSubTitle = (node: AutomationNodeShape) => {
+    const { intl: { formatMessage } } = this.props;
+    
     switch (node.type) {
       case 'DISPLAY_CAMPAIGN':
         return node.formData.goalFields.length ? 'exit on goal' : 'exit on visit';
       case 'QUERY_INPUT':
         return node.evaluation_mode && node.evaluation_mode === 'LIVE' ? <span>Live evaluation</span> : <span>Evalutated every {node.evaluation_period} {node.evaluation_period_unit}</span>
+      case 'ON_SEGMENT_ENTRY_INPUT_NODE':
+        return formatMessage(messages.onAudienceSegmentEntryNodeSubtitle);
+      case 'ON_SEGMENT_EXIT_INPUT_NODE':
+        return formatMessage(messages.onAudienceSegmentExitNodeSubtitle);
       default:
         return '';
     }

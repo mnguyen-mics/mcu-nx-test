@@ -546,6 +546,25 @@ export const storylineResourceData: StorylineResource = {
 };
 
 export const beginNode = (type?: AutomationSelectedType): ScenarioNodeShape => {
+  if (type === 'ON_SEGMENT_ENTRY' || type === 'ON_SEGMENT_EXIT') {
+    return type === 'ON_SEGMENT_ENTRY' ? {
+      id: beginNodeId,
+      type: 'ON_SEGMENT_ENTRY_INPUT_NODE',
+      name: "Enter Automation",
+      scenario_id: 'string',
+      last_added_node: true,
+      audience_segment_id: '',
+    } :
+      {
+        id: beginNodeId,
+        type: 'ON_SEGMENT_EXIT_INPUT_NODE',
+        name: "Enter Automation",
+        scenario_id: 'string',
+        last_added_node: true,
+        audience_segment_id: '',
+      };
+  }
+
   return {
     id: beginNodeId,
     name: 'Enter Automation',
@@ -555,8 +574,7 @@ export const beginNode = (type?: AutomationSelectedType): ScenarioNodeShape => {
     evaluation_mode: 'LIVE',
     ui_creation_mode: type === 'REACT_TO_EVENT' ? 'EVENT' : 'QUERY',
     last_added_node: true,
-    formData: {
-    },
+    formData: {},
   }
 };
 
@@ -629,6 +647,16 @@ export function generateNodeProperties(
         color: '#fc3f48',
       };
     case 'QUERY_INPUT':
+      return {
+        iconAnt: 'flag',
+        color: '#fbc02d',
+      };
+    case 'ON_SEGMENT_ENTRY_INPUT_NODE':
+      return {
+        iconAnt: 'flag',
+        color: '#fbc02d',
+      };
+    case 'ON_SEGMENT_EXIT_INPUT_NODE':
       return {
         iconAnt: 'flag',
         color: '#fbc02d',
