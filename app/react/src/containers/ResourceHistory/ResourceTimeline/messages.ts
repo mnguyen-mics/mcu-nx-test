@@ -67,6 +67,10 @@ const messages: {
     id: 'timeline.resourceType.emailRouter',
     defaultMessage: 'Email Router',
   },
+  exportResourceType: {
+    id: 'timeline.resourceType.export',
+    defaultMessage: 'Export',
+  },
   today: {
     id: 'timeline.events.title.today',
     defaultMessage: 'Today',
