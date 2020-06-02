@@ -78,7 +78,7 @@ interface ReactToEventAutomationFormData {
   query_language: QueryLanguage;
   query_text: string;
   fieldNodeForm: FieldNodeFormData[];
-  basicEventNames: PredefinedEventNames[];
+  standardEventNames: PredefinedEventNames[];
 }
 
 interface MapStateToProps {
@@ -86,14 +86,14 @@ interface MapStateToProps {
 }
 
 type State = {
-  formMode: 'BASIC' | 'ADVANCED';
+  formMode: 'STANDARD' | 'ADVANCED';
   isLoading: boolean;
   validObjectType?: WizardValidObjectTypeField;
   objectType?: ObjectLikeTypeInfoResource;
   objectTypes: ObjectLikeTypeInfoResource[];
-  basicEventNames: PredefinedEventNames[];
+  standardEventNames: PredefinedEventNames[];
   runtimeSchemaId?: string;
-  basicQueryText: string;
+  standardEventsQueryText: string;
   advancedQueryText: string;
 };
 
@@ -149,11 +149,11 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
     }
 
     this.state = {
-      formMode: 'BASIC',
+      formMode: 'STANDARD',
       isLoading: true,
       objectTypes: [],
-      basicEventNames: [],
-      basicQueryText: query_text || '', // ??
+      standardEventNames: [],
+      standardEventsQueryText: query_text || '',
       advancedQueryText: query_text || '',
     };
   }
@@ -214,7 +214,7 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
         if (dispatch) {
           dispatch(change(FORM_ID, 'events', events));
           dispatch(change(FORM_ID, 'fieldNodeForm', fieldNodeForm));
-          dispatch(change(FORM_ID, 'basicEventNames', predefinedEventNames.filter(e => events.includes(e))));
+          dispatch(change(FORM_ID, 'standardEventNames', predefinedEventNames.filter(e => events.includes(e))));
         }
       }
 
@@ -228,7 +228,7 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
         validObjectType!,
         this._queryService,
       ).then(eventNames => {
-        this.setState({ basicEventNames: eventNames });
+        this.setState({ standardEventNames: eventNames });
       });
     }).then(() => this.setState({ isLoading: false }));
   }
@@ -412,8 +412,8 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
 
       const newQueryText = JSON.stringify(query);
 
-      formMode === 'BASIC'
-        ? this.setState({basicQueryText: newQueryText})
+      formMode === 'STANDARD'
+        ? this.setState({standardEventsQueryText: newQueryText})
         : this.setState({advancedQueryText: newQueryText});
       
       if (this.props.dispatch)
@@ -469,9 +469,9 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
       isLoading,
       validObjectType,
       runtimeSchemaId,
-      basicEventNames,
+      standardEventNames,
       advancedQueryText,
-      basicQueryText
+      standardEventsQueryText
     } = this.state;
 
     const datamartId = node.formData.datamart_id
@@ -494,13 +494,13 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
     };
 
     const switchMode = () => {
-      if (formMode === 'BASIC')
+      if (formMode === 'STANDARD')
         this.setState({ formMode: 'ADVANCED'}, () => {
           if (dispatch && advancedQueryText) dispatch(change(FORM_ID, 'query_text', advancedQueryText));
         });
       else
-        this.setState({ formMode: 'BASIC'}, () => {
-          if (dispatch && basicQueryText) dispatch(change(FORM_ID, 'query_text', basicQueryText));
+        this.setState({ formMode: 'STANDARD'}, () => {
+          if (dispatch && standardEventsQueryText) dispatch(change(FORM_ID, 'query_text', standardEventsQueryText));
         });
     }
 
@@ -514,38 +514,38 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
             onChange={switchMode}
             buttonStyle="solid"
           >
-            <Radio.Button value="BASIC">{formatMessage(messages.basic)}</Radio.Button>
-            <Radio.Button value="ADVANCED">{formatMessage(messages.advanced)}</Radio.Button>
+            <Radio.Button value="STANDARD">{formatMessage(messages.standardEvents)}</Radio.Button>
+            <Radio.Button value="ADVANCED" disabled={isLoading}>{formatMessage(messages.advanced)}</Radio.Button>
           </Radio.Group>
           <Form
             id={FORM_ID}
             className="mcs-reactToEventAutomation_form edit-layout mcs-content-container mcs-form-container"
             layout={'vertical'}
           >
-            {formMode === 'BASIC' ? (
-              <div className="mcs-reactToEventAutomation_basicForm">
+            {formMode === 'STANDARD' ? (
+              <div className="mcs-reactToEventAutomation_standardEventsForm">
                 <FormSection
                   title={messages.reactToEventFormSectionTitle}
-                  subtitle={messages.reactToEventBasicFormSectionSubtitle}
+                  subtitle={messages.reactToEventStandardEventsFormSectionSubtitle}
                 />
                 {isLoading ? 
                   <Loading className="loading-full-screen" />
-                 : basicEventNames.length > 0 ?
+                 : standardEventNames.length > 0 ?
                     <FormCheckboxGroupField
-                      name="basicEventNames"
-                      className="mcs-reactToEventAutomation_basicForm-options"
+                      name="standardEventNames"
+                      className="mcs-reactToEventAutomation_standardEventsForm-options"
                       component={FormCheckboxGroup}
                       disabled={disabled}
                       validate={isRequired}
                       onChange={this.onEventsChange}
-                      options={basicEventNames.sort().map(eventName => {
+                      options={standardEventNames.sort().map(eventName => {
                         return {
                           label: formatMessage(messages[eventName]),
                           value: eventName,
                         };
                       })}
                     />
-                  : <FormattedMessage {...messages.noBasicEvents}/>
+                  : <FormattedMessage {...messages.noStandardEvents}/>
                 }
               </div>
             ) : (
@@ -627,16 +627,16 @@ const messages = defineMessages({
     id: 'automation.builder.node.reactToEventForm.event.title',
     defaultMessage: 'React to an Event',
   },
-  basic: {
-    id: 'automation.builder.node.reactToEventForm.formMode.basic',
-    defaultMessage: 'BASIC',
+  standardEvents: {
+    id: 'automation.builder.node.reactToEventForm.formMode.standardEvents',
+    defaultMessage: 'STANDARD EVENTS',
   },
   advanced: {
     id: 'automation.builder.node.reactToEventForm.formMode.advanced',
     defaultMessage: 'ADVANCED',
   },
-  reactToEventBasicFormSectionSubtitle: {
-    id: 'automation.builder.node.reactToEventForm.basicForm.event.subtitle',
+  reactToEventStandardEventsFormSectionSubtitle: {
+    id: 'automation.builder.node.reactToEventForm.standardEventsForm.event.subtitle',
     defaultMessage: 'Select options that will trigger this automation.',
   },
   reactToEventFormSectionSubtitle: {
@@ -665,48 +665,48 @@ const messages = defineMessages({
     id: 'automation.builder.node.reactToEventForm.schemaNotSuitableForAction',
     defaultMessage: 'Schema is not suitable for this action.',
   },
-  noBasicEvents: {
-    id: 'automation.builder.node.reactToEventForm.basicForm.noBasicEvents',
-    defaultMessage: 'You have no basic events in your datamart. For more options, please switch to the "Advanced" mode above.'
+  noStandardEvents: {
+    id: 'automation.builder.node.reactToEventForm.standardEventsForm.noStandardEvents',
+    defaultMessage: 'You have no standard events in your datamart. For more options, please switch to the "Advanced" mode above.'
   },
   $home_view: {	
-    id: 'automation.builder.node.reactToEventForm.basicForm.predefinedMessage.homeView',
+    id: 'automation.builder.node.reactToEventForm.standardEventsForm.predefinedMessage.homeView',
     defaultMessage: 'When the user views the site home page',
   },
   $item_list_view: {	
-    id: 'automation.builder.node.reactToEventForm.basicForm.predefinedMessage.itemListView',
+    id: 'automation.builder.node.reactToEventForm.standardEventsForm.predefinedMessage.itemListView',
     defaultMessage: 'When the user views a list of products in a category page or in a search results page',
   },
   $item_view: {	
-    id: 'automation.builder.node.reactToEventForm.basicForm.predefinedMessage.itemView',
+    id: 'automation.builder.node.reactToEventForm.standardEventsForm.predefinedMessage.itemView',
     defaultMessage: 'When the user views a product page',
   },
   $basket_view: {	
-    id: 'automation.builder.node.reactToEventForm.basicForm.predefinedMessage.basketView',
+    id: 'automation.builder.node.reactToEventForm.standardEventsForm.predefinedMessage.basketView',
     defaultMessage: 'When the user views the basket page',
   },
   $transaction_confirmed: {	
-    id: 'automation.builder.node.reactToEventForm.basicForm.predefinedMessage.transactionConfirmed',
+    id: 'automation.builder.node.reactToEventForm.standardEventsForm.predefinedMessage.transactionConfirmed',
     defaultMessage: 'When the user views the transaction confirmation page',
   },
   $conversion: {	
-    id: 'automation.builder.node.reactToEventForm.basicForm.predefinedMessage.conversion',
+    id: 'automation.builder.node.reactToEventForm.standardEventsForm.predefinedMessage.conversion',
     defaultMessage: 'When the user has completed a Goal',
   },
   $ad_click: {	
-    id: 'automation.builder.node.reactToEventForm.basicForm.predefinedMessage.adClick',
+    id: 'automation.builder.node.reactToEventForm.standardEventsForm.predefinedMessage.adClick',
     defaultMessage: 'When the user clicked on an Ad',
   },
   $ad_view: {	
-    id: 'automation.builder.node.reactToEventForm.basicForm.predefinedMessage.adView',
+    id: 'automation.builder.node.reactToEventForm.standardEventsForm.predefinedMessage.adView',
     defaultMessage: 'When the user views an Ad',
   },
   $email_click: {	
-    id: 'automation.builder.node.reactToEventForm.basicForm.predefinedMessage.emailClick',
+    id: 'automation.builder.node.reactToEventForm.standardEventsForm.predefinedMessage.emailClick',
     defaultMessage: 'When the user clicks in an Email',
   },
   $email_view: {	
-    id: 'automation.builder.node.reactToEventForm.basicForm.predefinedMessage.emailView',
+    id: 'automation.builder.node.reactToEventForm.standardEventsForm.predefinedMessage.emailView',
     defaultMessage: 'When the user opened an Email',
   },
 });
