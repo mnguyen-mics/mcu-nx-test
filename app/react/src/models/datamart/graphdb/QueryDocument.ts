@@ -104,6 +104,12 @@ export function isObjectNode(
   return node.type === 'OBJECT';
 }
 
+export function isGroupNode(
+  node: ObjectTreeExpressionNodeShape,
+): node is GroupNode {
+  return node.type === 'GROUP';
+}
+
 export interface FieldNode {
   type: 'FIELD';
   field: string;

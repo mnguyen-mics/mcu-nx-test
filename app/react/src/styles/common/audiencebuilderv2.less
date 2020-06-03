@@ -1,0 +1,81 @@
+.mcs-segmentBuilder-container {
+  min-height: auto;
+  .mcs-segmentBuilder-categoryCard {
+    margin: 40px;
+    .mcs-segmentBuilder-closeButton {
+      border: none;
+    }
+    .ant-select {
+      min-width: 176px;
+    }
+  }
+  .mcs-segmentBuilder-queryButtons {
+    text-align: center;
+  }
+
+  .mcs-segmentBuilder-narrowWithButton,
+  .mcs-segmentBuilder-excludeButton,
+  .mcs-segmentBuilder-moreButton {
+    color: @info-color;
+    font-size: 1.2em;
+    font-weight: bold;
+    background: none;
+    border: none;
+    box-shadow: none;
+  }
+
+  .mcs-segmentBuilder-liveDashboard {
+    margin-top: 40px;
+    text-align: center;
+    .mcs-segmentBuilder-totalAudience {
+      .ant-statistic-title {
+        font-size: 15px;
+      }
+      .ant-statistic-content {
+        font-size: 40px;
+      }
+    }
+    .mcs-segmentBuilder-purchaseIntent,
+    .mcs-segmentBuilder-geographics {
+      padding: 0 15%;
+      margin-top: 40px;
+      .title {
+        font-size: 15px;
+        margin-bottom: 15px;
+      }
+      .mcs-segmentBuilder-progressBars-1,
+      .mcs-segmentBuilder-progressBars-2 {
+        .ant-progress-bg {
+          height: 11px !important;
+          border-radius: 5.5px !important;
+          box-shadow: 2px 2px 8px 1px rgba(0, 0, 0, 0.21);
+        }
+        .mcs-segmentBuilder-progressBar {
+          margin-top: 12px;
+        }
+      }
+      .mcs-segmentBuilder-progressBars-1 {
+        .ant-progress-bg {
+          background-color: rgba(0, 48, 86, 0.57);
+        }
+      }
+      .mcs-segmentBuilder-progressBars-2 {
+        .ant-progress-bg {
+          background-color: rgba(0, 169, 99, 0.53);
+        }
+      }
+    }
+  }
+  .mcs-segmentBuilder-audienceFeature:not(:first-child) {
+    margin-top: 15px;
+  }
+  .mcs-segmentBuilder-audienceFeature {
+    border-bottom: 1px solid #d3dbe1;
+    padding-bottom: 15px;
+  }
+
+  .mcs-segmentBuilder-categoryCardFooter {
+    text-align: center;
+    padding-top: 20px;
+  }
+}
