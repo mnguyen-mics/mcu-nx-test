@@ -1,4 +1,7 @@
-import { defineMessages } from 'react-intl';
+import { ValueFormat } from './../../../ResourceHistory/utils';
+import { defineMessages, FormattedMessage } from 'react-intl';
+import { AudienceSegmentResource, AudienceSegmentType } from '../../../../models/audiencesegment/AudienceSegmentResource';
+import { HistoryKeys, formatToFormattingFunction } from '../../../ResourceHistory/utils';
 
 export default defineMessages({
   // Segment
@@ -174,4 +177,174 @@ export default defineMessages({
     id: 'audience.segments.ABComparisonDashboard.controlGroupDashboardButton',
     defaultMessage: 'See Control Group Dashboard',
   },
+  history: {
+    id: 'audience.segments.actionbar.history',
+    defaultMessage: 'History',
+  },
 });
+
+const audienceSegmentTypeMessages: {
+  [key in AudienceSegmentType]: FormattedMessage.MessageDescriptor;
+} = defineMessages({
+  USER_LIST: {
+    id: 'audience.segments.type.userList',
+    defaultMessage: 'User List',
+  },
+  USER_QUERY: {
+    id: 'audience.segments.type.userQuery',
+    defaultMessage: 'User Query',
+  },
+  USER_ACTIVATION: {
+    id: 'audience.segments.type.userActivation',
+    defaultMessage: 'User Activation',
+  },
+  USER_PARTITION: {
+    id: 'audience.segments.type.userPartition',
+    defaultMessage: 'User Partition',
+  },
+  USER_PIXEL: {
+    id: 'audience.segments.type.userPixel',
+    defaultMessage: 'User Pixel',
+  },
+  USER_LOOKALIKE: {
+    id: 'audience.segments.type.userLookalike',
+    defaultMessage: 'User Lookalike',
+  },
+  USER_CLIENT: {
+    id: 'audience.segments.type.userClient',
+    defaultMessage: 'User Client',
+  },
+});
+
+const audienceSegmentPropertiesMessageMap: {
+  [propertyName in
+    | keyof AudienceSegmentResource
+    | HistoryKeys]: FormattedMessage.MessageDescriptor;
+} = defineMessages({
+  id: {
+    id: 'audience.segments.fields.id',
+    defaultMessage: 'ID',
+  },
+  organisation_id: {
+    id: 'audience.segments.fields.organisationId',
+    defaultMessage: 'Organisation ID',
+  },
+  name: {
+    id: 'audience.segments.fields.name',
+    defaultMessage: 'Audience Segment Name',
+  },
+  short_description: {
+    id: 'audience.segments.fields.shortDescription',
+    defaultMessage: 'Short Description',
+  },
+  technical_name: {
+    id: 'audience.segments.fields.technicalName',
+    defaultMessage: 'Technical Name',
+  },
+  default_ttl: {
+    id: 'audience.segments.fields.defaultTtl',
+    defaultMessage: 'Default Ttl',
+  },
+  datamart_id: {
+    id: 'audience.segments.fields.datamartId',
+    defaultMessage: 'Datamart Id',
+  },
+  provider_name: {
+    id: 'audience.segments.fields.providerName',
+    defaultMessage: 'Provider Name',
+  },
+  persisted: {
+    id: 'audience.segments.fields.persisted',
+    defaultMessage: 'Persisted',
+  },
+  type: {
+    id: 'audience.segments.fields.type',
+    defaultMessage: 'Type',
+  },
+  user_points_count: {
+    id: 'audience.segments.fields.userPointsCount',
+    defaultMessage: 'User Points Count',
+  },
+  user_accounts_count: {
+    id: 'audience.segments.fields.userAccountsCount',
+    defaultMessage: 'User Accounts Count',
+  },
+  emails_count: {
+    id: 'audience.segments.fields.emailsCount',
+    defaultMessage: 'Emails Count',
+  },
+  desktop_cookie_ids_count: {
+    id: 'audience.segments.fields.desktopCookieIdsCount',
+    defaultMessage: 'Desktop Cookie Ids Count',
+  },
+  mobile_cookie_ids_count: {
+    id: 'audience.segments.fields.mobileCookieIdsCount',
+    defaultMessage: 'Mobile Cookie Ids Count',
+  },
+  mobile_ad_ids_count: {
+    id: 'audience.segments.fields.mobileAdIdsCount',
+    defaultMessage: 'Mobile Ad Ids Count',
+  },
+  creation_ts: {
+    id: 'audience.segments.fields.creationTs',
+    defaultMessage: 'Creation Timestamp',
+  },
+  history_title: {
+    id: 'audience.segments.resourceHistory.title',
+    defaultMessage: 'Audience Segment History',
+  },
+  history_resource_type: {
+    id: 'audience.segments.resourceHistory.type',
+    defaultMessage: 'Audience Segment',
+  },
+});
+
+const audienceSegmentPropertiesFormatMap: {
+  [propertyName in keyof AudienceSegmentResource | HistoryKeys]: {
+    format: ValueFormat;
+    messageMap?: { [key: string]: FormattedMessage.MessageDescriptor };
+  };
+} = {
+  id: { format: 'STRING' },
+  organisation_id: { format: 'STRING' },
+  name: { format: 'STRING' },
+  short_description: { format: 'STRING' },
+  technical_name: { format: 'STRING' },
+  default_ttl: { format: 'TIMESTAMP' },
+  datamart_id: { format: 'STRING' },
+  provider_name: { format: 'STRING' },
+  persisted: { format: 'STRING' },
+  type: {
+    format: 'MESSAGE',
+    messageMap: audienceSegmentTypeMessages,
+  },
+  user_points_count: { format: 'INTEGER' },
+  user_accounts_count: { format: 'INTEGER' },
+  emails_count: { format: 'INTEGER' },
+  desktop_cookie_ids_count: { format: 'INTEGER' },
+  mobile_cookie_ids_count: { format: 'INTEGER' },
+  mobile_ad_ids_count: { format: 'INTEGER' },
+  creation_ts: { format: 'TIMESTAMP' },
+  history_title: { format: 'STRING' },
+  history_resource_type: { format: 'STRING' },
+};
+
+export const formatAudienceSegmentProperty = (
+  property: keyof AudienceSegmentResource | HistoryKeys,
+  value?: string,
+): {
+  message: FormattedMessage.MessageDescriptor;
+  formattedValue?: React.ReactNode;
+} => {
+  return {
+    message: audienceSegmentPropertiesMessageMap[property],
+    formattedValue:
+      value && audienceSegmentPropertiesFormatMap[property]
+        ? formatToFormattingFunction(
+            value,
+            audienceSegmentPropertiesFormatMap[property].format,
+            audienceSegmentPropertiesFormatMap[property].messageMap,
+          )
+        : undefined,
+  };
+};

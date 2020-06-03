@@ -11,13 +11,16 @@ import McsIcon from '../../../../components/McsIcon';
 import { parseSearch } from '../../../../utils/LocationSearchHelper';
 import ExportService from '../../../../services/ExportService';
 import exportMessages from '../../../../common/messages/exportMessages';
-import segmentMessages from './messages';
+import segmentMessages, { formatAudienceSegmentProperty } from './messages';
 import { AudienceSegmentResource } from '../../../../models/audiencesegment';
 import AudienceLookalikeCreation, {
   AudienceLookalikeCreationProps,
 } from './Lookalike/AudienceLookalikeCreation';
 import { injectDrawer } from '../../../../components/Drawer';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
+import ResourceTimelinePage, {
+  ResourceTimelinePageProps,
+} from '../../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
 import { injectDatamart, InjectedDatamartProps } from '../../../Datamart';
 import {
   UserLookalikeSegment,
@@ -39,6 +42,8 @@ import AudienceExperimentationEditPage, {
   AudienceExperimentationEditPageProps,
 } from './Experimentation/AudienceExperimentationEditPage';
 import { isUserQuerySegment } from '../Edit/domain';
+import AudienceSegmentService from '../../../../services/AudienceSegmentService';
+import resourceHistoryMessages from '../../../ResourceHistory/ResourceTimeline/messages';
 
 export interface AudienceSegmentActionbarProps {
   segment?: AudienceSegmentShape;
@@ -74,6 +79,9 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
   };
   @lazyInject(TYPES.IOverlapInterval)
   private _overlapInterval: IOverlapInterval;
+
+  @lazyInject(TYPES.IAudienceSegmentService)
+  private _audienceSegmentService: AudienceSegmentService;
 
   hideExportLoadingMsg = () => {
     // init
@@ -312,7 +320,7 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
             },
           },
         },
-      );
+        );
     };
 
     const onRecalibrateClick = () => onCalibrationClick();
@@ -396,6 +404,42 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
               `/v2/o/${organisationId}/audience/segments/${controlGroupSegment.id}`,
             )
           );
+        case 'HISTORY':
+          return this.props.openNextDrawer<ResourceTimelinePageProps>(
+            ResourceTimelinePage,
+            {
+              additionalProps: {
+                resourceType: 'AUDIENCE_SEGMENT',
+                resourceId: (segment as AudienceSegmentResource).id,
+                handleClose: () => this.props.closeNextDrawer(),
+                formatProperty: formatAudienceSegmentProperty,
+                resourceLinkHelper: {
+                  AUDIENCE_SEGMENT: {
+                    direction: 'CHILD',
+                    getType: () => {
+                      return (
+                        <FormattedMessage
+                        {...resourceHistoryMessages.segmentResourceType}
+                        />
+                        );
+                      },
+                    getName: (id: string) => {
+                      return this._audienceSegmentService.getSegment(id)
+                      .then(response => {
+                        return response.data.name || id;
+                      })
+                    },
+                    goToResource: (id: string) => {
+                      history.push(
+                        `/v2/o/${organisationId}/audience/segments/${id}`,
+                      );
+                    },
+                  }
+                }
+              },
+              size: 'small',
+            },
+          );
         default:
           return () => ({});
       }
@@ -403,6 +447,9 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
 
     const dropdowMenu = (
       <Menu onClick={onMenuClick}>
+        <Menu.Item key="HISTORY">
+          <FormattedMessage {...segmentMessages.history} />
+        </Menu.Item>
         <Menu.Item key="LOOKALIKE">
           <FormattedMessage {...segmentMessages.lookAlikeCreation} />
         </Menu.Item>
