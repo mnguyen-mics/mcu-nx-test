@@ -10,9 +10,11 @@ import {
   FormInput,
 } from '../../../../../../components/Form';
 import { OptionProps } from 'antd/lib/select';
+import { CleaningRuleType } from '../../../../../../models/cleaningRules/CleaningRules';
 
 interface ScopeFormSectionProps {
-  channelOptions: OptionProps[];
+  options: OptionProps[];
+  cleaningRuleType: CleaningRuleType;
 }
 
 type Props = ScopeFormSectionProps & InjectedIntlProps;
@@ -21,13 +23,14 @@ class ScopeFormSection extends React.Component<Props> {
   render() {
     const {
       intl: { formatMessage },
-      channelOptions,
+      options,
+      cleaningRuleType
     } = this.props;
 
-    return (
+    return cleaningRuleType === 'USER_EVENT_CLEANING_RULE' ? (
       <div>
         <FormSection
-          subtitle={messages.sectionScopeSubTitle}
+          subtitle={messages.sectionScopeUserEventSubTitle}
           title={messages.sectionScopeTitle}
         />
         <FormSelectField
@@ -52,7 +55,7 @@ class ScopeFormSection extends React.Component<Props> {
             label: formatMessage(messages.sectionScopeChannelLabel),
             required: false,
           }}
-          options={channelOptions}
+          options={options}
           helpToolTipProps={{
             title: formatMessage(messages.sectionScopeChannelHelper),
           }}
@@ -66,6 +69,25 @@ class ScopeFormSection extends React.Component<Props> {
           }}
           helpToolTipProps={{
             title: formatMessage(messages.sectionScopeEventNameHelper),
+          }}
+        />
+      </div>
+    ) : (
+      <div>
+        <FormSection
+          subtitle={messages.sectionScopeUserProfileSubTitle}
+          title={messages.sectionScopeTitle}
+        />
+        <FormSelectField
+          name="userProfileCleaningRule.compartment_filter"
+          component={DefaultSelect}
+          formItemProps={{
+            label: formatMessage(messages.sectionScopeCompartmentLabel),
+            required: false,
+          }}
+          options={options}
+          helpToolTipProps={{
+            title: formatMessage(messages.sectionScopeCompartmentHelper),
           }}
         />
       </div>
