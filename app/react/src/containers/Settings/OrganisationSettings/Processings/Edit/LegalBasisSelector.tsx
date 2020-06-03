@@ -10,7 +10,7 @@ import { FormTitle } from '../../../../../components/Form';
 import messages from '../messages';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import { MenuList } from '../../../../../components/FormMenu';
-import { LegalBasis } from '../../../../../models/consent/UserConsentResource';
+import { LegalBasis } from '../../../../../models/processing';
 
 const { Content } = Layout;
 

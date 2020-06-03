@@ -1,7 +1,5 @@
-import {
-  ProcessingResource,
-  UserConsentResource,
-} from './../../../models/consent/UserConsentResource';
+import { ProcessingResource } from './../../../models/processing';
+import UserChoiceResource from '../../../models/userchoice/UserChoiceResource';
 import { Identifier } from './Monitoring';
 import {
   isUserPointIdentifier,
@@ -62,10 +60,10 @@ export interface IMonitoringService {
   fetchProcessings: (
     datamart: DatamartResource,
   ) => Promise<ProcessingResource[]>;
-  fetchConsents: (
+  fetchUserChoices: (
     datamart: DatamartResource,
     userIdentifier: Identifier,
-  ) => Promise<UserConsentResource[]>;
+  ) => Promise<UserChoiceResource[]>;
   fetchMonitoringData: (
     organisationId: string,
     datamart: DatamartResource,
@@ -277,9 +275,9 @@ export class MonitoringService implements IMonitoringService {
       });
   }
 
-  fetchConsents(datamart: DatamartResource, userIdentifier: Identifier) {
+  fetchUserChoices(datamart: DatamartResource, userIdentifier: Identifier) {
     return this._userDataService
-      .getConsents(datamart.id, userIdentifier)
+      .getUserChoices(datamart.id, userIdentifier)
       .then(response => {
         return response.data;
       })
@@ -298,7 +296,7 @@ export class MonitoringService implements IMonitoringService {
       this.fetchSegmentsData(datamart, userIdentifier),
       this.fetchProfileData(datamart, userIdentifier),
       this.fetchProcessings(datamart),
-      this.fetchConsents(datamart, userIdentifier),
+      this.fetchUserChoices(datamart, userIdentifier),
     ]);
   }
 
@@ -316,7 +314,7 @@ export class MonitoringService implements IMonitoringService {
       userAccountCompartments: [],
       lastSeen: 0,
       userSegmentList: [],
-      userChoices: { userConsents: [], processings: [] },
+      userChoices: { userChoices: [], processings: [] },
       userProfile: { type: undefined, profile: {} },
       userPointList: [],
       userIdentifier: { type: '', id: '' },
@@ -366,7 +364,7 @@ export class MonitoringService implements IMonitoringService {
               userAccountCompartments: res[0],
               lastSeen: res[1],
               userSegmentList: res[2],
-              userChoices: { userConsents: res[5], processings: res[4] },
+              userChoices: { userChoices: res[5], processings: res[4] },
               userProfile: res[3],
               userPointList: [],
               userIdentifier: userIdentifier,
@@ -393,7 +391,7 @@ export class MonitoringService implements IMonitoringService {
               userAccountCompartments: res[0],
               lastSeen: res[1],
               userSegmentList: res[2],
-              userChoices: { userConsents: res[5], processings: res[4] },
+              userChoices: { userChoices: res[5], processings: res[4] },
               userProfile: res[3],
               userPointList: [],
               userIdentifier: userIdentifier,

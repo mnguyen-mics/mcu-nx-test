@@ -3,7 +3,7 @@ import {
   UserEventContentFilterResource,
   CleaningRuleType,
 } from './../models/cleaningRules/CleaningRules';
-import { ProcessingSelectionResource } from './../models/consent/UserConsentResource';
+import { ProcessingSelectionResource } from './../models/processing';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import {
   DatamartResource,

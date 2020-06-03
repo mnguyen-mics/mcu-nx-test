@@ -48,7 +48,7 @@ import OTQLInputEditor, { OTQLInputEditorProps } from './Sections/query/OTQL';
 import { Path } from '../../../../components/ActionBar';
 import JSONQL, { JSONQLInputEditorProps } from './Sections/query/JSONQL';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
-import { ProcessingSelectionResource } from '../../../../models/consent/UserConsentResource';
+import { ProcessingSelectionResource } from '../../../../models/processing';
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 import ProcessingActivitiesFormSection, {
   ProcessingActivitiesFormSectionProps,

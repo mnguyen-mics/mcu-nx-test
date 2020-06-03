@@ -1,4 +1,4 @@
-import { ProcessingResource } from './../models/consent/UserConsentResource';
+import { ProcessingResource } from './../models/processing';
 import ApiService, { DataResponse, DataListResponse } from './ApiService';
 import {
   Cookie,

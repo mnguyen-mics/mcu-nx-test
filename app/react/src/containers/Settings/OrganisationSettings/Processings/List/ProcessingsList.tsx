@@ -22,7 +22,7 @@ import { injectWorkspace, InjectedWorkspaceProps } from '../../../../Datamart';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
-import { ProcessingResource } from '../../../../../models/consent/UserConsentResource';
+import { ProcessingResource } from '../../../../../models/processing';
 
 const { Content } = Layout;
 

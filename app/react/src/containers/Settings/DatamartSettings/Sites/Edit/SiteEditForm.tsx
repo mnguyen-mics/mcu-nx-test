@@ -38,7 +38,7 @@ import DomainsField, { DomainFieldProps } from './Sections/DomainsField';
 import ProcessingActivitiesFormSection, {
   ProcessingActivitiesFormSectionProps,
 } from '../../Common/ProcessingActivitiesFormSection';
-import { ProcessingSelectionResource } from '../../../../../models/consent/UserConsentResource';
+import { ProcessingSelectionResource } from '../../../../../models/processing';
 import { InjectedFeaturesProps, injectFeatures } from '../../../../Features';
 
 const FormDomainFields = FieldArray as new () => GenericFieldArray<

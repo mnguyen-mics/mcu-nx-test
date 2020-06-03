@@ -16,16 +16,18 @@ import CustomObjectRendererWrapper, {
   RenderingTemplates,
   TemplateDefinitions,
 } from '../../../../components/CustomObjectRendererWrapper';
-import { UserChoices, ProcessingResource, UserConsentResource } from '../../../../models/consent/UserConsentResource';
+import { ProcessingResource } from '../../../../models/processing';
+import { UserChoicesWithProcessings } from '../../../../models/timeline/timeline';
+import UserChoiceResource from '../../../../models/userchoice/UserChoiceResource';
 
 interface UserChoicesCardProps {
-  dataSource: UserChoices;
+  dataSource: UserChoicesWithProcessings;
   isLoading: boolean;
 }
 
 interface ProcessingUserChoice {
   processing: ProcessingResource;
-  consent: UserConsentResource;
+  userChoice: UserChoiceResource;
 }
 
 interface State {}
@@ -40,17 +42,17 @@ class UserChoicesCard extends React.Component<Props, State> {
     super(props);
   }
 
-  buildData = (data: UserChoices): ProcessingUserChoice[] => {
+  buildData = (data: UserChoicesWithProcessings): ProcessingUserChoice[] => {
     const associatedProcessingUserChoices: ProcessingUserChoice[] = data.processings.reduce(
       (accumulator: ProcessingUserChoice[], processing: ProcessingResource) => {
-        const associatedConsent = data.userConsents.find(consent => {
-          return consent.$processing_id === processing.id;
+        const associatedConsent = data.userChoices.find(userChoice => {
+          return userChoice.$processing_id === processing.id;
         });
 
         if (associatedConsent) {
           accumulator.push({
             processing: processing,
-            consent: associatedConsent,
+            userChoice: associatedConsent,
           });
         }
 
@@ -62,11 +64,11 @@ class UserChoicesCard extends React.Component<Props, State> {
     return associatedProcessingUserChoices;
   };
 
-  renderConsent = (consent: UserConsentResource): JSX.Element => {
+  renderUserChoice = (userChoice: UserChoiceResource): JSX.Element => {
     const { colors } = this.props;
 
-    const functionConsentValue = (consentValue: boolean) => {
-      return consentValue ? (
+    const functionChoiceAcceptanceValue = (choiceAcceptanceValue: boolean) => {
+      return choiceAcceptanceValue ? (
         <Tag color={colors['mcs-success']}>True</Tag>
       ) : (
         <Tag color={colors['mcs-error']}>False</Tag>
@@ -77,9 +79,9 @@ class UserChoicesCard extends React.Component<Props, State> {
       moment(timestampValue).format('YYYY-MM-DD, hh:mm:ss');
 
     const absoluteTemplates: TemplateDefinitions = {
-      $consent_value: functionConsentValue,
+      $choice_acceptance_value: functionChoiceAcceptanceValue,
       $creation_ts: functionTimestamp,
-      $consent_ts: functionTimestamp,
+      $choice_ts: functionTimestamp,
     };
 
     const renderingTemplates: RenderingTemplates = {
@@ -90,7 +92,7 @@ class UserChoicesCard extends React.Component<Props, State> {
     return (
       <CustomObjectRendererWrapper
         customRenderingTemplates={renderingTemplates}
-        customObject={consent}
+        customObject={userChoice}
       />
     );
   };
@@ -104,7 +106,7 @@ class UserChoicesCard extends React.Component<Props, State> {
     const legalBasis = this.uppercaseFirstLetter(
       processing.legal_basis.toLowerCase().replace(/_/gi, ' '),
     );
-    const consent = processingUserChoice.consent;
+    const userChoice = processingUserChoice.userChoice;
     return (
       <Row
         gutter={10}
@@ -123,7 +125,7 @@ class UserChoicesCard extends React.Component<Props, State> {
             </Tooltip>
           </Col>
         </Row>
-        {consent && this.renderConsent(consent)}
+        {userChoice && this.renderUserChoice(userChoice)}
       </Row>
     );
   };

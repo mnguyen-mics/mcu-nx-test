@@ -1,4 +1,4 @@
-import { ProcessingSelectionResource } from './../../../../../models/consent/UserConsentResource';
+import { ProcessingSelectionResource } from './../../../../../models/processing';
 import { ProcessingActivityFieldModel } from './../../Common/domain';
 import { UserAccountCompartmentDatamartSelectionResource } from '../../../../../models/datamart/DatamartResource';
 

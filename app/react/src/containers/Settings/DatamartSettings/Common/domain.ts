@@ -1,6 +1,6 @@
 import {
   ProcessingResource,
-} from './../../../../models/consent/UserConsentResource';
+} from './../../../../models/processing';
 import {
   PaginationSearchSettings,
   KeywordSearchSettings,
