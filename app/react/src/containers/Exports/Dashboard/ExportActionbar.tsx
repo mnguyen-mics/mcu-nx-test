@@ -9,10 +9,13 @@ import modalMessages from '../../../common/messages/modalMessages';
 import Actionbar from '../../../components/ActionBar';
 import McsIcon from '../../../components/McsIcon';
 import log from '../../../utils/Logger';
-import messages from './messages';
+import messages, { formatExportProperty } from './messages';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IExportService } from '../../../services/Library/ExportService';
+import ResourceTimelinePage, { ResourceTimelinePageProps } from '../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
+import resourceHistoryMessages from '../../ResourceHistory/ResourceTimeline/messages';
+import injectDrawer, { InjectedDrawerProps } from '../../../components/Drawer/injectDrawer';
 
 interface ExportActionbarProps {
   exportObject?: Export;
@@ -27,7 +30,8 @@ interface ExportActionbarState {
 
 type JoinedProps = ExportActionbarProps &
   RouteComponentProps<{ organisationId: string; exportId: string }> &
-  InjectedIntlProps;
+  InjectedIntlProps &
+  InjectedDrawerProps;
 
 class ExportsActionbar extends React.Component<
   JoinedProps,
@@ -142,9 +146,52 @@ class ExportsActionbar extends React.Component<
     };
 
     const onClick = (event: any) => {
+      const {
+        match: {
+          params: { organisationId, exportId },
+        },
+        history,
+      } = this.props;
       switch (event.key) {
         case 'ARCHIVED':
           return handleArchiveGoal();
+          case 'HISTORY':
+          return this.props.openNextDrawer<ResourceTimelinePageProps>(
+            ResourceTimelinePage,
+            {
+              additionalProps: {
+                resourceType: 'QUERY_EXPORT',
+                resourceId: exportId,
+                handleClose: () => this.props.closeNextDrawer(),
+                formatProperty: formatExportProperty,
+                resourceLinkHelper: {
+                  QUERY_EXPORT: {
+                    direction: 'CHILD',
+                    getType: () => {
+                      return (
+                        <FormattedMessage
+                          {...resourceHistoryMessages.exportResourceType}
+                        />
+                      );
+                    },
+                    getName: (id: string) => {
+                      return this._exportService
+                        .getExport(id)
+                        .then(response => {
+                          return response.data.name || id;
+                        });
+                    },
+                    goToResource: (id: string) => {
+                      history.push(
+                        `/v2/o/${organisationId}/datastudio/exports/${id}`,
+                      );
+                    },
+                  },
+                },
+              },
+              size: 'small',
+            },
+          );
         default:
           return () => {
             log.error('onclick error');
@@ -154,6 +201,9 @@ class ExportsActionbar extends React.Component<
 
     return (
       <Menu onClick={onClick}>
+        <Menu.Item key="HISTORY">
+          <FormattedMessage {...messages.history} />
+        </Menu.Item>
         <Menu.Item key="ARCHIVED">
           <FormattedMessage {...messages.archive} />
         </Menu.Item>
@@ -165,4 +215,5 @@ class ExportsActionbar extends React.Component<
 export default compose<JoinedProps, ExportActionbarProps>(
   withRouter,
   injectIntl,
+  injectDrawer,
 )(ExportsActionbar);

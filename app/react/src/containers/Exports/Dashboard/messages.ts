@@ -1,4 +1,6 @@
-import { defineMessages } from 'react-intl';
+import { Export } from './../../../models/exports/exports';
+import { defineMessages, FormattedMessage } from 'react-intl';
+import { HistoryKeys, ValueFormat, formatToFormattingFunction } from '../../ResourceHistory/utils';
 
 export default defineMessages({
   name: {
@@ -58,4 +60,88 @@ export default defineMessages({
     id: 'exports.table.column.status',
     defaultMessage: 'Status',
   },
+  history: {
+    id: 'exports.dashboard.actionbar.history',
+    defaultMessage: 'History',
+  },
 });
+
+const exportPropertiesMessageMap: {
+  [propertyName in
+    | keyof Export
+    | HistoryKeys]: FormattedMessage.MessageDescriptor;
+} = defineMessages({
+  id: {
+    id: 'export.fields.id',
+    defaultMessage: 'ID',
+  },
+  datamart_id: {
+    id: 'export.fields.datamartId',
+    defaultMessage: 'Datamart ID',
+  },
+  name: {
+    id: 'export.fields.name',
+    defaultMessage: 'Export Name',
+  },
+  organisation_id: {
+    id: 'export.fields.organisationId',
+    defaultMessage: 'Organisation ID',
+  },
+  output_format: {
+    id: 'export.fields.outputFormat',
+    defaultMessage: 'Output Format',
+  },
+  query_id: {
+    id: 'export.fields.queryId',
+    defaultMessage: 'Query ID',
+  },
+  type: {
+    id: 'export.fields.type',
+    defaultMessage: 'Typet',
+  },
+  history_title: {
+    id: 'export.resourceHistory.title',
+    defaultMessage: 'Export History',
+  },
+  history_resource_type: {
+    id: 'export.resourceHistory.type',
+    defaultMessage: 'Export',
+  },
+});
+
+const exportPropertiesFormatMap: {
+  [propertyName in keyof Export | HistoryKeys]: {
+    format: ValueFormat;
+    messageMap?: { [key: string]: FormattedMessage.MessageDescriptor };
+  };
+} = {
+  id: { format: 'STRING' },
+  datamart_id: { format: 'STRING' },
+  name: { format: 'STRING' },
+  organisation_id: { format: 'STRING' },
+  output_format: { format: 'STRING' },
+  query_id: { format: 'STRING' },
+  type: { format: 'STRING' },
+  history_title: { format: 'STRING' },
+  history_resource_type: { format: 'STRING' },
+};
+
+export const formatExportProperty = (
+  property: keyof Export | HistoryKeys,
+  value?: string,
+): {
+  message: FormattedMessage.MessageDescriptor;
+  formattedValue?: React.ReactNode;
+} => {
+  return {
+    message: exportPropertiesMessageMap[property],
+    formattedValue:
+      value && exportPropertiesFormatMap[property]
+        ? formatToFormattingFunction(
+            value,
+            exportPropertiesFormatMap[property].format,
+            exportPropertiesFormatMap[property].messageMap,
+          )
+        : undefined,
+  };
+};
