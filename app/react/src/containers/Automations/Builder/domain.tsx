@@ -833,6 +833,63 @@ export const getEventsNames = (
     });
 };
 
+export type PredefinedEventNames =
+  | '$home_view'
+  | '$item_list_view'
+  | '$item_view'
+  | '$basket_view'
+  | '$transaction_confirmed'
+  | '$conversion'
+  | '$ad_click'
+  | '$ad_view'
+  | '$email_click'
+  | '$email_view';
+
+export const predefinedEventNames = [
+  '$home_view',
+  '$item_list_view',
+  '$item_view',
+  '$basket_view',
+  '$transaction_confirmed',
+  '$conversion',
+  '$ad_click',
+  '$ad_view',
+  '$email_click',
+  '$email_view',
+];
+ 
+export const getDatamartPredefinedEventNames = (
+  datamartId: string,
+  validObjectType: WizardValidObjectTypeField,
+  queryService: IQueryService,
+): Promise<PredefinedEventNames[]> => {
+  if (!validObjectType || !validObjectType.objectTypeQueryName)
+    return Promise.resolve([]);
+
+  const query = `select {${validObjectType.objectTypeQueryName}{${validObjectType.fieldName}@map(limit:500)}} from UserPoint `;
+
+  return queryService
+    .runOTQLQuery(datamartId, query, { use_cache: true })
+    .then(oTQLDataResponse => {
+      if (isAggregateResult(oTQLDataResponse.data.rows)) {
+        return oTQLDataResponse.data.rows[0];
+      } else {
+        throw new Error('err');
+      }
+    })
+    .then(oTQLAggregationResult => {
+      return oTQLAggregationResult.aggregations.buckets[0];
+    })
+    .then(oTQLBuckets => {
+      return oTQLBuckets.buckets
+        .map(({ key }) => key)
+        .filter(eventName => predefinedEventNames.includes(eventName)) as PredefinedEventNames[];
+    })
+    .catch(() => {
+      return [];
+    });
+};
+
 export const getValidObjectType = (
   datamartId: string,
   runtimeSchemaService: IRuntimeSchemaService,
