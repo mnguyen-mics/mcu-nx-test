@@ -38,5 +38,10 @@ declare namespace Cypress {
      * /!\ The queryText field will not be emptied -> queryText is appended to the already existing query text !
      */
     fillExpertQuerySegmentForm(segmentName: string, queryText: string): void;
+
+    /**
+     * Creates a new organization, its datamart and publishes a runtime schema
+     */
+    initTestContext():void;
   }
 }
