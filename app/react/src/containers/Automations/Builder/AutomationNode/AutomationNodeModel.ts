@@ -13,6 +13,8 @@ import AddToSegmentAutomationForm from './Edit/AddToSegmentNodeForm/AddToSegment
 import DeleteFromSegmentAutomationForm from './Edit/DeleteFromSegmentNodeForm/DeleteFromSegmentAutomationForm';
 import ReactToEventAutomationForm from './Edit/ReactToEventAutomationForm/ReactToEventAutomationForm';
 import { QueryInputUiCreationMode } from '../../../../models/automations/automations';
+import OnSegmentEntryInputAutomationForm from './Edit/OnSegmentEntryInputForm/OnSegmentEntryInputAutomationForm';
+import OnSegmentExitInputAutomationForm from './Edit/OnSegmentExitInputForm/OnSegmentExitInputAutomationForm';
 
 export default class AutomationNodeModel extends NodeModel {
   collapsed = false;
@@ -78,6 +80,12 @@ export default class AutomationNodeModel extends NodeModel {
         this.creationMode === 'EVENT'
           ? this.editFormComponent = ReactToEventAutomationForm
           : this.editFormComponent = QueryAutomationForm;
+        break;
+      case 'ON_SEGMENT_ENTRY_INPUT_NODE':
+        this.editFormComponent = OnSegmentEntryInputAutomationForm;
+        break;
+      case 'ON_SEGMENT_EXIT_INPUT_NODE':
+        this.editFormComponent = OnSegmentExitInputAutomationForm;
         break;
       case 'WAIT_NODE':
         this.editFormComponent = WaitForm;

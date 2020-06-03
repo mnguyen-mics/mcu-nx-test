@@ -498,6 +498,8 @@ class AutomationNodeWidget extends React.Component<Props, State> {
       case 'DELETE_FROM_SEGMENT_NODE':
         return this.renderAddToSegmentOrDeleteFromSegmentEdit();
       case 'QUERY_INPUT':
+      case 'ON_SEGMENT_ENTRY_INPUT_NODE':
+      case 'ON_SEGMENT_EXIT_INPUT_NODE':
         return this.renderQueryEdit();
       case 'END_NODE':
         return this.renderEndNodeEdit();
