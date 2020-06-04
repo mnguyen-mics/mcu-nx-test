@@ -1,5 +1,5 @@
 import { IOrganisationService } from './../../../../services/OrganisationService';
-import { ProcessingSelectionResource } from './../../../../models/consent/UserConsentResource';
+import { ProcessingSelectionResource } from './../../../../models/processing';
 import { DataListResponse } from './../../../../services/ApiService';
 import { IAudienceSegmentService } from './../../../../services/AudienceSegmentService';
 import moment from 'moment';

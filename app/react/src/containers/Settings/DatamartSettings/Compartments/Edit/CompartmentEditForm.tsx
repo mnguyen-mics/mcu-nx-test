@@ -28,7 +28,7 @@ import { McsFormSection } from '../../../../../utils/FormHelper';
 import messages from './messages';
 import { FormLayoutActionbarProps } from '../../../../../components/Layout/FormLayoutActionbar';
 import GeneralFormSection from './Sections/GeneralFormSection';
-import { ProcessingSelectionResource } from '../../../../../models/consent/UserConsentResource';
+import { ProcessingSelectionResource } from '../../../../../models/processing';
 import { InjectedFeaturesProps, injectFeatures } from '../../../../Features';
 import ProcessingActivitiesFormSection, {
   ProcessingActivitiesFormSectionProps,

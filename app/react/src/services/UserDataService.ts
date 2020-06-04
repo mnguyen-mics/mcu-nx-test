@@ -1,4 +1,4 @@
-import { UserConsentResource } from './../models/consent/UserConsentResource';
+import UserChoiceResource from './../models/userchoice/UserChoiceResource';
 import {
   UserSegmentResource,
   UserProfileResource,
@@ -67,11 +67,11 @@ export interface IUserDataService {
     options?: object
   ) => Promise<DataResponse<ChannelResource> | undefined>;
 
-  getConsents: (
+  getUserChoices: (
     datamartId: string,
     identifier: Identifier,
     options?: object
-  ) => Promise<DataListResponse<UserConsentResource>>;
+  ) => Promise<DataListResponse<UserChoiceResource>>;
 }
 
 @injectable()
@@ -291,32 +291,32 @@ export class UserDataService implements IUserDataService {
     });
   }
 
-  getConsents(
+  getUserChoices(
     datamartId: string,
     identifier: Identifier,
     options: object = {},
-  ): Promise<DataListResponse<UserConsentResource>> {
+  ): Promise<DataListResponse<UserChoiceResource>> {
     const inBetweenCompartmentId = identifier.compartmentId
     ? `compartment_id=${identifier.compartmentId}/`
     : ``;
   const endpoint =
     identifier.type !== 'user_point_id'
       ? identifier.type === 'user_account_id'
-        ? `datamarts/${datamartId}/user_points/${inBetweenCompartmentId}${identifier.type}=${identifier.id}/user_consents`
-        : `datamarts/${datamartId}/user_points/${identifier.type}=${identifier.id}/user_consents`
-      : `datamarts/${datamartId}/user_points/${identifier.id}/user_consents`;
+        ? `datamarts/${datamartId}/user_points/${inBetweenCompartmentId}${identifier.type}=${identifier.id}/user_choices`
+        : `datamarts/${datamartId}/user_points/${identifier.type}=${identifier.id}/user_choices`
+      : `datamarts/${datamartId}/user_points/${identifier.id}/user_choices`;
 
   const params = {
     ...options,
   };
 
-  return ApiService.getRequest<DataListResponse<UserConsentResource>>(
+  return ApiService.getRequest<DataListResponse<UserChoiceResource>>(
     endpoint,
     params,
   ).catch(error => {
     // api send 404 when consents don't exist
     if (error && error.error === 'Resource Not Found') {
-      const result: DataListResponse<UserConsentResource> = {
+      const result: DataListResponse<UserChoiceResource> = {
         data: [],
         status: 'ok',
         count: 0,

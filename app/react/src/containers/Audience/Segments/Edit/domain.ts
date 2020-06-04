@@ -1,5 +1,5 @@
 import { ProcessingActivityFieldModel } from './../../../Settings/DatamartSettings/Common/domain';
-import { ProcessingSelectionResource } from './../../../../models/consent/UserConsentResource';
+import { ProcessingSelectionResource } from './../../../../models/processing';
 import { UploadFile } from 'antd/lib/upload/interface';
 import { AudienceSegmentShape } from "../../../../models/audiencesegment/";
 import { FieldArrayModel } from "../../../../utils/FormHelper";

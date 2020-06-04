@@ -29,7 +29,7 @@ import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IOrganisationService } from '../../../../../services/OrganisationService';
 import { createFieldArrayModel } from '../../../../../utils/FormHelper';
-import { ProcessingSelectionResource } from '../../../../../models/consent/UserConsentResource';
+import { ProcessingSelectionResource } from '../../../../../models/processing';
 
 interface State {
   compartmentFormData: CompartmentFormData;

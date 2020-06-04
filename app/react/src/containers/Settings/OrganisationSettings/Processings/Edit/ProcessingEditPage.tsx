@@ -16,7 +16,7 @@ import { IOrganisationService } from '../../../../../services/OrganisationServic
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
-import { LegalBasis, ProcessingResource } from '../../../../../models/consent/UserConsentResource';
+import { LegalBasis, ProcessingResource } from '../../../../../models/processing';
 
 export interface EditProcessingRouteMatchParams {
   organisationId: string;

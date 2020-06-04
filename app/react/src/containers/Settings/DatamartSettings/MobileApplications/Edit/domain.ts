@@ -1,5 +1,5 @@
 import { ProcessingActivityFieldModel } from './../../Common/domain';
-import { ProcessingSelectionResource } from './../../../../../models/consent/UserConsentResource';
+import { ProcessingSelectionResource } from './../../../../../models/processing';
 import { MobileApplicationResource } from '../../../../../models/settings/settings';
 import {
   VisitAnalyzerFieldModel,

@@ -1,4 +1,4 @@
-import { ProcessingSelectionResource } from './../models/consent/UserConsentResource';
+import { ProcessingSelectionResource } from './../models/processing';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import ReportService from './ReportService';
 import {

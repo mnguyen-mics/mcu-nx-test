@@ -65,7 +65,7 @@ class Monitoring extends React.Component<Props, State> {
         userAccountCompartments: [],
         userPointList: [],
         userSegmentList: [],
-        userChoices: { userConsents: [], processings: [] },
+        userChoices: { userChoices: [], processings: [] },
         userProfile: { type: undefined, profile: {} },
         lastSeen: 0,
         userIdentifier: {
@@ -161,7 +161,7 @@ class Monitoring extends React.Component<Props, State> {
                 userAccountCompartments: [],
                 userPointList: [],
                 userSegmentList: [],
-                userChoices: { userConsents: [], processings: [] },
+                userChoices: { userChoices: [], processings: [] },
                 userProfile: { type: undefined, profile: {} },
                 lastSeen: 0,
                 userIdentifier: {

@@ -21,7 +21,7 @@ import ProcessingActivitiesSelector, {
 import {
   ProcessingResource,
   ProcessingSelectionResource,
-} from '../../../../models/consent/UserConsentResource';
+} from '../../../../models/processing';
 import { Alert } from 'antd';
 import { McsIcon } from '../../../../components';
 

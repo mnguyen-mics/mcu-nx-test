@@ -17,7 +17,7 @@ import {
   DataListResponse,
 } from '../../../../services/ApiService';
 import { DataColumnDefinition } from '../../../../components/TableView/TableView';
-import { ProcessingResource } from '../../../../models/consent/UserConsentResource';
+import { ProcessingResource } from '../../../../models/processing';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';

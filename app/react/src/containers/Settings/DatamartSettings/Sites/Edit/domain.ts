@@ -1,4 +1,4 @@
-import { ProcessingSelectionResource } from './../../../../../models/consent/UserConsentResource';
+import { ProcessingSelectionResource } from './../../../../../models/processing';
 import { ProcessingActivityFieldModel } from './../../Common/domain';
 import { SiteResource, Aliases } from '../../../../../models/settings/settings';
 import {

@@ -1,4 +1,3 @@
-import { UserChoices } from './../consent/UserConsentResource';
 import { Identifier } from './../../containers/Audience/Timeline/Monitoring';
 import { Index } from '../../utils';
 import { UserActivityEventResource } from '../datamart/UserActivityResource';
@@ -8,6 +7,8 @@ import {
 } from '../datamart/graphdb/RuntimeSchema';
 import { Dictionary } from 'lodash';
 import { UserAccountCompartmentDatamartSelectionResource } from '../datamart/DatamartResource';
+import UserChoiceResource from '../userchoice/UserChoiceResource';
+import { ProcessingResource } from '../processing';
 
 export interface Activity {
   $email_hash: string | object;
@@ -171,6 +172,11 @@ export interface Device {
   raw_value?: string;
 }
 
+export interface UserChoicesWithProcessings {
+  userChoices: UserChoiceResource[];
+  processings: ProcessingResource[];
+}
+
 export interface MonitoringData {
   userAgentList: UserAgentIdentifierInfo[];
   userAccountsByCompartmentId: Dictionary<UserAccountIdentifierInfo[]>;
@@ -178,7 +184,7 @@ export interface MonitoringData {
   userEmailList: UserEmailIdentifierInfo[];
   userPointList: UserPointIdentifierInfo[];
   userSegmentList: UserSegmentResource[];
-  userChoices: UserChoices;
+  userChoices: UserChoicesWithProcessings;
   userProfile: UserProfileGlobal;
   lastSeen: number;
   userIdentifier: Identifier;

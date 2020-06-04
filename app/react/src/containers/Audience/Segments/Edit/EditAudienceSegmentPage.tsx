@@ -42,7 +42,7 @@ import { TYPES } from '../../../../constants/types';
 import { IAudienceSegmentFormService } from './AudienceSegmentFormService';
 import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
-import { ProcessingSelectionResource } from '../../../../models/consent/UserConsentResource';
+import { ProcessingSelectionResource } from '../../../../models/processing';
 
 const messagesMap = defineMessages({
   breadcrumbEditAudienceSegment: {

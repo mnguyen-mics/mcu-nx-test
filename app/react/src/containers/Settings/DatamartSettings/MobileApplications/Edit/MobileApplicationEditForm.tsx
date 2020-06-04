@@ -35,7 +35,7 @@ import EventRulesSection, {
 import ProcessingActivitiesFormSection, {
   ProcessingActivitiesFormSectionProps,
 } from '../../Common/ProcessingActivitiesFormSection';
-import { ProcessingSelectionResource } from '../../../../../models/consent/UserConsentResource';
+import { ProcessingSelectionResource } from '../../../../../models/processing';
 import { InjectedFeaturesProps, injectFeatures } from '../../../../Features';
 
 const Content = Layout.Content as React.ComponentClass<

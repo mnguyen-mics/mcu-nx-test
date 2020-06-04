@@ -35,7 +35,7 @@ import { TYPES } from '../../../../../constants/types';
 import { IChannelService } from '../../../../../services/ChannelService';
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 import { IOrganisationService } from '../../../../../services/OrganisationService';
-import { ProcessingSelectionResource } from '../../../../../models/consent/UserConsentResource';
+import { ProcessingSelectionResource } from '../../../../../models/processing';
 
 interface State {
   mobileApplicationData: MobileApplicationFormData;
