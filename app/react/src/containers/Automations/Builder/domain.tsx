@@ -12,6 +12,7 @@ import {
   EdgeHandler,
   AddToSegmentNodeResource,
   DeleteFromSegmentNodeResource,
+  OnSegmentEntryInputNodeResource,
 } from '../../../models/automations/automations';
 import {
   AutomationFormDataType,
@@ -24,6 +25,7 @@ import {
   AddToSegmentAutomationFormData,
   isScenarioNodeShape,
   DeleteFromSegmentAutomationFormData,
+  OnSegmentEntryInputAutomationFormData,
 } from './AutomationNode/Edit/domain';
 import { McsIconType } from '../../../components/McsIcon';
 import { QueryResource } from '../../../models/datamart/DatamartResource';
@@ -418,6 +420,16 @@ export class UpdateNodeOperation implements NodeOperation {
           formData: this.formData as ABNFormData,
         };
         break;
+      case 'ON_SEGMENT_EXIT_INPUT_NODE':
+      case 'ON_SEGMENT_ENTRY_INPUT_NODE':
+        nodeBody = {
+          ...storylineNode.node,
+          ...this.node as OnSegmentEntryInputNodeResource,
+          formData: this.formData as OnSegmentEntryInputAutomationFormData,
+          initialFormData: this
+            .initialFormData as OnSegmentEntryInputAutomationFormData
+        };
+        break;
       case 'QUERY_INPUT':
       case 'IF_NODE':
         nodeBody = {
@@ -554,6 +566,8 @@ export const beginNode = (type?: AutomationSelectedType): ScenarioNodeShape => {
       scenario_id: 'string',
       last_added_node: true,
       audience_segment_id: '',
+      formData: { name: '' },
+      initialFormData: { name: '' }
     } :
       {
         id: beginNodeId,
@@ -562,6 +576,8 @@ export const beginNode = (type?: AutomationSelectedType): ScenarioNodeShape => {
         scenario_id: 'string',
         last_added_node: true,
         audience_segment_id: '',
+        formData: { name: '' },
+        initialFormData: { name: '' }
       };
   }
 
