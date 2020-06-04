@@ -60,6 +60,10 @@ export default defineMessages({
     id: 'settings.cleaningRules.userEvent.form.scope.activityType.label',
     defaultMessage: 'Activity Type Filter',
   },
+  sectionScopeActivityTypeAllTypes: {
+    id: 'settings.cleaningRules.userEvent.form.scope.activityType.all',
+    defaultMessage: 'All',
+  },
   sectionScopeActivityTypeHelper: {
     id: 'settings.cleaningRules.userEvent.form.scope.activityType.helper',
     defaultMessage:
@@ -112,4 +116,8 @@ export default defineMessages({
     id: 'settings.cleaningRules.form.cleaningRuleLifeDurationDays',
     defaultMessage: 'Days',
   },
+  noFilter: {
+    id: 'settings.cleaningRules.form.noFilter',
+    defaultMessage: 'No filter'
+  }
 });

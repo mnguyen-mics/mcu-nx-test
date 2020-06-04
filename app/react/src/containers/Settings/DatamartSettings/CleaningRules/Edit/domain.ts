@@ -16,8 +16,8 @@ export interface UserEventCleaningRuleFormData {
   userEventCleaningRule?: UserEventCleaningRuleResource;
   userEventContentFilter?: UserEventContentFilterResource;
   eventNameFilter?: string;
-  channelFilter?: string;
-  activityTypeFilter?: UserActivityType;
+  channelFilter?: string | null;
+  activityTypeFilter?: UserActivityType | '' | null;
   actionAndPeriod: ActionAndPeriod;
   cleaningRuleType: 'USER_EVENT_CLEANING_RULE';
 }

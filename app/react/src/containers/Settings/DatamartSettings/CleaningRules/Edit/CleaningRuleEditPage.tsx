@@ -228,6 +228,7 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
+      intl: { formatMessage },
       notifyError,
     } = this.props;
 
@@ -257,18 +258,26 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
     return optionsResponseP
       .then(optionsResponse => optionsResponse.data)
       .then(optionsData => {
-        return optionsData.map(optionData => {
-          const usedId = isUserAccountCompartmentDatamartSelectionResource(
-            optionData,
-          )
-            ? optionData.compartment_id
-            : optionData.id;
+        const NoFilterOptionList: OptionProps[] = [
+          { value: '', title: formatMessage(messages.noFilter) },
+        ];
 
-          return {
-            value: usedId,
-            title: `${usedId} - ${optionData.name}`,
-          };
-        });
+        return NoFilterOptionList.concat(
+          optionsData.map(optionData => {
+            const usedId = isUserAccountCompartmentDatamartSelectionResource(
+              optionData,
+            )
+              ? optionData.compartment_id
+              : optionData.id;
+
+            const option: OptionProps = {
+              value: usedId,
+              title: `${usedId} - ${optionData.name}`,
+            };
+
+            return option;
+          }),
+        );
       })
       .catch(err => {
         notifyError(err);
@@ -523,8 +532,19 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
       const datamartId =
         userProfileCleaningRuleFormData.userProfileCleaningRule.datamart_id;
 
+      const compartmentFilter =
+        userProfileCleaningRuleFormData.userProfileCleaningRule
+          .compartment_filter !== undefined
+          ? userProfileCleaningRuleFormData.userProfileCleaningRule
+              .compartment_filter !== ''
+            ? userProfileCleaningRuleFormData.userProfileCleaningRule
+                .compartment_filter
+            : null
+          : undefined;
+
       const userProfileCleaningRule: UserProfileCleaningRuleResource = {
         ...userProfileCleaningRuleFormData.userProfileCleaningRule,
+        compartment_filter: compartmentFilter,
         action: userProfileCleaningRuleFormData.actionAndPeriod.selectedValue,
         life_duration: `P${userProfileCleaningRuleFormData.actionAndPeriod.periodNumber}${userProfileCleaningRuleFormData.actionAndPeriod.periodUnit}`,
       };
@@ -544,16 +564,21 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
     if (!cleaningRuleId && selectedDatamartId) {
       // Create user profile cleaning rule
 
+      const compartmentFilter = userProfileCleaningRuleFormData.userProfileCleaningRule
+        ? userProfileCleaningRuleFormData.userProfileCleaningRule
+            .compartment_filter !== ''
+          ? userProfileCleaningRuleFormData.userProfileCleaningRule
+              .compartment_filter
+          : undefined
+        : undefined;
+
       const userProfileCleaningRule: Partial<UserProfileCleaningRuleResource> = {
         type: 'USER_PROFILE_CLEANING_RULE',
         datamart_id: selectedDatamartId,
         action: userProfileCleaningRuleFormData.actionAndPeriod.selectedValue,
         status: 'DRAFT',
         archived: false,
-        compartment_filter: userProfileCleaningRuleFormData.userProfileCleaningRule
-          ? userProfileCleaningRuleFormData.userProfileCleaningRule
-              .compartment_filter
-          : undefined,
+        compartment_filter: compartmentFilter,
         life_duration: `P${userProfileCleaningRuleFormData.actionAndPeriod.periodNumber}${userProfileCleaningRuleFormData.actionAndPeriod.periodUnit}`,
       };
 
@@ -623,11 +648,25 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
       const datamartId =
         userEventCleaningRuleFormData.userEventCleaningRule.datamart_id;
 
+      const channelFilter =
+        userEventCleaningRuleFormData.channelFilter !== undefined
+          ? userEventCleaningRuleFormData.channelFilter !== ''
+            ? userEventCleaningRuleFormData.channelFilter
+            : null
+          : undefined;
+
+      const activityTypeFilter =
+        userEventCleaningRuleFormData.activityTypeFilter !== undefined
+          ? userEventCleaningRuleFormData.activityTypeFilter !== ''
+            ? userEventCleaningRuleFormData.activityTypeFilter
+            : null
+          : undefined;
+
       const userEventCleaningRule: UserEventCleaningRuleResource = {
         ...userEventCleaningRuleFormData.userEventCleaningRule,
         action: userEventCleaningRuleFormData.actionAndPeriod.selectedValue,
-        channel_filter: userEventCleaningRuleFormData.channelFilter,
-        activity_type_filter: userEventCleaningRuleFormData.activityTypeFilter,
+        channel_filter: channelFilter,
+        activity_type_filter: activityTypeFilter,
         life_duration: `P${userEventCleaningRuleFormData.actionAndPeriod.periodNumber}${userEventCleaningRuleFormData.actionAndPeriod.periodUnit}`,
       };
 
@@ -663,14 +702,28 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
     if (!cleaningRuleId && selectedDatamartId) {
       // Create cleaning rule
 
+      const activityTypeFilter =
+        userEventCleaningRuleFormData.activityTypeFilter !== undefined
+          ? userEventCleaningRuleFormData.activityTypeFilter !== ''
+            ? userEventCleaningRuleFormData.activityTypeFilter
+            : undefined
+          : undefined;
+
+      const channelFilter =
+        userEventCleaningRuleFormData.channelFilter !== undefined
+          ? userEventCleaningRuleFormData.channelFilter !== ''
+            ? userEventCleaningRuleFormData.channelFilter
+            : undefined
+          : undefined;
+
       const userEventCleaningRule: Partial<UserEventCleaningRuleResource> = {
         type: 'USER_EVENT_CLEANING_RULE',
         datamart_id: selectedDatamartId,
         action: userEventCleaningRuleFormData.actionAndPeriod.selectedValue,
         status: 'DRAFT',
         archived: false,
-        channel_filter: userEventCleaningRuleFormData.channelFilter,
-        activity_type_filter: userEventCleaningRuleFormData.activityTypeFilter,
+        channel_filter: channelFilter,
+        activity_type_filter: activityTypeFilter,
         life_duration: `P${userEventCleaningRuleFormData.actionAndPeriod.periodNumber}${userEventCleaningRuleFormData.actionAndPeriod.periodUnit}`,
       };
 

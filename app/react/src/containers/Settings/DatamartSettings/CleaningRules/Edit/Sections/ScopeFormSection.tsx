@@ -41,6 +41,7 @@ class ScopeFormSection extends React.Component<Props> {
             required: false,
           }}
           options={[
+            { value: '', title: formatMessage(messages.sectionScopeActivityTypeAllTypes)},
             { value: 'SITE_VISIT', title: 'SITE_VISIT' },
             { value: 'APP_VISIT', title: 'APP_VISIT' },
           ]}
