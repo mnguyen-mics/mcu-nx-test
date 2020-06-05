@@ -5,6 +5,8 @@ import {
   WaitFormData,
   AddToSegmentAutomationFormData,
   DeleteFromSegmentAutomationFormData,
+  OnSegmentEntryInputAutomationFormData,
+  OnSegmentExitInputAutomationFormData,
 } from '../../containers/Automations/Builder/AutomationNode/Edit/domain';
 
 import {
@@ -123,11 +125,15 @@ export interface QueryInputNodeResource extends ScenarioNodeResource {
 export interface OnSegmentEntryInputNodeResource extends ScenarioNodeResource {
   type: 'ON_SEGMENT_ENTRY_INPUT_NODE';
   audience_segment_id: string;
+  formData: OnSegmentEntryInputAutomationFormData;
+  initialFormData: OnSegmentEntryInputAutomationFormData;
 }
 
 export interface OnSegmentExitInputNodeResource extends ScenarioNodeResource {
   type: 'ON_SEGMENT_EXIT_INPUT_NODE';
   audience_segment_id: string;
+  formData: OnSegmentExitInputAutomationFormData;
+  initialFormData: OnSegmentExitInputAutomationFormData;
 }
 
 export interface ABNNodeResource extends ScenarioNodeResource {

@@ -168,6 +168,14 @@ export interface DeleteFromSegmentAutomationFormData extends DefaultFormData {
   segmentId?: string
 }
 
+export interface OnSegmentEntryInputAutomationFormData extends DefaultFormData {
+  segmentId?: string
+}
+
+export interface OnSegmentExitInputAutomationFormData extends DefaultFormData {
+  segmentId?: string
+}
+
 export interface QueryAutomationFormData extends DefaultFormData, Partial<QueryCreateRequest> {
 }
 
