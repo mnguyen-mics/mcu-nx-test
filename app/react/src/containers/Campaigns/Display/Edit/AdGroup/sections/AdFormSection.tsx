@@ -84,7 +84,7 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
   componentDidUpdate() {
     const loadedCreativeIds = Object.keys(this.state.displayCreativeCacheById);
     const creativeIdsToBeLoaded: string[] = [];
-    this.props.fields.getAll().forEach((field) => {
+    this.props.fields.getAll().forEach(field => {
       if (
         !isDisplayCreativeFormData(field.model) &&
         !loadedCreativeIds.includes(field.model.creative_id)
@@ -93,22 +93,24 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
       }
     });
 
-    this.cancelablePromise = makeCancelable(
-      Promise.all(
-        creativeIdsToBeLoaded.map(id =>
-          this._creativeService.getDisplayAd(id).then(res => res.data),
+    if (creativeIdsToBeLoaded.length !== 0) {
+      this.cancelablePromise = makeCancelable(
+        Promise.all(
+          creativeIdsToBeLoaded.map(id =>
+            this._creativeService.getDisplayAd(id).then(res => res.data),
+          ),
         ),
-      ),
-    );
+      );
 
-    this.cancelablePromise.promise.then(creatives => {
-      this.setState(prevState => ({
-        displayCreativeCacheById: {
-          ...prevState.displayCreativeCacheById,
-          ...normalizeArrayOfObject(creatives, 'id'),
-        },
-      }));
-    });
+      this.cancelablePromise.promise.then(creatives => {
+        this.setState(prevState => ({
+          displayCreativeCacheById: {
+            ...prevState.displayCreativeCacheById,
+            ...normalizeArrayOfObject(creatives, 'id'),
+          },
+        }));
+      });
+    }
   }
 
   componentWillUnmount() {

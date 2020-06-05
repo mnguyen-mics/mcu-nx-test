@@ -85,22 +85,24 @@ class AdGroupAdsFormSection extends React.Component<
       });
     });
 
-    this.cancelablePromise = makeCancelable(
-      Promise.all(
-        creativeIdsToBeLoaded.map(id =>
-          this._creativeService.getDisplayAd(id).then(res => res.data),
+    if (creativeIdsToBeLoaded.length !== 0) {
+      this.cancelablePromise = makeCancelable(
+        Promise.all(
+          creativeIdsToBeLoaded.map(id =>
+            this._creativeService.getDisplayAd(id).then(res => res.data),
+          ),
         ),
-      ),
-    );
+      );
 
-    this.cancelablePromise.promise.then(creatives => {
-      this.setState(prevState => ({
-        displayCreativeCacheById: {
-          ...prevState.displayCreativeCacheById,
-          ...normalizeArrayOfObject(creatives, 'id'),
-        },
-      }));
-    });
+      this.cancelablePromise.promise.then(creatives => {
+        this.setState(prevState => ({
+          displayCreativeCacheById: {
+            ...prevState.displayCreativeCacheById,
+            ...normalizeArrayOfObject(creatives, 'id'),
+          },
+        }));
+      });
+    }
   }
 
   componentWillUnmount() {

@@ -119,6 +119,7 @@ class GoalStackedAreaChart extends React.Component<
       },
       location: { search: previousSearch },
     } = previousProps;
+    
     if (
       !compareSearches(search, previousSearch) ||
       organisationId !== previousOrganisationId ||

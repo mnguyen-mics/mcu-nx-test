@@ -46,7 +46,8 @@ class LocationTargetingFormSection extends React.Component<JoinedProps, State> {
   componentDidUpdate(previousProps: JoinedProps) {
     const currentFields = this.props.fields;
     const previousFields = previousProps.fields;
-    if (currentFields.length === 0 && currentFields.length !== previousFields.length) {
+    const { locationTargetingDisplayed } = this.state;
+    if (currentFields.length === 0 && currentFields.length !== previousFields.length && locationTargetingDisplayed !== false) {
       this.setState({ locationTargetingDisplayed: false });
     }
   }
