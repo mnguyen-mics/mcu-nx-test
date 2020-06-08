@@ -188,7 +188,7 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
         const audiencePromises: Array<Promise<any>> = [
           this._audienceSegmentService.getSegments(organisationId, {
             audience_partition_id: partitionId,
-            type: 'USER_PARTITION',
+            type: ['USER_PARTITION'],
             max_results: 500,
           }),
           ReportService.getAudienceSegmentReport(

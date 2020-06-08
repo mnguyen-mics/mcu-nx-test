@@ -17,6 +17,7 @@ import { FormSearchObjectField } from '../../../../../QueryTool/JSONOTQL/Edit/Se
 import FormSearchObject from '../../../../../../components/Form/FormSelect/FormSearchObject';
 import SegmentNameDisplay from '../../../../../Audience/Common/SegmentNameDisplay';
 import { RouteComponentProps, withRouter } from 'react-router';
+import injectNotifications, { InjectedNotificationProps } from '../../../../../Notifications/injectNotifications';
 
 interface State {}
 
@@ -27,6 +28,7 @@ interface OnSegmentEntryInputGeneralSectionFormProps {
 
 type Props = OnSegmentEntryInputGeneralSectionFormProps &
   InjectedIntlProps &
+  InjectedNotificationProps &
   ValidatorProps &
   RouteComponentProps<{ organisationId: string }> &
   NormalizerProps;
@@ -36,7 +38,7 @@ class OnSegmentEntryInputGeneralSectionForm extends React.Component<
   State
 > {
   @lazyInject(TYPES.IAudienceSegmentService)
-  private _SegmentEntryInputService: IAudienceSegmentService;
+  private _audienceSegmentService: IAudienceSegmentService;
 
   constructor(props: Props) {
     super(props);
@@ -47,23 +49,42 @@ class OnSegmentEntryInputGeneralSectionForm extends React.Component<
       match: {
         params: { organisationId },
       },
+      initialValues: {
+        datamartId
+      },
+      notifyError,
     } = this.props;
 
-    return this._SegmentEntryInputService
-      .getSegments(organisationId, { keywords, type: 'USER_QUERY', persisted: true })
-      .then(({ data: segments }) =>
-        segments.map(r => ({
-          key: r.id,
-          label: <SegmentNameDisplay audienceSegmentResource={r} />,
-        })),
-      );
+    return Promise.all([
+      this._audienceSegmentService
+      .getSegments(
+        organisationId, 
+        { keywords, type: ['USER_QUERY'], persisted: true, datamart_id: datamartId }
+      ),
+      this._audienceSegmentService
+      .getSegments(
+        organisationId, 
+        { keywords, type: ['USER_LIST'], feed_type:'FILE_IMPORT', persisted: true, datamart_id: datamartId }
+      )
+    ]).then(([{ data: userQuerySegments }, { data: userListSegments }]) => {
+      return userQuerySegments.concat(userListSegments).map(segment => ({
+        key: segment.id,
+        label: <SegmentNameDisplay audienceSegmentResource={segment} />,
+      }));
+    }).catch(error => {
+      notifyError(error);
+      return [];
+    });
   };
 
   fetchSingleMethod = (id: string) => {
-    return this._SegmentEntryInputService.getSegment(id).then(({ data: segment }) => ({
+    return this._audienceSegmentService.getSegment(id).then(({ data: segment }) => ({
       key: segment.id,
       label: <SegmentNameDisplay audienceSegmentResource={segment} />,
-    }));
+    })).catch(error => {
+      this.props.notifyError(error);
+      throw error;
+    });
   };
 
   render() {
@@ -107,6 +128,7 @@ class OnSegmentEntryInputGeneralSectionForm extends React.Component<
 
 export default compose<Props, OnSegmentEntryInputGeneralSectionFormProps>(
   injectIntl,
+  injectNotifications,
   withValidators,
   withNormalizer,
   withRouter,

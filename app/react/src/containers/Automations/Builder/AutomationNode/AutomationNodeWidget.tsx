@@ -23,6 +23,8 @@ import {
   isQueryInputNode,
   isAddToSegmentNode,
   isDeleteFromSegmentNode,
+  isOnSegmentEntryInputNode,
+  isOnSegmentExitInputNode,
 } from './Edit/domain';
 
 import { ScenarioNodeType, ScenarioNodeShape } from '../../../../models/automations/automations'
@@ -231,6 +233,13 @@ class AutomationNodeWidget extends React.Component<Props, State> {
             break;
           case 'ON_SEGMENT_ENTRY_INPUT_NODE':
           case 'ON_SEGMENT_EXIT_INPUT_NODE':
+            initialValue = {
+              ...scenarioNodeShape.formData,
+              datamartId: scenarioNodeShape.formData.datamartId
+                ? scenarioNodeShape.formData.datamartId
+                : datamartId
+            } as any;
+            break;
           case 'DELETE_FROM_SEGMENT_NODE':
           case 'ADD_TO_SEGMENT_NODE':
             initialValue = {
@@ -246,6 +255,10 @@ class AutomationNodeWidget extends React.Component<Props, State> {
           case 'ADD_TO_SEGMENT_NODE':
           case 'DELETE_FROM_SEGMENT_NODE':
             disableEdition = !!scenarioNodeShape.user_list_segment_id;
+            break;
+          case 'ON_SEGMENT_ENTRY_INPUT_NODE':
+          case 'ON_SEGMENT_EXIT_INPUT_NODE':
+            disableEdition = !!scenarioNodeShape.audience_segment_id;
             break;
           default:
             break;
@@ -349,10 +362,6 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     } = this.props;
 
     const content: React.ReactNodeArray = [];
-    const gotToSegment = () => {
-      if(isAddToSegmentNode(node.storylineNodeModel.node) || isDeleteFromSegmentNode(node.storylineNodeModel.node)) 
-        history.push(`/v2/o/${organisationId}/audience/segments/${node.storylineNodeModel.node.user_list_segment_id}`)
-    }
 
     if (!viewer) {
       content.push((
@@ -369,6 +378,10 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         ))
       }
     } else {
+      const gotToSegment = () => {
+        if(isAddToSegmentNode(node.storylineNodeModel.node) || isDeleteFromSegmentNode(node.storylineNodeModel.node)) 
+          history.push(`/v2/o/${organisationId}/audience/segments/${node.storylineNodeModel.node.user_list_segment_id}`)
+      }
       content.push((
         <div key="stats" onClick={gotToSegment} className="boolean-menu-item">
           <FormattedMessage {...messages.goToSegment} />
@@ -384,6 +397,43 @@ class AutomationNodeWidget extends React.Component<Props, State> {
 
     return content;
 
+  }
+
+  renderOnSegmentInputEdit = (): React.ReactNodeArray => {
+    const { 
+      viewer,
+      node,
+      history,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
+    const content: React.ReactNodeArray = [];
+
+    if (!viewer) {
+      content.push((
+        <div key="edit" onClick={this.editNode} className="boolean-menu-item">
+          <FormattedMessage {...messages.edit} />
+        </div>
+      ))
+    } else {
+      const gotToSegment = () => {
+        if(isOnSegmentEntryInputNode(node.storylineNodeModel.node) || isOnSegmentExitInputNode(node.storylineNodeModel.node)) 
+          history.push(`/v2/o/${organisationId}/audience/segments/${node.storylineNodeModel.node.audience_segment_id}`)
+      }
+      content.push((
+        <div key="stats" onClick={gotToSegment} className="boolean-menu-item">
+          <FormattedMessage {...messages.goToSegment} />
+        </div>
+      ))
+      content.push((
+        <div key="view" onClick={this.editNode} className="boolean-menu-item">
+          <FormattedMessage {...messages.view} />
+        </div>
+      ))
+    }
+
+    return content;
   }
 
   renderDefautEdit = (): React.ReactNodeArray => {
@@ -502,8 +552,6 @@ class AutomationNodeWidget extends React.Component<Props, State> {
       case 'DELETE_FROM_SEGMENT_NODE':
         return this.renderAddToSegmentOrDeleteFromSegmentEdit();
       case 'QUERY_INPUT':
-      case 'ON_SEGMENT_ENTRY_INPUT_NODE':
-      case 'ON_SEGMENT_EXIT_INPUT_NODE':
         return this.renderQueryEdit();
       case 'END_NODE':
         return this.renderEndNodeEdit();
@@ -511,6 +559,9 @@ class AutomationNodeWidget extends React.Component<Props, State> {
       case 'WAIT_NODE':
       case 'PLUGIN_NODE':
         return this.defaultEditRemoveNode();
+      case 'ON_SEGMENT_ENTRY_INPUT_NODE':
+      case 'ON_SEGMENT_EXIT_INPUT_NODE':
+        return this.renderOnSegmentInputEdit();
       default:
         return [];
     }

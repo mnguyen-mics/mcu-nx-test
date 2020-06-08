@@ -17,6 +17,7 @@ import { FormSearchObjectField } from '../../../../../QueryTool/JSONOTQL/Edit/Se
 import FormSearchObject from '../../../../../../components/Form/FormSelect/FormSearchObject';
 import SegmentNameDisplay from '../../../../../Audience/Common/SegmentNameDisplay';
 import { RouteComponentProps, withRouter } from 'react-router';
+import injectNotifications, { InjectedNotificationProps } from '../../../../../Notifications/injectNotifications';
 
 interface State {}
 
@@ -27,6 +28,7 @@ interface OnSegmentExitInputGeneralSectionFormProps {
 
 type Props = OnSegmentExitInputGeneralSectionFormProps &
   InjectedIntlProps &
+  InjectedNotificationProps &
   ValidatorProps &
   RouteComponentProps<{ organisationId: string }> &
   NormalizerProps;
@@ -36,7 +38,7 @@ class OnSegmentExitInputGeneralSectionForm extends React.Component<
   State
 > {
   @lazyInject(TYPES.IAudienceSegmentService)
-  private _SegmentExitInputService: IAudienceSegmentService;
+  private _audienceSegmentService: IAudienceSegmentService;
 
   constructor(props: Props) {
     super(props);
@@ -47,23 +49,33 @@ class OnSegmentExitInputGeneralSectionForm extends React.Component<
       match: {
         params: { organisationId },
       },
+      initialValues: {
+        datamartId
+      },
+      notifyError,
     } = this.props;
 
-    return this._SegmentExitInputService
-      .getSegments(organisationId, { keywords, type: 'USER_QUERY', persisted: true })
+    return this._audienceSegmentService
+      .getSegments(organisationId, { keywords, type: ['USER_QUERY'], persisted: true, datamart_id: datamartId })
       .then(({ data: segments }) =>
         segments.map(r => ({
           key: r.id,
           label: <SegmentNameDisplay audienceSegmentResource={r} />,
         })),
-      );
+      ).catch(error => {
+        notifyError(error);
+        return [];
+      });
   };
 
   fetchSingleMethod = (id: string) => {
-    return this._SegmentExitInputService.getSegment(id).then(({ data: segment }) => ({
+    return this._audienceSegmentService.getSegment(id).then(({ data: segment }) => ({
       key: segment.id,
       label: <SegmentNameDisplay audienceSegmentResource={segment} />,
-    }));
+    })).catch(error => {
+      this.props.notifyError(error);
+      throw error;
+    });
   };
 
   render() {
@@ -107,6 +119,7 @@ class OnSegmentExitInputGeneralSectionForm extends React.Component<
 
 export default compose<Props, OnSegmentExitInputGeneralSectionFormProps>(
   injectIntl,
+  injectNotifications,
   withValidators,
   withNormalizer,
   withRouter,

@@ -69,7 +69,7 @@ export type UserListFeedType = 'FILE_IMPORT' | 'TAG' | 'SCENARIO';
 export interface GetSegmentsOption extends PaginatedApiParam {
   name?: string;
   technical_name?: string;
-  type?: AudienceSegmentType;
+  type?: AudienceSegmentType[];
   evaluation_mode?: UserQueryEvaluationMode;
   with_source_datamarts?: boolean;
   campaign_id?: string;

@@ -32,6 +32,8 @@ import {
   AddToSegmentAutomationFormData,
   DeleteFromSegmentAutomationFormData,
   isDeleteFromSegmentNode,
+  isOnSegmentEntryInputNode,
+  isOnSegmentExitInputNode,
 } from '../Builder/AutomationNode/Edit/domain';
 import { INITIAL_AUTOMATION_DATA } from '../Edit/domain';
 import { IQueryService } from '../../../services/QueryService';
@@ -333,6 +335,14 @@ export class AutomationFormService implements IAutomationFormService {
               case 'PLUGIN_NODE':
                 getPromise = Promise.resolve().then(() => ({ ...n }));
                 break;
+              case 'ON_SEGMENT_ENTRY_INPUT_NODE':
+              case 'ON_SEGMENT_EXIT_INPUT_NODE':
+                getPromise = Promise.resolve({ 
+                  ...n,
+                  formData: { name: '', datamartId: datamartId, segmentId: n.audience_segment_id }, 
+                  initialFormData: { name: '', datamartId: datamartId, segmentId: n.audience_segment_id } 
+                })
+                break;
             }
             return getPromise;
           }),
@@ -485,6 +495,27 @@ export class AutomationFormService implements IAutomationFormService {
   }
 
   saveFirstNode = (
+    datamartId: string,
+    automationId: string,
+    storylineNode: StorylineNodeModel,
+  ) => {
+    const nodeType = storylineNode.node.type;
+    if(nodeType === 'QUERY_INPUT')
+      return this.saveQueryInputNode(datamartId, automationId, storylineNode);
+    else
+      return this.saveOrCreateNode(
+        automationId,
+        storylineNode,
+        undefined,
+        undefined,
+        undefined,
+        true,
+      ).then(res => {
+        return res.data.id;
+      });
+  };
+
+  saveQueryInputNode = (
     datamartId: string,
     automationId: string,
     storylineNode: StorylineNodeModel,
@@ -777,6 +808,28 @@ export class AutomationFormService implements IAutomationFormService {
       };
       resourceId =
         node.query_id && !isFakeId(node.query_id) ? node.query_id : undefined;
+    } else if (isOnSegmentEntryInputNode(node)) {
+      scenarioNodeResource = {
+        id: node.id && !isFakeId(node.id) ? node.id : undefined,
+        name: node.name,
+        scenario_id: automationId,
+        x: node.x,
+        y: node.y,
+        type: 'ON_SEGMENT_ENTRY_INPUT_NODE',
+        audience_segment_id: node.formData.segmentId
+      };
+      resourceId = node.id && !isFakeId(node.id) ? node.id : undefined;
+    } else if (isOnSegmentExitInputNode(node)) {
+      scenarioNodeResource = {
+        id: node.id && !isFakeId(node.id) ? node.id : undefined,
+        name: node.name,
+        scenario_id: automationId,
+        x: node.x,
+        y: node.y,
+        type: 'ON_SEGMENT_EXIT_INPUT_NODE',
+        audience_segment_id: node.formData.segmentId
+      };
+      resourceId = node.id && !isFakeId(node.id) ? node.id : undefined;
     } else if (isAddToSegmentNode(node)) {
       scenarioNodeResource = {
         id: node.id && !isFakeId(node.id) ? node.id : undefined,

@@ -49,7 +49,7 @@ class SegmentByNameSelector extends React.Component<SegmentByNameSelectorProps, 
       datamart_id: datamartId
     }
     if(segmentType) {
-      options.type = segmentType
+      options.type = [segmentType]
     }
     return this._audienceSegmentService.getSegments(organisationId, options)
       .then(res => {
