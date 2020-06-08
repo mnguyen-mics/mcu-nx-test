@@ -23,6 +23,7 @@ import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IMonitoringService } from './MonitoringService';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
+import { Loading } from '../../../components';
 
 const { Content } = Layout;
 
@@ -220,7 +221,7 @@ class Monitoring extends React.Component<Props, State> {
           handleModal={this.handleModal}
         />
         <div className="ant-layout">
-          <Content className="mcs-content-container">
+          { !isLoading ? <Content className="mcs-content-container">
             {monitoringData.isUserFound ? (
               <Row>
                 <TimelineHeader
@@ -289,7 +290,7 @@ class Monitoring extends React.Component<Props, State> {
                 intlMessage={messages.pleaseFillInformations}
               />
             )}
-          </Content>
+          </Content> : <Loading className="loading-full-screen" />}
         </div>
       </div>
     );

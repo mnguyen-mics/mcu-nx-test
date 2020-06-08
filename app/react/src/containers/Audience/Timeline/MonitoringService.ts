@@ -25,6 +25,7 @@ import {
   UserProfileResource,
   UserAccountIdentifierInfo,
   isUserAccountIdentifier,
+  FormattedUserAccountCompartmentResource
 } from '../../../models/timeline/timeline';
 import { IOrganisationService } from '../../../services/OrganisationService';
 import { IDatamartService } from '../../../services/DatamartService';
@@ -105,56 +106,81 @@ export class MonitoringService implements IMonitoringService {
           };
         }
 
-        // Default accumulator value
-        const seedAcc: Promise<UserProfilePerCompartmentAndUserAccountId> = Promise.resolve(
-          {},
-        );
+        const profileApiResponse = profilesResponse.data;
 
-        // Async reducing
-        const userProfilePerCompartmentAndUserAccountId = profilesResponse.data.reduce(
-          (
-            accP: UserProfilePerCompartmentAndUserAccountId,
-            curr: UserProfileResource,
-          ) => {
-            const acc = accP;
+        const getUsersAccountCompartment = (profiles: UserProfileResource[]) => {
+          const promises: Array<Promise<any>>= [];
 
-            const compartmentId = curr.compartment_id
-              ? curr.compartment_id
-              : 'default';
-            const userAccountId = curr.user_account_id
-              ? curr.user_account_id
-              : 'anonymous';
-            const newProfile = {
-              userAccountId: userAccountId,
-              profile: curr,
-            };
+          const compartmentIds = new Set();
+          for (const profile of profiles) {
+            if(profile.compartment_id)
+              compartmentIds.add(profile.compartment_id);
+          }
+          compartmentIds.forEach((compartmentId: string) => {
+            promises.push(this._datamartService
+              .getUserAccountCompartment(compartmentId).then(compartment => {
+                return compartment.data;
+              }));
+          });
+          return Promise.all(promises);
+        }
 
-            if (!acc[compartmentId]) {
-              this._datamartService
-                .getUserAccountCompartment(compartmentId)
-                .then(compartment => {
-                  acc[compartmentId] = {
-                    compartmentName: compartment.data.name
-                      ? compartment.data.name
-                      : compartment.data.token,
-                    profiles: [newProfile],
-                  };
-                });
-            } else {
-              acc[compartmentId].profiles = acc[compartmentId].profiles.concat(
-                newProfile,
-              );
-            }
+        return getUsersAccountCompartment(profileApiResponse).then((usersAccountCompartments) => {
 
-            return acc;
-          },
-          seedAcc,
-        );
+          const formattedUsersAccountCompartmentsResponse: FormattedUserAccountCompartmentResource = {};
+          for (const usersAccountCompartment of usersAccountCompartments) {
+            formattedUsersAccountCompartmentsResponse[usersAccountCompartment.id] = usersAccountCompartment;
+          }
 
-        return {
-          type: 'pionus' as UserProfileGlobalType,
-          profile: userProfilePerCompartmentAndUserAccountId,
-        };
+          // Default accumulator value
+          const seedAcc: Promise<UserProfilePerCompartmentAndUserAccountId> = Promise.resolve(
+            {},
+          );
+
+          const userProfilePerCompartmentAndUserAccountId = profilesResponse.data.reduce(
+            (
+              accP: UserProfilePerCompartmentAndUserAccountId,
+              curr: UserProfileResource,
+            ) => {
+              const acc = accP;
+
+              const compartmentId = curr.compartment_id
+                ? curr.compartment_id
+                : 'default';
+              const userAccountId = curr.user_account_id
+                ? curr.user_account_id
+                : 'anonymous';
+              const newProfile = {
+                userAccountId: userAccountId,
+                profile: curr,
+              };
+
+              if (!acc[compartmentId]) {
+                acc[compartmentId] = {
+                  compartmentName: formattedUsersAccountCompartmentsResponse[compartmentId].name 
+                  || formattedUsersAccountCompartmentsResponse[compartmentId].token,
+                  profiles: [newProfile],
+                };
+              } else {
+                acc[compartmentId].profiles = acc[compartmentId].profiles.concat(
+                  newProfile,
+                );
+              }
+
+              return acc;
+            },
+            seedAcc,
+          );
+
+          return {
+            type: 'pionus' as UserProfileGlobalType,
+            profile: userProfilePerCompartmentAndUserAccountId,
+          };
+
+
+        }).catch(err => {
+          return emptyResponse;
+        });
       })
       .catch(() => {
         return emptyResponse;
@@ -337,17 +363,17 @@ export class MonitoringService implements IMonitoringService {
         );
         const userIdentifier = userPointIdentifierInfo
           ? {
-              type: 'user_point_id',
-              id:
-                userPointIdentifierInfo &&
-                userPointIdentifierInfo.user_point_id,
-            }
+            type: 'user_point_id',
+            id:
+              userPointIdentifierInfo &&
+              userPointIdentifierInfo.user_point_id,
+          }
           : {
-              type: 'user_agent_id',
-              id: userAgentIdentifierInfo
-                ? userAgentIdentifierInfo && userAgentIdentifierInfo.vector_id
-                : '',
-            };
+            type: 'user_agent_id',
+            id: userAgentIdentifierInfo
+              ? userAgentIdentifierInfo && userAgentIdentifierInfo.vector_id
+              : '',
+          };
 
         if (userIdentifier.id) {
           return this.fetchMonitoringDataByIdentifier(

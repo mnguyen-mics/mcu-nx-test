@@ -203,6 +203,16 @@ export interface UserProfilePerCompartmentAndUserAccountId {
   };
 }
 
+export interface FormattedUserAccountCompartmentResource {
+  [compartmentId: string]: {
+    id: string;
+    organisation_id: string;
+    token: string;
+    name: string;
+    archived: boolean;
+  };
+}
+
 export type UserProfileGlobalType = 'legacy' | 'pionus';
 
 export interface UserProfileGlobal {
