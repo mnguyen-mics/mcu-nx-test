@@ -670,34 +670,26 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
         life_duration: `P${userEventCleaningRuleFormData.actionAndPeriod.periodNumber}${userEventCleaningRuleFormData.actionAndPeriod.periodUnit}`,
       };
 
-      const updateCleaningRuleP = this._datamartService.updateCleaningRule(
-        datamartId,
-        cleaningRuleId,
-        userEventCleaningRule,
-      );
+      this._datamartService.updateCleaningRule(datamartId, cleaningRuleId, userEventCleaningRule)
+      .then(_ => {
+        const previousContentFilter = userEventCleaningRuleFormData.userEventContentFilter;
+        const nextEventNameFilter = userEventCleaningRuleFormData.eventNameFilter;
 
-      const previousContentFilter =
-        userEventCleaningRuleFormData.userEventContentFilter;
-
-      const nextEventNameFilter = userEventCleaningRuleFormData.eventNameFilter;
-
-      const contentFilterP = this.getContentFilterPromise(
-        datamartId,
-        cleaningRuleId,
-        previousContentFilter,
-        nextEventNameFilter,
-      );
-
-      Promise.all([updateCleaningRuleP, contentFilterP])
-        .then(_ => {
-          this.setState({ loading: false });
+        this.getContentFilterPromise(
+          datamartId,
+          cleaningRuleId,
+          previousContentFilter,
+          nextEventNameFilter
+        ).then(resContentFilter => {
+          this.setState({loading: false});
           this.onClose();
         })
-        .catch(err => {
-          this.setState({ loading: false });
-          notifyError(err);
-          this.onClose();
-        });
+      })
+      .catch(err => {
+        this.setState({loading: false});
+        notifyError(err);
+        this.onClose();
+      });
     }
     if (!cleaningRuleId && selectedDatamartId) {
       // Create cleaning rule
