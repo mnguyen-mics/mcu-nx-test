@@ -97,7 +97,8 @@ Cypress.Commands.add('initTestContext', () => {
   let datamartId:number
   let schemaId:number
   let organisationId:number
-  const datamartName=Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+  const datamartName:string=Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+  const organisationName:string=Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
   // api Identification
   cy
       .request('POST', `${Cypress.env('apiDomain')}/v1/authentication/refresh_tokens`, { email: 'dev@mediarithmics.com', password: 'F&&DikfGd3$XDXDt7duL#KeVTn&5A#8za&Q5PrtiPC*BHkTbtg' })
@@ -115,7 +116,7 @@ Cypress.Commands.add('initTestContext', () => {
                               method: 'POST',
                               headers: { Authorization: accessToken },
                               body: {
-                                  name: `${Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)}`,
+                                  name: `${organisationName}`,
                                   technical_name: `${Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10)}`,
                                   market_id: '1'
                               }
@@ -270,12 +271,13 @@ Cypress.Commands.add('initTestContext', () => {
                                                                       "datamartId":${datamartId},
                                                                       "datamartName":"${datamartName}",
                                                                       "schemaId":${schemaId},
-                                                                      "organisationId":${organisationId}
+                                                                      "organisationId":${organisationId},
+                                                                      "organisationName":"${organisationName}"
                                                                   }`)
                                                               })
                                                             }
-                                                            else{
-                                                              cy.exec(`ssh ${Cypress.env('virtualPlatformName')}.mics-sandbox.com 'curl -k -H "Authorization: ${accessToken}" -H "Content-Type: application/json" -X POST https://10.0.1.3:8493/v1/datamarts/${datamartId}/graphdb_runtime_schemas/${schemaId}/publication -H "Host: admin-api.mediarithmics.local:8493"'`)
+                                                            else if(Cypress.env('apiDomain')!=='https://api.mediarithmics.local'&& Cypress.env('userName')!==''){
+                                                              cy.exec(`ssh -o StrictHostKeyChecking=no -l ${Cypress.env('userName')} ${Cypress.env('virtualPlatformName')}.mics-sandbox.com 'curl -k -H "Authorization: ${accessToken}" -H "Content-Type: application/json" -X POST https://10.0.1.3:8493/v1/datamarts/${datamartId}/graphdb_runtime_schemas/${schemaId}/publication -H "Host: admin-api.mediarithmics.local:8493"'`)
                                                               .its('stdout').should('contain', '"status":"ok"')
                                                               .then(()=>{
                                                                   cy
@@ -285,7 +287,24 @@ Cypress.Commands.add('initTestContext', () => {
                                                                       "datamartId":${datamartId},
                                                                       "datamartName":"${datamartName}",
                                                                       "schemaId":${schemaId},
-                                                                      "organisationId":${organisationId}
+                                                                      "organisationId":${organisationId},
+                                                                      "organisationName":"${organisationName}"
+                                                                  }`)
+                                                                })
+                                                            }
+                                                            else{
+                                                              cy.exec(`ssh -o StrictHostKeyChecking=no ${Cypress.env('virtualPlatformName')}.mics-sandbox.com 'curl -k -H "Authorization: ${accessToken}" -H "Content-Type: application/json" -X POST https://10.0.1.3:8493/v1/datamarts/${datamartId}/graphdb_runtime_schemas/${schemaId}/publication -H "Host: admin-api.mediarithmics.local:8493"'`)
+                                                              .its('stdout').should('contain', '"status":"ok"')
+                                                              .then(()=>{
+                                                                  cy
+                                                                  .exec(`cat <<EOT > cypress/fixtures/init_infos.json
+                                                                  {
+                                                                      "accessToken":"${accessToken}",
+                                                                      "datamartId":${datamartId},
+                                                                      "datamartName":"${datamartName}",
+                                                                      "schemaId":${schemaId},
+                                                                      "organisationId":${organisationId},
+                                                                      "organisationName":"${organisationName}"
                                                                   }`)
                                                                 })
                                                             }
