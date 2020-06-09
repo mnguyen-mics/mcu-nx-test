@@ -83,13 +83,14 @@ export class AudienceSegmentFormService implements IAudienceSegmentFormService {
         processingAndSelection =>
           processingAndSelection.processingSelectionResource,
       );
-      const processingActivities = resProcessingSelections.map(processingAndSelection =>
-        createFieldArrayModel(processingAndSelection.processingResource),
+      const processingActivities = resProcessingSelections.map(
+        processingAndSelection =>
+          createFieldArrayModel(processingAndSelection.processingResource),
       );
 
       if (
         (resSegment.data.type === 'USER_QUERY' ||
-        resSegment.data.type === 'USER_LIST') &&
+          resSegment.data.type === 'USER_LIST') &&
         resSegment.data.query_id
       ) {
         return this._queryService
@@ -126,7 +127,7 @@ export class AudienceSegmentFormService implements IAudienceSegmentFormService {
           audienceSegmentFormData,
         );
       case 'USER_LIST':
-        return audienceSegmentFormData.audienceSegment.subtype === 'USER_CLIENT'
+        return audienceSegmentFormData.audienceSegment.subtype === 'EDGE'
           ? this.createOrUpdateAudienceSegmentUserQuery(
               organisationId,
               audienceSegmentFormData,

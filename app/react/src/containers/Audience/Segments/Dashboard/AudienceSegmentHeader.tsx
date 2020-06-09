@@ -51,8 +51,13 @@ export const localMessages: {
     id: 'audience.segments.dashboard.header.type.USER_LOOKALIKE',
     defaultMessage: 'User Lookalike',
   },
+  // USER_CLIENT is deprecated and replaced by EDGE
   USER_CLIENT: {
     id: 'audience.segments.dashboard.header.type.USER_CLIENT',
+    defaultMessage: 'Edge',
+  },
+  EDGE: {
+    id: 'audience.segments.dashboard.header.type.EDGE',
     defaultMessage: 'Edge',
   },
   AB_TESTING_CONTROL_GROUP: {
@@ -86,13 +91,12 @@ class AudienceSegmentHeader extends React.Component<Props> {
     }
 
     const renderName = () => {
-      const userClient = 'USER_CLIENT';
+      const edge = 'EDGE';
+      const edgeMessage = <FormattedMessage {...localMessages[edge]} />;
       if (segment) {
-        return (segment as UserListSegment).subtype === 'USER_CLIENT' ? (
-          <FormattedMessage {...localMessages[userClient]} />
-        ) : (
-          <FormattedMessage {...localMessages[segment.type]} />
-        );
+        const subtype = (segment as UserListSegment).subtype;
+        if (subtype === 'USER_CLIENT' || subtype === 'EDGE') return edgeMessage;
+        return <FormattedMessage {...localMessages[segment.type]} />;
       }
       return;
     };

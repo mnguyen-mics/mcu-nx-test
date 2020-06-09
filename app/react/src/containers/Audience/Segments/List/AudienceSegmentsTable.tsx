@@ -125,6 +125,10 @@ const messages = defineMessages({
     id: 'audience.segments.list.type.userClient',
     defaultMessage: 'User Client',
   },
+  EDGE: {
+    id: 'audience.segments.list.type.edge',
+    defaultMessage: 'EDGE',
+  },
   filterType: {
     id: 'audience.segments.list.filter.type',
     defaultMessage: 'Type',
@@ -164,7 +168,7 @@ const messages = defineMessages({
   more: {
     id: 'audience.segments.list.typeFilter.more',
     defaultMessage: 'More ...',
-  }
+  },
 });
 
 const messageMap: {
@@ -595,10 +599,10 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
             case 'USER_LIST': {
               typeIcon = 'solution';
               const feedType = (record as UserListSegment).feed_type;
-              if (feedType === 'FILE_IMPORT') subTypeIcon = "file";
-              if (feedType === 'TAG') subTypeIcon = "file-image";
-              if (feedType === 'SCENARIO') subTypeIcon = "share-alt";
-              subMessage = intl.formatMessage(messages[feedType])
+              if (feedType === 'FILE_IMPORT') subTypeIcon = 'file';
+              if (feedType === 'TAG') subTypeIcon = 'file-image';
+              if (feedType === 'SCENARIO') subTypeIcon = 'share-alt';
+              subMessage = intl.formatMessage(messages[feedType]);
               break;
             }
             case 'USER_PIXEL':
@@ -623,14 +627,13 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
                 <Icon type={typeIcon} />
               </Tooltip>
               {subTypeIcon && <span>&nbsp;>&nbsp;</span>}
-              {subTypeIcon && <Tooltip
-                placement="top"
-                title={subMessage}
-              >
-                <Icon type={subTypeIcon} />
-              </Tooltip>}
+              {subTypeIcon && (
+                <Tooltip placement="top" title={subMessage}>
+                  <Icon type={subTypeIcon} />
+                </Tooltip>
+              )}
             </div>
-          )
+          );
         },
       },
       {

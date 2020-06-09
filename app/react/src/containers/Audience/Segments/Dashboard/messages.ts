@@ -1,7 +1,13 @@
 import { ValueFormat } from './../../../ResourceHistory/utils';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { AudienceSegmentResource, AudienceSegmentType } from '../../../../models/audiencesegment/AudienceSegmentResource';
-import { HistoryKeys, formatToFormattingFunction } from '../../../ResourceHistory/utils';
+import {
+  AudienceSegmentResource,
+  AudienceSegmentType,
+} from '../../../../models/audiencesegment/AudienceSegmentResource';
+import {
+  HistoryKeys,
+  formatToFormattingFunction,
+} from '../../../ResourceHistory/utils';
 
 export default defineMessages({
   // Segment
@@ -167,7 +173,8 @@ export default defineMessages({
   },
   tooltipExtensionFactor: {
     id: 'audience.segments.lookalikeCreation.extension.tooltip',
-    defaultMessage: 'An extension factor of N means that the N most overlapping partitions will be added to your base segment.',
+    defaultMessage:
+      'An extension factor of N means that the N most overlapping partitions will be added to your base segment.',
   },
   extensionFactorError: {
     id: 'audience.segments.lookalikeCreation.extension.error',
@@ -213,6 +220,10 @@ const audienceSegmentTypeMessages: {
   USER_CLIENT: {
     id: 'audience.segments.type.userClient',
     defaultMessage: 'User Client',
+  },
+  EDGE: {
+    id: 'audience.segments.type.edge',
+    defaultMessage: 'EDGE',
   },
 });
 

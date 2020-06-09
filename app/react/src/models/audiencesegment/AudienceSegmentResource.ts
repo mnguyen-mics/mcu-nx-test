@@ -36,7 +36,8 @@ export type AudienceSegmentType =
   | 'USER_PARTITION'
   | 'USER_PIXEL'
   | 'USER_LOOKALIKE'
-  | 'USER_CLIENT';
+  | 'USER_CLIENT' // USER_CLIENT is deprecated and replaced by EDGE
+  | 'EDGE';
 
 export type UserQueryEvaluationMode = 'REAL_TIME' | 'AUTOMATIC' | 'ON_DEMAND';
 
@@ -57,7 +58,8 @@ export interface UserListSegment extends AudienceSegmentResource {
   feed_type: FeedType;
   type: 'USER_LIST';
   query_id?: string;
-  subtype: 'STANDARD' | 'USER_PIXEL' | 'USER_CLIENT';
+  subtype: 'STANDARD' | 'USER_PIXEL' | 'USER_CLIENT' | 'EDGE';
+  // USER_CLIENT is deprecated and replaced by EDGE
 }
 
 export interface UserLookalikeSegment extends AudienceSegmentResource {

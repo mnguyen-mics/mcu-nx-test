@@ -296,6 +296,9 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         !audienceSegmentFormData.query) ||
       (audienceSegmentFormData.audienceSegment.type === 'USER_LIST' &&
         audienceSegmentFormData.audienceSegment.subtype === 'USER_CLIENT' &&
+        !audienceSegmentFormData.query) ||
+      (audienceSegmentFormData.audienceSegment.type === 'USER_LIST' &&
+        audienceSegmentFormData.audienceSegment.subtype === 'EDGE' &&
         !audienceSegmentFormData.query)
     ) {
       message.error(intl.formatMessage(messagesMap.noQueryText));
@@ -489,6 +492,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
           },
         },
       });
+      // USER_CLIENT is deprecated and replaced by EDGE
     } else if (segmentType === 'USER_CLIENT') {
       this.setState({
         queryLanguage: 'JSON_OTQL',
@@ -499,7 +503,21 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
               .audienceSegment as UserListSegment),
             type: 'USER_LIST',
             feed_type: 'TAG',
-            subtype: 'USER_CLIENT',
+            subtype: 'EDGE',
+          },
+        },
+      });
+    } else if (segmentType === 'EDGE') {
+      this.setState({
+        queryLanguage: 'JSON_OTQL',
+        audienceSegmentFormData: {
+          ...this.state.audienceSegmentFormData,
+          audienceSegment: {
+            ...(this.state.audienceSegmentFormData
+              .audienceSegment as UserListSegment),
+            type: 'USER_LIST',
+            feed_type: 'TAG',
+            subtype: 'EDGE',
           },
         },
       });
@@ -531,7 +549,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     if (hasFeature('audience-user_client_segment')) {
       segmentTypesToDisplay.push({
         title: 'Edge',
-        value: 'USER_CLIENT',
+        value: 'EDGE',
       });
     }
     return segmentTypesToDisplay;
