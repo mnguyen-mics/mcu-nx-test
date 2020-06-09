@@ -11,10 +11,7 @@ import {
   DefaultLiftimeUnit,
 } from './domain';
 import { INITIAL_AUDIENCE_SEGMENT_FORM_DATA } from '../Edit/domain';
-import {
-  AudienceSegmentShape,
-  UserListSegment,
-} from '../../../../models/audiencesegment';
+import { UserListSegment } from '../../../../models/audiencesegment';
 import messages from './messages';
 
 import EditAudienceSegmentForm from './EditAudienceSegmentForm';
@@ -99,13 +96,13 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
   }
 
   countDefaultLifetime = (
-    audienceSegment: AudienceSegmentShape,
+    audienceSegmentFormData: AudienceSegmentFormData,
   ): {
     defaultLiftime?: number;
     defaultLiftimeUnit?: DefaultLiftimeUnit;
   } => {
     let lifetime = moment
-      .duration(audienceSegment.default_ttl, 'milliseconds')
+      .duration(audienceSegmentFormData.audienceSegment.default_ttl, 'milliseconds')
       .asMonths();
     if (Number.isInteger(lifetime) && lifetime > 0) {
       return {
@@ -114,7 +111,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       };
     } else {
       lifetime = moment
-        .duration(audienceSegment.default_ttl, 'milliseconds')
+        .duration(audienceSegmentFormData.audienceSegment.default_ttl, 'milliseconds')
         .asWeeks();
       if (Number.isInteger(lifetime) && lifetime > 0) {
         return {
@@ -123,7 +120,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         };
       } else {
         lifetime = moment
-          .duration(audienceSegment.default_ttl, 'milliseconds')
+          .duration(audienceSegmentFormData.audienceSegment.default_ttl, 'milliseconds')
           .asDays();
         return {
           defaultLiftime: lifetime,
@@ -149,10 +146,15 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
             .then(datamartData => datamartData.data)
             .then(datamartResource => {
               const newState: Partial<State> = {
-                audienceSegmentFormData: initialData,
+                audienceSegmentFormData: {
+                  ...initialData,
+                  defaultLifetime: this.countDefaultLifetime(initialData).defaultLiftime,
+                  defaultLifetimeUnit: this.countDefaultLifetime(initialData).defaultLiftimeUnit
+                },
                 selectedDatamart: datamartResource,
                 loading: false,
               };
+
               if (initialData.query) {
                 newState.queryLanguage = initialData.query.query_language;
               }
@@ -280,17 +282,16 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     const { selectedDatamart, queryLanguage } = this.state;
 
     const countTTL = (formData: AudienceSegmentFormData) => {
-      if (formData.defaultLiftimeUnit && formData.defaultLiftime) {
+      if (formData.defaultLifetimeUnit && formData.defaultLifetime) {
         return moment
           .duration(
-            Number(formData.defaultLiftime),
-            formData.defaultLiftimeUnit,
+            Number(formData.defaultLifetime),
+            formData.defaultLifetimeUnit,
           )
           .asMilliseconds();
       }
       return undefined;
     };
-
     if (
       (audienceSegmentFormData.audienceSegment.type === 'USER_QUERY' &&
         !audienceSegmentFormData.query) ||
