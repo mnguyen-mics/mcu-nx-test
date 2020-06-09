@@ -737,8 +737,6 @@ export class AutomationFormService implements IAutomationFormService {
         id: node.id && !isFakeId(node.id) ? node.id : undefined,
         name: node.name,
         scenario_id: automationId,
-        x: node.x,
-        y: node.y,
         type: node.type,
         ad_group_id: campaignIds ? campaignIds.ad_group_id : undefined,
         campaign_id: campaignIds ? campaignIds.campaign_id : undefined,
@@ -752,8 +750,6 @@ export class AutomationFormService implements IAutomationFormService {
         id: node.id && !isFakeId(node.id) ? node.id : undefined,
         name: node.name,
         scenario_id: automationId,
-        x: node.x,
-        y: node.y,
         type: node.type,
         campaign_id: campaignIds ? campaignIds.campaign_id : undefined,
       };
@@ -766,8 +762,6 @@ export class AutomationFormService implements IAutomationFormService {
         id: node.id && !isFakeId(node.id) ? node.id : undefined,
         name: node.name,
         scenario_id: automationId,
-        x: node.x,
-        y: node.y,
         type: 'QUERY_INPUT',
         query_id: queryId,
         evaluation_mode: node.evaluation_mode,
@@ -782,8 +776,6 @@ export class AutomationFormService implements IAutomationFormService {
         id: node.id && !isFakeId(node.id) ? node.id : undefined,
         name: node.name,
         scenario_id: automationId,
-        x: node.x,
-        y: node.y,
         type: node.type,
         user_list_segment_id: audienceSegmentId,
         user_segment_expiration_period: node.formData.ttl.value
@@ -798,8 +790,6 @@ export class AutomationFormService implements IAutomationFormService {
         id: node.id && !isFakeId(node.id) ? node.id : undefined,
         name: node.name,
         scenario_id: automationId,
-        x: node.x,
-        y: node.y,
         type: node.type,
         user_list_segment_id: audienceSegmentId,
       };
@@ -809,8 +799,6 @@ export class AutomationFormService implements IAutomationFormService {
         id: node.id && !isFakeId(node.id) ? node.id : undefined,
         name: node.name,
         scenario_id: automationId,
-        x: node.x,
-        y: node.y,
         query_id: queryId,
         type: 'IF_NODE',
       };
@@ -820,8 +808,6 @@ export class AutomationFormService implements IAutomationFormService {
         id: node.id && !isFakeId(node.id) ? node.id : undefined,
         name: node.name,
         scenario_id: automationId,
-        x: node.x,
-        y: node.y,
         type: 'ABN_NODE',
       };
       resourceId = node.id && !isFakeId(node.id) ? node.id : undefined;
@@ -830,8 +816,6 @@ export class AutomationFormService implements IAutomationFormService {
         id: node.id && !isFakeId(node.id) ? node.id : undefined,
         name: node.name,
         scenario_id: automationId,
-        x: node.x,
-        y: node.y,
         type: 'END_NODE',
       };
       resourceId = node.id && !isFakeId(node.id) ? node.id : undefined;
@@ -840,8 +824,6 @@ export class AutomationFormService implements IAutomationFormService {
         id: node.id && !isFakeId(node.id) ? node.id : undefined,
         name: node.name,
         scenario_id: automationId,
-        x: node.x,
-        y: node.y,
         delay_period: moment
           .duration(
             +node.formData.wait_duration.value,
