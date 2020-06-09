@@ -97,8 +97,8 @@ Cypress.Commands.add('initTestContext', () => {
   let datamartId:number
   let schemaId:number
   let organisationId:number
-  const datamartName:string=Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
-  const organisationName:string=Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+  const datamartName:string=faker.random.words(3)
+  const organisationName:string=faker.random.words(3)
   // api Identification
   cy
       .request('POST', `${Cypress.env('apiDomain')}/v1/authentication/refresh_tokens`, { email: 'dev@mediarithmics.com', password: 'F&&DikfGd3$XDXDt7duL#KeVTn&5A#8za&Q5PrtiPC*BHkTbtg' })
@@ -117,6 +117,7 @@ Cypress.Commands.add('initTestContext', () => {
                               headers: { Authorization: accessToken },
                               body: {
                                   name: `${organisationName}`,
+                                  // Using faker here isn't such a good idea because of the constraints on the technical name
                                   technical_name: `${Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10)}`,
                                   market_id: '1'
                               }
