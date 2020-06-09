@@ -159,8 +159,7 @@ class DatamartDashboardPage extends React.Component<Props, State> {
 
     if (
       hasFeature('audience-dashboards-datamart_users_analytics') &&
-      datamart &&
-      datamart.datafarm === 'DF_EU_2017_09'
+      datamart
     ) {
       items.push({
         title: intl.formatMessage(messages.statistics),

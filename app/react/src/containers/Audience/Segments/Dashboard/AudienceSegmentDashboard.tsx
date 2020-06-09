@@ -351,13 +351,8 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
         }
       : undefined;
 
-    const datamart =
-      segment && datamarts.find(d => d.id === segment.datamart_id);
-    const datafarm = datamart && datamart.datafarm;
-
     const shouldDisplayAnalyticsFeature =
       hasFeature('audience-dashboards-datamart_users_analytics') &&
-      (datafarm === 'DF_EU_2017_09' || datafarm === 'DF_EU_DEV') &&
       segment &&
       isUserQuerySegment(segment) &&
       segment.subtype !== 'AB_TESTING_EXPERIMENT';
