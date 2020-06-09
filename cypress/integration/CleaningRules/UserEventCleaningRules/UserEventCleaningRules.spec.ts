@@ -13,7 +13,7 @@ it('should test the cleaning rules update form', () => {
         // Add cleaning rule
         cy.contains('New Cleaning Rule').click({force:true})
         cy.contains(`${data.datamartName}`).click()
-        cy.get('div').should('contain','for')
+        cy.get('.text-center').should('contain','for')
         // Using force true because we can get error notifications on a vagrant
         cy.get('button').contains('Save User Event Cleaning Rule').click({force:true})
         cy.get('table').find('tbody>tr').should('have.length',2)
@@ -42,7 +42,7 @@ it('should test the cleaning rules update form', () => {
             // Update the cleaning rule
             cy.contains('KEEP').click()
             cy.contains('DELETE').click()
-            cy.get('div').should('contain','after')
+            cy.get('.text-center').should('contain','after')
             cy.get('.ant-input-number-input').type('999')
             cy.contains('- Select One -').click()
             cy.contains('APP_VISIT').click()
