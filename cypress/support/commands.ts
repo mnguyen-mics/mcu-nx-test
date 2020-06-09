@@ -102,12 +102,11 @@ Cypress.Commands.add('initTestContext', () => {
   // api Identification
   cy
       .request('POST', `${Cypress.env('apiDomain')}/v1/authentication/refresh_tokens`, { email: 'dev@mediarithmics.com', password: 'F&&DikfGd3$XDXDt7duL#KeVTn&5A#8za&Q5PrtiPC*BHkTbtg' })
-      .then((response) => {
+      .then((refreshTokenResponse) => {
           cy
-              .request('POST', `${Cypress.env('apiDomain')}/v1/authentication/access_tokens`, { refresh_token: `${response.body.data.refresh_token}` })
-              // tslint:disable-next-line: no-shadowed-variable
-              .then((response) => {
-                  accessToken = response.body.data.access_token
+              .request('POST', `${Cypress.env('apiDomain')}/v1/authentication/access_tokens`, { refresh_token: `${refreshTokenResponse.body.data.refresh_token}` })
+              .then((accessTokenResponse) => {
+                  accessToken = accessTokenResponse.body.data.access_token
                   // organisation creation
                   cy
                       .request(
@@ -122,9 +121,8 @@ Cypress.Commands.add('initTestContext', () => {
                                   market_id: '1'
                               }
                           })
-                      // tslint:disable-next-line: no-shadowed-variable
-                      .then((response) => {
-                          organisationId=response.body.data.id
+                      .then((orgResponse) => {
+                          organisationId=orgResponse.body.data.id
                           // datamart creation
                           cy
                               .request(
@@ -141,9 +139,8 @@ Cypress.Commands.add('initTestContext', () => {
                                           datafarm: 'DF_EU_DEV'
                                       }
                                   })
-                              // tslint:disable-next-line: no-shadowed-variable
-                              .then((response) => {
-                                  datamartId = response.body.data.id
+                              .then((datamartResponse) => {
+                                  datamartId = datamartResponse.body.data.id
                                   // schema publication
                                   cy
                                       .request(
@@ -152,9 +149,8 @@ Cypress.Commands.add('initTestContext', () => {
                                               method: 'GET',
                                               headers: { Authorization: accessToken }
                                           })
-                                      // tslint:disable-next-line: no-shadowed-variable
-                                      .then((response) => {
-                                          schemaId = response.body.data[0].id
+                                      .then((schemaResponse) => {
+                                          schemaId = schemaResponse.body.data[0].id
                                           cy
                                               .request(
                                                   {
@@ -277,7 +273,7 @@ Cypress.Commands.add('initTestContext', () => {
                                                                   }`)
                                                               })
                                                             }
-                                                            else if(Cypress.env('apiDomain')!=='https://api.mediarithmics.local'&& Cypress.env('userName')!==''){
+                                                            else if(Cypress.env('userName')!==''){
                                                               cy.exec(`ssh -o StrictHostKeyChecking=no -l ${Cypress.env('userName')} ${Cypress.env('virtualPlatformName')}.mics-sandbox.com 'curl -k -H "Authorization: ${accessToken}" -H "Content-Type: application/json" -X POST https://10.0.1.3:8493/v1/datamarts/${datamartId}/graphdb_runtime_schemas/${schemaId}/publication -H "Host: admin-api.mediarithmics.local:8493"'`)
                                                               .its('stdout').should('contain', '"status":"ok"')
                                                               .then(()=>{

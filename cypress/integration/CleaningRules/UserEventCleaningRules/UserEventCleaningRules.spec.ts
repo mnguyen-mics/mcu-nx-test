@@ -2,15 +2,10 @@ beforeEach( () =>{
     cy.initTestContext()
 })
 
-// Some of the waits are added to stablize the test to avoid false negatives
-
 it('should test the cleaning rules update form', () => {
     // Using readFile instead of fixtures because fixtures caches the file(this unwanted behavior was fixed on a more recent cypress version)
     cy.readFile('cypress/fixtures/init_infos.json').then((data) => {
-        cy.server()
-        cy.route('**/**').as('allRoutes')
         cy.login()
-        cy.wait('@allRoutes',{timeout:15000})
         cy.switchOrg(data.organisationName)
         cy.get('.mcs-options').click({force:true})
         cy.get(`[href="#/v2/o/${data.organisationId}/settings/datamart/audience/partitions"]`).click()
@@ -18,7 +13,7 @@ it('should test the cleaning rules update form', () => {
         // Add cleaning rule
         cy.contains('New Cleaning Rule').click({force:true})
         cy.contains(`${data.datamartName}`).click()
-        cy.contains('div','for')
+        cy.get('div').should('contain','for')
         // Using force true because we can get error notifications on a vagrant
         cy.get('button').contains('Save User Event Cleaning Rule').click({force:true})
         cy.get('table').find('tbody>tr').should('have.length',2)
@@ -44,11 +39,10 @@ it('should test the cleaning rules update form', () => {
             const channelId:number=response.body.data.id
             cy.contains('DRAFT').parent().parent().parent().find('.mcs-chevron').click()
             cy.contains('View').click()
-            cy.wait('@allRoutes')
             // Update the cleaning rule
             cy.contains('KEEP').click()
             cy.contains('DELETE').click()
-            cy.contains('div','after')
+            cy.get('div').should('contain','after')
             cy.get('.ant-input-number-input').type('999')
             cy.contains('- Select One -').click()
             cy.contains('APP_VISIT').click()
@@ -67,15 +61,12 @@ it('should test the cleaning rules update form', () => {
 
 it('should test that only DRAFT cleaning rules can be deleted and updated',()=>{
     cy.readFile('cypress/fixtures/init_infos.json').then((data) => {
-        cy.server()
-        cy.route('**/**').as('allRoutes')
         cy.login()
-        cy.wait('@allRoutes',{timeout:10000})
         cy.switchOrg(data.organisationName)
         cy.get('.mcs-options').click({force:true})
         cy.get(`[href="#/v2/o/${data.organisationId}/settings/datamart/audience/partitions"]`).click()
         cy.get(`[href="#/v2/o/${data.organisationId}/settings/datamart/cleaning_rules"]`).click()
-        cy.url().should('contain','datamart/cleaning_rules',{timeout:10000})
+        cy.url().should('contain','datamart/cleaning_rules')
         cy.get('tbody > tr:first').find('.mcs-chevron').click()
         // Check that we can't update and delete the cleaning rule when it's in status DRAFT
         cy.contains('View').parent().should('have.attr','aria-disabled','true')
@@ -105,10 +96,7 @@ it('should test that only DRAFT cleaning rules can be deleted and updated',()=>{
 
 it('should check that we can only have 3 different life durations for user event cleaning rules with content filters',()=>{
     cy.readFile('cypress/fixtures/init_infos.json').then((data) => {
-        cy.server()
-        cy.route('**/**').as('allRoutes')
         cy.login()
-        cy.wait('@allRoutes',{timeout:10000})
         cy.switchOrg(data.organisationName)
         cy.get('.mcs-options').click({force:true})
         cy.get(`[href="#/v2/o/${data.organisationId}/settings/datamart/audience/partitions"]`).click()
