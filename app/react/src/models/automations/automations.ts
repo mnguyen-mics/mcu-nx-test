@@ -65,8 +65,6 @@ export interface ScenarioNodeResource {
   id: string;
   name: string;
   scenario_id: string;
-  x?: number;
-  y?: number;
   type: ScenarioNodeType;
   last_added_node?: boolean;
 }
