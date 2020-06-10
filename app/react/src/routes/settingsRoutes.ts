@@ -58,7 +58,7 @@ import { AudiencePartitionsPage } from '../containers/Settings/DatamartSettings/
 import Partition from '../containers/Settings/DatamartSettings/Partitions/Dashboard/Partition';
 import AudiencePartitionPage from '../containers/Settings/DatamartSettings/Partitions/Edit/AudiencePartitionPage';
 import CleaningRulesDashboardPage from '../containers/Settings/DatamartSettings/CleaningRules/Dashboard/CleaningRulesDashboardPage';
-import UserEventCleaningRuleEditPage from '../containers/Settings/DatamartSettings/CleaningRules/Edit/UserEventCleaningRuleEditPage';
+import CleaningRuleEditPage from '../containers/Settings/DatamartSettings/CleaningRules/Edit/CleaningRuleEditPage';
 
 export const settingsDefinition: NavigatorDefinition = {
   /*
@@ -182,16 +182,28 @@ export const settingsDefinition: NavigatorDefinition = {
     contentComponent: CleaningRulesDashboardPage,
     requireDatamart: true,
   },
-  settingsDatamartCleaningRulesCreation: {
-    path: '/settings/datamart/cleaning_rules/create',
+  settingsDatamartUserEventCleaningRulesCreation: {
+    path: '/settings/datamart/cleaning_rules/user_event/create',
     layout: 'edit',
-    editComponent: UserEventCleaningRuleEditPage,
+    editComponent: CleaningRuleEditPage,
     requireDatamart: true,
   },
-  settingsDatamartCleaningRulesEdition: {
-    path: '/settings/datamart/:datamartId/cleaning_rules/:cleaningRuleId/edit',
+  settingsDatamartUserEventCleaningRulesEdition: {
+    path: '/settings/datamart/:datamartId/cleaning_rules/user_event/:cleaningRuleId/edit',
     layout: 'edit',
-    editComponent: UserEventCleaningRuleEditPage,
+    editComponent: CleaningRuleEditPage,
+    requireDatamart: true,
+  },
+  settingsDatamartUserProfileCleaningRulesCreation: {
+    path: '/settings/datamart/cleaning_rules/user_profile/create',
+    layout: 'edit',
+    editComponent: CleaningRuleEditPage,
+    requireDatamart: true,
+  },
+  settingsDatamartUserProfileCleaningRulesEdition: {
+    path: '/settings/datamart/:datamartId/cleaning_rules/user_profile/:cleaningRuleId/edit',
+    layout: 'edit',
+    editComponent: CleaningRuleEditPage,
     requireDatamart: true,
   },
 

@@ -32,13 +32,13 @@ export type UserActivityType =
   | 'USER_SCENARIO_NODE_EXIT';
 
 export interface UserEventCleaningRuleResource extends CleaningRuleResource {
-  channel_filter?: string;
-  activity_type_filter?: UserActivityType;
+  channel_filter?: string | null;
+  activity_type_filter?: UserActivityType | null;
   life_duration?: string;
 }
 
 export interface UserProfileCleaningRuleResource extends CleaningRuleResource {
-  compartment_filter?: string;
+  compartment_filter?: string | null;
   life_duration?: string;
 }
 

@@ -5,18 +5,23 @@ import withValidators, {
 } from '../../../../../../components/Form/withValidators';
 import { compose } from 'recompose';
 import messages from '../messages';
-import {
-  FormSection,
-} from '../../../../../../components/Form';
+import { FormSection } from '../../../../../../components/Form';
 import { Validator, Field, GenericField } from 'redux-form';
 import moment from 'moment';
 import {
   USER_EVENT_CLEANING_RULE_MIN_LIFE_DURATION,
   USER_EVENT_CLEANING_RULE_MAX_LIFE_DURATION,
 } from '../domain';
-import CleaningRuleLifeTimeDuration, { CleaningRuleLifeTimeDurationProps } from './CleaningRuleLifeTimeDuration';
+import CleaningRuleLifeTimeDuration, {
+  CleaningRuleLifeTimeDurationProps,
+} from './CleaningRuleLifeTimeDuration';
+import { CleaningRuleType } from '../../../../../../models/cleaningRules/CleaningRules';
 
-type Props = InjectedIntlProps & ValidatorProps;
+interface ActionFormSectionProps {
+  cleaningRuleType: CleaningRuleType;
+}
+
+type Props = ActionFormSectionProps & InjectedIntlProps & ValidatorProps;
 
 class ActionFormSection extends React.Component<Props> {
   checkLifeDuration = (): Validator => value => {
@@ -45,6 +50,7 @@ class ActionFormSection extends React.Component<Props> {
     const {
       fieldValidators: { isRequired },
       intl: { formatMessage },
+      cleaningRuleType,
     } = this.props;
 
     const optionsAndSeparators = [
@@ -60,13 +66,18 @@ class ActionFormSection extends React.Component<Props> {
       },
     ];
 
-
-    const CleaningRuleLifeTimeDurationField = Field as new () => GenericField<CleaningRuleLifeTimeDurationProps>
+    const CleaningRuleLifeTimeDurationField = Field as new () => GenericField<
+      CleaningRuleLifeTimeDurationProps
+    >;
 
     return (
       <div>
         <FormSection
-          subtitle={messages.sectionActionSubTitle}
+          subtitle={
+            cleaningRuleType === 'USER_EVENT_CLEANING_RULE'
+              ? messages.sectionActionUserEventSubTitle
+              : messages.sectionActionUserProfileSubTitle
+          }
           title={messages.sectionActionTitle}
         />
         <CleaningRuleLifeTimeDurationField
@@ -77,9 +88,16 @@ class ActionFormSection extends React.Component<Props> {
             label: formatMessage(messages.sectionActionLabel),
             required: true,
           }}
+          selectProps={{
+            disabled: cleaningRuleType === 'USER_PROFILE_CLEANING_RULE',
+          }}
           optionsAndSeparators={optionsAndSeparators}
           helpToolTipProps={{
-            title: formatMessage(messages.sectionActionHelper),
+            title: formatMessage(
+              cleaningRuleType === 'USER_EVENT_CLEANING_RULE'
+                ? messages.sectionActionUserEventHelper
+                : messages.sectionActionUserProfileHelper,
+            ),
           }}
         />
       </div>
@@ -87,4 +105,7 @@ class ActionFormSection extends React.Component<Props> {
   }
 }
 
-export default compose(injectIntl, withValidators)(ActionFormSection);
+export default compose<Props, ActionFormSectionProps>(
+  injectIntl,
+  withValidators,
+)(ActionFormSection);
