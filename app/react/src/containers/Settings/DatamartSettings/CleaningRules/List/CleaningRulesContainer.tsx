@@ -10,6 +10,7 @@ import {
   UserEventCleaningRuleResourceWithFilter,
   CleaningRuleStatus,
   getNextCleaningRuleStatus,
+  UserProfileCleaningRuleResource,
 } from '../../../../../models/cleaningRules/CleaningRules';
 import { Layout, Row, Icon, Modal, Button } from 'antd';
 import 'moment-duration-format';
@@ -260,41 +261,6 @@ class CleaningRulesContainer extends React.Component<Props, State> {
 
     const eventBasedAddedDataColumns = [
       {
-        intlMessage: messages.lifeDuration,
-        key: 'life_duration',
-        isHideable: false,
-        render: (
-          text: string,
-          record: UserEventCleaningRuleResourceWithFilter,
-        ) => {
-          if (record.life_duration) {
-            const duration = moment.duration(record.life_duration);
-            const durationList = [
-              { number: duration.years(), unit: 'year' },
-              { number: duration.months(), unit: 'month' },
-              { number: duration.days(), unit: 'day' },
-            ];
-
-            const durationStr = durationList.reduce(
-              (accumulator, currentValue) => {
-                if (currentValue.number !== 0) {
-                  const prefixCurrentValue =
-                    accumulator !== undefined ? `${accumulator}, ` : '';
-                  const strCurrentValue = `${currentValue.number} ${currentValue.unit}`;
-                  const suffixCurrentValue =
-                    currentValue.number === 1 ? '' : 's';
-                  return `${prefixCurrentValue}${strCurrentValue}${suffixCurrentValue}`;
-                } else return accumulator;
-              },
-              undefined,
-            );
-
-            return <span>{durationStr}</span>;
-          }
-          return <span>{'No duration'}</span>;
-        },
-      },
-      {
         intlMessage: messages.channelFilter,
         key: 'channel_filter',
         isHideable: false,
@@ -342,6 +308,24 @@ class CleaningRulesContainer extends React.Component<Props, State> {
       },
     ];
 
+    const profileBasedAddedDataColumns = [
+      {
+        intlMessage: messages.compartmentFilter,
+        key: 'compartment_filter',
+        isHideable: false,
+        render: (
+          text: string,
+          record: UserProfileCleaningRuleResource,
+        ) => (
+          <span>
+            {record.compartment_filter
+              ? record.compartment_filter
+              : intl.formatMessage(messages.all)}
+          </span>
+        ),
+      },
+    ];
+
     const baseDataColumns = [
       {
         intlMessage: messages.status,
@@ -369,12 +353,47 @@ class CleaningRulesContainer extends React.Component<Props, State> {
           <span>{record.action}</span>
         ),
       },
+      {
+        intlMessage: messages.lifeDuration,
+        key: 'life_duration',
+        isHideable: false,
+        render: (
+          text: string,
+          record: ExtendedCleaningRuleResource,
+        ) => {
+          if (record.life_duration) {
+            const duration = moment.duration(record.life_duration);
+            const durationList = [
+              { number: duration.years(), unit: 'year' },
+              { number: duration.months(), unit: 'month' },
+              { number: duration.days(), unit: 'day' },
+            ];
+
+            const durationStr = durationList.reduce(
+              (accumulator, currentValue) => {
+                if (currentValue.number !== 0) {
+                  const prefixCurrentValue =
+                    accumulator !== undefined ? `${accumulator}, ` : '';
+                  const strCurrentValue = `${currentValue.number} ${currentValue.unit}`;
+                  const suffixCurrentValue =
+                    currentValue.number === 1 ? '' : 's';
+                  return `${prefixCurrentValue}${strCurrentValue}${suffixCurrentValue}`;
+                } else return accumulator;
+              },
+              undefined,
+            );
+
+            return <span>{durationStr}</span>;
+          }
+          return <span>{'No duration'}</span>;
+        },
+      },
     ];
 
     const dataColumns = baseDataColumns.concat(
       filter.type === 'USER_EVENT_CLEANING_RULE'
         ? eventBasedAddedDataColumns
-        : [],
+        : profileBasedAddedDataColumns,
     );
 
     const actionColumns: Array<ActionsColumnDefinition<
