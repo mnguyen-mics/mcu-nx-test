@@ -44,8 +44,10 @@ it('should test the cleaning rules update form', () => {
             cy.contains('DELETE').click()
             cy.get('.text-center').should('contain','after')
             cy.get('.ant-input-number-input').type('999')
-            cy.contains('- Select One -').click()
+            cy.contains('All').click()
             cy.contains('APP_VISIT').click()
+            cy.contains('No filter').click()
+            cy.contains(`${channelId}`).click()
             cy.get('#eventNameFilter').type('test_1')
             cy.contains('Save User Event Cleaning Rule').click({force:true})
             // Check that the cleaning rule got updated
