@@ -17,6 +17,10 @@ export default defineMessages({
     id: 'settings.cleaningRules.table.column.channel_filter',
     defaultMessage: 'Channel Filter',
   },
+  compartmentFilter: {
+    id: 'settings.cleaningRules.table.column.compartment_filter',
+    defaultMessage: 'Compartment Filter',
+  },
   activityTypeFilter: {
     id: 'settings.cleaningRules.table.column.activity_type_filter',
     defaultMessage: 'Activity type filter',
