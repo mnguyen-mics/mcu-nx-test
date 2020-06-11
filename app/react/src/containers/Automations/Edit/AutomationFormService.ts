@@ -807,8 +807,6 @@ export class AutomationFormService implements IAutomationFormService {
         id: node.id && !isFakeId(node.id) ? node.id : undefined,
         name: node.name,
         scenario_id: automationId,
-        x: node.x,
-        y: node.y,
         type: 'ON_SEGMENT_ENTRY_INPUT_NODE',
         audience_segment_id: node.formData.segmentId
       };
@@ -818,8 +816,6 @@ export class AutomationFormService implements IAutomationFormService {
         id: node.id && !isFakeId(node.id) ? node.id : undefined,
         name: node.name,
         scenario_id: automationId,
-        x: node.x,
-        y: node.y,
         type: 'ON_SEGMENT_EXIT_INPUT_NODE',
         audience_segment_id: node.formData.segmentId
       };
