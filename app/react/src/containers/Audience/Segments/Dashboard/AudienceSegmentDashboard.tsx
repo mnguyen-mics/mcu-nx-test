@@ -49,6 +49,7 @@ import {
   ecommerceEngagementConfig,
   averageSessionDurationConfig,
 } from '../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
+import { isUsersAnalyticsSupportedByDatafarm } from '../../DatamartUsersAnalytics/components/helpers/utils';
 
 interface State {
   loading: boolean;
@@ -351,8 +352,12 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
         }
       : undefined;
 
+    const datamart =
+      segment && datamarts.find(d => d.id === segment.datamart_id);
+
     const shouldDisplayAnalyticsFeature =
       hasFeature('audience-dashboards-datamart_users_analytics') &&
+      datamart && isUsersAnalyticsSupportedByDatafarm(datamart.datafarm) &&
       segment &&
       isUserQuerySegment(segment) &&
       segment.subtype !== 'AB_TESTING_EXPERIMENT';

@@ -24,6 +24,7 @@ import Error from '../../../../components/Error';
 import DatamartUsersAnalyticsWrapper, { DatamartUsersAnalyticsWrapperProps } from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 import { averageSessionDurationConfig, channelEngagementConfig, acquisitionEngagementConfig, ecommerceEngagementConfig } from '../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
+import { isUsersAnalyticsSupportedByDatafarm } from '../../DatamartUsersAnalytics/components/helpers/utils';
 
 const { Content } = Layout;
 
@@ -155,6 +156,7 @@ class Partition extends React.Component<JoinedProps, HomeState> {
     const {
       hasFeature,
       intl,
+      selectedDatafarm
     } = this.props;
 
     const {
@@ -167,8 +169,8 @@ class Partition extends React.Component<JoinedProps, HomeState> {
       return <Loading />;
     }
 
-    const shouldDisplayAnalyticsFeature =
-      hasFeature('audience-dashboards-datamart_users_analytics');
+    const shouldDisplayAnalyticsFeature = hasFeature('audience-dashboards-datamart_users_analytics') && isUsersAnalyticsSupportedByDatafarm(selectedDatafarm);
+
 
     if (
       !isLoading &&
