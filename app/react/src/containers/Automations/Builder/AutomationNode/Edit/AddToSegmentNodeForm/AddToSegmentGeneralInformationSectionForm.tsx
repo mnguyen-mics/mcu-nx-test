@@ -52,7 +52,7 @@ class AddToSegmentGeneralInformationFormSection extends React.Component<Props, S
     this.setState({ fetchingAudienceSegments: true, });
     this.audienceSegmentService
       .getSegments(this.props.organisationId, {
-        type: "USER_LIST",
+        type: ["USER_LIST"],
       })
       .then(userListSegmentsResponse => {
         this.setState({

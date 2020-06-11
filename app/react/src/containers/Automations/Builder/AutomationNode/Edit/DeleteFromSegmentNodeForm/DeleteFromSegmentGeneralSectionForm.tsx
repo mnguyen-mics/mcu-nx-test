@@ -50,7 +50,7 @@ class DeleteFromSegmentGeneralSectionForm extends React.Component<
     } = this.props;
 
     return this._audienceSegmentService
-      .getSegments(organisationId, { keywords, type: 'USER_LIST', feed_type: 'SCENARIO' })
+      .getSegments(organisationId, { keywords, type: ['USER_LIST'], feed_type: 'SCENARIO' })
       .then(({ data: segments }) =>
         segments.map(r => ({
           key: r.id,

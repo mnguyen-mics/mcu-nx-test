@@ -140,7 +140,7 @@ class AudienceExperimentationEditPage extends React.Component<Props, State> {
       this._audienceSegmentService
         .getSegments(organisationId, {
           audience_partition_id: partitionId,
-          type: 'USER_PARTITION',
+          type: ['USER_PARTITION'],
           max_results: 500,
         })
         .then(segmentsRes => {

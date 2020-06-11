@@ -10,6 +10,8 @@ import {
   IfNodeResource,
   AddToSegmentNodeResource,
   DeleteFromSegmentNodeResource,
+  OnSegmentEntryInputNodeResource,
+  OnSegmentExitInputNodeResource,
 } from '../../../../../models/automations/automations';
 
 import { ABNAutomationFormProps } from './ABNAutomationForm/ABNAutomationForm';
@@ -165,15 +167,17 @@ export interface AddToSegmentAutomationFormData extends DefaultFormData {
 }
 
 export interface DeleteFromSegmentAutomationFormData extends DefaultFormData {
-  segmentId?: string
+  segmentId?: string;
 }
 
 export interface OnSegmentEntryInputAutomationFormData extends DefaultFormData {
-  segmentId?: string
+  datamartId?: string;
+  segmentId?: string;
 }
 
 export interface OnSegmentExitInputAutomationFormData extends DefaultFormData {
-  segmentId?: string
+  datamartId?: string;
+  segmentId?: string;
 }
 
 export interface QueryAutomationFormData extends DefaultFormData, Partial<QueryCreateRequest> {
@@ -239,6 +243,24 @@ export function isQueryInputNode(
   return (
     (node as QueryInputNodeResource).type ===
     'QUERY_INPUT'
+  );
+}
+
+export function isOnSegmentEntryInputNode(
+  node: AutomationNodeShape,
+): node is OnSegmentEntryInputNodeResource {
+  return (
+    (node as OnSegmentEntryInputNodeResource).type ===
+    'ON_SEGMENT_ENTRY_INPUT_NODE'
+  );
+}
+
+export function isOnSegmentExitInputNode(
+  node: AutomationNodeShape,
+): node is OnSegmentExitInputNodeResource {
+  return (
+    (node as OnSegmentExitInputNodeResource).type ===
+    'ON_SEGMENT_EXIT_INPUT_NODE'
   );
 }
 
