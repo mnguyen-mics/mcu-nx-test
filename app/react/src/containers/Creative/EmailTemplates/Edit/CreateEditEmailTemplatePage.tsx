@@ -106,14 +106,14 @@ class CreateEmailTemplate extends React.Component<
       match: {
         params: {
           organisationId: previousOrganisationId,
-          creativeId: previousEmailTemplateId,
+          creativeId: previousCreativeId,
         },
       },
     } = previousProps;
 
     if (
       (organisationId !== previousOrganisationId ||
-        creativeId !== previousEmailTemplateId) &&
+        creativeId !== previousCreativeId) &&
       creativeId
     ) {
       this.setState(() => {
