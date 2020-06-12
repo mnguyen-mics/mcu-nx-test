@@ -13,6 +13,7 @@ import {
   AddToSegmentNodeResource,
   DeleteFromSegmentNodeResource,
   OnSegmentEntryInputNodeResource,
+  IfNodeResource,
 } from '../../../models/automations/automations';
 import {
   AutomationFormDataType,
@@ -26,6 +27,7 @@ import {
   isScenarioNodeShape,
   DeleteFromSegmentAutomationFormData,
   OnSegmentEntryInputAutomationFormData,
+  QueryInputAutomationFormData,
 } from './AutomationNode/Edit/domain';
 import { McsIconType } from '../../../components/McsIcon';
 import { QueryResource } from '../../../models/datamart/DatamartResource';
@@ -431,10 +433,17 @@ export class UpdateNodeOperation implements NodeOperation {
         };
         break;
       case 'QUERY_INPUT':
-      case 'IF_NODE':
         nodeBody = {
           ...storylineNode.node,
           ...this.node as QueryInputNodeResource,
+          name: this.formData.name,
+          formData: this.formData as QueryInputAutomationFormData,
+        };
+        break;
+      case 'IF_NODE':
+        nodeBody = {
+          ...storylineNode.node,
+          ...this.node as IfNodeResource,
           name: this.formData.name,
           formData: this.formData as Partial<QueryResource>,
         };
@@ -588,9 +597,12 @@ export const beginNode = (type?: AutomationSelectedType): ScenarioNodeShape => {
     type: 'QUERY_INPUT',
     query_id: baseQueryId,
     evaluation_mode: 'LIVE',
-    ui_creation_mode: type === 'REACT_TO_EVENT' ? 'EVENT' : 'QUERY',
+    ui_creation_mode: type === 'REACT_TO_EVENT' ? 'REACT_TO_EVENT_STANDARD' : 'QUERY',
     last_added_node: true,
-    formData: {},
+    formData: { 
+      name: '', 
+      uiCreationMode: type === 'REACT_TO_EVENT' ? 'REACT_TO_EVENT_STANDARD' : 'QUERY', 
+    },
   }
 };
 
@@ -608,6 +620,8 @@ export const generateBeginNode = (type: AutomationSelectedType, evaluationPeriod
       ui_creation_mode: 'QUERY',
       last_added_node: true,
       formData: {
+        name: '',
+        uiCreationMode: 'QUERY'
       },
     }
   }
@@ -731,11 +745,19 @@ export const buildAutomationTreeData = (
     queryService
   ) {
     return queryService.getQuery(datamartId, node.query_id).then(res => {
+      const queryInputNode: QueryInputNodeResource = {
+        ...node,
+        formData: {
+          ...res.data,
+          name: '',
+          uiCreationMode: 
+            node.ui_creation_mode === 'REACT_TO_EVENT_STANDARD' || 
+            node.ui_creation_mode === 'REACT_TO_EVENT_ADVANCED' ?
+            node.ui_creation_mode : 'REACT_TO_EVENT_STANDARD'
+        }
+      };
       return {
-        node: {
-          ...node,
-          formData: res.data,
-        },
+        node: queryInputNode,
         out_edges: outNodes.map(n =>
           buildStorylineNodeModel(n, nodeData, edgeData, node),
         ),

@@ -432,7 +432,7 @@ class FieldNodeForm extends React.Component<Props, State> {
   };
 
   generateTimestampComparisonField() {
-    const { intl, name, idToAttachDropDowns } = this.props;
+    const { intl, name, idToAttachDropDowns, disabled } = this.props;
 
     let popUpProps = {};
 
@@ -456,6 +456,7 @@ class FieldNodeForm extends React.Component<Props, State> {
         }}
         small={true}
         unixTimstamp={true}
+        disabled={disabled}
       />
     );
   }
@@ -557,7 +558,7 @@ class FieldNodeForm extends React.Component<Props, State> {
   }
 
   generateNumericComparisonField() {
-    const { intl, name, fieldValidators, idToAttachDropDowns } = this.props;
+    const { intl, name, fieldValidators, idToAttachDropDowns, disabled } = this.props;
 
     let popUpProps = {};
 
@@ -584,6 +585,7 @@ class FieldNodeForm extends React.Component<Props, State> {
         selectProps={{
           options: [],
           dropdownStyle: { display: 'none' },
+          disabled: disabled,
           ...popUpProps,
         }}
         helpToolTipProps={{

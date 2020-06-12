@@ -226,7 +226,8 @@ class AutomationNodeWidget extends React.Component<Props, State> {
             } as any;
             size =
               scenarioNodeShape.type === 'QUERY_INPUT'
-                ? scenarioNodeShape.ui_creation_mode === 'EVENT'
+                ? scenarioNodeShape.ui_creation_mode === 'REACT_TO_EVENT_STANDARD' 
+                  || scenarioNodeShape.ui_creation_mode === 'REACT_TO_EVENT_ADVANCED'
                   ? 'small'
                   : 'large'
                 : 'large';

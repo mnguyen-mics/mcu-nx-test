@@ -9,7 +9,7 @@ import {
   FormattedMessage,
 } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { FORM_ID, QueryAutomationFormData } from '../domain';
+import { FORM_ID, QueryInputAutomationFormData } from '../domain';
 import { QueryInputNodeResource } from '../../../../../../models/automations/automations';
 import { QueryLanguage } from '../../../../../../models/datamart/DatamartResource';
 import { MenuPresentational } from '../../../../../../components/FormMenu';
@@ -49,8 +49,8 @@ export interface QueryAutomationFormProps {
   close: () => void;
   breadCrumbPaths: Path[];
   node: QueryInputNodeResource;
-  onSubmit: (data: QueryAutomationFormData) => void;
-  initialValues: QueryAutomationFormData;
+  onSubmit: (data: QueryInputAutomationFormData) => void;
+  initialValues: QueryInputAutomationFormData;
   disabled?: boolean;
 }
 
@@ -154,7 +154,7 @@ class QueryAutomationForm extends React.Component<Props, State> {
     if (queryLanguage === 'JSON_OTQL') {
       const actionBar = (query: QueryDocument) => {
         const onSave = () => {
-          const formData: QueryAutomationFormData = {
+          const formData: QueryInputAutomationFormData = {
             ...initialValues,
             query_language: queryLanguage,
             query_text: JSON.stringify(query),
@@ -204,7 +204,7 @@ class QueryAutomationForm extends React.Component<Props, State> {
     const onChange = (val: string) => this.setState({ queryText: val });
 
     const onOtqlSave = () => {
-      const formData: QueryAutomationFormData = {
+      const formData: QueryInputAutomationFormData = {
         ...initialValues,
         query_language: queryLanguage,
         query_text: this.state.queryText,

@@ -7,6 +7,7 @@ import {
   DeleteFromSegmentAutomationFormData,
   OnSegmentEntryInputAutomationFormData,
   OnSegmentExitInputAutomationFormData,
+  QueryInputAutomationFormData,
 } from '../../containers/Automations/Builder/AutomationNode/Edit/domain';
 
 import {
@@ -108,11 +109,14 @@ export type QueryInputEvaluationPeriodUnit =
 
 export type QueryInputEvaluationMode = 'LIVE' | 'PERIODIC';
 
-export type QueryInputUiCreationMode = 'EVENT' | 'QUERY';
+export type QueryInputUiCreationMode = 'EVENT' 
+| 'QUERY' 
+| 'REACT_TO_EVENT_STANDARD'
+| 'REACT_TO_EVENT_ADVANCED';
 
 export interface QueryInputNodeResource extends ScenarioNodeResource {
   type: 'QUERY_INPUT';
-  formData: Partial<QueryResource>;
+  formData: QueryInputAutomationFormData;
   query_id: string;
   evaluation_mode?: QueryInputEvaluationMode;
   evaluation_period?: number;
