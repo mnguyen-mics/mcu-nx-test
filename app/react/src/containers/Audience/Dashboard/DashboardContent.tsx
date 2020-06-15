@@ -13,6 +13,7 @@ import { ComponentLayout, Component } from '../../../models/dashboards/dashboard
 import Percentage from './Vizualisation/Percentage';
 import CountPieChart from './Vizualisation/CountPieChart';
 import TopInfo from './Vizualisation/TopInfo';
+import MapRadarChart from './Vizualisation/MapRadarChart';
 
 
 const BASE_FRAMEWORK_HEIGHT = 150;
@@ -93,8 +94,24 @@ export default class DashboardContent extends React.Component<
             queryId={comp.query_id}
             title={comp.title}
             labelsEnabled={comp.labels_enabled}
+            compared_query_id={comp.compared_query_id}
+            percentage={comp.percentage}
+            vertical={comp.vertical}
           />
         );
+      case 'MAP_RADAR_CHART':
+          return (
+            <MapRadarChart
+              segment={segment}
+              datamartId={datamartId}
+              queryId={comp.query_id}
+              title={comp.title}
+              labelsEnabled={comp.labels_enabled}
+              compared_query_id={comp.compared_query_id}
+              percentage={comp.percentage}
+              vertical={comp.vertical}
+            />
+          );
       case 'DATE_AGGREGATION_CHART':
         return (
           <DateAggregationChart
