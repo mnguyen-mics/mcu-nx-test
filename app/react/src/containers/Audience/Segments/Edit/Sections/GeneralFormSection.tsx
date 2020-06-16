@@ -221,7 +221,7 @@ class GeneralFormSection extends React.Component<Props, State> {
               <div>
                 <div className="custom-lifetime">
                   <FormInputField
-                    name="audienceSegment.defaultLiftime"
+                    name="defaultLifetime"
                     component={FormInput}
                     validate={[isValidInteger, isNotZero]}
                     formItemProps={{
@@ -235,7 +235,7 @@ class GeneralFormSection extends React.Component<Props, State> {
                         <div>
                           <Row>
                             <FormAddonSelectField
-                              name="audienceSegment.defaultLiftimeUnit"
+                              name="defaultLifetimeUnit"
                               component={AddonSelect}
                               disabled={this.state.neverExpire}
                               options={[

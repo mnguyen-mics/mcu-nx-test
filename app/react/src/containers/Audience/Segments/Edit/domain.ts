@@ -39,8 +39,8 @@ export interface AudienceSegmentFormData {
   audienceSegment: Partial<AudienceSegmentShape>;
   initialProcessingSelectionResources: ProcessingSelectionResource[];
   processingActivities: ProcessingActivityFieldModel[];
-  defaultLiftime?: number;
-  defaultLiftimeUnit?: DefaultLiftimeUnit;
+  defaultLifetime?: number;
+  defaultLifetimeUnit?: DefaultLiftimeUnit;
   query?: QueryResource;
   userListFiles?: UploadFile[];
 }
@@ -51,7 +51,7 @@ export const INITIAL_AUDIENCE_SEGMENT_FORM_DATA: AudienceSegmentFormData = {
   },
   initialProcessingSelectionResources: [],
   processingActivities: [],
-  defaultLiftimeUnit: 'days',
+  defaultLifetimeUnit: 'days',
   userListFiles: [],
 };
 
