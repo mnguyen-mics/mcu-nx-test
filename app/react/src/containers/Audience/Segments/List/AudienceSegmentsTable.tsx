@@ -35,6 +35,7 @@ import {
   AudienceSegmentResource,
   AudienceSegmentShape,
   UserListSegment,
+  AudienceSegmentType,
 } from '../../../../models/audiencesegment';
 import { injectDatamart, InjectedDatamartProps } from '../../../Datamart';
 import { Index } from '../../../../utils';
@@ -57,7 +58,11 @@ import { notifyError } from '../../../../redux/Notifications/actions';
 import { ButtonStyleless, McsIcon } from '../../../../components';
 import { Label } from '../../../Labels/Labels';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
-import { localMessages } from '../Dashboard/AudienceSegmentHeader';
+import {
+  audienceSegmentTypeMessages,
+  userQuerySegmentSubtypeMessages,
+} from '../Dashboard/messages';
+import { UserQuerySegmentSubtype } from '../../../../models/audiencesegment/AudienceSegmentResource';
 
 const messages = defineMessages({
   filterByLabel: {
@@ -125,6 +130,10 @@ const messages = defineMessages({
     id: 'audience.segments.list.type.userClient',
     defaultMessage: 'User Client',
   },
+  EDGE: {
+    id: 'audience.segments.list.type.edge',
+    defaultMessage: 'EDGE',
+  },
   filterType: {
     id: 'audience.segments.list.filter.type',
     defaultMessage: 'Type',
@@ -164,7 +173,7 @@ const messages = defineMessages({
   more: {
     id: 'audience.segments.list.typeFilter.more',
     defaultMessage: 'More ...',
-  }
+  },
 });
 
 const messageMap: {
@@ -595,10 +604,10 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
             case 'USER_LIST': {
               typeIcon = 'solution';
               const feedType = (record as UserListSegment).feed_type;
-              if (feedType === 'FILE_IMPORT') subTypeIcon = "file";
-              if (feedType === 'TAG') subTypeIcon = "file-image";
-              if (feedType === 'SCENARIO') subTypeIcon = "share-alt";
-              subMessage = intl.formatMessage(messages[feedType])
+              if (feedType === 'FILE_IMPORT') subTypeIcon = 'file';
+              if (feedType === 'TAG') subTypeIcon = 'file-image';
+              if (feedType === 'SCENARIO') subTypeIcon = 'share-alt';
+              subMessage = intl.formatMessage(messages[feedType]);
               break;
             }
             case 'USER_PIXEL':
@@ -623,14 +632,13 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
                 <Icon type={typeIcon} />
               </Tooltip>
               {subTypeIcon && <span>&nbsp;>&nbsp;</span>}
-              {subTypeIcon && <Tooltip
-                placement="top"
-                title={subMessage}
-              >
-                <Icon type={subTypeIcon} />
-              </Tooltip>}
+              {subTypeIcon && (
+                <Tooltip placement="top" title={subMessage}>
+                  <Icon type={subTypeIcon} />
+                </Tooltip>
+              )}
             </div>
-          )
+          );
         },
       },
       {
@@ -829,8 +837,15 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         subItems: typeSubItems,
         subItemsTitle: intl.formatMessage(messages.more),
         getKey: (item: { key: string; value: string }) => item.key,
-        display: (item: { key: string; value: string }) =>
-          intl.formatMessage(localMessages[item.value]),
+        display: (item: { key: string; value: string }) => {
+          const test = item.value as AudienceSegmentType &
+            UserQuerySegmentSubtype;
+          const aggregatedSegmentTypeMessages = {
+            ...audienceSegmentTypeMessages,
+            ...userQuerySegmentSubtypeMessages,
+          };
+          return intl.formatMessage(aggregatedSegmentTypeMessages[test]);
+        },
         handleMenuClick: (values: Array<{ key: string; value: string }>) =>
           this.updateLocationSearch({
             type: values.map(v => v.value),

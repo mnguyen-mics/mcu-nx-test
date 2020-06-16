@@ -320,7 +320,7 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
             },
           },
         },
-        );
+      );
     };
 
     const onRecalibrateClick = () => onCalibrationClick();
@@ -419,23 +419,24 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
                     getType: () => {
                       return (
                         <FormattedMessage
-                        {...resourceHistoryMessages.segmentResourceType}
+                          {...resourceHistoryMessages.segmentResourceType}
                         />
-                        );
-                      },
+                      );
+                    },
                     getName: (id: string) => {
-                      return this._audienceSegmentService.getSegment(id)
-                      .then(response => {
-                        return response.data.name || id;
-                      })
+                      return this._audienceSegmentService
+                        .getSegment(id)
+                        .then(response => {
+                          return response.data.name || id;
+                        });
                     },
                     goToResource: (id: string) => {
                       history.push(
                         `/v2/o/${organisationId}/audience/segments/${id}`,
                       );
                     },
-                  }
-                }
+                  },
+                },
               },
               size: 'small',
             },
@@ -472,7 +473,8 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
     const renderDotsMenu = () => {
       return (
         segment &&
-        (segment as UserListSegment).subtype !== 'USER_CLIENT' && (
+        (segment as UserListSegment).subtype !== 'USER_CLIENT' &&
+        (segment as UserListSegment).subtype !== 'EDGE' && (
           <Dropdown overlay={dropdowMenu} trigger={['click']}>
             <Button>
               <McsIcon className="compact" type={'dots'} />
