@@ -35,6 +35,7 @@ import {
   AudienceSegmentResource,
   AudienceSegmentShape,
   UserListSegment,
+  AudienceSegmentType,
 } from '../../../../models/audiencesegment';
 import { injectDatamart, InjectedDatamartProps } from '../../../Datamart';
 import { Index } from '../../../../utils';
@@ -57,7 +58,11 @@ import { notifyError } from '../../../../redux/Notifications/actions';
 import { ButtonStyleless, McsIcon } from '../../../../components';
 import { Label } from '../../../Labels/Labels';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
-import { localMessages } from '../Dashboard/AudienceSegmentHeader';
+import {
+  audienceSegmentTypeMessages,
+  userQuerySegmentSubtypeMessages,
+} from '../Dashboard/messages';
+import { UserQuerySegmentSubtype } from '../../../../models/audiencesegment/AudienceSegmentResource';
 
 const messages = defineMessages({
   filterByLabel: {
@@ -832,8 +837,15 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         subItems: typeSubItems,
         subItemsTitle: intl.formatMessage(messages.more),
         getKey: (item: { key: string; value: string }) => item.key,
-        display: (item: { key: string; value: string }) =>
-          intl.formatMessage(localMessages[item.value]),
+        display: (item: { key: string; value: string }) => {
+          const test = item.value as AudienceSegmentType &
+            UserQuerySegmentSubtype;
+          const aggregatedSegmentTypeMessages = {
+            ...audienceSegmentTypeMessages,
+            ...userQuerySegmentSubtypeMessages,
+          };
+          return intl.formatMessage(aggregatedSegmentTypeMessages[test]);
+        },
         handleMenuClick: (values: Array<{ key: string; value: string }>) =>
           this.updateLocationSearch({
             type: values.map(v => v.value),

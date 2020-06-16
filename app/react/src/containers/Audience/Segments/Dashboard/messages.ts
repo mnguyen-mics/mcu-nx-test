@@ -3,6 +3,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import {
   AudienceSegmentResource,
   AudienceSegmentType,
+  UserQuerySegmentSubtype,
 } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import {
   HistoryKeys,
@@ -190,7 +191,7 @@ export default defineMessages({
   },
 });
 
-const audienceSegmentTypeMessages: {
+export const audienceSegmentTypeMessages: {
   [key in AudienceSegmentType]: FormattedMessage.MessageDescriptor;
 } = defineMessages({
   USER_LIST: {
@@ -219,11 +220,28 @@ const audienceSegmentTypeMessages: {
   },
   USER_CLIENT: {
     id: 'audience.segments.type.userClient',
-    defaultMessage: 'User Client',
+    defaultMessage: 'EDGE',
   },
   EDGE: {
     id: 'audience.segments.type.edge',
     defaultMessage: 'EDGE',
+  },
+});
+
+export const userQuerySegmentSubtypeMessages: {
+  [key in UserQuerySegmentSubtype]: FormattedMessage.MessageDescriptor;
+} = defineMessages({
+  STANDARD: {
+    id: 'audience.segments.subtype.STANDARD',
+    defaultMessage: '(Standard)',
+  },
+  AB_TESTING_CONTROL_GROUP: {
+    id: 'audience.segments.subtype.AB_TESTING_CONTROL_GROUP',
+    defaultMessage: '(AB Testing Control Group)',
+  },
+  AB_TESTING_EXPERIMENT: {
+    id: 'audience.segments.subtype.AB_TESTING_EXPERIMENT',
+    defaultMessage: '(AB Testing Experiment)',
   },
 });
 

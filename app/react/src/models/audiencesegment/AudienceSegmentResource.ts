@@ -102,10 +102,15 @@ export interface OverlapJobResult extends PublicJobExecutionResource {
   };
 }
 
+export type UserQuerySegmentSubtype =
+  | 'STANDARD'
+  | 'AB_TESTING_CONTROL_GROUP'
+  | 'AB_TESTING_EXPERIMENT';
+
 export interface UserQuerySegment extends AudienceSegmentResource {
   query_id?: string;
   type: 'USER_QUERY';
-  subtype?: 'STANDARD' | 'AB_TESTING_CONTROL_GROUP' | 'AB_TESTING_EXPERIMENT';
+  subtype?: UserQuerySegmentSubtype;
   weight?: number;
   control_group_id?: string;
   control_group?: boolean;

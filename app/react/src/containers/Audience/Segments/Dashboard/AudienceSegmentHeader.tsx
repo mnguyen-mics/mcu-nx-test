@@ -7,15 +7,14 @@ import {
   AudienceSegmentShape,
   UserListSegment,
 } from '../../../../models/audiencesegment';
-import {
-  InjectedIntlProps,
-  defineMessages,
-  FormattedMessage,
-  injectIntl,
-} from 'react-intl';
+import { InjectedIntlProps, FormattedMessage, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import SegmentNameDisplay from '../../Common/SegmentNameDisplay';
 import { isUserQuerySegment } from '../Edit/domain';
+import {
+  audienceSegmentTypeMessages,
+  userQuerySegmentSubtypeMessages,
+} from './messages';
 
 export interface AudienceSegmentHeaderProps {
   segment?: AudienceSegmentShape;
@@ -23,52 +22,6 @@ export interface AudienceSegmentHeaderProps {
 }
 
 type Props = AudienceSegmentHeaderProps & InjectedIntlProps;
-
-export const localMessages: {
-  [key: string]: FormattedMessage.MessageDescriptor;
-} = defineMessages({
-  USER_ACTIVATION: {
-    id: 'audience.segments.dashboard.header.type.USER_ACTIVATION',
-    defaultMessage: 'User Activation',
-  },
-  USER_QUERY: {
-    id: 'audience.segments.dashboard.header.type.USER_QUERY',
-    defaultMessage: 'User Query',
-  },
-  USER_LIST: {
-    id: 'audience.segments.dashboard.header.type.USER_LIST',
-    defaultMessage: 'User List',
-  },
-  USER_PIXEL: {
-    id: 'audience.segments.dashboard.header.type.USER_PIXEL',
-    defaultMessage: 'User Pixel',
-  },
-  USER_PARTITION: {
-    id: 'audience.segments.dashboard.header.type.USER_PARTITION',
-    defaultMessage: 'User Partition',
-  },
-  USER_LOOKALIKE: {
-    id: 'audience.segments.dashboard.header.type.USER_LOOKALIKE',
-    defaultMessage: 'User Lookalike',
-  },
-  // USER_CLIENT is deprecated and replaced by EDGE
-  USER_CLIENT: {
-    id: 'audience.segments.dashboard.header.type.USER_CLIENT',
-    defaultMessage: 'Edge',
-  },
-  EDGE: {
-    id: 'audience.segments.dashboard.header.type.EDGE',
-    defaultMessage: 'Edge',
-  },
-  AB_TESTING_CONTROL_GROUP: {
-    id: 'audience.segments.dashboard.header.subtype.AB_TESTING_CONTROL_GROUP',
-    defaultMessage: '(AB Testing Control Group)',
-  },
-  AB_TESTING_EXPERIMENT: {
-    id: 'audience.segments.dashboard.header.subtype.AB_TESTING_EXPERIMENT',
-    defaultMessage: '(AB Testing Experiment)',
-  },
-});
 
 class AudienceSegmentHeader extends React.Component<Props> {
   render() {
@@ -92,11 +45,15 @@ class AudienceSegmentHeader extends React.Component<Props> {
 
     const renderName = () => {
       const edge = 'EDGE';
-      const edgeMessage = <FormattedMessage {...localMessages[edge]} />;
+      const edgeMessage = (
+        <FormattedMessage {...audienceSegmentTypeMessages[edge]} />
+      );
       if (segment) {
         const subtype = (segment as UserListSegment).subtype;
         if (subtype === 'USER_CLIENT' || subtype === 'EDGE') return edgeMessage;
-        return <FormattedMessage {...localMessages[segment.type]} />;
+        return (
+          <FormattedMessage {...audienceSegmentTypeMessages[segment.type]} />
+        );
       }
       return;
     };
@@ -107,7 +64,9 @@ class AudienceSegmentHeader extends React.Component<Props> {
           segment.subtype &&
           segment.subtype === 'AB_TESTING_EXPERIMENT' && (
             <div className="mcs-audienceSegmentDashboard_subtype">
-              <FormattedMessage {...localMessages[segment.subtype]} />
+              <FormattedMessage
+                {...userQuerySegmentSubtypeMessages[segment.subtype]}
+              />
             </div>
           )}
       </React.Fragment>
