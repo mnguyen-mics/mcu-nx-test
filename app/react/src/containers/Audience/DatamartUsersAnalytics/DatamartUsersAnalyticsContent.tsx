@@ -45,7 +45,7 @@ interface DatamartUsersAnalyticsContentProps {
   config: DashboardConfig[];
   dateRange: McsDateRangeValue;
   onChange: (isLoading: boolean) => void;
-  segmentToAggregate?:boolean;
+  segmentToAggregate?: boolean;
 }
 
 interface DatamartUsersAnalyticsContentStates {
@@ -112,8 +112,6 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
 
 
     if (!isEqual(filter.segments, segmentsFilters)) {
-
-
       const currentFormattedConfig = formattedConfig.slice();
       const tmpDashboardConfig: DashboardConfig[] = [];
       const newGeneratedDom: JSX.Element[] = [];
@@ -122,20 +120,42 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
       if (segmentsFilters.length < filter.segments.length) {
 
         const usedColors = currentFormattedConfig.map(item => item.color);
-        
+        const baseSegmentId = filter.segments[segmentsFilters.length]
+        // Deep copy
+        const allUsersConfigCopy = JSON.parse(JSON.stringify(allUsersConfig));
+
         // Add segment filter
-        for (const configItem of allUsersConfig) {
+        for (const configItem of allUsersConfigCopy) {
+          // Deep copy
+          const chartsCopy = JSON.parse(JSON.stringify(configItem.charts));
+
+          chartsCopy.map((c: Chart) => {
+            if (c.type !== 'SINGLE_STAT') c.options.title = undefined;
+            if (c.dimensionFilterClauses) {
+              c.dimensionFilterClauses.operator = 'AND';
+              c.dimensionFilterClauses.filters.push({
+                  dimension_name: 'segment_id',
+                  not: false,
+                  operator: 'EXACT',
+                  expressions: [
+                    baseSegmentId
+                  ],
+                  case_sensitive: false
+                });
+              };
+          });
+
           const currentConfigItem = {
             layout: {
               ...configItem.layout,
               i: this._cuid()
             },
             title: configItem.title,
-            charts: configItem.charts.slice(),
+            charts: chartsCopy,
             segments: {
-              baseSegmentId: filter.segments[segmentsFilters.length]
+              baseSegmentId
             },
-            color: usedColors.includes(filterColors[0]) ? filterColors[1] : filterColors[0]
+            color: usedColors.includes(filterColors[0]) ? filterColors[1] : filterColors[0],
           };
 
           tmpDashboardConfig.push(currentConfigItem);
@@ -159,7 +179,7 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
 
     if (!isEqual(filter.allusers, allUsersFilter)) {
 
- 
+
       this.setState(state => {
         const currentFormattedConfig = state.formattedConfig.slice();
         const newDashboardConfig = !filter.allusers ? currentFormattedConfig.filter(item => item.segments) : currentFormattedConfig.concat(allUsersConfig);
