@@ -215,7 +215,7 @@ class GraphQLConsoleContainer extends React.Component<Props, State> {
               <SchemaVizualizer
                 schema={
                   rawSchema
-                    ? computeFinalSchemaItem(rawSchema, 'UserPoint', false, false)
+                    ? computeFinalSchemaItem(rawSchema, 'UserPoint', false, false, false)
                     : undefined
                 }
                 disableDragAndDrop={true}

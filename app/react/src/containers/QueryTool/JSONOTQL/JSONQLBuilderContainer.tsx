@@ -35,6 +35,7 @@ export interface JSONQLBuilderContainerProps {
   ) => React.ReactNode;
   editionLayout?: boolean;
   isTrigger?: boolean;
+  isEdge?: boolean;
 }
 
 interface State {
@@ -107,13 +108,13 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
           prevState => ({
             fetchingObjectTypes: false,
             objectTypes: objectTypes
-              .map(oType => ({
-                ...oType,
-                fields: oType.fields.sort((fieldA, fieldB) =>
-                  fieldA.name.localeCompare(fieldB.name),
-                ),
-              }))
-              .sort((otypeA, oTypeB) => otypeA.name.localeCompare(oTypeB.name)),
+            .map(oType => ({
+              ...oType,
+              fields: oType.fields.sort((fieldA, fieldB) =>
+                fieldA.name.localeCompare(fieldB.name),
+              ),
+            }))
+            .sort((otypeA, oTypeB) => otypeA.name.localeCompare(oTypeB.name)),
             queryHistory: {
               past: [],
               present: this.props.queryDocument
@@ -214,7 +215,7 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
   };
 
   runFieldProposal: FieldProposalLookup = (treenodePath, fieldName) => {
-    const {datamartId, isTrigger, hasFeature} = this.props;
+    const {datamartId, isTrigger, hasFeature, isEdge} = this.props;
     const {queryHistory: {present: query}, objectTypes} = this.state;
 
     if (!hasFeature('audience-segment_builder-reference_table')) {
@@ -227,6 +228,7 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
           'UserPoint',
           !isTrigger,
           isTrigger ? isTrigger : false,
+          isEdge ? isEdge : false,
         )
       : undefined;
     
@@ -337,6 +339,7 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
         params: { organisationId },
       },
       isTrigger,
+      isEdge,
     } = this.props;
     const {
       fetchingObjectTypes,
@@ -359,9 +362,10 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
           'UserPoint',
           !isTrigger,
           isTrigger ? isTrigger : false,
+          isEdge ? isEdge: false,
         )
       : undefined;
-
+    
     return (
       <Layout className={editionLayout ? 'edit-layout' : ''}>
         {renderActionBar(
@@ -383,6 +387,7 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
               query: query,
               schema: computedSchema,
               isTrigger: !!this.props.isTrigger,
+              isEdge: !!this.props.isEdge,
               runFieldProposal: this.runFieldProposal
             }}
           >

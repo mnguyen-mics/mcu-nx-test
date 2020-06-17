@@ -31,6 +31,7 @@ interface ObjectNodeWidgetProps {
   query?: ObjectTreeExpressionNodeShape;
   schema?: SchemaItem;
   isTrigger: boolean;
+  isEdge: boolean;
   datamartId: string;
 }
 
@@ -153,6 +154,7 @@ class ObjectNodeWidget extends React.Component<Props, State> {
           },
           initialValues: generateFormDataFromObjectNode(node.objectNode),
           isTrigger: this.props.isTrigger,
+          isEdge: this.props.isEdge,
           datamartId: datamartId,
           runtimeSchemaId: node.objectTypeInfo.runtime_schema_id,
         },

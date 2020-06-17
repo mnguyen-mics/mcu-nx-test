@@ -569,6 +569,7 @@ export function computeFinalSchemaItem(
   rootObjectTypeName: string,
   onlyIndexed: boolean = true,
   isTrigger: boolean,
+  isEdge: boolean,
 ): SchemaItem {
   const initialSchemaItem = buildSchemaItem(
     objectTypes, 
@@ -577,7 +578,7 @@ export function computeFinalSchemaItem(
       closestParentType: '',
     }
   )
-  const filteredSchemaItem = filterSchemaItem(initialSchemaItem, objectTypes, onlyIndexed, isTrigger)
+  const filteredSchemaItem = filterSchemaItem(initialSchemaItem, objectTypes, onlyIndexed, isTrigger, isEdge)
   return computeSchemaItemPath(filteredSchemaItem, objectTypes, '');
 }
 
@@ -622,7 +623,8 @@ function filterSchemaItem(
   schema: SchemaItem,
   objectTypes: ObjectLikeTypeInfoResource[],
   onlyIndexed: boolean,
-  isTrigger: boolean
+  isTrigger: boolean,
+  isEdge: boolean
 ): SchemaItem {
   return {
     ...schema,
@@ -635,15 +637,14 @@ function filterSchemaItem(
         if(isFieldInfoEnfancedResource(field) && onlyIndexed){
           const match = extractFieldType(field as FieldInfoEnhancedResource);
           if (objectTypes.map(ot => ot.name).includes(match)) return true && checkIfVisible(field);
-          return (field as FieldInfoEnhancedResource).directives && (field as FieldInfoEnhancedResource).directives.length &&  (field as FieldInfoEnhancedResource).directives.find(f => f.name === 'TreeIndex') && checkIfVisible(field)
+          return (field as FieldInfoEnhancedResource).directives && (field as FieldInfoEnhancedResource).directives.length &&  (field as FieldInfoEnhancedResource).directives.find(f => f.name === 'TreeIndex') && (isEdge ? (field as FieldInfoEnhancedResource).directives.find(f => f.name === 'EdgeAvailability'): true) && checkIfVisible(field)
         } 
       return true && checkIfVisible(field)
       }
     }).map(field => {
-      if (isSchemaItem(field)) return filterSchemaItem(field as SchemaItem, objectTypes, onlyIndexed, isTrigger)
-     
+      if (isSchemaItem(field)) return filterSchemaItem(field as SchemaItem, objectTypes, onlyIndexed, isTrigger, isEdge)
       else return {...field, closestParentType: schema.name};
-    }),
+    }).filter(field => !('fields' in field) || field.fields.length > 0),
   };
 }
 

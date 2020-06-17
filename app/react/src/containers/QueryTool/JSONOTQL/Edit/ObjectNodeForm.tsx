@@ -39,6 +39,7 @@ export interface ObjectNodeFormProps
   objectType: ObjectLikeTypeInfoResource;
   objectTypes: ObjectLikeTypeInfoResource[];
   isTrigger: boolean;
+  isEdge: boolean;
   datamartId: string;
   runtimeSchemaId: string;
 }
@@ -80,7 +81,7 @@ class ObjectNodeForm extends React.Component<Props> {
       }, false);
   }
 
-  getQueryableObjectTypes = (isTrigger: boolean) => {
+  getQueryableObjectTypes = (isTrigger: boolean, isEdge: boolean) => {
     const { objectType, objectTypes } = this.props;
 
     if (isTrigger && objectType.name === 'UserPoint') {
@@ -104,7 +105,7 @@ class ObjectNodeForm extends React.Component<Props> {
       const hasIndexedField =
         !!found &&
         !!found.fields.find(
-          f => !!f.directives.find(dir => dir.name === 'TreeIndex'),
+          f => !!f.directives.find(dir => dir.name === 'TreeIndex') && (isEdge ? !!f.directives.find(dir => dir.name === 'EdgeAvailability') : true),
         );
       return !!found && hasIndexedField;
     });
@@ -127,14 +128,13 @@ class ObjectNodeForm extends React.Component<Props> {
    * Same a getQueryableObjectTypes but for scalar types
    */
   getQueryableFields = () => {
-    const { objectTypes } = this.props;
-
+    const { objectTypes, isEdge } = this.props;
     return this.getSelectedObjectType().fields.filter(
       f =>
         !objectTypes.find(ot => {
           const match = f.field_type.match(/\w+/);
           return !!(match && match[0] === ot.name);
-        }) && f.directives.find(dir => dir.name === 'TreeIndex'),
+        }) && f.directives.find(dir => dir.name === 'TreeIndex') && (isEdge ? f.directives.find(dir => dir.name === 'EdgeAvailability') : true),
     );
   };
 
@@ -146,6 +146,7 @@ class ObjectNodeForm extends React.Component<Props> {
       change,
       formValues,
       isTrigger,
+      isEdge,
       objectType,
       datamartId,
       runtimeSchemaId,
@@ -181,7 +182,7 @@ class ObjectNodeForm extends React.Component<Props> {
       title: messages.objectNodeTitle,
       component: (
         <ObjectNodeSection
-          objectTypeFields={this.getQueryableObjectTypes(isTrigger)}
+          objectTypeFields={this.getQueryableObjectTypes(isTrigger, isEdge)}
           objectType={objectType}
           selectedObjectType={
             hasField ? this.getSelectedObjectType() : undefined

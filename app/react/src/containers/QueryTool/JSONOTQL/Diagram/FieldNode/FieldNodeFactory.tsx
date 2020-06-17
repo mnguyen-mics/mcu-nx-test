@@ -39,7 +39,7 @@ export default class FieldNodeFactory extends AbstractNodeFactory<
     }
     return (
       <JSONQLBuilderContext.Consumer>
-        {({ runFieldProposal }) =>
+        {({ runFieldProposal, isEdge }) =>
           React.createElement(FieldNodeWidget, {
             node: node,
             diagramEngine: diagramEngine,
@@ -48,7 +48,8 @@ export default class FieldNodeFactory extends AbstractNodeFactory<
             lockGlobalInteraction: this.lockGlobalInteraction,
             keyboardOnlyLock: this.keyboardOnlyLock,
             datamartId: this.datamartId,
-            runFieldProposal: runFieldProposal
+            runFieldProposal: runFieldProposal,
+            isEdge: isEdge,
           })
         }
       </JSONQLBuilderContext.Consumer>

@@ -39,7 +39,7 @@ export default class PlusNodeFactory extends AbstractNodeFactory<
     }
     return (
       <JSONQLBuilderContext.Consumer>
-        {({ query, schema, isTrigger }) =>
+        {({ query, schema, isTrigger, isEdge }) =>
           React.createElement(PlusNodeWidget, {
             node: node,
             diagramEngine: diagramEngine,
@@ -49,6 +49,7 @@ export default class PlusNodeFactory extends AbstractNodeFactory<
             query: query,
             schema: schema,
             isTrigger: isTrigger,
+            isEdge: isEdge,
             datamartId: this.datamartId,
             runtimeSchemaId: this.runtimeSchemaId
           })

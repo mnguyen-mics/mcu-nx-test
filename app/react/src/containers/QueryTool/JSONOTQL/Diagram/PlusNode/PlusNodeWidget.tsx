@@ -37,6 +37,7 @@ interface PlusNodeProps {
   query?: ObjectTreeExpressionNodeShape;
   schema?: SchemaItem;
   isTrigger: boolean;
+  isEdge: boolean;
   datamartId: string;
   runtimeSchemaId: string;
 }
@@ -135,6 +136,7 @@ class PlusNodeWidget extends React.Component<
           },
           initialValues: QUERY_DOCUMENT_INITIAL_VALUE,
           isTrigger: this.props.isTrigger,
+          isEdge: this.props.isEdge,
           datamartId: this.props.datamartId,
           runtimeSchemaId: this.props.runtimeSchemaId
         },
