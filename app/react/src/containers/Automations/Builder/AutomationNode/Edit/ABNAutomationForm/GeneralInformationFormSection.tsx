@@ -2,9 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import {
-  FormInput,
   FormSection,
-  FormInputField,
   FormSlider,
   FormSliderField,
 } from '../../../../../../components/Form';
@@ -67,7 +65,6 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
 
   render() {
     const {
-      fieldValidators: { isRequired },
       intl: { formatMessage },
       disabled,
     } = this.props;
@@ -80,21 +77,6 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
         />
 
         <div>
-          <FormInputField
-            name="name"
-            component={FormInput}
-            validate={[isRequired]}
-            formItemProps={{
-              label: formatMessage(messages.automationNodeName),
-              required: true,
-            }}
-            inputProps={{
-              placeholder: formatMessage(messages.automationNodeName),
-              disabled: !!disabled,
-            }}
-            small={true}
-          />
-
           <FormSliderField
             name="branch_number"
             component={FormSlider}

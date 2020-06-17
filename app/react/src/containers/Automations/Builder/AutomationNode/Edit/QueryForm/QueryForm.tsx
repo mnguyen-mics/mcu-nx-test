@@ -158,7 +158,6 @@ class QueryAutomationForm extends React.Component<Props, State> {
             ...initialValues,
             query_language: queryLanguage,
             query_text: JSON.stringify(query),
-            name: node.name,
           };
           onSubmit(formData);
         };
@@ -208,7 +207,6 @@ class QueryAutomationForm extends React.Component<Props, State> {
         ...initialValues,
         query_language: queryLanguage,
         query_text: this.state.queryText,
-        name: node.name,
       };
       onSubmit(formData);
     };

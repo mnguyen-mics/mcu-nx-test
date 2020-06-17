@@ -13,7 +13,7 @@ import {
 import { injectDrawer } from '../../../../components/Drawer';
 import { compose } from 'recompose';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
-import { TreeNodeOperations, AutomationNodeShape } from '../domain';
+import { TreeNodeOperations, generateNodeProperties } from '../domain';
 import { Icon, Tooltip } from 'antd';
 import { McsIconType } from '../../../../components/McsIcon';
 import {
@@ -75,14 +75,6 @@ const messages = defineMessages({
   goToSegment: {
     id: 'automation.builder.node.goToSegment',
     defaultMessage: 'Go to Segment',
-  },
-  onAudienceSegmentEntryNodeSubtitle: {
-    id: 'automation.builder.node.onAudienceSegmentEntry.subtitle',
-    defaultMessage: 'On audience segment entry',
-  },
-  onAudienceSegmentExitNodeSubtitle: {
-    id: 'automation.builder.node.onAudienceSegmentExit.subtitle',
-    defaultMessage: 'On audience segment exit',
   },
 });
 
@@ -191,15 +183,13 @@ class AutomationNodeWidget extends React.Component<Props, State> {
   }
 
   editNode = () => {
-    const { node, openNextDrawer, closeNextDrawer, nodeOperations, viewer, datamartId } = this.props;
+    const { node, openNextDrawer, closeNextDrawer, nodeOperations, viewer, datamartId, intl: {formatMessage} } = this.props;
     this.setState({ focus: false }, () => {
       if (
         isScenarioNodeShape(node.storylineNodeModel.node)
       ) {
         const scenarioNodeShape = node.storylineNodeModel.node;
-        let initialValue: AutomationFormDataType = {
-          name: node.storylineNodeModel.node.name
-        };
+        let initialValue: AutomationFormDataType = {};
         let size: "small" | "large" = 'small';
 
         switch (scenarioNodeShape.type) {
@@ -209,7 +199,6 @@ class AutomationNodeWidget extends React.Component<Props, State> {
           case 'WAIT_NODE':
             initialValue = {
               ...scenarioNodeShape.formData,
-              name: scenarioNodeShape.name,
             };
             break;
           case 'QUERY_INPUT':
@@ -220,7 +209,6 @@ class AutomationNodeWidget extends React.Component<Props, State> {
               datamart_id: scenarioNodeShape.formData.datamart_id
                 ? scenarioNodeShape.formData.datamart_id
                 : datamartId,
-              name: scenarioNodeShape.name,
               events: [],
               fieldNodeForm: [],
             } as any;
@@ -275,7 +263,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
             additionalProps: {
               node: scenarioNodeShape,
               close: close,
-              breadCrumbPaths: [{ name: node.storylineNodeModel.node.name ? node.storylineNodeModel.node.name : "" }],
+              breadCrumbPaths: [{ name: generateNodeProperties(node.storylineNodeModel.node, formatMessage).title }],
               disabled: viewer || disableEdition,
               onSubmit: (formData: AutomationFormDataType) => {
                 nodeOperations.updateNode(
@@ -309,7 +297,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
   editNodeProperties = (node: ScenarioNodeShape) => () => {
     const { nodeOperations } = this.props;
 
-    let initialValuesForm: AutomationFormDataType = { name: node.name };
+    let initialValuesForm: AutomationFormDataType = {};
     switch (node.type) {
       case 'DISPLAY_CAMPAIGN':
       case 'EMAIL_CAMPAIGN':
@@ -323,8 +311,8 @@ class AutomationNodeWidget extends React.Component<Props, State> {
 
     nodeOperations.updateNode(
       node,
-      initialValuesForm ? initialValuesForm : { name: node.name },
-      initialValuesForm ? initialValuesForm : { name: node.name },
+      initialValuesForm ? initialValuesForm : {},
+      initialValuesForm ? initialValuesForm : {},
     );
   }
 
@@ -568,23 +556,6 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     }
   }
 
-  renderSubTitle = (node: AutomationNodeShape) => {
-    const { intl: { formatMessage } } = this.props;
-    
-    switch (node.type) {
-      case 'DISPLAY_CAMPAIGN':
-        return node.formData.goalFields.length ? 'exit on goal' : 'exit on visit';
-      case 'QUERY_INPUT':
-        return node.evaluation_mode && node.evaluation_mode === 'LIVE' ? <span>Live evaluation</span> : <span>Evalutated every {node.evaluation_period} {node.evaluation_period_unit}</span>
-      case 'ON_SEGMENT_ENTRY_INPUT_NODE':
-        return formatMessage(messages.onAudienceSegmentEntryNodeSubtitle);
-      case 'ON_SEGMENT_EXIT_INPUT_NODE':
-        return formatMessage(messages.onAudienceSegmentExitNodeSubtitle);
-      default:
-        return '';
-    }
-  }
-
   render() {
     const { node } = this.props;
     const { nodeName } = this.state;
@@ -601,24 +572,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
 
     const zoomRatio = this.props.diagramEngine.getDiagramModel().zoom / 100;
 
-    let nodeNameToDisplayed = node.title;
-
-    switch (node.storylineNodeModel.node.type) {
-      case 'DISPLAY_CAMPAIGN':
-      case 'EMAIL_CAMPAIGN':
-        nodeNameToDisplayed = node.storylineNodeModel.node.formData && node.storylineNodeModel.node.formData.campaign && node.storylineNodeModel.node.formData.campaign.name ? node.storylineNodeModel.node.formData.campaign.name : nodeNameToDisplayed;
-        break;
-      case 'ADD_TO_SEGMENT_NODE':
-      case 'DELETE_FROM_SEGMENT_NODE':
-        nodeNameToDisplayed = node.storylineNodeModel.node.formData && node.storylineNodeModel.node.formData.name ? node.storylineNodeModel.node.formData.name : nodeNameToDisplayed;
-        break;
-      case 'ABN_NODE':
-        // node name not saved on ABN NODE"
-        nodeNameToDisplayed = 'Split';
-        break;
-    }
-
-    nodeNameToDisplayed = nodeName || nodeNameToDisplayed;
+    const nodeTitleToDisplayed = nodeName || node.title;
 
     const nodeType = node.storylineNodeModel.node.type;
 
@@ -658,11 +612,11 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         </div>
 
         <div className="node-content">
-          <Tooltip title={nodeNameToDisplayed.length > NODE_NAME_MAX_SIZE ? nodeNameToDisplayed : undefined} placement="bottom" >
-            {`${nodeNameToDisplayed.substring(0, NODE_NAME_MAX_SIZE) + (nodeNameToDisplayed.length > NODE_NAME_MAX_SIZE ? '...' : '')}`}
+          <Tooltip title={nodeTitleToDisplayed.length > NODE_NAME_MAX_SIZE ? nodeTitleToDisplayed : undefined} placement="bottom" >
+            {`${nodeTitleToDisplayed.substring(0, NODE_NAME_MAX_SIZE) + (nodeTitleToDisplayed.length > NODE_NAME_MAX_SIZE ? '...' : '')}`}
           </Tooltip>
         </div>
-        <div className="node-subtitle">{this.renderSubTitle(node.storylineNodeModel.node)}</div>
+        <div className="node-subtitle">{node.subtitle ? node.subtitle : ''}</div>
       </div>
     );
 

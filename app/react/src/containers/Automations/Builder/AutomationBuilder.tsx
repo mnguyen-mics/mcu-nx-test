@@ -299,13 +299,22 @@ class AutomationBuilder extends React.Component<Props, State> {
   };
 
   buildAutomationNode(nodeModel: StorylineNodeResource): AutomationNodeModel {
+    const {
+      intl: { formatMessage },
+    } = this.props;
+    const nodeProperties = generateNodeProperties(
+      nodeModel.node,
+      formatMessage,
+    );
+
     const storylineNode = new AutomationNodeModel(
       this.props.datamartId,
       nodeModel,
-      `${nodeModel.node.name}`, // - (type: ${nodeModel.node.type})`,
-      generateNodeProperties(nodeModel.node).color,
-      generateNodeProperties(nodeModel.node).iconType,
-      generateNodeProperties(nodeModel.node).iconAnt,
+      nodeProperties.title,
+      nodeProperties.subtitle,
+      nodeProperties.color,
+      nodeProperties.iconType,
+      nodeProperties.iconAnt,
     );
     return storylineNode;
   }
@@ -402,13 +411,22 @@ class AutomationBuilder extends React.Component<Props, State> {
     model?: DiagramModel,
   ) => {
     if (automationData && automationData.node && model) {
+      const {
+        intl: { formatMessage },
+      } = this.props;
+      const nodeProperties = generateNodeProperties(
+        automationData.node,
+        formatMessage,
+      );
+
       const rootNode = new AutomationNodeModel(
         this.props.datamartId,
         automationData,
-        `${automationData.node.name}`,
-        generateNodeProperties(automationData.node).color,
-        generateNodeProperties(automationData.node).iconType,
-        generateNodeProperties(automationData.node).iconAnt,
+        nodeProperties.title,
+        nodeProperties.subtitle,
+        nodeProperties.color,
+        nodeProperties.iconType,
+        nodeProperties.iconAnt,
         undefined,
         true,
         this.props.creation_mode,
@@ -550,7 +568,7 @@ class AutomationBuilder extends React.Component<Props, State> {
               />{' '}
             </ButtonStyleless>
           </div>
-          
+
           {exitConditionButton}
         </Col>
         <Col

@@ -11,36 +11,49 @@ import { ScenarioNodeShape } from '../../../../models/automations/automations';
 import { generateNodeProperties } from '../domain';
 import { isAbnNode } from '../AutomationNode/Edit/domain';
 import { generateFakeId } from '../../../../utils/FakeIdHelper';
+import { InjectedIntlProps } from 'react-intl';
 
-interface AvailableNodeProps {
+interface AvailableNodeObjectProps {
   node: ScenarioNodeShape;
   connectDragSource?: ConnectDragSource;
   isDragging?: boolean;
   isDropped?: boolean;
 }
 
+type AvailableNodeProps = AvailableNodeObjectProps & InjectedIntlProps;
+
 const fieldSource = {
   beginDrag(props: AvailableNodeProps) {
+    const {
+      intl: { formatMessage },
+    } = props;
+    const nodeProperties = generateNodeProperties(props.node, formatMessage);
+
     return {
       id: generateFakeId(),
-      name: props.node.name,
-      icon: generateNodeProperties(props.node).iconType,
-      iconAnt: generateNodeProperties(props.node).iconAnt,
-      color: generateNodeProperties(props.node).color,
+      icon: nodeProperties.iconType,
+      iconAnt: nodeProperties.iconAnt,
+      color: nodeProperties.color,
       type: props.node.type,
       branch_number: isAbnNode(props.node) ? props.node.branch_number : 0,
-      ...props.node
+      ...props.node,
     };
   },
 };
 
 class AvailableNode extends React.Component<AvailableNodeProps> {
   render() {
-    const { node, connectDragSource } = this.props;
-    const name = node.name;
-    const icon = generateNodeProperties(node).iconType;
-    const color = generateNodeProperties(node).color;
-    const iconAnt = generateNodeProperties(node).iconAnt;
+    const {
+      node,
+      connectDragSource,
+      intl: { formatMessage },
+    } = this.props;
+    const nodeProperties = generateNodeProperties(node, formatMessage);
+
+    const name = nodeProperties.title;
+    const icon = nodeProperties.iconType;
+    const color = nodeProperties.color;
+    const iconAnt = nodeProperties.iconAnt;
 
     return (
       connectDragSource &&
