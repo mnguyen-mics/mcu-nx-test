@@ -24,7 +24,7 @@ import {
 import { EmailCampaignAutomationFormProps } from './EmailCampaignForm/EmailCampaignAutomationForm';
 import { generateFakeId } from '../../../../../utils/FakeIdHelper';
 import { DisplayCampaignFormData } from '../../../../Campaigns/Display/Edit/domain';
-import { QueryCreateRequest } from '../../../../../models/datamart/DatamartResource';
+import { QueryResource } from '../../../../../models/datamart/DatamartResource';
 import { AddToSegmentAutomationFormProps } from './AddToSegmentNodeForm/AddToSegmentSegmentAutomationForm';
 import { DeleteFromSegmentAutomationFormProps } from './DeleteFromSegmentNodeForm/DeleteFromSegmentAutomationForm';
 
@@ -136,15 +136,6 @@ export const INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA: EmailCampaignAutomationFormD
   },
 };
 
-export const INITIAL_QUERY_DATA: (datamartId: string) => QueryAutomationFormData = (datamartId: string) => {
-  return {
-    datamart_id: datamartId,
-    name: '',
-    query_language: undefined,
-    query_text: ''
-  }
-}
-
 export const INITIAL_WAIT_DATA: WaitFormData = {
   name: 'Wait',
   wait_duration: {
@@ -180,7 +171,8 @@ export interface OnSegmentExitInputAutomationFormData extends DefaultFormData {
   segmentId?: string;
 }
 
-export interface QueryAutomationFormData extends DefaultFormData, Partial<QueryCreateRequest> {
+export interface QueryInputAutomationFormData extends DefaultFormData, Partial<QueryResource> {
+  uiCreationMode: 'QUERY' | 'REACT_TO_EVENT_STANDARD' | 'REACT_TO_EVENT_ADVANCED';
 }
 
 export type AutomationFormDataType =
@@ -190,7 +182,7 @@ export type AutomationFormDataType =
   | AddToSegmentAutomationFormData
   | DeleteFromSegmentAutomationFormData
   | EmailCampaignAutomationFormData
-  | QueryAutomationFormData
+  | QueryInputAutomationFormData
   | WaitFormData;
 
 export type AutomationFormPropsType =

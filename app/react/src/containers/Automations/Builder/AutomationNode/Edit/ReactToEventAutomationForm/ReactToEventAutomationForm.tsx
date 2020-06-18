@@ -56,7 +56,7 @@ import FieldNodeSection, {
 } from '../../../../../QueryTool/JSONOTQL/Edit/Sections/FieldNodeSection';
 import { ObjectLikeTypeInfoResource } from '../../../../../../models/datamart/graphdb/RuntimeSchema';
 import { FieldNodeFormData } from '../../../../../QueryTool/JSONOTQL/Edit/domain';
-import { QueryAutomationFormData } from './../../../AutomationNode/Edit/domain';
+import { QueryInputAutomationFormData } from './../../../AutomationNode/Edit/domain';
 
 const FORM_ID = 'reactToEventForm';
 
@@ -70,7 +70,7 @@ export interface ReactToEventAutomationFormProps {
   close: () => void;
   breadCrumbPaths: Path[];
   disabled: boolean;
-  initialValues: QueryAutomationFormData;
+  initialValues: QueryInputAutomationFormData;
 }
 
 interface ReactToEventAutomationFormData {
@@ -86,7 +86,7 @@ interface MapStateToProps {
 }
 
 type State = {
-  formMode: 'STANDARD' | 'ADVANCED';
+  formMode: 'REACT_TO_EVENT_STANDARD' | 'REACT_TO_EVENT_ADVANCED';
   isLoading: boolean;
   validObjectType?: WizardValidObjectTypeField;
   objectType?: ObjectLikeTypeInfoResource;
@@ -120,7 +120,7 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
 
     const {
       node: {
-        formData: { query_text },
+        formData: { query_text, uiCreationMode },
       },
       dispatch,
     } = this.props;
@@ -148,8 +148,10 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
       }
     }
 
+    if(dispatch) dispatch(change(FORM_ID, 'uiCreationMode', uiCreationMode));
+
     this.state = {
-      formMode: 'STANDARD',
+      formMode: uiCreationMode === 'QUERY' ? 'REACT_TO_EVENT_STANDARD' : uiCreationMode,
       isLoading: true,
       objectTypes: [],
       standardEventNames: [],
@@ -241,7 +243,7 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
 
     const { formMode, validObjectType } = this.state;
 
-    if (validObjectType) {
+    if (validObjectType && query_text) {
       const query = JSON.parse(query_text);
 
       const extractEventNames: ObjectTreeExpressionNodeShape[] = query.where.expressions.filter(
@@ -254,7 +256,7 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
 
       query.where.expressions = extractEventNames;
 
-      if (formMode === 'ADVANCED')
+      if (formMode === 'REACT_TO_EVENT_ADVANCED')
         fieldNodeForm.map(fieldFormData => {
           if (fieldFormData.comparison && fieldFormData.comparison.values)
             query.where.expressions.push({
@@ -412,7 +414,7 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
 
       const newQueryText = JSON.stringify(query);
 
-      formMode === 'STANDARD'
+      formMode === 'REACT_TO_EVENT_STANDARD'
         ? this.setState({standardEventsQueryText: newQueryText})
         : this.setState({advancedQueryText: newQueryText});
       
@@ -494,15 +496,25 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
     };
 
     const switchMode = () => {
-      if (formMode === 'STANDARD')
-        this.setState({ formMode: 'ADVANCED'}, () => {
-          if (dispatch && advancedQueryText) dispatch(change(FORM_ID, 'query_text', advancedQueryText));
+      if (formMode === 'REACT_TO_EVENT_STANDARD')
+        this.setState({ formMode: 'REACT_TO_EVENT_ADVANCED'}, () => {
+          if (dispatch) {
+            dispatch(change(FORM_ID, 'uiCreationMode', 'REACT_TO_EVENT_ADVANCED'));
+            if(standardEventsQueryText)
+              dispatch(change(FORM_ID, 'query_text', advancedQueryText));
+          }
         });
       else
-        this.setState({ formMode: 'STANDARD'}, () => {
-          if (dispatch && standardEventsQueryText) dispatch(change(FORM_ID, 'query_text', standardEventsQueryText));
+        this.setState({ formMode: 'REACT_TO_EVENT_STANDARD'}, () => {
+          if (dispatch) {
+            dispatch(change(FORM_ID, 'uiCreationMode', 'REACT_TO_EVENT_STANDARD'));
+            if(standardEventsQueryText)
+              dispatch(change(FORM_ID, 'query_text', standardEventsQueryText));
+          }
         });
     }
+
+    const selectedObjectType = this.getSelectedObjectType();
 
     return (
       <Layout className="mcs-reactToEventAutomation edit-layout">
@@ -513,16 +525,17 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
             defaultValue={formMode}
             onChange={switchMode}
             buttonStyle="solid"
+            disabled={isLoading}
           >
-            <Radio.Button value="STANDARD">{formatMessage(messages.standardEvents)}</Radio.Button>
-            <Radio.Button value="ADVANCED" disabled={isLoading}>{formatMessage(messages.advanced)}</Radio.Button>
+            <Radio.Button value="REACT_TO_EVENT_STANDARD">{formatMessage(messages.standardEvents)}</Radio.Button>
+            <Radio.Button value="REACT_TO_EVENT_ADVANCED">{formatMessage(messages.advanced)}</Radio.Button>
           </Radio.Group>
           <Form
             id={FORM_ID}
             className="mcs-reactToEventAutomation_form edit-layout mcs-content-container mcs-form-container"
             layout={'vertical'}
           >
-            {formMode === 'STANDARD' ? (
+            {formMode === 'REACT_TO_EVENT_STANDARD' ? (
               <div className="mcs-reactToEventAutomation_standardEventsForm">
                 <FormSection
                   title={messages.reactToEventFormSectionTitle}
@@ -554,35 +567,36 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
                   title={messages.reactToEventFormSectionTitle}
                   subtitle={messages.reactToEventFormSectionSubtitle}
                 />
-                <div className="mcs-reactToEventAutomation_chooseEventNameContainer">
-                  <FormSearchObjectField
-                    name={'events'}
-                    component={FormSearchObject}
-                    onChange={this.onEventsChange}
-                    fetchListMethod={fetchListMethod}
-                    fetchSingleMethod={fetchSingleMethod}
-                    formItemProps={{
-                      label: formatMessage(messages.eventName),
-                      required: true,
-                    }}
-                    helpToolTipProps={{
-                      title: formatMessage(messages.eventNameHelp),
-                    }}
-                    small={true}
-                    validate={isRequired}
-                    selectProps={{
-                      mode: 'tags',
-                      disabled,
-                    }}
-                    loadOnlyOnce={true}
-                  />
-                </div>
-                <hr />
-                {runtimeSchemaId && (
+                { runtimeSchemaId && selectedObjectType ?
+                  <div>
+                    <div className="mcs-reactToEventAutomation_chooseEventNameContainer">
+                    <FormSearchObjectField
+                      name={'events'}
+                      component={FormSearchObject}
+                      onChange={this.onEventsChange}
+                      fetchListMethod={fetchListMethod}
+                      fetchSingleMethod={fetchSingleMethod}
+                      formItemProps={{
+                        label: formatMessage(messages.eventName),
+                        required: true,
+                      }}
+                      helpToolTipProps={{
+                        title: formatMessage(messages.eventNameHelp),
+                      }}
+                      small={true}
+                      validate={isRequired}
+                      selectProps={{
+                        mode: 'tags',
+                        disabled,
+                      }}
+                      loadOnlyOnce={true}
+                    />
+                  </div>
+                  <hr />
                   <FieldNodeListFieldArray
                     name="fieldNodeForm"
                     component={FieldNodeSection}
-                    objectType={this.getSelectedObjectType()}
+                    objectType={selectedObjectType}
                     availableFields={this.getQueryableFields()}
                     formChange={injectedFormPropsChange}
                     booleanOperator={'AND'}
@@ -593,7 +607,8 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
                     subtitle={messages.propertyFilterSectionSubtitle}
                     disabled={disabled}
                   />
-                )}
+                  </div> :  <Loading className="loading-full-screen" />
+                }
               </div>
             )}
           </Form>

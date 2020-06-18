@@ -317,6 +317,8 @@ export class AutomationFormService implements IAutomationFormService {
                     formData: {
                       ...q.data,
                       name: name,
+                      uiCreationMode: 
+                        n.ui_creation_mode === 'EVENT' ? 'QUERY' : n.ui_creation_mode
                     },
                   }));
                 break;
@@ -798,7 +800,7 @@ export class AutomationFormService implements IAutomationFormService {
         evaluation_mode: node.evaluation_mode,
         evaluation_period: node.evaluation_period,
         evaluation_period_unit: node.evaluation_period_unit,
-        ui_creation_mode: node.ui_creation_mode,
+        ui_creation_mode: node.formData.uiCreationMode,
       };
       resourceId =
         node.query_id && !isFakeId(node.query_id) ? node.query_id : undefined;

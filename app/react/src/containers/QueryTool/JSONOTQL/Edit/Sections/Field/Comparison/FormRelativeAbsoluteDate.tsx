@@ -46,6 +46,7 @@ export interface FormRelativeAbsoluteDateProps  extends FormFieldWrapperProps {
   datePickerProps?: DatePickerProps;
   unixTimstamp?: boolean;
   small?: boolean;
+  disabled?: boolean;
 }
 
 type DateType = 'ABSOLUTE' | 'RELATIVE'
@@ -117,6 +118,10 @@ export default class FormRelativeAbsoluteDate extends React.Component<
   }
 
   render() {
+    const {
+      disabled,
+    } = this.props;
+
     let validateStatus = 'success' as
       | 'success'
       | 'warning'
@@ -156,7 +161,7 @@ export default class FormRelativeAbsoluteDate extends React.Component<
         {...this.props.formItemProps}
       >
         <div style={{ marginBottom: 20 }}>
-          <RadioGroup style={{ width: '100%' }} defaultValue={this.state.datePickerType} onChange={onRadioChange}>
+          <RadioGroup style={{ width: '100%' }} defaultValue={this.state.datePickerType} onChange={onRadioChange} disabled={disabled}>
             <RadioButton style={{ width: '50%' }} value="ABSOLUTE"><FormattedMessage {...messages.absolute} /></RadioButton>
             <RadioButton style={{ width: '50%' }} value="RELATIVE"><FormattedMessage {...messages.relative} /></RadioButton>
           </RadioGroup>
@@ -169,13 +174,23 @@ export default class FormRelativeAbsoluteDate extends React.Component<
             style={{ width: "100%" }}
             defaultValue={moment().startOf('day')}
             {...this.props.datePickerProps}
+            disabled={disabled}
           /> : <div>
              <InputGroup compact={true} >
                 <Col span={15}>
-                  <InputNumber style={{ width: '100%' }} defaultValue={1} value={value as number} onChange={this.onValueChange} />
+                  <InputNumber 
+                    style={{ width: '100%' }} 
+                    defaultValue={1} 
+                    value={value as number} 
+                    onChange={this.onValueChange}
+                    disabled={disabled} />
                 </Col>
                 <Col span={7}>
-                <Select defaultValue={this.state.relativePeriod} onChange={onPeriodChange} getPopupContainer={this.props.datePickerProps && this.props.datePickerProps.getCalendarContainer}>
+                <Select 
+                  defaultValue={this.state.relativePeriod} 
+                  onChange={onPeriodChange} 
+                  getPopupContainer={this.props.datePickerProps && this.props.datePickerProps.getCalendarContainer}
+                  disabled={disabled}>
                   <Select.Option value="d"><FormattedMessage {...messages.days} /></Select.Option>
                   <Select.Option value="M"><FormattedMessage {...messages.month} /></Select.Option>
                   <Select.Option value="y"><FormattedMessage {...messages.year} /></Select.Option>

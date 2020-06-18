@@ -77,6 +77,8 @@ export default class AutomationNodeModel extends NodeModel {
         this.editFormComponent = ABNAutomationForm;
         break;
       case 'QUERY_INPUT':
+        this.creationMode === 'REACT_TO_EVENT_STANDARD' || 
+        this.creationMode === 'REACT_TO_EVENT_ADVANCED' ||
         this.creationMode === 'EVENT'
           ? this.editFormComponent = ReactToEventAutomationForm
           : this.editFormComponent = QueryAutomationForm;
