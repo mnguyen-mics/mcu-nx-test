@@ -3285,7 +3285,7 @@ const myDashboards: DashboardResource[] = [
         "component": {
           "id": 5,
           "component_type": "MAP_PIE_CHART",
-          "title": "Répartion des visites par type de profil matching (30j)",
+          "title": "Répartition des visites par type de profil matching (30j)",
           "show_legend": true,
           "query_id": "37761"
         }
