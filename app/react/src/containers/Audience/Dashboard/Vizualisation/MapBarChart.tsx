@@ -30,7 +30,7 @@ export interface MapBarChartProps {
   height?: number;
   labelsEnabled?: boolean;
   percentage?: boolean;
-  compared_query_id?: string;
+  shouldCompare?: boolean;
   vertical?: boolean;
 }
 
@@ -77,12 +77,12 @@ class MapBarChart extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { segment, queryId, datamartId, compared_query_id } = this.props;
-    this.fetchData(queryId, datamartId, compared_query_id, segment);
+    const { segment, queryId, datamartId, shouldCompare } = this.props;
+    this.fetchData(queryId, datamartId, shouldCompare, segment);
   }
 
   componentDidUpdate(previousProps: MapBarChartProps) {
-    const { segment, queryId, datamartId, compared_query_id } = this.props;
+    const { segment, queryId, datamartId, shouldCompare } = this.props;
     const {
       segment: previousSegment,
       queryId: previousChartQueryId,
@@ -94,7 +94,7 @@ class MapBarChart extends React.Component<Props, State> {
       queryId !== previousChartQueryId ||
       datamartId !== previousDatamartId
     ) {
-      this.fetchData(queryId, datamartId, compared_query_id, segment);
+      this.fetchData(queryId, datamartId, shouldCompare, segment);
     }
   }
 
@@ -127,13 +127,13 @@ class MapBarChart extends React.Component<Props, State> {
   fetchData = (
     chartQueryId: string,
     datamartId: string,
-    comparedQueryId?: string,
+    shouldCompare?: boolean,
     segment?: AudienceSegmentShape,
   ): Promise<void> => {
 
     this.setState({ error: false, loading: true });
-    const promise: Promise<void | QueryResource> = comparedQueryId ? this._queryService
-      .getQuery(datamartId, comparedQueryId)
+    const promise: Promise<void | QueryResource> = shouldCompare ? this._queryService
+      .getQuery(datamartId, chartQueryId)
       .then(queryResp => {
         return queryResp.data;
       })
@@ -195,14 +195,14 @@ class MapBarChart extends React.Component<Props, State> {
   };
 
   public render() {
-    const { title, colors, intl, compared_query_id, vertical } = this.props;
+    const { title, colors, intl, shouldCompare, vertical } = this.props;
 
-    const restKey = compared_query_id ? [{ key: COMPARED_YKEY, message: "" }] : [];
+    const restKey = shouldCompare ? [{ key: COMPARED_YKEY, message: "" }] : [];
 
     const optionsForChart = {
       xKey: 'xKey',
       yKeys: [{ key: BASE_YKEY, message: '' }].concat(restKey),
-      colors: [colors['mcs-info']].concat(compared_query_id ? [colors["mcs-normal"]] : []),
+      colors: [colors['mcs-info']].concat(shouldCompare ? [colors["mcs-normal"]] : []),
       labelsEnabled: this.props.labelsEnabled,
       vertical,
     };

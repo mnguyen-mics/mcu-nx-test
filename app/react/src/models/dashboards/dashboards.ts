@@ -33,7 +33,7 @@ export interface MapBarComponent extends BaseComponent {
   component_type: 'MAP_BAR_CHART';
   show_legend: boolean;
   query_id: string;
-  compared_query_id?: string;
+  shouldCompare?: boolean;
   percentage?: boolean;
   labels_enabled?: boolean;
   vertical?: boolean;
@@ -43,7 +43,7 @@ export interface MapRadarChart extends BaseComponent {
   component_type: 'MAP_RADAR_CHART';
   show_legend: boolean;
   query_id: string;
-  compared_query_id?: string;
+  shouldCompare?: boolean;
   percentage?: boolean;
   labels_enabled?: boolean;
   vertical?: boolean;

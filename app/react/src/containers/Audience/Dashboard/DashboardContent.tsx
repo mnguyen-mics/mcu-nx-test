@@ -94,7 +94,7 @@ export default class DashboardContent extends React.Component<
             queryId={comp.query_id}
             title={comp.title}
             labelsEnabled={comp.labels_enabled}
-            compared_query_id={comp.compared_query_id}
+            shouldCompare={comp.shouldCompare}
             percentage={comp.percentage}
             vertical={comp.vertical}
           />
@@ -107,7 +107,7 @@ export default class DashboardContent extends React.Component<
               queryId={comp.query_id}
               title={comp.title}
               labelsEnabled={comp.labels_enabled}
-              compared_query_id={comp.compared_query_id}
+              shouldCompare={comp.shouldCompare}
               percentage={comp.percentage}
               vertical={comp.vertical}
             />
