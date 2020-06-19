@@ -7,6 +7,7 @@ import McsDateRangePicker, { McsDateRangePickerProps } from '../McsDateRangePick
 import MultiSelect, { MultiSelectProps } from '../MultiSelect';
 import TableView, { DataColumnDefinition, TableViewProps } from './TableView';
 import LabelsSelector, { LabelsSelectorProps } from '../LabelsSelector';
+import TreeSelectFilter from '../TreeSelectFilter';
 
 const Search = Input.Search;
 
@@ -14,6 +15,7 @@ export interface ViewComponentWithFiltersProps<T> extends TableViewProps<T> {
   searchOptions?: SearchProps;
   dateRangePickerOptions?: McsDateRangePickerProps;
   filtersOptions?: Array<MultiSelectProps<any>>;
+  treeSelectFilter?: () => React.ReactElement<TreeSelectFilter>;
   columnsVisibilityOptions?: {
     isEnabled?: boolean;
   };
@@ -66,7 +68,8 @@ class TableViewFilters<T> extends React.Component<ViewComponentWithFiltersProps<
       filtersOptions,
       columnsVisibilityOptions,
       labelsOptions,
-      } = this.props;
+      treeSelectFilter,
+    } = this.props;
 
     const searchInput = searchOptions
       ? (
@@ -119,6 +122,7 @@ class TableViewFilters<T> extends React.Component<ViewComponentWithFiltersProps<
           </Col>
           <Col span={18} className="text-right">
             {dateRangePicker}
+            {treeSelectFilter ? treeSelectFilter() : null}
             {filtersMultiSelect}
             {visibilityMultiSelect}
           </Col>
