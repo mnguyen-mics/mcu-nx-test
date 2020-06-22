@@ -42,7 +42,7 @@ class AudienceFeatureFormSection extends React.Component<Props> {
                   onClick={handleRemove}
                 >
                   <McsIcon type="close" />
-                </Button>
+                </Button>}
               </Col>
             </Row>
           );

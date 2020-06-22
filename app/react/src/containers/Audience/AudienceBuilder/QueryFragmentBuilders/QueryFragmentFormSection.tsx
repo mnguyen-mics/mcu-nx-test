@@ -23,15 +23,25 @@ import AudienceFeatureFormSection, {
   AudienceFeatureFormSectionProps,
 } from './AudienceFeatureFormSection';
 import cuid from 'cuid';
+import injectDrawer, {
+  InjectedDrawerProps,
+} from '../../../../components/Drawer/injectDrawer';
+import AudienceFeatureSelector, {
+  AudienceFeatureSelectorProps,
+} from './AudienceFeatureSelector';
+import { ParametricPredicateResource } from '../../../../models/parametricPredicate';
 
 export const AudienceFeatureFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
   AudienceFeatureFormSectionProps
 >;
 
-export interface QueryFragmentFormSectionProps {}
+export interface QueryFragmentFormSectionProps {
+  datamartId: string;
+}
 
 type Props = WrappedFieldArrayProps<AudienceBuilderGroupNode> &
+  InjectedDrawerProps &
   InjectedFormProps<AudienceBuilderFormData, QueryFragmentFormSectionProps> &
   QueryFragmentFormSectionProps &
   InjectedIntlProps;
@@ -75,14 +85,16 @@ class QueryFragmentFormSection extends React.Component<Props> {
     );
   };
 
-  addFeature = (groupExpressionKey: string) => () => {
-    const { change, fields } = this.props;
+  saveAudienceFeatures = (groupExpressionKey: string) => (
+    audienceFeatures: ParametricPredicateResource[],
+  ) => {
+    const { change, fields, closeNextDrawer } = this.props;
 
     const newFeature: AudienceBuilderFieldNode = {
       key: cuid(),
       model: {
         type: 'FIELD',
-        field: 'XXX',
+        field: audienceFeatures[0].name,
         comparison: {
           type: 'STRING',
           operator: 'EQ',
@@ -106,6 +118,21 @@ class QueryFragmentFormSection extends React.Component<Props> {
     });
 
     change('where.expressions', newFields);
+    closeNextDrawer();
+  };
+
+  addFeature = (expressionKey: string) => () => {
+    const { openNextDrawer, datamartId } = this.props;
+
+    const props: AudienceFeatureSelectorProps = {
+      datamartId: datamartId,
+      close: this.props.closeNextDrawer,
+      save: this.saveAudienceFeatures(expressionKey),
+    };
+
+    openNextDrawer<AudienceFeatureSelectorProps>(AudienceFeatureSelector, {
+      additionalProps: props,
+    });
   };
 
   render() {
@@ -133,7 +160,7 @@ class QueryFragmentFormSection extends React.Component<Props> {
                         : intl.formatMessage(messages.audienceFeatures)
                     }
                     buttons={
-                      true && (
+                      index !== 0 && (
                         <Button
                           className="mcs-segmentBuilder_closeButton"
                           onClick={handleRemove}
@@ -152,7 +179,7 @@ class QueryFragmentFormSection extends React.Component<Props> {
                         onClick={this.addFeature(expressionField.key)}
                         className="mcs-segmentBuilder_moreButton"
                       >
-                        Add more audience features
+                       {intl.formatMessage(messages.addAudienceFeature)}
                       </Button>
                     </div>
                   </Card>
@@ -168,6 +195,7 @@ class QueryFragmentFormSection extends React.Component<Props> {
 
 export default compose<Props, QueryFragmentFormSectionProps>(
   injectIntl,
+  injectDrawer,
   reduxForm<AudienceBuilderFormData, QueryFragmentFormSectionProps>({
     form: FORM_ID,
     enableReinitialize: true,

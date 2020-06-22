@@ -1,3 +1,7 @@
+import {
+  ParametricPredicateService,
+  IParametricPredicateService,
+} from './../services/ParametricPredicateService';
 import AudienceBuilderService, {
   IAudienceBuilderService,
 } from './../services/AudienceBuilderService';
@@ -420,6 +424,9 @@ container
 container
   .bind<IDatamartUsersAnalyticsService>(TYPES.IDatamartUsersAnalyticsService)
   .to(DatamartUsersAnalyticsService);
+container
+  .bind<IParametricPredicateService>(TYPES.IParametricPredicateService)
+  .to(ParametricPredicateService);
 
 export const { lazyInject } = getDecorators(container, false);
 

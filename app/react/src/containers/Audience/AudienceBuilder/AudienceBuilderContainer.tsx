@@ -67,7 +67,7 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
   render() {
     const { totalAudience } = this.state;
 
-    const { change } = this.props;
+    const { change, formValues } = this.props;
 
     const genericFieldArrayProps = {
       formChange: change,
@@ -80,11 +80,14 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
         <Layout>
           <Row className="ant-layout-content mcs-segmentBuilder_container">
             <Col span={12}>
-              <QueryFragmentFieldArray
-                name={`where.expressions`}
-                component={QueryFragmentFormSection}
-                {...genericFieldArrayProps}
-              />
+              {formValues.datamart_id && (
+                <QueryFragmentFieldArray
+                  name={`where.expressions`}
+                  component={QueryFragmentFormSection}
+                  datamartId={formValues.datamart_id}
+                  {...genericFieldArrayProps}
+                />
+              )}
             </Col>
             <Col span={12}>
               <AudienceBuilderDashboard totalAudience={totalAudience} />

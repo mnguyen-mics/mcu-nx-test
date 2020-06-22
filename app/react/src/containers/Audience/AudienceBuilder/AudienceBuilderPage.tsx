@@ -62,7 +62,6 @@ class AudienceBuilderPage extends React.Component<Props, State> {
       .then(res => {
         this.setState({
           audienceBuilders: res.data,
-          formData: INITIAL_AUDIENCE_BUILDER_FORM_DATA,
           isLoading: false,
         });
       })
@@ -156,6 +155,8 @@ class AudienceBuilderPage extends React.Component<Props, State> {
     //   ...baseQueryFragment,
     //   where: clauseWhere,
     // };
+    // Let's keep it to check the query.
+    // It will be removed when backend part will be ready
     // console.log('The Query: ', query);
     // console.log('Number of errors: ', this.validateQuery(clauseWhere));
   };
@@ -212,6 +213,10 @@ class AudienceBuilderPage extends React.Component<Props, State> {
   selectAudienceBuilder = (audienceBuilder: AudienceBuilderResource) => {
     this.setState({
       selectedAudienceBuidler: audienceBuilder,
+      formData: {
+        ...INITIAL_AUDIENCE_BUILDER_FORM_DATA,
+        datamart_id: audienceBuilder.datamart_id,
+      },
     });
   };
 
