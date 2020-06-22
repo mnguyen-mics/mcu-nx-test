@@ -3600,7 +3600,7 @@ const myDashboards: DashboardResource[] = [
           component_type: 'MAP_BAR_CHART',
           title: 'Purchase Intent by Category',
           query_id: '37673',
-          shouldCompare: true,
+          shouldCompare: false,
           percentage: true,
           show_legend: true,
         },
