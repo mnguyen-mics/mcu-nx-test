@@ -3654,5 +3654,213 @@ const myDashboards: DashboardResource[] = [
         },
       }
     ]
+  },
+  {
+    "id": "1",
+    "name": "Demographics",
+    "type": "SEGMENT",
+    "datamart_id": "1459",
+    components: [
+      {
+        layout: {
+          h: 3,
+          static: false,
+          w: 6,
+          x: 0,
+          y: 0,
+        },
+        component: {
+          // select {profiles{demographic{personal_attributes{gender @map}}}} from UserPoint
+          id: 1,
+          component_type: 'MAP_BAR_CHART',
+          title: 'Gender',
+          query_id: '38036',
+          shouldCompare: true,
+          percentage: true,
+          show_legend: true,
+        },
+      },
+      {
+        layout: {
+          h: 3,
+          static: false,
+          w: 6,
+          x: 6,
+          y: 0,
+        },
+        component: {
+          // select {profiles{demographic{personal_attributes{age_range @map}}}} from UserPoint
+          id: 1,
+          component_type: 'MAP_BAR_CHART',
+          title: 'Age',
+          query_id: '38037',
+          shouldCompare: true,
+          percentage: true,
+          show_legend: true,
+        },
+      },
+      {
+        layout: {
+          h: 3,
+          static: false,
+          w: 4,
+          x: 0,
+          y: 3,
+        },
+        component: {
+          // select {profiles{demographic{personal_attributes{age_range @map}}}} from UserPoint
+          id: 1,
+          component_type: 'MAP_BAR_CHART',
+          title: 'Family Status',
+          query_id: '37670',
+          shouldCompare: true,
+          percentage: true,
+          show_legend: true,
+          vertical: true
+        },
+      },
+      {
+        layout: {
+          h: 3,
+          static: false,
+          w: 4,
+          x: 4,
+          y: 3,
+        },
+        component: {
+          // select {profiles{demographic{personal_attributes{age_range @map}}}} from UserPoint
+          id: 1,
+          component_type: 'MAP_BAR_CHART',
+          title: 'Family Composition',
+          query_id: '37670',
+          shouldCompare: true,
+          percentage: true,
+          show_legend: true,
+          vertical: true
+        },
+      },
+      {
+        layout: {
+          h: 3,
+          static: false,
+          w: 4,
+          x: 8,
+          y: 3,
+        },
+        component: {
+          // select {profiles{demographic{personal_attributes{age_range @map}}}} from UserPoint
+          id: 1,
+          component_type: 'MAP_BAR_CHART',
+          title: 'Income',
+          query_id: '37670',
+          shouldCompare: true,
+          percentage: true,
+          show_legend: true,
+          vertical: false
+        },
+      }
+    ]
+  },
+  {
+    "id": "1",
+    "name": "Pyschographics",
+    "type": "SEGMENT",
+    "datamart_id": "1459",
+    components: [
+      {
+        layout: {
+          h: 3,
+          static: false,
+          w: 12,
+          x: 0,
+          y: 0,
+        },
+        component: {
+          // select {profiles{demographic{personal_attributes{gender @map}}}} from UserPoint
+          id: 1,
+          component_type: 'MAP_RADAR_CHART',
+          title: 'Top 10 Interests',
+          query_id: '37670',
+          shouldCompare: true,
+          percentage: true,
+          show_legend: true,
+        },
+      }
+    ]
+  },
+  {
+    "id": "1",
+    "name": "Behavioral",
+    "type": "SEGMENT",
+    "datamart_id": "1459",
+    components: [
+      {
+        layout: {
+          h: 3,
+          static: false,
+          w: 12,
+          x: 0,
+          y: 0,
+        },
+        component: {
+          // select {profiles{demographic{personal_attributes{gender @map}}}} from UserPoint
+          id: 1,
+          component_type: 'MAP_BAR_CHART',
+          title: 'Purchase Intent by Category',
+          query_id: '37673',
+          shouldCompare: true,
+          percentage: true,
+          show_legend: true,
+        },
+      }
+    ]
+  },
+  {
+    "id": "1",
+    "name": "Media Touch Points",
+    "type": "SEGMENT",
+    "datamart_id": "1459",
+    components: [
+      {
+        layout: {
+          h: 3,
+          static: false,
+          w: 6,
+          x: 0,
+          y: 0,
+        },
+        component: {
+          // select {profiles{demographic{personal_attributes{gender @map}}}} from UserPoint
+          id: 1,
+          component_type: 'MAP_BAR_CHART',
+          title: 'App Categories',
+          query_id: '37670',
+          shouldCompare: true,
+          percentage: true,
+          show_legend: true,
+          vertical: true
+        },
+      },
+      {
+        layout: {
+          h: 3,
+          static: false,
+          w: 6,
+          x: 6,
+          y: 0,
+        },
+        component: {
+          // select {profiles{demographic{personal_attributes{gender @map}}}} from UserPoint
+          id: 1,
+          component_type: 'MAP_BAR_CHART',
+          title: 'Top 10 Apps',
+          query_id: '37670',
+          shouldCompare: true,
+          percentage: true,
+          show_legend: true,
+          vertical: true
+        },
+      }
+    ]
   }
 ];
