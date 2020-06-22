@@ -23,10 +23,30 @@ export interface BaseComponent {
 }
 
 export interface ComponentChart extends BaseComponent {
-  component_type: 'MAP_BAR_CHART' | 'MAP_PIE_CHART' | 'TOP_INFO_COMPONENT';
+  component_type: 'MAP_PIE_CHART' | 'TOP_INFO_COMPONENT';
   show_legend: boolean;
   query_id: string;
   labels_enabled?: boolean;
+}
+
+export interface MapBarComponent extends BaseComponent {
+  component_type: 'MAP_BAR_CHART';
+  show_legend: boolean;
+  query_id: string;
+  shouldCompare?: boolean;
+  percentage?: boolean;
+  labels_enabled?: boolean;
+  vertical?: boolean;
+}
+
+export interface MapRadarChart extends BaseComponent {
+  component_type: 'MAP_RADAR_CHART';
+  show_legend: boolean;
+  query_id: string;
+  shouldCompare?: boolean;
+  percentage?: boolean;
+  labels_enabled?: boolean;
+  vertical?: boolean;
 }
 
 export interface DateAggregationComponent extends BaseComponent {
@@ -95,7 +115,9 @@ export type Component =
   | ComponentCountBar
   | ComponentPercentage
   | DateAggregationComponent
-  | CountPieComponent;
+  | CountPieComponent
+  | MapBarComponent
+  | MapRadarChart;
 
 export type ComponentType =
   | 'MAP_BAR_CHART'
@@ -108,4 +130,5 @@ export type ComponentType =
   | 'WORLD_MAP_CHART'
   | 'COUNT_BAR_CHART'
   | 'COUNT_PIE_CHART'
-  | 'TOP_INFO_COMPONENT';
+  | 'TOP_INFO_COMPONENT'
+  | 'MAP_RADAR_CHART';

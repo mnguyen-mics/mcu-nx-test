@@ -17,10 +17,10 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
-import StackedBarPlot from '../../../../components/Charts/CategoryBased/StackedBarPlot';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { getFormattedQuery } from '../domain';
 import { QueryResource } from '../../../../models/datamart/DatamartResource';
+import RadarSpiderPlot from '../../../../components/Charts/CategoryBased/RadarSpiderPlot';
 
 export interface MapBarChartProps {
   title?: string;
@@ -226,7 +226,7 @@ class MapBarChart extends React.Component<Props, State> {
         return (
           this.state.queryResult &&
           this.state.queryResult.length && (
-            <StackedBarPlot
+            <RadarSpiderPlot
               dataset={this.state.queryResult as any}
               options={optionsForChart}
             />

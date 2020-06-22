@@ -1,19 +1,20 @@
 import * as React from 'react';
 import * as Highcharts from 'highcharts';
+require('highcharts/highcharts-more')(Highcharts);
 import HighchartsReact from 'highcharts-react-official';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 import { generateTooltip, BASE_CHART_HEIGHT } from '../domain';
 
-export interface StackedBarPlotProps {
+export interface RadarSpiderPlotProps {
   dataset: Dataset;
-  options: StackedBarPlotOptions;
+  options: RadarSpiderPlotOptions;
   height?: number;
 }
 
 type Dataset = Array<{ [key: string]: string | number | Date | undefined }>;
 
-export interface StackedBarPlotOptions {
+export interface RadarSpiderPlotOptions {
   colors: string[];
   yKeys: yKey[];
   xKey: string;
@@ -24,9 +25,9 @@ export interface StackedBarPlotOptions {
 
 type yKey = { key: string; message: FormattedMessage.MessageDescriptor | string };
 
-type Props = StackedBarPlotProps & InjectedIntlProps;
+type Props = RadarSpiderPlotProps & InjectedIntlProps;
 
-class StackedBarPlot extends React.Component<Props, {}> {
+class RadarSpiderPlot extends React.Component<Props, {}> {
 
   constructor(props: Props) {
     super(props);
@@ -51,35 +52,37 @@ class StackedBarPlot extends React.Component<Props, {}> {
       return {
         name: typeof y.message === "string" ? y.message : formatMessage(y.message),
         data: this.formatSerieData(dataset, y),
-        type: "column" as any
-      }
+        pointPlacement: 'on'
+      } as any
     });
   }
 
   render() {
     const {
       dataset,
-      options: { colors, xKey, yKeys, showLegend, type, vertical },
+      options: { colors, xKey, yKeys, showLegend },
       height,
     } = this.props;
 
     const options: Highcharts.Options = {
       chart: {
-        type: type || 'column',
+        polar: true,
+        type: 'line',
         height: height ? height : BASE_CHART_HEIGHT,
-        inverted: vertical,
       },
       title: {
         text: ''
       },
       colors: colors,
-      plotOptions: {
-        column: {
-          
-        },
-      },
       xAxis: {
-        categories: this.getXAxisValues(dataset, xKey)
+        categories: this.getXAxisValues(dataset, xKey),
+        tickmarkPlacement: 'on',
+        lineWidth: 0
+      },
+      yAxis: {
+        gridLineInterpolation: 'polygon',
+        lineWidth: 0,
+        min: 0
       },
       series: this.formatSeries(dataset, yKeys),
       credits: {
@@ -93,7 +96,6 @@ class StackedBarPlot extends React.Component<Props, {}> {
         enabled: showLegend === undefined ? false : showLegend,
       }
     };
-
     return (
         <HighchartsReact
           highcharts={Highcharts}
@@ -104,4 +106,4 @@ class StackedBarPlot extends React.Component<Props, {}> {
   }
 }
 
-export default compose<Props, StackedBarPlotProps>(injectIntl)(StackedBarPlot);
+export default compose<Props, RadarSpiderPlotProps>(injectIntl)(RadarSpiderPlot);

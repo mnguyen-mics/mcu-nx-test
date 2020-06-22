@@ -192,7 +192,7 @@ class Partition extends React.Component<JoinedProps, HomeState> {
                 datamartId={d.datamart_id}
               />
             ))}
-            {shouldDisplayAnalyticsFeature && (
+            {shouldDisplayAnalyticsFeature && dashboards.length === 0 && (
               datamartAnalyticsDashboardConfig.map((conf, i) => {
                 return (
                     <DatamartUsersAnalyticsWrapper
