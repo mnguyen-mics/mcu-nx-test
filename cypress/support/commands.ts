@@ -13,10 +13,14 @@ import faker from 'faker'
 import 'cypress-file-upload'
 import LoginPage from '../integration/components/LoginPage'
 
+before(()=>{
+  cy.initTestContext()
+})
+
 // -- This is a parent command --
 Cypress.Commands.add(
   'login',
-  (email = 'dev@mediarithmics.com', password = 'F&&DikfGd3$XDXDt7duL#KeVTn&5A#8za&Q5PrtiPC*BHkTbtg') => {
+  (email = 'dev@mediarithmics.com', password = '6J54DnPklJZfjKNW7bhEuCuHRDqhouS+ndTWf9dGJgBW+4SWwyFA1nT6') => {
     const loginPage = new LoginPage()
     const baseUrl = Cypress.config().baseUrl
     // cy.server()
@@ -101,7 +105,7 @@ Cypress.Commands.add('initTestContext', () => {
   const organisationName:string=faker.random.words(3)
   // api Identification
   cy
-      .request('POST', `${Cypress.env('apiDomain')}/v1/authentication/refresh_tokens`, { email: 'dev@mediarithmics.com', password: 'F&&DikfGd3$XDXDt7duL#KeVTn&5A#8za&Q5PrtiPC*BHkTbtg' })
+      .request('POST', `${Cypress.env('apiDomain')}/v1/authentication/refresh_tokens`, { email: 'dev@mediarithmics.com', password: '6J54DnPklJZfjKNW7bhEuCuHRDqhouS+ndTWf9dGJgBW+4SWwyFA1nT6' })
       .then((refreshTokenResponse) => {
           cy
               .request('POST', `${Cypress.env('apiDomain')}/v1/authentication/access_tokens`, { refresh_token: `${refreshTokenResponse.body.data.refresh_token}` })

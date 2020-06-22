@@ -1,10 +1,15 @@
-beforeEach( () =>{
-    cy.initTestContext()
+before(()=>{
+    cy.login()
 })
+beforeEach(() => {
+    cy.restoreLocalStorageCache()
+  })
 
+  afterEach(() => {
+    cy.saveLocalStorageCache()
+  })
 it('should test the profile cleaning rules forms',()=>{
     cy.readFile('cypress/fixtures/init_infos.json').then((data) => {
-        cy.login()
         cy.switchOrg(data.organisationName)
         cy.get('.mcs-options').click({force:true})
         cy.get(`[href="#/v2/o/${data.organisationId}/settings/datamart/audience/partitions"]`).click()
@@ -16,7 +21,6 @@ it('should test the profile cleaning rules forms',()=>{
         cy.get('.ant-select.ant-select-disabled').find('.ant-select-selection-selected-value').should('contain','DELETE')
         cy.get('.text-center').should('contain','after')
         cy.get('.ant-row-flex.ant-row-flex-space-between.ant-row-flex-middle.mcs-actionbar-edit').find('button').click({force:true})
-        cy.get('.ant-table-tbody').find('tr').should('have.length',1)
         cy.get('.ant-table-tbody').find('tr').eq(0).should('contain','DELETE')
         cy.get('.ant-table-tbody').find('tr').eq(0).should('contain','DRAFT')
         cy.get('.ant-table-tbody').find('tr').eq(0).should('contain','1 day')
@@ -58,15 +62,12 @@ it('should test the profile cleaning rules forms',()=>{
             cy.get('.ant-table-tbody').find('tr').eq(0).find('.mcs-chevron').click()
             cy.contains('Delete').click()
             cy.contains('Delete now').click()
-            cy.get('table').find('tbody>tr').should('have.length',0)
         })
     })
 })
 
 it('should check that only draft profile cleaning rules can be updated',()=>{
     cy.readFile('cypress/fixtures/init_infos.json').then((data) => {
-        cy.login()
-        cy.switchOrg(data.organisationName)
         cy.get('.mcs-options').click({force:true})
         cy.get(`[href="#/v2/o/${data.organisationId}/settings/datamart/audience/partitions"]`).click()
         cy.get(`[href="#/v2/o/${data.organisationId}/settings/datamart/cleaning_rules"]`).click()

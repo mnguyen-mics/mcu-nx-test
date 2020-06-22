@@ -1,11 +1,17 @@
-beforeEach( () =>{
-    cy.initTestContext()
+before(()=>{
+    cy.login()
 })
+beforeEach(() => {
+    cy.restoreLocalStorageCache()
+  })
+
+  afterEach(() => {
+    cy.saveLocalStorageCache()
+  })
 
 it('should test the cleaning rules update form', () => {
     // Using readFile instead of fixtures because fixtures caches the file(this unwanted behavior was fixed on a more recent cypress version)
     cy.readFile('cypress/fixtures/init_infos.json').then((data) => {
-        cy.login()
         cy.switchOrg(data.organisationName)
         cy.get('.mcs-options').click({force:true})
         cy.get(`[href="#/v2/o/${data.organisationId}/settings/datamart/audience/partitions"]`).click()
@@ -16,7 +22,6 @@ it('should test the cleaning rules update form', () => {
         cy.get('.text-center').should('contain','for')
         // Using force true because we can get error notifications on a vagrant
         cy.get('button').contains('Save User Event Cleaning Rule').click({force:true})
-        cy.get('table').find('tbody>tr').should('have.length',2)
         cy.contains('DRAFT').parent().parent().parent().should('contain','KEEP')
         cy.contains('DRAFT').parent().parent().parent().should('contain','1 day')
         cy.contains('DRAFT').parent().parent().parent().get('td').eq(3).should('contain','All')
@@ -63,23 +68,16 @@ it('should test the cleaning rules update form', () => {
 
 it('should test that only DRAFT cleaning rules can be deleted and updated',()=>{
     cy.readFile('cypress/fixtures/init_infos.json').then((data) => {
-        cy.login()
-        cy.switchOrg(data.organisationName)
         cy.get('.mcs-options').click({force:true})
         cy.get(`[href="#/v2/o/${data.organisationId}/settings/datamart/audience/partitions"]`).click()
         cy.get(`[href="#/v2/o/${data.organisationId}/settings/datamart/cleaning_rules"]`).click()
         cy.url().should('contain','datamart/cleaning_rules')
-        cy.get('tbody > tr:first').find('.mcs-chevron').click()
-        // Check that we can't update and delete the cleaning rule when it's in status DRAFT
-        cy.contains('View').parent().should('have.attr','aria-disabled','true')
-        cy.contains('Delete').parent().should('have.attr','aria-disabled','true')
         // Add new cleaning rule
         cy.get('button').contains('New Cleaning Rule').click({force:true})
         cy.get('div.title').contains(`${data.datamartName}`).click()
-        cy.get('#eventNameFilter').type('test_1')
+        cy.get('#eventNameFilter').type('test_2')
         cy.get('button').contains('Save User Event Cleaning Rule').click({force:true})
         cy.url().should('contain',`datamart/cleaning_rules`)
-        cy.get('table').find('tbody>tr').should('have.length',2)
         cy.contains('test_1').parent().parent().find('.mcs-chevron').click()
         cy.contains('View').parent().should('have.attr','aria-disabled','false')
         cy.contains('Delete').parent().should('have.attr','aria-disabled','false')
@@ -98,22 +96,21 @@ it('should test that only DRAFT cleaning rules can be deleted and updated',()=>{
 
 it('should check that we can only have 3 different life durations for user event cleaning rules with content filters',()=>{
     cy.readFile('cypress/fixtures/init_infos.json').then((data) => {
-        cy.login()
-        cy.switchOrg(data.organisationName)
         cy.get('.mcs-options').click({force:true})
         cy.get(`[href="#/v2/o/${data.organisationId}/settings/datamart/audience/partitions"]`).click()
         cy.get(`[href="#/v2/o/${data.organisationId}/settings/datamart/cleaning_rules"]`).click()
         cy.contains('New Cleaning Rule').click({force:true})
         cy.contains(`${data.datamartName}`).click()
-        cy.get('#eventNameFilter').type('test_1')
+        cy.get('input.ant-input-number-input').type('5')
+        cy.get('#eventNameFilter').type('test_3')
         cy.contains('Save User Event Cleaning Rule').click({force:true})
         cy.url().should('contain',`datamart/cleaning_rules`)
-        cy.contains('1 day').parent().parent().contains('Activate the rule').click()
+        cy.contains('15 day').parent().parent().contains('Activate the rule').click()
         cy.contains('Confirm').click()
         cy.contains('New Cleaning Rule').click({force:true})
         cy.contains(`${data.datamartName}`).click()
         cy.get('input.ant-input-number-input').type('1')
-        cy.get('#eventNameFilter').type('test_1')
+        cy.get('#eventNameFilter').type('test_3')
         cy.contains('Save User Event Cleaning Rule').click({force:true})
         cy.url().should('contain',`datamart/cleaning_rules`)
         cy.contains('11 days').parent().parent().contains('Activate the rule').click()
@@ -121,7 +118,7 @@ it('should check that we can only have 3 different life durations for user event
         cy.contains('New Cleaning Rule').click({force:true})
         cy.contains(`${data.datamartName}`).click()
         cy.get('input.ant-input-number-input').type('2')
-        cy.get('#eventNameFilter').type('test_1')
+        cy.get('#eventNameFilter').type('test_3')
         cy.contains('Save User Event Cleaning Rule').click({force:true})
         cy.url().should('contain',`datamart/cleaning_rules`)
         cy.contains('12 days').parent().parent().contains('Activate the rule').click()
@@ -129,13 +126,12 @@ it('should check that we can only have 3 different life durations for user event
         cy.contains('New Cleaning Rule').click({force:true})
         cy.contains(`${data.datamartName}`).click()
         cy.get('input.ant-input-number-input').type('3')
-        cy.get('#eventNameFilter').type('test_1')
+        cy.get('#eventNameFilter').type('test_3')
         cy.contains('Save User Event Cleaning Rule').click({force:true})
         cy.url().should('contain',`datamart/cleaning_rules`)
         cy.contains('13 days').parent().parent().contains('Activate the rule').click()
         cy.contains('Confirm').click()
         cy.get('span').should('contain','Maximum 3 different life durations can be used for USER_EVENT_CLEANING_RULE with content filters')
-        cy.get('table').find('tbody>tr').should('have.length',5)
         // TODO add the case where we change the event name filter of the previously added cleaning rules
     })
 })
