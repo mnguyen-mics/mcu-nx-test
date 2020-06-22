@@ -109,8 +109,7 @@ export type QueryInputEvaluationPeriodUnit =
 
 export type QueryInputEvaluationMode = 'LIVE' | 'PERIODIC';
 
-export type QueryInputUiCreationMode = 'EVENT' 
-| 'QUERY' 
+export type QueryInputUiCreationMode = 'QUERY' 
 | 'REACT_TO_EVENT_STANDARD'
 | 'REACT_TO_EVENT_ADVANCED';
 
