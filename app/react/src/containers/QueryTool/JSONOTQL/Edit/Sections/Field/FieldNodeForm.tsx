@@ -62,6 +62,7 @@ import { IChannelService } from '../../../../../../services/ChannelService';
 import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
 import { IReferenceTableService } from '../../../../../../services/ReferenceTableService';
 import { injectWorkspace, InjectedWorkspaceProps } from '../../../../../Datamart';
+import { FormInfiniteSearchObjectProps } from '../../../../../../components/Form/FormSelect/FormInfiniteSearchObject';
 
 export const FormTagSelectField = Field as new () => GenericField<
   FormTagSelectProps
@@ -71,6 +72,9 @@ export const FormRelativeAbsoluteDateField = Field as new () => GenericField<
 >;
 export const FormSearchObjectField = Field as new () => GenericField<
   FormSearchObjectProps
+>;
+export const FormInfiniteSearchObjectField = Field as new () => GenericField<
+  FormInfiniteSearchObjectProps
 >;
 
 export interface FieldNodeFormProps {
