@@ -48,7 +48,6 @@ interface State {
 
 const emailCampaignNode: ScenarioNodeShape = {
   id: generateFakeId(),
-  name: 'Send Email',
   type: 'EMAIL_CAMPAIGN',
   scenario_id: '',
   campaign_id: '',
@@ -58,7 +57,6 @@ const emailCampaignNode: ScenarioNodeShape = {
 
 const displayCampaignNode: ScenarioNodeShape = {
   id: generateFakeId(),
-  name: 'Display Advertising',
   type: 'DISPLAY_CAMPAIGN',
   campaign_id: '',
   scenario_id: '',
@@ -69,7 +67,6 @@ const displayCampaignNode: ScenarioNodeShape = {
 
 const addToSegmentNode: ScenarioNodeShape = {
   id: generateFakeId(),
-  name: 'Add to Segment',
   type: 'ADD_TO_SEGMENT_NODE',
   user_list_segment_id: '',
   user_segment_expiration_period: '0',
@@ -80,7 +77,6 @@ const addToSegmentNode: ScenarioNodeShape = {
 
 const deleteFromSegmentNode: ScenarioNodeShape = {
   id: generateFakeId(),
-  name: 'Delete from Segment',
   type: 'DELETE_FROM_SEGMENT_NODE',
   user_list_segment_id: '',
   scenario_id: '',
@@ -90,7 +86,6 @@ const deleteFromSegmentNode: ScenarioNodeShape = {
 
 const conditionNode1: ScenarioNodeShape = {
   id: generateFakeId(),
-  name: 'Split',
   type: 'ABN_NODE',
   scenario_id: '',
   edges_selection: {},
@@ -98,28 +93,24 @@ const conditionNode1: ScenarioNodeShape = {
   formData: {
     edges_selection: {},
     branch_number: 2,
-    name: '',
   },
 };
 
 const conditionNode2: ScenarioNodeShape = {
   id: generateFakeId(),
-  name: 'Wait',
   type: 'WAIT_NODE',
   scenario_id: '',
   delay_period: 'PT1H',
   formData: {
     wait_duration: {
       unit: 'hours',
-      value: '1'
+      value: '1',
     },
-    name: '',
   },
 };
 
 const conditionNode3: IfNodeResource = {
   id: generateFakeId(),
-  name: 'If',
   type: 'IF_NODE',
   scenario_id: '',
   query_id: '',
@@ -143,7 +134,12 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
       actionNodes: this.props.hasFeature(
         'automations-add-delete-to-from-segment-node',
       )
-        ? [emailCampaignNode, displayCampaignNode, addToSegmentNode, deleteFromSegmentNode]
+        ? [
+            emailCampaignNode,
+            displayCampaignNode,
+            addToSegmentNode,
+            deleteFromSegmentNode,
+          ]
         : [emailCampaignNode, displayCampaignNode],
       conditionNodes: [conditionNode1, conditionNode2, conditionNode3],
       exitsNodes: [],
@@ -151,12 +147,16 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
   }
 
   createNodeGrid = (nodeType: string, nodes: ScenarioNodeShape[]) => {
+    const { intl } = this.props;
     return (
       <Tree defaultExpandAll={true} multiple={false} draggable={false}>
         <TreeNode title={nodeType} selectable={false}>
           {nodes.map(node => {
             return (
-              <TreeNode title={<AvailableNode node={node} />} key={node.id} />
+              <TreeNode
+                title={<AvailableNode node={node} intl={intl} />}
+                key={node.id}
+              />
             );
           })}
         </TreeNode>

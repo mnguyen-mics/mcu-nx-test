@@ -21,7 +21,6 @@ export interface AutomationResource {
   datamart_id: string;
   organisation_id: string;
   status: AutomationStatus;
-  technical_name?: string;
 }
 
 export function isAutomationResource(
@@ -40,7 +39,6 @@ export const automationStatuses: AutomationStatus[] = [
 export interface AutomationCreateResource {
   name: string;
   datamart_id: string;
-  technical_name?: string;
 }
 
 export interface StorylineResource {
@@ -64,7 +62,6 @@ export type ScenarioNodeType =
 
 export interface ScenarioNodeResource {
   id: string;
-  name: string;
   scenario_id: string;
   type: ScenarioNodeType;
   last_added_node?: boolean;
@@ -150,7 +147,6 @@ export interface PluginNodeResource extends ScenarioNodeResource {
   artifact_id: string;
   group_id: string;
   id: string;
-  name: string;
   scenario_id: string;
   scenario_node_processor_id: string;
 }

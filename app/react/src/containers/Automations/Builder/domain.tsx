@@ -33,13 +33,17 @@ import { McsIconType } from '../../../components/McsIcon';
 import { QueryResource } from '../../../models/datamart/DatamartResource';
 import { IQueryService } from '../../../services/QueryService';
 import { generateFakeId } from '../../../utils/FakeIdHelper';
-import { ObjectLikeTypeResource, FieldResource } from '../../../models/datamart/graphdb/RuntimeSchema';
+import {
+  ObjectLikeTypeResource,
+  FieldResource,
+} from '../../../models/datamart/graphdb/RuntimeSchema';
 import { AutomationSelectedType } from './AutomationBuilderPage';
 import { LabeledValue } from 'antd/lib/select';
 import { isAggregateResult } from '../../../models/datamart/graphdb/OTQLResult';
 import { QueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
 import { IRuntimeSchemaService } from '../../../services/RuntimeSchemaService';
 import { reducePromises } from '../../../utils/PromiseHelper';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 export interface TreeNodeOperations {
   addNode: (
@@ -81,18 +85,20 @@ export interface NodeOperation {
   execute(automationData: StorylineNodeModel): StorylineNodeModel;
 }
 
-
-export const findLastAddedNode = (automationData: StorylineNodeModel): StorylineNodeModel | undefined => {
-	if(automationData.out_edges.length > 0) {
-		const findNode = (nodeModel: StorylineNodeModel): StorylineNodeModel | undefined => {
-			if(nodeModel.out_edges.length === 0) {
-				return undefined;
-			} else {
-				if (isScenarioNodeShape(nodeModel.node)) {
-					if(nodeModel.node.last_added_node)
-						return nodeModel;
-				}
-				return nodeModel.out_edges.reduce((previous, current) => {
+export const findLastAddedNode = (
+  automationData: StorylineNodeModel,
+): StorylineNodeModel | undefined => {
+  if (automationData.out_edges.length > 0) {
+    const findNode = (
+      nodeModel: StorylineNodeModel,
+    ): StorylineNodeModel | undefined => {
+      if (nodeModel.out_edges.length === 0) {
+        return undefined;
+      } else {
+        if (isScenarioNodeShape(nodeModel.node)) {
+          if (nodeModel.node.last_added_node) return nodeModel;
+        }
+        return nodeModel.out_edges.reduce((previous, current) => {
           if (
             previous &&
             isScenarioNodeShape(previous.node) &&
@@ -101,43 +107,47 @@ export const findLastAddedNode = (automationData: StorylineNodeModel): Storyline
             return previous;
           return findNode(current);
         }, undefined as StorylineNodeModel | undefined);
-			}
-		};
-
-		return findNode(automationData);
-	}
-
-	return isScenarioNodeShape(automationData.node) && automationData.node.last_added_node ? automationData : undefined;
-}
-
-export const cleanLastAdded = (automationData: StorylineNodeModel): StorylineNodeModel => {   const outEdges: StorylineNodeModel[] = automationData.out_edges.map(
-    (child) => {
-      if(child.out_edges.length === 0) {
-        return child;
-      } else {
-        if (isScenarioNodeShape(child.node)) {
-          return cleanLastAdded({
-            ...child,
-            node: {
-              ...child.node,
-              last_added_node: false,
-            }
-          });
-        } else {
-          return cleanLastAdded(child);
-        }
       }
-    },
-  );
+    };
+
+    return findNode(automationData);
+  }
+
+  return isScenarioNodeShape(automationData.node) &&
+    automationData.node.last_added_node
+    ? automationData
+    : undefined;
+};
+
+export const cleanLastAdded = (
+  automationData: StorylineNodeModel,
+): StorylineNodeModel => {
+  const outEdges: StorylineNodeModel[] = automationData.out_edges.map(child => {
+    if (child.out_edges.length === 0) {
+      return child;
+    } else {
+      if (isScenarioNodeShape(child.node)) {
+        return cleanLastAdded({
+          ...child,
+          node: {
+            ...child.node,
+            last_added_node: false,
+          },
+        });
+      } else {
+        return cleanLastAdded(child);
+      }
+    }
+  });
 
   return {
     node: isScenarioNodeShape(automationData.node)
-      ? {...automationData.node, last_added_node: false}
+      ? { ...automationData.node, last_added_node: false }
       : automationData.node,
     in_edge: automationData.in_edge,
     out_edges: outEdges,
   };
-}
+};
 
 // ADD NODE
 
@@ -162,7 +172,7 @@ export class AddNodeOperation implements NodeOperation {
       this.parentNodeId,
       this.childNodeId,
     );
-    return result
+    return result;
   }
 
   iterateData(
@@ -194,19 +204,18 @@ export class AddNodeOperation implements NodeOperation {
               this.node.formData ? this.node.formData.branch_number : 2,
             );
             newOutEdges = [childNode].concat(emptyNodes);
-
           } else if (isIfNode(this.node)) {
-            const emptyNodes = this.generateNewEmptyOutEdges(child, 2)
-            newOutEdges = [childNode].concat(emptyNodes)
+            const emptyNodes = this.generateNewEmptyOutEdges(child, 2);
+            newOutEdges = [childNode].concat(emptyNodes);
 
-            const firstEdge = newOutEdges[0]
-            const secondEdge = newOutEdges[1]
+            const firstEdge = newOutEdges[0];
+            const secondEdge = newOutEdges[1];
 
             if (firstEdge.in_edge !== undefined) {
-              firstEdge.in_edge.handler = 'IF_CONDITION_TRUE'
+              firstEdge.in_edge.handler = 'IF_CONDITION_TRUE';
             }
             if (secondEdge.in_edge !== undefined) {
-              secondEdge.in_edge.handler = 'IF_CONDITION_FALSE'
+              secondEdge.in_edge.handler = 'IF_CONDITION_FALSE';
             }
           } else {
             newOutEdges = [childNode];
@@ -250,7 +259,6 @@ export class AddNodeOperation implements NodeOperation {
       const emptyNode: StorylineNodeModel = {
         node: {
           id: newId,
-          name: 'Exit automation',
           scenario_id: '',
           type: 'END_NODE',
         },
@@ -268,18 +276,20 @@ export class AddNodeOperation implements NodeOperation {
     return newEmptyOutEdges;
   };
 
-
   getInEdgeHandler(child: StorylineNodeModel): EdgeHandler {
-    if (child.in_edge !== undefined && (child.in_edge.handler === 'IF_CONDITION_TRUE' || child.in_edge.handler === 'IF_CONDITION_FALSE')) {
-      return child.in_edge.handler
+    if (
+      child.in_edge !== undefined &&
+      (child.in_edge.handler === 'IF_CONDITION_TRUE' ||
+        child.in_edge.handler === 'IF_CONDITION_FALSE')
+    ) {
+      return child.in_edge.handler;
     } else if (this.node.type === 'DISPLAY_CAMPAIGN') {
-      return 'ON_VISIT'
+      return 'ON_VISIT';
     } else {
-      return 'OUT'
+      return 'OUT';
     }
   }
 }
-
 
 // DELETE NODE
 
@@ -291,13 +301,15 @@ export class DeleteNodeOperation implements NodeOperation {
   }
 
   execute(automationData: StorylineNodeModel): StorylineNodeModel {
-    return cleanLastAdded(this.iterateData(automationData, this.idNodeToBeDeleted));
+    return cleanLastAdded(
+      this.iterateData(automationData, this.idNodeToBeDeleted),
+    );
   }
 
   iterateData(
     automationData: StorylineNodeModel,
     idNodeToBeDeleted: string,
-    parentData?: StorylineNodeModel
+    parentData?: StorylineNodeModel,
   ): StorylineNodeModel {
     const outEdges: StorylineNodeModel[] = automationData.out_edges.map(
       (child, index) => {
@@ -308,7 +320,6 @@ export class DeleteNodeOperation implements NodeOperation {
           const newNode: StorylineNodeModel = {
             node: {
               id: child.node.id,
-              name: 'Exit Automation',
               scenario_id: '',
               type: 'END_NODE',
             },
@@ -318,18 +329,21 @@ export class DeleteNodeOperation implements NodeOperation {
           return newNode;
         } else if (
           child.node.id === idNodeToBeDeleted &&
-          !isAbnNode(child.node) && !isIfNode(child.node)
+          !isAbnNode(child.node) &&
+          !isIfNode(child.node)
         ) {
           const inEdge = child.in_edge;
           const storylineNodeModel: StorylineNodeModel = {
             node: child.out_edges[0].node,
-            in_edge: inEdge ? {
-              ...inEdge,
-              source_id: automationData.node.id,
-              target_id: inEdge.target_id,
-            } : undefined,
+            in_edge: inEdge
+              ? {
+                  ...inEdge,
+                  source_id: automationData.node.id,
+                  target_id: inEdge.target_id,
+                }
+              : undefined,
             out_edges: child.out_edges[0].out_edges,
-          }
+          };
           return storylineNodeModel;
         } else {
           return this.iterateData(child, idNodeToBeDeleted, automationData);
@@ -373,8 +387,7 @@ export class UpdateNodeOperation implements NodeOperation {
       case 'DISPLAY_CAMPAIGN':
         nodeBody = {
           ...storylineNode.node,
-          ...this.node as DisplayCampaignNodeResource,
-          name: this.formData.name,
+          ...(this.node as DisplayCampaignNodeResource),
           formData: this.formData as DisplayCampaignAutomationFormData,
           initialFormData: this
             .initialFormData as DisplayCampaignAutomationFormData,
@@ -383,30 +396,29 @@ export class UpdateNodeOperation implements NodeOperation {
       case 'EMAIL_CAMPAIGN':
         nodeBody = {
           ...storylineNode.node,
-          ...this.node as EmailCampaignNodeResource,
-          name: this.formData.name,
+          ...(this.node as EmailCampaignNodeResource),
           formData: this.formData as EmailCampaignAutomationFormData,
           initialFormData: this
             .initialFormData as EmailCampaignAutomationFormData,
         };
         break;
       case 'ADD_TO_SEGMENT_NODE':
-        const addToSegmentFormData = this.formData as AddToSegmentAutomationFormData;
+        const addToSegmentFormData = this
+          .formData as AddToSegmentAutomationFormData;
         nodeBody = {
           ...storylineNode.node,
-          ...this.node as AddToSegmentNodeResource,
-          name: addToSegmentFormData.name && addToSegmentFormData.name  || 'undefined segment name',
+          ...(this.node as AddToSegmentNodeResource),
           formData: addToSegmentFormData,
           initialFormData: this
             .initialFormData as AddToSegmentAutomationFormData,
         };
         break;
       case 'DELETE_FROM_SEGMENT_NODE':
-        const deleteFromSegmentFormData = this.formData as DeleteFromSegmentAutomationFormData;
+        const deleteFromSegmentFormData = this
+          .formData as DeleteFromSegmentAutomationFormData;
         nodeBody = {
           ...storylineNode.node,
-          ...this.node as DeleteFromSegmentNodeResource,
-          name: deleteFromSegmentFormData.name && deleteFromSegmentFormData.name  || 'undefined segment name',
+          ...(this.node as DeleteFromSegmentNodeResource),
           formData: deleteFromSegmentFormData,
           initialFormData: this
             .initialFormData as DeleteFromSegmentAutomationFormData,
@@ -415,10 +427,9 @@ export class UpdateNodeOperation implements NodeOperation {
       case 'ABN_NODE':
         nodeBody = {
           ...storylineNode.node,
-          ...this.node as ABNNodeResource,
+          ...(this.node as ABNNodeResource),
           branch_number: (this.formData as ABNFormData).branch_number,
           edges_selection: (this.formData as ABNFormData).edges_selection,
-          name: this.formData.name,
           formData: this.formData as ABNFormData,
         };
         break;
@@ -426,17 +437,16 @@ export class UpdateNodeOperation implements NodeOperation {
       case 'ON_SEGMENT_ENTRY_INPUT_NODE':
         nodeBody = {
           ...storylineNode.node,
-          ...this.node as OnSegmentEntryInputNodeResource,
+          ...(this.node as OnSegmentEntryInputNodeResource),
           formData: this.formData as OnSegmentEntryInputAutomationFormData,
           initialFormData: this
-            .initialFormData as OnSegmentEntryInputAutomationFormData
+            .initialFormData as OnSegmentEntryInputAutomationFormData,
         };
         break;
       case 'QUERY_INPUT':
         nodeBody = {
           ...storylineNode.node,
           ...this.node as QueryInputNodeResource,
-          name: this.formData.name,
           formData: this.formData as QueryInputAutomationFormData,
         };
         break;
@@ -444,22 +454,19 @@ export class UpdateNodeOperation implements NodeOperation {
         nodeBody = {
           ...storylineNode.node,
           ...this.node as IfNodeResource,
-          name: this.formData.name,
           formData: this.formData as Partial<QueryResource>,
         };
         break;
       case 'WAIT_NODE':
         nodeBody = {
           ...storylineNode.node,
-          ...this.node as WaitNodeResource,
-          name: this.formData.name,
+          ...(this.node as WaitNodeResource),
           formData: this.formData as WaitFormData,
         };
         break;
       default:
         nodeBody = {
           ...storylineNode.node,
-          name: this.formData.name,
         };
         break;
     }
@@ -503,7 +510,6 @@ export class UpdateNodeOperation implements NodeOperation {
       const emptyNode: StorylineNodeModel = {
         node: {
           id: newId,
-          name: 'Exit from automation',
           scenario_id: '',
           type: 'END_NODE',
         },
@@ -524,12 +530,11 @@ export class UpdateNodeOperation implements NodeOperation {
   iterateData(
     automationData: StorylineNodeModel,
     id: string,
-    firstNode?: boolean
+    firstNode?: boolean,
   ): StorylineNodeModel {
-
     let node = automationData;
     if (firstNode && automationData.node.id === id) {
-      node = this.buildUpdatedNode(automationData) as StorylineNodeModel
+      node = this.buildUpdatedNode(automationData) as StorylineNodeModel;
     }
 
     const outEdges: StorylineNodeModel[] = automationData.out_edges.map(
@@ -560,7 +565,7 @@ export interface StorylineNodeModel {
 const beginNodeId = generateFakeId();
 const endNodeId = generateFakeId();
 const baseEdgeId = generateFakeId();
-const baseQueryId = generateFakeId()
+const baseQueryId = generateFakeId();
 
 export const storylineResourceData: StorylineResource = {
   begin_node_id: beginNodeId,
@@ -568,49 +573,49 @@ export const storylineResourceData: StorylineResource = {
 
 export const beginNode = (type?: AutomationSelectedType): ScenarioNodeShape => {
   if (type === 'ON_SEGMENT_ENTRY' || type === 'ON_SEGMENT_EXIT') {
-    return type === 'ON_SEGMENT_ENTRY' ? {
-      id: beginNodeId,
-      type: 'ON_SEGMENT_ENTRY_INPUT_NODE',
-      name: "Enter Automation",
-      scenario_id: 'string',
-      last_added_node: true,
-      audience_segment_id: '',
-      formData: { name: '' },
-      initialFormData: { name: '' }
-    } :
-      {
-        id: beginNodeId,
-        type: 'ON_SEGMENT_EXIT_INPUT_NODE',
-        name: "Enter Automation",
-        scenario_id: 'string',
-        last_added_node: true,
-        audience_segment_id: '',
-        formData: { name: '' },
-        initialFormData: { name: '' }
-      };
+    return type === 'ON_SEGMENT_ENTRY'
+      ? {
+          id: beginNodeId,
+          type: 'ON_SEGMENT_ENTRY_INPUT_NODE',
+          scenario_id: 'string',
+          last_added_node: true,
+          audience_segment_id: '',
+          formData: {},
+          initialFormData: {},
+        }
+      : {
+          id: beginNodeId,
+          type: 'ON_SEGMENT_EXIT_INPUT_NODE',
+          scenario_id: 'string',
+          last_added_node: true,
+          audience_segment_id: '',
+          formData: {},
+          initialFormData: {},
+        };
   }
 
   return {
     id: beginNodeId,
-    name: 'Enter Automation',
     scenario_id: '',
     type: 'QUERY_INPUT',
     query_id: baseQueryId,
     evaluation_mode: 'LIVE',
     ui_creation_mode: type === 'REACT_TO_EVENT' ? 'REACT_TO_EVENT_STANDARD' : 'QUERY',
     last_added_node: true,
-    formData: { 
-      name: '', 
-      uiCreationMode: type === 'REACT_TO_EVENT' ? 'REACT_TO_EVENT_STANDARD' : 'QUERY', 
+    formData: {
+      uiCreationMode: type === 'REACT_TO_EVENT' ? 'REACT_TO_EVENT_STANDARD' : 'QUERY',
     },
-  }
+  };
 };
 
-export const generateBeginNode = (type: AutomationSelectedType, evaluationPeriod?: number, evaluationPeriodUnit?: QueryInputEvaluationPeriodUnit): ScenarioNodeShape => {
+export const generateBeginNode = (
+  type: AutomationSelectedType,
+  evaluationPeriod?: number,
+  evaluationPeriodUnit?: QueryInputEvaluationPeriodUnit,
+): ScenarioNodeShape => {
   if (type === 'PERIODIC' && evaluationPeriod && evaluationPeriodUnit) {
     return {
       id: beginNodeId,
-      name: 'Enter Automation',
       scenario_id: '',
       type: 'QUERY_INPUT',
       query_id: baseQueryId,
@@ -619,18 +624,14 @@ export const generateBeginNode = (type: AutomationSelectedType, evaluationPeriod
       evaluation_period_unit: evaluationPeriodUnit,
       ui_creation_mode: 'QUERY',
       last_added_node: true,
-      formData: {
-        name: '',
-        uiCreationMode: 'QUERY'
-      },
-    }
+      formData: {uiCreationMode: 'QUERY'},
+    };
   }
   return beginNode(type);
-}
+};
 
 export const node4: ScenarioNodeShape = {
   id: endNodeId,
-  name: 'Exit Automation',
   scenario_id: '',
   type: 'END_NODE',
 };
@@ -647,9 +648,17 @@ export const edge12: ScenarioEdgeResource = {
 
 export const storylineEdgeData: ScenarioEdgeResource[] = [edge12];
 
+type FormatMessageHandler = (
+  messageDescriptor: FormattedMessage.MessageDescriptor,
+  values?: { [key: string]: string | number | boolean | Date },
+) => string;
+
 export function generateNodeProperties(
   node: AutomationNodeShape,
+  formatMessage: FormatMessageHandler,
 ): {
+  title: string;
+  subtitle: string;
   color: string;
   iconType?: McsIconType;
   iconAnt?: AntIcon;
@@ -658,62 +667,107 @@ export function generateNodeProperties(
   switch (node.type) {
     case 'DISPLAY_CAMPAIGN':
       return {
+        title: node.formData.campaign.name
+          ? node.formData.campaign.name
+          : formatMessage(nodeMessages.displayCampaignNodeTitle),
+        subtitle: formatMessage(nodeMessages.displayCampaignNodeSubtitle),
         iconType: 'display',
         color: '#0ba6e1',
       };
     case 'EMAIL_CAMPAIGN':
       return {
+        title: node.formData.campaign.name
+          ? node.formData.campaign.name
+          : formatMessage(nodeMessages.emailCampaignNodeTitle),
+        subtitle: '',
         iconType: 'email',
         color: '#0ba6e1',
       };
     case 'ADD_TO_SEGMENT_NODE':
       return {
+        title: node.formData.audienceSegmentName
+          ? node.formData.audienceSegmentName
+          : formatMessage(nodeMessages.addToSegmentNodeTitle),
+        subtitle: '',
         iconType: 'user-list',
         color: '#0ba6e1',
       };
     case 'DELETE_FROM_SEGMENT_NODE':
       return {
+        title: node.formData.audienceSegmentName
+          ? node.formData.audienceSegmentName
+          : formatMessage(nodeMessages.deleteFromSegmentNodeTitle),
+        subtitle: '',
         iconType: 'user-list',
         color: '#fc3f48',
       };
     case 'QUERY_INPUT':
+      let subtitle = '';
+      if (node.evaluation_mode === 'PERIODIC') {
+        subtitle = formatMessage(nodeMessages.periodicQueryInputNodeSubtitle, {
+          frequency: node.evaluation_period ? node.evaluation_period : '',
+          timeUnit: node.evaluation_period_unit
+            ? node.evaluation_period_unit
+            : '',
+        });
+      } else {
+        subtitle = formatMessage(nodeMessages.livequeryInputNodeSubtitle);
+      }
       return {
+        title: formatMessage(nodeMessages.queryInputNodeTitle),
+        subtitle: subtitle,
         iconAnt: 'flag',
         color: '#fbc02d',
       };
     case 'ON_SEGMENT_ENTRY_INPUT_NODE':
       return {
+        title: formatMessage(nodeMessages.onAudienceSegmentEntryNodeTitle),
+        subtitle: formatMessage(
+          nodeMessages.onAudienceSegmentEntryNodeSubtitle,
+        ),
         iconAnt: 'flag',
         color: '#fbc02d',
       };
     case 'ON_SEGMENT_EXIT_INPUT_NODE':
       return {
+        title: formatMessage(nodeMessages.onAudienceSegmentExitNodeTitle),
+        subtitle: formatMessage(nodeMessages.onAudienceSegmentExitNodeSubtitle),
         iconAnt: 'flag',
         color: '#fbc02d',
       };
     case 'ABN_NODE':
       return {
+        title: formatMessage(nodeMessages.abnNodeTitle),
+        subtitle: '',
         iconAnt: 'fork',
         color: '#fbc02d',
         branchNumber: node.branch_number,
       };
     case 'IF_NODE':
       return {
+        title: formatMessage(nodeMessages.ifNodeTitle),
+        subtitle: '',
         iconAnt: 'branches',
         color: '#fbc02d',
       };
     case 'END_NODE':
       return {
+        title: formatMessage(nodeMessages.endNodeTitle),
+        subtitle: '',
         iconType: 'check',
         color: '#18b577',
       };
     case 'WAIT_NODE':
       return {
+        title: formatMessage(nodeMessages.waitNodeTitle),
+        subtitle: '',
         iconAnt: 'clock-circle',
         color: '#fbc02d',
       };
     default:
       return {
+        title: 'Node',
+        subtitle: '',
         iconType: 'info',
         color: '#fbc02d',
       };
@@ -749,7 +803,6 @@ export const buildAutomationTreeData = (
         ...node,
         formData: {
           ...res.data,
-          name: '',
           uiCreationMode: 
             node.ui_creation_mode === 'REACT_TO_EVENT_STANDARD' || 
             node.ui_creation_mode === 'REACT_TO_EVENT_ADVANCED' ?
@@ -798,7 +851,11 @@ export function buildStorylineNodeModel(
   };
 }
 
-export type WizardValidObjectTypeField = { objectTypeName: string, fieldName: string, objectTypeQueryName?: string };
+export type WizardValidObjectTypeField = {
+  objectTypeName: string;
+  fieldName: string;
+  objectTypeQueryName?: string;
+};
 export const wizardValidObjectTypes: WizardValidObjectTypeField[] = [
   { objectTypeName: 'ActivityEvent', fieldName: 'nature' },
   { objectTypeName: 'ActivityEvent', fieldName: 'name' },
@@ -806,23 +863,30 @@ export const wizardValidObjectTypes: WizardValidObjectTypeField[] = [
   { objectTypeName: 'UserEvent', fieldName: 'name' },
 ];
 
-export const getValidObjectTypesForWizardReactToEvent = (objectTypes: ObjectLikeTypeResource[]): ObjectLikeTypeResource[] => {
-  return objectTypes.filter(objectType =>
-    !!wizardValidObjectTypes.find(
-      validObjectType => validObjectType.objectTypeName === objectType.name,
-    ),
+export const getValidObjectTypesForWizardReactToEvent = (
+  objectTypes: ObjectLikeTypeResource[],
+): ObjectLikeTypeResource[] => {
+  return objectTypes.filter(
+    objectType =>
+      !!wizardValidObjectTypes.find(
+        validObjectType => validObjectType.objectTypeName === objectType.name,
+      ),
   );
-}
+};
 
-export const getValidFieldsForWizardReactToEvent = (objectType: ObjectLikeTypeResource, fields: FieldResource[]): FieldResource[] => {
-  return fields.filter(field =>
-    !!wizardValidObjectTypes.find(
-      validObjectType =>
-        validObjectType.objectTypeName === objectType.name &&
-        field.name === validObjectType.fieldName,
-    ),
+export const getValidFieldsForWizardReactToEvent = (
+  objectType: ObjectLikeTypeResource,
+  fields: FieldResource[],
+): FieldResource[] => {
+  return fields.filter(
+    field =>
+      !!wizardValidObjectTypes.find(
+        validObjectType =>
+          validObjectType.objectTypeName === objectType.name &&
+          field.name === validObjectType.fieldName,
+      ),
   );
-}
+};
 
 export const getEventsNames = (
   datamartId: string,
@@ -895,7 +959,7 @@ export const predefinedEventNames = [
   '$email_click',
   '$email_view',
 ];
- 
+
 export const getDatamartPredefinedEventNames = (
   datamartId: string,
   validObjectType: WizardValidObjectTypeField,
@@ -921,7 +985,9 @@ export const getDatamartPredefinedEventNames = (
     .then(oTQLBuckets => {
       return oTQLBuckets.buckets
         .map(({ key }) => key)
-        .filter(eventName => predefinedEventNames.includes(eventName)) as PredefinedEventNames[];
+        .filter(eventName =>
+          predefinedEventNames.includes(eventName),
+        ) as PredefinedEventNames[];
     })
     .catch(() => {
       return [];
@@ -1012,3 +1078,70 @@ export const getValidObjectType = (
         });
     });
 };
+
+const nodeMessages = defineMessages({
+  queryInputNodeTitle: {
+    id: 'automation.builder.node.queryInput.title',
+    defaultMessage: 'Enter Automation',
+  },
+  livequeryInputNodeSubtitle: {
+    id: 'automation.builder.node.queryInput.live.subtitle',
+    defaultMessage: 'Live evaluation',
+  },
+  periodicQueryInputNodeSubtitle: {
+    id: 'automation.builder.node.queryInput.periodic.title',
+    defaultMessage: 'Evaluated every {frequency} {timeUnit}',
+  },
+  onAudienceSegmentEntryNodeTitle: {
+    id: 'automation.builder.node.onAudienceSegmentEntry.title',
+    defaultMessage: 'Enter Automation',
+  },
+  onAudienceSegmentEntryNodeSubtitle: {
+    id: 'automation.builder.node.onAudienceSegmentEntry.subtitle',
+    defaultMessage: 'On audience segment entry',
+  },
+  onAudienceSegmentExitNodeTitle: {
+    id: 'automation.builder.node.onAudienceSegmentExit.title',
+    defaultMessage: 'Enter Automation',
+  },
+  onAudienceSegmentExitNodeSubtitle: {
+    id: 'automation.builder.node.onAudienceSegmentExit.subtitle',
+    defaultMessage: 'On audience segment exit',
+  },
+  displayCampaignNodeTitle: {
+    id: 'automation.builder.node.displayCampaign.title',
+    defaultMessage: 'Display Advertising',
+  },
+  displayCampaignNodeSubtitle: {
+    id: 'automation.builder.node.displayCampaign.subtitle',
+    defaultMessage: 'Exit on visit',
+  },
+  emailCampaignNodeTitle: {
+    id: 'automation.builder.node.emailCampaign.title',
+    defaultMessage: 'Email Campaign',
+  },
+  addToSegmentNodeTitle: {
+    id: 'automation.builder.node.addToSegment.title',
+    defaultMessage: 'Add to Segment',
+  },
+  deleteFromSegmentNodeTitle: {
+    id: 'automation.builder.node.deleteFromSegment.title',
+    defaultMessage: 'Delete from Segment',
+  },
+  abnNodeTitle: {
+    id: 'automation.builder.node.abn.title',
+    defaultMessage: 'Split',
+  },
+  ifNodeTitle: {
+    id: 'automation.builder.node.if.title',
+    defaultMessage: 'If',
+  },
+  waitNodeTitle: {
+    id: 'automation.builder.node.wait.title',
+    defaultMessage: 'Wait',
+  },
+  endNodeTitle: {
+    id: 'automation.builder.node.end.title',
+    defaultMessage: 'Exit Automation',
+  },
+});

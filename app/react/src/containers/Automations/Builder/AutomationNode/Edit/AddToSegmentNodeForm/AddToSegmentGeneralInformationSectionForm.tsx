@@ -78,7 +78,7 @@ class AddToSegmentGeneralInformationFormSection extends React.Component<Props, S
         />
         <div>
           <FormInputField
-            name="name"
+            name="audienceSegmentName"
             component={FormInput}
             validate={[isRequired]}
             formItemProps={{

@@ -22,6 +22,7 @@ export default class AutomationNodeModel extends NodeModel {
   datamartId: string;
   iconType: McsIconType;
   title: string;
+  subtitle?: string;
   color: string;
   storylineNodeModel: StorylineNodeModel;
   editFormComponent: React.ComponentClass<AutomationFormPropsType>;
@@ -35,6 +36,7 @@ export default class AutomationNodeModel extends NodeModel {
     datamartId?: string,
     storylineNodeModel?: StorylineNodeModel,
     title?: string,
+    subtitle?: string,
     color?: string,
     iconType?: McsIconType,
     iconAnt?: AntIcon,
@@ -54,6 +56,7 @@ export default class AutomationNodeModel extends NodeModel {
     }
     this.datamartId = datamartId;
     this.title = title;
+    this.subtitle = subtitle;
     this.color = color;
     this.storylineNodeModel = storylineNodeModel;
     this.iconAnt = iconAnt;

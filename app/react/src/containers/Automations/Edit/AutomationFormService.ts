@@ -224,7 +224,7 @@ export class AutomationFormService implements IAutomationFormService {
                   .loadCampaign(n.campaign_id)
                   .then(campaignResp => {
                     const initialValues = {
-                      name: n.name,
+                      name: campaignResp.campaign.name, 
                       campaign: campaignResp.campaign,
                       blastFields: campaignResp.blastFields,
                       routerFields: campaignResp.routerFields,
@@ -245,7 +245,7 @@ export class AutomationFormService implements IAutomationFormService {
                       n.user_segment_expiration_period,
                     );
                     const initialValues: AddToSegmentAutomationFormData = {
-                      name: segment.name,
+                      audienceSegmentName: segment.name,
                       ttl: {
                         value: n.user_segment_expiration_period
                           ? duration._months > 0
@@ -267,7 +267,7 @@ export class AutomationFormService implements IAutomationFormService {
                   .getSegment(n.user_list_segment_id)
                   .then(({ data: segment }) => {
                     const initialValues: DeleteFromSegmentAutomationFormData = {
-                      name: segment.name,
+                      audienceSegmentName: segment.name,
                       segmentId: n.user_list_segment_id,
                     };
                     return {
@@ -281,7 +281,6 @@ export class AutomationFormService implements IAutomationFormService {
                 const abnFormData: ABNFormData = {
                   branch_number: n.branch_number ? n.branch_number : 2,
                   edges_selection: n.edges_selection,
-                  name: 'Split',
                 };
                 getPromise = Promise.resolve().then(() => ({
                   ...n,
@@ -293,7 +292,6 @@ export class AutomationFormService implements IAutomationFormService {
                   // We type it any as Duration have a field _months that we can't access otherwise
                   const duration: any = moment.duration(n.delay_period);
                   const initialValues: WaitFormData = {
-                    name: 'Wait',
                     wait_duration: {
                       value:
                         duration._days > 0
@@ -617,7 +615,7 @@ export class AutomationFormService implements IAutomationFormService {
               : this.saveAudienceSegment(
                   organisationId,
                   datamartId,
-                  node.formData.name,
+                  node.formData.audienceSegmentName ? node.formData.audienceSegmentName : ''
                 );
             return saveOrCreateSegmentPromise.then(audienceSegmentId => {
               return this.saveOrCreateNode(
@@ -768,7 +766,6 @@ export class AutomationFormService implements IAutomationFormService {
     if (isDisplayCampaignNode(node)) {
       scenarioNodeResource = {
         id: node.id && !isFakeId(node.id) ? node.id : undefined,
-        name: node.name,
         scenario_id: automationId,
         type: node.type,
         ad_group_id: campaignIds ? campaignIds.ad_group_id : undefined,
@@ -781,7 +778,6 @@ export class AutomationFormService implements IAutomationFormService {
     } else if (isEmailCampaignNode(node)) {
       scenarioNodeResource = {
         id: node.id && !isFakeId(node.id) ? node.id : undefined,
-        name: node.name,
         scenario_id: automationId,
         type: node.type,
         campaign_id: campaignIds ? campaignIds.campaign_id : undefined,
@@ -793,7 +789,6 @@ export class AutomationFormService implements IAutomationFormService {
     } else if (isQueryInputNode(node)) {
       scenarioNodeResource = {
         id: node.id && !isFakeId(node.id) ? node.id : undefined,
-        name: node.name,
         scenario_id: automationId,
         type: 'QUERY_INPUT',
         query_id: queryId,
@@ -807,7 +802,6 @@ export class AutomationFormService implements IAutomationFormService {
     } else if (isOnSegmentEntryInputNode(node)) {
       scenarioNodeResource = {
         id: node.id && !isFakeId(node.id) ? node.id : undefined,
-        name: node.name,
         scenario_id: automationId,
         type: 'ON_SEGMENT_ENTRY_INPUT_NODE',
         audience_segment_id: node.formData.segmentId
@@ -816,7 +810,6 @@ export class AutomationFormService implements IAutomationFormService {
     } else if (isOnSegmentExitInputNode(node)) {
       scenarioNodeResource = {
         id: node.id && !isFakeId(node.id) ? node.id : undefined,
-        name: node.name,
         scenario_id: automationId,
         type: 'ON_SEGMENT_EXIT_INPUT_NODE',
         audience_segment_id: node.formData.segmentId
@@ -825,7 +818,6 @@ export class AutomationFormService implements IAutomationFormService {
     } else if (isAddToSegmentNode(node)) {
       scenarioNodeResource = {
         id: node.id && !isFakeId(node.id) ? node.id : undefined,
-        name: node.name,
         scenario_id: automationId,
         type: node.type,
         user_list_segment_id: audienceSegmentId,
@@ -839,7 +831,6 @@ export class AutomationFormService implements IAutomationFormService {
     } else if (isDeleteFromSegmentNode(node)) {
       scenarioNodeResource = {
         id: node.id && !isFakeId(node.id) ? node.id : undefined,
-        name: node.name,
         scenario_id: automationId,
         type: node.type,
         user_list_segment_id: audienceSegmentId,
@@ -848,7 +839,6 @@ export class AutomationFormService implements IAutomationFormService {
     } else if (isIfNode(node)) {
       scenarioNodeResource = {
         id: node.id && !isFakeId(node.id) ? node.id : undefined,
-        name: node.name,
         scenario_id: automationId,
         query_id: queryId,
         type: 'IF_NODE',
@@ -857,7 +847,6 @@ export class AutomationFormService implements IAutomationFormService {
     } else if (isAbnNode(node)) {
       scenarioNodeResource = {
         id: node.id && !isFakeId(node.id) ? node.id : undefined,
-        name: node.name,
         scenario_id: automationId,
         type: 'ABN_NODE',
       };
@@ -865,7 +854,6 @@ export class AutomationFormService implements IAutomationFormService {
     } else if (isEndNode(node)) {
       scenarioNodeResource = {
         id: node.id && !isFakeId(node.id) ? node.id : undefined,
-        name: node.name,
         scenario_id: automationId,
         type: 'END_NODE',
       };
@@ -873,7 +861,6 @@ export class AutomationFormService implements IAutomationFormService {
     } else if (isWaitNode(node)) {
       scenarioNodeResource = {
         id: node.id && !isFakeId(node.id) ? node.id : undefined,
-        name: node.name,
         scenario_id: automationId,
         delay_period: moment
           .duration(

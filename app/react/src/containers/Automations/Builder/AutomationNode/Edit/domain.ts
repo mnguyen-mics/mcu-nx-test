@@ -29,7 +29,6 @@ import { AddToSegmentAutomationFormProps } from './AddToSegmentNodeForm/AddToSeg
 import { DeleteFromSegmentAutomationFormProps } from './DeleteFromSegmentNodeForm/DeleteFromSegmentAutomationForm';
 
 export interface DefaultFormData {
-  name: string;
 }
 
 export interface ABNFormData extends DefaultFormData {
@@ -45,7 +44,6 @@ export interface WaitFormData extends DefaultFormData {
 }
 
 export const INITIAL_ADD_TO_SEGMENT_NODE_FORM_DATA: AddToSegmentAutomationFormData = {
-  name: '',
   ttl: {
     value: undefined,
     unit: 'days',
@@ -53,12 +51,10 @@ export const INITIAL_ADD_TO_SEGMENT_NODE_FORM_DATA: AddToSegmentAutomationFormDa
 }
 
 export const INITIAL_DELETE_FROM_SEGMENT_NODE_FORM_DATA: DeleteFromSegmentAutomationFormData = {
-  name: 'Delete from Segment',
   segmentId: undefined,
 }
 
 export const INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA: DisplayCampaignAutomationFormData = {
-  name: 'Display Advertising',
   campaign: {
     organisation_id: '',
     name: 'Display Advertising',
@@ -100,8 +96,6 @@ export const INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA: DisplayCampaignAutomationF
 };
 
 export const INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA: EmailCampaignAutomationFormData = {
-  name: 'Send Email',
-
   blastFields: [
     {
       key: generateFakeId(),
@@ -137,7 +131,6 @@ export const INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA: EmailCampaignAutomationFormD
 };
 
 export const INITIAL_WAIT_DATA: WaitFormData = {
-  name: 'Wait',
   wait_duration: {
     unit: 'days',
     value: '2'
@@ -151,6 +144,7 @@ export interface EmailCampaignAutomationFormData extends DefaultFormData, EmailC
 }
 
 export interface AddToSegmentAutomationFormData extends DefaultFormData {
+  audienceSegmentName?: string;
   ttl: {
     value?: string,
     unit: 'days' | 'months',
@@ -159,6 +153,7 @@ export interface AddToSegmentAutomationFormData extends DefaultFormData {
 
 export interface DeleteFromSegmentAutomationFormData extends DefaultFormData {
   segmentId?: string;
+  audienceSegmentName?: string;
 }
 
 export interface OnSegmentEntryInputAutomationFormData extends DefaultFormData {
