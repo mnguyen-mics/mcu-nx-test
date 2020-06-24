@@ -14,7 +14,7 @@ const prodConfig = {
 
   entry: {
     'plateforme.alliancegravity.com/style-less': paths.appGravityStyleLess,
-    'converged-ww2.havas.com/style-less': paths.appGravityStyleLess,
+    'converged-ww2.havas.com/style-less': paths.appConvergedStyleLess,
     'app.teamjoin.fr/style-less': paths.appTeamjoinStyleLess,
     'console.valiuz.com/style-less': paths.appValiuzStyleLess,
   },
@@ -34,7 +34,7 @@ const prodConfig = {
       inject: true,
       template: paths.appDistHtml,
       filename: '../index.html',
-      excludeAssets: [/(plateforme|app|console).*\/style.*.(css|js)/], // let's find a better way to handle style when we sign a new white label
+      excludeAssets: [/(plateforme|app|console|converged-ww2).*\/style.*.(css|js)/], // let's find a better way to handle style when we sign a new white label
     }),
     new HtmlWebpackExcludeAssetsPlugin(),
     new webpack.DefinePlugin({
