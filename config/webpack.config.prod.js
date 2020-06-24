@@ -14,6 +14,7 @@ const prodConfig = {
 
   entry: {
     'plateforme.alliancegravity.com/style-less': paths.appGravityStyleLess,
+    'converged-ww2.havas.com/style-less': paths.appGravityStyleLess,
     'app.teamjoin.fr/style-less': paths.appTeamjoinStyleLess,
     'console.valiuz.com/style-less': paths.appValiuzStyleLess,
   },
