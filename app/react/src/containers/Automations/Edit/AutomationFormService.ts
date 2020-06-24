@@ -315,8 +315,7 @@ export class AutomationFormService implements IAutomationFormService {
                     formData: {
                       ...q.data,
                       name: name,
-                      uiCreationMode: 
-                        n.ui_creation_mode === 'EVENT' ? 'QUERY' : n.ui_creation_mode
+                      uiCreationMode: n.ui_creation_mode
                     },
                   }));
                 break;
