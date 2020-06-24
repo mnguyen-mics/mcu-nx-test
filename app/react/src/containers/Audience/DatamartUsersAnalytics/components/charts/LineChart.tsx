@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import * as Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import cuid from 'cuid';
 
 export interface LineChartProps {
   options:  Highcharts.Options;
+  style?: CSSProperties;
 }
 
 type Props = LineChartProps;

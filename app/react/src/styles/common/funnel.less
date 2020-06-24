@@ -1,0 +1,190 @@
+canvas {
+  background-image: linear-gradient(to bottom, rgba(26, 210, 242, 0.39), rgba(11, 166, 225, 0.15));
+  flex: 1;
+
+}
+
+.arrow {
+  width: 60px;
+  height: 60px;
+  display: inline-block;
+  transform: rotate(180deg);
+
+  &:before {
+    position: absolute;
+    content: '';
+    border: none;
+    height: 60%;
+    width: 45%;
+    top: 50%;
+    left: 28%;
+  }
+
+
+
+  &:after {
+    content: '';
+    border-color: transparent;
+    border-style: solid;
+    position: absolute;
+    left: 0;
+    top: -50%;
+    border-width: 30px 30px;
+  }
+}
+
+
+.arrow-success {
+
+  &:before {
+    background-color: #67c79f;
+  }
+
+  &:after {
+    border-bottom-color: #67c79f;
+  }
+}
+
+.arrow-failed {
+
+  &:before {
+    background-color: #f8939b;
+  }
+
+  &:after {
+    border-bottom-color: #f8939b;
+  }
+}
+
+
+.arrow-step {
+  width: 60px;
+  height: 60px;
+  display: inline-block;
+  transform: rotate(90deg);
+  vertical-align: middle;
+
+  &:before {
+    position: absolute;
+    content: '';
+    border: none;
+    height: 60%;
+    width: 45%;
+    top: 50%;
+    left: 28%;
+    background-color: #678298;
+  }
+
+
+
+  &:after {
+    content: '';
+    border-color: transparent;
+    border-style: solid;
+    position: absolute;
+    left: 0;
+    top: -50%;
+    border-width: 30px 30px;
+    border-bottom-color: #678298;
+  }
+}
+
+.conversion-info {
+  margin: 0 auto;
+  text-align: center;
+  margin-top: -8%;
+  padding-bottom: 15px;
+}
+
+
+.step-info {
+  position: absolute;
+  top: 5%;
+  left: -6%;
+
+  p {
+    display: inline-block;
+    vertical-align: middle;
+    width: 46%;
+    margin-left: 3%;
+  }
+}
+
+
+.mcs-funnel {
+  border: 1px solid @border-color-split;
+}
+
+.mcs-funnel_userPoints,
+.mcs-funnel_stepName {
+  padding: 15px;
+}
+
+.mcs-funnel_stepName {
+  border-bottom: 1px solid @border-color-split;
+}
+
+.mcs-funnel_stepName--middle,
+.mcs-funnel_userPoints--middle,
+.mcs-funnel_chart--middle {
+  border-left: 1px solid @border-color-split;
+  border-right: 1px solid @border-color-split;
+}
+
+.mcs-funnel_header_title,
+.mcs-funnel_stepName_desc,
+.mcs-funnel_stepInfo {
+  font-size: 12px;
+  font-family: "LLCircularWeb-Book";
+  color: @primary-color;
+}
+
+.mcs-funnel_userPoints_title {
+  margin-bottom: 8px;
+  font-size: 10px;
+  font-family: "LLCircularWeb-Book";
+  color: @primary-color;
+}
+
+
+.mcs-funnel_userPoints_nbr {
+  font-size: 14px;
+  font-family: "LLCircularWeb-Medium";
+  font-weight: 500;
+  color: @primary-color;
+}
+
+.mcs-funnel_stepName_title {
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-family: "LLCircularWeb-Book";
+  font-weight: bold;
+  letter-spacing: normal; 
+  color: @primary-color;
+}
+
+.mcs-funnel_chart {
+  overflow: hidden;
+}
+
+.mcs-funnel_header_title {
+  display: inline;
+}
+
+.mcs-funnel_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px;
+  border-bottom: 1px solid @border-color-split;
+}
+
+.mcs-funnel_header_datePicker {
+  width: 146px;
+  height: 33px;
+  border-radius: 4px;
+  border: solid 1px #e1e1e1;
+  background-color: #ffffff;
+  color: @primary-color;
+}
+
