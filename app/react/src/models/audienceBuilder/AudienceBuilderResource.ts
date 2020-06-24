@@ -1,3 +1,4 @@
+import { ParametricPredicateResource } from './../parametricPredicate/ParametricPredicateResource';
 import {
   QueryBooleanOperator,
   QueryFieldComparisonShape,
@@ -50,7 +51,6 @@ export function isAudienceBuilderObjectNode(
   return nodeModel.type === 'OBJECT';
 }
 
-
 export function isAudienceBuilderFieldNode(
   node: AudienceBuilderNodeShape,
 ): node is AudienceBuilderFieldNode {
@@ -63,6 +63,7 @@ export interface AudienceBuilderGroupNode {
 }
 export interface AudienceBuilderFieldNode {
   key: string;
+  parametricPredicateResource?: ParametricPredicateResource;
   model: AudienceBuilderFieldNodeModel;
 }
 
@@ -70,7 +71,6 @@ export type AudienceBuilderNodeShape =
   | AudienceBuilderFieldNode
   | AudienceBuilderGroupNode;
 
-  
 export interface AudienceBuilderFormData {
   datamart_id?: string;
   where: {

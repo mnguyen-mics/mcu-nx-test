@@ -71,24 +71,14 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
     } = this.props;
     const columns: Array<DataColumnDefinition<ParametricPredicateResource>> = [
       {
-        intlMessage: messages.audienceFeatureId,
-        key: 'id',
-        render: (text, record) => <span>{record.id}</span>,
-      },
-      {
         intlMessage: messages.audienceFeatureName,
         key: 'name',
         render: (text, record) => <span>{record.name}</span>,
       },
       {
-        intlMessage: messages.audienceFeatureAdressableObject,
-        key: 'addressable_object',
-        render: (text, record) => <span>{record.addressable_object}</span>,
-      },
-      {
-        intlMessage: messages.audienceFeatureObjectTreeExpression,
-        key: 'object_tree_expression',
-        render: (text, record) => <span>{record.object_tree_expression}</span>,
+        intlMessage: messages.audienceFeatureDescription,
+        key: 'description',
+        render: (text, record) => <span>{record.description}</span>,
       },
     ];
 

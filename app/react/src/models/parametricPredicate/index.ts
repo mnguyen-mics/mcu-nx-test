@@ -1,2 +1,2 @@
-import { ParametricPredicateResource } from './ParametricPredicateResource';
-export { ParametricPredicateResource };
+import { ParametricPredicateResource, ParametricPredicateType } from './ParametricPredicateResource';
+export { ParametricPredicateResource, ParametricPredicateType };

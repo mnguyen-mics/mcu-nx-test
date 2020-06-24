@@ -92,6 +92,9 @@ class QueryFragmentFormSection extends React.Component<Props> {
 
     const newFeature: AudienceBuilderFieldNode = {
       key: cuid(),
+      parametricPredicateResource: {
+        ...audienceFeatures[0],
+      },
       model: {
         type: 'FIELD',
         field: audienceFeatures[0].name,
@@ -149,11 +152,13 @@ class QueryFragmentFormSection extends React.Component<Props> {
                 <React.Fragment key={expressionField.key}>
                   {index !== 0 && (
                     <div className="mcs-segmentBuilder_queryButtons">
-                      {intl.formatMessage(messages.narrowingWith)}
+                      {expressionField.model.negation
+                        ? intl.formatMessage(messages.excludingWith)
+                        : intl.formatMessage(messages.narrowingWith)}
                     </div>
                   )}
                   <Card
-                    className="mcs-segmentBuilder_categoryCard"
+                    className={'mcs-segmentBuilder_categoryCard'}
                     title={
                       index === 0
                         ? intl.formatMessage(messages.demographics)
@@ -173,15 +178,18 @@ class QueryFragmentFormSection extends React.Component<Props> {
                     <AudienceFeatureFieldArray
                       name={`where.expressions[${index}].model.expressions`}
                       component={AudienceFeatureFormSection}
+                      isDemographicsSection={index === 0}
                     />
-                    <div className="mcs-segmentBuilder_categoryCardFooter">
-                      <Button
-                        onClick={this.addFeature(expressionField.key)}
-                        className="mcs-segmentBuilder_moreButton"
-                      >
-                       {intl.formatMessage(messages.addAudienceFeature)}
-                      </Button>
-                    </div>
+                    {index !== 0 && (
+                      <div className="mcs-segmentBuilder_categoryCardFooter">
+                        <Button
+                          onClick={this.addFeature(expressionField.key)}
+                          className="mcs-segmentBuilder_moreButton"
+                        >
+                          {intl.formatMessage(messages.addAudienceFeature)}
+                        </Button>
+                      </div>
+                    )}
                   </Card>
                 </React.Fragment>
               )

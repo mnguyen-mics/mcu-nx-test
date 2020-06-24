@@ -57,6 +57,10 @@ export const messages: {
     id: 'segmentBuilderSelector.category.narrowingWith',
     defaultMessage: 'narrowing with',
   },
+  excludingWith: {
+    id: 'segmentBuilderSelector.category.excludingWith',
+    defaultMessage: 'excluding with',
+  },
   purchasIntent: {
     id: 'segmentBuilderSelector.liveDashboard.purchaseIntent',
     defaultMessage: 'Purchase Intent',
@@ -92,6 +96,10 @@ export const messages: {
   audienceFeatureName:{
     id: 'segmentBuilderSelector.audienceFeatureSelector.name',
     defaultMessage: 'Name',
+  },
+  audienceFeatureDescription:{
+    id: 'segmentBuilderSelector.audienceFeatureSelector.description',
+    defaultMessage: 'Description',
   },
   searchAudienceFeature:{
     id: 'segmentBuilderSelector.audienceFeatureSelector.searchPlaceholder',
@@ -130,7 +138,7 @@ export const INITIAL_AUDIENCE_BUILDER_FORM_DATA: AudienceBuilderFormData = {
               key: cuid(),
               model: {
                 type: 'FIELD',
-                field: 'gender',
+                field: 'Gender',
                 comparison: {
                   type: 'STRING',
                   operator: 'EQ',
@@ -142,7 +150,7 @@ export const INITIAL_AUDIENCE_BUILDER_FORM_DATA: AudienceBuilderFormData = {
               key: cuid(),
               model: {
                 type: 'FIELD',
-                field: 'age',
+                field: 'Age',
                 comparison: {
                   type: 'STRING',
                   operator: 'EQ',
@@ -154,7 +162,7 @@ export const INITIAL_AUDIENCE_BUILDER_FORM_DATA: AudienceBuilderFormData = {
               key: cuid(),
               model: {
                 type: 'FIELD',
-                field: 'language',
+                field: 'Languages',
                 comparison: {
                   type: 'STRING',
                   operator: 'EQ',

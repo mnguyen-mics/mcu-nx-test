@@ -2,8 +2,17 @@
   min-height: auto;
   .mcs-segmentBuilder_categoryCard {
     margin: 40px;
+    padding: 0px 0px 15px 0px;
+    .mcs-card-header {
+      padding: 20px;
+      border-bottom: 1px solid #d3dbe1;
+    }
     .mcs-segmentBuilder_closeButton {
       border: none;
+      font-size: 20px;
+      padding: 0;
+      float: right;
+      line-height: 36px;
     }
     .ant-select {
       min-width: 176px;
@@ -70,16 +79,38 @@
       }
     }
   }
-  .mcs-segmentBuilder-audienceFeature:not(:first-child) {
-    margin-top: 15px;
+  .mcs-segmentBuilder_audienceFeature:not(:first-child) {
+    padding-top: 15px;
   }
-  .mcs-segmentBuilder-audienceFeature {
+  .mcs-segmentBuilder_demographicFeature,
+  .mcs-segmentBuilder_audienceFeature {
+    padding: 20px;
+    .mcs-segmentBuilder_audienceFeatureName {
+      font-size: 12px;
+      font-weight: 500;
+    }
+  }
+  .mcs-segmentBuilder_audienceFeature {
     border-bottom: 1px solid @border-color-split;
     padding-bottom: 15px;
+    border-bottom: 1px solid #d3dbe1;
+    .mcs-segmentBuilder_audienceFeatureName {
+      color: @primary-color;
+      line-height: 20px;
+    }
+    .mcs-segmentBuilder_audienceFeatureDescription {
+      margin-bottom: 20px;
+    }
+    .mcs-segmentBuilder_closeButton {
+      font-size: 15px;
+    }
+    .mcs-segmentBuilder_audienceFeatureInput {
+      margin: 10px 0;
+    }
   }
 
   .mcs-segmentBuilder_categoryCardFooter {
     text-align: center;
-    padding-top: 20px;
+    padding: 20px 25px 25px 25px;
   }
 }
