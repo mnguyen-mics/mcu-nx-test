@@ -75,17 +75,22 @@ function buildReport(
   const dimensionFilterClausesCopy  = dimensionFilterClauses ? {...dimensionFilterClauses} : undefined;
 
   if (dimensionFilterClausesCopy && segmentId) {
+    const hasSegmentFilter = dimensionFilterClausesCopy.filters.find(filter => filter.expressions[0] === segmentId);
     dimensionFilterClausesCopy.operator = 'AND';
     const filters = dimensionFilterClausesCopy.filters.slice();
-    filters.push({
-      dimension_name: 'segment_id',
-      not: false,
-      operator: 'EXACT',
-      expressions: [
-        segmentId
-      ],
-      case_sensitive: false
-    });
+    
+    if (!hasSegmentFilter) {
+      filters.push({
+        dimension_name: 'segment_id',
+        not: false,
+        operator: 'EXACT',
+        expressions: [
+          segmentId
+        ],
+        case_sensitive: false
+      });
+    }
+
     if(segmentIdToAggregate) {
       filters.push({
         dimension_name: 'segment_id',
