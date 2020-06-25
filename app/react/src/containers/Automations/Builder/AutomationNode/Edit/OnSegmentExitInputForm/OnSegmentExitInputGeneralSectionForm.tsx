@@ -13,11 +13,11 @@ import {
   withValidators,
   FormSection,
 } from '../../../../../../components/Form';
-import { FormSearchObjectField } from '../../../../../QueryTool/JSONOTQL/Edit/Sections/Field/FieldNodeForm';
-import FormSearchObject from '../../../../../../components/Form/FormSelect/FormSearchObject';
+import { FormInfiniteSearchObjectField } from '../../../../../QueryTool/JSONOTQL/Edit/Sections/Field/FieldNodeForm';
 import SegmentNameDisplay from '../../../../../Audience/Common/SegmentNameDisplay';
 import { RouteComponentProps, withRouter } from 'react-router';
 import injectNotifications, { InjectedNotificationProps } from '../../../../../Notifications/injectNotifications';
+import FormInfiniteSearchObject from '../../../../../../components/Form/FormSelect/FormInfiniteSearchObject';
 
 interface State {}
 
@@ -44,7 +44,7 @@ class OnSegmentExitInputGeneralSectionForm extends React.Component<
     super(props);
   }
 
-  fetchListMethod = (keywords: string) => {
+  fetchListMethod = (keywords: string, firstResult: number, maxResults: number) => {
     const {
       match: {
         params: { organisationId },
@@ -56,7 +56,17 @@ class OnSegmentExitInputGeneralSectionForm extends React.Component<
     } = this.props;
 
     return this._audienceSegmentService
-      .getSegments(organisationId, { keywords, type: ['USER_QUERY'], persisted: true, datamart_id: datamartId })
+      .getSegments(
+        organisationId, 
+        { 
+          keywords, 
+          type: ['USER_QUERY'], 
+          persisted: true,
+          datamart_id: datamartId,
+          first_result: firstResult,
+          max_results: maxResults,
+        }
+        )
       .then(({ data: segments }) =>
         segments.map(r => ({
           key: r.id,
@@ -91,9 +101,9 @@ class OnSegmentExitInputGeneralSectionForm extends React.Component<
           subtitle={messages.sectionGeneralSubtitle}
           title={messages.sectionGeneralTitle}
         />
-        <FormSearchObjectField
+        <FormInfiniteSearchObjectField
           name="segmentId"
-          component={FormSearchObject}
+          component={FormInfiniteSearchObject}
           validate={[isRequired]}
           formItemProps={{
             label: formatMessage(messages.SegmentExitInputNameTitle),
