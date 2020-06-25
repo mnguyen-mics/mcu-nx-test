@@ -138,6 +138,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
               inputProps={{
                 datamartId: datamartId!,
                 context: 'GOALS',
+                isEdge: (initialValues.audienceSegment as UserListSegment).subtype === "EDGE",
               }}
             />,
           )

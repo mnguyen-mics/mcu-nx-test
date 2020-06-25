@@ -25,6 +25,7 @@ export interface FieldNodeFormWrapperProps
   datamartId: string;
   runFieldProposal?: FieldProposalLookup
   treeNodePath?: number[];
+  isEdge: boolean
 }
 
 type Props = InjectedFormProps<
@@ -41,14 +42,14 @@ class FieldNodeFormWrapper extends React.Component<Props, any> {
   //  * Same a getQueryableObjectTypes but for scalar types
   //  */
   getQueryableFields = () => {
-    const { objectTypes, objectType } = this.props;
+    const { objectTypes, objectType, isEdge } = this.props;
 
     return objectType.fields.filter(
       f =>
         !objectTypes.find(ot => {
           const match = f.field_type.match(/\w+/);
           return !!(match && match[0] === ot.name);
-        }) && f.directives.find(dir => dir.name === 'TreeIndex'),
+        }) && f.directives.find(dir => dir.name === 'TreeIndex') && (isEdge ? f.directives.find(dir => dir.name === 'EdgeAvailability') : true),
     );
   };
 

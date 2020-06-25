@@ -261,7 +261,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
               <SchemaVizualizer
                 schema={
                   rawSchema && rawSchema.length > 0
-                    ? computeFinalSchemaItem(rawSchema, startType, false, false)
+                    ? computeFinalSchemaItem(rawSchema, startType, false, false, false)
                     : undefined
                 }
                 disableDragAndDrop={true}

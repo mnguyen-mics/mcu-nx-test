@@ -28,7 +28,8 @@ interface FieldNodeWidgetProps {
   keyboardOnlyLock: (lock: boolean) => void;
   objectTypes: ObjectLikeTypeInfoResource[];
   datamartId: string;
-  runFieldProposal: FieldProposalLookup
+  runFieldProposal: FieldProposalLookup;
+  isEdge: boolean;
 
 }
 
@@ -250,6 +251,7 @@ class FieldNodeWidget extends React.Component<Props, State> {
           form={this.formName}
           treeNodePath={node.treeNodePath}
           runFieldProposal={runFieldProposal}
+          isEdge={this.props.isEdge}
         />
        
       </div>
