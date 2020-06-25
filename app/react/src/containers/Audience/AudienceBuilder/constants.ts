@@ -57,6 +57,10 @@ export const messages: {
     id: 'segmentBuilderSelector.category.narrowingWith',
     defaultMessage: 'narrowing with',
   },
+  excludingWith: {
+    id: 'segmentBuilderSelector.category.excludingWith',
+    defaultMessage: 'excluding with',
+  },
   purchasIntent: {
     id: 'segmentBuilderSelector.liveDashboard.purchaseIntent',
     defaultMessage: 'Purchase Intent',
@@ -69,49 +73,46 @@ export const messages: {
     id: 'segmentBuilderSelector.audienceFeature.card.title',
     defaultMessage: 'Audience Features',
   },
+  addAudienceFeature: {
+    id: 'segmentBuilderSelector.audienceFeatureSelector.actionBarTitle',
+    defaultMessage: 'Add more audience features',
+  },
   noDemographicExpressions: {
     id: 'segmentBuilderSelector.category.demographics.noDemographicExpressions',
     defaultMessage: 'No Demographic Expressions',
   },
-
-  // to delete
-  industry: {
-    id: 'segmentBuilderSelector.geographics.test1',
-    defaultMessage: 'Industry',
+  generalSectionTitle: {
+    id: 'segmentBuilderSelector.parametricPredicateForm.generalSectionTitle',
+    defaultMessage: 'Audience Feature',
   },
-  automotive: {
-    id: 'segmentBuilderSelector.geographics.test2',
-    defaultMessage: 'Automotive',
+  generalSectionSubtitle: {
+    id: 'segmentBuilderSelector.parametricPredicateForm.generalSectionSubtitle',
+    defaultMessage: 'Select your audience features',
   },
-  region: {
-    id: 'segmentBuilderSelector.geographics.test3',
-    defaultMessage: 'Region',
+  audienceFeatureId:{
+    id: 'segmentBuilderSelector.audienceFeatureSelector.id',
+    defaultMessage: 'ID',
   },
-  name: {
-    id: 'segmentBuilderSelector.geographics.test4',
+  audienceFeatureName:{
+    id: 'segmentBuilderSelector.audienceFeatureSelector.name',
     defaultMessage: 'Name',
   },
-  height: {
-    id: 'segmentBuilderSelector.geographics.test5',
-    defaultMessage: 'Height',
+  audienceFeatureDescription:{
+    id: 'segmentBuilderSelector.audienceFeatureSelector.description',
+    defaultMessage: 'Description',
   },
-  weight: {
-    id: 'segmentBuilderSelector.geographics.test6',
-    defaultMessage: 'Weight',
+  searchAudienceFeature:{
+    id: 'segmentBuilderSelector.audienceFeatureSelector.searchPlaceholder',
+    defaultMessage: 'Search an audience feature',
   },
-  food: {
-    id: 'segmentBuilderSelector.geographics.test7',
-    defaultMessage: 'Food',
+  audienceFeatureAdressableObject:{
+    id: 'segmentBuilderSelector.audienceFeatureSelector.adressableObject',
+    defaultMessage: 'Adressable Object',
   },
-  politics: {
-    id: 'segmentBuilderSelector.geographics.test8',
-    defaultMessage: 'politics',
+  audienceFeatureObjectTreeExpression:{
+    id: 'segmentBuilderSelector.audienceFeatureSelector.objectTreeExpression',
+    defaultMessage: 'Object Tree Expression',
   },
-  videogames: {
-    id: 'segmentBuilderSelector.geographics.test9',
-    defaultMessage: 'Video games',
-  },
-  // end to delete
 });
 
 export const fieldGridConfig = {
@@ -137,7 +138,7 @@ export const INITIAL_AUDIENCE_BUILDER_FORM_DATA: AudienceBuilderFormData = {
               key: cuid(),
               model: {
                 type: 'FIELD',
-                field: 'gender',
+                field: 'Gender',
                 comparison: {
                   type: 'STRING',
                   operator: 'EQ',
@@ -149,7 +150,7 @@ export const INITIAL_AUDIENCE_BUILDER_FORM_DATA: AudienceBuilderFormData = {
               key: cuid(),
               model: {
                 type: 'FIELD',
-                field: 'age',
+                field: 'Age',
                 comparison: {
                   type: 'STRING',
                   operator: 'EQ',
@@ -161,7 +162,7 @@ export const INITIAL_AUDIENCE_BUILDER_FORM_DATA: AudienceBuilderFormData = {
               key: cuid(),
               model: {
                 type: 'FIELD',
-                field: 'language',
+                field: 'Languages',
                 comparison: {
                   type: 'STRING',
                   operator: 'EQ',

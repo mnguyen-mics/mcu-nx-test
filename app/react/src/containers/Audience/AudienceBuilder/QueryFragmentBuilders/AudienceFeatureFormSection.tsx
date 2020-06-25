@@ -1,17 +1,16 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-// import { FORM_ID } from '../constants';
 import { ReduxFormChangeProps } from '../../../../utils/FormHelper';
 import { WrappedFieldArrayProps } from 'redux-form';
-import {
-  // AudienceBuilderFormData,
-  AudienceBuilderFieldNode,
-} from '../../../../models/audienceBuilder/AudienceBuilderResource';
-import { Row, Col, Button } from 'antd';
+import { AudienceBuilderFieldNode } from '../../../../models/audienceBuilder/AudienceBuilderResource';
+import { Row, Col, Button, Statistic } from 'antd';
 import { McsIcon } from '../../../../components';
+import ParametricPredicateLayout from './ParametricPredicateLayout';
 
-export interface AudienceFeatureFormSectionProps extends ReduxFormChangeProps {}
+export interface AudienceFeatureFormSectionProps extends ReduxFormChangeProps {
+  isDemographicsSection: boolean;
+}
 
 type Props = WrappedFieldArrayProps<AudienceBuilderFieldNode> &
   AudienceFeatureFormSectionProps &
@@ -19,31 +18,47 @@ type Props = WrappedFieldArrayProps<AudienceBuilderFieldNode> &
 
 class AudienceFeatureFormSection extends React.Component<Props> {
   render() {
-    const { fields } = this.props;
+    const { fields, isDemographicsSection } = this.props;
 
     return fields && fields.getAll()
       ? fields.getAll().map((f, index) => {
           const handleRemove = () => fields.remove(index);
           return (
-            <Row key={f.key}>
-              <Col span={20}>
-                {`${f.model.field} `}
-                {f.model.comparison && f.model.comparison.values[0] !== '' && (
-                  <span>
-                    {`(values: ${f.model.comparison.values.map(v => {
-                      return v;
-                    })})`}
-                  </span>
+            <Row
+              key={f.key}
+              className={
+                isDemographicsSection
+                  ? 'mcs-segmentBuilder_demographicFeature'
+                  : 'mcs-segmentBuilder_audienceFeature'
+              }
+            >
+              <Col span={isDemographicsSection ? 24 : 20}>
+                <div className="mcs-segmentBuilder_audienceFeatureName">{`${f.model.field} `}</div>
+                {f.parametricPredicateResource && (
+                  <ParametricPredicateLayout
+                    parametricPredicateResource={f.parametricPredicateResource}
+                  />
                 )}
               </Col>
-              <Col span={4}>
-                <Button
-                  className="mcs-segmentBuilder_closeButton"
-                  onClick={handleRemove}
-                >
-                  <McsIcon type="close" />
-                </Button>
-              </Col>
+
+              {!isDemographicsSection && (
+                <React.Fragment>
+                  <Col span={2}>
+                    <Statistic
+                      value={3.2}
+                      className="mcs-segmentBuilder_audienceFeatureTotal"
+                    />
+                  </Col>
+                  <Col span={2}>
+                    <Button
+                      className="mcs-segmentBuilder_closeButton"
+                      onClick={handleRemove}
+                    >
+                      <McsIcon type="close" />
+                    </Button>
+                  </Col>
+                </React.Fragment>
+              )}
             </Row>
           );
         })
@@ -51,10 +66,6 @@ class AudienceFeatureFormSection extends React.Component<Props> {
   }
 }
 
-export default compose<Props, AudienceFeatureFormSectionProps>(
-  injectIntl,
-  // reduxForm<AudienceBuilderFormData, AudienceFeatureFormSectionProps>({
-  //   form: FORM_ID,
-  //   enableReinitialize: true,
-  // }),
-)(AudienceFeatureFormSection);
+export default compose<Props, AudienceFeatureFormSectionProps>(injectIntl)(
+  AudienceFeatureFormSection,
+);
