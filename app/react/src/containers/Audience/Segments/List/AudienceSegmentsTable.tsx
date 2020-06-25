@@ -771,7 +771,10 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       ],
       selectedItems: filter.type.concat(filter.feed_type.map((ft: string) => `USER_LIST_${ft}`)),
       handleItemClick: (filters) => {
-        this.updateLocationSearch(filters);
+        this.updateLocationSearch({
+          ...filters,
+          currentPage: 1,
+        });
       },
     };
 
