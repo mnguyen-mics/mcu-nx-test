@@ -35,7 +35,6 @@ import {
   AudienceSegmentResource,
   AudienceSegmentShape,
   UserListSegment,
-  AudienceSegmentType,
 } from '../../../../models/audiencesegment';
 import { injectDatamart, InjectedDatamartProps } from '../../../Datamart';
 import { Index } from '../../../../utils';
@@ -60,9 +59,8 @@ import { Label } from '../../../Labels/Labels';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
 import {
   audienceSegmentTypeMessages,
-  userQuerySegmentSubtypeMessages,
 } from '../Dashboard/messages';
-import { UserQuerySegmentSubtype } from '../../../../models/audiencesegment/AudienceSegmentResource';
+import TreeSelectFilter, { TreeSelectFilterProps } from '../../../../components/TreeSelectFilter';
 
 const messages = defineMessages({
   filterByLabel: {
@@ -388,6 +386,12 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       formattedFilters = {
         ...formattedFilters,
         type: filter.type,
+      };
+    }
+    if (filter.feed_type.length) {
+      formattedFilters = {
+        ...formattedFilters,
+        feed_type: filter.feed_type,
       };
     }
     if (filter.label_id.length) {
@@ -734,6 +738,46 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       : dataColumns.concat(additionalColumns);
   };
 
+  renderTreeSelectFilter = (): React.ReactElement<TreeSelectFilter> => {
+    const { 
+      intl: { formatMessage }, 
+      location: { search } 
+    } = this.props;
+
+    const filter = parseSearch(search, this.getSearchSetting());
+
+    const treeSelectFilterProps: TreeSelectFilterProps = {
+      className: 'mcs-table-filters-item mcs-audienceSegmentTable-typeFilter',
+      placeholder: 'Type filter',
+      parentFilterName: 'type',
+      maxTagCount: 2,
+      tree: [
+        {
+          title: formatMessage(audienceSegmentTypeMessages.USER_LIST),
+          value: 'USER_LIST',
+        },{
+          title: formatMessage(audienceSegmentTypeMessages.USER_QUERY),
+          value: 'USER_QUERY',
+        },{
+          title: formatMessage(audienceSegmentTypeMessages.USER_ACTIVATION),
+          value: 'USER_ACTIVATION',
+        },{
+          title: formatMessage(audienceSegmentTypeMessages.USER_PARTITION),
+          value: 'USER_PARTITION',
+        },{
+          title: formatMessage(audienceSegmentTypeMessages.USER_LOOKALIKE),
+          value: 'USER_LOOKALIKE',
+        },
+      ],
+      selectedItems: filter.type.concat(filter.feed_type.map((ft: string) => `USER_LIST_${ft}`)),
+      handleItemClick: (filters) => {
+        this.updateLocationSearch(filters);
+      },
+    };
+
+    return <TreeSelectFilter {...treeSelectFilterProps}/>
+  }
+
   render() {
     const {
       match: {
@@ -797,17 +841,6 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       },
     ];
 
-    const typeItems = ['USER_LIST', 'USER_QUERY'].map(type => ({
-      key: type,
-      value: type,
-    }));
-
-    const typeSubItems = [
-      'USER_ACTIVATION',
-      'USER_PARTITION',
-      'USER_LOOKALIKE',
-    ].map(type => ({ key: type, value: type }));
-
     const datamartItems = workspace(organisationId)
       .datamarts.map(d => ({
         key: d.id,
@@ -820,37 +853,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         },
       ]);
 
-    const filtersOptions: Array<MultiSelectProps<any>> = [
-      {
-        displayElement: (
-          <div>
-            <FormattedMessage {...messages.filterType} /> <Icon type="down" />
-          </div>
-        ),
-        selectedItems: filter.type.map((type: string) => ({
-          key: type,
-          value: type,
-        })),
-        items: typeItems,
-        subItems: typeSubItems,
-        subItemsTitle: intl.formatMessage(messages.more),
-        getKey: (item: { key: string; value: string }) => item.key,
-        display: (item: { key: string; value: string }) => {
-          const test = item.value as AudienceSegmentType &
-            UserQuerySegmentSubtype;
-          const aggregatedSegmentTypeMessages = {
-            ...audienceSegmentTypeMessages,
-            ...userQuerySegmentSubtypeMessages,
-          };
-          return intl.formatMessage(aggregatedSegmentTypeMessages[test]);
-        },
-        handleMenuClick: (values: Array<{ key: string; value: string }>) =>
-          this.updateLocationSearch({
-            type: values.map(v => v.value),
-            currentPage: 1,
-          }),
-      },
-    ];
+    const filtersOptions: Array<MultiSelectProps<any>> = [];
 
     if (workspace(organisationId).datamarts.length > 1) {
       const datamartFilter = {
@@ -912,6 +915,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
           loading={list.isLoading}
           pagination={pagination}
           labelsOptions={labelsOptions}
+          treeSelectFilter={this.renderTreeSelectFilter}
         />
       </div>
     ) : (

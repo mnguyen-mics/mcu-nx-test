@@ -7,7 +7,7 @@ import {
   SORT_SEARCH_SETTINGS,
   DATE_SEARCH_SETTINGS,
 } from '../../../../utils/LocationSearchHelper';
-import { AudienceSegmentType } from '../../../../models/audiencesegment';
+import { AudienceSegmentType, FeedType } from '../../../../models/audiencesegment';
 import { Index } from '../../../../utils';
 
 const typeSearchSetting = {
@@ -24,6 +24,20 @@ const typeSearchSetting = {
     !query.type || query.type.split(',').length > 0,
 };
 
+const feedTypeSearchSetting = {
+  paramName: 'feed_type',
+  defaultValue: [],
+  deserialize: (query: Index<string>) => {
+    if (query.feed_type) {
+      return query.feed_type.split(',');
+    }
+    return [];
+  },
+  serialize: (value: FeedType[]) => value.join(','),
+  isValid: (query: Index<string>) =>
+    !query.feed_type || query.feed_type.split(',').length > 0,
+};
+
 export interface SegmentTypeSearchSettings {
   type: AudienceSegmentType[];
 }
@@ -35,6 +49,7 @@ export const SEGMENTS_SEARCH_SETTINGS: SearchSetting[] = [
   ...DATAMART_SEARCH_SETTINGS,
   ...SORT_SEARCH_SETTINGS,
   typeSearchSetting,
+  feedTypeSearchSetting,
 ];
 
 export const SEGMENT_SETTINGS: SearchSetting[] = [
