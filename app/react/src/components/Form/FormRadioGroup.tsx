@@ -7,27 +7,41 @@ import FormRadio from './FormRadio';
 
 export interface FormRadioGroupProps {
   radioGroupProps?: RadioGroupProps;
-  elements: Array<RadioProps & { id?: string, title: string }>;
+  elements: Array<RadioProps & { id?: string; title: string }>;
   elementClassName?: string;
   disabled?: boolean;
   groupClassName?: string;
+  radioButton?: boolean;
 }
 
 const RadioGroup = Radio.Group;
 
-const FormRadioGroup: React.SFC<FormRadioGroupProps & WrappedFieldProps> = props => {
+const FormRadioGroup: React.SFC<FormRadioGroupProps &
+  WrappedFieldProps> = props => {
+  const {
+    elementClassName,
+    groupClassName,
+    elements,
+    input,
+    disabled,
+    radioButton,
+  } = props;
 
-  const { elementClassName, groupClassName, elements, input, disabled } = props;
-
-  const elementsToMap = elements.map(element => (
-    <FormRadio
-      className={elementClassName}
-      key={element.id}
-      name={element.value}
-      title={element.title}
-      value={element.value}
-    />
-  ));
+  const elementsToMap = elements.map(element => {
+    return radioButton ? (
+      <Radio.Button key={element.id} value={element.value}>
+        {element.title}
+      </Radio.Button>
+    ) : (
+      <FormRadio
+        className={elementClassName}
+        key={element.id}
+        name={element.value}
+        title={element.title}
+        value={element.value}
+      />
+    );
+  });
 
   const onChange = (e: any) => input.onChange(e.target.value);
 
@@ -38,7 +52,8 @@ const FormRadioGroup: React.SFC<FormRadioGroupProps & WrappedFieldProps> = props
       onChange={onChange}
       value={input.value}
       disabled={disabled}
-    >{elementsToMap}
+    >
+      {elementsToMap}
     </RadioGroup>
   );
 };

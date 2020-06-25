@@ -75,6 +75,7 @@ const TYPES = {
   IEmailCampaignFormService: Symbol.for('emailCampaignFormService'),
   IPlacementListService: Symbol.for('placementListService'),
   IPlacementListFormService: Symbol.for('placementListFormService'),
+  IAudienceBuilderService: Symbol.for('audienceBuilderService'),
 };
 
 export { TYPES };

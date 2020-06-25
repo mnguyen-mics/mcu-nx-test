@@ -21,13 +21,14 @@ import { lazyInject } from '../../../config/inversify.config';
 import { IQueryService } from '../../../services/QueryService';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
 import { Alert } from 'antd';
+import { UserProfileResource } from '../../../models/directory/UserProfileResource';
 
 export interface QueryBuilderPageRouteParams {
   organisationId: string;
 }
 
 interface MapStateToProps {
-  connectedUser: any;
+  connectedUser: UserProfileResource;
 }
 
 type Props = RouteComponentProps<QueryBuilderPageRouteParams> &
@@ -73,11 +74,11 @@ class SegmentBuilderPage extends React.Component<Props> {
 
     const datamartIdQueryString = queryString.parse(location.search).datamartId;
 
-    if (orgWp.datamarts && orgWp.datamarts.length === 1) {
+    if (orgWp && orgWp.datamarts && orgWp.datamarts.length === 1) {
       selectedDatamart = orgWp.datamarts[0];
     }
 
-    if (datamartIdQueryString) {
+    if (datamartIdQueryString && orgWp) {
       selectedDatamart = orgWp.datamarts.find(
         (d: DatamartResource) => d.id === datamartIdQueryString,
       );

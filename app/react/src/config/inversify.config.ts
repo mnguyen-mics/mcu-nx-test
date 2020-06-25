@@ -1,3 +1,6 @@
+import AudienceBuilderService, {
+  IAudienceBuilderService,
+} from './../services/AudienceBuilderService';
 import {
   IPlacementListFormService,
   PlacementListFormService,
@@ -207,10 +210,16 @@ import {
   EmailCampaignFormService,
 } from '../containers/Campaigns/Email/Edit/EmailCampaignFormService';
 import { IRecommenderService } from '../services/Library/RecommenderService';
-import { ScenarioExitConditionService, IScenarioExitConditionService } from '../services/ScenarioExitConditionService';
+import {
+  ScenarioExitConditionService,
+  IScenarioExitConditionService,
+} from '../services/ScenarioExitConditionService';
 
 const container = new Container();
 
+container
+  .bind<IAudienceBuilderService>(TYPES.IAudienceBuilderService)
+  .to(AudienceBuilderService);
 container
   .bind<IEmailCampaignService>(TYPES.IEmailCampaignService)
   .to(EmailCampaignService);
@@ -253,7 +262,9 @@ container
 container.bind<IImportService>(TYPES.IImportService).to(ImportService);
 container.bind<IExportService>(TYPES.IExportService).to(ExportService);
 container.bind<IScenarioService>(TYPES.IScenarioService).to(ScenarioService);
-container.bind<IScenarioExitConditionService>(TYPES.IScenarioExitConditionService).to(ScenarioExitConditionService);
+container
+  .bind<IScenarioExitConditionService>(TYPES.IScenarioExitConditionService)
+  .to(ScenarioExitConditionService);
 container.bind<IDatamartService>(TYPES.IDatamartService).to(DatamartService);
 container
   .bind<IDisplayNetworkService>(TYPES.IDisplayNetworkService)
@@ -318,7 +329,8 @@ container.bind<IAuthService>(TYPES.IAuthService).to(AuthService);
 container.bind<ILabelService>(TYPES.ILabelService).to(LabelService);
 container
   .bind<IOrganisationService>(TYPES.IOrganisationService)
-  .to(OrganisationService).inSingletonScope();
+  .to(OrganisationService)
+  .inSingletonScope();
 container.bind<IAssetFileService>(TYPES.IAssetFileService).to(AssetFileService);
 container.bind<IPluginService>(TYPES.IPluginService).to(PluginService);
 container.bind<ICreativeService>(TYPES.ICreativeService).to(CreativeService);
