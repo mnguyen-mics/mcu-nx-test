@@ -38,7 +38,7 @@ class AudienceFeatureFormSection extends React.Component<Props> {
               </Col>
               <Col span={4}>
                 <Button
-                  className="mcs-segmentBuilder-closeButton"
+                  className="mcs-segmentBuilder_closeButton"
                   onClick={handleRemove}
                 >
                   <McsIcon type="close" />

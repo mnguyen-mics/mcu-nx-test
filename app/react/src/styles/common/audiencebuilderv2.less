@@ -1,21 +1,21 @@
-.mcs-segmentBuilder-container {
+.mcs-segmentBuilder_container {
   min-height: auto;
-  .mcs-segmentBuilder-categoryCard {
+  .mcs-segmentBuilder_categoryCard {
     margin: 40px;
-    .mcs-segmentBuilder-closeButton {
+    .mcs-segmentBuilder_closeButton {
       border: none;
     }
     .ant-select {
       min-width: 176px;
     }
   }
-  .mcs-segmentBuilder-queryButtons {
+  .mcs-segmentBuilder_queryButtons {
     text-align: center;
   }
 
-  .mcs-segmentBuilder-narrowWithButton,
-  .mcs-segmentBuilder-excludeButton,
-  .mcs-segmentBuilder-moreButton {
+  .mcs-segmentBuilder_narrowWithButton,
+  .mcs-segmentBuilder_excludeButton,
+  .mcs-segmentBuilder_moreButton {
     color: @info-color;
     font-size: 1.2em;
     font-weight: bold;
@@ -24,10 +24,10 @@
     box-shadow: none;
   }
 
-  .mcs-segmentBuilder-liveDashboard {
+  .mcs-segmentBuilder_liveDashboard {
     margin-top: 40px;
     text-align: center;
-    .mcs-segmentBuilder-totalAudience {
+    .mcs-segmentBuilder_totalAudience {
       .ant-statistic-title {
         font-size: 15px;
       }
@@ -35,32 +35,36 @@
         font-size: 40px;
       }
     }
-    .mcs-segmentBuilder-purchaseIntent,
-    .mcs-segmentBuilder-geographics {
+    .mcs-segmentBuilder_purchaseIntent,
+    .mcs-segmentBuilder_geographics {
       padding: 0 15%;
       margin-top: 40px;
       .title {
         font-size: 15px;
         margin-bottom: 15px;
       }
-      .mcs-segmentBuilder-progressBars-1,
-      .mcs-segmentBuilder-progressBars-2 {
+      .mcs-segmentBuilder_progressBars-1,
+      .mcs-segmentBuilder_progressBars-2 {
         .ant-progress-bg {
+          // TODO: find the right class to avoid !important
           height: 11px !important;
           border-radius: 5.5px !important;
           box-shadow: 2px 2px 8px 1px rgba(0, 0, 0, 0.21);
         }
-        .mcs-segmentBuilder-progressBar {
+
+        .mcs-segmentBuilder_progressBar {
           margin-top: 12px;
         }
       }
-      .mcs-segmentBuilder-progressBars-1 {
+      .mcs-segmentBuilder_progressBars-1 {
         .ant-progress-bg {
+          // TODO: use @primary-color
           background-color: rgba(0, 48, 86, 0.57);
         }
       }
-      .mcs-segmentBuilder-progressBars-2 {
+      .mcs-segmentBuilder_progressBars-2 {
         .ant-progress-bg {
+          // TODO: use @success-color
           background-color: rgba(0, 169, 99, 0.53);
         }
       }
@@ -70,11 +74,11 @@
     margin-top: 15px;
   }
   .mcs-segmentBuilder-audienceFeature {
-    border-bottom: 1px solid #d3dbe1;
+    border-bottom: 1px solid @border-color-split;
     padding-bottom: 15px;
   }
 
-  .mcs-segmentBuilder-categoryCardFooter {
+  .mcs-segmentBuilder_categoryCardFooter {
     text-align: center;
     padding-top: 20px;
   }

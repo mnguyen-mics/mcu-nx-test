@@ -55,9 +55,9 @@ class QueryFragmentFormSection extends React.Component<Props> {
 
   renderQueryBuilderButtons = () => {
     return (
-      <div className="mcs-segmentBuilder-queryButtons">
+      <div className="mcs-segmentBuilder_queryButtons">
         <Button
-          className="mcs-segmentBuilder-narrowWithButton"
+          className="mcs-segmentBuilder_narrowWithButton"
           onClick={this.addGroupExpression(false)}
         >
           Narrow with
@@ -66,7 +66,7 @@ class QueryFragmentFormSection extends React.Component<Props> {
         - or -
         <br />
         <Button
-          className="mcs-segmentBuilder-excludeButton"
+          className="mcs-segmentBuilder_excludeButton"
           onClick={this.addGroupExpression(true)}
         >
           Exclude
@@ -121,12 +121,12 @@ class QueryFragmentFormSection extends React.Component<Props> {
               isAudienceBuilderGroupNode(expressionField.model) && (
                 <React.Fragment key={expressionField.key}>
                   {index !== 0 && (
-                    <div className="mcs-segmentBuilder-queryButtons">
+                    <div className="mcs-segmentBuilder_queryButtons">
                       {intl.formatMessage(messages.narrowingWith)}
                     </div>
                   )}
                   <Card
-                    className="mcs-segmentBuilder-categoryCard"
+                    className="mcs-segmentBuilder_categoryCard"
                     title={
                       index === 0
                         ? intl.formatMessage(messages.demographics)
@@ -135,7 +135,7 @@ class QueryFragmentFormSection extends React.Component<Props> {
                     buttons={
                       true && (
                         <Button
-                          className="mcs-segmentBuilder-closeButton"
+                          className="mcs-segmentBuilder_closeButton"
                           onClick={handleRemove}
                         >
                           <McsIcon type="close" />
@@ -147,10 +147,10 @@ class QueryFragmentFormSection extends React.Component<Props> {
                       name={`where.expressions[${index}].model.expressions`}
                       component={AudienceFeatureFormSection}
                     />
-                    <div className="mcs-segmentBuilder-categoryCardFooter">
+                    <div className="mcs-segmentBuilder_categoryCardFooter">
                       <Button
                         onClick={this.addFeature(expressionField.key)}
-                        className="mcs-segmentBuilder-moreButton"
+                        className="mcs-segmentBuilder_moreButton"
                       >
                         Add more audience features
                       </Button>

@@ -78,7 +78,7 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
       <React.Fragment>
         <AudienceBuilderActionbar save={this.saveFormData} />
         <Layout>
-          <Row className="ant-layout-content mcs-segmentBuilder-container">
+          <Row className="ant-layout-content mcs-segmentBuilder_container">
             <Col span={12}>
               <QueryFragmentFieldArray
                 name={`where.expressions`}
