@@ -23,16 +23,9 @@ export interface DashboardConfig {
   charts: Chart[];
   color?: string;
   tabMode?: boolean;
-  enhancedManualReportView?: boolean;
   segments?: SegmentFilter;
 }
 
-// To Do: Refactor code using the
-// whole resources instead : 
-// interface SegmentFilter {
-//   baseSegment: AudienceSegmentShape;
-//   segmentToCompareWith?: AudienceSegmentShape;
-// }
 interface SegmentFilter {
   baseSegmentId: string;
   baseSegmentName?: string;
@@ -234,7 +227,6 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
               segmentName={comp.segments ? comp.segments.baseSegmentName : undefined}
               compareWithSegmentName={comp.segments ? comp.segments.segmentToCompareWithName : undefined}
               compareWithSegmentId={comp.segments ? comp.segments.segmentIdToCompareWith : undefined}
-              enhancedManualReportView={comp.enhancedManualReportView}
               segmentToAggregate={this.props.segmentToAggregate}
             />
           })}

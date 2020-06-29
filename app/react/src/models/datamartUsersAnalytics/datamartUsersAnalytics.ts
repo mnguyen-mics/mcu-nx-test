@@ -8,6 +8,7 @@ export type Dataset = { [key: string]: string | number | undefined };
 
 export interface Chart {
   type: ChartType;
+  enhancedManualReportView?: boolean;
   options: Highcharts.Options;
   dimensions?: DatamartUsersAnalyticsDimension[];
   metricNames: DatamartUsersAnalyticsMetric[];

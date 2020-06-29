@@ -27,16 +27,30 @@ import numeral from 'numeral';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../../Helpers/injectThemeColors';
-
 import { compose } from 'recompose';
+import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { EmptyCharts } from '../../../../../components/EmptyCharts';
+import { EmptyRecords } from '../../../../../components';
+import { DatamartUsersAnalyticsDimension } from '../../../../../utils/DatamartUsersAnalyticsReportHelper';
+
+const messages = defineMessages({
+  noData: {
+    id: 'datamartUsersAnalytics.noData',
+    defaultMessage: 'No data',
+  },
+});
+
 export interface FormatDataProps {
   apiResponse: ReportView;
   apiResponseToCompareWith?: ReportView;
   chart: Chart;
+  resourceNames: {
+    resourceName?: string;
+    compareWithSegmentName?: string
+  }
 }
 
-
-type JoinedProp = FormatDataProps & InjectedThemeColorsProps;
+type JoinedProp = FormatDataProps & InjectedThemeColorsProps & InjectedIntlProps;
 
 class FormatDataToChart extends React.Component<JoinedProp, {}> {
 
@@ -111,29 +125,6 @@ class FormatDataToChart extends React.Component<JoinedProp, {}> {
           }
           return acc;
         }, []);
-      // case 'COUNT':
-      //   return dataset.reduce((acc: any, d: any) => {
-      //     const found = acc.find((a: any) => a.title === d[dimensionName]);
-      //     const value = d[chart.metricNames[0]];
-      //     if (!found) {
-      //       acc.push({
-      //         title: d[dimensionName],
-      //         iconType: chart.icons && chart.icons.length > 0 ? chart.icons[0] : undefined,
-      //         value, unit: "%",
-      //         iconStyle: {
-      //           color: chart.options.colors ? chart.options.colors[0] : undefined
-      //         },
-      //         loading: false
-      //       });
-      //       if (chart.options.colors && chart.options.colors.length > 0) chart.options.colors.splice(0, 1);
-      //       if (chart.icons && chart.icons.length > 0) chart.icons.splice(0, 1);
-
-      //     }
-      //     else {
-      //       found.value += value
-      //     }
-      //     return acc;
-      //   }, []);
       case 'WORLD_MAP':
         return dataset.reduce((acc: MapSeriesDataOptions[], d: Dataset) => {
           const found = acc.find((a: MapSeriesDataOptions) => a.code3 === d[dimensionName]);
@@ -332,16 +323,127 @@ class FormatDataToChart extends React.Component<JoinedProp, {}> {
     }
   };
 
-  render() {
-    const { chart, apiResponse, apiResponseToCompareWith } = this.props;
-    const normalizedData = normalizeReportView(apiResponse);
-    const normalizedDataToCompareWith = apiResponseToCompareWith ? normalizeReportView(apiResponseToCompareWith) : undefined;
+  getEmptyDataComponent(chartType: string, message: string) {
+    return chartType !== 'SINGLE_STAT' ? (
+      <EmptyCharts title={message} />
+    ) : (
+      <EmptyRecords message={message} />
+    );
+  }
 
-    return (<div>{this.generateCharElements(chart, normalizedData, normalizedDataToCompareWith)}</div>)
+  areAnalyticsReady = (items: any[]) => {
+    const isItemNull = items[0] && items[0][0] === null;
+    const isItemNaN = items[0] && items[0][0] === 'NaN';
+    const isReady = !(isItemNull || isItemNaN);
+    return isReady;
+  };
+
+  shouldDisplayData = () => {
+    const { apiResponse, apiResponseToCompareWith } = this.props;
+    return (
+      apiResponse &&
+      (apiResponse.total_items > 0 ||
+        (apiResponseToCompareWith &&
+          apiResponseToCompareWith.total_items > 0)) &&
+      (this.areAnalyticsReady(apiResponse.rows) ||
+        (apiResponseToCompareWith &&
+          this.areAnalyticsReady(apiResponseToCompareWith.rows)))
+    );
+  };
+
+  addSegmentNameToReportView = (
+    reportView: ReportView,
+    resourceName?: string,
+  ) => {
+    const newHeaders = ['resource_name'].concat(reportView.columns_headers);
+    const newRows = reportView.rows.map(r => [resourceName].concat(r));
+      return {
+        ...reportView,
+        columns_headers: newHeaders,
+        rows: newRows,
+      };
+  };
+
+  getMergedApiResponse = (
+    apiResponse: ReportView,
+    apiResponseToCompareWith?: ReportView,
+  ) => {
+    const {
+      resourceNames
+    } = this.props;
+    const newApiResponse = 
+    this.addSegmentNameToReportView(
+      apiResponse,
+      resourceNames.resourceName
+      );
+
+    return {
+      ...newApiResponse,
+      rows: apiResponseToCompareWith
+        ? newApiResponse.rows.concat(
+          this.addSegmentNameToReportView(
+            apiResponseToCompareWith,
+            resourceNames.compareWithSegmentName
+            ).rows)
+        : newApiResponse.rows,
+    };
+  };
+
+  getChartVariables = () => {
+    const { chart, apiResponse, apiResponseToCompareWith } = this.props;
+
+    if (chart.enhancedManualReportView) {
+      const mergedApiResponses = this.getMergedApiResponse(
+        apiResponse,
+        apiResponseToCompareWith,
+      );
+      const enhancedChartWithDefaultDimension: Chart = {
+        ...chart,
+        dimensions: chart.dimensions
+          ? ['resource_name' as DatamartUsersAnalyticsDimension].concat(
+              chart.dimensions,
+            )
+          : [],
+      };
+      return [
+        enhancedChartWithDefaultDimension,
+        normalizeReportView(mergedApiResponses),
+        apiResponseToCompareWith
+          ? normalizeReportView(apiResponseToCompareWith)
+          : undefined
+      ];
+    } else {
+      return [
+        chart,
+        normalizeReportView(apiResponse),
+        apiResponseToCompareWith
+          ? normalizeReportView(apiResponseToCompareWith)
+          : undefined,
+      ];
+    }
+  };
+
+  render() {
+    const { chart, intl } = this.props;
+
+    return this.shouldDisplayData() ? (
+      <div>
+        {this.generateCharElements(
+          this.getChartVariables()[0] as Chart,
+          this.getChartVariables()[1] as Dataset[],
+          this.getChartVariables()[2]as Dataset[],
+        )}
+      </div>
+    ) : (
+      this.getEmptyDataComponent(
+        chart.type,
+        intl.formatMessage(messages.noData),
+      )
+    );
   }
 }
 
-
 export default compose<FormatDataProps, FormatDataProps>(
-  injectThemeColors
+  injectThemeColors,
+  injectIntl,
 )(FormatDataToChart);
