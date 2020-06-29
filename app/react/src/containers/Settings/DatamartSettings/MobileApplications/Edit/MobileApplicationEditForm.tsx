@@ -119,6 +119,7 @@ class MobileApplicationEditForm extends React.Component<Props> {
           <ProcessingActivitiesFieldArray
             name="processingActivities"
             component={ProcessingActivitiesFormSection}
+            processingsAssociatedType={'CHANNEL'}
             {...propsForProcessingActivities}
           />
         ),
