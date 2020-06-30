@@ -3,7 +3,7 @@ import { Layout, Form } from 'antd';
 import { BasicProps } from 'antd/lib/layout/layout';
 import { ConfigProps, InjectedFormProps, reduxForm } from 'redux-form';
 import { CleaningRuleFormData } from './domain';
-import { Path } from '../../../../../components/ActionBar';
+import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { OptionProps } from 'antd/lib/select';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';

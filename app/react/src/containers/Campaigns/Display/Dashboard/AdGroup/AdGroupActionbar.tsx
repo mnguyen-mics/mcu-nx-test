@@ -4,7 +4,7 @@ import { withRouter, Link } from 'react-router-dom';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import { Dropdown } from '../../../../../components/PopupContainers';
-import Actionbar from '../../../../../components/ActionBar';
+import { Actionbar } from '@mediarithmics-private/mcs-components-library';
 import messages from '../messages';
 import { McsIcon } from '../../../../../components/index';
 import { RouteComponentProps } from 'react-router';

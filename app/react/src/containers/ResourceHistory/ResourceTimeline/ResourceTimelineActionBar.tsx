@@ -1,5 +1,5 @@
 import * as React from 'react';
-import ActionBar from '../../../components/ActionBar';
+import { Actionbar } from '@mediarithmics-private/mcs-components-library';
 import { McsIcon } from '../../../components';
 import { FormatProperty } from './domain';
 import messages from './messages';
@@ -17,13 +17,13 @@ export default class ResourceTimelineActionBar extends React.Component<ResourceT
     } = this.props;
 
     return (
-      <ActionBar edition={true} paths={[{name: {...formatProperty('history_title').message || messages.defaultTitle}},]}>
+      <Actionbar edition={true} paths={[{name: {...formatProperty('history_title').message || messages.defaultTitle}},]}>
           <McsIcon
             type="close"
             className="close-icon"
             onClick={handleClose}
           />
-        </ActionBar>
+        </Actionbar>
     );
   }
 }

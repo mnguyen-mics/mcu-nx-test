@@ -3,7 +3,7 @@ import { Form, reduxForm, InjectedFormProps, ConfigProps } from 'redux-form';
 import { compose } from 'recompose';
 import { Layout } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import { Path } from '../../../../../components/ActionBar';
+import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../../components/Layout/FormLayoutActionbar';

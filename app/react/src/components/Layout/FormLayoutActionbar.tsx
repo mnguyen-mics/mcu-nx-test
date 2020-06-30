@@ -5,16 +5,16 @@ import { FormattedMessage } from 'react-intl';
 import { Button } from 'antd';
 import { ButtonProps } from 'antd/lib/button/button';
 import { compose } from 'recompose';
-
 import McsIcon from '../McsIcon';
-import ActionBar, { ActionBarProps } from '../ActionBar';
 import { Omit } from '../../utils/Types';
 import { DataResponse } from '../../services/ApiService';
 import { QueryResource } from '../../models/datamart/DatamartResource';
 import Convert2Otql from '../../containers/QueryTool/SaveAs/Convet2Otql';
+import { Actionbar } from '@mediarithmics-private/mcs-components-library';
+import { ActionbarProps } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar';
 
 export interface FormLayoutActionbarProps
-  extends Omit<ActionBarProps, 'edition'> {
+  extends Omit<ActionbarProps, 'edition'> {
   formId?: string;
   message?: FormattedMessage.MessageDescriptor;
   onClose?: React.MouseEventHandler<HTMLSpanElement>;
@@ -62,7 +62,7 @@ class FormLayoutActionbar extends React.Component<Props, State> {
    
 
     return (
-      <ActionBar edition={true} {...this.props}>
+      <Actionbar edition={true} {...this.props}>
         {message && !disabled ? (
           <Button {...submitButtonProps} className="mcs-primary">
             <McsIcon type="plus" />
@@ -89,7 +89,7 @@ class FormLayoutActionbar extends React.Component<Props, State> {
           style={{ cursor: 'pointer' }}
           onClick={onClose}
         />
-      </ActionBar>
+      </Actionbar>
     );
   }
 

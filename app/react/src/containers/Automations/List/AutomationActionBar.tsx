@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from 'antd';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
-import Actionbar from '../../../components/ActionBar';
+import { Actionbar } from '@mediarithmics-private/mcs-components-library';
 import { McsIcon } from '../../../components';
 import { compose } from 'recompose';
 import Menu from 'antd/lib/menu';

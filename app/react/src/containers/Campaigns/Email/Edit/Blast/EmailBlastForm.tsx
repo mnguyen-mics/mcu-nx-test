@@ -22,7 +22,7 @@ import { SegmentFormSectionProps } from './Sections/SegmentFormSection';
 import { TemplateFormSectionProps } from './Sections/TemplateFormSection';
 import { EmailBlastFormData } from '../domain';
 import messages from '../messages';
-import { Path } from '../../../../../components/ActionBar';
+import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../../components/Layout/FormLayoutActionbar';

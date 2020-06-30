@@ -19,7 +19,7 @@ import { ClickParam } from 'antd/lib/menu';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import ActionBar from '../../../../components/ActionBar';
+import { Actionbar } from '@mediarithmics-private/mcs-components-library';
 import ReportService from '../../../../services/ReportService';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
 import log from '../../../../utils/Logger';
@@ -312,7 +312,7 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
     ];
 
     return (
-      <ActionBar paths={breadcrumbPaths}>
+      <Actionbar paths={breadcrumbPaths}>
         {actionElement}
         <Button
           onClick={
@@ -341,7 +341,7 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
             <Icon type="ellipsis" />
           </Button>
         </Dropdown>
-      </ActionBar>
+      </Actionbar>
     );
   }
 }

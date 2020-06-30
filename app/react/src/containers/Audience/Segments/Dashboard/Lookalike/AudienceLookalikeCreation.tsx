@@ -33,7 +33,6 @@ import FormLayoutActionbar, {
 import messages from '../messages';
 import { Omit } from '../../../../../utils/Types';
 import { Layout, Row, Spin, Alert, Col } from 'antd';
-import { Path } from '../../../../../components/ActionBar';
 import { UserLookalikeSegment } from '../../../../../models/audiencesegment/AudienceSegmentResource';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -48,6 +47,7 @@ import { injectFeatures, InjectedFeaturesProps } from '../../../../Features';
 import { MenuList } from '@mediarithmics-private/mcs-components-library';
 import { IQueryService } from '../../../../../services/QueryService';
 import { connect } from 'react-redux';
+import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 
 const FORM_ID = 'lookalikeForm';
 const { Content } = Layout;

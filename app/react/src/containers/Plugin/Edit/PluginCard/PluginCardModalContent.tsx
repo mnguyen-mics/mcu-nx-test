@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Actionbar from '../../../../components/ActionBar';
+import { Actionbar } from '@mediarithmics-private/mcs-components-library';
 import { LayoutablePlugin } from '../../../../models/Plugins';
 import { compose } from 'recompose';
 import injectThemeColors, {

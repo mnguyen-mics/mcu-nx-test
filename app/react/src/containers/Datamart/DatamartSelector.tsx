@@ -12,7 +12,7 @@ import { UserProfileResource } from '../../models/directory/UserProfileResource'
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../components/Layout/FormLayoutActionbar';
-import ActionBar from '../../components/ActionBar';
+import { Actionbar } from '@mediarithmics-private/mcs-components-library';
 
 export interface DatamartSelectorProps {
   onSelect: (datamart: DatamartResource) => void;
@@ -51,7 +51,7 @@ class DatamartSelector extends React.Component<Props> {
     return (
       <Layout>
         {isMainlayout ? (
-          <ActionBar {...actionbarProps} />
+          <Actionbar {...actionbarProps} />
         ) : (
           <FormLayoutActionbar {...actionbarProps} />
         )}

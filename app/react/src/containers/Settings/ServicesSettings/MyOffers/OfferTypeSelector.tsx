@@ -9,7 +9,7 @@ import messages from '../../messages';
 import { FormTitle } from '../../../../components/Form';
 import { MenuPresentational } from '@mediarithmics-private/mcs-components-library';
 import { OfferType } from './EditOfferPage';
-import { Path } from '../../../../components/ActionBar';
+import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 
 const { Content } = Layout;
 

@@ -7,9 +7,9 @@ import { MenuList } from '@mediarithmics-private/mcs-components-library';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../components/Layout/FormLayoutActionbar';
-import ActionBar from '../../../components/ActionBar';
 import cuid from 'cuid';
 import { AudienceBuilderResource } from '../../../models/audienceBuilder/AudienceBuilderResource';
+import { Actionbar } from '@mediarithmics-private/mcs-components-library';
 
 export const messages = defineMessages({
   title: {
@@ -43,7 +43,7 @@ class AudienceBuilderSelector extends React.Component<Props> {
     return (
       <Layout>
         {isMainlayout ? (
-          <ActionBar {...actionbarProps} />
+          <Actionbar {...actionbarProps} />
         ) : (
           <FormLayoutActionbar {...actionbarProps} />
         )}

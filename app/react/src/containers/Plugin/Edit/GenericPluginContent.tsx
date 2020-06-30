@@ -18,7 +18,7 @@ import * as actions from '../../../redux/Notifications/actions';
 import { EditContentLayout } from '../../../components/Layout';
 import Loading from '../../../components/Loading';
 import messages from './messages';
-import { Path } from '../../../components/ActionBar';
+import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { SideBarItem } from '../../../components/Layout/ScrollspySider';
 import { PluginLayout } from '../../../models/plugin/PluginLayout';
 import { PropertyResourceShape } from '../../../models/plugin';

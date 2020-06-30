@@ -21,7 +21,7 @@ import {
 } from './Sections';
 import { GoalFormData } from './domain';
 import messages from './messages';
-import { Path } from '../../../../components/ActionBar';
+import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { Omit } from '../../../../utils/Types';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,

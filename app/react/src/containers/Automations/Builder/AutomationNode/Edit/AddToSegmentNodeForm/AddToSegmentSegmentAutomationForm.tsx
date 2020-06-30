@@ -8,7 +8,7 @@ import {
   Field,
 } from 'redux-form';
 import { FORM_ID, AddToSegmentAutomationFormData } from '../domain';
-import { Path } from '../../../../../../components/ActionBar';
+import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import * as React from 'react';

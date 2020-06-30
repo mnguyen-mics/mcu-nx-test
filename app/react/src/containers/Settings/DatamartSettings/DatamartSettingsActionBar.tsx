@@ -3,7 +3,7 @@ import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { injectIntl, defineMessages, InjectedIntlProps } from 'react-intl';
 
-import Actionbar from '../../../components/ActionBar';
+import { Actionbar } from '@mediarithmics-private/mcs-components-library';
 
 type Props = InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;

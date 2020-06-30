@@ -1,5 +1,4 @@
 import * as React from 'react';
-import ActionBar, { Path } from '../../../../../../components/ActionBar';
 import { Layout, Form, Row, Button, Alert } from 'antd';
 import { compose } from 'recompose';
 import {
@@ -18,6 +17,8 @@ import { McsIcon, OtqlConsole } from '../../../../../../components';
 import { QueryDocument } from '../../../../../../models/datamart/graphdb/QueryDocument';
 import { StorylineNodeModel } from '../../../domain';
 import { QueryInputNodeResource } from '../../../../../../models/automations/automations';
+import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
+import { Actionbar } from '@mediarithmics-private/mcs-components-library';
 
 const { Content } = Layout;
 
@@ -100,14 +101,14 @@ class QueryAutomationForm extends React.Component<Props, State> {
       return (
         <Layout>
           <div className="edit-layout ant-layout">
-            <ActionBar edition={true} paths={breadCrumbPaths}>
+            <Actionbar edition={true} paths={breadCrumbPaths}>
               <McsIcon
                 type="close"
                 className="close-icon"
                 style={{ cursor: 'pointer' }}
                 onClick={close}
               />
-            </ActionBar>
+            </Actionbar>
             <Layout>
               <Content className="mcs-content-container mcs-form-container text-center">
                 <FormTitle
@@ -166,7 +167,7 @@ class QueryAutomationForm extends React.Component<Props, State> {
         };
 
         return (
-          <ActionBar edition={true} paths={breadCrumbPaths}>
+          <Actionbar edition={true} paths={breadCrumbPaths}>
             {!disabled && (
               <Button onClick={onSave} type="primary" className={'mcs-primary'}>
                 Save
@@ -179,7 +180,7 @@ class QueryAutomationForm extends React.Component<Props, State> {
               style={{ cursor: 'pointer' }}
               onClick={close}
             />
-          </ActionBar>
+          </Actionbar>
         );
       };
 
@@ -217,7 +218,7 @@ class QueryAutomationForm extends React.Component<Props, State> {
     return (
       <Layout className="edit-layout">
         <Layout className={'ant-layout'}>
-          <ActionBar edition={true} paths={breadCrumbPaths}>
+          <Actionbar edition={true} paths={breadCrumbPaths}>
             <Button
               onClick={onOtqlSave}
               type="primary"
@@ -232,7 +233,7 @@ class QueryAutomationForm extends React.Component<Props, State> {
               style={{ cursor: 'pointer' }}
               onClick={close}
             />
-          </ActionBar>
+          </Actionbar>
           <Form className="edit-layout ant-layout" layout="vertical">
             <Content
               id={FORM_ID}
