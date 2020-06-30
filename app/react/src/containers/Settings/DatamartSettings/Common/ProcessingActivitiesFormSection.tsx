@@ -25,9 +25,12 @@ import {
 import { Alert } from 'antd';
 import { McsIcon } from '../../../../components';
 
+export type ProcessingsAssociatedType = 'CHANNEL' | 'COMPARTMENT' | 'SEGMENT';
+
 export interface ProcessingActivitiesFormSectionProps
   extends ReduxFormChangeProps {
   initialProcessingSelectionsForWarning?: ProcessingSelectionResource[];
+  processingsAssociatedType: ProcessingsAssociatedType;
 }
 
 type Props = InjectedIntlProps &
@@ -109,7 +112,18 @@ class ProcessingActivitiesFormSection extends React.Component<Props> {
   };
 
   isWarningNeeded = (): boolean => {
-    const { fields, initialProcessingSelectionsForWarning } = this.props;
+    const {
+      fields,
+      initialProcessingSelectionsForWarning,
+      processingsAssociatedType,
+    } = this.props;
+
+    if (
+      processingsAssociatedType === 'SEGMENT' ||
+      processingsAssociatedType === 'COMPARTMENT'
+    ) {
+      return false;
+    }
 
     if (initialProcessingSelectionsForWarning) {
       const initialProcessingIds = initialProcessingSelectionsForWarning.map(
@@ -129,10 +143,32 @@ class ProcessingActivitiesFormSection extends React.Component<Props> {
     return false;
   };
 
+  getSectionSubTitle = () => {
+    const { processingsAssociatedType } = this.props;
+
+    if (processingsAssociatedType === 'SEGMENT')
+      return messages.processingActivitiesForSegmentsSectionSubtitle;
+    else if (processingsAssociatedType === 'COMPARTMENT')
+      return messages.processingActivitiesForCompartmentsSectionSubtitle;
+    else return messages.processingActivitiesForChannelsSectionSubtitle;
+  };
+
+  getSectionTitle = () => {
+    const { processingsAssociatedType } = this.props;
+
+    if (processingsAssociatedType === 'SEGMENT')
+      return messages.processingActivitiesForSegmentsSectionTitle;
+    else
+      return messages.processingActivitiesForChannelsOrCompartmentsSectionTitle;
+  };
+
   render() {
     const {
       intl: { formatMessage },
     } = this.props;
+
+    const sectionSubTitle = this.getSectionSubTitle();
+    const sectionTitle = this.getSectionTitle();
 
     const warningTag = this.isWarningNeeded() ? (
       <div className="optional-section-content">
@@ -140,7 +176,7 @@ class ProcessingActivitiesFormSection extends React.Component<Props> {
           message={
             <div>
               <McsIcon type="warning" />
-              {formatMessage(messages.warningProcessingActivities)}
+              {formatMessage(messages.warningProcessingActivitiesForChannels)}
             </div>
           }
           type="warning"
@@ -158,8 +194,8 @@ class ProcessingActivitiesFormSection extends React.Component<Props> {
               onClick: this.openProcessingActivitySelector,
             },
           ]}
-          subtitle={messages.processingActivitiesSectionSubtitle}
-          title={messages.processingActivitiesSectionTitle}
+          subtitle={sectionSubTitle}
+          title={sectionTitle}
         />
         <RelatedRecords
           emptyOption={{

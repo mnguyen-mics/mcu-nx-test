@@ -5,14 +5,28 @@ export default defineMessages({
     id: 'settings.datamart.processings.section.add',
     defaultMessage: 'Add Processing Activity',
   },
-  processingActivitiesSectionSubtitle: {
-    id: 'settings.datamart.processings.section.subtitle',
+  processingActivitiesForChannelsSectionSubtitle: {
+    id: 'settings.datamart.processings.forChannels.section.subtitle',
     defaultMessage:
       'Select the Processing Activities on behalf of which you are capturing personal data on this channel. mediarithmics platform will automatically check the related User Choices before storing the captured data.',
   },
-  processingActivitiesSectionTitle: {
-    id: 'settings.datamart.processings.section.title',
-    defaultMessage: 'Privacy Wall - Processing Activities',
+  processingActivitiesForCompartmentsSectionSubtitle: {
+    id: 'settings.datamart.processings.forCompartments.section.subtitle',
+    defaultMessage:
+      'Select the Processing Activities on behalf of which you are capturing personal data on this compartment. mediarithmics platform will automatically check the related User Choices before storing the captured data.',
+  },
+  processingActivitiesForSegmentsSectionSubtitle: {
+    id: 'settings.datamart.processings.forSegments.section.subtitle',
+    defaultMessage:
+      'Select the Processing Activities on behalf of which you are creating this audience segment. mediarithmics platform will automatically take the related User Choices into account to include or exclude them from the segment.',
+  },
+  processingActivitiesForChannelsOrCompartmentsSectionTitle: {
+    id: 'settings.datamart.processings.forChannelsOrCompartments.section.title',
+    defaultMessage: 'User Choices - Privacy Wall',
+  },
+  processingActivitiesForSegmentsSectionTitle: {
+    id: 'settings.datamart.processings.forSegments.section.title',
+    defaultMessage: 'User Choices',
   },
   processingActivitiesEmptySection: {
     id: 'settings.datamart.processings.section.empty',
@@ -34,7 +48,7 @@ export default defineMessages({
     id: 'settings.datamart.processings.selector.search.placeholder',
     defaultMessage: 'Search Processing Activities',
   },
-  warningProcessingActivities: {
+  warningProcessingActivitiesForChannels: {
     id: 'settings.datamart.processings.warning',
     defaultMessage:
       'Danger Zone: When you link a Channel to a Processing Activity, the platform allows the storage of User Events if and only if the User Choices allow it. Therefore, to avoid unwanted data loss, you must be sure that User Choices are captured properly before doing so.',

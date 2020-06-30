@@ -103,6 +103,7 @@ class CompartmentEditForm extends React.Component<Props> {
             initialProcessingSelectionsForWarning={
               initialProcessingSelectionsForWarning
             }
+            processingsAssociatedType={'COMPARTMENT'}
             {...genericFieldArrayProps}
           />
         ),

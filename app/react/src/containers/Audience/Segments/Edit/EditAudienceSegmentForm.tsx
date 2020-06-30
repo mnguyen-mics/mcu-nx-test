@@ -9,7 +9,6 @@ import {
   FieldArray,
   GenericFieldArray,
 } from 'redux-form';
-import { connect } from 'react-redux';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { Layout, Alert } from 'antd';
 import { BasicProps } from 'antd/lib/layout/layout';
@@ -34,7 +33,6 @@ import {
   AudienceSegmentType,
   UserListSegment,
 } from '../../../../models/audiencesegment/';
-import * as FeatureSelectors from '../../../../redux/Features/selectors';
 import GeneralFormSection from './Sections/GeneralFormSection';
 import { UserListSection } from './Sections/list';
 import { McsFormSection } from '../../../../utils/FormHelper';
@@ -47,7 +45,6 @@ import FormCodeSnippet from '../../../../components/Form/FormCodeSnippet';
 import OTQLInputEditor, { OTQLInputEditorProps } from './Sections/query/OTQL';
 import { Path } from '../../../../components/ActionBar';
 import JSONQL, { JSONQLInputEditorProps } from './Sections/query/JSONQL';
-import { MicsReduxState } from '../../../../utils/ReduxHelper';
 import { ProcessingSelectionResource } from '../../../../models/processing';
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 import ProcessingActivitiesFormSection, {
@@ -265,6 +262,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
             initialProcessingSelectionsForWarning={
               initialProcessingSelectionsForWarning
             }
+            processingsAssociatedType={'SEGMENT'}
             {...genericFieldArrayProps}
           />
         ),
@@ -358,8 +356,5 @@ export default compose<Props, AudienceSegmentFormProps>(
   reduxForm<AudienceSegmentFormProps>({
     form: FORM_ID,
     enableReinitialize: true,
-  }),
-  connect((state: MicsReduxState) => ({
-    hasFeature: FeatureSelectors.hasFeature(state),
-  })),
+  })
 )(EditAudienceSegmentForm);
