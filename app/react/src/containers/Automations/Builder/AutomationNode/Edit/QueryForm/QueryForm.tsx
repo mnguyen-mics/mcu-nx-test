@@ -10,7 +10,7 @@ import {
 import { withRouter, RouteComponentProps } from 'react-router';
 import { FORM_ID, QueryInputAutomationFormData } from '../domain';
 import { QueryLanguage } from '../../../../../../models/datamart/DatamartResource';
-import { MenuPresentational } from '@mediarithmics-private/mcs-components-library';
+import { MenuPresentational, Actionbar } from '@mediarithmics-private/mcs-components-library';
 import { FormTitle } from '../../../../../../components/Form';
 import JSONQLBuilderContainer from '../../../../../QueryTool/JSONOTQL/JSONQLBuilderContainer';
 import { McsIcon, OtqlConsole } from '../../../../../../components';
@@ -18,7 +18,6 @@ import { QueryDocument } from '../../../../../../models/datamart/graphdb/QueryDo
 import { StorylineNodeModel } from '../../../domain';
 import { QueryInputNodeResource } from '../../../../../../models/automations/automations';
 import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
-import { Actionbar } from '@mediarithmics-private/mcs-components-library';
 
 const { Content } = Layout;
 
