@@ -79,10 +79,16 @@ class BidOptimizerFormSection extends React.Component<Props, State> {
   componentDidUpdate(previousProps: Props) {
     const bidOptimizerField = this.props.fields.getAll()[0];
     const previousBidOptimizerField = previousProps.fields.getAll()[0];
+
+    const previousBidOptimizerId =
+      previousBidOptimizerField && previousBidOptimizerField.model
+        ? previousBidOptimizerField.model.bid_optimizer_id
+        : undefined;
+
     if (
       bidOptimizerField &&
-      bidOptimizerField.model.bid_optimizer_id !==
-        previousBidOptimizerField.model.bid_optimizer_id
+      bidOptimizerField.model &&
+      bidOptimizerField.model.bid_optimizer_id !== previousBidOptimizerId
     )
       this.fetchBidOptimizer(bidOptimizerField.model.bid_optimizer_id);
   }
