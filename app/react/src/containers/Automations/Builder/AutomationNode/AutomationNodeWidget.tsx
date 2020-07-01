@@ -13,7 +13,11 @@ import {
 import { injectDrawer } from '../../../../components/Drawer';
 import { compose } from 'recompose';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
-import { TreeNodeOperations, generateNodeProperties } from '../domain';
+import {
+  TreeNodeOperations,
+  generateNodeProperties,
+  StorylineNodeModel,
+} from '../domain';
 import { Icon, Tooltip } from 'antd';
 import { McsIconType } from '../../../../components/McsIcon';
 import {
@@ -25,16 +29,25 @@ import {
   isDeleteFromSegmentNode,
   isOnSegmentEntryInputNode,
   isOnSegmentExitInputNode,
+  isDisplayCampaignNode,
+  isEmailCampaignNode,
 } from './Edit/domain';
 
-import { ScenarioNodeType, ScenarioNodeShape } from '../../../../models/automations/automations'
-import DisplayCampaignAutomatedDashboardPage, { DisplayCampaignAutomatedDashboardPageProps } from './Dashboard/DisplayCampaign/DisplayCampaignAutomatedDashboardPage';
-import EmailCampaignAutomatedDashboardPage, { EmailCampaignAutomatedDashboardPageProps } from './Dashboard/EmailCampaign/EmailCampaignAutomatedDashboardPage';
+import {
+  ScenarioNodeType,
+  ScenarioNodeShape,
+} from '../../../../models/automations/automations';
+import DisplayCampaignAutomatedDashboardPage, {
+  DisplayCampaignAutomatedDashboardPageProps,
+} from './Dashboard/DisplayCampaign/DisplayCampaignAutomatedDashboardPage';
+import EmailCampaignAutomatedDashboardPage, {
+  EmailCampaignAutomatedDashboardPageProps,
+} from './Dashboard/EmailCampaign/EmailCampaignAutomatedDashboardPage';
 import { withRouter, RouterProps, RouteComponentProps } from 'react-router';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
-
+import { isFakeId } from '../../../../utils/FakeIdHelper';
 
 interface AutomationNodeProps {
   node: AutomationNodeModel;
@@ -78,11 +91,11 @@ const messages = defineMessages({
   },
 });
 
-type Props = AutomationNodeProps 
-& InjectedDrawerProps 
-& InjectedIntlProps 
-& RouterProps 
-& RouteComponentProps<{ organisationId: string }>;
+type Props = AutomationNodeProps &
+  InjectedDrawerProps &
+  InjectedIntlProps &
+  RouterProps &
+  RouteComponentProps<{ organisationId: string }>;
 
 class AutomationNodeWidget extends React.Component<Props, State> {
   top: number = 0;
@@ -105,8 +118,10 @@ class AutomationNodeWidget extends React.Component<Props, State> {
   componentDidMount() {
     const { node } = this.props;
 
-    if (isScenarioNodeShape(node.storylineNodeModel.node)
-    && node.storylineNodeModel.node.last_added_node) {
+    if (
+      isScenarioNodeShape(node.storylineNodeModel.node) &&
+      node.storylineNodeModel.node.last_added_node
+    ) {
       this.editNode();
     }
 
@@ -114,28 +129,60 @@ class AutomationNodeWidget extends React.Component<Props, State> {
   }
 
   fetchNodeName() {
-    const {
-      node
-    } = this.props;
+    const { node, diagramEngine } = this.props;
 
     const nodeShape = node.storylineNodeModel.node;
     switch (nodeShape.type) {
       case 'DELETE_FROM_SEGMENT_NODE':
-        if(nodeShape.formData.segmentId) {
-          this._audienceSegmentService
-          .getSegment(nodeShape.formData.segmentId)
-          .then(({ data: segment }) => {
-            this.setState({ nodeName: segment.name });
-          })
-          .catch(() => {
-            this.setState({ nodeName: undefined });
-          })
+        if (nodeShape.formData.segmentId) {
+          if (!isFakeId(nodeShape.formData.segmentId)) {
+            this._audienceSegmentService
+              .getSegment(nodeShape.formData.segmentId)
+              .then(({ data: segment }) => {
+                this.setState({ nodeName: segment.name });
+              })
+              .catch(() => {
+                this.setState({ nodeName: undefined });
+              });
+          } else {
+            const scenarioNodes = Object.values(
+              diagramEngine.diagramModel.nodes,
+            )
+              .filter(nodeModel => nodeModel.type === 'automation-node')
+              .map(
+                (nodeModel: AutomationNodeModel) =>
+                  nodeModel.storylineNodeModel,
+              );
+            const nodeName = this.findSegmentNameFromAddToSegmentNode(
+              nodeShape.formData.segmentId,
+              scenarioNodes,
+            );
+            this.setState({ nodeName: nodeName });
+          }
         }
-        break; 
+        break;
       default:
         break;
-    }   
+    }
   }
+
+  findSegmentNameFromAddToSegmentNode = (
+    id: string,
+    storylineNodeModels: StorylineNodeModel[],
+  ) => {
+    const addToSegmentStoryLine = storylineNodeModels.find(
+      storylineNode =>
+        isAddToSegmentNode(storylineNode.node) &&
+        id === storylineNode.node.formData.audienceSegmentId,
+    );
+    if (
+      addToSegmentStoryLine &&
+      isAddToSegmentNode(addToSegmentStoryLine.node)
+    ) {
+      return addToSegmentStoryLine.node.formData.audienceSegmentName || '';
+    }
+    return '';
+  };
 
   setPosition = (node: HTMLDivElement | null) => {
     const bodyPosition = document.body.getBoundingClientRect();
@@ -156,7 +203,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     const { node, openNextDrawer, closeNextDrawer } = this.props;
     const selectedNode = node.storylineNodeModel.node;
 
-    if (selectedNode.type === "DISPLAY_CAMPAIGN") {
+    if (isDisplayCampaignNode(selectedNode)) {
       const campaignValue = selectedNode.formData;
       openNextDrawer<DisplayCampaignAutomatedDashboardPageProps>(
         DisplayCampaignAutomatedDashboardPage,
@@ -168,7 +215,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
           size: 'large',
         },
       );
-    } else if (selectedNode.type === "EMAIL_CAMPAIGN") {
+    } else if (isEmailCampaignNode(selectedNode)) {
       openNextDrawer<EmailCampaignAutomatedDashboardPageProps>(
         EmailCampaignAutomatedDashboardPage,
         {
@@ -180,17 +227,24 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         },
       );
     }
-  }
+  };
 
   editNode = () => {
-    const { node, openNextDrawer, closeNextDrawer, nodeOperations, viewer, datamartId, intl: {formatMessage} } = this.props;
+    const {
+      node,
+      openNextDrawer,
+      closeNextDrawer,
+      nodeOperations,
+      viewer,
+      datamartId,
+      diagramEngine,
+      intl: { formatMessage },
+    } = this.props;
     this.setState({ focus: false }, () => {
-      if (
-        isScenarioNodeShape(node.storylineNodeModel.node)
-      ) {
+      if (isScenarioNodeShape(node.storylineNodeModel.node)) {
         const scenarioNodeShape = node.storylineNodeModel.node;
         let initialValue: AutomationFormDataType = {};
-        let size: "small" | "large" = 'small';
+        let size: 'small' | 'large' = 'small';
 
         switch (scenarioNodeShape.type) {
           case 'ABN_NODE':
@@ -214,8 +268,10 @@ class AutomationNodeWidget extends React.Component<Props, State> {
             } as any;
             size =
               scenarioNodeShape.type === 'QUERY_INPUT'
-                ? scenarioNodeShape.ui_creation_mode === 'REACT_TO_EVENT_STANDARD' 
-                  || scenarioNodeShape.ui_creation_mode === 'REACT_TO_EVENT_ADVANCED'
+                ? scenarioNodeShape.ui_creation_mode ===
+                    'REACT_TO_EVENT_STANDARD' ||
+                  scenarioNodeShape.ui_creation_mode ===
+                    'REACT_TO_EVENT_ADVANCED'
                   ? 'small'
                   : 'large'
                 : 'large';
@@ -226,7 +282,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
               ...scenarioNodeShape.formData,
               datamartId: scenarioNodeShape.formData.datamartId
                 ? scenarioNodeShape.formData.datamartId
-                : datamartId
+                : datamartId,
             } as any;
             break;
           case 'DELETE_FROM_SEGMENT_NODE':
@@ -254,31 +310,42 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         }
 
         const close = () => {
-          closeNextDrawer()
-        }
+          closeNextDrawer();
+        };
 
-        openNextDrawer<AutomationFormPropsType>(
-          node.editFormComponent,
-          {
-            additionalProps: {
-              node: scenarioNodeShape,
-              close: close,
-              breadCrumbPaths: [{ name: generateNodeProperties(node.storylineNodeModel.node, formatMessage).title }],
-              disabled: viewer || disableEdition,
-              onSubmit: (formData: AutomationFormDataType) => {
-                nodeOperations.updateNode(
-                  scenarioNodeShape,
-                  formData,
-                  initialValue,
-                );
-                closeNextDrawer();
+        const scenarioNodes = Object.values(diagramEngine.diagramModel.nodes)
+          .filter(nodeModel => nodeModel.type === 'automation-node')
+          .map(
+            (nodeModel: AutomationNodeModel) => nodeModel.storylineNodeModel,
+          );
+
+        openNextDrawer<AutomationFormPropsType>(node.editFormComponent, {
+          additionalProps: {
+            storylineNodeModel: node.storylineNodeModel,
+            scenarioNodes: scenarioNodes,
+            close: close,
+            breadCrumbPaths: [
+              {
+                name: generateNodeProperties(
+                  node.storylineNodeModel.node,
+                  formatMessage,
+                ).title,
               },
-              initialValues: initialValue,
+            ],
+            disabled: viewer || disableEdition,
+            onSubmit: (formData: AutomationFormDataType) => {
+              nodeOperations.updateNode(
+                scenarioNodeShape,
+                formData,
+                initialValue,
+              );
+              closeNextDrawer();
             },
-            size: size,
-            isModal: true
+            initialValues: initialValue,
           },
-        );
+          size: size,
+          isModal: true,
+        });
       }
     });
   };
@@ -292,7 +359,6 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     }
     return undefined;
   };
-
 
   editNodeProperties = (node: ScenarioNodeShape) => () => {
     const { nodeOperations } = this.props;
@@ -314,7 +380,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
       initialValuesForm ? initialValuesForm : {},
       initialValuesForm ? initialValuesForm : {},
     );
-  }
+  };
 
   renderAbnEdit = (): React.ReactNodeArray => {
     const { viewer, node } = this.props;
@@ -322,26 +388,30 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     const content: React.ReactNodeArray = [];
 
     if (!viewer) {
-      content.push((
+      content.push(
         <div key="edit" onClick={this.editNode} className="boolean-menu-item">
           <FormattedMessage {...messages.edit} />
-        </div>
-      ))
+        </div>,
+      );
 
       if (!node.isFirstNode) {
-        content.push((
-          <div key="remove" onClick={this.removeNode} className="boolean-menu-item">
+        content.push(
+          <div
+            key="remove"
+            onClick={this.removeNode}
+            className="boolean-menu-item"
+          >
             <FormattedMessage {...messages.remove} />
-          </div>
-        ))
+          </div>,
+        );
       }
     }
 
-    return content
-  }
+    return content;
+  };
 
   renderAddToSegmentOrDeleteFromSegmentEdit = (): React.ReactNodeArray => {
-    const { 
+    const {
       viewer,
       node,
       history,
@@ -353,43 +423,51 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     const content: React.ReactNodeArray = [];
 
     if (!viewer) {
-      content.push((
+      content.push(
         <div key="edit" onClick={this.editNode} className="boolean-menu-item">
           <FormattedMessage {...messages.edit} />
-        </div>
-      ))
+        </div>,
+      );
 
       if (!node.isFirstNode) {
-        content.push((
-          <div key="remove" onClick={this.removeNode} className="boolean-menu-item">
+        content.push(
+          <div
+            key="remove"
+            onClick={this.removeNode}
+            className="boolean-menu-item"
+          >
             <FormattedMessage {...messages.remove} />
-          </div>
-        ))
+          </div>,
+        );
       }
     } else {
       const gotToSegment = () => {
-        if(isAddToSegmentNode(node.storylineNodeModel.node) || isDeleteFromSegmentNode(node.storylineNodeModel.node)) 
-          history.push(`/v2/o/${organisationId}/audience/segments/${node.storylineNodeModel.node.user_list_segment_id}`)
-      }
-      content.push((
+        if (
+          isAddToSegmentNode(node.storylineNodeModel.node) ||
+          isDeleteFromSegmentNode(node.storylineNodeModel.node)
+        )
+          history.push(
+            `/v2/o/${organisationId}/audience/segments/${node.storylineNodeModel.node.user_list_segment_id}`,
+          );
+      };
+      content.push(
         <div key="stats" onClick={gotToSegment} className="boolean-menu-item">
           <FormattedMessage {...messages.goToSegment} />
-        </div>
-      ))
+        </div>,
+      );
 
-      content.push((
+      content.push(
         <div key="view" onClick={this.editNode} className="boolean-menu-item">
           <FormattedMessage {...messages.view} />
-        </div>
-      ))
+        </div>,
+      );
     }
 
     return content;
-
-  }
+  };
 
   renderOnSegmentInputEdit = (): React.ReactNodeArray => {
-    const { 
+    const {
       viewer,
       node,
       history,
@@ -400,140 +478,160 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     const content: React.ReactNodeArray = [];
 
     if (!viewer) {
-      content.push((
+      content.push(
         <div key="edit" onClick={this.editNode} className="boolean-menu-item">
           <FormattedMessage {...messages.edit} />
-        </div>
-      ))
+        </div>,
+      );
     } else {
       const gotToSegment = () => {
-        if(isOnSegmentEntryInputNode(node.storylineNodeModel.node) || isOnSegmentExitInputNode(node.storylineNodeModel.node)) 
-          history.push(`/v2/o/${organisationId}/audience/segments/${node.storylineNodeModel.node.audience_segment_id}`)
-      }
-      content.push((
+        if (
+          isOnSegmentEntryInputNode(node.storylineNodeModel.node) ||
+          isOnSegmentExitInputNode(node.storylineNodeModel.node)
+        )
+          history.push(
+            `/v2/o/${organisationId}/audience/segments/${node.storylineNodeModel.node.audience_segment_id}`,
+          );
+      };
+      content.push(
         <div key="stats" onClick={gotToSegment} className="boolean-menu-item">
           <FormattedMessage {...messages.goToSegment} />
-        </div>
-      ))
-      content.push((
+        </div>,
+      );
+      content.push(
         <div key="view" onClick={this.editNode} className="boolean-menu-item">
           <FormattedMessage {...messages.view} />
-        </div>
-      ))
+        </div>,
+      );
     }
 
     return content;
-  }
+  };
 
   renderDefautEdit = (): React.ReactNodeArray => {
     const { viewer, node } = this.props;
 
     const content: React.ReactNodeArray = [];
     if (!viewer) {
-      content.push((
+      content.push(
         <div key="edit" onClick={this.editNode} className="boolean-menu-item">
           <FormattedMessage {...messages.edit} />
-        </div>
-      ))
+        </div>,
+      );
 
       if (!node.isFirstNode) {
-        content.push((
-          <div key="remove" onClick={this.removeNode} className="boolean-menu-item">
+        content.push(
+          <div
+            key="remove"
+            onClick={this.removeNode}
+            className="boolean-menu-item"
+          >
             <FormattedMessage {...messages.remove} />
-          </div>
-        ))
+          </div>,
+        );
       }
     } else {
-      content.push((
+      content.push(
         <div key="stats" onClick={this.viewStats} className="boolean-menu-item">
           <FormattedMessage {...messages.stats} />
-        </div>
-      ))
+        </div>,
+      );
 
-      content.push((
+      content.push(
         <div key="view" onClick={this.editNode} className="boolean-menu-item">
           <FormattedMessage {...messages.view} />
-        </div>
-      ))
+        </div>,
+      );
     }
 
     return content;
-  }
+  };
 
   renderQueryEdit = (): React.ReactNodeArray => {
     const { viewer, node } = this.props;
     const content: React.ReactNodeArray = [];
 
     if (!viewer) {
-      content.push((
+      content.push(
         <div key="edit" onClick={this.editNode} className="boolean-menu-item">
           <FormattedMessage {...messages.edit} />
-        </div>
-      ))
-      content.push((
-        <div key="settings" onClick={this.editNode} className="boolean-menu-item">
+        </div>,
+      );
+      content.push(
+        <div
+          key="settings"
+          onClick={this.editNode}
+          className="boolean-menu-item"
+        >
           <FormattedMessage {...messages.settings} />
-        </div>
-      ))
+        </div>,
+      );
 
       if (!node.isFirstNode) {
-        content.push((
-          <div key="remove" onClick={this.removeNode} className="boolean-menu-item">
+        content.push(
+          <div
+            key="remove"
+            onClick={this.removeNode}
+            className="boolean-menu-item"
+          >
             <FormattedMessage {...messages.remove} />
-          </div>
-        ))
+          </div>,
+        );
       }
     } else {
-      content.push((
+      content.push(
         <div key="view" onClick={this.editNode} className="boolean-menu-item">
           <FormattedMessage {...messages.view} />
-        </div>
-      ))
+        </div>,
+      );
     }
 
     return content;
-  }
+  };
 
   renderEndNodeEdit = (): React.ReactNodeArray => {
     const content: React.ReactNodeArray = [];
 
     return content;
-  }
+  };
 
   defaultEditRemoveNode = (): React.ReactNodeArray => {
     const { viewer, node } = this.props;
 
     const content: React.ReactNodeArray = [];
     if (!viewer) {
-      content.push((
+      content.push(
         <div key="edit" onClick={this.editNode} className="boolean-menu-item">
           <FormattedMessage {...messages.edit} />
-        </div>
-      ))
+        </div>,
+      );
 
       if (!node.isFirstNode) {
-        content.push((
-          <div key="remove" onClick={this.removeNode} className="boolean-menu-item">
+        content.push(
+          <div
+            key="remove"
+            onClick={this.removeNode}
+            className="boolean-menu-item"
+          >
             <FormattedMessage {...messages.remove} />
-          </div>
-        ))
+          </div>,
+        );
       }
     } else {
-      content.push((
+      content.push(
         <div key="view" onClick={this.editNode} className="boolean-menu-item">
           <FormattedMessage {...messages.view} />
-        </div>
-      ))
+        </div>,
+      );
     }
 
     return content;
-  }
-
+  };
 
   renderEditMenu = (nodeType: ScenarioNodeType): React.ReactNodeArray => {
     switch (nodeType) {
       case 'ABN_NODE':
-        return this.renderAbnEdit()
+        return this.renderAbnEdit();
       case 'EMAIL_CAMPAIGN':
       case 'DISPLAY_CAMPAIGN':
         return this.renderDefautEdit();
@@ -554,7 +652,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
       default:
         return [];
     }
-  }
+  };
 
   render() {
     const { node } = this.props;
@@ -567,7 +665,6 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     const onFocus = () => {
       this.setPosition(document.getElementById(this.id) as HTMLDivElement);
       this.setState({ focus: !this.state.focus });
-
     };
 
     const zoomRatio = this.props.diagramEngine.getDiagramModel().zoom / 100;
@@ -577,7 +674,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     const nodeType = node.storylineNodeModel.node.type;
 
     const editContent = this.renderEditMenu(nodeType);
-    const onClick = editContent.length ? onFocus : undefined
+    const onClick = editContent.length ? onFocus : undefined;
 
     const NODE_NAME_MAX_SIZE = 20;
     const renderedAutomationNode = (
@@ -586,7 +683,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         style={{
           width: `${node.getNodeSize().width}px`,
           height: `${node.getNodeSize().height}px`,
-          cursor: onClick ? 'pointer' : 'default'
+          cursor: onClick ? 'pointer' : 'default',
         }}
       >
         <div
@@ -604,22 +701,31 @@ class AutomationNodeWidget extends React.Component<Props, State> {
           {node.iconAnt ? (
             <Icon type={node.iconAnt} className="available-node-icon-gyph" />
           ) : (
-              <McsIcon
-                type={node.icon as McsIconType}
-                className="available-node-icon-gyph"
-              />
-            )}
+            <McsIcon
+              type={node.icon as McsIconType}
+              className="available-node-icon-gyph"
+            />
+          )}
         </div>
 
         <div className="node-content">
-          <Tooltip title={nodeTitleToDisplayed.length > NODE_NAME_MAX_SIZE ? nodeTitleToDisplayed : undefined} placement="bottom" >
-            {`${nodeTitleToDisplayed.substring(0, NODE_NAME_MAX_SIZE) + (nodeTitleToDisplayed.length > NODE_NAME_MAX_SIZE ? '...' : '')}`}
+          <Tooltip
+            title={
+              nodeTitleToDisplayed.length > NODE_NAME_MAX_SIZE
+                ? nodeTitleToDisplayed
+                : undefined
+            }
+            placement="bottom"
+          >
+            {`${nodeTitleToDisplayed.substring(0, NODE_NAME_MAX_SIZE) +
+              (nodeTitleToDisplayed.length > NODE_NAME_MAX_SIZE ? '...' : '')}`}
           </Tooltip>
         </div>
-        <div className="node-subtitle">{node.subtitle ? node.subtitle : ''}</div>
+        <div className="node-subtitle">
+          {node.subtitle ? node.subtitle : ''}
+        </div>
       </div>
     );
-
 
     return (
       <div id={this.id} key={this.id} onClick={onClick}>
@@ -644,16 +750,16 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         </div>
         {(node.y !== ROOT_NODE_POSITION.y ||
           node.x !== ROOT_NODE_POSITION.x) && (
-            <div
-              style={{
-                position: 'absolute',
-                top: node.getNodeSize().height / 2 - 6,
-                left: -10,
-              }}
-            >
-              <McsIcon type="chevron-right" className="arrow" />
-            </div>
-          )}
+          <div
+            style={{
+              position: 'absolute',
+              top: node.getNodeSize().height / 2 - 6,
+              left: -10,
+            }}
+          >
+            <McsIcon type="chevron-right" className="arrow" />
+          </div>
+        )}
         {this.state.focus && (
           <WindowBodyPortal>
             <div className="automation-builder focus">

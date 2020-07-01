@@ -16,9 +16,9 @@ import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { McsFormSection } from '../../../../../../utils/FormHelper';
 import { DefaultFormData, FORM_ID } from '../domain';
-import { ScenarioNodeShape } from '../../../../../../models/automations/automations';
 import GeneralInformationFormSection from './Sections/GeneralInformationFormSection';
 import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
+import { StorylineNodeModel } from '../../../domain';
 
 const { Content } = Layout;
 
@@ -41,7 +41,7 @@ export interface WaitAutomationFormProps
   extends Omit<ConfigProps<DefaultFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: Path[];
-  node: ScenarioNodeShape;
+  storylineNodeModel: StorylineNodeModel;
   disabled?: boolean;
 }
 
@@ -49,10 +49,7 @@ interface MapStateToProps {
   formValues: DefaultFormData;
 }
 
-type Props = InjectedFormProps<
-  DefaultFormData,
-  WaitAutomationFormProps
-> &
+type Props = InjectedFormProps<DefaultFormData, WaitAutomationFormProps> &
   WaitAutomationFormProps &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }> &
@@ -60,17 +57,20 @@ type Props = InjectedFormProps<
 
 class WaitAutomationForm extends React.Component<Props> {
   buildFormSections = () => {
-    const {disabled} = this.props;
+    const { disabled } = this.props;
     const general = {
       id: 'general',
       title: localMessages.sectionGeneralTitle,
       component: (
-        <GeneralInformationFormSection disabled={disabled} initialValues={this.props.initialValues} />
+        <GeneralInformationFormSection
+          disabled={disabled}
+          initialValues={this.props.initialValues}
+        />
       ),
     };
 
     const sections: McsFormSection[] = [general];
-    
+
     return sections;
   };
 
@@ -81,7 +81,7 @@ class WaitAutomationForm extends React.Component<Props> {
       paths: breadCrumbPaths,
       message: localMessages.save,
       onClose: close,
-      disabled: disabled
+      disabled: disabled,
     };
 
     const sections = this.buildFormSections();

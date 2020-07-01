@@ -6,7 +6,6 @@ import {
 } from 'redux-form';
 import { FORM_ID, OnSegmentEntryInputAutomationFormData } from '../domain';
 import { Path } from '../../../../../../components/ActionBar';
-import { ScenarioNodeShape } from '../../../../../../models/automations/automations';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import * as React from 'react';
 import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
@@ -18,6 +17,7 @@ import FormLayoutActionbar, {
 } from '../../../../../../components/Layout/FormLayoutActionbar';
 import { McsFormSection } from '../../../../../../utils/FormHelper';
 import OnSegmentEntryInputGeneralSectionForm from './OnSegmentEntryInputGeneralSectionForm';
+import { StorylineNodeModel } from '../../../domain';
 
 const { Content } = Layout;
 
@@ -36,7 +36,7 @@ export interface OnSegmentEntryInputAutomationFormProps
   extends Omit<ConfigProps<OnSegmentEntryInputAutomationFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: Path[];
-  node: ScenarioNodeShape;
+  storylineNodeModel: StorylineNodeModel;
   disabled?: boolean;
 }
 

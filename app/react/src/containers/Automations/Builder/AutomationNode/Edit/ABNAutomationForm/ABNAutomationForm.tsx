@@ -16,9 +16,9 @@ import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { McsFormSection } from '../../../../../../utils/FormHelper';
 import { FORM_ID, ABNFormData } from '../domain';
-import { ScenarioNodeShape } from '../../../../../../models/automations/automations';
 import GeneralInformationFormSection from './GeneralInformationFormSection';
 import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
+import { StorylineNodeModel } from '../../../domain';
 
 const { Content } = Layout;
 
@@ -41,7 +41,7 @@ export interface ABNAutomationFormProps
   extends Omit<ConfigProps<ABNFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: Path[];
-  node: ScenarioNodeShape;
+  storylineNodeModel: StorylineNodeModel;
   disabled?: boolean;
 }
 
@@ -81,7 +81,7 @@ class ABNAutomationForm extends React.Component<Props> {
       paths: breadCrumbPaths,
       message: localMessages.save,
       onClose: close,
-      disabled: disabled
+      disabled: disabled,
     };
 
     const sections = this.buildFormSections();
