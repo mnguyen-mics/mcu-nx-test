@@ -16,6 +16,8 @@ declare namespace Cypress {
      */
     switchOrg(organisationName: string): Chainable<any>;
 
+    goToHome(organisationId: string): Chainable<any>;
+
     /**
      * Save local storage between two tests in a single test suite.
      * Use this in afterEach method !

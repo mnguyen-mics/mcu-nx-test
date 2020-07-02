@@ -52,6 +52,10 @@ Cypress.Commands.add('switchOrg', organisationName => {
     .trigger('mouseout')
 })
 
+Cypress.Commands.add('goToHome', organisationId => {
+  cy.visit(`#/v2/o/${organisationId}/campaigns/display?currentPage=1&from=now-7d&pageSize=10&to=now`)
+})
+
 Cypress.Commands.add('fillExpertQuerySegmentForm', (segmentName: string, queryText: string) => {
     cy.contains('Save', { timeout: 5000 })
     cy.get('input[name="audienceSegment.name"]')
