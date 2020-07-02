@@ -193,7 +193,6 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
   {
     title: 'Revenue',
     tabMode: true,
-    enhancedManualReportView: true,
     layout: {
       'i': '1',
       'h': 3,
@@ -205,6 +204,7 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
     charts: [
       {
         type: 'AREA',
+        enhancedManualReportView: true,
         options: {
           title: undefined,
           credits: {
@@ -263,7 +263,6 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
   {
     title: 'Average Transaction Amount',
     tabMode: true,
-    enhancedManualReportView: true,
     layout: {
       'i': '1',
       'h': 3,
@@ -275,6 +274,7 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
     charts: [
       {
         type: 'AREA',
+        enhancedManualReportView: true,
         options: {
           title: undefined,
           credits: {
@@ -333,7 +333,6 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
   {
     title: 'Number Of Transactions',
     tabMode: true,
-    enhancedManualReportView: true,
     layout: {
       'i': '1',
       'h': 3,
@@ -345,6 +344,7 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
     charts: [
       {
         type: 'AREA',
+        enhancedManualReportView: true,
         options: {
           title: undefined,
           credits: {
@@ -403,7 +403,6 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
   {
     title: 'Average Session Duration',
     tabMode: true,
-    enhancedManualReportView: true,
     layout: {
       'i': '1',
       'h': 3,
@@ -415,6 +414,7 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
     charts: [
       {
         type: 'AREA',
+        enhancedManualReportView: true,
         options: {
           title: undefined,
           credits: {
@@ -473,7 +473,6 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
   {
     title: 'Average Events per Session',
     tabMode: true,
-    enhancedManualReportView: true,
     layout: {
       'i': '1',
       'h': 3,
@@ -485,6 +484,7 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
     charts: [
       {
         type: 'AREA',
+        enhancedManualReportView: true,
         options: {
           title: undefined,
           credits: {
@@ -543,7 +543,6 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
   {
     title: 'Average Conversion Rate',
     tabMode: true,
-    enhancedManualReportView: true,
     layout: {
       'i': '1',
       'h': 3,
@@ -555,6 +554,7 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
     charts: [
       {
         type: 'AREA',
+        enhancedManualReportView: true,
         options: {
           title: undefined,
           credits: {
