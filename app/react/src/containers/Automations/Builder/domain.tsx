@@ -28,6 +28,8 @@ import {
   DeleteFromSegmentAutomationFormData,
   OnSegmentEntryInputAutomationFormData,
   QueryInputAutomationFormData,
+  isAddToSegmentNode,
+  isDeleteFromSegmentNode,
 } from './AutomationNode/Edit/domain';
 import { McsIconType } from '../../../components/McsIcon';
 import { QueryResource } from '../../../models/datamart/DatamartResource';
@@ -302,7 +304,13 @@ export class DeleteNodeOperation implements NodeOperation {
 
   execute(automationData: StorylineNodeModel): StorylineNodeModel {
     return cleanLastAdded(
-      this.iterateData(automationData, this.idNodeToBeDeleted),
+      this.iterateData(
+        this.removeSegmentFromDeletedAddToSegmentNode(
+          this.idNodeToBeDeleted,
+          automationData,
+        ),
+        this.idNodeToBeDeleted,
+      ),
     );
   }
 
@@ -312,29 +320,29 @@ export class DeleteNodeOperation implements NodeOperation {
     parentData?: StorylineNodeModel,
   ): StorylineNodeModel {
     const outEdges: StorylineNodeModel[] = automationData.out_edges.map(
-      (child, index) => {
+      (storyLineModel, index) => {
         if (
-          child.node.id === idNodeToBeDeleted &&
-          (isAbnNode(child.node) || isIfNode(child.node))
+          storyLineModel.node.id === idNodeToBeDeleted &&
+          (isAbnNode(storyLineModel.node) || isIfNode(storyLineModel.node))
         ) {
           const newNode: StorylineNodeModel = {
             node: {
-              id: child.node.id,
+              id: storyLineModel.node.id,
               scenario_id: '',
               type: 'END_NODE',
             },
-            in_edge: child.in_edge,
+            in_edge: storyLineModel.in_edge,
             out_edges: [],
           };
           return newNode;
         } else if (
-          child.node.id === idNodeToBeDeleted &&
-          !isAbnNode(child.node) &&
-          !isIfNode(child.node)
+          storyLineModel.node.id === idNodeToBeDeleted &&
+          !isAbnNode(storyLineModel.node) &&
+          !isIfNode(storyLineModel.node)
         ) {
-          const inEdge = child.in_edge;
+          const inEdge = storyLineModel.in_edge;
           const storylineNodeModel: StorylineNodeModel = {
-            node: child.out_edges[0].node,
+            node: storyLineModel.out_edges[0].node,
             in_edge: inEdge
               ? {
                   ...inEdge,
@@ -342,11 +350,15 @@ export class DeleteNodeOperation implements NodeOperation {
                   target_id: inEdge.target_id,
                 }
               : undefined,
-            out_edges: child.out_edges[0].out_edges,
+            out_edges: storyLineModel.out_edges[0].out_edges,
           };
           return storylineNodeModel;
         } else {
-          return this.iterateData(child, idNodeToBeDeleted, automationData);
+          return this.iterateData(
+            storyLineModel,
+            idNodeToBeDeleted,
+            automationData,
+          );
         }
       },
     );
@@ -355,6 +367,68 @@ export class DeleteNodeOperation implements NodeOperation {
       node: automationData.node,
       in_edge: automationData.in_edge,
       out_edges: outEdges,
+    };
+  }
+
+  removeSegmentFromDeletedAddToSegmentNode(
+    nodeIdToBeDeleted: string,
+    automationData: StorylineNodeModel,
+  ): StorylineNodeModel {
+    const removeSegmentFromDeletedAddToSegmentNodeRec = (
+      nodeIdToDeleted: string,
+      storylinesModels: StorylineNodeModel[],
+      segmentIdToDelete?: string,
+    ): StorylineNodeModel[] => {
+      return storylinesModels.map(storylineModel => {
+        const node = storylineModel.node;
+        if (node.id === nodeIdToDeleted && isAddToSegmentNode(node)) {
+          return {
+            ...storylineModel,
+            out_edges: removeSegmentFromDeletedAddToSegmentNodeRec(
+              nodeIdToDeleted,
+              storylineModel.out_edges,
+              node.formData.audienceSegmentId, // audienceSegmentId to deleted found
+            ),
+          };
+        } else if (
+          segmentIdToDelete &&
+          isDeleteFromSegmentNode(node) &&
+          node.formData.segmentId === segmentIdToDelete
+        ) {
+          // same segmentId found, remove it from DELETE_FROM_SEGMENT_NODE form
+          return {
+            ...storylineModel,
+            node: {
+              ...node,
+              formData: {
+                ...node.formData,
+                segmentId: undefined,
+              },
+            },
+            out_edges: removeSegmentFromDeletedAddToSegmentNodeRec(
+              nodeIdToDeleted,
+              storylineModel.out_edges,
+              segmentIdToDelete,
+            ),
+          };
+        }
+        return {
+          ...storylineModel,
+          out_edges: removeSegmentFromDeletedAddToSegmentNodeRec(
+            nodeIdToDeleted,
+            storylineModel.out_edges,
+            segmentIdToDelete,
+          ),
+        };
+      });
+    };
+
+    return {
+      ...automationData,
+      out_edges: removeSegmentFromDeletedAddToSegmentNodeRec(
+        nodeIdToBeDeleted,
+        automationData.out_edges,
+      ),
     };
   }
 }
@@ -405,10 +479,21 @@ export class UpdateNodeOperation implements NodeOperation {
       case 'ADD_TO_SEGMENT_NODE':
         const addToSegmentFormData = this
           .formData as AddToSegmentAutomationFormData;
+
+        // generate fake id if id null
+        const audienceSegmentId = addToSegmentFormData.audienceSegmentId
+          ? addToSegmentFormData.audienceSegmentId
+          : generateFakeId();
+
+        const addToSegmentFormDataUpdated = {
+          ...addToSegmentFormData,
+          audienceSegmentId: audienceSegmentId,
+        };
+
         nodeBody = {
           ...storylineNode.node,
           ...(this.node as AddToSegmentNodeResource),
-          formData: addToSegmentFormData,
+          formData: addToSegmentFormDataUpdated,
           initialFormData: this
             .initialFormData as AddToSegmentAutomationFormData,
         };
@@ -446,14 +531,14 @@ export class UpdateNodeOperation implements NodeOperation {
       case 'QUERY_INPUT':
         nodeBody = {
           ...storylineNode.node,
-          ...this.node as QueryInputNodeResource,
+          ...(this.node as QueryInputNodeResource),
           formData: this.formData as QueryInputAutomationFormData,
         };
         break;
       case 'IF_NODE':
         nodeBody = {
           ...storylineNode.node,
-          ...this.node as IfNodeResource,
+          ...(this.node as IfNodeResource),
           formData: this.formData as Partial<QueryResource>,
         };
         break;
@@ -600,10 +685,12 @@ export const beginNode = (type?: AutomationSelectedType): ScenarioNodeShape => {
     type: 'QUERY_INPUT',
     query_id: baseQueryId,
     evaluation_mode: 'LIVE',
-    ui_creation_mode: type === 'REACT_TO_EVENT' ? 'REACT_TO_EVENT_STANDARD' : 'QUERY',
+    ui_creation_mode:
+      type === 'REACT_TO_EVENT' ? 'REACT_TO_EVENT_STANDARD' : 'QUERY',
     last_added_node: true,
     formData: {
-      uiCreationMode: type === 'REACT_TO_EVENT' ? 'REACT_TO_EVENT_STANDARD' : 'QUERY',
+      uiCreationMode:
+        type === 'REACT_TO_EVENT' ? 'REACT_TO_EVENT_STANDARD' : 'QUERY',
     },
   };
 };
@@ -624,7 +711,7 @@ export const generateBeginNode = (
       evaluation_period_unit: evaluationPeriodUnit,
       ui_creation_mode: 'QUERY',
       last_added_node: true,
-      formData: {uiCreationMode: 'QUERY'},
+      formData: { uiCreationMode: 'QUERY' },
     };
   }
   return beginNode(type);
@@ -803,11 +890,12 @@ export const buildAutomationTreeData = (
         ...node,
         formData: {
           ...res.data,
-          uiCreationMode: 
-            node.ui_creation_mode === 'REACT_TO_EVENT_STANDARD' || 
-            node.ui_creation_mode === 'REACT_TO_EVENT_ADVANCED' ?
-            node.ui_creation_mode : 'REACT_TO_EVENT_STANDARD'
-        }
+          uiCreationMode:
+            node.ui_creation_mode === 'REACT_TO_EVENT_STANDARD' ||
+            node.ui_creation_mode === 'REACT_TO_EVENT_ADVANCED'
+              ? node.ui_creation_mode
+              : 'REACT_TO_EVENT_STANDARD',
+        },
       };
       return {
         node: queryInputNode,

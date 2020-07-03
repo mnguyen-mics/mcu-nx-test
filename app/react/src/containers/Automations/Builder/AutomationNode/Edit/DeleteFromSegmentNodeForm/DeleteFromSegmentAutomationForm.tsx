@@ -6,7 +6,6 @@ import {
 } from 'redux-form';
 import { FORM_ID, DeleteFromSegmentAutomationFormData } from '../domain';
 import { Path } from '../../../../../../components/ActionBar';
-import { ScenarioNodeShape } from '../../../../../../models/automations/automations';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import * as React from 'react';
 import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
@@ -18,6 +17,7 @@ import FormLayoutActionbar, {
 } from '../../../../../../components/Layout/FormLayoutActionbar';
 import { McsFormSection } from '../../../../../../utils/FormHelper';
 import DeleteFromSegmentGeneralSectionForm from './DeleteFromSegmentGeneralSectionForm';
+import { StorylineNodeModel } from '../../../domain';
 
 const { Content } = Layout;
 
@@ -36,7 +36,8 @@ export interface DeleteFromSegmentAutomationFormProps
   extends Omit<ConfigProps<DeleteFromSegmentAutomationFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: Path[];
-  node: ScenarioNodeShape;
+  storylineNodeModel: StorylineNodeModel;
+  scenarioNodes: StorylineNodeModel[];
   disabled?: boolean;
 }
 
@@ -64,6 +65,8 @@ class DeleteFromSegmentAutomationForm extends React.Component<Props> {
       component: (
         <DeleteFromSegmentGeneralSectionForm
           initialValues={this.props.initialValues}
+          storylineNodeModel={this.props.storylineNodeModel}
+          scenarioNodes={this.props.scenarioNodes}
           disabled={disabled}
         />
       ),

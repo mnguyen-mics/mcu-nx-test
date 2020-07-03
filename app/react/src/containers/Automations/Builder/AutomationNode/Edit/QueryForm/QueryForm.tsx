@@ -10,13 +10,14 @@ import {
 } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { FORM_ID, QueryInputAutomationFormData } from '../domain';
-import { QueryInputNodeResource } from '../../../../../../models/automations/automations';
 import { QueryLanguage } from '../../../../../../models/datamart/DatamartResource';
 import { MenuPresentational } from '../../../../../../components/FormMenu';
 import { FormTitle } from '../../../../../../components/Form';
 import JSONQLBuilderContainer from '../../../../../QueryTool/JSONOTQL/JSONQLBuilderContainer';
 import { McsIcon, OtqlConsole } from '../../../../../../components';
 import { QueryDocument } from '../../../../../../models/datamart/graphdb/QueryDocument';
+import { StorylineNodeModel } from '../../../domain';
+import { QueryInputNodeResource } from '../../../../../../models/automations/automations';
 
 const { Content } = Layout;
 
@@ -48,7 +49,7 @@ const localMessages = defineMessages({
 export interface QueryAutomationFormProps {
   close: () => void;
   breadCrumbPaths: Path[];
-  node: QueryInputNodeResource;
+  storylineNodeModel: StorylineNodeModel;
   onSubmit: (data: QueryInputAutomationFormData) => void;
   initialValues: QueryInputAutomationFormData;
   disabled?: boolean;
@@ -67,10 +68,11 @@ interface State {
 class QueryAutomationForm extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
+    const node = props.storylineNodeModel.node as QueryInputNodeResource;
     this.state = {
-      queryLanguage: props.node.formData.query_language,
-      queryText: props.node.formData.query_text,
-      isTrigger: props.node.evaluation_mode === 'LIVE',
+      queryLanguage: node.formData.query_language,
+      queryText: node.formData.query_text,
+      isTrigger: node.evaluation_mode === 'LIVE',
     };
   }
 
@@ -78,7 +80,7 @@ class QueryAutomationForm extends React.Component<Props, State> {
     const {
       breadCrumbPaths,
       close,
-      node,
+      storylineNodeModel: storylineNodeModel,
       initialValues,
       onSubmit,
       disabled,
@@ -147,6 +149,7 @@ class QueryAutomationForm extends React.Component<Props, State> {
       );
     }
 
+    const node = storylineNodeModel.node as QueryInputNodeResource;
     const datamartId = node.formData.datamart_id
       ? node.formData.datamart_id
       : initialValues.datamart_id!;

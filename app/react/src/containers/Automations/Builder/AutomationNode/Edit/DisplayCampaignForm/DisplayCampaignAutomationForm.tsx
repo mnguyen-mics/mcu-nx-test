@@ -16,7 +16,7 @@ import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { McsFormSection } from '../../../../../../utils/FormHelper';
 import { FORM_ID, DisplayCampaignAutomationFormData } from '../domain';
-import { ScenarioNodeShape } from '../../../../../../models/automations/automations';
+
 import GeneralInformationFormSection from './GeneralInformationFormSection';
 import {
   InventoryCatalogFieldArray,
@@ -31,6 +31,7 @@ import { BidOptimizerFormSection } from '../../../../../Campaigns/Display/Edit/A
 import { GoalFieldArray } from '../../../../../Campaigns/Display/Edit/DisplayCampaignForm';
 import { GoalFormSection } from '../../../../../Campaigns/Display/Edit/Sections/Programmatic';
 import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
+import { StorylineNodeModel } from '../../../domain';
 
 const { Content } = Layout;
 
@@ -53,7 +54,7 @@ export interface DisplayCampaignAutomationFormProps
   extends Omit<ConfigProps<DisplayCampaignAutomationFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: Path[];
-  node: ScenarioNodeShape;
+  storylineNodeModel: StorylineNodeModel;
   disabled?: boolean;
 }
 
@@ -62,7 +63,7 @@ interface MapStateToProps {
 }
 
 type Props = InjectedFormProps<
-DisplayCampaignAutomationFormData,
+  DisplayCampaignAutomationFormData,
   DisplayCampaignAutomationFormProps
 > &
   DisplayCampaignAutomationFormProps &
@@ -77,7 +78,7 @@ class DisplayCampaignAutomationForm extends React.Component<Props> {
     const genericFieldArrayProps = {
       formChange: change,
       rerenderOnEveryChange: true,
-      disabled: disabled
+      disabled: disabled,
     };
 
     const sections: McsFormSection[] = [];
@@ -106,7 +107,6 @@ class DisplayCampaignAutomationForm extends React.Component<Props> {
       ),
     };
 
-
     const device = {
       id: 'device',
       title: messages.sectionTitleDevice,
@@ -116,7 +116,10 @@ class DisplayCampaignAutomationForm extends React.Component<Props> {
           formChange={this.props.change}
           small={true}
           disabled={!!disabled}
-          initialValues={this.props.initialValues.adGroupFields && this.props.initialValues.adGroupFields[0].model.adGroup}
+          initialValues={
+            this.props.initialValues.adGroupFields &&
+            this.props.initialValues.adGroupFields[0].model.adGroup
+          }
         />
       ),
     };
@@ -178,7 +181,7 @@ class DisplayCampaignAutomationForm extends React.Component<Props> {
       paths: breadCrumbPaths,
       message: localMessages.save,
       onClose: close,
-      disabled: disabled
+      disabled: disabled,
     };
 
     const sections = this.buildFormSections();

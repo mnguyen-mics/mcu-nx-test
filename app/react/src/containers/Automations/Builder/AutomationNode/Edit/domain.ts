@@ -17,9 +17,7 @@ import {
 import { ABNAutomationFormProps } from './ABNAutomationForm/ABNAutomationForm';
 import { DefaultAutomationFormProps } from './DefaultForm/DefaultAutomationForm';
 import { DisplayCampaignAutomationFormProps } from './DisplayCampaignForm/DisplayCampaignAutomationForm';
-import {
-  EmailCampaignFormData,
-} from '../../../../Campaigns/Email/Edit/domain';
+import { EmailCampaignFormData } from '../../../../Campaigns/Email/Edit/domain';
 
 import { EmailCampaignAutomationFormProps } from './EmailCampaignForm/EmailCampaignAutomationForm';
 import { generateFakeId } from '../../../../../utils/FakeIdHelper';
@@ -27,9 +25,13 @@ import { DisplayCampaignFormData } from '../../../../Campaigns/Display/Edit/doma
 import { QueryResource } from '../../../../../models/datamart/DatamartResource';
 import { AddToSegmentAutomationFormProps } from './AddToSegmentNodeForm/AddToSegmentSegmentAutomationForm';
 import { DeleteFromSegmentAutomationFormProps } from './DeleteFromSegmentNodeForm/DeleteFromSegmentAutomationForm';
+import { ReactToEventAutomationFormProps } from './ReactToEventAutomationForm/ReactToEventAutomationForm';
+import { QueryAutomationFormProps } from './QueryForm/QueryForm';
+import { WaitAutomationFormProps } from './WaitForm/WaitForm';
+import { OnSegmentExitInputAutomationFormProps } from './OnSegmentExitInputForm/OnSegmentExitInputAutomationForm';
+import { OnSegmentEntryInputAutomationFormProps } from './OnSegmentEntryInputForm/OnSegmentEntryInputAutomationForm';
 
-export interface DefaultFormData {
-}
+export interface DefaultFormData {}
 
 export interface ABNFormData extends DefaultFormData {
   branch_number: number;
@@ -38,21 +40,21 @@ export interface ABNFormData extends DefaultFormData {
 
 export interface WaitFormData extends DefaultFormData {
   wait_duration: {
-    value: string,
-    unit: 'days' | 'hours',
-  }
+    value: string;
+    unit: 'days' | 'hours';
+  };
 }
 
 export const INITIAL_ADD_TO_SEGMENT_NODE_FORM_DATA: AddToSegmentAutomationFormData = {
   ttl: {
     value: undefined,
     unit: 'days',
-  }
-}
+  },
+};
 
 export const INITIAL_DELETE_FROM_SEGMENT_NODE_FORM_DATA: DeleteFromSegmentAutomationFormData = {
   segmentId: undefined,
-}
+};
 
 export const INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA: DisplayCampaignAutomationFormData = {
   campaign: {
@@ -71,28 +73,30 @@ export const INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA: DisplayCampaignAutomationF
     time_zone: 'Europe/Paris',
     model_version: 'V2017_09',
     type: 'DISPLAY',
-    automated: true
+    automated: true,
   },
-  adGroupFields: [{
-    key: generateFakeId(),
-    model: {
-      adGroup: {
-        total_impression_capping: 10,
-        max_budget_period: 'DAY',
-        targeted_operating_systems: 'ALL',
-        targeted_medias: 'WEB',
-        targeted_devices: 'ALL',
-        targeted_connection_types: 'ALL',
-        targeted_browser_families: 'ALL',
+  adGroupFields: [
+    {
+      key: generateFakeId(),
+      model: {
+        adGroup: {
+          total_impression_capping: 10,
+          max_budget_period: 'DAY',
+          targeted_operating_systems: 'ALL',
+          targeted_medias: 'WEB',
+          targeted_devices: 'ALL',
+          targeted_connection_types: 'ALL',
+          targeted_browser_families: 'ALL',
+        },
+        adFields: [],
+        bidOptimizerFields: [],
+        inventoryCatalFields: [],
+        locationFields: [],
+        segmentFields: [],
       },
-      adFields: [],
-      bidOptimizerFields: [],
-      inventoryCatalFields: [],
-      locationFields: [],
-      segmentFields: []
-    }
-  }],
-  goalFields: []
+    },
+  ],
+  goalFields: [],
 };
 
 export const INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA: EmailCampaignAutomationFormData = {
@@ -111,9 +115,9 @@ export const INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA: EmailCampaignAutomationFormD
         },
         templateFields: [],
         consentFields: [],
-        segmentFields: []
+        segmentFields: [],
       },
-    }
+    },
   ],
   routerFields: [],
   campaign: {
@@ -133,22 +137,25 @@ export const INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA: EmailCampaignAutomationFormD
 export const INITIAL_WAIT_DATA: WaitFormData = {
   wait_duration: {
     unit: 'days',
-    value: '2'
-  }
-}
+    value: '2',
+  },
+};
 
-export interface DisplayCampaignAutomationFormData extends DefaultFormData, DisplayCampaignFormData {
-}
+export interface DisplayCampaignAutomationFormData
+  extends DefaultFormData,
+    DisplayCampaignFormData {}
 
-export interface EmailCampaignAutomationFormData extends DefaultFormData, EmailCampaignFormData {
-}
+export interface EmailCampaignAutomationFormData
+  extends DefaultFormData,
+    EmailCampaignFormData {}
 
 export interface AddToSegmentAutomationFormData extends DefaultFormData {
   audienceSegmentName?: string;
+  audienceSegmentId?: string;
   ttl: {
-    value?: string,
-    unit: 'days' | 'months',
-  }
+    value?: string;
+    unit: 'days' | 'months';
+  };
 }
 
 export interface DeleteFromSegmentAutomationFormData extends DefaultFormData {
@@ -166,8 +173,13 @@ export interface OnSegmentExitInputAutomationFormData extends DefaultFormData {
   segmentId?: string;
 }
 
-export interface QueryInputAutomationFormData extends DefaultFormData, Partial<QueryResource> {
-  uiCreationMode: 'QUERY' | 'REACT_TO_EVENT_STANDARD' | 'REACT_TO_EVENT_ADVANCED';
+export interface QueryInputAutomationFormData
+  extends DefaultFormData,
+    Partial<QueryResource> {
+  uiCreationMode:
+    | 'QUERY'
+    | 'REACT_TO_EVENT_STANDARD'
+    | 'REACT_TO_EVENT_ADVANCED';
 }
 
 export type AutomationFormDataType =
@@ -186,7 +198,12 @@ export type AutomationFormPropsType =
   | DisplayCampaignAutomationFormProps
   | EmailCampaignAutomationFormProps
   | AddToSegmentAutomationFormProps
-  | DeleteFromSegmentAutomationFormProps;
+  | DeleteFromSegmentAutomationFormProps
+  | ReactToEventAutomationFormProps
+  | QueryAutomationFormProps
+  | WaitAutomationFormProps
+  | OnSegmentExitInputAutomationFormProps
+  | OnSegmentEntryInputAutomationFormProps;
 
 export const FORM_ID = 'automationNodeForm';
 
@@ -227,10 +244,7 @@ export function isDeleteFromSegmentNode(
 export function isQueryInputNode(
   node: AutomationNodeShape,
 ): node is QueryInputNodeResource {
-  return (
-    (node as QueryInputNodeResource).type ===
-    'QUERY_INPUT'
-  );
+  return (node as QueryInputNodeResource).type === 'QUERY_INPUT';
 }
 
 export function isOnSegmentEntryInputNode(
@@ -254,10 +268,7 @@ export function isOnSegmentExitInputNode(
 export function isWaitNode(
   node: AutomationNodeShape,
 ): node is WaitNodeResource {
-  return (
-    (node as WaitNodeResource).type ===
-    'WAIT_NODE'
-  );
+  return (node as WaitNodeResource).type === 'WAIT_NODE';
 }
 
 export function isIfNode(node: AutomationNodeShape): node is IfNodeResource {

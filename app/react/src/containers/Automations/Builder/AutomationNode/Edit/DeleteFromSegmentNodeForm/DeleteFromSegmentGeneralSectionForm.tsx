@@ -1,7 +1,10 @@
 import * as React from 'react';
-import { DeleteFromSegmentAutomationFormData } from "../domain";
-import { InjectedIntlProps, injectIntl, defineMessages } from "react-intl";
-import { ValidatorProps } from "../../../../../../components/Form/withValidators";
+import {
+  DeleteFromSegmentAutomationFormData,
+  isAddToSegmentNode,
+} from '../domain';
+import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import { ValidatorProps } from '../../../../../../components/Form/withValidators';
 import { TYPES } from '../../../../../../constants/types';
 import { lazyInject } from '../../../../../../config/inversify.config';
 import { IAudienceSegmentService } from '../../../../../../services/AudienceSegmentService';
@@ -9,19 +12,22 @@ import { compose } from 'recompose';
 import withNormalizer, {
   NormalizerProps,
 } from '../../../../../../components/Form/withNormalizer';
-import {
-  withValidators,
-  FormSection,
-} from '../../../../../../components/Form';
+import { withValidators, FormSection } from '../../../../../../components/Form';
 import { FormSearchObjectField } from '../../../../../QueryTool/JSONOTQL/Edit/Sections/Field/FieldNodeForm';
 import FormSearchObject from '../../../../../../components/Form/FormSelect/FormSearchObject';
 import SegmentNameDisplay from '../../../../../Audience/Common/SegmentNameDisplay';
 import { RouteComponentProps, withRouter } from 'react-router';
+import { StorylineNodeModel } from '../../../domain';
+import { AddToSegmentNodeResource } from '../../../../../../models/automations/automations';
+import { isFakeId } from '../../../../../../utils/FakeIdHelper';
+import { LabeledValue } from 'antd/lib/select';
 
 interface State {}
 
 interface DeleteFromSegmentGeneralSectionFormProps {
   initialValues: Partial<DeleteFromSegmentAutomationFormData>;
+  storylineNodeModel: StorylineNodeModel;
+  scenarioNodes: StorylineNodeModel[];
   disabled?: boolean;
 }
 
@@ -47,23 +53,101 @@ class DeleteFromSegmentGeneralSectionForm extends React.Component<
       match: {
         params: { organisationId },
       },
+      storylineNodeModel,
+      scenarioNodes,
     } = this.props;
 
     return this._audienceSegmentService
-      .getSegments(organisationId, { keywords, type: ['USER_LIST'], feed_type: 'SCENARIO' })
+      .getSegments(organisationId, {
+        keywords,
+        type: ['USER_LIST'],
+        feed_type: 'SCENARIO',
+      })
       .then(({ data: segments }) =>
-        segments.map(r => ({
-          key: r.id,
-          label: <SegmentNameDisplay audienceSegmentResource={r} />,
-        })),
+        this.findPreviousAddToSegmentNodes(storylineNodeModel, scenarioNodes)
+          .map(r => ({
+            key: r.formData.audienceSegmentId || '',
+            label: <label>{r.formData.audienceSegmentName || ''}</label>,
+          }))
+          .concat(
+            segments.map(r => ({
+              key: r.id,
+              label: <SegmentNameDisplay audienceSegmentResource={r} />,
+            })),
+          ),
       );
   };
 
+  findPreviousAddToSegmentNodes = (
+    storylineNodeModel: StorylineNodeModel,
+    scenarioNodes: StorylineNodeModel[],
+  ): AddToSegmentNodeResource[] => {
+    const findPreviousAddToSegmentNodesRec = (
+      storylineNodeModelRec: StorylineNodeModel,
+      list: AddToSegmentNodeResource[],
+    ): AddToSegmentNodeResource[] => {
+      const inEdge = storylineNodeModelRec.in_edge;
+      if (inEdge) {
+        const foundStorylineNode = scenarioNodes.find(
+          storylineNode => storylineNode.node.id === inEdge.source_id,
+        );
+        if (foundStorylineNode) {
+          if (
+            isAddToSegmentNode(foundStorylineNode.node) &&
+            foundStorylineNode.node.formData.audienceSegmentName &&
+            foundStorylineNode.node.formData.audienceSegmentId &&
+            isFakeId(foundStorylineNode.node.formData.audienceSegmentId)
+          ) {
+            return findPreviousAddToSegmentNodesRec(
+              foundStorylineNode,
+              list.concat(foundStorylineNode.node),
+            );
+          }
+          return findPreviousAddToSegmentNodesRec(foundStorylineNode, list);
+        }
+      }
+      return list;
+    };
+
+    return findPreviousAddToSegmentNodesRec(storylineNodeModel, []);
+  };
+
   fetchSingleMethod = (id: string) => {
-    return this._audienceSegmentService.getSegment(id).then(({ data: segment }) => ({
-      key: segment.id,
-      label: <SegmentNameDisplay audienceSegmentResource={segment} />,
-    }));
+    const { scenarioNodes } = this.props;
+
+    if (isFakeId(id)) {
+      return new Promise<LabeledValue>(resolve => {
+        return resolve({
+          key: id,
+          label: <label>{this.findSegmentName(id, scenarioNodes)}</label>,
+        });
+      });
+    } else {
+      return this._audienceSegmentService
+        .getSegment(id)
+        .then(({ data: segment }) => ({
+          key: segment.id,
+          label: <SegmentNameDisplay audienceSegmentResource={segment} />,
+        }));
+    }
+  };
+
+  findSegmentName = (
+    audienceSegmentId: string,
+    scenarioNodes: StorylineNodeModel[],
+  ) => {
+    const addToSegmentStoryLine = scenarioNodes.find(
+      storylineNode =>
+        isAddToSegmentNode(storylineNode.node) &&
+        audienceSegmentId === storylineNode.node.formData.audienceSegmentId,
+    );
+    if (
+      addToSegmentStoryLine &&
+      isAddToSegmentNode(addToSegmentStoryLine.node)
+    ) {
+      return addToSegmentStoryLine.node.formData.audienceSegmentName || '';
+    }
+    return '';
   };
 
   render() {
@@ -94,7 +178,7 @@ class DeleteFromSegmentGeneralSectionForm extends React.Component<
           }}
           selectProps={{
             disabled: !!disabled,
-            mode: "default",
+            mode: 'default',
             showSearch: true,
           }}
           type="Audience"
@@ -114,7 +198,8 @@ export default compose<Props, DeleteFromSegmentGeneralSectionFormProps>(
 
 export const messages = defineMessages({
   sectionGeneralTitle: {
-    id: 'automation.builder.node.deleteFromSegmentForm.generalInfoSection.title',
+    id:
+      'automation.builder.node.deleteFromSegmentForm.generalInfoSection.title',
     defaultMessage: 'General information',
   },
   sectionGeneralSubtitle: {
@@ -131,7 +216,8 @@ export const messages = defineMessages({
   },
   audienceSegmentNameSubtitle: {
     id: 'automation.builder.node.deleteFromSegmentForm.name.subtitle',
-    defaultMessage: "Delete users if they exist in this segment otherwise do nothing and continue the automation.",
+    defaultMessage:
+      'Delete users if they exist in this segment otherwise do nothing and continue the automation.',
   },
   audienceSegmentNamePlaceholder: {
     id: 'automation.builder.node.deleteFromSegmentForm.name.placeholder',

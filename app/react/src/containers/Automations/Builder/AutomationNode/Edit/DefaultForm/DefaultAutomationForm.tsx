@@ -16,9 +16,9 @@ import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { McsFormSection } from '../../../../../../utils/FormHelper';
 import { DefaultFormData, FORM_ID } from '../domain';
-import { ScenarioNodeShape } from '../../../../../../models/automations/automations';
 import GeneralInformationFormSection from './GeneralInformationFormSection';
 import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
+import { StorylineNodeModel } from '../../../domain';
 
 const { Content } = Layout;
 
@@ -41,7 +41,7 @@ export interface DefaultAutomationFormProps
   extends Omit<ConfigProps<DefaultFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: Path[];
-  node: ScenarioNodeShape;
+  storylineNodeModel: StorylineNodeModel;
   disabled?: boolean;
 }
 
@@ -49,10 +49,7 @@ interface MapStateToProps {
   formValues: DefaultFormData;
 }
 
-type Props = InjectedFormProps<
-  DefaultFormData,
-  DefaultAutomationFormProps
-> &
+type Props = InjectedFormProps<DefaultFormData, DefaultAutomationFormProps> &
   DefaultAutomationFormProps &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }> &
@@ -60,17 +57,20 @@ type Props = InjectedFormProps<
 
 class DefaultAutomationForm extends React.Component<Props> {
   buildFormSections = () => {
-    const {disabled} = this.props;
+    const { disabled } = this.props;
     const general = {
       id: 'general',
       title: localMessages.sectionGeneralTitle,
       component: (
-        <GeneralInformationFormSection disabled={disabled} initialValues={this.props.initialValues} />
+        <GeneralInformationFormSection
+          disabled={disabled}
+          initialValues={this.props.initialValues}
+        />
       ),
     };
 
     const sections: McsFormSection[] = [general];
-    
+
     return sections;
   };
 
@@ -81,7 +81,7 @@ class DefaultAutomationForm extends React.Component<Props> {
       paths: breadCrumbPaths,
       message: localMessages.save,
       onClose: close,
-      disabled: disabled
+      disabled: disabled,
     };
 
     const sections = this.buildFormSections();
@@ -101,10 +101,7 @@ class DefaultAutomationForm extends React.Component<Props> {
       <Layout className="edit-layout">
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
-          <Form
-            className="edit-layout ant-layout"
-            onSubmit={handleSubmit}
-          >
+          <Form className="edit-layout ant-layout" onSubmit={handleSubmit}>
             <Content
               id={FORM_ID}
               className="mcs-content-container mcs-form-container automation-form"
