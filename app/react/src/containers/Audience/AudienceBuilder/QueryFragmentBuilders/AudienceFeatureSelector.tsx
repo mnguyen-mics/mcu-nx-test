@@ -6,18 +6,18 @@ import { RouteComponentProps } from 'react-router';
 import { messages } from '../constants';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
-import { IParametricPredicateService } from '../../../../services/ParametricPredicateService';
+import { IAudienceFeatureService } from '../../../../services/AudienceFeatureService';
 import { connect } from 'react-redux';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
 import { AudienceBuilderFormData } from '../../../../models/audienceBuilder/AudienceBuilderResource';
-import { ParametricPredicateResource } from '../../../../models/parametricPredicate';
 import TableSelector, {
   TableSelectorProps,
 } from '../../../../components/ElementSelector/TableSelector';
 import { DataColumnDefinition } from '../../../../components/TableView/TableView';
+import { AudienceFeatureResource } from '../../../../models/audienceFeature';
 
 const AudienceFeatureTableSelector: React.ComponentClass<TableSelectorProps<
-  ParametricPredicateResource
+  AudienceFeatureResource
 >> = TableSelector;
 
 interface MapStateToProps {
@@ -26,13 +26,13 @@ interface MapStateToProps {
 
 export interface AudienceFeatureSelectorProps {
   datamartId: string;
-  save: (audienceFeatures: ParametricPredicateResource[]) => void;
+  save: (audienceFeatures: AudienceFeatureResource[]) => void;
   close: () => void;
 }
 
 interface State {
   isLoading: boolean;
-  parametricPredicates: ParametricPredicateResource[];
+  parametricPredicates: AudienceFeatureResource[];
 }
 
 type Props = MapStateToProps &
@@ -41,8 +41,8 @@ type Props = MapStateToProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class AudienceFeatureSelector extends React.Component<Props, State> {
-  @lazyInject(TYPES.IParametricPredicateService)
-  private _parametricPredicateService: IParametricPredicateService;
+  @lazyInject(TYPES.IAudienceFeatureService)
+  private _audienceFeatureService: IAudienceFeatureService;
 
   constructor(props: Props) {
     super(props);
@@ -54,12 +54,12 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
 
   fetchAudienceFeatures = () => {
     const { datamartId } = this.props;
-    return this._parametricPredicateService.getParametricPredicates(datamartId);
+    return this._audienceFeatureService.getAudienceFeatures(datamartId);
   };
 
   saveAudienceFeatures = (
     audienceFeatureIds: string[],
-    audienceFeatures: ParametricPredicateResource[],
+    audienceFeatures: AudienceFeatureResource[],
   ) => {
     this.props.save(audienceFeatures);
   };
@@ -69,7 +69,7 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
       close,
       intl: { formatMessage },
     } = this.props;
-    const columns: Array<DataColumnDefinition<ParametricPredicateResource>> = [
+    const columns: Array<DataColumnDefinition<AudienceFeatureResource>> = [
       {
         intlMessage: messages.audienceFeatureName,
         key: 'name',
@@ -84,10 +84,7 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
 
     const fetchAudienceFeature = (id: string) => {
       const { datamartId } = this.props;
-      return this._parametricPredicateService.getParametricPredicate(
-        id,
-        datamartId,
-      );
+      return this._audienceFeatureService.getAudienceFeature(id, datamartId);
     };
 
     return (

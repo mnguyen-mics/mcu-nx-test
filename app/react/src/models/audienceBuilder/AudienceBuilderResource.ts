@@ -1,75 +1,41 @@
-import { ParametricPredicateResource } from './../parametricPredicate/ParametricPredicateResource';
-import {
-  QueryBooleanOperator,
-  QueryFieldComparisonShape,
-  ObjectTreeExpressionNodeShape,
-} from './../datamart/graphdb/QueryDocument';
+import { QueryBooleanOperator, SelectionOperation } from './../datamart/graphdb/QueryDocument';
 export interface AudienceBuilderResource {
   id: string;
   name: string;
   datamart_id: string;
 }
 
-interface AudienceBuilderObjectNodeModel {
-  type: 'OBJECT';
-  field: string;
-  expressions: ObjectTreeExpressionNodeShape[];
-  negation?: boolean;
-  boolean_operator: QueryBooleanOperator;
-  min_score?: number;
-  score_function?: 'SUM' | 'AVERAGE' | 'MIN' | 'MAX';
-  score_field?: string;
-}
-
-export interface AudienceBuilderGroupNodeModel {
+export interface AudienceBuilderGroupNode {
   type: 'GROUP';
   expressions: AudienceBuilderNodeShape[];
   negation?: boolean;
   boolean_operator: QueryBooleanOperator;
 }
 
-export interface AudienceBuilderFieldNodeModel {
-  type: 'FIELD';
-  field: string;
-  comparison?: QueryFieldComparisonShape;
+export interface AudienceBuilderParametricPredicateNode {
+  type: 'PARAMETRIC_PREDICATE';
+  id: string;
+  parameters: {
+    [key: string]: string[] | undefined;
+  };
 }
-
-type AudienceBuilderNodeModel =
-  | AudienceBuilderGroupNodeModel
-  | AudienceBuilderFieldNodeModel
-  | AudienceBuilderObjectNodeModel;
 
 export function isAudienceBuilderGroupNode(
-  nodeModel: AudienceBuilderNodeModel,
-): nodeModel is AudienceBuilderGroupNodeModel {
-  return nodeModel.type === 'GROUP';
-}
-
-export function isAudienceBuilderObjectNode(
-  nodeModel: AudienceBuilderNodeModel,
-): nodeModel is AudienceBuilderObjectNodeModel {
-  return nodeModel.type === 'OBJECT';
-}
-
-export function isAudienceBuilderFieldNode(
   node: AudienceBuilderNodeShape,
-): node is AudienceBuilderFieldNode {
-  return node.model.type === 'FIELD';
+): node is AudienceBuilderGroupNode {
+  return node.type === 'GROUP';
 }
 
-export interface AudienceBuilderGroupNode {
-  key: string;
-  model: AudienceBuilderGroupNodeModel;
+export function isAudienceBuilderParametricPredicateNode(
+  node: AudienceBuilderNodeShape,
+): node is AudienceBuilderParametricPredicateNode {
+  return node.type === 'PARAMETRIC_PREDICATE';
 }
-export interface AudienceBuilderFieldNode {
-  key: string;
-  parametricPredicateResource?: ParametricPredicateResource;
-  model: AudienceBuilderFieldNodeModel;
-}
+
 
 export type AudienceBuilderNodeShape =
-  | AudienceBuilderFieldNode
-  | AudienceBuilderGroupNode;
+  | AudienceBuilderGroupNode
+  | AudienceBuilderParametricPredicateNode;
 
 export interface AudienceBuilderFormData {
   datamart_id?: string;
@@ -79,4 +45,11 @@ export interface AudienceBuilderFormData {
     negation?: boolean;
     expressions: AudienceBuilderNodeShape[];
   };
+}
+
+export interface QueryDocument {
+  language_version?: string;
+  operations: SelectionOperation[];
+  from: string;
+  where?: AudienceBuilderNodeShape
 }

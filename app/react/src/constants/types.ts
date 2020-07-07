@@ -76,7 +76,7 @@ const TYPES = {
   IPlacementListService: Symbol.for('placementListService'),
   IPlacementListFormService: Symbol.for('placementListFormService'),
   IAudienceBuilderService: Symbol.for('audienceBuilderService'),
-  IParametricPredicateService: Symbol.for('parametricPredicateService'),
+  IAudienceFeatureService: Symbol.for('audienceFeatureService'),
 };
 
 export { TYPES };

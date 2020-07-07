@@ -67,10 +67,9 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
   render() {
     const { totalAudience } = this.state;
 
-    const { change, formValues } = this.props;
+    const { formValues } = this.props;
 
     const genericFieldArrayProps = {
-      formChange: change,
       rerenderOnEveryChange: true,
     };
 
@@ -89,7 +88,10 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
                 />
               )}
             </Col>
-            <Col span={12}>
+            <Col
+              span={12}
+              className="mcs-segmentBuilder_liveDashboardContainer"
+            >
               <AudienceBuilderDashboard totalAudience={totalAudience} />
             </Col>
           </Row>
