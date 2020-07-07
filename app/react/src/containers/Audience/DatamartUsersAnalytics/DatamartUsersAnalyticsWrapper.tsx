@@ -89,21 +89,25 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
       disableAllUserFilter,
       comparisonStartDate,
     } = this.props;
+
+    const queryParms = {
+      allusers: disableAllUserFilter ? false : true,
+      segments: defaultSegment ? [defaultSegment.key] : [],
+    };
+
+    const queryParamsWithDate = comparisonStartDate ? {
+      ...queryParms,
+      from: new McsMoment(
+        `now-${convertTimestampToDayNumber(comparisonStartDate)}d`,
+      ),
+      to: new McsMoment('now-1d'),
+    } : undefined;
+
     const nextLocation = {
       pathname: pathname,
-      search: updateSearch(search, {
-        allusers: disableAllUserFilter ? false : true,
-        segments: defaultSegment ? [defaultSegment.key] : [],
-        from: new McsMoment(
-          `now-${
-            comparisonStartDate
-              ? convertTimestampToDayNumber(comparisonStartDate)
-              : '8'
-          }d`,
-        ),
-        to: new McsMoment('now-1d'),
-      }),
+      search: updateSearch(search, queryParamsWithDate || queryParms ),
     };
+
     if (!isSearchValid(search, DATAMART_USERS_ANALYTICS_SETTING)) {
       history.replace(nextLocation);
     }
