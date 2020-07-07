@@ -31,6 +31,14 @@ Cypress.Commands.add(
     loginPage.fillPassword(password)
 
     loginPage.submit()
+
+    const waitForAccessTokenInLocalStorage = () => {
+      cy.wait(50).then(() => {
+        if(!localStorage.getItem('access_token'))
+          waitForAccessTokenInLocalStorage()
+      })
+    }
+    waitForAccessTokenInLocalStorage()
   },
 )
 
