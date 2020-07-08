@@ -157,6 +157,7 @@ class LabelsSelector extends React.Component<
             trigger={['click']}
           >
             <Input
+              autoFocus={true}
               id="labelInput"
               ref={this.saveInputRef}
               type="text"
