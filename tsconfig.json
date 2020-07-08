@@ -23,5 +23,5 @@
     "experimentalDecorators": true,
     // "types": ["reflect-metadata"]
   },
-  "exclude": ["node_modules", "ts-build", ".history", "dist"]
+  "exclude": ["node_modules", "ts-build", ".history", "dist", "Cypress"]
 }
