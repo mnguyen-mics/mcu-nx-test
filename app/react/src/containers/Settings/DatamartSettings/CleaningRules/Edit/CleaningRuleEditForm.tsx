@@ -55,6 +55,7 @@ class CleaningRuleEditForm extends React.Component<Props> {
       goToDatamartSelector,
       options,
       cleaningRuleType,
+      change
     } = this.props;
 
     const actionBarProps: FormLayoutActionbarProps = {
@@ -82,6 +83,7 @@ class CleaningRuleEditForm extends React.Component<Props> {
         <ScopeFormSection
           options={options}
           cleaningRuleType={cleaningRuleType}
+          formChange={change}
         />
       ),
     });
