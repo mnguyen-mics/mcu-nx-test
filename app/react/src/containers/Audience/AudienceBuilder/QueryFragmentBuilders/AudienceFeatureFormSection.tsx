@@ -3,66 +3,64 @@ import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { ReduxFormChangeProps } from '../../../../utils/FormHelper';
 import { WrappedFieldArrayProps } from 'redux-form';
-import { AudienceBuilderFieldNode } from '../../../../models/audienceBuilder/AudienceBuilderResource';
+import { AudienceBuilderParametricPredicateNode } from '../../../../models/audienceBuilder/AudienceBuilderResource';
 import { Row, Col, Button, Statistic } from 'antd';
 import { McsIcon } from '../../../../components';
-import ParametricPredicateLayout from './ParametricPredicateLayout';
+import AudienceFeatureLayout from './AudienceFeatureLayout';
 
 export interface AudienceFeatureFormSectionProps extends ReduxFormChangeProps {
   isDemographicsSection: boolean;
+  datamartId: string;
 }
 
-type Props = WrappedFieldArrayProps<AudienceBuilderFieldNode> &
+type Props = WrappedFieldArrayProps<AudienceBuilderParametricPredicateNode> &
   AudienceFeatureFormSectionProps &
   InjectedIntlProps;
 
 class AudienceFeatureFormSection extends React.Component<Props> {
   render() {
-    const { fields, isDemographicsSection } = this.props;
+    const { fields, isDemographicsSection, datamartId } = this.props;
 
-    return fields && fields.getAll()
-      ? fields.getAll().map((f, index) => {
-          const handleRemove = () => fields.remove(index);
-          return (
-            <Row
-              key={f.key}
-              className={
-                isDemographicsSection
-                  ? 'mcs-segmentBuilder_demographicFeature'
-                  : 'mcs-segmentBuilder_audienceFeature'
-              }
-            >
-              <Col span={isDemographicsSection ? 24 : 20}>
-                <div className="mcs-segmentBuilder_audienceFeatureName">{`${f.model.field} `}</div>
-                {f.parametricPredicateResource && (
-                  <ParametricPredicateLayout
-                    parametricPredicateResource={f.parametricPredicateResource}
-                  />
-                )}
+    return fields.map((name, index) => {
+      const handleRemove = () => fields.remove(index);
+      return (
+        <Row
+          key={`${index}_${fields.length}`}
+          className={
+            isDemographicsSection
+              ? 'mcs-segmentBuilder_demographicFeature'
+              : 'mcs-segmentBuilder_audienceFeature'
+          }
+        >
+          <Col span={isDemographicsSection ? 24 : 20}>
+            <AudienceFeatureLayout
+              formPath={`${name}`}
+              datamartId={datamartId}
+              parametricPredicateResource={fields.get(index)}
+            />
+          </Col>
+
+          {!isDemographicsSection && (
+            <React.Fragment>
+              <Col span={2}>
+                <Statistic
+                  value={3.2}
+                  className="mcs-segmentBuilder_audienceFeatureTotal"
+                />
               </Col>
-
-              {!isDemographicsSection && (
-                <React.Fragment>
-                  <Col span={2}>
-                    <Statistic
-                      value={3.2}
-                      className="mcs-segmentBuilder_audienceFeatureTotal"
-                    />
-                  </Col>
-                  <Col span={2}>
-                    <Button
-                      className="mcs-segmentBuilder_closeButton"
-                      onClick={handleRemove}
-                    >
-                      <McsIcon type="close" />
-                    </Button>
-                  </Col>
-                </React.Fragment>
-              )}
-            </Row>
-          );
-        })
-      : 'undefined';
+              <Col span={2}>
+                <Button
+                  className="mcs-segmentBuilder_closeButton"
+                  onClick={handleRemove}
+                >
+                  <McsIcon type="close" />
+                </Button>
+              </Col>
+            </React.Fragment>
+          )}
+        </Row>
+      );
+    });
   }
 }
 

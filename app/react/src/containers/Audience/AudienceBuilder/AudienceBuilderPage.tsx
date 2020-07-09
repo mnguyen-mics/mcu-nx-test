@@ -6,9 +6,9 @@ import AudienceBuilderContainer from './AudienceBuilderContainer';
 import {
   AudienceBuilderResource,
   AudienceBuilderFormData,
+  // QueryDocument,
   AudienceBuilderNodeShape,
   isAudienceBuilderGroupNode,
-  AudienceBuilderFieldNodeModel,
 } from '../../../models/audienceBuilder/AudienceBuilderResource';
 import { lazyInject } from '../../../config/inversify.config';
 import { IAudienceBuilderService } from '../../../services/AudienceBuilderService';
@@ -18,14 +18,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
 import { INITIAL_AUDIENCE_BUILDER_FORM_DATA } from './constants';
-import {
-  ObjectTreeExpressionNodeShape,
-  isGroupNode,
-  GroupNode,
-  isFieldNode,
-} from '../../../models/datamart/graphdb/QueryDocument';
 import { Loading } from '../../../components';
-import cuid from 'cuid';
 
 interface State {
   audienceBuilders?: AudienceBuilderResource[];
@@ -73,66 +66,6 @@ class AudienceBuilderPage extends React.Component<Props, State> {
       });
   }
 
-  // Builds formData from JSON OTQL where clause
-  buildFormData = (
-    whereClause?: ObjectTreeExpressionNodeShape,
-  ): AudienceBuilderFormData => {
-    const loop = (
-      node: ObjectTreeExpressionNodeShape,
-    ): AudienceBuilderNodeShape[] => {
-      if (!isGroupNode(node)) {
-        // Wrong data
-        return [];
-      } else {
-        return node.expressions.map(exp => {
-          if (isFieldNode(exp)) {
-            return {
-              key: cuid(),
-              model: exp,
-            };
-          } else if (isGroupNode(exp)) {
-            return {
-              key: cuid(),
-              model: {
-                ...exp,
-
-                expressions: loop(exp),
-              },
-            };
-          } else {
-            // If there is others node types,
-            // formData should not be valid
-            return {
-              key: cuid(),
-              model: exp as any,
-            };
-          }
-        });
-      }
-    };
-
-    const defaultFormData: AudienceBuilderFormData = {
-      where: {
-        type: 'GROUP',
-        boolean_operator: 'AND',
-        expressions: [],
-      },
-    };
-    if (!whereClause) {
-      return defaultFormData;
-    } else if (isGroupNode(whereClause)) {
-      const formData = {
-        where: {
-          ...whereClause,
-          expressions: loop(whereClause),
-        },
-      };
-      return formData as AudienceBuilderFormData;
-    } else {
-      return defaultFormData;
-    }
-  };
-
   saveAudience = (formData: AudienceBuilderFormData) => {
     // const baseQueryFragment = {
     //   language_version: 'JSON_OTQL',
@@ -149,9 +82,8 @@ class AudienceBuilderPage extends React.Component<Props, State> {
     //   from: 'UserPoint',
     //   where: {},
     // };
-    // JSON OTQL Clause where
-    // const clauseWhere = this.extractJsonOtql(formData);
-    // const query = {
+    // const clauseWhere = formData.where;
+    // const query: QueryDocument = {
     //   ...baseQueryFragment,
     //   where: clauseWhere,
     // };
@@ -161,30 +93,8 @@ class AudienceBuilderPage extends React.Component<Props, State> {
     // console.log('Number of errors: ', this.validateQuery(clauseWhere));
   };
 
-  // returns JSON OTQL where clause from formData
-  extractJsonOtql = (formData: AudienceBuilderFormData): GroupNode => {
-    const loop = (
-      expressions: AudienceBuilderNodeShape[],
-    ): ObjectTreeExpressionNodeShape[] => {
-      return expressions.map(exp => {
-        if (isAudienceBuilderGroupNode(exp.model)) {
-          return {
-            ...exp.model,
-            expressions: loop(exp.model.expressions),
-          };
-        } else {
-          return exp.model as AudienceBuilderFieldNodeModel;
-        }
-      });
-    };
-    return {
-      ...formData.where,
-      expressions: loop(formData.where.expressions),
-    };
-  };
-
   // Validates JSON OTQL clauseWhere from formData
-  validateQuery = (clauseWhere: ObjectTreeExpressionNodeShape): number => {
+  validateQuery = (clauseWhere: AudienceBuilderNodeShape): number => {
     let errors = 0;
     if (
       clauseWhere.type !== 'GROUP' ||
@@ -194,7 +104,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
     } else
       clauseWhere.expressions.forEach((exp, i) => {
         if (i === 0) {
-          if (!isGroupNode(exp)) {
+          if (!isAudienceBuilderGroupNode(exp)) {
             errors++;
           } else {
             if (exp.boolean_operator !== 'AND') {

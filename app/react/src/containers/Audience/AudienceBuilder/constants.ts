@@ -1,116 +1,91 @@
 import { AudienceBuilderFormData } from './../../../models/audienceBuilder/AudienceBuilderResource';
 import { FormattedMessage, defineMessages } from 'react-intl';
-import cuid from 'cuid';
 
 export const messages: {
   [key: string]: FormattedMessage.MessageDescriptor;
 } = defineMessages({
   title: {
-    id: 'segmentBuilderSelector.title',
-    defaultMessage: 'Segment Builder',
+    id: 'audienceBuilder.title',
+    defaultMessage: 'Audience Builder',
   },
   demographics: {
-    id: 'segmentBuilderSelector.category.demographics',
+    id: 'audienceBuilder.category.demographics',
     defaultMessage: 'Demographics',
   },
   totalAudience: {
-    id: 'segmentBuilderSelector.totalAudience',
+    id: 'audienceBuilder.totalAudience',
     defaultMessage: 'Total Audience',
   },
-  male: {
-    id: 'segmentBuilderSelector.category.demographics.male',
-    defaultMessage: 'Male',
-  },
-  female: {
-    id: 'segmentBuilderSelector.category.demographics.female',
-    defaultMessage: 'Female',
-  },
-  all: {
-    id: 'segmentBuilderSelector.category.demographics.all',
-    defaultMessage: 'All',
-  },
-  age: {
-    id: 'segmentBuilderSelector.category.demographics.age',
-    defaultMessage: 'Age',
-  },
-  language: {
-    id: 'segmentBuilderSelector.category.demographics.language',
-    defaultMessage: 'Language',
-  },
-  gender: {
-    id: 'segmentBuilderSelector.category.demographics.gender',
-    defaultMessage: 'Gender',
-  },
   tooltipGender: {
-    id: 'segmentBuilderSelector.category.demographics.tooltiptGender',
+    id: 'audienceBuilder.category.demographics.tooltiptGender',
     defaultMessage: 'Select the gender of your audience.',
   },
   tooltipAge: {
-    id: 'segmentBuilderSelector.category.demographics.tooltiptAge',
+    id: 'audienceBuilder.category.demographics.tooltiptAge',
     defaultMessage: 'Select the age of your audience.',
   },
   tooltipLanguage: {
-    id: 'segmentBuilderSelector.category.demographics.tooltiptLanguage',
+    id: 'audienceBuilder.category.demographics.tooltiptLanguage',
     defaultMessage: 'Select the language of your audience.',
   },
   narrowingWith: {
-    id: 'segmentBuilderSelector.category.narrowingWith',
+    id: 'audienceBuilder.category.narrowingWith',
     defaultMessage: 'narrowing with',
   },
   excludingWith: {
-    id: 'segmentBuilderSelector.category.excludingWith',
-    defaultMessage: 'excluding with',
+    id: 'audienceBuilder.category.excludingWith',
+    defaultMessage: 'excluding',
   },
   purchasIntent: {
-    id: 'segmentBuilderSelector.liveDashboard.purchaseIntent',
+    id: 'audienceBuilder.liveDashboard.purchaseIntent',
     defaultMessage: 'Purchase Intent',
   },
   geographics: {
-    id: 'segmentBuilderSelector.liveDashboard.geographics',
+    id: 'audienceBuilder.liveDashboard.geographics',
     defaultMessage: 'Geographics',
   },
   audienceFeatures: {
-    id: 'segmentBuilderSelector.audienceFeature.card.title',
+    id: 'audienceBuilder.audienceFeature.card.title',
     defaultMessage: 'Audience Features',
   },
   addAudienceFeature: {
-    id: 'segmentBuilderSelector.audienceFeatureSelector.actionBarTitle',
+    id: 'audienceBuilder.audienceFeatureSelector.actionBarTitle',
     defaultMessage: 'Add more audience features',
   },
   noDemographicExpressions: {
-    id: 'segmentBuilderSelector.category.demographics.noDemographicExpressions',
+    id: 'audienceBuilder.category.demographics.noDemographicExpressions',
     defaultMessage: 'No Demographic Expressions',
   },
   generalSectionTitle: {
-    id: 'segmentBuilderSelector.parametricPredicateForm.generalSectionTitle',
+    id: 'audienceBuilder.parametricPredicateForm.generalSectionTitle',
     defaultMessage: 'Audience Feature',
   },
   generalSectionSubtitle: {
-    id: 'segmentBuilderSelector.parametricPredicateForm.generalSectionSubtitle',
+    id: 'audienceBuilder.parametricPredicateForm.generalSectionSubtitle',
     defaultMessage: 'Select your audience features',
   },
-  audienceFeatureId:{
-    id: 'segmentBuilderSelector.audienceFeatureSelector.id',
+  audienceFeatureId: {
+    id: 'audienceBuilder.audienceFeatureSelector.id',
     defaultMessage: 'ID',
   },
-  audienceFeatureName:{
-    id: 'segmentBuilderSelector.audienceFeatureSelector.name',
+  audienceFeatureName: {
+    id: 'audienceBuilder.audienceFeatureSelector.name',
     defaultMessage: 'Name',
   },
-  audienceFeatureDescription:{
-    id: 'segmentBuilderSelector.audienceFeatureSelector.description',
+  audienceFeatureDescription: {
+    id: 'audienceBuilder.audienceFeatureSelector.description',
     defaultMessage: 'Description',
   },
-  searchAudienceFeature:{
-    id: 'segmentBuilderSelector.audienceFeatureSelector.searchPlaceholder',
+  searchAudienceFeature: {
+    id: 'audienceBuilder.audienceFeatureSelector.searchPlaceholder',
     defaultMessage: 'Search an audience feature',
   },
-  audienceFeatureAdressableObject:{
-    id: 'segmentBuilderSelector.audienceFeatureSelector.adressableObject',
+  audienceFeatureAdressableObject: {
+    id: 'audienceBuilder.audienceFeatureSelector.adressableObject',
     defaultMessage: 'Adressable Object',
   },
-  audienceFeatureObjectTreeExpression:{
-    id: 'segmentBuilderSelector.audienceFeatureSelector.objectTreeExpression',
+  audienceFeatureObjectTreeExpression: {
+    id: 'audienceBuilder.audienceFeatureSelector.objectTreeExpression',
     defaultMessage: 'Object Tree Expression',
   },
 });
@@ -123,55 +98,39 @@ export const fieldGridConfig = {
 export const FORM_ID = 'segmentBuilderFormData';
 
 export const INITIAL_AUDIENCE_BUILDER_FORM_DATA: AudienceBuilderFormData = {
-  // This is mocked data. Waiting for parametric predicates from backend 
+  // This is mocked data. Waiting for parametric predicates from backend
   where: {
     type: 'GROUP',
     boolean_operator: 'AND',
     expressions: [
       {
-        key: cuid(),
-        model: {
-          type: 'GROUP',
-          boolean_operator: 'AND',
-          expressions: [
-            {
-              key: cuid(),
-              model: {
-                type: 'FIELD',
-                field: 'Gender',
-                comparison: {
-                  type: 'STRING',
-                  operator: 'EQ',
-                  values: [''],
-                },
-              },
+        type: 'GROUP',
+        boolean_operator: 'AND',
+        expressions: [
+          {
+            type: 'PARAMETRIC_PREDICATE',
+            id: '48897',
+            parameters: {
+              age: ['18'],
             },
-            {
-              key: cuid(),
-              model: {
-                type: 'FIELD',
-                field: 'Age',
-                comparison: {
-                  type: 'STRING',
-                  operator: 'EQ',
-                  values: [''],
-                },
-              },
+          },
+          {
+            type: 'PARAMETRIC_PREDICATE',
+
+            id: '48896',
+            parameters: {
+              gender: ['male'],
+              languages: ['FR', 'EN'],
             },
-            {
-              key: cuid(),
-              model: {
-                type: 'FIELD',
-                field: 'Languages',
-                comparison: {
-                  type: 'STRING',
-                  operator: 'EQ',
-                  values: [''],
-                },
-              },
-            },
-          ],
-        },
+          },
+          // {
+          //     type: 'PARAMETRIC_PREDICATE',
+          //     id: '48899',
+          //     parameters: {
+          //       languages: 'FR',
+          //     },
+          // },
+        ],
       },
     ],
   },
