@@ -221,7 +221,7 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
             trigger={this.renderTrigger()}
           >
             <Logo mode={mode} />
-            <NavigatorMenu mode={mode} onMenuItemClick={this.onMenuItemClick} />
+            <NavigatorMenu mode={mode} onMenuItemClick={this.onMenuItemClick} className="mcs-mainLayout-menu"/>
           </Sider>
           <Layout>
             <NavigatorHeader />
