@@ -4,7 +4,8 @@ type AudienceFeatureCommonType = 'Int' | 'Enum' | 'Boolean' | 'String' | 'Date';
 
 interface AudienceFeatureCommonResource {
   path: string[];
-  directives?: any[];
+  reference_type?: string;
+  reference_model_type?: string;
 }
 
 export interface AudienceFeatureVariable<T>

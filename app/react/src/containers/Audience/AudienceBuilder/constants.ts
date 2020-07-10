@@ -116,7 +116,6 @@ export const INITIAL_AUDIENCE_BUILDER_FORM_DATA: AudienceBuilderFormData = {
           },
           {
             type: 'PARAMETRIC_PREDICATE',
-
             id: '48896',
             parameters: {
               gender: ['male'],
