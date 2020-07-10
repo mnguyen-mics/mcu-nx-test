@@ -59,6 +59,7 @@ import { Label } from '../../../Labels/Labels';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
 import {
   audienceSegmentTypeMessages,
+  userListFeedTypeMessages,
 } from '../Dashboard/messages';
 import TreeSelectFilter, { TreeSelectFilterProps } from '../../../../components/TreeSelectFilter';
 
@@ -755,6 +756,19 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         {
           title: formatMessage(audienceSegmentTypeMessages.USER_LIST),
           value: 'USER_LIST',
+          childrenFilterName: 'feed_type',
+          children: [
+            {
+              title: formatMessage(userListFeedTypeMessages.FILE_IMPORT),
+              value: 'FILE_IMPORT'
+            },{
+              title: formatMessage(userListFeedTypeMessages.SCENARIO),
+              value: 'SCENARIO'
+            },{
+              title: formatMessage(userListFeedTypeMessages.TAG),
+              value: 'TAG'
+            },
+          ]
         },{
           title: formatMessage(audienceSegmentTypeMessages.USER_QUERY),
           value: 'USER_QUERY',
