@@ -171,7 +171,15 @@ input:disabled {
   margin-bottom: 0 !important;
 }
 
-
 .react-grid-layout {
   margin: 0 -10px;
+}
+
+.mcs-mainLayout-menu {
+  overflow-y: scroll;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
