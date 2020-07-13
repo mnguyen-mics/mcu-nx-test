@@ -11,21 +11,56 @@ import {
 } from '../../../../../../components/Form';
 import { OptionProps } from 'antd/lib/select';
 import { CleaningRuleType } from '../../../../../../models/cleaningRules/CleaningRules';
+import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
+import { getFormValues } from 'redux-form';
+import { connect } from 'react-redux';
+import { FORM_ID } from '../CleaningRuleEditForm';
+import {
+  CleaningRuleFormData,
+  isUserEventCleaningRuleFormData,
+} from '../domain';
+import { UserActivityType } from '../../../../../../models/datamart/graphdb/RuntimeSchema';
 
 interface ScopeFormSectionProps {
   options: OptionProps[];
   cleaningRuleType: CleaningRuleType;
+  formChange: (field: string, value: any) => void;
 }
 
-type Props = ScopeFormSectionProps & InjectedIntlProps;
+interface MapStateToProps {
+  formValues: CleaningRuleFormData;
+}
+
+type Props = ScopeFormSectionProps & InjectedIntlProps & MapStateToProps;
 
 class ScopeFormSection extends React.Component<Props> {
+  constructor(props: Props) {
+    super(props);
+  }
+
+  onActivityTypeFilterChange = (value: UserActivityType | '') => {
+    const { formChange } = this.props;
+
+    if (value === 'TOUCH' || value === 'DISPLAY_AD' || value === 'EMAIL') {
+      formChange('channelFilter', null);
+    }
+  };
+
   render() {
     const {
       intl: { formatMessage },
       options,
-      cleaningRuleType
+      cleaningRuleType,
+      formValues,
     } = this.props;
+
+    const displayChannelFilter =
+      isUserEventCleaningRuleFormData(formValues) &&
+      !(
+        formValues.activityTypeFilter === 'TOUCH' ||
+        formValues.activityTypeFilter === 'DISPLAY_AD' ||
+        formValues.activityTypeFilter === 'EMAIL'
+      );
 
     return cleaningRuleType === 'USER_EVENT_CLEANING_RULE' ? (
       <div>
@@ -40,27 +75,38 @@ class ScopeFormSection extends React.Component<Props> {
             label: formatMessage(messages.sectionScopeActivityTypeLabel),
             required: false,
           }}
+          selectProps={{
+            onSelect: this.onActivityTypeFilterChange,
+          }}
           options={[
-            { value: '', title: formatMessage(messages.sectionScopeActivityTypeAllTypes)},
+            {
+              value: '',
+              title: formatMessage(messages.sectionScopeActivityTypeAllTypes),
+            },
             { value: 'SITE_VISIT', title: 'SITE_VISIT' },
             { value: 'APP_VISIT', title: 'APP_VISIT' },
+            { value: 'TOUCH', title: 'TOUCH' },
+            { value: 'DISPLAY_AD', title: 'DISPLAY_AD' },
+            { value: 'EMAIL', title: 'EMAIL' },
           ]}
           helpToolTipProps={{
             title: formatMessage(messages.sectionScopeActivityTypeHelper),
           }}
         />
-        <FormSelectField
-          name="channelFilter"
-          component={DefaultSelect}
-          formItemProps={{
-            label: formatMessage(messages.sectionScopeChannelLabel),
-            required: false,
-          }}
-          options={options}
-          helpToolTipProps={{
-            title: formatMessage(messages.sectionScopeChannelHelper),
-          }}
-        />
+        {displayChannelFilter && (
+          <FormSelectField
+            name="channelFilter"
+            component={DefaultSelect}
+            formItemProps={{
+              label: formatMessage(messages.sectionScopeChannelLabel),
+              required: false,
+            }}
+            options={options}
+            helpToolTipProps={{
+              title: formatMessage(messages.sectionScopeChannelHelper),
+            }}
+          />
+        )}
         <FormInputField
           name="eventNameFilter"
           component={FormInput}
@@ -96,4 +142,11 @@ class ScopeFormSection extends React.Component<Props> {
   }
 }
 
-export default compose<Props, ScopeFormSectionProps>(injectIntl)(ScopeFormSection);
+const mapStateToProps = (state: MicsReduxState) => ({
+  formValues: getFormValues(FORM_ID)(state),
+});
+
+export default compose<Props, ScopeFormSectionProps>(
+  injectIntl,
+  connect(mapStateToProps),
+)(ScopeFormSection);

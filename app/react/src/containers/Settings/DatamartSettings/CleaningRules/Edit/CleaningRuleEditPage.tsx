@@ -828,6 +828,6 @@ export default compose(
   withRouter,
   injectIntl,
   injectDatamart,
-  connect(mapStateToProps),
   injectNotifications,
+  connect(mapStateToProps),
 )(CleaningRuleEditPage);
