@@ -3555,7 +3555,7 @@ const myDashboards: DashboardResource[] = [
   },
   {
     "id": "1",
-    "name": "Pyschographics",
+    "name": "Psychographics",
     "type": "HOME",
     "datamart_id": "1459",
     components: [
@@ -3763,7 +3763,7 @@ const myDashboards: DashboardResource[] = [
   },
   {
     "id": "1",
-    "name": "Pyschographics",
+    "name": "Psychographics",
     "type": "SEGMENT",
     "datamart_id": "1459",
     components: [
@@ -3977,7 +3977,7 @@ const myDashboards: DashboardResource[] = [
   },
   {
     "id": "1",
-    "name": "Pyschographics",
+    "name": "Psychographics",
     "type": "HOME",
     "datamart_id": "1466",
     components: [
@@ -4188,7 +4188,7 @@ const myDashboards: DashboardResource[] = [
   },
   {
     "id": "1",
-    "name": "Pyschographics",
+    "name": "Psychographics",
     "type": "SEGMENT",
     "datamart_id": "1466",
     components: [
