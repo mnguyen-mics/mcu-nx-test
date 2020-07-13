@@ -5,11 +5,14 @@ import HighchartsReact from 'highcharts-react-official';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 import { generateTooltip, BASE_CHART_HEIGHT } from '../domain';
+import { TooltipChart, DataLabel } from '../../../models/dashboards/dashboards';
+import { SerieSortType } from './StackedBarPlot';
 
 export interface RadarSpiderPlotProps {
   dataset: Dataset;
   options: RadarSpiderPlotOptions;
   height?: number;
+  
 }
 
 type Dataset = Array<{ [key: string]: string | number | Date | undefined }>;
@@ -21,6 +24,9 @@ export interface RadarSpiderPlotOptions {
   showLegend?: boolean;
   type?: string;
   vertical?: boolean;
+  tooltip?: TooltipChart;
+  labels?: DataLabel;
+  sort?: SerieSortType;
 }
 
 type yKey = { key: string; message: FormattedMessage.MessageDescriptor | string };
@@ -34,25 +40,45 @@ class RadarSpiderPlot extends React.Component<Props, {}> {
     this.state = {};
   }
 
-  getXAxisValues = (dataset: Dataset, xKey: string) => {
+  getXAxisValues = (dataset: Dataset, xKey: string, sort?: SerieSortType) => {
     return dataset.map(d => {
       return d[xKey] as string;
+    }).sort((a,b) => {
+      if (!sort) {
+        return 1;
+      }
+      return a.localeCompare(b)
     })
   }
 
   formatSerieData = (dataset: Dataset, y: yKey) => {
     return dataset.map(d => {
-      return d[y.key] ? d[y.key] as number : 0;
+      return { y: d[y.key] ? d[y.key] as number : 0, count: d[`${y.key}-count`] };
     });
   }
 
-  formatSeries = (dataset: Dataset, yKeys: yKey[]): Highcharts.SeriesOptionsType[] => {
+  formatSeries = (dataset: Dataset, yKeys: yKey[], labels?: DataLabel): Highcharts.SeriesOptionsType[] => {
     const {intl: {formatMessage}} = this.props;
     return yKeys.map(y => {
       return {
         name: typeof y.message === "string" ? y.message : formatMessage(y.message),
         data: this.formatSerieData(dataset, y),
-        pointPlacement: 'on'
+        pointPlacement: 'on',
+        dataLabels: labels ? {
+          enabled: labels.enable,
+          format: labels.format,
+          style: {
+            "font-family": "LLCircularWeb-Book, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+            "color": "#666666",
+          },
+          filter: labels.filterValue ? {
+            property: y,
+            operator: '>',
+            value: labels.filterValue
+          } : undefined
+        } : {
+          enabled: false
+        }
       } as any
     });
   }
@@ -60,7 +86,7 @@ class RadarSpiderPlot extends React.Component<Props, {}> {
   render() {
     const {
       dataset,
-      options: { colors, xKey, yKeys, showLegend },
+      options: { colors, xKey, yKeys, showLegend, tooltip, labels, sort },
       height,
     } = this.props;
 
@@ -75,7 +101,7 @@ class RadarSpiderPlot extends React.Component<Props, {}> {
       },
       colors: colors,
       xAxis: {
-        categories: this.getXAxisValues(dataset, xKey),
+        categories: this.getXAxisValues(dataset, xKey, sort),
         tickmarkPlacement: 'on',
         lineWidth: 0
       },
@@ -84,13 +110,13 @@ class RadarSpiderPlot extends React.Component<Props, {}> {
         lineWidth: 0,
         min: 0
       },
-      series: this.formatSeries(dataset, yKeys),
+      series: this.formatSeries(dataset, yKeys, labels),
       credits: {
         enabled: false,
       },
       tooltip: {
         shared: true,
-        ...generateTooltip(),
+        ...generateTooltip(undefined, undefined, tooltip),
       },
       legend: {
         enabled: showLegend === undefined ? false : showLegend,

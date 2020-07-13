@@ -97,6 +97,9 @@ export default class DashboardContent extends React.Component<
             shouldCompare={comp.shouldCompare}
             percentage={comp.percentage}
             vertical={comp.vertical}
+            sortKey={comp.sortKey}
+            labels={comp.labels}
+            tooltip={comp.tooltip}
           />
         );
       case 'MAP_RADAR_CHART':
@@ -110,6 +113,9 @@ export default class DashboardContent extends React.Component<
               shouldCompare={comp.shouldCompare}
               percentage={comp.percentage}
               vertical={comp.vertical}
+              sortKey={comp.sortKey}
+              labels={comp.labels}
+              tooltip={comp.tooltip}
             />
           );
       case 'DATE_AGGREGATION_CHART':

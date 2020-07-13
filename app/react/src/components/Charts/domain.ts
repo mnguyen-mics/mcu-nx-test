@@ -1,5 +1,6 @@
 import * as Highcharts from 'highcharts';
 import moment from 'moment';
+import { TooltipChart } from '../../models/dashboards/dashboards';
 
 export const GRAY_COLOR = '#8ca0b3';
 export const LINE_COLOR = (Highcharts as any)
@@ -81,7 +82,8 @@ export const generateLegend = (): Partial<Highcharts.LegendOptions> => {
 
 export const generateTooltip = (
   showTooltip: boolean = true,
-  useTimeFormatter: boolean = false
+  useTimeFormatter: boolean = false,
+  tooltip?: TooltipChart
 ): Partial<Highcharts.TooltipOptions> => {
   return showTooltip
     ? {
@@ -94,7 +96,7 @@ export const generateTooltip = (
         shadow: false,
         hideDelay: 0,
         headerFormat: `<span style="font-size: 12px; font-weight: bold; margin-bottom: 13px;">{point.key}</span><br/><br/>`,
-        pointFormat: `<span style="color:{point.color}; font-size: 20px; margin-right: 20px;">\u25CF</span> {series.name}: <b>{point.y}</b><br/>`,
+        pointFormat: `<span style="color:{point.color}; font-size: 20px; margin-right: 20px;">\u25CF</span> {series.name}: <b>${tooltip ? tooltip.formatter : "{point.y}"}</b><br/>`,
         pointFormatter: useTimeFormatter ? function callback() {
           // tslint:disable-next-line
           return `<span style="color:${this.color}; font-size: 20px; margin-right: 20px;">\u25CF</span> ${this.series.name}: <b>${moment.duration(this.y as number, "second").format("h[hr] m[min] s[s]")}</b><br/>`;

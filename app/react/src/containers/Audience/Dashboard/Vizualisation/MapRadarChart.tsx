@@ -21,6 +21,8 @@ import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { getFormattedQuery } from '../domain';
 import { QueryResource } from '../../../../models/datamart/DatamartResource';
 import RadarSpiderPlot from '../../../../components/Charts/CategoryBased/RadarSpiderPlot';
+import { TooltipChart, DataLabel } from '../../../../models/dashboards/dashboards';
+import { SerieSortType } from '../../../../components/Charts/CategoryBased/StackedBarPlot';
 
 export interface MapBarChartProps {
   title?: string;
@@ -32,6 +34,9 @@ export interface MapBarChartProps {
   percentage?: boolean;
   shouldCompare?: boolean;
   vertical?: boolean;
+  tooltip?: TooltipChart;
+  labels?: DataLabel;
+  sortKey?: SerieSortType;
 }
 
 interface QueryResult {
@@ -107,6 +112,7 @@ class MapBarChart extends React.Component<Props, State> {
     ) {
       const total = percentage ? queryResult[0].aggregations.buckets[0].buckets.reduce((acc, data) => { return acc + data.count }, 0) : undefined;
       return queryResult[0].aggregations.buckets[0].buckets.map((data, i) => ({
+        [`${key}-count`]: data.count,
         [key]: total ? Math.round((data.count / total) * 10000) / 100 : data.count,
         xKey: data.key,
       }));
@@ -195,7 +201,7 @@ class MapBarChart extends React.Component<Props, State> {
   };
 
   public render() {
-    const { title, colors, intl, shouldCompare, vertical } = this.props;
+    const { title, colors, intl, shouldCompare, vertical, labels, tooltip, sortKey } = this.props;
 
     const restKey = shouldCompare ? [{ key: COMPARED_YKEY, message: "" }] : [];
 
@@ -205,6 +211,9 @@ class MapBarChart extends React.Component<Props, State> {
       colors: [colors['mcs-info']].concat(shouldCompare ? [colors["mcs-normal"]] : []),
       labelsEnabled: this.props.labelsEnabled,
       vertical,
+      labels,
+      sort: sortKey,
+      tooltip
     };
 
     const generateChart = () => {

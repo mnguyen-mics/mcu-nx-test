@@ -17,10 +17,11 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
-import StackedBarPlot from '../../../../components/Charts/CategoryBased/StackedBarPlot';
+import StackedBarPlot, { SerieSortType } from '../../../../components/Charts/CategoryBased/StackedBarPlot';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { getFormattedQuery } from '../domain';
 import { QueryResource } from '../../../../models/datamart/DatamartResource';
+import { DataLabel, TooltipChart } from '../../../../models/dashboards/dashboards';
 
 export interface MapBarChartProps {
   title?: string;
@@ -32,6 +33,9 @@ export interface MapBarChartProps {
   percentage?: boolean;
   shouldCompare?: boolean;
   vertical?: boolean;
+  sortKey?: SerieSortType;
+  labels?: DataLabel;
+  tooltip?: TooltipChart;
 }
 
 interface QueryResult {
@@ -107,6 +111,7 @@ class MapBarChart extends React.Component<Props, State> {
     ) {
       const total = percentage ? queryResult[0].aggregations.buckets[0].buckets.reduce((acc, data) => { return acc + data.count }, 0) : undefined;
       return queryResult[0].aggregations.buckets[0].buckets.map((data, i) => ({
+        [`${key}-count`]: data.count,
         [key]: total ? Math.round((data.count / total) * 10000) / 100 : data.count,
         xKey: data.key,
       }));
@@ -195,7 +200,7 @@ class MapBarChart extends React.Component<Props, State> {
   };
 
   public render() {
-    const { title, colors, intl, shouldCompare, vertical } = this.props;
+    const { title, colors, intl, shouldCompare, vertical, sortKey, labels, tooltip } = this.props;
 
     const restKey = shouldCompare ? [{ key: COMPARED_YKEY, message: "" }] : [];
 
@@ -205,6 +210,9 @@ class MapBarChart extends React.Component<Props, State> {
       colors: [colors['mcs-info']].concat(shouldCompare ? [colors["mcs-normal"]] : []),
       labelsEnabled: this.props.labelsEnabled,
       vertical,
+      sort: sortKey,
+      labels,
+      tooltip,
     };
 
     const generateChart = () => {

@@ -3470,6 +3470,15 @@ const myDashboards: DashboardResource[] = [
           // compared_query_id: '37513',
           percentage: true,
           show_legend: true,
+          sortKey:"A-Z",
+          labels: {
+            enable: true,
+            filterValue: 0,
+            format: "{point.y}%"
+          },
+          tooltip: {
+            formatter: "{point.y}% ({point.count})"
+          }
         },
       },
       {
@@ -3489,6 +3498,15 @@ const myDashboards: DashboardResource[] = [
           // compared_query_id: '37513',
           percentage: true,
           show_legend: true,
+          sortKey:"A-Z",
+          labels: {
+            enable: true,
+            filterValue: 0,
+            format: "{point.y}%"
+          },
+          tooltip: {
+            formatter: "{point.y}% ({point.count})"
+          }
         },
       },
       {
@@ -3508,7 +3526,15 @@ const myDashboards: DashboardResource[] = [
           // compared_query_id: '37513',
           percentage: true,
           show_legend: true,
-          vertical: true
+          vertical: true,
+          labels: {
+            enable: true,
+            filterValue: 0,
+            format: "{point.y}%"
+          },
+          tooltip: {
+            formatter: "{point.y}% ({point.count})"
+          }
         },
       },
       {
@@ -3528,7 +3554,15 @@ const myDashboards: DashboardResource[] = [
           // compared_query_id: '37513',
           percentage: true,
           show_legend: true,
-          vertical: true
+          vertical: true,
+          labels: {
+            enable: true,
+            filterValue: 0,
+            format: "{point.y}%"
+          },
+          tooltip: {
+            formatter: "{point.y}% ({point.count})"
+          }
         },
       },
       {
@@ -3548,7 +3582,15 @@ const myDashboards: DashboardResource[] = [
           // compared_query_id: '37670',
           percentage: true,
           show_legend: true,
-          vertical: false
+          vertical: false,
+          labels: {
+            enable: true,
+            filterValue: 0,
+            format: "{point.y}%"
+          },
+          tooltip: {
+            formatter: "{point.y}% ({point.count})"
+          }
         },
       }
     ]
@@ -3576,6 +3618,9 @@ const myDashboards: DashboardResource[] = [
           // compared_query_id: '37513',
           percentage: true,
           show_legend: true,
+          tooltip: {
+            formatter: "{point.y}% ({point.count})"
+          }
         },
       }
     ]
@@ -3603,6 +3648,14 @@ const myDashboards: DashboardResource[] = [
           shouldCompare: false,
           percentage: true,
           show_legend: true,
+          labels: {
+            enable: true,
+            filterValue: 0,
+            format: "{point.y}%"
+          },
+          tooltip: {
+            formatter: "{point.y}% ({point.count})"
+          }
         },
       }
     ]
@@ -3630,7 +3683,15 @@ const myDashboards: DashboardResource[] = [
           // compared_query_id: '37513',
           percentage: true,
           show_legend: true,
-          vertical: true
+          vertical: true,
+          labels: {
+            enable: true,
+            filterValue: 0,
+            format: "{point.y}%"
+          },
+          tooltip: {
+            formatter: "{point.y}% ({point.count})"
+          }
         },
       },
       {
@@ -3650,7 +3711,15 @@ const myDashboards: DashboardResource[] = [
           // compared_query_id: '37513',
           percentage: true,
           show_legend: true,
-          vertical: true
+          vertical: true,
+          labels: {
+            enable: true,
+            filterValue: 0,
+            format: "{point.y}%"
+          },
+          tooltip: {
+            formatter: "{point.y}% ({point.count})"
+          }
         },
       }
     ]
@@ -3678,6 +3747,15 @@ const myDashboards: DashboardResource[] = [
           shouldCompare: true,
           percentage: true,
           show_legend: true,
+          sortKey:"A-Z",
+          labels: {
+            enable: true,
+            filterValue: 0,
+            format: "{point.y}%"
+          },
+          tooltip: {
+            formatter: "{point.y}% ({point.count})"
+          }
         },
       },
       {
@@ -3697,6 +3775,15 @@ const myDashboards: DashboardResource[] = [
           shouldCompare: true,
           percentage: true,
           show_legend: true,
+          sortKey:"A-Z",
+          labels: {
+            enable: true,
+            filterValue: 0,
+            format: "{point.y}%"
+          },
+          tooltip: {
+            formatter: "{point.y}% ({point.count})"
+          }
         },
       },
       {
@@ -3716,7 +3803,15 @@ const myDashboards: DashboardResource[] = [
           shouldCompare: true,
           percentage: true,
           show_legend: true,
-          vertical: true
+          vertical: true,
+          labels: {
+            enable: true,
+            filterValue: 0,
+            format: "{point.y}%"
+          },
+          tooltip: {
+            formatter: "{point.y}% ({point.count})"
+          }
         },
       },
       {
@@ -3736,7 +3831,15 @@ const myDashboards: DashboardResource[] = [
           shouldCompare: true,
           percentage: true,
           show_legend: true,
-          vertical: true
+          vertical: true,
+          labels: {
+            enable: true,
+            filterValue: 0,
+            format: "{point.y}%"
+          },
+          tooltip: {
+            formatter: "{point.y}% ({point.count})"
+          }
         },
       },
       {
@@ -3756,7 +3859,15 @@ const myDashboards: DashboardResource[] = [
           shouldCompare: true,
           percentage: true,
           show_legend: true,
-          vertical: false
+          vertical: false,
+          labels: {
+            enable: true,
+            filterValue: 0,
+            format: "{point.y}%"
+          },
+          tooltip: {
+            formatter: "{point.y}% ({point.count})"
+          }
         },
       }
     ]
@@ -3784,6 +3895,9 @@ const myDashboards: DashboardResource[] = [
           shouldCompare: true,
           percentage: true,
           show_legend: true,
+          tooltip: {
+            formatter: "{point.y}% ({point.count})"
+          }
         },
       }
     ]
@@ -3811,6 +3925,14 @@ const myDashboards: DashboardResource[] = [
           shouldCompare: true,
           percentage: true,
           show_legend: true,
+          labels: {
+            enable: true,
+            filterValue: 0,
+            format: "{point.y}%"
+          },
+          tooltip: {
+            formatter: "{point.y}% ({point.count})"
+          }
         },
       }
     ]
@@ -3838,7 +3960,15 @@ const myDashboards: DashboardResource[] = [
           shouldCompare: true,
           percentage: true,
           show_legend: true,
-          vertical: true
+          vertical: true,
+          labels: {
+            enable: true,
+            filterValue: 0,
+            format: "{point.y}%"
+          },
+          tooltip: {
+            formatter: "{point.y}% ({point.count})"
+          }
         },
       },
       {
@@ -3858,7 +3988,15 @@ const myDashboards: DashboardResource[] = [
           shouldCompare: true,
           percentage: true,
           show_legend: true,
-          vertical: true
+          vertical: true,
+          labels: {
+            enable: true,
+            filterValue: 0,
+            format: "{point.y}%"
+          },
+          tooltip: {
+            formatter: "{point.y}% ({point.count})"
+          }
         },
       }
     ]
@@ -3889,6 +4027,15 @@ const myDashboards: DashboardResource[] = [
           // compared_query_id: '37513',
           percentage: true,
           show_legend: true,
+          sortKey:"A-Z",
+          labels: {
+            enable: true,
+            filterValue: 0,
+            format: "{point.y}%"
+          },
+          tooltip: {
+            formatter: "{point.y}% ({point.count})"
+          }
         },
       },
       {
@@ -3908,6 +4055,15 @@ const myDashboards: DashboardResource[] = [
           // compared_query_id: '37513',
           percentage: true,
           show_legend: true,
+          sortKey:"A-Z",
+          labels: {
+            enable: true,
+            filterValue: 0,
+            format: "{point.y}%"
+          },
+          tooltip: {
+            formatter: "{point.y}% ({point.count})"
+          }
         },
       },
       {
@@ -3928,7 +4084,15 @@ const myDashboards: DashboardResource[] = [
           // compared_query_id: '37513',
           percentage: true,
           show_legend: true,
-          vertical: true
+          vertical: true,
+          labels: {
+            enable: true,
+            filterValue: 0,
+            format: "{point.y}%"
+          },
+          tooltip: {
+            formatter: "{point.y}% ({point.count})"
+          }
         },
       },
       {
@@ -3949,7 +4113,15 @@ const myDashboards: DashboardResource[] = [
           // compared_query_id: '37513',
           percentage: true,
           show_legend: true,
-          vertical: true
+          vertical: true,
+          labels: {
+            enable: true,
+            filterValue: 0,
+            format: "{point.y}%"
+          },
+          tooltip: {
+            formatter: "{point.y}% ({point.count})"
+          }
         },
       },
       {
@@ -3970,7 +4142,15 @@ const myDashboards: DashboardResource[] = [
           // compared_query_id: '37670',
           percentage: true,
           show_legend: true,
-          vertical: false
+          vertical: false,
+          labels: {
+            enable: true,
+            filterValue: 0,
+            format: "{point.y}%"
+          },
+          tooltip: {
+            formatter: "{point.y}% ({point.count})"
+          }
         },
       }
     ]
@@ -3999,6 +4179,9 @@ const myDashboards: DashboardResource[] = [
           // compared_query_id: '37513',
           percentage: true,
           show_legend: true,
+          tooltip: {
+            formatter: "{point.y}% ({point.count})"
+          }
         },
       }
     ]
@@ -4026,6 +4209,14 @@ const myDashboards: DashboardResource[] = [
           shouldCompare: false,
           percentage: true,
           show_legend: true,
+          labels: {
+            enable: true,
+            filterValue: 0,
+            format: "{point.y}%"
+          },
+          tooltip: {
+            formatter: "{point.y}% ({point.count})"
+          }
         },
       }
     ]
@@ -4054,7 +4245,15 @@ const myDashboards: DashboardResource[] = [
           // compared_query_id: '37513',
           percentage: true,
           show_legend: true,
-          vertical: true
+          vertical: true,
+          labels: {
+            enable: true,
+            filterValue: 0,
+            format: "{point.y}%"
+          },
+          tooltip: {
+            formatter: "{point.y}% ({point.count})"
+          }
         },
       },
       {
@@ -4075,7 +4274,15 @@ const myDashboards: DashboardResource[] = [
           // compared_query_id: '37513',
           percentage: true,
           show_legend: true,
-          vertical: true
+          vertical: true,
+          labels: {
+            enable: true,
+            filterValue: 0,
+            format: "{point.y}%"
+          },
+          tooltip: {
+            formatter: "{point.y}% ({point.count})"
+          }
         },
       }
     ]
@@ -4103,6 +4310,15 @@ const myDashboards: DashboardResource[] = [
           shouldCompare: true,
           percentage: true,
           show_legend: true,
+          sortKey:"A-Z",
+          labels: {
+            enable: true,
+            filterValue: 0,
+            format: "{point.y}%"
+          },
+          tooltip: {
+            formatter: "{point.y}% ({point.count})"
+          }
         },
       },
       {
@@ -4122,6 +4338,15 @@ const myDashboards: DashboardResource[] = [
           shouldCompare: true,
           percentage: true,
           show_legend: true,
+          sortKey:"A-Z",
+          labels: {
+            enable: true,
+            filterValue: 0,
+            format: "{point.y}%"
+          },
+          tooltip: {
+            formatter: "{point.y}% ({point.count})"
+          }
         },
       },
       {
@@ -4141,7 +4366,15 @@ const myDashboards: DashboardResource[] = [
           shouldCompare: true,
           percentage: true,
           show_legend: true,
-          vertical: true
+          vertical: true,
+          labels: {
+            enable: true,
+            filterValue: 0,
+            format: "{point.y}%"
+          },
+          tooltip: {
+            formatter: "{point.y}% ({point.count})"
+          }
         },
       },
       {
@@ -4161,7 +4394,15 @@ const myDashboards: DashboardResource[] = [
           shouldCompare: true,
           percentage: true,
           show_legend: true,
-          vertical: true
+          vertical: true,
+          labels: {
+            enable: true,
+            filterValue: 0,
+            format: "{point.y}%"
+          },
+          tooltip: {
+            formatter: "{point.y}% ({point.count})"
+          }
         },
       },
       {
@@ -4181,7 +4422,15 @@ const myDashboards: DashboardResource[] = [
           shouldCompare: true,
           percentage: true,
           show_legend: true,
-          vertical: false
+          vertical: false,
+          labels: {
+            enable: true,
+            filterValue: 0,
+            format: "{point.y}%"
+          },
+          tooltip: {
+            formatter: "{point.y}% ({point.count})"
+          }
         },
       }
     ]
@@ -4209,6 +4458,9 @@ const myDashboards: DashboardResource[] = [
           shouldCompare: true,
           percentage: true,
           show_legend: true,
+          tooltip: {
+            formatter: "{point.y}% ({point.count})"
+          }
         },
       }
     ]
@@ -4236,6 +4488,14 @@ const myDashboards: DashboardResource[] = [
           shouldCompare: true,
           percentage: true,
           show_legend: true,
+          labels: {
+            enable: true,
+            filterValue: 0,
+            format: "{point.y}%"
+          },
+          tooltip: {
+            formatter: "{point.y}% ({point.count})"
+          }
         },
       }
     ]
@@ -4263,7 +4523,15 @@ const myDashboards: DashboardResource[] = [
           shouldCompare: true,
           percentage: true,
           show_legend: true,
-          vertical: true
+          vertical: true,
+          labels: {
+            enable: true,
+            filterValue: 0,
+            format: "{point.y}%"
+          },
+          tooltip: {
+            formatter: "{point.y}% ({point.count})"
+          }
         },
       },
       {
@@ -4283,7 +4551,15 @@ const myDashboards: DashboardResource[] = [
           shouldCompare: true,
           percentage: true,
           show_legend: true,
-          vertical: true
+          vertical: true,
+          labels: {
+            enable: true,
+            filterValue: 0,
+            format: "{point.y}%"
+          },
+          tooltip: {
+            formatter: "{point.y}% ({point.count})"
+          }
         },
       }
     ]

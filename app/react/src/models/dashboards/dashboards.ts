@@ -29,6 +29,16 @@ export interface ComponentChart extends BaseComponent {
   labels_enabled?: boolean;
 }
 
+export interface DataLabel {
+  format: string;
+  enable: boolean;
+  filterValue: number;
+}
+
+export interface TooltipChart {
+  formatter: string
+}
+
 export interface MapBarComponent extends BaseComponent {
   component_type: 'MAP_BAR_CHART';
   show_legend: boolean;
@@ -37,6 +47,9 @@ export interface MapBarComponent extends BaseComponent {
   percentage?: boolean;
   labels_enabled?: boolean;
   vertical?: boolean;
+  sortKey?: 'A-Z' | 'Z-A'
+  labels?: DataLabel;
+  tooltip?: TooltipChart
 }
 
 export interface MapRadarChart extends BaseComponent {
@@ -47,6 +60,9 @@ export interface MapRadarChart extends BaseComponent {
   percentage?: boolean;
   labels_enabled?: boolean;
   vertical?: boolean;
+  labels?: DataLabel;
+  sortKey?: 'A-Z' | 'Z-A'
+  tooltip?: TooltipChart
 }
 
 export interface DateAggregationComponent extends BaseComponent {
