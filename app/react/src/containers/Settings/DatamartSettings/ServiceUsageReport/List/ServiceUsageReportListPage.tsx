@@ -48,8 +48,7 @@ interface State {
   total: number;
 }
 
-type Props = ServiceUsageReportListPageProps &
-  InjectedIntlProps &
+type Props = InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class ServiceUsageReportListPage extends React.Component<Props, State> {

@@ -38,8 +38,6 @@ interface ExportExecutionItems {
   total: number;
 }
 
-interface ExportsProps {}
-
 interface ExportsState {
   exportObject: ExportItem;
   exportExecutions: ExportExecutionItems;
@@ -50,9 +48,7 @@ interface ExportRouteParams {
   exportId: string;
 }
 
-type JoinedProps = ExportsProps &
-  RouteComponentProps<ExportRouteParams> &
-  InjectedIntlProps;
+type JoinedProps = RouteComponentProps<ExportRouteParams> & InjectedIntlProps;
 
 class Exports extends React.Component<JoinedProps, ExportsState> {
   fetchLoop = window.setInterval(() => {
@@ -293,11 +289,11 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
       if (this.state.exportObject.item) {
         const exportId = this.state.exportObject.item.id;
         return this._exportService.deleteExport(exportId).then(() => {
-          history.push(`/v2/o/${organisationId}/datastudio/exports`)
+          history.push(`/v2/o/${organisationId}/datastudio/exports`);
         });
       }
       return;
-    }
+    };
 
     return (
       <div className="ant-layout">
@@ -336,7 +332,4 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
   }
 }
 
-export default compose<JoinedProps, {}>(
-  injectIntl,
-  withRouter,
-)(Exports);
+export default compose<JoinedProps, {}>(injectIntl, withRouter)(Exports);

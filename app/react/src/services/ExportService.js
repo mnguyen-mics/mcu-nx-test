@@ -356,7 +356,7 @@ const exportDisplayCampaignDashboard = (organisationId, campaign, campaignData, 
   };
 
   const sheets = [
-    addSheet(exportMessages.displayCampaignExportTitle, campaignData, campaignHeaders, exportFilter, formatMessage, campaignPageTitle, title, otherInfos),
+    addSheet(exportMessages.displayCampaignExportTitle, campaignData, campaignHeaders, exportFilter, formatMessage, campaignPageTitle, otherInfos),
     addSheet(exportMessages.mediasExportTitle, mediasData, mediaHeaders, exportFilter, formatMessage, title, otherInfos),
     addSheet(exportMessages.adGroupsExportTitle, adGroupsData, adsAdGroupsHeaders, exportFilter, formatMessage, title, otherInfos),
     addSheet(exportMessages.adsExportTitle, adsData, adsAdGroupsHeaders, exportFilter, formatMessage, title, otherInfos),

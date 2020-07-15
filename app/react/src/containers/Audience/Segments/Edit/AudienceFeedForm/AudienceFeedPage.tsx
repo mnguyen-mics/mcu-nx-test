@@ -7,9 +7,7 @@ import injectNotifications, {
 } from '../../../../Notifications/injectNotifications';
 import AudienceFeedForm from './AudienceFeedForm';
 import { Loading } from '../../../../../components';
-import {
-  IAudienceFeedFormService,
-} from './AudienceFeedFormService';
+import { IAudienceFeedFormService } from './AudienceFeedFormService';
 import { AudienceFeedFormModel, FeedRouteParams, FeedAction } from './domain';
 import AudienceFeedSelector from './AudienceFeedSelector';
 import { EditContentLayout } from '../../../../../components/Layout';
@@ -22,10 +20,7 @@ import CreateFeedPresetSelectionPage from './CreateFeedPresetSelectionPage';
 import { Path } from '../../../../../components/ActionBar';
 import { AudienceFeedType } from '../../../../../services/AudienceSegmentFeedService';
 
-export interface AudienceFeedPageProps {}
-
-type JoinedProps = AudienceFeedPageProps &
-  InjectedIntlProps &
+type JoinedProps = InjectedIntlProps &
   RouteComponentProps<FeedRouteParams> &
   InjectedNotificationProps;
 
@@ -87,8 +82,7 @@ class AudienceFeedPage extends React.Component<
     } = previousProps;
 
     if (
-      segmentId && 
-      segmentId !== previousSegmentId ||
+      (segmentId && segmentId !== previousSegmentId) ||
       feedId !== previousFeedId ||
       feedType !== previousFeedType
     ) {
@@ -145,7 +139,7 @@ class AudienceFeedPage extends React.Component<
     this.setState({
       type: feedType === 'EXTERNAL_FEED' ? 'create_external' : 'create_tag',
     });
-  }
+  };
 
   onClose = () => {
     const {
@@ -192,10 +186,7 @@ class AudienceFeedPage extends React.Component<
       },
     } = this.props;
 
-    const {
-      loading,
-      type,
-    } = this.state;
+    const { loading, type } = this.state;
 
     if (loading) {
       return <Loading className="loading-full-screen" />;
@@ -234,19 +225,21 @@ class AudienceFeedPage extends React.Component<
       );
     }
 
-    if(type === 'create_external_preset' || type === 'create_tag_preset') {
+    if (type === 'create_external_preset' || type === 'create_tag_preset') {
       const presetBreadcrumbPaths: Path[] = breadcrumbPaths.concat({
-        name: messages.actionBarSegmentPresetCreate
+        name: messages.actionBarSegmentPresetCreate,
       });
 
       return (
-        <CreateFeedPresetSelectionPage 
-          feedType={type === 'create_external_preset' ? 'EXTERNAL_FEED' : 'TAG_FEED'}
+        <CreateFeedPresetSelectionPage
+          feedType={
+            type === 'create_external_preset' ? 'EXTERNAL_FEED' : 'TAG_FEED'
+          }
           breadcrumbPaths={presetBreadcrumbPaths}
           onClose={this.onClose}
           onPresetSave={this.onPresetSave}
         />
-      )
+      );
     }
 
     return (

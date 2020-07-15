@@ -81,8 +81,6 @@ const messages = defineMessages({
   },
 });
 
-interface PartitionProps {}
-
 interface PartitionState {
   audiencePartition?: AudiencePartitionResource;
   userPartitionSegments: UserPartitionSegment[];
@@ -92,8 +90,7 @@ interface PartitionState {
   isLoadingStats: boolean;
 }
 
-type JoinedProps = PartitionProps &
-  InjectedWorkspaceProps &
+type JoinedProps = InjectedWorkspaceProps &
   InjectedIntlProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string; partitionId: string }>;
@@ -134,27 +131,20 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
   }
 
   componentDidUpdate(previousProps: JoinedProps) {
-    const { 
+    const {
       history,
       match: {
-        params: {
-          partitionId,
-          organisationId
-        }
-      }
+        params: { partitionId, organisationId },
+      },
     } = this.props;
 
     const {
       match: {
-        params: {
-          partitionId: previousPartitionId,
-        }
-      }
+        params: { partitionId: previousPartitionId },
+      },
     } = previousProps;
 
-    const {
-      audiencePartition
-    } = this.state;
+    const { audiencePartition } = this.state;
 
     if (
       audiencePartition &&
@@ -166,8 +156,7 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
       );
     }
 
-    if ( previousPartitionId !== partitionId )
-      this.loadData(partitionId);
+    if (previousPartitionId !== partitionId) this.loadData(partitionId);
   }
 
   loadData = (partitionId: string) => {

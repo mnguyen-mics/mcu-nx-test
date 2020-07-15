@@ -6,12 +6,8 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import Actionbar from '../../../components/ActionBar';
 import messages from './messages';
 
-export interface CatalogActionBarProps {}
-
 class CatalogActionBar extends React.Component<
-  CatalogActionBarProps &
-    RouteComponentProps<{ organisationId: string }> &
-    InjectedIntlProps,
+  RouteComponentProps<{ organisationId: string }> & InjectedIntlProps,
   any
 > {
   render() {
@@ -33,7 +29,4 @@ class CatalogActionBar extends React.Component<
   }
 }
 
-export default compose(
-  injectIntl,
-  withRouter,
-)(CatalogActionBar);
+export default compose(injectIntl, withRouter)(CatalogActionBar);

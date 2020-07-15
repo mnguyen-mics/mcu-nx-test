@@ -22,12 +22,7 @@ import { TYPES } from '../../../constants/types';
 
 const logoUrl = require('../../../assets/images/logo.png');
 
-export interface SetPasswordProps {}
-
-type Props = SetPasswordProps &
-  InjectedIntlProps &
-  FormComponentProps &
-  RouteComponentProps<{}>;
+type Props = InjectedIntlProps & FormComponentProps & RouteComponentProps<{}>;
 
 interface State {
   isRequesting: boolean;
@@ -56,10 +51,9 @@ const messages = defineMessages({
 });
 
 class SetPassword extends React.Component<Props, State> {
-
   @lazyInject(TYPES.IAuthService)
   private _authService: IAuthService;
-  
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -82,11 +76,8 @@ class SetPassword extends React.Component<Props, State> {
       if (!err) {
         if (this.checkPasswordValidity(values.password1, values.password2)) {
           // validate
-          this._authService.resetPassword(
-            filter.email,
-            filter.token,
-            values.password1,
-          )
+          this._authService
+            .resetPassword(filter.email, filter.token, values.password1)
             .then(() => {
               history.push('/login');
             })
@@ -158,7 +149,13 @@ class SetPassword extends React.Component<Props, State> {
                       ),
                     },
                   ],
-                })(<Input type="password" className="reset-password-input" autoComplete="off" />)}
+                })(
+                  <Input
+                    type="password"
+                    className="reset-password-input"
+                    autoComplete="off"
+                  />,
+                )}
               </FormItem>
             }
             <div className="password-text">
@@ -172,7 +169,13 @@ class SetPassword extends React.Component<Props, State> {
                     message: intl.formatMessage(defaultErrorMessages.required),
                   },
                 ],
-              })(<Input type="password" className="reset-password-input" autoComplete="off" />)}
+              })(
+                <Input
+                  type="password"
+                  className="reset-password-input"
+                  autoComplete="off"
+                />,
+              )}
             </FormItem>
             <Row type="flex" align="middle" justify="center">
               <Col span={12} className="reset-password-back-to-login">

@@ -18,10 +18,7 @@ import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
 import { Index } from '../../../../../utils';
 import { InjectedFeaturesProps, injectFeatures } from '../../../../Features';
 
-export interface FeedCardListProps {}
-
-type Props = FeedCardListProps &
-  InjectedFeaturesProps &
+type Props = InjectedFeaturesProps &
   RouteComponentProps<{ organisationId: string; segmentId: string }>;
 
 export interface FeedCardListState {
@@ -174,7 +171,7 @@ class FeedCardList extends React.Component<Props, FeedCardListState> {
             normalizedObjects[feed.id] = {
               feed_id: feed.id,
               uniq_user_points_count: 0,
-              uniq_user_identifiers_count: 0
+              uniq_user_identifiers_count: 0,
             };
           }
         });
@@ -247,7 +244,4 @@ class FeedCardList extends React.Component<Props, FeedCardListState> {
   }
 }
 
-export default compose<Props, FeedCardListProps>(
-  withRouter,
-  injectFeatures,
-)(FeedCardList);
+export default compose<Props, {}>(withRouter, injectFeatures)(FeedCardList);

@@ -45,8 +45,6 @@ const messages = defineMessages({
   },
 });
 
-interface EditApiTokenPageProps {}
-
 interface State {
   loading: boolean;
   apiTokenData: Partial<ApiTokenResource>;
@@ -56,8 +54,7 @@ interface MapStateToProps {
   connectedUser: UserProfileResource;
 }
 
-type Props = EditApiTokenPageProps &
-  InjectedIntlProps &
+type Props = InjectedIntlProps &
   MapStateToProps &
   RouteComponentProps<{ organisationId: string; apiTokenId: string }>;
 
@@ -200,8 +197,5 @@ const mapStateToProps = (state: MicsReduxState) => ({
 export default compose<Props, {}>(
   withRouter,
   injectIntl,
-  connect(
-    mapStateToProps,
-    undefined,
-  ),
+  connect(mapStateToProps, undefined),
 )(EditApiTokenPage);

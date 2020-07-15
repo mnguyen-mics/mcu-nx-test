@@ -14,7 +14,8 @@ import Actionbar from '../../../../components/ActionBar';
 import McsIcon from '../../../../components/McsIcon';
 import ExportService from '../../../../services/ExportService';
 import {
-  CampaignsOptions, IDisplayCampaignService,
+  CampaignsOptions,
+  IDisplayCampaignService,
 } from '../../../../services/DisplayCampaignService';
 import ReportService from '../../../../services/ReportService';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
@@ -99,9 +100,8 @@ class DisplayCampaignsActionbar extends React.Component<
   JoinedProps,
   DisplayCampaignsActionbarState
 > {
-
-@lazyInject(TYPES.IDisplayCampaignService)
-private _displayCampaignService: IDisplayCampaignService;
+  @lazyInject(TYPES.IDisplayCampaignService)
+  private _displayCampaignService: IDisplayCampaignService;
 
   constructor(props: JoinedProps) {
     super(props);
@@ -120,23 +120,25 @@ private _displayCampaignService: IDisplayCampaignService;
         first_result: 0,
         max_results: 2000,
       };
-  
-      const apiStatuses = filter.statuses.filter(status => status !== 'ARCHIVED');
-  
+
+      const apiStatuses = filter.statuses.filter(
+        status => status !== 'ARCHIVED',
+      );
+
       if (filter.keywords) {
         options.keywords = filter.keywords;
       }
       if (apiStatuses.length > 0) {
         options.status = apiStatuses;
       }
-  
+
       return options;
     };
-  
+
     const startDate = filter.from;
     const endDate = filter.to;
     const dimension = [''];
-  
+
     const apiResults = Promise.all([
       this._displayCampaignService.getDisplayCampaigns(
         organisationId,
@@ -150,14 +152,14 @@ private _displayCampaignService: IDisplayCampaignService;
         dimension,
       ),
     ]);
-  
+
     return apiResults.then(results => {
       const displayCampaigns = normalizeArrayOfObject(results[0].data, 'id');
       const performanceReport = normalizeArrayOfObject(
         normalizeReportView(results[1].data.report_view),
         'campaign_id',
       );
-  
+
       return Object.keys(displayCampaigns).map(campaignId => {
         return {
           ...displayCampaigns[campaignId],
@@ -172,7 +174,7 @@ private _displayCampaignService: IDisplayCampaignService;
       match: {
         params: { organisationId },
       },
-      intl
+      intl,
     } = this.props;
 
     const filter = parseSearch<FilterParams>(
@@ -193,7 +195,7 @@ private _displayCampaignService: IDisplayCampaignService;
           organisationId,
           data,
           filter,
-          intl.formatMessage
+          intl.formatMessage,
         );
         this.setState({ exportIsRunning: false });
         hideExportLoadingMsg();
@@ -275,13 +277,19 @@ private _displayCampaignService: IDisplayCampaignService;
         <Link to={`/v2/o/${organisationId}/campaigns/display/create`}>
           <Button className="mcs-primary" type="primary">
             <McsIcon type="plus" />{' '}
-            <FormattedMessage id="display.campaigns.list.actionbar.newCampaignButton" defaultMessage="New Campaign" />
+            <FormattedMessage
+              id="display.campaigns.list.actionbar.newCampaignButton"
+              defaultMessage="New Campaign"
+            />
           </Button>
         </Link>
 
         <Button onClick={this.handleRunExport} loading={exportIsRunning}>
           {!exportIsRunning && <McsIcon type="download" />}
-          <FormattedMessage id="display.campaigns.list.actionbar.newExportButton" defaultMessage="Export" />
+          <FormattedMessage
+            id="display.campaigns.list.actionbar.newExportButton"
+            defaultMessage="Export"
+          />
         </Button>
 
         <Slider
@@ -293,7 +301,10 @@ private _displayCampaignService: IDisplayCampaignService;
               className="button-slider button-glow"
             >
               <McsIcon type="delete" />
-              <FormattedMessage id="display.campaigns.list.actionbar.archiveButton" defaultMessage="Archive" />
+              <FormattedMessage
+                id="display.campaigns.list.actionbar.archiveButton"
+                defaultMessage="Archive"
+              />
             </Button>
           }
         />
@@ -321,7 +332,10 @@ private _displayCampaignService: IDisplayCampaignService;
               className="button-slider button-glow"
             >
               <McsIcon type="pen" />
-              <FormattedMessage id="display.campaigns.list.actionbar.editCampaignButton" defaultMessage="Edit" />
+              <FormattedMessage
+                id="display.campaigns.list.actionbar.editCampaignButton"
+                defaultMessage="Edit"
+              />
             </Button>
           }
         />
@@ -344,9 +358,6 @@ export default compose<JoinedProps, DisplayCampaignsActionbarProps>(
   withRouter,
   injectDrawer,
   injectNotifications,
-  connect(
-    mapStateToProps,
-    undefined,
-  ),
+  connect(mapStateToProps, undefined),
   injectIntl,
 )(DisplayCampaignsActionbar);

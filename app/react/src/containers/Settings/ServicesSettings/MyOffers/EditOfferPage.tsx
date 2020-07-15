@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
-import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../Notifications/injectNotifications';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import OfferTypeSelector from './OfferTypeSelector';
@@ -14,7 +16,7 @@ import { lazyInject } from '../../../../config/inversify.config';
 
 export enum OfferType {
   Automatic,
-  Manual
+  Manual,
 }
 
 interface State {
@@ -23,16 +25,11 @@ interface State {
   offerFormData: OfferFormData;
 }
 
-interface CreateOfferPageProps {
-}
-
 type Props = RouteComponentProps<{ organisationId: string; offerId?: string }> &
-  CreateOfferPageProps &
   InjectedNotificationProps &
   InjectedIntlProps;
 
 class EditOfferPage extends React.Component<Props, State> {
-
   @lazyInject(TYPES.IServiceOfferPageService)
   private _serviceOfferPageService: IServiceOfferPageService;
 
@@ -47,31 +44,37 @@ class EditOfferPage extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { match: { params: { organisationId, offerId } } } = this.props;
+    const {
+      match: {
+        params: { organisationId, offerId },
+      },
+    } = this.props;
 
     if (offerId) {
-      this._serviceOfferPageService.loadOffer(organisationId, offerId)
+      this._serviceOfferPageService
+        .loadOffer(organisationId, offerId)
         .then((formData: OfferFormData) => {
           this.setState({
             loading: false,
-            offerType: (formData.offer.automatic_on === null) ? OfferType.Manual : OfferType.Automatic,
+            offerType:
+              formData.offer.automatic_on === null
+                ? OfferType.Manual
+                : OfferType.Automatic,
             offerFormData: formData,
           });
         })
         .catch((err: any) => {
           this.setState({ loading: false });
           this.props.notifyError(err);
-        })
+        });
     } else {
       this.setState({ loading: false });
     }
   }
 
-
-
   chooseOfferType = (offerType: OfferType) => {
     this.setState({ offerType: offerType });
-  }
+  };
 
   redirect = () => {
     const {
@@ -82,25 +85,19 @@ class EditOfferPage extends React.Component<Props, State> {
       },
     } = this.props;
 
-    const defaultRedirectUrl = offerId ?
-      `/v2/o/${organisationId}/settings/services/my_offers/${offerId}/service_item_conditions` :
-      `/v2/o/${organisationId}/settings/services/my_offers`;
+    const defaultRedirectUrl = offerId
+      ? `/v2/o/${organisationId}/settings/services/my_offers/${offerId}/service_item_conditions`
+      : `/v2/o/${organisationId}/settings/services/my_offers`;
 
-    const url =
-      state && state.from ?
-        state.from :
-        defaultRedirectUrl;
+    const url = state && state.from ? state.from : defaultRedirectUrl;
 
     history.push(url);
-  }
+  };
 
   save = (offerFormData: OfferFormData) => {
-
     const {
       match: {
-        params: {
-          organisationId,
-        }
+        params: { organisationId },
       },
       notifyError,
       history,
@@ -112,19 +109,19 @@ class EditOfferPage extends React.Component<Props, State> {
       loading: true,
     });
 
-    this._serviceOfferPageService.createOrUpdateServiceOffer(
-      organisationId,
-      offerFormData,
-      initialOfferFormData,
-    ).then(
-      (returnedOfferId: string) => {
+    this._serviceOfferPageService
+      .createOrUpdateServiceOffer(
+        organisationId,
+        offerFormData,
+        initialOfferFormData,
+      )
+      .then((returnedOfferId: string) => {
         const displayOfferUrl = `/v2/o/${organisationId}/settings/services/my_offers/${returnedOfferId}/service_item_conditions`;
         this.setState({
           loading: false,
         });
         history.push(displayOfferUrl);
-      }
-    )
+      })
       .catch((err: any) => {
         notifyError(err);
         this.setState({
@@ -135,24 +132,23 @@ class EditOfferPage extends React.Component<Props, State> {
 
   render() {
     const {
-      match: { params: { organisationId, offerId} },
+      match: {
+        params: { organisationId, offerId },
+      },
     } = this.props;
 
-    const {
-      offerType,
-      offerFormData,
-      loading,
-    } = this.state;
+    const { offerType, offerFormData, loading } = this.state;
 
     if (loading) {
       return <Loading className="loading-full-screen" />;
     }
 
-    const resetOfferType = (offerId === undefined) ?
-    () => {
-      this.setState({ offerType: undefined});
-    } :
-    undefined;
+    const resetOfferType =
+      offerId === undefined
+        ? () => {
+            this.setState({ offerType: undefined });
+          }
+        : undefined;
 
     const breadcrumbPaths = [
       {
@@ -165,28 +161,29 @@ class EditOfferPage extends React.Component<Props, State> {
     ];
 
     if (offerType === undefined) {
-      return <OfferTypeSelector
-        onSelect={this.chooseOfferType}
-        close={this.redirect}
-        breadCrumbPaths={breadcrumbPaths}
-      />
-    }
-    else {
-
-      return <CreateOfferForm
-        initialValues={offerFormData}
-        offerType={offerType}
-        onSubmit={this.save}
-        close={this.redirect}
-        breadCrumbPaths={breadcrumbPaths}
-        goToOfferTypeSelection={resetOfferType}
-      />
+      return (
+        <OfferTypeSelector
+          onSelect={this.chooseOfferType}
+          close={this.redirect}
+          breadCrumbPaths={breadcrumbPaths}
+        />
+      );
+    } else {
+      return (
+        <CreateOfferForm
+          initialValues={offerFormData}
+          offerType={offerType}
+          onSubmit={this.save}
+          close={this.redirect}
+          breadCrumbPaths={breadcrumbPaths}
+          goToOfferTypeSelection={resetOfferType}
+        />
+      );
     }
   }
-
 }
 
-export default compose<Props, CreateOfferPageProps>(
+export default compose<Props, {}>(
   injectIntl,
   withRouter,
   injectNotifications,

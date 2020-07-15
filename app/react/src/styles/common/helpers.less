@@ -1,8 +1,8 @@
 // TODO mcs-menu not used anymore, check relevance.
 // see navigatormenu.less for current menu styling
 .ant-menu-root.ant-menu-inline.mcs-menu {
-    height:100%;
-    padding-top: 10px;
+  height: 100%;
+  padding-top: 10px;
 }
 
 // .mcs-menu,
@@ -10,44 +10,49 @@
 //     border-top: @border-width-base @border-style-base @border-color-split;
 // }
 
-.ant-menu-inline.mcs-menu-inline .ant-menu-item, .ant-menu-vertical .ant-menu-item {
-    border-left: 5px solid transparent;
-    margin-left: -1px;
-    left: 1px;
-    position: relative;
-    z-index: 1;
+.ant-menu-inline.mcs-menu-inline .ant-menu-item,
+.ant-menu-vertical .ant-menu-item {
+  border-left: 5px solid transparent;
+  margin-left: -1px;
+  left: 1px;
+  position: relative;
+  z-index: 1;
 }
 
-.ant-menu-inline.mcs-menu-inline .ant-menu-selected, .ant-menu-inline .ant-menu-item-selected {
-    border-left-color: @info-color!important;
-    border-right: @border-width-base @border-style-base @border-color-split;
-    transform: translateZ(0);
-    &:after {
-        border-right: none;
-    }
+.ant-menu-inline.mcs-menu-inline .ant-menu-selected,
+.ant-menu-inline .ant-menu-item-selected {
+  border-left-color: @info-color!important;
+  border-right: @border-width-base @border-style-base @border-color-split;
+  transform: translateZ(0);
+  &:after {
+    border-right: none;
+  }
 }
 
 .ant-menu-item-selected {
-    a,
-    a:hover {
-        font-weight: bold;
-    }
+  a,
+  a:hover {
+    font-weight: bold;
+  }
 }
 
 .ant-menu-horizontal {
-    .ant-menu-item-selected,
-    .ant-menu-item:hover {
-        border-bottom-color: @info-color!important;
-        border-bottom: 4px @border-style-base @border-color-base;
-    }
+  .ant-menu-item-selected,
+  .ant-menu-item:hover {
+    border-bottom: 4px @border-style-base @border-color-base;
+  }
 }
 
 .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
-    background-color: @layout-sider-background;
+  background-color: @layout-sider-background;
 }
 
-.ant-menu-item:hover, .ant-menu-item-active, .ant-menu:not(.ant-menu-inline) .ant-menu-submenu-open, .ant-menu-submenu-active, .ant-menu-submenu-title:hover {
-    color: @info-color!important;
+.ant-menu-item:hover,
+.ant-menu-item-active,
+.ant-menu:not(.ant-menu-inline) .ant-menu-submenu-open,
+.ant-menu-submenu-active,
+.ant-menu-submenu-title:hover {
+  color: @info-color!important;
 }
 
 // .mcs-menu-inline .ant-menu-item > a:hover {
@@ -55,18 +60,18 @@
 // }
 
 // .mcs-menu-inline .ant-menu-item-disabled.ant-menu-item.mcs-footer {
-//     position: absolute; 
-//     bottom: 0; 
-//     left: 0; 
-//     height: 95px; 
-//     width: 100%; 
+//     position: absolute;
+//     bottom: 0;
+//     left: 0;
+//     height: 95px;
+//     width: 100%;
 //     cursor: default;
 //     padding: 0 24px;
 // }
 
 // TODO not in use, check relevance
 // .mcs-footer-img {
-//     width: 100%; 
+//     width: 100%;
 //     margin-top:24px;
 // }
 
@@ -97,122 +102,120 @@
 // }
 
 .text-right {
-    text-align: right;
+  text-align: right;
 }
 
 .text-center {
-    text-align: center;
+  text-align: center;
 }
 
 .cursor-pointer {
-    cursor: pointer;
+  cursor: pointer;
 }
-
 
 .ant-breadcrumb-separator {
-    font-size: 0.8em;
+  font-size: 0.8em;
 }
 
-
 .ant-btn-primary.mcs-primary {
-    color: #fff;
-    background-color: @info-color ;
-    border-color: @info-color ;
-    padding: 10px 30px;
-    &:active {
-        background-color: @info-color;
-        border-color: lighten(@info-color, 10%);
-    }
-    &:hover {
-        background-color: lighten(@info-color, 10%);
-        border-color: lighten(@info-color, 10%);
-    }
-    &:disabled {
-        border-color: @btn-default-border;
-        background-color: @disabled-color;
-    }
+  color: #fff;
+  background-color: @info-color;
+  border-color: @info-color;
+  padding: 10px 30px;
+  &:active {
+    background-color: @info-color;
+    border-color: lighten(@info-color, 10%);
+  }
+  &:hover {
+    background-color: lighten(@info-color, 10%);
+    border-color: lighten(@info-color, 10%);
+  }
+  &:disabled {
+    border-color: @btn-default-border;
+    background-color: @disabled-color;
+  }
 }
 
 .ant-menu.ant-menu-vertical.ant-menu-sub.ant-menu-open {
-    overflow-y: scroll;
+  overflow-y: scroll;
 }
 
 .mcs-invisible-button {
-    background: transparent;
-    border: none !important;
-    padding: 0px;
+  background: transparent;
+  border: none !important;
+  padding: 0px;
 }
 
 .mcs-invisible-button:focus {
-    outline: none;
+  outline: none;
 }
 
 .m-r-5 {
-    margin-right: 5px;
+  margin-right: 5px;
 }
 
 .m-l-10 {
-    margin-left: 10px;
+  margin-left: 10px;
 }
 
 .m-r-10 {
-    margin-right: 10px;
+  margin-right: 10px;
 }
 
 .m-r-20 {
-    margin-right: 20px;
+  margin-right: 20px;
 }
 
 .m-t-5 {
-    margin-top: 5px;
+  margin-top: 5px;
 }
 
 .m-t-10 {
-    margin-top: 10px;
+  margin-top: 10px;
 }
 
 .m-t-15 {
-    margin-top: 15px;
+  margin-top: 15px;
 }
 
 .m-t-20 {
-    margin-top: 20px;
+  margin-top: 20px;
 }
 
 .m-t-40 {
-    margin-top: 40px;
+  margin-top: 40px;
 }
 
 .m-b-20 {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .p-r-20 {
-    padding-right: 20px; 
+  padding-right: 20px;
 }
 
 .p-l-20 {
-    padding-left: 20px; 
+  padding-left: 20px;
 }
 
 .p-t-40 {
-    padding-top: 40px;
+  padding-top: 40px;
 }
 
 .font-success {
-    color: @success-color;
+  color: @success-color;
 }
 
 .font-error {
-    color: @error-color
+  color: @error-color;
 }
 
 .float-right {
-    float: right;
+  float: right;
 }
 
 .float-left {
-    float: left;
+  float: left;
 }
 
 .vertical-center-modal {
@@ -236,9 +239,9 @@
 }
 
 .m-b-20 {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .full-width {
-    width: 100%;
+  width: 100%;
 }

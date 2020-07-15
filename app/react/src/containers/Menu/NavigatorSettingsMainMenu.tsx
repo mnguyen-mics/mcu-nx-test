@@ -12,15 +12,12 @@ import { injectFeatures, InjectedFeaturesProps } from '../Features';
 import { NavigatorMenuDefinition } from '../../routes/domain';
 import { MicsReduxState } from '../../utils/ReduxHelper';
 
-export interface NavigatorSettingsMainMenuProps {}
-
 interface NavigatorSettingsMainMenuStoreProps {
   organisationHasDatamarts: (organisationId: string) => boolean;
   orgFeatures: string[];
 }
 
-type Props = NavigatorSettingsMainMenuProps &
-  RouteComponentProps<{ organisationId: string }> &
+type Props = RouteComponentProps<{ organisationId: string }> &
   NavigatorSettingsMainMenuStoreProps &
   InjectedFeaturesProps;
 
@@ -182,7 +179,7 @@ const mapStateToProps = (state: MicsReduxState) => ({
 
 const mapDispatchToProps = {};
 
-export default compose<Props, NavigatorSettingsMainMenuProps>(
+export default compose<Props, {}>(
   withRouter,
   injectFeatures,
   connect(mapStateToProps, mapDispatchToProps),

@@ -3,35 +3,30 @@ import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 
-export interface FeatureFlagPageProps { }
+type Props = RouteComponentProps<{ organisationId: string; token?: string }> &
+  InjectedIntlProps;
 
-type Props = FeatureFlagPageProps & RouteComponentProps<{ organisationId: string, token?: string }> & InjectedIntlProps;
-
-interface State { }
+interface State {}
 
 const messages = defineMessages({
   deprecated: {
     id: 'features.add',
-    defaultMessage: 'WARNING: This page has been deprecated. Please ask directly to your support contact in order to get access (or be removed) to an alpha/beta feature.'
-  }
-})
+    defaultMessage:
+      'WARNING: This page has been deprecated. Please ask directly to your support contact in order to get access (or be removed) to an alpha/beta feature.',
+  },
+});
 
 /*
 Page used to add / remove UI features with a link so that customers can activate / remove features during alpha tests.
 */
 class FeatureFlagPage extends React.Component<Props, State> {
-
-
   render() {
-
     const {
       intl,
       history,
       match: {
-        params: {
-          organisationId,
-        }
-      }
+        params: { organisationId },
+      },
     } = this.props;
 
     // Used to redirect after 5 secs
@@ -53,7 +48,4 @@ class FeatureFlagPage extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, FeatureFlagPageProps>(
-  withRouter,
-  injectIntl
-)(FeatureFlagPage);
+export default compose<Props, {}>(withRouter, injectIntl)(FeatureFlagPage);

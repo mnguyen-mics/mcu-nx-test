@@ -5,8 +5,6 @@ import injectNotifications, {
 import { compose } from 'recompose';
 import { FormattedMessage } from 'react-intl';
 
-interface ErrorBoundaryProps {}
-
 interface State {
   hasError: boolean;
 }
@@ -16,7 +14,7 @@ const messageProps = {
   defaultMessage: 'Something went wrong',
 };
 
-type Props = ErrorBoundaryProps & InjectedNotificationProps;
+type Props = InjectedNotificationProps;
 
 class ErrorBoundary extends React.Component<Props, State> {
   constructor(props: Props) {
