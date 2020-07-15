@@ -35,14 +35,14 @@ class TreeSelectFilter extends React.Component<TreeSelectFilterProps, {}> {
     const { tree, parentFilterName, handleItemClick } = this.props;
     const parentFilter = {
       filterName: parentFilterName,
-      values: tree.filter(parent => value.findIndex(v => v === parent.value) >= 0).map(parent => parent.value),
+      values: tree.filter(parent => value.some(v => v === parent.value)).map(parent => parent.value),
     }
-    const childrenFilter = tree.map(parent => {
+    const childrenFilters = tree.map(parent => {
       return {
         filterName: parent.childrenFilterName,
         values: parent.children 
           ? parent.children
-            .filter(children => value.findIndex(v => v === `${parent.value}_${children.value}`) >= 0)
+            .filter(children => value.some(v => v === `${parent.value}_${children.value}`))
             .map(children => children.value) 
           : [],
       }
@@ -56,11 +56,24 @@ class TreeSelectFilter extends React.Component<TreeSelectFilterProps, {}> {
       return acc;
     }, []);
 
+    // We want to push parent filter if we have one of its children
+    childrenFilters.forEach(childrenFilter => {
+      const parent = tree.find(p => p.childrenFilterName === childrenFilter.filterName);
+
+      if(parent && !parentFilter.values.some(f => f === parent.value))
+        parentFilter.values.push(parent.value);
+    });
+
     const filters: Filters = {};
+    tree.forEach(parent => {
+      if(parent.childrenFilterName)
+        filters[parent.childrenFilterName] = [];
+    });
     filters[parentFilter.filterName] = parentFilter.values;
-    childrenFilter.map(filter => {
+    childrenFilters.forEach(filter => {
       filters[filter.filterName] = filter.values
-    })
+    });
+
     handleItemClick(filters);
   }
 
@@ -74,6 +87,7 @@ class TreeSelectFilter extends React.Component<TreeSelectFilterProps, {}> {
       selectedItems 
     } = this.props;
 
+    // We prefix children value with parent value, as value must be unique in all tree
     const treeData:  TreeNode[] = tree.map(parent => {
       return {
         value: parent.value,
@@ -89,6 +103,24 @@ class TreeSelectFilter extends React.Component<TreeSelectFilterProps, {}> {
       };
     });
 
+    // If not all children of a parent are selected we remove the parent from selected items
+    const filteredSelectedItems: string[] | undefined = selectedItems;
+    if(filteredSelectedItems) {
+      filteredSelectedItems.forEach(item => {
+        const parent = tree.find(p => p.value === item);
+
+        if(parent && parent.children) {
+          const children = parent.children.map(c => `${parent.value}_${c.value}`);
+          let childrensSelected = 0;
+          children.map(c => {
+            if(filteredSelectedItems.includes(c)) childrensSelected++;
+          });
+          if(childrensSelected !== 0 && childrensSelected !== children.length) 
+            filteredSelectedItems.splice(filteredSelectedItems.indexOf(parent.value), 1);
+        }
+      });
+    }
+
     return (
       <TreeSelect
         className={className}
@@ -100,7 +132,7 @@ class TreeSelectFilter extends React.Component<TreeSelectFilterProps, {}> {
         maxTagCount={maxTagCount}
         onChange={this.onTreeSelectChange}
         style={style}
-        value={selectedItems}
+        value={filteredSelectedItems}
         allowClear={true}
       />
     );

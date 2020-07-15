@@ -4,6 +4,7 @@ import {
   AudienceSegmentResource,
   AudienceSegmentType,
   UserQuerySegmentSubtype,
+  FeedType,
 } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import {
   HistoryKeys,
@@ -225,6 +226,23 @@ export const audienceSegmentTypeMessages: {
   EDGE: {
     id: 'audience.segments.type.edge',
     defaultMessage: 'EDGE',
+  },
+});
+
+export const userListFeedTypeMessages: {
+  [key in FeedType]: FormattedMessage.MessageDescriptor;
+} = defineMessages({
+  FILE_IMPORT: {
+    id: 'audience.segments.type.userList.feedType.fileImport',
+    defaultMessage: 'File Import',
+  },
+  SCENARIO: {
+    id: 'audience.segments.type.userList.feedType.scenario',
+    defaultMessage: 'Scenario',
+  },
+  TAG: {
+    id: 'audience.segments.type.userList.feedType.tag',
+    defaultMessage: 'Tag',
   },
 });
 
