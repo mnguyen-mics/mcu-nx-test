@@ -12,10 +12,10 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IDisplayCampaignService } from '../../../../services/DisplayCampaignService';
 
-export interface DisplayCampaignProps {}
-
-type Props = DisplayCampaignProps &
-  RouteComponentProps<{ organisationId: string; campaignId: string }> &
+type Props = RouteComponentProps<{
+  organisationId: string;
+  campaignId: string;
+}> &
   InjectedNotificationProps;
 
 interface State {
@@ -26,7 +26,7 @@ interface State {
 class DisplayCampaign extends React.Component<Props, State> {
   @lazyInject(TYPES.IDisplayCampaignService)
   private _displayCampaignService: IDisplayCampaignService;
-  
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -86,7 +86,7 @@ class DisplayCampaign extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, DisplayCampaignProps>(
+export default compose<Props, {}>(
   withRouter,
   injectNotifications,
 )(DisplayCampaign);

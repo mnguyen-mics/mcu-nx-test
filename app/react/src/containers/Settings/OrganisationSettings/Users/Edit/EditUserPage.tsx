@@ -43,15 +43,12 @@ const messages = defineMessages({
   },
 });
 
-interface EditUserPageProps {}
-
 interface State {
   loading: boolean;
   userData: Partial<UserResource>;
 }
 
-type Props = EditUserPageProps &
-  InjectedIntlProps &
+type Props = InjectedIntlProps &
   RouteComponentProps<{ organisationId: string; userId: string }>;
 
 class EditUserPage extends React.Component<Props, State> {
@@ -186,7 +183,4 @@ class EditUserPage extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, {}>(
-  withRouter,
-  injectIntl,
-)(EditUserPage);
+export default compose<Props, {}>(withRouter, injectIntl)(EditUserPage);

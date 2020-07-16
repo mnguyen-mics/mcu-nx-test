@@ -8,11 +8,7 @@ import { InjectedIntlProps, injectIntl } from 'react-intl';
 
 import messages from './messages';
 
-interface OverviewActionBarProps {}
-
-type JoinedProps = OverviewActionBarProps &
-  RouteComponentProps<any> &
-  InjectedIntlProps;
+type JoinedProps = RouteComponentProps<any> & InjectedIntlProps;
 
 class OverviewActionBar extends Component<JoinedProps> {
   render() {
@@ -34,7 +30,4 @@ class OverviewActionBar extends Component<JoinedProps> {
   }
 }
 
-export default compose(
-  injectIntl,
-  withRouter,
-)(OverviewActionBar);
+export default compose(injectIntl, withRouter)(OverviewActionBar);

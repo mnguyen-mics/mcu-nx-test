@@ -55,7 +55,6 @@ type Props = ABComparisonDashboardProps &
   InjectedIntlProps &
   InjectedNotificationProps &
   InjectedThemeColorsProps &
-  InjectedThemeColorsProps &
   InjectedFeaturesProps &
   RouteComponentProps<EditAudienceSegmentParam>;
 

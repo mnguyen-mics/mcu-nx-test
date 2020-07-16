@@ -4,7 +4,7 @@ import { SHOW_ALL, SHOW_PARENT, SHOW_CHILD } from './strategies';
 import * as React from 'react';
 import Select from './Select';
 import classNames from 'classnames';
-import {AbstractSelectProps, SelectLocale} from 'antd/lib/select';
+import { AbstractSelectProps, SelectLocale } from 'antd/lib/select';
 import LocaleReceiver from 'antd/lib/locale-provider/LocaleReceiver';
 
 const RcTreeSelect = Select as any;
@@ -36,7 +36,7 @@ export interface TreeSelectProps extends AbstractSelectProps {
   treeDefaultExpandAll?: boolean;
   treeCheckable?: boolean | React.ReactNode;
   treeDefaultExpandedKeys?: string[];
-  filterTreeNode?: (inputValue: string, treeNode: TreeData) => boolean | boolean;
+  filterTreeNode?: (inputValue: string, treeNode: TreeData) => boolean;
   treeNodeFilterProp?: string;
   treeNodeLabelProp?: string;
   treeData?: TreeData[];
@@ -72,7 +72,7 @@ class TreeSelect extends React.Component<TreeSelectProps, any> {
     super(props);
 
     // tslint:disable-next-line
-    // console.log( 
+    // console.log(
     //   props.multiple !== false || !props.treeCheckable,
     //   '`multiple` will always be `true` when `treeCheckable` is true',
     // );
@@ -88,7 +88,7 @@ class TreeSelect extends React.Component<TreeSelectProps, any> {
 
   saveTreeSelect = (node: typeof RcTreeSelect) => {
     this.rcTreeSelect = node;
-  }
+  };
 
   renderTreeSelect = (locale: SelectLocale) => {
     const {
@@ -100,10 +100,13 @@ class TreeSelect extends React.Component<TreeSelectProps, any> {
       ...restProps
     } = this.props;
 
-    const cls = classNames({
-      [`${prefixCls}-lg`]: size === 'large',
-      [`${prefixCls}-sm`]: size === 'small',
-    }, className);
+    const cls = classNames(
+      {
+        [`${prefixCls}-lg`]: size === 'large',
+        [`${prefixCls}-sm`]: size === 'small',
+      },
+      className,
+    );
 
     let checkable = restProps.treeCheckable;
     if (checkable) {
@@ -116,21 +119,22 @@ class TreeSelect extends React.Component<TreeSelectProps, any> {
           {...restProps}
           prefixCls={prefixCls}
           className={cls}
-          dropdownStyle={{ maxHeight: '100vh', overflow: 'auto', ...dropdownStyle }}
+          dropdownStyle={{
+            maxHeight: '100vh',
+            overflow: 'auto',
+            ...dropdownStyle,
+          }}
           treeCheckable={checkable}
           notFoundContent={notFoundContent || locale.notFoundContent}
           ref={this.saveTreeSelect}
         />
       </div>
     );
-  }
+  };
 
   render() {
     return (
-      <LocaleReceiver
-        componentName="Select"
-        defaultLocale={{}}
-      >
+      <LocaleReceiver componentName="Select" defaultLocale={{}}>
         {this.renderTreeSelect}
       </LocaleReceiver>
     );

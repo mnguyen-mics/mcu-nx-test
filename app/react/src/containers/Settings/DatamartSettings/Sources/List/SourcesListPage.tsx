@@ -22,8 +22,6 @@ import { lazyInject } from '../../../../../config/inversify.config';
 
 const { Content } = Layout;
 
-export interface SourcesListPageProps {}
-
 interface State {
   dataSource: DatamartResource[];
   loading: boolean;
@@ -55,8 +53,10 @@ export const messages = defineMessages({
   },
 });
 
-type Props = SourcesListPageProps &
-  RouteComponentProps<{ organisationId: string; datamartId: string }> &
+type Props = RouteComponentProps<{
+  organisationId: string;
+  datamartId: string;
+}> &
   InjectedNotificationProps;
 
 class SourcesListPage extends React.Component<Props, State> {
@@ -244,7 +244,7 @@ class SourcesListPage extends React.Component<Props, State> {
   }
 }
 
-export default compose<SourcesListPageProps, Props>(
+export default compose<{}, Props>(
   withRouter,
   injectNotifications,
 )(SourcesListPage);

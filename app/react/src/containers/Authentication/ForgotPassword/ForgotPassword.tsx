@@ -12,18 +12,15 @@ import { IAuthService } from '../../../services/AuthService';
 const logoUrl = require('../../../assets/images/logo.png');
 const FormItem = Form.Item;
 
-interface ForgotPasswordProps {}
-
 interface State {
-  hasError: boolean,
-  isRequesting: boolean,
-  passwordSentSuccess: boolean
+  hasError: boolean;
+  isRequesting: boolean;
+  passwordSentSuccess: boolean;
 }
 
-type Props = ForgotPasswordProps & InjectedIntlProps & FormComponentProps
+type Props = InjectedIntlProps & FormComponentProps;
 
 class ForgotPassword extends React.Component<Props, State> {
-
   @lazyInject(TYPES.IAuthService)
   private _authService: IAuthService;
 
@@ -33,21 +30,21 @@ class ForgotPassword extends React.Component<Props, State> {
       hasError: false,
       isRequesting: false,
       passwordSentSuccess: false,
-    }
+    };
   }
 
   handleSubmit = (e: React.FormEvent<any>) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        this.setState({ isRequesting: true })
+        this.setState({ isRequesting: true });
         this._authService
           .sendPassword(values.email)
           .then(() => {
-            this.setState({ passwordSentSuccess: true, isRequesting: false })
+            this.setState({ passwordSentSuccess: true, isRequesting: false });
           })
           .catch(() => {
-            this.setState({ hasError: true, isRequesting: false})
+            this.setState({ hasError: true, isRequesting: false });
           });
       }
     });
@@ -55,7 +52,7 @@ class ForgotPassword extends React.Component<Props, State> {
 
   render() {
     const {
-      form: { getFieldDecorator },      
+      form: { getFieldDecorator },
       intl: { formatMessage },
     } = this.props;
 
@@ -145,10 +142,7 @@ class ForgotPassword extends React.Component<Props, State> {
         </div>
       </div>
     );
-  } 
+  }
 }
 
-export default compose(
-  injectIntl,
-  Form.create(),
-)(ForgotPassword);
+export default compose(injectIntl, Form.create())(ForgotPassword);

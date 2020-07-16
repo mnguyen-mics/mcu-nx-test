@@ -20,7 +20,7 @@ before(()=>{
 // -- This is a parent command --
 Cypress.Commands.add(
   'login',
-  (email = 'dev@mediarithmics.com', password = '6J54DnPklJZfjKNW7bhEuCuHRDqhouS+ndTWf9dGJgBW+4SWwyFA1nT6') => {
+  (email = `${Cypress.env('devMail')}`, password = `${Cypress.env('devPwd')}`) => {
     const loginPage = new LoginPage()
     const baseUrl = Cypress.config().baseUrl
     // cy.server()
@@ -117,7 +117,7 @@ Cypress.Commands.add('initTestContext', () => {
   const organisationName:string=faker.random.words(3)
   // api Identification
   cy
-      .request('POST', `${Cypress.env('apiDomain')}/v1/authentication/refresh_tokens`, { email: 'dev@mediarithmics.com', password: '6J54DnPklJZfjKNW7bhEuCuHRDqhouS+ndTWf9dGJgBW+4SWwyFA1nT6' })
+      .request('POST', `${Cypress.env('apiDomain')}/v1/authentication/refresh_tokens`, { email: `${Cypress.env('devMail')}`, password: `${Cypress.env('devPwd')}` })
       .then((refreshTokenResponse) => {
           cy
               .request('POST', `${Cypress.env('apiDomain')}/v1/authentication/access_tokens`, { refresh_token: `${refreshTokenResponse.body.data.refresh_token}` })

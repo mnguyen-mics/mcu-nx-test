@@ -28,10 +28,7 @@ import { IAuthService } from '../../../services/AuthService';
 
 const logoUrl = require('../../../assets/images/logo.png');
 
-export interface ChangePasswordProps {}
-
-type Props = ChangePasswordProps &
-  InjectedIntlProps &
+type Props = InjectedIntlProps &
   FormComponentProps &
   RouteComponentProps<{ communityToken: string }>;
 
@@ -76,7 +73,6 @@ const messages = defineMessages({
 });
 
 class CommunityChangePassword extends React.Component<Props, State> {
-  
   @lazyInject(TYPES.ICommunityService)
   private _communityService: ICommunityService;
 
@@ -113,9 +109,8 @@ class CommunityChangePassword extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    this._communityService.getCommunityPasswordRequirements(
-      this.props.match.params.communityToken,
-    )
+    this._communityService
+      .getCommunityPasswordRequirements(this.props.match.params.communityToken)
       .then(response => {
         this.setState({
           passReq: response.data,
@@ -157,7 +152,8 @@ class CommunityChangePassword extends React.Component<Props, State> {
         )
       ) {
         // validate
-        this._authService.resetPassword(filter.email, filter.token, values.password1)
+        this._authService
+          .resetPassword(filter.email, filter.token, values.password1)
           .then(() => {
             history.push('/login');
           })

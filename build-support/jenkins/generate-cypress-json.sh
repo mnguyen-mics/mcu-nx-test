@@ -32,6 +32,9 @@ else
   RECORD_VIDEO=true
 fi
 
+DEV_MAIL="dev@mediarithmics.com"
+DEV_PWD="6J54DnPklJZfjKNW7bhEuCuHRDqhouS+ndTWf9dGJgBW+4SWwyFA1nT6"
+
 set -u
 cat << EOF
 {
@@ -43,6 +46,8 @@ cat << EOF
 
   "env": {
     "apiDomain": "${API_URL}",
+    "devMail": "${DEV_MAIL}",
+    "devPwd": "${DEV_PWD}",
     "virtualPlatformName":"${VIRTUAL_PLATFORM_NAME}",
     "userName":"${USER_NAME}"
   },

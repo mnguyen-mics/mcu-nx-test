@@ -47,8 +47,6 @@ interface AttributionModels {
   isLoading: boolean;
 }
 
-interface GoalDashboardProps {}
-
 interface GoalDashboardState {
   goalObject: GoalItem;
   attributionModels: AttributionModels;
@@ -59,15 +57,12 @@ interface GoalRouteParams {
   goalId: string;
 }
 
-type JoinedProps = GoalDashboardProps &
-  RouteComponentProps<GoalRouteParams> &
-  InjectedIntlProps;
+type JoinedProps = RouteComponentProps<GoalRouteParams> & InjectedIntlProps;
 
 class GoalDashboard extends React.Component<JoinedProps, GoalDashboardState> {
-
   @lazyInject(TYPES.IGoalService)
   private _goalService: IGoalService;
-  
+
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -135,7 +130,8 @@ class GoalDashboard extends React.Component<JoinedProps, GoalDashboardState> {
   }
 
   fetchGoal = (goalId: string) => {
-    return this._goalService.getGoal(goalId)
+    return this._goalService
+      .getGoal(goalId)
       .then(res => res.data)
       .then(res => {
         this.setState({ goalObject: { isLoading: false, item: res } });
@@ -236,7 +232,4 @@ class GoalDashboard extends React.Component<JoinedProps, GoalDashboardState> {
   }
 }
 
-export default compose(
-  injectIntl,
-  withRouter,
-)(GoalDashboard);
+export default compose(injectIntl, withRouter)(GoalDashboard);

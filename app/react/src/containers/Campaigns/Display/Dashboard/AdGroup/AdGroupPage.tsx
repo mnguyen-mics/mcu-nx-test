@@ -38,10 +38,7 @@ import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IDisplayCampaignService } from '../../../../../services/DisplayCampaignService';
 
-interface AdGroupPageProps {}
-
-type Props = AdGroupPageProps &
-  InjectedIntlProps &
+type Props = InjectedIntlProps &
   InjectedNotificationProps &
   RouteComponentProps<{
     organisationId: string;
@@ -474,12 +471,9 @@ export default compose(
   injectIntl,
   withRouter,
   injectNotifications,
-  connect(
-    undefined,
-    {
-      notifyError: NotificationActions.notifyError,
-      notifySuccess: NotificationActions.notifySuccess,
-      removeNotification: NotificationActions.removeNotification,
-    },
-  ),
+  connect(undefined, {
+    notifyError: NotificationActions.notifyError,
+    notifySuccess: NotificationActions.notifySuccess,
+    removeNotification: NotificationActions.removeNotification,
+  }),
 )(AdGroupPage);

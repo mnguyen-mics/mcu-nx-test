@@ -46,16 +46,13 @@ const messages = defineMessages({
   },
 });
 
-interface AudiencePartitionPageProps {}
-
 interface AudiencePartitionPageState {
   partitionFormData?: AudiencePartitionFormData;
   isLoading: boolean;
   selectedDatamart?: DatamartResource;
 }
 
-type JoinedProps = AudiencePartitionPageProps &
-  InjectedWorkspaceProps &
+type JoinedProps = InjectedWorkspaceProps &
   InjectedIntlProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string; partitionId: string }>;
@@ -135,9 +132,7 @@ class AudiencePartitionPage extends React.Component<
       this._audiencePartitionsService
         .createPartition(organisationId, datamartId, formData)
         .then(newAudiencePartition => {
-          const url = `/v2/o/${organisationId}/settings/datamart/audience/partitions/${
-            newAudiencePartition.data.id
-          }`;
+          const url = `/v2/o/${organisationId}/settings/datamart/audience/partitions/${newAudiencePartition.data.id}`;
           location.pathname
             ? history.push({
                 pathname: url,
@@ -235,7 +230,7 @@ class AudiencePartitionPage extends React.Component<
   }
 }
 
-export default compose<JoinedProps, AudiencePartitionPageProps>(
+export default compose<JoinedProps, {}>(
   injectIntl,
   withRouter,
   injectWorkspace,
