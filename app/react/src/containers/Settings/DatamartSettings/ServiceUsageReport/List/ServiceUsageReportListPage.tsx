@@ -39,8 +39,6 @@ export const DISPLAY_SEARCH_SETTINGS = [
   ...LABELS_SEARCH_SETTINGS,
 ];
 
-interface ServiceUsageReportListPageProps {}
-
 interface State {
   loading: boolean;
   dataSource: any[]; // type better
@@ -207,7 +205,7 @@ class ServiceUsageReportListPage extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, ServiceUsageReportListPageProps>(
+export default compose<Props, {}>(
   injectIntl,
   withRouter,
 )(ServiceUsageReportListPage);
