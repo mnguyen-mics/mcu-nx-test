@@ -126,6 +126,7 @@ const comparisonOperators = {
   generateStringComparisonOperator(
     intl: InjectedIntl,
     indexDataType: string = 'keyword',
+    isEdge: boolean = false
   ): ComparisonValues<StringComparisonOperator> {
     switch (indexDataType) {
       case 'text':
@@ -139,23 +140,64 @@ const comparisonOperators = {
           defaultValue: { type: 'STRING', operator: 'MATCHES', values: [] },
         };
       default: {
-        return {
-          values: [
-            {
-              value: 'EQ',
-              title: intl.formatMessage(messages.EQ),
-            },
-            {
-              value: 'NOT_EQ',
-              title: intl.formatMessage(messages.NOT_EQ),
-            },
-            {
-              value: 'STARTS_WITH',
-              title: intl.formatMessage(messages.STARTS_WITH),
-            },
-          ],
-          defaultValue: { type: 'STRING', operator: 'EQ', values: [] },
-        };
+        if (isEdge) {
+          return {
+            values: [
+              {
+                value: 'EQ',
+                title: intl.formatMessage(messages.EQ),
+              },
+              {
+                value: 'NOT_EQ',
+                title: intl.formatMessage(messages.NOT_EQ),
+              },
+              {
+                value: 'MATCHES',
+                title: intl.formatMessage(messages.MATCHES),
+              },
+              {
+                value: 'DOES_NOT_MATCH',
+                title: intl.formatMessage(messages.DOES_NOT_MATCH),
+              },
+              {
+                value: 'STARTS_WITH',
+                title: intl.formatMessage(messages.STARTS_WITH),
+              },
+              {
+                value: 'DOES_NOT_START_WITH',
+                title: intl.formatMessage(messages.DOES_NOT_START_WITH),
+              },
+              {
+                value: 'CONTAINS',
+                title: intl.formatMessage(messages.CONTAINS),
+              },
+              {
+                value: 'DOES_NOT_CONTAIN',
+                title: intl.formatMessage(messages.DOES_NOT_CONTAIN),
+              },
+            ],
+            defaultValue: { type: 'STRING', operator: 'EQ', values: [] },
+          };
+        }
+        else {
+          return {
+            values: [
+              {
+                value: 'EQ',
+                title: intl.formatMessage(messages.EQ),
+              },
+              {
+                value: 'NOT_EQ',
+                title: intl.formatMessage(messages.NOT_EQ),
+              },
+              {
+                value: 'STARTS_WITH',
+                title: intl.formatMessage(messages.STARTS_WITH),
+              },
+            ],
+            defaultValue: { type: 'STRING', operator: 'EQ', values: [] },
+          };
+        }
       }
     }
   },
