@@ -98,7 +98,7 @@ export class MonitoringService implements IMonitoringService {
 
         if (
           profilesResponse.data.length === 1 &&
-          profilesResponse.data[0].compartment_id === undefined
+          profilesResponse.data[0].$compartment_id === undefined
         ) {
           return {
             type: 'legacy' as UserProfileGlobalType,
@@ -113,8 +113,8 @@ export class MonitoringService implements IMonitoringService {
 
           const compartmentIds = new Set();
           for (const profile of profiles) {
-            if(profile.compartment_id)
-              compartmentIds.add(profile.compartment_id);
+            if(profile.$compartment_id)
+              compartmentIds.add(profile.$compartment_id);
           }
           compartmentIds.forEach((compartmentId: string) => {
             promises.push(this._datamartService
@@ -143,12 +143,12 @@ export class MonitoringService implements IMonitoringService {
               curr: UserProfileResource,
             ) => {
               const acc = accP;
-
-              const compartmentId = curr.compartment_id
-                ? curr.compartment_id
+     
+              const compartmentId = curr.$compartment_id
+                ? curr.$compartment_id
                 : 'default';
-              const userAccountId = curr.user_account_id
-                ? curr.user_account_id
+              const userAccountId = curr.$user_account_id
+                ? curr.$user_account_id
                 : 'anonymous';
               const newProfile = {
                 userAccountId: userAccountId,
@@ -243,7 +243,6 @@ export class MonitoringService implements IMonitoringService {
         const userAccountIdentifierInfos = response.data.filter(
           isUserAccountIdentifier,
         );
-
         const userAccountsByCompartmentId = groupBy(
           userAccountIdentifierInfos,
           'compartment_id',
