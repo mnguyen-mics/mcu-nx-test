@@ -88,11 +88,6 @@ export class DashboardService implements IDashboardService {
     type: 'HOME' | 'SEGMENT',
     options: GetDashboardsOptions = {},
   ): Promise<DataListResponse<DashboardResource>> {
-    // const endpoint = 'dashboards';
-    // const params = {
-    //   ...options,
-    // };
-    // return ApiService.getRequest(endpoint, params);
     const hardcodedDashboards = myDashboards.filter(
       d =>
         d.datamart_id === datamartId &&
@@ -137,16 +132,6 @@ export class DashboardService implements IDashboardService {
           });
         });
     });
-
-    // return Promise.resolve({
-    //   status: 'ok' as any,
-    //   data: myDashboards.filter(
-    //     d =>
-    //       d.datamart_id === datamartId &&
-    //       (options.type ? d.type === options.type : true),
-    //   ),
-    //   count: myDashboards.filter(d => d.datamart_id === datamartId).length,
-    // });
   }
   getDashboard(dashboardId: string): Promise<DataResponse<DashboardResource>> {
     // const endpoint = `dashboards/${dashboardId}`;
