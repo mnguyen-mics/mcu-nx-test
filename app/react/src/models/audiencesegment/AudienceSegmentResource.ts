@@ -62,6 +62,12 @@ export interface UserListSegment extends AudienceSegmentResource {
   // USER_CLIENT is deprecated and replaced by EDGE
 }
 
+export function isPartialUserListSegment(
+  segment: Partial<AudienceSegmentShape>
+): segment is Partial<UserListSegment> {
+  return segment.type === 'USER_LIST'
+}
+
 export interface UserLookalikeSegment extends AudienceSegmentResource {
   type: 'USER_LOOKALIKE';
   lookalike_algorithm: LookAlikeAlgorithm;

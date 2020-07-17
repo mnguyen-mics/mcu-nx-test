@@ -50,6 +50,7 @@ import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 import ProcessingActivitiesFormSection, {
   ProcessingActivitiesFormSectionProps,
 } from '../../../Settings/DatamartSettings/Common/ProcessingActivitiesFormSection';
+import { isPartialUserListSegment } from '../../../../models/audiencesegment/AudienceSegmentResource';
 
 export const FORM_ID = 'audienceSegmentForm';
 
@@ -218,6 +219,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       change,
       hasFeature,
       initialProcessingSelectionsForWarning,
+      audienceSegmentFormData
     } = this.props;
 
     const type = segmentType
@@ -246,7 +248,13 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       ),
     });
 
-    if (hasFeature('datamart-user_choices') && type === 'USER_QUERY') {
+    const audienceSegment = audienceSegmentFormData.audienceSegment
+
+    const isUserQuery = type === 'USER_QUERY';
+
+    const isUserListFileImport = isPartialUserListSegment(audienceSegment) && audienceSegment.feed_type && audienceSegment.feed_type === 'FILE_IMPORT'; 
+
+    if (hasFeature('datamart-user_choices') && (isUserQuery || isUserListFileImport)) {
       const genericFieldArrayProps = {
         formChange: change,
         rerenderOnEveryChange: true,
