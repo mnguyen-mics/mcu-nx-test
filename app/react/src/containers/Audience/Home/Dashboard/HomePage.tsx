@@ -83,7 +83,7 @@ class Partition extends React.Component<JoinedProps, HomeState> {
     this.setState({
       datamartAnalyticsDashboardConfig: this.getDatamartAnaylicsDashboardConfig(organisationId, selectedDatamartId, intl)
     });
-    this.loadData(selectedDatamartId);
+    this.loadData(organisationId, selectedDatamartId);
   }
 
   componentDidUpdate(prevProps: JoinedProps) {
@@ -92,7 +92,7 @@ class Partition extends React.Component<JoinedProps, HomeState> {
     const { selectedDatamartId: prevSelectedDatamart } = prevProps;
 
     if (selectedDatamartId !== prevSelectedDatamart) {
-      this.loadData(selectedDatamartId);
+      this.loadData(organisationId,selectedDatamartId);
       this.setState({
         datamartAnalyticsDashboardConfig: this.getDatamartAnaylicsDashboardConfig(organisationId, selectedDatamartId, intl)
       });
@@ -132,12 +132,10 @@ class Partition extends React.Component<JoinedProps, HomeState> {
     return config
   };
 
-  loadData = (selectedDatamartId: string) => {
+  loadData = (organisationId: string, selectedDatamartId: string) => {
     this.setState({ isLoading: true });
     this._dashboardService
-      .getDashboards(selectedDatamartId, {
-        type: 'HOME',
-      })
+      .getDashboards(organisationId, selectedDatamartId, 'HOME', {})
       .then(d => {
         return d.data;
       })

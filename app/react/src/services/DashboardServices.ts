@@ -1,4 +1,6 @@
-import { injectable } from 'inversify';
+import * as yup from 'yup';
+import log from '../utils/Logger';
+import { injectable, inject } from 'inversify';
 import { DataListResponse, DataResponse } from './ApiService';
 import { PaginatedApiParam } from '../utils/ApiHelper';
 import {
@@ -10,6 +12,8 @@ import {
   DashboardType,
   DashboardResource,
 } from '../models/dashboards/dashboards';
+import { TYPES } from '../constants/types';
+import { IDataFileService } from './DataFileService';
 
 export interface GetDashboardsOptions extends PaginatedApiParam {
   organisation_id?: string;
@@ -29,7 +33,9 @@ export const SCENARIOS_SEARCH_SETTINGS = [
 export interface IDashboardService {
   /*****   DASHBOARD RESOURCE   *****/
   getDashboards: (
+    organisationId: string,
     datamartId: string,
+    type: 'HOME' | 'SEGMENT',
     options: GetDashboardsOptions,
   ) => Promise<DataListResponse<DashboardResource>>;
   getDashboard: (
@@ -37,10 +43,49 @@ export interface IDashboardService {
   ) => Promise<DataResponse<DashboardResource>>;
 }
 
+const readFile = (b: Blob): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      return resolve(reader.result as string);
+    };
+    reader.onerror = r => {
+      return reject(r);
+    };
+    reader.readAsText(b);
+  });
+
+const dashboardsSchema = yup.array().of(yup.object().shape({
+  id: yup.string().required(),
+  type: yup.string().required(),
+  datamart_id: yup.string().required(),
+  name: yup.string().required(),
+  components: yup.array(yup.object().shape({
+    layout: yup.object().shape({
+      i: yup.string(),
+      x: yup.number().required(),
+      y: yup.number().required(),
+      w: yup.number().required(),
+      h: yup.number().required(),
+    }),
+    component: yup.object().required().shape({
+      id: yup.string().required(),
+      component_type: yup.string().required().oneOf(['MAP_BAR_CHART', 'MAP_PIE_CHART', 'DATE_AGGREGATION_CHART', 'COUNT', 'PERCENTAGE', 'GAUGE_PIE_CHART', 'MAP_STACKED_BAR_CHART', 'WORLD_MAP_CHART', 'COUNT_BAR_CHART', 'COUNT_PIE_CHART', 'TOP_INFO_COMPONENT', 'MAP_RADAR_CHART']),
+      title: yup.string().required(),
+      description: yup.string(),
+    })
+  }))
+}));
+
 @injectable()
 export class DashboardService implements IDashboardService {
+  @inject(TYPES.IDataFileService)
+  private _datafileService!: IDataFileService;
+
   getDashboards(
+    organisationId: string,
     datamartId: string,
+    type: 'HOME' | 'SEGMENT',
     options: GetDashboardsOptions = {},
   ): Promise<DataListResponse<DashboardResource>> {
     // const endpoint = 'dashboards';
@@ -48,15 +93,60 @@ export class DashboardService implements IDashboardService {
     //   ...options,
     // };
     // return ApiService.getRequest(endpoint, params);
-    return Promise.resolve({
-      status: 'ok' as any,
-      data: myDashboards.filter(
-        d =>
-          d.datamart_id === datamartId &&
-          (options.type ? d.type === options.type : true),
-      ),
-      count: myDashboards.filter(d => d.datamart_id === datamartId).length,
+    const hardcodedDashboards = myDashboards.filter(
+      d =>
+        d.datamart_id === datamartId &&
+        (d.type === type),
+    );
+
+    return new Promise((resolve, reject) => {
+      return this._datafileService
+        .getDatafileData(
+          `mics://data_file/tenants/${organisationId}/dashboards/${datamartId}/${type}.json`,
+        )
+        .then((b: Blob) => {
+          return readFile(b);
+        })
+        .then(s => {
+          // validate with yup
+          return JSON.parse(s);
+        })
+        .then((s: object) => {
+          return dashboardsSchema.validate(s).then(v => {
+            if ((v as any).name === 'ValidationError') {
+              throw new Error((v as any).message)
+            }
+            return v as any
+          })
+        })
+        .then(s => {
+          return resolve({
+            status: 'ok' as any,
+            data: s as DashboardResource[],
+            count: hardcodedDashboards.filter(d => d.datamart_id === datamartId)
+              .length,
+          });
+        })
+        .catch(e => {
+          log.debug(e)
+          return resolve({
+            status: 'ok' as any,
+            data: hardcodedDashboards as DashboardResource[],
+            count: hardcodedDashboards.filter(d => d.datamart_id === datamartId)
+              .length,
+          });
+        });
     });
+
+    // return Promise.resolve({
+    //   status: 'ok' as any,
+    //   data: myDashboards.filter(
+    //     d =>
+    //       d.datamart_id === datamartId &&
+    //       (options.type ? d.type === options.type : true),
+    //   ),
+    //   count: myDashboards.filter(d => d.datamart_id === datamartId).length,
+    // });
   }
   getDashboard(dashboardId: string): Promise<DataResponse<DashboardResource>> {
     // const endpoint = `dashboards/${dashboardId}`;
