@@ -25,7 +25,11 @@ import {
 import { Alert } from 'antd';
 import { McsIcon } from '../../../../components';
 
-export type ProcessingsAssociatedType = 'CHANNEL' | 'COMPARTMENT' | 'SEGMENT';
+export type ProcessingsAssociatedType =
+  | 'CHANNEL'
+  | 'COMPARTMENT'
+  | 'SEGMENT'
+  | 'SEGMENT-EDGE';
 
 export interface ProcessingActivitiesFormSectionProps
   extends ReduxFormChangeProps {
@@ -120,6 +124,7 @@ class ProcessingActivitiesFormSection extends React.Component<Props> {
 
     if (
       processingsAssociatedType === 'SEGMENT' ||
+      processingsAssociatedType === 'SEGMENT-EDGE' ||
       processingsAssociatedType === 'COMPARTMENT'
     ) {
       return false;
@@ -146,7 +151,10 @@ class ProcessingActivitiesFormSection extends React.Component<Props> {
   getSectionSubTitle = () => {
     const { processingsAssociatedType } = this.props;
 
-    if (processingsAssociatedType === 'SEGMENT')
+    if (
+      processingsAssociatedType === 'SEGMENT' ||
+      processingsAssociatedType === 'SEGMENT-EDGE'
+    )
       return messages.processingActivitiesForSegmentsSectionSubtitle;
     else if (processingsAssociatedType === 'COMPARTMENT')
       return messages.processingActivitiesForCompartmentsSectionSubtitle;
@@ -156,7 +164,10 @@ class ProcessingActivitiesFormSection extends React.Component<Props> {
   getSectionTitle = () => {
     const { processingsAssociatedType } = this.props;
 
-    if (processingsAssociatedType === 'SEGMENT')
+    if (
+      processingsAssociatedType === 'SEGMENT' ||
+      processingsAssociatedType === 'SEGMENT-EDGE'
+    )
       return messages.processingActivitiesForSegmentsSectionTitle;
     else
       return messages.processingActivitiesForChannelsOrCompartmentsSectionTitle;
@@ -165,6 +176,7 @@ class ProcessingActivitiesFormSection extends React.Component<Props> {
   render() {
     const {
       intl: { formatMessage },
+      processingsAssociatedType,
     } = this.props;
 
     const sectionSubTitle = this.getSectionSubTitle();
@@ -184,27 +196,42 @@ class ProcessingActivitiesFormSection extends React.Component<Props> {
       </div>
     ) : null;
 
-    return (
-      <div>
-        <FormSection
-          dropdownItems={[
+    const sectionDropdownItems =
+      processingsAssociatedType === 'SEGMENT-EDGE'
+        ? undefined
+        : [
             {
               id: messages.dropdownAddProcessingActivity.id,
               message: messages.dropdownAddProcessingActivity,
               onClick: this.openProcessingActivitySelector,
             },
-          ]}
+          ];
+
+    const relatedRecords = (
+      <RelatedRecords
+        emptyOption={{
+          iconType: 'users',
+          message: formatMessage(
+            processingsAssociatedType === 'SEGMENT-EDGE'
+              ? messages.processingActivitiesForEdge
+              : messages.processingActivitiesEmptySection,
+          ),
+        }}
+      >
+        {processingsAssociatedType === 'SEGMENT-EDGE'
+          ? []
+          : this.getProcessingActivityRecords()}
+      </RelatedRecords>
+    );
+
+    return (
+      <div>
+        <FormSection
+          dropdownItems={sectionDropdownItems}
           subtitle={sectionSubTitle}
           title={sectionTitle}
         />
-        <RelatedRecords
-          emptyOption={{
-            iconType: 'users',
-            message: formatMessage(messages.processingActivitiesEmptySection),
-          }}
-        >
-          {this.getProcessingActivityRecords()}
-        </RelatedRecords>
+        {relatedRecords}
         {warningTag}
       </div>
     );

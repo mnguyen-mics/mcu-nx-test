@@ -269,6 +269,10 @@ class EditAudienceSegmentForm extends React.Component<Props> {
         rerenderOnEveryChange: true,
       };
 
+      const isEdge = isPartialUserListSegment(audienceSegment) && audienceSegment.subtype === 'EDGE';
+
+      const processingAssociatedType = isEdge ? 'SEGMENT-EDGE' : 'SEGMENT';
+
       sections.push({
         id: 'processingActivities',
         title: messages.sectionProcessingActivitiesTitle,
@@ -279,7 +283,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
             initialProcessingSelectionsForWarning={
               initialProcessingSelectionsForWarning
             }
-            processingsAssociatedType={'SEGMENT'}
+            processingsAssociatedType={processingAssociatedType}
             {...genericFieldArrayProps}
           />
         ),
