@@ -5,6 +5,7 @@ const supportedDatafarm = new Set([
   'DF_EU_2018_12',
   'DF_EU_2020_02',
   'DF_EU_2020_06',
+  'DF_EU_DEV'
 ]);
 
 const isUsersAnalyticsSupportedByDatafarm = (datafarm: string) => {
