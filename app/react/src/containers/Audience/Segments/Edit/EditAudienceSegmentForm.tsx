@@ -136,7 +136,9 @@ class EditAudienceSegmentForm extends React.Component<Props> {
               inputProps={{
                 datamartId: datamartId!,
                 context: 'GOALS',
-                isEdge: (initialValues.audienceSegment as UserListSegment).subtype === "EDGE",
+                isEdge:
+                  (initialValues.audienceSegment as UserListSegment).subtype ===
+                  'EDGE',
               }}
             />,
           )
@@ -219,7 +221,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       change,
       hasFeature,
       initialProcessingSelectionsForWarning,
-      audienceSegmentFormData
+      audienceSegmentFormData,
     } = this.props;
 
     const type = segmentType
@@ -248,13 +250,20 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       ),
     });
 
-    const audienceSegment = audienceSegmentFormData.audienceSegment
+    const audienceSegment = audienceSegmentFormData.audienceSegment;
 
     const isUserQuery = type === 'USER_QUERY';
 
-    const isUserListFileImport = isPartialUserListSegment(audienceSegment) && audienceSegment.feed_type && audienceSegment.feed_type === 'FILE_IMPORT'; 
+    const isUserListFileImportOrTag =
+      isPartialUserListSegment(audienceSegment) &&
+      audienceSegment.feed_type &&
+      (audienceSegment.feed_type === 'FILE_IMPORT' ||
+        audienceSegment.feed_type === 'TAG');
 
-    if (hasFeature('datamart-user_choices') && (isUserQuery || isUserListFileImport)) {
+    if (
+      hasFeature('datamart-user_choices') &&
+      (isUserQuery || isUserListFileImportOrTag)
+    ) {
       const genericFieldArrayProps = {
         formChange: change,
         rerenderOnEveryChange: true,
@@ -364,5 +373,5 @@ export default compose<Props, AudienceSegmentFormProps>(
   reduxForm<AudienceSegmentFormProps>({
     form: FORM_ID,
     enableReinitialize: true,
-  })
+  }),
 )(EditAudienceSegmentForm);
