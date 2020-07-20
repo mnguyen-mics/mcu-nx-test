@@ -36,7 +36,14 @@ export interface IDashboardService {
     organisationId: string,
     datamartId: string,
     type: 'HOME' | 'SEGMENT',
-    options: GetDashboardsOptions,
+    options?: GetDashboardsOptions,
+  ) => Promise<DataListResponse<DashboardResource>>;
+
+  getSegmentDashboards: (
+    organisationId: string,
+    datamartId: string,
+    segmentId: string,
+    options?: GetDashboardsOptions,
   ) => Promise<DataListResponse<DashboardResource>>;
   getDashboard: (
     dashboardId: string,
@@ -133,6 +140,54 @@ export class DashboardService implements IDashboardService {
         });
     });
   }
+
+  getSegmentDashboards(
+    organisationId: string,
+    datamartId: string,
+    segmentId: string,
+    options: GetDashboardsOptions = {},
+  ): Promise<DataListResponse<DashboardResource>> {
+    const hardcodedDashboards = myDashboards.filter(
+      d =>
+        d.datamart_id === datamartId &&
+        (d.type === 'SEGMENT'),
+    );
+
+    return new Promise((resolve, reject) => {
+      return this._datafileService
+        .getDatafileData(
+          `mics://data_file/tenants/${organisationId}/dashboards/${datamartId}/SEGMENT-${segmentId}.json`,
+        )
+        .then((b: Blob) => {
+          return readFile(b);
+        })
+        .then(s => {
+          // validate with yup
+          return JSON.parse(s);
+        })
+        .then((s: object) => {
+          return dashboardsSchema.validate(s).then(v => {
+            if ((v as any).name === 'ValidationError') {
+              throw new Error((v as any).message)
+            }
+            return v as any
+          })
+        })
+        .then(s => {
+          return resolve({
+            status: 'ok' as any,
+            data: s as DashboardResource[],
+            count: hardcodedDashboards.filter(d => d.datamart_id === datamartId)
+              .length,
+          });
+        })
+        .catch(e => {
+          log.debug(e)
+          return this.getDashboards(organisationId, datamartId, "SEGMENT")
+        });
+    });
+  }
+
   getDashboard(dashboardId: string): Promise<DataResponse<DashboardResource>> {
     // const endpoint = `dashboards/${dashboardId}`;
     // return ApiService.getRequest(endpoint);
