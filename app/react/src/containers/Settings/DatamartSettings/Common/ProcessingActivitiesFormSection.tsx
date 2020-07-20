@@ -35,6 +35,7 @@ export interface ProcessingActivitiesFormSectionProps
   extends ReduxFormChangeProps {
   initialProcessingSelectionsForWarning?: ProcessingSelectionResource[];
   processingsAssociatedType: ProcessingsAssociatedType;
+  disabled?: boolean;
 }
 
 type Props = InjectedIntlProps &
@@ -82,7 +83,7 @@ class ProcessingActivitiesFormSection extends React.Component<Props> {
   };
 
   getProcessingActivityRecords = () => {
-    const { fields } = this.props;
+    const { fields, disabled } = this.props;
 
     const getProcessingName = (processingField: ProcessingActivityFieldModel) =>
       processingField.model.name;
@@ -107,7 +108,7 @@ class ProcessingActivitiesFormSection extends React.Component<Props> {
           record={processingField}
           title={getProcessingName}
           additionalData={getAdditionalData}
-          onRemove={removeRecord}
+          onRemove={disabled ?  undefined : removeRecord}
         />
       );
     });
@@ -177,6 +178,7 @@ class ProcessingActivitiesFormSection extends React.Component<Props> {
     const {
       intl: { formatMessage },
       processingsAssociatedType,
+      disabled
     } = this.props;
 
     const sectionSubTitle = this.getSectionSubTitle();
@@ -197,7 +199,7 @@ class ProcessingActivitiesFormSection extends React.Component<Props> {
     ) : null;
 
     const sectionDropdownItems =
-      processingsAssociatedType === 'SEGMENT-EDGE'
+      (processingsAssociatedType === 'SEGMENT-EDGE' || disabled )
         ? undefined
         : [
             {

@@ -3,6 +3,9 @@ import {
   InjectedFormProps,
   getFormValues,
   reduxForm,
+  FieldArray,
+  GenericFieldArray,
+  Field,
 } from 'redux-form';
 import { FORM_ID, AddToSegmentAutomationFormData } from '../domain';
 import { Path } from '../../../../../../components/ActionBar';
@@ -19,8 +22,14 @@ import FormLayoutActionbar, {
 import { McsFormSection } from '../../../../../../utils/FormHelper';
 import GeneralInformationFormSection from './AddToSegmentGeneralInformationSectionForm';
 import { StorylineNodeModel } from '../../../domain';
+import ProcessingActivitiesFormSection, { ProcessingActivitiesFormSectionProps } from '../../../../../Settings/DatamartSettings/Common/ProcessingActivitiesFormSection';
 
 const { Content } = Layout;
+
+const ProcessingActivitiesFieldArray = FieldArray as new () => GenericFieldArray<
+  Field,
+  ProcessingActivitiesFormSectionProps
+>;
 
 const messages = defineMessages({
   save: {
@@ -56,7 +65,7 @@ type Props = InjectedFormProps<
 
 class AddToSegmentAutomationForm extends React.Component<Props> {
   buildFormSections = () => {
-    const { disabled } = this.props;
+    const { disabled, change } = this.props;
 
     const sections: McsFormSection[] = [];
 
@@ -73,6 +82,23 @@ class AddToSegmentAutomationForm extends React.Component<Props> {
     };
 
     sections.push(addToSegmentSection);
+
+    const userChoicesSection = {
+      id: 'processingActivities',
+      title: messages.sectionGeneralTitle,
+      component: (
+        <ProcessingActivitiesFieldArray
+          name="processingActivities"
+          component={ProcessingActivitiesFormSection}
+          initialProcessingSelectionsForWarning={[]}
+          processingsAssociatedType={'SEGMENT'}
+          formChange={change}
+          disabled={disabled}
+        />
+      ),
+    };
+
+    sections.push(userChoicesSection)
 
     return sections;
   };
