@@ -90,6 +90,7 @@ export interface FieldNodeFormProps {
   runFieldProposal?: FieldProposalLookup;
   treeNodePath?: number[];
   disabled?: boolean;
+  isEdge?: boolean;
 }
 
 interface FormValues {
@@ -157,6 +158,7 @@ class FieldNodeForm extends React.Component<Props, State> {
       formChange,
       name,
       treeNodePath,
+      isEdge,
     } = this.props;
 
     if (treeNodePath) {
@@ -176,6 +178,7 @@ class FieldNodeForm extends React.Component<Props, State> {
           fieldType,
           fieldIndexDataType,
           directive,
+          isEdge,
         ).defaultValue,
       );
     }
@@ -191,7 +194,7 @@ class FieldNodeForm extends React.Component<Props, State> {
   };
 
   componentDidUpdate(previousProps: Props) {
-    const { formValues, expressionIndex, formChange, name } = this.props;
+    const { formValues, expressionIndex, formChange, name, isEdge } = this.props;
 
     const {
       formValues: previousFormValues,
@@ -215,6 +218,7 @@ class FieldNodeForm extends React.Component<Props, State> {
           fieldType,
           fieldIndexDataType,
           directive,
+          isEdge,
         ).defaultValue,
       );
     }
@@ -301,6 +305,7 @@ class FieldNodeForm extends React.Component<Props, State> {
     fieldType: string | null,
     fieldIndexDataType: string | null,
     directives?: FieldDirectiveResource[],
+    isEdge?: boolean
   ): FieldComparisonGenerator => {
     const { intl } = this.props;
 
@@ -343,6 +348,7 @@ class FieldNodeForm extends React.Component<Props, State> {
           ...constants.generateStringComparisonOperator(
             intl,
             fieldIndexDataType || undefined,
+            isEdge,
           ),
           component: shouldRenderDirective(
             this.generateStringComparisonField(),
@@ -826,6 +832,7 @@ class FieldNodeForm extends React.Component<Props, State> {
       name,
       idToAttachDropDowns,
       disabled,
+      isEdge,
     } = this.props;
 
     const field = this.getField(formValues, expressionIndex);
@@ -875,6 +882,7 @@ class FieldNodeForm extends React.Component<Props, State> {
               fieldType,
               fieldIndexDataType,
               directive,
+              isEdge,
             ).values
           }
           formItemProps={{
@@ -894,6 +902,7 @@ class FieldNodeForm extends React.Component<Props, State> {
             fieldType,
             fieldIndexDataType,
             directive,
+            isEdge,
           ).component}
       </div>
     );

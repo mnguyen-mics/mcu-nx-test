@@ -54,7 +54,7 @@ class FieldNodeFormWrapper extends React.Component<Props, any> {
   };
 
   render() {
-    const { handleSubmit, change, objectType, idToAttachDropDowns, datamartId, runtimeSchemaId, treeNodePath, runFieldProposal } = this.props;
+    const { handleSubmit, change, objectType, idToAttachDropDowns, datamartId, runtimeSchemaId, treeNodePath, runFieldProposal, isEdge } = this.props;
     return (
       <Form
         className="edit-layout ant-layout"
@@ -72,6 +72,7 @@ class FieldNodeFormWrapper extends React.Component<Props, any> {
           formName={this.props.form}
           treeNodePath={treeNodePath}
           runFieldProposal={runFieldProposal}
+          isEdge={isEdge}
         />
         <Button type="primary" className="mcs-primary" htmlType="submit">Submit</Button>
       </Form>
