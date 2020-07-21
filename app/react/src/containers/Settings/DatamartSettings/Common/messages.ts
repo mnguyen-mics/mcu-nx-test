@@ -32,6 +32,10 @@ export default defineMessages({
     id: 'settings.datamart.processings.section.empty',
     defaultMessage: 'There is no Processing Activity selected yet!',
   },
+  processingActivitiesForEdge: {
+    id: 'settings.datamart.processings.section.edge',
+    defaultMessage: 'This feature is not available for Edge segments.',
+  },
   processingActivitiesSelectorColumnName: {
     id: 'settings.datamart.processings.selector.columns.name',
     defaultMessage: 'Name',
