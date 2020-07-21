@@ -141,10 +141,6 @@ const libraryMenuDefinition: NavigatorMenuDefinition = {
       translation: messages.libraryDealList,
     },
     {
-      ...generateMissingdefinitionItemFromRoute(libraryDefinition.libraryCatalogList),
-      translation: messages.libraryCatalog,
-    },
-    {
       ...generateMissingdefinitionItemFromRoute(libraryDefinition.libraryAssetList),
       translation: messages.libraryAssets,
     },
