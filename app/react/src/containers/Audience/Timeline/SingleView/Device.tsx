@@ -30,9 +30,9 @@ const Device = (props: Props) => {
           {formFactorIcon(device.form_factor)}
         </span>
         <span style={{ float: 'left' }}>
-          <span className="title">{device.browser_family}</span>
-          <br />
-          <span className="subtitle">{device.os_family}</span>
+          {device.browser_family && <span><span className="title"> {device.browser_family}</span>
+          <br /> </span>}
+          <span className="subtitle"> {device.os_family}</span>
         </span>
       </Col>
       <Col className="table-right" span={12}>
