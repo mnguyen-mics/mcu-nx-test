@@ -108,7 +108,8 @@ class ProcessingActivitiesFormSection extends React.Component<Props> {
           record={processingField}
           title={getProcessingName}
           additionalData={getAdditionalData}
-          onRemove={disabled ?  undefined : removeRecord}
+          onRemove={removeRecord}
+          editable={disabled === undefined || disabled === false}
         />
       );
     });
