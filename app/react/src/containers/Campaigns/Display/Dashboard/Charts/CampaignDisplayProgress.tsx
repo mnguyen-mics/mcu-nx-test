@@ -44,13 +44,13 @@ class CampaignDisplayProgress extends React.Component<
   componentDidMount() {
     const {
       match: {
-        params: { organisationId, campaignId },
+        params: { campaignId },
       },
     } = this.props;
-    this.fetchAll(organisationId, campaignId);
+    this.fetchAll(campaignId);
   }
 
-  componentWillReceiveProps(nextProps: CampaignDisplayProgressProps) {
+  componentDidUpdate(previousProps: CampaignDisplayProgressProps) {
     const {
       match: {
         params: { organisationId, campaignId },
@@ -60,21 +60,21 @@ class CampaignDisplayProgress extends React.Component<
     const {
       match: {
         params: {
-          organisationId: nextOrganisationId,
-          campaignId: nextCampaignId,
+          organisationId: previousOrganisationId,
+          campaignId: previousCampaignId,
         },
       },
-    } = nextProps;
+    } = previousProps;
 
     if (
-      nextCampaignId !== campaignId &&
-      nextOrganisationId !== organisationId
+      previousCampaignId !== campaignId &&
+      previousOrganisationId !== organisationId
     ) {
-      this.fetchAll(organisationId, campaignId);
+      this.fetchAll(campaignId);
     }
   }
 
-  fetchAll = (organisationId: string, id: string) => {
+  fetchAll = (campaignId: string) => {
     this.setState(
       prevState => {
         const nextState = {
@@ -85,7 +85,7 @@ class CampaignDisplayProgress extends React.Component<
       },
       () => {
         this._displayCampaignService
-          .getCampaignDisplay(id)
+          .getCampaignDisplay(campaignId)
           .then(response => {
             this.setState(prevState => {
               const nextState = {

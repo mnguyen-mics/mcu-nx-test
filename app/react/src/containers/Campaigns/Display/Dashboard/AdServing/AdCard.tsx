@@ -83,7 +83,7 @@ class AdCard extends React.Component<Props, State> {
     );
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate(previousProps: Props) {
     const {
       ad,
       match: {
@@ -91,29 +91,31 @@ class AdCard extends React.Component<Props, State> {
       },
       location: { search },
     } = this.props;
+
     const {
-      ad: nextAd,
+      ad: previousAd,
       match: {
         params: {
-          organisationId: nextOrganisationId,
-          campaignId: nextCampaignId,
+          organisationId: previousOrganisationId,
+          campaignId: previousCampaignId,
         },
       },
-      location: { search: nextSearch },
-    } = nextProps;
+      location: { search: previousSearch },
+    } = previousProps;
+
     if (
-      ad.id !== nextAd.id ||
-      organisationId !== nextOrganisationId ||
-      !compareSearches(search, nextSearch) ||
-      campaignId !== nextCampaignId
+      ad.id !== previousAd.id ||
+      organisationId !== previousOrganisationId ||
+      !compareSearches(search, previousSearch) ||
+      campaignId !== previousCampaignId
     ) {
-      const filter = parseSearch(nextSearch, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
+      const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
       this.fetchData(
-        nextOrganisationId,
-        nextAd.creative_id,
+        organisationId,
+        ad.creative_id,
         filter.from,
         filter.to,
-        nextCampaignId,
+        campaignId,
       );
     }
   }

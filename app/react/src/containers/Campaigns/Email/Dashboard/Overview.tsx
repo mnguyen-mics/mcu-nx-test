@@ -43,12 +43,15 @@ class Overview extends React.Component<Props, State> {
     }
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate(previousProps: Props) {
+    const { campaign: previousCampaign } = previousProps;
+    const { campaign } = this.props;
+
     if (
-      nextProps.campaign &&
-      (!this.props.campaign || nextProps.campaign.id !== this.props.campaign.id)
+      campaign &&
+      (!previousCampaign || campaign.id !== previousCampaign.id)
     ) {
-      this.fetchData(nextProps.campaign);
+      this.fetchData(campaign);
     }
   }
 

@@ -43,9 +43,10 @@ class CreativeCard<
     this.fetchScreenshotIfNeeded(this.props.creative);
   }
 
-  componentWillReceiveProps(nextProps: CreativeCardProps<T>) {
-    if (this.props.creative.id !== nextProps.creative.id) {
-      this.fetchScreenshotIfNeeded(nextProps.creative);
+  componentDidUpdate(previousProps: CreativeCardProps<T>) {
+    const { creative } = this.props;
+    if (creative.id !== previousProps.creative.id) {
+      this.fetchScreenshotIfNeeded(creative);
     }
   }
 

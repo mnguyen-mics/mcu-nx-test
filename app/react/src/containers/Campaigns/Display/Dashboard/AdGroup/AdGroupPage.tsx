@@ -81,9 +81,9 @@ class AdGroupPage extends React.Component<Props, AdGroupPageState> {
     }
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate(previousProps: Props) {
     const {
-      location: { search },
+      location: { pathname, search },
       match: {
         params: { organisationId, campaignId, adGroupId },
       },
@@ -91,39 +91,39 @@ class AdGroupPage extends React.Component<Props, AdGroupPageState> {
     } = this.props;
 
     const {
-      location: { pathname: nextPathname, search: nextSearch },
+      location: { search: previousSearch },
       match: {
         params: {
-          campaignId: nextCampaignId,
-          organisationId: nextOrganisationId,
-          adGroupId: nextAdGroupId,
+          campaignId: previousCampaignId,
+          organisationId: previousOrganisationId,
+          adGroupId: previousAdGroupId,
         },
       },
-    } = nextProps;
+    } = previousProps;
 
     if (
-      !compareSearches(search, nextSearch) ||
-      campaignId !== nextCampaignId ||
-      adGroupId !== nextAdGroupId ||
-      organisationId !== nextOrganisationId
+      !compareSearches(search, previousSearch) ||
+      campaignId !== previousCampaignId ||
+      adGroupId !== previousAdGroupId ||
+      organisationId !== previousOrganisationId
     ) {
-      if (!isSearchValid(nextSearch, DISPLAY_DASHBOARD_SEARCH_SETTINGS)) {
+      if (!isSearchValid(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS)) {
         history.replace({
-          pathname: nextPathname,
+          pathname: pathname,
           search: buildDefaultSearch(
-            nextSearch,
+            search,
             DISPLAY_DASHBOARD_SEARCH_SETTINGS,
           ),
         });
       } else {
         const filter = parseSearch<DateSearchSettings>(
-          nextSearch,
+          search,
           DISPLAY_DASHBOARD_SEARCH_SETTINGS,
         );
         this.fetchAllData(
-          nextOrganisationId,
-          nextCampaignId,
-          nextAdGroupId,
+          organisationId,
+          campaignId,
+          adGroupId,
           filter,
         );
       }
