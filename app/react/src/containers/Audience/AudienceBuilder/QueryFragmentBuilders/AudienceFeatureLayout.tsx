@@ -13,8 +13,6 @@ import {
   DefaultSelect,
   FormInputField,
   FormInput,
-  FormDatePicker,
-  FormDatePickerField,
   FormDateRangePickerField,
   FormDateRangePicker,
 } from '../../../../components/Form';
@@ -25,6 +23,14 @@ import {
   isAudienceFeatureIntervalVariable,
 } from '../../../../models/audienceFeature/AudienceFeatureResource';
 import { AudienceBuilderParametricPredicateNode } from '../../../../models/audienceBuilder/AudienceBuilderResource';
+import { Field, GenericField } from 'redux-form';
+import FormRelativeAbsoluteDate, {
+  FormRelativeAbsoluteDateProps,
+} from '../../../QueryTool/JSONOTQL/Edit/Sections/Field/Comparison/FormRelativeAbsoluteDate';
+
+export const FormRelativeAbsoluteDateField = Field as new () => GenericField<
+  FormRelativeAbsoluteDateProps
+>;
 
 interface State {
   audienceFeature?: AudienceFeatureResource;
@@ -122,16 +128,16 @@ class AudienceFeatureLayout extends React.Component<Props, State> {
         );
       case 'Date':
         return (
-          <FormDatePickerField
+          <FormRelativeAbsoluteDateField
             name={name}
-            component={FormDatePicker}
-            datePickerProps={{}}
+            component={FormRelativeAbsoluteDate}
             formItemProps={{
               label: featureVariable.name,
-              ...fieldGridConfig,
             }}
+            unixTimstamp={true}
           />
         );
+
       case 'Interval':
         return (
           <FormDateRangePickerField
