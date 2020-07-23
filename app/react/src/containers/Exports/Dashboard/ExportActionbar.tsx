@@ -39,16 +39,22 @@ class ExportsActionbar extends React.Component<
 > {
   @lazyInject(TYPES.IExportService)
   private _exportService: IExportService;
-  
+
   constructor(props: JoinedProps) {
     super(props);
     this.state = { exportIsRunning: this.props.isExportExecutionRunning };
   }
 
-  componentWillReceiveProps(nextProps: JoinedProps) {
-    const { isExportExecutionRunning } = nextProps;
+  componentDidUpdate(previousProps: JoinedProps) {
+    const { isExportExecutionRunning } = this.props;
 
-    this.setState({ exportIsRunning: isExportExecutionRunning });
+    const {
+      isExportExecutionRunning: previousIsExportExecutionRunning,
+    } = previousProps;
+
+    if (isExportExecutionRunning !== previousIsExportExecutionRunning) {
+      this.setState({ exportIsRunning: isExportExecutionRunning });
+    }
   }
 
   editExport = () => {
@@ -75,7 +81,8 @@ class ExportsActionbar extends React.Component<
     if (this.state.exportIsRunning) {
       message.error(formatMessage(messages.exportRunning));
     } else if (this.props.exportObject) {
-      this._exportService.createExecution(this.props.exportObject.id)
+      this._exportService
+        .createExecution(this.props.exportObject.id)
         .then(res => this.setState({ exportIsRunning: true }))
         .then(res => this.props.onNewExecution());
     }

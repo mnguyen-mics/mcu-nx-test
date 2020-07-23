@@ -54,10 +54,14 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
     };
   }
 
-  componentWillReceiveProps(nextProps: JoinedProps) {
-    const { isImportExecutionRunning } = nextProps;
+  componentDidUpdate(previousProps: JoinedProps) {
+    const { isImportExecutionRunning } = this.props;
 
-    this.setState({ importIsRunning: isImportExecutionRunning });
+    const { isImportExecutionRunning: previousIsImportExecutionRunning } = previousProps;
+
+    if (isImportExecutionRunning !== previousIsImportExecutionRunning) {
+      this.setState({ importIsRunning: isImportExecutionRunning });
+    }
   }
 
   editImport = () => {

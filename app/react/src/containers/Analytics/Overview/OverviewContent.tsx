@@ -15,6 +15,7 @@ import {
   isSearchValid,
   parseSearch,
   updateSearch,
+  compareSearches,
 } from '../../../utils/LocationSearchHelper';
 import { ANALYTICS_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import { RouteComponentProps } from 'react-router';
@@ -154,35 +155,32 @@ class OverviewContent extends React.Component<
       getVisitReportPreviousPeriod,
       getVisitReportFormFactor,
       getVisitReportCountry,
-    ])
-      .then((result: any[]) => {
-        const visitReport = this.extractReportDataset(
-          result[0].data.report_view,
-        );
-        const visitReportSignificantDuration = this.extractReportDataset(
-          result[1].data.report_view,
-        );
-        const visitReportPreviousReport = this.extractReportDataset(
-          result[2].data.report_view,
-        );
-        const visitReportFormFactor = this.extractReportDataset(
-          result[3].data.report_view,
-        );
-        const visitReportCountry = this.extractReportDataset(
-          result[4].data.report_view,
-        );
-        this.setState(prevState => {
-          return {
-            ...prevState,
-            hasFetchedVisitReport: true,
-            visitReport: visitReport,
-            visitReportSignificantDuration: visitReportSignificantDuration,
-            visitReportPreviousPeriod: visitReportPreviousReport,
-            visitReportFormFactor: visitReportFormFactor,
-            visitReportCountry: visitReportCountry,
-          };
-        });
+    ]).then((result: any[]) => {
+      const visitReport = this.extractReportDataset(result[0].data.report_view);
+      const visitReportSignificantDuration = this.extractReportDataset(
+        result[1].data.report_view,
+      );
+      const visitReportPreviousReport = this.extractReportDataset(
+        result[2].data.report_view,
+      );
+      const visitReportFormFactor = this.extractReportDataset(
+        result[3].data.report_view,
+      );
+      const visitReportCountry = this.extractReportDataset(
+        result[4].data.report_view,
+      );
+      this.setState(prevState => {
+        return {
+          ...prevState,
+          hasFetchedVisitReport: true,
+          visitReport: visitReport,
+          visitReportSignificantDuration: visitReportSignificantDuration,
+          visitReportPreviousPeriod: visitReportPreviousReport,
+          visitReportFormFactor: visitReportFormFactor,
+          visitReportCountry: visitReportCountry,
+        };
       });
+    });
 
     this.setState(prevState => {
       return {
@@ -195,7 +193,9 @@ class OverviewContent extends React.Component<
   componentDidMount() {
     const {
       history,
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       datamart,
     } = this.props;
     const filter = parseSearch(
@@ -222,35 +222,53 @@ class OverviewContent extends React.Component<
     this.fetchAllData(organisationId, defaultDatamartId, filter);
   }
 
-  componentWillReceiveProps(nextProps: OverviewContentAllProps) {
+  componentDidUpdate(previousProps: OverviewContentAllProps) {
     const {
       history,
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       datamart,
     } = this.props;
 
-    const filter = parseSearch(
-      history.location.search,
-      ANALYTICS_DASHBOARD_SEARCH_SETTINGS,
-    );
+    const {
+      history: {
+        location: { search: previousSearch },
+      },
+      match: {
+        params: { organisationId: previousOrganisationId },
+      },
+      datamart: previousDatamart,
+    } = previousProps;
+
     if (
-      !isSearchValid(
+      !compareSearches(history.location.search, previousSearch) ||
+      organisationId !== previousOrganisationId ||
+      datamart !== previousDatamart
+    ) {
+      const filter = parseSearch(
         history.location.search,
         ANALYTICS_DASHBOARD_SEARCH_SETTINGS,
-      )
-    ) {
-      history.replace({
-        pathname: history.location.pathname,
-        search: buildDefaultSearch(
+      );
+      if (
+        !isSearchValid(
           history.location.search,
           ANALYTICS_DASHBOARD_SEARCH_SETTINGS,
-        ),
-        state: { reloadDataSource: true },
-      });
-    }
+        )
+      ) {
+        history.replace({
+          pathname: history.location.pathname,
+          search: buildDefaultSearch(
+            history.location.search,
+            ANALYTICS_DASHBOARD_SEARCH_SETTINGS,
+          ),
+          state: { reloadDataSource: true },
+        });
+      }
 
-    const defaultDatamartId = datamart && datamart.id ? datamart.id : '0';
-    this.fetchAllData(organisationId, defaultDatamartId, filter);
+      const defaultDatamartId = datamart && datamart.id ? datamart.id : '0';
+      this.fetchAllData(organisationId, defaultDatamartId, filter);
+    }
   }
 
   updateLocationSearch(params: McsDateRangeValue) {
@@ -272,7 +290,11 @@ class OverviewContent extends React.Component<
   }
 
   renderDatePicker() {
-    const { history: { location: { search } } } = this.props;
+    const {
+      history: {
+        location: { search },
+      },
+    } = this.props;
 
     const filter = parseSearch(search, ANALYTICS_DASHBOARD_SEARCH_SETTINGS);
 
@@ -291,7 +313,10 @@ class OverviewContent extends React.Component<
   }
 
   render() {
-    const { intl: { formatMessage }, colors } = this.props;
+    const {
+      intl: { formatMessage },
+      colors,
+    } = this.props;
 
     const buttons = this.renderDatePicker();
     return (
