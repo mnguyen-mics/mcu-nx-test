@@ -48,6 +48,8 @@ import {
   DatamartUsersAnalyticsDimension,
 } from '../../../../../utils/DatamartUsersAnalyticsReportHelper';
 import { DimensionFilterClause } from '../../../../../models/ReportRequestBody';
+import { isUsersAnalyticsSupportedByDatafarm } from '../../../../Audience/DatamartUsersAnalytics/components/helpers/utils';
+import { IDatamartService } from '../../../../../services/DatamartService';
 
 const { Content } = Layout;
 
@@ -61,6 +63,7 @@ interface ChannelsListPageState {
   isFetchingChannels: boolean;
   noChannelYet: boolean;
   filter: ChannelFilter;
+  shouldDisplayAnalyticsFeature: boolean;
 }
 
 interface MapStateToProps {
@@ -80,6 +83,9 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
   @lazyInject(TYPES.IDatamartUsersAnalyticsService)
   private _datamartUsersAnalyticsService: IDatamartUsersAnalyticsService;
 
+  @lazyInject(TYPES.IDatamartService)
+  private _datamartService: IDatamartService;
+
   constructor(props: Props) {
     super(props);
 
@@ -94,6 +100,7 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
         keywords: '',
         type: [],
       },
+      shouldDisplayAnalyticsFeature: false,
     };
   }
 
@@ -129,6 +136,8 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
 
     const { filter } = this.state;
 
+    this.fetchDatafarm(organisationId);
+
     this.fetchChannels(organisationId, filter, fixedFilterOpt);
   }
 
@@ -163,6 +172,21 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
     }
   }
 
+  fetchDatafarm = (organisationId: string) => {
+    const { notifyError } = this.props;
+    this._datamartService
+      .getDatamarts(organisationId, {allow_administrator: true})
+      .then(res =>
+        this.setState({
+          shouldDisplayAnalyticsFeature: res.data.some(datamart => isUsersAnalyticsSupportedByDatafarm(datamart.datafarm)
+          )
+        }),
+      )
+      .catch(err => {
+        notifyError(err);
+      });
+    };
+
   fetchChannels = (
     organisationId: string,
     filter: ChannelFilter,
@@ -195,6 +219,8 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
             channels: response.data,
             totalChannels: response.total ? response.total : response.count,
           });
+
+          if (this.state.shouldDisplayAnalyticsFeature) {
 
           const datamartIds = uniq(
             response.data.map(channel => channel.datamart_id),
@@ -230,12 +256,10 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
           )
             .then(table => {
               const analyticsByChannel = flatten(
-                table.map(t =>
-                  normalizeReportView<ChannelAnalyticsResource>(
+                table.map(t => normalizeReportView<ChannelAnalyticsResource>(
                     t.data.report_view,
-                  ),
                 ),
-              );
+              ));
               const channelsWithAnalytics: ChannelResourceShapeWithAnalytics[] = response.data.map(
                 channelRes => {
                   const analytics = analyticsByChannel.find(
@@ -258,6 +282,9 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
               this.setState({isFetchingChannels: false });
               notifyError(err);
             });
+          } else {
+            this.setState({ isFetchingChannels: false });
+          }
         })
         .catch(err => {
           this.setState({ isFetchingChannels: false });
