@@ -97,6 +97,20 @@ class SegmentFilter extends React.Component<JoinedProp, SegmentFilterState> {
     }
   }
 
+  componentDidUpdate(prevProps: JoinedProp) {
+    const { defaultSegment, segmentcolors, colors } = this.props;
+    const { defaultSegment: prevDefaultSegment } = prevProps;
+    if (!defaultSegment && prevDefaultSegment) {
+      this.removeFilter(prevDefaultSegment.key);
+    }
+    if(defaultSegment && !prevDefaultSegment) {
+      this.onSegmentByNameSelectorChange({
+        ...defaultSegment,
+        color: segmentcolors ? segmentcolors[0] : colors['mcs-info'],
+      });
+    }
+  }
+
   showSegmentSearch = () => {
     this.setState({
       segmentSearchDisplayed: true,
