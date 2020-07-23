@@ -22,6 +22,7 @@ import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 import { getWorkspace } from '../../../../../redux/Session/selectors';
 import { connect } from 'react-redux';
 import { SearchProps } from 'antd/lib/input';
+import { formatMetric } from '../../../../../utils/MetricHelper';
 
 export interface ChannelsTableProps {
   isFetchingChannels: boolean;
@@ -115,12 +116,18 @@ class ChannelsTable extends React.Component<Props> {
         key: 'sessions',
         isVisibleByDefault: true,
         isHideable: true,
+        render: (text: string, record: ChannelResourceShapeWithAnalytics) => {
+          return formatMetric(record.sessions, "0,0");
+        }
       },
       {
         intlMessage: messages.lastSevenDaysUsers,
         key: 'users',
         isVisibleByDefault: true,
         isHideable: true,
+        render: (text: string, record: ChannelResourceShapeWithAnalytics) => {
+          return formatMetric(record.users, "0,0");
+        }
       },
       {
         intlMessage: messages.channelDatamartName,

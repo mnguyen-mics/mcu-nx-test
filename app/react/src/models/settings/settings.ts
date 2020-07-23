@@ -13,7 +13,7 @@ export interface ChannelResource {
 export interface ChannelAnalyticsResource {
   channel_id?: number;
   sessions?: number;
-  user?: number;
+  users?: number;
 }
 
 export type ChannelResourceShape = MobileApplicationResource | SiteResource;
