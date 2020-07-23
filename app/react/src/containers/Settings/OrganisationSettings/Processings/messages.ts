@@ -87,7 +87,7 @@ const messages = defineMessages({
   },
   generalSectionNamePlaceholder: {
     id: 'settings.organisation.processings.form.sections.general.name.placeholder',
-    defaultMessage: 'Audience Segment Name',
+    defaultMessage: 'Data Processing Name',
   },
   generalSectionNameTooltip: {
     id: 'settings.organisation.processings.form.sections.general.name.tooltip',
@@ -99,7 +99,7 @@ const messages = defineMessages({
   },
   generalSectionPurposePlaceholder: {
     id: 'settings.organisation.processings.form.sections.general.purpose.placeholder',
-    defaultMessage: 'Audience Segment Description',
+    defaultMessage: 'Data Processing Purpose',
   },
   generalSectionPurposeTooltip: {
     id: 'settings.organisation.processings.form.sections.general.purpose.tooltip',
