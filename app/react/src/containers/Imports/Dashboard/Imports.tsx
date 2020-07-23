@@ -326,7 +326,9 @@ class Imports extends React.Component<JoinedProps, State> {
           // currently we can't pass color
           // https://github.com/ant-design/ant-design/blob/master/components/progress/progress.tsx
           <div>
-            <Progress showInfo={false} percent={getExecutionInfo(record, colors).percent * 100} />
+            <Progress showInfo={false} 
+                      percent={(record.status === 'SUCCEEDED' || record.status === 'SUCCESS') ? 
+                      100 : getExecutionInfo(record, colors).percent * 100} />
           </div>
         ),
       },
