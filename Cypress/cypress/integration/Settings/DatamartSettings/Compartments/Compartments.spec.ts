@@ -74,21 +74,28 @@ it('Should create a compartment', () => {
     cy.contains(`${data.datamartName}`).click()
 
     const compartmentName = faker.random.words(6)
-    const compartmentToken = faker.random.words(2).replace(" ","-")
+    const compartmentToken = faker.random.words(2).replace(' ', '-')
     cy.get('[id="compartment.name"]').type(compartmentName)
     cy.get('[id="compartment.token"]').type(compartmentToken)
 
     cy.contains('Advanced').click()
     cy.get('[name="compartment.default"').click()
-    
+
     cy.get('form').submit()
 
-    cy.contains(compartmentName).parents('tr').within(() => {
-      cy.get('td').eq(0).contains('Default')
-      cy.get('td').eq(1).contains(compartmentName)
-      cy.get('td').eq(2).contains(compartmentToken)
-    })
-
+    cy.contains(compartmentName)
+      .parents('tr')
+      .within(() => {
+        cy.get('td')
+          .eq(0)
+          .contains('Default')
+        cy.get('td')
+          .eq(1)
+          .contains(compartmentName)
+        cy.get('td')
+          .eq(2)
+          .contains(compartmentToken)
+      })
   })
 })
 
@@ -100,11 +107,15 @@ it('Should edit a compartment', () => {
     cy.contains('Datamart').click()
     cy.contains('Compartments').click()
 
-    cy.get('[class="mcs-chevron"]').first().click()
+    cy.get('[class="mcs-chevron"]')
+      .first()
+      .click()
     cy.contains('Edit').click()
 
     const compartmentName = faker.random.words(6)
-    cy.get('[id="compartment.name"]').clear().type(compartmentName)
+    cy.get('[id="compartment.name"]')
+      .clear()
+      .type(compartmentName)
     cy.get('form').submit()
     cy.contains(compartmentName)
   })

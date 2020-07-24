@@ -17,7 +17,6 @@ describe('User Expert Query Segment Form Test', () => {
 
   beforeEach(() => {
     cy.restoreLocalStorageCache()
-    cy.contains('Segments').click()
   })
 
   afterEach(() => {
@@ -25,6 +24,7 @@ describe('User Expert Query Segment Form Test', () => {
   })
 
   it('should create User Expert Query Segment', () => {
+    cy.contains('Segments').click()
     cy.contains('New Segment').click()
     cy.contains(datamartName).click()
     cy.contains('User Expert Query').click()
@@ -33,12 +33,9 @@ describe('User Expert Query Segment Form Test', () => {
 
     cy.contains('Save').click()
     cy.url({ timeout: 10000 }).should('match', /.*audience\/segments\/\d*\?/)
-  })
-
-  it('should edit User Query Segment', () => {
-    // For some reason, the 'click' on the Type filter doesn't show the dropdown box with the segment types when segments are being fetched.
+        // For some reason, the 'click' on the Type filter doesn't show the dropdown box with the segment types when segments are being fetched.
     // So we make sure that the segments are fetched first.
-    cy.get('.mcs-campaigns-link').should('have.length.gte', 1)
+    cy.contains('Segments').click()
     cy.contains('Type').click()
     cy.contains('User Query').click()
     cy.get('.mcs-search-input').type(segmentName + '{enter}')

@@ -45,5 +45,10 @@ declare namespace Cypress {
      * Creates a new organization, its datamart and publishes a runtime schema
      */
     initTestContext():void;
+
+    /**
+     * Create a segment using the UI
+     */
+    createSegmentFromUI(type:string):void;
   }
 }
