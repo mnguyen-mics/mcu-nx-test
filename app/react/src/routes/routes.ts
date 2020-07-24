@@ -10,6 +10,16 @@ import { marketplaceRoutes } from './marketplaceRoutes';
 
 import { NavigatorRoute } from './domain'
 import { featureFlagRoutes } from './featuresFlagRoutes';
+import { createBrowserHistory } from 'history'
+import { Modal } from 'antd';
+
+const browserHistory = createBrowserHistory();
+
+// router change
+browserHistory.listen(() => {
+  Modal.destroyAll();
+});
+
 /**
  * Route object definition
  * {
