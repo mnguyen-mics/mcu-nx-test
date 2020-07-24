@@ -1,3 +1,4 @@
+import { ProcessingActivityFieldModel } from './../../../../Settings/DatamartSettings/Common/domain';
 import { AutomationNodeShape } from './../../domain';
 import {
   ABNNodeResource,
@@ -46,6 +47,7 @@ export interface WaitFormData extends DefaultFormData {
 }
 
 export const INITIAL_ADD_TO_SEGMENT_NODE_FORM_DATA: AddToSegmentAutomationFormData = {
+  processingActivities: [],
   ttl: {
     value: undefined,
     unit: 'days',
@@ -152,6 +154,7 @@ export interface EmailCampaignAutomationFormData
 export interface AddToSegmentAutomationFormData extends DefaultFormData {
   audienceSegmentName?: string;
   audienceSegmentId?: string;
+  processingActivities: ProcessingActivityFieldModel[];
   ttl: {
     value?: string;
     unit: 'days' | 'months';

@@ -254,15 +254,12 @@ class EditAudienceSegmentForm extends React.Component<Props> {
 
     const isUserQuery = type === 'USER_QUERY';
 
-    const isUserListFileImportOrTag =
-      isPartialUserListSegment(audienceSegment) &&
-      audienceSegment.feed_type &&
-      (audienceSegment.feed_type === 'FILE_IMPORT' ||
-        audienceSegment.feed_type === 'TAG');
+    const isUserList =
+      isPartialUserListSegment(audienceSegment);
 
     if (
       hasFeature('datamart-user_choices') &&
-      (isUserQuery || isUserListFileImportOrTag)
+      (isUserQuery || isUserList)
     ) {
       const genericFieldArrayProps = {
         formChange: change,

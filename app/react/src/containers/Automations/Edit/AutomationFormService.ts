@@ -1,3 +1,6 @@
+import { AudienceSegmentFormData } from './../../Audience/Segments/Edit/domain';
+import { IAudienceSegmentFormService } from './../../Audience/Segments/Edit/AudienceSegmentFormService';
+import { ProcessingActivityFieldModel } from './../../Settings/DatamartSettings/Common/domain';
 import { IDisplayCampaignService } from './../../../services/DisplayCampaignService';
 import _ from 'lodash';
 import {
@@ -46,6 +49,7 @@ import { IAudienceSegmentService } from '../../../services/AudienceSegmentServic
 import moment from 'moment';
 import { IEmailCampaignService } from '../../../services/EmailCampaignService';
 import { IScenarioExitConditionService } from '../../../services/ScenarioExitConditionService';
+import { ProcessingSelectionResource } from '../../../models/processing';
 
 interface CustomEdgeResource {
   source_id: string;
@@ -98,6 +102,10 @@ export class AutomationFormService implements IAutomationFormService {
 
   @inject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
+
+  @inject(TYPES.IAudienceSegmentFormService)
+  private _audienceSegmentFormService: IAudienceSegmentFormService;
+
   @inject(TYPES.IEmailCampaignService)
   private _emailCampaignService: IEmailCampaignService;
 
@@ -237,15 +245,17 @@ export class AutomationFormService implements IAutomationFormService {
                   });
                 break;
               case 'ADD_TO_SEGMENT_NODE':
-                getPromise = this._audienceSegmentService
-                  .getSegment(n.user_list_segment_id)
-                  .then(({ data: segment }) => {
+                getPromise = this._audienceSegmentFormService
+                  .loadSegmentInitialValue(n.user_list_segment_id)
+                  .then((result: AudienceSegmentFormData) => {
+                    const segment = result.audienceSegment;
                     // We type it any as Duration have a field _months that we can't access otherwise
                     const duration: any = moment.duration(
                       n.user_segment_expiration_period,
                     );
                     const initialValues: AddToSegmentAutomationFormData = {
                       audienceSegmentName: segment.name,
+                      processingActivities: result.processingActivities,
                       ttl: {
                         value: n.user_segment_expiration_period
                           ? duration._months > 0
@@ -551,6 +561,28 @@ export class AutomationFormService implements IAutomationFormService {
     });
   };
 
+  saveProcessingSelections = (
+    audienceSegmentId: string,
+    processingActivities: ProcessingActivityFieldModel[],
+  ): Promise<string> => {
+    const savePromises = processingActivities.map(processingActivityField => {
+      const processingActivity = processingActivityField.model;
+      const processingSelectionResource: Partial<ProcessingSelectionResource> = {
+        processing_id: processingActivity.id,
+        processing_name: processingActivity.name,
+      };
+
+      return this._audienceSegmentService.createProcessingSelectionForAudienceSegment(
+        audienceSegmentId,
+        processingSelectionResource,
+      );
+    });
+
+    return Promise.all(savePromises).then(returnedProcessingActivities => {
+      return audienceSegmentId;
+    });
+  };
+
   iterate = (
     organisationId: string,
     datamartId: string,
@@ -626,41 +658,48 @@ export class AutomationFormService implements IAutomationFormService {
                     ? node.formData.audienceSegmentName
                     : '',
                 );
-            return saveOrCreateSegmentPromise.then(audienceSegmentId => {
-              return this.saveOrCreateNode(
-                automationId,
-                storylineNode,
-                undefined,
-                undefined,
-                audienceSegmentId,
-              ).then(res => {
-                return this.saveOrCreateEdges(automationId, {
-                  source_id: parentNodeId,
-                  target_id: res.data.id,
-                  edgeResource: storylineNode.in_edge,
-                }).then(() => {
-                  let nextNodes = storylineNode.out_edges;
-                  if (
-                    node.formData.audienceSegmentId &&
-                    isFakeId(node.formData.audienceSegmentId) &&
-                    isAddToSegmentNode(res.data)
-                  ) {
-                    nextNodes = this.iterateToUpdateDeleteFromSegmentNodes(
-                      node.formData.audienceSegmentId,
-                      res.data.user_list_segment_id,
-                      storylineNode.out_edges,
+            return saveOrCreateSegmentPromise
+              .then(audienceSegmentId => {
+                return this.saveProcessingSelections(
+                  audienceSegmentId,
+                  node.formData.processingActivities,
+                );
+              })
+              .then(audienceSegmentId => {
+                return this.saveOrCreateNode(
+                  automationId,
+                  storylineNode,
+                  undefined,
+                  undefined,
+                  audienceSegmentId,
+                ).then(res => {
+                  return this.saveOrCreateEdges(automationId, {
+                    source_id: parentNodeId,
+                    target_id: res.data.id,
+                    edgeResource: storylineNode.in_edge,
+                  }).then(() => {
+                    let nextNodes = storylineNode.out_edges;
+                    if (
+                      node.formData.audienceSegmentId &&
+                      isFakeId(node.formData.audienceSegmentId) &&
+                      isAddToSegmentNode(res.data)
+                    ) {
+                      nextNodes = this.iterateToUpdateDeleteFromSegmentNodes(
+                        node.formData.audienceSegmentId,
+                        res.data.user_list_segment_id,
+                        storylineNode.out_edges,
+                      );
+                    }
+                    return this.iterate(
+                      organisationId,
+                      datamartId,
+                      automationId,
+                      nextNodes,
+                      res.data.id,
                     );
-                  }
-                  return this.iterate(
-                    organisationId,
-                    datamartId,
-                    automationId,
-                    nextNodes,
-                    res.data.id,
-                  );
+                  });
                 });
               });
-            });
           } else if (isDeleteFromSegmentNode(node)) {
             return this.saveOrCreateNode(
               automationId,

@@ -22,6 +22,7 @@ interface RecordElementProps<T> {
   title: RenderItem<T>;
   additionalData?: RenderItem<T>;
   additionalActionButtons?: RenderItem<T>;
+  editable?: boolean;
 }
 
 class RecordElement<T> extends React.Component<
@@ -56,23 +57,19 @@ class RecordElement<T> extends React.Component<
       onRemove,
       record,
       intl,
+      editable,
     } = this.props;
 
-    return (
-      <Row className="related-record row-height">
-        <Col style={{ width: 60 }}>
-          <div className="icon-round-border">
-            <McsIcon type={recordIconType} />
-          </div>
-        </Col>
+    const nonEditable = editable !== undefined && editable === false;
 
-        <Col className={this.computeDataClass()}>{title(record)}</Col>
-        {additionalData && (
-          <Col className={this.computeDataClass()}>
-            {additionalData(record)}
-          </Col>
-        )}
+    const className = `${
+      nonEditable ? 'non-editable-related-record' : 'related-record'
+    } row-height`;
 
+    const additionalElements = nonEditable ? (
+      undefined
+    ) : (
+      <div>
         {additionalActionButtons && (
           <Col className={`${this.computeDataClass()} text-right m-r-20`}>
             {additionalActionButtons(record)}
@@ -98,6 +95,24 @@ class RecordElement<T> extends React.Component<
             </div>
           </Popconfirm>
         )}
+      </div>
+    );
+
+    return (
+      <Row className={className}>
+        <Col style={{ width: 60 }}>
+          <div className="icon-round-border">
+            <McsIcon type={recordIconType} />
+          </div>
+        </Col>
+
+        <Col className={this.computeDataClass()}>{title(record)}</Col>
+        {additionalData && (
+          <Col className={this.computeDataClass()}>
+            {additionalData(record)}
+          </Col>
+        )}
+        {additionalElements}
       </Row>
     );
   }

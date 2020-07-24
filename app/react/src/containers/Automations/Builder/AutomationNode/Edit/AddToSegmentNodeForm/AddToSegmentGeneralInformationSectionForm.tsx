@@ -2,10 +2,6 @@ import * as React from 'react';
 import { AddToSegmentAutomationFormData } from "../domain";
 import { InjectedIntlProps, injectIntl, defineMessages } from "react-intl";
 import { ValidatorProps } from "../../../../../../components/Form/withValidators";
-import { TYPES } from '../../../../../../constants/types';
-import { lazyInject } from '../../../../../../config/inversify.config';
-import { IAudienceSegmentService } from '../../../../../../services/AudienceSegmentService';
-import { AudienceSegmentShape } from '../../../../../../models/audiencesegment';
 import { compose } from 'recompose';
 import withNormalizer, {
   NormalizerProps,
@@ -19,11 +15,6 @@ import {
   AddonSelect
 } from '../../../../../../components/Form';
 
-interface State {
-  fetchingAudienceSegments: boolean;
-  userListSegment: AudienceSegmentShape[]
-}
-
 interface GeneralInformationFormSectionProps {
   initialValues: Partial<AddToSegmentAutomationFormData>;
   organisationId: string;
@@ -35,32 +26,7 @@ type Props = GeneralInformationFormSectionProps &
   ValidatorProps &
   NormalizerProps;
 
-class AddToSegmentGeneralInformationFormSection extends React.Component<Props, State> {
-
-  @lazyInject(TYPES.IAudienceSegmentService)
-  private audienceSegmentService: IAudienceSegmentService;
-
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      fetchingAudienceSegments: false,
-      userListSegment: []
-    };
-  }
-
-  componentDidMount() {
-    this.setState({ fetchingAudienceSegments: true, });
-    this.audienceSegmentService
-      .getSegments(this.props.organisationId, {
-        type: ["USER_LIST"],
-      })
-      .then(userListSegmentsResponse => {
-        this.setState({
-          fetchingAudienceSegments: false,
-          userListSegment: userListSegmentsResponse.data
-        });
-      });
-  }
+class AddToSegmentGeneralInformationFormSection extends React.Component<Props> {
 
   render() {
     const {
