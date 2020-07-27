@@ -57,6 +57,9 @@ class AdGroupFormSection extends React.Component<Props> {
   };
 
   openAdGroupForm = (field?: AdGroupFieldModel) => {
+    // prevent opening multiple drawer
+    this.props.closeNextDrawer();
+
     const {
       intl: { formatMessage },
     } = this.props;
