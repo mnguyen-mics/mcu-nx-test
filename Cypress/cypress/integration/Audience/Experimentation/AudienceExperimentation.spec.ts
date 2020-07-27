@@ -38,6 +38,6 @@ it('should create User Expert Query Segment', () => {
     cy.get('[class="ant-slider"]')
       .click()
     cy.get('[type="submit"]').click()
-    cy.get('.ant-alert.ant-alert-warning.ant-alert-no-icon').should('contain','no data')
+    cy.url().should('contain',`${data.organisationId}/audience/segments/`)
   })
 })
