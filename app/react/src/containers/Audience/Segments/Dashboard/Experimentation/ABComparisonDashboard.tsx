@@ -39,6 +39,7 @@ import {
 import McsDateRangePicker, {
   McsDateRangeValue,
 } from '../../../../../components/McsDateRangePicker';
+import SegmentNameDisplay from '../../../Common/SegmentNameDisplay';
 
 interface State {
   ABComparisonDashboardConfig: DatamartUsersAnalyticsWrapperProps[];
@@ -290,6 +291,16 @@ class ABComparisonDashboard extends React.Component<Props, State> {
   getLoadingState = (disableFilters: boolean) =>
     this.setState({ disableFilters });
 
+  getSegmentToAddToDimensionFilterClause = () => {
+    const segmentId = this.getFilter().segments && this.getFilter().segments[0];
+    return segmentId
+      ? {
+          key: segmentId,
+          label: <SegmentNameDisplay audienceSegmentId={segmentId} />,
+        }
+      : undefined;
+  };
+
   render() {
     const {
       experimentationSegment,
@@ -362,6 +373,8 @@ class ABComparisonDashboard extends React.Component<Props, State> {
             hideAllUsersButton={true}
             segmentcolors={[colors['mcs-warning']]}
             segmentFiltersLength={1}
+            defaultSegment={this.getSegmentToAddToDimensionFilterClause()}
+            defaultSegmentCanBeRemoved={true}
             placeholder={intl.formatMessage(
               messagesMap.abDashboardSegmentFilterPlaceholder,
             )}
