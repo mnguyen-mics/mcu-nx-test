@@ -17,7 +17,7 @@ If you're not (for local tests for instance), don't pass any argument ; localhos
 Several commands are already available, you can run them with `npm run` followed by the instruction (you can add others in the `package.json`). For instance, you can :
 * run Cypress using its GUI : `cypress`. All the tests in `cypress/integration` will be listed here, you can run them simply by clicking on them.
 * run all Cypress tests in headless mode : `cy:run`
-* run Cypress and generate an HTML report : `cy:report`. It will generate the file at `Cypress/mochawesome-report/mochawesome.html`, that you can open in your favorite web browser. This command runs tests against a headless Chrome browser, see `Cypress/scripts/report.js` for more details.
+* run Cypress and generate an HTML report : `cy:report`. It will generate the file at `Cypress/mochawesome-report/mochawesome.html`, that you can open in your favorite web browser. This command runs tests against a headless Electron browser by default ; to change this, you can add `--browser=<browser_name>` after the command, for instance : `npm run cy:report --browser=chrome`. See `Cypress/scripts/report.js` for more details.
 * run Cypress with a different browser than Electron, with `cy:run:chrome` or `cy:run:firefox` (note that the browser should exist on the machine beforehand, Cypress doesn't install it). This will run the tests in a headed browser ; if you want it to be headless, you can use `cy:run:hl-chrome` / `cy:run:hl-firefox` instead.
 
 ## Project structure
