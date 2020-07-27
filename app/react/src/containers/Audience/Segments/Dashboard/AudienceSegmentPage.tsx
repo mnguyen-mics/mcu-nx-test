@@ -145,7 +145,7 @@ class AudienceSegmentPage extends React.Component<Props, State> {
       });
   };
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate(previousProps: Props, previousState: State) {
     const {
       location: { search },
       match: {
@@ -155,25 +155,30 @@ class AudienceSegmentPage extends React.Component<Props, State> {
     } = this.props;
 
     const {
-      location: { search: nextSearch },
+      location: { search: previousSearch },
       match: {
         params: {
-          segmentId: nextSegmentId,
-          organisationId: nextOrganisationId,
+          segmentId: previousSegmentId,
+          organisationId: previousOrganisationId,
         },
       },
-    } = nextProps;
+    } = previousProps;
+
+    const { segment } = this.state;
+
+    const { segment: previousSegment } = previousState;
+
+    const previousSegmentIdFromState = previousSegment ? previousSegment.id : undefined;
 
     if (
-      !compareSearches(search, nextSearch) ||
-      segmentId !== nextSegmentId ||
-      organisationId !== nextOrganisationId ||
-      (this.state.segment && this.state.segment.type === 'USER_LOOKALIKE')
+      !compareSearches(search, previousSearch) ||
+      segmentId !== previousSegmentId ||
+      organisationId !== previousOrganisationId ||
+      (segment && segment.type === 'USER_LOOKALIKE' && segment.id !== previousSegmentIdFromState)
     ) {
-      if (organisationId !== nextOrganisationId) {
-        history.push(`/v2/o/${nextOrganisationId}/audience/segments`);
+      if (organisationId !== previousOrganisationId) {
+        history.push(`/v2/o/${organisationId}/audience/segments`);
       }
-
       this.setState({ isLoading: true });
       this.fetchAudienceSegment(segmentId);
     }

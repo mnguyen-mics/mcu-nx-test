@@ -94,31 +94,32 @@ class CreateEmailTemplate extends React.Component<
       });
   }
 
-  componentWillReceiveProps(nextProps: JoinedProps) {
+  componentDidUpdate(previousProps: JoinedProps) {
     const {
       match: {
         params: { organisationId, creativeId },
       },
       notifyError,
     } = this.props;
+
     const {
       match: {
         params: {
-          organisationId: nextOrganisationId,
-          creativeId: nextEmailTemplateId,
+          organisationId: previousOrganisationId,
+          creativeId: previousCreativeId,
         },
       },
-    } = nextProps;
+    } = previousProps;
 
     if (
-      (organisationId !== nextOrganisationId ||
-        creativeId !== nextEmailTemplateId) &&
-      nextEmailTemplateId
+      (organisationId !== previousOrganisationId ||
+        creativeId !== previousCreativeId) &&
+      creativeId
     ) {
       this.setState(() => {
         return { isLoading: true };
       });
-      this.fetchInitialValues(nextEmailTemplateId)
+      this.fetchInitialValues(creativeId)
         .then(() => {
           this.setState(() => {
             return { isLoading: false };

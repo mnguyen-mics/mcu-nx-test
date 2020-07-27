@@ -67,7 +67,7 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
     }
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate(previousProps: Props) {
     const {
       match: {
         params: { creativeId },
@@ -76,14 +76,14 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
 
     const {
       match: {
-        params: { creativeId: nextCreativeId },
+        params: { creativeId: previousCreativeId },
       },
-    } = nextProps;
+    } = previousProps;
 
-    if (creativeId !== nextCreativeId) {
+    if (creativeId !== previousCreativeId) {
       this.setState({ loading: true });
       this._creativeService
-        .getCreative(nextCreativeId)
+        .getCreative(creativeId)
         .then(resp => resp.data)
         .then(creativeData => {
           this.setState({
