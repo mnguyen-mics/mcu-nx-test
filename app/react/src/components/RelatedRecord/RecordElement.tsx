@@ -69,7 +69,7 @@ class RecordElement<T> extends React.Component<
     const additionalElements = nonEditable ? (
       undefined
     ) : (
-      <div>
+      <React.Fragment>
         {additionalActionButtons && (
           <Col className={`${this.computeDataClass()} text-right m-r-20`}>
             {additionalActionButtons(record)}
@@ -95,7 +95,7 @@ class RecordElement<T> extends React.Component<
             </div>
           </Popconfirm>
         )}
-      </div>
+      </React.Fragment>
     );
 
     return (
