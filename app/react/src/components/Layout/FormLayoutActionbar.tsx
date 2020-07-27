@@ -9,6 +9,9 @@ import { compose } from 'recompose';
 import McsIcon from '../McsIcon';
 import ActionBar, { ActionBarProps } from '../ActionBar';
 import { Omit } from '../../utils/Types';
+import { DataResponse } from '../../services/ApiService';
+import { QueryResource } from '../../models/datamart/DatamartResource';
+import Convert2Otql from '../../containers/QueryTool/SaveAs/Convet2Otql';
 
 export interface FormLayoutActionbarProps
   extends Omit<ActionBarProps, 'edition'> {
@@ -16,50 +19,84 @@ export interface FormLayoutActionbarProps
   message?: FormattedMessage.MessageDescriptor;
   onClose?: React.MouseEventHandler<HTMLSpanElement>;
   disabled?: boolean;
+  convert2Otql?: () => Promise<DataResponse<QueryResource>>;
 }
 
-interface FormLayoutActionbarProvidedProps
-  extends FormLayoutActionbarProps,
-    DispatchProp<FormAction> {
-  submitting: boolean;
+type Props = FormLayoutActionbarProps &
+    DispatchProp<FormAction> & 
+    {
+      submitting: boolean;
+    }
+
+interface State {
+  conversionModalVisible: boolean;
 }
 
 /* Redux-form allows us to use submit buttons removed from their normal form components.
  * This component includes a remote submit button.
  * See example at http://redux-form.com/6.8.0/examples/remoteSubmit/
  */
-const FormLayoutActionbar: React.SFC<FormLayoutActionbarProvidedProps> = props => {
-  const { dispatch, formId, message, onClose, submitting, disabled } = props;
+class FormLayoutActionbar extends React.Component<Props, State> {
 
-  const submitButtonProps: ButtonProps = {
-    disabled: submitting,
-    htmlType: 'submit',
-    onClick: () => dispatch && formId && dispatch(submit(formId)),
-    type: 'primary',
-  };
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      conversionModalVisible: false
+    };
+  }
 
-  return (
-    <ActionBar edition={true} {...props}>
-      {message && !disabled ? (
-        <Button {...submitButtonProps} className="mcs-primary">
-          <McsIcon type="plus" />
-          <FormattedMessage {...message} />
-        </Button>
-      ) : null}
+  render() {
 
-      <McsIcon
-        type="close"
-        className="close-icon"
-        style={{ cursor: 'pointer' }}
-        onClick={onClose}
-      />
-    </ActionBar>
-  );
+    const { dispatch, formId, message, onClose, submitting, disabled, convert2Otql } = this.props;
+
+    const submitButtonProps: ButtonProps = {
+      disabled: submitting,
+      htmlType: 'submit',
+      onClick: () => dispatch && formId && dispatch(submit(formId)),
+      type: 'primary',
+    };
+
+    const openConversionModal = () => this.setState({ conversionModalVisible: true })
+    const closeConversionModal = () => this.setState({ conversionModalVisible: false })
+
+   
+
+    return (
+      <ActionBar edition={true} {...this.props}>
+        {message && !disabled ? (
+          <Button {...submitButtonProps} className="mcs-primary">
+            <McsIcon type="plus" />
+            <FormattedMessage {...message} />
+          </Button>
+        ) : null}
+
+        {convert2Otql && <Button onClick={openConversionModal}>
+            <FormattedMessage
+              id="queryTool.query-builder.actionbar.convert"
+              defaultMessage="Convert to OTQL"
+            />
+        </Button>}
+        {convert2Otql && this.state.conversionModalVisible && <Convert2Otql 
+          onOk={closeConversionModal}
+          onCancel={closeConversionModal}
+          footer={null}
+          visible={this.state.conversionModalVisible}
+          convertQuery={convert2Otql}
+        />}
+        <McsIcon
+          type="close"
+          className="close-icon"
+          style={{ cursor: 'pointer' }}
+          onClick={onClose}
+        />
+      </ActionBar>
+    );
+  }
+
 };
 
 export default compose<
-  FormLayoutActionbarProvidedProps,
-  FormLayoutActionbarProps
+Props, FormLayoutActionbarProps
 >(
   connect((state, ownProps: FormLayoutActionbarProps) => ({
     /* For additional redux-form selectors, such as "pristine" or "form errors",

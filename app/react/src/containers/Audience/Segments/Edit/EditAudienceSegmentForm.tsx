@@ -51,6 +51,9 @@ import ProcessingActivitiesFormSection, {
   ProcessingActivitiesFormSectionProps,
 } from '../../../Settings/DatamartSettings/Common/ProcessingActivitiesFormSection';
 import { isPartialUserListSegment } from '../../../../models/audiencesegment/AudienceSegmentResource';
+import { IQueryService } from '../../../../services/QueryService';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
 
 export const FORM_ID = 'audienceSegmentForm';
 
@@ -93,6 +96,10 @@ type Props = InjectedFormProps<AudienceSegmentFormProps> &
   NormalizerProps;
 
 class EditAudienceSegmentForm extends React.Component<Props> {
+
+  @lazyInject(TYPES.IQueryService)
+  private _queryService: IQueryService;
+
   generateUserQueryTemplate = (renderedSection: JSX.Element) => {
     return (
       <div>
@@ -222,6 +229,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       hasFeature,
       initialProcessingSelectionsForWarning,
       audienceSegmentFormData,
+      queryLanguage,
     } = this.props;
 
     const type = segmentType
@@ -229,13 +237,20 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       : initialValues && initialValues.audienceSegment
       ? initialValues.audienceSegment.type
       : undefined;
-
+    
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
       paths: breadCrumbPaths,
       message: messages.audienceSegmentSaveButton,
       onClose: close,
     };
+    
+    const query = audienceSegmentFormData.query;
+    if (type === "USER_QUERY" && queryLanguage === "JSON_OTQL" && datamart && query) {
+      actionBarProps.convert2Otql = () => {
+          return this._queryService.convertJsonOtql2Otql(datamart.id, query);
+      };
+    }
 
     const sections: McsFormSection[] = [];
     sections.push({
