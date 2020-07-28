@@ -383,10 +383,25 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         order_by: filter.orderBy,
       };
     }
-    if (filter.type.length) {
+    const subtypes: string[] = [];
+    const types = filter.type.filter( (t: string) => {
+      if (t === "EDGE" || t === "USER_PIXEL") {
+        subtypes.push(t);
+        return false;
+      }
+      return true;
+    })
+    if (subtypes.length) {
+      if (types.indexOf("USER_LIST") === -1) types.push("USER_LIST");
       formattedFilters = {
         ...formattedFilters,
-        type: filter.type,
+        subtype: subtypes,
+      };
+    }
+    if (types.length) {
+      formattedFilters = {
+        ...formattedFilters,
+        type: types,
       };
     }
     if (filter.feed_type.length) {
@@ -399,12 +414,6 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       formattedFilters = {
         ...formattedFilters,
         label_id: filter.label_id,
-      };
-    }
-    if (filter.type.length) {
-      formattedFilters = {
-        ...formattedFilters,
-        type: filter.type,
       };
     }
 
@@ -606,16 +615,24 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
               break;
             case 'USER_LIST': {
               typeIcon = 'solution';
-              const feedType = (record as UserListSegment).feed_type;
-              if (feedType === 'FILE_IMPORT') subTypeIcon = 'file';
-              if (feedType === 'TAG') subTypeIcon = 'file-image';
-              if (feedType === 'SCENARIO') subTypeIcon = 'share-alt';
-              subMessage = intl.formatMessage(messages[feedType]);
+              const subtype = (record as UserListSegment).subtype
+              if (subtype === "EDGE" || subtype === "USER_CLIENT") {
+                subTypeIcon = 'file-image';
+                const subtypeEdge = "EDGE";
+                subMessage = intl.formatMessage(messages[subtypeEdge]);
+              }
+              if (subtype === "USER_PIXEL") {
+                subTypeIcon = 'global';
+                subMessage = intl.formatMessage(messages[subtype]);
+              }
+              if (subtype === "STANDARD") {
+                const feedType = (record as UserListSegment).feed_type;
+                if (feedType === 'FILE_IMPORT') subTypeIcon = 'file';
+                if (feedType === 'SCENARIO') subTypeIcon = 'share-alt';
+                subMessage = intl.formatMessage(messages[feedType]);
+              }
               break;
             }
-            case 'USER_PIXEL':
-              typeIcon = 'global';
-              break;
             case 'USER_PARTITION':
               typeIcon = 'api';
               break;
@@ -764,9 +781,6 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
             },{
               title: formatMessage(userListFeedTypeMessages.SCENARIO),
               value: 'SCENARIO'
-            },{
-              title: formatMessage(userListFeedTypeMessages.TAG),
-              value: 'TAG'
             },
           ]
         },{
@@ -781,6 +795,12 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         },{
           title: formatMessage(audienceSegmentTypeMessages.USER_LOOKALIKE),
           value: 'USER_LOOKALIKE',
+        },        {
+          title: formatMessage(audienceSegmentTypeMessages.USER_PIXEL),
+          value: 'USER_PIXEL',
+        },{
+          title: formatMessage(audienceSegmentTypeMessages.EDGE),
+          value: 'EDGE',
         },
       ],
       selectedItems: filter.type.concat(filter.feed_type.map((ft: string) => `USER_LIST_${ft}`)),
