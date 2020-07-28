@@ -56,9 +56,10 @@ context('Display Campaign - Resource history', () => {
       .contains('History')
       .parent()
       .click()
-
     // Check history
-    // cy.get('.mcs-timeline').children('have.length', 4).as('timeline_items')
+    cy.get('.ant-timeline-item')
+      .should('have.length', 4)
+      .as('timeline_items')
     cy.get('@timeline_items')
       .first()
       .should('have.text', 'Today')

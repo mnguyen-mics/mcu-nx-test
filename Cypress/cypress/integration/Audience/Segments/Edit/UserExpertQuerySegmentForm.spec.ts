@@ -33,9 +33,10 @@ describe('User Expert Query Segment Form Test', () => {
 
     cy.contains('Save').click()
     cy.url({ timeout: 10000 }).should('match', /.*audience\/segments\/\d*\?/)
+    cy.contains('Segments').click()
         // For some reason, the 'click' on the Type filter doesn't show the dropdown box with the segment types when segments are being fetched.
     // So we make sure that the segments are fetched first.
-    cy.contains('Segments').click()
+    cy.get('.mcs-campaigns-link').should('have.length.gte', 1)
     cy.contains('Type').click()
     cy.contains('User Query').click()
     cy.get('.mcs-search-input').type(segmentName + '{enter}')
