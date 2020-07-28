@@ -31,6 +31,7 @@ export interface FieldNodeSectionProps {
   title: FormattedMessage.MessageDescriptor;
   subtitle: FormattedMessage.MessageDescriptor;
   disabled?: boolean;
+  isEdge?: boolean;
 }
 
 type JoinedProps = InjectedIntlProps &
@@ -53,6 +54,7 @@ class FieldNodeSection extends React.Component<JoinedProps> {
       title,
       subtitle,
       disabled,
+      isEdge,
     } = this.props;
 
     const handleOnClick = () =>
@@ -82,6 +84,7 @@ class FieldNodeSection extends React.Component<JoinedProps> {
               runtimeSchemaId={runtimeSchemaId}
               formName={formName}
               disabled={disabled}
+              isEdge={isEdge}
             />
           </div>
         </div>

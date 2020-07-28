@@ -214,6 +214,7 @@ class ObjectNodeForm extends React.Component<Props> {
             title={messages.fieldConditionTitle}
             subtitle={messages.fieldConditionSubTitle}
             {...genericFieldArrayProps}
+            isEdge={isEdge}
           />
         ),
       });
