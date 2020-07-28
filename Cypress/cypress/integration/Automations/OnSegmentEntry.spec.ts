@@ -1,5 +1,5 @@
-import { createUserQuery } from "../helpers/SegmentHelper"
-import { createQuery } from "../helpers/QueryHelper"
+import { createUserQuery } from '../helpers/SegmentHelper'
+import { createQuery } from '../helpers/QueryHelper'
 
 before(() => {
   cy.login()
@@ -12,17 +12,19 @@ afterEach(() => {
 })
 
 it('Should test the creation of an automation with On Segment Entry', () => {
-  cy.readFile('cypress/fixtures/init_infos.json').then(async (data) => {
+  cy.readFile('cypress/fixtures/init_infos.json').then(async data => {
     cy.switchOrg(data.organisationName)
-    const query = await createQuery(
+    const query = await createQuery(data.datamartId, {
+      datamart_id: data.datamartId,
+      query_language: 'OTQL',
+      query_text: 'select { id } from UserPoint'
+    })
+    const userQuery = await createUserQuery(
       data.datamartId,
-      {
-        datamart_id: data.datamartId,
-        query_language: 'OTQL',
-        query_text: "select { id } from UserPoint"
-      }
-    );
-    const userQuery = await createUserQuery(data.datamartId, data.organisationId, query.id, 'UserQuery for On Segment Entry')
+      data.organisationId,
+      query.id,
+      'UserQuery for On Segment Entry'
+    )
 
     // Automation Creation
 
@@ -30,14 +32,25 @@ it('Should test the creation of an automation with On Segment Entry', () => {
     cy.contains('Builder').click()
     cy.contains('On Segment Entry').click()
 
-    cy.get('#OnSegmentEntryInputSectionId').find('.ant-select').click().type('{enter}')
-    cy.get('.drawer').find('[type=submit]').click()
-    cy.get('.mcs-actionbar').find('[type=button]').click()
+    cy.get('#OnSegmentEntryInputSectionId')
+      .find('.ant-select')
+      .click()
+      .type('{enter}')
+    cy.get('.drawer')
+      .find('[type=submit]')
+      .click()
+    cy.get('.mcs-actionbar')
+      .find('[type=button]')
+      .click()
 
     const automationName = 'On Segment Entry Automation'
 
-    cy.get('.form-modal').find('#name').type(automationName)
-    cy.get('.form-modal').find('[type=submit]').click()
+    cy.get('.form-modal')
+      .find('#name')
+      .type(automationName)
+    cy.get('.form-modal')
+      .find('[type=submit]')
+      .click()
 
     // Automation viewer
 
@@ -45,12 +58,19 @@ it('Should test the creation of an automation with On Segment Entry', () => {
 
     // Edit
 
-    cy.get('.mcs-actionbar').find('[type=button]').contains('Edit').click({ force: true })
+    cy.get('.mcs-actionbar')
+      .find('[type=button]')
+      .contains('Edit')
+      .click({ force: true })
 
     // Open the drawer
 
-    cy.get('.node-body').contains('On audience segment entry').click()
-    cy.get('.boolean-menu').contains('Edit').click()
+    cy.get('.node-body')
+      .contains('On audience segment entry')
+      .click()
+    cy.get('.boolean-menu')
+      .contains('Edit')
+      .click()
 
     // Check if the segment name in input is the one we had select on creation
 

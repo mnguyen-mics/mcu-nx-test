@@ -64,6 +64,53 @@ Cypress.Commands.add('goToHome', organisationId => {
   cy.visit(`#/v2/o/${organisationId}/campaigns/display?currentPage=1&from=now-7d&pageSize=10&to=now`)
 })
 
+Cypress.Commands.add('createSegmentFromUI', type => {
+    // Click on "new Segment"
+  cy.contains('New Segment').click()
+
+  // Select Segment Types
+  cy.contains(type).click()
+
+  // Fill the name of the segement
+  cy.get('[id="audienceSegment.name"]').type(
+    'Test Audience Segment Form - Test ' + type
+  )
+
+  // Fill the descritpion
+  cy.get('[id="audienceSegment.short_description"]').type(
+    'This segment was created to test the creation of segment.'
+  )
+
+  // click on advanced
+  cy.get('[class="button-styleless optional-section-title"]').click()
+
+  // Fill the technical name
+  cy.get('[id="audienceSegment.technical_name"]').type(faker.lorem.word())
+
+  // Fill the default life time
+  cy.get('[id="defaultLifetime"]').type('1')
+
+  // Choose day as the lifetime
+  cy.get('[class ="ant-select ant-select-enabled"]').click()
+
+  cy.contains('Days').click()
+
+  // In the case that we are in user expert query, we have to write a mock query to validate
+  if (type === 'User Expert Query') {
+    cy.get('[id="brace-editor"]')
+      .find('[class="ace_text-input"]')
+      .type(`SELECT {id} FROM UserPoint WHERE creation_date <= "now-120d/d"`, {
+        force: true,
+        parseSpecialCharSequences: false
+      })
+  }
+
+  // Save the new segment
+  cy.contains('Save').click()
+
+  cy.url({ timeout: 10000 }).should('not.contain', 'create')
+})
+
 Cypress.Commands.add('fillExpertQuerySegmentForm', (segmentName: string, queryText: string) => {
     cy.contains('Save', { timeout: 5000 })
     cy.get('input[name="audienceSegment.name"]')
@@ -76,10 +123,10 @@ Cypress.Commands.add('fillExpertQuerySegmentForm', (segmentName: string, queryTe
     cy.get('input[name="audienceSegment.technical_name"]')
       .clear()
       .type(faker.random.words(2))
-    cy.get('input[name="audienceSegment.defaultLiftime"]')
+    cy.get('input[name="defaultLifetime"]')
       .clear()
       .type('1')
-    cy.get('[id="audienceSegment.defaultLiftimeUnit"]').click()
+    cy.get('[id="defaultLifetimeUnit"]').click()
     cy.contains('Days').click()
     cy.get('[id="properties"').within(() => {
       cy.get('[id="brace-editor"]')
