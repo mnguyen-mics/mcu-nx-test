@@ -102,7 +102,7 @@ class FeedChart extends React.Component<Props, State> {
       .getStats(organisationId, reportBody)
       .then(res => {
         const normalized = normalizeReportView<{
-          day: string;
+          date_yyyy_mm_dd: string;
           sync_type: string;
           uniq_user_points_count: number;
           uniq_user_identifiers_count: number;
@@ -112,11 +112,11 @@ class FeedChart extends React.Component<Props, State> {
         const deletes = normalized.filter(rv => rv.sync_type === 'DELETE');
 
         let feedReports = upserts.map((upsertReport): FeedReport => {
-          const deleteReport = deletes.find(r => r.day === upsertReport.day);
+          const deleteReport = deletes.find(r => r.date_yyyy_mm_dd === upsertReport.date_yyyy_mm_dd);
 
           if (feedStatsUnit === "USER_POINTS") {
             return {
-              day: upsertReport.day,
+              day: upsertReport.date_yyyy_mm_dd,
               upserted: upsertReport.uniq_user_points_count,
               deleted: deleteReport
                 ? deleteReport.uniq_user_points_count
@@ -125,7 +125,7 @@ class FeedChart extends React.Component<Props, State> {
             };
           } else if (feedStatsUnit === "USER_IDENTIFIERS") {
             return {
-              day: upsertReport.day,
+              day: upsertReport.date_yyyy_mm_dd,
               upserted: upsertReport.uniq_user_identifiers_count,
               deleted: deleteReport
                 ? deleteReport.uniq_user_identifiers_count
