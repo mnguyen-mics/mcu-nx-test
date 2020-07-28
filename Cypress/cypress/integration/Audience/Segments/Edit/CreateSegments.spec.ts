@@ -1,28 +1,33 @@
-before(() => {
-  cy.login()
-})
+describe('This test should check that the audience segments forms are working properly',()=>{
 
 beforeEach(() => {
-  cy.restoreLocalStorageCache()
-})
-
-afterEach(() => {
-  cy.saveLocalStorageCache()
-})
-
-it('Should create User List / User Pixel / User Expert Query Segments', () => {
+  cy.login()
   cy.readFile('cypress/fixtures/init_infos.json').then(data => {
     cy.switchOrg(data.organisationName)
+  })
+})
+
+it('Should create User List Segment', () => {
+  cy.readFile('cypress/fixtures/init_infos.json').then(data => {
     cy.contains('Audience').click()
     cy.contains('Segments').click()
     cy.createSegmentFromUI('User List')
-    cy.goToHome(data.organisationId)
+  })
+})
+
+it('should create user pixel segment', () => {
+  cy.readFile('cypress/fixtures/init_infos.json').then(data => {
     cy.contains('Audience').click()
-    cy.contains('Segments').click({force:true})
+    cy.contains('Segments').click({ force: true })
     cy.createSegmentFromUI('User Pixel')
-    cy.goToHome(data.organisationId)
+  })
+})
+
+it('should create user expert query segment', () => {
+  cy.readFile('cypress/fixtures/init_infos.json').then(data => {
     cy.contains('Audience').click()
-    cy.contains('Segments').click({force:true})
+    cy.contains('Segments').click({ force: true })
     cy.createSegmentFromUI('User Expert Query')
   })
+})
 })
