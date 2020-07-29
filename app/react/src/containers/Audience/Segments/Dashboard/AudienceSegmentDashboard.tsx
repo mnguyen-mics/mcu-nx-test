@@ -182,7 +182,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
 
     if (datamarts && segment) {
       const datamart = datamarts.find(dm => dm.id === segment.datamart_id);
-      this.fetchDashboardChartView(segment.datamart_id);
+      this.fetchDashboardChartView(organisationId, segment.datamart_id, segment.id);
 
       additionalMetrics =
         datamart && datamart.audience_segment_metrics
@@ -203,11 +203,9 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
     );
   };
 
-  fetchDashboardChartView = (selectedDatamartId: string) => {
+  fetchDashboardChartView = (organisationId: string, selectedDatamartId: string, segmentId: string) => {
     this._dashboardService
-      .getDashboards(selectedDatamartId, {
-        type: 'SEGMENT',
-      })
+      .getSegmentDashboards(organisationId, selectedDatamartId, segmentId)
       .then(d => {
         return d.data;
       })

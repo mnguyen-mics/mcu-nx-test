@@ -51,18 +51,20 @@ class StackedBarPlot extends React.Component<Props, {}> {
     })
   }
 
-  formatSerieData = (dataset: Dataset, y: yKey) => {
-    return dataset.map(d => {
+  formatSerieData = (dataset: Dataset, y: yKey, xKey: string, sort?: SerieSortType) => {
+    return (sort ? dataset.sort((a,b) => {
+      return (a[xKey] as string).localeCompare((b[xKey] as string))
+    }) : dataset).map(d => {
       return { y: d[y.key] ? d[y.key] as number : 0, count: d[`${y.key}-count`] };
     });
   }
 
-  formatSeries = (dataset: Dataset, yKeys: yKey[], labels?: DataLabel): Highcharts.SeriesOptionsType[] => {
+  formatSeries = (dataset: Dataset, yKeys: yKey[], xKey: string, labels?: DataLabel, sort?: SerieSortType): Highcharts.SeriesOptionsType[] => {
     const {intl: {formatMessage}} = this.props;
     return yKeys.map(y => {
       return {
         name: typeof y.message === "string" ? y.message : formatMessage(y.message),
-        data: this.formatSerieData(dataset, y),
+        data: this.formatSerieData(dataset, y, xKey, sort),
         type: "column" as any,
         dataLabels: labels ? {
           enabled: labels.enable,
@@ -108,7 +110,7 @@ class StackedBarPlot extends React.Component<Props, {}> {
       xAxis: {
         categories: this.getXAxisValues(dataset, xKey, sort)
       },
-      series: this.formatSeries(dataset, yKeys, labels),
+      series: this.formatSeries(dataset, yKeys, xKey, labels, sort),
       credits: {
         enabled: false,
       },

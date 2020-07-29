@@ -70,9 +70,11 @@
     "reselect": "^3.0.1",
     "storm-react-diagrams": "^5.2.1",
     "whatwg-fetch": "^2.0.4",
-    "xlsx": "^0.14.1"
+    "xlsx": "^0.14.1",
+    "yup": "^0.29.1"
   },
   "devDependencies": {
+    "@types/chroma-js": "^2.0.0",
     "@types/classnames": "^2.2.6",
     "@types/create-react-class": "^15.6.2",
     "@types/cuid": "^1.3.0",
@@ -102,7 +104,7 @@
     "@types/recompose": "^0.24.7",
     "@types/redux-actions": "^2.6.1",
     "@types/redux-form": "7.4.12",
-    "@types/chroma-js": "^2.0.0",
+    "@types/yup": "^0.29.3",
     "awesome-typescript-loader": "^3.4.1",
     "babel": "^6.23.0",
     "babel-core": "^6.26.3",
