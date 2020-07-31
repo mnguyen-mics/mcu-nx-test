@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Checkbox } from 'antd';
 import { WrappedFieldProps } from 'redux-form';
+import { FormFieldWrapper } from '.';
 
 interface OptionProps {
   label: string;
@@ -34,16 +35,28 @@ const FormCheckboxGroup: React.SFC<FormCheckboxGroupProps &
     return input.onChange(valueOnChange);
   };
 
-  // const onChange = (e: any) => input.onChange(e.target.value);
+  let validateStatus = 'success' as
+    | 'success'
+    | 'warning'
+    | 'error'
+    | 'validating';
+
+  if (props.meta.touched && props.meta.invalid) validateStatus = 'error';
+  if (props.meta.touched && props.meta.warning) validateStatus = 'warning';
 
   return (
-    <CheckboxGroup
-      options={options}
-      defaultValue={defaultValue}
-      disabled={disabled}
-      onChange={onChange}
-      className={className}
-    />
+    <FormFieldWrapper
+      help={props.meta.touched && (props.meta.warning || props.meta.error)}
+      validateStatus={validateStatus}
+    >
+      <CheckboxGroup
+        options={options}
+        defaultValue={defaultValue}
+        disabled={disabled}
+        onChange={onChange}
+        className={className}
+      />
+    </FormFieldWrapper>
   );
 };
 

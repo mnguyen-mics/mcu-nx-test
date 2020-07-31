@@ -27,6 +27,7 @@ import FormDragAndDrop from './FormDragAndDrop';
 import { CheckboxProps } from 'antd/lib/checkbox';
 import FormRate, { FormRateProps } from './FormRate'
 import FormAlertInput, { FormAlertInputProps } from './FormAlertInput';
+import FormTimePicker, { FormTimePickerProps } from './FormTimePicker';
 
 export type FieldCtor<T> = React.ComponentClass<BaseFieldProps<T> & T>;
 
@@ -57,6 +58,7 @@ export default {
   FormSlider,
   FormRate,
   FormAlertInput,
+  FormTimePicker,
 };
 
 export {
@@ -84,7 +86,8 @@ export {
   FormDragAndDrop,
   FormSlider,
   FormRate,
-  FormAlertInput
+  FormAlertInput,
+  FormTimePicker,
 };
 
 export const FormInputField = Field as new () => GenericField<FormInputProps>;
@@ -107,3 +110,4 @@ export const FormRadioGroupField = Field as new () => GenericField<FormRadioGrou
 export const FormCheckboxGroupField = Field as new () => GenericField<FormCheckboxGroupProps>;
 export const FormRateField = Field as new() => GenericField<FormRateProps>;
 export const FormAlertInputField = Field as new() => GenericField<FormAlertInputProps>;
+export const FormTimePickerField = Field as new() => GenericField<FormTimePickerProps>;

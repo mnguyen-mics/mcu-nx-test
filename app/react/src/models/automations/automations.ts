@@ -1,3 +1,4 @@
+import { Moment } from 'moment';
 import {
   DisplayCampaignAutomationFormData,
   ABNFormData,
@@ -15,6 +16,7 @@ import {
   QueryCreateRequest,
 } from './../datamart/DatamartResource';
 import { AutomationSimpleFormData } from './../../containers/Automations/Builder/ActionBar/AutomationSimpleForm';
+import { WeekDay } from '../../utils/DateHelper';
 export interface AutomationResource {
   id: string;
   name: string;
@@ -157,6 +159,9 @@ export interface EndNodeResource extends ScenarioNodeResource {
 export interface WaitNodeResource extends ScenarioNodeResource {
   type: 'WAIT_NODE';
   delay_period: string;
+  day_window?: WeekDay[];
+  time_window_start?: Moment;
+  time_window_end?: Moment;
   formData: WaitFormData;
 }
 
