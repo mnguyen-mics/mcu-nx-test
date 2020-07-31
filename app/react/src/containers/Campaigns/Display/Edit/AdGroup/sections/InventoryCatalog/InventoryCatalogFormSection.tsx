@@ -20,8 +20,7 @@ import {
   DisplayNetworkServiceItemPublicResource,
   PlacementListServiceItemPublicResource,
 } from '../../../../../../../models/servicemanagement/PublicServiceItemResource';
-import FormSearchAndTreeSelect from '../../../../../../../components/Form/FormSearchAndTreeSelect';
-import { TreeData } from '../../../../../../../components/SearchAndTreeSelect';
+
 import ButtonStyleless from '../../../../../../../components/ButtonStyleless';
 import { ReduxFormChangeProps } from '../../../../../../../utils/FormHelper';
 import {
@@ -38,6 +37,7 @@ import {
 } from '../../../../../../../models/placement/PlacementListResource';
 import { AdExchangeSelectionCreateRequest } from '../../../../../../../models/adexchange/adexchange';
 import { DisplayNetworkSelectionCreateRequest } from '../../../../../../../models/displayNetworks/displayNetworks';
+import CustomTreeSelect, { TreeData } from '../../../../../../../components/Form/CustomTreeSelect';
 
 export interface InventoryCatalogFormSectionProps extends ReduxFormChangeProps {
   small?: boolean;
@@ -156,7 +156,7 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
               isLeaf: false,
             },
           ],
-          'servcices',
+          'services',
         ),
       )
       .concat(dealListTree, keywordListTree, placementListTree);
@@ -202,7 +202,7 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
               isLeaf: false,
             },
           ],
-          'servcices',
+          'services',
         ),
       )
       .concat(keywordListTree, placementListTree);
@@ -303,48 +303,92 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
         value: inventoryId.split('_')[1],
       };
 
-      const found = allFields.find(field => {
-        switch (inventory.type) {
-          case 'keywordList':
-            return (
-              (field.model.data as KeywordListSelectionCreateRequest)
-                .keyword_list_id === inventory.value
-            );
-          case 'placementList':
-            return (
-              (field.model.data as PlacementListSelectionCreateRequest)
-                .placement_list_id === inventory.value
-            );
-          case 'dealList':
-            return (
-              (field.model.data as DealsListSelectionCreateRequest)
-                .deal_list_id === inventory.value
-            );
-          case 'adExchange':
-            return (
-              (field.model.data as AdExchangeSelectionCreateRequest)
-                .ad_exchange_id === inventory.value
-            );
-          case 'displayNetwork':
-            return (
-              (field.model.data as DisplayNetworkSelectionCreateRequest)
-                .display_network_id === inventory.value
-            );
-        }
-        return false;
-      });
+      if (inventory.value) {
+        const found = allFields.find(field => {
+          switch (inventory.type) {
+            case 'keywordList':
+              return (
+                (field.model.data as KeywordListSelectionCreateRequest)
+                  .keyword_list_id === inventory.value
+              );
+            case 'placementList':
+              return (
+                (field.model.data as PlacementListSelectionCreateRequest)
+                  .placement_list_id === inventory.value
+              );
+            case 'dealList':
+              return (
+                (field.model.data as DealsListSelectionCreateRequest)
+                  .deal_list_id === inventory.value
+              );
+            case 'adExchange':
+              return (
+                (field.model.data as AdExchangeSelectionCreateRequest)
+                  .ad_exchange_id === inventory.value
+              );
+            case 'displayNetwork':
+              return (
+                (field.model.data as DisplayNetworkSelectionCreateRequest)
+                  .display_network_id === inventory.value
+              );
+          }
+          return false;
+        });
 
-      if (!found) {
-        const newField = this.generateField(
-          inventory.type,
-          inventory.value,
-          inventoryCategoryTree,
-          exclude,
+        if (!found) {
+          const newField = this.generateField(
+            inventory.type,
+            inventory.value,
+            inventoryCategoryTree,
+            exclude,
+          );
+
+          if (newField) {
+            newFields.push(newField);
+          }
+        }
+      } else if (
+        [
+          'keywordList',
+          'placementList',
+          'dealList',
+          'adExchange',
+          'displayNetwork',
+        ].includes(inventory.type)
+      ) {
+        // We only have a type in inventory and no associated value and therefore select all values
+        const consideredDataSource: TreeData[] = exclude
+          ? this.state.excludedDataSource
+          : this.state.includedDataSource;
+
+        const forType = consideredDataSource.find(
+          item => item.value === inventory.type,
         );
 
-        if (newField) {
-          newFields.push(newField);
-        }
+        const itemsForType =
+          forType && forType.children ? forType.children : [];
+
+        const typeAndIds = itemsForType
+          .map(child => child.value)
+          .map(childInventoryId => {
+            return {
+              type: childInventoryId.split('_')[0],
+              value: childInventoryId.split('_')[1],
+            };
+          });
+
+        typeAndIds.map(inventoryItem => {
+          const field = this.generateField(
+            inventoryItem.type,
+            inventoryItem.value,
+            inventoryCategoryTree,
+            exclude,
+          );
+
+          if (field) {
+            newFields.push(field);
+          }
+        });
       }
     });
 
@@ -566,14 +610,14 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
               />
             </Col>
           </Row>
-          <FormSearchAndTreeSelect
+          <CustomTreeSelect
             label={intl.formatMessage(
               inventoryCatalogMsgs.detailedTargetingLabel,
             )}
             placeholder={intl.formatMessage(
               inventoryCatalogMsgs.selectPlaceholder,
             )}
-            datasource={this.state.includedDataSource}
+            dataSource={this.state.includedDataSource}
             loading={
               inventoryCategoryTree.loading ||
               dealList.loading ||
@@ -607,14 +651,14 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
                 />
               </Col>
             </Row>
-            <FormSearchAndTreeSelect
+            <CustomTreeSelect
               label={intl.formatMessage(
                 inventoryCatalogMsgs.detailedTargetingExclusionLabel,
               )}
               placeholder={intl.formatMessage(
                 inventoryCatalogMsgs.selectPlaceholder,
               )}
-              datasource={this.state.excludedDataSource}
+              dataSource={this.state.excludedDataSource}
               loading={
                 inventoryCategoryTree.loading ||
                 dealList.loading ||

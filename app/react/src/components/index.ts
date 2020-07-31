@@ -6,10 +6,8 @@ import McsIcon from './McsIcon';
 import TableSelector from './ElementSelector/TableSelector';
 import MultiSelect from './MultiSelect';
 import SearchAndMultiSelect from './SearchAndMultiSelect';
-import SearchAndTreeSelect from './SearchAndTreeSelect';
 import LabelsSelector from './LabelsSelector';
 import OtqlConsole from './OtqlConsole';
-import TreeSelect from './TreeSelect';
 import WindowBodyPortal from './WindowBodyPortal';
 
 export {
@@ -22,8 +20,6 @@ export {
   TableSelector,
   MultiSelect,
   SearchAndMultiSelect,
-  SearchAndTreeSelect,
   OtqlConsole,
-  TreeSelect,
   WindowBodyPortal,
 };

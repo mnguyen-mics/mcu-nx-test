@@ -17,11 +17,10 @@ import {
 } from '../../../../../../../models/servicemanagement/PublicServiceItemResource';
 import { AudienceSegmentResource } from '../../../../../../../models/audiencesegment/AudienceSegmentResource';
 import FormSearchAndMultiSelect from '../../../../../../../components/Form/FormSearchAndMultiSelect';
-import FormSearchAndTreeSelect from '../../../../../../../components/Form/FormSearchAndTreeSelect';
 import { MenuItemProps } from '../../../../../../../components/SearchAndMultiSelect';
-import { TreeData } from '../../../../../../../components/SearchAndTreeSelect';
 import ButtonStyleless from '../../../../../../../components/ButtonStyleless';
 import { ReduxFormChangeProps } from '../../../../../../../utils/FormHelper';
+import CustomTreeSelect, { TreeData } from '../../../../../../../components/Form/CustomTreeSelect';
 
 export interface AudienceCatalogFormSectionProps extends ReduxFormChangeProps {}
 
@@ -39,6 +38,29 @@ class AudienceCatalogFormSection extends React.Component<Props, State> {
     super(props);
     this.state = { showExclude: false };
   }
+
+  computeDetailedTargetingDataSource = () => {
+    const { audienceCategoryTree, audienceSegments } = this.props;
+
+    const detailedTargetingDataSource = audienceCategoryTree.data
+      .map(child =>
+        toTreeData(child, [
+          {
+            value: child.node.id,
+            label: child.node.name,
+            isLeaf: false,
+          },
+        ]),
+      )
+      .concat(
+        audienceSegments.data.length > 0
+          ? // add datamart's segments to tree if any
+            this.buildTreeDataFromOwnSegments(audienceSegments.data)
+          : [],
+      );
+
+    return detailedTargetingDataSource;
+  };
 
   getSelectedSegment = (
     serviceItems: AudienceSegmentServiceItemPublicResource[],
@@ -100,12 +122,79 @@ class AudienceCatalogFormSection extends React.Component<Props, State> {
     }
   };
 
+  findChildrenSegmentIdsFromIds = (ids: string[]): string[] => {
+    const detailedTargetingDataSource = this.computeDetailedTargetingDataSource();
+
+    const finalReduceFunction = (
+      id: string,
+      treeData: TreeData,
+      returnLeaves: boolean,
+    ): string[] => {
+      if (treeData.children !== undefined) {
+        const childFoundValues = treeData.children.map((child: TreeData) => {
+          return findLeafValuesFromValueAux(id, child, returnLeaves);
+        });
+        return childFoundValues.reduce((l, acc) => {
+          return acc.concat(l);
+        }, []);
+      }
+      return [];
+    };
+
+    const findLeafValuesFromValueAux = (
+      id: string,
+      treeData: TreeData,
+      returnLeaves: boolean,
+    ): string[] => {
+      if (!returnLeaves) {
+        // We are still searching the id
+        if (treeData.value === id) {
+          // The Id is found
+          if (treeData.isLeaf) {
+            return [treeData.value];
+          } else {
+            return finalReduceFunction(id, treeData, true);
+          }
+        } else {
+          return finalReduceFunction(id, treeData, false);
+        }
+      } else {
+        // The Id was already found
+        if (treeData.isLeaf) {
+          return [treeData.value];
+        } else {
+          return finalReduceFunction(id, treeData, true);
+        }
+      }
+    };
+
+    const findLeafValuesFromValue = (id: string): string[] => {
+      const childFoundValues = detailedTargetingDataSource.map(
+        (treeData: TreeData) => {
+          return findLeafValuesFromValueAux(id, treeData, false);
+        },
+      );
+      return childFoundValues.reduce((l, acc) => {
+        return acc.concat(l);
+      }, []);
+    };
+    const idsToBeReturned = ids.map(findLeafValuesFromValue);
+
+    return idsToBeReturned
+      .reduce((partialList, acc) => {
+        return acc.concat(partialList);
+      }, [])
+      .reverse();
+  };
+
   handleChange = (
     audienceCategoryTree: ServiceCategoryTree[],
     audienceSegments: AudienceSegmentResource[],
     forExcludedSegment: boolean = false,
-  ) => (segmentIds: string[]) => {
+  ) => (inputIds: string[]) => {
     const { fields, formChange } = this.props;
+
+    const segmentIds = this.findChildrenSegmentIdsFromIds(inputIds);
 
     const allFields = fields.getAll() || [];
 
@@ -158,7 +247,9 @@ class AudienceCatalogFormSection extends React.Component<Props, State> {
   buildTreeDataFromOwnSegments = (
     audienceSegments: AudienceSegmentResource[],
   ): TreeData => {
-    const { intl: { formatMessage } } = this.props;
+    const {
+      intl: { formatMessage },
+    } = this.props;
     return {
       value: 'own-datamart-segments',
       label: formatMessage(audienceCatalogMsgs.mySegmentCategory),
@@ -190,22 +281,7 @@ class AudienceCatalogFormSection extends React.Component<Props, State> {
     );
     const ageServiceItemDataSource = ageServiceItems.data.map(toMenuItemProps);
 
-    const detailedTargetingDataSource = audienceCategoryTree.data
-      .map(child =>
-        toTreeData(child, [
-          {
-            value: child.node.id,
-            label: child.node.name,
-            isLeaf: false,
-          },
-        ]),
-      )
-      .concat(
-        audienceSegments.data.length > 0
-          ? // add datamart's segments to tree if any
-            this.buildTreeDataFromOwnSegments(audienceSegments.data)
-          : [],
-      );
+    const detailedTargetingDataSource = this.computeDetailedTargetingDataSource();
 
     const excludedSegmentFound = fields
       .getAll()
@@ -265,14 +341,14 @@ class AudienceCatalogFormSection extends React.Component<Props, State> {
               />
             </Col>
           </Row>
-          <FormSearchAndTreeSelect
+          <CustomTreeSelect
             label={intl.formatMessage(
               audienceCatalogMsgs.detailedTargetingLabel,
             )}
             placeholder={intl.formatMessage(
               audienceCatalogMsgs.selectPlaceholder,
             )}
-            datasource={detailedTargetingDataSource}
+            dataSource={detailedTargetingDataSource}
             loading={audienceCategoryTree.loading || audienceSegments.loading}
             tooltipProps={{
               title: intl.formatMessage(
@@ -297,14 +373,14 @@ class AudienceCatalogFormSection extends React.Component<Props, State> {
                 />
               </Col>
             </Row>
-            <FormSearchAndTreeSelect
+            <CustomTreeSelect
               label={intl.formatMessage(
                 audienceCatalogMsgs.detailedTargetingExclusionLabel,
               )}
               placeholder={intl.formatMessage(
                 audienceCatalogMsgs.selectPlaceholder,
               )}
-              datasource={detailedTargetingDataSource}
+              dataSource={detailedTargetingDataSource}
               loading={audienceCategoryTree.loading || audienceSegments.loading}
               tooltipProps={{
                 title: intl.formatMessage(

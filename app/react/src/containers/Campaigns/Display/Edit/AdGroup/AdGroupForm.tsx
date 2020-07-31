@@ -186,7 +186,6 @@ class AdGroupForm extends React.Component<Props> {
         />
       ),
     };
-
     const displayAd = {
       id: 'display',
       title: messages.sectionTitleAds,
