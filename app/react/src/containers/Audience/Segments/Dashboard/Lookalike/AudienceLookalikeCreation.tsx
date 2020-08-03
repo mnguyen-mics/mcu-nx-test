@@ -45,7 +45,7 @@ import { IAudienceSegmentService } from '../../../../../services/AudienceSegment
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { injectFeatures, InjectedFeaturesProps } from '../../../../Features';
-import { MenuList } from '../../../../../components/FormMenu';
+import { MenuList } from '@mediarithmics-private/mcs-components-library';
 import { IQueryService } from '../../../../../services/QueryService';
 import { connect } from 'react-redux';
 

@@ -7,13 +7,12 @@ import {
   MenuList,
   MenuPresentational,
   MenuSubList,
-} from '../../../../components/FormMenu';
+} from '@mediarithmics-private/mcs-components-library';
 import messages from './messages';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../components/Layout/FormLayoutActionbar';
 import { IPluginService } from '../../../../services/PluginService';
-import { Submenu } from '../../../../components/FormMenu/MenuSubList';
 import {
   IMAGE_SKINS_AD_RENDERER,
   EXTERNAL_AD_RENDERER,
@@ -22,6 +21,7 @@ import {
 } from './domain';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
+import { SubMenu } from '@mediarithmics-private/mcs-components-library/lib/components/form-menu/menu-sub-list/MenuSubList';
 
 const { Content } = Layout;
 
@@ -38,7 +38,7 @@ export interface DisplayCreativeRendererSelectorProps {
 }
 
 interface State {
-  adRendererSubmenu: Submenu[];
+  adRendererSubmenu: SubMenu[];
 }
 
 type Props = DisplayCreativeRendererSelectorProps &

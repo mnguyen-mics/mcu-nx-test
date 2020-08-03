@@ -24,20 +24,6 @@
     padding: 20px 0;
     width: 100%;
 
-    .menu-sublist {
-      overflow: hidden;
-
-      .lines {
-        transition: max-height 0.5s ease-in;
-      }
-      .lines.closed {
-        max-height: 0px;
-      }
-      .lines.opened {
-        max-height: 1000px;
-      }
-    }
-
     .presentation {
       display: flex;
       display: -moz-flex;
@@ -55,68 +41,6 @@
         font-size: 1.1em;
         font-weight: bold;
         letter-spacing: 0.3px;
-      }
-
-      .presentation-item {
-        background-color: #ffffff;
-        border: @border-width-base @border-style-base @border-color-base;
-        border-radius: @border-radius-sm @border-radius-sm;
-
-        position: relative;
-        flex-basis: calc(45%);
-        .content {
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          display: flex;
-          display: -webkit-flex;
-          justify-content: center;
-          align-items: center;
-          padding: 10px;
-          flex-direction: column;
-          .icon {
-            font-size: 10em;
-          }
-          .title {
-            padding-top: 10px;
-            font-size: 1.1em;
-            font-weight: bold;
-            letter-spacing: 0.4px;
-          }
-          .subtitle {
-            font-size: 1em;
-            letter-spacing: 0.4px;
-            color: @text-color-secondary;
-          }
-        }
-      }
-
-      .presentation-item:before {
-        content: '';
-        float: left;
-        padding-top: 100%;
-      }
-
-      .presentation-item:hover {
-        background-color: @hover-color;
-      }
-
-      .presentation-item:focus {
-        outline: none;
-      }
-
-      .presentation-item:disabled {
-        background-color: @btn-disable-bg;
-        border-color: @btn-disable-border;
-        color: @btn-disable-color;
-
-        .content {
-          .subtitle {
-            color: @error-color;
-          }
-        }
       }
     }
 
