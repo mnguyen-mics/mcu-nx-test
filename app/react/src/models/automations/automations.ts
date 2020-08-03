@@ -1,4 +1,3 @@
-import { Moment } from 'moment';
 import {
   DisplayCampaignAutomationFormData,
   ABNFormData,
@@ -160,8 +159,8 @@ export interface WaitNodeResource extends ScenarioNodeResource {
   type: 'WAIT_NODE';
   delay_period: string;
   day_window?: WeekDay[];
-  time_window_start?: Moment;
-  time_window_end?: Moment;
+  time_window_start?: string;
+  time_window_end?: string;
   formData: WaitFormData;
 }
 
