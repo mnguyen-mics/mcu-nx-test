@@ -13,10 +13,10 @@ export const DEFAULT_DATE_FORMAT = 'DD/MM/YYYY';
 
 export function formatUnixTimestamp(
   ts: number | null | undefined,
-  format?: string
+  format?: string,
 ) {
   if (!ts) return '--/--/----';
-  return moment(ts).format(format || DEFAULT_DATE_FORMAT);
+  return moment(ts).format(format || DEFAULT_DATE_FORMAT);
 }
 
 export function truncateUpToHour(date: Date, hourOfDay: number) {
@@ -30,3 +30,12 @@ export function truncateUpToHour(date: Date, hourOfDay: number) {
     date.setSeconds(0);
   }
 }
+
+export type WeekDay =
+  | 'MONDAY'
+  | 'TUESDAY'
+  | 'WEDNESDAY'
+  | 'THURSDAY'
+  | 'FRIDAY'
+  | 'SATURDAY'
+  | 'SUNDAY';

@@ -15,6 +15,7 @@ import {
   QueryCreateRequest,
 } from './../datamart/DatamartResource';
 import { AutomationSimpleFormData } from './../../containers/Automations/Builder/ActionBar/AutomationSimpleForm';
+import { WeekDay } from '../../utils/DateHelper';
 export interface AutomationResource {
   id: string;
   name: string;
@@ -157,6 +158,9 @@ export interface EndNodeResource extends ScenarioNodeResource {
 export interface WaitNodeResource extends ScenarioNodeResource {
   type: 'WAIT_NODE';
   delay_period: string;
+  day_window?: WeekDay[];
+  time_window_start?: string;
+  time_window_end?: string;
   formData: WaitFormData;
 }
 
