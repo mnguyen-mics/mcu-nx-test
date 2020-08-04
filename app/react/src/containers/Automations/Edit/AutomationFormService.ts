@@ -309,6 +309,9 @@ export class AutomationFormService implements IAutomationFormService {
                           : duration.asHours(),
                       unit: duration._days > 0 ? 'days' : 'hours',
                     },
+                    day_window: n.day_window,
+                    time_window_start: n.time_window_start ? moment(n.time_window_start, 'HH:mm') : undefined,
+                    time_window_end: n.time_window_end ? moment(n.time_window_end, 'HH:mm') : undefined,
                   };
                   return {
                     ...n,
@@ -966,6 +969,9 @@ export class AutomationFormService implements IAutomationFormService {
             node.formData.wait_duration.unit,
           )
           .toISOString(),
+        time_window_start: node.formData.time_window_start ? `T${node.formData.time_window_start.hours()}` : null,
+        time_window_end: node.formData.time_window_end ? `T${node.formData.time_window_end.hours()}` : null,
+        day_window: node.formData.day_window,
         type: 'WAIT_NODE',
       };
       resourceId = node.id && !isFakeId(node.id) ? node.id : undefined;
