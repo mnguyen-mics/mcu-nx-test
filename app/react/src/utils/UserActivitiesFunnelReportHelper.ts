@@ -9,9 +9,9 @@ export function buildUserActivitiesFunnelRequestBody(
   funnelTimeRange: FunnelTimeRange,
 ): FunnelRequestBody {
 
-  const report: FunnelRequestBody = {
+  const body: FunnelRequestBody = {
     for: [funnelFilter],
     in: funnelTimeRange
   };
-  return report;
+  return body;
 }

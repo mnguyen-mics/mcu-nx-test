@@ -25,7 +25,6 @@ import DatamartUsersAnalyticsWrapper, { DatamartUsersAnalyticsWrapperProps } fro
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 import { averageSessionDurationConfig, channelEngagementConfig, acquisitionEngagementConfig, ecommerceEngagementConfig } from '../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
 import { isUsersAnalyticsSupportedByDatafarm } from '../../DatamartUsersAnalytics/components/helpers/utils';
-import FunnelWrapper from '../../../../components/Funnel/FunnelWrapper';
 
 const { Content } = Layout;
 
@@ -191,8 +190,7 @@ class Partition extends React.Component<JoinedProps, HomeState> {
                 datamartId={d.datamart_id}
               />
             ))}
-            {<FunnelWrapper />}
-            {shouldDisplayAnalyticsFeature && (
+            {shouldDisplayAnalyticsFeature && dashboards.length === 0 && (
               datamartAnalyticsDashboardConfig.map((conf, i) => {
                 return (
                     <DatamartUsersAnalyticsWrapper

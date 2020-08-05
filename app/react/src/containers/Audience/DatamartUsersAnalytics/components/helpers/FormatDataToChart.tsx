@@ -220,7 +220,8 @@ class FormatDataToChart extends React.Component<JoinedProp, {}> {
         if (!chart.dimensions || chart.dimensions.length === 0) return null
         chart.options.series = this.formatSeriesForChart(chart, data) as Highcharts.SeriesOptionsType[];
         return (
-          <LineChart options={chart.options} />
+          <LineChart options={chart.options}
+          />
         )
       case 'PIE':
         chart.options.series = this.formatSeriesForChart(chart, data) as Highcharts.SeriesOptionsType[];
