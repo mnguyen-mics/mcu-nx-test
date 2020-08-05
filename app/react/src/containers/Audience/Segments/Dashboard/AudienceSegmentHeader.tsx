@@ -24,7 +24,7 @@ import {
 
 const localMessages = defineMessages({
   createdOn: {
-    id: 'components.segmentNameDisplay.createdOn',
+    id: 'audience.segments.dashboard.createdOn',
     defaultMessage: 'Created on',
   },
 });
