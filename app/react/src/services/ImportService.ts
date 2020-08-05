@@ -5,6 +5,7 @@ import { PaginatedApiParam } from '../utils/ApiHelper';
 
 export interface GetImportsOptions extends PaginatedApiParam {
   keywords?: string;
+  label_ids?: string[];
 }
 
 export interface IImportService {

@@ -10,6 +10,7 @@ import { injectable } from 'inversify';
 export interface GetExportOptions extends PaginatedApiParam {
   keywords?: string;
   organisation_id: string;
+  label_ids?: string[];
 }
 
 export interface IExportService {

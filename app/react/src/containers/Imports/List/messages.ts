@@ -76,6 +76,10 @@ export default defineMessages({
   delete: {
     id: 'imports.table.actionColumn.delete',
     defaultMessage: 'Delete',
+  },
+  filterByLabel: {
+    id: 'imports.table.labelFilter.placeholder',
+    defaultMessage: 'Filter By Label', 
   }
 })
 ;
