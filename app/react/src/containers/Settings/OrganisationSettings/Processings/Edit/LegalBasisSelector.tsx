@@ -9,7 +9,7 @@ import { Layout, Row } from 'antd';
 import { FormTitle } from '../../../../../components/Form';
 import messages from '../messages';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
-import { MenuList } from '../../../../../components/FormMenu';
+import { MenuList } from '@mediarithmics-private/mcs-components-library';
 import { LegalBasis } from '../../../../../models/processing';
 
 const { Content } = Layout;
@@ -28,7 +28,6 @@ type Props = LegalBasisSelectorProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class LegalBasisSelector extends React.Component<Props> {
-
   onSelect = (item: LegalBasis) => () => {
     this.props.onSelect(item);
   };
@@ -38,7 +37,9 @@ class LegalBasisSelector extends React.Component<Props> {
   };
 
   render() {
-    const {intl: {formatMessage}} = this.props;
+    const {
+      intl: { formatMessage },
+    } = this.props;
     const legalBasisValues: Array<{
       value: LegalBasis;
       subtitle: FormattedMessage.MessageDescriptor;
@@ -69,7 +70,7 @@ class LegalBasisSelector extends React.Component<Props> {
       value: LegalBasis;
       subtitle: FormattedMessage.MessageDescriptor;
     }): JSX.Element => {
-      const {value, subtitle} = item;
+      const { value, subtitle } = item;
 
       const title = this.uppercaseFirstLetter(
         value.toLowerCase().replace(/_/gi, ' '),
@@ -77,10 +78,10 @@ class LegalBasisSelector extends React.Component<Props> {
 
       return (
         <MenuList
-        title={title}
-        subtitles={[formatMessage(subtitle)]}
-        key={value}
-        select={this.onSelect(value)}
+          title={title}
+          subtitles={[formatMessage(subtitle)]}
+          key={value}
+          select={this.onSelect(value)}
         />
       );
     };

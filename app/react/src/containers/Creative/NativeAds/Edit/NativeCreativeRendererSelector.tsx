@@ -3,18 +3,18 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { Layout, Row } from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { FormTitle } from '../../../../components/Form';
-import {
-  MenuList,
-} from '../../../../components/FormMenu';
+import { MenuList } from '@mediarithmics-private/mcs-components-library';
 import messages from './../../DisplayAds/Edit/messages';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../components/Layout/FormLayoutActionbar';
-import { IVIDENCE_AD_RENDERER, QUANTUM_AD_RENDERER, NATIVE_AD_RENDERER } from './domain';
+import {
+  IVIDENCE_AD_RENDERER,
+  QUANTUM_AD_RENDERER,
+  NATIVE_AD_RENDERER,
+} from './domain';
 
 const { Content } = Layout;
-
-
 
 export interface NativeCreativeRendererSelectorProps {
   onSelect: (adRendererId: string) => void;
@@ -33,7 +33,7 @@ class NativeCreativeRendererSelector extends React.Component<Props> {
   render() {
     const {
       intl: { formatMessage },
-      onSelect
+      onSelect,
     } = this.props;
 
     const actionBarProps: FormLayoutActionbarProps = {
@@ -46,7 +46,7 @@ class NativeCreativeRendererSelector extends React.Component<Props> {
       ],
     };
 
-    const select = (id: string) => () => onSelect(id) 
+    const select = (id: string) => () => onSelect(id);
 
     return (
       <Layout>
@@ -61,15 +61,15 @@ class NativeCreativeRendererSelector extends React.Component<Props> {
               {
                 <Row className="mcs-selector_container">
                   <Row className="menu">
-                    <MenuList 
+                    <MenuList
                       title={formatMessage(messages.creativeTypeNative)}
                       select={select(NATIVE_AD_RENDERER)}
                     />
-                    <MenuList 
+                    <MenuList
                       title={formatMessage(messages.creativeTypeQuantum)}
                       select={select(QUANTUM_AD_RENDERER)}
                     />
-                    <MenuList 
+                    <MenuList
                       title={formatMessage(messages.creativeTypeIvidence)}
                       select={select(IVIDENCE_AD_RENDERER)}
                     />
