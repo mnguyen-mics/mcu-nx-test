@@ -106,6 +106,15 @@ const conditionNode2: ScenarioNodeShape = {
       unit: 'hours',
       value: '1',
     },
+    day_window: [
+      'MONDAY',
+      'TUESDAY',
+      'WEDNESDAY',
+      'THURSDAY',
+      'FRIDAY',
+      'SATURDAY',
+      'SUNDAY',
+    ],
   },
 };
 

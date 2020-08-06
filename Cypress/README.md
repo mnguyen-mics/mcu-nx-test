@@ -1,6 +1,7 @@
 # end-to-end-scenarios - Front testing (Cypress)
 
 ## How to use cypress
+
 Cypress is installed via npm. To use it, you'll need to run `npm install` first, in `./Cypress` (it requires a Node version >= 4.0.0).
 
 Before running anything, you'll need to use the script in `./build-support/jenkins/generate-cypress-json.sh`.

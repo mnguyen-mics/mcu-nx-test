@@ -1,3 +1,4 @@
+import { Moment } from 'moment';
 import { ProcessingActivityFieldModel } from './../../../../Settings/DatamartSettings/Common/domain';
 import { AutomationNodeShape } from './../../domain';
 import {
@@ -31,6 +32,7 @@ import { QueryAutomationFormProps } from './QueryForm/QueryForm';
 import { WaitAutomationFormProps } from './WaitForm/WaitForm';
 import { OnSegmentExitInputAutomationFormProps } from './OnSegmentExitInputForm/OnSegmentExitInputAutomationForm';
 import { OnSegmentEntryInputAutomationFormProps } from './OnSegmentEntryInputForm/OnSegmentEntryInputAutomationForm';
+import { WeekDay } from '../../../../../utils/DateHelper';
 
 export interface DefaultFormData {}
 
@@ -43,7 +45,10 @@ export interface WaitFormData extends DefaultFormData {
   wait_duration: {
     value: string;
     unit: 'days' | 'hours';
-  };
+  },
+  day_window?: WeekDay[];
+  time_window_start?: Moment;
+  time_window_end?: Moment;
 }
 
 export const INITIAL_ADD_TO_SEGMENT_NODE_FORM_DATA: AddToSegmentAutomationFormData = {
@@ -133,13 +138,6 @@ export const INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA: EmailCampaignAutomationFormD
     currency_code: 'EUR',
     technical_name: '',
     type: 'EMAIL',
-  },
-};
-
-export const INITIAL_WAIT_DATA: WaitFormData = {
-  wait_duration: {
-    unit: 'days',
-    value: '2',
   },
 };
 
