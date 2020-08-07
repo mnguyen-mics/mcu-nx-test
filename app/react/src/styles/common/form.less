@@ -42,6 +42,67 @@
         font-weight: bold;
         letter-spacing: 0.3px;
       }
+      .mcs-menu-presentational {
+        background-color: #ffffff;
+        border: @border-width-base @border-style-base @border-color-base;
+        border-radius: @border-radius-sm @border-radius-sm;
+
+        position: relative;
+        flex-basis: calc(45%);
+        .content {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          display: flex;
+          display: -webkit-flex;
+          justify-content: center;
+          align-items: center;
+          padding: 10px;
+          flex-direction: column;
+          .icon {
+            font-size: 10em;
+          }
+          .title {
+            padding-top: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            letter-spacing: 0.4px;
+          }
+          .subtitle {
+            font-size: 1em;
+            letter-spacing: 0.4px;
+            color: @text-color-secondary;
+          }
+        }
+      }
+
+      .mcs-menu-presentational:before {
+        content: '';
+        float: left;
+        padding-top: 100%;
+      }
+
+      .mcs-menu-presentational:hover {
+        background-color: @hover-color;
+      }
+
+      .mcs-menu-presentational:focus {
+        outline: none;
+      }
+
+      .mcs-menu-presentational:disabled {
+        background-color: @btn-disable-bg;
+        border-color: @btn-disable-border;
+        color: @btn-disable-color;
+
+        .content {
+          .subtitle {
+            color: @error-color;
+          }
+        }
+      }
     }
 
     .menu-item {
