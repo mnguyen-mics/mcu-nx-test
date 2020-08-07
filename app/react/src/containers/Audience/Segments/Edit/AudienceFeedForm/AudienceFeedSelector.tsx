@@ -1,8 +1,16 @@
 import * as React from 'react';
 import { Layout, Row } from 'antd';
 import { FormTitle } from '../../../../../components/Form';
-import { defineMessages, FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
-import { MenuPresentational, MenuList } from '../../../../../components/FormMenu';
+import {
+  defineMessages,
+  FormattedMessage,
+  injectIntl,
+  InjectedIntlProps,
+} from 'react-intl';
+import {
+  MenuList,
+  MenuPresentational,
+} from '@mediarithmics-private/mcs-components-library';
 import { FeedAction } from './domain';
 import { compose } from 'recompose';
 import { injectFeatures, InjectedFeaturesProps } from '../../../../Features';
@@ -14,7 +22,10 @@ export interface AudienceFeedSelectorProps {
   onSelect: (feedType: FeedAction) => void;
 }
 
-type Props = AudienceFeedSelectorProps & InjectedIntlProps & InjectedFeaturesProps & InjectedWorkspaceProps;
+type Props = AudienceFeedSelectorProps &
+  InjectedIntlProps &
+  InjectedFeaturesProps &
+  InjectedWorkspaceProps;
 
 const messages = defineMessages({
   listTitle: {
@@ -31,7 +42,7 @@ const messages = defineMessages({
   },
   feedAdvanced: {
     id: 'audience.segments.form.audienceFeedSelector.advanced',
-    defaultMessage: 'Advanced'
+    defaultMessage: 'Advanced',
   },
   createServerSidePreset: {
     id: 'audience.segments.form.audienceFeedSelector.createServerSidePreset',
@@ -40,18 +51,20 @@ const messages = defineMessages({
   createClientSidePreset: {
     id: 'audience.segments.form.audienceFeedSelector.createClientSidePreset',
     defaultMessage: 'Create a client side preset',
-  }
+  },
 });
 
 class AudienceFeedSelector extends React.Component<Props> {
   onSelect = (feedType: FeedAction) => () => {
-    this.props.onSelect(feedType)
-  }
+    this.props.onSelect(feedType);
+  };
 
   hasRightToCreatePreset(): boolean {
-    const { workspace: { role } } = this.props;
+    const {
+      workspace: { role },
+    } = this.props;
 
-    if(
+    if (
       role === 'ORGANISATION_ADMIN' ||
       role === 'COMMUNITY_ADMIN' ||
       role === 'CUSTOMER_ADMIN'
@@ -81,7 +94,9 @@ class AudienceFeedSelector extends React.Component<Props> {
                   <div className="presentation">
                     <MenuPresentational
                       title={'Server side'}
-                      subtitles={['Triggered when users are added / deleted from segment']}
+                      subtitles={[
+                        'Triggered when users are added / deleted from segment',
+                      ]}
                       type="data"
                       select={this.onSelect('create_external')}
                     />
@@ -90,13 +105,16 @@ class AudienceFeedSelector extends React.Component<Props> {
                     </div>
                     <MenuPresentational
                       title={'Client side'}
-                      subtitles={['Triggered when users are visiting your webpages / apps']}
+                      subtitles={[
+                        'Triggered when users are visiting your webpages / apps',
+                      ]}
                       type="code"
                       select={this.onSelect('create_tag')}
                     />
                   </div>
                 </Row>
-                { hasFeature("plugins-presets") && this.hasRightToCreatePreset() ?
+                {hasFeature('plugins-presets') &&
+                this.hasRightToCreatePreset() ? (
                   <div>
                     <Row className="intermediate-title">
                       <FormattedMessage {...messages.feedAdvanced} />
@@ -109,11 +127,10 @@ class AudienceFeedSelector extends React.Component<Props> {
                       <MenuList
                         title={formatMessage(messages.createClientSidePreset)}
                         select={this.onSelect('create_tag_preset')}
-                    />
+                      />
                     </Row>
                   </div>
-                  : null
-                }
+                ) : null}
               </Row>
             </Content>
           </Layout>
@@ -123,4 +140,8 @@ class AudienceFeedSelector extends React.Component<Props> {
   }
 }
 
-export default compose<Props, AudienceFeedSelectorProps>(injectIntl, injectFeatures, injectWorkspace)(AudienceFeedSelector)
+export default compose<Props, AudienceFeedSelectorProps>(
+  injectIntl,
+  injectFeatures,
+  injectWorkspace,
+)(AudienceFeedSelector);

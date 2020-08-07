@@ -11,7 +11,7 @@ import {
 import { withRouter, RouteComponentProps } from 'react-router';
 import { FORM_ID, QueryInputAutomationFormData } from '../domain';
 import { QueryLanguage } from '../../../../../../models/datamart/DatamartResource';
-import { MenuPresentational } from '../../../../../../components/FormMenu';
+import { MenuPresentational } from '@mediarithmics-private/mcs-components-library';
 import { FormTitle } from '../../../../../../components/Form';
 import JSONQLBuilderContainer from '../../../../../QueryTool/JSONOTQL/JSONQLBuilderContainer';
 import { McsIcon, OtqlConsole } from '../../../../../../components';

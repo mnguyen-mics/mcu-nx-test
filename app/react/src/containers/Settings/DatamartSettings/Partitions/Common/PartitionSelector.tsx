@@ -7,7 +7,7 @@ import {
   FormattedMessage,
 } from 'react-intl';
 import { FormTitle } from '../../../../../components/Form';
-import { MenuList } from '../../../../../components/FormMenu';
+import { MenuList } from '@mediarithmics-private/mcs-components-library';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../../components/Layout/FormLayoutActionbar';

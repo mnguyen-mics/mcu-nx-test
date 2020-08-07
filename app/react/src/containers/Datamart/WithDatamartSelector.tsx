@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { DatamartResource } from '../../models/datamart/DatamartResource';
 import { UserProfileResource } from '../../models/directory/UserProfileResource';
 import { Layout, Row } from 'antd';
-import { MenuList } from '../../components/FormMenu';
+import { MenuList } from '@mediarithmics-private/mcs-components-library';
 import { FormTitle } from '../../components/Form';
 import { defineMessages } from 'react-intl';
 import { MicsReduxState } from '../../utils/ReduxHelper';
@@ -33,7 +33,7 @@ const messages = defineMessages({
     id: 'datamart_selector.subtitle',
     defaultMessage: 'Choose your datamart',
   },
-})
+});
 
 export function withDatamartSelector<T>(
   WrappedComponent: React.ComponentClass,
@@ -50,9 +50,10 @@ export function withDatamartSelector<T>(
           foundDatamarts && foundDatamarts.length === 1
             ? foundDatamarts[0].id
             : undefined,
-        datafarm: foundDatamarts && foundDatamarts.length === 1
-          ? foundDatamarts[0].datafarm
-          : undefined,
+        datafarm:
+          foundDatamarts && foundDatamarts.length === 1
+            ? foundDatamarts[0].datafarm
+            : undefined,
       };
     }
 
@@ -60,15 +61,18 @@ export function withDatamartSelector<T>(
       this.assignAvailableDatamart(
         this.props.connectedUser,
         this.props.match.params.organisationId,
-      )
+      );
     }
 
     componentDidUpdate(prevProps: Props<T>, prevState: IState) {
-      if (prevProps.match.params.organisationId !== this.props.match.params.organisationId) {
+      if (
+        prevProps.match.params.organisationId !==
+        this.props.match.params.organisationId
+      ) {
         this.assignAvailableDatamart(
           this.props.connectedUser,
           this.props.match.params.organisationId,
-        )
+        );
       }
     }
 
@@ -81,11 +85,11 @@ export function withDatamartSelector<T>(
         currentOrganisationId,
       );
       if (foundDatamarts && foundDatamarts.length === 1) {
-        this.setState({ datamartId: foundDatamarts[0].id })
+        this.setState({ datamartId: foundDatamarts[0].id });
       } else {
-        this.setState({ datamartId: undefined, datafarm: undefined })
+        this.setState({ datamartId: undefined, datafarm: undefined });
       }
-    }
+    };
 
     findAvailableDatamarts = (
       connectedUser: UserProfileResource,
@@ -102,14 +106,12 @@ export function withDatamartSelector<T>(
       return datamarts;
     };
 
-    onSelectDatamart = (
-      d: DatamartResource
-    ) => {
-      this.setState({ 
+    onSelectDatamart = (d: DatamartResource) => {
+      this.setState({
         datamartId: d.id,
-        datafarm: d.datafarm
-      })
-    }
+        datafarm: d.datafarm,
+      });
+    };
 
     render() {
       const {
@@ -119,14 +121,13 @@ export function withDatamartSelector<T>(
         },
       } = this.props;
 
-      const {
-        datamartId,
-        datafarm
-      } = this.state;
+      const { datamartId, datafarm } = this.state;
 
       if (!datamartId) {
-
-        const datamarts = this.findAvailableDatamarts(connectedUser, organisationId);
+        const datamarts = this.findAvailableDatamarts(
+          connectedUser,
+          organisationId,
+        );
 
         return (
           <Layout>
@@ -155,7 +156,7 @@ export function withDatamartSelector<T>(
         selectedDatamartId: datamartId,
         selectedDatafarm: datafarm,
         connectedUser: connectedUser,
-      }
+      };
 
       return <WrappedComponent {...this.props} {...wrappedComponentProps} />;
     }

@@ -6,7 +6,7 @@ import { defineMessages } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { DatamartResource } from '../../models/datamart/DatamartResource';
 import { FormTitle } from '../../components/Form';
-import { MenuList } from '../../components/FormMenu';
+import { MenuList } from '@mediarithmics-private/mcs-components-library';
 import { MicsReduxState } from '../../utils/ReduxHelper';
 import { UserProfileResource } from '../../models/directory/UserProfileResource';
 import FormLayoutActionbar, {
