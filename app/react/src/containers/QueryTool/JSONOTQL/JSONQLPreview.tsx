@@ -10,8 +10,8 @@ import { InjectedDrawerProps } from '../../../components/Drawer/injectDrawer';
 import JSONQLBuilderContainer, {
   JSONQLBuilderContainerProps,
 } from './JSONQLBuilderContainer';
-import ActionBar from '../../../components/ActionBar';
 import { messages } from './messages';
+import { Actionbar } from '@mediarithmics-private/mcs-components-library';
 
 export type JSONQLPreviewContext = 'GOALS' | 'AUTOMATION_BUILDER';
 
@@ -42,7 +42,7 @@ class JSONQLPreview extends React.Component<Props> {
       };
       const onClose = () => this.props.closeNextDrawer();
       return (
-        <ActionBar
+        <Actionbar
           edition={true}
           paths={[
             {
@@ -70,7 +70,7 @@ class JSONQLPreview extends React.Component<Props> {
             style={{ cursor: 'pointer' }}
             onClick={onClose}
           />
-        </ActionBar>
+        </Actionbar>
       );
     };
 

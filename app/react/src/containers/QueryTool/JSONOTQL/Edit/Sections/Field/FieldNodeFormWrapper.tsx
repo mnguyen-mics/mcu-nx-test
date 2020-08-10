@@ -1,7 +1,5 @@
 import * as React from 'react';
-// import FieldNodeForm from './FieldNodeForm';
 import { ObjectLikeTypeInfoResource } from '../../../../../../models/datamart/graphdb/RuntimeSchema';
-import { Path } from '../../../../../../components/ActionBar';
 import { Button, Form } from 'antd';
 import {
   ConfigProps,
@@ -14,6 +12,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
 import FieldNodeForm from './FieldNodeForm';
 import { FieldProposalLookup } from '../../../domain';
+import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 
 export interface FieldNodeFormWrapperProps
   extends ConfigProps<FieldNodeFormDataValues> {

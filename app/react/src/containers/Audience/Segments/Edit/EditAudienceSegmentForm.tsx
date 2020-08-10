@@ -44,7 +44,6 @@ import {
 import { FormSection, FieldCtor } from '../../../../components/Form';
 import FormCodeSnippet from '../../../../components/Form/FormCodeSnippet';
 import OTQLInputEditor, { OTQLInputEditorProps } from './Sections/query/OTQL';
-import { Path } from '../../../../components/ActionBar';
 import JSONQL, { JSONQLInputEditorProps } from './Sections/query/JSONQL';
 import { ProcessingSelectionResource } from '../../../../models/processing';
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
@@ -56,6 +55,7 @@ import { IQueryService } from '../../../../services/QueryService';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { connect } from 'react-redux';
+import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 
 export const FORM_ID = 'audienceSegmentForm';
 

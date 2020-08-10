@@ -9,7 +9,7 @@ import {
   isExistingCreative,
 } from '../../DisplayAds/Edit/domain';
 import messages from '../../DisplayAds/Edit/messages';
-import { Path } from '../../../../components/ActionBar';
+import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import CustomLoaderPlaceholder from '../../DisplayAds/Edit/CustomLoaders/CustomLoaderPlaceholder';
 import {
   PropertiesFormSection,

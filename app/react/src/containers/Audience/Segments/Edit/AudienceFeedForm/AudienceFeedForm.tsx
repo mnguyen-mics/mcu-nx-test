@@ -24,7 +24,6 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
 import { AudienceFeedFormModel, FeedRouteParams } from './domain';
-import { Path } from '../../../../../components/ActionBar';
 import GenericPluginContent from '../../../../Plugin/Edit/GenericPluginContent';
 import {
   IAudienceSegmentFeedService,
@@ -32,6 +31,7 @@ import {
 } from '../../../../../services/AudienceSegmentFeedService';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
+import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 
 const titleMessages: {
   [key: string]: FormattedMessage.MessageDescriptor;

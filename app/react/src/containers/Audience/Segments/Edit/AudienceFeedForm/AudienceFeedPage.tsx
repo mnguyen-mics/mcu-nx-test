@@ -17,7 +17,7 @@ import { IAudienceSegmentService } from '../../../../../services/AudienceSegment
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import CreateFeedPresetSelectionPage from './CreateFeedPresetSelectionPage';
-import { Path } from '../../../../../components/ActionBar';
+import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { AudienceFeedType } from '../../../../../services/AudienceSegmentFeedService';
 
 type JoinedProps = InjectedIntlProps &

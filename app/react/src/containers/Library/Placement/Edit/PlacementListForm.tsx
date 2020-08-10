@@ -24,7 +24,7 @@ import { PlacementListFormData } from './domain';
 import {
   McsFormSection,
 } from '../../../../utils/FormHelper';
-import { Path } from '../../../../components/ActionBar';
+import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import GeneralFormSection from './Sections/GeneralFormSection';
 import PlacementsFormSection, { PlacementsFormSectionProps } from './Sections/PlacementsFormSection';
 import { Omit } from '../../../../utils/Types';

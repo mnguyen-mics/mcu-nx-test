@@ -6,8 +6,8 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import { compose } from 'recompose';
-import Actionbar from '../../../../components/ActionBar';
 import { Button } from 'antd';
+import { Actionbar } from '@mediarithmics-private/mcs-components-library';
 
 type Props = RouteComponentProps<{ organisationId: string }> &
   InjectedIntlProps &

@@ -9,7 +9,7 @@ import {
   isExistingCreative,
 } from './domain';
 import messages from './messages';
-import { Path } from '../../../../components/ActionBar';
+import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import CustomLoaderPlaceholder from './CustomLoaders/CustomLoaderPlaceholder';
 import NotSupportedPlaceholder from './CustomLoaders/NotSupportedPlaceholder';
 import {

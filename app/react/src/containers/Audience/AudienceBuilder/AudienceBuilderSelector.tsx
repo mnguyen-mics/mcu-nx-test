@@ -3,11 +3,10 @@ import { compose } from 'recompose';
 import { Layout, Row } from 'antd';
 import { defineMessages, injectIntl, InjectedIntlProps } from 'react-intl';
 import { FormTitle } from '../../../components/Form';
-import { MenuList } from '@mediarithmics-private/mcs-components-library';
+import { MenuList, Actionbar } from '@mediarithmics-private/mcs-components-library';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../components/Layout/FormLayoutActionbar';
-import ActionBar from '../../../components/ActionBar';
 import cuid from 'cuid';
 import { AudienceBuilderResource } from '../../../models/audienceBuilder/AudienceBuilderResource';
 
@@ -43,7 +42,7 @@ class AudienceBuilderSelector extends React.Component<Props> {
     return (
       <Layout>
         {isMainlayout ? (
-          <ActionBar {...actionbarProps} />
+          <Actionbar {...actionbarProps} />
         ) : (
           <FormLayoutActionbar {...actionbarProps} />
         )}

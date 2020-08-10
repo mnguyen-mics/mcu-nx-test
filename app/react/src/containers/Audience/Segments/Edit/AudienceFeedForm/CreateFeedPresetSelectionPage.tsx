@@ -4,7 +4,7 @@ import { FormTitle } from '../../../../../components/Form';
 import { defineMessages, injectIntl, InjectedIntlProps } from 'react-intl';
 import { AudienceFeedType } from '../../../../../services/AudienceSegmentFeedService';
 import { compose } from 'recompose';
-import { Path } from '../../../../../components/ActionBar';
+import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { EditContentLayout } from '../../../../../components/Layout';
 import { IPluginService } from '../../../../../services/PluginService';
 import {
