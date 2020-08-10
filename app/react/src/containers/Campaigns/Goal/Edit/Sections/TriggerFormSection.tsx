@@ -119,6 +119,7 @@ class TriggerFormSection extends React.Component<Props> {
           datamartId: datamart.id!,
           isTrigger: true,
           context: 'GOALS',
+          queryHasChanged: this.hasQueryChanged(),
         }}
       />
     );
@@ -140,10 +141,17 @@ class TriggerFormSection extends React.Component<Props> {
     }
   };
 
-  closeEditMode = () => {
-    this.setState({
-      editQueryMode: false,
-    });
+  hasQueryChanged = () => {
+    const { formValues, initialValues } = this.props;
+
+    return (
+      (formValues.query &&
+        initialValues.query &&
+        formValues.query.query_text !== initialValues.query.query_text) ||
+      (formValues.query &&
+        !!formValues.query.query_text &&
+        !initialValues.query)
+    );
   };
 
   displayPixelSection = () => {

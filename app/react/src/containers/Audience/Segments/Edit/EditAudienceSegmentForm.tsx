@@ -8,6 +8,7 @@ import {
   GenericField,
   FieldArray,
   GenericFieldArray,
+  getFormValues,
 } from 'redux-form';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { Layout, Alert } from 'antd';
@@ -54,6 +55,7 @@ import { isPartialUserListSegment } from '../../../../models/audiencesegment/Aud
 import { IQueryService } from '../../../../services/QueryService';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
+import { connect } from 'react-redux';
 
 export const FORM_ID = 'audienceSegmentForm';
 
@@ -72,6 +74,10 @@ const ProcessingActivitiesFieldArray = FieldArray as new () => GenericFieldArray
   Field,
   ProcessingActivitiesFormSectionProps
 >;
+
+interface MapStateToProps {
+  formValues: AudienceSegmentFormData;
+}
 
 export interface AudienceSegmentFormProps
   extends Omit<ConfigProps<AudienceSegmentFormData>, 'form'> {
@@ -93,10 +99,10 @@ type Props = InjectedFormProps<AudienceSegmentFormProps> &
   InjectedIntlProps &
   InjectedFeaturesProps &
   ValidatorProps &
+  MapStateToProps &
   NormalizerProps;
 
 class EditAudienceSegmentForm extends React.Component<Props> {
-
   @lazyInject(TYPES.IQueryService)
   private _queryService: IQueryService;
 
@@ -146,6 +152,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
                 isEdge:
                   (initialValues.audienceSegment as UserListSegment).subtype ===
                   'EDGE',
+                queryHasChanged: this.hasQueryChanged(),
               }}
             />,
           )
@@ -201,6 +208,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
               inputProps={{
                 datamartId: datamartId!,
                 context: 'GOALS',
+                queryHasChanged: this.hasQueryChanged(),
               }}
             />,
           )
@@ -213,6 +221,19 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       default:
         return <div>Not Supported</div>;
     }
+  };
+
+  hasQueryChanged = () => {
+    const { formValues, initialValues } = this.props;
+
+    return (
+      (formValues.query &&
+        initialValues.query &&
+        formValues.query.query_text !== initialValues.query.query_text) ||
+      (formValues.query &&
+        !!formValues.query.query_text &&
+        !initialValues.query)
+    );
   };
 
   render() {
@@ -237,18 +258,23 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       : initialValues && initialValues.audienceSegment
       ? initialValues.audienceSegment.type
       : undefined;
-    
+
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
       paths: breadCrumbPaths,
       message: messages.audienceSegmentSaveButton,
       onClose: close,
     };
-    
+
     const query = audienceSegmentFormData.query;
-    if (type === "USER_QUERY" && queryLanguage === "JSON_OTQL" && datamart && query) {
+    if (
+      type === 'USER_QUERY' &&
+      queryLanguage === 'JSON_OTQL' &&
+      datamart &&
+      query
+    ) {
       actionBarProps.convert2Otql = () => {
-          return this._queryService.convertJsonOtql2Otql(datamart.id, query);
+        return this._queryService.convertJsonOtql2Otql(datamart.id, query);
       };
     }
 
@@ -269,19 +295,17 @@ class EditAudienceSegmentForm extends React.Component<Props> {
 
     const isUserQuery = type === 'USER_QUERY';
 
-    const isUserList =
-      isPartialUserListSegment(audienceSegment);
+    const isUserList = isPartialUserListSegment(audienceSegment);
 
-    if (
-      hasFeature('datamart-user_choices') &&
-      (isUserQuery || isUserList)
-    ) {
+    if (hasFeature('datamart-user_choices') && (isUserQuery || isUserList)) {
       const genericFieldArrayProps = {
         formChange: change,
         rerenderOnEveryChange: true,
       };
 
-      const isEdge = isPartialUserListSegment(audienceSegment) && audienceSegment.subtype === 'EDGE';
+      const isEdge =
+        isPartialUserListSegment(audienceSegment) &&
+        audienceSegment.subtype === 'EDGE';
 
       const processingAssociatedType = isEdge ? 'SEGMENT-EDGE' : 'SEGMENT';
 
@@ -390,4 +414,7 @@ export default compose<Props, AudienceSegmentFormProps>(
     form: FORM_ID,
     enableReinitialize: true,
   }),
+  connect(state => ({
+    formValues: getFormValues(FORM_ID)(state),
+  })),
 )(EditAudienceSegmentForm);
