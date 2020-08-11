@@ -3,7 +3,6 @@
   "version": "1.0.0-SNAPSHOT",
   "private": true,
   "scripts": {
-    "test": "grunt test",
     "test:tslint": "tslint -c tslint.json 'app/react/src/**/*.{ts,tsx}'",
     "test:lint": "eslint --cache --max-warnings 0 app/react/src",
     "tslint-check": "tslint-config-prettier-check ./tslint.json",

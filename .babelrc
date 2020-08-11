@@ -10,9 +10,12 @@
   "env": {
     "production": {
       "plugins": [
-        ["react-intl", {
-          "messagesDir": "./build/messages"
-        }]
+        [
+          "react-intl",
+          {
+            "messagesDir": "./build/messages"
+          }
+        ]
       ]
     }
   }
