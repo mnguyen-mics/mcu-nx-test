@@ -69,7 +69,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
       });
       this._datamartReplicationService
         .getDatamartReplication(datamartId, datamartReplicationId)
-        .then((response) => {
+        .then(response => {
           this.setState({
             datamartReplicationData: response.data,
             isLoading: false,
@@ -77,7 +77,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
             datamartId: response.data.datamart_id,
           });
         })
-        .catch((err) => {
+        .catch(err => {
           notifyError(err);
           this.setState({
             isLoading: false,
@@ -134,7 +134,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
           );
 
       promise
-        .then((response) => {
+        .then(response => {
           if (datamartReplicationFormData.credentials_uri) {
             this._datamartReplicationService
               .uploadDatamartReplicationCredentials(
@@ -142,7 +142,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
                 response.data.id,
                 datamartReplicationFormData.credentials_uri,
               )
-              .catch((error) => {
+              .catch(error => {
                 notifyError(error);
                 this.setState({
                   isLoading: false,
@@ -157,7 +157,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
             state: { activeTab: 'Replications' },
           });
         })
-        .catch((err) => {
+        .catch(err => {
           notifyError(err);
           hideSaveInProgress();
           this.setState({
@@ -203,7 +203,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
 
     const { replicationTypes } = this.state;
 
-    const cards = replicationTypes.map((type) => {
+    const cards = replicationTypes.map(type => {
       return (
         <Col key={type} span={4}>
           <DatamartReplicationCard type={type} onClick={this.onSelectType} />
