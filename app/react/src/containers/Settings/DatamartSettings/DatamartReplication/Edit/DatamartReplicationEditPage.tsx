@@ -246,7 +246,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
     } = this.state;
 
     if (isLoading) {
-      return <Loading className='loading-full-screen' />;
+      return <Loading className="loading-full-screen" />;
     }
 
     const replicationName =
@@ -293,7 +293,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
         type={selectedType}
       />
     ) : (
-      <Layout className='edit-layout'>
+      <Layout className="edit-layout">
         <FormLayoutActionbar {...actionBarProps} />
         <Layout
           className={
