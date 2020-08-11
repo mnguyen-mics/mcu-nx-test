@@ -152,7 +152,10 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
         })
         .then(() => {
           hideSaveInProgress();
-          history.push(this.getPreviousUrl());
+          history.push({
+            pathname: this.getPreviousUrl(),
+            state: { activeTab: 'Replications' },
+          });
         })
         .catch(err => {
           notifyError(err);
@@ -215,8 +218,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
         key={i}
         style={{ marginTop: 30, marginBottom: 40 }}
         type={'flex'}
-        gutter={40}
-      >
+        gutter={40}>
         {arr}
       </Row>
     ));
@@ -296,8 +298,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
         <Layout
           className={
             'mcs-content-container ant-layout-content mcs-form-container'
-          }
-        >
+          }>
           <FormTitle
             title={messages.datamartReplicationTypeSelectionTitle}
             subtitle={messages.datamartReplicationTypeSelectionSubtitle}
