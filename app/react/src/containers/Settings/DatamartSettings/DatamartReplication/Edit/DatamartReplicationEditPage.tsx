@@ -69,7 +69,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
       });
       this._datamartReplicationService
         .getDatamartReplication(datamartId, datamartReplicationId)
-        .then(response => {
+        .then((response) => {
           this.setState({
             datamartReplicationData: response.data,
             isLoading: false,
@@ -77,7 +77,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
             datamartId: response.data.datamart_id,
           });
         })
-        .catch(err => {
+        .catch((err) => {
           notifyError(err);
           this.setState({
             isLoading: false,
@@ -134,7 +134,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
           );
 
       promise
-        .then(response => {
+        .then((response) => {
           if (datamartReplicationFormData.credentials_uri) {
             this._datamartReplicationService
               .uploadDatamartReplicationCredentials(
@@ -142,7 +142,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
                 response.data.id,
                 datamartReplicationFormData.credentials_uri,
               )
-              .catch(error => {
+              .catch((error) => {
                 notifyError(error);
                 this.setState({
                   isLoading: false,
@@ -152,9 +152,12 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
         })
         .then(() => {
           hideSaveInProgress();
-          history.push(this.getPreviousUrl());
+          history.push({
+            pathname: this.getPreviousUrl(),
+            state: { activeTab: 'Replications' },
+          });
         })
-        .catch(err => {
+        .catch((err) => {
           notifyError(err);
           hideSaveInProgress();
           this.setState({
@@ -200,7 +203,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
 
     const { replicationTypes } = this.state;
 
-    const cards = replicationTypes.map(type => {
+    const cards = replicationTypes.map((type) => {
       return (
         <Col key={type} span={4}>
           <DatamartReplicationCard type={type} onClick={this.onSelectType} />
@@ -215,8 +218,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
         key={i}
         style={{ marginTop: 30, marginBottom: 40 }}
         type={'flex'}
-        gutter={40}
-      >
+        gutter={40}>
         {arr}
       </Row>
     ));
@@ -244,7 +246,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
     } = this.state;
 
     if (isLoading) {
-      return <Loading className="loading-full-screen" />;
+      return <Loading className='loading-full-screen' />;
     }
 
     const replicationName =
@@ -291,13 +293,12 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
         type={selectedType}
       />
     ) : (
-      <Layout className="edit-layout">
+      <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
         <Layout
           className={
             'mcs-content-container ant-layout-content mcs-form-container'
-          }
-        >
+          }>
           <FormTitle
             title={messages.datamartReplicationTypeSelectionTitle}
             subtitle={messages.datamartReplicationTypeSelectionSubtitle}
