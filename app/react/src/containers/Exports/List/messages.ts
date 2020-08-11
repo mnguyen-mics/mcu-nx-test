@@ -47,4 +47,8 @@ export default defineMessages({
     id: 'exports.list.actionColumn.archive',
     defaultMessage: 'Archive',
   },
+  filterByLabel: {
+    id: 'exports.list.labelFilter.placeholder',
+    defaultMessage: 'Filter By Label',
+  }
 });

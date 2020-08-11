@@ -24,6 +24,7 @@ import messages from './messages';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IExportService } from '../../../services/Library/ExportService';
+import { Labels } from '../../Labels';
 
 const { Content } = Layout;
 
@@ -263,6 +264,8 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
       history,
     } = this.props;
 
+    const { exportExecutions, exportObject } = this.state;
+
     const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
     const pagination = {
       current: filter.currentPage,
@@ -275,7 +278,7 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
         this.updateLocationSearch({
           pageSize: size,
         }),
-      total: this.state.exportExecutions.total,
+      total: exportExecutions.total,
     };
 
     const onNewExecution = () => {
@@ -286,8 +289,8 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
     };
 
     const handleArchive = () => {
-      if (this.state.exportObject.item) {
-        const exportId = this.state.exportObject.item.id;
+      if (exportObject.item) {
+        const exportId = exportObject.item.id;
         return this._exportService.deleteExport(exportId).then(() => {
           history.push(`/v2/o/${organisationId}/datastudio/exports`);
         });
@@ -298,12 +301,12 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
     return (
       <div className="ant-layout">
         <ExportActionbar
-          exportObject={this.state.exportObject.item}
+          exportObject={exportObject.item}
           archiveObject={handleArchive}
           isExportExecutionRunning={
-            this.state.exportExecutions.items.length &&
-            (this.state.exportExecutions.items[0].status === 'PENDING' ||
-              this.state.exportExecutions.items[0].status === 'RUNNING')
+            exportExecutions.items.length &&
+            (exportExecutions.items[0].status === 'PENDING' ||
+              exportExecutions.items[0].status === 'RUNNING')
               ? true
               : false
           }
@@ -311,18 +314,21 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
         />
         <div className="ant-layout">
           <Content className="mcs-content-container">
-            <ExportHeader
-              object={
-                this.state.exportObject.item && this.state.exportObject.item
-              }
-            />
+            <ExportHeader object={exportObject.item && exportObject.item} />
+            {exportObject.item && (
+              <Labels
+                labellableId={exportObject.item.id}
+                labellableType="EXPORT"
+                organisationId={organisationId}
+              />
+            )}
             <Card title={formatMessage(messages.exportExecutionsTitle)}>
               <hr />
               <TableView
-                dataSource={this.state.exportExecutions.items}
+                dataSource={exportExecutions.items}
                 columns={this.buildColumnDefinition().dataColumnsDefinition}
                 pagination={pagination}
-                loading={this.state.exportExecutions.isLoading}
+                loading={exportExecutions.isLoading}
               />
             </Card>
           </Content>
