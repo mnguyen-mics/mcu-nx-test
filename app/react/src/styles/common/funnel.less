@@ -1,10 +1,11 @@
 .mcs-funnel {
-  border: 1px solid @border-color-split;
+  border-top: 1px solid @border-color-split;
+  border-left: 1px solid @border-color-split;
+  box-sizing: content-box;
 }
 
 .mcs-funnel_canvas {
   background-image: linear-gradient(to bottom, rgba(26, 210, 242, 0.39), rgba(11, 166, 225, 0.15));
-  flex: 1;
 }
 
 .mcs-funnel_arrow {
@@ -88,14 +89,14 @@
 .mcs-funnel_conversionInfo {
   margin: 0 auto;
   text-align: center;
-  margin-top: -8%;
+  margin-top: -45px;
   padding-bottom: 15px;
 }
 
 .mcs-funnel_percentageOfSucceeded {
   position: absolute;
   top: 5%;
-  left: -6%;
+  left: -31px;
 
   .mcs-funnel_stepInfo {
     display: inline-block;
@@ -105,21 +106,18 @@
   }
 }
 
-.mcs-funnel_userPoints,
-.mcs-funnel_stepName {
+.mcs-funnel_stepName,
+.mcs-funnel_userPoints {
   padding: 15px;
 }
 
-.mcs-funnel_stepName {
+.mcs-funnel_userPoints,
+.mcs-funnel_stepName,
+.mcs-funnel_chart {
   border-bottom: 1px solid @border-color-split;
-}
-
-.mcs-funnel_stepName--middle,
-.mcs-funnel_userPoints--middle,
-.mcs-funnel_chart--middle {
-  border-left: 1px solid @border-color-split;
   border-right: 1px solid @border-color-split;
 }
+
 
 .mcs-funnel_header_title,
 .mcs-funnel_stepName_desc,
@@ -148,12 +146,12 @@
   font-size: 12px;
   font-family: "LLCircularWeb-Book";
   font-weight: bold;
-  letter-spacing: normal; 
+  letter-spacing: normal;
   color: @primary-color;
 }
 
 .mcs-funnel_chart {
-  overflow: hidden;
+  position: relative;
 }
 
 .mcs-funnel_header_title {
@@ -166,6 +164,13 @@
   align-items: center;
   padding: 7px;
   border-bottom: 1px solid @border-color-split;
+  border-right: 1px solid @border-color-split;
+}
+
+.mcs-funnel_steps {
+  display: flex;
+  overflow: hidden;
+  border-right: 1px solid @border-color-split;
 }
 
 .mcs-funnel_header_datePicker {
