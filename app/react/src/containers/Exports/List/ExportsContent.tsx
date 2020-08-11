@@ -189,7 +189,7 @@ class ExportContent extends React.Component<Props, ExportContentState> {
             pageSize: filter.pageSize,
             currentPage: filter.currentPage,
             keywords: '',
-            label_id: []
+            label_id: [],
           });
         });
       },
@@ -304,11 +304,9 @@ class ExportContent extends React.Component<Props, ExportContentState> {
     const labelsOptions = {
       labels: labels,
       selectedLabels: labels.filter(label => {
-        return filter.label_id.find(
+        return filter.label_id.some(
           (filteredLabelId: string) => filteredLabelId === label.id,
-        )
-          ? true
-          : false;
+        );
       }),
       onChange: (newLabels: Label[]) => {
         const formattedLabels = newLabels.map(label => label.id);

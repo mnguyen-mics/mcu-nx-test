@@ -411,11 +411,9 @@ class ImportsContentContainer extends React.Component<Props, State> {
     const labelsOptions = {
       labels: labels,
       selectedLabels: labels.filter(label => {
-        return filter.label_id.find(
+        return filter.label_id.some(
           (filteredLabelId: string) => filteredLabelId === label.id,
         )
-          ? true
-          : false;
       }),
       onChange: (newLabels: Label[]) => {
         const formattedLabels = newLabels.map(label => label.id);
