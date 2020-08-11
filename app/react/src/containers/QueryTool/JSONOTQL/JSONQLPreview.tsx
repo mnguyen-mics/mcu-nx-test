@@ -4,18 +4,20 @@ import { QueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
 import McsIcon from '../../../components/McsIcon';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
-import { Button } from 'antd';
+import { Button, Alert } from 'antd';
 import { injectDrawer } from '../../../components/Drawer';
 import { InjectedDrawerProps } from '../../../components/Drawer/injectDrawer';
 import JSONQLBuilderContainer, {
   JSONQLBuilderContainerProps,
 } from './JSONQLBuilderContainer';
-import ActionBar from '../../../components/ActionBar';
+import { messages } from './messages';
+import { Actionbar } from '@mediarithmics-private/mcs-components-library';
 
 export type JSONQLPreviewContext = 'GOALS' | 'AUTOMATION_BUILDER';
 
 export interface JSONQLPreviewProps {
   value?: string | void;
+  queryHasChanged?: boolean;
   onChange?: (e: string) => void;
   datamartId: string;
   context: JSONQLPreviewContext;
@@ -40,7 +42,7 @@ class JSONQLPreview extends React.Component<Props> {
       };
       const onClose = () => this.props.closeNextDrawer();
       return (
-        <ActionBar
+        <Actionbar
           edition={true}
           paths={[
             {
@@ -68,7 +70,7 @@ class JSONQLPreview extends React.Component<Props> {
             style={{ cursor: 'pointer' }}
             onClick={onClose}
           />
-        </ActionBar>
+        </Actionbar>
       );
     };
 
@@ -88,7 +90,7 @@ class JSONQLPreview extends React.Component<Props> {
   };
 
   render() {
-    const { context } = this.props;
+    const { context, queryHasChanged, intl } = this.props;
 
     return context === 'AUTOMATION_BUILDER' ? (
       <div onClick={this.openEditor} className="boolean-menu-item">
@@ -99,6 +101,18 @@ class JSONQLPreview extends React.Component<Props> {
       </div>
     ) : (
       <div className="text-center m-t-20">
+        {queryHasChanged && (
+          <Alert
+            message={
+              <div>
+                <McsIcon type={'warning'} />
+                {intl.formatMessage(messages.queryHasChanged)}
+              </div>
+            }
+            type={'warning'}
+          />
+        )}
+        <br />
         <Button onClick={this.openEditor}>
           {this.props.intl.formatMessage({
             id: 'jsonql.button.query.edit',

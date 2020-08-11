@@ -7,7 +7,10 @@ import {
   InjectedIntlProps,
 } from 'react-intl';
 import { FormTitle } from '../../../../components/Form';
-import { MenuList, MenuPresentational } from '../../../../components/FormMenu';
+import {
+  MenuList,
+  MenuPresentational,
+} from '@mediarithmics-private/mcs-components-library';
 import {
   QueryLanguage,
   DatamartResource,

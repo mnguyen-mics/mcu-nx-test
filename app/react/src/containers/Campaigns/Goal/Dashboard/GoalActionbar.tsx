@@ -7,7 +7,7 @@ import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 import { GoalResource } from '../../../../models/goal/index';
 import modalMessages from '../../../../common/messages/modalMessages';
-import Actionbar from '../../../../components/ActionBar';
+import { Actionbar } from '@mediarithmics-private/mcs-components-library';
 import McsIcon from '../../../../components/McsIcon';
 import log from '../../../../utils/Logger';
 import messages from './messages';

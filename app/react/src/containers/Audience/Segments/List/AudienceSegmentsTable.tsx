@@ -383,16 +383,9 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         order_by: filter.orderBy,
       };
     }
-    const subtypes: string[] = [];
-    const types = filter.type.filter( (t: string) => {
-      if (t === "EDGE" || t === "USER_PIXEL") {
-        subtypes.push(t);
-        return false;
-      }
-      return true;
-    })
+    const subtypes: string[] = filter.type.filter( (t: string) => t === "EDGE" || t === "USER_PIXEL")
+    const types: string[] = filter.type.filter( (t: string) => t !== "EDGE" && t !== "USER_PIXEL")
     if (subtypes.length) {
-      if (types.indexOf("USER_LIST") === -1) types.push("USER_LIST");
       formattedFilters = {
         ...formattedFilters,
         subtype: subtypes,
@@ -404,10 +397,11 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         type: types,
       };
     }
-    if (filter.feed_type.length) {
+    const feedtypes: string[] = (types.some((t: string) => t === "USER_LIST") && filter.feed_type.length === 0) ? ["SCENARIO", "FILE_IMPORT"] : filter.feed_type;
+    if (feedtypes.length) {
       formattedFilters = {
         ...formattedFilters,
-        feed_type: filter.feed_type,
+        feed_type: feedtypes,
       };
     }
     if (filter.label_id.length) {

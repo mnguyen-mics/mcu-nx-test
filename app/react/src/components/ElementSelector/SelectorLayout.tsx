@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Button, Layout } from 'antd';
-import ActionBar from '../ActionBar';
 import McsIcon from '../McsIcon';
 import { FormattedMessage } from 'react-intl';
 import { EmptyTableView } from '../TableView';
+import { Actionbar } from '@mediarithmics-private/mcs-components-library';
 
 const { Content } = Layout;
 
@@ -32,7 +32,7 @@ export default class SelectorLayout extends React.Component<
     return (
       <Layout>
         <div className="edit-layout ant-layout">
-          <ActionBar paths={[{ name: actionBarTitle }]} edition={true}>
+          <Actionbar paths={[{ name: actionBarTitle }]} edition={true}>
             <Button type="primary" className="mcs-primary" onClick={handleAdd}>
               <McsIcon type="plus" />
               <FormattedMessage
@@ -45,7 +45,7 @@ export default class SelectorLayout extends React.Component<
               className="close-icon mcs-table-cursor"
               onClick={handleClose}
             />
-          </ActionBar>
+          </Actionbar>
           <Layout>
             <Content
               className={`mcs-edit-container ${className ? className : ''}`}

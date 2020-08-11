@@ -2,7 +2,10 @@ import * as React from 'react';
 import { Layout, Row } from 'antd';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { FormTitle } from '../../../components/Form';
-import { MenuList, MenuPresentational } from '../../../components/FormMenu';
+import {
+  MenuList,
+  MenuPresentational,
+} from '@mediarithmics-private/mcs-components-library';
 import { AudienceSegmentType } from '../../../models/audiencesegment';
 import { QueryLanguage } from '../../../models/datamart/DatamartResource';
 
@@ -35,7 +38,10 @@ interface SegmentTypeSelectorProps {
 type Props = SegmentTypeSelectorProps;
 
 class SegmentTypeSelector extends React.Component<Props> {
-  onSelect = (item: AudienceSegmentType, expertQuery: boolean = false) => () => {
+  onSelect = (
+    item: AudienceSegmentType,
+    expertQuery: boolean = false,
+  ) => () => {
     this.props.onSelect(item, expertQuery ? 'OTQL' : 'JSON_OTQL');
   };
 

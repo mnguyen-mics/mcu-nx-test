@@ -11,7 +11,7 @@ import { FormLayoutActionbarProps } from '../../../../components/Layout/FormLayo
 import messages from '../../messages';
 import { SidebarWrapperProps } from '../../../../components/Layout/ScrollspySider';
 import { McsFormSection } from '../../../../utils/FormHelper';
-import { Path } from '../../../../components/ActionBar';
+import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { Omit } from '../../../../utils/Types';
 import { OfferFormData } from '../domain';
 import { FormSection, FormInputField, FormInput, FormSelectField, DefaultSelect } from '../../../../components/Form';

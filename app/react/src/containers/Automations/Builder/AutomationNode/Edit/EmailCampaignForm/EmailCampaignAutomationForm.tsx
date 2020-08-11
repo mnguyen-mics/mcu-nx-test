@@ -6,7 +6,6 @@ import {
   ConfigProps,
   getFormValues,
 } from 'redux-form';
-import { Path } from '../../../../../../components/ActionBar';
 import { Layout, Form } from 'antd';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
@@ -24,6 +23,7 @@ import { BlastTemplateSectionFieldArray } from '../../../../../Campaigns/Email/E
 import GeneralInformationFormSection from './GeneralInformationSectionForm';
 import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
 import { StorylineNodeModel } from '../../../domain';
+import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 
 const { Content } = Layout;
 

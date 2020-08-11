@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
-
-import Actionbar from '../../../components/ActionBar';
 import { RouteComponentProps } from 'react-router';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
-
 import messages from './messages';
+import { Actionbar } from '@mediarithmics-private/mcs-components-library';
 
 type JoinedProps = RouteComponentProps<any> & InjectedIntlProps;
 
