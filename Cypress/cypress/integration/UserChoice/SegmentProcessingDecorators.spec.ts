@@ -59,7 +59,7 @@ it('should create User Query segments with processing selections and edit it', (
     cy.contains('Update').click()
     cy.contains('Save').click()
     // Wait for backend addition
-    cy.wait(1000)
+    cy.wait(1500)
     cy.contains('Edit').click()
     cy.get('.mcs-delete').click()
     cy.contains('Yes').click()
@@ -117,7 +117,7 @@ it('should create User List segment with processing selection and edit it', () =
     cy.contains('Add').click()
     cy.contains('Save').click()
     // Wait for backend addition
-    cy.wait(1000)
+    cy.wait(1500)
     cy.contains('Edit').click()
     cy.get('.mcs-delete').click()
     cy.contains('Yes').click()
@@ -176,7 +176,7 @@ it('should create User Pixel segment with processing selection and edit it', () 
     cy.contains('Save').click()
     cy.contains('Save').click()
     // Wait for backend addition
-    cy.wait(1000)
+    cy.wait(1500)
     cy.contains('Edit').click()
     cy.get('.mcs-delete').click()
     cy.contains('Yes').click()
@@ -189,7 +189,7 @@ it('should create User Pixel segment with processing selection and edit it', () 
         10
       )
       // Wait for the backend update
-      cy.wait(1000)
+      cy.wait(1500)
       // Check that it's been deleted
       cy.request({
         url: `${Cypress.env(
@@ -240,7 +240,7 @@ it('should create User Expert Query segment with processing selection and edit i
       })
     cy.contains('Save').click()
     // Wait for backend addition
-    cy.wait(1000)
+    cy.wait(1500)
     cy.contains('Edit').click()
     cy.get('.mcs-delete').click()
     cy.contains('Yes').click()
@@ -253,7 +253,7 @@ it('should create User Expert Query segment with processing selection and edit i
         10
       )
       // Wait for the backend update
-      cy.wait(1000)
+      cy.wait(1500)
       // Check that it's been deleted
       cy.request({
         url: `${Cypress.env(
