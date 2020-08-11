@@ -6,7 +6,6 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { getWorkspace } from '../../../redux/Session/selectors';
 import {
   parseSearch,
-  updateSearch,
   SearchSetting,
   isSearchValid,
   buildDefaultSearch,
@@ -14,9 +13,9 @@ import {
   PaginationSearchSettings,
   KeywordSearchSettings,
   DatamartSearchSettings,
+  LabelsSearchSettings,
 } from '../../../utils/LocationSearchHelper';
 import { IMPORTS_SEARCH_SETTINGS } from './constants';
-import { Index } from '../../../utils';
 import { UserWorkspaceResource } from '../../../models/directory/UserProfileResource';
 import ImportsContentContainer from './ImportsContentContainer';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
@@ -24,12 +23,12 @@ import { MicsReduxState } from '../../../utils/ReduxHelper';
 export interface ImportFilterParams
   extends PaginationSearchSettings,
     KeywordSearchSettings,
+    LabelsSearchSettings,
     DatamartSearchSettings {}
 
-interface ImportContentState {
+interface State {
   loading: boolean;
-  selectedDatamartId: string;
-  filter: ImportFilterParams;
+  selectedDatamartId?: string;
 }
 
 interface RouterProps {
@@ -44,18 +43,11 @@ type Props = RouteComponentProps<RouterProps> &
   InjectedIntlProps &
   MapStateToProps;
 
-class ImportContent extends React.Component<Props, ImportContentState> {
+class ImportContent extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
       loading: false,
-      selectedDatamartId: props.workspace(props.match.params.organisationId)
-        .datamarts[0].id,
-      filter: {
-        currentPage: 1,
-        pageSize: 10,
-        keywords: '',
-      },
     };
   }
 
@@ -63,30 +55,23 @@ class ImportContent extends React.Component<Props, ImportContentState> {
     const {
       history,
       location: { search, pathname },
+      match: {
+        params: { organisationId },
+      },
+      workspace,
     } = this.props;
 
     if (!isSearchValid(search, this.getSearchSetting())) {
       history.push({
         pathname: pathname,
-        search: buildDefaultSearch(
-          search,
-          this.getSearchSetting(),
-        )
+        search: buildDefaultSearch(search, this.getSearchSetting()),
       });
     } else {
-      const { currentPage, pageSize, datamartId, keywords } = parseSearch(
-        search,
-        this.getSearchSetting(),
-      );
+      const { datamartId } = parseSearch(search, this.getSearchSetting());
       const selectedDatamartId = datamartId
         ? datamartId
-        : this.state.selectedDatamartId;
+        : workspace(organisationId).datamarts[0].id;
       this.setState({
-        filter: {
-          currentPage: currentPage,
-          pageSize: pageSize,
-          keywords: keywords,
-        },
         selectedDatamartId: selectedDatamartId,
       });
     }
@@ -99,6 +84,7 @@ class ImportContent extends React.Component<Props, ImportContentState> {
         params: { organisationId },
       },
       history,
+      workspace,
     } = this.props;
 
     const {
@@ -112,82 +98,36 @@ class ImportContent extends React.Component<Props, ImportContentState> {
       !compareSearches(search, previousSearch) ||
       organisationId !== previousOrganisationId
     ) {
-      if (
-        !isSearchValid(search, this.getSearchSetting())
-      ) {
+      if (!isSearchValid(search, this.getSearchSetting())) {
         history.replace({
           pathname: pathname,
-          search: buildDefaultSearch(
-            search,
-            this.getSearchSetting(),
-          )
+          search: buildDefaultSearch(search, this.getSearchSetting()),
         });
       } else {
-        const { currentPage, pageSize, datamartId, keywords } = parseSearch(
-          search,
-          this.getSearchSetting(),
-        );
+        const { datamartId } = parseSearch(search, this.getSearchSetting());
         const selectedDatamartId = datamartId
           ? datamartId
-          : this.state.selectedDatamartId;
+          : workspace(organisationId).datamarts[0].id;
         this.setState({
-          filter: {
-            currentPage,
-            pageSize,
-            keywords,
-          },
           selectedDatamartId,
         });
       }
     }
   }
 
-  updateLocationSearch = (params: Index<any>) => {
-    const {
-      history,
-      location: { search: currentSearch, pathname },
-    } = this.props;
-
-    const nextLocation = {
-      pathname,
-      search: updateSearch(
-        currentSearch,
-        params,
-        this.getSearchSetting(),
-      ),
-    };
-
-    history.push(nextLocation);
-  };
-
-  onFilterChange = (newFilter: any) => {
-    const { datamartId, ...restFilter } = newFilter;
-
-    const calculatedDatamartId = datamartId
-      ? datamartId
-      : this.state.selectedDatamartId;
-
-    this.updateLocationSearch({
-      datamartId: calculatedDatamartId,
-      ...restFilter,
-    });
-  };
-
   getSearchSetting(): SearchSetting[] {
     return [...IMPORTS_SEARCH_SETTINGS];
   }
 
   render() {
-    const { filter, selectedDatamartId } = this.state;
+    const { selectedDatamartId } = this.state;
 
-    return (
+    return selectedDatamartId ? (
       <ImportsContentContainer
         datamartId={selectedDatamartId}
-        filter={filter}
-        onFilterChange={this.onFilterChange}
         noFilterDatamart={false}
       />
-    );
+    ) : null;
   }
 }
 
