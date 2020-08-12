@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { compose } from 'recompose';
+import _ from 'lodash';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { TableViewFilters } from '../../../components/TableView';
 import { MultiSelectProps } from '../../../components/MultiSelect';
 import messages from './messages';
-import queryString from 'query-string';
-import { Icon, Modal, Row, } from 'antd';
+import { Icon, Modal, Row } from 'antd';
 import { ActionsColumnDefinition } from '../../../components/TableView/TableView';
 import { Import } from '../../../models/imports/imports';
 import { Link } from 'react-router-dom';
@@ -21,22 +21,25 @@ import { formatDocumentTypeText, formatMimeTypeText } from '../domain';
 import { DatamartResource } from '../../../models/datamart/DatamartResource';
 import {
   updateSearch,
-  PaginationSearchSettings,
   SearchSetting,
-  parseSearch,
   compareSearches,
+  parseSearch,
+  isSearchValid,
+  buildDefaultSearch,
 } from '../../../utils/LocationSearchHelper';
 import { IDatamartService } from '../../../services/DatamartService';
 import { notifyError } from '../../../redux/Notifications/actions';
 import { Index } from '../../../utils';
-import { ImportFilterParams } from './ImportsContent';
 import { IMPORTS_SEARCH_SETTINGS } from './constants';
+import { connect } from 'react-redux';
+import { Label } from '../../Labels/Labels';
+import { MicsReduxState } from '../../../utils/ReduxHelper';
 
-interface ImportsContentContainerFilter extends PaginationSearchSettings {
-  datamartId: string;
+interface MapStateToProps {
+  labels: Label[];
 }
 
-interface ImportsContentContainerState {
+interface State {
   loading: boolean;
   data: Import[];
   total: number;
@@ -44,20 +47,16 @@ interface ImportsContentContainerState {
 }
 
 export interface ImportsContentContainerProps {
-  filter: ImportFilterParams;
-  onFilterChange: (newFilter: Partial<ImportsContentContainerFilter>) => void;
   datamartId: string;
   noFilterDatamart: boolean;
 }
 
 type Props = ImportsContentContainerProps &
-  RouteComponentProps<{ organisationId: string }> &
+  MapStateToProps &
+  RouteComponentProps<{ organisationId: string; datamartId: string }> &
   InjectedIntlProps;
 
-class ImportsContentContainer extends React.Component<
-  Props,
-  ImportsContentContainerState
-> {
+class ImportsContentContainer extends React.Component<Props, State> {
   @lazyInject(TYPES.IImportService)
   private _importService: IImportService;
 
@@ -77,11 +76,12 @@ class ImportsContentContainer extends React.Component<
   componentDidMount() {
     const {
       datamartId,
-      filter,
       match: {
         params: { organisationId },
       },
       noFilterDatamart,
+      location: { search, pathname },
+      history,
     } = this.props;
 
     this.setState({
@@ -92,52 +92,57 @@ class ImportsContentContainer extends React.Component<
       allow_administrator: true,
       archived: false,
     };
-    if (!noFilterDatamart) {
-      this._datamartService.getDatamarts(organisationId, options)
-        .then(res => {
-          this.setState({
-            datamarts: res.data,
-            loading: false,
-          });
-        })
-        .catch(err => {
-          this.setState({
-            loading: false,
-          });
-          notifyError(err);
-        });
-    }
 
-    this.fetchImport(datamartId, filter);
+    if (!isSearchValid(search, IMPORTS_SEARCH_SETTINGS)) {
+      history.replace({
+        pathname: pathname,
+        search: buildDefaultSearch(search, IMPORTS_SEARCH_SETTINGS),
+      });
+    } else {
+      const filter = parseSearch(search, IMPORTS_SEARCH_SETTINGS);
+
+      if (!noFilterDatamart) {
+        this._datamartService
+          .getDatamarts(organisationId, options)
+          .then(res => {
+            this.setState({
+              datamarts: res.data,
+              loading: false,
+            });
+          })
+          .catch(err => {
+            this.setState({
+              loading: false,
+            });
+            notifyError(err);
+          });
+      }
+
+      this.fetchImport(datamartId, filter);
+    }
   }
 
   componentDidUpdate(previousProps: Props) {
     const {
-      filter,
-      datamartId,
       match: {
-        params: { organisationId },
+        params: { organisationId, datamartId },
       },
       location: { search },
       noFilterDatamart,
     } = this.props;
 
     const {
-      filter: previousFilter,
-      datamartId: previousDatamartId,
       match: {
         params: { organisationId: previousOrganisationId },
       },
       location: { search: previousSearch },
     } = previousProps;
 
-    const keywords = queryString.parse(search).keywords;
+    const filter = parseSearch(search, IMPORTS_SEARCH_SETTINGS);
+    const previousFilter = parseSearch(previousSearch, IMPORTS_SEARCH_SETTINGS);
 
     if (
-      filter.currentPage !== previousFilter.currentPage ||
-      filter.pageSize !== previousFilter.pageSize ||
-      filter.keywords !== previousFilter.keywords ||
-      datamartId !== previousDatamartId ||
+      !_.isEqual(filter, previousFilter) ||
       organisationId !== previousOrganisationId ||
       !compareSearches(search, previousSearch)
     ) {
@@ -147,18 +152,25 @@ class ImportsContentContainer extends React.Component<
       };
 
       const newFilter = {
-        ...filter,
-        keywords: keywords,
+        first_result: filter.currentPage,
+        max_results: filter.pageSize,
+        label_id: filter.label_id,
+        keywords: filter.keywords,
       };
       if (!noFilterDatamart) {
-        this._datamartService.getDatamarts(organisationId, options).then(res => {
-          this.setState({
-            datamarts: res.data,
+        this._datamartService
+          .getDatamarts(organisationId, options)
+          .then(res => {
+            this.setState({
+              datamarts: res.data,
+            });
           });
-        });
       }
 
-      this.fetchImport(datamartId, newFilter);
+      this.fetchImport(
+        filter.datamartId || datamartId || this.props.datamartId,
+        newFilter,
+      );
     }
   }
 
@@ -166,13 +178,16 @@ class ImportsContentContainer extends React.Component<
     return this._importService.deleteImport(datamartId, importId);
   };
 
-  fetchImport = (datamartId: string, filter: ImportFilterParams) => {
+  fetchImport = (datamartId: string, filter: Index<any>) => {
     this.setState({ loading: true }, () => {
       const options: GetImportsOptions = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
       if (filter.keywords) {
         options.keywords = filter.keywords;
+      }
+      if (filter.label_id && filter.label_id.length) {
+        options.label_ids = filter.label_id;
       }
       this._importService.getImportList(datamartId, options).then(results => {
         this.setState({
@@ -189,11 +204,12 @@ class ImportsContentContainer extends React.Component<
       location: { search, pathname, state },
       history,
       intl: { formatMessage },
-      filter,
       datamartId,
     } = this.props;
 
     const { data } = this.state;
+
+    const filter = parseSearch(search, IMPORTS_SEARCH_SETTINGS);
 
     Modal.confirm({
       iconType: 'exclamation-circle',
@@ -234,9 +250,7 @@ class ImportsContentContainer extends React.Component<
     } = this.props;
 
     history.push({
-      pathname: `/v2/o/${organisationId}/datastudio/datamart/${
-        imp.datamart_id
-      }/imports/${imp.id}/edit`,
+      pathname: `/v2/o/${organisationId}/datastudio/datamart/${imp.datamart_id}/imports/${imp.id}/edit`,
       state: { from: `${location.pathname}${location.search}` },
     });
   };
@@ -264,15 +278,16 @@ class ImportsContentContainer extends React.Component<
       match: {
         params: { organisationId },
       },
-      filter,
-      onFilterChange,
       datamartId,
       noFilterDatamart,
       intl,
+      labels,
       location: { search },
     } = this.props;
 
     const { data, loading, datamarts } = this.state;
+
+    const filter = parseSearch(search, IMPORTS_SEARCH_SETTINGS);
 
     const actionsColumnsDefinition: Array<ActionsColumnDefinition<Import>> = [
       {
@@ -298,9 +313,7 @@ class ImportsContentContainer extends React.Component<
         render: (text: string, record: Import) => (
           <Link
             className="mcs-campaigns-link"
-            to={`/v2/o/${organisationId}/datastudio/datamart/${
-              record.datamart_id
-            }/imports/${record.id}`}
+            to={`/v2/o/${organisationId}/datastudio/datamart/${record.datamart_id}/imports/${record.id}`}
           >
             {text}
           </Link>
@@ -318,9 +331,7 @@ class ImportsContentContainer extends React.Component<
         intlMessage: messages.priority,
         key: 'priority',
         isHideable: false,
-        render: (text: string) => (
-          <span>{text}</span>
-        ),
+        render: (text: string) => <span>{text}</span>,
       },
       {
         intlMessage: messages.mimeType,
@@ -356,7 +367,7 @@ class ImportsContentContainer extends React.Component<
         getKey: (item: any) => (item && item.key ? item.key : ''),
         display: (item: any) => item.value,
         handleItemClick: (datamartItem: { key: string; value: string }) => {
-          onFilterChange({
+          this.updateLocationSearch({
             datamartId:
               datamartItem && datamartItem.key ? datamartItem.key : undefined,
             currentPage: 1,
@@ -369,8 +380,6 @@ class ImportsContentContainer extends React.Component<
       }
     }
 
-    const searchFilter = parseSearch(search, this.getSearchSetting());
-
     const searchOptions = {
       placeholder: intl.formatMessage(messages.searchTitle),
       onSearch: (value: string) =>
@@ -378,7 +387,7 @@ class ImportsContentContainer extends React.Component<
           keywords: value,
           currentPage: 1,
         }),
-      defaultValue: searchFilter.keywords,
+      defaultValue: filter.keywords,
     };
 
     const pagination = {
@@ -386,17 +395,34 @@ class ImportsContentContainer extends React.Component<
       pageSize: filter.pageSize,
       total: this.state.total,
       onChange: (page: number, size: number) =>
-        onFilterChange({
+        this.updateLocationSearch({
           currentPage: page,
           pageSize: size,
           datamartId: datamartId,
         }),
       onShowSizeChange: (current: number, size: number) =>
-        onFilterChange({
+        this.updateLocationSearch({
           currentPage: 1,
           pageSize: size,
           datamartId: datamartId,
         }),
+    };
+
+    const labelsOptions = {
+      labels: labels,
+      selectedLabels: labels.filter(label => {
+        return filter.label_id.some(
+          (filteredLabelId: string) => filteredLabelId === label.id,
+        )
+      }),
+      onChange: (newLabels: Label[]) => {
+        const formattedLabels = newLabels.map(label => label.id);
+        this.updateLocationSearch({
+          label_id: formattedLabels,
+          currentPage: 1,
+        });
+      },
+      buttonMessage: messages.filterByLabel,
     };
 
     return (
@@ -416,6 +442,7 @@ class ImportsContentContainer extends React.Component<
             dataSource={data}
             loading={loading}
             pagination={pagination}
+            labelsOptions={labelsOptions}
           />
         </div>
       </Row>
@@ -423,7 +450,12 @@ class ImportsContentContainer extends React.Component<
   }
 }
 
+const mapStateToProps = (state: MicsReduxState) => ({
+  labels: state.labels.labelsApi.data,
+});
+
 export default compose<Props, ImportsContentContainerProps>(
   withRouter,
   injectIntl,
+  connect(mapStateToProps),
 )(ImportsContentContainer);
