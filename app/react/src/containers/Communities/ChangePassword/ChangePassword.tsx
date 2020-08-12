@@ -26,8 +26,6 @@ import { TYPES } from '../../../constants/types';
 import { ICommunityService } from '../../../services/CommunityServices';
 import { IAuthService } from '../../../services/AuthService';
 
-const logoUrl = require('../../../assets/images/logo.png');
-
 type Props = InjectedIntlProps &
   FormComponentProps &
   RouteComponentProps<{ communityToken: string }>;
@@ -209,7 +207,7 @@ class CommunityChangePassword extends React.Component<Props, State> {
     return (
       <div className="mcs-reset-password-container">
         <div className="image-wrapper">
-          <img alt="mics-logo" className="reset-password-logo" src={logoUrl} />
+          <img alt="mics-logo" className="reset-password-logo" src={'/react/src/assets/images/logo.png'} />
         </div>
         <div className="reset-password-title">{pageType}</div>
         <div className="reset-password-container-frame">

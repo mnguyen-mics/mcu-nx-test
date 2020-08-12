@@ -20,8 +20,6 @@ import { lazyInject } from '../../../config/inversify.config';
 import { IAuthService } from '../../../services/AuthService';
 import { TYPES } from '../../../constants/types';
 
-const logoUrl = require('../../../assets/images/logo.png');
-
 type Props = InjectedIntlProps & FormComponentProps & RouteComponentProps<{}>;
 
 interface State {
@@ -127,7 +125,7 @@ class SetPassword extends React.Component<Props, State> {
     return (
       <div className="mcs-reset-password-container">
         <div className="image-wrapper">
-          <img alt="mics-logo" className="reset-password-logo" src={logoUrl} />
+          <img alt="mics-logo" className="reset-password-logo" src={'/react/src/assets/images/logo.png'} />
         </div>
         <div className="reset-password-title">
           <FormattedMessage {...messages.setPassword} />
