@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
+import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import { Modal, Row } from 'antd';
@@ -18,6 +19,7 @@ import {
   isSearchValid,
   buildDefaultSearch,
   compareSearches,
+  LabelsSearchSettings,
 } from '../../../utils/LocationSearchHelper';
 import { Export } from '../../../models/exports/exports';
 import messages from './messages';
@@ -27,6 +29,8 @@ import { Index } from '../../../utils';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { EXPORT_SEARCH_SETTINGS } from './constants';
+import { MicsReduxState } from '../../../utils/ReduxHelper';
+import { Label } from '../../Labels/Labels';
 
 const initialState = {
   loading: false,
@@ -36,6 +40,7 @@ const initialState = {
 
 export interface ExportFilterParams
   extends PaginationSearchSettings,
+    LabelsSearchSettings,
     KeywordSearchSettings {}
 
 interface ExportContentState {
@@ -44,11 +49,17 @@ interface ExportContentState {
   total: number;
 }
 
+interface MapStateToProps {
+  labels: Label[];
+}
+
 interface RouterProps {
   organisationId: string;
 }
 
-type Props = RouteComponentProps<RouterProps> & InjectedIntlProps;
+type Props = RouteComponentProps<RouterProps> &
+  InjectedIntlProps &
+  MapStateToProps;
 
 class ExportContent extends React.Component<Props, ExportContentState> {
   state = initialState;
@@ -71,10 +82,12 @@ class ExportContent extends React.Component<Props, ExportContentState> {
         search: buildDefaultSearch(search, EXPORT_SEARCH_SETTINGS),
       });
     } else {
-      const filter = parseSearch<ExportFilterParams>(search,EXPORT_SEARCH_SETTINGS);
+      const filter = parseSearch<ExportFilterParams>(
+        search,
+        EXPORT_SEARCH_SETTINGS,
+      );
       this.fetchExport(organisationId, filter);
     }
-
   }
 
   componentDidUpdate(previousProps: Props) {
@@ -100,13 +113,13 @@ class ExportContent extends React.Component<Props, ExportContentState> {
       if (!isSearchValid(search, EXPORT_SEARCH_SETTINGS)) {
         history.replace({
           pathname: pathname,
-          search: buildDefaultSearch(
-            search,
-            EXPORT_SEARCH_SETTINGS,
-          ),
+          search: buildDefaultSearch(search, EXPORT_SEARCH_SETTINGS),
         });
       } else {
-        const filter = parseSearch<ExportFilterParams>(search, EXPORT_SEARCH_SETTINGS);
+        const filter = parseSearch<ExportFilterParams>(
+          search,
+          EXPORT_SEARCH_SETTINGS,
+        );
         this.fetchExport(organisationId, filter);
       }
     }
@@ -124,6 +137,9 @@ class ExportContent extends React.Component<Props, ExportContentState> {
       };
       if (filter.keywords) {
         options.keywords = filter.keywords;
+      }
+      if (filter.label_id && filter.label_id.length) {
+        options.label_ids = filter.label_id;
       }
       this._exportService.getExports(options).then(results => {
         this.setState({
@@ -173,6 +189,7 @@ class ExportContent extends React.Component<Props, ExportContentState> {
             pageSize: filter.pageSize,
             currentPage: filter.currentPage,
             keywords: '',
+            label_id: [],
           });
         });
       },
@@ -214,6 +231,7 @@ class ExportContent extends React.Component<Props, ExportContentState> {
       },
       intl,
       location: { search },
+      labels,
     } = this.props;
 
     const { data, loading } = this.state;
@@ -283,6 +301,23 @@ class ExportContent extends React.Component<Props, ExportContentState> {
         }),
     };
 
+    const labelsOptions = {
+      labels: labels,
+      selectedLabels: labels.filter(label => {
+        return filter.label_id.some(
+          (filteredLabelId: string) => filteredLabelId === label.id,
+        );
+      }),
+      onChange: (newLabels: Label[]) => {
+        const formattedLabels = newLabels.map(label => label.id);
+        this.updateLocationSearch({
+          label_id: formattedLabels,
+          currentPage: 1,
+        });
+      },
+      buttonMessage: messages.filterByLabel,
+    };
+
     return (
       <Row className="mcs-table-container">
         <div>
@@ -301,6 +336,7 @@ class ExportContent extends React.Component<Props, ExportContentState> {
             dataSource={data}
             loading={loading}
             pagination={pagination}
+            labelsOptions={labelsOptions}
           />
         </div>
       </Row>
@@ -308,7 +344,12 @@ class ExportContent extends React.Component<Props, ExportContentState> {
   }
 }
 
+const mapStateToProps = (state: MicsReduxState) => ({
+  labels: state.labels.labelsApi.data,
+});
+
 export default compose(
   withRouter,
   injectIntl,
+  connect(mapStateToProps),
 )(ExportContent);
