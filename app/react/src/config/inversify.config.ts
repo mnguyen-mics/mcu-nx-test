@@ -218,6 +218,11 @@ import {
   ScenarioExitConditionService,
   IScenarioExitConditionService,
 } from '../services/ScenarioExitConditionService';
+import {
+  IUserActivitiesFunnelService,
+  UserActivitiesFunnelService,
+} from '../services/UserActivitiesFunnelService';
+
 
 const container = new Container();
 
@@ -427,6 +432,9 @@ container
 container
   .bind<IAudienceFeatureService>(TYPES.IAudienceFeatureService)
   .to(AudienceFeatureService);
+container
+  .bind<IUserActivitiesFunnelService>(TYPES.IUserActivitiesFunnelService)
+  .to(UserActivitiesFunnelService);
 
 export const { lazyInject } = getDecorators(container, false);
 
