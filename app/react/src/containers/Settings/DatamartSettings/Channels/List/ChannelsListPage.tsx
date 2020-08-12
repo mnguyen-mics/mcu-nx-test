@@ -194,7 +194,7 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
     this.setState({ isFetchingChannels: true }, () => {
       this._channelService
         .getChannelsByOrganisation(organisationId, buildGetChannelsOptions())
-        .then((response) => {
+        .then(response => {
           this.setState({
             channels: response.data,
             totalChannels: response.total ? response.total : response.count,
@@ -202,17 +202,17 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
 
           this._datamartService
             .getDatamarts(organisationId, { allow_administrator: true })
-            .then((datamartsResponse) => {
+            .then(datamartsResponse => {
               if (
-                datamartsResponse.data.some((datamart) =>
+                datamartsResponse.data.some(datamart =>
                   isUsersAnalyticsSupportedByDatafarm(datamart.datafarm),
                 )
               ) {
                 const datamartIds = datamartsResponse.data
-                  .filter((datamart) =>
+                  .filter(datamart =>
                     isUsersAnalyticsSupportedByDatafarm(datamart.datafarm),
                   )
-                  .map((datamart) => datamart.id);
+                  .map(datamart => datamart.id);
                 const metrics: DatamartUsersAnalyticsMetric[] = [
                   'sessions',
                   'users',
@@ -236,7 +236,7 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
                 };
 
                 Promise.all(
-                  datamartIds.map((datamartId) => {
+                  datamartIds.map(datamartId => {
                     return this._datamartUsersAnalyticsService.getAnalytics(
                       datamartId,
                       metrics,
@@ -247,18 +247,18 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
                     );
                   }),
                 )
-                  .then((table) => {
+                  .then(table => {
                     const analyticsByChannel = flatten(
-                      table.map((t) =>
+                      table.map(t =>
                         normalizeReportView<ChannelAnalyticsResource>(
                           t.data.report_view,
                         ),
                       ),
                     );
                     const channelsWithAnalytics: ChannelResourceShapeWithAnalytics[] = response.data.map(
-                      (channelRes) => {
+                      channelRes => {
                         const analytics = analyticsByChannel.find(
-                          (analyticsItem) =>
+                          analyticsItem =>
                             analyticsItem.channel_id !== undefined &&
                             analyticsItem.channel_id.toString() ===
                               channelRes.id,
@@ -276,7 +276,7 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
                       isFetchingChannels: false,
                     });
                   })
-                  .catch((err) => {
+                  .catch(err => {
                     this.setState({ isFetchingChannels: false });
                     notifyError(err);
                   });
@@ -284,12 +284,12 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
                 this.setState({ isFetchingChannels: false });
               }
             })
-            .catch((err) => {
+            .catch(err => {
               this.setState({ isFetchingChannels: false });
               notifyError(err);
             });
         })
-        .catch((err) => {
+        .catch(err => {
           this.setState({ isFetchingChannels: false });
           notifyError(err);
         });
@@ -345,7 +345,7 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
               state: { from: `${location.pathname}${location.search}` },
             });
           })
-          .catch((err) => {
+          .catch(err => {
             notifyError(err);
           });
       },
@@ -371,9 +371,9 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
       channelType === 'SITE' ? messages.newSite : messages.newMobileApplication;
 
     return (
-      <span className='mcs-card-button-left-margin'>
+      <span className="mcs-card-button-left-margin">
         <Link key={message.id} to={url}>
-          <Button key={message.id} type='primary'>
+          <Button key={message.id} type="primary">
             <FormattedMessage {...message} />
           </Button>
         </Link>
@@ -456,10 +456,10 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
       displayElement: (
         <div>
           <FormattedMessage {...messages.channelType} />
-          <Icon type='down' />
+          <Icon type="down" />
         </div>
       ),
-      selectedItems: channelTypeItems.filter((channelTypeItem) =>
+      selectedItems: channelTypeItems.filter(channelTypeItem =>
         filter.type.includes(channelTypeItem.key),
       ),
       items: channelTypeItems,
@@ -468,7 +468,7 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
       display: (item: ChannelTypeItem) => item.value,
       handleMenuClick: (items: ChannelTypeItem[]) => {
         this.updateLocationSearch({
-          type: items.map((i) => i.key),
+          type: items.map(i => i.key),
           currentPage: 1,
         });
       },
@@ -479,17 +479,17 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
     }
 
     return (
-      <div className='ant-layout'>
-        <Content className='mcs-content-container'>
-          <Row className='mcs-table-container'>
+      <div className="ant-layout">
+        <Content className="mcs-content-container">
+          <Row className="mcs-table-container">
             <div>
-              <div className='mcs-card-header mcs-card-title'>
-                <span className='mcs-card-title'>
+              <div className="mcs-card-header mcs-card-title">
+                <span className="mcs-card-title">
                   <FormattedMessage {...messages.channels} />
                 </span>
-                <span className='mcs-card-button'>{newButtonsList}</span>
+                <span className="mcs-card-button">{newButtonsList}</span>
               </div>
-              <hr className='mcs-separator' />
+              <hr className="mcs-separator" />
               <ChannelsTable
                 dataSource={channels}
                 totalChannels={totalChannels}
