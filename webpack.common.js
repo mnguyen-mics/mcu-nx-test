@@ -3,6 +3,7 @@ const path = require('path');
 const pkg = require('./package.json');
 const paths = require('./paths');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const VersionPlugin = require('./VersionPlugin.js');
 
 module.exports = {
   entry: {
@@ -90,6 +91,7 @@ module.exports = {
   },
 
   plugins: [
+    new VersionPlugin({ path: path.resolve('app') }),
     new ExtractTextPlugin('[name].css'),
     new webpack.DefinePlugin({
       PUBLIC_PATH: JSON.stringify('react'),
