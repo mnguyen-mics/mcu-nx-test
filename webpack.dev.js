@@ -21,18 +21,6 @@ module.exports = merge(common, {
     publicPath: paths.publicPath,
   },
 
-  optimization: {
-    runtimeChunk: 'single',
-    splitChunks: {
-      cacheGroups: {
-        vendor: {
-          test: /[\\/]node_modules[\\/]/,
-          name: 'vendors',
-          chunks: 'all',
-        },
-      },
-    },
-  },
   node: {
     fs: 'empty',
   },

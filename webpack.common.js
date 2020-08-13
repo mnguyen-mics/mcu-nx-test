@@ -83,6 +83,18 @@ module.exports = {
     ],
   },
 
+  optimization: {
+    splitChunks: {
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'react-vendors',
+          chunks: 'all',
+        },
+      },
+    },
+  },
+
   resolve: {
     alias: {
       Containers: path.resolve(__dirname, 'app/react/src/containers/'),
