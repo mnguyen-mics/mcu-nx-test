@@ -21,7 +21,7 @@ export interface CreateRequestType {
   EXPIRED_PASSWORD: string;
 }
 
-export interface MicsReduxState {
+export type MicsReduxState = {
   form: {
     [key: string]: any; // find a way to type all forms
   };
