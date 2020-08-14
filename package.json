@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@mapbox/mapbox-gl-draw": "1.1.1",
-    "@mediarithmics-private/mcs-components-library": "^1.2.0",
+    "@mediarithmics-private/mcs-components-library": "1.2.0",
     "@splitsoftware/splitio": "^10.9.2",
     "antd": "3.13.2",
     "assert": "^1.4.1",
