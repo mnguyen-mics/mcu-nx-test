@@ -4,6 +4,7 @@ type AudienceFeatureCommonType = 'Int' | 'Enum' | 'Boolean' | 'String' | 'Date';
 
 interface AudienceFeatureCommonResource {
   path: string[];
+  parameter_name: string;
   reference_type?: string;
   reference_model_type?: string;
 }
@@ -11,7 +12,7 @@ interface AudienceFeatureCommonResource {
 export interface AudienceFeatureVariable<T>
   extends AudienceFeatureCommonResource {
   type: T;
-  name: string;
+  field_name: string;
 }
 
 export interface AudienceFeatureIntervalVariable
