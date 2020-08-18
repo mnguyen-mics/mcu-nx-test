@@ -26,6 +26,7 @@ interface State {
 type FunnelProps = {
   datamartId: string;
   filter: FunnelFilter;
+  title: string;
 }
 
 type Props = FunnelProps &
@@ -160,12 +161,13 @@ class Funnel extends React.Component<Props, State> {
 
   render() {
     const { funnelData, stepDelta } = this.state;
+    const { title } = this.props;
 
     return (
       <Card>
         <div className="mcs-funnel" id="container" >
           <div className="mcs-funnel_header">
-            <h1 className="mcs-funnel_header_title">My Funnel name</h1>
+            <h1 className="mcs-funnel_header_title">{title}</h1>
             <button className="mcs-funnel_header_datePicker">
               over the last 14 days
                 </button>
