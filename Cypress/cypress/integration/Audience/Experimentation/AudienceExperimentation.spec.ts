@@ -33,7 +33,7 @@ describe('AudienceExperimentation Form Test', () => {
         .click()
       cy.get('.ant-dropdown-trigger > .compact').click({ force: true })
       cy.contains('Create Experimentation').click()
-      cy.get('.menu-item')
+      cy.get('.mcs-menu-list')
         .first()
         .click()
       cy.get('[class="ant-slider"]').click()

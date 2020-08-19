@@ -7,7 +7,7 @@ import {
   messages,
   AutomationBuilderPageRouteParams,
 } from '../AutomationBuilderPage';
-import ActionBar from '../../../../components/ActionBar';
+import { Actionbar } from '@mediarithmics-private/mcs-components-library';
 import { Button } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import AutomationSimpleForm, {
@@ -113,7 +113,7 @@ class AutomationActionBar extends React.Component<Props, State> {
     };
 
     return (
-      <ActionBar
+      <Actionbar
         paths={[
           {
             name: intl.formatMessage(messages.automationBuilder),
@@ -144,7 +144,7 @@ class AutomationActionBar extends React.Component<Props, State> {
             onHandleOk={handleOnOk}
           />
         )}
-      </ActionBar>
+      </Actionbar>
     );
   }
 }

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Layout, Row } from 'antd';
 import { FormLayoutActionbar } from '../../../../components/Layout';
 import { FormTitle } from '../../../../components/Form';
-import { MenuPresentational } from '../../../../components/FormMenu';
+import { MenuPresentational } from '@mediarithmics-private/mcs-components-library';
 import { FormattedMessage, injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { FormLayoutActionbarProps } from '../../../../components/Layout/FormLayoutActionbar';

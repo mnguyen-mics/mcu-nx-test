@@ -38,7 +38,7 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import DisplayCampaignDashboard from '../../../../../Campaigns/Display/Dashboard/ProgrammaticCampaign/DisplayCampaignDashboard';
 import messages from '../../../../../Campaigns/Display/Dashboard/messages';
 import { McsIcon } from '../../../../../../components';
-import ActionBar from '../../../../../../components/ActionBar';
+import { Actionbar } from '@mediarithmics-private/mcs-components-library';
 import { lazyInject } from '../../../../../../config/inversify.config';
 import { TYPES } from '../../../../../../constants/types';
 import { IDisplayCampaignService } from '../../../../../../services/DisplayCampaignService';
@@ -562,7 +562,7 @@ class DisplayCampaignAutomatedDashboardPage extends React.Component<
 
     return (
       <div className="ant-layout">
-        <ActionBar
+        <Actionbar
           paths={[
             {
               name:
@@ -582,7 +582,7 @@ class DisplayCampaignAutomatedDashboardPage extends React.Component<
             style={{ cursor: 'pointer' }}
             onClick={this.props.close}
           />
-        </ActionBar>
+        </Actionbar>
         <div className="ant-layout">
           <Content className="mcs-content-container">
             <CampaignDashboardHeader campaign={campaign.data.items[0]} />

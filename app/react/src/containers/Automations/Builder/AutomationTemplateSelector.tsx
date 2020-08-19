@@ -3,15 +3,15 @@ import { compose } from 'recompose';
 import { Layout, Row } from 'antd';
 import { defineMessages, FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { FormTitle } from '../../../components/Form';
-import ActionBar, { ActionBarProps } from '../../../components/ActionBar';
 import { QueryInputEvaluationPeriodUnit } from '../../../models/automations/automations';
 import { injectFeatures, InjectedFeaturesProps } from '../../Features';
 import { AutomationSelectedType } from './AutomationBuilderPage';
-import { MenuList } from '@mediarithmics-private/mcs-components-library';
+import { MenuList, Actionbar } from '@mediarithmics-private/mcs-components-library';
+import { ActionbarProps } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar';
 
 export interface AutomationTemplateSelectorProps {
   onSelectTemplate: (type: AutomationSelectedType, n?: number, p?: QueryInputEvaluationPeriodUnit) => void;
-  actionbarProps: ActionBarProps;
+  actionbarProps: ActionbarProps;
   disableReactToEvent: boolean;
 }
 
@@ -145,7 +145,7 @@ class AutomationTemplateSelector extends React.Component<Props, State> {
 
     return (
       <Layout>
-        <ActionBar {...actionbarProps} />
+        <Actionbar {...actionbarProps} />
         <Layout.Content className="mcs-content-container mcs-form-container text-center">
           <FormTitle title={messages.title} subtitle={messages.subTitleStep1} />
           {periodic

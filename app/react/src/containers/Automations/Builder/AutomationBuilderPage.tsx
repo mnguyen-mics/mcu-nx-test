@@ -31,7 +31,7 @@ import {
 } from '../../../models/automations/automations';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
 import { Loading } from '../../../components';
-import ActionBar from '../../../components/ActionBar';
+import { Actionbar } from '@mediarithmics-private/mcs-components-library';
 import { injectFeatures, InjectedFeaturesProps } from '../../Features';
 import {
   wizardValidObjectTypes,
@@ -389,7 +389,7 @@ class AutomationBuilderPage extends React.Component<Props, State> {
       if (isCheckingReactToEventAvailable)
         return (
           <Layout>
-            <ActionBar
+            <Actionbar
               paths={[
                 {
                   name: intl.formatMessage(messages.automationBuilder),

@@ -24,20 +24,6 @@
     padding: 20px 0;
     width: 100%;
 
-    .menu-sublist {
-      overflow: hidden;
-
-      .lines {
-        transition: max-height 0.5s ease-in;
-      }
-      .lines.closed {
-        max-height: 0px;
-      }
-      .lines.opened {
-        max-height: 1000px;
-      }
-    }
-
     .presentation {
       display: flex;
       display: -moz-flex;
@@ -56,8 +42,7 @@
         font-weight: bold;
         letter-spacing: 0.3px;
       }
-
-      .presentation-item {
+      .mcs-menu-presentational {
         background-color: #ffffff;
         border: @border-width-base @border-style-base @border-color-base;
         border-radius: @border-radius-sm @border-radius-sm;
@@ -93,21 +78,21 @@
         }
       }
 
-      .presentation-item:before {
+      .mcs-menu-presentational:before {
         content: '';
         float: left;
         padding-top: 100%;
       }
 
-      .presentation-item:hover {
+      .mcs-menu-presentational:hover {
         background-color: @hover-color;
       }
 
-      .presentation-item:focus {
+      .mcs-menu-presentational:focus {
         outline: none;
       }
 
-      .presentation-item:disabled {
+      .mcs-menu-presentational:disabled {
         background-color: @btn-disable-bg;
         border-color: @btn-disable-border;
         color: @btn-disable-color;

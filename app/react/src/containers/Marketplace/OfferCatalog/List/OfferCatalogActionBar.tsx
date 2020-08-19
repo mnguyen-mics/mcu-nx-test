@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import ActionBar from '../../../../components/ActionBar';
+import { Actionbar } from '@mediarithmics-private/mcs-components-library';
 import { RouteComponentProps } from 'react-router';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import messages from './messages';
@@ -33,7 +33,7 @@ class OfferCatalogActionBar extends React.Component<JoinedProps> {
     ];
 
     return (
-      <ActionBar paths={breadcrumbPaths} />
+      <Actionbar paths={breadcrumbPaths} />
     );
   }
 }

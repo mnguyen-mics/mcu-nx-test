@@ -28,7 +28,6 @@ import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../../components/Layout/FormLayoutActionbar';
 import messages from '../messages';
-import { Path } from '../../../../../components/ActionBar';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
@@ -42,6 +41,7 @@ import { SidebarWrapperProps } from '../../../../../components/Layout/ScrollspyS
 import { injectDrawer } from '../../../../../components/Drawer';
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import PartitionSelector from '../../../../Settings/DatamartSettings/Partitions/Common/PartitionSelector';
+import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 
 export const messagesMap: {
   [key: string]: FormattedMessage.MessageDescriptor;

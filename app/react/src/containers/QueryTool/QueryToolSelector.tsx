@@ -3,7 +3,7 @@ import GraphQLConsoleContainer from './GRAPHQL/GraphQLConsoleContainer';
 import OTQLConsoleContainer from './OTQL/OTQLConsoleContainer';
 import { Layout, Row } from 'antd';
 import { FormTitle } from '../../components/Form';
-import { MenuList } from '../../components/FormMenu';
+import { MenuList } from '@mediarithmics-private/mcs-components-library';
 import { defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { injectFeatures, InjectedFeaturesProps } from '../Features';
@@ -21,25 +21,22 @@ interface State {
 
 const messages = defineMessages({
   title: {
-    id: "queryselector.title",
-    defaultMessage: "Query Language"
+    id: 'queryselector.title',
+    defaultMessage: 'Query Language',
   },
   subTitle: {
-    id: "queryselector.subtitle",
-    defaultMessage: "Choose your Query Language"
-  }
-})
+    id: 'queryselector.subtitle',
+    defaultMessage: 'Choose your Query Language',
+  },
+});
 
-type Props = IQueryToolSelectorProps & InjectedFeaturesProps
+type Props = IQueryToolSelectorProps & InjectedFeaturesProps;
 
-class QueryToolSelector extends React.Component<
-  Props,
-  State
-> {
+class QueryToolSelector extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      queryLanguage: props.hasFeature('datamart-graphql') ? undefined : 'OTQL'
+      queryLanguage: props.hasFeature('datamart-graphql') ? undefined : 'OTQL',
     };
   }
 
@@ -65,14 +62,8 @@ class QueryToolSelector extends React.Component<
           <FormTitle title={messages.title} subtitle={messages.subTitle} />
           <Row className="mcs-selector_container">
             <Row className="menu">
-              <MenuList
-                title={"OTQL"}
-                select={this.onSelect("OTQL")}
-              />
-              <MenuList
-                title={"GraphQL"}
-                select={this.onSelect("GRAPHQL")}
-              />
+              <MenuList title={'OTQL'} select={this.onSelect('OTQL')} />
+              <MenuList title={'GraphQL'} select={this.onSelect('GRAPHQL')} />
             </Row>
           </Row>
         </Layout.Content>
@@ -81,6 +72,6 @@ class QueryToolSelector extends React.Component<
   }
 }
 
-export default compose<Props, IQueryToolSelectorProps>(
-  injectFeatures
-)(QueryToolSelector)
+export default compose<Props, IQueryToolSelectorProps>(injectFeatures)(
+  QueryToolSelector,
+);

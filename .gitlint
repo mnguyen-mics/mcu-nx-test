@@ -15,7 +15,7 @@ regex=^(:?Revert ")?[A-Z]+-[^ ]+ [^ ]+
 
 [body-max-line-length]
 # With 72, we cant paste stacktraces
-line-length=112
+line-length=200
 
 [author-valid-email]
 regex=[^@]+@(mediarithmics.com|users.noreply.github.com)

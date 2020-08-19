@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 
-import Actionbar from '../../../../components/ActionBar';
+import { Actionbar } from '@mediarithmics-private/mcs-components-library';
 import McsIcon from '../../../../components/McsIcon';
 import messages from './messages';
 

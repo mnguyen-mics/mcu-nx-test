@@ -2,7 +2,7 @@ import * as React from 'react';
 import { DisplayCampaignFormData } from './domain';
 import { ConfigProps, reduxForm, InjectedFormProps, Form, GenericFieldArray, Field, FieldArray } from 'redux-form';
 import { Omit } from '../../../../utils/Types';
-import { Path } from '../../../../components/ActionBar';
+import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';

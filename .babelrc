@@ -6,8 +6,17 @@
   ],
   "plugins": [
     "react-hot-loader/babel",
-    ["react-intl", {
-      "messagesDir": "./build/messages"
-    }]
-  ]
+  ],
+  "env": {
+    "production": {
+      "plugins": [
+        [
+          "react-intl",
+          {
+            "messagesDir": "./build/messages"
+          }
+        ]
+      ]
+    }
+  }
 }
