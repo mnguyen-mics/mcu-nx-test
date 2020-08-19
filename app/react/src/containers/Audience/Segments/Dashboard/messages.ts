@@ -192,6 +192,8 @@ export default defineMessages({
   },
 });
 
+type ExtraKeys = 'last_modified_ts';
+
 export const audienceSegmentTypeMessages: {
   [key in AudienceSegmentType]: FormattedMessage.MessageDescriptor;
 } = defineMessages({
@@ -266,6 +268,7 @@ export const userQuerySegmentSubtypeMessages: {
 const audienceSegmentPropertiesMessageMap: {
   [propertyName in
     | keyof AudienceSegmentResource
+    | ExtraKeys
     | HistoryKeys]: FormattedMessage.MessageDescriptor;
 } = defineMessages({
   id: {
@@ -336,6 +339,10 @@ const audienceSegmentPropertiesMessageMap: {
     id: 'audience.segments.fields.creationTs',
     defaultMessage: 'Creation Timestamp',
   },
+  last_modified_ts: {
+    id: 'audience.segments.fields.lastModifiedTs',
+    defaultMessage: 'Last Modified Timestamp',
+  },
   history_title: {
     id: 'audience.segments.resourceHistory.title',
     defaultMessage: 'Audience Segment History',
@@ -347,7 +354,7 @@ const audienceSegmentPropertiesMessageMap: {
 });
 
 const audienceSegmentPropertiesFormatMap: {
-  [propertyName in keyof AudienceSegmentResource | HistoryKeys]: {
+  [propertyName in keyof AudienceSegmentResource | ExtraKeys | HistoryKeys]: {
     format: ValueFormat;
     messageMap?: { [key: string]: FormattedMessage.MessageDescriptor };
   };
@@ -372,6 +379,7 @@ const audienceSegmentPropertiesFormatMap: {
   mobile_cookie_ids_count: { format: 'INTEGER' },
   mobile_ad_ids_count: { format: 'INTEGER' },
   creation_ts: { format: 'TIMESTAMP' },
+  last_modified_ts: { format: 'TIMESTAMP' },
   history_title: { format: 'STRING' },
   history_resource_type: { format: 'STRING' },
 };
