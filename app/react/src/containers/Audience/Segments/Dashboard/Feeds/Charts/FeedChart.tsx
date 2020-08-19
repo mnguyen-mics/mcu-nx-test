@@ -18,7 +18,7 @@ import injectThemeColors, {
 import McsMoment, { formatMcsDate } from '../../../../../../utils/McsMoment';
 import { McsDateRangeValue } from '../../../../../../components/McsDateRangePicker';
 import { Card } from 'antd';
-import StackedBarPlot from '../../../../../../components/Charts/CategoryBased/StackedBarPlot';
+import {StackedBarPlot} from '@mediarithmics-private/mcs-components-library';
 import moment from 'moment';
 
 interface FeedChartProps {
@@ -111,43 +111,27 @@ class FeedChart extends React.Component<Props, State> {
         const upserts = normalized.filter(rv => rv.sync_type === 'UPSERT');
         const deletes = normalized.filter(rv => rv.sync_type === 'DELETE');
 
-        let feedReports = upserts.map((upsertReport): FeedReport => {
-          const deleteReport = deletes.find(r => r.date_yyyy_mm_dd === upsertReport.date_yyyy_mm_dd);
-
-          if (feedStatsUnit === "USER_POINTS") {
-            return {
-              day: upsertReport.date_yyyy_mm_dd,
-              upserted: upsertReport.uniq_user_points_count,
-              deleted: deleteReport
-                ? deleteReport.uniq_user_points_count
-                : 0,
-              unit: feedStatsUnit
-            };
-          } else if (feedStatsUnit === "USER_IDENTIFIERS") {
-            return {
-              day: upsertReport.date_yyyy_mm_dd,
-              upserted: upsertReport.uniq_user_identifiers_count,
-              deleted: deleteReport
-                ? deleteReport.uniq_user_identifiers_count
-                : 0,
-              unit: feedStatsUnit
-            };
-          } else {
-            throw new Error(`Unsupported unit: ${feedStatsUnit}`);
-          }
+        let feedReports: FeedReport[] = allDates.map(day => {
+          const upsertedOnDay = upserts.find(r => r.date_yyyy_mm_dd === day);
+          const deletedOnDay = deletes.find(r => r.date_yyyy_mm_dd === day);
           
-        });
-
-        allDates.map(date => {
-          if (!feedReports.find(report => report.day === date)) {
-            feedReports.push({
-              day: date,
-              upserted: 0,
-              deleted: 0,
-              unit: feedStatsUnit
-            });
+          return {
+            day: day,
+            upserted:
+              upsertedOnDay
+                ? feedStatsUnit === "USER_POINTS"
+                  ? upsertedOnDay.uniq_user_points_count
+                  : upsertedOnDay.uniq_user_identifiers_count
+                : 0,
+            deleted:
+              deletedOnDay
+                ? feedStatsUnit === "USER_POINTS"
+                  ? deletedOnDay.uniq_user_points_count
+                  : deletedOnDay.uniq_user_identifiers_count
+                : 0,
+            unit: feedStatsUnit
           }
-        });
+        })
 
         feedReports = feedReports.sort((report1, report2) => report1.day.localeCompare(report2.day));
 
@@ -178,7 +162,7 @@ class FeedChart extends React.Component<Props, State> {
   }
 
   render() {
-    const { colors, intl } = this.props;
+    const { colors, intl: { formatMessage } } = this.props;
     const { dataSource, isLoading } = this.state;
 
     const metrics =
@@ -193,12 +177,12 @@ class FeedChart extends React.Component<Props, State> {
           if(metric === "upserted") {
             return {
               key: metric,
-              message: messagesMap.upserted_user_points,
+              message: formatMessage(messagesMap.upserted_user_points),
             };
           } else if(metric === "deleted") {
             return {
               key: metric,
-              message: messagesMap.deleted_user_points,
+              message: formatMessage(messagesMap.deleted_user_points),
             };
           } else {
             throw new Error(`Unsupported metric: ${metric}`)
@@ -207,12 +191,12 @@ class FeedChart extends React.Component<Props, State> {
           if(metric === "upserted") {
             return {
               key: metric,
-              message: messagesMap.upserted_identifiers,
+              message: formatMessage(messagesMap.upserted_identifiers),
             };
           } else if(metric === "deleted") {
             return {
               key: metric,
-              message: messagesMap.deleted_identifiers,
+              message: formatMessage(messagesMap.deleted_identifiers),
             };
           } else {
             throw new Error(`Unsupported metric: ${metric}`)
@@ -233,7 +217,7 @@ class FeedChart extends React.Component<Props, State> {
         ) : (
             <Card
               className="mcs-card-container compact"
-              title={intl.formatMessage(messagesMap.graph_title)}
+              title={formatMessage(messagesMap.graph_title)}
             >
               <StackedBarPlot
                 dataset={dataSource as any}
