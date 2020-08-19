@@ -4,7 +4,6 @@ import * as React from 'react';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { SaveAsExportModal, SaveAsUserQuerySegmentModal } from '.';
-import ActionBar, { Path } from '../../../components/ActionBar';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
@@ -13,6 +12,8 @@ import { NewUserQuerySimpleFormData } from './NewUserQuerySegmentSimpleForm';
 import { DataResponse } from '../../../services/ApiService';
 import { QueryResource } from '../../../models/datamart/DatamartResource';
 import Convert2Otql from './Convet2Otql';
+import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
+import { Actionbar } from '@mediarithmics-private/mcs-components-library';
 
 export interface SaveQueryAsActionBarProps {
   saveAsUserQuery?: (formData: NewUserQuerySimpleFormData) => Promise<any>;
@@ -113,7 +114,7 @@ class SaveQueryAsActionBar extends React.Component<Props, State> {
     );
 
     return (
-      <ActionBar paths={breadcrumb}>
+      <Actionbar paths={breadcrumb}>
         <Dropdown overlay={saveAsMenu} trigger={['click']}>
           <Button className="mcs-primary" type="primary">
             <FormattedMessage
@@ -148,7 +149,7 @@ class SaveQueryAsActionBar extends React.Component<Props, State> {
           confirmLoading={this.state.exportModalLoading}
           csvExportDisabled={csvExportDisabled}
         />
-      </ActionBar>
+      </Actionbar>
     );
   }
 }

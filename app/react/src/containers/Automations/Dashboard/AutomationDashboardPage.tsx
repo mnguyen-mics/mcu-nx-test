@@ -11,9 +11,10 @@ import { IAutomationFormService } from '../Edit/AutomationFormService';
 import { Loading, McsIcon } from '../../../components';
 import { Layout, Button } from 'antd';
 import AutomationBuilder from '../Builder/AutomationBuilder';
-import ActionBar, { Path } from '../../../components/ActionBar';
 import { IScenarioService } from '../../../services/ScenarioService';
 import { AutomationStatus } from '../../../models/automations/automations';
+import { Actionbar } from '@mediarithmics-private/mcs-components-library';
+import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 
 export interface AutomationDashboardrams {
   organisationId: string;
@@ -165,7 +166,7 @@ class AutomationDashboardPage extends React.Component<Props, State> {
     return (
       <div style={{ height: '100%', display: 'flex' }}>
         <Layout>
-          <ActionBar
+          <Actionbar
             paths={breadCrumbPaths}
           >
             {automationFormData.automation && automationFormData.automation.status && automationFormData.automation.id ? <Button onClick={this.onStatusClick(automationFormData.automation.id, automationFormData.automation.status)} className={"mcs-primary"} type="primary">
@@ -174,7 +175,7 @@ class AutomationDashboardPage extends React.Component<Props, State> {
             <Button onClick={this.onEditClick}>
               <McsIcon type={"pen"} /> Edit
             </Button>
-          </ActionBar>
+          </Actionbar>
           
           <Layout.Content
             className={`mcs-content-container`}

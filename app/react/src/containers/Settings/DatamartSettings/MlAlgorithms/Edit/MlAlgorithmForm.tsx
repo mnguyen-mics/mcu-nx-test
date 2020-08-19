@@ -3,7 +3,7 @@ import { ConfigProps, reduxForm, InjectedFormProps, Form } from 'redux-form';
 import { RouteComponentProps, withRouter } from "react-router";
 import { InjectedIntlProps, injectIntl } from "react-intl";
 import { compose } from 'recompose';
-import { Path } from '../../../../../components/ActionBar';
+import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import messages from '../messages';
 import { McsFormSection } from '../../../../../utils/FormHelper';
 import GeneralFormSection from './Section/GeneralFormSection';

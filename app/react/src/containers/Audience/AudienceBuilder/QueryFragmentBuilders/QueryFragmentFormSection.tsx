@@ -92,7 +92,7 @@ class QueryFragmentFormSection extends React.Component<Props> {
         parameters[v.from] = undefined;
         parameters[v.to] = undefined;
       } else {
-        parameters[v.name] = undefined;
+        parameters[v.field_name] = undefined;
       }
     });
     const newFeature: AudienceBuilderParametricPredicateNode = {

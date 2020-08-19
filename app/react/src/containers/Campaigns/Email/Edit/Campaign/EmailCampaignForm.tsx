@@ -19,7 +19,7 @@ import {
 import { BlastFormSectionProps } from './Sections/BlastFormSection';
 import { EmailCampaignFormData } from '../domain';
 import messages from '../messages';
-import { Path } from '../../../../../components/ActionBar';
+import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../../components/Layout/FormLayoutActionbar';

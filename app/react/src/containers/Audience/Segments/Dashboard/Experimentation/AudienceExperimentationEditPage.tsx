@@ -3,7 +3,6 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import { InjectedFormProps, ConfigProps } from 'redux-form';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import { Path } from '../../../../../components/ActionBar';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
@@ -28,6 +27,7 @@ import {
 } from '../../../../../models/audiencesegment/AudienceSegmentResource';
 import { message } from 'antd';
 import { getFormattedExperimentationQuery } from '../../../Dashboard/domain';
+import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 
 type Engagement = 'E_COMMERCE_ENGAGEMENT' | 'CHANNEL_ENGAGEMENT';
 

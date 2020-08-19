@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { InjectedIntlProps, FormattedMessage, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
-import ActionBar from '../../../components/ActionBar';
 import { messages } from './constants';
 import { Dropdown, Button, Menu } from 'antd';
 import { SaveAsUserQuerySegmentModal } from '../../QueryTool/SaveAs';
 import { ClickParam } from 'antd/lib/menu';
 import { NewUserQuerySimpleFormData } from '../../QueryTool/SaveAs/NewUserQuerySegmentSimpleForm';
+import { Actionbar } from '@mediarithmics-private/mcs-components-library';
 
 interface AudienceBuilderActionbarProps {
   save: () => void;
@@ -55,7 +55,7 @@ class AudienceBuilderActionbar extends React.Component<Props, State> {
       </Menu>
     );
     return (
-      <ActionBar
+      <Actionbar
         paths={[
           {
             name: intl.formatMessage(messages.title),
@@ -77,7 +77,7 @@ class AudienceBuilderActionbar extends React.Component<Props, State> {
           visible={this.state.segmentModalVisible}
           confirmLoading={this.state.segmentModalLoading}
         />
-      </ActionBar>
+      </Actionbar>
     );
   }
 }

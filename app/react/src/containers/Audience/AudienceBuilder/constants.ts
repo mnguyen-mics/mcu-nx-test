@@ -107,28 +107,7 @@ export const INITIAL_AUDIENCE_BUILDER_FORM_DATA: AudienceBuilderFormData = {
         type: 'GROUP',
         boolean_operator: 'AND',
         expressions: [
-          {
-            type: 'PARAMETRIC_PREDICATE',
-            id: '48897',
-            parameters: {
-              age: ['18'],
-            },
-          },
-          {
-            type: 'PARAMETRIC_PREDICATE',
-            id: '48896',
-            parameters: {
-              gender: ['male'],
-              languages: ['FR', 'EN'],
-            },
-          },
-          // {
-          //     type: 'PARAMETRIC_PREDICATE',
-          //     id: '48899',
-          //     parameters: {
-          //       languages: 'FR',
-          //     },
-          // },
+          // TODO set default expressions in some way
         ],
       },
     ],

@@ -4,7 +4,7 @@ import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Layout } from 'antd';
 import CampaignDashboardHeader from '../../../../../Campaigns/Common/CampaignDashboardHeader';
-import { Card } from '@mediarithmics-private/mcs-components-library';
+import { Card, Actionbar } from '@mediarithmics-private/mcs-components-library';
 import {
   EMAIL_DASHBOARD_SEARCH_SETTINGS,
   EmailDashboardSearchSettings,
@@ -28,7 +28,6 @@ import ReportService from '../../../../../../services/ReportService';
 import log from '../../../../../../utils/Logger';
 import { normalizeReportView } from '../../../../../../utils/MetricHelper';
 import { McsIcon } from '../../../../../../components';
-import ActionBar from '../../../../../../components/ActionBar';
 import { lazyInject } from '../../../../../../config/inversify.config';
 import { IEmailCampaignService } from '../../../../../../services/EmailCampaignService';
 import { TYPES } from '../../../../../../constants/types';
@@ -249,7 +248,7 @@ class EmailCampaignAutomatedDashboardPage extends React.Component<
 
     return (
       <div className="ant-layout">
-        <ActionBar
+        <Actionbar
           paths={[
             {
               name: campaign ? campaign.name : ''
@@ -263,7 +262,7 @@ class EmailCampaignAutomatedDashboardPage extends React.Component<
             style={{cursor: 'pointer'}}
             onClick={this.props.close}
           />
-        </ActionBar> 
+        </Actionbar> 
         <div className="ant-layout">
           <Content className="mcs-content-container">
             <CampaignDashboardHeader campaign={campaign} />

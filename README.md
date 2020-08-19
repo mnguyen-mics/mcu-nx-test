@@ -37,62 +37,16 @@ Prerequisites
 System:
 * node.js (version >= 0.12)
 * npm
-* ruby
-
-Node packages:
-* grunt-cli (-g)
-
-Ruby gems:
-* compass
-
 
 ### Details
 
 Here is the configuration of our build machine (so you can reproduce the build on your side) :
 
-#### To install global packages / gems in your home :
+#### To install global packages :
 
 In `~/.npmrc` :
 ```
 prefix=~/.local
-```
-
-In `~/.gemrc` :
-```
-gemhome: /home/your_user/.gem
-gem: --no-ri --no-rdoc
-```
-
-#### install system dependencies
-
-Here on Debian :
-
-```
-sudo aptitude install ruby1.9.3 build-essential libpng-dev zlib1g-dev imagemagick
-```
-
-Here for the mac users:
-make sure xcode is installed on your mac and follow those steps to install libpng-dev 
-http://mac-dev-env.patrickbougie.com/libpng/
-```
-xcode-select --install
-brew install ImageMagick
-```
-
-#### update path
-
-Before the build or in your bashrc :
-```
-export PATH=$PATH:~/.gem/bin:~/.local/bin
-export GEM_PATH=$(gem environment gempath)
-export GEM_HOME=~/.gem
-```
-
-#### install project dependencies
-
-```
-npm install -g grunt-cli
-gem install compass
 ```
 
 #### optional : set the version of nodejs

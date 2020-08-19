@@ -11,7 +11,7 @@ import {
   getFormValues,
 } from 'redux-form';
 import { ObjectNodeFormData, FORM_ID, FrequencyFormData } from './domain';
-import { Path } from '../../../../components/ActionBar';
+import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { Layout, Form } from 'antd';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,

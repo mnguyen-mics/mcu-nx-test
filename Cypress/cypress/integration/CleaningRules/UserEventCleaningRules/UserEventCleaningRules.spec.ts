@@ -74,7 +74,7 @@ it('should test that only DRAFT cleaning rules can be deleted and updated',()=>{
         cy.url().should('contain','datamart/cleaning_rules')
         // Add new cleaning rule
         cy.get('button').contains('New Cleaning Rule').click({force:true})
-        cy.get('div.title').contains(`${data.datamartName}`).click()
+        cy.contains(`${data.datamartName}`).click()
         cy.get('#eventNameFilter').type('test_2')
         cy.get('button').contains('Save User Event Cleaning Rule').click({force:true})
         cy.url().should('contain',`datamart/cleaning_rules`)

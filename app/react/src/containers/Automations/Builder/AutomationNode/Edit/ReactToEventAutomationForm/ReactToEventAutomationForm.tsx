@@ -11,7 +11,6 @@ import {
   Field,
   InjectedFormProps,
 } from 'redux-form';
-import { Path } from '../../../../../../components/ActionBar';
 import {
   injectIntl,
   InjectedIntlProps,
@@ -68,6 +67,7 @@ import { ObjectLikeTypeInfoResource } from '../../../../../../models/datamart/gr
 import { FieldNodeFormData } from '../../../../../QueryTool/JSONOTQL/Edit/domain';
 import { QueryInputAutomationFormData } from './../../../AutomationNode/Edit/domain';
 import { QueryInputNodeResource } from '../../../../../../models/automations/automations';
+import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 
 const FORM_ID = 'reactToEventForm';
 

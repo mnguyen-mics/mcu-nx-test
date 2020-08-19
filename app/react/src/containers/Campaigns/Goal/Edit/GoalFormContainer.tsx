@@ -13,7 +13,7 @@ import {
   QueryLanguage,
 } from '../../../../models/datamart/DatamartResource';
 import { Omit } from '../../../../utils/Types';
-import { Path } from '../../../../components/ActionBar';
+import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { EditContentLayout } from '../../../../components/Layout';
 import DatamartSelector from '../../../../containers/Datamart/DatamartSelector';
 import {

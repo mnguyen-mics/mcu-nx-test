@@ -7,7 +7,7 @@ import { BasicProps } from 'antd/lib/layout/layout';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../../components/Layout/FormLayoutActionbar';
-import { Path } from '../../../../../components/ActionBar';
+import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 
 import ScrollspySider, {
   SidebarWrapperProps,

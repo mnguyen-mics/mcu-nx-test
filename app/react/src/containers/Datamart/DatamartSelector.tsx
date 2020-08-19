@@ -6,13 +6,12 @@ import { defineMessages } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { DatamartResource } from '../../models/datamart/DatamartResource';
 import { FormTitle } from '../../components/Form';
-import { MenuList } from '../../components/FormMenu';
+import { MenuList, Actionbar } from '@mediarithmics-private/mcs-components-library';
 import { MicsReduxState } from '../../utils/ReduxHelper';
 import { UserProfileResource } from '../../models/directory/UserProfileResource';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../components/Layout/FormLayoutActionbar';
-import ActionBar from '../../components/ActionBar';
 
 export interface DatamartSelectorProps {
   onSelect: (datamart: DatamartResource) => void;
@@ -51,7 +50,7 @@ class DatamartSelector extends React.Component<Props> {
     return (
       <Layout>
         {isMainlayout ? (
-          <ActionBar {...actionbarProps} />
+          <Actionbar {...actionbarProps} />
         ) : (
           <FormLayoutActionbar {...actionbarProps} />
         )}

@@ -25,6 +25,7 @@ import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IExportService } from '../../../services/Library/ExportService';
 import { Labels } from '../../Labels';
+import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 
 const { Content } = Layout;
 
@@ -57,7 +58,6 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
       match: {
         params: { exportId },
       },
-      location: { search },
     } = this.props;
 
     if (
@@ -65,8 +65,7 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
       (this.state.exportExecutions.items[0].status === 'PENDING' ||
         this.state.exportExecutions.items[0].status === 'RUNNING')
     ) {
-      const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
-      this.fetchExportExecution(exportId, filter);
+      this.fetchExportExecution(exportId);
     }
   }, 5000);
 
@@ -104,9 +103,7 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
         state: { reloadDataSource: true },
       });
     } else {
-      const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
-
-      this.fetchExportExecution(exportId, filter);
+      this.fetchExportExecution(exportId);
     }
   }
 
@@ -137,8 +134,7 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
           state: { reloadDataSource: organisationId !== organisationId },
         });
       } else {
-        const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
-        this.fetchExportExecution(exportId, filter);
+        this.fetchExportExecution(exportId);
       }
     }
   }
@@ -147,7 +143,11 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
     window.clearInterval(this.fetchLoop);
   }
 
-  fetchExportExecution = (exportId: string, options: object) => {
+  fetchExportExecution = (exportId: string) => {
+    const {
+      location: { search }
+    } = this.props;
+    const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
     const fetchExport = this._exportService
       .getExport(exportId)
       .then(res => res.data)
@@ -156,7 +156,7 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
       )
       .catch(err => log.error(err));
     const fetchExportExecution = this._exportService
-      .getExportExecutions(exportId, options)
+      .getExportExecutions(exportId, getPaginatedApiParam(filter.currentPage, filter.pageSize))
       .then(res =>
         this.setState({
           exportExecutions: {
@@ -197,13 +197,13 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
     } else if (execution.status === 'SUCCEEDED') {
       (window as any).location = `${
         (window as any).MCS_CONSTANTS.API_URL
-      }/v1/exports/${this.props.match.params.exportId}/executions/${
+        }/v1/exports/${this.props.match.params.exportId}/executions/${
         execution.id
-      }/files/technical_name=${
+        }/files/technical_name=${
         execution.result.output_files[0]
-      }?access_token=${encodeURIComponent(
-        LocalStorage.getItem('access_token')!,
-      )}`;
+        }?access_token=${encodeURIComponent(
+          LocalStorage.getItem('access_token')!,
+        )}`;
     }
   };
 
@@ -277,14 +277,14 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
       onShowSizeChange: (current: number, size: number) =>
         this.updateLocationSearch({
           pageSize: size,
+          currentPage: 1,
         }),
       total: exportExecutions.total,
     };
 
     const onNewExecution = () => {
       return this.fetchExportExecution(
-        this.props.match.params.exportId,
-        filter,
+        this.props.match.params.exportId
       );
     };
 
@@ -305,8 +305,8 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
           archiveObject={handleArchive}
           isExportExecutionRunning={
             exportExecutions.items.length &&
-            (exportExecutions.items[0].status === 'PENDING' ||
-              exportExecutions.items[0].status === 'RUNNING')
+              (exportExecutions.items[0].status === 'PENDING' ||
+                exportExecutions.items[0].status === 'RUNNING')
               ? true
               : false
           }

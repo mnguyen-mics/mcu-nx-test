@@ -68,7 +68,7 @@ class AudienceFeatureLayout extends React.Component<Props, State> {
     const { formPath } = this.props;
     let name;
     if (!isAudienceFeatureIntervalVariable(featureVariable)) {
-      name = `${formPath}.parameters.${featureVariable.name}`;
+      name = `${formPath}.parameters.${featureVariable.field_name}`;
     } else {
       name = '';
     }
@@ -88,7 +88,7 @@ class AudienceFeatureLayout extends React.Component<Props, State> {
             name={name}
             component={FormMultiTag}
             formItemProps={{
-              label: featureVariable.name,
+              label: featureVariable.field_name,
               ...fieldGridConfig,
             }}
           />
@@ -99,7 +99,7 @@ class AudienceFeatureLayout extends React.Component<Props, State> {
             name={name}
             component={DefaultSelect}
             formItemProps={{
-              label: featureVariable.name,
+              label: featureVariable.field_name,
               ...fieldGridConfig,
             }}
           />
@@ -110,7 +110,7 @@ class AudienceFeatureLayout extends React.Component<Props, State> {
             name={name}
             component={FormInput}
             formItemProps={{
-              label: featureVariable.name,
+              label: featureVariable.field_name,
               ...fieldGridConfig,
             }}
           />
@@ -121,7 +121,7 @@ class AudienceFeatureLayout extends React.Component<Props, State> {
             name={name}
             component={FormInput}
             formItemProps={{
-              label: featureVariable.name,
+              label: featureVariable.field_name,
               ...fieldGridConfig,
             }}
           />
@@ -132,7 +132,7 @@ class AudienceFeatureLayout extends React.Component<Props, State> {
             name={name}
             component={FormRelativeAbsoluteDate}
             formItemProps={{
-              label: featureVariable.name,
+              label: featureVariable.field_name,
             }}
             unixTimstamp={true}
           />

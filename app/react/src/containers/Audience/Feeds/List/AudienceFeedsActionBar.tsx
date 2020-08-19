@@ -6,7 +6,6 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import { compose } from 'recompose';
-import Actionbar from '../../../../components/ActionBar';
 import ExportService from '../../../../services/ExportService';
 import { Button, message } from 'antd';
 import { McsIcon } from '../../../../components';
@@ -21,6 +20,7 @@ import messages from '../messages';
 import { IAudienceTagFeedService } from '../../../../services/AudienceTagFeedService';
 import { IAudienceExternalFeedService } from '../../../../services/AudienceExternalFeedService';
 import { AudienceTagFeed } from '../../../../models/Plugins';
+import { Actionbar } from '@mediarithmics-private/mcs-components-library';
 
 type Props = RouteComponentProps<{ organisationId: string }> &
   InjectedIntlProps &

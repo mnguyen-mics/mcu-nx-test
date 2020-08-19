@@ -5,7 +5,6 @@ import {
   reduxForm,
 } from 'redux-form';
 import { FORM_ID, OnSegmentExitInputAutomationFormData } from '../domain';
-import { Path } from '../../../../../../components/ActionBar';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import * as React from 'react';
 import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
@@ -18,6 +17,7 @@ import FormLayoutActionbar, {
 import { McsFormSection } from '../../../../../../utils/FormHelper';
 import OnSegmentExitInputGeneralSectionForm from './OnSegmentExitInputGeneralSectionForm';
 import { StorylineNodeModel } from '../../../domain';
+import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 
 const { Content } = Layout;
 

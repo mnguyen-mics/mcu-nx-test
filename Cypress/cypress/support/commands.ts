@@ -103,6 +103,9 @@ Cypress.Commands.add('createSegmentFromUI', type => {
         force: true,
         parseSpecialCharSequences: false
       })
+  } else if (type === 'User Query') {
+    cy.contains('Edit Query').click()
+    cy.contains('Update').click()
   }
 
   // Save the new segment

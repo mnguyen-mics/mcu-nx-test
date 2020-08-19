@@ -40,7 +40,7 @@ import {
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { DataResponse } from '../../../../../services/ApiService';
 import { IDatamartUsersAnalyticsService } from '../../../../../services/DatamartUsersAnalyticsService';
-import { uniq, flatten } from 'lodash';
+import { flatten } from 'lodash';
 import McsMoment from '../../../../../utils/McsMoment';
 import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import {
@@ -63,7 +63,6 @@ interface ChannelsListPageState {
   isFetchingChannels: boolean;
   noChannelYet: boolean;
   filter: ChannelFilter;
-  shouldDisplayAnalyticsFeature: boolean;
 }
 
 interface MapStateToProps {
@@ -100,7 +99,6 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
         keywords: '',
         type: [],
       },
-      shouldDisplayAnalyticsFeature: false,
     };
   }
 
@@ -136,8 +134,6 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
 
     const { filter } = this.state;
 
-    this.fetchDatafarm(organisationId);
-
     this.fetchChannels(organisationId, filter, fixedFilterOpt);
   }
 
@@ -172,21 +168,6 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
     }
   }
 
-  fetchDatafarm = (organisationId: string) => {
-    const { notifyError } = this.props;
-    this._datamartService
-      .getDatamarts(organisationId, {allow_administrator: true})
-      .then(res =>
-        this.setState({
-          shouldDisplayAnalyticsFeature: res.data.some(datamart => isUsersAnalyticsSupportedByDatafarm(datamart.datafarm)
-          )
-        }),
-      )
-      .catch(err => {
-        notifyError(err);
-      });
-    };
-
   fetchChannels = (
     organisationId: string,
     filter: ChannelFilter,
@@ -214,77 +195,99 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
       this._channelService
         .getChannelsByOrganisation(organisationId, buildGetChannelsOptions())
         .then(response => {
-
           this.setState({
             channels: response.data,
             totalChannels: response.total ? response.total : response.count,
           });
 
-          if (this.state.shouldDisplayAnalyticsFeature) {
+          this._datamartService
+            .getDatamarts(organisationId, { allow_administrator: true })
+            .then(datamartsResponse => {
+              if (
+                datamartsResponse.data.some(datamart =>
+                  isUsersAnalyticsSupportedByDatafarm(datamart.datafarm),
+                )
+              ) {
+                const datamartIds = datamartsResponse.data
+                  .filter(datamart =>
+                    isUsersAnalyticsSupportedByDatafarm(datamart.datafarm),
+                  )
+                  .map(datamart => datamart.id);
+                const metrics: DatamartUsersAnalyticsMetric[] = [
+                  'sessions',
+                  'users',
+                ];
+                const from = new McsMoment('now-8d');
+                const to = new McsMoment('now-1d');
+                const dimensions: DatamartUsersAnalyticsDimension[] = [
+                  'channel_id',
+                ];
+                const dimensionFilterClauses: DimensionFilterClause = {
+                  operator: 'OR',
+                  filters: [
+                    {
+                      dimension_name: 'type',
+                      not: false,
+                      operator: 'IN_LIST',
+                      expressions: ['SITE_VISIT', 'APP_VISIT'],
+                      case_sensitive: false,
+                    },
+                  ],
+                };
 
-          const datamartIds = uniq(
-            response.data.map(channel => channel.datamart_id),
-          );
-          const metrics: DatamartUsersAnalyticsMetric[] = ['sessions', 'users'];
-          const from = new McsMoment('now-8d');
-          const to = new McsMoment('now-1d');
-          const dimensions: DatamartUsersAnalyticsDimension[] = ['channel_id'];
-          const dimensionFilterClauses: DimensionFilterClause = {
-            operator: 'OR',
-            filters: [
-              {
-                dimension_name: 'type',
-                not: false,
-                operator: 'IN_LIST',
-                expressions: ['SITE_VISIT', 'APP_VISIT'],
-                case_sensitive: false,
-              },
-            ],
-          };
-
-          Promise.all(
-            datamartIds.map(datamartId => {
-              return this._datamartUsersAnalyticsService.getAnalytics(
-                datamartId,
-                metrics,
-                from,
-                to,
-                dimensions,
-                dimensionFilterClauses,
-              );
-            }),
-          )
-            .then(table => {
-              const analyticsByChannel = flatten(
-                table.map(t => normalizeReportView<ChannelAnalyticsResource>(
-                    t.data.report_view,
-                ),
-              ));
-              const channelsWithAnalytics: ChannelResourceShapeWithAnalytics[] = response.data.map(
-                channelRes => {
-                  const analytics = analyticsByChannel.find(
-                    analyticsItem =>
-                      analyticsItem.channel_id !== undefined &&
-                      analyticsItem.channel_id.toString() === channelRes.id,
-                  );
-                  if (analytics) {
-                    return { ...channelRes, ...analytics };
-                  } else return channelRes;
-                },
-              );
-              this.setState({
-                channels: channelsWithAnalytics,
-                totalChannels: response.total ? response.total : response.count,
-                isFetchingChannels: false,
-              });
+                Promise.all(
+                  datamartIds.map(datamartId => {
+                    return this._datamartUsersAnalyticsService.getAnalytics(
+                      datamartId,
+                      metrics,
+                      from,
+                      to,
+                      dimensions,
+                      dimensionFilterClauses,
+                    );
+                  }),
+                )
+                  .then(table => {
+                    const analyticsByChannel = flatten(
+                      table.map(t =>
+                        normalizeReportView<ChannelAnalyticsResource>(
+                          t.data.report_view,
+                        ),
+                      ),
+                    );
+                    const channelsWithAnalytics: ChannelResourceShapeWithAnalytics[] = response.data.map(
+                      channelRes => {
+                        const analytics = analyticsByChannel.find(
+                          analyticsItem =>
+                            analyticsItem.channel_id !== undefined &&
+                            analyticsItem.channel_id.toString() ===
+                              channelRes.id,
+                        );
+                        if (analytics) {
+                          return { ...channelRes, ...analytics };
+                        } else return channelRes;
+                      },
+                    );
+                    this.setState({
+                      channels: channelsWithAnalytics,
+                      totalChannels: response.total
+                        ? response.total
+                        : response.count,
+                      isFetchingChannels: false,
+                    });
+                  })
+                  .catch(err => {
+                    this.setState({ isFetchingChannels: false });
+                    notifyError(err);
+                  });
+              } else {
+                this.setState({ isFetchingChannels: false });
+              }
             })
             .catch(err => {
-              this.setState({isFetchingChannels: false });
+              this.setState({ isFetchingChannels: false });
               notifyError(err);
             });
-          } else {
-            this.setState({ isFetchingChannels: false });
-          }
         })
         .catch(err => {
           this.setState({ isFetchingChannels: false });
