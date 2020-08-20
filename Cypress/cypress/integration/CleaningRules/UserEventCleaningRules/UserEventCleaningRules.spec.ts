@@ -36,7 +36,7 @@ it('should test the cleaning rules update form', () => {
                     'name': 'test',
                     'domain': 'test.com',
                     'enable_analytics': false,
-                    'type': 'SITE'
+                    'type': 'MOBILE_APPLICATION'
                 }
             }
         )
