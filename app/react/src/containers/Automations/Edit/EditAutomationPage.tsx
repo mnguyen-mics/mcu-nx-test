@@ -4,13 +4,11 @@ import { connect } from 'react-redux';
 import queryString from 'query-string';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { message } from 'antd';
-import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
+import { injectIntl, InjectedIntlProps, FormattedMessage, defineMessages } from 'react-intl';
 import * as NotificationActions from '../../../redux/Notifications/actions';
 import * as FeatureSelectors from '../../../redux/Features/selectors';
 import { EditAutomationParam, AutomationFormData } from './domain';
-import AutomationEditForm from './AutomationEditForm';
 import { INITIAL_AUTOMATION_DATA } from '../Edit/domain';
-import messages from './messages';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
@@ -62,40 +60,37 @@ class EditAutomationPage extends React.Component<Props, State> {
   componentDidMount() {
     const {
       match: {
-        params: { automationId, organisationId },
+        params: { automationId },
       },
       location: { search },
     } = this.props;
     const datamartId = queryString.parse(search).datamartId;
 
-    if (automationId && organisationId) {
-      this.loadData(organisationId, automationId)
+    if (automationId) {
+      this.loadData(automationId)
     }
     if (!automationId && datamartId) {
-     
-        this.fetchDatamart(datamartId)
-   
-      
+      this.fetchDatamart(datamartId)
     }
   }
 
   componentDidUpdate(prevProps: Props) {
     const {
       match: {
-        params: { automationId, organisationId },
+        params: { automationId },
       },
       location: { search },
     } = this.props;
 
     const {
       match: {
-        params: { automationId: prevAutomationId, organisationId: prevOrganisationId },
+        params: { automationId: prevAutomationId },
       },
       location: { search: prevSearch },
     } = prevProps;
 
-    if (automationId && (automationId !== prevAutomationId || organisationId !== prevOrganisationId)) {
-      this.loadData(organisationId, automationId)
+    if (automationId && (automationId !== prevAutomationId)) {
+      this.loadData(automationId)
     }
     const datamartId = queryString.parse(search).datamartId;
     const preDatamartId = queryString.parse(prevSearch).datamartId;
@@ -105,47 +100,32 @@ class EditAutomationPage extends React.Component<Props, State> {
   }
 
   fetchDatamart = (datamartId: string) => {
-    this.setState({ loading: true });
+    this.setState({ loading: true });
     return this._datamartService.getDatamart(datamartId)
-      .then(r => this.setState({ datamart: r.data, loading: false }))
-      .catch((err) => {  this.props.notifyError(err); this.setState({ loading: false })})
+      .then(r => this.setState({ datamart: r.data, loading: false }))
+      .catch((err) => { this.props.notifyError(err); this.setState({ loading: false }) })
   }
 
-  loadData = (organisationId: string, automationId: string) => {
+  loadData = (automationId: string) => {
     this.setState({ loading: true });
     return this._scenarioService.getScenario(automationId)
       .then((r) => this._datamartService.getDatamart(r.data.datamart_id))
-      .then(r => {
-        const datafarmVersion = r.data.storage_model_version;
-        if (datafarmVersion === 'v201506') {
-          return this._automationFormService.loadInitialAutomationValues(automationId, 'v201506')
-            .then(data => {
-              this.setState({
-                datamart: r.data,
-                automationFormData: data,
-                loading: false,
-              })
-            })
-        }
-        return this._automationFormService.loadInitialAutomationValues(automationId, datafarmVersion)
-          .then((data) => {
-            this.setState({
-              datamart: r.data,
-              automationFormData: data,
-              loading: false,
-            })
+      .then(({ data: datamartResource }) => {
+        return this._automationFormService.loadInitialAutomationValues(
+          automationId,
+        ).then((data) => {
+          this.setState({
+            datamart: datamartResource,
+            automationFormData: data,
+            loading: false,
           })
+        })
       })
       .catch((err: any) => {
         this.props.notifyError(err);
         this.setState({ loading: false });
       });
   }
-
-  onSubmitFail = () => {
-    const { intl } = this.props;
-    message.error(intl.formatMessage(messages.errorFormMessage));
-  };
 
   save = (formData: AutomationFormData) => {
     const {
@@ -160,7 +140,7 @@ class EditAutomationPage extends React.Component<Props, State> {
       this.setState({ loading: true });
 
       this._automationFormService.validateAutomation(formData.automationTreeData).then(() => {
-        const saveOrUpdate = this._automationFormService.saveOrCreateAutomation(organisationId, datamart.storage_model_version, formData, automationFormData)
+        const saveOrUpdate = this._automationFormService.saveOrCreateAutomation(organisationId, formData, automationFormData)
         saveOrUpdate
           .then(() => {
             this.setState({ loading: false });
@@ -168,19 +148,19 @@ class EditAutomationPage extends React.Component<Props, State> {
               `/v2/o/${this.props.match.params.organisationId}/automations/${automationId}`,
             );
           })
-        .catch(err => {
-          this.setState({ loading: false });
-          this.props.notifyError(err.data);
-        })
-        
+          .catch(err => {
+            this.setState({ loading: false });
+            this.props.notifyError(err.data);
+          })
+
       })
-      .catch(validationError => {
-        this.setState({ 
-          loading: false,
-          automationFormData: formData
+        .catch(validationError => {
+          this.setState({
+            loading: false,
+            automationFormData: formData
+          });
+          message.error(this.props.intl.formatMessage(validationError))
         });
-        message.error(this.props.intl.formatMessage(validationError))      
-      });
     }
   };
 
@@ -197,88 +177,37 @@ class EditAutomationPage extends React.Component<Props, State> {
     history.push(state && state.from ? state.from : `/v2/o/${organisationId}/automations`);
   };
 
-
-
-  renderEditPage = (datamart: DatamartResource, organisationId: string, automationId: string) => {
-    const { intl } = this.props;
-    const breadcrumbPaths = [
-      {
-        name: messages.breadcrumbTitle,
-        path: `/v2/o/${organisationId}/automations`,
-      },
-      {
-        name: automationId
-          ? intl.formatMessage(messages.breadcrumbEdit, {
-              name: this.state.automationFormData.automation.name,
-            })
-          : messages.breadcrumbNew,
-      },
-    ];
-
-    switch (datamart.storage_model_version) {
-      case 'v201506':
-        return (
-          <AutomationEditForm
-            initialValues={this.state.automationFormData}
-            onSubmit={this.save}
-            close={this.onClose}
-            breadCrumbPaths={breadcrumbPaths}
-            onSubmitFail={this.onSubmitFail}
-            datamart={datamart}
-          />
-        )
-      default:
-        return (
-          <AutomationBuilderContainer 
-            datamartId={datamart.id}
-            automationFormData={this.state.automationFormData}
-            saveOrUpdate={this.save}
-            loading={this.state.loading}
-            edition={true}
-            creation_mode={
-              this.state.automationFormData.automationTreeData.node.type === 'QUERY_INPUT'
-                ? this.state.automationFormData.automationTreeData.node.ui_creation_mode
-                : 'QUERY'
-            }
-          />
-          
-        )
-    }
-    return <div />
-  }
-
   render() {
     const {
       match: {
-        params: { organisationId, automationId },
+        params: { automationId },
       },
     } = this.props;
 
     const { loading, datamart } = this.state;
-    
+
     if (loading) {
       return <Loading className="loading-full-screen" />
     }
 
     if (automationId && !loading && datamart) {
-      return this.renderEditPage(datamart, organisationId, automationId)
-    }
-
-    // render create form for old automations
-    if (!automationId && !loading) {
-      return (<AutomationEditForm
-        initialValues={this.state.automationFormData}
-        onSubmit={this.save}
-        close={this.onClose}
-        breadCrumbPaths={[]}
-        onSubmitFail={this.onSubmitFail}
-        datamart={datamart}
-      />)
+      return (
+        <AutomationBuilderContainer
+          datamartId={datamart.id}
+          automationFormData={this.state.automationFormData}
+          saveOrUpdate={this.save}
+          loading={this.state.loading}
+          edition={true}
+          creation_mode={
+            this.state.automationFormData.automationTreeData.node.type === 'QUERY_INPUT'
+              ? this.state.automationFormData.automationTreeData.node.ui_creation_mode
+              : 'QUERY'
+          }
+        />
+      );
     }
 
     return <FormattedMessage {...messages.dontExist} />
-
-   
   }
 }
 
@@ -295,3 +224,10 @@ export default compose<Props, {}>(
     },
   ),
 )(EditAutomationPage);
+
+const messages = defineMessages({
+  dontExist: {
+    id: 'automation.edit.dontexist',
+    defaultMessage: 'The automation you are trying to load doesn\'t seem to exist or you don\'t have the right to view it'
+  },
+});

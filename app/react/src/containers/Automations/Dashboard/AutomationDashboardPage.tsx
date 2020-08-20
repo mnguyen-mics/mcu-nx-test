@@ -58,7 +58,7 @@ class AutomationDashboardPage extends React.Component<Props, State> {
         isLoading: true,
       });
       this._automationFormService
-        .loadInitialAutomationValues(automationId, 'v201709')
+        .loadInitialAutomationValues(automationId)
         .then(res => {
           this.setState({
             automationFormData: res,
@@ -88,7 +88,7 @@ class AutomationDashboardPage extends React.Component<Props, State> {
         isLoading: true,
       });
       this._automationFormService
-        .loadInitialAutomationValues(automationId, 'v201709')
+        .loadInitialAutomationValues(automationId)
         .then(res => {
           this.setState({
             automationFormData: res,

@@ -65,6 +65,14 @@ const messagesMap: {
     id: 'automations.list.actionColumn.edit',
     defaultMessage: 'Edit',
   },
+  oldAutomationModalTitle: {
+    id: 'automations.list.oldAutomation.modal.title',
+    defaultMessage: 'Not supported',
+  },
+  oldAutomationModalContent: {
+    id: 'automations.list.oldAutomation.modal.content',
+    defaultMessage: 'This is automation is not supported anymore.',
+  }
 });
 
 interface AutomationsTableProps extends MapDispatchToProps {
@@ -194,6 +202,7 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
       },
       history,
       location,
+      intl: { formatMessage }
     } = this.props;
 
     this._datamartService.getDatamart(record.datamart_id).then(resp => {
@@ -202,10 +211,10 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
           from: `${location.pathname}${location.search}`,
         });
       } else {
-        history.push(
-          `/v2/o/${organisationId}/automation-builder-old/${record.id}`,
-          { from: `${location.pathname}${location.search}` },
-        );
+        Modal.info({
+          title: formatMessage(messagesMap.oldAutomationModalTitle),
+          content: formatMessage(messagesMap.oldAutomationModalContent),
+        });
       }
     });
   };
@@ -282,15 +291,19 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
         params: { organisationId },
       },
       history,
+      intl: {
+        formatMessage
+      }
     } = this.props;
 
     this._datamartService.getDatamart(record.datamart_id).then(resp => {
       if (resp.data.storage_model_version !== 'v201506') {
         history.push(`/v2/o/${organisationId}/automations/${record.id}`);
       } else {
-        history.push(
-          `/v2/o/${organisationId}/automation-builder-old/${record.id}`,
-        );
+        Modal.info({
+          title: formatMessage(messagesMap.oldAutomationModalTitle),
+          content: formatMessage(messagesMap.oldAutomationModalContent),
+        });
       }
     });
   };
