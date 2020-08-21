@@ -99,7 +99,7 @@ class AutomationBuilderPage extends React.Component<Props, State> {
         isLoading: true,
       });
       this._automationFormService
-        .loadInitialAutomationValues(automationId, 'v201709')
+        .loadInitialAutomationValues(automationId)
         .then(res => {
           this.setState({
             automationFormData: res,
@@ -141,7 +141,7 @@ class AutomationBuilderPage extends React.Component<Props, State> {
       });
 
       this._automationFormService
-        .loadInitialAutomationValues(automationId, 'v201709')
+        .loadInitialAutomationValues(automationId)
         .then(res => {
           this.setState({
             automationFormData: res,
@@ -258,7 +258,6 @@ class AutomationBuilderPage extends React.Component<Props, State> {
         this._automationFormService
           .saveOrCreateAutomation(
             organisationId,
-            'v201709',
             formData,
             automationFormData,
           )
@@ -339,9 +338,6 @@ class AutomationBuilderPage extends React.Component<Props, State> {
       location,
       intl,
       history,
-      match: {
-        params: { organisationId },
-      },
     } = this.props;
 
     const {
@@ -354,16 +350,10 @@ class AutomationBuilderPage extends React.Component<Props, State> {
 
     const handleOnSelectDatamart = (selection: DatamartResource) => {
       this.setState({ type: undefined }, () => {
-        if (selection.storage_model_version === 'v201506') {
-          history.push(
-            `/v2/o/${organisationId}/automation-builder-old?datamartId=${selection.id}`,
-          );
-        } else {
-          history.push({
-            pathname: location.pathname,
-            search: queryString.stringify({ datamartId: selection.id }),
-          });
-        }
+        history.push({
+          pathname: location.pathname,
+          search: queryString.stringify({ datamartId: selection.id }),
+        });
       });
     };
 

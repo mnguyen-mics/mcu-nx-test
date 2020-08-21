@@ -1,4 +1,4 @@
-import AutomationEditPage from '../containers/Automations/Edit/EditAutomationPage';
+import EditAutomationPage from '../containers/Automations/Edit/EditAutomationPage';
 import {
   NavigatorRoute,
   NavigatorDefinition,
@@ -19,21 +19,21 @@ export const automationDefinition: NavigatorDefinition = {
   automationBuilderOld: {
     path: '/automation-builder-old',
     layout: 'edit',
-    editComponent: AutomationEditPage,
+    editComponent: EditAutomationPage,
     requiredFeature: 'automations-builder',
     requireDatamart: true,
   },
   automationBuilderEditOld: {
     path: '/automation-builder-old/:automationId',
     layout: 'edit',
-    editComponent: AutomationEditPage,
+    editComponent: EditAutomationPage,
     requiredFeature: 'automations-builder',
     requireDatamart: true,
   },
   automationsEdit: {
     path: '/automations/:automationId/edit',
     layout: 'main',
-    contentComponent: AutomationEditPage,
+    contentComponent: EditAutomationPage,
     requiredFeature: 'automations-builder',
     requireDatamart: true,
   },

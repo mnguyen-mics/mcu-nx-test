@@ -60,11 +60,9 @@ interface CustomEdgeResource {
 export interface IAutomationFormService {
   loadInitialAutomationValues: (
     automationId: string,
-    storageModelVersionId: string,
   ) => Promise<AutomationFormData>;
   saveOrCreateAutomation: (
     organisationId: string,
-    storageModelVersionId: string,
     formData: AutomationFormData,
     initialFormData: AutomationFormData,
   ) => Promise<DataResponse<AutomationResource>>;
@@ -116,7 +114,6 @@ export class AutomationFormService implements IAutomationFormService {
 
   loadInitialAutomationValues(
     automationId: string,
-    storageModelVersion: string,
   ): Promise<AutomationFormData> {
     const automationPromise = this._scenarioService.getScenario(automationId);
     const exitConditionsPromise = (datamartId: string) =>
@@ -130,39 +127,29 @@ export class AutomationFormService implements IAutomationFormService {
 
     const edgePromise = this._scenarioService.getScenarioEdges(automationId);
 
-    if (storageModelVersion !== 'v201506') {
-      return this._scenarioService.getScenario(automationId).then(r => {
-        return Promise.all([
-          automationPromise,
-          storylinePromise,
-          nodePromise(r.data.datamart_id),
-          edgePromise,
-          exitConditionsPromise(r.data.datamart_id),
-        ]).then(res => {
-          return buildAutomationTreeData(
-            res[1].data,
-            res[2],
-            res[3].data,
-            this._queryService,
-            res[0].data.datamart_id,
-          ).then(storylineNodeModelRes => {
-            return {
-              automation: res[0].data,
-              exitCondition: res[4],
-              automationTreeData: storylineNodeModelRes,
-            };
-          });
+    return this._scenarioService.getScenario(automationId).then(r => {
+      return Promise.all([
+        automationPromise,
+        storylinePromise,
+        nodePromise(r.data.datamart_id),
+        edgePromise,
+        exitConditionsPromise(r.data.datamart_id),
+      ]).then(res => {
+        return buildAutomationTreeData(
+          res[1].data,
+          res[2],
+          res[3].data,
+          this._queryService,
+          res[0].data.datamart_id,
+        ).then(storylineNodeModelRes => {
+          return {
+            automation: res[0].data,
+            exitCondition: res[4],
+            automationTreeData: storylineNodeModelRes,
+          };
         });
       });
-    } else {
-      return automationPromise.then(({ data: automation }) => {
-        return {
-          automation: automation,
-          exitCondition: INITIAL_AUTOMATION_DATA.exitCondition,
-          automationTreeData: INITIAL_AUTOMATION_DATA.automationTreeData,
-        };
-      });
-    }
+    });
   }
 
   loadExitCondition(
@@ -427,7 +414,6 @@ export class AutomationFormService implements IAutomationFormService {
 
   saveOrCreateAutomation(
     organisationId: string,
-    storageModelVersion: string,
     formData: AutomationFormData,
     initialFormData: AutomationFormData,
   ): Promise<DataResponse<AutomationResource>> {
@@ -457,61 +443,56 @@ export class AutomationFormService implements IAutomationFormService {
             formData.automation as AutomationResource,
           );
 
-    if (storageModelVersion === 'v201506') {
-      return saveOrCreatePromise();
-    } else {
-      return saveOrCreatePromise()
-        .then(createdAutomation => {
-          if (formData.automation.datamart_id) {
-            return this.saveOrCreateExitCondition(
-              createdAutomation.data.id,
-              formData.automation.datamart_id,
-              formData.exitCondition,
-            ).then(() => createdAutomation);
-          }
-          return createdAutomation;
-        })
-        .then(createdAutomation => {
-          const savedAutomationId = createdAutomation.data.id;
-          const datamartId = formData.automation.datamart_id;
+    return saveOrCreatePromise()
+      .then(createdAutomation => {
+        if (formData.automation.datamart_id) {
+          return this.saveOrCreateExitCondition(
+            createdAutomation.data.id,
+            formData.automation.datamart_id,
+            formData.exitCondition,
+          ).then(() => createdAutomation);
+        }
+        return createdAutomation;
+      })
+      .then(createdAutomation => {
+        const savedAutomationId = createdAutomation.data.id;
+        const datamartId = formData.automation.datamart_id;
+        const treeData = formData.automationTreeData;
 
-          const treeData = formData.automationTreeData;
-
-          if (datamartId) {
-            return this.saveFirstNode(datamartId, savedAutomationId, treeData)
-              .then(firstNode => {
-                return this.iterate(
-                  organisationId,
-                  datamartId,
-                  savedAutomationId,
-                  treeData.out_edges,
-                  firstNode.id,
-                );
-              })
-              .then(() => {
-                return this.ids.reduce((acc, id) => {
-                  const formattedId = id.substr(2);
-                  if (id.startsWith('e-')) {
-                    return acc.then(() =>
-                      this._scenarioService.deleteScenarioEdge(
-                        createdAutomation.data.id,
-                        formattedId,
-                      ),
-                    );
-                  }
+        if (datamartId) {
+          return this.saveFirstNode(datamartId, savedAutomationId, treeData)
+            .then(firstNode => {
+              return this.iterate(
+                organisationId,
+                datamartId,
+                savedAutomationId,
+                treeData.out_edges,
+                firstNode.id,
+              );
+            })
+            .then(() => {
+              return this.ids.reduce((acc, id) => {
+                const formattedId = id.substr(2);
+                if (id.startsWith('e-')) {
                   return acc.then(() =>
-                    this._scenarioService.deleteScenarioNode(
+                    this._scenarioService.deleteScenarioEdge(
                       createdAutomation.data.id,
                       formattedId,
                     ),
                   );
-                }, Promise.resolve() as Promise<any>);
-              })
-              .then(() => createdAutomation);
-          }
-          return Promise.resolve(createdAutomation);
-        });
-    }
+                }
+                return acc.then(() =>
+                  this._scenarioService.deleteScenarioNode(
+                    createdAutomation.data.id,
+                    formattedId,
+                  ),
+                );
+              }, Promise.resolve() as Promise<any>);
+            })
+            .then(() => createdAutomation);
+        }
+        return Promise.resolve(createdAutomation);
+      });
   }
 
   saveFirstNode = (
