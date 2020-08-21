@@ -1,7 +1,8 @@
 
 {
   "extends": ["tslint:latest", "tslint-react", "tslint-eslint-rules", "tslint-config-prettier"],
-  "rules": {    
+  "rules": {
+    "array-type": [true, "array-simple"],
     "arrow-parens": false,
     "arrow-return-shorthand": [false],
     "comment-format": [true, "check-space"],
