@@ -61,7 +61,7 @@ const TagSelect: React.SFC<FormTagSelectProps & WrappedFieldProps> = props => {
   ));
 
   const onBlur = () => input.onBlur(undefined);
-  const getPopupContainer = () => document.getElementById(id)!
+  const getRef = () => document.getElementById(id)!;
 
   return (
     <FormFieldWrapper
@@ -81,7 +81,7 @@ const TagSelect: React.SFC<FormTagSelectProps & WrappedFieldProps> = props => {
           onFocus={input.onFocus as () => any}
           value={value}
           disabled={disabled}
-          getPopupContainer={getPopupContainer}
+          getPopupContainer={selectProps && selectProps.getPopupContainer ? selectProps.getPopupContainer : getRef}
         >{optionsToDisplay}
         </Select>
       </div>
