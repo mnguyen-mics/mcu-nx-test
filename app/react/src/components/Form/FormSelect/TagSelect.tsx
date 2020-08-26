@@ -72,7 +72,7 @@ const TagSelect: React.SFC<FormTagSelectProps & WrappedFieldProps> = props => {
       
       {...formItemProps}
     >
-      <div id={id} style={{width: '100%'}}>
+      <div id={id}>
         <Select
           {...selectProps}
           mode={mode}
