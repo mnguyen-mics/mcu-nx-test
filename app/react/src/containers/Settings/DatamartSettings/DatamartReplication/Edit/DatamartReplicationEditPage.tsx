@@ -28,6 +28,7 @@ import { ReplicationType } from '../../../../../models/settings/settings';
 import { FormTitle } from '../../../../../components/Form';
 import DatamartSelector from '../../../../Datamart/DatamartSelector';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
+import { isEmpty } from 'lodash';
 
 interface State {
   datamartReplicationData: DatamartReplicationFormData;
@@ -100,10 +101,24 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
         params: { datamartReplicationId },
       },
     } = this.props;
+
+    const {
+      credentials_uri,
+      ...formDataWithoutCredentialsUri
+    } = datamartReplicationFormData;
+
+    if (isEmpty(credentials_uri)) {
+      notifyError(new Error('Credentials must be defined'), {
+        intlDescription: messages.datamartReplicationCredentialsUriError,
+      });
+      return; 
+    }
+
     const { selectedType } = this.state;
     this.setState({
       isLoading: true,
     });
+
     const hideSaveInProgress = message.loading(
       intl.formatMessage(messages.savingInProgress),
       0,
@@ -112,16 +127,13 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
     const datamartId =
       datamartReplicationFormData.datamart_id || (state && state.datamartId);
 
-    const {
-      credentials_uri,
-      ...formDataWithoutCredentialsUri
-    } = datamartReplicationFormData;
     if (datamartId) {
       const newFormData = {
         ...formDataWithoutCredentialsUri,
         datamart_id: datamartId,
         type: selectedType,
       };
+
       const promise = datamartReplicationId
         ? this._datamartReplicationService.updateDatamartReplication(
             datamartId,

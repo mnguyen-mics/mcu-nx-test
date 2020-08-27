@@ -125,6 +125,10 @@ export const messages = defineMessages({
     id: 'settings.datamart.datamartReplication.edit.credentailsUri.label',
     defaultMessage: 'Credentials URI',
   },
+  datamartReplicationCredentialsUriError: {
+    id: 'settings.datamart.datamartReplication.edit.credentailsUri.error',
+    defaultMessage: 'Credentials must be defined',
+  },
   // Project ID
   datamartReplicationProjectIdPlaceHolder: {
     id: 'settings.datamart.datamartReplication.edit.projectId.placeholder',
