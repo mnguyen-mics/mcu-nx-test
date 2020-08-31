@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import _ from 'lodash';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { TableViewFilters } from '../../../components/TableView';
@@ -26,6 +25,9 @@ import {
   parseSearch,
   isSearchValid,
   buildDefaultSearch,
+  PaginationSearchSettings,
+  LabelsSearchSettings,
+  KeywordSearchSettings,
 } from '../../../utils/LocationSearchHelper';
 import { IDatamartService } from '../../../services/DatamartService';
 import { notifyError } from '../../../redux/Notifications/actions';
@@ -38,6 +40,13 @@ import { MicsReduxState } from '../../../utils/ReduxHelper';
 interface MapStateToProps {
   labels: Label[];
 }
+
+interface ImportFilterParams
+  extends PaginationSearchSettings,
+    LabelsSearchSettings,
+    KeywordSearchSettings {
+      datamartId: string,
+    }
 
 interface State {
   loading: boolean;
@@ -99,7 +108,7 @@ class ImportsContentContainer extends React.Component<Props, State> {
         search: buildDefaultSearch(search, IMPORTS_SEARCH_SETTINGS),
       });
     } else {
-      const filter = parseSearch(search, IMPORTS_SEARCH_SETTINGS);
+      const filter = parseSearch<ImportFilterParams>(search, IMPORTS_SEARCH_SETTINGS);
 
       if (!noFilterDatamart) {
         this._datamartService
@@ -138,11 +147,9 @@ class ImportsContentContainer extends React.Component<Props, State> {
       location: { search: previousSearch },
     } = previousProps;
 
-    const filter = parseSearch(search, IMPORTS_SEARCH_SETTINGS);
-    const previousFilter = parseSearch(previousSearch, IMPORTS_SEARCH_SETTINGS);
+    const filter = parseSearch<ImportFilterParams>(search, IMPORTS_SEARCH_SETTINGS);
 
     if (
-      !_.isEqual(filter, previousFilter) ||
       organisationId !== previousOrganisationId ||
       !compareSearches(search, previousSearch)
     ) {
@@ -151,12 +158,6 @@ class ImportsContentContainer extends React.Component<Props, State> {
         archived: false,
       };
 
-      const newFilter = {
-        first_result: filter.currentPage,
-        max_results: filter.pageSize,
-        label_id: filter.label_id,
-        keywords: filter.keywords,
-      };
       if (!noFilterDatamart) {
         this._datamartService
           .getDatamarts(organisationId, options)
@@ -169,7 +170,7 @@ class ImportsContentContainer extends React.Component<Props, State> {
 
       this.fetchImport(
         filter.datamartId || datamartId || this.props.datamartId,
-        newFilter,
+        filter,
       );
     }
   }
@@ -209,7 +210,7 @@ class ImportsContentContainer extends React.Component<Props, State> {
 
     const { data } = this.state;
 
-    const filter = parseSearch(search, IMPORTS_SEARCH_SETTINGS);
+    const filter = parseSearch<ImportFilterParams>(search, IMPORTS_SEARCH_SETTINGS);
 
     Modal.confirm({
       iconType: 'exclamation-circle',
@@ -287,7 +288,7 @@ class ImportsContentContainer extends React.Component<Props, State> {
 
     const { data, loading, datamarts } = this.state;
 
-    const filter = parseSearch(search, IMPORTS_SEARCH_SETTINGS);
+    const filter = parseSearch<ImportFilterParams>(search, IMPORTS_SEARCH_SETTINGS);
 
     const actionsColumnsDefinition: Array<ActionsColumnDefinition<Import>> = [
       {
@@ -386,6 +387,7 @@ class ImportsContentContainer extends React.Component<Props, State> {
         this.updateLocationSearch({
           keywords: value,
           currentPage: 1,
+          pageSize: filter.pageSize,
         }),
       defaultValue: filter.keywords,
     };

@@ -38,7 +38,7 @@ const initialState = {
   total: 0,
 };
 
-export interface ExportFilterParams
+interface ExportFilterParams
   extends PaginationSearchSettings,
     LabelsSearchSettings,
     KeywordSearchSettings {}
