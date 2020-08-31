@@ -29,6 +29,7 @@ import {
   AdInfoResource,
   AdResource,
   AdGroupResource,
+  AdGroupInfoResource,
 } from '../../../../../models/campaign/display';
 import { ReportView } from '../../../../../models/ReportView';
 import { UpdateMessage } from './DisplayCampaignAdGroupTable';
@@ -223,24 +224,14 @@ class DisplayCampaignPage extends React.Component<
       return nextState;
     });
 
-    getCampaignAdGroupAndAd().then(response => {
-      const data = response.data;
-      const campaign = {
-        ...data,
-      };
-      delete campaign.ad_groups;
+    getCampaignAdGroupAndAd().then(({ data: displayCampaignInfoResource }) => {
+      const { ad_groups: adGroups, ...campaign } = displayCampaignInfoResource;
 
-      const adGroups = [...data.ad_groups];
-      const formattedAdGroups = adGroups.map(item => {
-        const formattedItem = {
-          ...item,
-        };
-
-        delete formattedItem.ads;
-
-        return formattedItem;
-      });
-
+      const formattedAdGroups: Array<Omit<AdGroupInfoResource, 'ads'>> = adGroups.map(adGroup => {
+        const { ads: unusedAds, ...adGroupWithoutAds } = adGroup;
+        return adGroupWithoutAds;
+      })
+      
       const adGroupCampaign = adGroups.map(item => {
         return {
           ad_group_id: item.id,
@@ -255,7 +246,7 @@ class DisplayCampaignPage extends React.Component<
         campaign_id: string;
       }> = [];
 
-      data.ad_groups.forEach(adGroup => {
+      adGroups.forEach(adGroup => {
         adGroup.ads.forEach(ad => {
           ads.push(ad);
           adAdGroup.push({

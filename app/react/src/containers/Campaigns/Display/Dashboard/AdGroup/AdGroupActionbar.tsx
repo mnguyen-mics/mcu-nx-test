@@ -35,7 +35,7 @@ import { IPlacementListService } from '../../../../../services/Library/Placement
 
 interface AdGroupActionbarProps {
   adGroup?: AdGroupResource;
-  displayCampaign?: DisplayCampaignInfoResource;
+  displayCampaign?: Omit<DisplayCampaignInfoResource, 'ad_groups'>;
   updateAdGroup: (adGroupId: string, body: Partial<AdGroupResource>) => void;
   archiveAdGroup: () => void;
 }

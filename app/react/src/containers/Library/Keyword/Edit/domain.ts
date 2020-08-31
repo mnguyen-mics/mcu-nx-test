@@ -1,4 +1,3 @@
-import { KeywordListFormData } from './domain';
 import {
   KeywordResource,
   KeywordCreateRequest,

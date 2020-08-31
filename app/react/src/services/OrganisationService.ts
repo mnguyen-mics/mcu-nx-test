@@ -134,8 +134,8 @@ export default class OrganisationService implements IOrganisationService {
   ): Promise<DataResponse<ProcessingResource>> {
     const endpoint = `processings`;
     const resource = {
-      community_id: communityId,
       ...processingResource,
+      community_id: communityId,
     };
     return ApiService.postRequest(endpoint, resource);
   }

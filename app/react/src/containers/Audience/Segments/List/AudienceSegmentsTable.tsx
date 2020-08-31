@@ -645,7 +645,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
               >
                 <Icon type={typeIcon} />
               </Tooltip>
-              {subTypeIcon && <span>&nbsp;>&nbsp;</span>}
+              {subTypeIcon && <span>&nbsp;&gt;&nbsp;</span>}
               {subTypeIcon && (
                 <Tooltip placement="top" title={subMessage}>
                   <Icon type={subTypeIcon} />

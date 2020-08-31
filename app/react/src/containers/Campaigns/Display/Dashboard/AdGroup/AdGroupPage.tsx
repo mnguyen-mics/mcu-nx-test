@@ -217,18 +217,13 @@ class AdGroupPage extends React.Component<Props, AdGroupPageState> {
       return nextState;
     });
 
-    getCampaignAdGroupAndAd().then(reponse => {
-      const data = reponse.data;
-      const campaign = {
-        ...data,
-      };
-      delete campaign.ad_groups;
-      const adGroups = [...data.ad_groups];
-      const adGroup = adGroups.filter(item => {
+    getCampaignAdGroupAndAd().then(({ data: displayCampaignInfoResource }) => {
+      const { ad_groups: adGroups, ...campaign } = displayCampaignInfoResource;
+
+      const { ads, ...adGroup } = adGroups.filter(item => {
         return item.id === adGroupId;
       })[0];
-      const ads = [...adGroup.ads];
-      delete adGroup.ads;
+
       this.setState(prevState => {
         const nextState = {
           ...prevState,

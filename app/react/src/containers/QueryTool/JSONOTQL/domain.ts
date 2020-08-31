@@ -11,7 +11,6 @@ import {
   ObjectNode,
 } from '../../../models/datamart/graphdb/QueryDocument';
 import { ObjectLikeTypeInfoResource, FieldInfoResource, ObjectLikeType, ObjectLikeTypeDirectiveInfoResource, SchemaDecoratorResource, FieldDirectiveResource } from '../../../models/datamart/graphdb/RuntimeSchema';
-import { SchemaItem } from './domain';
 
 export type FieldProposalLookup = (treeNodePath: number[], fieldName: string) => Promise<string[]>;
 

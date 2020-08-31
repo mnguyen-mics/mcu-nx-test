@@ -1,4 +1,3 @@
-import { StorylineNodeModel } from './domain';
 import {
   ScenarioNodeShape,
   ScenarioEdgeResource,

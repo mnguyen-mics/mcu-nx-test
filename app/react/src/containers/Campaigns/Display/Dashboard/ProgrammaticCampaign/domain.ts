@@ -158,7 +158,7 @@ export interface GoalsCampaignRessource extends GoalSelectionResource {
 
 export interface DisplayCampaignPageState {
   campaign: {
-    data: Items<DisplayCampaignInfoResource>;
+    data: Items<Omit<DisplayCampaignInfoResource, 'ad_groups'>>;
     overallPerformance: Items<OverallStat>;
     performance: Items<OverallStat>;
     mediaPerformance: Items<MediaPerformance>;
@@ -176,7 +176,7 @@ export interface DisplayCampaignPageState {
 
 export interface AdGroupPageState {
   campaign: {
-    data: Items<DisplayCampaignInfoResource>;
+    data: Items<Omit<DisplayCampaignInfoResource, 'ad_groups'>>;
   };
   adGroups: {
     data: Items<AdGroupResource>;

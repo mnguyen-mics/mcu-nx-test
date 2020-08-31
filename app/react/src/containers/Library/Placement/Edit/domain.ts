@@ -1,4 +1,3 @@
-import { PlacementDescriptorFormData } from './domain';
 import {
   PlacementDescriptorResource,
   PlacementDescriptorCreateRequest,

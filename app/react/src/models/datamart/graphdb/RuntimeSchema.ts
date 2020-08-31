@@ -1,5 +1,3 @@
-import { HashFunction } from './RuntimeSchema';
-
 export interface RuntimeSchemaValidationInfoResource {
   datamart_id: string,
   schema_id: string,

@@ -178,7 +178,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<
     );
   }
 
-  getPluginsList() {
+  getPluginsList(): Promise<LayoutablePlugin[]> {
     return this._pluginService
       .getPlugins({
         plugin_type: this.props.pluginType,

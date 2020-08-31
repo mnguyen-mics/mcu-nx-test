@@ -9,6 +9,7 @@ import { CampaignRouteParams } from '../../../../../models/campaign/CampaignReso
 import {
   AdInfoResource,
   DisplayCampaignInfoResource,
+  AdGroupInfoResource,
 } from '../../../../../models/campaign/display/DisplayCampaignInfoResource';
 import modalMessages from '../../../../../common/messages/modalMessages';
 import { Actionbar } from '@mediarithmics-private/mcs-components-library';
@@ -40,7 +41,7 @@ import { IResourceHistoryService } from '../../../../../services/ResourceHistory
 import { IGoalService } from '../../../../../services/GoalService';
 
 interface DisplayCampaignActionBarProps {
-  campaign: DisplayCampaignInfoResource;
+  campaign: Omit<DisplayCampaignInfoResource, 'ad_groups'>;
   updateCampaign: (
     campaignId: string,
     object: {
@@ -415,21 +416,12 @@ class DisplayCampaignActionbar extends React.Component<
       );
       const goalData = responses[4];
       const data = responses[5].data;
-      const campaign = {
-        ...data,
-      };
-      delete campaign.ad_groups;
+      const { ad_groups: adGroups, ...campaign } = data;
 
-      const adGroups = [...data.ad_groups];
-      const formattedAdGroups = adGroups.map(item => {
-        const formattedItem = {
-          ...item,
-        };
-
-        delete formattedItem.ads;
-
-        return formattedItem;
-      });
+      const formattedAdGroups: Array<Omit<AdGroupInfoResource, 'ads'>> = adGroups.map(adGroup => {
+        const { ads: unusedAds, ...adGroupWithoutAds } = adGroup;
+        return adGroupWithoutAds;
+      })
 
       const ads: AdInfoResource[] = [];
       const adAdGroup: Array<{

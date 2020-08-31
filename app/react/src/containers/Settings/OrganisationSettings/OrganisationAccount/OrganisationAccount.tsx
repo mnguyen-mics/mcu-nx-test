@@ -62,6 +62,7 @@ class OrganisationAccount extends React.Component<Props> {
               name={'organisation_name'}
               component={FormInput}
               validate={[]}
+              // @ts-ignore
               props={{
                 formItemProps: {
                   label: intl.formatMessage(messages.OrganisationName),
@@ -73,6 +74,7 @@ class OrganisationAccount extends React.Component<Props> {
                 },
               }}
             />
+            {/* @ts-ignore */}
             <Field
               name={'organisation_id'}
               component={LogoInput}

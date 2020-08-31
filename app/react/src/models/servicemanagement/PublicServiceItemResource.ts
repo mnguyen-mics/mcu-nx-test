@@ -1,4 +1,3 @@
-import { ServiceType } from './PublicServiceItemResource';
 import { Locale } from '../Locale';
 import { FieldArrayModel } from '../../utils/FormHelper';
 

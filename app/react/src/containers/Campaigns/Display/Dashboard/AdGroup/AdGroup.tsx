@@ -37,7 +37,7 @@ interface AdGroupProps {
     mediaPerformance: Items<MediaPerformance>;
   };
   campaign: {
-    data: Items<DisplayCampaignInfoResource>;
+    data: Items<Omit<DisplayCampaignInfoResource, 'ad_groups'>>;
   };
   dashboardPerformance: {
     media: Items<MediaPerformance>;
