@@ -13,7 +13,6 @@
     "translation-file": "npm run build && node scripts/translate.js"
   },
   "dependencies": {
-    "@mapbox/mapbox-gl-draw": "1.1.1",
     "@mediarithmics-private/mcs-components-library": "1.2.0",
     "@splitsoftware/splitio": "^10.9.2",
     "antd": "3.13.2",
@@ -34,8 +33,6 @@
     "json-stringify-safe": "^5.0.1",
     "lodash": "^4.17.19",
     "loglevel": "^1.6.8",
-    "mapbox-gl": "0.45.0",
-    "mapbox-gl-draw-freehand-mode": "github:bemky/mapbox-gl-draw-free-mode",
     "moment": "^2.22.2",
     "moment-duration-format": "^2.2.2",
     "numeral": "^2.0.6",
@@ -92,7 +89,6 @@
     "@types/json-stringify-safe": "^5.0.0",
     "@types/lodash": "^4.14.118",
     "@types/loglevel": "^1.5.4",
-    "@types/mapbox-gl": "0.51.0",
     "@types/moment-duration-format": "^2.2.2",
     "@types/numeral": "0.0.22",
     "@types/papaparse": "^4.5.5",
