@@ -12,7 +12,6 @@ module.exports = {
     'react-vendors': Object.keys(pkg.dependencies),
   },
   module: {
-    noParse: /(mapbox-gl)\.js$/,
     rules: [
       {
         test: /\.js$/,
