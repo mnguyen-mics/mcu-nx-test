@@ -139,3 +139,38 @@ Example:
 </ul>
 
 ```
+
+VSCode SonarLint extension
+--------------------------
+
+This extension permits to detect and fix quality issues scanned from SonarQube directly in VSCode.
+
+### Installation instructions
+
+1) Token generation from SonarQube server
+
+  - Sign-in to following adress using Google credentials. Login is your email without `@mediarithmics.com`
+  ```
+  https://sf-sonarqube.mediarithmics.com
+  ```
+  - Click to `My Account` > `Security`
+  - Generate a token and copy it.
+
+2) SonarLint installation
+
+  - In VS Code, type `CTRL+P` and enter following command
+  ```
+  ext install SonarSource.sonarlint-vscode
+  ```
+  - In `File` > `Preferences` > `Settings` > `Extensions` > `SonarLint` > `Connected Mode` > `Connections: Sonarqube`
+  - Click on `Edit in settings.json`
+  - Paste following block :
+  ```
+    "sonarlint.connectedMode.connections.sonarqube": [
+        { "serverUrl": "https://sf-sonarqube.mediarithmics.com", "token": "PASTE_YOUR_TOKEN_HERE" }
+    ],
+    "sonarlint.connectedMode.project": {
+        "projectKey": "mediarithmics-navigator"
+    }
+  ```
+  - Enable SonarLint by typing `CTRL+SHIFT+P` and select `SonarLint: Update all project bindings to SonarQube/SonarCloud`
