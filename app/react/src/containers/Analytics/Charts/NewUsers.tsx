@@ -1,5 +1,4 @@
 import * as React from 'react';
-import PieChart from '../../../components/Charts/CategoryBased/PiePlot';
 import messages from '../Overview/messages';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
@@ -7,6 +6,7 @@ import EmptyCharts from '../../../components/EmptyCharts/EmptyChart';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../Helpers/injectThemeColors';
+import { PiePlot } from '@mediarithmics-private/mcs-components-library';
 
 interface NewUsersProps {
   hasFetchedVisitReport: boolean;
@@ -105,7 +105,7 @@ class NewUsers extends React.Component<JoinedProps> {
         !hasFetchedVisitReport ? (
           <EmptyCharts title={formatMessage(messages.no_visit_stat)} />
         ) : (
-          <PieChart
+          <PiePlot
             dataset={dataset}
             options={pieChartsOptions}
           />

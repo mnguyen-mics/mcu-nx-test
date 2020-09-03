@@ -5,9 +5,6 @@ import {
   isAggregateResult,
   isCountResult,
 } from '../../../../models/datamart/graphdb/OTQLResult';
-import PieChart, {
-  DatasetProps,
-} from '../../../../components/Charts/CategoryBased/PiePlot';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../Helpers/injectThemeColors';
@@ -21,6 +18,8 @@ import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { getFormattedQuery } from '../domain';
+import { PiePlot } from '@mediarithmics-private/mcs-components-library';
+import { DatasetProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/category-based-charts/pie-plot/PiePlot';
 
 export interface MapPieChartProps {
   title?: string;
@@ -192,7 +191,7 @@ class MapPieChart extends React.Component<Props, State> {
         return <EmptyCharts title={intl.formatMessage(messages.noData)} />;
       } else {
         return (
-          <PieChart
+          <PiePlot
             dataset={this.state.queryResult}
             options={pieChartsOptions}
             height={height}

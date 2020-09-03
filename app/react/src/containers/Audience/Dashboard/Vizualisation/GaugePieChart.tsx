@@ -5,9 +5,6 @@ import {
   isCountResult,
   OTQLCountResult,
 } from '../../../../models/datamart/graphdb/OTQLResult';
-import PieChart, {
-  DatasetProps,
-} from '../../../../components/Charts/CategoryBased/PiePlot';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../Helpers/injectThemeColors';
@@ -20,6 +17,8 @@ import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment/AudienceSegmentResource';
+import { PiePlot } from '@mediarithmics-private/mcs-components-library';
+import { DatasetProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/category-based-charts/pie-plot/PiePlot';
 
 export interface GaugePieChartProps {
   title?: string;
@@ -216,7 +215,7 @@ class GaugePieChart extends React.Component<Props, State> {
         return <EmptyCharts title={intl.formatMessage(messages.noData)} />;
       } else {
         return (
-          <PieChart
+          <PiePlot
             dataset={this.state.queryResult}
             options={pieChartsOptions}
             height={height}

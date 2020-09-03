@@ -17,8 +17,9 @@ import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
-import PiePlot, { DatasetProps, PiePlotOptionsProps } from '../../../../components/Charts/CategoryBased/PiePlot';
 import { getFormattedQuery } from '../domain';
+import { DatasetProps, PiePlotOptionsProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/category-based-charts/pie-plot/PiePlot';
+import { PiePlot } from '@mediarithmics-private/mcs-components-library';
 
 export interface CountPieChartProps {
   title?: string;

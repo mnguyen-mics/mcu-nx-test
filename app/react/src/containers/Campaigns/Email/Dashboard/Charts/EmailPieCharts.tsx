@@ -15,7 +15,7 @@ import {
   InjectedIntlProps,
   injectIntl,
 } from 'react-intl';
-import PiePlot from '../../../../../components/Charts/CategoryBased/PiePlot';
+import { PiePlot } from '@mediarithmics-private/mcs-components-library';
 
 const messageMap: {
   [key: string]: FormattedMessage.MessageDescriptor;
