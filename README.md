@@ -80,6 +80,7 @@ We recommend you use [Visual Studio Code](https://code.visualstudio.com/) with t
 * HTML snippets
 * Prettier
 * TS Lint
+* SonarLint
 
 Also we strongly recommend you download the React and Redux extensions for your favorite web browser. Here are the links for [React Developer Tools for Chrome](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi) and [Redux DevTools for Chrome](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd?hl=fr).
 
