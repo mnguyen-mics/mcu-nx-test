@@ -184,6 +184,7 @@ class AudienceFeedPage extends React.Component<
       match: {
         params: { feedType, organisationId, segmentId, feedId },
       },
+      intl: { formatMessage }
     } = this.props;
 
     const { loading, type } = this.state;
@@ -194,7 +195,7 @@ class AudienceFeedPage extends React.Component<
 
     const breadcrumbPaths: Path[] = [
       {
-        name: messages.actionBarSegmentTitle,
+        name: formatMessage(messages.actionBarSegmentTitle),
         path: `/v2/o/${organisationId}/audience/segments`,
       },
       {
@@ -208,8 +209,8 @@ class AudienceFeedPage extends React.Component<
 
     const feedBreadcrumbPaths: Path[] = breadcrumbPaths.concat({
       name: feedId
-        ? messages.actionBarSegmentFeedsEdit
-        : messages.actionBarSegmentFeedsCreate,
+        ? formatMessage(messages.actionBarSegmentFeedsEdit)
+        : formatMessage(messages.actionBarSegmentFeedsCreate),
     });
 
     if (!feedType && !type) {
@@ -227,7 +228,7 @@ class AudienceFeedPage extends React.Component<
 
     if (type === 'create_external_preset' || type === 'create_tag_preset') {
       const presetBreadcrumbPaths: Path[] = breadcrumbPaths.concat({
-        name: messages.actionBarSegmentPresetCreate,
+        name: formatMessage(messages.actionBarSegmentPresetCreate),
       });
 
       return (

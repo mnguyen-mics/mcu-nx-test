@@ -41,7 +41,7 @@ class NativeCreativeRendererSelector extends React.Component<Props> {
       onClose: this.props.close,
       paths: [
         {
-          name: messages.nativeCreationBreadCrumb,
+          name: formatMessage(messages.nativeCreationBreadCrumb),
         },
       ],
     };

@@ -180,7 +180,7 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
         params: { creativeId, organisationId },
       },
       location,
-      intl,
+      intl: { formatMessage },
     } = this.props;
 
     const { creativeName } = this.state;
@@ -193,21 +193,21 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
     const breadCrumbToList =
       from && location.state.from.includes('native')
         ? {
-            name: messages.nativeListBreadCrumb,
+            name: formatMessage(messages.nativeListBreadCrumb),
             path: `/v2/o/${organisationId}/creatives/native`,
           }
         : {
-            name: messages.displayListBreadCrumb,
+            name: formatMessage(messages.displayListBreadCrumb),
             path: `/v2/o/${organisationId}/creatives/display`,
           };
 
     const creaName = creativeId
-      ? intl.formatMessage(messages.creativeEditionBreadCrumb, {
+      ? formatMessage(messages.creativeEditionBreadCrumb, {
           name: creativeName,
         })
       : from && location.state.from.includes('native')
-      ? messages.nativeCreationBreadCrumb
-      : messages.creativeCreationBreadCrumb;
+      ? formatMessage(messages.nativeCreationBreadCrumb)
+      : formatMessage(messages.creativeCreationBreadCrumb);
 
     const breadCrumbPaths = [
       {

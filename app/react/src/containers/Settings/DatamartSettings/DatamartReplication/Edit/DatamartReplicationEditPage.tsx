@@ -247,7 +247,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
       match: {
         params: { datamartReplicationId },
       },
-      intl,
+      intl: { formatMessage },
     } = this.props;
 
     const {
@@ -264,11 +264,11 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
     const replicationName =
       datamartReplicationId && datamartReplicationData.name
         ? datamartReplicationData.name
-        : intl.formatMessage(messages.newDatamartReplication);
+        : formatMessage(messages.newDatamartReplication);
 
     const breadcrumbPaths = [
       {
-        name: messages.datamartReplications,
+        name: formatMessage(messages.datamartReplications),
         path: this.getPreviousUrl(),
         state: { activeTab: 'Replications' },
       },
@@ -290,7 +290,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
         actionbarProps={{
           paths: [
             {
-              name: messages.datamartReplications,
+              name: formatMessage(messages.datamartReplications),
               path: this.getPreviousUrl(),
             },
           ],

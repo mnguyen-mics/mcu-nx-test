@@ -174,7 +174,7 @@ class ServiceItemListPage extends React.Component<Props, State> {
       <List.Item
         key={item.id}
         className={
-          isItemSelected ? 'infinite-list-selected-item' : 'infinite-list-item'
+          isItemSelected ? 'infinite-list-item-selected' : 'infinite-list-item'
         }
       >
         <ButtonStyleless
@@ -279,7 +279,7 @@ class ServiceItemListPage extends React.Component<Props, State> {
       undefined;
 
     return (
-      <div className="ant-layout">
+      <div className="ant-layout mcs-service-item-list-page">
         <Content className="mcs-content-container">
           <Row className="mcs-table-container">
             <Breadcrumb

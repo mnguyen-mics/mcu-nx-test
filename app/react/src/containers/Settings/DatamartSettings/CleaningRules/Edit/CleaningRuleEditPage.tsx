@@ -757,6 +757,7 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
+      intl: { formatMessage },
     } = this.props;
 
     const {
@@ -775,13 +776,13 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
       cleaningRuleType === 'USER_EVENT_CLEANING_RULE'
         ? [
             {
-              name: messages.userEventBreadcrumbTitle,
+              name: formatMessage(messages.userEventBreadcrumbTitle),
               path: `/v2/o/${organisationId}/settings/datamart/cleaning_rules`,
             },
           ]
         : [
             {
-              name: messages.userProfileBreadcrumbTitle,
+              name: formatMessage(messages.userProfileBreadcrumbTitle),
               path: `/v2/o/${organisationId}/settings/datamart/cleaning_rules?type=USER_PROFILE_CLEANING_RULE`,
             },
           ];

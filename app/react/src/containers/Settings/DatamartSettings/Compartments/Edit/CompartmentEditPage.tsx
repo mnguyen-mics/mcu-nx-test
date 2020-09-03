@@ -405,6 +405,7 @@ class CompartmentEditPage extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
+      intl: { formatMessage },
     } = this.props;
 
     const { loading, compartmentFormData } = this.state;
@@ -415,7 +416,7 @@ class CompartmentEditPage extends React.Component<Props, State> {
 
     const breadcrumbPaths = [
       {
-        name: messages.breadcrumbTitle,
+        name: formatMessage(messages.breadcrumbTitle),
         path: `/v2/o/${organisationId}/settings/datamart/compartments`,
       },
     ];
