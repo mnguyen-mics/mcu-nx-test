@@ -1,6 +1,5 @@
 import * as React from 'react';
 
-import { EmptyCharts } from '../../../components/EmptyCharts/index';
 import MetricsColumn from '../../../components/MetricsColumn';
 import { formatMetric } from '../../../utils/MetricHelper';
 import { LegendChartWithModal } from '../../../components/LegendChart';
@@ -19,6 +18,7 @@ import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../Helpers/injectThemeColors';
 import DoubleStackedAreaPlot from '../../../components/Charts/TimeBased/DoubleStackedAreaPlot';
+import { EmptyChart } from '@mediarithmics-private/mcs-components-library';
 
 const _messages: { [s: string]: FormattedMessage.MessageDescriptor } = messages;
 
@@ -240,7 +240,7 @@ class VisitAnalysis extends React.Component<JoinedProps, VisitAnalysisState> {
           </Col>
           <Col span={19}>
             {(report && report.length === 0) || !hasFetchedVisitReport ? (
-              <EmptyCharts title={formatMessage(messages.no_visit_stat)} />
+              <EmptyChart title={formatMessage(messages.no_visit_stat)} icon='warning' />
             ) : (
               this.renderStackedAreaChart(report, optionsForChart)
             )}

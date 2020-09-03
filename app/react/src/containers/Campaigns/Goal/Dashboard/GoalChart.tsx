@@ -4,7 +4,7 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Row, Col } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 
-import { EmptyCharts, LoadingChart } from '../../../../components/EmptyCharts';
+import { LoadingChart } from '../../../../components/EmptyCharts';
 import { LegendChartWithModal } from '../../../../components/LegendChart';
 import MetricsColumn from '../../../../components/MetricsColumn';
 
@@ -33,6 +33,7 @@ import injectThemeColors, {
 } from '../../../Helpers/injectThemeColors';
 import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
 import DoubleStackedAreaPlot from '../../../../components/Charts/TimeBased/DoubleStackedAreaPlot';
+import { EmptyChart } from '@mediarithmics-private/mcs-components-library';
 
 
 interface OverallStats {
@@ -329,7 +330,7 @@ class GoalStackedAreaChart extends React.Component<
           </Col>
         </Row>
         {items.length === 0 && !isLoading ? (
-          <EmptyCharts title={formatMessage(messages.noStatAvailable)} />
+          <EmptyChart title={formatMessage(messages.noStatAvailable)} icon='warning' />
         ) : (
             <Row gutter={20}>
               <Col span={24}>{this.renderStackedAreaCharts()}</Col>

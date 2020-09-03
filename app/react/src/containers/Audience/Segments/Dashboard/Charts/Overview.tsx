@@ -10,7 +10,6 @@ import {
   FormattedMessage,
 } from 'react-intl';
 import {
-  EmptyCharts,
   LoadingChart,
 } from '../../../../../components/EmptyCharts/index';
 import McsDateRangePicker, {
@@ -27,6 +26,7 @@ import injectThemeColors, {
 } from '../../../../Helpers/injectThemeColors';
 import StackedAreaPlot from '../../../../../components/Charts/TimeBased/StackedAreaPlot';
 import { DatamartWithMetricResource } from '../../../../../models/datamart/DatamartResource';
+import { EmptyChart } from '@mediarithmics-private/mcs-components-library';
 
 
 interface OverviewProps {
@@ -154,8 +154,9 @@ class Overview extends React.Component<Props> {
           </Col>
         </Row>
         {dataSource.length === 0 && !isFetching ? (
-          <EmptyCharts
+          <EmptyChart
             title={intl.formatMessage(messages.noAdditionDeletion)}
+            icon='warning'
           />
         ) : (
           this.renderStackedAreaCharts()

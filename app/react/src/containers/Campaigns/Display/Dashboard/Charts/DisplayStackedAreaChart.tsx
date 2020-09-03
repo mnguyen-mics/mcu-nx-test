@@ -5,7 +5,6 @@ import { Row, Col } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 
 import {
-  EmptyCharts,
   LoadingChart,
 } from '../../../../../components/EmptyCharts';
 import McsDateRangePicker, {
@@ -28,6 +27,7 @@ import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../../Helpers/injectThemeColors';
 import DoubleStackedAreaPlot from '../../../../../components/Charts/TimeBased/DoubleStackedAreaPlot';
+import { EmptyChart } from '@mediarithmics-private/mcs-components-library';
 
 const LegendChartWithModalJS = LegendChartWithModal as any;
 
@@ -284,7 +284,7 @@ class DisplayStackedAreaChart<T> extends React.Component<
           </Col>
         </Row>
         {dataSource && dataSource.length === 0 && !isFetchingCampaignStat ? (
-          <EmptyCharts title={formatMessage(messages.noStatAvailable)} />
+          <EmptyChart title={formatMessage(messages.noStatAvailable)} icon='warning' />
         ) : (
           <Row gutter={20}>
             <Col span={24}>{this.renderStackedAreaCharts()}</Col>

@@ -29,9 +29,9 @@ import injectThemeColors, {
 } from '../../../../Helpers/injectThemeColors';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
-import { EmptyCharts } from '../../../../../components/EmptyCharts';
 import { EmptyRecords } from '../../../../../components';
 import { DatamartUsersAnalyticsDimension } from '../../../../../utils/DatamartUsersAnalyticsReportHelper';
+import { EmptyChart } from '@mediarithmics-private/mcs-components-library';
 
 const messages = defineMessages({
   noData: {
@@ -325,7 +325,7 @@ class FormatDataToChart extends React.Component<JoinedProp, {}> {
 
   getEmptyDataComponent(chartType: string, message: string) {
     return chartType !== 'SINGLE_STAT' ? (
-      <EmptyCharts title={message} />
+      <EmptyChart title={message} icon='warning' />
     ) : (
       <EmptyRecords message={message} />
     );

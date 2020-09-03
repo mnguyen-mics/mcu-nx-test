@@ -256,7 +256,7 @@
 //         (this.state.queryResult && this.state.queryResult.length === 0) ||
 //         !this.state.queryResult
 //       ) {
-//         return <EmptyCharts title={intl.formatMessage(messages.noData)} />;
+//         return <EmptyCharts title={intl.formatMessage(messages.noData)} icon='warning' />;
 //       } else {
 //         return (
 //           <ClusteredVerticalBarChart

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Row, Col } from 'antd';
-import { Card } from '@mediarithmics-private/mcs-components-library';
+import { Card, EmptyChart } from '@mediarithmics-private/mcs-components-library';
 import { AdInfoResource } from '../../../../../models/campaign/display';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
@@ -16,7 +16,6 @@ import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import {
-  EmptyCharts,
   LoadingChart,
 } from '../../../../../components/EmptyCharts';
 import McsMoment from '../../../../../utils/McsMoment';
@@ -304,7 +303,7 @@ class AdCard extends React.Component<Props, State> {
         </Row>
         {loading ? <LoadingChart /> : null}
         {!dataSource.length && !loading ? (
-          <EmptyCharts title={formatMessage(messages.noStatAvailable)} />
+          <EmptyChart title={formatMessage(messages.noStatAvailable)} icon='warning' />
         ) : null}
         {dataSource.length && !loading ? this.renderChart() : null}
       </Card>

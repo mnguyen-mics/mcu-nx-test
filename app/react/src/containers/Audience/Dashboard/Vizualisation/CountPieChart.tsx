@@ -9,7 +9,7 @@ import injectThemeColors, {
   ThemeColorsShape,
 } from '../../../Helpers/injectThemeColors';
 import { compose } from 'recompose';
-import { LoadingChart, EmptyCharts } from '../../../../components/EmptyCharts';
+import { LoadingChart } from '../../../../components/EmptyCharts';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import messages from './messages';
 import { lazyInject } from '../../../../config/inversify.config';
@@ -19,7 +19,7 @@ import CardFlex from '../Components/CardFlex';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { getFormattedQuery } from '../domain';
 import { DatasetProps, PiePlotOptionsProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/category-based-charts/pie-plot/PiePlot';
-import { PiePlot } from '@mediarithmics-private/mcs-components-library';
+import { PiePlot, EmptyChart } from '@mediarithmics-private/mcs-components-library';
 
 export interface CountPieChartProps {
   title?: string;
@@ -186,7 +186,7 @@ class CountPieChart extends React.Component<Props, State> {
         return <LoadingChart />;
       } else if (this.state.error) {
         return (
-          <EmptyCharts
+          <EmptyChart
             title={intl.formatMessage(messages.error)}
             icon={'close-big'}
           />
@@ -195,7 +195,7 @@ class CountPieChart extends React.Component<Props, State> {
         (this.state.queryResult && this.state.queryResult.length === 0) ||
         !this.state.queryResult
       ) {
-        return <EmptyCharts title={intl.formatMessage(messages.noData)} />;
+        return <EmptyChart title={intl.formatMessage(messages.noData)} icon='warning' />;
       } else {
         return (
           <PiePlot
