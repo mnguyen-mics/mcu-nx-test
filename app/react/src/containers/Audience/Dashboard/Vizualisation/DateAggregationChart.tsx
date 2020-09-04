@@ -11,7 +11,7 @@ import injectThemeColors, {
 import moment from 'moment';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import { LoadingChart, EmptyCharts } from '../../../../components/EmptyCharts';
+import { LoadingChart } from '../../../../components/EmptyCharts';
 import messages from './messages';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
@@ -20,6 +20,7 @@ import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import StackedBarPlot from '../../../../components/Charts/CategoryBased/StackedBarPlot';
 import CardFlex from '../Components/CardFlex';
 import { getFormattedQuery } from '../domain';
+import { EmptyChart } from '@mediarithmics-private/mcs-components-library';
 
 export interface DateAggregationChartProps {
   title?: string;
@@ -214,7 +215,7 @@ class DateAggregationChart extends React.Component<Props, State> {
         return <LoadingChart />;
       } else if (this.state.error) {
         return (
-          <EmptyCharts
+          <EmptyChart
             title={intl.formatMessage(messages.error)}
             icon={'close-big'}
           />
@@ -223,7 +224,7 @@ class DateAggregationChart extends React.Component<Props, State> {
         this.state.queryResult &&
         this.state.queryResult.length === 0
       ) {
-        return <EmptyCharts title={intl.formatMessage(messages.noData)} />;
+        return <EmptyChart title={intl.formatMessage(messages.noData)} icon='warning' />;
       } else {
         return (
           this.state.queryResult &&

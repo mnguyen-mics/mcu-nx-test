@@ -582,7 +582,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
 
     const breadcrumbPaths = [
       {
-        name: messagesMap.breadcrumbAudienceSegmentList,
+        name: formatMessage(messagesMap.breadcrumbAudienceSegmentList),
         path: `/v2/o/${organisationId}/audience/segments`,
       },
       {

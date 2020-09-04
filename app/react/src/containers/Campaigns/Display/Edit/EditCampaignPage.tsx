@@ -169,7 +169,7 @@ class EditCampaignPage extends React.Component<Props, State> {
 
     const breadcrumbPaths = [
       {
-        name: messages.breadcrumbTitle1,
+        name: formatMessage(messages.breadcrumbTitle1),
         path: `/v2/o/${organisationId}/campaigns/display`,
       },
       {

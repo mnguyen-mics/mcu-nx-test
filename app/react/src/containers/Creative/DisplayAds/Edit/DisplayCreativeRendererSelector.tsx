@@ -103,7 +103,7 @@ class DisplayCreativeRendererSelector extends React.Component<Props, State> {
       onClose: this.props.close,
       paths: [
         {
-          name: messages.creativeCreationBreadCrumb,
+          name: formatMessage(messages.creativeCreationBreadCrumb),
         },
       ],
     };

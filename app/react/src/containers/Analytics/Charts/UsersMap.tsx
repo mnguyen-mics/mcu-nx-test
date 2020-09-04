@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import * as ReactSimpleMaps from 'react-simple-maps';
 import messages from '../Overview/messages';
-import EmptyCharts from '../../../components/EmptyCharts/EmptyChart';
 import {compose} from 'recompose';
 import { injectIntl } from 'react-intl';
 import InjectedIntlProps = ReactIntl.InjectedIntlProps;
 import {scaleLinear} from 'd3-scale';
+import { EmptyChart } from '@mediarithmics-private/mcs-components-library';
 
 interface UsersMapProps {
   projection: string;
@@ -45,7 +45,7 @@ class UsersMap extends Component<UsersMapProps & InjectedIntlProps> {
       .range([colors['mcs-info'], colors['mcs-primary']]);
 
     return ((report && report.length === 0 || !hasFetchedVisitReport)) ?
-        <EmptyCharts title={formatMessage(messages.no_visit_stat)} /> :
+        <EmptyChart title={formatMessage(messages.no_visit_stat)} icon='warning' /> :
         (
           <div>
             <ReactSimpleMaps.ComposableMap

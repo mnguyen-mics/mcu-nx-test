@@ -7,7 +7,6 @@ import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import { RouteComponentProps } from 'react-router';
 import {
-  EmptyCharts,
   LoadingChart,
 } from '../../../../../components/EmptyCharts/index';
 import McsIcon from '../../../../../components/McsIcon';
@@ -27,6 +26,7 @@ import StackedBarPlot, {
   StackedBarPlotOptions,
 } from '../../../../../components/Charts/CategoryBased/StackedBarPlot';
 import { AudienceSegmentShape } from '../../../../../models/audiencesegment';
+import { EmptyChart } from '@mediarithmics-private/mcs-components-library';
 
 interface State {
   data: OverlapData;
@@ -208,12 +208,14 @@ class Overlap extends React.Component<Props, State> {
           </Col>
         </Row>
         {overlapFetchingError ? (
-          <EmptyCharts
+          <EmptyChart
             title={intl.formatMessage(messages.overlapFetchingError)}
+            icon='warning'
           />
         ) : !data.hasOverlap && !isFetchingOverlap ? (
-          <EmptyCharts
+          <EmptyChart
             title={intl.formatMessage(messages.noAdditionDeletion)}
+            icon='warning'
           />
         ) : (
           this.renderStackedAreaCharts()

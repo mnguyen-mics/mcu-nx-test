@@ -41,7 +41,7 @@ export default class Counter extends React.Component<CounterProps, State> {
         onMouseEnter={onHover('enter')}
         onMouseLeave={onHover('leave')}
       >
-        <div className="mcs-card-container no-margin-bottom result-view">
+        <div className="mcs-card no-margin-bottom result-view">
           <div className="view-name">{name}</div>
           <div className="view-value">
             {loading ? (

@@ -135,6 +135,7 @@ class EditOfferPage extends React.Component<Props, State> {
       match: {
         params: { organisationId, offerId },
       },
+      intl: { formatMessage },
     } = this.props;
 
     const { offerType, offerFormData, loading } = this.state;
@@ -152,11 +153,11 @@ class EditOfferPage extends React.Component<Props, State> {
 
     const breadcrumbPaths = [
       {
-        name: messages.breadcrumbTitle,
+        name: formatMessage(messages.breadcrumbTitle),
         path: `/v2/o/${organisationId}/settings/services/my_offers`,
       },
       {
-        name: messages.newOffer,
+        name: formatMessage(messages.newOffer),
       },
     ];
 

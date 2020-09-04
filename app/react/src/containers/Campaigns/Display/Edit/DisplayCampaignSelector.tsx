@@ -76,7 +76,7 @@ class DisplayCampaignSelector extends React.Component<
       onClose: close,
       paths: [
         {
-          name: messages.campaignSelectionBreadcrumb,
+          name: formatMessage(messages.campaignSelectionBreadcrumb),
         },
       ],
     };

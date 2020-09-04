@@ -6,7 +6,6 @@ import { compose } from 'recompose';
 import { ClickParam } from 'antd/lib/menu';
 import { Dropdown } from '../../../../../components/PopupContainers';
 import {
-  EmptyCharts,
   LoadingChart,
 } from '../../../../../components/EmptyCharts/index';
 import McsDateRangePicker, {
@@ -36,6 +35,7 @@ import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../../Helpers/injectThemeColors';
 import StackedAreaPlot from '../../../../../components/Charts/TimeBased/StackedAreaPlot';
+import { EmptyChart } from '@mediarithmics-private/mcs-components-library';
 
 const LegendChartTS = LegendChart as any;
 
@@ -387,7 +387,7 @@ class GoalStackedAreaChart extends React.Component<
           </Col>
         </Row>
         {!hasData && hasFetchedPerformance ? (
-          <EmptyCharts title={formatMessage(messages.noGoalStatAvailable)} />
+          <EmptyChart title={formatMessage(messages.noGoalStatAvailable)} icon='warning' />
         ) : (
           <Row>
             <Col span={24}>{this.renderStackedAreaCharts()}</Col>

@@ -10,7 +10,7 @@ import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../Helpers/injectThemeColors';
 import { compose } from 'recompose';
-import { LoadingChart, EmptyCharts } from '../../../../components/EmptyCharts';
+import { LoadingChart } from '../../../../components/EmptyCharts';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import messages from './messages';
 import { lazyInject } from '../../../../config/inversify.config';
@@ -22,6 +22,7 @@ import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { getFormattedQuery } from '../domain';
 import { QueryResource } from '../../../../models/datamart/DatamartResource';
 import { DataLabel, TooltipChart } from '../../../../models/dashboards/dashboards';
+import { EmptyChart } from '@mediarithmics-private/mcs-components-library';
 
 export interface MapBarChartProps {
   title?: string;
@@ -220,7 +221,7 @@ class MapBarChart extends React.Component<Props, State> {
         return <LoadingChart />;
       } else if (this.state.error) {
         return (
-          <EmptyCharts
+          <EmptyChart
             title={intl.formatMessage(messages.error)}
             icon={'close-big'}
           />
@@ -229,7 +230,7 @@ class MapBarChart extends React.Component<Props, State> {
         (this.state.queryResult && this.state.queryResult.length === 0) ||
         !this.state.queryResult
       ) {
-        return <EmptyCharts title={intl.formatMessage(messages.noData)} />;
+        return <EmptyChart title={intl.formatMessage(messages.noData)} icon='warning' />;
       } else {
         return (
           this.state.queryResult &&

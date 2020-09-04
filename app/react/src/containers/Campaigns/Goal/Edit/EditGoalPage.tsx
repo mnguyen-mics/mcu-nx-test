@@ -195,7 +195,7 @@ class EditGoalPage extends React.Component<Props, State> {
 
     const breadCrumbPaths = [
       {
-        name: messages.breadcrumbGoalsTitle,
+        name: formatMessage(messages.breadcrumbGoalsTitle),
         path: `/v2/o/${organisationId}/campaigns/goals`,
       },
       {

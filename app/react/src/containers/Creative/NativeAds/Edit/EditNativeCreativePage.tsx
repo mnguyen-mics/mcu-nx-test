@@ -166,7 +166,7 @@ class EditNativeCreativePage extends React.Component<Props, State> {
       match: {
         params: { nativeId, organisationId },
       },
-      intl,
+      intl: { formatMessage },
     } = this.props;
 
     const { nativeName } = this.state;
@@ -174,15 +174,15 @@ class EditNativeCreativePage extends React.Component<Props, State> {
     const actionBarButtonText = messages.save;
 
     const breadCrumbToList = {
-      name: messages.nativeListBreadCrumb,
+      name: formatMessage(messages.nativeListBreadCrumb),
       path: `/v2/o/${organisationId}/creatives/native`,
     };
 
     const creaName = nativeId
-      ? intl.formatMessage(messages.creativeEditionBreadCrumb, {
+      ? formatMessage(messages.creativeEditionBreadCrumb, {
           name: nativeName,
         })
-      : messages.nativeCreationBreadCrumb;
+      : formatMessage(messages.nativeCreationBreadCrumb);
 
     const breadCrumbPaths = [
       {

@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Row, Col } from 'antd';
 
 import {
-  EmptyCharts,
   LoadingChart,
 } from '../../../../../components/EmptyCharts';
 import injectThemeColors, {
@@ -15,7 +14,7 @@ import {
   InjectedIntlProps,
   injectIntl,
 } from 'react-intl';
-import PiePlot from '../../../../../components/Charts/CategoryBased/PiePlot';
+import { PiePlot, EmptyChart } from '@mediarithmics-private/mcs-components-library';
 
 const messageMap: {
   [key: string]: FormattedMessage.MessageDescriptor;
@@ -267,13 +266,14 @@ class EmailPieCharts extends React.Component<Props> {
 
     if (!deliveryReport)
       return (
-        <EmptyCharts
+        <EmptyChart
           title={
             <FormattedMessage
               id="email.campaign.dashboard.charts.noData"
               defaultMessage="No Data"
             />
           }
+          icon='warning'
         />
       );
 

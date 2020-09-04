@@ -1,12 +1,11 @@
 import * as React from 'react';
-import PieChart from '../../../components/Charts/CategoryBased/PiePlot';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import messages from '../Overview/messages';
-import EmptyCharts from '../../../components/EmptyCharts/EmptyChart';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../Helpers/injectThemeColors';
+import { PiePlot, EmptyChart } from '@mediarithmics-private/mcs-components-library';
 
 interface DeviceTypeProps {
   hasFetchedVisitReport: boolean;
@@ -116,9 +115,9 @@ class DeviceType extends React.Component<
       const pieChartsOptions = this.generateOptions(false);
       chartComponent =
         (dataset && dataset.length === 0) || !hasFetchedVisitReport ? (
-          <EmptyCharts title={formatMessage(messages.no_visit_stat)} />
+          <EmptyChart title={formatMessage(messages.no_visit_stat)} icon='warning' />
         ) : (
-          <PieChart
+          <PiePlot
             dataset={dataset}
             options={pieChartsOptions}
           />

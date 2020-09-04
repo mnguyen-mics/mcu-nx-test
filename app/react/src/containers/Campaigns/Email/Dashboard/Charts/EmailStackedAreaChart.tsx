@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Row, Col } from 'antd';
 import { compose } from 'recompose';
 import {
-  EmptyCharts,
   LoadingChart,
 } from '../../../../../components/EmptyCharts';
 import McsDateRangePicker, {
@@ -17,6 +16,7 @@ import injectThemeColors, {
 import { Index } from '../../../../../utils';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { messagesMap } from '../BlastTable';
+import { EmptyChart } from '@mediarithmics-private/mcs-components-library';
 
 export interface EmailStackedAreaChartProps {
   dateRangeValue: McsDateRangeValue;
@@ -107,7 +107,7 @@ class EmailStackedAreaChart extends React.Component<Props> {
           </Col>
         </Row>
         {emailReport.length === 0 && isLoading ? (
-          <EmptyCharts title={intl.formatMessage(messagesMap.noEmailStats)} />
+          <EmptyChart title={intl.formatMessage(messagesMap.noEmailStats)} icon='warning' />
         ) : (
           this.renderStackedAreaCharts()
         )}

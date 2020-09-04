@@ -216,7 +216,7 @@ class FeedChart extends React.Component<Props, State> {
           <LoadingChart />
         ) : (
             <Card
-              className="mcs-card-container compact"
+              className="compact"
               title={formatMessage(messagesMap.graph_title)}
             >
               <StackedBarPlot

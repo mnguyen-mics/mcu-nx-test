@@ -81,7 +81,7 @@ const Content = Layout.Content as React.ComponentClass<
 class EditCampaignsForm extends React.Component<
   JoinedProps,
   EditCampaignsFormState
-> {
+  > {
   @lazyInject(TYPES.IDisplayCampaignService)
   private _displayCampaignService: IDisplayCampaignService;
 
@@ -147,7 +147,7 @@ class EditCampaignsForm extends React.Component<
   };
 
   render() {
-    const { handleSubmit, close } = this.props;
+    const { handleSubmit, close, intl: { formatMessage } } = this.props;
 
     const { loading, campaignNames, v2014CampaignNames } = this.state;
 
@@ -155,7 +155,7 @@ class EditCampaignsForm extends React.Component<
       formId: FORM_ID,
       paths: [
         {
-          name: messages.editCampaigns,
+          name: formatMessage(messages.editCampaigns),
         },
       ],
       message: messages.saveCampaigns,

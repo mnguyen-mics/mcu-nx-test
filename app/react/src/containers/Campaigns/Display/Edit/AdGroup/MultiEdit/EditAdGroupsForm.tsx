@@ -166,13 +166,13 @@ class EditAdGroupsForm extends React.Component<
   };
 
   render() {
-    const { handleSubmit, close } = this.props;
+    const { handleSubmit, close, intl: { formatMessage } } = this.props;
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
       paths: [
         {
-          name: messages.editAdGroups,
+          name: formatMessage(messages.editAdGroups),
         },
       ],
       message: messages.saveAdGroup,
