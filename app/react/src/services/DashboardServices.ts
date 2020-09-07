@@ -157,6 +157,9 @@ export class DashboardService implements IDashboardService {
       return this._datafileService
         .getDatafileData(
           `mics://data_file/tenants/${organisationId}/dashboards/${datamartId}/SEGMENT-${segmentId}.json`,
+        ).then(
+          (d) => d, 
+          () => this._datafileService.getDatafileData(`mics://data_file/tenants/${organisationId}/dashboards/${datamartId}/SEGMENT.json`)
         )
         .then((b: Blob) => {
           return readFile(b);
@@ -182,8 +185,7 @@ export class DashboardService implements IDashboardService {
           });
         })
         .catch(e => {
-          log.debug(e)
-          return this.getDashboards(organisationId, datamartId, "SEGMENT")
+          log.debug(e);
         });
     });
   }
@@ -4418,10 +4420,10 @@ const myDashboards: DashboardResource[] = [
     ]
   },
   {
-    "id": "1",
+    "id": "3",
     "name": "Demographics",
     "type": "SEGMENT",
-    "datamart_id": "1466",
+    "datamart_id": "1500",
     components: [
       {
         layout: {
