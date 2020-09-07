@@ -207,10 +207,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
     this._dashboardService
       .getSegmentDashboards(organisationId, selectedDatamartId, segmentId)
       .then(d => {
-        return d.data;
-      })
-      .then(d => {
-        this.setState({ charts: d });
+        this.setState({ charts: d.data });
       })
       .catch(err => {
         this.props.notifyError(err);
