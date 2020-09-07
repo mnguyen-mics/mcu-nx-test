@@ -52,6 +52,7 @@ module.exports = merge(common, {
     }),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('dev'),
+      'process.env.API_ENV': JSON.stringify(process.env.API_ENV),
     }),
     new CopyWebpackPlugin([{
       from: 'app/conf/react-configuration.js',
