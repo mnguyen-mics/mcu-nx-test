@@ -1,20 +1,77 @@
 .mcs-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   height: @layout-header-height;
   background-color: @info-color;
 
-  .launcher {
+  &-title {
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    justify-content: space-between;
     padding-right: 20px;
+
+    .left-component {
+      display: flex;
+      align-items: center;
+
+      .ant-dropdown-trigger {
+        display: flex;
+      }
+
+      .launcher {
+        padding-right: 20px;
+      }
+    }
+
+    &-alert {
+      display: flex;
+      margin: auto;
+      margin-right: 0;
+      border-color: red;
+    }
   }
+
+  &-actions {
+    display: flex;
+
+    &-settings {
+      display: flex;
+      align-items: center;
+      padding-right: 20px;
+    }
+
+    &-account {
+      display: flex;
+      align-items: center;
+
+      .ant-dropdown-trigger {
+        display: flex;
+      }
+    }
+  }
+
+  .menu-icon {
+    margin: 0;
+    color: white;
+    font-size: 20px !important;
+    &:hover {
+      color: @normal-color;
+    }
+  }
+
 
   .datamart-switcher {
     margin-left: 40px;
   }
 
-  .organisation-name, .datamart-name {
+  .organisation-name {
     color: white;
     font-size: 15px;
     font-weight: bold;
-    cursor: default;
+    cursor: pointer;
+    text-decoration: none;
 
     i {
       font-size: 12px;
@@ -29,110 +86,11 @@
     }
   }
 
-  .menu-icon {
-    color: white;
-    font-size: 20px !important;
-    &:hover {
-      color: @normal-color;
-    }
-  }
+  
 
   .icon-right-align {
     text-align: right;
   }
-}
-
-// TODO check style usage of classes below
-
-.mcs-header-menu-icons {
-  float: right;
-  padding-right: 40px;
-}
-
-.mcs-header-menu-horizontal {
-  border-bottom: none;
-  display: inline-block;
-  padding-left: 20px;
-}
-
-.mcs-header-logo {
-  max-width: 200px;
-}
-
-.mcs-header-navigation {
-  width: ~'calc(100% - 200px)';
-}
-
-.mcs-header-logo-name > a {
-  font-size: 15px;
-  font-weight: bold;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  width: 150px;
-  max-width: 138px;
-
-  img {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    max-height: 70px;
-    max-width: 138px;
-  }
-}
-
-.mcs-header-logo-item {
-  float: left;
-  display: inline-block;
-}
-
-.mcs-header-logo-name {
-  max-width: 135px;
-  display: flex;
-  align-items: center;
-  align-content: center;
-}
-
-.ant-cascader-menu {
-  height: auto;
-}
-
-.mcs-header-logo-name,
-.ant-menu-item,
-.mcs-header-anticon,
-.mcs-header-divider {
-  line-height: @layout-header-height;
-  height: @layout-header-height;
-}
-
-.mcs-header-anticon {
-  font-size: 20px;
-  &:hover {
-    cursor: pointer;
-  }
-}
-
-.mcs-header-divider {
-  width: 1px;
-  height: 40px;
-  margin: 0px 25px;
-  background-color: @border-color-base;
-  display: inline-block;
-  vertical-align: sub;
-}
-
-.mcs-header-left-divider {
-  width: 1px;
-  height: 40px;
-  background-color: @border-color-base;
-  display: inline-block;
-  vertical-align: middle;
-  margin-right: 13px;
-}
-
-.text-center {
-  text-align: center;
 }
 
 .mcs-settings-main-menu {

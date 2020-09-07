@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter, Link, RouteComponentProps } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
-import { Layout, Menu, Row, Col, Icon } from 'antd';
+import { Layout, Menu, Icon, Alert } from 'antd';
 import { Dropdown } from '../../components/PopupContainers';
 import * as SessionHelper from '../../redux/Session/selectors';
 import McsIcon from '../../components/McsIcon';
@@ -66,52 +66,61 @@ class NavigatorHeader extends React.Component<Props> {
       </Menu>
     );
 
-    const renderSettings = (
-      <Link to={`/v2/o/${organisationId}/settings/organisation/labels`}>
-        <McsIcon type="options" className="menu-icon" />
-      </Link>
-    );
-
     return (
       <Header className="mcs-header">
-        <Row>
-          <Col span={22}>
-            <span className="left-component">
-              {isSetting ? (
-                <span className="launcher">
-                  <Dropdown overlay={menu} trigger={['click']}>
-                    <a>
-                      <Icon
-                        type="appstore"
-                        className="menu-icon"
-                        theme="filled"
-                      />
-                    </a>
-                  </Dropdown>
-                </span>
-              ) : null}
-              {<span className="organisation-name">{organisationName}</span>}
-            </span>
-          </Col>
-          <Col span={2}>
-            <Row>
-              <Col span={12} className="icon-right-align">
-                {renderSettings}
-              </Col>
-              <Col span={12} className="icon-right-align">
-                <Dropdown
-                  overlay={accountMenu}
-                  trigger={['click']}
-                  placement="bottomRight"
-                >
+        <div className="mcs-header-title">
+          <span className="left-component">
+            {isSetting ? (
+              <span className="launcher">
+                <Dropdown overlay={menu} trigger={['click']}>
                   <a>
-                    <McsIcon type="user" className="menu-icon" />
+                    <Icon
+                      type="appstore"
+                      className="menu-icon"
+                      theme="filled"
+                    />
                   </a>
                 </Dropdown>
-              </Col>
-            </Row>
-          </Col>
-        </Row>
+              </span>
+            ) : null}
+            {
+              <Link
+                to={`/v2/o/${organisationId}/campaigns/display`}
+                className="organisation-name">
+                  {organisationName}
+              </Link>
+            }
+          </span>
+          {
+            process.env.API_ENV === 'prod' ?
+              <Alert
+                className="mcs-header-title-alert"
+                message="You are using production API environment !"
+                type="error"
+                showIcon={true}
+              />
+              : null
+          }
+        </div>
+        <div className="mcs-header-actions">
+          <Link
+            className="mcs-header-actions-settings"
+            to={`/v2/o/${organisationId}/settings/organisation/labels`}
+          >
+            <McsIcon type="options" className="menu-icon" />
+          </Link>
+          <div className="mcs-header-actions-account">
+            <Dropdown
+              overlay={accountMenu}
+              trigger={['click']}
+              placement="bottomRight"
+            >
+              <a>
+                <McsIcon type="user" className="menu-icon" />
+              </a>
+            </Dropdown>
+          </div>
+        </div>
       </Header>
     );
   }
