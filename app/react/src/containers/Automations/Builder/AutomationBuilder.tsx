@@ -572,7 +572,7 @@ class AutomationBuilder extends React.Component<Props, State> {
           {exitConditionButton}
         </Col>
         <Col
-          span={viewNodeSelector ? 6 : 24}
+          span={viewNodeSelector ? 6 : 0}
           className="available-nodes-visualizer"
         >
           <AvailableNodeVisualizer />
