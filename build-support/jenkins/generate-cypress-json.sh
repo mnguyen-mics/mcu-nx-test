@@ -59,7 +59,7 @@ cat << EOF
   "video": ${RECORD_VIDEO},
   "viewportHeight": 1080,
   "viewportWidth": 1920,
-
+  "projectId":"px499y",
   "reporter": "mochawesome",
   "reporterOptions": {
     "overwrite": false,
