@@ -351,6 +351,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
       segment && datamarts.find(d => d.id === segment.datamart_id);
 
     const shouldDisplayAnalyticsFeature =
+      charts.length === 0 &&
       hasFeature('audience-dashboards-datamart_users_analytics') &&
       datamart && isUsersAnalyticsSupportedByDatafarm(datamart.datafarm) &&
       segment &&
