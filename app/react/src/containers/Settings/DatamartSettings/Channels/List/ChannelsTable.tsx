@@ -137,7 +137,7 @@ class ChannelsTable extends React.Component<Props> {
         render: (text: string, record: ChannelResourceShape) => {
           const datamart = datamarts.find(d => d.id === record.datamart_id);
 
-          return datamart ? `${datamart.name} (id: ${record.datamart_id})` : '';
+          return datamart ? datamart.name : '';
         },
       },
       {

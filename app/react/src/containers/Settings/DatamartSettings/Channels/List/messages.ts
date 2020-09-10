@@ -1,6 +1,10 @@
 import { defineMessages } from 'react-intl';
 
 const messages = defineMessages({
+  newChannel: {
+    id: 'settings.datamart.channels.new',
+    defaultMessage: 'New Channel',
+  },
   newSite: {
     id: 'settings.datamart.channels.new.site',
     defaultMessage: 'New Site',
