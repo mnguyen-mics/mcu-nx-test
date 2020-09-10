@@ -17,11 +17,10 @@ import {
 } from '../../../../../../../models/servicemanagement/PublicServiceItemResource';
 import { AudienceSegmentResource } from '../../../../../../../models/audiencesegment/AudienceSegmentResource';
 import FormSearchAndMultiSelect from '../../../../../../../components/Form/FormSearchAndMultiSelect';
-import FormSearchAndTreeSelect from '../../../../../../../components/Form/FormSearchAndTreeSelect';
 import { MenuItemProps } from '../../../../../../../components/SearchAndMultiSelect';
-import { TreeData } from '../../../../../../../components/SearchAndTreeSelect';
 import ButtonStyleless from '../../../../../../../components/ButtonStyleless';
 import { ReduxFormChangeProps } from '../../../../../../../utils/FormHelper';
+import TreeSelectWithList, { TreeData } from '../../../../../../../components/Form/TreeSelectWithList';
 
 export interface AudienceCatalogFormSectionProps extends ReduxFormChangeProps {}
 
@@ -158,7 +157,9 @@ class AudienceCatalogFormSection extends React.Component<Props, State> {
   buildTreeDataFromOwnSegments = (
     audienceSegments: AudienceSegmentResource[],
   ): TreeData => {
-    const { intl: { formatMessage } } = this.props;
+    const {
+      intl: { formatMessage },
+    } = this.props;
     return {
       value: 'own-datamart-segments',
       label: formatMessage(audienceCatalogMsgs.mySegmentCategory),
@@ -191,21 +192,21 @@ class AudienceCatalogFormSection extends React.Component<Props, State> {
     const ageServiceItemDataSource = ageServiceItems.data.map(toMenuItemProps);
 
     const detailedTargetingDataSource = audienceCategoryTree.data
-      .map(child =>
-        toTreeData(child, [
-          {
-            value: child.node.id,
-            label: child.node.name,
-            isLeaf: false,
-          },
-        ]),
-      )
-      .concat(
-        audienceSegments.data.length > 0
-          ? // add datamart's segments to tree if any
-            this.buildTreeDataFromOwnSegments(audienceSegments.data)
-          : [],
-      );
+    .map(child =>
+      toTreeData(child, [
+        {
+          value: child.node.id,
+          label: child.node.name,
+          isLeaf: false,
+        },
+      ]),
+    )
+    .concat(
+      audienceSegments.data.length > 0
+        ? // add datamart's segments to tree if any
+          this.buildTreeDataFromOwnSegments(audienceSegments.data)
+        : [],
+    );
 
     const excludedSegmentFound = fields
       .getAll()
@@ -265,14 +266,14 @@ class AudienceCatalogFormSection extends React.Component<Props, State> {
               />
             </Col>
           </Row>
-          <FormSearchAndTreeSelect
+          <TreeSelectWithList
             label={intl.formatMessage(
               audienceCatalogMsgs.detailedTargetingLabel,
             )}
             placeholder={intl.formatMessage(
               audienceCatalogMsgs.selectPlaceholder,
             )}
-            datasource={detailedTargetingDataSource}
+            dataSource={detailedTargetingDataSource}
             loading={audienceCategoryTree.loading || audienceSegments.loading}
             tooltipProps={{
               title: intl.formatMessage(
@@ -297,14 +298,14 @@ class AudienceCatalogFormSection extends React.Component<Props, State> {
                 />
               </Col>
             </Row>
-            <FormSearchAndTreeSelect
+            <TreeSelectWithList
               label={intl.formatMessage(
                 audienceCatalogMsgs.detailedTargetingExclusionLabel,
               )}
               placeholder={intl.formatMessage(
                 audienceCatalogMsgs.selectPlaceholder,
               )}
-              datasource={detailedTargetingDataSource}
+              dataSource={detailedTargetingDataSource}
               loading={audienceCategoryTree.loading || audienceSegments.loading}
               tooltipProps={{
                 title: intl.formatMessage(

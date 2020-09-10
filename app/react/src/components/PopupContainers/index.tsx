@@ -6,10 +6,8 @@ import { PopoverProps } from 'antd/lib/popover';
 import { DefaultSelectProps } from '../Form/FormSelect/DefaultSelect';
 import { GenericField } from 'redux-form';
 import { DropDownProps } from 'antd/lib/dropdown';
-import * as Components from '../../components';
 import { SelectProps } from 'antd/lib/select';
 import { DatePickerProps } from 'antd/lib/date-picker/interface';
-import { TreeSelectProps } from '../TreeSelect';
 
 function withPopupContainer<T>(Component: React.ComponentClass<any>) {
   return class EnhancedComponent extends React.Component<T> {
@@ -53,9 +51,6 @@ export const FormSelectField = withPopupContainer<
 >(Form.FormSelectField);
 export const Dropdown = withPopupContainer<DropDownProps>(Antd.Dropdown);
 
-export const TreeSelect = withPopupContainer<TreeSelectProps>(
-  Components.TreeSelect,
-);
 export const Select = withPopupContainer<SelectProps>(Antd.Select);
 export const DatePicker = withCalendarContainer<DatePickerProps>(
   Antd.DatePicker,
