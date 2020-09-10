@@ -1,30 +1,21 @@
-export type AudienceFeatureType = AudienceFeatureCommonType | 'Interval';
+export type AudienceFeatureType = 'Int' | 'Enum' | 'Boolean' | 'String' | 'Date' | 'Timestamp' | AdditionalAudienceFeatureType;
 
-type AudienceFeatureCommonType = 'Int' | 'Enum' | 'Boolean' | 'String' | 'Date';
+type AdditionalAudienceFeatureType = 'OperatingSystemFamily'
+  | 'FormFactor'
+  | 'HashFunction'
+  | 'BrowserFamily'
+  | 'UserAgentType'
+  | 'ActivitySource'
+  | 'UserActivityType';
 
-interface AudienceFeatureCommonResource {
-  path: string[];
+export interface AudienceFeatureVariable {
+  field_name: string;
   parameter_name: string;
+  path: string[];
+  type: AudienceFeatureType;
   reference_type?: string;
   reference_model_type?: string;
 }
-
-export interface AudienceFeatureVariable<T>
-  extends AudienceFeatureCommonResource {
-  type: T;
-  field_name: string;
-}
-
-export interface AudienceFeatureIntervalVariable
-  extends AudienceFeatureCommonResource {
-  type: 'Interval';
-  from: string;
-  to: string;
-}
-
-export type AudienceFeatureVariableShape =
-  | AudienceFeatureVariable<AudienceFeatureCommonType>
-  | AudienceFeatureIntervalVariable;
 
 export interface AudienceFeatureResource {
   id: string;
@@ -33,11 +24,5 @@ export interface AudienceFeatureResource {
   token: string;
   addressable_object: string;
   object_tree_expression: string;
-  variables: AudienceFeatureVariableShape[];
-}
-
-export function isAudienceFeatureIntervalVariable(
-  variable: AudienceFeatureVariableShape,
-): variable is AudienceFeatureIntervalVariable {
-  return variable.type === 'Interval';
+  variables: AudienceFeatureVariable[];
 }

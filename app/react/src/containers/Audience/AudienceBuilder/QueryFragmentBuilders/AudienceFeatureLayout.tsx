@@ -13,20 +13,16 @@ import {
   DefaultSelect,
   FormInputField,
   FormInput,
-  FormDateRangePickerField,
-  FormDateRangePicker,
 } from '../../../../components/Form';
 import { ValidatorProps } from '../../../../components/Form/withValidators';
 import FormMultiTag from '../../../../components/Form/FormSelect/FormMultiTag';
-import {
-  AudienceFeatureVariableShape,
-  isAudienceFeatureIntervalVariable,
-} from '../../../../models/audienceFeature/AudienceFeatureResource';
+import { AudienceFeatureVariable } from '../../../../models/audienceFeature/AudienceFeatureResource';
 import { AudienceBuilderParametricPredicateNode } from '../../../../models/audienceBuilder/AudienceBuilderResource';
 import { Field, GenericField } from 'redux-form';
 import FormRelativeAbsoluteDate, {
   FormRelativeAbsoluteDateProps,
 } from '../../../QueryTool/JSONOTQL/Edit/Sections/Field/Comparison/FormRelativeAbsoluteDate';
+import { builtinEnumTypeOptions } from '../../../QueryTool/JSONOTQL/Edit/Sections/Field/contants';
 
 export const FormRelativeAbsoluteDateField = Field as new () => GenericField<
   FormRelativeAbsoluteDateProps
@@ -56,7 +52,7 @@ class AudienceFeatureLayout extends React.Component<Props, State> {
   componentDidMount() {
     const { datamartId, parametricPredicateResource } = this.props;
     this._audienceFeatureService
-      .getAudienceFeature(datamartId, parametricPredicateResource.id)
+      .getAudienceFeature(datamartId, parametricPredicateResource.parametric_predicate_id)
       .then(res => {
         this.setState({
           audienceFeature: res.data,
@@ -64,15 +60,10 @@ class AudienceFeatureLayout extends React.Component<Props, State> {
       });
   }
 
-  renderField = (featureVariable: AudienceFeatureVariableShape) => {
+  renderField = (featureVariable: AudienceFeatureVariable) => {
     const { formPath } = this.props;
     let name;
-    if (!isAudienceFeatureIntervalVariable(featureVariable)) {
-      name = `${formPath}.parameters.${featureVariable.field_name}`;
-    } else {
-      name = '';
-    }
-
+    name = `${formPath}.parameters.${featureVariable.parameter_name}`;
     const fieldGridConfig = {
       labelCol: { span: 3 },
       wrapperCol: { span: 19, offset: 1 },
@@ -126,6 +117,7 @@ class AudienceFeatureLayout extends React.Component<Props, State> {
             }}
           />
         );
+      case 'Timestamp': 
       case 'Date':
         return (
           <FormRelativeAbsoluteDateField
@@ -137,27 +129,31 @@ class AudienceFeatureLayout extends React.Component<Props, State> {
             unixTimstamp={true}
           />
         );
-
-      case 'Interval':
-        return (
-          <FormDateRangePickerField
-            name={`${formPath}.parameters`}
-            component={FormDateRangePicker}
-            startDateFieldName={featureVariable.from}
-            endDateFieldName={featureVariable.to}
-            unixTimestamp={true}
-            allowPastDate={false}
-            formItemProps={{
-              label: `${featureVariable.from} -> ${featureVariable.to}`,
-            }}
-            startDatePickerProps={{
-              placeholder: 'start date',
-            }}
-            endDatePickerProps={{
-              placeholder: 'end date',
-            }}
-          />
-        );
+      case 'OperatingSystemFamily':
+      case 'FormFactor':
+      case 'HashFunction':
+      case 'BrowserFamily':
+      case 'UserAgentType':
+      case 'ActivitySource':
+      case 'UserActivityType':
+        return <FormMultiTagField
+        name={name}
+        component={FormMultiTag}
+        selectProps={{
+          options: (builtinEnumTypeOptions[featureVariable.type] as string[]).map(t => {
+            return {
+              label: t,
+              value: t
+            }
+          })
+        }}
+        formItemProps={{
+          label: featureVariable.field_name,
+          labelCol: { span: 5 },
+          wrapperCol: { span: 17, offset: 1 }, 
+        }}
+      />;
+            
       default:
         return 'not supported';
     }

@@ -28,7 +28,6 @@ import AudienceFeatureSelector, {
   AudienceFeatureSelectorProps,
 } from './AudienceFeatureSelector';
 import { AudienceFeatureResource } from '../../../../models/audienceFeature';
-import { isAudienceFeatureIntervalVariable } from '../../../../models/audienceFeature/AudienceFeatureResource';
 
 export const AudienceFeatureFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
@@ -88,16 +87,11 @@ class QueryFragmentFormSection extends React.Component<Props> {
 
     const parameters: { [key: string]: string[] | undefined } = {};
     audienceFeatures[0].variables.forEach(v => {
-      if (isAudienceFeatureIntervalVariable(v)) {
-        parameters[v.from] = undefined;
-        parameters[v.to] = undefined;
-      } else {
-        parameters[v.field_name] = undefined;
-      }
+      parameters[v.field_name] = undefined;
     });
     const newFeature: AudienceBuilderParametricPredicateNode = {
       type: 'PARAMETRIC_PREDICATE',
-      id: audienceFeatures[0].id,
+      parametric_predicate_id: audienceFeatures[0].id,
       parameters: parameters,
     };
 
@@ -151,28 +145,30 @@ class QueryFragmentFormSection extends React.Component<Props> {
               <Card
                 className={'mcs-segmentBuilder_categoryCard'}
                 title={
-                  index === 0
-                    ? intl.formatMessage(messages.demographics)
-                    : intl.formatMessage(messages.audienceFeatures)
+                  // Let's keep this for later
+                  // index === 0
+                  //  ? intl.formatMessage(messages.demographics)
+                  intl.formatMessage(messages.audienceFeatures)
                 }
                 buttons={
-                  index !== 0 && (
+                  // index !== 0 && (
                     <Button
                       className="mcs-segmentBuilder_closeButton"
                       onClick={handleRemove}
                     >
                       <McsIcon type="close" />
                     </Button>
-                  )
+                  // )
                 }
               >
                 <AudienceFeatureFieldArray
                   name={`${name}.expressions`}
                   component={AudienceFeatureFormSection}
                   datamartId={datamartId}
-                  isDemographicsSection={index === 0}
+                  // isDemographicsSection={index === 0}
                 />
-                {index !== 0 && (
+                {
+                // index !== 0 && (
                   <div className="mcs-segmentBuilder_categoryCardFooter">
                     <Button
                       onClick={this.addFeature(index)}
@@ -181,7 +177,8 @@ class QueryFragmentFormSection extends React.Component<Props> {
                       {intl.formatMessage(messages.addAudienceFeature)}
                     </Button>
                   </div>
-                )}
+                // )
+                }
               </Card>
             </React.Fragment>
           );

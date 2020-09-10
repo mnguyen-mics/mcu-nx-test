@@ -26,16 +26,6 @@ export default class AudienceBuilderService implements IAudienceBuilderService {
           name: 'Audience Builder 1',
           datamart_id: '1162',
         },
-        {
-          id: '2',
-          name: 'Audience Builder 2',
-          datamart_id: '2',
-        },
-        {
-          id: '3',
-          name: 'Audience Builder 3',
-          datamart_id: '3',
-        },
       ],
       count: 3,
     });

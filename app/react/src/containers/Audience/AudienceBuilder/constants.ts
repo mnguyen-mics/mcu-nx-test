@@ -107,7 +107,6 @@ export const INITIAL_AUDIENCE_BUILDER_FORM_DATA: AudienceBuilderFormData = {
         type: 'GROUP',
         boolean_operator: 'AND',
         expressions: [
-          // TODO set default expressions in some way
         ],
       },
     ],

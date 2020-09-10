@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { Statistic, Row, Col, Progress } from 'antd';
+import { Statistic} from 'antd'; 
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { messages } from './constants';
 import { compose } from 'recompose';
 
 interface AudienceBuilderDashboardProps {
-  totalAudience: number;
+  totalAudience?: number;
 }
 
 type Props = InjectedIntlProps & AudienceBuilderDashboardProps;
@@ -19,8 +19,8 @@ class AudienceBuilderDashboard extends React.Component<Props> {
           title={intl.formatMessage(messages.totalAudience)}
           value={totalAudience}
           className="mcs-segmentBuilder_totalAudience"
-        />
-        <div className="mcs-segmentBuilder_purchaseIntent">
+        />        
+        {/* <div className="mcs-segmentBuilder_purchaseIntent">
           <div className="title">
             {intl.formatMessage(messages.purchasIntent)}
           </div>
@@ -38,8 +38,8 @@ class AudienceBuilderDashboard extends React.Component<Props> {
               </Col>
             </Row>
           </div>
-        </div>
-        <div className="mcs-segmentBuilder_geographics">
+        </div> */}
+        {/* <div className="mcs-segmentBuilder_geographics">
           <div className="title">
             {intl.formatMessage(messages.geographics)}
           </div>
@@ -57,7 +57,7 @@ class AudienceBuilderDashboard extends React.Component<Props> {
               </Col>
             </Row>
           </div>
-        </div>
+        </div> */}
       </div>
     );
   }

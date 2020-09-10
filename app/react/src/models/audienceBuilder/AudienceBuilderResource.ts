@@ -14,7 +14,7 @@ export interface AudienceBuilderGroupNode {
 
 export interface AudienceBuilderParametricPredicateNode {
   type: 'PARAMETRIC_PREDICATE';
-  id: string;
+  parametric_predicate_id: string;
   parameters: {
     [key: string]: string[] | undefined;
   };
@@ -51,5 +51,5 @@ export interface QueryDocument {
   language_version?: string;
   operations: SelectionOperation[];
   from: string;
-  where?: AudienceBuilderNodeShape
+  where?: AudienceBuilderNodeShape;
 }
