@@ -22,8 +22,9 @@ export function normalizeArrayOfObject<T, K extends keyof T>(
 ): Index<T> {
   if (!Array.isArray(arr)) throw new Error(`${arr} is not an array`);
   return arr.reduce((acc, object) => {
-    if (object[key]) {
-      const keyValue = object[key].toString();
+    const val: {} = object[key]
+    if (val) {
+      const keyValue = val.toString();
       return {
         ...acc,
         [keyValue]: object,

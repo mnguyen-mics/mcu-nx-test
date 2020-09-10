@@ -212,6 +212,7 @@ class ProfileSettingsEditPage extends React.Component<
                   name={userField.fieldName}
                   component={FormInput}
                   validate={[userField.invalidCallback]}
+                  // @ts-ignore
                   props={{
                     formItemProps: {
                       label: formatMessage(userField.label),

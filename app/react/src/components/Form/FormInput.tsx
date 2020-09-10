@@ -34,6 +34,7 @@ const FormInput: React.SFC<FormInputProps & WrappedFieldProps> = props => {
       small={props.small}
       {...props.formItemProps}
     >
+      {/* @ts-ignore */}
       <InputComponent
         id={props.input.name}
         {...props.input}

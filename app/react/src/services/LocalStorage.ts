@@ -64,7 +64,7 @@ const setItem = (property: {[key: string]: string}) => {
 };
 
 const removeItem = (property: string) => {
-  return isLocalStorageSupported ? removeItemLocalStorage(property) : removeItemCookie(property);
+  return isLocalStorageSupported() ? removeItemLocalStorage(property) : removeItemCookie(property);
 };
 
 export default {

@@ -41,7 +41,7 @@ interface DisplayCampaignAdGroupTableProps {
     },
   ) => void;
   rowSelection: ExtendedTableRowSelection;
-  campaign?: DisplayCampaignInfoResource;
+  campaign?: Omit<DisplayCampaignInfoResource, 'ad_groups'>;
 }
 
 interface DisplayCampaignAdGroupTableState {

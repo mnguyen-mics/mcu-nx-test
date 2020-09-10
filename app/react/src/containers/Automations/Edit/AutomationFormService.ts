@@ -421,9 +421,8 @@ export class AutomationFormService implements IAutomationFormService {
 
     const traverse = (s: StorylineNodeModel) => {
       if (s.node.id && !isFakeId(s.node.id)) this.addNodeId(s.node.id);
-      if (s.in_edge) {
-        if (s.in_edge.id && !isFakeId(s.in_edge.id))
-          this.addEdgeId(s.in_edge.id);
+      if (s.in_edge?.id && !isFakeId(s.in_edge.id)) {
+        this.addEdgeId(s.in_edge.id);
       }
       s.out_edges.forEach(e => {
         traverse(e);

@@ -118,19 +118,15 @@ class SegmentFilter extends React.Component<JoinedProp, SegmentFilterState> {
   };
 
   onSegmentByNameSelectorChange = (newValue: AppliedSegmentFilter) => {
-    const { filterColors, appliedSegmentFilters } = this.state;
+    const { appliedSegmentFilters } = this.state;
     const { onChange } = this.props;
 
     const exist = appliedSegmentFilters.find(
       (item: AppliedSegmentFilter) => item.key === newValue.key,
     );
-    const usedColors = appliedSegmentFilters.map(item => item.color);
     if (!exist) {
       this.setState(state => {
         const newAppliedSegmentFilters = state.appliedSegmentFilters.concat({
-          color: usedColors.includes(filterColors[0])
-            ? filterColors[1]
-            : filterColors[0],
           ...newValue,
         });
 

@@ -12,18 +12,12 @@ export interface JSONQLInputEditorProps {
 }
 
 class JSONQLInputEditor extends React.Component<JSONQLInputEditorProps & WrappedFieldProps> {
-
   render() {
-
-
     return (
         <JSONQLPreview
           value={this.props.input.value}
-          datamartId={this.props.inputProps.datamartId}
           {...this.props.inputProps}
           onChange={this.props.input.onChange}
-          isTrigger={this.props.inputProps.isTrigger}
-          isEdge={this.props.inputProps.isEdge}
         />
     );
   }

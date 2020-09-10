@@ -30,13 +30,12 @@ const fieldSource = {
     const nodeProperties = generateNodeProperties(props.node, formatMessage);
 
     return {
+      ...props.node,
       id: generateFakeId(),
       icon: nodeProperties.iconType,
       iconAnt: nodeProperties.iconAnt,
       color: nodeProperties.color,
-      type: props.node.type,
       branch_number: isAbnNode(props.node) ? props.node.branch_number : 0,
-      ...props.node,
     };
   },
 };

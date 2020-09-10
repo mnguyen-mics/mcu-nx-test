@@ -29,7 +29,7 @@ import { formatListView } from '../../../../../utils/Normalizer';
 const { Content } = Layout;
 
 interface DisplayCampaignProps {
-  campaign: DisplayCampaignInfoResource;
+  campaign: Omit<DisplayCampaignInfoResource, 'ad_groups'>;
   ads: {
     data: ItemsById<AdInfoResource>;
     performance: ItemsById<OverallStat>;

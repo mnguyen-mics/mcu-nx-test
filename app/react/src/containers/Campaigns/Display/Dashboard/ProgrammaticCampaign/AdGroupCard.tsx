@@ -80,7 +80,7 @@ interface AdGroupCardProps extends CardProps {
     errorMessage?: UpdateMessage,
     undoBody?: Partial<AdGroupResource>,
   ) => Promise<any>;
-  campaign?: DisplayCampaignInfoResource;
+  campaign?: Omit<DisplayCampaignInfoResource, 'ad_groups'>;
 }
 
 interface AdGroupCardState {

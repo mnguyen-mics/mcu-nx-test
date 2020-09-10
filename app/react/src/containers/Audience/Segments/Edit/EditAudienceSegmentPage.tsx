@@ -660,7 +660,6 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
           onSelect={this.onSegmentTypeSelect}
           segmentTypesToDisplay={this.getSegmentTypesToDisplay()}
         />
-        )}
       </EditContentLayout>
     );
   }

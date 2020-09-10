@@ -1,4 +1,3 @@
-import { DisplayAdCreateRequest } from './CreativeResource';
 export type CreativeType =
   'DISPLAY_AD' |
   'VIDEO_AD' |

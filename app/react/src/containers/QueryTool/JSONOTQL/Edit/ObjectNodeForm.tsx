@@ -152,11 +152,6 @@ class ObjectNodeForm extends React.Component<Props> {
       runtimeSchemaId,
     } = this.props;
 
-    const genericFieldArrayProps = {
-      formChange: change,
-      rerenderOnEveryChange: true,
-    };
-
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
       paths: breadCrumbPaths,
@@ -206,6 +201,7 @@ class ObjectNodeForm extends React.Component<Props> {
             component={FieldNodeSection}
             availableFields={this.getQueryableFields()}
             formChange={change}
+            rerenderOnEveryChange={true}
             booleanOperator={formValues.objectNodeForm.boolean_operator}
             onBooleanOperatorChange={onBooleanOperatorChange}
             objectType={this.getSelectedObjectType()}
@@ -213,7 +209,6 @@ class ObjectNodeForm extends React.Component<Props> {
             runtimeSchemaId={runtimeSchemaId}
             title={messages.fieldConditionTitle}
             subtitle={messages.fieldConditionSubTitle}
-            {...genericFieldArrayProps}
             isEdge={isEdge}
           />
         ),
