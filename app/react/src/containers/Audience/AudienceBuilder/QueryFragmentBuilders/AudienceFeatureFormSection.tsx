@@ -4,7 +4,7 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { ReduxFormChangeProps } from '../../../../utils/FormHelper';
 import { WrappedFieldArrayProps } from 'redux-form';
 import { AudienceBuilderParametricPredicateNode } from '../../../../models/audienceBuilder/AudienceBuilderResource';
-import { Row, Col, Button, Statistic } from 'antd';
+import { Row, Col, Button } from 'antd';
 import { McsIcon } from '../../../../components';
 import AudienceFeatureLayout from './AudienceFeatureLayout';
 
@@ -32,7 +32,7 @@ class AudienceFeatureFormSection extends React.Component<Props> {
               : 'mcs-segmentBuilder_audienceFeature'
           }
         >
-          <Col span={isDemographicsSection ? 24 : 20}>
+          <Col span={isDemographicsSection ? 24 : 22}>
             <AudienceFeatureLayout
               formPath={`${name}`}
               datamartId={datamartId}
@@ -42,12 +42,12 @@ class AudienceFeatureFormSection extends React.Component<Props> {
 
           {!isDemographicsSection && (
             <React.Fragment>
-              <Col span={2}>
+              {/* <Col span={2}>
                 <Statistic
                   value={3.2}
                   className="mcs-segmentBuilder_audienceFeatureTotal"
                 />
-              </Col>
+              </Col> */}
               <Col span={2}>
                 <Button
                   className="mcs-segmentBuilder_closeButton"

@@ -23,6 +23,7 @@ import QueryFragmentFormSection, {
   QueryFragmentFormSectionProps,
 } from './QueryFragmentBuilders/QueryFragmentFormSection';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
+import { OTQLResult } from '../../../models/datamart/graphdb/OTQLResult';
 
 export const QueryFragmentFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
@@ -32,14 +33,12 @@ export const QueryFragmentFieldArray = FieldArray as new () => GenericFieldArray
 interface AudienceBuilderContainerProps
   extends Omit<ConfigProps<AudienceBuilderFormData>, 'form'> {
   save: (formData: AudienceBuilderFormData) => void;
+  datamartId: string;
+  queryResult?: OTQLResult;
 }
 
 interface MapStateToProps {
   formValues: AudienceBuilderFormData;
-}
-
-interface State {
-  totalAudience: number;
 }
 
 type Props = InjectedFormProps<
@@ -51,12 +50,9 @@ type Props = InjectedFormProps<
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
 
-class AudienceBuilderContainer extends React.Component<Props, State> {
+class AudienceBuilderContainer extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
-    this.state = {
-      totalAudience: 3525014,
-    };
   }
 
   saveFormData = () => {
@@ -65,9 +61,7 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
   };
 
   render() {
-    const { totalAudience } = this.state;
-
-    const { formValues } = this.props;
+    const { datamartId, queryResult } = this.props;
 
     const genericFieldArrayProps = {
       rerenderOnEveryChange: true,
@@ -79,20 +73,18 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
         <Layout>
           <Row className="ant-layout-content mcs-segmentBuilder_container">
             <Col span={12}>
-              {formValues.datamart_id && (
-                <QueryFragmentFieldArray
-                  name={`where.expressions`}
-                  component={QueryFragmentFormSection}
-                  datamartId={formValues.datamart_id}
-                  {...genericFieldArrayProps}
-                />
-              )}
+              <QueryFragmentFieldArray
+                name={`where.expressions`}
+                component={QueryFragmentFormSection}
+                datamartId={datamartId}
+                {...genericFieldArrayProps}
+              />
             </Col>
             <Col
               span={12}
               className="mcs-segmentBuilder_liveDashboardContainer"
             >
-              <AudienceBuilderDashboard totalAudience={totalAudience} />
+              <AudienceBuilderDashboard totalAudience={queryResult && queryResult.rows[0].count} />
             </Col>
           </Row>
         </Layout>

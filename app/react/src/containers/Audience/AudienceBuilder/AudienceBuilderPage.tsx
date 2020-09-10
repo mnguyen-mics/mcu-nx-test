@@ -1,4 +1,5 @@
 import * as React from 'react';
+import _ from 'lodash';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import AudienceBuilderSelector, { messages } from './AudienceBuilderSelector';
@@ -9,6 +10,7 @@ import {
   // QueryDocument,
   AudienceBuilderNodeShape,
   isAudienceBuilderGroupNode,
+  QueryDocument,
 } from '../../../models/audienceBuilder/AudienceBuilderResource';
 import { lazyInject } from '../../../config/inversify.config';
 import { IAudienceBuilderService } from '../../../services/AudienceBuilderService';
@@ -19,21 +21,32 @@ import injectNotifications, {
 } from '../../Notifications/injectNotifications';
 import { INITIAL_AUDIENCE_BUILDER_FORM_DATA } from './constants';
 import { Loading } from '../../../components';
+import {
+  withDatamartSelector,
+  WithDatamartSelectorProps,
+} from '../../Datamart/WithDatamartSelector';
+import { IQueryService } from '../../../services/QueryService';
+import { OTQLResult } from '../../../models/datamart/graphdb/OTQLResult';
 
 interface State {
   audienceBuilders?: AudienceBuilderResource[];
   selectedAudienceBuidler?: AudienceBuilderResource;
   formData: AudienceBuilderFormData;
   isLoading: boolean;
+  queryResult?: OTQLResult;
 }
 
 type Props = InjectedIntlProps &
   InjectedNotificationProps &
+  WithDatamartSelectorProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class AudienceBuilderPage extends React.Component<Props, State> {
   @lazyInject(TYPES.IAudienceBuilderService)
   private _audienceBuilderService: IAudienceBuilderService;
+
+  @lazyInject(TYPES.IQueryService)
+  private _queryService: IQueryService;
 
   constructor(props: Props) {
     super(props);
@@ -66,6 +79,19 @@ class AudienceBuilderPage extends React.Component<Props, State> {
       });
   }
 
+  componentDidUpdate(prevProps: Props, prevState: State) {
+    const {
+      selectedAudienceBuidler,
+      formData
+    } = this.state;
+    const {
+      selectedAudienceBuidler: prevSelectedAudienceBuidler
+    } = prevState;
+    if(!_.isEqual(selectedAudienceBuidler, prevSelectedAudienceBuidler)) {
+      this.runQuery(formData);
+    }
+  }
+
   saveAudience = (formData: AudienceBuilderFormData) => {
     // const baseQueryFragment = {
     //   language_version: 'JSON_OTQL',
@@ -92,6 +118,42 @@ class AudienceBuilderPage extends React.Component<Props, State> {
     // console.log('The Query: ', query);
     // console.log('Number of errors: ', this.validateQuery(clauseWhere));
   };
+
+  runQuery = (formData: AudienceBuilderFormData) => {
+    const {
+      selectedDatamartId,
+    } = this.props;
+     const baseQueryFragment = {
+      language_version: 'JSON_OTQL',
+      operations: [
+        {
+          directives: [
+            {
+              name: 'count',
+            },
+          ],
+          selections: [],
+        },
+      ],
+      from: 'UserPoint',
+      where: {},
+    };
+    const clauseWhere = formData.where;
+    const query: QueryDocument = {
+      ...baseQueryFragment,
+      where: clauseWhere,
+    };
+
+    this._queryService
+    .runJSONOTQLQuery(selectedDatamartId, query as any).
+    then(queryResult => {
+      this.setState({
+        queryResult: queryResult.data
+      })
+    }).catch(err => {
+      this.props.notifyError(err)
+    })
+  }
 
   // Validates JSON OTQL clauseWhere from formData
   validateQuery = (clauseWhere: AudienceBuilderNodeShape): number => {
@@ -125,18 +187,18 @@ class AudienceBuilderPage extends React.Component<Props, State> {
       selectedAudienceBuidler: audienceBuilder,
       formData: {
         ...INITIAL_AUDIENCE_BUILDER_FORM_DATA,
-        datamart_id: audienceBuilder.datamart_id,
       },
     });
   };
 
   render() {
-    const { intl } = this.props;
+    const { intl, selectedDatamartId } = this.props;
     const {
       selectedAudienceBuidler,
       audienceBuilders,
       isLoading,
       formData,
+      queryResult
     } = this.state;
 
     if (isLoading) {
@@ -144,8 +206,10 @@ class AudienceBuilderPage extends React.Component<Props, State> {
     }
     return selectedAudienceBuidler ? (
       <AudienceBuilderContainer
-        save={this.saveAudience}
+        save={this.runQuery}
         initialValues={formData}
+        queryResult={queryResult}
+        datamartId={selectedDatamartId}
       />
     ) : (
       <AudienceBuilderSelector
@@ -165,6 +229,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
 }
 
 export default compose(
+  withDatamartSelector,
   injectIntl,
   withRouter,
   injectNotifications,
