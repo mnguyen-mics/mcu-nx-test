@@ -21,7 +21,7 @@ export interface TreeData {
   type?: string;
 }
 
-export interface CustomTreeSelectProps {
+export interface TreeSelectWithListProps {
   label: string;
   placeholder?: string;
   dataSource: TreeData[];
@@ -34,7 +34,7 @@ export interface CustomTreeSelectProps {
   disabled?: boolean;
 }
 
-type Props = CustomTreeSelectProps & FormFieldWrapperProps;
+type Props = TreeSelectWithListProps & FormFieldWrapperProps;
 
 interface State {
   treeLeavesCache: {
@@ -42,7 +42,9 @@ interface State {
   };
 }
 
-class CustomTreeSelect extends React.Component<Props, State> {
+class TreeSelectWithList extends React.Component<Props, State> {
+  id: string = cuid();
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -50,7 +52,20 @@ class CustomTreeSelect extends React.Component<Props, State> {
     };
   }
 
-  id: string = cuid();
+  componentDidMount() {
+    const { dataSource } = this.props;
+    this.initTreeLeaves(dataSource);
+  }
+
+  componentDidUpdate(previousProps: Props) {
+    const { dataSource: previousDataSource } = previousProps;
+    const { dataSource } = this.props;
+
+    if (dataSource.length !== previousDataSource.length) {
+      // we don't expect the tree to be modified deeply, hence the comparison
+      this.initTreeLeaves(dataSource);
+    }
+  }
 
   initTreeLeaves = (treeData: TreeData[]) => {
     const treeLeavesCache: {
@@ -68,21 +83,6 @@ class CustomTreeSelect extends React.Component<Props, State> {
     traverse(treeData);
     this.setState({ treeLeavesCache: treeLeavesCache });
   };
-
-  componentDidMount() {
-    const { dataSource } = this.props;
-    this.initTreeLeaves(dataSource);
-  }
-
-  componentDidUpdate(previousProps: Props) {
-    const { dataSource: previousDataSource } = previousProps;
-    const { dataSource } = this.props;
-
-    if (dataSource.length !== previousDataSource.length) {
-      // we don't expect the tree to be modified deeply, hence the comparison
-      this.initTreeLeaves(dataSource);
-    }
-  }
 
   getTreeData = (): TreeNode[] => {
     const { dataSource } = this.props;
@@ -173,7 +173,7 @@ class CustomTreeSelect extends React.Component<Props, State> {
     });
 
     const getRef = () => document.getElementById(this.id)!;
-    
+
     const flexAlign = value.length > 0 ? 'top' : 'middle';
     return (
       <FormFieldWrapper
@@ -181,6 +181,7 @@ class CustomTreeSelect extends React.Component<Props, State> {
         rowProps={{ align: flexAlign }}
         helpToolTipProps={tooltipProps}
         small={small}
+        className="mcs-treeSelectWithList"
       >
         <Col span={24}>
           <div
@@ -199,13 +200,12 @@ class CustomTreeSelect extends React.Component<Props, State> {
             )}
           </div>
 
-          <div id={this.id} style={{ width: '100%' }}>
+          <div id={this.id} className="mcs-treeSelectWithList_container">
             <TreeSelect
               treeData={treeData}
               value={value}
               placeholder={placeholder}
               onChange={handleOnChange}
-              showCheckedStrategy={'SHOW_PARENT'}
               treeCheckable={true}
               maxTagCount={0}
               getPopupContainer={getRef}
@@ -219,4 +219,4 @@ class CustomTreeSelect extends React.Component<Props, State> {
   }
 }
 
-export default CustomTreeSelect;
+export default TreeSelectWithList;

@@ -37,7 +37,9 @@ import {
 } from '../../../../../../../models/placement/PlacementListResource';
 import { AdExchangeSelectionCreateRequest } from '../../../../../../../models/adexchange/adexchange';
 import { DisplayNetworkSelectionCreateRequest } from '../../../../../../../models/displayNetworks/displayNetworks';
-import CustomTreeSelect, { TreeData } from '../../../../../../../components/Form/CustomTreeSelect';
+import TreeSelectWithList, {
+  TreeData,
+} from '../../../../../../../components/Form/TreeSelectWithList';
 
 export interface InventoryCatalogFormSectionProps extends ReduxFormChangeProps {
   small?: boolean;
@@ -347,48 +349,6 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
             newFields.push(newField);
           }
         }
-      } else if (
-        [
-          'keywordList',
-          'placementList',
-          'dealList',
-          'adExchange',
-          'displayNetwork',
-        ].includes(inventory.type)
-      ) {
-        // We only have a type in inventory and no associated value and therefore select all values
-        const consideredDataSource: TreeData[] = exclude
-          ? this.state.excludedDataSource
-          : this.state.includedDataSource;
-
-        const forType = consideredDataSource.find(
-          item => item.value === inventory.type,
-        );
-
-        const itemsForType =
-          forType && forType.children ? forType.children : [];
-
-        const typeAndIds = itemsForType
-          .map(child => child.value)
-          .map(childInventoryId => {
-            return {
-              type: childInventoryId.split('_')[0],
-              value: childInventoryId.split('_')[1],
-            };
-          });
-
-        typeAndIds.map(inventoryItem => {
-          const field = this.generateField(
-            inventoryItem.type,
-            inventoryItem.value,
-            inventoryCategoryTree,
-            exclude,
-          );
-
-          if (field) {
-            newFields.push(field);
-          }
-        });
       }
     });
 
@@ -610,7 +570,7 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
               />
             </Col>
           </Row>
-          <CustomTreeSelect
+          <TreeSelectWithList
             label={intl.formatMessage(
               inventoryCatalogMsgs.detailedTargetingLabel,
             )}
@@ -651,7 +611,7 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
                 />
               </Col>
             </Row>
-            <CustomTreeSelect
+            <TreeSelectWithList
               label={intl.formatMessage(
                 inventoryCatalogMsgs.detailedTargetingExclusionLabel,
               )}
