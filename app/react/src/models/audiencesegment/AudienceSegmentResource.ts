@@ -21,6 +21,7 @@ export interface AudienceSegmentResource {
   mobile_cookie_ids_count?: number;
   mobile_ad_ids_count?: number;
   creation_ts?: number;
+  paused: boolean;
 }
 
 export type SortField =
