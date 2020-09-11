@@ -4,7 +4,6 @@ import { audienceDefinition } from './audienceRoutes';
 import { creativesDefinition } from './creativeRoutes';
 import { libraryDefinition } from './libraryRoutes';
 import { datastudioDefinition } from './datastudioRoutes';
-import { analyticsDefinition } from './analyticsRoutes';
 import { NavigatorMenuDefinition, generateMissingdefinitionItemFromRoute } from './domain';
 import messages from '../containers/Menu/messages'
 import { marketplaceDefinition } from './marketplaceRoutes';
@@ -76,18 +75,6 @@ const automationsMenuDefinition: NavigatorMenuDefinition = {
       ...generateMissingdefinitionItemFromRoute(automationDefinition.automationBuilder),
       translation: messages.automationBuilder
     },
-  ]
-}
-
-const analyticsMenuDefinition: NavigatorMenuDefinition = {
-  iconType: 'automation',
-  translation: messages.analyticsTitle,
-  type: 'multi',
-  subMenuItems: [
-    {
-      ...generateMissingdefinitionItemFromRoute(analyticsDefinition.analyticsOverview),
-      translation: messages.analyticsOverview,
-    }
   ]
 }
 
@@ -188,7 +175,6 @@ const marketplaceMenuDefinition: NavigatorMenuDefinition = {
 
 export const menuDefinitions: NavigatorMenuDefinition[] = [
   audienceMenuDefinition,
-  analyticsMenuDefinition,
   campaignsMenuDefinition,
   automationsMenuDefinition,
   creativesMenuDefinition,
