@@ -2,11 +2,6 @@ import { ChannelType } from './../../../../../models/settings/settings';
 import { Filter } from '../../Common/domain';
 import { SearchSetting } from '../../../../../utils/LocationSearchHelper';
 
-export interface FixedChannelFilter {
-  datamartId: string;
-  channelType: ChannelType;
-}
-
 export interface ChannelFilter extends Filter {
   type: ChannelType[];
 }

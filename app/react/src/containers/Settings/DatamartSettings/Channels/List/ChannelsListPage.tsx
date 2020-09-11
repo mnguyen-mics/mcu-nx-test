@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Row, Button, Layout, Icon, Modal } from 'antd';
+import { Row, Button, Layout, Icon, Modal, Menu, Dropdown } from 'antd';
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import injectNotifications, {
@@ -16,12 +16,7 @@ import {
   ChannelResourceShapeWithAnalytics,
 } from '../../../../../models/settings/settings';
 import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
-import {
-  FixedChannelFilter,
-  ChannelFilter,
-  ChannelTypeItem,
-  TYPE_SEARCH_SETTINGS,
-} from './domain';
+import { ChannelFilter, ChannelTypeItem, TYPE_SEARCH_SETTINGS } from './domain';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IChannelService } from '../../../../../services/ChannelService';
@@ -53,10 +48,6 @@ import { IDatamartService } from '../../../../../services/DatamartService';
 
 const { Content } = Layout;
 
-interface ChannelsListPageProps {
-  fixedFilterOpt?: FixedChannelFilter;
-}
-
 interface ChannelsListPageState {
   channels: ChannelResourceShape[];
   totalChannels: number;
@@ -69,8 +60,7 @@ interface MapStateToProps {
   workspace: (organisationId: string) => UserWorkspaceResource;
 }
 
-type Props = ChannelsListPageProps &
-  RouteComponentProps<{ organisationId: string }> &
+type Props = RouteComponentProps<{ organisationId: string }> &
   InjectedIntlProps &
   MapStateToProps &
   InjectedNotificationProps;
@@ -129,12 +119,11 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
       match: {
         params: { organisationId },
       },
-      fixedFilterOpt,
     } = this.props;
 
     const { filter } = this.state;
 
-    this.fetchChannels(organisationId, filter, fixedFilterOpt);
+    this.fetchChannels(organisationId, filter);
   }
 
   componentDidUpdate(previousProps: Props) {
@@ -143,7 +132,6 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
         params: { organisationId },
       },
       location: { search },
-      fixedFilterOpt,
     } = this.props;
 
     const {
@@ -151,13 +139,9 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
         params: { organisationId: previousOrganisationId },
       },
       location: { search: previousSearch },
-      fixedFilterOpt: previousFixedFilterOpt,
     } = previousProps;
 
-    if (fixedFilterOpt !== previousFixedFilterOpt && fixedFilterOpt) {
-      const { filter } = this.state;
-      this.fetchChannels(organisationId, filter, fixedFilterOpt);
-    } else if (
+    if (
       organisationId !== previousOrganisationId ||
       !compareSearches(search, previousSearch)
     ) {
@@ -168,11 +152,7 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
     }
   }
 
-  fetchChannels = (
-    organisationId: string,
-    filter: ChannelFilter,
-    fixedFilterOpt?: FixedChannelFilter,
-  ) => {
+  fetchChannels = (organisationId: string, filter: ChannelFilter) => {
     const { notifyError } = this.props;
     const buildGetChannelsOptions = () => {
       const filterType =
@@ -180,7 +160,7 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
 
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
-        channel_type: fixedFilterOpt ? fixedFilterOpt.channelType : filterType,
+        channel_type: filterType,
       };
       if (filter.keywords) {
         return {
@@ -371,39 +351,24 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
       channelType === 'SITE' ? messages.newSite : messages.newMobileApplication;
 
     return (
-      <span className="mcs-card-button-left-margin">
-        <Link key={message.id} to={url}>
-          <Button key={message.id} type="primary">
-            <FormattedMessage {...message} />
-          </Button>
-        </Link>
-      </span>
+      <Link key={message.id} to={url}>
+        <FormattedMessage {...message} />
+      </Link>
     );
   };
 
   handleFilterChange = (newFilter: ChannelFilter) => {
-    const {
-      match: {
-        params: { organisationId },
-      },
-      fixedFilterOpt,
-    } = this.props;
-
     const { filter } = this.state;
 
     const newFilterType = newFilter.type ? newFilter.type : filter.type;
 
     const computedFilter: ChannelFilter = {
       ...newFilter,
-      type: fixedFilterOpt ? [fixedFilterOpt.channelType] : newFilterType,
+      type: newFilterType,
     };
 
     this.setState({ filter: computedFilter }, () => {
-      if (fixedFilterOpt) {
-        this.fetchChannels(organisationId, computedFilter, fixedFilterOpt);
-      } else {
-        this.updateLocationSearch(computedFilter);
-      }
+      this.updateLocationSearch(computedFilter);
     });
   };
 
@@ -426,7 +391,6 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
       match: {
         params: { organisationId },
       },
-      fixedFilterOpt,
     } = this.props;
 
     const {
@@ -437,15 +401,27 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
       filter,
     } = this.state;
 
-    const newSiteButton = this.buildNewActionElement(organisationId, 'SITE');
-    const newMobileApplicationButton = this.buildNewActionElement(
-      organisationId,
-      'MOBILE_APPLICATION',
+    const menu = (
+      <Menu>
+        <Menu.Item>
+          {this.buildNewActionElement(organisationId, 'SITE')}
+        </Menu.Item>
+        <Menu.Item>
+          {this.buildNewActionElement(organisationId, 'MOBILE_APPLICATION')}
+        </Menu.Item>
+      </Menu>
     );
 
-    const newButtonsList = [newSiteButton, newMobileApplicationButton];
+    const dropdownButton = (
+      <Dropdown overlay={menu} trigger={['click']}>
+        <Button type="primary">
+          <FormattedMessage {...messages.newChannel} />
+          <Icon type="down" />
+        </Button>
+      </Dropdown>
+    );
 
-    const filtersOptions: Array<MultiSelectProps<any>> = [];
+    const newButtonsList = [dropdownButton];
 
     const channelTypeItems: ChannelTypeItem[] = [
       { key: 'SITE', value: 'Sites' },
@@ -474,9 +450,7 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
       },
     };
 
-    if (!fixedFilterOpt) {
-      filtersOptions.push(filterChannelType);
-    }
+    const filtersOptions: Array<MultiSelectProps<any>> = [filterChannelType];
 
     return (
       <div className="ant-layout">
@@ -513,7 +487,7 @@ const mapStateToProps = (state: MicsReduxState) => ({
   workspace: getWorkspace(state),
 });
 
-export default compose<Props, ChannelsListPageProps>(
+export default compose<Props, {}>(
   withRouter,
   injectIntl,
   injectNotifications,
