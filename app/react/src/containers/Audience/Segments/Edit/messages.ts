@@ -87,7 +87,7 @@ export default defineMessages({
   audienceSegmentCreationGeneralPausedFieldHelper: {
     id: 'audience.segment.create.section.general.field.paused.helper',
     defaultMessage:
-        'When a segment is paused, all related processing (statistics, user insertions and deletions) are stopped.',
+        'When a segment is paused, all related processings (statistics, user insertions and deletions) are stopped.',
   },
   audienceSegmentCreationGeneralNameFieldPlaceHolder: {
     id: 'audience.segment.create.section.general.field.name.placeholder',

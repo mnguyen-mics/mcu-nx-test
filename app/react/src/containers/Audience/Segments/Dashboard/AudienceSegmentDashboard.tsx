@@ -361,13 +361,12 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
 
     return (
       <div>
-        {segment && segment.paused ? (
+        {segment && segment.paused &&
             <Alert
                 className="m-b-20"
                 message={intl.formatMessage(messages.pausedSegment)}
                 type="warning"
             />
-        ) : ''
         }
         {segment && (
           <AudienceCounters datamarts={datamarts} segment={segment} />

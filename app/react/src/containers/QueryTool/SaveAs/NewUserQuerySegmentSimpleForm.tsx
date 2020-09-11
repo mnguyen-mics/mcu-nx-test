@@ -295,6 +295,6 @@ const messages = defineMessages({
   segmentPausedTooltip: {
     id: 'query.saveas.segment.paused.helper',
     defaultMessage:
-        'When a segment is paused, all related processing (statistics, user insertions and deletions) are stopped.',
+        'When a segment is paused, all related processings (statistics, user insertions and deletions) are stopped.',
   },
 });
