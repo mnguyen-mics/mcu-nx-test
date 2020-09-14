@@ -80,6 +80,15 @@ export default defineMessages({
     defaultMessage:
       'A persisted segment can be used in a campaign whereas a non persisted serves as analytics',
   },
+  audienceSegmentCreationGeneralPausedFieldTitle: {
+    id: 'audience.segment.create.section.general.field.paused.title',
+    defaultMessage: 'Paused',
+  },
+  audienceSegmentCreationGeneralPausedFieldHelper: {
+    id: 'audience.segment.create.section.general.field.paused.helper',
+    defaultMessage:
+        'When a segment is paused, all related processings (statistics, user insertions and deletions) are stopped.',
+  },
   audienceSegmentCreationGeneralNameFieldPlaceHolder: {
     id: 'audience.segment.create.section.general.field.name.placeholder',
     defaultMessage: 'Audience Segment Name',

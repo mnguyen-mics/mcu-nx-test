@@ -192,6 +192,22 @@ class NewUserQuerySegmentSimleForm extends React.Component<
                 }}
                 small={true}
               />
+              <FormBooleanField
+                  name="paused"
+                  component={FormBoolean}
+                  formItemProps={{
+                    label: intl.formatMessage(
+                        messages.segmentPausedLabel,
+                    ),
+                    hasMarginBottom: true,
+                  }}
+                  helpToolTipProps={{
+                    title: intl.formatMessage(
+                        messages.segmentPausedTooltip,
+                    ),
+                  }}
+                  small={true}
+              />
             </div>
           )}
         </div>
@@ -271,5 +287,14 @@ const messages = defineMessages({
     id: 'query.saveas.segment.persisted.helper',
     defaultMessage:
       'A persisted segment can be used in a campaign whereas a non persisted serves as analytics',
+  },
+  segmentPausedLabel: {
+    id: 'query.saveas.segment.paused.title',
+    defaultMessage: 'Paused',
+  },
+  segmentPausedTooltip: {
+    id: 'query.saveas.segment.paused.helper',
+    defaultMessage:
+        'When a segment is paused, all related processings (statistics, user insertions and deletions) are stopped.',
   },
 });

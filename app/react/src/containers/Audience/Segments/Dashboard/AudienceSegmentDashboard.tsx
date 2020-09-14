@@ -50,6 +50,7 @@ import {
   averageSessionDurationConfig,
 } from '../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
 import { isUsersAnalyticsSupportedByDatafarm } from '../../DatamartUsersAnalytics/components/helpers/utils';
+import {Alert} from "antd";
 
 interface State {
   loading: boolean;
@@ -338,7 +339,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
   };
 
   render() {
-    const { segment, datamarts, hasFeature } = this.props;
+    const { intl, segment, datamarts, hasFeature } = this.props;
     const { charts, datamartAnalyticsDashboardConfig } = this.state;
     const currentSegment = segment
       ? {
@@ -360,6 +361,13 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
 
     return (
       <div>
+        {segment && segment.paused &&
+            <Alert
+                className="m-b-20"
+                message={intl.formatMessage(messages.pausedSegment)}
+                type="warning"
+            />
+        }
         {segment && (
           <AudienceCounters datamarts={datamarts} segment={segment} />
         )}
@@ -428,5 +436,9 @@ const messages = defineMessages({
   exports: {
     id: 'audience-segment-dashboard-tab-title-exports',
     defaultMessage: 'Exports',
+  },
+  pausedSegment: {
+    id: 'audience-segment-dashboard-warning-paused-segment',
+    defaultMessage: 'Warning: This segment has been paused and is no longer refreshed (statistics, user insertions and deletions won\'t be computed).',
   },
 });

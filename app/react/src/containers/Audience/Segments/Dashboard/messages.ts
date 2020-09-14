@@ -351,6 +351,10 @@ const audienceSegmentPropertiesMessageMap: {
     id: 'audience.segments.resourceHistory.type',
     defaultMessage: 'Audience Segment',
   },
+  paused: {
+    id: 'audience.segments.fields.paused',
+    defaultMessage: 'Paused',
+  },
 });
 
 const audienceSegmentPropertiesFormatMap: {
@@ -382,6 +386,7 @@ const audienceSegmentPropertiesFormatMap: {
   last_modified_ts: { format: 'TIMESTAMP' },
   history_title: { format: 'STRING' },
   history_resource_type: { format: 'STRING' },
+  paused: { format: 'STRING' },
 };
 
 export const formatAudienceSegmentProperty = (

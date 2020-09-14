@@ -295,6 +295,23 @@ class GeneralFormSection extends React.Component<Props, State> {
                   />
                 </div>
               ) : null}
+
+              <div>
+                <FormBooleanField
+                    name="audienceSegment.paused"
+                    component={FormBoolean}
+                    formItemProps={{
+                      label: formatMessage(
+                          messages.audienceSegmentCreationGeneralPausedFieldTitle,
+                      ),
+                    }}
+                    helpToolTipProps={{
+                      title: formatMessage(
+                          messages.audienceSegmentCreationGeneralPausedFieldHelper,
+                      ),
+                    }}
+                />
+              </div>
             </div>
           </div>
         </div>
