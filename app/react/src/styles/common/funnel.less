@@ -181,3 +181,85 @@
   background-color: #fff;
   color: @primary-color;
 }
+
+.mcs-funnelQueryBuilder_step {
+  margin-bottom: 25px;
+}
+
+.mcs-funnelQueryBuilder_stepName {
+  display: inline-block;
+  width: 200px;
+  border: none;
+  color: rgb(0, 48, 86);
+  margin-bottom: 5px;
+
+  &:focus {
+    border-color: #104163;
+    outline: 0;
+    box-shadow: none;
+    border-right-width: none;
+}
+}
+
+.mcs-funnelQueryBuilder_dimensionValue {
+  background: rgba(225, 225, 225, 0.5);
+  border-radius: 7.5px;
+  float: none;
+  color: rgb(0, 48, 86);
+  text-align: center;
+  height: 40px;
+  border: none;
+}
+
+.mcs-funnelQueryBuilder_step_dimensions {
+  display: flex;
+  margin: 10px 0;
+}
+
+.mcs-funnelQueryBuilder_select {
+  border: none;
+  height: 40px;
+  margin-right: 20px;
+
+  .ant-select-selection {
+    background: rgba(225, 225, 225, 0.5);
+    border-radius: 7.5px;
+    border: none;
+  }
+
+  .ant-select-selection-selected-value,
+  .ant-select-selection__placeholder,
+  .ant-input::placeholder {
+    float: none;
+    color: rgb(0, 48, 86);
+    text-align: center;
+  }
+
+}
+
+.mcs-funnelQueryBuilder_removeStepBtn {
+  background: #fff;
+  color: rgba(55, 55, 55, 0.46);
+  border: 0;
+  box-shadow: none;
+  font-size: 20px;
+  margin-left: 10px;
+  padding: 6px 12px;
+
+  &:hover,
+  &:active {
+    color: rgba(55, 55, 55, 0.46);
+    background: #fff;
+    border-color: none;
+  }
+}
+
+.mcs-funnelQueryBuilder_addDimensionBtn,
+.mcs-funnelQueryBuilder_addDimensionBtn:hover,
+.mcs-funnelQueryBuilder_addDimensionBtn:active {
+  background: rgba(225, 225, 225, 0.5);
+  border-radius: 7.5px;
+  border: none;
+  color: rgb(0, 48, 86);
+  padding: 6px 12px;
+}
