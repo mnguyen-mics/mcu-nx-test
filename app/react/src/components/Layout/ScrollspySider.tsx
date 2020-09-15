@@ -4,10 +4,9 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { Layout } from 'antd';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
-
 import Scrollspy from '../Scrollspy';
 import McsIcon from '../McsIcon';
-import ButtonStyleless from '../ButtonStyleless';
+import { Button } from '@mediarithmics-private/mcs-components-library';
 
 const { Sider } = Layout;
 
@@ -41,9 +40,9 @@ class ScrollspySider extends React.Component<Props> {
         const handleOnClick = () => item.onClick!(item.sectionId);
         return (
           <li key={item.sectionId}>
-            <ButtonStyleless className={item.type} onClick={handleOnClick}>
+            <Button className={item.type} onClick={handleOnClick}>
               {iconAndText}
-            </ButtonStyleless>
+            </Button>
           </li>
         );
       }

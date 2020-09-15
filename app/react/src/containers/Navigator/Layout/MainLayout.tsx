@@ -5,15 +5,14 @@ import { Layout, Icon } from 'antd';
 import { connect } from 'react-redux';
 import { push as PushMenu, State } from 'react-burger-menu';
 import { Row, Col } from 'antd/lib/grid';
-
 import { NavigatorHeader } from '../../../containers/Header';
 import { NavigatorMenu } from '../../../containers/Menu';
 import { Logo } from '../../../containers/Logo';
 import * as MenuActions from '../../../redux/Menu/actions';
-import { ButtonStyleless } from '../../../components';
 import { compose } from 'recompose';
 import { MenuMode } from 'antd/lib/menu';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
+import { Button } from '@mediarithmics-private/mcs-components-library';
 
 const { Content, Sider } = Layout;
 
@@ -126,14 +125,14 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
           onMouseEnter={resizeBox('left')}
           onMouseLeave={resizeBox()}
         >
-          <ButtonStyleless onClick={orgSelector} style={{ width: '100%' }}>
+          <Button onClick={orgSelector} style={{ width: '100%' }}>
             <React.Fragment>
               <Icon type="bars" />{' '}
               {this.state.leftColumnSize > 12 && !this.props.collapsed && (
                 <FormattedMessage {...messages.switchOrg} />
               )}
             </React.Fragment>
-          </ButtonStyleless>
+          </Button>
         </ColAny>
         <ColAny
           span={this.state.rightColumnSize}
@@ -141,7 +140,7 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
           onMouseEnter={resizeBox('right')}
           onMouseLeave={resizeBox()}
         >
-          <ButtonStyleless onClick={onCollapse} style={{ width: '100%' }}>
+          <Button onClick={onCollapse} style={{ width: '100%' }}>
             {this.props.collapsed ? (
               <Icon type="right" />
             ) : (
@@ -152,13 +151,13 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
                 )}
               </React.Fragment>
             )}
-          </ButtonStyleless>
+          </Button>
         </ColAny>
       </Row>
     ) : (
       <Row>
         <Col span={24} className="all">
-          <ButtonStyleless
+          <Button
             onClick={onCollapse}
             style={{ width: '100%' }}
             onMouseEnter={resizeBox('right')}
@@ -178,7 +177,7 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
                 </span>
               </span>
             )}
-          </ButtonStyleless>
+          </Button>
         </Col>
       </Row>
     );

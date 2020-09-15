@@ -17,8 +17,7 @@ import {
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Row, Icon } from 'antd';
-import { Card } from '@mediarithmics-private/mcs-components-library';
-import { ButtonStyleless } from '../../../components';
+import { Card, Button } from '@mediarithmics-private/mcs-components-library';
 import messages from './messages';
 import { FormatProperty } from './domain';
 
@@ -279,7 +278,7 @@ class HistoryEventCard extends React.Component<Props, State> {
                   }
                 </div>
                 <div className="section-cta">
-                  <ButtonStyleless
+                  <Button
                     onClick={toggleDetails}
                     className="mcs-card-inner-action"
                   >
@@ -287,7 +286,7 @@ class HistoryEventCard extends React.Component<Props, State> {
                       ? <FormattedMessage {...messages.expandEvents} />
                       : <FormattedMessage {...messages.reduceEvents} />
                     }
-                  </ButtonStyleless>
+                  </Button>
                 </div>
                 {showMore && (
                   <div className="mcs-fields-list">

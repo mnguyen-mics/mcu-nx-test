@@ -22,9 +22,10 @@ import {
   FormTextArea,
   FormTextAreaField,
 } from '../../../../../components/Form';
-import { ButtonStyleless, McsIcon } from '../../../../../components';
+import { McsIcon } from '../../../../../components';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
 import { AudienceSegmentType } from '../../../../../models/audiencesegment';
+import { Button } from '@mediarithmics-private/mcs-components-library';
 
 const messagesMap = defineMessages({
   audienceSegmentFormSelectTypeOptionUserList: {
@@ -199,7 +200,7 @@ class GeneralFormSection extends React.Component<Props, State> {
             />
           </div>
           <div>
-            <ButtonStyleless
+            <Button
               className="optional-section-title"
               onClick={this.toggleAdvancedSection}
             >
@@ -208,7 +209,7 @@ class GeneralFormSection extends React.Component<Props, State> {
                 {formatMessage(messages.contentSectionGeneralAdvancedPartTitle)}
               </span>
               <McsIcon type="chevron" />
-            </ButtonStyleless>
+            </Button>
 
             <div
               className={

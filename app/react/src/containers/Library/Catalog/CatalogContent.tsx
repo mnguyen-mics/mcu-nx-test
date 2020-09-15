@@ -3,10 +3,9 @@ import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
 import { CatalogRessource, CategoryRessource, ItemRessource } from '../../../models/catalog/catalog';
-import { Card } from '@mediarithmics-private/mcs-components-library';
+import { Card, Button } from '@mediarithmics-private/mcs-components-library';
 import CatalogItemTable from './CatalogItemTable'
 import McsIcon from '../../../components/McsIcon'
-import { ButtonStyleless } from '../../../components'
 import { Select, Table, Breadcrumb, Icon } from 'antd';
 import messages from './messages'
 import injectNotifications, { InjectedNotificationProps } from '../../Notifications/injectNotifications';
@@ -235,16 +234,16 @@ class CatalogContent extends React.Component<
     return  (
       <Breadcrumb style={{ marginBottom: 14 }}>
         <Breadcrumb.Item>
-          <ButtonStyleless onClick={onHomeClick}>
+          <Button onClick={onHomeClick}>
             <Icon type="home" /> { this.state.catalogs.selectedId }
-          </ButtonStyleless>
+          </Button>
         </Breadcrumb.Item>
         {this.state.path.map((item, i) => {
           return (
             <Breadcrumb.Item key={item.category_id}>
-              {i === this.state.path.length -1 ? item.category_id : <ButtonStyleless onClick={onCategoryClick(item)}>
+              {i === this.state.path.length -1 ? item.category_id : <Button onClick={onCategoryClick(item)}>
                 {item.category_id}
-              </ButtonStyleless>}
+              </Button>}
             </Breadcrumb.Item>
           )
         })}

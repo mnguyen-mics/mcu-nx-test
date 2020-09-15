@@ -6,7 +6,6 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import { Row, Col, Spin } from 'antd';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
-
 import messages from '../../messages';
 import {
   EditAdGroupRouteMatchParam,
@@ -25,13 +24,12 @@ import { normalizeArrayOfObject } from '../../../../../../utils/Normalizer';
 import CreativeCardSelector, {
   CreativeCardSelectorProps,
 } from '../../../../Common/CreativeCardSelector';
-
 import {
   DisplayCreativeFormData,
   isDisplayAdResource,
 } from '../../../../../Creative/DisplayAds/Edit/domain';
 import { computeDimensionsByRatio } from '../../../../../../utils/ShapeHelper';
-import { ButtonStyleless } from '../../../../../../components/index';
+import { Button } from '@mediarithmics-private/mcs-components-library';
 import McsIcon from '../../../../../../components/McsIcon';
 import AuditStatusRenderer from '../../../../../Creative/DisplayAds/Audit/AuditStatusRenderer';
 import CreativeCard from '../../../../Common/CreativeCard';
@@ -245,9 +243,9 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
             <div className="dimensions">{data.creativeResource.format}</div>
           </Col>
           <Col className="inline buttons" span={4}>
-            <ButtonStyleless disabled={disabled} onClick={removeField}>
+            <Button disabled={disabled} onClick={removeField}>
               <McsIcon className="button" type="delete" />
-            </ButtonStyleless>
+            </Button>
           </Col>
         </Row>
         <Row className="footer">

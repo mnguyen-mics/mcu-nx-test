@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Col, Row, Popconfirm } from 'antd';
-
 import McsIcon, { McsIconType } from '../McsIcon';
-import ButtonStyleless from '../ButtonStyleless';
+import { Button } from '@mediarithmics-private/mcs-components-library';
 import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
 
 type RenderItem<T> = (record: T) => React.ReactNode;
@@ -76,12 +75,12 @@ class RecordElement<T> extends React.Component<
           </Col>
         )}
         {onEdit && (
-          <ButtonStyleless
+          <Button
             className="action-button"
             onClick={this.editTableField}
           >
             <McsIcon type="pen" className="big" />
-          </ButtonStyleless>
+          </Button>
         )}
         {onRemove && (
           <Popconfirm

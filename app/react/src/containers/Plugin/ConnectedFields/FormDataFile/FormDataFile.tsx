@@ -9,8 +9,8 @@ import { compose } from 'recompose';
 import FormDataFileDrawer, {
   FormDataFileDrawerProps,
 } from './FormDataFileDrawer';
-
-import { McsIcon, ButtonStyleless } from '../../../../components';
+import { Button as McsButton } from '@mediarithmics-private/mcs-components-library';
+import { McsIcon } from '../../../../components';
 import { FormFieldWrapper } from '../../../../components/Form';
 
 import messages from '../../messages';
@@ -253,12 +253,12 @@ class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
           {canEdit ? (
             <span>
               <span className="m-r-20">{this.state.fileName}</span>
-              <ButtonStyleless {...editProps}>
+              <McsButton {...editProps}>
                 <McsIcon type="pen" />
-              </ButtonStyleless>
-              <ButtonStyleless {...removeProps}>
+              </McsButton>
+              <McsButton {...removeProps}>
                 <McsIcon type="close" />
-              </ButtonStyleless>
+              </McsButton>
             </span>
           ) : null}
         </Col>

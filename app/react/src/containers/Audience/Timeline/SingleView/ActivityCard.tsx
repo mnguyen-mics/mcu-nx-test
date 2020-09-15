@@ -9,7 +9,7 @@ import {
   Activity,
   UserAgentIdentifierInfo,
 } from '../../../../models/timeline/timeline';
-import { Card } from '@mediarithmics-private/mcs-components-library';
+import { Card, Button } from '@mediarithmics-private/mcs-components-library';
 import EventActivity from './EventActivity';
 import Device from './Device';
 import Origin from './Origin';
@@ -21,7 +21,6 @@ import { makeCancelable, CancelablePromise } from '../../../../utils/ApiHelper';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { TimelinePageParams } from '../TimelinePage';
 import UserScenarioActivityCard from './UserScenarioActivityCard';
-import { ButtonStyleless } from '../../../../components';
 import { DatamartResource } from '../../../../models/datamart/DatamartResource';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
@@ -251,12 +250,12 @@ class ActivityCard extends React.Component<Props, State> {
               <br />
             </span>
           ) : null}
-          <ButtonStyleless
+          <Button
             onClick={this.handleJSONViewModal}
             className="mcs-card-inner-action"
           >
             <FormattedMessage {...messages.viewActivityJson} />
-          </ButtonStyleless>
+          </Button>
         </div>
       );
 

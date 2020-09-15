@@ -8,10 +8,9 @@ import log from '../../utils/Logger';
 import _ from 'lodash';
 import pathToRegexp from 'path-to-regexp';
 import pAll from 'p-all';
-
 import * as SessionHelper from '../../redux/Session/selectors';
 import OrgLogo from '../Logo/OrgLogo';
-import { ButtonStyleless } from '../../components/index';
+import { Button } from '@mediarithmics-private/mcs-components-library';
 import Search from 'antd/lib/input/Search';
 import { UserWorkspaceResource } from '../../models/directory/UserProfileResource';
 import { MicsReduxState } from '../../utils/ReduxHelper';
@@ -207,7 +206,7 @@ class OrgSelector extends React.Component<InnerProps, OrgSelectorState> {
             filteredWorkspaces && filteredWorkspaces.length ? (
               filteredWorkspaces.map(item => (
                 <Col span={24 / rowSize} key={item.organisation_id}>
-                  <ButtonStyleless
+                  <Button
                     onClick={this.onCardClick(item.organisation_id)}
                     style={{ height: 134, marginBottom: 20, width: '100%' }}
                   >
@@ -238,7 +237,7 @@ class OrgSelector extends React.Component<InnerProps, OrgSelectorState> {
                         description={item.organisation_name}
                       />
                     </Card>
-                  </ButtonStyleless>
+                  </Button>
                 </Col>
               ))
             ) : (

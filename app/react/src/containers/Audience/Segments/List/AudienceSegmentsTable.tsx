@@ -28,7 +28,7 @@ import {
   DatamartSearchSettings,
   compareSearches,
 } from '../../../../utils/LocationSearchHelper';
-
+import { Button } from '@mediarithmics-private/mcs-components-library';
 import { formatMetric } from '../../../../utils/MetricHelper';
 import { compose } from 'recompose';
 import {
@@ -54,7 +54,7 @@ import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
 import SegmentNameDisplay from '../../Common/SegmentNameDisplay';
 import { notifyError } from '../../../../redux/Notifications/actions';
-import { ButtonStyleless, McsIcon } from '../../../../components';
+import { McsIcon } from '../../../../components';
 import { Label } from '../../../Labels/Labels';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
 import {
@@ -561,7 +561,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
     const { isAsc, sortField } = this.state;
     const searchOnClick = () => this.columnStatSort(columnName);
     return (
-      <ButtonStyleless onClick={searchOnClick}>
+      <Button onClick={searchOnClick}>
         <FormattedMessage {...messageMap[columnName]} />
         <div className="mcs-table-header-icons">
           <McsIcon
@@ -579,7 +579,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
             }`}
           />
         </div>
-      </ButtonStyleless>
+      </Button>
     );
   }
 

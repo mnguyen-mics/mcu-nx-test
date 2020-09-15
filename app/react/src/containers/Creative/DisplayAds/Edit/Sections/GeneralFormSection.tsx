@@ -3,7 +3,7 @@ import { Field, getFormInitialValues, Validator, GenericField } from 'redux-form
 import { connect } from 'react-redux';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
-
+import { Button } from '@mediarithmics-private/mcs-components-library';
 import {
   FormSection,
   FieldCtor,
@@ -22,7 +22,7 @@ import {
   EditDisplayCreativeRouteMatchParams,
 } from '../domain';
 import DisplayCreativeFormatEditor from '../DisplayCreativeFormatEditor';
-import { ButtonStyleless, McsIcon } from '../../../../../components';
+import { McsIcon } from '../../../../../components';
 import { RouteComponentProps } from 'react-router';
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 
@@ -147,7 +147,7 @@ class GeneralFormSection extends React.Component<Props, State> {
           small={small}
         />
         <div>
-          <ButtonStyleless
+          <Button
             className="optional-section-title"
             onClick={this.toggleAdvancedSection}
           >
@@ -156,7 +156,7 @@ class GeneralFormSection extends React.Component<Props, State> {
               {formatMessage(messages.advanced)}
             </span>
             <McsIcon type="chevron" />
-          </ButtonStyleless>
+          </Button>
 
           <div
             className={

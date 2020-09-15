@@ -18,7 +18,7 @@ import {
 import { AudienceSegmentResource } from '../../../../../../../models/audiencesegment/AudienceSegmentResource';
 import FormSearchAndMultiSelect from '../../../../../../../components/Form/FormSearchAndMultiSelect';
 import { MenuItemProps } from '../../../../../../../components/SearchAndMultiSelect';
-import ButtonStyleless from '../../../../../../../components/ButtonStyleless';
+import { Button } from '@mediarithmics-private/mcs-components-library';
 import { ReduxFormChangeProps } from '../../../../../../../utils/FormHelper';
 import TreeSelectWithList, { TreeData } from '../../../../../../../components/Form/TreeSelectWithList';
 
@@ -327,12 +327,12 @@ class AudienceCatalogFormSection extends React.Component<Props, State> {
           </div>
           <Row className={showExclude ? 'hide-section' : ''}>
             <Col span={3} offset={14}>
-              <ButtonStyleless
+              <Button
                 onClick={this.toogleShowExclude}
                 className="action-button"
               >
                 <FormattedMessage {...audienceCatalogMsgs.excludeLinkMsg} />
-              </ButtonStyleless>
+              </Button>
             </Col>
           </Row>
         </Row>

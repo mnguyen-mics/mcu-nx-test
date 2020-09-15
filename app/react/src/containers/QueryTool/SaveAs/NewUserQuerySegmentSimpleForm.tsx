@@ -2,6 +2,7 @@ import * as React from 'react';
 import { reduxForm, InjectedFormProps, ConfigProps } from 'redux-form';
 import { Omit } from 'react-router';
 import { Form } from 'antd';
+import { Button } from '@mediarithmics-private/mcs-components-library';
 import {
   FormBoolean,
   AddonSelect,
@@ -16,7 +17,7 @@ import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { ValidatorProps } from '../../../components/Form/withValidators';
 import { NormalizerProps } from '../../../components/Form/withNormalizer';
-import { ButtonStyleless, McsIcon } from '../../../components';
+import { McsIcon } from '../../../components';
 
 export interface NewUserQuerySimpleFormData {
   name: string;
@@ -89,7 +90,7 @@ class NewUserQuerySegmentSimleForm extends React.Component<
             }}
             small={true}
           />
-          <ButtonStyleless
+          <Button
             className="optional-section-title"
             onClick={toggleAdvancedSection}
           >
@@ -100,7 +101,7 @@ class NewUserQuerySegmentSimleForm extends React.Component<
               )}
             </span>
             <McsIcon type="chevron" />
-          </ButtonStyleless>
+          </Button>
           {this.state.displayAdvancedSection && (
             <div>
               <div className="optional-section-content">

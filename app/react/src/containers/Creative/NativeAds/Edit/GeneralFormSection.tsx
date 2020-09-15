@@ -20,7 +20,8 @@ import {
   isDisplayAdResource,
   EditDisplayCreativeRouteMatchParams,
 } from '../../DisplayAds/Edit/domain';
-import { ButtonStyleless, McsIcon } from '../../../../components';
+import { McsIcon } from '../../../../components';
+import { Button } from '@mediarithmics-private/mcs-components-library';
 import { RouteComponentProps } from 'react-router';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
 
@@ -102,7 +103,7 @@ class GeneralFormSection extends React.Component<Props, State> {
         
       
         <div>
-          <ButtonStyleless
+          <Button
             className="optional-section-title"
             onClick={this.toggleAdvancedSection}
           >
@@ -111,7 +112,7 @@ class GeneralFormSection extends React.Component<Props, State> {
               {formatMessage(messages.advanced)}
             </span>
             <McsIcon type="chevron" />
-          </ButtonStyleless>
+          </Button>
 
           <div
             className={

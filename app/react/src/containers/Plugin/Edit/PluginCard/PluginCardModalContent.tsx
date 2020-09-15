@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { Actionbar } from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, Button } from '@mediarithmics-private/mcs-components-library';
 import { LayoutablePlugin } from '../../../../models/Plugins';
 import { compose } from 'recompose';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../Helpers/injectThemeColors';
-import { McsIcon, ButtonStyleless } from '../../../../components';
+import { McsIcon } from '../../../../components';
 import McsTabs from '../../../../components/McsTabs';
 import { PluginLayout } from '../../../../models/plugin/PluginLayout';
 import { PropertyResourceShape } from '../../../../models/plugin';
@@ -290,7 +290,7 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
           edition={true}
           inverted={color === 'black' ? true : false}
         >
-        <ButtonStyleless
+        <Button
           onClick={onClose}
           style={{ marginRight: 0 }}
         >
@@ -300,7 +300,7 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
             style={{ cursor: 'pointer' }}
             
           />
-        </ButtonStyleless>
+        </Button>
           
         </Actionbar>
         <div
@@ -322,7 +322,7 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
             <McsTabs items={items} defaultActiveKey={selectedTab} onChange={onActiveKeyChange} />
           </div>
           {selectedTab === 'configuration' ? <div className="footer">
-            <ButtonStyleless className={" m-r-20"} onClick={onClose}>Close</ButtonStyleless>
+            <Button className={" m-r-20"} onClick={onClose}>Close</Button>
             <ColoredButton className="mcs-primary" backgroundColor={backgroundColor} color={color} onClick={handleSubmit(this.onSubmit)}> { isLoading ? (<Icon type="loading" />) : null} Save</ColoredButton>
           </div> : null}
         </div>

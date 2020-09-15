@@ -1,11 +1,11 @@
 import * as React from 'react';
 import cuid from 'cuid';
-import { Card } from '@mediarithmics-private/mcs-components-library';
+import { Card, Button } from '@mediarithmics-private/mcs-components-library';
 import {
   AudienceExternalFeedTyped,
   AudienceTagFeedTyped,
 } from '../../Edit/domain';
-import { McsIcon, ButtonStyleless } from '../../../../../components';
+import { McsIcon } from '../../../../../components';
 import FeedPlaceholder from './FeedPlaceholder';
 import { Status } from '../../../../../models/Plugins';
 import injectNotifications, {
@@ -256,21 +256,21 @@ class FeedCard extends React.Component<Props, FeedCardState> {
     switch (feed.status) {
       case 'ACTIVE':
         return (
-          <ButtonStyleless onClick={editFeed}>
+          <Button onClick={editFeed}>
             {intl.formatMessage(messages.pause)}
-          </ButtonStyleless>
+          </Button>
         );
       case 'INITIAL':
         return (
-          <ButtonStyleless onClick={editFeed}>
+          <Button onClick={editFeed}>
             {intl.formatMessage(messages.activate)}
-          </ButtonStyleless>
+          </Button>
         );
       case 'PAUSED':
         return (
-          <ButtonStyleless onClick={editFeed}>
+          <Button onClick={editFeed}>
             {intl.formatMessage(messages.resume)}
-          </ButtonStyleless>
+          </Button>
         );
       case 'PUBLISHED':
         return <div className="feedcard-placeholder" />;

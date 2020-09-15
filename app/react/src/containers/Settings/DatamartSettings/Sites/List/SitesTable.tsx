@@ -11,7 +11,7 @@ import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { MultiSelectProps } from '../../../../../components/MultiSelect';
 import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
-import { ButtonStyleless } from '../../../../../components';
+import { Button } from '@mediarithmics-private/mcs-components-library';
 
 export interface SitesTableProps {
   isFetchingSites: boolean;
@@ -80,9 +80,9 @@ class SitesTable extends React.Component<Props> {
           }
 
           return (
-            <ButtonStyleless onClick={handleEditSite}>
+            <Button onClick={handleEditSite}>
               {text}
-            </ButtonStyleless>
+            </Button>
           )
         },
       },

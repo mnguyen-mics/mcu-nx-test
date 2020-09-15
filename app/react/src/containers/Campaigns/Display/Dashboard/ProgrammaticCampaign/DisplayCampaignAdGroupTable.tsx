@@ -3,9 +3,7 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { withRouter } from 'react-router-dom';
 import { Switch } from 'antd';
 import { compose } from 'recompose';
-
 import messages from '../messages';
-
 import { TableView } from '../../../../../components/TableView/index';
 import { formatMetric } from '../../../../../utils/MetricHelper';
 import McsIcon from '../../../../../components/McsIcon';
@@ -18,7 +16,7 @@ import {
   ActionDefinition,
 } from '../../../../../components/TableView/TableView';
 import { DisplayCampaignInfoResource } from '../../../../../models/campaign/display';
-import { ButtonStyleless } from '../../../../../components';
+import { Button } from '@mediarithmics-private/mcs-components-library';
 
 export interface UpdateMessage {
   title: string;
@@ -211,9 +209,9 @@ class DisplayCampaignAdGroupTable extends React.Component<
             });
           };
           return (
-            <ButtonStyleless onClick={toAdGroupDashboard}>
+            <Button onClick={toAdGroupDashboard}>
               <a>{text}</a>
-            </ButtonStyleless>
+            </Button>
           );
         },
       },

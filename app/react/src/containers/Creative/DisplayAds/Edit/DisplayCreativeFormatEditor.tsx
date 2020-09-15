@@ -5,7 +5,7 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { WrappedFieldProps } from 'redux-form';
 import { withRouter, RouteComponentProps } from 'react-router';
 import FormFieldWrapper from '../../../../components/Form/FormFieldWrapper';
-import ButtonStyleless from '../../../../components/ButtonStyleless';
+import { Button } from '@mediarithmics-private/mcs-components-library';
 import messages from '../Edit/messages';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
@@ -158,12 +158,12 @@ class DisplayCreativeFormatEditor extends React.Component<JoinedProps, State> {
           </div>
 
           <div className="button">
-            <ButtonStyleless
+            <Button
               className="clickable-on-hover"
               onClick={buttonOnClick}
             >
               {buttonLabel}
-            </ButtonStyleless>
+            </Button>
           </div>
         </div>
       </FormFieldWrapper>

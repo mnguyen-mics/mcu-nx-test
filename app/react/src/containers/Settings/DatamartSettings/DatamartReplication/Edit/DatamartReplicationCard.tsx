@@ -8,8 +8,7 @@ import {
   defineMessages,
 } from 'react-intl';
 import { DatamartReplicationRouteMatchParam } from './domain';
-import { ButtonStyleless } from '../../../../../components';
-import { Card } from '@mediarithmics-private/mcs-components-library';
+import { Card, Button } from '@mediarithmics-private/mcs-components-library';
 
 const messagesMap: {
   [key: string]: FormattedMessage.MessageDescriptor;
@@ -83,14 +82,14 @@ class DatamartReplicationCard extends React.Component<Props> {
           </div>
 
           <div className="select-button">
-            <ButtonStyleless
+            <Button
               className="button"
               onClick={onClickSelect}
               onMouseEnter={this.showTooltip}
               onMouseLeave={this.hideTooltip}
             >
               {formatMessage(messagesMap.selectButton)}
-            </ButtonStyleless>
+            </Button>
           </div>
         </Card>
       </div>

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Card } from '@mediarithmics-private/mcs-components-library';
-import { ButtonStyleless, McsIcon } from '../../../../components';
+import { Card, Button } from '@mediarithmics-private/mcs-components-library';
+import { McsIcon } from '../../../../components';
 import { LayoutablePlugin } from '../../../../models/Plugins';
 import { injectWorkspace, InjectedWorkspaceProps } from '../../../Datamart';
 import { compose } from 'recompose';
@@ -91,9 +91,9 @@ class PluginCard<T extends LayoutablePlugin> extends React.Component<
                   )}
             </div>
             <div className="select-button">
-              <ButtonStyleless className="button" onClick={onSelect}>
+              <Button className="button" onClick={onSelect}>
                 Select
-              </ButtonStyleless>
+              </Button>
             </div>
           </Card>
         </div>

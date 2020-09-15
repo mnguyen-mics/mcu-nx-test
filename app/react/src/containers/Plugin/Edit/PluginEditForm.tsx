@@ -25,7 +25,8 @@ import { Omit } from '../../../utils/Types';
 import messages from './messages';
 import { InjectedDrawerProps } from '../../../components/Drawer/injectDrawer';
 import { injectDrawer } from '../../../components/Drawer/index';
-import { ButtonStyleless, McsIcon } from '../../../components';
+import { McsIcon } from '../../../components';
+import { Button } from '@mediarithmics-private/mcs-components-library';
 import { PluginLayout } from '../../../models/plugin/PluginLayout';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { BasicProps } from 'antd/lib/layout/layout';
@@ -153,7 +154,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
     >;
     return (
       <div>
-        <ButtonStyleless
+        <Button
           className="optional-section-title"
           onClick={this.toggleAdvancedSection}
         >
@@ -162,7 +163,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
             {intl.formatMessage(messages.advanced)}
           </span>
           <McsIcon type="chevron" />
-        </ButtonStyleless>
+        </Button>
         <div
           className={
             !this.state.displayAdvancedSection

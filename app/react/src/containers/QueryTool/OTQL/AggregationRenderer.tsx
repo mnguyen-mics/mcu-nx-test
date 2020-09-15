@@ -6,7 +6,7 @@ import {
   OTQLBucket,
   OTQLBuckets,
 } from '../../../models/datamart/graphdb/OTQLResult';
-import ButtonStyleless from '../../../components/ButtonStyleless';
+import { Button } from '@mediarithmics-private/mcs-components-library';
 import { FormattedMessage } from 'react-intl';
 import { McsIcon } from '../../../components/index';
 
@@ -177,9 +177,9 @@ export default class AggregationRenderer extends React.Component<Props, State> {
     return (
       <Breadcrumb style={{ marginBottom: 14 }}>
         <Breadcrumb.Item>
-          <ButtonStyleless onClick={goToRoot}>
+          <Button onClick={goToRoot}>
             <Icon type="home" />
-          </ButtonStyleless>
+          </Button>
         </Breadcrumb.Item>
         {aggregationsPath.map((path, index) => {
           const isLast = index === aggregationsPath.length - 1;
@@ -197,9 +197,9 @@ export default class AggregationRenderer extends React.Component<Props, State> {
               {isLast ? (
                 pathToStr
               ) : (
-                <ButtonStyleless onClick={goToPath}>
+                <Button onClick={goToPath}>
                   {pathToStr}
-                </ButtonStyleless>
+                </Button>
               )}
             </Breadcrumb.Item>
           );

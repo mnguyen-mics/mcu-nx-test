@@ -25,10 +25,10 @@ import {
 import { isDisplayAdResource } from '../../../../../Creative/DisplayAds/Edit/domain';
 import { Row, Col, Spin } from 'antd';
 import {
-  ButtonStyleless,
   McsIcon,
   EmptyRecords,
 } from '../../../../../../components';
+import { Button } from '@mediarithmics-private/mcs-components-library';
 import { AuditStatusRenderer } from '../../../../../Creative/DisplayAds/Audit';
 import { DisplayAdResourceWithFieldIndex } from '../../AdGroup/sections/AdFormSection';
 import { CancelablePromise } from '../../../../../../services/ApiService';
@@ -261,9 +261,9 @@ class AdGroupAdsFormSection extends React.Component<
             <div className="dimensions">{data.creativeResource.format}</div>
           </Col>
           <Col className="inline buttons" span={2}>
-            <ButtonStyleless onClick={removeField}>
+            <Button onClick={removeField}>
               <McsIcon className="button" type="delete" />
-            </ButtonStyleless>
+            </Button>
           </Col>
         </Row>
         <Row className="footer">

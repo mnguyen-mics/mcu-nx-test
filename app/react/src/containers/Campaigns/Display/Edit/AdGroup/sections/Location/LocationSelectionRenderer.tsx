@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Row } from 'antd';
-import { ButtonStyleless } from '../../../../../../../components';
+import { Button } from '@mediarithmics-private/mcs-components-library';
 import McsIcon, { McsIconType } from '../../../../../../../components/McsIcon';
 import { LocationFieldModel } from '../../domain';
 import { Geoname, IGeonameService } from '../../../../../../../services/GeonameService';
@@ -54,13 +54,13 @@ class LocationSelectionRenderer extends React.Component<Props> {
                   renderMethod={renderGeoname}
                   fetchingMethod={this._geonameService.getGeoname}
                 />
-                <ButtonStyleless
+                <Button
                   className="close-button"
                   onClick={handleOnClick}
                   disabled={!!disabled}
                 >
                   <McsIcon type="close" />
-                </ButtonStyleless>
+                </Button>
               </div>
             );
           })}

@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-
+import { Button } from '@mediarithmics-private/mcs-components-library';
 import { FormSection, FormInputField } from '../../../../../components/Form';
 import withValidators, {
   ValidatorProps,
 } from '../../../../../components/Form/withValidators';
 import FormInput from '../../../../../components/Form/FormInput';
-import { ButtonStyleless, McsIcon } from '../../../../../components';
+import { McsIcon } from '../../../../../components';
 import messages from '../messages';
 
 interface State {
@@ -62,7 +62,7 @@ class GeneralFormSection extends React.Component<Props, State> {
         </div>
 
         <div>
-          <ButtonStyleless
+          <Button
             className="optional-section-title"
             onClick={this.toggleAdvancedSection}
           >
@@ -71,7 +71,7 @@ class GeneralFormSection extends React.Component<Props, State> {
               {formatMessage(messages.contentSectionGeneralAdvancedPartTitle)}
             </span>
             <McsIcon type="chevron" />
-          </ButtonStyleless>
+          </Button>
 
           <div
             className={

@@ -5,8 +5,8 @@ import FieldNodeComparisonRenderer from './FieldNodeComparisonRenderer';
 import {
   WindowBodyPortal,
   McsIcon,
-  ButtonStyleless,
 } from '../../../../../components';
+import { Button } from '@mediarithmics-private/mcs-components-library';
 import { TreeNodeOperations, MicsDiagramEngine, FieldProposalLookup } from '../../domain';
 import FieldNodeFormWrapper from '../../Edit/Sections/Field/FieldNodeFormWrapper';
 import { ObjectLikeTypeInfoResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
@@ -235,9 +235,9 @@ class FieldNodeWidget extends React.Component<Props, State> {
             right: 0,
           }}
         >
-          <ButtonStyleless onClick={closeEdit}>
+          <Button onClick={closeEdit}>
             <McsIcon type="close" />
-          </ButtonStyleless>
+          </Button>
         </div>
         <FieldNodeFormWrapper
           breadCrumbPaths={[]}
