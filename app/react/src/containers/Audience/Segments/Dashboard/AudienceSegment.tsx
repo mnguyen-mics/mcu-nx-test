@@ -9,7 +9,7 @@ import { InjectedIntlProps, defineMessages, injectIntl } from 'react-intl';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { DatamartWithMetricResource } from '../../../../models/datamart/DatamartResource';
 import { isUserQuerySegment } from '../Edit/domain';
-import McsTabs from '../../../../components/McsTabs';
+import { McsTabs } from '@mediarithmics-private/mcs-components-library';
 import ABComparisonDashboard from './Experimentation/ABComparisonDashboard';
 import { UserQuerySegment } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import ABDetailsTable from './Experimentation/ABDetailsTable';

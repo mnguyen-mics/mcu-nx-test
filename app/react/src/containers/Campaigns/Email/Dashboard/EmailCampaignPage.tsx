@@ -6,7 +6,7 @@ import { Layout } from 'antd';
 import EmailCampaignActionbar from './EmailCampaignActionbar';
 import CampaignDashboardHeader from '../../Common/CampaignDashboardHeader';
 import { Labels } from '../../../Labels';
-import { Card } from '@mediarithmics-private/mcs-components-library';
+import { Card, McsTabs } from '@mediarithmics-private/mcs-components-library';
 import {
   EMAIL_DASHBOARD_SEARCH_SETTINGS,
   EmailCampaignDashboardRouteMatchParam,
@@ -28,7 +28,6 @@ import { Index } from '../../../../utils';
 import Overview from './Overview';
 import { EmailStackedAreaChart } from './Charts';
 import BlastCard from './BlastCard';
-import McsTabs from '../../../../components/McsTabs';
 import { McsDateRangeValue } from '../../../../components/McsDateRangePicker';
 import ReportService from '../../../../services/ReportService';
 import log from '../../../../utils/Logger';

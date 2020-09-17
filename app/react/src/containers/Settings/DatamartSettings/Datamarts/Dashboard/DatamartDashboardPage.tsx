@@ -9,7 +9,7 @@ import DatamartHeader from './DatamartHeader';
 import { IDatamartService } from '../../../../../services/DatamartService';
 import { Row, Col, Layout } from 'antd';
 import { notifyError } from '../../../../../redux/Notifications/actions';
-import McsTabs from '../../../../../components/McsTabs';
+import { McsTabs } from '@mediarithmics-private/mcs-components-library';
 import DatamartConfigTab from './DatamartConfigTab';
 import DatamartObjectViewTab from './DatamartObjectViewTab';
 import DatamartActivity from './DatamartActivity';
@@ -124,7 +124,6 @@ class DatamartDashboardPage extends React.Component<Props, State> {
         params: { datamartId, organisationId },
       },
       hasFeature,
-      location: { state },
     } = this.props;
 
     const { datamart, isLoading } = this.state;
@@ -160,7 +159,8 @@ class DatamartDashboardPage extends React.Component<Props, State> {
 
     if (
       hasFeature('audience-dashboards-datamart_users_analytics') &&
-      datamart && isUsersAnalyticsSupportedByDatafarm(datamart.datafarm)
+      datamart &&
+      isUsersAnalyticsSupportedByDatafarm(datamart.datafarm)
     ) {
       items.push({
         title: intl.formatMessage(messages.statistics),
@@ -187,13 +187,7 @@ class DatamartDashboardPage extends React.Component<Props, State> {
               </Col>
             </Row>
             <Row>
-              <McsTabs
-                items={items}
-                tabBarStyle={{ margin: '0 40px' }}
-                activeKey={
-                  state && state.activeTab ? state.activeTab : items[0].title
-                }
-              />
+              <McsTabs items={items} tabBarStyle={{ margin: '0 40px' }} />
             </Row>
           </div>
         </div>
