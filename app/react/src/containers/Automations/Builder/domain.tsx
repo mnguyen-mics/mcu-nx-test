@@ -850,6 +850,13 @@ export function generateNodeProperties(
         iconAnt: 'clock-circle',
         color: '#fbc02d',
       };
+      case 'CUSTOM_ACTION':
+        return {
+          title: formatMessage(nodeMessages.customActionNodeTitle),
+          subtitle: '',
+          iconType: 'bolt',
+          color: '#0ba6e1',
+        };
     default:
       return {
         title: 'Node',
@@ -1230,5 +1237,9 @@ const nodeMessages = defineMessages({
   endNodeTitle: {
     id: 'automation.builder.node.end.title',
     defaultMessage: 'Exit Automation',
+  },
+  customActionNodeTitle: {
+    id: 'automation.builder.node.customAction.title',
+    defaultMessage: 'Custom Action',
   },
 });
