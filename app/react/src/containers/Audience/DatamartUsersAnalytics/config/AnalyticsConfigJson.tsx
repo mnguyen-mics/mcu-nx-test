@@ -191,7 +191,7 @@ export const averageSessionDurationConfig: DashboardConfig[] = [
 
 export const abTestingDashboardConfig: DashboardConfig[] = [
   {
-    title: 'Revenue',
+    title: 'Average Revenue',
     tabMode: true,
     layout: {
       'i': '1',
@@ -241,7 +241,7 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
           }
         },
         dimensions: ['date_yyyy_mm_dd'],
-        metricNames: ['revenue'],
+        metricNames: ['avg_revenue_per_user_point'],
         dimensionFilterClauses: {
           'operator': 'OR',
           'filters': [
@@ -331,7 +331,7 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
     ]
   },
   {
-    title: 'Number Of Transactions',
+    title: 'Average Number Of Transactions',
     tabMode: true,
     layout: {
       'i': '1',
@@ -381,7 +381,7 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
           }
         },
         dimensions: ['date_yyyy_mm_dd'],
-        metricNames: ['number_of_transactions'],
+        metricNames: ['avg_number_of_transactions'],
         dimensionFilterClauses: {
           'operator': 'OR',
           'filters': [
@@ -626,11 +626,11 @@ export const ecommerceEngagementConfig: DashboardConfig[] = [
       {
         type: 'SINGLE_STAT',
         options: {
-          title: { text: 'Number Of Transactions' }
+          title: { text: 'Average Number Of Transactions' }
         },
         unit: 'number',
         samplingRatio: 1,
-        metricNames: ['number_of_transactions'],
+        metricNames: ['avg_number_of_transactions'],
         dimensionFilterClauses: {
           'operator': 'OR',
           'filters': [
@@ -696,11 +696,11 @@ export const ecommerceEngagementConfig: DashboardConfig[] = [
       {
         type: 'SINGLE_STAT',
         options: {
-          title: { text: 'Revenue'},
+          title: { text: 'Average Revenue'},
         },
         unit: '€',
         samplingRatio: 1,
-        metricNames: ['revenue'],
+        metricNames: ['avg_revenue_per_user_point'],
         dimensionFilterClauses: {
           'operator': 'OR',
           'filters': [

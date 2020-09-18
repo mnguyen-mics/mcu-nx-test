@@ -22,9 +22,9 @@ export type DatamartUsersAnalyticsMetric = 'users'
                                             | 'avg_session_duration' 
                                             | 'avg_number_of_user_events' 
                                             | 'conversion_rate' 
-                                            | 'number_of_transactions'
+                                            | 'avg_number_of_transactions'
                                             | 'avg_transaction_amount'
-                                            | 'revenue';
+                                            | 'avg_revenue_per_user_point';
 
 
 
