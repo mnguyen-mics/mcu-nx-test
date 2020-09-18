@@ -5,9 +5,7 @@ import { creativeRoutes } from './creativeRoutes';
 import { libraryRoutes } from './libraryRoutes';
 import { settingsRoutes } from './settingsRoutes';
 import { datastudioRoutes } from './datastudioRoutes';
-import { analyticsRoutes } from './analyticsRoutes';
 import { marketplaceRoutes } from './marketplaceRoutes';
-
 import { NavigatorRoute } from './domain'
 import { featureFlagRoutes } from './featuresFlagRoutes';
 import { createBrowserHistory } from 'history'
@@ -41,7 +39,6 @@ const routes: NavigatorRoute[] = [
   ...libraryRoutes,
   ...settingsRoutes,
   ...datastudioRoutes,
-  ...analyticsRoutes,
   ...marketplaceRoutes,
   ...featureFlagRoutes
 ];
