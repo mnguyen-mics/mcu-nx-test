@@ -84,6 +84,12 @@ const deleteFromSegmentNode: ScenarioNodeShape = {
   initialFormData: INITIAL_DELETE_FROM_SEGMENT_NODE_FORM_DATA,
 };
 
+const customActionNode: ScenarioNodeShape = {
+  id: generateFakeId(),
+  type: 'CUSTOM_ACTION',
+  scenario_id: '',
+};
+
 const conditionNode1: ScenarioNodeShape = {
   id: generateFakeId(),
   type: 'ABN_NODE',
@@ -139,17 +145,20 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
   }
 
   componentWillMount() {
-    this.setState({
-      actionNodes: this.props.hasFeature(
-        'automations-add-delete-to-from-segment-node',
+    const actionNodesList = [emailCampaignNode, displayCampaignNode]
+      .concat(
+        this.props.hasFeature('automations-add-delete-to-from-segment-node')
+          ? [addToSegmentNode, deleteFromSegmentNode]
+          : [],
       )
-        ? [
-            emailCampaignNode,
-            displayCampaignNode,
-            addToSegmentNode,
-            deleteFromSegmentNode,
-          ]
-        : [emailCampaignNode, displayCampaignNode],
+      .concat(
+        this.props.hasFeature('automations-custom-action-node')
+          ? [customActionNode]
+          : [],
+      );
+
+    this.setState({
+      actionNodes: actionNodesList,
       conditionNodes: [conditionNode1, conditionNode2, conditionNode3],
       exitsNodes: [],
     });

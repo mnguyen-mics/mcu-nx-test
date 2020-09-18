@@ -59,7 +59,8 @@ export type ScenarioNodeType =
   | 'END_NODE'
   | 'WAIT_NODE'
   | 'DROP_NODE'
-  | 'IF_NODE';
+  | 'IF_NODE'
+  | 'CUSTOM_ACTION';
 
 export interface ScenarioNodeResource {
   id: string;
@@ -170,6 +171,10 @@ export interface IfNodeResource extends ScenarioNodeResource {
   query_id: string;
 }
 
+export interface CustomActionNodeResource extends ScenarioNodeResource {
+  type: 'CUSTOM_ACTION';
+}
+
 export type ScenarioNodeShape =
   | DisplayCampaignNodeResource
   | EmailCampaignNodeResource
@@ -182,7 +187,8 @@ export type ScenarioNodeShape =
   | PluginNodeResource
   | EndNodeResource
   | WaitNodeResource
-  | IfNodeResource;
+  | IfNodeResource
+  | CustomActionNodeResource;
 
 export interface ScenarioEdgeResource {
   id: string;
