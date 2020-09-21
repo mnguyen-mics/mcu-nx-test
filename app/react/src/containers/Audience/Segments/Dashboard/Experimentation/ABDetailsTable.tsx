@@ -36,17 +36,17 @@ import { formatMetric } from '../../../../../utils/MetricHelper';
 const abComparisonMessage: {
   [key: string]: FormattedMessage.MessageDescriptor;
 } = defineMessages({
-  number_of_transactions: {
+  avg_number_of_transactions: {
     id: 'audience.segment.dashboard.ABDetailsTable.numberOfTransactions',
-    defaultMessage: 'Number of transactions',
+    defaultMessage: 'Average number of transactions',
   },
   avg_transaction_amount: {
     id: 'audience.segment.dashboard.ABDetailsTable.avgTransactionAmount',
     defaultMessage: 'Average transaction amount',
   },
-  revenue: {
+  avg_revenue_per_user_point: {
     id: 'audience.segment.dashboard.ABDetailsTable.revenue',
-    defaultMessage: 'Revenue',
+    defaultMessage: 'Average Revenue',
   },
   avg_session_duration: {
     id: 'audience.segment.dashboard.ABDetailsTable.avgSessionDuration',
@@ -176,9 +176,9 @@ class ABDetailsTable extends React.Component<Props, State> {
         );
       };
       const metricList: DatamartUsersAnalyticsMetric[] = [
-        'number_of_transactions',
+        'avg_number_of_transactions',
         'avg_transaction_amount',
-        'revenue',
+        'avg_revenue_per_user_point',
         'avg_session_duration',
         'avg_number_of_user_events',
         'conversion_rate',
@@ -189,13 +189,7 @@ class ABDetailsTable extends React.Component<Props, State> {
           getPromise(controlGroupSegment.id, metric),
         ])
           .then(res => {
-            const ratio =
-              controlGroupSegment &&
-              controlGroupSegment.weight &&
-              (metric === 'number_of_transactions' || metric === 'revenue')
-                ? controlGroupSegment.weight /
-                  (100 - controlGroupSegment.weight)
-                : 1;
+            const ratio = 1;
             const experimentationMetric = res[0].data.report_view.rows[0][0];
             const controlGroupMetric = res[1].data.report_view.rows[0][0];
             const getComparison = () => {
