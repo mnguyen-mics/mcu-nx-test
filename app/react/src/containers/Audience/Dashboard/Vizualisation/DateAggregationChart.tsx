@@ -11,7 +11,6 @@ import injectThemeColors, {
 import moment from 'moment';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import { LoadingChart } from '../../../../components/EmptyCharts';
 import messages from './messages';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
@@ -20,7 +19,7 @@ import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import StackedBarPlot from '../../../../components/Charts/CategoryBased/StackedBarPlot';
 import CardFlex from '../Components/CardFlex';
 import { getFormattedQuery } from '../domain';
-import { EmptyChart } from '@mediarithmics-private/mcs-components-library';
+import { EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
 
 export interface DateAggregationChartProps {
   title?: string;

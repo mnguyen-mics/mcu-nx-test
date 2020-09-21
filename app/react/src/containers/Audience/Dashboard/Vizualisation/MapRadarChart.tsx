@@ -10,7 +10,6 @@ import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../Helpers/injectThemeColors';
 import { compose } from 'recompose';
-import { LoadingChart } from '../../../../components/EmptyCharts';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import messages from './messages';
 import { lazyInject } from '../../../../config/inversify.config';
@@ -23,7 +22,7 @@ import { QueryResource } from '../../../../models/datamart/DatamartResource';
 import RadarSpiderPlot from '../../../../components/Charts/CategoryBased/RadarSpiderPlot';
 import { TooltipChart, DataLabel } from '../../../../models/dashboards/dashboards';
 import { SerieSortType } from '../../../../components/Charts/CategoryBased/StackedBarPlot';
-import { EmptyChart } from '@mediarithmics-private/mcs-components-library';
+import { EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
 
 export interface MapBarChartProps {
   title?: string;

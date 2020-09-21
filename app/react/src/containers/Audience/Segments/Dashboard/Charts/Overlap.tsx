@@ -6,9 +6,6 @@ import moment from 'moment';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import { RouteComponentProps } from 'react-router';
-import {
-  LoadingChart,
-} from '../../../../../components/EmptyCharts/index';
 import McsIcon from '../../../../../components/McsIcon';
 import messages from '../messages';
 import injectThemeColors, {
@@ -26,7 +23,7 @@ import StackedBarPlot, {
   StackedBarPlotOptions,
 } from '../../../../../components/Charts/CategoryBased/StackedBarPlot';
 import { AudienceSegmentShape } from '../../../../../models/audiencesegment';
-import { EmptyChart } from '@mediarithmics-private/mcs-components-library';
+import { EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
 
 interface State {
   data: OverlapData;

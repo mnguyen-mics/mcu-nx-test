@@ -6,11 +6,10 @@ import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import { getFormattedQuery } from '../domain';
-import { LoadingChart } from '../../../../components/EmptyCharts';
 import messages from './messages';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
-import { EmptyChart } from '@mediarithmics-private/mcs-components-library';
+import { EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
 
 export interface TopInfoProps {
   queryId: string;

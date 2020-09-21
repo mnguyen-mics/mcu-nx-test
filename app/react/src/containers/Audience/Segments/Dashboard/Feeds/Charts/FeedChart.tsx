@@ -4,7 +4,6 @@ import { IFeedsStatsService } from '../../../../../../services/FeedsStatsService
 import { TYPES } from '../../../../../../constants/types';
 import { lazyInject } from '../../../../../../config/inversify.config';
 import { normalizeReportView } from '../../../../../../utils/MetricHelper';
-import { LoadingChart } from '../../../../../../components/EmptyCharts';
 import {
   defineMessages,
   FormattedMessage,
@@ -18,7 +17,7 @@ import injectThemeColors, {
 import McsMoment, { formatMcsDate } from '../../../../../../utils/McsMoment';
 import { McsDateRangeValue } from '../../../../../../components/McsDateRangePicker';
 import { Card } from 'antd';
-import {StackedBarPlot} from '@mediarithmics-private/mcs-components-library';
+import {StackedBarPlot, LoadingChart} from '@mediarithmics-private/mcs-components-library';
 import moment from 'moment';
 
 interface FeedChartProps {

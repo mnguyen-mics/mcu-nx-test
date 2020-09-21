@@ -5,9 +5,6 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import { ClickParam } from 'antd/lib/menu';
 import { Dropdown } from '../../../../../components/PopupContainers';
-import {
-  LoadingChart,
-} from '../../../../../components/EmptyCharts/index';
 import McsDateRangePicker, {
   McsDateRangeValue,
 } from '../../../../../components/McsDateRangePicker';
@@ -35,7 +32,7 @@ import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../../Helpers/injectThemeColors';
 import StackedAreaPlot from '../../../../../components/Charts/TimeBased/StackedAreaPlot';
-import { EmptyChart } from '@mediarithmics-private/mcs-components-library';
+import { EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
 
 const LegendChartTS = LegendChart as any;
 

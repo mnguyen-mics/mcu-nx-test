@@ -9,9 +9,6 @@ import {
   defineMessages,
   FormattedMessage,
 } from 'react-intl';
-import {
-  LoadingChart,
-} from '../../../../../components/EmptyCharts/index';
 import McsDateRangePicker, {
   McsDateRangeValue,
 } from '../../../../../components/McsDateRangePicker';
@@ -26,7 +23,7 @@ import injectThemeColors, {
 } from '../../../../Helpers/injectThemeColors';
 import StackedAreaPlot from '../../../../../components/Charts/TimeBased/StackedAreaPlot';
 import { DatamartWithMetricResource } from '../../../../../models/datamart/DatamartResource';
-import { EmptyChart } from '@mediarithmics-private/mcs-components-library';
+import { EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
 
 
 interface OverviewProps {

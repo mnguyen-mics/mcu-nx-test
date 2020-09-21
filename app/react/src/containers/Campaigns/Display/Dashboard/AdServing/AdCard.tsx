@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Row, Col } from 'antd';
-import { Card, EmptyChart } from '@mediarithmics-private/mcs-components-library';
+import { Card, EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
 import { AdInfoResource } from '../../../../../models/campaign/display';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
@@ -15,9 +15,6 @@ import {
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import {
-  LoadingChart,
-} from '../../../../../components/EmptyCharts';
 import McsMoment from '../../../../../utils/McsMoment';
 import injectThemeColors, {
   InjectedThemeColorsProps,

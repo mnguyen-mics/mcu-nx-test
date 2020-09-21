@@ -3,8 +3,6 @@ import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Row, Col } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-
-import { LoadingChart } from '../../../../components/EmptyCharts';
 import { LegendChartWithModal } from '../../../../components/LegendChart';
 import MetricsColumn from '../../../../components/MetricsColumn';
 
@@ -33,7 +31,7 @@ import injectThemeColors, {
 } from '../../../Helpers/injectThemeColors';
 import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
 import DoubleStackedAreaPlot from '../../../../components/Charts/TimeBased/DoubleStackedAreaPlot';
-import { EmptyChart } from '@mediarithmics-private/mcs-components-library';
+import { EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
 
 
 interface OverallStats {

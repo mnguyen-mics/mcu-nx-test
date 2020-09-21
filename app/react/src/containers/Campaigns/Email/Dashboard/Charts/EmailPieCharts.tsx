@@ -1,9 +1,5 @@
 import * as React from 'react';
 import { Row, Col } from 'antd';
-
-import {
-  LoadingChart,
-} from '../../../../../components/EmptyCharts';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../../Helpers/injectThemeColors';
@@ -14,7 +10,7 @@ import {
   InjectedIntlProps,
   injectIntl,
 } from 'react-intl';
-import { PiePlot, EmptyChart } from '@mediarithmics-private/mcs-components-library';
+import { PiePlot, EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
 
 const messageMap: {
   [key: string]: FormattedMessage.MessageDescriptor;
