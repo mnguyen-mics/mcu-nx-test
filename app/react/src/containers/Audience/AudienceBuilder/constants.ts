@@ -12,9 +12,9 @@ export const messages: {
     id: 'audienceBuilder.category.demographics',
     defaultMessage: 'Demographics',
   },
-  totalAudience: {
-    id: 'audienceBuilder.totalAudience',
-    defaultMessage: 'Total Audience',
+  selectedAudience: {
+    id: 'audienceBuilder.selectedAudience',
+    defaultMessage: 'Selected Audience',
   },
   tooltipGender: {
     id: 'audienceBuilder.category.demographics.tooltiptGender',
@@ -105,9 +105,8 @@ export const INITIAL_AUDIENCE_BUILDER_FORM_DATA: AudienceBuilderFormData = {
     expressions: [
       {
         type: 'GROUP',
-        boolean_operator: 'AND',
-        expressions: [
-        ],
+        boolean_operator: 'OR',
+        expressions: [],
       },
     ],
   },

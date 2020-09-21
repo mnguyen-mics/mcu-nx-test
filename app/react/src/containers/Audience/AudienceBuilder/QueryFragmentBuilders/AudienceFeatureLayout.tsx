@@ -6,23 +6,13 @@ import { Spin } from 'antd';
 import { lazyInject } from '../../../../config/inversify.config';
 import { IAudienceFeatureService } from '../../../../services/AudienceFeatureService';
 import { TYPES } from '../../../../constants/types';
-import {
-  withValidators,
-  FormMultiTagField,
-  FormSelectField,
-  DefaultSelect,
-  FormInputField,
-  FormInput,
-} from '../../../../components/Form';
+import { withValidators } from '../../../../components/Form';
 import { ValidatorProps } from '../../../../components/Form/withValidators';
-import FormMultiTag from '../../../../components/Form/FormSelect/FormMultiTag';
-import { AudienceFeatureVariable } from '../../../../models/audienceFeature/AudienceFeatureResource';
 import { AudienceBuilderParametricPredicateNode } from '../../../../models/audienceBuilder/AudienceBuilderResource';
 import { Field, GenericField } from 'redux-form';
-import FormRelativeAbsoluteDate, {
-  FormRelativeAbsoluteDateProps,
-} from '../../../QueryTool/JSONOTQL/Edit/Sections/Field/Comparison/FormRelativeAbsoluteDate';
-import { builtinEnumTypeOptions } from '../../../QueryTool/JSONOTQL/Edit/Sections/Field/contants';
+import { FormRelativeAbsoluteDateProps } from '../../../QueryTool/JSONOTQL/Edit/Sections/Field/Comparison/FormRelativeAbsoluteDate';
+import AudienceFeatureVariable from './AudienceFeatureVariable';
+import { ObjectLikeTypeInfoResource } from '../../../../models/datamart/graphdb/RuntimeSchema';
 
 export const FormRelativeAbsoluteDateField = Field as new () => GenericField<
   FormRelativeAbsoluteDateProps
@@ -36,6 +26,7 @@ export interface AudienceFeatureLayoutProps {
   datamartId: string;
   formPath: string;
   parametricPredicateResource: AudienceBuilderParametricPredicateNode;
+  objectTypes: ObjectLikeTypeInfoResource[];
 }
 
 type Props = AudienceFeatureLayoutProps & InjectedIntlProps & ValidatorProps;
@@ -52,115 +43,29 @@ class AudienceFeatureLayout extends React.Component<Props, State> {
   componentDidMount() {
     const { datamartId, parametricPredicateResource } = this.props;
     this._audienceFeatureService
-      .getAudienceFeature(datamartId, parametricPredicateResource.parametric_predicate_id)
+      .getAudienceFeature(
+        datamartId,
+        parametricPredicateResource.parametric_predicate_id,
+      )
       .then(res => {
         this.setState({
-          audienceFeature: res.data,
+          audienceFeature: {
+            ...res.data,
+            variables: res.data.variables.map(v => {
+              return {
+                ...v,
+                path: v.path.reverse(),
+              };
+            }),
+          },
         });
       });
   }
 
-  renderField = (featureVariable: AudienceFeatureVariable) => {
-    const { formPath } = this.props;
-    let name;
-    name = `${formPath}.parameters.${featureVariable.parameter_name}`;
-    const fieldGridConfig = {
-      labelCol: { span: 3 },
-      wrapperCol: { span: 19, offset: 1 },
-    };
-
-    switch (featureVariable.type) {
-      // To list Enum options, we will use here feature.path to build a query like this :
-      // select { path[0] { path[1] @map(limit:10000) } } from UserPoint
-      // or use feature.directives to do the call if they are provided
-      case 'Enum':
-        return (
-          <FormMultiTagField
-            name={name}
-            component={FormMultiTag}
-            formItemProps={{
-              label: featureVariable.field_name,
-              ...fieldGridConfig,
-            }}
-          />
-        );
-      case 'Boolean':
-        return (
-          <FormSelectField
-            name={name}
-            component={DefaultSelect}
-            formItemProps={{
-              label: featureVariable.field_name,
-              ...fieldGridConfig,
-            }}
-          />
-        );
-      case 'Int':
-        return (
-          <FormInputField
-            name={name}
-            component={FormInput}
-            formItemProps={{
-              label: featureVariable.field_name,
-              ...fieldGridConfig,
-            }}
-          />
-        );
-      case 'String':
-        return (
-          <FormInputField
-            name={name}
-            component={FormInput}
-            formItemProps={{
-              label: featureVariable.field_name,
-              ...fieldGridConfig,
-            }}
-          />
-        );
-      case 'Timestamp': 
-      case 'Date':
-        return (
-          <FormRelativeAbsoluteDateField
-            name={name}
-            component={FormRelativeAbsoluteDate}
-            formItemProps={{
-              label: featureVariable.field_name,
-            }}
-            unixTimstamp={true}
-          />
-        );
-      case 'OperatingSystemFamily':
-      case 'FormFactor':
-      case 'HashFunction':
-      case 'BrowserFamily':
-      case 'UserAgentType':
-      case 'ActivitySource':
-      case 'UserActivityType':
-        return <FormMultiTagField
-        name={name}
-        component={FormMultiTag}
-        selectProps={{
-          options: (builtinEnumTypeOptions[featureVariable.type] as string[]).map(t => {
-            return {
-              label: t,
-              value: t
-            }
-          })
-        }}
-        formItemProps={{
-          label: featureVariable.field_name,
-          labelCol: { span: 5 },
-          wrapperCol: { span: 17, offset: 1 }, 
-        }}
-      />;
-            
-      default:
-        return 'not supported';
-    }
-  };
-
   render() {
     const { audienceFeature } = this.state;
+
+    const { datamartId, formPath, objectTypes } = this.props;
 
     return audienceFeature ? (
       <React.Fragment>
@@ -168,12 +73,13 @@ class AudienceFeatureLayout extends React.Component<Props, State> {
         <div className="mcs-segmentBuilder_audienceFeatureDescription">{`${audienceFeature.description} `}</div>
         {audienceFeature.variables.map((v, index) => {
           return (
-            <div
-              className="mcs-segmentBuilder_audienceFeatureInput"
+            <AudienceFeatureVariable
               key={index}
-            >
-              {this.renderField(v)}
-            </div>
+              datamartId={datamartId}
+              variable={v}
+              formPath={formPath}
+              objectTypes={objectTypes}
+            />
           );
         })}
       </React.Fragment>

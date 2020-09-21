@@ -120,6 +120,8 @@ class FormSearchObject extends React.Component<
       }, () => {
         this.filterData()
       })
+    }).catch(() => {
+      this.setState({ fetching: false })
     })
   }
 

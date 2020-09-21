@@ -1,5 +1,10 @@
 import {
   AudienceFeatureResource,
   AudienceFeatureType,
+  AudienceFeatureVariableResource,
 } from './AudienceFeatureResource';
-export { AudienceFeatureResource, AudienceFeatureType };
+export {
+  AudienceFeatureResource,
+  AudienceFeatureType,
+  AudienceFeatureVariableResource,
+};

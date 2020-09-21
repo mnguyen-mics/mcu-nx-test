@@ -28,6 +28,7 @@ import AudienceFeatureSelector, {
   AudienceFeatureSelectorProps,
 } from './AudienceFeatureSelector';
 import { AudienceFeatureResource } from '../../../../models/audienceFeature';
+import { ObjectLikeTypeInfoResource } from '../../../../models/datamart/graphdb/RuntimeSchema';
 
 export const AudienceFeatureFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
@@ -36,6 +37,7 @@ export const AudienceFeatureFieldArray = FieldArray as new () => GenericFieldArr
 
 export interface QueryFragmentFormSectionProps {
   datamartId: string;
+  objectTypes: ObjectLikeTypeInfoResource[];
 }
 
 type Props = WrappedFieldArrayProps<AudienceBuilderGroupNode> &
@@ -125,7 +127,7 @@ class QueryFragmentFormSection extends React.Component<Props> {
   };
 
   render() {
-    const { fields, intl, datamartId } = this.props;
+    const { fields, intl, datamartId, objectTypes } = this.props;
 
     return (
       <React.Fragment>
@@ -165,6 +167,7 @@ class QueryFragmentFormSection extends React.Component<Props> {
                   name={`${name}.expressions`}
                   component={AudienceFeatureFormSection}
                   datamartId={datamartId}
+                  objectTypes={objectTypes}
                   // isDemographicsSection={index === 0}
                 />
                 {

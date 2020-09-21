@@ -7,10 +7,12 @@ import { AudienceBuilderParametricPredicateNode } from '../../../../models/audie
 import { Row, Col, Button } from 'antd';
 import { McsIcon } from '../../../../components';
 import AudienceFeatureLayout from './AudienceFeatureLayout';
+import { ObjectLikeTypeInfoResource } from '../../../../models/datamart/graphdb/RuntimeSchema';
 
 export interface AudienceFeatureFormSectionProps extends ReduxFormChangeProps {
   isDemographicsSection: boolean;
   datamartId: string;
+  objectTypes: ObjectLikeTypeInfoResource[];
 }
 
 type Props = WrappedFieldArrayProps<AudienceBuilderParametricPredicateNode> &
@@ -19,7 +21,7 @@ type Props = WrappedFieldArrayProps<AudienceBuilderParametricPredicateNode> &
 
 class AudienceFeatureFormSection extends React.Component<Props> {
   render() {
-    const { fields, isDemographicsSection, datamartId } = this.props;
+    const { fields, isDemographicsSection, datamartId, objectTypes } = this.props;
 
     return fields.map((name, index) => {
       const handleRemove = () => fields.remove(index);
@@ -37,17 +39,12 @@ class AudienceFeatureFormSection extends React.Component<Props> {
               formPath={`${name}`}
               datamartId={datamartId}
               parametricPredicateResource={fields.get(index)}
+              objectTypes={objectTypes}
             />
           </Col>
 
           {!isDemographicsSection && (
             <React.Fragment>
-              {/* <Col span={2}>
-                <Statistic
-                  value={3.2}
-                  className="mcs-segmentBuilder_audienceFeatureTotal"
-                />
-              </Col> */}
               <Col span={2}>
                 <Button
                   className="mcs-segmentBuilder_closeButton"

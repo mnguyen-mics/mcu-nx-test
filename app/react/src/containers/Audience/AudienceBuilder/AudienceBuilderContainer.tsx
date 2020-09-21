@@ -24,6 +24,10 @@ import QueryFragmentFormSection, {
 } from './QueryFragmentBuilders/QueryFragmentFormSection';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
 import { OTQLResult } from '../../../models/datamart/graphdb/OTQLResult';
+import { lazyInject } from '../../../config/inversify.config';
+import { TYPES } from '../../../constants/types';
+import { IRuntimeSchemaService } from '../../../services/RuntimeSchemaService';
+import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/RuntimeSchema';
 
 export const QueryFragmentFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
@@ -50,9 +54,39 @@ type Props = InjectedFormProps<
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
 
-class AudienceBuilderContainer extends React.Component<Props> {
+interface State {
+  isLoadingObjectTypes: boolean;
+  objectTypes: ObjectLikeTypeInfoResource[];
+}
+
+class AudienceBuilderContainer extends React.Component<Props, State> {
+  @lazyInject(TYPES.IRuntimeSchemaService)
+  private _runtimeSchemaService: IRuntimeSchemaService;
+
   constructor(props: Props) {
     super(props);
+    this.state = {
+      isLoadingObjectTypes: false,
+      objectTypes: [],
+    };
+  }
+
+  componentDidMount() {
+    const { datamartId } = this.props;
+    this.setState({
+      isLoadingObjectTypes: true,
+    });
+    this._runtimeSchemaService.getRuntimeSchemas(datamartId).then(schemaRes => {
+      const liveSchema = schemaRes.data.find(s => s.status === 'LIVE');
+      if (!liveSchema) return;
+      return this._runtimeSchemaService
+        .getObjectTypeInfoResources(datamartId, liveSchema.id)
+        .then(objectTypes => {
+          this.setState({
+            objectTypes: objectTypes,
+          });
+        });
+    });
   }
 
   saveFormData = () => {
@@ -62,6 +96,8 @@ class AudienceBuilderContainer extends React.Component<Props> {
 
   render() {
     const { datamartId, queryResult } = this.props;
+
+    const { objectTypes } = this.state;
 
     const genericFieldArrayProps = {
       rerenderOnEveryChange: true,
@@ -77,6 +113,7 @@ class AudienceBuilderContainer extends React.Component<Props> {
                 name={`where.expressions`}
                 component={QueryFragmentFormSection}
                 datamartId={datamartId}
+                objectTypes={objectTypes}
                 {...genericFieldArrayProps}
               />
             </Col>
@@ -84,7 +121,9 @@ class AudienceBuilderContainer extends React.Component<Props> {
               span={12}
               className="mcs-segmentBuilder_liveDashboardContainer"
             >
-              <AudienceBuilderDashboard totalAudience={queryResult && queryResult.rows[0].count} />
+              <AudienceBuilderDashboard
+                totalAudience={queryResult && queryResult.rows[0].count}
+              />
             </Col>
           </Row>
         </Layout>
