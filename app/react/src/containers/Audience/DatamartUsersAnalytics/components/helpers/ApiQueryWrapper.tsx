@@ -5,7 +5,6 @@ import { IDatamartUsersAnalyticsService } from '../../../../../services/Datamart
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { ReportView } from '../../../../../models/ReportView';
-import { LoadingChart } from '../../../../../components/EmptyCharts';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
@@ -23,6 +22,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { DATAMART_USERS_ANALYTICS_SETTING } from '../../../Segments/Dashboard/constants';
 import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import { orderBy, intersection, isEqual } from 'lodash';
+import { LoadingChart } from '@mediarithmics-private/mcs-components-library';
 
 type Props = ApiQueryWrapperProps &
   InjectedNotificationProps &

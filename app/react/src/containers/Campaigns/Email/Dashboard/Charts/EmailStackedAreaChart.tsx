@@ -1,9 +1,6 @@
 import * as React from 'react';
 import { Row, Col } from 'antd';
 import { compose } from 'recompose';
-import {
-  LoadingChart,
-} from '../../../../../components/EmptyCharts';
 import McsDateRangePicker, {
   McsDateRangeValue,
 } from '../../../../../components/McsDateRangePicker';
@@ -16,7 +13,7 @@ import injectThemeColors, {
 import { Index } from '../../../../../utils';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { messagesMap } from '../BlastTable';
-import { EmptyChart } from '@mediarithmics-private/mcs-components-library';
+import { EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
 
 export interface EmailStackedAreaChartProps {
   dateRangeValue: McsDateRangeValue;

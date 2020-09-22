@@ -9,7 +9,6 @@ import injectThemeColors, {
 } from '../../../Helpers/injectThemeColors';
 import { compose } from 'recompose';
 import StackedBarPlot from '../../../../components/Charts/CategoryBased/StackedBarPlot';
-import { LoadingChart } from '../../../../components/EmptyCharts';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import messages from './messages';
 import { lazyInject } from '../../../../config/inversify.config';
@@ -18,7 +17,7 @@ import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { getFormattedQuery } from '../domain';
-import { EmptyChart } from '@mediarithmics-private/mcs-components-library';
+import { EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
 
 export interface CountBarChartProps {
   title?: string;

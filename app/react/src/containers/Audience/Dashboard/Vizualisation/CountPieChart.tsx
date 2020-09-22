@@ -9,7 +9,6 @@ import injectThemeColors, {
   ThemeColorsShape,
 } from '../../../Helpers/injectThemeColors';
 import { compose } from 'recompose';
-import { LoadingChart } from '../../../../components/EmptyCharts';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import messages from './messages';
 import { lazyInject } from '../../../../config/inversify.config';
@@ -19,7 +18,7 @@ import CardFlex from '../Components/CardFlex';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { getFormattedQuery } from '../domain';
 import { DatasetProps, PiePlotOptionsProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/category-based-charts/pie-plot/PiePlot';
-import { PiePlot, EmptyChart } from '@mediarithmics-private/mcs-components-library';
+import { PiePlot, EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
 
 export interface CountPieChartProps {
   title?: string;

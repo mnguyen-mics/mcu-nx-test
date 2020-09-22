@@ -2,9 +2,6 @@ import * as React from 'react';
 import { withRouter } from 'react-router-dom';
 import { Row, Col } from 'antd';
 import { compose } from 'recompose';
-import {
-  LoadingChart,
-} from '../../../../../components/EmptyCharts/index';
 import McsDateRangePicker, {
   McsDateRangeValue,
 } from '../../../../../components/McsDateRangePicker';
@@ -20,7 +17,7 @@ import injectThemeColors, {
 import { RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import StackedBarPlot from '../../../../../components/Charts/CategoryBased/StackedBarPlot';
-import { EmptyChart } from '@mediarithmics-private/mcs-components-library';
+import { EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
 
 interface AdditionDeletionProps {
   isFetching: boolean;
