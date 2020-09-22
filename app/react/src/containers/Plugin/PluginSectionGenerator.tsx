@@ -3,7 +3,7 @@ import {
   PluginLayoutSectionResource,
   PluginLayoutFieldResource,
 } from '../../models/plugin/PluginLayout';
-import { ButtonStyleless, McsIcon } from '../../components';
+import { McsIcon } from '../../components';
 import { Row } from 'antd';
 import {
   FormTitle,
@@ -22,6 +22,7 @@ import messages from './Edit/messages';
 import { PropertyResourceShape } from '../../models/plugin';
 import { PluginPresetProperty } from '../../models/Plugins';
 import { Validator } from 'redux-form';
+import { Button } from '@mediarithmics-private/mcs-components-library';
 
 export interface PluginExtraField {
   label: string;
@@ -203,7 +204,7 @@ class PluginSectionGenerator extends React.Component<
       pluginLayoutSection.advanced_fields !== null &&
       pluginLayoutSection.advanced_fields.length !== 0 ? (
         <div>
-          <ButtonStyleless
+          <Button
             className="optional-section-title"
             onClick={this.toggleAdvancedFields}
           >
@@ -212,7 +213,7 @@ class PluginSectionGenerator extends React.Component<
               {formatMessage(messages.advanced)}
             </span>
             <McsIcon type="chevron" />
-          </ButtonStyleless>
+          </Button>
 
           <div
             className={

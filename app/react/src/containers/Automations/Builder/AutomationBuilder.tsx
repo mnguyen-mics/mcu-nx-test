@@ -7,7 +7,8 @@ import {
 } from 'storm-react-diagrams';
 import { ROOT_NODE_POSITION } from '../../QueryTool/JSONOTQL/domain';
 import { Col, Popconfirm } from 'antd';
-import { McsIcon, ButtonStyleless } from '../../../components';
+import { McsIcon } from '../../../components';
+import { Button } from '@mediarithmics-private/mcs-components-library';
 import SimplePortFactory from '../../QueryTool/JSONOTQL/Diagram/Port/SimplePortFactory';
 import AutomationNodeFactory from './AutomationNode/AutomationNodeFactory';
 import AutomationNodeModel from './AutomationNode/AutomationNodeModel';
@@ -551,7 +552,7 @@ class AutomationBuilder extends React.Component<Props, State> {
           />
 
           <div className="button-helpers top">
-            <ButtonStyleless
+            <Button
               onClick={this.onNodeSelectorClick}
               className="helper nodes-drawer"
             >
@@ -566,7 +567,7 @@ class AutomationBuilder extends React.Component<Props, State> {
                       }
                 }
               />{' '}
-            </ButtonStyleless>
+            </Button>
           </div>
 
           {exitConditionButton}

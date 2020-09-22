@@ -2,7 +2,8 @@ import * as React from 'react';
 import { TreeSelect, Col, Spin } from 'antd';
 import { groupBy } from 'lodash';
 import { TreeNode } from 'antd/lib/tree-select';
-import { ButtonStyleless, McsIcon } from '..';
+import { McsIcon } from '..';
+import { Button } from '@mediarithmics-private/mcs-components-library';
 import FormFieldWrapper, { FormFieldWrapperProps } from './FormFieldWrapper';
 import { TooltipProps } from 'antd/lib/tooltip';
 import cuid from 'cuid';
@@ -160,13 +161,13 @@ class TreeSelectWithList extends React.Component<Props, State> {
         selectedItemsView.push(
           <div key={leave.key} className="audience-service-subitem">
             {leave.label}
-            <ButtonStyleless
+            <Button
               disabled={disabled}
               className="remove-button"
               onClick={handleClick}
             >
               <McsIcon type="close" />
-            </ButtonStyleless>
+            </Button>
           </div>,
         );
       });

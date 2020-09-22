@@ -103,7 +103,7 @@ class SegmentFilter extends React.Component<JoinedProp, SegmentFilterState> {
     if (!defaultSegment && prevDefaultSegment) {
       this.removeFilter(prevDefaultSegment.key);
     }
-    if(defaultSegment && !prevDefaultSegment) {
+    if (defaultSegment && !prevDefaultSegment) {
       this.onSegmentByNameSelectorChange({
         ...defaultSegment,
         color: segmentcolors ? segmentcolors[0] : colors['mcs-info'],
@@ -118,16 +118,22 @@ class SegmentFilter extends React.Component<JoinedProp, SegmentFilterState> {
   };
 
   onSegmentByNameSelectorChange = (newValue: AppliedSegmentFilter) => {
-    const { appliedSegmentFilters } = this.state;
+    const { appliedSegmentFilters, filterColors } = this.state;
     const { onChange } = this.props;
 
     const exist = appliedSegmentFilters.find(
       (item: AppliedSegmentFilter) => item.key === newValue.key,
     );
+    const usedColors = appliedSegmentFilters.map(item => item.color);
     if (!exist) {
       this.setState(state => {
         const newAppliedSegmentFilters = state.appliedSegmentFilters.concat({
           ...newValue,
+          color:
+            newValue.color ||
+            (usedColors.includes(filterColors[0])
+              ? filterColors[1]
+              : filterColors[0]),
         });
 
         const segmentIds = newAppliedSegmentFilters

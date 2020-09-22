@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Col, Spin } from 'antd';
 import { TooltipProps } from 'antd/lib/tooltip';
-import { ButtonStyleless, McsIcon } from '../';
+import { McsIcon } from '../';
+import { Button } from '@mediarithmics-private/mcs-components-library';
 import SearchAndMultiSelect, { MenuItemProps } from '../SearchAndMultiSelect';
 import FormFieldWrapper, { FormFieldWrapperProps } from './FormFieldWrapper';
 
@@ -45,9 +46,9 @@ const FormSearchAndMultiSelect: React.SFC<
       return (
         <div key={key} className="audience-service-item">
           {foundData ? foundData.label : ''}
-          <ButtonStyleless className="remove-button" onClick={handleClick}>
+          <Button className="remove-button" onClick={handleClick}>
             <McsIcon type="close" />
-          </ButtonStyleless>
+          </Button>
         </div>
       );
     })

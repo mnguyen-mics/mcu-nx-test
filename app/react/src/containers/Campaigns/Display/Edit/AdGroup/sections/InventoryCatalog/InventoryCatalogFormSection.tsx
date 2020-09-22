@@ -8,7 +8,6 @@ import provideInventoryCatalog, {
   InjectedInventoryCatalogProps,
   DataLoadingContainer,
 } from './provideInventoryCatalog';
-
 import { InventoryCatalFieldsModel } from '../../domain';
 import FormSection from '../../../../../../../components/Form/FormSection';
 import messages from '../../../messages';
@@ -20,8 +19,7 @@ import {
   DisplayNetworkServiceItemPublicResource,
   PlacementListServiceItemPublicResource,
 } from '../../../../../../../models/servicemanagement/PublicServiceItemResource';
-
-import ButtonStyleless from '../../../../../../../components/ButtonStyleless';
+import { Button } from '@mediarithmics-private/mcs-components-library';
 import { ReduxFormChangeProps } from '../../../../../../../utils/FormHelper';
 import {
   DealsListResource,
@@ -648,12 +646,12 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
           </div>
           <Row className={showExclude ? 'hide-section' : ''}>
             <Col span={3} offset={small ? 20 : 14}>
-              <ButtonStyleless
+              <Button
                 onClick={disabled ? undefined : this.toogleShowExclude}
                 className="action-button"
               >
                 <FormattedMessage {...inventoryCatalogMsgs.excludeLinkMsg} />
-              </ButtonStyleless>
+              </Button>
             </Col>
           </Row>
         </Row>

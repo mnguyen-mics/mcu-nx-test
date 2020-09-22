@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import moment from 'moment';
-
 import {
   EmptyTableView,
   TableViewFilters,
@@ -13,7 +12,7 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { compose } from 'recompose';
 import { MultiSelectProps } from '../../../../../components/MultiSelect';
 import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
-import { ButtonStyleless } from '../../../../../components';
+import { Button } from '@mediarithmics-private/mcs-components-library';
 
 export interface MobileApplicationsTableProps {
   isFetchingMobileApplications: boolean;
@@ -82,9 +81,9 @@ class MobileApplicationsTable extends React.Component<Props> {
           }
 
           return (
-            <ButtonStyleless onClick={handleEditSite}>
+            <Button onClick={handleEditSite}>
               {text}
-            </ButtonStyleless>
+            </Button>
           )
         },
       },

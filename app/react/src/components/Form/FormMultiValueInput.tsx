@@ -1,11 +1,11 @@
 import * as React from 'react';
-
+import { Button } from '@mediarithmics-private/mcs-components-library';
 // TS Interfaces
 import { Input } from 'antd';
 import { InputProps } from 'antd/lib/input/Input';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { TooltipProps } from 'antd/lib/tooltip';
-import { ButtonStyleless, McsIcon } from '../';
+import { McsIcon } from '../';
 
 import FormFieldWrapper, {
   FormFieldWrapperProps,
@@ -110,9 +110,9 @@ class FormMultiInput extends React.Component<
       return (
         <div key={key} className="audience-service-item">
           {key}
-          <ButtonStyleless className="remove-button" onClick={handleClick}>
+          <Button className="remove-button" onClick={handleClick}>
             <McsIcon type="close" />
-          </ButtonStyleless>
+          </Button>
         </div>
       );
     });

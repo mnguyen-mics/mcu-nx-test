@@ -34,9 +34,10 @@ import { OTQLResult } from '../../../models/datamart/graphdb/OTQLResult';
 import CounterList from './CounterList';
 import { Col } from 'antd';
 import SchemaVizualizer from './SchemaVisualizer/SchemaVizualizer';
-import { ButtonStyleless, McsIcon } from '../../../components';
+import { McsIcon } from '../../../components';
 import { JSONQLBuilderContext } from './JSONQLBuilderContext';
 import withDragDropContext from '../../../common/Diagram/withDragDropContext';
+import { Button } from '@mediarithmics-private/mcs-components-library';
 
 export interface QueryResult {
   loading: boolean;
@@ -379,7 +380,7 @@ class JSONQLBuilder extends React.Component<Props, State> {
           />
           <BuilderMenu undoRedo={this.props.undoRedo} />
           <div className="button-helpers top">
-            <ButtonStyleless onClick={onSchemaSelectorClick} className="helper">
+            <Button onClick={onSchemaSelectorClick} className="helper">
               <McsIcon
                 type={'chevron-right'}
                 style={
@@ -391,7 +392,7 @@ class JSONQLBuilder extends React.Component<Props, State> {
                       }
                 }
               />
-            </ButtonStyleless>
+            </Button>
           </div>
         </Col>
         <Col span={viewSchema ? 6 : 24} className="schema-visualizer">

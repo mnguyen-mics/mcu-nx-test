@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { McsIcon, ButtonStyleless, WindowBodyPortal } from '../../../components';
+import { McsIcon, WindowBodyPortal } from '../../../components';
+import { Button } from '@mediarithmics-private/mcs-components-library';
 import { Icon } from 'antd';
 
 export interface UndoRedoProps {
@@ -41,23 +42,23 @@ export default class BuilderMenu extends React.Component<
     return (
       <div style={{ position: 'relative', height: 0 }}>
         <div className="button-helpers bottom">
-          <ButtonStyleless
+          <Button
             disabled={!enableUndo}
             onClick={handleUndo}
             className="helper"
           >
             <Icon type="arrow-left" />
-          </ButtonStyleless>
-          <ButtonStyleless
+          </Button>
+          <Button
             disabled={!enableRedo}
             onClick={handleRedo}
             className="helper"
           >
             <Icon type="arrow-right" />
-          </ButtonStyleless>
-          <ButtonStyleless onClick={openCloseModal} className="helper">
+          </Button>
+          <Button onClick={openCloseModal} className="helper">
             <McsIcon type="question" />
-          </ButtonStyleless>
+          </Button>
         </div>
         {viewHelp && (
           <WindowBodyPortal>

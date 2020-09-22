@@ -18,7 +18,8 @@ import {
   FormAddonSelectField,
   FormDateRangePickerField,
 } from '../../../../../../components/Form';
-import { ButtonStyleless, McsIcon } from '../../../../../../components';
+import { McsIcon } from '../../../../../../components';
+import { Button } from '@mediarithmics-private/mcs-components-library';
 import FormDateRangePicker from '../../../../../../components/Form/FormDateRangePicker';
 import { formatAdGroupProperty } from '../../../../Display/messages';
 
@@ -193,7 +194,7 @@ class GeneralFormSection extends React.Component<Props, State> {
         </div>
 
         <div>
-          <ButtonStyleless
+          <Button
             className="optional-section-title clickable-on-hover"
             onClick={this.toggleAdvancedSection}
           >
@@ -202,7 +203,7 @@ class GeneralFormSection extends React.Component<Props, State> {
               {formatMessage(messages.contentSectionGeneralAdvancedPartTitle)}
             </span>
             <McsIcon type="chevron" />
-          </ButtonStyleless>
+          </Button>
 
           <div
             className={

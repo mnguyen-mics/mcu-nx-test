@@ -14,7 +14,8 @@ import {
   FormAlertInput,
 } from '../../../../../../components/Form';
 import messages from '../../messages';
-import { ButtonStyleless, McsIcon } from '../../../../../../components';
+import {  McsIcon } from '../../../../../../components';
+import { Button } from '@mediarithmics-private/mcs-components-library';
 import { EditProcessingRouteMatchParams } from '../ProcessingEditPage';
 import { RouteComponentProps, withRouter } from 'react-router';
 
@@ -108,7 +109,7 @@ class GeneralFormSection extends React.Component<Props, State> {
           }}
         />
         <div>
-          <ButtonStyleless
+          <Button
             className="optional-section-title  clickable-on-hover"
             onClick={this.toggleAdvancedSection}
           >
@@ -117,7 +118,7 @@ class GeneralFormSection extends React.Component<Props, State> {
               {formatMessage(messages.generalSectionAdvancedPartTitle)}
             </span>
             <McsIcon type="chevron" />
-          </ButtonStyleless>
+          </Button>
           <div
             className={
               displayAdvancedSection

@@ -11,7 +11,7 @@ import {
   ActionsColumnDefinition,
 } from '../../../../../components/TableView/TableView';
 import messages from './messages';
-import { ButtonStyleless } from '../../../../../components';
+import { Button } from '@mediarithmics-private/mcs-components-library';
 import moment from 'moment';
 import {
   EmptyTableView,
@@ -93,9 +93,9 @@ class ChannelsTable extends React.Component<Props> {
           };
 
           return (
-            <ButtonStyleless onClick={handleEditChannel}>
+            <Button onClick={handleEditChannel}>
               {text}
-            </ButtonStyleless>
+            </Button>
           );
         },
       },

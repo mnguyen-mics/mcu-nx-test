@@ -7,7 +7,8 @@ import { WrappedFieldArrayProps } from 'redux-form';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import { ReduxFormChangeProps } from '../../../../../utils/FormHelper';
 import { compose } from 'recompose';
-import { ButtonStyleless, McsIcon } from '../../../../../components';
+import { McsIcon } from '../../../../../components';
+import { Button } from '@mediarithmics-private/mcs-components-library';
 import { MultipleImageField } from '../domain';
 
 const messages = defineMessages({
@@ -73,8 +74,8 @@ class CustomMultipleImageLoader extends React.Component<JoinedProps, State> {
         <div className="text">{file.name}</div>
         <div className="overlay">
           <div>
-            <div className="tets"><ButtonStyleless onClick={onClick}><McsIcon type="close" /></ButtonStyleless></div>
-            <div><ButtonStyleless onClick={openModal}>{intl.formatMessage(messages.editName)}</ButtonStyleless></div>
+            <div className="tets"><Button onClick={onClick}><McsIcon type="close" /></Button></div>
+            <div><Button onClick={openModal}>{intl.formatMessage(messages.editName)}</Button></div>
           </div>
         </div>
       </div>

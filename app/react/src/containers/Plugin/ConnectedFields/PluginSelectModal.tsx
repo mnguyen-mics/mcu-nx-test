@@ -3,7 +3,8 @@ import { Modal, Button, Select } from 'antd';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import messages from '../messages';
 import { OptionProps } from 'antd/lib/select';
-import { ButtonStyleless, McsIcon } from '../../../components';
+import { McsIcon } from '../../../components';
+import { Button as McsButton } from '@mediarithmics-private/mcs-components-library';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IPluginService } from '../../../services/PluginService';
@@ -376,12 +377,12 @@ class PluginSelectModal extends React.Component<Props, State> {
           {selectedItem ? (
             <span>
               {selectedItem}
-              <ButtonStyleless
+              <McsButton
                 onClick={this.delete}
                 style={{ verticalAlign: 'bottom', marginLeft: '5px' }}
               >
                 <McsIcon type="delete" className="big" />
-              </ButtonStyleless>
+              </McsButton>
             </span>
           ) : (
             noItemSelected

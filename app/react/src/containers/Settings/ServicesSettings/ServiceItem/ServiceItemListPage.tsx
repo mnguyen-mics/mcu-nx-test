@@ -3,14 +3,13 @@ import { compose } from 'recompose';
 import { List, Layout, Row, Col, Breadcrumb, Button } from 'antd';
 import { Link } from 'react-router-dom';
 import { withRouter, RouteComponentProps } from 'react-router';
-import ButtonStyleless from '../../../../components/ButtonStyleless';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { GetServiceOptions, GetServiceItemsOptions, ICatalogService,
 } from '../../../../services/CatalogService';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import { InfiniteList } from '@mediarithmics-private/mcs-components-library';
+import { InfiniteList, Button as McsButton } from '@mediarithmics-private/mcs-components-library';
 import { InfiniteListFilters } from '@mediarithmics-private/mcs-components-library/lib/components/infinite-list';
 import {
   ServiceItemShape,
@@ -177,12 +176,12 @@ class ServiceItemListPage extends React.Component<Props, State> {
           isItemSelected ? 'infinite-list-item-selected' : 'infinite-list-item'
         }
       >
-        <ButtonStyleless
+        <McsButton
           onClick={this.onItemClick(item)}
           style={{ textAlign: 'left' }}
         >
           <List.Item.Meta title={this.getItemTitle(item)} />
-        </ButtonStyleless>
+        </McsButton>
       </List.Item>
     ) : (
         <div />

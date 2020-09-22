@@ -6,7 +6,7 @@ import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/styles/hljs';
 import McsIcon from '../../../../components/McsIcon';
 import messages from '../messages';
-import { ButtonStyleless } from '../../../../components';
+import { Button } from '@mediarithmics-private/mcs-components-library';
 import { UserActivityEventResource } from '../../../../models/datamart/UserActivityResource';
 import CustomObjectRendererWrapper, {
   RenderingTemplates,
@@ -68,13 +68,13 @@ class EventActivity extends React.Component<Props, State> {
           <div className="section-cta">
             {event.$properties && showMore ? (
               <div>
-                <ButtonStyleless
+                <Button
                   onClick={this.handleJSONViewModal}
                   className="mcs-card-inner-action"
                   style={{ marginRight: '10px' }}
                 >
                   <FormattedMessage {...messages.viewEventJson} />
-                </ButtonStyleless>
+                </Button>
                 <button
                   className="mcs-card-inner-action"
                   onClick={changeVisibility}

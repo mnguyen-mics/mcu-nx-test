@@ -3,7 +3,7 @@ import Slide from '../Transition/Slide';
 import { FormattedMessage } from 'react-intl';
 import { Alert } from 'antd';
 import { PaginationProps } from 'antd/lib/pagination/Pagination';
-import { ButtonStyleless } from '../index';
+import { Button } from '@mediarithmics-private/mcs-components-library';
 import { ExtendedTableRowSelection } from './TableView';
 
 interface SelectionNotifyerProps<T> {
@@ -36,7 +36,7 @@ class SelectionNotifyer extends React.Component<SelectionNotifyerProps<any>> {
                 paginationTotal: pagination.total,
               }}
             />
-            <ButtonStyleless
+            <Button
               onClick={rowSelection.unselectAllItemIds}
               className="selected-rows-btn"
             >
@@ -44,7 +44,7 @@ class SelectionNotifyer extends React.Component<SelectionNotifyerProps<any>> {
                 id="components.tableview.selectionNotifyer.unselectAll"
                 defaultMessage={`Click here to unselect all the items.`}
               />
-            </ButtonStyleless>
+            </Button>
           </div>
         );
       } else if (rowSelection.selectedRowKeys.length === pagination.pageSize) {
@@ -57,7 +57,7 @@ class SelectionNotifyer extends React.Component<SelectionNotifyerProps<any>> {
                 paginationPageSize: pagination.pageSize,
               }}
             />
-            <ButtonStyleless
+            <Button
               onClick={handleOnClick}
               className="selected-rows-btn"
             >
@@ -65,7 +65,7 @@ class SelectionNotifyer extends React.Component<SelectionNotifyerProps<any>> {
                 id="components.tableview.selectionNotifyer.selectAll"
                 defaultMessage={`Click here to select all the items.`}
               />
-            </ButtonStyleless>
+            </Button>
           </div>
         );
       } else {

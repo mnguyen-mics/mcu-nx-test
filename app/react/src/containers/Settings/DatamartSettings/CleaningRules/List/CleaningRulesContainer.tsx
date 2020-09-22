@@ -2,6 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
+import { Button as McsButton} from '@mediarithmics-private/mcs-components-library';
 import { TableViewFilters } from '../../../../../components/TableView';
 import messages from './messages';
 import {
@@ -29,7 +30,7 @@ import { TYPES } from '../../../../../constants/types';
 import { IDatamartService } from '../../../../../services/DatamartService';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
-import { McsIcon, ButtonStyleless, Loading } from '../../../../../components';
+import { McsIcon, Loading } from '../../../../../components';
 
 const { Content } = Layout;
 
@@ -504,12 +505,12 @@ class CleaningRulesContainer extends React.Component<Props, State> {
       const buttonText = this.getButtonText(record.status);
       const displayModal = () => this.renderModal(record);
       return (
-        <ButtonStyleless
+        <McsButton
           className="update-cleaning-rule-status"
           onClick={displayModal}
         >
           {buttonText}
-        </ButtonStyleless>
+        </McsButton>
       );
     } else {
       return undefined;

@@ -5,7 +5,7 @@ import {
 } from '../../../models/datamart/graphdb/QueryDocument';
 import { OTQLDataResult } from '../../../models/datamart/graphdb/OTQLResult';
 import { Spin } from 'antd';
-import { ButtonStyleless } from '../../../components';
+import { Button } from '@mediarithmics-private/mcs-components-library';
 import { defineMessages, injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import { lazyInject } from '../../../config/inversify.config';
@@ -111,9 +111,9 @@ class TimelineSelector extends React.Component<Props, State> {
         {this.state.loading ? (
           <Spin size={'small'} />
         ) : (
-          <ButtonStyleless onClick={onClick}>
+          <Button onClick={onClick}>
             {formatMessage(messages.buttonLabel)}
-          </ButtonStyleless>
+          </Button>
         )}
         {this.state.error && !this.state.loading && (
           <div className="error">{formatMessage(messages.errorLabel)}</div>
