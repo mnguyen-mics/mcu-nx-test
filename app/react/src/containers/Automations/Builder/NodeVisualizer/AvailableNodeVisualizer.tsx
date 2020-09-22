@@ -88,6 +88,7 @@ const customActionNode: ScenarioNodeShape = {
   id: generateFakeId(),
   type: 'CUSTOM_ACTION',
   scenario_id: '',
+  formData: { name: '' },
 };
 
 const conditionNode1: ScenarioNodeShape = {

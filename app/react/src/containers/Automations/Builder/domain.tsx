@@ -13,6 +13,7 @@ import {
   DeleteFromSegmentNodeResource,
   OnSegmentEntryInputNodeResource,
   IfNodeResource,
+  CustomActionNodeResource,
 } from '../../../models/automations/automations';
 import {
   AutomationFormDataType,
@@ -29,6 +30,7 @@ import {
   QueryInputAutomationFormData,
   isAddToSegmentNode,
   isDeleteFromSegmentNode,
+  CustomActionAutomationFormData,
 } from './AutomationNode/Edit/domain';
 import { McsIconType } from '../../../components/McsIcon';
 import { QueryResource } from '../../../models/datamart/DatamartResource';
@@ -548,6 +550,13 @@ export class UpdateNodeOperation implements NodeOperation {
           formData: this.formData as WaitFormData,
         };
         break;
+      case 'CUSTOM_ACTION':
+        nodeBody = {
+          ...storylineNode.node,
+          ...(this.node as CustomActionNodeResource),
+          formData: this.formData as CustomActionAutomationFormData,
+        };
+        break;
       default:
         nodeBody = {
           ...storylineNode.node,
@@ -850,13 +859,13 @@ export function generateNodeProperties(
         iconAnt: 'clock-circle',
         color: '#fbc02d',
       };
-      case 'CUSTOM_ACTION':
-        return {
-          title: formatMessage(nodeMessages.customActionNodeTitle),
-          subtitle: '',
-          iconType: 'bolt',
-          color: '#0ba6e1',
-        };
+    case 'CUSTOM_ACTION':
+      return {
+        title: formatMessage(nodeMessages.customActionNodeTitle),
+        subtitle: '',
+        iconType: 'bolt',
+        color: '#0ba6e1',
+      };
     default:
       return {
         title: 'Node',

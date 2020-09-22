@@ -61,7 +61,7 @@ export interface IPluginService {
     pluginId: string,
     versionId: string,
   ) => Promise<DataResponse<PluginVersionResource>>;
-  getPluginVersionProperty: (
+  getPluginVersionProperties: (
     pluginId: string,
     pluginVersionId: string,
     params?: object,
@@ -187,7 +187,7 @@ export class PluginService implements IPluginService {
     const endpoint = `plugins/${pluginId}/versions/${versionId}`;
     return ApiService.getRequest(endpoint);
   }
-  getPluginVersionProperty(
+  getPluginVersionProperties(
     pluginId: string,
     pluginVersionId: string,
     params: object = {},

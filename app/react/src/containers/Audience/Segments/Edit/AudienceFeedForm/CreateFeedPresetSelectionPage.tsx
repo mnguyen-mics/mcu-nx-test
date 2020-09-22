@@ -75,7 +75,7 @@ class CreateFeedPresetSelectionPage extends React.Component<Props, State> {
             return [
               ...plugins,
               Promise.all([
-                this._pluginService.getPluginVersionProperty(
+                this._pluginService.getPluginVersionProperties(
                   plugin.id,
                   plugin.current_version_id,
                 ),

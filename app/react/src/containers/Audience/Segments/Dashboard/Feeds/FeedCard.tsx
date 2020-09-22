@@ -313,7 +313,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
     return this._pluginService
       .findPluginFromVersionId(feed.version_id)
       .then(res =>
-        this._pluginService.getPluginVersionProperty(
+        this._pluginService.getPluginVersionProperties(
           res.data.id,
           res.data.current_version_id!,
         ),

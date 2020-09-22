@@ -405,7 +405,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<
           .getPluginVersions(layoutablePlugin.id)
           .then(res => {
             const lastVersion = res.data[res.data.length - 1];
-            const promiseVersionProperties = this._pluginService.getPluginVersionProperty(
+            const promiseVersionProperties = this._pluginService.getPluginVersionProperties(
               layoutablePlugin.id,
               layoutablePlugin.current_version_id
                 ? layoutablePlugin.current_version_id
