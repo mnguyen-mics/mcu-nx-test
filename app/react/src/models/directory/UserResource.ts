@@ -1,4 +1,6 @@
-export default interface UserResource {
+import UserRoleResource from './UserRoleResource';
+
+export interface User {
   id: string;
   first_name: string;
   last_name: string;
@@ -6,4 +8,11 @@ export default interface UserResource {
   locale: string;
   organisation_id: string;
   community_id: string;
+}
+
+export interface UserCreationWithRoleResource extends User {
+  role?: string;
+}
+export default interface UserResource extends User {
+  user_roles?: UserRoleResource[];
 }

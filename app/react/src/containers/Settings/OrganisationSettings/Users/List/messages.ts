@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl';
 
-const messages = defineMessages({
+export const messages = defineMessages({
   users: {
     id: 'settings.organisation.users.list.title',
     defaultMessage: 'Users',
@@ -38,5 +38,3 @@ const messages = defineMessages({
     defaultMessage: 'Creation Date',
   },
 });
-
-export default messages;

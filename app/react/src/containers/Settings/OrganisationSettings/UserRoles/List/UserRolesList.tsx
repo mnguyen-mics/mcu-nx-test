@@ -2,18 +2,18 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
-import { Layout, Button } from 'antd';
+import { Layout } from 'antd';
 import { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import { PAGINATION_SEARCH_SETTINGS } from '../../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
-import UserResource from '../../../../../models/directory/UserResource';
 import { messages } from './messages';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
-import { Link } from 'react-router-dom';
+import { IUsersService } from '../../../../../services/UsersService';
+import { UserWithRole } from '../domain';
 import { IOrganisationService } from '../../../../../services/OrganisationService';
-import { ICommunityService } from '../../../../../services/CommunityServices';
+import { OrganisationResource } from '../../../../../models/organisation/organisation';
 
 const { Content } = Layout;
 
@@ -21,29 +21,33 @@ const initialState = {
   loading: false,
   data: [],
   total: 0,
+  communityId: "0",
+  communityOrgs: [] as OrganisationResource[],
 };
 
 interface UserListState {
   loading: boolean;
-  data: UserResource[];
+  data: UserWithRole[];
   total: number;
+  communityId: string;
+  communityOrgs: OrganisationResource[];
 }
 
 interface RouterProps {
   organisationId: string;
 }
 
-class UserListsList extends React.Component<
+class UserRolesList extends React.Component<
   RouteComponentProps<RouterProps> & InjectedIntlProps,
   UserListState
 > {
   state = initialState;
 
+  @lazyInject(TYPES.IUsersService)
+  private _usersService: IUsersService;
+
   @lazyInject(TYPES.IOrganisationService)
   private _organisationService: IOrganisationService;
-
-  @lazyInject(TYPES.ICommunityService)
-  private _communityService: ICommunityService
 
   archiveUser = (recommenderId: string) => {
     return Promise.resolve();
@@ -55,21 +59,29 @@ class UserListsList extends React.Component<
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
       this._organisationService.getOrganisation(organisationId)
-        .then(response => 
-          this._communityService.getCommunityUsers(response.data.community_id, options))
-        .then(
-          (results: { data: UserResource[]; total?: number; count: number }) => {
-            this.setState({
-              loading: false,
-              data: results.data,
-              total: results.total || results.count,
-            });
-          }
-        );
+        .then(response => {
+          this.setState({communityId: response.data.community_id})
+          this._usersService.getUsersWithUserRole(response.data.community_id, options)
+          .then(
+            (results: { data: UserWithRole[]; total?: number; count: number }) => {
+              this.setState({
+                loading: false,
+                data: results.data,
+                total: results.total || results.count,
+              });
+              this._organisationService.getOrganisations(this.state.communityId)
+              .then(organisationsResponse => 
+                this.setState({communityOrgs: organisationsResponse.data})
+              )
+            }
+          )
+          
+        }
+      );
     });
   };
 
-  onClickEdit = (user: UserResource) => {
+  onClickEdit = (user: UserWithRole) => {
     const {
       history,
       match: {
@@ -78,21 +90,15 @@ class UserListsList extends React.Component<
     } = this.props;
 
     history.push(
-      `/v2/o/${organisationId}/settings/organisation/users/${user.id}/edit`,
+      `/v2/o/${organisationId}/settings/organisation/user_roles/${user.role.id}/user/${user.id}/edit`,
     );
   };
 
   render() {
-    const {
-      match: {
-        params: { organisationId },
-      },
-    } = this.props;
-
     const actionsColumnsDefinition = [
       {
         key: 'action',
-        actions: () => [{ intlMessage: messages.editUser, callback: this.onClickEdit }],
+        actions: () => [{ intlMessage: messages.editUserRole, callback: this.onClickEdit }],
       },
     ];
 
@@ -101,16 +107,6 @@ class UserListsList extends React.Component<
         intlMessage: messages.usersFirstName,
         key: 'first_name',
         isHideable: false,
-        render: (text: string, record: UserResource) => (
-          <Link
-            className="mcs-campaigns-link"
-            to={`/v2/o/${organisationId}/settings/organisation/users/${
-              record.id
-            }/edit`}
-          >
-            {text} {record.last_name}
-          </Link>
-        ),
       },
       {
         intlMessage: messages.usersLastName,
@@ -122,6 +118,21 @@ class UserListsList extends React.Component<
         key: 'email',
         isHideable: false,
       },
+      {
+        intlMessage: messages.roleOrg,
+        key: 'role.organisation_id',
+        isHideable: false,
+        render: (text: string) => {
+          const organisation: OrganisationResource | undefined = this.state.communityOrgs.find((org: OrganisationResource) => org.id === text);
+          return organisation ? organisation.name : text;
+        }
+      },
+      {
+        intlMessage: messages.roleTitle,
+        key: 'role.role',
+        isHideable: false,
+        render: (text: string) => text.charAt(0) + text.slice(1).toLowerCase().replace('_', ' ')
+      },
     ];
 
     const emptyTable: {
@@ -132,24 +143,12 @@ class UserListsList extends React.Component<
       intlMessage: messages.emptyUsers,
     };
 
-    const onClick = () =>
-      this.props.history.push(
-        `/v2/o/${organisationId}/settings/organisation/users/create`,
-      );
-
-    const buttons = (
-      <Button key="create" type="primary" onClick={onClick}>
-        <FormattedMessage {...messages.newUser} />
-      </Button>
-    );
-
     const additionnalComponent = (
       <div>
         <div className="mcs-card-header mcs-card-title">
           <span className="mcs-card-title">
-            <FormattedMessage {...messages.users} />
+            <FormattedMessage {...messages.userRoles} />
           </span>
-          <span className="mcs-card-button">{buttons}</span>
         </div>
         <hr className="mcs-separator" />
       </div>
@@ -175,4 +174,4 @@ class UserListsList extends React.Component<
   }
 }
 
-export default compose(withRouter, injectIntl)(UserListsList);
+export default compose(withRouter, injectIntl)(UserRolesList);

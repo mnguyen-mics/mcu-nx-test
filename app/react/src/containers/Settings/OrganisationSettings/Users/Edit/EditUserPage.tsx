@@ -5,7 +5,6 @@ import { compose } from 'recompose';
 import { message } from 'antd';
 import { Loading } from '../../../../../components/index';
 import EditUserForm from './EditUserForm';
-import { INITIAL_USER_FORM_DATA } from './domain';
 import UserResource from '../../../../../models/directory/UserResource';
 import { notifyError } from '../../../../../redux/Notifications/actions';
 import { lazyInject } from '../../../../../config/inversify.config';
@@ -42,6 +41,11 @@ const messages = defineMessages({
     defaultMessage: 'User update failed ',
   },
 });
+
+const INITIAL_USER_FORM_DATA: Partial<UserResource> = {
+  first_name: '',
+  email: ''
+}
 
 interface State {
   loading: boolean;
@@ -134,7 +138,7 @@ class EditUserPage extends React.Component<Props, State> {
 
     createOrUpdateUserPromise
       .then(() => {
-        redirectAndNotify();
+        redirectAndNotify(true);
       })
       .catch(err => {
         redirectAndNotify();

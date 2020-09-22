@@ -1,19 +1,24 @@
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
-import UserResource from '../models/directory/UserResource';
 import { injectable } from 'inversify';
+import UserResource, { UserCreationWithRoleResource } from '../models/directory/UserResource';
+import { UserWithRole } from '../containers/Settings/OrganisationSettings/UserRoles/domain';
 
 export interface IUsersService {
   getUsers: (
     organisationId: string,
     filters?: object,
   ) => Promise<DataListResponse<UserResource>>;
+  getUsersWithUserRole: (
+    organisationId: string,
+    filters?: object,
+  ) => Promise<DataListResponse<UserWithRole>>;
   getUser: (
     userId: string,
     organisationId: string,
   ) => Promise<DataResponse<UserResource>>;
   createUser: (
     organisationId: string,
-    body: Partial<UserResource>,
+    body: Partial<UserCreationWithRoleResource>,
   ) => Promise<DataResponse<UserResource>>;
   updateUser: (
     userId: string,
@@ -35,6 +40,17 @@ export class UsersService implements IUsersService {
     };
     return ApiService.getRequest(endpoint, options);
   }
+  getUsersWithUserRole(
+    communityId: string,
+    filters: object = {},
+  ): Promise<DataListResponse<UserWithRole>> {
+    const endpoint = `users.user_roles`;
+    const options = {
+      community_id: communityId,
+      ...filters,
+    };
+    return ApiService.getRequest(endpoint, options);
+  }
   getUser(
     userId: string,
     organisationId: string,
@@ -44,7 +60,7 @@ export class UsersService implements IUsersService {
   }
   createUser(
     organisationId: string,
-    body: Partial<UserResource>,
+    body: Partial<UserCreationWithRoleResource>,
   ): Promise<DataResponse<UserResource>> {
     const endpoint = `users?organisation_id=${organisationId}`;
     return ApiService.postRequest(endpoint, body);

@@ -1,6 +1,7 @@
-import ApiService, { DataResponse } from './ApiService';
+import ApiService, { DataResponse, DataListResponse } from './ApiService';
 import { PasswordRequirementResource, PasswordValidityResource } from '../models/communities';
 import { injectable } from 'inversify';
+import UserResource from '../models/directory/UserResource';
 
 export interface ICommunityService {
   getCommunityPasswordRequirements: (
@@ -11,6 +12,11 @@ export interface ICommunityService {
     technicalName: string,
     password: string,
   ) => Promise<DataResponse<PasswordValidityResource>>;
+
+  getCommunityUsers: (
+    communityId: string,
+    params: object,
+  ) => Promise<DataListResponse<UserResource>>;
 }
 
 @injectable()
@@ -38,5 +44,13 @@ export class CommunityService implements ICommunityService {
         authenticated: false,
     }
     return ApiService.postRequest(endpoint, body, {}, {}, options);
+  }
+
+  getCommunityUsers(
+    communityId: string,
+    params: object,
+  ): Promise<DataListResponse<UserResource>> {
+    const endpoint = `communities/${communityId}/users`;
+    return ApiService.getRequest(endpoint, params);
   }
 };
