@@ -19,11 +19,9 @@ import { IOverlapInterval } from '../OverlapServices';
 import { OverlapData } from '../constants';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
-import StackedBarPlot, {
-  StackedBarPlotOptions,
-} from '../../../../../components/Charts/CategoryBased/StackedBarPlot';
 import { AudienceSegmentShape } from '../../../../../models/audiencesegment';
-import { EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
+import { EmptyChart, LoadingChart, StackedBarPlot } from '@mediarithmics-private/mcs-components-library';
+import { StackedBarPlotOptions } from '@mediarithmics-private/mcs-components-library/lib/components/charts/category-based-charts/stacked-bar-plot/StackedBarPlot';
 
 interface State {
   data: OverlapData;
@@ -91,7 +89,7 @@ class Overlap extends React.Component<Props, State> {
   }
 
   renderStackedAreaCharts() {
-    const { colors } = this.props;
+    const { colors, intl: { formatMessage } } = this.props;
     const { data, isFetchingOverlap } = this.state;
 
     if (isFetchingOverlap) return <LoadingChart />;
@@ -118,7 +116,7 @@ class Overlap extends React.Component<Props, State> {
       yKeys: [
         {
           key: 'yKey',
-          message: { id: 'overlap.name', defaultMessage: 'Overlaping %' },
+          message: formatMessage({ id: 'overlap.name', defaultMessage: 'Overlapping %' }),
         },
       ],
       colors: [colors['mcs-info']],
