@@ -468,8 +468,8 @@ class SiteEditPage extends React.Component<Props, State> {
     generateSavingPromise()
       .then(() => {
         hideSaveInProgress();
-        const mobileApplicationUrl = `/v2/o/${organisationId}/settings/datamart/sites`;
-        history.push(mobileApplicationUrl);
+        const channelsUrl = `/v2/o/${organisationId}/settings/datamart/channels`;
+        history.push(channelsUrl);
       })
       .catch(err => {
         hideSaveInProgress();
@@ -489,7 +489,7 @@ class SiteEditPage extends React.Component<Props, State> {
       },
     } = this.props;
 
-    const defaultRedirectUrl = `/v2/o/${organisationId}/settings/datamart/sites`;
+    const defaultRedirectUrl = `/v2/o/${organisationId}/settings/datamart/channels`;
 
     return location.state && location.state.from
       ? history.push(location.state.from)
@@ -516,7 +516,7 @@ class SiteEditPage extends React.Component<Props, State> {
       return <Loading className="loading-full-screen" />;
     }
 
-    const mobileName =
+    const siteName =
       siteData.site && siteData.site.name
         ? formatMessage(messages.editSiteTitle, {
             name: siteData.site.name,
@@ -526,10 +526,10 @@ class SiteEditPage extends React.Component<Props, State> {
     const breadcrumbPaths = [
       {
         name: formatMessage(messages.breadcrumbTitle1),
-        path: `/v2/o/${organisationId}/settings/datamart/sites`,
+        path: `/v2/o/${organisationId}/settings/datamart/channels`,
       },
       {
-        name: mobileName,
+        name: siteName,
       },
     ];
 

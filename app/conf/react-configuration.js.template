@@ -39,8 +39,6 @@
     'organisationSettings-settings',
     'datamartSettings-visit_analyzers',
     'datamartSettings-channels',
-    'datamartSettings-sites',
-    'datamartSettings-mobile_applications',
     'datamartSettings-datamarts',
     'datamartSettings-service_usage_report',
     'accountSettings-profile',

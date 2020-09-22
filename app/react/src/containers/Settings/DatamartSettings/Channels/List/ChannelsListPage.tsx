@@ -48,6 +48,10 @@ import { IDatamartService } from '../../../../../services/DatamartService';
 
 const { Content } = Layout;
 
+interface ChannelsListPageProps {
+  fixedDatamartOpt?: string;
+}
+
 interface ChannelsListPageState {
   channels: ChannelResourceShape[];
   totalChannels: number;
@@ -60,7 +64,8 @@ interface MapStateToProps {
   workspace: (organisationId: string) => UserWorkspaceResource;
 }
 
-type Props = RouteComponentProps<{ organisationId: string }> &
+type Props = ChannelsListPageProps &
+  RouteComponentProps<{ organisationId: string }> &
   InjectedIntlProps &
   MapStateToProps &
   InjectedNotificationProps;
@@ -87,22 +92,38 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
         currentPage: 1,
         pageSize: 10,
         keywords: '',
-        type: [],
+        types: [],
       },
     };
   }
 
-  computeFilter = (search: string): ChannelFilter => {
-    const parsedFilter = parseSearch(search, this.getSearchSettings());
-    const filter: ChannelFilter = {
-      currentPage: parsedFilter.currentPage ? parsedFilter.currentPage : 1,
-      pageSize: parsedFilter.pageSize ? parsedFilter.pageSize : 10,
-      keywords: parsedFilter.keywords ? parsedFilter.keywords : '',
-      datamartId: parsedFilter.datamartId,
-      type: parsedFilter.type,
-    };
+  computeFilter = (
+    search: string,
+    fixedDatamartOpt: string | undefined,
+  ): ChannelFilter => {
+    if (!fixedDatamartOpt) {
+      const parsedFilter = parseSearch(search, this.getSearchSettings());
+      const computedFilter: ChannelFilter = {
+        currentPage: parsedFilter.currentPage ? parsedFilter.currentPage : 1,
+        pageSize: parsedFilter.pageSize ? parsedFilter.pageSize : 10,
+        keywords: parsedFilter.keywords ? parsedFilter.keywords : '',
+        datamartId: parsedFilter.datamartId,
+        types: parsedFilter.types ? parsedFilter.types : [],
+      };
 
-    return filter;
+      return computedFilter;
+    } else {
+      const { filter } = this.state;
+
+      const computedFilter: ChannelFilter = {
+        currentPage: filter.currentPage,
+        pageSize: filter.pageSize,
+        keywords: filter.keywords,
+        datamartId: fixedDatamartOpt,
+        types: filter.types,
+      };
+      return computedFilter;
+    }
   };
 
   getSearchSettings() {
@@ -119,19 +140,29 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
       match: {
         params: { organisationId },
       },
+      location: { search },
+      fixedDatamartOpt,
     } = this.props;
 
-    const { filter } = this.state;
-
-    this.fetchChannels(organisationId, filter);
+    const computedFilter: ChannelFilter = this.computeFilter(
+      search,
+      fixedDatamartOpt,
+    );
+    this.setState({ filter: computedFilter }, () => {
+      this.fetchChannels(organisationId, computedFilter);
+    });
   }
 
-  componentDidUpdate(previousProps: Props) {
+  componentDidUpdate(
+    previousProps: Props,
+    previousState: ChannelsListPageState,
+  ) {
     const {
       match: {
         params: { organisationId },
       },
       location: { search },
+      fixedDatamartOpt,
     } = this.props;
 
     const {
@@ -139,24 +170,51 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
         params: { organisationId: previousOrganisationId },
       },
       location: { search: previousSearch },
+      fixedDatamartOpt: previousFixedDatamartOpt,
     } = previousProps;
+
+    const { filter } = this.state;
+
+    const { filter: previousFilter } = previousState;
 
     if (
       organisationId !== previousOrganisationId ||
-      !compareSearches(search, previousSearch)
+      !compareSearches(search, previousSearch) ||
+      !this.compareFilters(filter, previousFilter) ||
+      fixedDatamartOpt !== previousFixedDatamartOpt
     ) {
-      const computedFilter: ChannelFilter = this.computeFilter(search);
+      const computedFilter: ChannelFilter = this.computeFilter(
+        search,
+        fixedDatamartOpt,
+      );
       this.setState({ filter: computedFilter }, () => {
         this.fetchChannels(organisationId, computedFilter);
       });
     }
   }
 
+  compareFilters = (
+    filter: ChannelFilter,
+    previousFilter: ChannelFilter,
+  ): boolean => {
+    const comparedTypes =
+      filter.types.every(type => previousFilter.types.includes(type)) &&
+      filter.types.length === previousFilter.types.length;
+
+    return (
+      comparedTypes &&
+      filter.currentPage === previousFilter.currentPage &&
+      filter.datamartId === previousFilter.datamartId &&
+      filter.keywords === previousFilter.keywords &&
+      filter.pageSize === previousFilter.pageSize
+    );
+  };
+
   fetchChannels = (organisationId: string, filter: ChannelFilter) => {
     const { notifyError } = this.props;
     const buildGetChannelsOptions = () => {
       const filterType =
-        filter.type && filter.type.length === 1 ? filter.type[0] : undefined;
+        filter.types && filter.types.length === 1 ? filter.types[0] : undefined;
 
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
@@ -357,22 +415,18 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
     );
   };
 
-  handleFilterChange = (newFilter: ChannelFilter) => {
+  handlePartialFilterChange = (partialFilter: Partial<ChannelFilter>) => {
+    const { fixedDatamartOpt } = this.props;
     const { filter } = this.state;
 
-    const newFilterType = newFilter.type ? newFilter.type : filter.type;
+    const newFilter: ChannelFilter = { ...filter, ...partialFilter };
 
-    const computedFilter: ChannelFilter = {
-      ...newFilter,
-      type: newFilterType,
-    };
-
-    this.setState({ filter: computedFilter }, () => {
-      this.updateLocationSearch(computedFilter);
+    this.setState({ filter: newFilter }, () => {
+      if (!fixedDatamartOpt) this.updateLocationSearch(newFilter);
     });
   };
 
-  updateLocationSearch = (params: Partial<ChannelFilter>) => {
+  updateLocationSearch = (filter: ChannelFilter) => {
     const {
       history,
       location: { search: currentSearch, pathname },
@@ -380,7 +434,7 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
 
     const nextLocation = {
       pathname,
-      search: updateSearch(currentSearch, params, this.getSearchSettings()),
+      search: updateSearch(currentSearch, filter, this.getSearchSettings()),
     };
 
     history.push(nextLocation);
@@ -425,7 +479,10 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
 
     const channelTypeItems: ChannelTypeItem[] = [
       { key: 'SITE', value: 'Sites' },
-      { key: 'MOBILE_APPLICATION', value: 'Mobile Applications' },
+      {
+        key: 'MOBILE_APPLICATION',
+        value: 'Mobile Applications',
+      },
     ];
 
     const filterChannelType: MultiSelectProps<ChannelTypeItem> = {
@@ -436,17 +493,18 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
         </div>
       ),
       selectedItems: channelTypeItems.filter(channelTypeItem =>
-        filter.type.includes(channelTypeItem.key),
+        filter.types.includes(channelTypeItem.key),
       ),
       items: channelTypeItems,
       singleSelectOnly: false,
       getKey: (item: ChannelTypeItem) => item.key,
       display: (item: ChannelTypeItem) => item.value,
       handleMenuClick: (items: ChannelTypeItem[]) => {
-        this.updateLocationSearch({
-          type: items.map(i => i.key),
+        const partialFilter: Partial<ChannelFilter> = {
           currentPage: 1,
-        });
+          types: items.map(i => i.key),
+        };
+        this.handlePartialFilterChange(partialFilter);
       },
     };
 
@@ -470,7 +528,7 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
                 isFetchingChannels={isFetchingChannels}
                 noChannelYet={noChannelYet}
                 filter={filter}
-                onFilterChange={this.handleFilterChange}
+                onFilterChange={this.handlePartialFilterChange}
                 onDeleteChannel={this.handleDeleteChannel}
                 onEditChannel={this.handleEditChannel}
                 filtersOptions={filtersOptions}
@@ -487,7 +545,7 @@ const mapStateToProps = (state: MicsReduxState) => ({
   workspace: getWorkspace(state),
 });
 
-export default compose<Props, {}>(
+export default compose<Props, ChannelsListPageProps>(
   withRouter,
   injectIntl,
   injectNotifications,

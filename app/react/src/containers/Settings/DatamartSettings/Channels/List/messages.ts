@@ -78,13 +78,13 @@ const messages = defineMessages({
     id: 'settings.datamart.channels.placeholder',
     defaultMessage: 'Search Channels',
   },
-  lastSevenDaysSessions: {
-    id: 'settings.datamart.channels.last.seven.days.sessions',
-    defaultMessage: 'Sessions in the last 7 days',
+  lastSevenDaysActivities: {
+    id: 'settings.datamart.channels.last.seven.days.activities',
+    defaultMessage: 'Activities in the last 7 days',
   },
   lastSevenDaysUsers: {
     id: 'settings.datamart.channels.last.seven.days.unique.users',
-    defaultMessage: 'Unique users in the last 7 days',
+    defaultMessage: 'User Points in the last 7 days',
   },
 });
 
