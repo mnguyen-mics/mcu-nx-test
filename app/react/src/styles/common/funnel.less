@@ -202,9 +202,10 @@
 }
 
 .mcs-funnelQueryBuilder_dimensionValue {
+  float: none;
+  width: 176px;
   background: rgba(225, 225, 225, 0.5);
   border-radius: 7.5px;
-  float: none;
   color: rgb(0, 48, 86);
   text-align: center;
   height: 40px;
@@ -233,6 +234,20 @@
     float: none;
     color: rgb(0, 48, 86);
     text-align: center;
+  }
+
+  &.mcs-funnelQueryBuilder_select--booleanOperators {
+    display: block;
+    width: 55px;
+  }
+
+  &.mcs-funnelQueryBuilder_select--dimensions {
+    width: 176px;
+  }
+
+  &.mcs-funnelQueryBuilder_select--dimensionsFilter {
+    width: auto;
+    min-width: 130px;
   }
 
 }

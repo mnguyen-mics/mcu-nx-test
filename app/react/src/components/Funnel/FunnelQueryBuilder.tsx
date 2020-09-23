@@ -1,7 +1,13 @@
 import * as React from 'react';
 import { Card, Input, Select, Row, Col, Button } from "antd";
-import * as Antd from 'antd';
 import cuid from 'cuid';
+import { TYPES } from '../../constants/types';
+import { lazyInject } from '../../config/inversify.config';
+import { IUsersAnalyticsService } from '../../services/UsersAnalyticsService';
+import { DimensionsList } from '../../models/datamartUsersAnalytics/datamartUsersAnalytics';
+import { compose } from 'recompose';
+import injectNotifications, { InjectedNotificationProps } from '../../containers/Notifications/injectNotifications';
+import { booleanOperator, dimensionFilterOperator } from './constants';
 interface Dimension {
   id: string;
   name: string;
@@ -15,13 +21,22 @@ interface Step {
   dimensions: Dimension[];
 }
 interface State {
-  steps: Step[]
+  steps: Step[];
+  isLoading: boolean;
+  dimensionsList: DimensionsList;
 }
 
-interface Props { }
+interface FunnelQueryBuilderProps {
+  datamartId: string;
+}
+
+type Props = FunnelQueryBuilderProps &
+  InjectedNotificationProps;
 
 class FunnelQueryBuilder extends React.Component<Props, State> {
   private _cuid = cuid;
+  @lazyInject(TYPES.IUsersAnalyticsService)
+  private _usersAnalyticsService: IUsersAnalyticsService;
 
   constructor(props: Props) {
     super(props);
@@ -37,13 +52,39 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
           value: "",
         }]
       }],
+      dimensionsList: {
+        dimensions: []
+      },
+      isLoading: false
     };
   }
 
+  componentDidMount() {
+    const { datamartId } = this.props;
+    this.fetchDimensions(datamartId);
+  }
+
+  fetchDimensions = (datamartId: string) => {
+    this.setState({
+      isLoading: true
+    });
+    return this._usersAnalyticsService
+      .getDimensions(datamartId).then((response) => {
+        this.setState({
+          isLoading: false,
+          dimensionsList: response.data
+        });
+      })
+      .catch(e => {
+        this.props.notifyError(e);
+        this.setState({
+          isLoading: false,
+        });
+      });;
+  }
+
   addStep = () => {
-
     const { steps } = this.state;
-
     const newSteps = steps;
 
     newSteps.push({
@@ -79,17 +120,14 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     this.setState({ steps: newSteps });
   }
 
-
   removeDimensionFromStep = (stepId: string, dimensionId: string) => {
     const { steps } = this.state;
-
-
     const newSteps = steps;
 
     newSteps.forEach(step => {
       if (step.id === stepId) {
-        const toto = step.dimensions.filter(dimension => dimension.id !== dimensionId);
-        step.dimensions = toto;
+        const filterStepDimensions = step.dimensions.filter(dimension => dimension.id !== dimensionId);
+        step.dimensions = filterStepDimensions;
       }
     });
 
@@ -97,13 +135,13 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
   }
 
   render() {
-    const Option = Antd.Select.Option;
-    const { steps } = this.state;
+    const Option = Select.Option;
+    const { steps, dimensionsList } = this.state;
 
     return (<Card title="Steps">
       {steps.map((step, index) => {
         return (
-          <div>
+          <div key={this._cuid()}>
             <div className={"mcs-funnelQueryBuilder_step"}>
               <Row>
                 <Col span={24}>
@@ -112,49 +150,46 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
               </Row>
               {step.dimensions.map((dimension, dimensionIndex) => {
                 return (
-                  <div>
+                  <div key={this._cuid()}>
                     {dimensionIndex > 0 && <Select
                       showArrow={false}
-                      style={{ width: 50, display: "block" }}
-                      defaultValue={"or"}
-                      className={"mcs-funnelQueryBuilder_select "}
+                      defaultValue={"OR"}
+                      className={"mcs-funnelQueryBuilder_select mcs-funnelQueryBuilder_select--booleanOperators"}
                     >
-                      <Option key={"1"} value={"or"}>
-                        {"or"}
-                      </Option>
-                      <Option key={"1"} value={"and"}>
-                        {"and"}
-                      </Option>
+                      {booleanOperator.map(bo => {
+                        return (
+                          <Option key={this._cuid()} value={bo}>
+                            {bo}
+                          </Option>)
+                      })}
                     </Select>}
                     <div className={"mcs-funnelQueryBuilder_step_dimensions"}>
                       <Select
-                        showSearch
+                        showSearch={true}
                         showArrow={false}
-                        style={{ width: 176 }}
                         placeholder="Dimension name"
-                        className={"mcs-funnelQueryBuilder_select"}
+                        className={"mcs-funnelQueryBuilder_select mcs-funnelQueryBuilder_select--dimensions"}
                       >
-                        <Option key={"1"} value={"Dimension name 1"}>
-                          {"Dimension name 1"}
-                        </Option>
-                        <Option key={"1"} value={"Dimension name 2"}>
-                          {"Dimension name 2"}
-                        </Option>
+                        {dimensionsList.dimensions.map(d => {
+                          return (
+                            <Option key={this._cuid()} value={d}>
+                              {d}
+                            </Option>)
+                        })}
                       </Select>
                       <Select
                         showArrow={false}
-                        style={{ width: 50 }}
-                        className={"mcs-funnelQueryBuilder_select"}
-                        defaultValue="is"
+                        className={"mcs-funnelQueryBuilder_select mcs-funnelQueryBuilder_select--dimensionsFilter"}
+                        defaultValue="EXACT"
                       >
-                        <Option key={"1"} value={"is"}>
-                          {"is"}
-                        </Option>
-                        <Option key={"1"} value={"is not"}>
-                          {"is not"}
-                        </Option>
+                        {dimensionFilterOperator.map(operator => {
+                          return (
+                            <Option key={this._cuid()} value={operator}>
+                              {operator}
+                            </Option>)
+                        })}
                       </Select>
-                      <Input size="small" style={{ width: 176 }} placeholder="Dimension value" className={"mcs-funnelQueryBuilder_dimensionValue"} />
+                      <Input size="small" placeholder="Dimension value" className={"mcs-funnelQueryBuilder_dimensionValue"} />
                       <Button type="primary" shape="circle" icon="cross" className={"mcs-funnelQueryBuilder_removeStepBtn"} onClick={this.removeDimensionFromStep.bind(this, step.id, dimension.id)} />
                     </div>
                   </div>)
@@ -176,4 +211,6 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
   }
 }
 
-export default FunnelQueryBuilder;
+export default compose<FunnelQueryBuilderProps, FunnelQueryBuilderProps>(
+  injectNotifications,
+)(FunnelQueryBuilder);
