@@ -1,9 +1,13 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { Layout, Row } from 'antd';
+import { Layout, Row, Alert } from 'antd';
 import { defineMessages, injectIntl, InjectedIntlProps } from 'react-intl';
 import { FormTitle } from '../../../components/Form';
-import { MenuList, Actionbar } from '@mediarithmics-private/mcs-components-library';
+import {
+  MenuList,
+  Actionbar,
+  McsIcon,
+} from '@mediarithmics-private/mcs-components-library';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../components/Layout/FormLayoutActionbar';
@@ -19,6 +23,11 @@ export const messages = defineMessages({
     id: 'segmentBuilderSelector.subtitle',
     defaultMessage: 'Choose your Segment Builder',
   },
+  noAudienceBuilder: {
+    id: 'datamart.audienceBuilder.alert.noAudienceBuilder',
+    defaultMessage:
+      'No Audience Builder found for selected datamart. Please create one to proceed.',
+  },
 });
 
 export interface AudienceBuilderSelectorProps {
@@ -26,6 +35,7 @@ export interface AudienceBuilderSelectorProps {
   onSelect: (segmentBuilder: AudienceBuilderResource) => void;
   actionbarProps: FormLayoutActionbarProps;
   isMainlayout?: boolean;
+  noAudienceBuilder?: boolean;
 }
 
 type Props = AudienceBuilderSelectorProps & InjectedIntlProps;
@@ -37,6 +47,8 @@ class AudienceBuilderSelector extends React.Component<Props> {
       actionbarProps,
       isMainlayout,
       audienceBuilders,
+      noAudienceBuilder,
+      intl,
     } = this.props;
 
     return (
@@ -49,16 +61,32 @@ class AudienceBuilderSelector extends React.Component<Props> {
         <Layout.Content className="mcs-content-container mcs-form-container text-center">
           <FormTitle title={messages.title} subtitle={messages.subTitle} />
 
-          <Row className="mcs-selector_container">
-            <Row className="menu">
-              {audienceBuilders.map(b => {
-                const handleSelect = () => onSelect(b);
-                return (
-                  <MenuList key={cuid()} title={b.name} select={handleSelect} />
-                );
-              })}
+          {noAudienceBuilder ? (
+            <Alert
+              message={
+                <div>
+                  <McsIcon type={'warning'} />
+                  {intl.formatMessage(messages.noAudienceBuilder)}
+                </div>
+              }
+              type={'warning'}
+            />
+          ) : (
+            <Row className="mcs-selector_container">
+              <Row className="menu">
+                {audienceBuilders.map(b => {
+                  const handleSelect = () => onSelect(b);
+                  return (
+                    <MenuList
+                      key={cuid()}
+                      title={b.name}
+                      select={handleSelect}
+                    />
+                  );
+                })}
+              </Row>
             </Row>
-          </Row>
+          )}
         </Layout.Content>
       </Layout>
     );
