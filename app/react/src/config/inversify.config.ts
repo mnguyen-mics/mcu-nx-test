@@ -222,7 +222,10 @@ import {
   IUserActivitiesFunnelService,
   UserActivitiesFunnelService,
 } from '../services/UserActivitiesFunnelService';
-
+import {
+  IUsersAnalyticsService,
+  UsersAnalyticsService,
+} from '../services/UsersAnalyticsService';
 
 const container = new Container();
 
@@ -435,6 +438,9 @@ container
 container
   .bind<IUserActivitiesFunnelService>(TYPES.IUserActivitiesFunnelService)
   .to(UserActivitiesFunnelService);
+container
+  .bind<IUsersAnalyticsService>(TYPES.IUsersAnalyticsService)
+  .to(UsersAnalyticsService);
 
 export const { lazyInject } = getDecorators(container, false);
 

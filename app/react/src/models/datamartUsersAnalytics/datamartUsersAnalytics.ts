@@ -63,3 +63,7 @@ export interface ColumnSeriesDataOptions {
   showInLegend: false;
   name: string;
 }
+
+export interface DimensionsList {
+  dimensions: string[]
+}

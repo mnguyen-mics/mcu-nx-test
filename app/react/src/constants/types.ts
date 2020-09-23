@@ -78,6 +78,7 @@ const TYPES = {
   IAudienceBuilderService: Symbol.for('audienceBuilderService'),
   IAudienceFeatureService: Symbol.for('audienceFeatureService'),
   IUserActivitiesFunnelService: Symbol.for('userActivitiesFunnelService'),
+  IUsersAnalyticsService: Symbol.for('usersAnalyticsService'),
 };
 
 export { TYPES };
