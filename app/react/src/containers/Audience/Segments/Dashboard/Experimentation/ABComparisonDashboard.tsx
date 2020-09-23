@@ -24,7 +24,7 @@ import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../../Helpers/injectThemeColors';
 import { Card, Alert, Row, Col } from 'antd';
-import McsTabs from '../../../../../components/McsTabs';
+import { McsTabs } from '@mediarithmics-private/mcs-components-library';
 import { Loading } from '../../../../../components';
 import DatamartUsersAnalyticsContent, {
   DashboardConfig,

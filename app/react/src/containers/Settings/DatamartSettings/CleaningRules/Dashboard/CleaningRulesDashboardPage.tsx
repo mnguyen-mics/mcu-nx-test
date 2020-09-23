@@ -3,7 +3,7 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { Row } from 'antd';
-import McsTabs from '../../../../../components/McsTabs';
+import { McsTabs } from '@mediarithmics-private/mcs-components-library';
 import CleaningRulesContainer from '../List/CleaningRulesContainer';
 import messages from './messages';
 import {

@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { Card } from '@mediarithmics-private/mcs-components-library';
-import McsTabs from '../../../../components/McsTabs';
+import { Card, McsTabs } from '@mediarithmics-private/mcs-components-library';
 import { Overview, AdditionDeletion, Overlap } from './Charts';
 import { EditAudienceSegmentParam, isUserQuerySegment } from '../Edit/domain';
 import injectNotifications, {

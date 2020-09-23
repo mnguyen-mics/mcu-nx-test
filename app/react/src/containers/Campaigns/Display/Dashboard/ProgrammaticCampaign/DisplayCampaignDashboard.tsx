@@ -3,8 +3,7 @@ import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 
-import McsTabs from '../../../../../components/McsTabs';
-import { Card } from '@mediarithmics-private/mcs-components-library';
+import { Card, McsTabs } from '@mediarithmics-private/mcs-components-library';
 import {
   DisplayStackedAreaChart,
   MediaPerformanceTable,
