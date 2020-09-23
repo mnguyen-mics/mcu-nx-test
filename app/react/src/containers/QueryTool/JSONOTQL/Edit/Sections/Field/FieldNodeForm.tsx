@@ -169,7 +169,7 @@ class FieldNodeForm extends React.Component<Props, State> {
     const directive = field ? this.getFieldDirective(field.field) : undefined;
 
     if (field && !field.comparison) {
-      const fieldName = field ? field.field : undefined;
+      const fieldName = field.field;
       const fieldType = this.getSelectedFieldType(fieldName);
       const fieldIndexDataType = this.getSelectedFieldIndexDataType(fieldName);
       formChange(
@@ -330,12 +330,6 @@ class FieldNodeForm extends React.Component<Props, State> {
 
     switch (fieldType) {
       case 'Timestamp':
-        return {
-          ...constants.generateTimeComparisonOperator(intl),
-          component: shouldRenderDirective(
-            this.generateTimestampComparisonField(),
-          ),
-        };
       case 'Date':
         return {
           ...constants.generateTimeComparisonOperator(intl),
@@ -357,12 +351,6 @@ class FieldNodeForm extends React.Component<Props, State> {
           fetchPredicate: undefined,
         };
       case 'Bool':
-        return {
-          ...constants.generateBooleanComparisonOperator(intl),
-          component: shouldRenderDirective(
-            this.generateBooleanComparisonField(),
-          ),
-        };
       case 'Boolean':
         return {
           ...constants.generateBooleanComparisonOperator(intl),
@@ -376,33 +364,9 @@ class FieldNodeForm extends React.Component<Props, State> {
           component: shouldRenderDirective(this.generateEnumComparisonField()),
         };
       case 'Number':
-        return {
-          ...constants.generateNumericComparisonOperator(intl),
-          component: shouldRenderDirective(
-            this.generateNumericComparisonField(),
-          ),
-        };
       case 'Float':
-        return {
-          ...constants.generateNumericComparisonOperator(intl),
-          component: shouldRenderDirective(
-            this.generateNumericComparisonField(),
-          ),
-        };
       case 'Int':
-        return {
-          ...constants.generateNumericComparisonOperator(intl),
-          component: shouldRenderDirective(
-            this.generateNumericComparisonField(),
-          ),
-        };
       case 'Double':
-        return {
-          ...constants.generateNumericComparisonOperator(intl),
-          component: shouldRenderDirective(
-            this.generateNumericComparisonField(),
-          ),
-        };
       case 'BigDecimal':
         return {
           ...constants.generateNumericComparisonOperator(intl),
@@ -442,7 +406,7 @@ class FieldNodeForm extends React.Component<Props, State> {
   };
 
   generateTimestampComparisonField() {
-    const { intl, name, idToAttachDropDowns, disabled } = this.props;
+    const { intl, name, idToAttachDropDowns, disabled, formValues, expressionIndex } = this.props;
 
     let popUpProps = {};
 
@@ -452,6 +416,9 @@ class FieldNodeForm extends React.Component<Props, State> {
           document.getElementById(idToAttachDropDowns)!,
       };
     }
+
+    const field = this.getField(formValues, expressionIndex);
+    const comparisonOperatorValue = field?.comparison?.operator;
 
     return (
       <FormRelativeAbsoluteDateField
@@ -467,6 +434,7 @@ class FieldNodeForm extends React.Component<Props, State> {
         small={true}
         unixTimstamp={true}
         disabled={disabled}
+        dateComparisonOperator={comparisonOperatorValue}
       />
     );
   }
@@ -855,6 +823,13 @@ class FieldNodeForm extends React.Component<Props, State> {
       };
     }
 
+    const generatedAvailableConditionOptions = this.generateAvailableConditionOptions(
+      fieldType,
+      fieldIndexDataType,
+      directive,
+      isEdge,
+    );
+
     return (
       <div>
         <FormSelectField
@@ -877,14 +852,7 @@ class FieldNodeForm extends React.Component<Props, State> {
           name={name ? `${name}.comparison.operator` : 'comparison.operator'}
           component={DefaultSelect}
           validate={[]}
-          options={
-            this.generateAvailableConditionOptions(
-              fieldType,
-              fieldIndexDataType,
-              directive,
-              isEdge,
-            ).values
-          }
+          options={generatedAvailableConditionOptions.values}
           formItemProps={{
             label: intl.formatMessage(messages.fieldConditionConditionLabel),
           }}
@@ -898,12 +866,7 @@ class FieldNodeForm extends React.Component<Props, State> {
         />
         {fieldName &&
           fieldCondition &&
-          this.generateAvailableConditionOptions(
-            fieldType,
-            fieldIndexDataType,
-            directive,
-            isEdge,
-          ).component}
+          generatedAvailableConditionOptions.component}
       </div>
     );
   }
