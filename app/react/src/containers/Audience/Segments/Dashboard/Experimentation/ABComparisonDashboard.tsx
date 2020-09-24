@@ -89,13 +89,6 @@ class ABComparisonDashboard extends React.Component<Props, State> {
               config: dashboardConfig.config.map(config => {
                 return {
                   ...config,
-                  charts: config.charts.map(c => {
-                    return {
-                      ...c,
-                      samplingRatio:
-                        c.samplingRatio && experimentationSegment.weight,
-                    };
-                  }),
                   color: colors['mcs-warning'],
                   segments: {
                     segmentIdToCompareWith: experimentationSegment.id,

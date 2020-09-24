@@ -46,7 +46,7 @@ const abComparisonMessage: {
   },
   avg_revenue_per_user_point: {
     id: 'audience.segment.dashboard.ABDetailsTable.revenue',
-    defaultMessage: 'Average Revenue',
+    defaultMessage: 'Average Revenue Per User Point',
   },
   avg_session_duration: {
     id: 'audience.segment.dashboard.ABDetailsTable.avgSessionDuration',

@@ -191,7 +191,7 @@ export const averageSessionDurationConfig: DashboardConfig[] = [
 
 export const abTestingDashboardConfig: DashboardConfig[] = [
   {
-    title: 'Average Revenue',
+    title: 'Average Revenue Per User Point',
     tabMode: true,
     layout: {
       'i': '1',
@@ -629,7 +629,6 @@ export const ecommerceEngagementConfig: DashboardConfig[] = [
           title: { text: 'Average Number Of Transactions' }
         },
         unit: 'number',
-        samplingRatio: 1,
         metricNames: ['avg_number_of_transactions'],
         dimensionFilterClauses: {
           'operator': 'OR',
@@ -696,10 +695,9 @@ export const ecommerceEngagementConfig: DashboardConfig[] = [
       {
         type: 'SINGLE_STAT',
         options: {
-          title: { text: 'Average Revenue'},
+          title: { text: 'Average Revenue Per User Point'},
         },
         unit: '€',
-        samplingRatio: 1,
         metricNames: ['avg_revenue_per_user_point'],
         dimensionFilterClauses: {
           'operator': 'OR',

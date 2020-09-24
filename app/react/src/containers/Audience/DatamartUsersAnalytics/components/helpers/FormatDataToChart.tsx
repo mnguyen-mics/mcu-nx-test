@@ -286,9 +286,8 @@ class FormatDataToChart extends React.Component<JoinedProp, {}> {
         const newValue = dataToCompareWith ? dataToCompareWith[0][chart.metricNames[0]] : undefined;
 
         let trend;
-        if (dataToCompareWith && chart.samplingRatio !== 100 && chart.samplingRatio !== 0) {
-          const ratio = chart.samplingRatio !== undefined ? (chart.samplingRatio/(100-chart.samplingRatio)) : 1;
-          trend = ((((originalValue as number * ratio)  - (newValue as number)) / (originalValue as number * ratio)) * 100) ;
+        if (dataToCompareWith) {
+          trend = ((((originalValue as number)  - (newValue as number)) / (originalValue as number)) * 100) ;
           if(isNaN(trend)) {
             trend = undefined;
           }
