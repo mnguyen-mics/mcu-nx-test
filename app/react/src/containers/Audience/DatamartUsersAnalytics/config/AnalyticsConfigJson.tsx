@@ -191,7 +191,7 @@ export const averageSessionDurationConfig: DashboardConfig[] = [
 
 export const abTestingDashboardConfig: DashboardConfig[] = [
   {
-    title: 'Average Revenue',
+    title: 'Average Revenue Per User Point',
     tabMode: true,
     layout: {
       'i': '1',
@@ -695,7 +695,7 @@ export const ecommerceEngagementConfig: DashboardConfig[] = [
       {
         type: 'SINGLE_STAT',
         options: {
-          title: { text: 'Average Revenue'},
+          title: { text: 'Average Revenue Per User Point'},
         },
         unit: '€',
         metricNames: ['avg_revenue_per_user_point'],
