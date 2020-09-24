@@ -508,8 +508,7 @@ export class AutomationFormService implements IAutomationFormService {
         storylineNode,
         undefined,
         undefined,
-        undefined,
-        true,
+        undefined
       ).then(res => {
         return res.data;
       });
@@ -536,8 +535,7 @@ export class AutomationFormService implements IAutomationFormService {
         storylineNode,
         undefined,
         queryRes.data.id,
-        undefined,
-        true,
+        undefined
       ).then(res => {
         return res.data;
       });
@@ -837,8 +835,7 @@ export class AutomationFormService implements IAutomationFormService {
       campaign_id: string;
     },
     queryId?: string,
-    audienceSegmentId?: string,
-    isStartNode?: boolean,
+    audienceSegmentId?: string
   ) => {
     const node = storylineNode.node as ScenarioNodeShape;
     let saveOrCreateScenarioNode: Promise<DataResponse<ScenarioNodeShape>>;
@@ -967,12 +964,7 @@ export class AutomationFormService implements IAutomationFormService {
           ...scenarioNodeResource,
           id: undefined,
         });
-    return saveOrCreateScenarioNode.then(res => {
-      if (isStartNode && !resourceId) {
-        this._scenarioService.createScenarioBeginNode(automationId, res.data);
-      }
-      return res;
-    });
+    return saveOrCreateScenarioNode;
   };
 
   saveOrCreateEdges = (
