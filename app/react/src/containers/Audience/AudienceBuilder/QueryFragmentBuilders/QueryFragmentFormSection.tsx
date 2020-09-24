@@ -29,6 +29,7 @@ import AudienceFeatureSelector, {
 } from './AudienceFeatureSelector';
 import { AudienceFeatureResource } from '../../../../models/audienceFeature';
 import { ObjectLikeTypeInfoResource } from '../../../../models/datamart/graphdb/RuntimeSchema';
+import { withRouter, RouteComponentProps } from 'react-router';
 
 export const AudienceFeatureFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
@@ -44,6 +45,7 @@ type Props = WrappedFieldArrayProps<AudienceBuilderGroupNode> &
   InjectedDrawerProps &
   InjectedFormProps<AudienceBuilderFormData, QueryFragmentFormSectionProps> &
   QueryFragmentFormSectionProps &
+  RouteComponentProps<{ organisationId: string }> &
   InjectedIntlProps;
 
 class QueryFragmentFormSection extends React.Component<Props> {
@@ -113,12 +115,19 @@ class QueryFragmentFormSection extends React.Component<Props> {
   };
 
   addFeature = (index: number) => () => {
-    const { openNextDrawer, datamartId } = this.props;
+    const {
+      openNextDrawer,
+      datamartId,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
 
     const props: AudienceFeatureSelectorProps = {
       datamartId: datamartId,
       close: this.props.closeNextDrawer,
       save: this.addAudienceFeature(index),
+      demographicIds: organisationId === '1407' ? ['28', '29'] : undefined,
     };
 
     openNextDrawer<AudienceFeatureSelectorProps>(AudienceFeatureSelector, {
@@ -127,7 +136,15 @@ class QueryFragmentFormSection extends React.Component<Props> {
   };
 
   render() {
-    const { fields, intl, datamartId, objectTypes } = this.props;
+    const {
+      fields,
+      intl,
+      datamartId,
+      objectTypes,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
 
     return (
       <React.Fragment>
@@ -147,20 +164,19 @@ class QueryFragmentFormSection extends React.Component<Props> {
               <Card
                 className={'mcs-segmentBuilder_categoryCard'}
                 title={
-                  // Let's keep this for later
-                  // index === 0
-                  //  ? intl.formatMessage(messages.demographics)
-                  intl.formatMessage(messages.audienceFeatures)
+                  index === 0 && organisationId === '1407'
+                    ? intl.formatMessage(messages.demographics)
+                    : intl.formatMessage(messages.audienceFeatures)
                 }
                 buttons={
-                  // index !== 0 && (
+                  index !== 0 && (
                     <Button
                       className="mcs-segmentBuilder_closeButton"
                       onClick={handleRemove}
                     >
                       <McsIcon type="close" />
                     </Button>
-                  // )
+                  )
                 }
               >
                 <AudienceFeatureFieldArray
@@ -168,10 +184,11 @@ class QueryFragmentFormSection extends React.Component<Props> {
                   component={AudienceFeatureFormSection}
                   datamartId={datamartId}
                   objectTypes={objectTypes}
-                  // isDemographicsSection={index === 0}
+                  isDemographicsSection={
+                    index === 0 && organisationId === '1407'
+                  }
                 />
-                {
-                // index !== 0 && (
+                {(index !== 0 || organisationId !== '1407') && (
                   <div className="mcs-segmentBuilder_categoryCardFooter">
                     <Button
                       onClick={this.addFeature(index)}
@@ -180,8 +197,7 @@ class QueryFragmentFormSection extends React.Component<Props> {
                       {intl.formatMessage(messages.addAudienceFeature)}
                     </Button>
                   </div>
-                // )
-                }
+                )}
               </Card>
             </React.Fragment>
           );
@@ -193,6 +209,7 @@ class QueryFragmentFormSection extends React.Component<Props> {
 }
 
 export default compose<Props, QueryFragmentFormSectionProps>(
+  withRouter,
   injectIntl,
   injectDrawer,
   reduxForm<AudienceBuilderFormData, QueryFragmentFormSectionProps>({

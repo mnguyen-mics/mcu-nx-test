@@ -5,6 +5,7 @@ import ApiService, { DataListResponse, DataResponse } from './ApiService';
 export interface IAudienceFeatureService {
   getAudienceFeatures: (
     datamartId: string,
+    demographicIds?: string[],
   ) => Promise<DataListResponse<AudienceFeatureResource>>;
   getAudienceFeature: (
     datamartId: string,
@@ -16,8 +17,12 @@ export interface IAudienceFeatureService {
 export class AudienceFeatureService implements IAudienceFeatureService {
   getAudienceFeatures(
     datamartId: string,
+    demographicIds?: string[],
   ): Promise<DataListResponse<AudienceFeatureResource>> {
-    const endpoint = `datamarts/${datamartId}/audience_features`;
+    let endpoint = `datamarts/${datamartId}/audience_features`;
+    if (demographicIds && demographicIds.length >= 1) {
+      endpoint = `${endpoint}?exclude=${demographicIds.toString()}`;
+    }
     return ApiService.getRequest(endpoint);
   }
 

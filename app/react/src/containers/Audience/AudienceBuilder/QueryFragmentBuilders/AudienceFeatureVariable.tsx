@@ -136,9 +136,9 @@ class AudienceFeatureVariable extends React.Component<Props> {
         );
       case 'String':
         const userPointObject = objectTypes.find(o => o.name === 'UserPoint')!;
-        const foundField = userPointObject.fields.find(
-          f => f.name === variable.field_name,
-        );
+        const foundField =
+          userPointObject &&
+          userPointObject.fields.find(f => f.name === variable.field_name);
         const fieldDirectives = foundField ? foundField.directives : undefined;
         let fetchListMethod = (
           keywords: string,
@@ -233,36 +233,37 @@ class AudienceFeatureVariable extends React.Component<Props> {
             }
           }
         } else {
-          const queryStart = 'SELECT';
-          const buildQuery = () => (
-            acc: string,
-            pathValue: string,
-            index: number,
-          ) => {
-            const qq = `{ ${pathValue} ${acc} }`;
-            return qq;
-          };
+          fetchListMethod = (k: string) => {
+            const queryStart = 'SELECT';
+            const buildQuery = () => (
+              acc: string,
+              pathValue: string,
+              index: number,
+            ) => {
+              const qq = `{ ${pathValue} ${acc} }`;
+              return qq;
+            };
 
-          const path = variable.path;
+            const path = variable.path;
 
-          const innerQuery = path.reduce(buildQuery(), '@map(limit:10000)');
+            const innerQuery = path.reduce(buildQuery(), '@map(limit:10000)');
 
-          const query = `${queryStart} ${innerQuery} FROM UserPoint`;
-          fetchListMethod = (k: string) =>
-            this._queryService
+            const query = `${queryStart} ${innerQuery} FROM UserPoint`;
+            return this._queryService
               .runOTQLQuery(datamartId, query, {
                 use_cache: true,
               })
               .then(otqlResultResp => {
-                return otqlResultResp.data.rows[0].aggregations.map(
-                  (r: any) => {
+                return otqlResultResp.data.rows[0].aggregations.buckets[0].buckets.map(
+                  (b: any) => {
                     return {
-                      key: r,
-                      label: r,
+                      key: b.key,
+                      label: b.key,
                     };
                   },
                 );
               });
+          };
         }
 
         return (

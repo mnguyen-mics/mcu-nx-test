@@ -98,7 +98,6 @@ export const fieldGridConfig = {
 export const FORM_ID = 'segmentBuilderFormData';
 
 export const INITIAL_AUDIENCE_BUILDER_FORM_DATA: AudienceBuilderFormData = {
-  // This is mocked data. Waiting for parametric predicates from backend
   where: {
     type: 'GROUP',
     boolean_operator: 'AND',
