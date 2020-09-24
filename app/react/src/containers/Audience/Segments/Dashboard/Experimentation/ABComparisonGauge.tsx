@@ -22,10 +22,10 @@ class ABComparisonGauge extends React.Component<Props> {
   getGaugeRatio = (percent: number) => {
     if (percent === 0) {
       return [0, 100];
-    } else if (percent >= 0 && percent < 20) {
-      return [20, 80];
-    } else if (percent >= 80 && percent < 100) {
-      return [80, 20];
+    } else if (percent >= 0 && percent < 30) {
+      return [30, 70];
+    } else if (percent >= 70 && percent < 100) {
+      return [70, 30];
     } else if (percent === 100) {
       return [100, 0];
     } else return [percent, 100 - percent];
