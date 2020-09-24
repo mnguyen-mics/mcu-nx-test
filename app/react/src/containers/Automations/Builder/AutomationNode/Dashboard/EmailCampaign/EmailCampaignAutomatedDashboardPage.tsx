@@ -1,21 +1,10 @@
 import * as React from 'react';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
-import { withRouter, RouteComponentProps } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router';
 import { Layout } from 'antd';
 import CampaignDashboardHeader from '../../../../../Campaigns/Common/CampaignDashboardHeader';
 import { Card, Actionbar } from '@mediarithmics-private/mcs-components-library';
-import {
-  EMAIL_DASHBOARD_SEARCH_SETTINGS,
-  EmailDashboardSearchSettings,
-} from '../../../../../Campaigns/Email/Dashboard/constants';
-import {
-  parseSearch,
-  isSearchValid,
-  buildDefaultSearch,
-  compareSearches,
-  updateSearch,
-} from '../../../../../../utils/LocationSearchHelper';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../../Notifications/injectNotifications';
@@ -31,6 +20,7 @@ import { McsIcon } from '../../../../../../components';
 import { lazyInject } from '../../../../../../config/inversify.config';
 import { IEmailCampaignService } from '../../../../../../services/EmailCampaignService';
 import { TYPES } from '../../../../../../constants/types';
+import McsMoment from '../../../../../../utils/McsMoment';
 
 export interface EmailCampaignAutomatedDashboardPageProps {
   campaignId: string;
@@ -77,13 +67,13 @@ interface State {
   isLoadingCampaign: boolean;
   campaignStatReport: Array<Index<any>>;
   isLoadingCampaignStatReport: boolean;
+  dateRange: McsDateRangeValue;
 }
 
 class EmailCampaignAutomatedDashboardPage extends React.Component<
   Props,
   State
 > {
-
   @lazyInject(TYPES.IEmailCampaignService)
   private _emailCampaignService: IEmailCampaignService;
 
@@ -93,72 +83,48 @@ class EmailCampaignAutomatedDashboardPage extends React.Component<
       isLoadingCampaign: true,
       isLoadingCampaignStatReport: true,
       campaignStatReport: [],
+      dateRange: { from: new McsMoment('now-7d'), to: new McsMoment('now') },
     };
   }
 
   componentDidMount() {
     const {
-      history,
-      location: { search, pathname },
       match: {
         params: { organisationId },
       },
       campaignId,
     } = this.props;
-    if (!isSearchValid(search, EMAIL_DASHBOARD_SEARCH_SETTINGS)) {
-      history.replace({
-        pathname: pathname,
-        search: buildDefaultSearch(search, EMAIL_DASHBOARD_SEARCH_SETTINGS),
-      });
-    } else {
-      const filter = parseSearch<EmailDashboardSearchSettings>(
-        search,
-        EMAIL_DASHBOARD_SEARCH_SETTINGS,
-      );
-      this.loadCampaign(campaignId);
-      this.refreshStats(organisationId, campaignId, filter);
-    }
+    this.loadCampaign(campaignId);
+    this.refreshStats(organisationId, campaignId);
   }
 
-  componentDidUpdate(previousProps: Props) {
+  componentDidUpdate(previousProps: Props, previousState: State) {
     const {
-      location: { pathname, search },
       match: {
         params: { organisationId },
       },
       campaignId,
-      history,
     } = this.props;
 
-    const {
-      location: { search: previousSearch },
-      campaignId: previousCampaignId,
-    } = previousProps;
+    const { campaignId: previousCampaignId } = previousProps;
+    const { dateRange } = this.state;
+    const { dateRange: previousDateRange } = previousState;
 
-    if (!compareSearches(search, previousSearch) || campaignId !== previousCampaignId) {
-      if (!isSearchValid(search, EMAIL_DASHBOARD_SEARCH_SETTINGS)) {
-        history.replace({
-          pathname: pathname,
-          search: buildDefaultSearch(
-            search,
-            EMAIL_DASHBOARD_SEARCH_SETTINGS,
-          ),
-        });
-      } else {
-        const filter = parseSearch<EmailDashboardSearchSettings>(
-          search,
-          EMAIL_DASHBOARD_SEARCH_SETTINGS,
-        );
-        this.loadCampaign(campaignId);
-        this.refreshStats(organisationId, campaignId, filter);
-      }
+    if (
+      dateRange.from.value !== previousDateRange.from.value ||
+      dateRange.to.value !== previousDateRange.to.value ||
+      campaignId !== previousCampaignId
+    ) {
+      this.loadCampaign(campaignId);
+      this.refreshStats(organisationId, campaignId);
     }
   }
 
   loadCampaign = (campaignId: string) => {
     if (!this.state.campaign || this.state.campaign.id !== campaignId) {
       this.setState({ isLoadingCampaign: true });
-      this._emailCampaignService.getEmailCampaign(campaignId)
+      this._emailCampaignService
+        .getEmailCampaign(campaignId)
         .then(res => {
           this.setState({
             isLoadingCampaign: false,
@@ -175,19 +141,15 @@ class EmailCampaignAutomatedDashboardPage extends React.Component<
     }
   };
 
-  refreshStats = (
-    organisationId: string,
-    campaignId: string,
-    filter: EmailDashboardSearchSettings,
-  ) => {
+  refreshStats = (organisationId: string, campaignId: string) => {
     this.setState({
       isLoadingCampaignStatReport: true,
     });
     ReportService.getSingleEmailDeliveryReport(
       organisationId,
       campaignId,
-      filter.from,
-      filter.to,
+      this.state.dateRange.from,
+      this.state.dateRange.to,
       ['day'],
     )
       .then(res => {
@@ -205,29 +167,8 @@ class EmailCampaignAutomatedDashboardPage extends React.Component<
       });
   };
 
-  updateLocationSearch(params: Index<any>) {
-    const {
-      history,
-      location: { search: currentSearch, pathname },
-    } = this.props;
-
-    const nextLocation = {
-      pathname,
-      search: updateSearch(
-        currentSearch,
-        params,
-        EMAIL_DASHBOARD_SEARCH_SETTINGS,
-      ),
-    };
-
-    history.push(nextLocation);
-  }
-
   render() {
-    const {     
-      location: { search },
-      intl,
-    } = this.props;
+    const { intl } = this.props;
 
     const {
       campaign,
@@ -236,46 +177,34 @@ class EmailCampaignAutomatedDashboardPage extends React.Component<
       isLoadingCampaign,
     } = this.state;
 
-    const filter = parseSearch(
-      search,
-      EMAIL_DASHBOARD_SEARCH_SETTINGS,
-    ) as EmailDashboardSearchSettings;
-
-    const handleDateRangeChange = (values: McsDateRangeValue) =>
-      this.updateLocationSearch(values);
-
-   
+    const handleDateRangeChange = (newRange: McsDateRangeValue) =>
+      this.setState({ dateRange: newRange });
 
     return (
       <div className="ant-layout">
         <Actionbar
           paths={[
             {
-              name: campaign ? campaign.name : ''
-            }
+              name: campaign ? campaign.name : '',
+            },
           ]}
-          edition={true}
-        >
+          edition={true}>
           <McsIcon
             type="close"
             className="close-icon"
-            style={{cursor: 'pointer'}}
+            style={{ cursor: 'pointer' }}
             onClick={this.props.close}
           />
-        </Actionbar> 
+        </Actionbar>
         <div className="ant-layout">
           <Content className="mcs-content-container">
             <CampaignDashboardHeader campaign={campaign} />
-            <Card
-              title={intl.formatMessage(messageMap.overview)}
-            >
+            <Card title={intl.formatMessage(messageMap.overview)}>
               <Overview campaign={campaign} isLoading={isLoadingCampaign} />
             </Card>
-            <Card
-              title={intl.formatMessage(messageMap.devileryAnalysis)}
-            >
+            <Card title={intl.formatMessage(messageMap.devileryAnalysis)}>
               <EmailStackedAreaChart
-                dateRangeValue={{ from: filter.from, to: filter.to }}
+                dateRangeValue={{ ...this.state.dateRange }}
                 onDateRangeChange={handleDateRangeChange}
                 isLoading={isLoadingCampaignStatReport}
                 emailReport={campaignStatReport}
