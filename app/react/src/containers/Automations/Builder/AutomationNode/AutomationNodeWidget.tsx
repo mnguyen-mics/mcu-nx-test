@@ -282,16 +282,12 @@ class AutomationNodeWidget extends React.Component<Props, State> {
                 : datamartId,
             } as any;
             break;
+          case 'CUSTOM_ACTION':
           case 'DELETE_FROM_SEGMENT_NODE':
           case 'ADD_TO_SEGMENT_NODE':
             initialValue = {
               ...scenarioNodeShape.formData,
             } as any;
-            break;
-          case 'CUSTOM_ACTION':
-            initialValue = {
-              ...scenarioNodeShape.formData,
-            };
             break;
           default:
             break;
@@ -613,6 +609,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
       case 'ABN_NODE':
         return this.renderAbnEdit();
       case 'EMAIL_CAMPAIGN':
+      case 'CUSTOM_ACTION':
       case 'DISPLAY_CAMPAIGN':
         return this.renderDefautEdit();
       case 'ADD_TO_SEGMENT_NODE':
@@ -629,8 +626,6 @@ class AutomationNodeWidget extends React.Component<Props, State> {
       case 'ON_SEGMENT_ENTRY_INPUT_NODE':
       case 'ON_SEGMENT_EXIT_INPUT_NODE':
         return this.renderOnSegmentInputEdit();
-      case 'CUSTOM_ACTION':
-        return this.renderDefautEdit();
       default:
         return [];
     }

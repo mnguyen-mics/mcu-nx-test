@@ -28,7 +28,7 @@ const messages = defineMessages({
   noInformationOnPlugin: {
     id:
       'automation.builder.node.customActionForm.pluginSettings.noInformationOnPlugin',
-    defaultMessage: 'No Information was found on this plugin',
+    defaultMessage: 'No information was found on this plugin',
   },
 });
 

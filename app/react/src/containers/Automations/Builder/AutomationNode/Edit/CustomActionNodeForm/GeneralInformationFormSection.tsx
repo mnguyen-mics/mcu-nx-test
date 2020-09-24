@@ -39,10 +39,10 @@ class GeneralInformationFormSection extends React.Component<Props> {
     const options: OptionProps[] = extendedPluginsInformation.map(
       extendedPluginInformation => ({
         value: extendedPluginInformation.plugin.id,
-        title: extendedPluginInformation.pluginLayout
-          ? extendedPluginInformation.pluginLayout.metadata.display_name
-          : extendedPluginInformation.plugin.name ||
-            extendedPluginInformation.plugin.artifact_id,
+        title:
+          extendedPluginInformation.pluginLayout?.metadata.display_name ||
+          extendedPluginInformation.plugin.name ||
+          extendedPluginInformation.plugin.artifact_id,
       }),
     );
 

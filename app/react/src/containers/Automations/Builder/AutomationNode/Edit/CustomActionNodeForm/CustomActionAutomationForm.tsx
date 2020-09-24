@@ -108,8 +108,10 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
       })
       .then(resPlugins => {
         const pluginsPromises = resPlugins.data.map(plugin => {
-          const pluginId = plugin.id;
-          const currentPluginVersionId = plugin.current_version_id;
+          const {
+            id: pluginId,
+            current_version_id: currentPluginVersionId,
+          } = plugin;
           const pluginLayoutPromise = currentPluginVersionId
             ? this._pluginService.getLocalizedPluginLayout(
                 pluginId,
@@ -164,7 +166,6 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
   buildFormSections = () => {
     const {
       disabled,
-      // change
       match: {
         params: { organisationId },
       },
@@ -189,22 +190,23 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
 
     sections.push(generalSection);
 
-    const pluginId =
-      (this.props.formValues && this.props.formValues.pluginId) || undefined;
+    const pluginId = this.props.formValues?.pluginId;
 
-    const pluginInstanceSection = {
-      id: 'pluginInstance',
-      title: messages.sectionPluginSettingsTitle,
-      component: (
-        <PluginInstanceFormSection
-          pluginId={pluginId}
-          extendedPluginsInformation={extendedPluginsInformation}
-          organisationId={organisationId}
-        />
-      ),
-    };
+    if (pluginId) {
+      const pluginInstanceSection = {
+        id: 'pluginInstance',
+        title: messages.sectionPluginSettingsTitle,
+        component: (
+          <PluginInstanceFormSection
+            pluginId={pluginId}
+            extendedPluginsInformation={extendedPluginsInformation}
+            organisationId={organisationId}
+          />
+        ),
+      };
 
-    if (pluginId) sections.push(pluginInstanceSection);
+      sections.push(pluginInstanceSection);
+    }
 
     return sections;
   };
