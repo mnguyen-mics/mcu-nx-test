@@ -60,14 +60,6 @@ export interface IScenarioService {
     scenarioId: string,
     storyline: StorylineResource,
   ) => Promise<DataResponse<StorylineResource>>;
-  /*****   BEGIN NODE RESOURCE   *****/
-  getScenarioBeginNode: (
-    scenarioId: string,
-  ) => Promise<DataResponse<StorylineResource>>;
-  createScenarioBeginNode: (
-    scenarioId: string,
-    storyline: any,
-  ) => Promise<DataResponse<StorylineResource>>;
   /*****   SCENARIO NODE RESOURCE   *****/
   getScenarioNodes: (
     scenarioId: string,
@@ -157,19 +149,6 @@ export class ScenarioService implements IScenarioService {
   ): Promise<DataResponse<StorylineResource>> {
     const endpoint = `scenarios/${scenarioId}/storyline`;
     return ApiService.putRequest(endpoint, storyline);
-  }
-  getScenarioBeginNode(
-    scenarioId: string,
-  ): Promise<DataResponse<StorylineResource>> {
-    const endpoint = `scenarios/${scenarioId}/storyline/begin`;
-    return ApiService.getRequest(endpoint);
-  }
-  createScenarioBeginNode(
-    scenarioId: string,
-    storyline: any,
-  ): Promise<DataResponse<StorylineResource>> {
-    const endpoint = `scenarios/${scenarioId}/storyline/begin`;
-    return ApiService.postRequest(endpoint, storyline);
   }
   // Storyline Nodes
   getScenarioNodes(
