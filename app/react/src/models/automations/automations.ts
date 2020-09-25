@@ -8,6 +8,7 @@ import {
   OnSegmentEntryInputAutomationFormData,
   OnSegmentExitInputAutomationFormData,
   QueryInputAutomationFormData,
+  CustomActionAutomationFormData,
 } from '../../containers/Automations/Builder/AutomationNode/Edit/domain';
 
 import {
@@ -108,9 +109,10 @@ export type QueryInputEvaluationPeriodUnit =
 
 export type QueryInputEvaluationMode = 'LIVE' | 'PERIODIC';
 
-export type QueryInputUiCreationMode = 'QUERY' 
-| 'REACT_TO_EVENT_STANDARD'
-| 'REACT_TO_EVENT_ADVANCED';
+export type QueryInputUiCreationMode =
+  | 'QUERY'
+  | 'REACT_TO_EVENT_STANDARD'
+  | 'REACT_TO_EVENT_ADVANCED';
 
 export interface QueryInputNodeResource extends ScenarioNodeResource {
   type: 'QUERY_INPUT';
@@ -173,6 +175,7 @@ export interface IfNodeResource extends ScenarioNodeResource {
 
 export interface CustomActionNodeResource extends ScenarioNodeResource {
   type: 'CUSTOM_ACTION';
+  formData: CustomActionAutomationFormData;
 }
 
 export type ScenarioNodeShape =

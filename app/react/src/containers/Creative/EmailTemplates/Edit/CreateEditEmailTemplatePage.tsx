@@ -179,7 +179,7 @@ class CreateEmailTemplate extends React.Component<
 
         return Promise.all([
           this._pluginService
-            .getPluginVersionProperty(CreativeRendererId, lastVersion.id)
+            .getPluginVersionProperties(CreativeRendererId, lastVersion.id)
             .then(res1 => res1.data),
           this._pluginService.getLocalizedPluginLayout(
             CreativeRendererId,

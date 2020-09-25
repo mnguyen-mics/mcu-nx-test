@@ -65,7 +65,7 @@ export class DisplayCreativeFormService implements IDisplayCreativeFormService {
           const lastVersion = resp.data;
 
           return Promise.all([
-            this._pluginService.getPluginVersionProperty(
+            this._pluginService.getPluginVersionProperties(
               adRendererId,
               lastVersion.id,
             ),

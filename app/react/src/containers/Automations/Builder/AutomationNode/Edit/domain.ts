@@ -1,3 +1,5 @@
+import { CustomActionNodeResource } from './../../../../../models/automations/automations';
+import { CustomActionAutomationFormProps } from './CustomActionNodeForm/CustomActionAutomationForm';
 import { Moment } from 'moment';
 import { ProcessingActivityFieldModel } from './../../../../Settings/DatamartSettings/Common/domain';
 import { AutomationNodeShape } from './../../domain';
@@ -45,7 +47,7 @@ export interface WaitFormData extends DefaultFormData {
   wait_duration: {
     value: string;
     unit: 'days' | 'hours';
-  },
+  };
   day_window?: WeekDay[];
   time_window_start?: Moment;
   time_window_end?: Moment;
@@ -183,6 +185,12 @@ export interface QueryInputAutomationFormData
     | 'REACT_TO_EVENT_ADVANCED';
 }
 
+export interface CustomActionAutomationFormData extends DefaultFormData {
+  name: string;
+  pluginId?: string;
+  properties?: any;
+}
+
 export type AutomationFormDataType =
   | DefaultFormData
   | ABNFormData
@@ -191,7 +199,8 @@ export type AutomationFormDataType =
   | DeleteFromSegmentAutomationFormData
   | EmailCampaignAutomationFormData
   | QueryInputAutomationFormData
-  | WaitFormData;
+  | WaitFormData
+  | CustomActionAutomationFormData;
 
 export type AutomationFormPropsType =
   | ABNAutomationFormProps
@@ -204,7 +213,8 @@ export type AutomationFormPropsType =
   | QueryAutomationFormProps
   | WaitAutomationFormProps
   | OnSegmentExitInputAutomationFormProps
-  | OnSegmentEntryInputAutomationFormProps;
+  | OnSegmentEntryInputAutomationFormProps
+  | CustomActionAutomationFormProps;
 
 export const FORM_ID = 'automationNodeForm';
 
@@ -264,6 +274,12 @@ export function isOnSegmentExitInputNode(
     (node as OnSegmentExitInputNodeResource).type ===
     'ON_SEGMENT_EXIT_INPUT_NODE'
   );
+}
+
+export function isCustomActionNode(
+  node: AutomationNodeShape,
+): node is CustomActionNodeResource {
+  return (node as CustomActionNodeResource).type === 'CUSTOM_ACTION';
 }
 
 export function isWaitNode(

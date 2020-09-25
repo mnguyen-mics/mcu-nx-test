@@ -15,6 +15,7 @@ import ReactToEventAutomationForm from './Edit/ReactToEventAutomationForm/ReactT
 import { QueryInputUiCreationMode } from '../../../../models/automations/automations';
 import OnSegmentEntryInputAutomationForm from './Edit/OnSegmentEntryInputForm/OnSegmentEntryInputAutomationForm';
 import OnSegmentExitInputAutomationForm from './Edit/OnSegmentExitInputForm/OnSegmentExitInputAutomationForm';
+import CustomActionAutomationForm from './Edit/CustomActionNodeForm/CustomActionAutomationForm';
 
 export default class AutomationNodeModel extends NodeModel {
   collapsed = false;
@@ -51,8 +52,13 @@ export default class AutomationNodeModel extends NodeModel {
 
     this.icon = iconType;
 
-    if (datamartId === undefined || title === undefined || color === undefined || storylineNodeModel === undefined) {
-      throw new Error('missing parameters') 
+    if (
+      datamartId === undefined ||
+      title === undefined ||
+      color === undefined ||
+      storylineNodeModel === undefined
+    ) {
+      throw new Error('missing parameters');
     }
     this.datamartId = datamartId;
     this.title = title;
@@ -80,10 +86,10 @@ export default class AutomationNodeModel extends NodeModel {
         this.editFormComponent = ABNAutomationForm;
         break;
       case 'QUERY_INPUT':
-        this.creationMode === 'REACT_TO_EVENT_STANDARD' || 
+        this.creationMode === 'REACT_TO_EVENT_STANDARD' ||
         this.creationMode === 'REACT_TO_EVENT_ADVANCED'
-          ? this.editFormComponent = ReactToEventAutomationForm
-          : this.editFormComponent = QueryAutomationForm;
+          ? (this.editFormComponent = ReactToEventAutomationForm)
+          : (this.editFormComponent = QueryAutomationForm);
         break;
       case 'ON_SEGMENT_ENTRY_INPUT_NODE':
         this.editFormComponent = OnSegmentEntryInputAutomationForm;
@@ -96,6 +102,9 @@ export default class AutomationNodeModel extends NodeModel {
         break;
       case 'IF_NODE':
         this.editFormComponent = QueryAutomationForm;
+        break;
+      case 'CUSTOM_ACTION':
+        this.editFormComponent = CustomActionAutomationForm;
         break;
       default:
         this.editFormComponent = DefaultAutomationForm;

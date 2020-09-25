@@ -62,7 +62,8 @@ export type PluginType =
   | 'ACTIVITY_ANALYZER'
   | 'DATA_CONNECTOR'
   | 'SCENARIO_NODE_PROCESSOR'
-  | 'ML_FUNCTION';
+  | 'ML_FUNCTION'
+  | 'SCENARIO_CUSTOM_ACTION';
 
 export interface PluginVersionResource {
   id: string;

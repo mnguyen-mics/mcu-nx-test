@@ -33,10 +33,7 @@ import {
   isEmailCampaignNode,
 } from './Edit/domain';
 
-import {
-  ScenarioNodeType,
-  ScenarioNodeShape,
-} from '../../../../models/automations/automations';
+import { ScenarioNodeType } from '../../../../models/automations/automations';
 import DisplayCampaignAutomatedDashboardPage, {
   DisplayCampaignAutomatedDashboardPageProps,
 } from './Dashboard/DisplayCampaign/DisplayCampaignAutomatedDashboardPage';
@@ -285,6 +282,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
                 : datamartId,
             } as any;
             break;
+          case 'CUSTOM_ACTION':
           case 'DELETE_FROM_SEGMENT_NODE':
           case 'ADD_TO_SEGMENT_NODE':
             initialValue = {
@@ -358,28 +356,6 @@ class AutomationNodeWidget extends React.Component<Props, State> {
       }
     }
     return undefined;
-  };
-
-  editNodeProperties = (node: ScenarioNodeShape) => () => {
-    const { nodeOperations } = this.props;
-
-    let initialValuesForm: AutomationFormDataType = {};
-    switch (node.type) {
-      case 'DISPLAY_CAMPAIGN':
-      case 'EMAIL_CAMPAIGN':
-      case 'ADD_TO_SEGMENT_NODE':
-      case 'ON_SEGMENT_ENTRY_INPUT_NODE':
-      case 'ON_SEGMENT_EXIT_INPUT_NODE':
-      case 'DELETE_FROM_SEGMENT_NODE':
-        initialValuesForm = node.initialFormData;
-        break;
-    }
-
-    nodeOperations.updateNode(
-      node,
-      initialValuesForm ? initialValuesForm : {},
-      initialValuesForm ? initialValuesForm : {},
-    );
   };
 
   renderAbnEdit = (): React.ReactNodeArray => {
@@ -633,6 +609,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
       case 'ABN_NODE':
         return this.renderAbnEdit();
       case 'EMAIL_CAMPAIGN':
+      case 'CUSTOM_ACTION':
       case 'DISPLAY_CAMPAIGN':
         return this.renderDefautEdit();
       case 'ADD_TO_SEGMENT_NODE':
