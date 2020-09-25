@@ -107,7 +107,7 @@
     "@types/recompose": "^0.24.7",
     "@types/redux-actions": "^2.6.1",
     "@types/redux-form": "7.4.12",
-    "@types/yup": "^0.29.3",
+    "@types/yup": "^0.29.7",
     "babel": "^6.23.0",
     "babel-core": "^6.26.3",
     "babel-eslint": "^7.1.1",
