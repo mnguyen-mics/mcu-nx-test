@@ -26,6 +26,7 @@ interface MapStateToProps {
 
 export interface AudienceFeatureSelectorProps {
   datamartId: string;
+  demographicIds?: string[];
   save: (audienceFeatures: AudienceFeatureResource[]) => void;
   close: () => void;
 }
@@ -53,8 +54,8 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
   }
 
   fetchAudienceFeatures = () => {
-    const { datamartId } = this.props;
-    return this._audienceFeatureService.getAudienceFeatures(datamartId);
+    const { datamartId, demographicIds } = this.props;
+    return this._audienceFeatureService.getAudienceFeatures(datamartId, demographicIds);
   };
 
   saveAudienceFeatures = (

@@ -8,7 +8,7 @@ type AdditionalAudienceFeatureType = 'OperatingSystemFamily'
   | 'ActivitySource'
   | 'UserActivityType';
 
-export interface AudienceFeatureVariable {
+export interface AudienceFeatureVariableResource {
   field_name: string;
   parameter_name: string;
   path: string[];
@@ -24,5 +24,5 @@ export interface AudienceFeatureResource {
   token: string;
   addressable_object: string;
   object_tree_expression: string;
-  variables: AudienceFeatureVariable[];
+  variables: AudienceFeatureVariableResource[];
 }

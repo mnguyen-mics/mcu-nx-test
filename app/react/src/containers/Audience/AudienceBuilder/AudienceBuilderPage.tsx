@@ -52,7 +52,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
     super(props);
     this.state = {
       isLoading: true,
-      formData: INITIAL_AUDIENCE_BUILDER_FORM_DATA,
+      formData: this.getInitialFormData(),
     };
   }
 
@@ -80,17 +80,52 @@ class AudienceBuilderPage extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
-    const {
-      selectedAudienceBuidler,
-      formData
-    } = this.state;
-    const {
-      selectedAudienceBuidler: prevSelectedAudienceBuidler
-    } = prevState;
-    if(!_.isEqual(selectedAudienceBuidler, prevSelectedAudienceBuidler)) {
+    const { selectedAudienceBuidler, formData } = this.state;
+    const { selectedAudienceBuidler: prevSelectedAudienceBuidler } = prevState;
+    if (!_.isEqual(selectedAudienceBuidler, prevSelectedAudienceBuidler)) {
       this.runQuery(formData);
     }
   }
+
+  getInitialFormData = () => {
+    const {
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
+    if (organisationId === '1407') {
+      
+      const formData: AudienceBuilderFormData = {
+        where: {
+          type: 'GROUP',
+          boolean_operator: 'AND',
+          expressions: [
+            {
+              type: 'GROUP',
+              boolean_operator: 'AND',
+              expressions: [
+                {
+                  type: 'PARAMETRIC_PREDICATE',
+                  parametric_predicate_id: '28',
+                  parameters: {
+                    age: '18-24' as any
+                  },
+                },
+                {
+                  type: 'PARAMETRIC_PREDICATE',
+                  parametric_predicate_id: '29',
+                  parameters: {
+                    gender: 'female' as any
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      };
+      return formData;
+    } else return INITIAL_AUDIENCE_BUILDER_FORM_DATA;
+  };
 
   saveAudience = (formData: AudienceBuilderFormData) => {
     // const baseQueryFragment = {
@@ -120,10 +155,8 @@ class AudienceBuilderPage extends React.Component<Props, State> {
   };
 
   runQuery = (formData: AudienceBuilderFormData) => {
-    const {
-      selectedDatamartId,
-    } = this.props;
-     const baseQueryFragment = {
+    const { selectedDatamartId } = this.props;
+    const baseQueryFragment = {
       language_version: 'JSON_OTQL',
       operations: [
         {
@@ -145,15 +178,16 @@ class AudienceBuilderPage extends React.Component<Props, State> {
     };
 
     this._queryService
-    .runJSONOTQLQuery(selectedDatamartId, query as any).
-    then(queryResult => {
-      this.setState({
-        queryResult: queryResult.data
+      .runJSONOTQLQuery(selectedDatamartId, query as any)
+      .then(queryResult => {
+        this.setState({
+          queryResult: queryResult.data,
+        });
       })
-    }).catch(err => {
-      this.props.notifyError(err)
-    })
-  }
+      .catch(err => {
+        this.props.notifyError(err);
+      });
+  };
 
   // Validates JSON OTQL clauseWhere from formData
   validateQuery = (clauseWhere: AudienceBuilderNodeShape): number => {
@@ -185,9 +219,6 @@ class AudienceBuilderPage extends React.Component<Props, State> {
   selectAudienceBuilder = (audienceBuilder: AudienceBuilderResource) => {
     this.setState({
       selectedAudienceBuidler: audienceBuilder,
-      formData: {
-        ...INITIAL_AUDIENCE_BUILDER_FORM_DATA,
-      },
     });
   };
 
@@ -198,7 +229,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
       audienceBuilders,
       isLoading,
       formData,
-      queryResult
+      queryResult,
     } = this.state;
 
     if (isLoading) {

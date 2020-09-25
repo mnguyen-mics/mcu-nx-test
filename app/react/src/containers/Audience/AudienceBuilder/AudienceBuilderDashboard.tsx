@@ -1,68 +1,103 @@
 import * as React from 'react';
-import { Statistic} from 'antd'; 
+import { Statistic } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { messages } from './constants';
 import { compose } from 'recompose';
+import { DashboardResource } from '../../../models/dashboards/dashboards';
+import { lazyInject } from '../../../config/inversify.config';
+import { TYPES } from '../../../constants/types';
+import { IDashboardService } from '../../../services/DashboardServices';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../Notifications/injectNotifications';
+import { Loading } from '@mediarithmics-private/mcs-components-library';
+// import DashboardWrapper from '../Dashboard/DashboardWrapper';
+import CardFlex from '../Dashboard/Components/CardFlex';
 
 interface AudienceBuilderDashboardProps {
   totalAudience?: number;
 }
 
-type Props = InjectedIntlProps & AudienceBuilderDashboardProps;
+type Props = InjectedIntlProps &
+  InjectedNotificationProps &
+  AudienceBuilderDashboardProps;
 
-class AudienceBuilderDashboard extends React.Component<Props> {
+interface State {
+  isLoading: boolean;
+  dashboards: DashboardResource[];
+}
+
+class AudienceBuilderDashboard extends React.Component<Props, State> {
+  @lazyInject(TYPES.IDashboardService)
+  private _dashboardService: IDashboardService;
+
+  constructor(props: Props) {
+    super(props);
+
+    this.state = {
+      dashboards: [],
+      isLoading: true,
+    };
+  }
+  componentDidMount() {
+    // const organisationId = '1407';
+    // const datamartId = '1493';
+    // this.loadData(organisationId, datamartId);
+  }
+
+  loadData = (organisationId: string, selectedDatamartId: string) => {
+    this.setState({ isLoading: true });
+    this._dashboardService
+      .getDashboards(organisationId, selectedDatamartId, 'HOME', {})
+      .then(d => {
+        return d.data;
+      })
+      .then(d => {
+        this.setState({ isLoading: false, dashboards: d });
+      })
+      .catch(err => {
+        this.props.notifyError(err);
+        this.setState({
+          isLoading: false,
+        });
+      });
+  };
+
   render() {
     const { intl, totalAudience } = this.props;
+    // const { isLoading, dashboards } = this.state;
     return (
       <div className="mcs-segmentBuilder_liveDashboard">
-        <Statistic
-          title={intl.formatMessage(messages.totalAudience)}
-          value={totalAudience}
-          className="mcs-segmentBuilder_totalAudience"
-        />        
-        {/* <div className="mcs-segmentBuilder_purchaseIntent">
-          <div className="title">
-            {intl.formatMessage(messages.purchasIntent)}
-          </div>
-          <div className="mcs-segmentBuilder_progressBars-1">
-            <Row className="mcs-segmentBuilder_progressBar">
-              <Col span={8}>Food & Drinks </Col>
-              <Col span={16}>
-                <Progress percent={81.1} />
-              </Col>
-            </Row>
-            <Row className="mcs-segmentBuilder_progressBar">
-              <Col span={8}>Household appliances </Col>
-              <Col span={16}>
-                <Progress percent={62.84} />
-              </Col>
-            </Row>
-          </div>
-        </div> */}
-        {/* <div className="mcs-segmentBuilder_geographics">
-          <div className="title">
-            {intl.formatMessage(messages.geographics)}
-          </div>
-          <div className="mcs-segmentBuilder_progressBars-2">
-            <Row className="mcs-segmentBuilder_progressBar">
-              <Col span={8}>USA </Col>
-              <Col span={16}>
-                <Progress percent={81.1} />
-              </Col>
-            </Row>
-            <Row className="mcs-segmentBuilder_progressBar">
-              <Col span={8}>France </Col>
-              <Col span={16}>
-                <Progress percent={62.84} />
-              </Col>
-            </Row>
-          </div>
-        </div> */}
+        <CardFlex className="mcs-segmentBuilder_totalAudience">
+          {totalAudience !== undefined ? (
+            <Statistic
+              title={intl.formatMessage(messages.selectedAudience)}
+              value={totalAudience}
+            />
+          ) : (
+            <Loading isFullScreen={true} />
+          )}
+        </CardFlex>
+
+        {/* <React.Fragment>
+          {isLoading ? (
+            <Loading isFullScreen={true} />
+          ) : (
+            dashboards.map(d => (
+              <DashboardWrapper
+                key={d.id}
+                layout={d.components}
+                datamartId={d.datamart_id}
+              />
+            ))
+          )}
+        </React.Fragment> */}
       </div>
     );
   }
 }
 
-export default compose<Props, AudienceBuilderDashboardProps>(injectIntl)(
-  AudienceBuilderDashboard,
-);
+export default compose<Props, AudienceBuilderDashboardProps>(
+  injectIntl,
+  injectNotifications,
+)(AudienceBuilderDashboard);
