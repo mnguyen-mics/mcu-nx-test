@@ -1,8 +1,12 @@
-import { QueryBooleanOperator, SelectionOperation } from './../datamart/graphdb/QueryDocument';
+import {
+  QueryBooleanOperator,
+  SelectionOperation,
+} from './../datamart/graphdb/QueryDocument';
 export interface AudienceBuilderResource {
   id: string;
   name: string;
   datamart_id: string;
+  demographics_features_ids: string[];
 }
 
 export interface AudienceBuilderGroupNode {
@@ -31,7 +35,6 @@ export function isAudienceBuilderParametricPredicateNode(
 ): node is AudienceBuilderParametricPredicateNode {
   return node.type === 'PARAMETRIC_PREDICATE';
 }
-
 
 export type AudienceBuilderNodeShape =
   | AudienceBuilderGroupNode

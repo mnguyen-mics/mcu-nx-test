@@ -14,7 +14,6 @@ import {
 } from '../../../models/audienceBuilder/AudienceBuilderResource';
 import { lazyInject } from '../../../config/inversify.config';
 import { IAudienceBuilderService } from '../../../services/AudienceBuilderService';
-import { RouteComponentProps, withRouter } from 'react-router';
 import { TYPES } from '../../../constants/types';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -34,12 +33,12 @@ interface State {
   formData: AudienceBuilderFormData;
   isLoading: boolean;
   queryResult?: OTQLResult;
+  noAudienceBuilder?: boolean;
 }
 
 type Props = InjectedIntlProps &
   InjectedNotificationProps &
-  WithDatamartSelectorProps &
-  RouteComponentProps<{ organisationId: string }>;
+  WithDatamartSelectorProps;
 
 class AudienceBuilderPage extends React.Component<Props, State> {
   @lazyInject(TYPES.IAudienceBuilderService)
@@ -57,18 +56,15 @@ class AudienceBuilderPage extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const {
-      match: {
-        params: { organisationId },
-      },
-    } = this.props;
+    const { selectedDatamartId } = this.props;
 
     this._audienceBuilderService
-      .getAudienceBuilders(organisationId)
+      .getAudienceBuilders(selectedDatamartId)
       .then(res => {
         this.setState({
           audienceBuilders: res.data,
           isLoading: false,
+          noAudienceBuilder: res.count === 0,
         });
       })
       .catch(error => {
@@ -80,7 +76,9 @@ class AudienceBuilderPage extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
-    const { selectedAudienceBuidler, formData } = this.state;
+    const { selectedAudienceBuidler, formData, audienceBuilders } = this.state;
+    if (audienceBuilders?.length === 1 && selectedAudienceBuidler === undefined)
+      this.selectAudienceBuilder(audienceBuilders[0]);
     const { selectedAudienceBuidler: prevSelectedAudienceBuidler } = prevState;
     if (!_.isEqual(selectedAudienceBuidler, prevSelectedAudienceBuidler)) {
       this.runQuery(formData);
@@ -197,7 +195,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
       clauseWhere.boolean_operator !== 'AND'
     ) {
       errors++;
-    } else
+    } else {
       clauseWhere.expressions.forEach((exp, i) => {
         if (i === 0) {
           if (!isAudienceBuilderGroupNode(exp)) {
@@ -213,6 +211,8 @@ class AudienceBuilderPage extends React.Component<Props, State> {
           }
         }
       });
+    }
+
     return errors;
   };
 
@@ -230,11 +230,13 @@ class AudienceBuilderPage extends React.Component<Props, State> {
       isLoading,
       formData,
       queryResult,
+      noAudienceBuilder,
     } = this.state;
 
     if (isLoading) {
       return <Loading className="loading-full-screen" />;
     }
+
     return selectedAudienceBuidler ? (
       <AudienceBuilderContainer
         save={this.runQuery}
@@ -254,6 +256,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
           ],
         }}
         isMainlayout={true}
+        noAudienceBuilder={noAudienceBuilder}
       />
     );
   }
@@ -262,6 +265,5 @@ class AudienceBuilderPage extends React.Component<Props, State> {
 export default compose(
   withDatamartSelector,
   injectIntl,
-  withRouter,
   injectNotifications,
 )(AudienceBuilderPage);
