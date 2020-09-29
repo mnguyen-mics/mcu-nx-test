@@ -2,8 +2,6 @@ import * as React from 'react';
 import LineChart from '../charts/LineChart';
 import PieChart from '../charts/PieChart';
 import _ from 'lodash';
-import { CounterDashboard } from '../../../../../components/Counter';
-import { CounterProps } from '../../../../../components/Counter/Counter';
 import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import GenericWorldMap from '../charts/GenericWorldMap';
 import GenericStackedBar from '../charts/GenericStackedBar';
@@ -31,7 +29,8 @@ import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { EmptyRecords } from '../../../../../components';
 import { DatamartUsersAnalyticsDimension } from '../../../../../utils/DatamartUsersAnalyticsReportHelper';
-import { EmptyChart } from '@mediarithmics-private/mcs-components-library';
+import { EmptyChart, CounterDashboard } from '@mediarithmics-private/mcs-components-library';
+import { CounterProps } from '@mediarithmics-private/mcs-components-library/lib/components/counters/counter';
 
 const messages = defineMessages({
   noData: {
