@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { LoadingCounterValue } from '../../../components/Counter/Counter';
 import { QueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
 import McsIcon from '../../../components/McsIcon';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
@@ -23,10 +22,6 @@ export interface JSONQLPreviewProps {
   context: JSONQLPreviewContext;
   isTrigger?: boolean;
   isEdge?: boolean;
-}
-
-export interface View extends LoadingCounterValue {
-  name: string;
 }
 
 type Props = JSONQLPreviewProps & InjectedIntlProps & InjectedDrawerProps;

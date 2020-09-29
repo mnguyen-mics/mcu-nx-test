@@ -1,6 +1,6 @@
-import { CounterProps } from "../../components/Counter/Counter";
 import { DatamartUsersAnalyticsMetric, DatamartUsersAnalyticsDimension } from "../../utils/DatamartUsersAnalyticsReportHelper";
 import { DimensionFilterClause } from "../ReportRequestBody";
+import { CounterProps } from "@mediarithmics-private/mcs-components-library/lib/components/counters/counter";
 
 type ChartType = 'PIE' | 'AREA' | 'WORLD_MAP' | 'STACKED_BAR' | 'COUNT' | 'TABS' | 'SINGLE_STAT' | 'COLUMN';
 
