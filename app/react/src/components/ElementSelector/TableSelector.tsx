@@ -10,7 +10,6 @@ import { DataColumnDefinition, TableViewProps } from '../TableView/TableView';
 import { normalizeArrayOfObject } from '../../utils/Normalizer';
 import { DataListResponse, DataResponse } from '../../services/ApiService';
 import { SearchFilter, SelectableItem } from './';
-import SelectorLayout from './SelectorLayout';
 import { MultiSelectProps } from '../MultiSelect';
 import { getWorkspace } from '../../redux/Session/selectors';
 import { UserWorkspaceResource } from '../../models/directory/UserProfileResource';
@@ -22,6 +21,7 @@ import {
   TypeSearchSettings,
 } from '../../utils/LocationSearchHelper';
 import { MicsReduxState } from '../../utils/ReduxHelper';
+import { SelectorLayout } from '@mediarithmics-private/mcs-components-library';
 
 const messages = defineMessages({
   audienceSegment: {
@@ -47,7 +47,11 @@ const messages = defineMessages({
   serviceType: {
     id: 'components.elementSelector.tableSelector.serviceType',
     defaultMessage: 'Service type',
-  }
+  },
+  addElementText: {
+    id: 'components.elementSelector.tableSelector.add',
+    defaultMessage: 'Add',
+  },
 });
 
 export interface TableSelectorProps<T extends SelectableItem> {
@@ -395,7 +399,16 @@ class TableSelector<T extends SelectableItem> extends React.Component<
   };
 
   render() {
-    const { actionBarTitle, close, displayFiltering, filtersOptions } = this.props;
+    const { 
+      actionBarTitle, 
+      close, 
+      displayFiltering, 
+      filtersOptions,
+      intl: {
+        formatMessage,
+      }
+    } = this.props;
+
     const {
       elementsById,
       allElementIds,
@@ -442,6 +455,8 @@ class TableSelector<T extends SelectableItem> extends React.Component<
         handleAdd={this.handleAdd}
         handleClose={close}
         disabled={noElement}
+        addButtonText={formatMessage(messages.addElementText)}
+        noElementText=''
       >
         {renderedTable}
       </SelectorLayout>
