@@ -154,6 +154,7 @@ class ChannelsTable extends React.Component<Props> {
       onSearch: (value: string) =>
         onFilterChange({
           keywords: value,
+          currentPage: 1,
         }),
       defaultValue: filter.keywords,
     };

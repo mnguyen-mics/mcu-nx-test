@@ -48,6 +48,11 @@ import { IDatamartService } from '../../../../../services/DatamartService';
 
 const { Content } = Layout;
 
+interface ChannelsWithTotal {
+  channels: ChannelResourceShape[];
+  total: number;
+}
+
 interface ChannelsListPageProps {
   fixedDatamartOpt?: string;
 }
@@ -148,9 +153,8 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
       search,
       fixedDatamartOpt,
     );
-    this.setState({ filter: computedFilter }, () => {
-      this.fetchChannels(organisationId, computedFilter);
-    });
+
+    this.fetchChannels(organisationId, computedFilter);
   }
 
   componentDidUpdate(
@@ -173,23 +177,22 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
       fixedDatamartOpt: previousFixedDatamartOpt,
     } = previousProps;
 
-    const { filter } = this.state;
+    const { filter, isFetchingChannels } = this.state;
 
     const { filter: previousFilter } = previousState;
 
     if (
-      organisationId !== previousOrganisationId ||
-      !compareSearches(search, previousSearch) ||
-      !this.compareFilters(filter, previousFilter) ||
-      fixedDatamartOpt !== previousFixedDatamartOpt
+      (organisationId !== previousOrganisationId ||
+        !compareSearches(search, previousSearch) ||
+        !this.compareFilters(filter, previousFilter) ||
+        fixedDatamartOpt !== previousFixedDatamartOpt) &&
+      !isFetchingChannels
     ) {
       const computedFilter: ChannelFilter = this.computeFilter(
         search,
         fixedDatamartOpt,
       );
-      this.setState({ filter: computedFilter }, () => {
-        this.fetchChannels(organisationId, computedFilter);
-      });
+      this.fetchChannels(organisationId, computedFilter);
     }
   }
 
@@ -212,124 +215,123 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
 
   fetchChannels = (organisationId: string, filter: ChannelFilter) => {
     const { notifyError } = this.props;
-    const buildGetChannelsOptions = () => {
+    const buildChannelsOptions = () => {
       const filterType =
         filter.types && filter.types.length === 1 ? filter.types[0] : undefined;
 
-      const options = {
+      return {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
         channel_type: filterType,
+        keywords: filter.keywords,
+        datamart_id: filter.datamartId,
       };
-      if (filter.keywords) {
-        return {
-          ...options,
-          keywords: filter.keywords,
-        };
-      }
-      return options;
     };
 
     this.setState({ isFetchingChannels: true }, () => {
-      this._channelService
-        .getChannelsByOrganisation(organisationId, buildGetChannelsOptions())
-        .then(response => {
-          this.setState({
-            channels: response.data,
-            totalChannels: response.total ? response.total : response.count,
-          });
-
-          this._datamartService
-            .getDatamarts(organisationId, { allow_administrator: true })
-            .then(datamartsResponse => {
-              if (
-                datamartsResponse.data.some(datamart =>
-                  isUsersAnalyticsSupportedByDatafarm(datamart.datafarm),
-                )
-              ) {
-                const datamartIds = datamartsResponse.data
-                  .filter(datamart =>
-                    isUsersAnalyticsSupportedByDatafarm(datamart.datafarm),
-                  )
-                  .map(datamart => datamart.id);
-                const metrics: DatamartUsersAnalyticsMetric[] = [
-                  'sessions',
-                  'users',
-                ];
-                const from = new McsMoment('now-8d');
-                const to = new McsMoment('now-1d');
-                const dimensions: DatamartUsersAnalyticsDimension[] = [
-                  'channel_id',
-                ];
-                const dimensionFilterClauses: DimensionFilterClause = {
-                  operator: 'OR',
-                  filters: [
-                    {
-                      dimension_name: 'type',
-                      not: false,
-                      operator: 'IN_LIST',
-                      expressions: ['SITE_VISIT', 'APP_VISIT'],
-                      case_sensitive: false,
-                    },
-                  ],
-                };
-
-                Promise.all(
-                  datamartIds.map(datamartId => {
-                    return this._datamartUsersAnalyticsService.getAnalytics(
-                      datamartId,
-                      metrics,
-                      from,
-                      to,
-                      dimensions,
-                      dimensionFilterClauses,
-                    );
-                  }),
-                )
-                  .then(table => {
-                    const analyticsByChannel = flatten(
-                      table.map(t =>
-                        normalizeReportView<ChannelAnalyticsResource>(
-                          t.data.report_view,
-                        ),
-                      ),
-                    );
-                    const channelsWithAnalytics: ChannelResourceShapeWithAnalytics[] = response.data.map(
-                      channelRes => {
-                        const analytics = analyticsByChannel.find(
-                          analyticsItem =>
-                            analyticsItem.channel_id !== undefined &&
-                            analyticsItem.channel_id.toString() ===
-                              channelRes.id,
-                        );
-                        if (analytics) {
-                          return { ...channelRes, ...analytics };
-                        } else return channelRes;
-                      },
-                    );
-                    this.setState({
-                      channels: channelsWithAnalytics,
-                      totalChannels: response.total
-                        ? response.total
-                        : response.count,
-                      isFetchingChannels: false,
-                    });
-                  })
-                  .catch(err => {
-                    this.setState({ isFetchingChannels: false });
-                    notifyError(err);
-                  });
-              } else {
-                this.setState({ isFetchingChannels: false });
-              }
-            })
-            .catch(err => {
-              this.setState({ isFetchingChannels: false });
-              notifyError(err);
-            });
+      const channelsPromise = this._channelService
+        .getChannelsByOrganisation(organisationId, buildChannelsOptions())
+        .then(responseChannels => {
+          const channelsWithTotal: ChannelsWithTotal = {
+            channels: responseChannels.data,
+            total: responseChannels.total
+              ? responseChannels.total
+              : responseChannels.count,
+          };
+          return channelsWithTotal;
         })
         .catch(err => {
-          this.setState({ isFetchingChannels: false });
           notifyError(err);
+          const emptyChannels: ChannelsWithTotal = {
+            channels: [],
+            total: 0,
+          };
+          return emptyChannels;
+        });
+
+      const analyticsPromise = this._datamartService
+        .getDatamarts(organisationId, { allow_administrator: true })
+        .then(datamartsResponse => {
+          const datamartIds = datamartsResponse.data
+            .filter(_ => isUsersAnalyticsSupportedByDatafarm(_.datafarm))
+            .map(_ => _.id);
+
+          const metrics: DatamartUsersAnalyticsMetric[] = ['sessions', 'users'];
+          const from = new McsMoment('now-8d');
+          const to = new McsMoment('now-1d');
+          const dimensions: DatamartUsersAnalyticsDimension[] = ['channel_id'];
+          const dimensionFilterClauses: DimensionFilterClause = {
+            operator: 'OR',
+            filters: [
+              {
+                dimension_name: 'type',
+                not: false,
+                operator: 'IN_LIST',
+                expressions: ['SITE_VISIT', 'APP_VISIT'],
+                case_sensitive: false,
+              },
+            ],
+          };
+
+          return Promise.all(
+            datamartIds.map(datamartId => {
+              return this._datamartUsersAnalyticsService.getAnalytics(
+                datamartId,
+                metrics,
+                from,
+                to,
+                dimensions,
+                dimensionFilterClauses,
+              );
+            }),
+          ).then(table => {
+            const analyticsByChannel = flatten(
+              table.map(t =>
+                normalizeReportView<ChannelAnalyticsResource>(
+                  t.data.report_view,
+                ),
+              ),
+            );
+            return analyticsByChannel;
+          });
+        })
+        .catch(err => {
+          notifyError(err);
+          const emptyChannelAnalytics: ChannelAnalyticsResource[] = [];
+          return emptyChannelAnalytics;
+        });
+
+      Promise.all([channelsPromise, analyticsPromise])
+        .then(resPromises => {
+          const channelsWithTotal = resPromises[0];
+          const analyticsByChannel = resPromises[1];
+
+          const { channels, total } = channelsWithTotal;
+
+          const channelsWithAnalytics: ChannelResourceShapeWithAnalytics[] = channels.map(
+            channel => {
+              const analytics = analyticsByChannel.find(
+                analyticsItem =>
+                  analyticsItem.channel_id &&
+                  analyticsItem.channel_id.toString() === channel.id,
+              );
+
+              return { ...channel, ...analytics };
+            },
+          );
+
+          this.setState({
+            isFetchingChannels: false,
+            channels: channelsWithAnalytics,
+            totalChannels: total,
+          });
+        })
+        .catch(err => {
+          notifyError(err);
+          this.setState({
+            isFetchingChannels: false,
+            channels: [],
+            totalChannels: 0,
+          });
         });
     });
   };
@@ -416,14 +418,20 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
   };
 
   handlePartialFilterChange = (partialFilter: Partial<ChannelFilter>) => {
-    const { fixedDatamartOpt } = this.props;
-    const { filter } = this.state;
+    const {
+      location: { search },
+      fixedDatamartOpt,
+    } = this.props;
 
-    const newFilter: ChannelFilter = { ...filter, ...partialFilter };
+    const computedFilter = this.computeFilter(search, fixedDatamartOpt);
 
-    this.setState({ filter: newFilter }, () => {
-      if (!fixedDatamartOpt) this.updateLocationSearch(newFilter);
-    });
+    const newFilter: ChannelFilter = { ...computedFilter, ...partialFilter };
+
+    if (!fixedDatamartOpt) {
+      this.updateLocationSearch(newFilter);
+    } else {
+      this.setState({ filter: newFilter });
+    }
   };
 
   updateLocationSearch = (filter: ChannelFilter) => {
@@ -445,6 +453,8 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
       match: {
         params: { organisationId },
       },
+      location: { search },
+      fixedDatamartOpt,
     } = this.props;
 
     const {
@@ -452,8 +462,9 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
       totalChannels,
       channels,
       noChannelYet,
-      filter,
     } = this.state;
+
+    const computedFilter = this.computeFilter(search, fixedDatamartOpt);
 
     const menu = (
       <Menu>
@@ -493,7 +504,7 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
         </div>
       ),
       selectedItems: channelTypeItems.filter(channelTypeItem =>
-        filter.types.includes(channelTypeItem.key),
+        computedFilter.types.includes(channelTypeItem.key),
       ),
       items: channelTypeItems,
       singleSelectOnly: false,
@@ -527,7 +538,7 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
                 totalChannels={totalChannels}
                 isFetchingChannels={isFetchingChannels}
                 noChannelYet={noChannelYet}
-                filter={filter}
+                filter={computedFilter}
                 onFilterChange={this.handlePartialFilterChange}
                 onDeleteChannel={this.handleDeleteChannel}
                 onEditChannel={this.handleEditChannel}
