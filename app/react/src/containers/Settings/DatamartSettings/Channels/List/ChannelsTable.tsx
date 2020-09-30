@@ -112,8 +112,8 @@ class ChannelsTable extends React.Component<Props> {
         isHideable: true,
       },
       {
-        intlMessage: messages.lastSevenDaysSessions,
-        key: 'sessions',
+        intlMessage: messages.lastSevenDaysActivities,
+        key: 'activities',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: string, record: ChannelResourceShapeWithAnalytics) => {
@@ -154,6 +154,7 @@ class ChannelsTable extends React.Component<Props> {
       onSearch: (value: string) =>
         onFilterChange({
           keywords: value,
+          currentPage: 1,
         }),
       defaultValue: filter.keywords,
     };

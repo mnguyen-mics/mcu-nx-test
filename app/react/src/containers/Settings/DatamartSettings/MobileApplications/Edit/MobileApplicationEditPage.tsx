@@ -444,8 +444,8 @@ class EditMobileAppPage extends React.Component<Props, State> {
     generateSavingPromise()
       .then(() => {
         hideSaveInProgress();
-        const mobileApplicationUrl = `/v2/o/${organisationId}/settings/datamart/mobile_applications?datamartId=${this.state.selectedDatamartId}`;
-        history.push(mobileApplicationUrl);
+        const channelsUrl = `/v2/o/${organisationId}/settings/channels`;
+        history.push(channelsUrl);
       })
       .catch(err => {
         hideSaveInProgress();
@@ -465,7 +465,7 @@ class EditMobileAppPage extends React.Component<Props, State> {
       },
     } = this.props;
 
-    const defaultRedirectUrl = `/v2/o/${organisationId}/settings/datamart/mobile_applications`;
+    const defaultRedirectUrl = `/v2/o/${organisationId}/settings/datamart/channels`;
 
     return location.state && location.state.from
       ? history.push(location.state.from)
@@ -503,7 +503,7 @@ class EditMobileAppPage extends React.Component<Props, State> {
     const breadcrumbPaths = [
       {
         name: formatMessage(messages.breadcrumbTitle1),
-        path: `/v2/o/${organisationId}/settings/datamart/mobile_applications?datamartId=${this.state.selectedDatamartId}`,
+        path: `/v2/o/${organisationId}/settings/datamart/channels`,
       },
       {
         name: mobileName,

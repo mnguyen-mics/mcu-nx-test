@@ -3,7 +3,7 @@ import { Filter } from '../../Common/domain';
 import { SearchSetting } from '../../../../../utils/LocationSearchHelper';
 
 export interface ChannelFilter extends Filter {
-  type: ChannelType[];
+  types: ChannelType[];
 }
 
 export interface ChannelTypeItem {
@@ -13,11 +13,11 @@ export interface ChannelTypeItem {
 
 export const TYPE_SEARCH_SETTINGS: SearchSetting[] = [
   {
-    paramName: 'type',
+    paramName: 'types',
     defaultValue: undefined,
     deserialize: query => {
-      if (query.type) {
-        return query.type.split(',');
+      if (query.types) {
+        return query.types.split(',');
       }
       return [];
     },

@@ -1,7 +1,9 @@
 import { settingsDefinition } from './settingsRoutes';
 import messages from '../containers/Menu/messages';
-import { NavigatorMenuDefinition, generateMissingdefinitionItemFromRoute } from './domain';
-
+import {
+  NavigatorMenuDefinition,
+  generateMissingdefinitionItemFromRoute,
+} from './domain';
 
 const accountSettingsDefinition: NavigatorMenuDefinition = {
   iconType: 'users',
@@ -20,7 +22,6 @@ const accountSettingsDefinition: NavigatorMenuDefinition = {
       ),
       translation: messages.accountSettingsApiToken,
     },
-    
   ],
 };
 
@@ -31,21 +32,9 @@ const datamartSettingsDefinition: NavigatorMenuDefinition = {
   subMenuItems: [
     {
       ...generateMissingdefinitionItemFromRoute(
-        settingsDefinition.settingsDatamartAudiencePartitionsList
+        settingsDefinition.settingsDatamartAudiencePartitionsList,
       ),
-      translation: messages.audiencePartitionsSettingsTitle
-    },
-    {
-      ...generateMissingdefinitionItemFromRoute(
-        settingsDefinition.settingsDatamartSitesList,
-      ),
-      translation: messages.siteSettingsTitle,
-    },
-    {
-      ...generateMissingdefinitionItemFromRoute(
-        settingsDefinition.settingsDatamartMobileAppList,
-      ),
-      translation: messages.mobileAppsSettingsTitle,
+      translation: messages.audiencePartitionsSettingsTitle,
     },
     {
       ...generateMissingdefinitionItemFromRoute(
@@ -67,7 +56,7 @@ const datamartSettingsDefinition: NavigatorMenuDefinition = {
     },
     {
       ...generateMissingdefinitionItemFromRoute(
-        settingsDefinition.settingsDatamartMlFunctionList
+        settingsDefinition.settingsDatamartMlFunctionList,
       ),
       translation: messages.mlFunctionSettingsTitle,
     },
@@ -188,11 +177,10 @@ const serviceSettingsDefinition: NavigatorMenuDefinition = {
   ],
 };
 
-
 export const settingsDefinitions: NavigatorMenuDefinition[] = [
   accountSettingsDefinition,
   organisationSettingsDefinition,
   datamartSettingsDefinition,
   campaignSettingsDefinition,
-  serviceSettingsDefinition
+  serviceSettingsDefinition,
 ];

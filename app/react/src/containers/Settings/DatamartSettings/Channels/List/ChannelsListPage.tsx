@@ -48,6 +48,15 @@ import { IDatamartService } from '../../../../../services/DatamartService';
 
 const { Content } = Layout;
 
+interface ChannelsWithTotal {
+  channels: ChannelResourceShape[];
+  total: number;
+}
+
+interface ChannelsListPageProps {
+  fixedDatamartOpt?: string;
+}
+
 interface ChannelsListPageState {
   channels: ChannelResourceShape[];
   totalChannels: number;
@@ -60,7 +69,8 @@ interface MapStateToProps {
   workspace: (organisationId: string) => UserWorkspaceResource;
 }
 
-type Props = RouteComponentProps<{ organisationId: string }> &
+type Props = ChannelsListPageProps &
+  RouteComponentProps<{ organisationId: string }> &
   InjectedIntlProps &
   MapStateToProps &
   InjectedNotificationProps;
@@ -87,22 +97,38 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
         currentPage: 1,
         pageSize: 10,
         keywords: '',
-        type: [],
+        types: [],
       },
     };
   }
 
-  computeFilter = (search: string): ChannelFilter => {
-    const parsedFilter = parseSearch(search, this.getSearchSettings());
-    const filter: ChannelFilter = {
-      currentPage: parsedFilter.currentPage ? parsedFilter.currentPage : 1,
-      pageSize: parsedFilter.pageSize ? parsedFilter.pageSize : 10,
-      keywords: parsedFilter.keywords ? parsedFilter.keywords : '',
-      datamartId: parsedFilter.datamartId,
-      type: parsedFilter.type,
-    };
+  computeFilter = (
+    search: string,
+    fixedDatamartOpt: string | undefined,
+  ): ChannelFilter => {
+    if (!fixedDatamartOpt) {
+      const parsedFilter = parseSearch(search, this.getSearchSettings());
+      const computedFilter: ChannelFilter = {
+        currentPage: parsedFilter.currentPage ? parsedFilter.currentPage : 1,
+        pageSize: parsedFilter.pageSize ? parsedFilter.pageSize : 10,
+        keywords: parsedFilter.keywords ? parsedFilter.keywords : '',
+        datamartId: parsedFilter.datamartId,
+        types: parsedFilter.types ? parsedFilter.types : [],
+      };
 
-    return filter;
+      return computedFilter;
+    } else {
+      const { filter } = this.state;
+
+      const computedFilter: ChannelFilter = {
+        currentPage: filter.currentPage,
+        pageSize: filter.pageSize,
+        keywords: filter.keywords,
+        datamartId: fixedDatamartOpt,
+        types: filter.types,
+      };
+      return computedFilter;
+    }
   };
 
   getSearchSettings() {
@@ -119,19 +145,28 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
       match: {
         params: { organisationId },
       },
+      location: { search },
+      fixedDatamartOpt,
     } = this.props;
 
-    const { filter } = this.state;
+    const computedFilter: ChannelFilter = this.computeFilter(
+      search,
+      fixedDatamartOpt,
+    );
 
-    this.fetchChannels(organisationId, filter);
+    this.fetchChannels(organisationId, computedFilter);
   }
 
-  componentDidUpdate(previousProps: Props) {
+  componentDidUpdate(
+    previousProps: Props,
+    previousState: ChannelsListPageState,
+  ) {
     const {
       match: {
         params: { organisationId },
       },
       location: { search },
+      fixedDatamartOpt,
     } = this.props;
 
     const {
@@ -139,139 +174,164 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
         params: { organisationId: previousOrganisationId },
       },
       location: { search: previousSearch },
+      fixedDatamartOpt: previousFixedDatamartOpt,
     } = previousProps;
 
+    const { filter, isFetchingChannels } = this.state;
+
+    const { filter: previousFilter } = previousState;
+
     if (
-      organisationId !== previousOrganisationId ||
-      !compareSearches(search, previousSearch)
+      (organisationId !== previousOrganisationId ||
+        !compareSearches(search, previousSearch) ||
+        !this.compareFilters(filter, previousFilter) ||
+        fixedDatamartOpt !== previousFixedDatamartOpt) &&
+      !isFetchingChannels
     ) {
-      const computedFilter: ChannelFilter = this.computeFilter(search);
-      this.setState({ filter: computedFilter }, () => {
-        this.fetchChannels(organisationId, computedFilter);
-      });
+      const computedFilter: ChannelFilter = this.computeFilter(
+        search,
+        fixedDatamartOpt,
+      );
+      this.fetchChannels(organisationId, computedFilter);
     }
   }
 
+  compareFilters = (
+    filter: ChannelFilter,
+    previousFilter: ChannelFilter,
+  ): boolean => {
+    const comparedTypes =
+      filter.types.every(type => previousFilter.types.includes(type)) &&
+      filter.types.length === previousFilter.types.length;
+
+    return (
+      comparedTypes &&
+      filter.currentPage === previousFilter.currentPage &&
+      filter.datamartId === previousFilter.datamartId &&
+      filter.keywords === previousFilter.keywords &&
+      filter.pageSize === previousFilter.pageSize
+    );
+  };
+
   fetchChannels = (organisationId: string, filter: ChannelFilter) => {
     const { notifyError } = this.props;
-    const buildGetChannelsOptions = () => {
+    const buildChannelsOptions = () => {
       const filterType =
-        filter.type && filter.type.length === 1 ? filter.type[0] : undefined;
+        filter.types && filter.types.length === 1 ? filter.types[0] : undefined;
 
-      const options = {
+      return {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
         channel_type: filterType,
+        keywords: filter.keywords,
+        datamart_id: filter.datamartId,
       };
-      if (filter.keywords) {
-        return {
-          ...options,
-          keywords: filter.keywords,
-        };
-      }
-      return options;
     };
 
     this.setState({ isFetchingChannels: true }, () => {
-      this._channelService
-        .getChannelsByOrganisation(organisationId, buildGetChannelsOptions())
-        .then(response => {
-          this.setState({
-            channels: response.data,
-            totalChannels: response.total ? response.total : response.count,
-          });
-
-          this._datamartService
-            .getDatamarts(organisationId, { allow_administrator: true })
-            .then(datamartsResponse => {
-              if (
-                datamartsResponse.data.some(datamart =>
-                  isUsersAnalyticsSupportedByDatafarm(datamart.datafarm),
-                )
-              ) {
-                const datamartIds = datamartsResponse.data
-                  .filter(datamart =>
-                    isUsersAnalyticsSupportedByDatafarm(datamart.datafarm),
-                  )
-                  .map(datamart => datamart.id);
-                const metrics: DatamartUsersAnalyticsMetric[] = [
-                  'sessions',
-                  'users',
-                ];
-                const from = new McsMoment('now-8d');
-                const to = new McsMoment('now-1d');
-                const dimensions: DatamartUsersAnalyticsDimension[] = [
-                  'channel_id',
-                ];
-                const dimensionFilterClauses: DimensionFilterClause = {
-                  operator: 'OR',
-                  filters: [
-                    {
-                      dimension_name: 'type',
-                      not: false,
-                      operator: 'IN_LIST',
-                      expressions: ['SITE_VISIT', 'APP_VISIT'],
-                      case_sensitive: false,
-                    },
-                  ],
-                };
-
-                Promise.all(
-                  datamartIds.map(datamartId => {
-                    return this._datamartUsersAnalyticsService.getAnalytics(
-                      datamartId,
-                      metrics,
-                      from,
-                      to,
-                      dimensions,
-                      dimensionFilterClauses,
-                    );
-                  }),
-                )
-                  .then(table => {
-                    const analyticsByChannel = flatten(
-                      table.map(t =>
-                        normalizeReportView<ChannelAnalyticsResource>(
-                          t.data.report_view,
-                        ),
-                      ),
-                    );
-                    const channelsWithAnalytics: ChannelResourceShapeWithAnalytics[] = response.data.map(
-                      channelRes => {
-                        const analytics = analyticsByChannel.find(
-                          analyticsItem =>
-                            analyticsItem.channel_id !== undefined &&
-                            analyticsItem.channel_id.toString() ===
-                              channelRes.id,
-                        );
-                        if (analytics) {
-                          return { ...channelRes, ...analytics };
-                        } else return channelRes;
-                      },
-                    );
-                    this.setState({
-                      channels: channelsWithAnalytics,
-                      totalChannels: response.total
-                        ? response.total
-                        : response.count,
-                      isFetchingChannels: false,
-                    });
-                  })
-                  .catch(err => {
-                    this.setState({ isFetchingChannels: false });
-                    notifyError(err);
-                  });
-              } else {
-                this.setState({ isFetchingChannels: false });
-              }
-            })
-            .catch(err => {
-              this.setState({ isFetchingChannels: false });
-              notifyError(err);
-            });
+      const channelsPromise = this._channelService
+        .getChannelsByOrganisation(organisationId, buildChannelsOptions())
+        .then(responseChannels => {
+          const channelsWithTotal: ChannelsWithTotal = {
+            channels: responseChannels.data,
+            total: responseChannels.total
+              ? responseChannels.total
+              : responseChannels.count,
+          };
+          return channelsWithTotal;
         })
         .catch(err => {
-          this.setState({ isFetchingChannels: false });
           notifyError(err);
+          const emptyChannels: ChannelsWithTotal = {
+            channels: [],
+            total: 0,
+          };
+          return emptyChannels;
+        });
+
+      const analyticsPromise = this._datamartService
+        .getDatamarts(organisationId, { allow_administrator: true })
+        .then(datamartsResponse => {
+          const datamartIds = datamartsResponse.data
+            .filter(_ => isUsersAnalyticsSupportedByDatafarm(_.datafarm))
+            .map(_ => _.id);
+
+          const metrics: DatamartUsersAnalyticsMetric[] = ['sessions', 'users'];
+          const from = new McsMoment('now-8d');
+          const to = new McsMoment('now-1d');
+          const dimensions: DatamartUsersAnalyticsDimension[] = ['channel_id'];
+          const dimensionFilterClauses: DimensionFilterClause = {
+            operator: 'OR',
+            filters: [
+              {
+                dimension_name: 'type',
+                not: false,
+                operator: 'IN_LIST',
+                expressions: ['SITE_VISIT', 'APP_VISIT'],
+                case_sensitive: false,
+              },
+            ],
+          };
+
+          return Promise.all(
+            datamartIds.map(datamartId => {
+              return this._datamartUsersAnalyticsService.getAnalytics(
+                datamartId,
+                metrics,
+                from,
+                to,
+                dimensions,
+                dimensionFilterClauses,
+              );
+            }),
+          ).then(table => {
+            const analyticsByChannel = flatten(
+              table.map(t =>
+                normalizeReportView<ChannelAnalyticsResource>(
+                  t.data.report_view,
+                ),
+              ),
+            );
+            return analyticsByChannel;
+          });
+        })
+        .catch(err => {
+          notifyError(err);
+          const emptyChannelAnalytics: ChannelAnalyticsResource[] = [];
+          return emptyChannelAnalytics;
+        });
+
+      Promise.all([channelsPromise, analyticsPromise])
+        .then(resPromises => {
+          const channelsWithTotal = resPromises[0];
+          const analyticsByChannel = resPromises[1];
+
+          const { channels, total } = channelsWithTotal;
+
+          const channelsWithAnalytics: ChannelResourceShapeWithAnalytics[] = channels.map(
+            channel => {
+              const analytics = analyticsByChannel.find(
+                analyticsItem =>
+                  analyticsItem.channel_id &&
+                  analyticsItem.channel_id.toString() === channel.id,
+              );
+
+              return { ...channel, ...analytics };
+            },
+          );
+
+          this.setState({
+            isFetchingChannels: false,
+            channels: channelsWithAnalytics,
+            totalChannels: total,
+          });
+        })
+        .catch(err => {
+          notifyError(err);
+          this.setState({
+            isFetchingChannels: false,
+            channels: [],
+            totalChannels: 0,
+          });
         });
     });
   };
@@ -357,22 +417,24 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
     );
   };
 
-  handleFilterChange = (newFilter: ChannelFilter) => {
-    const { filter } = this.state;
+  handlePartialFilterChange = (partialFilter: Partial<ChannelFilter>) => {
+    const {
+      location: { search },
+      fixedDatamartOpt,
+    } = this.props;
 
-    const newFilterType = newFilter.type ? newFilter.type : filter.type;
+    const computedFilter = this.computeFilter(search, fixedDatamartOpt);
 
-    const computedFilter: ChannelFilter = {
-      ...newFilter,
-      type: newFilterType,
-    };
+    const newFilter: ChannelFilter = { ...computedFilter, ...partialFilter };
 
-    this.setState({ filter: computedFilter }, () => {
-      this.updateLocationSearch(computedFilter);
-    });
+    if (!fixedDatamartOpt) {
+      this.updateLocationSearch(newFilter);
+    } else {
+      this.setState({ filter: newFilter });
+    }
   };
 
-  updateLocationSearch = (params: Partial<ChannelFilter>) => {
+  updateLocationSearch = (filter: ChannelFilter) => {
     const {
       history,
       location: { search: currentSearch, pathname },
@@ -380,7 +442,7 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
 
     const nextLocation = {
       pathname,
-      search: updateSearch(currentSearch, params, this.getSearchSettings()),
+      search: updateSearch(currentSearch, filter, this.getSearchSettings()),
     };
 
     history.push(nextLocation);
@@ -391,6 +453,8 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
       match: {
         params: { organisationId },
       },
+      location: { search },
+      fixedDatamartOpt,
     } = this.props;
 
     const {
@@ -398,8 +462,9 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
       totalChannels,
       channels,
       noChannelYet,
-      filter,
     } = this.state;
+
+    const computedFilter = this.computeFilter(search, fixedDatamartOpt);
 
     const menu = (
       <Menu>
@@ -425,7 +490,10 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
 
     const channelTypeItems: ChannelTypeItem[] = [
       { key: 'SITE', value: 'Sites' },
-      { key: 'MOBILE_APPLICATION', value: 'Mobile Applications' },
+      {
+        key: 'MOBILE_APPLICATION',
+        value: 'Mobile Applications',
+      },
     ];
 
     const filterChannelType: MultiSelectProps<ChannelTypeItem> = {
@@ -436,17 +504,18 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
         </div>
       ),
       selectedItems: channelTypeItems.filter(channelTypeItem =>
-        filter.type.includes(channelTypeItem.key),
+        computedFilter.types.includes(channelTypeItem.key),
       ),
       items: channelTypeItems,
       singleSelectOnly: false,
       getKey: (item: ChannelTypeItem) => item.key,
       display: (item: ChannelTypeItem) => item.value,
       handleMenuClick: (items: ChannelTypeItem[]) => {
-        this.updateLocationSearch({
-          type: items.map(i => i.key),
+        const partialFilter: Partial<ChannelFilter> = {
           currentPage: 1,
-        });
+          types: items.map(i => i.key),
+        };
+        this.handlePartialFilterChange(partialFilter);
       },
     };
 
@@ -469,8 +538,8 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
                 totalChannels={totalChannels}
                 isFetchingChannels={isFetchingChannels}
                 noChannelYet={noChannelYet}
-                filter={filter}
-                onFilterChange={this.handleFilterChange}
+                filter={computedFilter}
+                onFilterChange={this.handlePartialFilterChange}
                 onDeleteChannel={this.handleDeleteChannel}
                 onEditChannel={this.handleEditChannel}
                 filtersOptions={filtersOptions}
@@ -487,7 +556,7 @@ const mapStateToProps = (state: MicsReduxState) => ({
   workspace: getWorkspace(state),
 });
 
-export default compose<Props, {}>(
+export default compose<Props, ChannelsListPageProps>(
   withRouter,
   injectIntl,
   injectNotifications,

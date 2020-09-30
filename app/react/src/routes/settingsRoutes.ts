@@ -1,6 +1,4 @@
-import { SitesListPage } from '../containers/Settings/DatamartSettings/Sites/List';
 import { DatamartsListPage } from '../containers/Settings/DatamartSettings/Datamarts/List';
-import { MobileApplicationsListPage } from '../containers/Settings/DatamartSettings/MobileApplications/List';
 
 import { LabelsListPage } from '../containers/Settings/OrganisationSettings/Labels';
 import UserListPage from '../containers/Settings/OrganisationSettings/Users/List/UsersListsList';
@@ -66,20 +64,12 @@ export const settingsDefinition: NavigatorDefinition = {
    * DATAMART SETTINGS
    */
 
-  // sites
-  settingsDatamartSitesList: {
-    path: '/settings/datamart/sites',
-    layout: 'settings',
-    contentComponent: SitesListPage,
-    requiredFeature: 'datamartSettings-sites',
-    requireDatamart: true,
-  },
-
+  // Sites (Edition)
   settingsDatamartSitesCreation: {
     path: '/settings/datamart/sites/create',
     layout: 'edit',
     editComponent: SiteEditPage,
-    requiredFeature: 'datamartSettings-sites',
+    requiredFeature: 'datamartSettings-channels',
     requireDatamart: true,
   },
 
@@ -87,23 +77,16 @@ export const settingsDefinition: NavigatorDefinition = {
     path: '/settings/datamart/:datamartId/sites/:siteId/edit',
     layout: 'edit',
     editComponent: SiteEditPage,
-    requiredFeature: 'datamartSettings-sites',
+    requiredFeature: 'datamartSettings-channels',
     requireDatamart: true,
   },
 
-  // mobile apps
-  settingsDatamartMobileAppList: {
-    path: '/settings/datamart/mobile_applications',
-    layout: 'settings',
-    contentComponent: MobileApplicationsListPage,
-    requiredFeature: 'datamartSettings-mobile_applications',
-    requireDatamart: true,
-  },
+  // Mobile Applications (Edition)
   settingsDatamartMobileAppCreation: {
     path: '/settings/datamart/mobile_application/create',
     layout: 'edit',
     editComponent: MobileApplicationEditPage,
-    requiredFeature: 'datamartSettings-mobile_applications',
+    requiredFeature: 'datamartSettings-channels',
     requireDatamart: true,
   },
   settingsDatamartMobileAppEdition: {
@@ -111,7 +94,7 @@ export const settingsDefinition: NavigatorDefinition = {
       '/settings/datamart/:datamartId/mobile_application/:mobileApplicationId/edit',
     layout: 'edit',
     editComponent: MobileApplicationEditPage,
-    requiredFeature: 'datamartSettings-mobile_applications',
+    requiredFeature: 'datamartSettings-channels',
     requireDatamart: true,
   },
 

@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { Row, Col } from 'antd';
 import { compose } from 'recompose';
-import { MobileApplicationsListPage } from '../../MobileApplications/List';
-import { SitesListPage } from '../../Sites/List';
 import { PaginationSearchSettings } from '../../../../../utils/LocationSearchHelper';
 import CompartmentsContainer from '../../Compartments/List/CompartmentsContainer';
 import { injectFeatures, InjectedFeaturesProps } from '../../../../Features';
+import ChannelsListPage from '../../Channels/List/ChannelsListPage';
 
 export interface DatamartConfigTabProps {
   datamartId: string;
@@ -50,12 +49,7 @@ class DatamartConfigTab extends React.Component<Props, State> {
       <div>
         <Row>
           <Col>
-            <MobileApplicationsListPage datamartId={datamartId} />
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <SitesListPage datamartId={datamartId} />
+            <ChannelsListPage fixedDatamartOpt={datamartId} />
           </Col>
         </Row>
         <Row>
