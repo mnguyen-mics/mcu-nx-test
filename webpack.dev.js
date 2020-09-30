@@ -9,7 +9,7 @@ const paths = require('./paths');
 
 module.exports = merge(common, {
   mode: 'development',
-  devtool: 'eval',
+  devtool: 'eval-source-map',
   devServer: {
     port: 9000,
     contentBase: paths.appPath,
