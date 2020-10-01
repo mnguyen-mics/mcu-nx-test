@@ -105,7 +105,7 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
 }
 
 const mapStateToProps = (state: MicsReduxState) => ({
-  formValues: getFormValues('segmentBuilderFormData')(state),
+  formValues: getFormValues('audienceBuilderFormData')(state),
 });
 
 export default compose<Props, AudienceFeatureSelectorProps>(

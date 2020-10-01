@@ -64,9 +64,9 @@ class QueryFragmentFormSection extends React.Component<Props> {
 
   renderQueryBuilderButtons = () => {
     return (
-      <div className="mcs-segmentBuilder_queryButtons">
+      <div className="mcs-audienceBuilder_queryButtons">
         <Button
-          className="mcs-segmentBuilder_narrowWithButton"
+          className="mcs-audienceBuilder_narrowWithButton"
           onClick={this.addGroupExpression(false)}
         >
           Narrow with
@@ -75,7 +75,7 @@ class QueryFragmentFormSection extends React.Component<Props> {
         - or -
         <br />
         <Button
-          className="mcs-segmentBuilder_excludeButton"
+          className="mcs-audienceBuilder_excludeButton"
           onClick={this.addGroupExpression(true)}
         >
           Exclude
@@ -155,14 +155,14 @@ class QueryFragmentFormSection extends React.Component<Props> {
           return (
             <React.Fragment key={`${index}_${fields.length}`}>
               {index !== 0 && (
-                <div className="mcs-segmentBuilder_queryButtons">
+                <div className="mcs-audienceBuilder_queryButtons">
                   {fields.get(index).negation
                     ? intl.formatMessage(messages.excludingWith)
                     : intl.formatMessage(messages.narrowingWith)}
                 </div>
               )}
               <Card
-                className={'mcs-segmentBuilder_categoryCard'}
+                className={'mcs-audienceBuilder_categoryCard'}
                 title={
                   index === 0 && organisationId === '1407'
                     ? intl.formatMessage(messages.demographics)
@@ -171,7 +171,7 @@ class QueryFragmentFormSection extends React.Component<Props> {
                 buttons={
                   index !== 0 && (
                     <Button
-                      className="mcs-segmentBuilder_closeButton"
+                      className="mcs-audienceBuilder_closeButton"
                       onClick={handleRemove}
                     >
                       <McsIcon type="close" />
@@ -189,10 +189,10 @@ class QueryFragmentFormSection extends React.Component<Props> {
                   }
                 />
                 {(index !== 0 || organisationId !== '1407') && (
-                  <div className="mcs-segmentBuilder_categoryCardFooter">
+                  <div className="mcs-audienceBuilder_categoryCardFooter">
                     <Button
                       onClick={this.addFeature(index)}
-                      className="mcs-segmentBuilder_moreButton"
+                      className="mcs-audienceBuilder_moreButton"
                     >
                       {intl.formatMessage(messages.addAudienceFeature)}
                     </Button>
