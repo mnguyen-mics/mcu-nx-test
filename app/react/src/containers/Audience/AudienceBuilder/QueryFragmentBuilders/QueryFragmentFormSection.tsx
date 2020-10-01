@@ -16,6 +16,7 @@ import {
   AudienceBuilderFormData,
   AudienceBuilderGroupNode,
   AudienceBuilderParametricPredicateNode,
+  AudienceBuilderResource,
 } from '../../../../models/audienceBuilder/AudienceBuilderResource';
 import { McsIcon } from '../../../../components';
 import AudienceFeatureFormSection, {
@@ -29,7 +30,6 @@ import AudienceFeatureSelector, {
 } from './AudienceFeatureSelector';
 import { AudienceFeatureResource } from '../../../../models/audienceFeature';
 import { ObjectLikeTypeInfoResource } from '../../../../models/datamart/graphdb/RuntimeSchema';
-import { withRouter, RouteComponentProps } from 'react-router';
 
 export const AudienceFeatureFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
@@ -37,7 +37,7 @@ export const AudienceFeatureFieldArray = FieldArray as new () => GenericFieldArr
 >;
 
 export interface QueryFragmentFormSectionProps {
-  datamartId: string;
+  audienceBuilder: AudienceBuilderResource;
   objectTypes: ObjectLikeTypeInfoResource[];
 }
 
@@ -45,7 +45,6 @@ type Props = WrappedFieldArrayProps<AudienceBuilderGroupNode> &
   InjectedDrawerProps &
   InjectedFormProps<AudienceBuilderFormData, QueryFragmentFormSectionProps> &
   QueryFragmentFormSectionProps &
-  RouteComponentProps<{ organisationId: string }> &
   InjectedIntlProps;
 
 class QueryFragmentFormSection extends React.Component<Props> {
@@ -115,19 +114,16 @@ class QueryFragmentFormSection extends React.Component<Props> {
   };
 
   addFeature = (index: number) => () => {
-    const {
-      openNextDrawer,
-      datamartId,
-      match: {
-        params: { organisationId },
-      },
-    } = this.props;
+    const { openNextDrawer, audienceBuilder } = this.props;
 
     const props: AudienceFeatureSelectorProps = {
-      datamartId: datamartId,
+      datamartId: audienceBuilder.datamart_id,
       close: this.props.closeNextDrawer,
       save: this.addAudienceFeature(index),
-      demographicIds: organisationId === '1407' ? ['28', '29'] : undefined,
+      demographicIds:
+        audienceBuilder.demographics_features_ids.length >= 1
+          ? audienceBuilder.demographics_features_ids
+          : undefined,
     };
 
     openNextDrawer<AudienceFeatureSelectorProps>(AudienceFeatureSelector, {
@@ -136,15 +132,7 @@ class QueryFragmentFormSection extends React.Component<Props> {
   };
 
   render() {
-    const {
-      fields,
-      intl,
-      datamartId,
-      objectTypes,
-      match: {
-        params: { organisationId },
-      },
-    } = this.props;
+    const { fields, intl, audienceBuilder, objectTypes } = this.props;
 
     return (
       <React.Fragment>
@@ -164,7 +152,8 @@ class QueryFragmentFormSection extends React.Component<Props> {
               <Card
                 className={'mcs-audienceBuilder_categoryCard'}
                 title={
-                  index === 0 && organisationId === '1407'
+                  index === 0 &&
+                  audienceBuilder.demographics_features_ids.length >= 1
                     ? intl.formatMessage(messages.demographics)
                     : intl.formatMessage(messages.audienceFeatures)
                 }
@@ -182,13 +171,15 @@ class QueryFragmentFormSection extends React.Component<Props> {
                 <AudienceFeatureFieldArray
                   name={`${name}.expressions`}
                   component={AudienceFeatureFormSection}
-                  datamartId={datamartId}
+                  datamartId={audienceBuilder.datamart_id}
                   objectTypes={objectTypes}
                   isDemographicsSection={
-                    index === 0 && organisationId === '1407'
+                    index === 0 &&
+                    audienceBuilder.demographics_features_ids.length >= 1
                   }
                 />
-                {(index !== 0 || organisationId !== '1407') && (
+                {(index !== 0 ||
+                  audienceBuilder.demographics_features_ids.length === 0) && (
                   <div className="mcs-audienceBuilder_categoryCardFooter">
                     <Button
                       onClick={this.addFeature(index)}
@@ -209,7 +200,6 @@ class QueryFragmentFormSection extends React.Component<Props> {
 }
 
 export default compose<Props, QueryFragmentFormSectionProps>(
-  withRouter,
   injectIntl,
   injectDrawer,
   reduxForm<AudienceBuilderFormData, QueryFragmentFormSectionProps>({

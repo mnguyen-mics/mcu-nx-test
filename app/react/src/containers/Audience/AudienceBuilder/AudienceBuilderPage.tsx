@@ -7,10 +7,9 @@ import AudienceBuilderContainer from './AudienceBuilderContainer';
 import {
   AudienceBuilderResource,
   AudienceBuilderFormData,
-  // QueryDocument,
-  AudienceBuilderNodeShape,
-  isAudienceBuilderGroupNode,
   QueryDocument,
+  AudienceBuilderGroupNode,
+  AudienceBuilderParametricPredicateNode,
 } from '../../../models/audienceBuilder/AudienceBuilderResource';
 import { lazyInject } from '../../../config/inversify.config';
 import { IAudienceBuilderService } from '../../../services/AudienceBuilderService';
@@ -20,20 +19,20 @@ import injectNotifications, {
 } from '../../Notifications/injectNotifications';
 import { INITIAL_AUDIENCE_BUILDER_FORM_DATA } from './constants';
 import { Loading } from '../../../components';
+import { IQueryService } from '../../../services/QueryService';
+import { OTQLResult } from '../../../models/datamart/graphdb/OTQLResult';
+import { IAudienceFeatureService } from '../../../services/AudienceFeatureService';
 import {
   withDatamartSelector,
   WithDatamartSelectorProps,
 } from '../../Datamart/WithDatamartSelector';
-import { IQueryService } from '../../../services/QueryService';
-import { OTQLResult } from '../../../models/datamart/graphdb/OTQLResult';
 
 interface State {
   audienceBuilders?: AudienceBuilderResource[];
-  selectedAudienceBuidler?: AudienceBuilderResource;
+  selectedAudienceBuilder?: AudienceBuilderResource;
   formData: AudienceBuilderFormData;
   isLoading: boolean;
   queryResult?: OTQLResult;
-  noAudienceBuilder?: boolean;
 }
 
 type Props = InjectedIntlProps &
@@ -44,6 +43,9 @@ class AudienceBuilderPage extends React.Component<Props, State> {
   @lazyInject(TYPES.IAudienceBuilderService)
   private _audienceBuilderService: IAudienceBuilderService;
 
+  @lazyInject(TYPES.IAudienceFeatureService)
+  private _audienceFeatureService: IAudienceFeatureService;
+
   @lazyInject(TYPES.IQueryService)
   private _queryService: IQueryService;
 
@@ -51,7 +53,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
     super(props);
     this.state = {
       isLoading: true,
-      formData: this.getInitialFormData(),
+      formData: INITIAL_AUDIENCE_BUILDER_FORM_DATA,
     };
   }
 
@@ -64,7 +66,6 @@ class AudienceBuilderPage extends React.Component<Props, State> {
         this.setState({
           audienceBuilders: res.data,
           isLoading: false,
-          noAudienceBuilder: res.count === 0,
         });
       })
       .catch(error => {
@@ -76,53 +77,57 @@ class AudienceBuilderPage extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
-    const { selectedAudienceBuidler, formData, audienceBuilders } = this.state;
-    if (audienceBuilders?.length === 1 && selectedAudienceBuidler === undefined)
+    const { selectedAudienceBuilder, formData, audienceBuilders } = this.state;
+    if (audienceBuilders?.length === 1 && selectedAudienceBuilder === undefined)
       this.selectAudienceBuilder(audienceBuilders[0]);
-    const { selectedAudienceBuidler: prevSelectedAudienceBuidler } = prevState;
-    if (!_.isEqual(selectedAudienceBuidler, prevSelectedAudienceBuidler)) {
+    const { selectedAudienceBuilder: prevSelectedAudienceBuidler } = prevState;
+    if (!_.isEqual(selectedAudienceBuilder, prevSelectedAudienceBuidler)) {
       this.runQuery(formData);
     }
   }
 
-  getInitialFormData = () => {
-    const {
-      match: {
-        params: { organisationId },
-      },
-    } = this.props;
-    if (organisationId === '1407') {
-      
-      const formData: AudienceBuilderFormData = {
-        where: {
-          type: 'GROUP',
-          boolean_operator: 'AND',
-          expressions: [
-            {
+  getInitialFormData = (audienceBuilder: AudienceBuilderResource) => {
+    if (audienceBuilder.demographics_features_ids.length >= 1) {
+      const datamartId = audienceBuilder.datamart_id;
+      const promises = audienceBuilder.demographics_features_ids.map(id => {
+        return this._audienceFeatureService.getAudienceFeature(datamartId, id);
+      });
+      Promise.all(promises).then(resp => {
+        const parametricPredicates = resp.map(r => {
+          return r.data;
+        });
+        this.setState({
+          formData: {
+            where: {
               type: 'GROUP',
               boolean_operator: 'AND',
               expressions: [
                 {
-                  type: 'PARAMETRIC_PREDICATE',
-                  parametric_predicate_id: '28',
-                  parameters: {
-                    age: '18-24' as any
-                  },
-                },
-                {
-                  type: 'PARAMETRIC_PREDICATE',
-                  parametric_predicate_id: '29',
-                  parameters: {
-                    gender: 'female' as any
-                  },
+                  type: 'GROUP',
+                  boolean_operator: 'AND',
+                  expressions: parametricPredicates.map(p => {
+                    const parameters: { [key: string]: any } = {};
+                    p.variables.forEach(v => {
+                      const parameterName = v.parameter_name;
+                      parameters[parameterName] = '';
+                    });
+                    return {
+                      type: 'PARAMETRIC_PREDICATE',
+                      parametric_predicate_id: p.id,
+                      parameters: parameters,
+                    };
+                  }),
                 },
               ],
             },
-          ],
-        },
-      };
-      return formData;
-    } else return INITIAL_AUDIENCE_BUILDER_FORM_DATA;
+          },
+        });
+      });
+    } else {
+      this.setState({
+        formData: INITIAL_AUDIENCE_BUILDER_FORM_DATA,
+      });
+    }
   };
 
   saveAudience = (formData: AudienceBuilderFormData) => {
@@ -176,7 +181,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
     };
 
     this._queryService
-      .runJSONOTQLQuery(selectedDatamartId, query as any)
+      .runJSONOTQLQuery(selectedDatamartId, this.formateQuery(query) as any)
       .then(queryResult => {
         this.setState({
           queryResult: queryResult.data,
@@ -187,62 +192,70 @@ class AudienceBuilderPage extends React.Component<Props, State> {
       });
   };
 
-  // Validates JSON OTQL clauseWhere from formData
-  validateQuery = (clauseWhere: AudienceBuilderNodeShape): number => {
-    let errors = 0;
-    if (
-      clauseWhere.type !== 'GROUP' ||
-      clauseWhere.boolean_operator !== 'AND'
-    ) {
-      errors++;
-    } else {
-      clauseWhere.expressions.forEach((exp, i) => {
-        if (i === 0) {
-          if (!isAudienceBuilderGroupNode(exp)) {
-            errors++;
-          } else {
-            if (exp.boolean_operator !== 'AND') {
-              errors++;
-            }
-          }
-        } else {
-          if (exp.type !== 'GROUP' || exp.boolean_operator !== 'OR') {
-            errors++;
-          }
-        }
-      });
-    }
+  // This will be removed when backend will be able to handle List and Long
+  formateQuery = (query: QueryDocument) => {
+    return {
+      ...query,
+      where: {
+        ...query.where,
+        expressions: (query.where as AudienceBuilderGroupNode).expressions.map(
+          (exp: AudienceBuilderGroupNode) => {
+            return {
+              ...exp,
+              expressions: exp.expressions.map(
+                (e: AudienceBuilderParametricPredicateNode) => {
+                  const parameters: any = {};
+                  const formateValue = (v: any) => {
+                    if (Array.isArray(v)) {
+                      return v[0].toString();
+                    } else if (typeof v === 'number') {
+                      return v.toString();
+                    } else return v;
+                  };
+                  Object.keys(e.parameters).map(k => {
+                    parameters[`${k}`] = formateValue(e.parameters[k]);
+                  });
 
-    return errors;
+                  return {
+                    ...e,
+                    parameters: parameters,
+                  };
+                },
+              ),
+            };
+          },
+        ),
+      },
+    };
   };
 
   selectAudienceBuilder = (audienceBuilder: AudienceBuilderResource) => {
     this.setState({
-      selectedAudienceBuidler: audienceBuilder,
+      selectedAudienceBuilder: audienceBuilder,
     });
+    this.getInitialFormData(audienceBuilder);
   };
 
   render() {
-    const { intl, selectedDatamartId } = this.props;
+    const { intl } = this.props;
     const {
-      selectedAudienceBuidler,
+      selectedAudienceBuilder,
       audienceBuilders,
       isLoading,
       formData,
       queryResult,
-      noAudienceBuilder,
     } = this.state;
 
     if (isLoading) {
       return <Loading className="loading-full-screen" />;
     }
 
-    return selectedAudienceBuidler ? (
+    return selectedAudienceBuilder ? (
       <AudienceBuilderContainer
         save={this.runQuery}
         initialValues={formData}
         queryResult={queryResult}
-        datamartId={selectedDatamartId}
+        audienceBuilder={selectedAudienceBuilder}
       />
     ) : (
       <AudienceBuilderSelector
@@ -256,7 +269,6 @@ class AudienceBuilderPage extends React.Component<Props, State> {
           ],
         }}
         isMainlayout={true}
-        noAudienceBuilder={noAudienceBuilder}
       />
     );
   }
