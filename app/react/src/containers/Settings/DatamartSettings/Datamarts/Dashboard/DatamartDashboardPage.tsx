@@ -20,7 +20,6 @@ import DatamartUsersAnalyticsWrapper from '../../../../Audience/DatamartUsersAna
 import { sessionInTimeJsonConfig } from '../../../../Audience/DatamartUsersAnalytics/config/AnalyticsConfigJson';
 import { DashboardConfig } from '../../../../Audience/DatamartUsersAnalytics/DatamartUsersAnalyticsContent';
 import DatamartReplicationTab from './DatamartReplicationTab';
-import { isUsersAnalyticsSupportedByDatafarm } from '../../../../Audience/DatamartUsersAnalytics/components/helpers/utils';
 
 const { Content } = Layout;
 
@@ -159,8 +158,7 @@ class DatamartDashboardPage extends React.Component<Props, State> {
 
     if (
       hasFeature('audience-dashboards-datamart_users_analytics') &&
-      datamart &&
-      isUsersAnalyticsSupportedByDatafarm(datamart.datafarm)
+      datamart
     ) {
       items.push({
         title: intl.formatMessage(messages.statistics),
