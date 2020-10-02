@@ -42,13 +42,9 @@ export class UsersService implements IUsersService {
   }
   getUsersWithUserRole(
     communityId: string,
-    filters: object = {},
+    options: object = {},
   ): Promise<DataListResponse<UserWithRole>> {
-    const endpoint = `users.user_roles`;
-    const options = {
-      community_id: communityId,
-      ...filters,
-    };
+    const endpoint = `community/${communityId}/users.user_roles`;
     return ApiService.getRequest(endpoint, options);
   }
   getUser(
