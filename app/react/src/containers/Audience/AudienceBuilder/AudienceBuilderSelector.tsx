@@ -16,12 +16,12 @@ import { AudienceBuilderResource } from '../../../models/audienceBuilder/Audienc
 
 export const messages = defineMessages({
   title: {
-    id: 'segmentBuilderSelector.title',
-    defaultMessage: 'Segment Builder',
+    id: 'audienceBuilderSelector.title',
+    defaultMessage: 'Audience Builder',
   },
   subTitle: {
-    id: 'segmentBuilderSelector.subtitle',
-    defaultMessage: 'Choose your Segment Builder',
+    id: 'audienceBuilderSelector.subtitle',
+    defaultMessage: 'Choose your Audience Builder',
   },
   noAudienceBuilder: {
     id: 'datamart.audienceBuilder.alert.noAudienceBuilder',
@@ -32,7 +32,7 @@ export const messages = defineMessages({
 
 export interface AudienceBuilderSelectorProps {
   audienceBuilders: AudienceBuilderResource[];
-  onSelect: (segmentBuilder: AudienceBuilderResource) => void;
+  onSelect: (audienceBuilder: AudienceBuilderResource) => void;
   actionbarProps: FormLayoutActionbarProps;
   isMainlayout?: boolean;
   noAudienceBuilder?: boolean;

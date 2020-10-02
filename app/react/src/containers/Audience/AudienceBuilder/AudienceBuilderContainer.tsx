@@ -107,7 +107,7 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
       <React.Fragment>
         <AudienceBuilderActionbar save={this.saveFormData} />
         <Layout>
-          <Row className="ant-layout-content mcs-segmentBuilder_container">
+          <Row className="ant-layout-content mcs-audienceBuilder_container">
             <Col span={12}>
               <QueryFragmentFieldArray
                 name={`where.expressions`}
@@ -119,7 +119,7 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
             </Col>
             <Col
               span={12}
-              className="mcs-segmentBuilder_liveDashboardContainer"
+              className="mcs-audienceBuilder_liveDashboardContainer"
             >
               <AudienceBuilderDashboard
                 totalAudience={queryResult && queryResult.rows[0].count}

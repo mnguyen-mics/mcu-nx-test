@@ -64,7 +64,7 @@ class AudienceBuilderActionbar extends React.Component<Props, State> {
         {/* <Dropdown overlay={saveAsMenu} trigger={['click']}>
           <Button className="mcs-primary" type="primary">
             <FormattedMessage
-              id="segmentBuilderV2.actionBar.saveAsButton"
+              id="audienceBuilder.actionBar.saveAsButton"
               defaultMessage="Save As"
             />
           </Button>
@@ -72,7 +72,7 @@ class AudienceBuilderActionbar extends React.Component<Props, State> {
 
         <Button className="mcs-primary" type="primary" onClick={this.props.save}>
           <FormattedMessage
-            id="segmentBuilderV2.actionBar.runQueryButton"
+            id="audienceBuilder.actionBar.runQueryButton"
             defaultMessage="Run Query"
           />
         </Button>

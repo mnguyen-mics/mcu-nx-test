@@ -67,8 +67,8 @@ class AudienceBuilderDashboard extends React.Component<Props, State> {
     const { intl, totalAudience } = this.props;
     // const { isLoading, dashboards } = this.state;
     return (
-      <div className="mcs-segmentBuilder_liveDashboard">
-        <CardFlex className="mcs-segmentBuilder_totalAudience">
+      <div className="mcs-audienceBuilder_liveDashboard">
+        <CardFlex className="mcs-audienceBuilder_totalAudience">
           {totalAudience !== undefined ? (
             <Statistic
               title={intl.formatMessage(messages.selectedAudience)}

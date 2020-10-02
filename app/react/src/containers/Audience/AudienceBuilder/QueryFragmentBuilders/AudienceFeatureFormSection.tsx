@@ -30,8 +30,8 @@ class AudienceFeatureFormSection extends React.Component<Props> {
           key={`${index}_${fields.length}`}
           className={
             isDemographicsSection
-              ? 'mcs-segmentBuilder_demographicFeature'
-              : 'mcs-segmentBuilder_audienceFeature'
+              ? 'mcs-audienceBuilder_demographicFeature'
+              : 'mcs-audienceBuilder_audienceFeature'
           }
         >
           <Col span={isDemographicsSection ? 24 : 22}>
@@ -47,7 +47,7 @@ class AudienceFeatureFormSection extends React.Component<Props> {
             <React.Fragment>
               <Col span={2}>
                 <Button
-                  className="mcs-segmentBuilder_closeButton"
+                  className="mcs-audienceBuilder_closeButton"
                   onClick={handleRemove}
                 >
                   <McsIcon type="close" />

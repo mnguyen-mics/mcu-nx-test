@@ -69,8 +69,8 @@ class AudienceFeatureLayout extends React.Component<Props, State> {
 
     return audienceFeature ? (
       <React.Fragment>
-        <div className="mcs-segmentBuilder_audienceFeatureName">{`${audienceFeature.name}`}</div>
-        <div className="mcs-segmentBuilder_audienceFeatureDescription">{`${audienceFeature.description} `}</div>
+        <div className="mcs-audienceBuilder_audienceFeatureName">{`${audienceFeature.name}`}</div>
+        <div className="mcs-audienceBuilder_audienceFeatureDescription">{`${audienceFeature.description} `}</div>
         {audienceFeature.variables.map((v, index) => {
           return (
             <AudienceFeatureVariable
