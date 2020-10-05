@@ -1,0 +1,102 @@
+pipeline {
+    agent any
+    options { disableConcurrentBuilds() }
+	parameters {
+	    string(name: 'END_TO_END_CHECK', 
+	    defaultValue: 'true', 
+	    description: 'set to false to bypass the virtual platform creation and the cypress tests'),
+        string(name: 'GIVEN_VIRTUAL_PLATFORM_NAME',
+        defaultValue: '',
+        description: 'If you would like to run the tests on a precedently created virtual platform (For example if a previous build fails because of false positive tests) please provide its name')
+    }
+    stages {
+        stage('Checkout') {
+            agent {
+                label "master"
+            }
+            steps {
+                checkout scm
+            }
+        }
+        stage('Building and Publishing Navigator Staging Artifacts'){
+            when {
+                // Only publish staging if END_TO_END_CHECK == true
+                expression { params.END_TO_END_CHECK == 'true' && params.GIVEN_VIRTUAL_PLATFORM_NAME == '' }
+            }
+            steps {
+                echo 'Running mediarithmics-navigator-publish-zip'
+                build job: 'mediarithmics-navigator-publish-zip'
+            }
+        }
+            stage('Virtual Platform Creation') {
+                    when {
+                        // Only create sandbox if END_TO_END_CHECK == true
+                        expression { params.END_TO_END_CHECK == 'true' && params.GIVEN_VIRTUAL_PLATFORM_NAME == ''}
+                    }
+                    steps {
+                        script {
+                            echo 'Running Virtual Platform Creation Job'
+                            sandbox_build = build job: 'sandbox-creation-from-template', parameters: [
+                                [$class: 'StringParameterValue', name: 'template', value: "master"],
+                                [$class: 'StringParameterValue', name: 'lifetime', value: "1"],
+                                [$class: 'StringParameterValue', name: 'custom_navigator_build', value: "staging-1+"]
+                            ]
+                        copyArtifacts projectName: 'sandbox-creation-from-template', selector: specific("${sandbox_build.number}"), filter: 'output.json'
+                        props = readJSON file: 'output.json'
+                        VIRTUAL_PLATFORM_NAME = props['data']['name']
+                        echo "Got the virtual platform ${VIRTUAL_PLATFORM_NAME} (build #${sandbox_build.number})"
+                        VIRTUAL_PLATFORM_ID = props['data']['id']
+                        echo "Got the virtual platform id ${VIRTUAL_PLATFORM_ID} (build #${sandbox_build.number})"
+                        }
+                    }
+                }
+            
+        stage('Cypress Parallel Tests On Given Virtual Platform'){
+            when {
+                expression { params.GIVEN_VIRTUAL_PLATFORM_NAME != '' }
+            }
+            steps{
+                echo 'Running Cypress end-to-end front-end scenarios'
+                build job: 'cypress-parallel-tests', parameters: [[$class: 'StringParameterValue', name: 'VIRTUAL_PLATFORM_NAME', value: "${params.GIVEN_VIRTUAL_PLATFORM_NAME}"]]
+            }
+        }
+        stage('Cypress Parallel Tests On Created Virtual Platform'){
+            when {
+                // Only run end to end scenarios is END_TO_END_CHECK == true
+                expression { params.END_TO_END_CHECK == 'true' && params.GIVEN_VIRTUAL_PLATFORM_NAME == ''}
+            }
+            steps{
+            echo 'Running Cypress end-to-end front-end scenarios'
+            build job: 'cypress-parallel-tests', parameters: [[$class: 'StringParameterValue', name: 'VIRTUAL_PLATFORM_NAME', value: "${VIRTUAL_PLATFORM_NAME}"]]
+            }
+        }
+        /*stage('Push to master') {
+            agent {
+                label "master"
+            }
+            steps {
+                echo 'Pushing to master'
+                build job: 'mediarithmics-navigator-staging'
+            }
+        }*/
+        stage('Kill Given Virtual Platform') {
+          when {
+              expression { params.GIVEN_VIRTUAL_PLATFORM_NAME != ''}
+          }
+            steps {
+                echo 'Kill virtual platform used for end-to-end tests'
+                build job: 'sandbox-metal-delete', parameters: [[$class: 'StringParameterValue', name: 'id', value: "${params.GIVEN_VIRTUAL_PLATFORM_NAME}"]]
+            }
+        }
+        stage('Kill Created Virtual Platform') {
+          when {
+              // Only run end to end scenarios is END_TO_END_CHECK == true
+              expression { params.END_TO_END_CHECK == 'true' && params.GIVEN_VIRTUAL_PLATFORM_NAME == ''}
+          }
+            steps {
+                echo 'Kill virtual platform used for end-to-end tests'
+                build job: 'sandbox-metal-delete', parameters: [[$class: 'StringParameterValue', name: 'id', value: "${VIRTUAL_PLATFORM_ID}"]]
+            }
+        }
+    }
+}
