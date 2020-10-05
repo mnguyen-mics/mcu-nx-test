@@ -288,7 +288,6 @@ class AudienceFeatureVariable extends React.Component<Props> {
               label: variable.parameter_name,
             }}
             unixTimstamp={true}
-            noArrayValues={true}
           />
         );
       case 'OperatingSystemFamily':

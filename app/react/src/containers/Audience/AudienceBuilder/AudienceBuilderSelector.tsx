@@ -35,7 +35,6 @@ export interface AudienceBuilderSelectorProps {
   onSelect: (audienceBuilder: AudienceBuilderResource) => void;
   actionbarProps: FormLayoutActionbarProps;
   isMainlayout?: boolean;
-  noAudienceBuilder?: boolean;
 }
 
 type Props = AudienceBuilderSelectorProps & InjectedIntlProps;
@@ -47,7 +46,6 @@ class AudienceBuilderSelector extends React.Component<Props> {
       actionbarProps,
       isMainlayout,
       audienceBuilders,
-      noAudienceBuilder,
       intl,
     } = this.props;
 
@@ -61,7 +59,7 @@ class AudienceBuilderSelector extends React.Component<Props> {
         <Layout.Content className="mcs-content-container mcs-form-container text-center">
           <FormTitle title={messages.title} subtitle={messages.subTitle} />
 
-          {noAudienceBuilder ? (
+          {audienceBuilders.length === 0 ? (
             <Alert
               message={
                 <div>

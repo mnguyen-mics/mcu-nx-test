@@ -95,7 +95,7 @@ export const fieldGridConfig = {
   wrapperCol: { span: 15, offset: 1 },
 };
 
-export const FORM_ID = 'audienceBuilderFormData';
+export const FORM_ID = 'segmentBuilderFormData';
 
 export const INITIAL_AUDIENCE_BUILDER_FORM_DATA: AudienceBuilderFormData = {
   where: {

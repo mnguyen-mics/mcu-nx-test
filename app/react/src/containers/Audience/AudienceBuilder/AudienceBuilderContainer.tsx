@@ -15,8 +15,10 @@ import {
 } from 'redux-form';
 import { FORM_ID } from './constants';
 import { Omit } from '../../../utils/Types';
-import { AudienceBuilderFormData } from '../../../models/audienceBuilder/AudienceBuilderResource';
-
+import {
+  AudienceBuilderFormData,
+  AudienceBuilderResource,
+} from '../../../models/audienceBuilder/AudienceBuilderResource';
 import AudienceBuilderDashboard from './AudienceBuilderDashboard';
 import AudienceBuilderActionbar from './AudienceBuilderActionbar';
 import QueryFragmentFormSection, {
@@ -37,7 +39,7 @@ export const QueryFragmentFieldArray = FieldArray as new () => GenericFieldArray
 interface AudienceBuilderContainerProps
   extends Omit<ConfigProps<AudienceBuilderFormData>, 'form'> {
   save: (formData: AudienceBuilderFormData) => void;
-  datamartId: string;
+  audienceBuilder: AudienceBuilderResource;
   queryResult?: OTQLResult;
 }
 
@@ -72,21 +74,26 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { datamartId } = this.props;
+    const { audienceBuilder } = this.props;
     this.setState({
       isLoadingObjectTypes: true,
     });
-    this._runtimeSchemaService.getRuntimeSchemas(datamartId).then(schemaRes => {
-      const liveSchema = schemaRes.data.find(s => s.status === 'LIVE');
-      if (!liveSchema) return;
-      return this._runtimeSchemaService
-        .getObjectTypeInfoResources(datamartId, liveSchema.id)
-        .then(objectTypes => {
-          this.setState({
-            objectTypes: objectTypes,
+    this._runtimeSchemaService
+      .getRuntimeSchemas(audienceBuilder.datamart_id)
+      .then(schemaRes => {
+        const liveSchema = schemaRes.data.find(s => s.status === 'LIVE');
+        if (!liveSchema) return;
+        return this._runtimeSchemaService
+          .getObjectTypeInfoResources(
+            audienceBuilder.datamart_id,
+            liveSchema.id,
+          )
+          .then(objectTypes => {
+            this.setState({
+              objectTypes: objectTypes,
+            });
           });
-        });
-    });
+      });
   }
 
   saveFormData = () => {
@@ -95,7 +102,7 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
   };
 
   render() {
-    const { datamartId, queryResult } = this.props;
+    const { audienceBuilder, queryResult } = this.props;
 
     const { objectTypes } = this.state;
 
@@ -112,7 +119,7 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
               <QueryFragmentFieldArray
                 name={`where.expressions`}
                 component={QueryFragmentFormSection}
-                datamartId={datamartId}
+                audienceBuilder={audienceBuilder}
                 objectTypes={objectTypes}
                 {...genericFieldArrayProps}
               />
