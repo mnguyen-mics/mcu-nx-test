@@ -8,10 +8,6 @@ import {
   InjectedIntlProps,
   defineMessages,
 } from 'react-intl';
-
-import CollectionSelector, {
-  CollectionSelectorProps,
-} from '../../../components/ElementSelector/CollectionSelector';
 import { SearchFilter } from '../../../components/ElementSelector';
 import {
   CreativesOptions,
@@ -25,6 +21,8 @@ import {
 import CreativeCard, { CreativeCardProps } from './CreativeCard';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
+import { CollectionSelector } from '@mediarithmics-private/mcs-components-library';
+import { CollectionSelectorProps } from '@mediarithmics-private/mcs-components-library/lib/components/collection-selector';
 
 const CreativeCollectionSelector: React.ComponentClass<
   CollectionSelectorProps<CreativeResourceShape>
@@ -57,6 +55,10 @@ const messages = defineMessages({
   selectButtonSelected: {
     id: 'creative-display-selector-select-button-selected',
     defaultMessage: 'Selected !',
+  },
+  addElementText: {
+    id: 'creative-card-selector.add',
+    defaultMessage: 'Add',
   },
 });
 
@@ -191,6 +193,8 @@ class CreativeCardSelector extends React.Component<Props> {
         renderCollectionItem={this.renderCreative}
         save={this.saveCreatives}
         close={close}
+        addButtonText={formatMessage(messages.addElementText)}
+        noElementText=''
       />
     );
   }

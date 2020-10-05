@@ -13,7 +13,7 @@
     "translation-file": "npm run build && node scripts/translate.js"
   },
   "dependencies": {
-    "@mediarithmics-private/mcs-components-library": "2.2.3",
+    "@mediarithmics-private/mcs-components-library": "2.2.4",
     "@splitsoftware/splitio": "^10.9.2",
     "antd": "3.13.2",
     "assert": "^1.4.1",
