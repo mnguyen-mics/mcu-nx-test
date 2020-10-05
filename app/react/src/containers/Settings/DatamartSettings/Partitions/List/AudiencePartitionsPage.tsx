@@ -3,7 +3,7 @@ import { Layout } from 'antd';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { defineMessages } from 'react-intl';
+import { defineMessages, injectIntl, InjectedIntlProps } from 'react-intl';
 import {
   GetPartitionOption,
   IAudiencePartitionsService,
@@ -16,7 +16,6 @@ import { Loading } from '../../../../../components';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
-import { EmptyTableView } from '../../../../../components/TableView';
 import AudiencePartitionsTable from './AudiencePartitionsTable';
 import AudiencePartitionsActionbar from './AudiencePartitionsActionbar';
 import {
@@ -37,6 +36,7 @@ import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 import { getWorkspace } from '../../../../../redux/Session/selectors';
 import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
 import { DataListResponse } from '../../../../../services/ApiService';
+import { EmptyTableView } from '@mediarithmics-private/mcs-components-library';
 
 const { Content } = Layout;
 
@@ -53,6 +53,7 @@ interface State {
 
 type Props = MapStateToProps &
   InjectedNotificationProps &
+  InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
 
 export interface PartitionFilterParams
@@ -258,6 +259,7 @@ class AudiencePartitionsPage extends React.Component<Props, State> {
       match: { params },
       location: { search },
       workspace,
+      intl
     } = this.props;
     const {
       hasAudiencePartitions,
@@ -280,7 +282,7 @@ class AudiencePartitionsPage extends React.Component<Props, State> {
         {!initialFetching && !hasAudiencePartitions && (
           <EmptyTableView
             iconType="users"
-            intlMessage={messageMap.noPartitionYet}
+            message={intl.formatMessage(messageMap.noPartitionYet)}
           />
         )}
         {!initialFetching && hasAudiencePartitions && (
@@ -314,6 +316,7 @@ const mapStateToProps = (state: MicsReduxState) => ({
 
 export default compose(
   withRouter,
+  injectIntl,
   injectNotifications,
   connect(mapStateToProps),
 )(AudiencePartitionsPage);

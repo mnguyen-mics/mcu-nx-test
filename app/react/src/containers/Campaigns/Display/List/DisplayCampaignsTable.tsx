@@ -9,7 +9,6 @@ import {
   defineMessages,
 } from 'react-intl';
 import {
-  EmptyTableView,
   TableViewFilters,
 } from '../../../../components/TableView/index';
 import McsIcon from '../../../../components/McsIcon';
@@ -34,6 +33,7 @@ import {
   ExtendedTableRowSelection,
   ActionsColumnDefinition,
 } from '../../../../components/TableView/TableView';
+import { EmptyTableView } from '@mediarithmics-private/mcs-components-library';
 
 const messagesMap: {
   [key: string]: FormattedMessage.MessageDescriptor;
@@ -54,6 +54,10 @@ const messagesMap: {
     id: 'display.campaigns.list.status.archived',
     defaultMessage: 'Archived',
   },
+  noCampaign: {
+    id: 'display.campaigns.noCampaign',
+    defaultMessage: 'No campaign',
+  }
 });
 
 interface DisplayCampaignsTableProps extends MapDispatchToProps {
@@ -389,7 +393,7 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
         />
       </div>
     ) : (
-      <EmptyTableView iconType="display" text="EMPTY_DISPLAY" />
+      <EmptyTableView iconType="display" message={intl.formatMessage(messagesMap.noCampaign)} />
     );
   }
 }

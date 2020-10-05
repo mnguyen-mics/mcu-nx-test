@@ -79,4 +79,16 @@ export default defineMessages({
     id: 'creative.email.list.sendTest',
     defaultMessage: 'Send a test Email',
   },
+  noDisplayCreative: {
+    id: 'creative.display.list.noCreative',
+    defaultMessage: 'No Display Creatives',
+  },
+  noNativeCreative: {
+    id: 'creative.native.list.noCreative',
+    defaultMessage: 'No Native Creatives',
+  },
+  noEmailTemplate: {
+    id: 'creative.email.list.noTemplate',
+    defaultMessage: 'No Email Templates',
+  },
 });

@@ -278,10 +278,10 @@ class ProcessingsList extends React.Component<Props, ProcessingPageState> {
 
     const emptyTable: {
       iconType: McsIconType;
-      intlMessage: FormattedMessage.Props;
+      message: string;
     } = {
       iconType: 'settings',
-      intlMessage: messages.emptyProcessings,
+      message: formatMessage(messages.emptyProcessings)
     };
 
     const actionColumns:

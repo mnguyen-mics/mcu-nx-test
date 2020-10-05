@@ -59,4 +59,8 @@ export const messages: {
     id: 'goals.table.column.action.edit',
     defaultMessage: 'Edit',
   },
+  noGoal: {
+    id: 'goals.table.noGoal',
+    defaultMessage: 'No goals',
+  },
 });

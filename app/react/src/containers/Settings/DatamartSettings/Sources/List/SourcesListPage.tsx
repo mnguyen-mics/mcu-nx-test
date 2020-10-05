@@ -8,17 +8,18 @@ import {
 } from '../../../../../utils/LocationSearchHelper';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { IDatamartService } from '../../../../../services/DatamartService';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
-import { TableView, EmptyTableView } from '../../../../../components/TableView';
+import { TableView } from '../../../../../components/TableView';
 import { Index } from '../../../../../utils';
 import { McsIcon } from '../../../../../components';
 import { Link } from 'react-router-dom';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
+import { EmptyTableView } from '@mediarithmics-private/mcs-components-library';
 
 const { Content } = Layout;
 
@@ -57,6 +58,7 @@ type Props = RouteComponentProps<{
   organisationId: string;
   datamartId: string;
 }> &
+  InjectedIntlProps & 
   InjectedNotificationProps;
 
 class SourcesListPage extends React.Component<Props, State> {
@@ -156,6 +158,7 @@ class SourcesListPage extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
+      intl
     } = this.props;
     const { dataSource, loading, filters, total, datamart } = this.state;
 
@@ -226,7 +229,7 @@ class SourcesListPage extends React.Component<Props, State> {
             {total === 0 && loading === false ? (
               <EmptyTableView
                 iconType="settings"
-                intlMessage={messages.noData}
+                message={intl.formatMessage(messages.noData)}
                 className="mcs-table-view-empty mcs-empty-card"
               />
             ) : (
@@ -246,5 +249,6 @@ class SourcesListPage extends React.Component<Props, State> {
 
 export default compose<{}, Props>(
   withRouter,
+  injectIntl,
   injectNotifications,
 )(SourcesListPage);

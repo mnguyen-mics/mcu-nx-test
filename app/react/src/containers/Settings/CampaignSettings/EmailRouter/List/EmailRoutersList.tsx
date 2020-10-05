@@ -165,10 +165,10 @@ class EmailRoutersList extends React.Component<
 
     const emptyTable: {
       iconType: McsIconType;
-      intlMessage: FormattedMessage.Props;
+      message: string;
     } = {
       iconType: 'settings',
-      intlMessage: messages.empty,
+      message: this.props.intl.formatMessage(messages.empty)
     };
 
     const onClick = () =>

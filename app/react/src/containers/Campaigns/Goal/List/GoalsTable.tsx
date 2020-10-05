@@ -6,7 +6,6 @@ import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import {
   TableViewFilters,
-  EmptyTableView,
 } from '../../../../components/TableView/index';
 import { GOAL_SEARCH_SETTINGS } from './constants';
 import {
@@ -48,6 +47,7 @@ import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
+import { EmptyTableView } from '@mediarithmics-private/mcs-components-library';
 
 export interface ParamFilters
   extends PaginationSearchSettings,
@@ -525,7 +525,7 @@ class GoalsTable extends React.Component<Props, State> {
         />
       </div>
     ) : (
-      <EmptyTableView iconType="goals" text="EMPTY_GOALS" />
+      <EmptyTableView iconType="goals" message={intl.formatMessage(messages.noGoal)} />
     );
   }
 }

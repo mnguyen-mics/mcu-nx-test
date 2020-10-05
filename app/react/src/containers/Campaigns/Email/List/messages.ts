@@ -108,6 +108,10 @@ export const messages: {
     id: 'campaign.email.filterBy.label',
     defaultMessage: 'Filter By Label',
   },
+  noCampaign: {
+    id: 'campaign.email.list.noCampaign',
+    defaultMessage: 'No Email Campaigns',
+  },
 });
 
 export default messages;

@@ -11,10 +11,9 @@ import {
   ActionsColumnDefinition,
 } from '../../../../../components/TableView/TableView';
 import messages from './messages';
-import { Button } from '@mediarithmics-private/mcs-components-library';
+import { Button, EmptyTableView } from '@mediarithmics-private/mcs-components-library';
 import moment from 'moment';
 import {
-  EmptyTableView,
   TableViewFilters,
 } from '../../../../../components/TableView';
 import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
@@ -180,7 +179,7 @@ class ChannelsTable extends React.Component<Props> {
     return noChannelYet ? (
       <EmptyTableView
         iconType="settings"
-        intlMessage={messages.emptyChannels}
+        message={formatMessage(messages.emptyChannels)}
         className="mcs-table-view-empty mcs-empty-card"
       />
     ) : (

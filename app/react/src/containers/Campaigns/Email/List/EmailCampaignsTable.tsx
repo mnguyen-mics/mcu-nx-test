@@ -4,7 +4,6 @@ import { Icon, Tooltip } from 'antd';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import {
   TableViewFilters,
-  EmptyTableView,
 } from '../../../../components/TableView/index';
 import { McsIcon } from '../../../../components/index';
 import messages from './messages';
@@ -21,6 +20,7 @@ import { EMAIL_SEARCH_SETTINGS } from './constants';
 import { McsDateRangeValue } from '../../../../components/McsDateRangePicker';
 import { compose } from 'recompose';
 import { CampaignStatus } from '../../../../models/campaign/constants';
+import { EmptyTableView } from '@mediarithmics-private/mcs-components-library';
 
 interface EmailCampaignsTableProps {
   dataSource: EmailCampaignResourceWithStats[];
@@ -245,7 +245,7 @@ class EmailCampaignsTable extends React.Component<Props> {
         />
       </div>
     ) : (
-      <EmptyTableView iconType="email" text="EMPTY_EMAILS" />
+      <EmptyTableView iconType="email" message={formatMessage(messages.noCampaign)} />
     );
   }
 }

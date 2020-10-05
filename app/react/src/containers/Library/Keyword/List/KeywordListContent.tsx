@@ -3,7 +3,7 @@ import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import { Modal } from 'antd';
-import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
+import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { McsIconType } from '../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../components/ItemList';
 import { IKeywordListService } from '../../../../services/Library/KeywordListsService';
@@ -145,10 +145,10 @@ class KeywordListContent extends React.Component<
 
     const emptyTable: {
       iconType: McsIconType;
-      intlMessage: FormattedMessage.Props;
+      message: string
     } = {
       iconType: 'library',
-      intlMessage: messages.empty,
+      message: this.props.intl.formatMessage(messages.empty)
     };
 
     return (
