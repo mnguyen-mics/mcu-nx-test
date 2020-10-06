@@ -5,7 +5,6 @@ import { compose } from 'recompose';
 import { message } from 'antd';
 import { Loading } from '../../../../../components/index';
 import EditUserForm from './EditUserForm';
-import { INITIAL_USER_FORM_DATA } from './domain';
 import UserResource from '../../../../../models/directory/UserResource';
 import { notifyError } from '../../../../../redux/Notifications/actions';
 import { lazyInject } from '../../../../../config/inversify.config';
@@ -14,34 +13,39 @@ import { IUsersService } from '../../../../../services/UsersService';
 
 const messages = defineMessages({
   newUser: {
-    id: 'new.user',
+    id: 'settings.organisation.users.edit.newUser',
     defaultMessage: 'New User',
   },
   users: {
-    id: 'edit.user.users',
+    id: 'settings.organisation.users.edit.users',
     defaultMessage: 'Users',
   },
   user: {
-    id: 'edit.user.user',
+    id: 'settings.organisation.users.edit.user',
     defaultMessage: 'User',
   },
   editUser: {
-    id: 'edit.user',
+    id: 'settings.organisation.users.edit.edit',
     defaultMessage: 'Edit {name}',
   },
   savingInProgress: {
-    id: 'form.user.saving.in.progress',
+    id: 'settings.organisation.users.edit.savingInProgress',
     defaultMessage: 'Saving in progress',
   },
   updateSuccess: {
-    id: 'edit.user.success.message',
+    id: 'settings.organisation.users.edit.UserSuccessfullySaved',
     defaultMessage: 'User successfully saved ',
   },
   updateError: {
-    id: 'edit.user.error.message',
+    id: 'settings.organisation.users.edit.userUpdateFailed',
     defaultMessage: 'User update failed ',
   },
 });
+
+const INITIAL_USER_FORM_DATA: Partial<UserResource> = {
+  first_name: '',
+  email: ''
+}
 
 interface State {
   loading: boolean;
@@ -134,7 +138,7 @@ class EditUserPage extends React.Component<Props, State> {
 
     createOrUpdateUserPromise
       .then(() => {
-        redirectAndNotify();
+        redirectAndNotify(true);
       })
       .catch(err => {
         redirectAndNotify();

@@ -226,6 +226,8 @@ import {
   IUsersAnalyticsService,
   UsersAnalyticsService,
 } from '../services/UsersAnalyticsService';
+import { IUserRolesService, UserRolesService } from '../services/UserRolesService';
+
 
 const container = new Container();
 
@@ -441,6 +443,8 @@ container
 container
   .bind<IUsersAnalyticsService>(TYPES.IUsersAnalyticsService)
   .to(UsersAnalyticsService);
+container.bind<IUserRolesService>(TYPES.IUserRolesService).to(UserRolesService);
+
 
 export const { lazyInject } = getDecorators(container, false);
 

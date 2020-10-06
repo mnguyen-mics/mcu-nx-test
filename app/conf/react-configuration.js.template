@@ -36,6 +36,7 @@
     'datastudio-imports',
     'organisationSettings-labels',
     'organisationSettings-users',
+    'organisationSettings-user_roles',
     'organisationSettings-settings',
     'datamartSettings-visit_analyzers',
     'datamartSettings-channels',
@@ -59,6 +60,7 @@
     'creatives-display',
     'organisationSettings-labels',
     'organisationSettings-users',
+    'organisationSettings-user_roles',
     'organisationSettings-settings',
     'accountSettings-profile',
   ]

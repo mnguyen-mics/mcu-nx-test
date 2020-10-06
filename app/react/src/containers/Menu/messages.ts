@@ -220,6 +220,10 @@ export default defineMessages({
     id: 'menu.organisation.users',
     defaultMessage: 'Users',
   },
+  userRolesSettingsTitle: {
+    id: 'menu.organisation.userRoles',
+    defaultMessage: 'User Roles',
+  },
   labelsSettingsTitle: {
     id: 'menu.organisation.labels',
     defaultMessage: 'Labels',
