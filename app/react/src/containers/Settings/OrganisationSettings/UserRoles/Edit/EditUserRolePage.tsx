@@ -15,31 +15,31 @@ import { message } from 'antd';
 
 const messages = defineMessages({
   newUserRole: {
-    id: 'new.user.role',
+    id: 'settings.organisation.usersRoles.edit.newUserRole',
     defaultMessage: 'New User Role',
   },
   userRoles: {
-    id: 'edit.user.role.roles',
+    id: 'settings.organisation.usersRoles.edit.userRoles',
     defaultMessage: 'User Roles',
   },
   userRole: {
-    id: 'edit.user.role.user',
+    id: 'settings.organisation.usersRoles.edit.userRole',
     defaultMessage: 'User Role',
   },
   editUserRole: {
-    id: 'edit.user.role',
+    id: 'settings.organisation.usersRoles.edit.editRole',
     defaultMessage: 'Edit role',
   },
   savingInProgress: {
-    id: 'form.user.saving.in.progress',
+    id: 'settings.organisation.usersRoles.edit.savingInProgress',
     defaultMessage: 'Saving in progress',
   },
   updateSuccess: {
-    id: 'edit.user.success.message',
+    id: 'settings.organisation.usersRoles.edit.userRoleSuccessfullySaved',
     defaultMessage: 'User role successfully saved ',
   },
   updateError: {
-    id: 'edit.user.error.message',
+    id: 'settings.organisation.usersRoles.edit.userRoleUpdateFailed',
     defaultMessage: 'User role update failed ',
   },
 });
@@ -133,6 +133,10 @@ class EditUserPage extends React.Component<Props, State> {
           notifyError("UserRole not found");
           this.setState({loading: false});
         }
+      })
+      .catch(err => {
+        this.redirectAndNotify(false);
+        notifyError(err);
       })
     }
   }
