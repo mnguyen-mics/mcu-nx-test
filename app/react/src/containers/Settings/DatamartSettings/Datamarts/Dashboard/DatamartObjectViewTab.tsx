@@ -119,7 +119,6 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
       this.fetchSchemas(datamartId, true);
     }
   }
-
   fetchSchemas = (datamartId: string, shouldSelectLive = true) => {
     this.setState({ loadingList: true });
     return this._runtimeSchemaService
@@ -198,7 +197,7 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
   saveSchema = () => {
     const { selectedSchema, changedSchemaValue } = this.state;
     if (selectedSchema && changedSchemaValue) {
-      this.setState({ loadingSingle: true });
+      this.setState({ loadingSingle: true , schemaValidation: undefined});
       return this._runtimeSchemaService
         .updateRuntimeSchema(
           selectedSchema.datamart_id,
@@ -385,6 +384,7 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
     }
 
     if (
+      !changedSchemaValue &&
       selectedSchema &&
       selectedSchema.status === 'DRAFT' &&
       isInValidationMode &&
@@ -457,7 +457,7 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
               <Loading />
             ) : (
               <div>
-                {isInValidationMode && (
+                {isInValidationMode && selectedSchema?.id===schemaValidation?.schema_id && (
                   <Alert
                     style={{ marginBottom: 10 }}
                     message={
