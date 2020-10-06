@@ -110,7 +110,7 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
-      formValues
+      formValues,
     } = this.props;
 
     const { objectTypes } = this.state;

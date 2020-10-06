@@ -184,7 +184,9 @@ class AudienceBuilderPage extends React.Component<Props, State> {
 
   runQuery = (formData: AudienceBuilderFormData) => {
     const { selectedDatamartId } = this.props;
-
+    this.setState({
+      isQueryRunning: true,
+    });
     this._queryService
       .runJSONOTQLQuery(selectedDatamartId, buildQueryDocument(formData))
       .then(queryResult => {

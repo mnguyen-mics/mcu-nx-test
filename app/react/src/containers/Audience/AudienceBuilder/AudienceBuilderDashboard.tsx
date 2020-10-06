@@ -68,8 +68,7 @@ class AudienceBuilderDashboard extends React.Component<Props, State> {
   };
 
   render() {
-    const { intl, totalAudience, isQueryRunning, queryDocument } = this.props;
-    
+    const { intl, totalAudience, queryDocument, isQueryRunning } = this.props;
     const { isLoading, dashboards } = this.state;
     return (
       <div className="mcs-audienceBuilder_liveDashboard">
