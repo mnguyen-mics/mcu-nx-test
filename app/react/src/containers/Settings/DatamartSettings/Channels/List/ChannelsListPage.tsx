@@ -43,7 +43,6 @@ import {
   DatamartUsersAnalyticsDimension,
 } from '../../../../../utils/DatamartUsersAnalyticsReportHelper';
 import { DimensionFilterClause } from '../../../../../models/ReportRequestBody';
-import { isUsersAnalyticsSupportedByDatafarm } from '../../../../Audience/DatamartUsersAnalytics/components/helpers/utils';
 import { IDatamartService } from '../../../../../services/DatamartService';
 
 const { Content } = Layout;
@@ -252,7 +251,6 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
         .getDatamarts(organisationId, { allow_administrator: true })
         .then(datamartsResponse => {
           const datamartIds = datamartsResponse.data
-            .filter(_ => isUsersAnalyticsSupportedByDatafarm(_.datafarm))
             .map(_ => _.id);
 
           const metrics: DatamartUsersAnalyticsMetric[] = ['sessions', 'users'];
