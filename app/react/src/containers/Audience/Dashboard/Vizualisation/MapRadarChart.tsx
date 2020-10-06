@@ -23,10 +23,11 @@ import RadarSpiderPlot from '../../../../components/Charts/CategoryBased/RadarSp
 import { TooltipChart, DataLabel } from '../../../../models/dashboards/dashboards';
 import { SerieSortType } from '../../../../components/Charts/CategoryBased/StackedBarPlot';
 import { EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
+import { QueryDocument } from '../../../../models/datamart/graphdb/QueryDocument';
 
 export interface MapBarChartProps {
   title?: string;
-  segment?: AudienceSegmentShape;
+  source?: AudienceSegmentShape | QueryDocument;
   queryId: string;
   datamartId: string;
   height?: number;
@@ -82,24 +83,24 @@ class MapBarChart extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { segment, queryId, datamartId, shouldCompare } = this.props;
-    this.fetchData(queryId, datamartId, shouldCompare, segment);
+    const { source, queryId, datamartId, shouldCompare } = this.props;
+    this.fetchData(queryId, datamartId, shouldCompare, source);
   }
 
   componentDidUpdate(previousProps: MapBarChartProps) {
-    const { segment, queryId, datamartId, shouldCompare } = this.props;
+    const { source, queryId, datamartId, shouldCompare } = this.props;
     const {
-      segment: previousSegment,
+      source: previousSource,
       queryId: previousChartQueryId,
       datamartId: previousDatamartId
     } = previousProps;
 
     if (
-      segment !== previousSegment ||
+      source !== previousSource ||
       queryId !== previousChartQueryId ||
       datamartId !== previousDatamartId
     ) {
-      this.fetchData(queryId, datamartId, shouldCompare, segment);
+      this.fetchData(queryId, datamartId, shouldCompare, source);
     }
   }
 
@@ -134,7 +135,7 @@ class MapBarChart extends React.Component<Props, State> {
     chartQueryId: string,
     datamartId: string,
     shouldCompare?: boolean,
-    segment?: AudienceSegmentShape,
+    source?: AudienceSegmentShape | QueryDocument
   ): Promise<void> => {
 
     this.setState({ error: false, loading: true });
@@ -162,7 +163,7 @@ class MapBarChart extends React.Component<Props, State> {
           return queryResp.data;
         })
         .then(q => {
-          return getFormattedQuery(datamartId, this._queryService, q, segment);
+          return getFormattedQuery(datamartId, this._queryService, q, source);
         }),
       promise
     ])

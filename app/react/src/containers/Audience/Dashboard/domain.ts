@@ -1,6 +1,10 @@
+import { QueryDocument } from './../../../models/datamart/graphdb/QueryDocument';
 import { UserPartitionSegment } from './../../../models/audiencesegment/AudienceSegmentResource';
 import { AudienceSegmentShape } from '../../../models/audiencesegment';
-import { isUserQuerySegment } from '../Segments/Edit/domain';
+import {
+  isUserQuerySegment,
+  isAudienceSegmentShape,
+} from '../Segments/Edit/domain';
 import { QueryResource } from '../../../models/datamart/DatamartResource';
 import { IQueryService } from '../../../services/QueryService';
 
@@ -54,41 +58,63 @@ export const getFormattedQuery = (
   datamartId: string,
   queryService: IQueryService,
   dashboardQuery: QueryResource,
-  segment?: AudienceSegmentShape,
+  source?: AudienceSegmentShape | QueryDocument,
 ): Promise<QueryResource> => {
-  if (!segment) {
+  if (isAudienceSegmentShape(source)) {
+    if (isUserQuerySegment(source) && source.query_id) {
+      return queryService
+        .getQuery(datamartId, source.query_id)
+        .then(q => q.data)
+        .then(q => {
+          switch (q.query_language) {
+            case 'OTQL':
+              return Promise.resolve(
+                formatQuery(
+                  dashboardQuery,
+                  extractOtqlWhereClause(q.query_text),
+                ),
+              );
+            case 'JSON_OTQL':
+              return queryService
+                .convertJsonOtql2Otql(datamartId, q)
+                .then(otqlQ => otqlQ.data)
+                .then(otqlQ => {
+                  return Promise.resolve(
+                    formatQuery(
+                      dashboardQuery,
+                      extractOtqlWhereClause(otqlQ.query_text),
+                    ),
+                  );
+                });
+            default:
+              return dashboardQuery;
+          }
+        });
+    }
+    return Promise.resolve(
+      formatQuery(dashboardQuery, `segments { id = \"${source.id}\"}`),
+    );
+  } else if (
+    isQueryDocument(source) &&
+    source.language_version === 'JSON_OTQL'
+  ) {
+    const queryResource: any = {
+      datamart_id: datamartId,
+      query_language: 'JSON_OTQL',
+      query_text: JSON.stringify(source)
+
+    }; 
+    return queryService
+      .convertJsonOtql2Otql(datamartId, queryResource)
+      .then(otqlQ => otqlQ.data)
+      .then(otqlQ => {
+        return Promise.resolve(
+          formatQuery(dashboardQuery, extractOtqlWhereClause(otqlQ.query_text)),
+        );
+      });
+  } else {
     return Promise.resolve(dashboardQuery);
   }
-  if (isUserQuerySegment(segment) && segment.query_id) {
-    return queryService
-      .getQuery(datamartId, segment.query_id)
-      .then(q => q.data)
-      .then(q => {
-        switch (q.query_language) {
-          case 'OTQL':
-            return Promise.resolve(
-              formatQuery(dashboardQuery, extractOtqlWhereClause(q.query_text)),
-            );
-          case 'JSON_OTQL':
-            return queryService
-              .convertJsonOtql2Otql(datamartId, q)
-              .then(otqlQ => otqlQ.data)
-              .then(otqlQ => {
-                return Promise.resolve(
-                  formatQuery(
-                    dashboardQuery,
-                    extractOtqlWhereClause(otqlQ.query_text),
-                  ),
-                );
-              });
-          default:
-            return dashboardQuery;
-        }
-      });
-  }
-  return Promise.resolve(
-    formatQuery(dashboardQuery, `segments { id = \"${segment.id}\"}`),
-  );
 };
 
 export const formatQuery = (
@@ -114,3 +140,12 @@ export const extractOtqlWhereClause = (text: string) => {
 export const hasWhereClause = (text: string) => {
   return text.toLowerCase().indexOf('where') > -1;
 };
+
+function isQueryDocument(
+  source?: AudienceSegmentShape | QueryDocument,
+): source is QueryDocument {
+  return (
+    source !== undefined &&
+    (source as QueryDocument).language_version !== undefined
+  );
+}

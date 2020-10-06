@@ -15,13 +15,11 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
-import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { getFormattedQuery } from '../domain';
 import { EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
 
 export interface CountBarChartProps {
   title?: string;
-  segment?: AudienceSegmentShape;
   queryIds: string[];
   datamartId: string;
   height: number;
@@ -70,25 +68,23 @@ class CountBarChart extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { segment, queryIds, datamartId } = this.props;
+    const { queryIds, datamartId } = this.props;
 
-    this.fetchData(queryIds, datamartId, segment);
+    this.fetchData(queryIds, datamartId);
   }
 
   componentDidUpdate(previousProps: CountBarChartProps) {
-    const { segment, queryIds, datamartId } = this.props;
+    const { queryIds, datamartId } = this.props;
     const {
-      segment: previousSegment,
       queryIds: previousChartQueryIds,
       datamartId: previousDatamartId
     } = previousProps;
 
     if (
-      segment !== previousSegment ||
       queryIds !== previousChartQueryIds ||
       datamartId !== previousDatamartId
     ) {
-      this.fetchData(queryIds, datamartId, segment);
+      this.fetchData(queryIds, datamartId);
     }
   }
 
@@ -116,7 +112,6 @@ class CountBarChart extends React.Component<Props, State> {
   fetchData = (
     chartQueryIds: string[],
     datamartId: string,
-    segment?: AudienceSegmentShape,
   ): Promise<void> => {
     const promises = chartQueryIds.map((chartQueryId, i) => {
       return this.fetchQuery(chartQueryId, datamartId, i);
@@ -143,7 +138,6 @@ class CountBarChart extends React.Component<Props, State> {
     chartQueryId: string,
     datamartId: string,
     plotLabelIndex: number,
-    segment?: AudienceSegmentShape,
   ): Promise<QueryResult[]> => {
     return this._queryService
       .getQuery(datamartId, chartQueryId)
@@ -151,7 +145,7 @@ class CountBarChart extends React.Component<Props, State> {
         return queryResp.data;
       })
       .then(q => {
-        return getFormattedQuery(datamartId, this._queryService, q, segment);
+        return getFormattedQuery(datamartId, this._queryService, q);
       })
       .then(q => {
         return this._queryService

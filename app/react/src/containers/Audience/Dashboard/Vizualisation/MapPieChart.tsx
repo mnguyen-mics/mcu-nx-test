@@ -1,5 +1,6 @@
 import * as React from 'react';
 import cuid from 'cuid';
+import _ from 'lodash';
 import {
   OTQLAggregationResult,
   isAggregateResult,
@@ -19,10 +20,11 @@ import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { getFormattedQuery } from '../domain';
 import { PiePlot, EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
 import { DatasetProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/category-based-charts/pie-plot/PiePlot';
+import { QueryDocument } from '../../../../models/datamart/graphdb/QueryDocument';
 
 export interface MapPieChartProps {
   title?: string;
-  segment?: AudienceSegmentShape;
+  source?: AudienceSegmentShape | QueryDocument;
   queryId: string;
   datamartId: string;
   showLegend?: boolean;
@@ -64,24 +66,24 @@ class MapPieChart extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { segment, queryId, datamartId } = this.props;
-    this.fetchData(queryId, datamartId, segment);
+    const { source, queryId, datamartId } = this.props;
+    this.fetchData(queryId, datamartId, source);
   }
 
   componentDidUpdate(previousProps: MapPieChartProps) {
-    const { segment, queryId, datamartId } = this.props;
+    const { source, queryId, datamartId } = this.props;
     const {
-      segment: previousSegment,
+      source: previousSource,
       queryId: previousChartQueryId,
       datamartId: previousDatamartId,
     } = previousProps;
 
     if (
-      segment !== previousSegment ||
+      !_.isEqual(previousSource, source) || 
       queryId !== previousChartQueryId ||
       datamartId !== previousDatamartId
     ) {
-      this.fetchData(queryId, datamartId, segment);
+      this.fetchData(queryId, datamartId, source);
     }
   }
 
@@ -110,7 +112,7 @@ class MapPieChart extends React.Component<Props, State> {
   fetchData = (
     chartQueryId: string,
     datamartId: string,
-    segment?: AudienceSegmentShape,
+    source?: AudienceSegmentShape | QueryDocument,
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
 
@@ -121,7 +123,7 @@ class MapPieChart extends React.Component<Props, State> {
         return queryResp.data;
       })
       .then(q => {
-        return getFormattedQuery(datamartId, this._queryService, q, segment);
+        return getFormattedQuery(datamartId, this._queryService, q, source);
       })
       .then(q => {
         const query = q.query_text;

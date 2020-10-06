@@ -13,7 +13,7 @@ import {
   InjectedFormProps,
   getFormValues,
 } from 'redux-form';
-import { FORM_ID } from './constants';
+import { FORM_ID, buildQueryDocument } from './constants';
 import { Omit } from '../../../utils/Types';
 import {
   AudienceBuilderFormData,
@@ -110,6 +110,7 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
+      formValues
     } = this.props;
 
     const { objectTypes } = this.state;
@@ -141,6 +142,7 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
                 datamartId={audienceBuilder.datamart_id}
                 totalAudience={queryResult && queryResult.rows[0].count}
                 isQueryRunning={isQueryRunning}
+                queryDocument={buildQueryDocument(formValues)}
               />
             </Col>
           </Row>

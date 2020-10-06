@@ -1,4 +1,5 @@
 import * as React from 'react';
+import _ from 'lodash';
 import { isAggregateResult, OTQLBucket } from '../../../../models/datamart/graphdb/OTQLResult';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
@@ -10,12 +11,13 @@ import messages from './messages';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import { EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
+import { QueryDocument } from '../../../../models/datamart/graphdb/QueryDocument';
 
 export interface TopInfoProps {
   queryId: string;
   datamartId: string;
   title: string;
-  segment?: AudienceSegmentShape;
+  source?: AudienceSegmentShape | QueryDocument;
 }
 
 interface State {
@@ -39,31 +41,31 @@ class TopInfo extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { segment, datamartId, queryId } = this.props;
-    this.fetchData(queryId, datamartId, segment);
+    const { source, datamartId, queryId } = this.props;
+    this.fetchData(queryId, datamartId, source);
   }
 
   componentDidUpdate(previousProps: Props) {
-    const { segment, queryId, datamartId } = this.props;
+    const { source, queryId, datamartId } = this.props;
     const {
-      segment: previousSegment,
+      source: previousSource,
       queryId: previousChartQueryId,
       datamartId: previousDatamartId
     } = previousProps;
 
     if (
-      segment !== previousSegment ||
+      !_.isEqual(previousSource, source) ||
       queryId !== previousChartQueryId ||
       datamartId !== previousDatamartId
     ) {
-      this.fetchData(queryId, datamartId, segment);
+      this.fetchData(queryId, datamartId, source);
     }
   }
 
   fetchData = (
     chartQueryId: string,
     datamartId: string,
-    segment?: AudienceSegmentShape,
+    source?: AudienceSegmentShape | QueryDocument,
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
     return this._queryService
@@ -73,7 +75,7 @@ class TopInfo extends React.Component<Props, State> {
         return queryResp.data;
       })
       .then(q => {
-        return getFormattedQuery(datamartId, this._queryService, q, segment);
+        return getFormattedQuery(datamartId, this._queryService, q, source);
       })
       .then(q => {
         const query = q.query_text;

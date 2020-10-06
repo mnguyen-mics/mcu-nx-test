@@ -1,4 +1,9 @@
-import { AudienceBuilderFormData } from './../../../models/audienceBuilder/AudienceBuilderResource';
+import {
+  AudienceBuilderFormData,
+  AudienceBuilderGroupNode,
+  AudienceBuilderParametricPredicateNode,
+  QueryDocument,
+} from './../../../models/audienceBuilder/AudienceBuilderResource';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
 export const messages: {
@@ -109,4 +114,65 @@ export const INITIAL_AUDIENCE_BUILDER_FORM_DATA: AudienceBuilderFormData = {
       },
     ],
   },
+};
+
+const formateQuery = (query: QueryDocument) => {
+  return {
+    ...query,
+    where: {
+      ...query.where,
+      expressions: (query.where as AudienceBuilderGroupNode).expressions.map(
+        (exp: AudienceBuilderGroupNode) => {
+          return {
+            ...exp,
+            expressions: exp.expressions.map(
+              (e: AudienceBuilderParametricPredicateNode) => {
+                const parameters: any = {};
+                const formateValue = (v: any) => {
+                  if (Array.isArray(v)) {
+                    return v[0] ? v[0].toString() : '';
+                  } else if (typeof v === 'number') {
+                    return v.toString();
+                  } else return v;
+                };
+                Object.keys(e.parameters).map(k => {
+                  parameters[`${k}`] = formateValue(e.parameters[k]);
+                });
+
+                return {
+                  ...e,
+                  parameters: parameters,
+                };
+              },
+            ),
+          };
+        },
+      ),
+    },
+  };
+};
+
+export const buildQueryDocument = (formData: AudienceBuilderFormData) => {
+  const baseQueryFragment = {
+    language_version: 'JSON_OTQL',
+    operations: [
+      {
+        directives: [
+          {
+            name: 'count',
+          },
+        ],
+        selections: [],
+      },
+    ],
+    from: 'UserPoint',
+    where: {},
+  };
+  const clauseWhere = formData.where;
+  const query: QueryDocument = {
+    ...baseQueryFragment,
+    where: clauseWhere,
+  };
+  // This will be removed when backend will be able to handle List and Long
+  return formateQuery(query) as any;
 };

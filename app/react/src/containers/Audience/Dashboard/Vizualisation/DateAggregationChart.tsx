@@ -20,10 +20,11 @@ import StackedBarPlot from '../../../../components/Charts/CategoryBased/StackedB
 import CardFlex from '../Components/CardFlex';
 import { getFormattedQuery } from '../domain';
 import { EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
+import { QueryDocument } from '../../../../models/datamart/graphdb/QueryDocument';
 
 export interface DateAggregationChartProps {
   title?: string;
-  segment?: AudienceSegmentShape;
+  source?: AudienceSegmentShape | QueryDocument;
   queryIds: string[];
   datamartId: string;
   plotLabels: string[];
@@ -73,24 +74,24 @@ class DateAggregationChart extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { segment, queryIds, datamartId } = this.props;
-    this.fetchData(queryIds, datamartId, segment);
+    const { source, queryIds, datamartId } = this.props;
+    this.fetchData(queryIds, datamartId, source);
   }
 
   componentDidUpdate(previousProps: DateAggregationChartProps) {
-    const { segment, queryIds, datamartId } = this.props;
+    const { source, queryIds, datamartId } = this.props;
     const {
-      segment: previousSegment,
+      source: previousSource,
       queryIds: previousChartQueryIds,
       datamartId: previousDatamartId,
     } = previousProps;
 
     if (
-      segment !== previousSegment ||
+      source !== previousSource ||
       queryIds !== previousChartQueryIds ||
       datamartId !== previousDatamartId
     ) {
-      this.fetchData(queryIds, datamartId, segment);
+      this.fetchData(queryIds, datamartId, source);
     }
   }
 
@@ -128,11 +129,11 @@ class DateAggregationChart extends React.Component<Props, State> {
   fetchData = (
     chartQueryIds: string[],
     datamartId: string,
-    segment?: AudienceSegmentShape,
+    source?: AudienceSegmentShape | QueryDocument,
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
     return Promise.all(chartQueryIds.map((c, i) => {
-      return this.fetchQuery(c, datamartId, i, segment)
+      return this.fetchQuery(c, datamartId, i, source)
     }))
     .then(q => {
       this.setState({
@@ -149,7 +150,7 @@ class DateAggregationChart extends React.Component<Props, State> {
     chartQueryId: string,
     datamartId: string,
     plotLabelIndex: number,
-    segment?: AudienceSegmentShape,
+    source?: AudienceSegmentShape | QueryDocument,
   ): Promise<QueryResult[]> => {
     return this._queryService
           .getQuery(datamartId, chartQueryId)
@@ -157,7 +158,7 @@ class DateAggregationChart extends React.Component<Props, State> {
             return queryResp.data;
           })
           .then(q => {
-            return getFormattedQuery(datamartId, this._queryService, q, segment);
+            return getFormattedQuery(datamartId, this._queryService, q, source);
           })
           .then(q => {
             return this._queryService

@@ -4,12 +4,13 @@ import { Layout, Layouts } from 'react-grid-layout';
 import { ContentHeader } from '@mediarithmics-private/mcs-components-library';
 import { ComponentLayout } from '../../../models/dashboards/dashboards';
 import { AudienceSegmentShape } from '../../../models/audiencesegment';
+import { QueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
 
 interface DashboardWrapperProps {
   key?: any;
   layout: ComponentLayout[];
   title?: string;
-  segment?: AudienceSegmentShape;
+  source?: AudienceSegmentShape | QueryDocument;
   datamartId: string;
 }
 
@@ -31,15 +32,15 @@ class DashboardWrapper extends React.Component<Props, State> {
   }
 
   render() {
-    const { segment, layout, title, datamartId } = this.props;
+    const { source, layout, title, datamartId } = this.props;
 
     return (
       <div>
-        <ContentHeader title={title} size={segment ? 'medium' : `large`} />
+        <ContentHeader title={title} size={source ? 'medium' : `large`} />
         <DashboardContent
           layout={layout}
           onLayoutChange={this.onLayoutChange}
-          segment={segment}
+          source={source}
           datamartId={datamartId}
         />
       </div>

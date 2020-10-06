@@ -26,7 +26,7 @@ export const messages = defineMessages({
   noAudienceBuilder: {
     id: 'datamart.audienceBuilder.alert.noAudienceBuilder',
     defaultMessage:
-      'No Audience Builder found for selected datamart. Please create one to proceed.',
+      'No Audience Builder found for selected datamart. Please create one to proceed or contact the support team.',
   },
 });
 
