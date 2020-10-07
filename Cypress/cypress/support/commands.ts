@@ -82,7 +82,7 @@ Cypress.Commands.add('createSegmentFromUI', type => {
   )
 
   // click on advanced
-  cy.get('[class="button-styleless optional-section-title"]').click()
+  cy.get('[class="mcs-button optional-section-title"]').click()
 
   // Fill the technical name
   cy.get('[id="audienceSegment.technical_name"]').type(faker.lorem.word())
