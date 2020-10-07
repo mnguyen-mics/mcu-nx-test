@@ -31,7 +31,7 @@ it('Should test the UserPixel Forms', () => {
 		// Fill the descritpion
 		cy.get('[id="audienceSegment.short_description"]').type(segmentDescription)
 		// click on advanced
-		cy.get('[class="button-styleless optional-section-title"]').click()
+		cy.get('[class="mcs-button optional-section-title"]').click()
 		// Fill the technical name
 		cy.get('[id="audienceSegment.technical_name"]').type(segmentTechName)
 		// Fill the default life time
@@ -83,7 +83,7 @@ it('Should test the UserPixel Forms', () => {
 				// Fill the descritpion
 				cy.get('[id="audienceSegment.short_description"]').type(' -edited')
 				// click on advanced
-				cy.get('[class="button-styleless optional-section-title"]').click()
+				cy.get('[class="mcs-button optional-section-title"]').click()
 				// Fill the technical name
 				cy.get('[id="audienceSegment.technical_name"]').type(' -edited')
 				// Fill the default life time
@@ -92,7 +92,7 @@ it('Should test the UserPixel Forms', () => {
 				cy.get('[class ="ant-select ant-select-enabled"]').click()
 				cy.contains('Days').click()
 				// click on advanced
-				cy.get('[class="button-styleless optional-section-title"]').click()
+				cy.get('[class="mcs-button optional-section-title"]').click()
 				// Save the new segment
                 cy.contains('Save').click({ force: true })
                 // Wait before checking the changes

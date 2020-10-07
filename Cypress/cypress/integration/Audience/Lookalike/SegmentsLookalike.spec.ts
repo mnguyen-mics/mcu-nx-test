@@ -42,7 +42,7 @@ it('should create a user lookalike segment from user list segment and edit it', 
         cy.get('[id="audienceSegment.short_description"]').type(
           segmentDescription
         )
-        cy.get('[class="button-styleless optional-section-title"]').click()
+        cy.get('[class="mcs-button optional-section-title"]').click()
         cy.get('[id="defaultLifetime"]').clear().type('1')
         cy.contains('Save').click()
         cy.url().should('match', /.*segments\/[0-9]+/)
