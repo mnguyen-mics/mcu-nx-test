@@ -43,10 +43,10 @@ Cypress.Commands.add(
 )
 
 Cypress.Commands.add('switchOrg', organisationName => {
-  cy.get('.button-styleless')
+  cy.get('.mcs-button')
     .first()
     .trigger('mouseover')
-  cy.get('.button-styleless')
+  cy.get('.mcs-button')
     .contains('Switch Org.')
     .click()
   cy.get('[placeholder="Search Organisation"]').type(organisationName)
@@ -55,7 +55,7 @@ Cypress.Commands.add('switchOrg', organisationName => {
   cy.get('.mcs-org-card')
     .should('have.length', 1)
     .click()
-  cy.get('.button-styleless')
+  cy.get('.mcs-button')
     .first()
     .trigger('mouseout')
 })
