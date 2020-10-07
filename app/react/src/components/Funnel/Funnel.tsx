@@ -170,7 +170,7 @@ class Funnel extends React.Component<Props, State> {
             <h1 className="mcs-funnel_header_title">{title}</h1>
             <button className="mcs-funnel_header_datePicker">
               over the last 14 days
-                </button>
+            </button>
           </div>
           <div className="mcs-funnel_steps" >
 
