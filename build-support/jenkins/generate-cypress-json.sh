@@ -41,7 +41,7 @@ cat << EOF
   "baseUrl": "${NAVIGATOR_URL}",
   
   "testFiles": ["**/*.spec.js", "**/*.spec.ts"],
-  "ignoreTestFiles": ["Monitoring.spec.ts", "CreateJobExecution.spec.js", "EditAllReplicationFields.spec.js"],
+  "ignoreTestFiles": ["Monitoring.spec.ts", "CreateJobExecution.spec.js", "EditAllReplicationFields.spec.js","Sites.spec.ts","DisplayLiveEventWithoutUserPoint.spec.ts","OnSegmentExit.spec.ts","DisplayCampaignResourceHistory.spec.ts","MobileApplication.spec.ts"],
 
 
   "env": {
