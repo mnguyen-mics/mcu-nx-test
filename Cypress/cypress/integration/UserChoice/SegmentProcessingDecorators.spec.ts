@@ -43,7 +43,7 @@ it('should create User Query segments with processing selections and edit it', (
       faker.random.words(3)
     )
     // click on advanced
-    cy.get('[class="button-styleless optional-section-title"]').click()
+    cy.get('[class="mcs-button optional-section-title"]').click()
     // Fill the technical name
     cy.get('[id="audienceSegment.technical_name"]').type(faker.lorem.word())
     // Fill the default life time
@@ -103,7 +103,7 @@ it('should create User List segment with processing selection and edit it', () =
       faker.random.words(3)
     )
     // click on advanced
-    cy.get('[class="button-styleless optional-section-title"]').click()
+    cy.get('[class="mcs-button optional-section-title"]').click()
     // Fill the technical name
     cy.get('[id="audienceSegment.technical_name"]').type(faker.lorem.word())
     // Fill the default life time
@@ -161,7 +161,7 @@ it('should create User Pixel segment with processing selection and edit it', () 
       faker.random.words(3)
     )
     // click on advanced
-    cy.get('[class="button-styleless optional-section-title"]').click()
+    cy.get('[class="mcs-button optional-section-title"]').click()
     // Fill the technical name
     cy.get('[id="audienceSegment.technical_name"]').type(faker.lorem.word())
     // Fill the default life time
@@ -220,7 +220,7 @@ it('should create User Expert Query segment with processing selection and edit i
       faker.random.words(3)
     )
     // click on advanced
-    cy.get('[class="button-styleless optional-section-title"]').click()
+    cy.get('[class="mcs-button optional-section-title"]').click()
     // Fill the technical name
     cy.get('[id="audienceSegment.technical_name"]').type(faker.lorem.word())
     // Fill the default life time
