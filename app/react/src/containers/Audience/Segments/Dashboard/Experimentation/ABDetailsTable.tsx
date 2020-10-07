@@ -189,7 +189,6 @@ class ABDetailsTable extends React.Component<Props, State> {
           getPromise(controlGroupSegment.id, metric),
         ])
           .then(res => {
-            const ratio = 1;
             const experimentationMetric = res[0].data.report_view.rows[0][0];
             const controlGroupMetric = res[1].data.report_view.rows[0][0];
             const getComparison = () => {
@@ -197,8 +196,8 @@ class ABDetailsTable extends React.Component<Props, State> {
                 typeof controlGroupMetric === 'number' &&
                 controlGroupMetric !== 0
                 ? Math.abs(
-                    (controlGroupMetric * ratio - experimentationMetric) /
-                      (controlGroupMetric * ratio),
+                    (controlGroupMetric - experimentationMetric) /
+                      controlGroupMetric,
                   )
                 : '-';
             };
@@ -285,7 +284,7 @@ class ABDetailsTable extends React.Component<Props, State> {
         isHideable: false,
         render: (text: string, record: ABDetailsTableDataSource) => {
           return record.metricName !== 'User Points'
-            ? `${formatMetric(text, '0,0.00%')}`
+            ? `${formatMetric(text, '0.00%')}`
             : text;
         },
       },

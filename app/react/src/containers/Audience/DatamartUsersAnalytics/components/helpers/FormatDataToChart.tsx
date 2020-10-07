@@ -273,20 +273,20 @@ class FormatDataToChart extends React.Component<JoinedProp, {}> {
           statValue = moment.duration(apiMetricValue, "second").format("h[hr] m[min] s[s]");
         }
         else if (chart.unit === '%') {
-          statValue = (apiMetricValue as number * 100).toFixed(2);
+          statValue = numeral(apiMetricValue as number * 100).format('0.00');
         }
         else if (chart.unit === '€') {
           statValue = numeral(apiMetricValue).format('0.00a');
         }
         else {
-          statValue = (apiMetricValue as number).toFixed(2);
+          statValue = numeral(apiMetricValue as number).format('0.00');
         }
         const originalValue = data[0][chart.metricNames[0]];
         const newValue = dataToCompareWith ? dataToCompareWith[0][chart.metricNames[0]] : undefined;
 
         let trend;
         if (dataToCompareWith) {
-          trend = ((((originalValue as number)  - (newValue as number)) / (originalValue as number)) * 100) ;
+          trend = ((((originalValue as number)  - (newValue as number)) / (originalValue as number)) * 100);
           if(isNaN(trend)) {
             trend = undefined;
           }
@@ -306,7 +306,7 @@ class FormatDataToChart extends React.Component<JoinedProp, {}> {
               {trend &&
                 <Statistic
                   className={'mcs-datamartUsersAnalytics_charts_trend'}
-                  value={Math.abs(trend)}
+                  value={numeral(Math.abs(trend)).format('0.00')}
                   precision={2}
                   valueStyle={{ color: Math.sign(trend) > -1 ? colors["mcs-error"] : colors["mcs-success"] }}
                   prefix={<Icon type={Math.sign(trend) > -1 ? 'caret-down' : 'caret-up'} />}
