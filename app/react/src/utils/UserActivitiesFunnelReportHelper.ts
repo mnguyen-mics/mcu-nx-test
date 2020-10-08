@@ -5,13 +5,14 @@ import {
 } from '../models/datamart/UserActivitiesFunnel';
 
 export function buildUserActivitiesFunnelRequestBody(
-  funnelFilter: FunnelFilter,
-  funnelTimeRange: FunnelTimeRange,
+  funnelFilter: FunnelFilter[],
+  funnelTimeRange: FunnelTimeRange
 ): FunnelRequestBody {
 
   const body: FunnelRequestBody = {
-    for: [funnelFilter],
-    in: funnelTimeRange
+    for: funnelFilter,
+    in: funnelTimeRange,
   };
+
   return body;
 }

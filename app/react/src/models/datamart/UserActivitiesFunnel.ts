@@ -6,8 +6,9 @@ export interface FunnelFilter {
 }
 
 export interface FunnelTimeRange {
-  offset: number, 
-  unit: TimeUnit
+  type: TimeUnit, 
+  start_date: string, 
+  end_date: string
 }
 
 export interface FunnelRequestBody {

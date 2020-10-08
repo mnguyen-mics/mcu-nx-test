@@ -9,6 +9,10 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../containers/Notifications/injectNotifications';
 import { compose } from 'recompose';
+import { debounce } from 'lodash';
+import { EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
+import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { messages } from './constants';
 
 interface StepDelta {
   step: number
@@ -25,11 +29,12 @@ interface State {
 
 type FunnelProps = {
   datamartId: string;
-  filter: FunnelFilter;
+  filter: FunnelFilter[];
   title: string;
 }
 
 type Props = FunnelProps &
+  InjectedIntlProps &
   InjectedNotificationProps;
 
 const getPercentage = (nbr: number, total: number): number => {
@@ -43,6 +48,7 @@ const valueFromPercentage = (percentage: number, drawerAreaHeight: number): numb
 class Funnel extends React.Component<Props, State> {
   @lazyInject(TYPES.IUserActivitiesFunnelService)
   private _userActivitiesFunnelService: IUserActivitiesFunnelService;
+  private _debounce = debounce;
 
   constructor(props: Props) {
     super(props);
@@ -54,26 +60,40 @@ class Funnel extends React.Component<Props, State> {
       },
       stepDelta: [],
       timeRange: {
-        offset: 183600,
-        unit: 'DAY'
-      }
+        type: 'DAY',
+        start_date: '2020-10-04T04:00:00Z',
+        end_date: '2020-10-07T05:00:00Z'
+      },
     }
+
+    this.fetchData = this._debounce(this.fetchData.bind(this), 800);
   }
 
   componentDidMount() {
     const { datamartId, filter } = this.props;
     const { timeRange } = this.state;
-    this.fetchData(datamartId, filter, timeRange);
+    if (filter.length > 0) this.fetchData(datamartId, filter, timeRange);
 
     window.addEventListener('resize', this.drawSteps.bind(this));
   }
 
+
+  componentDidUpdate(prevProps: Props) {
+    const {
+      filter,
+      datamartId
+    } = this.props;
+    const { timeRange } = this.state;
+    if (prevProps.filter !== filter) {
+      this.fetchData(datamartId, filter, timeRange);
+    }
+  }
   // listener cleanup
   componentWillUnmount() {
     window.removeEventListener('resize', this.drawSteps.bind(this))
   }
 
-  fetchData = (datamartId: string, filter: FunnelFilter, timeRange: FunnelTimeRange) => {
+  fetchData = (datamartId: string, filter: FunnelFilter[], timeRange: FunnelTimeRange) => {
     this.setState({
       isLoading: true
     });
@@ -160,12 +180,13 @@ class Funnel extends React.Component<Props, State> {
   }
 
   render() {
-    const { funnelData, stepDelta } = this.state;
-    const { title } = this.props;
+    const { funnelData, stepDelta, isLoading } = this.state;
+    const { title, intl } = this.props;
 
+    if (isLoading) return (<LoadingChart />);
     return (
       <Card>
-        <div className="mcs-funnel" id="container" >
+        {funnelData.steps.length === 0 ? (<EmptyChart title={intl.formatMessage(messages.noData)} icon='warning' />) : (<div className="mcs-funnel" id="container" >
           <div className="mcs-funnel_header">
             <h1 className="mcs-funnel_header_title">{title}</h1>
             <button className="mcs-funnel_header_datePicker">
@@ -173,7 +194,6 @@ class Funnel extends React.Component<Props, State> {
             </button>
           </div>
           <div className="mcs-funnel_steps" >
-
             {funnelData.steps.map((step, index) => {
               return (<div key={index.toString()} style={{ flex: 1 }} >
                 <div className={"mcs-funnel_stepName"}>
@@ -202,13 +222,14 @@ class Funnel extends React.Component<Props, State> {
               </div>
               )
             })}
-
           </div>
-        </div>
+        </div>)}
       </Card >)
   }
+
 }
 
-export default compose<FunnelProps, FunnelProps>(
+export default compose<Props, FunnelProps>(
   injectNotifications,
+  injectIntl
 )(Funnel);
