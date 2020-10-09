@@ -1,5 +1,5 @@
 import * as React from 'react';
-import StandardModal from '../../../../components/BlurredModal/StandardModal';
+import { StandardModal } from '@mediarithmics-private/mcs-components-library';
 import PluginCardModalContent, { PluginCardModalContentProps } from './PluginCardModalContent';
 import { LayoutablePlugin } from '../../../../models/Plugins';
 

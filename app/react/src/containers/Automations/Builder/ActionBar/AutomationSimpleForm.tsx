@@ -13,7 +13,7 @@ import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { ValidatorProps } from '../../../../components/Form/withValidators';
 import { NormalizerProps } from '../../../../components/Form/withNormalizer';
 import { AutomationResource } from '../../../../models/automations/automations';
-import BlurredModal from '../../../../components/BlurredModal/BlurredModal';
+import { BlurredModal } from '@mediarithmics-private/mcs-components-library';
 import { McsIcon } from '../../../../components';
 import { ButtonProps } from 'antd/lib/button';
 
@@ -46,13 +46,13 @@ class AutomationSimpleForm extends React.Component<
       handleSubmit,
       visible,
       onClose,
-      onHandleOk
+      onHandleOk,
     } = this.props;
 
     const submitButtonProps: ButtonProps = {
       htmlType: 'submit',
       type: 'primary',
-      onClick: onHandleOk
+      onClick: onHandleOk,
     };
 
     const modalFooter = (
@@ -63,10 +63,7 @@ class AutomationSimpleForm extends React.Component<
     );
 
     return (
-      <Form
-        className="edit-layout ant-layout"
-        onSubmit={handleSubmit as any}
-      >
+      <Form className="edit-layout ant-layout" onSubmit={handleSubmit as any}>
         <BlurredModal
           onClose={onClose}
           formId={FORM_ID}
