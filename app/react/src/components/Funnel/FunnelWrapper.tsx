@@ -36,11 +36,11 @@ class FunnelWrapper extends React.Component<JoinedProp> {
      } = this.props;
 
      const routeParams = parseSearch(search, FUNNEL_SEARCH_SETTING);
-
+     const funnelFilter = routeParams.filter.length > 0 ? JSON.parse(routeParams.filter) : {};
     return (
       <div>
         <FunnelQueryBuilder datamartId={datamartId} />
-        {routeParams.filter.length > 0 && <Funnel datamartId={datamartId} title={"Funnel demo"} filter={JSON.parse(routeParams.filter)} />}
+        <Funnel datamartId={datamartId} title={"Funnel demo"} filter={funnelFilter} />
       </div>
     )
   }

@@ -1,3 +1,4 @@
+import { Actionbar } from '@mediarithmics-private/mcs-components-library';
 import { Layout } from 'antd';
 import * as React from 'react';
 import { compose } from 'recompose';
@@ -11,14 +12,19 @@ type JoinedProps = WithDatamartSelectorProps;
 class FunnelDemoPage extends React.Component<JoinedProps> {
   render() {
     const { selectedDatamartId } = this.props;
-
-    return (<div className="ant-layout">
+    const breadcrumbPaths = [
+      {
+        key: 'Funnel Builder',
+        name: 'Funnel Builder'
+      }
+    ];
+    return (
       <div className="ant-layout">
+        <Actionbar paths={breadcrumbPaths} />
         <Content className="mcs-content-container">
           <FunnelWrapper datamartId={selectedDatamartId} />
         </Content>
-      </div>
-    </div>)
+      </div>)
   }
 }
 

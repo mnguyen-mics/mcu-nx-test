@@ -1,7 +1,12 @@
 .mcs-funnel {
+  margin-top: 15px;
   border-top: 1px solid @border-color-split;
   border-left: 1px solid @border-color-split;
   box-sizing: content-box;
+}
+
+.mcs-funnelQueryBuilder_steps {
+  margin-top: 15px;
 }
 
 .mcs-funnel_canvas {
@@ -109,12 +114,16 @@
 .mcs-funnel_stepName,
 .mcs-funnel_userPoints {
   padding: 15px;
+  min-height: 77px;
 }
 
-.mcs-funnel_userPoints,
 .mcs-funnel_stepName,
 .mcs-funnel_chart {
+  border-right: 1px solid @border-color-split;
   border-bottom: 1px solid @border-color-split;
+}
+
+.mcs-funnel_userPoints {
   border-right: 1px solid @border-color-split;
 }
 
@@ -249,7 +258,6 @@
     width: auto;
     min-width: 130px;
   }
-
 }
 
 .mcs-funnelQueryBuilder_removeStepBtn {
@@ -262,6 +270,7 @@
   padding: 6px 12px;
 
   &:hover,
+  &:focus,
   &:active {
     color: rgba(55, 55, 55, 0.46);
     background: #fff;
@@ -271,7 +280,8 @@
 
 .mcs-funnelQueryBuilder_addDimensionBtn,
 .mcs-funnelQueryBuilder_addDimensionBtn:hover,
-.mcs-funnelQueryBuilder_addDimensionBtn:active {
+.mcs-funnelQueryBuilder_addDimensionBtn:active,
+.mcs-funnelQueryBuilder_addDimensionBtn:focus {
   background: rgba(225, 225, 225, 0.5);
   border-radius: 7.5px;
   border: none;

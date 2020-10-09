@@ -7,7 +7,7 @@ import { IUsersAnalyticsService } from '../../services/UsersAnalyticsService';
 import { DimensionsList } from '../../models/datamartUsersAnalytics/datamartUsersAnalytics';
 import { compose } from 'recompose';
 import injectNotifications, { InjectedNotificationProps } from '../../containers/Notifications/injectNotifications';
-import { booleanOperator, dimensionFilterOperator, FUNNEL_SEARCH_SETTING } from './constants';
+import { booleanOperator, dimensionFilterOperator, eventTypesDimension, FUNNEL_SEARCH_SETTING } from './constants';
 import { BooleanOperator, DimensionFilterClause, DimensionFilterOperator } from '../../models/ReportRequestBody';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { updateSearch } from '../../utils/LocationSearchHelper';
@@ -15,7 +15,7 @@ import { updateSearch } from '../../utils/LocationSearchHelper';
 export interface Step {
   id?: string;
   name: string;
-  filterClause: DimensionFilterClause;
+  filter_clause: DimensionFilterClause;
 }
 
 interface State {
@@ -44,7 +44,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
       steps: [{
         id: this._cuid(),
         name: "",
-        filterClause: {
+        filter_clause: {
           operator: 'OR',
           filters: []
         }
@@ -89,7 +89,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     newSteps.push({
       id: this._cuid(),
       name: "",
-      filterClause: {
+      filter_clause: {
         operator: 'OR',
         filters: []
       }
@@ -103,8 +103,8 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     const newSteps = steps.slice();
     newSteps.forEach(step => {
       if (step.id === stepId) {
-        step.filterClause.operator = 'OR';
-        step.filterClause.filters.push(
+        step.filter_clause.operator = 'OR';
+        step.filter_clause.filters.push(
           {
             'dimension_name': 'DATE_TIME',
             'not': false,
@@ -125,7 +125,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     const { steps } = this.state;
     steps.forEach(step => {
       if (step.id === stepId) {
-        step.filterClause.filters.forEach((filter, index) => {
+        step.filter_clause.filters.forEach((filter, index) => {
           if (dimensionIndex === index) {
             filter.dimension_name = value
           }
@@ -141,7 +141,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     const { steps } = this.state;
     steps.forEach(step => {
       if (step.id === stepId) {
-        step.filterClause.filters.forEach((filter, index) => {
+        step.filter_clause.filters.forEach((filter, index) => {
           if (dimensionIndex === index) {
             filter.operator = value;
           }
@@ -156,9 +156,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
   handleFilterOperatorChange(stepId: string, value: BooleanOperator) {
     const { steps } = this.state;
     steps.forEach(step => {
-      if (step.id === stepId) {
-        step.filterClause.operator = value;
-      }
+      if (step.id === stepId) step.filter_clause.operator = value;
     });
     this.setState({
       steps
@@ -169,9 +167,25 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     const { steps } = this.state;
     steps.forEach(step => {
       if (step.id === stepId) {
-        step.filterClause.filters.forEach((filter, index) => {
+        step.filter_clause.filters.forEach((filter, index) => {
           if (dimensionIndex === index) {
             filter.expressions = event.target.value.split(',');
+          }
+        });
+      }
+    });
+    this.setState({ steps }, () => {
+      this.updateFilterQueryStringParams();
+    });
+  }
+
+  handleDimensioExpressionForEventTypeChange(dimensionIndex: number, stepId: string, value: string) {
+    const { steps } = this.state;
+    steps.forEach(step => {
+      if (step.id === stepId) {
+        step.filter_clause.filters.forEach((filter, index) => {
+          if (dimensionIndex === index) {
+            filter.expressions = [value];
           }
         });
       }
@@ -204,9 +218,9 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     // deep copy
     const stepsCopy = JSON.parse(JSON.stringify(steps));
     stepsCopy.forEach((step: Step) => step.id = undefined);
-
+    const stepsFormated = stepsCopy.filter( (s: Step) => s.filter_clause.filters.length > 0)
     const queryParms = {
-      filter: [JSON.stringify(stepsCopy)],
+      filter: [JSON.stringify(stepsFormated)],
     };
 
     const nextLocation = {
@@ -223,8 +237,8 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
 
     newSteps.forEach(step => {
       if (step.id === stepId) {
-        const filterStepDimensions = step.filterClause.filters.filter((filter, index) => dimensionIndex !== index)
-        step.filterClause.filters = filterStepDimensions;
+        const filterStepDimensions = step.filter_clause.filters.filter((filter, index) => dimensionIndex !== index)
+        step.filter_clause.filters = filterStepDimensions;
       }
     });
 
@@ -241,7 +255,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
   render() {
     const Option = Select.Option;
     const { steps, dimensionsList } = this.state;
-    return (<Card title="Steps">
+    return (<Card title="Steps" className={"mcs-funnelQueryBuilder_steps"}>
       {steps.map((step, index) => {
         return (
           <div key={step.id}>
@@ -264,14 +278,15 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
                     onClick={this.removeStep.bind(this, step.id)} />
                 </Col>
               </Row>
-              {step.filterClause.filters.map((filter, filterIndex) => {
+              {step.filter_clause.filters.map((filter, filterIndex) => {
                 return (
                   <div key={filterIndex}>
                     {filterIndex > 0 && <Select
                       showArrow={false}
                       defaultValue={"OR"}
                       className={"mcs-funnelQueryBuilder_select mcs-funnelQueryBuilder_select--booleanOperators"}
-                      onChange={this.handleFilterOperatorChange.bind(this, step.id)}>
+                      onChange={this.handleFilterOperatorChange.bind(this, step.id)}
+                      value={step.filter_clause.operator}>
                       {booleanOperator.map(bo => {
                         return (
                           <Option key={this._cuid()} value={bo}>
@@ -285,7 +300,6 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
                         showArrow={false}
                         placeholder="Dimension name"
                         className={"mcs-funnelQueryBuilder_select mcs-funnelQueryBuilder_select--dimensions"}
-                       
                         onChange={this.handleDimensionNameChange.bind(this, filterIndex, step.id)}>
                         {dimensionsList.dimensions.sort().map(d => {
                           return (
@@ -308,12 +322,25 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
                             </Option>)
                         })}
                       </Select>
-                      <Input
+                      {filter.dimension_name !== "EVENT_TYPE" ? <Input
                         size="small"
                         placeholder="Dimension value"
                         className={"mcs-funnelQueryBuilder_dimensionValue"}
                         onChange={this.handleDimensioExpressionChange.bind(this, filterIndex, step.id)}
                         value={filter.expressions.join(",")} />
+                      : <Select
+                        showSearch={true}
+                        showArrow={false}
+                        placeholder="Dimension value"
+                        className={"mcs-funnelQueryBuilder_select mcs-funnelQueryBuilder_select--dimensions"}
+                        onChange={this.handleDimensioExpressionForEventTypeChange.bind(this, filterIndex, step.id)}>
+                        {eventTypesDimension.map(et => {
+                          return (
+                            <Option key={this._cuid()} value={et}>
+                              {et}
+                            </Option>)
+                        })}
+                      </Select>}
                       <Button
                         type="primary"
                         shape="circle"
