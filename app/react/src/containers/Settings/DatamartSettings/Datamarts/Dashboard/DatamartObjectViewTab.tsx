@@ -35,6 +35,7 @@ interface State {
   schemaDecorator?: SchemaDecoratorResource[];
   uploadingDecorator: boolean;
   changedSchemaValue?: string;
+  changedSchemaId?:string;
 }
 
 const messages = defineMessages({
@@ -208,6 +209,7 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
           this.setState({
             selectedSchemaText: changedSchemaValue,
             changedSchemaValue: undefined,
+            changedSchemaId:undefined,
             loadingSingle: false,
           }),
         )
@@ -319,7 +321,7 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
   };
 
   onSchemaChange = (value: string) => {
-    this.setState({ changedSchemaValue: value });
+    this.setState({ changedSchemaValue: value , changedSchemaId:this.state.selectedSchema?.id });
   };
 
   onClickOnSelect = (schema: RuntimeSchemaResource) => () =>
@@ -334,6 +336,7 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
       selectedSchemaText,
       schemaValidation,
       changedSchemaValue,
+      changedSchemaId,
     } = this.state;
 
     let additionnalButton;
@@ -478,8 +481,9 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
                     showGutter: true,
                   }}
                   onChange={this.onSchemaChange}
+                  readOnly={selectedSchema?.status ==="DRAFT" ? false : true}
                   value={
-                    changedSchemaValue ? changedSchemaValue : selectedSchemaText
+                    changedSchemaValue && changedSchemaId===selectedSchema?.id ? changedSchemaValue : selectedSchemaText
                   }
                 />
                 <Row className="decorators">
