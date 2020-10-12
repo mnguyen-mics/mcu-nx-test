@@ -20,10 +20,10 @@ import {
 } from '../../../Datamart/WithDatamartSelector';
 import { Loading } from '../../../../components';
 import DashboardWrapper from '../../Dashboard/DashboardWrapper';
-import Error from '../../../../components/Error';
 import DatamartUsersAnalyticsWrapper, { DatamartUsersAnalyticsWrapperProps } from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 import { averageSessionDurationConfig, channelEngagementConfig, acquisitionEngagementConfig, ecommerceEngagementConfig } from '../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
+import { Error } from '@mediarithmics-private/mcs-components-library';
 
 const { Content } = Layout;
 
