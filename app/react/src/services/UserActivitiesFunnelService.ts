@@ -4,15 +4,15 @@ import {
   FunnelFilter, 
   FunnelTimeRange, 
   FunnelRequestBody, 
-  FunnelResponse 
+  FunnelResponse
 } from '../models/datamart/UserActivitiesFunnel';
 import { buildUserActivitiesFunnelRequestBody } from '../utils/UserActivitiesFunnelReportHelper';
 
 export interface IUserActivitiesFunnelService {
   getUserActivitiesFunnel: (
     datamartId: string,
-    funnelFilter: FunnelFilter,
-    funnelTimeRange: FunnelTimeRange,
+    funnelFilter: FunnelFilter[],
+    funnelTimeRange: FunnelTimeRange
   ) => Promise<FunnelResponse>;
 }
 
@@ -20,8 +20,8 @@ export interface IUserActivitiesFunnelService {
 export class UserActivitiesFunnelService implements IUserActivitiesFunnelService {
   getUserActivitiesFunnel(
     datamartId: string,
-    funnelFilter: FunnelFilter,
-    funnelTimeRange: FunnelTimeRange,
+    funnelFilter: FunnelFilter[],
+    funnelTimeRange: FunnelTimeRange
   ): Promise<FunnelResponse> {
     const report: FunnelRequestBody = buildUserActivitiesFunnelRequestBody(funnelFilter, funnelTimeRange);
     const endpoint = `datamarts/${datamartId}/user_activities_funnel`;
