@@ -11,7 +11,7 @@ import { compose } from 'recompose';
 import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
-import ContentHeader from '../../../../../components/ContentHeader';
+import { ContentHeader } from '@mediarithmics-private/mcs-components-library';
 import { IFeedsStatsService } from '../../../../../services/FeedsStatsService';
 import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';

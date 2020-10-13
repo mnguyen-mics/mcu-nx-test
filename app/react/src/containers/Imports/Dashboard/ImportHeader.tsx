@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Import } from '../../../models/imports/imports';
-import ContentHeader from '../../../components/ContentHeader';
+import { ContentHeader } from '@mediarithmics-private/mcs-components-library';
 import { formatDocumentTypeText, formatMimeTypeText } from '../domain';
 
 interface ImportHeaderProps {

@@ -22,7 +22,7 @@ import {
 import SegmentFilter from './components/SegmentFilter';
 import { DATAMART_USERS_ANALYTICS_SETTING } from '../Segments/Dashboard/constants';
 import { LabeledValue } from 'antd/lib/select';
-import ContentHeader from '../../../components/ContentHeader';
+import { ContentHeader } from '@mediarithmics-private/mcs-components-library';
 import McsMoment from '../../../utils/McsMoment';
 
 interface State {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { Card, McsTabs } from '@mediarithmics-private/mcs-components-library';
+import { Card, McsTabs, ContentHeader } from '@mediarithmics-private/mcs-components-library';
 import { Overview, AdditionDeletion, Overlap } from './Charts';
 import { EditAudienceSegmentParam, isUserQuerySegment } from '../Edit/domain';
 import injectNotifications, {
@@ -39,7 +39,6 @@ import { TYPES } from '../../../../constants/types';
 import { IDashboardService } from '../../../../services/DashboardServices';
 import { DashboardResource } from '../../../../models/dashboards/dashboards';
 import DashboardWrapper from '../../Dashboard/DashboardWrapper';
-import ContentHeader from '../../../../components/ContentHeader';
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 import DatamartUsersAnalyticsWrapper, {
   DatamartUsersAnalyticsWrapperProps,
