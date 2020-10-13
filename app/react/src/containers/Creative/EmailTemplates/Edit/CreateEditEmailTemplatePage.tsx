@@ -307,6 +307,11 @@ class CreateEmailTemplate extends React.Component<
       Promise<DataResponse<PropertyResourceShape>>
     > = [];
     properties.forEach(item => {
+      if(item.property_type==="DATA_FILE" && item.technical_name === "template_file"){
+        const fileValues = item.value as any
+        fileValues.fileName = fileValues && fileValues.fileName ? fileValues.fileName.replaceAll(' ','_') : undefined
+        item.value = fileValues
+      }
       propertiesPromises.push(
         this._creativeService.updateEmailTemplateProperty(
           organisationId,
