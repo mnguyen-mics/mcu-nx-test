@@ -2,7 +2,7 @@ import * as React from 'react';
 import { FormattedMessage } from 'react-intl';
 import moment from 'moment';
 import messages from './messages';
-import ContentHeader from '../../../components/ContentHeader';
+import { ContentHeader } from '@mediarithmics-private/mcs-components-library';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { TimelinePageParams } from './TimelinePage';
 import { compose } from 'recompose';

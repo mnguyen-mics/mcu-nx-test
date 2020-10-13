@@ -9,7 +9,7 @@ import {
   defineMessages,
 } from 'react-intl';
 import { makeCancelable, CancelablePromise } from '../../../utils/ApiHelper';
-import ContentHeader from '../../../components/ContentHeader';
+import { ContentHeader } from '@mediarithmics-private/mcs-components-library';
 import { GraphQLResult } from '../../../models/datamart/graphdb/OTQLResult';
 import injectNotifications, {
   InjectedNotificationProps,

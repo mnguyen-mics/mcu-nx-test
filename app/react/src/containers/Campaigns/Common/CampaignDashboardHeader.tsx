@@ -1,5 +1,5 @@
 import * as React from 'react';
-import ContentHeader from '../../../components/ContentHeader';
+import { ContentHeader } from '@mediarithmics-private/mcs-components-library';
 import CampaignStatusIndicator from './CampaignStatusIndicator';
 import { CampaignStatus } from '../../../models/campaign/constants';
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Export } from '../../../models/exports/exports';
-import ContentHeader from '../../../components/ContentHeader';
+import { ContentHeader } from '@mediarithmics-private/mcs-components-library';
 
 interface ExportHeaderProps {
   object?: Export;

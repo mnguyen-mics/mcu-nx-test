@@ -2,8 +2,7 @@ import * as React from 'react';
 import { withRouter } from 'react-router-dom';
 import { Icon } from 'antd';
 import moment from 'moment';
-
-import ContentHeader from '../../../../components/ContentHeader';
+import { ContentHeader } from '@mediarithmics-private/mcs-components-library';
 import {
   AudienceSegmentShape,
   UserListSegment,

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { GoalResource } from '../../../../models/goal/index';
-import ContentHeader from '../../../../components/ContentHeader';
+import { ContentHeader } from '@mediarithmics-private/mcs-components-library';
 
 interface GoalHeaderProps {
   goal?: GoalResource;
