@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Modal, Layout } from 'antd';
-import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
+import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { McsIconType } from '../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../components/ItemList';
 import { AssetFileResource } from '../../../../models/assets/assets';
@@ -182,10 +182,10 @@ class AssetListContent extends React.Component<
 
     const emptyTable: {
       iconType: McsIconType;
-      intlMessage: FormattedMessage.Props;
+      message: string;
     } = {
       iconType: 'library',
-      intlMessage: messages.empty,
+      message: this.props.intl.formatMessage(messages.empty),
     };
 
     return (

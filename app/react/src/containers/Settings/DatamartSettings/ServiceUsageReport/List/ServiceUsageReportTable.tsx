@@ -10,7 +10,6 @@ import {
   InjectedIntlProps,
   injectIntl,
   defineMessages,
-  FormattedMessage,
 } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { DISPLAY_SEARCH_SETTINGS } from './ServiceUsageReportListPage';
@@ -129,10 +128,10 @@ class ServiceUsageReportTable extends React.Component<Props, State> {
 
     const emptyTable: {
       iconType: McsIconType;
-      intlMessage: FormattedMessage.Props;
+      message: string;
     } = {
       iconType: 'library',
-      intlMessage: messages.noData,
+      message: this.props.intl.formatMessage(messages.noData)
     };
 
     const filter = parseSearch(search, DISPLAY_SEARCH_SETTINGS);

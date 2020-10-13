@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
-
-import { EmptyTableView, TableViewFilters } from './TableView';
-import { FormattedMessage } from 'react-intl';
+import { TableViewFilters } from './TableView';
 import { McsIconType } from './McsIcon';
 import {
   buildDefaultSearch,
@@ -13,6 +11,7 @@ import {
   updateSearch,
 } from '../utils/LocationSearchHelper';
 import { ViewComponentWithFiltersProps } from './TableView/TableViewFilters';
+import { EmptyTableView } from '@mediarithmics-private/mcs-components-library';
 
 export interface Filters {
   currentPage?: number;
@@ -36,7 +35,7 @@ export interface PageSetting {
 
 interface EmptyTableProps {
   iconType: McsIconType;
-  intlMessage: FormattedMessage.Props;
+  message: string;
 }
 
 export interface ItemListProps<T = any> extends ViewComponentWithFiltersProps<T> {
@@ -137,14 +136,14 @@ class ItemList<T> extends React.Component<Props<T>> {
       pageSettings,
       emptyTable: {
         iconType,
-        intlMessage,
+        message,
       },
       additionnalComponent,
       ...rest
     } = this.props;
 
     if (!rest.dataSource.length && !rest.loading && !additionnalComponent) {
-      return <EmptyTableView iconType={iconType} intlMessage={intlMessage} />;
+      return <EmptyTableView iconType={iconType} message={message} />;
     }
 
     const filter = parseSearch(search, pageSettings);
@@ -169,7 +168,7 @@ class ItemList<T> extends React.Component<Props<T>> {
         {!rest.dataSource.length && !rest.loading ? (
           <EmptyTableView
             iconType={iconType}
-            intlMessage={intlMessage}
+            message={message}
             className="mcs-table-view-empty mcs-empty-card"
           />
         ) : (

@@ -11,7 +11,6 @@ import { messages } from './messages';
 import { DatamartReplicationJobExecutionResource } from '../../../../../models/settings/settings';
 import {
   TableViewFilters,
-  EmptyTableView,
 } from '../../../../../components/TableView';
 import { McsIcon } from '../../../../../components';
 import { getExecutionInfo } from '../../../../../utils/JobHelpers';
@@ -25,6 +24,7 @@ import {
 } from '../../../../../utils/LocationSearchHelper';
 import { Filters } from '../../../../../components/ItemList';
 import { Index } from '../../../../../utils';
+import { EmptyTableView } from '@mediarithmics-private/mcs-components-library';
 
 interface DatamartReplicationJobTableProps {
   dataSource: DatamartReplicationJobExecutionResource[];
@@ -179,6 +179,7 @@ class DatamartReplicationJobTable extends React.Component<Props> {
       isLoading,
       dataSource,
       noItem,
+      intl
     } = this.props;
 
     const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
@@ -199,7 +200,7 @@ class DatamartReplicationJobTable extends React.Component<Props> {
     return noItem && !isLoading ? (
       <EmptyTableView
         iconType="settings"
-        intlMessage={messages.emptyInitialSynchronizationList}
+        message={intl.formatMessage(messages.emptyInitialSynchronizationList)}
         className="mcs-table-view-empty mcs-empty-card"
       />
     ) : (

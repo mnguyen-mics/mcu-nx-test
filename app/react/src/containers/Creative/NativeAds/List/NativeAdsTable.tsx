@@ -5,7 +5,6 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { RouteComponentProps } from 'react-router';
 import {
   TableViewFilters,
-  EmptyTableView,
 } from '../../../../components/TableView/index';
 import { NATIVE_SEARCH_SETTINGS } from './constants';
 import {
@@ -21,6 +20,7 @@ import {
   ActionsColumnDefinition,
 } from '../../../../components/TableView/TableView';
 import messagesMap from '../../DisplayAds/List/message';
+import { EmptyTableView } from '@mediarithmics-private/mcs-components-library';
 
 interface NativeAdsTableProps {
   rowSelection: ExtendedTableRowSelection;
@@ -203,7 +203,7 @@ class NativeAdsTable extends React.Component<
         />
       </div>
     ) : (
-      <EmptyTableView iconType="display" text="EMPTY_NATIVE_CREATIVES" />
+      <EmptyTableView iconType="display" message={intl.formatMessage(messagesMap.noNativeCreative)} />
     );
   }
 }

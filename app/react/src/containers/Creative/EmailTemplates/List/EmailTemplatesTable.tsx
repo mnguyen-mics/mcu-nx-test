@@ -5,7 +5,6 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { RouteComponentProps } from 'react-router';
 import {
   TableViewFilters,
-  EmptyTableView,
 } from '../../../../components/TableView/index';
 import EmailTestModal from './EmailTestModal';
 import { CREATIVE_EMAIL_SEARCH_SETTINGS } from './constants';
@@ -22,6 +21,7 @@ import {
   ExtendedTableRowSelection,
   ActionsColumnDefinition,
 } from '../../../../components/TableView/TableView';
+import { EmptyTableView } from '@mediarithmics-private/mcs-components-library';
 interface EmailTemplatesTableProps {
   rowSelection: ExtendedTableRowSelection;
   isLoadingEmailTemplates: boolean;
@@ -217,7 +217,7 @@ class EmailTemplatesTable extends React.Component<JoinedProps, State> {
         />
       </div>
     ) : (
-      <EmptyTableView iconType="email" text="EMPTY_CREATIVES_EMAIL" />
+      <EmptyTableView iconType="email" message={intl.formatMessage(messagesMap.noEmailTemplate)} />
     );
   }
 }

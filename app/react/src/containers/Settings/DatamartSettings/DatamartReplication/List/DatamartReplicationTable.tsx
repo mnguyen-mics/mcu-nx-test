@@ -3,7 +3,6 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/styles/hljs';
 import {
-  EmptyTableView,
   TableViewFilters,
 } from '../../../../../components/TableView';
 import messages from './messages';
@@ -16,6 +15,7 @@ import { parseSearch } from '../../../../../utils/LocationSearchHelper';
 import { DATAMART_REPLICATION_SEARCH_SETTINGS } from './DatamartReplicationListContainer';
 import { Modal, Switch, Tooltip } from 'antd';
 import { McsIcon } from '../../../../../components';
+import { EmptyTableView } from '@mediarithmics-private/mcs-components-library';
 
 export interface DatamartReplicationTableProps {
   isLoading: boolean;
@@ -219,7 +219,7 @@ class DatamartReplicationTable extends React.Component<Props> {
     return noItem && !isLoading ? (
       <EmptyTableView
         iconType="settings"
-        intlMessage={messages.emptyDatamartReplicationList}
+        message={formatMessage(messages.emptyDatamartReplicationList)}
         className="mcs-table-view-empty mcs-empty-card"
       />
     ) : (

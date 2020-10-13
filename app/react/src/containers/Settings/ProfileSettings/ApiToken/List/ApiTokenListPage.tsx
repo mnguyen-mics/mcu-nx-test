@@ -335,10 +335,10 @@ class ApiTokenListPage extends React.Component<Props, State> {
 
     const emptyTable: {
       iconType: McsIconType;
-      intlMessage: FormattedMessage.Props;
+      message: string;
     } = {
       iconType: 'settings',
-      intlMessage: messages.emptyApiTokenList,
+      message: intl.formatMessage(messages.emptyApiTokenList),
     };
 
     const apiTokenModal = (apiTokenData: ApiTokenResource) => {

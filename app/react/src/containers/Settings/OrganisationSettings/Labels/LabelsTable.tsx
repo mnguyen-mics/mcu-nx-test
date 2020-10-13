@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { injectIntl } from 'react-intl';
+import { injectIntl, InjectedIntlProps } from 'react-intl';
 import moment from 'moment';
-import { EmptyTableView, TableView } from '../../../../components/TableView/index';
+import { TableView } from '../../../../components/TableView/index';
 import { Label } from '../../../Labels/Labels';
 import messages from './messages';
 import { ActionsColumnDefinition } from '../../../../components/TableView/TableView';
+import { EmptyTableView } from '@mediarithmics-private/mcs-components-library';
 
 export interface Filters {
   currentPage?: number;
@@ -22,7 +23,7 @@ interface LabelsTableProps {
   filter: Filters;
 }
 
-function LabelsTable(props: LabelsTableProps) {
+function LabelsTable(props: LabelsTableProps & InjectedIntlProps) {
 
     const {
       isFetchingLabels,
@@ -33,6 +34,7 @@ function LabelsTable(props: LabelsTableProps) {
       onLabelEdit,
       onLabelArchive,
       filter,
+      intl
     } = props;
 
     const pagination = {
@@ -84,7 +86,7 @@ function LabelsTable(props: LabelsTableProps) {
     return (noLabelYet) ? (
             <EmptyTableView
               iconType="full-users"
-              intlMessage={messages.emptyLabels}
+              message={intl.formatMessage(messages.emptyLabels)}
             />
           ) : (
             <TableView

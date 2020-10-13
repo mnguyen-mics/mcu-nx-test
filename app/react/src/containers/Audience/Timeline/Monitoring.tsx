@@ -3,7 +3,7 @@ import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { Row, Col, Layout } from 'antd';
 import MonitoringActionbar from './MonitoringActionBar';
 import ProfileCard from './SingleView/ProfileCard';
@@ -17,13 +17,13 @@ import ActivitiesTimeline from './ActivitiesTimeline';
 import messages from './messages';
 import { TimelinePageParams } from './TimelinePage';
 import { MonitoringData } from '../../../models/timeline/timeline';
-import { EmptyTableView } from '../../../components/TableView';
 import { DatamartResource } from '../../../models/datamart/DatamartResource';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IMonitoringService } from './MonitoringService';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
 import { Loading } from '../../../components';
+import { EmptyTableView } from '@mediarithmics-private/mcs-components-library';
 
 const { Content } = Layout;
 
@@ -49,6 +49,7 @@ interface MonitoringProps {
 
 type Props = MonitoringProps &
   MapStateToProps &
+  InjectedIntlProps &
   RouteComponentProps<TimelinePageParams>;
 
 class Monitoring extends React.Component<Props, State> {
@@ -287,7 +288,7 @@ class Monitoring extends React.Component<Props, State> {
             ) : (
               <EmptyTableView
                 iconType="user"
-                intlMessage={messages.pleaseFillInformations}
+                message={this.props.intl.formatMessage(messages.pleaseFillInformations)}
               />
             )}
           </Content> : <Loading className="loading-full-screen" />}
@@ -303,5 +304,6 @@ const mapStateToProps = (state: MicsReduxState) => ({
 
 export default compose<Props, MonitoringProps>(
   withRouter,
+  injectIntl,
   connect(mapStateToProps, undefined),
 )(Monitoring);

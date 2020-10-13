@@ -126,10 +126,10 @@ class UserListsList extends React.Component<
 
     const emptyTable: {
       iconType: McsIconType;
-      intlMessage: FormattedMessage.Props;
+      message: string;
     } = {
       iconType: 'settings',
-      intlMessage: messages.emptyUsers,
+      message: this.props.intl.formatMessage(messages.emptyUsers),
     };
 
     const onClick = () =>

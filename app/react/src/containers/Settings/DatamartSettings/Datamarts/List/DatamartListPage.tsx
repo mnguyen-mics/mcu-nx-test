@@ -179,10 +179,10 @@ class DatamartsListPage extends React.Component<
 
     const emptyTable: {
       iconType: McsIconType;
-      intlMessage: FormattedMessage.Props;
+      message: string;
     } = {
         iconType: 'settings',
-        intlMessage: messages.emptyDatamarts,
+        message: this.props.intl.formatMessage(messages.emptyDatamarts)
       };
 
     const additionnalComponent = (

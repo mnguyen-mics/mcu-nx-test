@@ -12,7 +12,6 @@ import {
 } from 'react-intl';
 import {
   TableViewFilters,
-  EmptyTableView,
 } from '../../../../components/TableView';
 import { SEGMENTS_SEARCH_SETTINGS } from './constants';
 import {
@@ -28,7 +27,7 @@ import {
   DatamartSearchSettings,
   compareSearches,
 } from '../../../../utils/LocationSearchHelper';
-import { Button } from '@mediarithmics-private/mcs-components-library';
+import { Button, EmptyTableView } from '@mediarithmics-private/mcs-components-library';
 import { formatMetric } from '../../../../utils/MetricHelper';
 import { compose } from 'recompose';
 import {
@@ -172,6 +171,10 @@ const messages = defineMessages({
   more: {
     id: 'audience.segments.list.typeFilter.more',
     defaultMessage: 'More ...',
+  },
+  emptySegments: {
+    id: 'audience.segments.list.emptyList',
+    defaultMessage: 'No segments',
   },
 });
 
@@ -950,7 +953,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         />
       </div>
     ) : (
-      <EmptyTableView iconType="data" text="EMPTY_SEGMENTS" />
+      <EmptyTableView iconType="data" message={intl.formatMessage(messages.emptySegments)} />
     );
   }
 }

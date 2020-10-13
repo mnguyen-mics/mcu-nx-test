@@ -21,9 +21,9 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import { Loading } from '../../../../components';
-import { EmptyTableView } from '../../../../components/TableView';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
+import { EmptyTableView } from '@mediarithmics-private/mcs-components-library';
 
 type Props = RouteComponentProps<{ organisationId: string }> &
   InjectedIntlProps &
@@ -232,7 +232,7 @@ class AudienceFeedsOverview extends React.Component<Props, State> {
         )}
       </div>
     ) : (
-      <EmptyTableView iconType={'users'} intlMessage={messages.noData} />
+      <EmptyTableView iconType={'users'} message={this.props.intl.formatMessage(messages.noData)} />
     );
   }
 }

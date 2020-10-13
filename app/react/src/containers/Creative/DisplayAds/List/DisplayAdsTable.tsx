@@ -5,7 +5,6 @@ import { RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
 import {
   TableViewFilters,
-  EmptyTableView,
 } from '../../../../components/TableView';
 import { CREATIVE_DISPLAY_SEARCH_SETTINGS } from './constants';
 import {
@@ -20,6 +19,7 @@ import {
   ExtendedTableRowSelection,
   ActionsColumnDefinition,
 } from '../../../../components/TableView/TableView';
+import { EmptyTableView } from '@mediarithmics-private/mcs-components-library';
 
 interface DisplayAdsTableProps {
   rowSelection: ExtendedTableRowSelection;
@@ -189,7 +189,7 @@ class DisplayAdsTable extends React.Component<JoinedProps> {
         />
       </div>
     ) : (
-      <EmptyTableView iconType="display" text="EMPTY_CREATIVES_DISPLAY" />
+      <EmptyTableView iconType="display" message={intl.formatMessage(messages.noDisplayCreative)} />
     );
   }
 }
