@@ -19,8 +19,8 @@ interface AudienceBuilderDashboardProps {
   organisationId: string;
   datamartId: string;
   totalAudience?: number;
+  queryDocument?: QueryDocument;
   isQueryRunning: boolean;
-  queryDocument: QueryDocument;
 }
 
 type Props = InjectedIntlProps &
@@ -68,12 +68,14 @@ class AudienceBuilderDashboard extends React.Component<Props, State> {
   };
 
   render() {
-    const { intl, totalAudience, queryDocument, isQueryRunning } = this.props;
+    const { intl, totalAudience, isQueryRunning, queryDocument } = this.props;
     const { isLoading, dashboards } = this.state;
     return (
       <div className="mcs-audienceBuilder_liveDashboard">
         <CardFlex className="mcs-audienceBuilder_totalAudience">
-          {totalAudience !== undefined && !isQueryRunning ? (
+          {totalAudience === undefined ? (
+            <Statistic title={intl.formatMessage(messages.selectedAudience)} />
+          ) : !isQueryRunning ? (
             <Statistic
               title={intl.formatMessage(messages.selectedAudience)}
               value={totalAudience}
@@ -86,7 +88,7 @@ class AudienceBuilderDashboard extends React.Component<Props, State> {
         <React.Fragment>
           {isLoading ? (
             <Loading isFullScreen={true} />
-          ) : (
+          ) : queryDocument ? (
             dashboards.map(d => (
               <DashboardWrapper
                 key={d.id}
@@ -95,7 +97,7 @@ class AudienceBuilderDashboard extends React.Component<Props, State> {
                 source={queryDocument}
               />
             ))
-          )}
+          ) : null}
         </React.Fragment>
       </div>
     );

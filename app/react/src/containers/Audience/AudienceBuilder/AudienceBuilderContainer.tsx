@@ -30,6 +30,7 @@ import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IRuntimeSchemaService } from '../../../services/RuntimeSchemaService';
 import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/RuntimeSchema';
+import { QueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
 
 export const QueryFragmentFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
@@ -59,6 +60,7 @@ type Props = InjectedFormProps<
 
 interface State {
   isLoadingObjectTypes: boolean;
+  queryDocument?: QueryDocument;
   objectTypes: ObjectLikeTypeInfoResource[];
 }
 
@@ -100,6 +102,9 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
   saveFormData = () => {
     const { formValues } = this.props;
     this.props.save(formValues);
+    this.setState({
+      queryDocument: buildQueryDocument(formValues),
+    });
   };
 
   render() {
@@ -110,10 +115,9 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
-      formValues,
     } = this.props;
 
-    const { objectTypes } = this.state;
+    const { objectTypes, queryDocument } = this.state;
 
     const genericFieldArrayProps = {
       rerenderOnEveryChange: true,
@@ -142,7 +146,7 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
                 datamartId={audienceBuilder.datamart_id}
                 totalAudience={queryResult && queryResult.rows[0].count}
                 isQueryRunning={isQueryRunning}
-                queryDocument={buildQueryDocument(formValues)}
+                queryDocument={queryDocument}
               />
             </Col>
           </Row>

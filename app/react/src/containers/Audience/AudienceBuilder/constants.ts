@@ -117,43 +117,45 @@ export const INITIAL_AUDIENCE_BUILDER_FORM_DATA: AudienceBuilderFormData = {
 };
 
 const formateQuery = (query: QueryDocument) => {
-  return {
-    ...query,
-    where: {
-      ...query.where,
-      expressions: (query.where as AudienceBuilderGroupNode).expressions.map(
-        (exp: AudienceBuilderGroupNode) => {
-          return {
-            ...exp,
-            expressions: exp.expressions.map(
-              (e: AudienceBuilderParametricPredicateNode) => {
-                const parameters: any = {};
-                const formateValue = (v: any) => {
-                  if (Array.isArray(v)) {
-                    return v[0] ? v[0].toString() : '';
-                  } else if (typeof v === 'number') {
-                    return v.toString();
-                  } else return v;
-                };
-                Object.keys(e.parameters).map(k => {
-                  parameters[`${k}`] = formateValue(e.parameters[k]);
-                });
+  if (query?.where) {
+    return {
+      ...query,
+      where: {
+        ...query.where,
+        expressions: (query.where as AudienceBuilderGroupNode).expressions.map(
+          (exp: AudienceBuilderGroupNode) => {
+            return {
+              ...exp,
+              expressions: exp.expressions.map(
+                (e: AudienceBuilderParametricPredicateNode) => {
+                  const parameters: any = {};
+                  const formateValue = (v: any) => {
+                    if (Array.isArray(v)) {
+                      return v[0] ? v[0].toString() : '';
+                    } else if (typeof v === 'number') {
+                      return v.toString();
+                    } else return v;
+                  };
+                  Object.keys(e.parameters).forEach(k => {
+                    parameters[`${k}`] = formateValue(e.parameters[k]);
+                  });
 
-                return {
-                  ...e,
-                  parameters: parameters,
-                };
-              },
-            ),
-          };
-        },
-      ),
-    },
-  };
+                  return {
+                    ...e,
+                    parameters: parameters,
+                  };
+                },
+              ),
+            };
+          },
+        ),
+      },
+    };
+  } else return query;
 };
 
 export const buildQueryDocument = (formData: AudienceBuilderFormData) => {
-  const baseQueryFragment = {
+  let query: QueryDocument = {
     language_version: 'JSON_OTQL',
     operations: [
       {
@@ -166,13 +168,15 @@ export const buildQueryDocument = (formData: AudienceBuilderFormData) => {
       },
     ],
     from: 'UserPoint',
-    where: {},
   };
-  const clauseWhere = formData.where;
-  const query: QueryDocument = {
-    ...baseQueryFragment,
-    where: clauseWhere,
-  };
+  const clauseWhere = formData?.where;
+
+  if (clauseWhere) {
+    query = {
+      ...query,
+      where: clauseWhere,
+    };
+  }
   // This will be removed when backend will be able to handle List and Long
   return formateQuery(query) as any;
 };

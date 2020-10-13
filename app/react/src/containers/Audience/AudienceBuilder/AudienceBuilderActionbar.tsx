@@ -70,7 +70,11 @@ class AudienceBuilderActionbar extends React.Component<Props, State> {
           </Button>
         </Dropdown> */}
 
-        <Button className="mcs-primary" type="primary" onClick={this.props.save}>
+        <Button
+          className="mcs-primary"
+          type="primary"
+          onClick={this.props.save}
+        >
           <FormattedMessage
             id="audienceBuilder.actionBar.runQueryButton"
             defaultMessage="Run Query"

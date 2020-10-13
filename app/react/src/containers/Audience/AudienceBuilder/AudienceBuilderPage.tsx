@@ -17,6 +17,7 @@ import injectNotifications, {
 import {
   INITIAL_AUDIENCE_BUILDER_FORM_DATA,
   buildQueryDocument,
+  FORM_ID,
 } from './constants';
 import { Loading } from '../../../components';
 import { IQueryService } from '../../../services/QueryService';
@@ -27,6 +28,9 @@ import {
   WithDatamartSelectorProps,
 } from '../../Datamart/WithDatamartSelector';
 import { withRouter, RouteComponentProps } from 'react-router';
+import { MicsReduxState } from '../../../utils/ReduxHelper';
+import { getFormValues } from 'redux-form';
+import { connect } from 'react-redux';
 
 interface State {
   audienceBuilders?: AudienceBuilderResource[];
@@ -37,8 +41,13 @@ interface State {
   isQueryRunning: boolean;
 }
 
+interface MapStateToProps {
+  formValues: AudienceBuilderFormData;
+}
+
 type Props = InjectedIntlProps &
   InjectedNotificationProps &
+  MapStateToProps &
   RouteComponentProps<{ organisationId: string }> &
   WithDatamartSelectorProps;
 
@@ -67,39 +76,45 @@ class AudienceBuilderPage extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
-    const { selectedAudienceBuilder, formData, audienceBuilders } = this.state;
+    const { selectedAudienceBuilder } = this.state;
     const {
       match: {
         params: { organisationId },
       },
       selectedDatamartId,
+      formValues,
     } = this.props;
     const {
       match: {
         params: { organisationId: prevOrganisationId },
       },
       selectedDatamartId: prevSelectedDatamartId,
+      formValues: prevFormValues,
     } = prevProps;
-    if (audienceBuilders?.length === 1 && selectedAudienceBuilder === undefined)
-      this.selectAudienceBuilder(audienceBuilders[0]);
-    const { selectedAudienceBuilder: prevSelectedAudienceBuidler } = prevState;
-    if (!_.isEqual(selectedAudienceBuilder, prevSelectedAudienceBuidler)) {
-      this.runQuery(formData);
-    } else if (
+    if (
       organisationId !== prevOrganisationId ||
       selectedDatamartId !== prevSelectedDatamartId
     ) {
-      this.getAudienceBuilders(selectedDatamartId);
+      this.getAudienceBuilders(selectedDatamartId).then(() => {
+        this.runQuery(formValues);
+      });
+    } else if (
+      selectedAudienceBuilder &&
+      selectedAudienceBuilder.demographics_features_ids.length === 0 &&
+      !_.isEqual(formValues, prevFormValues)
+    ) {
+      this.runQuery(formValues);
     }
   }
 
   getAudienceBuilders = (datamartId: string) => {
-    this._audienceBuilderService
+    return this._audienceBuilderService
       .getAudienceBuilders(datamartId)
       .then(res => {
         this.setState({
           audienceBuilders: res.data,
-          selectedAudienceBuilder: undefined,
+          selectedAudienceBuilder:
+            res.data.length === 1 ? res.data[0] : undefined,
           isLoading: false,
         });
       })
@@ -111,7 +126,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
       });
   };
 
-  getInitialFormData = (audienceBuilder: AudienceBuilderResource) => {
+  selectAudienceBuilder = (audienceBuilder: AudienceBuilderResource) => {
     if (audienceBuilder.demographics_features_ids.length >= 1) {
       const datamartId = audienceBuilder.datamart_id;
       const promises = audienceBuilder.demographics_features_ids.map(id => {
@@ -122,6 +137,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
           return r.data;
         });
         this.setState({
+          selectedAudienceBuilder: audienceBuilder,
           formData: {
             where: {
               type: 'GROUP',
@@ -150,36 +166,10 @@ class AudienceBuilderPage extends React.Component<Props, State> {
       });
     } else {
       this.setState({
+        selectedAudienceBuilder: audienceBuilder,
         formData: INITIAL_AUDIENCE_BUILDER_FORM_DATA,
       });
     }
-  };
-
-  saveAudience = (formData: AudienceBuilderFormData) => {
-    // const baseQueryFragment = {
-    //   language_version: 'JSON_OTQL',
-    //   operations: [
-    //     {
-    //       directives: [
-    //         {
-    //           name: 'count',
-    //         },
-    //       ],
-    //       selections: [],
-    //     },
-    //   ],
-    //   from: 'UserPoint',
-    //   where: {},
-    // };
-    // const clauseWhere = formData.where;
-    // const query: QueryDocument = {
-    //   ...baseQueryFragment,
-    //   where: clauseWhere,
-    // };
-    // Let's keep it to check the query.
-    // It will be removed when backend part will be ready
-    // console.log('The Query: ', query);
-    // console.log('Number of errors: ', this.validateQuery(clauseWhere));
   };
 
   runQuery = (formData: AudienceBuilderFormData) => {
@@ -203,13 +193,6 @@ class AudienceBuilderPage extends React.Component<Props, State> {
       });
   };
 
-  selectAudienceBuilder = (audienceBuilder: AudienceBuilderResource) => {
-    this.setState({
-      selectedAudienceBuilder: audienceBuilder,
-    });
-    this.getInitialFormData(audienceBuilder);
-  };
-
   render() {
     const { intl } = this.props;
     const {
@@ -218,7 +201,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
       isLoading,
       formData,
       queryResult,
-      isQueryRunning
+      isQueryRunning,
     } = this.state;
 
     if (isLoading) {
@@ -250,9 +233,14 @@ class AudienceBuilderPage extends React.Component<Props, State> {
   }
 }
 
+const mapStateToProps = (state: MicsReduxState) => ({
+  formValues: getFormValues(FORM_ID)(state),
+});
+
 export default compose(
   withDatamartSelector,
   withRouter,
   injectIntl,
   injectNotifications,
+  connect(mapStateToProps),
 )(AudienceBuilderPage);
