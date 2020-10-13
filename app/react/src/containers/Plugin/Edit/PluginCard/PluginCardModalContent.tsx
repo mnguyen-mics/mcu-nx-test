@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Actionbar, Button, McsTabs } from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, Button, McsTabs, ColoredButton } from '@mediarithmics-private/mcs-components-library';
 import { LayoutablePlugin } from '../../../../models/Plugins';
 import { compose } from 'recompose';
 import injectThemeColors, {
@@ -13,7 +13,6 @@ import injectNotifications, { InjectedNotificationProps } from '../../../Notific
 import { reduxForm, InjectedFormProps } from 'redux-form';
 import { Form, Spin, Icon } from 'antd';
 import { ValidatorProps } from '../../../../components/Form/withValidators';
-import ColoredButton from '../../../../components/ColoredButton';
 import { ColorPalletteOption, getColorPalettes, rgbToHex, getPerceivedBrightness } from '../../../../utils/ColorHelpers';
 import { generateFakeId } from '../../../../utils/FakeIdHelper';
 import FeedChart from '../../../Audience/Segments/Dashboard/Feeds/Charts/FeedChart';

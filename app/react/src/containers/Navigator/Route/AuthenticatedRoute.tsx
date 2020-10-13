@@ -8,8 +8,6 @@ import {
   match,
 } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-
-import Error from '../../../components/Error';
 import { IAuthService } from '../../../services/AuthService';
 import log from '../../../utils/Logger';
 import { getWorkspace } from '../../../redux/Session/actions';
@@ -20,6 +18,7 @@ import injectFeatures, { InjectedFeaturesProps } from '../../Features/injectFeat
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
+import { Error } from '@mediarithmics-private/mcs-components-library';
 
 export interface AuthenticatedRouteProps {
   render: (props: any) => JSX.Element;
