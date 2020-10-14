@@ -93,8 +93,8 @@ class AudienceFeatureVariable extends React.Component<Props> {
     let name;
     name = `${formPath}.parameters.${variable.parameter_name}`;
     const fieldGridConfig = {
-      labelCol: { span: 3 },
-      wrapperCol: { span: 20, offset: 1 },
+      labelCol: { span: 5 },
+      wrapperCol: { span: 18, offset: 1 },
     };
 
     switch (variable.type) {
@@ -286,6 +286,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
             component={FormRelativeAbsoluteDate}
             formItemProps={{
               label: variable.parameter_name,
+              ...fieldGridConfig,
             }}
             unixTimstamp={true}
           />
@@ -313,8 +314,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
             }}
             formItemProps={{
               label: variable.parameter_name,
-              labelCol: { span: 3 },
-              wrapperCol: { span: 20, offset: 1 },
+              ...fieldGridConfig,
             }}
           />
         );

@@ -41,6 +41,7 @@ interface AudienceBuilderContainerProps
   save: (formData: AudienceBuilderFormData) => void;
   audienceBuilder: AudienceBuilderResource;
   queryResult?: OTQLResult;
+  isQueryRunning: boolean;
 }
 
 interface MapStateToProps {
@@ -102,7 +103,14 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
   };
 
   render() {
-    const { audienceBuilder, queryResult } = this.props;
+    const {
+      audienceBuilder,
+      queryResult,
+      isQueryRunning,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
 
     const { objectTypes } = this.state;
 
@@ -129,7 +137,10 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
               className="mcs-audienceBuilder_liveDashboardContainer"
             >
               <AudienceBuilderDashboard
+                organisationId={organisationId}
+                datamartId={audienceBuilder.datamart_id}
                 totalAudience={queryResult && queryResult.rows[0].count}
+                isQueryRunning={isQueryRunning}
               />
             </Col>
           </Row>

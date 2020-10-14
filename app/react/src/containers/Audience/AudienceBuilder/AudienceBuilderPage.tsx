@@ -33,6 +33,7 @@ interface State {
   formData: AudienceBuilderFormData;
   isLoading: boolean;
   queryResult?: OTQLResult;
+  isQueryRunning: boolean;
 }
 
 type Props = InjectedIntlProps &
@@ -53,6 +54,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
     super(props);
     this.state = {
       isLoading: true,
+      isQueryRunning: false,
       formData: INITIAL_AUDIENCE_BUILDER_FORM_DATA,
     };
   }
@@ -159,6 +161,9 @@ class AudienceBuilderPage extends React.Component<Props, State> {
 
   runQuery = (formData: AudienceBuilderFormData) => {
     const { selectedDatamartId } = this.props;
+    this.setState({
+      isQueryRunning: true,
+    });
     const baseQueryFragment = {
       language_version: 'JSON_OTQL',
       operations: [
@@ -185,10 +190,14 @@ class AudienceBuilderPage extends React.Component<Props, State> {
       .then(queryResult => {
         this.setState({
           queryResult: queryResult.data,
+          isQueryRunning: false,
         });
       })
       .catch(err => {
-        this.props.notifyError(err);
+        // this.props.notifyError(err);
+        this.setState({
+          isQueryRunning: false,
+        });
       });
   };
 
@@ -212,7 +221,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
                       return v.toString();
                     } else return v;
                   };
-                  Object.keys(e.parameters).map(k => {
+                  Object.keys(e.parameters).forEach(k => {
                     parameters[`${k}`] = formateValue(e.parameters[k]);
                   });
 
@@ -244,6 +253,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
       isLoading,
       formData,
       queryResult,
+      isQueryRunning
     } = this.state;
 
     if (isLoading) {
@@ -255,6 +265,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
         save={this.runQuery}
         initialValues={formData}
         queryResult={queryResult}
+        isQueryRunning={isQueryRunning}
         audienceBuilder={selectedAudienceBuilder}
       />
     ) : (
