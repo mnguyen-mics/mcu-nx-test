@@ -11,11 +11,14 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
 import { Loading } from '@mediarithmics-private/mcs-components-library';
-// import DashboardWrapper from '../Dashboard/DashboardWrapper';
+import DashboardWrapper from '../Dashboard/DashboardWrapper';
 import CardFlex from '../Dashboard/Components/CardFlex';
 
 interface AudienceBuilderDashboardProps {
+  organisationId: string;
+  datamartId: string;
   totalAudience?: number;
+  isQueryRunning: boolean;
 }
 
 type Props = InjectedIntlProps &
@@ -40,9 +43,8 @@ class AudienceBuilderDashboard extends React.Component<Props, State> {
     };
   }
   componentDidMount() {
-    // const organisationId = '1407';
-    // const datamartId = '1493';
-    // this.loadData(organisationId, datamartId);
+    const { organisationId, datamartId } = this.props;
+    this.loadData(organisationId, datamartId);
   }
 
   loadData = (organisationId: string, selectedDatamartId: string) => {
@@ -64,12 +66,12 @@ class AudienceBuilderDashboard extends React.Component<Props, State> {
   };
 
   render() {
-    const { intl, totalAudience } = this.props;
-    // const { isLoading, dashboards } = this.state;
+    const { intl, totalAudience, isQueryRunning } = this.props;
+    const { isLoading, dashboards } = this.state;
     return (
       <div className="mcs-audienceBuilder_liveDashboard">
         <CardFlex className="mcs-audienceBuilder_totalAudience">
-          {totalAudience !== undefined ? (
+          {totalAudience !== undefined && !isQueryRunning ? (
             <Statistic
               title={intl.formatMessage(messages.selectedAudience)}
               value={totalAudience}
@@ -79,7 +81,7 @@ class AudienceBuilderDashboard extends React.Component<Props, State> {
           )}
         </CardFlex>
 
-        {/* <React.Fragment>
+        <React.Fragment>
           {isLoading ? (
             <Loading isFullScreen={true} />
           ) : (
@@ -91,7 +93,7 @@ class AudienceBuilderDashboard extends React.Component<Props, State> {
               />
             ))
           )}
-        </React.Fragment> */}
+        </React.Fragment>
       </div>
     );
   }

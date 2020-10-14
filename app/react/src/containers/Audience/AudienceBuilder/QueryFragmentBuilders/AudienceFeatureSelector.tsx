@@ -79,7 +79,7 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
       {
         intlMessage: messages.audienceFeatureDescription,
         key: 'description',
-        render: (text, record) => <span>{record.description}</span>,
+        render: (text, record) => <i>{record.description}</i>,
       },
     ];
 
