@@ -122,6 +122,7 @@ export interface UserQuerySegment extends AudienceSegmentResource {
   control_group_id?: string;
   control_group?: boolean;
   target_metric: Engagement;
+  segment_editor?: string;
 }
 
 export type Engagement = 'E_COMMERCE_ENGAGEMENT' | 'CHANNEL_ENGAGEMENT';

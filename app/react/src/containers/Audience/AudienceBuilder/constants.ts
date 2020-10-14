@@ -116,7 +116,10 @@ export const INITIAL_AUDIENCE_BUILDER_FORM_DATA: AudienceBuilderFormData = {
   },
 };
 
-const formatQuery = (query: QueryDocument) => {
+export const formatQuery = (
+  query: QueryDocument,
+  isEditMode: boolean = false,
+) => {
   if (query?.where) {
     return {
       ...query,
@@ -134,11 +137,11 @@ const formatQuery = (query: QueryDocument) => {
                       return v[0] ? v[0].toString() : undefined;
                     } else if (typeof v === 'number') {
                       return v.toString();
-                    } else return v;
+                    } else return isEditMode ? [v] : v;
                   };
                   Object.keys(e.parameters).forEach(k => {
                     const value = formatValue(e.parameters[k]);
-                    if(value){
+                    if (value) {
                       parameters[`${k}`] = value;
                     }
                   });

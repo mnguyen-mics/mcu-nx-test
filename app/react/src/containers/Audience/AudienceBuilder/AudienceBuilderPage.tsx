@@ -7,7 +7,9 @@ import AudienceBuilderContainer from './AudienceBuilderContainer';
 import {
   AudienceBuilderResource,
   AudienceBuilderFormData,
+  QueryDocument as AudienceBuilderQueryDocument,
 } from '../../../models/audienceBuilder/AudienceBuilderResource';
+import { UserQuerySegment } from '../../../models/audiencesegment/AudienceSegmentResource';
 import { lazyInject } from '../../../config/inversify.config';
 import { IAudienceBuilderService } from '../../../services/AudienceBuilderService';
 import { TYPES } from '../../../constants/types';
@@ -16,13 +18,13 @@ import injectNotifications, {
 } from '../../Notifications/injectNotifications';
 import {
   INITIAL_AUDIENCE_BUILDER_FORM_DATA,
-  buildQueryDocument,
+  formatQuery,
   FORM_ID,
 } from './constants';
 import { Loading } from '../../../components';
 import { IQueryService } from '../../../services/QueryService';
-import { OTQLResult } from '../../../models/datamart/graphdb/OTQLResult';
 import { IAudienceFeatureService } from '../../../services/AudienceFeatureService';
+import { IAudienceSegmentService } from '../../../services/AudienceSegmentService';
 import {
   withDatamartSelector,
   WithDatamartSelectorProps,
@@ -31,14 +33,15 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
 import { getFormValues } from 'redux-form';
 import { connect } from 'react-redux';
+import { NewUserQuerySimpleFormData } from '../../QueryTool/SaveAs/NewUserQuerySegmentSimpleForm';
+import AudienceBuilderActionbar from './AudienceBuilderActionbar';
+import { calculateDefaultTtl } from '../Segments/Edit/domain';
 
 interface State {
   audienceBuilders?: AudienceBuilderResource[];
   selectedAudienceBuilder?: AudienceBuilderResource;
   formData: AudienceBuilderFormData;
   isLoading: boolean;
-  queryResult?: OTQLResult;
-  isQueryRunning: boolean;
 }
 
 interface MapStateToProps {
@@ -58,6 +61,9 @@ class AudienceBuilderPage extends React.Component<Props, State> {
   @lazyInject(TYPES.IAudienceFeatureService)
   private _audienceFeatureService: IAudienceFeatureService;
 
+  @lazyInject(TYPES.IAudienceSegmentService)
+  private _audienceSegmentService: IAudienceSegmentService;
+
   @lazyInject(TYPES.IQueryService)
   private _queryService: IQueryService;
 
@@ -65,16 +71,13 @@ class AudienceBuilderPage extends React.Component<Props, State> {
     super(props);
     this.state = {
       isLoading: true,
-      isQueryRunning: false,
       formData: INITIAL_AUDIENCE_BUILDER_FORM_DATA,
     };
   }
 
   componentDidMount() {
-    const { selectedDatamartId, formValues } = this.props;
-    this.getAudienceBuilders(selectedDatamartId).then(() => {
-      this.runQuery(formValues);
-    });
+    const { selectedDatamartId } = this.props;
+    this.getAudienceBuilders(selectedDatamartId);
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
@@ -82,8 +85,8 @@ class AudienceBuilderPage extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
-      selectedDatamartId,
-      formValues,
+      selectedDatamartId /* 
+      formValues, */,
     } = this.props;
     const {
       match: {
@@ -95,9 +98,11 @@ class AudienceBuilderPage extends React.Component<Props, State> {
       organisationId !== prevOrganisationId ||
       selectedDatamartId !== prevSelectedDatamartId
     ) {
-      this.getAudienceBuilders(selectedDatamartId).then(() => {
+      this.getAudienceBuilders(
+        selectedDatamartId,
+      ); /* .then(() => {
         this.runQuery(formValues);
-      });
+      }); */
     }
   }
 
@@ -166,11 +171,8 @@ class AudienceBuilderPage extends React.Component<Props, State> {
     }
   };
 
-  runQuery = (formData: AudienceBuilderFormData) => {
+  /*   runQuery = (formData: AudienceBuilderFormData) => {
     const { selectedDatamartId } = this.props;
-    this.setState({
-      isQueryRunning: true,
-    });
     this._queryService
       .runJSONOTQLQuery(selectedDatamartId, buildQueryDocument(formData))
       .then(queryResult => {
@@ -185,17 +187,55 @@ class AudienceBuilderPage extends React.Component<Props, State> {
           isQueryRunning: false,
         });
       });
+  }; */
+
+  audienceBuilderActionbar = (
+    query: AudienceBuilderQueryDocument,
+    datamartId: string,
+    runQuery: () => void,
+  ) => {
+    const saveAudience = (userQueryFormData: NewUserQuerySimpleFormData) => {
+      const { match, history } = this.props;
+      const { name, technical_name, persisted } = userQueryFormData;
+
+      return this._queryService
+        .createQuery(datamartId, {
+          query_language: 'JSON_OTQL',
+          query_text: JSON.stringify(formatQuery(query)),
+        })
+        .then(res => {
+          const userQuerySegment: Partial<UserQuerySegment> = {
+            datamart_id: datamartId,
+            type: 'USER_QUERY',
+            name,
+            technical_name,
+            persisted,
+            default_ttl: calculateDefaultTtl(userQueryFormData),
+            query_id: res.data.id,
+            segment_editor: 'AUDIENCE_BUILDER',
+          };
+          return this._audienceSegmentService.saveSegment(
+            match.params.organisationId,
+            userQuerySegment,
+          );
+        })
+        .then(res => {
+          history.push(
+            `/v2/o/${match.params.organisationId}/audience/segments/${res.data.id}`,
+          );
+        });
+    };
+
+    return <AudienceBuilderActionbar save={saveAudience} run={runQuery} />;
   };
 
   render() {
-    const { intl } = this.props;
+    const { intl, selectedDatamartId } = this.props;
     const {
       selectedAudienceBuilder,
       audienceBuilders,
       isLoading,
       formData,
-      queryResult,
-      isQueryRunning,
     } = this.state;
 
     if (isLoading) {
@@ -204,11 +244,12 @@ class AudienceBuilderPage extends React.Component<Props, State> {
 
     return selectedAudienceBuilder ? (
       <AudienceBuilderContainer
-        save={this.runQuery}
         initialValues={formData}
-        queryResult={queryResult}
-        isQueryRunning={isQueryRunning}
-        audienceBuilder={selectedAudienceBuilder}
+        demographicsFeaturesIds={
+          selectedAudienceBuilder.demographics_features_ids
+        }
+        datamartId={selectedDatamartId}
+        renderActionBar={this.audienceBuilderActionbar}
       />
     ) : (
       <AudienceBuilderSelector

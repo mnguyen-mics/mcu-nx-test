@@ -50,7 +50,7 @@ import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 import ProcessingActivitiesFormSection, {
   ProcessingActivitiesFormSectionProps,
 } from '../../../Settings/DatamartSettings/Common/ProcessingActivitiesFormSection';
-import { isPartialUserListSegment } from '../../../../models/audiencesegment/AudienceSegmentResource';
+import { isPartialUserListSegment, UserQuerySegment } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import { IQueryService } from '../../../../services/QueryService';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
@@ -209,6 +209,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
                 datamartId: datamartId!,
                 context: 'GOALS',
                 queryHasChanged: this.hasQueryChanged(),
+                segmentEditor: (initialValues.audienceSegment as UserQuerySegment).segment_editor,
               }}
             />,
           )

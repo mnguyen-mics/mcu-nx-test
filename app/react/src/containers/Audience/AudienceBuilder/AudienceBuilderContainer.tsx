@@ -13,17 +13,13 @@ import {
   InjectedFormProps,
   getFormValues,
 } from 'redux-form';
-import {
-  FORM_ID,
-  buildQueryDocument,
-} from './constants';
+import { FORM_ID, buildQueryDocument } from './constants';
 import { Omit } from '../../../utils/Types';
 import {
   AudienceBuilderFormData,
-  AudienceBuilderResource,
+  QueryDocument as AudienceBuilderQueryDocument,
 } from '../../../models/audienceBuilder/AudienceBuilderResource';
 import AudienceBuilderDashboard from './AudienceBuilderDashboard';
-import AudienceBuilderActionbar from './AudienceBuilderActionbar';
 import QueryFragmentFormSection, {
   QueryFragmentFormSectionProps,
 } from './QueryFragmentBuilders/QueryFragmentFormSection';
@@ -32,20 +28,24 @@ import { OTQLResult } from '../../../models/datamart/graphdb/OTQLResult';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IRuntimeSchemaService } from '../../../services/RuntimeSchemaService';
+import { IQueryService } from '../../../services/QueryService';
 import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/RuntimeSchema';
-import { QueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
+import { QueryDocument as GraphDbQueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
 
 export const QueryFragmentFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
   QueryFragmentFormSectionProps
 >;
 
-interface AudienceBuilderContainerProps
+export interface AudienceBuilderContainerProps
   extends Omit<ConfigProps<AudienceBuilderFormData>, 'form'> {
-  save: (formData: AudienceBuilderFormData) => void;
-  audienceBuilder: AudienceBuilderResource;
-  queryResult?: OTQLResult;
-  isQueryRunning: boolean;
+  demographicsFeaturesIds: string[];
+  renderActionBar: (
+    queryDocument: AudienceBuilderQueryDocument,
+    datamartId: string,
+    run: () => void,
+  ) => React.ReactNode;
+  datamartId: string;
 }
 
 interface MapStateToProps {
@@ -63,64 +63,96 @@ type Props = InjectedFormProps<
 
 interface State {
   isLoadingObjectTypes: boolean;
-  queryDocument?: QueryDocument;
+  queryDocument?: GraphDbQueryDocument;
   objectTypes: ObjectLikeTypeInfoResource[];
+  queryResult?: OTQLResult;
+  isQueryRunning: boolean;
 }
 
 class AudienceBuilderContainer extends React.Component<Props, State> {
   @lazyInject(TYPES.IRuntimeSchemaService)
   private _runtimeSchemaService: IRuntimeSchemaService;
 
+  @lazyInject(TYPES.IQueryService)
+  private _queryService: IQueryService;
+
   constructor(props: Props) {
     super(props);
     this.state = {
       isLoadingObjectTypes: false,
       objectTypes: [],
+      isQueryRunning: false,
     };
   }
 
   componentDidMount() {
-    const { audienceBuilder } = this.props;
+    const { datamartId, formValues } = this.props;
     this.setState({
       isLoadingObjectTypes: true,
     });
-    this._runtimeSchemaService
-      .getRuntimeSchemas(audienceBuilder.datamart_id)
-      .then(schemaRes => {
-        const liveSchema = schemaRes.data.find(s => s.status === 'LIVE');
-        if (!liveSchema) return;
-        return this._runtimeSchemaService
-          .getObjectTypeInfoResources(
-            audienceBuilder.datamart_id,
-            liveSchema.id,
-          )
-          .then(objectTypes => {
-            this.setState({
-              objectTypes: objectTypes,
-            });
+    this.runQuery(formValues);
+    this._runtimeSchemaService.getRuntimeSchemas(datamartId).then(schemaRes => {
+      const liveSchema = schemaRes.data.find(s => s.status === 'LIVE');
+      if (!liveSchema) return;
+      return this._runtimeSchemaService
+        .getObjectTypeInfoResources(datamartId, liveSchema.id)
+        .then(objectTypes => {
+          this.setState({
+            objectTypes: objectTypes,
           });
-      });
+        });
+    });
   }
 
-  saveFormData = () => {
-    const { formValues } = this.props;
-    this.props.save(formValues);
+  componentDidUpdate(prevProps: Props) {
+    const { formValues, datamartId } = this.props;
+    const { datamartId: prevDatamartId } = prevProps;
+    if (datamartId !== prevDatamartId) {
+      this.runQuery(formValues);
+    }
+  }
+
+  runQuery = (formData: AudienceBuilderFormData) => {
+    const { datamartId } = this.props;
     this.setState({
-      queryDocument: buildQueryDocument(formValues),
+      isQueryRunning: true,
     });
+    this._queryService
+      .runJSONOTQLQuery(datamartId, buildQueryDocument(formData))
+      .then(queryResult => {
+        this.setState({
+          queryResult: queryResult.data,
+          isQueryRunning: false,
+          queryDocument: buildQueryDocument(formData),
+        });
+      })
+      .catch(err => {
+        // this.props.notifyError(err);
+        this.setState({
+          isQueryRunning: false,
+        });
+      });
   };
+
+  // This will be removed when backend will be able to handle List and Long
 
   render() {
     const {
-      audienceBuilder,
-      queryResult,
-      isQueryRunning,
+      datamartId,
+      renderActionBar,
+      formValues,
+      demographicsFeaturesIds,
       match: {
         params: { organisationId },
       },
     } = this.props;
 
-    const { objectTypes, queryDocument } = this.state;
+    const {
+      objectTypes,
+      queryResult,
+      isQueryRunning,
+      queryDocument,
+    } = this.state;
 
     const genericFieldArrayProps = {
       rerenderOnEveryChange: true,
@@ -128,14 +160,23 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
 
     return (
       <React.Fragment>
-        <AudienceBuilderActionbar save={this.saveFormData} />
         <Layout>
+          {renderActionBar(
+            {
+              operations: [{ directives: [], selections: [{ name: 'id' }] }],
+              from: 'UserPoint',
+              where: formValues.where,
+            },
+            datamartId,
+            () => this.runQuery(formValues),
+          )}
           <Row className="ant-layout-content mcs-audienceBuilder_container">
             <Col span={12}>
               <QueryFragmentFieldArray
                 name={`where.expressions`}
                 component={QueryFragmentFormSection}
-                audienceBuilder={audienceBuilder}
+                datamartId={datamartId}
+                demographicsFeaturesIds={demographicsFeaturesIds}
                 objectTypes={objectTypes}
                 {...genericFieldArrayProps}
               />
@@ -146,7 +187,7 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
             >
               <AudienceBuilderDashboard
                 organisationId={organisationId}
-                datamartId={audienceBuilder.datamart_id}
+                datamartId={datamartId}
                 totalAudience={queryResult && queryResult.rows[0].count}
                 isQueryRunning={isQueryRunning}
                 queryDocument={queryDocument}
