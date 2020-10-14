@@ -68,7 +68,7 @@ it('Should create a new RANDOM_SPLIT partition and publish it', () => {
     cy.contains('Publish').click()
     cy.contains('OK').click()
 
-    cy.get('[class="content-title"]').should('contain', partitionName)
+    cy.get('[class="mcs-contentHeader_title--large"]').should('contain', partitionName)
 
     cy.contains('Partition number')
     cy.contains('Users')
