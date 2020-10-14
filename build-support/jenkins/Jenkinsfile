@@ -4,7 +4,7 @@ pipeline {
 	parameters {
 	    string(name: 'END_TO_END_CHECK', 
 	    defaultValue: 'true', 
-	    description: 'set to false to bypass the virtual platform creation and the cypress tests'),
+	    description: 'set to false to bypass the virtual platform creation and the cypress tests')
         string(name: 'GIVEN_VIRTUAL_PLATFORM_NAME',
         defaultValue: '',
         description: 'If you would like to run the tests on a precedently created virtual platform (For example if a previous build fails because of false positive tests) please provide its name')

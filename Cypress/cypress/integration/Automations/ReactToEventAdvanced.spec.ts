@@ -38,10 +38,10 @@ it('Should test the creation of an automation with React to Event Advanced', () 
 
     const automationName = 'React to an Event Advanced'
 
-    cy.get('.form-modal')
+    cy.get('.mcs-form-modal-container')
       .find('#name')
       .type(automationName)
-    cy.get('.form-modal')
+    cy.get('.mcs-form-modal-container')
       .find('[type=submit]')
       .click()
 

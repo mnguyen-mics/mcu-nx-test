@@ -46,10 +46,10 @@ it.skip('Should test the creation of an automation with On Segment Exit', () => 
 
     const automationName = 'On Segment Exit Automation'
 
-    cy.get('.form-modal')
+    cy.get('.mcs-form-modal-container')
       .find('#name')
       .type(automationName)
-    cy.get('.form-modal')
+    cy.get('.mcs-form-modal-container')
       .find('[type=submit]')
       .click()
 
