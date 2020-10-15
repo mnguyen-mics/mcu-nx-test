@@ -88,7 +88,7 @@ class AudienceBuilderDashboard extends React.Component<Props, State> {
         <React.Fragment>
           {isLoading ? (
             <Loading isFullScreen={true} />
-          ) : queryDocument ? (
+          ) : (
             dashboards.map(d => (
               <DashboardWrapper
                 key={d.id}
@@ -97,7 +97,7 @@ class AudienceBuilderDashboard extends React.Component<Props, State> {
                 source={queryDocument}
               />
             ))
-          ) : null}
+          )}
         </React.Fragment>
       </div>
     );

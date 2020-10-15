@@ -71,12 +71,13 @@ class AudienceBuilderPage extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { selectedDatamartId } = this.props;
-    this.getAudienceBuilders(selectedDatamartId);
+    const { selectedDatamartId, formValues } = this.props;
+    this.getAudienceBuilders(selectedDatamartId).then(() => {
+      this.runQuery(formValues);
+    });
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
-    const { selectedAudienceBuilder } = this.state;
     const {
       match: {
         params: { organisationId },
@@ -89,7 +90,6 @@ class AudienceBuilderPage extends React.Component<Props, State> {
         params: { organisationId: prevOrganisationId },
       },
       selectedDatamartId: prevSelectedDatamartId,
-      formValues: prevFormValues,
     } = prevProps;
     if (
       organisationId !== prevOrganisationId ||
@@ -98,12 +98,6 @@ class AudienceBuilderPage extends React.Component<Props, State> {
       this.getAudienceBuilders(selectedDatamartId).then(() => {
         this.runQuery(formValues);
       });
-    } else if (
-      selectedAudienceBuilder &&
-      selectedAudienceBuilder.demographics_features_ids.length === 0 &&
-      !_.isEqual(formValues, prevFormValues)
-    ) {
-      this.runQuery(formValues);
     }
   }
 

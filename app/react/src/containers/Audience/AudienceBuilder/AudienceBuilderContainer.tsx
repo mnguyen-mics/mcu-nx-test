@@ -13,7 +13,10 @@ import {
   InjectedFormProps,
   getFormValues,
 } from 'redux-form';
-import { FORM_ID, buildQueryDocument } from './constants';
+import {
+  FORM_ID,
+  buildQueryDocument,
+} from './constants';
 import { Omit } from '../../../utils/Types';
 import {
   AudienceBuilderFormData,
