@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { Layout, Row } from 'antd';
-import { defineMessages, FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
+import { defineMessages, injectIntl, InjectedIntlProps } from 'react-intl';
 import { FormTitle } from '../../../components/Form';
 import { QueryInputEvaluationPeriodUnit } from '../../../models/automations/automations';
 import { injectFeatures, InjectedFeaturesProps } from '../../Features';
@@ -15,23 +15,11 @@ export interface AutomationTemplateSelectorProps {
   disableReactToEvent: boolean;
 }
 
-
-interface State {
-  periodic: boolean
-}
-
 type Props = AutomationTemplateSelectorProps
   & InjectedIntlProps
   & InjectedFeaturesProps;
 
-class AutomationTemplateSelector extends React.Component<Props, State> {
-
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      periodic: false
-    }
-  }
+class AutomationTemplateSelector extends React.Component<Props> {
 
   renderSelectionAutomationType = () => {
 
@@ -44,11 +32,9 @@ class AutomationTemplateSelector extends React.Component<Props, State> {
       disableReactToEvent,
     } = this.props;
 
-    const onClickOnLive = () => onSelectTemplate('LIVE');
     const onClickOnReactToEvent = () => onSelectTemplate('REACT_TO_EVENT');
     const onClicOnSegmentEntry = () => onSelectTemplate('ON_SEGMENT_ENTRY');
     const onClicOnSegmentExit = () => onSelectTemplate('ON_SEGMENT_EXIT');
-    const onClickOnPeriodic = () => this.setState({ periodic: true })
 
     return (
       <Row className="mcs-selector_container">
@@ -64,10 +50,7 @@ class AutomationTemplateSelector extends React.Component<Props, State> {
                 ? [formatMessage(messages.reactToAnEventDisabled)]
                 : undefined
             }
-            select={
-              hasFeature('automations-wizard-react-to-event')
-                ? onClickOnReactToEvent :
-                onClickOnLive}
+            select={onClickOnReactToEvent}
             disabled={hasFeature('automations-wizard-react-to-event') ? disableReactToEvent : false}
           />
           {
@@ -87,49 +70,6 @@ class AutomationTemplateSelector extends React.Component<Props, State> {
           }
 
         </Row>
-
-        <div>
-          <Row className="intermediate-title">
-            <FormattedMessage {...messages.advanced} />
-          </Row>
-          <Row className="menu">
-            {hasFeature('automations-wizard-react-to-event') && <MenuList
-              title={formatMessage(messages.live)}
-              select={onClickOnLive}
-            />
-            }
-            <MenuList
-              title={formatMessage(messages.periodic)}
-              select={onClickOnPeriodic}
-            />
-          </Row>
-        </div>
-
-      </Row>
-    )
-  }
-
-  renderSelectionPeriod = () => {
-
-    const {
-      onSelectTemplate,
-      intl: {
-        formatMessage
-      }
-    } = this.props;
-
-    const onClickOnPeriodic = (n: number, p: QueryInputEvaluationPeriodUnit) => () => onSelectTemplate('PERIODIC', n, p);
-
-    return (
-      <Row className="mcs-selector_container">
-        <Row className="menu">
-          <MenuList title={formatMessage(messages.everyHours)} select={onClickOnPeriodic(1, "HOUR")} />
-          <MenuList title={formatMessage(messages.every2Hours)} select={onClickOnPeriodic(2, "HOUR")} />
-          <MenuList title={formatMessage(messages.everyDays)} select={onClickOnPeriodic(1, "DAY")} />
-          <MenuList title={formatMessage(messages.everyWeeks)} select={onClickOnPeriodic(1, "WEEK")} />
-          <MenuList title={formatMessage(messages.everyMonths)} select={onClickOnPeriodic(1, "MONTH")} />
-          <MenuList title={formatMessage(messages.everyYears)} select={onClickOnPeriodic(12, "MONTH")} />
-        </Row>
       </Row>
     )
   }
@@ -139,19 +79,12 @@ class AutomationTemplateSelector extends React.Component<Props, State> {
       actionbarProps,
     } = this.props;
 
-    const {
-      periodic
-    } = this.state;
-
     return (
       <Layout>
         <Actionbar {...actionbarProps} />
         <Layout.Content className="mcs-content-container mcs-form-container text-center">
           <FormTitle title={messages.title} subtitle={messages.subTitleStep1} />
-          {periodic
-            ? this.renderSelectionPeriod()
-            : this.renderSelectionAutomationType()
-          }
+          {this.renderSelectionAutomationType()}
         </Layout.Content>
       </Layout>
     );
