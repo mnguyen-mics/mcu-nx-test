@@ -10,7 +10,6 @@ import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { AntIcon } from '../domain';
 import {
   INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA,
-  INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA,
   INITIAL_ADD_TO_SEGMENT_NODE_FORM_DATA,
   INITIAL_DELETE_FROM_SEGMENT_NODE_FORM_DATA,
 } from '../AutomationNode/Edit/domain';
@@ -53,16 +52,6 @@ const emailCampaignNode: ScenarioNodeShape = {
   campaign_id: '',
   formData: INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA,
   initialFormData: INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA,
-};
-
-const displayCampaignNode: ScenarioNodeShape = {
-  id: generateFakeId(),
-  type: 'DISPLAY_CAMPAIGN',
-  campaign_id: '',
-  scenario_id: '',
-  ad_group_id: '',
-  formData: INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA,
-  initialFormData: INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA,
 };
 
 const addToSegmentNode: ScenarioNodeShape = {
@@ -146,7 +135,7 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
   }
 
   componentWillMount() {
-    const actionNodesList = [emailCampaignNode, displayCampaignNode]
+    const actionNodesList = [emailCampaignNode]
       .concat(
         this.props.hasFeature('automations-add-delete-to-from-segment-node')
           ? [addToSegmentNode, deleteFromSegmentNode]
