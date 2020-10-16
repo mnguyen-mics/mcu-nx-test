@@ -116,7 +116,7 @@ export const INITIAL_AUDIENCE_BUILDER_FORM_DATA: AudienceBuilderFormData = {
   },
 };
 
-const formateQuery = (query: QueryDocument) => {
+const formatQuery = (query: QueryDocument) => {
   if (query?.where) {
     return {
       ...query,
@@ -129,15 +129,18 @@ const formateQuery = (query: QueryDocument) => {
               expressions: exp.expressions.map(
                 (e: AudienceBuilderParametricPredicateNode) => {
                   const parameters: any = {};
-                  const formateValue = (v: any) => {
+                  const formatValue = (v: any) => {
                     if (Array.isArray(v)) {
-                      return v[0] ? v[0].toString() : '';
+                      return v[0] ? v[0].toString() : undefined;
                     } else if (typeof v === 'number') {
                       return v.toString();
                     } else return v;
                   };
                   Object.keys(e.parameters).forEach(k => {
-                    parameters[`${k}`] = formateValue(e.parameters[k]);
+                    const value = formatValue(e.parameters[k]);
+                    if(value){
+                      parameters[`${k}`] = value;
+                    }
                   });
 
                   return {
@@ -178,5 +181,5 @@ export const buildQueryDocument = (formData: AudienceBuilderFormData) => {
     };
   }
   // This will be removed when backend will be able to handle List and Long
-  return formateQuery(query) as any;
+  return formatQuery(query) as any;
 };

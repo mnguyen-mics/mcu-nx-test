@@ -1,5 +1,6 @@
 import * as React from 'react';
 import cuid from 'cuid';
+import _ from 'lodash';
 import {
   OTQLAggregationResult,
   isAggregateResult,
@@ -96,7 +97,7 @@ class MapBarChart extends React.Component<Props, State> {
     } = previousProps;
 
     if (
-      source !== previousSource ||
+      !_.isEqual(previousSource, source) ||
       queryId !== previousChartQueryId ||
       datamartId !== previousDatamartId
     ) {
