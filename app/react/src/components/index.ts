@@ -5,7 +5,6 @@ import Loading from './Loading';
 import McsIcon from './McsIcon';
 import TableSelector from './ElementSelector/TableSelector';
 import MultiSelect from './MultiSelect';
-import SearchAndMultiSelect from './SearchAndMultiSelect';
 import LabelsSelector from './LabelsSelector';
 import OtqlConsole from './OtqlConsole';
 import WindowBodyPortal from './WindowBodyPortal';
@@ -19,7 +18,6 @@ export {
   McsIcon,
   TableSelector,
   MultiSelect,
-  SearchAndMultiSelect,
   OtqlConsole,
   WindowBodyPortal,
 };

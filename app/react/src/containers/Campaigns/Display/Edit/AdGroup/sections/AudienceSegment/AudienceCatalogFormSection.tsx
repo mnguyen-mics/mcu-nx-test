@@ -17,7 +17,7 @@ import {
 } from '../../../../../../../models/servicemanagement/PublicServiceItemResource';
 import { AudienceSegmentResource } from '../../../../../../../models/audiencesegment/AudienceSegmentResource';
 import FormSearchAndMultiSelect from '../../../../../../../components/Form/FormSearchAndMultiSelect';
-import { MenuItemProps } from '../../../../../../../components/SearchAndMultiSelect';
+import { MenuItemProps } from '@mediarithmics-private/mcs-components-library/lib/components/search-multi-select/SearchAndMultiSelect';
 import { Button } from '@mediarithmics-private/mcs-components-library';
 import { ReduxFormChangeProps } from '../../../../../../../utils/FormHelper';
 import TreeSelectWithList, { TreeData } from '../../../../../../../components/Form/TreeSelectWithList';
