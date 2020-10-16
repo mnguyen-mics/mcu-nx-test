@@ -238,7 +238,7 @@ class Funnel extends React.Component<Props, State> {
 
     return (
       <Card className="mcs-funnel">
-        {funnelData.steps.length === 0 ? (<EmptyChart title={intl.formatMessage(messages.noData)} icon='warning' />) : (<div className="mcs-funnel" id="container" >
+        <div className="mcs-funnel" id="container" >
           <div className="mcs-funnel_header">
             <h1 className="mcs-funnel_header_title">{title}</h1>
             <McsDateRangePicker
@@ -246,38 +246,44 @@ class Funnel extends React.Component<Props, State> {
               onChange={dateRangePickerOptions.onChange}
             />
           </div>
-          <div className="mcs-funnel_steps" >
-            {funnelData.steps.map((step, index) => {
-              return (<div key={index.toString()} style={{ flex: 1 }} >
-                <div className={"mcs-funnel_stepName"}>
-                  <h3 className="mcs-funnel_stepName_title">Step {index + 1}</h3>
-                  <p className="mcs-funnel_stepName_desc">{step.name}</p>
-                </div>
-                <div className={"mcs-funnel_userPoints"}>
-                  <div className="mcs-funnel_userPoints_title">UserPoints</div>
-                  <div className="mcs-funnel_userPoints_nbr">{step.count}</div>
-                </div>
-                <div className={"mcs-funnel_chart"}>
-                  {(stepDelta[index] && stepDelta[index].percentageOfSucceeded) ? <div className="mcs-funnel_percentageOfSucceeded">
-                    <div className="mcs-funnel_arrow mcs_funnel_arrowStep" />
-                    <p className="mcs-funnel_stepInfo"><b>{`${stepDelta[index].percentageOfSucceeded}%`}</b> have succeeded in <b>{moment.duration(funnelData.steps[index - 1].interaction_duration, "second").format("d [days] h [hour]")}</b></p>
-                  </div> : ""}
-                  {<canvas id={`canvas_${index + 1}`} className={"mcs-funnel_canvas"} height="370" />}
-                  <div className="mcs-funnel_conversionInfo">
-                    <div className={this.isLastStep(index + 1) ? "mcs-funnel_arrow mcs-funnel_arrow--success" : "mcs-funnel_arrow  mcs-funnel_arrow--failed"} />
-                    <div className="mcs-funnel_stepInfo">
-                      <b>{stepDelta[index] && `${stepDelta[index].diff}%`}</b><br />
-                      <p>{this.isLastStep(index + 1) ? "Conversions" : "Dropoffs"}</p>
-                    </div>
+          {funnelData.steps.length === 0 ?
+            <div className="mcs-funnel_empty">
+              <EmptyChart title={intl.formatMessage(messages.noData)} icon='warning' />
+            </div> :
+            <div className="mcs-funnel_steps" >
+              {funnelData.steps.map((step, index) => {
+                return <div key={index.toString()} style={{ flex: 1 }} >
+                  <div className={"mcs-funnel_stepName"}>
+                    <h3 className="mcs-funnel_stepName_title">Step {index + 1}</h3>
+                    <p className="mcs-funnel_stepName_desc">{step.name}</p>
                   </div>
+                  <div className={"mcs-funnel_userPoints"}>
+                    <div className="mcs-funnel_userPoints_title">UserPoints</div>
+                    <div className="mcs-funnel_userPoints_nbr">{step.count}</div>
+                  </div>
+                  <div className={"mcs-funnel_chart"}>
+                    {(stepDelta[index] && stepDelta[index].percentageOfSucceeded) ? <div className="mcs-funnel_percentageOfSucceeded">
+                      <div className="mcs-funnel_arrow mcs_funnel_arrowStep" />
+                      <p className="mcs-funnel_stepInfo"><b>{`${stepDelta[index].percentageOfSucceeded}%`}</b> have succeeded in <b>{moment.duration(funnelData.steps[index - 1].interaction_duration, "second").format("d [days] h [hour]")}</b></p>
+                    </div> : ""}
+                    {<canvas id={`canvas_${index + 1}`} className={"mcs-funnel_canvas"} height="370" />}
+                    <div className="mcs-funnel_conversionInfo">
+                      <div className={this.isLastStep(index + 1) ? "mcs-funnel_arrow mcs-funnel_arrow--success" : "mcs-funnel_arrow  mcs-funnel_arrow--failed"} />
+                      <div className="mcs-funnel_stepInfo">
+                        <b>{stepDelta[index] && `${stepDelta[index].diff}%`}</b><br />
+                        <p>{this.isLastStep(index + 1) ? "Conversions" : "Dropoffs"}</p>
+                      </div>
+                    </div>
 
+                  </div>
                 </div>
-              </div>
-              )
-            })}
-          </div>
-        </div>)}
-      </Card >)
+              }
+              )}
+            </div>
+          }
+        </div>
+      </Card >
+    )
   }
 }
 
