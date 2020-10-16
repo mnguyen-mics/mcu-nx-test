@@ -1,4 +1,9 @@
-import { AudienceBuilderFormData } from './../../../models/audienceBuilder/AudienceBuilderResource';
+import {
+  AudienceBuilderFormData,
+  AudienceBuilderGroupNode,
+  AudienceBuilderParametricPredicateNode,
+  QueryDocument,
+} from './../../../models/audienceBuilder/AudienceBuilderResource';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
 export const messages: {
@@ -109,4 +114,72 @@ export const INITIAL_AUDIENCE_BUILDER_FORM_DATA: AudienceBuilderFormData = {
       },
     ],
   },
+};
+
+const formatQuery = (query: QueryDocument) => {
+  if (query?.where) {
+    return {
+      ...query,
+      where: {
+        ...query.where,
+        expressions: (query.where as AudienceBuilderGroupNode).expressions.map(
+          (exp: AudienceBuilderGroupNode) => {
+            return {
+              ...exp,
+              expressions: exp.expressions.map(
+                (e: AudienceBuilderParametricPredicateNode) => {
+                  const parameters: any = {};
+                  const formatValue = (v: any) => {
+                    if (Array.isArray(v)) {
+                      return v[0] ? v[0].toString() : undefined;
+                    } else if (typeof v === 'number') {
+                      return v.toString();
+                    } else return v;
+                  };
+                  Object.keys(e.parameters).forEach(k => {
+                    const value = formatValue(e.parameters[k]);
+                    if(value){
+                      parameters[`${k}`] = value;
+                    }
+                  });
+
+                  return {
+                    ...e,
+                    parameters: parameters,
+                  };
+                },
+              ),
+            };
+          },
+        ),
+      },
+    };
+  } else return query;
+};
+
+export const buildQueryDocument = (formData: AudienceBuilderFormData) => {
+  let query: QueryDocument = {
+    language_version: 'JSON_OTQL',
+    operations: [
+      {
+        directives: [
+          {
+            name: 'count',
+          },
+        ],
+        selections: [],
+      },
+    ],
+    from: 'UserPoint',
+  };
+  const clauseWhere = formData?.where;
+
+  if (clauseWhere) {
+    query = {
+      ...query,
+      where: clauseWhere,
+    };
+  }
+  // This will be removed when backend will be able to handle List and Long
+  return formatQuery(query) as any;
 };

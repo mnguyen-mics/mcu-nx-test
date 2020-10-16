@@ -1,4 +1,5 @@
 import * as React from 'react';
+import _ from 'lodash';
 import { isCountResult } from '../../../../models/datamart/graphdb/OTQLResult';
 import { formatMetric } from '../../../../utils/MetricHelper';
 import { lazyInject } from '../../../../config/inversify.config';
@@ -7,13 +8,14 @@ import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import { getFormattedQuery } from '../domain';
+import { QueryDocument } from '../../../../models/datamart/graphdb/QueryDocument';
 
 export interface PercentageProps {
   queryId: string;
   totalQueryId: string;
   datamartId: string;
   title: string;
-  segment?: AudienceSegmentShape;
+  source?: AudienceSegmentShape | QueryDocument;
 }
 
 interface State {
@@ -35,26 +37,26 @@ export default class Percentage extends React.Component<PercentageProps, State> 
   }
 
   componentDidMount() {
-    const { segment, datamartId, queryId, totalQueryId } = this.props;
-    this.fetchData(queryId, totalQueryId, datamartId, segment);
+    const { source, datamartId, queryId, totalQueryId } = this.props;
+    this.fetchData(queryId, totalQueryId, datamartId, source);
   }
 
   componentDidUpdate(previousProps: PercentageProps) {
-    const { segment, queryId, datamartId, totalQueryId } = this.props;
+    const { source, queryId, datamartId, totalQueryId } = this.props;
     const {
-      segment: previousSegment,
+      source: previousSource,
       queryId: previousChartQueryId,
       datamartId: previousDatamartId,
       totalQueryId: previousTotalQueryId
     } = previousProps;
 
     if (
-      segment !== previousSegment ||
+      !_.isEqual(previousSource, source) || 
       queryId !== previousChartQueryId ||
       datamartId !== previousDatamartId ||
       totalQueryId !== previousTotalQueryId
     ) {
-      this.fetchData(queryId, totalQueryId, datamartId, segment);
+      this.fetchData(queryId, totalQueryId, datamartId, source);
     }
   }
 
@@ -62,11 +64,11 @@ export default class Percentage extends React.Component<PercentageProps, State> 
     chartQueryId: string,
     totalQueryId: string,
     datamartId: string,
-    segment?: AudienceSegmentShape,
+    source?: AudienceSegmentShape | QueryDocument,
   ): Promise<void> => {
     return Promise.all([
-      this.fetchQuery(chartQueryId, datamartId, segment),
-      this.fetchQuery(totalQueryId, datamartId, segment)
+      this.fetchQuery(chartQueryId, datamartId, source),
+      this.fetchQuery(totalQueryId, datamartId, source)
     ])
     .then(q => {
       const left = q[0]
@@ -90,7 +92,7 @@ export default class Percentage extends React.Component<PercentageProps, State> 
   fetchQuery = (
     chartQueryId: string,
     datamartId: string,
-    segment?: AudienceSegmentShape,
+    source?: AudienceSegmentShape | QueryDocument,
   ): Promise<number | void> => {
     this.setState({ error: false, loading: true });
 
@@ -102,7 +104,7 @@ export default class Percentage extends React.Component<PercentageProps, State> 
         return queryResp.data;
       })
       .then(q => {
-        return getFormattedQuery(datamartId, this._queryService, q, segment);
+        return getFormattedQuery(datamartId, this._queryService, q, source);
       })
       .then(q => {
         const query = q.query_text;

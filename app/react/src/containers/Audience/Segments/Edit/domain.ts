@@ -1,3 +1,4 @@
+import { QueryDocument } from './../../../../models/datamart/graphdb/QueryDocument';
 import { ProcessingActivityFieldModel } from './../../../Settings/DatamartSettings/Common/domain';
 import { ProcessingSelectionResource } from './../../../../models/processing';
 import { UploadFile } from 'antd/lib/upload/interface';
@@ -54,6 +55,12 @@ export const INITIAL_AUDIENCE_SEGMENT_FORM_DATA: AudienceSegmentFormData = {
   defaultLifetimeUnit: 'days',
   userListFiles: [],
 };
+
+export function isAudienceSegmentShape(
+  source?: AudienceSegmentShape | QueryDocument,
+): source is AudienceSegmentShape {
+  return source !== undefined && (source as AudienceSegmentShape).type !== undefined;
+}
 
 export function isUserQuerySegment(
   segment: AudienceSegmentShape,

@@ -15,13 +15,11 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
-import { AudienceSegmentShape } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import { PiePlot, EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
 import { DatasetProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/category-based-charts/pie-plot/PiePlot';
 
 export interface GaugePieChartProps {
   title?: string;
-  segment?: AudienceSegmentShape;
   queryIds: string[];
   datamartId: string;
   height: number;
@@ -63,25 +61,23 @@ class GaugePieChart extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { segment, queryIds, datamartId } = this.props;
+    const { queryIds, datamartId } = this.props;
 
-    this.fetchData(queryIds, datamartId, segment);
+    this.fetchData(queryIds, datamartId);
   }
 
   componentDidUpdate(previousProps: GaugePieChartProps) {
-    const { segment, queryIds, datamartId } = this.props;
+    const { queryIds, datamartId } = this.props;
     const {
-      segment: previousSegment,
       queryIds: previousChartQueryIds,
       datamartId: previousDatamartId
     } = previousProps;
 
     if (
-      segment !== previousSegment ||
       queryIds !== previousChartQueryIds ||
       datamartId !== previousDatamartId
     ) {
-      this.fetchData(queryIds, datamartId, segment);
+      this.fetchData(queryIds, datamartId);
     }
   }
 
@@ -107,7 +103,6 @@ class GaugePieChart extends React.Component<Props, State> {
   fetchData = (
     chartQueryIds: string[],
     datamartId: string,
-    segment?: AudienceSegmentShape,
    
   ): Promise<void> => {
     this.setState({ error: false, loading: true });

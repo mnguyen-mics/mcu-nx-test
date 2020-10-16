@@ -13,11 +13,13 @@ import injectNotifications, {
 import { Loading } from '@mediarithmics-private/mcs-components-library';
 import DashboardWrapper from '../Dashboard/DashboardWrapper';
 import CardFlex from '../Dashboard/Components/CardFlex';
+import { QueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
 
 interface AudienceBuilderDashboardProps {
   organisationId: string;
   datamartId: string;
   totalAudience?: number;
+  queryDocument?: QueryDocument;
   isQueryRunning: boolean;
 }
 
@@ -66,12 +68,14 @@ class AudienceBuilderDashboard extends React.Component<Props, State> {
   };
 
   render() {
-    const { intl, totalAudience, isQueryRunning } = this.props;
+    const { intl, totalAudience, isQueryRunning, queryDocument } = this.props;
     const { isLoading, dashboards } = this.state;
     return (
       <div className="mcs-audienceBuilder_liveDashboard">
         <CardFlex className="mcs-audienceBuilder_totalAudience">
-          {totalAudience !== undefined && !isQueryRunning ? (
+          {totalAudience === undefined ? (
+            <Statistic title={intl.formatMessage(messages.selectedAudience)} />
+          ) : !isQueryRunning ? (
             <Statistic
               title={intl.formatMessage(messages.selectedAudience)}
               value={totalAudience}
@@ -90,6 +94,7 @@ class AudienceBuilderDashboard extends React.Component<Props, State> {
                 key={d.id}
                 layout={d.components}
                 datamartId={d.datamart_id}
+                source={queryDocument}
               />
             ))
           )}

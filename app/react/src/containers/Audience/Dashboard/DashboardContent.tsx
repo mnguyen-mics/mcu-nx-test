@@ -9,12 +9,15 @@ import GaugePieChart from './Vizualisation/GaugePieChart';
 import WorldMapChart from './Vizualisation/WorldMapChart';
 import { AudienceSegmentShape } from '../../../models/audiencesegment/AudienceSegmentResource';
 import CountBarChart from './Vizualisation/CountBarChart';
-import { ComponentLayout, Component } from '../../../models/dashboards/dashboards';
+import {
+  ComponentLayout,
+  Component,
+} from '../../../models/dashboards/dashboards';
 import Percentage from './Vizualisation/Percentage';
 import CountPieChart from './Vizualisation/CountPieChart';
 import TopInfo from './Vizualisation/TopInfo';
 import MapRadarChart from './Vizualisation/MapRadarChart';
-
+import { QueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
 
 const BASE_FRAMEWORK_HEIGHT = 150;
 const BASE_PADDING = 5;
@@ -24,7 +27,7 @@ const ResponsiveReactGridLayout = WidthProvider(Responsive);
 interface Props {
   layout: ComponentLayout[];
   onLayoutChange: (layout: Layout[], allLayouts: Layouts) => void;
-  segment?: AudienceSegmentShape;
+  source?: AudienceSegmentShape | QueryDocument;
   datamartId: string;
 }
 
@@ -34,10 +37,7 @@ interface State {
   mounted: boolean;
 }
 
-export default class DashboardContent extends React.Component<
-  Props,
-  State
-> {
+export default class DashboardContent extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -51,15 +51,15 @@ export default class DashboardContent extends React.Component<
   }
 
   generateComponent = (comp: Component, layout: Layout) => {
-    const { segment, datamartId } = this.props;
+    const { source, datamartId } = this.props;
 
-    const height =  this.computeHeight(layout.h);
+    const height = this.computeHeight(layout.h);
 
     switch (comp.component_type) {
       case 'COUNT':
         return (
           <Count
-            segment={segment}
+            source={source}
             datamartId={datamartId}
             title={comp.title}
             queryId={comp.query_id}
@@ -67,18 +67,18 @@ export default class DashboardContent extends React.Component<
         );
       case 'PERCENTAGE':
         return (
-          <Percentage 
-            segment={segment}
+          <Percentage
+            source={source}
             datamartId={datamartId}
             title={comp.title}
             queryId={comp.query_id}
             totalQueryId={comp.total_query_id}
           />
-        )
+        );
       case 'MAP_PIE_CHART':
         return (
           <MapPieChart
-            segment={segment}
+            source={source}
             title={comp.title}
             queryId={comp.query_id}
             datamartId={datamartId}
@@ -89,7 +89,7 @@ export default class DashboardContent extends React.Component<
       case 'MAP_BAR_CHART':
         return (
           <MapBarChart
-            segment={segment}
+            source={source}
             datamartId={datamartId}
             queryId={comp.query_id}
             title={comp.title}
@@ -103,25 +103,25 @@ export default class DashboardContent extends React.Component<
           />
         );
       case 'MAP_RADAR_CHART':
-          return (
-            <MapRadarChart
-              segment={segment}
-              datamartId={datamartId}
-              queryId={comp.query_id}
-              title={comp.title}
-              labelsEnabled={comp.labels_enabled}
-              shouldCompare={comp.shouldCompare}
-              percentage={comp.percentage}
-              vertical={comp.vertical}
-              sortKey={comp.sortKey}
-              labels={comp.labels}
-              tooltip={comp.tooltip}
-            />
-          );
+        return (
+          <MapRadarChart
+            source={source}
+            datamartId={datamartId}
+            queryId={comp.query_id}
+            title={comp.title}
+            labelsEnabled={comp.labels_enabled}
+            shouldCompare={comp.shouldCompare}
+            percentage={comp.percentage}
+            vertical={comp.vertical}
+            sortKey={comp.sortKey}
+            labels={comp.labels}
+            tooltip={comp.tooltip}
+          />
+        );
       case 'DATE_AGGREGATION_CHART':
         return (
           <DateAggregationChart
-            segment={segment}
+            source={source}
             title={comp.title}
             queryIds={comp.query_ids}
             plotLabels={comp.plot_labels}
@@ -133,7 +133,6 @@ export default class DashboardContent extends React.Component<
       case 'GAUGE_PIE_CHART':
         return (
           <GaugePieChart
-            segment={segment}
             datamartId={datamartId}
             title={comp.title}
             queryIds={comp.query_ids}
@@ -143,7 +142,6 @@ export default class DashboardContent extends React.Component<
       case 'WORLD_MAP_CHART':
         return (
           <WorldMapChart
-            segment={segment}
             title={comp.title}
             datamartId={datamartId}
             queryId={comp.query_id}
@@ -153,7 +151,6 @@ export default class DashboardContent extends React.Component<
       case 'COUNT_BAR_CHART':
         return (
           <CountBarChart
-            segment={segment}
             title={comp.title}
             queryIds={comp.query_ids}
             datamartId={datamartId}
@@ -163,25 +160,25 @@ export default class DashboardContent extends React.Component<
           />
         );
       case 'COUNT_PIE_CHART':
-          return (
-            <CountPieChart 
-              datamartId={datamartId}
-              height={height}
-              labelsEnabled={comp.labels_enabled}
-              plotLabels={comp.plot_labels}
-              queryIds={comp.query_ids}
-              title={comp.title}
-            />
-          )
+        return (
+          <CountPieChart
+            datamartId={datamartId}
+            height={height}
+            labelsEnabled={comp.labels_enabled}
+            plotLabels={comp.plot_labels}
+            queryIds={comp.query_ids}
+            title={comp.title}
+          />
+        );
       case 'TOP_INFO_COMPONENT':
         return (
-          <TopInfo 
+          <TopInfo
             datamartId={datamartId}
             title={comp.title}
             queryId={comp.query_id}
-            segment={segment}
+            source={source}
           />
-        )
+        );
       default:
         return null;
     }
@@ -216,10 +213,13 @@ export default class DashboardContent extends React.Component<
 
   computeHeight = (h: number) => {
     return BASE_FRAMEWORK_HEIGHT * h + (h > 1 ? h * BASE_PADDING : 0) - 51;
-  }
+  };
 
   render() {
-    const layouts = this.props.layout.map((cl, i) => ({...cl.layout, i: i.toString()}));
+    const layouts = this.props.layout.map((cl, i) => ({
+      ...cl.layout,
+      i: i.toString(),
+    }));
     return (
       <ResponsiveReactGridLayout
         cols={{ lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 }}

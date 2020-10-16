@@ -374,7 +374,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
             layout={c.components}
             title={c.name}
             datamartId={c.datamart_id}
-            segment={segment}
+            source={segment}
           />
         ))}
         {charts.length ? (

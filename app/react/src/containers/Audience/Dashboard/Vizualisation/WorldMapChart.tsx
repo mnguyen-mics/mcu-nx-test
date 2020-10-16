@@ -10,10 +10,8 @@ import {
   OTQLAggregationResult,
 } from '../../../../models/datamart/graphdb/OTQLResult';
 import { mapData2 } from '../mapData';
-import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 
 export interface WorldMapChartProps {
-  segment?: AudienceSegmentShape;
   title: string;
   queryId: string;
   datamartId: string;
@@ -43,24 +41,19 @@ export default class WorldMapChart extends React.Component<
   }
 
   componentDidMount() {
-    const { segment, queryId, datamartId } = this.props;
-    this.fetchData(queryId, datamartId, segment);
+    const { queryId, datamartId } = this.props;
+    this.fetchData(queryId, datamartId);
   }
 
   componentDidUpdate(previousProps: WorldMapChartProps) {
-    const { segment, queryId, datamartId } = this.props;
+    const { queryId, datamartId } = this.props;
     const {
-      segment: previousSegment,
       queryId: previousChartQueryId,
-      datamartId: previousDatamartId
+      datamartId: previousDatamartId,
     } = previousProps;
 
-    if (
-      segment !== previousSegment ||
-      queryId !== previousChartQueryId ||
-      datamartId !== previousDatamartId
-    ) {
-      this.fetchData(queryId, datamartId, segment);
+    if (queryId !== previousChartQueryId || datamartId !== previousDatamartId) {
+      this.fetchData(queryId, datamartId);
     }
   }
 
@@ -80,11 +73,7 @@ export default class WorldMapChart extends React.Component<
       : [];
   };
 
-  fetchData = (
-    chartQueryId: string,
-    datamartId: string,
-    segment?: AudienceSegmentShape,
-  ): Promise<void> => {
+  fetchData = (chartQueryId: string, datamartId: string): Promise<void> => {
     this.setState({ error: false });
     return this._queryService
       .getQuery(datamartId, chartQueryId)

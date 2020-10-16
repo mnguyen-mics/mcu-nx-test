@@ -41,7 +41,6 @@ export type AudienceBuilderNodeShape =
   | AudienceBuilderParametricPredicateNode;
 
 export interface AudienceBuilderFormData {
-  datamart_id?: string;
   where: {
     type: 'GROUP';
     boolean_operator: QueryBooleanOperator;

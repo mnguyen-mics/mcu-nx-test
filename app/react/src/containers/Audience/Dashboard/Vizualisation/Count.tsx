@@ -1,4 +1,5 @@
 import * as React from 'react';
+import _ from 'lodash';
 import { isCountResult } from '../../../../models/datamart/graphdb/OTQLResult';
 import { formatMetric } from '../../../../utils/MetricHelper';
 import { lazyInject } from '../../../../config/inversify.config';
@@ -7,12 +8,13 @@ import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import { getFormattedQuery } from '../domain';
+import { QueryDocument } from '../../../../models/datamart/graphdb/QueryDocument';
 
 export interface CountProps {
   queryId: string;
   datamartId: string;
   title: string;
-  segment?: AudienceSegmentShape;
+  source?: AudienceSegmentShape | QueryDocument;
 }
 
 interface State {
@@ -34,31 +36,31 @@ export default class Count extends React.Component<CountProps, State> {
   }
 
   componentDidMount() {
-    const { segment, datamartId, queryId } = this.props;
-    this.fetchData(queryId, datamartId, segment);
+    const { source, datamartId, queryId } = this.props;
+    this.fetchData(queryId, datamartId, source);
   }
 
   componentDidUpdate(previousProps: CountProps) {
-    const { segment, queryId, datamartId } = this.props;
+    const { source, queryId, datamartId } = this.props;
     const {
-      segment: previousSegment,
+      source: previousSource,
       queryId: previousChartQueryId,
       datamartId: previousDatamartId
     } = previousProps;
 
     if (
-      segment !== previousSegment ||
+      !_.isEqual(previousSource, source) || 
       queryId !== previousChartQueryId ||
       datamartId !== previousDatamartId
     ) {
-      this.fetchData(queryId, datamartId, segment);
+      this.fetchData(queryId, datamartId, source);
     }
   }
 
   fetchData = (
     chartQueryId: string,
     datamartId: string,
-    segment?: AudienceSegmentShape,
+    source?: AudienceSegmentShape | QueryDocument,
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
     return this._queryService
@@ -68,7 +70,7 @@ export default class Count extends React.Component<CountProps, State> {
         return queryResp.data;
       })
       .then(q => {
-        return getFormattedQuery(datamartId, this._queryService, q, segment);
+        return getFormattedQuery(datamartId, this._queryService, q, source);
       })
       .then(q => {
         const query = q.query_text;
