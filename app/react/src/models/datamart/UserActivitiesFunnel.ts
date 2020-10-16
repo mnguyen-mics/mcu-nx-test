@@ -6,11 +6,19 @@ export interface FunnelFilter {
   filterClause: DimensionFilterClause;
 }
 
-export interface FunnelTimeRange {
-  type: TimeType;
-  unit: TimeUnit; 
-  offset: number;
+export interface FunnelDateRange {
+  type: string,
+  start_date: string,
+  end_date: string
 }
+
+export interface FunnelWindowRange {
+  type: string,
+  unit: TimeUnit,
+  offset: number
+}
+
+export type FunnelTimeRange = FunnelWindowRange | FunnelDateRange
 
 
 export interface FunnelRequestBody {
@@ -32,4 +40,4 @@ export interface Steps {
 }
 
 export type TimeUnit = 'DAY' | 'WEEK' | 'MONTH';
-export type TimeType = 'WINDOW' | 'DATE'
+export type TimeType = 'WINDOW' | 'DATES'

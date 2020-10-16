@@ -1,18 +1,28 @@
 import * as React from 'react';
+import { RouteComponentProps, withRouter } from 'react-router';
 import { Card } from 'antd';
 import moment from 'moment';
 import { IUserActivitiesFunnelService } from '../../services/UserActivitiesFunnelService';
 import { TYPES } from '../../constants/types';
 import { lazyInject } from '../../config/inversify.config';
-import { FunnelFilter, FunnelTimeRange, FunnelResource } from '../../models/datamart/UserActivitiesFunnel';
+import { FunnelFilter, FunnelTimeRange, FunnelResource, FunnelDateRange } from '../../models/datamart/UserActivitiesFunnel';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../containers/Notifications/injectNotifications';
 import { compose } from 'recompose';
 import { debounce } from 'lodash';
-import { EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
+import { EmptyChart, LoadingChart, McsDateRangePicker } from '@mediarithmics-private/mcs-components-library';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { messages } from './constants';
+import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
+
+import {
+  updateSearch,
+  parseSearch,
+  DATE_SEARCH_SETTINGS,
+} from '../../utils/LocationSearchHelper';
+import { formatMcsDate, McsRange } from '../../utils/McsMoment';
+
 
 interface StepDelta {
   step: number
@@ -24,7 +34,6 @@ interface State {
   isLoading: boolean;
   funnelData: FunnelResource;
   stepDelta: StepDelta[];
-  timeRange: FunnelTimeRange;
 }
 
 type FunnelProps = {
@@ -35,7 +44,8 @@ type FunnelProps = {
 
 type Props = FunnelProps &
   InjectedIntlProps &
-  InjectedNotificationProps;
+  InjectedNotificationProps &
+  RouteComponentProps<void>;
 
 const getPercentage = (nbr: number, total: number): number => {
   return (nbr * 100) / total;
@@ -45,10 +55,28 @@ const valueFromPercentage = (percentage: number, drawerAreaHeight: number): numb
   return (percentage * drawerAreaHeight) / 100;
 }
 
+interface FormattedDates {
+  from: string,
+  to: string
+}
+
 class Funnel extends React.Component<Props, State> {
   @lazyInject(TYPES.IUserActivitiesFunnelService)
   private _userActivitiesFunnelService: IUserActivitiesFunnelService;
   private _debounce = debounce;
+
+  updateLocationSearch = (params: any) => {
+    const {
+      history,
+      location: { search: currentSearch, pathname },
+    } = this.props;
+
+    const nextLocation = {
+      pathname,
+      search: updateSearch(currentSearch, params, DATE_SEARCH_SETTINGS),
+    };
+    history.push(nextLocation);
+  };
 
   constructor(props: Props) {
     super(props);
@@ -58,31 +86,37 @@ class Funnel extends React.Component<Props, State> {
         total: 0,
         steps: []
       },
-      stepDelta: [],
-      timeRange: {
-        type: 'WINDOW',
-        unit: 'DAY',
-        offset: 14
-      },
+      stepDelta: []
     }
 
     this.fetchData = this._debounce(this.fetchData.bind(this), 800);
   }
 
+  private extractDatesFromProps(): FunnelDateRange {
+    const { location: { search } } = this.props;
+    const dateFilter: McsRange = parseSearch(search, DATE_SEARCH_SETTINGS);
+    const formattedDates: FormattedDates = formatMcsDate(dateFilter, true);
+    const timeRange = {
+      type: "DATES",
+      start_date: formattedDates.from,
+      end_date: formattedDates.to
+    }
+    return timeRange;
+  }
+
   componentDidMount() {
     const { datamartId, filter } = this.props;
-    const { timeRange } = this.state;
+    const timeRange = this.extractDatesFromProps();
     if (filter.length > 0) this.fetchData(datamartId, filter, timeRange);
     window.addEventListener('resize', this.drawSteps.bind(this));
   }
 
-
   componentDidUpdate(prevProps: Props) {
     const {
       filter,
-      datamartId
+      datamartId,
     } = this.props;
-    const { timeRange } = this.state;
+    const timeRange = this.extractDatesFromProps();
     if (prevProps.filter !== filter && filter.length > 0) {
       this.fetchData(datamartId, filter, timeRange);
     }
@@ -143,7 +177,7 @@ class Funnel extends React.Component<Props, State> {
     const stepStart = drawerAreaHeight && valueFromPercentage(percentageStart, drawerAreaHeight);
     const stepEnd = drawerAreaHeight && valueFromPercentage(percentageEnd, drawerAreaHeight);
 
-    this.setStepDelta(stepNumber,  percentageEnd, percentageStart);
+    this.setStepDelta(stepNumber, percentageEnd, percentageStart);
 
     const ctx = canvas.getContext("2d");
     ctx.beginPath();
@@ -185,16 +219,32 @@ class Funnel extends React.Component<Props, State> {
 
   render() {
     const { funnelData, stepDelta, isLoading } = this.state;
-    const { title, intl } = this.props;
+    const { title, intl, location: { search } } = this.props;
     if (isLoading) return (<LoadingChart />);
+
+    const filter = parseSearch(search, DATE_SEARCH_SETTINGS);
+    const dateRangePickerOptions = {
+      isEnabled: true,
+      onChange: (values: McsDateRangeValue) =>
+        this.updateLocationSearch({
+          from: values.from,
+          to: values.to,
+        }),
+      values: {
+        from: filter.from,
+        to: filter.to,
+      },
+    };
+
     return (
       <Card className="mcs-funnel">
         {funnelData.steps.length === 0 ? (<EmptyChart title={intl.formatMessage(messages.noData)} icon='warning' />) : (<div className="mcs-funnel" id="container" >
           <div className="mcs-funnel_header">
             <h1 className="mcs-funnel_header_title">{title}</h1>
-            <button className="mcs-funnel_header_datePicker">
-              over the last 14 days
-            </button>
+            <McsDateRangePicker
+              values={dateRangePickerOptions.values}
+              onChange={dateRangePickerOptions.onChange}
+            />
           </div>
           <div className="mcs-funnel_steps" >
             {funnelData.steps.map((step, index) => {
@@ -233,5 +283,6 @@ class Funnel extends React.Component<Props, State> {
 
 export default compose<Props, FunnelProps>(
   injectNotifications,
-  injectIntl
+  injectIntl,
+  withRouter
 )(Funnel);
