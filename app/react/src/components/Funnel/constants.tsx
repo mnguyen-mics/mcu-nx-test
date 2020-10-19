@@ -48,7 +48,7 @@ const funnelFilterSearchSetting = {
     return [];
   },
   serialize: (value: FunnelFilter[]) => value.join(','),
-  isValid: (query: Index<string>) => query.filter.split(',').length > 0,
+  isValid: (query: Index<string>) => !query.filter || query.filter.split(',').length > 0,
 };
 
 export const FUNNEL_SEARCH_SETTING: SearchSetting[] = [funnelFilterSearchSetting];
