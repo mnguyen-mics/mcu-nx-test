@@ -14,6 +14,7 @@ import emailMessages from '../containers/Campaigns/Email/List/messages.ts';
 import goalMessages from '../containers/Campaigns/Goal/Dashboard/messages.ts';
 import { formatUnixTimestamp } from '../utils/DateHelper.ts';
 import { messagesMap as abComparisonMessage } from '../containers/Audience/Segments/Dashboard/Experimentation/AudienceExperimentationForm.tsx';
+import { funnelMessages } from '../components/Funnel/Constants.tsx';
 
 const exportServiceMessages = defineMessages({
   from: {
@@ -850,6 +851,66 @@ const exportABComparison = (experimentationSegment, dataSource, formatMessage) =
   exportData(sheets, `${experimentationSegment.name}_ab-details`, 'xlsx');
 };
 
+const exportFunnel = (funnelResource, datamartId, organisationId, formatMessage) => {
+  const titleLine = 'Funnel report';
+  const blankLine = [];
+
+  const dataSheet = [];
+
+  dataSheet.push(titleLine);
+
+  const headerMap = [
+    { name: 'total user points', translation: formatMessage(funnelMessages.stepName) },
+  ];
+  dataSheet.push(blankLine);
+  dataSheet.push(blankLine);
+
+  const headerLine = headerMap.map(header => header.name);
+
+  dataSheet.push(headerLine);
+
+
+  dataSheet.push([funnelResource.total]);
+  dataSheet.push(blankLine);
+  dataSheet.push(blankLine);
+
+  const headersMap = [
+    { name: 'step name', translation: formatMessage(funnelMessages.stepName) },
+    { name: 'user points', translation: formatMessage(funnelMessages.userPoints) },
+    { name: 'interaction duration', translation: formatMessage(funnelMessages.duration) },
+  ];
+
+  const headersLine = headersMap.map(header => header.name);
+
+  dataSheet.push(headersLine);
+
+  funnelResource.steps.forEach(step => {
+
+    const dataLine = [];
+
+    /* eslint-disable camelcase */
+    const {
+      name,
+      count,
+      interaction_duration
+    } = step;
+
+    dataLine.push(
+      name,
+      count,
+      `${interaction_duration}s`
+    );
+    /* eslint-enable camelcase */
+    dataSheet.push(dataLine);
+  });
+
+  const sheets = [{
+    name: titleLine,
+    data: dataSheet,
+  }];
+  exportData(sheets, `${organisationId}_${datamartId}_funnel`, 'xlsx');
+};
+
 export default {
   exportData,
   exportGoals,
@@ -863,5 +924,6 @@ export default {
   exportAudienceSegmentDashboard,
   exportServiceUsageReportList,
   exportCreativeAdServingSnippet,
-  exportABComparison
+  exportABComparison,
+  exportFunnel
 };

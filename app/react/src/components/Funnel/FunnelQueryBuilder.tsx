@@ -7,7 +7,7 @@ import { IUsersAnalyticsService } from '../../services/UsersAnalyticsService';
 import { DimensionsList } from '../../models/datamartUsersAnalytics/datamartUsersAnalytics';
 import { compose } from 'recompose';
 import injectNotifications, { InjectedNotificationProps } from '../../containers/Notifications/injectNotifications';
-import { booleanOperator, dimensionFilterOperator, eventTypesDimension, FUNNEL_SEARCH_SETTING } from './constants';
+import { booleanOperator, dimensionFilterOperator, eventTypesDimension, FUNNEL_SEARCH_SETTING } from './Constants';
 import { BooleanOperator, DimensionFilterClause, DimensionFilterOperator } from '../../models/ReportRequestBody';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { updateSearch } from '../../utils/LocationSearchHelper';

@@ -5,7 +5,7 @@ import moment from 'moment';
 import { IUserActivitiesFunnelService } from '../../services/UserActivitiesFunnelService';
 import { TYPES } from '../../constants/types';
 import { lazyInject } from '../../config/inversify.config';
-import { FunnelFilter, FunnelTimeRange, FunnelResource, FunnelDateRange } from '../../models/datamart/UserActivitiesFunnel';
+import { FunnelFilter, FunnelTimeRange, FunnelResource } from '../../models/datamart/UserActivitiesFunnel';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../containers/Notifications/injectNotifications';
@@ -13,15 +13,14 @@ import { compose } from 'recompose';
 import { debounce } from 'lodash';
 import { EmptyChart, LoadingChart, McsDateRangePicker } from '@mediarithmics-private/mcs-components-library';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
-import { messages } from './constants';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
-
 import {
   updateSearch,
   parseSearch,
   DATE_SEARCH_SETTINGS,
 } from '../../utils/LocationSearchHelper';
-import { formatMcsDate, McsRange } from '../../utils/McsMoment';
+import { funnelMessages } from './Constants';
+import { extractDatesFromProps } from './Utils';
 
 
 interface StepDelta {
@@ -55,10 +54,6 @@ const valueFromPercentage = (percentage: number, drawerAreaHeight: number): numb
   return (percentage * drawerAreaHeight) / 100;
 }
 
-interface FormattedDates {
-  from: string,
-  to: string
-}
 
 class Funnel extends React.Component<Props, State> {
   @lazyInject(TYPES.IUserActivitiesFunnelService)
@@ -92,21 +87,12 @@ class Funnel extends React.Component<Props, State> {
     this.fetchData = this._debounce(this.fetchData.bind(this), 800);
   }
 
-  private extractDatesFromProps(): FunnelDateRange {
-    const { location: { search } } = this.props;
-    const dateFilter: McsRange = parseSearch(search, DATE_SEARCH_SETTINGS);
-    const formattedDates: FormattedDates = formatMcsDate(dateFilter, true);
-    const timeRange = {
-      type: "DATES",
-      start_date: formattedDates.from,
-      end_date: formattedDates.to
-    }
-    return timeRange;
-  }
-
   componentDidMount() {
-    const { datamartId, filter } = this.props;
-    const timeRange = this.extractDatesFromProps();
+    const { 
+      datamartId, 
+      filter,
+      location: { search }, } = this.props;
+    const timeRange = extractDatesFromProps(search);
     if (filter.length > 0) this.fetchData(datamartId, filter, timeRange);
     window.addEventListener('resize', this.drawSteps.bind(this));
   }
@@ -115,12 +101,13 @@ class Funnel extends React.Component<Props, State> {
     const {
       filter,
       datamartId,
-    } = this.props;
-    const timeRange = this.extractDatesFromProps();
-    if (prevProps.filter !== filter && filter.length > 0) {
+      location: { search }, } = this.props;
+    const timeRange = extractDatesFromProps(search);
+    if (prevProps.location.search !== search) {
       this.fetchData(datamartId, filter, timeRange);
     }
   }
+
   // listener cleanup
   componentWillUnmount() {
     window.removeEventListener('resize', this.drawSteps.bind(this))
@@ -248,7 +235,7 @@ class Funnel extends React.Component<Props, State> {
           </div>
           {funnelData.steps.length === 0 ?
             <div className="mcs-funnel_empty">
-              <EmptyChart title={intl.formatMessage(messages.noData)} icon='warning' />
+              <EmptyChart title={intl.formatMessage(funnelMessages.noData)} icon='warning' />
             </div> :
             <div className="mcs-funnel_steps" >
               {funnelData.steps.map((step, index) => {
