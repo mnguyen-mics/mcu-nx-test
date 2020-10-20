@@ -1,8 +1,5 @@
 import * as React from 'react';
-import {
-  DiagramWidget,
-  DiagramModel,
-} from 'storm-react-diagrams';
+import { DiagramWidget, DiagramModel } from 'storm-react-diagrams';
 import { ObjectTreeExpressionNodeShape } from '../../../models/datamart/graphdb/QueryDocument';
 import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/RuntimeSchema';
 import { BooleanOperatorNodeFactory } from './Diagram/BooleanOperatorNode';
@@ -29,6 +26,7 @@ import {
   toNodeList,
   buildLinkList,
   MicsDiagramEngine,
+  Point,
 } from './domain';
 import { OTQLResult } from '../../../models/datamart/graphdb/OTQLResult';
 import CounterList from './CounterList';
@@ -56,6 +54,7 @@ export interface JSONQLBuilderProps {
   runQuery: () => void;
   datamartId: string;
   organisationId: string;
+  hideCounterAndTimeline?: boolean;
 }
 
 interface State {
@@ -75,7 +74,9 @@ class JSONQLBuilder extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    const runtimeSchemaId = props.objectTypes[0] ? props.objectTypes[0].runtime_schema_id : ''
+    const runtimeSchemaId = props.objectTypes[0]
+      ? props.objectTypes[0].runtime_schema_id
+      : '';
     this.engine.registerNodeFactory(
       new BooleanOperatorNodeFactory(
         this.getTreeNodeOperations(),
@@ -88,7 +89,7 @@ class JSONQLBuilder extends React.Component<Props, State> {
         this.props.objectTypes,
         this.lockInteraction,
         this.props.datamartId,
-        runtimeSchemaId
+        runtimeSchemaId,
       ),
     );
     this.engine.registerNodeFactory(
@@ -96,7 +97,7 @@ class JSONQLBuilder extends React.Component<Props, State> {
         this.getTreeNodeOperations(),
         this.props.objectTypes,
         this.lockInteraction,
-        this.props.datamartId
+        this.props.datamartId,
       ),
     );
     this.engine.registerNodeFactory(
@@ -105,7 +106,7 @@ class JSONQLBuilder extends React.Component<Props, State> {
         this.props.objectTypes,
         this.lockInteraction,
         this.keyboardOnlyLock,
-        this.props.datamartId
+        this.props.datamartId,
       ),
     );
 
@@ -116,7 +117,7 @@ class JSONQLBuilder extends React.Component<Props, State> {
       keydown: [],
       locked: false,
       viewSchema: true,
-      keyboardOnlyLock: false
+      keyboardOnlyLock: false,
     };
   }
 
@@ -125,7 +126,7 @@ class JSONQLBuilder extends React.Component<Props, State> {
   };
 
   keyboardOnlyLock = (keyboardOnlyLock: boolean) => {
-    this.setState({ keyboardOnlyLock })
+    this.setState({ keyboardOnlyLock });
   };
 
   componentDidMount() {
@@ -150,27 +151,38 @@ class JSONQLBuilder extends React.Component<Props, State> {
     };
   };
 
-  cutNode = (nodePath: number[], objectLikeType: string, treeNodePath: number[]) => {
+  cutNode = (
+    nodePath: number[],
+    objectLikeType: string,
+    treeNodePath: number[],
+  ) => {
     this.copyNode(nodePath, objectLikeType, treeNodePath);
     this.deleteNode(nodePath);
-  }
+  };
 
-
-  copyNode = (nodePath: number[], objectLikeType: string, treeNodePath: number[]) => {
+  copyNode = (
+    nodePath: number[],
+    objectLikeType: string,
+    treeNodePath: number[],
+  ) => {
     const { query } = this.props;
     if (query) {
-      const partialObjectTree = this.getObjectTreeExpressionFromNodePath(nodePath, query);
+      const partialObjectTree = this.getObjectTreeExpressionFromNodePath(
+        nodePath,
+        query,
+      );
       this.engine.setCopying(partialObjectTree, objectLikeType, treeNodePath);
-      
     }
-    
-  }
+  };
 
-  getObjectTreeExpressionFromNodePath = (nodePath: number[], ot: ObjectTreeExpressionNodeShape): ObjectTreeExpressionNodeShape => {    
+  getObjectTreeExpressionFromNodePath = (
+    nodePath: number[],
+    ot: ObjectTreeExpressionNodeShape,
+  ): ObjectTreeExpressionNodeShape => {
     if (nodePath.length === 0) {
       return ot;
     }
-    if (ot.type === "FIELD") {
+    if (ot.type === 'FIELD') {
       return ot;
     }
     if (nodePath.length === 1) {
@@ -178,8 +190,8 @@ class JSONQLBuilder extends React.Component<Props, State> {
     }
 
     const [head, ...tail] = nodePath;
-    return this.getObjectTreeExpressionFromNodePath(tail, ot.expressions[head]); 
-  }
+    return this.getObjectTreeExpressionFromNodePath(tail, ot.expressions[head]);
+  };
 
   addNode = (nodePath: number[], node: ObjectTreeExpressionNodeShape) => {
     const { updateQuery, query } = this.props;
@@ -273,8 +285,9 @@ class JSONQLBuilder extends React.Component<Props, State> {
     model.setLocked(true);
     const rootNode = new PlusNodeModel();
     rootNode.root = true;
-    rootNode.x = ROOT_NODE_POSITION.x;
-    rootNode.y = ROOT_NODE_POSITION.y;
+    const rootNodePosition = this.getRootNodePosition();
+    rootNode.x = rootNodePosition.x;
+    rootNode.y = rootNodePosition.y;
 
     this.buildModelTree(this.props.query, rootNode, objectTypes, model);
 
@@ -293,8 +306,9 @@ class JSONQLBuilder extends React.Component<Props, State> {
 
       const rootNode = new PlusNodeModel();
       rootNode.root = true;
-      rootNode.x = ROOT_NODE_POSITION.x;
-      rootNode.y = ROOT_NODE_POSITION.y;
+      const rootNodePosition = this.getRootNodePosition();
+      rootNode.x = rootNodePosition.x;
+      rootNode.y = rootNodePosition.y;
 
       this.buildModelTree(query, rootNode, objectTypes, model);
 
@@ -302,6 +316,19 @@ class JSONQLBuilder extends React.Component<Props, State> {
       this.forceUpdate();
     }
   }
+
+  getRootNodePosition = () => {
+    const { hideCounterAndTimeline } = this.props;
+    const position: Point = {
+      x: ROOT_NODE_POSITION.x,
+      y:
+        hideCounterAndTimeline
+          ? ROOT_NODE_POSITION.x
+          : ROOT_NODE_POSITION.y,
+    };
+
+    return position;
+  };
 
   buildModelTree(
     query: ObjectTreeExpressionNodeShape | undefined,
@@ -323,7 +350,7 @@ class JSONQLBuilder extends React.Component<Props, State> {
       layout(
         nodeBTree,
         applyTranslation(
-          ROOT_NODE_POSITION,
+          this.getRootNodePosition(),
           MIN_X,
           (rootNode.getSize().height +
             (rootNode.getSize().borderWidth || 0) * 2) /
@@ -350,6 +377,7 @@ class JSONQLBuilder extends React.Component<Props, State> {
       query,
       datamartId,
       organisationId,
+      hideCounterAndTimeline,
     } = this.props;
 
     const { viewSchema } = this.state;
@@ -370,6 +398,7 @@ class JSONQLBuilder extends React.Component<Props, State> {
           organisationId={organisationId}
           query={query}
           editionLayout={this.props.edition}
+          hideCounterAndTimeline={hideCounterAndTimeline}
         />
         <Col span={viewSchema ? 18 : 24} className={'diagram'}>
           <DiagramWidget

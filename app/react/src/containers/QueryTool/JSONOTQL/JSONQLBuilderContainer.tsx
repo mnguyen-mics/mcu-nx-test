@@ -36,6 +36,7 @@ export interface JSONQLBuilderContainerProps {
   editionLayout?: boolean;
   isTrigger?: boolean;
   isEdge?: boolean;
+  hideCounterAndTimeline?: boolean;
 }
 
 interface State {
@@ -340,6 +341,7 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
       },
       isTrigger,
       isEdge,
+      hideCounterAndTimeline
     } = this.props;
     const {
       fetchingObjectTypes,
@@ -407,6 +409,7 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
               queryResult={queryResult}
               datamartId={this.props.datamartId}
               organisationId={organisationId}
+              hideCounterAndTimeline={hideCounterAndTimeline}
             />
           </JSONQLBuilderContext.Provider>
         </Layout.Content>

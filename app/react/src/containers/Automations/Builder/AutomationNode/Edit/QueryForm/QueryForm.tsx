@@ -199,6 +199,7 @@ class QueryAutomationForm extends React.Component<Props, State> {
           }
           isTrigger={isTrigger}
           {...isDisabled}
+          hideCounterAndTimeline={true}
         />
       );
     }
