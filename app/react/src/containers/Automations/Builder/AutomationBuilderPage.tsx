@@ -25,10 +25,7 @@ import {
 
 import { IAutomationFormService } from '../Edit/AutomationFormService';
 import AutomationTemplateSelector from './AutomationTemplateSelector';
-import {
-  QueryInputEvaluationMode,
-  QueryInputEvaluationPeriodUnit,
-} from '../../../models/automations/automations';
+import { QueryInputEvaluationMode } from '../../../models/automations/automations';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
 import { Loading } from '../../../components';
 import { Actionbar } from '@mediarithmics-private/mcs-components-library';
@@ -55,7 +52,6 @@ export type AutomationSelectedType =
   | 'REACT_TO_EVENT'
   | 'ON_SEGMENT_ENTRY'
   | 'ON_SEGMENT_EXIT';
-
 
 interface State {
   isLoading: boolean;
@@ -256,11 +252,7 @@ class AutomationBuilderPage extends React.Component<Props, State> {
       .validateAutomation(formData.automationTreeData)
       .then(() =>
         this._automationFormService
-          .saveOrCreateAutomation(
-            organisationId,
-            formData,
-            automationFormData,
-          )
+          .saveOrCreateAutomation(organisationId, formData, automationFormData)
           .then(automation => {
             hideSaveInProgress();
             this.setState({ isLoading: false });
@@ -295,12 +287,8 @@ class AutomationBuilderPage extends React.Component<Props, State> {
     return history.push(url);
   };
 
-  hasSelectedType = (
-    type: AutomationSelectedType,
-    n?: number,
-    p?: QueryInputEvaluationPeriodUnit,
-  ) => {
-    const newInitialValues = generateInitialAutomationData(type, n, p);
+  hasSelectedType = (type: AutomationSelectedType) => {
+    const newInitialValues = generateInitialAutomationData(type);
     this.setState({ type, automationFormData: newInitialValues });
   };
 
@@ -334,11 +322,7 @@ class AutomationBuilderPage extends React.Component<Props, State> {
   };
 
   render() {
-    const {
-      location,
-      intl,
-      history,
-    } = this.props;
+    const { location, intl, history } = this.props;
 
     const {
       automationFormData,
@@ -411,7 +395,9 @@ class AutomationBuilderPage extends React.Component<Props, State> {
         automationFormData={automationFormData}
         saveOrUpdate={this.saveAutomation}
         loading={isLoading}
-        creation_mode={type === 'REACT_TO_EVENT' ? 'REACT_TO_EVENT_STANDARD' : 'QUERY'}
+        creation_mode={
+          type === 'REACT_TO_EVENT' ? 'REACT_TO_EVENT_STANDARD' : 'QUERY'
+        }
       />
     );
   }

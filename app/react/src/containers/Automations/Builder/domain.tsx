@@ -7,7 +7,6 @@ import {
   ABNNodeResource,
   QueryInputNodeResource,
   WaitNodeResource,
-  QueryInputEvaluationPeriodUnit,
   EdgeHandler,
   AddToSegmentNodeResource,
   DeleteFromSegmentNodeResource,
@@ -701,28 +700,6 @@ export const beginNode = (type?: AutomationSelectedType): ScenarioNodeShape => {
         type === 'REACT_TO_EVENT' ? 'REACT_TO_EVENT_STANDARD' : 'QUERY',
     },
   };
-};
-
-export const generateBeginNode = (
-  type: AutomationSelectedType,
-  evaluationPeriod?: number,
-  evaluationPeriodUnit?: QueryInputEvaluationPeriodUnit,
-): ScenarioNodeShape => {
-  if (type === 'PERIODIC' && evaluationPeriod && evaluationPeriodUnit) {
-    return {
-      id: beginNodeId,
-      scenario_id: '',
-      type: 'QUERY_INPUT',
-      query_id: baseQueryId,
-      evaluation_mode: 'PERIODIC',
-      evaluation_period: evaluationPeriod,
-      evaluation_period_unit: evaluationPeriodUnit,
-      ui_creation_mode: 'QUERY',
-      last_added_node: true,
-      formData: { uiCreationMode: 'QUERY' },
-    };
-  }
-  return beginNode(type);
 };
 
 export const node4: ScenarioNodeShape = {
