@@ -54,7 +54,7 @@ export interface JSONQLBuilderProps {
   runQuery: () => void;
   datamartId: string;
   organisationId: string;
-  showCounterAndTimeline?: boolean;
+  hideCounterAndTimeline?: boolean;
 }
 
 interface State {
@@ -318,11 +318,11 @@ class JSONQLBuilder extends React.Component<Props, State> {
   }
 
   getRootNodePosition = () => {
-    const { showCounterAndTimeline } = this.props;
+    const { hideCounterAndTimeline } = this.props;
     const position: Point = {
       x: ROOT_NODE_POSITION.x,
       y:
-        showCounterAndTimeline === false
+        hideCounterAndTimeline
           ? ROOT_NODE_POSITION.x
           : ROOT_NODE_POSITION.y,
     };
@@ -377,7 +377,7 @@ class JSONQLBuilder extends React.Component<Props, State> {
       query,
       datamartId,
       organisationId,
-      showCounterAndTimeline,
+      hideCounterAndTimeline,
     } = this.props;
 
     const { viewSchema } = this.state;
@@ -398,7 +398,7 @@ class JSONQLBuilder extends React.Component<Props, State> {
           organisationId={organisationId}
           query={query}
           editionLayout={this.props.edition}
-          showCounterAndTimeline={showCounterAndTimeline}
+          hideCounterAndTimeline={hideCounterAndTimeline}
         />
         <Col span={viewSchema ? 18 : 24} className={'diagram'}>
           <DiagramWidget

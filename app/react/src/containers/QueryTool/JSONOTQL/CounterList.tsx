@@ -12,7 +12,7 @@ export interface CounterListProps {
   datamartId: string;
   organisationId: string;
   editionLayout?: boolean;
-  showCounterAndTimeline?: boolean;
+  hideCounterAndTimeline?: boolean;
 }
 
 export default class CounterList extends React.Component<
@@ -36,7 +36,7 @@ export default class CounterList extends React.Component<
       onRefresh,
       organisationId,
       editionLayout,
-      showCounterAndTimeline,
+      hideCounterAndTimeline,
     } = this.props;
     if (queryResults.length === 0) {
       return null;
@@ -45,15 +45,14 @@ export default class CounterList extends React.Component<
       ? {}
       : { position: 'relative', height: 0 };
 
-    const timelineSelector =
-      showCounterAndTimeline !== false ? (
-        <TimelineSelector
-          stale={staleQueryResult}
-          datamartId={this.props.datamartId}
-          query={this.props.query}
-          organisationId={organisationId}
-        />
-      ) : null;
+    const timelineSelector = !hideCounterAndTimeline && (
+      <TimelineSelector
+        stale={staleQueryResult}
+        datamartId={this.props.datamartId}
+        query={this.props.query}
+        organisationId={organisationId}
+      />
+    );
 
     return (
       <div style={style}>
@@ -85,7 +84,7 @@ export default class CounterList extends React.Component<
                 width={this.generateWidth()}
                 onRefresh={onRefresh}
                 error={error}
-                viewValue={showCounterAndTimeline}
+                hideValue={hideCounterAndTimeline}
               />
             );
           })}
