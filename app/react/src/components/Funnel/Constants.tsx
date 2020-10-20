@@ -54,9 +54,29 @@ const funnelFilterSearchSetting = {
 export const FUNNEL_SEARCH_SETTING: SearchSetting[] = [funnelFilterSearchSetting];
 
 
-export const messages = defineMessages({
+export const funnelMessages = defineMessages({
   noData: {
     id: 'funnel.common.noData',
     defaultMessage: 'There is no data for your query. Please retry later!'
+  },
+  exportTitle: {
+    id: 'funnel.export.title',
+    defaultMessage: 'Funnel Report'
+  },
+  total: {
+    id: 'funnel.common.totla',
+    defaultMessage: 'Total'
+  },
+  stepName: {
+    id: 'funnel.common.stepName',
+    defaultMessage: 'step name'
+  },
+  userPoints: {
+    id: 'funnel.common.userPoints',
+    defaultMessage: 'user points'
+  },
+  duration: {
+    id: 'funnel.common.interationDuration',
+    defaultMessage: 'interaction duration'
   }
 });

@@ -4,7 +4,7 @@ import Funnel from './Funnel';
 import FunnelQueryBuilder from './FunnelQueryBuilder';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { buildDefaultSearch, parseSearch, isSearchValid } from '../../utils/LocationSearchHelper';
-import { FUNNEL_SEARCH_SETTING } from './constants';
+import { FUNNEL_SEARCH_SETTING } from './Constants';
 
 interface FunnelWrapperProps {
   datamartId: string;
