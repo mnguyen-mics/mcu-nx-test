@@ -1,12 +1,6 @@
-import {
-  beginNode,
-  edge12,
-  node4,
-  generateBeginNode,
-} from './../Builder/domain';
+import { beginNode, edge12, node4 } from './../Builder/domain';
 import {
   AutomationResource,
-  QueryInputEvaluationPeriodUnit,
   ScenarioExitConditionFormResource,
 } from '../../../models/automations/automations';
 import { StorylineNodeModel } from '../Builder/domain';
@@ -48,8 +42,6 @@ export const INITIAL_AUTOMATION_DATA: AutomationFormData = {
 
 export const generateInitialAutomationData = (
   type: AutomationSelectedType,
-  n?: number,
-  p?: QueryInputEvaluationPeriodUnit,
 ): AutomationFormData => {
   return {
     automation: {},
@@ -62,7 +54,7 @@ export const generateInitialAutomationData = (
       initialFormData: {},
     },
     automationTreeData: {
-      node: generateBeginNode(type, n, p),
+      node: beginNode(type),
       out_edges: [
         {
           in_edge: edge12,
