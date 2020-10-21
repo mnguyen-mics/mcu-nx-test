@@ -163,7 +163,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     });
   };
 
-  handleDimensioExpressionChange(dimensionIndex: number, stepId: string, event: React.ChangeEvent<HTMLInputElement>) {
+  handleDimensionExpressionChange(dimensionIndex: number, stepId: string, event: React.ChangeEvent<HTMLInputElement>) {
     const { steps } = this.state;
     steps.forEach(step => {
       if (step.id === stepId) {
@@ -179,7 +179,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     });
   }
 
-  handleDimensioExpressionForEventTypeChange(dimensionIndex: number, stepId: string, value: string) {
+  handleDimensionExpressionForEventTypeChange(dimensionIndex: number, stepId: string, value: string) {
     const { steps } = this.state;
     steps.forEach(step => {
       if (step.id === stepId) {
@@ -326,14 +326,14 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
                         size="small"
                         placeholder="Dimension value"
                         className={"mcs-funnelQueryBuilder_dimensionValue"}
-                        onChange={this.handleDimensioExpressionChange.bind(this, filterIndex, step.id)}
+                        onChange={this.handleDimensionExpressionChange.bind(this, filterIndex, step.id)}
                         value={filter.expressions.join(",")} />
                       : <Select
                         showSearch={true}
                         showArrow={false}
                         placeholder="Dimension value"
                         className={"mcs-funnelQueryBuilder_select mcs-funnelQueryBuilder_select--dimensions"}
-                        onChange={this.handleDimensioExpressionForEventTypeChange.bind(this, filterIndex, step.id)}>
+                        onChange={this.handleDimensionExpressionForEventTypeChange.bind(this, filterIndex, step.id)}>
                         {eventTypesDimension.map(et => {
                           return (
                             <Option key={this._cuid()} value={et}>

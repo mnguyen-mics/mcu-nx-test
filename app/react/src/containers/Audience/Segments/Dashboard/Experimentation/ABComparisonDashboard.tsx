@@ -39,7 +39,7 @@ import {
 import McsDateRangePicker, {
   McsDateRangeValue,
 } from '../../../../../components/McsDateRangePicker';
-import SegmentNameDisplay from '../../../Common/SegmentNameDisplay';
+import { SegmentNameDisplay } from '../../../Common/SegmentNameDisplay';
 
 interface State {
   ABComparisonDashboardConfig: DatamartUsersAnalyticsWrapperProps[];

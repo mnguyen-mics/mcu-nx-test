@@ -26,7 +26,6 @@ export type EventTypeDimension = "$transaction_confirmed"
   | "$item_view"
   | "$basket_view";
 
-
 export const eventTypesDimension: EventTypeDimension[] = [
   "$transaction_confirmed",
   "$item_list_view",

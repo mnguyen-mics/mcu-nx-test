@@ -22,7 +22,7 @@ import McsMoment from '../../../utils/McsMoment';
 import { normalizeArrayOfObject } from '../../../utils/Normalizer';
 import { TYPES } from '../../../constants/types';
 import { lazyInject } from '../../../config/inversify.config';
-import SegmentNameDisplay from '../../Audience/Common/SegmentNameDisplay';
+import { SegmentNameDisplay } from '../../Audience/Common/SegmentNameDisplay';
 
 const SegmentTableSelector: React.ComponentClass<
   TableSelectorProps<AudienceSegmentShape>

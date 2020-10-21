@@ -6,7 +6,7 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import SegmentNameDisplay from '../../Common/SegmentNameDisplay';
+import { SegmentNameDisplay } from '../../Common/SegmentNameDisplay';
 
 interface SegmentsTagProps {
   segmentId: string;

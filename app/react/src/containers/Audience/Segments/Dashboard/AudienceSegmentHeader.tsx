@@ -14,7 +14,7 @@ import {
   defineMessages,
 } from 'react-intl';
 import { compose } from 'recompose';
-import SegmentNameDisplay from '../../Common/SegmentNameDisplay';
+import { SegmentNameDisplay } from '../../Common/SegmentNameDisplay';
 import { isUserQuerySegment } from '../Edit/domain';
 import {
   audienceSegmentTypeMessages,

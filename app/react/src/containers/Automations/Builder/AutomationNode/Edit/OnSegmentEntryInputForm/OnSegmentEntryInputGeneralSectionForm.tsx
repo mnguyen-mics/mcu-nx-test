@@ -15,7 +15,7 @@ import {
 } from '../../../../../../components/Form';
 import { FormSearchObjectField } from '../../../../../QueryTool/JSONOTQL/Edit/Sections/Field/FieldNodeForm';
 import FormSearchObject from '../../../../../../components/Form/FormSelect/FormSearchObject';
-import SegmentNameDisplay from '../../../../../Audience/Common/SegmentNameDisplay';
+import { SegmentNameDisplay } from '../../../../../Audience/Common/SegmentNameDisplay';
 import { RouteComponentProps, withRouter } from 'react-router';
 import injectNotifications, { InjectedNotificationProps } from '../../../../../Notifications/injectNotifications';
 
