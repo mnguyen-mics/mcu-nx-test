@@ -3,6 +3,8 @@ import Select, { LabeledValue } from "antd/lib/select";
 import debounce from 'lodash/debounce';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { Spin } from 'antd';
+import injectNotifications, { InjectedNotificationProps } from '../../../../../containers/Notifications/injectNotifications';
+import { compose } from 'recompose';
 
 interface GetOptions {
   organisation_id: string,
@@ -25,28 +27,23 @@ interface ResourceByKeywordSelectorState {
 }
 
 interface ResourceByKeywordSelectorProps {
+  anchorId: string;
   datamartId: string;
   organisationId: string;
   onchange: (value: LabeledValue) => void;
 }
 
-function ComponentPropsAdapter<T, S>(Display: React.ComponentType<S>, adapter: (t: T) => S): React.ComponentClass<T> {
-  return class extends React.Component<T, {}, any> {
-    render() {
-      const props = this.props;
-      const adapted = adapter(props)
-      return <Display {...adapted}/>
-    }
-  }
+interface QueryFilter<AdditionalContext> {
+  filter?: AdditionalContext
 }
 
-function ResourceByKeywordSelector<T extends SelectableResource, AdditionalContext>(NameDisplay: React.ComponentType<T>, resourceFetcher: ResourceFetcher<T>, 
-  className: string, 
-  placeholder: string, 
-  elementId: string) {
-  return class extends React.Component<ResourceByKeywordSelectorProps & AdditionalContext, ResourceByKeywordSelectorState> {
+
+function ResourceByKeywordSelector<T extends SelectableResource, AdditionalContext>(NameDisplay: React.ComponentType<T>, resourceFetcher: ResourceFetcher<T>,
+  placeholder: string) {
+  type Props = ResourceByKeywordSelectorProps & QueryFilter<AdditionalContext>;
+  class Wrapped extends React.Component<Props & InjectedNotificationProps, ResourceByKeywordSelectorState> {
     private _debounce = debounce;
-    constructor(props: ResourceByKeywordSelectorProps & AdditionalContext) {
+    constructor(props: Props & InjectedNotificationProps) {
       super(props);
       this.state = {
         resourcesList: [],
@@ -54,19 +51,19 @@ function ResourceByKeywordSelector<T extends SelectableResource, AdditionalConte
       };
       this.fetchListMethod = this._debounce(this.fetchListMethod.bind(this), 800);
     }
-  
+
     componentDidMount() {
       this.fetchListMethod('');
     }
-  
-    fetchListMethod( keyword: string) {
-      const { datamartId, organisationId } = this.props;
+
+    fetchListMethod(keyword: string) {
+      const { datamartId, organisationId, filter, notifyError } = this.props;
       this.setState({ resourcesList: [], fetching: true });
       const options = {
         keywords: keyword,
         datamart_id: datamartId,
         organisation_id: organisationId,
-        ...this.props
+        ...filter
       }
       return resourceFetcher.getForKeyword(options)
         .then(res => {
@@ -74,9 +71,14 @@ function ResourceByKeywordSelector<T extends SelectableResource, AdditionalConte
             resourcesList: res.map(r => ({ key: r.id, label: <NameDisplay {...r} /> })),
             fetching: false
           })
+        }).catch(e => {
+          notifyError(e);
+          this.setState({
+            fetching: false,
+          });
         });
     }
-  
+
     handleChange = (value: LabeledValue) => {
       const { onchange } = this.props;
       this.setState({
@@ -84,28 +86,31 @@ function ResourceByKeywordSelector<T extends SelectableResource, AdditionalConte
       });
       onchange(value)
     };
-  
+
     render() {
       const { resourcesList, fetching, value } = this.state;
-      const getPopupContainer = () => document.getElementById(elementId)!
+      const { anchorId } = this.props;
+      const getPopupContainer = () => document.getElementById(anchorId)!
       return (<Select
         showSearch={true}
         labelInValue={true}
         autoFocus={true}
         value={value}
-        className={className}
+        className="mcs-resourceByNameSelector"
         placeholder={placeholder}
         filterOption={false}
         onSearch={this.fetchListMethod}
         onChange={this.handleChange}
-        notFoundContent={fetching ? <Spin size="small" className="text-center" />: null}
+        notFoundContent={fetching ? <Spin size="small" className="text-center" /> : null}
         suffixIcon={<McsIcon type="magnifier" />}
         getPopupContainer={getPopupContainer}
       >
         {resourcesList.map((item: LabeledValue, index: number) => <Select.Option value={item.key} key={index.toString()}>{item.label}</Select.Option>)}
       </Select>);
     }
-  
   }
+  return compose<Props & InjectedNotificationProps, Props>(
+    injectNotifications,
+  )(Wrapped)
 }
-export {ResourceByKeywordSelector, ResourceFetcher, GetOptions, ComponentPropsAdapter}
+export { ResourceByKeywordSelector, ResourceFetcher, GetOptions }
