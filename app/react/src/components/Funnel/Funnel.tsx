@@ -21,12 +21,12 @@ import {
 } from '../../utils/LocationSearchHelper';
 import { funnelMessages } from './Constants';
 import { extractDatesFromProps } from './Utils';
-
+import numeral from 'numeral';
 
 interface StepDelta {
   step: number
-  diff: number;
-  percentageOfSucceeded?: number;
+  diff?: string;
+  percentageOfSucceeded?: string;
 }
 
 interface State {
@@ -186,13 +186,13 @@ class Funnel extends React.Component<Props, State> {
   }
 
   setStepDelta = (stepNumber: number, percentageEnd: number, percentageStart: number) => {
+    const { funnelData } = this.state;
     this.setState(state => {
       state.stepDelta.push({
         step: stepNumber,
-        diff: Math.round(100 - percentageEnd),
-        percentageOfSucceeded: (stepNumber > 1) ? Math.round(100 - percentageStart) : undefined
+        diff: stepNumber === funnelData.steps.length ? (100 - percentageEnd).toFixed(2) : Math.round(percentageEnd).toFixed(2),
+        percentageOfSucceeded: stepNumber > 1 ? (100 - percentageStart).toFixed(2) : undefined
       })
-
       return {
         stepDelta: state.stepDelta
       }
@@ -246,12 +246,12 @@ class Funnel extends React.Component<Props, State> {
                   </div>
                   <div className={"mcs-funnel_userPoints"}>
                     <div className="mcs-funnel_userPoints_title">UserPoints</div>
-                    <div className="mcs-funnel_userPoints_nbr">{step.count}</div>
+                    <div className="mcs-funnel_userPoints_nbr">{numeral(step.count).format('0,0')}</div>
                   </div>
                   <div className={"mcs-funnel_chart"}>
                     {(stepDelta[index] && stepDelta[index].percentageOfSucceeded) ? <div className="mcs-funnel_percentageOfSucceeded">
                       <div className="mcs-funnel_arrow mcs_funnel_arrowStep" />
-                      <p className="mcs-funnel_stepInfo"><b>{`${stepDelta[index].percentageOfSucceeded}%`}</b> have succeeded in <b>{moment.duration(funnelData.steps[index - 1].interaction_duration, "second").format("d [days] h [hour]")}</b></p>
+                      <p className="mcs-funnel_stepInfo"><strong>{`${stepDelta[index].percentageOfSucceeded}%`}</strong> have succeeded in <strong>{moment.duration(funnelData.steps[index - 1].interaction_duration, "second").format("d [day] h [hour] m [minute]")}</strong></p>
                     </div> : ""}
                     {<canvas id={`canvas_${index + 1}`} className={"mcs-funnel_canvas"} height="370" />}
                     <div className="mcs-funnel_conversionInfo">
