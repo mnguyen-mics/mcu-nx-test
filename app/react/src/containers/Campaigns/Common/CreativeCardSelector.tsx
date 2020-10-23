@@ -105,6 +105,7 @@ class CreativeCardSelector extends React.Component<Props> {
     }
 
     if (creativeType === 'EMAIL_TEMPLATE') {
+      options.archived=false
       return this._creativeService.getEmailTemplates(organisationId, options);
     }
     return this._creativeService.getDisplayAds(organisationId, options);
