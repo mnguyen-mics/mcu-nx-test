@@ -1,7 +1,7 @@
 import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import * as React from 'react';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
-import { connect } from 'react-redux';
+import { connect, DispatchProp } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
 import {
@@ -9,6 +9,7 @@ import {
   getFormValues,
   InjectedFormProps,
   reduxForm,
+  change,
 } from 'redux-form';
 import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
 import { FORM_ID, CustomActionAutomationFormData } from '../domain';
@@ -54,6 +55,7 @@ type Props = InjectedFormProps<
   CustomActionAutomationFormData,
   CustomActionAutomationFormProps
 > &
+  DispatchProp<any> &
   CustomActionAutomationFormProps &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }> &
@@ -83,24 +85,37 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
+      initialValues,
     } = this.props;
 
-    this.setState({ fetchingPluginVersions: true }, () => {
-      this.getExtendedPluginVersionsWithLayouts(organisationId).then(
-        (extendedPluginsInformation: ExtendedPluginInformation[]) => {
-          this.setState({
-            extendedPluginsInformation,
-            fetchingPluginVersions: false,
-          });
-        },
-      );
-    });
+    if (initialValues.pluginId && initialValues.pluginResource) {
+      const extendedPluginInformation: ExtendedPluginInformation = {
+        plugin: initialValues.pluginResource,
+        pluginLayout: initialValues.pluginLayout,
+        pluginProperties: initialValues.pluginVersionProperties,
+      };
+      this.setState({
+        extendedPluginsInformation: [extendedPluginInformation],
+        fetchingPluginVersions: false,
+      });
+    } else {
+      this.setState({ fetchingPluginVersions: true }, () => {
+        this.getExtendedPluginVersionsWithLayouts(organisationId).then(
+          (extendedPluginsInformation: ExtendedPluginInformation[]) => {
+            this.setState({
+              extendedPluginsInformation,
+              fetchingPluginVersions: false,
+            });
+          },
+        );
+      });
+    }
   }
 
   getExtendedPluginVersionsWithLayouts = (
     organisationId: string,
   ): Promise<ExtendedPluginInformation[]> => {
-    const { notifyError } = this.props;
+    const { notifyError, dispatch } = this.props;
     return this._pluginService
       .getPlugins({
         organisation_id: +organisationId,
@@ -137,6 +152,16 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
             const pluginLayoutOrNull = resPromises[0];
             const pluginPropertiesOrNull = resPromises[1];
 
+            if (dispatch) {
+              dispatch(
+                change(
+                  FORM_ID,
+                  'pluginVersionProperties',
+                  pluginPropertiesOrNull,
+                ),
+              );
+            }
+
             const extendedPluginInformation: ExtendedPluginInformation = {
               plugin,
               pluginLayout:
@@ -163,9 +188,8 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
       });
   };
 
-  buildFormSections = () => {
+  buildFormSections = (disabled: boolean) => {
     const {
-      disabled,
       match: {
         params: { organisationId },
       },
@@ -201,6 +225,7 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
             pluginId={pluginId}
             extendedPluginsInformation={extendedPluginsInformation}
             organisationId={organisationId}
+            disabled={disabled}
           />
         ),
       };
@@ -212,19 +237,27 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
   };
 
   render() {
-    const { breadCrumbPaths, handleSubmit, close, disabled } = this.props;
+    const {
+      breadCrumbPaths,
+      handleSubmit,
+      close,
+      disabled,
+      initialValues: { pluginResource },
+    } = this.props;
 
     const { fetchingPluginVersions } = this.state;
+
+    const calculatedDisabled = disabled || pluginResource !== undefined;
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
       paths: breadCrumbPaths,
       message: messages.save,
       onClose: close,
-      disabled: disabled,
+      disabled: calculatedDisabled,
     };
 
-    const sections = this.buildFormSections();
+    const sections = this.buildFormSections(calculatedDisabled);
 
     const renderedSections = sections.map((section, index) => {
       return (

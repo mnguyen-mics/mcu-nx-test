@@ -282,7 +282,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
                 : datamartId,
             } as any;
             break;
-          case 'CUSTOM_ACTION':
+          case 'CUSTOM_ACTION_NODE':
           case 'DELETE_FROM_SEGMENT_NODE':
           case 'ADD_TO_SEGMENT_NODE':
             initialValue = {
@@ -609,7 +609,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
       case 'ABN_NODE':
         return this.renderAbnEdit();
       case 'EMAIL_CAMPAIGN':
-      case 'CUSTOM_ACTION':
+      case 'CUSTOM_ACTION_NODE':
       case 'DISPLAY_CAMPAIGN':
         return this.renderDefautEdit();
       case 'ADD_TO_SEGMENT_NODE':

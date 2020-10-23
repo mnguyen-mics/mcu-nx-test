@@ -61,7 +61,7 @@ export type ScenarioNodeType =
   | 'WAIT_NODE'
   | 'DROP_NODE'
   | 'IF_NODE'
-  | 'CUSTOM_ACTION';
+  | 'CUSTOM_ACTION_NODE';
 
 export interface ScenarioNodeResource {
   id: string;
@@ -174,8 +174,9 @@ export interface IfNodeResource extends ScenarioNodeResource {
 }
 
 export interface CustomActionNodeResource extends ScenarioNodeResource {
-  type: 'CUSTOM_ACTION';
-  formData: CustomActionAutomationFormData;
+  type: 'CUSTOM_ACTION_NODE';
+  custom_action_id?: string;
+  formData?: CustomActionAutomationFormData;
 }
 
 export type ScenarioNodeShape =

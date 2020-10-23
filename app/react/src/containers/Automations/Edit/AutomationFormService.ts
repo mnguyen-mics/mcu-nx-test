@@ -1,3 +1,7 @@
+import { IPluginService } from './../../../services/PluginService';
+import { CustomActionAutomationFormData } from './../Builder/AutomationNode/Edit/domain';
+import { CustomActionResource } from './../../../models/Plugins';
+import { ICustomActionService } from './../../../services/CustomActionService';
 import { AudienceSegmentFormData } from './../../Audience/Segments/Edit/domain';
 import { IAudienceSegmentFormService } from './../../Audience/Segments/Edit/AudienceSegmentFormService';
 import { ProcessingActivityFieldModel } from './../../Settings/DatamartSettings/Common/domain';
@@ -9,6 +13,7 @@ import {
   ScenarioEdgeResource,
   QueryInputNodeResource,
   ScenarioExitConditionFormResource,
+  CustomActionNodeResource,
 } from './../../../models/automations/automations';
 import { IScenarioService } from './../../../services/ScenarioService';
 import { injectable, inject } from 'inversify';
@@ -37,6 +42,7 @@ import {
   isDeleteFromSegmentNode,
   isOnSegmentEntryInputNode,
   isOnSegmentExitInputNode,
+  isCustomActionNode,
 } from '../Builder/AutomationNode/Edit/domain';
 import { INITIAL_AUTOMATION_DATA } from '../Edit/domain';
 import { IQueryService } from '../../../services/QueryService';
@@ -109,6 +115,12 @@ export class AutomationFormService implements IAutomationFormService {
 
   @inject(TYPES.IEmailCampaignFormService)
   private _emailCampaignFormService: IEmailCampaignFormService;
+
+  @inject(TYPES.ICustomActionService)
+  private _customActionService: ICustomActionService;
+
+  @inject(TYPES.IPluginService)
+  private _pluginService: IPluginService;
 
   private ids: string[] = [];
 
@@ -297,8 +309,12 @@ export class AutomationFormService implements IAutomationFormService {
                       unit: duration._days > 0 ? 'days' : 'hours',
                     },
                     day_window: n.day_window,
-                    time_window_start: n.time_window_start ? moment(n.time_window_start, 'HH:mm') : undefined,
-                    time_window_end: n.time_window_end ? moment(n.time_window_end, 'HH:mm') : undefined,
+                    time_window_start: n.time_window_start
+                      ? moment(n.time_window_start, 'HH:mm')
+                      : undefined,
+                    time_window_end: n.time_window_end
+                      ? moment(n.time_window_end, 'HH:mm')
+                      : undefined,
                   };
                   return {
                     ...n,
@@ -349,6 +365,55 @@ export class AutomationFormService implements IAutomationFormService {
                     segmentId: n.audience_segment_id,
                   },
                 });
+                break;
+              case 'CUSTOM_ACTION_NODE':
+                getPromise = n.custom_action_id
+                  ? this._customActionService
+                      .getInstanceById(n.custom_action_id)
+                      .then(resCustomAction => {
+                        const customActionResource = resCustomAction.data;
+
+                        const pluginLayoutP = this._pluginService.getLocalizedPluginLayoutFromVersionId(
+                          customActionResource.version_id,
+                        );
+
+                        const customActionPropertiesP = this._customActionService
+                          .getInstanceProperties(customActionResource.id)
+                          .then(
+                            resCustomActionProperties =>
+                              resCustomActionProperties.data,
+                          );
+
+                        return Promise.all([
+                          pluginLayoutP,
+                          customActionPropertiesP,
+                        ]).then(resPromises => {
+                          const { plugin, layout } = resPromises[0];
+                          const customActionProperties = resPromises[1];
+
+                          const formProperties: any = {};
+                          customActionProperties.map(propertyResourceShape => {
+                            formProperties[
+                              propertyResourceShape.technical_name
+                            ] = { value: propertyResourceShape.value };
+                          });
+
+                          const constructedNode: CustomActionNodeResource = {
+                            ...n,
+                            custom_action_id: customActionResource.id,
+                            formData: {
+                              name: customActionResource.name,
+                              pluginId: plugin.id,
+                              pluginResource: plugin,
+                              pluginLayout: layout,
+                              pluginVersionProperties: customActionProperties,
+                              properties: formProperties,
+                            },
+                          };
+                          return constructedNode;
+                        });
+                      })
+                  : Promise.resolve({ ...n });
                 break;
             }
             return getPromise;
@@ -508,7 +573,7 @@ export class AutomationFormService implements IAutomationFormService {
         storylineNode,
         undefined,
         undefined,
-        undefined
+        undefined,
       ).then(res => {
         return res.data;
       });
@@ -535,7 +600,7 @@ export class AutomationFormService implements IAutomationFormService {
         storylineNode,
         undefined,
         queryRes.data.id,
-        undefined
+        undefined,
       ).then(res => {
         return res.data;
       });
@@ -733,6 +798,43 @@ export class AutomationFormService implements IAutomationFormService {
                 });
               });
             });
+          } else if (
+            isCustomActionNode(node) &&
+            node.formData &&
+            node.formData.pluginId
+          ) {
+            const customActionIdP = node.custom_action_id
+              ? Promise.resolve(node.custom_action_id)
+              : this.saveCustomActionIfNeeded(
+                  organisationId,
+                  node.formData,
+                  node.formData.pluginId,
+                );
+
+            return customActionIdP.then(customActionId => {
+              return this.saveOrCreateNode(
+                automationId,
+                storylineNode,
+                undefined,
+                undefined,
+                undefined,
+                customActionId,
+              ).then(res => {
+                return this.saveOrCreateEdges(automationId, {
+                  source_id: parentNodeId,
+                  target_id: res.data.id,
+                  edgeResource: storylineNode.in_edge,
+                }).then(() => {
+                  return this.iterate(
+                    organisationId,
+                    datamartId,
+                    automationId,
+                    storylineNode.out_edges,
+                    res.data.id,
+                  );
+                });
+              });
+            });
           } else if (isAbnNode(node) || isEndNode(node) || isWaitNode(node)) {
             return this.saveOrCreateNode(automationId, storylineNode).then(
               res => {
@@ -835,7 +937,8 @@ export class AutomationFormService implements IAutomationFormService {
       campaign_id: string;
     },
     queryId?: string,
-    audienceSegmentId?: string
+    audienceSegmentId?: string,
+    customActionId?: string,
   ) => {
     const node = storylineNode.node as ScenarioNodeShape;
     let saveOrCreateScenarioNode: Promise<DataResponse<ScenarioNodeShape>>;
@@ -946,10 +1049,22 @@ export class AutomationFormService implements IAutomationFormService {
             node.formData.wait_duration.unit,
           )
           .toISOString(),
-        time_window_start: node.formData.time_window_start ? `T${node.formData.time_window_start.hours()}` : null,
-        time_window_end: node.formData.time_window_end ? `T${node.formData.time_window_end.hours()}` : null,
+        time_window_start: node.formData.time_window_start
+          ? `T${node.formData.time_window_start.hours()}`
+          : null,
+        time_window_end: node.formData.time_window_end
+          ? `T${node.formData.time_window_end.hours()}`
+          : null,
         day_window: node.formData.day_window,
         type: 'WAIT_NODE',
+      };
+      resourceId = node.id && !isFakeId(node.id) ? node.id : undefined;
+    } else if (isCustomActionNode(node)) {
+      scenarioNodeResource = {
+        id: node.id && !isFakeId(node.id) ? node.id : undefined,
+        scenarioId: automationId,
+        custom_action_id: customActionId,
+        type: 'CUSTOM_ACTION_NODE',
       };
       resourceId = node.id && !isFakeId(node.id) ? node.id : undefined;
     }
@@ -1021,6 +1136,60 @@ export class AutomationFormService implements IAutomationFormService {
           ad_group_id: r && r.data.length ? r.data[0].id : undefined,
         })),
       );
+  };
+
+  saveCustomActionIfNeeded = (
+    organisationId: string,
+    customActionFormData: CustomActionAutomationFormData,
+    pluginId: string,
+  ): Promise<string> => {
+    return this._pluginService.getPlugin(pluginId).then(resPlugin => {
+      const pluginResource = resPlugin.data;
+
+      const customActionResourceP: Partial<CustomActionResource> = {
+        name: customActionFormData.name,
+        organisation_id: organisationId,
+        group_id: pluginResource.group_id,
+        artifact_id: pluginResource.artifact_id,
+      };
+
+      return this._customActionService
+        .createPluginInstance(organisationId, customActionResourceP)
+        .then(resCustomAction => {
+          const createdCustomAction = resCustomAction.data;
+          const customActionId = createdCustomAction.id;
+
+          const propertyKeysAndValues = Object.entries<any>(
+            customActionFormData.properties,
+          );
+          const propertyPromises = propertyKeysAndValues.map(keyAndValue => {
+            const [key, valueObj] = keyAndValue;
+            const value = valueObj.value;
+            const associatedPluginVersionProperty = customActionFormData.pluginVersionProperties
+              ? customActionFormData.pluginVersionProperties.find(
+                  property => property.technical_name === key,
+                )
+              : undefined;
+
+            const propertyToBeCreated = {
+              ...associatedPluginVersionProperty,
+              technical_name: key,
+              value: value,
+            };
+
+            return this._customActionService.updatePluginInstanceProperty(
+              organisationId,
+              customActionId,
+              key,
+              propertyToBeCreated,
+            );
+          });
+
+          return Promise.all(propertyPromises).then(resPropertyPromises => {
+            return customActionId;
+          });
+        });
+    });
   };
 
   saveAudienceSegment = (

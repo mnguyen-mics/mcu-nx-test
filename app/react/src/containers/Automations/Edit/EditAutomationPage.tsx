@@ -4,7 +4,12 @@ import { connect } from 'react-redux';
 import queryString from 'query-string';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { message } from 'antd';
-import { injectIntl, InjectedIntlProps, FormattedMessage, defineMessages } from 'react-intl';
+import {
+  injectIntl,
+  InjectedIntlProps,
+  FormattedMessage,
+  defineMessages,
+} from 'react-intl';
 import * as NotificationActions from '../../../redux/Notifications/actions';
 import * as FeatureSelectors from '../../../redux/Features/selectors';
 import { EditAutomationParam, AutomationFormData } from './domain';
@@ -22,7 +27,6 @@ import { IScenarioService } from '../../../services/ScenarioService';
 import AutomationBuilderContainer from '../Builder/AutomationBuilderContainer';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
 
-
 interface State {
   automationFormData: AutomationFormData;
   loading: boolean;
@@ -39,7 +43,6 @@ type Props = InjectedIntlProps &
   RouteComponentProps<EditAutomationParam>;
 
 class EditAutomationPage extends React.Component<Props, State> {
-
   @lazyInject(TYPES.IAutomationFormService)
   private _automationFormService: IAutomationFormService;
 
@@ -67,10 +70,10 @@ class EditAutomationPage extends React.Component<Props, State> {
     const datamartId = queryString.parse(search).datamartId;
 
     if (automationId) {
-      this.loadData(automationId)
+      this.loadData(automationId);
     }
     if (!automationId && datamartId) {
-      this.fetchDatamart(datamartId)
+      this.fetchDatamart(datamartId);
     }
   }
 
@@ -89,43 +92,52 @@ class EditAutomationPage extends React.Component<Props, State> {
       location: { search: prevSearch },
     } = prevProps;
 
-    if (automationId && (automationId !== prevAutomationId)) {
-      this.loadData(automationId)
+    if (automationId && automationId !== prevAutomationId) {
+      this.loadData(automationId);
     }
     const datamartId = queryString.parse(search).datamartId;
     const preDatamartId = queryString.parse(prevSearch).datamartId;
-    if (!automationId && automationId !== prevAutomationId && datamartId !== preDatamartId) {
-      this.fetchDatamart(datamartId)
+    if (
+      !automationId &&
+      automationId !== prevAutomationId &&
+      datamartId !== preDatamartId
+    ) {
+      this.fetchDatamart(datamartId);
     }
   }
 
   fetchDatamart = (datamartId: string) => {
     this.setState({ loading: true });
-    return this._datamartService.getDatamart(datamartId)
+    return this._datamartService
+      .getDatamart(datamartId)
       .then(r => this.setState({ datamart: r.data, loading: false }))
-      .catch((err) => { this.props.notifyError(err); this.setState({ loading: false }) })
-  }
+      .catch(err => {
+        this.props.notifyError(err);
+        this.setState({ loading: false });
+      });
+  };
 
   loadData = (automationId: string) => {
     this.setState({ loading: true });
-    return this._scenarioService.getScenario(automationId)
-      .then((r) => this._datamartService.getDatamart(r.data.datamart_id))
+    return this._scenarioService
+      .getScenario(automationId)
+      .then(r => this._datamartService.getDatamart(r.data.datamart_id))
       .then(({ data: datamartResource }) => {
-        return this._automationFormService.loadInitialAutomationValues(
-          automationId,
-        ).then((data) => {
-          this.setState({
-            datamart: datamartResource,
-            automationFormData: data,
-            loading: false,
-          })
-        })
+        return this._automationFormService
+          .loadInitialAutomationValues(automationId)
+          .then(data => {
+            this.setState({
+              datamart: datamartResource,
+              automationFormData: data,
+              loading: false,
+            });
+          });
       })
       .catch((err: any) => {
         this.props.notifyError(err);
         this.setState({ loading: false });
       });
-  }
+  };
 
   save = (formData: AutomationFormData) => {
     const {
@@ -139,27 +151,32 @@ class EditAutomationPage extends React.Component<Props, State> {
     if (datamart) {
       this.setState({ loading: true });
 
-      this._automationFormService.validateAutomation(formData.automationTreeData).then(() => {
-        const saveOrUpdate = this._automationFormService.saveOrCreateAutomation(organisationId, formData, automationFormData)
-        saveOrUpdate
-          .then(() => {
-            this.setState({ loading: false });
-            this.props.history.push(
-              `/v2/o/${this.props.match.params.organisationId}/automations/${automationId}`,
-            );
-          })
-          .catch(err => {
-            this.setState({ loading: false });
-            this.props.notifyError(err.data);
-          })
-
-      })
+      this._automationFormService
+        .validateAutomation(formData.automationTreeData)
+        .then(() => {
+          const saveOrUpdate = this._automationFormService.saveOrCreateAutomation(
+            organisationId,
+            formData,
+            automationFormData,
+          );
+          saveOrUpdate
+            .then(() => {
+              this.setState({ loading: false });
+              this.props.history.push(
+                `/v2/o/${this.props.match.params.organisationId}/automations/${automationId}`,
+              );
+            })
+            .catch(err => {
+              this.setState({ loading: false });
+              this.props.notifyError(err.data);
+            });
+        })
         .catch(validationError => {
           this.setState({
             loading: false,
-            automationFormData: formData
+            automationFormData: formData,
           });
-          message.error(this.props.intl.formatMessage(validationError))
+          message.error(this.props.intl.formatMessage(validationError));
         });
     }
   };
@@ -170,11 +187,11 @@ class EditAutomationPage extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
-      location: {
-        state
-      }
+      location: { state },
     } = this.props;
-    history.push(state && state.from ? state.from : `/v2/o/${organisationId}/automations`);
+    history.push(
+      state && state.from ? state.from : `/v2/o/${organisationId}/automations`,
+    );
   };
 
   render() {
@@ -187,7 +204,7 @@ class EditAutomationPage extends React.Component<Props, State> {
     const { loading, datamart } = this.state;
 
     if (loading) {
-      return <Loading className="loading-full-screen" />
+      return <Loading className="loading-full-screen" />;
     }
 
     if (automationId && !loading && datamart) {
@@ -199,15 +216,17 @@ class EditAutomationPage extends React.Component<Props, State> {
           loading={this.state.loading}
           edition={true}
           creation_mode={
-            this.state.automationFormData.automationTreeData.node.type === 'QUERY_INPUT'
-              ? this.state.automationFormData.automationTreeData.node.ui_creation_mode
+            this.state.automationFormData.automationTreeData.node.type ===
+            'QUERY_INPUT'
+              ? this.state.automationFormData.automationTreeData.node
+                  .ui_creation_mode
               : 'QUERY'
           }
         />
       );
     }
 
-    return <FormattedMessage {...messages.dontExist} />
+    return <FormattedMessage {...messages.dontExist} />;
   }
 }
 
@@ -228,6 +247,7 @@ export default compose<Props, {}>(
 const messages = defineMessages({
   dontExist: {
     id: 'automation.edit.dontexist',
-    defaultMessage: 'The automation you are trying to load doesn\'t seem to exist or you don\'t have the right to view it'
+    defaultMessage:
+      "The automation you are trying to load doesn't seem to exist or you don't have the right to view it",
   },
 });

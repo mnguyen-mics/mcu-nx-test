@@ -12,6 +12,7 @@ interface PluginInstanceFormSectionProps {
   pluginId?: string;
   extendedPluginsInformation: ExtendedPluginInformation[];
   organisationId: string;
+  disabled: boolean;
 }
 
 type Props = PluginInstanceFormSectionProps & InjectedIntlProps;
@@ -27,7 +28,7 @@ class PluginInstanceFormSection extends React.Component<Props> {
   };
 
   render() {
-    const { pluginId, organisationId, extendedPluginsInformation } = this.props;
+    const { pluginId, organisationId, extendedPluginsInformation, disabled } = this.props;
 
     if (pluginId) {
       const extendedPluginInformation = extendedPluginsInformation.find(
@@ -60,7 +61,7 @@ class PluginInstanceFormSection extends React.Component<Props> {
                     pluginLayoutSection={section}
                     organisationId={organisationId}
                     pluginProperties={givenPluginProperties}
-                    disableFields={false}
+                    disableFields={disabled}
                     pluginVersionId={pluginVersionId}
                   />
                   {hrBooleanCondition ? <hr /> : null}
@@ -77,7 +78,7 @@ class PluginInstanceFormSection extends React.Component<Props> {
                   <PluginFieldGenerator
                     key={`${fieldDef.technical_name}`}
                     definition={fieldDef}
-                    disabled={false}
+                    disabled={disabled}
                     pluginVersionId={pluginVersionId}
                     organisationId={organisationId}
                   />
@@ -91,7 +92,11 @@ class PluginInstanceFormSection extends React.Component<Props> {
         }
       }
     }
-    return <div><FormattedMessage {...messages.noInformationOnPlugin}/></div>;
+    return (
+      <div>
+        <FormattedMessage {...messages.noInformationOnPlugin} />
+      </div>
+    );
   }
 }
 
