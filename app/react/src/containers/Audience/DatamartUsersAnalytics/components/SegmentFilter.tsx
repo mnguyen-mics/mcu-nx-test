@@ -203,8 +203,9 @@ class SegmentFilter extends React.Component<JoinedProp, SegmentFilterState> {
       segmentType,
     } = this.props;
     const appliedSegmentFiltersLength = segmentFiltersLength || 2;
+    const filterId = "mcs-segmentFilter"
     return (
-      <div className={className} id="mcs-segmentFilter">
+      <div className={className} id={filterId}>
         {!hideAllUsersButton && (
           <Button
             className={
@@ -260,7 +261,8 @@ class SegmentFilter extends React.Component<JoinedProp, SegmentFilterState> {
               datamartId={datamartId}
               organisationId={organisationId}
               onchange={this.onSegmentByNameSelectorChange}
-              segmentType={segmentType}
+              filter={{segmentType: segmentType}}
+              anchorId={filterId}
             />
           ))}
       </div>

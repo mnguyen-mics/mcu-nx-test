@@ -9,7 +9,7 @@ import {
   BooleanComparisonOperator,
   NumericComparisonOperator,
 } from '../../../../../models/datamart/graphdb/QueryDocument';
-import SegmentNameDisplay from '../../../../Audience/Common/SegmentNameDisplay';
+import { SegmentNameDisplay } from '../../../../Audience/Common/SegmentNameDisplay';
 import CompartmentNameDisplay from '../../../../Common/CompartmentNameDisplay';
 import ChannelNameDisplay from '../../../../Common/ChannelNameDisplay';
 import { getCoreReferenceTypeAndModel } from '../../domain';

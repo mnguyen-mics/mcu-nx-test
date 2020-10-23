@@ -46,6 +46,7 @@ export interface AdFormatResource {
 }
 
 export interface GenericCreativeResource {
+  id: string;
   organisation_id: string;
   name: string;
   technical_name: string;

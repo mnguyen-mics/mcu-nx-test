@@ -39,6 +39,10 @@ const creativePropertiesMessageMap: {
     | keyof GenericCreativeResource
     | HistoryKeys]: FormattedMessage.MessageDescriptor;
 } = defineMessages({
+  id: {
+    id: 'creative.fields.id',
+    defaultMessage: 'Creative ID',
+  },
   organisation_id: {
     id: 'creative.fields.organisationId',
     defaultMessage: 'Organisation ID',
@@ -125,6 +129,7 @@ const creativePropertiesFormatMap: {
   };
 } = {
   organisation_id: { format: 'STRING' },
+  id: { format: 'STRING' },
   name: { format: 'STRING' },
   technical_name: { format: 'STRING' },
   archived: { format: 'STRING' },

@@ -51,7 +51,7 @@ import {
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
-import SegmentNameDisplay from '../../Common/SegmentNameDisplay';
+import { SegmentNameDisplay } from '../../Common/SegmentNameDisplay';
 import { notifyError } from '../../../../redux/Notifications/actions';
 import { McsIcon } from '../../../../components';
 import { Label } from '../../../Labels/Labels';

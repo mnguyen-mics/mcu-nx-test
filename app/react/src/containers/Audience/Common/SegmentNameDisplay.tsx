@@ -42,7 +42,7 @@ type Props = SegmentNameDisplayProps &
  *
  * If both are passed, the resource is chosen as the source of truth
  */
-class SegmentNameDisplay extends React.Component<Props, State> {
+class SegmentNameDisplayWrapped extends React.Component<Props, State> {
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
 
@@ -152,8 +152,9 @@ class SegmentNameDisplay extends React.Component<Props, State> {
     );
   }
 }
-
-export default compose<Props, SegmentNameDisplayProps>(
+const SegmentNameDisplay = compose<Props, SegmentNameDisplayProps>(
   injectIntl,
   injectNotifications,
-)(SegmentNameDisplay);
+)(SegmentNameDisplayWrapped)
+
+export { SegmentNameDisplay, SegmentNameDisplayProps }

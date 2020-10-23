@@ -15,7 +15,7 @@ import withNormalizer, {
 import { withValidators, FormSection } from '../../../../../../components/Form';
 import { FormSearchObjectField } from '../../../../../QueryTool/JSONOTQL/Edit/Sections/Field/FieldNodeForm';
 import FormSearchObject from '../../../../../../components/Form/FormSelect/FormSearchObject';
-import SegmentNameDisplay from '../../../../../Audience/Common/SegmentNameDisplay';
+import { SegmentNameDisplay } from '../../../../../Audience/Common/SegmentNameDisplay';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { StorylineNodeModel } from '../../../domain';
 import { AddToSegmentNodeResource } from '../../../../../../models/automations/automations';

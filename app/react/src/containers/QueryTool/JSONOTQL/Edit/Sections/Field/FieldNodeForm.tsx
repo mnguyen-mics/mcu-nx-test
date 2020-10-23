@@ -51,7 +51,7 @@ import constants, {
 import { IAudienceSegmentService } from '../../../../../../services/AudienceSegmentService';
 import { TYPES } from '../../../../../../constants/types';
 import { lazyInject } from '../../../../../../config/inversify.config';
-import SegmentNameDisplay from '../../../../../Audience/Common/SegmentNameDisplay';
+import { SegmentNameDisplay } from '../../../../../Audience/Common/SegmentNameDisplay';
 import { IDatamartService } from '../../../../../../services/DatamartService';
 import { IComparmentService } from '../../../../../../services/CompartmentService';
 import {

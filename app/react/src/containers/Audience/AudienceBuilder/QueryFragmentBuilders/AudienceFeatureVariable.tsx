@@ -32,7 +32,7 @@ import { IChannelService } from '../../../../services/ChannelService';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectWorkspace, InjectedWorkspaceProps } from '../../../Datamart';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
-import SegmentNameDisplay from '../../Common/SegmentNameDisplay';
+import { SegmentNameDisplay } from '../../Common/SegmentNameDisplay';
 
 export const FormRelativeAbsoluteDateField = Field as new () => GenericField<
   FormRelativeAbsoluteDateProps
