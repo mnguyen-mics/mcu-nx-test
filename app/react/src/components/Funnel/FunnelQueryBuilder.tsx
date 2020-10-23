@@ -72,7 +72,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
       isLoading: true
     });
     return this._usersAnalyticsService
-      .getDimensions(datamartId).then((response) => {
+      .getDimensions(datamartId, true).then((response) => {
         this.setState({
           isLoading: false,
           dimensionsList: {
