@@ -129,10 +129,8 @@ class GeneralFormSection extends React.Component<Props, State> {
             <FormInputField
               name="technical_name"
               component={FormInput}
-              validate={[isRequired]}
               formItemProps={{
                 label: formatMessage(messages.generalSectionTechnicalNameLabel),
-                required: true,
               }}
               inputProps={{
                 placeholder: formatMessage(
