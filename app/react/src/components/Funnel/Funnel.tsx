@@ -124,6 +124,12 @@ class Funnel extends React.Component<Props, State> {
     });
     return this._userActivitiesFunnelService
       .getUserActivitiesFunnel(datamartId, filter, timeRange).then((response) => {
+
+        // Enhance api data with last conversion step
+        if (response.data.steps[response.data.steps.length -  1].count > 0) {
+          response.data.steps.push(response.data.steps[response.data.steps.length -  1]);
+        }
+
         this.setState({
           isLoading: false,
           funnelData: response.data
@@ -146,8 +152,9 @@ class Funnel extends React.Component<Props, State> {
 
     funnelData.steps.map((step, index) => {
       const start = index === 0 ? funnelData.total : funnelData.steps[index - 1].count;
-      this.drawCanvas((funnelData.total - start), (funnelData.total - step.count), index + 1, funnelData.steps.length);
+      this.drawCanvas((funnelData.total - start), (funnelData.total - step.count), index + 1, funnelData.steps.length)
     });
+
   }
 
   drawCanvas = (startCount: number, endCount: number, stepNumber: number, totalSteps: number) => {
@@ -190,7 +197,7 @@ class Funnel extends React.Component<Props, State> {
     this.setState(state => {
       state.stepDelta.push({
         step: stepNumber,
-        diff: stepNumber === funnelData.steps.length ? (100 - percentageEnd).toFixed(2) : Math.round(percentageEnd).toFixed(2),
+        diff: stepNumber === funnelData.steps.length ? (100 - percentageEnd).toFixed(2) : percentageEnd.toFixed(2),
         percentageOfSucceeded: stepNumber > 1 ? (100 - percentageStart).toFixed(2) : undefined
       })
       return {
@@ -242,11 +249,11 @@ class Funnel extends React.Component<Props, State> {
                 return <div key={index.toString()} style={{ flex: 1 }} >
                   <div className={"mcs-funnel_stepName"}>
                     <h3 className="mcs-funnel_stepName_title">Step {index + 1}</h3>
-                    <p className="mcs-funnel_stepName_desc">{step.name}</p>
+                    <p className="mcs-funnel_stepName_desc">{this.isLastStep(index + 1) ? '' : step.name}</p>
                   </div>
                   <div className={"mcs-funnel_userPoints"}>
                     <div className="mcs-funnel_userPoints_title">UserPoints</div>
-                    <div className="mcs-funnel_userPoints_nbr">{numeral(step.count).format('0,0')}</div>
+                    <div className="mcs-funnel_userPoints_nbr">{numeral(index === 0 ? funnelData.total : funnelData.steps[index - 1].count).format('0,0')}</div>
                   </div>
                   <div className={"mcs-funnel_chart"}>
                     {(stepDelta[index] && stepDelta[index].percentageOfSucceeded) ? <div className="mcs-funnel_percentageOfSucceeded">
