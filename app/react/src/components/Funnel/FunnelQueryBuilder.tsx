@@ -262,9 +262,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
         });
       }
     });
-    this.setState({ steps }, () => {
-      this.updateFilterQueryStringParams();
-    });
+    this.setState({ steps });
   }
 
   handleDimensionExpressionForSelectorChange<T>(dimensionIndex: number, stepId: string, valueExtract: (elem: T) => string, value: T) {
@@ -278,10 +276,32 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
         });
       }
     });
-    this.setState({ steps }, () => {
-      this.updateFilterQueryStringParams();
-    });
+    this.setState({ steps });
   }
+
+  checkExpressionsNotEmpty = () => {
+    let result = true;
+    const { steps } = this.state;
+    steps.forEach(step => {
+      step.filter_clause.filters.forEach(filter => {
+        if(filter.expressions.length === 0)
+          result = false;
+        else
+          filter.expressions.forEach(exp => {
+            if(exp.length === 0 || !exp.trim())
+              result = false
+          })
+      })
+    });
+
+    return result
+  }
+
+  handleExecuteQueryButtonClick = () => {
+    if(this.checkExpressionsNotEmpty())
+      this.updateFilterQueryStringParams();
+  }
+
 
   handleStepNameChange(stepId: string, event: React.ChangeEvent<HTMLInputElement>) {
     const { steps } = this.state;
@@ -297,7 +317,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
 
   updateFilterQueryStringParams() {
     const { steps } = this.state;
-
+    
     const {
       history,
       location: { search: currentSearch, pathname }
@@ -434,6 +454,9 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
             <span>{`${steps.length + 1}.`}</span> <Button className={"mcs-funnelQueryBuilder_addDimensionBtn"} onClick={this.addStep}>Add step</Button>
           </Col>
         </Row>
+      </div>
+      <div className={"mcs-funnelQueryBuilder_step"}>
+        <Button className="mcs-primary" type="primary" onClick={this.handleExecuteQueryButtonClick}>Execute Query</Button>
       </div>
     </Card >)
   }
