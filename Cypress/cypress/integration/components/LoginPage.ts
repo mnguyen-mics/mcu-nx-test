@@ -3,20 +3,18 @@ class LoginPage {
     cy.visit('/');
   }
 
-  fillEmail(value) {
+  fillEmail(value:string) {
     const field = cy.get('#email.ant-input.login-input');
     field.type(value);
-    
     return this;
   }
 
-  fillPassword(value) {
+  fillPassword(value:string) {
     const field = cy.get('#password.ant-input.login-input');
     field.type(value);
-    
     return this;
   }
-  
+
   submit() {
     const button = cy.get('.login-form-button');
     button.click();

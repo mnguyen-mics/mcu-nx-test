@@ -1,4 +1,5 @@
-before(()=>{
+describe('User Event Cleaning Rules Test',()=>{
+    before(()=>{
     cy.login()
 })
 beforeEach(() => {
@@ -137,3 +138,4 @@ it('should check that we can only have 3 different life durations for user event
 })
 
 // TODO add test that checks that we have to have at least one event cleaning rule with DELETE action
+})

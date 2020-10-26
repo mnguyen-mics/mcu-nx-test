@@ -1,4 +1,4 @@
-context('Display Campaign - Resource history', () => {
+describe('Display Campaign - Resource history', () => {
   const second = 1000
   const organisationName = 'yellow velvet'
   const campaignName = '#bogoss ' + (Math.random() * 100).toFixed(0)

@@ -1,5 +1,5 @@
 import faker from 'faker'
-
+describe('User pixel segment test',()=>{
 before(() => {
 	cy.login()
 })
@@ -120,4 +120,6 @@ it('Should test the UserPixel Forms', () => {
 			})
 		})
 	})
+})
+
 })

@@ -1,5 +1,5 @@
 import faker from 'faker'
-
+describe('User Processing on segments tests',()=>{
 before(() => {
   cy.login()
 })
@@ -281,3 +281,5 @@ it('should check that processing decorators are not activated for edge segments'
   })
 })
 // TODO add test for scenario segments
+
+})

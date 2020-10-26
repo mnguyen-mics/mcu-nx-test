@@ -51,7 +51,10 @@ cat << EOF
     "virtualPlatformName":"${VIRTUAL_PLATFORM_NAME}",
     "userName":"${USER_NAME}"
   },
-  
+  "retries": {
+    "runMode": 2,
+    "openMode": 1
+  },
   "watchForFileChanges": false,
 
   "defaultCommandTimeout": 6000,

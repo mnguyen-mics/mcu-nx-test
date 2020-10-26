@@ -1,6 +1,6 @@
 import { createUserQuery } from '../helpers/SegmentHelper'
 import { createQuery } from '../helpers/QueryHelper'
-
+describe('OnSegmentExit test',()=>{
 before(() => {
   cy.login()
 })
@@ -78,3 +78,5 @@ it.skip('Should test the creation of an automation with On Segment Exit', () => 
     cy.get('#OnSegmentExitInputSectionId').contains(userQuery.name)
   })
 })
+})
+

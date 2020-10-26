@@ -1,3 +1,4 @@
+describe('Profile Cleaning Rules Tests',()=>{
 before(()=>{
     cy.login()
 })
@@ -92,3 +93,4 @@ it('should check that only draft profile cleaning rules can be updated',()=>{
 })
 
 // TODO add test for content filter behavior once it's defined with the PMS
+})

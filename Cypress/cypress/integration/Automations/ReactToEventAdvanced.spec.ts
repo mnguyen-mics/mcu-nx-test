@@ -1,3 +1,4 @@
+describe('React To Event Advanced test',()=>{
 before(() => {
   cy.login()
 })
@@ -65,4 +66,6 @@ it('Should test the creation of an automation with React to Event Advanced', () 
     cy.wait(5000)
     cy.get('.mcs-reactToEventAutomation').find(`[title=${eventName}]`)
   })
+})
+
 })
