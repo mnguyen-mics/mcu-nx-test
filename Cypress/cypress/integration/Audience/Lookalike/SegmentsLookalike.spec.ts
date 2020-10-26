@@ -1,5 +1,5 @@
 import faker from 'faker'
-
+describe('Segments lookalike tests', ()=>{
 before(() => {
   cy.login()
 })
@@ -157,3 +157,5 @@ it('should create a user lookalike segment from user query segment', () => {
 })
 
 // TODO Add a test where we calibrate the segment(We probably need to have user points on our datamart)
+})
+

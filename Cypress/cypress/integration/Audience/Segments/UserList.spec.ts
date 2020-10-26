@@ -1,5 +1,5 @@
 import faker from 'faker'
-
+describe('UserList segment test',()=>{
 before(() => {
 	cy.login()
 })
@@ -118,4 +118,6 @@ it('Should test the UserList Forms', () => {
 			})
 		})
 	})
+})
+
 })

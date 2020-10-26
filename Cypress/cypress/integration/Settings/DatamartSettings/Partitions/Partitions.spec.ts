@@ -1,5 +1,5 @@
 import faker from 'faker'
-
+describe('partitions test',()=>{
 before(() => {
   cy.login()
   cy.readFile('cypress/fixtures/init_infos.json').then((data) => {
@@ -78,4 +78,6 @@ it('Should create a new RANDOM_SPLIT partition and publish it', () => {
       cy.get('tr').should('have.length', partCount)
     })
   })
+})
+
 })

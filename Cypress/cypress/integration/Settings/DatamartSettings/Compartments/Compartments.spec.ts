@@ -1,5 +1,5 @@
 import faker from 'faker'
-
+describe('Compartments test',()=>{
 before(() => {
   cy.login()
   cy.readFile('cypress/fixtures/init_infos.json').then(data => {
@@ -119,4 +119,6 @@ it('Should edit a compartment', () => {
     cy.get('form').submit()
     cy.contains(compartmentName)
   })
+})
+
 })
