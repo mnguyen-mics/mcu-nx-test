@@ -137,7 +137,7 @@ export default compose<Props, OnSegmentEntryInputGeneralSectionFormProps>(
 export const messages = defineMessages({
   sectionGeneralTitle: {
     id: 'automation.builder.node.onSegmentEntryInputForm.generalInfoSection.title',
-    defaultMessage: 'Enter Automation - On audience segment entry',
+    defaultMessage: 'Start Automation - On audience segment entry',
   },
   sectionGeneralSubtitle: {
     id: 'automation.builder.node.onSegmentEntryInputForm.general.subtitle',

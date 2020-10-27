@@ -138,7 +138,7 @@ export default compose<Props, OnSegmentExitInputGeneralSectionFormProps>(
 export const messages = defineMessages({
   sectionGeneralTitle: {
     id: 'automation.builder.node.onSegmentExitInputForm.generalInfoSection.title',
-    defaultMessage: 'Enter Automation - On audience segment exit',
+    defaultMessage: 'Start Automation - On audience segment exit',
   },
   sectionGeneralSubtitle: {
     id: 'automation.builder.node.onSegmentExitInputForm.general.subtitle',
