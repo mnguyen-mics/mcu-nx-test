@@ -45,7 +45,7 @@ class StackedBarPlot extends React.Component<Props, {}> {
       return d[xKey] as string;
     }).sort((a,b) => {
       if (!sort) {
-        return 1;
+        return 0;
       }
       return a.localeCompare(b)
     })
