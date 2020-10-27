@@ -1174,7 +1174,7 @@ const nodeMessages = defineMessages({
   },
   onAudienceSegmentEntryNodeTitle: {
     id: 'automation.builder.node.onAudienceSegmentEntry.title',
-    defaultMessage: 'Enter Automation',
+    defaultMessage: 'Start Automation',
   },
   onAudienceSegmentEntryNodeSubtitle: {
     id: 'automation.builder.node.onAudienceSegmentEntry.subtitle',
@@ -1182,7 +1182,7 @@ const nodeMessages = defineMessages({
   },
   onAudienceSegmentExitNodeTitle: {
     id: 'automation.builder.node.onAudienceSegmentExit.title',
-    defaultMessage: 'Enter Automation',
+    defaultMessage: 'Start Automation',
   },
   onAudienceSegmentExitNodeSubtitle: {
     id: 'automation.builder.node.onAudienceSegmentExit.subtitle',
