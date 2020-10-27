@@ -1162,7 +1162,7 @@ export const getValidObjectType = (
 const nodeMessages = defineMessages({
   queryInputNodeTitle: {
     id: 'automation.builder.node.queryInput.title',
-    defaultMessage: 'Enter Automation',
+    defaultMessage: 'Start Automation',
   },
   livequeryInputNodeSubtitle: {
     id: 'automation.builder.node.queryInput.live.subtitle',
@@ -1222,7 +1222,7 @@ const nodeMessages = defineMessages({
   },
   endNodeTitle: {
     id: 'automation.builder.node.end.title',
-    defaultMessage: 'Exit Automation',
+    defaultMessage: 'End Automation',
   },
   customActionNodeTitle: {
     id: 'automation.builder.node.customAction.title',
