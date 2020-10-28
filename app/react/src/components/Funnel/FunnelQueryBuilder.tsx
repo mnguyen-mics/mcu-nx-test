@@ -10,7 +10,7 @@ import injectNotifications, { InjectedNotificationProps } from '../../containers
 import { booleanOperator, dimensionFilterOperator, eventTypesDimension, FUNNEL_SEARCH_SETTING } from './Constants';
 import { BooleanOperator, DimensionFilterClause, DimensionFilterOperator } from '../../models/ReportRequestBody';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { updateSearch } from '../../utils/LocationSearchHelper';
+import { updateSearch, DATE_SEARCH_SETTINGS } from '../../utils/LocationSearchHelper';
 import { GoalByKeywordSelector } from '../../containers/Audience/DatamartUsersAnalytics/components/GoalByNameSelector'
 import { LabeledValue } from 'antd/lib/select';
 import { CampaignByKeywordSelector } from '../../containers/Audience/DatamartUsersAnalytics/components/CampaignByNameSelector';
@@ -327,13 +327,13 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     const stepsCopy = JSON.parse(JSON.stringify(steps));
     stepsCopy.forEach((step: Step) => step.id = undefined);
     const stepsFormated = stepsCopy.filter((s: Step) => s.filter_clause.filters.length > 0)
-    const queryParms = {
+    const queryParams = {
       filter: [JSON.stringify(stepsFormated)],
     };
 
     const nextLocation = {
       pathname: pathname,
-      search: updateSearch(currentSearch, queryParms, FUNNEL_SEARCH_SETTING),
+      search: updateSearch(currentSearch, queryParams, FUNNEL_SEARCH_SETTING.concat(DATE_SEARCH_SETTINGS)),
     };
 
     history.replace(nextLocation);
