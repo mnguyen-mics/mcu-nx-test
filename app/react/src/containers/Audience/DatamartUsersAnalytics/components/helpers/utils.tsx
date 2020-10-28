@@ -92,6 +92,8 @@ function ResourceByKeywordSelector<T extends SelectableResource, AdditionalConte
       const { anchorId } = this.props;
       const getPopupContainer = () => document.getElementById(anchorId)!
       return (<Select
+        mode="tags"
+        tokenSeparators={[',']}
         showSearch={true}
         labelInValue={true}
         autoFocus={true}
