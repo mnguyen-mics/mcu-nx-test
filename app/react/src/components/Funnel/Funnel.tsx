@@ -62,9 +62,12 @@ class Funnel extends React.Component<Props, State> {
 
   updateLocationSearch = (params: any) => {
     const {
-      history,
-      location: { search: currentSearch, pathname },
+      history
     } = this.props;
+
+    const {
+      location: { search: currentSearch, pathname }
+    } = history;
 
     const nextLocation = {
       pathname,
@@ -88,10 +91,10 @@ class Funnel extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { 
-      datamartId, 
+    const {
+      datamartId,
       filter,
-      location: { search }, } = this.props;
+      history: { location: { search } }, } = this.props;
     const timeRange = extractDatesFromProps(search);
     if (filter.length > 0) this.fetchData(datamartId, filter, timeRange);
     window.addEventListener('resize', this.drawSteps.bind(this));
@@ -213,7 +216,7 @@ class Funnel extends React.Component<Props, State> {
 
   render() {
     const { funnelData, stepDelta, isLoading } = this.state;
-    const { title, intl, location: { search } } = this.props;
+    const { title, intl, history: { location: { search } } } = this.props;
     if (isLoading) return (<LoadingChart />);
 
     const filter = parseSearch(search, DATE_SEARCH_SETTINGS);
