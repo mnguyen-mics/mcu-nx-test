@@ -317,26 +317,28 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
 
   updateFilterQueryStringParams() {
     const { steps } = this.state;
-    
     const {
-      history,
-      location: { search: currentSearch, pathname }
+      history
     } = this.props;
+
+    const {
+      location: { search: currentSearch, pathname }
+    } = history;
 
     // deep copy
     const stepsCopy = JSON.parse(JSON.stringify(steps));
     stepsCopy.forEach((step: Step) => step.id = undefined);
     const stepsFormated = stepsCopy.filter((s: Step) => s.filter_clause.filters.length > 0)
-    const queryParms = {
+    const queryParams = {
       filter: [JSON.stringify(stepsFormated)],
     };
 
     const nextLocation = {
       pathname: pathname,
-      search: updateSearch(currentSearch, queryParms, FUNNEL_SEARCH_SETTING),
+      search: updateSearch(currentSearch, queryParams, FUNNEL_SEARCH_SETTING),
     };
 
-    history.replace(nextLocation);
+    history.push(nextLocation);
   }
 
   removeDimensionFromStep = (stepId: string, dimensionIndex: number) => {
