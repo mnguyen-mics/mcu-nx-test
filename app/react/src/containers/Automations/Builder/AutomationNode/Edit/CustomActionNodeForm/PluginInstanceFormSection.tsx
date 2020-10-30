@@ -12,7 +12,7 @@ interface PluginInstanceFormSectionProps {
   pluginId?: string;
   extendedPluginsInformation: ExtendedPluginInformation[];
   organisationId: string;
-  disabled: boolean;
+  disabled?: boolean;
 }
 
 type Props = PluginInstanceFormSectionProps & InjectedIntlProps;
@@ -28,7 +28,12 @@ class PluginInstanceFormSection extends React.Component<Props> {
   };
 
   render() {
-    const { pluginId, organisationId, extendedPluginsInformation, disabled } = this.props;
+    const {
+      pluginId,
+      organisationId,
+      extendedPluginsInformation,
+      disabled,
+    } = this.props;
 
     if (pluginId) {
       const extendedPluginInformation = extendedPluginsInformation.find(
@@ -63,6 +68,7 @@ class PluginInstanceFormSection extends React.Component<Props> {
                     pluginProperties={givenPluginProperties}
                     disableFields={disabled}
                     pluginVersionId={pluginVersionId}
+                    small={true}
                   />
                   {hrBooleanCondition ? <hr /> : null}
                 </div>
