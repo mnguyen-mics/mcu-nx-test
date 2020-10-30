@@ -81,6 +81,7 @@ export default class DashboardContent extends React.Component<Props, State> {
             source={source}
             title={comp.title}
             queryId={comp.query_id}
+            data={comp.data}
             datamartId={datamartId}
             labelsEnabled={comp.show_legend}
             height={height}
@@ -98,6 +99,7 @@ export default class DashboardContent extends React.Component<Props, State> {
             percentage={comp.percentage}
             vertical={comp.vertical}
             sortKey={comp.sortKey}
+            data={comp.data}
             labels={comp.labels}
             tooltip={comp.tooltip}
           />
@@ -115,6 +117,7 @@ export default class DashboardContent extends React.Component<Props, State> {
             vertical={comp.vertical}
             sortKey={comp.sortKey}
             labels={comp.labels}
+            data={comp.data}
             tooltip={comp.tooltip}
           />
         );

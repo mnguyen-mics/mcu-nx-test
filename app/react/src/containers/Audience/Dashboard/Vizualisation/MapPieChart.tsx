@@ -5,6 +5,7 @@ import {
   OTQLAggregationResult,
   isAggregateResult,
   isCountResult,
+  OTQLResult,
 } from '../../../../models/datamart/graphdb/OTQLResult';
 import injectThemeColors, {
   InjectedThemeColorsProps,
@@ -26,6 +27,7 @@ export interface MapPieChartProps {
   title?: string;
   source?: AudienceSegmentShape | QueryDocument;
   queryId: string;
+  data?: OTQLResult;
   datamartId: string;
   showLegend?: boolean;
   labelsEnabled?: boolean;
@@ -66,26 +68,46 @@ class MapPieChart extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { source, queryId, datamartId } = this.props;
-    this.fetchData(queryId, datamartId, source);
+    const { source, queryId, datamartId,  data } = this.props;
+    if (data) {
+      this.formatOtqlQueryResult(data)
+    } else {
+      this.fetchData(queryId, datamartId, source);
+    }
   }
 
   componentDidUpdate(previousProps: MapPieChartProps) {
-    const { source, queryId, datamartId } = this.props;
+    const { source, queryId, datamartId, data } = this.props;
     const {
       source: previousSource,
       queryId: previousChartQueryId,
       datamartId: previousDatamartId,
+      data: previousData
     } = previousProps;
 
     if (
       !_.isEqual(previousSource, source) || 
       queryId !== previousChartQueryId ||
-      datamartId !== previousDatamartId
+      datamartId !== previousDatamartId ||
+      data !== previousData
     ) {
-      this.fetchData(queryId, datamartId, source);
+      if (data) {
+        this.formatOtqlQueryResult(data);
+      } else {
+        this.fetchData(queryId, datamartId, source);
+      }
     }
   }
+
+  public formatOtqlQueryResult = (r: OTQLResult) => {
+    if (r && isAggregateResult(r.rows) && !isCountResult(r.rows)) {
+      return this.setState({
+        queryResult: this.formatData(r.rows),
+        loading: false,
+      });
+    }
+    return this.setState({ error: true, loading: false });
+  };
 
   formatData = (queryResult: OTQLAggregationResult[]): DatasetProps[] => {
     const generateColorIndex = (currentIndex: number) => {

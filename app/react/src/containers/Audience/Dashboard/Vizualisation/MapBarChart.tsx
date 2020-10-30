@@ -28,6 +28,7 @@ import { QueryDocument } from '../../../../models/datamart/graphdb/QueryDocument
 export interface MapBarChartProps {
   title?: string;
   source?: AudienceSegmentShape | QueryDocument;
+  data?: OTQLResult;
   queryId: string;
   datamartId: string;
   height?: number;
@@ -83,25 +84,46 @@ class MapBarChart extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { source, queryId, datamartId, shouldCompare } = this.props;
-    this.fetchData(queryId, datamartId, shouldCompare, source);
+    const { source, queryId, datamartId, shouldCompare, data } = this.props;
+    if (data) {
+      this.formatOtqlQueryResult(data)
+    } else {
+      this.fetchData(queryId, datamartId, shouldCompare, source);
+    }
   }
+  
 
   componentDidUpdate(previousProps: MapBarChartProps) {
-    const { source, queryId, datamartId, shouldCompare } = this.props;
+    const { source, queryId, datamartId, shouldCompare, data } = this.props;
     const {
       source: previousSource,
       queryId: previousChartQueryId,
-      datamartId: previousDatamartId
+      datamartId: previousDatamartId,
+      data: previousData
     } = previousProps;
 
     if (
       !_.isEqual(previousSource, source) || 
       queryId !== previousChartQueryId ||
-      datamartId !== previousDatamartId
+      datamartId !== previousDatamartId ||
+      data !== previousData
     ) {
-      this.fetchData(queryId, datamartId, shouldCompare, source);
+      if (data) {
+        this.formatOtqlQueryResult(data);
+      } else {
+        this.fetchData(queryId, datamartId, shouldCompare, source);
+      }
     }
+  }
+
+  public formatOtqlQueryResult = (r: OTQLResult) => {
+    if (r && isAggregateResult(r.rows) && !isCountResult(r.rows)) {
+      return this.setState({
+        queryResult: this.formatData(r.rows, BASE_YKEY),
+        loading: false,
+      });
+    }
+    return this.setState({ error: true, loading: false })
   }
 
   formatData = (queryResult: OTQLAggregationResult[], key: string): QueryResult[] => {
