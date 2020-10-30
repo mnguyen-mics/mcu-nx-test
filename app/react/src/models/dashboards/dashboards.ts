@@ -1,4 +1,5 @@
 import { Layout } from "react-grid-layout";
+import { OTQLResult } from "../datamart/graphdb/OTQLResult";
 
 export interface DashboardResource {
   id: string,
@@ -26,6 +27,7 @@ export interface ComponentChart extends BaseComponent {
   component_type: 'MAP_PIE_CHART' | 'TOP_INFO_COMPONENT';
   show_legend: boolean;
   query_id: string;
+  data?: OTQLResult;
   labels_enabled?: boolean;
 }
 
@@ -44,6 +46,7 @@ export interface MapBarComponent extends BaseComponent {
   show_legend: boolean;
   query_id: string;
   shouldCompare?: boolean;
+  data?: OTQLResult;
   percentage?: boolean;
   labels_enabled?: boolean;
   vertical?: boolean;
@@ -57,6 +60,7 @@ export interface MapRadarChart extends BaseComponent {
   show_legend: boolean;
   query_id: string;
   shouldCompare?: boolean;
+  data?: OTQLResult;
   percentage?: boolean;
   labels_enabled?: boolean;
   vertical?: boolean;
