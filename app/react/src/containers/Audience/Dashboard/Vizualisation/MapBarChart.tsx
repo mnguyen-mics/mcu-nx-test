@@ -106,7 +106,7 @@ class MapBarChart extends React.Component<Props, State> {
       !_.isEqual(previousSource, source) || 
       queryId !== previousChartQueryId ||
       datamartId !== previousDatamartId ||
-      data !== previousData
+      !_.isEqual(data, previousData)
     ) {
       if (data) {
         this.formatOtqlQueryResult(data);
