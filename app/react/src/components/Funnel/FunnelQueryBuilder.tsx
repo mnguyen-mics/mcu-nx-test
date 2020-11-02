@@ -160,12 +160,15 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
           />
         </div>)
       default:
-        return <Input
-          size="small"
+        return <Select
           placeholder="Dimension value"
-          className={"mcs-funnelQueryBuilder_dimensionValue"}
-          onChange={this.handleDimensionExpressionChange.bind(this, dimensionIndex, stepId)}
-          value={expressions.join(",")} />
+          mode="tags"
+          tokenSeparators={[',']}
+          showSearch={true}
+          labelInValue={true}
+          autoFocus={true}
+          className="mcs-funnelQueryBuilder_dimensionValue"
+          onChange={this.handleDimensionExpressionForSelectorChange.bind(this, dimensionIndex, stepId, (x: LabeledValue) => x.key)}/>
     }
   }
 
@@ -251,34 +254,23 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     });
   };
 
-  handleDimensionExpressionChange(dimensionIndex: number, stepId: string, event: React.ChangeEvent<HTMLInputElement>) {
-    const { steps } = this.state;
-    steps.forEach(step => {
-      if (step.id === stepId) {
-        step.filter_clause.filters.forEach((filter, index) => {
-          if (dimensionIndex === index) {
-            filter.expressions = event.target.value.split(',');
-          }
-        });
-      }
-    });
-    this.setState({ steps });
-  }
-
   handleDimensionExpressionForSelectorChange<T>(dimensionIndex: number, stepId: string, valueExtract: (elem: T) => string, value: T) {
     const { steps } = this.state;
     steps.forEach(step => {
       if (step.id === stepId) {
         step.filter_clause.filters.forEach((filter, index) => {
           if (dimensionIndex === index) {
-            filter.expressions = [valueExtract(value)];
+            if(value && (Array.isArray(value) && value.length > 0 || !Array.isArray(value))) {
+              filter.expressions = Array.isArray(value) ? value.map(valueExtract) : [valueExtract(value)]
+            } else {
+              filter.expressions = []
+            }
           }
         });
       }
     });
     this.setState({ steps });
   }
-
   checkExpressionsNotEmpty = () => {
     let result = true;
     const { steps } = this.state;
@@ -288,7 +280,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
           result = false;
         else
           filter.expressions.forEach(exp => {
-            if(exp.length === 0 || !exp.trim())
+            if(!exp || exp.length === 0 || !exp.trim())
               result = false
           })
       })
