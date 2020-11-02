@@ -11,17 +11,16 @@ import injectNotifications, {
 } from '../../containers/Notifications/injectNotifications';
 import { compose } from 'recompose';
 import { debounce } from 'lodash';
-import { EmptyChart, LoadingChart, McsDateRangePicker } from '@mediarithmics-private/mcs-components-library';
+import { EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
-import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import {
   updateSearch,
-  parseSearch,
-  DATE_SEARCH_SETTINGS,
+  parseSearch
 } from '../../utils/LocationSearchHelper';
-import { funnelMessages } from './Constants';
+import { funnelMessages, FUNNEL_SEARCH_SETTING } from './Constants';
 import { extractDatesFromProps } from './Utils';
 import numeral from 'numeral';
+
 
 interface StepDelta {
   step: number
@@ -71,7 +70,7 @@ class Funnel extends React.Component<Props, State> {
 
     const nextLocation = {
       pathname,
-      search: updateSearch(currentSearch, params, DATE_SEARCH_SETTINGS),
+      search: updateSearch(currentSearch, params, FUNNEL_SEARCH_SETTING),
     };
     history.push(nextLocation);
   };
@@ -102,12 +101,13 @@ class Funnel extends React.Component<Props, State> {
 
   componentDidUpdate(prevProps: Props) {
     const {
-      filter,
       datamartId,
       location: { search }, } = this.props;
     const timeRange = extractDatesFromProps(search);
-    if (prevProps.location.search !== search) {
-      this.fetchData(datamartId, filter, timeRange);
+    const routeParams = parseSearch(search, FUNNEL_SEARCH_SETTING);
+    const funnelFilter = routeParams.filter.length > 0 ? JSON.parse(routeParams.filter) : {};
+    if (prevProps.location.search !== search && funnelFilter.length > 0) {
+      this.fetchData(datamartId, funnelFilter, timeRange);
     }
   }
 
@@ -214,32 +214,14 @@ class Funnel extends React.Component<Props, State> {
 
   render() {
     const { funnelData, stepDelta, isLoading } = this.state;
-    const { title, intl, history: { location: { search } } } = this.props;
+    const { title, intl } = this.props;
     if (isLoading) return (<LoadingChart />);
-
-    const filter = parseSearch(search, DATE_SEARCH_SETTINGS);
-    const dateRangePickerOptions = {
-      isEnabled: true,
-      onChange: (values: McsDateRangeValue) =>
-        this.updateLocationSearch({
-          from: values.from,
-          to: values.to,
-        }),
-      values: {
-        from: filter.from,
-        to: filter.to,
-      },
-    };
 
     return (
       <Card className="mcs-funnel">
-        <div className="mcs-funnel" id="container" >
+        <div id="container" >
           <div className="mcs-funnel_header">
             <h1 className="mcs-funnel_header_title">{title}</h1>
-            <McsDateRangePicker
-              values={dateRangePickerOptions.values}
-              onChange={dateRangePickerOptions.onChange}
-            />
           </div>
           {funnelData.steps.length === 0 ?
             <div className="mcs-funnel_empty">

@@ -31,6 +31,7 @@ export interface FilterClause<F extends Filter> {
 }
 
 export interface DimensionFilter extends Filter {
+  id?: string;
   dimension_name: string;
   operator: DimensionFilterOperator;
   expressions: string[];
