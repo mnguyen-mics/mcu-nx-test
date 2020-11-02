@@ -129,9 +129,7 @@ class Funnel extends React.Component<Props, State> {
       .getUserActivitiesFunnel(datamartId, filter, timeRange).then((response) => {
 
         // Enhance api data with last conversion step
-        if (response.data.steps[response.data.steps.length -  1].count > 0) {
-          response.data.steps.push(response.data.steps[response.data.steps.length -  1]);
-        }
+        response.data.steps.push(response.data.steps[response.data.steps.length -  1]);
 
         this.setState({
           isLoading: false,
