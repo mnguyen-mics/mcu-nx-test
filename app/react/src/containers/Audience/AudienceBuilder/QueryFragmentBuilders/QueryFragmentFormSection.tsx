@@ -16,7 +16,7 @@ import {
   AudienceBuilderFormData,
   AudienceBuilderGroupNode,
   AudienceBuilderParametricPredicateNode,
-  AudienceBuilderResource,
+  
 } from '../../../../models/audienceBuilder/AudienceBuilderResource';
 import { McsIcon } from '../../../../components';
 import AudienceFeatureFormSection, {
@@ -37,7 +37,8 @@ export const AudienceFeatureFieldArray = FieldArray as new () => GenericFieldArr
 >;
 
 export interface QueryFragmentFormSectionProps {
-  audienceBuilder: AudienceBuilderResource;
+  datamartId: string;
+  demographicsFeaturesIds: string[];
   objectTypes: ObjectLikeTypeInfoResource[];
 }
 
@@ -114,15 +115,15 @@ class QueryFragmentFormSection extends React.Component<Props> {
   };
 
   addFeature = (index: number) => () => {
-    const { openNextDrawer, audienceBuilder } = this.props;
+    const { openNextDrawer, datamartId, demographicsFeaturesIds } = this.props;
 
     const props: AudienceFeatureSelectorProps = {
-      datamartId: audienceBuilder.datamart_id,
+      datamartId: datamartId,
       close: this.props.closeNextDrawer,
       save: this.addAudienceFeature(index),
       demographicIds:
-        audienceBuilder.demographics_features_ids.length >= 1
-          ? audienceBuilder.demographics_features_ids
+      demographicsFeaturesIds.length >= 1
+          ? demographicsFeaturesIds
           : undefined,
     };
 
@@ -132,7 +133,7 @@ class QueryFragmentFormSection extends React.Component<Props> {
   };
 
   render() {
-    const { fields, intl, audienceBuilder, objectTypes } = this.props;
+    const { fields, intl, datamartId, demographicsFeaturesIds, objectTypes } = this.props;
 
     return (
       <React.Fragment>
@@ -153,7 +154,7 @@ class QueryFragmentFormSection extends React.Component<Props> {
                 className={'mcs-audienceBuilder_categoryCard'}
                 title={
                   index === 0 &&
-                  audienceBuilder.demographics_features_ids.length >= 1
+                  demographicsFeaturesIds.length >= 1
                     ? intl.formatMessage(messages.demographics)
                     : intl.formatMessage(messages.audienceFeatures)
                 }
@@ -171,15 +172,15 @@ class QueryFragmentFormSection extends React.Component<Props> {
                 <AudienceFeatureFieldArray
                   name={`${name}.expressions`}
                   component={AudienceFeatureFormSection}
-                  datamartId={audienceBuilder.datamart_id}
+                  datamartId={datamartId}
                   objectTypes={objectTypes}
                   isDemographicsSection={
                     index === 0 &&
-                    audienceBuilder.demographics_features_ids.length >= 1
+                    demographicsFeaturesIds.length >= 1
                   }
                 />
                 {(index !== 0 ||
-                  audienceBuilder.demographics_features_ids.length === 0) && (
+                  demographicsFeaturesIds.length === 0) && (
                   <div className="mcs-audienceBuilder_categoryCardFooter">
                     <Button
                       onClick={this.addFeature(index)}

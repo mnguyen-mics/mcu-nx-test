@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { QueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
+import { QueryDocument as GraphdbQueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
 import McsIcon from '../../../components/McsIcon';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
@@ -11,6 +11,11 @@ import JSONQLBuilderContainer, {
 } from './JSONQLBuilderContainer';
 import { messages } from './messages';
 import { Actionbar } from '@mediarithmics-private/mcs-components-library';
+import { formatQuery } from '../../Audience/AudienceBuilder/constants';
+import AudienceBuilderContainer, {
+  AudienceBuilderContainerProps,
+} from '../../Audience/AudienceBuilder/AudienceBuilderContainer';
+import { QueryDocument as AudienceQueryDocument } from '../../../models/audienceBuilder/AudienceBuilderResource';
 
 export type JSONQLPreviewContext = 'GOALS' | 'AUTOMATION_BUILDER';
 
@@ -22,20 +27,21 @@ export interface JSONQLPreviewProps {
   context: JSONQLPreviewContext;
   isTrigger?: boolean;
   isEdge?: boolean;
+  segmentEditor?: string;
 }
 
 type Props = JSONQLPreviewProps & InjectedIntlProps & InjectedDrawerProps;
 
 class JSONQLPreview extends React.Component<Props> {
   openEditor = () => {
-    const { intl, value } = this.props;
+    const { intl, value, segmentEditor } = this.props;
 
-    const actionbar = (query: QueryDocument, datamartId: string) => {
-      const onSave = () => {
-        if (this.props.onChange) this.props.onChange(JSON.stringify(query));
-        this.props.closeNextDrawer();
-      };
-      const onClose = () => this.props.closeNextDrawer();
+    const createActionBar = (
+      onSave: () => void,
+      onClose: () => void,
+      runQuery: () => void,
+      query: any,
+    ) => {
       return (
         <Actionbar
           edition={true}
@@ -59,6 +65,14 @@ class JSONQLPreview extends React.Component<Props> {
               defaultMessage="Update"
             />
           </Button>
+          {segmentEditor === 'AUDIENCE_BUILDER' && (
+            <Button disabled={!query} onClick={runQuery}>
+              <FormattedMessage
+                id="queryTool.jsonql.querytool.query.edit.run"
+                defaultMessage="Run Query"
+              />
+            </Button>
+          )}
           <McsIcon
             type="close"
             className="close-icon"
@@ -69,19 +83,60 @@ class JSONQLPreview extends React.Component<Props> {
       );
     };
 
-    this.props.openNextDrawer<JSONQLBuilderContainerProps>(
-      JSONQLBuilderContainer,
-      {
-        additionalProps: {
-          datamartId: this.props.datamartId,
-          renderActionBar: actionbar,
-          editionLayout: true,
-          queryDocument: value ? JSON.parse(value) : undefined,
-          isTrigger: this.props.isTrigger,
-          isEdge: this.props.isEdge,
+    if (segmentEditor === 'AUDIENCE_BUILDER') {
+      const actionbar = (
+        query: AudienceQueryDocument,
+        datamartId: string,
+        runQuery: () => void,
+      ) => {
+        const onSave = () => {
+          if (this.props.onChange)
+            this.props.onChange(JSON.stringify(formatQuery(query)));
+          this.props.closeNextDrawer();
+        };
+        const onClose = () => this.props.closeNextDrawer();
+        return createActionBar(onSave, onClose, runQuery, query);
+      };
+
+      this.props.openNextDrawer<AudienceBuilderContainerProps>(
+        AudienceBuilderContainer,
+        {
+          additionalProps: {
+            datamartId: this.props.datamartId,
+            renderActionBar: actionbar,
+            initialValues: value
+              ? (formatQuery(JSON.parse(value), true) as any)
+              : undefined,
+            demographicsFeaturesIds: [],
+          },
         },
-      },
-    );
+      );
+    } else {
+      const actionbar = (query: GraphdbQueryDocument, datamartId: string) => {
+        const onSave = () => {
+          if (this.props.onChange) this.props.onChange(JSON.stringify(query));
+          this.props.closeNextDrawer();
+        };
+        const onClose = () => this.props.closeNextDrawer();
+        return createActionBar(onSave, onClose, () => null, query);
+      };
+
+      this.props.openNextDrawer<JSONQLBuilderContainerProps>(
+        JSONQLBuilderContainer,
+        {
+          additionalProps: {
+            datamartId: this.props.datamartId,
+            renderActionBar: actionbar,
+            editionLayout: true,
+            queryDocument: value
+              ? (formatQuery(JSON.parse(value), true) as any)
+              : undefined,
+            isTrigger: this.props.isTrigger,
+            isEdge: this.props.isEdge,
+          },
+        },
+      );
+    }
   };
 
   render() {

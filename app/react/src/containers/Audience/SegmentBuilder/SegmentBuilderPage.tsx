@@ -1,4 +1,3 @@
-import * as moment from 'moment';
 import queryString from 'query-string';
 import * as React from 'react';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
@@ -22,6 +21,7 @@ import { IQueryService } from '../../../services/QueryService';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
 import { Alert } from 'antd';
 import { UserProfileResource } from '../../../models/directory/UserProfileResource';
+import { calculateDefaultTtl } from '../Segments/Edit/domain';
 
 export interface QueryBuilderPageRouteParams {
   organisationId: string;
@@ -102,6 +102,7 @@ class SegmentBuilderPage extends React.Component<Props> {
               persisted,
               default_ttl: calculateDefaultTtl(segmentFormData),
               query_id: res.data.id,
+              segment_editor: 'SEGMENT_BUILDER',
             };
             return this._audienceSegmentService.saveSegment(
               match.params.organisationId,
@@ -184,12 +185,3 @@ export default compose(
     connectedUser: state.session.connectedUser,
   })),
 )(SegmentBuilderPage);
-
-function calculateDefaultTtl(formData: NewUserQuerySimpleFormData) {
-  if (formData.defaultLifetime && formData.defaultLifetimeUnit) {
-    return moment
-      .duration(Number(formData.defaultLifetime), formData.defaultLifetimeUnit)
-      .asMilliseconds();
-  }
-  return undefined;
-}

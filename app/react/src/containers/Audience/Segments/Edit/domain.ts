@@ -2,39 +2,52 @@ import { QueryDocument } from './../../../../models/datamart/graphdb/QueryDocume
 import { ProcessingActivityFieldModel } from './../../../Settings/DatamartSettings/Common/domain';
 import { ProcessingSelectionResource } from './../../../../models/processing';
 import { UploadFile } from 'antd/lib/upload/interface';
-import { AudienceSegmentShape } from "../../../../models/audiencesegment/";
-import { FieldArrayModel } from "../../../../utils/FormHelper";
-import { PluginProperty, AudienceExternalFeed, AudienceTagFeed } from "../../../../models/Plugins";
-import { QueryResource } from "../../../../models/datamart/DatamartResource";
-import { UserQuerySegment, UserListSegment, UserActivationSegment } from '../../../../models/audiencesegment/AudienceSegmentResource';
-
+import { AudienceSegmentShape } from '../../../../models/audiencesegment/';
+import { FieldArrayModel } from '../../../../utils/FormHelper';
+import {
+  PluginProperty,
+  AudienceExternalFeed,
+  AudienceTagFeed,
+} from '../../../../models/Plugins';
+import { QueryResource } from '../../../../models/datamart/DatamartResource';
+import {
+  UserQuerySegment,
+  UserListSegment,
+  UserActivationSegment,
+} from '../../../../models/audiencesegment/AudienceSegmentResource';
+import { NewUserQuerySimpleFormData } from '../../../QueryTool/SaveAs/NewUserQuerySegmentSimpleForm';
+import * as moment from 'moment';
 
 export interface EditAudienceSegmentParam {
   organisationId: string;
   segmentId: string;
 }
 
-export type DefaultLiftimeUnit = 'days' | 'weeks' | 'months'
+export type DefaultLiftimeUnit = 'days' | 'weeks' | 'months';
 
 export interface AudienceExternalFeedResource extends AudienceExternalFeed {
-  properties?: PluginProperty[]
+  properties?: PluginProperty[];
 }
 
 export interface AudienceTagFeedResource extends AudienceTagFeed {
-  properties?: PluginProperty[]
+  properties?: PluginProperty[];
 }
 
 export interface AudienceExternalFeedTyped extends AudienceExternalFeed {
-  type: 'EXTERNAL_FEED'
+  type: 'EXTERNAL_FEED';
 }
 
 export interface AudienceTagFeedTyped extends AudienceTagFeed {
-  type: 'TAG_FEED'
+  type: 'TAG_FEED';
 }
 
-export type AudienceExternalFeedsFieldModel = FieldArrayModel<AudienceExternalFeedResource>;
+export type AudienceExternalFeedsFieldModel = FieldArrayModel<
+  AudienceExternalFeedResource
+>;
 
-export type AudienceTagFeedsFieldModel = FieldArrayModel<AudienceTagFeedResource>
+export type AudienceTagFeedsFieldModel = FieldArrayModel<
+  AudienceTagFeedResource
+>;
 
 export interface AudienceSegmentFormData {
   audienceSegment: Partial<AudienceSegmentShape>;
@@ -48,7 +61,7 @@ export interface AudienceSegmentFormData {
 
 export const INITIAL_AUDIENCE_SEGMENT_FORM_DATA: AudienceSegmentFormData = {
   audienceSegment: {
-    persisted: true
+    persisted: true,
   },
   initialProcessingSelectionResources: [],
   processingActivities: [],
@@ -71,7 +84,10 @@ export function isUserQuerySegment(
 export function isUserListSegment(
   segment: AudienceSegmentShape,
 ): segment is UserListSegment {
-  return (segment as UserListSegment).type === 'USER_LIST' && (segment as UserListSegment).subtype === "STANDARD";
+  return (
+    (segment as UserListSegment).type === 'USER_LIST' &&
+    (segment as UserListSegment).subtype === 'STANDARD'
+  );
 }
 
 export function isUserActivationSegment(
@@ -83,11 +99,26 @@ export function isUserActivationSegment(
 export function isUserPixelSegment(
   segment: AudienceSegmentShape,
 ): segment is UserListSegment {
-  return (segment as UserListSegment).type === 'USER_LIST' && (segment as UserListSegment).subtype !== "USER_PIXEL";
+  return (
+    (segment as UserListSegment).type === 'USER_LIST' &&
+    (segment as UserListSegment).subtype !== 'USER_PIXEL'
+  );
 }
 
 export function isEdgeSegment(
   segment: AudienceSegmentShape,
 ): segment is UserListSegment {
-  return (segment as UserListSegment).type === 'USER_LIST' && (segment as UserListSegment).subtype !== "USER_CLIENT";
+  return (
+    (segment as UserListSegment).type === 'USER_LIST' &&
+    (segment as UserListSegment).subtype !== 'USER_CLIENT'
+  );
+}
+
+export function calculateDefaultTtl(formData: NewUserQuerySimpleFormData) {
+  if (formData.defaultLifetime && formData.defaultLifetimeUnit) {
+    return moment
+      .duration(Number(formData.defaultLifetime), formData.defaultLifetimeUnit)
+      .asMilliseconds();
+  }
+  return undefined;
 }
