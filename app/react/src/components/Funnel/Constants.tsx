@@ -1,6 +1,6 @@
 
 import { Index } from '@mediarithmics-private/mcs-components-library/lib/utils';
-import { SearchSetting } from '@mediarithmics-private/mcs-components-library/lib/utils/LocationSearchHelper';
+import { DATE_SEARCH_SETTINGS, SearchSetting } from '../../utils/LocationSearchHelper';
 import { FunnelFilter } from '../../models/datamart/UserActivitiesFunnel'
 import { defineMessages } from "react-intl";
 
@@ -39,7 +39,7 @@ export const booleanOperator: BooleanOperator[] = ["OR", "AND"]
 
 const funnelFilterSearchSetting = {
   paramName: 'filter',
-  defaultValue: [],
+  defaultValue: undefined,
   deserialize: (query: Index<string>) => {
     if (query.filter) {
       return query.filter.split(',')
@@ -50,7 +50,7 @@ const funnelFilterSearchSetting = {
   isValid: (query: Index<string>) => !query.filter || query.filter.split(',').length > 0,
 };
 
-export const FUNNEL_SEARCH_SETTING: SearchSetting[] = [funnelFilterSearchSetting];
+export const FUNNEL_SEARCH_SETTING: SearchSetting[] = [...DATE_SEARCH_SETTINGS, funnelFilterSearchSetting];
 
 
 export const funnelMessages = defineMessages({

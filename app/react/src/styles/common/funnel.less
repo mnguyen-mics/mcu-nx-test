@@ -1,8 +1,9 @@
 .mcs-funnel {
   margin-top: 15px;
-  border-top: 1px solid @border-color-split;
-  border-left: 1px solid @border-color-split;
   box-sizing: content-box;
+  .ant-card-body {
+    padding: 0;
+  }
 }
 
 .mcs-funnelQueryBuilder_steps {
@@ -127,7 +128,7 @@
   border-right: 1px solid @border-color-split;
 }
 
-
+.mcs-funnelQueryBuilder_header_title,
 .mcs-funnel_header_title,
 .mcs-funnel_stepName_desc,
 .mcs-funnel_stepInfo {
@@ -168,24 +169,24 @@
 }
 
 .mcs-funnel_header {
+  padding: 16px;
+}
+
+.mcs-funnel_header,
+.mcs-funnelQueryBuilder_header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 7px;
   border-bottom: 1px solid @border-color-split;
-  border-right: 1px solid @border-color-split;
 }
 
 .mcs-funnel_steps {
   display: flex;
   overflow: hidden;
-  border-right: 1px solid @border-color-split;
 }
 
 .mcs-funnel_empty {
   padding-top: 1px;
-  border-right: 1px solid @border-color-split;
-  border-bottom: 1px solid @border-color-split;
 }
 
 .mcs-funnel_header_datePicker {
@@ -195,6 +196,21 @@
   border: solid 1px #e1e1e1;
   background-color: #fff;
   color: @primary-color;
+}
+
+.mcs-funnelQueryBuilder {
+  margin-top: 15px;
+  .ant-card-body {
+    padding: 0;
+  }
+}
+
+.mcs-funnelQueryBuilder_header {
+  padding: 5px 24px;
+}
+
+.mcs-funnelQueryBuilder_steps {
+  padding: 0 24px;
 }
 
 .mcs-funnelQueryBuilder_step {
