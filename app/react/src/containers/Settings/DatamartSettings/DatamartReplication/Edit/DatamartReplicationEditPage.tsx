@@ -107,7 +107,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
       ...formDataWithoutCredentialsUri
     } = datamartReplicationFormData;
 
-    if (isEmpty(credentials_uri)) {
+    if (isEmpty(credentials_uri) && !datamartReplicationId) {
       notifyError(new Error('Credentials must be defined'), {
         intlDescription: messages.datamartReplicationCredentialsUriError,
       });
@@ -155,7 +155,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
                 datamartReplicationFormData.credentials_uri,
               )
               .catch(error => {
-                notifyError(error);
+                if(error) notifyError(error);
                 this.setState({
                   isLoading: false,
                 });
