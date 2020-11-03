@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Card, Input, Select, Row, Col, Button } from "antd";
+import messages from '../../containers/Campaigns/Display/Edit/messages';
 import cuid from 'cuid';
 import { TYPES } from '../../constants/types';
 import { lazyInject } from '../../config/inversify.config';
@@ -232,7 +233,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
         step.filter_clause.filters.push(
           {
             id: this._cuid(),
-            dimension_name: 'DATE_TIME',
+            dimension_name: '',
             not: false,
             operator: 'EXACT' as DimensionFilterOperator,
             expressions: [
@@ -325,9 +326,27 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     return result
   }
 
+  checkDimensionsNotEmpty = () => {
+    let result = true;
+    const { steps } = this.state;
+    steps.forEach(step => {
+      step.filter_clause.filters.forEach(filter => {
+        if(!filter.dimension_name || filter.dimension_name.length === 0)
+          result = false;
+      })
+    });
+
+    return result
+  }
+
   handleExecuteQueryButtonClick = () => {
-    if (this.checkExpressionsNotEmpty())
+    if(this.checkExpressionsNotEmpty() && this.checkDimensionsNotEmpty())
       this.updateFilterQueryStringParams();
+    else
+      this.props.notifyWarning({
+        message: messages.errorFormMessage.defaultMessage,
+        description: "",
+      });
   }
 
 
