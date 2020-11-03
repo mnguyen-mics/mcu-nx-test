@@ -32,12 +32,15 @@ interface State {
   isLoading: boolean;
   funnelData: FunnelResource;
   stepDelta: StepDelta[];
+  lastExecutedQueryAskedTime: number;
 }
 
 type FunnelProps = {
   datamartId: string;
   filter: FunnelFilter[];
   title: string;
+  parentCallback: (isLoading: boolean) => void;
+  launchExecutionAskedTime: number;
 }
 
 type Props = FunnelProps &
@@ -83,7 +86,8 @@ class Funnel extends React.Component<Props, State> {
         total: 0,
         steps: []
       },
-      stepDelta: []
+      stepDelta: [],
+      lastExecutedQueryAskedTime: 0
     }
 
     this.fetchData = this._debounce(this.fetchData.bind(this), 800);
@@ -102,11 +106,15 @@ class Funnel extends React.Component<Props, State> {
   componentDidUpdate(prevProps: Props) {
     const {
       datamartId,
-      location: { search }, } = this.props;
+      location: { search },
+      launchExecutionAskedTime
+    } = this.props;
+    const lastExecutedQueryAskedTime = this.state.lastExecutedQueryAskedTime
     const timeRange = extractDatesFromProps(search);
     const routeParams = parseSearch(search, FUNNEL_SEARCH_SETTING);
     const funnelFilter = routeParams.filter.length > 0 ? JSON.parse(routeParams.filter) : {};
-    if (prevProps.location.search !== search && funnelFilter.length > 0) {
+    if ((prevProps.location.search !== search || lastExecutedQueryAskedTime !== launchExecutionAskedTime) && funnelFilter.length > 0) {
+      this.setState({lastExecutedQueryAskedTime: launchExecutionAskedTime})
       this.fetchData(datamartId, funnelFilter, timeRange);
     }
   }
@@ -117,6 +125,8 @@ class Funnel extends React.Component<Props, State> {
   }
 
   fetchData = (datamartId: string, filter: FunnelFilter[], timeRange: FunnelTimeRange) => {
+    const {parentCallback, notifyError} = this.props
+
     this.setState({
       isLoading: true,
       stepDelta: [],
@@ -124,13 +134,14 @@ class Funnel extends React.Component<Props, State> {
         total: 0,
         steps: []
       }
+    }, () => {
+      parentCallback(this.state.isLoading)
     });
     return this._userActivitiesFunnelService
       .getUserActivitiesFunnel(datamartId, filter, timeRange).then((response) => {
 
         // Enhance api data with last conversion step
         response.data.steps.push(response.data.steps[response.data.steps.length -  1]);
-
         this.setState({
           isLoading: false,
           funnelData: response.data
@@ -138,20 +149,24 @@ class Funnel extends React.Component<Props, State> {
           setTimeout(() => {
             this.drawSteps();
           });
+          parentCallback(this.state.isLoading)
         });
+        
       })
       .catch(e => {
-        this.props.notifyError(e);
+        notifyError(e);
         this.setState({
           isLoading: false,
+        }, () => {
+          parentCallback(false)
         });
-      });;
+      });
   }
 
   drawSteps = () => {
     const { funnelData } = this.state;
 
-    funnelData.steps.map((step, index) => {
+    funnelData.steps.forEach((step, index) => {
       const start = index === 0 ? funnelData.total : funnelData.steps[index - 1].count;
       this.drawCanvas((funnelData.total - start), (funnelData.total - step.count), index + 1, funnelData.steps.length)
     });

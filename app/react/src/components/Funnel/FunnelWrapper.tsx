@@ -14,6 +14,21 @@ type JoinedProp = RouteComponentProps &
   FunnelWrapperProps;
 
 class FunnelWrapper extends React.Component<JoinedProp> {
+  state = { 
+    isLoading: false,
+    launchExecutionAskedTime: 0
+  }
+  
+  funnelCallbackFunction = (loading: boolean) => {
+    this.setState({
+      isLoading: loading
+    })
+  }
+
+  funnelQueryBuilderCallbackFunction = (timestampInSec: number) => {
+    this.setState({launchExecutionAskedTime: timestampInSec})
+  }
+  
   componentDidUpdate(prevProps: JoinedProp) {
     const {
       location: { search, pathname },
@@ -37,10 +52,11 @@ class FunnelWrapper extends React.Component<JoinedProp> {
 
      const routeParams = parseSearch(search, FUNNEL_SEARCH_SETTING);
      const funnelFilter = routeParams.filter.length > 0 ? JSON.parse(routeParams.filter) : {};
+     const { isLoading, launchExecutionAskedTime } = this.state
     return (
       <div>
-        <FunnelQueryBuilder datamartId={datamartId} />
-        <Funnel datamartId={datamartId} title={"Funnel demo"} filter={funnelFilter} />
+        <FunnelQueryBuilder datamartId={datamartId} isLoading={isLoading} parentCallback={this.funnelQueryBuilderCallbackFunction}/>
+        <Funnel datamartId={datamartId} title={"Funnel demo"} filter={funnelFilter} parentCallback={this.funnelCallbackFunction} launchExecutionAskedTime={launchExecutionAskedTime}/>
       </div>
     )
   }
