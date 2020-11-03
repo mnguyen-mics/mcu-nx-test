@@ -86,6 +86,12 @@ export interface PluginInstance {
   organisation_id: string;
 }
 
+export interface CustomActionResource extends PluginInstance {
+  id: string;
+  name: string;
+  creation_ts: string;
+}
+
 export interface AttributionModelCreateRequest extends PluginInstance {
   artifact_id: string;
   group_id: string;

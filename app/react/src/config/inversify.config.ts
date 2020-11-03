@@ -1,3 +1,4 @@
+import { CustomActionService, ICustomActionService } from './../services/CustomActionService';
 import {
   AudienceFeatureService,
   IAudienceFeatureService,
@@ -444,6 +445,7 @@ container
   .bind<IUsersAnalyticsService>(TYPES.IUsersAnalyticsService)
   .to(UsersAnalyticsService);
 container.bind<IUserRolesService>(TYPES.IUserRolesService).to(UserRolesService);
+container.bind<ICustomActionService>(TYPES.ICustomActionService).to(CustomActionService);
 
 
 export const { lazyInject } = getDecorators(container, false);

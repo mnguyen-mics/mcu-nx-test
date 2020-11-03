@@ -1,3 +1,6 @@
+import { PluginLayout } from './../../../../../models/plugin/PluginLayout';
+import { PluginResource } from './../../../../../models/Plugins';
+import { PropertyResourceShape } from './../../../../../models/plugin/index';
 import { CustomActionNodeResource } from './../../../../../models/automations/automations';
 import { CustomActionAutomationFormProps } from './CustomActionNodeForm/CustomActionAutomationForm';
 import { Moment } from 'moment';
@@ -188,7 +191,10 @@ export interface QueryInputAutomationFormData
 export interface CustomActionAutomationFormData extends DefaultFormData {
   name: string;
   pluginId?: string;
+  pluginResource?: PluginResource;
+  pluginLayout?: PluginLayout;
   properties?: any;
+  pluginVersionProperties?: PropertyResourceShape[];
 }
 
 export type AutomationFormDataType =
@@ -279,7 +285,7 @@ export function isOnSegmentExitInputNode(
 export function isCustomActionNode(
   node: AutomationNodeShape,
 ): node is CustomActionNodeResource {
-  return (node as CustomActionNodeResource).type === 'CUSTOM_ACTION';
+  return (node as CustomActionNodeResource).type === 'CUSTOM_ACTION_NODE';
 }
 
 export function isWaitNode(

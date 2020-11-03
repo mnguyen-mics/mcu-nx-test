@@ -421,6 +421,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
               }
               name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value.value`}
               key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
+              small={pluginFieldProps.small}
             />
           );
         case 'URL':

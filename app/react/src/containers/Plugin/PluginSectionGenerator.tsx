@@ -41,7 +41,7 @@ interface PluginSectionGeneratorProps {
   pluginLayoutSection: PluginLayoutSectionResource;
   pluginVersionId: string;
   noUploadModal?: () => void;
-  disableFields: boolean;
+  disableFields?: boolean;
   small?: boolean;
   nameField?: PluginExtraField;
   descriptionField?: PluginExtraField;

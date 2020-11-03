@@ -103,7 +103,7 @@ export default class AutomationNodeModel extends NodeModel {
       case 'IF_NODE':
         this.editFormComponent = QueryAutomationForm;
         break;
-      case 'CUSTOM_ACTION':
+      case 'CUSTOM_ACTION_NODE':
         this.editFormComponent = CustomActionAutomationForm;
         break;
       default:

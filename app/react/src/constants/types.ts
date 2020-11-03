@@ -80,6 +80,7 @@ const TYPES = {
   IUserActivitiesFunnelService: Symbol.for('userActivitiesFunnelService'),
   IUsersAnalyticsService: Symbol.for('usersAnalyticsService'),
   IUserRolesService: Symbol.for('userRolesService'),
+  ICustomActionService: Symbol.for('customActionService'),
 };
 
 export { TYPES };

@@ -549,7 +549,7 @@ export class UpdateNodeOperation implements NodeOperation {
           formData: this.formData as WaitFormData,
         };
         break;
-      case 'CUSTOM_ACTION':
+      case 'CUSTOM_ACTION_NODE':
         nodeBody = {
           ...storylineNode.node,
           ...(this.node as CustomActionNodeResource),
@@ -836,7 +836,7 @@ export function generateNodeProperties(
         iconAnt: 'clock-circle',
         color: '#fbc02d',
       };
-    case 'CUSTOM_ACTION':
+    case 'CUSTOM_ACTION_NODE':
       return {
         title: formatMessage(nodeMessages.customActionNodeTitle),
         subtitle: '',
