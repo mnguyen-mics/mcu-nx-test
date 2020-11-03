@@ -18,7 +18,8 @@ class SegmentFetcher implements ResourceFetcher<AudienceSegmentShape> {
 
 const segmentFetcher = new SegmentFetcher()
 interface SegmentByNameSelectorProps {
-  segmentType?: AudienceSegmentType
+  segmentType?: AudienceSegmentType;
+  className?: string
 }
 
 function audienceSegmentAdapter(s: AudienceSegmentShape): SegmentNameDisplayProps {

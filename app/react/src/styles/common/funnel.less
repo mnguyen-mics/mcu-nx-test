@@ -4,6 +4,7 @@
   .ant-card-body {
     padding: 0;
   }
+  margin-bottom: 15px;
 }
 
 .mcs-funnelQueryBuilder_steps {
@@ -115,7 +116,7 @@
 .mcs-funnel_stepName,
 .mcs-funnel_userPoints {
   padding: 15px;
-  min-height: 77px;
+  min-height: 42px;
 }
 
 .mcs-funnel_stepName,
@@ -152,8 +153,16 @@
 }
 
 .mcs-funnel_stepName_title {
-  margin-bottom: 10px;
   font-size: 12px;
+  font-family: "LLCircularWeb-Book";
+  font-weight: bold;
+  letter-spacing: normal;
+  color: @primary-color;
+}
+
+.mcs-funnelQueryBuilder_stepName_title {
+  margin-bottom: 10px;
+  font-size: 15px;
   font-family: "LLCircularWeb-Book";
   font-weight: bold;
   letter-spacing: normal;
@@ -213,28 +222,15 @@
   padding: 0 24px;
 }
 
-.mcs-funnelQueryBuilder_step {
+.mcs-funnelQueryBuilder_ExecuteQueryBtn {
   margin-bottom: 25px;
-}
-
-.mcs-funnelQueryBuilder_stepName {
-  display: inline-block;
-  width: 200px;
-  border: none;
-  color: rgb(0, 48, 86);
-  margin-bottom: 5px;
-
-  &:focus {
-    border-color: #104163;
-    outline: 0;
-    box-shadow: none;
-    border-right-width: none;
-}
 }
 
 .mcs-funnelQueryBuilder_dimensionValue {
   float: none;
-  width: 176px;
+  min-width: 176px;
+  width: auto;
+  max-width: 352px;
   background: rgba(225, 225, 225, 0.5);
   border-radius: 7.5px;
   color: rgb(0, 48, 86);
@@ -246,6 +242,19 @@
 .mcs-funnelQueryBuilder_step_dimensions {
   display: flex;
   margin: 10px 0;
+}
+
+.mcs-funnelQueryBuilder_step_dimensionFilter_operator {
+  display: flex;
+  margin-right: 20px;
+  height: 40px;
+}
+
+.mcs-funnelQueryBuilder_step_dimensionFilter_operator_text {
+  color: @primary-color;
+  font-family: "LLCircularWeb-Book";
+  font-size: 15px;
+  margin: auto;
 }
 
 .mcs-funnelQueryBuilder_select {
@@ -273,7 +282,9 @@
   }
 
   &.mcs-funnelQueryBuilder_select--dimensions {
-    width: 176px;
+    width: auto;
+    min-width: 176px;
+    max-width: 352px;
   }
 
   &.mcs-funnelQueryBuilder_select--dimensionsFilter {
@@ -283,6 +294,24 @@
 }
 
 .mcs-funnelQueryBuilder_removeStepBtn {
+  background: #fff;
+  color: rgba(55, 55, 55, 0.46);
+  border: 0;
+  box-shadow: none;
+  font-size: 15px;
+  margin-left: 10px;
+  padding: 6px 12px;
+
+  &:hover,
+  &:focus,
+  &:active {
+    color: rgba(55, 55, 55, 0.46);
+    background: #fff;
+    border-color: none;
+  }
+}
+
+.mcs-funnelQueryBuilder_removeFilterBtn {
   background: #fff;
   color: rgba(55, 55, 55, 0.46);
   border: 0;
@@ -300,10 +329,32 @@
   }
 }
 
+.mcs-funnelQueryBuilder_addDimensionBtn_Icon {
+  font-size: 10px;
+  margin-right: 10px;
+}
+
 .mcs-funnelQueryBuilder_addDimensionBtn,
 .mcs-funnelQueryBuilder_addDimensionBtn:hover,
 .mcs-funnelQueryBuilder_addDimensionBtn:active,
 .mcs-funnelQueryBuilder_addDimensionBtn:focus {
+  background: rgba(225, 225, 225, 0.5);
+  border-radius: 7.5px;
+  border: none;
+  color: rgb(0, 48, 86);
+  padding: 11px 12px;
+}
+
+.mcs-funnelQueryBuilder_addStepBtn_Icon {
+  font-size: 10px;
+  margin-right: 10px;
+}
+
+.mcs-funnelQueryBuilder_addStepBtn,
+.mcs-funnelQueryBuilder_addStepBtn:hover,
+.mcs-funnelQueryBuilder_addStepBtn:active,
+.mcs-funnelQueryBuilder_addStepBtn:focus {
+  margin-bottom: 25px;
   background: rgba(225, 225, 225, 0.5);
   border-radius: 7.5px;
   border: none;

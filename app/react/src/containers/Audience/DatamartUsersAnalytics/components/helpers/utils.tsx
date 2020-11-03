@@ -27,6 +27,7 @@ interface ResourceByKeywordSelectorState {
 }
 
 interface ResourceByKeywordSelectorProps {
+  className?: string;
   anchorId: string;
   datamartId: string;
   organisationId: string;
@@ -89,7 +90,7 @@ function ResourceByKeywordSelector<T extends SelectableResource, AdditionalConte
 
     render() {
       const { resourcesList, fetching, value } = this.state;
-      const { anchorId } = this.props;
+      const { anchorId, className } = this.props;
       const getPopupContainer = () => document.getElementById(anchorId)!
       return (<Select
         mode="tags"
@@ -98,7 +99,7 @@ function ResourceByKeywordSelector<T extends SelectableResource, AdditionalConte
         labelInValue={true}
         autoFocus={true}
         value={value}
-        className="mcs-resourceByNameSelector"
+        className={className ? className : "mcs-resourceByNameSelector"}
         placeholder={placeholder}
         filterOption={false}
         onSearch={this.fetchListMethod}

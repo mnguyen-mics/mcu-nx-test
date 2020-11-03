@@ -21,6 +21,13 @@ export const dimensionFilterOperator: DimensionFilterOperator[] = [
   "IS_NULL"
 ]
 
+export type FilterOperatorLabel = "equals" | "in"
+
+export const showFilterOperator: FilterOperatorLabel[] = [
+  "equals",
+  "in"
+] 
+
 export type EventTypeDimension = "$transaction_confirmed"
   | "$item_list_view"
   | "$item_view"
