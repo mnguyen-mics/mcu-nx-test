@@ -231,8 +231,7 @@ class Funnel extends React.Component<Props, State> {
               {funnelData.steps.map((step, index) => {
                 return <div key={index.toString()} style={{ flex: 1 }} >
                   <div className={"mcs-funnel_stepName"}>
-                    <h3 className="mcs-funnel_stepName_title">Step {index + 1}</h3>
-                    <p className="mcs-funnel_stepName_desc">{this.isLastStep(index + 1) ? '' : step.name}</p>
+                    <h3 className="mcs-funnel_stepName_title">{index === 0 ? 'Total' : 'Step '+ index} </h3>
                   </div>
                   <div className={"mcs-funnel_userPoints"}>
                     <div className="mcs-funnel_userPoints_title">UserPoints</div>
