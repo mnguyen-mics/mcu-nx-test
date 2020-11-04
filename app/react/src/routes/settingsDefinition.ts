@@ -126,12 +126,6 @@ const campaignSettingsDefinition: NavigatorMenuDefinition = {
   subMenuItems: [
     {
       ...generateMissingdefinitionItemFromRoute(
-        settingsDefinition.settingsCampaignBidOptimizerList,
-      ),
-      translation: messages.campaignSettingsbidOptimizer,
-    },
-    {
-      ...generateMissingdefinitionItemFromRoute(
         settingsDefinition.settingsCampaignAttributionModelList,
       ),
       translation: messages.campaignSettingsAttributionModels,

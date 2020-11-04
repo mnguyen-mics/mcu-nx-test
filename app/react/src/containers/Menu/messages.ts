@@ -98,10 +98,6 @@ export default defineMessages({
     id: 'menu.library.keyword',
     defaultMessage: 'Keyword List',
   },
-  libraryBidOptimizer: {
-    id: 'menu.library.BidOptimizer',
-    defaultMessage: 'Bid Optimizers',
-  },
   libraryAttributionModel: {
     id: 'menu.library.AttributionModel',
     defaultMessage: 'Attribution Models',
@@ -260,11 +256,6 @@ export default defineMessages({
   serviceOffersSettingsTitle: {
     id: 'menu.service.offers.title',
     defaultMessage: 'Services',
-  },
-
-  campaignSettingsbidOptimizer: {
-    id: 'menu.campaigns.bid_optimizer',
-    defaultMessage: 'Bid Optimizer',
   },
 
   campaignSettingsAttributionModels: {

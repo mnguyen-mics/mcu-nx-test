@@ -36,9 +36,6 @@ import AudienceSegmentFormSection, {
 import AudienceCatalogFormSection, {
   AudienceCatalogFormSectionProps,
 } from './sections/AudienceSegment/AudienceCatalogFormSection';
-import BidOptimizerFormSection, {
-  BidOptimizerFormSectionProps,
-} from './sections/BidOptimizerFormSection';
 import InventoryCatalogFormSection, {
   InventoryCatalogFormSectionProps,
 } from './sections/InventoryCatalog/InventoryCatalogFormSection';
@@ -70,11 +67,6 @@ export const LocationTargetingFieldArray = FieldArray as new () => GenericFieldA
 export const AdFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
   AdFormSectionProps
->;
-
-export const BidOptimizerFieldArray = FieldArray as new () => GenericFieldArray<
-  Field,
-  BidOptimizerFormSectionProps
 >;
 
 export const InventoryCatalogFieldArray = FieldArray as new () => GenericFieldArray<
@@ -198,25 +190,12 @@ class AdGroupForm extends React.Component<Props> {
       ),
     };
 
-    const bidOptimizer = {
-      id: 'bidOptimizer',
-      title: messages.sectionTitleOptimizer,
-      component: (
-        <BidOptimizerFieldArray
-          name="bidOptimizerFields"
-          component={BidOptimizerFormSection}
-          {...genericFieldArrayProps}
-        />
-      ),
-    };
-
     sections.push(general);
     if (hasDatamarts(organisationId)) sections.push(audience);
     sections.push(device);
     sections.push(location);
     sections.push(placementList);
     sections.push(displayAd);
-    sections.push(bidOptimizer);
 
     const insertIndex = displaySummaryFirst ? 0 : sections.length;
     sections.splice(insertIndex, 0, summary);

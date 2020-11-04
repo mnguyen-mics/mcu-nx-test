@@ -76,18 +76,6 @@ const redirects: Redirect[] = [
     to: settingsDefinition.settingsCampaignAttributionModelEdition.path
   },
   {
-    from: '/library/bidOptimizers',
-    to: settingsDefinition.settingsCampaignBidOptimizerList.path
-  },
-  {
-    from: '/library/bidOptimizers/:bidOptimizerId',
-    to: settingsDefinition.settingsCampaignBidOptimizerEdition.path
-  },
-  {
-    from: '/library/bidOptimizers/:bidOptimizerId/models/:modelId/report',
-    to: settingsDefinition.settingsCampaignBidOptimizerEdition.path
-  },
-  {
     from: '/campaigns/email/edit/:campaignId',
     to: campaignsDefinition.campaignEmailEdition.path
   },

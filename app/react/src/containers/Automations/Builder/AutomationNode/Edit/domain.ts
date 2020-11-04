@@ -101,7 +101,6 @@ export const INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA: DisplayCampaignAutomationF
           targeted_browser_families: 'ALL',
         },
         adFields: [],
-        bidOptimizerFields: [],
         inventoryCatalFields: [],
         locationFields: [],
         segmentFields: [],

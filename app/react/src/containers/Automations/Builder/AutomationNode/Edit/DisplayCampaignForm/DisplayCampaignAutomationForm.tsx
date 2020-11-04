@@ -20,13 +20,11 @@ import GeneralInformationFormSection from './GeneralInformationFormSection';
 import {
   InventoryCatalogFieldArray,
   AdFieldArray,
-  BidOptimizerFieldArray,
 } from '../../../../../Campaigns/Display/Edit/AdGroup/AdGroupForm';
 import messages from '../../../../../Campaigns/Display/Edit/messages';
 import DeviceFormSection from '../../../../../Campaigns/Display/Edit/AdGroup/sections/DeviceFormSection';
 import { InventoryCatalogFormSection } from '../../../../../Campaigns/Display/Edit/AdGroup/sections/InventoryCatalog';
 import AdFormSection from '../../../../../Campaigns/Display/Edit/AdGroup/sections/AdFormSection';
-import { BidOptimizerFormSection } from '../../../../../Campaigns/Display/Edit/AdGroup/sections';
 import { GoalFieldArray } from '../../../../../Campaigns/Display/Edit/DisplayCampaignForm';
 import { GoalFormSection } from '../../../../../Campaigns/Display/Edit/Sections/Programmatic';
 import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
@@ -151,25 +149,11 @@ class DisplayCampaignAutomationForm extends React.Component<Props> {
       ),
     };
 
-    const bidOptimizer = {
-      id: 'bidOptimizer',
-      title: messages.sectionTitleOptimizer,
-      component: (
-        <BidOptimizerFieldArray
-          name="adGroupFields[0].model.bidOptimizerFields"
-          component={BidOptimizerFormSection}
-          small={true}
-          {...genericFieldArrayProps}
-        />
-      ),
-    };
-
     sections.push(displayCampaignSection);
     sections.push(goalSection);
     sections.push(device);
     sections.push(placementList);
     sections.push(displayAd);
-    sections.push(bidOptimizer);
 
     return sections;
   };

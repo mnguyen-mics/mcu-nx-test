@@ -105,14 +105,6 @@ export interface AttributionModel extends AttributionModelCreateRequest {
   organisation_id: string;
 }
 
-export interface BidOptimizer extends PluginInstance {
-  engine_artifact_id: string;
-  engine_group_id: string;
-  engine_version_id: string;
-  id: string;
-  name: string;
-  organisation_id: string;
-}
 export interface EmailRouter extends PluginInstance {
   id: string;
   name: string;

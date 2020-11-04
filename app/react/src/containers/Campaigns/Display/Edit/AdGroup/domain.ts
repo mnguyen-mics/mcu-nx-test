@@ -20,7 +20,6 @@ import {
   LocationSelectionCreateRequest,
 } from '../AdGroup/sections/Location/domain';
 import { DisplayCreativeFormData } from '../../../../Creative/DisplayAds/Edit/domain';
-import { BidOptimizationObjectiveType } from '../../../../../models/campaign/constants';
 import { KeywordListSelectionResource, KeywordListSelectionCreateRequest } from '../../../../../models/keywordList/keywordList';
 import { DealsListSelectionCreateRequest, DealsListSelectionResource } from '../../../../../models/dealList/dealList';
 import { AdExchangeSelectionResource, AdExchangeSelectionCreateRequest } from '../../../../../models/adexchange/adexchange';
@@ -114,12 +113,6 @@ export type LocationSelectionShape =
 
 export type LocationFieldModel = FieldArrayModel<LocationSelectionShape>;
 
-export type BidOptimizerFieldModel = FieldArrayModel<{
-  bid_optimizer_id: string;
-  bid_optimization_objective_type: BidOptimizationObjectiveType;
-  bid_optimization_objective_value: string;
-}>;
-
 /* FIELD Array must match AdGroupFormData keys (eg: segmentFields key is the fieldArray name in a section) */
 
 export interface AdGroupFormData {
@@ -127,10 +120,7 @@ export interface AdGroupFormData {
   segmentFields: SegmentFieldModel[];
   adFields: AdFieldModel[];
   locationFields: LocationFieldModel[];
-  bidOptimizerFields: BidOptimizerFieldModel[];
-
   inventoryCatalFields: InventoryCatalFieldsModel[];
-
 }
 
 export const INITIAL_AD_GROUP_FORM_DATA: AdGroupFormData = {
@@ -145,7 +135,6 @@ export const INITIAL_AD_GROUP_FORM_DATA: AdGroupFormData = {
   segmentFields: [],
   adFields: [],
   locationFields: [],
-  bidOptimizerFields: [],
   inventoryCatalFields: [],
 };
 
