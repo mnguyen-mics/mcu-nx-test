@@ -10,7 +10,6 @@
     'campaigns-display',
     'campaigns-email',
     'campaigns-goals',
-    'campaignsSettings-bid_optimizers',
     'campaignsSettings-attribution_models',
     'campaignsSettings-email_routers',
     'campaignsSettings-recommenders',

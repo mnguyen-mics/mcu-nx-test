@@ -19,10 +19,6 @@ import {
   IReferenceTableService,
   ReferenceTableService,
 } from './../services/ReferenceTableService';
-import {
-  IBidOptimizerService,
-  BidOptimizerService,
-} from './../services/Library/BidOptimizerService';
 import DataFileService, {
   IDataFileService,
 } from './../services/DataFileService';
@@ -367,9 +363,6 @@ container
 container
   .bind<IEmailRouterService>(TYPES.IEmailRouterService)
   .to(EmailRouterService);
-container
-  .bind<IBidOptimizerService>(TYPES.IBidOptimizerService)
-  .to(BidOptimizerService);
 container
   .bind<IServiceUsageReportService>(TYPES.IServiceUsageReportService)
   .to(ServiceUsageReportService);

@@ -351,10 +351,6 @@ const adGroupPropertiesMessageMap: {
     id: 'adgroup.fields.visibility',
     defaultMessage: 'Visibility',
   },
-  bid_optimizer_id: {
-    id: 'adgroup.fields.bidOptimizerId',
-    defaultMessage: 'Bid Optimizer ID',
-  },
   bid_optimization_objective_type: {
     id: 'adgroup.fields.bidOptimizationObjectiveType',
     defaultMessage: 'Bid Optimization Objective Type',
@@ -480,10 +476,6 @@ const adGroupPropertiesFormatMap: {
     format: 'MESSAGE',
     messageMap: visibilityMessages,
   },
-  bid_optimizer_id: { format: 'STRING' },
-  bid_optimization_objective_type: { format: 'STRING' },
-  bid_optimization_use_user_data: { format: 'STRING' },
-  bid_optimization_objective_value: { format: 'STRING' },
   viewability_min_score: { format: 'INTEGER' },
   viewability_use_third_party_data: { format: 'STRING' },
   ab_selection: { format: 'STRING' },

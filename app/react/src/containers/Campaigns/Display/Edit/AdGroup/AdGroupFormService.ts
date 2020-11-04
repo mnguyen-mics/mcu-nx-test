@@ -10,7 +10,6 @@ import {
   AdGroupFormData,
   AdFieldModel,
   LocationFieldModel,
-  BidOptimizerFieldModel,
   isAudienceSegmentSelectionResource,
   isLocationSelectionResource,
   INITIAL_AD_GROUP_FORM_DATA,
@@ -96,19 +95,6 @@ export class AdGroupFormService implements IAdGroupFormService {
         .then(extractData),
       this.loadAdGroupDependencies(displayCampaignId, adGroupId, duplicate),
     ]).then(([adGroup, dependencies]) => {
-      // bid optimizer is treated as a FieldArray
-      const bidOptimizerFields: BidOptimizerFieldModel[] = [];
-      if (adGroup.bid_optimizer_id) {
-        bidOptimizerFields.push(
-          createFieldArrayModel({
-            bid_optimizer_id: adGroup.bid_optimizer_id,
-            bid_optimization_objective_type:
-              adGroup.bid_optimization_objective_type,
-            bid_optimization_objective_value:
-              adGroup.bid_optimization_objective_value,
-          }),
-        );
-      }
 
       return {
         adGroup: {
@@ -116,7 +102,6 @@ export class AdGroupFormService implements IAdGroupFormService {
           ...(duplicate ? omit(adGroup, 'id') : adGroup),
         },
         ...dependencies,
-        bidOptimizerFields,
       };
     });
   }
@@ -253,8 +238,6 @@ export class AdGroupFormService implements IAdGroupFormService {
     formData: AdGroupFormData,
     initialFormData: AdGroupFormData = INITIAL_AD_GROUP_FORM_DATA,
   ): Promise<AdGroupId> {
-    updateBidOptimizer(formData);
-
     let createOrUpdatePromise;
     if (formData.adGroup.id) {
       createOrUpdatePromise = this._displayCampaignService.updateAdGroup(
@@ -776,20 +759,3 @@ export class AdGroupFormService implements IAdGroupFormService {
 }
 
 export default AdGroupFormService;
-
-function updateBidOptimizer(adGroupFormData: AdGroupFormData) {
-  const bidOptimizer =
-    adGroupFormData.bidOptimizerFields[0] &&
-    adGroupFormData.bidOptimizerFields[0].model;
-  if (bidOptimizer) {
-    adGroupFormData.adGroup.bid_optimizer_id = bidOptimizer.bid_optimizer_id;
-    adGroupFormData.adGroup.bid_optimization_objective_type =
-      bidOptimizer.bid_optimization_objective_type;
-    adGroupFormData.adGroup.bid_optimization_objective_value =
-      bidOptimizer.bid_optimization_objective_value;
-  } else {
-    adGroupFormData.adGroup.bid_optimizer_id = null;
-    adGroupFormData.adGroup.bid_optimization_objective_type = null;
-    adGroupFormData.adGroup.bid_optimization_objective_value = null;
-  }
-}

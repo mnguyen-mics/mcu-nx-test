@@ -173,10 +173,6 @@ export default defineMessages({
     id: 'adGroupEditor.section.title.placement',
     defaultMessage: 'Placement',
   },
-  sectionTitleOptimizer: {
-    id: 'adGroupEditor.section.title.optimizer',
-    defaultMessage: 'Optimization',
-  },
   sectionTitleSummary: {
     id: 'adGroupEditor.section.title.summary',
     defaultMessage: 'Summary',
@@ -220,10 +216,6 @@ export default defineMessages({
   sectionSubtitleAds: {
     id: 'adGroupEditor.section.subtitle.ads',
     defaultMessage: 'This section helps you add new ads to your ad group',
-  },
-  sectionSubtitleOptimizer: {
-    id: 'adGroupEditor.section.subtitle.optimizer',
-    defaultMessage: 'Leverage the power of AI to optimize the way you bid',
   },
   sectionSubtitleSummary: {
     id: 'adGroupEditor.section.subtitle.summary',
@@ -746,13 +738,6 @@ export default defineMessages({
     defaultMessage: 'Add',
   },
 
-  /* --------------------------- SECTION OPTIMIZER -------------------------- */
-
-  contentSectionOptimizerEmptyTitle: {
-    id: 'adGroupEditor.section.optimizer.emptyTitle',
-    defaultMessage: 'Click on the pen to add an optimizer to your ad group',
-  },
-
   /* ---------------------------- SECTION SUMMARY --------------------------- */
 
   // TODO: use formatMessage(messages.greeting, {name: 'Eric'});
@@ -805,10 +790,6 @@ export default defineMessages({
   contentSectionSummaryPart7: {
     id: 'adGroupEditor.section.summary.part7',
     defaultMessage: 'Your ad will target the following keywords:',
-  },
-  contentSectionSummaryPart8: {
-    id: 'adGroupEditor.section.summary.part8',
-    defaultMessage: 'Your ad is using the following bid optimizer:',
   },
   contentSectionSummaryPart9Group1: {
     id: 'adGroupEditor.section.summary.part9.group1',

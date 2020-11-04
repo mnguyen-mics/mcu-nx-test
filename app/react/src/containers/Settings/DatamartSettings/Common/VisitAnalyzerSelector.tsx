@@ -23,10 +23,6 @@ const messages = defineMessages({
     id: 'visit-analyzer-selector-title',
     defaultMessage: 'Add a Visit Analyzer',
   },
-  visitAnalyzerSelectorSearchPlaceholder: {
-    id: 'visit-analyzer-selector-search-placeholder',
-    defaultMessage: 'Search bid optimizers',
-  },
   visitAnalyzerSelectorColumnName: {
     id: 'visit-analyzer-selector-column-name',
     defaultMessage: 'Name',
@@ -179,9 +175,6 @@ class VisitAnalyzerSelector extends React.Component<Props, State> {
       <VisitAnalyzerTableSelector
         actionBarTitle={formatMessage(messages.visitAnalyzerSelectorTitle)}
         displayFiltering={true}
-        searchPlaceholder={formatMessage(
-          messages.visitAnalyzerSelectorSearchPlaceholder,
-        )}
         selectedIds={selectedVisitAnalyzerIds}
         fetchDataList={this.fetchVisitAnalyzers}
         fetchData={fetchVisitAnalyzer}

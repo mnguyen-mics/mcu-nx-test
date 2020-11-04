@@ -11,9 +11,6 @@ import MobileApplicationEditPage from '../containers/Settings/DatamartSettings/M
 import SiteEditPage from '../containers/Settings/DatamartSettings/Sites/Edit/SiteEditPage';
 import DatamartEditPage from '../containers/Settings/DatamartSettings/Datamarts/Edit/DatamartEditPage';
 
-import { BidOptimizersList } from '../containers/Settings/CampaignSettings/BidOptimizer/List';
-import { CreateEditBidOptimizer } from '../containers/Settings/CampaignSettings/BidOptimizer/Edit';
-
 import { AttributionModelContent } from '../containers/Settings/CampaignSettings/AttributionModel/List';
 import EditAttributionModelPage from '../containers/Settings/CampaignSettings/AttributionModel/Edit/EditAttributionModelPage';
 
@@ -423,29 +420,8 @@ export const settingsDefinition: NavigatorDefinition = {
   /*
   
     CAMPAIGNS SETTINGS
-  
+
   */
-
-  // bid optimizer
-  settingsCampaignBidOptimizerList: {
-    path: '/settings/campaigns/bid_optimizer',
-    layout: 'settings',
-    contentComponent: BidOptimizersList,
-    requiredFeature: 'campaignsSettings-bid_optimizers',
-  },
-
-  settingsCampaignBidOptimizerEdition: {
-    path: '/settings/campaigns/bid_optimizer/:bidOptimizerId(\\d+)/edit',
-    layout: 'edit',
-    editComponent: CreateEditBidOptimizer,
-    requiredFeature: 'campaignsSettings-bid_optimizers',
-  },
-  settingsCampaignBidOptimizerCreation: {
-    path: '/settings/campaigns/bid_optimizer/create',
-    layout: 'edit',
-    editComponent: CreateEditBidOptimizer,
-    requiredFeature: 'campaignsSettings-bid_optimizers',
-  },
 
   // attribution model
   settingsCampaignAttributionModelList: {

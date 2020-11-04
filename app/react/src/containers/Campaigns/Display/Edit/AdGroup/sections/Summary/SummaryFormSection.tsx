@@ -53,25 +53,6 @@ class SummaryFormSection extends React.Component<Props> {
               <LocationSummary />
             </Section>
 
-
-            <Section>
-              <FormattedMessage
-                id="display.campaign.edit.adGroup.summaryFormSection.bidoptimizer"
-                defaultMessage={`You have { bidOptimizerCountLabeled } 
-                  { bidOptimizerCount , plural, 
-                    zero {bid optimizer} one {bid optimizer} other {bid optimizers} }
-                  attached to your ad group`}
-                values={{
-                  bidOptimizerCountLabeled: (
-                    <span className="info-color">
-                      {adGroupFormData.bidOptimizerFields.length}
-                    </span>
-                  ),
-                  bidOptimizerCount: adGroupFormData.bidOptimizerFields.length,
-                }}
-              />
-            </Section>
-
             <Section>
               <FormattedMessage
                 id="display.campaign.edit.adGroup.summaryFormSection.creative"
