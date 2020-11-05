@@ -159,7 +159,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
           showSearch={true}
           showArrow={false}
           placeholder="Dimension value"
-          className={"mcs-funnelQueryBuilder_select mcs-funnelQueryBuilder_select--dimensions"}
+          className={"mcs-funnelQueryBuilder_dimensionValue"}
           onChange={this.handleDimensionExpressionForSelectorChange.bind(this, dimensionIndex, stepId, (x: string) => x)}>
           {eventTypesDimension.map(et => {
             return (
@@ -174,7 +174,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
             anchorId={anchorId}
             datamartId={datamartId}
             organisationId={organisationId}
-            className={"mcs-funnelQueryBuilder_select mcs-funnelQueryBuilder_select--dimensions"}
+            className={"mcs-funnelQueryBuilder_dimensionValue"}
             onchange={this.handleDimensionExpressionForSelectorChange.bind(this, dimensionIndex, stepId, (x: LabeledValue) => x.key)}
           />
         </div>)
@@ -184,7 +184,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
             anchorId={anchorId}
             datamartId={datamartId}
             organisationId={organisationId}
-            className={"mcs-funnelQueryBuilder_select mcs-funnelQueryBuilder_select--dimensions"}
+            className={"mcs-funnelQueryBuilder_dimensionValue"}
             onchange={this.handleDimensionExpressionForSelectorChange.bind(this, dimensionIndex, stepId, (x: LabeledValue) => x.key)}
           />
         </div>)
@@ -194,7 +194,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
             anchorId={anchorId}
             datamartId={datamartId}
             organisationId={organisationId}
-            className={"mcs-funnelQueryBuilder_select mcs-funnelQueryBuilder_select--dimensions"}
+            className={"mcs-funnelQueryBuilder_dimensionValue"}
             onchange={this.handleDimensionExpressionForSelectorChange.bind(this, dimensionIndex, stepId, (x: LabeledValue) => x.key)}
           />
         </div>)
@@ -204,7 +204,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
             anchorId={anchorId}
             datamartId={datamartId}
             organisationId={organisationId}
-            className={"mcs-funnelQueryBuilder_select mcs-funnelQueryBuilder_select--dimensions"}
+            className={"mcs-funnelQueryBuilder_dimensionValue"}
             onchange={this.handleDimensionExpressionForSelectorChange.bind(this, dimensionIndex, stepId, (x: LabeledValue) => x.key)}
           />
         </div>)
@@ -214,7 +214,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
             anchorId={anchorId}
             datamartId={datamartId}
             organisationId={organisationId}
-            className={"mcs-funnelQueryBuilder_select mcs-funnelQueryBuilder_select--dimensions"}
+            className={"mcs-funnelQueryBuilder_dimensionValue"}
             onchange={this.handleDimensionExpressionForSelectorChange.bind(this, dimensionIndex, stepId, (x: LabeledValue) => x.key)}
           />
         </div>)
@@ -235,7 +235,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
             anchorId={anchorId}
             datamartId={datamartId}
             organisationId={organisationId}
-            className={"mcs-funnelQueryBuilder_select mcs-funnelQueryBuilder_select--dimensions"}
+            className={"mcs-funnelQueryBuilder_dimensionValue"}
             onchange={this.handleDimensionExpressionForSelectorChange.bind(this, dimensionIndex, stepId, (x: LabeledValue) => x.key)}
           />
         </div>)
@@ -260,7 +260,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
       id: this._cuid(),
       name: "",
       filter_clause: {
-        operator: 'OR',
+        operator: 'AND',
         filters: [
           {
             'dimension_name': 'DATE_TIME',
@@ -286,7 +286,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     const newSteps = steps.slice();
     newSteps.forEach(step => {
       if (step.id === stepId) {
-        step.filter_clause.operator = 'OR';
+        step.filter_clause.operator = 'AND';
         step.filter_clause.filters.push(
           {
             id: this._cuid(),
@@ -536,7 +536,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
                     <div key={filter.id}>
                       {filterIndex > 0 && <Select
                         showArrow={false}
-                        defaultValue={"OR"}
+                        defaultValue={"AND"}
                         className={"mcs-funnelQueryBuilder_select mcs-funnelQueryBuilder_select--booleanOperators"}
                         onChange={this.handleFilterOperatorChange.bind(this, step.id)}
                         value={step.filter_clause.operator}>
@@ -607,7 +607,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
         </div>
         <div className={"mcs-funnelQueryBuilder_ExecuteQueryBtn"}>
           <Button className="mcs-primary" type="primary" onClick={this.handleExecuteQueryButtonClick} loading={isLoading}>
-            {!isLoading && <McsIconProcessing type="download" />}
+            {!isLoading && <McsIconProcessing type="play" />}
             Execute Query
           </Button>
         </div>
