@@ -129,7 +129,7 @@ class JSONQLPreview extends React.Component<Props> {
             renderActionBar: actionbar,
             editionLayout: true,
             queryDocument: value
-              ? (formatQuery(JSON.parse(value), true) as any)
+              ? JSON.parse(value)
               : undefined,
             isTrigger: this.props.isTrigger,
             isEdge: this.props.isEdge,
