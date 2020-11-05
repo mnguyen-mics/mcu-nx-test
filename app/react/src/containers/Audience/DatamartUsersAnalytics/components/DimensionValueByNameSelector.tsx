@@ -13,23 +13,19 @@ interface NamedSelectable {
   name: string
 }
 
+interface AdditionalOptions {
+  dimensionName: string,
+  from: McsMoment,
+  to: McsMoment
+}
+
 class DimensionFetcher implements ResourceFetcher<NamedSelectable> {
   @lazyInject(TYPES.IDatamartUsersAnalyticsService)
   private _datamartUsersAnalyticsService: IDatamartUsersAnalyticsService;
 
-  private dimension: string
-  private from: McsMoment
-  private to: McsMoment
-
-  constructor(dimension: string, from: McsMoment, to: McsMoment) {
-    this.dimension = dimension;
-    this.from = from;
-    this.to = to;
-  }
-
-  getForKeyword(options: GetOptions): Promise<NamedSelectable[]> {
+  getForKeyword(options: GetOptions & AdditionalOptions): Promise<NamedSelectable[]> {
     const filter: DimensionFilter = {
-      dimension_name: this.dimension,
+      dimension_name: options.dimensionName,
       operator: 'LIKE' as DimensionFilterOperator,
       expressions: [options.keywords],
       case_sensitive: false
@@ -38,16 +34,15 @@ class DimensionFetcher implements ResourceFetcher<NamedSelectable> {
       operator: 'OR' as BooleanOperator,
       filters: [filter]
     }
-    return this._datamartUsersAnalyticsService.getAnalytics(options.datamart_id, [], this.from, this.to, [this.dimension as DatamartUsersAnalyticsDimension], clause).then((reportView: ReportViewResponse) => {
+    return this._datamartUsersAnalyticsService.getAnalytics(options.datamart_id, [], options.from, options.to, [options.dimensionName as DatamartUsersAnalyticsDimension], clause).then((reportView: ReportViewResponse) => {
       return reportView.data.report_view.rows.map(x => {
         return { id: x[0].toString(), name: x[0].toString() }
-      })
+      }).sort((a, b) => a.name.localeCompare(b.name))
     })
   }
 }
 
-const DimensionValueByNameSelector = (dimensionName: string, from: McsMoment, to: McsMoment) => ResourceByKeywordSelector(displayNameAdapted<NamedSelectable>(),
-  new DimensionFetcher(dimensionName, from, to),
-  `Search ${dimensionName} by name`)
-
+const DimensionValueByNameSelector = ResourceByKeywordSelector<NamedSelectable, AdditionalOptions>(displayNameAdapted<NamedSelectable>(),
+  new DimensionFetcher(),
+  `Search by keyword`)
 export default DimensionValueByNameSelector;
