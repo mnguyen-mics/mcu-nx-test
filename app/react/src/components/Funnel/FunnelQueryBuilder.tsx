@@ -25,6 +25,7 @@ import McsMoment from '../../utils/McsMoment';
 import {
   FormattedMessage,
 } from 'react-intl';
+import DimensionValueByNameSelector from '../../containers/Audience/DatamartUsersAnalytics/components/DimensionValueByNameSelector';
 
 export interface Step {
   id?: string;
@@ -139,7 +140,10 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
   getInputField(dimensionName: string,
     dimensionIndex: number,
     expressions: string[],
-    stepId?: string) {
+    from: McsMoment,
+    to: McsMoment,
+    stepId?: string,
+  ) {
     const { datamartId,
       match: {
         params: { organisationId },
@@ -205,6 +209,22 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
       case 'ORIGIN_CREATIVE_ID':
         return (<div id={anchorId}>
           <CreativeByKeywordSelector
+            anchorId={anchorId}
+            datamartId={datamartId}
+            organisationId={organisationId}
+            className={"mcs-funnelQueryBuilder_select mcs-funnelQueryBuilder_select--dimensions"}
+            onchange={this.handleDimensionExpressionForSelectorChange.bind(this, dimensionIndex, stepId, (x: LabeledValue) => x.key)}
+          />
+        </div>)
+      case 'PRODUCT_ID':
+      case 'CATEGORY1':
+      case 'CATEGORY2':
+      case 'CATEGORY3':
+      case 'CATEGORY4':
+      case 'BRAND':
+        const DimensionComponent = DimensionValueByNameSelector(dimensionName, from, to)
+        return (<div id={anchorId}>
+          <DimensionComponent
             anchorId={anchorId}
             datamartId={datamartId}
             organisationId={organisationId}
@@ -466,6 +486,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
   render() {
     const Option = Select.Option;
     const { steps, dimensionsList, dateRange } = this.state;
+    const { from, to } = dateRange
 
     const onChange = (newValues: McsDateRangeValue): void => {
       this.updateLocationSearch({
@@ -538,7 +559,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
                           <span className="mcs-funnelQueryBuilder_step_dimensionFilter_operator_text">{this.showFilterSymbol(filterIndex, step.id)}
                           </span>
                         </div>
-                        {this.getInputField(filter.dimension_name, filterIndex, filter.expressions, step.id)}
+                        {this.getInputField(filter.dimension_name, filterIndex, filter.expressions, from, to, step.id)}
                         <Button
                           type="primary"
                           shape="circle"
