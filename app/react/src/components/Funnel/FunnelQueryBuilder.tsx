@@ -27,6 +27,7 @@ import {
   FormattedMessage,
 } from 'react-intl';
 import DimensionValueByNameSelector from '../../containers/Audience/DatamartUsersAnalytics/components/DimensionValueByNameSelector';
+import { AdGroupByKeywordSelector } from '../../containers/Audience/DatamartUsersAnalytics/components/AdGroupByNameSelector';
 
 export interface Step {
   id?: string;
@@ -171,6 +172,16 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
       case 'SEGMENT_ID':
         return (<div id={anchorId}>
           <SegmentByNameSelector
+            anchorId={anchorId}
+            datamartId={datamartId}
+            organisationId={organisationId}
+            className={"mcs-funnelQueryBuilder_dimensionValue"}
+            onchange={this.handleDimensionExpressionForSelectorChange.bind(this, dimensionIndex, stepId, (x: LabeledValue) => x.key)}
+          />
+        </div>)
+      case 'SUB_CAMPAIGN_ID':
+        return (<div id={anchorId}>
+          <AdGroupByKeywordSelector
             anchorId={anchorId}
             datamartId={datamartId}
             organisationId={organisationId}

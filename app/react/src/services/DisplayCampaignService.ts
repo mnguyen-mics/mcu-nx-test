@@ -46,6 +46,10 @@ export interface CampaignsOptions extends PaginatedApiParam {
   automated?: boolean;
 }
 
+export interface AdGroupOptions extends PaginatedApiParam {
+  keywords?: string;
+}
+
 export interface IDisplayCampaignService {
   getCampaignDisplay: (
     campaignId: string,
@@ -76,8 +80,13 @@ export interface IDisplayCampaignService {
   ) => Promise<DataResponse<AdGroupResource>>;
 
   getAdGroups: (
-    campaignId: string,
+    campaignId: string
   ) => Promise<DataListResponse<AdGroupResource>>;
+
+  findAdGroups: (
+    organisationId: string,
+    adGroupOptions: AdGroupOptions
+  ) => Promise<DataListResponse<AdGroupResource>>
 
   createAdGroup: (
     campaignId: string,
@@ -418,6 +427,15 @@ export class DisplayCampaignService implements IDisplayCampaignService {
   getAdGroups(campaignId: string): Promise<DataListResponse<AdGroupResource>> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups`;
     return ApiService.getRequest(endpoint);
+  }
+
+  findAdGroups(organisationId: string, options: AdGroupOptions): Promise<DataListResponse<AdGroupResource>> {
+    const endpoint = `display_campaigns.ad_groups`;
+    const params = {
+      organisation_id: organisationId,
+      ...options,
+    };
+    return ApiService.getRequest(endpoint, params);
   }
 
   createAdGroup(
