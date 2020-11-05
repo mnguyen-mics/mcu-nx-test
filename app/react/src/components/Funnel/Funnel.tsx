@@ -227,6 +227,14 @@ class Funnel extends React.Component<Props, State> {
     return funnelData.steps.length === stepNumber;
   }
 
+  isFirstStep = (stepNumber: number) => {
+    return stepNumber === 0;
+  }
+
+  private getDurationMessage(stepIndex: number, seconds: number) {
+    return this.isFirstStep(stepIndex-1) ? <div/> : <span> in <strong>{moment.duration(seconds, "second").format("d [day] h [hour] m [minute]")}</strong></span>
+  }
+
   render() {
     const { funnelData, stepDelta, isLoading } = this.state;
     const { title, intl } = this.props;
@@ -255,7 +263,7 @@ class Funnel extends React.Component<Props, State> {
                   <div className={"mcs-funnel_chart"}>
                     {(stepDelta[index] && stepDelta[index].percentageOfSucceeded) ? <div className="mcs-funnel_percentageOfSucceeded">
                       <div className="mcs-funnel_arrow mcs_funnel_arrowStep" />
-                      <p className="mcs-funnel_stepInfo"><strong>{`${stepDelta[index].percentageOfSucceeded}%`}</strong> have succeeded in <strong>{moment.duration(funnelData.steps[index - 1].interaction_duration, "second").format("d [day] h [hour] m [minute]")}</strong></p>
+                      <p className="mcs-funnel_stepInfo"><strong>{`${stepDelta[index].percentageOfSucceeded}%`}</strong> have succeeded {this.getDurationMessage(index, funnelData.steps[index - 1].interaction_duration)}</p>
                     </div> : ""}
                     {<canvas id={`canvas_${index + 1}`} className={"mcs-funnel_canvas"} height="370" />}
                     <div className="mcs-funnel_conversionInfo">
