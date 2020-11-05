@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Card, Select, Row, Col, Button, Divider } from "antd";
 import messages from '../../containers/Campaigns/Display/Edit/messages';
+import McsIconProcessing from '../McsIcon';
 import cuid from 'cuid';
 import { TYPES } from '../../constants/types';
 import { lazyInject } from '../../config/inversify.config';
@@ -42,6 +43,8 @@ interface State {
 
 interface FunnelQueryBuilderProps {
   datamartId: string;
+  isLoading: boolean;
+  parentCallback: (timestampInSec: number) => void 
 }
 
 type Props = FunnelQueryBuilderProps &
@@ -383,13 +386,15 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
   }
 
   handleExecuteQueryButtonClick = () => {
-    if(this.checkExpressionsNotEmpty() && this.checkDimensionsNotEmpty())
+    if(this.checkExpressionsNotEmpty() && this.checkDimensionsNotEmpty()) {
       this.updateFilterQueryStringParams();
-    else
+      this.props.parentCallback(new Date().getTime())
+    } else {
       this.props.notifyWarning({
         message: messages.errorFormMessage.defaultMessage,
         description: "",
       });
+    }
   }
 
 
@@ -411,10 +416,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     return result;
   }
 
-  handleExecuteQueryButtonClick = () => {
-    if (this.checkExpressionsNotEmpty())
-      this.updateFilterQueryStringParams();
-  }
+  
 
 
   updateFilterQueryStringParams() {
@@ -491,7 +493,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     const Option = Select.Option;
     const { steps, dimensionsList, dateRange } = this.state;
     const { from, to } = dateRange
-
+    const { isLoading} = this.props;
     const onChange = (newValues: McsDateRangeValue): void => {
       this.updateLocationSearch({
         from: newValues.from,
@@ -604,7 +606,10 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
           </Row>
         </div>
         <div className={"mcs-funnelQueryBuilder_ExecuteQueryBtn"}>
-          <Button className="mcs-primary" type="primary" onClick={this.handleExecuteQueryButtonClick}>Execute Query</Button>
+          <Button className="mcs-primary" type="primary" onClick={this.handleExecuteQueryButtonClick} loading={isLoading}>
+            {!isLoading && <McsIconProcessing type="download" />}
+            Execute Query
+          </Button>
         </div>
       </div>
     </Card >)
