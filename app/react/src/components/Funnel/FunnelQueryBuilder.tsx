@@ -139,7 +139,6 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
 
   getInputField(dimensionName: string,
     dimensionIndex: number,
-    expressions: string[],
     from: McsMoment,
     to: McsMoment,
     stepId?: string,
@@ -222,9 +221,14 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
       case 'CATEGORY3':
       case 'CATEGORY4':
       case 'BRAND':
-        const DimensionComponent = DimensionValueByNameSelector(dimensionName, from, to)
+        const additionalDimensionFilter = {
+          from: from,
+          to: to,
+          dimensionName: dimensionName
+        }
         return (<div id={anchorId}>
-          <DimensionComponent
+          <DimensionValueByNameSelector
+            filter={additionalDimensionFilter}
             anchorId={anchorId}
             datamartId={datamartId}
             organisationId={organisationId}
@@ -559,7 +563,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
                           <span className="mcs-funnelQueryBuilder_step_dimensionFilter_operator_text">{this.showFilterSymbol(filterIndex, step.id)}
                           </span>
                         </div>
-                        {this.getInputField(filter.dimension_name, filterIndex, filter.expressions, from, to, step.id)}
+                        {this.getInputField(filter.dimension_name, filterIndex, from, to, step.id)}
                         <Button
                           type="primary"
                           shape="circle"
