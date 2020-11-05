@@ -14,7 +14,6 @@ interface NamedSelectable {
 }
 
 interface AdditionalOptions {
-  dimensionName: string,
   from: McsMoment,
   to: McsMoment
 }
@@ -23,9 +22,14 @@ class DimensionFetcher implements ResourceFetcher<NamedSelectable> {
   @lazyInject(TYPES.IDatamartUsersAnalyticsService)
   private _datamartUsersAnalyticsService: IDatamartUsersAnalyticsService;
 
+  private dimensionName: string
+  constructor(dimensionName: string) {
+    this.dimensionName = dimensionName
+  }
+
   getForKeyword(options: GetOptions & AdditionalOptions): Promise<NamedSelectable[]> {
     const filter: DimensionFilter = {
-      dimension_name: options.dimensionName,
+      dimension_name: this.dimensionName,
       operator: 'LIKE' as DimensionFilterOperator,
       expressions: [options.keywords],
       case_sensitive: false
@@ -34,7 +38,7 @@ class DimensionFetcher implements ResourceFetcher<NamedSelectable> {
       operator: 'OR' as BooleanOperator,
       filters: [filter]
     }
-    return this._datamartUsersAnalyticsService.getAnalytics(options.datamart_id, [], options.from, options.to, [options.dimensionName as DatamartUsersAnalyticsDimension], clause).then((reportView: ReportViewResponse) => {
+    return this._datamartUsersAnalyticsService.getAnalytics(options.datamart_id, [], options.from, options.to, [this.dimensionName as DatamartUsersAnalyticsDimension], clause).then((reportView: ReportViewResponse) => {
       return reportView.data.report_view.rows.map(x => {
         return { id: x[0].toString(), name: x[0].toString() }
       }).sort((a, b) => a.name.localeCompare(b.name))
@@ -42,7 +46,22 @@ class DimensionFetcher implements ResourceFetcher<NamedSelectable> {
   }
 }
 
-const DimensionValueByNameSelector = ResourceByKeywordSelector<NamedSelectable, AdditionalOptions>(displayNameAdapted<NamedSelectable>(),
-  new DimensionFetcher(),
-  `Search by keyword`)
-export default DimensionValueByNameSelector;
+const DimensionValueByNameSelector = (dimensionName: string) => ResourceByKeywordSelector<NamedSelectable, AdditionalOptions>(displayNameAdapted<NamedSelectable>(),
+  new DimensionFetcher(dimensionName),
+  `Search ${dimensionName} by keyword`)
+
+const Category1ByNameSelector = DimensionValueByNameSelector('CATEGORY1');
+const Category2ByNameSelector = DimensionValueByNameSelector('CATEGORY2');
+const Category3ByNameSelector = DimensionValueByNameSelector('CATEGORY3');
+const Category4ByNameSelector = DimensionValueByNameSelector('CATEGORY4');
+const BrandByNameSelector = DimensionValueByNameSelector('BRAND');
+const ProductIdByNameSelector = DimensionValueByNameSelector('PRODUCT_ID');
+
+export {
+  Category1ByNameSelector, 
+  Category2ByNameSelector,
+  Category3ByNameSelector,
+  Category4ByNameSelector,
+  BrandByNameSelector,
+  ProductIdByNameSelector
+};

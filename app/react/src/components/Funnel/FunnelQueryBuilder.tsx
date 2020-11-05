@@ -26,7 +26,15 @@ import McsMoment from '../../utils/McsMoment';
 import {
   FormattedMessage,
 } from 'react-intl';
-import DimensionValueByNameSelector from '../../containers/Audience/DatamartUsersAnalytics/components/DimensionValueByNameSelector';
+import {
+  BrandByNameSelector,
+  Category1ByNameSelector,
+  Category2ByNameSelector,
+  Category3ByNameSelector,
+  Category4ByNameSelector,
+  ProductIdByNameSelector
+} from '../../containers/Audience/DatamartUsersAnalytics/components/DimensionValueByNameSelector';
+import { AdGroupByKeywordSelector } from '../../containers/Audience/DatamartUsersAnalytics/components/AdGroupByNameSelector';
 
 export interface Step {
   id?: string;
@@ -153,6 +161,18 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     } = this.props;
     const Option = Select.Option;
     const anchorId = "mcs-funnel_expression_select_anchor"
+
+    const commonProps = {
+      anchorId: anchorId,
+      datamartId: datamartId,
+      organisationId: organisationId,
+      className: "mcs-funnelQueryBuilder_dimensionValue",
+      onchange: this.handleDimensionExpressionForSelectorChange.bind(this, dimensionIndex, stepId, (x: LabeledValue) => x.key)
+    }
+    const additionalDimensionFilter = {
+      from: from,
+      to: to
+    }
     switch (dimensionName) {
       case 'EVENT_TYPE':
         return <Select
@@ -171,72 +191,79 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
       case 'SEGMENT_ID':
         return (<div id={anchorId}>
           <SegmentByNameSelector
-            anchorId={anchorId}
-            datamartId={datamartId}
-            organisationId={organisationId}
-            className={"mcs-funnelQueryBuilder_dimensionValue"}
-            onchange={this.handleDimensionExpressionForSelectorChange.bind(this, dimensionIndex, stepId, (x: LabeledValue) => x.key)}
+            {...commonProps}
+          />
+        </div>)
+      case 'SUB_CAMPAIGN_ID':
+        return (<div id={anchorId}>
+          <AdGroupByKeywordSelector
+            {...commonProps}
           />
         </div>)
       case 'ORIGIN_CAMPAIGN_ID':
         return (<div id={anchorId}>
           <CampaignByKeywordSelector
-            anchorId={anchorId}
-            datamartId={datamartId}
-            organisationId={organisationId}
-            className={"mcs-funnelQueryBuilder_dimensionValue"}
-            onchange={this.handleDimensionExpressionForSelectorChange.bind(this, dimensionIndex, stepId, (x: LabeledValue) => x.key)}
+            {...commonProps}
           />
         </div>)
       case 'GOAL_ID':
         return (<div id={anchorId}>
           <GoalByKeywordSelector
-            anchorId={anchorId}
-            datamartId={datamartId}
-            organisationId={organisationId}
-            className={"mcs-funnelQueryBuilder_dimensionValue"}
-            onchange={this.handleDimensionExpressionForSelectorChange.bind(this, dimensionIndex, stepId, (x: LabeledValue) => x.key)}
+            {...commonProps}
           />
         </div>)
       case 'CHANNEL_ID':
         return (<div id={anchorId}>
           <ChannelByKeywordSelector
-            anchorId={anchorId}
-            datamartId={datamartId}
-            organisationId={organisationId}
-            className={"mcs-funnelQueryBuilder_dimensionValue"}
-            onchange={this.handleDimensionExpressionForSelectorChange.bind(this, dimensionIndex, stepId, (x: LabeledValue) => x.key)}
+            {...commonProps}
           />
         </div>)
       case 'ORIGIN_CREATIVE_ID':
         return (<div id={anchorId}>
           <CreativeByKeywordSelector
-            anchorId={anchorId}
-            datamartId={datamartId}
-            organisationId={organisationId}
-            className={"mcs-funnelQueryBuilder_dimensionValue"}
-            onchange={this.handleDimensionExpressionForSelectorChange.bind(this, dimensionIndex, stepId, (x: LabeledValue) => x.key)}
+            {...commonProps}
           />
         </div>)
       case 'PRODUCT_ID':
-      case 'CATEGORY1':
-      case 'CATEGORY2':
-      case 'CATEGORY3':
-      case 'CATEGORY4':
-      case 'BRAND':
-        const additionalDimensionFilter = {
-          from: from,
-          to: to,
-          dimensionName: dimensionName
-        }
         return (<div id={anchorId}>
-          <DimensionValueByNameSelector
+          <ProductIdByNameSelector
             filter={additionalDimensionFilter}
-            anchorId={anchorId}
-            datamartId={datamartId}
-            organisationId={organisationId}
-            className={"mcs-funnelQueryBuilder_dimensionValue"}
-            onchange={this.handleDimensionExpressionForSelectorChange.bind(this, dimensionIndex, stepId, (x: LabeledValue) => x.key)}
+            {...commonProps}
+          />
+        </div>)
+      case 'CATEGORY1':
+        return (<div id={anchorId}>
+          <Category1ByNameSelector
+            filter={additionalDimensionFilter}
+            {...commonProps}
+          />
+        </div>)
+      case 'CATEGORY2':
+        return (<div id={anchorId}>
+          <Category2ByNameSelector
+            filter={additionalDimensionFilter}
+            {...commonProps}
+          />
+        </div>)
+      case 'CATEGORY3':
+        return (<div id={anchorId}>
+          <Category3ByNameSelector
+            filter={additionalDimensionFilter}
+            {...commonProps}
+          />
+        </div>)
+      case 'CATEGORY4':
+        return (<div id={anchorId}>
+          <Category4ByNameSelector
+            filter={additionalDimensionFilter}
+            {...commonProps}
+          />
+        </div>)
+      case 'BRAND':
+        return (<div id={anchorId}>
+          <BrandByNameSelector
+            filter={additionalDimensionFilter}
+            {...commonProps}
           />
         </div>)
       default:
