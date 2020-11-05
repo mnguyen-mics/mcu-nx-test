@@ -16,9 +16,6 @@ import { getWorkspace } from '../../../../redux/Session/selectors';
 import { IScenarioService } from '../../../../services/ScenarioService';
 import { IUserDataService } from '../../../../services/UserDataService';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
-import injectNotifications, {
-  InjectedNotificationProps,
-} from '../../../Notifications/injectNotifications';
 import messages from './messages';
 
 const { Content } = Layout;
@@ -40,7 +37,6 @@ interface MapStateToProps {
 type Props = MapStateToProps &
   AutomationScenarioTestProps &
   InjectedIntlProps &
-  InjectedNotificationProps &
   RouteComponentProps<AutomationScenarioTestParams>;
 
 interface State {
@@ -76,7 +72,6 @@ class AutomationScenarioTest extends React.Component<Props, State> {
       match: {
         params: { organisationId, automationId },
       },
-      notifyError,
     } = this.props;
 
     this.setState({ isFetchingUserPointId: true }, () => {
@@ -102,7 +97,6 @@ class AutomationScenarioTest extends React.Component<Props, State> {
             });
         })
         .catch(err => {
-          notifyError(err);
           this.setState({ isFetchingUserPointId: false });
         });
     });
@@ -110,7 +104,6 @@ class AutomationScenarioTest extends React.Component<Props, State> {
 
   getContent = () => {
     const {
-      cookies,
       match: {
         params: { organisationId },
       },
@@ -118,22 +111,21 @@ class AutomationScenarioTest extends React.Component<Props, State> {
 
     const { userPointId } = this.state;
 
-    const displayedId = userPointId
-      ? userPointId
-      : cookies.mics_vid
-      ? `vec:${cookies.mics_vid}`
-      : '';
-
-    const subtitle = cookies.mics_vid ? (
+    const subtitle = userPointId ? (
       <div className="subtitle">
-        <FormattedMessage {...messages.contentSubtitleBegin} />
-        <Link
-          to={`/v2/o/${organisationId}/audience/timeline/user_agent_id/vec:${cookies.mics_vid}`}
-          target="_blank"
-        >
-          {displayedId}
-        </Link>
-        <FormattedMessage {...messages.contentSubtitleEnd} />
+        <FormattedMessage
+          {...messages.contentSubtitle}
+          values={{
+            userPointId: (
+              <Link
+                to={`/v2/o/${organisationId}/audience/timeline/user_point_id/${userPointId}`}
+                target="_blank"
+              >
+                {userPointId}
+              </Link>
+            ),
+          }}
+        />
         <div className="edit-top">
           <Button className={'mcs-primary'} type="primary">
             <FormattedMessage {...messages.buttonTitle} />
@@ -200,6 +192,5 @@ const mapStateToProps = (state: MicsReduxState) => ({
 export default compose<Props, AutomationScenarioTestProps>(
   injectIntl,
   withRouter,
-  injectNotifications,
   connect(mapStateToProps, undefined),
 )(AutomationScenarioTest);

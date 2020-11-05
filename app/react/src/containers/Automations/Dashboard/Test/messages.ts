@@ -9,14 +9,10 @@ export default defineMessages({
     id: 'automation.test.content.title',
     defaultMessage: 'Test your automation',
   },
-  contentSubtitleBegin: {
-    id: 'automation.test.content.subtitle.begin',
-    defaultMessage: 'Your user point (',
-  },
-  contentSubtitleEnd: {
-    id: 'automation.test.content.subtitle.end',
+  contentSubtitle: {
+    id: 'automation.test.content.subtitle',
     defaultMessage:
-      ') will go through the automation. All waiting nodes will be bypassed for the purpose of testing.',
+      'Your user point ({userPointId}) will go through the automation. All waiting nodes will be bypassed for the purpose of testing.',
   },
   contentSubtitleNoUserPoint: {
     id: 'automation.test.content.subtitle.noUserPoint',
