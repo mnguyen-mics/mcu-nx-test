@@ -42,7 +42,7 @@ export const eventTypesDimension: EventTypeDimension[] = [
 
 export type BooleanOperator = "OR" | "AND";
 
-export const booleanOperator: BooleanOperator[] = ["OR", "AND"]
+export const booleanOperator: BooleanOperator[] = ["AND", "OR"]
 
 const funnelFilterSearchSetting = {
   paramName: 'filter',
