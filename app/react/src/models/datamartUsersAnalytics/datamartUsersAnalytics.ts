@@ -63,6 +63,9 @@ export interface ColumnSeriesDataOptions {
   name: string;
 }
 
+export type DimensionsWithLabel = { label: string; value: string} | string
+
 export interface DimensionsList {
-  dimensions: string[]
+  dimensions: DimensionsWithLabel[]
 }
+
