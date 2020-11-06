@@ -169,10 +169,6 @@ export default defineMessages({
     id: 'adGroupEditor.section.title.ads',
     defaultMessage: 'Ads',
   },
-  sectionTitlePlacement: {
-    id: 'adGroupEditor.section.title.placement',
-    defaultMessage: 'Placement',
-  },
   sectionTitleSummary: {
     id: 'adGroupEditor.section.title.summary',
     defaultMessage: 'Summary',
@@ -208,10 +204,6 @@ export default defineMessages({
     id: 'adGroupEditor.section.subtitle.media',
     defaultMessage:
       'Define on which websites you want your content to appear or which section of the website',
-  },
-  sectionSubtitlePlacement: {
-    id: 'adGroupEditor.section.subtitle.placement',
-    defaultMessage: 'Define on which websites you want your content to appear',
   },
   sectionSubtitleAds: {
     id: 'adGroupEditor.section.subtitle.ads',
@@ -674,48 +666,6 @@ export default defineMessages({
     defaultMessage: 'Click on the pen to add a publisher to your ad group',
   },
 
-  /* --------------------------- SECTION PLACEMENT -------------------------- */
-
-  contentSectionPlacementRadio1: {
-    id: 'adGroupEditor.section.placement.radio1',
-    defaultMessage: 'Automatic Placements (Recommended)',
-  },
-  contentSectionPlacementRadio2: {
-    id: 'adGroupEditor.section.placement.radio2',
-    defaultMessage: 'Edit Placements',
-  },
-
-  contentSectionPlacementTooltip: {
-    id: 'adGroupEditor.section.placement.tooltip',
-    defaultMessage: 'Lorem Ips',
-  },
-  contentSectionPlacementProperties: {
-    id: 'adGroupEditor.section.placement.properties',
-    defaultMessage: 'Properties',
-  },
-  contentSectionPlacementTypeWebsites: {
-    id: 'adGroupEditor.section.placement.type.websites',
-    defaultMessage: 'Web Sites',
-  },
-  contentSectionPlacementTypeMobileApps: {
-    id: 'adGroupEditor.section.placement.type.mobileApps',
-    defaultMessage: 'Mobile Apps',
-  },
-
-  contentSectionPlacementSearchPlaceholder: {
-    id: 'adGroupEditor.section.placement.search.placeholder',
-    defaultMessage: 'Search',
-  },
-  contentSectionPlacementSearchEmptyTable: {
-    id: 'adGroupEditor.section.placement.search.emptyTable',
-    defaultMessage: 'No result',
-  },
-
-  contentSectionPlacementEmptyTitle: {
-    id: 'adGroupEditor.section.placement.emptyTitle',
-    defaultMessage: 'Click on the pen to add a placement to your ad group',
-  },
-
   /* ------------------------------- SECTION AD ----------------------------- */
 
   contentSectionAdEmptyTitle: {
@@ -1071,9 +1021,6 @@ export default defineMessages({
 
   sectionInventorySubTitle: {
     id: 'campaignEditor.sectionInventory.subtitle',
-    defaultMessage: 'Add Display Networks, Ad Exchanges, Placement Lists, Keyword Lists and Deal Lists to your Adgroup.',
+    defaultMessage: 'Add Display Networks, Ad Exchanges and Deal Lists to your Adgroup.',
   },
-
-  
-
 });

@@ -7,15 +7,11 @@ import { EditAdGroupRouteMatchParam } from '../../domain';
 import injectDatamart, {
   InjectedDatamartProps,
 } from '../../../../../../Datamart/injectDatamart';
-import { PlacementListResource } from '../../../../../../../models/placement/PlacementListResource';
 import { IDealListService } from '../../../../../../../services/Library/DealListService';
 import { DealsListResource } from '../../../../../../../models/dealList/dealList';
-import { IKeywordListService } from '../../../../../../../services/Library/KeywordListsService';
 import { TYPES } from '../../../../../../../constants/types';
 import { lazyInject } from '../../../../../../../config/inversify.config';
-import { KeywordListResource } from '../../../../../../../models/keywordList/keywordList';
 import { ICatalogService } from '../../../../../../../services/CatalogService';
-import { IPlacementListService } from '../../../../../../../services/Library/PlacementListService';
 
 export interface DataLoadingContainer<T> {
   data: T;
@@ -24,8 +20,6 @@ export interface DataLoadingContainer<T> {
 
 export interface InjectedInventoryCatalogProps {
   inventoryCategoryTree: DataLoadingContainer<ServiceCategoryTree[]>;
-  placementList: DataLoadingContainer<PlacementListResource[]>;
-  keywordList: DataLoadingContainer<KeywordListResource[]>;
   dealList: DataLoadingContainer<DealsListResource[]>;
 }
 
@@ -43,30 +37,16 @@ const provideInventoryCatalog = (
   Component: React.ComponentClass<InjectedInventoryCatalogProps>,
 ) => {
   class ProvidedComponent extends React.Component<Props, State> {
-    @lazyInject(TYPES.IKeywordListService)
-    private _keywordListService: IKeywordListService;
-
     @lazyInject(TYPES.IDealListService)
     private _dealsListService: IDealListService;
 
     @lazyInject(TYPES.ICatalogService)
     private _catalogService: ICatalogService;
 
-    @lazyInject(TYPES.IPlacementListService)
-    private _placementListService: IPlacementListService;
-
     public constructor(props: Props) {
       super(props);
       this.state = {
         inventoryCategoryTree: {
-          data: [],
-          loading: false,
-        },
-        keywordList: {
-          data: [],
-          loading: false,
-        },
-        placementList: {
           data: [],
           loading: false,
         },
@@ -81,8 +61,6 @@ const provideInventoryCatalog = (
       this.fetchDetailedTargetingData();
       if (!this.props.isScenario) {
         this.fetchOwnDealList();
-        this.fetchOwnKeywordList();
-        this.fetchOwnPlacementList();
       }
     }
 
@@ -143,64 +121,6 @@ const provideInventoryCatalog = (
                     ? categoryTree
                     : categoryTree[0].children
                   : categoryTree,
-              loading: false,
-            },
-          }));
-        });
-    };
-
-    fetchOwnKeywordList = () => {
-      const {
-        match: {
-          params: { organisationId },
-        },
-      } = this.props;
-
-      this.setState(prevState => ({
-        keywordList: {
-          ...prevState.keywordList,
-          loading: true,
-        },
-      }));
-
-      this._keywordListService
-        .getKeywordLists(organisationId, {
-          max_results: 500,
-        })
-        .then(res => res.data)
-        .then(keywordList => {
-          this.setState(prevState => ({
-            keywordList: {
-              data: keywordList,
-              loading: false,
-            },
-          }));
-        });
-    };
-
-    fetchOwnPlacementList = () => {
-      const {
-        match: {
-          params: { organisationId },
-        },
-      } = this.props;
-
-      this.setState(prevState => ({
-        placementList: {
-          ...prevState.placementList,
-          loading: true,
-        },
-      }));
-
-      this._placementListService
-        .getPlacementLists(organisationId, {
-          max_results: 500,
-        })
-        .then(res => res.data)
-        .then(placementList => {
-          this.setState(prevState => ({
-            placementList: {
-              data: placementList,
               loading: false,
             },
           }));

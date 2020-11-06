@@ -60,14 +60,14 @@ interface DealListFormProps
   close: () => void;
   breadCrumbPaths: Path[];
 }
-interface KeywordListFormState {}
+interface DealListFormState {}
 
 type JoinedProps = DealListFormProps &
   InjectedFormProps<DealListFormData, DealListFormProps>;
 
 class DealListForm extends React.Component<
   JoinedProps,
-  KeywordListFormState
+  DealListFormState
 > {
   constructor(props: JoinedProps) {
     super(props);
@@ -84,7 +84,7 @@ class DealListForm extends React.Component<
     };
 
     const deals = {
-      id: 'keywords',
+      id: 'deals',
       title: messages.sectionTitleKeywords,
       component: (
         <DealsFieldArray

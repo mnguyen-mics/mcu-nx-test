@@ -23,11 +23,11 @@ const messages = defineMessages({
     id: 'exports.edit.generalInfoSection.subtitle',
     defaultMessage: 'Give your Export a name',
   },
-  labelPlacementListName: {
+  labelExportName: {
     id: 'exports.edit.generalInfoSection.label.name',
     defaultMessage: 'Export Name',
   },
-  tootltipPlacementListName: {
+  tootltipExportName: {
     id: 'exports.edit.generalInfoSection.tooltip.name',
     defaultMessage:
       'Give your Export a Name so you can find it back in the different screens.',
@@ -71,14 +71,14 @@ class GeneralFormSection extends React.Component<Props, State> {
             component={FormInput}
             validate={[isRequired]}
             formItemProps={{
-              label: formatMessage(messages.labelPlacementListName),
+              label: formatMessage(messages.labelExportName),
               required: true,
             }}
             inputProps={{
-              placeholder: formatMessage(messages.labelPlacementListName),
+              placeholder: formatMessage(messages.labelExportName),
             }}
             helpToolTipProps={{
-              title: formatMessage(messages.tootltipPlacementListName),
+              title: formatMessage(messages.tootltipExportName),
             }}
           />
         </div>

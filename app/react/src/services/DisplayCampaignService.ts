@@ -10,16 +10,11 @@ import {
   AdCreateRequest,
 } from '../models/campaign/display/AdResource';
 import { GoalSelectionResource } from '../models/goal/GoalSelectionResource';
-import { PlacementListSelectionResource } from '../models/placement/PlacementListResource';
 import {
   LocationSelectionResource,
   LocationSelectionCreateRequest,
 } from '../containers/Campaigns/Display/Edit/AdGroup/sections/Location/domain';
 import { GoalSelectionCreateRequest } from '../models/goal/index';
-import {
-  KeywordListSelectionResource,
-  KeywordListSelectionCreateRequest,
-} from '../models/keywordList/keywordList';
 import {
   DealsListSelectionCreateRequest,
   DealsListSelectionResource,
@@ -212,61 +207,6 @@ export interface IDisplayCampaignService {
     id: string,
     body: Partial<LocationSelectionCreateRequest>,
   ) => Promise<DataResponse<LocationSelectionResource>>;
-
-  /* PLACEMENT LIST SERVICES */
-  getPlacementLists: (
-    campaignId: string,
-    adGroupId: string,
-  ) => Promise<DataListResponse<PlacementListSelectionResource>>;
-
-  createPlacementList: (
-    campaignId: string,
-    adGroupId: string,
-    body: Partial<PlacementListSelectionResource>,
-  ) => Promise<DataResponse<PlacementListSelectionResource>>;
-
-  updatePlacementList: (
-    campaignId: string,
-    adGroupId: string,
-    id: string,
-    body: Partial<PlacementListSelectionResource>,
-  ) => Promise<DataResponse<PlacementListSelectionResource>>;
-  deletePlacementList: (
-    campaignId: string,
-    adGroupId: string,
-    id: string,
-  ) => Promise<any>;
-
-  // KEYWORD LIST
-  getKeywordList: (
-    campaignId: string,
-    adGroupId: string,
-  ) => Promise<DataListResponse<KeywordListSelectionResource>>;
-
-  getKeywordListSelection: (
-    campaignId: string,
-    adGroupId: string,
-    id: string,
-  ) => Promise<DataResponse<KeywordListSelectionResource>>;
-
-  createKeywordList: (
-    campaignId: string,
-    adGroupId: string,
-    body: Partial<KeywordListSelectionCreateRequest>,
-  ) => Promise<DataResponse<KeywordListSelectionResource>>;
-
-  updateKeywordList: (
-    campaignId: string,
-    adGroupId: string,
-    id: string,
-    body: Partial<KeywordListSelectionResource>,
-  ) => Promise<DataResponse<KeywordListSelectionResource>>;
-
-  deleteKeywordList: (
-    campaignId: string,
-    adGroupId: string,
-    id: string,
-  ) => Promise<any>;
 
   // DEAL LIST
   getDealsLists: (
@@ -665,88 +605,6 @@ export class DisplayCampaignService implements IDisplayCampaignService {
   ): Promise<DataResponse<LocationSelectionResource>> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/locations/${id}`;
     return ApiService.putRequest(endpoint, body);
-  }
-
-  /* PLACEMENT LIST SERVICES */
-  getPlacementLists(
-    campaignId: string,
-    adGroupId: string,
-  ): Promise<DataListResponse<PlacementListSelectionResource>> {
-    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/placement_lists`;
-    return ApiService.getRequest(endpoint);
-  }
-
-  createPlacementList(
-    campaignId: string,
-    adGroupId: string,
-    body: Partial<PlacementListSelectionResource>,
-  ): Promise<DataResponse<PlacementListSelectionResource>> {
-    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/placement_lists`;
-    return ApiService.postRequest(endpoint, body);
-  }
-
-  updatePlacementList(
-    campaignId: string,
-    adGroupId: string,
-    id: string,
-    body: Partial<PlacementListSelectionResource>,
-  ): Promise<DataResponse<PlacementListSelectionResource>> {
-    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/placement_lists/${id}`;
-    return ApiService.putRequest(endpoint, body);
-  }
-  deletePlacementList(
-    campaignId: string,
-    adGroupId: string,
-    id: string,
-  ): Promise<any> {
-    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/placement_lists/${id}`;
-    return ApiService.deleteRequest(endpoint, {});
-  }
-
-  // KEYWORD LIST
-  getKeywordList(
-    campaignId: string,
-    adGroupId: string,
-  ): Promise<DataListResponse<KeywordListSelectionResource>> {
-    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/keyword_lists`;
-    return ApiService.getRequest(endpoint);
-  }
-
-  getKeywordListSelection(
-    campaignId: string,
-    adGroupId: string,
-    id: string,
-  ): Promise<DataResponse<KeywordListSelectionResource>> {
-    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/keyword_lists/${id}`;
-    return ApiService.getRequest(endpoint);
-  }
-
-  createKeywordList(
-    campaignId: string,
-    adGroupId: string,
-    body: Partial<KeywordListSelectionCreateRequest>,
-  ): Promise<DataResponse<KeywordListSelectionResource>> {
-    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/keyword_lists`;
-    return ApiService.postRequest(endpoint, body);
-  }
-
-  updateKeywordList(
-    campaignId: string,
-    adGroupId: string,
-    id: string,
-    body: Partial<KeywordListSelectionResource>,
-  ): Promise<DataResponse<KeywordListSelectionResource>> {
-    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/keyword_lists/${id}`;
-    return ApiService.putRequest(endpoint, body);
-  }
-
-  deleteKeywordList(
-    campaignId: string,
-    adGroupId: string,
-    id: string,
-  ): Promise<any> {
-    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/keyword_lists/${id}`;
-    return ApiService.deleteRequest(endpoint, {});
   }
 
   // DEAL LIST

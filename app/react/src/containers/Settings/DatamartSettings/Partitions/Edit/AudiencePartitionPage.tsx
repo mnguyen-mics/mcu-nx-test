@@ -189,22 +189,11 @@ class AudiencePartitionPage extends React.Component<
     if (isLoading) {
       return <Loading className="loading-full-screen" />;
     } else {
-      const placementListName =
-        partitionId && partitionFormData
-          ? intl.formatMessage(messages.editPartition, {
-              name: partitionFormData.name
-                ? partitionFormData.name
-                : intl.formatMessage(messages.partition),
-            })
-          : intl.formatMessage(messages.newPartition);
       const breadcrumbPaths = [
         {
           name: intl.formatMessage(messages.partitions),
           path: `/v2/o/${organisationId}/settings/datamart/audience/partitions`,
-        },
-        {
-          name: placementListName,
-        },
+        }
       ];
       const actionbarProps = {
         onClose: this.redirect,
@@ -215,7 +204,7 @@ class AudiencePartitionPage extends React.Component<
         workspace.datamarts.length === 1 ||
         selectedDatamart ? (
         <AudiencePartitionForm
-          initialValues={this.state.partitionFormData}
+          initialValues={partitionFormData}
           onSubmit={this.save}
           close={this.redirect}
           breadCrumbPaths={breadcrumbPaths}

@@ -6,14 +6,6 @@ import {
 import AudienceBuilderService, {
   IAudienceBuilderService,
 } from './../services/AudienceBuilderService';
-import {
-  IPlacementListFormService,
-  PlacementListFormService,
-} from './../containers/Library/Placement/Edit/PlacementListFormService';
-import {
-  IPlacementListService,
-  PlacementListService,
-} from '../services/Library/PlacementListService';
 import { RecommenderService } from './../services/Library/RecommenderService';
 import {
   IReferenceTableService,
@@ -84,10 +76,6 @@ import {
 import AudienceSegmentService, {
   IAudienceSegmentService,
 } from '../services/AudienceSegmentService';
-import {
-  IKeywordListFormService,
-  KeywordListFormService,
-} from '../containers/Library/Keyword/Edit/KeywordListFormService';
 import {
   IDisplayCampaignFormService,
   DisplayCampaignFormService,
@@ -172,10 +160,6 @@ import {
 import { IEmailRouterService } from '../services/Library/EmailRoutersService';
 import { CreativeService, ICreativeService } from '../services/CreativeService';
 import PluginService, { IPluginService } from '../services/PluginService';
-import {
-  IKeywordListService,
-  KeywordListService,
-} from '../services/Library/KeywordListsService';
 import getDecorators from 'inversify-inject-decorators';
 import { IDatamartReplicationService } from '../services/DatamartReplicationService';
 import {
@@ -237,12 +221,6 @@ container
 container
   .bind<IEmailCampaignFormService>(TYPES.IEmailCampaignFormService)
   .to(EmailCampaignFormService);
-container
-  .bind<IKeywordListService>(TYPES.IKeywordListService)
-  .to(KeywordListService);
-container
-  .bind<IKeywordListFormService>(TYPES.IKeywordListFormService)
-  .to(KeywordListFormService);
 container
   .bind<IAudienceSegmentService>(TYPES.IAudienceSegmentService)
   .to(AudienceSegmentService);
@@ -319,12 +297,6 @@ container.bind<IConsentService>(TYPES.IConsentService).to(ConsentService);
 container.bind<IGeonameService>(TYPES.IGeonameService).to(GeonameService);
 container.bind<ISettingsService>(TYPES.ISettingsService).to(SettingsService);
 container.bind<IDashboardService>(TYPES.IDashboardService).to(DashboardService);
-container
-  .bind<IPlacementListService>(TYPES.IPlacementListService)
-  .to(PlacementListService);
-container
-  .bind<IPlacementListFormService>(TYPES.IPlacementListFormService)
-  .to(PlacementListFormService);
 container.bind<ICatalogService>(TYPES.ICatalogService).to(CatalogService);
 container
   .bind<ILibraryCatalogService>(TYPES.ILibraryCatalogService)

@@ -90,14 +90,6 @@ export default defineMessages({
     id: 'menu.library.title',
     defaultMessage: 'Library',
   },
-  libraryPlacement: {
-    id: 'menu.library.placement',
-    defaultMessage: 'Placement List',
-  },
-  libraryKeyword: {
-    id: 'menu.library.keyword',
-    defaultMessage: 'Keyword List',
-  },
   libraryAttributionModel: {
     id: 'menu.library.AttributionModel',
     defaultMessage: 'Attribution Models',

@@ -32,14 +32,6 @@ const messages = defineMessages({
     id: 'components.elementSelector.tableSelector.dealList',
     defaultMessage: 'Deal List',
   },
-  placementList: {
-    id: 'components.elementSelector.tableSelector.placementList',
-    defaultMessage: 'Placement List',
-  },
-  keywordList: {
-    id: 'components.elementSelector.tableSelector.keywordList',
-    defaultMessage: 'Keyword List',
-  },
   userAccountCompartment: {
     id: 'components.elementSelector.tableSelector.userAccountCompartment',
     defaultMessage: 'User Account Compartment',
@@ -293,14 +285,6 @@ class TableSelector<T extends SelectableItem> extends React.Component<
               {
                 key: "INVENTORY_ACCESS_DEAL_LIST",
                 value: intl.formatMessage(messages.dealList),
-              },
-              {
-                key: "INVENTORY_ACCESS_PLACEMENT_LIST",
-                value: intl.formatMessage(messages.placementList),
-              },
-              {
-                key: "INVENTORY_ACCESS_KEYWORD_LIST",
-                value: intl.formatMessage(messages.keywordList),
               },
               {
                 key: "USER_ACCOUNT_COMPARTMENT",

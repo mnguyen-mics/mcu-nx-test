@@ -153,10 +153,6 @@ export class ServiceOfferPageService implements IServiceOfferPageService {
       return formatMessage(messages.audience_segmentType);
     } else if (type === 'inventory_access_deal_list') {
       return formatMessage(messages.inventory_access_deal_listType);
-    } else if (type === 'inventory_access_placement_list') {
-      return formatMessage(messages.inventory_access_placement_listType);
-    } else if (type === 'inventory_access_keyword_list') {
-      return formatMessage(messages.inventory_access_keyword_listType);
     } else if (type === 'user_account_compartment') {
       return formatMessage(messages.user_account_compartmentType);
     } else return type;

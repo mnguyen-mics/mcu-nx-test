@@ -23,7 +23,6 @@ import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { IDisplayNetworkService } from '../../../../../services/DisplayNetworkService';
 import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
-import { IKeywordListService } from '../../../../../services/Library/KeywordListsService';
 import { IDealListService } from '../../../../../services/Library/DealListService';
 import { AdexInventoryServiceItemPublicResource } from '../../../../../models/servicemanagement/PublicServiceItemResource';
 import { IGeonameService } from '../../../../../services/GeonameService';
@@ -31,7 +30,6 @@ import { ICatalogService } from '../../../../../services/CatalogService';
 import { ICreativeService } from '../../../../../services/CreativeService';
 import { IDisplayCampaignService } from '../../../../../services/DisplayCampaignService';
 import { IResourceHistoryService } from '../../../../../services/ResourceHistoryService';
-import { IPlacementListService } from '../../../../../services/Library/PlacementListService';
 
 interface AdGroupActionbarProps {
   adGroup?: AdGroupResource;
@@ -56,9 +54,6 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
 
-  @lazyInject(TYPES.IKeywordListService)
-  private _keywordsListService: IKeywordListService;
-
   @lazyInject(TYPES.IDealListService)
   private _dealsListService: IDealListService;
 
@@ -76,9 +71,6 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
 
   @lazyInject(TYPES.IResourceHistoryService)
   private _resourceHistoryService: IResourceHistoryService;
-
-  @lazyInject(TYPES.IPlacementListService)
-  private _placementListService: IPlacementListService;
 
   buildActionElement = () => {
     const { adGroup, updateAdGroup } = this.props;
@@ -249,46 +241,6 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                         .then(audienceSegmentId => {
                           history.push(
                             `/v2/o/${organisationId}/audience/segments/${audienceSegmentId}`,
-                          );
-                        });
-                    },
-                  },
-                  KEYWORDS_LIST_SELECTION: {
-                    direction: 'CHILD',
-                    getType: () => {
-                      return (
-                        <FormattedMessage
-                          {...resourceHistoryMessages.keywordsListResourceType}
-                        />
-                      );
-                    },
-                    getName: (id: string) => {
-                      return this._resourceHistoryService
-                        .getLinkedResourceIdInSelection(
-                          organisationId,
-                          'KEYWORDS_LIST_SELECTION',
-                          id,
-                          'KEYWORDS_LIST',
-                        )
-                        .then(keywordsListId => {
-                          return this._keywordsListService
-                            .getKeywordList(keywordsListId)
-                            .then(response => {
-                              return response.data.name;
-                            });
-                        });
-                    },
-                    goToResource: (id: string) => {
-                      return this._resourceHistoryService
-                        .getLinkedResourceIdInSelection(
-                          organisationId,
-                          'KEYWORDS_LIST_SELECTION',
-                          id,
-                          'KEYWORDS_LIST',
-                        )
-                        .then(keywordsListId => {
-                          history.push(
-                            `/v2/o/${organisationId}/library/keywordslist/${keywordsListId}/edit`,
                           );
                         });
                     },
@@ -491,46 +443,6 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                     },
                     goToResource: (id: string) => {
                       return;
-                    },
-                  },
-                  PLACEMENT_LIST_SELECTION: {
-                    direction: 'CHILD',
-                    getType: () => {
-                      return (
-                        <FormattedMessage
-                          {...resourceHistoryMessages.placementListResourceType}
-                        />
-                      );
-                    },
-                    getName: (id: string) => {
-                      return this._resourceHistoryService
-                        .getLinkedResourceIdInSelection(
-                          organisationId,
-                          'PLACEMENT_LIST_SELECTION',
-                          id,
-                          'PLACEMENT_LIST',
-                        )
-                        .then(placementListId => {
-                          return this._placementListService
-                            .getPlacementList(placementListId)
-                            .then(placementListResponse => {
-                              return placementListResponse.data.name;
-                            });
-                        });
-                    },
-                    goToResource: (id: string) => {
-                      return this._resourceHistoryService
-                        .getLinkedResourceIdInSelection(
-                          organisationId,
-                          'PLACEMENT_LIST_SELECTION',
-                          id,
-                          'PLACEMENT_LIST',
-                        )
-                        .then(placementListId => {
-                          history.push(
-                            `/v2/o/${organisationId}/library/placementlist/${placementListId}/edit`,
-                          );
-                        });
                     },
                   },
                 },

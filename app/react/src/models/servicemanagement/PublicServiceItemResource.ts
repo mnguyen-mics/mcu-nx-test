@@ -47,12 +47,6 @@ export interface DisplayNetworkServiceItemPublicResource
   display_network_id: string;
 }
 
-export interface PlacementListServiceItemPublicResource
-  extends ServiceItemPublicResource {
-  type: 'inventory_access_placement_list';
-  placement_list_id: string;
-}
-
 export interface DealListServiceItemPublicResource
   extends ServiceItemPublicResource {
   type: 'inventory_access_deal_list';
@@ -75,23 +69,15 @@ export interface AdExchangeHubInventoryServiceItemPublicResource
   ad_exchange_hub_key: string;
 }
 
-export interface KeywordListInventoryAccessPublicResource
-  extends ServiceItemPublicResource {
-  type: 'inventory_access_keyword_list';
-  keyword_list_id: string;
-}
-
 export type ServiceItemModel = FieldArrayModel<ServiceItemShape>;
 
 export type ServiceItemShape =
   | AudienceSegmentServiceItemPublicResource
   | DisplayNetworkServiceItemPublicResource
-  | PlacementListServiceItemPublicResource
   | DealListServiceItemPublicResource
   | AdexInventoryServiceItemPublicResource
   | AdExchangeHubInventoryServiceItemPublicResource
-  | BaseServiceItemPublicResource
-  | KeywordListInventoryAccessPublicResource;
+  | BaseServiceItemPublicResource;
 
 export interface ServiceCategoryPublicResource {
   id: string;

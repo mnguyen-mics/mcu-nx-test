@@ -215,38 +215,6 @@ const redirects: Redirect[] = [
     to: datastudioDefinition.datastudioExportDashboard.path
   },
   {
-    from: '/library/keywordslists',
-    to: libraryDefinition.libraryKeywordList.path
-  },
-  {
-    from: '/library/keywordslists/new',
-    to: libraryDefinition.libraryKeywordCreation.path
-  },
-  {
-    from: '/library/keywordslists/:keywordsListId',
-    to: libraryDefinition.libraryKeywordEdition.path
-  },
-  {
-    from: '/library/placementlists',
-    to: libraryDefinition.libraryPlacementList.path
-  },
-  {
-    from: '/library/placementlists/new',
-    to: libraryDefinition.libraryPlacementCreation.path
-  },
-  {
-    from: '/library/placementlists/:placementListId',
-    to: libraryDefinition.libraryPlacementEdition.path
-  },
-  {
-    from: '/library/placementlists/:placementListId/descriptor/:descriptor_id',
-    to: libraryDefinition.libraryPlacementEdition.path
-  },
-  {
-    from: '/library/placementlists/:placementListId/descriptor',
-    to: libraryDefinition.libraryPlacementEdition.path
-  },
-  {
     from: '/library/scenario',
     to: automationDefinition.automationsList.path
   },

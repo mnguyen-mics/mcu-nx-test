@@ -36,7 +36,7 @@ import AudienceSegmentFormSection, {
 import AudienceCatalogFormSection, {
   AudienceCatalogFormSectionProps,
 } from './sections/AudienceSegment/AudienceCatalogFormSection';
-import InventoryCatalogFormSection, {
+import {
   InventoryCatalogFormSectionProps,
 } from './sections/InventoryCatalog/InventoryCatalogFormSection';
 import * as SessionSelectors from '../../../../../redux/Session/selectors';
@@ -167,17 +167,6 @@ class AdGroupForm extends React.Component<Props> {
         />
       ),
     };
-    const placementList = {
-      id: 'placementList',
-      title: messages.sectionTitlePlacement,
-      component: (
-        <InventoryCatalogFieldArray
-          name="inventoryCatalFields"
-          component={InventoryCatalogFormSection}
-          {...genericFieldArrayProps}
-        />
-      ),
-    };
     const displayAd = {
       id: 'display',
       title: messages.sectionTitleAds,
@@ -194,7 +183,6 @@ class AdGroupForm extends React.Component<Props> {
     if (hasDatamarts(organisationId)) sections.push(audience);
     sections.push(device);
     sections.push(location);
-    sections.push(placementList);
     sections.push(displayAd);
 
     const insertIndex = displaySummaryFirst ? 0 : sections.length;

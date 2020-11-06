@@ -152,7 +152,7 @@ class DealListPage extends React.Component<JoinedProps, DealListPageState> {
     if (isLoading) {
       return <Loading className="loading-full-screen" />;
     } else {
-      const keywordListName =
+      const dealListName =
         dealListId && dealListFormData
           ? intl.formatMessage(messages.editDealList, {
               name: dealListFormData.name
@@ -166,7 +166,7 @@ class DealListPage extends React.Component<JoinedProps, DealListPageState> {
           path: `/v2/o/${organisationId}/library/deallist`,
         },
         {
-          name: keywordListName,
+          name: dealListName,
         },
       ];
       return (

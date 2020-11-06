@@ -1,6 +1,4 @@
 const TYPES = {
-  IKeywordListService: Symbol.for('KeywordListService'),
-  IKeywordListFormService: Symbol.for('KeywordListFormService'),
   IAudienceSegmentService: Symbol.for('audienceSegmentService'),
   IAudienceFeedFormService: Symbol.for('audienceFeedFormService'),
   IAudienceSegmentFormService: Symbol.for('audienceSegmentFormService'),
@@ -72,8 +70,6 @@ const TYPES = {
   IDatamartUsersAnalyticsService: Symbol.for('datamartUsersAnalyticsService'),
   IEmailCampaignService: Symbol.for('emailCampaignService'),
   IEmailCampaignFormService: Symbol.for('emailCampaignFormService'),
-  IPlacementListService: Symbol.for('placementListService'),
-  IPlacementListFormService: Symbol.for('placementListFormService'),
   IAudienceBuilderService: Symbol.for('audienceBuilderService'),
   IAudienceFeatureService: Symbol.for('audienceFeatureService'),
   IUserActivitiesFunnelService: Symbol.for('userActivitiesFunnelService'),

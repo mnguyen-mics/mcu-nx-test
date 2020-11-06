@@ -18,12 +18,10 @@ import { FORM_ID, DisplayCampaignAutomationFormData } from '../domain';
 
 import GeneralInformationFormSection from './GeneralInformationFormSection';
 import {
-  InventoryCatalogFieldArray,
   AdFieldArray,
 } from '../../../../../Campaigns/Display/Edit/AdGroup/AdGroupForm';
 import messages from '../../../../../Campaigns/Display/Edit/messages';
 import DeviceFormSection from '../../../../../Campaigns/Display/Edit/AdGroup/sections/DeviceFormSection';
-import { InventoryCatalogFormSection } from '../../../../../Campaigns/Display/Edit/AdGroup/sections/InventoryCatalog';
 import AdFormSection from '../../../../../Campaigns/Display/Edit/AdGroup/sections/AdFormSection';
 import { GoalFieldArray } from '../../../../../Campaigns/Display/Edit/DisplayCampaignForm';
 import { GoalFormSection } from '../../../../../Campaigns/Display/Edit/Sections/Programmatic';
@@ -122,20 +120,6 @@ class DisplayCampaignAutomationForm extends React.Component<Props> {
       ),
     };
 
-    const placementList = {
-      id: 'placementList',
-      title: messages.sectionTitlePlacement,
-      component: (
-        <InventoryCatalogFieldArray
-          name="adGroupFields[0].model.inventoryCatalFields"
-          component={InventoryCatalogFormSection}
-          small={true}
-          isScenario={true}
-          {...genericFieldArrayProps}
-        />
-      ),
-    };
-
     const displayAd = {
       id: 'display',
       title: messages.sectionTitleAds,
@@ -152,7 +136,6 @@ class DisplayCampaignAutomationForm extends React.Component<Props> {
     sections.push(displayCampaignSection);
     sections.push(goalSection);
     sections.push(device);
-    sections.push(placementList);
     sections.push(displayAd);
 
     return sections;

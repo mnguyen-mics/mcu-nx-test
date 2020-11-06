@@ -16,7 +16,7 @@ import ScrollspySider, {
   SidebarWrapperProps,
 } from '../../../../../components/Layout/ScrollspySider';
 import { BasicProps } from 'antd/lib/layout/layout';
-import { PlacementDescriptorResource } from '../../../../../models/placement/PlacementDescriptorResource';
+import { DealDescriptorResource } from '../../../../../models/deal/DealDescriptorResource';
 import { injectDrawer } from '../../../../../components/Drawer/index';
 import { ICatalogService } from '../../../../../services/CatalogService';
 import {
@@ -47,7 +47,7 @@ const Content = Layout.Content as React.ComponentClass<
   >;
 
 const messages = defineMessages({
-  addPlacementDescriptor: {
+  addDealDescriptor: {
     id: 'deal.edit.addDeal',
     defaultMessage: 'Add Deal',
   },
@@ -59,7 +59,7 @@ const messages = defineMessages({
     id: 'deal.edit.actionbar.breadCrumb.deals',
     defaultMessage: 'Deals',
   },
-  newPlacementDescriptor: {
+  newDealDescriptor: {
     id: 'deal.edit.actionabar.newDeal',
     defaultMessage: 'New Deal',
   },
@@ -154,7 +154,7 @@ interface State {
 
 type JoinedProps = DealFormProps &
   InjectedDrawerProps &
-  InjectedFormProps<PlacementDescriptorResource, DealFormProps> &
+  InjectedFormProps<DealDescriptorResource, DealFormProps> &
   InjectedIntlProps &
   ValidatorProps &
   InjectedNotificationProps &
@@ -229,7 +229,7 @@ class DealForm extends React.Component<JoinedProps, State> {
             ? this.props.initialValues!.value
             : this.props.initialValues!.id,
         })
-        : intl.formatMessage(messages.newPlacementDescriptor);
+        : intl.formatMessage(messages.newDealDescriptor);
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
@@ -238,7 +238,7 @@ class DealForm extends React.Component<JoinedProps, State> {
           name: dealName,
         },
       ],
-      message: messages.addPlacementDescriptor,
+      message: messages.addDealDescriptor,
       onClose: this.props.closeNextDrawer,
     };
     const sideBarProps: SidebarWrapperProps = {
@@ -387,7 +387,7 @@ export default compose<JoinedProps, DealFormProps>(
   withValidators,
   withRouter,
   injectNotifications,
-  reduxForm<PlacementDescriptorResource, DealFormProps>({
+  reduxForm<DealDescriptorResource, DealFormProps>({
     form: FORM_ID,
     enableReinitialize: true,
   }),

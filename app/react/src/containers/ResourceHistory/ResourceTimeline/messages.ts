@@ -59,10 +59,6 @@ const messages: {
     id: 'timeline.resourceType.adxExchange',
     defaultMessage: 'Ad Exchange',
   },
-  placementListResourceType: {
-    id: 'timeline.resourceType.placementList',
-    defaultMessage: 'Placement List',
-  },
   emailRouterResourceType: {
     id: 'timeline.resourceType.emailRouter',
     defaultMessage: 'Email Router',
