@@ -1,4 +1,5 @@
 import * as React from 'react';
+import _ from 'lodash';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { lazyInject } from '../../../../config/inversify.config';
@@ -138,8 +139,15 @@ class AudienceFeatureVariable extends React.Component<Props> {
         const userPointObject = objectTypes.find(o => o.name === 'UserPoint')!;
         const foundField =
           userPointObject &&
-          userPointObject.fields.find(f => f.name === variable.field_name);
-        const fieldDirectives = foundField ? foundField.directives : undefined;
+          userPointObject.fields.find(f => f.name === variable.path[0]);
+        const schemaType = foundField
+          ? objectTypes.find(ot => foundField.field_type.includes(ot.name))
+          : undefined;
+        const field = schemaType?.fields.find(
+          f => f.name === variable.field_name,
+        );
+        const fieldDirectives = field ? field.directives : undefined;
+
         let fetchListMethod = (
           keywords: string,
         ): Promise<Array<{ key: string; label: JSX.Element | string }>> => {
@@ -148,7 +156,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
               .getReferenceTable(
                 datamartId,
                 foundField.runtime_schema_id,
-                userPointObject.name,
+                foundField.name,
                 variable.field_name,
               )
               .then(res =>
@@ -159,77 +167,74 @@ class AudienceFeatureVariable extends React.Component<Props> {
         };
         let fetchSingleMethod = (id: string) =>
           Promise.resolve({ key: id, label: id });
+        const modelAndType =
+          fieldDirectives && getCoreReferenceTypeAndModel(fieldDirectives);
 
-        if (fieldDirectives) {
-          const modelAndType = getCoreReferenceTypeAndModel(fieldDirectives);
-          if (modelAndType) {
-            if (modelAndType.type && modelAndType.type === 'CORE_OBJECT') {
-              switch (modelAndType.modelType) {
-                case 'COMPARTMENTS':
-                  fetchListMethod = (keywords: string) => {
-                    return this._datamartService
-                      .getUserAccountCompartmentDatamartSelectionResources(
-                        datamartId,
-                      )
-                      .then(res =>
-                        res.data.map(r => ({
-                          key: r.compartment_id,
-                          label: r.name ? r.name : r.token,
-                        })),
-                      );
-                  };
-                  fetchSingleMethod = (id: string) =>
-                    this._compartmentService.getCompartment(id).then(res => ({
-                      key: res.data.id,
-                      label: res.data.name,
-                    }));
-                  break;
-                case 'CHANNELS':
-                  fetchListMethod = (keywords: string) => {
-                    return this._channelService
-                      .getChannelsByOrganisation(organisationId, {
-                        community_id:
-                          organisationId === community_id
-                            ? community_id
-                            : undefined,
-                        keywords: keywords,
-                        with_source_datamarts: true,
-                      })
-                      .then(res =>
-                        res.data.map(r => ({ key: r.id, label: r.name })),
-                      );
-                  };
-                  fetchSingleMethod = (id: string) =>
-                    this._channelService
-                      .getChannel(datamartId, id)
-                      .then(res => ({
-                        key: res.data.id,
-                        label: res.data.name,
-                      }));
-                  break;
-                case 'SEGMENTS':
-                  fetchListMethod = (keywords: string) => {
-                    return this._audienceSegmentService
-                      .getSegments(organisationId, {
-                        keywords: keywords,
-                        datamart_id: datamartId,
-                      })
-                      .then(res =>
-                        res.data.map(r => ({
-                          key: r.id,
-                          label: (
-                            <SegmentNameDisplay audienceSegmentResource={r} />
-                          ),
-                        })),
-                      );
-                  };
-                  fetchSingleMethod = (id: string) =>
-                    this._audienceSegmentService.getSegment(id).then(res => ({
-                      key: res.data.id,
-                      label: res.data.name,
-                    }));
-                  break;
-              }
+        if (fieldDirectives && modelAndType) {
+          if (modelAndType.type && modelAndType.type === 'CORE_OBJECT') {
+            switch (modelAndType.modelType) {
+              case 'COMPARTMENTS':
+                fetchListMethod = (keywords: string) => {
+                  return this._datamartService
+                    .getUserAccountCompartmentDatamartSelectionResources(
+                      datamartId,
+                    )
+                    .then(res =>
+                      res.data.map(r => ({
+                        key: r.compartment_id,
+                        label: r.name ? r.name : r.token,
+                      })),
+                    );
+                };
+                fetchSingleMethod = (id: string) =>
+                  this._compartmentService.getCompartment(id).then(res => ({
+                    key: res.data.id,
+                    label: res.data.name,
+                  }));
+                break;
+              case 'CHANNELS':
+                fetchListMethod = (keywords: string) => {
+                  return this._channelService
+                    .getChannelsByOrganisation(organisationId, {
+                      community_id:
+                        organisationId === community_id
+                          ? community_id
+                          : undefined,
+                      keywords: keywords,
+                      with_source_datamarts: true,
+                    })
+                    .then(res =>
+                      res.data.map(r => ({ key: r.id, label: r.name })),
+                    );
+                };
+                fetchSingleMethod = (id: string) =>
+                  this._channelService.getChannel(datamartId, id).then(res => ({
+                    key: res.data.id,
+                    label: res.data.name,
+                  }));
+                break;
+              case 'SEGMENTS':
+                fetchListMethod = (keywords: string) => {
+                  return this._audienceSegmentService
+                    .getSegments(organisationId, {
+                      keywords: keywords,
+                      datamart_id: datamartId,
+                    })
+                    .then(res =>
+                      res.data.map(r => ({
+                        key: r.id,
+                        label: (
+                          <SegmentNameDisplay audienceSegmentResource={r} />
+                        ),
+                      })),
+                    );
+                };
+                fetchSingleMethod = (id: string) =>
+                  this._audienceSegmentService.getSegment(id).then(res => ({
+                    key: res.data.id,
+                    label: res.data.name,
+                  }));
+                break;
             }
           }
         } else {
@@ -244,7 +249,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
               return qq;
             };
 
-            const path = variable.path;
+            const path = variable.path.reverse();
 
             const innerQuery = path.reduce(buildQuery(), '@map(limit:10000)');
 

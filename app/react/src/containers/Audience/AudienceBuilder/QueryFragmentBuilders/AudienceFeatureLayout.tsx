@@ -49,15 +49,7 @@ class AudienceFeatureLayout extends React.Component<Props, State> {
       )
       .then(res => {
         this.setState({
-          audienceFeature: {
-            ...res.data,
-            variables: res.data.variables.map(v => {
-              return {
-                ...v,
-                path: v.path.reverse(),
-              };
-            }),
-          },
+          audienceFeature: res.data,
         });
       });
   }
