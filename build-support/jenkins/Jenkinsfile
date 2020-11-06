@@ -8,6 +8,9 @@ pipeline {
         string(name: 'GIVEN_VIRTUAL_PLATFORM_NAME',
         defaultValue: '',
         description: 'If you would like to run the tests on a precedently created virtual platform (For example if a previous build fails because of false positive tests) please provide its name')
+        string(name: 'GIVEN_VIRTUAL_PLATFORM_ID',
+        defaultValue: '',
+        description: 'Please provide the given virtual platforms id so that it would be killed properly')
     }
     stages {
         stage('Checkout') {
@@ -57,7 +60,7 @@ pipeline {
             }
             steps{
                 echo 'Running Cypress end-to-end front-end scenarios'
-                build job: 'cypress-parallel-tests', parameters: [[$class: 'StringParameterValue', name: 'VIRTUAL_PLATFORM_NAME', value: "${params.GIVEN_VIRTUAL_PLATFORM_NAME}"]]
+                build job: 'install-cypress-and-execute-scenarios', parameters: [[$class: 'StringParameterValue', name: 'VIRTUAL_PLATFORM_NAME', value: "${params.GIVEN_VIRTUAL_PLATFORM_NAME}"]]
             }
         }
         stage('Cypress Parallel Tests On Created Virtual Platform'){
@@ -67,10 +70,10 @@ pipeline {
             }
             steps{
             echo 'Running Cypress end-to-end front-end scenarios'
-            build job: 'cypress-parallel-tests', parameters: [[$class: 'StringParameterValue', name: 'VIRTUAL_PLATFORM_NAME', value: "${VIRTUAL_PLATFORM_NAME}"]]
+            build job: 'install-cypress-and-execute-scenarios', parameters: [[$class: 'StringParameterValue', name: 'VIRTUAL_PLATFORM_NAME', value: "${VIRTUAL_PLATFORM_NAME}"]]
             }
         }
-        /*stage('Push to master') {
+        stage('Push to master') {
             agent {
                 label "master"
             }
@@ -78,14 +81,14 @@ pipeline {
                 echo 'Pushing to master'
                 build job: 'mediarithmics-navigator-staging'
             }
-        }*/
+        }
         stage('Kill Given Virtual Platform') {
           when {
-              expression { params.GIVEN_VIRTUAL_PLATFORM_NAME != ''}
+              expression { params.GIVEN_VIRTUAL_PLATFORM_NAME != '' && params.GIVEN_VIRTUAL_PLATFORM_ID != ''}
           }
             steps {
                 echo 'Kill virtual platform used for end-to-end tests'
-                build job: 'sandbox-metal-delete', parameters: [[$class: 'StringParameterValue', name: 'id', value: "${params.GIVEN_VIRTUAL_PLATFORM_NAME}"]]
+                build job: 'sandbox-metal-delete', parameters: [[$class: 'StringParameterValue', name: 'id', value: "${params.GIVEN_VIRTUAL_PLATFORM_ID}"]]
             }
         }
         stage('Kill Created Virtual Platform') {

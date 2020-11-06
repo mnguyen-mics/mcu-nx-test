@@ -94,7 +94,7 @@ it('Should test the UserList Forms', () => {
 				cy.get('[class="mcs-button optional-section-title"]').click()
 				// Save the new segment
 				cy.contains('Save').click({ force: true })
-				cy.wait(1000)
+				cy.wait(2000)
 				cy.request({
 					url: `${Cypress.env('apiDomain')}/v1/audience_segments/${segmentId}`,
 					method: 'GET',
