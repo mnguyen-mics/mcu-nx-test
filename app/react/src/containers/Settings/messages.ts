@@ -134,14 +134,6 @@ const messages = defineMessages({
     id: 'inventory_access_deal_listType',
     defaultMessage: 'Deal List',
   },
-  inventory_access_placement_listType: {
-    id: 'inventory_access_placement_listType',
-    defaultMessage: 'Placement List',
-  },
-  inventory_access_keyword_listType: {
-    id: 'inventory_access_keyword_listType',
-    defaultMessage: 'Keyword List',
-  },
   user_account_compartmentType: {
     id: 'user_account_compartmentType',
     defaultMessage: 'User Account Compartment',

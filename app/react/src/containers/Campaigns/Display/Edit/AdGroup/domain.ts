@@ -12,15 +12,10 @@ import {
   AdCreateRequest,
 } from '../../../../../models/campaign/display/AdResource';
 import {
-  PlacementListSelectionResource,
-  PlacementListSelectionCreateRequest,
-} from '../../../../../models/placement/PlacementListResource';
-import {
   LocationSelectionResource,
   LocationSelectionCreateRequest,
 } from '../AdGroup/sections/Location/domain';
 import { DisplayCreativeFormData } from '../../../../Creative/DisplayAds/Edit/domain';
-import { KeywordListSelectionResource, KeywordListSelectionCreateRequest } from '../../../../../models/keywordList/keywordList';
 import { DealsListSelectionCreateRequest, DealsListSelectionResource } from '../../../../../models/dealList/dealList';
 import { AdExchangeSelectionResource, AdExchangeSelectionCreateRequest } from '../../../../../models/adexchange/adexchange';
 import { DisplayNetworkSelectionResource, DisplayNetworkSelectionCreateRequest } from '../../../../../models/displayNetworks/displayNetworks';
@@ -49,14 +44,6 @@ export type SegmentFieldModel = FieldArrayModelWithMeta<
   { name: string }
 >;
 
-export type PlacementListSelectionShape =
-  | PlacementListSelectionResource
-  | PlacementListSelectionCreateRequest;
-
-export type KeywordListSelectionShape =
-  | KeywordListSelectionResource
-  | KeywordListSelectionCreateRequest;
-
 export type DealListSelectionShape =
   | DealsListSelectionResource
   | DealsListSelectionCreateRequest;
@@ -68,15 +55,6 @@ export type AdExchangeSelectionShape =
 export type DisplayNetworkSelectionShape =
   | DisplayNetworkSelectionResource
   | DisplayNetworkSelectionCreateRequest;
-
-export type PlacementListFieldModel = FieldArrayModelWithMeta<
-  PlacementListSelectionShape,
-  { name: string }
->;
-
-export type KeywordListFieldModel = FieldArrayModel<
-  KeywordListSelectionShape
->;
 
 export type DealListFieldModel = FieldArrayModel<
   DealListSelectionShape
@@ -96,12 +74,6 @@ export type InventoryCatalFieldsModel = FieldArrayModel<{
 } | {
   type: 'DISPLAY_NETWORK'
   data: DisplayNetworkSelectionCreateRequest | DisplayNetworkSelectionResource
-} | {
-  type: 'PLACEMENT_LIST'
-  data: PlacementListSelectionCreateRequest | PlacementListSelectionResource
-} | {
-  type: 'KEYWORD_LIST'
-  data: KeywordListSelectionCreateRequest | KeywordListSelectionResource
 } | {
   type: 'DEAL_LIST'
   data: DealsListSelectionCreateRequest | DealsListSelectionResource
@@ -193,18 +165,6 @@ export function isLocationSelectionResource(
   model: LocationSelectionShape,
 ): model is LocationSelectionResource {
   return (model as LocationSelectionResource).id !== undefined;
-}
-
-export function isPlacementListSelectionResource(
-  model: PlacementListSelectionShape,
-): model is PlacementListSelectionResource {
-  return (model as PlacementListSelectionResource).id !== undefined;
-}
-
-export function isKeywordListSelectionResource(
-  model: KeywordListSelectionShape,
-): model is KeywordListSelectionResource {
-  return (model as KeywordListSelectionResource).id !== undefined;
 }
 
 export function isDealListSelectionResource(

@@ -18,8 +18,6 @@ import {
   InventoryCatalFieldsModel,
   SegmentFieldModel,
   isDealListSelectionResource,
-  isPlacementListSelectionResource,
-  isKeywordListSelectionResource,
   isAdExchangeSelectionResource,
   isDisplayNetworkSelectionResource,
 } from './domain';
@@ -127,12 +125,6 @@ export class AdGroupFormService implements IAdGroupFormService {
         .getLocations(displayCampaignId, adGroupId)
         .then(extractDataList),
       this._displayCampaignService
-        .getPlacementLists(displayCampaignId, adGroupId)
-        .then(extractDataList),
-      this._displayCampaignService
-        .getKeywordList(displayCampaignId, adGroupId)
-        .then(extractDataList),
-      this._displayCampaignService
         .getDealsLists(displayCampaignId, adGroupId)
         .then(extractDataList),
       this._displayCampaignService
@@ -146,8 +138,6 @@ export class AdGroupFormService implements IAdGroupFormService {
         audienceSegmentSelections,
         adSelections,
         locarionSelections,
-        placementListSelections,
-        keywordListSelections,
         dealListSelections,
         adExchangeSelections,
         displayNetworkSelections,
@@ -163,26 +153,6 @@ export class AdGroupFormService implements IAdGroupFormService {
         const locationFields = locarionSelections.map(el =>
           createFieldArrayModel(duplicate ? omit(el, 'id') : el),
         );
-
-        const placementListFields = placementListSelections.map(el => {
-          const model = {
-            data: duplicate ? omit(el, 'id') : el,
-            type: 'PLACEMENT_LIST',
-          };
-          return createFieldArrayModelWithMeta(model, {
-            name: el.name,
-          });
-        });
-
-        const keywordListFields = keywordListSelections.map(el => {
-          const model = {
-            data: duplicate ? omit(el, 'id') : el,
-            type: 'KEYWORD_LIST',
-          };
-          return createFieldArrayModelWithMeta(model, {
-            name: el.name,
-          });
-        });
 
         const dealListFields = dealListSelections.map(el => {
           const model = {
@@ -217,8 +187,6 @@ export class AdGroupFormService implements IAdGroupFormService {
         const inventoryCatalFields = [
           ...displayNetworkFields,
           ...adExchangeFields,
-          ...placementListFields,
-          ...keywordListFields,
           ...dealListFields,
         ];
 
@@ -506,8 +474,6 @@ export class AdGroupFormService implements IAdGroupFormService {
   ): Task[] {
     // get initial values
     const initialDealListIds: string[] = [];
-    const initialPlacementListIds: string[] = [];
-    const initialKeywordListIds: string[] = [];
     const initialAdExchangeIds: string[] = [];
     const initialDisplayNetworkIds: string[] = [];
 
@@ -517,18 +483,6 @@ export class AdGroupFormService implements IAdGroupFormService {
         isDealListSelectionResource(field.model.data)
       ) {
         initialDealListIds.push(field.model.data.id);
-      }
-      if (
-        field.model.type === 'KEYWORD_LIST' &&
-        isKeywordListSelectionResource(field.model.data)
-      ) {
-        initialKeywordListIds.push(field.model.data.id);
-      }
-      if (
-        field.model.type === 'PLACEMENT_LIST' &&
-        isPlacementListSelectionResource(field.model.data)
-      ) {
-        initialPlacementListIds.push(field.model.data.id);
       }
       if (
         field.model.type === 'AD_EXCHANGE' &&
@@ -546,8 +500,6 @@ export class AdGroupFormService implements IAdGroupFormService {
 
     // get current values
     const currentDealListIds: string[] = [];
-    const currentPlacementListIds: string[] = [];
-    const currentKeywordListIds: string[] = [];
     const currentAdExchangeIds: string[] = [];
     const currentDisplayNetworkIds: string[] = [];
 
@@ -557,18 +509,6 @@ export class AdGroupFormService implements IAdGroupFormService {
         isDealListSelectionResource(field.model.data)
       ) {
         currentDealListIds.push(field.model.data.id);
-      }
-      if (
-        field.model.type === 'KEYWORD_LIST' &&
-        isKeywordListSelectionResource(field.model.data)
-      ) {
-        currentKeywordListIds.push(field.model.data.id);
-      }
-      if (
-        field.model.type === 'PLACEMENT_LIST' &&
-        isPlacementListSelectionResource(field.model.data)
-      ) {
-        currentPlacementListIds.push(field.model.data.id);
       }
       if (
         field.model.type === 'AD_EXCHANGE' &&
@@ -601,52 +541,6 @@ export class AdGroupFormService implements IAdGroupFormService {
         } else {
           tasks.push(() =>
             this._displayCampaignService.createDealsList(
-              campaignId,
-              adGroupId,
-              data,
-            ),
-          );
-        }
-      }
-
-      if (field.model.type === 'KEYWORD_LIST') {
-        const data = field.model.data;
-        if (isKeywordListSelectionResource(field.model.data)) {
-          const id = field.model.data.id;
-          tasks.push(() =>
-            this._displayCampaignService.updateKeywordList(
-              campaignId,
-              adGroupId,
-              id,
-              data,
-            ),
-          );
-        } else {
-          tasks.push(() =>
-            this._displayCampaignService.createKeywordList(
-              campaignId,
-              adGroupId,
-              data,
-            ),
-          );
-        }
-      }
-
-      if (field.model.type === 'PLACEMENT_LIST') {
-        const data = field.model.data;
-        if (isPlacementListSelectionResource(field.model.data)) {
-          const id = field.model.data.id;
-          tasks.push(() =>
-            this._displayCampaignService.updatePlacementList(
-              campaignId,
-              adGroupId,
-              id,
-              data,
-            ),
-          );
-        } else {
-          tasks.push(() =>
-            this._displayCampaignService.createPlacementList(
               campaignId,
               adGroupId,
               data,
@@ -708,28 +602,6 @@ export class AdGroupFormService implements IAdGroupFormService {
       .forEach(id => {
         tasks.push(() =>
           this._displayCampaignService.deleteDealsList(
-            campaignId,
-            adGroupId,
-            id,
-          ),
-        );
-      });
-    initialKeywordListIds
-      .filter(id => !currentKeywordListIds.includes(id))
-      .forEach(id => {
-        tasks.push(() =>
-          this._displayCampaignService.deleteKeywordList(
-            campaignId,
-            adGroupId,
-            id,
-          ),
-        );
-      });
-    initialPlacementListIds
-      .filter(id => !currentPlacementListIds.includes(id))
-      .forEach(id => {
-        tasks.push(() =>
-          this._displayCampaignService.deletePlacementList(
             campaignId,
             adGroupId,
             id,

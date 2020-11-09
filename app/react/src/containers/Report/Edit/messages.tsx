@@ -19,7 +19,7 @@ export default defineMessages({
   },
   reportSectionGeneralSubTitle: {
     id: 'report.create.section.general.subtitle',
-    defaultMessage: 'Give your Placement List a Name',
+    defaultMessage: 'Give your report a name',
   },
   reportSectionGeneralTypeLabel: {
     id: 'report.create.section.general.type.label',

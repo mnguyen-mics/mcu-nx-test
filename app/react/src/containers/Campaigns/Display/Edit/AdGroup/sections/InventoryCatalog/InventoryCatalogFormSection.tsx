@@ -17,7 +17,6 @@ import {
   AdexInventoryServiceItemPublicResource,
   DealListServiceItemPublicResource,
   DisplayNetworkServiceItemPublicResource,
-  PlacementListServiceItemPublicResource,
 } from '../../../../../../../models/servicemanagement/PublicServiceItemResource';
 import { Button } from '@mediarithmics-private/mcs-components-library';
 import { ReduxFormChangeProps } from '../../../../../../../utils/FormHelper';
@@ -25,14 +24,6 @@ import {
   DealsListResource,
   DealsListSelectionCreateRequest,
 } from '../../../../../../../models/dealList/dealList';
-import {
-  KeywordListResource,
-  KeywordListSelectionCreateRequest,
-} from '../../../../../../../models/keywordList/keywordList';
-import {
-  PlacementListResource,
-  PlacementListSelectionCreateRequest,
-} from '../../../../../../../models/placement/PlacementListResource';
 import { AdExchangeSelectionCreateRequest } from '../../../../../../../models/adexchange/adexchange';
 import { DisplayNetworkSelectionCreateRequest } from '../../../../../../../models/displayNetworks/displayNetworks';
 import TreeSelectWithList, {
@@ -59,8 +50,7 @@ interface State {
 type ServicesType =
   | AdexInventoryServiceItemPublicResource
   | DealListServiceItemPublicResource
-  | DisplayNetworkServiceItemPublicResource
-  | PlacementListServiceItemPublicResource;
+  | DisplayNetworkServiceItemPublicResource;
 
 class InventoryCatalogFormSection extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -75,65 +65,33 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
   componentDidUpdate(previousProps: Props) {
     const {
       inventoryCategoryTree,
-      keywordList,
       dealList,
-      placementList,
     } = this.props;
 
     const {
       inventoryCategoryTree: previousInventoryCategoryTree,
-      keywordList: previousKeywordList,
       dealList: previousDealList,
-      placementList: previousPlacementList,
     } = previousProps;
 
     if (
       inventoryCategoryTree !== previousInventoryCategoryTree ||
-      keywordList !== previousKeywordList ||
-      dealList !== previousDealList ||
-      placementList !== previousPlacementList
+      dealList !== previousDealList
     ) {
       this.buildIncludedDataSet(
-        placementList,
-        keywordList,
         dealList,
         inventoryCategoryTree,
       );
       this.buildExcludedDataSet(
-        placementList,
-        keywordList,
         inventoryCategoryTree,
       );
     }
   }
 
   buildIncludedDataSet = (
-    placementList: DataLoadingContainer<PlacementListResource[]>,
-    keywordList: DataLoadingContainer<KeywordListResource[]>,
     dealList: DataLoadingContainer<DealsListResource[]>,
     inventoryCategoryTree: DataLoadingContainer<ServiceCategoryTree[]>,
   ) => {
     const { intl } = this.props;
-
-    const placementListTree =
-      placementList.data.length > 0
-        ? // add datamart's segments to tree if any
-          this.buildTreeDataFromOwnSegments(
-            placementList.data,
-            'placementList',
-            intl.formatMessage(inventoryCatalogMsgs.myPlacementListCategory),
-          )
-        : [];
-
-    const keywordListTree =
-      keywordList.data.length > 0
-        ? // add datamart's segments to tree if any
-          this.buildTreeDataFromOwnSegments(
-            keywordList.data,
-            'keywordList',
-            intl.formatMessage(inventoryCatalogMsgs.myKeywordListCategory),
-          )
-        : [];
 
     const dealListTree =
       dealList.data.length > 0
@@ -159,38 +117,14 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
           'services',
         ),
       )
-      .concat(dealListTree, keywordListTree, placementListTree);
+      .concat(dealListTree);
 
     this.setState({ includedDataSource });
   };
 
   buildExcludedDataSet = (
-    placementList: DataLoadingContainer<PlacementListResource[]>,
-    keywordList: DataLoadingContainer<KeywordListResource[]>,
     inventoryCategoryTree: DataLoadingContainer<ServiceCategoryTree[]>,
   ) => {
-    const { intl } = this.props;
-
-    const placementListTree =
-      placementList.data.length > 0
-        ? // add datamart's segments to tree if any
-          this.buildTreeDataFromOwnSegments(
-            placementList.data,
-            'placementList',
-            intl.formatMessage(inventoryCatalogMsgs.myPlacementListCategory),
-          )
-        : [];
-
-    const keywordListTree =
-      keywordList.data.length > 0
-        ? // add datamart's segments to tree if any
-          this.buildTreeDataFromOwnSegments(
-            keywordList.data,
-            'keywordList',
-            intl.formatMessage(inventoryCatalogMsgs.myKeywordListCategory),
-          )
-        : [];
-
     const excludedDataSource = inventoryCategoryTree.data
       .map(child =>
         toTreeData(
@@ -205,36 +139,19 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
           'services',
         ),
       )
-      .concat(keywordListTree, placementListTree);
 
     this.setState({ excludedDataSource });
   };
 
   getSelectedInventory = (
     serviceItems: ServicesType[],
-    otherData: Array<
-      DealsListResource | KeywordListResource | PlacementListResource
-    >,
+    otherData: DealsListResource[],
     excluded: boolean = false,
   ): string[] => {
     const selectedInventoryIds: string[] = [];
     this.props.fields.getAll().forEach(field => {
       if (field.model.type === 'DEAL_LIST' && !excluded) {
         selectedInventoryIds.push(`dealList_${field.model.data.deal_list_id}`);
-      } else if (
-        field.model.type === 'KEYWORD_LIST' &&
-        field.model.data.exclude === excluded
-      ) {
-        selectedInventoryIds.push(
-          `keywordList_${field.model.data.keyword_list_id}`,
-        );
-      } else if (
-        field.model.type === 'PLACEMENT_LIST' &&
-        field.model.data.exclude === excluded
-      ) {
-        selectedInventoryIds.push(
-          `placementList_${field.model.data.placement_list_id}`,
-        );
       } else if (
         field.model.type === 'AD_EXCHANGE' &&
         field.model.data.exclude === excluded
@@ -272,8 +189,6 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
   handleChange = (
     inventoryCategoryTree: ServiceCategoryTree[],
     dealList: DealsListResource[],
-    keywordList: KeywordListResource[],
-    placementList: PlacementListResource[],
     exclude: boolean = false,
   ) => (inventoryIds: string[]) => {
     const { fields, formChange } = this.props;
@@ -282,7 +197,7 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
 
     const newFields: InventoryCatalFieldsModel[] = [];
 
-    const otherData = [...dealList, ...keywordList, ...placementList];
+    const otherData = [...dealList];
 
     const currentlySelectedIds = this.getSelectedInventory(
       getServices(inventoryCategoryTree),
@@ -306,16 +221,6 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
       if (inventory.value) {
         const found = allFields.find(field => {
           switch (inventory.type) {
-            case 'keywordList':
-              return (
-                (field.model.data as KeywordListSelectionCreateRequest)
-                  .keyword_list_id === inventory.value
-              );
-            case 'placementList':
-              return (
-                (field.model.data as PlacementListSelectionCreateRequest)
-                  .placement_list_id === inventory.value
-              );
             case 'dealList':
               return (
                 (field.model.data as DealsListSelectionCreateRequest)
@@ -368,28 +273,6 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
     exclude: boolean = false,
   ): InventoryCatalFieldsModel | undefined => {
     switch (type) {
-      case 'keywordList':
-        return {
-          key: cuid(),
-          model: {
-            data: {
-              keyword_list_id: value,
-              exclude: exclude,
-            },
-            type: 'KEYWORD_LIST',
-          },
-        };
-      case 'placementList':
-        return {
-          key: cuid(),
-          model: {
-            data: {
-              placement_list_id: value,
-              exclude: exclude,
-            },
-            type: 'PLACEMENT_LIST',
-          },
-        };
       case 'dealList':
         return {
           key: cuid(),
@@ -427,11 +310,6 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
           return (
             s.type === 'inventory_access_ad_exchange' &&
             s.ad_exchange_id === value
-          );
-        case 'placementList':
-          return (
-            s.type === 'inventory_access_placement_list' &&
-            s.placement_list_id === value
           );
         case 'dealList':
           return (
@@ -475,17 +353,6 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
               type: 'DEAL_LIST',
             },
           };
-        case 'inventory_access_placement_list':
-          return {
-            key: cuid(),
-            model: {
-              data: {
-                placement_list_id: foundService.placement_list_id,
-                exclude: exclude, // to be removed ?
-              },
-              type: 'PLACEMENT_LIST',
-            },
-          };
       }
     }
     return undefined;
@@ -493,12 +360,8 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
 
   getId = (field: InventoryCatalFieldsModel) => {
     switch (field.model.type) {
-      case 'PLACEMENT_LIST':
-        return `placementList_${field.model.data.placement_list_id}`;
       case 'DEAL_LIST':
         return `dealList_${field.model.data.deal_list_id}`;
-      case 'KEYWORD_LIST':
-        return `keywordList_${field.model.data.keyword_list_id}`;
       case 'AD_EXCHANGE':
         return `adExchange_${field.model.data.ad_exchange_id}`;
       case 'DISPLAY_NETWORK':
@@ -533,17 +396,13 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
     const {
       intl,
       inventoryCategoryTree,
-      keywordList,
       dealList,
-      placementList,
       small,
       disabled,
     } = this.props;
 
     const otherData = [
       ...dealList.data,
-      ...keywordList.data,
-      ...placementList.data,
     ];
 
     const excludedSegmentFound = !!this.getSelectedInventory(
@@ -578,9 +437,7 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
             dataSource={this.state.includedDataSource}
             loading={
               inventoryCategoryTree.loading ||
-              dealList.loading ||
-              keywordList.loading ||
-              placementList.loading
+              dealList.loading
             }
             tooltipProps={{
               title: intl.formatMessage(
@@ -595,8 +452,6 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
             handleOnChange={this.handleChange(
               inventoryCategoryTree.data,
               dealList.data,
-              keywordList.data,
-              placementList.data,
             )}
             disabled={disabled}
             small={small}
@@ -619,9 +474,7 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
               dataSource={this.state.excludedDataSource}
               loading={
                 inventoryCategoryTree.loading ||
-                dealList.loading ||
-                keywordList.loading ||
-                placementList.loading
+                dealList.loading
               }
               tooltipProps={{
                 title: intl.formatMessage(
@@ -637,8 +490,6 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
               handleOnChange={this.handleChange(
                 inventoryCategoryTree.data,
                 dealList.data,
-                keywordList.data,
-                placementList.data,
                 true,
               )}
               disabled={disabled}
@@ -670,8 +521,6 @@ function generateServiceType(service: ServicesType) {
     return `adExchange_${service.ad_exchange_id}`;
   } else if (service.type === 'inventory_access_display_network') {
     return `displayNetwork_${service.display_network_id}`;
-  } else if (service.type === 'inventory_access_placement_list') {
-    return `placementList_${service.placement_list_id}`;
   } else if (service.type === 'inventory_access_deal_list') {
     return `dealList_${service.deal_list_id}`;
   }

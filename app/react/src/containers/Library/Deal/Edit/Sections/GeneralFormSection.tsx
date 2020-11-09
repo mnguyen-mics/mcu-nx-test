@@ -18,7 +18,7 @@ import { RouteComponentProps, withRouter } from 'react-router';
 const messages = defineMessages({
   sectionSubtitleGeneral: {
     id: 'edit.dealList.form.general.subtitle',
-    defaultMessage: 'Give your Keyword List a name.',
+    defaultMessage: 'Give your Deal List a name.',
   },
   sectionTitleGeneral: {
     id: 'edit.dealList.form.general.title',

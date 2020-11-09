@@ -104,14 +104,6 @@ const libraryMenuDefinition: NavigatorMenuDefinition = {
   type: 'multi',
   subMenuItems: [
     {
-      ...generateMissingdefinitionItemFromRoute(libraryDefinition.libraryPlacementList),
-      translation: messages.libraryPlacement,
-    },
-    {
-      ...generateMissingdefinitionItemFromRoute(libraryDefinition.libraryKeywordList),
-      translation: messages.libraryKeyword,
-    },
-    {
       path: '/library/adlayouts',
       requiredFeature: 'library.ad_layouts',
       translation: messages.libraryAdLayouts,
