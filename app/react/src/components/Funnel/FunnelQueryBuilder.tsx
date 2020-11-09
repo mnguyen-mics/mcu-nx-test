@@ -52,7 +52,7 @@ interface State {
 interface FunnelQueryBuilderProps {
   datamartId: string;
   isLoading: boolean;
-  parentCallback: (timestampInSec: number) => void 
+  parentCallback: (timestampInSec: number) => void
 }
 
 type Props = FunnelQueryBuilderProps &
@@ -136,7 +136,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
         this.setState({
           isLoading: false,
           dimensionsList: {
-            dimensions: response.data.dimensions.sort()
+            dimensions: response.data.dimensions
           }
         });
       })
@@ -404,7 +404,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     const { steps } = this.state;
     steps.forEach(step => {
       step.filter_clause.filters.forEach(filter => {
-        if(!filter.dimension_name || filter.dimension_name.length === 0)
+        if (!filter.dimension_name || filter.dimension_name.length === 0)
           result = false;
       })
     });
@@ -413,7 +413,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
   }
 
   handleExecuteQueryButtonClick = () => {
-    if(this.checkExpressionsNotEmpty() && this.checkDimensionsNotEmpty()) {
+    if (this.checkExpressionsNotEmpty() && this.checkDimensionsNotEmpty()) {
       this.updateFilterQueryStringParams();
       this.props.parentCallback(new Date().getTime())
     } else {
@@ -443,7 +443,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     return result;
   }
 
-  
+
 
 
   updateFilterQueryStringParams() {
@@ -516,11 +516,28 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     history.push(nextLocation);
   };
 
+  getDimensionNameSelect = () => {
+    const Option = Select.Option;
+    const { dimensionsList } = this.state;
+    return dimensionsList.dimensions.map(d => {
+      if (typeof d === "string") {
+        return <Option key={this._cuid()} value={d}>
+          {d}
+        </Option>
+      } else {
+        return (
+          <Option key={this._cuid()} value={d.value}>
+            {d.label}
+          </Option>)
+      }
+    })
+  }
+
   render() {
     const Option = Select.Option;
-    const { steps, dimensionsList, dateRange } = this.state;
+    const { steps, dateRange } = this.state;
     const { from, to } = dateRange
-    const { isLoading} = this.props;
+    const { isLoading } = this.props;
     const onChange = (newValues: McsDateRangeValue): void => {
       this.updateLocationSearch({
         from: newValues.from,
@@ -581,12 +598,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
                           placeholder="Dimension name"
                           className={"mcs-funnelQueryBuilder_select mcs-funnelQueryBuilder_select--dimensions"}
                           onChange={this.handleDimensionNameChange.bind(this, filterIndex, step.id)}>
-                          {dimensionsList.dimensions.sort().map(d => {
-                            return (
-                              <Option key={this._cuid()} value={d}>
-                                {d}
-                              </Option>)
-                          })}
+                          {this.getDimensionNameSelect()}
                         </Select>
                         <div className="mcs-funnelQueryBuilder_step_dimensionFilter_operator">
                           <span className="mcs-funnelQueryBuilder_step_dimensionFilter_operator_text">{this.showFilterSymbol(filterIndex, step.id)}
