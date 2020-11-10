@@ -1,9 +1,10 @@
 .mcs-audienceBuilder_container {
   min-height: auto;
+  height: auto;
   .mcs-audienceBuilder_categoryCard {
     .mcs-card-title {
       font-size: 15px;
-      line-height: 50px;;
+      line-height: 50px;
     }
     margin: 40px;
     padding: 0px 0px 15px 0px;
@@ -38,8 +39,43 @@
   }
 
   .mcs-audienceBuilder_liveDashboardContainer {
-    padding: 40px;
+    height: 100%;
+    .mcs-audienceBuilder_sizeButton {
+      position: fixed;
+      background-color: #fff;
+      z-index: 3;
+      border-radius: 50%;
+      padding: 10px 15px;
+      top: 50%;
+      margin-left: -20px;;
+      border: 1px solid #000;
+      transform: rotate(180deg);
+      &:hover {
+        cursor: pointer;
+      }
+    }
+    .mcs-audienceBuilder_liveDashboardMask {
+      width: 100%;
+      height: inherit;
+      background: rgba(0, 0, 0, 0.5);
+      position: absolute;
+      z-index: 2;
+      text-align: center;
+      p {
+        color: #ffffff;
+        position: fixed;
+        top: 50%;
+        width: 10%;
+        left: 80%;
+        font-size: 1.2em;
+        font-weight: bold;
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
     .mcs-audienceBuilder_liveDashboard {
+      padding: 40px;
       text-align: center;
       .mcs-audienceBuilder_totalAudience {
         padding: 15px;

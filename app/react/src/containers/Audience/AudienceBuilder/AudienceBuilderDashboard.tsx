@@ -85,20 +85,18 @@ class AudienceBuilderDashboard extends React.Component<Props, State> {
           )}
         </CardFlex>
 
-        <React.Fragment>
-          {isLoading ? (
-            <Loading isFullScreen={true} />
-          ) : (
-            dashboards.map(d => (
-              <DashboardWrapper
-                key={d.id}
-                layout={d.components}
-                datamartId={d.datamart_id}
-                source={queryDocument}
-              />
-            ))
-          )}
-        </React.Fragment>
+        {isLoading ? (
+          <Loading isFullScreen={true} />
+        ) : (
+          dashboards.map(d => (
+            <DashboardWrapper
+              key={d.id}
+              layout={d.components}
+              datamartId={d.datamart_id}
+              source={queryDocument}
+            />
+          ))
+        )}
       </div>
     );
   }
