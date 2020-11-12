@@ -18,6 +18,7 @@ import { QueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
 interface AudienceBuilderDashboardProps {
   organisationId: string;
   datamartId: string;
+  audienceBuilderId: string;
   totalAudience?: number;
   queryDocument?: QueryDocument;
   isQueryRunning: boolean;
@@ -45,26 +46,25 @@ class AudienceBuilderDashboard extends React.Component<Props, State> {
     };
   }
   componentDidMount() {
-    const { organisationId, datamartId } = this.props;
-    this.loadData(organisationId, datamartId);
+    const { organisationId, datamartId, audienceBuilderId } = this.props;
+    this.loadData(organisationId, datamartId, audienceBuilderId);
   }
 
-  loadData = (organisationId: string, selectedDatamartId: string) => {
+  loadData = (organisationId: string, selectedDatamartId: string, audienceBuilderId: string) => {
     this.setState({ isLoading: true });
     this._dashboardService
-      .getDashboards(organisationId, selectedDatamartId, 'HOME', {})
+      .getAudienceBuilderDashboards(organisationId, selectedDatamartId, audienceBuilderId, {})
       .then(d => {
-        return d.data;
-      })
-      .then(d => {
-        this.setState({ isLoading: false, dashboards: d });
+        this.setState({ dashboards: d.status === "ok" ? d.data : [] });
       })
       .catch(err => {
         this.props.notifyError(err);
+      })
+      .finally(() => {
         this.setState({
           isLoading: false,
         });
-      });
+      })
   };
 
   render() {

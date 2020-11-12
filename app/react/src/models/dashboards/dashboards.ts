@@ -9,7 +9,7 @@ export interface DashboardResource {
   components: ComponentLayout[]
 }
 
-export type DashboardType = "HOME" | "SEGMENT"
+export type DashboardType = "HOME" | "SEGMENT" | "AUDIENCE_BUILDER"
 
 export interface ComponentLayout {
   layout: Layout;

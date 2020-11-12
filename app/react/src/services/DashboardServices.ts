@@ -35,7 +35,7 @@ export interface IDashboardService {
   getDashboards: (
     organisationId: string,
     datamartId: string,
-    type: 'HOME' | 'SEGMENT',
+    type: 'HOME' | 'SEGMENT' ,
     options?: GetDashboardsOptions,
   ) => Promise<DataListResponse<DashboardResource>>;
 
@@ -45,6 +45,14 @@ export interface IDashboardService {
     segmentId: string,
     options?: GetDashboardsOptions,
   ) => Promise<DataListResponse<DashboardResource>>;
+
+  getAudienceBuilderDashboards: (
+    organisationId: string,
+    datamartId: string,
+    audienceBuilderId: string,
+    options?: GetDashboardsOptions,
+  ) => Promise<DataListResponse<DashboardResource>>;
+
   getDashboard: (
     dashboardId: string,
   ) => Promise<DataResponse<DashboardResource>>;
@@ -92,7 +100,7 @@ export class DashboardService implements IDashboardService {
   getDashboards(
     organisationId: string,
     datamartId: string,
-    type: 'HOME' | 'SEGMENT',
+    type: 'HOME' | 'SEGMENT' | 'AUDIENCE_BUILDER',
     options: GetDashboardsOptions = {},
   ): Promise<DataListResponse<DashboardResource>> {
     const hardcodedDashboards = myDashboards.filter(
@@ -186,6 +194,67 @@ export class DashboardService implements IDashboardService {
         })
         .catch(e => {
           log.debug(e);
+          return resolve({
+            status: 'ok' as any,
+            data: hardcodedDashboards as DashboardResource[],
+            count: hardcodedDashboards.filter(d => d.datamart_id === datamartId)
+              .length,
+          });
+        });
+    });
+  }
+
+  getAudienceBuilderDashboards(
+    organisationId: string,
+    datamartId: string,
+    audienceBuilderId: string,
+    options: GetDashboardsOptions = {},
+  ): Promise<DataListResponse<DashboardResource>> {
+    const hardcodedDashboards = myDashboards.filter(
+      d =>
+        d.datamart_id === datamartId &&
+        (d.type === 'AUDIENCE_BUILDER'),
+    );
+
+    return new Promise((resolve, reject) => {
+      return this._datafileService
+        .getDatafileData(
+          `mics://data_file/tenants/${organisationId}/dashboards/${datamartId}/AUDIENCE_BUILDER-${audienceBuilderId}.json`,
+        ).then(
+          (d) => d, 
+          () => this._datafileService.getDatafileData(`mics://data_file/tenants/${organisationId}/dashboards/${datamartId}/AUDIENCE_BUILDER.json`)
+        )
+        .then((b: Blob) => {
+          return readFile(b);
+        })
+        .then(s => {
+          // validate with yup
+          return JSON.parse(s);
+        })
+        .then((s: object) => {
+          return dashboardsSchema.validate(s).then(v => {
+            if ((v as any).name === 'ValidationError') {
+              throw new Error((v as any).message)
+            }
+            return v as any
+          })
+        })
+        .then(s => {
+          return resolve({
+            status: 'ok' as any,
+            data: s as DashboardResource[],
+            count: hardcodedDashboards.filter(d => d.datamart_id === datamartId)
+              .length,
+          });
+        })
+        .catch(e => {
+          log.debug(e);
+          return resolve({
+            status: 'ok' as any,
+            data: hardcodedDashboards as DashboardResource[],
+            count: hardcodedDashboards.filter(d => d.datamart_id === datamartId)
+              .length,
+          });
         });
     });
   }

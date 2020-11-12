@@ -95,6 +95,7 @@ class JSONQLPreview extends React.Component<Props> {
               ? (formatQuery(JSON.parse(value), true) as any)
               : undefined,
             demographicsFeaturesIds: [],
+            audienceBuilderId: "" // question how do we pass the proper ID here
           },
         },
       );

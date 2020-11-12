@@ -224,6 +224,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
         demographicsFeaturesIds={
           selectedAudienceBuilder.demographics_features_ids
         }
+        audienceBuilderId={selectedAudienceBuilder.id}
         datamartId={selectedDatamartId}
         renderActionBar={this.audienceBuilderActionbar}
       />
