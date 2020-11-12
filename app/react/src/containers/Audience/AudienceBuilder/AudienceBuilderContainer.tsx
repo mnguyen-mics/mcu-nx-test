@@ -18,6 +18,7 @@ import { FORM_ID, buildQueryDocument, messages } from './constants';
 import { Omit } from '../../../utils/Types';
 import {
   AudienceBuilderFormData,
+  isAudienceBuilderGroupNode,
   QueryDocument as AudienceBuilderQueryDocument,
 } from '../../../models/audienceBuilder/AudienceBuilderResource';
 import AudienceBuilderDashboard from './AudienceBuilderDashboard';
@@ -111,8 +112,14 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
 
   componentDidUpdate(prevProps: Props) {
     const { formValues } = this.props;
-    const { isMaskVisible } = this.state;
-    if (!_.isEqual(formValues, prevProps.formValues) && !isMaskVisible) {
+    const lastExpression =
+      formValues.where.expressions[formValues.where.expressions.length - 1];
+    if (
+      !_.isEqual(formValues, prevProps.formValues) &&
+      lastExpression &&
+      isAudienceBuilderGroupNode(lastExpression) &&
+      !!lastExpression.expressions.length
+    ) {
       this.setState({
         isMaskVisible: true,
       });
@@ -145,6 +152,10 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
     this.setState({
       isDashboardToggled: !this.state.isDashboardToggled,
     });
+    // Timeout is needed here otherwise graph resizing won't work
+    setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 50);
   };
 
   refreshDashboard = () => {
@@ -189,31 +200,37 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
         )}
         <Layout>
           <Row className="ant-layout-content mcs-audienceBuilder_container">
-            <Col span={isDashboardToggled ? 12 : 16}>
-              <QueryFragmentFieldArray
-                name={`where.expressions`}
-                component={QueryFragmentFormSection}
-                datamartId={datamartId}
-                demographicsFeaturesIds={demographicsFeaturesIds}
-                objectTypes={objectTypes}
-                {...genericFieldArrayProps}
-              />
+            <Col span={isDashboardToggled ? 1 : 12}>
+              <div
+                className={`${isDashboardToggled &&
+                  'mcs-audienceBuilder_hiddenForm'}`}
+              >
+                <QueryFragmentFieldArray
+                  name={`where.expressions`}
+                  component={QueryFragmentFormSection}
+                  datamartId={datamartId}
+                  demographicsFeaturesIds={demographicsFeaturesIds}
+                  objectTypes={objectTypes}
+                  {...genericFieldArrayProps}
+                />
+              </div>
             </Col>
             <Col
-              span={isDashboardToggled ? 12 : 8}
+              span={isDashboardToggled ? 23 : 12}
               className="mcs-audienceBuilder_liveDashboardContainer"
             >
+              <Button
+                className={`mcs-audienceBuilder_sizeButton ${isDashboardToggled &&
+                  'mcs-audienceBuilder_rightChevron'}`}
+                onClick={this.toggleDashboard}
+              >
+                <McsIcon type="chevron-right" />
+              </Button>
               {!!isMaskVisible && (
                 <React.Fragment>
-                  <Button
-                    className="mcs-audienceBuilder_sizeButton"
-                    onClick={this.toggleDashboard}
-                  >
-                    <McsIcon type="chevron-right" />
-                  </Button>
                   <div className="mcs-audienceBuilder_liveDashboardMask">
                     <Button onClick={this.refreshDashboard}>
-                      <p>{intl.formatMessage(messages.refreshMessage)}</p>
+                      {intl.formatMessage(messages.refreshMessage)}
                     </Button>
                   </div>
                 </React.Fragment>

@@ -23,6 +23,11 @@
       width: 100%;
     }
   }
+
+  .mcs-audienceBuilder_hiddenForm {
+    display: none;
+  }
+  
   .mcs-audienceBuilder_queryButtons {
     text-align: center;
   }
@@ -40,6 +45,7 @@
 
   .mcs-audienceBuilder_liveDashboardContainer {
     height: 100%;
+    border-left: 1px solid @border-color-split;
     .mcs-audienceBuilder_sizeButton {
       position: fixed;
       background-color: #fff;
@@ -47,12 +53,15 @@
       border-radius: 50%;
       padding: 10px 15px;
       top: 50%;
-      margin-left: -20px;;
-      border: 1px solid #000;
+      margin-left: -20px;
+      border: 1px solid @border-color-split;
       transform: rotate(180deg);
       &:hover {
         cursor: pointer;
       }
+    }
+    .mcs-audienceBuilder_rightChevron {
+      transform: rotate(0deg);
     }
     .mcs-audienceBuilder_liveDashboardMask {
       width: 100%;
@@ -61,14 +70,14 @@
       position: absolute;
       z-index: 2;
       text-align: center;
-      p {
+      button {
         color: #ffffff;
         position: fixed;
         top: 50%;
         width: 10%;
-        left: 80%;
         font-size: 1.2em;
         font-weight: bold;
+        margin-left: -5%;
         &:hover {
           cursor: pointer;
         }
