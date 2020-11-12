@@ -48,6 +48,7 @@ export interface AudienceBuilderContainerProps
     datamartId: string,
   ) => React.ReactNode;
   datamartId: string;
+  audienceBuilderId: string;
 }
 
 interface MapStateToProps {
@@ -173,6 +174,7 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
         params: { organisationId },
       },
       intl,
+      audienceBuilderId
     } = this.props;
 
     const {
@@ -238,6 +240,7 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
               <AudienceBuilderDashboard
                 organisationId={organisationId}
                 datamartId={datamartId}
+                audienceBuilderId={audienceBuilderId}
                 totalAudience={queryResult && queryResult.rows[0].count}
                 isQueryRunning={isQueryRunning}
                 queryDocument={queryDocument}
