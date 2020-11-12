@@ -13,6 +13,8 @@ import FormLayoutActionbar, {
 } from '../../../components/Layout/FormLayoutActionbar';
 import cuid from 'cuid';
 import { AudienceBuilderResource } from '../../../models/audienceBuilder/AudienceBuilderResource';
+import { injectWorkspace, InjectedWorkspaceProps } from '../../Datamart';
+import { DatamartWithMetricResource } from '../../../models/datamart/DatamartResource';
 
 export const messages = defineMessages({
   title: {
@@ -32,14 +34,33 @@ export const messages = defineMessages({
 
 export interface AudienceBuilderSelectorProps {
   audienceBuilders: AudienceBuilderResource[];
+  datamartId: string;
   onSelect: (audienceBuilder: AudienceBuilderResource) => void;
   actionbarProps: FormLayoutActionbarProps;
   isMainlayout?: boolean;
 }
 
-type Props = AudienceBuilderSelectorProps & InjectedIntlProps;
+type Props = AudienceBuilderSelectorProps &
+  InjectedIntlProps &
+  InjectedWorkspaceProps;
 
-class AudienceBuilderSelector extends React.Component<Props> {
+interface State {
+  datamart?: DatamartWithMetricResource;
+}
+
+class AudienceBuilderSelector extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {};
+  }
+
+  componentDidMount() {
+    const { workspace, datamartId } = this.props;
+    this.setState({
+      datamart: workspace.datamarts.find(d => d.id === datamartId),
+    });
+  }
+
   render() {
     const {
       onSelect,
@@ -48,6 +69,8 @@ class AudienceBuilderSelector extends React.Component<Props> {
       audienceBuilders,
       intl,
     } = this.props;
+
+    const { datamart } = this.state;
 
     return (
       <Layout>
@@ -77,7 +100,7 @@ class AudienceBuilderSelector extends React.Component<Props> {
                   return (
                     <MenuList
                       key={cuid()}
-                      title={b.name}
+                      title={`${b.name} ${datamart && `(${datamart.name})`}`}
                       select={handleSelect}
                     />
                   );
@@ -91,6 +114,7 @@ class AudienceBuilderSelector extends React.Component<Props> {
   }
 }
 
-export default compose<Props, AudienceBuilderSelectorProps>(injectIntl)(
-  AudienceBuilderSelector,
-);
+export default compose<Props, AudienceBuilderSelectorProps>(
+  injectIntl,
+  injectWorkspace,
+)(AudienceBuilderSelector);

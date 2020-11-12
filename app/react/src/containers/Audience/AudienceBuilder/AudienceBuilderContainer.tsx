@@ -1,4 +1,5 @@
 import * as React from 'react';
+import _ from 'lodash';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { Layout, Col, Row } from 'antd';
@@ -13,10 +14,11 @@ import {
   InjectedFormProps,
   getFormValues,
 } from 'redux-form';
-import { FORM_ID, buildQueryDocument } from './constants';
+import { FORM_ID, buildQueryDocument, messages } from './constants';
 import { Omit } from '../../../utils/Types';
 import {
   AudienceBuilderFormData,
+  isAudienceBuilderGroupNode,
   QueryDocument as AudienceBuilderQueryDocument,
 } from '../../../models/audienceBuilder/AudienceBuilderResource';
 import AudienceBuilderDashboard from './AudienceBuilderDashboard';
@@ -31,6 +33,7 @@ import { IRuntimeSchemaService } from '../../../services/RuntimeSchemaService';
 import { IQueryService } from '../../../services/QueryService';
 import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/RuntimeSchema';
 import { QueryDocument as GraphDbQueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
+import { McsIcon, Button } from '@mediarithmics-private/mcs-components-library';
 
 export const QueryFragmentFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
@@ -43,7 +46,6 @@ export interface AudienceBuilderContainerProps
   renderActionBar: (
     queryDocument: AudienceBuilderQueryDocument,
     datamartId: string,
-    run: () => void,
   ) => React.ReactNode;
   datamartId: string;
 }
@@ -67,6 +69,8 @@ interface State {
   objectTypes: ObjectLikeTypeInfoResource[];
   queryResult?: OTQLResult;
   isQueryRunning: boolean;
+  isDashboardToggled: boolean;
+  isMaskVisible: boolean;
 }
 
 class AudienceBuilderContainer extends React.Component<Props, State> {
@@ -82,6 +86,8 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
       isLoadingObjectTypes: false,
       objectTypes: [],
       isQueryRunning: false,
+      isDashboardToggled: false,
+      isMaskVisible: false,
     };
   }
 
@@ -105,10 +111,18 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { formValues, datamartId } = this.props;
-    const { datamartId: prevDatamartId } = prevProps;
-    if (datamartId !== prevDatamartId) {
-      this.runQuery(formValues);
+    const { formValues } = this.props;
+    const lastExpression =
+      formValues.where.expressions[formValues.where.expressions.length - 1];
+    if (
+      !_.isEqual(formValues, prevProps.formValues) &&
+      lastExpression &&
+      isAudienceBuilderGroupNode(lastExpression) &&
+      !!lastExpression.expressions.length
+    ) {
+      this.setState({
+        isMaskVisible: true,
+      });
     }
   }
 
@@ -116,6 +130,7 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
     const { datamartId } = this.props;
     this.setState({
       isQueryRunning: true,
+      isMaskVisible: false,
     });
     this._queryService
       .runJSONOTQLQuery(datamartId, buildQueryDocument(formData))
@@ -127,14 +142,26 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
         });
       })
       .catch(err => {
-        // this.props.notifyError(err);
         this.setState({
           isQueryRunning: false,
         });
       });
   };
 
-  // This will be removed when backend will be able to handle List and Long
+  toggleDashboard = () => {
+    this.setState({
+      isDashboardToggled: !this.state.isDashboardToggled,
+    });
+    // Timeout is needed here otherwise graph resizing won't work
+    setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 50);
+  };
+
+  refreshDashboard = () => {
+    const { formValues } = this.props;
+    this.runQuery(formValues);
+  };
 
   render() {
     const {
@@ -145,6 +172,7 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
+      intl,
     } = this.props;
 
     const {
@@ -152,6 +180,8 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
       queryResult,
       isQueryRunning,
       queryDocument,
+      isDashboardToggled,
+      isMaskVisible,
     } = this.state;
 
     const genericFieldArrayProps = {
@@ -160,31 +190,51 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
 
     return (
       <React.Fragment>
+        {renderActionBar(
+          {
+            operations: [{ directives: [], selections: [{ name: 'id' }] }],
+            from: 'UserPoint',
+            where: formValues.where,
+          },
+          datamartId,
+        )}
         <Layout>
-          {renderActionBar(
-            {
-              operations: [{ directives: [], selections: [{ name: 'id' }] }],
-              from: 'UserPoint',
-              where: formValues.where,
-            },
-            datamartId,
-            () => this.runQuery(formValues),
-          )}
           <Row className="ant-layout-content mcs-audienceBuilder_container">
-            <Col span={12}>
-              <QueryFragmentFieldArray
-                name={`where.expressions`}
-                component={QueryFragmentFormSection}
-                datamartId={datamartId}
-                demographicsFeaturesIds={demographicsFeaturesIds}
-                objectTypes={objectTypes}
-                {...genericFieldArrayProps}
-              />
+            <Col span={isDashboardToggled ? 1 : 12}>
+              <div
+                className={`${isDashboardToggled &&
+                  'mcs-audienceBuilder_hiddenForm'}`}
+              >
+                <QueryFragmentFieldArray
+                  name={`where.expressions`}
+                  component={QueryFragmentFormSection}
+                  datamartId={datamartId}
+                  demographicsFeaturesIds={demographicsFeaturesIds}
+                  objectTypes={objectTypes}
+                  {...genericFieldArrayProps}
+                />
+              </div>
             </Col>
             <Col
-              span={12}
+              span={isDashboardToggled ? 23 : 12}
               className="mcs-audienceBuilder_liveDashboardContainer"
             >
+              <Button
+                className={`mcs-audienceBuilder_sizeButton ${isDashboardToggled &&
+                  'mcs-audienceBuilder_rightChevron'}`}
+                onClick={this.toggleDashboard}
+              >
+                <McsIcon type="chevron-right" />
+              </Button>
+              {!!isMaskVisible && (
+                <React.Fragment>
+                  <div className="mcs-audienceBuilder_liveDashboardMask">
+                    <Button onClick={this.refreshDashboard}>
+                      {intl.formatMessage(messages.refreshMessage)}
+                    </Button>
+                  </div>
+                </React.Fragment>
+              )}
               <AudienceBuilderDashboard
                 organisationId={organisationId}
                 datamartId={datamartId}

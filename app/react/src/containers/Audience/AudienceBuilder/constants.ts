@@ -41,13 +41,10 @@ export const messages: {
     id: 'audienceBuilder.category.excludingWith',
     defaultMessage: 'excluding',
   },
-  purchasIntent: {
-    id: 'audienceBuilder.liveDashboard.purchaseIntent',
-    defaultMessage: 'Purchase Intent',
-  },
-  geographics: {
-    id: 'audienceBuilder.liveDashboard.geographics',
-    defaultMessage: 'Geographics',
+  refreshMessage: {
+    id: 'audienceBuilder.liveDashboard.refreshMessage',
+    defaultMessage:
+      'Your query has been modified, please click here to refresh',
   },
   audienceFeatures: {
     id: 'audienceBuilder.audienceFeature.card.title',

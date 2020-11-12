@@ -10,7 +10,6 @@ import { Actionbar } from '@mediarithmics-private/mcs-components-library';
 
 interface AudienceBuilderActionbarProps {
   save: (formData: NewUserQuerySimpleFormData) => Promise<any>;
-  run: () => void;
 }
 
 interface State {
@@ -42,10 +41,6 @@ class AudienceBuilderActionbar extends React.Component<Props, State> {
         segmentModalLoading: false,
       });
     });
-  };
-
-  handleRun = () => {
-    this.props.run();
   };
 
   render() {
@@ -83,13 +78,6 @@ class AudienceBuilderActionbar extends React.Component<Props, State> {
             </Button>
           </Dropdown>
         }
-
-        <Button className="mcs-primary" type="primary" onClick={this.handleRun}>
-          <FormattedMessage
-            id="audience.audienceBuilder.actionBar.runQueryButton"
-            defaultMessage="Run Query"
-          />
-        </Button>
 
         <SaveAsUserQuerySegmentModal
           onOk={this.handleSaveAsUserQuery}

@@ -249,7 +249,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
               return qq;
             };
 
-            const path = variable.path.reverse();
+            const path = variable.path.slice().reverse();
 
             const innerQuery = path.reduce(buildQuery(), '@map(limit:10000)');
 

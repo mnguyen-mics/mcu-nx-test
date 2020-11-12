@@ -85,8 +85,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
-      selectedDatamartId /* 
-      formValues, */,
+      selectedDatamartId,
     } = this.props;
     const {
       match: {
@@ -98,11 +97,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
       organisationId !== prevOrganisationId ||
       selectedDatamartId !== prevSelectedDatamartId
     ) {
-      this.getAudienceBuilders(
-        selectedDatamartId,
-      ); /* .then(() => {
-        this.runQuery(formValues);
-      }); */
+      this.getAudienceBuilders(selectedDatamartId);
     }
   }
 
@@ -171,28 +166,9 @@ class AudienceBuilderPage extends React.Component<Props, State> {
     }
   };
 
-  /*   runQuery = (formData: AudienceBuilderFormData) => {
-    const { selectedDatamartId } = this.props;
-    this._queryService
-      .runJSONOTQLQuery(selectedDatamartId, buildQueryDocument(formData))
-      .then(queryResult => {
-        this.setState({
-          queryResult: queryResult.data,
-          isQueryRunning: false,
-        });
-      })
-      .catch(err => {
-        // this.props.notifyError(err);
-        this.setState({
-          isQueryRunning: false,
-        });
-      });
-  }; */
-
   audienceBuilderActionbar = (
     query: AudienceBuilderQueryDocument,
     datamartId: string,
-    runQuery: () => void,
   ) => {
     const saveAudience = (userQueryFormData: NewUserQuerySimpleFormData) => {
       const { match, history } = this.props;
@@ -226,7 +202,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
         });
     };
 
-    return <AudienceBuilderActionbar save={saveAudience} run={runQuery} />;
+    return <AudienceBuilderActionbar save={saveAudience} />;
   };
 
   render() {
@@ -255,6 +231,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
       <AudienceBuilderSelector
         audienceBuilders={audienceBuilders || []}
         onSelect={this.selectAudienceBuilder}
+        datamartId={selectedDatamartId}
         actionbarProps={{
           paths: [
             {

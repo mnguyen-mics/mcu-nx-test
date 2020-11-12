@@ -39,7 +39,6 @@ class JSONQLPreview extends React.Component<Props> {
     const createActionBar = (
       onSave: () => void,
       onClose: () => void,
-      runQuery: () => void,
       query: any,
     ) => {
       return (
@@ -65,14 +64,6 @@ class JSONQLPreview extends React.Component<Props> {
               defaultMessage="Update"
             />
           </Button>
-          {segmentEditor === 'AUDIENCE_BUILDER' && (
-            <Button disabled={!query} onClick={runQuery}>
-              <FormattedMessage
-                id="queryTool.jsonql.querytool.query.edit.run"
-                defaultMessage="Run Query"
-              />
-            </Button>
-          )}
           <McsIcon
             type="close"
             className="close-icon"
@@ -84,18 +75,14 @@ class JSONQLPreview extends React.Component<Props> {
     };
 
     if (segmentEditor === 'AUDIENCE_BUILDER') {
-      const actionbar = (
-        query: AudienceQueryDocument,
-        datamartId: string,
-        runQuery: () => void,
-      ) => {
+      const actionbar = (query: AudienceQueryDocument, datamartId: string) => {
         const onSave = () => {
           if (this.props.onChange)
             this.props.onChange(JSON.stringify(formatQuery(query)));
           this.props.closeNextDrawer();
         };
         const onClose = () => this.props.closeNextDrawer();
-        return createActionBar(onSave, onClose, runQuery, query);
+        return createActionBar(onSave, onClose, query);
       };
 
       this.props.openNextDrawer<AudienceBuilderContainerProps>(
@@ -118,7 +105,7 @@ class JSONQLPreview extends React.Component<Props> {
           this.props.closeNextDrawer();
         };
         const onClose = () => this.props.closeNextDrawer();
-        return createActionBar(onSave, onClose, () => null, query);
+        return createActionBar(onSave, onClose, query);
       };
 
       this.props.openNextDrawer<JSONQLBuilderContainerProps>(
@@ -128,9 +115,7 @@ class JSONQLPreview extends React.Component<Props> {
             datamartId: this.props.datamartId,
             renderActionBar: actionbar,
             editionLayout: true,
-            queryDocument: value
-              ? JSON.parse(value)
-              : undefined,
+            queryDocument: value ? JSON.parse(value) : undefined,
             isTrigger: this.props.isTrigger,
             isEdge: this.props.isEdge,
           },
