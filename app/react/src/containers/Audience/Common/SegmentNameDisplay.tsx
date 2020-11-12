@@ -126,6 +126,12 @@ class SegmentNameDisplayWrapped extends React.Component<Props, State> {
       : segmentName;
   };
 
+  displayId = () => {
+    const { audienceSegmentResource } = this.state;
+    if (!audienceSegmentResource) return <span />;
+    return audienceSegmentResource.name === audienceSegmentResource.id ? <span /> : <span> {audienceSegmentResource.id} - </span>;
+  }
+
   render() {
     const { intl } = this.props;
     const { audienceSegmentResource } = this.state;
@@ -147,7 +153,7 @@ class SegmentNameDisplayWrapped extends React.Component<Props, State> {
     }
     return (
       <span title={audienceSegmentResource.name}>
-        {this.ellipsizeSegmentName(audienceSegmentName)}
+        {this.displayId()} {this.ellipsizeSegmentName(audienceSegmentName)}
       </span>
     );
   }
