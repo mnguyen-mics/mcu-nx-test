@@ -15,6 +15,7 @@ type Props = DimensionNameDisplayProps &
   InjectedIntlProps;
 
 interface NamedResource {
+  id: string;
   name: string;
 }
 
@@ -33,10 +34,15 @@ class DimensionNameDisplayWrapped extends React.Component<Props> {
       : name;
   };
 
+  displayId = () => {
+    const { resource } = this.props;
+    return resource.name === resource.id ? <span /> : <span> {resource.id} - </span>;
+  }
+
   render() {
     const { resource } = this.props;
     return <span title={resource.name}>
-      {this.ellipsizeResourceName(resource.name)}
+      {this.displayId()} {this.ellipsizeResourceName(resource.name)} 
     </span>
   }
 }
