@@ -1203,7 +1203,6 @@ export class AutomationFormService implements IAutomationFormService {
         feed_type: 'SCENARIO',
         datamart_id: datamartId,
         name: name,
-        persisted: false,
       })
       .then(({ data: segment }) => {
         return segment.id;
