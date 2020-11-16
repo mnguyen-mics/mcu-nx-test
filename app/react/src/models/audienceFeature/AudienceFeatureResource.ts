@@ -1,6 +1,15 @@
-export type AudienceFeatureType = 'Int' | 'Enum' | 'Boolean' | 'String' | 'Date' | 'Timestamp' | AdditionalAudienceFeatureType;
+export type AudienceFeatureType =
+  | 'Int'
+  | 'Float'
+  | 'Enum'
+  | 'Boolean'
+  | 'String'
+  | 'Date'
+  | 'Timestamp'
+  | AdditionalAudienceFeatureType;
 
-type AdditionalAudienceFeatureType = 'OperatingSystemFamily'
+type AdditionalAudienceFeatureType =
+  | 'OperatingSystemFamily'
   | 'FormFactor'
   | 'HashFunction'
   | 'BrowserFamily'
