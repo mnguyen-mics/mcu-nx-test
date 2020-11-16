@@ -248,10 +248,12 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
         });
 
       const analyticsPromise = this._datamartService
-        .getDatamarts(organisationId, { allow_administrator: true })
+        .getDatamarts(organisationId, {
+          allow_administrator: true,
+          archived: false,
+        })
         .then(datamartsResponse => {
-          const datamartIds = datamartsResponse.data
-            .map(_ => _.id);
+          const datamartIds = datamartsResponse.data.map(_ => _.id);
 
           const metrics: DatamartUsersAnalyticsMetric[] = ['sessions', 'users'];
           const from = new McsMoment('now-8d');
