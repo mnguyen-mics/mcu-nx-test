@@ -147,6 +147,9 @@ class AudienceFeatureVariable extends React.Component<Props> {
           f => f.name === variable.field_name,
         );
         const fieldDirectives = field ? field.directives : undefined;
+        let selectProps = {};
+        let loadOnlyOnce = false;
+        let shouldFilterData = false;
 
         let fetchListMethod = (
           keywords: string,
@@ -269,6 +272,12 @@ class AudienceFeatureVariable extends React.Component<Props> {
                 );
               });
           };
+          selectProps = {
+            ...selectProps,
+            mode: 'tags',
+          };
+          loadOnlyOnce = true;
+          shouldFilterData = true;
         }
 
         return (
@@ -281,6 +290,9 @@ class AudienceFeatureVariable extends React.Component<Props> {
             }}
             fetchListMethod={fetchListMethod}
             fetchSingleMethod={fetchSingleMethod}
+            selectProps={selectProps}
+            loadOnlyOnce = {loadOnlyOnce}
+            shouldFilterData = {shouldFilterData}
           />
         );
       case 'Timestamp':
