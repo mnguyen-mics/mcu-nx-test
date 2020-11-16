@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Modal, Row, Col, Radio } from 'antd';
-import McsIcon from '../McsIcon';
 import { RadioChangeEvent } from 'antd/lib/radio';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 interface Legend {
   key: string;

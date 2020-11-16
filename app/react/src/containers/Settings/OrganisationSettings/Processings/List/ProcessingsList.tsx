@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Layout, Button, Modal } from 'antd';
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import messages from '../messages';
-import { McsIconType } from '../../../../../components/McsIcon';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import settingsMessages from '../../../messages';
 import { PAGINATION_SEARCH_SETTINGS } from '../../../../../utils/LocationSearchHelper';
@@ -23,6 +22,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
 import { ProcessingResource } from '../../../../../models/processing';
+import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 
 const { Content } = Layout;
 

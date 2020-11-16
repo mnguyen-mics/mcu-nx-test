@@ -32,9 +32,9 @@ import injectThemeColors, {
 import LocalStorage from '../../../../services/LocalStorage';
 import { UserAccountCompartmentDatamartSelectionResource } from '../../../../models/datamart/DatamartResource';
 import { IDatamartService } from '../../../../services/DatamartService';
-import { McsIcon } from '../../../../components';
 import { Filters } from '../../../../components/ItemList';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 const InputGroup = Input.Group;
 const Option = Select.Option;

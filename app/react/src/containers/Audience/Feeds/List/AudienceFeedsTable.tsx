@@ -40,7 +40,6 @@ import { IAudienceSegmentService } from '../../../../services/AudienceSegmentSer
 import { TYPES } from '../../../../constants/types';
 import { Link } from 'react-router-dom';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
-import { McsIcon } from '../../../../components';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
@@ -52,6 +51,7 @@ import EditPluginModal from './EditPluginModal';
 import { PluginCardModalTab } from '../../../Plugin/Edit/PluginCard/PluginCardModalContent';
 import messages from '../messages';
 import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 type Props = InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }> &

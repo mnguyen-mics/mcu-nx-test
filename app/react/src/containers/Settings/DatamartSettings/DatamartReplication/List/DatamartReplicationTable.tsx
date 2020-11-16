@@ -14,8 +14,7 @@ import { ActionsColumnDefinition } from '../../../../../components/TableView/Tab
 import { parseSearch } from '../../../../../utils/LocationSearchHelper';
 import { DATAMART_REPLICATION_SEARCH_SETTINGS } from './DatamartReplicationListContainer';
 import { Modal, Switch, Tooltip } from 'antd';
-import { McsIcon } from '../../../../../components';
-import { EmptyTableView } from '@mediarithmics-private/mcs-components-library';
+import { EmptyTableView, McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 export interface DatamartReplicationTableProps {
   isLoading: boolean;

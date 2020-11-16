@@ -6,9 +6,8 @@ import {
   OTQLBucket,
   OTQLBuckets,
 } from '../../../models/datamart/graphdb/OTQLResult';
-import { Button } from '@mediarithmics-private/mcs-components-library';
+import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { FormattedMessage } from 'react-intl';
-import { McsIcon } from '../../../components/index';
 
 interface BucketPath {
   aggregationBucket: OTQLBuckets;

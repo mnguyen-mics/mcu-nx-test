@@ -1,6 +1,5 @@
 import { NodeModel } from 'storm-react-diagrams';
 import SimplePortModel from '../../../QueryTool/JSONOTQL/Diagram/Port/SimplePortModel';
-import { McsIconType } from '../../../../components/McsIcon';
 import { StorylineNodeModel, AntIcon } from '../domain';
 import DisplayCampaignAutomationForm from './Edit/DisplayCampaignForm/DisplayCampaignAutomationForm';
 import ABNAutomationForm from './Edit/ABNAutomationForm/ABNAutomationForm';
@@ -16,6 +15,7 @@ import { QueryInputUiCreationMode } from '../../../../models/automations/automat
 import OnSegmentEntryInputAutomationForm from './Edit/OnSegmentEntryInputForm/OnSegmentEntryInputAutomationForm';
 import OnSegmentExitInputAutomationForm from './Edit/OnSegmentExitInputForm/OnSegmentExitInputAutomationForm';
 import CustomActionAutomationForm from './Edit/CustomActionNodeForm/CustomActionAutomationForm';
+import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 
 export default class AutomationNodeModel extends NodeModel {
   collapsed = false;

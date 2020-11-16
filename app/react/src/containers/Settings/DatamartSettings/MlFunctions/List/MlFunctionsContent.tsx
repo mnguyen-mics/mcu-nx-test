@@ -4,7 +4,6 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { Modal, Button, Layout } from 'antd';
-import McsIcon, { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import {
   PAGINATION_SEARCH_SETTINGS,
@@ -20,6 +19,8 @@ import injectNotifications, { InjectedNotificationProps } from '../../../../Noti
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IPluginService } from '../../../../../services/PluginService';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 
 const { Content } = Layout;
 

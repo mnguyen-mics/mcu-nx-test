@@ -1,5 +1,6 @@
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 import * as React from 'react';
-import McsIcon, { McsIconType } from '../McsIcon';
 
 export interface EmptyRecordsProps {
   iconType?: McsIconType;

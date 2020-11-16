@@ -14,8 +14,8 @@ import {
 import { RouteComponentProps, withRouter } from 'react-router';
 import { DISPLAY_SEARCH_SETTINGS } from './ServiceUsageReportListPage';
 import ItemList from '../../../../../components/ItemList';
-import { McsIconType } from '../../../../../components/McsIcon';
 import { McsDateRangeValue } from '../../../../../components/McsDateRangePicker';
+import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 
 const { Content } = Layout;
 

@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { Actionbar } from '@mediarithmics-private/mcs-components-library';
-import { McsIcon } from '../../../components';
+import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { FormatProperty } from './domain';
 import messages from './messages';
 import { injectIntl, InjectedIntlProps } from 'react-intl';

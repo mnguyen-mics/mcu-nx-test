@@ -11,11 +11,12 @@ import { PAGINATION_SEARCH_SETTINGS } from '../../../../utils/LocationSearchHelp
 import { ServiceItemOfferResource } from '../../../../models/servicemanagement/PublicServiceItemResource';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { Link } from 'react-router-dom';
-import McsIcon, { McsIconType } from '../../../../components/McsIcon';
 import ItemList from '../../../../components/ItemList';
 import Button, { ButtonProps } from 'antd/lib/button';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 
 const { Content } = Layout;
 

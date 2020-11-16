@@ -2,9 +2,7 @@ import * as React from 'react';
 import { Button } from 'antd';
 import { Link } from 'react-router-dom';
 import { compose } from 'recompose';
-
-import McsIcon from '../../../../../components/McsIcon';
-import { Actionbar } from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import {
   FormattedMessage,
   defineMessages,

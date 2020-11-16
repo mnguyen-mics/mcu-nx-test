@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Spin } from 'antd';
-import McsIcon from '../../components/McsIcon';
 import {
   DisplayAdResource,
   EmailTemplateResource,
@@ -8,6 +7,7 @@ import {
 import { lazyInject } from '../../config/inversify.config';
 import { TYPES } from '../../constants/types';
 import { ICreativeService } from '../../services/CreativeService';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 interface CreativeScreenshotProps {
   item: DisplayAdResource | EmailTemplateResource;
@@ -122,7 +122,7 @@ class CreativeScreenshot extends React.Component<
   };
 
   renderErrorScreenshot = () => {
-    return <McsIcon className="icon-3x" type="close-big" />;
+    return <McsIcon className="mcs-icon-3x" type="close-big" />;
   };
 
   render() {

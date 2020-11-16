@@ -2,8 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import messages from '../../messages';
-import { McsIcon } from '../../../../../../components';
-import { Button } from '@mediarithmics-private/mcs-components-library';
+import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import {
   FormInput,
   FormAlertInput,

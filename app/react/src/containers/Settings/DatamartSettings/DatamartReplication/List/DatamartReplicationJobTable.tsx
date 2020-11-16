@@ -12,7 +12,6 @@ import { DatamartReplicationJobExecutionResource } from '../../../../../models/s
 import {
   TableViewFilters,
 } from '../../../../../components/TableView';
-import { McsIcon } from '../../../../../components';
 import { getExecutionInfo } from '../../../../../utils/JobHelpers';
 import injectThemeColors, {
   InjectedThemeColorsProps,
@@ -24,7 +23,7 @@ import {
 } from '../../../../../utils/LocationSearchHelper';
 import { Filters } from '../../../../../components/ItemList';
 import { Index } from '../../../../../utils';
-import { EmptyTableView } from '@mediarithmics-private/mcs-components-library';
+import { EmptyTableView, McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 interface DatamartReplicationJobTableProps {
   dataSource: DatamartReplicationJobExecutionResource[];

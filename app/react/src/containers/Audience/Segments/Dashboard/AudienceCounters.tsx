@@ -3,11 +3,11 @@ import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { EditAudienceSegmentParam } from '../Edit/domain';
 import { DatamartWithMetricResource } from '../../../../models/datamart/DatamartResource';
-import { McsIconType } from '../../../../components/McsIcon';
 import messages from './messages';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { CounterProps } from '@mediarithmics-private/mcs-components-library/lib/components/counters/counter';
 import { CounterDashboard } from '@mediarithmics-private/mcs-components-library';
+import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 
 export interface AudienceCountersProps {
   datamarts: DatamartWithMetricResource[];

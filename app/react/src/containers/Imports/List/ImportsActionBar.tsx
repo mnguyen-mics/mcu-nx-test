@@ -5,10 +5,12 @@ import { compose } from 'recompose';
 import { Button } from 'antd';
 import { Link } from 'react-router-dom';
 
-import { Actionbar } from '@mediarithmics-private/mcs-components-library';
+import {
+  Actionbar,
+  McsIcon,
+} from '@mediarithmics-private/mcs-components-library';
 import messages from './messages';
 import { InjectedDatamartProps, injectDatamart } from '../../Datamart';
-import McsIcon from '../../../components/McsIcon';
 
 interface RouterProps {
   organisationId: string;

@@ -4,10 +4,7 @@ import { Link, withRouter, matchPath } from 'react-router-dom';
 import { Menu } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
-import {
-  getDefaultDatamart,
-} from '../../redux/Session/selectors';
-import McsIcon, { McsIconType } from '../../components/McsIcon';
+import { getDefaultDatamart } from '../../redux/Session/selectors';
 
 import { menuDefinitions } from '../../routes/menuDefinition';
 
@@ -15,10 +12,15 @@ import { compose } from 'recompose';
 import { RouteComponentProps } from 'react-router';
 import { MenuMode } from 'antd/lib/menu';
 import { injectFeatures, InjectedFeaturesProps } from '../Features';
-import { NavigatorMenuDefinition, NavigatorSubMenuDefinition } from '../../routes/domain';
+import {
+  NavigatorMenuDefinition,
+  NavigatorSubMenuDefinition,
+} from '../../routes/domain';
 import { DatamartResource } from '../../models/datamart/DatamartResource';
 import { MicsReduxState } from '../../utils/ReduxHelper';
- 
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
+
 const { SubMenu } = Menu;
 
 const basePath = '/v2/o/:organisationId(\\d+)';
@@ -57,25 +59,37 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
   }
 
   componentDidMount() {
-    const { location: { pathname } } = this.props;
-    this.checkInitialState(pathname)
-    
+    const {
+      location: { pathname },
+    } = this.props;
+    this.checkInitialState(pathname);
   }
 
   checkInitialState = (pathname: string) => {
-
     const currentOpenSubMenu = menuDefinitions
-      .filter(item => item.type === 'multi' && item.subMenuItems && item.subMenuItems.length > 0)
+      .filter(
+        item =>
+          item.type === 'multi' &&
+          item.subMenuItems &&
+          item.subMenuItems.length > 0,
+      )
       .find(
-        item => item.type === 'multi' && item.subMenuItems.reduce((acc: boolean, val) => {
-          return matchPath(pathname, { path: `${basePath}${val.path}`, exact: false, strict: false }) ? true : acc;
-        }, false)
+        item =>
+          item.type === 'multi' &&
+          item.subMenuItems.reduce((acc: boolean, val) => {
+            return matchPath(pathname, {
+              path: `${basePath}${val.path}`,
+              exact: false,
+              strict: false,
+            })
+              ? true
+              : acc;
+          }, false),
       );
 
     if (currentOpenSubMenu)
       this.setState({ inlineOpenKeys: [currentOpenSubMenu.iconType] });
-  }
-  
+  };
 
   onOpenChange = (openKeys: string[]) => {
     const state = this.state;
@@ -97,7 +111,6 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
   };
 
   onClick = ({ key }: { key: string }) => {
-    
     const hasClickOnFirstLevelMenuItem = menuDefinitions.find(
       item => item.iconType === key,
     );
@@ -105,24 +118,29 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
   };
 
   getAvailableItems = (): NavigatorMenuDefinition[] => {
-    const {
-      hasFeature
-    } = this.props;
+    const { hasFeature } = this.props;
 
-    const checkIfHasAtLeastOneFeature = (item: NavigatorMenuDefinition): boolean => {
+    const checkIfHasAtLeastOneFeature = (
+      item: NavigatorMenuDefinition,
+    ): boolean => {
       if (item.type === 'simple') {
-        return hasFeature(item.requiredFeature, item.requireDatamart)
+        return hasFeature(item.requiredFeature, item.requireDatamart);
       }
       return item.subMenuItems.reduce((acc, val) => {
-        return hasFeature(val.requiredFeature, val.requireDatamart) ? hasFeature(val.requiredFeature, val.requireDatamart) : acc;
-      }, false)
-    }
+        return hasFeature(val.requiredFeature, val.requireDatamart)
+          ? hasFeature(val.requiredFeature, val.requireDatamart)
+          : acc;
+      }, false);
+    };
 
     return menuDefinitions.reduce((acc, item) => {
       if (checkIfHasAtLeastOneFeature(item)) {
         if (item.type === 'multi') {
           const subMenuItems = (item.subMenuItems || []).filter(subMenuItem =>
-            hasFeature(subMenuItem.requiredFeature, subMenuItem.requireDatamart),
+            hasFeature(
+              subMenuItem.requiredFeature,
+              subMenuItem.requireDatamart,
+            ),
           );
           return [...acc, { ...item, subMenuItems }];
         }
@@ -130,18 +148,19 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
       }
       return acc;
     }, []);
-  }
+  };
 
   buildItems = () => {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       defaultDatamart,
     } = this.props;
 
     const baseUrl = `/v2/o/${organisationId}`;
-    
-    return this.getAvailableItems().map(itemDef => {
 
+    return this.getAvailableItems().map(itemDef => {
       if (itemDef.type === 'multi') {
         const onTitleClick = () => {
           this.setState({ inlineOpenKeys: [itemDef.iconType] });
@@ -160,27 +179,27 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
               </span>
             }
           >
-            {itemDef.subMenuItems.map((subMenuItem: NavigatorSubMenuDefinition) => {
-              let linkUrl = `${baseUrl}${subMenuItem.path}`;
-              if (subMenuItem.legacyPath) {
-                if (subMenuItem.requireDatamart) {
-                  linkUrl = `/o${organisationId}d${
-                    defaultDatamart(organisationId).id
-                  }${subMenuItem.path}`;
-                } else {
-                  linkUrl = `/${organisationId}${subMenuItem.path}`;
+            {itemDef.subMenuItems.map(
+              (subMenuItem: NavigatorSubMenuDefinition) => {
+                let linkUrl = `${baseUrl}${subMenuItem.path}`;
+                if (subMenuItem.legacyPath) {
+                  if (subMenuItem.requireDatamart) {
+                    linkUrl = `/o${organisationId}d${
+                      defaultDatamart(organisationId).id
+                    }${subMenuItem.path}`;
+                  } else {
+                    linkUrl = `/${organisationId}${subMenuItem.path}`;
+                  }
                 }
-              }
-              return (
-                <Menu.Item
-                  key={subMenuItem.path}
-                >
-                  <Link to={linkUrl}>
-                    <FormattedMessage {...subMenuItem.translation} />
-                  </Link>
-                </Menu.Item>
-              );
-            })}
+                return (
+                  <Menu.Item key={subMenuItem.path}>
+                    <Link to={linkUrl}>
+                      <FormattedMessage {...subMenuItem.translation} />
+                    </Link>
+                  </Menu.Item>
+                );
+              },
+            )}
           </SubMenu>
         );
       }
@@ -196,9 +215,13 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
         </Menu.Item>
       );
     });
-  }
+  };
 
-  getAllKeysWithPath = (): Array<{ path: string, key: string, mainKey: string }> => {
+  getAllKeysWithPath = (): Array<{
+    path: string;
+    key: string;
+    mainKey: string;
+  }> => {
     return this.getAvailableItems().reduce((acc, item) => {
       let subMenuKeys;
       if (item.type === 'multi') {
@@ -209,33 +232,31 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
               {
                 key: subItem.path,
                 path: subItem.path,
-                mainKey: item.iconType
+                mainKey: item.iconType,
               },
             ];
           },
           [],
         );
-        return [
-          ...acc,
-          ...subMenuKeys,
-        ];
+        return [...acc, ...subMenuKeys];
       } else {
         return [
           ...acc,
           {
             key: item.iconType,
             path: item.path,
-            mainKey: item.iconType
+            mainKey: item.iconType,
           },
         ];
       }
-      
-      
     }, []);
-  }
+  };
 
   render() {
-    const { mode, location: { pathname } } = this.props;
+    const {
+      mode,
+      location: { pathname },
+    } = this.props;
 
     const getSelectedKeys = (): string[] => {
       const currentItem = this.getAllKeysWithPath().find(item => {

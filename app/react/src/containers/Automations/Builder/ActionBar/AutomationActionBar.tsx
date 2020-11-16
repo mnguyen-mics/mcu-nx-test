@@ -7,7 +7,7 @@ import {
   messages,
   AutomationBuilderPageRouteParams,
 } from '../AutomationBuilderPage';
-import { Actionbar } from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { Button } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import AutomationSimpleForm, {
@@ -18,7 +18,6 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import { AutomationFormData, INITIAL_AUTOMATION_DATA } from '../../Edit/domain';
-import { McsIcon } from '../../../../components';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
 
 interface AutomationActionBarProps {

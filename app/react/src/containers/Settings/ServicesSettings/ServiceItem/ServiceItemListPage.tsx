@@ -9,7 +9,7 @@ import { GetServiceOptions, GetServiceItemsOptions, ICatalogService,
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import { InfiniteList, Button as McsButton } from '@mediarithmics-private/mcs-components-library';
+import { InfiniteList, Button as McsButton, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { InfiniteListFilters } from '@mediarithmics-private/mcs-components-library/lib/components/infinite-list';
 import {
   ServiceItemShape,
@@ -17,7 +17,6 @@ import {
   ServiceItemConditionShape,
   isLinearServiceItemConditionsResource,
 } from '../../../../models/servicemanagement/PublicServiceItemResource';
-import { McsIcon } from '../../../../components';
 import { messages } from '../SubscribedOffers/List/SubscribedOffersListPage';
 import StackedBarPlot from '../../../../components/Charts/CategoryBased/StackedBarPlot';
 import injectThemeColors, {

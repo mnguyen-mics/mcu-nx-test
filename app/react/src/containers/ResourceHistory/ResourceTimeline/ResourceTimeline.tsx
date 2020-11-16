@@ -6,7 +6,6 @@ import { InjectedIntlProps, FormattedMessage, injectIntl } from "react-intl";
 
 import { ResourceType, HistoryEventShape, ResourceLinkHelper } from "../../../models/resourceHistory/ResourceHistory";
 import messages from './messages';
-import { McsIcon } from '../../../components';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import HistoryEventCard from './HistoryEventCard';
@@ -17,6 +16,7 @@ import injectNotifications, {
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IResourceHistoryService } from '../../../services/ResourceHistoryService';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 export interface Events {
   isLoading: boolean;

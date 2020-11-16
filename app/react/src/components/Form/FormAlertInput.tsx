@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Row, Col, Alert, Input } from 'antd';
-import { McsIcon } from '../../components';
 import { AlertProps } from 'antd/lib/alert';
-import { McsIconType } from '../McsIcon';
 import FormFieldWrapper, { FormFieldWrapperProps } from './FormFieldWrapper';
 import { WrappedFieldProps } from 'redux-form';
 import { FormInputProps } from './FormInput';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 
 export interface FormAlertInputProps
   extends FormFieldWrapperProps,

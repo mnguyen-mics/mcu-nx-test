@@ -3,13 +3,9 @@ import { WrappedFieldArrayProps } from 'redux-form';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { Row, Col } from 'antd';
 import cuid from 'cuid';
-
 import messages from '../messages';
-import McsIcon from '../../../../../components/McsIcon';
-
 import { FormSection } from '../../../../../components/Form';
 import { QueryBooleanOperator } from '../../../../../models/datamart/graphdb/QueryDocument';
-// import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { FormItemProps } from 'antd/lib/form';
 import { FieldNodeFormData } from '../domain';
 import {
@@ -17,6 +13,7 @@ import {
   ObjectLikeTypeInfoResource,
 } from '../../../../../models/datamart/graphdb/RuntimeSchema';
 import FieldNodeForm from './Field/FieldNodeForm';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 export interface FieldNodeSectionProps {
   formItemProps?: FormItemProps;

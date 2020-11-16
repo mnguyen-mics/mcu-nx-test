@@ -3,7 +3,6 @@ import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Modal, Layout } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import { McsIconType } from '../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../components/ItemList';
 import { AssetFileResource } from '../../../../models/assets/assets';
 import {
@@ -18,6 +17,7 @@ import { ActionsColumnDefinition } from '../../../../components/TableView/TableV
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IAssetFileService } from '../../../../services/Library/AssetFileService';
+import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 
 const { Content } = Layout;
 

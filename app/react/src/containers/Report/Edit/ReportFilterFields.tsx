@@ -4,10 +4,10 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { Row, Col } from 'antd';
 
 import messages from './messages';
-import McsIcon from '../../../components/McsIcon';
 import FormLinkedSelectInput, {
   FormLinkedSelectInputProps,
 } from '../../../components/Form/FormLinkedSelectInput';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 interface FormLinkedSelectInputModel {
   leftValue: string;

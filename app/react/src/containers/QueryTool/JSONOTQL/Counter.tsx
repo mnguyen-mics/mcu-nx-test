@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Icon } from 'antd';
 import { formatMetric } from '../../../utils/MetricHelper';
-import { McsIcon } from '../../../components';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 export interface CounterProps {
   name: string;

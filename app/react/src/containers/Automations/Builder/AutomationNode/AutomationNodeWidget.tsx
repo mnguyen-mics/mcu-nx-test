@@ -2,7 +2,7 @@ import * as React from 'react';
 import cuid from 'cuid';
 import { DiagramEngine, PortWidget } from 'storm-react-diagrams';
 import AutomationNodeModel from './AutomationNodeModel';
-import { McsIcon, WindowBodyPortal } from '../../../../components';
+import { WindowBodyPortal } from '../../../../components';
 import { ROOT_NODE_POSITION } from '../../../QueryTool/JSONOTQL/domain';
 import {
   injectIntl,
@@ -19,7 +19,6 @@ import {
   StorylineNodeModel,
 } from '../domain';
 import { Icon, Tooltip } from 'antd';
-import { McsIconType } from '../../../../components/McsIcon';
 import {
   isScenarioNodeShape,
   AutomationFormDataType,
@@ -45,6 +44,8 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
 import { isFakeId } from '../../../../utils/FakeIdHelper';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 
 interface AutomationNodeProps {
   node: AutomationNodeModel;

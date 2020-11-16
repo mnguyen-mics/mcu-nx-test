@@ -4,7 +4,7 @@ import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Layout } from 'antd';
 import CampaignDashboardHeader from '../../../../../Campaigns/Common/CampaignDashboardHeader';
-import { Card, Actionbar } from '@mediarithmics-private/mcs-components-library';
+import { Card, Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../../Notifications/injectNotifications';
@@ -16,7 +16,6 @@ import { McsDateRangeValue } from '../../../../../../components/McsDateRangePick
 import ReportService from '../../../../../../services/ReportService';
 import log from '../../../../../../utils/Logger';
 import { normalizeReportView } from '../../../../../../utils/MetricHelper';
-import { McsIcon } from '../../../../../../components';
 import { lazyInject } from '../../../../../../config/inversify.config';
 import { IEmailCampaignService } from '../../../../../../services/EmailCampaignService';
 import { TYPES } from '../../../../../../constants/types';

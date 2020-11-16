@@ -7,7 +7,6 @@ import GenericWorldMap from '../charts/GenericWorldMap';
 import GenericStackedBar from '../charts/GenericStackedBar';
 import GenericColumn from '../charts/GenericColumn';
 import { Tabs, Statistic, Icon } from 'antd';
-import { McsIconType } from '../../../../../components/McsIcon';
 import * as Highcharts from 'highcharts';
 import {
   TabItem,
@@ -31,6 +30,7 @@ import { EmptyRecords } from '../../../../../components';
 import { DatamartUsersAnalyticsDimension } from '../../../../../utils/DatamartUsersAnalyticsReportHelper';
 import { EmptyChart, CounterDashboard } from '@mediarithmics-private/mcs-components-library';
 import { CounterProps } from '@mediarithmics-private/mcs-components-library/lib/components/counters/counter';
+import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 
 const messages = defineMessages({
   noData: {

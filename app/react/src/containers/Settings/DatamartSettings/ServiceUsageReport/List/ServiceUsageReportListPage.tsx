@@ -18,11 +18,11 @@ import {
   KEYWORD_SEARCH_SETTINGS,
 } from '../../../../../utils/LocationSearchHelper';
 import ServiceUsageReportTable from './ServiceUsageReportTable';
-import { McsIcon } from '../../../../../components';
 import ExportService from '../../../../../services/ExportService';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IServiceUsageReportService } from '../../../../../services/ServiceUsageReportService';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 const messages = defineMessages({
   serviceUsageReportTitle: {

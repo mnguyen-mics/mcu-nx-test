@@ -1,5 +1,4 @@
-import { Actionbar } from '@mediarithmics-private/mcs-components-library';
-import McsIcon from '../../../components/McsIcon';
+import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { parseSearch } from '../../../utils/LocationSearchHelper';
 import { Button, Layout } from 'antd';
 import * as React from 'react';

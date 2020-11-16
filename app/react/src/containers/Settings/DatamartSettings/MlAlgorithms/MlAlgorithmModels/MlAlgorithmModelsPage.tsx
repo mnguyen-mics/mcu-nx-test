@@ -17,7 +17,6 @@ import ItemList, { Filters } from '../../../../../components/ItemList';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import messages from './messages';
 import moment from 'moment';
-import { McsIconType } from '../../../../../components/McsIcon';
 import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 import { UploadFile } from 'antd/lib/upload/interface';
 import withValidators, {
@@ -27,6 +26,7 @@ import LocalStorage from '../../../../../services/LocalStorage';
 import log from '../../../../../utils/Logger';
 import NotebookResultPreviewModal from './NotebookResultPreviewModal';
 import { IDataFileService } from '../../../../../services/DataFileService';
+import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 
 const { Content } = Layout;
 

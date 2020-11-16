@@ -11,7 +11,7 @@ import {
   SchemaItem,
   MicsDiagramEngine,
 } from '../../domain';
-import { McsIcon, WindowBodyPortal } from '../../../../../components';
+import { WindowBodyPortal } from '../../../../../components';
 import { ObjectLikeTypeInfoResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
 import ObjectNodeForm, { ObjectNodeFormProps } from '../../Edit/ObjectNodeForm';
 import {
@@ -27,6 +27,7 @@ import injectThemeColors, {
 import FourAnchorPortWidget from '../Common/FourAnchorPortWidget';
 import messages from '../Common/messages';
 import { FormattedMessage } from 'react-intl';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 interface PlusNodeProps {
   node: PlusNodeModel;

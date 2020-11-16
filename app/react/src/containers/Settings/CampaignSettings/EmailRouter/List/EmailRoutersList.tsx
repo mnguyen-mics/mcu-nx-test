@@ -4,7 +4,6 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import { Modal, Button, Layout } from 'antd';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
-import { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import {
@@ -18,6 +17,7 @@ import { ActionsColumnDefinition } from '../../../../../components/TableView/Tab
 import { lazyInject } from '../../../../../config/inversify.config';
 import { IEmailRouterService } from '../../../../../services/Library/EmailRoutersService';
 import { TYPES } from '../../../../../constants/types';
+import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 
 const { Content } = Layout;
 

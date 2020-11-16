@@ -6,7 +6,6 @@ import moment from 'moment';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import { RouteComponentProps } from 'react-router';
-import McsIcon from '../../../../../components/McsIcon';
 import messages from '../messages';
 import injectThemeColors, {
   InjectedThemeColorsProps,
@@ -20,7 +19,7 @@ import { OverlapData } from '../constants';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { AudienceSegmentShape } from '../../../../../models/audiencesegment';
-import { EmptyChart, LoadingChart, StackedBarPlot } from '@mediarithmics-private/mcs-components-library';
+import { EmptyChart, LoadingChart, McsIcon, StackedBarPlot } from '@mediarithmics-private/mcs-components-library';
 import { StackedBarPlotOptions } from '@mediarithmics-private/mcs-components-library/lib/components/charts/category-based-charts/stacked-bar-plot/StackedBarPlot';
 
 interface State {

@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Tag, Tooltip, Input, Button, Menu } from 'antd';
 import { ClickParam } from 'antd/lib/menu';
-import McsIcon from './McsIcon';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { Dropdown } from '../components/PopupContainers';
 import { Label } from '../containers/Labels/Labels';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 export interface LabelsSelectorProps {
   labels: Label[];

@@ -13,7 +13,6 @@ import {
   defineMessages,
 } from 'react-intl';
 import { Layout, Button, Modal, message, Input, Alert } from 'antd';
-import McsIcon, { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import { PAGINATION_SEARCH_SETTINGS } from '../../../../../utils/LocationSearchHelper';
 import { UserProfileResource } from '../../../../../models/directory/UserProfileResource';
@@ -27,6 +26,8 @@ import { lazyInject } from '../../../../../config/inversify.config';
 import { IApiTokenService } from '../../../../../services/ApiTokenService';
 import { TYPES } from '../../../../../constants/types';
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 
 const { Content } = Layout;
 

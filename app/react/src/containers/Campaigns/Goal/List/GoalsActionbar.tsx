@@ -8,8 +8,7 @@ import {
   injectIntl,
 } from 'react-intl';
 import { compose } from 'recompose';
-import { Actionbar } from '@mediarithmics-private/mcs-components-library';
-import McsIcon from '../../../../components/McsIcon';
+import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import ExportService from '../../../../services/ExportService';
 import ReportService from '../../../../services/ReportService';
 import { normalizeReportView } from '../../../../utils/MetricHelper';

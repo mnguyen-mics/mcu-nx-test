@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Card, Select, Row, Col, Button, Divider } from "antd";
 import messages from '../../containers/Campaigns/Display/Edit/messages';
-import McsIconProcessing from '../McsIcon';
 import cuid from 'cuid';
 import { TYPES } from '../../constants/types';
 import { lazyInject } from '../../config/inversify.config';
@@ -646,7 +645,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
         </div>
         <div className={"mcs-funnelQueryBuilder_ExecuteQueryBtn"}>
           <Button className="mcs-primary" type="primary" onClick={this.handleExecuteQueryButtonClick} loading={isLoading}>
-            {!isLoading && <McsIconProcessing type="play" />}
+            {!isLoading && <McsIcon type="play" />}
             Execute Query
           </Button>
         </div>

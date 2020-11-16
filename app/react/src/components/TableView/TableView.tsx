@@ -7,8 +7,8 @@ import { TableProps, ColumnProps, TableRowSelection } from 'antd/lib/table';
 import { PaginationProps } from 'antd/lib/pagination/Pagination';
 import { ClickParam } from 'antd/lib/menu';
 import { Dropdown } from '../../components/PopupContainers';
-import McsIcon from '../McsIcon';
 import SelectionNotifyer from './SelectionNotifyer';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 const DEFAULT_PAGINATION_OPTION = {
   size: 'small',

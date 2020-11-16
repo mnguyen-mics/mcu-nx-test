@@ -20,8 +20,7 @@ import {
   isDisplayAdResource,
   EditDisplayCreativeRouteMatchParams,
 } from '../../DisplayAds/Edit/domain';
-import { McsIcon } from '../../../../components';
-import { Button } from '@mediarithmics-private/mcs-components-library';
+import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { RouteComponentProps } from 'react-router';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
 

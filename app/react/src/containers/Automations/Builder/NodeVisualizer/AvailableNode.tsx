@@ -1,4 +1,3 @@
-import McsIcon, { McsIconType } from '../../../../components/McsIcon';
 import React from 'react';
 import {
   ConnectDragSource,
@@ -12,6 +11,8 @@ import { generateNodeProperties } from '../domain';
 import { isAbnNode } from '../AutomationNode/Edit/domain';
 import { generateFakeId } from '../../../../utils/FakeIdHelper';
 import { InjectedIntlProps } from 'react-intl';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 
 interface AvailableNodeObjectProps {
   node: ScenarioNodeShape;

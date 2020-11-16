@@ -7,9 +7,9 @@ import {
   DragSourceMonitor,
 } from 'react-dnd';
 import { DragAndDropInterface, SchemaItem, extractFieldType, FieldInfoEnhancedResource } from '../domain';
-import { McsIcon } from '../../../../components';
 import { Tooltip } from 'antd';
 import cuid from 'cuid';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 export type FieldNodeProps = FieldNodeObjectProps | FieldNodeFieldProps;
 

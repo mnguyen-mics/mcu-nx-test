@@ -11,7 +11,6 @@ import {
 import {
   TableViewFilters,
 } from '../../../../components/TableView/index';
-import McsIcon from '../../../../components/McsIcon';
 import { DISPLAY_SEARCH_SETTINGS } from './constants';
 import {
   parseSearch,
@@ -33,7 +32,7 @@ import {
   ExtendedTableRowSelection,
   ActionsColumnDefinition,
 } from '../../../../components/TableView/TableView';
-import { EmptyTableView } from '@mediarithmics-private/mcs-components-library';
+import { EmptyTableView, McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 const messagesMap: {
   [key: string]: FormattedMessage.MessageDescriptor;

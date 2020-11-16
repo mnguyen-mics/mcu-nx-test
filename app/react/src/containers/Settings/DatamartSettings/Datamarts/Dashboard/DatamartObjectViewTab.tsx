@@ -6,7 +6,7 @@ import {
   RuntimeSchemaValidationInfoResource,
 } from '../../../../../models/datamart/graphdb/RuntimeSchema';
 import moment from 'moment';
-import { Loading, McsIcon } from '../../../../../components';
+import { Loading } from '../../../../../components';
 import { compose } from 'recompose';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -18,6 +18,7 @@ import { UploadFile } from 'antd/lib/upload/interface';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IRuntimeSchemaService } from '../../../../../services/RuntimeSchemaService';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 type Props = IDatamartObjectViewTabProps & InjectedNotificationProps;
 

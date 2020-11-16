@@ -1,8 +1,9 @@
 import * as React from 'react';
-import McsIcon, { McsIconType } from './McsIcon';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { Tooltip } from 'antd';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 
 export interface MetricInfoProps {
   color: IconColor;

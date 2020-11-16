@@ -2,8 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
-import { Actionbar } from '@mediarithmics-private/mcs-components-library';
-import { McsIcon } from '../../../../../components';
+import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { Button } from 'antd';
 import messages from './messages';
 

@@ -5,7 +5,6 @@ import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import {
   TableViewFilters,
 } from '../../../../components/TableView/index';
-import { McsIcon } from '../../../../components/index';
 import messages from './messages';
 import {
   EmailCampaignResourceWithStats,
@@ -20,7 +19,7 @@ import { EMAIL_SEARCH_SETTINGS } from './constants';
 import { McsDateRangeValue } from '../../../../components/McsDateRangePicker';
 import { compose } from 'recompose';
 import { CampaignStatus } from '../../../../models/campaign/constants';
-import { EmptyTableView } from '@mediarithmics-private/mcs-components-library';
+import { EmptyTableView, McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 interface EmailCampaignsTableProps {
   dataSource: EmailCampaignResourceWithStats[];

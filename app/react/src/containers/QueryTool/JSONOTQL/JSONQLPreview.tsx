@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { QueryDocument as GraphdbQueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
-import McsIcon from '../../../components/McsIcon';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 import { Button, Alert } from 'antd';
@@ -10,7 +9,7 @@ import JSONQLBuilderContainer, {
   JSONQLBuilderContainerProps,
 } from './JSONQLBuilderContainer';
 import { messages } from './messages';
-import { Actionbar } from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { formatQuery } from '../../Audience/AudienceBuilder/constants';
 import AudienceBuilderContainer, {
   AudienceBuilderContainerProps,

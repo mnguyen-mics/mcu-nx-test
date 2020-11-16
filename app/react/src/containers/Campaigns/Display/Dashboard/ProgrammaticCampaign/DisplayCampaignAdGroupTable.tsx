@@ -6,7 +6,6 @@ import { compose } from 'recompose';
 import messages from '../messages';
 import { TableView } from '../../../../../components/TableView/index';
 import { formatMetric } from '../../../../../utils/MetricHelper';
-import McsIcon from '../../../../../components/McsIcon';
 import { RouteComponentProps } from 'react-router';
 import { AdGroupResource } from '../../../../../models/campaign/display/AdGroupResource';
 import { AdGroupStatus } from '../../../../../models/campaign/constants/index';
@@ -16,7 +15,7 @@ import {
   ActionDefinition,
 } from '../../../../../components/TableView/TableView';
 import { DisplayCampaignInfoResource } from '../../../../../models/campaign/display';
-import { Button } from '@mediarithmics-private/mcs-components-library';
+import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 export interface UpdateMessage {
   title: string;

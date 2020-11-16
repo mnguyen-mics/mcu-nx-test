@@ -2,8 +2,7 @@ import * as React from 'react';
 import { Row, Tooltip, Modal, Col, Button } from 'antd';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import moment from 'moment';
-import { Card } from '@mediarithmics-private/mcs-components-library';
-import McsIcon from '../../../../components/McsIcon';
+import { Card, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { TableView } from '../../../../components/TableView/index';
 import messages from '../messages';
 import { UserEmailIdentifierInfo } from '../../../../models/timeline/timeline';
@@ -226,7 +225,7 @@ class EmailCard extends React.Component<Props, State> {
             return (
               <div key={agent.email + agent.hash}>
                 <Row gutter={10} className="table-line">
-                  <div className="icon-left">
+                  <div className="mcs-icon-left">
                     <McsIcon type="email" />
                   </div>
                   <div className="info-right">

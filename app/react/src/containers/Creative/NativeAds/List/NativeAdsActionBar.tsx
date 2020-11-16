@@ -9,8 +9,7 @@ import {
 } from 'react-intl';
 import { compose } from 'recompose';
 
-import { Actionbar } from '@mediarithmics-private/mcs-components-library';
-import McsIcon from '../../../../components/McsIcon';
+import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { RouteComponentProps } from 'react-router';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
 import Slider from '../../../../components/Transition/Slide';

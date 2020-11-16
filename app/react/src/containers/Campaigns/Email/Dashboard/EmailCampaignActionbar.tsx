@@ -9,7 +9,6 @@ import modalMessages from '../../../../common/messages/modalMessages';
 import exportMessages from '../../../../common/messages/exportMessages';
 import ExportService from '../../../../services/ExportService';
 import { parseSearch } from '../../../../utils/LocationSearchHelper';
-import McsIcon from '../../../../components/McsIcon';
 import {
   EmailCampaignDashboardRouteMatchParam,
   EMAIL_DASHBOARD_SEARCH_SETTINGS,
@@ -19,7 +18,7 @@ import { ClickParam } from 'antd/lib/menu';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import { Actionbar } from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import ReportService from '../../../../services/ReportService';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
 import log from '../../../../utils/Logger';

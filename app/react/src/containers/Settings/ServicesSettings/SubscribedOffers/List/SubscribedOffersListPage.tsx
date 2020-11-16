@@ -17,9 +17,10 @@ import injectNotifications, {
 } from '../../../../Notifications/injectNotifications';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { ServiceItemOfferResource } from '../../../../../models/servicemanagement/PublicServiceItemResource';
-import McsIcon, { McsIconType } from '../../../../../components/McsIcon';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 
 const { Content } = Layout;
 

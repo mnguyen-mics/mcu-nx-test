@@ -38,13 +38,13 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
 import { ValidatorProps } from '../../../../../components/Form/withValidators';
-import { Loading, McsIcon } from '../../../../../components';
+import { Loading } from '../../../../../components';
 import { IAudiencePartitionsService } from '../../../../../services/AudiencePartitionsService';
 import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { injectFeatures, InjectedFeaturesProps } from '../../../../Features';
-import { MenuList } from '@mediarithmics-private/mcs-components-library';
+import { McsIcon, MenuList } from '@mediarithmics-private/mcs-components-library';
 import { IQueryService } from '../../../../../services/QueryService';
 import { connect } from 'react-redux';
 import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';

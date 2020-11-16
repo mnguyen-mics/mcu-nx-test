@@ -18,8 +18,7 @@ import GoalSelector, {
   GoalSelectorProps,
 } from '../../../../Common/GoalSelector';
 import { InjectedDatamartProps, injectDatamart } from '../../../../../Datamart';
-import { McsIcon } from '../../../../../../components';
-import { Button } from '@mediarithmics-private/mcs-components-library';
+import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import {
   RelatedRecords,
   RecordElement,

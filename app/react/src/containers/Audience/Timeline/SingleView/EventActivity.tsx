@@ -4,9 +4,8 @@ import moment from 'moment';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/styles/hljs';
-import McsIcon from '../../../../components/McsIcon';
 import messages from '../messages';
-import { Button } from '@mediarithmics-private/mcs-components-library';
+import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { UserActivityEventResource } from '../../../../models/datamart/UserActivityResource';
 import CustomObjectRendererWrapper, {
   RenderingTemplates,
@@ -79,7 +78,7 @@ class EventActivity extends React.Component<Props, State> {
                   className="mcs-card-inner-action"
                   onClick={changeVisibility}
                 >
-                  <McsIcon className="icon-inverted" type="chevron" />
+                  <McsIcon className="mcs-icon-inverted" type="chevron" />
                   &nbsp;
                   <FormattedMessage {...messages.less} />
                 </button>

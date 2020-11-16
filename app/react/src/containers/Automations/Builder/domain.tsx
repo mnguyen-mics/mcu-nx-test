@@ -31,7 +31,6 @@ import {
   isDeleteFromSegmentNode,
   CustomActionAutomationFormData,
 } from './AutomationNode/Edit/domain';
-import { McsIconType } from '../../../components/McsIcon';
 import { QueryResource } from '../../../models/datamart/DatamartResource';
 import { IQueryService } from '../../../services/QueryService';
 import { generateFakeId } from '../../../utils/FakeIdHelper';
@@ -46,6 +45,7 @@ import { QueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
 import { IRuntimeSchemaService } from '../../../services/RuntimeSchemaService';
 import { reducePromises } from '../../../utils/PromiseHelper';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 
 export interface TreeNodeOperations {
   addNode: (

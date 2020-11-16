@@ -9,8 +9,7 @@ import { compose } from 'recompose';
 import FormDataFileDrawer, {
   FormDataFileDrawerProps,
 } from './FormDataFileDrawer';
-import { Button as McsButton } from '@mediarithmics-private/mcs-components-library';
-import { McsIcon } from '../../../../components';
+import { Button as McsButton, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { FormFieldWrapper } from '../../../../components/Form';
 
 import messages from '../../messages';

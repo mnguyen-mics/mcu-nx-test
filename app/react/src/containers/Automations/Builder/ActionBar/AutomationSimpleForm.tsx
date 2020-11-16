@@ -13,8 +13,7 @@ import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { ValidatorProps } from '../../../../components/Form/withValidators';
 import { NormalizerProps } from '../../../../components/Form/withNormalizer';
 import { AutomationResource } from '../../../../models/automations/automations';
-import { BlurredModal } from '@mediarithmics-private/mcs-components-library';
-import { McsIcon } from '../../../../components';
+import { BlurredModal, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { ButtonProps } from 'antd/lib/button';
 
 export type AutomationSimpleFormData = Partial<AutomationResource>;

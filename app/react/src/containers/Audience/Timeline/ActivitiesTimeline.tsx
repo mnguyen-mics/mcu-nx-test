@@ -13,18 +13,18 @@ import {
 import { Identifier } from './Monitoring';
 import messages from './messages';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { McsIcon } from '../../../components';
 import ActivityCard from './SingleView/ActivityCard';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
 import { TimelinePageParams } from './TimelinePage';
 import { takeLatest } from '../../../utils/ApiHelper';
-import { McsIconType } from '../../../components/McsIcon';
 import { DatamartResource } from '../../../models/datamart/DatamartResource';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IUserDataService } from '../../../services/UserDataService';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 
 export interface Activities {
   isLoading: boolean;

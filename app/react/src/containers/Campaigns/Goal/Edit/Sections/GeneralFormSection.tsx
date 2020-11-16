@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import { Button } from '@mediarithmics-private/mcs-components-library';
+import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { FormSection, FormInputField } from '../../../../../components/Form';
 import withValidators, {
   ValidatorProps,
 } from '../../../../../components/Form/withValidators';
 import FormInput from '../../../../../components/Form/FormInput';
-import { McsIcon } from '../../../../../components';
 import messages from '../messages';
 
 interface State {

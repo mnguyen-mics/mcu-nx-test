@@ -4,8 +4,7 @@ import { Col, Form, Row, Tooltip } from 'antd';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { RowProps } from 'antd/lib/grid/row';
 import { TooltipProps } from 'antd/lib/tooltip';
-
-import McsIcon from '../McsIcon';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 export interface FormFieldWrapperProps {
   hasMarginBottom?: boolean;

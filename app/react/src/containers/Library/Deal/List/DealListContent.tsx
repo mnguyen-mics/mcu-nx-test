@@ -4,7 +4,6 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import { Modal } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import { McsIconType } from '../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../components/ItemList';
 import { IDealListService } from '../../../../services/Library/DealListService';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
@@ -21,6 +20,7 @@ import injectNotifications, {
 import { ActionsColumnDefinition } from '../../../../components/TableView/TableView';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
+import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 
 const initialState = {
   loading: false,

@@ -38,8 +38,7 @@ import AdCard from '../../../../../Campaigns/Display/Dashboard/ProgrammaticCampa
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import DisplayCampaignDashboard from '../../../../../Campaigns/Display/Dashboard/ProgrammaticCampaign/DisplayCampaignDashboard';
 import messages from '../../../../../Campaigns/Display/Dashboard/messages';
-import { McsIcon } from '../../../../../../components';
-import { Actionbar } from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { lazyInject } from '../../../../../../config/inversify.config';
 import { TYPES } from '../../../../../../constants/types';
 import { IDisplayCampaignService } from '../../../../../../services/DisplayCampaignService';

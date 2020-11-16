@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Spin } from 'antd';
 import cuid from 'cuid';
-import McsIcon from '../../../components/McsIcon';
 import { ICreativeService } from '../../../services/CreativeService';
 import { DataResponse } from '../../../services/ApiService';
 import {
@@ -11,6 +10,7 @@ import {
 import { makeCancelable, CancelablePromise } from '../../../utils/ApiHelper';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 export interface CreativeCardProps<T> {
   creative: T;
@@ -128,7 +128,7 @@ class CreativeCard<
           backgroundColor: '#bdbdbd',
         }}
       >
-        <McsIcon className="icon-3x" type="close-big" />
+        <McsIcon className="mcs-icon-3x" type="close-big" />
       </div>
     );
   };
