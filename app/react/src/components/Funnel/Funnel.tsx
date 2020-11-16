@@ -33,6 +33,7 @@ interface State {
   funnelData: FunnelResource;
   stepDelta: StepDelta[];
   lastExecutedQueryAskedTime: number;
+  promiseCanceled: boolean;
 }
 
 type FunnelProps = {
@@ -41,6 +42,7 @@ type FunnelProps = {
   title: string;
   parentCallback: (isLoading: boolean) => void;
   launchExecutionAskedTime: number;
+  cancelQueryAskedTime: number;
 }
 
 type Props = FunnelProps &
@@ -87,7 +89,8 @@ class Funnel extends React.Component<Props, State> {
         steps: []
       },
       stepDelta: [],
-      lastExecutedQueryAskedTime: 0
+      lastExecutedQueryAskedTime: 0,
+      promiseCanceled: false
     }
 
     this.fetchData = this._debounce(this.fetchData.bind(this), 800);
@@ -107,15 +110,28 @@ class Funnel extends React.Component<Props, State> {
     const {
       datamartId,
       location: { search },
-      launchExecutionAskedTime
+      launchExecutionAskedTime,
+      cancelQueryAskedTime
     } = this.props;
     const lastExecutedQueryAskedTime = this.state.lastExecutedQueryAskedTime
     const timeRange = extractDatesFromProps(search);
     const routeParams = parseSearch(search, FUNNEL_SEARCH_SETTING);
     const funnelFilter = routeParams.filter.length > 0 ? JSON.parse(routeParams.filter) : {};
     if ((prevProps.location.search !== search || lastExecutedQueryAskedTime !== launchExecutionAskedTime) && funnelFilter.length > 0) {
-      this.setState({lastExecutedQueryAskedTime: launchExecutionAskedTime})
+      this.setState({ lastExecutedQueryAskedTime: launchExecutionAskedTime, promiseCanceled: false })
       this.fetchData(datamartId, funnelFilter, timeRange);
+    }
+
+    if (prevProps.cancelQueryAskedTime !== cancelQueryAskedTime) {
+      this.setState({
+        isLoading: false,
+        funnelData: {
+          total: 0,
+          steps: []
+        },
+        stepDelta: [],
+        promiseCanceled: true
+      })
     }
   }
 
@@ -125,7 +141,7 @@ class Funnel extends React.Component<Props, State> {
   }
 
   fetchData = (datamartId: string, filter: FunnelFilter[], timeRange: FunnelTimeRange) => {
-    const {parentCallback, notifyError} = this.props
+    const { parentCallback, notifyError } = this.props;
 
     this.setState({
       isLoading: true,
@@ -137,11 +153,12 @@ class Funnel extends React.Component<Props, State> {
     }, () => {
       parentCallback(this.state.isLoading)
     });
-    return this._userActivitiesFunnelService
-      .getUserActivitiesFunnel(datamartId, filter, timeRange).then((response) => {
-
-        // Enhance api data with last conversion step
-        response.data.steps.push(response.data.steps[response.data.steps.length -  1]);
+    
+    return this._userActivitiesFunnelService.getUserActivitiesFunnel(datamartId, filter, timeRange).
+      then(response => {
+      // Enhance api data with last conversion step
+      if (!this.state.promiseCanceled) {
+        response.data.steps.push(response.data.steps[response.data.steps.length - 1]);
         this.setState({
           isLoading: false,
           funnelData: response.data
@@ -151,16 +168,16 @@ class Funnel extends React.Component<Props, State> {
           });
           parentCallback(this.state.isLoading)
         });
-        
-      })
-      .catch(e => {
-        notifyError(e);
-        this.setState({
-          isLoading: false,
-        }, () => {
-          parentCallback(false)
-        });
+      }
+    })
+    .catch(e => {
+      notifyError(e);
+      this.setState({
+        isLoading: false,
+      }, () => {
+        parentCallback(false)
       });
+    });
   }
 
   drawSteps = () => {
@@ -232,7 +249,7 @@ class Funnel extends React.Component<Props, State> {
   }
 
   private getDurationMessage(stepIndex: number, seconds: number) {
-    return this.isFirstStep(stepIndex-1) ? <div/> : <span> in <strong>{moment.duration(seconds, "second").format("d [day] h [hour] m [minute]")}</strong></span>
+    return this.isFirstStep(stepIndex - 1) ? <div /> : <span> in <strong>{moment.duration(seconds, "second").format("d [day] h [hour] m [minute]")}</strong></span>
   }
 
   render() {
@@ -254,7 +271,7 @@ class Funnel extends React.Component<Props, State> {
               {funnelData.steps.map((step, index) => {
                 return <div key={index.toString()} style={{ flex: 1 }} >
                   <div className={"mcs-funnel_stepName"}>
-                    <h3 className="mcs-funnel_stepName_title">{index === 0 ? 'Total' : 'Step '+ index} </h3>
+                    <h3 className="mcs-funnel_stepName_title">{index === 0 ? 'Total' : 'Step ' + index} </h3>
                   </div>
                   <div className={"mcs-funnel_userPoints"}>
                     <div className="mcs-funnel_userPoints_title">UserPoints</div>

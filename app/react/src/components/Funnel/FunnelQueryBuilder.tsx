@@ -53,6 +53,7 @@ interface FunnelQueryBuilderProps {
   datamartId: string;
   isLoading: boolean;
   parentCallback: (timestampInSec: number) => void
+  cancelQueryCallback: (timestampInSec: number) => void
 }
 
 type Props = FunnelQueryBuilderProps &
@@ -424,6 +425,8 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     }
   }
 
+  handleCancelCallback = () => this.props.cancelQueryCallback(new Date().getTime());
+
 
   showFilterSymbol(filterIndex: number, stepId?: string): FilterOperatorLabel {
     const { steps } = this.state;
@@ -644,10 +647,13 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
             </Col>
           </Row>
         </div>
-        <div className={"mcs-funnelQueryBuilder_ExecuteQueryBtn"}>
+        <div className={"mcs-funnelQueryBuilder_executeQueryBtn"}>
           <Button className="mcs-primary" type="primary" onClick={this.handleExecuteQueryButtonClick} loading={isLoading}>
             {!isLoading && <McsIconProcessing type="play" />}
             Execute Query
+          </Button>
+          <Button className="mcs-funnelQueryBuilder_cancelBtn" type="default" onClick={this.handleCancelCallback}>
+            Cancel
           </Button>
         </div>
       </div>
