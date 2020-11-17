@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Card, Select, Row, Col, Button, Divider } from "antd";
+import { Card, Select, Row, Col, Button, Divider, Icon } from "antd";
 import messages from '../../containers/Campaigns/Display/Edit/messages';
 import cuid from 'cuid';
 import { TYPES } from '../../constants/types';
@@ -538,6 +538,30 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     })
   }
 
+  sortStep = (index: number, direction: 'up' | 'down') => {
+    const { steps } = this.state;
+
+    const temp = steps[index];
+
+    if (direction === 'up' && index > 0) {
+      steps[index] = steps[index - 1];
+      steps[index].name = `Step ${index + 1}`;
+      steps[index - 1] = temp;
+      steps[index - 1].name = `Step ${index}`;
+      this.setState({ steps });
+    }
+
+    if (direction === 'down' && (index + 1 < steps.length)) {
+      steps[index] = steps[index + 1];
+      steps[index].name = `Step ${index + 1}`;
+      steps[index + 1] = temp;
+      steps[index + 1].name = `Step ${index + 2}`;
+      this.setState({ steps });
+    }
+
+
+  }
+
   render() {
     const Option = Select.Option;
     const { steps, dateRange } = this.state;
@@ -569,8 +593,12 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
           steps.map((step, index) => {
             return (
               <div key={step.id} className={"mcs-funnelQueryBuilder_step"}>
-                <Row>
-                  <Col span={24}>
+                <Row type="flex" style={{ alignItems: 'center' }}>
+                  <Col span={1} >
+                    {index > 0 && <Icon className={"mcs-funnelQueryBuilder_sortBtn mcs-funnelQueryBuilder_sortBtn--up"} type="arrow-up" onClick={this.sortStep.bind(this, index, "up")} />}
+                    {index + 1 < steps.length && <Icon className={"mcs-funnelQueryBuilder_sortBtn"} onClick={this.sortStep.bind(this, index, "down")} type="arrow-down" />}
+                  </Col>
+                  <Col span={23}>
                     <span className="mcs-funnelQueryBuilder_stepName_title">{step.name}</span>
                     <Button
                       type="primary"
@@ -578,86 +606,86 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
                       icon="cross"
                       className={"mcs-funnelQueryBuilder_removeStepBtn"}
                       onClick={this.removeStep.bind(this, step.id)} />
-                  </Col>
-                </Row>
-                {step.filter_clause.filters.map((filter, filterIndex) => {
-                  return (
-                    <div key={filter.id}>
-                      {filterIndex > 0 && <Select
-                        showArrow={false}
-                        defaultValue={"AND"}
-                        className={"mcs-funnelQueryBuilder_select mcs-funnelQueryBuilder_select--booleanOperators"}
-                        onChange={this.handleFilterOperatorChange.bind(this, step.id)}
-                        value={step.filter_clause.operator}>
-                        {booleanOperator.map(bo => {
-                          return (
-                            <Option key={this._cuid()} value={bo}>
-                              {bo}
-                            </Option>)
-                        })}
-                      </Select>}
-                      <div className={"mcs-funnelQueryBuilder_step_dimensions"}>
-                        <Select
-                          showSearch={true}
-                          showArrow={false}
-                          placeholder="Dimension name"
-                          className={"mcs-funnelQueryBuilder_select mcs-funnelQueryBuilder_select--dimensions"}
-                          onChange={this.handleDimensionNameChange.bind(this, filterIndex, step.id)}>
-                          {this.getDimensionNameSelect()}
-                        </Select>
-                        <div className="mcs-funnelQueryBuilder_step_dimensionFilter_operator">
-                          <span className="mcs-funnelQueryBuilder_step_dimensionFilter_operator_text">{this.showFilterSymbol(filterIndex, step.id)}
-                          </span>
-                        </div>
-                        {this.getInputField(filter.dimension_name, filterIndex, from, to, step.id)}
-                        <Button
-                          type="primary"
-                          shape="circle"
-                          icon="cross"
-                          className={"mcs-funnelQueryBuilder_removeFilterBtn"}
-                          onClick={this.removeDimensionFromStep.bind(this, step.id, filter.id)} />
-                      </div>
-                    </div>)
-                })}
 
-                {<Button className="mcs-funnelQueryBuilder_addDimensionBtn" onClick={this.addDimensionToStep.bind(this, step.id)}>
-                  <McsIcon type="plus" className="mcs-funnelQueryBuilder_addDimensionBtn_Icon" />
-                  <FormattedMessage
-                    id="audience.funnel.querybuilder.newFilter"
-                    defaultMessage="Add Filter"
-                  />
-                </Button>}
-                <Row>
-                  <Col span={8}>
-                    <Divider />
+                    {step.filter_clause.filters.map((filter, filterIndex) => {
+                      return (
+                        <div key={filter.id}>
+                          {filterIndex > 0 && <Select
+                            showArrow={false}
+                            defaultValue={"AND"}
+                            className={"mcs-funnelQueryBuilder_select mcs-funnelQueryBuilder_select--booleanOperators"}
+                            onChange={this.handleFilterOperatorChange.bind(this, step.id)}
+                            value={step.filter_clause.operator}>
+                            {booleanOperator.map(bo => {
+                              return (
+                                <Option key={this._cuid()} value={bo}>
+                                  {bo}
+                                </Option>)
+                            })}
+                          </Select>}
+                          <div className={"mcs-funnelQueryBuilder_step_dimensions"}>
+                            <Select
+                              showSearch={true}
+                              showArrow={false}
+                              placeholder="Dimension name"
+                              className={"mcs-funnelQueryBuilder_select mcs-funnelQueryBuilder_select--dimensions"}
+                              onChange={this.handleDimensionNameChange.bind(this, filterIndex, step.id)}>
+                              {this.getDimensionNameSelect()}
+                            </Select>
+                            <div className="mcs-funnelQueryBuilder_step_dimensionFilter_operator">
+                              <span className="mcs-funnelQueryBuilder_step_dimensionFilter_operator_text">{this.showFilterSymbol(filterIndex, step.id)}
+                              </span>
+                            </div>
+                            {this.getInputField(filter.dimension_name, filterIndex, from, to, step.id)}
+                            <Button
+                              type="primary"
+                              shape="circle"
+                              icon="cross"
+                              className={"mcs-funnelQueryBuilder_removeFilterBtn"}
+                              onClick={this.removeDimensionFromStep.bind(this, step.id, filter.id)} />
+                          </div>
+                        </div>)
+                    })}
+                    {<Button className="mcs-funnelQueryBuilder_addDimensionBtn" onClick={this.addDimensionToStep.bind(this, step.id)}>
+                      <McsIcon type="plus" className="mcs-funnelQueryBuilder_addDimensionBtn_Icon" />
+                      <FormattedMessage
+                        id="audience.funnel.querybuilder.newFilter"
+                        defaultMessage="Add Filter"
+                      />
+                    </Button>}
+                    <Row>
+                      <Col span={8}>
+                        <Divider />
+                      </Col>
+                    </Row>
                   </Col>
                 </Row>
+
               </div>
             )
           })
         }
-        < div className={"mcs-funnelQueryBuilder_step"} >
-          <Row>
-            <Col span={24}>
-              <Button className={"mcs-funnelQueryBuilder_addStepBtn"} onClick={this.addStep}>
-                <McsIcon type="plus" className="mcs-funnelQueryBuilder_addStepBtn_Icon" />
-                <FormattedMessage
-                  id="audience.funnel.querybuilder.newStep"
-                  defaultMessage="Add Step"
-                />
-              </Button>
-            </Col>
-          </Row>
-        </div>
-        <div className={"mcs-funnelQueryBuilder_executeQueryBtn"}>
-          <Button className="mcs-primary" type="primary" onClick={this.handleExecuteQueryButtonClick} loading={isLoading}>
-            {!isLoading && <McsIcon type="play" />}
+        <Row>
+          <Col span={23} offset={1}>
+            <Button className={"mcs-funnelQueryBuilder_addStepBtn"} onClick={this.addStep}>
+              <McsIcon type="plus" className="mcs-funnelQueryBuilder_addStepBtn_Icon" />
+              <FormattedMessage
+                id="audience.funnel.querybuilder.newStep"
+                defaultMessage="Add Step"
+              />
+            </Button>
+            <div className={"mcs-funnelQueryBuilder_executeQueryBtn"}>
+              <Button className="mcs-primary" type="primary" onClick={this.handleExecuteQueryButtonClick} loading={isLoading}>
+                {!isLoading && <McsIcon type="play" />}
             Execute Query
           </Button>
-          <Button className="mcs-funnelQueryBuilder_cancelBtn" type="default" onClick={this.handleCancelCallback}>
-            Cancel
+              <Button className="mcs-funnelQueryBuilder_cancelBtn" type="default" onClick={this.handleCancelCallback}>
+                Cancel
           </Button>
-        </div>
+            </div>
+          </Col>
+        </Row>
+
       </div>
     </Card >)
   }
