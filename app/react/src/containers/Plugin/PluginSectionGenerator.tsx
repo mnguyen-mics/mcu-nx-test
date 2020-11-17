@@ -3,7 +3,6 @@ import {
   PluginLayoutSectionResource,
   PluginLayoutFieldResource,
 } from '../../models/plugin/PluginLayout';
-import { McsIcon } from '../../components';
 import { Row } from 'antd';
 import {
   FormTitle,
@@ -22,7 +21,7 @@ import messages from './Edit/messages';
 import { PropertyResourceShape } from '../../models/plugin';
 import { PluginPresetProperty } from '../../models/Plugins';
 import { Validator } from 'redux-form';
-import { Button } from '@mediarithmics-private/mcs-components-library';
+import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 export interface PluginExtraField {
   label: string;

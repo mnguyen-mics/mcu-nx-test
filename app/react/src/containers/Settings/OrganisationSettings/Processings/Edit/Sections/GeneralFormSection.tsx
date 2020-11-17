@@ -14,8 +14,7 @@ import {
   FormAlertInput,
 } from '../../../../../../components/Form';
 import messages from '../../messages';
-import {  McsIcon } from '../../../../../../components';
-import { Button } from '@mediarithmics-private/mcs-components-library';
+import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { EditProcessingRouteMatchParams } from '../ProcessingEditPage';
 import { RouteComponentProps, withRouter } from 'react-router';
 

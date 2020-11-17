@@ -3,8 +3,6 @@ import { Link, withRouter, matchPath } from 'react-router-dom';
 import { Menu } from 'antd';
 import { FormattedMessage } from 'react-intl';
 
-import McsIcon, { McsIconType } from '../../components/McsIcon';
-
 import { settingsDefinitions } from '../../routes/settingsDefinition';
 
 import { compose } from 'recompose';
@@ -15,6 +13,8 @@ import {
   NavigatorMultipleLevelMenuDefinition,
   NavigatorSubMenuDefinition,
 } from '../../routes/domain';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 
 const basePath = '/v2/o/:organisationId(\\d+)';
 

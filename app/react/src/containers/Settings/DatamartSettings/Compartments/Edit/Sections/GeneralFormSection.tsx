@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
-import { Button } from '@mediarithmics-private/mcs-components-library';
+import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import withValidators, {
   ValidatorProps,
 } from '../../../../../../components/Form/withValidators';
@@ -16,7 +16,6 @@ import {
   FormAlertInput,
   FormAlertInputField,
 } from '../../../../../../components/Form';
-import { McsIcon } from '../../../../../../components';
 
 type Props = InjectedIntlProps & ValidatorProps;
 

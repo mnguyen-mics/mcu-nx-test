@@ -7,8 +7,7 @@ import { RouteComponentProps } from 'react-router';
 
 import { TableView } from '../../../../../components/TableView/index';
 import { formatMetric } from '../../../../../utils/MetricHelper';
-import McsIcon from '../../../../../components/McsIcon';
-import { Button } from '@mediarithmics-private/mcs-components-library';
+import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import messages from '../messages';
 import {
   AdResource,

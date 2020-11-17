@@ -7,8 +7,7 @@ import { WrappedFieldArrayProps } from 'redux-form';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import { ReduxFormChangeProps } from '../../../../../utils/FormHelper';
 import { compose } from 'recompose';
-import { McsIcon } from '../../../../../components';
-import { Button } from '@mediarithmics-private/mcs-components-library';
+import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { MultipleImageField } from '../domain';
 
 const messages = defineMessages({

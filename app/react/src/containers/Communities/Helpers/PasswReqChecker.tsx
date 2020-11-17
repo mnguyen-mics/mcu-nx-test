@@ -3,8 +3,8 @@ import {
   PasswordValidityResource,
 } from '../../../models/communities';
 import React from 'react';
-import McsIcon from '../../../components/McsIcon';
 import { defineMessages } from 'react-intl';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 export interface PrintPasswordRequirementProps {
   req: PasswordRequirementResource;

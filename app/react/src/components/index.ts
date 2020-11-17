@@ -2,7 +2,6 @@ import Button from '@mediarithmics-private/mcs-components-library';
 import EmptyRecords from './RelatedRecord/EmptyRecords';
 import Form from './Form';
 import Loading from './Loading';
-import McsIcon from './McsIcon';
 import TableSelector from './ElementSelector/TableSelector';
 import MultiSelect from './MultiSelect';
 import LabelsSelector from './LabelsSelector';
@@ -15,7 +14,6 @@ export {
   Form,
   Loading,
   LabelsSelector,
-  McsIcon,
   TableSelector,
   MultiSelect,
   OtqlConsole,

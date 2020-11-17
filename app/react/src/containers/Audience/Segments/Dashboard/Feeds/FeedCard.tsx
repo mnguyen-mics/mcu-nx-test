@@ -1,11 +1,10 @@
 import * as React from 'react';
 import cuid from 'cuid';
-import { Card, Button } from '@mediarithmics-private/mcs-components-library';
+import { Card, Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import {
   AudienceExternalFeedTyped,
   AudienceTagFeedTyped,
 } from '../../Edit/domain';
-import { McsIcon } from '../../../../../components';
 import FeedPlaceholder from './FeedPlaceholder';
 import { Status } from '../../../../../models/Plugins';
 import injectNotifications, {

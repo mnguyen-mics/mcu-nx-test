@@ -5,12 +5,12 @@ import { FormattedMessage } from 'react-intl';
 import { Layout, Menu, Icon, Alert } from 'antd';
 import { Dropdown } from '../../components/PopupContainers';
 import * as SessionHelper from '../../redux/Session/selectors';
-import McsIcon from '../../components/McsIcon';
 import messages from './messages';
 import { compose } from 'recompose';
 import { injectDatamart, InjectedDatamartProps } from '../Datamart';
 import { UserWorkspaceResource } from '../../models/directory/UserProfileResource';
 import { MicsReduxState } from '../../utils/ReduxHelper';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 const { Header } = Layout;
 

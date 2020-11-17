@@ -2,12 +2,13 @@ import * as React from 'react';
 import cuid from 'cuid';
 import FieldNodeModel from './FieldNodeModel';
 import FieldNodeComparisonRenderer from './FieldNodeComparisonRenderer';
+import { WindowBodyPortal } from '../../../../../components';
+import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import {
-  WindowBodyPortal,
-  McsIcon,
-} from '../../../../../components';
-import { Button } from '@mediarithmics-private/mcs-components-library';
-import { TreeNodeOperations, MicsDiagramEngine, FieldProposalLookup } from '../../domain';
+  TreeNodeOperations,
+  MicsDiagramEngine,
+  FieldProposalLookup,
+} from '../../domain';
 import FieldNodeFormWrapper from '../../Edit/Sections/Field/FieldNodeFormWrapper';
 import { ObjectLikeTypeInfoResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
 import { FieldNodeFormDataValues, FORM_ID } from '../../Edit/domain';
@@ -30,7 +31,6 @@ interface FieldNodeWidgetProps {
   datamartId: string;
   runFieldProposal: FieldProposalLookup;
   isEdge: boolean;
-
 }
 
 interface MapStateToProps {
@@ -147,7 +147,7 @@ class FieldNodeWidget extends React.Component<Props, State> {
       this.props.treeNodeOperations.copyNode(
         this.props.node.treeNodePath,
         this.props.node.objectTypeInfo.name,
-        this.props.node.treeNodePath
+        this.props.node.treeNodePath,
       );
       this.props.treeNodeOperations.updateLayout();
     });
@@ -158,7 +158,7 @@ class FieldNodeWidget extends React.Component<Props, State> {
       this.props.treeNodeOperations.cutNode(
         this.props.node.treeNodePath,
         this.props.node.objectTypeInfo.name,
-        this.props.node.treeNodePath
+        this.props.node.treeNodePath,
       );
       this.props.treeNodeOperations.updateLayout();
     });
@@ -186,7 +186,12 @@ class FieldNodeWidget extends React.Component<Props, State> {
   };
 
   renderEditNode = () => {
-    const { node, treeNodeOperations, datamartId, runFieldProposal } = this.props;
+    const {
+      node,
+      treeNodeOperations,
+      datamartId,
+      runFieldProposal,
+    } = this.props;
 
     const onSubmit = (val: FieldNodeFormDataValues) => {
       treeNodeOperations.updateNode(node.treeNodePath, val.fieldNodeForm);
@@ -198,68 +203,65 @@ class FieldNodeWidget extends React.Component<Props, State> {
 
     return (
       <React.Fragment>
-      <div
-        id={this.id}
-        style={{
-          backgroundColor: '#ffffff',
-          borderStyle: 'solid',
-          color: node.getColor(),
-          borderColor: node.getColor(),
-          zIndex: 999999,
-          padding: 10,
-          borderRadius: 4,
-          width: EDIT_FIELD_SIZE,
-        }}
-        className="mcs-form-container no-padding"
-        onMouseOver={onMouseOver}
-        onMouseLeave={onMouseLeave}
-      >
-        <FourAnchorPortWidget node={node} />
         <div
+          id={this.id}
           style={{
-            width: 0,
-            height: 0,
-            borderLeft: `${ARROW_SIZE}px solid transparent`,
-            borderRight: `${ARROW_SIZE}px solid transparent`,
-            borderBottom: `${ARROW_SIZE}px solid ${node.getColor()}`,
-            transform: 'rotate(-90deg)',
-            position: 'absolute',
-            left: -ARROW_SIZE - ARROW_SIZE / 2 + 2,
-            top: node.getSize().height / 2 - ARROW_SIZE / 2,
+            backgroundColor: '#ffffff',
+            borderStyle: 'solid',
+            color: node.getColor(),
+            borderColor: node.getColor(),
+            zIndex: 999999,
+            padding: 10,
+            borderRadius: 4,
+            width: EDIT_FIELD_SIZE,
           }}
-        />
-        <div
-          style={{
-            position: 'absolute',
-            top: 7,
-            right: 0,
-          }}
+          className="mcs-form-container no-padding"
+          onMouseOver={onMouseOver}
+          onMouseLeave={onMouseLeave}
         >
-          <Button onClick={closeEdit}>
-            <McsIcon type="close" />
-          </Button>
+          <FourAnchorPortWidget node={node} />
+          <div
+            style={{
+              width: 0,
+              height: 0,
+              borderLeft: `${ARROW_SIZE}px solid transparent`,
+              borderRight: `${ARROW_SIZE}px solid transparent`,
+              borderBottom: `${ARROW_SIZE}px solid ${node.getColor()}`,
+              transform: 'rotate(-90deg)',
+              position: 'absolute',
+              left: -ARROW_SIZE - ARROW_SIZE / 2 + 2,
+              top: node.getSize().height / 2 - ARROW_SIZE / 2,
+            }}
+          />
+          <div
+            style={{
+              position: 'absolute',
+              top: 7,
+              right: 0,
+            }}
+          >
+            <Button onClick={closeEdit}>
+              <McsIcon type="close" />
+            </Button>
+          </div>
+          <FieldNodeFormWrapper
+            breadCrumbPaths={[]}
+            objectType={node.objectTypeInfo}
+            objectTypes={this.props.objectTypes}
+            initialValues={{ fieldNodeForm: node.fieldNode }}
+            onSubmit={onSubmit}
+            idToAttachDropDowns={'popoverId'}
+            runtimeSchemaId={node.objectTypeInfo.runtime_schema_id}
+            datamartId={datamartId}
+            form={this.formName}
+            treeNodePath={node.treeNodePath}
+            runFieldProposal={runFieldProposal}
+            isEdge={this.props.isEdge}
+          />
         </div>
-        <FieldNodeFormWrapper
-          breadCrumbPaths={[]}
-          objectType={node.objectTypeInfo}
-          objectTypes={this.props.objectTypes}
-          initialValues={{ fieldNodeForm: node.fieldNode }}
-          onSubmit={onSubmit}
-          idToAttachDropDowns={'popoverId'}
-          runtimeSchemaId={node.objectTypeInfo.runtime_schema_id}
-          datamartId={datamartId}
-          form={this.formName}
-          treeNodePath={node.treeNodePath}
-          runFieldProposal={runFieldProposal}
-          isEdge={this.props.isEdge}
-        />
-       
-      </div>
-
       </React.Fragment>
     );
   };
-  
 
   renderedStandardNode = (): JSX.Element => {
     const { node, datamartId } = this.props;

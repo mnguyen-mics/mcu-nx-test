@@ -11,8 +11,7 @@ import {
 import { compose } from 'recompose';
 import { Dropdown } from '../../../../../components/PopupContainers/index';
 
-import { Actionbar } from '@mediarithmics-private/mcs-components-library';
-import McsIcon from '../../../../../components/McsIcon';
+import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { getDefaultDatamart } from '../../../../../redux/Session/selectors';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';

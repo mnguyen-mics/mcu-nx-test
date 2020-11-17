@@ -5,8 +5,10 @@ import { Link } from 'react-router-dom';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 
-import { Actionbar } from '@mediarithmics-private/mcs-components-library';
-import McsIcon from '../../../../components/McsIcon';
+import {
+  Actionbar,
+  McsIcon,
+} from '@mediarithmics-private/mcs-components-library';
 import messages from './messages';
 
 interface RouterProps {
@@ -44,7 +46,4 @@ class DealListActionbar extends React.Component<
   }
 }
 
-export default compose(
-  injectIntl,
-  withRouter,
-)(DealListActionbar);
+export default compose(injectIntl, withRouter)(DealListActionbar);

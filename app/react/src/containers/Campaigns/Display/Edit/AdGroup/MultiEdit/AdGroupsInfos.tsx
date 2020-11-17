@@ -10,7 +10,6 @@ import {
 } from 'react-intl';
 
 import { AdGroupsInfosFieldModel } from '../domain';
-import { McsIcon } from '../../../../../../components/index';
 import {
   FormInput,
   DefaultSelect,
@@ -23,6 +22,7 @@ import { AdGroupResource } from '../../../../../../models/campaign/display/AdGro
 import withValidators, {
   ValidatorProps,
 } from '../../../../../../components/Form/withValidators';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 const editableAdGroupProperties: Array<keyof AdGroupResource> = [
   'total_budget',

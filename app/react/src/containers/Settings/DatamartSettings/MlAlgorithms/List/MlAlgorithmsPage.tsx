@@ -20,13 +20,13 @@ import moment from 'moment';
 import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 import { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
 import { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
-import { McsIconType } from '../../../../../components/McsIcon';
 import { Link } from 'react-router-dom';
 import MlAlgorithmVariableResource from '../../../../../models/mlAlgorithmVariable/MlAlgorithmVariableResource';
 import { IMlAlgorithmModelService } from '../../../../../services/MlAlgorithmModelService';
 import { IMlAlgorithmVariableService } from '../../../../../services/MlAlgorithmVariableService';
 import MlAlgorithmModelResource from '../../../../../models/mlAlgorithmModel/MlAlgorithmModelResource';
 import { FormFieldWrapper } from '../../../../../components/Form';
+import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 
 const { Content } = Layout;
 

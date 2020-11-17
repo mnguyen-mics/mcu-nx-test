@@ -1,4 +1,4 @@
-import { McsIconType } from "../components/McsIcon";
+import { McsIconType } from "@mediarithmics-private/mcs-components-library/lib/components/mcs-icon";
 import { FormattedMessage } from "react-intl";
 import { Omit } from "../utils/Types";
 

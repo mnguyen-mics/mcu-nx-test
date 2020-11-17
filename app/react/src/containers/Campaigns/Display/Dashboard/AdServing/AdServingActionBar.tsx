@@ -3,9 +3,8 @@ import {
   DisplayCampaignInfoResource,
   AdInfoResource,
 } from '../../../../../models/campaign/display';
-import { Actionbar } from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { Button, Dropdown, Icon, message, Menu, Modal } from 'antd';
-import { McsIcon } from '../../../../../components';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import messages from '../messages';
 import { withRouter, RouteComponentProps } from 'react-router';

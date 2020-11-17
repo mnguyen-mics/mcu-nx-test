@@ -8,12 +8,12 @@ import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { AutomationFormData, INITIAL_AUTOMATION_DATA } from '../Edit/domain';
 import { IAutomationFormService } from '../Edit/AutomationFormService';
-import { Loading, McsIcon } from '../../../components';
+import { Loading } from '../../../components';
 import { Layout, Button } from 'antd';
 import AutomationBuilder from '../Builder/AutomationBuilder';
 import { IScenarioService } from '../../../services/ScenarioService';
 import { AutomationStatus } from '../../../models/automations/automations';
-import { Actionbar } from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import injectDrawer, {

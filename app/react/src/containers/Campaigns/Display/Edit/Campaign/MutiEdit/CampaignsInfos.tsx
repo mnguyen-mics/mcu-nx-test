@@ -10,7 +10,6 @@ import {
 } from 'react-intl';
 
 import { CampaignsInfosFieldModel } from '../domain';
-import { McsIcon } from '../../../../../../components/index';
 import {
   FormInput,
   DefaultSelect,
@@ -21,6 +20,7 @@ import { DisplayCampaignResource } from '../../../../../../models/campaign/displ
 import withValidators, {
   ValidatorProps,
 } from '../../../../../../components/Form/withValidators';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 const editableCampaignProperties: Array<keyof DisplayCampaignResource> = [
   'total_impression_capping',

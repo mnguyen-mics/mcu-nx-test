@@ -21,7 +21,6 @@ import {
   buildDefaultSearch,
   parseSearch,
 } from '../../../utils/LocationSearchHelper';
-import { McsIcon } from '../../../components';
 import { TableViewFilters } from '../../../components/TableView';
 import { MapDispatchToProps } from './AutomationListPage';
 import { FilterParams } from '../../Campaigns/Display/List/DisplayCampaignsActionbar';
@@ -35,6 +34,7 @@ import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IDatamartService } from '../../../services/DatamartService';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 const { Content } = Layout;
 

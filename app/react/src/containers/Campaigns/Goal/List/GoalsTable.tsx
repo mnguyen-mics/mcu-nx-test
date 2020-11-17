@@ -34,7 +34,6 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import { ActionsColumnDefinition } from '../../../../components/TableView/TableView';
-import { McsIcon } from '../../../../components';
 import { messages } from './messages';
 import { Index } from '../../../../utils';
 import {
@@ -47,7 +46,7 @@ import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
-import { EmptyTableView } from '@mediarithmics-private/mcs-components-library';
+import { EmptyTableView, McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 export interface ParamFilters
   extends PaginationSearchSettings,

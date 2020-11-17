@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Row, Col, Radio } from 'antd';
 import { compose } from 'recompose';
 
-
 import IframeSupport from './IframeSupport';
 import AceEditor from 'react-ace';
 import 'brace/ext/searchbox';
@@ -10,8 +9,8 @@ import ContentArea, { ContentType } from './ContentArea';
 
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import { injectDrawer } from '../../../../../components/Drawer/index';
-import { McsIcon } from '../../../../../components';
 import { RadioChangeEvent } from 'antd/lib/radio';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 export interface HtmlEditorProps {
   onChange: (html: string) => void;
@@ -28,14 +27,12 @@ interface HtmlEditorState {
 type Props = HtmlEditorProps & InjectedDrawerProps;
 
 class HtmlEditor extends React.Component<Props, HtmlEditorState> {
-  
-
   constructor(props: Props) {
-    super(props)
+    super(props);
     this.state = {
       size: 'MEDIUM',
-      type: 'CODE'
-    }
+      type: 'CODE',
+    };
   }
 
   buildQuickInitialValues = () => {
@@ -119,7 +116,6 @@ class HtmlEditor extends React.Component<Props, HtmlEditorState> {
     return listOfContent;
   };
 
-
   render() {
     const iframe = <IframeSupport content={this.props.content} />;
     const codeEdit = (
@@ -145,27 +141,36 @@ class HtmlEditor extends React.Component<Props, HtmlEditorState> {
       />
     );
 
-    const quikEdit = <ContentArea
-      form={'codeAreaForm'}
-      initialValues={this.buildQuickInitialValues()}
-      content={this.buildContent()}
-      onChange={this.onQuickContentChange}
-    />
+    const quikEdit = (
+      <ContentArea
+        form={'codeAreaForm'}
+        initialValues={this.buildQuickInitialValues()}
+        content={this.buildContent()}
+        onChange={this.onQuickContentChange}
+      />
+    );
 
+    const onSizeChange = (e: RadioChangeEvent) =>
+      this.setState({ size: e.target.value as Size });
+    const onTypeChange = (e: RadioChangeEvent) =>
+      this.setState({ type: e.target.value as Type });
 
-    const onSizeChange = (e: RadioChangeEvent) => this.setState({ size: e.target.value as Size })
-    const onTypeChange = (e: RadioChangeEvent) => this.setState({ type: e.target.value as Type })
-
-
-    const changedSize = this.state.size === 'LARGE' ? -4 : this.state.size === 'SMALL' ? 4 : 0
+    const changedSize =
+      this.state.size === 'LARGE' ? -4 : this.state.size === 'SMALL' ? 4 : 0;
 
     return (
       <div>
         <Row style={{ marginBottom: 10 }}>
           <Col span={12 - changedSize}>
             <Radio.Group onChange={onTypeChange} defaultValue={this.state.type}>
-              <Radio.Button value="CODE"><McsIcon type="code" />Code</Radio.Button>
-              <Radio.Button value="QUICK"><McsIcon type="pen" />Quick Edit</Radio.Button>
+              <Radio.Button value="CODE">
+                <McsIcon type="code" />
+                Code
+              </Radio.Button>
+              <Radio.Button value="QUICK">
+                <McsIcon type="pen" />
+                Quick Edit
+              </Radio.Button>
             </Radio.Group>
           </Col>
           <Col span={12 + changedSize} style={{ textAlign: 'right' }}>
@@ -177,11 +182,20 @@ class HtmlEditor extends React.Component<Props, HtmlEditorState> {
           </Col>
         </Row>
         <Row style={{ maxHeight: 800 }}>
-          <Col span={12 - changedSize} style={{ overflowY: this.state.type === 'CODE' ? 'initial' : 'scroll', maxHeight: 800 }}>
-            { this.state.type === 'CODE' ? codeEdit : quikEdit}
+          <Col
+            span={12 - changedSize}
+            style={{
+              overflowY: this.state.type === 'CODE' ? 'initial' : 'scroll',
+              maxHeight: 800,
+            }}
+          >
+            {this.state.type === 'CODE' ? codeEdit : quikEdit}
           </Col>
 
-          <Col span={12 + changedSize} style={{ overflowY: 'scroll', maxHeight: 800 }}>
+          <Col
+            span={12 + changedSize}
+            style={{ overflowY: 'scroll', maxHeight: 800 }}
+          >
             {iframe}
           </Col>
         </Row>

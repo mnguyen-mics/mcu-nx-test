@@ -5,7 +5,7 @@ import { Layout, Progress, Tooltip } from 'antd';
 import { compose } from 'recompose';
 import moment from 'moment';
 import ImportHeader from './ImportHeader';
-import { Card } from '@mediarithmics-private/mcs-components-library';
+import { Card, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { Filters } from '../../../components/ItemList';
 import { ImportExecution, Import } from '../../../models/imports/imports';
 import ImportActionbar from './ImportActionbar';
@@ -28,7 +28,6 @@ import { IImportService } from '../../../services/ImportService';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../Helpers/injectThemeColors';
-import { McsIcon } from '../../../components';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 import injectNotifications, {
   InjectedNotificationProps,

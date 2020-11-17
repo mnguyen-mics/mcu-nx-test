@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
-import { Button as McsButton} from '@mediarithmics-private/mcs-components-library';
+import { Button as McsButton, McsIcon} from '@mediarithmics-private/mcs-components-library';
 import { TableViewFilters } from '../../../../../components/TableView';
 import messages from './messages';
 import {
@@ -30,7 +30,7 @@ import { TYPES } from '../../../../../constants/types';
 import { IDatamartService } from '../../../../../services/DatamartService';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
-import { McsIcon, Loading } from '../../../../../components';
+import { Loading } from '../../../../../components';
 
 const { Content } = Layout;
 

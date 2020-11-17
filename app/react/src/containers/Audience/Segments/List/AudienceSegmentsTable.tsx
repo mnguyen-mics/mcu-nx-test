@@ -27,7 +27,7 @@ import {
   DatamartSearchSettings,
   compareSearches,
 } from '../../../../utils/LocationSearchHelper';
-import { Button, EmptyTableView } from '@mediarithmics-private/mcs-components-library';
+import { Button, EmptyTableView, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { formatMetric } from '../../../../utils/MetricHelper';
 import { compose } from 'recompose';
 import {
@@ -53,7 +53,6 @@ import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
 import { SegmentNameDisplay } from '../../Common/SegmentNameDisplay';
 import { notifyError } from '../../../../redux/Notifications/actions';
-import { McsIcon } from '../../../../components';
 import { Label } from '../../../Labels/Labels';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
 import {

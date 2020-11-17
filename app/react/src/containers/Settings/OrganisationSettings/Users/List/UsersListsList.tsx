@@ -3,7 +3,6 @@ import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { Layout, Button } from 'antd';
-import { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import { PAGINATION_SEARCH_SETTINGS } from '../../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
@@ -14,6 +13,7 @@ import { TYPES } from '../../../../../constants/types';
 import { Link } from 'react-router-dom';
 import { IOrganisationService } from '../../../../../services/OrganisationService';
 import { ICommunityService } from '../../../../../services/CommunityServices';
+import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 
 const { Content } = Layout;
 

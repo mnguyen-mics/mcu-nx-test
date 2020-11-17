@@ -5,9 +5,9 @@ import { ReduxFormChangeProps } from '../../../../utils/FormHelper';
 import { WrappedFieldArrayProps } from 'redux-form';
 import { AudienceBuilderParametricPredicateNode } from '../../../../models/audienceBuilder/AudienceBuilderResource';
 import { Row, Col, Button } from 'antd';
-import { McsIcon } from '../../../../components';
 import AudienceFeatureLayout from './AudienceFeatureLayout';
 import { ObjectLikeTypeInfoResource } from '../../../../models/datamart/graphdb/RuntimeSchema';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 export interface AudienceFeatureFormSectionProps extends ReduxFormChangeProps {
   isDemographicsSection: boolean;

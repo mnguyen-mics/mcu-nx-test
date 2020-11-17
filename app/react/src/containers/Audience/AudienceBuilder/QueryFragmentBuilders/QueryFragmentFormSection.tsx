@@ -11,14 +11,13 @@ import { Button } from 'antd';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { messages, FORM_ID } from '../constants';
-import { Card } from '@mediarithmics-private/mcs-components-library';
+import { Card, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import {
   AudienceBuilderFormData,
   AudienceBuilderGroupNode,
   AudienceBuilderParametricPredicateNode,
   
 } from '../../../../models/audienceBuilder/AudienceBuilderResource';
-import { McsIcon } from '../../../../components';
 import AudienceFeatureFormSection, {
   AudienceFeatureFormSectionProps,
 } from './AudienceFeatureFormSection';

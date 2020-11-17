@@ -10,10 +10,10 @@ import {
 import { withRouter, RouteComponentProps } from 'react-router';
 import { FORM_ID, QueryInputAutomationFormData } from '../domain';
 import { QueryLanguage } from '../../../../../../models/datamart/DatamartResource';
-import { MenuPresentational, Actionbar } from '@mediarithmics-private/mcs-components-library';
+import { MenuPresentational, Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { FormTitle } from '../../../../../../components/Form';
 import JSONQLBuilderContainer from '../../../../../QueryTool/JSONOTQL/JSONQLBuilderContainer';
-import { McsIcon, OtqlConsole } from '../../../../../../components';
+import { OtqlConsole } from '../../../../../../components';
 import { QueryDocument } from '../../../../../../models/datamart/graphdb/QueryDocument';
 import { StorylineNodeModel } from '../../../domain';
 import { QueryInputNodeResource } from '../../../../../../models/automations/automations';

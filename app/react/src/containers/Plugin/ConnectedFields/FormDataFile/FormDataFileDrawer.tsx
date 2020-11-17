@@ -2,8 +2,10 @@ import * as React from 'react';
 import { Layout, Button, Select, Upload, Input } from 'antd';
 import { FormattedMessage } from 'react-intl';
 import { UploadProps, UploadFile } from 'antd/lib/upload/interface';
-import { Actionbar } from '@mediarithmics-private/mcs-components-library';
-import McsIcon from '../../../../components/McsIcon';
+import {
+  Actionbar,
+  McsIcon,
+} from '@mediarithmics-private/mcs-components-library';
 import { FormTitle } from '../../../../components/Form';
 import messages from '../../messages';
 import { Content } from './HtmlEditor/ContentArea';
@@ -182,7 +184,8 @@ class FormDataFileDrawer extends React.Component<
       const { fileSelectorValue } = this.state;
 
       if (fileSelectorValue) {
-        this._dataFileService.getDatafileData(fileSelectorValue)
+        this._dataFileService
+          .getDatafileData(fileSelectorValue)
           .then(res => {
             this.onFileUpdate(res);
             const fileName = this.parseFileName(fileSelectorValue);

@@ -15,7 +15,7 @@ import { UpdateMessage } from './DisplayCampaignAdGroupTable';
 
 import { CampaignRouteParams } from '../../../../../models/campaign/CampaignResource';
 import DisplayCampaignAdTable from '../Common/DisplayCampaignAdTable';
-import { Card } from '@mediarithmics-private/mcs-components-library';
+import { Card, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { CardProps } from '@mediarithmics-private/mcs-components-library/lib/components/card';
 import McsDateRangePicker, {
   McsDateRangeValue,
@@ -27,7 +27,6 @@ import {
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';
 import Slide from '../../../../../components/Transition/Slide';
-import { McsIcon } from '../../../../../components/index';
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import { injectDrawer } from '../../../../../components/Drawer/index';
 import {

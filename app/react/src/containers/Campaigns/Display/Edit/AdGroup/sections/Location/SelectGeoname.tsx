@@ -2,7 +2,6 @@ import * as React from 'react';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import cuid from 'cuid';
 import * as Antd from 'antd';
-import McsIcon from '../../../../../../../components/McsIcon';
 import messages from '../../../messages';
 import {
   Geoname, IGeonameService,
@@ -11,6 +10,7 @@ import { LocationFieldModel } from '../../domain';
 import { Select } from '../../../../../../../components/PopupContainers';
 import { lazyInject } from '../../../../../../../config/inversify.config';
 import { TYPES } from '../../../../../../../constants/types';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 const InputGroup = Antd.Input.Group;
 const Option = Antd.Select.Option;

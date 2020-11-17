@@ -8,7 +8,6 @@ import injectNotifications, {
 import { compose } from 'recompose';
 import ExportService from '../../../../services/ExportService';
 import { Button, message } from 'antd';
-import { McsIcon } from '../../../../components';
 import { parseSearch } from '../../../../utils/LocationSearchHelper';
 import { FEEDS_SEARCH_SETTINGS } from './constants';
 import { AudienceFeedType, IAudienceSegmentFeedService } from '../../../../services/AudienceSegmentFeedService';
@@ -20,7 +19,7 @@ import messages from '../messages';
 import { IAudienceTagFeedService } from '../../../../services/AudienceTagFeedService';
 import { IAudienceExternalFeedService } from '../../../../services/AudienceExternalFeedService';
 import { AudienceTagFeed } from '../../../../models/Plugins';
-import { Actionbar } from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 type Props = RouteComponentProps<{ organisationId: string }> &
   InjectedIntlProps &

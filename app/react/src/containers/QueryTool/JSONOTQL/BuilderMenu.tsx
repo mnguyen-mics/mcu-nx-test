@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { McsIcon, WindowBodyPortal } from '../../../components';
-import { Button } from '@mediarithmics-private/mcs-components-library';
+import { WindowBodyPortal } from '../../../components';
+import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { Icon } from 'antd';
 
 export interface UndoRedoProps {

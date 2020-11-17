@@ -24,11 +24,8 @@ import {
 } from '../../../../../../models/creative/CreativeResource';
 import { isDisplayAdResource } from '../../../../../Creative/DisplayAds/Edit/domain';
 import { Row, Col, Spin } from 'antd';
-import {
-  McsIcon,
-  EmptyRecords,
-} from '../../../../../../components';
-import { Button } from '@mediarithmics-private/mcs-components-library';
+import { EmptyRecords } from '../../../../../../components';
+import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { AuditStatusRenderer } from '../../../../../Creative/DisplayAds/Audit';
 import { DisplayAdResourceWithFieldIndex } from '../../AdGroup/sections/AdFormSection';
 import { CancelablePromise } from '../../../../../../services/ApiService';

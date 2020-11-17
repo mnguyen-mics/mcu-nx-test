@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { Actionbar, Button, McsTabs, ColoredButton } from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, Button, McsTabs, ColoredButton, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { LayoutablePlugin } from '../../../../models/Plugins';
 import { compose } from 'recompose';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../Helpers/injectThemeColors';
-import { McsIcon } from '../../../../components';
 import { PluginLayout } from '../../../../models/plugin/PluginLayout';
 import { PropertyResourceShape } from '../../../../models/plugin';
 import PluginSectionGenerator, { PluginExtraField } from '../../PluginSectionGenerator';

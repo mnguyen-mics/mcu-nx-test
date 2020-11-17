@@ -23,7 +23,7 @@ import {
   ProcessingSelectionResource,
 } from '../../../../models/processing';
 import { Alert } from 'antd';
-import { McsIcon } from '../../../../components';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 export type ProcessingsAssociatedType =
   | 'CHANNEL'

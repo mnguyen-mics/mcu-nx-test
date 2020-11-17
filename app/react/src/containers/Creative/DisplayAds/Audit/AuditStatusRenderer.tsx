@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { CreativeAuditStatus } from '../../../../models/creative/CreativeResource';
-import { McsIcon } from '../../../../components/index';
 import { FormattedMessage, defineMessages } from 'react-intl';
-import { McsIconType } from '../../../../components/McsIcon';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 
 export interface AuditStatusRendererProps {
   auditStatus?: CreativeAuditStatus;

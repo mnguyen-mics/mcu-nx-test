@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Col, Spin } from 'antd';
 import { TooltipProps } from 'antd/lib/tooltip';
-import { McsIcon } from '../';
-import { Button, SearchAndMultiSelect } from '@mediarithmics-private/mcs-components-library';
+import { Button, McsIcon, SearchAndMultiSelect } from '@mediarithmics-private/mcs-components-library';
 import { MenuItemProps } from '@mediarithmics-private/mcs-components-library/lib/components/search-multi-select/SearchAndMultiSelect';
 import FormFieldWrapper, { FormFieldWrapperProps } from './FormFieldWrapper';
 

@@ -5,7 +5,7 @@ import FormTitle, { FormTitleProps } from './FormTitle';
 import { ClickParam } from 'antd/lib/menu';
 
 import { Dropdown } from '../../components/PopupContainers';
-import McsIcon from '../McsIcon';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 interface DropdownButtonItemProps {
   id: string;

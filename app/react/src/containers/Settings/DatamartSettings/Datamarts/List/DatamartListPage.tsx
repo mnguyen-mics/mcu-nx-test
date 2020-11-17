@@ -7,7 +7,6 @@ import {
   FormattedMessage,
 } from 'react-intl';
 import { Layout } from 'antd';
-import { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import { PAGINATION_SEARCH_SETTINGS, ARCHIVED_SEARCH_SETTINGS } from '../../../../../utils/LocationSearchHelper';
 import { IDatamartService } from '../../../../../services/DatamartService';
@@ -22,6 +21,7 @@ import { Link } from 'react-router-dom';
 import { ActionsColumnDefinition, ActionsRenderer, ActionDefinition } from '../../../../../components/TableView/TableView';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
+import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 
 const { Content } = Layout;
 

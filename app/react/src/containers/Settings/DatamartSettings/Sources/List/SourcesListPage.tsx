@@ -15,11 +15,10 @@ import injectNotifications, {
 } from '../../../../Notifications/injectNotifications';
 import { TableView } from '../../../../../components/TableView';
 import { Index } from '../../../../../utils';
-import { McsIcon } from '../../../../../components';
 import { Link } from 'react-router-dom';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
-import { EmptyTableView } from '@mediarithmics-private/mcs-components-library';
+import { EmptyTableView, McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 const { Content } = Layout;
 

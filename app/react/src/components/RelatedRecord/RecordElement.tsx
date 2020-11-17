@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Col, Row, Popconfirm } from 'antd';
-import McsIcon, { McsIconType } from '../McsIcon';
-import { Button } from '@mediarithmics-private/mcs-components-library';
+import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
+import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 
 type RenderItem<T> = (record: T) => React.ReactNode;
 

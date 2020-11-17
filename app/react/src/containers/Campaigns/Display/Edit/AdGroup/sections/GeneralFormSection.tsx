@@ -18,8 +18,7 @@ import {
   FormAddonSelectField,
   FormDateRangePickerField,
 } from '../../../../../../components/Form';
-import { McsIcon } from '../../../../../../components';
-import { Button } from '@mediarithmics-private/mcs-components-library';
+import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import FormDateRangePicker from '../../../../../../components/Form/FormDateRangePicker';
 import { formatAdGroupProperty } from '../../../../Display/messages';
 

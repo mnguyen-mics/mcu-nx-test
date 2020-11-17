@@ -5,8 +5,7 @@ import { Layout } from 'antd';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import Scrollspy from '../Scrollspy';
-import McsIcon from '../McsIcon';
-import { Button } from '@mediarithmics-private/mcs-components-library';
+import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 const { Sider } = Layout;
 

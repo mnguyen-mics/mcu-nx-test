@@ -22,10 +22,9 @@ import {
   FormTextArea,
   FormTextAreaField,
 } from '../../../../../components/Form';
-import { McsIcon } from '../../../../../components';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
 import { AudienceSegmentType } from '../../../../../models/audiencesegment';
-import { Button } from '@mediarithmics-private/mcs-components-library';
+import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 const messagesMap = defineMessages({
   audienceSegmentFormSelectTypeOptionUserList: {

@@ -32,10 +32,9 @@ import { OTQLResult } from '../../../models/datamart/graphdb/OTQLResult';
 import CounterList from './CounterList';
 import { Col } from 'antd';
 import SchemaVizualizer from './SchemaVisualizer/SchemaVizualizer';
-import { McsIcon } from '../../../components';
 import { JSONQLBuilderContext } from './JSONQLBuilderContext';
 import withDragDropContext from '../../../common/Diagram/withDragDropContext';
-import { Button } from '@mediarithmics-private/mcs-components-library';
+import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 export interface QueryResult {
   loading: boolean;

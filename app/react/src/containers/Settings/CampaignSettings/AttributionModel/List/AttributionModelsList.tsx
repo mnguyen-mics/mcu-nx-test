@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { IAttributionModelService } from '../../../../../services/AttributionModelService';
 import { Modal, Button, Layout } from 'antd';
-import { McsIconType } from '../../../../../components/McsIcon';
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import { IPluginService } from '../../../../../services/PluginService';
 import {
@@ -22,6 +21,7 @@ import messages from './messages';
 import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
+import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 
 const { Content } = Layout;
 

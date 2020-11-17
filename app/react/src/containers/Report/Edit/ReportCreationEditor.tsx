@@ -18,8 +18,7 @@ import { Layout, Row, Button, Col } from 'antd';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 
-import { Actionbar } from '@mediarithmics-private/mcs-components-library';
-import McsIcon from '../../../components/McsIcon';
+import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { FormTitle, withValidators } from '../../../components/Form';
 import FormDateRangePicker, {
   FormDateRangePickerProps,

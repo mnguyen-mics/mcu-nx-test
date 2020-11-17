@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { McsIconType } from '../../../../components/McsIcon';
 import { Row, Tree } from 'antd';
 import AvailableNode from './AvailableNode';
 import {
@@ -16,6 +15,7 @@ import {
 import { generateFakeId } from '../../../../utils/FakeIdHelper';
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 import { compose } from 'recompose';
+import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 
 const { TreeNode } = Tree;
 

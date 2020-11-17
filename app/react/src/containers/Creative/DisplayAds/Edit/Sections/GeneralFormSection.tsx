@@ -3,7 +3,7 @@ import { Field, getFormInitialValues, Validator, GenericField } from 'redux-form
 import { connect } from 'react-redux';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
-import { Button } from '@mediarithmics-private/mcs-components-library';
+import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import {
   FormSection,
   FieldCtor,
@@ -22,7 +22,6 @@ import {
   EditDisplayCreativeRouteMatchParams,
 } from '../domain';
 import DisplayCreativeFormatEditor from '../DisplayCreativeFormatEditor';
-import { McsIcon } from '../../../../../components';
 import { RouteComponentProps } from 'react-router';
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 

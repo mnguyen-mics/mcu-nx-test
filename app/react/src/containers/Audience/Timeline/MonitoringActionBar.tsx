@@ -3,8 +3,7 @@ import { Input, Select, Button, Modal } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
-import { Actionbar } from '@mediarithmics-private/mcs-components-library';
-import McsIcon from '../../../components/McsIcon';
+import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import messages from './messages';
 import { Identifier } from './Monitoring';
 import {

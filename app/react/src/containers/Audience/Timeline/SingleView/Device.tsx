@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Row, Col, Icon } from 'antd';
-import McsIcon from '../../../../components/McsIcon';
 import { Device, FormFactor } from '../../../../models/timeline/timeline';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 interface Props {
   vectorId: string;

@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { Button } from '@mediarithmics-private/mcs-components-library';
+import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 // TS Interfaces
 import { Input } from 'antd';
 import { InputProps } from 'antd/lib/input/Input';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { TooltipProps } from 'antd/lib/tooltip';
-import { McsIcon } from '../';
 
 import FormFieldWrapper, {
   FormFieldWrapperProps,

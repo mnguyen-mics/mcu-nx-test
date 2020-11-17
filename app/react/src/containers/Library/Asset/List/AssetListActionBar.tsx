@@ -4,8 +4,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 
-import { Actionbar } from '@mediarithmics-private/mcs-components-library';
-import McsIcon from '../../../../components/McsIcon';
+import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import messages from './messages';
 import { UploadFile } from 'antd/lib/upload/interface';
 import { Filters } from '../../../../components/ItemList';

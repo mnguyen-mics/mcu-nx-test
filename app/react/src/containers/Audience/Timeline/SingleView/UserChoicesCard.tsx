@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
-import { Card } from '@mediarithmics-private/mcs-components-library';
+import { Card, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { Row, Col, Tooltip, Modal, Tag } from 'antd';
 import messages from '../messages';
-import { McsIcon } from '../../../../components';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/styles/hljs';
 import { injectFeatures, InjectedFeaturesProps } from '../../../Features';

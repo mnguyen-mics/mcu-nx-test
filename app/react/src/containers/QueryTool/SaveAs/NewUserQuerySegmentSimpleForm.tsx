@@ -2,7 +2,7 @@ import * as React from 'react';
 import { reduxForm, InjectedFormProps, ConfigProps } from 'redux-form';
 import { Omit } from 'react-router';
 import { Form } from 'antd';
-import { Button } from '@mediarithmics-private/mcs-components-library';
+import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import {
   FormBoolean,
   AddonSelect,
@@ -17,7 +17,6 @@ import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { ValidatorProps } from '../../../components/Form/withValidators';
 import { NormalizerProps } from '../../../components/Form/withNormalizer';
-import { McsIcon } from '../../../components';
 
 export interface NewUserQuerySimpleFormData {
   name: string;

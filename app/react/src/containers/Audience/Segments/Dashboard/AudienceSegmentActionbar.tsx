@@ -6,7 +6,6 @@ import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import McsIcon from '../../../../components/McsIcon';
 import { parseSearch } from '../../../../utils/LocationSearchHelper';
 import ExportService from '../../../../services/ExportService';
 import exportMessages from '../../../../common/messages/exportMessages';
@@ -43,7 +42,7 @@ import AudienceExperimentationEditPage, {
 import { isUserQuerySegment } from '../Edit/domain';
 import AudienceSegmentService from '../../../../services/AudienceSegmentService';
 import resourceHistoryMessages from '../../../ResourceHistory/ResourceTimeline/messages';
-import { Actionbar } from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 export interface AudienceSegmentActionbarProps {
   segment?: AudienceSegmentShape;
