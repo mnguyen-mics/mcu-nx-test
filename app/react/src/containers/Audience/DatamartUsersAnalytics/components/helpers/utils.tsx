@@ -32,6 +32,8 @@ interface ResourceByKeywordSelectorProps {
   datamartId: string;
   organisationId: string;
   onchange: (value: LabeledValue) => void;
+  multiselect?: boolean;
+  showId?: boolean;
 }
 
 interface QueryFilter<AdditionalContext> {
@@ -58,7 +60,7 @@ function ResourceByKeywordSelector<T extends SelectableResource, AdditionalConte
     }
 
     fetchListMethod(keyword: string) {
-      const { datamartId, organisationId, filter, notifyError } = this.props;
+      const { datamartId, organisationId, filter, notifyError, showId } = this.props;
       this.setState({ resourcesList: [], fetching: true });
       const options = {
         keywords: keyword,
@@ -69,7 +71,7 @@ function ResourceByKeywordSelector<T extends SelectableResource, AdditionalConte
       return resourceFetcher.getForKeyword(options)
         .then(res => {
           this.setState({
-            resourcesList: res.map(r => ({ key: r.id, label: <NameDisplay {...r} /> })),
+            resourcesList: res.map(r => ({ key: r.id, label: <NameDisplay {...r} showId={showId} /> })),
             fetching: false
           })
         }).catch(e => {
@@ -90,10 +92,10 @@ function ResourceByKeywordSelector<T extends SelectableResource, AdditionalConte
 
     render() {
       const { resourcesList, fetching, value } = this.state;
-      const { anchorId, className } = this.props;
+      const { anchorId, className, multiselect } = this.props;
       const getPopupContainer = () => document.getElementById(anchorId)!
       return (<Select
-        mode="tags"
+        mode={multiselect ? "tags" : "default"}
         tokenSeparators={[',']}
         showSearch={true}
         labelInValue={true}
@@ -116,4 +118,4 @@ function ResourceByKeywordSelector<T extends SelectableResource, AdditionalConte
     injectNotifications,
   )(Wrapped)
 }
-export { ResourceByKeywordSelector, ResourceFetcher, GetOptions }
+export { ResourceByKeywordSelector, ResourceFetcher, GetOptions, ResourceByKeywordSelectorProps }

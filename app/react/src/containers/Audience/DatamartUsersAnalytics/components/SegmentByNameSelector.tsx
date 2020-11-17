@@ -20,6 +20,7 @@ const segmentFetcher = new SegmentFetcher()
 interface SegmentByNameSelectorProps {
   segmentType?: AudienceSegmentType;
   className?: string
+  showId?: boolean;
 }
 
 function audienceSegmentAdapter(s: AudienceSegmentShape): SegmentNameDisplayProps {
