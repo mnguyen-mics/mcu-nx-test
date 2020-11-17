@@ -23,7 +23,8 @@ export type FunnelTimeRange = FunnelWindowRange | FunnelDateRange
 
 export interface FunnelRequestBody {
   for: FunnelFilter[];
-  in: FunnelTimeRange
+  in: FunnelTimeRange;
+  number_of_parts_to_split_on: number;
 }
 
 export type FunnelResponse = DataResponse<FunnelResource>

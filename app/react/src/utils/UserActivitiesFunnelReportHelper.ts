@@ -12,6 +12,7 @@ export function buildUserActivitiesFunnelRequestBody(
   const body: FunnelRequestBody = {
     for: funnelFilter,
     in: funnelTimeRange,
+    number_of_parts_to_split_on: 10
   };
 
   return body;
