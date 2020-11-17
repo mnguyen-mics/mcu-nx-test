@@ -34,6 +34,7 @@ import {
   ProductIdByNameSelector
 } from '../../containers/Audience/DatamartUsersAnalytics/components/DimensionValueByNameSelector';
 import { AdGroupByKeywordSelector } from '../../containers/Audience/DatamartUsersAnalytics/components/AdGroupByNameSelector';
+import { ResourceByKeywordSelectorProps } from '../../containers/Audience/DatamartUsersAnalytics/components/helpers/utils';
 
 export interface Step {
   id?: string;
@@ -162,12 +163,14 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     const Option = Select.Option;
     const anchorId = "mcs-funnel_expression_select_anchor"
 
-    const commonProps = {
+    const commonProps: ResourceByKeywordSelectorProps = {
       anchorId: anchorId,
       datamartId: datamartId,
       organisationId: organisationId,
       className: "mcs-funnelQueryBuilder_dimensionValue",
-      onchange: this.handleDimensionExpressionForSelectorChange.bind(this, dimensionIndex, stepId, (x: LabeledValue) => x.key)
+      onchange: this.handleDimensionExpressionForSelectorChange.bind(this, dimensionIndex, stepId, (x: LabeledValue) => x.key),
+      showId: true,
+      multiselect: true
     }
     const additionalDimensionFilter = {
       from: from,

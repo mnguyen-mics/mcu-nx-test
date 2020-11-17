@@ -8,6 +8,7 @@ import ComponentPropsAdapter from './ComponentPropsAdapter';
 
 interface DimensionNameDisplayProps { 
   resource: NamedResource;
+  showId?: boolean;
 }
 
 type Props = DimensionNameDisplayProps &
@@ -40,9 +41,9 @@ class DimensionNameDisplayWrapped extends React.Component<Props> {
   }
 
   render() {
-    const { resource } = this.props;
+    const { resource, showId } = this.props;
     return <span title={resource.name}>
-      {this.displayId()} {this.ellipsizeResourceName(resource.name)} 
+      {showId && this.displayId()} {this.ellipsizeResourceName(resource.name)} 
     </span>
   }
 }

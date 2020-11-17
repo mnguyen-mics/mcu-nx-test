@@ -14,6 +14,7 @@ interface SegmentNameDisplayProps {
   audienceSegmentResource?: AudienceSegmentShape;
   onLoad?: (segment?: AudienceSegmentShape) => void;
   tableViewMode?: boolean;
+  showId?: boolean
 }
 
 interface State {
@@ -133,7 +134,7 @@ class SegmentNameDisplayWrapped extends React.Component<Props, State> {
   }
 
   render() {
-    const { intl } = this.props;
+    const { intl, showId } = this.props;
     const { audienceSegmentResource } = this.state;
 
     // This can happen when the component isrenderloading the segment name (or if something shitty happened)
@@ -153,7 +154,7 @@ class SegmentNameDisplayWrapped extends React.Component<Props, State> {
     }
     return (
       <span title={audienceSegmentResource.name}>
-        {this.displayId()} {this.ellipsizeSegmentName(audienceSegmentName)}
+        { showId && this.displayId()} {this.ellipsizeSegmentName(audienceSegmentName)}
       </span>
     );
   }

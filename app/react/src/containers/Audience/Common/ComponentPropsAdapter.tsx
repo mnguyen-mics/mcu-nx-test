@@ -5,7 +5,7 @@ function ComponentPropsAdapter<T, S>(Display: React.ComponentType<S>, adapter: (
     render() {
       const props = this.props;
       const adapted = adapter(props)
-      return <Display {...adapted}/>
+      return <Display {...props} {...adapted}/>
     }
   }
 }
