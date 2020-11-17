@@ -56,12 +56,20 @@ const Category3ByNameSelector = DimensionValueByNameSelector('CATEGORY3');
 const Category4ByNameSelector = DimensionValueByNameSelector('CATEGORY4');
 const BrandByNameSelector = DimensionValueByNameSelector('BRAND');
 const ProductIdByNameSelector = DimensionValueByNameSelector('PRODUCT_ID');
+const DeviceBrandByNameSelector = DimensionValueByNameSelector('DEVICE_BRAND');
+const TypeByNameSelector = DimensionValueByNameSelector('TYPE');
+const DeviceCarrierByNameSelector = DimensionValueByNameSelector('DEVICE_CARRIER');
+const DeviceModelByNameSelector = DimensionValueByNameSelector('DEVICE_MODEL');
 
 export {
-  Category1ByNameSelector, 
+  Category1ByNameSelector,
   Category2ByNameSelector,
   Category3ByNameSelector,
   Category4ByNameSelector,
   BrandByNameSelector,
-  ProductIdByNameSelector
+  ProductIdByNameSelector,
+  DeviceBrandByNameSelector,
+  TypeByNameSelector,
+  DeviceCarrierByNameSelector,
+  DeviceModelByNameSelector
 };
