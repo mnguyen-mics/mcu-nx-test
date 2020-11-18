@@ -94,6 +94,7 @@ function ResourceByKeywordSelector<T extends SelectableResource, AdditionalConte
       const { resourcesList, fetching, value } = this.state;
       const { anchorId, className, multiselect } = this.props;
       const getPopupContainer = () => document.getElementById(anchorId)!
+      const alwaysTrue = () => true
       return (<Select
         mode={multiselect ? "tags" : "default"}
         tokenSeparators={[',']}
@@ -103,12 +104,12 @@ function ResourceByKeywordSelector<T extends SelectableResource, AdditionalConte
         value={value}
         className={className ? className : "mcs-resourceByNameSelector"}
         placeholder={placeholder}
-        filterOption={false}
         onSearch={this.fetchListMethod}
         onChange={this.handleChange}
         notFoundContent={fetching ? <Spin size="small" className="text-center" /> : null}
         suffixIcon={<McsIcon type="magnifier" />}
         getPopupContainer={getPopupContainer}
+        filterOption={alwaysTrue}
       >
         {resourcesList.map((item: LabeledValue, index: number) => <Select.Option value={item.key} key={index.toString()}>{item.label}</Select.Option>)}
       </Select>);
