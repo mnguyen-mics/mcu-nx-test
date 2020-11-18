@@ -6,13 +6,18 @@ import { RouteComponentProps } from 'react-router';
 import { messages } from '../constants';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
-import { IAudienceFeatureService } from '../../../../services/AudienceFeatureService';
+import {
+  IAudienceFeatureService,
+  AudienceFeatureOptions,
+} from '../../../../services/AudienceFeatureService';
 import { connect } from 'react-redux';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
+import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { AudienceBuilderFormData } from '../../../../models/audienceBuilder/AudienceBuilderResource';
 import TableSelector, {
   TableSelectorProps,
 } from '../../../../components/ElementSelector/TableSelector';
+import { SearchFilter } from '../../../../components/ElementSelector';
 import { DataColumnDefinition } from '../../../../components/TableView/TableView';
 import { AudienceFeatureResource } from '../../../../models/audienceFeature';
 
@@ -53,9 +58,22 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
     };
   }
 
-  fetchAudienceFeatures = () => {
+  fetchAudienceFeatures = (filter: SearchFilter) => {
     const { datamartId, demographicIds } = this.props;
-    return this._audienceFeatureService.getAudienceFeatures(datamartId, demographicIds);
+
+    const options: AudienceFeatureOptions = {
+      ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
+    };
+
+    if (filter.keywords) {
+      options.keywords = [filter.keywords];
+    }
+
+    return this._audienceFeatureService.getAudienceFeatures(
+      datamartId,
+      demographicIds,
+      options,
+    );
   };
 
   saveAudienceFeatures = (

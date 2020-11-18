@@ -1,6 +1,6 @@
-import { PaginatedApiParam } from './../utils/ApiHelper';
 import { AudienceFeatureResource } from '../models/audienceFeature';
 import { injectable } from 'inversify';
+import { PaginatedApiParam } from '../utils/ApiHelper';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 
 export interface AudienceFeatureOptions extends PaginatedApiParam {
