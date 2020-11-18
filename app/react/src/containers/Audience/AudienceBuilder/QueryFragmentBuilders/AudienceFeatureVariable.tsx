@@ -90,6 +90,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
         params: { organisationId },
       },
       workspace: { community_id },
+      fieldValidators: { isValidFloat, isValidInteger },
     } = this.props;
     let name;
     name = `${formPath}.parameters.${variable.parameter_name}`;
@@ -122,6 +123,16 @@ class AudienceFeatureVariable extends React.Component<Props> {
               label: variable.parameter_name,
               ...fieldGridConfig,
             }}
+            options={[
+              {
+                title: 'true',
+                value: 'true',
+              },
+              {
+                title: 'false',
+                value: 'false',
+              },
+            ]}
           />
         );
       case 'Int':
@@ -129,6 +140,19 @@ class AudienceFeatureVariable extends React.Component<Props> {
           <FormInputField
             name={name}
             component={FormInput}
+            validate={[isValidInteger]}
+            formItemProps={{
+              label: variable.parameter_name,
+              ...fieldGridConfig,
+            }}
+          />
+        );
+      case 'Float':
+        return (
+          <FormInputField
+            name={name}
+            component={FormInput}
+            validate={[isValidFloat]}
             formItemProps={{
               label: variable.parameter_name,
               ...fieldGridConfig,
@@ -291,8 +315,8 @@ class AudienceFeatureVariable extends React.Component<Props> {
             fetchListMethod={fetchListMethod}
             fetchSingleMethod={fetchSingleMethod}
             selectProps={selectProps}
-            loadOnlyOnce = {loadOnlyOnce}
-            shouldFilterData = {shouldFilterData}
+            loadOnlyOnce={loadOnlyOnce}
+            shouldFilterData={shouldFilterData}
           />
         );
       case 'Timestamp':

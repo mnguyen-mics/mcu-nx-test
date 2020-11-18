@@ -20,7 +20,7 @@ export interface AudienceBuilderParametricPredicateNode {
   type: 'PARAMETRIC_PREDICATE';
   parametric_predicate_id: string;
   parameters: {
-    [key: string]: string[] | undefined;
+    [key: string]: string[] | number | undefined;
   };
 }
 

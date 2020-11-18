@@ -134,6 +134,12 @@ export const formatQuery = (
                       return v[0] ? v[0].toString() : undefined;
                     } else if (typeof v === 'number') {
                       return v.toString();
+                    } else if (
+                      // Check if string value represents a float
+                      // and return it as a float
+                      !isNaN(v)
+                    ) {
+                      return parseFloat(v);
                     } else return isEditMode ? [v] : v;
                   };
                   Object.keys(e.parameters).forEach(k => {
