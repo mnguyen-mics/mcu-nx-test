@@ -8,16 +8,10 @@ import { IUsersAnalyticsService } from '../../services/UsersAnalyticsService';
 import { DimensionsList } from '../../models/datamartUsersAnalytics/datamartUsersAnalytics';
 import { compose } from 'recompose';
 import injectNotifications, { InjectedNotificationProps } from '../../containers/Notifications/injectNotifications';
-import { booleanOperator, FUNNEL_SEARCH_SETTING, FilterOperatorLabel, enumValuesByName, DimensionEnum } from './Constants';
+import { booleanOperator, FUNNEL_SEARCH_SETTING, FilterOperatorLabel } from './Constants';
 import { BooleanOperator, DimensionFilterClause, DimensionFilterOperator } from '../../models/ReportRequestBody';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { updateSearch, isSearchValid } from '../../utils/LocationSearchHelper';
-import { GoalByKeywordSelector } from '../../containers/Audience/DatamartUsersAnalytics/components/GoalByNameSelector'
-import { LabeledValue } from 'antd/lib/select';
-import { CampaignByKeywordSelector } from '../../containers/Audience/DatamartUsersAnalytics/components/CampaignByNameSelector';
-import SegmentByNameSelector from '../../containers/Audience/DatamartUsersAnalytics/components/SegmentByNameSelector';
-import { ChannelByKeywordSelector } from '../../containers/Audience/DatamartUsersAnalytics/components/ChannelByNameSelector';
-import { CreativeByKeywordSelector } from '../../containers/Audience/DatamartUsersAnalytics/components/CreativeByNameSelector';
 import { McsDateRangePicker, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import { FILTERS } from '../../containers/Audience/DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
@@ -25,33 +19,12 @@ import McsMoment from '../../utils/McsMoment';
 import {
   FormattedMessage,
 } from 'react-intl';
-import {
-  BrandByNameSelector,
-  Category1ByNameSelector,
-  Category2ByNameSelector,
-  Category3ByNameSelector,
-  Category4ByNameSelector,
-  ProductIdByNameSelector,
-  DeviceBrandByNameSelector,
-  TypeByNameSelector,
-  DeviceCarrierByNameSelector,
-  DeviceModelByNameSelector
-} from '../../containers/Audience/DatamartUsersAnalytics/components/DimensionValueByNameSelector';
-import { AdGroupByKeywordSelector } from '../../containers/Audience/DatamartUsersAnalytics/components/AdGroupByNameSelector';
-import { ResourceByKeywordSelectorProps } from '../../containers/Audience/DatamartUsersAnalytics/components/helpers/utils';
+import FunnelExpressionInput from './FunnelExpressionInput';
 
 export interface Step {
   id?: string;
   name: string;
   filter_clause: DimensionFilterClause;
-}
-
-interface CommonEnumProps {
-  showSearch: boolean,
-  showArrow: boolean,
-  placeholder: string,
-  className: string,
-  onChange: (s: string) => void
 }
 
 interface State {
@@ -161,186 +134,6 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
       });
   }
 
-  getInputField(dimensionName: string,
-    dimensionIndex: number,
-    from: McsMoment,
-    to: McsMoment,
-    stepId?: string,
-  ) {
-    const { datamartId,
-      match: {
-        params: { organisationId },
-      }
-    } = this.props;
-    const Option = Select.Option;
-    const anchorId = "mcs-funnel_expression_select_anchor"
-
-    const commonProps: ResourceByKeywordSelectorProps = {
-      anchorId: anchorId,
-      datamartId: datamartId,
-      organisationId: organisationId,
-      className: "mcs-funnelQueryBuilder_dimensionValue",
-      onchange: this.handleDimensionExpressionForSelectorChange.bind(this, dimensionIndex, stepId, (x: LabeledValue) => x.key),
-      showId: true,
-      multiselect: true
-    }
-
-    const additionalDimensionFilter = {
-      from: from,
-      to: to
-    }
-
-    const commonEnumProps: CommonEnumProps = {
-      showSearch: true,
-      showArrow: false,
-      placeholder: "Dimension value",
-      className: "mcs-funnelQueryBuilder_dimensionValue",
-      onChange: this.handleDimensionExpressionForSelectorChange.bind(this, dimensionIndex, stepId, (x: string) => x)
-    }
-
-    switch (dimensionName) {
-      case 'HAS_CONVERSION':
-      case 'HAS_BOUNCED':
-        return <Select {...commonEnumProps} >
-          <Option key={this._cuid()} value={"0"}>
-            {"false"}
-          </Option>
-          <Option key={this._cuid()} value={"1"}>
-            {"true"}
-          </Option>
-        </Select>
-      case 'EVENT_TYPE':
-      case 'DEVICE_OS_FAMILY':
-      case 'DEVICE_FORM_FACTOR':
-      case 'DEVICE_BROWSER_FAMILY':
-        const dimensionEnums: DimensionEnum[] = enumValuesByName[dimensionName]
-        return <Select {...commonEnumProps} >
-          {dimensionEnums.map((et: DimensionEnum) => {
-            return (
-              <Option key={this._cuid()} value={et.toString()}>
-                {et.toString()}
-              </Option>)
-          })}
-        </Select>
-      case 'SEGMENT_ID':
-        return (<div id={anchorId}>
-          <SegmentByNameSelector
-            {...commonProps}
-          />
-        </div>)
-      case 'SUB_CAMPAIGN_ID':
-        return (<div id={anchorId}>
-          <AdGroupByKeywordSelector
-            {...commonProps}
-          />
-        </div>)
-      case 'ORIGIN_CAMPAIGN_ID':
-        return (<div id={anchorId}>
-          <CampaignByKeywordSelector
-            {...commonProps}
-          />
-        </div>)
-      case 'GOAL_ID':
-        return (<div id={anchorId}>
-          <GoalByKeywordSelector
-            {...commonProps}
-          />
-        </div>)
-      case 'CHANNEL_ID':
-        return (<div id={anchorId}>
-          <ChannelByKeywordSelector
-            {...commonProps}
-          />
-        </div>)
-      case 'ORIGIN_CREATIVE_ID':
-        return (<div id={anchorId}>
-          <CreativeByKeywordSelector
-            {...commonProps}
-          />
-        </div>)
-      case 'PRODUCT_ID':
-        return (<div id={anchorId}>
-          <ProductIdByNameSelector
-            filter={additionalDimensionFilter}
-            {...commonProps}
-          />
-        </div>)
-      case 'CATEGORY1':
-        return (<div id={anchorId}>
-          <Category1ByNameSelector
-            filter={additionalDimensionFilter}
-            {...commonProps}
-          />
-        </div>)
-      case 'CATEGORY2':
-        return (<div id={anchorId}>
-          <Category2ByNameSelector
-            filter={additionalDimensionFilter}
-            {...commonProps}
-          />
-        </div>)
-      case 'CATEGORY3':
-        return (<div id={anchorId}>
-          <Category3ByNameSelector
-            filter={additionalDimensionFilter}
-            {...commonProps}
-          />
-        </div>)
-      case 'CATEGORY4':
-        return (<div id={anchorId}>
-          <Category4ByNameSelector
-            filter={additionalDimensionFilter}
-            {...commonProps}
-          />
-        </div>)
-      case 'BRAND':
-        return (<div id={anchorId}>
-          <BrandByNameSelector
-            filter={additionalDimensionFilter}
-            {...commonProps}
-          />
-        </div>)
-      case 'DEVICE_BRAND':
-        return (<div id={anchorId}>
-          <DeviceBrandByNameSelector
-            filter={additionalDimensionFilter}
-            {...commonProps}
-          />
-        </div>)
-      case 'TYPE':
-        return (<div id={anchorId}>
-          <TypeByNameSelector
-            filter={additionalDimensionFilter}
-            {...commonProps}
-          />
-        </div>)
-      case 'DEVICE_CARRIER':
-        return (<div id={anchorId}>
-          <DeviceCarrierByNameSelector
-            filter={additionalDimensionFilter}
-            {...commonProps}
-          />
-        </div>)
-      case 'DEVICE_MODEL':
-        return (<div id={anchorId}>
-          <DeviceModelByNameSelector
-            filter={additionalDimensionFilter}
-            {...commonProps}
-          />
-        </div>)
-      default:
-        return <Select
-          placeholder="Dimension value"
-          mode="tags"
-          tokenSeparators={[',']}
-          showSearch={true}
-          labelInValue={true}
-          autoFocus={true}
-          className="mcs-funnelQueryBuilder_dimensionValue"
-          onChange={this.handleDimensionExpressionForSelectorChange.bind(this, dimensionIndex, stepId, (x: LabeledValue) => x.key)} />
-    }
-  }
-
   addStep = () => {
     const { steps } = this.state;
     const newSteps = steps.slice();
@@ -436,14 +229,14 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     });
   };
 
-  handleDimensionExpressionForSelectorChange<T>(dimensionIndex: number, stepId: string, valueExtract: (elem: T) => string, value: T) {
+  handleDimensionExpressionForSelectorChange(dimensionIndex: number, stepId: string, value: string[]) {
     const { steps } = this.state;
     steps.forEach(step => {
       if (step.id === stepId) {
         step.filter_clause.filters.forEach((filter, index) => {
           if (dimensionIndex === index) {
-            if (value && (Array.isArray(value) && value.length > 0 || !Array.isArray(value))) {
-              filter.expressions = Array.isArray(value) ? value.map(valueExtract) : [valueExtract(value)]
+            if (value.length > 0) {
+              filter.expressions = value
               if (filter.expressions.length > 1)
                 filter.operator = 'IN_LIST' as DimensionFilterOperator
               else
@@ -458,6 +251,8 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     });
     this.setState({ steps });
   }
+
+
   checkExpressionsNotEmpty = () => {
     let result = true;
     const { steps } = this.state;
@@ -632,15 +427,13 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
       steps[index + 1].name = `Step ${index + 2}`;
       this.setState({ steps });
     }
-
-
   }
 
   render() {
     const Option = Select.Option;
     const { steps, dateRange } = this.state;
     const { from, to } = dateRange
-    const { isLoading } = this.props;
+    const { isLoading, datamartId } = this.props;
     const onChange = (newValues: McsDateRangeValue): void => {
       this.updateLocationSearch({
         from: newValues.from,
@@ -722,7 +515,15 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
                               <span className="mcs-funnelQueryBuilder_step_dimensionFilter_operator_text">{this.showFilterSymbol(filterIndex, step.id)}
                               </span>
                             </div>
-                            {this.getInputField(filter.dimension_name, filterIndex, from, to, step.id)}
+                            <FunnelExpressionInput 
+                              datamartId={datamartId}
+                              dimensionName={filter.dimension_name}
+                              dimensionIndex={filterIndex}
+                              from={from}
+                              to={to}
+                              stepId={step.id}
+                              handleDimensionExpressionForSelectorChange={this.handleDimensionExpressionForSelectorChange.bind(this, filterIndex, step.id)}
+                            />
                             <Button
                               type="primary"
                               shape="circle"
