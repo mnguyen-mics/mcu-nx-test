@@ -13,8 +13,9 @@ export interface Props {
   onQueryChange: (query: string) => void;
   defaultValue?: string;
   precision: QueryPrecisionMode;
+  evaluateGraphQl: boolean;
   useCache: boolean;
-  handleChange: (useCache: boolean, precision: QueryPrecisionMode) => void;
+  handleChange: (evaluateGraphQl: boolean, useCache: boolean, precision: QueryPrecisionMode) => void;
 }
 
 interface State {
@@ -114,13 +115,15 @@ class OTQLInputEditor extends React.Component<Props, State> {
       datamartId,
       defaultValue,
       useCache,
+      evaluateGraphQl,
       precision,
       handleChange,
     } = this.props;
 
-    const onCacheChange = (a: boolean) => handleChange(a, precision);
+    const onCacheChange = (a: boolean) => handleChange(evaluateGraphQl, a, precision);
+    const onEvaluateGraphQlChange = (a: boolean) => handleChange(a, useCache, precision);
     const onPrecisionChange = (a: QueryPrecisionMode) =>
-      handleChange(useCache, a);
+      handleChange(evaluateGraphQl, useCache, a);
 
     return (
       <Card
@@ -145,7 +148,14 @@ class OTQLInputEditor extends React.Component<Props, State> {
         >
           <div style={{ marginBottom: 10 }}>
             <FormattedMessage
-              id="queryTool.otql.edit.label"
+              id="queryTool.otql.modal.evaluate.graphql"
+              defaultMessage="Evaluate SELECT clause in GraphQL"
+            />
+            : <Switch checked={evaluateGraphQl} onChange={onEvaluateGraphQlChange} />
+          </div>
+          <div style={{ marginBottom: 10 }}>
+            <FormattedMessage
+              id="queryTool.otql.modal.use.cache"
               defaultMessage="Use Cache"
             />
             : <Switch checked={useCache} onChange={onCacheChange} />

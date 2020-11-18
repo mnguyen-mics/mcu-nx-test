@@ -35,6 +35,7 @@ export interface IQueryService {
       query_id?: string;
       limit?: number;
       offset?: number;
+      graphql_select?: boolean;
       use_cache?: boolean;
       precision?: QueryPrecisionMode;
       content_type?: string;
@@ -116,7 +117,8 @@ export class QueryService implements IQueryService {
       query_id?: string;
       limit?: number;
       offset?: number;
-      useCache?: boolean;
+      graphql_select?: boolean;
+      use_cache?: boolean;
       precision?: QueryPrecisionMode;
       content_type?: string;
     } = {},
