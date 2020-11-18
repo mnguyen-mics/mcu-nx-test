@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Card, Select, Row, Col, Button, Divider, Icon } from "antd";
+import { Card, Select, Row, Col, Button, Divider, Icon, Switch } from "antd";
 import messages from '../../containers/Campaigns/Display/Edit/messages';
 import cuid from 'cuid';
 import { TYPES } from '../../constants/types';
@@ -393,6 +393,21 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     this.setState({ steps: newSteps });
   }
 
+  handleNotSwitcherChange(dimensionIndex: number, stepId: string, value: boolean) {
+    const { steps } = this.state;
+    steps.forEach(step => {
+      if (step.id === stepId) {
+        step.filter_clause.filters.forEach((filter, index) => {
+          if (dimensionIndex === index) {
+            filter.not = !value
+          }
+        });
+      }
+    });
+    this.setState({
+      steps
+    });
+  }
 
   handleDimensionNameChange(dimensionIndex: number, stepId: string, value: string) {
     const { steps } = this.state;
@@ -691,6 +706,18 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
                               onChange={this.handleDimensionNameChange.bind(this, filterIndex, step.id)}>
                               {this.getDimensionNameSelect()}
                             </Select>
+                            <div className="mcs-funnelQueryBuilder_switch">
+                              <Switch
+                                defaultChecked={true}
+                                unCheckedChildren="NOT"
+                                className={"mcs-funnelQueryBuilder_switch_btn"}
+                                onChange={this.handleNotSwitcherChange.bind(this, filterIndex, step.id)}
+                              />
+                              {filter.not && <McsIcon
+                                type="info"
+                                className="mcs-funnelQueryBuilder_notInfo_notSwitcherIcon"
+                                title={"This will filter only actvities that have the selected criteria filled with another value than the one(s) selected"} />}
+                            </div>
                             <div className="mcs-funnelQueryBuilder_step_dimensionFilter_operator">
                               <span className="mcs-funnelQueryBuilder_step_dimensionFilter_operator_text">{this.showFilterSymbol(filterIndex, step.id)}
                               </span>
@@ -719,7 +746,6 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
                     </Row>
                   </Col>
                 </Row>
-
               </div>
             )
           })
