@@ -43,6 +43,7 @@ interface State {
   schemaLoading: boolean;
   rawSchema?: ObjectLikeTypeInfoResource[];
   precision: QueryPrecisionMode;
+  evaluateGraphQl: boolean;
   useCache: boolean;
   noLiveSchemaFound: boolean;
 }
@@ -72,6 +73,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
       schemaVizOpen: true,
       schemaLoading: true,
       precision: 'FULL_PRECISION',
+      evaluateGraphQl: true,
       useCache: false,
       noLiveSchemaFound: false,
     };
@@ -120,7 +122,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
 
   runQuery = (otqlQuery: string) => {
     const { datamartId } = this.props;
-    const { precision, useCache } = this.state;
+    const { precision, useCache, evaluateGraphQl } = this.state;
     this.setState({
       runningQuery: true,
       error: null,
@@ -128,7 +130,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
       queryResult: null,
     });
     this.asyncQuery = makeCancelable(
-      this._queryService.runOTQLQuery(datamartId, otqlQuery, { precision: precision, use_cache: useCache }),
+      this._queryService.runOTQLQuery(datamartId, otqlQuery, { precision: precision, use_cache: useCache, graphql_select: evaluateGraphQl }),
     );
     this.asyncQuery.promise
       .then(result => {
@@ -161,6 +163,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
       rawSchema,
       query,
       precision,
+      evaluateGraphQl,
       useCache,
       noLiveSchemaFound,
     } = this.state;
@@ -224,7 +227,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
       }
     }
 
-    const handleChange = (c: boolean, p: QueryPrecisionMode) => this.setState({ useCache: c, precision: p})
+    const handleChange = (eg: boolean, c: boolean, p: QueryPrecisionMode) => this.setState({ evaluateGraphQl: eg, useCache: c, precision: p})
 
     return (
       <Layout>
@@ -251,6 +254,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
                 defaultValue={query}
                 handleChange={handleChange}
                 precision={precision}
+                evaluateGraphQl={evaluateGraphQl}
                 useCache={useCache}
               />
               {queryResultRenderer}
