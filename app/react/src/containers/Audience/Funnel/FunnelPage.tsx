@@ -24,7 +24,7 @@ interface State {
 type JoinedProps = WithDatamartSelectorProps & InjectedIntlProps &
   InjectedNotificationProps;
 
-class FunnelDemoPage extends React.Component<JoinedProps, State> {
+class FunnelPage extends React.Component<JoinedProps, State> {
   @lazyInject(TYPES.IUserActivitiesFunnelService)
   private _userActivitiesFunnelService: IUserActivitiesFunnelService;
 
@@ -98,4 +98,4 @@ export default compose(
   withRouter,
   injectIntl,
   injectNotifications
-)(FunnelDemoPage);
+)(FunnelPage);
