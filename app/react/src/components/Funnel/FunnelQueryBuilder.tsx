@@ -8,7 +8,7 @@ import { IUsersAnalyticsService } from '../../services/UsersAnalyticsService';
 import { DimensionsList } from '../../models/datamartUsersAnalytics/datamartUsersAnalytics';
 import { compose } from 'recompose';
 import injectNotifications, { InjectedNotificationProps } from '../../containers/Notifications/injectNotifications';
-import { booleanOperator, eventTypesDimension, FUNNEL_SEARCH_SETTING, FilterOperatorLabel } from './Constants';
+import { booleanOperator, FUNNEL_SEARCH_SETTING, FilterOperatorLabel, enumValuesByName, DimensionEnum } from './Constants';
 import { BooleanOperator, DimensionFilterClause, DimensionFilterOperator } from '../../models/ReportRequestBody';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { updateSearch, isSearchValid } from '../../utils/LocationSearchHelper';
@@ -31,7 +31,11 @@ import {
   Category2ByNameSelector,
   Category3ByNameSelector,
   Category4ByNameSelector,
-  ProductIdByNameSelector
+  ProductIdByNameSelector,
+  DeviceBrandByNameSelector,
+  TypeByNameSelector,
+  DeviceCarrierByNameSelector,
+  DeviceModelByNameSelector
 } from '../../containers/Audience/DatamartUsersAnalytics/components/DimensionValueByNameSelector';
 import { AdGroupByKeywordSelector } from '../../containers/Audience/DatamartUsersAnalytics/components/AdGroupByNameSelector';
 import { ResourceByKeywordSelectorProps } from '../../containers/Audience/DatamartUsersAnalytics/components/helpers/utils';
@@ -40,6 +44,14 @@ export interface Step {
   id?: string;
   name: string;
   filter_clause: DimensionFilterClause;
+}
+
+interface CommonEnumProps {
+  showSearch: boolean,
+  showArrow: boolean,
+  placeholder: string,
+  className: string,
+  onChange: (s: string) => void
 }
 
 interface State {
@@ -172,22 +184,41 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
       showId: true,
       multiselect: true
     }
+
     const additionalDimensionFilter = {
       from: from,
       to: to
     }
+
+    const commonEnumProps: CommonEnumProps = {
+      showSearch: true,
+      showArrow: false,
+      placeholder: "Dimension value",
+      className: "mcs-funnelQueryBuilder_dimensionValue",
+      onChange: this.handleDimensionExpressionForSelectorChange.bind(this, dimensionIndex, stepId, (x: string) => x)
+    }
+
     switch (dimensionName) {
+      case 'HAS_CONVERSION':
+      case 'HAS_BOUNCED':
+        return <Select {...commonEnumProps} >
+          <Option key={this._cuid()} value={"0"}>
+            {"false"}
+          </Option>
+          <Option key={this._cuid()} value={"1"}>
+            {"true"}
+          </Option>
+        </Select>
       case 'EVENT_TYPE':
-        return <Select
-          showSearch={true}
-          showArrow={false}
-          placeholder="Dimension value"
-          className={"mcs-funnelQueryBuilder_dimensionValue"}
-          onChange={this.handleDimensionExpressionForSelectorChange.bind(this, dimensionIndex, stepId, (x: string) => x)}>
-          {eventTypesDimension.map(et => {
+      case 'DEVICE_OS_FAMILY':
+      case 'DEVICE_FORM_FACTOR':
+      case 'DEVICE_BROWSER_FAMILY':
+        const dimensionEnums: DimensionEnum[] = enumValuesByName[dimensionName]
+        return <Select {...commonEnumProps} >
+          {dimensionEnums.map((et: DimensionEnum) => {
             return (
-              <Option key={this._cuid()} value={et}>
-                {et}
+              <Option key={this._cuid()} value={et.toString()}>
+                {et.toString()}
               </Option>)
           })}
         </Select>
@@ -265,6 +296,34 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
       case 'BRAND':
         return (<div id={anchorId}>
           <BrandByNameSelector
+            filter={additionalDimensionFilter}
+            {...commonProps}
+          />
+        </div>)
+      case 'DEVICE_BRAND':
+        return (<div id={anchorId}>
+          <DeviceBrandByNameSelector
+            filter={additionalDimensionFilter}
+            {...commonProps}
+          />
+        </div>)
+      case 'TYPE':
+        return (<div id={anchorId}>
+          <TypeByNameSelector
+            filter={additionalDimensionFilter}
+            {...commonProps}
+          />
+        </div>)
+      case 'DEVICE_CARRIER':
+        return (<div id={anchorId}>
+          <DeviceCarrierByNameSelector
+            filter={additionalDimensionFilter}
+            {...commonProps}
+          />
+        </div>)
+      case 'DEVICE_MODEL':
+        return (<div id={anchorId}>
+          <DeviceModelByNameSelector
             filter={additionalDimensionFilter}
             {...commonProps}
           />

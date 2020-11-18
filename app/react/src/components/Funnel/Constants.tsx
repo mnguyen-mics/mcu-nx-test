@@ -40,6 +40,76 @@ export const eventTypesDimension: EventTypeDimension[] = [
   "$basket_view"
 ]
 
+export type DeviceFormFactorDimension = "OTHER" |
+  "PERSONAL_COMPUTER" |
+  "SMART_TV" |
+  "GAME_CONSOLE" |
+  "SMARTPHONE" |
+  "TABLET" |
+  "WEARABLE_COMPUTER";
+
+export const deviceFormFactorDimensions: DeviceFormFactorDimension[] = [
+  "OTHER",
+  "PERSONAL_COMPUTER",
+  "SMART_TV",
+  "GAME_CONSOLE",
+  "SMARTPHONE",
+  "TABLET",
+  "WEARABLE_COMPUTER"
+]
+
+export type DeviceOsFamilyDimension = "OTHER" |
+  "WINDOWS" |
+  "MAC_OS" |
+  "LINUX" |
+  "ANDROID" |
+  "IOS";
+
+export const deviceOsFamilyDimensions: DeviceOsFamilyDimension[] = [
+  "OTHER",
+  "WINDOWS",
+  "MAC_OS",
+  "LINUX",
+  "ANDROID",
+  "IOS"
+]
+
+export type DeviceBrowserFamilyDimension = "OTHER" |
+  "CHROME" |
+  "IE" |
+  "FIREFOX" |
+  "SAFARI" |
+  "OPERA" |
+  "STOCK_ANDROID" |
+  "BOT" |
+  "EMAIL_CLIENT" |
+  "MICROSOFT_EDGE";
+
+export const deviceBrowserFamilyDimensions: DeviceBrowserFamilyDimension[] = [
+  "OTHER",
+  "CHROME",
+  "IE",
+  "FIREFOX",
+  "SAFARI",
+  "OPERA",
+  "STOCK_ANDROID",
+  "BOT",
+  "EMAIL_CLIENT",
+  "MICROSOFT_EDGE"
+]
+
+export type DimensionEnum = EventTypeDimension |
+  DeviceFormFactorDimension |
+  DeviceOsFamilyDimension |
+  DeviceBrowserFamilyDimension
+
+export const enumValuesByName = {
+  'EVENT_TYPE': eventTypesDimension,
+  'DEVICE_OS_FAMILY': deviceOsFamilyDimensions,
+  'DEVICE_FORM_FACTOR': deviceFormFactorDimensions,
+  'DEVICE_BROWSER_FAMILY': deviceBrowserFamilyDimensions,
+}
+
 export type BooleanOperator = "OR" | "AND";
 
 export const booleanOperator: BooleanOperator[] = ["AND", "OR"]
