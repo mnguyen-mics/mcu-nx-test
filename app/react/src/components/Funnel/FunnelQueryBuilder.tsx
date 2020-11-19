@@ -509,7 +509,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
                               {filter.not && <McsIcon
                                 type="info"
                                 className="mcs-funnelQueryBuilder_notInfo_notSwitcherIcon"
-                                title={"This will filter only actvities that have the selected criteria filled with another value than the one(s) selected"} />}
+                                title={"This will filter only activities that have the selected criteria filled with another value than the one(s) selected"} />}
                             </div>
                             <div className="mcs-funnelQueryBuilder_step_dimensionFilter_operator">
                               <span className="mcs-funnelQueryBuilder_step_dimensionFilter_operator_text">{this.showFilterSymbol(filterIndex, step.id)}
