@@ -10,7 +10,6 @@ import { NavigatorRoute } from './domain'
 import { featureFlagRoutes } from './featuresFlagRoutes';
 import { createBrowserHistory } from 'history'
 import { Modal } from 'antd';
-import { funnelRoutes } from './funnelRoute';
 
 const browserHistory = createBrowserHistory();
 
@@ -42,7 +41,6 @@ const routes: NavigatorRoute[] = [
   ...datastudioRoutes,
   ...marketplaceRoutes,
   ...featureFlagRoutes,
-  ...funnelRoutes
 ];
 
 export default routes;

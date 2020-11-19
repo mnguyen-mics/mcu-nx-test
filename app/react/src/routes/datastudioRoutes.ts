@@ -11,6 +11,7 @@ import {
 } from './domain';
 import ExportEditPage from '../containers/Exports/Edit/ExportEditPage';
 import ImportEditPage from '../containers/Imports/Edit/ImportEditPage';
+import FunnelPage from '../containers/Audience/Funnel/FunnelPage';
 
 export const datastudioDefinition: NavigatorDefinition = {
   datastudioQueryTool: {
@@ -18,6 +19,13 @@ export const datastudioDefinition: NavigatorDefinition = {
     layout: 'main',
     contentComponent: QueryToolPage,
     requiredFeature: 'datastudio-query_tool',
+    requireDatamart: true,
+  },
+  datastudioFunnel: {
+    path: '/datastudio/funnel',
+    layout: 'main',
+    contentComponent: FunnelPage,
+    requiredFeature: 'funnel-analytics',
     requireDatamart: true,
   },
   datastudioReport: {

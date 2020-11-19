@@ -144,6 +144,10 @@ export default defineMessages({
     id: 'menu.dataStudio.query',
     defaultMessage: 'Query Tool',
   },
+  dataStudioFunnel: {
+    id: 'menu.dataStudio.funnel',
+    defaultMessage: 'Funnel',
+  },
   dataStudioReport: {
     id: 'menu.dataStudio.report',
     defaultMessage: 'Report',
