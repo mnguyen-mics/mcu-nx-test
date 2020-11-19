@@ -22,7 +22,7 @@ interface ResourceFetcher<T extends SelectableResource> {
 
 interface ResourceByKeywordSelectorState {
   resourcesList: LabeledValue[];
-  value?: LabeledValue;
+  value?: LabeledValue | LabeledValue[];
   fetching: boolean;
 }
 
@@ -31,7 +31,7 @@ interface ResourceByKeywordSelectorProps {
   anchorId: string;
   datamartId: string;
   organisationId: string;
-  onchange: (value: LabeledValue) => void;
+  onchange: (value: LabeledValue | LabeledValue[]) => void;
   multiselect?: boolean;
   showId?: boolean;
 }
@@ -82,7 +82,7 @@ function ResourceByKeywordSelector<T extends SelectableResource, AdditionalConte
         });
     }
 
-    handleChange = (value: LabeledValue) => {
+    handleChange = (value: LabeledValue | LabeledValue[]) => {
       const { onchange } = this.props;
       this.setState({
         value
