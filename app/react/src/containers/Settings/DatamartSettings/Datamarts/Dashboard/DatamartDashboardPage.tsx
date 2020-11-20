@@ -20,6 +20,7 @@ import DatamartUsersAnalyticsWrapper from '../../../../Audience/DatamartUsersAna
 import { sessionInTimeJsonConfig } from '../../../../Audience/DatamartUsersAnalytics/config/AnalyticsConfigJson';
 import { DashboardConfig } from '../../../../Audience/DatamartUsersAnalytics/DatamartUsersAnalyticsContent';
 import DatamartReplicationTab from './DatamartReplicationTab';
+import AudienceBuilderTab from './AudienceBuilderTab';
 
 const { Content } = Layout;
 
@@ -47,6 +48,10 @@ const messages = defineMessages({
   statistics: {
     id: 'settings.datamart.statistics',
     defaultMessage: 'Statistics',
+  },
+  audienceBuilder: {
+    id: 'settings.datamart.audienceBuilder',
+    defaultMessage: 'Audience Builder',
   },
 });
 
@@ -171,6 +176,13 @@ class DatamartDashboardPage extends React.Component<Props, State> {
             />
           </Content>
         ),
+      });
+    }
+
+    if (hasFeature('audience-segment_builder_v2')) {
+      items.push({
+        title: intl.formatMessage(messages.audienceBuilder),
+        display: <AudienceBuilderTab />,
       });
     }
 
