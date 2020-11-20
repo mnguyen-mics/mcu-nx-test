@@ -132,7 +132,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
         },
       } = this.props;
       history.push({
-        pathname: `/v2/o/${organisationId}/settings/datamart/datamart_replication/create`,
+        pathname: `/v2/o/${organisationId}/settings/datamart/${datamartId}/audience_feature/create`,
         state: {
           datamartId: datamartId,
         },

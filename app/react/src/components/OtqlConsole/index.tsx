@@ -54,7 +54,7 @@ export default class OtqlConsole extends React.Component<
   onChange = (value: string, event?: any) => {
     const editor = this.aceEditor.editor;
 
-    if (this.props.onChange) { this.props.onChange(value, event) };
+    if (this.props.onChange) { this.props.onChange(value, event) }
 
     if (this.debouncing) {
       window.clearTimeout(this.debouncing);

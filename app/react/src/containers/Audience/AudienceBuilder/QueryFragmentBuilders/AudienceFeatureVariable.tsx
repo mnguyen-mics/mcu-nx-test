@@ -48,6 +48,7 @@ export interface AudienceFeatureVariableProps {
   variable: AudienceFeatureVariableResource;
   formPath: string;
   objectTypes: ObjectLikeTypeInfoResource[];
+  disabled?: boolean;
 }
 
 type Props = AudienceFeatureVariableProps &
@@ -91,6 +92,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
       },
       workspace: { community_id },
       fieldValidators: { isValidFloat, isValidInteger },
+      disabled,
     } = this.props;
     let name;
     name = `${formPath}.parameters.${variable.parameter_name}`;
@@ -111,6 +113,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
             }}
             selectProps={{
               options: [],
+              disabled: !!disabled,
             }}
           />
         );
@@ -123,6 +126,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
               label: variable.parameter_name,
               ...fieldGridConfig,
             }}
+            disabled={!!disabled}
             options={[
               {
                 title: 'true',
@@ -145,6 +149,9 @@ class AudienceFeatureVariable extends React.Component<Props> {
               label: variable.parameter_name,
               ...fieldGridConfig,
             }}
+            inputProps={{
+              disabled: !!disabled,
+            }}
           />
         );
       case 'Float':
@@ -156,6 +163,9 @@ class AudienceFeatureVariable extends React.Component<Props> {
             formItemProps={{
               label: variable.parameter_name,
               ...fieldGridConfig,
+            }}
+            inputProps={{
+              disabled: !!disabled,
             }}
           />
         );
@@ -299,6 +309,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
           selectProps = {
             ...selectProps,
             mode: 'tags',
+            disabled: !!disabled,
           };
           loadOnlyOnce = true;
           shouldFilterData = true;
@@ -330,6 +341,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
               ...fieldGridConfig,
             }}
             unixTimstamp={true}
+            disabled={!!disabled}
           />
         );
       case 'OperatingSystemFamily':
@@ -352,6 +364,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
                   };
                 },
               ),
+              disabled: !!disabled,
             }}
             formItemProps={{
               label: variable.parameter_name,
