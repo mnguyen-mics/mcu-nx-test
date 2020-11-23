@@ -85,4 +85,8 @@ export const messages = defineMessages({
     id: 'settings.datamart.audienceFeatures.edit.preview',
     defaultMessage: 'Preview',
   },
+  savingInProgress: {
+    id: 'settings.datamart.audienceFeatures.edit.savingInProgress',
+    defaultMessage: 'Saving in progress...',
+  },
 });

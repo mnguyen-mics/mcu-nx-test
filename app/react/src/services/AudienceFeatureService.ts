@@ -15,7 +15,16 @@ export interface IAudienceFeatureService {
   ) => Promise<DataListResponse<AudienceFeatureResource>>;
   getAudienceFeature: (
     datamartId: string,
-    predicateId: string,
+    audienceFeatureId: string,
+  ) => Promise<DataResponse<AudienceFeatureResource>>;
+  createAudienceFeature: (
+    datamartId: string,
+    body: Partial<AudienceFeatureResource>,
+  ) => Promise<DataResponse<AudienceFeatureResource>>;
+  updateAudienceFeature: (
+    datamartId: string,
+    audienceFeatureId: string,
+    body: Partial<AudienceFeatureResource>,
   ) => Promise<DataResponse<AudienceFeatureResource>>;
 }
 
@@ -39,5 +48,22 @@ export class AudienceFeatureService implements IAudienceFeatureService {
   ): Promise<DataResponse<AudienceFeatureResource>> {
     const endpoint = `datamarts/${datamartId}/audience_features/${audienceFeatureId}`;
     return ApiService.getRequest(endpoint);
+  }
+
+  createAudienceFeature(
+    datamartId: string,
+    body: Partial<AudienceFeatureResource>,
+  ): Promise<DataResponse<AudienceFeatureResource>> {
+    const endpoint = `datamarts/${datamartId}/audience_features`;
+    return ApiService.postRequest(endpoint, body);
+  }
+
+  updateAudienceFeature(
+    datamartId: string,
+    audienceFeatureId: string,
+    body: Partial<AudienceFeatureResource>,
+  ): Promise<DataResponse<AudienceFeatureResource>> {
+    const endpoint = `datamarts/${datamartId}/audience_features/${audienceFeatureId}`;
+    return ApiService.putRequest(endpoint, body);
   }
 }

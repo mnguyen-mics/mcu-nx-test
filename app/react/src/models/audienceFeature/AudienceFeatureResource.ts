@@ -6,7 +6,8 @@ export type AudienceFeatureType =
   | 'String'
   | 'Date'
   | 'Timestamp'
-  | AdditionalAudienceFeatureType;
+  | AdditionalAudienceFeatureType
+  | null;
 
 type AdditionalAudienceFeatureType =
   | 'OperatingSystemFamily'

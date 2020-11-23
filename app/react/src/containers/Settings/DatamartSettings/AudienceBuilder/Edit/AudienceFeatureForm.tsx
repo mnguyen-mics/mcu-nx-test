@@ -114,7 +114,7 @@ class AudienceFeatureForm extends React.Component<Props> {
                 <Col className="mcs-audienceFeature_formColumn" span={12}>
                   <AudienceFeaturePreview
                     schema={schema}
-                    associatedQuery={formValues.object_tree_expression}
+                    formValues={formValues}
                   />
                 </Col>
               </Row>

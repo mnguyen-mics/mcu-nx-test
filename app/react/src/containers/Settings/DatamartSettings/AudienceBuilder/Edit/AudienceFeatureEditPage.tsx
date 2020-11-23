@@ -16,6 +16,8 @@ import {
   computeFinalSchemaItem,
   SchemaItem,
 } from '../../../../QueryTool/JSONOTQL/domain';
+import { message } from 'antd';
+import { Loading } from '../../../../../components';
 
 type Props = InjectedNotificationProps &
   InjectedIntlProps &
@@ -41,7 +43,7 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      isLoading: true,
+      isLoading: false,
       audienceFeature: {},
     };
   }
@@ -53,6 +55,9 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
       notifyError,
     } = this.props;
     if (audienceFeatureId) {
+      this.setState({
+        isLoading: true,
+      });
       this._audienceFeatureService
         .getAudienceFeature(datamartId, audienceFeatureId)
         .then(res => {
@@ -83,8 +88,57 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
     });
   }
 
-  save = () => {
-    //
+  save = (formData: AudienceFeatureFormData) => {
+    const {
+      match: {
+        params: { organisationId, audienceFeatureId, datamartId },
+      },
+      notifyError,
+      history,
+      intl,
+    } = this.props;
+
+    const hideSaveInProgress = message.loading(
+      intl.formatMessage(messages.savingInProgress),
+      0,
+    );
+
+    this.setState({
+      isLoading: true,
+    });
+
+    const newFormData = {
+      ...formData,
+      addressable_object: 'UserPoint',
+      object_tree_expression: formData.object_tree_expression
+        ?.toLowerCase()
+        .split('where')[1],
+    };
+
+    const promise = audienceFeatureId
+      ? this._audienceFeatureService.updateAudienceFeature(
+          datamartId,
+          audienceFeatureId,
+          newFormData,
+        )
+      : this._audienceFeatureService.createAudienceFeature(
+          datamartId,
+          newFormData,
+        );
+    promise
+      .then(() => {
+        hideSaveInProgress();
+        history.push(
+          `/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`,
+        );
+      })
+      .catch(err => {
+        hideSaveInProgress();
+        notifyError(err);
+        this.setState({
+          isLoading: false,
+        });
+      });
   };
 
   onClose = () => {
@@ -103,7 +157,7 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
   };
 
   render() {
-    const { audienceFeature, schema } = this.state;
+    const { audienceFeature, schema, isLoading } = this.state;
     const {
       intl: { formatMessage },
       match: {
@@ -126,6 +180,11 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
         name: replicationName,
       },
     ];
+
+    if (isLoading) {
+      return <Loading className="loading-full-screen" />;
+    }
+
     return (
       <AudienceFeatureForm
         initialValues={audienceFeature}
