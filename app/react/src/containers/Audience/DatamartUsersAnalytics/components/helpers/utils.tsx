@@ -24,6 +24,8 @@ interface ResourceByKeywordSelectorState {
   resourcesList: LabeledValue[];
   value?: LabeledValue | LabeledValue[];
   fetching: boolean;
+  fetchedResourcesList?: LabeledValue[];
+  fetchedKeyword?: string;
 }
 
 interface ResourceByKeywordSelectorProps {
@@ -52,11 +54,23 @@ function ResourceByKeywordSelector<T extends SelectableResource, AdditionalConte
         resourcesList: [],
         fetching: false,
       };
-      this.fetchListMethod = this._debounce(this.fetchListMethod.bind(this), 800);
+      this.fetchListMethod = this._debounce(this.fetchListMethod.bind(this), 800, { trailing: true });
     }
 
-    componentDidMount() {
-      this.fetchListMethod('');
+    handleSearch = (keyword: string) => {
+      if(keyword.length > 0) {
+        const { fetchedKeyword, fetchedResourcesList } = this.state
+        if(keyword.length > 2 && fetchedResourcesList && fetchedKeyword && keyword.toLowerCase().includes(fetchedKeyword.toLowerCase()))
+          this.searchInPreviousFetch(keyword, fetchedResourcesList)
+        else
+          this.fetchListMethod(keyword)
+      }
+    }
+
+    searchInPreviousFetch(keyword: string, fetchedResourcesList: LabeledValue[]) {
+      this.setState({
+        resourcesList: fetchedResourcesList.filter(labeledValue => labeledValue.key.toLowerCase().includes(keyword.toLowerCase()))
+      });
     }
 
     fetchListMethod(keyword: string) {
@@ -70,9 +84,12 @@ function ResourceByKeywordSelector<T extends SelectableResource, AdditionalConte
       }
       return resourceFetcher.getForKeyword(options)
         .then(res => {
+          const result = res.map(r => ({ key: r.id, label: <NameDisplay {...r} showId={showId} /> }))
           this.setState({
-            resourcesList: res.map(r => ({ key: r.id, label: <NameDisplay {...r} showId={showId} /> })),
-            fetching: false
+            resourcesList: result,
+            fetching: false,
+            fetchedResourcesList: result,
+            fetchedKeyword: keyword
           })
         }).catch(e => {
           notifyError(e);
@@ -104,7 +121,7 @@ function ResourceByKeywordSelector<T extends SelectableResource, AdditionalConte
         value={value}
         className={className ? className : "mcs-resourceByNameSelector"}
         placeholder={placeholder}
-        onSearch={this.fetchListMethod}
+        onSearch={this.handleSearch}
         onChange={this.handleChange}
         notFoundContent={fetching ? <Spin size="small" className="text-center" /> : null}
         suffixIcon={<McsIcon type="magnifier" />}
