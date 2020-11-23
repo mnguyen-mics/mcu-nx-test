@@ -119,6 +119,12 @@ class SegmentsActionbar extends React.Component<Props, State> {
       if (filter.type && filter.type.length > 0) {
         options.type = filter.type;
       }
+      if (filter.label_id && filter.label_id.length) {
+        options.label_id = filter.label_id;
+      }
+      if (filter.orderBy && filter.orderBy.length) {
+        options.order_by = filter.orderBy;
+      }
       return options;
     };
 
