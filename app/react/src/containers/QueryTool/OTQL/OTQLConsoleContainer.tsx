@@ -31,6 +31,7 @@ const { Content, Sider } = Layout;
 export interface OTQLConsoleContainerProps {
   datamartId: string;
   renderActionBar: (query: string, datamartId: string) => React.ReactNode;
+  query?: string; 
 }
 
 interface State {
@@ -69,7 +70,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
       runningQuery: false,
       queryAborted: false,
       error: null,
-      query: 'SELECT @count{} FROM UserPoint',
+      query: props.query || 'SELECT @count{} FROM UserPoint',
       schemaVizOpen: true,
       schemaLoading: true,
       precision: 'FULL_PRECISION',

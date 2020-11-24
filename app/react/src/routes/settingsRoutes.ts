@@ -56,6 +56,7 @@ import AudiencePartitionPage from '../containers/Settings/DatamartSettings/Parti
 import CleaningRulesDashboardPage from '../containers/Settings/DatamartSettings/CleaningRules/Dashboard/CleaningRulesDashboardPage';
 import CleaningRuleEditPage from '../containers/Settings/DatamartSettings/CleaningRules/Edit/CleaningRuleEditPage';
 import EditUserRolePage from '../containers/Settings/OrganisationSettings/UserRoles/Edit/EditUserRolePage';
+import AudienceFeatureEditPage from '../containers/Settings/DatamartSettings/AudienceBuilder/Edit/AudienceFeatureEditPage';
 
 export const settingsDefinition: NavigatorDefinition = {
   /*
@@ -203,6 +204,24 @@ export const settingsDefinition: NavigatorDefinition = {
     layout: 'edit',
     editComponent: DatamartReplicationEditPage,
     requiredFeature: 'datamartSettings-datamart_replication',
+    requireDatamart: true,
+  },
+
+  // Audience Builder and audience feature
+  settingsDatamartAudienceFeatureEdition: {
+    path:
+      '/settings/datamart/:datamartId/audience_feature/:audienceFeatureId/edit',
+    layout: 'edit',
+    editComponent: AudienceFeatureEditPage,
+    requiredFeature: 'audience-segment_builder_v2',
+    requireDatamart: true,
+  },
+  settingsDatamartAudienceFeatureCreation: {
+    path:
+      '/settings/datamart/:datamartId/audience_feature/create',
+    layout: 'edit',
+    editComponent: AudienceFeatureEditPage,
+    requiredFeature: 'audience-segment_builder_v2',
     requireDatamart: true,
   },
 

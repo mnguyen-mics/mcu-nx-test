@@ -6,7 +6,8 @@ export type AudienceFeatureType =
   | 'String'
   | 'Date'
   | 'Timestamp'
-  | AdditionalAudienceFeatureType;
+  | AdditionalAudienceFeatureType
+  | null;
 
 type AdditionalAudienceFeatureType =
   | 'OperatingSystemFamily'
@@ -29,6 +30,7 @@ export interface AudienceFeatureVariableResource {
 export interface AudienceFeatureResource {
   id: string;
   name: string;
+  datamart_id: string;
   description: string;
   token: string;
   addressable_object: string;

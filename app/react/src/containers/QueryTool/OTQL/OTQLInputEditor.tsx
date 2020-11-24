@@ -27,7 +27,7 @@ class OTQLInputEditor extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      query: '',
+      query: props.defaultValue || '',
       visible: false,
     };
   }
@@ -71,7 +71,7 @@ class OTQLInputEditor extends React.Component<Props, State> {
       </Button>
     );
 
-    const handleOnRunButtonClick = () => onRunQuery(query!);
+    const handleOnRunButtonClick = () => onRunQuery(query);
     const runButton = (
       <Button
         type="primary"
@@ -113,7 +113,6 @@ class OTQLInputEditor extends React.Component<Props, State> {
     const { query } = this.state;
     const {
       datamartId,
-      defaultValue,
       useCache,
       evaluateGraphQl,
       precision,
@@ -195,7 +194,6 @@ class OTQLInputEditor extends React.Component<Props, State> {
           height="250px"
           enableBasicAutocompletion={true}
           enableLiveAutocompletion={false}
-          defaultValue={defaultValue}
         />
       </Card>
     );
