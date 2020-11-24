@@ -94,7 +94,7 @@ class FunnelExpressionInput extends React.Component<Props, State> {
       showArrow: false,
       placeholder: "Dimension value",
       className: "mcs-funnelQueryBuilder_dimensionValue",
-      onChange: this._compose(this._map((label: string) => label), handleDimensionExpressionForSelectorChange),
+      onChange: handleDimensionExpressionForSelectorChange,
       filterOption: (inputValue: string, option: React.ReactElement<OptionProps>) => {
         const contains = option.props.value?.toString().toLowerCase().indexOf(inputValue.toLowerCase())
         return (contains !== undefined && contains > -1)
@@ -133,7 +133,7 @@ class FunnelExpressionInput extends React.Component<Props, State> {
             {...commonProps}
           />
         </div>)
-      case 'SUB_CAMPAIGN_ID':
+      case 'ORIGIN_SUB_CAMPAIGN_ID':
         return (<div id={anchorId}>
           <AdGroupByKeywordSelector
             {...commonProps}
