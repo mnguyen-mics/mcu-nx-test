@@ -149,9 +149,7 @@ export interface CombinedServiceItemData {
 
 export type AutomaticRecordType =
   | 'AUDIENCE_SEGMENT'
-  | 'DEAL_LIST'
-  | 'PLACEMENT_LIST'
-  | 'KEYWORDS_LIST';
+  | 'DEAL_LIST';
 
 export type ServiceItemConditionShape =
   | LinearServiceItemConditionResource

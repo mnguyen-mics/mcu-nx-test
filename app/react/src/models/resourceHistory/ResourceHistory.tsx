@@ -23,11 +23,7 @@ export type ResourceType =
   | 'GEONAME'
   | 'GEO_TARGETING_SELECTION'
   | 'GOAL'
-  | 'GOAL_SELECTION'
-  | 'KEYWORDS_LIST'
-  | 'KEYWORDS_LIST_SELECTION'
-  | 'PLACEMENT_LIST'
-  | 'PLACEMENT_LIST_SELECTION';
+  | 'GOAL_SELECTION';
 
 export type EventType =
   | 'CREATE_EVENT'
