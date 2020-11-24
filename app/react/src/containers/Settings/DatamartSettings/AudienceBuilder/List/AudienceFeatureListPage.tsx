@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
-import { Button, Row, Layout } from 'antd';
+import { Button, Row, Layout, Modal } from 'antd';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { messages } from '../messages';
 import {
   KEYWORD_SEARCH_SETTINGS,
   PAGINATION_SEARCH_SETTINGS,
   parseSearch,
+  updateSearch,
 } from '../../../../../utils/LocationSearchHelper';
 import AudienceFeatureTable from '../List/AudienceFeatureTable';
 import { injectDrawer } from '../../../../../components/Drawer';
@@ -114,6 +115,55 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
       });
   };
 
+  deleteAudienceFeature = (resource: AudienceFeatureResource) => {
+    const {
+      match: {
+        params: { datamartId },
+      },
+      location: { search, pathname, state },
+      history,
+      intl: { formatMessage },
+      notifyError,
+    } = this.props;
+
+    const { audienceFeatures } = this.state;
+
+    const filter = parseSearch(search, AUDIENCE_BUILDER_SEARCH_SETTINGS);
+
+    Modal.confirm({
+      icon: 'exclamation-circle',
+      title: formatMessage(messages.deleteAudienceFeaturelModalTitle),
+      okText: formatMessage(messages.deleteAudienceFeaturelModalOk),
+      cancelText: formatMessage(messages.deleteAudienceFeaturelModalCancel),
+      onOk: () => {
+        this._audienceFeatureService
+          .deleteAudienceFeature(resource.datamart_id, resource.id)
+          .then(() => {
+            if (audienceFeatures.length === 1 && filter.currentPage !== 1) {
+              const newFilter = {
+                ...filter,
+                currentPage: filter.currentPage - 1,
+              };
+              this.fetchAudienceFeatures(datamartId, filter);
+              history.replace({
+                pathname: pathname,
+                search: updateSearch(search, newFilter),
+                state: state,
+              });
+            } else {
+              this.fetchAudienceFeatures(datamartId, filter);
+            }
+          })
+          .catch(err => {
+            notifyError(err);
+          });
+      },
+      onCancel: () => {
+        // cancel,
+      },
+    });
+  };
+
   onFilterChange = (newFilter: Index<any>) => {
     const {
       match: {
@@ -175,6 +225,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
                 noItem={noAudienceFeature}
                 onFilterChange={this.onFilterChange}
                 filter={filter}
+                deleteAudienceFeature={this.deleteAudienceFeature}
               />
             </div>
           </Row>

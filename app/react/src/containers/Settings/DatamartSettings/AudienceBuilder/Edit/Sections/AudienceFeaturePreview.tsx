@@ -108,7 +108,7 @@ class AudienceFeaturePreview extends React.Component<Props, State> {
           loop(field.fields);
         } else {
           variables.push({
-            parameter_name: `${field.name} parameter`,
+            parameter_name: field.name,
             field_name: field.name,
             type: matchType(field.field_type),
             path: [],

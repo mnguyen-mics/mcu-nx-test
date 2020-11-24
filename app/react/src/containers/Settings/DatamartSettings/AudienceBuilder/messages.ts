@@ -39,7 +39,7 @@ export const messages = defineMessages({
   },
   emptyList: {
     id: 'settings.datamart.audienceFeatures.emptyList',
-    defaultMessage: 'There is no audience features',
+    defaultMessage: 'There are no audience features',
   },
   sectionGeneralSubTitle: {
     id: 'settings.datamart.audienceFeatures.edit.subtitle',
@@ -47,7 +47,7 @@ export const messages = defineMessages({
   },
   sectionGeneralTitle: {
     id: 'settings.datamart.audienceFeatures.edit.title',
-    defaultMessage: 'General Informations',
+    defaultMessage: 'General Information',
   },
   audienceFeatureNameLabel: {
     id: 'settings.datamart.audienceFeatures.edit.name.label',
@@ -88,5 +88,18 @@ export const messages = defineMessages({
   savingInProgress: {
     id: 'settings.datamart.audienceFeatures.edit.savingInProgress',
     defaultMessage: 'Saving in progress...',
+  },
+  deleteAudienceFeaturelModalTitle: {
+    id: 'settings.datamart.audienceFeatures.list.deleteModal.title',
+    defaultMessage:
+      'You are about to delete an Audience Feature from your datamart. This action cannot be undone. Do you want to proceed anyway ?',
+  },
+  deleteAudienceFeaturelModalOk: {
+    id: 'settings.datamart.audienceFeatures.list.deleteModal.ok',
+    defaultMessage: 'Delete',
+  },
+  deleteAudienceFeaturelModalCancel: {
+    id: 'settings.datamart.audienceFeatures.list.deleteModal.cancel',
+    defaultMessage: 'Cancel',
   },
 });

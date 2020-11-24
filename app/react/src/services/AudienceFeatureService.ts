@@ -26,6 +26,10 @@ export interface IAudienceFeatureService {
     audienceFeatureId: string,
     body: Partial<AudienceFeatureResource>,
   ) => Promise<DataResponse<AudienceFeatureResource>>;
+  deleteAudienceFeature: (
+    datamartId: string,
+    audienceFeatureId: string,
+  ) => Promise<DataResponse<AudienceFeatureResource>>;
 }
 
 @injectable()
@@ -65,5 +69,13 @@ export class AudienceFeatureService implements IAudienceFeatureService {
   ): Promise<DataResponse<AudienceFeatureResource>> {
     const endpoint = `datamarts/${datamartId}/audience_features/${audienceFeatureId}`;
     return ApiService.putRequest(endpoint, body);
+  }
+
+  deleteAudienceFeature(
+    datamartId: string,
+    audienceFeatureId: string,
+  ): Promise<DataResponse<AudienceFeatureResource>> {
+    const endpoint = `datamarts/${datamartId}/audience_features/${audienceFeatureId}`;
+    return ApiService.deleteRequest(endpoint);
   }
 }

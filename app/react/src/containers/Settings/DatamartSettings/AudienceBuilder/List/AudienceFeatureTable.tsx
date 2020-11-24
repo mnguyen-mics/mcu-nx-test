@@ -8,6 +8,9 @@ import { compose } from 'recompose';
 import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 import { EmptyTableView } from '@mediarithmics-private/mcs-components-library';
 import { AudienceFeatureResource } from '../../../../../models/audienceFeature';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../../Notifications/injectNotifications';
 
 export interface AudienceFeatureTableProps {
   isLoading: boolean;
@@ -16,9 +19,11 @@ export interface AudienceFeatureTableProps {
   noItem: boolean;
   onFilterChange: (newFilter: Partial<Filter>) => void;
   filter: Filter;
+  deleteAudienceFeature: (audienceFeature: AudienceFeatureResource) => void;
 }
 
 type Props = AudienceFeatureTableProps &
+  InjectedNotificationProps &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string; datamartId: string }>;
 
@@ -36,10 +41,6 @@ class AudienceFeatureTable extends React.Component<Props> {
     });
   };
 
-  onDeleteAudienceFeature = (resource: AudienceFeatureResource) => {
-    //
-  };
-
   render() {
     const {
       intl: { formatMessage },
@@ -52,6 +53,7 @@ class AudienceFeatureTable extends React.Component<Props> {
         params: { organisationId, datamartId },
       },
       filter,
+      deleteAudienceFeature,
     } = this.props;
 
     const pagination = {
@@ -125,7 +127,7 @@ class AudienceFeatureTable extends React.Component<Props> {
           },
           {
             intlMessage: messages.delete,
-            callback: this.onDeleteAudienceFeature,
+            callback: deleteAudienceFeature,
           },
         ],
       },
@@ -162,4 +164,5 @@ class AudienceFeatureTable extends React.Component<Props> {
 export default compose<Props, AudienceFeatureTableProps>(
   injectIntl,
   withRouter,
+  injectNotifications,
 )(AudienceFeatureTable);
