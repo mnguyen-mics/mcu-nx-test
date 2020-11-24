@@ -110,14 +110,6 @@ class CreateOfferForm extends React.Component<Props> {
         {
           value: "DEAL_LIST",
           title: "DEAL_LIST",
-        },
-        {
-          value: "PLACEMENT_LIST",
-          title: "PLACEMENT_LIST",
-        },
-        {
-          value: "KEYWORDS_LIST",
-          title: "KEYWORDS_LIST",
         }
       ];
 
