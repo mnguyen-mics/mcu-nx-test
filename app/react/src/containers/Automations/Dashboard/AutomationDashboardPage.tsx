@@ -13,7 +13,10 @@ import { Layout, Button } from 'antd';
 import AutomationBuilder from '../Builder/AutomationBuilder';
 import { IScenarioService } from '../../../services/ScenarioService';
 import { AutomationStatus } from '../../../models/automations/automations';
-import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import {
+  Actionbar,
+  McsIcon,
+} from '@mediarithmics-private/mcs-components-library';
 import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import injectDrawer, {
@@ -165,10 +168,13 @@ class AutomationDashboardPage extends React.Component<Props, State> {
 
   onTestClick = () => {
     const { openNextDrawer, closeNextDrawer } = this.props;
+    const { automationFormData } = this.state;
     const size: 'small' | 'large' = 'small';
 
     const props = {
       close: closeNextDrawer,
+      datamartId: automationFormData.automation?.datamart_id,
+      nodeId: automationFormData.automationTreeData?.node.id,
     };
 
     openNextDrawer<AutomationScenarioTestProps>(AutomationScenarioTest, {
@@ -210,13 +216,12 @@ class AutomationDashboardPage extends React.Component<Props, State> {
       },
     ];
 
+    const automationStatus = automationFormData.automation.status;
+
     const testButton =
-      automationFormData.automation &&
-      automationFormData.automation.status &&
-      (automationFormData.automation.status === 'ACTIVE' ||
-        automationFormData.automation.status === 'PAUSED') &&
+      (automationStatus === 'ACTIVE' || automationStatus === 'PAUSED') &&
       hasFeature('automations-test-scenario') ? (
-        <Button onClick={this.onTestClick}>
+        <Button onClick={this.onTestClick} disabled={isLoading}>
           <McsIcon type={'gears'} />
           {formatMessage(messages.testTitle)}
         </Button>

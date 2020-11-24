@@ -1,4 +1,4 @@
-import { Button, Layout, Spin } from 'antd';
+import { Button, Layout, Spin, message } from 'antd';
 import * as React from 'react';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
@@ -7,6 +7,7 @@ import { compose } from 'recompose';
 import { FormLayoutActionbar } from '../../../../components/Layout';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
+import { UserScenarioResource } from '../../../../models/automations/automations';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 import {
   Cookies,
@@ -16,6 +17,9 @@ import { getWorkspace } from '../../../../redux/Session/selectors';
 import { IScenarioService } from '../../../../services/ScenarioService';
 import { IUserDataService } from '../../../../services/UserDataService';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../Notifications/injectNotifications';
 import messages from './messages';
 
 const { Content } = Layout;
@@ -27,6 +31,8 @@ export interface AutomationScenarioTestParams {
 
 export interface AutomationScenarioTestProps {
   close: () => void;
+  datamartId?: string;
+  nodeId?: string;
 }
 
 interface MapStateToProps {
@@ -37,6 +43,7 @@ interface MapStateToProps {
 type Props = MapStateToProps &
   AutomationScenarioTestProps &
   InjectedIntlProps &
+  InjectedNotificationProps &
   RouteComponentProps<AutomationScenarioTestParams>;
 
 interface State {
@@ -107,36 +114,49 @@ class AutomationScenarioTest extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
+      datamartId,
+      nodeId,
     } = this.props;
 
     const { userPointId } = this.state;
 
-    const subtitle = userPointId ? (
-      <div className="subtitle">
-        <FormattedMessage
-          {...messages.contentSubtitle}
-          values={{
-            userPointId: (
-              <Link
-                to={`/v2/o/${organisationId}/audience/timeline/user_point_id/${userPointId}`}
-                target="_blank"
+    const subtitle =
+      datamartId && nodeId ? (
+        userPointId ? (
+          <div className="subtitle">
+            <FormattedMessage
+              {...messages.contentSubtitle}
+              values={{
+                userPointId: (
+                  <Link
+                    to={`/v2/o/${organisationId}/audience/timeline/user_point_id/${userPointId}`}
+                    target="_blank"
+                  >
+                    {userPointId}
+                  </Link>
+                ),
+              }}
+            />
+            <div className="edit-top">
+              <Button
+                className={'mcs-primary'}
+                type="primary"
+                onClick={this.launchTest(datamartId, nodeId, userPointId)}
               >
-                {userPointId}
-              </Link>
-            ),
-          }}
-        />
-        <div className="edit-top">
-          <Button className={'mcs-primary'} type="primary">
-            <FormattedMessage {...messages.buttonTitle} />
-          </Button>
+                <FormattedMessage {...messages.buttonTitle} />
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="subtitle">
+            <FormattedMessage {...messages.contentSubtitleNoUserPoint} />
+          </div>
+        )
+      ) : (
+        <div className="subtitle">
+          <FormattedMessage {...messages.contentSubtitleNoDatamartIdOrNodeId} />
         </div>
-      </div>
-    ) : (
-      <div className="subtitle">
-        <FormattedMessage {...messages.contentSubtitleNoUserPoint} />
-      </div>
-    );
+      );
 
     return (
       <div className="title-container">
@@ -146,6 +166,38 @@ class AutomationScenarioTest extends React.Component<Props, State> {
         {subtitle}
       </div>
     );
+  };
+
+  launchTest = (
+    datamartId: string,
+    nodeId: string,
+    userPointId: string,
+  ) => () => {
+    const {
+      match: {
+        params: { automationId },
+      },
+      intl: { formatMessage },
+      close,
+      notifyError,
+    } = this.props;
+
+    const userScenarioResource: UserScenarioResource = {
+      datamart_id: datamartId,
+      user_point_id: userPointId,
+      scenario_id: automationId,
+      node_id: nodeId,
+    };
+
+    this._scenarioService
+      .upsertUserScenarioByUserPointIdAndScenarioId(userScenarioResource)
+      .then(resUserScenarioResource => {
+        message.success(formatMessage(messages.testSuccessfullyLaunched));
+        close();
+      })
+      .catch(err => {
+        notifyError(err);
+      });
   };
 
   render() {
@@ -192,5 +244,6 @@ const mapStateToProps = (state: MicsReduxState) => ({
 export default compose<Props, AutomationScenarioTestProps>(
   injectIntl,
   withRouter,
+  injectNotifications,
   connect(mapStateToProps, undefined),
 )(AutomationScenarioTest);

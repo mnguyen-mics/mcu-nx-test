@@ -19,8 +19,18 @@ export default defineMessages({
     defaultMessage:
       'Since we will be using your own user point to test the scenario, you should make sure your current browser is linked to some activity on one of your channels before you can launch a test.',
   },
+  contentSubtitleNoDatamartIdOrNodeId: {
+    id: 'automation.test.content.subtitle.noDatamartIdOrNodeId',
+    defaultMessage:
+      'Some information was missing on the automation in order to display the test button.',
+  },
   buttonTitle: {
     id: 'automation.test.content.button.title',
     defaultMessage: 'Launch test',
   },
+  testSuccessfullyLaunched: {
+    id: 'automation.test.launched.message',
+    defaultMessage:
+      'Your test was successfully launched.',
+  }
 });
