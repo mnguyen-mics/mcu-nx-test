@@ -551,33 +551,36 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
       <Layout className="mcs-reactToEventAutomation edit-layout">
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-content'}>
-          <Radio.Group
-            className="mcs-reactToEventAutomation_buttonSwitchMode"
-            defaultValue={formMode}
-            onChange={switchMode}
-            buttonStyle="solid"
-            disabled={isLoading}
-          >
-            <Radio.Button value="REACT_TO_EVENT_STANDARD">
-              {formatMessage(messages.standardEvents)}
-            </Radio.Button>
-            <Radio.Button value="REACT_TO_EVENT_ADVANCED">
-              {formatMessage(messages.advanced)}
-            </Radio.Button>
-          </Radio.Group>
           <Form
             id={FORM_ID}
             className="mcs-reactToEventAutomation_form edit-layout mcs-content-container mcs-form-container"
             layout={'vertical'}
           >
+            <FormSection
+              title={messages.reactToEventFormSectionTitle}
+              subtitle={messages.reactToEventFormSectionSubtitle}
+            />
+            <FormSection
+              title={messages.reactToEventFormSectionConfigurationTitle}
+              subtitle={messages.reactToEventFormSectionConfigurationSubtitle}
+            />
+            <Radio.Group
+              className="mcs-reactToEventAutomation_buttonSwitchMode"
+              defaultValue={formMode}
+              onChange={switchMode}
+              buttonStyle="solid"
+              disabled={isLoading}
+            >
+              <Radio.Button value="REACT_TO_EVENT_STANDARD">
+                {formatMessage(messages.standardEvents)}
+              </Radio.Button>
+              <Radio.Button value="REACT_TO_EVENT_ADVANCED">
+                {formatMessage(messages.advanced)}
+              </Radio.Button>
+            </Radio.Group>
+
             {formMode === 'REACT_TO_EVENT_STANDARD' ? (
               <div className="mcs-reactToEventAutomation_standardEventsForm">
-                <FormSection
-                  title={messages.reactToEventFormSectionTitle}
-                  subtitle={
-                    messages.reactToEventStandardEventsFormSectionSubtitle
-                  }
-                />
                 {isLoading ? (
                   <Loading className="loading-full-screen" />
                 ) : standardEventNames.length > 0 ? (
@@ -601,10 +604,6 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
               </div>
             ) : (
               <div className="mcs-reactToEventAutomation_advancedForm">
-                <FormSection
-                  title={messages.reactToEventFormSectionTitle}
-                  subtitle={messages.reactToEventFormSectionSubtitle}
-                />
                 {runtimeSchemaId && selectedObjectType ? (
                   <div>
                     <div className="mcs-reactToEventAutomation_chooseEventNameContainer">
@@ -617,9 +616,6 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
                         formItemProps={{
                           label: formatMessage(messages.eventName),
                           required: true,
-                        }}
-                        helpToolTipProps={{
-                          title: formatMessage(messages.eventNameHelp),
                         }}
                         small={true}
                         validate={isRequired}
@@ -680,7 +676,19 @@ const messages = defineMessages({
   },
   reactToEventFormSectionTitle: {
     id: 'automation.builder.node.reactToEventForm.event.title',
-    defaultMessage: 'React to an Event',
+    defaultMessage: 'Description',
+  },
+  reactToEventFormSectionSubtitle: {
+    id: 'automation.builder.node.reactToEventForm.event.subtitle',
+    defaultMessage: 'This is the starting point for your automation.',
+  },
+  reactToEventFormSectionConfigurationTitle: {
+    id: 'automation.builder.node.reactToEventForm.event.configuration.title',
+    defaultMessage: 'Configuration',
+  },
+  reactToEventFormSectionConfigurationSubtitle: {
+    id: 'automation.builder.node.reactToEventForm.event.configuration.subtitle',
+    defaultMessage: 'Define which events will cause a user to enter this automation. Standard events will appear if you\'ve used mediarithmics predefined event names in your integration. Otherwise, use the advanced tab.',
   },
   standardEvents: {
     id: 'automation.builder.node.reactToEventForm.formMode.standardEvents',
@@ -689,16 +697,6 @@ const messages = defineMessages({
   advanced: {
     id: 'automation.builder.node.reactToEventForm.formMode.advanced',
     defaultMessage: 'ADVANCED',
-  },
-  reactToEventStandardEventsFormSectionSubtitle: {
-    id:
-      'automation.builder.node.reactToEventForm.standardEventsForm.event.subtitle',
-    defaultMessage: 'Select options that will trigger this automation.',
-  },
-  reactToEventFormSectionSubtitle: {
-    id: 'automation.builder.node.reactToEventForm.event.subtitle',
-    defaultMessage:
-      'Specify which events should trigger the Automation for Users. Once an event matching the below conditions is tracked on a User, he will directly enter the Automation.',
   },
   propertyFilterSectionTitle: {
     id: 'automation.builder.node.reactToEventForm.propertyFilter.title',
@@ -711,11 +709,6 @@ const messages = defineMessages({
   eventName: {
     id: 'automation.builder.node.reactToEventForm.eventName',
     defaultMessage: 'Event names',
-  },
-  eventNameHelp: {
-    id: 'automation.builder.node.reactToEventForm.eventNameHelp',
-    defaultMessage:
-      'The event names that will trigger the Automation. When receiving one of these events, the user will enter the automation.',
   },
   schemaNotSuitableForAction: {
     id: 'automation.builder.node.reactToEventForm.schemaNotSuitableForAction',

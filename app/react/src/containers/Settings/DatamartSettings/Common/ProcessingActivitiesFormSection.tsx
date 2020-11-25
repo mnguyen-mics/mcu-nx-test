@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ReduxFormChangeProps } from '../../../../utils/FormHelper';
-import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import { WrappedFieldArrayProps } from 'redux-form';
 import { ProcessingActivityFieldModel } from './domain';
 import injectDrawer, {
@@ -24,12 +24,14 @@ import {
 } from '../../../../models/processing';
 import { Alert } from 'antd';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { Link } from 'react-router-dom';
 
 export type ProcessingsAssociatedType =
   | 'CHANNEL'
   | 'COMPARTMENT'
   | 'SEGMENT'
-  | 'SEGMENT-EDGE';
+  | 'SEGMENT-EDGE'
+  | 'ADD-TO-SEGMENT-AUTOMATION';
 
 export interface ProcessingActivitiesFormSectionProps
   extends ReduxFormChangeProps {
@@ -127,7 +129,8 @@ class ProcessingActivitiesFormSection extends React.Component<Props> {
     if (
       processingsAssociatedType === 'SEGMENT' ||
       processingsAssociatedType === 'SEGMENT-EDGE' ||
-      processingsAssociatedType === 'COMPARTMENT'
+      processingsAssociatedType === 'COMPARTMENT' ||
+      processingsAssociatedType === 'ADD-TO-SEGMENT-AUTOMATION'
     ) {
       return false;
     }
@@ -151,7 +154,12 @@ class ProcessingActivitiesFormSection extends React.Component<Props> {
   };
 
   getSectionSubTitle = () => {
-    const { processingsAssociatedType } = this.props;
+    const {
+      processingsAssociatedType,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
 
     if (
       processingsAssociatedType === 'SEGMENT' ||
@@ -160,6 +168,20 @@ class ProcessingActivitiesFormSection extends React.Component<Props> {
       return messages.processingActivitiesForSegmentsSectionSubtitle;
     else if (processingsAssociatedType === 'COMPARTMENT')
       return messages.processingActivitiesForCompartmentsSectionSubtitle;
+    else if (processingsAssociatedType === 'ADD-TO-SEGMENT-AUTOMATION')
+      return {
+        ...messages.addToSegmentAutomationSectionSubtitle,
+        values: {
+          organisationSettings: (
+            <Link
+              to={`/v2/o/${organisationId}/settings/organisation/processings`}
+              target="_blank"
+            >
+              <FormattedMessage {...messages.organisationSettings} />
+            </Link>
+          ),
+        },
+      };
     else return messages.processingActivitiesForChannelsSectionSubtitle;
   };
 
@@ -168,7 +190,8 @@ class ProcessingActivitiesFormSection extends React.Component<Props> {
 
     if (
       processingsAssociatedType === 'SEGMENT' ||
-      processingsAssociatedType === 'SEGMENT-EDGE'
+      processingsAssociatedType === 'SEGMENT-EDGE' ||
+      processingsAssociatedType === 'ADD-TO-SEGMENT-AUTOMATION'
     )
       return messages.processingActivitiesForSegmentsSectionTitle;
     else
@@ -179,7 +202,7 @@ class ProcessingActivitiesFormSection extends React.Component<Props> {
     const {
       intl: { formatMessage },
       processingsAssociatedType,
-      disabled
+      disabled,
     } = this.props;
 
     const sectionSubTitle = this.getSectionSubTitle();
@@ -200,7 +223,7 @@ class ProcessingActivitiesFormSection extends React.Component<Props> {
     ) : null;
 
     const sectionDropdownItems =
-      (processingsAssociatedType === 'SEGMENT-EDGE' || disabled )
+      processingsAssociatedType === 'SEGMENT-EDGE' || disabled
         ? undefined
         : [
             {

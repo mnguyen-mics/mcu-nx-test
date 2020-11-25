@@ -237,12 +237,12 @@ export default defineMessages({
   },
   campaignFormPlaceholderCampaignName: {
     id: 'campaign.form.section.general.placeholder.name',
-    defaultMessage: 'This is a campaign name',
+    defaultMessage: 'Your campaign name',
   },
   contentSectionGeneralRow1Tooltip: {
     id: 'adGroupEditor.section.general.row1.tooltip',
     defaultMessage:
-      "The campaign's name will help you identify it on the different screens. Make it as memorable as you want your results to be!",
+      "The campaign name will help you identify it on the different screens. Make it as memorable as you want your results to be!",
   },
 
   /* Row 2 */

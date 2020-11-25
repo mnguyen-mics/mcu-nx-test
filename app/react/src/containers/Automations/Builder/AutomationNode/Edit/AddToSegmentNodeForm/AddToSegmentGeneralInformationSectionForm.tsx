@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { AddToSegmentAutomationFormData } from "../domain";
-import { InjectedIntlProps, injectIntl, defineMessages } from "react-intl";
-import { ValidatorProps } from "../../../../../../components/Form/withValidators";
+import { AddToSegmentAutomationFormData } from '../domain';
+import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import { ValidatorProps } from '../../../../../../components/Form/withValidators';
 import { compose } from 'recompose';
 import withNormalizer, {
   NormalizerProps,
@@ -12,7 +12,7 @@ import {
   FormInput,
   FormInputField,
   FormAddonSelectField,
-  AddonSelect
+  AddonSelect,
 } from '../../../../../../components/Form';
 
 interface GeneralInformationFormSectionProps {
@@ -27,30 +27,27 @@ type Props = GeneralInformationFormSectionProps &
   NormalizerProps;
 
 class AddToSegmentGeneralInformationFormSection extends React.Component<Props> {
-
   render() {
     const {
-        fieldValidators: { isRequired, isValidInteger },
-        intl: { formatMessage },
-        disabled,
-      } = this.props;
+      fieldValidators: { isRequired, isValidInteger },
+      intl: { formatMessage },
+      disabled,
+    } = this.props;
 
     return (
-
       <div>
         <FormSection
           subtitle={messages.sectionGeneralSubtitle}
           title={messages.sectionGeneralTitle}
         />
+        <FormSection title={messages.sectionGeneralConfigurationTitle} />
         <div>
           <FormInputField
             name="audienceSegmentName"
             component={FormInput}
             validate={[isRequired]}
             formItemProps={{
-              label: formatMessage(
-                messages.audienceSegmentNameTitle, 
-              ),
+              label: formatMessage(messages.audienceSegmentNameTitle),
               required: true,
             }}
             inputProps={{
@@ -69,13 +66,13 @@ class AddToSegmentGeneralInformationFormSection extends React.Component<Props> {
             component={FormInput}
             validate={[isValidInteger]}
             formItemProps={{
-              label: formatMessage(
-                messages.audienceSegmentTTLTitle,
-              ),
+              label: formatMessage(messages.audienceSegmentTTLTitle),
             }}
             inputProps={{
               disabled: disabled,
-              placeholder: formatMessage(messages.audienceSegmentTTLPlaceholder),
+              placeholder: formatMessage(
+                messages.audienceSegmentTTLPlaceholder,
+              ),
               addonAfter: (
                 <FormAddonSelectField
                   name="ttl.unit"
@@ -85,9 +82,7 @@ class AddToSegmentGeneralInformationFormSection extends React.Component<Props> {
                     {
                       value: 'days',
                       key: 'days',
-                      title: formatMessage(
-                        messages.audienceSegmentTTLUnitDays,
-                      ),
+                      title: formatMessage(messages.audienceSegmentTTLUnitDays),
                     },
                     {
                       value: 'months',
@@ -102,15 +97,13 @@ class AddToSegmentGeneralInformationFormSection extends React.Component<Props> {
               style: { width: '100%' },
             }}
             helpToolTipProps={{
-              title: formatMessage(
-                messages.audienceSegmentTTLSubtitle,
-              ),
+              title: formatMessage(messages.audienceSegmentTTLSubtitle),
             }}
             small={true}
           />
         </div>
       </div>
-    )
+    );
   }
 }
 
@@ -123,11 +116,15 @@ export default compose<Props, GeneralInformationFormSectionProps>(
 export const messages = defineMessages({
   sectionGeneralTitle: {
     id: 'automation.builder.node.addToSegmentForm.general.title',
-    defaultMessage: 'General information',
+    defaultMessage: 'Description',
   },
   sectionGeneralSubtitle: {
     id: 'automation.builder.node.addToSegmentForm.general.subtitle',
-    defaultMessage: 'Modify the general information of your audience segment',
+    defaultMessage: 'The action allows you to add users to a segment.',
+  },
+  sectionGeneralConfigurationTitle: {
+    id: 'automation.builder.node.addToSegmentForm.general.configuration.title',
+    defaultMessage: 'Configuration',
   },
   automationNodeName: {
     id: 'automation.builder.node.addToSegmentForm.name',
@@ -135,11 +132,12 @@ export const messages = defineMessages({
   },
   audienceSegmentNameTitle: {
     id: 'automation.builder.node.addToSegmentForm.name.title',
-    defaultMessage: 'This is the audience segment name',
+    defaultMessage: 'Segment Name',
   },
   audienceSegmentNameSubtitle: {
     id: 'automation.builder.node.addToSegmentForm.name.subtitle',
-    defaultMessage: "The audience segment's name will help you identify it on the different screens. Make it as memorable as you want your results to be !",
+    defaultMessage:
+      "The segment name will help you identify it on the different screens. Make it as memorable as you want your results to be!",
   },
   audienceSegmentNamePlaceholder: {
     id: 'automation.builder.node.addToSegmentForm.name.placeholder',
@@ -151,18 +149,19 @@ export const messages = defineMessages({
   },
   audienceSegmentTTLSubtitle: {
     id: 'automation.builder.node.addToSegmentForm.ttl.subtitle',
-    defaultMessage: "Time during which the user will belong to the segment (0 means forever). If not filled the default lifetime of the associated segment will be used.",
+    defaultMessage:
+      'The time that users will be in the segment for (0 means forever). If not filled, a default TTL will be applied.',
   },
   audienceSegmentTTLPlaceholder: {
     id: 'automation.builder.node.addToSegmentForm.ttl.placeholder',
-    defaultMessage: "Time to live",
+    defaultMessage: 'Time to live',
   },
   audienceSegmentTTLUnitDays: {
     id: 'automation.builder.node.addToSegmentForm.ttl.unit.days',
-    defaultMessage: "Days",
+    defaultMessage: 'Days',
   },
   audienceSegmentTTLUnitMonths: {
     id: 'automation.builder.node.addToSegmentForm.ttl.unit.months',
-    defaultMessage: "Months",
+    defaultMessage: 'Months',
   },
 });

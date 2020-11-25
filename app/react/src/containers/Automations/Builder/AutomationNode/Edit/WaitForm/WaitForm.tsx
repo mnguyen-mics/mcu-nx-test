@@ -29,7 +29,7 @@ const localMessages = defineMessages({
   },
   sectionGeneralTitle: {
     id: 'automation.builder.node.waitForm.generalTitle',
-    defaultMessage: 'General Informations',
+    defaultMessage: 'General Information',
   },
   sectionDisplayCampaignTitle: {
     id: 'automation.builder.node.waitForm.displayTitle',

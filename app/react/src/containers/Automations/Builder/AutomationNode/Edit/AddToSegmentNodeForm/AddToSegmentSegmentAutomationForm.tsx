@@ -38,7 +38,7 @@ const messages = defineMessages({
   },
   sectionGeneralTitle: {
     id: 'automation.builder.node.addToSegmentForm.general.title',
-    defaultMessage: 'General Informations',
+    defaultMessage: 'General Information',
   },
 });
 
@@ -91,7 +91,7 @@ class AddToSegmentAutomationForm extends React.Component<Props> {
           name="processingActivities"
           component={ProcessingActivitiesFormSection}
           initialProcessingSelectionsForWarning={[]}
-          processingsAssociatedType={'SEGMENT'}
+          processingsAssociatedType={'ADD-TO-SEGMENT-AUTOMATION'}
           formChange={change}
           disabled={disabled}
         />

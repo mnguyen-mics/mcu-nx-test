@@ -29,6 +29,16 @@ const messages = defineMessages({
     defaultMessage:
       'Drag and drop your components in the builder to create your automation.',
   },
+  actionsTitle: {
+    id: 'automation.builder.availableNode.actions.title',
+    defaultMessage:
+      'Actions',
+  },
+  flowControlTitle: {
+    id: 'automation.builder.availableNode.flowControl.title',
+    defaultMessage:
+      'Flow control',
+  },
 });
 
 export interface AvailableNode {
@@ -185,10 +195,10 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
           </div>
         </Row>
         <Row className="mcs-availableNodeVisualizer_row">
-          {this.createNodeGrid('Actions', this.state.actionNodes)}
+          {this.createNodeGrid(intl.formatMessage(messages.actionsTitle), this.state.actionNodes)}
         </Row>
         <Row className="mcs-availableNodeVisualizer_row">
-          {this.createNodeGrid('Conditions', this.state.conditionNodes)}
+          {this.createNodeGrid(intl.formatMessage(messages.flowControlTitle), this.state.conditionNodes)}
         </Row>
       </div>
     );

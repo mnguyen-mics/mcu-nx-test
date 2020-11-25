@@ -10,8 +10,12 @@ import {
 import { withRouter, RouteComponentProps } from 'react-router';
 import { FORM_ID, QueryInputAutomationFormData } from '../domain';
 import { QueryLanguage } from '../../../../../../models/datamart/DatamartResource';
-import { MenuPresentational, Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
-import { FormTitle } from '../../../../../../components/Form';
+import {
+  MenuPresentational,
+  Actionbar,
+  McsIcon,
+} from '@mediarithmics-private/mcs-components-library';
+import { FormSection, FormTitle } from '../../../../../../components/Form';
 import JSONQLBuilderContainer from '../../../../../QueryTool/JSONOTQL/JSONQLBuilderContainer';
 import { OtqlConsole } from '../../../../../../components';
 import { QueryDocument } from '../../../../../../models/datamart/graphdb/QueryDocument';
@@ -22,6 +26,27 @@ import { Path } from '@mediarithmics-private/mcs-components-library/lib/componen
 const { Content } = Layout;
 
 const localMessages = defineMessages({
+  descriptionTitle: {
+    id:
+      'automation.builder.node.edition.form.query.presentation.description.title',
+    defaultMessage: 'Description',
+  },
+  descriptionSubtitle: {
+    id:
+      'automation.builder.node.edition.form.query.presentation.description.subtitle',
+    defaultMessage:
+      'Using {if}, you can add a check whether the user should proceed to the next step of the automation.',
+  },
+  if: {
+    id:
+      'automation.builder.node.edition.form.query.presentation.description.subtitle.if',
+    defaultMessage: 'If',
+  },
+  configurationTitle: {
+    id:
+      'automation.builder.node.edition.form.query.presentation.configuration.title',
+    defaultMessage: 'Configuration',
+  },
   save: {
     id: 'automation.builder.node.edition.form.query.save.button',
     defaultMessage: 'Update',
@@ -97,6 +122,17 @@ class QueryAutomationForm extends React.Component<Props, State> {
       const onSelect = (q: QueryLanguage) => () =>
         this.setState({ queryLanguage: q });
 
+      const descriptionSubtitle = {
+        ...localMessages.descriptionSubtitle,
+        values: {
+          if: (
+            <span className="mcs-automation_nodeName">
+              <FormattedMessage {...localMessages.if} />
+            </span>
+          ),
+        },
+      };
+
       return (
         <Layout>
           <div className="edit-layout ant-layout">
@@ -109,30 +145,37 @@ class QueryAutomationForm extends React.Component<Props, State> {
               />
             </Actionbar>
             <Layout>
-              <Content className="mcs-content-container mcs-form-container text-center">
-                <FormTitle
-                  title={localMessages.title}
-                  subtitle={localMessages.subtitle}
+              <Content className="mcs-content-container mcs-form-container">
+                <FormSection
+                  subtitle={descriptionSubtitle}
+                  title={localMessages.descriptionTitle}
                 />
-                <Row className="mcs-selector_container">
-                  <Row className="menu">
-                    <div className="presentation">
-                      <MenuPresentational
-                        title={'Query Builder'}
-                        type="data"
-                        select={onSelect('JSON_OTQL')}
-                      />
-                      <div className="separator">
-                        <FormattedMessage {...localMessages.or} />
+                <FormSection title={localMessages.configurationTitle} />
+                <Content className="text-center">
+                  <FormTitle
+                    title={localMessages.title}
+                    subtitle={localMessages.subtitle}
+                  />
+                  <Row className="mcs-selector_container">
+                    <Row className="menu">
+                      <div className="presentation">
+                        <MenuPresentational
+                          title={'Query Builder'}
+                          type="data"
+                          select={onSelect('JSON_OTQL')}
+                        />
+                        <div className="separator">
+                          <FormattedMessage {...localMessages.or} />
+                        </div>
+                        <MenuPresentational
+                          title={'Expert Mode'}
+                          type="code"
+                          select={onSelect('OTQL')}
+                        />
                       </div>
-                      <MenuPresentational
-                        title={'Expert Mode'}
-                        type="code"
-                        select={onSelect('OTQL')}
-                      />
-                    </div>
+                    </Row>
                   </Row>
-                </Row>
+                </Content>
               </Content>
             </Layout>
           </div>

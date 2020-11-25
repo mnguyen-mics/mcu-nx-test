@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { OnSegmentExitInputAutomationFormData } from "../domain";
-import { InjectedIntlProps, injectIntl, defineMessages } from "react-intl";
-import { ValidatorProps } from "../../../../../../components/Form/withValidators";
+import { OnSegmentExitInputAutomationFormData } from '../domain';
+import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import { ValidatorProps } from '../../../../../../components/Form/withValidators';
 import { TYPES } from '../../../../../../constants/types';
 import { lazyInject } from '../../../../../../config/inversify.config';
 import { IAudienceSegmentService } from '../../../../../../services/AudienceSegmentService';
@@ -9,14 +9,13 @@ import { compose } from 'recompose';
 import withNormalizer, {
   NormalizerProps,
 } from '../../../../../../components/Form/withNormalizer';
-import {
-  withValidators,
-  FormSection,
-} from '../../../../../../components/Form';
+import { withValidators, FormSection } from '../../../../../../components/Form';
 import { FormInfiniteSearchObjectField } from '../../../../../QueryTool/JSONOTQL/Edit/Sections/Field/FieldNodeForm';
 import { SegmentNameDisplay } from '../../../../../Audience/Common/SegmentNameDisplay';
 import { RouteComponentProps, withRouter } from 'react-router';
-import injectNotifications, { InjectedNotificationProps } from '../../../../../Notifications/injectNotifications';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../../../Notifications/injectNotifications';
 import FormInfiniteSearchObject from '../../../../../../components/Form/FormSelect/FormInfiniteSearchObject';
 
 interface State {}
@@ -44,48 +43,51 @@ class OnSegmentExitInputGeneralSectionForm extends React.Component<
     super(props);
   }
 
-  fetchListMethod = (keywords: string, firstResult: number, maxResults: number) => {
+  fetchListMethod = (
+    keywords: string,
+    firstResult: number,
+    maxResults: number,
+  ) => {
     const {
       match: {
         params: { organisationId },
       },
-      initialValues: {
-        datamartId
-      },
+      initialValues: { datamartId },
       notifyError,
     } = this.props;
 
     return this._audienceSegmentService
-      .getSegments(
-        organisationId, 
-        { 
-          keywords, 
-          type: ['USER_QUERY'], 
-          persisted: true,
-          datamart_id: datamartId,
-          first_result: firstResult,
-          max_results: maxResults,
-        }
-        )
+      .getSegments(organisationId, {
+        keywords,
+        type: ['USER_QUERY'],
+        persisted: true,
+        datamart_id: datamartId,
+        first_result: firstResult,
+        max_results: maxResults,
+      })
       .then(({ data: segments }) =>
         segments.map(r => ({
           key: r.id,
           label: <SegmentNameDisplay audienceSegmentResource={r} />,
         })),
-      ).catch(error => {
+      )
+      .catch(error => {
         notifyError(error);
         return [];
       });
   };
 
   fetchSingleMethod = (id: string) => {
-    return this._audienceSegmentService.getSegment(id).then(({ data: segment }) => ({
-      key: segment.id,
-      label: <SegmentNameDisplay audienceSegmentResource={segment} />,
-    })).catch(error => {
-      this.props.notifyError(error);
-      throw error;
-    });
+    return this._audienceSegmentService
+      .getSegment(id)
+      .then(({ data: segment }) => ({
+        key: segment.id,
+        label: <SegmentNameDisplay audienceSegmentResource={segment} />,
+      }))
+      .catch(error => {
+        this.props.notifyError(error);
+        throw error;
+      });
   };
 
   render() {
@@ -101,22 +103,20 @@ class OnSegmentExitInputGeneralSectionForm extends React.Component<
           subtitle={messages.sectionGeneralSubtitle}
           title={messages.sectionGeneralTitle}
         />
+        <FormSection title={messages.configurationTitle} />
         <FormInfiniteSearchObjectField
           name="segmentId"
           component={FormInfiniteSearchObject}
           validate={[isRequired]}
           formItemProps={{
-            label: formatMessage(messages.SegmentExitInputNameTitle),
+            label: formatMessage(messages.segmentExitInputNameTitle),
             required: true,
           }}
           fetchListMethod={this.fetchListMethod}
           fetchSingleMethod={this.fetchSingleMethod}
-          helpToolTipProps={{
-            title: formatMessage(messages.SegmentExitInputNameSubtitle),
-          }}
           selectProps={{
             disabled: !!disabled,
-            mode: "default",
+            mode: 'default',
             showSearch: true,
           }}
           type="Audience"
@@ -137,27 +137,22 @@ export default compose<Props, OnSegmentExitInputGeneralSectionFormProps>(
 
 export const messages = defineMessages({
   sectionGeneralTitle: {
-    id: 'automation.builder.node.onSegmentExitInputForm.generalInfoSection.title',
-    defaultMessage: 'Start Automation - On audience segment exit',
+    id:
+      'automation.builder.node.onSegmentExitInputForm.generalInfoSection.title',
+    defaultMessage: 'Description',
   },
   sectionGeneralSubtitle: {
     id: 'automation.builder.node.onSegmentExitInputForm.general.subtitle',
-    defaultMessage: 'Modify the segment to be used for this automation',
+    defaultMessage: 'This is the starting point for your automation.',
   },
-  automationNodeName: {
-    id: 'automation.builder.node.onSegmentExitInputForm.name',
-    defaultMessage: 'Automation node name',
+  configurationTitle: {
+    id:
+      'automation.builder.node.onSegmentExitInputForm.generalInfoSection.configuration.title',
+    defaultMessage: 'Configuration',
   },
-  SegmentExitInputNameTitle: {
+  segmentExitInputNameTitle: {
     id: 'automation.builder.node.onSegmentExitInputForm.name.title',
-    defaultMessage: 'Select the segment which will be used for entering the automation',
-  },
-  SegmentExitInputNameSubtitle: {
-    id: 'automation.builder.node.onSegmentExitInputForm.name.subtitle',
-    defaultMessage: "When users are leaving the segment, they will also enter the automation.",
-  },
-  SegmentExitInputNamePlaceholder: {
-    id: 'automation.builder.node.onSegmentExitInputForm.name.placeholder',
-    defaultMessage: 'Segment Name',
+    defaultMessage:
+      'Users will enter this automation when they leave this segment.',
   },
 });

@@ -1,6 +1,11 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import {
+  InjectedIntlProps,
+  injectIntl,
+  defineMessages,
+  FormattedMessage,
+} from 'react-intl';
 import {
   FormInput,
   FormSection,
@@ -24,15 +29,22 @@ import { lazyInject } from '../../../../../../config/inversify.config';
 import { IConsentService } from '../../../../../../services/ConsentService';
 import { IEmailRouterService } from '../../../../../../services/Library/EmailRoutersService';
 import { TYPES } from '../../../../../../constants/types';
+import { Link } from 'react-router-dom';
 
 export const formMessages = defineMessages({
   sectionGeneralTitle: {
     id: 'automation.builder.node.emailCampaignForm.generalInfoSection.title',
-    defaultMessage: 'General information',
+    defaultMessage: 'Description',
   },
   sectionGeneralSubtitle: {
     id: 'automation.builder.node.emailCampaignForm.general.subtitle',
-    defaultMessage: 'Modify the general information of your email campaign',
+    defaultMessage:
+      'This action allows you to send an email to the user who goes through it.',
+  },
+  sectionGeneralConfigurationTitle: {
+    id:
+      'automation.builder.node.emailCampaignForm.generalInfoSection.configuration.title',
+    defaultMessage: 'Configuration',
   },
   automationNodeName: {
     id: 'automation.builder.node.emailCampaignForm.name',
@@ -45,7 +57,12 @@ export const formMessages = defineMessages({
   emailEditorRouterSelectHelper: {
     id: 'automation.builder.emailEditor.step.select.helper.router',
     defaultMessage:
-      'Choose your Router. A Router is basically a channel through which you will send your email.',
+      'Choose a router for your campaign. A Router is basically a channel through which you will send your email. You can configure you email routers in your {campaignSettings}.',
+  },
+  campaignSettings: {
+    id:
+      'automation.builder.emailEditor.step.select.helper.router.campaignSettings',
+    defaultMessage: 'campaigns settings',
   },
   emailEditorProviderSelectLabel: {
     id: 'automation.builder.emailEditor.step.select.label.provider',
@@ -54,7 +71,7 @@ export const formMessages = defineMessages({
   emailEditorProviderSelectHelper: {
     id: 'automation.builder.emailEditor.step.select.helper.provider',
     defaultMessage:
-      'A Provider helps you target the user that have given you an explicit consent on being targeted by email',
+      'A Provider helps you target users who have given you explicit consent to email targeting. Get in touch with your support contact to update your providers list.',
   },
 });
 
@@ -114,8 +131,25 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
     const {
       fieldValidators: { isRequired },
       intl: { formatMessage },
+      organisationId,
       disabled,
     } = this.props;
+
+    const routerHelpTooltipTitle = (
+      <FormattedMessage
+        {...formMessages.emailEditorRouterSelectHelper}
+        values={{
+          campaignSettings: (
+            <Link
+              to={`/v2/o/${organisationId}/settings/campaigns/email_routers`}
+              target="_blank"
+            >
+              <FormattedMessage {...formMessages.campaignSettings} />
+            </Link>
+          ),
+        }}
+      />
+    );
 
     return (
       <div>
@@ -123,6 +157,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
           subtitle={formMessages.sectionGeneralSubtitle}
           title={formMessages.sectionGeneralTitle}
         />
+        <FormSection title={formMessages.sectionGeneralConfigurationTitle} />
 
         <div>
           <FormInputField
@@ -165,7 +200,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
               title: router.name,
             }))}
             helpToolTipProps={{
-              title: formatMessage(formMessages.emailEditorRouterSelectHelper),
+              title: routerHelpTooltipTitle,
             }}
             small={true}
             disabled={!!disabled}

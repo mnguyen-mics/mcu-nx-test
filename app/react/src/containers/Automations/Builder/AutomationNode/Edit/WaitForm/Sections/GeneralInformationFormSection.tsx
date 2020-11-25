@@ -40,11 +40,21 @@ export const messages: {
 } = defineMessages({
   sectionGeneralTitle: {
     id: 'automation.builder.node.waitNodeForm.general.title',
-    defaultMessage: 'General Informations',
+    defaultMessage: 'Description',
   },
   sectionGeneralSubtitle: {
     id: 'automation.builder.node.waitNodeForm.general.subtitle',
-    defaultMessage: 'Modify the general information of the node',
+    defaultMessage: `Using {wait}, you can stall the automation for a given amount of time.
+    For example, you can wait a few hours before checking if users have bought the product
+    they've added to their cart.`,
+  },
+  wait: {
+    id: 'automation.builder.node.waitNodeForm.general.subtitle.wait',
+    defaultMessage: 'Wait',
+  },
+  sectionGeneralConfigurationTitle: {
+    id: 'automation.builder.node.waitNodeForm.general.configuration.title',
+    defaultMessage: 'Configuration',
   },
   durationTitle: {
     id: 'automation.builder.node.waitNodeForm.duration.title',
@@ -298,12 +308,24 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
     } = this.props;
     const { enableTimeWindow, enableDayWindow } = this.state;
 
+    const sectionGeneralSubtitle = {
+      ...messages.sectionGeneralSubtitle,
+      values: {
+        wait: (
+          <span className="mcs-automation_nodeName">
+            <FormattedMessage {...messages.wait} />
+          </span>
+        ),
+      },
+    };
+
     return (
       <div className="mcs-automationWaitNodeForm">
         <FormSection
-          subtitle={messages.sectionGeneralSubtitle}
+          subtitle={sectionGeneralSubtitle}
           title={messages.sectionGeneralTitle}
         />
+        <FormSection title={messages.sectionGeneralConfigurationTitle} />
         <FormInputField
           name="wait_duration.value"
           component={FormInput}

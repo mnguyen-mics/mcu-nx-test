@@ -1166,7 +1166,7 @@ const nodeMessages = defineMessages({
   },
   livequeryInputNodeSubtitle: {
     id: 'automation.builder.node.queryInput.live.subtitle',
-    defaultMessage: 'Live evaluation',
+    defaultMessage: 'React to an event',
   },
   periodicQueryInputNodeSubtitle: {
     id: 'automation.builder.node.queryInput.periodic.title',
@@ -1198,7 +1198,7 @@ const nodeMessages = defineMessages({
   },
   emailCampaignNodeTitle: {
     id: 'automation.builder.node.emailCampaign.title',
-    defaultMessage: 'Email Campaign',
+    defaultMessage: 'Send Email',
   },
   addToSegmentNodeTitle: {
     id: 'automation.builder.node.addToSegment.title',
