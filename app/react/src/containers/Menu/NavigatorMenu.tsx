@@ -178,6 +178,7 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
                 </span>
               </span>
             }
+            className={`mcs-sideBar-subMenu_${itemDef.translation.id}`}
           >
             {itemDef.subMenuItems.map(
               (subMenuItem: NavigatorSubMenuDefinition) => {
@@ -192,7 +193,7 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
                   }
                 }
                 return (
-                  <Menu.Item key={subMenuItem.path}>
+                  <Menu.Item key={subMenuItem.path} className={`mcs-sideBar-subMenuItem_${subMenuItem.translation.id}`}>
                     <Link to={linkUrl}>
                       <FormattedMessage {...subMenuItem.translation} />
                     </Link>
