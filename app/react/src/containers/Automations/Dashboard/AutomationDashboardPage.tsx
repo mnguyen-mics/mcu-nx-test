@@ -166,15 +166,14 @@ class AutomationDashboardPage extends React.Component<Props, State> {
     history.push(`/v2/o/${organisationId}/automations/${automationId}/edit`);
   };
 
-  onTestClick = () => {
+  onTestClick = (datamartId: string, nodeId: string) => () => {
     const { openNextDrawer, closeNextDrawer } = this.props;
-    const { automationFormData } = this.state;
     const size: 'small' | 'large' = 'small';
 
     const props = {
       close: closeNextDrawer,
-      datamartId: automationFormData.automation?.datamart_id,
-      nodeId: automationFormData.automationTreeData?.node.id,
+      datamartId: datamartId,
+      nodeId: nodeId,
     };
 
     openNextDrawer<AutomationScenarioTestProps>(AutomationScenarioTest, {
@@ -218,10 +217,18 @@ class AutomationDashboardPage extends React.Component<Props, State> {
 
     const automationStatus = automationFormData.automation.status;
 
+    const datamartId = automationFormData.automation?.datamart_id;
+    const nodeId = automationFormData.automationTreeData?.node.id;
+
     const testButton =
       (automationStatus === 'ACTIVE' || automationStatus === 'PAUSED') &&
+      datamartId &&
+      nodeId &&
       hasFeature('automations-test-scenario') ? (
-        <Button onClick={this.onTestClick} disabled={isLoading}>
+        <Button
+          onClick={this.onTestClick(datamartId, nodeId)}
+          disabled={isLoading}
+        >
           <McsIcon type={'gears'} />
           {formatMessage(messages.testTitle)}
         </Button>

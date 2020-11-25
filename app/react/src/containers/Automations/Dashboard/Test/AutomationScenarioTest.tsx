@@ -4,6 +4,7 @@ import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
+import { FormSection } from '../../../../components/Form';
 import { FormLayoutActionbar } from '../../../../components/Layout';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
@@ -31,8 +32,8 @@ export interface AutomationScenarioTestParams {
 
 export interface AutomationScenarioTestProps {
   close: () => void;
-  datamartId?: string;
-  nodeId?: string;
+  datamartId: string;
+  nodeId: string;
 }
 
 interface MapStateToProps {
@@ -49,6 +50,7 @@ type Props = MapStateToProps &
 interface State {
   isFetchingUserPointId: boolean;
   userPointId?: string;
+  isLaunchingTest: boolean;
 }
 
 class AutomationScenarioTest extends React.Component<Props, State> {
@@ -63,6 +65,7 @@ class AutomationScenarioTest extends React.Component<Props, State> {
 
     this.state = {
       isFetchingUserPointId: false,
+      isLaunchingTest: false,
     };
   }
 
@@ -118,53 +121,45 @@ class AutomationScenarioTest extends React.Component<Props, State> {
       nodeId,
     } = this.props;
 
-    const { userPointId } = this.state;
+    const { userPointId, isLaunchingTest } = this.state;
 
-    const subtitle =
-      datamartId && nodeId ? (
-        userPointId ? (
-          <div className="subtitle">
-            <FormattedMessage
-              {...messages.contentSubtitle}
-              values={{
-                userPointId: (
-                  <Link
-                    to={`/v2/o/${organisationId}/audience/timeline/user_point_id/${userPointId}`}
-                    target="_blank"
-                  >
-                    {userPointId}
-                  </Link>
-                ),
-              }}
-            />
-            <div className="edit-top">
-              <Button
-                className={'mcs-primary'}
-                type="primary"
-                onClick={this.launchTest(datamartId, nodeId, userPointId)}
-              >
-                <FormattedMessage {...messages.buttonTitle} />
-              </Button>
-            </div>
-          </div>
-        ) : (
-          <div className="subtitle">
-            <FormattedMessage {...messages.contentSubtitleNoUserPoint} />
-          </div>
-        )
-      ) : (
-        <div className="subtitle">
-          <FormattedMessage {...messages.contentSubtitleNoDatamartIdOrNodeId} />
-        </div>
-      );
+    const baseSubtitle = {
+      values: {
+        userPointId: (
+          <Link
+            to={`/v2/o/${organisationId}/audience/timeline/user_point_id/${userPointId}`}
+            target="_blank"
+          >
+            {userPointId}
+          </Link>
+        ),
+      },
+      ...messages.contentSubtitle,
+    };
 
-    return (
-      <div className="title-container">
-        <div className="title">
-          <FormattedMessage {...messages.contentTitle} />
-        </div>
-        {subtitle}
+    const spinOrTitle = isLaunchingTest ? (
+      <div>
+        <Spin size="small" className="text-center" />
       </div>
+    ) : <FormattedMessage {...messages.buttonTitle} />;
+
+    return userPointId ? (
+      <div>
+        <FormSection title={messages.contentTitle} subtitle={baseSubtitle} />
+        <Button
+          className={'mcs-primary'}
+          type="primary"
+          disabled={isLaunchingTest}
+          onClick={this.launchTest(datamartId, nodeId, userPointId)}
+        >
+          {spinOrTitle}
+        </Button>
+      </div>
+    ) : (
+      <FormSection
+        title={messages.contentTitle}
+        subtitle={messages.contentSubtitleNoUserPoint}
+      />
     );
   };
 
@@ -189,15 +184,21 @@ class AutomationScenarioTest extends React.Component<Props, State> {
       node_id: nodeId,
     };
 
-    this._scenarioService
-      .upsertUserScenarioByUserPointIdAndScenarioId(userScenarioResource)
-      .then(resUserScenarioResource => {
-        message.success(formatMessage(messages.testSuccessfullyLaunched));
-        close();
-      })
-      .catch(err => {
-        notifyError(err);
-      });
+    this.setState({ isLaunchingTest: true }, () => {
+      this._scenarioService
+        .upsertUserScenarioByUserPointIdAndScenarioId(userScenarioResource)
+        .then(resUserScenarioResource => {
+          this.setState({ isLaunchingTest: false }, () => {
+            message.success(formatMessage(messages.testSuccessfullyLaunched));
+            close();
+          });
+        })
+        .catch(err => {
+          this.setState({ isLaunchingTest: false }, () => {
+            notifyError(err);
+          });
+        });
+    });
   };
 
   render() {
