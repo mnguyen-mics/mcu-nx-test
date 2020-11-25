@@ -13,7 +13,10 @@ import { Layout, Button } from 'antd';
 import AutomationBuilder from '../Builder/AutomationBuilder';
 import { IScenarioService } from '../../../services/ScenarioService';
 import { AutomationStatus } from '../../../models/automations/automations';
-import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import {
+  Actionbar,
+  McsIcon,
+} from '@mediarithmics-private/mcs-components-library';
 import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import injectDrawer, {
@@ -163,12 +166,14 @@ class AutomationDashboardPage extends React.Component<Props, State> {
     history.push(`/v2/o/${organisationId}/automations/${automationId}/edit`);
   };
 
-  onTestClick = () => {
+  onTestClick = (datamartId: string, nodeId: string) => () => {
     const { openNextDrawer, closeNextDrawer } = this.props;
     const size: 'small' | 'large' = 'small';
 
     const props = {
       close: closeNextDrawer,
+      datamartId: datamartId,
+      nodeId: nodeId,
     };
 
     openNextDrawer<AutomationScenarioTestProps>(AutomationScenarioTest, {
@@ -210,13 +215,20 @@ class AutomationDashboardPage extends React.Component<Props, State> {
       },
     ];
 
+    const automationStatus = automationFormData.automation.status;
+
+    const datamartId = automationFormData.automation?.datamart_id;
+    const nodeId = automationFormData.automationTreeData?.node.id;
+
     const testButton =
-      automationFormData.automation &&
-      automationFormData.automation.status &&
-      (automationFormData.automation.status === 'ACTIVE' ||
-        automationFormData.automation.status === 'PAUSED') &&
+      (automationStatus === 'ACTIVE' || automationStatus === 'PAUSED') &&
+      datamartId &&
+      nodeId &&
       hasFeature('automations-test-scenario') ? (
-        <Button onClick={this.onTestClick}>
+        <Button
+          onClick={this.onTestClick(datamartId, nodeId)}
+          disabled={isLoading}
+        >
           <McsIcon type={'gears'} />
           {formatMessage(messages.testTitle)}
         </Button>

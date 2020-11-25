@@ -3,6 +3,7 @@ import {
   ScenarioNodeShape,
   StorylineResource,
   ScenarioEdgeResource,
+  UserScenarioResource,
 } from './../models/automations/automations';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import {
@@ -94,6 +95,9 @@ export interface IScenarioService {
     edgeId: string,
     scenarioEdge: ScenarioEdgeResource,
   ) => Promise<DataResponse<ScenarioEdgeResource>>;
+  upsertUserScenarioByUserPointIdAndScenarioId: (
+    userScenarioResource: UserScenarioResource,
+  ) => Promise<DataResponse<UserScenarioResource>>;
 }
 
 @injectable()
@@ -207,5 +211,16 @@ export class ScenarioService implements IScenarioService {
   ): Promise<DataResponse<ScenarioEdgeResource>> {
     const endpoint = `scenarios/${scenarioId}/storyline/edges/${edgeId}`;
     return ApiService.putRequest(endpoint, scenarioEdge);
+  }
+
+  upsertUserScenarioByUserPointIdAndScenarioId(
+    userScenarioResource: UserScenarioResource,
+  ): Promise<DataResponse<UserScenarioResource>> {
+    const datamartId = userScenarioResource.datamart_id;
+    const userPointId = userScenarioResource.user_point_id;
+    const scenarioId = userScenarioResource.scenario_id;
+    const endpoint = `datamarts/${datamartId}/user_points/${userPointId}/user_scenarios/scenario_id=${scenarioId}`;
+
+    return ApiService.putRequest(endpoint, userScenarioResource);
   }
 }

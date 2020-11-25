@@ -234,3 +234,16 @@ export interface ScenarioExitConditionFormResource
   formData: ScenarioExitConditionFormData;
   initialFormData: ScenarioExitConditionFormData;
 }
+
+export interface UserScenarioResource {
+  datamart_id: string;
+  user_point_id: string;
+  scenario_id: string;
+  execution_id?: string;
+  node_id: string;
+  active?: boolean;
+  callback_ts?: string;
+  start_ts?: string;
+  node_start_ts?: string;
+  matched_exit_condition_id?: string;
+}

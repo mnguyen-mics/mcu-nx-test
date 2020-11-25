@@ -23,4 +23,9 @@ export default defineMessages({
     id: 'automation.test.content.button.title',
     defaultMessage: 'Launch test',
   },
+  testSuccessfullyLaunched: {
+    id: 'automation.test.launched.message',
+    defaultMessage:
+      'Your test was successfully launched.',
+  }
 });
