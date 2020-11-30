@@ -274,7 +274,7 @@ class ExportEditPage extends React.Component<Props, ExportEditPageState> {
     ];
 
     if (loading) {
-      return <Loading className="loading-full-screen" />;
+      return <Loading isFullScreen={true} />;
     }
 
     if (exportId) {

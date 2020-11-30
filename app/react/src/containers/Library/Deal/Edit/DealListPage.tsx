@@ -150,7 +150,7 @@ class DealListPage extends React.Component<JoinedProps, DealListPageState> {
     } = this.props;
     const { dealListFormData, isLoading } = this.state;
     if (isLoading) {
-      return <Loading className="loading-full-screen" />;
+      return <Loading isFullScreen={true} />;
     } else {
       const dealListName =
         dealListId && dealListFormData

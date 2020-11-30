@@ -8,7 +8,6 @@ import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import * as FeatureSelectors from '../../../../redux/Features/selectors';
 import { GoalFormData, INITIAL_GOAL_FORM_DATA } from './domain';
 import GoalFormContainer from './GoalFormContainer';
-import Loading from '../../../../components/Loading';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
@@ -18,6 +17,7 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IGoalFormService } from './GoalFormService';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
+import { Loading } from '@mediarithmics-private/mcs-components-library';
 
 const messages = defineMessages({
   errorFormMessage: {
@@ -183,7 +183,7 @@ class EditGoalPage extends React.Component<Props, State> {
     const { loading, goalFormData } = this.state;
 
     if (loading) {
-      return <Loading className="loading-full-screen" />;
+      return <Loading isFullScreen={true} />;
     }
 
     const goalName =

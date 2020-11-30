@@ -319,7 +319,7 @@ class AudienceLookalikeCreation extends React.Component<
     };
 
     if (this.state.loading) {
-      return <Loading className="loading-full-screen" />;
+      return <Loading isFullScreen={true} />;
     }
     // const defaultValue = this.state.partitions.length && this.state.partitions[0].id ? this.state.partitions[0].id : '';
 

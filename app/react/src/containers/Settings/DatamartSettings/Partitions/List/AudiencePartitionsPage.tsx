@@ -303,7 +303,7 @@ class AudiencePartitionsPage extends React.Component<Props, State> {
     return (
       <Layout>
         <AudiencePartitionsActionbar />
-        {initialFetching && <Loading className="loading-full-screen" />}
+        {initialFetching && <Loading isFullScreen={true} />}
         {!initialFetching && content}
       </Layout>
     );

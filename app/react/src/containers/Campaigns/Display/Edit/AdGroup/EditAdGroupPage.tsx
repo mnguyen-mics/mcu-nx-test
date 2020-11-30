@@ -14,7 +14,6 @@ import {
 import { DisplayCampaignResource } from '../../../../../models/campaign/display/DisplayCampaignResource';
 import messages from '../messages';
 import AdGroupForm from './AdGroupForm';
-import Loading from '../../../../../components/Loading';
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -24,6 +23,7 @@ import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IDisplayCampaignService } from '../../../../../services/DisplayCampaignService';
 import { IAdGroupFormService } from './AdGroupFormService';
+import { Loading } from '@mediarithmics-private/mcs-components-library';
 
 interface State {
   campaign?: DisplayCampaignResource;
@@ -163,7 +163,7 @@ class EditAdGroupPage extends React.Component<Props, State> {
     const { loading, campaign, adGroupFormData } = this.state;
 
     if (loading) {
-      return <Loading className="loading-full-screen" />;
+      return <Loading isFullScreen={true} />;
     }
 
     const campaignName = campaign ? campaign.name : campaignId;

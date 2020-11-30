@@ -10,7 +10,6 @@ import {
   DisplayCreativeFormData,
   EditDisplayCreativeRouteMatchParams,
 } from './domain';
-import Loading from '../../../../components/Loading';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
@@ -18,6 +17,7 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { ICreativeService } from '../../../../services/CreativeService';
 import { IDisplayCreativeFormService } from './DisplayCreativeFormService';
+import { Loading } from '@mediarithmics-private/mcs-components-library';
 
 interface State {
   loading: boolean;
@@ -229,7 +229,7 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
     };
 
     if (this.state.loading) {
-      return <Loading className="loading-full-screen" />;
+      return <Loading isFullScreen={true} />;
     }
 
     if (!creativeId) {

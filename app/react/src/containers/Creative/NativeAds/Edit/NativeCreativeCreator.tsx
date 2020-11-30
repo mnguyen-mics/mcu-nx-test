@@ -5,7 +5,6 @@ import { InjectedIntlProps } from 'react-intl';
 import NativeCreativeRendererSelector from './NativeCreativeRendererSelector';
 import log from '../../../../utils/Logger';
 import { NativeCreativeFormData } from './domain';
-import Loading from '../../../../components/Loading';
 import { DisplayCreativeFormProps } from '../../DisplayAds/Edit/DisplayCreativeForm';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -14,6 +13,7 @@ import NativeCreativeForm from './NativeCreativeForm';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IDisplayCreativeFormService } from '../../DisplayAds/Edit/DisplayCreativeFormService';
+import { Loading } from '@mediarithmics-private/mcs-components-library';
 
 export interface NativeCreativeCreatorProps extends DisplayCreativeFormProps {}
 
@@ -66,7 +66,7 @@ class NativeCreativeCreator extends React.Component<Props, State> {
   render() {
     const { nativeFormData, isLoading } = this.state;
 
-    if (isLoading) return <Loading className="loading-full-screen" />;
+    if (isLoading) return <Loading isFullScreen={true} />;
 
     const initialValues = this.props.initialValues || nativeFormData;
 

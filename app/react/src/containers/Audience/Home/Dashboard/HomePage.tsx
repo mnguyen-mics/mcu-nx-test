@@ -162,7 +162,7 @@ class Partition extends React.Component<JoinedProps, HomeState> {
     } = this.state;
 
     if (isLoading) {
-      return <Loading />;
+      return <Loading isFullScreen={false} />;
     }
 
     const shouldDisplayAnalyticsFeature = hasFeature('audience-dashboards-datamart_users_analytics');

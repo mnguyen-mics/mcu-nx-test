@@ -458,7 +458,7 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
           </Col>
           <Col span={18} className="content">
             {loadingSingle ? (
-              <Loading />
+              <Loading isFullScreen={false} />
             ) : (
               <div>
                 {isInValidationMode && selectedSchema?.id===schemaValidation?.schema_id && (

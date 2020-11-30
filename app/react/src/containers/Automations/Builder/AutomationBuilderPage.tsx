@@ -370,7 +370,7 @@ class AutomationBuilderPage extends React.Component<Props, State> {
                 },
               ]}
             />
-            <Loading />
+            <Loading isFullScreen={false} />
           </Layout>
         );
 

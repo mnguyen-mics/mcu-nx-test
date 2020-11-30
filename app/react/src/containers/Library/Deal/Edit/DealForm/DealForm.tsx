@@ -220,7 +220,7 @@ class DealForm extends React.Component<JoinedProps, State> {
     } = this.props;
 
     if (this.state.adex.loading || this.state.displayNetwork.loading)
-      return <Loading className="loading-full-screen" />
+      return <Loading isFullScreen={true} />
 
     const dealName =
       initialValues && initialValues.id

@@ -2,7 +2,6 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import GoalForm, { GoalFormProps } from './GoalForm';
 import { INITIAL_GOAL_FORM_DATA, GoalFormData } from './domain';
-import Loading from '../../../../components/Loading';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
@@ -12,6 +11,7 @@ import { DatamartResource } from '../../../../models/datamart/DatamartResource';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IGoalFormService } from './GoalFormService';
+import { Loading } from '@mediarithmics-private/mcs-components-library';
 
 export interface GoalFormLoaderProps extends Omit<GoalFormProps, 'datamart'> {
   goalId: string;
@@ -76,7 +76,7 @@ class GoalFormLoader extends React.Component<Props, State> {
     const { loading, datamart } = this.state;
 
     if (loading || !datamart)
-      return <Loading className="loading-full-screen" />;
+      return <Loading isFullScreen={true} />;
 
     return (
       <GoalForm

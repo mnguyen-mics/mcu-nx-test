@@ -182,7 +182,7 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
     ];
 
     if (isLoading) {
-      return <Loading className="loading-full-screen" />;
+      return <Loading isFullScreen={true} />;
     }
 
     return (

@@ -133,7 +133,7 @@ class EditCampaignPage extends React.Component<Props, State> {
     const { campaignFormData, loading } = this.state;
 
     if (loading) {
-      return <Loading className="loading-full-screen" />;
+      return <Loading isFullScreen={true} />;
     }
 
     const campaignName =

@@ -141,7 +141,7 @@ class EditOfferPage extends React.Component<Props, State> {
     const { offerType, offerFormData, loading } = this.state;
 
     if (loading) {
-      return <Loading className="loading-full-screen" />;
+      return <Loading isFullScreen={true} />;
     }
 
     const resetOfferType =

@@ -49,7 +49,7 @@ class PartitionSelector extends React.Component<Props> {
     } = this.props;
 
     return isLoading ? (
-      <Loading className="loading-full-screen" />
+      <Loading isFullScreen={true} />
     ) : (
       <Layout>
         <FormLayoutActionbar {...actionbarProps} />

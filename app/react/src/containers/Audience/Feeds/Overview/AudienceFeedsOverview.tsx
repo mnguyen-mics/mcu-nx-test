@@ -210,7 +210,7 @@ class AudienceFeedsOverview extends React.Component<Props, State> {
     const { feedsAggregationMetrics } = this.state;
 
     return feedsAggregationMetrics.isLoading ? (
-      <Loading className="loading-full-screen full-height" />
+      <Loading isFullScreen={true} className="full-height" />
     ) : Object.keys(feedsAggregationMetrics.aggregates).length > 0 ? (
       <div className="feed-overview">
         {Object.keys(feedsAggregationMetrics.aggregates).map(

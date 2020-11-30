@@ -13,7 +13,6 @@ import {
 } from './domain';
 import messages from './messages';
 import SiteEditForm, { FORM_ID } from './SiteEditForm';
-import Loading from '../../../../../components/Loading';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
@@ -36,6 +35,7 @@ import queryString from 'query-string';
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 import { IOrganisationService } from '../../../../../services/OrganisationService';
 import { ProcessingSelectionResource } from '../../../../../models/processing';
+import { Loading } from '@mediarithmics-private/mcs-components-library';
 
 interface State {
   siteData: SiteFormData;
@@ -513,7 +513,7 @@ class SiteEditPage extends React.Component<Props, State> {
     const { loading, siteData } = this.state;
 
     if (loading) {
-      return <Loading className="loading-full-screen" />;
+      return <Loading isFullScreen={true} />;
     }
 
     const siteName =

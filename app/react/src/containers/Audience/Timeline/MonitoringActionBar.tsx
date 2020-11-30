@@ -169,7 +169,7 @@ class MonitoringActionbar extends React.Component<Props, State> {
     };
 
     if (isLoading || !compartments) {
-      return <Loading className="loading-full-screen" />;
+      return <Loading isFullScreen={true} />;
     }
     else {
       const showCompartment =

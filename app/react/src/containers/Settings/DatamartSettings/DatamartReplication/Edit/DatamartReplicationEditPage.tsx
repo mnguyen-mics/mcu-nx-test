@@ -10,7 +10,6 @@ import {
   INITIAL_DATAMART_REPLICATION_FORM_DATA,
 } from './domain';
 import { messages } from '../List/messages';
-import Loading from '../../../../../components/Loading';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
@@ -29,6 +28,7 @@ import { FormTitle } from '../../../../../components/Form';
 import DatamartSelector from '../../../../Datamart/DatamartSelector';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
 import { isEmpty } from 'lodash';
+import { Loading } from '@mediarithmics-private/mcs-components-library';
 
 interface State {
   datamartReplicationData: DatamartReplicationFormData;
@@ -258,7 +258,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
     } = this.state;
 
     if (isLoading) {
-      return <Loading className="loading-full-screen" />;
+      return <Loading isFullScreen={true} />;
     }
 
     const replicationName =

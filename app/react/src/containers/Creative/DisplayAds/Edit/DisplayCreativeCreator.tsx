@@ -5,7 +5,6 @@ import DisplayCreativeRendererSelector from './DisplayCreativeRendererSelector';
 import log from '../../../../utils/Logger';
 import { DisplayCreativeForm } from './index';
 import { DisplayCreativeFormData, IMAGE_AD_RENDERER } from './domain';
-import Loading from '../../../../components/Loading';
 import { DisplayCreativeFormProps } from './DisplayCreativeForm';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -15,6 +14,7 @@ import DisplayCreativeMultipleForm from './DisplayCreativeMultipleForm';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
 import { IDisplayCreativeFormService } from './DisplayCreativeFormService';
+import { Loading } from '@mediarithmics-private/mcs-components-library';
 
 export interface DisplayCreativeCreatorProps extends DisplayCreativeFormProps {}
 
@@ -87,7 +87,7 @@ class DisplayCreativeCreator extends React.Component<Props, State> {
   render() {
     const { creativeFormData, isLoading } = this.state;
 
-    if (isLoading) return <Loading className="loading-full-screen" />;
+    if (isLoading) return <Loading isFullScreen={true} />;
 
     const initialValues = this.props.initialValues || creativeFormData;
 

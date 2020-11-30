@@ -308,7 +308,7 @@ class ABComparisonDashboard extends React.Component<Props, State> {
       disableFilters,
     } = this.state;
     if (isLoading) {
-      return <Loading className="loading-full-screen" />;
+      return <Loading isFullScreen={true} />;
     }
 
     return !experimentationSegment.user_points_count ||

@@ -162,7 +162,7 @@ class ProcessingEditPage extends React.Component<Props, State> {
     const { processingFormData, loading, showLegalBasisSelector } = this.state;
 
     if (loading) {
-      return <Loading className="loading-full-screen" />;
+      return <Loading isFullScreen={true} />;
     }
 
     const newOrEditProcessing = processingFormData.id

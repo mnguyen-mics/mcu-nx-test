@@ -170,7 +170,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
     } = this.state;
 
     if (schemaLoading) {
-      return <Loading className="loading-full-screen" />;
+      return <Loading isFullScreen={true} />;
     }
 
     const errorMsg = error && (

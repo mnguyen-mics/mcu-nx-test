@@ -14,7 +14,6 @@ import {
 import { IDisplayCampaignFormService } from './DisplayCampaignFormService';
 import messages from './messages';
 import DisplayCampaignForm from './DisplayCampaignForm';
-import Loading from '../../../../components/Loading';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
@@ -25,6 +24,7 @@ import DisplayAdServingCampaignForm from './DisplayAdServingCampaignForm';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
+import { Loading } from '@mediarithmics-private/mcs-components-library';
 
 interface State {
   displayCampaignFormData: DisplayCampaignFormData;
@@ -157,7 +157,7 @@ class EditCampaignPage extends React.Component<Props, State> {
     const { loading, displayCampaignFormData } = this.state;
 
     if (loading) {
-      return <Loading className="loading-full-screen" />;
+      return <Loading isFullScreen={true} />;
     }
 
     const campaignName =

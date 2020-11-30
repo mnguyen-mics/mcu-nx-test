@@ -80,7 +80,7 @@ class DisplayCreativeFormLoader extends React.Component<
     const { creativeId, ...rest } = this.props;
 
     if (this.state.isLoading) {
-      return <Loading className="loading-full-screen" />;
+      return <Loading isFullScreen={true} />;
     }
 
     return (

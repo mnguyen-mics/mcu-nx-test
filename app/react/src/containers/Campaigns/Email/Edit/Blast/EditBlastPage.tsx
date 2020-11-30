@@ -138,7 +138,7 @@ class EditBlastPage extends React.Component<Props, State> {
     const { loading, campaign, blastFormData } = this.state;
 
     if (loading) {
-      return <Loading className="loading-full-screen" />;
+      return <Loading isFullScreen={true} />;
     }
 
     const campaignName = campaign ? campaign.name : campaignId;

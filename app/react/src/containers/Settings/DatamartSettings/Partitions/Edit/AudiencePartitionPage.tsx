@@ -187,7 +187,7 @@ class AudiencePartitionPage extends React.Component<
     const { partitionFormData, isLoading, selectedDatamart } = this.state;
 
     if (isLoading) {
-      return <Loading className="loading-full-screen" />;
+      return <Loading isFullScreen={true} />;
     } else {
       const breadcrumbPaths = [
         {

@@ -191,7 +191,7 @@ class ScenarioExitConditionAutomationForm extends React.Component<
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-content'}>
           {isLoading ? (
-            <Loading className="loading-full-screen" />
+            <Loading isFullScreen={true} />
           ) : (
             <Form
               id={FORM_ID}

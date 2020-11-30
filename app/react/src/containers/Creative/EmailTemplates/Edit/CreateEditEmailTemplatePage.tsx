@@ -396,7 +396,7 @@ class CreateEmailTemplate extends React.Component<
 
     return isLoading ? (
       <div style={{ display: 'flex', flex: 1 }}>
-        <Loading className="loading-full-screen" />
+        <Loading isFullScreen={true} />
       </div>
     ) : (
       <EditContentLayout

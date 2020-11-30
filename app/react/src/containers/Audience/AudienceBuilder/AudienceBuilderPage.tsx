@@ -215,7 +215,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
     } = this.state;
 
     if (isLoading) {
-      return <Loading className="loading-full-screen" />;
+      return <Loading isFullScreen={true} />;
     }
 
     return selectedAudienceBuilder ? (

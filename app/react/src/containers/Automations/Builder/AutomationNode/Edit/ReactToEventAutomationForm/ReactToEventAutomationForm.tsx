@@ -579,7 +579,7 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
                   }
                 />
                 {isLoading ? (
-                  <Loading className="loading-full-screen" />
+                  <Loading isFullScreen={true} />
                 ) : standardEventNames.length > 0 ? (
                   <FormCheckboxGroupField
                     name="standardEventNames"
@@ -647,7 +647,7 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
                     />
                   </div>
                 ) : (
-                  <Loading className="loading-full-screen" />
+                  <Loading isFullScreen={true} />
                 )}
               </div>
             )}
