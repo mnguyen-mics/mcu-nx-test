@@ -203,12 +203,12 @@ class ScenarioExitConditionAutomationForm extends React.Component<
               className="edit-layout mcs-content-container mcs-form-container"
               layout={'vertical'}
             >
-              <FormSection title={messages.descriptionTitle} />
-              <div className="mcs-reactToEventAutomation_message">
-                <div>
+              <div className="mcs-exitConditionAutomation_description">
+                <FormSection title={messages.descriptionTitle} />
+                <div className="mcs-exitConditionAutomation_descriptionSubtitle">
                   <FormattedMessage {...messages.descriptionSubtitle} />
                 </div>
-                <div>
+                <div className="mcs-exitConditionAutomation_descriptionSubtitle">
                   <FormattedMessage
                     {...messages.descriptionSubtitleExplanation}
                   />
