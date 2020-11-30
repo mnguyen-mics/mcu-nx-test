@@ -2,8 +2,13 @@ import React from 'react';
 import { compose } from 'recompose';
 import { Form, Layout, message } from 'antd';
 import { change, reduxForm, getFormValues } from 'redux-form';
-import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
-import { withValidators } from '../../../components/Form';
+import {
+  injectIntl,
+  InjectedIntlProps,
+  defineMessages,
+  FormattedMessage,
+} from 'react-intl';
+import { FormSection, withValidators } from '../../../components/Form';
 import { ValidatorProps } from '../../../components/Form/withValidators';
 import {
   WizardValidObjectTypeField,
@@ -198,6 +203,18 @@ class ScenarioExitConditionAutomationForm extends React.Component<
               className="edit-layout mcs-content-container mcs-form-container"
               layout={'vertical'}
             >
+              <div className="mcs-exitConditionAutomation_description">
+                <FormSection title={messages.descriptionTitle} />
+                <div className="mcs-exitConditionAutomation_descriptionSubtitle">
+                  <FormattedMessage {...messages.descriptionSubtitle} />
+                </div>
+                <div className="mcs-exitConditionAutomation_descriptionSubtitle">
+                  <FormattedMessage
+                    {...messages.descriptionSubtitleExplanation}
+                  />
+                </div>
+              </div>
+              <FormSection title={messages.configurationTitle} />
               <div className="mcs-reactToEventAutomation_chooseEventNameContainer">
                 <FormSearchObjectField
                   name={'events'}
@@ -260,11 +277,32 @@ const messages = defineMessages({
   eventNameHelp: {
     id: 'automation.builder.node.scenarioExitConditionForm.eventNameHelp',
     defaultMessage:
-      'The event names that will trigger the exit of the Automation. When receiving one of these events, the user will be remove from the current Automation.',
+      'When receiving one of these events, the user will instantly leave the automation.',
   },
   schemaNotSuitableForAction: {
     id:
       'automation.builder.node.scenarioExitConditionForm.schemaNotSuitableForAction',
     defaultMessage: 'Schema is not suitable for this action.',
+  },
+  descriptionTitle: {
+    id: 'automation.builder.node.scenarioExitConditionForm.description.title',
+    defaultMessage: 'Description',
+  },
+  descriptionSubtitle: {
+    id:
+      'automation.builder.node.scenarioExitConditionForm.description.subtitle',
+    defaultMessage:
+      'If you add an exit condition, users will leave the automation as soon as this condition is met.',
+  },
+  descriptionSubtitleExplanation: {
+    id:
+      'automation.builder.node.scenarioExitConditionForm.description.subtitle.explanation',
+    defaultMessage: `For instance, if you plan to send an email to all users who've added an item to their cart but have not completed a transaction,
+    you could set a "transaction confirmed" event as an exit condition. This way, if a "transaction confirmed" event is received,
+    the users will leave the automation and not receive an email.`,
+  },
+  configurationTitle: {
+    id: 'automation.builder.node.scenarioExitConditionForm.configuration.title',
+    defaultMessage: 'Configuration',
   },
 });

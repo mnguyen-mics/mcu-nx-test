@@ -163,6 +163,9 @@ class DeleteFromSegmentGeneralSectionForm extends React.Component<
           subtitle={messages.sectionGeneralSubtitle}
           title={messages.sectionGeneralTitle}
         />
+        <FormSection
+          title={messages.sectionGeneralConfigurationTitle}
+        />
         <FormSearchObjectField
           name="segmentId"
           component={FormSearchObject}
@@ -173,9 +176,6 @@ class DeleteFromSegmentGeneralSectionForm extends React.Component<
           }}
           fetchListMethod={this.fetchListMethod}
           fetchSingleMethod={this.fetchSingleMethod}
-          helpToolTipProps={{
-            title: formatMessage(messages.audienceSegmentNameSubtitle),
-          }}
           selectProps={{
             disabled: !!disabled,
             mode: 'default',
@@ -200,11 +200,17 @@ export const messages = defineMessages({
   sectionGeneralTitle: {
     id:
       'automation.builder.node.deleteFromSegmentForm.generalInfoSection.title',
-    defaultMessage: 'General information',
+    defaultMessage: 'Description',
   },
   sectionGeneralSubtitle: {
     id: 'automation.builder.node.deleteFromSegmentForm.general.subtitle',
-    defaultMessage: 'Modify the general information of your audience segment',
+    defaultMessage:
+      "This action allows you to delete users from a segment. If the users are not in the segment, there won't be any action and the automation will continue.",
+  },
+  sectionGeneralConfigurationTitle: {
+    id:
+    'automation.builder.node.deleteFromSegmentForm.generalInfoSection.configuration.title',
+  defaultMessage: 'Configuration',
   },
   automationNodeName: {
     id: 'automation.builder.node.deleteFromSegmentForm.name',
@@ -213,11 +219,6 @@ export const messages = defineMessages({
   audienceSegmentNameTitle: {
     id: 'automation.builder.node.deleteFromSegmentForm.name.title',
     defaultMessage: 'Select the segment to delete the users from',
-  },
-  audienceSegmentNameSubtitle: {
-    id: 'automation.builder.node.deleteFromSegmentForm.name.subtitle',
-    defaultMessage:
-      'Delete users if they exist in this segment otherwise do nothing and continue the automation.',
   },
   audienceSegmentNamePlaceholder: {
     id: 'automation.builder.node.deleteFromSegmentForm.name.placeholder',

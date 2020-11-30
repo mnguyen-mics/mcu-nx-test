@@ -37,7 +37,6 @@ class BlastFormSection extends React.Component<Props> {
     return (
       <div>
         <FormSection
-          subtitle={messages.emailBlastEditorStepSubTitleBlastInformation}
           title={messages.emailBlastEditorStepTitleBlastInformation}
         />
         <FormInputField

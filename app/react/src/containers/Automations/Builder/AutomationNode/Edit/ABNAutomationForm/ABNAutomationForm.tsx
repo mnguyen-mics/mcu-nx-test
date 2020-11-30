@@ -29,7 +29,7 @@ const localMessages = defineMessages({
   },
   sectionGeneralTitle: {
     id: 'automation.builder.abnNode.edition.form.general.title',
-    defaultMessage: 'General Informations',
+    defaultMessage: 'General Information',
   },
   sectionDisplayCampaignTitle: {
     id: 'automation.builder.abnNode.edition.form.display.title',

@@ -134,7 +134,7 @@ export const INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA: EmailCampaignAutomationFormD
   campaign: {
     organisation_id: '',
     automated: true,
-    name: 'Send Email',
+    name: '',
     editor_version_id: '17',
     editor_version_value: '',
     editor_group_id: '',

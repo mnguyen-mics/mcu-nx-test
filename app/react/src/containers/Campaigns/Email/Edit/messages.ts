@@ -143,7 +143,7 @@ export default defineMessages({
   },
   emailBlastEditorStepperBlastInformation: {
     id: 'emailBlastEditor.stepper.blast_information',
-    defaultMessage: 'Blast Information',
+    defaultMessage: 'Header section',
   },
   emailBlastEditorStepperTemplateSelection: {
     id: 'emailBlastEditor.stepper.template_selection',
@@ -188,11 +188,7 @@ export default defineMessages({
   },
   emailBlastEditorStepTitleBlastInformation: {
     id: 'emailBlastEditor.step.title.blast_information',
-    defaultMessage: 'Blast Information',
-  },
-  emailBlastEditorStepSubTitleBlastInformation: {
-    id: 'emailBlastEditor.step.subtitle.blast_information',
-    defaultMessage: 'Provide configuration details',
+    defaultMessage: 'Header section',
   },
   emailBlastEditorStepTitleTemplateSelection: {
     id: 'emailBlastEditor.step.title.template_selection',
@@ -200,7 +196,7 @@ export default defineMessages({
   },
   emailBlastEditorStepSubTitleTemplateSelection: {
     id: 'emailBlastEditor.step.subtitle.template_selection',
-    defaultMessage: 'Select an email template for your blast',
+    defaultMessage: 'Select an email template for the body of your email.',
   },
   emailBlastEditorInputLabelSubjectLine: {
     id: 'emailBlastEditor.input.label.subject_line',
@@ -209,7 +205,7 @@ export default defineMessages({
   emailBlastEditorInputHelperSubjectLine: {
     id: 'emailBlastEditor.input.helper.subject_line',
     defaultMessage:
-      'Your Subject is what your audience will see first when the open their mailbox. So make it catchy!',
+      'The email subject is what users will see first when they open their mailbox. Make it catchy!',
   },
   emailBlastEditorInputPlaceholderSubjectLine: {
     id: 'emailBlastEditor.input.placeholder.subject_line',
@@ -235,7 +231,7 @@ export default defineMessages({
   emailBlastEditorInputHelperFromName: {
     id: 'emailBlastEditor.input.helper.from_name',
     defaultMessage:
-      'The From Name is the Name your audience will receive the mail from.',
+      'The From name is the sender name users will see.',
   },
   emailBlastEditorInputPlaceholderFromName: {
     id: 'emailBlastEditor.input.placeholder.from_name',
@@ -248,7 +244,7 @@ export default defineMessages({
   emailBlastEditorInputHelperReplyTo: {
     id: 'emailBlastEditor.input.helper.reply_to',
     defaultMessage:
-      'The reply to email is the email address your audience will be able to reply to from the email you are about to send.',
+      'The Reply to is the email address users will be able to reply to.',
   },
   emailBlastEditorInputPlaceholderReplyTo: {
     id: 'emailBlastEditor.input.placeholder.reply_to',

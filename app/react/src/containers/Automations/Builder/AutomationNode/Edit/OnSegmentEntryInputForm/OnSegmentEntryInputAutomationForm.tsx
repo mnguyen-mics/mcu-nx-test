@@ -28,7 +28,7 @@ const messages = defineMessages({
   },
   sectionGeneralTitle: {
     id: 'automation.builder.node.onSegmentEntryInputForm.general.title',
-    defaultMessage: 'General Informations',
+    defaultMessage: 'General Information',
   },
 });
 
