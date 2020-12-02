@@ -57,6 +57,10 @@ function ResourceByKeywordSelector<T extends SelectableResource, AdditionalConte
       this.fetchListMethod = this._debounce(this.fetchListMethod.bind(this), 800, { trailing: true });
     }
 
+    componentDidMount() {
+      this.fetchListMethod('')
+    }
+
     handleSearch = (keyword: string) => {
       if(keyword.length > 0) {
         const { fetchedKeyword, fetchedResourcesList } = this.state
