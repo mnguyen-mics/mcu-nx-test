@@ -265,7 +265,7 @@ class Funnel extends React.Component<Props, State> {
           <div className="mcs-funnel_header">
             <h1 className="mcs-funnel_header_title">{title}</h1>
           </div>
-          {funnelData.steps.length === 0 ?
+          {funnelData.steps.length === 0 || funnelData.total === 0 ?
             <div className="mcs-funnel_empty">
               <EmptyChart title={intl.formatMessage(funnelMessages.noData)} icon='warning' />
             </div> :
