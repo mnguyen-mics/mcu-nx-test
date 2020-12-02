@@ -225,13 +225,15 @@ class Funnel extends React.Component<Props, State> {
     ctx.fill();
   }
 
+  formatPercentageValue = (value: number) => value < 100 ? value.toFixed(4) : value.toString();
+
   setStepDelta = (stepNumber: number, percentageEnd: number, percentageStart: number) => {
     const { funnelData } = this.state;
     this.setState(state => {
       state.stepDelta.push({
         step: stepNumber,
-        diff: stepNumber === funnelData.steps.length ? (100 - percentageEnd).toFixed(2) : percentageEnd.toFixed(2),
-        percentageOfSucceeded: stepNumber > 1 ? (100 - percentageStart).toFixed(2) : undefined
+        diff: stepNumber === funnelData.steps.length ?  this.formatPercentageValue(100 - percentageEnd) :  this.formatPercentageValue(percentageEnd),
+        percentageOfSucceeded: stepNumber > 1 ? this.formatPercentageValue(100 - percentageStart) : undefined
       })
       return {
         stepDelta: state.stepDelta
