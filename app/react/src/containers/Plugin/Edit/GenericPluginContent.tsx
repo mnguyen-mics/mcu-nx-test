@@ -16,7 +16,6 @@ import {
 import { IPluginInstanceService } from '../../../services/PluginInstanceService';
 import * as actions from '../../../redux/Notifications/actions';
 import { EditContentLayout } from '../../../components/Layout';
-import Loading from '../../../components/Loading';
 import messages from './messages';
 import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { SideBarItem } from '../../../components/Layout/ScrollspySider';
@@ -31,6 +30,7 @@ import { Modal } from 'antd';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IPluginService } from '../../../services/PluginService';
+import { Loading } from '@mediarithmics-private/mcs-components-library';
 
 const formId = 'pluginForm';
 
@@ -585,7 +585,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<
     if (isLoadingList || (isLoadingPlugin && !isCardLayout))
       return (
         <div style={{ display: 'flex', flex: 1 }}>
-          <Loading className="loading-full-screen" />
+          <Loading isFullScreen={true} />
         </div>
       );
 

@@ -24,7 +24,6 @@ import FormLayoutActionbar, {
 } from '../../../../../../components/Layout/FormLayoutActionbar';
 import messages from '../../messages';
 import { FormSection } from '../../../../../../components/Form/index';
-import Loading from '../../../../../../components/Loading';
 import { CampaignsInfosFieldModel } from '../domain';
 import { Col } from 'antd/lib/grid';
 import injectNotifications, {
@@ -33,6 +32,7 @@ import injectNotifications, {
 import { lazyInject } from '../../../../../../config/inversify.config';
 import { TYPES } from '../../../../../../constants/types';
 import { IDisplayCampaignService } from '../../../../../../services/DisplayCampaignService';
+import { Loading } from '@mediarithmics-private/mcs-components-library';
 
 const FORM_ID = 'editCampaignsForm';
 
@@ -163,7 +163,7 @@ class EditCampaignsForm extends React.Component<
     };
 
     if (loading) {
-      return <Loading className="loading-full-screen" />;
+      return <Loading isFullScreen={true} />;
     }
 
     return (

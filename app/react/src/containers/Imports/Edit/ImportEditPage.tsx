@@ -240,7 +240,7 @@ class ImportEditPage extends React.Component<Props, ImportEditPageState> {
     ];
 
     if (loading) {
-      return <Loading className="loading-full-screen" />;
+      return <Loading isFullScreen={true} />;
     }
 
     if (importId) {

@@ -259,7 +259,7 @@ class CreateFeedPresetSelectionPage extends React.Component<Props, State> {
         onClose={onClose}
       >
         {this.state.isLoading ? (
-          <Loading className="loading-full-screen" />
+          <Loading isFullScreen={true} />
         ) : (
           <Layout className="mcs-content-container mcs-form-container ant-layout-content">
             <FormTitle title={title} subtitle={subtitle} />

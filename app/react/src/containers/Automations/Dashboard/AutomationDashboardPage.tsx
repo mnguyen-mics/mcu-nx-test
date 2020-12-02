@@ -193,7 +193,7 @@ class AutomationDashboardPage extends React.Component<Props, State> {
     const { automationFormData, isLoading, updating } = this.state;
 
     if (isLoading) {
-      return <Loading className="loading-full-screen" />;
+      return <Loading isFullScreen={true} />;
     }
 
     if (

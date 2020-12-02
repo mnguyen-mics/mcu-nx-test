@@ -14,7 +14,6 @@ import messages from './messages';
 import MobileApplicationEditForm, {
   FORM_ID,
 } from './MobileApplicationEditForm';
-import Loading from '../../../../../components/Loading';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
@@ -36,6 +35,7 @@ import { IChannelService } from '../../../../../services/ChannelService';
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 import { IOrganisationService } from '../../../../../services/OrganisationService';
 import { ProcessingSelectionResource } from '../../../../../models/processing';
+import { Loading } from '@mediarithmics-private/mcs-components-library';
 
 interface State {
   mobileApplicationData: MobileApplicationFormData;
@@ -489,7 +489,7 @@ class EditMobileAppPage extends React.Component<Props, State> {
     const { loading, mobileApplicationData } = this.state;
 
     if (loading) {
-      return <Loading className="loading-full-screen" />;
+      return <Loading isFullScreen={true} />;
     }
 
     const mobileName =

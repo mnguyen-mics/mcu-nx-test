@@ -411,7 +411,7 @@ class CompartmentEditPage extends React.Component<Props, State> {
     const { loading, compartmentFormData } = this.state;
 
     if (loading) {
-      return <Loading className="loading-full-screen" />;
+      return <Loading isFullScreen={true} />;
     }
 
     const breadcrumbPaths = [

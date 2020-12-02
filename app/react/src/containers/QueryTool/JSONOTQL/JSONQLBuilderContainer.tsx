@@ -352,7 +352,7 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
     } = this.state;
 
     if (fetchingObjectTypes) {
-      return <Loading className="loading-full-screen" />;
+      return <Loading isFullScreen={true} />;
     }
 
     const enableUndo = this.state.queryHistory.past.length > 0;

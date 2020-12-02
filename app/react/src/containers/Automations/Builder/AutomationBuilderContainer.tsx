@@ -99,7 +99,7 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
     const { automationTreeData, exitConditionFormResource } = this.state;
 
     if (loading) {
-      return <Loading className="loading-full-screen" />;
+      return <Loading isFullScreen={true} />;
     }
 
     return (

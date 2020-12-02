@@ -8,7 +8,6 @@ import enLocaleData from 'react-intl/locale-data/en';
 import frLocaleData from 'react-intl/locale-data/fr';
 import Datalayer from './Datalayer';
 import LayoutManager from './Layout/LayoutManager';
-import Loading from '../../components/Loading';
 import { AuthenticatedRoute } from './Route';
 import { ForgotPassword } from '../Authentication/ForgotPassword';
 import { Login } from '../Authentication/Login';
@@ -32,7 +31,7 @@ import { INavigatorService } from '../../services/NavigatorService';
 import { Notifications } from '../../containers/Notifications';
 import { IAuthService } from '../../services/AuthService';
 import { MicsReduxState } from '../../utils/ReduxHelper';
-import { Error } from '@mediarithmics-private/mcs-components-library';
+import { Error, Loading } from '@mediarithmics-private/mcs-components-library';
 
 interface MapStateToProps {
   initialized: boolean;
@@ -140,7 +139,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
       return <Error message={formatMessage(errorMessages.generic)} />;
     }
 
-    if (!initialized) return <Loading />; // allow app to bootstrap before render any routes, wait for translations, autologin, etc....
+    if (!initialized) return <Loading isFullScreen={false} />; // allow app to bootstrap before render any routes, wait for translations, autologin, etc....
 
     let selectorSize = 200;
 

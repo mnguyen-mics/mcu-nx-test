@@ -176,7 +176,7 @@ class EditApiTokenPage extends React.Component<Props, State> {
     ];
 
     if (loading) {
-      return <Loading className="loading-full-screen" />;
+      return <Loading isFullScreen={true} />;
     }
 
     return (

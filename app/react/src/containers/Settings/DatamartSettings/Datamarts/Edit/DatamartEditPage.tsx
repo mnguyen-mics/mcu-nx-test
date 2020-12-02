@@ -14,7 +14,6 @@ import {
 import { IDatamartService } from '../../../../../services/DatamartService';
 import messages from './messages';
 import DatamartEditForm from './DatamartEditForm';
-import Loading from '../../../../../components/Loading';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
@@ -25,6 +24,7 @@ import { DatamartResource } from '../../../../../models/datamart/DatamartResourc
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
+import { Loading } from '@mediarithmics-private/mcs-components-library';
 
 interface State {
   datamartFormData: DatamartFormData;
@@ -206,7 +206,7 @@ class DatamartEditPage extends React.Component<Props, State> {
     const { loading, datamartFormData } = this.state;
 
     if (loading) {
-      return <Loading className="loading-full-screen" />;
+      return <Loading isFullScreen={true} />;
     }
 
     const datamartName =

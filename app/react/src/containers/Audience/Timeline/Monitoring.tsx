@@ -291,7 +291,7 @@ class Monitoring extends React.Component<Props, State> {
                 message={this.props.intl.formatMessage(messages.pleaseFillInformations)}
               />
             )}
-          </Content> : <Loading className="loading-full-screen" />}
+          </Content> : <Loading isFullScreen={true} />}
         </div>
       </div>
     );

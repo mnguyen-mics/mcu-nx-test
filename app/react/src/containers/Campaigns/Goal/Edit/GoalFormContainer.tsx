@@ -126,7 +126,7 @@ class GoalFormContainer extends React.Component<Props, State> {
       showTriggerTypeSelector,
     } = this.state;
 
-    if (loading) return <Loading className="loading-full-screen" />;
+    if (loading) return <Loading isFullScreen={true} />;
 
     const resetTriggerType = () => {
       this.setState({ showTriggerTypeSelector: true });

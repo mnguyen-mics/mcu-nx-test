@@ -190,7 +190,7 @@ class AudienceFeedPage extends React.Component<
     const { loading, type } = this.state;
 
     if (loading) {
-      return <Loading className="loading-full-screen" />;
+      return <Loading isFullScreen={true} />;
     }
 
     const breadcrumbPaths: Path[] = [

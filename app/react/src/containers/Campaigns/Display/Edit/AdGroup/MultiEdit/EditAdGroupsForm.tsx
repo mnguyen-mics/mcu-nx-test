@@ -19,13 +19,13 @@ import FormLayoutActionbar, {
 import messages from '../../messages';
 import { FormSection } from '../../../../../../components/Form/index';
 import { AdGroupsInfosFieldModel } from '../domain';
-import Loading from '../../../../../../components/Loading';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../../Notifications/injectNotifications';
 import { lazyInject } from '../../../../../../config/inversify.config';
 import { TYPES } from '../../../../../../constants/types';
 import { IDisplayCampaignService } from '../../../../../../services/DisplayCampaignService';
+import { Loading } from '@mediarithmics-private/mcs-components-library';
 
 const FORM_ID = 'editAdGroupsForm';
 
@@ -166,7 +166,11 @@ class EditAdGroupsForm extends React.Component<
   };
 
   render() {
-    const { handleSubmit, close, intl: { formatMessage } } = this.props;
+    const {
+      handleSubmit,
+      close,
+      intl: { formatMessage },
+    } = this.props;
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
@@ -185,7 +189,7 @@ class EditAdGroupsForm extends React.Component<
     };
 
     if (this.state.loading) {
-      return <Loading className="loading-full-screen" />;
+      return <Loading isFullScreen={true} />;
     }
 
     return (

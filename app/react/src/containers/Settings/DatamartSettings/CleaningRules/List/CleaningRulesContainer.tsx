@@ -434,7 +434,7 @@ class CleaningRulesContainer extends React.Component<Props, State> {
     };
 
     if (isLoading) {
-      return <Loading className="loading-full-screen" />;
+      return <Loading isFullScreen={true} />;
     } else
       return (
         <div className="ant-layout">

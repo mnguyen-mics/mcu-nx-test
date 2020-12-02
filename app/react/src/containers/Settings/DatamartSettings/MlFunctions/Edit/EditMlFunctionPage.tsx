@@ -192,7 +192,7 @@ class EditMlFunctionPage extends React.Component<JoinedProps, IState> {
     ];
 
     if (loading) {
-      return <Loading />;
+      return <Loading isFullScreen={false} />;
     }
 
     return datamartId || mlFunctionId ? (

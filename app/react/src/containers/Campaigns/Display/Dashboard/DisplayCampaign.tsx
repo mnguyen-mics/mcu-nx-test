@@ -74,7 +74,7 @@ class DisplayCampaign extends React.Component<Props, State> {
 
   public render() {
     if (this.state.loading || !this.state.campaign)
-      return <Loading className="loading-full-screen" />;
+      return <Loading isFullScreen={true} />;
 
     switch (this.state.campaign.subtype) {
       case 'PROGRAMMATIC':

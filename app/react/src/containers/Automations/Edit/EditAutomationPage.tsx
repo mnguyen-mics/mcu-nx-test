@@ -204,7 +204,7 @@ class EditAutomationPage extends React.Component<Props, State> {
     const { loading, datamart } = this.state;
 
     if (loading) {
-      return <Loading className="loading-full-screen" />;
+      return <Loading isFullScreen={true} />;
     }
 
     if (automationId && !loading && datamart) {

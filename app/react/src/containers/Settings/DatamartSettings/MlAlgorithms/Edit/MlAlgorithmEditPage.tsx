@@ -317,7 +317,7 @@ class MlAlgorithmEditPage extends React.Component<
     ];
 
     if (loading) {
-      return <Loading className="loading-full-screen" />;
+      return <Loading isFullScreen={true} />;
     }
 
     return (

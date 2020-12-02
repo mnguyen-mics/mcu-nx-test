@@ -10,7 +10,6 @@ import {
   EditNativeCreativeRouteMatchParams,
 } from './domain';
 import { ICreativeService } from '../../../../services/CreativeService';
-import Loading from '../../../../components/Loading';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
@@ -18,6 +17,7 @@ import NativeCreativeFormLoader from './NativeCreativeFormLoader';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IDisplayCreativeFormService } from '../../DisplayAds/Edit/DisplayCreativeFormService';
+import { Loading } from '@mediarithmics-private/mcs-components-library';
 
 interface State {
   loading: boolean;
@@ -202,7 +202,7 @@ class EditNativeCreativePage extends React.Component<Props, State> {
     };
 
     if (this.state.loading) {
-      return <Loading className="loading-full-screen" />;
+      return <Loading isFullScreen={true} />;
     }
 
     return nativeId ? (
