@@ -84,7 +84,7 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      isLoadingObjectTypes: false,
+      isLoadingObjectTypes: true,
       objectTypes: [],
       isQueryRunning: false,
       isDashboardToggled: false,
@@ -94,9 +94,6 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
 
   componentDidMount() {
     const { datamartId, formValues } = this.props;
-    this.setState({
-      isLoadingObjectTypes: true,
-    });
     this.runQuery(formValues);
     this._runtimeSchemaService.getRuntimeSchemas(datamartId).then(schemaRes => {
       const liveSchema = schemaRes.data.find(s => s.status === 'LIVE');
@@ -106,6 +103,7 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
         .then(objectTypes => {
           this.setState({
             objectTypes: objectTypes,
+            isLoadingObjectTypes: false,
           });
         });
     });
@@ -174,7 +172,7 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
         params: { organisationId },
       },
       intl,
-      audienceBuilderId
+      audienceBuilderId,
     } = this.props;
 
     const {
@@ -184,6 +182,7 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
       queryDocument,
       isDashboardToggled,
       isMaskVisible,
+      isLoadingObjectTypes,
     } = this.state;
 
     const genericFieldArrayProps = {
@@ -207,14 +206,16 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
                 className={`${isDashboardToggled &&
                   'mcs-audienceBuilder_hiddenForm'}`}
               >
-                <QueryFragmentFieldArray
-                  name={`where.expressions`}
-                  component={QueryFragmentFormSection}
-                  datamartId={datamartId}
-                  demographicsFeaturesIds={demographicsFeaturesIds}
-                  objectTypes={objectTypes}
-                  {...genericFieldArrayProps}
-                />
+                {!isLoadingObjectTypes && (
+                  <QueryFragmentFieldArray
+                    name={`where.expressions`}
+                    component={QueryFragmentFormSection}
+                    datamartId={datamartId}
+                    demographicsFeaturesIds={demographicsFeaturesIds}
+                    objectTypes={objectTypes}
+                    {...genericFieldArrayProps}
+                  />
+                )}
               </div>
             </Col>
             <Col

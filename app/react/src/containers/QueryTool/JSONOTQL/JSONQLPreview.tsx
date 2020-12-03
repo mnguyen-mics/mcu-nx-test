@@ -98,7 +98,7 @@ class JSONQLPreview extends React.Component<Props> {
               ? (formatQuery(JSON.parse(value), true) as any)
               : undefined,
             demographicsFeaturesIds: [],
-            audienceBuilderId: audienceBuilderId ? audienceBuilderId : '',
+            audienceBuilderId: audienceBuilderId ? audienceBuilderId : "",
           },
         },
       );
