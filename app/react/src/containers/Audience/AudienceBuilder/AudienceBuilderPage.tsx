@@ -172,6 +172,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
   ) => {
     const saveAudience = (userQueryFormData: NewUserQuerySimpleFormData) => {
       const { match, history } = this.props;
+      const { selectedAudienceBuilder } = this.state;
       const { name, technical_name, persisted } = userQueryFormData;
 
       return this._queryService
@@ -189,6 +190,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
             default_ttl: calculateDefaultTtl(userQueryFormData),
             query_id: res.data.id,
             segment_editor: 'AUDIENCE_BUILDER',
+            audience_builder_id: selectedAudienceBuilder?.id,
           };
           return this._audienceSegmentService.saveSegment(
             match.params.organisationId,
