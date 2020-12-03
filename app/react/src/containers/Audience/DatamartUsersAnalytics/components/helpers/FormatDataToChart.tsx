@@ -1,6 +1,5 @@
 import * as React from 'react';
 import LineChart from '../charts/LineChart';
-import PieChart from '../charts/PieChart';
 import _ from 'lodash';
 import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import GenericWorldMap from '../charts/GenericWorldMap';
@@ -28,7 +27,7 @@ import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { EmptyRecords } from '../../../../../components';
 import { DatamartUsersAnalyticsDimension } from '../../../../../utils/DatamartUsersAnalyticsReportHelper';
-import { EmptyChart, CounterDashboard } from '@mediarithmics-private/mcs-components-library';
+import { EmptyChart, CounterDashboard, PieChart } from '@mediarithmics-private/mcs-components-library';
 import { CounterProps } from '@mediarithmics-private/mcs-components-library/lib/components/counters/counter';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 
