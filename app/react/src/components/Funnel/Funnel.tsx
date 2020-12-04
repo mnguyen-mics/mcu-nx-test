@@ -21,17 +21,15 @@ import { funnelMessages, FUNNEL_SEARCH_SETTING } from './Constants';
 import { extractDatesFromProps } from './Utils';
 import numeral from 'numeral';
 
-
 interface StepDelta {
-  step: number
-  diff?: string;
-  percentageOfSucceeded?: string;
+  dropOff?: string;
+  passThroughPercentage?: string;
 }
 
 interface State {
   isLoading: boolean;
   funnelData: FunnelResource;
-  stepDelta: StepDelta[];
+  stepsDelta: StepDelta[];
   lastExecutedQueryAskedTime: number;
   promiseCanceled: boolean;
 }
@@ -88,7 +86,7 @@ class Funnel extends React.Component<Props, State> {
         total: 0,
         steps: []
       },
-      stepDelta: [],
+      stepsDelta: [],
       lastExecutedQueryAskedTime: 0,
       promiseCanceled: false
     }
@@ -129,7 +127,7 @@ class Funnel extends React.Component<Props, State> {
           total: 0,
           steps: []
         },
-        stepDelta: [],
+        stepsDelta: [],
         promiseCanceled: true
       })
     }
@@ -145,7 +143,7 @@ class Funnel extends React.Component<Props, State> {
 
     this.setState({
       isLoading: true,
-      stepDelta: [],
+      stepsDelta: [],
       funnelData: {
         total: 0,
         steps: []
@@ -153,31 +151,35 @@ class Funnel extends React.Component<Props, State> {
     }, () => {
       parentCallback(this.state.isLoading)
     });
-    
+
     return this._userActivitiesFunnelService.getUserActivitiesFunnel(datamartId, filter, timeRange).
       then(response => {
-      // Enhance api data with last conversion step
-      if (!this.state.promiseCanceled) {
-        response.data.steps.push(response.data.steps[response.data.steps.length - 1]);
+        // Enhance api data with last conversion step
+        if (!this.state.promiseCanceled) {
+          response.data.steps.push(response.data.steps[response.data.steps.length - 1]);
+          this.setState({
+            isLoading: false,
+            funnelData: response.data
+          }, () => {
+            setTimeout(() => {
+              this.drawSteps();
+              const upCountsPerStep = response.data.steps.map(step => step.count);
+              upCountsPerStep.unshift(response.data.total);
+              upCountsPerStep.pop();
+              this.computeStepDelta(upCountsPerStep);
+            });
+            parentCallback(this.state.isLoading)
+          });
+        }
+      })
+      .catch(e => {
+        notifyError(e);
         this.setState({
           isLoading: false,
-          funnelData: response.data
         }, () => {
-          setTimeout(() => {
-            this.drawSteps();
-          });
-          parentCallback(this.state.isLoading)
+          parentCallback(false)
         });
-      }
-    })
-    .catch(e => {
-      notifyError(e);
-      this.setState({
-        isLoading: false,
-      }, () => {
-        parentCallback(false)
       });
-    });
   }
 
   drawSteps = () => {
@@ -185,9 +187,8 @@ class Funnel extends React.Component<Props, State> {
 
     funnelData.steps.forEach((step, index) => {
       const start = index === 0 ? funnelData.total : funnelData.steps[index - 1].count;
-      this.drawCanvas((funnelData.total - start), (funnelData.total - step.count), index + 1, funnelData.steps.length)
+      this.drawCanvas((funnelData.total - start), (funnelData.total - step.count), index + 1, funnelData.steps.length);
     });
-
   }
 
   drawCanvas = (startCount: number, endCount: number, stepNumber: number, totalSteps: number) => {
@@ -203,8 +204,6 @@ class Funnel extends React.Component<Props, State> {
     const percentageEnd = getPercentage(endCount, funnelData.total);
     const stepStart = drawerAreaHeight && valueFromPercentage(percentageStart, drawerAreaHeight);
     const stepEnd = drawerAreaHeight && valueFromPercentage(percentageEnd, drawerAreaHeight);
-
-    this.setStepDelta(stepNumber, percentageEnd, percentageStart);
 
     const ctx = canvas.getContext("2d");
     ctx.beginPath();
@@ -227,19 +226,31 @@ class Funnel extends React.Component<Props, State> {
 
   formatPercentageValue = (value: number) => value < 100 ? value.toFixed(4) : value.toString();
 
-  setStepDelta = (stepNumber: number, percentageEnd: number, percentageStart: number) => {
-    const { funnelData } = this.state;
-    this.setState(state => {
-      state.stepDelta.push({
-        step: stepNumber,
-        diff: stepNumber === funnelData.steps.length ?  this.formatPercentageValue(100 - percentageEnd) :  this.formatPercentageValue(percentageEnd),
-        percentageOfSucceeded: stepNumber > 1 ? this.formatPercentageValue(100 - percentageStart) : undefined
-      })
-      return {
-        stepDelta: state.stepDelta
+  computeStepDelta = (upCountsPerStep: number[]) => {
+    const stepsDelta: StepDelta[] = upCountsPerStep.map((step, i) => {
+      let dropOff;
+      
+      if (i < upCountsPerStep.length - 1) {
+        const nextStep = upCountsPerStep[i + 1];
+        const passThroughPercentage = nextStep > 0 ? (nextStep / step) * 100 : 0;
+        dropOff = 100 - passThroughPercentage
+        return {
+          passThroughPercentage: this.formatPercentageValue(passThroughPercentage),
+          dropOff: this.formatPercentageValue(dropOff),
+        }
+      }
+      else {
+        return { 
+          dropOff: this.formatPercentageValue((step / upCountsPerStep[0]) * 100) 
+        };
       }
     });
+
+    this.setState({
+      stepsDelta
+    });
   }
+
 
   isLastStep = (stepNumber: number) => {
     const { funnelData } = this.state;
@@ -251,14 +262,13 @@ class Funnel extends React.Component<Props, State> {
   }
 
   private getDurationMessage(stepIndex: number, seconds: number) {
-    return this.isFirstStep(stepIndex - 1) ? <div /> : <span> in <strong>{moment.duration(seconds, "second").format("d [day] h [hour] m [minute]")}</strong></span>
+    return this.isFirstStep(stepIndex) ? <span /> : <span> in <strong>{moment.duration(seconds, "second").format("d [day] h [hour] m [minute]")}</strong></span>
   }
 
   render() {
-    const { funnelData, stepDelta, isLoading } = this.state;
+    const { funnelData, stepsDelta, isLoading } = this.state;
     const { title, intl } = this.props;
     if (isLoading) return (<LoadingChart />);
-
     return (
       <Card className="mcs-funnel">
         <div id="container" >
@@ -280,18 +290,25 @@ class Funnel extends React.Component<Props, State> {
                     <div className="mcs-funnel_userPoints_nbr">{numeral(index === 0 ? funnelData.total : funnelData.steps[index - 1].count).format('0,0')}</div>
                   </div>
                   <div className={"mcs-funnel_chart"}>
-                    {(stepDelta[index] && stepDelta[index].percentageOfSucceeded) ? <div className="mcs-funnel_percentageOfSucceeded">
+
+                    {stepsDelta[index] && stepsDelta[index].passThroughPercentage ? <div className="mcs-funnel_percentageOfSucceeded">
                       <div className="mcs-funnel_arrow mcs_funnel_arrowStep" />
-                      <p className="mcs-funnel_stepInfo"><strong>{`${stepDelta[index].percentageOfSucceeded}%`}</strong> have succeeded {this.getDurationMessage(index, funnelData.steps[index - 1].interaction_duration)}</p>
+                      <p className="mcs-funnel_stepInfo"><strong>{`${stepsDelta[index].passThroughPercentage}%`}</strong> have succeeded {this.getDurationMessage(index, funnelData.steps[index + 1].interaction_duration)}</p>
                     </div> : ""}
+
                     {<canvas id={`canvas_${index + 1}`} className={"mcs-funnel_canvas"} height="370" />}
+
                     <div className="mcs-funnel_conversionInfo">
                       <div className={this.isLastStep(index + 1) ? "mcs-funnel_arrow mcs-funnel_arrow--success" : "mcs-funnel_arrow  mcs-funnel_arrow--failed"} />
                       <div className="mcs-funnel_stepInfo">
-                        <b>{stepDelta[index] && `${stepDelta[index].diff}%`}</b><br />
+                        <b>{stepsDelta[index] && `${stepsDelta[index].dropOff}%`}</b><br />
                         <p>{this.isLastStep(index + 1) ? "Conversions" : "Dropoffs"}</p>
                       </div>
                     </div>
+
+
+
+
 
                   </div>
                 </div>
