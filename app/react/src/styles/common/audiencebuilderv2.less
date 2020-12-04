@@ -47,7 +47,7 @@
     height: 100%;
     border-left: 1px solid @border-color-split;
     .mcs-audienceBuilder_sizeButton {
-      position: fixed;
+      position: sticky;
       background-color: #fff;
       z-index: 3;
       border-radius: 50%;
@@ -58,6 +58,9 @@
       transform: rotate(180deg);
       &:hover {
         cursor: pointer;
+      }
+      .mcs-icon {
+        margin-right: 0px;
       }
     }
     .mcs-audienceBuilder_rightChevron {
@@ -84,7 +87,7 @@
       }
     }
     .mcs-audienceBuilder_liveDashboard {
-      padding: 40px;
+      padding: 0px 40px;
       text-align: center;
       .mcs-audienceBuilder_totalAudience {
         padding: 15px;

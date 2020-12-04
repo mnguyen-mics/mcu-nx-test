@@ -101,11 +101,11 @@ export const getFormattedQuery = (
     const queryResource = {
       datamart_id: datamartId,
       query_language: 'JSON_OTQL',
-      query_text: JSON.stringify(source)
-    }; 
-    
+      query_text: JSON.stringify(source),
+    };
+
     return queryService
-      .convertJsonOtql2Otql(datamartId, (queryResource as QueryResource))
+      .convertJsonOtql2Otql(datamartId, queryResource as QueryResource)
       .then(otqlQ => otqlQ.data)
       .then(otqlQ => {
         return Promise.resolve(
@@ -124,9 +124,12 @@ export const formatQuery = (
   return {
     ...query,
     query_language: 'OTQL',
-    query_text: hasWhereClause(query.query_text)
-      ? `${query.query_text} AND ${additionnalQuery}`
-      : `${query.query_text} WHERE ${additionnalQuery}`,
+    query_text:
+      additionnalQuery !== ' '
+        ? hasWhereClause(query.query_text)
+          ? `${query.query_text} AND ${additionnalQuery}`
+          : `${query.query_text} WHERE ${additionnalQuery}`
+        : query.query_text,
   };
 };
 

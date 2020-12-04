@@ -98,6 +98,7 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
       isLoadingObjectTypes: true,
     });
     this.runQuery(formValues);
+
     this._runtimeSchemaService.getRuntimeSchemas(datamartId).then(schemaRes => {
       const liveSchema = schemaRes.data.find(s => s.status === 'LIVE');
       if (!liveSchema) return;
@@ -133,13 +134,14 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
       isQueryRunning: true,
       isMaskVisible: false,
     });
+    const queryDocument = buildQueryDocument(formData);
     this._queryService
-      .runJSONOTQLQuery(datamartId, buildQueryDocument(formData))
+      .runJSONOTQLQuery(datamartId, queryDocument)
       .then(queryResult => {
         this.setState({
           queryResult: queryResult.data,
           isQueryRunning: false,
-          queryDocument: buildQueryDocument(formData),
+          queryDocument: queryDocument,
         });
       })
       .catch(err => {
@@ -174,7 +176,7 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
         params: { organisationId },
       },
       intl,
-      audienceBuilderId
+      audienceBuilderId,
     } = this.props;
 
     const {

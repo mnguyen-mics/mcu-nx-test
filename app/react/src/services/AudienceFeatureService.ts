@@ -5,12 +5,12 @@ import ApiService, { DataListResponse, DataResponse } from './ApiService';
 
 export interface AudienceFeatureOptions extends PaginatedApiParam {
   keywords?: string[];
+  exclude?: string[];
 }
 
 export interface IAudienceFeatureService {
   getAudienceFeatures: (
     datamartId: string,
-    demographicIds?: string[],
     options?: AudienceFeatureOptions,
   ) => Promise<DataListResponse<AudienceFeatureResource>>;
   getAudienceFeature: (
@@ -36,13 +36,9 @@ export interface IAudienceFeatureService {
 export class AudienceFeatureService implements IAudienceFeatureService {
   getAudienceFeatures(
     datamartId: string,
-    demographicIds?: string[],
     options?: AudienceFeatureOptions,
   ): Promise<DataListResponse<AudienceFeatureResource>> {
-    let endpoint = `datamarts/${datamartId}/audience_features`;
-    if (demographicIds && demographicIds.length >= 1) {
-      endpoint = `${endpoint}?exclude=${demographicIds.toString()}`;
-    }
+    const endpoint = `datamarts/${datamartId}/audience_features`;
     return ApiService.getRequest(endpoint, options);
   }
 
