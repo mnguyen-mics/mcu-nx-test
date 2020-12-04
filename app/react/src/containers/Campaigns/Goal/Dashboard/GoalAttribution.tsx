@@ -23,7 +23,7 @@ import McsDateRangePicker, {
   McsDateRangeValue,
 } from '../../../../components/McsDateRangePicker';
 import messages from './messages';
-import MetricsHighlight from '../../../../components/MetricsHighlight';
+import { MetricsHighlight } from '@mediarithmics-private/mcs-components-library';
 import {formatSecondsIntoDhmsFormat} from '../../../../utils/DurationHelper';
 
 const Option = Select.Option;
