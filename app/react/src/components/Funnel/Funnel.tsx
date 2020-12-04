@@ -232,7 +232,7 @@ class Funnel extends React.Component<Props, State> {
       
       if (i < upCountsPerStep.length - 1) {
         const nextStep = upCountsPerStep[i + 1];
-        const passThroughPercentage = nextStep > 0 ? (nextStep / step) * 100 : 0;
+        const passThroughPercentage = nextStep > 0 && step > 0 ? (nextStep / step) * 100 : 0;
         dropOff = 100 - passThroughPercentage
         return {
           passThroughPercentage: this.formatPercentageValue(passThroughPercentage),
@@ -241,7 +241,7 @@ class Funnel extends React.Component<Props, State> {
       }
       else {
         return { 
-          dropOff: this.formatPercentageValue((step / upCountsPerStep[0]) * 100) 
+          dropOff: this.formatPercentageValue(step > 0 && upCountsPerStep[0] > 0 ? (step / upCountsPerStep[0]) * 100  : 0)
         };
       }
     });
