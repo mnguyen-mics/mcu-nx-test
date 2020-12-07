@@ -69,9 +69,12 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
       options.keywords = [filter.keywords];
     }
 
+    if(demographicIds && demographicIds.length >= 1) {
+      options.exclude = demographicIds
+    }
+
     return this._audienceFeatureService.getAudienceFeatures(
       datamartId,
-      demographicIds,
       options,
     );
   };

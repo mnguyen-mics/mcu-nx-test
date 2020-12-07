@@ -16,11 +16,7 @@ import { TYPES } from '../../../constants/types';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
-import {
-  INITIAL_AUDIENCE_BUILDER_FORM_DATA,
-  formatQuery,
-  FORM_ID,
-} from './constants';
+import { INITIAL_AUDIENCE_BUILDER_FORM_DATA, formatQuery } from './constants';
 import { Loading } from '../../../components';
 import { IQueryService } from '../../../services/QueryService';
 import { IAudienceFeatureService } from '../../../services/AudienceFeatureService';
@@ -30,9 +26,6 @@ import {
   WithDatamartSelectorProps,
 } from '../../Datamart/WithDatamartSelector';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { MicsReduxState } from '../../../utils/ReduxHelper';
-import { getFormValues } from 'redux-form';
-import { connect } from 'react-redux';
 import { NewUserQuerySimpleFormData } from '../../QueryTool/SaveAs/NewUserQuerySegmentSimpleForm';
 import AudienceBuilderActionbar from './AudienceBuilderActionbar';
 import { calculateDefaultTtl } from '../Segments/Edit/domain';
@@ -44,13 +37,8 @@ interface State {
   isLoading: boolean;
 }
 
-interface MapStateToProps {
-  formValues: AudienceBuilderFormData;
-}
-
 type Props = InjectedIntlProps &
   InjectedNotificationProps &
-  MapStateToProps &
   RouteComponentProps<{ organisationId: string }> &
   WithDatamartSelectorProps;
 
@@ -248,14 +236,9 @@ class AudienceBuilderPage extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state: MicsReduxState) => ({
-  formValues: getFormValues(FORM_ID)(state),
-});
-
 export default compose(
   withDatamartSelector,
   withRouter,
   injectIntl,
   injectNotifications,
-  connect(mapStateToProps),
 )(AudienceBuilderPage);

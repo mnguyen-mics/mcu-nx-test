@@ -98,7 +98,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
     });
 
     this._audienceFeatureService
-      .getAudienceFeatures(datamartId, undefined, buildOptions())
+      .getAudienceFeatures(datamartId, buildOptions())
       .then(res => {
         this.setState({
           isLoading: false,

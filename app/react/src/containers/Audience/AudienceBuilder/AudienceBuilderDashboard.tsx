@@ -29,7 +29,7 @@ type Props = InjectedIntlProps &
   AudienceBuilderDashboardProps;
 
 interface State {
-  isLoading: boolean;
+  isDashboardLoading: boolean;
   dashboards: DashboardResource[];
 }
 
@@ -42,7 +42,7 @@ class AudienceBuilderDashboard extends React.Component<Props, State> {
 
     this.state = {
       dashboards: [],
-      isLoading: true,
+      isDashboardLoading: true,
     };
   }
   componentDidMount() {
@@ -50,52 +50,64 @@ class AudienceBuilderDashboard extends React.Component<Props, State> {
     this.loadData(organisationId, datamartId, audienceBuilderId);
   }
 
-  loadData = (organisationId: string, selectedDatamartId: string, audienceBuilderId: string) => {
-    this.setState({ isLoading: true });
+  loadData = (
+    organisationId: string,
+    selectedDatamartId: string,
+    audienceBuilderId: string,
+  ) => {
+    this.setState({ isDashboardLoading: true });
     this._dashboardService
-      .getAudienceBuilderDashboards(organisationId, selectedDatamartId, audienceBuilderId, {})
+      .getAudienceBuilderDashboards(
+        organisationId,
+        selectedDatamartId,
+        audienceBuilderId,
+        {},
+      )
       .then(d => {
-        this.setState({ dashboards: d.status === "ok" ? d.data : [] });
+        this.setState({ dashboards: d.status === 'ok' ? d.data : [] });
       })
       .catch(err => {
         this.props.notifyError(err);
       })
       .finally(() => {
         this.setState({
-          isLoading: false,
+          isDashboardLoading: false,
         });
-      })
+      });
   };
 
   render() {
     const { intl, totalAudience, isQueryRunning, queryDocument } = this.props;
-    const { isLoading, dashboards } = this.state;
+    const { isDashboardLoading, dashboards } = this.state;
     return (
       <div className="mcs-audienceBuilder_liveDashboard">
-        <CardFlex className="mcs-audienceBuilder_totalAudience">
-          {totalAudience === undefined ? (
-            <Statistic title={intl.formatMessage(messages.selectedAudience)} />
-          ) : !isQueryRunning ? (
-            <Statistic
-              title={intl.formatMessage(messages.selectedAudience)}
-              value={totalAudience}
-            />
-          ) : (
-            <Loading isFullScreen={true} />
-          )}
-        </CardFlex>
-
-        {isLoading ? (
+        {isQueryRunning ? (
           <Loading isFullScreen={true} />
+        ) : totalAudience ? (
+          <React.Fragment>
+            <CardFlex className="mcs-audienceBuilder_totalAudience">
+              <Statistic
+                title={intl.formatMessage(messages.selectedAudience)}
+                value={totalAudience}
+              />
+            </CardFlex>
+            {isDashboardLoading || !queryDocument ? (
+              <Loading className="m-t-20" isFullScreen={true} />
+            ) : (
+              dashboards.map(d => (
+                <DashboardWrapper
+                  key={d.id}
+                  layout={d.components}
+                  datamartId={d.datamart_id}
+                  source={queryDocument}
+                />
+              ))
+            )}
+          </React.Fragment>
         ) : (
-          dashboards.map(d => (
-            <DashboardWrapper
-              key={d.id}
-              layout={d.components}
-              datamartId={d.datamart_id}
-              source={queryDocument}
-            />
-          ))
+          <CardFlex className="mcs-audienceBuilder_totalAudience">
+            <Statistic title={intl.formatMessage(messages.selectedAudience)} />
+          </CardFlex>
         )}
       </div>
     );
