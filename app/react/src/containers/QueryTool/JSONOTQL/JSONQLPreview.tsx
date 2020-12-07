@@ -9,7 +9,10 @@ import JSONQLBuilderContainer, {
   JSONQLBuilderContainerProps,
 } from './JSONQLBuilderContainer';
 import { messages } from './messages';
-import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import {
+  Actionbar,
+  McsIcon,
+} from '@mediarithmics-private/mcs-components-library';
 import { formatQuery } from '../../Audience/AudienceBuilder/constants';
 import AudienceBuilderContainer, {
   AudienceBuilderContainerProps,
@@ -27,13 +30,14 @@ export interface JSONQLPreviewProps {
   isTrigger?: boolean;
   isEdge?: boolean;
   segmentEditor?: string;
+  audienceBuilderId?: string;
 }
 
 type Props = JSONQLPreviewProps & InjectedIntlProps & InjectedDrawerProps;
 
 class JSONQLPreview extends React.Component<Props> {
   openEditor = () => {
-    const { intl, value, segmentEditor } = this.props;
+    const { intl, value, segmentEditor, audienceBuilderId } = this.props;
 
     const createActionBar = (
       onSave: () => void,
@@ -94,7 +98,7 @@ class JSONQLPreview extends React.Component<Props> {
               ? (formatQuery(JSON.parse(value), true) as any)
               : undefined,
             demographicsFeaturesIds: [],
-            audienceBuilderId: "" // question how do we pass the proper ID here
+            audienceBuilderId: audienceBuilderId ? audienceBuilderId : "",
           },
         },
       );

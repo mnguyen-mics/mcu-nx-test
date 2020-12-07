@@ -64,9 +64,9 @@ export interface UserListSegment extends AudienceSegmentResource {
 }
 
 export function isPartialUserListSegment(
-  segment: Partial<AudienceSegmentShape>
+  segment: Partial<AudienceSegmentShape>,
 ): segment is Partial<UserListSegment> {
-  return segment.type === 'USER_LIST'
+  return segment.type === 'USER_LIST';
 }
 
 export interface UserLookalikeSegment extends AudienceSegmentResource {
@@ -123,6 +123,7 @@ export interface UserQuerySegment extends AudienceSegmentResource {
   control_group?: boolean;
   target_metric: Engagement;
   segment_editor?: string;
+  audience_builder_id?: string;
 }
 
 export type Engagement = 'E_COMMERCE_ENGAGEMENT' | 'CHANNEL_ENGAGEMENT';
