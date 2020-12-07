@@ -24,18 +24,22 @@ describe('Should test the funnel', () => {
     cy.clearLocalStorage();
   });
 
-  it.skip('step 1 should be correctly displayed with total 0', () => {
+  it('step 1 should be correctly displayed with total 0', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
-      cy.login()
-      cy.switchOrg(data.organisationName)
-      cy.get('.mcs-sideBar-subMenu_menu.dataStudio.title').click();
-      cy.get('.mcs-sideBar-subMenuItem_menu.dataStudio.funnel').click();
+      cy.login();
+      cy.switchOrg(data.organisationName);
+      cy.get('.mcs-sideBar-subMenu_menu\\.dataStudio\\.title').click();
+      cy.get('.mcs-sideBar-subMenuItem_menu\\.dataStudio\\.funnel').click();
       cy.get('.mcs-funnelQueryBuilder_select--dimensions').click();
-      cy.contains('Has visited using this channel').click();
-      cy.get('.mcs-funnelQueryBuilder_dimensionValue').type(createdChannelId+'{enter}')
-      cy.get('.mcs-funnelQueryBuilder_executeQueryBtn button:first').click()
-      cy.get('.mcs-funnel_stepName_title').should('have.length', 2)
-      cy.get('.mcs-funnel_userPoints_nbr',{timeout:20000}).should('have.length','2')
+      cy.contains('Channel Id').click();
+      cy.get('.mcs-funnelQueryBuilder_dimensionValue').type(
+        createdChannelId + '{enter}',
+      );
+      cy.get('.mcs-funnelQueryBuilder_executeQueryBtn button:first').click();
+      cy.get('.mcs-funnel_empty', { timeout: 20000 }).should(
+        'contain',
+        'There is no data for your query.',
+      );
     });
   });
 
@@ -43,8 +47,8 @@ describe('Should test the funnel', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.login();
       cy.switchOrg(data.organisationName);
-      cy.get('.mcs-sideBar-subMenu_menu.dataStudio.title').click();
-      cy.get('.mcs-sideBar-subMenuItem_menu.dataStudio.funnel').click();
+      cy.get('.mcs-sideBar-subMenu_menu\\.dataStudio\\.title').click();
+      cy.get('.mcs-sideBar-subMenuItem_menu\\.dataStudio\\.funnel').click();
       cy.request({
         url: `${Cypress.env('apiDomain')}/v1/datamarts/${
           data.datamartId
@@ -70,7 +74,7 @@ describe('Should test the funnel', () => {
       }).then(() => {
         cy.wait(5000);
         cy.get('.mcs-funnelQueryBuilder_select--dimensions').click();
-        cy.contains('Has visited using this channel').click();
+        cy.contains('Channel Id').click();
         cy.get('.mcs-funnelQueryBuilder_dimensionValue').type(
           createdChannelId + '{enter}',
         );
@@ -85,11 +89,11 @@ describe('Should test the funnel', () => {
           .eq(1)
           .should('contain', 'Step 1');
         cy.get('.mcs-funnel_stepInfo')
-          .first()
-          .should('contain', '0.00%');
-        cy.get('.mcs-funnel_stepInfo')
           .eq(1)
-          .should('contain', '100.00%');
+          .should('contain', '0.0000%');
+        cy.get('.mcs-funnel_stepInfo')
+          .first()
+          .should('contain', '100%');
         cy.get('.mcs-funnel_userPoints_nbr')
           .first()
           .should('contain', '1');
@@ -104,8 +108,8 @@ describe('Should test the funnel', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.login();
       cy.switchOrg(data.organisationName);
-      cy.get('.mcs-sideBar-subMenu_menu.dataStudio.title').click();
-      cy.get('.mcs-sideBar-subMenuItem_menu.dataStudio.funnel').click();
+      cy.get('.mcs-sideBar-subMenu_menu\\.dataStudio\\.title').click();
+      cy.get('.mcs-sideBar-subMenuItem_menu\\.dataStudio\\.funnel').click();
       cy.get('.mcs-funnelQueryBuilder_addStepBtn').click();
       cy.get('.mcs-funnelQueryBuilder_addStepBtn').click();
       cy.get('.mcs-funnelQueryBuilder_select--dimensions')
@@ -137,8 +141,8 @@ describe('Should test the funnel', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.login();
       cy.switchOrg(data.organisationName);
-      cy.get('.mcs-sideBar-subMenu_menu.dataStudio.title').click();
-      cy.get('.mcs-sideBar-subMenuItem_menu.dataStudio.funnel').click();
+      cy.get('.mcs-sideBar-subMenu_menu\\.dataStudio\\.title').click();
+      cy.get('.mcs-sideBar-subMenuItem_menu\\.dataStudio\\.funnel').click();
       cy.request({
         url: `${Cypress.env('apiDomain')}/v1/datamarts/${
           data.datamartId
@@ -170,54 +174,323 @@ describe('Should test the funnel', () => {
             },
           ],
         },
-      }).then(()=>{
-        cy.wait(2000)
+      }).then(() => {
+        cy.wait(2000);
         cy.get('.mcs-funnelQueryBuilder_select--dimensions').click();
-        cy.contains('Product Id').click()
-        cy.get('.mcs-funnelQueryBuilder_dimensionValue').type('test')
-        cy.get('#mcs-funnel_expression_select_anchor').should('contain','test_autocomplete')
+        cy.contains('Product Id').click();
+        cy.get('.mcs-funnelQueryBuilder_dimensionValue').type('test');
+        cy.get('#mcs-funnel_expression_select_anchor', {
+          timeout: 20000,
+        }).should('contain', 'test_autocomplete');
         cy.get('.mcs-funnelQueryBuilder_select--dimensions').click();
-        cy.contains('Brand').click()
-        cy.get('.mcs-funnelQueryBuilder_dimensionValue').type('test')
-        cy.get('#mcs-funnel_expression_select_anchor').should('contain','test_autocomplete')
+        cy.contains('Brand').click();
+        cy.get('.mcs-funnelQueryBuilder_dimensionValue').type('test');
+        cy.get('#mcs-funnel_expression_select_anchor').should(
+          'contain',
+          'test_autocomplete',
+        );
         cy.get('.mcs-funnelQueryBuilder_select--dimensions').click();
-        cy.contains('Category 1').click()
-        cy.get('.mcs-funnelQueryBuilder_dimensionValue').type('test')
-        cy.get('#mcs-funnel_expression_select_anchor').should('contain','test_autocomplete')
+        cy.contains('Category 1').click();
+        cy.get('.mcs-funnelQueryBuilder_dimensionValue').type('test');
+        cy.get('#mcs-funnel_expression_select_anchor').should(
+          'contain',
+          'test_autocomplete',
+        );
         cy.get('.mcs-funnelQueryBuilder_select--dimensions').click();
-        cy.contains('Category 2').click()
-        cy.get('.mcs-funnelQueryBuilder_dimensionValue').type('test')
-        cy.get('#mcs-funnel_expression_select_anchor').should('contain','test_autocomplete')
+        cy.contains('Category 2').click();
+        cy.get('.mcs-funnelQueryBuilder_dimensionValue').type('test');
+        cy.get('#mcs-funnel_expression_select_anchor').should(
+          'contain',
+          'test_autocomplete',
+        );
         cy.get('.mcs-funnelQueryBuilder_select--dimensions').click();
-        cy.contains('Category 3').click()
-        cy.get('.mcs-funnelQueryBuilder_dimensionValue').type('test')
-        cy.get('#mcs-funnel_expression_select_anchor').should('contain','test_autocomplete')
+        cy.contains('Category 3').click();
+        cy.get('.mcs-funnelQueryBuilder_dimensionValue').type('test');
+        cy.get('#mcs-funnel_expression_select_anchor').should(
+          'contain',
+          'test_autocomplete',
+        );
         cy.get('.mcs-funnelQueryBuilder_select--dimensions').click();
-        cy.contains('Category 4').click()
-        cy.get('.mcs-funnelQueryBuilder_dimensionValue').type('test')
-        cy.get('#mcs-funnel_expression_select_anchor').should('contain','test_autocomplete')
-      })
+        cy.contains('Category 4').click();
+        cy.get('.mcs-funnelQueryBuilder_dimensionValue').type('test');
+        cy.get('#mcs-funnel_expression_select_anchor').should(
+          'contain',
+          'test_autocomplete',
+        );
+      });
     });
   });
 
-  it('should test the steps, dimensions deletion',()=>{
+  it('should test the steps, dimensions deletion', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.login();
       cy.switchOrg(data.organisationName);
-      cy.get('.mcs-sideBar-subMenu_menu.dataStudio.title').click();
-      cy.get('.mcs-sideBar-subMenuItem_menu.dataStudio.funnel').click();
-      cy.get('.mcs-funnelQueryBuilder_step').should('have.length',1)
-      cy.get('.mcs-funnelQueryBuilder_removeStepBtn').click()
-      cy.get('.mcs-funnelQueryBuilder_step').should('have.length',0)
-      cy.get('.mcs-funnelQueryBuilder_addStepBtn').click()
-      cy.get('.mcs-funnelQueryBuilder_step').should('have.length',1)
-      cy.get('.mcs-funnelQueryBuilder_addStepBtn').click()
-      cy.get('.mcs-funnelQueryBuilder_step').should('have.length',2)
-      cy.get('.mcs-funnelQueryBuilder_step_dimensions').should('have.length',2)
-      cy.get('.mcs-funnelQueryBuilder_removeFilterBtn').first().click()
-      cy.get('.mcs-funnelQueryBuilder_step_dimensions').should('have.length',1)
-      cy.get('.mcs-funnelQueryBuilder_addDimensionBtn').first().click()
-      cy.get('.mcs-funnelQueryBuilder_step_dimensions').should('have.length',2)
-    })
-  })
+      cy.get('.mcs-sideBar-subMenu_menu\\.dataStudio\\.title').click();
+      cy.get('.mcs-sideBar-subMenuItem_menu\\.dataStudio\\.funnel').click();
+      cy.get('.mcs-funnelQueryBuilder_step').should('have.length', 1);
+      cy.get('.mcs-funnelQueryBuilder_removeStepBtn').click();
+      cy.get('.mcs-funnelQueryBuilder_step').should('have.length', 0);
+      cy.get('.mcs-funnelQueryBuilder_addStepBtn').click();
+      cy.get('.mcs-funnelQueryBuilder_step').should('have.length', 1);
+      cy.get('.mcs-funnelQueryBuilder_addStepBtn').click();
+      cy.get('.mcs-funnelQueryBuilder_step').should('have.length', 2);
+      cy.get('.mcs-funnelQueryBuilder_step_dimensions').should(
+        'have.length',
+        2,
+      );
+      cy.get('.mcs-funnelQueryBuilder_removeFilterBtn')
+        .first()
+        .click();
+      cy.get('.mcs-funnelQueryBuilder_step_dimensions').should(
+        'have.length',
+        1,
+      );
+      cy.get('.mcs-funnelQueryBuilder_addDimensionBtn')
+        .first()
+        .click();
+      cy.get('.mcs-funnelQueryBuilder_step_dimensions').should(
+        'have.length',
+        2,
+      );
+    });
+  });
+
+  it('should check that we have the right numbers between the steps', () => {
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      cy.request({
+        url: `${Cypress.env('apiDomain')}/v1/datamarts/${
+          data.datamartId
+        }/user_activities?processing_pipeline=false`,
+        method: 'POST',
+        headers: { Authorization: data.accessToken },
+        body: {
+          $user_account_id: 'testing',
+          $type: 'APP_VISIT',
+          $site_id: `${createdChannelId}`,
+          $session_status: 'NO_SESSION',
+          $ts: new Date().getTime(),
+          $events: [
+            {
+              $event_name: '$item_view',
+              $ts: new Date().getTime(),
+              $properties: {
+                $items: [
+                  {
+                    $product_id: 'test',
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      }).then(() => {
+        cy.request({
+          url: `${Cypress.env('apiDomain')}/v1/datamarts/${
+            data.datamartId
+          }/user_activities?processing_pipeline=false`,
+          method: 'POST',
+          headers: { Authorization: data.accessToken },
+          body: {
+            $user_account_id: 'test_percentage_1',
+            $type: 'APP_VISIT',
+            $site_id: `${createdChannelId}`,
+            $session_status: 'NO_SESSION',
+            $ts: new Date().getTime(),
+            $events: [
+              {
+                $event_name: '$item_view',
+                $ts: new Date().getTime(),
+                $properties: {
+                  $items: [
+                    {
+                      $product_id: 'test_percentage',
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        }).then(() => {
+          cy.request({
+            url: `${Cypress.env('apiDomain')}/v1/datamarts/${
+              data.datamartId
+            }/user_activities?processing_pipeline=false`,
+            method: 'POST',
+            headers: { Authorization: data.accessToken },
+            body: {
+              $user_account_id: 'test_percentage_2',
+              $type: 'APP_VISIT',
+              $site_id: `${createdChannelId}`,
+              $session_status: 'NO_SESSION',
+              $ts: new Date().getTime(),
+              $events: [
+                {
+                  $event_name: '$item_view',
+                  $ts: new Date().getTime(),
+                  $properties: {
+                    $items: [
+                      {
+                        $product_id: 'test_percentage',
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          }).then(() => {
+            cy.request({
+              url: `${Cypress.env('apiDomain')}/v1/datamarts/${
+                data.datamartId
+              }/user_activities?processing_pipeline=false`,
+              method: 'POST',
+              headers: { Authorization: data.accessToken },
+              body: {
+                $user_account_id: 'test_percentage_3',
+                $type: 'APP_VISIT',
+                $site_id: `${createdChannelId}`,
+                $session_status: 'NO_SESSION',
+                $ts: new Date().getTime(),
+                $events: [
+                  {
+                    $event_name: '$item_view',
+                    $ts: new Date().getTime(),
+                    $properties: {
+                      $items: [
+                        {
+                          $product_id: 'test_percentage',
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+            }).then(() => {
+              cy.wait(10000);
+              cy.request({
+                url: `${Cypress.env('apiDomain')}/v1/datamarts/${
+                  data.datamartId
+                }/user_activities?processing_pipeline=false`,
+                method: 'POST',
+                headers: { Authorization: data.accessToken },
+                body: {
+                  $user_account_id: 'test_percentage_3',
+                  $type: 'APP_VISIT',
+                  $site_id: `${createdChannelId}`,
+                  $session_status: 'NO_SESSION',
+                  $ts: new Date().getTime(),
+                  $events: [
+                    {
+                      $event_name: '$item_view',
+                      $ts: new Date().getTime(),
+                      $properties: {
+                        $items: [
+                          {
+                            $product_id: 'test_percentage',
+                            $brand: 'percentage',
+                          },
+                        ],
+                      },
+                    },
+                  ],
+                },
+              }).then(() => {
+                cy.request({
+                  url: `${Cypress.env('apiDomain')}/v1/datamarts/${
+                    data.datamartId
+                  }/user_activities?processing_pipeline=false`,
+                  method: 'POST',
+                  headers: { Authorization: data.accessToken },
+                  body: {
+                    $user_account_id: 'test_percentage_3',
+                    $type: 'APP_VISIT',
+                    $site_id: `${createdChannelId}`,
+                    $session_status: 'NO_SESSION',
+                    $ts: new Date().getTime(),
+                    $events: [
+                      {
+                        $event_name: '$item_view',
+                        $ts: new Date().getTime(),
+                        $properties: {
+                          $items: [
+                            {
+                              $product_id: 'test_percentage',
+                              $brand: 'percentage',
+                            },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                }).then(() => {
+                  cy.wait(5000);
+                  cy.login();
+                  cy.switchOrg(data.organisationName);
+                  cy.get(
+                    '.mcs-sideBar-subMenu_menu\\.dataStudio\\.title',
+                  ).click();
+                  cy.get(
+                    '.mcs-sideBar-subMenuItem_menu\\.dataStudio\\.funnel',
+                  ).click();
+                  cy.get('.mcs-funnelQueryBuilder_select--dimensions').click();
+                  cy.contains('Product Id').click();
+                  cy.get('.mcs-funnelQueryBuilder_dimensionValue').type(
+                    'test_percentage' + '{enter}',
+                  );
+                  cy.get('.mcs-funnelQueryBuilder_addStepBtn').click();
+                  cy.get('.mcs-funnelQueryBuilder_select--dimensions')
+                    .eq(1)
+                    .click();
+                  cy.wait(1000);
+                  cy.get('.ant-select-dropdown')
+                    .eq(2)
+                    .contains('Brand')
+                    .click({ force: true });
+                  cy.get('.mcs-funnelQueryBuilder_dimensionValue')
+                    .eq(1)
+                    .type('percentage' + '{enter}');
+                  cy.get('.mcs-date-range-picker').click();
+                  cy.contains('Today').click();
+                  cy.get(
+                    '.mcs-funnelQueryBuilder_executeQueryBtn button:first',
+                  ).click();
+                  cy.get('.mcs-funnel_stepInfo')
+                    .eq(2)
+                    .children()
+                    .first()
+                    .then($stepPercetange => {
+                      const stepPercentage: number = parseInt(
+                        $stepPercetange.text(),
+                        10,
+                      );
+                      cy.get('.mcs-funnel_userPoints_nbr')
+                        .eq(1)
+                        .then($firstStepNumber => {
+                          const firstStepNumber: number = parseInt(
+                            $firstStepNumber.text(),
+                            10,
+                          );
+                          cy.get('.mcs-funnel_userPoints_nbr')
+                            .eq(2)
+                            .then($secondStepNumber => {
+                              const secondStepNumber: number = parseInt(
+                                $secondStepNumber.text(),
+                                10,
+                              );
+                              expect(
+                                Math.ceil(
+                                  100 -
+                                    (secondStepNumber / firstStepNumber) * 100,
+                                ),
+                              ).to.eq(100 - stepPercentage);
+                            });
+                        });
+                    });
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+  });
 });
