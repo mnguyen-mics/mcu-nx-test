@@ -7,7 +7,6 @@ import McsDateRangePicker, {
   McsDateRangeValue,
 } from '../../../../../components/McsDateRangePicker';
 import { LegendChartWithModal } from '../../../../../components/LegendChart';
-import MetricsColumn from '../../../../../components/MetricsColumn';
 import CampaignDisplayProgress from './CampaignDisplayProgress';
 
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
@@ -23,7 +22,7 @@ import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../../Helpers/injectThemeColors';
 import DoubleStackedAreaPlot from '../../../../../components/Charts/TimeBased/DoubleStackedAreaPlot';
-import { EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
+import { EmptyChart, LoadingChart, MetricsColumn } from '@mediarithmics-private/mcs-components-library';
 
 const LegendChartWithModalJS = LegendChartWithModal as any;
 
