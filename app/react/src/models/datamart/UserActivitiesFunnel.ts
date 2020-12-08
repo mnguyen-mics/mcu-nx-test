@@ -18,7 +18,7 @@ export interface FunnelWindowRange {
   offset: number
 }
 
-export type FunnelTimeRange = FunnelWindowRange | FunnelDateRange
+export type FunnelTimeRange = FunnelDateRange
 
 
 export interface FunnelRequestBody {
