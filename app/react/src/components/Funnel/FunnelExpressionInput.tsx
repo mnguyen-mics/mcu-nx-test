@@ -237,7 +237,7 @@ class FunnelExpressionInput extends React.Component<Props, State> {
         return <Select
           placeholder="Dimension value"
           mode="tags"
-          tokenSeparators={[',',' ','\n', ' ', '	']}
+          tokenSeparators={[',','	']}
           showSearch={true}
           labelInValue={true}
           autoFocus={true}
