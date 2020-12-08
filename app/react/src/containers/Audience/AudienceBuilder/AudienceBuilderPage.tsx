@@ -2,6 +2,7 @@ import * as React from 'react';
 import _ from 'lodash';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { Loading } from '@mediarithmics-private/mcs-components-library'; 
 import AudienceBuilderSelector, { messages } from './AudienceBuilderSelector';
 import AudienceBuilderContainer from './AudienceBuilderContainer';
 import {
@@ -17,7 +18,6 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
 import { INITIAL_AUDIENCE_BUILDER_FORM_DATA, formatQuery } from './constants';
-import { Loading } from '../../../components';
 import { IQueryService } from '../../../services/QueryService';
 import { IAudienceFeatureService } from '../../../services/AudienceFeatureService';
 import { IAudienceSegmentService } from '../../../services/AudienceSegmentService';

@@ -18,8 +18,9 @@ import { FORM_ID, buildQueryDocument, messages } from './constants';
 import { Omit } from '../../../utils/Types';
 import {
   AudienceBuilderFormData,
-  isAudienceBuilderGroupNode,
   QueryDocument as AudienceBuilderQueryDocument,
+  AudienceBuilderGroupNode,
+  isAudienceBuilderParametricPredicateNode,
 } from '../../../models/audienceBuilder/AudienceBuilderResource';
 import AudienceBuilderDashboard from './AudienceBuilderDashboard';
 import QueryFragmentFormSection, {
@@ -33,7 +34,13 @@ import { IRuntimeSchemaService } from '../../../services/RuntimeSchemaService';
 import { IQueryService } from '../../../services/QueryService';
 import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/RuntimeSchema';
 import { QueryDocument as GraphDbQueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
-import { McsIcon, Button } from '@mediarithmics-private/mcs-components-library';
+import {
+  McsIcon,
+  Button,
+  Loading,
+} from '@mediarithmics-private/mcs-components-library';
+import { IAudienceFeatureService } from '../../../services/AudienceFeatureService';
+import { AudienceFeatureResource } from '../../../models/audienceFeature';
 
 export const QueryFragmentFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
@@ -72,6 +79,7 @@ interface State {
   isQueryRunning: boolean;
   isDashboardToggled: boolean;
   isMaskVisible: boolean;
+  audienceFeatures?: AudienceFeatureResource[];
 }
 
 class AudienceBuilderContainer extends React.Component<Props, State> {
@@ -80,6 +88,9 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
 
   @lazyInject(TYPES.IQueryService)
   private _queryService: IQueryService;
+
+  @lazyInject(TYPES.IAudienceFeatureService)
+  private _audienceFeatureService: IAudienceFeatureService;
 
   constructor(props: Props) {
     super(props);
@@ -108,18 +119,30 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
           });
         });
     });
+    const audienceFeatureIds: string[] = [];
+    formValues.where.expressions.forEach(exp => {
+      (exp as AudienceBuilderGroupNode).expressions.forEach(e => {
+        if (isAudienceBuilderParametricPredicateNode(e)) {
+          audienceFeatureIds.push(e.parametric_predicate_id);
+        }
+      });
+    });
+    const promises = audienceFeatureIds.map(id => {
+      return this._audienceFeatureService.getAudienceFeature(datamartId, id);
+    });
+
+    Promise.all(promises).then(res => {
+      const audienceFeatures = res.map(r => r.data);
+      this.setState({
+        audienceFeatures,
+      });
+    });
   }
 
   componentDidUpdate(prevProps: Props) {
     const { formValues } = this.props;
-    const lastExpression =
-      formValues.where.expressions[formValues.where.expressions.length - 1];
-    if (
-      !_.isEqual(formValues, prevProps.formValues) &&
-      lastExpression &&
-      isAudienceBuilderGroupNode(lastExpression) &&
-      !!lastExpression.expressions.length
-    ) {
+    // Todo: don't display mask if empty expression node is added/deleted
+    if (!_.isEqual(formValues, prevProps.formValues)) {
       this.setState({
         isMaskVisible: true,
       });
@@ -175,6 +198,7 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
       },
       intl,
       audienceBuilderId,
+      change,
     } = this.props;
 
     const {
@@ -185,6 +209,7 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
       isDashboardToggled,
       isMaskVisible,
       isLoadingObjectTypes,
+      audienceFeatures,
     } = this.state;
 
     const genericFieldArrayProps = {
@@ -208,15 +233,19 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
                 className={`${isDashboardToggled &&
                   'mcs-audienceBuilder_hiddenForm'}`}
               >
-                {!isLoadingObjectTypes && (
+                {!isLoadingObjectTypes ? (
                   <QueryFragmentFieldArray
                     name={`where.expressions`}
                     component={QueryFragmentFormSection}
                     datamartId={datamartId}
+                    formChange={change}
                     demographicsFeaturesIds={demographicsFeaturesIds}
+                    audienceFeatures={audienceFeatures}
                     objectTypes={objectTypes}
                     {...genericFieldArrayProps}
                   />
+                ) : (
+                  <Loading className="m-t-40" isFullScreen={true} />
                 )}
               </div>
             </Col>
@@ -232,13 +261,11 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
                 <McsIcon type="chevron-right" />
               </Button>
               {!!isMaskVisible && (
-                <React.Fragment>
-                  <div className="mcs-audienceBuilder_liveDashboardMask">
-                    <Button onClick={this.refreshDashboard}>
-                      {intl.formatMessage(messages.refreshMessage)}
-                    </Button>
-                  </div>
-                </React.Fragment>
+                <div className="mcs-audienceBuilder_liveDashboardMask">
+                  <Button onClick={this.refreshDashboard}>
+                    {intl.formatMessage(messages.refreshMessage)}
+                  </Button>
+                </div>
               )}
               <AudienceBuilderDashboard
                 organisationId={organisationId}

@@ -8,11 +8,13 @@ import { Row, Col, Button } from 'antd';
 import AudienceFeatureLayout from './AudienceFeatureLayout';
 import { ObjectLikeTypeInfoResource } from '../../../../models/datamart/graphdb/RuntimeSchema';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { AudienceFeatureResource } from '../../../../models/audienceFeature';
 
 export interface AudienceFeatureFormSectionProps extends ReduxFormChangeProps {
   isDemographicsSection: boolean;
   datamartId: string;
   objectTypes: ObjectLikeTypeInfoResource[];
+  audienceFeatures?: AudienceFeatureResource[]
 }
 
 type Props = WrappedFieldArrayProps<AudienceBuilderParametricPredicateNode> &
@@ -20,8 +22,16 @@ type Props = WrappedFieldArrayProps<AudienceBuilderParametricPredicateNode> &
   InjectedIntlProps;
 
 class AudienceFeatureFormSection extends React.Component<Props> {
+
+
   render() {
-    const { fields, isDemographicsSection, datamartId, objectTypes } = this.props;
+    const {
+      fields,
+      isDemographicsSection,
+      datamartId,
+      objectTypes,
+      audienceFeatures
+    } = this.props;
 
     return fields.map((name, index) => {
       const handleRemove = () => fields.remove(index);
@@ -40,6 +50,7 @@ class AudienceFeatureFormSection extends React.Component<Props> {
               datamartId={datamartId}
               parametricPredicateResource={fields.get(index)}
               objectTypes={objectTypes}
+              audienceFeatures={audienceFeatures}
             />
           </Col>
 
