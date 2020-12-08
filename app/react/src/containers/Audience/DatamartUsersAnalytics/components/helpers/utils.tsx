@@ -118,7 +118,7 @@ function ResourceByKeywordSelector<T extends SelectableResource, AdditionalConte
       const alwaysTrue = () => true
       return (<Select
         mode={multiselect ? "tags" : "default"}
-        tokenSeparators={[',']}
+        tokenSeparators={[',','	']}
         showSearch={true}
         labelInValue={true}
         autoFocus={true}
