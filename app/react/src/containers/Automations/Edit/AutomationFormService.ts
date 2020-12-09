@@ -1160,7 +1160,7 @@ export class AutomationFormService implements IAutomationFormService {
           const customActionId = createdCustomAction.id;
 
           const propertyKeysAndValues = Object.entries<any>(
-            customActionFormData.properties,
+            customActionFormData.properties || {},
           );
           const propertyPromises = propertyKeysAndValues.map(keyAndValue => {
             const [key, valueObj] = keyAndValue;
