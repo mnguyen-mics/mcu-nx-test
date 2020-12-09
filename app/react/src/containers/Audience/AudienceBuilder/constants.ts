@@ -130,9 +130,7 @@ export const formatQuery = (
                 (e: AudienceBuilderParametricPredicateNode) => {
                   const parameters: any = {};
                   const formatValue = (v: any) => {
-                    if (Array.isArray(v)) {
-                      return v[0] ? v[0].toString() : undefined;
-                    } else if (typeof v === 'number') {
+                    if (typeof v === 'number') {
                       return v.toString();
                     } else if (
                       // Check if string value represents a float
@@ -140,12 +138,13 @@ export const formatQuery = (
                       !isNaN(v)
                     ) {
                       return parseFloat(v);
-                    } else return isEditMode ? [v] : v;
+                    }
+                    return;
                   };
-                  Object.keys(e.parameters).forEach(k => {
-                    const value = formatValue(e.parameters[k]);
+                  Object.keys(e.parameters).forEach(p => {
+                    const value = formatValue(e.parameters[p]);
                     if (value) {
-                      parameters[`${k}`] = value;
+                      parameters[`${p}`] = value;
                     }
                   });
 
