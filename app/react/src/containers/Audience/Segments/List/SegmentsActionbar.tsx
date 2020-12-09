@@ -8,7 +8,10 @@ import {
   injectIntl,
 } from 'react-intl';
 import { compose } from 'recompose';
-import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import {
+  Actionbar,
+  McsIcon,
+} from '@mediarithmics-private/mcs-components-library';
 import ExportService from '../../../../services/ExportService';
 import { SEGMENTS_SEARCH_SETTINGS } from './constants';
 import { parseSearch } from '../../../../utils/LocationSearchHelper';
@@ -111,7 +114,7 @@ class SegmentsActionbar extends React.Component<Props, State> {
       };
 
       if (filter.keywords) {
-        options.name = filter.keywords;
+        options.keywords = filter.keywords;
       }
       if (datamartId) {
         options.datamart_id = datamartId;
@@ -125,6 +128,7 @@ class SegmentsActionbar extends React.Component<Props, State> {
       if (filter.orderBy && filter.orderBy.length) {
         options.order_by = filter.orderBy;
       }
+      
       return options;
     };
 
@@ -211,8 +215,7 @@ class SegmentsActionbar extends React.Component<Props, State> {
         <Link
           to={{
             pathname: `/v2/o/${organisationId}/audience/segments/create`,
-          }}
-        >
+          }}>
           <Button className="mcs-primary" type="primary">
             <McsIcon type="plus" />{' '}
             <FormattedMessage {...messages.newSegment} />
