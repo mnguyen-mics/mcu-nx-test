@@ -1,5 +1,42 @@
 describe('Should test the funnel', () => {
   let createdChannelId: string;
+
+  const getDate = (diffDays: number, diffMonths: number) => {
+    const currentDate = new Date();
+    const day = currentDate.getDate() + diffDays;
+    const month = currentDate.getMonth() + 1 + diffMonths;
+    const year = currentDate.getFullYear();
+    const formattedDay = day >= 10 ? day : '0' + day;
+    const formattedMonth = month >= 10 ? month : '0' + month;
+    return year + '-' + formattedMonth + '-' + formattedDay;
+  };
+
+  const funnelStubbedResponse = (stepCount: number) => {
+    return {
+      status: 200,
+      body: {
+        status: 'ok',
+        data: {
+          total: stepCount,
+          steps: [
+            { name: 'Step 1', count: stepCount, interaction_duration: 10 },
+          ],
+        },
+      },
+      headers: {
+        'content-type': 'application/json',
+        'content-encoding': 'UTF-8',
+        'access-control-max-age': '600',
+        'access-control-allow-origin': '*',
+        'access-control-allow-headers':
+          'Accept, Content-Type, Origin, Authorization, X-Requested-With, X-Requested-By',
+        'access-control-allow-methods': 'POST, GET, PUT, DELETE',
+        'content-length': '97',
+        'strict-transport-security':
+          'max-age=63072000;includeSubDomains;preload',
+      },
+    };
+  };
   before(() => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.request({
@@ -491,6 +528,144 @@ describe('Should test the funnel', () => {
           });
         });
       });
+    });
+  });
+
+  it('should send the right request on 7 days datepicker', () => {
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      cy.login();
+      cy.switchOrg(data.organisationName);
+      cy.get('.mcs-sideBar-subMenu_menu\\.dataStudio\\.title').click();
+      cy.get('.mcs-sideBar-subMenuItem_menu\\.dataStudio\\.funnel').click();
+      cy.get('.mcs-funnelQueryBuilder_select--dimensions').click();
+      cy.contains('Channel Id').click();
+      cy.get('.mcs-funnelQueryBuilder_dimensionValue').type(
+        createdChannelId + '{enter}',
+      );
+      cy.get('.mcs-funnelQueryBuilder_executeQueryBtn button:first').click();
+      cy.intercept(
+        { pathname: /.*\/user_activities_funnel/, method: 'POST' },
+        req => {
+          expect(req.body.in.end_date).to.eq(getDate(1, 0));
+          expect(req.body.in.start_date).to.eq(getDate(-7, 0));
+          req.reply(res => {
+            res.send(
+              funnelStubbedResponse(100).status,
+              funnelStubbedResponse(100).body,
+              funnelStubbedResponse(100).headers,
+            );
+          });
+        },
+      );
+      cy.get('.mcs-funnel_userPoints_nbr')
+        .eq(0)
+        .should('contain', '100');
+    });
+  });
+
+  it('should send the right request on today datepicker', () => {
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      cy.login();
+      cy.switchOrg(data.organisationName);
+      cy.get('.mcs-sideBar-subMenu_menu\\.dataStudio\\.title').click();
+      cy.get('.mcs-sideBar-subMenuItem_menu\\.dataStudio\\.funnel').click();
+      cy.get('.mcs-funnelQueryBuilder_select--dimensions').click();
+      cy.contains('Channel Id').click();
+      cy.get('.mcs-funnelQueryBuilder_dimensionValue').type(
+        createdChannelId + '{enter}',
+      );
+      cy.get('.mcs-date-range-picker').click();
+      cy.contains('Today').click();
+      cy.get('.mcs-funnelQueryBuilder_executeQueryBtn button:first').click();
+      cy.intercept(
+        { pathname: /.*\/user_activities_funnel/, method: 'POST' },
+        req => {
+          expect(req.body.in.end_date).to.eq(getDate(1, 0));
+          expect(req.body.in.start_date).to.eq(getDate(0, 0));
+          req.reply(res => {
+            res.send(
+              funnelStubbedResponse(200).status,
+              funnelStubbedResponse(200).body,
+              funnelStubbedResponse(200).headers,
+            );
+          });
+        },
+      );
+      cy.get('.mcs-funnel_userPoints_nbr')
+        .eq(0)
+        .should('contain', '200');
+    });
+  });
+
+    it('should send the right request on 30 days datepicker', () => {
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      cy.login();
+      cy.switchOrg(data.organisationName);
+      cy.get('.mcs-sideBar-subMenu_menu\\.dataStudio\\.title').click();
+      cy.get('.mcs-sideBar-subMenuItem_menu\\.dataStudio\\.funnel').click();
+      cy.get('.mcs-funnelQueryBuilder_select--dimensions').click();
+      cy.contains('Channel Id').click();
+      cy.get('.mcs-funnelQueryBuilder_dimensionValue').type(
+        createdChannelId + '{enter}',
+      );
+      cy.get('.mcs-date-range-picker').click();
+      cy.contains('Last 30 days').click();
+      cy.get('.mcs-funnelQueryBuilder_executeQueryBtn button:first').click();
+      cy.intercept(
+        { pathname: /.*\/user_activities_funnel/, method: 'POST' },
+        req => {
+          expect(req.body.in.end_date).to.eq(getDate(1, 0));
+          expect(req.body.in.start_date).to.eq(getDate(0, -1));
+          req.reply(res => {
+            res.send(
+              funnelStubbedResponse(300).status,
+              funnelStubbedResponse(300).body,
+              funnelStubbedResponse(300).headers,
+            );
+          });
+        },
+      );
+      cy.get('.mcs-funnel_userPoints_nbr')
+        .eq(0)
+        .should('contain', '300');
+    });
+  });
+
+      it('should send the right request on custom datepicker', () => {
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      cy.login();
+      cy.switchOrg(data.organisationName);
+      cy.get('.mcs-sideBar-subMenu_menu\\.dataStudio\\.title').click();
+      cy.get('.mcs-sideBar-subMenuItem_menu\\.dataStudio\\.funnel').click();
+      cy.get('.mcs-funnelQueryBuilder_select--dimensions').click();
+      cy.contains('Channel Id').click();
+      cy.get('.mcs-funnelQueryBuilder_dimensionValue').type(
+        createdChannelId + '{enter}',
+      );
+      cy.get('.mcs-date-range-picker').click();
+      cy.contains('Custom').click();
+      cy.get('.ant-calendar-input').eq(0).clear().type(getDate(0,-3))
+      cy.get('.mcs-date-range-picker').click();
+      cy.contains('Custom').click();
+      cy.get('.ant-calendar-input').eq(1).clear().type(getDate(0,-2))
+      cy.get('.mcs-funnelQueryBuilder_executeQueryBtn button:first').click();
+      cy.intercept(
+        { pathname: /.*\/user_activities_funnel/, method: 'POST' },
+        req => {
+          expect(req.body.in.end_date).to.eq(getDate(1, -2));
+          expect(req.body.in.start_date).to.eq(getDate(0, -3));
+          req.reply(res => {
+            res.send(
+              funnelStubbedResponse(400).status,
+              funnelStubbedResponse(400).body,
+              funnelStubbedResponse(400).headers,
+            );
+          });
+        },
+      );
+      cy.get('.mcs-funnel_userPoints_nbr')
+        .eq(0)
+        .should('contain', '400');
     });
   });
 });
