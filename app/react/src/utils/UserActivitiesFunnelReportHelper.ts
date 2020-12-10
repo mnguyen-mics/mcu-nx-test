@@ -9,8 +9,8 @@ export function buildUserActivitiesFunnelRequestBody(
   funnelFilter: FunnelFilter[],
   funnelTimeRange: FunnelTimeRange
 ): FunnelRequestBody {
-  const startDate: string = new McsMoment(funnelTimeRange.start_date).toMoment().utc(true).startOf('day').format().replace('Z', '');
-  const endDate: string = new McsMoment(funnelTimeRange.end_date).toMoment().utc().endOf('day').format().replace('Z', '');
+  const startDate: string = new McsMoment(funnelTimeRange.start_date).toMoment().utc(true).format('YYYY-MM-DD');
+  const endDate: string = new McsMoment(funnelTimeRange.end_date).toMoment().utc().format('YYYY-MM-DD');
   const body: FunnelRequestBody = {
     for: funnelFilter,
     in: {
