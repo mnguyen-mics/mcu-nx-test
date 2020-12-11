@@ -160,7 +160,7 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
         // Remove segment filter
         newDashboardConfig = currentFormattedConfig.filter(item => !item.segments || (item.segments && item.segments.baseSegmentId !== thedifference[0]));
         const newDashboardConfigKeys = newDashboardConfig.map(item => item.layout.i);
-        newGeneratedDom.concat(generatedDom.filter((item: JSX.Element) => newDashboardConfigKeys.includes(item.key as string | undefined)))
+        newGeneratedDom.concat(generatedDom.filter((item: JSX.Element) => newDashboardConfigKeys.includes(item.key as string)))
       }
 
       this.setState({
@@ -178,7 +178,7 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
         const newDashboardConfig = !filter.allusers ? currentFormattedConfig.filter(item => item.segments) : currentFormattedConfig.concat(allUsersConfig);
         const newDashboardConfigKeys = newDashboardConfig.map(item => item.layout.i);
 
-        const newGeneratedDom = filter.allusers ? this.generateDOM(newDashboardConfig, datamartId, dateRange, onChange) : state.generatedDom.filter((item: JSX.Element) => newDashboardConfigKeys.includes(item.key as string | undefined));
+        const newGeneratedDom = filter.allusers ? this.generateDOM(newDashboardConfig, datamartId, dateRange, onChange) : state.generatedDom.filter((item: JSX.Element) => newDashboardConfigKeys.includes(item.key as string));
         return {
           formattedConfig: newDashboardConfig,
           allUsersFilter: filter.allusers,
@@ -245,7 +245,8 @@ class DatamartUsersAnalyticsContent extends React.Component<JoinedProp, Datamart
         cols={{ lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 }}
         isDraggable={false}
         isResizable={false}
-        measureBeforeMount={false}>
+        measureBeforeMount={false}
+        resizeHandle={<div />}>
         {generatedDom}
       </ResponsiveGridLayout>
     );

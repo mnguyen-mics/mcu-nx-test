@@ -96,7 +96,7 @@
     "@types/react": "16.7.7",
     "@types/react-burger-menu": "^2.2.1",
     "@types/react-dom": "^16.0.11",
-    "@types/react-grid-layout": "^0.16.6",
+    "@types/react-grid-layout": "^1.1.1",
     "@types/react-infinite-scroller": "^1.2.0",
     "@types/react-intl": "^2.3.13",
     "@types/react-map-gl": "3.3.3",

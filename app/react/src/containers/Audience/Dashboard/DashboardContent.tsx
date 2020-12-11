@@ -235,6 +235,7 @@ export default class DashboardContent extends React.Component<Props, State> {
         // Disable dragging & resizabling
         isDraggable={false}
         isResizable={false}
+        resizeHandle={<div />}
       >
         {this.generateDOM()}
       </ResponsiveReactGridLayout>

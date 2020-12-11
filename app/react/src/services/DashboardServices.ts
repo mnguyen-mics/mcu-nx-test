@@ -14,7 +14,7 @@ import {
 } from '../models/dashboards/dashboards';
 import { TYPES } from '../constants/types';
 import { IDataFileService } from './DataFileService';
-
+import cuid from 'cuid';
 export interface GetDashboardsOptions extends PaginatedApiParam {
   organisation_id?: string;
   datamartId?: string;
@@ -279,6 +279,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -295,6 +296,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -310,6 +312,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -325,6 +328,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -340,6 +344,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -356,6 +361,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -374,6 +380,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -398,6 +405,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -419,6 +427,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 12,
@@ -437,6 +446,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 12,
@@ -455,6 +465,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 12,
@@ -481,6 +492,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -497,6 +509,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -512,6 +525,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -527,6 +541,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -542,6 +557,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -558,6 +574,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -576,6 +593,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -600,6 +618,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -621,6 +640,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 12,
@@ -639,6 +659,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 12,
@@ -657,6 +678,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 12,
@@ -683,6 +705,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -699,6 +722,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -714,6 +738,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -729,6 +754,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -744,6 +770,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -760,6 +787,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -778,6 +806,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -802,6 +831,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -823,6 +853,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 12,
@@ -841,6 +872,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 12,
@@ -859,6 +891,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 12,
@@ -883,7 +916,8 @@ const myDashboards: DashboardResource[] = [
     type: 'HOME',
     components: [
       {
-        layout: { h: 1, static: false, w: 3, x: 0, y: 0 },
+        layout: {
+          i: cuid(),  h: 1, static: false, w: 3, x: 0, y: 0 },
         component: {
           id: 1,
           component_type: 'PERCENTAGE',
@@ -893,7 +927,8 @@ const myDashboards: DashboardResource[] = [
         },
       },
       {
-        layout: { h: 1, static: false, w: 3, x: 3, y: 0 },
+        layout: {
+          i: cuid(),  h: 1, static: false, w: 3, x: 3, y: 0 },
         component: {
           id: 2,
           component_type: 'COUNT',
@@ -902,7 +937,8 @@ const myDashboards: DashboardResource[] = [
         },
       },
       {
-        layout: { h: 1, static: false, w: 3, x: 6, y: 0 },
+        layout: {
+          i: cuid(),  h: 1, static: false, w: 3, x: 6, y: 0 },
         component: {
           id: 3,
           component_type: 'COUNT',
@@ -911,7 +947,8 @@ const myDashboards: DashboardResource[] = [
         },
       },
       {
-        layout: { h: 1, static: false, w: 3, x: 9, y: 0 },
+        layout: {
+          i: cuid(),  h: 1, static: false, w: 3, x: 9, y: 0 },
         component: {
           id: 4,
           component_type: 'COUNT',
@@ -920,7 +957,8 @@ const myDashboards: DashboardResource[] = [
         },
       },
       {
-        layout: { h: 3, static: false, w: 6, x: 0, y: 1 },
+        layout: {
+          i: cuid(),  h: 3, static: false, w: 6, x: 0, y: 1 },
         component: {
           id: 5,
           component_type: 'MAP_PIE_CHART',
@@ -930,7 +968,8 @@ const myDashboards: DashboardResource[] = [
         },
       },
       {
-        layout: { h: 3, static: false, w: 6, x: 6, y: 1 },
+        layout: {
+          i: cuid(),  h: 3, static: false, w: 6, x: 6, y: 1 },
         component: {
           id: 5,
           component_type: 'COUNT_PIE_CHART',
@@ -942,7 +981,8 @@ const myDashboards: DashboardResource[] = [
         },
       },
       {
-        layout: { h: 3, static: false, w: 6, x: 0, y: 4 },
+        layout: {
+          i: cuid(),  h: 3, static: false, w: 6, x: 0, y: 4 },
         component: {
           id: 5,
           component_type: 'COUNT_PIE_CHART',
@@ -960,7 +1000,8 @@ const myDashboards: DashboardResource[] = [
         },
       },
       {
-        layout: { h: 3, static: false, w: 6, x: 6, y: 4 },
+        layout: {
+          i: cuid(),  h: 3, static: false, w: 6, x: 6, y: 4 },
         component: {
           id: 5,
           component_type: 'COUNT_PIE_CHART',
@@ -975,7 +1016,8 @@ const myDashboards: DashboardResource[] = [
         },
       },
       {
-        layout: { h: 3, static: false, w: 12, x: 0, y: 7 },
+        layout: {
+          i: cuid(),  h: 3, static: false, w: 12, x: 0, y: 7 },
         component: {
           id: 5,
           component_type: 'DATE_AGGREGATION_CHART',
@@ -987,7 +1029,8 @@ const myDashboards: DashboardResource[] = [
         },
       },
       {
-        layout: { h: 3, static: false, w: 12, x: 0, y: 10 },
+        layout: {
+          i: cuid(),  h: 3, static: false, w: 12, x: 0, y: 10 },
         component: {
           id: 5,
           component_type: 'DATE_AGGREGATION_CHART',
@@ -999,7 +1042,8 @@ const myDashboards: DashboardResource[] = [
         },
       },
       {
-        layout: { h: 3, static: false, w: 12, x: 0, y: 13 },
+        layout: {
+          i: cuid(),  h: 3, static: false, w: 12, x: 0, y: 13 },
         component: {
           id: 5,
           component_type: 'DATE_AGGREGATION_CHART',
@@ -1020,6 +1064,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -1036,6 +1081,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -1051,6 +1097,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -1066,6 +1113,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -1081,6 +1129,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -1097,6 +1146,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -1115,6 +1165,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -1139,6 +1190,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -1160,6 +1212,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 12,
@@ -1178,6 +1231,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 12,
@@ -1196,6 +1250,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 12,
@@ -1222,6 +1277,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -1238,6 +1294,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -1253,6 +1310,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -1268,6 +1326,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -1283,6 +1342,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -1299,6 +1359,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -1317,6 +1378,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -1341,6 +1403,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -1362,6 +1425,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 12,
@@ -1380,6 +1444,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 12,
@@ -1398,6 +1463,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 12,
@@ -1424,6 +1490,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -1440,6 +1507,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -1455,6 +1523,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -1470,6 +1539,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -1485,6 +1555,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -1501,6 +1572,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -1519,6 +1591,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -1543,6 +1616,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -1564,6 +1638,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 12,
@@ -1582,6 +1657,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 12,
@@ -1600,6 +1676,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 12,
@@ -1626,6 +1703,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -1642,6 +1720,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -1657,6 +1736,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -1672,6 +1752,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -1687,6 +1768,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -1703,6 +1785,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -1721,6 +1804,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -1745,6 +1829,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -1766,6 +1851,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 12,
@@ -1784,6 +1870,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 12,
@@ -1802,6 +1889,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 12,
@@ -1828,6 +1916,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -1844,6 +1933,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -1859,6 +1949,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -1874,6 +1965,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -1889,6 +1981,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -1905,6 +1998,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -1923,6 +2017,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -1947,6 +2042,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -1968,6 +2064,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 12,
@@ -1986,6 +2083,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 12,
@@ -2004,6 +2102,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 12,
@@ -2030,6 +2129,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -2046,6 +2146,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -2061,6 +2162,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -2076,6 +2178,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -2091,6 +2194,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -2107,6 +2211,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -2125,6 +2230,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -2149,6 +2255,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -2170,6 +2277,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 12,
@@ -2188,6 +2296,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 12,
@@ -2206,6 +2315,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 12,
@@ -2231,7 +2341,8 @@ const myDashboards: DashboardResource[] = [
     type: 'HOME',
     components: [
       {
-        layout: { h: 1, static: false, w: 3, x: 0, y: 0 },
+        layout: {
+          i: cuid(),  h: 1, static: false, w: 3, x: 0, y: 0 },
         component: {
           id: 1,
           component_type: 'PERCENTAGE',
@@ -2241,7 +2352,8 @@ const myDashboards: DashboardResource[] = [
         },
       },
       {
-        layout: { h: 1, static: false, w: 3, x: 3, y: 0 },
+        layout: {
+          i: cuid(),  h: 1, static: false, w: 3, x: 3, y: 0 },
         component: {
           id: 2,
           component_type: 'COUNT',
@@ -2250,7 +2362,8 @@ const myDashboards: DashboardResource[] = [
         },
       },
       {
-        layout: { h: 1, static: false, w: 3, x: 6, y: 0 },
+        layout: {
+          i: cuid(),  h: 1, static: false, w: 3, x: 6, y: 0 },
         component: {
           id: 3,
           component_type: 'COUNT',
@@ -2259,7 +2372,8 @@ const myDashboards: DashboardResource[] = [
         },
       },
       {
-        layout: { h: 1, static: false, w: 3, x: 9, y: 0 },
+        layout: {
+          i: cuid(),  h: 1, static: false, w: 3, x: 9, y: 0 },
         component: {
           id: 4,
           component_type: 'COUNT',
@@ -2268,7 +2382,8 @@ const myDashboards: DashboardResource[] = [
         },
       },
       {
-        layout: { h: 3, static: false, w: 6, x: 0, y: 1 },
+        layout: {
+          i: cuid(),  h: 3, static: false, w: 6, x: 0, y: 1 },
         component: {
           id: 5,
           component_type: 'MAP_PIE_CHART',
@@ -2278,7 +2393,8 @@ const myDashboards: DashboardResource[] = [
         },
       },
       {
-        layout: { h: 3, static: false, w: 6, x: 6, y: 1 },
+        layout: {
+          i: cuid(),  h: 3, static: false, w: 6, x: 6, y: 1 },
         component: {
           id: 5,
           component_type: 'COUNT_PIE_CHART',
@@ -2290,7 +2406,8 @@ const myDashboards: DashboardResource[] = [
         },
       },
       {
-        layout: { h: 3, static: false, w: 6, x: 0, y: 4 },
+        layout: {
+          i: cuid(),  h: 3, static: false, w: 6, x: 0, y: 4 },
         component: {
           id: 5,
           component_type: 'COUNT_PIE_CHART',
@@ -2308,7 +2425,8 @@ const myDashboards: DashboardResource[] = [
         },
       },
       {
-        layout: { h: 3, static: false, w: 6, x: 6, y: 4 },
+        layout: {
+          i: cuid(),  h: 3, static: false, w: 6, x: 6, y: 4 },
         component: {
           id: 5,
           component_type: 'COUNT_PIE_CHART',
@@ -2323,7 +2441,8 @@ const myDashboards: DashboardResource[] = [
         },
       },
       {
-        layout: { h: 3, static: false, w: 12, x: 0, y: 7 },
+        layout: {
+          i: cuid(),  h: 3, static: false, w: 12, x: 0, y: 7 },
         component: {
           id: 5,
           component_type: 'DATE_AGGREGATION_CHART',
@@ -2335,7 +2454,8 @@ const myDashboards: DashboardResource[] = [
         },
       },
       {
-        layout: { h: 3, static: false, w: 12, x: 0, y: 10 },
+        layout: {
+          i: cuid(),  h: 3, static: false, w: 12, x: 0, y: 10 },
         component: {
           id: 5,
           component_type: 'DATE_AGGREGATION_CHART',
@@ -2347,7 +2467,8 @@ const myDashboards: DashboardResource[] = [
         },
       },
       {
-        layout: { h: 3, static: false, w: 12, x: 0, y: 13 },
+        layout: {
+          i: cuid(),  h: 3, static: false, w: 12, x: 0, y: 13 },
         component: {
           id: 5,
           component_type: 'DATE_AGGREGATION_CHART',
@@ -2369,6 +2490,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -2384,6 +2506,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -2399,6 +2522,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -2414,6 +2538,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -2429,6 +2554,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -2445,6 +2571,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -2461,6 +2588,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 4,
@@ -2477,6 +2605,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 4,
@@ -2495,6 +2624,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 4,
@@ -2519,6 +2649,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 4,
@@ -2534,6 +2665,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 4,
@@ -2549,6 +2681,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 4,
@@ -2564,6 +2697,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -2580,6 +2714,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -2596,6 +2731,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 4,
@@ -2612,6 +2748,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 4,
@@ -2630,6 +2767,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 4,
@@ -2654,6 +2792,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -2669,6 +2808,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -2684,6 +2824,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -2699,6 +2840,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 3,
@@ -2714,6 +2856,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -2730,6 +2873,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -2746,6 +2890,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 4,
@@ -2762,6 +2907,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 4,
@@ -2780,6 +2926,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 4,
@@ -2804,6 +2951,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 4,
@@ -2819,6 +2967,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 4,
@@ -2834,6 +2983,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 1,
           static: false,
           w: 4,
@@ -2849,6 +2999,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -2865,6 +3016,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -2881,6 +3033,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 4,
@@ -2897,6 +3050,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 4,
@@ -2915,6 +3069,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 4,
@@ -2938,6 +3093,7 @@ const myDashboards: DashboardResource[] = [
     "components": [
       {
         "layout": {
+          "i": cuid(),
           "h": 1,
           "static": false,
           "w": 3,
@@ -2954,6 +3110,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         "layout": {
+          "i": cuid(),
           "h": 1,
           "static": false,
           "w": 3,
@@ -2969,6 +3126,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         "layout": {
+          "i": cuid(),
           "h": 1,
           "static": false,
           "w": 3,
@@ -2984,6 +3142,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         "layout": {
+          "i": cuid(),
           "h": 1,
           "static": false,
           "w": 3,
@@ -2999,6 +3158,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         "layout": {
+          "i": cuid(),
           "h": 3,
           "static": false,
           "w": 6,
@@ -3015,6 +3175,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         "layout": {
+          "i": cuid(),
           "h": 3,
           "static": false,
           "w": 6,
@@ -3041,6 +3202,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         "layout": {
+          "i": cuid(),
           "h": 3,
           "static": false,
           "w": 6,
@@ -3071,6 +3233,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         "layout": {
+          "i": cuid(),
           "h": 3,
           "static": false,
           "w": 6,
@@ -3095,6 +3258,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         "layout": {
+          "i": cuid(),
           "h": 3,
           "static": false,
           "w": 12,
@@ -3123,6 +3287,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         "layout": {
+          "i": cuid(),
           "h": 3,
           "static": false,
           "w": 12,
@@ -3147,6 +3312,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         "layout": {
+          "i": cuid(),
           "h": 3,
           "static": false,
           "w": 12,
@@ -3177,6 +3343,7 @@ const myDashboards: DashboardResource[] = [
     "components": [
       {
         "layout": {
+          "i": cuid(),
           "h": 1,
           "static": false,
           "w": 3,
@@ -3193,6 +3360,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         "layout": {
+          "i": cuid(),
           "h": 1,
           "static": false,
           "w": 3,
@@ -3208,6 +3376,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         "layout": {
+          "i": cuid(),
           "h": 1,
           "static": false,
           "w": 3,
@@ -3223,6 +3392,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         "layout": {
+          "i": cuid(),
           "h": 1,
           "static": false,
           "w": 3,
@@ -3238,6 +3408,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         "layout": {
+          "i": cuid(),
           "h": 3,
           "static": false,
           "w": 6,
@@ -3254,6 +3425,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         "layout": {
+          "i": cuid(),
           "h": 3,
           "static": false,
           "w": 6,
@@ -3280,6 +3452,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         "layout": {
+          "i": cuid(),
           "h": 3,
           "static": false,
           "w": 6,
@@ -3310,6 +3483,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         "layout": {
+          "i": cuid(),
           "h": 3,
           "static": false,
           "w": 6,
@@ -3334,6 +3508,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         "layout": {
+          "i": cuid(),
           "h": 3,
           "static": false,
           "w": 12,
@@ -3362,6 +3537,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         "layout": {
+          "i": cuid(),
           "h": 3,
           "static": false,
           "w": 12,
@@ -3386,6 +3562,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         "layout": {
+          "i": cuid(),
           "h": 3,
           "static": false,
           "w": 12,
@@ -3416,6 +3593,7 @@ const myDashboards: DashboardResource[] = [
     "components": [
       {
         "layout": {
+          "i": cuid(),
           "h": 1,
           "static": false,
           "w": 3,
@@ -3432,6 +3610,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         "layout": {
+          "i": cuid(),
           "h": 1,
           "static": false,
           "w": 3,
@@ -3447,6 +3626,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         "layout": {
+          "i": cuid(),
           "h": 1,
           "static": false,
           "w": 3,
@@ -3462,6 +3642,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         "layout": {
+          "i": cuid(),
           "h": 1,
           "static": false,
           "w": 3,
@@ -3477,6 +3658,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         "layout": {
+          "i": cuid(),
           "h": 3,
           "static": false,
           "w": 6,
@@ -3493,6 +3675,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         "layout": {
+          "i": cuid(),
           "h": 3,
           "static": false,
           "w": 6,
@@ -3519,6 +3702,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         "layout": {
+          "i": cuid(),
           "h": 3,
           "static": false,
           "w": 6,
@@ -3549,6 +3733,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         "layout": {
+          "i": cuid(),
           "h": 3,
           "static": false,
           "w": 6,
@@ -3573,6 +3758,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         "layout": {
+          "i": cuid(),
           "h": 3,
           "static": false,
           "w": 12,
@@ -3601,6 +3787,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         "layout": {
+          "i": cuid(),
           "h": 3,
           "static": false,
           "w": 12,
@@ -3625,6 +3812,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         "layout": {
+          "i": cuid(),
           "h": 3,
           "static": false,
           "w": 12,
@@ -3656,6 +3844,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -3684,6 +3873,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -3712,6 +3902,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 4,
@@ -3740,6 +3931,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 4,
@@ -3768,6 +3960,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 4,
@@ -3804,6 +3997,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 12,
@@ -3834,6 +4028,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 12,
@@ -3869,6 +4064,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -3897,6 +4093,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -3933,6 +4130,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -3961,6 +4159,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -3989,6 +4188,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 4,
@@ -4017,6 +4217,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 4,
@@ -4045,6 +4246,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 4,
@@ -4081,6 +4283,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 12,
@@ -4111,6 +4314,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 12,
@@ -4146,6 +4350,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -4174,6 +4379,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -4213,6 +4419,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -4241,6 +4448,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -4269,6 +4477,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 4,
@@ -4298,6 +4507,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 4,
@@ -4327,6 +4537,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 4,
@@ -4364,6 +4575,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 12,
@@ -4395,6 +4607,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 12,
@@ -4430,6 +4643,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -4459,6 +4673,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -4496,6 +4711,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -4524,6 +4740,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -4552,6 +4769,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 4,
@@ -4580,6 +4798,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 4,
@@ -4608,6 +4827,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 4,
@@ -4644,6 +4864,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 12,
@@ -4674,6 +4895,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 12,
@@ -4709,6 +4931,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
@@ -4737,6 +4960,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
+          i: cuid(), 
           h: 3,
           static: false,
           w: 6,
