@@ -35,14 +35,9 @@ describe('User Profile Import Test', () => {
 
   // File upload
   const uploadFile = (fileName: string) => {
-    cy.fixture(fileName).then(fileContent => {
-      cy.get('[type="file"]').upload(
-        {
-          fileContent,
-          fileName,
-          mimeType: 'application/json',
-          encoding: 'utf-8'
-        },
+    cy.fixture(fileName).then(() => {
+      cy.get('[type="file"]').attachFile(
+        fileName,
         { force: true, subjectType: 'drag-n-drop' }
       )
     })
