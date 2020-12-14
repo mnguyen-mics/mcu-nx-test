@@ -9,9 +9,9 @@ export default defineMessages({
     id: 'audience.feeds.list.column.name',
     defaultMessage: 'Name',
   },
-  segmentName: {
-    id: 'audience.feeds.list.column.segmentName',
-    defaultMessage: 'Segment Name',
+  source: {
+    id: 'audience.feeds.list.column.source',
+    defaultMessage: 'Source',
   },
 	feedId: {
     id: 'audience.feeds.list.column.feedId',
@@ -25,6 +25,10 @@ export default defineMessages({
     id: 'audience.feeds.list.column.segmentNameNotFound',
     defaultMessage: 'Untitled',
   },
+  scenarioNameNotFound: {
+    id: 'audience.feeds.list.column.scenarioNameNotFound',
+    defaultMessage: 'Untitled',
+  },
   segmentDeleted: {
     id: 'audience.feeds.list.column.segmentDeleted',
     defaultMessage: 'Segment deleted',
@@ -32,6 +36,10 @@ export default defineMessages({
   artifactId: {
     id: 'audience.feeds.list.column.artifactId',
     defaultMessage: 'Connector',
+  },
+  createdFrom: {
+    id: 'audience.feeds.list.column.sourceType',
+    defaultMessage: 'Source type',
   },
   status: {
     id: 'audience.feeds.list.column.status',

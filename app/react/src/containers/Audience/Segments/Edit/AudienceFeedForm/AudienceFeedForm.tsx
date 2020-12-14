@@ -203,6 +203,7 @@ class CreateAudienceFeed<T> extends React.Component<JoinedProps<T>> {
       organisation_id: organisationId,
       audience_segment_id: segmentId,
       status: 'INITIAL',
+      created_from: 'SEGMENT'
     };
     return result;
   };

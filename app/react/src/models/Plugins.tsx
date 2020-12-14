@@ -145,6 +145,8 @@ export enum StatusEnum {
 }
 export type Status = keyof typeof StatusEnum;
 
+export type AudienceSegmentFeedSourceType = 'SEGMENT' | 'AUTOMATION';
+
 export interface AudienceExternalFeed extends PluginInstance {
   artifact_id: string;
   audience_segment_id: string;
@@ -154,6 +156,8 @@ export interface AudienceExternalFeed extends PluginInstance {
   status: Status;
   version_id: string;
   name?: string;
+  created_from: AudienceSegmentFeedSourceType;
+  scenario_id?: string;
 }
 
 export interface AudienceTagFeed extends PluginInstance {
@@ -165,6 +169,8 @@ export interface AudienceTagFeed extends PluginInstance {
   organisation_id: string;
   version_id: string;
   name?: string;
+  created_from: AudienceSegmentFeedSourceType;
+  scenario_id?: string;
 }
 
 export interface Adlayout {
