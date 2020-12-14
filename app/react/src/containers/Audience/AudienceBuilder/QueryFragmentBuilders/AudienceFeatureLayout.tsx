@@ -3,9 +3,6 @@ import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { AudienceFeatureResource } from '../../../../models/audienceFeature';
 import { Spin } from 'antd';
-import { lazyInject } from '../../../../config/inversify.config';
-import { IAudienceFeatureService } from '../../../../services/AudienceFeatureService';
-import { TYPES } from '../../../../constants/types';
 import { withValidators } from '../../../../components/Form';
 import { ValidatorProps } from '../../../../components/Form/withValidators';
 import { AudienceBuilderParametricPredicateNode } from '../../../../models/audienceBuilder/AudienceBuilderResource';
@@ -27,32 +24,30 @@ export interface AudienceFeatureLayoutProps {
   formPath: string;
   parametricPredicateResource: AudienceBuilderParametricPredicateNode;
   objectTypes: ObjectLikeTypeInfoResource[];
+  audienceFeatures?: AudienceFeatureResource[];
 }
 
 type Props = AudienceFeatureLayoutProps & InjectedIntlProps & ValidatorProps;
 
 class AudienceFeatureLayout extends React.Component<Props, State> {
-  @lazyInject(TYPES.IAudienceFeatureService)
-  private _audienceFeatureService: IAudienceFeatureService;
-
   constructor(props: Props) {
     super(props);
     this.state = {};
   }
 
   componentDidMount() {
-    const { datamartId, parametricPredicateResource } = this.props;
-    this._audienceFeatureService
-      .getAudienceFeature(
-        datamartId,
-        parametricPredicateResource.parametric_predicate_id,
-      )
-      .then(res => {
-        this.setState({
-          audienceFeature: res.data,
-        });
-      });
+    this.getAudienceFeature();
   }
+  getAudienceFeature = () => {
+    const { parametricPredicateResource, audienceFeatures } = this.props;
+    if (audienceFeatures) {
+      this.setState({
+        audienceFeature: audienceFeatures.find(
+          f => f.id === parametricPredicateResource.parametric_predicate_id,
+        ),
+      });
+    }
+  };
 
   render() {
     const { audienceFeature } = this.state;
