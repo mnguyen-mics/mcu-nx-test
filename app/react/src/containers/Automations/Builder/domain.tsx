@@ -725,17 +725,20 @@ type FormatMessageHandler = (
   values?: { [key: string]: string | number | boolean | Date },
 ) => string;
 
-export function generateNodeProperties(
-  node: AutomationNodeShape,
-  formatMessage: FormatMessageHandler,
-): {
+export interface NodeProperties {
   title: string;
   subtitle: string;
   color: string;
   iconType?: McsIconType;
   iconAnt?: AntIcon;
   branchNumber?: number;
-} {
+  iconAssetUrl?: string;
+}
+
+export function generateNodeProperties(
+  node: AutomationNodeShape,
+  formatMessage: FormatMessageHandler,
+): NodeProperties {
   switch (node.type) {
     case 'DISPLAY_CAMPAIGN':
       return {
@@ -842,6 +845,13 @@ export function generateNodeProperties(
         subtitle: '',
         iconType: 'bolt',
         color: '#0ba6e1',
+      };
+    case 'SCENARIO_AUDIENCE_SEGMENT_FEED_NODE':
+      return {
+        title: node.strictlyLayoutablePlugin?.name || '',
+        subtitle: '',
+        color: '#0ba6e1',
+        iconAssetUrl: node.strictlyLayoutablePlugin?.plugin_layout.metadata.small_icon_asset_url,
       };
     default:
       return {

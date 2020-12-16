@@ -30,6 +30,7 @@ export default class AutomationNodeModel extends NodeModel {
   root?: boolean;
   icon?: McsIconType;
   iconAnt?: AntIcon;
+  iconAssetUrl?: string;
   isFirstNode?: boolean;
   creationMode?: QueryInputUiCreationMode;
 
@@ -41,6 +42,7 @@ export default class AutomationNodeModel extends NodeModel {
     color?: string,
     iconType?: McsIconType,
     iconAnt?: AntIcon,
+    iconAssetUrl?: string,
     treeNodePath?: number[],
     isFirstNode?: boolean,
     creationMode?: QueryInputUiCreationMode,
@@ -66,6 +68,7 @@ export default class AutomationNodeModel extends NodeModel {
     this.color = color;
     this.storylineNodeModel = storylineNodeModel;
     this.iconAnt = iconAnt;
+    this.iconAssetUrl = iconAssetUrl;
     this.isFirstNode = isFirstNode;
     this.creationMode = creationMode;
 

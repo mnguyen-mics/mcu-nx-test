@@ -7,12 +7,11 @@ import {
 } from 'react-dnd';
 import { Icon } from 'antd';
 import { ScenarioNodeShape } from '../../../../models/automations/automations';
-import { generateNodeProperties } from '../domain';
+import { generateNodeProperties, NodeProperties } from '../domain';
 import { isAbnNode } from '../AutomationNode/Edit/domain';
 import { generateFakeId } from '../../../../utils/FakeIdHelper';
 import { InjectedIntlProps } from 'react-intl';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
-import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 
 interface AvailableNodeObjectProps {
   node: ScenarioNodeShape;
@@ -42,36 +41,65 @@ const fieldSource = {
 };
 
 class AvailableNode extends React.Component<AvailableNodeProps> {
+  getIcon = (nodeProperties: NodeProperties) => {
+    if (nodeProperties.iconAnt) {
+      return (
+        <div
+          className="available-node-icon"
+          style={{ backgroundColor: nodeProperties.color }}
+        >
+          <Icon
+            type={nodeProperties.iconAnt}
+            className="available-node-icon-gyph"
+          />
+        </div>
+      );
+    } else if (nodeProperties.iconType) {
+      return (
+        <div
+          className="available-node-icon"
+          style={{ backgroundColor: nodeProperties.color }}
+        >
+          <McsIcon
+            type={nodeProperties.iconType}
+            className="available-node-icon-gyph"
+          />
+        </div>
+      );
+    } else if (nodeProperties.iconAssetUrl) {
+      return (
+        <div className="available-node-icon">
+          <img
+            className="available-node-icon-img"
+            src={`${(window as any).MCS_CONSTANTS.ASSETS_URL}${
+              nodeProperties.iconAssetUrl
+            }`}
+          />
+        </div>
+      );
+    } else return null;
+  };
+
   render() {
     const {
       node,
       connectDragSource,
       intl: { formatMessage },
     } = this.props;
-    const nodeProperties = generateNodeProperties(node, formatMessage);
+    const nodeProperties: NodeProperties = generateNodeProperties(
+      node,
+      formatMessage,
+    );
 
     const name = nodeProperties.title;
-    const icon = nodeProperties.iconType;
-    const color = nodeProperties.color;
-    const iconAnt = nodeProperties.iconAnt;
+
+    const iconElement = this.getIcon(nodeProperties);
 
     return (
       connectDragSource &&
       connectDragSource(
         <div className="available-node">
-          <div
-            className="available-node-icon"
-            style={{ backgroundColor: color }}
-          >
-            {iconAnt ? (
-              <Icon type={iconAnt} className="available-node-icon-gyph" />
-            ) : (
-              <McsIcon
-                type={icon as McsIconType}
-                className="available-node-icon-gyph"
-              />
-            )}
-          </div>
+          {iconElement}
           <div className="available-node-text">{name}</div>
         </div>,
       )
