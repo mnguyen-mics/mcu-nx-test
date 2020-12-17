@@ -171,7 +171,9 @@ class NavigatorSettingsSideMenu extends React.Component<
       currentOpenMenu.subMenuItems.map(itemDef => {
         return hasFeature(itemDef.requiredFeature, itemDef.requireDatamart) ? (
           <Menu.Item key={itemDef.path}>
-            <Link to={`${baseUrl}${itemDef.path}`}>
+            <Link
+              to={`${baseUrl}${itemDef.path}`}
+              className={`mcs-settingsSideMenu_${itemDef.translation.id}`}>
               <McsIcon type={itemDef.iconType as McsIconType} />
               <span className="nav-text">
                 <FormattedMessage {...itemDef.translation} />
@@ -245,8 +247,7 @@ class NavigatorSettingsSideMenu extends React.Component<
         selectedKeys={getSelectedKeys()}
         openKeys={getOpenKeysInMode()}
         onOpenChange={this.onOpenChange}
-        onClick={this.onClick}
-      >
+        onClick={this.onClick}>
         {this.buildItems()}
       </Menu>
     );
