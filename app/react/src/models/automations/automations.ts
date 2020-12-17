@@ -186,7 +186,7 @@ export interface FeedNodeResource extends ScenarioNodeResource {
   type: 'SCENARIO_AUDIENCE_SEGMENT_FEED_NODE';
   feed_node_id?: string;
   formData?: FeedNodeFormData;
-  strictlyLayoutablePlugin?: StrictlyLayoutablePlugin;
+  strictlyLayoutablePlugin: StrictlyLayoutablePlugin;
 }
 
 export type ScenarioNodeShape =

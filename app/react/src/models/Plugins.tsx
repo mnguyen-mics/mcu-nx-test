@@ -1,3 +1,4 @@
+import { PropertyResourceShape } from './plugin';
 import { PluginLayout } from './plugin/PluginLayout';
 
 export interface PluginResource {
@@ -18,6 +19,7 @@ export interface LayoutablePlugin extends PluginResource {
 export interface StrictlyLayoutablePlugin extends PluginResource {
   plugin_layout: PluginLayout;
   plugin_preset: PluginPresetResource;
+  plugin_version_properties: PropertyResourceShape[];
 }
 
 export interface PluginProperty {

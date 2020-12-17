@@ -16,6 +16,7 @@ import OnSegmentEntryInputAutomationForm from './Edit/OnSegmentEntryInputForm/On
 import OnSegmentExitInputAutomationForm from './Edit/OnSegmentExitInputForm/OnSegmentExitInputAutomationForm';
 import CustomActionAutomationForm from './Edit/CustomActionNodeForm/CustomActionAutomationForm';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
+import AudienceSegmentFeedAutomationForm from './Edit/AudienceSegmentFeedNodeForm/AudienceSegmentFeedAutomationForm';
 
 export default class AutomationNodeModel extends NodeModel {
   collapsed = false;
@@ -108,6 +109,9 @@ export default class AutomationNodeModel extends NodeModel {
         break;
       case 'CUSTOM_ACTION_NODE':
         this.editFormComponent = CustomActionAutomationForm;
+        break;
+      case 'SCENARIO_AUDIENCE_SEGMENT_FEED_NODE':
+        this.editFormComponent = AudienceSegmentFeedAutomationForm;
         break;
       default:
         this.editFormComponent = DefaultAutomationForm;

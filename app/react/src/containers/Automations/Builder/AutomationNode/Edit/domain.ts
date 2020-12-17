@@ -38,6 +38,7 @@ import { WaitAutomationFormProps } from './WaitForm/WaitForm';
 import { OnSegmentExitInputAutomationFormProps } from './OnSegmentExitInputForm/OnSegmentExitInputAutomationForm';
 import { OnSegmentEntryInputAutomationFormProps } from './OnSegmentEntryInputForm/OnSegmentEntryInputAutomationForm';
 import { WeekDay } from '../../../../../utils/DateHelper';
+import { AudienceSegmentFeedAutomationFormProps } from './AudienceSegmentFeedNodeForm/AudienceSegmentFeedAutomationForm';
 
 export interface DefaultFormData {}
 
@@ -197,6 +198,7 @@ export interface CustomActionAutomationFormData extends DefaultFormData {
 }
 
 export interface FeedNodeFormData extends DefaultFormData {
+  properties: any;
 }
 
 export type AutomationFormDataType =
@@ -223,14 +225,15 @@ export type AutomationFormPropsType =
   | WaitAutomationFormProps
   | OnSegmentExitInputAutomationFormProps
   | OnSegmentEntryInputAutomationFormProps
-  | CustomActionAutomationFormProps;
+  | CustomActionAutomationFormProps
+  | AudienceSegmentFeedAutomationFormProps;
 
 export const FORM_ID = 'automationNodeForm';
 
 export function isScenarioNodeShape(
   node: AutomationNodeShape,
 ): node is ScenarioNodeShape {
-  return (node as AutomationNodeShape).type !== 'DROP_NODE';
+  return node.type !== 'DROP_NODE';
 }
 
 export function isAbnNode(node: AutomationNodeShape): node is ABNNodeResource {

@@ -11,6 +11,7 @@ import {
   INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA,
   INITIAL_ADD_TO_SEGMENT_NODE_FORM_DATA,
   INITIAL_DELETE_FROM_SEGMENT_NODE_FORM_DATA,
+  FeedNodeFormData,
 } from '../AutomationNode/Edit/domain';
 import { generateFakeId } from '../../../../utils/FakeIdHelper';
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
@@ -21,12 +22,14 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { RouteComponentProps, withRouter } from 'react-router';
 import {
+  PluginPresetProperty,
   PluginPresetResource,
   PluginType,
   PluginVersionResource,
   StrictlyLayoutablePlugin,
 } from '../../../../models/Plugins';
 import { PluginLayout } from '../../../../models/plugin/PluginLayout';
+import { PropertyResourceShape } from '../../../../models/plugin';
 
 const { TreeNode } = Tree;
 
@@ -58,9 +61,10 @@ export interface AvailableNode {
   branchNumber?: number;
 }
 
-interface PluginLayoutAndVersion {
+interface PluginLayoutAndVersionProperties {
   pluginLayout: PluginLayout;
   pluginVersion: PluginVersionResource;
+  pluginVersionProperties: PropertyResourceShape[];
 }
 
 interface State {
@@ -224,7 +228,7 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
         Promise.resolve([]),
       );
 
-      const pluginLayoutsAndVersionsP: Promise<PluginLayoutAndVersion[]> = pluginPresetFeedsP.then(
+      const pluginLayoutsAndVersionPropertiesP: Promise<PluginLayoutAndVersionProperties[]> = pluginPresetFeedsP.then(
         pluginPresets => {
           const distinctPluginVersionIds = [
             ...new Set(pluginPresets.map(preset => preset.plugin_version_id)),
@@ -254,23 +258,44 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
                     .catch(err => undefined)
                 : Promise.resolve(undefined);
 
-              return Promise.all([pluginLayoutP, pluginVersionP]).then(
-                resPluginLayoutAndVersion => {
-                  const pluginLayout = resPluginLayoutAndVersion[0];
-                  const pluginVersion = resPluginLayoutAndVersion[1];
+              const pluginVersionPropertiesP = associatedPluginId
+                ? this._pluginService
+                    .getPluginVersionProperties(
+                      associatedPluginId,
+                      pluginVersionId,
+                    )
+                    .then(
+                      resPluginVersionProperties =>
+                        resPluginVersionProperties.data,
+                    )
+                    .catch(err => undefined)
+                : Promise.resolve(undefined);
 
-                  return { pluginLayout, pluginVersion };
-                },
-              );
+              return Promise.all([
+                pluginLayoutP,
+                pluginVersionP,
+                pluginVersionPropertiesP,
+              ]).then(resPluginLayoutAndVersion => {
+                const pluginLayout = resPluginLayoutAndVersion[0];
+                const pluginVersion = resPluginLayoutAndVersion[1];
+                const pluginVersionProperties = resPluginLayoutAndVersion[2];
+
+                return { pluginLayout, pluginVersion, pluginVersionProperties };
+              });
             }),
           ).then(resPluginLayoutsAndVersions =>
             resPluginLayoutsAndVersions.reduce(
-              (acc: PluginLayoutAndVersion[], el) => {
-                if (el.pluginLayout && el.pluginVersion) {
+              (acc: PluginLayoutAndVersionProperties[], el) => {
+                if (
+                  el.pluginLayout &&
+                  el.pluginVersion &&
+                  el.pluginVersionProperties
+                ) {
                   return acc.concat([
                     {
                       pluginLayout: el.pluginLayout,
                       pluginVersion: el.pluginVersion,
+                      pluginVersionProperties: el.pluginVersionProperties,
                     },
                   ]);
                 }
@@ -282,40 +307,93 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
         },
       );
 
-      return Promise.all([pluginLayoutsAndVersionsP, pluginPresetFeedsP])
+      return Promise.all([
+        pluginLayoutsAndVersionPropertiesP,
+        pluginPresetFeedsP,
+      ])
         .then(resLayoutsAndPresets => {
-          const layoutsAndVersions: PluginLayoutAndVersion[] =
+          const layoutsAndVersionProperties: PluginLayoutAndVersionProperties[] =
             resLayoutsAndPresets[0];
           const presets: PluginPresetResource[] = resLayoutsAndPresets[1];
 
           return presets.map(pluginPreset => {
-            const associatedLayoutAndVersion = layoutsAndVersions.find(
-              layoutAndVersion => {
+            const associatedLayoutAndVersionProperties = layoutsAndVersionProperties.find(
+              layoutAndVersionProperties => {
                 return (
-                  layoutAndVersion.pluginVersion?.id ===
+                  layoutAndVersionProperties.pluginVersion?.id ===
                   pluginPreset.plugin_version_id
                 );
               },
             );
 
-            if (associatedLayoutAndVersion) {
+            if (associatedLayoutAndVersionProperties) {
               const strictlyLayoutablePlugin: StrictlyLayoutablePlugin = {
-                plugin_layout: associatedLayoutAndVersion.pluginLayout,
+                plugin_layout:
+                  associatedLayoutAndVersionProperties.pluginLayout,
                 plugin_preset: pluginPreset,
-                id: associatedLayoutAndVersion.pluginVersion.plugin_id,
+                plugin_version_properties:
+                  associatedLayoutAndVersionProperties.pluginVersionProperties,
+                id:
+                  associatedLayoutAndVersionProperties.pluginVersion.plugin_id,
                 name: pluginPreset.name,
                 organisation_id: pluginPreset.organisation_id,
                 plugin_type: pluginPreset.plugin_type,
-                group_id: associatedLayoutAndVersion.pluginVersion.group_id,
+                group_id:
+                  associatedLayoutAndVersionProperties.pluginVersion.group_id,
                 artifact_id:
-                  associatedLayoutAndVersion.pluginVersion.artifact_id,
-                current_version_id: associatedLayoutAndVersion.pluginVersion.id,
+                  associatedLayoutAndVersionProperties.pluginVersion
+                    .artifact_id,
+                current_version_id:
+                  associatedLayoutAndVersionProperties.pluginVersion.id,
+              };
+
+              const reduceFunction = (
+                o: any,
+                prop: PropertyResourceShape | PluginPresetProperty,
+              ) => {
+                return {
+                  ...o,
+                  [prop.technical_name]: {
+                    property_type: prop.property_type,
+                    technical_name: prop.technical_name,
+                    value: prop.value,
+                  },
+                };
+              };
+
+              const pluginVersionProperties = associatedLayoutAndVersionProperties.pluginVersionProperties.reduce(
+                reduceFunction,
+                {},
+              );
+
+              const propertiesWithPreset = pluginPreset.properties.reduce(
+                reduceFunction,
+                pluginVersionProperties,
+              );
+
+              const allProperties = {
+                ...propertiesWithPreset,
+                name: {
+                  property_type: "STRING",
+                  technical_name: "name",
+                  value: {value: pluginPreset.name}
+                },
+                description: {
+                  property_type: "STRING",
+                  technical_name: "description",
+                  value: {value: pluginPreset.description}
+                }
+              }
+
+              const feedNodeFormData: FeedNodeFormData = {
+                properties: allProperties,
               };
 
               const scenarioNodeShape: ScenarioNodeShape = {
                 id: generateFakeId(),
                 type: 'SCENARIO_AUDIENCE_SEGMENT_FEED_NODE',
                 scenario_id: '',
+                formData: feedNodeFormData,
                 strictlyLayoutablePlugin,
               };
 
