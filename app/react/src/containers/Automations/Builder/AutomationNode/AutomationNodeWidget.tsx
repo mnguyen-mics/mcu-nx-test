@@ -632,13 +632,63 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     }
   };
 
+  getIcon = (node: AutomationNodeModel) => {
+    const backgroundColor = node.getColor();
+    const color = '#ffffff';
+    const borderColor = node.getColor();
+
+    const icon = node.iconAnt ? (
+      <Icon type={node.iconAnt} className="available-node-icon-gyph" />
+    ) : (
+      <McsIcon
+        type={node.icon as McsIconType}
+        className="available-node-icon-gyph"
+      />
+    );
+
+    if (node.iconAssetUrl) {
+      return (
+        <div
+          className={'node-icon-without-border'}
+          style={{
+            width: node.getSize().width,
+            height: node.getSize().height,
+            float: 'left',
+          }}
+        >
+          <img
+            className="available-node-icon-img"
+            src={`${(window as any).MCS_CONSTANTS.ASSETS_URL}${
+              node.iconAssetUrl
+            }`}
+          />
+        </div>
+      );
+    } else {
+      return (
+        <div
+          className={'node-icon'}
+          style={{
+            width: node.getSize().width,
+            height: node.getSize().height,
+            borderWidth: node.getSize().borderWidth,
+            borderColor: borderColor,
+            float: 'left',
+            color: color,
+            backgroundColor: backgroundColor,
+          }}
+        >
+          {icon}
+        </div>
+      );
+    }
+  };
+
   render() {
     const { node } = this.props;
     const { nodeName } = this.state;
 
-    const backgroundColor = node.getColor();
-    const color = '#ffffff';
-    const borderColor = node.getColor();
+    const icon = this.getIcon(node);
 
     const onFocus = () => {
       this.setPosition(document.getElementById(this.id) as HTMLDivElement);
@@ -664,28 +714,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
           cursor: onClick ? 'pointer' : 'default',
         }}
       >
-        <div
-          className={'node-icon'}
-          style={{
-            width: node.getSize().width,
-            height: node.getSize().height,
-            borderWidth: node.getSize().borderWidth,
-            borderColor: borderColor,
-            float: 'left',
-            color: color,
-            backgroundColor: backgroundColor,
-          }}
-        >
-          {node.iconAnt ? (
-            <Icon type={node.iconAnt} className="available-node-icon-gyph" />
-          ) : (
-            <McsIcon
-              type={node.icon as McsIconType}
-              className="available-node-icon-gyph"
-            />
-          )}
-        </div>
-
+        {icon}
         <div className="node-content">
           <Tooltip
             title={

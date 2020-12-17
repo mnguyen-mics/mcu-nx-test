@@ -81,6 +81,20 @@
     }
   }
 
+  .node-icon-without-border {
+    position: absolute;
+    transition: 0.3s ease;
+    transform: rotateZ(0deg);
+    border-radius: 50%;
+    left: 50%;
+    margin-left: -25px;
+    top: -25px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
   .drop-container {
     position: relative;
     border-radius: 50%;
@@ -154,6 +168,7 @@
     border-radius: 0.5em;
     word-wrap: break-word;
     white-space: pre-line;
+    overflow: hidden;
   }
 
   .available-node-grid {
@@ -224,6 +239,11 @@
     border-radius: 50%;
   }
 
+  .available-node-icon-img {
+    height: 50px;
+    width: 50px;
+  }
+
   .available-node-icon-gyph {
     font-size: 1.6em;
     position: absolute;
@@ -240,7 +260,7 @@
     position: absolute;
     left: 70px;
     padding-right: 15px;
-    text-align: center;
+    text-align: left;
   }
 
   .srd-diagram {

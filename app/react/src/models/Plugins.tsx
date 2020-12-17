@@ -15,6 +15,11 @@ export interface LayoutablePlugin extends PluginResource {
   plugin_preset?: PluginPresetResource;
 }
 
+export interface StrictlyLayoutablePlugin extends PluginResource {
+  plugin_layout: PluginLayout;
+  plugin_preset: PluginPresetResource;
+}
+
 export interface PluginProperty {
   deletable: boolean;
   origin: string;

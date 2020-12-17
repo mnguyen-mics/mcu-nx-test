@@ -1,3 +1,5 @@
+import { StrictlyLayoutablePlugin } from './../Plugins';
+import { FeedNodeFormData } from './../../containers/Automations/Builder/AutomationNode/Edit/domain';
 import {
   DisplayCampaignAutomationFormData,
   ABNFormData,
@@ -61,7 +63,8 @@ export type ScenarioNodeType =
   | 'WAIT_NODE'
   | 'DROP_NODE'
   | 'IF_NODE'
-  | 'CUSTOM_ACTION_NODE';
+  | 'CUSTOM_ACTION_NODE'
+  | 'SCENARIO_AUDIENCE_SEGMENT_FEED_NODE';
 
 export interface ScenarioNodeResource {
   id: string;
@@ -179,6 +182,13 @@ export interface CustomActionNodeResource extends ScenarioNodeResource {
   formData?: CustomActionAutomationFormData;
 }
 
+export interface FeedNodeResource extends ScenarioNodeResource {
+  type: 'SCENARIO_AUDIENCE_SEGMENT_FEED_NODE';
+  feed_node_id?: string;
+  formData?: FeedNodeFormData;
+  strictlyLayoutablePlugin?: StrictlyLayoutablePlugin;
+}
+
 export type ScenarioNodeShape =
   | DisplayCampaignNodeResource
   | EmailCampaignNodeResource
@@ -192,7 +202,8 @@ export type ScenarioNodeShape =
   | EndNodeResource
   | WaitNodeResource
   | IfNodeResource
-  | CustomActionNodeResource;
+  | CustomActionNodeResource
+  | FeedNodeResource;
 
 export interface ScenarioEdgeResource {
   id: string;

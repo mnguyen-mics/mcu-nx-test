@@ -196,6 +196,9 @@ export interface CustomActionAutomationFormData extends DefaultFormData {
   pluginVersionProperties?: PropertyResourceShape[];
 }
 
+export interface FeedNodeFormData extends DefaultFormData {
+}
+
 export type AutomationFormDataType =
   | DefaultFormData
   | ABNFormData
@@ -205,7 +208,8 @@ export type AutomationFormDataType =
   | EmailCampaignAutomationFormData
   | QueryInputAutomationFormData
   | WaitFormData
-  | CustomActionAutomationFormData;
+  | CustomActionAutomationFormData
+  | FeedNodeFormData;
 
 export type AutomationFormPropsType =
   | ABNAutomationFormProps
