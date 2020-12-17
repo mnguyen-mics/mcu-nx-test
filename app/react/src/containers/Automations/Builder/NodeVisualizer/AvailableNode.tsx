@@ -12,6 +12,7 @@ import { isAbnNode } from '../AutomationNode/Edit/domain';
 import { generateFakeId } from '../../../../utils/FakeIdHelper';
 import { InjectedIntlProps } from 'react-intl';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 
 interface AvailableNodeObjectProps {
   node: ScenarioNodeShape;
@@ -42,31 +43,19 @@ const fieldSource = {
 
 class AvailableNode extends React.Component<AvailableNodeProps> {
   getIcon = (nodeProperties: NodeProperties) => {
-    if (nodeProperties.iconAnt) {
-      return (
-        <div
-          className="available-node-icon"
-          style={{ backgroundColor: nodeProperties.color }}
-        >
-          <Icon
-            type={nodeProperties.iconAnt}
-            className="available-node-icon-gyph"
-          />
-        </div>
-      );
-    } else if (nodeProperties.iconType) {
-      return (
-        <div
-          className="available-node-icon"
-          style={{ backgroundColor: nodeProperties.color }}
-        >
-          <McsIcon
-            type={nodeProperties.iconType}
-            className="available-node-icon-gyph"
-          />
-        </div>
-      );
-    } else if (nodeProperties.iconAssetUrl) {
+    const icon = nodeProperties.iconAnt ? (
+      <Icon
+        type={nodeProperties.iconAnt}
+        className="available-node-icon-gyph"
+      />
+    ) : (
+      <McsIcon
+        type={nodeProperties.iconType as McsIconType}
+        className="available-node-icon-gyph"
+      />
+    );
+
+    if (nodeProperties.iconAssetUrl) {
       return (
         <div className="available-node-icon">
           <img
@@ -77,7 +66,15 @@ class AvailableNode extends React.Component<AvailableNodeProps> {
           />
         </div>
       );
-    } else return null;
+    } else
+      return (
+        <div
+          className="available-node-icon"
+          style={{ backgroundColor: nodeProperties.color }}
+        >
+          {icon}
+        </div>
+      );
   };
 
   render() {

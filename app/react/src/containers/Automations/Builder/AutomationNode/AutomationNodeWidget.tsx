@@ -637,24 +637,16 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     const color = '#ffffff';
     const borderColor = node.getColor();
 
-    if (node.iconAnt) {
-      return (
-        <div
-          className={'node-icon'}
-          style={{
-            width: node.getSize().width,
-            height: node.getSize().height,
-            borderWidth: node.getSize().borderWidth,
-            borderColor: borderColor,
-            float: 'left',
-            color: color,
-            backgroundColor: backgroundColor,
-          }}
-        >
-          <Icon type={node.iconAnt} className="available-node-icon-gyph" />
-        </div>
-      );
-    } else if (node.iconAssetUrl) {
+    const icon = node.iconAnt ? (
+      <Icon type={node.iconAnt} className="available-node-icon-gyph" />
+    ) : (
+      <McsIcon
+        type={node.icon as McsIconType}
+        className="available-node-icon-gyph"
+      />
+    );
+
+    if (node.iconAssetUrl) {
       return (
         <div
           className={'node-icon-without-border'}
@@ -686,10 +678,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
             backgroundColor: backgroundColor,
           }}
         >
-          <McsIcon
-            type={node.icon as McsIconType}
-            className="available-node-icon-gyph"
-          />
+          {icon}
         </div>
       );
     }

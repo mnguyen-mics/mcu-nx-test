@@ -160,32 +160,34 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
+
+    const actionNodesList = [emailCampaignNode]
+      .concat(
+        this.props.hasFeature('automations-add-delete-to-from-segment-node')
+          ? [addToSegmentNode, deleteFromSegmentNode]
+          : [],
+      )
+      .concat(
+        this.props.hasFeature('automations-custom-action-node')
+          ? [customActionNode]
+          : [],
+      );
+
     this.state = {
-      actionNodes: [],
-      conditionNodes: [],
+      actionNodes: actionNodesList,
+      conditionNodes: [conditionNode1, conditionNode2, conditionNode3],
       exitsNodes: [],
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
+    const { actionNodes } = this.state;
+
     this.getFeedPresetNodes().then(feedPresetNodes => {
-      const actionNodesList = [emailCampaignNode]
-        .concat(
-          this.props.hasFeature('automations-add-delete-to-from-segment-node')
-            ? [addToSegmentNode, deleteFromSegmentNode]
-            : [],
-        )
-        .concat(
-          this.props.hasFeature('automations-custom-action-node')
-            ? [customActionNode]
-            : [],
-        )
-        .concat(feedPresetNodes);
+      const actionNodesList = actionNodes.concat(feedPresetNodes);
 
       this.setState({
         actionNodes: actionNodesList,
-        conditionNodes: [conditionNode1, conditionNode2, conditionNode3],
-        exitsNodes: [],
       });
     });
   }
