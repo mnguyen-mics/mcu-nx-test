@@ -150,6 +150,7 @@ class NavigatorSettingsMainMenu extends React.Component<Props, State> {
                 ? item.subMenuItems[0].path
                 : item.type === 'simple' && item.path
             }`}
+            className={`mcs-settingsMainMenu_${item.translation.id}`}
           >
             <FormattedMessage {...item.translation} />
           </Link>

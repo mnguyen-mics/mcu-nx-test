@@ -103,7 +103,7 @@ class DatamartReplicationListContainer extends React.Component<Props> {
                 <span className="mcs-card-title">
                   <FormattedMessage {...messages.datamartReplications} />
                 </span>
-                <span className="mcs-card-button">
+                <span className="mcs-card-button mcs-replicationNew_button">
                   {this.buildNewActionElement()}
                 </span>
               </div>

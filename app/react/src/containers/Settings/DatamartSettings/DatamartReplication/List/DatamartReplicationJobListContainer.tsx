@@ -129,6 +129,7 @@ class DatamartReplicationJobListContainer extends React.Component<Props> {
         type="primary"
         onClick={onClick}
         disabled={!!lastExecutionIsLessThan7days}
+        className={"mcs-replicationNewExecution_button"}
       >
         <FormattedMessage {...messages.newExecution} />
       </Button>
