@@ -13,6 +13,7 @@ import {
   OnSegmentEntryInputNodeResource,
   IfNodeResource,
   CustomActionNodeResource,
+  FeedNodeResource,
 } from '../../../models/automations/automations';
 import {
   AutomationFormDataType,
@@ -30,6 +31,7 @@ import {
   isAddToSegmentNode,
   isDeleteFromSegmentNode,
   CustomActionAutomationFormData,
+  FeedNodeFormData,
 } from './AutomationNode/Edit/domain';
 import { QueryResource } from '../../../models/datamart/DatamartResource';
 import { IQueryService } from '../../../services/QueryService';
@@ -556,6 +558,13 @@ export class UpdateNodeOperation implements NodeOperation {
           formData: this.formData as CustomActionAutomationFormData,
         };
         break;
+      case 'SCENARIO_AUDIENCE_SEGMENT_FEED_NODE':
+        nodeBody = {
+          ...storylineNode.node,
+          ...(this.node as FeedNodeResource),
+          formData: this.formData as FeedNodeFormData,
+        };
+        break;
       default:
         nodeBody = {
           ...storylineNode.node,
@@ -851,7 +860,9 @@ export function generateNodeProperties(
         title: node.strictlyLayoutablePlugin?.name || '',
         subtitle: '',
         color: '#0ba6e1',
-        iconAssetUrl: node.strictlyLayoutablePlugin?.plugin_layout.metadata.small_icon_asset_url,
+        iconAssetUrl:
+          node.strictlyLayoutablePlugin?.plugin_layout.metadata
+            .small_icon_asset_url,
       };
     default:
       return {

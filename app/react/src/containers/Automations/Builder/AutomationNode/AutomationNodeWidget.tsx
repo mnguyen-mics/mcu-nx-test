@@ -284,6 +284,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
             } as any;
             break;
           case 'CUSTOM_ACTION_NODE':
+          case 'SCENARIO_AUDIENCE_SEGMENT_FEED_NODE':
           case 'DELETE_FROM_SEGMENT_NODE':
           case 'ADD_TO_SEGMENT_NODE':
             initialValue = {
@@ -619,6 +620,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         return this.renderQueryEdit();
       case 'END_NODE':
         return this.renderEndNodeEdit();
+      case 'SCENARIO_AUDIENCE_SEGMENT_FEED_NODE':
       case 'CUSTOM_ACTION_NODE':
       case 'IF_NODE':
       case 'WAIT_NODE':
