@@ -34,7 +34,7 @@ interface State {
   datamartReplicationData: DatamartReplicationFormData;
   isLoading: boolean;
   selectedType?: ReplicationType;
-  replicationTypes: string[];
+  replicationTypes: ReplicationType[];
   datamartId?: string;
 }
 
@@ -52,7 +52,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
     this.state = {
       isLoading: false,
       datamartReplicationData: INITIAL_DATAMART_REPLICATION_FORM_DATA,
-      replicationTypes: ['GOOGLE_PUBSUB'],
+      replicationTypes: ['GOOGLE_PUBSUB', 'AZURE_EVENT_HUBS'],
     };
   }
 
@@ -104,14 +104,23 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
 
     const {
       credentials_uri,
+      type,
       ...formDataWithoutCredentialsUri
     } = datamartReplicationFormData;
 
     if (isEmpty(credentials_uri) && !datamartReplicationId) {
-      notifyError(new Error('Credentials must be defined'), {
-        intlDescription: messages.datamartReplicationCredentialsUriError,
-      });
-      return; 
+      switch (type) {
+        case 'AZURE_EVENT_HUBS': 
+          notifyError(new Error('A Connection String must be defined'), {
+            intlDescription: messages.datamartReplicationEventHubsConnectionStringUriError,
+          });
+          return; 
+        default:
+          notifyError(new Error('Credentials must be defined'), {
+           intlDescription: messages.datamartReplicationPubSubCredentialsUriError,
+         });
+         return; 
+      }
     }
 
     const { selectedType } = this.state;
