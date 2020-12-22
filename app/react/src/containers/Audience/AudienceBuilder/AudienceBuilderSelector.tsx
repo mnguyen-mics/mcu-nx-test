@@ -2,7 +2,6 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { Layout, Row, Alert } from 'antd';
 import { defineMessages, injectIntl, InjectedIntlProps } from 'react-intl';
-import { FormTitle } from '../../../components/Form';
 import {
   MenuList,
   Actionbar,
@@ -11,19 +10,14 @@ import {
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../components/Layout/FormLayoutActionbar';
-import cuid from 'cuid';
 import { AudienceBuilderResource } from '../../../models/audienceBuilder/AudienceBuilderResource';
-import { injectWorkspace, InjectedWorkspaceProps } from '../../Datamart';
+import cuid from 'cuid';
 import { DatamartWithMetricResource } from '../../../models/datamart/DatamartResource';
 
 export const messages = defineMessages({
-  title: {
-    id: 'audienceBuilderSelector.title',
-    defaultMessage: 'Audience Builder',
-  },
   subTitle: {
     id: 'audienceBuilderSelector.subtitle',
-    defaultMessage: 'Choose your Audience Builder',
+    defaultMessage: 'Audience Builders',
   },
   noAudienceBuilder: {
     id: 'datamart.audienceBuilder.alert.noAudienceBuilder',
@@ -33,32 +27,19 @@ export const messages = defineMessages({
 });
 
 export interface AudienceBuilderSelectorProps {
-  audienceBuilders: AudienceBuilderResource[];
-  datamartId: string;
-  onSelect: (audienceBuilder: AudienceBuilderResource) => void;
+  audienceBuildersByDatamartId?: AudienceBuilderResource[][];
+  datamarts: DatamartWithMetricResource[];
+  onSelect: (audienceBuilderId: string) => void;
   actionbarProps: FormLayoutActionbarProps;
   isMainlayout?: boolean;
 }
 
-type Props = AudienceBuilderSelectorProps &
-  InjectedIntlProps &
-  InjectedWorkspaceProps;
+type Props = AudienceBuilderSelectorProps & InjectedIntlProps;
 
-interface State {
-  datamart?: DatamartWithMetricResource;
-}
-
-class AudienceBuilderSelector extends React.Component<Props, State> {
+class AudienceBuilderSelector extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
     this.state = {};
-  }
-
-  componentDidMount() {
-    const { workspace, datamartId } = this.props;
-    this.setState({
-      datamart: workspace.datamarts.find(d => d.id === datamartId),
-    });
   }
 
   render() {
@@ -66,11 +47,10 @@ class AudienceBuilderSelector extends React.Component<Props, State> {
       onSelect,
       actionbarProps,
       isMainlayout,
-      audienceBuilders,
+      audienceBuildersByDatamartId,
       intl,
+      datamarts,
     } = this.props;
-
-    const { datamart } = this.state;
 
     return (
       <Layout>
@@ -80,9 +60,8 @@ class AudienceBuilderSelector extends React.Component<Props, State> {
           <FormLayoutActionbar {...actionbarProps} />
         )}
         <Layout.Content className="mcs-content-container mcs-form-container text-center">
-          <FormTitle title={messages.title} subtitle={messages.subTitle} />
-
-          {audienceBuilders.length === 0 ? (
+          {!audienceBuildersByDatamartId ||
+          audienceBuildersByDatamartId.length === 0 ? (
             <Alert
               message={
                 <div>
@@ -95,14 +74,27 @@ class AudienceBuilderSelector extends React.Component<Props, State> {
           ) : (
             <Row className="mcs-selector_container">
               <Row className="menu">
-                {audienceBuilders.map(b => {
-                  const handleSelect = () => onSelect(b);
+                {audienceBuildersByDatamartId.map((builders, i) => {
                   return (
-                    <MenuList
-                      key={cuid()}
-                      title={`${b.name} ${datamart && `(${datamart.name})`}`}
-                      select={handleSelect}
-                    />
+                    <div key={i}>
+                      <div className="mcs-datamartName_title">
+                        {
+                          datamarts.find(d => d.id === builders[0].datamart_id)
+                            ?.name
+                        }
+                      </div>
+
+                      {builders.map(b => {
+                        const handleSelect = () => onSelect(b.id);
+                        return (
+                          <MenuList
+                            key={cuid()}
+                            title={b.name}
+                            select={handleSelect}
+                          />
+                        );
+                      })}
+                    </div>
                   );
                 })}
               </Row>
@@ -114,7 +106,6 @@ class AudienceBuilderSelector extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, AudienceBuilderSelectorProps>(
-  injectIntl,
-  injectWorkspace,
-)(AudienceBuilderSelector);
+export default compose<Props, AudienceBuilderSelectorProps>(injectIntl)(
+  AudienceBuilderSelector,
+);

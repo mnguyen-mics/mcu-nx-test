@@ -17,7 +17,10 @@ import { formatQuery } from '../../Audience/AudienceBuilder/constants';
 import AudienceBuilderContainer, {
   AudienceBuilderContainerProps,
 } from '../../Audience/AudienceBuilder/AudienceBuilderContainer';
-import { QueryDocument as AudienceQueryDocument } from '../../../models/audienceBuilder/AudienceBuilderResource';
+import {
+  QueryDocument as AudienceQueryDocument,
+  AudienceBuilderResource,
+} from '../../../models/audienceBuilder/AudienceBuilderResource';
 
 export type JSONQLPreviewContext = 'GOALS' | 'AUTOMATION_BUILDER';
 
@@ -30,14 +33,14 @@ export interface JSONQLPreviewProps {
   isTrigger?: boolean;
   isEdge?: boolean;
   segmentEditor?: string;
-  audienceBuilderId?: string;
+  audienceBuilder?: AudienceBuilderResource;
 }
 
 type Props = JSONQLPreviewProps & InjectedIntlProps & InjectedDrawerProps;
 
 class JSONQLPreview extends React.Component<Props> {
   openEditor = () => {
-    const { intl, value, segmentEditor, audienceBuilderId } = this.props;
+    const { intl, value, segmentEditor, audienceBuilder } = this.props;
 
     const createActionBar = (
       onSave: () => void,
@@ -88,19 +91,20 @@ class JSONQLPreview extends React.Component<Props> {
         return createActionBar(onSave, onClose, query);
       };
 
-      this.props.openNextDrawer<AudienceBuilderContainerProps>(
-        AudienceBuilderContainer,
-        {
-          additionalProps: {
-            datamartId: this.props.datamartId,
-            renderActionBar: actionbar,
-            initialValues: value
-              ? (formatQuery(JSON.parse(value), true) as any)
-              : undefined,
-            demographicsFeaturesIds: [],
-            audienceBuilderId: audienceBuilderId ? audienceBuilderId : "",
+      return (
+        audienceBuilder &&
+        this.props.openNextDrawer<AudienceBuilderContainerProps>(
+          AudienceBuilderContainer,
+          {
+            additionalProps: {
+              renderActionBar: actionbar,
+              initialValues: value
+                ? (formatQuery(JSON.parse(value), true) as any)
+                : undefined,
+              audienceBuilder: audienceBuilder,
+            },
           },
-        },
+        )
       );
     } else {
       const actionbar = (query: GraphdbQueryDocument, datamartId: string) => {

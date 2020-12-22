@@ -11,7 +11,7 @@ export const messages: {
 } = defineMessages({
   title: {
     id: 'audienceBuilder.title',
-    defaultMessage: 'Audience Builder',
+    defaultMessage: 'Audience Builders',
   },
   demographics: {
     id: 'audienceBuilder.category.demographics',
@@ -89,6 +89,10 @@ export const messages: {
   audienceFeatureObjectTreeExpression: {
     id: 'audienceBuilder.audienceFeatureSelector.objectTreeExpression',
     defaultMessage: 'Object Tree Expression',
+  },
+  newAudienceSegment: {
+    id: 'audienceBuilder.newSegmentName',
+    defaultMessage: 'New Audience Segment',
   },
 });
 

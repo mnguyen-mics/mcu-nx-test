@@ -40,6 +40,8 @@ import { IAudienceSegmentFormService } from './AudienceSegmentFormService';
 import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
 import { ProcessingSelectionResource } from '../../../../models/processing';
+import { IAudienceBuilderService } from '../../../../services/AudienceBuilderService';
+import { AudienceBuilderResource } from '../../../../models/audienceBuilder/AudienceBuilderResource';
 
 const messagesMap = defineMessages({
   breadcrumbEditAudienceSegment: {
@@ -66,6 +68,7 @@ interface State {
   loading: boolean;
   selectedDatamart?: DatamartResource;
   displayDatamartSelector: boolean;
+  audienceBuilder?: AudienceBuilderResource;
 }
 
 interface MapStateToProps {
@@ -85,6 +88,9 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
   @lazyInject(TYPES.IDatamartService)
   private _datamartService: IDatamartService;
 
+  @lazyInject(TYPES.IAudienceBuilderService)
+  private _audienceBuilderService: IAudienceBuilderService;
+
   constructor(props: Props) {
     super(props);
 
@@ -102,7 +108,10 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     defaultLiftimeUnit?: DefaultLiftimeUnit;
   } => {
     let lifetime = moment
-      .duration(audienceSegmentFormData.audienceSegment.default_ttl, 'milliseconds')
+      .duration(
+        audienceSegmentFormData.audienceSegment.default_ttl,
+        'milliseconds',
+      )
       .asMonths();
     if (Number.isInteger(lifetime) && lifetime > 0) {
       return {
@@ -111,7 +120,10 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       };
     } else {
       lifetime = moment
-        .duration(audienceSegmentFormData.audienceSegment.default_ttl, 'milliseconds')
+        .duration(
+          audienceSegmentFormData.audienceSegment.default_ttl,
+          'milliseconds',
+        )
         .asWeeks();
       if (Number.isInteger(lifetime) && lifetime > 0) {
         return {
@@ -120,7 +132,10 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         };
       } else {
         lifetime = moment
-          .duration(audienceSegmentFormData.audienceSegment.default_ttl, 'milliseconds')
+          .duration(
+            audienceSegmentFormData.audienceSegment.default_ttl,
+            'milliseconds',
+          )
           .asDays();
         return {
           defaultLiftime: lifetime,
@@ -148,8 +163,10 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
               const newState: Partial<State> = {
                 audienceSegmentFormData: {
                   ...initialData,
-                  defaultLifetime: this.countDefaultLifetime(initialData).defaultLiftime,
-                  defaultLifetimeUnit: this.countDefaultLifetime(initialData).defaultLiftimeUnit
+                  defaultLifetime: this.countDefaultLifetime(initialData)
+                    .defaultLiftime,
+                  defaultLifetimeUnit: this.countDefaultLifetime(initialData)
+                    .defaultLiftimeUnit,
                 },
                 selectedDatamart: datamartResource,
                 loading: false,
@@ -157,8 +174,22 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
 
               if (initialData.query) {
                 newState.queryLanguage = initialData.query.query_language;
+                const audienceSegment = initialData.audienceSegment as UserQuerySegment;
+                if (audienceSegment.audience_builder_id) {
+                  this._audienceBuilderService
+                    .getAudienceBuilder(
+                      audienceSegment.datamart_id,
+                      audienceSegment.audience_builder_id,
+                    )
+                    .then(res => {
+                      newState.audienceBuilder = res.data;
+                      this.setState(newState as State);
+                    });
+                } else {
+                  this.setState(newState as State);
+                }
               }
-              this.setState(newState as State);
+              
             });
         })
         .catch(err => {
@@ -494,21 +525,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         },
       });
       // USER_CLIENT is deprecated and replaced by EDGE
-    } else if (segmentType === 'USER_CLIENT') {
-      this.setState({
-        queryLanguage: 'JSON_OTQL',
-        audienceSegmentFormData: {
-          ...this.state.audienceSegmentFormData,
-          audienceSegment: {
-            ...(this.state.audienceSegmentFormData
-              .audienceSegment as UserListSegment),
-            type: 'USER_LIST',
-            feed_type: 'TAG',
-            subtype: 'EDGE',
-          },
-        },
-      });
-    } else if (segmentType === 'EDGE') {
+    } else if (segmentType === 'USER_CLIENT' || segmentType === 'EDGE') {
       this.setState({
         queryLanguage: 'JSON_OTQL',
         audienceSegmentFormData: {
@@ -570,6 +587,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       loading,
       displayDatamartSelector,
       queryLanguage,
+      audienceBuilder,
     } = this.state;
 
     const audienceSegmentName =
@@ -648,6 +666,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         initialProcessingSelectionsForWarning={
           initialProcessingSelectionsForWarning
         }
+        audienceBuilder={audienceBuilder}
       />
     ) : displayDatamartSelector ? (
       <DatamartSelector

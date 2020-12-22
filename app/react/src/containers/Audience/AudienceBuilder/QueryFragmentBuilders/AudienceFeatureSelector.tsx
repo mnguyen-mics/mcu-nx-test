@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import { getFormValues } from 'redux-form';
 import { RouteComponentProps } from 'react-router';
 import { messages } from '../constants';
 import { lazyInject } from '../../../../config/inversify.config';
@@ -10,8 +9,6 @@ import {
   IAudienceFeatureService,
   AudienceFeatureOptions,
 } from '../../../../services/AudienceFeatureService';
-import { connect } from 'react-redux';
-import { MicsReduxState } from '../../../../utils/ReduxHelper';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { AudienceBuilderFormData } from '../../../../models/audienceBuilder/AudienceBuilderResource';
 import TableSelector, {
@@ -69,8 +66,8 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
       options.keywords = [filter.keywords];
     }
 
-    if(demographicIds && demographicIds.length >= 1) {
-      options.exclude = demographicIds
+    if (demographicIds && demographicIds.length >= 1) {
+      options.exclude = demographicIds;
     }
 
     return this._audienceFeatureService.getAudienceFeatures(
@@ -125,11 +122,6 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state: MicsReduxState) => ({
-  formValues: getFormValues('audienceBuilderFormData')(state),
-});
-
-export default compose<Props, AudienceFeatureSelectorProps>(
-  injectIntl,
-  connect(mapStateToProps),
-)(AudienceFeatureSelector);
+export default compose<Props, AudienceFeatureSelectorProps>(injectIntl)(
+  AudienceFeatureSelector,
+);
