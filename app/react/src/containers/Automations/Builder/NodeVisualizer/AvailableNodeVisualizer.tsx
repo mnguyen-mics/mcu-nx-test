@@ -326,7 +326,10 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
               },
             );
 
-            if (associatedLayoutAndVersionProperties) {
+            if (
+              associatedLayoutAndVersionProperties &&
+              pluginPreset.plugin_type
+            ) {
               const strictlyLayoutablePlugin: StrictlyLayoutablePlugin = {
                 plugin_layout:
                   associatedLayoutAndVersionProperties.pluginLayout,
@@ -347,43 +350,47 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
                   associatedLayoutAndVersionProperties.pluginVersion.id,
               };
 
-              const reduceFunction = (
-                o: any,
-                prop: PropertyResourceShape | PluginPresetProperty,
-              ) => {
+              const reduceFunctionForPropertyResourceShape = (
+                o: { [key: string]: PropertyResourceShape },
+                prop: PropertyResourceShape,
+              ): { [key: string]: PropertyResourceShape } => {
                 return {
                   ...o,
-                  [prop.technical_name]: {
-                    property_type: prop.property_type,
-                    technical_name: prop.technical_name,
-                    value: prop.value,
-                  },
+                  [prop.technical_name]: prop,
                 };
               };
 
+              const reduceFunctionForPluginPresetProperty = (
+                o: { [key: string]: PropertyResourceShape },
+                prop: PluginPresetProperty,
+              ): { [key: string]: PropertyResourceShape } => {
+                const foundProperty = o[prop.technical_name];
+
+                if (foundProperty) {
+                  const modifiedProp: PropertyResourceShape = {
+                    ...foundProperty,
+                    value: prop.value,
+                  };
+                  return {
+                    ...o,
+                    [prop.technical_name]: modifiedProp,
+                  };
+                } else return o;
+              };
+
               const pluginVersionProperties = associatedLayoutAndVersionProperties.pluginVersionProperties.reduce(
-                reduceFunction,
+                reduceFunctionForPropertyResourceShape,
                 {},
               );
 
               const propertiesWithPreset = pluginPreset.properties.reduce(
-                reduceFunction,
+                reduceFunctionForPluginPresetProperty,
                 pluginVersionProperties,
               );
 
-              const allProperties = {
+              const allProperties: { [key: string]: PropertyResourceShape } = {
                 ...propertiesWithPreset,
-                name: {
-                  property_type: "STRING",
-                  technical_name: "name",
-                  value: {value: pluginPreset.name}
-                },
-                description: {
-                  property_type: "STRING",
-                  technical_name: "description",
-                  value: {value: pluginPreset.description}
-                }
-              }
+              };
 
               const feedNodeFormData: FeedNodeFormData = {
                 properties: allProperties,

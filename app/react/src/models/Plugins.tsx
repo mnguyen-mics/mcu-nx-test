@@ -20,6 +20,7 @@ export interface StrictlyLayoutablePlugin extends PluginResource {
   plugin_layout: PluginLayout;
   plugin_preset: PluginPresetResource;
   plugin_version_properties: PropertyResourceShape[];
+  plugin_type: PluginType;
 }
 
 export interface PluginProperty {

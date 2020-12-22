@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
+import { FormSection } from '../../../../../../components/Form';
 import withValidators, {
   ValidatorProps,
 } from '../../../../../../components/Form/withValidators';
@@ -85,7 +86,15 @@ class PluginInstanceFormSection extends React.Component<Props> {
       );
     });
 
-    return <div>{layoutSections}</div>;
+    return (
+      <div>
+        <FormSection
+          title={messages.descriptionFormSectionTitle}
+          subtitle={messages.descriptionFormSectionSubtitle}
+        />
+        {layoutSections}
+      </div>
+    );
   }
 }
 
