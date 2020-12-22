@@ -290,7 +290,7 @@ export class MonitoringService implements IMonitoringService {
       .then(res => {
         const communityId = res.data.community_id;
         return this._organisationService
-          .getProcessings(communityId)
+          .getProcessings(communityId,{ first_result:0, max_results:2147483647 })
           .then(response => {
             return response.data;
           });
