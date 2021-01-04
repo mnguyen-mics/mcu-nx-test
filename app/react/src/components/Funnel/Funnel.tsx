@@ -281,14 +281,31 @@ class Funnel extends React.Component<Props, State> {
             </div> :
             <div className="mcs-funnel_steps" >
               {funnelData.steps.map((step, index) => {
+
+                const conversion = index > 0 && funnelData.steps[index - 1].conversion ?
+                    numeral(funnelData.steps[index - 1].conversion).format('0,0') : undefined;
+                const amount = index > 0 && funnelData.steps[index - 1].amount ?
+                    `${numeral(funnelData.steps[index - 1].amount).format('0,0')}€` : undefined;
+
                 return <div key={index.toString()} style={{ flex: 1 }} >
                   <div className={"mcs-funnel_stepName"}>
                     <h3 className="mcs-funnel_stepName_title">{index === 0 ? 'Total' : 'Step ' + index} </h3>
                   </div>
-                  <div className={"mcs-funnel_userPoints"}>
-                    <div className="mcs-funnel_userPoints_title">UserPoints</div>
-                    <div className="mcs-funnel_userPoints_nbr">{numeral(index === 0 ? funnelData.total : funnelData.steps[index - 1].count).format('0,0')}</div>
+                  <div className={"mcs-funnel_metricsBlock"}>
+                    <div className={"mcs-funnel_metric"}>
+                      <div className="mcs-funnel_metric_title">UserPoints</div>
+                      <div className="mcs-funnel_metric_nbr">{numeral(index === 0 ? funnelData.total : funnelData.steps[index - 1].count).format('0,0')}</div>
+                    </div>
+                    {conversion && <div className={"mcs-funnel_metric"}>
+                      <div className="mcs-funnel_metric_title">Conversion</div>
+                      <div className="mcs-funnel_metric_nbr">{conversion}</div>
+                    </div>}
+                    {amount && <div className={"mcs-funnel_metric"}>
+                      <div className="mcs-funnel_metric_title">Amount</div>
+                      <div className="mcs-funnel_metric_nbr">{amount}</div>
+                    </div>}
                   </div>
+     
                   <div className={"mcs-funnel_chart"}>
 
                     {stepsDelta[index] && stepsDelta[index].passThroughPercentage ? <div className="mcs-funnel_percentageOfSucceeded">
@@ -305,11 +322,6 @@ class Funnel extends React.Component<Props, State> {
                         <p>{this.isLastStep(index + 1) ? "Conversions" : "Dropoffs"}</p>
                       </div>
                     </div>
-
-
-
-
-
                   </div>
                 </div>
               }
