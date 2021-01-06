@@ -1,0 +1,31 @@
+Disclosure Policy
+
+Let us know of any potential vulnerabilities as soon as possible and
+we will make every effort to resolve the issue quickly.
+Share with us the full details of any vulnerability including steps to reproduce if applicable.
+Provide us a reasonable amount of time to fix the issue before disclosure to the public or a third-party.
+We will investigate legitimate reports and make every effort to quickly resolve any vulnerability.
+Please make a good faith effort to avoid privacy violations, destruction of data, and interruption or degradation of our services.
+We will not pursue civil action or initiate a complaint to law enforcement for accidental, good faith violations of this policy.
+We consider activities conducted consistent with this policy to constitute “authorised” conduct under the Computer Fraud and Abuse Act. 
+If legal action is initiated by a third party against you and you have complied with this security policy,
+We will take steps to make it known that your actions were conducted in compliance with this policy.
+It is also important to note, We will not take legal action against you simply for providing us with a proof of concept of the security vulnerability.
+
+Exclusions
+
+While researching, please do not attempt the following:
+Denial of service (DoS)
+Spamming
+Phishing
+Spoofing or hijacking
+Man in the Middle (MitM) or interception
+Attacks which require physical presence on the network of a user
+Domain name hijacking or theft
+Account hijacking or theft
+Cybersquatting
+Social engineering
+Physical/real-life attacks
+Anything that could falsely lower the reputation of us or our websites
+Anything that could falsely get us in trouble
+Attacks on 3rd-party systems that are out of our general control
