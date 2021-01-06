@@ -58,7 +58,7 @@ function ResourceByKeywordSelector<T extends SelectableResource, AdditionalConte
     }
 
     componentDidMount() {
-      this.fetchListMethod('')
+      this.fetchListMethod('');
     }
 
     handleSearch = (keyword: string) => {
@@ -105,6 +105,11 @@ function ResourceByKeywordSelector<T extends SelectableResource, AdditionalConte
 
     handleChange = (value: LabeledValue | LabeledValue[]) => {
       const { onchange } = this.props;
+
+      if (Array.isArray(value) && value.length === 0 ) {
+        this.fetchListMethod('');
+      }
+
       this.setState({
         value
       });
