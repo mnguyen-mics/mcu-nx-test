@@ -224,8 +224,17 @@ class Funnel extends React.Component<Props, State> {
     ctx.fill();
   }
 
-  formatPercentageValue = (value: number) => value < 100 ? value.toFixed(4) : value.toString();
-
+  formatPercentageValue = (value: number) => {
+    if (value >= 0.01) {
+      return value.toFixed(2)
+    } else if (value >= 0.0001) {
+      return value.toFixed(4)
+    } else {
+      const exponentialDigits = 2
+      return value.toExponential(exponentialDigits)
+    }
+  }
+  
   computeStepDelta = (upCountsPerStep: number[]) => {
     const stepsDelta: StepDelta[] = upCountsPerStep.map((step, i) => {
       let dropOff;
