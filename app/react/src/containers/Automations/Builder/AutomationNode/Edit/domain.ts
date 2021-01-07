@@ -1,7 +1,10 @@
 import { PluginLayout } from './../../../../../models/plugin/PluginLayout';
 import { PluginResource } from './../../../../../models/Plugins';
 import { PropertyResourceShape } from './../../../../../models/plugin/index';
-import { CustomActionNodeResource } from './../../../../../models/automations/automations';
+import {
+  CustomActionNodeResource,
+  FeedNodeResource,
+} from './../../../../../models/automations/automations';
 import { CustomActionAutomationFormProps } from './CustomActionNodeForm/CustomActionAutomationForm';
 import { Moment } from 'moment';
 import { ProcessingActivityFieldModel } from './../../../../Settings/DatamartSettings/Common/domain';
@@ -198,7 +201,7 @@ export interface CustomActionAutomationFormData extends DefaultFormData {
 }
 
 export interface FeedNodeFormData extends DefaultFormData {
-  properties: any;
+  properties: {[key: string]: PropertyResourceShape};
 }
 
 export type AutomationFormDataType =
@@ -292,6 +295,14 @@ export function isCustomActionNode(
   node: AutomationNodeShape,
 ): node is CustomActionNodeResource {
   return (node as CustomActionNodeResource).type === 'CUSTOM_ACTION_NODE';
+}
+
+export function isFeedNode(
+  node: AutomationNodeShape,
+): node is FeedNodeResource {
+  return (
+    (node as FeedNodeResource).type === 'SCENARIO_AUDIENCE_SEGMENT_FEED_NODE'
+  );
 }
 
 export function isWaitNode(

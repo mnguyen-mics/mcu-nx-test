@@ -1,6 +1,11 @@
+import { FeedNodeFormData } from './../Builder/AutomationNode/Edit/domain';
 import { IPluginService } from './../../../services/PluginService';
-import { CustomActionAutomationFormData } from './../Builder/AutomationNode/Edit/domain';
-import { CustomActionResource } from './../../../models/Plugins';
+import {
+  AudienceExternalFeed,
+  AudienceTagFeed,
+  CustomActionResource,
+  StrictlyLayoutablePlugin,
+} from './../../../models/Plugins';
 import { ICustomActionService } from './../../../services/CustomActionService';
 import { AudienceSegmentFormData } from './../../Audience/Segments/Edit/domain';
 import { IAudienceSegmentFormService } from './../../Audience/Segments/Edit/AudienceSegmentFormService';
@@ -39,10 +44,12 @@ import {
   isAddToSegmentNode,
   AddToSegmentAutomationFormData,
   DeleteFromSegmentAutomationFormData,
+  CustomActionAutomationFormData,
   isDeleteFromSegmentNode,
   isOnSegmentEntryInputNode,
   isOnSegmentExitInputNode,
   isCustomActionNode,
+  isFeedNode,
 } from '../Builder/AutomationNode/Edit/domain';
 import { INITIAL_AUTOMATION_DATA } from '../Edit/domain';
 import { IQueryService } from '../../../services/QueryService';
@@ -197,7 +204,7 @@ export class AutomationFormService implements IAutomationFormService {
     return this._scenarioService
       .getScenarioNodes(automationId)
       .then(r => {
-        r.data.map(n => {
+        r.data.forEach(n => {
           this.addNodeId(n.id);
         });
         return r;
@@ -392,11 +399,13 @@ export class AutomationFormService implements IAutomationFormService {
                           const customActionProperties = resPromises[1];
 
                           const formProperties: any = {};
-                          customActionProperties.map(propertyResourceShape => {
-                            formProperties[
-                              propertyResourceShape.technical_name
-                            ] = { value: propertyResourceShape.value };
-                          });
+                          customActionProperties.forEach(
+                            propertyResourceShape => {
+                              formProperties[
+                                propertyResourceShape.technical_name
+                              ] = { value: propertyResourceShape.value };
+                            },
+                          );
 
                           const constructedNode: CustomActionNodeResource = {
                             ...n,
@@ -414,6 +423,9 @@ export class AutomationFormService implements IAutomationFormService {
                         });
                       })
                   : Promise.resolve({ ...n });
+                break;
+              case 'SCENARIO_AUDIENCE_SEGMENT_FEED_NODE':
+                // Load the Feed Node data here
                 break;
             }
             return getPromise;
@@ -835,6 +847,43 @@ export class AutomationFormService implements IAutomationFormService {
                 });
               });
             });
+          } else if (isFeedNode(node) && node.formData) {
+            const feedNodeIdP = node.feed_node_id
+              ? Promise.resolve(node.feed_node_id)
+              : this.saveFeedIfNeeded(
+                  organisationId,
+                  datamartId,
+                  automationId,
+                  node.id,
+                  node.formData,
+                  node.strictlyLayoutablePlugin,
+                );
+
+            return feedNodeIdP.then(feedNodeId => {
+              return this.saveOrCreateNode(
+                automationId,
+                storylineNode,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                feedNodeId,
+              ).then(res => {
+                return this.saveOrCreateEdges(automationId, {
+                  source_id: parentNodeId,
+                  target_id: res.data.id,
+                  edgeResource: storylineNode.in_edge,
+                }).then(() => {
+                  return this.iterate(
+                    organisationId,
+                    datamartId,
+                    automationId,
+                    storylineNode.out_edges,
+                    res.data.id,
+                  );
+                });
+              });
+            });
           } else if (isAbnNode(node) || isEndNode(node) || isWaitNode(node)) {
             return this.saveOrCreateNode(automationId, storylineNode).then(
               res => {
@@ -939,6 +988,7 @@ export class AutomationFormService implements IAutomationFormService {
     queryId?: string,
     audienceSegmentId?: string,
     customActionId?: string,
+    feedId?: string,
   ) => {
     const node = storylineNode.node as ScenarioNodeShape;
     let saveOrCreateScenarioNode: Promise<DataResponse<ScenarioNodeShape>>;
@@ -1067,6 +1117,14 @@ export class AutomationFormService implements IAutomationFormService {
         type: 'CUSTOM_ACTION_NODE',
       };
       resourceId = node.id && !isFakeId(node.id) ? node.id : undefined;
+    } else if (isFeedNode(node)) {
+      scenarioNodeResource = {
+        id: node.id && !isFakeId(node.id) ? node.id : undefined,
+        feed_id: feedId,
+        scenario_id: automationId,
+        type: 'SCENARIO_AUDIENCE_SEGMENT_FEED_NODE',
+      };
+      resourceId = node.id && !isFakeId(node.id) ? node.id : undefined;
     }
     saveOrCreateScenarioNode = resourceId
       ? this._scenarioService
@@ -1160,7 +1218,7 @@ export class AutomationFormService implements IAutomationFormService {
           const customActionId = createdCustomAction.id;
 
           const propertyKeysAndValues = Object.entries<any>(
-            customActionFormData.properties || {},
+            customActionFormData.properties || {},
           );
           const propertyPromises = propertyKeysAndValues.map(keyAndValue => {
             const [key, valueObj] = keyAndValue;
@@ -1190,6 +1248,77 @@ export class AutomationFormService implements IAutomationFormService {
           });
         });
     });
+  };
+
+  saveFeedIfNeeded = (
+    organisationId: string,
+    datamartId: string,
+    automationId: string,
+    nodeId: string,
+    feedNodeFormData: FeedNodeFormData,
+    strictlyLayoutablePlugin: StrictlyLayoutablePlugin,
+  ): Promise<string> => {
+    const audienceSegmentP = this._audienceSegmentService
+      .createAudienceSegment(organisationId, {
+        type: 'USER_LIST',
+        feed_type: 'SCENARIO',
+        datamart_id: datamartId,
+        name: `automation_feed_autogenerated_scenarioId_${automationId}`,
+      })
+      .then(resAudienceSegment => {
+        return resAudienceSegment.data.id;
+      });
+
+    const properties = Object.values(feedNodeFormData.properties);
+
+    const feedP = audienceSegmentP.then(audienceSegmentId => {
+      const createFeed =
+        strictlyLayoutablePlugin.plugin_type ===
+        'AUDIENCE_SEGMENT_EXTERNAL_FEED'
+          ? this._audienceSegmentService.createAudienceExternalFeeds
+          : this._audienceSegmentService.createAudienceTagFeeds;
+
+      return createFeed(audienceSegmentId, {
+        name: strictlyLayoutablePlugin.plugin_preset.name,
+        group_id: strictlyLayoutablePlugin.group_id,
+        artifact_id: strictlyLayoutablePlugin.artifact_id,
+        version_id: strictlyLayoutablePlugin.plugin_preset.plugin_version_id,
+        created_from: 'AUTOMATION',
+        scenario_id: automationId,
+      }).then(
+        (resFeed: DataResponse<AudienceExternalFeed | AudienceTagFeed>) =>
+          resFeed.data,
+      );
+    });
+
+    return Promise.all([audienceSegmentP, feedP]).then(
+      audienceSegmentAndFeed => {
+        const audienceSegmentId = audienceSegmentAndFeed[0];
+        const feed = audienceSegmentAndFeed[1];
+        const updateProperty =
+          strictlyLayoutablePlugin.plugin_type ===
+          'AUDIENCE_SEGMENT_EXTERNAL_FEED'
+            ? this._audienceSegmentService
+                .updateAudienceSegmentExternalFeedProperty
+            : this._audienceSegmentService.updateAudienceSegmentTagFeedProperty;
+
+        return Promise.all(
+          properties.map(property => {
+            if (property.writable) {
+              updateProperty(
+                organisationId,
+                audienceSegmentId,
+                feed.id,
+                property.technical_name,
+                property,
+              );
+            }
+          }),
+        ).then(res => {
+          return feed.id;
+        });
+      },
+    );
   };
 
   saveAudienceSegment = (
