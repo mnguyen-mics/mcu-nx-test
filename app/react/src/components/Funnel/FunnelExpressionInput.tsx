@@ -26,7 +26,8 @@ interface FunnelExpressionProps {
 }
 
 interface State {
-  expressionBuster: boolean
+  value: string[],
+  allOptionsSelected: boolean;
 }
 type Props = FunnelExpressionProps & RouteComponentProps<{ organisationId: string }>
 
@@ -36,9 +37,8 @@ interface CommonEnumProps {
   showArrow: boolean
   placeholder: string
   className: string
-  onChange: (s: string[]) => void
   filterOption: boolean | ((inputValue: string, option: React.ReactElement<OptionProps>) => boolean)
-  value?: undefined
+  value: string[]
 }
 
 class FunnelExpressionInput extends React.Component<Props, State> {
@@ -55,7 +55,8 @@ class FunnelExpressionInput extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      expressionBuster: false
+      value: [],
+      allOptionsSelected: false
     };
   }
 
@@ -69,8 +70,9 @@ class FunnelExpressionInput extends React.Component<Props, State> {
       },
       handleDimensionExpressionForSelectorChange,
     } = this.props;
-    const { expressionBuster } = this.state;
-    const value = expressionBuster ? { value: undefined } : {}
+
+    const { value, allOptionsSelected } = this.state;
+    const selectAllOptionValue = allOptionsSelected ? "Deselect all" : "Select all";
     const Option = Select.Option;
     const anchorId = "mcs-funnel_expression_select_anchor"
 
@@ -94,19 +96,24 @@ class FunnelExpressionInput extends React.Component<Props, State> {
       showArrow: false,
       placeholder: "Dimension value",
       className: "mcs-funnelQueryBuilder_dimensionValue",
-      onChange: handleDimensionExpressionForSelectorChange,
       filterOption: (inputValue: string, option: React.ReactElement<OptionProps>) => {
         const contains = option.props.value?.toString().toLowerCase().indexOf(inputValue.toLowerCase())
         return (contains !== undefined && contains > -1)
       },
-      ...value
+      value: value
     }
 
     switch (dimensionName) {
       
       case 'HAS_CONVERSION':
       case 'HAS_BOUNCED':
-        return <Select {...commonEnumProps} >
+        const handleBooleanEnum = (selectValue: string[]) => {
+          this.setState({
+            value: selectValue
+          });
+          handleDimensionExpressionForSelectorChange(selectValue)
+        };
+        return <Select {...commonEnumProps} onChange={handleBooleanEnum}>
           <Option key={this._cuid()} value={"0"}>
             {"false"}
           </Option>
@@ -118,8 +125,28 @@ class FunnelExpressionInput extends React.Component<Props, State> {
       case 'DEVICE_OS_FAMILY':
       case 'DEVICE_FORM_FACTOR':
       case 'DEVICE_BROWSER_FAMILY':
-        const dimensionEnums: DimensionEnum[] = enumValuesByName[dimensionName]
-        return <Select {...commonEnumProps} >
+        const dimensionEnums: DimensionEnum[] = enumValuesByName[dimensionName];
+        const handleEnumChange = (selectValue: string[]) => {
+          const selectAllChecked = selectValue.includes("Select all");
+           if (selectAllChecked) {
+            selectValue = dimensionEnums.map(e => e.toString());
+           }
+
+           if (selectValue.includes("Deselect all")) {
+             selectValue = [];
+           }
+
+           this.setState({
+             value: selectValue,
+             allOptionsSelected: selectAllChecked
+           });
+           handleDimensionExpressionForSelectorChange(selectValue)
+         };
+
+        return <Select {...commonEnumProps} onChange={handleEnumChange} >
+           <Option key={this._cuid()} value={selectAllOptionValue}>
+              {selectAllOptionValue}
+            </Option>
           {dimensionEnums.map((et: DimensionEnum) => {
             return (
               <Option key={this._cuid()} value={et.toString()}>
@@ -250,13 +277,12 @@ class FunnelExpressionInput extends React.Component<Props, State> {
 
   componentDidUpdate(prevProps: Props) {
     const { dimensionName } = this.props
-    const { expressionBuster } = this.state
     if (prevProps.dimensionName !== dimensionName) {
       this.setState({
-        expressionBuster: true
+        value: [],
+        allOptionsSelected: false
       })
     }
-    if (expressionBuster) this.setState({ expressionBuster: false })
   }
 
   render() {
