@@ -29,17 +29,19 @@ import DatamartSelector from '../../../../Datamart/DatamartSelector';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
 import { isEmpty } from 'lodash';
 import { Loading } from '@mediarithmics-private/mcs-components-library';
+import { InjectedFeaturesProps, injectFeatures } from '../../../../Features';
 
 interface State {
   datamartReplicationData: DatamartReplicationFormData;
   isLoading: boolean;
   selectedType?: ReplicationType;
-  replicationTypes: string[];
+  replicationTypes: ReplicationType[];
   datamartId?: string;
 }
 
 type Props = InjectedIntlProps &
   InjectedNotificationProps &
+  InjectedFeaturesProps &
   RouteComponentProps<DatamartReplicationRouteMatchParam>;
 
 class EditDatamartReplicationPage extends React.Component<Props, State> {
@@ -52,7 +54,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
     this.state = {
       isLoading: false,
       datamartReplicationData: INITIAL_DATAMART_REPLICATION_FORM_DATA,
-      replicationTypes: ['GOOGLE_PUBSUB'],
+      replicationTypes: ['GOOGLE_PUBSUB', 'AZURE_EVENT_HUBS'],
     };
   }
 
@@ -104,14 +106,23 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
 
     const {
       credentials_uri,
+      type,
       ...formDataWithoutCredentialsUri
     } = datamartReplicationFormData;
 
     if (isEmpty(credentials_uri) && !datamartReplicationId) {
-      notifyError(new Error('Credentials must be defined'), {
-        intlDescription: messages.datamartReplicationCredentialsUriError,
-      });
-      return; 
+      switch (type) {
+        case 'AZURE_EVENT_HUBS': 
+          notifyError(new Error('A Connection String must be defined'), {
+            intlDescription: messages.datamartReplicationEventHubsConnectionStringUriError,
+          });
+          return; 
+        default:
+          notifyError(new Error('Credentials must be defined'), {
+           intlDescription: messages.datamartReplicationPubSubCredentialsUriError,
+         });
+         return; 
+      }
     }
 
     const { selectedType } = this.state;
@@ -212,13 +223,16 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
   renderReplicationCards = () => {
     const array = [];
     const size = 6;
+    const { hasFeature } = this.props;
 
     const { replicationTypes } = this.state;
 
-    const cards = replicationTypes.map(type => {
+    const cards = replicationTypes
+    .filter(type => type !== 'AZURE_EVENT_HUBS' || hasFeature('datamartSettings-event_hubs_replication'))
+    .map(type => {
       return (
         <Col key={type} span={4}>
-          <DatamartReplicationCard type={type} onClick={this.onSelectType} />
+            <DatamartReplicationCard type={type} onClick={this.onSelectType} />
         </Col>
       );
     });
@@ -330,6 +344,7 @@ const mapStateToProps = (state: MicsReduxState) => ({
 export default compose(
   withRouter,
   injectIntl,
+  injectFeatures,
   connect(mapStateToProps),
   injectNotifications,
 )(EditDatamartReplicationPage);

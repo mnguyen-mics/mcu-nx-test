@@ -112,49 +112,82 @@ export const messages = defineMessages({
     id: 'settings.datamart.datamartReplication.edit.name.label',
     defaultMessage: 'Name',
   },
-  // crendentials URI
-  datamartReplicationCredentialsUriPlaceHolder: {
-    id: 'settings.datamart.datamartReplication.edit.credentailsUri.placeholder',
+  // --------- GOOGLE PUB/SUB ---------
+  // Credentials URI
+  datamartReplicationPubSubCredentialsUriPlaceHolder: {
+    id: 'settings.datamart.datamartReplication.pubsub.edit.credentialsUri.placeholder',
     defaultMessage: 'Replication Credentials URI',
   },
-  datamartReplicationCredentialsUriTooltip: {
-    id: 'settings.datamart.datamartReplication.edit.credentailsUri.tootltip',
-    defaultMessage: 'Give your Replication credentials URI',
+  datamartReplicationPubSubCredentialsUriTooltip: {
+    id: 'settings.datamart.datamartReplication.pubsub.edit.credentialsUri.tootltip',
+    defaultMessage: 'Give your Replication your Credentials',
   },
-  datamartReplicationCredentialsUriLabel: {
-    id: 'settings.datamart.datamartReplication.edit.credentailsUri.label',
+  datamartReplicationPubSubCredentialsUriLabel: {
+    id: 'settings.datamart.datamartReplication.pubsub.edit.credentialsUri.label',
     defaultMessage: 'Credentials URI',
   },
-  datamartReplicationCredentialsUriError: {
-    id: 'settings.datamart.datamartReplication.edit.credentailsUri.error',
+  datamartReplicationPubSubCredentialsUriError: {
+    id: 'settings.datamart.datamartReplication.pubsub.edit.credentialsUri.error',
     defaultMessage: 'Credentials must be defined',
   },
   // Project ID
-  datamartReplicationProjectIdPlaceHolder: {
-    id: 'settings.datamart.datamartReplication.edit.projectId.placeholder',
+  datamartReplicationPubSubProjectIdPlaceholder: {
+    id: 'settings.datamart.datamartReplication.pubsub.edit.projectId.placeholder',
     defaultMessage: 'Replication Project ID',
   },
-  datamartReplicationProjectIdTooltip: {
-    id: 'settings.datamart.datamartReplication.edit.projectId.tootltip',
+  datamartReplicationPubSubProjectIdTooltip: {
+    id: 'settings.datamart.datamartReplication.pubsub.edit.projectId.tootltip',
     defaultMessage: 'Give your Replication a project ID',
   },
-  datamartReplicationProjectIdLabel: {
-    id: 'settings.datamart.datamartReplication.edit.projectId.label',
+  datamartReplicationPubSubProjectIdLabel: {
+    id: 'settings.datamart.datamartReplication.pubsub.edit.projectId.label',
     defaultMessage: 'Project ID',
   },
-  // topic ID
-  datamartReplicationTopicIdPlaceHolder: {
-    id: 'settings.datamart.datamartReplication.edit.topicId.placeholder',
+  // Topic ID
+  datamartReplicationPubSubTopicIdPlaceHolder: {
+    id: 'settings.datamart.datamartReplication.pubsub.edit.topicId.placeholder',
     defaultMessage: 'Replication Topic ID',
   },
-  datamartReplicationTopicIdTooltip: {
-    id: 'settings.datamart.datamartReplication.edit.topicId.tootltip',
+  datamartReplicationPubSubTopicIdTooltip: {
+    id: 'settings.datamart.datamartReplication.pubsub.edit.topicId.tootltip',
     defaultMessage: 'Give your Replication a topic ID',
   },
-  datamartReplicationTopicIdLabel: {
-    id: 'settings.datamart.datamartReplication.edit.topic.label',
+  datamartReplicationPubSubTopicIdLabel: {
+    id: 'settings.datamart.datamartReplication.pubsub.edit.topic.label',
     defaultMessage: 'Topic ID',
   },
+   // --------- MICROSOFT AZURE EVENT HUBS ---------
+  // Connection String (put in credentials_uri)
+  datamartReplicationEventHubsConnectionStringUriPlaceHolder: {
+    id: 'settings.datamart.datamartReplication.eventHubs.edit.connectionStringUri.placeholder',
+    defaultMessage: 'Replication Connection String URI',
+  },
+  datamartReplicationEventHubsConnectionStringUriTooltip: {
+    id: 'settings.datamart.datamartReplication.eventHubs.edit.connectionStringUri.tootltip',
+    defaultMessage: 'Give your Replication a Connection String',
+  },
+  datamartReplicationEventHubsConnectionStringUriLabel: {
+    id: 'settings.datamart.datamartReplication.eventHubs.edit.connectionStringUri.label',
+    defaultMessage: 'Connection String URI',
+  },
+  datamartReplicationEventHubsConnectionStringUriError: {
+    id: 'settings.datamart.datamartReplication.eventHubs.edit.connectionStringUri.error',
+    defaultMessage: 'Connection String URI must be defined',
+  },
+  // Event Hub Name
+  datamartReplicationEventHubNamePlaceholder: {
+    id: 'settings.datamart.datamartReplication.eventHubs.edit.eventHubName.placeholder',
+    defaultMessage: 'Replication Event Hub Name',
+  },
+  datamartReplicationEventHubNameTooltip: {
+    id: 'settings.datamart.datamartReplication.eventHubs.edit.eventHubName.tootltip',
+    defaultMessage: 'Give your Replication an Event Hub Name',
+  },
+  datamartReplicationEventHubNameLabel: {
+    id: 'settings.datamart.datamartReplication.eventHubs.edit.eventHubName.label',
+    defaultMessage: 'Event Hub Name',
+  },
+  // General
   savingInProgress: {
     id: 'settings.datamart.datamartReplication.edit.savingInProgess',
     defaultMessage: 'Saving in progress',

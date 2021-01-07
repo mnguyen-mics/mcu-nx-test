@@ -108,11 +108,11 @@ export interface Aliases {
   name: string;
 }
 
-export type ReplicationType = 'GOOGLE_PUBSUB';
+export type ReplicationType = 'GOOGLE_PUBSUB' | 'AZURE_EVENT_HUBS';
 
 export type ReplicationStatus = 'PAUSED' | 'ACTIVE' | 'ERROR';
 
-export type DatamartReplicationResourceShape = PubSubReplicationResource;
+export type DatamartReplicationResourceShape = PubSubReplicationResource | EventHubsReplicationResource;
 
 export interface DatamartReplicationResource {
   id: string;
@@ -120,12 +120,16 @@ export interface DatamartReplicationResource {
   datamart_id: string;
   type: ReplicationType;
   status: ReplicationStatus;
+  credentials_uri: string;
 }
 
 export interface PubSubReplicationResource extends DatamartReplicationResource {
-  credentials_uri: string;
   project_id: string;
   topic_id: string;
+}
+
+export interface EventHubsReplicationResource extends DatamartReplicationResource {
+  event_hub_name: string;
 }
 
 // Waiting for backend

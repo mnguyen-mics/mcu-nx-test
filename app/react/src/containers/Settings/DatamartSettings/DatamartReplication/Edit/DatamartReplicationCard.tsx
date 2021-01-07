@@ -9,6 +9,7 @@ import {
 } from 'react-intl';
 import { DatamartReplicationRouteMatchParam } from './domain';
 import { Card, Button } from '@mediarithmics-private/mcs-components-library';
+import { ReplicationType } from '../../../../../models/settings/settings';
 
 const messagesMap: {
   [key: string]: FormattedMessage.MessageDescriptor;
@@ -17,6 +18,11 @@ const messagesMap: {
     id:
       'settings.datamart.datamartReplication.create.replicationType.googlePubSub',
     defaultMessage: 'Google Pub/Sub',
+  },
+  AZURE_EVENT_HUBS: {
+    id:
+      'settings.datamart.datamartReplication.create.replicationType.azureEventHubs',
+    defaultMessage: 'Microsoft Azure Event Hubs',
   },
   selectButton: {
     id:
@@ -31,7 +37,7 @@ const messagesMap: {
 });
 
 export interface DatamartReplicationCardProps {
-  type: string;
+  type: ReplicationType;
   onClick: (type: string) => void;
 }
 
@@ -54,6 +60,29 @@ class DatamartReplicationCard extends React.Component<Props> {
     this.setState({ isTooltipVisible: false });
   };
 
+  renderImage = (type: ReplicationType) => {
+    switch (type) {
+      case 'GOOGLE_PUBSUB':
+        return (
+          <img
+            alt="logo-google-pubsub"
+            className="replication-logo"
+            src={`https://assets.mediarithmics.com/1/public/assets/1580747629223-sdjBhPFh/google-pubsub-logo.svg`}
+          />
+        );
+      case 'AZURE_EVENT_HUBS':
+        return (
+          <img
+            alt="logo-microsoft-azure-event-hubs"
+            className="replication-logo"
+            src={`https://assets.mediarithmics.io/1/public/assets/1608210980698-rLbvZaLF/azure-event-hub.png`}
+          />
+        );
+      default:
+        return <div className="placeholder" />;
+    }
+  };
+
   render() {
     const {
       type,
@@ -65,22 +94,10 @@ class DatamartReplicationCard extends React.Component<Props> {
     return (
       <div key={type} className="replication-card" onClick={onClickSelect}>
         <Card className="replication-card hoverable" type="flex">
-          <div className="image-placeholder">
-            {/* TO DO: <img src={`${(window as any).MCS_CONSTANTS.ASSETS_URL}${replication.assetUrl}`} /> */}
-            {type === 'GOOGLE_PUBSUB' ? (
-              <img
-                alt="logo-google-pubsub"
-                className="replication-logo"
-                src={`https://assets.mediarithmics.com/1/public/assets/1580747629223-sdjBhPFh/google-pubsub-logo.svg`}
-              />
-            ) : (
-              <div className="placeholder" />
-            )}
-          </div>
+          <div className="image-placeholder">{this.renderImage(type)}</div>
           <div className="replication-title">
             {formatMessage(messagesMap[type])}
           </div>
-
           <div className="select-button">
             <Button
               className="button"

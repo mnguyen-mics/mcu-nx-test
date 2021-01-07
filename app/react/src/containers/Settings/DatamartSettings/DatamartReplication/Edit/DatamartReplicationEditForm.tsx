@@ -15,7 +15,8 @@ import { DatamartReplicationFormData } from './domain';
 import { Omit } from '../../../../../utils/Types';
 import GeneralFormSection from './Sections/GeneralFormSection';
 import { McsFormSection } from '../../../../../utils/FormHelper';
-import CustomFormSection from './Sections/CustomFormSection';
+import PubSubCustomFormSection from './Sections/PubSubCustomFormSection';
+import EventHubsCustomFormSection from './Sections/EventHubsCustomFormSection';
 
 const Content = Layout.Content;
 
@@ -57,7 +58,15 @@ class DatamartReplicationEditForm extends React.Component<Props> {
       sections.push({
         id: 'custom',
         title: messages.sectionCustomTitle,
-        component: <CustomFormSection />,
+        component: <PubSubCustomFormSection />,
+      });
+    }
+
+    if (type === 'AZURE_EVENT_HUBS') {
+      sections.push({
+        id: 'custom',
+        title: messages.sectionCustomTitle,
+        component: <EventHubsCustomFormSection />,
       });
     }
 
