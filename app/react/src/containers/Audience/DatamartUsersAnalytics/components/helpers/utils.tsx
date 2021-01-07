@@ -106,23 +106,26 @@ function ResourceByKeywordSelector<T extends SelectableResource, AdditionalConte
         });
     }
 
-    handleChange = (value: LabeledValue[]) => {
+    handleChange = (value: LabeledValue | LabeledValue[]) => {
       const { onchange } = this.props;
+      const { resourcesList } = this.state;
 
       if (Array.isArray(value) && value.length === 0 ) {
         this.fetchListMethod('');
       }
 
-      const { resourcesList } = this.state;
-      const isAllSelected = value.find(v => v.key === "Select all");
-      if (isAllSelected) {
-        value = resourcesList;
+      let isAllSelected;
+      if (Array.isArray(value)) {
+        isAllSelected = Array.isArray(value) && value.find(v => v.key === "Select all");
+        if (isAllSelected) {
+          value = resourcesList;
+        }
+        const isAllDeselected = value.find(v => v.key === "Deselect all");
+        if (isAllDeselected) {
+          value = [];
+        }
       }
-      const isAllDeselected = value.find(v => v.key === "Deselect all");
-      if (isAllDeselected) {
-        value = [];
-      }
-      
+
       this.setState({
         value,
         allOptionsSelected: !!isAllSelected
@@ -152,7 +155,7 @@ function ResourceByKeywordSelector<T extends SelectableResource, AdditionalConte
         getPopupContainer={getPopupContainer}
         filterOption={alwaysTrue}
       >
-        <Select.Option  value={selectAllOptionValue} key={selectAllOptionValue}>{selectAllOptionValue}</Select.Option>
+        {resourcesList.length > 1 && <Select.Option  value={selectAllOptionValue} key={selectAllOptionValue}>{selectAllOptionValue}</Select.Option>}
         {resourcesList.map((item: LabeledValue, index: number) => <Select.Option value={item.key} key={index.toString()}>{item.label}</Select.Option>)}
       </Select>);
     }
