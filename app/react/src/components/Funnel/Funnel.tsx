@@ -282,9 +282,9 @@ class Funnel extends React.Component<Props, State> {
             <div className="mcs-funnel_steps" >
               {funnelData.steps.map((step, index) => {
 
-                const conversion = index > 0 && funnelData.steps[index - 1].conversion ?
+                const conversion = index > 0 && funnelData.steps[index - 1].hasOwnProperty("conversion") ?
                     numeral(funnelData.steps[index - 1].conversion).format('0,0') : undefined;
-                const amount = index > 0 && funnelData.steps[index - 1].amount ?
+                const amount = index > 0 && funnelData.steps[index - 1].hasOwnProperty("amount") ?
                     `${numeral(funnelData.steps[index - 1].amount).format('0,0')}€` : undefined;
 
                 return <div key={index.toString()} style={{ flex: 1 }} >
