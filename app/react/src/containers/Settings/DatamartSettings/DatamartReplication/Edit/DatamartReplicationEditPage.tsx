@@ -29,6 +29,7 @@ import DatamartSelector from '../../../../Datamart/DatamartSelector';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
 import { isEmpty } from 'lodash';
 import { Loading } from '@mediarithmics-private/mcs-components-library';
+import { InjectedFeaturesProps, injectFeatures } from '../../../../Features';
 
 interface State {
   datamartReplicationData: DatamartReplicationFormData;
@@ -40,6 +41,7 @@ interface State {
 
 type Props = InjectedIntlProps &
   InjectedNotificationProps &
+  InjectedFeaturesProps &
   RouteComponentProps<DatamartReplicationRouteMatchParam>;
 
 class EditDatamartReplicationPage extends React.Component<Props, State> {
@@ -221,13 +223,16 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
   renderReplicationCards = () => {
     const array = [];
     const size = 6;
+    const { hasFeature } = this.props;
 
     const { replicationTypes } = this.state;
 
-    const cards = replicationTypes.map(type => {
+    const cards = replicationTypes
+    .filter(type => type !== 'AZURE_EVENT_HUBS' || hasFeature('datamartSettings-event_hubs_replication'))
+    .map(type => {
       return (
         <Col key={type} span={4}>
-          <DatamartReplicationCard type={type} onClick={this.onSelectType} />
+            <DatamartReplicationCard type={type} onClick={this.onSelectType} />
         </Col>
       );
     });
@@ -339,6 +344,7 @@ const mapStateToProps = (state: MicsReduxState) => ({
 export default compose(
   withRouter,
   injectIntl,
+  injectFeatures,
   connect(mapStateToProps),
   injectNotifications,
 )(EditDatamartReplicationPage);

@@ -49,6 +49,8 @@
     'datamart-user_choices',
     'datamartSettings-audience_partitions',
     'datamartSettings-compartments',
+    'datamartSettings-datamart_replication',
+    'datamartSettings-event_hubs_replication',
     'funnel-analytics'
   ];
 
