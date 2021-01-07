@@ -37,6 +37,8 @@ export interface FunnelResource {
 export interface Steps {
   name: string;
   count: number;
+  conversion?: number;
+  amount?: number
   interaction_duration: number
 }
 

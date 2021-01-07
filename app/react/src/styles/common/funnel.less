@@ -116,7 +116,7 @@
 }
 
 .mcs-funnel_stepName,
-.mcs-funnel_userPoints {
+.mcs-funnel_metric {
   padding: 15px;
   min-height: 42px;
 }
@@ -127,8 +127,10 @@
   border-bottom: 1px solid @border-color-split;
 }
 
-.mcs-funnel_userPoints {
-  border-right: 1px solid @border-color-split;
+.mcs-funnel_metricsBlock {
+  display: flex;
+  justify-content: space-between;
+  border-right: 1px solid #D3DBE1;
 }
 
 .mcs-funnelQueryBuilder_header_title,
@@ -140,14 +142,14 @@
   color: @primary-color;
 }
 
-.mcs-funnel_userPoints_title {
+.mcs-funnel_metric_title {
   margin-bottom: 8px;
   font-size: 10px;
   font-family: "LLCircularWeb-Book";
   color: @primary-color;
 }
 
-.mcs-funnel_userPoints_nbr {
+.mcs-funnel_metric_nbr {
   font-size: 14px;
   font-family: "LLCircularWeb-Medium";
   font-weight: 500;
