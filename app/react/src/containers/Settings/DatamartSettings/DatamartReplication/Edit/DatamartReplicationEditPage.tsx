@@ -3,7 +3,6 @@ import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import * as FeatureSelectors from '../../../../../redux/Features/selectors';
 import {
   DatamartReplicationRouteMatchParam,
   DatamartReplicationFormData,
@@ -338,7 +337,6 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
 
 const mapStateToProps = (state: MicsReduxState) => ({
   workspace: getWorkspace(state),
-  hasFeature: FeatureSelectors.hasFeature(state),
 });
 
 export default compose(
