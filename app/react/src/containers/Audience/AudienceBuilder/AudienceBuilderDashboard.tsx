@@ -14,6 +14,7 @@ import { Loading } from '@mediarithmics-private/mcs-components-library';
 import DashboardWrapper from '../Dashboard/DashboardWrapper';
 import CardFlex from '../Dashboard/Components/CardFlex';
 import { QueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
+import TimelineSelector from '../../QueryTool/JSONOTQL/TimelineSelector';
 
 interface AudienceBuilderDashboardProps {
   organisationId: string;
@@ -77,7 +78,14 @@ class AudienceBuilderDashboard extends React.Component<Props, State> {
   };
 
   render() {
-    const { intl, totalAudience, isQueryRunning, queryDocument } = this.props;
+    const {
+      intl,
+      totalAudience,
+      isQueryRunning,
+      queryDocument,
+      datamartId,
+      organisationId,
+    } = this.props;
     const { isDashboardLoading, dashboards } = this.state;
     return (
       <div className="mcs-audienceBuilder_liveDashboard">
@@ -90,6 +98,14 @@ class AudienceBuilderDashboard extends React.Component<Props, State> {
                 title={intl.formatMessage(messages.selectedAudience)}
                 value={totalAudience}
               />
+              <div className="mcs-audienceBuilder_timelineSelector">
+                <TimelineSelector
+                  stale={false}
+                  datamartId={datamartId}
+                  query={queryDocument?.where}
+                  organisationId={organisationId}
+                />
+              </div>
             </CardFlex>
             {isDashboardLoading || !queryDocument ? (
               <Loading className="m-t-20" isFullScreen={true} />
