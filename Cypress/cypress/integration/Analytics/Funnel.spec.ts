@@ -2,10 +2,10 @@ describe('Should test the funnel', () => {
   let createdChannelId: string;
 
   const getDate = (diffDays: number, diffMonths: number) => {
-    const currentDate = new Date();
-    const day = currentDate.getDate() + diffDays;
-    const month = currentDate.getMonth() + 1 + diffMonths;
-    const year = currentDate.getFullYear();
+    const wantedDate = new Date(new Date().setDate(new Date().getDate() + diffDays + (diffMonths * 30)));
+    const day = wantedDate.getDate();
+    const month =wantedDate.getMonth() + 1;
+    const year = wantedDate.getFullYear() ;
     const formattedDay = day >= 10 ? day : '0' + day;
     const formattedMonth = month >= 10 ? month : '0' + month;
     return year + '-' + formattedMonth + '-' + formattedDay;
@@ -20,6 +20,17 @@ describe('Should test the funnel', () => {
           total: stepCount,
           steps: [
             { name: 'Step 1', count: stepCount, interaction_duration: 10 },
+          ],
+        },
+      },
+      conversionBody:{
+        status: 'ok',
+        data: {
+          total: stepCount,
+          steps: [
+            { name: 'Step 1', count: stepCount, interaction_duration: 10, conversion: 5000, amount:8000 },
+            { name: 'Step 2', count: stepCount-1, interaction_duration: 5000, conversion: 500000.651651, amount:800000.51651 },
+            { name: 'Step 3', count: stepCount-1, interaction_duration: 5000, conversion: 0, amount:0 },
           ],
         },
       },
@@ -97,11 +108,11 @@ describe('Should test the funnel', () => {
           $type: 'APP_VISIT',
           $site_id: `${createdChannelId}`,
           $session_status: 'NO_SESSION',
-          $ts: new Date().getTime(),
+          $ts: new Date().getTime()-10800000,
           $events: [
             {
               $event_name: '$transaction_confirmed',
-              $ts: new Date().getTime(),
+              $ts: new Date().getTime()-10800000,
               $properties: {
                 $product_id: 'test',
               },
@@ -117,7 +128,7 @@ describe('Should test the funnel', () => {
         );
         cy.get('.mcs-funnelQueryBuilder_executeQueryBtn button:first').click();
         cy.wait(2000);
-        cy.get('.mcs-funnel_userPoints_nbr').should('have.length', 2);
+        cy.get('.mcs-funnel_metric_nbr').should('have.length', 2);
         cy.get('.mcs-funnel_stepName_title').should('have.length', 2);
         cy.get('.mcs-funnel_stepName_title')
           .first()
@@ -127,14 +138,14 @@ describe('Should test the funnel', () => {
           .should('contain', 'Step 1');
         cy.get('.mcs-funnel_stepInfo')
           .eq(1)
-          .should('contain', '0.0000%');
+          .should('contain', '0.00e+0%');
         cy.get('.mcs-funnel_stepInfo')
           .first()
           .should('contain', '100%');
-        cy.get('.mcs-funnel_userPoints_nbr')
+        cy.get('.mcs-funnel_metric_nbr')
           .first()
           .should('contain', '1');
-        cy.get('.mcs-funnel_userPoints_nbr')
+        cy.get('.mcs-funnel_metric_nbr')
           .eq(1)
           .should('contain', '1');
       });
@@ -212,7 +223,7 @@ describe('Should test the funnel', () => {
           ],
         },
       }).then(() => {
-        cy.wait(2000);
+        cy.wait(5000);
         cy.get('.mcs-funnelQueryBuilder_select--dimensions').click();
         cy.contains('Product Id').click();
         cy.get('.mcs-funnelQueryBuilder_dimensionValue').type('test');
@@ -499,14 +510,14 @@ describe('Should test the funnel', () => {
                         $stepPercetange.text(),
                         10,
                       );
-                      cy.get('.mcs-funnel_userPoints_nbr')
+                      cy.get('.mcs-funnel_metric_nbr')
                         .eq(1)
                         .then($firstStepNumber => {
                           const firstStepNumber: number = parseInt(
                             $firstStepNumber.text(),
                             10,
                           );
-                          cy.get('.mcs-funnel_userPoints_nbr')
+                          cy.get('.mcs-funnel_metric_nbr')
                             .eq(2)
                             .then($secondStepNumber => {
                               const secondStepNumber: number = parseInt(
@@ -546,7 +557,7 @@ describe('Should test the funnel', () => {
       cy.intercept(
         { pathname: /.*\/user_activities_funnel/, method: 'POST' },
         req => {
-          expect(req.body.in.end_date).to.eq(getDate(1, 0));
+          expect(req.body.in.end_date).to.eq(getDate(0, 0));
           expect(req.body.in.start_date).to.eq(getDate(-7, 0));
           req.reply(res => {
             res.send(
@@ -557,7 +568,7 @@ describe('Should test the funnel', () => {
           });
         },
       );
-      cy.get('.mcs-funnel_userPoints_nbr')
+      cy.get('.mcs-funnel_metric_nbr')
         .eq(0)
         .should('contain', '100');
     });
@@ -580,7 +591,7 @@ describe('Should test the funnel', () => {
       cy.intercept(
         { pathname: /.*\/user_activities_funnel/, method: 'POST' },
         req => {
-          expect(req.body.in.end_date).to.eq(getDate(1, 0));
+          expect(req.body.in.end_date).to.eq(getDate(0, 0));
           expect(req.body.in.start_date).to.eq(getDate(0, 0));
           req.reply(res => {
             res.send(
@@ -591,7 +602,7 @@ describe('Should test the funnel', () => {
           });
         },
       );
-      cy.get('.mcs-funnel_userPoints_nbr')
+      cy.get('.mcs-funnel_metric_nbr')
         .eq(0)
         .should('contain', '200');
     });
@@ -614,7 +625,7 @@ describe('Should test the funnel', () => {
       cy.intercept(
         { pathname: /.*\/user_activities_funnel/, method: 'POST' },
         req => {
-          expect(req.body.in.end_date).to.eq(getDate(1, 0));
+          expect(req.body.in.end_date).to.eq(getDate(0, 0));
           expect(req.body.in.start_date).to.eq(getDate(0, -1));
           req.reply(res => {
             res.send(
@@ -625,13 +636,13 @@ describe('Should test the funnel', () => {
           });
         },
       );
-      cy.get('.mcs-funnel_userPoints_nbr')
+      cy.get('.mcs-funnel_metric_nbr')
         .eq(0)
         .should('contain', '300');
     });
   });
 
-      it('should send the right request on custom datepicker', () => {
+  it('should send the right request on custom datepicker', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.login();
       cy.switchOrg(data.organisationName);
@@ -644,15 +655,21 @@ describe('Should test the funnel', () => {
       );
       cy.get('.mcs-date-range-picker').click();
       cy.contains('Custom').click();
-      cy.get('.ant-calendar-input').eq(0).clear().type(getDate(0,-3))
+      cy.get('.ant-calendar-input')
+        .eq(0)
+        .clear()
+        .type(getDate(0, -3));
       cy.get('.mcs-date-range-picker').click();
       cy.contains('Custom').click();
-      cy.get('.ant-calendar-input').eq(1).clear().type(getDate(0,-2))
+      cy.get('.ant-calendar-input')
+        .eq(1)
+        .clear()
+        .type(getDate(0, -2));
       cy.get('.mcs-funnelQueryBuilder_executeQueryBtn button:first').click();
       cy.intercept(
         { pathname: /.*\/user_activities_funnel/, method: 'POST' },
         req => {
-          expect(req.body.in.end_date).to.eq(getDate(1, -2));
+          expect(req.body.in.end_date).to.eq(getDate(0, -2));
           expect(req.body.in.start_date).to.eq(getDate(0, -3));
           req.reply(res => {
             res.send(
@@ -663,9 +680,65 @@ describe('Should test the funnel', () => {
           });
         },
       );
-      cy.get('.mcs-funnel_userPoints_nbr')
+      cy.get('.mcs-funnel_metric_nbr')
         .eq(0)
         .should('contain', '400');
+    });
+  });
+
+    it('should display the amount and conversion when available', () => {
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      cy.login();
+      cy.switchOrg(data.organisationName);
+      cy.get('.mcs-sideBar-subMenu_menu\\.dataStudio\\.title').click();
+      cy.get('.mcs-sideBar-subMenuItem_menu\\.dataStudio\\.funnel').click();
+      cy.get('.mcs-funnelQueryBuilder_select--dimensions').click();
+      cy.contains('Channel Id').click();
+      cy.get('.mcs-funnelQueryBuilder_dimensionValue').type(
+        createdChannelId + '{enter}',
+      );
+      cy.get('.mcs-date-range-picker').click();
+      cy.contains('Custom').click();
+      cy.get('.ant-calendar-input')
+        .eq(0)
+        .clear()
+        .type(getDate(0, -3));
+      cy.get('.mcs-date-range-picker').click();
+      cy.contains('Custom').click();
+      cy.get('.ant-calendar-input')
+        .eq(1)
+        .clear()
+        .type(getDate(0, -2));
+      cy.get('.mcs-funnelQueryBuilder_executeQueryBtn button:first').click();
+      cy.intercept(
+        { pathname: /.*\/user_activities_funnel/, method: 'POST' },
+        req => {
+          expect(req.body.in.end_date).to.eq(getDate(0, -2));
+          expect(req.body.in.start_date).to.eq(getDate(0, -3));
+          req.reply(res => {
+            res.send(
+              funnelStubbedResponse(400).status,
+              funnelStubbedResponse(400).conversionBody,
+              funnelStubbedResponse(400).headers,
+            );
+          });
+        },
+      );
+      cy.get('.mcs-funnel_metricsBlock')
+        .eq(0)
+        .should('contain', '400');
+      cy.get('.mcs-funnel_metricsBlock')
+        .eq(1)
+        .should('contain', '5,000');
+      cy.get('.mcs-funnel_metricsBlock')
+        .eq(1)
+        .should('contain', '8,000€');
+      cy.get('.mcs-funnel_metricsBlock')
+        .eq(3)
+        .should('contain', '0€');
+      cy.get('.mcs-funnel_metricsBlock')
+        .eq(3)
+        .should('contain', '0');
     });
   });
 });
