@@ -161,7 +161,7 @@ class EditPluginModal extends React.Component<Props, State> {
     const { feed, notifyError, onClose } = this.props;
 
     return this.feedService
-      .getAudienceFeedProperty(feed.id)
+      .getAudienceFeedProperties(feed.id)
       .then(res =>
         this.setState({
           initialValues: {

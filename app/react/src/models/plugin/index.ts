@@ -1,34 +1,57 @@
-import { UploadFile } from "antd/lib/upload/interface";
+import { UploadFile } from 'antd/lib/upload/interface';
 
 export type PluginPropertyOrigin = 'PLUGIN_STATIC' | 'PLUGIN' | 'INSTANCE';
+
+export type PluginPropertyType =
+  | 'STRING'
+  | 'URL'
+  | 'DOUBLE'
+  | 'INT'
+  | 'BOOLEAN'
+  | 'ASSET'
+  | 'ASSET_FILE'
+  | 'DATA_FILE'
+  | 'AD_LAYOUT'
+  | 'STYLE_SHEET'
+  | 'PIXEL_TAG'
+  | 'RECOMMENDER'
+  | 'LONG'
+  | 'MODEL_ID'
+  | 'DATAMART_ID'
+  | 'RECOMMENDER_ID'
+  | 'NATIVE_IMAGE'
+  | 'NATIVE_TITLE'
+  | 'NATIVE_DATA';
 
 export interface PropertyResource {
   deletable: boolean;
   origin: PluginPropertyOrigin;
   technical_name: string;
   writable: boolean;
+  property_type: PluginPropertyType;
 }
 
-export type PropertyResourceShape = StringPropertyResource
-| UrlPropertyResource
-| DoublePropertyResource
-| IntPropertyResource
-| BooleanPropertyResource
-| AssetPropertyResource
-| AssetFilePropertyResource
-| AssetPropertyCreationResource
-| DataFilePropertyResource
-| AdLayoutPropertyResource
-| StyleSheetPropertyResource
-| PixelTagPropertyResource
-| RecommenderPropertyResource
-| LongPropertyResource
-| ModelIdPropertyResource
-| DatamartIdPropertyResource
-| RecommenderIdPropertyResource 
-| NativeImagePropertyResource
-| NativeTitlePropertyResource
-| NativeDataPropertyResource;
+export type PropertyResourceShape =
+  | StringPropertyResource
+  | UrlPropertyResource
+  | DoublePropertyResource
+  | IntPropertyResource
+  | BooleanPropertyResource
+  | AssetPropertyResource
+  | AssetFilePropertyResource
+  | AssetPropertyCreationResource
+  | DataFilePropertyResource
+  | AdLayoutPropertyResource
+  | StyleSheetPropertyResource
+  | PixelTagPropertyResource
+  | RecommenderPropertyResource
+  | LongPropertyResource
+  | ModelIdPropertyResource
+  | DatamartIdPropertyResource
+  | RecommenderIdPropertyResource
+  | NativeImagePropertyResource
+  | NativeTitlePropertyResource
+  | NativeDataPropertyResource;
 
 export interface StringPropertyResource extends PropertyResource {
   property_type: 'STRING';

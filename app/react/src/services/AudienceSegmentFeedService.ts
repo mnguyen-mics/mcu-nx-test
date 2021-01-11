@@ -1,7 +1,7 @@
 import PluginInstanceService from './PluginInstanceService';
 import {
   AudienceTagFeed,
-  AudienceExternalFeed,
+  AudienceFeed,
   Status,
   PluginProperty,
 } from '../models/Plugins';
@@ -20,8 +20,6 @@ import { IAudienceSegmentService } from './AudienceSegmentService';
 export type AudienceFeedType = 'EXTERNAL_FEED' | 'TAG_FEED';
 export type FeedOrderBy = 'AUDIENCE_SEGMENT_NAME';
 
-type AudienceFeed = AudienceTagFeed | AudienceExternalFeed;
-
 export interface GetFeeds extends PaginatedApiParam {
   organisation_id?: string;
   community_id?: string;
@@ -30,6 +28,7 @@ export interface GetFeeds extends PaginatedApiParam {
   group_id?: string;
   artifact_id?: string;
   version_id?: string;
+  scenario_id?: string;
   administrated?: boolean;
   order_by?: FeedOrderBy;
 }
@@ -69,10 +68,6 @@ export interface IAudienceSegmentFeedService {
     organisationId: string,
     options: object,
   ) => Promise<DataResponse<AudienceTagFeed>>;
-  getAudienceFeedProperties: (
-    id: string,
-    options: object,
-  ) => Promise<DataListResponse<any>>;
   getLocalizedPluginLayout: (
     pInstanceId: string,
   ) => Promise<PluginLayout | null>;
@@ -84,13 +79,12 @@ export interface IAudienceSegmentFeedService {
     audienceFeed: Partial<AudienceFeed>,
     options: object,
   ) => Promise<DataResponse<AudienceFeed>>;
-
   updateAudienceFeed: (
     audienceFeedId: string,
     audienceFeed: Partial<AudienceFeed>,
     options?: object,
   ) => Promise<DataResponse<AudienceFeed>>;
-  getAudienceFeedProperty: (
+  getAudienceFeedProperties: (
     feedId: string,
     options?: object,
   ) => Promise<DataListResponse<PluginProperty>>;
@@ -193,13 +187,6 @@ export default abstract class AudienceSegmentFeedService<T extends AudienceFeed>
     return this.service.createPluginInstance(organisationId, options);
   };
 
-  // STOP
-
-  // OLD WAY AND DUMB WAY TO DO IT, TO CHANGE
-  getAudienceFeedProperties = (id: string, options: object = {}) => {
-    return this.service.getAudienceFeedProperties(id, options);
-  };
-
   getLocalizedPluginLayout(pInstanceId: string): Promise<PluginLayout | null> {
     return this.service.getLocalizedPluginLayout(pInstanceId);
   }
@@ -256,14 +243,14 @@ export default abstract class AudienceSegmentFeedService<T extends AudienceFeed>
         );
   };
 
-  getAudienceFeedProperty = (feedId: string, options: object = {}) => {
+  getAudienceFeedProperties = (feedId: string, options: object = {}) => {
     return this.feedType === 'EXTERNAL_FEED'
-      ? this.audienceSegmentService.getAudienceExternalFeedProperty(
+      ? this.audienceSegmentService.getAudienceExternalFeedProperties(
           this.segmentId,
           feedId,
           options,
         )
-      : this.audienceSegmentService.getAudienceTagFeedProperty(
+      : this.audienceSegmentService.getAudienceTagFeedProperties(
           this.segmentId,
           feedId,
           options,

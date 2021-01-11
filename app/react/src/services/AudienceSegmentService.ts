@@ -185,7 +185,7 @@ export interface IAudienceSegmentService {
     audienceExternalFeedId: string,
     options?: object,
   ) => Promise<DataListResponse<AudienceExternalFeed>>;
-  getAudienceExternalFeedProperty: (
+  getAudienceExternalFeedProperties: (
     audienceSegmentId: string,
     feedId: string,
     options?: object,
@@ -215,7 +215,7 @@ export interface IAudienceSegmentService {
     audienceTagFeedId: string,
     options?: object,
   ) => Promise<DataListResponse<AudienceTagFeed>>;
-  getAudienceTagFeedProperty: (
+  getAudienceTagFeedProperties: (
     audienceSegmentId: string,
     feedId: string,
     options?: object,
@@ -501,7 +501,7 @@ export default class AudienceSegmentService implements IAudienceSegmentService {
     const endpoint = `audience_segments/${audienceSegmentId}/external_feeds/${audienceExternalFeedId}`;
     return ApiService.deleteRequest(endpoint);
   };
-  getAudienceExternalFeedProperty = (
+  getAudienceExternalFeedProperties = (
     audienceSegmentId: string,
     feedId: string,
     options: object = {},
@@ -549,7 +549,7 @@ export default class AudienceSegmentService implements IAudienceSegmentService {
     const endpoint = `audience_segments/${audienceSegmentId}/tag_feeds/${audienceTagFeedId}`;
     return ApiService.deleteRequest(endpoint);
   };
-  getAudienceTagFeedProperty = (
+  getAudienceTagFeedProperties = (
     audienceSegmentId: string,
     feedId: string,
     options: object = {},

@@ -18,9 +18,10 @@ export interface LayoutablePlugin extends PluginResource {
 
 export interface StrictlyLayoutablePlugin extends PluginResource {
   plugin_layout: PluginLayout;
-  plugin_preset: PluginPresetResource;
+  plugin_preset?: PluginPresetResource;
   plugin_version_properties: PropertyResourceShape[];
   plugin_type: PluginType;
+  disabled?: boolean;
 }
 
 export interface PluginProperty {
@@ -180,6 +181,8 @@ export interface AudienceTagFeed extends PluginInstance {
   created_from: AudienceSegmentFeedSourceType;
   scenario_id?: string;
 }
+
+export type AudienceFeed = AudienceTagFeed | AudienceExternalFeed;
 
 export interface Adlayout {
   id: string;

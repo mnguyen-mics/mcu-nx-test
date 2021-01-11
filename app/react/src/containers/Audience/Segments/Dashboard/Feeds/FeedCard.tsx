@@ -323,7 +323,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
   getInitialValues = () => {
     const { feed } = this.props;
 
-    return this.feedService.getAudienceFeedProperty(feed.id).then(res =>
+    return this.feedService.getAudienceFeedProperties(feed.id).then(res =>
       this.setState({
         initialValue: {
           plugin: feed,

@@ -856,8 +856,12 @@ export function generateNodeProperties(
         color: '#0ba6e1',
       };
     case 'SCENARIO_AUDIENCE_SEGMENT_FEED_NODE':
+      const title =
+        node.strictlyLayoutablePlugin?.name ||
+        node.strictlyLayoutablePlugin?.plugin_layout.metadata.display_name ||
+        '';
       return {
-        title: node.strictlyLayoutablePlugin?.name || '',
+        title: title,
         subtitle: '',
         color: '#0ba6e1',
         iconAssetUrl:
