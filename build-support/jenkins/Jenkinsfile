@@ -79,7 +79,7 @@ pipeline {
             }
             steps {
                 echo 'Pushing to master'
-                build job: 'mediarithmics-navigator-staging'
+                build job: 'mediarithmics-navigator-push-to-master'
             }
         }
         stage('Kill Given Virtual Platform') {
