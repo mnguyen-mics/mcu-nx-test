@@ -59,6 +59,7 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { connect } from 'react-redux';
 import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
+import { AudienceBuilderResource } from '../../../../models/audienceBuilder/AudienceBuilderResource';
 
 export const FORM_ID = 'audienceSegmentForm';
 
@@ -95,6 +96,7 @@ export interface AudienceSegmentFormProps
   segmentType?: AudienceSegmentType;
   goToSegmentTypeSelection?: () => void;
   initialProcessingSelectionsForWarning?: ProcessingSelectionResource[];
+  audienceBuilder?: AudienceBuilderResource;
 }
 
 type Props = InjectedFormProps<AudienceSegmentFormProps> &
@@ -129,6 +131,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       initialValues,
       segmentType,
       audienceSegmentFormData,
+      audienceBuilder
     } = this.props;
     const type = segmentType
       ? segmentType
@@ -214,8 +217,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
                 queryHasChanged: this.hasQueryChanged(),
                 segmentEditor: (initialValues.audienceSegment as UserQuerySegment)
                   .segment_editor,
-                audienceBuilderId: (initialValues.audienceSegment as UserQuerySegment)
-                  .audience_builder_id,
+                audienceBuilder: audienceBuilder,
               }}
             />,
           )

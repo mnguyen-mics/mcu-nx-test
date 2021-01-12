@@ -7,9 +7,13 @@ import { ClickParam } from 'antd/lib/menu';
 import { SaveAsUserQuerySegmentModal } from '../../QueryTool/SaveAs';
 import { NewUserQuerySimpleFormData } from '../../QueryTool/SaveAs/NewUserQuerySegmentSimpleForm';
 import { Actionbar } from '@mediarithmics-private/mcs-components-library';
+import { AudienceBuilderResource } from '../../../models/audienceBuilder/AudienceBuilderResource';
+import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
+import { withRouter, RouteComponentProps } from 'react-router';
 
 interface AudienceBuilderActionbarProps {
   save: (formData: NewUserQuerySimpleFormData) => Promise<any>;
+  audienceBuilder?: AudienceBuilderResource;
 }
 
 interface State {
@@ -17,7 +21,9 @@ interface State {
   segmentModalLoading: boolean;
 }
 
-type Props = InjectedIntlProps & AudienceBuilderActionbarProps;
+type Props = InjectedIntlProps &
+  AudienceBuilderActionbarProps &
+  RouteComponentProps<{ organisationId: string; segmentId: string }>;
 
 class AudienceBuilderActionbar extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -27,6 +33,7 @@ class AudienceBuilderActionbar extends React.Component<Props, State> {
       segmentModalVisible: false,
     };
   }
+
   closeSegmentModal = () =>
     this.setState({
       segmentModalVisible: false,
@@ -44,7 +51,13 @@ class AudienceBuilderActionbar extends React.Component<Props, State> {
   };
 
   render() {
-    const { intl } = this.props;
+    const {
+      intl,
+      audienceBuilder,
+      match: {
+        params: { organisationId, segmentId },
+      },
+    } = this.props;
     const handleMenuClick = (e: ClickParam) => {
       if (e.key === 'USER_QUERY') {
         this.setState({ segmentModalVisible: true });
@@ -60,14 +73,26 @@ class AudienceBuilderActionbar extends React.Component<Props, State> {
         </Menu.Item>
       </Menu>
     );
+    let paths: Path[] = [
+      {
+        name: intl.formatMessage(messages.title),
+        path: `/v2/o/${organisationId}/audience/segment-builder-v2?audienceBuilderId=`,
+
+      },
+    ];
+    if (audienceBuilder) {
+      paths = paths.concat({
+        name: audienceBuilder.name,
+      });
+      if (!segmentId) {
+        paths = paths.concat({
+          name: intl.formatMessage(messages.newAudienceSegment),
+        });
+      }
+    }
+
     return (
-      <Actionbar
-        paths={[
-          {
-            name: intl.formatMessage(messages.title),
-          },
-        ]}
-      >
+      <Actionbar paths={paths}>
         {
           <Dropdown overlay={saveAsMenu} trigger={['click']}>
             <Button className="mcs-primary" type="primary">
@@ -90,6 +115,7 @@ class AudienceBuilderActionbar extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, AudienceBuilderActionbarProps>(injectIntl)(
-  AudienceBuilderActionbar,
-);
+export default compose<Props, AudienceBuilderActionbarProps>(
+  injectIntl,
+  withRouter,
+)(AudienceBuilderActionbar);

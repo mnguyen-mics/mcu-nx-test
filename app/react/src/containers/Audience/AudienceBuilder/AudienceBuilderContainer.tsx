@@ -21,6 +21,7 @@ import {
   QueryDocument as AudienceBuilderQueryDocument,
   AudienceBuilderGroupNode,
   isAudienceBuilderParametricPredicateNode,
+  AudienceBuilderResource,
 } from '../../../models/audienceBuilder/AudienceBuilderResource';
 import AudienceBuilderDashboard from './AudienceBuilderDashboard';
 import QueryFragmentFormSection, {
@@ -49,13 +50,11 @@ export const QueryFragmentFieldArray = FieldArray as new () => GenericFieldArray
 
 export interface AudienceBuilderContainerProps
   extends Omit<ConfigProps<AudienceBuilderFormData>, 'form'> {
-  demographicsFeaturesIds: string[];
+  audienceBuilder: AudienceBuilderResource;
   renderActionBar: (
     queryDocument: AudienceBuilderQueryDocument,
     datamartId: string,
   ) => React.ReactNode;
-  datamartId: string;
-  audienceBuilderId: string;
 }
 
 interface MapStateToProps {
@@ -104,21 +103,26 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { datamartId, formValues } = this.props;
+    const { audienceBuilder, formValues } = this.props;
     this.runQuery(formValues);
 
-    this._runtimeSchemaService.getRuntimeSchemas(datamartId).then(schemaRes => {
-      const liveSchema = schemaRes.data.find(s => s.status === 'LIVE');
-      if (!liveSchema) return;
-      return this._runtimeSchemaService
-        .getObjectTypeInfoResources(datamartId, liveSchema.id)
-        .then(objectTypes => {
-          this.setState({
-            objectTypes: objectTypes,
-            isLoadingObjectTypes: false,
+    this._runtimeSchemaService
+      .getRuntimeSchemas(audienceBuilder.datamart_id)
+      .then(schemaRes => {
+        const liveSchema = schemaRes.data.find(s => s.status === 'LIVE');
+        if (!liveSchema) return;
+        return this._runtimeSchemaService
+          .getObjectTypeInfoResources(
+            audienceBuilder.datamart_id,
+            liveSchema.id,
+          )
+          .then(objectTypes => {
+            this.setState({
+              objectTypes: objectTypes,
+              isLoadingObjectTypes: false,
+            });
           });
-        });
-    });
+      });
     const audienceFeatureIds: string[] = [];
     formValues.where.expressions.forEach(exp => {
       (exp as AudienceBuilderGroupNode).expressions.forEach(e => {
@@ -128,7 +132,10 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
       });
     });
     const promises = audienceFeatureIds.map(id => {
-      return this._audienceFeatureService.getAudienceFeature(datamartId, id);
+      return this._audienceFeatureService.getAudienceFeature(
+        audienceBuilder.datamart_id,
+        id,
+      );
     });
 
     Promise.all(promises).then(res => {
@@ -150,14 +157,14 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
   }
 
   runQuery = (formData: AudienceBuilderFormData) => {
-    const { datamartId } = this.props;
+    const { audienceBuilder } = this.props;
     this.setState({
       isQueryRunning: true,
       isMaskVisible: false,
     });
     const queryDocument = buildQueryDocument(formData);
     this._queryService
-      .runJSONOTQLQuery(datamartId, queryDocument)
+      .runJSONOTQLQuery(audienceBuilder.datamart_id, queryDocument)
       .then(queryResult => {
         this.setState({
           queryResult: queryResult.data,
@@ -189,15 +196,13 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
 
   render() {
     const {
-      datamartId,
       renderActionBar,
       formValues,
-      demographicsFeaturesIds,
       match: {
         params: { organisationId },
       },
       intl,
-      audienceBuilderId,
+      audienceBuilder,
       change,
     } = this.props;
 
@@ -224,7 +229,7 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
             from: 'UserPoint',
             where: formValues.where,
           },
-          datamartId,
+          audienceBuilder.datamart_id,
         )}
         <Layout>
           <Row className="ant-layout-content mcs-audienceBuilder_container">
@@ -237,9 +242,11 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
                   <QueryFragmentFieldArray
                     name={`where.expressions`}
                     component={QueryFragmentFormSection}
-                    datamartId={datamartId}
+                    datamartId={audienceBuilder.datamart_id}
                     formChange={change}
-                    demographicsFeaturesIds={demographicsFeaturesIds}
+                    demographicsFeaturesIds={
+                      audienceBuilder.demographics_features_ids
+                    }
                     audienceFeatures={audienceFeatures}
                     objectTypes={objectTypes}
                     {...genericFieldArrayProps}
@@ -269,8 +276,8 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
               )}
               <AudienceBuilderDashboard
                 organisationId={organisationId}
-                datamartId={datamartId}
-                audienceBuilderId={audienceBuilderId}
+                datamartId={audienceBuilder.datamart_id}
+                audienceBuilderId={audienceBuilder.id}
                 totalAudience={queryResult && queryResult.rows[0].count}
                 isQueryRunning={isQueryRunning}
                 queryDocument={queryDocument}
