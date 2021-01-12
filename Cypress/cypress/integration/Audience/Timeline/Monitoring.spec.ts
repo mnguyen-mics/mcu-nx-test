@@ -8,22 +8,54 @@ describe('Timeline', () => {
   const firstName = faker.name.firstName();
   const lastName = faker.name.lastName();
   const address = faker.address.streetAddress();
-  before(() => {
-    // Login
-    cy.login();
 
-    cy.url({ timeout: 10 * second }).should(
-      'contain',
-      Cypress.config().baseUrl + '/#/v2/o/1/campaigns/display',
-    );
+  const goToMonitoring = () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      // Login
+      cy.login();
+
+      cy.url({ timeout: 10 * second }).should(
+        'contain',
+        Cypress.config().baseUrl + '/#/v2/o/1/campaigns/display',
+      );
       cy.switchOrg(data.organisationName);
 
       // Go to Segment menu
       cy.contains('Audience').click();
 
       cy.contains('Monitoring').click();
+      cy.request({
+        url: `${Cypress.env('apiDomain')}/v1/datamarts/${
+          data.datamartId
+        }/compartments`,
+        method: 'GET',
+        headers: { Authorization: data.accessToken },
+      }).then(compartmentResponse => {
+        cy.request({
+          url: `${Cypress.env('apiDomain')}/v1/datamarts/${
+            data.datamartId
+          }/user_identifiers/compartment_id=${
+            compartmentResponse.body.data[0].compartment_id
+          }/user_account_id=${userAccountId}`,
+          method: 'GET',
+          headers: { Authorization: data.accessToken },
+        }).then(userLookupResponse => {
+          cy.contains('User Lookup').click();
+          cy.get('.ant-input').type(
+            `${
+              userLookupResponse.body.data[0].user_point_id
+                ? userLookupResponse.body.data[0].user_point_id
+                : userLookupResponse.body.data[1].user_point_id
+            }`,
+          );
+          cy.contains('Submit').click();
+        });
+      });
+    });
+  };
 
+  before(() => {
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.request({
         url: `${Cypress.env('apiDomain')}/v1/datamarts/${
           data.datamartId
@@ -63,8 +95,6 @@ describe('Timeline', () => {
             ],
           },
         }).then(() => {
-          cy.wait(3000);
-          // Get default compartment
           cy.request({
             url: `${Cypress.env('apiDomain')}/v1/datamarts/${
               data.datamartId
@@ -84,15 +114,6 @@ describe('Timeline', () => {
               userPointId = userLookupResponse.body.data[0].user_point_id
                 ? userLookupResponse.body.data[0].user_point_id
                 : userLookupResponse.body.data[1].user_point_id;
-              cy.contains('User Lookup').click();
-              cy.get('.ant-input').type(
-                `${
-                  userLookupResponse.body.data[0].user_point_id
-                    ? userLookupResponse.body.data[0].user_point_id
-                    : userLookupResponse.body.data[1].user_point_id
-                }`,
-              );
-              cy.contains('Submit').click();
             });
           });
         });
@@ -105,10 +126,11 @@ describe('Timeline', () => {
   });
 
   afterEach(() => {
-    cy.saveLocalStorageCache();
+    cy.clearLocalStorage();
   });
 
   it('Check the existence cards', () => {
+    goToMonitoring();
     cy.get('.mcs-contentHeader_title--large').should('have.text', userPointId);
     cy.get('.mcs-profileCard').should('be.visible');
     cy.get('.mcs-accountIdCard').should('be.visible');
@@ -119,21 +141,24 @@ describe('Timeline', () => {
   });
 
   it('Check the content profile card', () => {
+    goToMonitoring();
     cy.get('.mcs-profileCard').should('contain', `${userAccountId}`);
     cy.get('.mcs-profileCard').should('contain', firstName);
     cy.get('.mcs-profileCard').should('contain', lastName);
   });
 
   it('Check the content of user account id card', () => {
-    cy.get('.mcs-accountIdCard').should(
-      'contain',
-      `${userAccountId}`,
-    );
+    goToMonitoring();
+    cy.get('.mcs-accountIdCard').should('contain', `${userAccountId}`);
   });
 
   it('Check timeline', () => {
-    cy.get('.mcs-activityCard').should('contain','$set_user_profile_properties')
-    cy.contains('Details').click()
+    goToMonitoring();
+    cy.get('.mcs-activityCard').should(
+      'contain',
+      '$set_user_profile_properties',
+    );
+    cy.contains('Details').click();
     cy.get('.mcs-activityCard').should('contain', `${userAccountId}`);
     cy.get('.mcs-activityCard').should('contain', firstName);
     cy.get('.mcs-activityCard').should('contain', lastName);
@@ -141,6 +166,7 @@ describe('Timeline', () => {
   });
 
   it('Should display json source modal', () => {
+    goToMonitoring();
     cy.get('.ant-timeline-item')
       .eq(1)
       .find('.mcs-card-inner-action')
