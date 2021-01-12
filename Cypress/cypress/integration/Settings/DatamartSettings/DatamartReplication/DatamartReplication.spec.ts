@@ -61,7 +61,7 @@ describe('Datamart Replication Feature Tests', () => {
       cy.contains(data.datamartName).click();
       cy.contains('Replications').click();
       cy.get('.mcs-replicationNew_button').click();
-      cy.get('.mcs-card.replication-card').click();
+      cy.get('.mcs-card.replication-card').first().click();
       cy.get('#name').type(faker.random.word());
       const fileName = '03-credentialsTestFile.txt';
       cy.contains('Select a File').click();
@@ -75,7 +75,7 @@ describe('Datamart Replication Feature Tests', () => {
         .first()
         .click({ force: true });
       cy.get('code').contains(
-        /Missing mandatory credentials|Error in validating credentials/,
+        /Missing mandatory credentials|Error in validating credentials|An error occurred during credentials validation/,
       );
     });
   });
@@ -90,7 +90,7 @@ describe('Datamart Replication Feature Tests', () => {
       cy.contains(data.datamartName).click();
       cy.contains('Replications').click();
       cy.get('.mcs-replicationNew_button').click();
-      cy.get('.mcs-card.replication-card').click();
+      cy.get('.mcs-card.replication-card').first().click();
       cy.get('#name').type(faker.random.word());
       const fileName = '03-credentialsTestFile.txt';
       cy.contains('Select a File').click();
@@ -144,6 +144,7 @@ describe('Datamart Replication Feature Tests', () => {
         .click();
       cy.wait(1000);
       cy.get('.mcs-replicationNewExecution_button').click();
+      cy.wait(1000)
       cy.get('.ant-modal-content')
         .contains('New Execution')
         .click();
