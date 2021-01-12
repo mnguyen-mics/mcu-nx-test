@@ -39,10 +39,7 @@ import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import {
-  AudienceExternalFeedTyped,
-  AudienceTagFeedTyped,
-} from '../../Segments/Edit/domain';
+import { AudienceFeedTyped } from '../../Segments/Edit/domain';
 import EditPluginModal from './EditPluginModal';
 import { PluginCardModalTab } from '../../../Plugin/Edit/PluginCard/PluginCardModalContent';
 import messages from '../messages';
@@ -57,7 +54,7 @@ type Props = InjectedNotificationProps &
   InjectedIntlProps;
 
 type RecordType = {
-  feed: AudienceExternalFeedTyped | AudienceTagFeedTyped;
+  feed: AudienceFeedTyped;
   audienceSegment?: AudienceSegmentResource;
   scenarioResource?: AutomationResource;
 };
@@ -70,7 +67,7 @@ interface State {
   };
   externalPlugins: PluginResource[];
   tagPlugins: PluginResource[];
-  modalFeed?: AudienceExternalFeedTyped | AudienceTagFeedTyped;
+  modalFeed?: AudienceFeedTyped;
   modalTab: PluginCardModalTab;
 }
 
@@ -271,9 +268,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
             const resAudienceSegments = resPromise[1];
 
             const feeds = feedResults.data.map(feed => {
-              const feedTyped:
-                | AudienceTagFeedTyped
-                | AudienceExternalFeedTyped =
+              const feedTyped: AudienceFeedTyped =
                 this.getFeedType() === 'TAG_FEED'
                   ? { ...feed, type: 'TAG_FEED' }
                   : { ...feed, type: 'EXTERNAL_FEED' };

@@ -1,3 +1,4 @@
+import { DataListResponse } from './../../../services/ApiService';
 import {
   PluginPropertyOrigin,
   PluginPropertyType,
@@ -480,124 +481,116 @@ export class AutomationFormService implements IAutomationFormService {
   }
 
   getFeedNodePromise = (node: FeedNodeResource): Promise<FeedNodeResource> => {
-    if (node.feed_id) {
-      const feedP: Promise<
-        AudienceFeedTyped | undefined
-      > = this.externalFeedService
-        .getFeeds({ scenario_id: node.scenario_id })
-        .then(feeds => {
-          const foundFeed = feeds.data.find(feed => feed.id === node.feed_id);
-          if (foundFeed) {
-            const audienceFeedTyped: AudienceFeedTyped = {
-              ...foundFeed,
-              type: 'EXTERNAL_FEED',
-            };
-            return audienceFeedTyped;
-          } else return Promise.reject(undefined);
+    if (!node.feed_id) return Promise.resolve(node);
+
+    const thenForGetFeeds = (feedType: 'EXTERNAL_FEED' | 'TAG_FEED') => (
+      feeds: DataListResponse<AudienceFeed>,
+    ) => {
+      const foundFeed = feeds.data.find(feed => feed.id === node.feed_id);
+      if (foundFeed) {
+        const audienceFeedTyped: AudienceFeedTyped = {
+          ...foundFeed,
+          type: feedType,
+        };
+        return audienceFeedTyped;
+      } else return Promise.reject(undefined);
+    };
+
+    const feedP: Promise<
+      AudienceFeedTyped | undefined
+    > = this.externalFeedService
+      .getFeeds({ scenario_id: node.scenario_id })
+      .then(thenForGetFeeds('EXTERNAL_FEED'))
+      .catch(err => {
+        return this.tagFeedService
+          .getFeeds({ scenario_id: node.scenario_id })
+          .then(thenForGetFeeds('EXTERNAL_FEED'))
+          .catch(innerErr => Promise.resolve(undefined));
+      });
+
+    const propertiesP: Promise<{
+      [key: string]: PropertyResourceShape;
+    }> = feedP.then(feedOpt => {
+      if (!feedOpt) return {};
+      const getFeedPropertiesFunction =
+        feedOpt.type === 'EXTERNAL_FEED'
+          ? this._audienceSegmentService.getAudienceExternalFeedProperties
+          : this._audienceSegmentService.getAudienceTagFeedProperties;
+
+      return getFeedPropertiesFunction(feedOpt.audience_segment_id, feedOpt.id)
+        .then(resProperties => {
+          return resProperties.data.reduce(
+            (
+              o: { [key: string]: PropertyResourceShape },
+              prop: PluginProperty,
+            ): { [key: string]: PropertyResourceShape } => {
+              const propertyResourceShape: PropertyResourceShape = {
+                deletable: prop.deletable,
+                origin: prop.origin as PluginPropertyOrigin,
+                technical_name: prop.technical_name,
+                writable: prop.writable,
+                value: prop.value,
+                property_type: prop.property_type as PluginPropertyType,
+              };
+
+              return {
+                ...o,
+                [prop.technical_name]: propertyResourceShape,
+              };
+            },
+            {},
+          );
         })
         .catch(err => {
-          return this.tagFeedService
-            .getFeeds({ scenario_id: node.scenario_id })
-            .then(feeds => {
-              const foundFeed = feeds.data.find(
-                feed => feed.id === node.feed_id,
-              );
-              if (foundFeed) {
-                const audienceFeedTyped: AudienceFeedTyped = {
-                  ...foundFeed,
-                  type: 'TAG_FEED',
-                };
-                return audienceFeedTyped;
-              } else return Promise.reject(undefined);
-            })
-            .catch(innerErr => Promise.resolve(undefined));
+          return {};
         });
+    });
 
-      const propertiesP: Promise<{
-        [key: string]: PropertyResourceShape;
-      }> = feedP.then(feedOpt => {
-        if (feedOpt) {
-          const getFeedPropertiesFunction =
-            feedOpt.type === 'EXTERNAL_FEED'
-              ? this._audienceSegmentService.getAudienceExternalFeedProperties
-              : this._audienceSegmentService.getAudienceTagFeedProperties;
-
-          return getFeedPropertiesFunction(
-            feedOpt.audience_segment_id,
-            feedOpt.id,
-          ).then(resProperties => {
-            return resProperties.data.reduce(
-              (
-                o: { [key: string]: PropertyResourceShape },
-                prop: PluginProperty,
-              ): { [key: string]: PropertyResourceShape } => {
-                const propertyResourceShape: PropertyResourceShape = {
-                  deletable: prop.deletable,
-                  origin: prop.origin as PluginPropertyOrigin,
-                  technical_name: prop.technical_name,
-                  writable: prop.writable,
-                  value: prop.value,
-                  property_type: prop.property_type as PluginPropertyType,
+    const strictlyLayoutablePluginP: Promise<
+      StrictlyLayoutablePlugin | undefined
+    > = feedP.then(feedOpt => {
+      if (!feedOpt) return undefined;
+      return this._pluginService
+        .getLocalizedPluginLayoutFromVersionId(feedOpt.version_id)
+        .then(resPluginAndLayout => {
+          const { plugin, layout } = resPluginAndLayout;
+          if (layout) {
+            return this._pluginService
+              .getPluginVersionProperties(plugin.id, feedOpt.version_id)
+              .then(resProperties => {
+                const strictlyLayoutablePlugin: StrictlyLayoutablePlugin = {
+                  ...plugin,
+                  plugin_layout: layout,
+                  plugin_preset: undefined,
+                  plugin_version_properties: resProperties.data,
+                  plugin_type:
+                    feedOpt.type === 'EXTERNAL_FEED'
+                      ? 'AUDIENCE_SEGMENT_EXTERNAL_FEED'
+                      : 'AUDIENCE_SEGMENT_TAG_FEED',
+                  disabled: true,
                 };
+                return strictlyLayoutablePlugin;
+              })
+              .catch(err => undefined);
+          } else return undefined;
+        });
+    });
 
-                return {
-                  ...o,
-                  [prop.technical_name]: propertyResourceShape,
-                };
-              },
-              {},
-            );
-          });
-        } else return {};
-      });
+    return Promise.all([propertiesP, strictlyLayoutablePluginP]).then(
+      resFeedAndProperties => {
+        const properties = resFeedAndProperties[0];
+        const strictlyLayoutablePluginOpt = resFeedAndProperties[1];
 
-      const strictlyLayoutablePluginP: Promise<
-        StrictlyLayoutablePlugin | undefined
-      > = feedP.then(feedOpt => {
-        if (feedOpt) {
-          return this._pluginService
-            .getLocalizedPluginLayoutFromVersionId(feedOpt.version_id)
-            .then(resPluginAndLayout => {
-              const { plugin, layout } = resPluginAndLayout;
-              if (layout) {
-                return this._pluginService
-                  .getPluginVersionProperties(plugin.id, feedOpt.version_id)
-                  .then(resProperties => {
-                    const strictlyLayoutablePlugin: StrictlyLayoutablePlugin = {
-                      ...plugin,
-                      plugin_layout: layout,
-                      plugin_preset: undefined,
-                      plugin_version_properties: resProperties.data,
-                      plugin_type:
-                        feedOpt.type === 'EXTERNAL_FEED'
-                          ? 'AUDIENCE_SEGMENT_EXTERNAL_FEED'
-                          : 'AUDIENCE_SEGMENT_TAG_FEED',
-                      disabled: true,
-                    };
-                    return strictlyLayoutablePlugin;
-                  });
-              } else return undefined;
-            });
-        } else return undefined;
-      });
-
-      return Promise.all([feedP, propertiesP, strictlyLayoutablePluginP]).then(
-        resFeedAndProperties => {
-          const feed = resFeedAndProperties[0];
-          const properties = resFeedAndProperties[1];
-          const strictlyLayoutablePluginOpt = resFeedAndProperties[2];
-
-          if (feed && properties && strictlyLayoutablePluginOpt) {
-            return {
-              ...node,
-              formData: { properties },
-              strictlyLayoutablePlugin: strictlyLayoutablePluginOpt,
-            };
-          }
-          return node;
-        },
-      );
-    } else return Promise.resolve(node);
+        if (properties && strictlyLayoutablePluginOpt) {
+          return {
+            ...node,
+            formData: { properties },
+            strictlyLayoutablePlugin: strictlyLayoutablePluginOpt,
+          };
+        }
+        return node;
+      },
+    );
   };
 
   removeNodeId = (id: string) =>
@@ -1016,20 +1009,19 @@ export class AutomationFormService implements IAutomationFormService {
           } else if (
             isFeedNode(node) &&
             node.formData &&
-            node.strictlyLayoutablePlugin &&
-            node.strictlyLayoutablePlugin.plugin_preset
+            node.strictlyLayoutablePlugin
           ) {
-            const feedIdP = node.feed_id
-              ? Promise.resolve(node.feed_id)
-              : this.saveFeedIfNeeded(
-                  organisationId,
-                  datamartId,
-                  automationId,
-                  node.id,
-                  node.formData,
-                  node.strictlyLayoutablePlugin,
-                  node.strictlyLayoutablePlugin.plugin_preset,
-                );
+            const feedIdP =
+              !node.feed_id && node.strictlyLayoutablePlugin.plugin_preset
+                ? this.saveFeedIfNeeded(
+                    organisationId,
+                    datamartId,
+                    automationId,
+                    node.formData,
+                    node.strictlyLayoutablePlugin,
+                    node.strictlyLayoutablePlugin.plugin_preset,
+                  )
+                : Promise.resolve(node.feed_id);
 
             return feedIdP.then(feedId => {
               return this.saveOrCreateNode(
@@ -1426,7 +1418,6 @@ export class AutomationFormService implements IAutomationFormService {
     organisationId: string,
     datamartId: string,
     automationId: string,
-    nodeId: string,
     feedNodeFormData: FeedNodeFormData,
     strictlyLayoutablePlugin: StrictlyLayoutablePlugin,
     pluginPresetResource: PluginPresetResource,

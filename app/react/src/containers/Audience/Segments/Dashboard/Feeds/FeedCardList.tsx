@@ -2,6 +2,7 @@ import * as React from 'react';
 import {
   AudienceTagFeedTyped,
   AudienceExternalFeedTyped,
+  AudienceFeedTyped,
 } from '../../Edit/domain';
 import { Row, Col } from 'antd';
 import FeedCard from './FeedCard';
@@ -23,7 +24,7 @@ type Props = InjectedFeaturesProps &
 
 export interface FeedCardListState {
   isLoading: boolean;
-  feeds: Array<AudienceTagFeedTyped | AudienceExternalFeedTyped>;
+  feeds: AudienceFeedTyped[];
   shouldScrollWhenLoaded: boolean;
   feedsStatsByFeedId: Index<{
     feed_id: string;
@@ -102,9 +103,7 @@ class FeedCardList extends React.Component<Props, FeedCardListState> {
         const myTypedFeed: AudienceTagFeedTyped = { ...ef, type: 'TAG_FEED' };
         return myTypedFeed;
       });
-      const feeds: Array<
-        AudienceTagFeedTyped | AudienceExternalFeedTyped
-      > = externalTypedFeed;
+      const feeds: AudienceFeedTyped[] = externalTypedFeed;
       tagTypedFeed.forEach(f => feeds.push(f));
       this.setState({
         isLoading: false,
@@ -113,7 +112,7 @@ class FeedCardList extends React.Component<Props, FeedCardListState> {
     });
   };
 
-  onFeedDelete = (feed: AudienceTagFeedTyped | AudienceExternalFeedTyped) => {
+  onFeedDelete = (feed: AudienceFeedTyped) => {
     const newFeeds = this.state.feeds.filter(
       f => !(f.id === feed.id && f.artifact_id === feed.artifact_id),
     );
@@ -122,7 +121,7 @@ class FeedCardList extends React.Component<Props, FeedCardListState> {
     });
   };
 
-  onFeedUpdate = (feed: AudienceTagFeedTyped | AudienceExternalFeedTyped) => {
+  onFeedUpdate = (feed: AudienceFeedTyped) => {
     const newFeeds = this.state.feeds.map(f => {
       if (f.id === feed.id && f.artifact_id === feed.artifact_id) {
         return feed;

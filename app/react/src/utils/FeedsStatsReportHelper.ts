@@ -1,3 +1,4 @@
+import { AudienceFeedTyped } from './../containers/Audience/Segments/Edit/domain';
 import {
   ReportRequestBody,
   DateRange,
@@ -7,7 +8,6 @@ import {
   DimensionFilter,
 } from '../models/ReportRequestBody';
 import McsMoment, { formatMcsDate } from './McsMoment';
-import { AudienceExternalFeedTyped, AudienceTagFeedTyped } from '../containers/Audience/Segments/Edit/domain';
 
 type FeedsStatsDimension =
   | 'ORGANISATION_ID'
@@ -130,7 +130,7 @@ function buildReport(
   return report;
 }
 
-export function getFeedStatsUnit(feed: AudienceExternalFeedTyped | AudienceTagFeedTyped): FeedStatsUnit {
+export function getFeedStatsUnit(feed: AudienceFeedTyped): FeedStatsUnit {
 
   // For Google and AppNexus external feeds, we display the count of identifiers
   if (feed.group_id === "com.mediarithmics.audience.externalfeed"
