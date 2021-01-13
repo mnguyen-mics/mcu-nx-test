@@ -1,10 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
-import {
-  AudienceExternalFeedTyped,
-  AudienceTagFeedTyped,
-} from '../../Segments/Edit/domain';
+import { AudienceFeedTyped } from '../../Segments/Edit/domain';
 import PluginCardModal from '../../../Plugin/Edit/PluginCard/PluginCardModal';
 import { IPluginService } from '../../../../services/PluginService';
 import {
@@ -25,7 +22,7 @@ import { TYPES } from '../../../../constants/types';
 import { getFeedStatsUnit } from '../../../../utils/FeedsStatsReportHelper';
 
 export interface EditPluginModalProps {
-  feed: AudienceExternalFeedTyped | AudienceTagFeedTyped;
+  feed: AudienceFeedTyped;
   modalTab: PluginCardModalTab;
   onChange: () => void;
   onClose: () => void;
@@ -41,7 +38,7 @@ interface State {
   layout?: PluginLayout;
   pluginProperties: PropertyResourceShape[];
   initialValues?: {
-    plugin: AudienceExternalFeedTyped | AudienceTagFeedTyped;
+    plugin: AudienceFeedTyped;
     properties: any;
   };
   isLoading: boolean;
@@ -161,7 +158,7 @@ class EditPluginModal extends React.Component<Props, State> {
     const { feed, notifyError, onClose } = this.props;
 
     return this.feedService
-      .getAudienceFeedProperty(feed.id)
+      .getAudienceFeedProperties(feed.id)
       .then(res =>
         this.setState({
           initialValues: {
@@ -183,7 +180,7 @@ class EditPluginModal extends React.Component<Props, State> {
   };
 
   savePluginInstance = (
-    pluginInstance: AudienceTagFeedTyped | AudienceExternalFeedTyped,
+    pluginInstance: AudienceFeedTyped,
     properties: PropertyResourceShape[],
     name?: string,
   ) => {

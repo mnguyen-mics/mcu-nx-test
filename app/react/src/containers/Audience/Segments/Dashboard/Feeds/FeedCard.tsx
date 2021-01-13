@@ -1,10 +1,7 @@
 import * as React from 'react';
 import cuid from 'cuid';
 import { Card, Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
-import {
-  AudienceExternalFeedTyped,
-  AudienceTagFeedTyped,
-} from '../../Edit/domain';
+import { AudienceFeedTyped } from '../../Edit/domain';
 import FeedPlaceholder from './FeedPlaceholder';
 import { Status } from '../../../../../models/Plugins';
 import injectNotifications, {
@@ -33,12 +30,12 @@ import { TYPES } from '../../../../../constants/types';
 import { FeedStatsUnit, getFeedStatsUnit, FeedStatsCounts } from '../../../../../utils/FeedsStatsReportHelper';
 
 export interface FeedCardProps {
-  feed: AudienceExternalFeedTyped | AudienceTagFeedTyped;
+  feed: AudienceFeedTyped;
   onFeedUpdate: (
-    newFeed: AudienceExternalFeedTyped | AudienceTagFeedTyped,
+    newFeed: AudienceFeedTyped,
   ) => void;
   onFeedDelete: (
-    feed: AudienceExternalFeedTyped | AudienceTagFeedTyped,
+    feed: AudienceFeedTyped,
   ) => void;
   segmentId: string;
   organisationId: string;
@@ -61,7 +58,7 @@ interface FeedCardState {
 }
 
 const FeedCardModal = PluginCardModal as React.ComponentClass<
-  PluginCardModalProps<AudienceExternalFeedTyped | AudienceTagFeedTyped>
+  PluginCardModalProps<AudienceFeedTyped>
 >;
 
 type Props = FeedCardProps &
@@ -323,7 +320,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
   getInitialValues = () => {
     const { feed } = this.props;
 
-    return this.feedService.getAudienceFeedProperty(feed.id).then(res =>
+    return this.feedService.getAudienceFeedProperties(feed.id).then(res =>
       this.setState({
         initialValue: {
           plugin: feed,
@@ -361,7 +358,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
   };
 
   saveOrCreatePluginInstance = (
-    pluginInstance: AudienceTagFeedTyped | AudienceExternalFeedTyped,
+    pluginInstance: AudienceFeedTyped,
     properties: PropertyResourceShape[],
     name?: string,
   ) => {

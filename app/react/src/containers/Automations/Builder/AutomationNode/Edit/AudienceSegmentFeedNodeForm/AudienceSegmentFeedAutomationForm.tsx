@@ -2,7 +2,12 @@ import * as React from 'react';
 import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { StorylineNodeModel } from '../../../domain';
 import { FeedNodeFormData, FORM_ID } from '../domain';
-import { ConfigProps, getFormValues, InjectedFormProps, reduxForm } from 'redux-form';
+import {
+  ConfigProps,
+  getFormValues,
+  InjectedFormProps,
+  reduxForm,
+} from 'redux-form';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
@@ -38,27 +43,37 @@ type Props = InjectedFormProps<
 
 class AudienceSegmentFeedAutomationForm extends React.Component<Props> {
   buildFormSections = () => {
-    const { storylineNodeModel, disabled } = this.props;
+    const {
+      storylineNodeModel: { node },
+      disabled,
+    } = this.props;
 
     const sections: McsFormSection[] = [];
 
     if (
-      storylineNodeModel.node.type === 'SCENARIO_AUDIENCE_SEGMENT_FEED_NODE'
+      node.type === 'SCENARIO_AUDIENCE_SEGMENT_FEED_NODE' &&
+      node.strictlyLayoutablePlugin
     ) {
-      const generalSection = {
-        id: 'generalSection',
-        title: messages.sectionGeneralTitle,
-        component: (
-          <PluginInstanceFormSection
-            strictlyLayoutablePlugin={
-              storylineNodeModel.node.strictlyLayoutablePlugin
-            }
-            disabled={disabled}
-          />
-        ),
-      };
+      const calculatedDisabled = node.strictlyLayoutablePlugin?.disabled ? node.strictlyLayoutablePlugin?.disabled : disabled;
+      const strictlyLayoutablePlugin = node.strictlyLayoutablePlugin;
+      const pluginVersionId = strictlyLayoutablePlugin.plugin_preset
+        ? strictlyLayoutablePlugin.plugin_preset.plugin_version_id
+        : strictlyLayoutablePlugin.current_version_id;
 
-      sections.push(generalSection);
+      if (pluginVersionId) {
+        const generalSection = {
+          id: 'generalSection',
+          title: messages.sectionGeneralTitle,
+          component: (
+            <PluginInstanceFormSection
+              strictlyLayoutablePlugin={strictlyLayoutablePlugin}
+              pluginVersionId={pluginVersionId}
+              disabled={calculatedDisabled}
+            />
+          ),
+        };
+        sections.push(generalSection);
+      }
     }
 
     return sections;

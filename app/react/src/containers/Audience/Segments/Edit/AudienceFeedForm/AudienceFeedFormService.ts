@@ -42,7 +42,7 @@ export class AudienceFeedFormService implements IAudienceFeedFormService {
       .then(res => res.data)
       .then(res => {
         return this._audienceSegmentService
-          .getAudienceTagFeedProperty(segmentId, feedId)
+          .getAudienceTagFeedProperties(segmentId, feedId)
           .then(prop => prop.data)
           .then(prop => ({ plugin: res, properties: prop }));
       });
@@ -56,7 +56,7 @@ export class AudienceFeedFormService implements IAudienceFeedFormService {
       .then(res => res.data)
       .then(res => {
         return this._audienceSegmentService
-          .getAudienceExternalFeedProperty(segmentId, feedId)
+          .getAudienceExternalFeedProperties(segmentId, feedId)
           .then(prop => prop.data)
           .then(prop => ({ plugin: res, properties: prop }));
       });

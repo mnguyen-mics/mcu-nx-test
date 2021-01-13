@@ -41,6 +41,8 @@ export interface AudienceTagFeedTyped extends AudienceTagFeed {
   type: 'TAG_FEED';
 }
 
+export type AudienceFeedTyped = AudienceExternalFeedTyped | AudienceTagFeedTyped;
+
 export type AudienceExternalFeedsFieldModel = FieldArrayModel<
   AudienceExternalFeedResource
 >;
