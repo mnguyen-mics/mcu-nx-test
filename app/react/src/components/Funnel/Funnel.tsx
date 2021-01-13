@@ -229,6 +229,8 @@ class Funnel extends React.Component<Props, State> {
       return value.toFixed(2)
     } else if (value >= 0.0001) {
       return value.toFixed(4)
+    } else if (value === 0) {
+      return value.toString();
     } else {
       const exponentialDigits = 2
       return value.toExponential(exponentialDigits)
