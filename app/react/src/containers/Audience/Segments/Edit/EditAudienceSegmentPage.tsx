@@ -188,8 +188,9 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
                 } else {
                   this.setState(newState as State);
                 }
+              } else {
+                this.setState(newState as State);
               }
-              
             });
         })
         .catch(err => {
