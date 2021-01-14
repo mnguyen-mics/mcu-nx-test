@@ -119,6 +119,10 @@ const messages = defineMessages({
     id: 'audience.segments.list.type.userList.scenario',
     defaultMessage: 'Scenario',
   },
+  SCENARIO_FEED: {
+    id: 'audience.segments.list.type.userList.scenarioFeed',
+    defaultMessage: 'Scenario Feed',
+  },
   USER_PIXEL: {
     id: 'audience.segments.list.type.userPixel',
     defaultMessage: 'User Pixel',
@@ -393,13 +397,12 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         subtype: subtypes,
       };
     }
-    if (types.length) {
-      formattedFilters = {
-        ...formattedFilters,
-        type: types,
-      };
-    }
-    const feedtypes: string[] = (types.some((t: string) => t === "USER_LIST") && filter.feed_type.length === 0) ? ["SCENARIO", "FILE_IMPORT"] : filter.feed_type;
+    const calculatedTypes = types.length ? types : ['USER_LIST', 'USER_QUERY', 'USER_LOOKALIKE', 'USER_ACTIVATION', 'USER_PARTITION', 'USER_DATA_SUBSCRIPTION'];
+    formattedFilters = {
+      ...formattedFilters,
+      type: calculatedTypes
+    };
+    const feedtypes: string[] = (calculatedTypes.some((t: string) => t === "USER_LIST") && filter.feed_type.length === 0) ? ["SCENARIO", "FILE_IMPORT"] : filter.feed_type;
     if (feedtypes.length) {
       formattedFilters = {
         ...formattedFilters,
