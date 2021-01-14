@@ -3,9 +3,7 @@ const common = require('./webpack.common.js');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const HtmlWebpackSkipAssetsPlugin = require('html-webpack-skip-assets-plugin').HtmlWebpackSkipAssetsPlugin;
-const SriPlugin = require('webpack-subresource-integrity');
-
+const HtmlWebpackExcludeAssetsPlugin = require('html-webpack-exclude-assets-plugin');
 const paths = require('./paths');
 
 module.exports = merge(common, {
@@ -55,11 +53,7 @@ module.exports = merge(common, {
       filename: '../index.html',
       excludeAssets: [/(plateforme|app|console|converged-ww2).*\/style.*.(css|js)/],
     }),
-    new SriPlugin({
-      hashFuncNames: ['sha256', 'sha384'],
-      enabled: process.env.NODE_ENV === 'production', // double check to ensure that we are in production env
-    }),
-    new HtmlWebpackSkipAssetsPlugin(),
+    new HtmlWebpackExcludeAssetsPlugin(),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('production'),
     }),
