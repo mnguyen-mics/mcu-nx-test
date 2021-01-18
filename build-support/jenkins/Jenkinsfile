@@ -1,5 +1,6 @@
 pipeline {
     agent any
+    triggers { cron('H 23 * * 6-7') }
     options { disableConcurrentBuilds() }
 	parameters {
 	    string(name: 'END_TO_END_CHECK', 
