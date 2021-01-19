@@ -84,6 +84,7 @@ class FunnelExpressionInput extends React.Component<Props, State> {
       onchange: this._compose(this._map((label: LabeledValue) => label.key), handleDimensionExpressionForSelectorChange),
       showId: true,
       multiselect: true,
+      displaySelectAll:true
     }
     const additionalDimensionFilter = {
       from: from,
