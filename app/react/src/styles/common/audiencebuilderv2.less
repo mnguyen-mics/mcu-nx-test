@@ -195,3 +195,61 @@
   font-weight: bold;
   margin-bottom: 20px;
 }
+
+.mcs-audienceBuilder_featureSelector {
+  background-color: @layout-body-background;
+  .mcs-search-input {
+    width: 400px;
+  }
+  .mcs-audienceBuilder_breadCrumb {
+    margin: 15px 0px;
+  }
+  .mcs-audienceBuilder_folder,
+  .mcs-audienceBuilder_featureCard {
+    height: 100px;
+    border: 1px solid @border-color-split;
+    border-radius: 3px;
+    padding: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    .mcs-icon {
+      font-size: 1.4em;
+    }
+    &:hover {
+      cursor: pointer;
+      border: 1px solid @primary-color;
+      color: @primary-color;
+    }
+    .mcs-audienceBuilder_folderChildNumber {
+      font-weight: initial;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+  }
+  .selected {
+    cursor: pointer;
+    border: 1px solid @primary-color;
+    color: @primary-color;
+  }
+  .toggled {
+    background-color: @primary-color !important;
+    color: white;
+    &:hover {
+      color: white;
+    }
+  }
+  .mcs-audienceBuilder_featureCardContainer {
+    margin-top: 30px;
+    .mcs-audienceBuilder_featureCard {
+      background-color: @layout-content-background;
+      .mcs-icon {
+        float: right;
+      }
+      .mcs-audienceBuilder_featureCardDescritpion {
+        font-weight: initial;
+        font-size: 12px;
+        margin-top: 5px;
+      }
+    }
+  }
+}

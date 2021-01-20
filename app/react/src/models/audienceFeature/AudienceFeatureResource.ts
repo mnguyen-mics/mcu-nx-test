@@ -37,4 +37,22 @@ export interface AudienceFeatureResource {
   addressable_object: string;
   object_tree_expression: string;
   variables: AudienceFeatureVariableResource[];
+  audienceFeatureFolderId: string;
+}
+
+export interface AudienceFeatureFolderResource {
+  id: string;
+  name: string;
+  datamart_id: string;
+  audience_feature_ids: string[];
+  parent_id: string;
+  children_ids: string[];
+}
+
+export interface AudienceFeaturesByFolder {
+  id: string;
+  name: string;
+  audience_features: AudienceFeatureResource[];
+  parent_id: string;
+  children: AudienceFeaturesByFolder[];
 }

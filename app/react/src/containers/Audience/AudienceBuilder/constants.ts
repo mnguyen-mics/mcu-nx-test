@@ -54,6 +54,10 @@ export const messages: {
     id: 'audienceBuilder.audienceFeatureSelector.actionBarTitle',
     defaultMessage: 'Add more audience features',
   },
+  addAudienceFeatureButton: {
+    id: 'audienceBuilder.audienceFeatureSelector.addButton',
+    defaultMessage: 'Add',
+  },
   noDemographicExpressions: {
     id: 'audienceBuilder.category.demographics.noDemographicExpressions',
     defaultMessage: 'No Demographic Expressions',
@@ -93,6 +97,10 @@ export const messages: {
   newAudienceSegment: {
     id: 'audienceBuilder.newSegmentName',
     defaultMessage: 'New Audience Segment',
+  },
+  availableFilters: {
+    id: 'audienceBuilder.audienceFeatureSelector.availableFilters',
+    defaultMessage: 'Available Filters',
   },
 });
 
