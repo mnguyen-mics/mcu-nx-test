@@ -37,6 +37,7 @@ interface ResourceByKeywordSelectorProps {
   onchange: (value: LabeledValue | LabeledValue[]) => void;
   multiselect?: boolean;
   showId?: boolean;
+  displaySelectAll?: boolean;
 }
 
 interface QueryFilter<AdditionalContext> {
@@ -136,7 +137,7 @@ function ResourceByKeywordSelector<T extends SelectableResource, AdditionalConte
     render() {
       const { resourcesList, fetching, value, allOptionsSelected } = this.state;
       const selectAllOptionValue = allOptionsSelected ? "Deselect all" : "Select all";
-      const { anchorId, className, multiselect } = this.props;
+      const { anchorId, className, multiselect, displaySelectAll } = this.props;
       const getPopupContainer = () => document.getElementById(anchorId)!
       const alwaysTrue = () => true
       return (<Select
@@ -155,7 +156,7 @@ function ResourceByKeywordSelector<T extends SelectableResource, AdditionalConte
         getPopupContainer={getPopupContainer}
         filterOption={alwaysTrue}
       >
-        {resourcesList.length > 1 && <Select.Option  value={selectAllOptionValue} key={selectAllOptionValue}>{selectAllOptionValue}</Select.Option>}
+        {resourcesList.length > 1 && displaySelectAll && <Select.Option  value={selectAllOptionValue} key={selectAllOptionValue}>{selectAllOptionValue}</Select.Option>}
         {resourcesList.map((item: LabeledValue, index: number) => <Select.Option value={item.key} key={index.toString()}>{item.label}</Select.Option>)}
       </Select>);
     }
