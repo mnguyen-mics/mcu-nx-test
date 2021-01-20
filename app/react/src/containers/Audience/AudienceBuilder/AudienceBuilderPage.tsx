@@ -62,7 +62,15 @@ class AudienceBuilderPage extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    this.getAudienceBuilders();
+    const {
+      location: { search },
+    } = this.props;
+    this.getAudienceBuilders().then(() => {
+      const audienceBuilderId = queryString.parse(search).audienceBuilderId;
+      if (audienceBuilderId) {
+        this.getAudienceBuilder(audienceBuilderId);
+      }
+    });
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
@@ -99,7 +107,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
           return res.data;
         });
     });
-    Promise.all(promises)
+    return Promise.all(promises)
       .then(res => {
         this.setState({
           audienceBuildersByDatamartId: res.filter(r => r.length > 0),
@@ -235,9 +243,10 @@ class AudienceBuilderPage extends React.Component<Props, State> {
   };
 
   render() {
-    const { intl, workspace: {
-      datamarts
-    } } = this.props;
+    const {
+      intl,
+      workspace: { datamarts },
+    } = this.props;
     const {
       selectedAudienceBuilder,
       audienceBuildersByDatamartId,

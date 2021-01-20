@@ -143,7 +143,7 @@ export const formatQuery = (
                     ) {
                       return parseFloat(v);
                     }
-                    return;
+                    return v;
                   };
                   Object.keys(e.parameters).forEach(p => {
                     const value = formatValue(e.parameters[p]);
