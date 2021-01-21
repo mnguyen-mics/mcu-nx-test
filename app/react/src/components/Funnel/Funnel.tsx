@@ -20,6 +20,7 @@ import {
 import { funnelMessages, FUNNEL_SEARCH_SETTING } from './Constants';
 import { extractDatesFromProps } from './Utils';
 import numeral from 'numeral';
+import chroma from 'chroma-js';
 
 interface StepDelta {
   dropOff?: string;
@@ -32,6 +33,7 @@ interface State {
   stepsDelta: StepDelta[];
   lastExecutedQueryAskedTime: number;
   promiseCanceled: boolean;
+  splitPerChannel: boolean;
 }
 
 type FunnelProps = {
@@ -88,7 +90,8 @@ class Funnel extends React.Component<Props, State> {
       },
       stepsDelta: [],
       lastExecutedQueryAskedTime: 0,
-      promiseCanceled: false
+      promiseCanceled: false,
+      splitPerChannel: true
     }
 
     this.fetchData = this._debounce(this.fetchData.bind(this), 800);
@@ -169,7 +172,7 @@ class Funnel extends React.Component<Props, State> {
               upCountsPerStep.pop();
               this.computeStepDelta(upCountsPerStep);
             });
-            parentCallback(this.state.isLoading)
+            parentCallback(this.state.isLoading);
           });
         }
       })
@@ -188,12 +191,12 @@ class Funnel extends React.Component<Props, State> {
 
     funnelData.steps.forEach((step, index) => {
       const start = index === 0 ? funnelData.total : funnelData.steps[index - 1].count;
-      this.drawCanvas((funnelData.total - start), (funnelData.total - step.count), index + 1, funnelData.steps.length);
+      this.drawCanvas((funnelData.total - start), (funnelData.total - step.count), index + 1, funnelData.steps.length, funnelData.steps[index].splitPerChannel);
     });
   }
 
-  drawCanvas = (startCount: number, endCount: number, stepNumber: number, totalSteps: number) => {
-    const { funnelData } = this.state;
+  drawCanvas = (startCount: number, endCount: number, stepNumber: number, totalSteps: number, channels: any) => {
+    const { funnelData, splitPerChannel } = this.state;
     const container = document.getElementById("container");
     const canvas: any = document.getElementById(`canvas_${stepNumber}`);
 
@@ -201,28 +204,69 @@ class Funnel extends React.Component<Props, State> {
     const drawerAreaHeight = 370;
     canvas.width = drawWidth || 0;
 
-    const percentageStart = getPercentage(startCount, funnelData.total);
-    const percentageEnd = getPercentage(endCount, funnelData.total);
-    const stepStart = drawerAreaHeight && valueFromPercentage(percentageStart, drawerAreaHeight);
-    const stepEnd = drawerAreaHeight && valueFromPercentage(percentageEnd, drawerAreaHeight);
 
     const ctx = canvas.getContext("2d");
-    ctx.beginPath();
-    ctx.lineWidth = 3;
-    ctx.moveTo(0, stepStart);
-    ctx.lineTo(drawWidth, stepEnd);
-    ctx.strokeStyle = '#0ba6e1';
-    ctx.stroke();
+    const colors = ['green', 'orange', 'pink']
+    if (splitPerChannel) {
+      const splitPerChannel = funnelData.steps[stepNumber - 1].splitPerChannel
+      if (splitPerChannel) {
+        splitPerChannel.forEach((channel, index) => {
+      
+          const stepIndex = (stepNumber === 1) ?  stepNumber - 1 : stepNumber;
 
-    ctx.beginPath();
-    ctx.moveTo(0, 0);
-    ctx.lineTo(0, stepStart && stepStart - 1);
-    ctx.lineTo(drawWidth, stepEnd && stepEnd - 1);
-    ctx.lineTo(drawWidth, 0);
-    ctx.closePath();
+          const startCount = stepIndex === 0 ? funnelData.total : (funnelData.steps[stepNumber - 2].splitPerChannel as any)[index].count
+          if (stepIndex > 0) console.log((funnelData.steps[stepIndex - 1].splitPerChannel as any)[index].count)
+          const percentageStart = getPercentage((funnelData.total - startCount), funnelData.total);
+          const percentageEnd = getPercentage((funnelData.total - channel.count), funnelData.total);
+          const stepStart = drawerAreaHeight && valueFromPercentage(percentageStart, drawerAreaHeight);
+          const stepEnd = drawerAreaHeight && valueFromPercentage(percentageEnd, drawerAreaHeight);
+          
+          ctx.beginPath();
+          ctx.lineWidth = 3;
+          ctx.moveTo(0, stepStart);
+          ctx.lineTo(drawWidth, stepEnd);
+          ctx.strokeStyle = colors[index];
+          ctx.stroke();
 
-    ctx.fillStyle = "white";
-    ctx.fill();
+          ctx.beginPath();
+          ctx.moveTo(0, stepStart + 1);
+          ctx.lineTo(drawWidth, stepEnd);
+          ctx.lineTo(drawWidth, 1000);
+          ctx.lineTo(0, 1000);
+          ctx.closePath();
+      
+          ctx.fillStyle = colors[index];
+          ctx.fill();
+        })
+      }
+
+    }
+    else {
+      const percentageStart = getPercentage(startCount, funnelData.total);
+      const percentageEnd = getPercentage(endCount, funnelData.total);
+      const stepStart = drawerAreaHeight && valueFromPercentage(percentageStart, drawerAreaHeight);
+      const stepEnd = drawerAreaHeight && valueFromPercentage(percentageEnd, drawerAreaHeight);
+
+      ctx.beginPath();
+
+      ctx.lineWidth = 3;
+      ctx.moveTo(0, stepStart);
+      ctx.lineTo(drawWidth, stepEnd);
+      ctx.strokeStyle = '#0ba6e1';
+      ctx.stroke();
+  
+      ctx.moveTo(0, 0);
+      ctx.lineTo(0, stepStart && stepStart - 1);
+      ctx.lineTo(drawWidth, stepEnd && stepEnd - 1);
+      ctx.lineTo(drawWidth, 0);
+  
+      ctx.fillStyle = "white";
+      ctx.fill();
+  
+      ctx.closePath();
+    }
+
+
   }
 
   formatPercentageValue = (value: number) => {
@@ -322,7 +366,7 @@ class Funnel extends React.Component<Props, State> {
 
                     {stepsDelta[index] && stepsDelta[index].passThroughPercentage ? <div className="mcs-funnel_percentageOfSucceeded">
                       <div className="mcs-funnel_arrow mcs_funnel_arrowStep" />
-                      <p className="mcs-funnel_stepInfo"><strong>{`${stepsDelta[index].passThroughPercentage}%`}</strong> have succeeded {this.getDurationMessage(index, funnelData.steps[index + 1].interaction_duration)}</p>
+                      <p className="mcs-funnel_stepInfo"><strong>{`${stepsDelta[index].passThroughPercentage}%`}</strong> have succeeded {this.getDurationMessage(index, 0 )}</p>
                     </div> : ""}
 
                     {<canvas id={`canvas_${index + 1}`} className={"mcs-funnel_canvas"} height="370" />}

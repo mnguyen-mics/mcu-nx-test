@@ -31,15 +31,22 @@ export type FunnelResponse = DataResponse<any>
 
 export interface FunnelResource {
   total: number;
-  steps: Steps[]
+  steps: Steps[];
+}
+
+export interface countPerChannels {
+  channel_name: string;
+  count: number;
+  interaction_duration: number;
 }
 
 export interface Steps {
   name: string;
   count: number;
   conversion?: number;
-  amount?: number
-  interaction_duration: number
+  amount?: number;
+  interaction_duration: number;
+  splitPerChannel?: countPerChannels[];
 }
 
 export type TimeUnit = 'DAY' | 'WEEK' | 'MONTH';
