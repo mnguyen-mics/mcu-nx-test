@@ -5,7 +5,7 @@ import moment from 'moment';
 import { IUserActivitiesFunnelService } from '../../services/UserActivitiesFunnelService';
 import { TYPES } from '../../constants/types';
 import { lazyInject } from '../../config/inversify.config';
-import { FunnelFilter, FunnelTimeRange, FunnelResource } from '../../models/datamart/UserActivitiesFunnel';
+import { FunnelFilter, FunnelTimeRange, Steps, GroupedByFunnel } from '../../models/datamart/UserActivitiesFunnel';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../containers/Notifications/injectNotifications';
@@ -20,7 +20,7 @@ import {
 import { funnelMessages, FUNNEL_SEARCH_SETTING } from './Constants';
 import { extractDatesFromProps } from './Utils';
 import numeral from 'numeral';
-import chroma from 'chroma-js';
+
 
 interface StepDelta {
   dropOff?: string;
@@ -29,7 +29,7 @@ interface StepDelta {
 
 interface State {
   isLoading: boolean;
-  funnelData: FunnelResource;
+  funnelData: GroupedByFunnel;
   stepsDelta: StepDelta[];
   lastExecutedQueryAskedTime: number;
   promiseCanceled: boolean;
@@ -85,8 +85,11 @@ class Funnel extends React.Component<Props, State> {
     this.state = {
       isLoading: false,
       funnelData: {
-        total: 0,
-        steps: []
+        global: {
+          total: 0,
+          steps: []
+        },
+        grouped_by: []
       },
       stepsDelta: [],
       lastExecutedQueryAskedTime: 0,
@@ -127,8 +130,11 @@ class Funnel extends React.Component<Props, State> {
       this.setState({
         isLoading: false,
         funnelData: {
-          total: 0,
-          steps: []
+          global: {
+            total: 0,
+            steps: []
+          },
+          grouped_by: []
         },
         stepsDelta: [],
         promiseCanceled: true
@@ -148,9 +154,12 @@ class Funnel extends React.Component<Props, State> {
       isLoading: true,
       stepsDelta: [],
       funnelData: {
-        total: 0,
-        steps: []
-      }
+        global: {
+          total: 0,
+          steps: []
+        },
+        grouped_by: []
+      },
     }, () => {
       parentCallback(this.state.isLoading)
     });
@@ -159,8 +168,9 @@ class Funnel extends React.Component<Props, State> {
       then(response => {
         // Enhance api data with last conversion step
         if (!this.state.promiseCanceled) {
-          const apiResponse: FunnelResource = response.data.global || response.data;
+          const apiResponse: FunnelResource = response.data.global;
           apiResponse.steps.push(apiResponse.steps[apiResponse.steps.length - 1]);
+          apiResponse.grouped_by.map((channel)=> channel.funnel.steps.push(channel.funnel.steps[channel.funnel.steps.length - 1]))
           this.setState({
             isLoading: false,
             funnelData: apiResponse
@@ -189,84 +199,73 @@ class Funnel extends React.Component<Props, State> {
   drawSteps = () => {
     const { funnelData } = this.state;
 
-    funnelData.steps.forEach((step, index) => {
-      const start = index === 0 ? funnelData.total : funnelData.steps[index - 1].count;
-      this.drawCanvas((funnelData.total - start), (funnelData.total - step.count), index + 1, funnelData.steps.length, funnelData.steps[index].splitPerChannel);
+    funnelData.global.steps.forEach((step: Steps, index: number) => {
+      const start = index === 0 ? funnelData.global.total : funnelData.global.steps[index - 1].count;
+      this.drawCanvas((funnelData.global.total - start), (funnelData.global.total - step.count), index, funnelData.global.steps.length);
     });
   }
 
-  drawCanvas = (startCount: number, endCount: number, stepNumber: number, totalSteps: number, channels: any) => {
+  drawCanvas = (startCount: number, endCount: number, StepIndex: number, totalSteps: number) => {
     const { funnelData, splitPerChannel } = this.state;
     const container = document.getElementById("container");
-    const canvas: any = document.getElementById(`canvas_${stepNumber}`);
+    const canvas = document.getElementById(`canvas_${StepIndex + 1}`) as HTMLCanvasElement;
 
     const drawWidth = container && (container.offsetWidth / totalSteps);
-    const drawerAreaHeight = 370;
+
     canvas.width = drawWidth || 0;
 
+    const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+    const colors = [
+      ['#2a67e7','#9ebeff'], 
+      ['#c64522','#ffb494'], 
+      ['#119345','#86daa7'],
+      ['#3e19b2','#b799ff'],
+      ['#fdc72f','#ffe39f']
+    ];  
 
-    const ctx = canvas.getContext("2d");
-    const colors = ['green', 'orange', 'pink']
     if (splitPerChannel) {
-      const splitPerChannel = funnelData.steps[stepNumber - 1].splitPerChannel
-      if (splitPerChannel) {
-        splitPerChannel.forEach((channel, index) => {
-      
-          const stepIndex = (stepNumber === 1) ?  stepNumber - 1 : stepNumber;
-
-          const startCount = stepIndex === 0 ? funnelData.total : (funnelData.steps[stepNumber - 2].splitPerChannel as any)[index].count
-          if (stepIndex > 0) console.log((funnelData.steps[stepIndex - 1].splitPerChannel as any)[index].count)
-          const percentageStart = getPercentage((funnelData.total - startCount), funnelData.total);
-          const percentageEnd = getPercentage((funnelData.total - channel.count), funnelData.total);
-          const stepStart = drawerAreaHeight && valueFromPercentage(percentageStart, drawerAreaHeight);
-          const stepEnd = drawerAreaHeight && valueFromPercentage(percentageEnd, drawerAreaHeight);
-          
-          ctx.beginPath();
-          ctx.lineWidth = 3;
-          ctx.moveTo(0, stepStart);
-          ctx.lineTo(drawWidth, stepEnd);
-          ctx.strokeStyle = colors[index];
-          ctx.stroke();
-
-          ctx.beginPath();
-          ctx.moveTo(0, stepStart + 1);
-          ctx.lineTo(drawWidth, stepEnd);
-          ctx.lineTo(drawWidth, 1000);
-          ctx.lineTo(0, 1000);
-          ctx.closePath();
-      
-          ctx.fillStyle = colors[index];
-          ctx.fill();
+        funnelData.grouped_by.forEach((channel, index) => {  
+          const startCountForSplit = StepIndex === 0 ? funnelData.global.total : channel.funnel.steps[StepIndex - 1].count
+          this.drawChart(
+            ctx, 
+            (funnelData.global.total - startCountForSplit), 
+            (funnelData.global.total - channel.funnel.steps[StepIndex].count), 
+            canvas.width,
+            colors[index]
+          )
         })
-      }
-
     }
     else {
-      const percentageStart = getPercentage(startCount, funnelData.total);
-      const percentageEnd = getPercentage(endCount, funnelData.total);
-      const stepStart = drawerAreaHeight && valueFromPercentage(percentageStart, drawerAreaHeight);
-      const stepEnd = drawerAreaHeight && valueFromPercentage(percentageEnd, drawerAreaHeight);
-
-      ctx.beginPath();
-
-      ctx.lineWidth = 3;
-      ctx.moveTo(0, stepStart);
-      ctx.lineTo(drawWidth, stepEnd);
-      ctx.strokeStyle = '#0ba6e1';
-      ctx.stroke();
-  
-      ctx.moveTo(0, 0);
-      ctx.lineTo(0, stepStart && stepStart - 1);
-      ctx.lineTo(drawWidth, stepEnd && stepEnd - 1);
-      ctx.lineTo(drawWidth, 0);
-  
-      ctx.fillStyle = "white";
-      ctx.fill();
-  
-      ctx.closePath();
+      this.drawChart(ctx, startCount, endCount, canvas.width, colors[0])
     }
+  }
 
 
+  drawChart = (ctx: CanvasRenderingContext2D, startCount: number, endCount: number,  drawWidth: number, colors: string[]) => {
+    const { funnelData } = this.state;
+    const drawerHeight = 370;
+    const percentageStart = getPercentage(startCount, funnelData.global.total);
+    const percentageEnd = getPercentage(endCount, funnelData.global.total);
+    const stepStart = drawerHeight && valueFromPercentage(percentageStart, drawerHeight);
+    const stepEnd = drawerHeight && valueFromPercentage(percentageEnd, drawerHeight);
+
+    ctx.beginPath();
+
+    ctx.lineWidth = 3;
+    ctx.moveTo(0, stepStart);
+    ctx.lineTo(drawWidth, stepEnd);
+    ctx.strokeStyle = colors[0];
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(0, stepStart);
+    ctx.lineTo(drawWidth, stepEnd);
+    ctx.lineTo(drawWidth, 1000);
+    ctx.lineTo(0, 1000);
+    ctx.closePath();
+
+    ctx.fillStyle = colors[1];
+    ctx.fill();
   }
 
   formatPercentageValue = (value: number) => {
@@ -310,7 +309,7 @@ class Funnel extends React.Component<Props, State> {
 
   isLastStep = (stepNumber: number) => {
     const { funnelData } = this.state;
-    return funnelData.steps.length === stepNumber;
+    return funnelData.global.steps.length === stepNumber;
   }
 
   isFirstStep = (stepNumber: number) => {
@@ -325,23 +324,25 @@ class Funnel extends React.Component<Props, State> {
     const { funnelData, stepsDelta, isLoading } = this.state;
     const { title, intl } = this.props;
     if (isLoading) return (<LoadingChart />);
+    const steps = funnelData.global.steps;
+    const total = funnelData.global.total;
     return (
       <Card className="mcs-funnel">
         <div id="container" >
           <div className="mcs-funnel_header">
             <h1 className="mcs-funnel_header_title">{title}</h1>
           </div>
-          {funnelData.steps.length === 0 || funnelData.total === 0 ?
+          {steps.length === 0 || total === 0 ?
             <div className="mcs-funnel_empty">
               <EmptyChart title={intl.formatMessage(funnelMessages.noData)} icon='warning' />
             </div> :
             <div className="mcs-funnel_steps" >
-              {funnelData.steps.map((step, index) => {
+              {steps.map((step, index) => {
 
-                const conversion = index > 0 && funnelData.steps[index - 1].hasOwnProperty("conversion") && funnelData.steps[index - 1].conversion != null ?
-                    numeral(funnelData.steps[index - 1].conversion).format('0,0') : undefined;
-                const amount = index > 0 && funnelData.steps[index - 1].hasOwnProperty("amount") && funnelData.steps[index - 1].amount != null ?
-                    `${numeral(funnelData.steps[index - 1].amount).format('0,0')}€` : undefined;
+                const conversion = index > 0 && steps[index - 1].hasOwnProperty("conversion") ?
+                    numeral(steps[index - 1].conversion).format('0,0') : undefined;
+                const amount = index > 0 && steps[index - 1].hasOwnProperty("amount") ?
+                    `${numeral(steps[index - 1].amount).format('0,0')}€` : undefined;
 
                 return <div key={index.toString()} style={{ flex: 1 }} >
                   <div className={"mcs-funnel_stepName"}>
@@ -350,7 +351,7 @@ class Funnel extends React.Component<Props, State> {
                   <div className={"mcs-funnel_metricsBlock"}>
                     <div className={"mcs-funnel_metric"}>
                       <div className="mcs-funnel_metric_title">UserPoints</div>
-                      <div className="mcs-funnel_metric_nbr">{numeral(index === 0 ? funnelData.total : funnelData.steps[index - 1].count).format('0,0')}</div>
+                      <div className="mcs-funnel_metric_nbr">{numeral(index === 0 ? total : steps[index - 1].count).format('0,0')}</div>
                     </div>
                     {conversion && <div className={"mcs-funnel_metric"}>
                       <div className="mcs-funnel_metric_title">Conversion</div>
@@ -366,7 +367,7 @@ class Funnel extends React.Component<Props, State> {
 
                     {stepsDelta[index] && stepsDelta[index].passThroughPercentage ? <div className="mcs-funnel_percentageOfSucceeded">
                       <div className="mcs-funnel_arrow mcs_funnel_arrowStep" />
-                      <p className="mcs-funnel_stepInfo"><strong>{`${stepsDelta[index].passThroughPercentage}%`}</strong> have succeeded {this.getDurationMessage(index, 0 )}</p>
+                      <p className="mcs-funnel_stepInfo"><strong>{`${stepsDelta[index].passThroughPercentage}%`}</strong> have succeeded {this.getDurationMessage(index, steps[index + 1].interaction_duration )}</p>
                     </div> : ""}
 
                     {<canvas id={`canvas_${index + 1}`} className={"mcs-funnel_canvas"} height="370" />}

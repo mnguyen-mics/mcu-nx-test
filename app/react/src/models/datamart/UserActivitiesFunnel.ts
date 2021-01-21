@@ -27,26 +27,28 @@ export interface FunnelRequestBody {
   number_of_parts_to_split_on: number;
 }
 
-export type FunnelResponse = DataResponse<any>
+export type FunnelResponse = DataResponse<GroupedByFunnel>
 
 export interface FunnelResource {
   total: number;
   steps: Steps[];
 }
 
-export interface countPerChannels {
-  channel_name: string;
-  count: number;
-  interaction_duration: number;
+export interface GroupedByFunnel {
+  global: FunnelResource; 
+  grouped_by: FieldValueFunnelResource[];
 }
-
+export interface FieldValueFunnelResource {
+  field_name: string;
+  field_value: string;
+  funnel: FunnelResource;
+}
 export interface Steps {
   name: string;
   count: number;
   conversion?: number;
   amount?: number;
   interaction_duration: number;
-  splitPerChannel?: countPerChannels[];
 }
 
 export type TimeUnit = 'DAY' | 'WEEK' | 'MONTH';
