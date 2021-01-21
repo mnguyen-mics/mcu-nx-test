@@ -110,10 +110,18 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
     const newFormData = {
       ...formData,
       addressable_object: 'UserPoint',
-      object_tree_expression: formData.object_tree_expression
-        ?.toLowerCase()
-        .split('where')[1],
     };
+
+    let objectTreeExpression = formData.object_tree_expression;
+
+    if (objectTreeExpression) {
+      if (objectTreeExpression.includes('where')) {
+        objectTreeExpression = objectTreeExpression.split('where')[1];
+      } else if (objectTreeExpression.includes('WHERE')) {
+        objectTreeExpression = objectTreeExpression.split('WHERE')[1];
+      }
+      newFormData.object_tree_expression = objectTreeExpression.toLowerCase();
+    }
 
     const promise = audienceFeatureId
       ? this._audienceFeatureService.updateAudienceFeature(
