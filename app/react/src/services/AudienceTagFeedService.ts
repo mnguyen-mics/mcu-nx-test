@@ -52,7 +52,6 @@ export interface IAudienceTagFeedService {
     organisationId: string,
     options: object,
   ) => Promise<DataResponse<AudienceTagFeed>>;
-  getAudienceFeedProperties: (id: string, options: object) => Promise<any>;
   getLocalizedPluginLayout(pInstanceId: string): Promise<PluginLayout | null>;
 }
 
@@ -161,17 +160,6 @@ export class AudienceTagFeedService
     };
 
     return ApiService.postRequest(endpoint, params);
-  };
-
-  // STOP
-
-  // OLD WAY AND DUMB WAY TO DO IT, TO CHANGE
-  getAudienceFeedProperties = (id: string, options: object = {}) => {
-    const endpoint = `audience_segments/${this.segmentId}/tag_feeds/${id}/properties`;
-
-    return ApiService.getRequest(endpoint, options).then((res: any) => {
-      return { ...res.data, id };
-    });
   };
 
   getLocalizedPluginLayout(pInstanceId: string): Promise<PluginLayout | null> {
