@@ -59,11 +59,6 @@ export interface IAudienceExternalFeedService {
     options: object,
   ) => Promise<DataResponse<AudienceExternalFeed>>;
 
-  getAudienceFeedProperties: (
-    id: string,
-    options: object,
-  ) => Promise<DataListResponse<any>>;
-
   getLocalizedPluginLayout(pInstanceId: string): Promise<PluginLayout | null>;
 }
 
@@ -170,17 +165,6 @@ export class AudienceExternalFeedService
     };
 
     return ApiService.postRequest(endpoint, params);
-  };
-
-  // STOP
-
-  // OLD WAY AND DUMB WAY TO DO IT, TO CHANGE
-  getAudienceFeedProperties = (id: string, options: object = {}) => {
-    const endpoint = `audience_segments/${this.segmentId}/external_feeds/${id}/properties`;
-
-    return ApiService.getRequest(endpoint, options).then((res: any) => {
-      return { ...res.data, id };
-    });
   };
 
   getLocalizedPluginLayout(pInstanceId: string): Promise<PluginLayout | null> {
