@@ -18,7 +18,7 @@ import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer'
 import { lazyInject } from '../../../../config/inversify.config';
 import { IDataFileService } from '../../../../services/DataFileService';
 import { TYPES } from '../../../../constants/types';
-import DOMPurify from 'dompurify';
+
 
 export type AcceptedFile = 'text/html' | '*';
 
@@ -80,22 +80,15 @@ class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
       this.onFileUpdate(res).then((fileContent: string) => {
         const fileName = this.parseFileName(uri);
         const basePath = this.parseFileName(uri, true);
-
-        const sanitizedContent =  DOMPurify.sanitize(
-          fileContent, 
-          {
-            SAFE_FOR_TEMPLATES: true, 
-            WHOLE_DOCUMENT: true
-          });
         this.setState({
           canEdit: true,
-          fileContent: sanitizedContent,
+          fileContent: fileContent,
           fileName: fileName,
           basePath: basePath,
         });
         input.onChange({
           uri: uri,
-          fileContent: sanitizedContent,
+          fileContent: fileContent,
           fileName: fileName,
         });
       });
