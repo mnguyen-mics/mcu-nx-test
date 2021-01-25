@@ -47,6 +47,11 @@ declare namespace Cypress {
     initTestContext():void;
 
     /**
+     * Creates a activities and user scenario allowing testing automation
+     */
+    setDataSetForAutomation(accessToken: string, datamartId: string, organisationId:string): void;
+
+    /**
      * Create a segment using the UI
      */
     createSegmentFromUI(type:string):void;
