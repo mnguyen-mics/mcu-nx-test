@@ -70,7 +70,6 @@ const messages = defineMessages({
     id: 'edit.import.general.infos.tooltip.priority',
     defaultMessage: 'Choose the document import priority.',
   },
-
 });
 
 interface MapStateToProps {
@@ -121,16 +120,16 @@ class GeneralFormSection extends React.Component<Props, State> {
         },
         {
           title: 'User Identifiers Association',
-          value: 'USER_IDENTIFIERS_ASSOCIATION_DECLARATIONS'
+          value: 'USER_IDENTIFIERS_ASSOCIATION_DECLARATIONS',
         },
         {
           title: 'User Identifiers Dissociation',
-          value: 'USER_IDENTIFIERS_DISSOCIATION_DECLARATIONS'
+          value: 'USER_IDENTIFIERS_DISSOCIATION_DECLARATIONS',
         },
         {
           title: 'User Identifiers Deletion',
-          value: 'USER_IDENTIFIERS_DELETION'
-        }
+          value: 'USER_IDENTIFIERS_DELETION',
+        },
       ];
     };
 
@@ -186,6 +185,9 @@ class GeneralFormSection extends React.Component<Props, State> {
             }}
             helpToolTipProps={{
               title: formatMessage(messages.tootltipImportDocumentType),
+            }}
+            selectProps={{
+              className: `mcs-imports_selectField_${messages.tootltipImportDocumentType.id}`,
             }}
           />
           <DefaultSelectField
@@ -250,6 +252,9 @@ class GeneralFormSection extends React.Component<Props, State> {
             }}
             helpToolTipProps={{
               title: formatMessage(messages.tootltipImportPriority),
+            }}
+            selectProps={{
+              className: `mcs-imports_selectField_${messages.tootltipImportPriority.id}`,
             }}
           />
         </div>
