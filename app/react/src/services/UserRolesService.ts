@@ -35,7 +35,7 @@ export class UserRolesService implements IUserRolesService {
     userId: string,
     userRoleId: string,
   ): Promise<DataResponse<any>> {
-    const endpoint = `users/${userId}/user_roles?role_id=${userRoleId}`;
+    const endpoint = `users/${userId}/user_roles/${userRoleId}`;
     return ApiService.deleteRequest(endpoint);
   }
 }

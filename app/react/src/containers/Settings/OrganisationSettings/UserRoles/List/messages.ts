@@ -33,9 +33,9 @@ export const messages = defineMessages({
     id: 'settings.organisation.users.roles.list.edit',
     defaultMessage: 'Edit role',
   },
-  archiveUser: {
-    id: 'settings.organisation.users.roles.list.archive',
-    defaultMessage: 'Archive User',
+  deleteUserRole: {
+    id: 'settings.organisation.users.roles.list.delete',
+    defaultMessage: 'Delete role',
   },
   emptyUsers: {
     id: 'settings.organisation.users.roles.list.empty',
