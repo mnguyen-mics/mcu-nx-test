@@ -37,7 +37,7 @@ class ImportsActionbar extends React.Component<
     return (
       <Actionbar paths={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/datastudio/imports/create`}>
-          <Button className="mcs-primary" type="primary">
+          <Button className="mcs-primary mcs-imports_creationButton" type="primary">
             <McsIcon type="plus" /> <FormattedMessage {...messages.newImport} />
           </Button>
         </Link>

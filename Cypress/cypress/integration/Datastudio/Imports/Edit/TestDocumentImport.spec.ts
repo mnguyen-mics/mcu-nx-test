@@ -1,89 +1,83 @@
-describe('User Profile Import Test', () => {
-  const second = 1000
-  const minutes = 60 * second
+import faker from 'faker';
 
-  before(() => {
-    cy.login()
+describe('User Profile Import Test', () => {
+  const second = 1000;
+  const minutes = 60 * second;
+
+  const loginAndInitiateDocImportCreation = () => {
+    cy.login();
     cy.url({ timeout: 10 * second }).should(
       'contain',
-      Cypress.config().baseUrl + '/#/v2/o/1/campaigns/display'
-    )
+      Cypress.config().baseUrl + '/#/v2/o/1/campaigns/display',
+    );
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
-      cy.switchOrg(data.organisationName)
-    })
-  })
-
-  // Before each test, local storage is restored and document import is initiated
-  beforeEach(() => {
-    cy.restoreLocalStorageCache()
-    cy.contains('Data Studio').click()
-    cy.contains('Imports').click()
-    cy.contains('New Import').click()
-    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
-      cy.contains(data.datamartName).click()
-    })
-    cy.get('[id="name"]').type('Test Document Import Cypress e2e')
-    cy.get('[class="ant-select-selection__rendered"]')
-      .first()
-      .click()
-  })
+      cy.switchOrg(data.organisationName);
+      cy.get('.mcs-sideBar-subMenu_menu\\.dataStudio\\.title').click();
+      cy.get('.mcs-sideBar-subMenuItem_menu\\.library\\.Imports').click();
+      cy.get('.mcs-imports_creationButton').click();
+      cy.contains(data.datamartName).click();
+      cy.get('[id="name"]').type(faker.random.words(2));
+      cy.get('.mcs-imports_selectField_edit\\.import\\.general\\.infos\\.tooltip\\.documentType')
+        .first()
+        .click();
+    });
+  };
 
   // After each test, local storage is saved
   afterEach(() => {
-    cy.saveLocalStorageCache()
-  })
+    cy.clearLocalStorage();
+  });
 
   // File upload
   const uploadFile = (fileName: string) => {
     cy.fixture(fileName).then(() => {
-      cy.get('[type="file"]').attachFile(
-        fileName,
-        { force: true, subjectType: 'drag-n-drop' }
-      )
-    })
-  }
+      cy.get('[type="file"]').attachFile(fileName, {
+        force: true,
+        subjectType: 'drag-n-drop',
+      });
+    });
+  };
 
   // Document import type
   const importTypeFunc = (importType: string | number | RegExp) => {
-    cy.contains(importType).click()
-    cy.get('[class="ant-select-selection__rendered"]')
-      .eq(3)
-      .click()
-    cy.contains('MEDIUM').click()
-    cy.contains('Save').click()
-    cy.contains('New Execution').click()
-  }
+    cy.contains(importType).click();
+    cy.get('.mcs-imports_selectField_edit\\.import\\.general\\.infos\\.tooltip\\.priority')
+      .first()
+      .click();
+    cy.contains('MEDIUM').click();
+    cy.get('.mcs-form_saveButton_importForm').click();
+    cy.get('.mcs-importExecution_newExecution').click();
+  };
 
   it('should succeed if import profile input file is valid', () => {
-    importTypeFunc('User Profile')
-    uploadFile('00-testProfiles.ndjson')
-    cy.contains('Ok').click()
-    cy.get('.ant-table-row > td')
-      .eq(1, { timeout: 1 * minutes })
-      .should('contain', 'RUNNING')
-    cy.get('.ant-table-row > td')
-      .eq(1, { timeout: 1 * minutes })
-      .should('contain', 'SUCCEEDED')
-  })
+    loginAndInitiateDocImportCreation();
+    importTypeFunc('User Profile');
+    uploadFile('00-testProfiles.ndjson');
+    cy.contains('Ok').click();
+    cy.get('.mcs-importExecution_table', { timeout: 1 * minutes })
+      .should('contain', 'RUNNING');
+    cy.get('.mcs-importExecution_table', { timeout: 1 * minutes })
+      .should('contain', 'SUCCEEDED');
+  });
 
   it('should succeed if import activites input file is valid', () => {
-    importTypeFunc('User Activity')
-    uploadFile('01-testActivities.ndjson')
-    cy.contains('Ok').click()
-    cy.get('.ant-table-row > td')
-      .eq(1, { timeout: 1 * minutes })
-      .should('contain', 'RUNNING')
-    cy.get('.ant-table-row > td')
-      .eq(1, { timeout: 1 * minutes })
-      .should('contain', 'SUCCEEDED')
-  })
+    loginAndInitiateDocImportCreation();
+    importTypeFunc('User Activity');
+    uploadFile('01-testActivities.ndjson');
+    cy.contains('Ok').click();
+    cy.get('.mcs-importExecution_table', { timeout: 1 * minutes })
+      .should('contain', 'RUNNING');
+    cy.get('.mcs-importExecution_table', { timeout: 1 * minutes })
+      .should('contain', 'SUCCEEDED');
+  });
 
   it('should fail if import profile input file does not match user profile resource', () => {
-    importTypeFunc('User Profile')
-    uploadFile('02-wrongData.ndjson')
-    cy.contains('Ok').click()
+    loginAndInitiateDocImportCreation();
+    importTypeFunc('User Profile');
+    uploadFile('02-wrongData.ndjson');
+    cy.contains('Ok').click();
     cy.get('.ant-notification-notice-with-icon')
       .should('contain', 'Something went wrong')
-      .should('be.visible')
-  })
-})
+      .should('be.visible');
+  });
+});

@@ -239,7 +239,7 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
       <Actionbar paths={breadcrumbPaths}>
         {this.renderModal()}
         <Button
-          className="mcs-primary"
+          className="mcs-primary mcs-importExecution_newExecution"
           type="primary"
           onClick={this.handleOpenClose}
         >

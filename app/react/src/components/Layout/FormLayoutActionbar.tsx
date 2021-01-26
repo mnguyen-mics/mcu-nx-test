@@ -53,6 +53,7 @@ class FormLayoutActionbar extends React.Component<Props, State> {
       htmlType: 'submit',
       onClick: () => dispatch && formId && dispatch(submit(formId)),
       type: 'primary',
+      className: `mcs-form_saveButton_${formId}`
     };
 
     const openConversionModal = () => this.setState({ conversionModalVisible: true })
@@ -63,7 +64,7 @@ class FormLayoutActionbar extends React.Component<Props, State> {
     return (
       <Actionbar edition={true} {...this.props}>
         {message && !disabled ? (
-          <Button {...submitButtonProps} className="mcs-primary">
+          <Button {...submitButtonProps} className={`mcs-primary ${formId ? `mcs-form_saveButton_${formId}` : ''}`}>
             <McsIcon type="plus" />
             <FormattedMessage {...message} />
           </Button>

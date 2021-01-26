@@ -463,6 +463,7 @@ class Imports extends React.Component<JoinedProps, State> {
                 actionsColumnsDefinition={actionsColumnsDefinition}
                 pagination={pagination}
                 loading={importExecutions.isLoading}
+                className="mcs-importExecution_table"
               />
             </Card>
           </Content>
