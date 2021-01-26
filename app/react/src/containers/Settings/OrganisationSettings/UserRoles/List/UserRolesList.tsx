@@ -4,7 +4,11 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { Layout } from 'antd';
 import ItemList, { Filters } from '../../../../../components/ItemList';
-import { PAGINATION_SEARCH_SETTINGS } from '../../../../../utils/LocationSearchHelper';
+import {
+  PAGINATION_SEARCH_SETTINGS,
+  updateSearch,
+  parseSearch
+} from '../../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { messages } from './messages';
 import { lazyInject } from '../../../../../config/inversify.config';
@@ -14,6 +18,10 @@ import { UserWithRole } from '../domain';
 import { IOrganisationService } from '../../../../../services/OrganisationService';
 import { OrganisationResource } from '../../../../../models/organisation/organisation';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
+import { IUserRolesService } from '../../../../../services/UserRolesService';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../../Notifications/injectNotifications';
 
 const { Content } = Layout;
 
@@ -21,7 +29,7 @@ const initialState = {
   loading: false,
   data: [],
   total: 0,
-  communityId: "0",
+  communityId: '0',
   communityOrgs: [] as OrganisationResource[],
 };
 
@@ -37,10 +45,11 @@ interface RouterProps {
   organisationId: string;
 }
 
-class UserRolesList extends React.Component<
-  RouteComponentProps<RouterProps> & InjectedIntlProps,
-  UserListState
-> {
+type Props = RouteComponentProps<RouterProps> &
+  InjectedIntlProps &
+  InjectedNotificationProps;
+
+class UserRolesList extends React.Component<Props, UserListState> {
   state = initialState;
 
   @lazyInject(TYPES.IUsersService)
@@ -49,35 +58,41 @@ class UserRolesList extends React.Component<
   @lazyInject(TYPES.IOrganisationService)
   private _organisationService: IOrganisationService;
 
-  archiveUser = (recommenderId: string) => {
-    return Promise.resolve();
-  };
+  @lazyInject(TYPES.IUserRolesService)
+  private _userRolesService: IUserRolesService;
 
   fetchUsers = (organisationId: string, filter: Filters) => {
     this.setState({ loading: true }, () => {
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      this._organisationService.getOrganisation(organisationId)
+      this._organisationService
+        .getOrganisation(organisationId)
         .then(response => {
-          this.setState({communityId: response.data.community_id})
-          this._usersService.getUsersWithUserRole(response.data.community_id, options)
-          .then(
-            (results: { data: UserWithRole[]; total?: number; count: number }) => {
-              this.setState({
-                loading: false,
-                data: results.data,
-                total: results.total || results.count,
-              });
-              this._organisationService.getOrganisations(this.state.communityId)
-              .then(organisationsResponse => 
-                this.setState({communityOrgs: organisationsResponse.data})
-              )
-            }
-          )
-          
-        }
-      );
+          this.setState({ communityId: response.data.community_id });
+          this._usersService
+            .getUsersWithUserRole(response.data.community_id, options)
+            .then(
+              (results: {
+                data: UserWithRole[];
+                total?: number;
+                count: number;
+              }) => {
+                this.setState({
+                  loading: false,
+                  data: results.data,
+                  total: results.total || results.count,
+                });
+                this._organisationService
+                  .getOrganisations(this.state.communityId)
+                  .then(organisationsResponse =>
+                    this.setState({
+                      communityOrgs: organisationsResponse.data,
+                    }),
+                  );
+              },
+            );
+        });
     });
   };
 
@@ -94,11 +109,62 @@ class UserRolesList extends React.Component<
     );
   };
 
+  redirect = () => {
+    const {
+      match: {
+        params: { organisationId },
+      },
+      location: { search: currentSearch, pathname },
+      history,
+    } = this.props;
+    const { data } = this.state;
+
+    const filter = parseSearch(currentSearch, PAGINATION_SEARCH_SETTINGS);
+
+    if (data.length === 1 && filter.currentPage !== 1) {
+      const computedFilter = {
+        ...filter,
+        currentPage: filter.currentPage - 1,
+      };
+
+      const nextLocation = {
+        pathname,
+        search: updateSearch(
+          currentSearch,
+          computedFilter,
+          PAGINATION_SEARCH_SETTINGS,
+        ),
+      };
+
+      history.push(nextLocation);
+    } else {
+      this.fetchUsers(organisationId, filter);
+    }
+  };
+
+  onClickDelete = (user: UserWithRole) => {
+    const { notifyError } = this.props;
+    if (user.role.id) {
+      this._userRolesService
+        .deleteUserRole(user.id, user.role.id)
+        .then(this.redirect)
+        .catch(err => {
+          notifyError(err);
+        });
+    }
+  };
+
   render() {
     const actionsColumnsDefinition = [
       {
         key: 'action',
-        actions: () => [{ intlMessage: messages.editUserRole, callback: this.onClickEdit }],
+        actions: () => [
+          { intlMessage: messages.editUserRole, callback: this.onClickEdit },
+          {
+            intlMessage: messages.deleteUserRole,
+            callback: this.onClickDelete,
+          },
+        ],
       },
     ];
 
@@ -123,15 +189,24 @@ class UserRolesList extends React.Component<
         key: 'role.organisation_id',
         isHideable: false,
         render: (text: string) => {
-          const organisation: OrganisationResource | undefined = this.state.communityOrgs.find((org: OrganisationResource) => org.id === text);
+          const organisation:
+            | OrganisationResource
+            | undefined = this.state.communityOrgs.find(
+            (org: OrganisationResource) => org.id === text,
+          );
           return organisation ? organisation.name : text;
-        }
+        },
       },
       {
         intlMessage: messages.roleTitle,
         key: 'role.role',
         isHideable: false,
-        render: (text: string) => text.charAt(0) + text.slice(1).toLowerCase().replace('_', ' ')
+        render: (text: string) =>
+          text.charAt(0) +
+          text
+            .slice(1)
+            .toLowerCase()
+            .replace('_', ' '),
       },
     ];
 
@@ -174,4 +249,8 @@ class UserRolesList extends React.Component<
   }
 }
 
-export default compose(withRouter, injectIntl)(UserRolesList);
+export default compose<Props, {}>(
+  withRouter,
+  injectIntl,
+  injectNotifications,
+)(UserRolesList);
