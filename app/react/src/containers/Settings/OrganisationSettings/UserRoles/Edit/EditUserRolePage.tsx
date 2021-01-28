@@ -89,56 +89,64 @@ class EditUserPage extends React.Component<Props, State> {
   componentDidMount() {
     const {
       match: {
-        params: { userId, roleId },
+        params: { userId, roleId, organisationId },
       },
+      location,
+      history,
     } = this.props;
-    if (userId && roleId) {
-      this.setState({loading: true});
-      this._userRolesService.getUserRoles(userId)
-      .then(response => {
-        return response.data.find((role: UserRoleResource) => role.id === roleId)
-      })
-      .then(role => {
-        if (role) {
-          this._usersService
-            .getUser(userId, role.organisation_id)
-            .then(resp => {
-              const userWithRole: UserRoleExtended = {
-                ...role,
-                user_id: resp.data.id,
-                user_name: `${resp.data.first_name} ${resp.data.last_name}`,
-                email: resp.data.email,
-                organisation_name: "",
-              }
-              this.setState({
-                userRoleData: userWithRole,
-              });
-              this._organisationService.getOrganisation(role.organisation_id)
-              .then(orgRessource => 
-                this.setState({
-                  userRoleData: {
-                    ...this.state.userRoleData,
-                    organisation_name: orgRessource.data.name,
-                  },
-                  loading: false,
-                })
-              )
-            })
-            .catch(err => {
-              this.redirectAndNotify(false);
-              notifyError(err);
-            })
-        }
-        else {
-          notifyError("UserRole not found");
-          this.setState({loading: false});
-        }
-      })
-      .catch(err => {
-        this.redirectAndNotify(false);
-        notifyError(err);
-      })
+
+    const userOrganisationId = location.state?.userOrganisationId;
+    if (!userId || !roleId || !userOrganisationId) {
+      return history.replace(
+        `/v2/o/${organisationId}/settings/organisation/user_roles`,
+      );
     }
+
+    this.setState({loading: true});
+    this._userRolesService.getUserRoles(userId)
+    .then(response => {
+      return response.data.find((role: UserRoleResource) => role.id === roleId)
+    })
+    .then(role => {
+      if (role) {
+        this._usersService
+          .getUser(userId, userOrganisationId)
+          .then(resp => {
+            const userWithRole: UserRoleExtended = {
+              ...role,
+              user_id: resp.data.id,
+              user_name: `${resp.data.first_name} ${resp.data.last_name}`,
+              email: resp.data.email,
+              organisation_name: "",
+            }
+            this.setState({
+              userRoleData: userWithRole,
+            });
+            this._organisationService.getOrganisation(userOrganisationId)
+            .then(orgRessource => 
+              this.setState({
+                userRoleData: {
+                  ...this.state.userRoleData,
+                  organisation_name: orgRessource.data.name,
+                },
+                loading: false,
+              })
+            )
+          })
+          .catch(err => {
+            this.redirectAndNotify(false);
+            notifyError(err);
+          })
+      }
+      else {
+        notifyError("UserRole not found");
+        this.setState({loading: false});
+      }
+    })
+    .catch(err => {
+      this.redirectAndNotify(false);
+      notifyError(err);
+    })
   }
 
   close = () => {
