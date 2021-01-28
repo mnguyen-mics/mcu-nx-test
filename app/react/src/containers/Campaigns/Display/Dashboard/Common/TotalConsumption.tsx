@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { formatMetric } from '../../../../../utils/MetricHelper';
 import ReportService from '../../../../../services/ReportService';
-import Progress from '../../../../../components/Progress';
+import { Progress } from '@mediarithmics-private/mcs-components-library';
 import log from '../../../../../utils/Logger';
 import McsMoment from '../../../../../utils/McsMoment';
 
