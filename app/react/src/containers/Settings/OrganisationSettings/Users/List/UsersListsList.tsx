@@ -4,7 +4,11 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { Layout, Button } from 'antd';
 import ItemList, { Filters } from '../../../../../components/ItemList';
-import { PAGINATION_SEARCH_SETTINGS } from '../../../../../utils/LocationSearchHelper';
+import {
+  PAGINATION_SEARCH_SETTINGS,
+  parseSearch,
+  updateSearch,
+} from '../../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import UserResource from '../../../../../models/directory/UserResource';
 import { messages } from './messages';
@@ -14,6 +18,10 @@ import { Link } from 'react-router-dom';
 import { IOrganisationService } from '../../../../../services/OrganisationService';
 import { ICommunityService } from '../../../../../services/CommunityServices';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../../Notifications/injectNotifications';
+import { IUsersService } from '../../../../../services/UsersService';
 
 const { Content } = Layout;
 
@@ -33,17 +41,21 @@ interface RouterProps {
   organisationId: string;
 }
 
-class UserListsList extends React.Component<
-  RouteComponentProps<RouterProps> & InjectedIntlProps,
-  UserListState
-> {
+type Props = RouteComponentProps<RouterProps> &
+  InjectedIntlProps &
+  InjectedNotificationProps;
+
+class UserListsList extends React.Component<Props, UserListState> {
   state = initialState;
 
   @lazyInject(TYPES.IOrganisationService)
   private _organisationService: IOrganisationService;
 
   @lazyInject(TYPES.ICommunityService)
-  private _communityService: ICommunityService
+  private _communityService: ICommunityService;
+
+  @lazyInject(TYPES.IUsersService)
+  private _usersService: IUsersService;
 
   archiveUser = (recommenderId: string) => {
     return Promise.resolve();
@@ -54,17 +66,26 @@ class UserListsList extends React.Component<
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      this._organisationService.getOrganisation(organisationId)
-        .then(response => 
-          this._communityService.getCommunityUsers(response.data.community_id, options))
+      this._organisationService
+        .getOrganisation(organisationId)
+        .then(response =>
+          this._communityService.getCommunityUsers(
+            response.data.community_id,
+            options,
+          ),
+        )
         .then(
-          (results: { data: UserResource[]; total?: number; count: number }) => {
+          (results: {
+            data: UserResource[];
+            total?: number;
+            count: number;
+          }) => {
             this.setState({
               loading: false,
               data: results.data,
               total: results.total || results.count,
             });
-          }
+          },
         );
     });
   };
@@ -82,6 +103,51 @@ class UserListsList extends React.Component<
     );
   };
 
+  redirect = () => {
+    const {
+      match: {
+        params: { organisationId },
+      },
+      location: { search: currentSearch, pathname },
+      history,
+    } = this.props;
+
+    const { data } = this.state;
+
+    const filter = parseSearch(currentSearch, PAGINATION_SEARCH_SETTINGS);
+
+    if (data.length === 1 && filter.currentPage !== 1) {
+      const computedFilter = {
+        ...filter,
+        currentPage: filter.currentPage - 1,
+      };
+
+      const nextLocation = {
+        pathname,
+        search: updateSearch(
+          currentSearch,
+          computedFilter,
+          PAGINATION_SEARCH_SETTINGS,
+        ),
+      };
+
+      history.push(nextLocation);
+    } else {
+      this.fetchUsers(organisationId, filter);
+    }
+  };
+
+  onClickDelete = (user: UserResource) => {
+    const { notifyError } = this.props;
+
+    this._usersService
+      .deleteUser(user.id, user.organisation_id)
+      .then(this.redirect)
+      .catch(err => {
+        notifyError(err);
+      });
+  };
+
   render() {
     const {
       match: {
@@ -92,7 +158,13 @@ class UserListsList extends React.Component<
     const actionsColumnsDefinition = [
       {
         key: 'action',
-        actions: () => [{ intlMessage: messages.editUser, callback: this.onClickEdit }],
+        actions: () => [
+          { intlMessage: messages.editUser, callback: this.onClickEdit },
+          {
+            intlMessage: messages.deleteUser,
+            callback: this.onClickDelete,
+          },
+        ],
       },
     ];
 
@@ -104,9 +176,7 @@ class UserListsList extends React.Component<
         render: (text: string, record: UserResource) => (
           <Link
             className="mcs-campaigns-link"
-            to={`/v2/o/${organisationId}/settings/organisation/users/${
-              record.id
-            }/edit`}
+            to={`/v2/o/${organisationId}/settings/organisation/users/${record.id}/edit`}
           >
             {text} {record.last_name}
           </Link>
@@ -175,4 +245,8 @@ class UserListsList extends React.Component<
   }
 }
 
-export default compose(withRouter, injectIntl)(UserListsList);
+export default compose<Props, {}>(
+  withRouter,
+  injectIntl,
+  injectNotifications,
+)(UserListsList);

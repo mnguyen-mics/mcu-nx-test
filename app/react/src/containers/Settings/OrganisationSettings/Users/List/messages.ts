@@ -25,6 +25,10 @@ export const messages = defineMessages({
     id: 'settings.organisation.users.list.edit',
     defaultMessage: 'Edit User',
   },
+  deleteUser: {
+    id: 'settings.organisation.users.list.delete',
+    defaultMessage: 'Delete User',
+  },
   archiveUser: {
     id: 'settings.organisation.users.list.archive',
     defaultMessage: 'Archive User',
