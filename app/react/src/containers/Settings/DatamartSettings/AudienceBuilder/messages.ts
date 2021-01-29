@@ -5,6 +5,26 @@ export const messages = defineMessages({
     id: 'settings.datamart.audienceFeature.newAudienceFeature',
     defaultMessage: 'New Audience Feature',
   },
+  addFolder: {
+    id: 'settings.datamart.audienceFeature.addFolder',
+    defaultMessage: 'Add Folder',
+  },
+  placeholderFolderInput: {
+    id: 'settings.datamart.audienceFeature.placeholderFolderInput',
+    defaultMessage: 'Enter folder name',
+  },
+  addButton: {
+    id: 'settings.datamart.audienceFeature.add',
+    defaultMessage: 'Add',
+  },
+  cancelButton: {
+    id: 'settings.datamart.audienceFeature.cancel',
+    defaultMessage: 'Cancel',
+  },
+  rename: {
+    id: 'settings.datamart.audienceFeature.renameFolder',
+    defaultMessage: 'Rename',
+  },
   audienceFeatures: {
     id: 'settings.datamart.audienceFeatures',
     defaultMessage: 'Audience Features',
