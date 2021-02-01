@@ -28,13 +28,13 @@ import { Index } from '../../../../utils';
 import Overview from './Overview';
 import { EmailStackedAreaChart } from './Charts';
 import BlastCard from './BlastCard';
-import { McsDateRangeValue } from '../../../../components/McsDateRangePicker';
 import ReportService from '../../../../services/ReportService';
 import log from '../../../../utils/Logger';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
 import { CampaignStatus } from '../../../../models/campaign/constants';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
+import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 
 const { Content } = Layout;
 
@@ -125,20 +125,18 @@ class EmailCampaign extends React.Component<Props, State> {
     const {
       location: { search: previousSearch },
       match: {
-        params: {
-          campaignId: previousCampaignId,
-        },
+        params: { campaignId: previousCampaignId },
       },
     } = previousProps;
 
-    if (!compareSearches(search, previousSearch) || campaignId !== previousCampaignId) {
+    if (
+      !compareSearches(search, previousSearch) ||
+      campaignId !== previousCampaignId
+    ) {
       if (!isSearchValid(search, EMAIL_DASHBOARD_SEARCH_SETTINGS)) {
         history.replace({
           pathname: pathname,
-          search: buildDefaultSearch(
-            search,
-            EMAIL_DASHBOARD_SEARCH_SETTINGS,
-          ),
+          search: buildDefaultSearch(search, EMAIL_DASHBOARD_SEARCH_SETTINGS),
         });
       } else {
         const filter = parseSearch<EmailDashboardSearchSettings>(

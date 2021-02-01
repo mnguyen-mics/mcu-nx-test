@@ -6,13 +6,14 @@ import { Row, Col } from 'antd';
 import messages from '../messages';
 import { TableView } from '../../../../../components/TableView';
 import { formatMetric } from '../../../../../utils/MetricHelper';
-import McsDateRangePicker, { McsDateRangeValue } from '../../../../../components/McsDateRangePicker';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 
 import {
   parseSearch,
   updateSearch,
 } from '../../../../../utils/LocationSearchHelper';
+import { McsDateRangePicker } from '@mediarithmics-private/mcs-components-library';
+import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 
 export interface MediaPerformance {
   display_network_name: string;
@@ -37,23 +38,35 @@ interface RouterProps {
   adGroupId: string;
 }
 
-type JoinedProps = RouteComponentProps<RouterProps> & MediaPerformanceTableProps & InjectedIntlProps;
+type JoinedProps = RouteComponentProps<RouterProps> &
+  MediaPerformanceTableProps &
+  InjectedIntlProps;
 
 class MediaPerformanceTable extends React.Component<JoinedProps> {
-
   updateLocationSearch(params: McsDateRangeValue) {
-    const { history, location: { search: currentSearch, pathname } } = this.props;
+    const {
+      history,
+      location: { search: currentSearch, pathname },
+    } = this.props;
 
     const nextLocation = {
       pathname,
-      search: updateSearch(currentSearch, params, DISPLAY_DASHBOARD_SEARCH_SETTINGS),
+      search: updateSearch(
+        currentSearch,
+        params,
+        DISPLAY_DASHBOARD_SEARCH_SETTINGS,
+      ),
     };
 
     history.push(nextLocation);
   }
 
   renderDatePicker() {
-    const { history: { location: { search } } } = this.props;
+    const {
+      history: {
+        location: { search },
+      },
+    } = this.props;
 
     const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
 
@@ -74,24 +87,29 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
   }
 
   render() {
-
     const {
       isFetchingMediaStat,
       dataSet,
-      intl: {
-        formatMessage
-      }
+      intl: { formatMessage },
     } = this.props;
 
-    const renderMetricData = (value: string | number, numeralFormat: string, currency: string = '') => {
+    const renderMetricData = (
+      value: string | number,
+      numeralFormat: string,
+      currency: string = '',
+    ) => {
       if (isFetchingMediaStat) {
-        return (<i className="mcs-table-cell-loading" />);
+        return <i className="mcs-table-cell-loading" />;
       }
       const unlocalizedMoneyPrefix = currency === 'EUR' ? '€ ' : '';
       return formatMetric(value, numeralFormat, unlocalizedMoneyPrefix);
     };
 
-    const sorter = (a: MediaPerformance, b: MediaPerformance, key: keyof MediaPerformance) => {
+    const sorter = (
+      a: MediaPerformance,
+      b: MediaPerformance,
+      key: keyof MediaPerformance,
+    ) => {
       if (a[key] === '-') {
         return -1;
       }
@@ -106,7 +124,14 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
         intlMessage: messages.displayNetworkName,
         key: 'display_network_name',
         isHideable: false,
-        render: (text: string) =>  text ? <span>{text}</span> : <span>{formatMessage(messages.displayNetworkNameUncategorized)}</span>,
+        render: (text: string) =>
+          text ? (
+            <span>{text}</span>
+          ) : (
+            <span>
+              {formatMessage(messages.displayNetworkNameUncategorized)}
+            </span>
+          ),
       },
       {
         intlMessage: messages.name,
@@ -126,7 +151,8 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: string) => renderMetricData(text, '0,0'),
-        sorter: (a: MediaPerformance, b: MediaPerformance) => sorter(a, b, 'impressions'),
+        sorter: (a: MediaPerformance, b: MediaPerformance) =>
+          sorter(a, b, 'impressions'),
       },
       {
         intlMessage: messages.clicks,
@@ -134,7 +160,8 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: string) => renderMetricData(text, '0,0'),
-        sorter: (a: MediaPerformance, b: MediaPerformance) => sorter(a, b, 'clicks'),
+        sorter: (a: MediaPerformance, b: MediaPerformance) =>
+          sorter(a, b, 'clicks'),
       },
       {
         intlMessage: messages.cpm,
@@ -142,15 +169,18 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: string) => renderMetricData(text, '0,0.00', 'EUR'),
-        sorter: (a: MediaPerformance, b: MediaPerformance) => sorter(a, b, 'cpm'),
+        sorter: (a: MediaPerformance, b: MediaPerformance) =>
+          sorter(a, b, 'cpm'),
       },
       {
         intlMessage: messages.ctr,
         key: 'ctr',
         isVisibleByDefault: true,
         isHideable: true,
-        render: (text: string) => renderMetricData(parseFloat(text) / 100, '0.000 %'),
-        sorter: (a: MediaPerformance, b: MediaPerformance) => sorter(a, b, 'ctr'),
+        render: (text: string) =>
+          renderMetricData(parseFloat(text) / 100, '0.000 %'),
+        sorter: (a: MediaPerformance, b: MediaPerformance) =>
+          sorter(a, b, 'ctr'),
       },
       {
         intlMessage: messages.cpc,
@@ -158,7 +188,8 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: string) => renderMetricData(text, '0,0.00', 'EUR'),
-        sorter: (a: MediaPerformance, b: MediaPerformance) => sorter(a, b, 'cpc'),
+        sorter: (a: MediaPerformance, b: MediaPerformance) =>
+          sorter(a, b, 'cpc'),
       },
       {
         intlMessage: messages.impressions_cost,
@@ -166,7 +197,8 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: string) => renderMetricData(text, '0,0.00', 'EUR'),
-        sorter: (a: MediaPerformance, b: MediaPerformance) => sorter(a, b, 'impressions_cost'),
+        sorter: (a: MediaPerformance, b: MediaPerformance) =>
+          sorter(a, b, 'impressions_cost'),
       },
       // TODO UNCOMMENT WHEN BACKEND IS FIXED
       // {
@@ -194,7 +226,6 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
       </Row>
     );
   }
-
 }
 
 export default compose<JoinedProps, MediaPerformanceTableProps>(

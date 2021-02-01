@@ -2,9 +2,6 @@ import * as React from 'react';
 import { withRouter } from 'react-router-dom';
 import { Row, Col } from 'antd';
 import { compose } from 'recompose';
-import McsDateRangePicker, {
-  McsDateRangeValue,
-} from '../../../../../components/McsDateRangePicker';
 import messages from '../messages';
 import { SEGMENT_QUERY_SETTINGS, AudienceReport } from '../constants';
 import {
@@ -17,7 +14,12 @@ import injectThemeColors, {
 import { RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import StackedBarPlot from '../../../../../components/Charts/CategoryBased/StackedBarPlot';
-import { EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
+import {
+  EmptyChart,
+  LoadingChart,
+  McsDateRangePicker,
+} from '@mediarithmics-private/mcs-components-library';
+import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 
 interface AdditionDeletionProps {
   isFetching: boolean;
@@ -110,7 +112,7 @@ class AdditionDeletion extends React.Component<Props> {
         {dataSource.length === 0 && !isFetching ? (
           <EmptyChart
             title={intl.formatMessage(messages.noAdditionDeletion)}
-            icon='warning'
+            icon="warning"
           />
         ) : (
           this.renderStackedAreaCharts()

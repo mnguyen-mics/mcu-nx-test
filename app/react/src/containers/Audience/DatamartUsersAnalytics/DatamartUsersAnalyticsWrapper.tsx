@@ -4,9 +4,6 @@ import DatamartUsersAnalyticsContent, {
   DashboardConfig,
 } from './DatamartUsersAnalyticsContent';
 import { Row, Col } from 'antd';
-import McsDateRangePicker, {
-  McsDateRangeValue,
-} from '../../../components/McsDateRangePicker';
 import { compose } from 'recompose';
 import { RouteComponentProps, withRouter } from 'react-router';
 import {
@@ -22,8 +19,12 @@ import {
 import SegmentFilter from './components/SegmentFilter';
 import { DATAMART_USERS_ANALYTICS_SETTING } from '../Segments/Dashboard/constants';
 import { LabeledValue } from 'antd/lib/select';
-import { ContentHeader } from '@mediarithmics-private/mcs-components-library';
+import {
+  ContentHeader,
+  McsDateRangePicker,
+} from '@mediarithmics-private/mcs-components-library';
 import McsMoment from '../../../utils/McsMoment';
+import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 
 interface State {
   layout: Layout[];
@@ -46,7 +47,10 @@ export interface DatamartUsersAnalyticsWrapperProps {
   segmentToAggregate?: boolean;
 }
 
-export type FILTERS = DateSearchSettings | SegmentsSearchSettings | AllUsersSettings;
+export type FILTERS =
+  | DateSearchSettings
+  | SegmentsSearchSettings
+  | AllUsersSettings;
 
 type JoinedProp = RouteComponentProps<{ segmentId?: string }> &
   DatamartUsersAnalyticsWrapperProps;
@@ -95,17 +99,19 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
       segments: defaultSegment ? [defaultSegment.key] : [],
     };
 
-    const queryParamsWithDate = comparisonStartDate ? {
-      ...queryParms,
-      from: new McsMoment(
-        `now-${convertTimestampToDayNumber(comparisonStartDate)}d`,
-      ),
-      to: new McsMoment('now-1d'),
-    } : undefined;
+    const queryParamsWithDate = comparisonStartDate
+      ? {
+          ...queryParms,
+          from: new McsMoment(
+            `now-${convertTimestampToDayNumber(comparisonStartDate)}d`,
+          ),
+          to: new McsMoment('now-1d'),
+        }
+      : undefined;
 
     const nextLocation = {
       pathname: pathname,
-      search: updateSearch(search, queryParamsWithDate || queryParms ),
+      search: updateSearch(search, queryParamsWithDate || queryParms),
     };
 
     if (!isSearchValid(search, DATAMART_USERS_ANALYTICS_SETTING)) {

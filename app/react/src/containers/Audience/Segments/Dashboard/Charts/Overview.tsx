@@ -9,9 +9,6 @@ import {
   defineMessages,
   FormattedMessage,
 } from 'react-intl';
-import McsDateRangePicker, {
-  McsDateRangeValue,
-} from '../../../../../components/McsDateRangePicker';
 import { SEGMENT_QUERY_SETTINGS, AudienceReport } from '../constants';
 import {
   updateSearch,
@@ -23,8 +20,12 @@ import injectThemeColors, {
 } from '../../../../Helpers/injectThemeColors';
 import StackedAreaPlot from '../../../../../components/Charts/TimeBased/StackedAreaPlot';
 import { DatamartWithMetricResource } from '../../../../../models/datamart/DatamartResource';
-import { EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
-
+import {
+  EmptyChart,
+  LoadingChart,
+  McsDateRangePicker,
+} from '@mediarithmics-private/mcs-components-library';
+import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 
 interface OverviewProps {
   isFetching: boolean;
@@ -37,7 +38,7 @@ type Props = OverviewProps &
   InjectedThemeColorsProps &
   InjectedIntlProps &
   RouteComponentProps<{
-    organisationId: string
+    organisationId: string;
   }>;
 
 class Overview extends React.Component<Props> {
@@ -73,11 +74,23 @@ class Overview extends React.Component<Props> {
         to: newValues.to,
       });
 
-    return <McsDateRangePicker values={values} onChange={onChange} excludeToday={true}/>;
+    return (
+      <McsDateRangePicker
+        values={values}
+        onChange={onChange}
+        excludeToday={true}
+      />
+    );
   }
 
   renderStackedAreaCharts() {
-    const { dataSource, isFetching, colors, datamarts, datamartId } = this.props;
+    const {
+      dataSource,
+      isFetching,
+      colors,
+      datamarts,
+      datamartId,
+    } = this.props;
     const metrics =
       dataSource && dataSource[0]
         ? Object.keys(dataSource[0]).filter(
@@ -95,7 +108,8 @@ class Overview extends React.Component<Props> {
       yKeys: metrics.map(metric => {
         return {
           key: metric,
-          message: this.getMetricsDisplayName(metric, datamart) || messagesMap[metric]
+          message:
+            this.getMetricsDisplayName(metric, datamart) || messagesMap[metric],
         };
       }),
       colors: [
@@ -103,23 +117,27 @@ class Overview extends React.Component<Props> {
         colors['mcs-info'],
         colors['mcs-success'],
         colors['mcs-error'],
-        colors['mcs-highlight']
+        colors['mcs-highlight'],
       ].slice(0, metrics.length),
     };
     return !isFetching ? (
-      <StackedAreaPlot
-        dataset={dataSource as any}
-        options={optionsForChart}
-      />
+      <StackedAreaPlot dataset={dataSource as any} options={optionsForChart} />
     ) : (
       <LoadingChart />
     );
   }
 
-  getMetricsDisplayName = (metric: string, datamart?: DatamartWithMetricResource) => {
-    const metricName = datamart && datamart.audience_segment_metrics.find(el => el.technical_name === metric); 
+  getMetricsDisplayName = (
+    metric: string,
+    datamart?: DatamartWithMetricResource,
+  ) => {
+    const metricName =
+      datamart &&
+      datamart.audience_segment_metrics.find(
+        el => el.technical_name === metric,
+      );
     return metricName ? metricName.display_name : undefined;
-  }
+  };
 
   getColor = (metric: string) => {
     const { colors } = this.props;
@@ -153,7 +171,7 @@ class Overview extends React.Component<Props> {
         {dataSource.length === 0 && !isFetching ? (
           <EmptyChart
             title={intl.formatMessage(messages.noAdditionDeletion)}
-            icon='warning'
+            icon="warning"
           />
         ) : (
           this.renderStackedAreaCharts()

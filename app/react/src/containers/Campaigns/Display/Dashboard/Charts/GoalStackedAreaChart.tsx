@@ -5,9 +5,6 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import { ClickParam } from 'antd/lib/menu';
 import { Dropdown } from '../../../../../components/PopupContainers';
-import McsDateRangePicker, {
-  McsDateRangeValue,
-} from '../../../../../components/McsDateRangePicker';
 import { LegendChart } from '../../../../../components/LegendChart';
 
 import {
@@ -32,7 +29,12 @@ import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../../Helpers/injectThemeColors';
 import StackedAreaPlot from '../../../../../components/Charts/TimeBased/StackedAreaPlot';
-import { EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
+import {
+  EmptyChart,
+  LoadingChart,
+  McsDateRangePicker,
+} from '@mediarithmics-private/mcs-components-library';
+import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 
 const LegendChartTS = LegendChart as any;
 
@@ -107,7 +109,9 @@ class GoalStackedAreaChart extends React.Component<
       goal,
       history,
       location: { search, pathname },
-      match: { params: { campaignId, organisationId } },
+      match: {
+        params: { campaignId, organisationId },
+      },
     } = this.props;
 
     if (!isSearchValid(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS)) {
@@ -162,7 +166,9 @@ class GoalStackedAreaChart extends React.Component<
       goal,
       history,
       location: { search },
-      match: { params: { campaignId, organisationId } },
+      match: {
+        params: { campaignId, organisationId },
+      },
     } = this.props;
 
     const { selectedAttributionModel } = this.state;
@@ -253,7 +259,11 @@ class GoalStackedAreaChart extends React.Component<
   };
 
   renderDatePicker() {
-    const { history: { location: { search } } } = this.props;
+    const {
+      history: {
+        location: { search },
+      },
+    } = this.props;
 
     const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
 
@@ -286,10 +296,7 @@ class GoalStackedAreaChart extends React.Component<
     };
 
     return !isFetchingPerformance && performance.length !== 0 ? (
-      <StackedAreaPlot
-        dataset={performance as any}
-        options={optionsForChart}
-      />
+      <StackedAreaPlot dataset={performance as any} options={optionsForChart} />
     ) : (
       <LoadingChart />
     );
@@ -298,7 +305,9 @@ class GoalStackedAreaChart extends React.Component<
   renderAttributionSelect = () => {
     const {
       goal,
-      match: { params: { campaignId, organisationId } },
+      match: {
+        params: { campaignId, organisationId },
+      },
       location: { search },
     } = this.props;
 
@@ -351,7 +360,10 @@ class GoalStackedAreaChart extends React.Component<
   };
 
   render() {
-    const { colors, intl: { formatMessage } } = this.props;
+    const {
+      colors,
+      intl: { formatMessage },
+    } = this.props;
 
     const {
       hasFetchedPerformance,
@@ -384,7 +396,10 @@ class GoalStackedAreaChart extends React.Component<
           </Col>
         </Row>
         {!hasData && hasFetchedPerformance ? (
-          <EmptyChart title={formatMessage(messages.noGoalStatAvailable)} icon='warning' />
+          <EmptyChart
+            title={formatMessage(messages.noGoalStatAvailable)}
+            icon="warning"
+          />
         ) : (
           <Row>
             <Col span={24}>{this.renderStackedAreaCharts()}</Col>

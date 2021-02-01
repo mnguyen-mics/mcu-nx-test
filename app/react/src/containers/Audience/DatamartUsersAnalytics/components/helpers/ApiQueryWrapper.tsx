@@ -16,13 +16,13 @@ import {
 import { DimensionFilterClause } from '../../../../../models/ReportRequestBody';
 import { MetricCounterLoader } from '../MetricCounterLoader';
 import McsMoment from '../../../../../utils/McsMoment';
-import { McsDateRangeValue } from '../../../../../components/McsDateRangePicker';
 import { parseSearch } from '../../../../../utils/LocationSearchHelper';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { DATAMART_USERS_ANALYTICS_SETTING } from '../../../Segments/Dashboard/constants';
 import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import { orderBy, intersection, isEqual } from 'lodash';
 import { LoadingChart } from '@mediarithmics-private/mcs-components-library';
+import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 
 type Props = ApiQueryWrapperProps &
   InjectedNotificationProps &
@@ -135,8 +135,8 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       });
     }
   }
-  
-  // TODO: date range should not be undefined  
+
+  // TODO: date range should not be undefined
   getDataRangeValues = () => {
     const { dateRange } = this.props;
     if (!dateRange.from.value || !dateRange.to.value) {

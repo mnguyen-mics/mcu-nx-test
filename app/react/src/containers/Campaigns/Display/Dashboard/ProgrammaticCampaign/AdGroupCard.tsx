@@ -11,7 +11,11 @@ import {
 import { Dropdown } from '../../../../../components/PopupContainers';
 import messages from '../messages';
 import Slide from '../../../../../components/Transition/Slide';
-import { Card, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import {
+  Card,
+  McsIcon,
+  McsDateRangePicker,
+} from '@mediarithmics-private/mcs-components-library';
 import { CardProps } from '@mediarithmics-private/mcs-components-library/lib/components/card/Card';
 import { AdGroupResource } from '../../../../../models/campaign/display/AdGroupResource';
 import DisplayCampaignAdGroupTable, {
@@ -23,9 +27,6 @@ import {
   updateSearch,
 } from '../../../../../utils/LocationSearchHelper';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
-import McsDateRangePicker, {
-  McsDateRangeValue,
-} from '../../../../../components/McsDateRangePicker';
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import { injectDrawer } from '../../../../../components/Drawer/index';
 import EditAdGroupsForm, {
@@ -44,6 +45,7 @@ import { DisplayCampaignInfoResource } from '../../../../../models/campaign/disp
 import { lazyInject } from '../../../../../config/inversify.config';
 import { IAdGroupFormService } from '../../Edit/AdGroup/AdGroupFormService';
 import { TYPES } from '../../../../../constants/types';
+import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 
 const messagesMap = defineMessages({
   setStatus: {
