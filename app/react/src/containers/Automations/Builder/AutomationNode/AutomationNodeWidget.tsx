@@ -30,6 +30,7 @@ import {
   isOnSegmentExitInputNode,
   isDisplayCampaignNode,
   isEmailCampaignNode,
+  isFeedNode,
 } from './Edit/domain';
 
 import { ScenarioNodeType } from '../../../../models/automations/automations';
@@ -46,6 +47,7 @@ import { IAudienceSegmentService } from '../../../../services/AudienceSegmentSer
 import { isFakeId } from '../../../../utils/FakeIdHelper';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
+import FeedNodeAutomationDashboardStats, { FeedNodeAutomationDashboardStatsProps } from './Dashboard/FeedNode/FeedNodeAutomationDashboardStats';
 
 interface AutomationNodeProps {
   node: AutomationNodeModel;
@@ -222,6 +224,17 @@ class AutomationNodeWidget extends React.Component<Props, State> {
             close: closeNextDrawer,
           },
           size: 'large',
+        },
+      );
+    } else if (isFeedNode(selectedNode) && selectedNode.feed_id) {
+      openNextDrawer<FeedNodeAutomationDashboardStatsProps>(
+        FeedNodeAutomationDashboardStats,
+        {
+          additionalProps: {
+            feedId: selectedNode.feed_id,
+            close: closeNextDrawer,
+          },
+          size: 'medium',
         },
       );
     }
@@ -612,6 +625,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         return this.renderAbnEdit();
       case 'EMAIL_CAMPAIGN':
       case 'DISPLAY_CAMPAIGN':
+      case 'SCENARIO_AUDIENCE_SEGMENT_FEED_NODE':
         return this.renderDefautEdit();
       case 'ADD_TO_SEGMENT_NODE':
       case 'DELETE_FROM_SEGMENT_NODE':
@@ -620,7 +634,6 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         return this.renderQueryEdit();
       case 'END_NODE':
         return this.renderEndNodeEdit();
-      case 'SCENARIO_AUDIENCE_SEGMENT_FEED_NODE':
       case 'CUSTOM_ACTION_NODE':
       case 'IF_NODE':
       case 'WAIT_NODE':
