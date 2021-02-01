@@ -146,20 +146,6 @@ class FeedChart extends React.Component<Props, State> {
       });
   }
 
-  renderDescription() {
-    return (
-        <div className="description">
-          <img className="beta-logo" src="/react/src/assets/images/beta-icon.png" />
-          <div>
-            <FormattedMessage {...messagesMap.stats_description1} />
-          </div>
-          <div>
-            <FormattedMessage {...messagesMap.stats_description2} />
-          </div>
-        </div>
-    );
-  }
-
   render() {
     const { colors, intl: { formatMessage } } = this.props;
     const { dataSource, isLoading } = this.state;
@@ -210,7 +196,13 @@ class FeedChart extends React.Component<Props, State> {
 
     return (
       <div className="mcs-feed-chart">
-        {this.renderDescription()}
+        <div className="mcs-feed-chart_header">
+          <img className="mcs-feed-chart_header_image" src="/react/src/assets/images/beta-icon.png" />
+          <div className="mcs-feed-chart_header_description">
+            <FormattedMessage {...messagesMap.stats_description1} />
+            <FormattedMessage {...messagesMap.stats_description2} />
+          </div>
+        </div>
         {isLoading ? (
           <LoadingChart />
         ) : (

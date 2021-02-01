@@ -9,6 +9,7 @@ import { InjectedDrawerProps } from './injectDrawer';
 
 const viewportDrawerRatio = {
   large: 0.85,
+  medium: 0.6,
   small: 0.4,
 };
 
