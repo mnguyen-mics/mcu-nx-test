@@ -15,7 +15,7 @@ export interface IChannelService {
     organisationId: string,
     datamartId: string,
     options?: object,
-  ) => Promise<DataListResponse<ChannelResource>>;
+  ) => Promise<DataListResponse<ChannelResourceShape>>;
   getChannelsByOrganisation: (
     organisationId: string,
     options?: object,
@@ -116,7 +116,7 @@ export class ChannelService implements IChannelService {
     organisationId: string,
     datamartId: string,
     options: object = {},
-  ): Promise<DataListResponse<ChannelResource>> {
+  ): Promise<DataListResponse<ChannelResourceShape>> {
     const endpoint = `datamarts/${datamartId}/channels`;
 
     const params = {

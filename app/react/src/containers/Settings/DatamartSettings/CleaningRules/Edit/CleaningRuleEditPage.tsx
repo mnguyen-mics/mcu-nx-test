@@ -49,7 +49,7 @@ import {
   DataListResponse,
   DataResponse,
 } from '../../../../../services/ApiService';
-import { ChannelResource } from '../../../../../models/settings/settings';
+import { ChannelResourceShape } from '../../../../../models/settings/settings';
 import { message } from 'antd';
 import moment from 'moment';
 import CleaningRuleEditForm, { FORM_ID } from './CleaningRuleEditForm';
@@ -234,7 +234,7 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
 
     const isUserAccountCompartmentDatamartSelectionResource = (
       optionData:
-        | ChannelResource
+        | ChannelResourceShape
         | UserAccountCompartmentDatamartSelectionResource,
     ): optionData is UserAccountCompartmentDatamartSelectionResource => {
       return (
@@ -244,7 +244,7 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
     };
 
     const optionsResponseP: Promise<DataListResponse<
-      ChannelResource | UserAccountCompartmentDatamartSelectionResource
+      ChannelResourceShape | UserAccountCompartmentDatamartSelectionResource
     >> =
       cleaningRuleType === 'USER_EVENT_CLEANING_RULE'
         ? this._channelService.getChannels(organisationId, datamartId, {
@@ -258,12 +258,12 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
     return optionsResponseP
       .then(optionsResponse => optionsResponse.data)
       .then(optionsData => {
-        const NoFilterOptionList: OptionProps[] = [
+        const noFilterOptionList: OptionProps[] = [
           { value: '', title: formatMessage(messages.noFilter) },
         ];
 
-        return NoFilterOptionList.concat(
-          optionsData.map(optionData => {
+        return noFilterOptionList.concat(
+          optionsData.map((optionData: any, i) => {
             const usedId = isUserAccountCompartmentDatamartSelectionResource(
               optionData,
             )
@@ -273,6 +273,7 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
             const option: OptionProps = {
               value: usedId,
               title: `${usedId} - ${optionData.name}`,
+              key: optionData.type ? `${optionData.type}-${i}` : `${i}`
             };
 
             return option;

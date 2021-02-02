@@ -31,28 +31,47 @@ interface MapStateToProps {
   formValues: CleaningRuleFormData;
 }
 
+interface State {
+  options: OptionProps[];
+}
+
 type Props = ScopeFormSectionProps & InjectedIntlProps & MapStateToProps;
 
-class ScopeFormSection extends React.Component<Props> {
+class ScopeFormSection extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
+    this.state = {
+      options: props.options,
+    };
   }
 
   onActivityTypeFilterChange = (value: UserActivityType | '') => {
     const { formChange } = this.props;
-
-    if (value === 'TOUCH' || value === 'DISPLAY_AD' || value === 'EMAIL') {
-      formChange('channelFilter', null);
+    const { options } = this.props;
+    formChange('channelFilter', null);
+    if (value === 'SITE_VISIT') {
+      this.setState({
+        options: options.filter(o => o.key?.includes('SITE')),
+      });
+    } else if (value === 'APP_VISIT') {
+      this.setState({
+        options: options.filter(o => o.key?.includes('APP')),
+      });
+    } else {
+      this.setState({
+        options: options,
+      });
     }
   };
 
   render() {
     const {
       intl: { formatMessage },
-      options,
       cleaningRuleType,
       formValues,
     } = this.props;
+
+    const { options } = this.state;
 
     const displayChannelFilter =
       isUserEventCleaningRuleFormData(formValues) &&
