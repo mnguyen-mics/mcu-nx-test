@@ -24,7 +24,10 @@ import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../../Helpers/injectThemeColors';
 import { Card, Alert, Row, Col } from 'antd';
-import { McsTabs } from '@mediarithmics-private/mcs-components-library';
+import {
+  McsTabs,
+  McsDateRangePicker,
+} from '@mediarithmics-private/mcs-components-library';
 import { Loading } from '../../../../../components';
 import DatamartUsersAnalyticsContent, {
   DashboardConfig,
@@ -36,10 +39,8 @@ import {
   parseSearch,
   updateSearch,
 } from '../../../../../utils/LocationSearchHelper';
-import McsDateRangePicker, {
-  McsDateRangeValue,
-} from '../../../../../components/McsDateRangePicker';
 import { SegmentNameDisplay } from '../../../Common/SegmentNameDisplay';
+import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 
 interface State {
   ABComparisonDashboardConfig: DatamartUsersAnalyticsWrapperProps[];

@@ -20,18 +20,22 @@ import {
   normalizeReportView,
 } from '../../../../utils/MetricHelper';
 import McsMoment from '../../../../utils/McsMoment';
-import McsDateRangePicker, {
-  McsDateRangeValue,
-} from '../../../../components/McsDateRangePicker';
 import ReportService from '../../../../services/ReportService';
 import { takeLatest } from '../../../../utils/ApiHelper';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../Helpers/injectThemeColors';
-import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../Notifications/injectNotifications';
 import DoubleStackedAreaPlot from '../../../../components/Charts/TimeBased/DoubleStackedAreaPlot';
-import { EmptyChart, LoadingChart, MetricsColumn } from '@mediarithmics-private/mcs-components-library';
-
+import {
+  EmptyChart,
+  LoadingChart,
+  MetricsColumn,
+  McsDateRangePicker,
+} from '@mediarithmics-private/mcs-components-library';
+import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 
 interface OverallStats {
   value: string;
@@ -86,7 +90,7 @@ const initialState: GoalStackedAreaChartState = {
 class GoalStackedAreaChart extends React.Component<
   JoinedProps,
   GoalStackedAreaChartState
-  > {
+> {
   constructor(props: JoinedProps) {
     super(props);
 
@@ -95,8 +99,12 @@ class GoalStackedAreaChart extends React.Component<
 
   componentDidMount() {
     const {
-      match: { params: { organisationId, goalId } },
-      history: { location: { search } },
+      match: {
+        params: { organisationId, goalId },
+      },
+      history: {
+        location: { search },
+      },
     } = this.props;
 
     const filter = parseSearch(search, DATE_SEARCH_SETTINGS);
@@ -106,18 +114,23 @@ class GoalStackedAreaChart extends React.Component<
 
   componentDidUpdate(previousProps: JoinedProps) {
     const {
-      match: { params: { organisationId, goalId } },
+      match: {
+        params: { organisationId, goalId },
+      },
       history,
       location: { pathname, search },
     } = this.props;
 
     const {
       match: {
-        params: { organisationId: previousOrganisationId, goalId: previousGoalId },
+        params: {
+          organisationId: previousOrganisationId,
+          goalId: previousGoalId,
+        },
       },
       location: { search: previousSearch },
     } = previousProps;
-    
+
     if (
       !compareSearches(search, previousSearch) ||
       organisationId !== previousOrganisationId ||
@@ -127,7 +140,9 @@ class GoalStackedAreaChart extends React.Component<
         history.replace({
           pathname: pathname,
           search: buildDefaultSearch(search, DATE_SEARCH_SETTINGS),
-          state: { reloadDataSource: organisationId !== previousOrganisationId },
+          state: {
+            reloadDataSource: organisationId !== previousOrganisationId,
+          },
         });
       } else {
         const filter = parseSearch(search, DATE_SEARCH_SETTINGS);
@@ -162,22 +177,29 @@ class GoalStackedAreaChart extends React.Component<
       [this.state.key1, this.state.key2],
     ).then(res => res.data.report_view);
 
-    return Promise.all([dailyPerformance, overallPerformance]).then(res =>
-      this.setState({
-        data: {
-          isLoading: false,
-          items: normalizeReportView(res[0]),
-          overall: normalizeReportView(res[1]),
-        },
-      }),
-    ).catch(err => {
-      this.props.notifyError(err);
-      this.setState({ ...initialState, data: { ...initialState.data, isLoading: false } })
-    });
+    return Promise.all([dailyPerformance, overallPerformance])
+      .then(res =>
+        this.setState({
+          data: {
+            isLoading: false,
+            items: normalizeReportView(res[0]),
+            overall: normalizeReportView(res[1]),
+          },
+        }),
+      )
+      .catch(err => {
+        this.props.notifyError(err);
+        this.setState({
+          ...initialState,
+          data: { ...initialState.data, isLoading: false },
+        });
+      });
   };
 
   createLegend() {
-    const { intl: { formatMessage } } = this.props;
+    const {
+      intl: { formatMessage },
+    } = this.props;
     const legends = [
       {
         key: 'value',
@@ -211,7 +233,11 @@ class GoalStackedAreaChart extends React.Component<
   }
 
   renderDatePicker() {
-    const { history: { location: { search } } } = this.props;
+    const {
+      history: {
+        location: { search },
+      },
+    } = this.props;
 
     const filter = parseSearch(search, DATE_SEARCH_SETTINGS);
 
@@ -231,7 +257,11 @@ class GoalStackedAreaChart extends React.Component<
 
   renderStackedAreaCharts() {
     const { colors } = this.props;
-    const { key1, key2, data: { isLoading, items, overall } } = this.state;
+    const {
+      key1,
+      key2,
+      data: { isLoading, items, overall },
+    } = this.state;
 
     const optionsForChart = {
       xKey: 'day',
@@ -285,13 +315,20 @@ class GoalStackedAreaChart extends React.Component<
         />
       </div>
     ) : (
-        <LoadingChart />
-      );
+      <LoadingChart />
+    );
   }
 
   render() {
-    const { colors, intl: { formatMessage } } = this.props;
-    const { key1, key2, data: { isLoading, items } } = this.state;
+    const {
+      colors,
+      intl: { formatMessage },
+    } = this.props;
+    const {
+      key1,
+      key2,
+      data: { isLoading, items },
+    } = this.state;
 
     const legendOptions = [
       {
@@ -317,22 +354,25 @@ class GoalStackedAreaChart extends React.Component<
             {items.length === 0 && isLoading ? (
               <div />
             ) : (
-                <LegendChartWithModal
-                  identifier="chartLegend"
-                  options={legendOptions}
-                  legends={legends}
-                  onLegendChange={onLegendChange}
-                />
-              )}
+              <LegendChartWithModal
+                identifier="chartLegend"
+                options={legendOptions}
+                legends={legends}
+                onLegendChange={onLegendChange}
+              />
+            )}
           </Col>
         </Row>
         {items.length === 0 && !isLoading ? (
-          <EmptyChart title={formatMessage(messages.noStatAvailable)} icon='warning' />
+          <EmptyChart
+            title={formatMessage(messages.noStatAvailable)}
+            icon="warning"
+          />
         ) : (
-            <Row gutter={20}>
-              <Col span={24}>{this.renderStackedAreaCharts()}</Col>
-            </Row>
-          )}
+          <Row gutter={20}>
+            <Col span={24}>{this.renderStackedAreaCharts()}</Col>
+          </Row>
+        )}
       </div>
     );
 

@@ -4,7 +4,11 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { Layout } from 'antd';
 import { compose } from 'recompose';
 import GoalHeader from './GoalHeader';
-import { Card, McsTabs } from '@mediarithmics-private/mcs-components-library';
+import {
+  Card,
+  McsTabs,
+  McsDateRangePicker,
+} from '@mediarithmics-private/mcs-components-library';
 import {
   GoalResource,
   AttributionSelectionResource,
@@ -19,15 +23,13 @@ import {
   updateSearch,
 } from '../../../../utils/LocationSearchHelper';
 import messages from './messages';
-import McsDateRangePicker, {
-  McsDateRangeValue,
-} from '../../../../components/McsDateRangePicker';
 import McsMoment from '../../../../utils/McsMoment';
 import GoalStackedAreaChart from './GoalChart';
 import GoalAttribution from './GoalAttribution';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IGoalService } from '../../../../services/GoalService';
+import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 
 const { Content } = Layout;
 

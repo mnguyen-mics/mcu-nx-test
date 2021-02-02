@@ -19,12 +19,13 @@ import {
 } from '../../../../utils/MetricHelper';
 import GoalAttributionTable from './GoalAttributionTable';
 import { Row, Select } from 'antd';
-import McsDateRangePicker, {
-  McsDateRangeValue,
-} from '../../../../components/McsDateRangePicker';
 import messages from './messages';
-import { MetricsHighlight } from '@mediarithmics-private/mcs-components-library';
-import {formatSecondsIntoDhmsFormat} from '../../../../utils/DurationHelper';
+import {
+  MetricsHighlight,
+  McsDateRangePicker,
+} from '@mediarithmics-private/mcs-components-library';
+import { formatSecondsIntoDhmsFormat } from '../../../../utils/DurationHelper';
+import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 
 const Option = Select.Option;
 
@@ -76,9 +77,13 @@ export interface SourceStatData {
   dataSource: SourceStat[];
 }
 
-interface Filters extends DateSearchSettings { }
+interface Filters extends DateSearchSettings {}
 
-const ReportType: Array<'SOURCE' | 'CAMPAIGN' | 'CREATIVES'> = ['SOURCE', 'CAMPAIGN', 'CREATIVES'];
+const ReportType: Array<'SOURCE' | 'CAMPAIGN' | 'CREATIVES'> = [
+  'SOURCE',
+  'CAMPAIGN',
+  'CREATIVES',
+];
 
 // export type SelectedView = 'SOURCE' | 'CAMPAIGN' | 'CREATIVES';
 export type SelectedView = CampaignStatData | CreativeStatData | SourceStatData;
@@ -107,7 +112,7 @@ type JoinedProps = GoalAttributionProps &
 class GoalAttribution extends React.Component<
   JoinedProps,
   GoalAttributionState
-  > {
+> {
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -128,7 +133,9 @@ class GoalAttribution extends React.Component<
 
   componentDidMount() {
     const {
-      match: { params: { organisationId, goalId } },
+      match: {
+        params: { organisationId, goalId },
+      },
       attributionModelId,
       history,
       location: { pathname, search },
@@ -156,7 +163,9 @@ class GoalAttribution extends React.Component<
 
   componentDidUpdate(previousProps: JoinedProps) {
     const {
-      match: { params: { organisationId, goalId } },
+      match: {
+        params: { organisationId, goalId },
+      },
       history,
       location: { pathname, search },
       attributionModelId,
@@ -164,7 +173,10 @@ class GoalAttribution extends React.Component<
 
     const {
       match: {
-        params: { organisationId: previousOrganisationId, goalId: previousGoalId },
+        params: {
+          organisationId: previousOrganisationId,
+          goalId: previousGoalId,
+        },
       },
       location: { search: previousSearch },
       attributionModelId: previousAttributionModelId,
@@ -180,16 +192,13 @@ class GoalAttribution extends React.Component<
         history.replace({
           pathname: pathname,
           search: buildDefaultSearch(search, DATE_SEARCH_SETTINGS),
-          state: { reloadDataSource: organisationId !== previousOrganisationId },
+          state: {
+            reloadDataSource: organisationId !== previousOrganisationId,
+          },
         });
       } else {
         const filter = parseSearch<Filters>(search, DATE_SEARCH_SETTINGS);
-        this.fetchOverall(
-          organisationId,
-          goalId,
-          attributionModelId,
-          filter,
-        );
+        this.fetchOverall(organisationId, goalId, attributionModelId, filter);
         this.fetchDetailled(
           organisationId,
           goalId,
@@ -221,7 +230,7 @@ class GoalAttribution extends React.Component<
         this.setState({
           overall: { isLoading: false, items: normalizeReportView(res) },
         }),
-    );
+      );
   };
 
   fetchDetailled = (
@@ -358,7 +367,11 @@ class GoalAttribution extends React.Component<
   };
 
   renderDatePicker = () => {
-    const { history: { location: { search } } } = this.props;
+    const {
+      history: {
+        location: { search },
+      },
+    } = this.props;
 
     const filter = parseSearch(search, DATE_SEARCH_SETTINGS);
 
@@ -378,7 +391,7 @@ class GoalAttribution extends React.Component<
         <McsDateRangePicker values={values} onChange={onChange} />
       </div>
     );
-  }
+  };
 
   updateLocationSearch = (params: Filters) => {
     const {
@@ -395,11 +408,8 @@ class GoalAttribution extends React.Component<
   };
 
   render() {
-
     const {
-      intl: {
-        formatMessage,
-      }
+      intl: { formatMessage },
     } = this.props;
 
     const onChange = (value: string) =>
@@ -417,7 +427,7 @@ class GoalAttribution extends React.Component<
           ? acc + parseInt(item.interaction_to_conversion_duration, 10)
           : acc,
       0,
-    )
+    );
 
     const postClickInteractionDuration = this.state.overall.items.reduce(
       (acc, item) =>
@@ -425,9 +435,12 @@ class GoalAttribution extends React.Component<
           ? acc + parseInt(item.interaction_to_conversion_duration, 10)
           : acc,
       0,
-    )
+    );
 
-    const InteractionDuration = Math.max(postViewInteractionDuration, postClickInteractionDuration)
+    const InteractionDuration = Math.max(
+      postViewInteractionDuration,
+      postClickInteractionDuration,
+    );
 
     const metrics = [
       {
@@ -435,12 +448,12 @@ class GoalAttribution extends React.Component<
         value:
           !this.state.overall.isLoading && this.state.overall.items.length
             ? formatMetric(
-              this.state.overall.items.reduce(
-                (acc, item) => acc + parseInt(item.weighted_conversions, 10),
-                0,
-              ),
-              '0,0',
-            )
+                this.state.overall.items.reduce(
+                  (acc, item) => acc + parseInt(item.weighted_conversions, 10),
+                  0,
+                ),
+                '0,0',
+              )
             : '--',
       },
       {
@@ -448,18 +461,22 @@ class GoalAttribution extends React.Component<
         value:
           !this.state.overall.isLoading && this.state.overall.items.length
             ? formatMessage(messages.pCpVFormatDuration, {
-              value: formatMetric(
-                this.state.overall.items.reduce(
-                  (acc, item) =>
-                    item.interaction_type === 'POST_VIEW'
-                      ? acc + parseInt(item.weighted_conversions, 10)
-                      : acc,
-                  0,
+                value: formatMetric(
+                  this.state.overall.items.reduce(
+                    (acc, item) =>
+                      item.interaction_type === 'POST_VIEW'
+                        ? acc + parseInt(item.weighted_conversions, 10)
+                        : acc,
+                    0,
+                  ),
+                  '0,0',
                 ),
-                '0,0',
-              ),
-              duration: postViewInteractionDuration && !isNaN(postViewInteractionDuration) ? formatSecondsIntoDhmsFormat(postViewInteractionDuration) : '--'
-            })
+                duration:
+                  postViewInteractionDuration &&
+                  !isNaN(postViewInteractionDuration)
+                    ? formatSecondsIntoDhmsFormat(postViewInteractionDuration)
+                    : '--',
+              })
             : '--',
       },
       {
@@ -467,25 +484,31 @@ class GoalAttribution extends React.Component<
         value:
           !this.state.overall.isLoading && this.state.overall.items.length
             ? formatMessage(messages.pCpVFormatDuration, {
-              value: formatMetric(
-                this.state.overall.items.reduce(
-                  (acc, item) =>
-                    item.interaction_type === 'POST_CLICK'
-                      ? acc + parseInt(item.weighted_conversions, 10)
-                      : acc,
-                  0,
+                value: formatMetric(
+                  this.state.overall.items.reduce(
+                    (acc, item) =>
+                      item.interaction_type === 'POST_CLICK'
+                        ? acc + parseInt(item.weighted_conversions, 10)
+                        : acc,
+                    0,
+                  ),
+                  '0,0',
                 ),
-                '0,0',
-              ),
-              duration: postClickInteractionDuration && !isNaN(postClickInteractionDuration) ? formatSecondsIntoDhmsFormat(postClickInteractionDuration) : '--'
-            })
+                duration:
+                  postClickInteractionDuration &&
+                  !isNaN(postClickInteractionDuration)
+                    ? formatSecondsIntoDhmsFormat(postClickInteractionDuration)
+                    : '--',
+              })
             : '--',
       },
       {
         name: formatMessage(messages.interactionToConversionDuration),
         value:
           !this.state.overall.isLoading && this.state.overall.items.length
-            ? InteractionDuration && !isNaN(InteractionDuration) ? formatSecondsIntoDhmsFormat(InteractionDuration) : '--'
+            ? InteractionDuration && !isNaN(InteractionDuration)
+              ? formatSecondsIntoDhmsFormat(InteractionDuration)
+              : '--'
             : '--',
       },
     ];
@@ -515,7 +538,7 @@ class GoalAttribution extends React.Component<
                 style={{ width: 120 }}
                 onChange={onChange}
               >
-                {(ReportType).map(item => (
+                {ReportType.map(item => (
                   <Option value={item} key={item}>
                     {formatMessage(messages[item])}
                   </Option>
@@ -525,7 +548,6 @@ class GoalAttribution extends React.Component<
           </div>
         </Row>
         <Row>
-
           <GoalAttributionTable
             dataSource={this.state.detailled.data}
             uniq={this.state.detailled.uniq}

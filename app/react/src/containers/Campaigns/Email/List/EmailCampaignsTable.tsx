@@ -2,9 +2,7 @@ import * as React from 'react';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import { Icon, Tooltip } from 'antd';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
-import {
-  TableViewFilters,
-} from '../../../../components/TableView/index';
+import { TableViewFilters } from '../../../../components/TableView/index';
 import messages from './messages';
 import {
   EmailCampaignResourceWithStats,
@@ -16,10 +14,13 @@ import { Index } from '../../../../utils';
 import { LabelsSelectorProps } from '../../../../components/LabelsSelector';
 import { parseSearch } from '../../../../utils/LocationSearchHelper';
 import { EMAIL_SEARCH_SETTINGS } from './constants';
-import { McsDateRangeValue } from '../../../../components/McsDateRangePicker';
 import { compose } from 'recompose';
 import { CampaignStatus } from '../../../../models/campaign/constants';
-import { EmptyTableView, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import {
+  EmptyTableView,
+  McsIcon,
+} from '@mediarithmics-private/mcs-components-library';
+import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 
 interface EmailCampaignsTableProps {
   dataSource: EmailCampaignResourceWithStats[];
@@ -244,7 +245,10 @@ class EmailCampaignsTable extends React.Component<Props> {
         />
       </div>
     ) : (
-      <EmptyTableView iconType="email" message={formatMessage(messages.noCampaign)} />
+      <EmptyTableView
+        iconType="email"
+        message={formatMessage(messages.noCampaign)}
+      />
     );
   }
 }

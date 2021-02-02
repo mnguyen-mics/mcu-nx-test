@@ -3,9 +3,6 @@ import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Row, Col } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import McsDateRangePicker, {
-  McsDateRangeValue,
-} from '../../../../../components/McsDateRangePicker';
 import { LegendChartWithModal } from '../../../../../components/LegendChart';
 import CampaignDisplayProgress from './CampaignDisplayProgress';
 
@@ -22,7 +19,13 @@ import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../../Helpers/injectThemeColors';
 import DoubleStackedAreaPlot from '../../../../../components/Charts/TimeBased/DoubleStackedAreaPlot';
-import { EmptyChart, LoadingChart, MetricsColumn } from '@mediarithmics-private/mcs-components-library';
+import {
+  EmptyChart,
+  LoadingChart,
+  MetricsColumn,
+  McsDateRangePicker,
+} from '@mediarithmics-private/mcs-components-library';
+import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 
 const LegendChartWithModalJS = LegendChartWithModal as any;
 
@@ -218,11 +221,13 @@ class DisplayStackedAreaChart<T> extends React.Component<
             isLoading={isFetchingOverallStat || isFetchingOverallStat}
           />
         </div>
-        {dataSource && <DoubleStackedAreaPlot
-          dataset={dataSource as any}
-          options={optionsForChart}
-          style={{ flex: '1' }}
-        />}
+        {dataSource && (
+          <DoubleStackedAreaPlot
+            dataset={dataSource as any}
+            options={optionsForChart}
+            style={{ flex: '1' }}
+          />
+        )}
       </div>
     ) : (
       <LoadingChart />
@@ -279,7 +284,10 @@ class DisplayStackedAreaChart<T> extends React.Component<
           </Col>
         </Row>
         {dataSource && dataSource.length === 0 && !isFetchingCampaignStat ? (
-          <EmptyChart title={formatMessage(messages.noStatAvailable)} icon='warning' />
+          <EmptyChart
+            title={formatMessage(messages.noStatAvailable)}
+            icon="warning"
+          />
         ) : (
           <Row gutter={20}>
             <Col span={24}>{this.renderStackedAreaCharts()}</Col>

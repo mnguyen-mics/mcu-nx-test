@@ -15,11 +15,12 @@ import { UpdateMessage } from './DisplayCampaignAdGroupTable';
 
 import { CampaignRouteParams } from '../../../../../models/campaign/CampaignResource';
 import DisplayCampaignAdTable from '../Common/DisplayCampaignAdTable';
-import { Card, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import {
+  Card,
+  McsIcon,
+  McsDateRangePicker,
+} from '@mediarithmics-private/mcs-components-library';
 import { CardProps } from '@mediarithmics-private/mcs-components-library/lib/components/card';
-import McsDateRangePicker, {
-  McsDateRangeValue,
-} from '../../../../../components/McsDateRangePicker';
 import {
   parseSearch,
   updateSearch,
@@ -40,6 +41,7 @@ import { CreativeAuditAction } from '../../../../../models/creative/CreativeReso
 import { ICreativeService } from '../../../../../services/CreativeService';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
+import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 
 const messagesMap = defineMessages({
   setStatus: {

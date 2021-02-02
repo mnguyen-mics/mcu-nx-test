@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { Card } from '@mediarithmics-private/mcs-components-library';
+import {
+  Card,
+  McsDateRangePicker,
+} from '@mediarithmics-private/mcs-components-library';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Button } from 'antd';
 import injectNotifications, {
@@ -28,10 +31,8 @@ import { DimensionFilterClause } from '../../../../../models/ReportRequestBody';
 import ExportService from '../../../../../services/ExportService';
 import { DATAMART_USERS_ANALYTICS_SETTING } from '../constants';
 import { FILTERS } from '../../../../../containers/Audience/DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
-import McsDateRangePicker, {
-  McsDateRangeValue,
-} from '../../../../../components/McsDateRangePicker';
 import { formatMetric } from '../../../../../utils/MetricHelper';
+import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 
 const abComparisonMessage: {
   [key: string]: FormattedMessage.MessageDescriptor;

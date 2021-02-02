@@ -4,7 +4,11 @@ import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Layout } from 'antd';
 import CampaignDashboardHeader from '../../../../../Campaigns/Common/CampaignDashboardHeader';
-import { Card, Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import {
+  Card,
+  Actionbar,
+  McsIcon,
+} from '@mediarithmics-private/mcs-components-library';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../../Notifications/injectNotifications';
@@ -12,7 +16,6 @@ import { EmailCampaignResource } from '../../../../../../models/campaign/email';
 import { Index } from '../../../../../../utils';
 import Overview from '../../../../../Campaigns/Email/Dashboard/Overview';
 import { EmailStackedAreaChart } from '../../../../../Campaigns/Email/Dashboard/Charts';
-import { McsDateRangeValue } from '../../../../../../components/McsDateRangePicker';
 import ReportService from '../../../../../../services/ReportService';
 import log from '../../../../../../utils/Logger';
 import { normalizeReportView } from '../../../../../../utils/MetricHelper';
@@ -20,6 +23,7 @@ import { lazyInject } from '../../../../../../config/inversify.config';
 import { IEmailCampaignService } from '../../../../../../services/EmailCampaignService';
 import { TYPES } from '../../../../../../constants/types';
 import McsMoment from '../../../../../../utils/McsMoment';
+import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 
 export interface EmailCampaignAutomatedDashboardPageProps {
   campaignId: string;
@@ -187,7 +191,8 @@ class EmailCampaignAutomatedDashboardPage extends React.Component<
               name: campaign ? campaign.name : '',
             },
           ]}
-          edition={true}>
+          edition={true}
+        >
           <McsIcon
             type="close"
             className="close-icon"

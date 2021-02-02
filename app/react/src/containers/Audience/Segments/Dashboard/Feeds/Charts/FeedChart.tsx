@@ -1,5 +1,8 @@
 import * as React from 'react';
-import { buildFeedStatsByFeedRequestBody, FeedStatsUnit } from '../../../../../../utils/FeedsStatsReportHelper';
+import {
+  buildFeedStatsByFeedRequestBody,
+  FeedStatsUnit,
+} from '../../../../../../utils/FeedsStatsReportHelper';
 import { IFeedsStatsService } from '../../../../../../services/FeedsStatsService';
 import { TYPES } from '../../../../../../constants/types';
 import { lazyInject } from '../../../../../../config/inversify.config';
@@ -15,10 +18,13 @@ import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../../../Helpers/injectThemeColors';
 import McsMoment, { formatMcsDate } from '../../../../../../utils/McsMoment';
-import { McsDateRangeValue } from '../../../../../../components/McsDateRangePicker';
 import { Card } from 'antd';
-import {StackedBarPlot, LoadingChart} from '@mediarithmics-private/mcs-components-library';
+import {
+  StackedBarPlot,
+  LoadingChart,
+} from '@mediarithmics-private/mcs-components-library';
 import moment from 'moment';
+import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 
 interface FeedChartProps {
   organisationId: string;
@@ -87,15 +93,25 @@ class FeedChart extends React.Component<Props, State> {
     const formatedNonInclusiveDateRange = formatMcsDate(dateRange);
     const allDates = [formatedNonInclusiveDateRange.from];
 
-    while (allDates[allDates.length - 1] !== moment(formatedNonInclusiveDateRange.to).format('YYYY-MM-DD')) {
-      allDates.push(moment(allDates[allDates.length - 1]).add(1, 'days').format('YYYY-MM-DD'));
+    while (
+      allDates[allDates.length - 1] !==
+      moment(formatedNonInclusiveDateRange.to).format('YYYY-MM-DD')
+    ) {
+      allDates.push(
+        moment(allDates[allDates.length - 1])
+          .add(1, 'days')
+          .format('YYYY-MM-DD'),
+      );
     }
 
-    const reportBody = buildFeedStatsByFeedRequestBody(feedId, {
-      start_date: formatedInclusiveDateRange.from,
-      end_date: formatedInclusiveDateRange.to,
-    },
-    ["UNIQ_USER_POINTS_COUNT", "UNIQ_USER_IDENTIFIERS_COUNT"]);
+    const reportBody = buildFeedStatsByFeedRequestBody(
+      feedId,
+      {
+        start_date: formatedInclusiveDateRange.from,
+        end_date: formatedInclusiveDateRange.to,
+      },
+      ['UNIQ_USER_POINTS_COUNT', 'UNIQ_USER_IDENTIFIERS_COUNT'],
+    );
 
     return this._feedsStatsService
       .getStats(organisationId, reportBody)
@@ -113,26 +129,26 @@ class FeedChart extends React.Component<Props, State> {
         let feedReports: FeedReport[] = allDates.map(day => {
           const upsertedOnDay = upserts.find(r => r.date_yyyy_mm_dd === day);
           const deletedOnDay = deletes.find(r => r.date_yyyy_mm_dd === day);
-          
+
           return {
             day: day,
-            upserted:
-              upsertedOnDay
-                ? feedStatsUnit === "USER_POINTS"
-                  ? upsertedOnDay.uniq_user_points_count
-                  : upsertedOnDay.uniq_user_identifiers_count
-                : 0,
-            deleted:
-              deletedOnDay
-                ? feedStatsUnit === "USER_POINTS"
-                  ? deletedOnDay.uniq_user_points_count
-                  : deletedOnDay.uniq_user_identifiers_count
-                : 0,
-            unit: feedStatsUnit
-          }
-        })
+            upserted: upsertedOnDay
+              ? feedStatsUnit === 'USER_POINTS'
+                ? upsertedOnDay.uniq_user_points_count
+                : upsertedOnDay.uniq_user_identifiers_count
+              : 0,
+            deleted: deletedOnDay
+              ? feedStatsUnit === 'USER_POINTS'
+                ? deletedOnDay.uniq_user_points_count
+                : deletedOnDay.uniq_user_identifiers_count
+              : 0,
+            unit: feedStatsUnit,
+          };
+        });
 
-        feedReports = feedReports.sort((report1, report2) => report1.day.localeCompare(report2.day));
+        feedReports = feedReports.sort((report1, report2) =>
+          report1.day.localeCompare(report2.day),
+        );
 
         return this.setState({
           dataSource: feedReports,
@@ -147,7 +163,10 @@ class FeedChart extends React.Component<Props, State> {
   }
 
   render() {
-    const { colors, intl: { formatMessage } } = this.props;
+    const {
+      colors,
+      intl: { formatMessage },
+    } = this.props;
     const { dataSource, isLoading } = this.state;
 
     const metrics =
@@ -158,40 +177,40 @@ class FeedChart extends React.Component<Props, State> {
     const optionsForChart = {
       xKey: 'day',
       yKeys: metrics.map(metric => {
-        if(dataSource[0].unit === "USER_POINTS") {
-          if(metric === "upserted") {
+        if (dataSource[0].unit === 'USER_POINTS') {
+          if (metric === 'upserted') {
             return {
               key: metric,
               message: formatMessage(messagesMap.upserted_user_points),
             };
-          } else if(metric === "deleted") {
+          } else if (metric === 'deleted') {
             return {
               key: metric,
               message: formatMessage(messagesMap.deleted_user_points),
             };
           } else {
-            throw new Error(`Unsupported metric: ${metric}`)
+            throw new Error(`Unsupported metric: ${metric}`);
           }
-        } else if(dataSource[0].unit === "USER_IDENTIFIERS") {
-          if(metric === "upserted") {
+        } else if (dataSource[0].unit === 'USER_IDENTIFIERS') {
+          if (metric === 'upserted') {
             return {
               key: metric,
               message: formatMessage(messagesMap.upserted_identifiers),
             };
-          } else if(metric === "deleted") {
+          } else if (metric === 'deleted') {
             return {
               key: metric,
               message: formatMessage(messagesMap.deleted_identifiers),
             };
           } else {
-            throw new Error(`Unsupported metric: ${metric}`)
+            throw new Error(`Unsupported metric: ${metric}`);
           }
         } else {
-          throw new Error(`Unsupported unit: ${dataSource[0].unit}`)
+          throw new Error(`Unsupported unit: ${dataSource[0].unit}`);
         }
       }),
       colors: [colors['mcs-info'], colors['mcs-error']],
-      showLegend: true
+      showLegend: true,
     };
 
     return (
@@ -206,16 +225,16 @@ class FeedChart extends React.Component<Props, State> {
         {isLoading ? (
           <LoadingChart />
         ) : (
-            <Card
-              className="compact"
-              title={formatMessage(messagesMap.graph_title)}
-            >
-              <StackedBarPlot
-                dataset={dataSource as any}
-                options={optionsForChart}
-              />
-            </Card>
-          )}
+          <Card
+            className="compact"
+            title={formatMessage(messagesMap.graph_title)}
+          >
+            <StackedBarPlot
+              dataset={dataSource as any}
+              options={optionsForChart}
+            />
+          </Card>
+        )}
       </div>
     );
   }

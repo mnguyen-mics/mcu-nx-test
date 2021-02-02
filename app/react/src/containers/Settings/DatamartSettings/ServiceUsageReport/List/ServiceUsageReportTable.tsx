@@ -6,16 +6,12 @@ import {
   parseSearch,
   PAGINATION_SEARCH_SETTINGS,
 } from '../../../../../utils/LocationSearchHelper';
-import {
-  InjectedIntlProps,
-  injectIntl,
-  defineMessages,
-} from 'react-intl';
+import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { DISPLAY_SEARCH_SETTINGS } from './ServiceUsageReportListPage';
 import ItemList from '../../../../../components/ItemList';
-import { McsDateRangeValue } from '../../../../../components/McsDateRangePicker';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
+import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 
 const { Content } = Layout;
 
@@ -131,7 +127,7 @@ class ServiceUsageReportTable extends React.Component<Props, State> {
       message: string;
     } = {
       iconType: 'library',
-      message: this.props.intl.formatMessage(messages.noData)
+      message: this.props.intl.formatMessage(messages.noData),
     };
 
     const filter = parseSearch(search, DISPLAY_SEARCH_SETTINGS);

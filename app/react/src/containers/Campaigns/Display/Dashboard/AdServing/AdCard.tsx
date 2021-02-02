@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { Row, Col } from 'antd';
-import { Card, EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
+import {
+  Card,
+  EmptyChart,
+  LoadingChart,
+  McsDateRangePicker,
+} from '@mediarithmics-private/mcs-components-library';
 import { AdInfoResource } from '../../../../../models/campaign/display';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
-import McsDateRangePicker, {
-  McsDateRangeValue,
-} from '../../../../../components/McsDateRangePicker';
 import {
   updateSearch,
   parseSearch,
@@ -26,6 +28,7 @@ import { CancelablePromise } from '../../../../../services/ApiService';
 import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import { Index } from '../../../../../utils';
 import DoubleStackedAreaPlot from '../../../../../components/Charts/TimeBased/DoubleStackedAreaPlot';
+import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 
 const LegendChartTS = LegendChart as any;
 
@@ -300,7 +303,10 @@ class AdCard extends React.Component<Props, State> {
         </Row>
         {loading ? <LoadingChart /> : null}
         {!dataSource.length && !loading ? (
-          <EmptyChart title={formatMessage(messages.noStatAvailable)} icon='warning' />
+          <EmptyChart
+            title={formatMessage(messages.noStatAvailable)}
+            icon="warning"
+          />
         ) : null}
         {dataSource.length && !loading ? this.renderChart() : null}
       </Card>

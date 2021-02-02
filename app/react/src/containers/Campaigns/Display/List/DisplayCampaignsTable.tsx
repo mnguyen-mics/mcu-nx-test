@@ -8,9 +8,7 @@ import {
   injectIntl,
   defineMessages,
 } from 'react-intl';
-import {
-  TableViewFilters,
-} from '../../../../components/TableView/index';
+import { TableViewFilters } from '../../../../components/TableView/index';
 import { DISPLAY_SEARCH_SETTINGS } from './constants';
 import {
   parseSearch,
@@ -25,14 +23,17 @@ import {
   DisplayCampaignResource,
   DisplayCampaignResourceWithStats,
 } from '../../../../models/campaign/display/DisplayCampaignResource';
-import { McsDateRangeValue } from '../../../../components/McsDateRangePicker';
 import { Label } from '../../../Labels/Labels';
 import { MapDispatchToProps } from './DisplayCampaignsPage';
 import {
   ExtendedTableRowSelection,
   ActionsColumnDefinition,
 } from '../../../../components/TableView/TableView';
-import { EmptyTableView, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import {
+  EmptyTableView,
+  McsIcon,
+} from '@mediarithmics-private/mcs-components-library';
+import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 
 const messagesMap: {
   [key: string]: FormattedMessage.MessageDescriptor;
@@ -56,7 +57,7 @@ const messagesMap: {
   noCampaign: {
     id: 'display.campaigns.noCampaign',
     defaultMessage: 'No campaign',
-  }
+  },
 });
 
 interface DisplayCampaignsTableProps extends MapDispatchToProps {
@@ -392,7 +393,10 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
         />
       </div>
     ) : (
-      <EmptyTableView iconType="display" message={intl.formatMessage(messagesMap.noCampaign)} />
+      <EmptyTableView
+        iconType="display"
+        message={intl.formatMessage(messagesMap.noCampaign)}
+      />
     );
   }
 }

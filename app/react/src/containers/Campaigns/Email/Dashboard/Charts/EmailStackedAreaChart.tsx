@@ -1,9 +1,6 @@
 import * as React from 'react';
 import { Row, Col } from 'antd';
 import { compose } from 'recompose';
-import McsDateRangePicker, {
-  McsDateRangeValue,
-} from '../../../../../components/McsDateRangePicker';
 import StackedAreaPlot from '../../../../../components/Charts/TimeBased/StackedAreaPlot';
 import { LegendChart } from '../../../../../components/LegendChart';
 import messages from '../messages';
@@ -13,7 +10,12 @@ import injectThemeColors, {
 import { Index } from '../../../../../utils';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { messagesMap } from '../BlastTable';
-import { EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
+import {
+  EmptyChart,
+  LoadingChart,
+  McsDateRangePicker,
+} from '@mediarithmics-private/mcs-components-library';
+import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 
 export interface EmailStackedAreaChartProps {
   dateRangeValue: McsDateRangeValue;
@@ -46,10 +48,7 @@ class EmailStackedAreaChart extends React.Component<Props> {
       ],
     };
     return !isLoading ? (
-      <StackedAreaPlot
-        dataset={emailReport}
-        options={optionsForChart}
-      />
+      <StackedAreaPlot dataset={emailReport} options={optionsForChart} />
     ) : (
       <LoadingChart />
     );
@@ -104,7 +103,10 @@ class EmailStackedAreaChart extends React.Component<Props> {
           </Col>
         </Row>
         {emailReport.length === 0 && isLoading ? (
-          <EmptyChart title={intl.formatMessage(messagesMap.noEmailStats)} icon='warning' />
+          <EmptyChart
+            title={intl.formatMessage(messagesMap.noEmailStats)}
+            icon="warning"
+          />
         ) : (
           this.renderStackedAreaCharts()
         )}
