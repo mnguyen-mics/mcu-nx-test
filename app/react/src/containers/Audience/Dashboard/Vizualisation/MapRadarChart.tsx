@@ -22,9 +22,9 @@ import { getFormattedQuery } from '../domain';
 import { QueryResource } from '../../../../models/datamart/DatamartResource';
 import RadarSpiderPlot from '../../../../components/Charts/CategoryBased/RadarSpiderPlot';
 import { TooltipChart, DataLabel } from '../../../../models/dashboards/dashboards';
-import { SerieSortType } from '../../../../components/Charts/CategoryBased/StackedBarPlot';
 import { EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
 import { QueryDocument } from '../../../../models/datamart/graphdb/QueryDocument';
+import { SerieSortType } from '../../../../components/Charts/domain';
 
 export interface MapBarChartProps {
   title?: string;
