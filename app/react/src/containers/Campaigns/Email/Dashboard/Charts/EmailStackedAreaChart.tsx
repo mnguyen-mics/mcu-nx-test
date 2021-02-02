@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Row, Col } from 'antd';
 import { compose } from 'recompose';
-import StackedAreaPlot from '../../../../../components/Charts/TimeBased/StackedAreaPlot';
 import { LegendChart } from '../../../../../components/LegendChart';
 import messages from '../messages';
 import injectThemeColors, {
@@ -14,6 +13,7 @@ import {
   EmptyChart,
   LoadingChart,
   McsDateRangePicker,
+  StackedAreaPlot,
 } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 
@@ -30,15 +30,26 @@ type Props = EmailStackedAreaChartProps &
 
 class EmailStackedAreaChart extends React.Component<Props> {
   renderStackedAreaCharts() {
-    const { emailReport, isLoading, colors } = this.props;
+    const {
+      emailReport,
+      isLoading,
+      colors,
+      intl: { formatMessage },
+    } = this.props;
 
     const optionsForChart = {
       xKey: 'day',
       yKeys: [
-        { key: 'email_sent', message: messages.emailSent },
-        { key: 'clicks', message: messages.emailClicks },
-        { key: 'impressions', message: messages.emailImpressions },
-        { key: 'email_hard_bounced', message: messages.emailHardBounce },
+        { key: 'email_sent', message: formatMessage(messages.emailSent) },
+        { key: 'clicks', message: formatMessage(messages.emailClicks) },
+        {
+          key: 'impressions',
+          message: formatMessage(messages.emailImpressions),
+        },
+        {
+          key: 'email_hard_bounced',
+          message: formatMessage(messages.emailHardBounce),
+        },
       ],
       colors: [
         colors['mcs-warning'],
