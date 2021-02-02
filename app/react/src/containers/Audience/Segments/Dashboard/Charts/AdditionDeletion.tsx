@@ -13,11 +13,11 @@ import injectThemeColors, {
 } from '../../../../Helpers/injectThemeColors';
 import { RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import StackedBarPlot from '../../../../../components/Charts/CategoryBased/StackedBarPlot';
 import {
   EmptyChart,
   LoadingChart,
   McsDateRangePicker,
+  StackedBarPlot,
 } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 
@@ -68,7 +68,12 @@ class AdditionDeletion extends React.Component<Props> {
   }
 
   renderStackedAreaCharts() {
-    const { dataSource, isFetching, colors } = this.props;
+    const {
+      dataSource,
+      isFetching,
+      colors,
+      intl: { formatMessage },
+    } = this.props;
 
     const formattedDataSource = dataSource.length
       ? dataSource.map(item => {
@@ -84,8 +89,14 @@ class AdditionDeletion extends React.Component<Props> {
     const optionsForChart = {
       xKey: 'day',
       yKeys: [
-        { key: 'user_point_additions', message: messages.userPointAddition },
-        { key: 'user_point_deletions', message: messages.userPointDeletion },
+        {
+          key: 'user_point_additions',
+          message: formatMessage(messages.userPointAddition),
+        },
+        {
+          key: 'user_point_deletions',
+          message: formatMessage(messages.userPointDeletion),
+        },
       ],
       colors: [colors['mcs-success'], colors['mcs-error']],
     };

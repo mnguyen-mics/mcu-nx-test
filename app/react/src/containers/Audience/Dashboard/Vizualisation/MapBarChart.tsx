@@ -17,12 +17,18 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
-import StackedBarPlot, { SerieSortType } from '../../../../components/Charts/CategoryBased/StackedBarPlot';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { getFormattedQuery } from '../domain';
 import { QueryResource } from '../../../../models/datamart/DatamartResource';
-import { DataLabel, TooltipChart } from '../../../../models/dashboards/dashboards';
-import { EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
+import {
+  DataLabel,
+  TooltipChart,
+} from '../../../../models/dashboards/dashboards';
+import {
+  EmptyChart,
+  LoadingChart,
+  StackedBarPlot,
+} from '@mediarithmics-private/mcs-components-library';
 import { QueryDocument } from '../../../../models/datamart/graphdb/QueryDocument';
 
 export interface MapBarChartProps {
@@ -36,7 +42,7 @@ export interface MapBarChartProps {
   percentage?: boolean;
   shouldCompare?: boolean;
   vertical?: boolean;
-  sortKey?: SerieSortType;
+  sortKey?: 'A-Z' | 'Z-A';
   labels?: DataLabel;
   tooltip?: TooltipChart;
 }
@@ -86,12 +92,11 @@ class MapBarChart extends React.Component<Props, State> {
   componentDidMount() {
     const { source, queryId, datamartId, shouldCompare, data } = this.props;
     if (data) {
-      this.formatOtqlQueryResult(data)
+      this.formatOtqlQueryResult(data);
     } else {
       this.fetchData(queryId, datamartId, shouldCompare, source);
     }
   }
-  
 
   componentDidUpdate(previousProps: MapBarChartProps) {
     const { source, queryId, datamartId, shouldCompare, data } = this.props;
@@ -99,11 +104,11 @@ class MapBarChart extends React.Component<Props, State> {
       source: previousSource,
       queryId: previousChartQueryId,
       datamartId: previousDatamartId,
-      data: previousData
+      data: previousData,
     } = previousProps;
 
     if (
-      !_.isEqual(previousSource, source) || 
+      !_.isEqual(previousSource, source) ||
       queryId !== previousChartQueryId ||
       datamartId !== previousDatamartId ||
       !_.isEqual(data, previousData)
@@ -123,35 +128,58 @@ class MapBarChart extends React.Component<Props, State> {
         loading: false,
       });
     }
-    return this.setState({ error: true, loading: false })
-  }
+    return this.setState({ error: true, loading: false });
+  };
 
-  formatData = (queryResult: OTQLAggregationResult[], key: string): QueryResult[] => {
+  formatData = (
+    queryResult: OTQLAggregationResult[],
+    key: string,
+  ): QueryResult[] => {
     const { percentage } = this.props;
     if (
       queryResult.length &&
       queryResult[0].aggregations.buckets.length &&
       queryResult[0].aggregations.buckets[0].buckets.length
     ) {
-      const total = percentage ? queryResult[0].aggregations.buckets[0].buckets.reduce((acc, data) => { return acc + data.count }, 0) : undefined;
+      const total = percentage
+        ? queryResult[0].aggregations.buckets[0].buckets.reduce((acc, data) => {
+            return acc + data.count;
+          }, 0)
+        : undefined;
       return queryResult[0].aggregations.buckets[0].buckets.map((data, i) => ({
         [`${key}-count`]: data.count,
-        [key]: total ? Math.round((data.count / total) * 10000) / 100 : data.count,
+        [key]: total
+          ? Math.round((data.count / total) * 10000) / 100
+          : data.count,
         xKey: data.key,
       }));
     }
     return [];
   };
 
-  mergeData = (d0: QueryResult[], yKey0: string, d1: QueryResult[], yKey1: string) => {
+  mergeData = (
+    d0: QueryResult[],
+    yKey0: string,
+    d1: QueryResult[],
+    yKey1: string,
+  ) => {
     // filter and unique the keys;
-    const xKeys = d0.map(d => d.xKey).concat(d1.map(d => d.xKey)).filter((x, i, s) => s.indexOf(x) === i);
+    const xKeys = d0
+      .map(d => d.xKey)
+      .concat(d1.map(d => d.xKey))
+      .filter((x, i, s) => s.indexOf(x) === i);
     return xKeys.map(xKey => ({
-      [yKey1]: d1.find(d => d.xKey === xKey) && d1.find(d => d.xKey === xKey)![yKey1] ? d1.find(d => d.xKey === xKey)![yKey1] : 0,
-      [yKey0]: d0.find(d => d.xKey === xKey) && d0.find(d => d.xKey === xKey)![yKey0] ? d0.find(d => d.xKey === xKey)![yKey0] : 0,
-      xKey
-    }))
-  }
+      [yKey1]:
+        d1.find(d => d.xKey === xKey) && d1.find(d => d.xKey === xKey)![yKey1]
+          ? d1.find(d => d.xKey === xKey)![yKey1]
+          : 0,
+      [yKey0]:
+        d0.find(d => d.xKey === xKey) && d0.find(d => d.xKey === xKey)![yKey0]
+          ? d0.find(d => d.xKey === xKey)![yKey0]
+          : 0,
+      xKey,
+    }));
+  };
 
   fetchData = (
     chartQueryId: string,
@@ -159,24 +187,30 @@ class MapBarChart extends React.Component<Props, State> {
     shouldCompare?: boolean,
     source?: AudienceSegmentShape | QueryDocument,
   ): Promise<void> => {
-
     this.setState({ error: false, loading: true });
-    const promise: Promise<void | QueryResource> = shouldCompare ? this._queryService
-      .getQuery(datamartId, chartQueryId)
-      .then(queryResp => {
-        return queryResp.data;
-      })
-      .then(q => {
-        return getFormattedQuery(datamartId, this._queryService, q);
-      }) : Promise.resolve();
-    
-    const getResultPromise = (q?: QueryResource | void): Promise<void | OTQLResult> =>  q ? this._queryService
-      .runOTQLQuery(datamartId, (q as QueryResource).query_text, {
-        use_cache: true,
-      })
-      .then(resp => {
-        return resp.data;
-      }) : Promise.resolve();
+    const promise: Promise<void | QueryResource> = shouldCompare
+      ? this._queryService
+          .getQuery(datamartId, chartQueryId)
+          .then(queryResp => {
+            return queryResp.data;
+          })
+          .then(q => {
+            return getFormattedQuery(datamartId, this._queryService, q);
+          })
+      : Promise.resolve();
+
+    const getResultPromise = (
+      q?: QueryResource | void,
+    ): Promise<void | OTQLResult> =>
+      q
+        ? this._queryService
+            .runOTQLQuery(datamartId, (q as QueryResource).query_text, {
+              use_cache: true,
+            })
+            .then(resp => {
+              return resp.data;
+            })
+        : Promise.resolve();
 
     return Promise.all([
       this._queryService
@@ -187,7 +221,7 @@ class MapBarChart extends React.Component<Props, State> {
         .then(q => {
           return getFormattedQuery(datamartId, this._queryService, q, source);
         }),
-      promise
+      promise,
     ])
       .then(([q0, q1]) => {
         return Promise.all([
@@ -198,19 +232,36 @@ class MapBarChart extends React.Component<Props, State> {
             .then(resp => {
               return resp.data;
             }),
-            getResultPromise(q1)
-          ])
+          getResultPromise(q1),
+        ])
           .then(([r0, r1]) => {
-            if (r0 && !r1 && isAggregateResult(r0.rows) && !isCountResult(r0.rows)) {
+            if (
+              r0 &&
+              !r1 &&
+              isAggregateResult(r0.rows) &&
+              !isCountResult(r0.rows)
+            ) {
               this.setState({
                 queryResult: this.formatData(r0.rows, BASE_YKEY),
                 loading: false,
               });
               return Promise.resolve();
             }
-            if (r0 && r1 && isAggregateResult(r0.rows) && !isCountResult(r0.rows) && isAggregateResult(r1.rows) && !isCountResult(r1.rows)) {
+            if (
+              r0 &&
+              r1 &&
+              isAggregateResult(r0.rows) &&
+              !isCountResult(r0.rows) &&
+              isAggregateResult(r1.rows) &&
+              !isCountResult(r1.rows)
+            ) {
               this.setState({
-                queryResult: this.mergeData(this.formatData(r0.rows, BASE_YKEY), BASE_YKEY, this.formatData(r1.rows, COMPARED_YKEY), COMPARED_YKEY),
+                queryResult: this.mergeData(
+                  this.formatData(r0.rows, BASE_YKEY),
+                  BASE_YKEY,
+                  this.formatData(r1.rows, COMPARED_YKEY),
+                  COMPARED_YKEY,
+                ),
                 loading: false,
               });
               return Promise.resolve();
@@ -224,14 +275,25 @@ class MapBarChart extends React.Component<Props, State> {
   };
 
   public render() {
-    const { title, colors, intl, shouldCompare, vertical, sortKey, labels, tooltip } = this.props;
+    const {
+      title,
+      colors,
+      intl,
+      shouldCompare,
+      vertical,
+      sortKey,
+      labels,
+      tooltip,
+    } = this.props;
 
-    const restKey = shouldCompare ? [{ key: COMPARED_YKEY, message: "" }] : [];
+    const restKey = shouldCompare ? [{ key: COMPARED_YKEY, message: '' }] : [];
 
     const optionsForChart = {
       xKey: 'xKey',
       yKeys: [{ key: BASE_YKEY, message: '' }].concat(restKey),
-      colors: [colors['mcs-info']].concat(shouldCompare ? [colors["mcs-normal"]] : []),
+      colors: [colors['mcs-info']].concat(
+        shouldCompare ? [colors['mcs-normal']] : [],
+      ),
       labelsEnabled: this.props.labelsEnabled,
       vertical,
       sort: sortKey,
@@ -253,7 +315,12 @@ class MapBarChart extends React.Component<Props, State> {
         (this.state.queryResult && this.state.queryResult.length === 0) ||
         !this.state.queryResult
       ) {
-        return <EmptyChart title={intl.formatMessage(messages.noData)} icon='warning' />;
+        return (
+          <EmptyChart
+            title={intl.formatMessage(messages.noData)}
+            icon="warning"
+          />
+        );
       } else {
         return (
           this.state.queryResult &&

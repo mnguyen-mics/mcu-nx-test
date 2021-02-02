@@ -28,11 +28,11 @@ import log from '../../../../../utils/Logger';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../../Helpers/injectThemeColors';
-import StackedAreaPlot from '../../../../../components/Charts/TimeBased/StackedAreaPlot';
 import {
   EmptyChart,
   LoadingChart,
   McsDateRangePicker,
+  StackedAreaPlot,
 } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 
@@ -282,14 +282,20 @@ class GoalStackedAreaChart extends React.Component<
   }
 
   renderStackedAreaCharts() {
-    const { colors } = this.props;
+    const {
+      colors,
+      intl: { formatMessage },
+    } = this.props;
 
     const { performance, isFetchingPerformance } = this.state;
 
     const optionsForChart = {
       xKey: 'day',
       yKeys: [
-        { key: 'weighted_conversions', message: messages.weightedConversion },
+        {
+          key: 'weighted_conversions',
+          message: formatMessage(messages.weightedConversion),
+        },
       ],
       colors: [colors['mcs-success']],
       isDraggable: false,

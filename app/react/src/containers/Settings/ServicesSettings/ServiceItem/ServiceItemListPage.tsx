@@ -4,12 +4,20 @@ import { List, Layout, Row, Col, Breadcrumb, Button } from 'antd';
 import { Link } from 'react-router-dom';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
-import { GetServiceOptions, GetServiceItemsOptions, ICatalogService,
+import {
+  GetServiceOptions,
+  GetServiceItemsOptions,
+  ICatalogService,
 } from '../../../../services/CatalogService';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import { InfiniteList, Button as McsButton, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import {
+  InfiniteList,
+  Button as McsButton,
+  McsIcon,
+  StackedBarPlot,
+} from '@mediarithmics-private/mcs-components-library';
 import { InfiniteListFilters } from '@mediarithmics-private/mcs-components-library/lib/components/infinite-list';
 import {
   ServiceItemShape,
@@ -18,7 +26,6 @@ import {
   isLinearServiceItemConditionsResource,
 } from '../../../../models/servicemanagement/PublicServiceItemResource';
 import { messages } from '../SubscribedOffers/List/SubscribedOffersListPage';
-import StackedBarPlot from '../../../../components/Charts/CategoryBased/StackedBarPlot';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../Helpers/injectThemeColors';
@@ -29,7 +36,6 @@ import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
 
 const { Content } = Layout;
-
 
 interface ServiceItemListPageProps {
   offerOwnership: offerType;
@@ -49,10 +55,9 @@ type Props = ServiceItemListPageProps &
   InjectedNotificationProps;
 
 class ServiceItemListPage extends React.Component<Props, State> {
-
   @lazyInject(TYPES.ICatalogService)
   private _catalogService: ICatalogService;
-  
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -69,9 +74,10 @@ class ServiceItemListPage extends React.Component<Props, State> {
     } = this.props;
 
     if (offerId) {
-      const offerPromise = (offerOwnership === "subscribed_offer") ?
-        this._catalogService.getSubscribedOffer(organisationId, offerId) :
-        this._catalogService.getMyOffer(organisationId, offerId);
+      const offerPromise =
+        offerOwnership === 'subscribed_offer'
+          ? this._catalogService.getSubscribedOffer(organisationId, offerId)
+          : this._catalogService.getMyOffer(organisationId, offerId);
 
       offerPromise.then(resp => {
         this.setState({
@@ -79,42 +85,40 @@ class ServiceItemListPage extends React.Component<Props, State> {
         });
       });
     }
-  };
+  }
 
   fetchData = (
     organisationId: string,
     offerId: string,
     options: InfiniteListFilters,
   ) => {
-    const {
-      offerOwnership
-    } = this.props;
+    const { offerOwnership } = this.props;
     const fetchOptions: GetServiceOptions = {
       first_result: options.page,
       max_results: options.pageSize,
-
     };
     const fetchServiceItemOptions: GetServiceItemsOptions = {
       first_result: options.page,
       max_results: options.pageSize,
       offer_id: offerId,
-    }
+    };
 
     if (options.keywords) {
       fetchOptions.keywords = options.keywords;
       fetchServiceItemOptions.keywords = options.keywords;
     }
 
-    const serviceItemsPromise = (offerOwnership === "subscribed_offer") ?
-      this._catalogService.getSubscribedServiceItems(
-        organisationId,
-        offerId,
-        fetchOptions,
-      ) :
-      this._catalogService.getServiceItems(
-        organisationId,
-        fetchServiceItemOptions
-      );
+    const serviceItemsPromise =
+      offerOwnership === 'subscribed_offer'
+        ? this._catalogService.getSubscribedServiceItems(
+            organisationId,
+            offerId,
+            fetchOptions,
+          )
+        : this._catalogService.getServiceItems(
+            organisationId,
+            fetchServiceItemOptions,
+          );
 
     return serviceItemsPromise
       .then(resp => {
@@ -130,9 +134,7 @@ class ServiceItemListPage extends React.Component<Props, State> {
   };
 
   storeItemData = (item: ServiceItemShape) => {
-    const {
-      offerOwnership
-    } = this.props;
+    const { offerOwnership } = this.props;
     this.setState({
       serviceItem: item,
     });
@@ -143,15 +145,14 @@ class ServiceItemListPage extends React.Component<Props, State> {
       intl,
     } = this.props;
 
-    const serviceItemConditionsPromise = (offerOwnership === "subscribed_offer") ?
-      this._catalogService.getSubscribedServiceItemConditions(
-        organisationId,
-        offerId,
-        item.id,
-      ) :
-      this._catalogService.getOfferConditions(
-        offerId
-      );
+    const serviceItemConditionsPromise =
+      offerOwnership === 'subscribed_offer'
+        ? this._catalogService.getSubscribedServiceItemConditions(
+            organisationId,
+            offerId,
+            item.id,
+          )
+        : this._catalogService.getOfferConditions(offerId);
 
     serviceItemConditionsPromise.then(resp => {
       this.setState({
@@ -183,8 +184,8 @@ class ServiceItemListPage extends React.Component<Props, State> {
         </McsButton>
       </List.Item>
     ) : (
-        <div />
-      );
+      <div />
+    );
   };
 
   render() {
@@ -197,12 +198,15 @@ class ServiceItemListPage extends React.Component<Props, State> {
       colors,
       intl,
       offerOwnership,
+      intl: { formatMessage },
     } = this.props;
 
     const optionsForChart = {
       xKey: 'cost',
-      xLabel: intl.formatMessage(messages.usageCost),
-      yKeys: [{ key: 'usage_price', message: messages.usagePrice }],
+      xLabel: formatMessage(messages.usageCost),
+      yKeys: [
+        { key: 'usage_price', message: formatMessage(messages.usagePrice) },
+      ],
       colors: [colors['mcs-primary']],
     };
 
@@ -248,33 +252,39 @@ class ServiceItemListPage extends React.Component<Props, State> {
 
     const dataset = generateDataSource();
 
-    const priceChart = dataset ?
-      (
-        <StackedBarPlot
-          dataset={dataset}
-          options={optionsForChart}
-        />
-      ) :
-      undefined;
+    const priceChart = dataset ? (
+      <StackedBarPlot dataset={dataset} options={optionsForChart} />
+    ) : (
+      undefined
+    );
 
-      const hasPriceChart = priceChart !== undefined;
+    const hasPriceChart = priceChart !== undefined;
 
     const submitButtonProps: ButtonProps = {
       htmlType: 'submit',
-      onClick: () => { return null; },
+      onClick: () => {
+        return null;
+      },
       type: 'primary',
     };
 
-    const addedButton = (offerOwnership === "my_offer") ?
-      (
-        <Link to={`/v2/o/${organisationId}/settings/services/my_offers/${offerId}/edit`}>
-          <Button {...submitButtonProps} className="mcs-primary" style={{ float: "right" }}>
+    const addedButton =
+      offerOwnership === 'my_offer' ? (
+        <Link
+          to={`/v2/o/${organisationId}/settings/services/my_offers/${offerId}/edit`}
+        >
+          <Button
+            {...submitButtonProps}
+            className="mcs-primary"
+            style={{ float: 'right' }}
+          >
             <McsIcon type="plus" />
             <FormattedMessage {...messages.myServiceOffersEdit} />
           </Button>
         </Link>
-      ) :
-      undefined;
+      ) : (
+        undefined
+      );
 
     return (
       <div className="ant-layout mcs-service-item-list-page">
@@ -285,31 +295,25 @@ class ServiceItemListPage extends React.Component<Props, State> {
               separator={<McsIcon type="chevron-right" />}
             >
               <Breadcrumb.Item>
-                <span style={{ lineHeight: "40px" }}>
+                <span style={{ lineHeight: '40px' }}>
                   <Link
                     to={`/v2/o/${organisationId}/settings/services/${offerOwnership}s`}
                   >
-                    {offerOwnership === "subscribed_offer" ?
-                      intl.formatMessage(messages.subscribedOffersTitle) :
-                      intl.formatMessage(messages.myOffersTitle)
-                    }
+                    {offerOwnership === 'subscribed_offer'
+                      ? intl.formatMessage(messages.subscribedOffersTitle)
+                      : intl.formatMessage(messages.myOffersTitle)}
                   </Link>
                 </span>
               </Breadcrumb.Item>
               <Breadcrumb.Item>
-                <span style={{ lineHeight: "40px" }}>
-                  {offer ?
-                    (
-                      <span>
-                        {offer.name}
-                      </span>
-                    ) :
-                    (
-                      <span>
-                        <FormattedMessage {...messages.unknownOffer} />
-                      </span>
-                    )
-                  }
+                <span style={{ lineHeight: '40px' }}>
+                  {offer ? (
+                    <span>{offer.name}</span>
+                  ) : (
+                    <span>
+                      <FormattedMessage {...messages.unknownOffer} />
+                    </span>
+                  )}
                 </span>
                 {addedButton}
               </Breadcrumb.Item>

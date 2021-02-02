@@ -18,12 +18,12 @@ import messages from '../messages';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../../Helpers/injectThemeColors';
-import StackedAreaPlot from '../../../../../components/Charts/TimeBased/StackedAreaPlot';
 import { DatamartWithMetricResource } from '../../../../../models/datamart/DatamartResource';
 import {
   EmptyChart,
   LoadingChart,
   McsDateRangePicker,
+  StackedAreaPlot,
 } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 
@@ -90,6 +90,7 @@ class Overview extends React.Component<Props> {
       colors,
       datamarts,
       datamartId,
+      intl: { formatMessage },
     } = this.props;
     const metrics =
       dataSource && dataSource[0]
@@ -109,7 +110,8 @@ class Overview extends React.Component<Props> {
         return {
           key: metric,
           message:
-            this.getMetricsDisplayName(metric, datamart) || messagesMap[metric],
+            this.getMetricsDisplayName(metric, datamart) ||
+            formatMessage(messagesMap[metric]),
         };
       }),
       colors: [

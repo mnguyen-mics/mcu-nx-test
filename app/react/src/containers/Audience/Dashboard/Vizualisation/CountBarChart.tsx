@@ -8,7 +8,6 @@ import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../Helpers/injectThemeColors';
 import { compose } from 'recompose';
-import StackedBarPlot from '../../../../components/Charts/CategoryBased/StackedBarPlot';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import messages from './messages';
 import { lazyInject } from '../../../../config/inversify.config';
@@ -16,7 +15,11 @@ import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
 import { getFormattedQuery } from '../domain';
-import { EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
+import {
+  EmptyChart,
+  LoadingChart,
+  StackedBarPlot,
+} from '@mediarithmics-private/mcs-components-library';
 
 export interface CountBarChartProps {
   title?: string;
@@ -24,7 +27,7 @@ export interface CountBarChartProps {
   datamartId: string;
   height: number;
   labelsEnabled?: boolean;
-  plotLabels: string[]
+  plotLabels: string[];
 }
 
 interface QueryResult {
@@ -77,7 +80,7 @@ class CountBarChart extends React.Component<Props, State> {
     const { queryIds, datamartId } = this.props;
     const {
       queryIds: previousChartQueryIds,
-      datamartId: previousDatamartId
+      datamartId: previousDatamartId,
     } = previousProps;
 
     if (
@@ -88,31 +91,29 @@ class CountBarChart extends React.Component<Props, State> {
     }
   }
 
-  formatDataQuery = (otqlResults: OTQLCountResult[], plotLabelName: string, i: number): QueryResult[] => {
-
+  formatDataQuery = (
+    otqlResults: OTQLCountResult[],
+    plotLabelName: string,
+    i: number,
+  ): QueryResult[] => {
     const { colors } = this.props;
 
-      if (
-        otqlResults.length &&
-        otqlResults[0].count
-      ) {
+    if (otqlResults.length && otqlResults[0].count) {
+      const colorArray = Object.keys(colors);
+      const color = colorArray[i % colorArray.length];
 
-        const colorArray = Object.keys(colors);
-        const color = colorArray[i%colorArray.length];
-
-        return [{
+      return [
+        {
           yKey: otqlResults[0].count,
           xKey: plotLabelName,
           color: color,
-        }];
-      }
-      return [];
+        },
+      ];
+    }
+    return [];
   };
 
-  fetchData = (
-    chartQueryIds: string[],
-    datamartId: string,
-  ): Promise<void> => {
+  fetchData = (chartQueryIds: string[], datamartId: string): Promise<void> => {
     const promises = chartQueryIds.map((chartQueryId, i) => {
       return this.fetchQuery(chartQueryId, datamartId, i);
     });
@@ -121,11 +122,11 @@ class CountBarChart extends React.Component<Props, State> {
         this.setState({
           loading: false,
           queryResult: queryListResp.reduce((acc, v, i) => {
-            return acc.concat(v)
-          }, [])
+            return acc.concat(v);
+          }, []),
         });
       })
-     
+
       .catch(() => {
         this.setState({
           error: true,
@@ -161,7 +162,7 @@ class CountBarChart extends React.Component<Props, State> {
                   this.props.plotLabels[plotLabelIndex]
                     ? this.props.plotLabels[plotLabelIndex]
                     : plotLabelIndex.toString(),
-                    plotLabelIndex
+                  plotLabelIndex,
                 ),
               );
             }
@@ -169,7 +170,6 @@ class CountBarChart extends React.Component<Props, State> {
           });
       });
   };
-
 
   generateOptions = () => {
     const options = {
@@ -207,7 +207,12 @@ class CountBarChart extends React.Component<Props, State> {
         (this.state.queryResult && this.state.queryResult.length === 0) ||
         !this.state.queryResult
       ) {
-        return <EmptyChart title={intl.formatMessage(messages.noData)} icon='warning' />;
+        return (
+          <EmptyChart
+            title={intl.formatMessage(messages.noData)}
+            icon="warning"
+          />
+        );
       } else {
         return (
           <StackedBarPlot

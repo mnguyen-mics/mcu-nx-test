@@ -6,7 +6,8 @@ import {
   isCountResult,
 } from '../../../../models/datamart/graphdb/OTQLResult';
 import injectThemeColors, {
-  InjectedThemeColorsProps, ThemeColorsShape,
+  InjectedThemeColorsProps,
+  ThemeColorsShape,
 } from '../../../Helpers/injectThemeColors';
 import moment from 'moment';
 import { compose } from 'recompose';
@@ -16,10 +17,13 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
-import StackedBarPlot from '../../../../components/Charts/CategoryBased/StackedBarPlot';
 import CardFlex from '../Components/CardFlex';
 import { getFormattedQuery } from '../domain';
-import { EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
+import {
+  EmptyChart,
+  LoadingChart,
+  StackedBarPlot,
+} from '@mediarithmics-private/mcs-components-library';
 import { QueryDocument } from '../../../../models/datamart/graphdb/QueryDocument';
 
 export interface DateAggregationChartProps {
@@ -95,7 +99,10 @@ class DateAggregationChart extends React.Component<Props, State> {
     }
   }
 
-  formatDataQuery = (queryResult: OTQLAggregationResult[], plotLabelIndex: string): QueryResult[] => {
+  formatDataQuery = (
+    queryResult: OTQLAggregationResult[],
+    plotLabelIndex: string,
+  ): QueryResult[] => {
     const { format } = this.props;
     if (
       queryResult.length &&
@@ -111,20 +118,21 @@ class DateAggregationChart extends React.Component<Props, State> {
   };
 
   groupQueryResult = (groupKey: string, q: QueryResult[][]): QueryResult[] => {
-    return q.reduce((acc, v, i) => {
-      return acc.concat(v);
-    }, [] as QueryResult[])
-    .reduce((acc, v, i) => {
-      const foundValue = acc.findIndex(s => s[groupKey] === v[groupKey]);
-      if (foundValue > -1) {
-        acc[foundValue] = {...acc[foundValue], ...v};
-        return acc;
-      } else {
-        acc.push(v);
-        return acc;
-      }
-    }, [] as QueryResult[]);
-  }
+    return q
+      .reduce((acc, v, i) => {
+        return acc.concat(v);
+      }, [] as QueryResult[])
+      .reduce((acc, v, i) => {
+        const foundValue = acc.findIndex(s => s[groupKey] === v[groupKey]);
+        if (foundValue > -1) {
+          acc[foundValue] = { ...acc[foundValue], ...v };
+          return acc;
+        } else {
+          acc.push(v);
+          return acc;
+        }
+      }, [] as QueryResult[]);
+  };
 
   fetchData = (
     chartQueryIds: string[],
@@ -132,18 +140,20 @@ class DateAggregationChart extends React.Component<Props, State> {
     source?: AudienceSegmentShape | QueryDocument,
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
-    return Promise.all(chartQueryIds.map((c, i) => {
-      return this.fetchQuery(c, datamartId, i, source)
-    }))
-    .then(q => {
-      this.setState({
-        loading: false,
-        queryResult: this.groupQueryResult('xKey', q)
+    return Promise.all(
+      chartQueryIds.map((c, i) => {
+        return this.fetchQuery(c, datamartId, i, source);
+      }),
+    )
+      .then(q => {
+        this.setState({
+          loading: false,
+          queryResult: this.groupQueryResult('xKey', q),
+        });
       })
-    })
-    .catch(() => {
-      this.setState({ error: true, loading: false });
-    });
+      .catch(() => {
+        this.setState({ error: true, loading: false });
+      });
   };
 
   fetchQuery = (
@@ -153,26 +163,33 @@ class DateAggregationChart extends React.Component<Props, State> {
     source?: AudienceSegmentShape | QueryDocument,
   ): Promise<QueryResult[]> => {
     return this._queryService
-          .getQuery(datamartId, chartQueryId)
-          .then(queryResp => {
-            return queryResp.data;
+      .getQuery(datamartId, chartQueryId)
+      .then(queryResp => {
+        return queryResp.data;
+      })
+      .then(q => {
+        return getFormattedQuery(datamartId, this._queryService, q, source);
+      })
+      .then(q => {
+        return this._queryService
+          .runOTQLQuery(datamartId, q.query_text, {
+            use_cache: true,
           })
-          .then(q => {
-            return getFormattedQuery(datamartId, this._queryService, q, source);
-          })
-          .then(q => {
-            return this._queryService
-              .runOTQLQuery(datamartId, q.query_text, {
-                use_cache: true,
-              })
-              .then(r => r.data)
-              .then(r => {
-                if (isAggregateResult(r.rows) && !isCountResult(r.rows)) {
-                  return Promise.resolve(this.formatDataQuery(r.rows, this.props.plotLabels[plotLabelIndex] ? this.props.plotLabels[plotLabelIndex] : plotLabelIndex.toString()),);
-                }
-                throw new Error('wrong query type');
-              })
-          })
+          .then(r => r.data)
+          .then(r => {
+            if (isAggregateResult(r.rows) && !isCountResult(r.rows)) {
+              return Promise.resolve(
+                this.formatDataQuery(
+                  r.rows,
+                  this.props.plotLabels[plotLabelIndex]
+                    ? this.props.plotLabels[plotLabelIndex]
+                    : plotLabelIndex.toString(),
+                ),
+              );
+            }
+            throw new Error('wrong query type');
+          });
+      });
   };
 
   generateOptions = () => {
@@ -191,18 +208,25 @@ class DateAggregationChart extends React.Component<Props, State> {
 
     const computeChartLabels = () => {
       return queryIds.map((q, i) => {
-        return { 
-          key: plotLabels[i] ? plotLabels[i] : i.toString(), 
-          message:  plotLabels[i] ? plotLabels[i] : i.toString()};
-      })
-    }
+        return {
+          key: plotLabels[i] ? plotLabels[i] : i.toString(),
+          message: plotLabels[i] ? plotLabels[i] : i.toString(),
+        };
+      });
+    };
 
     const computeChartColors = () => {
-      const availableColors = Object.keys(colors).filter(c => c !== "mcs-normal");
-      return queryIds.map((q, i) =>{
-        return colors[availableColors[i%(availableColors.length - 1)] as keyof ThemeColorsShape] as string
-      })
-    }
+      const availableColors = Object.keys(colors).filter(
+        c => c !== 'mcs-normal',
+      );
+      return queryIds.map((q, i) => {
+        return colors[
+          availableColors[
+            i % (availableColors.length - 1)
+          ] as keyof ThemeColorsShape
+        ] as string;
+      });
+    };
 
     const optionsForChart = {
       xKey: 'xKey',
@@ -224,7 +248,12 @@ class DateAggregationChart extends React.Component<Props, State> {
         this.state.queryResult &&
         this.state.queryResult.length === 0
       ) {
-        return <EmptyChart title={intl.formatMessage(messages.noData)} icon='warning' />;
+        return (
+          <EmptyChart
+            title={intl.formatMessage(messages.noData)}
+            icon="warning"
+          />
+        );
       } else {
         return (
           this.state.queryResult &&

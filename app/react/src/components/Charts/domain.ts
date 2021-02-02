@@ -2,6 +2,8 @@ import * as Highcharts from 'highcharts';
 import moment from 'moment';
 import { TooltipChart } from '../../models/dashboards/dashboards';
 
+export type SerieSortType = "A-Z" | "Z-A";
+
 export const GRAY_COLOR = '#8ca0b3';
 export const LINE_COLOR = (Highcharts as any)
   .Color(GRAY_COLOR)
