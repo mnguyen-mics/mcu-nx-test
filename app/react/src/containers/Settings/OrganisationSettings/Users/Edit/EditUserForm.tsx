@@ -1,12 +1,7 @@
 import * as React from 'react';
 import { Layout } from 'antd';
 import { compose } from 'recompose';
-import {
-  Form,
-  reduxForm,
-  InjectedFormProps,
-  ConfigProps,
-} from 'redux-form';
+import { Form, reduxForm, InjectedFormProps, ConfigProps } from 'redux-form';
 import { BasicProps } from 'antd/lib/layout/layout';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { InjectedIntlProps, defineMessages, injectIntl } from 'react-intl';
@@ -17,11 +12,10 @@ import FormLayoutActionbar, {
 import ScrollspySider, {
   SidebarWrapperProps,
 } from '../../../../../components/Layout/ScrollspySider';
-import {
-  McsFormSection,
-} from '../../../../../utils/FormHelper';
+import { McsFormSection } from '../../../../../utils/FormHelper';
 import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import GeneralFormSection from './Sections/GeneralFormSection';
+import RoleFormSection from '../../UserRoles/Edit/Sections/RoleInfoFormSection';
 import { Omit } from '../../../../../utils/Types';
 import UserResource from '../../../../../models/directory/UserResource';
 
@@ -34,7 +28,11 @@ const Content = Layout.Content as React.ComponentClass<
 const messages = defineMessages({
   sectionTitleGeneral: {
     id: 'settings.organisation.users.edit.generalInformationSection.title',
-    defaultMessage: 'General Informations',
+    defaultMessage: 'General Information',
+  },
+  sectionTitleRole: {
+    id: 'settings.organisation.users.edit.roleInformationSection.title',
+    defaultMessage: 'Role Information',
   },
   saveUser: {
     id: 'settings.organisation.users.edit.saveButton',
@@ -42,7 +40,8 @@ const messages = defineMessages({
   },
 });
 
-interface EditUserFormProps extends Omit<ConfigProps<Partial<UserResource>>, 'form'> {
+interface EditUserFormProps
+  extends Omit<ConfigProps<Partial<UserResource>>, 'form'> {
   onClose: () => void;
   onSave: (formData: Partial<UserResource>) => void;
   breadCrumbPaths: Path[];
@@ -61,7 +60,13 @@ class EditUserForm extends React.Component<Props> {
       title: messages.sectionTitleGeneral,
       component: <GeneralFormSection />,
     };
+    const role = {
+      id: 'role',
+      title: messages.sectionTitleRole,
+      component: <RoleFormSection />,
+    };
     sections.push(general);
+    sections.push(role);
     return sections;
   };
 
