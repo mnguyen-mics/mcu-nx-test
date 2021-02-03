@@ -3,7 +3,8 @@ import { DimensionFilterClause } from "../ReportRequestBody";
 
 export interface FunnelFilter {
   name: string;
-  filterClause: DimensionFilterClause;
+  filter_clause: DimensionFilterClause;
+  group_by_dimension?: string;
 }
 
 export interface FunnelDateRange {
@@ -36,11 +37,11 @@ export interface FunnelResource {
 
 export interface GroupedByFunnel {
   global: FunnelResource; 
-  grouped_by: FieldValueFunnelResource[];
+  grouped_by?: FieldValueFunnelResource[];
 }
 export interface FieldValueFunnelResource {
-  field_name: string;
-  field_value: string;
+  dimension_name: string;
+  dimension_value: string;
   funnel: FunnelResource;
 }
 export interface Steps {
@@ -49,6 +50,14 @@ export interface Steps {
   conversion?: number;
   amount?: number;
   interaction_duration: number;
+  splitedView?: boolean;
+  isLoading?: boolean
+}
+
+export interface FunnelIdByDimension {
+  name: string,
+  id: string,
+  colors: string[]
 }
 
 export type TimeUnit = 'DAY' | 'WEEK' | 'MONTH';
