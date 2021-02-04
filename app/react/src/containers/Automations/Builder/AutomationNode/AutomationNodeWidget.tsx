@@ -664,10 +664,12 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     if (node.iconAssetUrl) {
       return (
         <div
-          className={'node-icon-without-border'}
+          className={'node-icon'}
           style={{
             width: node.getSize().width,
             height: node.getSize().height,
+            borderColor: borderColor,
+            backgroundColor: backgroundColor,
             float: 'left',
           }}
         >
