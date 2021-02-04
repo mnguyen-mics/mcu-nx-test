@@ -10,8 +10,8 @@ count=$(git log --oneline "$range"|wc -l)
 jira_tickets=$(git log --pretty=format:"%s" "$range"|egrep -o '^MICS-[0-9]+ '|sort|uniq)
 
 # Find out lead and sidekick's names
-allNames=$(git log --pretty=format:"%ce%n%ae" "$range" --reverse | cut -d '@' -f 1)
-names=($(echo -e "${allNames}" | sed -n 'n;p' | awk '!a[$0]++'))
+allNames=$(git log --pretty=format:"%ae" --no-merges "$range" --reverse | cut -d '@' -f 1)
+names=($(echo -e "${allNames}" | awk '!a[$0]++'))
 # history -p "history => ${names[@]}"
 
 # Set up lead and sidekick
@@ -29,9 +29,9 @@ fi
 message="We have $count commits since the last successful build."
 
 if [ -n "${lead:-}" ]; then message="$message <@${lead}> (lead)"; else message="$message. Devs"; fi
-if [ -n "${sidekick:-}" ]; then message="$message <@${sidekick}> (sidekick)"; fi
+if [ -n "${sidekick:-}" ]; then message="$message and <@${sidekick}> (sidekick)"; fi
 
-message="$message could you check the build?"
+message="$message could you check the build please?"
 
 if [[ -n "$jira_tickets" ]]; then
   message="$message The commits reference the jira tickets"
