@@ -259,7 +259,7 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
       .then(optionsResponse => optionsResponse.data)
       .then(optionsData => {
         const noFilterOptionList: OptionProps[] = [
-          { value: '', title: formatMessage(messages.noFilter) },
+          { value: '', title: formatMessage(messages.noFilter), key: 'NO_FILTER' },
         ];
 
         return noFilterOptionList.concat(
