@@ -98,7 +98,7 @@ function* authorizeLoop(
         ...connectedUser,
         workspaces: connectedUser.workspaces.map(w => {
           if (w.datamarts && w.datamarts.length) {
-            w.datamarts.map(d => {
+            w.datamarts.forEach(d => {
               const formatted = d;
               if (
                 d.audience_segment_metrics &&
@@ -141,6 +141,9 @@ function* authorizeLoop(
       _micsTagService.addUserAccountProperty(connectedUser.id);
       _micsTagService.setUserProperties(filteredConnectedUser);
       yield put(getConnectedUser.success(filteredConnectedUser));
+      // Set the global variable userId for Google Analytics
+      // This variable is used in index.html
+      (window as any).userId = connectedUser.id;
       (window as any).organisationId =
         connectedUser.workspaces[
           connectedUser.default_workspace
@@ -213,6 +216,10 @@ function* authentication() {
     });
 
     if (signOutAction) {
+      // Global variable userId is for Google Analytics.
+      // We set it to undefined in order to make difference
+      // between logged in and logged out user
+      (window as any).userId = undefined;
       yield call(_authService.revokeRefreshToken);
       yield call(_authService.deleteCredentials);
       yield call(_authService.setIsLogged, false);
