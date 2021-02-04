@@ -51,11 +51,11 @@ class ScopeFormSection extends React.Component<Props, State> {
     formChange('channelFilter', null);
     if (value === 'SITE_VISIT') {
       this.setState({
-        options: options.filter(o => o.key?.includes('SITE')),
+        options: options.filter(o => o.key?.includes('SITE') || o.key === 'NO_FILTER'),
       });
     } else if (value === 'APP_VISIT') {
       this.setState({
-        options: options.filter(o => o.key?.includes('APP')),
+        options: options.filter(o => o.key?.includes('APP') || o.key === 'NO_FILTER'),
       });
     } else {
       this.setState({
