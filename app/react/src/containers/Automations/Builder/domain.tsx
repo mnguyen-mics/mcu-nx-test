@@ -863,7 +863,7 @@ export function generateNodeProperties(
       return {
         title: title,
         subtitle: '',
-        color: '#0ba6e1',
+        color: '#ffffff',
         iconAssetUrl:
           node.strictlyLayoutablePlugin?.plugin_layout.metadata
             .small_icon_asset_url,
