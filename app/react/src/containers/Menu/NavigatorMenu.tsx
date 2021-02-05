@@ -65,6 +65,19 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
     this.checkInitialState(pathname);
   }
 
+  componentDidUpdate(previousProps: Props) {
+    const {
+      location: { pathname: previousPathname },
+    } = previousProps;
+    const {
+      location: { pathname },
+    } = this.props;
+
+    if (pathname !== previousPathname) {
+      this.checkInitialState(pathname);
+    }
+  }
+
   checkInitialState = (pathname: string) => {
     const currentOpenSubMenu = menuDefinitions
       .filter(
@@ -193,7 +206,10 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
                   }
                 }
                 return (
-                  <Menu.Item key={subMenuItem.path} className={`mcs-sideBar-subMenuItem_${subMenuItem.translation.id}`}>
+                  <Menu.Item
+                    key={subMenuItem.path}
+                    className={`mcs-sideBar-subMenuItem_${subMenuItem.translation.id}`}
+                  >
                     <Link to={linkUrl}>
                       <FormattedMessage {...subMenuItem.translation} />
                     </Link>
