@@ -10,6 +10,25 @@
 <!--<![endif]-->
 
 <head>
+  <script type="text/javascript">
+    // Global site tag (gtag.js) - Google Analytics
+    // Only used on navigator.mediarithmics.com
+    if(window.location.href.includes('navigator.mediarithmics')) {
+      const head = document.getElementsByTagName('head')[0];
+      const js = document.createElement("script");
+      js.type = "text/javascript";
+      js.src = "https://www.googletagmanager.com/gtag/js?id=G-S9J3649K5Y";
+      head.appendChild(js);
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-S9J3649K5Y');
+      // The global varibale userId can be undefined if user is logged out
+      gtag('config', 'GA_MEASUREMENT_ID', {
+        'user_id': window.userId
+      });
+    }
+  </script>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <!-- the page title is init with the organisation name in Session init -->
@@ -34,7 +53,6 @@
 
   <div id="mcs-react-app" class="mcs-react-app"></div>
   
-
   <div class="mcs-colors">
     <div class="mcs-primary"></div>
     <div class="mcs-normal"></div>
