@@ -378,7 +378,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
           />
         ))}
         {charts.length ? (
-          <ContentHeader size="medium" title="Technical Informations" />
+          <ContentHeader size="medium" title="Technical Information" />
         ) : null}
         <Card>
           <McsTabs items={this.buildItems()} />

@@ -17,7 +17,7 @@ import { DefaultFormData } from '../domain';
 export const messages = defineMessages({
   sectionGeneralTitle: {
     id: 'automation.builder.node.defaultForm.generalInfoSection.title',
-    defaultMessage: 'General Informations',
+    defaultMessage: 'General Information',
   },
   sectionGeneralSubtitle: {
     id: 'automation.builder.node.defaultForm.general.subtitle',

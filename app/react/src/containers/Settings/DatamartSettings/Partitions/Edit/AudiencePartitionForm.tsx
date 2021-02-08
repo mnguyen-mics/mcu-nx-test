@@ -30,7 +30,7 @@ const messages = defineMessages({
   },
   sectionTitleGeneral: {
     id: 'edit.partition.form.sectionTitleGeneral',
-    defaultMessage: 'General Informations',
+    defaultMessage: 'General Information',
   },
 });
 

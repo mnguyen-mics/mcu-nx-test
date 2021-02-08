@@ -27,7 +27,7 @@ const messages = defineMessages({
   },
   sectionTitleGeneral: {
     id: 'edit.partition.form.general.title',
-    defaultMessage: 'General Informations',
+    defaultMessage: 'General Information',
   },
   labelPartitionName: {
     id: 'edit.partition.general.infos.label.name',

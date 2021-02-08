@@ -25,12 +25,12 @@ Several commands are already available, you can run them with `npm run` followed
 https://docs.cypress.io/guides/core-concepts/writing-and-organizing-tests.html#Folder-Structure
 
 ### The `cypress.json` file
-For more informations, see https://docs.cypress.io/guides/references/configuration.html#Options.
+For more information, see https://docs.cypress.io/guides/references/configuration.html#Options.
 
 This file should be generated with the script `generate-cypress-json.sh`. For more details, see instructions in the script file.
 
 This file is the configuration file of Cypress. Since it's a generated file, ignored by Git, you can edit it as you want to fit your needs. For now, it contains :
-* **baseUrl** : This URL will be used as a prefix everytime you'll use `cy.visit()` or `cy.request()`.
+* **baseUrl** : This URL will be used as a prefix every time you'll use `cy.visit()` or `cy.request()`.
 * **testFiles** / **ignoreTestFiles** : A string or array of glob patterns used to include / ignore test files. You'll see that all files should end with `.spec.js` or `.spec.ts` to be included.
 * **watchForFileChanges** : Whether Cypress will watch and restart tests on test file changes. It is set to false for the CI, but you can change it for your local tests.
 * **defaultCommandTimeout** : Time, in milliseconds, to wait until most DOM based commands are considered timed out. This is the default timeout for almost all cy.xXx commands.

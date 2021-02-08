@@ -21,7 +21,7 @@ const messages = defineMessages({
   },
   sectionTitleGeneral: {
     id: 'settings.profile.apiToken.edit.general.title',
-    defaultMessage: 'General Informations',
+    defaultMessage: 'General Information',
   },
   labelApiTokenName: {
     id: 'settings.profile.apiToken.edit.general.label.name',
