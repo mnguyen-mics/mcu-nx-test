@@ -27,7 +27,7 @@ export interface FunnelRequestBody {
   number_of_parts_to_split_on: number;
 }
 
-export type FunnelResponse = DataResponse<FunnelResource>
+export type FunnelResponse = DataResponse<any>
 
 export interface FunnelResource {
   total: number;
