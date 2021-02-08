@@ -156,15 +156,16 @@ class Funnel extends React.Component<Props, State> {
       then(response => {
         // Enhance api data with last conversion step
         if (!this.state.promiseCanceled) {
-          response.data.steps.push(response.data.steps[response.data.steps.length - 1]);
+          const apiResponse: FunnelResource = response.data.global || response.data;
+          apiResponse.steps.push(apiResponse.steps[apiResponse.steps.length - 1]);
           this.setState({
             isLoading: false,
-            funnelData: response.data
+            funnelData: apiResponse
           }, () => {
             setTimeout(() => {
               this.drawSteps();
-              const upCountsPerStep = response.data.steps.map(step => step.count);
-              upCountsPerStep.unshift(response.data.total);
+              const upCountsPerStep = apiResponse.steps.map(step => step.count);
+              upCountsPerStep.unshift(apiResponse.total);
               upCountsPerStep.pop();
               this.computeStepDelta(upCountsPerStep);
             });
