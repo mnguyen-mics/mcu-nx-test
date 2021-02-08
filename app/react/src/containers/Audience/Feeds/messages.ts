@@ -1,6 +1,15 @@
 import { defineMessages } from "react-intl";
 
 export default defineMessages({
+  deleteModalTitle: {
+    id: 'audienceFeed.modal.delete.title',
+    defaultMessage: 'Are you sure you want to continue ?',
+  },
+  deleteModalDescription: {
+    id: 'audienceFeed.modal.delete.description',
+    defaultMessage:
+      'Are you sure you want delete this feed ? Careful this action cannot be undone.',
+  },
 	segmentId: {
     id: 'audience.feeds.list.column.segmentId',
     defaultMessage: 'Segment ID',
