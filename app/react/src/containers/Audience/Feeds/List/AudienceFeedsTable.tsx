@@ -28,7 +28,7 @@ import {
   IAudienceSegmentFeedService,
 } from '../../../../services/AudienceSegmentFeedService';
 import { MultiSelectProps } from '../../../../components/MultiSelect';
-import { Icon, Tooltip } from 'antd';
+import { Icon, Tooltip, Modal } from 'antd';
 import { IPluginService } from '../../../../services/PluginService';
 import { AudienceSegmentResource } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import { lazyInject } from '../../../../config/inversify.config';
@@ -437,6 +437,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
     const {
       notifyError,
       location: { search },
+      intl,
     } = this.props;
 
     const {
@@ -445,7 +446,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
 
     const filter = parseSearch(search, FEEDS_SEARCH_SETTINGS);
 
-    return feedService
+    const onOkDelete = () => feedService
       .deleteAudienceFeed(record.feed.id)
       .then(() => {
         if (feeds.length === 1 && filter.currentPage !== 1) {
@@ -461,6 +462,12 @@ class AudienceFeedsTable extends React.Component<Props, State> {
       .catch(err => {
         notifyError(err);
       });
+
+    Modal.confirm({
+      title: intl.formatMessage(messages.deleteModalTitle),
+      content: intl.formatMessage(messages.deleteModalDescription),
+      onOk: onOkDelete,
+    });
   };
 
   renderActionColumnDefinition: ActionsRenderer<RecordType> = (
