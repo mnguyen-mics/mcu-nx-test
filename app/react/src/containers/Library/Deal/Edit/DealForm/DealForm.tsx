@@ -65,7 +65,7 @@ const messages = defineMessages({
   },
   generalInfos: {
     id: 'deal.edit.generalSection.title',
-    defaultMessage: 'General Informations',
+    defaultMessage: 'General Information',
   },
   generalInfosSubtitle: {
     id: 'deal.edit.generalSection.subtitle',

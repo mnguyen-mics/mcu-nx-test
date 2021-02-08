@@ -27,7 +27,7 @@ const Content = Layout.Content as React.ComponentClass<
 const messages = defineMessages({
   sectionTitleGeneral: {
     id: 'settings.profile.apiToken.edit.generalInfoSection.title',
-    defaultMessage: 'General Informations',
+    defaultMessage: 'General Information',
   },
   saveApiToken: {
     id: 'settings.profile.apiToken.edit.saveButton',

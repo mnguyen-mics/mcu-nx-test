@@ -46,7 +46,7 @@ const messages = defineMessages({
   },
   sectionTitleGeneral: {
     id: 'dealList.form.sectionTitleGeneral',
-    defaultMessage: 'General Informations',
+    defaultMessage: 'General Information',
   },
   sectionTitleKeywords: {
     id: 'dealList.form.sectionTitleDeals',

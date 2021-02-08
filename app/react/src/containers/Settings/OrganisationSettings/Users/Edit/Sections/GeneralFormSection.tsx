@@ -21,7 +21,7 @@ const messages = defineMessages({
   },
   sectionTitleGeneral: {
     id: 'settings.organisation.users.edit.generalInfoSection.title',
-    defaultMessage: 'General Informations',
+    defaultMessage: 'General Information',
   },
   labelUserFirstName: {
     id: 'settings.organisation.users.edit.generalInfoSection.label.firstname',

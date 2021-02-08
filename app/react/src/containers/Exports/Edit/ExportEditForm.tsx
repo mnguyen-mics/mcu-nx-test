@@ -39,7 +39,7 @@ const Content = Layout.Content as React.ComponentClass<
 const messages = defineMessages({
   sectionTitleGeneral: {
     id: 'exports.form.general',
-    defaultMessage: 'General Informations',
+    defaultMessage: 'General Information',
   },
   sectionTitleQuery: {
     id: 'exports.form.query',

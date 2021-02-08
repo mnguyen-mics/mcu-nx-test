@@ -26,7 +26,7 @@ const Content = Layout.Content as React.ComponentClass<
 const messages = defineMessages({
   sectionTitleGeneral: {
     id: 'imports.form.general',
-    defaultMessage: 'General Informations',
+    defaultMessage: 'General Information',
   },
   saveImport: {
     id: 'save.import',

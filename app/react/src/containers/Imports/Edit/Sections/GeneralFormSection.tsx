@@ -23,7 +23,7 @@ import { MicsReduxState } from '../../../../utils/ReduxHelper';
 const messages = defineMessages({
   sectionTitleGeneral: {
     id: 'edit.import.form.general.title',
-    defaultMessage: 'General Informations',
+    defaultMessage: 'General Information',
   },
   sectionSubTitleGeneral: {
     id: 'edit.import.form.general.subtitle',

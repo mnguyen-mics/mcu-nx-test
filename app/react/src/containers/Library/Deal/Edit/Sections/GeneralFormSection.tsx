@@ -22,7 +22,7 @@ const messages = defineMessages({
   },
   sectionTitleGeneral: {
     id: 'edit.dealList.form.general.title',
-    defaultMessage: 'General Informations',
+    defaultMessage: 'General Information',
   },
   labelDealListName: {
     id: 'edit.dealList.general.infos.label.name',

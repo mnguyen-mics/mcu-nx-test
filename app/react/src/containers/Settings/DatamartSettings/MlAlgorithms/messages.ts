@@ -71,7 +71,7 @@ const messages = defineMessages({
   },
   sectionTitleGeneral: {
     id: 'settings.organisation.ml-algorithms.edit.general-section',
-    defaultMessage: 'General Informations'
+    defaultMessage: 'General Information'
   },
   sectionSubTitleGeneral: {
     id: 'settings.organisation.ml-algorithms.edit.subtitle',

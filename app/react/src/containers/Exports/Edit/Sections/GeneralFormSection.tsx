@@ -17,7 +17,7 @@ import {
 const messages = defineMessages({
   sectionTitleGeneral: {
     id: 'exports.edit.generalInfoSection.title',
-    defaultMessage: 'General Informations',
+    defaultMessage: 'General Information',
   },
   sectionSubTitleGeneral: {
     id: 'exports.edit.generalInfoSection.subtitle',
