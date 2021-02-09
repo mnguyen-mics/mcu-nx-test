@@ -20,7 +20,7 @@ import { AudienceFeatureFormData } from '../domain';
 
 interface AudienceFeaturePreviewProps {
   schema?: SchemaItem;
-  formValues: AudienceFeatureFormData;
+  formValues?: AudienceFeatureFormData;
 }
 
 interface State {
@@ -39,13 +39,15 @@ class AudienceFeaturePreview extends React.Component<Props, State> {
 
   componentDidUpdate(prevProps: Props) {
     const {
-      formValues: { object_tree_expression: prevObjectTreeExpression },
+      formValues: prevFormValues,
       schema: prevSchema,
     } = prevProps;
     const {
-      formValues: { object_tree_expression },
+      formValues,
       schema,
     } = this.props;
+    const object_tree_expression = formValues?.object_tree_expression;
+    const prevObjectTreeExpression = prevFormValues?.object_tree_expression;
     if (
       (object_tree_expression !== prevObjectTreeExpression ||
         !_.isEqual(schema, prevSchema)) &&
@@ -118,8 +120,8 @@ class AudienceFeaturePreview extends React.Component<Props, State> {
     };
     loop(schema.fields);
 
-    // Split the query on <, <=, >, >=, = or == and remove last one
-    const queryElements = query.split(/[<>]=?|==|=/);
+    // Split the query on <, <=, >, >=, =, ==, in or IN and remove last one
+    const queryElements = query.split(/[<>]=?|==|=| in | IN /);
     queryElements.splice(queryElements.length - 1);
     const fieldNames = queryElements.map(el => {
       // we remove leading/trailing spaces and
@@ -162,9 +164,9 @@ class AudienceFeaturePreview extends React.Component<Props, State> {
           title={formatMessage(messages.audienceFeatures)}
         >
           <div className="mcs-audienceFeature_cardContainer">
-            <div className="mcs-audienceFeature_name">{formValues.name}</div>
+            <div className="mcs-audienceFeature_name">{formValues?.name}</div>
             <i className="mcs-audienceFeature_description">
-              {formValues.description}
+              {formValues?.description}
             </i>
             {variables.map((v, index) => {
               return (

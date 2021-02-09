@@ -54,7 +54,6 @@ class GeneralFormSection extends React.Component<Props> {
         <FormInputField
           name="description"
           component={FormInput}
-          validate={[isRequired]}
           formItemProps={{
             label: formatMessage(messages.audienceFeatureDescriptionLabel),
             required: true,
