@@ -32,7 +32,7 @@ export interface AudienceFeatureFormProps
 }
 
 interface MapStateToProps {
-  formValues: AudienceFeatureFormData;
+  formValues?: AudienceFeatureFormData;
 }
 
 type Props = InjectedFormProps<
@@ -79,7 +79,7 @@ class AudienceFeatureForm extends React.Component<Props> {
       component: (
         <QueryFormSection
           formChange={change}
-          associatedQuery={formValues.object_tree_expression}
+          associatedQuery={formValues?.object_tree_expression}
         />
       ),
     });
