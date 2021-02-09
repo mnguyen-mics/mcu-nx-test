@@ -108,7 +108,7 @@ Cypress.Commands.add('createSegmentFromUI', (type) => {
   // Save the new segment
   cy.contains('Save').click();
 
-  cy.url({ timeout: 10000 }).should('not.contain', 'create');
+  cy.url({ timeout: 20000 }).should('not.contain', 'create');
 });
 
 Cypress.Commands.add(
