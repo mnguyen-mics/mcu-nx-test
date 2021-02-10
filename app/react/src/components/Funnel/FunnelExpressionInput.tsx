@@ -21,7 +21,8 @@ interface FunnelExpressionProps {
   dimensionName: string
   dimensionIndex: number
   datamartId: string
-  stepId?: string
+  stepId?: string,
+  initialValue: string[],
   handleDimensionExpressionForSelectorChange: (value: string[]) => void
 }
 
@@ -55,7 +56,7 @@ class FunnelExpressionInput extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      value: [],
+      value: props.initialValue,
       allOptionsSelected: false
     };
   }
@@ -77,6 +78,7 @@ class FunnelExpressionInput extends React.Component<Props, State> {
     const anchorId = "mcs-funnel_expression_select_anchor"
 
     const commonProps: ResourceByKeywordSelectorProps = {
+      value: value,
       anchorId: anchorId,
       datamartId: datamartId,
       organisationId: organisationId,
