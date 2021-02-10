@@ -42,7 +42,7 @@ export type AudienceSegmentType =
 
 export type UserQueryEvaluationMode = 'REAL_TIME' | 'AUTOMATIC' | 'ON_DEMAND';
 
-export type FeedType = 'FILE_IMPORT' | 'TAG' | 'SCENARIO';
+export type FeedType = 'FILE_IMPORT' | 'TAG' | 'SCENARIO' | 'SCENARIO_FEED';
 
 export type LookAlikeAlgorithm =
   | 'CLUSTER_OVERLAP'

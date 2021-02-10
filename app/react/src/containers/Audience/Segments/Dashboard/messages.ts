@@ -242,6 +242,10 @@ export const userListFeedTypeMessages: {
     id: 'audience.segments.type.userList.feedType.scenario',
     defaultMessage: 'Scenario',
   },
+  SCENARIO_FEED: {
+    id: 'audience.segments.type.userList.feedType.scenarioFeed',
+    defaultMessage: 'Scenario Feed',
+  },
   TAG: {
     id: 'audience.segments.type.userList.feedType.tag',
     defaultMessage: 'Tag',
