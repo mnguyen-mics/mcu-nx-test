@@ -258,6 +258,7 @@ class SegmentFilter extends React.Component<JoinedProp, SegmentFilterState> {
             </Button>
           ) : (
             <SegmentByNameSelector
+              value={[]}
               datamartId={datamartId}
               organisationId={organisationId}
               onchange={this.onSegmentByNameSelectorChange}

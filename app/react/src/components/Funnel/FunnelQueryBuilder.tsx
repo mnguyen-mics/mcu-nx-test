@@ -11,7 +11,7 @@ import injectNotifications, { InjectedNotificationProps } from '../../containers
 import { booleanOperator, FUNNEL_SEARCH_SETTING, FilterOperatorLabel } from './Constants';
 import { BooleanOperator, DimensionFilterClause, DimensionFilterOperator } from '../../models/ReportRequestBody';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { updateSearch, isSearchValid } from '../../utils/LocationSearchHelper';
+import { updateSearch, isSearchValid, parseSearch } from '../../utils/LocationSearchHelper';
 import { McsDateRangePicker, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import { FILTERS } from '../../containers/Audience/DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
@@ -98,6 +98,25 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
 
     const { dateRange } = this.state;
 
+    const parsedSearch = parseSearch(search, FUNNEL_SEARCH_SETTING);
+    try {
+      const steps = JSON.parse(parsedSearch.filter)
+      const identifiedSteps = steps.map((step: Step) => {
+        return {
+          ...step,
+          id: this._cuid()
+        }
+      })
+
+      this.setState({
+        steps: identifiedSteps
+      })
+    } catch(error) {
+      this.setState({
+        steps: []
+      })
+    }
+
     const queryParams = {
       from: dateRange.from,
       to: dateRange.to,
@@ -172,7 +191,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
         step.filter_clause.filters.push(
           {
             id: this._cuid(),
-            dimension_name: '',
+            dimension_name: 'DATE_TIME',
             not: false,
             operator: 'EXACT' as DimensionFilterOperator,
             expressions: [
@@ -484,6 +503,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
                           </Select>}
                           <div className={"mcs-funnelQueryBuilder_step_dimensions"}>
                             <Select
+                              value={filter.dimension_name}
                               showSearch={true}
                               showArrow={false}
                               placeholder="Dimension name"
@@ -493,7 +513,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
                             </Select>
                             <div className="mcs-funnelQueryBuilder_switch">
                               <Switch
-                                defaultChecked={true}
+                                defaultChecked={!filter.not}
                                 unCheckedChildren="NOT"
                                 className={"mcs-funnelQueryBuilder_switch_btn"}
                                 onChange={this.handleNotSwitcherChange.bind(this, filterIndex, step.id)}
@@ -508,6 +528,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
                               </span>
                             </div>
                             <FunnelExpressionInput 
+                              initialValue={filter.expressions}
                               datamartId={datamartId}
                               dimensionName={filter.dimension_name}
                               dimensionIndex={filterIndex}
