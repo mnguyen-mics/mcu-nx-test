@@ -14,6 +14,7 @@ import { withDatamartSelector, WithDatamartSelectorProps } from '../../Datamart/
 import ExportService from '../../../services/ExportService';
 import injectNotifications, { InjectedNotificationProps } from '../../Notifications/injectNotifications';
 import { extractDatesFromProps } from '../../../components/Funnel/Utils';
+import { FunnelFilter } from '../../../models/datamart/UserActivitiesFunnel';
 
 const { Content } = Layout;
 
@@ -47,7 +48,8 @@ class FunnelPage extends React.Component<JoinedProps, State> {
     } = this.props;
 
     const routeParams = parseSearch(search, FUNNEL_SEARCH_SETTING);
-    const funnelFilter = routeParams.filter.length > 0 ? JSON.parse(routeParams.filter) : {};
+    const funnelFilter: FunnelFilter[] = (routeParams.filter.length > 0 ? JSON.parse(routeParams.filter) : {});
+    funnelFilter.forEach(item => item.group_by_dimension = "channel_id")
     const funnelTimeRange = extractDatesFromProps(search);
 
     this._userActivitiesFunnelService
