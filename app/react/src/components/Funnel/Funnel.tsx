@@ -206,7 +206,7 @@ class Funnel extends React.Component<Props, State> {
       parentCallback(this.state.isLoading)
     });
 
-    return this._userActivitiesFunnelService.getUserActivitiesFunnel(datamartId, filter, timeRange).
+    return this._userActivitiesFunnelService.getUserActivitiesFunnel(datamartId, filter, timeRange, 5).
       then(response => {
         // Enhance api data with last conversion step
         if (!this.state.promiseCanceled) {

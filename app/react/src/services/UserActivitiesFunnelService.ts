@@ -12,7 +12,8 @@ export interface IUserActivitiesFunnelService {
   getUserActivitiesFunnel: (
     datamartId: string,
     funnelFilter: FunnelFilter[],
-    funnelTimeRange: FunnelTimeRange
+    funnelTimeRange: FunnelTimeRange,
+    limit?: number
   ) => Promise<FunnelResponse>;
 }
 
@@ -21,9 +22,10 @@ export class UserActivitiesFunnelService implements IUserActivitiesFunnelService
   getUserActivitiesFunnel(
     datamartId: string,
     funnelFilter: FunnelFilter[],
-    funnelTimeRange: FunnelTimeRange
+    funnelTimeRange: FunnelTimeRange,
+    limit?: number
   ): Promise<FunnelResponse> {
-    const report: FunnelRequestBody = buildUserActivitiesFunnelRequestBody(funnelFilter, funnelTimeRange);
+    const report: FunnelRequestBody = buildUserActivitiesFunnelRequestBody(funnelFilter, funnelTimeRange, limit);
     const endpoint = `datamarts/${datamartId}/user_activities_funnel`;
     return ApiService.postRequest(endpoint, report);
   }

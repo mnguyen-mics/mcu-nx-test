@@ -29,7 +29,7 @@ interface FunnelStepHoverProps {
   globalMetrics: GlobalMetrics;
   idByDimension: FunnelIdByDimension[];
   stepNumber: number;
-  hasTransactionConfirmed: Boolean;
+  hasTransactionConfirmed: boolean;
 }
 
 type Props = FunnelStepHoverProps;
