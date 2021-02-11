@@ -113,7 +113,23 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
       })
     } catch(error) {
       this.setState({
-        steps: []
+        steps: [{
+          id: this._cuid(),
+          name: "Step 1",
+          filter_clause: {
+            operator: 'OR',
+            filters: [
+              {
+                'dimension_name': 'DATE_TIME',
+                'not': false,
+                'operator': 'EXACT' as DimensionFilterOperator,
+                'expressions': [
+                ],
+                'case_sensitive': false
+              }
+            ]
+          }
+        }]
       })
     }
 
