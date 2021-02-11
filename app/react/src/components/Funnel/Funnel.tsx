@@ -206,7 +206,7 @@ class Funnel extends React.Component<Props, State> {
       parentCallback(this.state.isLoading)
     });
 
-    return this._userActivitiesFunnelService.getUserActivitiesFunnel(datamartId, filter, timeRange).
+    return this._userActivitiesFunnelService.getUserActivitiesFunnel(datamartId, filter, timeRange, 5).
       then(response => {
         // Enhance api data with last conversion step
         if (!this.state.promiseCanceled) {
@@ -251,8 +251,7 @@ class Funnel extends React.Component<Props, State> {
     const container = document.getElementById("container");
     const canvas = document.getElementById(`canvas_${StepIndex + 1}`) as HTMLCanvasElement;
 
-    const drawWidth = container && (container.offsetWidth / totalSteps);
-
+    const drawWidth = container && (container.offsetWidth / totalSteps);    
     canvas.width = drawWidth || 0;
 
     const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
@@ -343,7 +342,7 @@ class Funnel extends React.Component<Props, State> {
               pourcentage: getPercentage(dimension.funnel.steps[i].count, steps.count),
               color: colors[j][0]
             },
-            conversions: dimension.funnel.steps[i].conversion ? {
+            conversions: dimension.funnel.steps[i].conversion || dimension.funnel.steps[i].conversion === 0  ? {
               value: dimension.funnel.steps[i].conversion as number,
               pourcentage: getPercentage(dimension.funnel.steps[i].conversion as number, steps.conversion as number),
               color: colors[j][0]
@@ -413,7 +412,7 @@ class Funnel extends React.Component<Props, State> {
     return this.isFirstStep(stepIndex) ? <span /> : <span> in <span className={"mcs-funnel_metric"}>{moment.duration(seconds, "second").format("d [day] h [hour] m [minute]")}</span></span>
   }
 
-  private getStepHover = (index: number, dimensionMetrics: DimensionMetrics[]) => {
+  private getStepHover = (index: number, dimensionMetrics: DimensionMetrics[], filter: FunnelFilter) => {
     const { funnelData } = this.state;
     const globalMetrics: GlobalMetrics = {
       userPoints: funnelData.global.steps[index - 1].count,
@@ -438,10 +437,11 @@ class Funnel extends React.Component<Props, State> {
               globalMetrics={globalMetrics} 
               idByDimension={idByDimension} 
               dimensionMetrics={dimensionMetrics} 
-              stepNumber={index} />
+              stepNumber={index} 
+              hasTransactionConfirmed={this.hasTransactionConfirmed(filter)} />
   }
 
-  private hasTransactionConfirmed = (filter: FunnelFilter) => !!filter.filter_clause.filters.find(f => f.expressions.includes('$transaction_confirmed'));
+  private hasTransactionConfirmed = (filter: FunnelFilter) => filter.filter_clause && !!filter.filter_clause.filters.find(f => f.expressions.includes('$transaction_confirmed'));
 
   private getConversionDescription = (filter: FunnelFilter, conversion?: string, amount?: string) => {
     if (this.hasTransactionConfirmed(filter)) {
@@ -483,10 +483,10 @@ class Funnel extends React.Component<Props, State> {
                   <div className={"mcs-funnel_chart"}>
                     <div className={"mcs-funnel_stepInfo"}>
                       <p className={'mcs-funnel_stepInfo_desc'}><span className={'mcs-funnel_stepInfo_metric'}>{numeral(index === 0 ? total : steps[index - 1].count).format('0,0')} </span>{index > 0 ? `user points at step ${index}` : 'total user points'}</p>
-                      {index > 0 && this.getConversionDescription(filter[index - 1], conversion, amount)}
+                      {index > 0 && filter[index - 1] ? this.getConversionDescription(filter[index - 1], conversion, amount) : undefined}
 
                       <div className={"mcs-funnel_splitBy"}>               
-                        {(index > 0 && steps[index - 1].count > 0 && this.displaySplitByDropdown(filter[index - 1])) ?  <Select key={this._cuid()} disabled={steps[index].isLoading} loading={steps[index].isLoading} className="mcs-funnel_splitBy_select" value={filter[index - 1].group_by_dimension} placeholder="Split by" onChange={this.handleSplitByDimension.bind(this, index)}>
+                        {(index > 0 && steps[index - 1] && steps[index - 1].count > 0 && (filter[index - 1] && this.displaySplitByDropdown(filter[index - 1]))) ?  <Select key={this._cuid()} disabled={steps[index].isLoading} loading={steps[index].isLoading} className="mcs-funnel_splitBy_select" value={filter[index - 1].group_by_dimension} placeholder="Split by" onChange={this.handleSplitByDimension.bind(this, index)}>
                             {filter[index - 1].filter_clause.filters.map((dimension)=> this.getLabelValueForDimension(dimension.dimension_name))} 
                           </Select> : undefined}
                       </div>
@@ -497,9 +497,9 @@ class Funnel extends React.Component<Props, State> {
                       icon="cross"
                       className={"mcs-funnel_disableStepHover"}
                       onClick={this.closeSplitByHover.bind(this, index)} /> : undefined}
-                    {index > 0 && steps[index].splitedView ? this.getStepHover(index, dimensionMetrics[index-1]) : undefined}
+                    {index > 0 && filter[index - 1] && steps[index].splitedView ? this.getStepHover(index, dimensionMetrics[index-1], filter[index - 1]) : undefined}
                 
-                    {stepsDelta[index] && stepsDelta[index].passThroughPercentage && !steps[index + 1].splitedView ? <div className="mcs-funnel_percentageOfSucceeded">
+                    {stepsDelta[index] && stepsDelta[index].passThroughPercentage && (steps[index + 1] && !steps[index + 1].splitedView)? <div className="mcs-funnel_percentageOfSucceeded">
                       <div className="mcs-funnel_arrow mcs_funnel_arrowStep" />
                       <p className="mcs-funnel_deltaInfo"><span className={"mcs-funnel_metric"}>{`${stepsDelta[index ].passThroughPercentage}%`}</span> have succeeded {this.getDurationMessage(index, steps[index + 1].interaction_duration )}</p>
                     </div> : undefined}

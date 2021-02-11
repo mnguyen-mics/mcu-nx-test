@@ -29,6 +29,7 @@ interface FunnelStepHoverProps {
   globalMetrics: GlobalMetrics;
   idByDimension: FunnelIdByDimension[];
   stepNumber: number;
+  hasTransactionConfirmed: boolean;
 }
 
 type Props = FunnelStepHoverProps;
@@ -40,9 +41,15 @@ class FunnelStepHover extends React.Component<Props> {
   }
 
   private getConversionDescription = ( conversion?: number, amount?: number) => {
+    const { hasTransactionConfirmed } = this.props;
+    if (hasTransactionConfirmed) {
+      return (<p className={'mcs-funnel_stepInfo_desc'}>
+        {conversion && <span>Users bought <span className={'mcs-funnel_stepInfo_metric'}>{numeral(conversion).format('0,0')}</span> units</span>}{ amount && <span><br /> for a total of <span className={'mcs-funnel_stepInfo_metric'}>{numeral(amount).format('0,0')}€</span></span>}
+      </p>)
+    }
     return (<p className={'mcs-funnel_stepInfo_desc'}>
-      {conversion && <span>Users bought <span className={'mcs-funnel_stepInfo_metric'}>{numeral(conversion).format('0,0')}</span> units</span>}{ amount && <span><br /> for a total of <span className={'mcs-funnel_stepInfo_metric'}>{numeral(amount).format('0,0')}€</span></span>}
-    </p>)
+              {conversion && <span><span className={'mcs-funnel_stepInfo_metric'}>{numeral(conversion).format('0,0')}</span> units were linked to this step</span>}{ amount && <span><br /> for a total of <span className={'mcs-funnel_stepInfo_metric'}>{numeral(amount).format('0,0')}€</span></span>}
+            </p>)
   }
 
   render() {

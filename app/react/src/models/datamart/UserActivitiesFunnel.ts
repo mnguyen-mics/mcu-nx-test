@@ -26,6 +26,7 @@ export interface FunnelRequestBody {
   for: FunnelFilter[];
   in: FunnelTimeRange;
   number_of_parts_to_split_on: number;
+  limit?: number;
 }
 
 export type FunnelResponse = DataResponse<GroupedByFunnel>
