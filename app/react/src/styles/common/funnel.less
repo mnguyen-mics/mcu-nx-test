@@ -11,10 +11,6 @@
   margin-top: 15px;
 }
 
-.mcs-funnel_canvas {
-  background-image: linear-gradient(to bottom, rgba(26, 210, 242, 0.39), rgba(11, 166, 225, 0.15));
-}
-
 .mcs-funnel_arrow {
   width: 60px;
   height: 60px;
@@ -94,23 +90,24 @@
 }
 
 .mcs-funnel_conversionInfo {
-  margin: 0 auto;
-  text-align: center;
+  position: relative;
+  z-index: 3;
   margin-top: -45px;
-  padding-bottom: 15px;
+  text-align: center;
+  padding-bottom: 16px;
 }
 
 .mcs-funnel_percentageOfSucceeded {
   position: absolute;
-  top: 5%;
+  top: 32%;
   right: -370px;
-  z-index: 999;
+  z-index: 1;
   width: 400px;
 
-  .mcs-funnel_stepInfo {
+  .mcs-funnel_deltaInfo {
     display: inline-block;
     vertical-align: middle;
-    width: 46%;
+    width: 50%;
     margin-left: 3%;
   }
 }
@@ -128,14 +125,15 @@
 }
 
 .mcs-funnel_metricsBlock {
+  position: relative;
   display: flex;
   justify-content: space-between;
   border-right: 1px solid #D3DBE1;
 }
 
 .mcs-funnelQueryBuilder_header_title,
-.mcs-funnel_header_title,
 .mcs-funnel_stepName_desc,
+.mcs-funnel_deltaInfo,
 .mcs-funnel_stepInfo {
   font-size: 12px;
   font-family: "LLCircularWeb-Book";
@@ -177,15 +175,6 @@
   position: relative;
 }
 
-.mcs-funnel_header_title {
-  display: inline;
-}
-
-.mcs-funnel_header {
-  padding: 16px;
-}
-
-.mcs-funnel_header,
 .mcs-funnelQueryBuilder_header {
   display: flex;
   justify-content: space-between;
@@ -393,4 +382,108 @@
 
 .mcs-funnelQueryBuilder_notInfo_notSwitcherIcon {
   font-size: 10px;
+}
+
+.mcs-funnel_splitBy {
+  position: absolute;
+  top: 120px;
+  height: 40px;
+}
+
+.mcs-funnel_splitBy_select {
+  display: block;
+  width: 146px;
+}
+
+.mcs-funnelStepHover {
+  position: absolute;
+  width: 100%;
+  height: 100vh;
+  background: #fff;
+  z-index: 2;
+  padding: 20px 15px;
+}
+
+.mcs-funnelStepHover_metrics {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.mcs-funnelQueryBuilder_metric {
+ flex: 1;
+ min-width: 50px; 
+
+  &:not(last-child) {
+    margin-right: 10px
+  }
+}
+
+.mcs-funnelStepHover_desc {
+  margin-bottom: 10px;
+  font-size: 12px;
+  color:#003056;
+
+  &--secondary {
+    margin-top: 15px;
+  }
+}
+
+.mcs-funnelStepHover_metric {
+  font-family: "LLCircularWeb-Medium";
+  font-weight: 500;
+  font-size: 14px;
+  color:#003056;
+}
+
+.mcs-funnel_disableStepHover {
+  position: absolute;
+  right: 23px;
+  top: 15px;
+  z-index: 5;
+  border: none;
+  font-size: 16px;
+  color: grey;
+  padding: 0;
+  cursor: hand;
+  &:hover {
+    color: grey;
+  }
+}
+
+.mcs-funnel_stepInfo {
+  position: absolute;
+  padding: 20px 15px;
+  font-size: 12px;
+}
+
+.mcs-funnel_stepInfo_desc {
+  margin-bottom: 15px; 
+}
+
+.mcs-funnel_stepInfo_metric {
+  font-family: "LLCircularWeb-Medium";
+  font-weight: 500;
+  font-size: 14px;
+  color:#003056;
+}
+
+.mcs-funnel_canvas {
+  height: 370px;
+  margin-top: 126px;
+}
+
+.mcs-funnelStepHover_totalsByDimension {
+  margin-top: 20px;
+}
+
+.mcs-funnelStepHover_totalsByDimension_tags {
+  font-family: "LLCircularWeb-Medium";
+  font-weight: 500;
+}
+
+.mcs-funnel_metric {
+  font-family: "LLCircularWeb-Medium";
+  font-weight: 500;
+  padding: 0;
+  font-size: 14px;
 }

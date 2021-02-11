@@ -21,6 +21,8 @@ import {
 } from 'react-intl';
 import FunnelExpressionInput from './FunnelExpressionInput';
 
+const Option = Select.Option;
+
 export interface Step {
   id?: string;
   name: string;
@@ -402,20 +404,8 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
   };
 
   getDimensionNameSelect = () => {
-    const Option = Select.Option;
     const { dimensionsList } = this.state;
-    return dimensionsList.dimensions.map(d => {
-      if (typeof d === "string") {
-        return <Option key={this._cuid()} value={d}>
-          {d}
-        </Option>
-      } else {
-        return (
-          <Option key={this._cuid()} value={d.value}>
-            {d.label}
-          </Option>)
-      }
-    })
+    return dimensionsList.dimensions.map(d => <Option key={this._cuid()} value={d.value}>{d.label}</Option>)
   }
 
   sortStep = (index: number, direction: 'up' | 'down') => {
@@ -441,7 +431,6 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
   }
 
   render() {
-    const Option = Select.Option;
     const { steps, dateRange } = this.state;
     const { from, to } = dateRange
     const { isLoading, datamartId } = this.props;
