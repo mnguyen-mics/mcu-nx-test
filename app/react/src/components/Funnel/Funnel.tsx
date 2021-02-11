@@ -405,7 +405,7 @@ class Funnel extends React.Component<Props, State> {
   getLabelValueForDimension = (dimensionValue: string) => {
     const { dimensionsList } = this.state;
     const dimensionLabelValue = dimensionsList.dimensions.find((d) => d.value === dimensionValue)
-    return dimensionValue === 'CHANNEL_ID' && <Option key={this._cuid()} value={dimensionLabelValue?.value}>{dimensionLabelValue?.label}</Option>
+    return dimensionValue === 'CHANNEL_ID' && <Option className="mcs-funnelSplitBy_option" key={this._cuid()} value={dimensionLabelValue?.value}>{dimensionLabelValue?.label}</Option>
   }
 
   private getDurationMessage(stepIndex: number, seconds: number) {

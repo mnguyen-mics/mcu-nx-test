@@ -57,7 +57,7 @@ cat << EOF
   },
   "watchForFileChanges": false,
 
-  "defaultCommandTimeout": 6000,
+  "defaultCommandTimeout": 15000,
 
   "video": ${RECORD_VIDEO},
   "viewportHeight": 1080,
