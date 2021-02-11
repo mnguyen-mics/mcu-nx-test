@@ -154,5 +154,17 @@ export const funnelMessages = defineMessages({
   duration: {
     id: 'funnel.common.interationDuration',
     defaultMessage: 'interaction duration'
+  },
+  channelId: {
+    id: 'funnel.common.channelId',
+    defaultMessage: 'channel id'
+  },
+  conversion: {
+    id: 'funnel.common.conversion',
+    defaultMessage: '# units'
+  },
+  amount: {
+    id: 'funnel.common.amount',
+    defaultMessage: 'amount'
   }
 });

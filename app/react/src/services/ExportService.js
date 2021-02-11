@@ -875,16 +875,19 @@ const exportFunnel = (funnelResource, datamartId, organisationId, formatMessage)
   dataSheet.push(blankLine);
 
   const headersMap = [
-    { name: 'step name', translation: formatMessage(funnelMessages.stepName) },
-    { name: 'user points', translation: formatMessage(funnelMessages.userPoints) },
-    { name: 'interaction duration', translation: formatMessage(funnelMessages.duration) },
+    { name: 'Step name', translation: formatMessage(funnelMessages.stepName) },
+    { name: 'Channel ID', translation: formatMessage(funnelMessages.channelId) },
+    { name: 'User points', translation: formatMessage(funnelMessages.userPoints) },
+    { name: '# units', translation: formatMessage(funnelMessages.conversion) },
+    { name: 'Amount', translation: formatMessage(funnelMessages.amount) },
+    { name: 'Interaction duration', translation: formatMessage(funnelMessages.duration) },
   ];
 
   const headersLine = headersMap.map(header => header.name);
 
   dataSheet.push(headersLine);
 
-  funnelResource.steps.forEach(step => {
+  funnelResource.global.steps.forEach((step, index) => {
 
     const dataLine = [];
 
@@ -892,16 +895,35 @@ const exportFunnel = (funnelResource, datamartId, organisationId, formatMessage)
     const {
       name,
       count,
+      conversion,
+      amount,
       interaction_duration
     } = step;
 
     dataLine.push(
       name,
+      '',
       count,
+      conversion,
+      amount,
       `${interaction_duration}s`
     );
     /* eslint-enable camelcase */
     dataSheet.push(dataLine);
+
+    funnelResource.grouped_by.filter(group => group.dimension_value).forEach(group => {
+      const dataLineSplit = [];
+
+      dataLineSplit.push(
+        '',
+        group.dimension_value,
+        group.funnel.steps[index].count,
+        group.funnel.steps[index].conversion,
+        group.funnel.steps[index].amount,
+        `${group.funnel.steps[index].interaction_duration}s`
+      );
+      dataSheet.push(dataLineSplit);
+    });
   });
 
   const sheets = [{

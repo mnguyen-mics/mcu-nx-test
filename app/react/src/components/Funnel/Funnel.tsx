@@ -25,7 +25,6 @@ import cuid from 'cuid';
 import { IUsersAnalyticsService } from '../../services/UsersAnalyticsService';
 import { DimensionsList } from '../../models/datamartUsersAnalytics/datamartUsersAnalytics';
 
-
 const Option = Select.Option;
 
 interface StepDelta {
