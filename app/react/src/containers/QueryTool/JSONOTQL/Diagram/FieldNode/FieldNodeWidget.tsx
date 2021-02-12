@@ -233,17 +233,14 @@ class FieldNodeWidget extends React.Component<Props, State> {
               top: node.getSize().height / 2 - ARROW_SIZE / 2,
             }}
           />
-          <div
-            style={{
-              position: 'absolute',
-              top: 7,
-              right: 0,
-            }}
+
+          <Button
+            className="mcs-fieldNodeFormWrapper_closeButton"
+            onClick={closeEdit}
           >
-            <Button onClick={closeEdit}>
-              <McsIcon type="close" />
-            </Button>
-          </div>
+            <McsIcon type="close" />
+          </Button>
+
           <FieldNodeFormWrapper
             breadCrumbPaths={[]}
             objectType={node.objectTypeInfo}
