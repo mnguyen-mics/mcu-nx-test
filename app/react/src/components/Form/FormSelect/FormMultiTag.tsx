@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Select } from 'antd';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { WrappedFieldProps } from 'redux-form';
-
 import FormFieldWrapper, { FormFieldWrapperProps } from '../FormFieldWrapper';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { RestrictedSelectProps } from './DefaultSelect';
@@ -11,12 +10,14 @@ const Option = Select.Option;
 
 export interface FormMultiTagProps extends FormFieldWrapperProps {
   formItemProps: FormItemProps;
-  selectProps?: RestrictedSelectProps & { options: Array<{ label: string, value: string, disabled?: boolean }> };
+  selectProps?: RestrictedSelectProps & {
+    options: Array<{ label: string; value: string; disabled?: boolean }>;
+  };
   small?: boolean;
-  numericOnly?: boolean
+  numericOnly?: boolean;
 }
 
-type Props = FormMultiTagProps & WrappedFieldProps & InjectedIntlProps
+type Props = FormMultiTagProps & WrappedFieldProps & InjectedIntlProps;
 
 const FormMultiTag: React.SFC<Props> = props => {
 
@@ -29,7 +30,11 @@ const FormMultiTag: React.SFC<Props> = props => {
     small,
   } = props;
 
-  let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
+  let validateStatus = 'success' as
+    | 'success'
+    | 'warning'
+    | 'error'
+    | 'validating';
   const mode = 'tags' as 'multiple' | 'tags' | 'combobox';
 
   if (meta.touched && meta.invalid) {
@@ -39,11 +44,13 @@ const FormMultiTag: React.SFC<Props> = props => {
     validateStatus = 'warning';
   }
 
-  const optionsToDisplay = selectProps ? selectProps.options.map(({ label, ...option }) => (
-    <Option {...option} key={option.value}>{label}</Option>
-  )) : [];
-
-  
+  const optionsToDisplay = selectProps
+    ? selectProps.options.map(({ label, ...option }) => (
+        <Option {...option} key={option.value}>
+          {label}
+        </Option>
+      ))
+    : [];
 
   return (
     <FormFieldWrapper
@@ -60,7 +67,8 @@ const FormMultiTag: React.SFC<Props> = props => {
         onFocus={input.onFocus as () => any}
         value={input.value || []}
         {...selectProps}
-      >{optionsToDisplay}
+      >
+        {optionsToDisplay}
       </Select>
     </FormFieldWrapper>
   );

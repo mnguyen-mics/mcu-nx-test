@@ -14,16 +14,35 @@ export interface FormSelectAddonProps {
   disabled?: boolean;
 }
 
-class AddonSelect extends React.Component<
-  FormSelectAddonProps & WrappedFieldProps
-> {
-  static defaultProps: Partial<FormSelectAddonProps & WrappedFieldProps> = {
+interface State {
+  didMount: boolean;
+}
+
+type Props = FormSelectAddonProps & WrappedFieldProps;
+
+class AddonSelect extends React.Component<Props, State> {
+  static defaultProps: Partial<Props> = {
     style: { width: 100 },
     disabled: false,
   };
 
+  id: string = cuid();
+
+  constructor(props: Props) {
+    super(props);
+    this.state = { didMount: false };
+  }
+
+  componentDidMount() {
+    this.setState({
+      didMount: true,
+    });
+  }
+
   render() {
     const { selectProps, input, style, options, disabled } = this.props;
+
+    const { didMount } = this.state;
 
     const formValue = input.value || options[0];
     const filteredOptions = options.filter(
@@ -36,19 +55,26 @@ class AddonSelect extends React.Component<
       </Option>
     ));
 
+    const getRef = () => document.getElementById(this.id)!;
+
     return (
-      <Select
-        id={input.name}
-        onBlur={input.onBlur as () => any}
-        onChange={input.onChange as () => any}
-        onFocus={input.onFocus as () => any}
-        value={input.value}
-        {...selectProps}
-        style={{ display: 'flex', justifyContent: 'center', ...style }}
-        disabled={disabled}
-      >
-        {optionsToDisplay}
-      </Select>
+      <span id={this.id} className="mcs-addonSelect">
+        {didMount && (
+          <Select
+            id={input.name}
+            onBlur={input.onBlur as () => any}
+            onChange={input.onChange as () => any}
+            onFocus={input.onFocus as () => any}
+            value={input.value}
+            {...selectProps}
+            style={{ display: 'flex', justifyContent: 'center', ...style }}
+            disabled={disabled}
+            getPopupContainer={getRef}
+          >
+            {optionsToDisplay}
+          </Select>
+        )}
+      </span>
     );
   }
 }
