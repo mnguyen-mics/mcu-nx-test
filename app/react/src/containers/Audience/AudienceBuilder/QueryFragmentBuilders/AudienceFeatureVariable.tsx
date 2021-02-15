@@ -337,6 +337,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
               }}
               unixTimstamp={true}
               disabled={!!disabled}
+              noListValue={true}
             />
           );
         case 'OperatingSystemFamily':

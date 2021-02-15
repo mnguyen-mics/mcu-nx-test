@@ -117,10 +117,7 @@ export const INITIAL_AUDIENCE_BUILDER_FORM_DATA: AudienceBuilderFormData = {
   },
 };
 
-export const formatQuery = (
-  query: QueryDocument,
-  isEditMode: boolean = false,
-) => {
+export const formatQuery = (query: QueryDocument) => {
   if (query?.where) {
     return {
       ...query,
@@ -136,12 +133,6 @@ export const formatQuery = (
                   const formatValue = (v: any) => {
                     if (typeof v === 'number') {
                       return v.toString();
-                    } else if (
-                      // Check if string value represents a float
-                      // and return it as a float
-                      !isNaN(v)
-                    ) {
-                      return parseFloat(v);
                     }
                     return v;
                   };
@@ -189,6 +180,5 @@ export const buildQueryDocument = (formData: AudienceBuilderFormData) => {
       where: clauseWhere,
     };
   }
-  // This will be removed when backend will be able to handle List and Long
   return formatQuery(query) as any;
 };
