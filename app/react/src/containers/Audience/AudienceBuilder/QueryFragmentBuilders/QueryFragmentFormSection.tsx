@@ -25,6 +25,10 @@ import AudienceFeatureSelector, {
 } from './AudienceFeatureSelector';
 import { AudienceFeatureResource } from '../../../../models/audienceFeature';
 import { ObjectLikeTypeInfoResource } from '../../../../models/datamart/graphdb/RuntimeSchema';
+import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
+import NewAudienceFeatureSelector, {
+  NewAudienceFeatureSelectorProps,
+} from './NewAudienceFeatureSelector';
 
 export const AudienceFeatureFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
@@ -42,6 +46,7 @@ export interface QueryFragmentFormSectionProps {
 type Props = WrappedFieldArrayProps<AudienceBuilderGroupNode> &
   InjectedDrawerProps &
   QueryFragmentFormSectionProps &
+  InjectedFeaturesProps &
   InjectedIntlProps;
 
 interface State {
@@ -128,7 +133,12 @@ class QueryFragmentFormSection extends React.Component<Props, State> {
   };
 
   addFeature = (index: number) => () => {
-    const { openNextDrawer, datamartId, demographicsFeaturesIds } = this.props;
+    const {
+      openNextDrawer,
+      datamartId,
+      demographicsFeaturesIds,
+      hasFeature,
+    } = this.props;
 
     const props: AudienceFeatureSelectorProps = {
       datamartId: datamartId,
@@ -139,10 +149,16 @@ class QueryFragmentFormSection extends React.Component<Props, State> {
           ? demographicsFeaturesIds
           : undefined,
     };
-
-    openNextDrawer<AudienceFeatureSelectorProps>(AudienceFeatureSelector, {
-      additionalProps: props,
-    });
+    hasFeature('new-audienceFeatureSelector')
+      ? openNextDrawer<NewAudienceFeatureSelectorProps>(
+          NewAudienceFeatureSelector,
+          {
+            additionalProps: props,
+          },
+        )
+      : openNextDrawer<AudienceFeatureSelectorProps>(AudienceFeatureSelector, {
+          additionalProps: props,
+        });
   };
 
   render() {
@@ -222,4 +238,5 @@ class QueryFragmentFormSection extends React.Component<Props, State> {
 export default compose<Props, QueryFragmentFormSectionProps>(
   injectIntl,
   injectDrawer,
+  injectFeatures,
 )(QueryFragmentFormSection);
