@@ -3,7 +3,6 @@ import { InjectedIntlProps, FormattedMessage, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { messages } from './constants';
 import { Button, Menu, Dropdown } from 'antd';
-import { ClickParam } from 'antd/lib/menu';
 import { SaveAsUserQuerySegmentModal } from '../../QueryTool/SaveAs';
 import { NewUserQuerySimpleFormData } from '../../QueryTool/SaveAs/NewUserQuerySegmentSimpleForm';
 import { Actionbar } from '@mediarithmics-private/mcs-components-library';
@@ -58,7 +57,7 @@ class AudienceBuilderActionbar extends React.Component<Props, State> {
         params: { organisationId, segmentId },
       },
     } = this.props;
-    const handleMenuClick = (e: ClickParam) => {
+    const handleMenuClick = (e: any) => {
       if (e.key === 'USER_QUERY') {
         this.setState({ segmentModalVisible: true });
       }

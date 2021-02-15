@@ -5,7 +5,7 @@ import { MultiSelectProps } from '../../../../../components/MultiSelect';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
-import { PaginationConfig } from 'antd/lib/table';
+import { TablePaginationConfig } from 'antd/lib/table';
 import {
   DataColumnDefinition,
   ActionsColumnDefinition,
@@ -65,7 +65,7 @@ class ChannelsTable extends React.Component<Props> {
 
     const datamarts = workspace(organisationId).datamarts;
 
-    const pagination: PaginationConfig = {
+    const pagination: TablePaginationConfig = {
       current: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalChannels,

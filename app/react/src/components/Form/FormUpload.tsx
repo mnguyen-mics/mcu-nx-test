@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Upload, Button, Icon } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
+import { Upload, Button } from 'antd';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import {
   UploadProps,
@@ -7,14 +8,14 @@ import {
   UploadChangeParam,
 } from 'antd/lib/upload/interface';
 import { WrappedFieldProps } from 'redux-form';
-import { TooltipProps } from 'antd/lib/tooltip';
+import { TooltipPropsWithTitle } from 'antd/lib/tooltip';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { FormFieldWrapper } from './index';
 
 export interface FormUploadProps {
   formItemProps?: FormItemProps;
   inputProps?: UploadProps;
-  helpToolTipProps?: TooltipProps;
+  helpToolTipProps?: TooltipPropsWithTitle;
   buttonText: string;
   noUploadModal?: () => void;
   disabled?: boolean;
@@ -104,7 +105,7 @@ class FormUpload extends React.Component<JoinedProps, State> {
             onClick={this.props.noUploadModal}
             disabled={disabled}
           >
-            <Icon type="upload" /> {this.props.buttonText}
+            <UploadOutlined /> {this.props.buttonText}
           </Button>
         </Upload>
       </FormFieldWrapper>

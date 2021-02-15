@@ -32,7 +32,7 @@ import ScrollspySider, {
 import { ReduxFormChangeProps } from '../../../../utils/FormHelper';
 import { DatamartResource } from '../../../../models/datamart/DatamartResource';
 
-const Content = Layout.Content as React.ComponentClass<
+const Content = Layout.Content as unknown as React.ComponentClass<
   BasicProps & { id: string }
 >;
 

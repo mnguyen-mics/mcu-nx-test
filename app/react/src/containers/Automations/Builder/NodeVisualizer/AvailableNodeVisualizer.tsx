@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { Row, Tree } from 'antd';
+import { Row, Collapse } from 'antd';
 import AvailableNode from './AvailableNode';
 import {
   ScenarioNodeShape,
   IfNodeResource,
 } from '../../../../models/automations/automations';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
-import { AntIcon } from '../domain';
 import {
   INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA,
   INITIAL_ADD_TO_SEGMENT_NODE_FORM_DATA,
@@ -31,7 +30,7 @@ import {
 import { PluginLayout } from '../../../../models/plugin/PluginLayout';
 import { PropertyResourceShape } from '../../../../models/plugin';
 
-const { TreeNode } = Tree;
+const { Panel } = Collapse;
 
 const messages = defineMessages({
   availableNodeTitle: {
@@ -56,7 +55,7 @@ const messages = defineMessages({
 export interface AvailableNode {
   node: ScenarioNodeShape;
   iconType?: McsIconType;
-  iconAnt?: AntIcon;
+  iconAnt?: React.ReactNode;
   color: string;
   branchNumber?: number;
 }
@@ -187,7 +186,7 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
   componentDidMount() {
     const { actionNodes } = this.state;
 
-    this.getFeedPresetNodes().then(feedPresetNodes => {
+    this.getFeedPresetNodes().then((feedPresetNodes) => {
       const actionNodesList = actionNodes.concat(feedPresetNodes);
 
       this.setState({
@@ -216,11 +215,11 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
               organisation_id: +organisationId,
               plugin_type: currentFeedType,
             })
-            .then(resPresets => resPresets.data)
-            .catch(_ => [] as PluginPresetResource[]);
+            .then((resPresets) => resPresets.data)
+            .catch((_) => [] as PluginPresetResource[]);
 
           return Promise.all([accPromisePresets, currentFeedTypePresets]).then(
-            resAccAndCurrentType => {
+            (resAccAndCurrentType) => {
               return resAccAndCurrentType[0].concat(resAccAndCurrentType[1]);
             },
           );
@@ -228,97 +227,94 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
         Promise.resolve([]),
       );
 
-      const pluginLayoutsAndVersionPropertiesP: Promise<PluginLayoutAndVersionProperties[]> = pluginPresetFeedsP.then(
-        pluginPresets => {
-          const distinctPluginVersionIds = [
-            ...new Set(pluginPresets.map(preset => preset.plugin_version_id)),
-          ];
+      const pluginLayoutsAndVersionPropertiesP: Promise<
+        PluginLayoutAndVersionProperties[]
+      > = pluginPresetFeedsP.then((pluginPresets) => {
+        const distinctPluginVersionIds = [
+          ...new Set(pluginPresets.map((preset) => preset.plugin_version_id)),
+        ];
 
-          return Promise.all(
-            distinctPluginVersionIds.map(pluginVersionId => {
-              const associatedPluginId = pluginPresets.find(
-                preset => preset.plugin_version_id === pluginVersionId,
-              )?.plugin_id;
+        return Promise.all(
+          distinctPluginVersionIds.map((pluginVersionId) => {
+            const associatedPluginId = pluginPresets.find(
+              (preset) => preset.plugin_version_id === pluginVersionId,
+            )?.plugin_id;
 
-              const pluginLayoutP = associatedPluginId
-                ? this._pluginService
-                    .getLocalizedPluginLayout(
-                      associatedPluginId,
-                      pluginVersionId,
-                    )
-                    .then(pluginLayout => {
-                      return pluginLayout !== null ? pluginLayout : undefined;
-                    })
-                : Promise.resolve(undefined);
+            const pluginLayoutP = associatedPluginId
+              ? this._pluginService
+                  .getLocalizedPluginLayout(associatedPluginId, pluginVersionId)
+                  .then((pluginLayout) => {
+                    return pluginLayout !== null ? pluginLayout : undefined;
+                  })
+              : Promise.resolve(undefined);
 
-              const pluginVersionP = associatedPluginId
-                ? this._pluginService
-                    .getPluginVersion(associatedPluginId, pluginVersionId)
-                    .then(resPluginVersion => resPluginVersion.data)
-                    .catch(err => undefined)
-                : Promise.resolve(undefined);
+            const pluginVersionP = associatedPluginId
+              ? this._pluginService
+                  .getPluginVersion(associatedPluginId, pluginVersionId)
+                  .then((resPluginVersion) => resPluginVersion.data)
+                  .catch((err) => undefined)
+              : Promise.resolve(undefined);
 
-              const pluginVersionPropertiesP = associatedPluginId
-                ? this._pluginService
-                    .getPluginVersionProperties(
-                      associatedPluginId,
-                      pluginVersionId,
-                    )
-                    .then(
-                      resPluginVersionProperties =>
-                        resPluginVersionProperties.data,
-                    )
-                    .catch(err => undefined)
-                : Promise.resolve(undefined);
+            const pluginVersionPropertiesP = associatedPluginId
+              ? this._pluginService
+                  .getPluginVersionProperties(
+                    associatedPluginId,
+                    pluginVersionId,
+                  )
+                  .then(
+                    (resPluginVersionProperties) =>
+                      resPluginVersionProperties.data,
+                  )
+                  .catch((err) => undefined)
+              : Promise.resolve(undefined);
 
-              return Promise.all([
-                pluginLayoutP,
-                pluginVersionP,
-                pluginVersionPropertiesP,
-              ]).then(resPluginLayoutAndVersion => {
-                const pluginLayout = resPluginLayoutAndVersion[0];
-                const pluginVersion = resPluginLayoutAndVersion[1];
-                const pluginVersionProperties = resPluginLayoutAndVersion[2];
+            return Promise.all([
+              pluginLayoutP,
+              pluginVersionP,
+              pluginVersionPropertiesP,
+            ]).then((resPluginLayoutAndVersion) => {
+              const pluginLayout = resPluginLayoutAndVersion[0];
+              const pluginVersion = resPluginLayoutAndVersion[1];
+              const pluginVersionProperties = resPluginLayoutAndVersion[2];
 
-                return { pluginLayout, pluginVersion, pluginVersionProperties };
-              });
-            }),
-          ).then(resPluginLayoutsAndVersions =>
-            resPluginLayoutsAndVersions.reduce(
-              (acc: PluginLayoutAndVersionProperties[], el) => {
-                if (
-                  el.pluginLayout &&
-                  el.pluginVersion &&
-                  el.pluginVersionProperties
-                ) {
-                  return acc.concat([
-                    {
-                      pluginLayout: el.pluginLayout,
-                      pluginVersion: el.pluginVersion,
-                      pluginVersionProperties: el.pluginVersionProperties,
-                    },
-                  ]);
-                }
-                return acc;
-              },
-              [],
-            ),
-          );
-        },
-      );
+              return { pluginLayout, pluginVersion, pluginVersionProperties };
+            });
+          }),
+        ).then((resPluginLayoutsAndVersions) =>
+          resPluginLayoutsAndVersions.reduce(
+            (acc: PluginLayoutAndVersionProperties[], el) => {
+              if (
+                el.pluginLayout &&
+                el.pluginVersion &&
+                el.pluginVersionProperties
+              ) {
+                return acc.concat([
+                  {
+                    pluginLayout: el.pluginLayout,
+                    pluginVersion: el.pluginVersion,
+                    pluginVersionProperties: el.pluginVersionProperties,
+                  },
+                ]);
+              }
+              return acc;
+            },
+            [],
+          ),
+        );
+      });
 
       return Promise.all([
         pluginLayoutsAndVersionPropertiesP,
         pluginPresetFeedsP,
       ])
-        .then(resLayoutsAndPresets => {
+        .then((resLayoutsAndPresets) => {
           const layoutsAndVersionProperties: PluginLayoutAndVersionProperties[] =
             resLayoutsAndPresets[0];
           const presets: PluginPresetResource[] = resLayoutsAndPresets[1];
 
-          return presets.map(pluginPreset => {
+          return presets.map((pluginPreset) => {
             const associatedLayoutAndVersionProperties = layoutsAndVersionProperties.find(
-              layoutAndVersionProperties => {
+              (layoutAndVersionProperties) => {
                 return (
                   layoutAndVersionProperties.pluginVersion?.id ===
                   pluginPreset.plugin_version_id
@@ -409,7 +405,7 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
             return undefined;
           });
         })
-        .then(resLayoutablesOrUndefined =>
+        .then((resLayoutablesOrUndefined) =>
           resLayoutablesOrUndefined.reduce(
             (acc: ScenarioNodeShape[], el: ScenarioNodeShape | undefined) => {
               if (el) return acc.concat([el]);
@@ -421,22 +417,9 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
     } else return Promise.resolve([]);
   };
 
-  createNodeGrid = (nodeType: string, nodes: ScenarioNodeShape[]) => {
+  createNodeGrid = (nodes: ScenarioNodeShape[]) => {
     const { intl } = this.props;
-    return (
-      <Tree defaultExpandAll={true} multiple={false} draggable={false}>
-        <TreeNode title={nodeType} selectable={false}>
-          {nodes.map(node => {
-            return (
-              <TreeNode
-                title={<AvailableNode node={node} intl={intl} />}
-                key={node.id}
-              />
-            );
-          })}
-        </TreeNode>
-      </Tree>
-    );
+    return nodes.map((n) => <AvailableNode node={n} intl={intl} key={n.id} />);
   };
 
   render() {
@@ -451,18 +434,22 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
             {intl.formatMessage(messages.availableNodeSubtitle)}
           </div>
         </Row>
-        <Row className="mcs-availableNodeVisualizer_row">
-          {this.createNodeGrid(
-            intl.formatMessage(messages.actionsTitle),
-            this.state.actionNodes,
-          )}
-        </Row>
-        <Row className="mcs-availableNodeVisualizer_row">
-          {this.createNodeGrid(
-            intl.formatMessage(messages.flowControlTitle),
-            this.state.conditionNodes,
-          )}
-        </Row>
+        <Collapse defaultActiveKey={['1']} bordered={false}>
+          <Panel
+            header={intl.formatMessage(messages.actionsTitle)}
+            key="1"
+            className="mcs-availableNodeVisualizer_panel"
+          >
+            {this.createNodeGrid(this.state.actionNodes)}
+          </Panel>
+          <Panel
+            header={intl.formatMessage(messages.flowControlTitle)}
+            key="2"
+            className="mcs-availableNodeVisualizer_panel"
+          >
+            {this.createNodeGrid(this.state.conditionNodes)}
+          </Panel>
+        </Collapse>
       </div>
     );
   }

@@ -20,6 +20,7 @@ import { DisplayAdResource } from '../../../../../models/creative/CreativeResour
 import PluginSectionGenerator from '../../../../Plugin/PluginSectionGenerator';
 import { PropertyResourceShape } from '../../../../../models/plugin';
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 interface MapStateProps {
   initialValue: DisplayCreativeFormData;
@@ -46,7 +47,7 @@ class PropertiesFormSection extends React.Component<Props> {
         creative.audit_status === 'AUDIT_PASSED'
           ? formatMessage(modalMessages.noUploadMessage)
           : formatMessage(modalMessages.noUpdateMessage),
-      iconType: 'exclamation-circle',
+      icon: <ExclamationCircleOutlined />,
       okText: formatMessage(modalMessages.confirm),
     });
   };

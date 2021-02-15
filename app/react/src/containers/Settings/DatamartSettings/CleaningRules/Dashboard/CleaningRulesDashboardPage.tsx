@@ -2,7 +2,6 @@ import * as React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
-import { Row } from 'antd';
 import { McsTabs } from '@mediarithmics-private/mcs-components-library';
 import CleaningRulesContainer from '../List/CleaningRulesContainer';
 import messages from './messages';
@@ -257,13 +256,11 @@ class CleaningRulesDashboardPage extends React.Component<Props, State> {
     return (
       <div className="ant-layout">
         <div className="ant-layout-content">
-          <Row>
             <McsTabs
               items={items}
               activeKey={cleaningRuleType}
               onChange={this.onChangeCleaningRuleType}
             />
-          </Row>
         </div>
       </div>
     );

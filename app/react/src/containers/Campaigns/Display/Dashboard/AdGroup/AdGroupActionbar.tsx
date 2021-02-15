@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Button, Icon, Menu, Modal } from 'antd';
+import { EllipsisOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { Button, Menu, Modal } from 'antd';
 import { withRouter, Link } from 'react-router-dom';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
@@ -132,7 +133,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
       Modal.confirm({
         title: intl.formatMessage(messages.archiveAdGroupModalTitle),
         content: intl.formatMessage(messages.archiveAdGroupModalMessage),
-        iconType: 'exclamation-circle',
+        icon: <ExclamationCircleOutlined />,
         okText: intl.formatMessage(messages.creativeModalConfirmArchivedOk),
         cancelText: intl.formatMessage(messages.cancelText),
         onOk() {
@@ -524,7 +525,7 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
         ) : null}
         <Dropdown overlay={menu} trigger={['click']}>
           <Button>
-            <Icon type="ellipsis" />
+            <EllipsisOutlined />
           </Button>
         </Dropdown>
       </Actionbar>

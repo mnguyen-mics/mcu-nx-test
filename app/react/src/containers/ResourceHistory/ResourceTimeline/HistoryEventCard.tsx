@@ -16,7 +16,8 @@ import {
 } from '../../../models/resourceHistory/ResourceHistory';
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { Row, Icon } from 'antd';
+import { ClockCircleOutlined } from '@ant-design/icons';
+import { Row } from 'antd';
 import { Card, Button } from '@mediarithmics-private/mcs-components-library';
 import messages from './messages';
 import { FormatProperty } from './domain';
@@ -32,12 +33,12 @@ type Props = HistoryEventCardProps &
   InjectedIntlProps &
   RouteComponentProps<any>;
 
-  interface State {
-    showMore: boolean;
-    resourceNames: {
-      [resourceIdentifier: string]: React.ReactNode;
-    };
-  }
+interface State {
+  showMore: boolean;
+  resourceNames: {
+    [resourceIdentifier: string]: React.ReactNode;
+  };
+}
 
 class HistoryEventCard extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -341,7 +342,7 @@ class HistoryEventCard extends React.Component<Props, State> {
         </Row>
         <Row style={{padding: '15px 0px 0px', fontWeight: 'bold',}} className="timed-footer text-left">
           <span>
-            <Icon type="clock-circle-o" style={{paddingRight: '5px'}}/>
+            <ClockCircleOutlined style={{paddingRight: '5px'}} />
             <FormattedMessage
               {...{...messages.date, values: {
                 day: moment(events[0].timestamp).format("Do"),

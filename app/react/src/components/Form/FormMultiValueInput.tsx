@@ -4,7 +4,7 @@ import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { Input } from 'antd';
 import { InputProps } from 'antd/lib/input/Input';
 import { FormItemProps } from 'antd/lib/form/FormItem';
-import { TooltipProps } from 'antd/lib/tooltip';
+import { TooltipPropsWithTitle } from 'antd/lib/tooltip';
 
 import FormFieldWrapper, {
   FormFieldWrapperProps,
@@ -15,7 +15,7 @@ export interface FormMultiInputProps {
   validate?: Validator | Validator[];
   formItemProps?: FormItemProps;
   inputProps?: InputProps;
-  helpToolTipProps?: TooltipProps;
+  helpToolTipProps?: TooltipPropsWithTitle;
   values: string[];
   handleClickOnRemove: (key: string) => void;
   handleClickOnItem: (key: string) => void;

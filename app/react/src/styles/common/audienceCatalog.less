@@ -1,69 +1,72 @@
 .audience-catalog {
-  
-      .audience-selection-notice {
-        margin-bottom: 10px;
-        font-style: italic;
+  button {
+    height: 40px;
+  }
+
+  .audience-selection-notice {
+    margin-bottom: 10px;
+    font-style: italic;
+  }
+
+  .action-button {
+    color: @info-color;
+  }
+
+  .selected-audience-services-container {
+    background-color: #ffffff;
+    max-height: 300px;
+    border: 1px solid #e0e1e1;
+    border-bottom: none;
+    border-radius: 3px 3px 0px 0px;
+    overflow: auto;
+    ::-webkit-scrollbar {
+      width: 0px !important;
+      background: transparent; /* make scrollbar transparent */
+    }
+
+    .audience-service-item {
+      width: 100%;
+      padding: 2px 0px 2px 7px;
+      &:hover {
+        background-color: #ebeff2;
       }
 
-      .action-button {
-        color: @info-color;
+      .mcs-icon {
+        margin-right: 7px;
       }
-  
-      .selected-audience-services-container {
-        background-color: #FFFFFF;
-        max-height: 300px;
-        border: 1px solid #E0E1E1;
-        border-bottom: none;
-        border-radius: 3px 3px 0px 0px;
-        overflow: auto;
-        ::-webkit-scrollbar {
-          width: 0px !important;
-          background: transparent; /* make scrollbar transparent */
-        }
-        
-        .audience-service-item {
-          width: 100%;
-          padding: 2px 0px 2px 7px;
-          &:hover{
-            background-color: #ebeff2;
-          }
-  
-          .mcs-icon {
-            margin-right: 7px;
-          }
-        }
-  
-        .as-category {
-          color: @info-color;
-          font-weight: bold;
-        }
-    
-        .audience-service-subitem {
-          .audience-service-item;
-          padding-left: 30px;
-        }
-    
-        .remove-button{
-          float: right
-        }
-      }
-      i.mcs-check {
-        color: @success-color;
-      }
-      i.mcs-close-big {
-        color: @error-color;
-      }
-      .checkbox-location-section{
-        padding-bottom: 1.8em;
-      }
-      .label-col{
-        text-align: right;
-        padding-right: 4.16%;
-      }
-      .field-tooltip{
-        text-align-last: left;
-        padding-left: 2%;
-      }
+    }
+
+    .as-category {
+      color: @info-color;
+      font-weight: bold;
+    }
+
+    .audience-service-subitem {
+      .audience-service-item;
+      padding-left: 30px;
+    }
+
+    .remove-button {
+      float: right;
+    }
+  }
+  i.mcs-check {
+    color: @success-color;
+  }
+  i.mcs-close-big {
+    color: @error-color;
+  }
+  .checkbox-location-section {
+    padding-bottom: 1.8em;
+  }
+  .label-col {
+    text-align: right;
+    padding-right: 4.16%;
+  }
+  .field-tooltip {
+    text-align-last: left;
+    padding-left: 2%;
+  }
 }
 
 .mcs-popover-audience {

@@ -4,7 +4,8 @@ import {
   AdInfoResource,
 } from '../../../../../models/campaign/display';
 import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
-import { Button, Dropdown, Icon, message, Menu, Modal } from 'antd';
+import { Button, Dropdown, message, Menu, Modal } from 'antd';
+import { EllipsisOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import messages from '../messages';
 import { withRouter, RouteComponentProps } from 'react-router';
@@ -12,7 +13,6 @@ import { compose } from 'recompose';
 import log from '../../../../../utils/Logger';
 import modalMessages from '../../../../../common/messages/modalMessages';
 import { generateCsvData, ExportType } from './snippetExport';
-import { ClickParam } from 'antd/lib/menu';
 import { injectDrawer } from '../../../../../components/Drawer';
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import ResourceTimelinePage, {
@@ -38,7 +38,7 @@ class AdServingActionBar extends React.Component<Props> {
   @lazyInject(TYPES.IDisplayCampaignService)
   private _displayCampaignService: IDisplayCampaignService;
 
-  getSnippet = (type: ClickParam) => {
+  getSnippet = (type: any) => {
     const {
       campaign,
       intl: { formatMessage },
@@ -92,7 +92,7 @@ class AdServingActionBar extends React.Component<Props> {
       Modal.confirm({
         title: formatMessage(modalMessages.archiveCampaignConfirm),
         content: formatMessage(modalMessages.archiveCampaignMessage),
-        iconType: 'exclamation-circle',
+        icon: <ExclamationCircleOutlined />,
         okText: formatMessage(modalMessages.confirm),
         cancelText: formatMessage(modalMessages.cancel),
         onOk() {
@@ -251,7 +251,7 @@ class AdServingActionBar extends React.Component<Props> {
 
         <Dropdown overlay={menu} trigger={['click']}>
           <Button>
-            <Icon type="ellipsis" />
+            <EllipsisOutlined />
           </Button>
         </Dropdown>
       </Actionbar>

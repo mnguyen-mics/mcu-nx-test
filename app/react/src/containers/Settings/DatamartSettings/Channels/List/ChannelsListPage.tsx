@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Row, Button, Layout, Icon, Modal, Menu, Dropdown } from 'antd';
+import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { Row, Button, Layout, Modal, Menu, Dropdown } from 'antd';
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import injectNotifications, {
@@ -365,7 +366,7 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
     } = this.props;
 
     Modal.confirm({
-      iconType: 'exclamation-circle',
+      icon: <ExclamationCircleOutlined />,
       title: formatMessage(messages.deleteChannelModalTitle),
       okText: formatMessage(messages.deleteChannelModalOk),
       cancelText: formatMessage(messages.deleteChannelModalCancel),
@@ -481,7 +482,7 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
       <Dropdown overlay={menu} trigger={['click']}>
         <Button type="primary">
           <FormattedMessage {...messages.newChannel} />
-          <Icon type="down" />
+          <DownOutlined />
         </Button>
       </Dropdown>
     );
@@ -500,7 +501,7 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
       displayElement: (
         <div>
           <FormattedMessage {...messages.channelType} />
-          <Icon type="down" />
+          <DownOutlined />
         </div>
       ),
       selectedItems: channelTypeItems.filter(channelTypeItem =>

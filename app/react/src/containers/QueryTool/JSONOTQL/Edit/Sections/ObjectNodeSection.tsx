@@ -167,7 +167,7 @@ class ObjectNodeSection extends React.Component<Props> {
                       {
                         value: 'AT_MOST',
                         title: formatMessage(frequencyModeMessageMap.AT_MOST),
-                        disabled: true,
+                        // disabled: true,
                       },
                     ]}
                   />

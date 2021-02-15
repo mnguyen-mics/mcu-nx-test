@@ -57,11 +57,11 @@ function ResourceByKeywordSelector<T extends SelectableResource, AdditionalConte
         (key: string) => {
         return {
           key: key,
-          label: key
+          value: key
         }
       })
       this.state = {
-        value: value,
+        value: value as LabeledValue[],
       resourcesList: [],
         fetching: false,
           allOptionsSelected: false
@@ -85,7 +85,7 @@ handleSearch = (keyword: string) => {
 
 searchInPreviousFetch(keyword: string, fetchedResourcesList: LabeledValue[]) {
   this.setState({
-    resourcesList: fetchedResourcesList.filter(labeledValue => labeledValue.key.toLowerCase().includes(keyword.toLowerCase()))
+    resourcesList: fetchedResourcesList.filter(labeledValue => labeledValue.key && labeledValue.key.toLowerCase().includes(keyword.toLowerCase()))
   });
 }
 
@@ -103,9 +103,9 @@ fetchListMethod(keyword: string) {
       const result = res.filter(re => re.id).map(r => ({ key: r.id, label: <NameDisplay {...r} showId={showId} /> }));
 
       this.setState({
-        resourcesList: result,
+        resourcesList: result as LabeledValue[],
         fetching: false,
-        fetchedResourcesList: result,
+        fetchedResourcesList: result as LabeledValue[],
         fetchedKeyword: keyword
       })
     }).catch(e => {
@@ -150,7 +150,7 @@ render() {
   const getPopupContainer = () => document.getElementById(anchorId)!
   const alwaysTrue = () => true
   return (<Select
-    mode={multiselect ? "tags" : "default"}
+    mode={multiselect ? "tags" : undefined}
     tokenSeparators={[',', '	']}
     showSearch={true}
     labelInValue={true}
@@ -166,7 +166,7 @@ render() {
     filterOption={alwaysTrue}
   >
     {resourcesList.length > 1 && displaySelectAll && <Select.Option value={selectAllOptionValue} key={selectAllOptionValue}>{selectAllOptionValue}</Select.Option>}
-    {resourcesList.map((item: LabeledValue, index: number) => <Select.Option value={item.key} key={index.toString()}>{item.label}</Select.Option>)}
+    {resourcesList.map((item: LabeledValue, index: number) => <Select.Option value={item.key as React.ReactText} key={index.toString()}>{item.label}</Select.Option>)}
   </Select>);
 }
   }

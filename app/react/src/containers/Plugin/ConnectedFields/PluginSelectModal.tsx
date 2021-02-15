@@ -2,11 +2,11 @@ import * as React from 'react';
 import { Modal, Button, Select } from 'antd';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import messages from '../messages';
-import { OptionProps } from 'antd/lib/select';
 import { Button as McsButton, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IPluginService } from '../../../services/PluginService';
+import { DefaultOptionProps } from '../../../components/Form/FormSelect/DefaultSelect';
 
 const Option = Select.Option;
 
@@ -28,8 +28,8 @@ interface State {
   //   elementName: string;
   //   versionName: string;
   // };
-  elements: OptionProps[];
-  pluginVersions: OptionProps[];
+  elements: DefaultOptionProps[];
+  pluginVersions: DefaultOptionProps[];
   loading: boolean;
 }
 
@@ -346,8 +346,8 @@ class PluginSelectModal extends React.Component<Props, State> {
                 onSelect={this.onIdChange}
                 value={this.state.id}
               >
-                {elements.map(({ disabled, value, title, key }) => (
-                  <Option {...{ disabled, value, title }} key={key}>
+                {elements.map(({ value, title, key }) => (
+                  <Option {...{ value, title }} key={key}>
                     {title}
                   </Option>
                 ))}
@@ -363,8 +363,8 @@ class PluginSelectModal extends React.Component<Props, State> {
                 onChange={this.onVersionChange}
                 value={this.state.selectedVersion}
               >
-                {pluginVersions.map(({ disabled, value, title, key }) => (
-                  <Option {...{ disabled, value, title }} key={key}>
+                {pluginVersions.map(({ value, title, key }) => (
+                  <Option {...{ value, title }} key={key}>
                     {title}
                   </Option>
                 ))}

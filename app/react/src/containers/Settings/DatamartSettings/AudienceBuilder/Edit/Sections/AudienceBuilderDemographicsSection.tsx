@@ -19,6 +19,7 @@ import { ReduxFormChangeProps } from "../../../../../../utils/FormHelper";
 import AudienceFeatureSelector, {
   AudienceFeatureSelectorProps,
 } from '../../../../../Audience/AudienceBuilder/QueryFragmentBuilders/AudienceFeatureSelector';
+import { InfoCircleFilled } from '@ant-design/icons';
 
 export interface DemographicsFormSectionProps extends ReduxFormChangeProps { }
 
@@ -114,7 +115,7 @@ class AudienceBuilderDemographicsSection extends React.Component<Props> {
 
         <RelatedRecords
           emptyOption={{
-            genericIconProps: { type: 'info-circle', className: 'mcs-audienceBuilderSettings-records', theme: 'filled' },
+            genericIconProps: <InfoCircleFilled className="mcs-audienceBuilderSettings-records" />,
             message: formatMessage(messages.audienceBuilderSectionDemographicsSubtitle),
           }}
         >

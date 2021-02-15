@@ -4,7 +4,7 @@ import { message } from 'antd';
 
 import AudiencePartitionForm from './AudiencePartitionForm';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, StaticContext, withRouter } from 'react-router';
 import { Loading } from '../../../../../components/index';
 import {
   AudiencePartitionFormData,
@@ -55,7 +55,7 @@ interface AudiencePartitionPageState {
 type JoinedProps = InjectedWorkspaceProps &
   InjectedIntlProps &
   InjectedNotificationProps &
-  RouteComponentProps<{ organisationId: string; partitionId: string }>;
+  RouteComponentProps<{ organisationId: string; partitionId: string }, StaticContext, { from?: string }>;
 
 class AudiencePartitionPage extends React.Component<
   JoinedProps,

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { isEmpty } from 'lodash';
 import FormFieldWrapper from '../../../components/Form/FormFieldWrapper';
 import { FormItemProps } from 'antd/lib/form';
-import { TooltipProps } from 'antd/lib/tooltip';
+import { TooltipPropsWithTitle } from 'antd/lib/tooltip';
 import { WrappedFieldProps } from 'redux-form';
 import PluginSelectModal from './PluginSelectModal';
 
@@ -13,7 +13,7 @@ interface FormAdLayoutProps {
     pluginVersionId: string;
     organisationId: string;
   };
-  helpToolTipProps: TooltipProps;
+  helpToolTipProps: TooltipPropsWithTitle;
 }
 
 type Props = FormAdLayoutProps & WrappedFieldProps;

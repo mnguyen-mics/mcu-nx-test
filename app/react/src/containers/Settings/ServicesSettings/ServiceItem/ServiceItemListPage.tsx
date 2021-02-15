@@ -319,7 +319,7 @@ class ServiceItemListPage extends React.Component<Props, State> {
               </Breadcrumb.Item>
             </Breadcrumb>
           </Row>
-          <Row className="mcs-table-container mcs-settings-card">
+          <Row className="mcs-table-container mcs-settings-card" style={{display: "flex"}}>
             <Col span={6}>
               <InfiniteList
                 fetchData={this.fetchData}

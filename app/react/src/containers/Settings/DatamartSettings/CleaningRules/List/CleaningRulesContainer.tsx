@@ -13,7 +13,8 @@ import {
   getNextCleaningRuleStatus,
   UserProfileCleaningRuleResource,
 } from '../../../../../models/cleaningRules/CleaningRules';
-import { Layout, Row, Icon, Modal, Button } from 'antd';
+import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { Layout, Row, Modal, Button } from 'antd';
 import 'moment-duration-format';
 import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
 import injectNotifications, {
@@ -140,7 +141,7 @@ class CleaningRulesContainer extends React.Component<Props, State> {
     } = this.props;
 
     Modal.confirm({
-      iconType: 'exclamation-circle',
+      icon: <ExclamationCircleOutlined />,
       title: formatMessage(messages.deleteCleaningRuleModalTitle),
       okText: formatMessage(messages.deleteCleaningRuleModalOk),
       cancelText: formatMessage(messages.deleteCleaningRuleModalCancel),
@@ -189,7 +190,7 @@ class CleaningRulesContainer extends React.Component<Props, State> {
     const contentText = this.getUpdateStatusModalText(record.status);
 
     Modal.confirm({
-      iconType: 'exclamation-circle',
+      icon: <ExclamationCircleOutlined />,
       title: formatMessage(messages.updateStatusModalTitle),
       content: contentText,
       okText: formatMessage(messages.updateStatusModalConfirm),
@@ -239,7 +240,7 @@ class CleaningRulesContainer extends React.Component<Props, State> {
         displayElement: (
           <div>
             <FormattedMessage {...messages.datamartFilter} />
-            <Icon type="down" />
+            <DownOutlined />
           </div>
         ),
         selectedItems: filter.datamartId

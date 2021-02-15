@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { ObjectLikeTypeInfoResource } from '../../../../../../models/datamart/graphdb/RuntimeSchema';
-import { Button, Form } from 'antd';
+import { Button } from 'antd';
+import { Form } from '@ant-design/compatible';
 import {
   ConfigProps,
   reduxForm,
@@ -57,7 +58,7 @@ class FieldNodeFormWrapper extends React.Component<Props, any> {
     return (
       <Form
         className="edit-layout ant-layout"
-        onSubmit={handleSubmit as any}
+        onSubmit={handleSubmit}
         layout="vertical"
       >
         <FieldNodeForm

@@ -3,7 +3,8 @@ import {
   FormLayoutActionbar,
   ScrollspySider,
 } from '../../../../../components/Layout';
-import { Layout, Form } from 'antd';
+import { Layout } from 'antd';
+import { Form } from '@ant-design/compatible';
 import { FormLayoutActionbarProps } from '../../../../../components/Layout/FormLayoutActionbar';
 import messages from '../messages';
 import { ProcessingFormData } from '../domain';
@@ -19,7 +20,7 @@ import GeneralFormSection from './Sections/GeneralFormSection';
 import { Omit } from '../../../../../utils/Types';
 import { SidebarWrapperProps } from '../../../../../components/Layout/ScrollspySider';
 
-const Content = Layout.Content as React.ComponentClass<
+const Content = Layout.Content as unknown as React.ComponentClass<
   BasicProps & { id: string }
 >;
 

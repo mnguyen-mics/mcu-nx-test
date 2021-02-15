@@ -224,7 +224,7 @@ class Monitoring extends React.Component<Props, State> {
         <div className="ant-layout">
           { !isLoading ? <Content className="mcs-content-container">
             {monitoringData.isUserFound ? (
-              <Row>
+              <div>
                 <TimelineHeader
                   dataSource={monitoringData}
                   isLoading={isLoading}
@@ -284,7 +284,7 @@ class Monitoring extends React.Component<Props, State> {
                     />
                   </Col>
                 </Row>
-              </Row>
+              </div>
             ) : (
               <EmptyTableView
                 iconType="user"

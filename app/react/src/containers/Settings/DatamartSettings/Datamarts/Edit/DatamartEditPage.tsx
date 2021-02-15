@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps, StaticContext } from 'react-router';
 import { message } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 
@@ -33,7 +33,7 @@ interface State {
 
 type Props = InjectedIntlProps &
   InjectedNotificationProps &
-  RouteComponentProps<EditDatamartRouteMatchParam> &
+  RouteComponentProps<EditDatamartRouteMatchParam, StaticContext, { from?: string, datamartId?: string }> &
   InjectedDatamartProps;
 
 class DatamartEditPage extends React.Component<Props, State> {
@@ -60,7 +60,7 @@ class DatamartEditPage extends React.Component<Props, State> {
       location.state && location.state.datamartId;
 
     const datamartId =
-      datamartIdFromURLParam || datamartIdFromLocState;
+      datamartIdFromLocState || datamartIdFromURLParam;
 
     return datamartId;
   }
@@ -197,6 +197,7 @@ class DatamartEditPage extends React.Component<Props, State> {
       : history.push(defaultRedirectUrl);
   };
 
+  
   render() {
     const {
       match: { params: { organisationId } },

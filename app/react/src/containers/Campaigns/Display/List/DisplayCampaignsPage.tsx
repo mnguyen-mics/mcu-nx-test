@@ -47,6 +47,7 @@ import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import ReportService from '../../../../services/ReportService';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 export interface MapDispatchToProps {
   labels: Label[];
@@ -74,6 +75,7 @@ type Props = InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class DisplayCampaignsPage extends React.Component<Props, State> {
+  _isMounted = false;
   @lazyInject(TYPES.IDisplayCampaignFormService)
   private _displayCampaignFormService: IDisplayCampaignFormService;
 
@@ -105,6 +107,7 @@ class DisplayCampaignsPage extends React.Component<Props, State> {
       },
     } = this.props;
 
+    this._isMounted = true;
     if (!isSearchValid(search, DISPLAY_SEARCH_SETTINGS)) {
       history.replace({
         pathname: pathname,
@@ -151,6 +154,10 @@ class DisplayCampaignsPage extends React.Component<Props, State> {
         this.loadDisplayCampaignsDataSource(organisationId, filter);
       }
     }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   loadDisplayCampaignsDataSource = (
@@ -348,7 +355,7 @@ class DisplayCampaignsPage extends React.Component<Props, State> {
     Modal.confirm({
       title: intl.formatMessage(messages.confirmArchiveModalTitle),
       content: intl.formatMessage(messages.confirmArchiveModalContent),
-      iconType: 'exclamation-circle',
+      icon: <ExclamationCircleOutlined />,
       okText: intl.formatMessage(messages.confirmArchiveModalOk),
       cancelText: intl.formatMessage(messages.confirmArchiveModalCancel),
       onOk() {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps, StaticContext } from 'react-router';
 import { message, Modal } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import * as FeatureSelectors from '../../../../../redux/Features/selectors';
@@ -49,7 +49,7 @@ interface MapStateToProps {
 
 type Props = InjectedIntlProps &
   InjectedNotificationProps &
-  RouteComponentProps<EditMobileAppRouteMatchParam> &
+  RouteComponentProps<EditMobileAppRouteMatchParam, StaticContext, { from?: string, mobileApplicationId?: string }> &
   MapStateToProps &
   InjectedDatamartProps;
 

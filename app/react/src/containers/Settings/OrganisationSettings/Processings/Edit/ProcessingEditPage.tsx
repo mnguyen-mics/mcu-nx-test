@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps, StaticContext } from 'react-router';
 import { Loading } from '../../../../../components';
 import { Layout } from 'antd';
 import { FormLayoutActionbar } from '../../../../../components/Layout';
@@ -25,7 +25,7 @@ export interface EditProcessingRouteMatchParams {
 
 type Props = InjectedIntlProps &
   InjectedNotificationProps &
-  RouteComponentProps<EditProcessingRouteMatchParams>;
+  RouteComponentProps<EditProcessingRouteMatchParams, StaticContext, { from?: string }>;
 
 interface State {
   loading: boolean;

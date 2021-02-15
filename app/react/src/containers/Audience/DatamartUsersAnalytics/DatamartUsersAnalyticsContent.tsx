@@ -328,7 +328,7 @@ class DatamartUsersAnalyticsContent extends React.Component<
         isDraggable={false}
         isResizable={false}
         measureBeforeMount={false}
-        resizeHandle={<div />}
+        // resizeHandle={<div />}
       >
         {generatedDom}
       </ResponsiveGridLayout>

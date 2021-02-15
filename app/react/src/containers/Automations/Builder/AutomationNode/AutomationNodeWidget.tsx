@@ -18,7 +18,7 @@ import {
   generateNodeProperties,
   StorylineNodeModel,
 } from '../domain';
-import { Icon, Tooltip } from 'antd';
+import { Tooltip } from 'antd';
 import {
   isScenarioNodeShape,
   AutomationFormDataType,
@@ -652,9 +652,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     const color = '#ffffff';
     const borderColor = node.getColor();
 
-    const icon = node.iconAnt ? (
-      <Icon type={node.iconAnt} className="available-node-icon-gyph" />
-    ) : (
+    const icon = node.iconAnt ? node.iconAnt : (
       <McsIcon
         type={node.icon as McsIconType}
         className="available-node-icon-gyph"

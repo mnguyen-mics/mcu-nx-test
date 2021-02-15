@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { connect } from 'react-redux';
+import { connect } from 'react-redux'
+import React, { useEffect, useState } from "react";
 import { ActionFunctionAny, ActionMeta } from 'redux-actions';
 import { compose } from 'recompose';
 import { withRouter, Link, RouteComponentProps } from 'react-router-dom';
@@ -9,14 +9,16 @@ import {
   injectIntl,
   InjectedIntlProps,
 } from 'react-intl';
-import { Form, Input, Button, Alert, Switch, Divider } from 'antd';
-import { FormComponentProps } from 'antd/lib/form';
+import { Input, Button, Form, Alert, Switch, Divider } from 'antd';
+import { FormComponentProps } from '@ant-design/compatible/lib/form';
 import log from '../../../utils/Logger';
 import { logIn } from '../../../redux/Login/actions';
 import { Credentials } from '../../../services/AuthService';
 import { UserProfileResource } from '../../../models/directory/UserProfileResource';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
 import LocalStorage from '../../../services/LocalStorage';
+import { StaticContext } from 'react-router';
+import { LocationDescriptorObject } from 'history';
 
 const FormItem = Form.Item;
 
@@ -61,10 +63,6 @@ const messages = defineMessages({
   },
 });
 
-interface State {
-  isRequesting: boolean;
-}
-
 interface MapStateToProps {
   hasError: boolean;
   error: {
@@ -86,17 +84,13 @@ type Props = MapStateToProps &
   MapDispatchToProps &
   InjectedIntlProps &
   FormComponentProps &
-  RouteComponentProps<{}>;
+  RouteComponentProps<{}, StaticContext, { from?: string}>;
 
-class Login extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      isRequesting: false,
-    };
-  }
+const Login = (props: Props) => {
+  const [isRequesting, setIsRequesting] = useState(false);
+  const [form] = Form.useForm();
 
-  componentDidMount() {
+  useEffect(() => {
     let loggedIn = false;
     window.addEventListener('storage', (e: StorageEvent) => {
       const loginEvent = 
@@ -104,28 +98,24 @@ class Login extends React.Component<Props, State> {
           e.storageArea.isLogged &&
           e.storageArea.isLogged === 'true';
       if (!!loginEvent && !loggedIn) {
-        this.handleSubmit(e);
+        handleSubmit(e);
         loggedIn = true;
       }
     });
-  }
+  }, [])
 
-  handleSubmit = (e: React.FormEvent<any> | StorageEvent) => {
-    e.preventDefault();
-    const { from } = this.props.location.state || { from: { pathname: '/' } };
-    const { match } = this.props;
-
+  const handleSubmit = (e: any) => {
+    const defaultRedirect: LocationDescriptorObject = { pathname: '/' }
+    const from = props.location.state && props.location.state.from || defaultRedirect;
+    const { match } = props;
     const redirect = () => {
-      log.debug(`Redirect from ${match.url} to ${from.pathname}`);
-      this.props.history.push(from);
+      log.debug(`Redirect from ${match.url} to ${from}`);
+      props.history.push("/");
     };
 
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        this.setState({
-          isRequesting: true,
-        });
-        this.props.logInRequest(
+  form.validateFields().then((values) => {
+        setIsRequesting(true);
+        props.logInRequest(
           {
             email: values.email,
             password: values.password,
@@ -135,20 +125,15 @@ class Login extends React.Component<Props, State> {
         );
         // logInRequest is not a Promise so
         // there is no.then() and no .catch()
-      }
-    });
+    })
   };
 
-  render() {
     const {
-      form: { getFieldDecorator },
       hasError,
       error,
       intl,
       connectedUser,
-    } = this.props;
-
-    const { isRequesting } = this.state;
+    } = props;
 
     const getRememberMe = () => {
       const rememberMe = LocalStorage.getItem('remember_me');
@@ -180,39 +165,23 @@ class Login extends React.Component<Props, State> {
             <img alt="mics-logo" className="login-logo" src={'/react/src/assets/images/logo.png'} />
           </div>
           <div className="login-frame">
-            <Form onSubmit={this.handleSubmit}>
+            <Form onFinish={handleSubmit} form={form} >
               {errorMsg}
               <div className="login-password-text">
                 <FormattedMessage {...messages.emailText} />
               </div>
-              <FormItem>
-                {getFieldDecorator('email', {
-                  rules: [
-                    {
-                      required: true,
-                      message: intl.formatMessage(messages.emailRequired),
-                    },
-                  ],
-                })(<Input className="login-input" />)}
+              <FormItem name="email" rules={[{ required: true, message: intl.formatMessage(messages.emailRequired)}]}>
+                <Input className="login-input" />
               </FormItem>
               <div className="login-password-text">
                 <FormattedMessage {...messages.passwordText} />
               </div>
-              <FormItem>
-                {getFieldDecorator('password', {
-                  rules: [
-                    {
-                      required: true,
-                      message: intl.formatMessage(messages.passwordRequired),
-                    },
-                  ],
-                })(
-                  <Input
-                    type="password"
-                    className="login-input"
-                    autoComplete="off"
-                  />,
-                )}
+              <FormItem name="password" rules={[{ required: true, message: intl.formatMessage(messages.passwordRequired)}]}>
+                <Input
+                  type="password"
+                  className="login-input"
+                  autoComplete="off"
+                />
               </FormItem>
               <FormItem>
                 <Button
@@ -227,11 +196,8 @@ class Login extends React.Component<Props, State> {
                 </Button>
               </FormItem>
               <Divider />
-              <FormItem>
-                {getFieldDecorator('remember', {
-                  valuePropName: 'checked',
-                  initialValue: getRememberMe(),
-                })(<Switch size="small" />)}
+              <FormItem initialValue={getRememberMe()}>
+                <Switch size="small" />
                 <div className="login-text-remember-me">
                   <FormattedMessage {...messages.rememberMe} />
                 </div>
@@ -246,7 +212,6 @@ class Login extends React.Component<Props, State> {
       </div>
     );
   }
-}
 
 const mapStateToProps = (state: MicsReduxState) => ({
   hasError: state.login.hasError,
@@ -258,9 +223,9 @@ const mapDispatchToProps = {
   logInRequest: logIn.request,
 };
 
-export default compose(
+
+export default compose<Props, {}>(
   injectIntl,
   withRouter,
   connect(mapStateToProps, mapDispatchToProps),
-  Form.create(),
 )(Login);

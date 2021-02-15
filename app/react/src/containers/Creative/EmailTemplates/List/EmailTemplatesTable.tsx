@@ -22,6 +22,7 @@ import {
   ActionsColumnDefinition,
 } from '../../../../components/TableView/TableView';
 import { EmptyTableView } from '@mediarithmics-private/mcs-components-library';
+
 interface EmailTemplatesTableProps {
   rowSelection: ExtendedTableRowSelection;
   isLoadingEmailTemplates: boolean;
@@ -110,9 +111,10 @@ class EmailTemplatesTable extends React.Component<JoinedProps, State> {
       current: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalEmailTemplates,
-      onChange: (page: number) => {
+      onChange: (page: number, size: number) => {
         this.updateLocationSearch({
           currentPage: page,
+          pageSize: size
         });
         if (
           rowSelection &&

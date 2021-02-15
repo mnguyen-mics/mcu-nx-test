@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { Layout, Icon } from 'antd';
+import { BarsOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
+import { Layout } from 'antd';
 import { connect } from 'react-redux';
 import { push as PushMenu, State } from 'react-burger-menu';
 import { Row, Col } from 'antd/lib/grid';
@@ -124,12 +125,12 @@ class SettingLayout extends React.Component<Props, SettingLayoutState> {
       <Row>
         <ColAny span={this.state.left} className="left" onMouseEnter={resizeBox('left')} onMouseLeave={resizeBox()} >
           <Button onClick={orgSelector} style={{ width: '100%' }}>
-            <span><Icon type="bars" /> <span className={this.state.left > 12 && !this.props.collapsed ? 'visible' : 'hidden'}><FormattedMessage {...messages.switchOrg} /></span></span>
+            <span><BarsOutlined /> <span className={this.state.left > 12 && !this.props.collapsed ? 'visible' : 'hidden'}><FormattedMessage {...messages.switchOrg} /></span></span>
           </Button>
         </ColAny>
         <ColAny span={this.state.right} className="right" onMouseEnter={resizeBox('right')} onMouseLeave={resizeBox()}>
           <Button onClick={onCollapse} style={{ width: '100%' }}>
-            {this.props.collapsed ? <Icon type="right" /> : <span><Icon type="left" /> <span className={this.state.right > 12 ? 'visible' : 'hidden'}><FormattedMessage {...messages.collapse} /></span></span>}
+            {this.props.collapsed ? <RightOutlined /> : <span><LeftOutlined /> <span className={this.state.right > 12 ? 'visible' : 'hidden'}><FormattedMessage {...messages.collapse} /></span></span>}
           </Button>
         </ColAny>
       </Row>
@@ -137,7 +138,7 @@ class SettingLayout extends React.Component<Props, SettingLayoutState> {
       <Row>
         <Col span={24} className="all">
           <Button onClick={onCollapse} style={{ width: '100%' }} onMouseEnter={resizeBox('right')} onMouseLeave={resizeBox()}>
-            {this.props.collapsed ? <Icon type="right" /> : <span><Icon type="left" /> <span className={this.state.right > 12 ? 'visible' : 'hidden'}><FormattedMessage {...messages.collapse} /></span></span>}
+            {this.props.collapsed ? <RightOutlined /> : <span><LeftOutlined /> <span className={this.state.right > 12 ? 'visible' : 'hidden'}><FormattedMessage {...messages.collapse} /></span></span>}
           </Button>
         </Col>
       </Row>
@@ -150,13 +151,15 @@ class SettingLayout extends React.Component<Props, SettingLayoutState> {
       this.setState(prevState => { return { ...prevState, isOpen: !prevState.isOpen }});
     };
 
-    return <Row>
-    <Col span={24} className="all">
-      <Button onClick={orgSelector} style={{ width: '100%' }}>
-        <span><Icon type="bars" /> <span><FormattedMessage {...messages.switchOrg} /></span></span>
-      </Button>
-    </Col>
-  </Row>
+    return (
+      <Row>
+      <Col span={24} className="all">
+        <Button onClick={orgSelector} style={{ width: '100%' }}>
+          <span><BarsOutlined /> <span><FormattedMessage {...messages.switchOrg} /></span></span>
+        </Button>
+      </Col>
+    </Row>
+    );
   }
 
   render() {

@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { TreeSelect, Col, Spin } from 'antd';
 import { groupBy } from 'lodash';
-import { TreeNode } from 'antd/lib/tree-select';
 import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import FormFieldWrapper, { FormFieldWrapperProps } from './FormFieldWrapper';
-import { TooltipProps } from 'antd/lib/tooltip';
+import { TooltipPropsWithTitle } from 'antd/lib/tooltip';
 import cuid from 'cuid';
+import { DataNode } from 'antd/lib/tree';
 
 export interface TreeData {
   key?: string;
@@ -26,7 +26,7 @@ export interface TreeSelectWithListProps {
   placeholder?: string;
   dataSource: TreeData[];
   loading?: boolean;
-  tooltipProps: TooltipProps;
+  tooltipProps: TooltipPropsWithTitle;
   value: string[];
   handleClickOnRemove: (key: string) => void;
   handleOnChange: (checkedKeys: string[]) => void;
@@ -84,19 +84,18 @@ class TreeSelectWithList extends React.Component<Props, State> {
     this.setState({ treeLeavesCache: treeLeavesCache });
   };
 
-  getTreeData = (): TreeNode[] => {
+  getTreeData = (): DataNode[] => {
     const { dataSource } = this.props;
 
-    const getTreeDataBase = (treeData: TreeData): TreeNode => {
+    const getTreeDataBase = (treeData: TreeData): DataNode => {
       return {
-        value: treeData.value,
         key: treeData.value,
         title: treeData.label,
         children: treeData.children
           ? treeData.children.map(getTreeDataBase)
           : undefined,
         disabled: treeData.disabled,
-        disableCheckBox: treeData.disableCheckbox,
+        disableCheckbox: treeData.disableCheckbox,
       };
     };
 
@@ -174,6 +173,8 @@ class TreeSelectWithList extends React.Component<Props, State> {
 
     const getRef = () => document.getElementById(this.id)!;
 
+    const placeholderF = () => placeholder
+
     const flexAlign = value.length > 0 ? 'top' : 'middle';
     return (
       <FormFieldWrapper
@@ -209,7 +210,7 @@ class TreeSelectWithList extends React.Component<Props, State> {
               treeCheckable={true}
               maxTagCount={0}
               getPopupContainer={getRef}
-              maxTagPlaceholder={placeholder}
+              maxTagPlaceholder={placeholderF}
               dropdownStyle={{ maxHeight: '200px', overflowY: 'auto' }}
             />
           </div>

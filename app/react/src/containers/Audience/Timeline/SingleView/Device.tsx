@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Row, Col, Icon } from 'antd';
+import { Row, Col } from 'antd';
+import { Icon } from '@ant-design/compatible';
 import { Device, FormFactor } from '../../../../models/timeline/timeline';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 

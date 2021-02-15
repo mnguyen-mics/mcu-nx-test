@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Button, Icon, Menu, Modal, message } from 'antd';
+import { EditOutlined, EllipsisOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { Button, Menu, Modal, message } from 'antd';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
@@ -14,7 +15,6 @@ import {
   EMAIL_DASHBOARD_SEARCH_SETTINGS,
 } from './constants';
 import { EmailCampaignResource } from '../../../../models/campaign/email';
-import { ClickParam } from 'antd/lib/menu';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
@@ -156,7 +156,7 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
       Modal.confirm({
         title: formatMessage(modalMessages.archiveCampaignConfirm),
         content: formatMessage(modalMessages.archiveCampaignMessage),
-        iconType: 'exclamation-circle',
+        icon: <ExclamationCircleOutlined />,
         okText: formatMessage(modalMessages.confirm),
         cancelText: formatMessage(modalMessages.cancel),
         onOk() {
@@ -165,7 +165,7 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
       });
     };
 
-    const onClick = (param: ClickParam) => {
+    const onClick = (param: any) => {
       const {
         match: {
           params: { organisationId, campaignId },
@@ -282,7 +282,7 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
     Modal.warning({
       title: formatMessage(modalMessages.exportIsRunningTitle),
       content: formatMessage(modalMessages.exportIsRunningMessage),
-      iconType: 'exclamation-circle',
+      icon: <ExclamationCircleOutlined />,
       okText: formatMessage(modalMessages.confirm),
       onOk() {
         // closing modal
@@ -328,7 +328,7 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
         </Button>
         <Link to={`/v2/o/${organisationId}/campaigns/email/${campaignId}/edit`}>
           <Button>
-            <Icon type="edit" />
+            <EditOutlined />
             <FormattedMessage
               id="email.campaign.dashboard.actionbar.edit"
               defaultMessage="Edit"
@@ -337,7 +337,7 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
         </Link>
         <Dropdown overlay={menu} trigger={['click']}>
           <Button>
-            <Icon type="ellipsis" />
+            <EllipsisOutlined />
           </Button>
         </Dropdown>
       </Actionbar>

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, StaticContext, withRouter } from 'react-router';
 import { message } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import DisplayCreativeFormLoader from './DisplayCreativeFormLoader';
@@ -24,7 +24,7 @@ interface State {
   creativeName: string;
 }
 
-type Props = RouteComponentProps<EditDisplayCreativeRouteMatchParams> &
+type Props = RouteComponentProps<EditDisplayCreativeRouteMatchParams, StaticContext, { from?: string }> &
   InjectedNotificationProps &
   InjectedIntlProps;
 
@@ -191,7 +191,7 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
     const from = location && location.state && location.state.from;
 
     const breadCrumbToList =
-      from && location.state.from.includes('native')
+      from && from.includes('native')
         ? {
             name: formatMessage(messages.nativeListBreadCrumb),
             path: `/v2/o/${organisationId}/creatives/native`,
@@ -205,7 +205,7 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
       ? formatMessage(messages.creativeEditionBreadCrumb, {
           name: creativeName,
         })
-      : from && location.state.from.includes('native')
+      : from && from.includes('native')
       ? formatMessage(messages.nativeCreationBreadCrumb)
       : formatMessage(messages.creativeCreationBreadCrumb);
 

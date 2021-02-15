@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { TreeSelect } from 'antd';
-import { TreeNode } from 'antd/lib/tree-select';
 import cuid from 'cuid';
 
 export interface TreeDataParent {
@@ -117,7 +116,7 @@ class TreeSelectFilter extends React.Component<TreeSelectFilterProps, State> {
     const { didMount } = this.state;
 
     // We prefix children value with parent value, as value must be unique in all tree
-    const treeData: TreeNode[] = tree.map(parent => {
+    const treeData = tree.map(parent => {
       return {
         value: parent.value,
         title: parent.title,

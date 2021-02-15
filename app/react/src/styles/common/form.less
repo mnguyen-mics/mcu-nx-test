@@ -20,9 +20,16 @@
     display: inline-block;
   }
 
+  .has-error {
+    .ant-select-selector {
+      border: 1px solid @error-color;
+    }
+  }
+
   .menu {
     padding: 20px 0;
     width: 100%;
+    display: block;
 
     .presentation {
       display: flex;
@@ -184,9 +191,29 @@
     margin-bottom: 0;
   }
 
+  .ant-legacy-form-item {
+    margin-bottom: 0;
+  }
+
+  .form-split {
+    display: block;
+    text-align: center;
+    margin: 0;
+  }
+
   .field-label {
-    font-weight: bold;
-    font-size: 0.9em;
+    line-height: 32px;
+    font-variant: normal;
+    list-style: none;
+    text-align: right;
+    line-height: 32px;
+    white-space: nowrap;
+    font-feature-settings: normal;
+    cursor: default !important;
+    touch-action: manipulation;
+    box-sizing: border-box;
+    position: relative;
+    color: rgba(0, 0, 0, 0.65);
   }
 
   .form-input-group {
@@ -305,6 +332,10 @@
     margin: 60px 0 40px;
   }
 
+  .prout {
+    font-size: 25px;
+  }
+
   .form-field-wrapper {
     margin-bottom: 24px;
   }
@@ -337,11 +368,14 @@
     .title {
       font-size: 1.3em;
       font-weight: bold;
+      font-variant: normal;
+      color: rgba(0, 0, 0, 0.65);
     }
 
     .subtitle {
       font-size: 1em;
       color: #7e7e7e;
+      font-variant: normal;
     }
   }
 
@@ -410,8 +444,16 @@
   }
 }
 
+.ant-legacy-form-item {
+  font-size: inherit;
+}
+
 .automation-form {
   .ant-form-item-label label:after {
+    content: none;
+  }
+
+  .ant-legacy-form-item-label label:after {
     content: none;
   }
 }
@@ -556,6 +598,13 @@
   }
 }
 
+.ant-legacy-form-vertical {
+  .form-field-wrapper {
+    .ant-legacy-form-item-label {
+      white-space: initial;
+    }
+  }
+}
 .mics-error-text {
   color: @error-color;
   line-height: 1.524;

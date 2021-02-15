@@ -3,16 +3,16 @@ import { Slider } from 'antd';
 
 // TS Interface
 import { WrappedFieldProps } from 'redux-form';
-import { TooltipProps } from 'antd/lib/tooltip';
+import { TooltipPropsWithTitle } from 'antd/lib/tooltip';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 
 import FormFieldWrapper from './FormFieldWrapper';
-import { SliderProps } from 'antd/lib/slider';
+import { SliderSingleProps } from 'antd/lib/slider';
 
 export interface FormSliderProps {
   formItemProps?: FormItemProps;
-  inputProps?: SliderProps;
-  helpToolTipProps?: TooltipProps;
+  inputProps?: SliderSingleProps;
+  helpToolTipProps?: TooltipPropsWithTitle;
   small?: boolean;
 }
 

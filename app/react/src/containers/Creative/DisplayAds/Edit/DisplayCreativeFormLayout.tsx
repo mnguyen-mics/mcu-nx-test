@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
-import { Layout, Form, Modal } from 'antd';
-
+import { Layout, Modal } from 'antd';
+import { Form } from '@ant-design/compatible';
 import {
   DISPLAY_CREATIVE_FORM,
 } from './domain';
@@ -14,7 +14,7 @@ import { Path } from '@mediarithmics-private/mcs-components-library/lib/componen
 import { BasicProps } from 'antd/lib/layout/layout';
 import { McsFormSection } from '../../../../utils/FormHelper';
 
-const Content = Layout.Content as React.ComponentClass<
+const Content = Layout.Content as unknown as React.ComponentClass<
   BasicProps & { id: string }
   >;
 
@@ -95,7 +95,7 @@ class DisplayCreativeFormLayout extends React.Component<Props> {
 
       return (
         <Layout className="ant-layout-has-sider">
-          <div className="ant-layout-sider" style={{ width: "60%", backgroundColor: 'rgba(0, 0, 0, 0.64)' }}>
+          <div className="ant-layout-sider" style={{ width: "53%", backgroundColor: 'rgba(0, 0, 0, 0.64)' }}>
             <div className="ant-layout-sider-children" style={{  display: 'flex', justifyContent: 'space-between', flexDirection: 'column' }}>
               {renderedLeftSections}
             </div>
@@ -144,7 +144,7 @@ class DisplayCreativeFormLayout extends React.Component<Props> {
       </Layout>
     );
   }
-} 
+}
 
 export default compose<Props, DisplayCreativeFormLayoutProps>(
   injectIntl

@@ -3,13 +3,13 @@ import * as React from 'react';
 import { EditableLogo } from '../../../Logo';
 import { FormFieldWrapper } from '../../../../components/Form';
 import { FormItemProps } from 'antd/lib/form';
-import { TooltipProps } from 'antd/lib/tooltip';
+import { TooltipPropsWithTitle } from 'antd/lib/tooltip';
 import { WrappedFieldProps } from 'redux-form';
 
 export interface LogoInputProps {
   formItemProps?: FormItemProps;
   inputProps?: any;
-  helpToolTipProps?: TooltipProps;
+  helpToolTipProps?: TooltipPropsWithTitle;
 }
 
 class LogoInput extends React.Component<LogoInputProps & WrappedFieldProps> {

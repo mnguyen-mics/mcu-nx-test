@@ -1,20 +1,20 @@
-import * as React from 'react';
-import { DatePicker, Radio, Input, InputNumber, Col, Select } from 'antd';
-import moment from 'moment';
-import { WrappedFieldProps } from 'redux-form';
-import { DatePickerProps } from 'antd/lib/date-picker/interface';
-import { FormItemProps } from 'antd/lib/form/FormItem';
+import * as React from "react";
+import { DatePicker, Radio, Input, InputNumber, Col, Select } from "antd";
+import moment from "moment";
+import { WrappedFieldProps } from "redux-form";
+import { FormItemProps } from "antd/lib/form/FormItem";
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const InputGroup = Input.Group;
 
 import FormFieldWrapper, {
-  FormFieldWrapperProps,
-} from '../../../../../../../components/Form/FormFieldWrapper';
-import { RadioChangeEvent } from 'antd/lib/radio';
-import { defineMessages, FormattedMessage } from 'react-intl';
-import { TimeComparisonOperator } from '../../../../../../../models/datamart/graphdb/QueryDocument';
+  FormFieldWrapperProps
+} from "../../../../../../../components/Form/FormFieldWrapper";
+import { RadioChangeEvent } from "antd/lib/radio";
+import { defineMessages, FormattedMessage } from "react-intl";
+import { TimeComparisonOperator } from "../../../../../../../models/datamart/graphdb/QueryDocument";
+import { DatePickerProps } from 'antd/lib/date-picker';
 
 const messages = defineMessages({
   absolute: {
@@ -300,7 +300,7 @@ export default class FormRelativeAbsoluteDate extends React.Component<
                     onChange={onPeriodChange}
                     getPopupContainer={
                       this.props.datePickerProps &&
-                      this.props.datePickerProps.getCalendarContainer
+                      this.props.datePickerProps.getPopupContainer
                     }
                     disabled={disabled}
                   >

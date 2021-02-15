@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Col, Spin, Timeline, Icon } from 'antd';
+import { FlagOutlined } from '@ant-design/icons';
+import { Col, Spin, Timeline } from 'antd';
 import lodash from 'lodash';
 import moment from 'moment';
 import { InjectedIntlProps, FormattedMessage, injectIntl } from "react-intl";
@@ -264,7 +265,7 @@ class ResourceTimeline extends React.Component<Props, State> {
           return (
             <div className="mcs-timeline" key={day}>
               <Timeline.Item
-                dot={<Icon type="flag" className="mcs-timeline-dot" />}
+                dot={<FlagOutlined className="mcs-timeline-dot" />}
               >
                 <div className="mcs-title">{dayToFormattedMessage}</div>
               </Timeline.Item>

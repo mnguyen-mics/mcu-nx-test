@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { WindowBodyPortal } from '../../../components';
-import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
-import { Icon } from 'antd';
+import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library'
+import { ArrowLeftOutlined, ArrowRightOutlined } from '@ant-design/icons';
 
 export interface UndoRedoProps {
   enableUndo: boolean;
@@ -47,14 +47,14 @@ export default class BuilderMenu extends React.Component<
             onClick={handleUndo}
             className="helper"
           >
-            <Icon type="arrow-left" />
+            <ArrowLeftOutlined />
           </Button>
           <Button
             disabled={!enableRedo}
             onClick={handleRedo}
             className="helper"
           >
-            <Icon type="arrow-right" />
+            <ArrowRightOutlined />
           </Button>
           <Button onClick={openCloseModal} className="helper">
             <McsIcon type="question" />

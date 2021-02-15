@@ -68,11 +68,13 @@ class DeleteFromSegmentGeneralSectionForm extends React.Component<
           .map(r => ({
             key: r.formData.audienceSegmentId || '',
             label: <label>{r.formData.audienceSegmentName || ''}</label>,
+            value: r.formData.audienceSegmentId || '',
           }))
           .concat(
             segments.map(r => ({
               key: r.id,
               label: <SegmentNameDisplay audienceSegmentResource={r} />,
+              value: r.id,
             })),
           ),
       );
@@ -120,6 +122,7 @@ class DeleteFromSegmentGeneralSectionForm extends React.Component<
         return resolve({
           key: id,
           label: <label>{this.findSegmentName(id, scenarioNodes)}</label>,
+          value: id,
         });
       });
     } else {
@@ -128,6 +131,7 @@ class DeleteFromSegmentGeneralSectionForm extends React.Component<
         .then(({ data: segment }) => ({
           key: segment.id,
           label: <SegmentNameDisplay audienceSegmentResource={segment} />,
+          value: segment.id,
         }));
     }
   };
@@ -178,7 +182,7 @@ class DeleteFromSegmentGeneralSectionForm extends React.Component<
           fetchSingleMethod={this.fetchSingleMethod}
           selectProps={{
             disabled: !!disabled,
-            mode: 'default',
+            mode: 'multiple',
             showSearch: true,
           }}
           type="Audience"

@@ -2,14 +2,14 @@ import * as React from 'react';
 import { OtqlConsole } from '../../../../../../components';
 import { FormItemProps } from 'antd/lib/form';
 import { AceEditorProps } from 'react-ace';
-import { TooltipProps } from 'antd/lib/tooltip';
+import { TooltipPropsWithTitle } from 'antd/lib/tooltip';
 import { WrappedFieldProps } from 'redux-form';
 
 
 export interface OTQLInputEditorProps {
   formItemProps?: FormItemProps;
   inputProps?: AceEditorProps;
-  helpToolTipProps?: TooltipProps;
+  helpToolTipProps?: TooltipPropsWithTitle;
   datamartId: string
 }
 

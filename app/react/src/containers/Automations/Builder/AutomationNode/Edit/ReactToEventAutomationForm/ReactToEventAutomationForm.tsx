@@ -1,6 +1,7 @@
 import React from 'react';
 import { compose } from 'recompose';
-import { Form, Layout, message, Radio } from 'antd';
+import { Layout, message, Radio } from 'antd';
+import { Form } from '@ant-design/compatible';
 import cuid from 'cuid';
 import {
   change,
@@ -126,6 +127,8 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
   @lazyInject(TYPES.IRuntimeSchemaService)
   private _runtimeSchemaService: IRuntimeSchemaService;
 
+  _isMounted = false;
+
   constructor(props: Props) {
     super(props);
 
@@ -184,6 +187,8 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
     const {
       formData: { query_text, datamart_id },
     } = node;
+
+    this._isMounted = true;
 
     if (dispatch) dispatch(change(FORM_ID, 'query_language', 'JSON_OTQL'));
 
@@ -295,6 +300,10 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
       if (query_text !== newQueryText && dispatch)
         dispatch(change(FORM_ID, 'query_text', newQueryText));
     }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   getValidObjectType = (): Promise<WizardValidObjectTypeField | undefined> => {
@@ -519,7 +528,7 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
       return getEventsNames(datamartId, validObjectType!, this._queryService);
     };
     const fetchSingleMethod = (event: string) => {
-      return Promise.resolve({ key: event, label: event });
+      return Promise.resolve({ key: event, label: event, value: event });
     };
 
     const switchMode = () => {

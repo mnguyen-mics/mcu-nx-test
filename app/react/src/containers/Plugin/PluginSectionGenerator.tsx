@@ -87,7 +87,7 @@ class PluginSectionGenerator extends React.Component<
 
     if (currentPluginProperty !== undefined) {
       return (
-        <Row key={field.property_technical_name}>
+        <div key={field.property_technical_name}>
           <PluginFieldGenerator
             definition={currentPluginProperty}
             pluginLayoutFieldDefinition={field}
@@ -98,7 +98,7 @@ class PluginSectionGenerator extends React.Component<
             small={small}
             {...noUploadModal}
           />
-        </Row>
+        </div>
       );
     } else {
       return null;
@@ -232,7 +232,6 @@ class PluginSectionGenerator extends React.Component<
       descriptionField ? (
       <div id={pluginLayoutSection.title}>
         <Row
-          type="flex"
           align="middle"
           justify="space-between"
           className="section-header"

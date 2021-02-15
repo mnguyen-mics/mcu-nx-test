@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { reduxForm, InjectedFormProps, ConfigProps } from 'redux-form';
 import { Omit } from 'react-router';
-import { Form, Button } from 'antd';
+import { Form } from '@ant-design/compatible';
+import { Button } from 'antd';
 import {
   FormInputField,
   FormInput,

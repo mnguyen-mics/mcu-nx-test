@@ -14,7 +14,7 @@ import {
 } from '../../../../../../components/Form';
 import { compose } from 'recompose';
 import { ExtendedPluginInformation } from './CustomActionAutomationForm';
-import { OptionProps } from 'antd/lib/select';
+import { DefaultOptionProps } from '../../../../../../components/Form/FormSelect/DefaultSelect';
 
 interface GeneralInformationFormSectionProps {
   initialValues: Partial<CustomActionAutomationFormData>;
@@ -36,7 +36,7 @@ class GeneralInformationFormSection extends React.Component<Props> {
       extendedPluginsInformation,
     } = this.props;
 
-    const options: OptionProps[] = extendedPluginsInformation.map(
+    const options: DefaultOptionProps[] = extendedPluginsInformation.map(
       extendedPluginInformation => ({
         value: extendedPluginInformation.plugin.id,
         title:

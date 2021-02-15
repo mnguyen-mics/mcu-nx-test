@@ -131,7 +131,7 @@ function* authorizeLoop(
             return resolve(client);
           });
           client.on(client.Event.SDK_READY_TIMED_OUT, () => {
-            return resolve();
+            return resolve(null);
           });
         });
 

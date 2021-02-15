@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { WrappedFieldProps } from 'redux-form';
 import { FormItemProps } from 'antd/lib/form/FormItem';
-import { Select, Input, Col } from 'antd';
+import { Select, Input } from 'antd';
 import { SelectProps } from 'antd/lib/select';
 
 import FormFieldWrapper, { FormFieldWrapperProps } from './FormFieldWrapper';
@@ -13,7 +13,7 @@ export interface OptionsProps {
 
 export interface FormLinkedSelectInputProps extends FormFieldWrapperProps {
   formItemProps: FormItemProps;
-  leftFormSelectProps: SelectProps;
+  leftFormSelectProps: SelectProps<any>;
   leftOptionsProps: OptionsProps[];
   small?: boolean;
 }
@@ -21,24 +21,26 @@ export interface FormLinkedSelectInputProps extends FormFieldWrapperProps {
 type JoinedProps = FormLinkedSelectInputProps & WrappedFieldProps;
 
 class FormLinkedSelectInput extends React.Component<JoinedProps> {
-
   updateLeftSelect = (leftValue: string) => {
     const { input } = this.props;
     input.onChange({ leftValue: leftValue });
-  }
+  };
   updateRightInput = (e: any) => {
     const { input } = this.props;
     input.onChange({ ...input.value, rightValue: e.target.value });
-  }
+  };
 
   createLeftOptions = () => {
     const { leftOptionsProps } = this.props;
-    const leftOptions = leftOptionsProps.map(option => (<Select.Option key={option.value}>{option.label}</Select.Option>));
+    const leftOptions = leftOptionsProps.map((option) => (
+      <Select.Option key={option.value} value={option.value}>
+        {option.label}
+      </Select.Option>
+    ));
     return leftOptions;
-  }
+  };
 
   render() {
-
     const {
       input,
       meta,
@@ -46,11 +48,15 @@ class FormLinkedSelectInput extends React.Component<JoinedProps> {
       helpToolTipProps,
       leftFormSelectProps,
       renderFieldAction,
-      small
+      small,
     } = this.props;
 
     const leftOptions = this.createLeftOptions();
-    let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
+    let validateStatus = 'success' as
+      | 'success'
+      | 'warning'
+      | 'error'
+      | 'validating';
     if (meta.touched && meta.invalid) validateStatus = 'error';
     if (meta.touched && meta.warning) validateStatus = 'warning';
 
@@ -63,28 +69,29 @@ class FormLinkedSelectInput extends React.Component<JoinedProps> {
         small={small}
         {...formItemProps}
       >
-        <Col span={11}>
-          <Select
-            value={input.value.leftValue}
-            onChange={this.updateLeftSelect}
-            {...leftFormSelectProps}
-          >
-            {leftOptions}
-          </Select>
-        </Col>
-        <Col span={2}>
-          <p className="ant-form-split">=</p>
-        </Col>
-        <Col span={11}>
-          <Input
-            value={input.value.rightValue}
-            onChange={this.updateRightInput}
-          />
-        </Col>
+        <div className="range-filter">
+          <div className="filter-input">
+            <Select
+              value={input.value.leftValue}
+              onChange={this.updateLeftSelect}
+              {...leftFormSelectProps}
+            >
+              {leftOptions}
+            </Select>
+          </div>
+          <div className="range-filter-separator">
+            <p className="form-split">=</p>
+          </div>
+          <div className="filter-input">
+            <Input
+              value={input.value.rightValue}
+              onChange={this.updateRightInput}
+            />
+          </div>
+        </div>
       </FormFieldWrapper>
     );
   }
-
 }
 
 export default FormLinkedSelectInput;

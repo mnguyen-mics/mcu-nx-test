@@ -25,7 +25,6 @@ import FormLayoutActionbar, {
 import messages from '../../messages';
 import { FormSection } from '../../../../../../components/Form/index';
 import { CampaignsInfosFieldModel } from '../domain';
-import { Col } from 'antd/lib/grid';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../../Notifications/injectNotifications';
@@ -48,9 +47,7 @@ const messageMap = defineMessages({
   },
 });
 
-const CampaignsInfosFieldArray = FieldArray as new () => GenericFieldArray<
-  Field
->;
+const CampaignsInfosFieldArray = FieldArray as new () => GenericFieldArray<Field>;
 
 export interface EditCampaignsFormData {
   [key: string]: Array<{ [property in keyof CampaignsInfosFieldModel]: any }>;
@@ -74,14 +71,14 @@ type JoinedProps = EditCampaignsFormProps &
   RouteComponentProps<{ organisationId: string }> &
   InjectedFormProps<EditCampaignsFormData>;
 
-const Content = Layout.Content as React.ComponentClass<
+const Content = (Layout.Content as unknown) as React.ComponentClass<
   BasicProps & { id: string }
 >;
 
 class EditCampaignsForm extends React.Component<
   JoinedProps,
   EditCampaignsFormState
-  > {
+> {
   @lazyInject(TYPES.IDisplayCampaignService)
   private _displayCampaignService: IDisplayCampaignService;
 
@@ -108,18 +105,18 @@ class EditCampaignsForm extends React.Component<
   fetchData = (selectedRowKeys: string[]) => {
     const v2014CampaignNames: string[] = [];
     Promise.all(
-      selectedRowKeys.map(campaignId => {
+      selectedRowKeys.map((campaignId) => {
         return this._displayCampaignService
           .getCampaignDisplay(campaignId)
-          .then(apiResp => apiResp.data)
-          .then(campaignData => {
+          .then((apiResp) => apiResp.data)
+          .then((campaignData) => {
             if (campaignData.model_version === 'V2014_06') {
               v2014CampaignNames.push(campaignData.name);
             }
             return campaignData.name || '';
           });
       }),
-    ).then(campaignNames => {
+    ).then((campaignNames) => {
       this.setState({
         campaignNames: campaignNames,
         v2014CampaignNames: v2014CampaignNames,
@@ -138,7 +135,7 @@ class EditCampaignsForm extends React.Component<
           loading: false,
         });
       })
-      .catch(err => {
+      .catch((err) => {
         this.props.notifyError(err);
         this.setState({
           loading: false,
@@ -147,7 +144,11 @@ class EditCampaignsForm extends React.Component<
   };
 
   render() {
-    const { handleSubmit, close, intl: { formatMessage } } = this.props;
+    const {
+      handleSubmit,
+      close,
+      intl: { formatMessage },
+    } = this.props;
 
     const { loading, campaignNames, v2014CampaignNames } = this.state;
 
@@ -182,10 +183,12 @@ class EditCampaignsForm extends React.Component<
                 subtitle={messages.multiEditSubtitle}
                 title={messages.multiEditTitle}
               />
-              <Row style={{ marginBottom: '3em' }}>
+              <Row style={{ marginBottom: '1em' }}>
                 {campaignNames.map((campaignName, index) => (
                   <Tag key={index}>{campaignName}</Tag>
                 ))}
+              </Row>
+              <Row style={{ marginBottom: '3em' }}>
                 {v2014CampaignNames.length > 0 && (
                   <div>
                     <br />
@@ -198,14 +201,11 @@ class EditCampaignsForm extends React.Component<
                 )}
               </Row>
               <Row>
-                <Col span={4} />
-                <Col span={16}>
-                  <CampaignsInfosFieldArray
-                    name="fields"
-                    component={CampaignsInfos}
-                    rerenderOnEveryChange={true}
-                  />
-                </Col>
+                <CampaignsInfosFieldArray
+                  name="fields"
+                  component={CampaignsInfos}
+                  rerenderOnEveryChange={true}
+                />
               </Row>
             </Content>
           </Form>

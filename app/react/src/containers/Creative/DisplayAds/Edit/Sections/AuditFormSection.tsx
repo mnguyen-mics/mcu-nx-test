@@ -13,7 +13,6 @@ class AuditFormSection extends React.Component<AuditFormSectionProps> {
 
     return (
       <Row
-        type="flex"
         align="middle"
         justify="space-between"
         className={'mcs-actionbar'}

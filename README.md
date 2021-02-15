@@ -175,3 +175,10 @@ This extension permits to detect and fix quality issues scanned from SonarQube d
     }
   ```
   - Enable SonarLint by typing `CTRL+SHIFT+P` and select `SonarLint: Update all project bindings to SonarQube/SonarCloud`
+
+
+CSS rules && Guidelines
+
+1/ Avoid antd css classes direct targeting. Create new BEM class instead. if no choice, you can only target antd classes inside another scoped class.
+
+2/ Always use BEM methodology for class naming (see above)

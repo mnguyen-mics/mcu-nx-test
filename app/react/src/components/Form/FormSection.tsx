@@ -2,8 +2,7 @@ import * as React from 'react';
 import { Button, Row, Menu, Col } from 'antd';
 import { FormattedMessage } from 'react-intl';
 import FormTitle, { FormTitleProps } from './FormTitle';
-import { ClickParam } from 'antd/lib/menu';
-
+import { MenuInfo } from '../../../../../node_modules/antd/node_modules/rc-menu/lib/interface'
 import { Dropdown } from '../../components/PopupContainers';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
@@ -35,7 +34,7 @@ class FormSection extends React.Component<FormSectionProps> {
         </Menu.Item>
       ));
 
-    const handleClick = (param: ClickParam) => {
+    const handleClick = (param: MenuInfo) => {
       const currentItem =
         dropdownItems && dropdownItems.find(item => item.id === param.key);
       currentItem!.onClick();
@@ -77,7 +76,6 @@ class FormSection extends React.Component<FormSectionProps> {
 
     return (
       <Row
-        type="flex"
         align="middle"
         justify="space-between"
         className="section-header"

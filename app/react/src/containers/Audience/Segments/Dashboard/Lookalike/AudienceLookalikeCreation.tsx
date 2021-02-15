@@ -368,7 +368,7 @@ class AudienceLookalikeCreation extends React.Component<
                     name="audience_partition_id"
                     component={DefaultSelect}
                     options={this.state.partitions.map(i => {
-                      return { title: i.name, value: i.id };
+                      return { title: i.name || i.id, value: i.id };
                     })}
                     validate={[isRequired]}
                     formItemProps={{

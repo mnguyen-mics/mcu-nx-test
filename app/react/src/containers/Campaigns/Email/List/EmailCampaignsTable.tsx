@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
-import { Icon, Tooltip } from 'antd';
+import { DownOutlined } from '@ant-design/icons';
+import { Tooltip } from 'antd';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { TableViewFilters } from '../../../../components/TableView/index';
 import messages from './messages';
@@ -207,7 +208,7 @@ class EmailCampaignsTable extends React.Component<Props> {
         displayElement: (
           <div>
             <FormattedMessage {...messages.emailHeaderStatus} />
-            <Icon type="down" />
+            <DownOutlined />
           </div>
         ),
         selectedItems: filter.statuses.map((status: CampaignStatus) => ({

@@ -210,7 +210,7 @@ import {
 import { IUserRolesService, UserRolesService } from '../services/UserRolesService';
 
 
-const container = new Container();
+export const container = new Container();
 
 container
   .bind<IAudienceBuilderService>(TYPES.IAudienceBuilderService)

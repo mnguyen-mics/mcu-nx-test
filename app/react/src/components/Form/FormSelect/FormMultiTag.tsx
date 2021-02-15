@@ -30,12 +30,8 @@ const FormMultiTag: React.SFC<Props> = props => {
     small,
   } = props;
 
-  let validateStatus = 'success' as
-    | 'success'
-    | 'warning'
-    | 'error'
-    | 'validating';
-  const mode = 'tags' as 'multiple' | 'tags' | 'combobox';
+  let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
+  const mode = 'tags' as 'multiple' | 'tags';
 
   if (meta.touched && meta.invalid) {
     validateStatus = 'error';
@@ -46,7 +42,7 @@ const FormMultiTag: React.SFC<Props> = props => {
 
   const optionsToDisplay = selectProps
     ? selectProps.options.map(({ label, ...option }) => (
-        <Option {...option} key={option.value}>
+        <Option {...option} key={option.value} value={option.value}>
           {label}
         </Option>
       ))
@@ -62,9 +58,8 @@ const FormMultiTag: React.SFC<Props> = props => {
     >
       <Select
         mode={mode}
-        onBlur={input.onBlur as () => any}
-        onChange={input.onChange as () => any}
-        onFocus={input.onFocus as () => any}
+        onChange={input.onChange}
+        onFocus={input.onFocus}
         value={input.value || []}
         {...selectProps}
       >

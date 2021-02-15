@@ -6,15 +6,14 @@ import { lazyInject } from '../../config/inversify.config';
 import { TYPES } from '../../constants/types';
 import { IQueryService } from '../../services/QueryService';
 import CustomOtqlMode from './theme/CustomOtqlMode';
-import './theme/style/otql.theme.js';
-
+import { defineAce } from './theme/style/otql.theme.js';
 
 export interface OtqlConsoleProps extends AceEditorProps {
   datamartId: string;
 }
 
 interface State {
-  annotations: Annotation[]
+  annotations: Annotation[];
 }
 
 export default class OtqlConsole extends React.Component<
@@ -30,11 +29,12 @@ export default class OtqlConsole extends React.Component<
   constructor(props: OtqlConsoleProps) {
     super(props);
     this.state = {
-      annotations: []
-    }
+      annotations: [],
+    };
   }
 
   componentDidMount() {
+    defineAce();
     if (this.aceEditor && this.aceEditor.editor) {
       this.aceEditor.editor.completers = [this.buildCustomCompleters()];
       const customMode = new CustomOtqlMode();
@@ -54,35 +54,35 @@ export default class OtqlConsole extends React.Component<
   onChange = (value: string, event?: any) => {
     const editor = this.aceEditor.editor;
 
-    if (this.props.onChange) { this.props.onChange(value, event) }
+    if (this.props.onChange) {
+      this.props.onChange(value, event);
+    }
 
     if (this.debouncing) {
       window.clearTimeout(this.debouncing);
     }
 
     this.debouncing = setTimeout(() => {
-      this._queryService.checkOtqlQuery(
-        this.props.datamartId,
-        value
-      ).then(d => d.data)
-      .then(d => {
-        if (d.status === "error") {
-          const annotation: Annotation = {
-            row: d.error.position.row - 1,
-            column: d.error.position.col -1,
-            text: d.error.message,
-            type: "error",
+      this._queryService
+        .checkOtqlQuery(this.props.datamartId, value)
+        .then((d) => d.data)
+        .then((d) => {
+          if (d.status === 'error') {
+            const annotation: Annotation = {
+              row: d.error.position.row - 1,
+              column: d.error.position.col - 1,
+              text: d.error.message,
+              type: 'error',
+            };
+            editor.getSession().setAnnotations([annotation]);
+            this.setState({ annotations: [annotation] });
+          } else {
+            this.setState({ annotations: [] });
           }
-          editor.getSession().setAnnotations([annotation]);
-          this.setState({ annotations: [annotation] })
-        } else {
-          this.setState({ annotations: [] })
-        }
-      })
-      .catch(() => this.setState({ annotations: [] }))
-    }, 1000) 
-    
-  }
+        })
+        .catch(() => this.setState({ annotations: [] }));
+    }, 1000);
+  };
 
   buildCustomCompleters = () => {
     return {
@@ -98,9 +98,9 @@ export default class OtqlConsole extends React.Component<
           editor.getValue() as string,
           pos.row + 1,
           pos.column + 1,
-        ).then(res => {
+        ).then((res) => {
           const valueFromServer = res
-            ? res.map(r => ({
+            ? res.map((r) => ({
                 name: r.field_name,
                 value: r.field_name,
                 meta: r.type,
@@ -122,6 +122,8 @@ export default class OtqlConsole extends React.Component<
     const setAceEditorRef = (aceEditorRef: any) =>
       (this.aceEditor = aceEditorRef);
 
+    defineAce();
+
     return (
       <div>
         <AceEditor
@@ -133,7 +135,7 @@ export default class OtqlConsole extends React.Component<
           ref={setAceEditorRef}
           width="100%"
           setOptions={{
-            showGutter: true
+            showGutter: true,
           }}
         />
       </div>

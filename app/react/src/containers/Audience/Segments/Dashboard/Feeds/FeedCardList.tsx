@@ -7,7 +7,7 @@ import {
 import { Row, Col } from 'antd';
 import FeedCard from './FeedCard';
 import FeedPlaceholder from './FeedPlaceholder';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, StaticContext, withRouter } from 'react-router';
 import { compose } from 'recompose';
 import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
 import { TYPES } from '../../../../../constants/types';
@@ -20,7 +20,7 @@ import { Index } from '../../../../../utils';
 import { InjectedFeaturesProps, injectFeatures } from '../../../../Features';
 
 type Props = InjectedFeaturesProps &
-  RouteComponentProps<{ organisationId: string; segmentId: string }>;
+  RouteComponentProps<{ organisationId: string; segmentId: string }, StaticContext, { scrollToFeed?: boolean }>;
 
 export interface FeedCardListState {
   isLoading: boolean;

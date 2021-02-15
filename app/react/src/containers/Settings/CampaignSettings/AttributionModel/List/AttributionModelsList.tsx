@@ -22,6 +22,7 @@ import { ActionsColumnDefinition } from '../../../../../components/TableView/Tab
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 const { Content } = Layout;
 
@@ -108,7 +109,7 @@ class AttributionModelsList extends React.Component<
     const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
 
     Modal.confirm({
-      iconType: 'exclamation-circle',
+      icon: <ExclamationCircleOutlined />,
       title: formatMessage(messages.attributionModelArchiveTitle),
       content: formatMessage(messages.attributionModelArchiveTitle),
       okText: formatMessage(messages.attributionModelArchiveOk),

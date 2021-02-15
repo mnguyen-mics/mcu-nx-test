@@ -2,7 +2,9 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { Field, reduxForm, InjectedFormProps } from 'redux-form';
-import { Form, Button, Icon, Layout } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
+import { Form } from '@ant-design/compatible';
+import { Button, Layout } from 'antd';
 import {
   injectIntl,
   FormattedMessage,
@@ -79,7 +81,7 @@ class ProfileSettingsEditPage extends React.Component<
         disabled={!(dirty && valid)}
       >
         <FormattedMessage id="settings.profile.edit.save" defaultMessage="Save" />{' '}
-        {this.state.loading ? <Icon type="loading" /> : null}
+        {this.state.loading ? <LoadingOutlined /> : null}
       </Button>
     );
   }

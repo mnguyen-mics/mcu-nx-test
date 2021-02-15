@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, StaticContext, withRouter } from 'react-router';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { lazyInject } from '../../../../../config/inversify.config';
@@ -24,7 +24,7 @@ type Props = InjectedDrawerProps &
   RouteComponentProps<{
     organisationId: string;
     mlAlgorithmId: string;
-  }> &
+  }, StaticContext, { from?: string }> &
   InjectedIntlProps;
 
 class MlAlgorithmEditPage extends React.Component<

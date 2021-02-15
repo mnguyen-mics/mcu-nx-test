@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Layout, message, Modal } from 'antd';
 import { compose } from 'recompose';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps, StaticContext } from 'react-router';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import DisplayAdsActionBar from './DisplayAdsActionBar';
 import DisplayAdsTable from './DisplayAdsTable';
@@ -34,6 +34,7 @@ import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import messages from './message';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 const { Content } = Layout;
 
@@ -52,7 +53,7 @@ interface State {
 type JoinedProps = InjectedIntlProps &
   InjectedDrawerProps &
   InjectedNotificationProps &
-  RouteComponentProps<CampaignRouteParams>;
+  RouteComponentProps<CampaignRouteParams, StaticContext, { reloadDataSource?: boolean }>;
 
 class DisplayAdsPage extends React.Component<JoinedProps, State> {
   @lazyInject(TYPES.ICreativeService)
@@ -386,7 +387,7 @@ class DisplayAdsPage extends React.Component<JoinedProps, State> {
         content: intl.formatMessage(
           messages.creativeModalConfirmArchivedContent,
         ),
-        iconType: 'exclamation-circle',
+        icon: <ExclamationCircleOutlined />,
         okText: intl.formatMessage(messages.creativeModalConfirmArchivedOk),
         cancelText: intl.formatMessage(messages.cancelText),
         onOk() {
@@ -414,7 +415,7 @@ class DisplayAdsPage extends React.Component<JoinedProps, State> {
       Modal.warning({
         title: intl.formatMessage(messages.creativeModalNoArchiveTitle),
         content: intl.formatMessage(messages.creativeModalNoArchiveMessage),
-        iconType: 'exclamation-circle',
+        icon: <ExclamationCircleOutlined />,
       });
     }
   };

@@ -1,15 +1,16 @@
 import * as React from 'react';
-import { isEmpty } from 'lodash';
-import { Col, Form, Row, Tooltip } from 'antd';
+import { Col, Row, Tooltip } from 'antd';
+// New Form component in antd's version 4 is not compatible with our current implementation
+import { Form } from '@ant-design/compatible';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { RowProps } from 'antd/lib/grid/row';
-import { TooltipProps } from 'antd/lib/tooltip';
+import { TooltipPropsWithTitle } from 'antd/lib/tooltip';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 export interface FormFieldWrapperProps {
   hasMarginBottom?: boolean;
-  helpToolTipProps?: TooltipProps;
-  hoverToolTipProps?: TooltipProps;
+  helpToolTipProps?: TooltipPropsWithTitle;
+  hoverToolTipProps?: TooltipPropsWithTitle;
   renderFieldAction?: () => React.ReactNode;
   rowProps?: RowProps;
   small?: boolean;
@@ -21,7 +22,6 @@ const defaultFieldGridConfig: Partial<FormItemProps> = {
 };
 
 const defaultRowProps: Partial<RowProps> = {
-  type: 'flex',
   align: 'middle',
 };
 
@@ -38,8 +38,7 @@ const FormFieldWrapper: React.SFC<FormItemProps & FormFieldWrapperProps> = props
     small,
     ...formInputProps
   } = props;
-
-
+  
   const renderedLabel = small ? <span><span className="field-label">{label}</span><div className="field-helper">{helpToolTipProps && helpToolTipProps.title}</div></span>  : <span className="field-label">{label}</span>
 
   return (
@@ -50,7 +49,7 @@ const FormFieldWrapper: React.SFC<FormItemProps & FormFieldWrapperProps> = props
         {...formInputProps}
       >
         <Row {...defaultRowProps} {...rowProps}>
-          {!isEmpty(hoverToolTipProps) && !small
+          {hoverToolTipProps && hoverToolTipProps.title && !small
             ? (
               <Tooltip placement="top" {...hoverToolTipProps}>
                 <Col span={20}>{children}</Col>
@@ -60,17 +59,14 @@ const FormFieldWrapper: React.SFC<FormItemProps & FormFieldWrapperProps> = props
             )
           }
 
-          {!isEmpty(helpToolTipProps) && !small
+          {helpToolTipProps && helpToolTipProps.title && !small
             ? (
               <Col span={2} className={`field-tooltip`}>
-                <Tooltip {...helpToolTipProps} placement="right">
+                <Tooltip title={helpToolTipProps?.title} placement="right">
                   <McsIcon type="info" />
                 </Tooltip>
               </Col>
-            ) : (
-              small ? null : <Col span={2} className="
-              " />
-            )
+            ) : undefined
           }
           {(typeof renderFieldAction !== 'undefined')
             ? (

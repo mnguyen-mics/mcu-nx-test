@@ -3,7 +3,7 @@ import * as React from 'react';
 // TS Interfaces
 import AceEditor from 'react-ace';
 import { FormItemProps } from 'antd/lib/form/FormItem';
-import { TooltipProps } from 'antd/lib/tooltip';
+import { TooltipPropsWithTitle } from 'antd/lib/tooltip';
 import { AceEditorProps } from 'react-ace/types'
 import 'brace/ext/searchbox'
 import { WrappedFieldProps } from 'redux-form';
@@ -14,7 +14,7 @@ import FormFieldWrapper, { FormFieldWrapperProps } from '../../components/Form/F
 export interface FormCodeEditProps extends FormFieldWrapperProps {
   formItemProps?: FormItemProps;
   inputProps?: AceEditorProps;
-  helpToolTipProps?: TooltipProps;
+  helpToolTipProps?: TooltipPropsWithTitle;
   disabled?: boolean;
   small?: boolean;
 }
@@ -35,6 +35,7 @@ const FormCodeEdit: React.SFC<FormCodeEditProps & WrappedFieldProps> = props => 
       validateStatus={validateStatus}
       small={props.small}
       {...props.formItemProps}
+      className="mcs-formFieldWrapper_codeEdit"
     >
       <AceEditor
         value={props.input.value}

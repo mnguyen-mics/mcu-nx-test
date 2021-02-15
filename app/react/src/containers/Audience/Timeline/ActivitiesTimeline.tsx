@@ -1,6 +1,7 @@
 import * as React from 'react';
 import lodash from 'lodash';
-import { Timeline, Icon, Col, Spin } from 'antd';
+import { FlagOutlined } from '@ant-design/icons';
+import { Timeline, Col, Spin } from 'antd';
 import moment from 'moment';
 import cuid from 'cuid';
 import { compose } from 'recompose';
@@ -387,7 +388,7 @@ class ActivitiesTimeline extends React.Component<Props, State> {
   renderType(activity: Activity) {
     switch (activity.$type) {
       case 'USER_SCENARIO_START':
-        return <Icon type="flag" className="mcs-timeline-dot live" />;
+        return <FlagOutlined className="mcs-timeline-dot live" />;
       default:
         const mcsType = this.findMcsType(activity);
         return (
@@ -416,7 +417,7 @@ class ActivitiesTimeline extends React.Component<Props, State> {
           return (
             <div className="mcs-timeline" key={cuid()}>
               <Timeline.Item
-                dot={<Icon type="flag" className="mcs-timeline-dot" />}
+                dot={<FlagOutlined className="mcs-timeline-dot" />}
               >
                 <div className="mcs-title">{dayToFormattedMessage}</div>
               </Timeline.Item>

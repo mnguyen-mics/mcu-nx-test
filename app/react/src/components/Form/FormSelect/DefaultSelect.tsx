@@ -4,21 +4,28 @@ import cuid from 'cuid';
 // TS Interfaces
 import { WrappedFieldProps } from 'redux-form';
 import { FormItemProps } from 'antd/lib/form/FormItem';
-import { SelectProps, OptionProps } from 'antd/lib/select';
+import { SelectProps } from 'antd/lib/select';
 
 import FormFieldWrapper, { FormFieldWrapperProps } from '../FormFieldWrapper';
 import { Omit } from '../../../utils/Types';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 export type RestrictedSelectProps = Omit<
-  SelectProps,
+  SelectProps<string>,
   'onChange' | 'value' | 'onBlur' | 'onFocus' | 'defaultValue'
 >;
+
+export interface DefaultOptionProps {
+  value: string;
+  title?: string;
+  key?: string;
+  children?: React.ReactNode;
+}
 
 export interface DefaultSelectProps extends FormFieldWrapperProps {
   formItemProps?: FormItemProps;
   selectProps?: RestrictedSelectProps;
-  options?: OptionProps[];
+  options?: DefaultOptionProps[];
   disabled?: boolean;
   small?: boolean;
   autoSetDefaultValue?: boolean;
@@ -106,8 +113,8 @@ class DefaultSelect extends React.Component<Props, State> {
     if (meta && meta.touched && meta.warning) validateStatus = 'warning';
 
     const optionsToDisplay = options!.map(option => (
-      <Option key={cuid()} {...option}>
-        {option.title || option.children}
+      <Option key={cuid()} value={option.value}>
+        {option.title || option.value}
       </Option>
     ));
 
@@ -117,6 +124,8 @@ class DefaultSelect extends React.Component<Props, State> {
       </Option>
     );
     const getRef = () => document.getElementById(this.id)!;
+
+    const handleOnBlur = () => () => input.onBlur(input.value);
 
     return (
       <FormFieldWrapper
@@ -130,12 +139,12 @@ class DefaultSelect extends React.Component<Props, State> {
           {didMount && (
             <Select
               {...selectProps}
-              onBlur={input.onBlur as () => any}
-              onChange={input.onChange as () => any}
-              onFocus={input.onFocus as () => any}
+              onBlur={handleOnBlur}
+              onChange={input.onChange}
+              onFocus={input.onFocus}
               value={input.value}
               disabled={disabled}
-              getPopupContainer={getRef}
+              getPopupContainer={selectProps && selectProps.getPopupContainer ? selectProps.getPopupContainer : getRef}
             >
               {defaultOption}
               {optionsToDisplay}

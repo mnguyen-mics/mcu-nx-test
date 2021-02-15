@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Button, Icon, Menu, Modal, message } from 'antd';
+import { EllipsisOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { Button, Menu, Modal, message } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Dropdown } from '../../../../../components/PopupContainers';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
@@ -146,7 +147,7 @@ class DisplayCampaignActionbar extends React.Component<
     Modal.warning({
       title: formatMessage(modalMessages.exportIsRunningTitle),
       content: formatMessage(modalMessages.exportIsRunningMessage),
-      iconType: 'exclamation-circle',
+      icon: <ExclamationCircleOutlined />,
       okText: formatMessage(modalMessages.confirm),
       onOk() {
         // closing modal
@@ -225,7 +226,7 @@ class DisplayCampaignActionbar extends React.Component<
 
         <Dropdown overlay={menu} trigger={['click']}>
           <Button>
-            <Icon type="ellipsis" />
+            <EllipsisOutlined />
           </Button>
         </Dropdown>
       </Actionbar>
@@ -481,7 +482,7 @@ class DisplayCampaignActionbar extends React.Component<
       Modal.confirm({
         title: formatMessage(modalMessages.archiveCampaignConfirm),
         content: formatMessage(modalMessages.archiveCampaignMessage),
-        iconType: 'exclamation-circle',
+        icon: <ExclamationCircleOutlined />,
         okText: formatMessage(modalMessages.confirm),
         cancelText: formatMessage(modalMessages.cancel),
         onOk() {

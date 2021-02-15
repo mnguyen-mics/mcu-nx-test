@@ -33,7 +33,7 @@ const TagSelect: React.SFC<FormTagSelectProps & WrappedFieldProps> = props => {
   } = props;
 
   let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
-  const mode = 'multiple' as 'multiple' | 'tags' | 'combobox';
+  const mode = 'multiple' as 'multiple' | 'tags';
 
   if (meta.touched && meta.invalid) {
     validateStatus = 'error';
@@ -57,7 +57,7 @@ const TagSelect: React.SFC<FormTagSelectProps & WrappedFieldProps> = props => {
   };
 
   const optionsToDisplay = selectProps!.options.map(({ label, ...option }) => (
-    <Option {...option} key={option.value}>{label}</Option>
+    <Option {...option} key={option.value} value={option.value}>{label}</Option>
   ));
 
   const onBlur = () => input.onBlur(undefined);
@@ -78,7 +78,7 @@ const TagSelect: React.SFC<FormTagSelectProps & WrappedFieldProps> = props => {
           mode={mode}
           onBlur={onBlur}
           onChange={onChange}
-          onFocus={input.onFocus as () => any}
+          onFocus={input.onFocus}
           value={value}
           disabled={disabled}
           getPopupContainer={selectProps && selectProps.getPopupContainer ? selectProps.getPopupContainer : getRef}

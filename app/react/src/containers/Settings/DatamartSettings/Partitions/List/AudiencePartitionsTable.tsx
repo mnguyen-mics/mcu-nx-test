@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { Icon } from 'antd';
+import { DownOutlined } from '@ant-design/icons';
 import { compose } from 'recompose';
 import {
   FormattedMessage,
@@ -60,7 +60,7 @@ class AudiencePartitionsTable extends React.Component<Props> {
                 id="audience.partitions.list.datamartFilter"
                 defaultMessage="Datamart"
               />{' '}
-              <Icon type="down" />
+              <DownOutlined />
             </div>
           ),
           selectedItems: filter.datamartId

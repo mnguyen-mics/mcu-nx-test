@@ -5,7 +5,8 @@ import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { TableViewFilters } from '../../../components/TableView';
 import { MultiSelectProps } from '../../../components/MultiSelect';
 import messages from './messages';
-import { Icon, Modal, Row } from 'antd';
+import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { Modal, Row } from 'antd';
 import { ActionsColumnDefinition } from '../../../components/TableView/TableView';
 import { Import } from '../../../models/imports/imports';
 import { Link } from 'react-router-dom';
@@ -213,7 +214,7 @@ class ImportsContentContainer extends React.Component<Props, State> {
     const filter = parseSearch<ImportFilterParams>(search, IMPORTS_SEARCH_SETTINGS);
 
     Modal.confirm({
-      iconType: 'exclamation-circle',
+      icon: <ExclamationCircleOutlined />,
       title: formatMessage(messages.importsDeleteTitle),
       content: formatMessage(messages.importsDeleteMessage),
       okText: formatMessage(messages.importsDeleteOk),
@@ -359,7 +360,7 @@ class ImportsContentContainer extends React.Component<Props, State> {
               id="imports.list.datamartFilter"
               defaultMessage="Datamart"
             />{' '}
-            <Icon type="down" />
+            <DownOutlined />
           </div>
         ),
         selectedItems: [datamartItems.find(di => di.key === datamartId)],

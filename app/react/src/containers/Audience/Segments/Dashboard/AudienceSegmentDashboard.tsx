@@ -342,6 +342,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
       ? {
           key: segment.id.toString(),
           label: segment.name,
+          value: segment.name,
         }
       : undefined;
 

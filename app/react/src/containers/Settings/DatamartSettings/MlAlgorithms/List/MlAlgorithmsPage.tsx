@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Layout, Button, message, Modal, Spin, Input, Form } from 'antd';
+import { Layout, Button, message, Modal, Spin, Input } from 'antd';
+import { Form } from '@ant-design/compatible';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
-
 import { compose } from 'redux';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';

@@ -39,7 +39,7 @@ import FormSelect, {
 } from '../../components/Form/';
 import { InputProps } from 'antd/lib/input';
 import { FormItemProps } from 'antd/lib/form';
-import { TooltipProps } from 'antd/lib/tooltip';
+import { TooltipPropsWithTitle } from 'antd/lib/tooltip';
 import {
   StringPropertyResource,
   PropertyResourceShape,
@@ -361,7 +361,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
       const pluginFieldProps: {
         formItemProps: FormItemProps;
         inputProps: InputProps;
-        helpToolTipProps?: TooltipProps;
+        helpToolTipProps?: TooltipPropsWithTitle;
         small?: boolean;
       } = {
         inputProps: {

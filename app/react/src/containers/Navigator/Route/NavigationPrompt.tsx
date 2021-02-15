@@ -61,7 +61,7 @@
 //   modalProps: {
 //     title: 'You have unsaved data',
 //     content: 'Do you want to close anyway ?',
-//     iconType: 'exclamation-circle',
+//     icon: <ExclamationCircleOutlined />,
 //     okText: 'Ok',
 //     cancelText: 'Cancel',
 //   },

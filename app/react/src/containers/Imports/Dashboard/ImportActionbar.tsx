@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Button, Icon, Menu, Modal, message, Upload, Spin } from 'antd';
+import { EllipsisOutlined, ExclamationCircleOutlined, LoadingOutlined } from '@ant-design/icons';
+import { Button, Menu, Modal, message, Upload, Spin } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Dropdown } from '../../../components/PopupContainers';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
@@ -244,7 +245,7 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
           onClick={this.handleOpenClose}
         >
           {this.state.importIsRunning ? (
-            <Icon type="loading" spin={true} />
+            <LoadingOutlined spin={true} />
           ) : (
             <McsIcon type="plus" />
           )}
@@ -258,7 +259,7 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
 
         <Dropdown overlay={menu} trigger={['click']}>
           <Button>
-            <Icon type="ellipsis" />
+            <EllipsisOutlined />
           </Button>
         </Dropdown>
       </Actionbar>
@@ -279,7 +280,7 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
       Modal.confirm({
         title: formatMessage(modalMessages.deleteImportConfirm),
         content: formatMessage(modalMessages.deleteImportMessage),
-        iconType: 'exclamation-circle',
+        icon: <ExclamationCircleOutlined />,
         okText: formatMessage(modalMessages.confirm),
         cancelText: formatMessage(modalMessages.cancel),
         onOk: () => {

@@ -5,7 +5,7 @@ import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import GenericWorldMap from '../charts/GenericWorldMap';
 import GenericStackedBar from '../charts/GenericStackedBar';
 import GenericColumn from '../charts/GenericColumn';
-import { Tabs, Statistic, Icon } from 'antd';
+import { Tabs, Statistic } from 'antd';
 import * as Highcharts from 'highcharts';
 import {
   TabItem,
@@ -30,6 +30,7 @@ import { DatamartUsersAnalyticsDimension } from '../../../../../utils/DatamartUs
 import { EmptyChart, CounterDashboard, PieChart } from '@mediarithmics-private/mcs-components-library';
 import { CounterProps } from '@mediarithmics-private/mcs-components-library/lib/components/counters/counter';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
+import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons';
 
 const messages = defineMessages({
   noData: {
@@ -308,13 +309,13 @@ class FormatDataToChart extends React.Component<JoinedProp, {}> {
                   value={numeral(Math.abs(trend)).format('0.00')}
                   precision={2}
                   valueStyle={{ color: Math.sign(trend) > -1 ? colors["mcs-error"] : colors["mcs-success"] }}
-                  prefix={<Icon type={Math.sign(trend) > -1 ? 'caret-down' : 'caret-up'} />}
+                  prefix={Math.sign(trend) > -1 ? <CaretDownOutlined /> : <CaretUpOutlined />}
                   suffix="%"
                 />
               }
             </div>
           </div>
-        )
+        );
       default:
         return null;
     }

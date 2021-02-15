@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Row, Col } from 'antd';
 import { compose } from 'recompose';
 import { PaginationSearchSettings } from '../../../../../utils/LocationSearchHelper';
 import CompartmentsContainer from '../../Compartments/List/CompartmentsContainer';
@@ -47,20 +46,20 @@ class DatamartConfigTab extends React.Component<Props, State> {
 
     return (
       <div>
-        <Row>
-          <Col>
+        <div>
+          <div>
             <ChannelsListPage fixedDatamartOpt={datamartId} />
-          </Col>
-        </Row>
-        <Row>
-          <Col>
+          </div>
+        </div>
+        <div>
+          <div>
             <CompartmentsContainer
               datamartId={datamartId}
               filter={compartmentsFilter}
               onFilterChange={this.onCompartmentsFilterChange}
             />
-          </Col>
-        </Row>
+          </div>
+        </div>
       </div>
     );
   }

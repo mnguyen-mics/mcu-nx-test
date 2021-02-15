@@ -20,6 +20,7 @@ import {
   ActionsColumnDefinition,
 } from '../../../../../components/TableView/TableView';
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 interface DisplayCampaignAdTableProps {
   isFetching: boolean;
@@ -82,7 +83,7 @@ class DisplayCampaignAdTable extends React.Component<
     Modal.confirm({
       title: formatMessage(messages.creativeModalConfirmArchivedTitle),
       content: formatMessage(messages.creativeModalConfirmArchivedContent),
-      iconType: 'exclamation-circle',
+      icon: <ExclamationCircleOutlined />,
       okText: formatMessage(messages.creativeModalConfirmArchivedOk),
       cancelText: formatMessage(messages.cancelText),
       onOk() {

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Button, Row, Layout, Modal, Tooltip } from 'antd';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { Index } from '../../../../../utils';
@@ -85,7 +86,7 @@ class DatamartReplicationJobListContainer extends React.Component<Props> {
           return this.props.createJobExecution(datamartId)
         };
         Modal.confirm({
-          icon: 'exclamation-circle',
+          icon: <ExclamationCircleOutlined />,
           title: formatMessage(messages.executionModalTitle),
           content: (
             <React.Fragment>
@@ -107,7 +108,7 @@ class DatamartReplicationJobListContainer extends React.Component<Props> {
         });
       } else {
         Modal.confirm({
-          icon: 'exclamation-circle',
+          icon: <ExclamationCircleOutlined />,
           title: formatMessage(messages.noExecutionModalTitle),
           content: formatMessage(messages.noExecutionModalContent),
         });

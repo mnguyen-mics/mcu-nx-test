@@ -89,7 +89,7 @@ class EditOfferPage extends React.Component<Props, State> {
       ? `/v2/o/${organisationId}/settings/services/my_offers/${offerId}/service_item_conditions`
       : `/v2/o/${organisationId}/settings/services/my_offers`;
 
-    const url = state && state.from ? state.from : defaultRedirectUrl;
+    const url = state && (state as any).from ? (state as any).from : defaultRedirectUrl;
 
     history.push(url);
   };

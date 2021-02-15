@@ -17,8 +17,8 @@ export interface DoubleLinkedSelectOptionsProps {
 
 export interface FormDoubleLinkedSelectProps extends FormFieldWrapperProps {
   formItemProps: FormItemProps;
-  leftFormSelectProps: SelectProps;
-  rightFormSelectProps: SelectProps;
+  leftFormSelectProps: SelectProps<any>;
+  rightFormSelectProps: SelectProps<any>;
   optionsProps: DoubleLinkedSelectOptionsProps;
   small?:boolean
 }
@@ -38,7 +38,7 @@ class FormDoubleLinkedSelect extends React.Component<JoinedProps> {
 
   createLeftOptions = () => {
     const { optionsProps } = this.props;
-    const leftOptions = optionsProps.leftOptions.map(option => (<Select.Option key={option.value}>{option.label}</Select.Option>));
+    const leftOptions = optionsProps.leftOptions.map(option => (<Select.Option key={option.value} value={option.value}>{option.label}</Select.Option>));
     return leftOptions;
   }
 
@@ -48,7 +48,7 @@ class FormDoubleLinkedSelect extends React.Component<JoinedProps> {
       return [];
     }
     const rightOptions = optionsProps.rightOptions[leftValue].map(
-      option => (<Select.Option key={option.value}>{option.label}</Select.Option>));
+      option => (<Select.Option key={option.value} value={option.value}>{option.label}</Select.Option>));
     return rightOptions;
   }
 
@@ -90,7 +90,7 @@ class FormDoubleLinkedSelect extends React.Component<JoinedProps> {
             </Select>
           </div>
           <div className="double-select-separator">
-            <p className="ant-form-split">=</p>
+            <p className="form-split">=</p>
           </div>
           <div className="select">
             <Select

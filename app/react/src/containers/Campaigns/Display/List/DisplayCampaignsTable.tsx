@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { Link, withRouter } from 'react-router-dom';
-import { Icon, Tooltip, message } from 'antd';
+import { DownOutlined } from '@ant-design/icons';
+import { Tooltip, message } from 'antd';
 import {
   FormattedMessage,
   InjectedIntlProps,
@@ -179,9 +180,10 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
       current: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalCampaigns,
-      onChange: (page: number) => {
+      onChange: (page: number,size: number) => {
         this.updateLocationSearch({
           currentPage: page,
+          pageSize: size
         });
         if (
           rowSelection &&
@@ -339,7 +341,7 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
               id="display.campaigns.list.filterStatus"
               defaultMessage="Status"
             />{' '}
-            <Icon type="down" />
+            <DownOutlined />
           </div>
         ),
         selectedItems: filter.statuses.map((status: CampaignStatus) => ({

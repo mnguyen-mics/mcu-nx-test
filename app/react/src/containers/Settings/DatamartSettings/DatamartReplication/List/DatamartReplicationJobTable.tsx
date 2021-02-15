@@ -183,8 +183,8 @@ class DatamartReplicationJobTable extends React.Component<Props> {
 
     const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
     const pagination = {
-      current: filter.currentPage,
-      pageSize: filter.pageSize,
+      current: filter.currentPage || 1,
+      pageSize: filter.pageSize || 10,
       onChange: (page: number) =>
         this.updateLocationSearch({
           currentPage: page,

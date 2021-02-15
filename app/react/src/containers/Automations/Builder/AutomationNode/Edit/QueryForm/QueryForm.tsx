@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Layout, Form, Row, Button, Alert } from 'antd';
+import { Layout, Row, Button, Alert } from 'antd';
+import { Form } from '@ant-design/compatible';
 import { compose } from 'recompose';
 import {
   injectIntl,

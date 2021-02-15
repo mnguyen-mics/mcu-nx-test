@@ -18,6 +18,7 @@ import { lazyInject } from '../../../../../config/inversify.config';
 import { IEmailRouterService } from '../../../../../services/Library/EmailRoutersService';
 import { TYPES } from '../../../../../constants/types';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 const { Content } = Layout;
 
@@ -82,7 +83,7 @@ class EmailRoutersList extends React.Component<
     const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
 
     Modal.confirm({
-      iconType: 'exclamation-circle',
+      icon: <ExclamationCircleOutlined />,
       title: formatMessage(messages.emailRouterArchiveTitle),
       content: formatMessage(messages.emailRouterArchiveMessage),
       okText: formatMessage(messages.emailRouterArchiveOk),

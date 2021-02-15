@@ -11,7 +11,8 @@ import {
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import { Form, Layout } from 'antd';
+import { Layout } from 'antd';
+import { Form } from '@ant-design/compatible';
 import { FormLayoutActionbar } from '../../../../../../components/Layout';
 import { FormLayoutActionbarProps } from '../../../../../../components/Layout/FormLayoutActionbar';
 import PluginInstanceFormSection from './PluginInstanceFormSection';
@@ -54,7 +55,9 @@ class AudienceSegmentFeedAutomationForm extends React.Component<Props> {
       node.type === 'SCENARIO_AUDIENCE_SEGMENT_FEED_NODE' &&
       node.strictlyLayoutablePlugin
     ) {
-      const calculatedDisabled = node.strictlyLayoutablePlugin?.disabled ? node.strictlyLayoutablePlugin?.disabled : disabled;
+      const calculatedDisabled = node.strictlyLayoutablePlugin?.disabled
+        ? node.strictlyLayoutablePlugin?.disabled
+        : disabled;
       const strictlyLayoutablePlugin = node.strictlyLayoutablePlugin;
       const pluginVersionId = strictlyLayoutablePlugin.plugin_preset
         ? strictlyLayoutablePlugin.plugin_preset.plugin_version_id
@@ -108,14 +111,12 @@ class AudienceSegmentFeedAutomationForm extends React.Component<Props> {
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
           <Form
+            id={FORM_ID}
             className="edit-layout ant-layout"
             onSubmit={handleSubmit}
             layout="vertical"
           >
-            <Content
-              id={FORM_ID}
-              className="mcs-content-container mcs-form-container automation-form"
-            >
+            <Content className="mcs-content-container mcs-form-container automation-form">
               {renderedSections}
             </Content>
           </Form>

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { FormattedMessage, defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
-import { Checkbox, Radio, Icon } from 'antd';
+import { DownOutlined } from '@ant-design/icons';
+import { Checkbox, Radio } from 'antd';
 import { omit } from 'lodash';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
@@ -234,7 +235,7 @@ class TableSelector<T extends SelectableItem> extends React.Component<
           displayElement: (
             <div>
               <FormattedMessage id="components.elementSelector.tableSelector.filterDatamart.button" defaultMessage="Datamart" />{' '}
-              <Icon type="down" />
+              <DownOutlined />
             </div>
           ),
           selectedItems: this.state.datamartId
@@ -267,7 +268,7 @@ class TableSelector<T extends SelectableItem> extends React.Component<
           displayElement: (
             <div>
               <FormattedMessage {...messages.serviceType} />
-              <Icon type="down" />
+              <DownOutlined />
             </div>
           ),
           selectedItems: this.state.type !== undefined ?
