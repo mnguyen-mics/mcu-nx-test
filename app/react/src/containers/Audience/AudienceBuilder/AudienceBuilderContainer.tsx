@@ -42,6 +42,9 @@ import {
 } from '@mediarithmics-private/mcs-components-library';
 import { IAudienceFeatureService } from '../../../services/AudienceFeatureService';
 import { AudienceFeatureResource } from '../../../models/audienceFeature';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../Notifications/injectNotifications';
 
 export const QueryFragmentFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
@@ -67,6 +70,7 @@ type Props = InjectedFormProps<
 > &
   MapStateToProps &
   AudienceBuilderContainerProps &
+  InjectedNotificationProps &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
 
@@ -176,6 +180,7 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
         this.setState({
           isQueryRunning: false,
         });
+        this.props.notifyError(err);
       });
   };
 
@@ -297,6 +302,7 @@ const mapStateToProps = (state: MicsReduxState) => ({
 export default compose<Props, AudienceBuilderContainerProps>(
   injectIntl,
   withRouter,
+  injectNotifications,
   reduxForm<AudienceBuilderFormData, AudienceBuilderContainerProps>({
     form: FORM_ID,
     enableReinitialize: true,
