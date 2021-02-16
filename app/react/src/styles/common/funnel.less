@@ -9,6 +9,14 @@
 
 .mcs-funnelQueryBuilder_steps {
   margin-top: 15px;
+  width: 50%;
+  min-width: 608px;
+}
+
+.mcs-funnelQueryBuilder_step {
+  margin-bottom: 30px;
+  border-radius: 2px;
+  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.2);
 }
 
 .mcs-funnel_arrow {
@@ -163,8 +171,7 @@
 }
 
 .mcs-funnelQueryBuilder_stepName_title {
-  margin-bottom: 10px;
-  font-size: 15px;
+  font-size: 14px;
   font-family: "LLCircularWeb-Book";
   font-weight: bold;
   letter-spacing: normal;
@@ -177,9 +184,8 @@
 
 .mcs-funnelQueryBuilder_header {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
-  border-bottom: 1px solid @border-color-split;
 }
 
 .mcs-funnel_steps {
@@ -203,7 +209,7 @@
 .mcs-funnelQueryBuilder {
   margin-top: 15px;
   .ant-card-body {
-    padding: 0;
+    padding: 15px;
   }
 }
 
@@ -215,6 +221,27 @@
   padding: 0 24px;
 }
 
+.mcs-funnelQueryBuilder_stepHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+.mcs-funnelQueryBuilder_step_body {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.mcs-funnelQueryBuilder_step_content {
+  width: 100%;
+}
+
+.mcs-funnelQueryBuilder_step_reorderBtn {
+  vertical-align: middle;
+  margin-right: 30px;
+}
+
 .mcs-funnelQueryBuilder_executeQueryBtn {
   margin-bottom: 25px;
 }
@@ -224,44 +251,43 @@
 }
 
 .mcs-funnelQueryBuilder_dimensionValue {
-  float: none;
-  min-width: 176px;
+  min-width: 159px;
+  height: auto;
   width: auto;
   max-width: 352px;
   background: rgba(225, 225, 225, 0.5);
-  border-radius: 7.5px;
+  border-radius: 3px;
   color: rgb(0, 48, 86);
   text-align: center;
-  height: auto;
   border: none;
 }
 
 .mcs-funnelQueryBuilder_step_dimensions {
   display: flex;
-  margin: 10px 0;
+  margin-bottom: 10px;
 }
 
 .mcs-funnelQueryBuilder_step_dimensionFilter_operator {
   display: flex;
-  margin-right: 20px;
+  margin-right: 18px;
   height: 40px;
 }
 
 .mcs-funnelQueryBuilder_step_dimensionFilter_operator_text {
   color: @primary-color;
   font-family: "LLCircularWeb-Book";
-  font-size: 15px;
+  font-size: 14px;
   margin: auto;
 }
 
 .mcs-funnelQueryBuilder_select {
   border: none;
   height: 40px;
-  margin-right: 20px;
+  margin-right: 15px;
 
   .ant-select-selection {
-    background: rgba(225, 225, 225, 0.5);
-    border-radius: 7.5px;
+    background: #f1f1f1;
+    border-radius: 3px;
     border: none;
   }
 
@@ -275,6 +301,7 @@
 
   &.mcs-funnelQueryBuilder_select--booleanOperators {
     display: block;
+    margin-bottom: 10px;
     width: 55px;
   }
 
@@ -290,73 +317,61 @@
   }
 }
 
-.mcs-funnelQueryBuilder_removeStepBtn {
-  background: #fff;
-  color: rgba(55, 55, 55, 0.46);
+.mcs-funnelQueryBuilder_removeStepBtn,
+.mcs-funnelQueryBuilder_removeFilterBtn {
   border: 0;
   box-shadow: none;
-  font-size: 15px;
-  margin-left: 10px;
-  padding: 6px 12px;
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  color: rgba(0, 0, 0, 0.43);
 
   &:hover,
   &:focus,
   &:active {
-    color: rgba(55, 55, 55, 0.46);
+    color: rgba(0, 0, 0, 0.43);
     background: #fff;
     border-color: none;
   }
 }
 
 .mcs-funnelQueryBuilder_removeFilterBtn {
-  background: #fff;
-  color: rgba(55, 55, 55, 0.46);
-  border: 0;
-  box-shadow: none;
-  font-size: 20px;
-  margin-left: 10px;
-  padding: 6px 12px;
-
-  &:hover,
-  &:focus,
-  &:active {
-    color: rgba(55, 55, 55, 0.46);
-    background: #fff;
-    border-color: none;
-  }
-}
-
-.mcs-funnelQueryBuilder_addDimensionBtn_Icon {
-  font-size: 10px;
-  margin-right: 10px;
+  margin-left: 18px;
 }
 
 .mcs-funnelQueryBuilder_addDimensionBtn,
 .mcs-funnelQueryBuilder_addDimensionBtn:hover,
 .mcs-funnelQueryBuilder_addDimensionBtn:active,
 .mcs-funnelQueryBuilder_addDimensionBtn:focus {
-  background: rgba(225, 225, 225, 0.5);
-  border-radius: 7.5px;
+  margin-top: 20px;
+  margin-bottom: 26px;
+  padding: 0;
   border: none;
-  color: rgb(0, 48, 86);
-  padding: 11px 12px;
+  color: @info-color;
+  background: none;
+  font-family: "LLCircularWeb-Book";
+  font-weight: bold;
+  font-size: 12px;
+  box-shadow: none;
 }
 
-.mcs-funnelQueryBuilder_addStepBtn_Icon {
-  font-size: 10px;
-  margin-right: 10px;
-}
 
 .mcs-funnelQueryBuilder_addStepBtn,
 .mcs-funnelQueryBuilder_addStepBtn:hover,
 .mcs-funnelQueryBuilder_addStepBtn:active,
 .mcs-funnelQueryBuilder_addStepBtn:focus {
-  margin-bottom: 25px;
-  background: rgba(225, 225, 225, 0.5);
-  border-radius: 7.5px;
+  font-family: "LLCircularWeb-Book";
+  font-size: 12px;
+  font-weight: bold;
   border: none;
-  color: rgb(0, 48, 86);
-  padding: 11px 12px;
+  color: @info-color;
+  background: none;
+  padding: 40px 236px;
+  border-radius: 3px;
+  border: solid 1px #d3dbe1;
+  width: 100%;
+  margin-bottom: 15px;
+  box-shadow: 0;
 }
 
 .mcs-funnelQueryBuilder_sortBtn {
@@ -372,8 +387,10 @@
 }
 
 .mcs-funnelQueryBuilder_switch {
-  width: 80px;  
-  
+  position: relative;
+  width: 55px;  
+  margin-right: 3px;
+
   &_btn {
     top: 10px;
     width: 55px;
@@ -381,6 +398,8 @@
 }
 
 .mcs-funnelQueryBuilder_notInfo_notSwitcherIcon {
+  position: absolute;
+  right: -17px;
   font-size: 10px;
 }
 

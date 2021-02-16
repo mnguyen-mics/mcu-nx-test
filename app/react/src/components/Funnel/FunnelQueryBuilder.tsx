@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Card, Select, Row, Col, Button, Divider, Icon, Switch } from "antd";
+import { Card, Select, Button, Icon, Switch } from "antd";
 import messages from '../../containers/Campaigns/Display/Edit/messages';
 import cuid from 'cuid';
 import { TYPES } from '../../constants/types';
@@ -113,7 +113,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
       this.setState({
         steps: identifiedSteps
       })
-    } catch(error) {
+    } catch (error) {
       this.setState({
         steps: [{
           id: this._cuid(),
@@ -463,9 +463,8 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
       });
     }
 
-    return (<Card className={"mcs-funnelQueryBuilder"} >
+    return (<div className={"mcs-funnelQueryBuilder"} >
       <div className="mcs-funnelQueryBuilder_header">
-        <h1 className="mcs-funnelQueryBuilder_header_title">Steps</h1>
         <McsDateRangePicker
           values={dateRange}
           onChange={onChange}
@@ -475,20 +474,22 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
         {
           steps.map((step, index) => {
             return (
-              <div key={step.id} className={"mcs-funnelQueryBuilder_step"}>
-                <Row type="flex" style={{ alignItems: 'center' }}>
-                  <Col span={1} >
+              <Card key={step.id} className={"mcs-funnelQueryBuilder_step"} bordered={false}>
+                <div className={"mcs-funnelQueryBuilder_step_body"}>
+                  {steps.length > 1 && <div className={"mcs-funnelQueryBuilder_step_reorderBtn"}>
                     {index > 0 && <Icon className={"mcs-funnelQueryBuilder_sortBtn mcs-funnelQueryBuilder_sortBtn--up"} type="arrow-up" onClick={this.sortStep.bind(this, index, "up")} />}
                     {index + 1 < steps.length && <Icon className={"mcs-funnelQueryBuilder_sortBtn"} onClick={this.sortStep.bind(this, index, "down")} type="arrow-down" />}
-                  </Col>
-                  <Col span={23}>
-                    <span className="mcs-funnelQueryBuilder_stepName_title">{step.name}</span>
-                    <Button
-                      type="primary"
-                      shape="circle"
-                      icon="cross"
-                      className={"mcs-funnelQueryBuilder_removeStepBtn"}
-                      onClick={this.removeStep.bind(this, step.id)} />
+                  </div>}
+                  <div className={"mcs-funnelQueryBuilder_step_content"}>
+                    <div className={"mcs-funnelQueryBuilder_stepHeader"}>
+                      <div className="mcs-funnelQueryBuilder_stepName_title">{step.name}</div>
+                      <Button
+                        shape="circle"
+                        icon="cross"
+                        className={"mcs-funnelQueryBuilder_removeStepBtn"}
+                        onClick={this.removeStep.bind(this, step.id)} />
+                    </div>
+ 
 
                     {step.filter_clause.filters.map((filter, filterIndex) => {
                       return (
@@ -532,7 +533,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
                               <span className="mcs-funnelQueryBuilder_step_dimensionFilter_operator_text">{this.showFilterSymbol(filterIndex, step.id)}
                               </span>
                             </div>
-                            <FunnelExpressionInput 
+                            <FunnelExpressionInput
                               initialValue={filter.expressions}
                               datamartId={datamartId}
                               dimensionName={filter.dimension_name}
@@ -543,7 +544,6 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
                               handleDimensionExpressionForSelectorChange={this.handleDimensionExpressionForSelectorChange.bind(this, filterIndex, step.id)}
                             />
                             <Button
-                              type="primary"
                               shape="circle"
                               icon="cross"
                               className={"mcs-funnelQueryBuilder_removeFilterBtn"}
@@ -552,46 +552,34 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
                         </div>)
                     })}
                     {<Button className="mcs-funnelQueryBuilder_addDimensionBtn" onClick={this.addDimensionToStep.bind(this, step.id)}>
-                      <McsIcon type="plus" className="mcs-funnelQueryBuilder_addDimensionBtn_Icon" />
                       <FormattedMessage
                         id="audience.funnel.querybuilder.newFilter"
-                        defaultMessage="Add Filter"
+                        defaultMessage="Add a filter"
                       />
                     </Button>}
-                    <Row>
-                      <Col span={8}>
-                        <Divider />
-                      </Col>
-                    </Row>
-                  </Col>
-                </Row>
-              </div>
+                  </div>
+                </div>
+              </Card>
             )
           })
         }
-        <Row>
-          <Col span={23} offset={1}>
-            <Button className={"mcs-funnelQueryBuilder_addStepBtn"} onClick={this.addStep}>
-              <McsIcon type="plus" className="mcs-funnelQueryBuilder_addStepBtn_Icon" />
-              <FormattedMessage
-                id="audience.funnel.querybuilder.newStep"
-                defaultMessage="Add Step"
-              />
-            </Button>
-            <div className={"mcs-funnelQueryBuilder_executeQueryBtn"}>
-              <Button className="mcs-primary" type="primary" onClick={this.handleExecuteQueryButtonClick} loading={isLoading}>
-                {!isLoading && <McsIcon type="play" />}
+        <Button className={"mcs-funnelQueryBuilder_addStepBtn"} onClick={this.addStep}>
+          <FormattedMessage
+            id="audience.funnel.querybuilder.newStep"
+            defaultMessage="Add a step"
+          />
+        </Button>
+        <div className={"mcs-funnelQueryBuilder_executeQueryBtn"}>
+          <Button className="mcs-primary" type="primary" onClick={this.handleExecuteQueryButtonClick} loading={isLoading}>
+            {!isLoading && <McsIcon type="play" />}
             Execute Query
           </Button>
-              <Button className="mcs-funnelQueryBuilder_cancelBtn" type="default" onClick={this.handleCancelCallback}>
-                Cancel
+          <Button className="mcs-funnelQueryBuilder_cancelBtn" type="default" onClick={this.handleCancelCallback}>
+            Cancel
           </Button>
-            </div>
-          </Col>
-        </Row>
-
+        </div>
       </div>
-    </Card >)
+    </div >)
   }
 }
 
