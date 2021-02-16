@@ -30,14 +30,18 @@ const Option = Select.Option;
 const messages = defineMessages({
   defaultValue: {
     id: 'components.form.formSelect.defaultSelect.defaultValue',
-    defaultMessage: '- Select One -'
-  }
-})
+    defaultMessage: '- Select One -',
+  },
+});
 
-class DefaultSelect extends React.Component<
-  DefaultSelectProps & WrappedFieldProps
-> {
-  static defaultProps: Partial<DefaultSelectProps> = {
+type Props = DefaultSelectProps & WrappedFieldProps;
+
+interface State {
+  didMount: boolean;
+}
+
+class DefaultSelect extends React.Component<Props, State> {
+  static defaultProps: Partial<Props> = {
     formItemProps: {},
     selectProps: {},
     options: [],
@@ -47,12 +51,24 @@ class DefaultSelect extends React.Component<
 
   id: string = cuid();
 
+  constructor(props: Props) {
+    super(props);
+    this.state = { didMount: false };
+  }
+
   componentDidMount() {
-    if (this.props.autoSetDefaultValue) this.setDefaultValue();
+    this.setState({
+      didMount: true,
+    });
+    if (this.props.autoSetDefaultValue) {
+      this.setDefaultValue();
+    }
   }
 
   componentDidUpdate() {
-    if (this.props.autoSetDefaultValue) this.setDefaultValue();
+    if (this.props.autoSetDefaultValue) {
+      this.setDefaultValue();
+    }
   }
 
   setDefaultValue = () => {
@@ -79,6 +95,8 @@ class DefaultSelect extends React.Component<
       defaultValueTitle,
     } = this.props;
 
+    const { didMount } = this.state;
+
     let validateStatus = 'success' as
       | 'success'
       | 'warning'
@@ -97,9 +115,8 @@ class DefaultSelect extends React.Component<
       <Option value={''}>
         {defaultValueTitle || <FormattedMessage {...messages.defaultValue} />}
       </Option>
-    )
+    );
     const getRef = () => document.getElementById(this.id)!;
-    
 
     return (
       <FormFieldWrapper
@@ -109,19 +126,21 @@ class DefaultSelect extends React.Component<
         small={small}
         {...formItemProps}
       >
-        <div id={this.id} style={{width: '100%'}}>
-          <Select
-            {...selectProps}
-            onBlur={input.onBlur as () => any}
-            onChange={input.onChange as () => any}
-            onFocus={input.onFocus as () => any}
-            value={input.value}
-            disabled={disabled}
-            getPopupContainer={selectProps && selectProps.getPopupContainer ? selectProps.getPopupContainer : getRef}
-          >
-            {defaultOption}
-            {optionsToDisplay}
-          </Select>
+        <div id={this.id} style={{ width: '100%' }}>
+          {didMount && (
+            <Select
+              {...selectProps}
+              onBlur={input.onBlur as () => any}
+              onChange={input.onChange as () => any}
+              onFocus={input.onFocus as () => any}
+              value={input.value}
+              disabled={disabled}
+              getPopupContainer={getRef}
+            >
+              {defaultOption}
+              {optionsToDisplay}
+            </Select>
+          )}
         </div>
       </FormFieldWrapper>
     );
