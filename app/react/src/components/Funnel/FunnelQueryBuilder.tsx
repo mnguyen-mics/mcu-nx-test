@@ -471,6 +471,10 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
         />
       </div>
       <div className={"mcs-funnelQueryBuilder_steps"}>
+        <div className={"mcs-funnelQueryBuilder_step_timelineStart"}>
+          {from && <p className={"mcs-funnelQueryBuilder_timeline_date"}>{from.toMoment().format('DD/MM/YYYY 00:00')}</p>}
+          <Icon type="calendar" className={"mcs-funnelQueryBuilder_timeline_icon"} />
+        </div>
         {
           steps.map((step, index) => {
             return (
@@ -489,7 +493,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
                         className={"mcs-funnelQueryBuilder_removeStepBtn"}
                         onClick={this.removeStep.bind(this, step.id)} />
                     </div>
- 
+
 
                     {step.filter_clause.filters.map((filter, filterIndex) => {
                       return (
@@ -559,25 +563,34 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
                     </Button>}
                   </div>
                 </div>
+                <div className={"mcs-funnelQueryBuilder_step_bullet"}>
+                  <div className={"mcs-funnelQueryBuilder_step_bullet_icon"}/>
+                </div>
               </Card>
             )
           })
         }
-        <Button className={"mcs-funnelQueryBuilder_addStepBtn"} onClick={this.addStep}>
-          <FormattedMessage
-            id="audience.funnel.querybuilder.newStep"
-            defaultMessage="Add a step"
-          />
-        </Button>
-        <div className={"mcs-funnelQueryBuilder_executeQueryBtn"}>
-          <Button className="mcs-primary" type="primary" onClick={this.handleExecuteQueryButtonClick} loading={isLoading}>
-            {!isLoading && <McsIcon type="play" />}
-            Execute Query
-          </Button>
-          <Button className="mcs-funnelQueryBuilder_cancelBtn" type="default" onClick={this.handleCancelCallback}>
-            Cancel
+        <div className={"mcs-funnelQueryBuilder_addStepBlock"}>
+          <div className={"mcs-funnelQueryBuilder_step_timelineEnd"}>
+            <Icon type="flag" className={"mcs-funnelQueryBuilder_timeline_icon"} />
+            {to && <p className={"mcs-funnelQueryBuilder_timeline_date"}>{to.toMoment().format('DD/MM/YYYY 23:59')}</p>}
+          </div>
+          <Button className={"mcs-funnelQueryBuilder_addStepBtn"} onClick={this.addStep}>
+            <FormattedMessage
+              id="audience.funnel.querybuilder.newStep"
+              defaultMessage="Add a step"
+            />
           </Button>
         </div>
+      </div>
+      <div className={"mcs-funnelQueryBuilder_executeQueryBtn"}>
+        <Button className="mcs-primary" type="primary" onClick={this.handleExecuteQueryButtonClick} loading={isLoading}>
+          {!isLoading && <McsIcon type="play" />}
+          Execute Query
+        </Button>
+        <Button className="mcs-funnelQueryBuilder_cancelBtn" type="default" onClick={this.handleCancelCallback}>
+          Cancel
+        </Button>
       </div>
     </div >)
   }
