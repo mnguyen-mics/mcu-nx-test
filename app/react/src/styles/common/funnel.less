@@ -5,12 +5,17 @@
     padding: 0;
   }
   margin-bottom: 15px;
+  border-radius: 2px;
+  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.2);
 }
 
 .mcs-funnelQueryBuilder_steps {
+  position: relative;
   margin-top: 15px;
-  width: 50%;
-  min-width: 608px;
+  width: 60%;
+  min-width: 627px;
+  padding: 17px 20px 17px 0;
+  border-right: 1px dotted #d3dbe1;
 }
 
 .mcs-funnelQueryBuilder_step {
@@ -172,8 +177,8 @@
 
 .mcs-funnelQueryBuilder_stepName_title {
   font-size: 14px;
-  font-family: "LLCircularWeb-Book";
-  font-weight: bold;
+  font-family: "LLCircularWeb-Medium";
+  font-weight: 500;
   letter-spacing: normal;
   color: @primary-color;
 }
@@ -217,10 +222,6 @@
   padding: 5px 24px;
 }
 
-.mcs-funnelQueryBuilder_steps {
-  padding: 0 24px;
-}
-
 .mcs-funnelQueryBuilder_stepHeader {
   display: flex;
   justify-content: space-between;
@@ -251,15 +252,20 @@
 }
 
 .mcs-funnelQueryBuilder_dimensionValue {
+  font-family: "LLCircularWeb-Book";
+  font-size: 12px;
   min-width: 159px;
   height: auto;
-  width: auto;
-  max-width: 352px;
+  width: 100%;
   background: rgba(225, 225, 225, 0.5);
   border-radius: 3px;
   color: rgb(0, 48, 86);
   text-align: center;
   border: none;
+}
+
+#mcs-funnel_expression_select_anchor {
+  width: 100%;
 }
 
 .mcs-funnelQueryBuilder_step_dimensions {
@@ -284,7 +290,9 @@
   border: none;
   height: 40px;
   margin-right: 15px;
-
+  font-family: "LLCircularWeb-Medium";
+  font-size: 12px;
+  font-weight: 500;
   .ant-select-selection {
     background: #f1f1f1;
     border-radius: 3px;
@@ -349,20 +357,23 @@
   border: none;
   color: @info-color;
   background: none;
-  font-family: "LLCircularWeb-Book";
-  font-weight: bold;
+  font-family: "LLCircularWeb-Medium";
+  font-weight: 500;
   font-size: 12px;
   box-shadow: none;
 }
 
+.mcs-funnelQueryBuilder_addStepBlock {
+  position: relative;
+}
 
 .mcs-funnelQueryBuilder_addStepBtn,
 .mcs-funnelQueryBuilder_addStepBtn:hover,
 .mcs-funnelQueryBuilder_addStepBtn:active,
 .mcs-funnelQueryBuilder_addStepBtn:focus {
-  font-family: "LLCircularWeb-Book";
+  font-family: "LLCircularWeb-Medium";
   font-size: 12px;
-  font-weight: bold;
+  font-weight: 500;
   border: none;
   color: @info-color;
   background: none;
@@ -505,4 +516,55 @@
   font-weight: 500;
   padding: 0;
   font-size: 14px;
+}
+
+.mcs-funnelQueryBuilder_step_bullet {
+  position: absolute;
+  right: -31px;
+  bottom: -10px;
+  padding: 10px 0;
+  background: @layout-content-background;
+
+  &_icon {
+    width: 20px;
+    height: 20px;
+    background-color: @info-color;
+    border-radius: 50%;
+  }
+}
+
+.mcs-funnelQueryBuilder_step_timelineStart {
+  position: absolute;
+  top: -30px;
+  right: -10px;
+
+  .mcs-funnelQueryBuilder_timeline_icon {
+    margin-left: 10px;
+  }
+}
+
+.mcs-funnelQueryBuilder_step_timelineEnd {
+  position: absolute;
+  top: 20px;
+  right: -164px;
+  padding: 10px 0 70px;
+  min-width: 150px;
+  background: @layout-content-background;
+
+  .mcs-funnelQueryBuilder_timeline_icon {
+    margin-right: 10px;
+  }
+}
+
+.mcs-funnelQueryBuilder_timeline_date {
+  display: inline-block;
+  font-family: "LLCircularWeb-Book";
+  font-size: 12px;
+}
+
+.mcs-funnelQueryBuilder_timeline_icon {
+  display: inline-block;
+  font-size: 20px;
+  color: @info-color;
+  vertical-align: middle;
 }

@@ -72,8 +72,8 @@ class FunnelPage extends React.Component<JoinedProps, State> {
     const { exportIsRunning } = this.state;
     const breadcrumbPaths = [
       {
-        key: 'Funnel Builder',
-        name: 'Funnel Builder'
+        key: 'Funnel Analytics',
+        name: 'Funnel Analytics'
       }
     ];
     return (

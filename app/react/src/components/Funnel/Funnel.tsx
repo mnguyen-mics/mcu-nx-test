@@ -465,7 +465,7 @@ class Funnel extends React.Component<Props, State> {
     const steps = funnelData.global.steps;
     const total = funnelData.global.total;
     return (
-      <Card className="mcs-funnel">
+      <Card className="mcs-funnel" bordered={false}>
         <div id="container" >
           {steps.length === 0 || total === 0 ?
             <div className="mcs-funnel_empty">
