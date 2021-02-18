@@ -16,7 +16,7 @@ import withNormalizer, {
 
 type Props = InjectedIntlProps & ValidatorProps & NormalizerProps;
 
-class GeneralFormSection extends React.Component<Props> {
+class AudienceBuilderGeneralSection extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
     this.state = { displayAdvancedSection: false };
@@ -51,22 +51,6 @@ class GeneralFormSection extends React.Component<Props> {
             title: formatMessage(messages.audienceFeatureNameTooltip),
           }}
         />
-        <FormInputField
-          name="description"
-          component={FormInput}
-          formItemProps={{
-            label: formatMessage(messages.audienceFeatureDescriptionLabel),
-            required: true,
-          }}
-          inputProps={{
-            placeholder: formatMessage(
-              messages.audienceFeatureDescriptionPlaceholder,
-            ),
-          }}
-          helpToolTipProps={{
-            title: formatMessage(messages.audienceFeatureDescriptionTooltip),
-          }}
-        />
       </div>
     );
   }
@@ -76,4 +60,4 @@ export default compose(
   injectIntl,
   withValidators,
   withNormalizer,
-)(GeneralFormSection);
+)(AudienceBuilderGeneralSection);

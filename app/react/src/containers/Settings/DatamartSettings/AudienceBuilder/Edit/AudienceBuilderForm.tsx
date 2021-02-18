@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Layout, Row, Col } from 'antd';
 import { FormLayoutActionbar } from '../../../../../components/Layout';
-import { AUDIENCE_FEATURE_FORM_ID, AudienceFeatureFormData } from './domain';
+import { AUDIENCE_BUILDER_FORM_ID, AudienceBuilderFormData } from './domain';
 import {
   ConfigProps,
   Form,
@@ -11,39 +11,35 @@ import {
 } from 'redux-form';
 import { FormLayoutActionbarProps } from '../../../../../components/Layout/FormLayoutActionbar';
 import { McsFormSection } from '../../../../../utils/FormHelper';
-import AudienceFeatureGeneralSection from './Sections/AudienceFeatureGeneralSection';
+import AudienceBuilderGeneralSection from './Sections/AudienceBuilderGeneralSection';
 import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { messages } from '../messages';
 import { compose } from 'recompose';
-import AudienceFeaturePreview from './Sections/AudienceFeaturePreview';
-import QueryFormSection from './Sections/QueryFormSection';
-import { SchemaItem } from '../../../../QueryTool/JSONOTQL/domain';
 import { connect } from 'react-redux';
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 
 const Content = Layout.Content;
 
-export interface AudienceFeatureFormProps
-  extends Omit<ConfigProps<AudienceFeatureFormData>, 'form'> {
+export interface AudienceBuilderFormProps
+  extends Omit<ConfigProps<AudienceBuilderFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: Path[];
-  schema?: SchemaItem;
 }
 
 interface MapStateToProps {
-  formValues?: AudienceFeatureFormData;
+  formValues?: AudienceBuilderFormData;
 }
 
 type Props = InjectedFormProps<
-  AudienceFeatureFormData,
-  AudienceFeatureFormProps
+  AudienceBuilderFormData,
+  AudienceBuilderFormProps
 > &
-  AudienceFeatureFormProps &
+  AudienceBuilderFormProps &
   MapStateToProps &
   InjectedIntlProps;
 
-class AudienceFeatureForm extends React.Component<Props> {
+class AudienceBuilderForm extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
     this.state = {};
@@ -54,35 +50,22 @@ class AudienceFeatureForm extends React.Component<Props> {
       handleSubmit,
       breadCrumbPaths,
       close,
-      change,
-      schema,
-      formValues,
     } = this.props;
 
     const actionBarProps: FormLayoutActionbarProps = {
-      formId: AUDIENCE_FEATURE_FORM_ID,
+      formId: AUDIENCE_BUILDER_FORM_ID,
       paths: breadCrumbPaths,
-      message: messages.audienceFeatureSave,
+      message: messages.audienceBuilderSave,
       onClose: close,
     };
 
     const sections: McsFormSection[] = [];
     sections.push({
       id: 'general',
-      title: messages.audienceFeatureSectionGeneralTitle,
-      component: <GeneralFormSection />,
+      title: messages.audienceBuilderSectionGeneralTitle,
+      component: <AudienceBuilderGeneralSection />,
     });
 
-    sections.push({
-      id: 'query',
-      title: messages.audienceFeatureAssociatedQuery,
-      component: (
-        <QueryFormSection
-          formChange={change}
-          associatedQuery={formValues?.object_tree_expression}
-        />
-      ),
-    });
 
     const renderedSections = sections.map((section, index) => {
       return (
@@ -106,17 +89,11 @@ class AudienceFeatureForm extends React.Component<Props> {
             {/* this button enables submit on enter */}
             <button type="submit" style={{ display: 'none' }} />
             <Content
-              id={AUDIENCE_FEATURE_FORM_ID}
+              id={AUDIENCE_BUILDER_FORM_ID}
               className="mcs-content-container mcs-form-container"
             >
               <Row>
-                <Col className="mcs-audienceFeature_formColumn" span={12}>{renderedSections}</Col>
-                <Col className="mcs-audienceFeature_formColumn" span={12}>
-                  <AudienceFeaturePreview
-                    schema={schema}
-                    formValues={formValues}
-                  />
-                </Col>
+                <Col className="mcs-audienceBuilder_formColumn" span={12}>{renderedSections}</Col>
               </Row>
             </Content>
           </Form>
@@ -127,14 +104,14 @@ class AudienceFeatureForm extends React.Component<Props> {
 }
 
 const mapStateToProps = (state: MicsReduxState) => ({
-  formValues: getFormValues(AUDIENCE_FEATURE_FORM_ID)(state),
+  formValues: getFormValues(AUDIENCE_BUILDER_FORM_ID)(state),
 });
 
-export default compose<Props, AudienceFeatureFormProps>(
+export default compose<Props, AudienceBuilderFormProps>(
   injectIntl,
   reduxForm({
-    form: AUDIENCE_FEATURE_FORM_ID,
+    form: AUDIENCE_BUILDER_FORM_ID,
     enableReinitialize: true,
   }),
   connect(mapStateToProps),
-)(AudienceFeatureForm);
+)(AudienceBuilderForm);

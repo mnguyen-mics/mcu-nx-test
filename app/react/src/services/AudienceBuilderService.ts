@@ -6,6 +6,10 @@ import { PaginatedApiParam } from '../utils/ApiHelper';
 export interface AudienceBuilderOptions extends PaginatedApiParam {}
 
 export interface IAudienceBuilderService {
+  createAudienceBuilder: (
+    datamartId: string,
+    body: Partial<AudienceBuilderResource>,
+  ) => Promise<DataResponse<AudienceBuilderResource>>;
   getAudienceBuilders: (
     datamartId: string,
     options?: AudienceBuilderOptions,
@@ -27,6 +31,14 @@ export interface IAudienceBuilderService {
 
 @injectable()
 export default class AudienceBuilderService implements IAudienceBuilderService {
+  createAudienceBuilder(
+    datamartId: string,
+    body: Partial<AudienceBuilderResource>,
+  ): Promise<DataResponse<AudienceBuilderResource>> {
+    const endpoint = `datamarts/${datamartId}/audience_builders`;
+    return ApiService.postRequest(endpoint, body);
+  }
+
   getAudienceBuilders(
     datamartId: string,
     options?: AudienceBuilderOptions,
@@ -41,14 +53,6 @@ export default class AudienceBuilderService implements IAudienceBuilderService {
   ): Promise<DataResponse<AudienceBuilderResource>> {
     const endpoint = `datamarts/${datamartId}/audience_builders/${audienceBuilderId}`;
     return ApiService.getRequest(endpoint);
-  }
-
-  createAudienceBuilder(
-    datamartId: string,
-    body: Partial<AudienceBuilderResource>,
-  ): Promise<DataResponse<AudienceBuilderResource>> {
-    const endpoint = `datamarts/${datamartId}/audience_builders`;
-    return ApiService.postRequest(endpoint, body);
   }
 
   updateAudienceBuilder(
