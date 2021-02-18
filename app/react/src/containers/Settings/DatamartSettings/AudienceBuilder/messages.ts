@@ -1,7 +1,81 @@
 import { defineMessages } from 'react-intl';
 
 export const messages = defineMessages({
-  newAudienceFeature: {
+  // AUDIENCE BUILDER
+
+  audienceBuilderNew: {
+    id: 'settings.datamart.audienceBuilder.newAudienceBuilder',
+    defaultMessage: 'New Audience Builder',
+  },
+  audienceBuilders: {
+    id: 'settings.datamart.audienceBuilders',
+    defaultMessage: 'Audience Builders',
+  },
+  audienceBuilderName: {
+    id: 'settings.datamart.audienceBuilders.name',
+    defaultMessage: 'Name',
+  },
+  audienceBuilderEdit: {
+    id: 'settings.datamart.audienceBuilders.edit',
+    defaultMessage: 'Edit',
+  },
+  audienceBuilderSave: {
+    id: 'settings.datamart.audienceBuilders.save',
+    defaultMessage: 'Save',
+  },
+  audienceBuilderDelete: {
+    id: 'settings.datamart.audienceBuilders.delete',
+    defaultMessage: 'Delete',
+  },
+  audienceBuilderEmptyList: {
+    id: 'settings.datamart.audienceBuilders.emptyList',
+    defaultMessage: 'There are no audience builders',
+  },
+  audienceBuilderSectionGeneralSubTitle: {
+    id: 'settings.datamart.audienceBuilders.edit.subtitle',
+    defaultMessage: 'Enter your parameters for the following inputs',
+  },
+  audienceBuilderSectionGeneralTitle: {
+    id: 'settings.datamart.audienceBuilders.edit.title',
+    defaultMessage: 'General Information',
+  },
+  audienceBuilderNameLabel: {
+    id: 'settings.datamart.audienceBuilders.edit.name.label',
+    defaultMessage: 'Name',
+  },
+  audienceBuilderNamePlaceholder: {
+    id: 'settings.datamart.audienceBuilders.edit.name.placeholder',
+    defaultMessage: 'Name',
+  },
+  audienceBuilderNameTooltip: {
+    id: 'settings.datamart.audienceBuilders.edit.name.tooltip',
+    defaultMessage: 'Enter a name for your audience builder',
+  },
+  audienceBuilderPreview: {
+    id: 'settings.datamart.audienceBuilders.edit.preview',
+    defaultMessage: 'Preview',
+  },
+  audienceBuilderSavingInProgress: {
+    id: 'settings.datamart.audienceBuilders.edit.savingInProgress',
+    defaultMessage: 'Saving in progress...',
+  },
+  audienceBuilderDeleteListModalTitle: {
+    id: 'settings.datamart.audienceBuilders.list.deleteModal.title',
+    defaultMessage:
+      'You are about to delete an Audience Builder from your datamart. This action cannot be undone. Do you want to proceed anyway ?',
+  },
+  audienceBuilderDeleteListModalOk: {
+    id: 'settings.datamart.audienceBuilders.list.deleteModal.ok',
+    defaultMessage: 'Delete',
+  },
+  audienceBuilderDeleteListModalCancel: {
+    id: 'settings.datamart.audienceBuilders.list.deleteModal.cancel',
+    defaultMessage: 'Cancel',
+  },
+
+  // AUDIENCE FEATURE
+
+  audienceFeatureNew: {
     id: 'settings.datamart.audienceFeature.newAudienceFeature',
     defaultMessage: 'New Audience Feature',
   },
@@ -29,43 +103,43 @@ export const messages = defineMessages({
     id: 'settings.datamart.audienceFeatures',
     defaultMessage: 'Audience Features',
   },
-  name: {
+  audienceFeatureName: {
     id: 'settings.datamart.audienceFeatures.name',
     defaultMessage: 'Name',
   },
-  description: {
+  audienceFeatureDescription: {
     id: 'settings.datamart.audienceFeatures.description',
     defaultMessage: 'Description',
   },
-  objectTreeExpression: {
+  audienceFeatureObjectTreeExpression: {
     id: 'settings.datamart.audienceFeatures.objectTreeExpression',
     defaultMessage: 'Object Tree Expression',
   },
-  edit: {
+  audienceFeatureEdit: {
     id: 'settings.datamart.audienceFeatures.edit',
     defaultMessage: 'Edit',
   },
-  save: {
+  audienceFeatureSave: {
     id: 'settings.datamart.audienceFeatures.save',
     defaultMessage: 'Save',
   },
-  delete: {
+  audienceFeatureDelete: {
     id: 'settings.datamart.audienceFeatures.delete',
     defaultMessage: 'Delete',
   },
-  searchPlaceholder: {
+  audienceFeatureSearchPlaceholder: {
     id: 'settings.datamart.audienceFeatures.searchPlaceholder',
     defaultMessage: 'Search audience features',
   },
-  emptyList: {
+  audienceFeatureEmptyList: {
     id: 'settings.datamart.audienceFeatures.emptyList',
     defaultMessage: 'There are no audience features',
   },
-  sectionGeneralSubTitle: {
+  audienceFeatureSectionGeneralSubTitle: {
     id: 'settings.datamart.audienceFeatures.edit.subtitle',
     defaultMessage: 'Enter your parameters for the following inputs',
   },
-  sectionGeneralTitle: {
+  audienceFeatureSectionGeneralTitle: {
     id: 'settings.datamart.audienceFeatures.edit.title',
     defaultMessage: 'General Information',
   },
@@ -93,32 +167,32 @@ export const messages = defineMessages({
     id: 'settings.datamart.audienceFeatures.edit.description.tooltip',
     defaultMessage: 'Enter a description for your audience feature',
   },
-  associatedQuery: {
+  audienceFeatureAssociatedQuery: {
     id: 'settings.datamart.audienceFeatures.edit.query.title',
     defaultMessage: 'Associated Query',
   },
-  associatedQuerySubtitle: {
+  audienceFeatureAssociatedQuerySubtitle: {
     id: 'settings.datamart.audienceFeatures.edit.query.subtitle',
     defaultMessage: 'Click on the button to edit your associated query',
   },
-  preview: {
+  audienceFeaturePreview: {
     id: 'settings.datamart.audienceFeatures.edit.preview',
     defaultMessage: 'Preview',
   },
-  savingInProgress: {
+  audienceFeatureSavingInProgress: {
     id: 'settings.datamart.audienceFeatures.edit.savingInProgress',
     defaultMessage: 'Saving in progress...',
   },
-  deleteAudienceFeaturelModalTitle: {
+  audienceFeatureDeleteListModalTitle: {
     id: 'settings.datamart.audienceFeatures.list.deleteModal.title',
     defaultMessage:
       'You are about to delete an Audience Feature from your datamart. This action cannot be undone. Do you want to proceed anyway ?',
   },
-  deleteAudienceFeaturelModalOk: {
+  audienceFeatureDeleteListModalOk: {
     id: 'settings.datamart.audienceFeatures.list.deleteModal.ok',
     defaultMessage: 'Delete',
   },
-  deleteAudienceFeaturelModalCancel: {
+  audienceFeatureDeleteListModalCancel: {
     id: 'settings.datamart.audienceFeatures.list.deleteModal.cancel',
     defaultMessage: 'Cancel',
   },

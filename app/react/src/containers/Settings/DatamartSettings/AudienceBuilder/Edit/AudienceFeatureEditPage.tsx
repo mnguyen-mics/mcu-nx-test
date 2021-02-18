@@ -99,7 +99,7 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
     } = this.props;
 
     const hideSaveInProgress = message.loading(
-      intl.formatMessage(messages.savingInProgress),
+      intl.formatMessage(messages.audienceFeatureSavingInProgress),
       0,
     );
 
@@ -176,7 +176,7 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
     const replicationName =
       audienceFeatureId && audienceFeature.name
         ? audienceFeature.name
-        : formatMessage(messages.newAudienceFeature);
+        : formatMessage(messages.audienceFeatureNew);
 
     const breadcrumbPaths = [
       {

@@ -62,20 +62,20 @@ class AudienceFeatureForm extends React.Component<Props> {
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
       paths: breadCrumbPaths,
-      message: messages.save,
+      message: messages.audienceFeatureSave,
       onClose: close,
     };
 
     const sections: McsFormSection[] = [];
     sections.push({
       id: 'general',
-      title: messages.sectionGeneralTitle,
+      title: messages.audienceFeatureSectionGeneralTitle,
       component: <GeneralFormSection />,
     });
 
     sections.push({
       id: 'query',
-      title: messages.associatedQuery,
+      title: messages.audienceFeatureAssociatedQuery,
       component: (
         <QueryFormSection
           formChange={change}

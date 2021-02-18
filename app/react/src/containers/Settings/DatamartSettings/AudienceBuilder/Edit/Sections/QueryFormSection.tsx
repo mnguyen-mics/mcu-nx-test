@@ -98,8 +98,8 @@ class QueryFormSection extends React.Component<Props> {
     return (
       <React.Fragment>
         <FormSection
-          subtitle={messages.sectionGeneralSubTitle}
-          title={messages.associatedQuery}
+          subtitle={messages.audienceFeatureSectionGeneralSubTitle}
+          title={messages.audienceFeatureAssociatedQuery}
         />
         <Button onClick={this.openEditor} className="m-b-20 float-right mcs-audienceFeature_edit_query_button">
           {this.props.intl.formatMessage({

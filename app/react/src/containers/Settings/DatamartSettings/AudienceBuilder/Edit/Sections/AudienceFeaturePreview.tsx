@@ -158,7 +158,7 @@ class AudienceFeaturePreview extends React.Component<Props, State> {
 
     return (
       <div className="mcs-audienceFeature-preview">
-        <FormSection title={messages.preview} />
+        <FormSection title={messages.audienceFeaturePreview} />
         <Card
           className="mcs-audienceFeature_card"
           title={formatMessage(messages.audienceFeatures)}

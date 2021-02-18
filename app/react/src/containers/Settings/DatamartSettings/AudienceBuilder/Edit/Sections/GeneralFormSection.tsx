@@ -31,7 +31,7 @@ class GeneralFormSection extends React.Component<Props> {
     return (
       <div>
         <FormSection
-          title={messages.sectionGeneralTitle}
+          title={messages.audienceFeatureSectionGeneralTitle}
         />
 
         <FormInputField

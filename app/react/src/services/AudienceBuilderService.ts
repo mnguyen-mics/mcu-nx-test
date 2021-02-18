@@ -1,10 +1,14 @@
 import { AudienceBuilderResource } from './../models/audienceBuilder/AudienceBuilderResource';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import { injectable } from 'inversify';
+import { PaginatedApiParam } from '../utils/ApiHelper';
+
+export interface AudienceBuilderOptions extends PaginatedApiParam {}
 
 export interface IAudienceBuilderService {
   getAudienceBuilders: (
     datamartId: string,
+    options?: AudienceBuilderOptions,
   ) => Promise<DataListResponse<AudienceBuilderResource>>;
   getAudienceBuilder: (
     datamartId: string,
@@ -25,9 +29,10 @@ export interface IAudienceBuilderService {
 export default class AudienceBuilderService implements IAudienceBuilderService {
   getAudienceBuilders(
     datamartId: string,
+    options?: AudienceBuilderOptions,
   ): Promise<DataListResponse<AudienceBuilderResource>> {
     const endpoint = `datamarts/${datamartId}/audience_builders`;
-    return ApiService.getRequest(endpoint);
+    return ApiService.getRequest(endpoint, options);
   }
 
   getAudienceBuilder(
