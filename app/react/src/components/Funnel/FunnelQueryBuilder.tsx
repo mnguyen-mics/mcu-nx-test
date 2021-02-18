@@ -272,7 +272,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
       if (step.id === stepId) {
         step.filter_clause.filters.forEach((filter, index) => {
           if (dimensionIndex === index) {
-            filter.expressions = value
+            filter.expressions = value.map(v => v.trim())
             if (filter.expressions.length > 1)
               filter.operator = 'IN_LIST' as DimensionFilterOperator
             else
