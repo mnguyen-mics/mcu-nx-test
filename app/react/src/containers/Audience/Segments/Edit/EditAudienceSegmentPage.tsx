@@ -525,8 +525,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
           },
         },
       });
-      // USER_CLIENT is deprecated and replaced by EDGE
-    } else if (segmentType === 'USER_CLIENT' || segmentType === 'EDGE') {
+    } else if (segmentType === 'EDGE') {
       this.setState({
         queryLanguage: 'JSON_OTQL',
         audienceSegmentFormData: {

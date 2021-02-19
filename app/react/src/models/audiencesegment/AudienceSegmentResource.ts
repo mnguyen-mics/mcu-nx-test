@@ -37,7 +37,6 @@ export type AudienceSegmentType =
   | 'USER_PARTITION'
   | 'USER_PIXEL'
   | 'USER_LOOKALIKE'
-  | 'USER_CLIENT' // USER_CLIENT is deprecated and replaced by EDGE
   | 'EDGE';
 
 export type UserQueryEvaluationMode = 'REAL_TIME' | 'AUTOMATIC' | 'ON_DEMAND';
