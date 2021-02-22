@@ -375,7 +375,7 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
     }
 
     if (
-      !changedSchemaValue &&
+      changedSchemaValue === undefined &&
       selectedSchema &&
       selectedSchema.status === 'DRAFT' &&
       !isInValidationMode
@@ -483,8 +483,10 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
                   }}
                   onChange={this.onSchemaChange}
                   readOnly={selectedSchema?.status ==="DRAFT" ? false : true}
+                  // changedSchemaValue can be equal to '' and in this case we don't want to display selectedSchemaText
+                  // hence the use of: changedSchemaValue !== undefined
                   value={
-                    changedSchemaValue && changedSchemaId===selectedSchema?.id ? changedSchemaValue : selectedSchemaText
+                    changedSchemaValue !== undefined && changedSchemaId===selectedSchema?.id ? changedSchemaValue : selectedSchemaText
                   }
                 />
                 <Row className="decorators">
