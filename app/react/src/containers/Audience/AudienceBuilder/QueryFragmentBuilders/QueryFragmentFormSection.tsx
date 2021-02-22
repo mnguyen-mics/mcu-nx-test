@@ -102,34 +102,36 @@ class QueryFragmentFormSection extends React.Component<Props, State> {
     const { formChange, fields, closeNextDrawer } = this.props;
 
     const parameters: { [key: string]: string[] | undefined } = {};
-    audienceFeatures[0].variables.forEach(v => {
-      parameters[v.field_name] = undefined;
-    });
-    const newFeature: AudienceBuilderParametricPredicateNode = {
-      type: 'PARAMETRIC_PREDICATE',
-      parametric_predicate_id: audienceFeatures[0].id,
-      parameters: parameters,
-    };
+    if (audienceFeatures[0]) {
+      audienceFeatures[0].variables.forEach(v => {
+        parameters[v.field_name] = undefined;
+      });
+      const newFeature: AudienceBuilderParametricPredicateNode = {
+        type: 'PARAMETRIC_PREDICATE',
+        parametric_predicate_id: audienceFeatures[0].id,
+        parameters: parameters,
+      };
 
-    const newFields = fields.getAll().map((f, i) => {
-      if (i === index) {
-        return {
-          ...f,
-          expressions: f.expressions.concat(newFeature),
-        };
-      } else {
-        return f;
-      }
-    });
+      const newFields = fields.getAll().map((f, i) => {
+        if (i === index) {
+          return {
+            ...f,
+            expressions: f.expressions.concat(newFeature),
+          };
+        } else {
+          return f;
+        }
+      });
 
-    this.setState({
-      audienceFeatures: this.state.audienceFeatures?.concat(
-        audienceFeatures[0],
-      ),
-    });
+      this.setState({
+        audienceFeatures: this.state.audienceFeatures?.concat(
+          audienceFeatures[0],
+        ),
+      });
 
-    formChange('where.expressions', newFields);
-    closeNextDrawer();
+      formChange('where.expressions', newFields);
+      closeNextDrawer();
+    }
   };
 
   addFeature = (index: number) => () => {

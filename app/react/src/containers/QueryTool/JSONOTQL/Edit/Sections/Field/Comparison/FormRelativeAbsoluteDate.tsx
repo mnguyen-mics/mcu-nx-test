@@ -102,7 +102,7 @@ export default class FormRelativeAbsoluteDate extends React.Component<
   getValueType = (value: Array<string | number>): DateType => {
     const { noListValue } = this.props;
     if (noListValue && value) {
-      return value.includes('now') ? 'RELATIVE' : 'ABSOLUTE';
+      return value.toString().includes('now') ? 'RELATIVE' : 'ABSOLUTE';
     } else if (value && value.length && value[0]) {
       if (typeof value[0] === 'string') {
         return value[0].indexOf('now') > -1 ? 'RELATIVE' : 'ABSOLUTE';
