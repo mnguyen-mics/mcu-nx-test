@@ -1,6 +1,6 @@
 import * as React from 'react';
 import _ from 'lodash';
-import { Input, Row, Col, Breadcrumb } from 'antd';
+import { Input, Row, Col, Breadcrumb, Icon } from 'antd';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { RouteComponentProps } from 'react-router';
@@ -23,7 +23,6 @@ import injectNotifications, {
 import { AudienceFeaturesByFolder } from '../../../../models/audienceFeature/AudienceFeatureResource';
 import {
   SelectorLayout,
-  McsIcon,
   Button,
 } from '@mediarithmics-private/mcs-components-library';
 import AudienceFeatureCard from './AudienceFeatureCard';
@@ -299,7 +298,7 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
                     className="mcs-audienceBuilder_folder"
                     onClick={this.onSelectFolder(folder.id)}
                   >
-                    <McsIcon type="email" />
+                    <Icon type="folder" className="menu-icon" />
                     <br />
                     <span>{folder.name}</span>
                     <br />

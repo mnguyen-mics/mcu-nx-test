@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Row, Col, Dropdown, Menu, Input, Button } from 'antd';
+import { Row, Col, Dropdown, Menu, Input, Button, Icon } from 'antd';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
@@ -89,7 +89,7 @@ class AudienceFeatureFolder extends React.Component<Props, State> {
     return (
       <Row key={folder.id} className="mcs-audienceFeatureSettings_folder">
         <Col span={2}>
-          <McsIcon type="email" />
+        <Icon type="folder" className="menu-icon" />
         </Col>
         <Col span={21}>
           {editionMode ? (
