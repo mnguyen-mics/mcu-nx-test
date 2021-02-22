@@ -16,6 +16,7 @@ export interface Props {
   evaluateGraphQl: boolean;
   useCache: boolean;
   handleChange: (evaluateGraphQl: boolean, useCache: boolean, precision: QueryPrecisionMode) => void;
+  queryEditorClassName?: string;
 }
 
 interface State {
@@ -117,6 +118,7 @@ class OTQLInputEditor extends React.Component<Props, State> {
       evaluateGraphQl,
       precision,
       handleChange,
+      queryEditorClassName
     } = this.props;
 
     const onCacheChange = (a: boolean) => handleChange(evaluateGraphQl, a, precision);
@@ -194,6 +196,7 @@ class OTQLInputEditor extends React.Component<Props, State> {
           height="250px"
           enableBasicAutocompletion={true}
           enableLiveAutocompletion={false}
+          className={queryEditorClassName ? queryEditorClassName : ''}
         />
       </Card>
     );

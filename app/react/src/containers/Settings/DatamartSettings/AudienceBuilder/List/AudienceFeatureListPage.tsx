@@ -422,7 +422,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
       </div>
     ) : (
       <div>
-        <Button type="primary" onClick={addNewFeature}>
+        <Button type="primary" onClick={addNewFeature} className="mcs-audienceFeature_creation_button">
           <FormattedMessage {...messages.newAudienceFeature} />
         </Button>
         <Button

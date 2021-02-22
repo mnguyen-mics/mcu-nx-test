@@ -148,7 +148,7 @@ class AudienceFeatureTable extends React.Component<Props> {
       <EmptyTableView
         iconType="settings"
         message={formatMessage(messages.emptyList)}
-        className="mcs-table-view-empty mcs-empty-card"
+        className="mcs-table-view-empty mcs-empty-card mcs-audienceFeature_table"
       />
     ) : (
       <TableViewFilters
@@ -159,6 +159,7 @@ class AudienceFeatureTable extends React.Component<Props> {
         loading={isLoading}
         pagination={pagination}
         relatedTable={relatedTable}
+        className="mcs-audienceFeature_table"
       />
     );
   }

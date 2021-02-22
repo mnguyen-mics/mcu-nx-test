@@ -56,7 +56,7 @@ class QueryFormSection extends React.Component<Props> {
         >
           <Button
             disabled={!query}
-            className="mcs-primary"
+            className="mcs-primary mcs-audienceFeature_update_query"
             type="primary"
             onClick={onSave}
           >
@@ -87,6 +87,7 @@ class QueryFormSection extends React.Component<Props> {
         datamartId: this.props.match.params.datamartId,
         renderActionBar: actionbar,
         query: 'SELECT @count{} FROM UserPoint where ' + associatedQuery,
+        queryEditorClassName: 'mcs-audienceFeature_edit_form_query_builder'
       },
     });
   };
@@ -100,7 +101,7 @@ class QueryFormSection extends React.Component<Props> {
           subtitle={messages.sectionGeneralSubTitle}
           title={messages.associatedQuery}
         />
-        <Button onClick={this.openEditor} className="m-b-20 float-right">
+        <Button onClick={this.openEditor} className="m-b-20 float-right mcs-audienceFeature_edit_query_button">
           {this.props.intl.formatMessage({
             id: 'jsonql.button.query.edit',
             defaultMessage: 'Edit Query',

@@ -31,7 +31,8 @@ const { Content, Sider } = Layout;
 export interface OTQLConsoleContainerProps {
   datamartId: string;
   renderActionBar: (query: string, datamartId: string) => React.ReactNode;
-  query?: string; 
+  query?: string;
+  queryEditorClassName?: string;
 }
 
 interface State {
@@ -153,7 +154,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
   dismissError = () => this.setState({ error: null });
 
   render() {
-    const { intl, datamartId } = this.props;
+    const { intl, datamartId, queryEditorClassName } = this.props;
     const {
       error,
       queryResult,
@@ -257,6 +258,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
                 precision={precision}
                 evaluateGraphQl={evaluateGraphQl}
                 useCache={useCache}
+                queryEditorClassName={queryEditorClassName}
               />
               {queryResultRenderer}
             </Content>
