@@ -10,7 +10,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../containers/Notifications/injectNotifications';
 import { compose } from 'recompose';
-import { debounce } from 'lodash';
+import { debounce, uniqBy } from 'lodash';
 import { EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import {
@@ -486,7 +486,7 @@ class Funnel extends React.Component<Props, State> {
 
                       <div className={"mcs-funnel_splitBy"}>               
                         {(index > 0 && steps[index - 1] && steps[index - 1].count > 0 && (filter[index - 1] && this.displaySplitByDropdown(filter[index - 1]))) ?  <Select key={this._cuid()} disabled={steps[index].isLoading} loading={steps[index].isLoading} className="mcs-funnel_splitBy_select" value={filter[index - 1].group_by_dimension} placeholder="Split by" onChange={this.handleSplitByDimension.bind(this, index)}>
-                            {filter[index - 1].filter_clause.filters.map((dimension)=> this.getLabelValueForDimension(dimension.dimension_name))} 
+                            {uniqBy(filter[index - 1].filter_clause.filters, 'dimension_name').map((dimension)=> this.getLabelValueForDimension(dimension.dimension_name))} 
                           </Select> : undefined}
                       </div>
                     </div>
