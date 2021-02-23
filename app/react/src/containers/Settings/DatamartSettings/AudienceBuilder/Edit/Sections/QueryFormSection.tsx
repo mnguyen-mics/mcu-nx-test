@@ -86,7 +86,7 @@ class QueryFormSection extends React.Component<Props> {
       additionalProps: {
         datamartId: this.props.match.params.datamartId,
         renderActionBar: actionbar,
-        query: associatedQuery,
+        query: 'SELECT @count{} FROM UserPoint where ' + associatedQuery,
       },
     });
   };
@@ -114,7 +114,7 @@ class QueryFormSection extends React.Component<Props> {
           height="100px"
           readOnly={true}
           ref={setAceEditorRef}
-          value={associatedQuery}
+          value={'SELECT @count{} FROM UserPoint where ' + associatedQuery}
           setOptions={{
             showGutter: true,
           }}
