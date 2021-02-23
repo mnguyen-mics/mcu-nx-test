@@ -13,7 +13,7 @@ import { DataResponse } from '../../../../../services/ApiService';
 
 export interface AudienceFeatureFolderProps {
   folder: AudienceFeaturesByFolder;
-  onSelectFolder: (id: string) => () => void;
+  onSelectFolder: (id: string | null) => () => void;
   renameFolder: (
     id: string,
     name: string,
@@ -49,32 +49,40 @@ class AudienceFeatureFolder extends React.Component<Props, State> {
     this.setState({ inputValue: e.target.value });
   };
 
-  getMenu = (id: string) => {
+  getMenu = (id: string | null) => {
     const { intl, deleteFolder } = this.props;
-    const displayForm = () => {
-      this.setState({
-        editionMode: true,
-      });
-    };
-    const onDelete = () => {
-      deleteFolder(id);
-    };
-    return (
-      <Menu>
-        <Menu.Item key="0">
-          <div onClick={displayForm}>{intl.formatMessage(messages.rename)}</div>
-        </Menu.Item>
-        <Menu.Item key="1">
-          <div onClick={onDelete}>{intl.formatMessage(messages.delete)}</div>
-        </Menu.Item>
-      </Menu>
-    );
+    if (id !== null) {
+      const displayForm = () => {
+        this.setState({
+          editionMode: true,
+        });
+      };
+      const onDelete = () => {
+        deleteFolder(id);
+      };
+      return (
+        <Menu>
+          <Menu.Item key="0">
+            <div onClick={displayForm}>
+              {intl.formatMessage(messages.rename)}
+            </div>
+          </Menu.Item>
+          <Menu.Item key="1">
+            <div onClick={onDelete}>{intl.formatMessage(messages.delete)}</div>
+          </Menu.Item>
+        </Menu>
+      );
+    }
+    return;
   };
 
-  renameFolder = (id: string) => () => {
+  renameFolder = (id: string | null) => () => {
     const { renameFolder } = this.props;
     const { inputValue } = this.state;
-    return renameFolder(id, inputValue);
+    if (id !== null) {
+      return renameFolder(id, inputValue);
+    }
+    return;
   };
 
   cancelEdition = () => {
@@ -87,40 +95,45 @@ class AudienceFeatureFolder extends React.Component<Props, State> {
     const { folder, onSelectFolder, intl } = this.props;
     const { editionMode, inputValue } = this.state;
     return (
-      <Row key={folder.id} className="mcs-audienceFeatureSettings_folder">
-        <Col span={2}>
-        <Icon type="folder" className="menu-icon" />
-        </Col>
-        <Col span={21}>
-          {editionMode ? (
-            <div className="mcs-audienceFeatureSettings-folderForm">
-              <Input
-                value={inputValue}
-                onChange={this.handleInputChange}
-                className="mcs-audienceFeatureSettings-folderInput"
-                placeholder={intl.formatMessage(
-                  messages.placeholderFolderInput,
-                )}
-              />
+      <div onClick={onSelectFolder(folder.id)}>
+        <Row
+          key={folder.id ? folder.id : 'root_key'}
+          className="mcs-audienceFeatureSettings_folder"
+        >
+          <Col span={2}>
+            <Icon type="folder" className="menu-icon" />
+          </Col>
+          <Col span={21}>
+            {editionMode ? (
+              <div className="mcs-audienceFeatureSettings-folderForm">
+                <Input
+                  value={inputValue}
+                  onChange={this.handleInputChange}
+                  className="mcs-audienceFeatureSettings-folderInput"
+                  placeholder={intl.formatMessage(
+                    messages.placeholderFolderInput,
+                  )}
+                />
 
-              <Button type="primary" onClick={this.renameFolder(folder.id)}>
-                <FormattedMessage {...messages.rename} />
-              </Button>
+                <Button type="primary" onClick={this.renameFolder(folder.id)}>
+                  <FormattedMessage {...messages.rename} />
+                </Button>
 
-              <Button onClick={this.cancelEdition}>
-                <FormattedMessage {...messages.cancelButton} />
-              </Button>
-            </div>
-          ) : (
-            <div onClick={onSelectFolder(folder.id)}> {folder.name}</div>
-          )}
-        </Col>
-        <Col span={1}>
-          <Dropdown overlay={this.getMenu(folder.id)} trigger={['click']}>
-            <McsIcon type="chevron" />
-          </Dropdown>
-        </Col>
-      </Row>
+                <Button onClick={this.cancelEdition}>
+                  <FormattedMessage {...messages.cancelButton} />
+                </Button>
+              </div>
+            ) : (
+              folder.name
+            )}
+          </Col>
+          <Col span={1}>
+            <Dropdown overlay={this.getMenu(folder.id)} trigger={['click']}>
+              <McsIcon type="chevron" />
+            </Dropdown>
+          </Col>
+        </Row>
+      </div>
     );
   }
 }

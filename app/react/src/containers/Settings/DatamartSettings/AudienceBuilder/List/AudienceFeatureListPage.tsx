@@ -112,19 +112,19 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
                 children: folderLoop(
                   audienceFeatureFolders.filter(
                     (f: AudienceFeatureFolderResource) =>
-                      folder.children_ids.includes(f.id),
+                      f.id !== null && folder.children_ids.includes(f.id),
                   ),
                 ),
               };
             });
           };
           const baseFolder = {
-            id: '0',
+            id: null,
             name: intl.formatMessage(messages.audienceFeatures),
             parent_id: 'root',
             children: folderLoop(
               audienceFeatureFolders.filter(
-                (f: AudienceFeatureFolderResource) => f.parent_id === '0',
+                (f: AudienceFeatureFolderResource) => f.parent_id === null,
               ),
             ),
             audience_features: [],
@@ -276,11 +276,11 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
       });
   };
 
-  getFolder = (id: string) => {
+  getFolder = (id: string | null) => {
     const { audienceFeaturesByFolder } = this.state;
     let selectedFolder: AudienceFeaturesByFolder | undefined;
     const loop = (folder: AudienceFeaturesByFolder) => {
-      if (id === '0') {
+      if (id === null) {
         selectedFolder = audienceFeaturesByFolder;
       } else {
         folder.children.forEach(f => {
@@ -296,7 +296,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
     return selectedFolder;
   };
 
-  onSelectFolder = (id: string) => () => {
+  onSelectFolder = (id: string | null) => () => {
     this.setState({
       selectedFolder: this.getFolder(id),
     });
@@ -309,7 +309,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
         const path: AudienceFeaturesByFolder[] = [];
         const pathLoop = (folder: AudienceFeaturesByFolder) => {
           const parent = this.getFolder(folder.parent_id);
-          if (folder.id === '0') {
+          if (folder.id === null) {
             path.unshift(audienceFeaturesByFolder);
           } else {
             path.unshift(folder);
@@ -320,7 +320,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
 
         return path.map(elt => {
           return (
-            <Breadcrumb.Item key={elt.id}>
+            <Breadcrumb.Item key={elt.id ? elt.id : 'root_key'}>
               <McsButton onClick={this.onSelectFolder(elt.id)}>
                 {elt.name}
               </McsButton>
@@ -348,7 +348,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
             selectedFolder.children.map(folder => {
               return (
                 <AudienceFeatureFolder
-                  key={folder.id}
+                  key={folder.id ? folder.id : 'root_key'}
                   folder={folder}
                   onSelectFolder={this.onSelectFolder}
                   renameFolder={this.renameFolder}

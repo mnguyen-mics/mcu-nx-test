@@ -88,19 +88,19 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
                 children: folderLoop(
                   audienceFeatureFolders.filter(
                     (f: AudienceFeatureFolderResource) =>
-                      folder.children_ids.includes(f.id),
+                      f.id !== null && folder.children_ids.includes(f.id),
                   ),
                 ),
               };
             });
           };
           const baseFolder = {
-            id: '0',
+            id: null,
             name: intl.formatMessage(messages.audienceFeatures),
             parent_id: 'root',
             children: folderLoop(
               audienceFeatureFolders.filter(
-                (f: AudienceFeatureFolderResource) => f.parent_id === '0',
+                (f: AudienceFeatureFolderResource) => f.parent_id === null,
               ),
             ),
             audience_features: [],
@@ -178,7 +178,7 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
         const path: AudienceFeaturesByFolder[] = [];
         const pathLoop = (folder: AudienceFeaturesByFolder) => {
           const parent = this.getFolder(folder.parent_id);
-          if (folder.id === '0') {
+          if (folder.id === null) {
             path.unshift(audienceFeaturesByFolder);
           } else {
             path.unshift(folder);
@@ -189,7 +189,7 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
 
         return path.map(elt => {
           return (
-            <Breadcrumb.Item key={elt.id}>
+            <Breadcrumb.Item key={elt.id ? elt.id : 'root_key'}>
               <Button onClick={this.onSelectFolder(elt.id)}>{elt.name}</Button>
             </Breadcrumb.Item>
           );
@@ -204,11 +204,11 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
     );
   };
 
-  getFolder = (id: string) => {
+  getFolder = (id: string | null) => {
     const { audienceFeaturesByFolder } = this.state;
     let selectedFolder: AudienceFeaturesByFolder | undefined;
     const loop = (folder: AudienceFeaturesByFolder) => {
-      if (id === '0') {
+      if (id === null) {
         selectedFolder = audienceFeaturesByFolder;
       } else {
         folder.children.forEach(f => {
@@ -224,7 +224,7 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
     return selectedFolder;
   };
 
-  onSelectFolder = (id: string) => () => {
+  onSelectFolder = (id: string | null) => () => {
     this.setState({
       selectedFolder: this.getFolder(id),
     });
@@ -293,7 +293,7 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
           {!!selectedFolder &&
             selectedFolder.children.map(folder => {
               return (
-                <Col key={folder.id} span={4}>
+                <Col key={folder.id ? folder.id : 'root_key'} span={4}>
                   <div
                     className="mcs-audienceBuilder_folder"
                     onClick={this.onSelectFolder(folder.id)}
