@@ -36,7 +36,7 @@ interface State {
   schemaDecorator?: SchemaDecoratorResource[];
   uploadingDecorator: boolean;
   changedSchemaValue?: string;
-  changedSchemaId?:string;
+  changedSchemaId?: string;
 }
 
 const messages = defineMessages({
@@ -86,9 +86,13 @@ const messages = defineMessages({
     id: 'datamart.schemaEditor.objectTree.decorators.upload',
     defaultMessage: 'Upload new Decorators',
   },
+  downloadTemplate: {
+    id: 'datamart.schemaEditor.objectTree.decorators.downloadTemplate',
+    defaultMessage: 'Download Template',
+  },
   downloadDecorators: {
     id: 'datamart.schemaEditor.objectTree.decorators.download',
-    defaultMessage: 'Download Template',
+    defaultMessage: 'Download Decorators',
   },
 });
 
@@ -199,7 +203,7 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
   saveSchema = () => {
     const { selectedSchema, changedSchemaValue } = this.state;
     if (selectedSchema && changedSchemaValue) {
-      this.setState({ loadingSingle: true , schemaValidation: undefined});
+      this.setState({ loadingSingle: true, schemaValidation: undefined });
       return this._runtimeSchemaService
         .updateRuntimeSchema(
           selectedSchema.datamart_id,
@@ -210,7 +214,7 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
           this.setState({
             selectedSchemaText: changedSchemaValue,
             changedSchemaValue: undefined,
-            changedSchemaId:undefined,
+            changedSchemaId: undefined,
             loadingSingle: false,
           }),
         )
@@ -241,8 +245,39 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
   };
 
   downloadDecoratorsTemplate = () => {
-    const rowsToUpload: string[][] = [];
-    rowsToUpload.push([
+    const rowsToDownload = [
+      [
+        'UserPoint',
+        'profiles',
+        'false',
+        'Profile',
+        'Uploaded CRM Profiles',
+        'en-US',
+      ],
+    ];
+    this.downloadCSVFile(rowsToDownload);
+  };
+
+  downloadDecorators = () => {
+    const { schemaDecorator } = this.state;
+    if (schemaDecorator) {
+      const rowsToDownload = schemaDecorator.map(decorator => {
+        return [
+          decorator.object_name,
+          decorator.field_name,
+          decorator.hidden.toString(),
+          decorator.label,
+          decorator.help_text || '',
+          decorator.locale || '',
+        ];
+      });
+      this.downloadCSVFile(rowsToDownload);
+    }
+  };
+
+  downloadCSVFile = (rowsToDownload: string[][]) => {
+    const rows: string[][] = [];
+    rows.push([
       'OBJECT_NAME',
       'FIELD_NAME',
       'HIDDEN',
@@ -250,16 +285,18 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
       'HELP_TEXT',
       'LOCALE',
     ]);
-    rowsToUpload.push([
-      'UserPoint',
-      'profiles',
-      'false',
-      'Profile',
-      'Uploaded CRM Profiles',
-      'en-US',
-    ]);
+    rowsToDownload.forEach(rowToDownload => {
+      rows.push([
+        rowToDownload[0],
+        rowToDownload[1],
+        rowToDownload[2],
+        rowToDownload[3],
+        rowToDownload[4],
+        rowToDownload[5],
+      ]);
+    });
     let csvContent = 'data:text/csv;charset=utf-8,';
-    rowsToUpload.forEach(rowArray => {
+    rows.forEach(rowArray => {
       const row = rowArray.join(',');
       csvContent += row + '\r\n';
     });
@@ -322,7 +359,10 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
   };
 
   onSchemaChange = (value: string) => {
-    this.setState({ changedSchemaValue: value , changedSchemaId:this.state.selectedSchema?.id });
+    this.setState({
+      changedSchemaValue: value,
+      changedSchemaId: this.state.selectedSchema?.id,
+    });
   };
 
   onClickOnSelect = (schema: RuntimeSchemaResource) => () =>
@@ -461,19 +501,20 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
               <Loading isFullScreen={false} />
             ) : (
               <div>
-                {isInValidationMode && selectedSchema?.id===schemaValidation?.schema_id && (
-                  <Alert
-                    style={{ marginBottom: 10 }}
-                    message={
-                      validationError ? (
-                        <FormattedMessage {...messages.validationError} />
-                      ) : (
-                        <FormattedMessage {...messages.validationSuccess} />
-                      )
-                    }
-                    type={validationError ? 'error' : 'success'}
-                  />
-                )}
+                {isInValidationMode &&
+                  selectedSchema?.id === schemaValidation?.schema_id && (
+                    <Alert
+                      style={{ marginBottom: 10 }}
+                      message={
+                        validationError ? (
+                          <FormattedMessage {...messages.validationError} />
+                        ) : (
+                          <FormattedMessage {...messages.validationSuccess} />
+                        )
+                      }
+                      type={validationError ? 'error' : 'success'}
+                    />
+                  )}
                 <AceEditor
                   width="100%"
                   mode="graphqlschema"
@@ -482,11 +523,14 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
                     showGutter: true,
                   }}
                   onChange={this.onSchemaChange}
-                  readOnly={selectedSchema?.status ==="DRAFT" ? false : true}
+                  readOnly={selectedSchema?.status === 'DRAFT' ? false : true}
                   // changedSchemaValue can be equal to '' and in this case we don't want to display selectedSchemaText
                   // hence the use of: changedSchemaValue !== undefined
                   value={
-                    changedSchemaValue !== undefined && changedSchemaId===selectedSchema?.id ? changedSchemaValue : selectedSchemaText
+                    changedSchemaValue !== undefined &&
+                    changedSchemaId === selectedSchema?.id
+                      ? changedSchemaValue
+                      : selectedSchemaText
                   }
                 />
                 <Row className="decorators">
@@ -511,10 +555,17 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
                     </Upload>
                     <Button
                       size="small"
+                      className="spacing"
                       onClick={this.downloadDecoratorsTemplate}
                     >
-                      <FormattedMessage {...messages.downloadDecorators} />
+                      <FormattedMessage {...messages.downloadTemplate} />
                     </Button>
+                    {this.state.schemaDecorator &&
+                      this.state.schemaDecorator.length > 0 && (
+                        <Button size="small" onClick={this.downloadDecorators}>
+                          <FormattedMessage {...messages.downloadDecorators} />
+                        </Button>
+                      )}
                   </Col>
                 </Row>
               </div>
