@@ -31,24 +31,24 @@ class AudienceBuilderGeneralSection extends React.Component<Props> {
     return (
       <div>
         <FormSection
-          title={messages.audienceFeatureSectionGeneralTitle}
+          title={messages.audienceBuilderSectionGeneralTitle}
         />
 
         <FormInputField
-          name="name"
+          name="audienceBuilder.name"
           component={FormInput}
           validate={[isRequired]}
           formItemProps={{
-            label: formatMessage(messages.audienceFeatureNameLabel),
+            label: formatMessage(messages.audienceBuilderNameLabel),
             required: true,
           }}
           inputProps={{
             placeholder: formatMessage(
-              messages.audienceFeatureNamePlaceholder,
+              messages.audienceBuilderNamePlaceholder,
             ),
           }}
           helpToolTipProps={{
-            title: formatMessage(messages.audienceFeatureNameTooltip),
+            title: formatMessage(messages.audienceBuilderNameTooltip),
           }}
         />
       </div>

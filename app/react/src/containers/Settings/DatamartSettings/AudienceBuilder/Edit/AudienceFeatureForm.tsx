@@ -17,7 +17,7 @@ import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { messages } from '../messages';
 import { compose } from 'recompose';
 import AudienceFeaturePreview from './Sections/AudienceFeaturePreview';
-import QueryFormSection from './Sections/QueryFormSection';
+import QueryFormSection from './Sections/AudienceFeatureQueryFormSection';
 import { SchemaItem } from '../../../../QueryTool/JSONOTQL/domain';
 import { connect } from 'react-redux';
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
@@ -70,7 +70,7 @@ class AudienceFeatureForm extends React.Component<Props> {
     sections.push({
       id: 'general',
       title: messages.audienceFeatureSectionGeneralTitle,
-      component: <GeneralFormSection />,
+      component: <AudienceFeatureGeneralSection />,
     });
 
     sections.push({

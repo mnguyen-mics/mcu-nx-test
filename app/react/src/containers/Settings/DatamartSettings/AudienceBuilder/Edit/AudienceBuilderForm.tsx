@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { withRouter } from 'react-router';
 import { Layout, Row, Col } from 'antd';
 import { FormLayoutActionbar } from '../../../../../components/Layout';
 import { AUDIENCE_BUILDER_FORM_ID, AudienceBuilderFormData } from './domain';
@@ -7,7 +8,9 @@ import {
   Form,
   InjectedFormProps,
   reduxForm,
-  getFormValues,
+  Field,
+  FieldArray,
+  GenericFieldArray,
 } from 'redux-form';
 import { FormLayoutActionbarProps } from '../../../../../components/Layout/FormLayoutActionbar';
 import { McsFormSection } from '../../../../../utils/FormHelper';
@@ -16,8 +19,7 @@ import { Path } from '@mediarithmics-private/mcs-components-library/lib/componen
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { messages } from '../messages';
 import { compose } from 'recompose';
-import { connect } from 'react-redux';
-import { MicsReduxState } from '../../../../../utils/ReduxHelper';
+import AudienceBuilderDemographicsSection, { DemographicsFormSectionProps } from './Sections/AudienceBuilderDemographicsSection';
 
 const Content = Layout.Content;
 
@@ -26,6 +28,11 @@ export interface AudienceBuilderFormProps
   close: () => void;
   breadCrumbPaths: Path[];
 }
+
+const DemographicsFieldArray = FieldArray as new () => GenericFieldArray<
+  Field,
+  DemographicsFormSectionProps
+>;
 
 interface MapStateToProps {
   formValues?: AudienceBuilderFormData;
@@ -49,8 +56,14 @@ class AudienceBuilderForm extends React.Component<Props> {
     const {
       handleSubmit,
       breadCrumbPaths,
+      change,
       close,
     } = this.props;
+
+    const genericFieldArrayProps = {
+      formChange: change,
+      rerenderOnEveryChange: true,
+    };
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: AUDIENCE_BUILDER_FORM_ID,
@@ -60,12 +73,24 @@ class AudienceBuilderForm extends React.Component<Props> {
     };
 
     const sections: McsFormSection[] = [];
+
     sections.push({
       id: 'general',
       title: messages.audienceBuilderSectionGeneralTitle,
       component: <AudienceBuilderGeneralSection />,
     });
 
+    sections.push({
+      id: 'demographics',
+      title: messages.audienceBuilderSectionDemographicsTitle,
+      component: (
+        <DemographicsFieldArray
+          name="audienceFeatureDemographics"
+          component={AudienceBuilderDemographicsSection}
+          {...genericFieldArrayProps}
+        />
+      ),
+    });
 
     const renderedSections = sections.map((section, index) => {
       return (
@@ -103,15 +128,11 @@ class AudienceBuilderForm extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = (state: MicsReduxState) => ({
-  formValues: getFormValues(AUDIENCE_BUILDER_FORM_ID)(state),
-});
-
 export default compose<Props, AudienceBuilderFormProps>(
   injectIntl,
+  withRouter,
   reduxForm({
     form: AUDIENCE_BUILDER_FORM_ID,
     enableReinitialize: true,
   }),
-  connect(mapStateToProps),
 )(AudienceBuilderForm);

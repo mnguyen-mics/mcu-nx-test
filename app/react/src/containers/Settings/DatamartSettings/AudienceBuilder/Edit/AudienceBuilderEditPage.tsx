@@ -10,7 +10,7 @@ import injectNotifications, {
 } from '../../../../Notifications/injectNotifications';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { messages } from '../messages';
-import { AudienceBuilderFormData } from './domain';
+import { AudienceBuilderFormData, INITIAL_AUDIENCE_BUILDER_FORM_DATA } from './domain';
 import { message } from 'antd';
 import { Loading } from '../../../../../components';
 
@@ -24,7 +24,7 @@ type Props = InjectedNotificationProps &
 
 interface State {
   isLoading: boolean;
-  audienceBuilder: AudienceBuilderFormData;
+  builderFormData: AudienceBuilderFormData;
 }
 
 class AudienceBuilderEditPage extends React.Component<Props, State> {
@@ -35,9 +35,10 @@ class AudienceBuilderEditPage extends React.Component<Props, State> {
     super(props);
     this.state = {
       isLoading: false,
-      audienceBuilder: {},
+      builderFormData: INITIAL_AUDIENCE_BUILDER_FORM_DATA,
     };
   }
+
   componentDidMount() {
     const {
       match: {
@@ -51,14 +52,13 @@ class AudienceBuilderEditPage extends React.Component<Props, State> {
         isLoading: true,
       });
       this._audienceBuilderService
-        .getAudienceBuilder(datamartId, audienceBuilderId)
-        .then(res => {
+        .loadAudienceBuilder(datamartId, audienceBuilderId)
+        .then((formData: AudienceBuilderFormData) => {
           this.setState({
-            audienceBuilder: res.data,
+            builderFormData: formData,
             isLoading: false,
           });
         })
-
         .catch(e => {
           notifyError(e);
           this.setState({
@@ -88,8 +88,14 @@ class AudienceBuilderEditPage extends React.Component<Props, State> {
     });
 
     const newFormData = {
-      ...formData,
+      ...formData.audienceBuilder,
     };
+
+    const demographics = formData.audienceFeatureDemographics
+
+    if (demographics) {
+      newFormData.demographics_features_ids = demographics.map(d => d.model.id)
+    }
 
     const promise = audienceBuilderId
       ? this._audienceBuilderService.updateAudienceBuilder(
@@ -133,7 +139,7 @@ class AudienceBuilderEditPage extends React.Component<Props, State> {
   };
 
   render() {
-    const { audienceBuilder, isLoading } = this.state;
+    const { builderFormData, isLoading } = this.state;
     const {
       intl: { formatMessage },
       match: {
@@ -141,9 +147,11 @@ class AudienceBuilderEditPage extends React.Component<Props, State> {
       },
     } = this.props;
 
-    const replicationName =
-      audienceBuilderId && audienceBuilder.name
-        ? audienceBuilder.name
+    const existingBuilderName = builderFormData.audienceBuilder.name
+
+    const builderName =
+      audienceBuilderId && existingBuilderName
+        ? existingBuilderName
         : formatMessage(messages.audienceBuilderNew);
 
     const breadcrumbPaths = [
@@ -153,7 +161,7 @@ class AudienceBuilderEditPage extends React.Component<Props, State> {
         state: { activeTab: 'Audience Builder' },
       },
       {
-        name: replicationName,
+        name: builderName,
       },
     ];
 
@@ -163,7 +171,7 @@ class AudienceBuilderEditPage extends React.Component<Props, State> {
 
     return (
       <AudienceBuilderForm
-        initialValues={audienceBuilder}
+        initialValues={builderFormData}
         onSubmit={this.save}
         close={this.onClose}
         breadCrumbPaths={breadcrumbPaths}

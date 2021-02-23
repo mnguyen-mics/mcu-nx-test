@@ -132,9 +132,9 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
 
     Modal.confirm({
       icon: 'exclamation-circle',
-      title: formatMessage(messages.deleteAudienceFeaturelModalTitle),
-      okText: formatMessage(messages.deleteAudienceFeaturelModalOk),
-      cancelText: formatMessage(messages.deleteAudienceFeaturelModalCancel),
+      title: formatMessage(messages.audienceFeatureDeleteListModalTitle),
+      okText: formatMessage(messages.audienceFeatureDeleteListModalOk),
+      cancelText: formatMessage(messages.audienceFeatureDeleteListModalCancel),
       onOk: () => {
         this._audienceFeatureService
           .deleteAudienceFeature(resource.datamart_id, resource.id)
@@ -190,7 +190,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
     };
     return (
       <Button type="primary" onClick={onClick}>
-        <FormattedMessage {...messages.newAudienceFeature} />
+        <FormattedMessage {...messages.audienceFeatureNew} />
       </Button>
     );
   };

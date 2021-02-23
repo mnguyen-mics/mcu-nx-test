@@ -64,11 +64,11 @@ class AudienceFeatureFolder extends React.Component<Props, State> {
         <Menu>
           <Menu.Item key="0">
             <div onClick={displayForm}>
-              {intl.formatMessage(messages.rename)}
+              {intl.formatMessage(messages.audienceFeatureRename)}
             </div>
           </Menu.Item>
           <Menu.Item key="1">
-            <div onClick={onDelete}>{intl.formatMessage(messages.delete)}</div>
+            <div onClick={onDelete}>{intl.formatMessage(messages.audienceFeatureDelete)}</div>
           </Menu.Item>
         </Menu>
       );
@@ -111,16 +111,16 @@ class AudienceFeatureFolder extends React.Component<Props, State> {
                   onChange={this.handleInputChange}
                   className="mcs-audienceFeatureSettings-folderInput"
                   placeholder={intl.formatMessage(
-                    messages.placeholderFolderInput,
+                    messages.audienceFeaturePlaceholderFolderInput,
                   )}
                 />
 
                 <Button type="primary" onClick={this.renameFolder(folder.id)}>
-                  <FormattedMessage {...messages.rename} />
+                  <FormattedMessage {...messages.audienceFeatureRename} />
                 </Button>
 
                 <Button onClick={this.cancelEdition}>
-                  <FormattedMessage {...messages.cancelButton} />
+                  <FormattedMessage {...messages.audienceFeatureCancelButton} />
                 </Button>
               </div>
             ) : (

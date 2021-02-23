@@ -31,13 +31,25 @@ export const messages = defineMessages({
     id: 'settings.datamart.audienceBuilders.emptyList',
     defaultMessage: 'There are no audience builders',
   },
-  audienceBuilderSectionGeneralSubTitle: {
+  audienceBuilderSectionGeneralSubtitle: {
     id: 'settings.datamart.audienceBuilders.edit.subtitle',
     defaultMessage: 'Enter your parameters for the following inputs',
   },
   audienceBuilderSectionGeneralTitle: {
-    id: 'settings.datamart.audienceBuilders.edit.title',
+    id: 'settings.datamart.audienceBuilders.edit.general.title',
     defaultMessage: 'General Information',
+  },
+  audienceBuilderSectionDemographicsTitle: {
+    id: 'settings.datamart.audienceBuilders.edit.demographics.title',
+    defaultMessage: 'Demographics',
+  },
+  audienceBuilderSectionDemographicsSubtitle: {
+    id: 'settings.datamart.audienceBuilders.edit.demographics.subtitle',
+    defaultMessage: 'Audience Features that will always be used when building an audience',
+  },
+  audienceBuilderSectionDemographicsAddButton: {
+    id: 'settings.datamart.audienceBuilders.edit.demographics.add',
+    defaultMessage: 'Add from library',
   },
   audienceBuilderNameLabel: {
     id: 'settings.datamart.audienceBuilders.edit.name.label',
@@ -79,23 +91,23 @@ export const messages = defineMessages({
     id: 'settings.datamart.audienceFeature.newAudienceFeature',
     defaultMessage: 'New Audience Feature',
   },
-  addFolder: {
+  audienceFeatureAddFolder: {
     id: 'settings.datamart.audienceFeature.addFolder',
     defaultMessage: 'Add Folder',
   },
-  placeholderFolderInput: {
+  audienceFeaturePlaceholderFolderInput: {
     id: 'settings.datamart.audienceFeature.placeholderFolderInput',
     defaultMessage: 'Enter folder name',
   },
-  addButton: {
+  audienceFeatureAddButton: {
     id: 'settings.datamart.audienceFeature.add',
     defaultMessage: 'Add',
   },
-  cancelButton: {
+  audienceFeatureCancelButton: {
     id: 'settings.datamart.audienceFeature.cancel',
     defaultMessage: 'Cancel',
   },
-  rename: {
+  audienceFeatureRename: {
     id: 'settings.datamart.audienceFeature.renameFolder',
     defaultMessage: 'Rename',
   },

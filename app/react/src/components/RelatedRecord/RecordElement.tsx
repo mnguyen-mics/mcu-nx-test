@@ -14,7 +14,7 @@ const messages = defineMessages({
 });
 
 interface RecordElementProps<T> {
-  recordIconType: McsIconType;
+  recordIconType?: McsIconType;
   onEdit?: (record: T) => void;
   onRemove?: (record: T) => void;
   record: T;
@@ -99,11 +99,13 @@ class RecordElement<T> extends React.Component<
 
     return (
       <Row className={className}>
-        <Col style={{ width: 60 }}>
-          <div className="icon-round-border">
-            <McsIcon type={recordIconType} />
-          </div>
-        </Col>
+        {recordIconType && (
+          <Col style={{ width: 60 }}>
+            <div className="icon-round-border">
+              <McsIcon type={recordIconType} />
+            </div>
+          </Col>
+        )}
 
         <Col className={this.computeDataClass()}>{title(record)}</Col>
         {additionalData && (

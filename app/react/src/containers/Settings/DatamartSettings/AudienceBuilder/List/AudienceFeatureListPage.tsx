@@ -409,15 +409,15 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
           value={inputValue}
           onChange={this.handleInputChange}
           className="mcs-audienceFeatureSettings-folderInput"
-          placeholder={intl.formatMessage(messages.placeholderFolderInput)}
+          placeholder={intl.formatMessage(messages.audienceFeaturePlaceholderFolderInput)}
         />
 
         <Button type="primary" onClick={onOk}>
-          <FormattedMessage {...messages.addButton} />
+          <FormattedMessage {...messages.audienceFeatureAddButton} />
         </Button>
 
         <Button onClick={onCancel}>
-          <FormattedMessage {...messages.cancelButton} />
+          <FormattedMessage {...messages.audienceFeatureCancelButton} />
         </Button>
       </div>
     ) : (
@@ -429,7 +429,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
           className="mcs-audienceFeatureSettings-addFolderButton"
           onClick={addFolder}
         >
-          <FormattedMessage {...messages.addFolder} />
+          <FormattedMessage {...messages.audienceFeatureAddFolder} />
         </Button>
       </div>
     );

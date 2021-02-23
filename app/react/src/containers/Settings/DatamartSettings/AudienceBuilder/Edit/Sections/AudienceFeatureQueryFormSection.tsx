@@ -17,17 +17,17 @@ import { messages } from '../../messages';
 import AceEditor from 'react-ace';
 import CustomOtqlMode from '../../../../../../components/OtqlConsole/theme/CustomOtqlMode';
 
-interface QueryFormSectionProps {
+interface AudienceFeatureQueryFormSectionProps {
   associatedQuery?: string;
   formChange: (field: string, value: any) => void;
 }
 
-type Props = QueryFormSectionProps &
+type Props = AudienceFeatureQueryFormSectionProps &
   InjectedDrawerProps &
   InjectedIntlProps &
   RouteComponentProps<{ datamartId: string }>;
 
-class QueryFormSection extends React.Component<Props> {
+class AudienceFeatureQueryFormSection extends React.Component<Props> {
   aceEditor: any = null;
   componentDidMount() {
     if (this.aceEditor && this.aceEditor.editor) {
@@ -125,8 +125,8 @@ class QueryFormSection extends React.Component<Props> {
   }
 }
 
-export default compose<Props, QueryFormSectionProps>(
+export default compose<Props, AudienceFeatureQueryFormSectionProps>(
   injectIntl,
   injectDrawer,
   withRouter,
-)(QueryFormSection);
+)(AudienceFeatureQueryFormSection);
