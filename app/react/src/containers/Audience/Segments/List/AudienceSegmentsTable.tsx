@@ -389,7 +389,11 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         order_by: filter.orderBy,
       };
     }
-    const subtypes: string[] = filter.type.filter( (t: string) => t === "EDGE" || t === "USER_PIXEL")
+    const isUserList = (t: string) => t === "USER_LIST"
+    const isEdgeOrUserPixel = (t: string) => t === "EDGE" || t === "USER_PIXEL";
+    const subtypes: string[] = filter.type.filter(isEdgeOrUserPixel);
+    if(filter.type.some(isUserList))
+      subtypes.push("STANDARD");
     const types: string[] = filter.type.filter( (t: string) => t !== "EDGE" && t !== "USER_PIXEL")
     if (subtypes.length) {
       formattedFilters = {
@@ -397,12 +401,22 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         subtype: subtypes,
       };
     }
-    const calculatedTypes = types.length ? types : ['USER_LIST', 'USER_QUERY', 'USER_LOOKALIKE', 'USER_ACTIVATION', 'USER_PARTITION', 'USER_DATA_SUBSCRIPTION'];
+    const showUserListOnly = types.filter(isUserList).length === 0 && subtypes.length > 0;
+    const showAllSegmentTypes = types.length === 0 && subtypes.length === 0;
+    const allSegmentTypes = ['USER_LIST', 'USER_QUERY', 'USER_LOOKALIKE', 'USER_ACTIVATION', 'USER_PARTITION', 'USER_DATA_SUBSCRIPTION'];
+    const calculatedTypes = 
+      showUserListOnly ? ['USER_LIST'] : 
+      (showAllSegmentTypes ? allSegmentTypes :
+      types);
     formattedFilters = {
       ...formattedFilters,
       type: calculatedTypes
     };
-    const feedtypes: string[] = (calculatedTypes.some((t: string) => t === "USER_LIST") && filter.feed_type.length === 0) ? ["SCENARIO", "FILE_IMPORT"] : filter.feed_type;
+    const allfeedtypes = ["SCENARIO", "FILE_IMPORT", "TAG"];
+    const feedtypes: string[] = (calculatedTypes.some(isUserList) && filter.feed_type.length === 0) ? allfeedtypes : filter.feed_type;
+    if(filter.type.some(isEdgeOrUserPixel))
+      feedtypes.push("TAG"); // An edge segment can have the feedtype tag, we want to fetch them
+    
     if (feedtypes.length) {
       formattedFilters = {
         ...formattedFilters,
@@ -418,43 +432,6 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
 
     return formattedFilters;
   };
-
-  // archiveSegment = (segment: AudienceSegmentResource) => {
-  //   const {
-  //     match: {
-  //       params: {
-  //         organisationId,
-  //       },
-  //     },
-  //     location: {
-  //       search,
-  //     },
-  //     intl,
-  //   } = this.props;
-
-  //   const filter = parseSearch(search, this.getSearchSetting(organisationId));
-
-  //   const archiveAudienceSegment = () => {
-  //     return AudienceSegmentService.
-  //   }
-
-  //   Modal.confirm({
-  //     title: intl.formatMessage(messages.modalTitle),
-  //     content: intl.formatMessage(messages.modalText),
-  //     iconType: 'exclamation-circle',
-  //     okText: intl.formatMessage(messages.modalOk),
-  //     cancelText: intl.formatMessage(messages.modalCancel),
-  //     onOk() {
-  //       return archiveAudienceSegment(segment.id).then(() => {
-  //         const datamartId = filter.datamarts[0];
-  //         loadAudienceSegmentsDataSource(organisationId, datamartId, filter);
-  //       });
-  //     },
-  //     onCancel() {
-  //       // cancel
-  //     },
-  //   });
-  // }
 
   editSegment = (segment: AudienceSegmentResource) => {
     const {
