@@ -9,16 +9,28 @@ interface ApiResponse {
   status: StatusCode;
 }
 
-export interface DataResponse<T> extends ApiResponse {
+// export interface OkResponse {
+//   status: 'ok'
+// }
+
+
+export interface DataResponse<T> extends ApiResponse { // extends OkResponse
   data: T;
 }
 
-export interface DataListResponse<T> extends ApiResponse {
+export interface DataListResponse<T> extends ApiResponse { // extends OkResponse
   data: T[];
   count: number;
   first_result?: number;
   max_results?: number;
   total?: number;
+}
+
+export interface ErrorResponse extends ApiResponse {
+  status: 'error';
+  error_id: string;
+  error: string;
+  error_code: string;
 }
 
 export function extractData<T>(dataResponse: DataResponse<T>) {

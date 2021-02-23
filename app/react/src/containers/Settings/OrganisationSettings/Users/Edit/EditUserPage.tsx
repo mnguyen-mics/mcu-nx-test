@@ -10,6 +10,7 @@ import { notifyError } from '../../../../../redux/Notifications/actions';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IUsersService } from '../../../../../services/UsersService';
+import { ErrorResponse } from '../../../../../services/ApiService';
 
 const messages = defineMessages({
   newUser: {
@@ -40,7 +41,18 @@ const messages = defineMessages({
     id: 'settings.organisation.users.edit.userUpdateFailed',
     defaultMessage: 'User update failed ',
   },
+  emailAlreadyExists: {
+    id: 'settings.organisation.users.edit.emailAlreadyExists',
+    defaultMessage: 'Email already exists ',
+  },
 });
+
+function updateErrorMessage(err: ErrorResponse) {
+  if(err.error_code === "EMAIL_ALREADY_EXISTS")
+    return messages.emailAlreadyExists;
+  else
+    return messages.updateError;
+}
 
 const INITIAL_USER_FORM_DATA: Partial<UserResource> = {
   first_name: '',
@@ -112,15 +124,15 @@ class EditUserPage extends React.Component<Props, State> {
       intl.formatMessage(messages.savingInProgress),
       0,
     );
-    const redirectAndNotify = (success: boolean = false) => {
+    const redirectAndNotify = (err: ErrorResponse | null = null) => {
       this.setState({
         loading: false,
       });
       hideSaveInProgress();
       this.close();
-      success
+      err === null
         ? message.success(intl.formatMessage(messages.updateSuccess))
-        : message.error(intl.formatMessage(messages.updateError));
+        : message.error(intl.formatMessage(updateErrorMessage(err)));
     };
     let createOrUpdateUserPromise;
     if (userId) {
@@ -138,10 +150,10 @@ class EditUserPage extends React.Component<Props, State> {
 
     createOrUpdateUserPromise
       .then(() => {
-        redirectAndNotify(true);
+        redirectAndNotify(null);
       })
       .catch(err => {
-        redirectAndNotify();
+        redirectAndNotify(err);
         notifyError(err);
       });
   };
