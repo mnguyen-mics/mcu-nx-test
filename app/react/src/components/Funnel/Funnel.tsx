@@ -229,6 +229,14 @@ class Funnel extends React.Component<Props, State> {
       })
       .catch(e => {
         notifyError(e);
+        if (splitBy && index) {
+          const { funnelData } = this.state;
+          funnelData.global.steps[index].isLoading = false;
+          this.setState({
+            funnelData
+          });
+        }
+
         this.setState({
           isLoading: false,
         }, () => {
@@ -464,6 +472,7 @@ class Funnel extends React.Component<Props, State> {
     if (isLoading) return (<LoadingChart />);
     const steps = funnelData.global.steps;
     const total = funnelData.global.total;
+    const getPopupContainer = () => document.getElementById('mcs-funnel_splitBy')!
     return (
       <Card className="mcs-funnel" bordered={false}>
         <div id="container" >
@@ -484,8 +493,18 @@ class Funnel extends React.Component<Props, State> {
                       <p className={'mcs-funnel_stepInfo_desc'}><span className={'mcs-funnel_stepInfo_metric'}>{numeral(index === 0 ? total : steps[index - 1].count).format('0,0')} </span>{index > 0 ? `user points at step ${index}` : 'total user points'}</p>
                       {index > 0 && filter[index - 1] ? this.getConversionDescription(filter[index - 1], conversion, amount) : undefined}
 
-                      <div className={"mcs-funnel_splitBy"}>               
-                        {(index > 0 && steps[index - 1] && steps[index - 1].count > 0 && (filter[index - 1] && this.displaySplitByDropdown(filter[index - 1]))) ?  <Select key={this._cuid()} disabled={steps[index].isLoading} loading={steps[index].isLoading} className="mcs-funnel_splitBy_select" value={filter[index - 1].group_by_dimension} placeholder="Split by" onChange={this.handleSplitByDimension.bind(this, index)}>
+                      <div className={"mcs-funnel_splitBy"} id="mcs-funnel_splitBy">               
+                        {(index > 0 && steps[index - 1] && steps[index - 1].count > 0 && (filter[index - 1] && this.displaySplitByDropdown(filter[index - 1]))) ?  
+                          <Select 
+                          key={this._cuid()} 
+                          disabled={steps[index].isLoading} 
+                          loading={steps[index].isLoading} 
+                          className="mcs-funnel_splitBy_select" 
+                          value={filter[index - 1].group_by_dimension} 
+                          placeholder="Split by" 
+                          onChange={this.handleSplitByDimension.bind(this, index)}
+                          getPopupContainer={getPopupContainer}
+                          >
                             {uniqBy(filter[index - 1].filter_clause.filters, 'dimension_name').map((dimension)=> this.getLabelValueForDimension(dimension.dimension_name))} 
                           </Select> : undefined}
                       </div>
