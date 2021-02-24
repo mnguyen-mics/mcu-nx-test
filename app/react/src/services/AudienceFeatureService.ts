@@ -424,7 +424,7 @@ export class AudienceFeatureService implements IAudienceFeatureService {
           name: 'Demographics',
           datamart_id: '1',
           audience_feature_ids: ['11', '12'],
-          parent_id: '0',
+          parent_id: null,
           children_ids: ['4', '5'],
         },
         {
@@ -432,7 +432,7 @@ export class AudienceFeatureService implements IAudienceFeatureService {
           name: 'Intents',
           datamart_id: '1',
           audience_feature_ids: ['21', '22'],
-          parent_id: '0',
+          parent_id: null,
           children_ids: ['6', '7', '8'],
         },
         {
@@ -440,7 +440,7 @@ export class AudienceFeatureService implements IAudienceFeatureService {
           name: 'Interests',
           datamart_id: '1',
           audience_feature_ids: ['31', '32'],
-          parent_id: '0',
+          parent_id: null,
           children_ids: ['9', '10', '11'],
         },
         // sub folders Demographics

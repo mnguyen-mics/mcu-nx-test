@@ -41,18 +41,18 @@ export interface AudienceFeatureResource {
 }
 
 export interface AudienceFeatureFolderResource {
-  id: string;
+  id: string | null;
   name: string;
   datamart_id: string;
   audience_feature_ids: string[];
-  parent_id: string;
+  parent_id: string | null;
   children_ids: string[];
 }
 
 export interface AudienceFeaturesByFolder {
-  id: string;
+  id: string | null;
   name: string;
   audience_features: AudienceFeatureResource[];
-  parent_id: string;
+  parent_id: string | null;
   children: AudienceFeaturesByFolder[];
 }

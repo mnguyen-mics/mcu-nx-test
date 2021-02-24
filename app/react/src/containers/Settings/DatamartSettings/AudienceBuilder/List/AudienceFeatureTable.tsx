@@ -20,6 +20,7 @@ export interface AudienceFeatureTableProps {
   onFilterChange: (newFilter: Partial<Filter>) => void;
   filter: Filter;
   deleteAudienceFeature: (audienceFeature: AudienceFeatureResource) => void;
+  relatedTable?: JSX.Element
 }
 
 type Props = AudienceFeatureTableProps &
@@ -54,6 +55,7 @@ class AudienceFeatureTable extends React.Component<Props> {
       },
       filter,
       deleteAudienceFeature,
+      relatedTable
     } = this.props;
 
     const pagination = {
@@ -156,6 +158,7 @@ class AudienceFeatureTable extends React.Component<Props> {
         dataSource={dataSource}
         loading={isLoading}
         pagination={pagination}
+        relatedTable={relatedTable}
       />
     );
   }

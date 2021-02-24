@@ -21,6 +21,7 @@ export interface ViewComponentWithFiltersProps<T> extends TableViewProps<T> {
     isEnabled?: boolean;
   };
   labelsOptions?: LabelsSelectorProps;
+  relatedTable?: JSX.Element;
 }
 
 export interface FiltersState<T> {
@@ -73,6 +74,7 @@ class TableViewFilters<T> extends React.Component<
       columnsVisibilityOptions,
       labelsOptions,
       treeSelectFilter,
+      relatedTable,
     } = this.props;
 
     const searchInput = searchOptions ? (
@@ -128,6 +130,7 @@ class TableViewFilters<T> extends React.Component<
             <LabelsSelector {...labelsOptions} />
           </Row>
         ) : null}
+        {!!relatedTable && relatedTable}
         <Row className="mcs-table-body">
           <Col span={24}>
             <TableView
