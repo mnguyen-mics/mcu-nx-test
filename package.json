@@ -62,7 +62,7 @@
     "react-redux": "^5.1.1",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
-    "react-scrollspy": "^3.2.0",
+    "react-scrollspy": "^3.4.3",
     "react-syntax-highlighter": "^6.1.1",
     "react-transition-group": "^2.5.0",
     "recompose": "^0.23.5",
