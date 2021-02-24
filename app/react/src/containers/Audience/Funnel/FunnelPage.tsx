@@ -20,6 +20,9 @@ const { Content } = Layout;
 
 interface State {
   exportIsRunning: boolean;
+  isLoading: boolean;
+  executeQuery?: () => void;
+  cancelQuery?: () => void;
 }
 
 type JoinedProps = WithDatamartSelectorProps & InjectedIntlProps &
@@ -33,6 +36,7 @@ class FunnelPage extends React.Component<JoinedProps, State> {
     super(props);
     this.state = {
       exportIsRunning: false,
+      isLoading: false
     };
   }
 
@@ -66,13 +70,39 @@ class FunnelPage extends React.Component<JoinedProps, State> {
       });
   }
 
+  handleExecuteQueryButtonClick = () => {
+    const {executeQuery} = this.state
+    if(executeQuery) {
+      executeQuery()
+    }
+  }
+
+  handleFunnelWrapperCallback = (executeQuery: () => void, cancelQuery: () => void, isLoading: boolean) => {
+    const { exportIsRunning } = this.state
+    this.setState({
+      exportIsRunning: exportIsRunning,
+      isLoading: isLoading,
+      executeQuery: executeQuery,
+      cancelQuery: cancelQuery
+    })
+  }
+
+  handleCancelButtonClick = () => {
+    const {cancelQuery} = this.state
+    if(cancelQuery) {
+      cancelQuery()
+      this.setState({
+        isLoading: false
+      })
+    }
+  }
 
   render() {
     const { 
       selectedDatamartId, 
       location: { search } 
     } = this.props;
-    const { exportIsRunning } = this.state;
+    const { exportIsRunning, isLoading } = this.state;
     const routeParams = parseSearch(search, FUNNEL_SEARCH_SETTING);
     const breadcrumbPaths = [
       {
@@ -83,6 +113,13 @@ class FunnelPage extends React.Component<JoinedProps, State> {
     return (
       <div className="ant-layout" >
         <Actionbar paths={breadcrumbPaths}>
+          {isLoading && <Button className="mcs-funnelQueryBuilder_cancelBtn" type="default" onClick={this.handleCancelButtonClick}>
+            Cancel
+          </Button>}
+          <Button className="mcs-primary" type="primary" onClick={this.handleExecuteQueryButtonClick} loading={isLoading}>
+            {!isLoading && <McsIcon type="play" />}
+            Execute Query
+          </Button>
           {routeParams.filter.length > 0 && <Button
             onClick={this.handleRunExport} loading={exportIsRunning} >
             {!exportIsRunning && <McsIcon type="download" />}
@@ -93,11 +130,12 @@ class FunnelPage extends React.Component<JoinedProps, State> {
           </Button>}
         </Actionbar>
         <Content className="mcs-content-container">
-          <FunnelWrapper datamartId={selectedDatamartId} />
+          <FunnelWrapper datamartId={selectedDatamartId} parentCallback={this.handleFunnelWrapperCallback}/>
         </Content>
       </div>)
   }
 }
+
 
 export default compose(
   withDatamartSelector,

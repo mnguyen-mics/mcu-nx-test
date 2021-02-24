@@ -39,9 +39,8 @@ interface State {
 
 interface FunnelQueryBuilderProps {
   datamartId: string;
-  isLoading: boolean;
-  parentCallback: (timestampInSec: number) => void
-  cancelQueryCallback: (timestampInSec: number) => void
+  parentCallback: (timestampInSec: number) => void;
+  launchQueryFunctionCallback: (launchQueryFunction: () => void) => void;
 }
 
 type Props = FunnelQueryBuilderProps &
@@ -92,6 +91,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     const { datamartId } = this.props;
     this.setInitialParams()
     this.fetchDimensions(datamartId);
+    this.props.launchQueryFunctionCallback(this.handleExecuteQueryButtonClick)
   }
 
   setInitialParams = () => {
@@ -342,9 +342,6 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     }
   }
 
-  handleCancelCallback = () => this.props.cancelQueryCallback(new Date().getTime());
-
-
   showFilterSymbol(filterIndex: number, stepId?: string): FilterOperatorLabel {
     const { steps } = this.state;
     let result = "equals" as FilterOperatorLabel;
@@ -469,7 +466,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
   render() {
     const { steps, dateRange } = this.state;
     const { from, to } = dateRange
-    const { isLoading, datamartId } = this.props;
+    const { datamartId } = this.props;
     const onChange = (newValues: McsDateRangeValue): void => {
       this.updateLocationSearch({
         from: newValues.from,
@@ -612,15 +609,6 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
             />
           </Button>
         </div>
-      </div>
-      <div className={"mcs-funnelQueryBuilder_executeQueryBtn"}>
-        <Button className="mcs-primary" type="primary" onClick={this.handleExecuteQueryButtonClick} loading={isLoading}>
-          {!isLoading && <McsIcon type="play" />}
-          Execute Query
-        </Button>
-        <Button className="mcs-funnelQueryBuilder_cancelBtn" type="default" onClick={this.handleCancelCallback}>
-          Cancel
-        </Button>
       </div>
     </div >)
   }
