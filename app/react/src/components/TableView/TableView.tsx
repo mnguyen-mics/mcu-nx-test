@@ -72,6 +72,7 @@ class TableView<
           <Dropdown
             overlay={this.renderActionsMenu(column.actions, record)}
             trigger={['click']}
+            className={`mcs-tableActions_dropdown`}
           >
             <a className="ant-dropdown-link">
               <McsIcon type="chevron" />
@@ -139,7 +140,7 @@ class TableView<
       <Menu onClick={onClick} className="mcs-dropdown-actions">
         {actions(record).map((action, index) => {
           return (
-            <Menu.Item key={index.toString()} disabled={action.disabled}>
+            <Menu.Item key={index.toString()} disabled={action.disabled} className={action.intlMessage ? `mcs-tableActions_${action.intlMessage?.id}` : ''}>
               {action.intlMessage ? (
                 <FormattedMessage {...action.intlMessage!} />
               ) : (
