@@ -68,8 +68,12 @@ class FunnelPage extends React.Component<JoinedProps, State> {
 
 
   render() {
-    const { selectedDatamartId } = this.props;
+    const { 
+      selectedDatamartId, 
+      location: { search } 
+    } = this.props;
     const { exportIsRunning } = this.state;
+    const routeParams = parseSearch(search, FUNNEL_SEARCH_SETTING);
     const breadcrumbPaths = [
       {
         key: 'Funnel Analytics',
@@ -79,14 +83,14 @@ class FunnelPage extends React.Component<JoinedProps, State> {
     return (
       <div className="ant-layout" >
         <Actionbar paths={breadcrumbPaths}>
-          <Button
+          {routeParams.filter.length > 0 && <Button
             onClick={this.handleRunExport} loading={exportIsRunning} >
             {!exportIsRunning && <McsIcon type="download" />}
             <FormattedMessage
               id="funnel.actionbar.exportButton"
               defaultMessage="Export"
             />
-          </Button>
+          </Button>}
         </Actionbar>
         <Content className="mcs-content-container">
           <FunnelWrapper datamartId={selectedDatamartId} />
