@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Card, Select, Button, Icon, Switch } from "antd";
+import { Card, Select, Button, Icon, Switch, Input } from "antd";
 import messages from '../../containers/Campaigns/Display/Edit/messages';
 import cuid from 'cuid';
 import { TYPES } from '../../constants/types';
@@ -27,6 +27,7 @@ export interface Step {
   id?: string;
   name: string;
   filter_clause: DimensionFilterClause;
+  max_days_after_previous_step?: number;
 }
 
 interface State {
@@ -59,6 +60,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
       steps: [{
         id: this._cuid(),
         name: "Step 1",
+        max_days_after_previous_step: 0,
         filter_clause: {
           operator: 'OR',
           filters: [
@@ -178,6 +180,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     newSteps.push({
       id: this._cuid(),
       name: "",
+      max_days_after_previous_step: 0,
       filter_clause: {
         operator: 'AND',
         filters: [
@@ -284,6 +287,17 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     this.setState({ steps });
   }
 
+  handleMaximumDaysAfterStepChange(stepId: string, value: any) {
+    const { steps } = this.state;
+    steps.forEach(step => {
+      if (step.id === stepId) {
+        step.max_days_after_previous_step = parseInt(value.target.value, 10);
+      }
+    }); 
+
+    this.setState({ steps });
+  }
+
 
   checkExpressionsNotEmpty = () => {
     let result = true;
@@ -363,8 +377,14 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     const stepsCopy = JSON.parse(JSON.stringify(steps));
     stepsCopy.forEach((step: Step) => {
       step.id = undefined;
-      step.filter_clause.filters.forEach(filter => filter.id = undefined);
+      if (step.max_days_after_previous_step && step.max_days_after_previous_step < 1) {
+        step.max_days_after_previous_step = undefined;
+      }
+      step.filter_clause.filters.forEach(filter => { 
+        filter.id = undefined
+      });
     });
+
     const stepsFormated = stepsCopy.filter((s: Step) => s.filter_clause.filters.length > 0)
     const queryParams = {
       filter: [JSON.stringify(stepsFormated)],
@@ -494,7 +514,17 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
                         onClick={this.removeStep.bind(this, step.id)} />
                     </div>
 
-
+                    {index > 0 && <div className={"mcs-funnelQueryBuilder_maximumDaysAfterStep"}>
+                      <Input 
+                        type="number" 
+                        className={"mcs-funnelQueryBuilder_maximumDaysAfterStep_input"}
+                        min="0"
+                        value={step.max_days_after_previous_step}
+                        onChange={this.handleMaximumDaysAfterStepChange.bind(this, step.id)} />
+                      <p className={"mcs-funnelQueryBuilder_maximumDaysAfterStep_desc"}>
+                        {step.max_days_after_previous_step && step.max_days_after_previous_step > 1 ? "days" : "day"} maximum after previous step
+                      </p>
+                    </div>}
                     {step.filter_clause.filters.map((filter, filterIndex) => {
                       return (
                         <div key={filter.id}>

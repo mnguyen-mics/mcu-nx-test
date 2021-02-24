@@ -5,6 +5,7 @@ export interface FunnelFilter {
   name: string;
   filter_clause: DimensionFilterClause;
   group_by_dimension?: string;
+  max_days_after_previous_step?: number
 }
 
 export interface FunnelDateRange {
@@ -52,7 +53,7 @@ export interface Steps {
   amount?: number;
   interaction_duration: number;
   splitedView?: boolean;
-  isLoading?: boolean
+  isLoading?: boolean;
 }
 
 export interface FunnelIdByDimension {
