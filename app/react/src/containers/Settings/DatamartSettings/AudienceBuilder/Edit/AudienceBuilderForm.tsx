@@ -1,7 +1,10 @@
 import * as React from 'react';
 import { withRouter } from 'react-router';
-import { Layout, Row, Col } from 'antd';
-import { FormLayoutActionbar } from '../../../../../components/Layout';
+import { Layout } from 'antd';
+import {
+  FormLayoutActionbar,
+  ScrollspySider,
+} from '../../../../../components/Layout';
 import { AUDIENCE_BUILDER_FORM_ID, AudienceBuilderFormData } from './domain';
 import {
   ConfigProps,
@@ -19,7 +22,10 @@ import { Path } from '@mediarithmics-private/mcs-components-library/lib/componen
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { messages } from '../messages';
 import { compose } from 'recompose';
-import AudienceBuilderDemographicsSection, { DemographicsFormSectionProps } from './Sections/AudienceBuilderDemographicsSection';
+import AudienceBuilderDemographicsSection, {
+  DemographicsFormSectionProps,
+} from './Sections/AudienceBuilderDemographicsSection';
+import { SidebarWrapperProps } from '../../../../../components/Layout/ScrollspySider';
 
 const Content = Layout.Content;
 
@@ -53,12 +59,7 @@ class AudienceBuilderForm extends React.Component<Props> {
   }
 
   render() {
-    const {
-      handleSubmit,
-      breadCrumbPaths,
-      change,
-      close,
-    } = this.props;
+    const { handleSubmit, breadCrumbPaths, change, close } = this.props;
 
     const genericFieldArrayProps = {
       formChange: change,
@@ -103,10 +104,16 @@ class AudienceBuilderForm extends React.Component<Props> {
       );
     });
 
+    const sideBarProps: SidebarWrapperProps = {
+      items: sections.map(s => ({ sectionId: s.id, title: s.title })),
+      scrollId: AUDIENCE_BUILDER_FORM_ID,
+    };
+
     return (
       <Layout className="edit-layout">
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
+          <ScrollspySider {...sideBarProps} />
           <Form
             className="edit-layout ant-layout"
             onSubmit={handleSubmit as any}
@@ -117,9 +124,9 @@ class AudienceBuilderForm extends React.Component<Props> {
               id={AUDIENCE_BUILDER_FORM_ID}
               className="mcs-content-container mcs-form-container"
             >
-              <Row>
-                <Col className="mcs-audienceBuilder_formColumn" span={12}>{renderedSections}</Col>
-              </Row>
+              <div className="mcs-audienceBuilder_formColumn">
+                {renderedSections}
+              </div>
             </Content>
           </Form>
         </Layout>
