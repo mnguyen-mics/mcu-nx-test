@@ -12,9 +12,8 @@ import { booleanOperator, FUNNEL_SEARCH_SETTING, FilterOperatorLabel } from './C
 import { BooleanOperator, DimensionFilterClause, DimensionFilterOperator } from '../../models/ReportRequestBody';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { updateSearch, isSearchValid, parseSearch } from '../../utils/LocationSearchHelper';
-import { McsDateRangePicker, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
-import { FILTERS } from '../../containers/Audience/DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import McsMoment from '../../utils/McsMoment';
 import {
   FormattedMessage,
@@ -40,7 +39,7 @@ interface State {
 interface FunnelQueryBuilderProps {
   datamartId: string;
   parentCallback: (timestampInSec: number) => void;
-  launchQueryFunctionCallback: (launchQueryFunction: () => void) => void;
+  liftFunctionsCallback: (executeQueryFunction: () => void) => void;
 }
 
 type Props = FunnelQueryBuilderProps &
@@ -91,7 +90,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     const { datamartId } = this.props;
     this.setInitialParams()
     this.fetchDimensions(datamartId);
-    this.props.launchQueryFunctionCallback(this.handleExecuteQueryButtonClick)
+    this.props.liftFunctionsCallback(this.handleExecuteQueryButtonClick)
   }
 
   setInitialParams = () => {
@@ -333,7 +332,6 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
   handleExecuteQueryButtonClick = () => {
     if (this.checkExpressionsNotEmpty() && this.checkDimensionsNotEmpty()) {
       this.updateFilterQueryStringParams();
-      this.props.parentCallback(new Date().getTime())
     } else {
       this.props.notifyWarning({
         message: messages.errorFormMessage.defaultMessage,
@@ -419,23 +417,6 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     this.setState({ steps: newSteps });
   }
 
-  updateLocationSearch = (params: FILTERS) => {
-    const {
-      history,
-      location: { search: currentSearch, pathname },
-    } = this.props;
-    const nextLocation = {
-      pathname,
-      search: updateSearch(
-        currentSearch,
-        params,
-        FUNNEL_SEARCH_SETTING,
-      ),
-    };
-
-    history.push(nextLocation);
-  };
-
   getDimensionNameSelect = () => {
     const { dimensionsList } = this.state;
     return dimensionsList.dimensions.map(d => <Option key={this._cuid()} value={d.value}>{d.label}</Option>)
@@ -467,26 +448,9 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     const { steps, dateRange } = this.state;
     const { from, to } = dateRange
     const { datamartId } = this.props;
-    const onChange = (newValues: McsDateRangeValue): void => {
-      this.updateLocationSearch({
-        from: newValues.from,
-        to: newValues.to,
-      });
-      this.setState({
-        dateRange: {
-          from: newValues.from,
-          to: newValues.to
-        }
-      });
-    }
-
+    
     return (<div className={"mcs-funnelQueryBuilder"} >
-      <div className="mcs-funnelQueryBuilder_header">
-        <McsDateRangePicker
-          values={dateRange}
-          onChange={onChange}
-        />
-      </div>
+
       <div className={"mcs-funnelQueryBuilder_steps"}>
         <div className={"mcs-funnelQueryBuilder_step_timelineStart"}>
           {from && <p className={"mcs-funnelQueryBuilder_timeline_date"}>{from.toMoment().format('DD/MM/YYYY 00:00')}</p>}

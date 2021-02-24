@@ -1,5 +1,5 @@
-import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
-import { parseSearch } from '../../../utils/LocationSearchHelper';
+import { Actionbar, McsIcon, McsDateRangePicker } from '@mediarithmics-private/mcs-components-library';
+import { parseSearch, updateSearch } from '../../../utils/LocationSearchHelper';
 import { Button, Layout } from 'antd';
 import * as React from 'react';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
@@ -15,14 +15,18 @@ import ExportService from '../../../services/ExportService';
 import injectNotifications, { InjectedNotificationProps } from '../../Notifications/injectNotifications';
 import { extractDatesFromProps } from '../../../components/Funnel/Utils';
 import { FunnelFilter } from '../../../models/datamart/UserActivitiesFunnel';
+import McsMoment from '../../../utils/McsMoment';
+import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
+import { FILTERS } from '../../../containers/Audience/DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 
 const { Content } = Layout;
 
 interface State {
   exportIsRunning: boolean;
   isLoading: boolean;
-  executeQuery?: () => void;
-  cancelQuery?: () => void;
+  executeQueryFunction?: () => void;
+  cancelQueryFunction?: () => void;
+  dateRange: McsDateRangeValue;
 }
 
 type JoinedProps = WithDatamartSelectorProps & InjectedIntlProps &
@@ -36,7 +40,13 @@ class FunnelPage extends React.Component<JoinedProps, State> {
     super(props);
     this.state = {
       exportIsRunning: false,
-      isLoading: false
+      isLoading: false,
+      dateRange: {
+        from: new McsMoment(
+          `now-7d`,
+        ),
+        to: new McsMoment('now'),
+      }
     };
   }
 
@@ -71,30 +81,60 @@ class FunnelPage extends React.Component<JoinedProps, State> {
   }
 
   handleExecuteQueryButtonClick = () => {
-    const {executeQuery} = this.state
-    if(executeQuery) {
-      executeQuery()
+    const {executeQueryFunction} = this.state
+    if(executeQueryFunction) {
+      executeQueryFunction()
     }
   }
 
-  handleFunnelWrapperCallback = (executeQuery: () => void, cancelQuery: () => void, isLoading: boolean) => {
+  handleFunnelWrapperCallback = (executeQueryFunction: () => void, cancelQueryFunction: () => void, isLoading: boolean) => {
     const { exportIsRunning } = this.state
     this.setState({
       exportIsRunning: exportIsRunning,
       isLoading: isLoading,
-      executeQuery: executeQuery,
-      cancelQuery: cancelQuery
+      executeQueryFunction: executeQueryFunction,
+      cancelQueryFunction: cancelQueryFunction
     })
   }
 
   handleCancelButtonClick = () => {
-    const {cancelQuery} = this.state
-    if(cancelQuery) {
-      cancelQuery()
+    const {cancelQueryFunction} = this.state
+    if(cancelQueryFunction) {
+      cancelQueryFunction()
       this.setState({
         isLoading: false
       })
     }
+  }
+
+  updateLocationSearch = (params: FILTERS) => {
+    const { 
+      history,
+      location:{ search: currentSearch, pathname } 
+    } = this.props;
+    const nextLocation = {
+      pathname,
+      search: updateSearch(
+        currentSearch,
+        params,
+        FUNNEL_SEARCH_SETTING,
+      ),
+    };
+
+    history.push(nextLocation);
+  };
+
+  handleDateRangePickerChangeFunction = (newValues: McsDateRangeValue): void => {
+    this.updateLocationSearch({
+      from: newValues.from,
+      to: newValues.to,
+    });
+    this.setState({
+      dateRange: {
+        from: newValues.from,
+        to: newValues.to
+      }
+    });
   }
 
   render() {
@@ -102,7 +142,7 @@ class FunnelPage extends React.Component<JoinedProps, State> {
       selectedDatamartId, 
       location: { search } 
     } = this.props;
-    const { exportIsRunning, isLoading } = this.state;
+    const { exportIsRunning, isLoading, dateRange } = this.state;
     const routeParams = parseSearch(search, FUNNEL_SEARCH_SETTING);
     const breadcrumbPaths = [
       {
@@ -113,14 +153,11 @@ class FunnelPage extends React.Component<JoinedProps, State> {
     return (
       <div className="ant-layout" >
         <Actionbar paths={breadcrumbPaths}>
-          {isLoading && <Button className="mcs-funnelQueryBuilder_cancelBtn" type="default" onClick={this.handleCancelButtonClick}>
-            Cancel
-          </Button>}
-          <Button className="mcs-primary" type="primary" onClick={this.handleExecuteQueryButtonClick} loading={isLoading}>
-            {!isLoading && <McsIcon type="play" />}
-            Execute Query
-          </Button>
-          {routeParams.filter.length > 0 && <Button
+	        <McsDateRangePicker
+            values={dateRange}
+            onChange={this.handleDateRangePickerChangeFunction}
+          />
+          {routeParams.filter.length > 0 && <Button className="mcs-funnelQueryBuilder_exportBtn"
             onClick={this.handleRunExport} loading={exportIsRunning} >
             {!exportIsRunning && <McsIcon type="download" />}
             <FormattedMessage
@@ -128,6 +165,13 @@ class FunnelPage extends React.Component<JoinedProps, State> {
               defaultMessage="Export"
             />
           </Button>}
+          {isLoading && <Button className="mcs-funnelQueryBuilder_cancelBtn" type="default" onClick={this.handleCancelButtonClick}>
+            Cancel
+          </Button>}
+          <Button className="mcs-primary mcs-funnelQueryBuilder_executeQueryBtn" type="primary" onClick={this.handleExecuteQueryButtonClick} loading={isLoading}>
+            {!isLoading && <McsIcon type="play" />}
+            Execute Query
+          </Button>
         </Actionbar>
         <Content className="mcs-content-container">
           <FunnelWrapper datamartId={selectedDatamartId} parentCallback={this.handleFunnelWrapperCallback}/>
