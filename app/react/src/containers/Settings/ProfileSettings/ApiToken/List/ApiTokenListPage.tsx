@@ -266,7 +266,7 @@ class ApiTokenListPage extends React.Component<Props, State> {
       intl,
     } = this.props;
 
-    const { isModalVisible, loading, saving } = this.state;
+    const { isModalVisible, loading, saving, name } = this.state;
 
     const actionsColumnsDefinition: Array<
       ActionsColumnDefinition<ApiTokenResource>
@@ -456,6 +456,7 @@ class ApiTokenListPage extends React.Component<Props, State> {
           <br />
           <Input
             onChange={changeName}
+            value={name}
             placeholder={intl.formatMessage(messages.apiTokenName)}
           />
         </Modal>
