@@ -1,35 +1,34 @@
 import * as React from 'react';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import { TableViewFilters } from '../../../../../components/TableView';
+import { TableView } from '../../../../../components/TableView';
 import { messages } from '../messages';
 import { Filter } from '../../Common/domain';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { compose } from 'recompose';
 import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 import { EmptyTableView } from '@mediarithmics-private/mcs-components-library';
-import { AudienceFeatureResource } from '../../../../../models/audienceFeature';
+import { AudienceBuilderResource } from '../../../../../models/audienceBuilder';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
 
-export interface AudienceFeatureTableProps {
+export interface AudienceBuilderTableProps {
   isLoading: boolean;
-  dataSource: AudienceFeatureResource[];
+  dataSource: AudienceBuilderResource[];
   total: number;
   noItem: boolean;
   onFilterChange: (newFilter: Partial<Filter>) => void;
   filter: Filter;
-  deleteAudienceFeature: (audienceFeature: AudienceFeatureResource) => void;
-  relatedTable?: JSX.Element
+  deleteAudienceBuilder: (audienceBuilder: AudienceBuilderResource) => void;
 }
 
-type Props = AudienceFeatureTableProps &
+type Props = AudienceBuilderTableProps &
   InjectedNotificationProps &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string; datamartId: string }>;
 
-class AudienceFeatureTable extends React.Component<Props> {
-  onEditAudienceFeature = (record: AudienceFeatureResource) => {
+class AudienceBuilderTable extends React.Component<Props> {
+  onEditAudienceBuilder = (record: AudienceBuilderResource) => {
     const {
       match: {
         params: { organisationId, datamartId },
@@ -37,7 +36,7 @@ class AudienceFeatureTable extends React.Component<Props> {
       history,
     } = this.props;
     history.push({
-      pathname: `/v2/o/${organisationId}/settings/datamart/${datamartId}/audience_feature/${record.id}/edit`,
+      pathname: `/v2/o/${organisationId}/settings/datamart/${datamartId}/audience_builder/${record.id}/edit`,
       state: { from: `${location.pathname}${location.search}` },
     });
   };
@@ -54,8 +53,7 @@ class AudienceFeatureTable extends React.Component<Props> {
         params: { organisationId, datamartId },
       },
       filter,
-      deleteAudienceFeature,
-      relatedTable
+      deleteAudienceBuilder,
     } = this.props;
 
     const pagination = {
@@ -83,14 +81,14 @@ class AudienceFeatureTable extends React.Component<Props> {
         render: (text: string) => text,
       },
       {
-        intlMessage: messages.audienceFeatureName,
+        intlMessage: messages.audienceBuilderName,
         key: 'name',
         isHideable: false,
-        render: (text: string, record: AudienceFeatureResource) => {
+        render: (text: string, record: AudienceBuilderResource) => {
           return (
             <Link
               to={{
-                pathname: `/v2/o/${organisationId}/settings/datamart/${datamartId}/audience_feature/${record.id}/edit`,
+                pathname: `/v2/o/${organisationId}/settings/datamart/${datamartId}/audience_builder/${record.id}/edit`,
                 state: {
                   datamartId: datamartId,
                 },
@@ -101,72 +99,46 @@ class AudienceFeatureTable extends React.Component<Props> {
           );
         },
       },
-      {
-        intlMessage: messages.audienceFeatureDescription,
-        key: 'description',
-        isVisibleByDefault: true,
-        isHideable: true,
-        render: (text: string) => text,
-      },
-      {
-        intlMessage: messages.audienceFeatureObjectTreeExpression,
-        key: 'object_tree_expression',
-        isVisibleByDefault: true,
-        isHideable: true,
-        render: (text: string) => text,
-      },
     ];
 
     const actionColumns: Array<ActionsColumnDefinition<
-      AudienceFeatureResource
+      AudienceBuilderResource
     >> = [
       {
         key: 'action',
         actions: () => [
           {
-            intlMessage: messages.audienceFeatureEdit,
-            callback: this.onEditAudienceFeature,
+            intlMessage: messages.audienceBuilderEdit,
+            callback: this.onEditAudienceBuilder,
           },
           {
-            intlMessage: messages.audienceFeatureDelete,
-            callback: deleteAudienceFeature,
+            intlMessage: messages.audienceBuilderDelete,
+            callback: deleteAudienceBuilder,
           },
         ],
       },
     ];
 
-    const searchOptions = {
-      placeholder: formatMessage(messages.audienceFeatureSearchPlaceholder),
-      onSearch: (value: string) =>
-        onFilterChange({
-          keywords: value,
-        }),
-      defaultValue: filter.keywords,
-    };
-
     return noItem && !isLoading ? (
       <EmptyTableView
         iconType="settings"
-        message={formatMessage(messages.audienceFeatureEmptyList)}
-        className="mcs-table-view-empty mcs-empty-card mcs-audienceFeature_table"
+        message={formatMessage(messages.audienceBuilderEmptyList)}
+        className="mcs-table-view-empty mcs-empty-card"
       />
     ) : (
-      <TableViewFilters
+      <TableView
         columns={dataColumns}
         actionsColumnsDefinition={actionColumns}
-        searchOptions={searchOptions}
         dataSource={dataSource}
         loading={isLoading}
         pagination={pagination}
-        relatedTable={relatedTable}
-        className="mcs-audienceFeature_table"
       />
     );
   }
 }
 
-export default compose<Props, AudienceFeatureTableProps>(
+export default compose<Props, AudienceBuilderTableProps>(
   injectIntl,
   withRouter,
   injectNotifications,
-)(AudienceFeatureTable);
+)(AudienceBuilderTable);

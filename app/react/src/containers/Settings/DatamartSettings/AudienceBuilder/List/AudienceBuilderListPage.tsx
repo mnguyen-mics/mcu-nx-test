@@ -4,24 +4,25 @@ import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { Button, Row, Layout, Modal } from 'antd';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { messages } from '../messages';
+import AudienceBuilderTable from './AudienceBuilderTable';
+import { injectDrawer } from '../../../../../components/Drawer';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../../Notifications/injectNotifications';
 import {
   KEYWORD_SEARCH_SETTINGS,
   PAGINATION_SEARCH_SETTINGS,
   parseSearch,
   updateSearch,
 } from '../../../../../utils/LocationSearchHelper';
-import AudienceFeatureTable from '../List/AudienceFeatureTable';
-import { injectDrawer } from '../../../../../components/Drawer';
-import injectNotifications, {
-  InjectedNotificationProps,
-} from '../../../../Notifications/injectNotifications';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
-import { IAudienceFeatureService } from '../../../../../services/AudienceFeatureService';
-import { AudienceFeatureResource } from '../../../../../models/audienceFeature';
+import { IAudienceBuilderService } from '../../../../../services/AudienceBuilderService';
+import { AudienceBuilderResource } from '../../../../../models/audienceBuilder';
 import { Index } from '@mediarithmics-private/mcs-components-library/lib/utils';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { Filter } from '../../Common/domain';
+
 const { Content } = Layout;
 
 export const AUDIENCE_BUILDER_SEARCH_SETTINGS = [
@@ -29,11 +30,12 @@ export const AUDIENCE_BUILDER_SEARCH_SETTINGS = [
   ...PAGINATION_SEARCH_SETTINGS,
 ];
 
+
 interface State {
   isLoading: boolean;
-  audienceFeatures: AudienceFeatureResource[];
-  noAudienceFeature: boolean;
-  totalAudienceFeature: number;
+  audienceBuilders: AudienceBuilderResource[];
+  noAudienceBuilder: boolean;
+  totalAudienceBuilder: number;
   filter: Filter;
 }
 
@@ -44,17 +46,17 @@ type Props = RouteComponentProps<{
   InjectedNotificationProps &
   InjectedIntlProps;
 
-class AudienceFeatureListPage extends React.Component<Props, State> {
-  @lazyInject(TYPES.IAudienceFeatureService)
-  private _audienceFeatureService: IAudienceFeatureService;
+class AudienceBuilderListPage extends React.Component<Props, State> {
+  @lazyInject(TYPES.IAudienceBuilderService)
+  private _audienceBuilderService: IAudienceBuilderService;
 
   constructor(props: Props) {
     super(props);
     this.state = {
       isLoading: true,
-      noAudienceFeature: true,
-      totalAudienceFeature: 0,
-      audienceFeatures: [],
+      noAudienceBuilder: true,
+      totalAudienceBuilder: 0,
+      audienceBuilders: [],
       filter: {
         pageSize: 10,
         currentPage: 1,
@@ -72,10 +74,10 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
     } = this.props;
     const filter = parseSearch(search, AUDIENCE_BUILDER_SEARCH_SETTINGS);
 
-    this.fetchAudienceFeatures(datamartId, filter);
+    this.fetchAudienceBuilders(datamartId, filter);
   }
 
-  fetchAudienceFeatures = (datamartId: string, filter: Index<any>) => {
+  fetchAudienceBuilders = (datamartId: string, filter: Index<any>) => {
     const { notifyError } = this.props;
     const buildOptions = () => {
       let options = {};
@@ -93,18 +95,14 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
       return options;
     };
 
-    this.setState({
-      filter: filter as Filter,
-    });
-
-    this._audienceFeatureService
-      .getAudienceFeatures(datamartId, buildOptions())
+    this._audienceBuilderService
+      .getAudienceBuilders(datamartId, buildOptions())
       .then(res => {
         this.setState({
           isLoading: false,
-          audienceFeatures: res.data,
-          noAudienceFeature: res && res.total === 0 && !filter.keywords,
-          totalAudienceFeature: res.total ? res.total : res.count,
+          audienceBuilders: res.data,
+          noAudienceBuilder: res && res.total === 0,
+          totalAudienceBuilder: res.total ? res.total : res.count,
         });
       })
       .catch(e => {
@@ -115,7 +113,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
       });
   };
 
-  deleteAudienceFeature = (resource: AudienceFeatureResource) => {
+  deleteAudienceBuilder = (resource: AudienceBuilderResource) => {
     const {
       match: {
         params: { datamartId },
@@ -126,32 +124,32 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
       notifyError,
     } = this.props;
 
-    const { audienceFeatures } = this.state;
+    const { audienceBuilders } = this.state;
 
     const filter = parseSearch(search, AUDIENCE_BUILDER_SEARCH_SETTINGS);
 
     Modal.confirm({
       icon: 'exclamation-circle',
-      title: formatMessage(messages.audienceFeatureDeleteListModalTitle),
-      okText: formatMessage(messages.audienceFeatureDeleteListModalOk),
-      cancelText: formatMessage(messages.audienceFeatureDeleteListModalCancel),
+      title: formatMessage(messages.audienceBuilderDeleteListModalTitle),
+      okText: formatMessage(messages.audienceBuilderDeleteListModalOk),
+      cancelText: formatMessage(messages.audienceBuilderDeleteListModalCancel),
       onOk: () => {
-        this._audienceFeatureService
-          .deleteAudienceFeature(resource.datamart_id, resource.id)
+        this._audienceBuilderService
+          .deleteAudienceBuilder(resource.datamart_id, resource.id)
           .then(() => {
-            if (audienceFeatures.length === 1 && filter.currentPage !== 1) {
+            if (audienceBuilders.length === 1 && filter.currentPage !== 1) {
               const newFilter = {
                 ...filter,
                 currentPage: filter.currentPage - 1,
               };
-              this.fetchAudienceFeatures(datamartId, filter);
+              this.fetchAudienceBuilders(datamartId, filter);
               history.replace({
                 pathname: pathname,
                 search: updateSearch(search, newFilter),
                 state: state,
               });
             } else {
-              this.fetchAudienceFeatures(datamartId, filter);
+              this.fetchAudienceBuilders(datamartId, filter);
             }
           })
           .catch(err => {
@@ -164,15 +162,6 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
     });
   };
 
-  onFilterChange = (newFilter: Index<any>) => {
-    const {
-      match: {
-        params: { datamartId },
-      },
-    } = this.props;
-    this.fetchAudienceFeatures(datamartId, newFilter);
-  };
-
   buildNewActionElement = () => {
     const onClick = () => {
       const {
@@ -182,7 +171,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
         },
       } = this.props;
       history.push({
-        pathname: `/v2/o/${organisationId}/settings/datamart/${datamartId}/audience_feature/create`,
+        pathname: `/v2/o/${organisationId}/settings/datamart/${datamartId}/audience_builder/create`,
         state: {
           datamartId: datamartId,
         },
@@ -190,17 +179,27 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
     };
     return (
       <Button type="primary" onClick={onClick}>
-        <FormattedMessage {...messages.audienceFeatureNew} />
+        <FormattedMessage {...messages.audienceBuilderNew} />
       </Button>
     );
   };
 
+  onFilterChange = (newFilter: Index<any>) => {
+    const {
+      match: {
+        params: { datamartId },
+      },
+    } = this.props;
+    this.fetchAudienceBuilders(datamartId, newFilter);
+  };
+
+
   render() {
     const {
       isLoading,
-      audienceFeatures,
-      noAudienceFeature,
-      totalAudienceFeature,
+      audienceBuilders,
+      noAudienceBuilder,
+      totalAudienceBuilder,
       filter,
     } = this.state;
 
@@ -211,21 +210,21 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
             <div>
               <div className="mcs-card-header mcs-card-title">
                 <span className="mcs-card-title">
-                  <FormattedMessage {...messages.audienceFeatures} />
+                  <FormattedMessage {...messages.audienceBuilders} />
                 </span>
                 <span className="mcs-card-button">
                   {this.buildNewActionElement()}
                 </span>
               </div>
               <hr className="mcs-separator" />
-              <AudienceFeatureTable
-                dataSource={audienceFeatures}
-                total={totalAudienceFeature}
+              <AudienceBuilderTable
+                dataSource={audienceBuilders}
+                total={totalAudienceBuilder}
                 isLoading={isLoading}
-                noItem={noAudienceFeature}
+                noItem={noAudienceBuilder}
                 onFilterChange={this.onFilterChange}
                 filter={filter}
-                deleteAudienceFeature={this.deleteAudienceFeature}
+                deleteAudienceBuilder={this.deleteAudienceBuilder}
               />
             </div>
           </Row>
@@ -240,4 +239,4 @@ export default compose<Props, {}>(
   withRouter,
   injectDrawer,
   injectNotifications,
-)(AudienceFeatureListPage);
+)(AudienceBuilderListPage);

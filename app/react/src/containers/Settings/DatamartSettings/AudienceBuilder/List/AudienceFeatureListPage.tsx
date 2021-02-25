@@ -36,7 +36,7 @@ import AudienceFeatureFolder from './AudienceFeatureFolder';
 
 const { Content } = Layout;
 
-export const AUDIENCE_BUILDER_SEARCH_SETTINGS = [
+export const AUDIENCE_FEATURE_SEARCH_SETTINGS = [
   ...KEYWORD_SEARCH_SETTINGS,
   ...PAGINATION_SEARCH_SETTINGS,
 ];
@@ -84,7 +84,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
       },
       location: { search },
     } = this.props;
-    const filter = parseSearch(search, AUDIENCE_BUILDER_SEARCH_SETTINGS);
+    const filter = parseSearch(search, AUDIENCE_FEATURE_SEARCH_SETTINGS);
 
     this.fetchFoldersAndFeatures(datamartId, filter);
   }
@@ -190,13 +190,13 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
 
     const { selectedFolder } = this.state;
 
-    const filter = parseSearch(search, AUDIENCE_BUILDER_SEARCH_SETTINGS);
+    const filter = parseSearch(search, AUDIENCE_FEATURE_SEARCH_SETTINGS);
 
     Modal.confirm({
       icon: 'exclamation-circle',
-      title: formatMessage(messages.deleteAudienceFeaturelModalTitle),
-      okText: formatMessage(messages.deleteAudienceFeaturelModalOk),
-      cancelText: formatMessage(messages.deleteAudienceFeaturelModalCancel),
+      title: formatMessage(messages.audienceFeatureDeleteListModalTitle),
+      okText: formatMessage(messages.audienceFeatureDeleteListModalOk),
+      cancelText: formatMessage(messages.audienceFeatureDeleteListModalCancel),
       onOk: () => {
         this._audienceFeatureService
           .deleteAudienceFeature(resource.datamart_id, resource.id)
@@ -409,27 +409,27 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
           value={inputValue}
           onChange={this.handleInputChange}
           className="mcs-audienceFeatureSettings-folderInput"
-          placeholder={intl.formatMessage(messages.placeholderFolderInput)}
+          placeholder={intl.formatMessage(messages.audienceFeaturePlaceholderFolderInput)}
         />
 
         <Button type="primary" onClick={onOk}>
-          <FormattedMessage {...messages.addButton} />
+          <FormattedMessage {...messages.audienceFeatureAddButton} />
         </Button>
 
         <Button onClick={onCancel}>
-          <FormattedMessage {...messages.cancelButton} />
+          <FormattedMessage {...messages.audienceFeatureCancelButton} />
         </Button>
       </div>
     ) : (
       <div>
         <Button type="primary" onClick={addNewFeature} className="mcs-audienceFeature_creation_button">
-          <FormattedMessage {...messages.newAudienceFeature} />
+          <FormattedMessage {...messages.audienceFeatureNew} />
         </Button>
         <Button
           className="mcs-audienceFeatureSettings-addFolderButton"
           onClick={addFolder}
         >
-          <FormattedMessage {...messages.addFolder} />
+          <FormattedMessage {...messages.audienceFeatureAddFolder} />
         </Button>
       </div>
     );

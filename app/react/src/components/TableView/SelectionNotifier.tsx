@@ -6,12 +6,12 @@ import { PaginationProps } from 'antd/lib/pagination/Pagination';
 import { Button } from '@mediarithmics-private/mcs-components-library';
 import { ExtendedTableRowSelection } from './TableView';
 
-interface SelectionNotifyerProps<T> {
+interface SelectionNotifierProps<T> {
   rowSelection?: ExtendedTableRowSelection<T>;
   pagination?: PaginationProps | false;
 }
 
-class SelectionNotifyer extends React.Component<SelectionNotifyerProps<any>> {
+class SelectionNotifier extends React.Component<SelectionNotifierProps<any>> {
   render() {
     const { rowSelection, pagination } = this.props;
     let content: JSX.Element = <span />;
@@ -30,7 +30,7 @@ class SelectionNotifyer extends React.Component<SelectionNotifyerProps<any>> {
         content = (
           <div>
             <FormattedMessage
-              id="components.tableview.selectionNotifyer.allRowsSelected"
+              id="components.tableview.selectionNotifier.allRowsSelected"
               defaultMessage={`All the {paginationTotal} items of this list have been selected. `}
               values={{
                 paginationTotal: pagination.total,
@@ -41,7 +41,7 @@ class SelectionNotifyer extends React.Component<SelectionNotifyerProps<any>> {
               className="selected-rows-btn"
             >
               <FormattedMessage
-                id="components.tableview.selectionNotifyer.unselectAll"
+                id="components.tableview.selectionNotifier.unselectAll"
                 defaultMessage={`Click here to unselect all the items.`}
               />
             </Button>
@@ -51,7 +51,7 @@ class SelectionNotifyer extends React.Component<SelectionNotifyerProps<any>> {
         content = (
           <div>
             <FormattedMessage
-              id="components.tableview.selectionNotifyer.allPageRowsSelected"
+              id="components.tableview.selectionNotifier.allPageRowsSelected"
               defaultMessage={`You have selected {paginationPageSize} items. `}
               values={{
                 paginationPageSize: pagination.pageSize,
@@ -62,7 +62,7 @@ class SelectionNotifyer extends React.Component<SelectionNotifyerProps<any>> {
               className="selected-rows-btn"
             >
               <FormattedMessage
-                id="components.tableview.selectionNotifyer.selectAll"
+                id="components.tableview.selectionNotifier.selectAll"
                 defaultMessage={`Click here to select all the items.`}
               />
             </Button>
@@ -72,7 +72,7 @@ class SelectionNotifyer extends React.Component<SelectionNotifyerProps<any>> {
         content = (
           <div>
             <FormattedMessage
-              id="components.tableview.selectionNotifyer.selectedRows"
+              id="components.tableview.selectionNotifier.selectedRows"
               defaultMessage={`You have selected {selectedRowKeysLength}
               { selectedRowKeysLength, plural, zero {item} one {item} other {items} }.`}
               values={{
@@ -101,4 +101,4 @@ class SelectionNotifyer extends React.Component<SelectionNotifyerProps<any>> {
   }
 }
 
-export default SelectionNotifyer;
+export default SelectionNotifier;

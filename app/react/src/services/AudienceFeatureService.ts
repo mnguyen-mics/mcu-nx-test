@@ -527,7 +527,7 @@ export class AudienceFeatureService implements IAudienceFeatureService {
     datamartId: string,
     folderId: string,
   ): Promise<DataResponse<AudienceFeatureFolderResource>> {
-    const endpoint = `datamarts/${datamartId}/audience_feature_folder/${folderId}`;
+    const endpoint = `datamarts/${datamartId}/audience_feature_folders/${folderId}`;
     return ApiService.getRequest(endpoint);
   }
 
@@ -536,7 +536,7 @@ export class AudienceFeatureService implements IAudienceFeatureService {
     folderId: string,
     body: Partial<AudienceFeatureFolderResource>,
   ): Promise<DataResponse<AudienceFeatureFolderResource>> {
-    const endpoint = `datamarts/${datamartId}/audience_feature_folder/${folderId}`;
+    const endpoint = `datamarts/${datamartId}/audience_feature_folders/${folderId}`;
     return ApiService.putRequest(endpoint, body);
   }
 
@@ -544,7 +544,7 @@ export class AudienceFeatureService implements IAudienceFeatureService {
     datamartId: string,
     folderId: string,
   ): Promise<DataResponse<AudienceFeatureFolderResource>> {
-    const endpoint = `datamarts/${datamartId}/audience_feature_folder/${folderId}`;
+    const endpoint = `datamarts/${datamartId}/audience_feature_folders/${folderId}`;
     return ApiService.deleteRequest(endpoint);
   }
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Layout, Row, Col } from 'antd';
 import { FormLayoutActionbar } from '../../../../../components/Layout';
-import { FORM_ID, AudienceFeatureFormData } from './domain';
+import { AUDIENCE_FEATURE_FORM_ID, AudienceFeatureFormData } from './domain';
 import {
   ConfigProps,
   Form,
@@ -11,13 +11,13 @@ import {
 } from 'redux-form';
 import { FormLayoutActionbarProps } from '../../../../../components/Layout/FormLayoutActionbar';
 import { McsFormSection } from '../../../../../utils/FormHelper';
-import GeneralFormSection from './Sections/GeneralFormSection';
+import AudienceFeatureGeneralSection from './Sections/AudienceFeatureGeneralSection';
 import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { messages } from '../messages';
 import { compose } from 'recompose';
 import AudienceFeaturePreview from './Sections/AudienceFeaturePreview';
-import QueryFormSection from './Sections/QueryFormSection';
+import QueryFormSection from './Sections/AudienceFeatureQueryFormSection';
 import { SchemaItem } from '../../../../QueryTool/JSONOTQL/domain';
 import { connect } from 'react-redux';
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
@@ -60,22 +60,22 @@ class AudienceFeatureForm extends React.Component<Props> {
     } = this.props;
 
     const actionBarProps: FormLayoutActionbarProps = {
-      formId: FORM_ID,
+      formId: AUDIENCE_FEATURE_FORM_ID,
       paths: breadCrumbPaths,
-      message: messages.save,
+      message: messages.audienceFeatureSave,
       onClose: close,
     };
 
     const sections: McsFormSection[] = [];
     sections.push({
       id: 'general',
-      title: messages.sectionGeneralTitle,
-      component: <GeneralFormSection />,
+      title: messages.audienceFeatureSectionGeneralTitle,
+      component: <AudienceFeatureGeneralSection />,
     });
 
     sections.push({
       id: 'query',
-      title: messages.associatedQuery,
+      title: messages.audienceFeatureAssociatedQuery,
       component: (
         <QueryFormSection
           formChange={change}
@@ -106,7 +106,7 @@ class AudienceFeatureForm extends React.Component<Props> {
             {/* this button enables submit on enter */}
             <button type="submit" style={{ display: 'none' }} />
             <Content
-              id={FORM_ID}
+              id={AUDIENCE_FEATURE_FORM_ID}
               className="mcs-content-container mcs-form-container"
             >
               <Row>
@@ -127,13 +127,13 @@ class AudienceFeatureForm extends React.Component<Props> {
 }
 
 const mapStateToProps = (state: MicsReduxState) => ({
-  formValues: getFormValues(FORM_ID)(state),
+  formValues: getFormValues(AUDIENCE_FEATURE_FORM_ID)(state),
 });
 
 export default compose<Props, AudienceFeatureFormProps>(
   injectIntl,
   reduxForm({
-    form: FORM_ID,
+    form: AUDIENCE_FEATURE_FORM_ID,
     enableReinitialize: true,
   }),
   connect(mapStateToProps),

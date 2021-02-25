@@ -16,7 +16,7 @@ import withNormalizer, {
 
 type Props = InjectedIntlProps & ValidatorProps & NormalizerProps;
 
-class GeneralFormSection extends React.Component<Props> {
+class AudienceBuilderGeneralSection extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
     this.state = { displayAdvancedSection: false };
@@ -31,40 +31,24 @@ class GeneralFormSection extends React.Component<Props> {
     return (
       <div>
         <FormSection
-          title={messages.sectionGeneralTitle}
+          title={messages.audienceBuilderSectionGeneralTitle}
         />
 
         <FormInputField
-          name="name"
+          name="audienceBuilder.name"
           component={FormInput}
           validate={[isRequired]}
           formItemProps={{
-            label: formatMessage(messages.audienceFeatureNameLabel),
+            label: formatMessage(messages.audienceBuilderNameLabel),
             required: true,
           }}
           inputProps={{
             placeholder: formatMessage(
-              messages.audienceFeatureNamePlaceholder,
+              messages.audienceBuilderNamePlaceholder,
             ),
           }}
           helpToolTipProps={{
-            title: formatMessage(messages.audienceFeatureNameTooltip),
-          }}
-        />
-        <FormInputField
-          name="description"
-          component={FormInput}
-          formItemProps={{
-            label: formatMessage(messages.audienceFeatureDescriptionLabel),
-            required: true,
-          }}
-          inputProps={{
-            placeholder: formatMessage(
-              messages.audienceFeatureDescriptionPlaceholder,
-            ),
-          }}
-          helpToolTipProps={{
-            title: formatMessage(messages.audienceFeatureDescriptionTooltip),
+            title: formatMessage(messages.audienceBuilderNameTooltip),
           }}
         />
       </div>
@@ -76,4 +60,4 @@ export default compose(
   injectIntl,
   withValidators,
   withNormalizer,
-)(GeneralFormSection);
+)(AudienceBuilderGeneralSection);

@@ -1,21 +1,16 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import AudienceFeatureForm from './AudienceFeatureForm';
+import AudienceBuilderForm from './AudienceBuilderForm';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
-import { IAudienceFeatureService } from '../../../../../services/AudienceFeatureService';
+import { IAudienceBuilderService } from '../../../../../services/AudienceBuilderService';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { messages } from '../messages';
-import { AudienceFeatureFormData } from './domain';
-import { IRuntimeSchemaService } from '../../../../../services/RuntimeSchemaService';
-import {
-  computeFinalSchemaItem,
-  SchemaItem,
-} from '../../../../QueryTool/JSONOTQL/domain';
+import { AudienceBuilderFormData, INITIAL_AUDIENCE_BUILDER_FORM_DATA } from './domain';
 import { message } from 'antd';
 import { Loading } from '../../../../../components';
 
@@ -24,49 +19,46 @@ type Props = InjectedNotificationProps &
   RouteComponentProps<{
     datamartId: string;
     organisationId: string;
-    audienceFeatureId: string;
+    audienceBuilderId: string;
   }>;
 
 interface State {
   isLoading: boolean;
-  audienceFeature: AudienceFeatureFormData;
-  schema?: SchemaItem;
+  builderFormData: AudienceBuilderFormData;
 }
 
-class AudienceFeatureEditPage extends React.Component<Props, State> {
-  @lazyInject(TYPES.IAudienceFeatureService)
-  private _audienceFeatureService: IAudienceFeatureService;
-
-  @lazyInject(TYPES.IRuntimeSchemaService)
-  private _runtimeSchemaService: IRuntimeSchemaService;
+class AudienceBuilderEditPage extends React.Component<Props, State> {
+  @lazyInject(TYPES.IAudienceBuilderService)
+  private _audienceBuilderService: IAudienceBuilderService;
 
   constructor(props: Props) {
     super(props);
     this.state = {
       isLoading: false,
-      audienceFeature: {},
+      builderFormData: INITIAL_AUDIENCE_BUILDER_FORM_DATA,
     };
   }
+
   componentDidMount() {
     const {
       match: {
-        params: { datamartId, audienceFeatureId },
+        params: { datamartId, audienceBuilderId },
       },
       notifyError,
     } = this.props;
-    if (audienceFeatureId) {
+
+    if (audienceBuilderId) {
       this.setState({
         isLoading: true,
       });
-      this._audienceFeatureService
-        .getAudienceFeature(datamartId, audienceFeatureId)
-        .then(res => {
+      this._audienceBuilderService
+        .loadAudienceBuilder(datamartId, audienceBuilderId)
+        .then((formData: AudienceBuilderFormData) => {
           this.setState({
-            audienceFeature: res.data,
+            builderFormData: formData,
             isLoading: false,
           });
         })
-
         .catch(e => {
           notifyError(e);
           this.setState({
@@ -74,24 +66,12 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
           });
         });
     }
-    this._runtimeSchemaService.getRuntimeSchemas(datamartId).then(schemaRes => {
-      const liveSchema = schemaRes.data.find(s => s.status === 'LIVE');
-      if (!liveSchema) return [];
-      return this._runtimeSchemaService
-        .getObjectTypeInfoResources(datamartId, liveSchema.id)
-        .then(r => {
-          this.setState({
-            schema: computeFinalSchemaItem(r, 'UserPoint', false, false, false),
-          });
-          return r;
-        });
-    });
   }
 
-  save = (formData: AudienceFeatureFormData) => {
+  save = (formData: AudienceBuilderFormData) => {
     const {
       match: {
-        params: { organisationId, audienceFeatureId, datamartId },
+        params: { organisationId, audienceBuilderId, datamartId },
       },
       notifyError,
       history,
@@ -99,7 +79,7 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
     } = this.props;
 
     const hideSaveInProgress = message.loading(
-      intl.formatMessage(messages.audienceFeatureSavingInProgress),
+      intl.formatMessage(messages.audienceBuilderSavingInProgress),
       0,
     );
 
@@ -108,28 +88,22 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
     });
 
     const newFormData = {
-      ...formData,
-      addressable_object: 'UserPoint',
+      ...formData.audienceBuilder,
     };
 
-    let objectTreeExpression = formData.object_tree_expression;
+    const demographics = formData.audienceFeatureDemographics
 
-    if (objectTreeExpression) {
-      if (objectTreeExpression.includes('where')) {
-        objectTreeExpression = objectTreeExpression.split('where')[1];
-      } else if (objectTreeExpression.includes('WHERE')) {
-        objectTreeExpression = objectTreeExpression.split('WHERE')[1];
-      }
-      newFormData.object_tree_expression = objectTreeExpression.toLowerCase();
+    if (demographics) {
+      newFormData.demographics_features_ids = demographics.map(d => d.model.id)
     }
 
-    const promise = audienceFeatureId
-      ? this._audienceFeatureService.updateAudienceFeature(
+    const promise = audienceBuilderId
+      ? this._audienceBuilderService.updateAudienceBuilder(
           datamartId,
-          audienceFeatureId,
+          audienceBuilderId,
           newFormData,
         )
-      : this._audienceFeatureService.createAudienceFeature(
+      : this._audienceBuilderService.createAudienceBuilder(
           datamartId,
           newFormData,
         );
@@ -165,27 +139,29 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
   };
 
   render() {
-    const { audienceFeature, schema, isLoading } = this.state;
+    const { builderFormData, isLoading } = this.state;
     const {
       intl: { formatMessage },
       match: {
-        params: { organisationId, datamartId, audienceFeatureId },
+        params: { organisationId, datamartId, audienceBuilderId },
       },
     } = this.props;
 
-    const replicationName =
-      audienceFeatureId && audienceFeature.name
-        ? audienceFeature.name
-        : formatMessage(messages.audienceFeatureNew);
+    const existingBuilderName = builderFormData.audienceBuilder.name
+
+    const builderName =
+      audienceBuilderId && existingBuilderName
+        ? existingBuilderName
+        : formatMessage(messages.audienceBuilderNew);
 
     const breadcrumbPaths = [
       {
-        name: formatMessage(messages.audienceFeatures),
+        name: formatMessage(messages.audienceBuilders),
         path: `/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`,
         state: { activeTab: 'Audience Builder' },
       },
       {
-        name: replicationName,
+        name: builderName,
       },
     ];
 
@@ -194,12 +170,11 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
     }
 
     return (
-      <AudienceFeatureForm
-        initialValues={audienceFeature}
+      <AudienceBuilderForm
+        initialValues={builderFormData}
         onSubmit={this.save}
         close={this.onClose}
         breadCrumbPaths={breadcrumbPaths}
-        schema={schema}
       />
     );
   }
@@ -209,4 +184,4 @@ export default compose(
   withRouter,
   injectIntl,
   injectNotifications,
-)(AudienceFeatureEditPage);
+)(AudienceBuilderEditPage);
