@@ -86,11 +86,24 @@ class AudienceBuilderPage extends React.Component<Props, State> {
       },
       location: { search: prevSearch },
     } = prevProps;
+    const {
+      audienceBuildersByDatamartId,
+      selectedAudienceBuilder,
+      isLoading,
+    } = this.state;
     if (organisationId !== prevOrganisationId) {
       this.getAudienceBuilders();
+    } else if (
+      selectedAudienceBuilder === undefined &&
+      audienceBuildersByDatamartId?.length === 1 &&
+      audienceBuildersByDatamartId![0].length === 1 &&
+      !isLoading
+    ) {
+      this.setState({
+        selectedAudienceBuilder: audienceBuildersByDatamartId[0][0],
+      });
     } else if (search !== prevSearch) {
       const audienceBuilderId = queryString.parse(search).audienceBuilderId;
-
       this.getAudienceBuilder(audienceBuilderId);
     }
   }
@@ -99,6 +112,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
     const { workspace } = this.props;
     this.setState({
       selectedAudienceBuilder: undefined,
+      isLoading: true,
     });
     const promises = workspace.datamarts.map(d => {
       return this._audienceBuilderService
