@@ -5,7 +5,6 @@ import { compose } from 'recompose';
 import IframeSupport from './IframeSupport';
 import AceEditor from 'react-ace';
 import 'brace/ext/searchbox';
-import ContentArea, { ContentType } from './ContentArea';
 
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import { injectDrawer } from '../../../../../components/Drawer/index';
@@ -34,18 +33,6 @@ class HtmlEditor extends React.Component<Props, HtmlEditorState> {
       type: 'CODE',
     };
   }
-
-  buildQuickInitialValues = () => {
-    const values = this.buildContent();
-    return values.reduce((acc, item) => {
-      return item
-        ? {
-            ...acc,
-            [item.name]: item.content,
-          }
-        : acc;
-    }, {});
-  };
 
   buildCodeInitialValues = () => {
     return {
@@ -79,43 +66,6 @@ class HtmlEditor extends React.Component<Props, HtmlEditorState> {
     this.props.onChange(code);
   };
 
-  buildContent = () => {
-    const d = document.createElement('div');
-    d.innerHTML = this.props.content;
-    const listOfContent = [];
-    const listOfSelector = d.querySelectorAll('[data-mcs-type]');
-    for (let i = 0; i <= listOfSelector.length - 1; i += 1) {
-      const type = listOfSelector[i].getAttribute(
-        'data-mcs-type',
-      ) as ContentType;
-      let value;
-      if (type === 'image') {
-        const elem = listOfSelector[i] as HTMLImageElement;
-        value = {
-          type: type,
-          name: listOfSelector[i].getAttribute('data-mcs-name') as string,
-          content: elem.src,
-        };
-      } else if (type === 'link') {
-        const elem = listOfSelector[i] as HTMLLinkElement;
-        value = {
-          type: type,
-          name: listOfSelector[i].getAttribute('data-mcs-name') as string,
-          content: elem.href,
-        };
-      } else if (type === 'text') {
-        value = {
-          type: type,
-          name: listOfSelector[i].getAttribute('data-mcs-name') as string,
-          content: listOfSelector[i].innerHTML,
-        };
-      }
-
-      if (value) listOfContent.push(value);
-    }
-    return listOfContent;
-  };
-
   render() {
     const iframe = <IframeSupport content={this.props.content} />;
     const codeEdit = (
@@ -141,15 +91,6 @@ class HtmlEditor extends React.Component<Props, HtmlEditorState> {
       />
     );
 
-    const quikEdit = (
-      <ContentArea
-        form={'codeAreaForm'}
-        initialValues={this.buildQuickInitialValues()}
-        content={this.buildContent()}
-        onChange={this.onQuickContentChange}
-      />
-    );
-
     const onSizeChange = (e: RadioChangeEvent) =>
       this.setState({ size: e.target.value as Size });
     const onTypeChange = (e: RadioChangeEvent) =>
@@ -166,10 +107,6 @@ class HtmlEditor extends React.Component<Props, HtmlEditorState> {
               <Radio.Button value="CODE">
                 <McsIcon type="code" />
                 Code
-              </Radio.Button>
-              <Radio.Button value="QUICK">
-                <McsIcon type="pen" />
-                Quick Edit
               </Radio.Button>
             </Radio.Group>
           </Col>
@@ -189,7 +126,7 @@ class HtmlEditor extends React.Component<Props, HtmlEditorState> {
               maxHeight: 800,
             }}
           >
-            {this.state.type === 'CODE' ? codeEdit : quikEdit}
+            {this.state.type === 'CODE' && codeEdit}
           </Col>
 
           <Col
