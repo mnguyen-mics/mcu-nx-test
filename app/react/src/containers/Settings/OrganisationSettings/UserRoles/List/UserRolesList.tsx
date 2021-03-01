@@ -243,6 +243,7 @@ class UserRolesList extends React.Component<Props, UserListState> {
             pageSettings={PAGINATION_SEARCH_SETTINGS}
             emptyTable={emptyTable}
             additionnalComponent={additionnalComponent}
+            className="mcs-userRoles_table"
           />
         </Content>
       </div>

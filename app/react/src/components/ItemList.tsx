@@ -169,7 +169,7 @@ class ItemList<T> extends React.Component<Props<T>> {
           <EmptyTableView
             iconType={iconType}
             message={message}
-            className="mcs-table-view-empty mcs-empty-card"
+            className={`mcs-table-view-empty mcs-empty-card ${rest?.className ? rest.className : ''}`}
           />
         ) : (
           <TableViewFilters pagination={pagination} {...rest} />
