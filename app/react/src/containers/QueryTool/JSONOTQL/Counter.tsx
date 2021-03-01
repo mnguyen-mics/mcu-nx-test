@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
 import { formatMetric } from '../../../utils/MetricHelper';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
@@ -54,7 +54,7 @@ export default class Counter extends React.Component<CounterProps, State> {
         {loading && <div className={'refresh-overlay'} onClick={onRefresh} />}
         {loading && (
           <div className="refresh-text">
-            <Icon type="loading" />
+            <LoadingOutlined />
           </div>
         )}
         {(stale || this.state.hover) && !loading && (

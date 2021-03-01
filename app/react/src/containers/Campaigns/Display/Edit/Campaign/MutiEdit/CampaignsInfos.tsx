@@ -102,8 +102,8 @@ class CampaignsInfos extends React.Component<JoinedProps> {
     };
 
     return (
-      <div>
-        <Row>
+      <div style={{width: "70%", margin: "auto"}}>
+        <Row style={{display: "block"}}>
           {fields.map((name: string, index: number) => {
             const removeField = () => fields.remove(index);
             let validates: Validator[] = [];
@@ -172,7 +172,7 @@ class CampaignsInfos extends React.Component<JoinedProps> {
         </Row>
         {fields.getAll() &&
           fields.getAll().length <= editableCampaignProperties.length - 1 && (
-            <Row>
+            <Row style={{display: "block"}}>
               <div onClick={adField}>
                 <Col
                   span={22}

@@ -1,6 +1,7 @@
 // Deprecated -> For further dev, use ChangePassword component
 import * as React from 'react';
-import { Form, Input, Button, Alert, Row, Col } from 'antd';
+import { Input, Button, Alert, Row, Col } from 'antd';
+import { Form } from '@ant-design/compatible';
 import FormItem from 'antd/lib/form/FormItem';
 import {
   injectIntl,
@@ -9,7 +10,7 @@ import {
   defineMessages,
 } from 'react-intl';
 import { compose } from 'recompose';
-import { FormComponentProps } from 'antd/lib/form';
+import { FormComponentProps } from '@ant-design/compatible/lib/form';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import {
   SET_PASSWORD_SEARCH_SETTINGS,
@@ -175,7 +176,9 @@ class SetPassword extends React.Component<Props, State> {
                 />,
               )}
             </FormItem>
-            <Row type="flex" align="middle" justify="center">
+            <Row
+            //  type="flex"
+             align="middle" justify="center">
               <Col span={12} className="reset-password-back-to-login">
                 <Link to={'/login'}>
                   <FormattedMessage {...messages.revertologin} />
@@ -200,6 +203,5 @@ class SetPassword extends React.Component<Props, State> {
 
 export default compose<Props, {}>(
   withRouter,
-  Form.create(),
   injectIntl,
 )(SetPassword);

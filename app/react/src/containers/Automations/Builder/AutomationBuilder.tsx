@@ -314,8 +314,8 @@ class AutomationBuilder extends React.Component<Props, State> {
       nodeProperties.subtitle,
       nodeProperties.color,
       nodeProperties.iconType,
+      nodeProperties.iconAssetUrl,
       nodeProperties.iconAnt,
-      nodeProperties.iconAssetUrl
     );
     return storylineNode;
   }
@@ -427,8 +427,8 @@ class AutomationBuilder extends React.Component<Props, State> {
         nodeProperties.subtitle,
         nodeProperties.color,
         nodeProperties.iconType,
-        nodeProperties.iconAnt,
         undefined,
+        nodeProperties.iconAnt,
         undefined,
         true,
         this.props.creation_mode,

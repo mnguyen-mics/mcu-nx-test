@@ -397,7 +397,7 @@ class SelectGeoname extends React.Component<JoinedProps, State> {
             disabled={!!disabled}
           >
             {allCountries.map(country => (
-              <Option key={country.name}>{country.name}</Option>
+              <Option key={country.name} value={country.name}>{country.name}</Option>
             ))}
           </Select>
         </div>
@@ -415,7 +415,7 @@ class SelectGeoname extends React.Component<JoinedProps, State> {
             disabled={!!disabled}
           >
             {listOfGeonamesToDisplay.map(country => (
-              <Option key={country.id}>{country.name}</Option>
+              <Option key={country.id} value={country.id}>{country.name}</Option>
             ))}
           </Select>
         </div>

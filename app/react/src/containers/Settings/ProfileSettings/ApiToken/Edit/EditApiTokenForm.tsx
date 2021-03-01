@@ -20,7 +20,7 @@ import ApiTokenResource from '../../../../../models/directory/ApiTokenResource';
 
 const FORM_ID = 'userForm';
 
-const Content = Layout.Content as React.ComponentClass<
+const Content = Layout.Content as unknown as React.ComponentClass<
   BasicProps & { id: string }
 >;
 

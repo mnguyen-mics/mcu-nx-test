@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Row, Col } from 'antd';
 import AudienceBuilderListPage from '../../AudienceBuilder/List/AudienceBuilderListPage';
 import AudienceFeatureListPage from '../../AudienceBuilder/List/AudienceFeatureListPage';
 import { injectFeatures, InjectedFeaturesProps } from '../../../../Features';
@@ -16,16 +15,12 @@ class AudienceBuilderTab extends React.Component<InjectedFeaturesProps> {
     const { hasFeature } = this.props;
     return (
       <div>
-        <Row>
-          <Col>
-          <AudienceBuilderListPage />
-            {hasFeature('new-audienceFeatureSelector') ? (
-              <AudienceFeatureListPage />
-            ) : (
-              <OldAudienceFeatureListPage />
-            )}
-          </Col>
-        </Row>
+        <AudienceBuilderListPage />
+        {hasFeature('new-audienceFeatureSelector') ? (
+          <AudienceFeatureListPage />
+        ) : (
+          <OldAudienceFeatureListPage />
+        )}
       </div>
     );
   }

@@ -1,7 +1,6 @@
 @import 'helpers.less';
 
 .mcs-login-container {
-
   display: flex;
 
   .login-error-message {
@@ -17,6 +16,9 @@
     text-align: left;
     margin: 0;
     padding: 0 0 7px 0;
+    .ant-alert-message {
+      color: #ff4d5c;
+    }
   }
 
   .mcs-login-container-left {
@@ -34,11 +36,11 @@
         max-height: 150px;
       }
     }
-  
+
     .login-frame {
       display: flex;
       flex-direction: column;
-      background-color: @layout-body-background ;
+      background-color: @layout-body-background;
       width: 385px;
       padding: 30px 20px 0px 20px;
       border-radius: 4px;
@@ -62,7 +64,7 @@
         text-decoration: underline;
       }
       .ant-switch-checked {
-        background-color: @info-color ;
+        background-color: @info-color;
       }
       .login-form-button {
         width: 100%;
@@ -80,6 +82,10 @@
   }
   .mcs-login-container-right {
     flex: 1;
-    background-image: radial-gradient(circle at 47% 44%, @info-color , @primary-color);
+    background-image: radial-gradient(
+      circle at 47% 44%,
+      @info-color,
+      @primary-color
+    );
   }
 }

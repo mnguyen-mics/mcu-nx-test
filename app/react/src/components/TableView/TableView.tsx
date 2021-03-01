@@ -3,15 +3,15 @@ import cuid from 'cuid';
 import { compose } from 'recompose';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import { Menu, Table } from 'antd';
-import { TableProps, ColumnProps, TableRowSelection } from 'antd/lib/table';
+import { TableProps, ColumnProps } from 'antd/lib/table';
 import { PaginationProps } from 'antd/lib/pagination/Pagination';
-import { ClickParam } from 'antd/lib/menu';
 import { Dropdown } from '../../components/PopupContainers';
 import SelectionNotifier from './SelectionNotifier';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { TablePaginationConfig, TableRowSelection } from 'antd/lib/table/interface';
 
 const DEFAULT_PAGINATION_OPTION = {
-  size: 'small',
+  size: 'small' as 'small',
   showSizeChanger: true,
 };
 
@@ -132,7 +132,7 @@ class TableView<
     actions: (record: T) => Array<ActionDefinition<T>>,
     record: T,
   ) => {
-    const onClick = (item: ClickParam) => {
+    const onClick = (item: any) => {
       actions(record)[parseInt(item.key, 0)].callback(record);
     };
 
@@ -178,7 +178,7 @@ class TableView<
       ...(elem as any),
     }));
 
-    let newPagination = pagination;
+    let newPagination: false | TablePaginationConfig | undefined = pagination;
     if (pagination) {
       newPagination = {
         ...DEFAULT_PAGINATION_OPTION,
@@ -200,7 +200,7 @@ class TableView<
     };
 
     return (
-      <div>
+      <div style={{width: "100%"}}>
         <SelectionNotifier
           rowSelection={rest.rowSelection}
           pagination={pagination}

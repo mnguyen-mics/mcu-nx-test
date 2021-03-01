@@ -108,6 +108,8 @@ class DisplayCreativeFormatEditor extends React.Component<JoinedProps, State> {
       }
     };
 
+    const handleOnBlur = () => () => input.onBlur(input.value);
+
     return (
       <FormFieldWrapper
         helpToolTipProps={{
@@ -124,9 +126,9 @@ class DisplayCreativeFormatEditor extends React.Component<JoinedProps, State> {
           <div className="field">
             {standardFormat ? (
               <Select
-                onBlur={input.onBlur as () => any}
-                onChange={input.onChange as () => any}
-                onFocus={input.onFocus as () => any}
+                onBlur={handleOnBlur}
+                onChange={input.onChange}
+                onFocus={input.onFocus}
                 value={input.value}
                 disabled={disabled}
               >

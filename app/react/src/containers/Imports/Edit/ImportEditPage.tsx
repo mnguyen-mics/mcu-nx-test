@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps, StaticContext } from 'react-router';
 import { InjectedIntlProps, defineMessages, injectIntl } from 'react-intl';
 import { message } from 'antd';
 import { INITIAL_IMPORTS_FORM_DATA } from './domain';
@@ -54,7 +54,7 @@ type Props = InjectedDrawerProps &
     organisationId: string;
     datamartId: string;
     importId: string;
-  }> &
+  }, StaticContext, { from?: string }> &
   InjectedIntlProps;
 
 class ImportEditPage extends React.Component<Props, ImportEditPageState> {

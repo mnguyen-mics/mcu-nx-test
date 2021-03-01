@@ -7,7 +7,8 @@ import {
   injectIntl,
 } from 'react-intl';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
-import { Menu, Icon } from 'antd';
+import { DownOutlined } from '@ant-design/icons';
+import { Menu } from 'antd';
 import { Dropdown } from '../../../../components/PopupContainers';
 import { TableView } from '../../../../components/TableView';
 import { formatMetric } from '../../../../utils/MetricHelper';
@@ -18,7 +19,6 @@ import {
 } from '../../../../components/TableView/TableView';
 import { EmailBlastStatus } from '../../../../models/campaign/email';
 import { EmailCampaignDashboardRouteMatchParam } from './constants';
-import { ClickParam } from 'antd/lib/menu';
 import injectDrawer, {
   InjectedDrawerProps,
 } from '../../../../components/Drawer/injectDrawer';
@@ -175,7 +175,7 @@ class BlastTable extends React.Component<Props> {
         <Dropdown overlay={this.getStatusMenu(blast)} trigger={['click']}>
           <a className="ant-dropdown-link">
             <FormattedMessage {...blastStatusMessageMap[blast.status]} />
-            <Icon type="down" />
+            <DownOutlined />
           </a>
         </Dropdown>
       );
@@ -194,7 +194,7 @@ class BlastTable extends React.Component<Props> {
       ),
     );
 
-    const handleOnClick = (param: ClickParam) =>
+    const handleOnClick = (param: any) =>
       updateBlastStatus(blast.id, param.key as EmailBlastStatus);
 
     return <Menu onClick={handleOnClick}>{menuItems}</Menu>;

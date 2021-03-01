@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { WrappedFieldArrayProps } from 'redux-form';
-import { Row } from 'antd/lib/grid';
 import { compose } from 'recompose';
 import cuid from 'cuid';
 import messages from '../messages';
@@ -69,7 +68,6 @@ class DomainField extends React.Component<Props> {
           title={messages.sectionAliasesTitle}
         />
         <div className="audience-catalog">
-          <Row>
             <FormMultiValueInput
               {...this.props}
               values={this.getStringValues()}
@@ -92,7 +90,6 @@ class DomainField extends React.Component<Props> {
                 ),
               }}
             />
-          </Row>
         </div>
       </div>
     );

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps, StaticContext } from 'react-router';
 import { message, Modal } from 'antd';
 import moment from 'moment';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
@@ -79,7 +79,7 @@ type Props = InjectedIntlProps &
   MapStateToProps &
   InjectedFeaturesProps &
   InjectedNotificationProps &
-  RouteComponentProps<EditAudienceSegmentParam>;
+  RouteComponentProps<EditAudienceSegmentParam, StaticContext, { from?: string }>;
 
 class EditAudienceSegmentPage extends React.Component<Props, State> {
   @lazyInject(TYPES.IAudienceSegmentFormService)

@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Breadcrumb, Icon, Table, Row, Select } from 'antd';
+import { HomeOutlined } from '@ant-design/icons';
+import { Breadcrumb, Table, Row, Select } from 'antd';
 import {
   OTQLMetric,
   OTQLAggregations,
@@ -24,9 +25,6 @@ interface State {
   selectedView: string;
 }
 
-class BucketTable extends Table<OTQLBucket> {}
-class MetricTable extends Table<OTQLMetric> {}
-
 export default class AggregationRenderer extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -47,7 +45,7 @@ export default class AggregationRenderer extends React.Component<Props, State> {
   getMetrics = (metrics: OTQLMetric[] = []) => {
     if (metrics.length === 0) return null;
     return (
-      <MetricTable
+      <Table<OTQLMetric>
         columns={[
           { title: 'Name', dataIndex: 'name' },
           { title: 'Value', dataIndex: 'value' },
@@ -102,7 +100,7 @@ export default class AggregationRenderer extends React.Component<Props, State> {
     }
 
     return (
-      <BucketTable
+      <Table<OTQLBucket>
         columns={[
           {
             title: 'Key',
@@ -177,7 +175,7 @@ export default class AggregationRenderer extends React.Component<Props, State> {
       <Breadcrumb style={{ marginBottom: 14 }}>
         <Breadcrumb.Item>
           <Button onClick={goToRoot}>
-            <Icon type="home" />
+            <HomeOutlined />
           </Button>
         </Breadcrumb.Item>
         {aggregationsPath.map((path, index) => {

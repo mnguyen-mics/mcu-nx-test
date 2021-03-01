@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Form, Layout } from 'antd';
+import { Layout } from 'antd';
+import { Form } from '@ant-design/compatible';
 import {
   FormattedMessage,
   injectIntl,

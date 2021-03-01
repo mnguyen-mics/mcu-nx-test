@@ -92,7 +92,7 @@ class AccountIdCard extends React.Component<Props, State> {
                   ? userAccountsByCompartmentIdCopy.splice(0, 5)
                   : userAccountsByCompartmentId[key];
               return (
-                <Row gutter={10} key={key} className="table-line border-top">
+                <Row gutter={10} key={key} className="table-line border-top" style={{display: "block"}}>
                   <div className="sub-title">{compartmentName}</div>
                   {accountsFormatted.map(account => {
                     return (

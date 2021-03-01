@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Row, Col, Modal } from 'antd';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { Modal } from 'antd';
 import { compose } from 'recompose';
 import {
   DatamartReplicationResourceShape,
@@ -208,7 +209,7 @@ class DatamartReplicationTab extends React.Component<Props, State> {
     };
 
     Modal.confirm({
-      icon: 'exclamation-circle',
+      icon: <ExclamationCircleOutlined />,
       title: formatMessage(messages.deleteDatamartReplicationModalTitle),
       content: formatMessage(messages.deleteDatamartReplicationModalContent),
       okText: formatMessage(messages.deleteDatamartReplication),
@@ -308,8 +309,8 @@ class DatamartReplicationTab extends React.Component<Props, State> {
 
     return (
       <div>
-        <Row>
-          <Col>
+        <div>
+          <div>
             <DatamartReplicationListContainer
               replications={replications}
               totalReplications={totalReplications}
@@ -320,10 +321,10 @@ class DatamartReplicationTab extends React.Component<Props, State> {
               updateReplication={this.onUpdateDatamartReplication}
               lastExecutionIsRunning={this.isLastExecutionRunning()}
             />
-          </Col>
-        </Row>
-        <Row>
-          <Col>
+          </div>
+        </div>
+        <div>
+          <div>
             <DatamartReplicationJobListContainer
               jobExecutions={jobExecutions}
               totalJobExecutions={totalJobExecutions}
@@ -334,8 +335,8 @@ class DatamartReplicationTab extends React.Component<Props, State> {
               fetchReplicationsAndJobs={this.fetchReplicationsAndJobs}
               createJobExecution={this.createJobExecution}
             />
-          </Col>
-        </Row>
+          </div>
+        </div>
       </div>
     );
   }

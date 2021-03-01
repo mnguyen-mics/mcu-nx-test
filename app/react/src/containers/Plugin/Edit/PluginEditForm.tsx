@@ -34,7 +34,7 @@ import { PropertyResourceShape } from '../../../models/plugin';
 
 const FORM_NAME = 'pluginForm';
 
-const Content = Layout.Content as React.ComponentClass<
+const Content = Layout.Content as unknown as React.ComponentClass<
   BasicProps & { id: string }
 >;
 interface PluginEditFormProps extends Omit<ConfigProps<any>, 'form'> {
@@ -274,14 +274,13 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
               <div>
                 <div id={'general'}>
                   <Row
-                    type="flex"
                     align="middle"
                     justify="space-between"
                     className="section-header"
                   >
                     <FormTitle title={messages.sectionGeneralTitle} />
                   </Row>
-                  <Row>
+                  <div>
                     <InputField
                       name="plugin.name"
                       component={FormInput}
@@ -292,7 +291,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
                       ? renderSpecificFields(disableFields, 'plugin')
                       : null}
                     {showTechnicalName ? this.renderTechnicalName() : null}
-                  </Row>
+                  </div>
                 </div>
                 <hr />
               </div>
@@ -300,14 +299,13 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
             {pluginLayout === undefined ? (
               <div id={'properties'}>
                 <Row
-                  type="flex"
                   align="middle"
                   justify="space-between"
                   className="section-header"
                 >
                   <FormTitle title={messages.sectionPropertiesTitle} />
                 </Row>
-                <Row>{this.pluginFieldGenerated()}</Row>
+                <div style={{display: "block"}}>{this.pluginFieldGenerated()}</div>
               </div>
             ) : (
               <div>{this.generateFormFromPluginLayout(pluginLayout)}</div>

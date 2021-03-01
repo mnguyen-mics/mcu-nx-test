@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps, StaticContext } from 'react-router';
 import { message } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 
@@ -34,7 +34,7 @@ interface State {
 type Props = InjectedIntlProps &
   InjectedNotificationProps &
   InjectedDatamartProps &
-  RouteComponentProps<EditDisplayCampaignRouteMatchParam>;
+  RouteComponentProps<EditDisplayCampaignRouteMatchParam, StaticContext, { from?: string, campaignId?: string }>;
 
 class EditCampaignPage extends React.Component<Props, State> {
   @lazyInject(TYPES.IDisplayCampaignFormService)

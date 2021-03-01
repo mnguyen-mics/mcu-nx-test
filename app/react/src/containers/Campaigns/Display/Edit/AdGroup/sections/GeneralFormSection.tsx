@@ -111,6 +111,7 @@ class GeneralFormSection extends React.Component<Props, State> {
                   options={[
                     {
                       value: 'DAY',
+                      title: 'DAY',
                       children: formatAdGroupProperty(
                         'max_budget_period',
                         'DAY',
@@ -118,6 +119,7 @@ class GeneralFormSection extends React.Component<Props, State> {
                     },
                     {
                       value: 'WEEK',
+                      title: 'WEEK',
                       children: formatAdGroupProperty(
                         'max_budget_period',
                         'WEEK',
@@ -125,6 +127,7 @@ class GeneralFormSection extends React.Component<Props, State> {
                     },
                     {
                       value: 'MONTH',
+                      title: 'MONTH',
                       children: formatAdGroupProperty(
                         'max_budget_period',
                         'MONTH',
@@ -154,15 +157,16 @@ class GeneralFormSection extends React.Component<Props, State> {
               label: formatMessage(formatAdGroupProperty('duration').message),
             }}
             startDatePickerProps={{
-              placeholder: formatMessage(
-                formatAdGroupProperty('start_date').message,
-              ),
+              
+              // placeholder: formatMessage(
+              //   formatAdGroupProperty('start_date').message,
+              // ),
               style: { width: '100%' },
             }}
             endDatePickerProps={{
-              placeholder: formatMessage(
-                formatAdGroupProperty('end_date').message,
-              ),
+              // placeholder: formatMessage(
+              //   formatAdGroupProperty('end_date').message,
+              // ),
               style: { width: '100%' },
             }}
             helpToolTipProps={{

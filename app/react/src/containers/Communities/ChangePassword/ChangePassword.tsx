@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Form, Row, Col, Input, Button, Alert, Spin } from 'antd';
+import { Row, Col, Input, Button, Alert, Spin } from 'antd';
+import { Form } from '@ant-design/compatible';
 import FormItem from 'antd/lib/form/FormItem';
 import {
   injectIntl,
@@ -8,7 +9,7 @@ import {
   defineMessages,
 } from 'react-intl';
 import { compose } from 'recompose';
-import { FormComponentProps } from 'antd/lib/form';
+import { FormComponentProps } from '@ant-design/compatible/lib/form';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import {
   SET_PASSWORD_SEARCH_SETTINGS,
@@ -215,7 +216,10 @@ class CommunityChangePassword extends React.Component<Props, State> {
           {!fetchingPasswReq && !passReq && (
             <div>
               {errorMsg}
-              <Row type="flex" align="middle" justify="center">
+              <Row
+                
+                align="middle"
+                justify="center">
                 <Col span={24}>
                   <Button
                     type="ghost"
@@ -279,7 +283,9 @@ class CommunityChangePassword extends React.Component<Props, State> {
                   />,
                 )}
               </FormItem>
-              <Row type="flex" align="middle" justify="center">
+              <Row 
+              
+              align="middle" justify="center">
                 <Col span={12}>
                   <Button
                     type="ghost"
@@ -310,6 +316,5 @@ class CommunityChangePassword extends React.Component<Props, State> {
 
 export default compose<Props, {}>(
   withRouter,
-  Form.create(),
   injectIntl,
 )(CommunityChangePassword);

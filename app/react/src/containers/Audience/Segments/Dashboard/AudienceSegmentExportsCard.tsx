@@ -321,7 +321,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
     compartments: UserAccountCompartmentDatamartSelectionResource[],
   ) => {
     const compartmentOptions = compartments.map(compartment => (
-      <Select.Option key={compartment.compartment_id}>
+      <Select.Option key={compartment.compartment_id} value={compartment.compartment_id}>
         {`${compartment.compartment_id} - ${compartment.name}`}
       </Select.Option>
     ));

@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { Row, Col, Menu, Button, Icon } from 'antd';
+import { DownOutlined } from '@ant-design/icons';
+import { Row, Col, Menu, Button } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
-import { ClickParam } from 'antd/lib/menu';
+import { MenuInfo } from '../../../../../../../../node_modules/antd/node_modules/rc-menu/lib/interface'
 import { Dropdown } from '../../../../../components/PopupContainers';
 import { LegendChart } from '../../../../../components/LegendChart';
 
@@ -317,11 +318,11 @@ class GoalStackedAreaChart extends React.Component<
       location: { search },
     } = this.props;
 
-    const handleClick = ({ key }: ClickParam) => {
+    const handleClick = (e: MenuInfo) => {
       const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
       this.setState(prevState => {
         const selectedAttributionModel = goal.attribution.find(
-          item => item.id === key,
+          item => item.id === e.key,
         );
 
         this.getPerformanceForGoalAndAttribution(
@@ -359,7 +360,7 @@ class GoalStackedAreaChart extends React.Component<
             {this.state.selectedAttributionModel &&
               this.state.selectedAttributionModel.attribution_model_name}
           </span>{' '}
-          <Icon type="down" />
+          <DownOutlined />
         </Button>
       </Dropdown>
     );

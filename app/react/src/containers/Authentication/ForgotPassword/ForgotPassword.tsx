@@ -1,147 +1,136 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import { compose } from 'recompose';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
-import { Form, Input, Button, Alert, Col, Row } from 'antd';
-import { FormComponentProps } from 'antd/lib/form';
+import { Input, Button, Alert, Col, Row, Form } from 'antd';
+import { FormComponentProps } from '@ant-design/compatible/lib/form';
 import messages from './messages';
-import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IAuthService } from '../../../services/AuthService';
+import { useInjection } from '../../../config/inversify.react';
 
 const FormItem = Form.Item;
 
-interface State {
-  hasError: boolean;
-  isRequesting: boolean;
-  passwordSentSuccess: boolean;
-}
-
 type Props = InjectedIntlProps & FormComponentProps;
 
-class ForgotPassword extends React.Component<Props, State> {
-  @lazyInject(TYPES.IAuthService)
-  private _authService: IAuthService;
+const ForgotPassword = (props: Props) => {
+  const [form] = Form.useForm();
+  const [hasError, setHasError] = useState(false);
+  const [isRequesting, setIsRequesting] = useState(false);
+  const [passwordSentSuccess, setPasswordSentSuccess] = useState(false);
+  const authService = useInjection<IAuthService>(TYPES.IAuthService);
 
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      hasError: false,
-      isRequesting: false,
-      passwordSentSuccess: false,
-    };
-  }
-
-  handleSubmit = (e: React.FormEvent<any>) => {
-    e.preventDefault();
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        this.setState({ isRequesting: true });
-        this._authService
-          .sendPassword(values.email)
-          .then(() => {
-            this.setState({ passwordSentSuccess: true, isRequesting: false });
-          })
-          .catch(() => {
-            this.setState({ hasError: true, isRequesting: false });
-          });
-      }
+  const handleSubmit = (e: any) => {
+    form.validateFields().then(values => {
+      setIsRequesting(true);
+      authService
+        .sendPassword(values.email)
+        .then(() => {
+          setPasswordSentSuccess(true);
+          setIsRequesting(false);
+        })
+        .catch(() => {
+          setHasError(true);
+          setIsRequesting(false);
+        });
     });
   };
 
-  render() {
-    const {
-      form: { getFieldDecorator },
-      intl: { formatMessage },
-    } = this.props;
+  const hasFieldError = form.getFieldError('email').length !== 0;
+  const errorMsg =
+    !hasFieldError && hasError ? (
+      <Alert
+        type="error"
+        className="login-error-message"
+        style={{ marginBottom: 24 }}
+        message={<FormattedMessage {...messages.authenticationError} />}
+      />
+    ) : null;
 
-    const { isRequesting, hasError, passwordSentSuccess } = this.state;
-
-    const hasFieldError = this.props.form.getFieldError('email');
-    const errorMsg =
-      !hasFieldError && hasError ? (
-        <Alert
-          type="error"
-          className="login-error-message"
-          style={{ marginBottom: 24 }}
-          message={<FormattedMessage {...messages.authenticationError} />}
+  return (
+    <div className="mcs-reset-password-container">
+      <div className="image-wrapper">
+        <img
+          alt="mics-logo"
+          className="reset-password-logo"
+          src={'/react/src/assets/images/logo.png'}
         />
-      ) : null;
-
-    return (
-      <div className="mcs-reset-password-container">
-        <div className="image-wrapper">
-          <img alt="mics-logo" className="reset-password-logo" src={'/react/src/assets/images/logo.png'} />
-        </div>
-        <div className="reset-password-title">
-          <FormattedMessage {...messages.resetPasswordTitle} />
-        </div>
-        <div className="reset-password-container-frame">
-          {!passwordSentSuccess && (
-            <Form onSubmit={this.handleSubmit} className="reset-password-form">
-              {errorMsg}
-              <div className="reset-passwork-msg">
-                <FormattedMessage {...messages.resetPasswordDescription} />
-              </div>
-              <div className="password-text">
-                <FormattedMessage {...messages.emailText} />
-              </div>
-              <FormItem>
-                {getFieldDecorator('email', {
-                  rules: [
-                    {
-                      type: 'email',
-                      required: true,
-                      message: formatMessage(
-                        messages.resetPasswordEmailRequired,
-                      ),
-                    },
-                  ],
-                })(<Input className="reset-password-input" />)}
-              </FormItem>
-              <Row type="flex" align="middle" justify="center">
-                <Col span={12} className="reset-password-back-to-login">
-                  <Link to={'/login'}>
-                    <FormattedMessage {...messages.resetPasswordBack} />
-                  </Link>
-                </Col>
-                <Col span={12}>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    className="mcs-primary reset-password-button"
-                    loading={isRequesting}
-                  >
-                    <FormattedMessage {...messages.resetPasswordSubmit} />
-                  </Button>
-                </Col>
-              </Row>
-            </Form>
-          )}
-          {passwordSentSuccess && (
-            <div>
-              <div>
-                <p className="reset-password-messages">
-                  <FormattedMessage {...messages.resetPasswordPasswordSent} />
-                </p>
-                <p className="reset-password-messages">
-                  <FormattedMessage {...messages.resetPasswordEmailSpan} />
-                </p>
-              </div>
-              <Button
-                type="primary"
-                htmlType="button"
-                className="mcs-primary reset-password-button"
-                href="/"
-              >
-                <FormattedMessage {...messages.resetPasswordReturnToLogin} />
-              </Button>
-            </div>
-          )}
-        </div>
       </div>
-    );
-  }
-}
+      <div className="reset-password-title">
+        <FormattedMessage {...messages.resetPasswordTitle} />
+      </div>
+      <div className="reset-password-container-frame">
+        {!passwordSentSuccess && (
+          <Form
+            onFinish={handleSubmit}
+            form={form}
+            className="reset-password-form"
+          >
+            {errorMsg}
+            <div className="reset-passwork-msg">
+              <FormattedMessage {...messages.resetPasswordDescription} />
+            </div>
+            <div className="password-text">
+              <FormattedMessage {...messages.emailText} />
+            </div>
+            <FormItem
+              name="email"
+              rules={[
+                {
+                  required: true,
+                  message: messages.resetPasswordEmailRequired.defaultMessage,
+                },
+              ]}
+            >
+              <Input className="reset-password-input" />
+            </FormItem>
+            <Row>
+              <Col span={12} className="reset-password-back-to-login">
+              <Button
+                  type="link"
+                  href="#/login"
+                  className="reset-password-button"
+                  loading={isRequesting}
+                >
+                  <FormattedMessage {...messages.resetPasswordBack} />
+                </Button>
+              </Col>
+              <Col span={12}>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className="mcs-primary reset-password-button"
+                  loading={isRequesting}
+                >
+                  <FormattedMessage {...messages.resetPasswordSubmit} />
+                </Button>
+              </Col>
+            </Row>
+          </Form>
+        )}
+        {passwordSentSuccess && (
+          <div>
+            <div>
+              <p className="reset-password-messages">
+                <FormattedMessage {...messages.resetPasswordPasswordSent} />
+              </p>
+              <p className="reset-password-messages">
+                <FormattedMessage {...messages.resetPasswordEmailSpan} />
+              </p>
+            </div>
+            <Button
+              type="primary"
+              htmlType="button"
+              className="mcs-primary reset-password-button"
+              href="/"
+            >
+              <FormattedMessage {...messages.resetPasswordReturnToLogin} />
+            </Button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
-export default compose(injectIntl, Form.create())(ForgotPassword);
+export default compose<Props, {}>(injectIntl)(ForgotPassword);

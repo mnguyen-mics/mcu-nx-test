@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
-import { Icon, Modal, Tooltip } from 'antd';
+import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { Modal, Tooltip } from 'antd';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import {
@@ -47,6 +48,7 @@ import { MicsReduxState } from '../../../../utils/ReduxHelper';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { EmptyTableView, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { StaticContext } from 'react-router';
 
 export interface ParamFilters
   extends PaginationSearchSettings,
@@ -73,7 +75,7 @@ interface MapStateToProps {
 type Props = MapStateToProps &
   InjectedIntlProps &
   InjectedNotificationProps &
-  RouteComponentProps<{ organisationId: string }>;
+  RouteComponentProps<{ organisationId: string }, StaticContext, { reloadDataSource?: boolean }>;
 
 class GoalsTable extends React.Component<Props, State> {
   @lazyInject(TYPES.IGoalService)
@@ -234,7 +236,7 @@ class GoalsTable extends React.Component<Props, State> {
     Modal.confirm({
       title: intl.formatMessage(messages.archiveGoalModalTitle),
       content: intl.formatMessage(messages.archiveGoalModalBody),
-      iconType: 'exclamation-circle',
+      icon: <ExclamationCircleOutlined />,
       okText: intl.formatMessage(messages.archiveGoalModalOk),
       cancelText: intl.formatMessage(messages.archiveGoalModalCancel),
       onOk() {
@@ -284,7 +286,6 @@ class GoalsTable extends React.Component<Props, State> {
       history,
       location: { search: currentSearch, pathname },
     } = this.props;
-
     const nextLocation = {
       pathname,
       search: updateSearch(currentSearch, params, GOAL_SEARCH_SETTINGS),
@@ -344,9 +345,10 @@ class GoalsTable extends React.Component<Props, State> {
       current: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalGoals,
-      onChange: (page: number) =>
+      onChange: (page: number,size: number) =>
         this.updateLocationSearch({
           currentPage: page,
+          pageSize: size
         }),
       onShowSizeChange: (current: number, size: number) =>
         this.updateLocationSearch({
@@ -433,7 +435,7 @@ class GoalsTable extends React.Component<Props, State> {
               id="goals.list.statusFilter"
               defaultMessage="Status"
             />{' '}
-            <Icon type="down" />
+            <DownOutlined />
           </div>
         ),
         selectedItems: filter.statuses.map((status: string) => ({
@@ -471,7 +473,7 @@ class GoalsTable extends React.Component<Props, State> {
               id="goals.list.datamartFilter"
               defaultMessage="Datamart"
             />{' '}
-            <Icon type="down" />
+            <DownOutlined />
           </div>
         ),
         selectedItems: filter.datamartId

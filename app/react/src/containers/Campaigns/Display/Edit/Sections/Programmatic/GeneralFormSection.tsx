@@ -172,6 +172,7 @@ class GeneralFormSection extends React.Component<Props, State> {
                   options={[
                     {
                       value: 'DAY',
+                      title: 'DAY',
                       children: formatDisplayCampaignProperty(
                         'max_budget_period',
                         'DAY',
@@ -179,6 +180,7 @@ class GeneralFormSection extends React.Component<Props, State> {
                     },
                     {
                       value: 'WEEK',
+                      title: 'WEEK',
                       children: formatDisplayCampaignProperty(
                         'max_budget_period',
                         'WEEK',
@@ -186,6 +188,7 @@ class GeneralFormSection extends React.Component<Props, State> {
                     },
                     {
                       value: 'MONTH',
+                      title: 'MONTH',
                       children: formatDisplayCampaignProperty(
                         'max_budget_period',
                         'MONTH',

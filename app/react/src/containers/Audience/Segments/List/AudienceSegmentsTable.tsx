@@ -3,7 +3,9 @@ import queryString from 'query-string';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
-import { Icon, Tooltip } from 'antd';
+
+import { ApiOutlined, DatabaseOutlined, DownOutlined, FileImageOutlined, FileOutlined, GlobalOutlined, RocketOutlined, ShareAltOutlined, SolutionOutlined, UsergroupAddOutlined } from '@ant-design/icons';
+import { Tooltip } from 'antd';
 import {
   FormattedMessage,
   defineMessages,
@@ -579,44 +581,44 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         key: 'type',
         isHideable: false,
         render: (text: string, record: AudienceSegmentResource) => {
-          let typeIcon = 'database';
+          let typeIcon = <DatabaseOutlined />;
           let subTypeIcon;
           let subMessage;
           switch (text) {
             case 'USER_ACTIVATION':
-              typeIcon = 'rocket';
+              typeIcon = <RocketOutlined />;
               break;
             case 'USER_QUERY':
-              typeIcon = 'database';
+              typeIcon = <DatabaseOutlined />;
               break;
             case 'USER_LIST': {
-              typeIcon = 'solution';
+              typeIcon = <SolutionOutlined />;
               const subtype = (record as UserListSegment).subtype
               if (subtype === "EDGE" || subtype === "USER_CLIENT") {
-                subTypeIcon = 'file-image';
+                subTypeIcon = <FileImageOutlined />;
                 const subtypeEdge = "EDGE";
                 subMessage = intl.formatMessage(messages[subtypeEdge]);
               }
               if (subtype === "USER_PIXEL") {
-                subTypeIcon = 'global';
+                subTypeIcon = <GlobalOutlined />;
                 subMessage = intl.formatMessage(messages[subtype]);
               }
               if (subtype === "STANDARD") {
                 const feedType = (record as UserListSegment).feed_type;
-                if (feedType === 'FILE_IMPORT') subTypeIcon = 'file';
-                if (feedType === 'SCENARIO') subTypeIcon = 'share-alt';
+                if (feedType === 'FILE_IMPORT') subTypeIcon = <FileOutlined />;
+                if (feedType === 'SCENARIO') subTypeIcon = <ShareAltOutlined />;
                 subMessage = intl.formatMessage(messages[feedType]);
               }
               break;
             }
             case 'USER_PARTITION':
-              typeIcon = 'api';
+              typeIcon = <ApiOutlined />;
               break;
             case 'USER_LOOKALIKE':
-              typeIcon = 'usergroup-add';
+              typeIcon = <UsergroupAddOutlined />;
               break;
             default:
-              typeIcon = 'database';
+              typeIcon = <DatabaseOutlined />;
               break;
           }
           return (
@@ -625,12 +627,12 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
                 placement="top"
                 title={intl.formatMessage(messages[record.type] || text)}
               >
-                <Icon type={typeIcon} />
+                {typeIcon}
               </Tooltip>
               {subTypeIcon && <span>&nbsp;&gt;&nbsp;</span>}
               {subTypeIcon && (
                 <Tooltip placement="top" title={subMessage}>
-                  <Icon type={subTypeIcon} />
+                  {subTypeIcon}
                 </Tooltip>
               )}
             </div>
@@ -876,7 +878,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
               id="audience.segments.list.datamartFilter"
               defaultMessage="Datamart"
             />{' '}
-            <Icon type="down" />
+            <DownOutlined />
           </div>
         ),
         selectedItems: filter.datamartId

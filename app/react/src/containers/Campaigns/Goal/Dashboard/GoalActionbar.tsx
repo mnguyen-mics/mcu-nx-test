@@ -1,6 +1,7 @@
 import * as React from 'react';
 import lodash from 'lodash';
-import { Button, Icon, Menu, Modal, message } from 'antd';
+import { EllipsisOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { Button, Menu, Modal, message } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Dropdown } from '../../../../components/PopupContainers';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
@@ -297,7 +298,7 @@ class ExportsActionbar extends React.Component<
 
         <Dropdown overlay={menu} trigger={['click']}>
           <Button>
-            <Icon type="ellipsis" />
+            <EllipsisOutlined />
           </Button>
         </Dropdown>
       </Actionbar>
@@ -326,7 +327,7 @@ class ExportsActionbar extends React.Component<
         Modal.confirm({
           title: formatMessage(messages.archiveGoalModalTitle),
           content: formatMessage(messages.archiveGoalModalBody),
-          iconType: 'exclamation-circle',
+          icon: <ExclamationCircleOutlined />,
           okText: formatMessage(modalMessages.confirm),
           cancelText: formatMessage(modalMessages.cancel),
           onOk() {

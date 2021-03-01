@@ -1,17 +1,17 @@
 import * as React from 'react';
 import { WrappedFieldProps } from 'redux-form';
 import moment, { Moment } from 'moment';
-import { DatePickerProps } from 'antd/lib/date-picker/interface';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 
 import FormFieldWrapper, { FormFieldWrapperProps } from './FormFieldWrapper';
 import { DEFAULT_DATE_FORMAT } from '../../utils/DateHelper';
 import { DatePicker } from '../../components/PopupContainers';
+import { PickerPanelDateProps } from 'antd/lib/calendar/generateCalendar';
 
 export interface FormDateRangePickerProps extends FormFieldWrapperProps {
   formItemProps: FormItemProps;
-  startDatePickerProps: DatePickerProps;
-  endDatePickerProps: DatePickerProps;
+  startDatePickerProps: PickerPanelDateProps<any>;
+  endDatePickerProps: PickerPanelDateProps<any>;
   allowPastDate?: boolean;
   unixTimestamp?: boolean;
   startDateFieldName?: string;
@@ -131,7 +131,7 @@ class FormDateRangePicker extends React.Component<JoinedProps> {
       endDateFieldName,
       unixTimestamp,
       small,
-      disabled
+      disabled,
     } = this.props;
 
     // TODO properly handle required/validation case
@@ -153,16 +153,16 @@ class FormDateRangePicker extends React.Component<JoinedProps> {
       input.value[startDateFieldName] === null
         ? undefined
         : unixTimestamp
-          ? moment(input.value[startDateFieldName])
-          : input.value[startDateFieldName];
+        ? moment(input.value[startDateFieldName])
+        : input.value[startDateFieldName];
 
     const endDateValue =
       input.value[endDateFieldName] === undefined ||
       input.value[endDateFieldName] === null
         ? undefined
         : unixTimestamp
-          ? moment(input.value[endDateFieldName])
-          : input.value[endDateFieldName];
+        ? moment(input.value[endDateFieldName])
+        : input.value[endDateFieldName];
 
     return (
       <FormFieldWrapper
@@ -177,27 +177,27 @@ class FormDateRangePicker extends React.Component<JoinedProps> {
             <DatePicker
               allowClear={false}
               {...startDatePickerProps}
-              {...{value:startDateValue}}
+              {...{ value: startDateValue }}
               onChange={this.updateStartDate}
               disabledDate={this.disabledStartDate}
               disabled={disabled}
               format={DEFAULT_DATE_FORMAT}
+              size={'middle'}
             />
           </div>
-
           <div className="range-picker-separator">
-            <p className="ant-form-split">-</p>
+            <p className="form-split">-</p>
           </div>
-
           <div className="date-picker">
             <DatePicker
               allowClear={false}
               {...endDatePickerProps}
-              {...{value:endDateValue}}
+              {...{ value: endDateValue }}
               onChange={this.updateEndDate}
               disabledDate={this.disabledEndDate}
               disabled={disabled}
               format={DEFAULT_DATE_FORMAT}
+              size={'middle'}
             />
           </div>
         </div>

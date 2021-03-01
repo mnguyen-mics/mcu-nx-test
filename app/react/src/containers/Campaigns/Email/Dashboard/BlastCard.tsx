@@ -132,7 +132,7 @@ class BlastCard extends React.Component<Props, State> {
     // Modal.confirm({
     //   title: formatMessage(messages.blastArchiveTitle),
     //   content: formatMessage(messages.blastArchivetext),
-    //   iconType: 'exclamation-circle',
+    //   icon: <ExclamationCircleOutlined />,
     //   okText: formatMessage(messages.blastArchiveOk),
     //   cancelText: formatMessage(messages.blastArchiveCancel),
     //   onOk() {

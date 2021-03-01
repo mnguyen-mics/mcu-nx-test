@@ -29,7 +29,7 @@ import RoleInfoFormSection from './Sections/RoleInfoFormSection';
 
 const FORM_ID = 'userRoleForm';
 
-const Content = Layout.Content as React.ComponentClass<
+const Content = Layout.Content as unknown as React.ComponentClass<
   BasicProps & { id: string }
 >;
 

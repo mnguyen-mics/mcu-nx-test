@@ -93,7 +93,6 @@ class NavigatorSettingsMainMenu extends React.Component<Props, State> {
   };
 
   handleClick = (e: any) => {
-    const {} = this.props;
     this.setState({
       current: e.key,
     });

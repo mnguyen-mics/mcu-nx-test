@@ -84,7 +84,7 @@ class PluginCardSelector<T extends LayoutablePlugin> extends React.Component<
       <Row
         key={i}
         style={{ marginTop: 30, marginBottom: 40 }}
-        type={'flex'}
+        // type={'flex'}
         gutter={40}
       >
         {arr}

@@ -3,7 +3,7 @@ import { Checkbox } from 'antd';
 
 // TS Interface
 import { WrappedFieldProps } from 'redux-form';
-import { TooltipProps } from 'antd/lib/tooltip';
+import { TooltipPropsWithTitle } from 'antd/lib/tooltip';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { CheckboxProps } from 'antd/lib/checkbox/Checkbox';
 
@@ -12,7 +12,7 @@ import FormFieldWrapper, { FormFieldWrapperProps } from './FormFieldWrapper';
 export interface FormBooleanProps extends FormFieldWrapperProps {
   formItemProps?: FormItemProps & { hasMarginBottom?: boolean; };
   inputProps?: CheckboxProps;
-  helpToolTipProps?: TooltipProps;
+  helpToolTipProps?: TooltipPropsWithTitle;
   small?: boolean;
 }
 
@@ -33,7 +33,7 @@ class FormBoolean extends React.Component<
   constructor(props: FormBooleanProps & WrappedFieldProps) {
     super(props);
     this.state = {
-      checked: props.input.value ? props.input.value : false,
+      checked: props.input.checked ? props.input.checked : false,
     };
   }
 

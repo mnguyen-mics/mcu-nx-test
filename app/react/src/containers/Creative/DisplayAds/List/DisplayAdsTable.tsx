@@ -104,9 +104,10 @@ class DisplayAdsTable extends React.Component<JoinedProps> {
       current: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalDisplayAds,
-      onChange: (page: number) => {
+      onChange: (page: number, size: number) => {
         this.updateLocationSearch({
           currentPage: page,
+          pageSize: size
         });
         if (
           rowSelection &&

@@ -110,7 +110,7 @@ class EmailCard extends React.Component<Props, State> {
             </Button>,
           ]}
         >
-          <Row gutter={10} className="table-line">
+          <Row gutter={10} className="table-line" style={{display: "block"}}>
             <Col span={24} className="title">
               <FormattedMessage {...messages.emailInfo} />
             </Col>
@@ -151,7 +151,7 @@ class EmailCard extends React.Component<Props, State> {
               </Col>
             </Row>
           </Row>
-          <Row>
+          <Row style={{display: "block"}}>
             {selectedAgent.providers ? (
               <div>
                 <Col span={24} className="title">
@@ -241,7 +241,7 @@ class EmailCard extends React.Component<Props, State> {
                     </div>
                   </div>
                 </Row>
-                <Row className="text-right">
+                <Row className="text-right" style={{display: "block"}}>
                   <button className="button-sm" onClick={handleModal(agent)}>
                     <FormattedMessage {...messages.viewMore} />
                   </button>

@@ -71,6 +71,7 @@ class OnSegmentEntryInputGeneralSectionForm extends React.Component<
         return userQuerySegments.concat(userListSegments).map(segment => ({
           key: segment.id,
           label: <SegmentNameDisplay audienceSegmentResource={segment} />,
+          value: segment.id,
         }));
       })
       .catch(error => {
@@ -85,6 +86,7 @@ class OnSegmentEntryInputGeneralSectionForm extends React.Component<
       .then(({ data: segment }) => ({
         key: segment.id,
         label: <SegmentNameDisplay audienceSegmentResource={segment} />,
+        value: segment.id
       }))
       .catch(error => {
         this.props.notifyError(error);
@@ -120,7 +122,7 @@ class OnSegmentEntryInputGeneralSectionForm extends React.Component<
           fetchSingleMethod={this.fetchSingleMethod}
           selectProps={{
             disabled: !!disabled,
-            mode: 'default',
+            mode: undefined,
             showSearch: true,
           }}
           type="Audience"

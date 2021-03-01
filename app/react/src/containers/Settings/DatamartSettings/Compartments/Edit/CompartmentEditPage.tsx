@@ -2,7 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { message, Modal } from 'antd';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, StaticContext, withRouter } from 'react-router';
 import queryString from 'query-string';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -39,7 +39,7 @@ interface State {
 
 type Props = InjectedIntlProps &
   InjectedNotificationProps &
-  RouteComponentProps<EditCompartmentRouteMatchParam> &
+  RouteComponentProps<EditCompartmentRouteMatchParam, StaticContext, { from?: string, compartmentId?: string }> &
   InjectedDatamartProps;
 
 class CompartmentEditPage extends React.Component<Props, State> {

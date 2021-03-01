@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { Layout, Icon } from 'antd';
+import { BarsOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
+import { Layout } from 'antd';
 import { connect } from 'react-redux';
 import { push as PushMenu, State } from 'react-burger-menu';
 import { Row, Col } from 'antd/lib/grid';
@@ -127,7 +128,7 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
         >
           <Button onClick={orgSelector} style={{ width: '100%' }}>
             <React.Fragment>
-              <Icon type="bars" />{' '}
+              <BarsOutlined />{' '}
               {this.state.leftColumnSize > 12 && !this.props.collapsed && (
                 <FormattedMessage {...messages.switchOrg} />
               )}
@@ -142,10 +143,10 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
         >
           <Button onClick={onCollapse} style={{ width: '100%' }}>
             {this.props.collapsed ? (
-              <Icon type="right" />
+              <RightOutlined />
             ) : (
               <React.Fragment>
-                <Icon type="left" />{' '}
+                <LeftOutlined />{' '}
                 {this.state.rightColumnSize > 12 && (
                   <FormattedMessage {...messages.collapse} />
                 )}
@@ -164,10 +165,10 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
             onMouseLeave={resizeBox()}
           >
             {this.props.collapsed ? (
-              <Icon type="right" />
+              <RightOutlined />
             ) : (
               <span>
-                <Icon type="left" />{' '}
+                <LeftOutlined />{' '}
                 <span
                   className={
                     this.state.rightColumnSize > 12 ? 'visible' : 'hidden'

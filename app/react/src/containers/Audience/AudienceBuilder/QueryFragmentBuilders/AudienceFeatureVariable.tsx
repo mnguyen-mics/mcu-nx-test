@@ -115,7 +115,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
 
     let fetchListMethod = (
       keywords: string,
-    ): Promise<Array<{ key: string; label: JSX.Element | string }>> => {
+    ): Promise<Array<{ key: string; label: JSX.Element | string ; value:string  }>> => {
       if (variable.field_name && foundField) {
         return this._referenceTableService
           .getReferenceTable(
@@ -125,13 +125,13 @@ class AudienceFeatureVariable extends React.Component<Props> {
             variable.field_name,
           )
           .then(res =>
-            res.data.map(r => ({ key: r.value, label: r.display_value })),
+            res.data.map(r => ({ key: r.value, label: r.display_value, value: r.value })),
           );
       }
       return Promise.resolve([]);
     };
     let fetchSingleMethod = (id: string) =>
-      Promise.resolve({ key: id, label: id });
+      Promise.resolve({ key: id, label: id, value: id });
     const modelAndType =
       fieldDirectives && getCoreReferenceTypeAndModel(fieldDirectives);
 
@@ -146,6 +146,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
                   res.data.map(r => ({
                     key: r.compartment_id,
                     label: r.name ? r.name : r.token,
+                    value: r.compartment_id
                   })),
                 );
             };
@@ -153,6 +154,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
               this._compartmentService.getCompartment(id).then(res => ({
                 key: res.data.id,
                 label: res.data.name,
+                value: res.data.id
               }));
             break;
           case 'CHANNELS':
@@ -164,12 +166,13 @@ class AudienceFeatureVariable extends React.Component<Props> {
                   keywords: keywords,
                   with_source_datamarts: true,
                 })
-                .then(res => res.data.map(r => ({ key: r.id, label: r.name })));
+                .then(res => res.data.map(r => ({ key: r.id, label: r.name, value: r.id })));
             };
             fetchSingleMethod = (id: string) =>
               this._channelService.getChannel(datamartId, id).then(res => ({
                 key: res.data.id,
                 label: res.data.name,
+                value: res.data.id
               }));
             break;
           case 'SEGMENTS':
@@ -183,6 +186,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
                   res.data.map(r => ({
                     key: r.id,
                     label: <SegmentNameDisplay audienceSegmentResource={r} />,
+                    value: r.id
                   })),
                 );
             };
@@ -190,6 +194,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
               this._audienceSegmentService.getSegment(id).then(res => ({
                 key: res.data.id,
                 label: res.data.name,
+                value: res.data.id
               }));
             break;
         }

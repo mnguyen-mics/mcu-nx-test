@@ -8,7 +8,8 @@ import {
   defineMessages,
 } from 'react-intl';
 import { compose } from 'recompose';
-import { Upload, Icon } from 'antd';
+import { InboxOutlined } from '@ant-design/icons';
+import { Upload } from 'antd';
 
 import { getLogo, putLogo } from '../../redux/Session/actions';
 import { MenuMode } from 'antd/lib/menu';
@@ -63,7 +64,7 @@ class EditableLogo extends React.Component<Props> {
     return (
       <div className="mcs-logo-dragger">
         <p className="ant-upload-drag-icon">
-          <Icon type="inbox" />
+          <InboxOutlined />
         </p>
         <p className="ant-upload-text">
           <FormattedMessage

@@ -45,7 +45,7 @@ import AdFormSection, { AdFormSectionProps } from './sections/AdFormSection';
 import DeviceFormSection from './sections/DeviceFormSection';
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 
-const Content = Layout.Content as React.ComponentClass<
+const Content = Layout.Content  as unknown as React.ComponentClass<
   BasicProps & { id: string }
 >;
 

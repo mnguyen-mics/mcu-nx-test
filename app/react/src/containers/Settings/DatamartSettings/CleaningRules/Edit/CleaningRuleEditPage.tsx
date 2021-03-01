@@ -3,14 +3,13 @@ import { InjectedIntlProps, injectIntl } from 'react-intl';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, StaticContext, withRouter } from 'react-router';
 import {
   InjectedDatamartProps,
   injectDatamart,
   DatamartSelector,
 } from '../../../../Datamart';
 import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
-import { OptionProps } from 'antd/lib/select';
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 import { getWorkspace } from '../../../../../redux/Session/selectors';
 import { compose } from 'redux';
@@ -53,13 +52,14 @@ import { ChannelResourceShape } from '../../../../../models/settings/settings';
 import { message } from 'antd';
 import moment from 'moment';
 import CleaningRuleEditForm, { FORM_ID } from './CleaningRuleEditForm';
+import { DefaultOptionProps } from '../../../../../components/Form/FormSelect/DefaultSelect';
 
 interface State {
   cleaningRuleFormData: CleaningRuleFormData;
   loading: boolean;
   selectedDatamartId?: string;
-  channelOptions?: OptionProps[];
-  compartmentOptions?: OptionProps[];
+  channelOptions?: DefaultOptionProps[];
+  compartmentOptions?: DefaultOptionProps[];
   cleaningRuleType: CleaningRuleType;
 }
 
@@ -69,7 +69,7 @@ interface MapStateToProps {
 
 type Props = InjectedIntlProps &
   InjectedNotificationProps &
-  RouteComponentProps<EditCleaningRuleRouteMatchParam> &
+  RouteComponentProps<EditCleaningRuleRouteMatchParam, StaticContext, { from?: string }> &
   MapStateToProps &
   InjectedDatamartProps;
 
@@ -223,7 +223,7 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
   fetchOptions = (
     datamartId: string,
     cleaningRuleType: CleaningRuleType,
-  ): Promise<OptionProps[]> => {
+  ): Promise<DefaultOptionProps[]> => {
     const {
       match: {
         params: { organisationId },
@@ -258,7 +258,7 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
     return optionsResponseP
       .then(optionsResponse => optionsResponse.data)
       .then(optionsData => {
-        const noFilterOptionList: OptionProps[] = [
+        const noFilterOptionList: DefaultOptionProps[] = [
           { value: '', title: formatMessage(messages.noFilter), key: 'NO_FILTER' },
         ];
 
@@ -270,7 +270,7 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
               ? optionData.compartment_id
               : optionData.id;
 
-            const option: OptionProps = {
+            const option: DefaultOptionProps = {
               value: usedId,
               title: `${usedId} - ${optionData.name}`,
               key: optionData.type ? `${optionData.type}-${i}` : `${i}`
@@ -301,7 +301,7 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
           | UserEventCleaningRuleAndOptionalFilter
           | UserProfileCleaningRuleResource
         ),
-        OptionProps[]
+        DefaultOptionProps[]
       ],
     ) => {
       const isUserEventCleaningRuleAndOptionalFilter = (

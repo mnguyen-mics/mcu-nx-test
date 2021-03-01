@@ -6,7 +6,8 @@ import {
   ConfigProps,
   getFormValues,
 } from 'redux-form';
-import { Layout, Form } from 'antd';
+import { Form } from '@ant-design/compatible';
+import { Layout } from 'antd';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../../../components/Layout/FormLayoutActionbar';

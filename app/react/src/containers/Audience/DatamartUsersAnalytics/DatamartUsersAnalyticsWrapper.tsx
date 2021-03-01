@@ -210,7 +210,7 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
           </Col>
         </Row>
         {!refresh && (
-          <Row>
+          <Row justify="space-between">
             {showFilter && (
               <SegmentFilter
                 className={

@@ -15,7 +15,8 @@ import * as React from 'react';
 import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
 import { Omit, connect } from 'react-redux';
 import { compose } from 'recompose';
-import { Layout, Form } from 'antd';
+import { Layout } from 'antd';
+import { Form } from '@ant-design/compatible';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../../../components/Layout/FormLayoutActionbar';

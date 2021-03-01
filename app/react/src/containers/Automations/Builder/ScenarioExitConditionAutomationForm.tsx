@@ -1,6 +1,7 @@
 import React from 'react';
 import { compose } from 'recompose';
-import { Form, Layout, message } from 'antd';
+import { Layout, message } from 'antd';
+import { Form } from '@ant-design/compatible';
 import { change, reduxForm, getFormValues } from 'redux-form';
 import {
   injectIntl,
@@ -188,7 +189,7 @@ class ScenarioExitConditionAutomationForm extends React.Component<
       return getEventsNames(datamart_id, validObjectType!, this._queryService);
     };
     const fetchSingleMethod = (event: string) => {
-      return Promise.resolve({ key: event, label: event });
+      return Promise.resolve({ key: event, label: event, value: event });
     };
 
     return (

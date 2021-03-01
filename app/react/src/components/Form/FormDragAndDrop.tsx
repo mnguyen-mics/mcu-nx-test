@@ -4,13 +4,13 @@ import { Upload, message } from 'antd';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { UploadProps, UploadFile } from 'antd/lib/upload/interface';
 import { WrappedFieldProps } from 'redux-form';
-import { TooltipProps } from 'antd/lib/tooltip';
+import { TooltipPropsWithTitle } from 'antd/lib/tooltip';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 
 export interface FormDragAndDropProps {
   formItemProps?: FormItemProps;
   inputProps?: UploadProps;
-  helpToolTipProps?: TooltipProps;
+  helpToolTipProps?: TooltipPropsWithTitle;
   maxFileSize: number;
   uploadTitle: FormattedMessage.MessageDescriptor;
   uploadMessage: FormattedMessage.MessageDescriptor;

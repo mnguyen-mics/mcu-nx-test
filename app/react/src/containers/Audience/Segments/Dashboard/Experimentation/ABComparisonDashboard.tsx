@@ -291,6 +291,7 @@ class ABComparisonDashboard extends React.Component<Props, State> {
       ? {
           key: segmentId,
           label: <SegmentNameDisplay audienceSegmentId={segmentId} />,
+          value: segmentId,
         }
       : undefined;
   };

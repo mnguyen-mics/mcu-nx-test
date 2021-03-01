@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { PlusOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import SegmentByNameSelector from './SegmentByNameSelector';
 import chroma from 'chroma-js';
@@ -9,6 +10,9 @@ import injectThemeColors, {
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { AudienceSegmentType } from '../../../../models/audiencesegment';
+
+
+type RawValue = string | number
 
 const messages = defineMessages({
   allUsers: {
@@ -29,7 +33,7 @@ interface SegmentFilterProps {
   hideAllUsersButton?: boolean;
   defaultSegment?: LabeledValue;
   defaultSegmentCanBeRemoved?: boolean;
-  onChange: (values: string[]) => void;
+  onChange: (values: RawValue[]) => void;
   onToggleAllUsersFilter: (allUsersEnabled: boolean) => void;
   segmentcolors?: string[];
   segmentFiltersLength?: number;
@@ -101,7 +105,7 @@ class SegmentFilter extends React.Component<JoinedProp, SegmentFilterState> {
     const { defaultSegment, segmentcolors, colors } = this.props;
     const { defaultSegment: prevDefaultSegment } = prevProps;
     if (!defaultSegment && prevDefaultSegment) {
-      this.removeFilter(prevDefaultSegment.key);
+      this.removeFilter(prevDefaultSegment.value);
     }
     if (defaultSegment && !prevDefaultSegment) {
       this.onSegmentByNameSelectorChange({
@@ -127,7 +131,7 @@ class SegmentFilter extends React.Component<JoinedProp, SegmentFilterState> {
     const usedColors = appliedSegmentFilters.map(item => item.color);
     if (!exist) {
       this.setState(state => {
-        const newAppliedSegmentFilters = state.appliedSegmentFilters.concat({
+        const newAppliedSegmentFilters: AppliedSegmentFilter[] = state.appliedSegmentFilters.concat({
           ...newValue,
           color:
             newValue.color ||
@@ -136,9 +140,9 @@ class SegmentFilter extends React.Component<JoinedProp, SegmentFilterState> {
               : filterColors[0]),
         });
 
-        const segmentIds = newAppliedSegmentFilters
+        const segmentIds: RawValue[] = newAppliedSegmentFilters
           .slice()
-          .map((item: AppliedSegmentFilter) => item.key);
+          .map((item: AppliedSegmentFilter) => item.key!)
         onChange(segmentIds);
         return {
           appliedSegmentFilters: newAppliedSegmentFilters,
@@ -148,10 +152,10 @@ class SegmentFilter extends React.Component<JoinedProp, SegmentFilterState> {
     }
   };
 
-  removeFilter = (segmentId: string) => {
+  removeFilter = (segmentId: RawValue) => {
     const { onChange, defaultSegment, defaultSegmentCanBeRemoved } = this.props;
 
-    if (
+    if (segmentId &&
       !defaultSegment ||
       (defaultSegment && defaultSegment.key !== segmentId) ||
       defaultSegmentCanBeRemoved
@@ -162,7 +166,7 @@ class SegmentFilter extends React.Component<JoinedProp, SegmentFilterState> {
         );
         const segmentIds = appliedSegmentFilters
           .slice()
-          .map((item: AppliedSegmentFilter) => item.key);
+          .map((item: AppliedSegmentFilter) => item.key!);
         onChange(segmentIds);
         return {
           appliedSegmentFilters,
@@ -205,7 +209,7 @@ class SegmentFilter extends React.Component<JoinedProp, SegmentFilterState> {
     const appliedSegmentFiltersLength = segmentFiltersLength || 2;
     const filterId = "mcs-segmentFilter"
     return (
-      <div className={className} id={filterId}>
+      <div className={className} id={filterId} style={{position: "relative"}}>
         {!hideAllUsersButton && (
           <Button
             className={
@@ -248,7 +252,7 @@ class SegmentFilter extends React.Component<JoinedProp, SegmentFilterState> {
               type="dashed"
               ghost={true}
               className="segmentFilter"
-              icon="plus"
+              icon={<PlusOutlined />}
               onClick={this.showSegmentSearch}
             >
               <span className="placeholder">

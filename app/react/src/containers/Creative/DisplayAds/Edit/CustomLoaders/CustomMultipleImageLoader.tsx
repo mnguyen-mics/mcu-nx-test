@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Row, Upload, message, Modal, Input } from 'antd';
+import { Upload, message, Modal, Input } from 'antd';
 import { UploadProps } from 'antd/lib/upload';
 import { UploadFile, UploadChangeParam } from 'antd/lib/upload/interface';
 import { FormUploadProps } from '../../../../../components/Form/FormUpload';
@@ -13,7 +13,8 @@ import { MultipleImageField } from '../domain';
 const messages = defineMessages({
   uploadMessage: {
     id: 'creative.create.loader.upload.message',
-    defaultMessage: 'is above 200kB! You can only upload image files with the following format .jpg,.jpeg,.png,.gif,.svg with a maximum size of 200kB',
+    defaultMessage:
+      'is above 200kB! You can only upload image files with the following format .jpg,.jpeg,.png,.gif,.svg with a maximum size of 200kB',
   },
   uploadText: {
     id: 'creative.create.loader.upload.text',
@@ -27,7 +28,7 @@ const messages = defineMessages({
     id: 'creative.create.loader.upload.modal.title',
     defaultMessage: 'Edit Creative Name',
   },
-})
+});
 
 export interface CustomMultipleImageLoaderProps extends ReduxFormChangeProps {
   inputProps?: UploadProps;
@@ -35,105 +36,116 @@ export interface CustomMultipleImageLoaderProps extends ReduxFormChangeProps {
 
 const maxFileSize = 200 * 1024;
 
-type JoinedProps = FormUploadProps & WrappedFieldArrayProps<MultipleImageField> & InjectedIntlProps & CustomMultipleImageLoaderProps;
+type JoinedProps = FormUploadProps &
+  WrappedFieldArrayProps<MultipleImageField> &
+  InjectedIntlProps &
+  CustomMultipleImageLoaderProps;
 
 interface State {
   selectedFile?: MultipleImageField;
-  inputValue: string; 
+  inputValue: string;
   modalVisible: boolean;
 }
 
 class CustomMultipleImageLoader extends React.Component<JoinedProps, State> {
-
   constructor(props: JoinedProps) {
-    super(props)
+    super(props);
     this.state = {
       modalVisible: false,
-      inputValue: ''
-    }
+      inputValue: '',
+    };
   }
 
-
   renderImageEditor = (file: MultipleImageField) => {
-    const {
-      intl
-    } = this.props;
+    const { intl } = this.props;
 
     const url = URL.createObjectURL(file.file);
     const onClick = () => {
-      this.removeItem(file.file.uid)
-    }
+      this.removeItem(file.file.uid);
+    };
 
     const openModal = () => {
-      this.setState({ modalVisible: true, selectedFile: file, inputValue: file.name })
-    }
+      this.setState({
+        modalVisible: true,
+        selectedFile: file,
+        inputValue: file.name,
+      });
+    };
     return (
       <div className="content">
-        <div className="image"><img src={`${url}`} /></div>
+        <div className="image">
+          <img src={`${url}`} />
+        </div>
         <div className="text">{file.name}</div>
         <div className="overlay">
           <div>
-            <div className="tets"><Button onClick={onClick}><McsIcon type="close" /></Button></div>
-            <div><Button onClick={openModal}>{intl.formatMessage(messages.editName)}</Button></div>
+            <div className="tets">
+              <Button onClick={onClick}>
+                <McsIcon type="close" />
+              </Button>
+            </div>
+            <div>
+              <Button onClick={openModal}>
+                {intl.formatMessage(messages.editName)}
+              </Button>
+            </div>
           </div>
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   removeItem = (id: string) => {
-    const {
-      fields,
-      formChange,
-    } = this.props;
+    const { fields, formChange } = this.props;
 
     const newFields: MultipleImageField[] = [];
     fields.getAll().forEach(f => {
       if (f.file.uid !== id) {
-        newFields.push(f)
+        newFields.push(f);
       }
     });
     formChange((fields as any).name, newFields);
-  }
+  };
 
   handleOk = () => {
-    const {
-      fields,
-      formChange,
-    } = this.props;
+    const { fields, formChange } = this.props;
 
     const newFields: MultipleImageField[] = [];
     fields.getAll().forEach(f => {
-      if (this.state.selectedFile && f.file.uid === this.state.selectedFile.file.uid) {
+      if (
+        this.state.selectedFile &&
+        f.file.uid === this.state.selectedFile.file.uid
+      ) {
         newFields.push({
           file: this.state.selectedFile.file,
-          name: this.state.inputValue
-        })
+          name: this.state.inputValue,
+        });
       } else {
-        newFields.push(f)
+        newFields.push(f);
       }
     });
     formChange((fields as any).name, newFields);
-    this.setState({ modalVisible: false, selectedFile: undefined, inputValue: '' })
-  }
+    this.setState({
+      modalVisible: false,
+      selectedFile: undefined,
+      inputValue: '',
+    });
+  };
 
   handleCancel = () => {
-    this.setState({ modalVisible: false, selectedFile: undefined, inputValue: '' })
-  }
+    this.setState({
+      modalVisible: false,
+      selectedFile: undefined,
+      inputValue: '',
+    });
+  };
 
   handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({ inputValue: e.target.value })
-  }
+    this.setState({ inputValue: e.target.value });
+  };
 
   render() {
-
-    const {
-      fields,
-      formChange,
-      inputProps,
-      disabled,
-      intl
-    } = this.props;
+    const { fields, formChange, inputProps, disabled, intl } = this.props;
 
     const uploadDetailProps: Partial<UploadProps> = {
       action: '/',
@@ -146,10 +158,13 @@ class CustomMultipleImageLoader extends React.Component<JoinedProps, State> {
           if (info.file.size <= maxFileSize) {
             newFields.push({
               name: info.file.name,
-              file: info.file
-            })
+              file: info.file,
+            });
           } else {
-            message.error(`${info.file.name} ${intl.formatMessage(messages.uploadMessage)}`, 2);
+            message.error(
+              `${info.file.name} ${intl.formatMessage(messages.uploadMessage)}`,
+              2,
+            );
           }
 
           formChange((fields as any).name, newFields);
@@ -158,47 +173,48 @@ class CustomMultipleImageLoader extends React.Component<JoinedProps, State> {
       showUploadList: false,
       accept: 'image/*',
       multiple: inputProps && inputProps.multiple ? inputProps.multiple : false,
-      className: 'content'
     };
 
     const fileList = fields.getAll();
 
     return (
-      <Row
-        className="mcs-custom-loader image-loader"
-        gutter={16}
-      >
+      <div className="mcs-custom-loader image-loader">
         <div className="square-container">
-
-          {fileList && fileList.map(f => {
-          return (
-            <div key={f.file.uid} className="square">
-              {this.renderImageEditor(f)}
-            </div>
-            )
-          })}
+          {fileList &&
+            fileList.map(f => {
+              return (
+                <div key={f.file.uid} className="square">
+                  {this.renderImageEditor(f)}
+                </div>
+              );
+            })}
 
           <div className="square">
-            <Upload.Dragger fileList={fileList.map(f => f.file)} {...inputProps} {...uploadDetailProps}>
-              <div>
-                {intl.formatMessage(messages.uploadText)}
-              </div>
-            </Upload.Dragger>
+            <span className="content">
+              <Upload.Dragger
+                fileList={fileList.map(f => f.file)}
+                {...inputProps}
+                {...uploadDetailProps}>
+                <div>{intl.formatMessage(messages.uploadText)}</div>
+              </Upload.Dragger>
+            </span>
           </div>
           <Modal
-             title={intl.formatMessage(messages.modalTitle)}
-             visible={this.state.modalVisible}
-             onOk={this.handleOk}
-             onCancel={this.handleCancel}
-          >
-            <Input value={this.state.inputValue} onChange={this.handleInputChange}  />
+            title={intl.formatMessage(messages.modalTitle)}
+            visible={this.state.modalVisible}
+            onOk={this.handleOk}
+            onCancel={this.handleCancel}>
+            <Input
+              value={this.state.inputValue}
+              onChange={this.handleInputChange}
+            />
           </Modal>
         </div>
-      </Row>
+      </div>
     );
   }
 }
 
-export default compose<JoinedProps, CustomMultipleImageLoaderProps>(
-  injectIntl
-)(CustomMultipleImageLoader);
+export default compose<JoinedProps, CustomMultipleImageLoaderProps>(injectIntl)(
+  CustomMultipleImageLoader,
+);

@@ -14,7 +14,8 @@ import {
 import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
 import { FORM_ID, CustomActionAutomationFormData } from '../domain';
 import { StorylineNodeModel } from '../../../domain';
-import { Form, Layout, Spin } from 'antd';
+import { Layout, Spin } from 'antd';
+import { Form } from '@ant-design/compatible';
 import { FormLayoutActionbar } from '../../../../../../components/Layout';
 import { FormLayoutActionbarProps } from '../../../../../../components/Layout/FormLayoutActionbar';
 import messages from './messages';

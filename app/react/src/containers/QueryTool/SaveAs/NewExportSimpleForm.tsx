@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { reduxForm, InjectedFormProps, ConfigProps } from 'redux-form';
 import { Omit } from 'react-router';
-import { Form } from 'antd';
+import { Form } from '@ant-design/compatible';
 import {
   AddonSelect,
   FormInputField,
@@ -72,7 +72,7 @@ class NewExportSimleForm extends React.Component<
       <Form
         className="edit-layout ant-layout"
         layout="vertical"
-        onSubmit={handleSubmit as any}
+        onSubmit={handleSubmit}
       >
         <div className="mcs-form-container" style={{ paddingTop: '0px' }}>
           <FormInputField

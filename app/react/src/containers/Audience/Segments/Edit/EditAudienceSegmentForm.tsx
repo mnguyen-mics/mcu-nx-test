@@ -12,7 +12,6 @@ import {
 } from 'redux-form';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { Layout, Alert } from 'antd';
-import { BasicProps } from 'antd/lib/layout/layout';
 import { compose } from 'recompose';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
@@ -63,9 +62,7 @@ import { AudienceBuilderResource } from '../../../../models/audienceBuilder/Audi
 
 export const FORM_ID = 'audienceSegmentForm';
 
-const Content = Layout.Content as React.ComponentClass<
-  BasicProps & { id: string }
->;
+const Content = Layout.Content
 
 const FormOTQL: FieldCtor<OTQLInputEditorProps> = Field as new () => GenericField<
   OTQLInputEditorProps

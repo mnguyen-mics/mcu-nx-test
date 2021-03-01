@@ -101,9 +101,9 @@ class NavigatorSettingsSideMenu extends React.Component<
     }
   };
 
-  onClick = ({ key }: { key: string }) => {
+  onClick = (e: any) => {
     const hasClickOnFirstLevelMenuItem = settingsDefinitions.find(
-      item => item.iconType === key,
+      item => item.iconType === e.key,
     );
     if (hasClickOnFirstLevelMenuItem) this.setState({ inlineOpenKeys: [] });
   };

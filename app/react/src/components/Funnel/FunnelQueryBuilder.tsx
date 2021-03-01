@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { Card, Select, Button, Icon, Switch, Input } from "antd";
+import { Card, Select, Button, Switch, Input } from "antd";
 import messages from '../../containers/Campaigns/Display/Edit/messages';
+import { ArrowUpOutlined, ArrowDownOutlined, CloseOutlined, CalendarOutlined, FlagOutlined } from '@ant-design/icons';
 import cuid from 'cuid';
 import { TYPES } from '../../constants/types';
 import { lazyInject } from '../../config/inversify.config';
@@ -444,6 +445,10 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     }
   }
 
+  popupContainer() {
+    return document.getElementById("mcs-funnelQueryBuilder_step_dimensions") as HTMLElement
+  }
+
   render() {
     const { steps, dateRange } = this.state;
     const { from, to } = dateRange
@@ -454,7 +459,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
       <div className={"mcs-funnelQueryBuilder_steps"}>
         <div className={"mcs-funnelQueryBuilder_step_timelineStart"}>
           {from && <p className={"mcs-funnelQueryBuilder_timeline_date"}>{from.toMoment().format('DD/MM/YYYY 00:00')}</p>}
-          <Icon type="calendar" className={"mcs-funnelQueryBuilder_timeline_icon"} />
+          <CalendarOutlined className={"mcs-funnelQueryBuilder_timeline_icon"} />
         </div>
         {
           steps.map((step, index) => {
@@ -462,15 +467,15 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
               <Card key={step.id} className={"mcs-funnelQueryBuilder_step"} bordered={false}>
                 <div className={"mcs-funnelQueryBuilder_step_body"}>
                   {steps.length > 1 && <div className={"mcs-funnelQueryBuilder_step_reorderBtn"}>
-                    {index > 0 && <Icon className={"mcs-funnelQueryBuilder_sortBtn mcs-funnelQueryBuilder_sortBtn--up"} type="arrow-up" onClick={this.sortStep.bind(this, index, "up")} />}
-                    {index + 1 < steps.length && <Icon className={"mcs-funnelQueryBuilder_sortBtn"} onClick={this.sortStep.bind(this, index, "down")} type="arrow-down" />}
+                    {index > 0 && <ArrowUpOutlined className={"mcs-funnelQueryBuilder_sortBtn mcs-funnelQueryBuilder_sortBtn--up"} onClick={this.sortStep.bind(this, index, "up")} />}
+                    {index + 1 < steps.length && <ArrowDownOutlined className={"mcs-funnelQueryBuilder_sortBtn"} onClick={this.sortStep.bind(this, index, "down")} />}
                   </div>}
                   <div className={"mcs-funnelQueryBuilder_step_content"}>
                     <div className={"mcs-funnelQueryBuilder_stepHeader"}>
                       <div className="mcs-funnelQueryBuilder_stepName_title">{step.name}</div>
                       <Button
                         shape="circle"
-                        icon="cross"
+                        icon={<CloseOutlined />}
                         className={"mcs-funnelQueryBuilder_removeStepBtn"}
                         onClick={this.removeStep.bind(this, step.id)} />
                     </div>
@@ -502,12 +507,13 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
                                 </Option>)
                             })}
                           </Select>}
-                          <div className={"mcs-funnelQueryBuilder_step_dimensions"}>
+                          <div className={"mcs-funnelQueryBuilder_step_dimensions"} id="mcs-funnelQueryBuilder_step_dimensions">
                             <Select
                               value={filter.dimension_name}
                               showSearch={true}
                               showArrow={false}
                               placeholder="Dimension name"
+                              getPopupContainer={this.popupContainer}
                               className={"mcs-funnelQueryBuilder_select mcs-funnelQueryBuilder_select--dimensions"}
                               onChange={this.handleDimensionNameChange.bind(this, filterIndex, step.id)}>
                               {this.getDimensionNameSelect()}
@@ -540,7 +546,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
                             />
                             <Button
                               shape="circle"
-                              icon="cross"
+                              icon={<CloseOutlined />}
                               className={"mcs-funnelQueryBuilder_removeFilterBtn"}
                               onClick={this.removeDimensionFromStep.bind(this, step.id, filter.id)} />
                           </div>
@@ -563,7 +569,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
         }
         <div className={"mcs-funnelQueryBuilder_addStepBlock"}>
           <div className={"mcs-funnelQueryBuilder_step_timelineEnd"}>
-            <Icon type="flag" className={"mcs-funnelQueryBuilder_timeline_icon"} />
+            <FlagOutlined className={"mcs-funnelQueryBuilder_timeline_icon"} />
             {to && <p className={"mcs-funnelQueryBuilder_timeline_date"}>{to.toMoment().format('DD/MM/YYYY 23:59')}</p>}
           </div>
           <Button className={"mcs-funnelQueryBuilder_addStepBtn"} onClick={this.addStep}>

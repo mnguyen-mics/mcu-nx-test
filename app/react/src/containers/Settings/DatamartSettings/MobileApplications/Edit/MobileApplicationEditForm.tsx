@@ -38,7 +38,7 @@ import ProcessingActivitiesFormSection, {
 import { ProcessingSelectionResource } from '../../../../../models/processing';
 import { InjectedFeaturesProps, injectFeatures } from '../../../../Features';
 
-const Content = Layout.Content as React.ComponentClass<
+const Content = Layout.Content as unknown as React.ComponentClass<
   BasicProps & { id: string }
 >;
 

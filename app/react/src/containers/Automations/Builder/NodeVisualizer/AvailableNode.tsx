@@ -5,7 +5,7 @@ import {
   DragSourceConnector,
   DragSourceMonitor,
 } from 'react-dnd';
-import { Icon } from 'antd';
+
 import { ScenarioNodeShape } from '../../../../models/automations/automations';
 import { generateNodeProperties, NodeProperties } from '../domain';
 import { isAbnNode } from '../AutomationNode/Edit/domain';
@@ -43,12 +43,8 @@ const fieldSource = {
 
 class AvailableNode extends React.Component<AvailableNodeProps> {
   getIcon = (nodeProperties: NodeProperties) => {
-    const icon = nodeProperties.iconAnt ? (
-      <Icon
-        type={nodeProperties.iconAnt}
-        className="available-node-icon-gyph"
-      />
-    ) : (
+    const icon = nodeProperties.iconAnt ? 
+      nodeProperties.iconAnt : (
       <McsIcon
         type={nodeProperties.iconType as McsIconType}
         className="available-node-icon-gyph"

@@ -8,10 +8,11 @@
 .range-picker {
   display: flex;
   flex-direction: row;
+  align-items: center;
 
   .date-picker {
     width: 46%;
-    .ant-calendar-picker {
+    .ant-picker {
       width: 100%;
     }
   }
@@ -20,6 +21,25 @@
     width: 8%;
   }
 }
+
+.range-filter {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  .filter-input {
+    width: 46%;
+    .ant-input {
+      width: 100%;
+      height: 40px;
+    }
+  }
+
+  .range-filter-separator {
+    width: 8%;
+  }
+}
+
 
 .report-previewButton {
   .ant-btn {

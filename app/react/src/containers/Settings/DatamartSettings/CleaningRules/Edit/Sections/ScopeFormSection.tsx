@@ -9,7 +9,6 @@ import {
   FormInputField,
   FormInput,
 } from '../../../../../../components/Form';
-import { OptionProps } from 'antd/lib/select';
 import { CleaningRuleType } from '../../../../../../models/cleaningRules/CleaningRules';
 import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
 import { getFormValues } from 'redux-form';
@@ -20,9 +19,10 @@ import {
   isUserEventCleaningRuleFormData,
 } from '../domain';
 import { UserActivityType } from '../../../../../../models/datamart/graphdb/RuntimeSchema';
+import { DefaultOptionProps } from '../../../../../../components/Form/FormSelect/DefaultSelect';
 
 interface ScopeFormSectionProps {
-  options: OptionProps[];
+  options: DefaultOptionProps[];
   cleaningRuleType: CleaningRuleType;
   formChange: (field: string, value: any) => void;
 }
@@ -32,7 +32,7 @@ interface MapStateToProps {
 }
 
 interface State {
-  options: OptionProps[];
+  options: DefaultOptionProps[];
 }
 
 type Props = ScopeFormSectionProps & InjectedIntlProps & MapStateToProps;

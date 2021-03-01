@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { Layout, Form } from 'antd';
+import { Layout } from 'antd';
+import { Form } from '@ant-design/compatible';
 import { BasicProps } from 'antd/lib/layout/layout';
 import { ConfigProps, InjectedFormProps, reduxForm } from 'redux-form';
 import { CleaningRuleFormData } from './domain';
 import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
-import { OptionProps } from 'antd/lib/select';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
@@ -21,10 +21,11 @@ import ScrollspySider, {
   SidebarWrapperProps,
 } from '../../../../../components/Layout/ScrollspySider';
 import { Omit } from '../../../../../utils/Types';
+import { DefaultOptionProps } from '../../../../../components/Form/FormSelect/DefaultSelect';
 
 export const FORM_ID = 'cleaningRuleForm';
 
-const Content = Layout.Content as React.ComponentClass<
+const Content = Layout.Content as unknown as React.ComponentClass<
   BasicProps & { id: string }
 >;
 
@@ -34,7 +35,7 @@ export interface CleaningRuleEditFormProps
   breadCrumbPaths: Path[];
   goToDatamartSelector: () => void;
   datamartId: string;
-  options: OptionProps[];
+  options: DefaultOptionProps[];
   cleaningRuleType: CleaningRuleType;
 }
 
@@ -123,7 +124,7 @@ class CleaningRuleEditForm extends React.Component<Props> {
           <ScrollspySider {...sideBarProps} />
           <Form
             className="edit-layout ant-layout"
-            onSubmit={handleSubmit as any}
+            onSubmit={handleSubmit}
           >
             {/* This button enables submit on enter */}
             <button type="submit" style={{ display: 'none' }} />

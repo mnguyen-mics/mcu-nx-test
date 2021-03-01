@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Row, Col, Dropdown, Menu, Input, Button, Icon } from 'antd';
+import { Row, Col, Dropdown, Menu, Input, Button } from 'antd';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
@@ -10,6 +10,7 @@ import {
 } from '../../../../../models/audienceFeature/AudienceFeatureResource';
 import { messages } from '../messages';
 import { DataResponse } from '../../../../../services/ApiService';
+import { FolderOutlined } from '@ant-design/icons';
 
 export interface AudienceFeatureFolderProps {
   folder: AudienceFeaturesByFolder;
@@ -73,7 +74,7 @@ class AudienceFeatureFolder extends React.Component<Props, State> {
         </Menu>
       );
     }
-    return;
+    return <div />;
   };
 
   renameFolder = (id: string | null) => () => {
@@ -101,7 +102,7 @@ class AudienceFeatureFolder extends React.Component<Props, State> {
           className="mcs-audienceFeatureSettings_folder"
         >
           <Col span={2}>
-            <Icon type="folder" className="menu-icon" />
+            <FolderOutlined className="menu-icon" />
           </Col>
           <Col span={21}>
             {editionMode ? (

@@ -281,7 +281,7 @@ class AudienceExperimentationForm extends React.Component<Props, State> {
                   inputProps={{
                     min: 0,
                     max: 100,
-                    tipFormatter: value => {
+                    tipFormatter: (value: any) => {
                       return <span>{Math.round(value * 100) / 100}%</span>;
                     },
                     step: this.getSliderStep(

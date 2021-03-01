@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FormItemProps } from 'antd/lib/form';
-import { TooltipProps } from 'antd/lib/tooltip';
+import { TooltipPropsWithTitle } from 'antd/lib/tooltip';
 import { WrappedFieldProps } from 'redux-form';
 import JSONQLPreview, {
   JSONQLPreviewProps,
@@ -9,7 +9,7 @@ import JSONQLPreview, {
 export interface JSONQLInputEditorProps {
   formItemProps?: FormItemProps;
   inputProps: JSONQLPreviewProps;
-  helpToolTipProps?: TooltipProps;
+  helpToolTipProps?: TooltipPropsWithTitle;
 }
 
 class JSONQLInputEditor extends React.Component<

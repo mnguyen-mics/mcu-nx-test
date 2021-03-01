@@ -22,6 +22,7 @@ import { IUserRolesService } from '../../../../../services/UserRolesService';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
+import { DataColumnDefinition } from '../../../../../components/TableView/TableView';
 
 const { Content } = Layout;
 
@@ -169,7 +170,7 @@ class UserRolesList extends React.Component<Props, UserListState> {
       },
     ];
 
-    const dataColumnsDefinition = [
+    const dataColumnsDefinition: Array<DataColumnDefinition<UserWithRole>> = [
       {
         intlMessage: messages.usersFirstName,
         key: 'first_name',
@@ -187,24 +188,24 @@ class UserRolesList extends React.Component<Props, UserListState> {
       },
       {
         intlMessage: messages.roleOrg,
-        key: 'role.organisation_id',
+        key: 'role',
         isHideable: false,
-        render: (text: string) => {
+        render: (value:string,record: UserWithRole) => {
           const organisation:
             | OrganisationResource
             | undefined = this.state.communityOrgs.find(
-            (org: OrganisationResource) => org.id === text,
+            (org: OrganisationResource) => org.id === record.role.organisation_id,
           );
-          return organisation ? organisation.name : text;
+          return organisation ? organisation.name : record.role.organisation_id;
         },
       },
       {
         intlMessage: messages.roleTitle,
-        key: 'role.role',
+        key: 'role',
         isHideable: false,
-        render: (text: string) =>
-          text.charAt(0) +
-          text
+        render: (text: string,record: UserWithRole) =>
+          record.role.role.charAt(0) +
+          record.role.role
             .slice(1)
             .toLowerCase()
             .replace('_', ' '),

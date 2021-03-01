@@ -17,7 +17,7 @@ import GeneralFormSection from './Sections/GeneralFormSection';
 import { AudiencePartitionFormData } from './domain';
 import { Omit } from '../../../../../utils/Types';
 
-const Content = Layout.Content as React.ComponentClass<
+const Content = Layout.Content as unknown as React.ComponentClass<
   BasicProps & { id: string }
 >;
 

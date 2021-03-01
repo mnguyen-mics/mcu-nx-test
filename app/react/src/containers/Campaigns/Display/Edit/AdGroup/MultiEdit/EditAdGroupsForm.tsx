@@ -65,7 +65,7 @@ type JoinedProps = EditAdGroupsFormProps &
   RouteComponentProps<{ campaignId: string }> &
   InjectedFormProps<EditAdGroupsFormData>;
 
-const Content = Layout.Content as React.ComponentClass<
+const Content = Layout.Content  as unknown as React.ComponentClass<
   BasicProps & { id: string }
 >;
 

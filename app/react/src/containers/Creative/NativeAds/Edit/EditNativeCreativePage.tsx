@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, StaticContext, withRouter } from 'react-router';
 import { message } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import NativeCreativeCreator from './NativeCreativeCreator';
@@ -24,7 +24,7 @@ interface State {
   nativeName: string;
 }
 
-type Props = RouteComponentProps<EditNativeCreativeRouteMatchParams> &
+type Props = RouteComponentProps<EditNativeCreativeRouteMatchParams, StaticContext, { from?: string }> &
   InjectedNotificationProps &
   InjectedIntlProps;
 

@@ -18,6 +18,7 @@ import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IVisitAnalyzerService } from '../../../../../services/Library/VisitAnalyzerService';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 const { Content } = Layout;
 
@@ -134,7 +135,7 @@ class VisitAnalyzersList extends Component<
     const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
 
     Modal.confirm({
-      iconType: 'exclamation-circle',
+      icon: <ExclamationCircleOutlined />,
       title: formatMessage(messages.visitAnalyzerArchiveTitle),
       content: formatMessage(messages.visitAnalyzerArchiveMessage),
       okText: formatMessage(messages.visitAnalyzerArchiveOk),

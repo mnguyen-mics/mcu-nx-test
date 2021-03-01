@@ -10,7 +10,9 @@ import { PropertyResourceShape } from '../../../../models/plugin';
 import PluginSectionGenerator, { PluginExtraField } from '../../PluginSectionGenerator';
 import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
 import { reduxForm, InjectedFormProps } from 'redux-form';
-import { Form, Spin, Icon } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
+import { Spin } from 'antd';
+import { Form } from '@ant-design/compatible';
 import { ValidatorProps } from '../../../../components/Form/withValidators';
 import { ColorPalletteOption, getColorPalettes, rgbToHex, getPerceivedBrightness } from '../../../../utils/ColorHelpers';
 import { generateFakeId } from '../../../../utils/FakeIdHelper';
@@ -320,7 +322,7 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
           </div>
           {selectedTab === 'configuration' ? <div className="footer">
             <Button className={" m-r-20"} onClick={onClose}>Close</Button>
-            <ColoredButton className="mcs-primary" backgroundColor={backgroundColor} color={color} onClick={handleSubmit(this.onSubmit)}> { isLoading ? (<Icon type="loading" />) : null} Save</ColoredButton>
+            <ColoredButton className="mcs-primary" backgroundColor={backgroundColor} color={color} onClick={handleSubmit(this.onSubmit)}> { isLoading ? (<LoadingOutlined />) : null} Save</ColoredButton>
           </div> : null}
         </div>
        

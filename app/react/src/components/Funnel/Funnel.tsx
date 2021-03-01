@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { Card, Select, Button } from 'antd';
+import { CloseOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import { IUserActivitiesFunnelService } from '../../services/UserActivitiesFunnelService';
 import { TYPES } from '../../constants/types';
@@ -412,7 +413,7 @@ class Funnel extends React.Component<Props, State> {
   getLabelValueForDimension = (dimensionValue: string) => {
     const { dimensionsList } = this.state;
     const dimensionLabelValue = dimensionsList.dimensions.find((d) => d.value === dimensionValue)
-    return dimensionValue === 'CHANNEL_ID' && <Option className="mcs-funnelSplitBy_option" key={this._cuid()} value={dimensionLabelValue?.value}>{dimensionLabelValue?.label}</Option>
+    return dimensionValue === 'CHANNEL_ID' && <Option className="mcs-funnelSplitBy_option" key={this._cuid()} value={dimensionLabelValue?.value || ""}>{dimensionLabelValue?.label}</Option>
   }
 
   private getDurationMessage(stepIndex: number, seconds: number) {
@@ -512,7 +513,8 @@ class Funnel extends React.Component<Props, State> {
                
                   {(index > 0 && steps[index].splitedView) ? 
                     <Button
-                      icon="cross"
+                      shape="circle"
+                      icon={<CloseOutlined />}
                       className={"mcs-funnel_disableStepHover"}
                       onClick={this.closeSplitByHover.bind(this, index)} /> : undefined}
                     {index > 0 && filter[index - 1] && steps[index].splitedView ? this.getStepHover(index, dimensionMetrics[index-1], filter[index - 1]) : undefined}

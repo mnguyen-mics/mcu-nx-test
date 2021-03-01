@@ -12,7 +12,8 @@ import {
 } from 'redux-form';
 import { ObjectNodeFormData, FORM_ID, FrequencyFormData } from './domain';
 import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
-import { Layout, Form } from 'antd';
+import { Layout } from 'antd';
+import { Form } from '@ant-design/compatible';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../components/Layout/FormLayoutActionbar';
@@ -232,7 +233,7 @@ class ObjectNodeForm extends React.Component<Props> {
         <Layout className={'ant-layout-has-sider'}>
           <Form
             className="edit-layout ant-layout"
-            onSubmit={handleSubmit as any}
+            onSubmit={handleSubmit}
             layout="vertical"
           >
             <Content

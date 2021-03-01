@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Row, Icon, Modal } from 'antd';
+import { ClockCircleOutlined } from '@ant-design/icons';
+import { Row, Modal } from 'antd';
 import moment from 'moment';
 import { compose } from 'recompose';
 import SyntaxHighlighter from 'react-syntax-highlighter';
@@ -199,7 +200,7 @@ class ActivityCard extends React.Component<Props, State> {
         ? parseInt(activity.$location.$latlon[0], 10)
         : 0;
     return (
-      <Row>
+      <Row style={{display: "block"  }}>
         <Device vectorId={activity.$user_agent_id} device={device} />
         <Origin origin={activity.$origin} />
         <Location longitude={longitude} latitude={latitude} />
@@ -246,7 +247,7 @@ class ActivityCard extends React.Component<Props, State> {
         <div className="timeline-activity-card-buttons">
           {needToDisplayDurationFor.indexOf(activity.$type) > -1 ? (
             <span>
-              <Icon type="clock-circle-o" /> {displayDuration || 0}
+              <ClockCircleOutlined /> {displayDuration || 0}
               <br />
             </span>
           ) : null}
@@ -262,7 +263,7 @@ class ActivityCard extends React.Component<Props, State> {
       return (
         <Card title={this.state.siteName} buttons={buttons} className={"mcs-activityCard"}>
           {this.generateCardContent(activity)}
-          <Row className="border-top sm-footer timed-footer text-right">
+          <Row className="border-top sm-footer timed-footer text-right" style={{display: "block"}}>
             {moment(activity.$ts).format('H:mm:ss')}
           </Row>
         </Card>

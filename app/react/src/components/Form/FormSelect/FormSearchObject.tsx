@@ -3,7 +3,7 @@ import { Select, Spin } from 'antd';
 import {debounce} from 'lodash';
 // TS Interface
 import { WrappedFieldProps } from 'redux-form';
-import { TooltipProps } from 'antd/lib/tooltip';
+import { TooltipPropsWithTitle } from 'antd/lib/tooltip';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 
 import FormFieldWrapper from '../FormFieldWrapper';
@@ -13,8 +13,8 @@ const { Option } = Select;
 
 export interface FormSearchObjectProps {
   formItemProps?: FormItemProps;
-  selectProps?: SelectProps;
-  helpToolTipProps?: TooltipProps;
+  selectProps?: SelectProps<any>;
+  helpToolTipProps?: TooltipPropsWithTitle;
   loadOnlyOnce?: boolean;
   shouldFilterData?: boolean;
   fetchListMethod: (keyword: string) => Promise<LabeledValue[]>;
@@ -86,7 +86,7 @@ class FormSearchObject extends React.Component<
     const { fetchSingleMethod, selectProps } = this.props;
     this.setState({ initialFetch: true })
 
-    if(selectProps && selectProps.mode === "default" || typeof values === "string") {
+    if(selectProps && selectProps.mode === "multiple" || typeof values === "string") {
       const singleValue = values as string;
 
       if(!singleValue) {
@@ -131,7 +131,7 @@ class FormSearchObject extends React.Component<
       selectProps
     } = this.props;
 
-    if(selectProps && selectProps.mode === "default") {
+    if(selectProps && selectProps.mode === "multiple") {
       const singleValue = value as LabeledValue;
       this.setState({ value: [singleValue], currentValue: undefined }, () => { this.filterData() });
       input.onChange(singleValue.key);
@@ -163,7 +163,7 @@ class FormSearchObject extends React.Component<
       }
       const typedValue = getLatestTypedValue();
       const opts = this.state.data.filter(v => {
-        return v.key.toLocaleLowerCase().startsWith(typedValue)
+        return v.key?.toLocaleLowerCase().startsWith(typedValue)
       }).slice(0,100);
       this.setState({ filteredData: opts });
     } else {
@@ -209,7 +209,7 @@ class FormSearchObject extends React.Component<
     if (meta.touched && meta.invalid) validateStatus = 'error';
     if (meta.touched && meta.warning) validateStatus = 'warning';
 
-    const options = filteredData.map(d => <Option key={d.key} value={d.key}>{d.label}</Option>);
+    const options = filteredData.map(d => <Option key={d.key} value={d.value}>{d.label}</Option>);
 
     return (
       <FormFieldWrapper

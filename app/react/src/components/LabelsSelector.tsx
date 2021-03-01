@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Tag, Tooltip, Input, Button, Menu } from 'antd';
-import { ClickParam } from 'antd/lib/menu';
+import { MenuInfo } from '../../../../node_modules/antd/node_modules/rc-menu/lib/interface'
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { Dropdown } from '../components/PopupContainers';
 import { Label } from '../containers/Labels/Labels';
@@ -30,7 +30,7 @@ const messages = defineMessages({
   },
 });
 
-class LabelsSelector extends React.Component<
+class LabelsSelector extends React.PureComponent<
   LabelsSelectorProps,
   LabelsSelectorState
 > {
@@ -92,7 +92,7 @@ class LabelsSelector extends React.Component<
       this.handleClose(label);
     };
 
-    const onClick = (a: ClickParam) => {
+    const onClick = (a: MenuInfo) => {
       const foundLabel = this.props.labels.find(label => label.id === a.key);
       this.setState(
         {
@@ -136,7 +136,7 @@ class LabelsSelector extends React.Component<
               className="label"
               key={label.id}
               closable={true}
-              afterClose={onClose(label)}
+              onClose={onClose(label)}
             >
               {isLongTag ? `${label.name.slice(0, 20)}...` : label.name}
             </Tag>
@@ -162,7 +162,7 @@ class LabelsSelector extends React.Component<
               ref={this.saveInputRef}
               type="text"
               size="small"
-              style={{ width: 100 }}
+              style={{ width: 100, height: '22px', padding: '2px 7px' }}
               value={inputValue}
               onChange={this.handleInputChange}
               onPressEnter={this.handleInputConfirm}

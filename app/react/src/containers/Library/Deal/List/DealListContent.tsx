@@ -21,6 +21,7 @@ import { ActionsColumnDefinition } from '../../../../components/TableView/TableV
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 const initialState = {
   loading: false,
@@ -97,7 +98,7 @@ class DealListContent extends React.Component<
     const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
 
     Modal.confirm({
-      iconType: 'exclamation-circle',
+      icon: <ExclamationCircleOutlined />,
       title: formatMessage(messages.dealListArchiveTitle),
       content: formatMessage(messages.dealListArchiveMessage),
       okText: formatMessage(messages.dealListArchiveOk),

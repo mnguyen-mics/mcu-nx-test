@@ -9,7 +9,10 @@ import { Omit } from '../../utils/Types';
 import { DataResponse } from '../../services/ApiService';
 import { QueryResource } from '../../models/datamart/DatamartResource';
 import Convert2Otql from '../../containers/QueryTool/SaveAs/Convet2Otql';
-import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import {
+  Actionbar,
+  McsIcon,
+} from '@mediarithmics-private/mcs-components-library';
 import { ActionbarProps } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar';
 
 export interface FormLayoutActionbarProps
@@ -22,10 +25,9 @@ export interface FormLayoutActionbarProps
 }
 
 type Props = FormLayoutActionbarProps &
-    DispatchProp<FormAction> & 
-    {
-      submitting: boolean;
-    }
+  DispatchProp<FormAction> & {
+    submitting: boolean;
+  };
 
 interface State {
   conversionModalVisible: boolean;
@@ -36,53 +38,68 @@ interface State {
  * See example at http://redux-form.com/6.8.0/examples/remoteSubmit/
  */
 class FormLayoutActionbar extends React.Component<Props, State> {
-
   constructor(props: Props) {
     super(props);
     this.state = {
-      conversionModalVisible: false
+      conversionModalVisible: false,
     };
   }
 
   render() {
-
-    const { dispatch, formId, message, onClose, submitting, disabled, convert2Otql } = this.props;
+    const {
+      dispatch,
+      formId,
+      message,
+      onClose,
+      submitting,
+      disabled,
+      convert2Otql,
+    } = this.props;
 
     const submitButtonProps: ButtonProps = {
       disabled: submitting,
       htmlType: 'submit',
       onClick: () => dispatch && formId && dispatch(submit(formId)),
       type: 'primary',
-      className: `mcs-form_saveButton_${formId}`
+      className: `mcs-form_saveButton_${formId}`,
     };
 
-    const openConversionModal = () => this.setState({ conversionModalVisible: true })
-    const closeConversionModal = () => this.setState({ conversionModalVisible: false })
-
-   
+    const openConversionModal = () =>
+      this.setState({ conversionModalVisible: true });
+    const closeConversionModal = () =>
+      this.setState({ conversionModalVisible: false });
 
     return (
       <Actionbar edition={true} {...this.props}>
         {message && !disabled ? (
-          <Button {...submitButtonProps} className={`mcs-primary ${formId ? `mcs-form_saveButton_${formId}` : ''}`}>
+          <Button
+            {...submitButtonProps}
+            className={`mcs-primary ${
+              formId ? `mcs-form_saveButton_${formId}` : ''
+            }`}
+          >
             <McsIcon type="plus" />
             <FormattedMessage {...message} />
           </Button>
         ) : null}
 
-        {convert2Otql && <Button onClick={openConversionModal}>
+        {convert2Otql && (
+          <Button onClick={openConversionModal}>
             <FormattedMessage
               id="queryTool.query-builder.actionbar.convert"
               defaultMessage="Convert to OTQL"
             />
-        </Button>}
-        {convert2Otql && this.state.conversionModalVisible && <Convert2Otql 
-          onOk={closeConversionModal}
-          onCancel={closeConversionModal}
-          footer={null}
-          visible={this.state.conversionModalVisible}
-          convertQuery={convert2Otql}
-        />}
+          </Button>
+        )}
+        {convert2Otql && this.state.conversionModalVisible && (
+          <Convert2Otql
+            onOk={closeConversionModal}
+            onCancel={closeConversionModal}
+            footer={null}
+            visible={this.state.conversionModalVisible}
+            convertQuery={convert2Otql}
+          />
+        )}
         <McsIcon
           type="close"
           className="close-icon"
@@ -92,12 +109,9 @@ class FormLayoutActionbar extends React.Component<Props, State> {
       </Actionbar>
     );
   }
+}
 
-};
-
-export default compose<
-Props, FormLayoutActionbarProps
->(
+export default compose<Props, FormLayoutActionbarProps>(
   connect((state, ownProps: FormLayoutActionbarProps) => ({
     /* For additional redux-form selectors, such as "pristine" or "form errors",
      * check http://redux-form.com/6.8.0/docs/api/Selectors.md/

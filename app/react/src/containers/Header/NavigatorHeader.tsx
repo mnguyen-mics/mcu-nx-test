@@ -2,7 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter, Link, RouteComponentProps } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
-import { Layout, Menu, Icon, Alert } from 'antd';
+import { AppstoreFilled } from '@ant-design/icons';
+import { Layout, Menu, Alert } from 'antd';
 import { Dropdown } from '../../components/PopupContainers';
 import * as SessionHelper from '../../redux/Session/selectors';
 import messages from './messages';
@@ -21,7 +22,7 @@ interface NavigatorHeaderStoreProps {
 
 export interface NavigatorHeaderProps {
   isSetting?: boolean;
-  menu?: React.ReactNode;
+  menu?: React.ReactElement;
 }
 
 type Props = NavigatorHeaderProps &
@@ -70,15 +71,11 @@ class NavigatorHeader extends React.Component<Props> {
       <Header className="mcs-header">
         <div className="mcs-header-title">
           <span className="left-component">
-            {isSetting ? (
+            {isSetting && menu ? (
               <span className="launcher">
                 <Dropdown overlay={menu} trigger={['click']}>
                   <a>
-                    <Icon
-                      type="appstore"
-                      className="menu-icon"
-                      theme="filled"
-                    />
+                    <AppstoreFilled className="menu-icon" />
                   </a>
                 </Dropdown>
               </span>

@@ -1,3 +1,4 @@
+import * as React from 'react';
 import {
   ScenarioNodeShape,
   ScenarioEdgeResource,
@@ -48,6 +49,7 @@ import { IRuntimeSchemaService } from '../../../services/RuntimeSchemaService';
 import { reducePromises } from '../../../utils/PromiseHelper';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
+import { BranchesOutlined, ClockCircleOutlined, FlagOutlined, ForkOutlined } from '@ant-design/icons';
 
 export interface TreeNodeOperations {
   addNode: (
@@ -739,7 +741,7 @@ export interface NodeProperties {
   subtitle: string;
   color: string;
   iconType?: McsIconType;
-  iconAnt?: AntIcon;
+  iconAnt?: React.ReactNode;
   branchNumber?: number;
   iconAssetUrl?: string;
 }
@@ -800,7 +802,7 @@ export function generateNodeProperties(
       return {
         title: formatMessage(nodeMessages.queryInputNodeTitle),
         subtitle: subtitle,
-        iconAnt: 'flag',
+        iconAnt: <FlagOutlined className="available-node-icon-gyph" />,
         color: '#fbc02d',
       };
     case 'ON_SEGMENT_ENTRY_INPUT_NODE':
@@ -809,21 +811,21 @@ export function generateNodeProperties(
         subtitle: formatMessage(
           nodeMessages.onAudienceSegmentEntryNodeSubtitle,
         ),
-        iconAnt: 'flag',
+        iconAnt: <FlagOutlined className="available-node-icon-gyph" />,
         color: '#fbc02d',
       };
     case 'ON_SEGMENT_EXIT_INPUT_NODE':
       return {
         title: formatMessage(nodeMessages.onAudienceSegmentExitNodeTitle),
         subtitle: formatMessage(nodeMessages.onAudienceSegmentExitNodeSubtitle),
-        iconAnt: 'flag',
+        iconAnt: <FlagOutlined className="available-node-icon-gyph" />,
         color: '#fbc02d',
       };
     case 'ABN_NODE':
       return {
         title: formatMessage(nodeMessages.abnNodeTitle),
         subtitle: '',
-        iconAnt: 'fork',
+        iconAnt: <ForkOutlined className="available-node-icon-gyph" />,
         color: '#fbc02d',
         branchNumber: node.branch_number,
       };
@@ -831,7 +833,7 @@ export function generateNodeProperties(
       return {
         title: formatMessage(nodeMessages.ifNodeTitle),
         subtitle: '',
-        iconAnt: 'branches',
+        iconAnt: <BranchesOutlined className="available-node-icon-gyph" />,
         color: '#fbc02d',
       };
     case 'END_NODE':
@@ -845,7 +847,7 @@ export function generateNodeProperties(
       return {
         title: formatMessage(nodeMessages.waitNodeTitle),
         subtitle: '',
-        iconAnt: 'clock-circle',
+        iconAnt: <ClockCircleOutlined className="available-node-icon-gyph" />,
         color: '#fbc02d',
       };
     case 'CUSTOM_ACTION_NODE':
@@ -1033,7 +1035,7 @@ export const getEventsNames = (
       return oTQLAggregationResult.aggregations.buckets[0];
     })
     .then(oTQLBuckets => {
-      return oTQLBuckets.buckets.map(({ key }) => ({ key: key, label: key }));
+      return oTQLBuckets.buckets.map(({ key }) => ({ key: key, label: key, value: key }));
     })
     .catch(() => {
       return [];

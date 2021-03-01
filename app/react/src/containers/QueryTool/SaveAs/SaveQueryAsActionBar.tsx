@@ -1,5 +1,4 @@
 import { Button, Dropdown, Menu } from 'antd';
-import { ClickParam } from 'antd/lib/menu';
 import * as React from 'react';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
@@ -51,7 +50,7 @@ class SaveQueryAsActionBar extends React.Component<Props, State> {
 
   render() {
     const { saveAsExort, saveAsUserQuery, convertToOtql, breadcrumb, csvExportDisabled } = this.props;
-    const handleMenuClick = (e: ClickParam) => {
+    const handleMenuClick = (e: any) => {
       if (e.key === 'USER_QUERY') {
         this.setState({ segmentModalVisible: true });
       } else if (e.key === 'EXPORT') {

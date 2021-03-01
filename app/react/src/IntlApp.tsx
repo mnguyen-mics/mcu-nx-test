@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { addLocaleData, IntlProvider } from 'react-intl';
 import enUS from 'antd/lib/locale-provider/en_US';
-import { LocaleProvider } from 'antd';
+import { ConfigProvider } from 'antd';
 import enLocaleData from 'react-intl/locale-data/en';
 import frLocaleData from 'react-intl/locale-data/fr';
 import Navigator from './containers/Navigator';
@@ -41,11 +41,11 @@ class IntlApp extends React.Component<{}> {
         defaultFormats={formats}
         locale="en"
       >
-        <LocaleProvider locale={enUS}>
+        <ConfigProvider locale={enUS}>
           <Router>
             <Navigator />
           </Router>
-        </LocaleProvider>
+        </ConfigProvider>
       </IntlProvider>
     );
   }

@@ -1,12 +1,14 @@
 import * as React from 'react';
-import { Upload, Icon, message, Button } from 'antd';
+
+import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+import { Upload, message, Button } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
 import FormFieldWrapper, {
   FormFieldWrapperProps,
 } from '../../../../../components/Form/FormFieldWrapper';
 import { WrappedFieldProps } from 'redux-form';
-import { TooltipProps } from 'antd/lib/tooltip';
+import { TooltipPropsWithTitle } from 'antd/lib/tooltip';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { UploadProps, UploadFile } from 'antd/lib/upload/interface';
 import { injectDrawer } from '../../../../../components/Drawer/index';
@@ -21,7 +23,7 @@ import { IAssetFileService } from '../../../../../services/Library/AssetFileServ
 export interface QuickAssetUploadProps extends FormFieldWrapperProps {
   formItemProps?: FormItemProps;
   inputProps?: UploadProps & React.ButtonHTMLAttributes<HTMLButtonElement>;
-  helpToolTipProps?: TooltipProps;
+  helpToolTipProps?: TooltipPropsWithTitle;
 }
 
 export interface QuickAssetUploadState {
@@ -103,7 +105,7 @@ class QuickAssetUpload extends React.Component<
     const uploadButton = (
       <div className="m-r-20 m-t-10">
         <Button>
-          <Icon type={this.state.loading ? 'loading' : 'plus'} />
+          {this.state.loading ? <LoadingOutlined /> : <PlusOutlined /> }
           Upload
         </Button>
       </div>
@@ -128,7 +130,7 @@ class QuickAssetUpload extends React.Component<
       >
         <div style={{ maxWidth: '100%', marginBottom: 10 }}>
           {this.state.loading ? (
-            <Icon type="loading" />
+            <LoadingOutlined />
           ) : (
             <img src={imageUrl} alt="" style={{ maxWidth: '100%' }} />
           )}

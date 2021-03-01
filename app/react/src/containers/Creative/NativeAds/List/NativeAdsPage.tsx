@@ -5,7 +5,7 @@ import NativeAdsActionBar from './NativeAdsActionBar';
 import NativeAdsTable from './NativeAdsTable';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, StaticContext, withRouter } from 'react-router';
 import {
   CreativesOptions,
   ICreativeService,
@@ -31,6 +31,7 @@ import { Index } from '../../../../utils';
 import messagesMap from '../../DisplayAds/List/message';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 const { Content } = Layout;
 
@@ -48,7 +49,7 @@ interface State {
 type JoinedProps = InjectedIntlProps &
   InjectedDrawerProps &
   InjectedNotificationProps &
-  RouteComponentProps<CampaignRouteParams>;
+  RouteComponentProps<CampaignRouteParams, StaticContext, { reloadDataSource?: boolean }>;
 
 class NativeAdsPage extends React.Component<JoinedProps, State> {
   @lazyInject(TYPES.ICreativeService)
@@ -247,7 +248,7 @@ class NativeAdsPage extends React.Component<JoinedProps, State> {
     Modal.confirm({
       title: intl.formatMessage(messagesMap.creativeModalConfirmArchivedTitle),
       content: intl.formatMessage(messagesMap.creativeModalNoArchiveMessage),
-      iconType: 'exclamation-circle',
+      icon: <ExclamationCircleOutlined />,
       okText: intl.formatMessage(messagesMap.creativeModalConfirmArchivedOk),
       cancelText: intl.formatMessage(messagesMap.cancelText),
       onOk() {

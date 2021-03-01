@@ -5,7 +5,7 @@ import EmailTemplatesActionBar from './EmailTemplatesActionBar';
 import EmailTemplatesTable from './EmailTemplatesTable';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, StaticContext, withRouter } from 'react-router';
 import {
   CreativesOptions,
   ICreativeService,
@@ -31,6 +31,7 @@ import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import messages from '../../DisplayAds/List/message';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 const { Content } = Layout;
 
@@ -48,7 +49,7 @@ interface State {
 type JoinedProps = InjectedIntlProps &
   InjectedDrawerProps &
   InjectedNotificationProps &
-  RouteComponentProps<CampaignRouteParams>;
+  RouteComponentProps<CampaignRouteParams, StaticContext, { reloadDataSource?: boolean }>;
 
 class EmailTemplatesPage extends React.Component<JoinedProps, State> {
   @lazyInject(TYPES.ICreativeService)
@@ -315,7 +316,7 @@ class EmailTemplatesPage extends React.Component<JoinedProps, State> {
     Modal.confirm({
       title: intl.formatMessage(messages.creativeModalConfirmArchivedTitle),
       content: intl.formatMessage(messages.creativeModalConfirmArchivedContent),
-      iconType: 'exclamation-circle',
+      icon: <ExclamationCircleOutlined />,
       okText: intl.formatMessage(messages.creativeModalConfirmArchivedOk),
       cancelText: intl.formatMessage(messages.cancelText),
       onOk() {

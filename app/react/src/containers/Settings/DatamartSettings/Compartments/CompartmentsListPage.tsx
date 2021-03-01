@@ -2,7 +2,8 @@ import * as React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
 import settingsMessages from '../../messages';
-import { Layout, Row, Icon, Button } from 'antd';
+import { DownOutlined } from '@ant-design/icons';
+import { Layout, Row, Button } from 'antd';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import CompartmentsTable from './List/CompartmentsTable';
 import { UserAccountCompartmentDatamartSelectionResource } from '../../../../models/datamart/DatamartResource';
@@ -223,7 +224,7 @@ class CompartmentsListPage extends React.Component<
         displayElement: (
           <div>
             <FormattedMessage {...messages.datamartFilter} />
-            <Icon type="down" />
+            <DownOutlined />
           </div>
         ),
         selectedItems: filterData.datamartId

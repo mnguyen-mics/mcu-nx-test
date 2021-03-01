@@ -10,8 +10,6 @@ export interface CatalogItemTableProps {
   records: ItemRessource[];
 }
 
-class ItemsTable extends Table<ItemRessource> {}
-
 type Props = InjectedIntlProps & CatalogItemTableProps;
 
 class CatalogItemTable extends React.Component<Props, any> {
@@ -52,7 +50,7 @@ class CatalogItemTable extends React.Component<Props, any> {
       return "mcs-table-cursor"
     }
     return (
-      <ItemsTable 
+      <Table<ItemRessource> 
         columns={[
           {
             title: intl.formatMessage(messages.brand),

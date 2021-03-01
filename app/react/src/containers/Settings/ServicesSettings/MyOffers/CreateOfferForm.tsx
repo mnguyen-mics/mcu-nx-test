@@ -18,7 +18,7 @@ import { FormSection, FormInputField, FormInput, FormSelectField, DefaultSelect 
 import withValidators, { ValidatorProps } from '../../../../components/Form/withValidators';
 import ServiceItemsFormSection, { ServiceItemsFormSectionProps } from './sections/ServiceItemsFormSection';
 
-const Content = Layout.Content as React.ComponentClass<
+const Content = Layout.Content as unknown as React.ComponentClass<
   BasicProps & { id: string }
   >;
 

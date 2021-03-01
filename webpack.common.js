@@ -2,7 +2,7 @@ const webpack = require('webpack');
 const path = require('path');
 const pkg = require('./package.json');
 const paths = require('./paths');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const VersionPlugin = require('./VersionPlugin.js');
 
 module.exports = {
@@ -41,10 +41,24 @@ module.exports = {
         loader: 'babel-loader',
       },
       {
-        test: /\.less$/i,
-        loader: ExtractTextPlugin.extract({
-          use: ['css-loader', 'less-loader'],
-        }),
+        test: /\.less$/,
+        use: [
+          {
+            loader: 'style-loader',
+          },
+          {
+            loader: 'css-loader',
+          },
+          {
+            loader: 'less-loader',
+            options: {
+              javascriptEnabled: true,
+              lessOptions: {
+                strictMath: true,
+              },
+            },
+          },
+        ],
       },
       {
         test: /\.css$/,
@@ -103,7 +117,9 @@ module.exports = {
 
   plugins: [
     new VersionPlugin({ path: path.resolve('app') }),
-    new ExtractTextPlugin('[name].css'),
+    new MiniCssExtractPlugin({
+      filename: '[name].css',
+    }),
     new webpack.DefinePlugin({
       PUBLIC_PATH: JSON.stringify('react'),
       PUBLIC_URL: JSON.stringify('/v2'),

@@ -1,6 +1,7 @@
 import React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { Layout, Tooltip, Icon, Modal } from 'antd';
+import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { Layout, Tooltip, Modal } from 'antd';
 import { compose } from 'recompose';
 import { ExtendedTableRowSelection } from '../../../components/TableView/TableView';
 import {
@@ -255,7 +256,7 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
       content: intl.formatMessage(
         messages.automationModalConfirmDeletionContent,
       ),
-      iconType: 'exclamation-circle',
+      icon: <ExclamationCircleOutlined />,
       okText: intl.formatMessage(messages.deleteAutomation),
       cancelText: intl.formatMessage(
         messages.automationModalConfirmDeletionCancel,
@@ -411,7 +412,7 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
               id="automations.list.filterStatus"
               defaultMessage="Status"
             />{' '}
-            <Icon type="down" />
+            <DownOutlined />
           </div>
         ),
         selectedItems: filter.statuses.map((status: AutomationStatus) => ({

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps, StaticContext } from 'react-router';
 import { message, Modal } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 
@@ -49,7 +49,7 @@ interface MapStateToProps {
 
 type Props = InjectedIntlProps &
   InjectedNotificationProps &
-  RouteComponentProps<EditSiteRouteMatchParam> &
+  RouteComponentProps<EditSiteRouteMatchParam, StaticContext, { from?: string, siteId: string }> &
   MapStateToProps &
   InjectedDatamartProps;
 

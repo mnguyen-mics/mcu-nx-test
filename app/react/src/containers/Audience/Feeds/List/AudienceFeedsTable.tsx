@@ -28,7 +28,8 @@ import {
   IAudienceSegmentFeedService,
 } from '../../../../services/AudienceSegmentFeedService';
 import { MultiSelectProps } from '../../../../components/MultiSelect';
-import { Icon, Tooltip, Modal } from 'antd';
+import { Tooltip, Modal } from 'antd';
+import { DownOutlined } from '@ant-design/icons';
 import { IPluginService } from '../../../../services/PluginService';
 import { AudienceSegmentResource } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import { lazyInject } from '../../../../config/inversify.config';
@@ -713,7 +714,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
       {
         displayElement: (
           <div>
-            {intl.formatMessage(messages[feedType])} <Icon type="down" />
+            {intl.formatMessage(messages[feedType])} <DownOutlined />
           </div>
         ),
         selectedItems: [feedType],
@@ -741,7 +742,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
         displayElement: (
           <div>
             <FormattedMessage {...messages.filterArtifactId} />{' '}
-            <Icon type="down" />
+            <DownOutlined />
           </div>
         ),
         selectedItems: filter.artifactId,
@@ -759,7 +760,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
     filtersOptions.push({
       displayElement: (
         <div>
-          <FormattedMessage {...messages.filterStatus} /> <Icon type="down" />
+          <FormattedMessage {...messages.filterStatus} /> <DownOutlined />
         </div>
       ),
       selectedItems: filter.status.map((status: Status) => ({

@@ -69,6 +69,7 @@ class OnSegmentExitInputGeneralSectionForm extends React.Component<
         segments.map(r => ({
           key: r.id,
           label: <SegmentNameDisplay audienceSegmentResource={r} />,
+          value: r.id,
         })),
       )
       .catch(error => {
@@ -83,6 +84,7 @@ class OnSegmentExitInputGeneralSectionForm extends React.Component<
       .then(({ data: segment }) => ({
         key: segment.id,
         label: <SegmentNameDisplay audienceSegmentResource={segment} />,
+        value: segment.id
       }))
       .catch(error => {
         this.props.notifyError(error);
@@ -116,7 +118,7 @@ class OnSegmentExitInputGeneralSectionForm extends React.Component<
           fetchSingleMethod={this.fetchSingleMethod}
           selectProps={{
             disabled: !!disabled,
-            mode: 'default',
+            mode: 'multiple',
             showSearch: true,
           }}
           type="Audience"

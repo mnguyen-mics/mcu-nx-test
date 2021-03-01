@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { message } from 'antd';
-import { withRouter, RouteComponentProps } from 'react-router';
+import { withRouter, RouteComponentProps, StaticContext } from 'react-router';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import EmailCampaignForm from './EmailCampaignForm';
 import {
@@ -25,7 +25,7 @@ interface State {
 
 type Props = InjectedIntlProps &
   InjectedNotificationProps &
-  RouteComponentProps<EditEmailCampaignRouteMatchParam>;
+  RouteComponentProps<EditEmailCampaignRouteMatchParam, StaticContext, { from?: string }>;
 
 class EditCampaignPage extends React.Component<Props, State> {
 

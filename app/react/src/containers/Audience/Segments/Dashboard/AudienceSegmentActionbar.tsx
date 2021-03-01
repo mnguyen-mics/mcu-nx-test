@@ -31,7 +31,6 @@ import ReportService, { Filter } from '../../../../services/ReportService';
 import McsMoment from '../../../../utils/McsMoment';
 import { DatamartWithMetricResource } from '../../../../models/datamart/DatamartResource';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
-import { ClickParam } from 'antd/lib/menu';
 import { IOverlapInterval } from './OverlapServices';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
@@ -386,7 +385,7 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
       }
     }
 
-    const onMenuClick = (event: ClickParam) => {
+    const onMenuClick = (event: any) => {
       switch (event.key) {
         case 'LOOKALIKE':
           return onClick();

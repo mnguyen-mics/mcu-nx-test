@@ -1,6 +1,6 @@
 import McsMoment from '@mediarithmics-private/mcs-components-library/lib/utils/McsMoment';
 import { Select } from 'antd';
-import { LabeledValue, OptionProps } from 'antd/lib/select';
+import { LabeledValue } from 'antd/lib/select';
 import cuid from 'cuid';
 import React from 'react'
 import { RouteComponentProps, withRouter } from 'react-router';
@@ -33,12 +33,11 @@ interface State {
 type Props = FunnelExpressionProps & RouteComponentProps<{ organisationId: string }>
 
 interface CommonEnumProps {
-  mode: string
   showSearch: boolean
   showArrow: boolean
   placeholder: string
   className: string
-  filterOption: boolean | ((inputValue: string, option: React.ReactElement<OptionProps>) => boolean)
+  filterOption: boolean | ((inputValue: string, option: any) => boolean)
   value: string[]
 }
 
@@ -94,13 +93,12 @@ class FunnelExpressionInput extends React.Component<Props, State> {
     }
 
     const commonEnumProps: CommonEnumProps = {
-      mode: "tags",
       showSearch: true,
       showArrow: false,
       placeholder: "Dimension value",
       className: "mcs-funnelQueryBuilder_dimensionValue",
-      filterOption: (inputValue: string, option: React.ReactElement<OptionProps>) => {
-        const contains = option.props.value?.toString().toLowerCase().indexOf(inputValue.toLowerCase())
+      filterOption: (inputValue: string, option: any) => {
+        const contains = option.prop.value?.toString().toLowerCase().indexOf(inputValue.toLowerCase())
         return (contains !== undefined && contains > -1)
       },
       value: value
@@ -116,7 +114,7 @@ class FunnelExpressionInput extends React.Component<Props, State> {
           });
           handleDimensionExpressionForSelectorChange(selectValue)
         };
-        return <Select {...commonEnumProps} onChange={handleBooleanEnum}>
+        return <Select {...commonEnumProps} mode="tags" onChange={handleBooleanEnum}>
           <Option key={this._cuid()} value={"0"}>
             {"false"}
           </Option>
@@ -146,7 +144,7 @@ class FunnelExpressionInput extends React.Component<Props, State> {
            handleDimensionExpressionForSelectorChange(selectValue)
          };
 
-        return <Select {...commonEnumProps} onChange={handleEnumChange} >
+        return <Select {...commonEnumProps} mode="tags" onChange={handleEnumChange} >
            <Option key={this._cuid()} value={selectAllOptionValue}>
               {selectAllOptionValue}
             </Option>

@@ -4,7 +4,7 @@ import { Input } from 'antd';
 
 // TS Interface
 import { WrappedFieldProps } from 'redux-form';
-import { TooltipProps } from 'antd/lib/tooltip';
+import { TooltipPropsWithTitle } from 'antd/lib/tooltip';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { TextAreaProps } from 'antd/lib/input/TextArea';
 import FormFieldWrapper, { FormFieldWrapperProps } from '../../components/Form/FormFieldWrapper';
@@ -12,7 +12,7 @@ import FormFieldWrapper, { FormFieldWrapperProps } from '../../components/Form/F
 export interface FormTextAreaProps extends FormFieldWrapperProps {
   formItemProps?: FormItemProps;
   inputProps?: TextAreaProps & React.TextareaHTMLAttributes<HTMLTextAreaElement>;
-  helpToolTipProps?: TooltipProps;
+  helpToolTipProps?: TooltipPropsWithTitle;
   small?: boolean;
 }
 
@@ -42,7 +42,7 @@ const FormTextArea: React.SFC<FormTextAreaProps & WrappedFieldProps> = props => 
 FormTextArea.defaultProps = {
   formItemProps: {},
   inputProps: {},
-  helpToolTipProps: {},
+  helpToolTipProps: {title: ''},
 };
 
 export default FormTextArea;

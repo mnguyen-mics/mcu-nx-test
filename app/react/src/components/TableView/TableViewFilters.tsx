@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Icon, Row, Col, Input } from 'antd';
+import { LayoutOutlined } from '@ant-design/icons';
+import { Row, Col, Input } from 'antd';
 import cuid from 'cuid';
 import { SearchProps } from 'antd/lib/input/Search';
 
@@ -102,20 +103,22 @@ class TableViewFilters<T> extends React.Component<
       : null;
 
     const getItemKey = (item: DataColumnDefinition<T>) => item.key;
-    const visibilityMultiSelect = columnsVisibilityOptions!.isEnabled ? (
-      <VisibilityMultiSelect
-        displayElement={<Icon type="layout" />}
-        items={this.getHideableColumns()}
-        getKey={getItemKey}
-        display={getItemKey}
-        selectedItems={this.state.visibilitySelectedColumns}
-        handleMenuClick={this.changeColumnVisibility}
-        buttonClass={'mcs-table-filters-item'}
-      />
-    ) : null;
+    const visibilityMultiSelect = columnsVisibilityOptions!.isEnabled
+      ? (
+        <VisibilityMultiSelect
+          displayElement={<LayoutOutlined />}
+          items={this.getHideableColumns()}
+          getKey={getItemKey}
+          display={getItemKey}
+          selectedItems={this.state.visibilitySelectedColumns}
+          handleMenuClick={this.changeColumnVisibility}
+          buttonClass={'mcs-table-filters-item'}
+        />
+      )
+      : null;
 
     return (
-      <Row>
+      <div>
         <Row className="mcs-table-header">
           <Col span={6}>{searchInput}</Col>
           <Col span={18} className="text-right">
@@ -139,7 +142,7 @@ class TableViewFilters<T> extends React.Component<
             />
           </Col>
         </Row>
-      </Row>
+      </div>
     );
   }
 }

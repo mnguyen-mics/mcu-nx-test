@@ -31,7 +31,6 @@ class LocationSelectionRenderer extends React.Component<Props> {
     return (
       <div>
         <Row
-          type="flex"
           align="middle"
           justify="space-between"
           className={

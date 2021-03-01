@@ -18,7 +18,10 @@ import { Layout, Row, Button, Col } from 'antd';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 
-import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import {
+  Actionbar,
+  McsIcon,
+} from '@mediarithmics-private/mcs-components-library';
 import { FormTitle, withValidators } from '../../../components/Form';
 import FormDateRangePicker, {
   FormDateRangePickerProps,
@@ -81,12 +84,8 @@ type JoinedProps = ReportCreationEditorProps &
 
 const DefaultSelectField = Field as new () => GenericField<DefaultSelectProps>;
 const TagSelectField = Field as new () => GenericField<FormTagSelectProps>;
-const FormDateRangePickerField = Field as new () => GenericField<
-  FormDateRangePickerProps
->;
-const FormLinkedSelectInputField = Field as new () => GenericField<
-  FormLinkedSelectInputProps
->;
+const FormDateRangePickerField = Field as new () => GenericField<FormDateRangePickerProps>;
+const FormLinkedSelectInputField = Field as new () => GenericField<FormLinkedSelectInputProps>;
 const ReportCreationEditorFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
   FormLinkedSelectInputProps
@@ -108,11 +107,11 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
     let loadingData = true;
     this.setState({ loadingData });
     ReportCreationService.exportReport(formValue, this.props.organisationId)
-      .then(res => {
+      .then((res) => {
         loadingData = false;
         this.setState({ loadingData });
       })
-      .catch(err => {
+      .catch((err) => {
         loadingData = false;
         this.setState({ loadingData });
         this.props.notifyError(err);
@@ -127,12 +126,12 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
     this.setState({ loadingData });
 
     ReportCreationService.preview(formValue, organisationId)
-      .then(res => {
+      .then((res) => {
         this.setState(res);
         loadingData = false;
         this.setState({ loadingData });
       })
-      .catch(err => {
+      .catch((err) => {
         loadingData = false;
         this.setState({ loadingData });
         this.props.notifyError(err);
@@ -239,7 +238,7 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
                 <Content className="mcs-content-container mcs-form-container">
                   <div id={'general_information'}>
                     <Row
-                      type="flex"
+                      style={{ display: 'block' }}
                       align="middle"
                       justify="space-between"
                       className="section-header"
@@ -249,7 +248,7 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
                         subtitle={messages.reportSectionGeneralSubTitle}
                       />
                     </Row>
-                    <Row>
+                    <Row style={{ display: 'block' }}>
                       <DefaultSelectField
                         name="type"
                         component={DefaultSelect}
@@ -273,7 +272,6 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
                   <hr />
                   <div id={'detailed_information'}>
                     <Row
-                      type="flex"
                       align="middle"
                       justify="space-between"
                       className="section-header"
@@ -283,7 +281,7 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
                         subtitle={messages.reportSectionDetailedSubTitle}
                       />
                     </Row>
-                    <Row>
+                    <Row style={{ display: 'block' }}>
                       <TagSelectField
                         name="dimensions"
                         component={TagSelect}
@@ -337,16 +335,20 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
                           ),
                         }}
                         allowPastDate={true}
-                        startDatePickerProps={{
-                          placeholder: intl.formatMessage(
-                            messages.reportSectionDetailedDurationStartDatePlaceholder,
-                          ),
-                        }}
-                        endDatePickerProps={{
-                          placeholder: intl.formatMessage(
-                            messages.reportSectionDetailedDurationEndDatePlaceholder,
-                          ),
-                        }}
+                        startDatePickerProps={
+                          {
+                            // placeholder: intl.formatMessage(
+                            //   messages.reportSectionDetailedDurationStartDatePlaceholder,
+                            // ),
+                          }
+                        }
+                        endDatePickerProps={
+                          {
+                            // placeholder: intl.formatMessage(
+                            //   messages.reportSectionDetailedDurationEndDatePlaceholder,
+                            // ),
+                          }
+                        }
                       />
                       <FormLinkedSelectInputField
                         name="filter"
@@ -369,6 +371,7 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
                         }}
                         leftOptionsProps={linkedSelectOptions}
                       />
+
                       <ReportCreationEditorFieldArray
                         name="additionalFilters"
                         component={ReportFilterFields}
@@ -414,7 +417,7 @@ export default compose<JoinedProps, ReportCreationEditorProps>(
   reduxForm({ form: FORM_NAME }),
   withValidators,
   connect(
-    state => ({
+    (state) => ({
       formValue: getFormValues(FORM_NAME)(state),
       isFormValid: isValid(FORM_NAME)(state),
     }),

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { withRouter } from 'react-router-dom';
-import { Icon } from 'antd';
+
 import moment from 'moment';
 import { ContentHeader } from '@mediarithmics-private/mcs-components-library';
 import {
@@ -20,6 +20,7 @@ import {
   audienceSegmentTypeMessages,
   userQuerySegmentSubtypeMessages,
 } from './messages';
+import { ApiOutlined, DatabaseOutlined, RocketOutlined, SolutionOutlined, UsergroupAddOutlined } from '@ant-design/icons';
 
 const localMessages = defineMessages({
   createdOn: {
@@ -43,19 +44,19 @@ class AudienceSegmentHeader extends React.Component<Props> {
       isLoading,
     } = this.props;
 
-    let iconType = '';
+    let iconType = null;
 
     if (segment) {
       if (segment.type === 'USER_ACTIVATION') {
-        iconType = 'rocket';
+        iconType = <RocketOutlined />;
       } else if (segment.type === 'USER_QUERY') {
-        iconType = 'database';
+        iconType = <DatabaseOutlined />;
       } else if (segment.type === 'USER_LIST') {
-        iconType = 'solution';
+        iconType = <SolutionOutlined />;
       } else if (segment.type === 'USER_LOOKALIKE') {
-        iconType = 'usergroup-add';
+        iconType = <UsergroupAddOutlined />;
       } else if (segment.type === 'USER_PARTITION') {
-        iconType = 'api';
+        iconType = <ApiOutlined />;
       }
     }
 
@@ -89,7 +90,7 @@ class AudienceSegmentHeader extends React.Component<Props> {
 
     const segmentType = segment ? (
       <React.Fragment>
-        <Icon type={iconType} /> {renderName()}
+        {iconType} {renderName()}
         {isUserQuerySegment(segment) &&
           segment.subtype &&
           segment.subtype === 'AB_TESTING_EXPERIMENT' && (

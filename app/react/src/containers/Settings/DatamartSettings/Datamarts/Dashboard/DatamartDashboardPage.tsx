@@ -7,7 +7,7 @@ import DatamartActionBar from './DatamartActionBar';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
 import DatamartHeader from './DatamartHeader';
 import { IDatamartService } from '../../../../../services/DatamartService';
-import { Row, Col, Layout } from 'antd';
+import { Layout } from 'antd';
 import { notifyError } from '../../../../../redux/Notifications/actions';
 import { McsTabs } from '@mediarithmics-private/mcs-components-library';
 import DatamartConfigTab from './DatamartConfigTab';
@@ -191,14 +191,14 @@ class DatamartDashboardPage extends React.Component<Props, State> {
         <DatamartActionBar />
         <div className="ant-layout">
           <div className="ant-layout-content">
-            <Row className="mcs-content-channel">
-              <Col className="mcs-datamart-title">
+            <div className="mcs-content-channel">
+              <div className="mcs-datamart-title">
                 <DatamartHeader datamart={datamart} isLoading={isLoading} />
-              </Col>
-            </Row>
-            <Row>
+              </div>
+            </div>
+            <div>
               <McsTabs items={items} tabBarStyle={{ margin: '0 40px' }} />
-            </Row>
+            </div>
           </div>
         </div>
       </div>

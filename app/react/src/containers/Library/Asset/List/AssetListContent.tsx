@@ -18,6 +18,7 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IAssetFileService } from '../../../../services/Library/AssetFileService';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
+import { ExclamationCircleOutlined } from '@ant-design/icons'
 
 const { Content } = Layout;
 
@@ -82,7 +83,7 @@ class AssetListContent extends React.Component<
     const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
 
     Modal.confirm({
-      iconType: 'exclamation-circle',
+      icon: <ExclamationCircleOutlined />,
       title: formatMessage(messages.assetArchiveTitle),
       content: formatMessage(messages.assetArchiveMessage),
       okText: formatMessage(messages.assetArchiveOk),

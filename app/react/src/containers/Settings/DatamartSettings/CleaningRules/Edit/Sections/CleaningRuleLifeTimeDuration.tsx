@@ -16,7 +16,7 @@ export interface OptionsAndSeparatorProps {
 export interface CleaningRuleLifeTimeDurationProps
   extends FormFieldWrapperProps {
   formItemProps: FormItemProps;
-  selectProps?: SelectProps;
+  selectProps?: SelectProps<string>;
   optionsAndSeparators: OptionsAndSeparatorProps[];
 }
 
@@ -38,7 +38,7 @@ class CleaningRuleLifeTimeDuration extends React.Component<Props> {
     const { optionsAndSeparators } = this.props;
 
     return optionsAndSeparators.map(optionAndSeparator => (
-      <Select.Option key={optionAndSeparator.value}>
+      <Select.Option key={optionAndSeparator.value} value={optionAndSeparator.value}>
         {optionAndSeparator.label}
       </Select.Option>
     ));

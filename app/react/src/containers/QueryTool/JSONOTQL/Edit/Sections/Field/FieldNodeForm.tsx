@@ -1,4 +1,3 @@
-import { OptionProps } from 'antd/lib/select';
 import * as React from 'react';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
@@ -63,6 +62,7 @@ import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
 import { IReferenceTableService } from '../../../../../../services/ReferenceTableService';
 import { injectWorkspace, InjectedWorkspaceProps } from '../../../../../Datamart';
 import { FormInfiniteSearchObjectProps } from '../../../../../../components/Form/FormSelect/FormInfiniteSearchObject';
+import { DefaultOptionProps } from '../../../../../../components/Form/FormSelect/DefaultSelect';
 
 export const FormTagSelectField = Field as new () => GenericField<
   FormTagSelectProps
@@ -240,7 +240,7 @@ class FieldNodeForm extends React.Component<Props, State> {
     return undefined;
   };
 
-  getAvailableFields = (): OptionProps[] => {
+  getAvailableFields = (): DefaultOptionProps[] => {
     const { availableFields } = this.props;
     return availableFields
       .filter(field =>
@@ -594,12 +594,14 @@ class FieldNodeForm extends React.Component<Props, State> {
           res.data.map(r => ({
             key: r.id,
             label: <SegmentNameDisplay audienceSegmentResource={r} />,
+            value: r.id,
           })),
         );
     const fetchSingleMethod = (id: string) =>
       this._audienceSegmentService.getSegment(id).then(res => ({
         key: res.data.id,
         label: <SegmentNameDisplay audienceSegmentResource={res.data} />,
+        value: res.data.id,
       }));
 
     let popUpProps = {};
@@ -659,7 +661,7 @@ class FieldNodeForm extends React.Component<Props, State> {
 
     let fetchListMethod = (
       keywords: string,
-    ): Promise<Array<{ key: string; label: JSX.Element | string }>> => {
+    ): Promise<Array<{ key: string; label: JSX.Element | string; value: string }>> => {
       if (field) {
         return this._referenceTableService
           .getReferenceTable(
@@ -669,14 +671,14 @@ class FieldNodeForm extends React.Component<Props, State> {
             field.field,
           )
           .then(res =>
-            res.data.map(r => ({ key: r.value, label: r.display_value })),
+            res.data.map(r => ({ key: r.value, label: r.display_value, value: r.value })),
           );
       }
       return Promise.resolve([]);
     };
 
     let fetchSingleMethod = (id: string) =>
-      Promise.resolve({ key: id, label: id });
+      Promise.resolve({ key: id, label: id, value: id });
     let selectProps = {};
     let loadOnlyOnce = false;
     let shouldFilterData = false;
@@ -692,13 +694,14 @@ class FieldNodeForm extends React.Component<Props, State> {
                   res.data.map(r => ({
                     key: r.compartment_id,
                     label: r.name ? r.name : r.token,
+                    value: r.compartment_id
                   })),
                 );
             };
             fetchSingleMethod = (id: string) =>
               this._compartmentService
                 .getCompartment(id)
-                .then(res => ({ key: res.data.id, label: res.data.name }));
+                .then(res => ({ key: res.data.id, label: res.data.name, value: res.data.id }));
             break;
           case 'CHANNELS':
             fetchListMethod = (keywords: string) => {
@@ -709,12 +712,12 @@ class FieldNodeForm extends React.Component<Props, State> {
                   keywords: keywords,
                   with_source_datamarts: true,
                 })
-                .then(res => res.data.map(r => ({ key: r.id, label: r.name })));
+                .then(res => res.data.map(r => ({ key: r.id, label: r.name, value: r.id })));
             };
             fetchSingleMethod = (id: string) =>
               this._channelService
                 .getChannel(datamartId, id)
-                .then(res => ({ key: res.data.id, label: res.data.name }));
+                .then(res => ({ key: res.data.id, label: res.data.name, value: res.data.id }));
             break;
           case 'SEGMENTS':
             fetchListMethod = (keywords: string) => {
@@ -727,13 +730,14 @@ class FieldNodeForm extends React.Component<Props, State> {
                   res.data.map(r => ({
                     key: r.id,
                     label: <SegmentNameDisplay audienceSegmentResource={r} />,
+                    value: r.id
                   })),
                 );
             };
             fetchSingleMethod = (id: string) =>
               this._audienceSegmentService
                 .getSegment(id)
-                .then(res => ({ key: res.data.id, label: res.data.name }));
+                .then(res => ({ key: res.data.id, label: res.data.name, value: res.data.id }));
             break;
         }
       }
@@ -742,7 +746,7 @@ class FieldNodeForm extends React.Component<Props, State> {
         this.fetchPredicates(
           this._computedTreeNodePath,
           field ? field.field : '',
-        ).then(r => r.map(e => ({ key: e, label: e })));
+        ).then(r => r.map(e => ({ key: e, label: e, value: e })));
       selectProps = {
         ...selectProps,
         mode: 'tags',

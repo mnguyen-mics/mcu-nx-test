@@ -3,8 +3,10 @@ import { connect } from 'react-redux';
 import { Link, withRouter, matchPath } from 'react-router-dom';
 import { Menu } from 'antd';
 import { FormattedMessage } from 'react-intl';
-
-import { getDefaultDatamart } from '../../redux/Session/selectors';
+import { MenuInfo } from '../../../../../node_modules/antd/node_modules/rc-menu/lib/interface'
+import {
+  getDefaultDatamart,
+} from '../../redux/Session/selectors';
 
 import { menuDefinitions } from '../../routes/menuDefinition';
 
@@ -123,9 +125,10 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
     }
   };
 
-  onClick = ({ key }: { key: string }) => {
+  onClick = (e: MenuInfo) => {
+    
     const hasClickOnFirstLevelMenuItem = menuDefinitions.find(
-      item => item.iconType === key,
+      item => item.iconType === e.key,
     );
     if (hasClickOnFirstLevelMenuItem) this.setState({ inlineOpenKeys: [] });
   };

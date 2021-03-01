@@ -31,6 +31,7 @@ import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IPluginService } from '../../../services/PluginService';
 import { Loading } from '@mediarithmics-private/mcs-components-library';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 const formId = 'pluginForm';
 
@@ -442,7 +443,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<
     } = this.props;
     if (layoutablePlugin && layoutablePlugin.plugin_preset)
       Modal.confirm({
-        iconType: 'exclamation-circle',
+        icon: <ExclamationCircleOutlined />,
         title: formatMessage(messages.presetDeletionModalDescription),
         okText: formatMessage(messages.presetDeletionModalConfirm),
         cancelText: formatMessage(messages.presetDeletionModalCancel),

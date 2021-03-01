@@ -35,6 +35,7 @@ import { Label } from '../../../Labels/Labels';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IEmailCampaignService } from '../../../../services/EmailCampaignService';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 const getLatestDeliveryReport = takeLatest(
   ReportService.getEmailDeliveryReport,
@@ -165,7 +166,7 @@ class EmailCampaignListPage extends React.Component<Props, State> {
     Modal.confirm({
       title: intl.formatMessage(messages.confirmArchiveModalTitle),
       content: intl.formatMessage(messages.confirmArchiveModalContent),
-      iconType: 'exclamation-circle',
+      icon: <ExclamationCircleOutlined />,
       okText: intl.formatMessage(messages.confirmArchiveModalOk),
       cancelText: intl.formatMessage(messages.confirmArchiveModalCancel),
       onOk() {

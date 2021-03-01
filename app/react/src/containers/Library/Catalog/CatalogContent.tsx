@@ -13,11 +13,10 @@ import {
   McsIcon,
 } from '@mediarithmics-private/mcs-components-library';
 import CatalogItemTable from './CatalogItemTable';
-import { Select, Table, Breadcrumb, Icon } from 'antd';
 import messages from './messages';
-import injectNotifications, {
-  InjectedNotificationProps,
-} from '../../Notifications/injectNotifications';
+import { HomeOutlined } from '@ant-design/icons';
+import { Select, Table, Breadcrumb } from 'antd';
+import injectNotifications, { InjectedNotificationProps } from '../../Notifications/injectNotifications';
 import { injectDatamart, InjectedDatamartProps } from '../../Datamart';
 import { TYPES } from '../../../constants/types';
 import { lazyInject } from '../../../config/inversify.config';
@@ -48,8 +47,6 @@ type Props = InjectedNotificationProps &
   InjectedDatamartProps &
   RouteComponentProps<{ organisationId: string }> &
   InjectedIntlProps;
-
-class CategoryTable extends Table<Category> {}
 
 class CatalogContent extends React.Component<Props, CatalogContentState> {
   @lazyInject(TYPES.ILibraryCatalogService)
@@ -311,7 +308,7 @@ class CatalogContent extends React.Component<Props, CatalogContentState> {
       <Breadcrumb style={{ marginBottom: 14 }}>
         <Breadcrumb.Item>
           <Button onClick={onHomeClick}>
-            <Icon type="home" /> {this.state.catalogs.selectedId}
+            <HomeOutlined /> {this.state.catalogs.selectedId}
           </Button>
         </Breadcrumb.Item>
         {this.state.path.map((item, i) => {
@@ -376,7 +373,7 @@ class CatalogContent extends React.Component<Props, CatalogContentState> {
           <hr />
           {this.generateBreadcrumb()}
 
-          <CategoryTable
+          <Table<Category>
             columns={[
               {
                 title: intl.formatMessage(messages.category),
