@@ -10,7 +10,10 @@ import injectNotifications, {
 } from '../../../../Notifications/injectNotifications';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { messages } from '../messages';
-import { AudienceBuilderFormData, INITIAL_AUDIENCE_BUILDER_FORM_DATA } from './domain';
+import {
+  AudienceBuilderFormData,
+  INITIAL_AUDIENCE_BUILDER_FORM_DATA,
+} from './domain';
 import { message } from 'antd';
 import { Loading } from '../../../../../components';
 
@@ -91,10 +94,10 @@ class AudienceBuilderEditPage extends React.Component<Props, State> {
       ...formData.audienceBuilder,
     };
 
-    const demographics = formData.audienceFeatureDemographics
+    const demographics = formData.audienceFeatureDemographics;
 
     if (demographics) {
-      newFormData.demographics_features_ids = demographics.map(d => d.model.id)
+      newFormData.demographics_features_ids = demographics.map(d => d.model.id);
     }
 
     const promise = audienceBuilderId
@@ -110,9 +113,12 @@ class AudienceBuilderEditPage extends React.Component<Props, State> {
     promise
       .then(() => {
         hideSaveInProgress();
-        history.push(
-          `/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`,
-        );
+        history.push({
+          pathname: `/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`,
+          state: {
+            activeTab: 'audience_builder',
+          },
+        });
       })
       .catch(err => {
         hideSaveInProgress();
@@ -133,7 +139,7 @@ class AudienceBuilderEditPage extends React.Component<Props, State> {
     return history.push({
       pathname: `/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`,
       state: {
-        activeTab: 'Replications',
+        activeTab: 'audience_builder',
       },
     });
   };
@@ -147,7 +153,7 @@ class AudienceBuilderEditPage extends React.Component<Props, State> {
       },
     } = this.props;
 
-    const existingBuilderName = builderFormData.audienceBuilder.name
+    const existingBuilderName = builderFormData.audienceBuilder.name;
 
     const builderName =
       audienceBuilderId && existingBuilderName
@@ -158,7 +164,7 @@ class AudienceBuilderEditPage extends React.Component<Props, State> {
       {
         name: formatMessage(messages.audienceBuilders),
         path: `/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`,
-        state: { activeTab: 'Audience Builder' },
+        state: { activeTab: 'audience_builder' },
       },
       {
         name: builderName,

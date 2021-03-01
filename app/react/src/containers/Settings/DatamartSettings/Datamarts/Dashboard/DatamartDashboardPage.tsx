@@ -22,6 +22,13 @@ import { DashboardConfig } from '../../../../Audience/DatamartUsersAnalytics/Dat
 import DatamartReplicationTab from './DatamartReplicationTab';
 import AudienceBuilderTab from './AudienceBuilderTab';
 
+interface McsTabsItem {
+  title: string;
+  display?: JSX.Element;
+  forceRender?: boolean;
+  key?: string;
+}
+
 const { Content } = Layout;
 
 const messages = defineMessages({
@@ -127,19 +134,22 @@ class DatamartDashboardPage extends React.Component<Props, State> {
       match: {
         params: { datamartId, organisationId },
       },
+      location,
       hasFeature,
     } = this.props;
 
     const { datamart, isLoading } = this.state;
 
-    const items = [
+    const items: McsTabsItem[] = [
       {
         title: intl.formatMessage(messages.datamartConfiguration),
         display: <DatamartConfigTab datamartId={datamartId} />,
+        key: 'configuration',
       },
       {
         title: intl.formatMessage(messages.datamartActivity),
         display: <DatamartActivity datamartId={datamartId} />,
+        key: 'activity',
       },
     ];
 
@@ -147,6 +157,7 @@ class DatamartDashboardPage extends React.Component<Props, State> {
       items.push({
         title: intl.formatMessage(messages.datamartReplications),
         display: <DatamartReplicationTab />,
+        key: 'replications',
       });
     }
 
@@ -158,6 +169,7 @@ class DatamartDashboardPage extends React.Component<Props, State> {
       items.push({
         title: intl.formatMessage(messages.objectViewConfiguration),
         display: <DatamartObjectViewTab datamartId={datamartId} />,
+        key: 'object_view_configuration',
       });
     }
 
@@ -176,6 +188,7 @@ class DatamartDashboardPage extends React.Component<Props, State> {
             />
           </Content>
         ),
+        key: 'statistics',
       });
     }
 
@@ -183,6 +196,7 @@ class DatamartDashboardPage extends React.Component<Props, State> {
       items.push({
         title: intl.formatMessage(messages.audienceBuilder),
         display: <AudienceBuilderTab />,
+        key: 'audience_builder',
       });
     }
 
@@ -197,7 +211,14 @@ class DatamartDashboardPage extends React.Component<Props, State> {
               </div>
             </div>
             <div>
-              <McsTabs items={items} tabBarStyle={{ margin: '0 40px' }} />
+              <McsTabs
+                items={items}
+                tabBarStyle={{ margin: '0 40px' }}
+                defaultActiveKey={
+                  (location && location.state && location.state.activeTab) ||
+                  'configuration'
+                }
+              />
             </div>
           </div>
         </div>
