@@ -372,7 +372,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     const stepsCopy = JSON.parse(JSON.stringify(steps));
     stepsCopy.forEach((step: Step) => {
       step.id = undefined;
-      if (step.max_days_after_previous_step && step.max_days_after_previous_step < 1) {
+      if (step.max_days_after_previous_step === 0) {
         step.max_days_after_previous_step = undefined;
       }
       step.filter_clause.filters.forEach(filter => { 
