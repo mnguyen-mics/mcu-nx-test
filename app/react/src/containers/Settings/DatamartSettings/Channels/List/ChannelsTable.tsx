@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ChannelResourceShape, ChannelResourceShapeWithAnalytics } from '../../../../../models/settings/settings';
 import { ChannelFilter } from './domain';
-import { MultiSelectProps } from '../../../../../components/MultiSelect';
+import { MultiSelectProps } from '@mediarithmics-private/mcs-components-library/lib/components/multi-select';;
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';

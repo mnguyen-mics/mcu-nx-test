@@ -3,7 +3,7 @@ import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { TableViewFilters } from '../../../components/TableView';
-import { MultiSelectProps } from '../../../components/MultiSelect';
+import { MultiSelectProps } from '@mediarithmics-private/mcs-components-library/lib/components/multi-select';;
 import messages from './messages';
 import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Modal, Row } from 'antd';

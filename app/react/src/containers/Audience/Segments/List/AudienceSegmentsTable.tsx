@@ -45,7 +45,7 @@ import {
 } from '../../../../utils/ApiHelper';
 import { getWorkspace } from '../../../../redux/Session/selectors';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
-import { MultiSelectProps } from '../../../../components/MultiSelect';
+import { MultiSelectProps } from '@mediarithmics-private/mcs-components-library/lib/components/multi-select';
 import {
   ActionsColumnDefinition,
   DataColumnDefinition,

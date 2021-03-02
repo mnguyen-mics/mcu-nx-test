@@ -11,7 +11,7 @@ import { DataColumnDefinition, TableViewProps } from '../TableView/TableView';
 import { normalizeArrayOfObject } from '../../utils/Normalizer';
 import { DataListResponse, DataResponse } from '../../services/ApiService';
 import { SearchFilter, SelectableItem } from './';
-import { MultiSelectProps } from '../MultiSelect';
+import { MultiSelectProps } from '@mediarithmics-private/mcs-components-library/lib/components/multi-select';
 import { getWorkspace } from '../../redux/Session/selectors';
 import { UserWorkspaceResource } from '../../models/directory/UserProfileResource';
 import { RouteComponentProps, withRouter } from 'react-router';

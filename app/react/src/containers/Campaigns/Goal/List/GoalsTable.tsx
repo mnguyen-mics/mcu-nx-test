@@ -30,7 +30,7 @@ import { GoalsOptions, IGoalService } from '../../../../services/GoalService';
 import { Label } from '../../../Labels/Labels';
 import { McsRange } from '../../../../utils/McsMoment';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
-import { MultiSelectProps } from '../../../../components/MultiSelect';
+import { MultiSelectProps } from '@mediarithmics-private/mcs-components-library/lib/components/multi-select';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
