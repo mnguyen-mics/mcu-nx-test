@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from 'antd';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
-import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, McsIcon, Slide } from '@mediarithmics-private/mcs-components-library';
 import { compose } from 'recompose';
 import Menu from 'antd/lib/menu';
 import { ExtendedTableRowSelection } from '../../../components/TableView/TableView';
@@ -16,7 +16,6 @@ import injectNotifications, {
 } from '../../Notifications/injectNotifications';
 import Dropdown from 'antd/lib/dropdown/dropdown';
 import messages from './messages';
-import Slider from '../../../components/Transition/Slide';
 
 interface AutomationActionbarProps {
   organisationId: string;
@@ -121,7 +120,7 @@ class AutomationActionBar extends React.Component<
             />
           </Button>
         </Link>
-        <Slider
+        <Slide
           toShow={hasSelected}
           horizontal={true}
           content={buildActionElement()}

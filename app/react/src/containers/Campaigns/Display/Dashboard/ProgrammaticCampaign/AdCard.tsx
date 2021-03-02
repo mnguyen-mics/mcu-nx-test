@@ -19,6 +19,7 @@ import {
   Card,
   McsIcon,
   McsDateRangePicker,
+  Slide
 } from '@mediarithmics-private/mcs-components-library';
 import { CardProps } from '@mediarithmics-private/mcs-components-library/lib/components/card';
 import {
@@ -27,7 +28,6 @@ import {
 } from '../../../../../utils/LocationSearchHelper';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';
-import Slide from '../../../../../components/Transition/Slide';
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import { injectDrawer } from '../../../../../components/Drawer/index';
 import {
