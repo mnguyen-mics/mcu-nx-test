@@ -23,7 +23,7 @@ import injectNotifications, {
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 import { connect } from 'react-redux';
 import { CleaningRulesFilter } from '../domain';
-import { MultiSelectProps } from '../../../../../components/MultiSelect';
+import { MultiSelectProps } from '@mediarithmics-private/mcs-components-library/lib/components/multi-select';;
 import { getWorkspace } from '../../../../../redux/Session/selectors';
 import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 import { lazyInject } from '../../../../../config/inversify.config';

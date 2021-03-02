@@ -4,11 +4,11 @@ import { Row, Col, Input } from 'antd';
 import cuid from 'cuid';
 import { SearchProps } from 'antd/lib/input/Search';
 
-import MultiSelect, { MultiSelectProps } from '../MultiSelect';
+import { MultiSelectProps } from '@mediarithmics-private/mcs-components-library/lib/components/multi-select';
 import TableView, { DataColumnDefinition, TableViewProps } from './TableView';
 import LabelsSelector, { LabelsSelectorProps } from '../LabelsSelector';
 import TreeSelectFilter from '../TreeSelectFilter';
-import { McsDateRangePicker } from '@mediarithmics-private/mcs-components-library';
+import { McsDateRangePicker, MultiSelect } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangePickerProps } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker';
 
 const Search = Input.Search;

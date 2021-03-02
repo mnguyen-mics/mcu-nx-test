@@ -21,7 +21,7 @@ import { ChannelFilter, ChannelTypeItem, TYPE_SEARCH_SETTINGS } from './domain';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IChannelService } from '../../../../../services/ChannelService';
-import { MultiSelectProps } from '../../../../../components/MultiSelect';
+import { MultiSelectProps } from '@mediarithmics-private/mcs-components-library/lib/components/multi-select';;
 import { Link } from 'react-router-dom';
 import messages from './messages';
 import ChannelsTable from './ChannelsTable';

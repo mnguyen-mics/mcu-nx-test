@@ -27,7 +27,7 @@ import {
   AudienceFeedType,
   IAudienceSegmentFeedService,
 } from '../../../../services/AudienceSegmentFeedService';
-import { MultiSelectProps } from '../../../../components/MultiSelect';
+import { MultiSelectProps } from '@mediarithmics-private/mcs-components-library/lib/components/multi-select';
 import { Tooltip, Modal } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import { IPluginService } from '../../../../services/PluginService';
