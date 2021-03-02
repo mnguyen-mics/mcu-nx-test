@@ -15,6 +15,7 @@ import { IScenarioService } from '../../../services/ScenarioService';
 import { AutomationStatus } from '../../../models/automations/automations';
 import {
   Actionbar,
+  McsDateRangePicker,
   McsIcon,
 } from '@mediarithmics-private/mcs-components-library';
 import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
@@ -26,6 +27,9 @@ import AutomationScenarioTest, {
   AutomationScenarioTestProps,
 } from './Test/AutomationScenarioTest';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
+import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
+import { DateSearchSettings, DATE_SEARCH_SETTINGS, parseSearch, updateSearch } from '../../../utils/LocationSearchHelper';
+import McsMoment from '../../../utils/McsMoment';
 
 export interface AutomationDashboardrams {
   organisationId: string;
@@ -48,6 +52,10 @@ const messages = defineMessages({
   testTitle: {
     id: 'automationDashboardPage.actionBar.test',
     defaultMessage: 'Test',
+  },
+  timeWindowLabel: {
+    id: 'automationDashboardPage.actionBar.timeWindow.label',
+    defaultMessage: 'View user flow',
   },
 });
 
@@ -72,6 +80,9 @@ class AutomationDashboardPage extends React.Component<Props, State> {
       match: {
         params: { automationId },
       },
+      history: {
+        location: { search },
+      },
     } = this.props;
     if (automationId) {
       this.setState({
@@ -85,6 +96,13 @@ class AutomationDashboardPage extends React.Component<Props, State> {
             isLoading: false,
           });
         });
+    }
+    const filter = parseSearch(search, DATE_SEARCH_SETTINGS);
+    if(!filter.from.value || !filter.from.to) {
+      this.updateLocationSearch({
+        from: new McsMoment("now-7d"),
+        to: new McsMoment("now"),
+      })
     }
   }
 
@@ -182,6 +200,43 @@ class AutomationDashboardPage extends React.Component<Props, State> {
     });
   };
 
+  renderDatePicker = () => {
+    const {
+      history: {
+        location: { search },
+      },
+    } = this.props;
+
+    const filter = parseSearch(search, DATE_SEARCH_SETTINGS);
+
+    const values = {
+      from: filter.from,
+      to: filter.to,
+    };
+
+    const onChange = (newValues: McsDateRangeValue) =>
+      this.updateLocationSearch({
+        from: newValues.from,
+        to: newValues.to,
+      });
+
+    return <McsDateRangePicker values={values} onChange={onChange} />;
+  };
+
+  updateLocationSearch = (params: DateSearchSettings) => {
+    const {
+      history,
+      location: { search: currentSearch, pathname },
+    } = this.props;
+
+    const nextLocation = {
+      pathname,
+      search: updateSearch(currentSearch, params, DATE_SEARCH_SETTINGS),
+    };
+
+    history.push(nextLocation);
+  };
+
   render() {
     const {
       match: {
@@ -234,6 +289,8 @@ class AutomationDashboardPage extends React.Component<Props, State> {
         </Button>
       ) : null;
 
+    const displayDateRange = hasFeature("automations-analytics");
+
     return (
       <div style={{ height: '100%', display: 'flex' }}>
         <Layout>
@@ -263,6 +320,8 @@ class AutomationDashboardPage extends React.Component<Props, State> {
               <McsIcon type={'pen'} /> Edit
             </Button>
             {testButton}
+            {displayDateRange && <span key="label">{formatMessage(messages.timeWindowLabel)}</span>}
+            {displayDateRange && this.renderDatePicker()}
           </Actionbar>
 
           <Layout.Content
