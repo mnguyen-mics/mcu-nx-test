@@ -178,7 +178,7 @@ class AudienceBuilderListPage extends React.Component<Props, State> {
       });
     };
     return (
-      <Button type="primary" onClick={onClick}>
+      <Button type="primary" className="mcs-audienceBuilder_creation_button" onClick={onClick}>
         <FormattedMessage {...messages.audienceBuilderNew} />
       </Button>
     );

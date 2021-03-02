@@ -274,7 +274,7 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
               </Button>
               {!!isMaskVisible && (
                 <div className="mcs-audienceBuilder_liveDashboardMask">
-                  <Button onClick={this.refreshDashboard}>
+                  <Button onClick={this.refreshDashboard} className="mcs-audienceBuilder_dashboard_refresh_button">
                     {intl.formatMessage(messages.refreshMessage)}
                   </Button>
                 </div>
