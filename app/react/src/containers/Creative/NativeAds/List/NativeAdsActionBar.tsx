@@ -9,10 +9,9 @@ import {
 } from 'react-intl';
 import { compose } from 'recompose';
 
-import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, McsIcon, Slide } from '@mediarithmics-private/mcs-components-library';
 import { RouteComponentProps } from 'react-router';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
-import Slider from '../../../../components/Transition/Slide';
 
 const messages = defineMessages({
   archiveNativesModalTitle: {
@@ -97,7 +96,7 @@ class NativeAdsActionBar extends React.Component<JoinedProps> {
             <FormattedMessage {...messages.newNativeCreativeButton} />
           </Button>
         </a>
-        <Slider
+        <Slide
           toShow={hasSelected}
           horizontal={true}
           content={

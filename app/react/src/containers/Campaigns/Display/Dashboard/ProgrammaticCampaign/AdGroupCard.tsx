@@ -10,11 +10,11 @@ import {
 } from 'react-intl';
 import { Dropdown } from '../../../../../components/PopupContainers';
 import messages from '../messages';
-import Slide from '../../../../../components/Transition/Slide';
 import {
   Card,
   McsIcon,
   McsDateRangePicker,
+  Slide
 } from '@mediarithmics-private/mcs-components-library';
 import { CardProps } from '@mediarithmics-private/mcs-components-library/lib/components/card/Card';
 import { AdGroupResource } from '../../../../../models/campaign/display/AdGroupResource';

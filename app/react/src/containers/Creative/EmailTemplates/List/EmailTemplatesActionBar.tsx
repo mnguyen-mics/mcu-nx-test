@@ -8,10 +8,9 @@ import {
   injectIntl,
 } from 'react-intl';
 import { compose } from 'recompose';
-import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, McsIcon, Slide } from '@mediarithmics-private/mcs-components-library';
 import { RouteComponentProps } from 'react-router';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
-import Slider from '../../../../components/Transition/Slide';
 
 const messages = defineMessages({
   archiveEmailsModalTitle: {
@@ -85,7 +84,7 @@ class EmailTemplatesActionBar extends React.Component<JoinedProps> {
             />
           </Button>
         </Link>
-        <Slider
+        <Slide
           toShow={hasSelected}
           horizontal={true}
           content={

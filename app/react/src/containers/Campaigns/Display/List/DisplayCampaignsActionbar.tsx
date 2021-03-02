@@ -10,7 +10,7 @@ import {
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { Dropdown } from '../../../../components/PopupContainers';
-import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, McsIcon, Slide } from '@mediarithmics-private/mcs-components-library';
 import ExportService from '../../../../services/ExportService';
 import {
   CampaignsOptions,
@@ -28,7 +28,6 @@ import {
 } from '../../../../utils/LocationSearchHelper';
 import { RouteComponentProps } from 'react-router';
 import messages from './messages';
-import Slider from '../../../../components/Transition/Slide';
 import {
   DrawableContent,
   injectDrawer,
@@ -291,7 +290,7 @@ class DisplayCampaignsActionbar extends React.Component<
           />
         </Button>
 
-        <Slider
+        <Slide
           toShow={hasSelected}
           horizontal={true}
           content={
@@ -322,7 +321,7 @@ class DisplayCampaignsActionbar extends React.Component<
           </Modal>
         ) : null}
 
-        <Slider
+        <Slide
           toShow={hasSelected}
           horizontal={true}
           content={
@@ -339,7 +338,7 @@ class DisplayCampaignsActionbar extends React.Component<
           }
         />
 
-        <Slider
+        <Slide
           toShow={hasSelected}
           horizontal={true}
           content={buildActionElement()}

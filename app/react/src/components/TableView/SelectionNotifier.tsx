@@ -1,9 +1,8 @@
 import * as React from 'react';
-import Slide from '../Transition/Slide';
 import { FormattedMessage } from 'react-intl';
 import { Alert } from 'antd';
 import { PaginationProps } from 'antd/lib/pagination/Pagination';
-import { Button } from '@mediarithmics-private/mcs-components-library';
+import { Button, Slide } from '@mediarithmics-private/mcs-components-library';
 import { ExtendedTableRowSelection } from './TableView';
 
 interface SelectionNotifierProps<T> {

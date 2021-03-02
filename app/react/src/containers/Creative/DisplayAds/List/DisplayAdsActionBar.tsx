@@ -9,10 +9,9 @@ import {
 } from 'react-intl';
 import { compose } from 'recompose';
 import { Dropdown } from '../../../../components/PopupContainers';
-import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, McsIcon, Slide } from '@mediarithmics-private/mcs-components-library';
 import { RouteComponentProps } from 'react-router';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
-import Slide from '../../../../components/Transition/Slide';
 import { CreativeAuditAction } from '../../../../models/creative/CreativeResource';
 
 interface DisplayAdsActionBarProps {
