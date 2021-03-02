@@ -106,6 +106,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     try {
       const steps = JSON.parse(parsedSearch.filter)
       const identifiedSteps = steps.map((step: Step) => {
+        step.filter_clause.filters.forEach(f => f.id = this._cuid());
         return {
           ...step,
           id: this._cuid()
