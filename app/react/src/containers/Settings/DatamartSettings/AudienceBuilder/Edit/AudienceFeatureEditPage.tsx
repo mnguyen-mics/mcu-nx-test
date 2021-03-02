@@ -136,9 +136,10 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
     promise
       .then(() => {
         hideSaveInProgress();
-        history.push(
-          `/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`,
-        );
+        history.push({
+          pathname: `/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`,
+          state: { activeTab: 'audience_builder' },
+        });
       })
       .catch(err => {
         hideSaveInProgress();
@@ -159,7 +160,7 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
     return history.push({
       pathname: `/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`,
       state: {
-        activeTab: 'Replications',
+        activeTab: 'audience_builder',
       },
     });
   };
@@ -182,7 +183,7 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
       {
         name: formatMessage(messages.audienceFeatures),
         path: `/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`,
-        state: { activeTab: 'Audience Builder' },
+        state: { activeTab: 'audience_builder' },
       },
       {
         name: replicationName,
