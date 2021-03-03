@@ -232,7 +232,7 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
           {
             operations: [{ directives: [], selections: [{ name: 'id' }] }],
             from: 'UserPoint',
-            where: formValues.where,
+            where: formValues?.where,
           },
           audienceBuilder.datamart_id,
         )}

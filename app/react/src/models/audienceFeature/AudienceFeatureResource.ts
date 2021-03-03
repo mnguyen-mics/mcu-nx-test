@@ -23,6 +23,7 @@ export interface AudienceFeatureVariableResource {
   parameter_name: string;
   path: string[];
   type: AudienceFeatureType;
+  data_type?: string;
   reference_type?: string;
   container_type?: string;
   reference_model_type?: string;

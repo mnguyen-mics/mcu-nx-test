@@ -1,19 +1,19 @@
-import * as React from "react";
-import { DatePicker, Radio, Input, InputNumber, Col, Select } from "antd";
-import moment from "moment";
-import { WrappedFieldProps } from "redux-form";
-import { FormItemProps } from "antd/lib/form/FormItem";
+import * as React from 'react';
+import { DatePicker, Radio, Input, InputNumber, Col, Select } from 'antd';
+import moment from 'moment';
+import { WrappedFieldProps } from 'redux-form';
+import { FormItemProps } from 'antd/lib/form/FormItem';
 
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const InputGroup = Input.Group;
 
 import FormFieldWrapper, {
-  FormFieldWrapperProps
-} from "../../../../../../../components/Form/FormFieldWrapper";
-import { RadioChangeEvent } from "antd/lib/radio";
-import { defineMessages, FormattedMessage } from "react-intl";
-import { TimeComparisonOperator } from "../../../../../../../models/datamart/graphdb/QueryDocument";
+  FormFieldWrapperProps,
+} from '../../../../../../../components/Form/FormFieldWrapper';
+import { RadioChangeEvent } from 'antd/lib/radio';
+import { defineMessages, FormattedMessage } from 'react-intl';
+import { TimeComparisonOperator } from '../../../../../../../models/datamart/graphdb/QueryDocument';
 import { DatePickerProps } from 'antd/lib/date-picker';
 
 const messages = defineMessages({
@@ -52,6 +52,7 @@ export interface FormRelativeAbsoluteDateProps extends FormFieldWrapperProps {
   dateComparisonOperator?: any; // here it should be only a TimeComparisonOperator
   // The new Audience Builder doesn't handle list values for Date input
   noListValue?: boolean;
+  handleStringValue?: (value: any) => void;
 }
 
 type Props = FormRelativeAbsoluteDateProps & WrappedFieldProps;
@@ -77,23 +78,21 @@ export default class FormRelativeAbsoluteDate extends React.Component<
   }
 
   componentDidMount() {
-    const { input, noListValue } = this.props;
+    const { input, noListValue, handleStringValue } = this.props;
     if (!input.value || input.value.length === 0) {
       if (this.state.datePickerType === 'RELATIVE') {
         input.onChange(noListValue ? 'now-1d' : ['now-1d']);
       } else {
+        let value;
         if (!this.props.unixTimstamp) {
-          input.onChange(
-            noListValue
-              ? this.getAdjustedAbsoluteTimestamp().toISOString()
-              : [this.getAdjustedAbsoluteTimestamp().toISOString()],
-          );
+          value = this.getAdjustedAbsoluteTimestamp().toISOString();
+          input.onChange(noListValue ? value : [value]);
         } else {
-          input.onChange(
-            noListValue
-              ? this.getAdjustedAbsoluteTimestamp().valueOf()
-              : [this.getAdjustedAbsoluteTimestamp().valueOf()],
-          );
+          value = this.getAdjustedAbsoluteTimestamp().valueOf();
+          input.onChange(noListValue ? value : [value]);
+        }
+        if (handleStringValue) {
+          handleStringValue(value.toString());
         }
       }
     }
@@ -168,7 +167,11 @@ export default class FormRelativeAbsoluteDate extends React.Component<
   };
 
   componentDidUpdate(prevProps: Props) {
-    const { dateComparisonOperator, noListValue } = this.props;
+    const {
+      dateComparisonOperator,
+      noListValue,
+      handleStringValue,
+    } = this.props;
 
     const { dateComparisonOperator: prevDateComparisonOperator } = prevProps;
 
@@ -183,11 +186,14 @@ export default class FormRelativeAbsoluteDate extends React.Component<
         ? this.getAdjustedAbsoluteTimestamp(date).valueOf()
         : this.getAdjustedAbsoluteTimestamp(date);
       this.props.input.onChange(noListValue ? newValue : [newValue]);
+      if (handleStringValue) {
+        handleStringValue(newValue.toString());
+      }
     }
   }
 
   render() {
-    const { disabled, noListValue } = this.props;
+    const { disabled, noListValue, handleStringValue } = this.props;
 
     let validateStatus = 'success' as
       | 'success'
@@ -209,7 +215,9 @@ export default class FormRelativeAbsoluteDate extends React.Component<
       value = !!this.props.input.value
         ? this.getAdjustedAbsoluteTimestamp(
             moment(
-              noListValue ? parseInt(this.props.input.value, 10) : this.props.input.value[0],
+              noListValue
+                ? parseInt(this.props.input.value, 10)
+                : this.props.input.value[0],
             ),
           )
         : this.getAdjustedAbsoluteTimestamp();
@@ -223,7 +231,11 @@ export default class FormRelativeAbsoluteDate extends React.Component<
       const newValue = this.props.unixTimstamp
         ? this.getAdjustedAbsoluteTimestamp(date).valueOf()
         : this.getAdjustedAbsoluteTimestamp(date);
-      return this.props.input.onChange(noListValue ? newValue : [newValue]);
+
+      this.props.input.onChange(noListValue ? newValue : [newValue]);
+      if (handleStringValue) {
+        handleStringValue(newValue.toString());
+      }
     };
 
     const onRadioChange = (e: RadioChangeEvent) => {
@@ -235,6 +247,9 @@ export default class FormRelativeAbsoluteDate extends React.Component<
             : this.getAdjustedAbsoluteTimestamp().toISOString()
           : 'now';
       this.props.input.onChange(noListValue ? newValue : [newValue]);
+      if (handleStringValue) {
+        handleStringValue(newValue.toString());
+      }
     };
     const onPeriodChange = (val: DateRelativePeriodType) => {
       this.setState({ relativePeriod: val }, () =>

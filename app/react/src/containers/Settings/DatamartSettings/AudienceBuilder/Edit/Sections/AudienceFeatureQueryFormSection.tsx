@@ -74,9 +74,10 @@ class AudienceFeatureQueryFormSection extends React.Component<Props> {
         </Actionbar>
       );
     };
-    const actionbar = (query: string, datamartId: string) => {
+    const actionbar = (query: string) => {
       const onSave = () => {
-        this.props.formChange('object_tree_expression', query);
+        const objectTreeExpression = query.split('where').pop();
+        this.props.formChange('object_tree_expression', objectTreeExpression);
         this.props.closeNextDrawer();
       };
       const onClose = () => this.props.closeNextDrawer();
@@ -87,7 +88,7 @@ class AudienceFeatureQueryFormSection extends React.Component<Props> {
         datamartId: this.props.match.params.datamartId,
         renderActionBar: actionbar,
         query: 'SELECT @count{} FROM UserPoint where ' + associatedQuery,
-        queryEditorClassName: 'mcs-audienceFeature_edit_form_query_builder'
+        queryEditorClassName: 'mcs-audienceFeature_edit_form_query_builder',
       },
     });
   };
@@ -101,7 +102,10 @@ class AudienceFeatureQueryFormSection extends React.Component<Props> {
           subtitle={messages.audienceFeatureSectionGeneralSubTitle}
           title={messages.audienceFeatureAssociatedQuery}
         />
-        <Button onClick={this.openEditor} className="m-b-20 float-right mcs-audienceFeature_edit_query_button">
+        <Button
+          onClick={this.openEditor}
+          className="m-b-20 float-right mcs-audienceFeature_edit_query_button"
+        >
           {this.props.intl.formatMessage({
             id: 'jsonql.button.query.edit',
             defaultMessage: 'Edit Query',
