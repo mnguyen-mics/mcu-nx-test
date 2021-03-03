@@ -3,9 +3,7 @@ import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { Link, withRouter } from 'react-router-dom';
 import { RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
-import {
-  TableViewFilters,
-} from '../../../../components/TableView';
+import { TableViewFilters } from '../../../../components/TableView';
 import { CREATIVE_DISPLAY_SEARCH_SETTINGS } from './constants';
 import {
   updateSearch,
@@ -15,11 +13,12 @@ import CreativeScreenshot from '../../CreativeScreenshot';
 import messages from './message';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
 import { DisplayAdResource } from '../../../../models/creative/CreativeResource';
-import {
-  ExtendedTableRowSelection,
-  ActionsColumnDefinition,
-} from '../../../../components/TableView/TableView';
 import { EmptyTableView } from '@mediarithmics-private/mcs-components-library';
+import {
+  ActionsColumnDefinition,
+  DataColumnDefinition,
+  ExtendedTableRowSelection,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 interface DisplayAdsTableProps {
   rowSelection: ExtendedTableRowSelection;
@@ -36,7 +35,6 @@ type JoinedProps = DisplayAdsTableProps &
   InjectedIntlProps;
 
 class DisplayAdsTable extends React.Component<JoinedProps> {
-
   constructor(props: JoinedProps) {
     super(props);
   }
@@ -70,7 +68,7 @@ class DisplayAdsTable extends React.Component<JoinedProps> {
     history.push(
       `/v2/o/${organisationId}/creatives/display/edit/${creative.id}`,
     );
-  }
+  };
 
   render() {
     const {
@@ -83,7 +81,7 @@ class DisplayAdsTable extends React.Component<JoinedProps> {
       rowSelection,
       isUpdatingAuditStatus,
       totalDisplayAds,
-      intl,
+      intl : { formatMessage },
       hasDisplayAds,
       archiveDisplayAd,
     } = this.props;
@@ -91,7 +89,7 @@ class DisplayAdsTable extends React.Component<JoinedProps> {
     const filter = parseSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS);
 
     const searchOptions = {
-      placeholder: intl.formatMessage(messages.creativeModalSearchPlaceholder),
+      placeholder: formatMessage(messages.creativeModalSearchPlaceholder),
       onSearch: (value: string) =>
         this.updateLocationSearch({
           keywords: value,
@@ -107,7 +105,7 @@ class DisplayAdsTable extends React.Component<JoinedProps> {
       onChange: (page: number, size: number) => {
         this.updateLocationSearch({
           currentPage: page,
-          pageSize: size
+          pageSize: size,
         });
         if (
           rowSelection &&
@@ -124,9 +122,9 @@ class DisplayAdsTable extends React.Component<JoinedProps> {
         }),
     };
 
-    const dataColumns = [
+    const dataColumns: Array<DataColumnDefinition<DisplayAdResource>> = [
       {
-        intlMessage: messages.preview,
+        title: formatMessage(messages.preview),
         key: 'asset_path',
         isHideable: false,
         className: 'mcs-table-image-col',
@@ -135,7 +133,7 @@ class DisplayAdsTable extends React.Component<JoinedProps> {
         ),
       },
       {
-        intlMessage: messages.name,
+        title: formatMessage(messages.name),
         key: 'name',
         isHideable: false,
         render: (text: string, record: DisplayAdResource) => (
@@ -148,13 +146,13 @@ class DisplayAdsTable extends React.Component<JoinedProps> {
         ),
       },
       {
-        intlMessage: messages.auditStatus,
+        title: formatMessage(messages.auditStatus),
         key: 'audit_status',
         isHideable: false,
         render: (text: string) => <span>{text}</span>,
       },
       {
-        intlMessage: messages.publishedVersion,
+        title: formatMessage(messages.publishedVersion),
         key: 'published_version',
         isHideable: false,
         render: (text: string) => <span>{text}</span>,
@@ -166,11 +164,11 @@ class DisplayAdsTable extends React.Component<JoinedProps> {
         key: 'action',
         actions: () => [
           {
-            intlMessage: messages.edit,
+            message: formatMessage(messages.edit),
             callback: this.editDisplayCreative,
           },
           {
-            intlMessage: messages.archive,
+            message: formatMessage(messages.archive),
             callback: archiveDisplayAd,
           },
         ],
@@ -190,7 +188,10 @@ class DisplayAdsTable extends React.Component<JoinedProps> {
         />
       </div>
     ) : (
-      <EmptyTableView iconType="display" message={intl.formatMessage(messages.noDisplayCreative)} />
+      <EmptyTableView
+        iconType="display"
+        message={formatMessage(messages.noDisplayCreative)}
+      />
     );
   }
 }

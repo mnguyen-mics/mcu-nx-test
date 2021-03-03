@@ -6,19 +6,22 @@ import TableSelector, {
   TableSelectorProps,
 } from '../../../components/ElementSelector/TableSelector';
 import { SearchFilter } from '../../../components/ElementSelector';
-import { DataColumnDefinition } from '../../../components/TableView/TableView';
 import { injectDatamart, InjectedDatamartProps } from '../../Datamart';
 import { UserWorkspaceResource } from '../../../models/directory/UserProfileResource';
-import { GetServiceOptions, ICatalogService } from '../../../services/CatalogService';
+import {
+  GetServiceOptions,
+  ICatalogService,
+} from '../../../services/CatalogService';
 import { AudienceSegmentServiceItemPublicResource } from '../../../models/servicemanagement/PublicServiceItemResource';
 import { DataResponse } from '../../../services/ApiService';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 import { TYPES } from '../../../constants/types';
 import { lazyInject } from '../../../config/inversify.config';
+import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 const SegmentTableSelector: React.ComponentClass<
   TableSelectorProps<AudienceSegmentServiceItemPublicResource>
-  > = TableSelector;
+> = TableSelector;
 
 const messages = defineMessages({
   segmentSelectorTitle: {
@@ -61,7 +64,6 @@ type Props = SharedAudienceSegmentSelectorProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class SharedAudienceSegmentSelector extends React.Component<Props> {
-
   @lazyInject(TYPES.ICatalogService)
   private _catalogService: ICatalogService;
 
@@ -73,10 +75,14 @@ class SharedAudienceSegmentSelector extends React.Component<Props> {
   };
 
   fetchSegments = (filter: SearchFilter) => {
-    const { match: { params: { organisationId } } } = this.props;
+    const {
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
 
     const options: GetServiceOptions = {
-      ...getPaginatedApiParam(filter.currentPage, filter.pageSize)
+      ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
     };
 
     if (filter.keywords) {
@@ -85,20 +91,28 @@ class SharedAudienceSegmentSelector extends React.Component<Props> {
 
     return this._catalogService.getAudienceSegmentServices(
       organisationId,
-      options
+      options,
     );
   };
 
   fetchSegment = (segmentId: string) => {
-    return this._catalogService.getService(segmentId) as Promise<DataResponse<AudienceSegmentServiceItemPublicResource>>;
+    return this._catalogService.getService(segmentId) as Promise<
+      DataResponse<AudienceSegmentServiceItemPublicResource>
+    >;
   };
 
   render() {
-    const { selectedSegmentIds, close, intl: { formatMessage } } = this.props;
+    const {
+      selectedSegmentIds,
+      close,
+      intl: { formatMessage },
+    } = this.props;
 
-    const columns: Array<DataColumnDefinition<AudienceSegmentServiceItemPublicResource>> = [
+    const columns: Array<
+      DataColumnDefinition<AudienceSegmentServiceItemPublicResource>
+    > = [
       {
-        intlMessage: messages.segmentSelectorColumnName,
+        title: formatMessage(messages.segmentSelectorColumnName),
         key: 'name',
         render: (text, record) => <span>{record.name}</span>,
       },

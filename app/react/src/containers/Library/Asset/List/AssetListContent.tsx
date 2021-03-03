@@ -13,12 +13,12 @@ import {
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import AssetListActionBar from './AssetListActionBar';
 import messages from './messages';
-import { ActionsColumnDefinition } from '../../../../components/TableView/TableView';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IAssetFileService } from '../../../../services/Library/AssetFileService';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
-import { ExclamationCircleOutlined } from '@ant-design/icons'
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { ActionsColumnDefinition, DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 const { Content } = Layout;
 
@@ -58,7 +58,7 @@ class AssetListContent extends React.Component<
       };
       this._assetFileService
         .getAssetsFiles(organisationId, options)
-        .then(results => {
+        .then((results) => {
           this.setState({
             loading: false,
             data: results.data,
@@ -112,20 +112,27 @@ class AssetListContent extends React.Component<
   };
 
   render() {
+    const {
+      intl: { formatMessage },
+    } = this.props;
+
     const actionsColumnsDefinition: Array<
       ActionsColumnDefinition<AssetFileResource>
     > = [
       {
         key: 'action',
         actions: () => [
-          { intlMessage: messages.archive, callback: this.onClickArchive },
+          {
+            message: formatMessage(messages.archive),
+            callback: this.onClickArchive,
+          },
         ],
       },
     ];
 
-    const dataColumnsDefinition = [
+    const dataColumnsDefinition: Array<DataColumnDefinition<AssetFileResource>> = [
       {
-        intlMessage: messages.preview,
+        title: formatMessage(messages.preview),
         key: 'path',
         isHideable: false,
         className: 'mcs-table-image-col',
@@ -148,7 +155,7 @@ class AssetListContent extends React.Component<
         ),
       },
       {
-        intlMessage: messages.name,
+        title: formatMessage(messages.name),
         key: 'original_name',
         isHideable: false,
         render: (text: string, record: AssetFileResource) => (
@@ -164,13 +171,13 @@ class AssetListContent extends React.Component<
         ),
       },
       {
-        intlMessage: messages.type,
+        title: formatMessage(messages.type),
         key: 'mime_type',
         isHideable: false,
         render: (text: string) => <span>{text}</span>,
       },
       {
-        intlMessage: messages.dimensions,
+        title: formatMessage(messages.dimensions),
         key: 'width',
         isHideable: false,
         render: (text: string, record: AssetFileResource) => (
@@ -211,7 +218,4 @@ class AssetListContent extends React.Component<
   }
 }
 
-export default compose(
-  withRouter,
-  injectIntl,
-)(AssetListContent);
+export default compose(withRouter, injectIntl)(AssetListContent);

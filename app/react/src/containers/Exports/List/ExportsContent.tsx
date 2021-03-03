@@ -23,7 +23,6 @@ import {
 } from '../../../utils/LocationSearchHelper';
 import { Export } from '../../../models/exports/exports';
 import messages from './messages';
-import { ActionsColumnDefinition } from '../../../components/TableView/TableView';
 import { TableViewFilters } from '../../../components/TableView';
 import { Index } from '../../../utils';
 import { lazyInject } from '../../../config/inversify.config';
@@ -32,6 +31,10 @@ import { EXPORT_SEARCH_SETTINGS } from './constants';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
 import { Label } from '../../Labels/Labels';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import {
+  ActionsColumnDefinition,
+  DataColumnDefinition,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 const initialState = {
   loading: false,
@@ -142,7 +145,7 @@ class ExportContent extends React.Component<Props, ExportContentState> {
       if (filter.label_id && filter.label_id.length) {
         options.label_ids = filter.label_id;
       }
-      this._exportService.getExports(options).then(results => {
+      this._exportService.getExports(options).then((results) => {
         this.setState({
           loading: false,
           data: results.data,
@@ -230,7 +233,7 @@ class ExportContent extends React.Component<Props, ExportContentState> {
       match: {
         params: { organisationId },
       },
-      intl,
+      intl: { formatMessage },
       location: { search },
       labels,
     } = this.props;
@@ -242,41 +245,40 @@ class ExportContent extends React.Component<Props, ExportContentState> {
         key: 'action',
         actions: () => [
           // { intlMessage: 'EDIT', callback: this.onClickEdit },
-          { intlMessage: messages.archive, callback: this.onClickArchive },
+          {
+            message: formatMessage(messages.archive),
+            callback: this.onClickArchive,
+          },
         ],
       },
     ];
 
-    const columnsDefinitions = {
-      actionsColumnsDefinition,
-
-      dataColumnsDefinition: [
-        {
-          intlMessage: messages.name,
-          key: 'name',
-          isHideable: false,
-          render: (text: string, record: Export) => (
-            <Link
-              className="mcs-campaigns-link"
-              to={`/v2/o/${organisationId}/datastudio/exports/${record.id}`}
-            >
-              {text}
-            </Link>
-          ),
-        },
-        {
-          intlMessage: messages.type,
-          key: 'type',
-          isHideable: false,
-          render: (text: string, record: Export) => <span>{text}</span>,
-        },
-      ],
-    };
+    const dataColumnsDefinition: Array<DataColumnDefinition<Export>> = [
+      {
+        title: formatMessage(messages.name),
+        key: 'name',
+        isHideable: false,
+        render: (text: string, record: Export) => (
+          <Link
+            className="mcs-campaigns-link"
+            to={`/v2/o/${organisationId}/datastudio/exports/${record.id}`}
+          >
+            {text}
+          </Link>
+        ),
+      },
+      {
+        title: formatMessage(messages.type),
+        key: 'type',
+        isHideable: false,
+        render: (text: string, record: Export) => <span>{text}</span>,
+      },
+    ];
 
     const filter = parseSearch(search, EXPORT_SEARCH_SETTINGS);
 
     const searchOptions = {
-      placeholder: intl.formatMessage(messages.searchTitle),
+      placeholder: formatMessage(messages.searchTitle),
       onSearch: (value: string) =>
         this.updateLocationSearch({
           keywords: value,
@@ -304,13 +306,13 @@ class ExportContent extends React.Component<Props, ExportContentState> {
 
     const labelsOptions = {
       labels: labels,
-      selectedLabels: labels.filter(label => {
+      selectedLabels: labels.filter((label) => {
         return filter.label_id.some(
           (filteredLabelId: string) => filteredLabelId === label.id,
         );
       }),
       onChange: (newLabels: Label[]) => {
-        const formattedLabels = newLabels.map(label => label.id);
+        const formattedLabels = newLabels.map((label) => label.id);
         this.updateLocationSearch({
           label_id: formattedLabels,
           currentPage: 1,
@@ -329,10 +331,8 @@ class ExportContent extends React.Component<Props, ExportContentState> {
           </div>
           <hr className="mcs-separator" />
           <TableViewFilters
-            columns={columnsDefinitions.dataColumnsDefinition}
-            actionsColumnsDefinition={
-              columnsDefinitions.actionsColumnsDefinition
-            }
+            columns={dataColumnsDefinition}
+            actionsColumnsDefinition={actionsColumnsDefinition}
             searchOptions={searchOptions}
             dataSource={data}
             loading={loading}

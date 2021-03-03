@@ -5,12 +5,15 @@ import { messages } from '../messages';
 import { Filter } from '../../Common/domain';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { compose } from 'recompose';
-import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 import { EmptyTableView } from '@mediarithmics-private/mcs-components-library';
 import { AudienceFeatureResource } from '../../../../../models/audienceFeature';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
+import {
+  ActionsColumnDefinition,
+  DataColumnDefinition,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 export interface AudienceFeatureTableProps {
   isLoading: boolean;
@@ -20,7 +23,7 @@ export interface AudienceFeatureTableProps {
   onFilterChange: (newFilter: Partial<Filter>) => void;
   filter: Filter;
   deleteAudienceFeature: (audienceFeature: AudienceFeatureResource) => void;
-  relatedTable?: JSX.Element
+  relatedTable?: JSX.Element;
 }
 
 type Props = AudienceFeatureTableProps &
@@ -55,7 +58,7 @@ class AudienceFeatureTable extends React.Component<Props> {
       },
       filter,
       deleteAudienceFeature,
-      relatedTable
+      relatedTable,
     } = this.props;
 
     const pagination = {
@@ -74,7 +77,7 @@ class AudienceFeatureTable extends React.Component<Props> {
         }),
     };
 
-    const dataColumns = [
+    const dataColumns: Array<DataColumnDefinition<AudienceFeatureResource>> = [
       {
         title: 'ID',
         key: 'id',
@@ -83,7 +86,7 @@ class AudienceFeatureTable extends React.Component<Props> {
         render: (text: string) => text,
       },
       {
-        intlMessage: messages.audienceFeatureName,
+        title: formatMessage(messages.audienceFeatureName),
         key: 'name',
         isHideable: false,
         render: (text: string, record: AudienceFeatureResource) => {
@@ -102,14 +105,14 @@ class AudienceFeatureTable extends React.Component<Props> {
         },
       },
       {
-        intlMessage: messages.audienceFeatureDescription,
+        title: formatMessage(messages.audienceFeatureDescription),
         key: 'description',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: string) => text,
       },
       {
-        intlMessage: messages.audienceFeatureObjectTreeExpression,
+        title: formatMessage(messages.audienceFeatureObjectTreeExpression),
         key: 'object_tree_expression',
         isVisibleByDefault: true,
         isHideable: true,
@@ -117,18 +120,18 @@ class AudienceFeatureTable extends React.Component<Props> {
       },
     ];
 
-    const actionColumns: Array<ActionsColumnDefinition<
-      AudienceFeatureResource
-    >> = [
+    const actionColumns: Array<
+      ActionsColumnDefinition<AudienceFeatureResource>
+    > = [
       {
         key: 'action',
         actions: () => [
           {
-            intlMessage: messages.audienceFeatureEdit,
+            message: formatMessage(messages.audienceFeatureEdit),
             callback: this.onEditAudienceFeature,
           },
           {
-            intlMessage: messages.audienceFeatureDelete,
+            message: formatMessage(messages.audienceFeatureDelete),
             callback: deleteAudienceFeature,
           },
         ],

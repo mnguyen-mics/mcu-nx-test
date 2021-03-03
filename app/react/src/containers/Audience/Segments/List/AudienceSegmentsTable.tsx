@@ -4,7 +4,18 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 
-import { ApiOutlined, DatabaseOutlined, DownOutlined, FileImageOutlined, FileOutlined, GlobalOutlined, RocketOutlined, ShareAltOutlined, SolutionOutlined, UsergroupAddOutlined } from '@ant-design/icons';
+import {
+  ApiOutlined,
+  DatabaseOutlined,
+  DownOutlined,
+  FileImageOutlined,
+  FileOutlined,
+  GlobalOutlined,
+  RocketOutlined,
+  ShareAltOutlined,
+  SolutionOutlined,
+  UsergroupAddOutlined,
+} from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import {
   FormattedMessage,
@@ -12,9 +23,7 @@ import {
   InjectedIntlProps,
   injectIntl,
 } from 'react-intl';
-import {
-  TableViewFilters,
-} from '../../../../components/TableView';
+import { TableViewFilters } from '../../../../components/TableView';
 import { SEGMENTS_SEARCH_SETTINGS } from './constants';
 import {
   updateSearch,
@@ -29,7 +38,11 @@ import {
   DatamartSearchSettings,
   compareSearches,
 } from '../../../../utils/LocationSearchHelper';
-import { Button, EmptyTableView, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import {
+  Button,
+  EmptyTableView,
+  McsIcon,
+} from '@mediarithmics-private/mcs-components-library';
 import { formatMetric } from '../../../../utils/MetricHelper';
 import { compose } from 'recompose';
 import {
@@ -46,10 +59,6 @@ import {
 import { getWorkspace } from '../../../../redux/Session/selectors';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 import { MultiSelectProps } from '@mediarithmics-private/mcs-components-library/lib/components/multi-select';
-import {
-  ActionsColumnDefinition,
-  DataColumnDefinition,
-} from '../../../../components/TableView/TableView';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
@@ -61,7 +70,13 @@ import {
   audienceSegmentTypeMessages,
   userListFeedTypeMessages,
 } from '../Dashboard/messages';
-import TreeSelectFilter, { TreeSelectFilterProps } from '../../../../components/TreeSelectFilter';
+import TreeSelectFilter, {
+  TreeSelectFilterProps,
+} from '../../../../components/TreeSelectFilter';
+import {
+  ActionsColumnDefinition,
+  DataColumnDefinition,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 const messages = defineMessages({
   filterByLabel: {
@@ -323,7 +338,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
   }
 
   componentWillUnmount() {
-    this.cancellablePromises.forEach(promise => {
+    this.cancellablePromises.forEach((promise) => {
       promise.cancel();
     });
   }
@@ -335,7 +350,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
     };
     return this._audienceSegmentService
       .getSegments(organisationId, newFilters)
-      .then(res => {
+      .then((res) => {
         this.setState({ hasItems: res.count !== 0 });
       });
   };
@@ -350,7 +365,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         organisationId,
         this.buildApiSearchFilters(filter, datamartId),
       )
-      .then(res => {
+      .then((res) => {
         this.setState({
           list: {
             segments: res.data,
@@ -359,7 +374,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
           },
         });
       })
-      .catch(e => {
+      .catch((e) => {
         notifyError(e);
       });
   };
@@ -391,34 +406,46 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         order_by: filter.orderBy,
       };
     }
-    const isUserList = (t: string) => t === "USER_LIST"
-    const isEdgeOrUserPixel = (t: string) => t === "EDGE" || t === "USER_PIXEL";
+    const isUserList = (t: string) => t === 'USER_LIST';
+    const isEdgeOrUserPixel = (t: string) => t === 'EDGE' || t === 'USER_PIXEL';
     const subtypes: string[] = filter.type.filter(isEdgeOrUserPixel);
-    if(filter.type.some(isUserList))
-      subtypes.push("STANDARD");
-    const types: string[] = filter.type.filter( (t: string) => t !== "EDGE" && t !== "USER_PIXEL")
+    if (filter.type.some(isUserList)) subtypes.push('STANDARD');
+    const types: string[] = filter.type.filter(
+      (t: string) => t !== 'EDGE' && t !== 'USER_PIXEL',
+    );
     if (subtypes.length) {
       formattedFilters = {
         ...formattedFilters,
         subtype: subtypes,
       };
     }
-    const showUserListOnly = types.filter(isUserList).length === 0 && subtypes.length > 0;
+    const showUserListOnly =
+      types.filter(isUserList).length === 0 && subtypes.length > 0;
     const showAllSegmentTypes = types.length === 0 && subtypes.length === 0;
-    const allSegmentTypes = ['USER_LIST', 'USER_QUERY', 'USER_LOOKALIKE', 'USER_ACTIVATION', 'USER_PARTITION', 'USER_DATA_SUBSCRIPTION'];
-    const calculatedTypes = 
-      showUserListOnly ? ['USER_LIST'] : 
-      (showAllSegmentTypes ? allSegmentTypes :
-      types);
+    const allSegmentTypes = [
+      'USER_LIST',
+      'USER_QUERY',
+      'USER_LOOKALIKE',
+      'USER_ACTIVATION',
+      'USER_PARTITION',
+      'USER_DATA_SUBSCRIPTION',
+    ];
+    const calculatedTypes = showUserListOnly
+      ? ['USER_LIST']
+      : showAllSegmentTypes
+      ? allSegmentTypes
+      : types;
     formattedFilters = {
       ...formattedFilters,
-      type: calculatedTypes
+      type: calculatedTypes,
     };
-    const allfeedtypes = ["SCENARIO", "FILE_IMPORT", "TAG"];
-    const feedtypes: string[] = (calculatedTypes.some(isUserList) && filter.feed_type.length === 0) ? allfeedtypes : filter.feed_type;
-    if(filter.type.some(isEdgeOrUserPixel))
-      feedtypes.push("TAG"); // An edge segment can have the feedtype tag, we want to fetch them
-    
+    const allfeedtypes = ['SCENARIO', 'FILE_IMPORT', 'TAG'];
+    const feedtypes: string[] =
+      calculatedTypes.some(isUserList) && filter.feed_type.length === 0
+        ? allfeedtypes
+        : filter.feed_type;
+    if (filter.type.some(isEdgeOrUserPixel)) feedtypes.push('TAG'); // An edge segment can have the feedtype tag, we want to fetch them
+
     if (feedtypes.length) {
       formattedFilters = {
         ...formattedFilters,
@@ -476,7 +503,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
     } = this.props;
     const datamartId = dmId || queryString.parse(search).datamartId;
     const datamarts = workspace(organisationId).datamarts;
-    const datamart = datamarts.find(d => d.id === datamartId);
+    const datamart = datamarts.find((d) => d.id === datamartId);
     // case where there is only one Pionus datamart in the organisation,
     // and there is no datamartFilter and no datamartId in URL
     if (
@@ -572,12 +599,12 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
-      intl,
+      intl: { formatMessage },
     } = this.props;
 
     const dataColumns: Array<DataColumnDefinition<AudienceSegmentShape>> = [
       {
-        intlMessage: messages.type,
+        title: formatMessage(messages.type),
         key: 'type',
         isHideable: false,
         render: (text: string, record: AudienceSegmentResource) => {
@@ -593,21 +620,21 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
               break;
             case 'USER_LIST': {
               typeIcon = <SolutionOutlined />;
-              const subtype = (record as UserListSegment).subtype
-              if (subtype === "EDGE" || subtype === "USER_CLIENT") {
+              const subtype = (record as UserListSegment).subtype;
+              if (subtype === 'EDGE' || subtype === 'USER_CLIENT') {
                 subTypeIcon = <FileImageOutlined />;
-                const subtypeEdge = "EDGE";
-                subMessage = intl.formatMessage(messages[subtypeEdge]);
+                const subtypeEdge = 'EDGE';
+                subMessage = formatMessage(messages[subtypeEdge]);
               }
-              if (subtype === "USER_PIXEL") {
+              if (subtype === 'USER_PIXEL') {
                 subTypeIcon = <GlobalOutlined />;
-                subMessage = intl.formatMessage(messages[subtype]);
+                subMessage = formatMessage(messages[subtype]);
               }
-              if (subtype === "STANDARD") {
+              if (subtype === 'STANDARD') {
                 const feedType = (record as UserListSegment).feed_type;
                 if (feedType === 'FILE_IMPORT') subTypeIcon = <FileOutlined />;
                 if (feedType === 'SCENARIO') subTypeIcon = <ShareAltOutlined />;
-                subMessage = intl.formatMessage(messages[feedType]);
+                subMessage = formatMessage(messages[feedType]);
               }
               break;
             }
@@ -625,7 +652,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
             <div className="mcs-audienceSegmentTable_type">
               <Tooltip
                 placement="top"
-                title={intl.formatMessage(messages[record.type] || text)}
+                title={formatMessage(messages[record.type] || text)}
               >
                 {typeIcon}
               </Tooltip>
@@ -640,7 +667,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         },
       },
       {
-        intlMessage: messages.name,
+        title: formatMessage(messages.name),
         key: 'name',
         isHideable: false,
         render: (text: string, record: AudienceSegmentShape) => (
@@ -656,7 +683,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         ),
       },
       {
-        intlMessage: messages.technicalName,
+        title: formatMessage(messages.technicalName),
         isVisibleByDefault: false,
         key: 'technical_name',
         isHideable: true,
@@ -735,9 +762,9 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
   };
 
   renderTreeSelectFilter = (): React.ReactElement<TreeSelectFilter> => {
-    const { 
-      intl: { formatMessage }, 
-      location: { search } 
+    const {
+      intl: { formatMessage },
+      location: { search },
     } = this.props;
 
     const filter = parseSearch(search, this.getSearchSetting());
@@ -755,33 +782,42 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
           children: [
             {
               title: formatMessage(userListFeedTypeMessages.FILE_IMPORT),
-              value: 'FILE_IMPORT'
-            },{
-              title: formatMessage(userListFeedTypeMessages.SCENARIO),
-              value: 'SCENARIO'
+              value: 'FILE_IMPORT',
             },
-          ]
-        },{
+            {
+              title: formatMessage(userListFeedTypeMessages.SCENARIO),
+              value: 'SCENARIO',
+            },
+          ],
+        },
+        {
           title: formatMessage(audienceSegmentTypeMessages.USER_QUERY),
           value: 'USER_QUERY',
-        },{
+        },
+        {
           title: formatMessage(audienceSegmentTypeMessages.USER_ACTIVATION),
           value: 'USER_ACTIVATION',
-        },{
+        },
+        {
           title: formatMessage(audienceSegmentTypeMessages.USER_PARTITION),
           value: 'USER_PARTITION',
-        },{
+        },
+        {
           title: formatMessage(audienceSegmentTypeMessages.USER_LOOKALIKE),
           value: 'USER_LOOKALIKE',
-        },        {
+        },
+        {
           title: formatMessage(audienceSegmentTypeMessages.USER_PIXEL),
           value: 'USER_PIXEL',
-        },{
+        },
+        {
           title: formatMessage(audienceSegmentTypeMessages.EDGE),
           value: 'EDGE',
         },
       ],
-      selectedItems: filter.type.concat(filter.feed_type.map((ft: string) => `USER_LIST_${ft}`)),
+      selectedItems: filter.type.concat(
+        filter.feed_type.map((ft: string) => `USER_LIST_${ft}`),
+      ),
       handleItemClick: (filters) => {
         this.updateLocationSearch({
           ...filters,
@@ -790,8 +826,8 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       },
     };
 
-    return <TreeSelectFilter {...treeSelectFilterProps}/>
-  }
+    return <TreeSelectFilter {...treeSelectFilterProps} />;
+  };
 
   render() {
     const {
@@ -838,9 +874,9 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         }),
     };
 
-    const actionColumns: Array<ActionsColumnDefinition<
-      AudienceSegmentShape
-    >> = [
+    const actionColumns: Array<
+      ActionsColumnDefinition<AudienceSegmentShape>
+    > = [
       {
         key: 'action',
         actions: () => [
@@ -857,7 +893,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
     ];
 
     const datamartItems = workspace(organisationId)
-      .datamarts.map(d => ({
+      .datamarts.map((d) => ({
         key: d.id,
         value: d.name || d.token,
       }))
@@ -882,7 +918,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
           </div>
         ),
         selectedItems: filter.datamartId
-          ? [datamartItems.find(di => di.key === filter.datamartId)]
+          ? [datamartItems.find((di) => di.key === filter.datamartId)]
           : [datamartItems],
         items: datamartItems,
         singleSelectOnly: true,
@@ -901,7 +937,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
 
     const labelsOptions = {
       labels: this.props.labels,
-      selectedLabels: labels.filter(label => {
+      selectedLabels: labels.filter((label) => {
         return filter.label_id.find(
           (filteredLabelId: string) => filteredLabelId === label.id,
         )
@@ -909,7 +945,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
           : false;
       }),
       onChange: (newLabels: Label[]) => {
-        const formattedLabels = newLabels.map(label => label.id);
+        const formattedLabels = newLabels.map((label) => label.id);
         this.updateLocationSearch({
           label_id: formattedLabels,
           currentPage: 1,
@@ -934,7 +970,10 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         />
       </div>
     ) : (
-      <EmptyTableView iconType="data" message={intl.formatMessage(messages.emptySegments)} />
+      <EmptyTableView
+        iconType="data"
+        message={intl.formatMessage(messages.emptySegments)}
+      />
     );
   }
 }

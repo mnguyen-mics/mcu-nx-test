@@ -15,7 +15,6 @@ import {
 import { RouteComponentProps, withRouter } from 'react-router';
 import { OrganisationResource } from '../../../../../models/organisation/organisation';
 import { lazyInject } from '../../../../../config/inversify.config';
-import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 import { compose } from 'recompose';
 import { injectWorkspace, InjectedWorkspaceProps } from '../../../../Datamart';
 import injectNotifications, {
@@ -23,6 +22,10 @@ import injectNotifications, {
 } from '../../../../Notifications/injectNotifications';
 import { ProcessingResource } from '../../../../../models/processing';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
+import {
+  ActionsColumnDefinition,
+  DataColumnDefinition,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 const { Content } = Layout;
 
@@ -93,7 +96,7 @@ class ProcessingsList extends React.Component<Props, ProcessingPageState> {
         : this.fetchCommunityId(organisationId);
 
       communityIdF
-        .then(comId => {
+        .then((comId) => {
           const options = {
             ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
           };
@@ -108,7 +111,7 @@ class ProcessingsList extends React.Component<Props, ProcessingPageState> {
               return results;
             });
         })
-        .catch(err => {
+        .catch((err) => {
           this.setState({
             loading: false,
             data: [],
@@ -162,7 +165,7 @@ class ProcessingsList extends React.Component<Props, ProcessingPageState> {
             `/v2/o/${organisationId}/settings/organisation/processings`,
           );
         })
-        .catch(err => {
+        .catch((err) => {
           notifyError(err);
         });
     }
@@ -197,7 +200,7 @@ class ProcessingsList extends React.Component<Props, ProcessingPageState> {
             `/v2/o/${organisationId}/settings/organisation/processings`,
           );
         })
-        .catch(err => {
+        .catch((err) => {
           this.closeDeleteModal();
           notifyError(err);
         });
@@ -243,34 +246,36 @@ class ProcessingsList extends React.Component<Props, ProcessingPageState> {
 
     const authorizeEditActions = this.authorizeEditActions();
 
-    const dataColumnsDefinition = [
+    const dataColumnsDefinition: Array<
+      DataColumnDefinition<ProcessingResource>
+    > = [
       {
-        intlMessage: messages.id,
+        title: formatMessage(messages.id),
         key: 'id',
         isHideable: false,
       },
       {
-        intlMessage: messages.name,
+        title: formatMessage(messages.name),
         key: 'name',
         isHideable: false,
       },
       {
-        intlMessage: messages.purpose,
+        title: formatMessage(messages.purpose),
         key: 'purpose',
         isHideable: false,
       },
       {
-        intlMessage: messages.legalBasis,
+        title: formatMessage(messages.legalBasis),
         key: 'legal_basis',
         isHideable: false,
       },
       {
-        intlMessage: messages.technicalName,
+        title: formatMessage(messages.technicalName),
         key: 'technical_name',
         isHideable: false,
       },
       {
-        intlMessage: messages.token,
+        title: formatMessage(messages.token),
         key: 'token',
         isHideable: false,
       },
@@ -281,7 +286,7 @@ class ProcessingsList extends React.Component<Props, ProcessingPageState> {
       message: string;
     } = {
       iconType: 'settings',
-      message: formatMessage(messages.emptyProcessings)
+      message: formatMessage(messages.emptyProcessings),
     };
 
     const actionColumns:
@@ -292,15 +297,15 @@ class ProcessingsList extends React.Component<Props, ProcessingPageState> {
             key: 'action',
             actions: () => [
               {
-                intlMessage: messages.editProcessing,
+                message: formatMessage(messages.editProcessing),
                 callback: this.editProcessing,
               },
               {
-                intlMessage: messages.archiveProcessing,
+                message: formatMessage(messages.archiveProcessing),
                 callback: this.archiveProcessing,
               },
               {
-                intlMessage: messages.deleteProcessing,
+                message: formatMessage(messages.deleteProcessing),
                 callback: this.deleteProcessing,
               },
             ],
@@ -322,9 +327,7 @@ class ProcessingsList extends React.Component<Props, ProcessingPageState> {
           <FormattedMessage {...messages.newProcessing} />
         </Button>
       </span>
-    ) : (
-      undefined
-    );
+    ) : undefined;
 
     const additionnalComponent = (
       <div>

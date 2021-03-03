@@ -15,8 +15,8 @@ import TableSelector, {
   TableSelectorProps,
 } from '../../../../components/ElementSelector/TableSelector';
 import { SearchFilter } from '../../../../components/ElementSelector';
-import { DataColumnDefinition } from '../../../../components/TableView/TableView';
 import { AudienceFeatureResource } from '../../../../models/audienceFeature';
+import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 const AudienceFeatureTableSelector: React.ComponentClass<TableSelectorProps<
   AudienceFeatureResource
@@ -90,12 +90,12 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
     } = this.props;
     const columns: Array<DataColumnDefinition<AudienceFeatureResource>> = [
       {
-        intlMessage: messages.audienceFeatureName,
+        title: formatMessage(messages.audienceFeatureName),
         key: 'name',
         render: (text, record) => <span>{record.name}</span>,
       },
       {
-        intlMessage: messages.audienceFeatureDescription,
+        title: formatMessage(messages.audienceFeatureDescription),
         key: 'description',
         render: (text, record) => <i>{record.description}</i>,
       },

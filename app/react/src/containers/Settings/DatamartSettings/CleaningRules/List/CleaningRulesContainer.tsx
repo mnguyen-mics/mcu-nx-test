@@ -2,7 +2,10 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
-import { Button as McsButton, McsIcon} from '@mediarithmics-private/mcs-components-library';
+import {
+  Button as McsButton,
+  McsIcon,
+} from '@mediarithmics-private/mcs-components-library';
 import { TableViewFilters } from '../../../../../components/TableView';
 import messages from './messages';
 import {
@@ -25,13 +28,16 @@ import { connect } from 'react-redux';
 import { CleaningRulesFilter } from '../domain';
 import { MultiSelectProps } from '@mediarithmics-private/mcs-components-library/lib/components/multi-select';;
 import { getWorkspace } from '../../../../../redux/Session/selectors';
-import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IDatamartService } from '../../../../../services/DatamartService';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
 import { Loading } from '../../../../../components';
+import {
+  ActionsColumnDefinition,
+  DataColumnDefinition,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 const { Content } = Layout;
 
@@ -86,7 +92,7 @@ class CleaningRulesContainer extends React.Component<Props, State> {
   getDatamartItemsFromOrganisationId = (organisationId: string) => {
     const { workspace } = this.props;
 
-    return workspace(organisationId).datamarts.map(d => ({
+    return workspace(organisationId).datamarts.map((d) => ({
       key: d.id,
       value: d.name || d.token,
     }));
@@ -151,7 +157,7 @@ class CleaningRulesContainer extends React.Component<Props, State> {
           .then(() => {
             onCleaningRuleUpdate();
           })
-          .catch(err => {
+          .catch((err) => {
             notifyError(err);
           });
       },
@@ -204,7 +210,7 @@ class CleaningRulesContainer extends React.Component<Props, State> {
             this.setState({ isLoading: false });
             onCleaningRuleUpdate();
           })
-          .catch(err => {
+          .catch((err) => {
             this.setState({ isLoading: false });
             notifyError(err);
           });
@@ -222,7 +228,7 @@ class CleaningRulesContainer extends React.Component<Props, State> {
       cleaningRules,
       isFetchingCleaningRules,
       total,
-      intl,
+      intl: { formatMessage },
     } = this.props;
 
     const { datamartItems, isLoading } = this.state;
@@ -244,7 +250,7 @@ class CleaningRulesContainer extends React.Component<Props, State> {
           </div>
         ),
         selectedItems: filter.datamartId
-          ? [datamartItems.find(di => di.key === filter.datamartId)]
+          ? [datamartItems.find((di) => di.key === filter.datamartId)]
           : [datamartItems[0]],
         items: datamartItems,
         singleSelectOnly: true,
@@ -261,9 +267,11 @@ class CleaningRulesContainer extends React.Component<Props, State> {
       filtersOptions.push(datamartFilter);
     }
 
-    const eventBasedAddedDataColumns = [
+    const eventBasedAddedDataColumns: Array<
+      DataColumnDefinition<ExtendedCleaningRuleResource>
+    > = [
       {
-        intlMessage: messages.channelFilter,
+        title: formatMessage(messages.channelFilter),
         key: 'channel_filter',
         isHideable: false,
         render: (
@@ -273,12 +281,12 @@ class CleaningRulesContainer extends React.Component<Props, State> {
           <span>
             {record.channel_filter
               ? record.channel_filter
-              : intl.formatMessage(messages.all)}
+              : formatMessage(messages.all)}
           </span>
         ),
       },
       {
-        intlMessage: messages.activityTypeFilter,
+        title: formatMessage(messages.activityTypeFilter),
         key: 'activity_type_filter',
         isHideable: false,
         render: (
@@ -288,13 +296,13 @@ class CleaningRulesContainer extends React.Component<Props, State> {
           <span>
             {record.activity_type_filter
               ? record.activity_type_filter
-              : intl.formatMessage(messages.all)}
+              : formatMessage(messages.all)}
           </span>
         ),
       },
       // No other content_type is implemented for the moment
       {
-        intlMessage: messages.contentFilterValue,
+        title: formatMessage(messages.contentFilterValue),
         key: 'filter',
         isHideable: false,
         render: (
@@ -302,35 +310,34 @@ class CleaningRulesContainer extends React.Component<Props, State> {
           record: UserEventCleaningRuleResourceWithFilter,
         ) => (
           <span>
-            {record.filter
-              ? record.filter
-              : intl.formatMessage(messages.noFilter)}
+            {record.filter ? record.filter : formatMessage(messages.noFilter)}
           </span>
         ),
       },
     ];
 
-    const profileBasedAddedDataColumns = [
+    const profileBasedAddedDataColumns: Array<
+      DataColumnDefinition<ExtendedCleaningRuleResource>
+    > = [
       {
-        intlMessage: messages.compartmentFilter,
+        title: formatMessage(messages.compartmentFilter),
         key: 'compartment_filter',
         isHideable: false,
-        render: (
-          text: string,
-          record: UserProfileCleaningRuleResource,
-        ) => (
+        render: (text: string, record: UserProfileCleaningRuleResource) => (
           <span>
             {record.compartment_filter
               ? record.compartment_filter
-              : intl.formatMessage(messages.all)}
+              : formatMessage(messages.all)}
           </span>
         ),
       },
     ];
 
-    const baseDataColumns = [
+    const baseDataColumns: Array<
+      DataColumnDefinition<ExtendedCleaningRuleResource>
+    > = [
       {
-        intlMessage: messages.status,
+        title: formatMessage(messages.status),
         key: 'status',
         isHideable: false,
         render: (text: string, record: ExtendedCleaningRuleResource) => {
@@ -348,7 +355,7 @@ class CleaningRulesContainer extends React.Component<Props, State> {
         },
       },
       {
-        intlMessage: messages.action,
+        title: formatMessage(messages.action),
         key: 'action',
         isHideable: false,
         render: (text: string, record: ExtendedCleaningRuleResource) => (
@@ -356,13 +363,10 @@ class CleaningRulesContainer extends React.Component<Props, State> {
         ),
       },
       {
-        intlMessage: messages.lifeDuration,
+        title: formatMessage(messages.lifeDuration),
         key: 'life_duration',
         isHideable: false,
-        render: (
-          text: string,
-          record: ExtendedCleaningRuleResource,
-        ) => {
+        render: (text: string, record: ExtendedCleaningRuleResource) => {
           if (record.life_duration) {
             const duration = moment.duration(record.life_duration);
             const durationList = [
@@ -398,19 +402,19 @@ class CleaningRulesContainer extends React.Component<Props, State> {
         : profileBasedAddedDataColumns,
     );
 
-    const actionColumns: Array<ActionsColumnDefinition<
-      ExtendedCleaningRuleResource
-    >> = [
+    const actionColumns: Array<
+      ActionsColumnDefinition<ExtendedCleaningRuleResource>
+    > = [
       {
         key: 'action',
         actions: (record: ExtendedCleaningRuleResource) => [
           {
-            intlMessage: messages.editCleaningRule,
+            message: formatMessage(messages.editCleaningRule),
             disabled: record.status !== 'DRAFT',
             callback: this.onEditCleaningRule,
           },
           {
-            intlMessage: messages.deleteCleaningRule,
+            message: formatMessage(messages.deleteCleaningRule),
             disabled: record.status !== 'DRAFT',
             callback: this.onDeleteCleaningRule,
           },

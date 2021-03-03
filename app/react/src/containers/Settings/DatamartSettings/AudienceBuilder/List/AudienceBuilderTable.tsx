@@ -1,16 +1,19 @@
 import * as React from 'react';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import { TableView } from '../../../../../components/TableView';
 import { messages } from '../messages';
 import { Filter } from '../../Common/domain';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { compose } from 'recompose';
-import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 import { EmptyTableView } from '@mediarithmics-private/mcs-components-library';
 import { AudienceBuilderResource } from '../../../../../models/audienceBuilder';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
+import {
+  ActionsColumnDefinition,
+  DataColumnDefinition,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import { TableViewWrapper } from '../../../../../components/TableView';
 
 export interface AudienceBuilderTableProps {
   isLoading: boolean;
@@ -72,7 +75,7 @@ class AudienceBuilderTable extends React.Component<Props> {
         }),
     };
 
-    const dataColumns = [
+    const dataColumns: Array<DataColumnDefinition<AudienceBuilderResource>> = [
       {
         title: 'ID',
         key: 'id',
@@ -81,7 +84,7 @@ class AudienceBuilderTable extends React.Component<Props> {
         render: (text: string) => text,
       },
       {
-        intlMessage: messages.audienceBuilderName,
+        title: formatMessage(messages.audienceBuilderName),
         key: 'name',
         isHideable: false,
         render: (text: string, record: AudienceBuilderResource) => {
@@ -101,18 +104,18 @@ class AudienceBuilderTable extends React.Component<Props> {
       },
     ];
 
-    const actionColumns: Array<ActionsColumnDefinition<
-      AudienceBuilderResource
-    >> = [
+    const actionColumns: Array<
+      ActionsColumnDefinition<AudienceBuilderResource>
+    > = [
       {
         key: 'action',
         actions: () => [
           {
-            intlMessage: messages.audienceBuilderEdit,
+            message: formatMessage(messages.audienceBuilderEdit),
             callback: this.onEditAudienceBuilder,
           },
           {
-            intlMessage: messages.audienceBuilderDelete,
+            message: formatMessage(messages.audienceBuilderDelete),
             callback: deleteAudienceBuilder,
           },
         ],
@@ -126,7 +129,7 @@ class AudienceBuilderTable extends React.Component<Props> {
         className="mcs-table-view-empty mcs-empty-card"
       />
     ) : (
-      <TableView
+      <TableViewWrapper
         columns={dataColumns}
         actionsColumnsDefinition={actionColumns}
         dataSource={dataSource}

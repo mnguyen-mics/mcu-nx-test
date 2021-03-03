@@ -9,11 +9,11 @@ import {
 } from '../../../../utils/ApiHelper';
 import { TableSelectorProps } from '../../../../components/ElementSelector/TableSelector';
 import { TableSelector } from '../../../../components/index';
-import { DataColumnDefinition } from '../../../../components/TableView/TableView';
 import { AttributionModel } from '../../../../models/Plugins';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IAttributionModelService } from '../../../../services/AttributionModelService';
+import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 const AttributionModelTableSelector: React.ComponentClass<
   TableSelectorProps<AttributionModel>
@@ -52,7 +52,11 @@ class AttributionModelSelector extends React.Component<Props> {
   private _attributionModelService: IAttributionModelService;
 
   fetchAttributionModels = (filter: SearchFilter) => {
-    const { match: { params: { organisationId } } } = this.props;
+    const {
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
     const options: PaginatedApiParam = {
       ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
     };
@@ -63,7 +67,9 @@ class AttributionModelSelector extends React.Component<Props> {
   };
 
   fetchAttributionModel = (attributionModelId: string) => {
-    return this._attributionModelService.getAttributionModel(attributionModelId);
+    return this._attributionModelService.getAttributionModel(
+      attributionModelId,
+    );
   };
 
   saveAttributionModels = (
@@ -82,17 +88,16 @@ class AttributionModelSelector extends React.Component<Props> {
 
     const columns: Array<DataColumnDefinition<AttributionModel>> = [
       {
-        intlMessage: messages.attributionModelSelectorColumnType,
+        title: formatMessage(messages.attributionModelSelectorColumnType),
         key: 'type',
         render: (text, record) => <span>{record.id} (WITH PROCESSOR)</span>,
       },
       {
-        intlMessage: messages.attributionModelSelectorColumnProcessor,
+        title: formatMessage(messages.attributionModelSelectorColumnProcessor),
         key: 'processor',
         render: (text, record) => (
           <span>
-            {record.name}
-            ({record.group_id}:{record.artifact_id})
+            {record.name}({record.group_id}:{record.artifact_id})
           </span>
         ),
       },

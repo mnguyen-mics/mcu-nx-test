@@ -12,16 +12,21 @@ import {
 } from '../../../../../utils/LocationSearchHelper';
 import messages from './messages';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
-import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 import { MlFunctionResource } from '../../../../../models/datamart/MlFunction';
 import { IMlFunctionService } from '../../../../../services/MlFunctionService';
-import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../../Notifications/injectNotifications';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IPluginService } from '../../../../../services/PluginService';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import {
+  ActionsColumnDefinition,
+  DataColumnDefinition,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 const { Content } = Layout;
 
@@ -66,10 +71,7 @@ type Props = RouteComponentProps<RouterProps> &
   InjectedIntlProps &
   InjectedNotificationProps;
 
-class MlFunctionsContent extends Component<
-  Props,
-  MlFunctionsContentState
-  > {
+class MlFunctionsContent extends Component<Props, MlFunctionsContentState> {
   @lazyInject(TYPES.IMlFunctionService)
   private _mlFunctionService: IMlFunctionService;
 
@@ -82,7 +84,7 @@ class MlFunctionsContent extends Component<
   }
 
   archiveMlFunction = (mlFunctionService: string) => {
-    return Promise.resolve()
+    return Promise.resolve();
   };
 
   fetchMlFunctions = (organisationId: string, filter: Filters) => {
@@ -90,15 +92,17 @@ class MlFunctionsContent extends Component<
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      this._mlFunctionService.listMlFunctions(organisationId, options).then(
-        (results) => {
-          const promises = results.data.map(sp => {
+      this._mlFunctionService
+        .listMlFunctions(organisationId, options)
+        .then((results) => {
+          const promises = results.data.map((sp) => {
             return new Promise((resolve, reject) => {
-              this._pluginService.getEngineVersion(sp.version_id)
-                .then(mlFunction => {
+              this._pluginService
+                .getEngineVersion(sp.version_id)
+                .then((mlFunction) => {
                   return this._pluginService.getEngineProperties(mlFunction.id);
                 })
-                .then(v => resolve(v));
+                .then((v) => resolve(v));
             });
           });
           Promise.all(promises).then((spProperties: PluginProperty[]) => {
@@ -115,7 +119,7 @@ class MlFunctionsContent extends Component<
             });
           });
         })
-        .catch(err => {
+        .catch((err) => {
           this.props.notifyError(err);
           this.setState({ loading: false });
         });
@@ -174,9 +178,7 @@ class MlFunctionsContent extends Component<
     } = this.props;
 
     history.push(
-      `/v2/o/${organisationId}/settings/datamart/ml_functions/${
-      mlFunction.id
-      }/edit`,
+      `/v2/o/${organisationId}/settings/datamart/ml_functions/${mlFunction.id}/edit`,
     );
   };
 
@@ -186,23 +188,30 @@ class MlFunctionsContent extends Component<
         params: { organisationId },
       },
       history,
+      intl: { formatMessage },
     } = this.props;
 
     const actionsColumnsDefinition: Array<
       ActionsColumnDefinition<MlFunction>
     > = [
-        {
-          key: 'action',
-          actions: () => [
-            { intlMessage: messages.edit, callback: this.onClickEdit },
-            { intlMessage: messages.archive, callback: this.onClickArchive },
-          ],
-        },
-      ];
-
-    const dataColumnsDefinition = [
       {
-        intlMessage: messages.name,
+        key: 'action',
+        actions: () => [
+          {
+            message: formatMessage(messages.edit),
+            callback: this.onClickEdit,
+          },
+          {
+            message: formatMessage(messages.archive),
+            callback: this.onClickArchive,
+          },
+        ],
+      },
+    ];
+
+    const dataColumnsDefinition: Array<DataColumnDefinition<MlFunction>> = [
+      {
+        title: formatMessage(messages.name),
         key: 'status',
         isHideable: false,
         render: (text: string, record: MlFunction) => (
@@ -212,15 +221,13 @@ class MlFunctionsContent extends Component<
         ),
       },
       {
-        intlMessage: messages.name,
+        title: formatMessage(messages.name),
         key: 'name',
         isHideable: false,
         render: (text: string, record: MlFunction) => (
           <Link
             className="mcs-campaigns-link"
-            to={`/v2/o/${organisationId}/settings/datamart/ml_functions/${
-              record.id
-              }/edit`}
+            to={`/v2/o/${organisationId}/settings/datamart/ml_functions/${record.id}/edit`}
           >
             {text}
           </Link>
@@ -233,7 +240,7 @@ class MlFunctionsContent extends Component<
       message: string;
     } = {
       iconType: 'settings',
-      message: this.props.intl.formatMessage(messages.empty)
+      message: this.props.intl.formatMessage(messages.empty),
     };
 
     const onClick = () =>
@@ -282,5 +289,5 @@ class MlFunctionsContent extends Component<
 export default compose<Props, {}>(
   withRouter,
   injectIntl,
-  injectNotifications
+  injectNotifications,
 )(MlFunctionsContent);

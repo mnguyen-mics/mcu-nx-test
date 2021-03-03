@@ -9,7 +9,6 @@ import { Card } from '@mediarithmics-private/mcs-components-library';
 import { Filters } from '../../../components/ItemList';
 import { Export, ExportExecution } from '../../../models/exports/exports';
 import ExportActionbar from './ExportActionbar';
-import TableView from '../../../components/TableView/TableView';
 import log from '../../../utils/Logger';
 import LocalStorage from '../../../services/LocalStorage';
 import {
@@ -26,6 +25,8 @@ import { TYPES } from '../../../constants/types';
 import { IExportService } from '../../../services/Library/ExportService';
 import { Labels } from '../../Labels';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
+import { TableViewWrapper } from '../../../components/TableView';
+import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 const { Content } = Layout;
 
@@ -212,21 +213,21 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
       intl: { formatMessage },
     } = this.props;
 
-    const dataColumns = [
+    const dataColumns: Array<DataColumnDefinition<ExportExecution>> = [
       {
-        intlMessage: messages.status,
+        title: formatMessage(messages.status),
         key: 'status',
         isHideable: false,
         render: (text: string) => text,
       },
       {
-        intlMessage: messages.creationDate,
+        title: formatMessage(messages.creationDate),
         key: 'creation_date',
         isHideable: false,
         render: (text: string) => moment(text).format('DD/MM/YYYY HH:mm:ss'),
       },
       {
-        intlMessage: messages.startDate,
+        title: formatMessage(messages.startDate),
         key: 'start_date',
         isHideable: false,
         render: (text: string) =>
@@ -324,7 +325,7 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
             )}
             <Card title={formatMessage(messages.exportExecutionsTitle)}>
               <hr />
-              <TableView
+              <TableViewWrapper
                 dataSource={exportExecutions.items}
                 columns={this.buildColumnDefinition().dataColumnsDefinition}
                 pagination={pagination}

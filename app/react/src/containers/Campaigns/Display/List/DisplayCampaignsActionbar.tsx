@@ -36,9 +36,9 @@ import { CampaignStatus } from '../../../../models/campaign/constants/index';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import { ExtendedTableRowSelection } from '../../../../components/TableView/TableView';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
+import { ExtendedTableRowSelection } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 const messagesMap = defineMessages({
   setStatus: {

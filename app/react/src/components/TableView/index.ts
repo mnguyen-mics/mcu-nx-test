@@ -1,7 +1,4 @@
 import TableViewFilters from './TableViewFilters';
-import TableView from './TableView';
+import TableViewWrapper from './TableViewWrapper';
 
-export {
-  TableViewFilters,
-  TableView,
-};
+export { TableViewFilters, TableViewWrapper };

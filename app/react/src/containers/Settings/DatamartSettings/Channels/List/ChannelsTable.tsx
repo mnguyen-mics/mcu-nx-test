@@ -1,27 +1,31 @@
 import * as React from 'react';
-import { ChannelResourceShape, ChannelResourceShapeWithAnalytics } from '../../../../../models/settings/settings';
+import {
+  ChannelResourceShape,
+  ChannelResourceShapeWithAnalytics,
+} from '../../../../../models/settings/settings';
 import { ChannelFilter } from './domain';
 import { MultiSelectProps } from '@mediarithmics-private/mcs-components-library/lib/components/multi-select';;
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
 import { TablePaginationConfig } from 'antd/lib/table';
-import {
-  DataColumnDefinition,
-  ActionsColumnDefinition,
-} from '../../../../../components/TableView/TableView';
 import messages from './messages';
-import { Button, EmptyTableView } from '@mediarithmics-private/mcs-components-library';
-import moment from 'moment';
 import {
-  TableViewFilters,
-} from '../../../../../components/TableView';
+  Button,
+  EmptyTableView,
+} from '@mediarithmics-private/mcs-components-library';
+import moment from 'moment';
+import { TableViewFilters } from '../../../../../components/TableView';
 import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 import { getWorkspace } from '../../../../../redux/Session/selectors';
 import { connect } from 'react-redux';
 import { SearchProps } from 'antd/lib/input';
 import { formatMetric } from '../../../../../utils/MetricHelper';
+import {
+  ActionsColumnDefinition,
+  DataColumnDefinition,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 export interface ChannelsTableProps {
   isFetchingChannels: boolean;
@@ -81,9 +85,11 @@ class ChannelsTable extends React.Component<Props> {
         }),
     };
 
-    const dataColumns: Array<DataColumnDefinition<ChannelResourceShapeWithAnalytics>> = [
+    const dataColumns: Array<
+      DataColumnDefinition<ChannelResourceShapeWithAnalytics>
+    > = [
       {
-        intlMessage: messages.channelName,
+        title: formatMessage(messages.channelName),
         key: 'name',
         isHideable: false,
         render: (text: string, record: ChannelResourceShapeWithAnalytics) => {
@@ -91,56 +97,52 @@ class ChannelsTable extends React.Component<Props> {
             onEditChannel(record);
           };
 
-          return (
-            <Button onClick={handleEditChannel}>
-              {text}
-            </Button>
-          );
+          return <Button onClick={handleEditChannel}>{text}</Button>;
         },
       },
       {
-        intlMessage: messages.channelType,
+        title: formatMessage(messages.channelType),
         key: 'type',
         isVisibleByDefault: true,
         isHideable: true,
       },
       {
-        intlMessage: messages.channelToken,
+        title: formatMessage(messages.channelToken),
         key: 'token',
         isVisibleByDefault: true,
         isHideable: true,
       },
       {
-        intlMessage: messages.lastSevenDaysActivities,
+        title: formatMessage(messages.lastSevenDaysActivities),
         key: 'activities',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: string, record: ChannelResourceShapeWithAnalytics) => {
-          return formatMetric(record.sessions, "0,0");
-        }
+          return formatMetric(record.sessions, '0,0');
+        },
       },
       {
-        intlMessage: messages.lastSevenDaysUsers,
+        title: formatMessage(messages.lastSevenDaysUsers),
         key: 'users',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: string, record: ChannelResourceShapeWithAnalytics) => {
-          return formatMetric(record.users, "0,0");
-        }
+          return formatMetric(record.users, '0,0');
+        },
       },
       {
-        intlMessage: messages.channelDatamartName,
+        title: formatMessage(messages.channelDatamartName),
         key: 'datamart_name',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: string, record: ChannelResourceShape) => {
-          const datamart = datamarts.find(d => d.id === record.datamart_id);
+          const datamart = datamarts.find((d) => d.id === record.datamart_id);
 
           return datamart ? datamart.name : '';
         },
       },
       {
-        intlMessage: messages.channelCreationDate,
+        title: formatMessage(messages.channelCreationDate),
         key: 'creation_ts',
         isVisibleByDefault: true,
         isHideable: true,
@@ -158,18 +160,18 @@ class ChannelsTable extends React.Component<Props> {
       defaultValue: filter.keywords,
     };
 
-    const actionColumns: Array<ActionsColumnDefinition<
-      ChannelResourceShape
-    >> = [
+    const actionColumns: Array<
+      ActionsColumnDefinition<ChannelResourceShape>
+    > = [
       {
         key: 'action',
         actions: () => [
           {
-            intlMessage: messages.editChannel,
+            message: formatMessage(messages.editChannel),
             callback: onEditChannel,
           },
           {
-            intlMessage: messages.deleteChannel,
+            message: formatMessage(messages.deleteChannel),
             callback: onDeleteChannel,
           },
         ],

@@ -21,6 +21,7 @@ import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
+import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 const { Content } = Layout;
 
@@ -99,7 +100,7 @@ export const messages = defineMessages({
   myServiceOffersEdit: {
     id: 'settings.myOffers.edit',
     defaultMessage: 'Edit offer',
-  }
+  },
 });
 
 interface RouterProps {
@@ -117,7 +118,6 @@ type Props = RouteComponentProps<RouterProps> &
   InjectedNotificationProps;
 
 class SubscribedOffersListPage extends React.Component<Props, State> {
-
   @lazyInject(TYPES.ICatalogService)
   private _catalogService: ICatalogService;
 
@@ -137,15 +137,16 @@ class SubscribedOffersListPage extends React.Component<Props, State> {
     const options = {
       ...getPaginatedApiParam(filters.currentPage, filters.pageSize),
     };
-    this._catalogService.getSubscribedOffers(organisationId, options)
-      .then(resp => {
+    this._catalogService
+      .getSubscribedOffers(organisationId, options)
+      .then((resp) => {
         this.setState({
           loading: false,
           data: resp.data,
           total: resp.total || resp.count,
         });
       })
-      .catch(err => {
+      .catch((err) => {
         this.setState({
           loading: false,
         });
@@ -160,26 +161,27 @@ class SubscribedOffersListPage extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
+      intl: { formatMessage },
     } = this.props;
 
-    const dataColumnsDefinition = [
+    const dataColumnsDefinition: Array<
+      DataColumnDefinition<ServiceItemOfferResource>
+    > = [
       {
-        intlMessage: messages.name,
+        title: formatMessage(messages.name),
         key: 'name',
         isHideable: false,
         render: (text: string, record: ServiceItemOfferResource) => (
           <Link
             className="mcs-campaigns-link"
-            to={`/v2/o/${organisationId}/settings/services/subscribed_offers/${
-              record.id
-              }/service_item_conditions`}
+            to={`/v2/o/${organisationId}/settings/services/subscribed_offers/${record.id}/service_item_conditions`}
           >
             {text}
           </Link>
         ),
       },
       {
-        intlMessage: messages.creditedAccount,
+        title: formatMessage(messages.creditedAccount),
         key: 'credited_account_name',
         isHideable: false,
         render: (text: string, record: ServiceItemOfferResource) => {
@@ -187,7 +189,7 @@ class SubscribedOffersListPage extends React.Component<Props, State> {
         },
       },
       {
-        intlMessage: messages.providerName,
+        title: formatMessage(messages.providerName),
         key: 'provider_name',
         isHideable: false,
         render: (text: string, record: ServiceItemOfferResource) => {

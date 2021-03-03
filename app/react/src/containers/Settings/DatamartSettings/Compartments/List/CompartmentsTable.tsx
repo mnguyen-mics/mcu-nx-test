@@ -7,7 +7,10 @@ import { Filter } from '../../Common/domain';
 import { MultiSelectProps } from '@mediarithmics-private/mcs-components-library/lib/components/multi-select';;
 import { TableViewFilters } from '../../../../../components/TableView';
 import messages from './messages';
-import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
+import {
+  ActionsColumnDefinition,
+  DataColumnDefinition,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 export interface CompartmentsTableProps {
   isFetchingCompartments: boolean;
@@ -58,6 +61,7 @@ class CompartmentsTable extends React.Component<Props> {
       onFilterChange,
       filter,
       filtersOptions,
+      intl: { formatMessage },
     } = this.props;
 
     const pagination = {
@@ -78,18 +82,24 @@ class CompartmentsTable extends React.Component<Props> {
       },
     };
 
-    const dataColumns = [
+    const dataColumns: Array<
+      DataColumnDefinition<UserAccountCompartmentDatamartSelectionResource>
+    > = [
       {
-        intlMessage: messages.compartment_id,
+        title: formatMessage(messages.compartment_id),
         key: 'compartment_id',
         isHideable: false,
         render: (
           text: string,
           record: UserAccountCompartmentDatamartSelectionResource,
-      ) => <span>{text} {record.default && " (Default)"}</span>,
+        ) => (
+          <span>
+            {text} {record.default && ' (Default)'}
+          </span>
+        ),
       },
       {
-        intlMessage: messages.name,
+        title: formatMessage(messages.name),
         key: 'name',
         isHideable: false,
         render: (
@@ -98,7 +108,7 @@ class CompartmentsTable extends React.Component<Props> {
         ) => <span>{text}</span>,
       },
       {
-        intlMessage: messages.token,
+        title: formatMessage(messages.token),
         key: 'token',
         isHideable: false,
         render: (
@@ -108,23 +118,23 @@ class CompartmentsTable extends React.Component<Props> {
       },
     ];
 
-    const actionColumns: Array<ActionsColumnDefinition<
-      UserAccountCompartmentDatamartSelectionResource
-    >> = [
+    const actionColumns: Array<
+      ActionsColumnDefinition<UserAccountCompartmentDatamartSelectionResource>
+    > = [
       {
         key: 'action',
         actions: () => [
           {
-            intlMessage: messages.editCompartment,
+            message: formatMessage(messages.editCompartment),
             callback: this.editCompartment,
           },
           {
-            intlMessage: messages.archiveCompartment,
-            disabled: true,            
+            message: formatMessage(messages.archiveCompartment),
+            disabled: true,
             callback: this.voidFunction,
           },
           {
-            intlMessage: messages.deleteCompartment,
+            message: formatMessage(messages.deleteCompartment),
             disabled: true,
             callback: this.voidFunction,
           },

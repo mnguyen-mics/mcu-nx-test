@@ -4,7 +4,6 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { Row, Col } from 'antd';
 import messages from '../messages';
-import { TableView } from '../../../../../components/TableView';
 import { formatMetric } from '../../../../../utils/MetricHelper';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 
@@ -14,6 +13,8 @@ import {
 } from '../../../../../utils/LocationSearchHelper';
 import { McsDateRangePicker } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
+import { TableViewWrapper } from '../../../../../components/TableView';
+import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 export interface MediaPerformance {
   display_network_name: string;
@@ -119,9 +120,9 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
       return parseFloat(a[key]) - parseFloat(b[key]);
     };
 
-    const dataColumns = [
+    const dataColumns: Array<DataColumnDefinition<MediaPerformance>> = [
       {
-        intlMessage: messages.displayNetworkName,
+        title: formatMessage(messages.displayNetworkName),
         key: 'display_network_name',
         isHideable: false,
         render: (text: string) =>
@@ -134,19 +135,19 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
           ),
       },
       {
-        intlMessage: messages.name,
+        title: formatMessage(messages.name),
         key: 'media_id',
         isHideable: false,
         render: (text: string) => <span>{text}</span>,
       },
       {
-        intlMessage: messages.format,
+        title: formatMessage(messages.format),
         key: 'format',
         isHideable: false,
         render: (text: string) => <span>{text}</span>,
       },
       {
-        intlMessage: messages.impressions,
+        title: formatMessage(messages.impressions),
         key: 'impressions',
         isVisibleByDefault: true,
         isHideable: true,
@@ -155,7 +156,7 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
           sorter(a, b, 'impressions'),
       },
       {
-        intlMessage: messages.clicks,
+        title: formatMessage(messages.clicks),
         key: 'clicks',
         isVisibleByDefault: true,
         isHideable: true,
@@ -164,7 +165,7 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
           sorter(a, b, 'clicks'),
       },
       {
-        intlMessage: messages.cpm,
+        title: formatMessage(messages.cpm),
         key: 'cpm',
         isVisibleByDefault: true,
         isHideable: true,
@@ -173,7 +174,7 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
           sorter(a, b, 'cpm'),
       },
       {
-        intlMessage: messages.ctr,
+        title: formatMessage(messages.ctr),
         key: 'ctr',
         isVisibleByDefault: true,
         isHideable: true,
@@ -183,7 +184,7 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
           sorter(a, b, 'ctr'),
       },
       {
-        intlMessage: messages.cpc,
+        title: formatMessage(messages.cpc),
         key: 'cpc',
         isVisibleByDefault: true,
         isHideable: true,
@@ -192,7 +193,7 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
           sorter(a, b, 'cpc'),
       },
       {
-        intlMessage: messages.impressions_cost,
+        title: formatMessage(messages.impressions_cost),
         key: 'impressions_cost',
         isVisibleByDefault: true,
         isHideable: true,
@@ -217,7 +218,7 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
           <div className="mcs-card-button">{this.renderDatePicker()}</div>
         </Col>
         <Col span={24}>
-          <TableView
+          <TableViewWrapper
             columns={dataColumns}
             dataSource={dataSet}
             loading={isFetchingMediaStat}

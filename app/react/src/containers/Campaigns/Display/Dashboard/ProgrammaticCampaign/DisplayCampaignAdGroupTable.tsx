@@ -4,18 +4,19 @@ import { withRouter } from 'react-router-dom';
 import { Switch } from 'antd';
 import { compose } from 'recompose';
 import messages from '../messages';
-import { TableView } from '../../../../../components/TableView/index';
 import { formatMetric } from '../../../../../utils/MetricHelper';
 import { RouteComponentProps } from 'react-router';
 import { AdGroupResource } from '../../../../../models/campaign/display/AdGroupResource';
 import { AdGroupStatus } from '../../../../../models/campaign/constants/index';
-import {
-  ExtendedTableRowSelection,
-  ActionsColumnDefinition,
-  ActionDefinition,
-} from '../../../../../components/TableView/TableView';
 import { DisplayCampaignInfoResource } from '../../../../../models/campaign/display';
 import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import {
+  ActionDefinition,
+  ActionsColumnDefinition,
+  DataColumnDefinition,
+  ExtendedTableRowSelection,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import { TableViewWrapper } from '../../../../../components/TableView';
 
 export interface UpdateMessage {
   title: string;
@@ -70,9 +71,7 @@ class DisplayCampaignAdGroupTable extends React.Component<
     } = this.props;
 
     history.push({
-      pathname: `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/edit/${
-        adgroup.id
-      }`,
+      pathname: `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/edit/${adgroup.id}`,
       state: { from: `${location.pathname}${location.search}` },
     });
   };
@@ -109,6 +108,8 @@ class DisplayCampaignAdGroupTable extends React.Component<
       history,
       dataSet,
       rowSelection,
+      intl: { formatMessage },
+      updateAdGroup,
     } = this.props;
 
     const renderMetricData = (
@@ -124,10 +125,6 @@ class DisplayCampaignAdGroupTable extends React.Component<
     };
 
     const changeAdGroupStatus = (record: AdGroupResource, checked: boolean) => {
-      const {
-        updateAdGroup,
-        intl: { formatMessage },
-      } = this.props;
       const status: AdGroupStatus = checked ? 'ACTIVE' : 'PAUSED';
       const initialStatus = checked ? 'PAUSED' : 'ACTIVE';
       const successMessage = checked
@@ -170,9 +167,9 @@ class DisplayCampaignAdGroupTable extends React.Component<
       );
     };
 
-    const dataColumns = [
+    const dataColumns: Array<DataColumnDefinition<AdGroupResource>> = [
       {
-        intlMessage: messages.status,
+        title: formatMessage(messages.status),
         key: 'status',
         isHideable: false,
         render: (text: string, record: AdGroupResource) => {
@@ -197,7 +194,7 @@ class DisplayCampaignAdGroupTable extends React.Component<
         },
       },
       {
-        intlMessage: messages.name,
+        title: formatMessage(messages.name),
         key: 'name',
         isHideable: false,
         render: (text: any, record: AdGroupResource) => {
@@ -216,28 +213,28 @@ class DisplayCampaignAdGroupTable extends React.Component<
       },
 
       {
-        intlMessage: messages.impressions,
+        title: formatMessage(messages.impressions),
         key: 'impressions',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: any) => renderMetricData(text, '0,0'),
       },
       {
-        intlMessage: messages.clicks,
+        title: formatMessage(messages.clicks),
         key: 'clicks',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: any) => renderMetricData(text, '0,0'),
       },
       {
-        intlMessage: messages.cpm,
+        title: formatMessage(messages.cpm),
         key: 'cpm',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: any) => renderMetricData(text, '0,0.00', 'EUR'),
       },
       {
-        intlMessage: messages.ctr,
+        title: formatMessage(messages.ctr),
         key: 'ctr',
         isVisibleByDefault: true,
         isHideable: true,
@@ -245,14 +242,14 @@ class DisplayCampaignAdGroupTable extends React.Component<
           renderMetricData(parseFloat(text) / 100, '0.000 %'),
       },
       {
-        intlMessage: messages.cpc,
+        title: formatMessage(messages.cpc),
         key: 'cpc',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: any) => renderMetricData(text, '0,0.00', 'EUR'),
       },
       {
-        intlMessage: messages.impressions_cost,
+        title: formatMessage(messages.impressions_cost),
         key: 'impressions_cost',
         isVisibleByDefault: true,
         isHideable: true,
@@ -276,11 +273,11 @@ class DisplayCampaignAdGroupTable extends React.Component<
     ) {
       actions.push(
         {
-          intlMessage: messages.editCampaign,
+          message: formatMessage(messages.editCampaign),
           callback: this.editCampaign,
         },
         {
-          intlMessage: messages.duplicate,
+          message: formatMessage(messages.duplicate),
           callback: this.duplicateCampaign,
         },
       );
@@ -312,7 +309,7 @@ class DisplayCampaignAdGroupTable extends React.Component<
     };
 
     return (
-      <TableView
+      <TableViewWrapper
         columns={dataColumns}
         actionsColumnsDefinition={actionColumns}
         dataSource={dataSet}
