@@ -138,14 +138,8 @@ export const formatQuery = (query: QueryDocument) => {
               expressions: exp.expressions.map(
                 (e: AudienceBuilderParametricPredicateNode) => {
                   const parameters: any = {};
-                  const formatValue = (v: any) => {
-                    if (typeof v === 'number') {
-                      return v.toString();
-                    }
-                    return v;
-                  };
                   Object.keys(e.parameters).forEach(p => {
-                    const value = formatValue(e.parameters[p]);
+                    const value = e.parameters[p];
                     if (value) {
                       parameters[`${p}`] = value;
                     }

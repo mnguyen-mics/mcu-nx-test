@@ -1,30 +1,27 @@
 import * as React from 'react';
 
 // TS Interfaces
-import { Input } from 'antd';
-import { InputProps } from 'antd/lib/input/Input';
+import { InputNumber } from 'antd';
+import { InputNumberProps } from 'antd/lib/input-number';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { TooltipPropsWithTitle } from 'antd/lib/tooltip';
 import { WrappedFieldProps } from 'redux-form';
 
-import FormFieldWrapper, { FormFieldWrapperProps } from '../../components/Form/FormFieldWrapper';
+import FormFieldWrapper, { FormFieldWrapperProps } from './FormFieldWrapper';
 
-export interface FormInputProps extends FormFieldWrapperProps {
+export interface FormInputNumberProps extends FormFieldWrapperProps {
   formItemProps?: FormItemProps;
-  inputProps?: InputProps;
+  inputNumberProps?: InputNumberProps;
   helpToolTipProps?: TooltipPropsWithTitle;
-  textArea?: boolean;
   small?: boolean;
 }
 
-const FormInput: React.FunctionComponent<FormInputProps & WrappedFieldProps> = props => {
+const FormInputNumber: React.FunctionComponent<FormInputNumberProps & WrappedFieldProps> = props => {
 
   let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
 
   if (props.meta.touched && props.meta.invalid) validateStatus = 'error';
   if (props.meta.touched && props.meta.warning) validateStatus = 'warning';
-
-  const InputComponent = props.textArea ? Input.TextArea : Input;
 
   return (
     <FormFieldWrapper
@@ -34,20 +31,13 @@ const FormInput: React.FunctionComponent<FormInputProps & WrappedFieldProps> = p
       small={props.small}
       {...props.formItemProps}
     >
-      {/* @ts-ignore */}
-      <InputComponent
+      <InputNumber
         id={props.input.name}
         {...props.input}
-        {...props.inputProps}
+        {...props.inputNumberProps}
       />
     </FormFieldWrapper>
   );
 };
 
-FormInput.defaultProps = {
-  formItemProps: {},
-  inputProps: {},
-  helpToolTipProps: {title: ''},
-};
-
-export default FormInput;
+export default FormInputNumber;

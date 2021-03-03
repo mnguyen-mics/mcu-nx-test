@@ -25,7 +25,7 @@ const defaultRowProps: Partial<RowProps> = {
   align: 'middle',
 };
 
-const FormFieldWrapper: React.SFC<FormItemProps & FormFieldWrapperProps> = props => {
+const FormFieldWrapper: React.FunctionComponent<FormItemProps & FormFieldWrapperProps> = props => {
 
   const {
     children,

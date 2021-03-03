@@ -9,8 +9,8 @@ import {
   FormMultiTagField,
   FormSelectField,
   DefaultSelect,
-  FormInputField,
-  FormInput,
+  FormInputNumberField,
+  FormInputNumber
 } from '../../../../components/Form';
 import { ValidatorProps } from '../../../../components/Form/withValidators';
 import FormMultiTag from '../../../../components/Form/FormSelect/FormMultiTag';
@@ -265,12 +265,19 @@ class AudienceFeatureVariable extends React.Component<Props> {
       fieldValidators: { isValidFloat, isValidInteger },
       disabled,
     } = this.props;
-    let name;
-    name = `${formPath}.parameters.${variable.parameter_name}`;
+    const name = `${formPath}.parameters.${variable.parameter_name}`;
     const fieldGridConfig = {
       labelCol: { span: 5 },
       wrapperCol: { span: 18, offset: 1 },
     };
+
+    const normalizeInt = (v: any): any => {
+      return parseInt(v, 0) || v
+    }
+
+    const normalizeFloat = (v: any): any => {
+      return parseFloat(v) || v
+    }
 
     if (variable.container_type && variable.container_type.includes('List')) {
       return this.renderSelectField();
@@ -298,36 +305,42 @@ class AudienceFeatureVariable extends React.Component<Props> {
               ]}
             />
           );
-        case 'Int':
+        case 'Int' :
           return (
-            <FormInputField
+            <FormInputNumberField
               name={name}
-              component={FormInput}
+              // Needed normalize hack to save as int in redux state 
+              normalize={normalizeInt}
+              component={FormInputNumber}
               validate={[isValidInteger]}
               formItemProps={{
                 label: variable.parameter_name,
                 ...fieldGridConfig,
               }}
-              inputProps={{
+              inputNumberProps={{
                 disabled: !!disabled,
               }}
             />
           );
+
         case 'Float':
           return (
-            <FormInputField
+            <FormInputNumberField
               name={name}
-              component={FormInput}
+              // Needed normalize hack to save as float in redux state 
+              normalize={normalizeFloat}
+              component={FormInputNumber}
               validate={[isValidFloat]}
               formItemProps={{
                 label: variable.parameter_name,
                 ...fieldGridConfig,
               }}
-              inputProps={{
+              inputNumberProps={{
                 disabled: !!disabled,
               }}
             />
           );
+
         case 'String':
           return this.renderSelectField();
         case 'Timestamp':
