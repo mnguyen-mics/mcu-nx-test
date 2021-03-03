@@ -112,6 +112,10 @@ const messages = defineMessages({
   createModelNameLabel: {
     id: 'settings.organisation.ml-models.edit.create-model-name-label',
     defaultMessage: "Name",
+  },
+  modelNameIsRequired: {
+    id: 'settings.organisation.ml-models.edit.mode-name-is-required',
+    defaultMessage: "An ML model name is required",
   }
 });
 

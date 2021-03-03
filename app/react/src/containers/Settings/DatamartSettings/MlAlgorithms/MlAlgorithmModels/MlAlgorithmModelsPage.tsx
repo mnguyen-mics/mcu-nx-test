@@ -69,7 +69,7 @@ type JoinedProps = RouteComponentProps<RouterProps> &
 class MlAlgorithmModelList extends React.Component<
   JoinedProps,
   MlAlgorithmModelsListState
-> {
+  > {
   @lazyInject(TYPES.IMlAlgorithmModelService)
   private _mlAlgorithmModelService: IMlAlgorithmModelService;
 
@@ -195,9 +195,14 @@ class MlAlgorithmModelList extends React.Component<
       intl,
     } = this.props;
 
-    const { modelFile, resultFile, notebookFile } = this.state;
+    const { modelFile, resultFile, notebookFile, newModelName } = this.state;
 
-    if (modelFile && resultFile && notebookFile) {
+    if (newModelName === '') {
+      message.error(intl.formatMessage(messages.modelNameIsRequired));
+    }
+
+    if (modelFile && resultFile && notebookFile && newModelName !== '') {
+      this.setState({ loading: true });
       Promise.all([
         this.formatFormData(modelFile[0]),
         this.formatFormData(resultFile[0]),
@@ -251,10 +256,16 @@ class MlAlgorithmModelList extends React.Component<
               });
             })
             .catch(err => {
-              message.error(intl.formatMessage(messages.modelCreationError));
+              this.setState({ loading: false })
+              let errorMessage = intl.formatMessage(messages.modelCreationError);
+              if (err.error) {
+                errorMessage += `: ${err.error}`;
+              }
+              message.error(errorMessage);
             });
         })
         .catch(err => {
+          this.setState({ loading: false })
           this.props.notifyError(err);
         });
     }
@@ -420,6 +431,7 @@ class MlAlgorithmModelList extends React.Component<
         title={formatMessage(messages.uploadTitle)}
         visible={isModalOpen}
         onOk={this.handleOnUploadButton}
+        okButtonProps={{ disabled: loading }}
         okText={formatMessage(messages.uploadConfirm)}
         onCancel={this.handleOpenClose}
         confirmLoading={loading}
@@ -429,6 +441,7 @@ class MlAlgorithmModelList extends React.Component<
             defaultValue={this.state.newModelName}
             onChange={onChange}
             placeholder="Name"
+            required={true}
           />
           <br />
           <br />
