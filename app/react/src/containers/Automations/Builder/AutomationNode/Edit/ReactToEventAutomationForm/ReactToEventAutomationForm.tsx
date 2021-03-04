@@ -45,6 +45,7 @@ import {
   isObjectNode,
   isFieldNode,
   ObjectTreeExpressionNodeShape,
+  QueryBooleanOperator,
 } from '../../../../../../models/datamart/graphdb/QueryDocument';
 import { Loading } from '../../../../../../components';
 import injectNotifications, {
@@ -107,6 +108,7 @@ type State = {
   runtimeSchemaId?: string;
   standardEventsQueryText: string;
   advancedQueryText: string;
+  booleanOperator: QueryBooleanOperator;
 };
 
 type Props = ReactToEventAutomationFormProps &
@@ -172,6 +174,7 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
       standardEventNames: [],
       standardEventsQueryText: query_text || '',
       advancedQueryText: query_text || '',
+      booleanOperator: 'AND',
     };
   }
 
@@ -459,6 +462,13 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
     }
   };
 
+  onBooleanOperatorChange = () => {
+    const { booleanOperator } = this.state;
+    this.setState({
+      booleanOperator: booleanOperator === 'AND' ? 'OR' : 'AND',
+    });
+  };
+
   getSelectedObjectType = () => {
     const { objectTypes, validObjectType } = this.state;
 
@@ -508,6 +518,7 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
       standardEventNames,
       advancedQueryText,
       standardEventsQueryText,
+      booleanOperator,
     } = this.state;
 
     const node = storylineNodeModel.node as QueryInputNodeResource;
@@ -563,8 +574,7 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
           <Form
             id={FORM_ID}
             className="mcs-reactToEventAutomation_form edit-layout mcs-content-container mcs-form-container"
-            layout={'vertical'}
-          >
+            layout={'vertical'}>
             <FormSection
               title={messages.reactToEventFormSectionTitle}
               subtitle={messages.reactToEventFormSectionSubtitle}
@@ -578,8 +588,7 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
               defaultValue={formMode}
               onChange={switchMode}
               buttonStyle="solid"
-              disabled={isLoading}
-            >
+              disabled={isLoading}>
               <Radio.Button value="REACT_TO_EVENT_STANDARD">
                 {formatMessage(messages.standardEvents)}
               </Radio.Button>
@@ -642,13 +651,14 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
                       objectType={selectedObjectType}
                       availableFields={this.getQueryableFields()}
                       formChange={injectedFormPropsChange}
-                      booleanOperator={'AND'}
+                      booleanOperator={booleanOperator}
                       datamartId={datamartId}
                       runtimeSchemaId={runtimeSchemaId}
                       formName={FORM_ID}
                       title={messages.propertyFilterSectionTitle}
                       subtitle={messages.propertyFilterSectionSubtitle}
                       disabled={disabled}
+                      onBooleanOperatorChange={this.onBooleanOperatorChange}
                     />
                   </div>
                 ) : (
@@ -697,7 +707,8 @@ const messages = defineMessages({
   },
   reactToEventFormSectionConfigurationSubtitle: {
     id: 'automation.builder.node.reactToEventForm.event.configuration.subtitle',
-    defaultMessage: 'Define which events will cause a user to enter this automation. Standard events will appear if you\'ve used mediarithmics predefined event names in your integration. Otherwise, use the advanced tab.',
+    defaultMessage:
+      "Define which events will cause a user to enter this automation. Standard events will appear if you've used mediarithmics predefined event names in your integration. Otherwise, use the advanced tab.",
   },
   standardEvents: {
     id: 'automation.builder.node.reactToEventForm.formMode.standardEvents',
