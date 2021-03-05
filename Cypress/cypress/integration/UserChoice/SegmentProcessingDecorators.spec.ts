@@ -49,7 +49,7 @@ it('should create User Query segments with processing selections and edit it', (
     // Fill the default life time
     cy.get('[id="defaultLifetime"]').type('1')
     // Choose day as the lifetime
-    cy.get('[class ="ant-select ant-select-enabled"]').click()
+    cy.get('[class ="mcs-addonSelect"]').click()
     cy.contains('Days').click()
     cy.get('.ant-btn.ant-dropdown-trigger').click()
     cy.contains('Add Processing Activity').click()
@@ -109,7 +109,7 @@ it('should create User List segment with processing selection and edit it', () =
     // Fill the default life time
     cy.get('[id="defaultLifetime"]').type('1')
     // Choose day as the lifetime
-    cy.get('[class ="ant-select ant-select-enabled"]').click()
+    cy.get('[class ="mcs-addonSelect"]').click()
     cy.contains('Days').click()
     cy.get('.ant-btn.ant-dropdown-trigger').click()
     cy.contains('Add Processing Activity').click()
@@ -167,7 +167,7 @@ it('should create User Pixel segment with processing selection and edit it', () 
     // Fill the default life time
     cy.get('[id="defaultLifetime"]').type('1')
     // Choose day as the lifetime
-    cy.get('[class ="ant-select ant-select-enabled"]').click()
+    cy.get('[class ="mcs-addonSelect"]').click()
     cy.contains('Days').click()
     cy.get('.ant-btn.ant-dropdown-trigger').click()
     cy.contains('Add Processing Activity').click()
@@ -226,7 +226,7 @@ it('should create User Expert Query segment with processing selection and edit i
     // Fill the default life time
     cy.get('[id="defaultLifetime"]').type('1')
     // Choose day as the lifetime
-    cy.get('[class ="ant-select ant-select-enabled"]').click()
+    cy.get('[class ="mcs-addonSelect"]').click()
     cy.contains('Days').click()
     cy.get('.ant-btn.ant-dropdown-trigger').click()
     cy.contains('Add Processing Activity').click()

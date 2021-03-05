@@ -37,7 +37,7 @@ it('Should test the UserPixel Forms', () => {
 		// Fill the default life time
 		cy.get('[id="defaultLifetime"]').type('1')
 		// Choose day as the lifetime
-		cy.get('[class ="ant-select ant-select-enabled"]').click()
+		cy.get('[class ="mcs-addonSelect"]').click()
 		cy.contains('Days').click()
 		// Save the new segment
 		cy.contains('Save').click({ force: true })
@@ -89,7 +89,7 @@ it('Should test the UserPixel Forms', () => {
 				// Fill the default life time
 				cy.get('[id="defaultLifetime"]').type('2')
 				// Choose day as the lifetime
-				cy.get('[class ="ant-select ant-select-enabled"]').click()
+				cy.get('[class ="mcs-addonSelect"]').click()
 				cy.contains('Days').click()
 				// click on advanced
 				cy.get('[class="mcs-button optional-section-title"]').click()

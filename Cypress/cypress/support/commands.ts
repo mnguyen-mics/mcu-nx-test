@@ -88,7 +88,7 @@ Cypress.Commands.add('createSegmentFromUI', (type) => {
   cy.get('[id="defaultLifetime"]').type('1');
 
   // Choose day as the lifetime
-  cy.get('[class ="ant-select ant-select-enabled"]').click();
+  cy.get('[class ="mcs-addonSelect"]').click();
 
   cy.contains('Days').click();
 
