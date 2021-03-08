@@ -160,21 +160,25 @@ class MlAlgorithmModelList extends React.Component<
     };
   };
 
-  onFileUpdate = (file: any) => {
+  onFileUpdate = (file: any, isBinary: boolean) => {
     return new Promise((resolve, reject) => {
       const fileReader = new FileReader();
       fileReader.onload = (fileLoadedEvent: any) => {
         const textFromFileLoaded = fileLoadedEvent.target.result;
         return resolve(textFromFileLoaded);
       };
-
-      fileReader.readAsText(file, 'UTF-8');
+      if (isBinary) {
+        // ML Algorithm models are binary files that needs to be parsed as ArrayBuffer
+        fileReader.readAsArrayBuffer(file);
+      } else {
+        fileReader.readAsText(file, 'UTF-8');
+      }
     });
   };
 
-  formatFormData = (file: UploadFile): Promise<FormData> => {
+  formatFormData = (file: UploadFile, isBinary: boolean): Promise<FormData> => {
     const formData = new FormData();
-    return this.onFileUpdate(file)
+    return this.onFileUpdate(file, isBinary)
       .then(fileContent => {
         const formattedFile = new Blob([fileContent as any], {});
         formData.append('file', formattedFile, file.name);
@@ -204,9 +208,9 @@ class MlAlgorithmModelList extends React.Component<
     if (modelFile && resultFile && notebookFile && newModelName !== '') {
       this.setState({ loading: true });
       Promise.all([
-        this.formatFormData(modelFile[0]),
-        this.formatFormData(resultFile[0]),
-        this.formatFormData(notebookFile[0]),
+        this.formatFormData(modelFile[0], true),
+        this.formatFormData(resultFile[0], false),
+        this.formatFormData(notebookFile[0], false),
       ])
         .then(responses => {
           const modelFormData = responses[0];
