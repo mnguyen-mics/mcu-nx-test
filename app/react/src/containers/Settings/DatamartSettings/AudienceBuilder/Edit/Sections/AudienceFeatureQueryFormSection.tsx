@@ -87,7 +87,7 @@ class AudienceFeatureQueryFormSection extends React.Component<Props> {
       additionalProps: {
         datamartId: this.props.match.params.datamartId,
         renderActionBar: actionbar,
-        query: 'SELECT @count{} FROM UserPoint where ' + associatedQuery,
+        query: 'SELECT @count{} FROM UserPoint where' + associatedQuery,
         queryEditorClassName: 'mcs-audienceFeature_edit_form_query_builder',
       },
     });
@@ -119,7 +119,7 @@ class AudienceFeatureQueryFormSection extends React.Component<Props> {
           height="100px"
           readOnly={true}
           ref={setAceEditorRef}
-          value={'SELECT @count{} FROM UserPoint where ' + associatedQuery}
+          value={'SELECT @count{} FROM UserPoint where' + associatedQuery}
           setOptions={{
             showGutter: true,
           }}
