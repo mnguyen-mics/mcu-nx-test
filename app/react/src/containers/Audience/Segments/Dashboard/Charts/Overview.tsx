@@ -26,6 +26,7 @@ import {
   StackedAreaPlot,
 } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
+import chroma from 'chroma-js';
 
 interface OverviewProps {
   isFetching: boolean;
@@ -104,6 +105,24 @@ class Overview extends React.Component<Props> {
 
     const datamart = datamarts && datamarts.find(dm => dm.id === datamartId);
 
+    const chartColors = [
+      colors['mcs-warning'],
+      colors['mcs-info'],
+      colors['mcs-success'],
+      colors['mcs-error'],
+      colors['mcs-highlight'],
+      colors['mcs-primary'],
+      colors['mcs-normal'],
+    ];
+
+    // a security in the case we have more metrics than colors
+    if (chartColors.length < metrics.length) {
+      let i = chartColors.length;
+      for (i = chartColors.length; i < metrics.length; i++) {
+        chartColors.push( chroma.random().hex());
+      }
+    };
+
     const optionsForChart = {
       xKey: 'day',
       yKeys: metrics.map(metric => {
@@ -114,13 +133,7 @@ class Overview extends React.Component<Props> {
             formatMessage(messagesMap[metric]),
         };
       }),
-      colors: [
-        colors['mcs-warning'],
-        colors['mcs-info'],
-        colors['mcs-success'],
-        colors['mcs-error'],
-        colors['mcs-highlight'],
-      ].slice(0, metrics.length),
+      colors: chartColors,
     };
     return !isFetching ? (
       <StackedAreaPlot dataset={dataSource as any} options={optionsForChart} />
@@ -139,22 +152,6 @@ class Overview extends React.Component<Props> {
         el => el.technical_name === metric,
       );
     return metricName ? metricName.display_name : undefined;
-  };
-
-  getColor = (metric: string) => {
-    const { colors } = this.props;
-    switch (metric) {
-      case 'user_points':
-        return colors['mcs-warning'];
-      case 'user_accounts':
-        return colors['mcs-info'];
-      case 'emails':
-        return colors['mcs-success'];
-      case 'deskstop_cookie_ids':
-        return colors['mcs-error'];
-      default:
-        return colors['mcs-info'];
-    }
   };
 
   render() {
