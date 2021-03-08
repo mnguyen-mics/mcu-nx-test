@@ -1,0 +1,23 @@
+pipeline {
+    agent any
+    parameters {
+        string(name: 'VIRTUAL_PLATFORM_NAME',
+	    defaultValue: '',
+	    description: 'The virtual platform you would like to run tests on')
+    }
+    stages {
+        stage('Run cypress E2E tests'){
+            steps {
+                echo 'Running cypress E2E scenarios'
+                build job: 'install-cypress-and-execute-scenarios', parameters: [[$class: 'StringParameterValue', name: 'VIRTUAL_PLATFORM_NAME', value: "${params.VIRTUAL_PLATFORM_NAME}"]]
+                echo currentBuild.result
+            }
+        }
+    }
+    post {
+        failure {
+            echo 'The staging build failed.'
+            sh './build-support/notify-qa.sh'
+        }
+    }
+}

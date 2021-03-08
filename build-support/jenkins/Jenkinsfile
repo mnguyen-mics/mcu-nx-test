@@ -61,7 +61,7 @@ pipeline {
             }
             steps{
                 echo 'Running Cypress end-to-end front-end scenarios'
-                build job: 'install-cypress-and-execute-scenarios', parameters: [[$class: 'StringParameterValue', name: 'VIRTUAL_PLATFORM_NAME', value: "${params.GIVEN_VIRTUAL_PLATFORM_NAME}"]]
+                build job: 'cypress-navigator-pipeline-tests/cypress tests', parameters: [[$class: 'StringParameterValue', name: 'VIRTUAL_PLATFORM_NAME', value: "${params.GIVEN_VIRTUAL_PLATFORM_NAME}"]]
             }
         }
         stage('Cypress Parallel Tests On Created Virtual Platform'){
@@ -71,7 +71,7 @@ pipeline {
             }
             steps{
             echo 'Running Cypress end-to-end front-end scenarios'
-            build job: 'install-cypress-and-execute-scenarios', parameters: [[$class: 'StringParameterValue', name: 'VIRTUAL_PLATFORM_NAME', value: "${VIRTUAL_PLATFORM_NAME}"]]
+            build job: 'cypress-navigator-pipeline-tests/cypress tests', parameters: [[$class: 'StringParameterValue', name: 'VIRTUAL_PLATFORM_NAME', value: "${VIRTUAL_PLATFORM_NAME}"]]
             }
         }
         stage('Push to master') {
