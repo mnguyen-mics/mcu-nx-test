@@ -62,20 +62,17 @@ import { QueryLanguage } from '../../../../../../models/datamart/DatamartResourc
 import { FormSearchObjectField } from '../../../../../QueryTool/JSONOTQL/Edit/Sections/Field/FieldNodeForm';
 import FormSearchObject from '../../../../../../components/Form/FormSelect/FormSearchObject';
 import { IQueryService } from '../../../../../../services/QueryService';
-import FieldNodeSection, {
-  FieldNodeSectionProps,
-} from '../../../../../QueryTool/JSONOTQL/Edit/Sections/FieldNodeSection';
 import { ObjectLikeTypeInfoResource } from '../../../../../../models/datamart/graphdb/RuntimeSchema';
-import { FieldNodeFormData } from '../../../../../QueryTool/JSONOTQL/Edit/domain';
 import { QueryInputAutomationFormData } from './../../../AutomationNode/Edit/domain';
 import { QueryInputNodeResource } from '../../../../../../models/automations/automations';
 import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
+import EventPropertyFormSection, { EventPropertyFormSectionProps } from './EventPropertyFormSection';
 
-const FORM_ID = 'reactToEventForm';
+export const FORM_ID = 'reactToEventForm';
 
-const FieldNodeListFieldArray = FieldArray as new () => GenericFieldArray<
+const EventProperFormFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
-  FieldNodeSectionProps
+  EventPropertyFormSectionProps
 >;
 
 export interface ReactToEventAutomationFormProps {
@@ -90,7 +87,11 @@ interface ReactToEventAutomationFormData {
   datamart_id: string;
   query_language: QueryLanguage;
   query_text: string;
-  fieldNodeForm: FieldNodeFormData[];
+  events: string[];
+  eventPropertyFormSection?: Array<{
+    value: string;
+    expression: ObjectTreeExpressionNodeShape;
+  }>;
   standardEventNames: PredefinedEventNames[];
 }
 
@@ -205,7 +206,11 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
         if (query_text) {
           const query = JSON.parse(query_text);
           let events: string[] = [];
-          let fieldNodeForm = [];
+          let eventPropertyFormSection = [];
+
+          this.setState({
+            booleanOperator: query.where.boolean_operator,
+          });
 
           if (
             query.where &&
@@ -223,15 +228,20 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
             if (expressionEventNames.length > 0)
               events = expressionEventNames[0].comparison.values;
 
-            fieldNodeForm = query.where.expressions
+            eventPropertyFormSection = query.where.expressions
               .filter((expression: FieldNode) => {
                 if (isFieldNode(expression))
                   return expression.field !== validObjectType.fieldName;
                 return true;
               })
-              .map((expression: FieldNode) => {
+              .map((expression: ObjectNode | FieldNode) => {
+                const generateValue = (n: ObjectNode | FieldNode): string => {
+                  if (isFieldNode(n)) return n.field;
+                  return `${n.field} ${generateValue(n.expressions[0] as ObjectNode | FieldNode)}`;
+                }
                 return {
-                  ...expression,
+                  expression: expression,
+                  value: generateValue(expression),
                   key: cuid(),
                 };
               });
@@ -239,7 +249,7 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
 
           if (dispatch) {
             dispatch(change(FORM_ID, 'events', events));
-            dispatch(change(FORM_ID, 'fieldNodeForm', fieldNodeForm));
+            dispatch(change(FORM_ID, 'eventPropertyFormSection', eventPropertyFormSection));
             dispatch(
               change(
                 FORM_ID,
@@ -270,36 +280,41 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
 
   componentDidUpdate(prevProps: Props, prevState: State) {
     const {
-      formValues: { fieldNodeForm, query_text },
+      formValues: { eventPropertyFormSection, query_text, events },
       dispatch,
     } = this.props;
 
     const { formMode, validObjectType } = this.state;
 
     if (validObjectType && query_text) {
-      const query = JSON.parse(query_text);
+      const newQuery = JSON.parse(query_text);
+      newQuery.where.expressions = [];
 
-      const extractEventNames: ObjectTreeExpressionNodeShape[] = query.where.expressions.filter(
-        (expression: ObjectTreeExpressionNodeShape) => {
-          if (isFieldNode(expression))
-            return expression.field === validObjectType.fieldName;
-          return true;
+      newQuery.where.expressions.push({
+        type: 'FIELD',
+        field: validObjectType.fieldName,
+        comparison: {
+          type: 'STRING',
+          operator: 'EQ',
+          values: events,
         },
-      );
+      });
 
-      query.where.expressions = extractEventNames;
+      if (formMode === 'REACT_TO_EVENT_ADVANCED' && eventPropertyFormSection) {
+        eventPropertyFormSection.map(eventProperty => {
+          if (eventProperty.expression) {
+            const hasValues = (tree: ObjectTreeExpressionNodeShape): boolean => {
+              if (tree.type === 'FIELD') return !!tree.comparison?.values?.[0];
+              return hasValues(tree.expressions[0]);
+            }
 
-      if (formMode === 'REACT_TO_EVENT_ADVANCED')
-        fieldNodeForm.map(fieldFormData => {
-          if (fieldFormData.comparison && fieldFormData.comparison.values)
-            query.where.expressions.push({
-              type: 'FIELD',
-              field: fieldFormData.field,
-              comparison: fieldFormData.comparison,
-            });
+            if (hasValues(eventProperty.expression))
+              newQuery.where.expressions.push(eventProperty.expression);
+          }
         });
+      }
 
-      const newQueryText = JSON.stringify(query);
+      const newQueryText = JSON.stringify(newQuery);
       if (query_text !== newQueryText && dispatch)
         dispatch(change(FORM_ID, 'query_text', newQueryText));
     }
@@ -348,17 +363,17 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
               ),
             ).then(validObjectTypes => {
               /*
-							Here we need to find a WizardValidObjectTypeField
-							For each WizardValidObjectTypeField we check if we have an objectType with 
-							the same WizardValidObjectTypeField.objectTypeName in validObjectTypes and if 
-							its fields contain at least one with the WizardValidObjectTypeField.fieldName.
-							*/
+              Here we need to find a WizardValidObjectTypeField
+              For each WizardValidObjectTypeField we check if we have an objectType with 
+              the same WizardValidObjectTypeField.objectTypeName in validObjectTypes and if 
+              its fields contain at least one with the WizardValidObjectTypeField.fieldName.
+              */
               const wizardValidObjectTypesFiltered = wizardValidObjectTypes.find(
                 automationWizardValidObjectType =>
                   !!validObjectTypes.find(
                     validObjectType =>
                       validObjectType.objectType.name ===
-                        automationWizardValidObjectType.objectTypeName &&
+                      automationWizardValidObjectType.objectTypeName &&
                       !!validObjectType.validFields.find(
                         of =>
                           of.name === automationWizardValidObjectType.fieldName,
@@ -369,41 +384,31 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
               if (!wizardValidObjectTypesFiltered) return;
 
               /*
-							We need to fetch the ObjectType UserPoint as it refers to our valid object type, 
-							thus we can have its usable name to use in a query.
-							For example: ActivityEvent => activity_events
-							*/
+              We need the ObjectType UserPoint as it refers to our valid object type, 
+              thus we can have its usable name to use in a query.
+              For example: ActivityEvent => activity_events
+              */
               const userPointObjectType = objectTypes.find(
                 o => o.name === 'UserPoint',
               );
 
               if (userPointObjectType) {
-                return this._runtimeSchemaService
-                  .getFields(
-                    datamartId,
-                    runtimeSchema.id,
-                    userPointObjectType.id,
-                  )
-                  .then(upFields => {
-                    const field = upFields.data.find(
-                      f =>
-                        f.field_type.match(/\w+/)![0] ===
-                        wizardValidObjectTypesFiltered.objectTypeName,
-                    );
+                const field = userPointObjectType.fields.find(
+                  f =>
+                    f.field_type.match(/\w+/)![0] ===
+                    wizardValidObjectTypesFiltered.objectTypeName,
+                );
 
-                    if (field) {
-                      this.setState({
-                        objectType: userPointObjectType,
-                        objectTypes,
-                      });
-                      return {
-                        ...wizardValidObjectTypesFiltered,
-                        objectTypeQueryName: field ? field.name : undefined,
-                      };
-                    }
-
-                    return;
+                if (field) {
+                  this.setState({
+                    objectType: objectTypes.find(ot => ot.name === wizardValidObjectTypesFiltered.objectTypeName),
+                    objectTypes,
                   });
+                  return {
+                    ...wizardValidObjectTypesFiltered,
+                    objectTypeQueryName: field ? field.name : undefined,
+                  };
+                } else return;
               } else return;
             });
           });
@@ -418,7 +423,7 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
     const {
       formValues: { query_text },
     } = this.props;
-    const { formMode, validObjectType } = this.state;
+    const { formMode, validObjectType, booleanOperator } = this.state;
 
     if (!validObjectType || !validObjectType.objectTypeQueryName) return;
 
@@ -433,7 +438,7 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
       }) as ObjectTreeExpressionNodeShape[];
 
       where = {
-        boolean_operator: 'AND',
+        boolean_operator: booleanOperator,
         field: validObjectType.objectTypeQueryName,
         type: 'OBJECT',
         expressions: extractExpressions,
@@ -463,38 +468,24 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
   };
 
   onBooleanOperatorChange = () => {
+    const {
+      formValues: { query_text },
+    } = this.props;
+
     const { booleanOperator } = this.state;
+
+    const newBooleanOperator = booleanOperator === 'AND' ? 'OR' : 'AND';
+
+    if (this.props.dispatch) {
+      const query = JSON.parse(query_text);
+      query.where.boolean_operator = newBooleanOperator;
+      const newQueryText = JSON.stringify(query);
+      this.props.dispatch(change(FORM_ID, 'query_text', newQueryText));
+    }
+
     this.setState({
-      booleanOperator: booleanOperator === 'AND' ? 'OR' : 'AND',
+      booleanOperator: newBooleanOperator,
     });
-  };
-
-  getSelectedObjectType = () => {
-    const { objectTypes, validObjectType } = this.state;
-
-    if (!validObjectType) return;
-
-    return objectTypes.find(objectType => {
-      return objectType.name === validObjectType.objectTypeName;
-    });
-  };
-
-  getQueryableFields = () => {
-    const { objectTypes, validObjectType } = this.state;
-
-    const selectedObjectType = this.getSelectedObjectType();
-
-    if (!selectedObjectType || !validObjectType) return;
-
-    return selectedObjectType.fields
-      .filter(
-        f =>
-          !objectTypes.find(ot => {
-            const match = f.field_type.match(/\w+/);
-            return !!(match && match[0] === ot.name);
-          }) && f.directives.find(dir => dir.name === 'TreeIndex'),
-      )
-      .filter(f => f.name !== validObjectType.fieldName);
   };
 
   render() {
@@ -506,8 +497,8 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
       breadCrumbPaths,
       storylineNodeModel: storylineNodeModel,
       initialValues,
-      change: injectedFormPropsChange,
       dispatch,
+      change: injectedFormPropsChange,
     } = this.props;
 
     const {
@@ -519,6 +510,8 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
       advancedQueryText,
       standardEventsQueryText,
       booleanOperator,
+      objectType,
+      objectTypes,
     } = this.state;
 
     const node = storylineNodeModel.node as QueryInputNodeResource;
@@ -564,8 +557,6 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
           }
         });
     };
-
-    const selectedObjectType = this.getSelectedObjectType();
 
     return (
       <Layout className="mcs-reactToEventAutomation edit-layout">
@@ -617,55 +608,56 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
                     })}
                   />
                 ) : (
-                  <FormattedMessage {...messages.noStandardEvents} />
-                )}
+                      <FormattedMessage {...messages.noStandardEvents} />
+                    )}
               </div>
             ) : (
-              <div className="mcs-reactToEventAutomation_advancedForm">
-                {runtimeSchemaId && selectedObjectType ? (
-                  <div>
-                    <div className="mcs-reactToEventAutomation_chooseEventNameContainer">
-                      <FormSearchObjectField
-                        name={'events'}
-                        component={FormSearchObject}
-                        onChange={this.onEventsChange}
-                        fetchListMethod={fetchListMethod}
-                        fetchSingleMethod={fetchSingleMethod}
-                        formItemProps={{
-                          label: formatMessage(messages.eventName),
-                          required: true,
-                        }}
-                        small={true}
-                        validate={isRequired}
-                        selectProps={{
-                          mode: 'tags',
-                          disabled,
-                        }}
-                        loadOnlyOnce={true}
-                      />
+                <div className="mcs-reactToEventAutomation_advancedForm">
+                  {runtimeSchemaId && validObjectType ? (
+                    <div>
+                      <div className="mcs-reactToEventAutomation_chooseEventNameContainer">
+                        <FormSearchObjectField
+                          name='events'
+                          component={FormSearchObject}
+                          onChange={this.onEventsChange}
+                          fetchListMethod={fetchListMethod}
+                          fetchSingleMethod={fetchSingleMethod}
+                          formItemProps={{
+                            label: formatMessage(messages.eventName),
+                            required: true,
+                          }}
+                          small={true}
+                          validate={isRequired}
+                          selectProps={{
+                            mode: 'tags',
+                            disabled,
+                          }}
+                          loadOnlyOnce={true}
+                        />
+                      </div>
+                      <hr />
+                      {objectType && <EventProperFormFieldArray
+                        name='eventPropertyFormSection'
+                        component={EventPropertyFormSection}
+                        formId={FORM_ID}
+                        sourceObjectType={objectType}
+                        objectTypes={objectTypes}
+                        datamartId={datamartId}
+                        runtimeSchemaId={runtimeSchemaId}
+                        title={messages.propertyFilterSectionTitle}
+                        subtitle={messages.propertyFilterSectionSubtitle}
+                        booleanOperator={booleanOperator}
+                        onBooleanOperatorChange={this.onBooleanOperatorChange}
+                        formChange={injectedFormPropsChange}
+                        filterOutFields={validObjectType?.fieldName ? [validObjectType.fieldName] : []}
+                        disabled={disabled}
+                      />}
                     </div>
-                    <hr />
-                    <FieldNodeListFieldArray
-                      name="fieldNodeForm"
-                      component={FieldNodeSection}
-                      objectType={selectedObjectType}
-                      availableFields={this.getQueryableFields()}
-                      formChange={injectedFormPropsChange}
-                      booleanOperator={booleanOperator}
-                      datamartId={datamartId}
-                      runtimeSchemaId={runtimeSchemaId}
-                      formName={FORM_ID}
-                      title={messages.propertyFilterSectionTitle}
-                      subtitle={messages.propertyFilterSectionSubtitle}
-                      disabled={disabled}
-                      onBooleanOperatorChange={this.onBooleanOperatorChange}
-                    />
-                  </div>
-                ) : (
-                  <Loading isFullScreen={true} />
-                )}
-              </div>
-            )}
+                  ) : (
+                      <Loading isFullScreen={true} />
+                    )}
+                </div>
+              )}
           </Form>
         </Layout>
       </Layout>

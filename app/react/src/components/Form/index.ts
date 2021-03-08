@@ -29,6 +29,7 @@ import { CheckboxProps } from 'antd/lib/checkbox';
 import FormRate, { FormRateProps } from './FormRate'
 import FormAlertInput, { FormAlertInputProps } from './FormAlertInput';
 import FormTimePicker, { FormTimePickerProps } from './FormTimePicker';
+import FormTreeSelect, { FormTreeSelectProps } from './FormTreeSelect';
 
 export type FieldCtor<T> = React.ComponentClass<BaseFieldProps<T> & T>;
 
@@ -61,6 +62,7 @@ export default {
   FormRate,
   FormAlertInput,
   FormTimePicker,
+  FormTreeSelect,
 };
 
 export {
@@ -91,12 +93,14 @@ export {
   FormRate,
   FormAlertInput,
   FormTimePicker,
+  FormTreeSelect,
 };
 
 export const FormInputField = Field as new () => GenericField<FormInputProps>;
 export const FormInputNumberField = Field as new () => GenericField<FormInputNumberProps>;
 export const FormDatePickerField = Field as new () => GenericField<FormDatePickerProps>;
 export const FormSelectField = Field as new () => GenericField<DefaultSelectProps>;
+export const FormTreeSelectField = Field as new () => GenericField<FormTreeSelectProps>;
 export const FormMultiTagField = Field as new () => GenericField<FormMultiTagProps>;
 export const FormAddonSelectField = Field as new () => GenericField<FormSelectAddonProps>;
 export const FormSwitchField = Field as new () => GenericField<FormSwitchProps>;
