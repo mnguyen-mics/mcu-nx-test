@@ -53,7 +53,7 @@ function* authorizeLoop(
   isNewLogin: boolean = false,
 ) {
   const _authService = yield getContext('authService');
-  const _micsTagService = yield getContext('micsTagService');
+  const _tagService = yield getContext('tagService');
   try {
     let refreshToken;
     if (isAuthenticated || canAuthenticate) {
@@ -138,8 +138,8 @@ function* authorizeLoop(
       const clientAction = yield call(clientPromise);
       yield put(setClientFeature(clientAction));
 
-      _micsTagService.addUserAccountProperty(connectedUser.id);
-      _micsTagService.setUserProperties(filteredConnectedUser);
+      _tagService.addUserAccountProperty(connectedUser.id);
+      _tagService.setUserProperties(filteredConnectedUser);
       yield put(getConnectedUser.success(filteredConnectedUser));
       // Set the global variable userId for Google Analytics
       // This variable is used in index.html

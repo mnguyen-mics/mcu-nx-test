@@ -11,7 +11,7 @@ import { IAuthService } from '../services/AuthService';
 import { ILabelService } from '../services/LabelsService';
 import { IOrganisationService } from '../services/OrganisationService';
 import { MicsReduxState } from '../utils/ReduxHelper';
-import { IMicsTagService } from '../services/MicsTagService';
+import { ITagService } from '../services/TagService';
 
 function bindDependencies(
   func: (
@@ -19,7 +19,7 @@ function bindDependencies(
     authService: IAuthService,
     labelService: ILabelService,
     organisationService: IOrganisationService,
-    micsTagService: IMicsTagService,
+    tagService: ITagService,
     state: MicsReduxState,
   ) => void,
   dependencies: symbol[],
@@ -37,7 +37,7 @@ function configureStore(
   authService: IAuthService,
   labelService: ILabelService,
   organisationService: IOrganisationService,
-  micsTagService: IMicsTagService,
+  tagService: ITagService,
   preloadedState: MicsReduxState,
 ) {
   const middlewares = [];
@@ -48,7 +48,7 @@ function configureStore(
       authService: authService,
       labelService: labelService,
       organisationService: organisationService,
-      micsTagService: micsTagService,
+      tagService: tagService,
     },
   });
 
@@ -81,5 +81,5 @@ export default bindDependencies(configureStore, [
   TYPES.IAuthService,
   TYPES.ILabelService,
   TYPES.IOrganisationService,
-  TYPES.IMicsTagService,
+  TYPES.ITagService,
 ]);

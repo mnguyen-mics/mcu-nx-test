@@ -4,7 +4,7 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
 import { lazyInject } from '../../config/inversify.config';
 import { TYPES } from '../../constants/types';
-import { IMicsTagService } from '../../services/MicsTagService';
+import { ITagService } from '../../services/TagService';
 
 export interface DatalayerProps {
   datalayer?: DataLayerDefinition;
@@ -13,8 +13,8 @@ export interface DatalayerProps {
 type Props = DatalayerProps & RouteComponentProps<{ organisationId: string }>;
 
 class Datalayer extends React.Component<Props> {
-  @lazyInject(TYPES.IMicsTagService)
-  private _micsTagService: IMicsTagService;
+  @lazyInject(TYPES.ITagService)
+  private _tagService: ITagService;
   componentDidMount() {
     const {
       datalayer,
@@ -26,6 +26,7 @@ class Datalayer extends React.Component<Props> {
     this.pushEvent(
       this.buildFinalDatalayer(organisationId, pathname, datalayer),
     );
+    this.googleAnalyticsTrack(pathname);
   }
   componentDidUpdate(previousProps: Props) {
     const {
@@ -50,12 +51,9 @@ class Datalayer extends React.Component<Props> {
       organisationId !== previousOrganisationId
     ) {
       this.pushEvent(
-        this.buildFinalDatalayer(
-          organisationId,
-          pathname,
-          datalayer,
-        ),
+        this.buildFinalDatalayer(organisationId, pathname, datalayer),
       );
+      this.googleAnalyticsTrack(pathname);
     }
   }
 
@@ -72,7 +70,11 @@ class Datalayer extends React.Component<Props> {
   };
 
   pushEvent = (datalayer: any) => {
-    this._micsTagService.pushPageView(datalayer);
+    this._tagService.pushPageView(datalayer);
+  };
+
+  googleAnalyticsTrack = (pathname: string) => {
+    this._tagService.googleAnalyticsTrack(pathname);
   };
 
   public render() {
