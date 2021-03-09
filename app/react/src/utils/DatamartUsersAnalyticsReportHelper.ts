@@ -15,7 +15,8 @@ export type DatamartUsersAnalyticsDimension = 'date_yyyy_mm_dd'
                                               | 'device_os_family'
                                               | 'origin_source'
                                               | 'origin_channel'
-                                              | 'resource_name';
+                                              | 'resource_name'
+                                              | 'number_of_confirmed_transactions';
 
 export type DatamartUsersAnalyticsMetric = 'users'
                                             | 'sessions' 
@@ -23,8 +24,10 @@ export type DatamartUsersAnalyticsMetric = 'users'
                                             | 'avg_number_of_user_events' 
                                             | 'conversion_rate' 
                                             | 'avg_number_of_transactions'
+                                            | 'number_of_transactions'
                                             | 'avg_transaction_amount'
-                                            | 'avg_revenue_per_user_point';
+                                            | 'avg_revenue_per_user_point'
+                                            | 'revenue';
 
 
 
