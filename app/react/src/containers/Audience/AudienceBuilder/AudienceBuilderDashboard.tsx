@@ -91,7 +91,7 @@ class AudienceBuilderDashboard extends React.Component<Props, State> {
       <div className="mcs-audienceBuilder_liveDashboard">
         {isQueryRunning ? (
           <Loading isFullScreen={true} />
-        ) : totalAudience ? (
+        ) : (!!totalAudience || totalAudience === 0) ? (
           <React.Fragment>
             <CardFlex className="mcs-audienceBuilder_totalAudience">
               <Statistic
