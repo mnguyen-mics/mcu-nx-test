@@ -121,7 +121,7 @@ class TableViewFilters<T> extends React.Component<
       <div>
         <Row className="mcs-table-header">
           <Col span={6}>{searchInput}</Col>
-          <Col span={18} className="text-right">
+          <Col span={18} className="mcs-table-header-right">
             {dateRangePicker}
             {treeSelectFilter ? treeSelectFilter() : null}
             {filtersMultiSelect}
