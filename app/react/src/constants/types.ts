@@ -58,7 +58,7 @@ const TYPES = {
     'audienceSegmentFeedServiceFactory',
   ),
   IAuthService: Symbol.for('authService'),
-  IMicsTagService: Symbol.for('micsTagService'),
+  ITagService: Symbol.for('tagService'),
   ILabelService: Symbol.for('labelService'),
   IOrganisationService: Symbol.for('organisationService'),
   IDatamartReplicationService: Symbol.for('datamartReplicationService'),

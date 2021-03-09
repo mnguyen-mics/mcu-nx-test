@@ -1,3 +1,4 @@
+import { DataLayerDefinition } from './../routes/domain';
 import { injectable } from 'inversify';
 
 export interface Mics {
@@ -10,15 +11,16 @@ export interface MicsWindow extends Window {
   mics: Mics;
 }
 
-export interface IMicsTagService {
-  pushPageView: (datalayer?: any) => void;
+export interface ITagService {
+  pushPageView: (datalayer?: DataLayerDefinition) => void;
   addUserAccountProperty: (userAccountId: string) => void;
   setUserProperties: (user: { id: string }) => void;
+  googleAnalyticsTrack: (pathname: string) => void;
 }
 
 @injectable()
-export class MicsTagService implements IMicsTagService {
-  pushPageView = (datalayer?: any): void => {
+export class TagService implements ITagService {
+  pushPageView = (datalayer?: DataLayerDefinition): void => {
     if ((window as any).mics && (window as any).mics.push) {
       (window as any).mics.push('PageView', datalayer ? datalayer : {});
     }
@@ -33,6 +35,15 @@ export class MicsTagService implements IMicsTagService {
       (window as any).mics.addProperty('$set_user_profile_properties', {
         $user_account_id: user.id,
       });
+    }
+  };
+  // Google Analytics Tracker function for navigator's virtual pageviews
+  // (https://developers.google.com/analytics/devguides/collection/analyticsjs/single-page-applications)
+  googleAnalyticsTrack = (pathname: string) => {
+    if (window as any) {
+      const dataLayer = (window as any).dataLayer || [];
+      dataLayer.push('set', 'page', pathname);
+      dataLayer.push('send', 'pageview');
     }
   };
 }

@@ -16,7 +16,7 @@ import DataFileService, {
 } from './../services/DataFileService';
 import { DatamartReplicationService } from './../services/DatamartReplicationService';
 import { Container, interfaces } from 'inversify';
-import { IMicsTagService, MicsTagService } from '../services/MicsTagService';
+import { ITagService, TagService } from '../services/TagService';
 import {
   IServiceOfferPageService,
   ServiceOfferPageService,
@@ -307,7 +307,7 @@ container
 container
   .bind<IFeedsStatsService>(TYPES.IFeedsStatsService)
   .to(FeedsStatsService);
-container.bind<IMicsTagService>(TYPES.IMicsTagService).to(MicsTagService);
+container.bind<ITagService>(TYPES.ITagService).to(TagService);
 container.bind<IAuthService>(TYPES.IAuthService).to(AuthService);
 container.bind<ILabelService>(TYPES.ILabelService).to(LabelService);
 container
