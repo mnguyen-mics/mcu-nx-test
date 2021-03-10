@@ -1,9 +1,0 @@
-If you would like to report a security issue
-you may report it to our security team within mediarithmics
-Contact: security@mediarithmics.com
-Acknowledgments: https://www.mediarithmics.com/.well-known/acksecurity.txt
-Preferred-Languages: en, fr
-
-This file is available identically at these locations:
-https://www.mediarithmics.com/.well-known/security.txt
-https://www.mediarithmics.com/security.txt
