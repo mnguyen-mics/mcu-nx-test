@@ -41,6 +41,7 @@ module.exports = merge(common, {
       { from: './app/*.html', to: '../[name].[ext]' },
       { from: './app/*.txt', to: '../[name].[ext]' },
       { from: './app/*.json', to: '../[name].[ext]' },
+      { from: './app/*.png', to: '../[name].[ext]' },
       {
         from: 'app/react/src/assets',
         to: 'src/assets',
