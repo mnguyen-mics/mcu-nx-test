@@ -16,6 +16,12 @@ import { FormSection } from '../../../../../../components/Form';
 import { messages } from '../../messages';
 import AceEditor from 'react-ace';
 import CustomOtqlMode from '../../../../../../components/OtqlConsole/theme/CustomOtqlMode';
+import { lazyInject } from '../../../../../../config/inversify.config';
+import { TYPES } from '../../../../../../constants/types';
+import { IAudienceFeatureService } from '../../../../../../services/AudienceFeatureService';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../../../Notifications/injectNotifications';
 
 interface AudienceFeatureQueryFormSectionProps {
   associatedQuery?: string;
@@ -25,9 +31,13 @@ interface AudienceFeatureQueryFormSectionProps {
 type Props = AudienceFeatureQueryFormSectionProps &
   InjectedDrawerProps &
   InjectedIntlProps &
+  InjectedNotificationProps &
   RouteComponentProps<{ datamartId: string }>;
 
 class AudienceFeatureQueryFormSection extends React.Component<Props> {
+  @lazyInject(TYPES.IAudienceFeatureService)
+  private _audienceFeatureService: IAudienceFeatureService;
+
   aceEditor: any = null;
   componentDidMount() {
     if (this.aceEditor && this.aceEditor.editor) {
@@ -76,9 +86,23 @@ class AudienceFeatureQueryFormSection extends React.Component<Props> {
     };
     const actionbar = (query: string) => {
       const onSave = () => {
-        const objectTreeExpression = query.split('where').pop();
-        this.props.formChange('object_tree_expression', objectTreeExpression);
-        this.props.closeNextDrawer();
+        const objectTreeExpression = query.split('where ').pop();
+        this._audienceFeatureService
+          .extractAudienceFeatureVariables(
+            this.props.match.params.datamartId,
+            objectTreeExpression!,
+          )
+          .then((response) => {
+            this.props.formChange('variables', response.data);
+            this.props.formChange(
+              'object_tree_expression',
+              objectTreeExpression,
+            );
+            this.props.closeNextDrawer();
+          })
+          .catch((err) => {
+            this.props.notifyError(err);
+          });
       };
       const onClose = () => this.props.closeNextDrawer();
       return createActionBar(onSave, onClose, query);
@@ -87,7 +111,7 @@ class AudienceFeatureQueryFormSection extends React.Component<Props> {
       additionalProps: {
         datamartId: this.props.match.params.datamartId,
         renderActionBar: actionbar,
-        query: 'SELECT @count{} FROM UserPoint where' + associatedQuery,
+        query: 'SELECT @count{} FROM UserPoint where ' + associatedQuery,
         queryEditorClassName: 'mcs-audienceFeature_edit_form_query_builder',
       },
     });
@@ -119,7 +143,7 @@ class AudienceFeatureQueryFormSection extends React.Component<Props> {
           height="100px"
           readOnly={true}
           ref={setAceEditorRef}
-          value={'SELECT @count{} FROM UserPoint where' + associatedQuery}
+          value={'SELECT @count{} FROM UserPoint where ' + associatedQuery}
           setOptions={{
             showGutter: true,
           }}
@@ -132,5 +156,6 @@ class AudienceFeatureQueryFormSection extends React.Component<Props> {
 export default compose<Props, AudienceFeatureQueryFormSectionProps>(
   injectIntl,
   injectDrawer,
+  injectNotifications,
   withRouter,
 )(AudienceFeatureQueryFormSection);
