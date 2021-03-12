@@ -45,6 +45,8 @@ import { AudienceFeatureResource } from '../../../models/audienceFeature';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
+import { injectFeatures, InjectedFeaturesProps } from '../../Features';
+import NewQueryFragmentFormSection from './QueryFragmentBuilders/NewQueryFragmentFormSection';
 
 export const QueryFragmentFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
@@ -71,6 +73,7 @@ type Props = InjectedFormProps<
   MapStateToProps &
   AudienceBuilderContainerProps &
   InjectedNotificationProps &
+  InjectedFeaturesProps &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
 
@@ -209,6 +212,7 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
       intl,
       audienceBuilder,
       change,
+      hasFeature,
     } = this.props;
 
     const {
@@ -236,17 +240,19 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
           },
           audienceBuilder.datamart_id,
         )}
+
         <Layout>
           <Row className="ant-layout-content mcs-audienceBuilder_container">
             <Col span={isDashboardToggled ? 1 : 12}>
               <div
-                className={`${isDashboardToggled &&
-                  'mcs-audienceBuilder_hiddenForm'}`}
+                className={`${isDashboardToggled && 'mcs-audienceBuilder_hiddenForm'}`}
               >
                 {!isLoadingObjectTypes ? (
                   <QueryFragmentFieldArray
                     name={`where.expressions`}
-                    component={QueryFragmentFormSection}
+                    component={hasFeature("audience-builder-new_design") ?
+                      NewQueryFragmentFormSection :
+                      QueryFragmentFormSection}
                     datamartId={audienceBuilder.datamart_id}
                     formChange={change}
                     demographicsFeaturesIds={
@@ -257,10 +263,11 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
                     {...genericFieldArrayProps}
                   />
                 ) : (
-                  <Loading className="m-t-40" isFullScreen={true} />
-                )}
+                    <Loading className="m-t-40" isFullScreen={true} />
+                  )}
               </div>
             </Col>
+
             <Col
               span={isDashboardToggled ? 23 : 12}
               className="mcs-audienceBuilder_liveDashboardContainer"
@@ -303,6 +310,7 @@ export default compose<Props, AudienceBuilderContainerProps>(
   injectIntl,
   withRouter,
   injectNotifications,
+  injectFeatures,
   reduxForm<AudienceBuilderFormData, AudienceBuilderContainerProps>({
     form: FORM_ID,
     enableReinitialize: true,

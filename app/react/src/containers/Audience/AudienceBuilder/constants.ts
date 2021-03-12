@@ -31,14 +31,6 @@ export const messages: {
     id: 'audienceBuilder.category.demographics.tooltiptLanguage',
     defaultMessage: 'Select the language of your audience.',
   },
-  narrowingWith: {
-    id: 'audienceBuilder.category.narrowingWith',
-    defaultMessage: 'narrowing with',
-  },
-  excludingWith: {
-    id: 'audienceBuilder.category.excludingWith',
-    defaultMessage: 'excluding',
-  },
   refreshMessage: {
     id: 'audienceBuilder.liveDashboard.refreshMessage',
     defaultMessage:
@@ -99,6 +91,14 @@ export const messages: {
   availableFilters: {
     id: 'audienceBuilder.audienceFeatureSelector.availableFilters',
     defaultMessage: 'Available Filters',
+  }, 
+  audienceBuilderTimelineMatchingCriterias: {
+    id: 'audienceBuilder.timeline.matchingCriterias',
+    defaultMessage: 'People should match one of these criterias',
+  },
+  audienceBuilderTimelineAddCriteria: {
+    id: 'audienceBuilder.timeline.addCriteria',
+    defaultMessage: 'add criteria',
   },
 });
 
@@ -113,13 +113,7 @@ export const INITIAL_AUDIENCE_BUILDER_FORM_DATA: AudienceBuilderFormData = {
   where: {
     type: 'GROUP',
     boolean_operator: 'AND',
-    expressions: [
-      {
-        type: 'GROUP',
-        boolean_operator: 'OR',
-        expressions: [],
-      },
-    ],
+    expressions: [],
   },
 };
 

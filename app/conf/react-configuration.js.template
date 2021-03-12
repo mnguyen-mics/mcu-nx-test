@@ -52,6 +52,9 @@
     'datamartSettings-event_hubs_replication',
     'funnel-analytics',
     'automations-analytics',
+    'audience-segment_builder_v2',
+    'audience-builder-new_design',
+    'new-audienceFeatureSelector',
   ];
 
  const gravityFeatures = [

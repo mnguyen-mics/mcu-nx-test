@@ -96,6 +96,7 @@ class QueryFragmentFormSection extends React.Component<Props, State> {
     );
   };
 
+
   addAudienceFeature = (index: number) => (
     audienceFeatures: AudienceFeatureResource[],
   ) => {
@@ -187,13 +188,6 @@ class QueryFragmentFormSection extends React.Component<Props, State> {
           };
           return (
             <React.Fragment key={`${index}_${fields.length}`}>
-              {index !== 0 && (
-                <div className="mcs-audienceBuilder_queryButtons">
-                  {fields.get(index).negation
-                    ? intl.formatMessage(messages.excludingWith)
-                    : intl.formatMessage(messages.narrowingWith)}
-                </div>
-              )}
               <Card
                 className={'mcs-audienceBuilder_categoryCard'}
                 title={
