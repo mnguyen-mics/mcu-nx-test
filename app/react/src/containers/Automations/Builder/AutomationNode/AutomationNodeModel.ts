@@ -134,6 +134,10 @@ export default class AutomationNodeModel extends NodeModel {
     };
   }
 
+  getNodeCounterHeight() {
+    return this.getSize().height * 0.5;
+  }
+
   getNodeSize() {
     return {
       width: 180,

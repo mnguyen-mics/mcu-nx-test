@@ -51,6 +51,7 @@ import injectDrawer, {
 import ScenarioExitConditionAutomationForm from './ScenarioExitConditionAutomationForm';
 import { INITIAL_AUTOMATION_DATA } from '../Edit/domain';
 import { compose } from 'recompose';
+import UsersCounter from './UsersCounter';
 
 export const messages = defineMessages({
   ifNodeFalsePathLabel: {
@@ -505,6 +506,13 @@ class AutomationBuilder extends React.Component<Props, State> {
     ) && (
       <div className="button-helpers bottom">
         <div className="helper exit-condition">
+          {hasFeature('automations-analytics') &&
+          exitCondition &&
+          exitCondition.formData.query_text &&
+          viewer ? (
+            <UsersCounter iconName={'user'} numberOfUsers={123456789} />
+          ) : undefined}
+
           <div
             className={'edit'}
             onClick={
