@@ -15,9 +15,9 @@ import {
   AudienceBuilderNodeShape,
   AudienceBuilderParametricPredicateNode,
 } from '../../../../models/audienceBuilder/AudienceBuilderResource';
-import AudienceFeatureFormSection, {
-  AudienceFeatureFormSectionProps,
-} from './AudienceFeatureFormSection';
+import NewAudienceFeatureFormSection, {
+  NewAudienceFeatureFormSectionProps,
+} from './NewAudienceFeatureFormSection';
 import injectDrawer, {
   InjectedDrawerProps,
 } from '../../../../components/Drawer/injectDrawer';
@@ -31,9 +31,9 @@ import NewAudienceFeatureSelector, {
   NewAudienceFeatureSelectorProps,
 } from './NewAudienceFeatureSelector';
 
-export const AudienceFeatureFieldArray = FieldArray as new () => GenericFieldArray<
+export const NewAudienceFeatureFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
-  AudienceFeatureFormSectionProps
+  NewAudienceFeatureFormSectionProps
 >;
 
 export interface NewQueryFragmentFormSectionProps {
@@ -133,11 +133,11 @@ class NewQueryFragmentFormSection extends React.Component<Props, State> {
     let addToNewGroup = (
       predicate: AudienceBuilderParametricPredicateNode
     ): AudienceBuilderGroupNode[] => {
-      const newGroup = this.newAudienceBuilderGroup();
+      const newGroup = this.newAudienceBuilderGroup(true, [predicate]);
       return fields.getAll().concat(newGroup);
     }
 
-    const updatedGroups = groupIndex ?
+    const updatedGroups = groupIndex != undefined ?
       addToGroup(groupIndex, predicate) :
       addToNewGroup(predicate)
 
@@ -206,9 +206,10 @@ class NewQueryFragmentFormSection extends React.Component<Props, State> {
         <div className="mcs-timeline">
 
           {fields.map((name, index) => {
-            const handleRemove = () => {
-              fields.remove(index);
-            };
+            const removeGroup = () => {
+              console.log("Removing group " + index)
+              fields.remove(index)
+            }
 
             return (
               <React.Fragment key={`${index}_${fields.length}`}>
@@ -218,22 +219,13 @@ class NewQueryFragmentFormSection extends React.Component<Props, State> {
                   {index == 0 && intl.formatMessage(messages.audienceBuilderTimelineMatchingCriterias)}
 
                   <Card
-                    className={'mcs-audienceBuilder_categoryCard'}
-                    buttons={
-                      index !== 0 && (
-                        <Button
-                          className="mcs-audienceBuilder_closeButton"
-                          onClick={handleRemove}
-                        >
-                          <McsIcon type="close" />
-                        </Button>
-                      )
-                    }
+                    className={'mcs-audienceBuilder_categoryCard-2'}
                   >
-                    <AudienceFeatureFieldArray
+                    <NewAudienceFeatureFieldArray
                       name={`${name}.expressions`}
-                      component={AudienceFeatureFormSection}
+                      component={NewAudienceFeatureFormSection}
                       datamartId={datamartId}
+                      removeGroup={removeGroup}
                       objectTypes={objectTypes}
                       audienceFeatures={audienceFeatures}
                       isDemographicsSection={
@@ -242,7 +234,6 @@ class NewQueryFragmentFormSection extends React.Component<Props, State> {
                     />
                   </Card>
                 </Timeline.Item>
-
 
 
                 <Timeline.Item
