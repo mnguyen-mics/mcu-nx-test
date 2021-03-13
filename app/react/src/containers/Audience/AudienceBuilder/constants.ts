@@ -96,6 +96,10 @@ export const messages: {
     id: 'audienceBuilder.timeline.matchingCriterias',
     defaultMessage: 'People should match one of these criterias',
   },
+  audienceBuilderTimelineExcludingCriterias: {
+    id: 'audienceBuilder.timeline.excludingCriterias',
+    defaultMessage: 'Exclude people matching one of these criterias',
+  },
   audienceBuilderTimelineAddCriteria: {
     id: 'audienceBuilder.timeline.addCriteria',
     defaultMessage: 'add criteria',
@@ -110,6 +114,20 @@ export const fieldGridConfig = {
 export const FORM_ID = 'segmentBuilderFormData';
 
 export const INITIAL_AUDIENCE_BUILDER_FORM_DATA: AudienceBuilderFormData = {
+  where: {
+    type: 'GROUP',
+    boolean_operator: 'AND',
+    expressions: [
+      {
+        type: 'GROUP',
+        boolean_operator: 'OR',
+        expressions: [],
+      },
+    ],
+  },
+};
+
+export const INITIAL_AUDIENCE_BUILDER_FORM_DATA_2: AudienceBuilderFormData = {
   where: {
     type: 'GROUP',
     boolean_operator: 'AND',

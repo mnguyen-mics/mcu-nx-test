@@ -9,7 +9,7 @@ import { Button, Timeline } from 'antd';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { messages } from '../constants';
-import { Card, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import {
   AudienceBuilderGroupNode,
   AudienceBuilderNodeShape,
@@ -201,16 +201,19 @@ class NewQueryFragmentFormSection extends React.Component<Props, State> {
 
     const { audienceFeatures } = this.state;
 
+    const featuresCount = (index: number): number => {
+      return fields.get(index).expressions.length
+    }
+
+    const removeGroup = (index: number) => () => {
+      fields.remove(index)
+    }
+
     return (
       <React.Fragment>
         <div className="mcs-timeline">
 
           {fields.map((name, index) => {
-            const removeGroup = () => {
-              console.log("Removing group " + index)
-              fields.remove(index)
-            }
-
             return (
               <React.Fragment key={`${index}_${fields.length}`}>
                 <Timeline.Item
@@ -218,37 +221,31 @@ class NewQueryFragmentFormSection extends React.Component<Props, State> {
                 >
                   {index == 0 && intl.formatMessage(messages.audienceBuilderTimelineMatchingCriterias)}
 
-                  <Card
-                    className={'mcs-audienceBuilder_categoryCard-2'}
-                  >
-                    <NewAudienceFeatureFieldArray
-                      name={`${name}.expressions`}
-                      component={NewAudienceFeatureFormSection}
-                      datamartId={datamartId}
-                      removeGroup={removeGroup}
-                      objectTypes={objectTypes}
-                      audienceFeatures={audienceFeatures}
-                      isDemographicsSection={
-                        index === 0 && demographicsFeaturesIds.length >= 1
-                      }
-                    />
-                  </Card>
+                  <NewAudienceFeatureFieldArray
+                    name={`${name}.expressions`}
+                    component={NewAudienceFeatureFormSection}
+                    datamartId={datamartId}
+                    removeGroup={removeGroup(index)}
+                    objectTypes={objectTypes}
+                    audienceFeatures={audienceFeatures}
+                    isDemographicsSection={
+                      index === 0 && demographicsFeaturesIds.length >= 1
+                    }
+                  />
                 </Timeline.Item>
-
 
                 <Timeline.Item
                   dot={
                     <Button
-                      className="mcs-audienceBuilder_moreButton"
+                      className="mcs-audienceBuilder_moreButton-2"
                       onClick={this.selectNewAudienceFeature(this.addAudienceFeature(index))}
                     >
                       <McsIcon type="status" className={'mcs-timeline-add-dot'} />
                     </Button>
                   }
                 >
-                  {index == 0 ? intl.formatMessage(messages.audienceBuilderTimelineAddCriteria) : ""}
+                  {featuresCount(index) < 2 ? intl.formatMessage(messages.audienceBuilderTimelineAddCriteria) : ""}
                 </Timeline.Item>
-
 
               </React.Fragment>
             );

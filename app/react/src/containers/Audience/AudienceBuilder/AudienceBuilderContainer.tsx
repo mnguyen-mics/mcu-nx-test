@@ -199,6 +199,8 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
 
   refreshDashboard = () => {
     const { formValues } = this.props;
+    console.log("run query");
+    console.log(formValues);
     this.runQuery(formValues);
   };
 

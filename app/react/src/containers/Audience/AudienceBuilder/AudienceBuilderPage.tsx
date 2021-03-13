@@ -18,7 +18,7 @@ import { TYPES } from '../../../constants/types';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
-import { INITIAL_AUDIENCE_BUILDER_FORM_DATA } from './constants';
+import { INITIAL_AUDIENCE_BUILDER_FORM_DATA, INITIAL_AUDIENCE_BUILDER_FORM_DATA_2, formatQuery } from './constants';
 import { IQueryService } from '../../../services/QueryService';
 import { IAudienceFeatureService } from '../../../services/AudienceFeatureService';
 import { IAudienceSegmentService } from '../../../services/AudienceSegmentService';
@@ -27,6 +27,7 @@ import { NewUserQuerySimpleFormData } from '../../QueryTool/SaveAs/NewUserQueryS
 import AudienceBuilderActionbar from './AudienceBuilderActionbar';
 import { calculateDefaultTtl } from '../Segments/Edit/domain';
 import { InjectedWorkspaceProps, injectWorkspace } from '../../Datamart';
+import { injectFeatures, InjectedFeaturesProps } from '../../Features';
 
 interface State {
   audienceBuildersByDatamartId?: AudienceBuilderResource[][];
@@ -37,6 +38,7 @@ interface State {
 
 type Props = InjectedIntlProps &
   InjectedNotificationProps &
+  InjectedFeaturesProps &
   InjectedWorkspaceProps &
   RouteComponentProps<{ organisationId: string }>;
 
@@ -55,9 +57,14 @@ class AudienceBuilderPage extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
+
+    const { hasFeature } = this.props;
+
     this.state = {
       isLoading: true,
-      formData: INITIAL_AUDIENCE_BUILDER_FORM_DATA,
+      formData: hasFeature("audience-builder-new_design") ?
+        INITIAL_AUDIENCE_BUILDER_FORM_DATA_2 :
+        INITIAL_AUDIENCE_BUILDER_FORM_DATA,
     };
   }
 
@@ -146,7 +153,14 @@ class AudienceBuilderPage extends React.Component<Props, State> {
   };
 
   getAudienceBuilder = (audienceBuilderId?: string) => {
-    const { audienceBuildersByDatamartId } = this.state;
+    const {
+      hasFeature
+    } = this.props;
+
+    const {
+      audienceBuildersByDatamartId,
+    } = this.state;
+
     if (audienceBuilderId) {
       const audienceBuilder = _.flattenDeep(audienceBuildersByDatamartId).find(
         (b) => b.id === audienceBuilderId,
@@ -198,7 +212,9 @@ class AudienceBuilderPage extends React.Component<Props, State> {
       } else {
         this.setState({
           selectedAudienceBuilder: audienceBuilder,
-          formData: INITIAL_AUDIENCE_BUILDER_FORM_DATA,
+          formData: hasFeature("audience-builder-new_design") ?
+            INITIAL_AUDIENCE_BUILDER_FORM_DATA_2 :
+            INITIAL_AUDIENCE_BUILDER_FORM_DATA,
         });
       }
     } else {
@@ -277,26 +293,27 @@ class AudienceBuilderPage extends React.Component<Props, State> {
         renderActionBar={this.audienceBuilderActionbar}
       />
     ) : (
-      <AudienceBuilderSelector
-        audienceBuildersByDatamartId={audienceBuildersByDatamartId}
-        datamarts={datamarts}
-        onSelect={this.selectAudienceBuilder}
-        actionbarProps={{
-          paths: [
-            {
-              name: intl.formatMessage(messages.subTitle),
-            },
-          ],
-        }}
-        isMainlayout={true}
-      />
-    );
+        <AudienceBuilderSelector
+          audienceBuildersByDatamartId={audienceBuildersByDatamartId}
+          datamarts={datamarts}
+          onSelect={this.selectAudienceBuilder}
+          actionbarProps={{
+            paths: [
+              {
+                name: intl.formatMessage(messages.subTitle),
+              },
+            ],
+          }}
+          isMainlayout={true}
+        />
+      );
   }
 }
 
 export default compose(
   withRouter,
   injectIntl,
+  injectFeatures,
   injectNotifications,
   injectWorkspace,
 )(AudienceBuilderPage);
