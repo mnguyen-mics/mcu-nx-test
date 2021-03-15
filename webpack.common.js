@@ -118,7 +118,7 @@ module.exports = {
   plugins: [
     new VersionPlugin({ path: path.resolve('app') }),
     new MiniCssExtractPlugin({
-      filename: '[name].css',
+      filename: '[name].[contenthash].css',
     }),
     new webpack.DefinePlugin({
       PUBLIC_PATH: JSON.stringify('react'),
