@@ -96,16 +96,16 @@ function* authorizeLoop(
     if (connectedUser) {
       const filteredConnectedUser = {
         ...connectedUser,
-        workspaces: connectedUser.workspaces.map(w => {
+        workspaces: connectedUser.workspaces.map((w) => {
           if (w.datamarts && w.datamarts.length) {
-            w.datamarts.forEach(d => {
+            w.datamarts.forEach((d) => {
               const formatted = d;
               if (
                 d.audience_segment_metrics &&
                 d.audience_segment_metrics.length
               ) {
                 formatted.audience_segment_metrics = d.audience_segment_metrics.filter(
-                  a => a.status === 'LIVE',
+                  (a) => a.status === 'LIVE',
                 );
               }
               return formatted;
@@ -137,7 +137,14 @@ function* authorizeLoop(
 
       const clientAction = yield call(clientPromise);
       yield put(setClientFeature(clientAction));
-
+      // OVH Crisis code
+      const communityId = connectedUser.workspaces[
+        connectedUser.default_workspace
+      ].community_id;
+      if (communityId) {
+        // We set it in the window object because we will need it in ApiService.ts
+        (window as any).communityId = communityId;
+      }
       _tagService.addUserAccountProperty(connectedUser.id);
       _tagService.setUserProperties(filteredConnectedUser);
       yield put(getConnectedUser.success(filteredConnectedUser));
@@ -167,7 +174,6 @@ function* authorizeLoop(
         }
       }
     }
-
   } catch (e) {
     log.error('Authorize error : ', e);
     yield call(_authService.deleteCredentials);
