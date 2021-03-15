@@ -135,12 +135,6 @@ class Notifications extends React.Component<Props> {
       },
     };
 
-    // Functions bellow handle 'predefined' notification
-    // - simple intl object as strings for message and description
-    // - error (default error notif, display error_id)
-    // - new version (displayed when a new version is detected)
-    // order is important as message and description props are overriden
-
     // handle react-intl message and description props
     if (isValidFormattedMessageProps(notification.intlMessage)) {
       notifcationConfig.message = formatMessage(notification.intlMessage);
@@ -204,7 +198,7 @@ class Notifications extends React.Component<Props> {
             </div>
           );
         }
-      // OVH crisis
+      // OVH crisis - handle string error message
       } else if (notification.error.message) {
         notifcationConfig.description = (
           <span>{notification.error.message}</span>
@@ -232,6 +226,10 @@ class Notifications extends React.Component<Props> {
         </Button>
       );
     }
+
+    // OVH Crisis: There are many error notifications due to OVH crisis
+    // Let's make these notifications disappear after 3 seconds 
+    notifcationConfig.duration = 3;
 
     return notifcationConfig;
   }
