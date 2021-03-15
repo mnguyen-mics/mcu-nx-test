@@ -35,10 +35,16 @@ class PluginInstanceFormSection extends React.Component<Props> {
     const presetProperties = preset ? preset.properties : [];
     const pluginProperties = strictlyLayoutablePlugin.plugin_version_properties;
 
-    const nameField: PluginExtraField | undefined = preset
+    const nameValue = strictlyLayoutablePlugin.name
+      ? strictlyLayoutablePlugin.name
+      : preset?.name;
+
+    const nameField: PluginExtraField | undefined = nameValue
       ? {
           label: formatMessage(messages.nameFieldLabel),
-          title: (
+          title: disabled ? (
+            formatMessage(messages.nameFieldDisabledTitle)
+          ) : (
             <div>
               {formatMessage(messages.nameFieldTitle)}
               <br />
@@ -48,7 +54,7 @@ class PluginInstanceFormSection extends React.Component<Props> {
           placeholder: formatMessage(messages.nameFieldPlaceholder),
           display: true,
           disabled: true,
-          value: preset.name,
+          value: nameValue,
         }
       : undefined;
 
