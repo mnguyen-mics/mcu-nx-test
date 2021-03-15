@@ -55,6 +55,7 @@ export interface Notification {
   error: {
     error: string;
     error_id: string;
+    message?: string;
   };
   newVersion: boolean;
   onClose: () => void;
@@ -203,6 +204,11 @@ class Notifications extends React.Component<Props> {
             </div>
           );
         }
+      // OVH crisis
+      } else if (notification.error.message) {
+        notifcationConfig.description = (
+          <span>{notification.error.message}</span>
+        );
       } else if (!notifcationConfig.description) {
         notifcationConfig.description = (
           <span>{formatMessage(messages.errorDescription)}</span>

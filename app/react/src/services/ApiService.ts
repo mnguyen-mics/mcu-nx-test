@@ -13,12 +13,13 @@ interface ApiResponse {
 //   status: 'ok'
 // }
 
-
-export interface DataResponse<T> extends ApiResponse { // extends OkResponse
+export interface DataResponse<T> extends ApiResponse {
+  // extends OkResponse
   data: T;
 }
 
-export interface DataListResponse<T> extends ApiResponse { // extends OkResponse
+export interface DataListResponse<T> extends ApiResponse {
+  // extends OkResponse
   data: T[];
   count: number;
   first_result?: number;
@@ -28,7 +29,7 @@ export interface DataListResponse<T> extends ApiResponse { // extends OkResponse
 
 export interface ErrorResponse extends ApiResponse {
   status: 'error';
-  error_id: string;
+  error_id: string;
   error: string;
   error_code: string;
 }
@@ -64,9 +65,10 @@ function paramsToQueryString(paramsArg: { [key: string]: any } = {}) {
   if (!paramsArg) return '';
   const paramsToArray: string[] = Object.keys(paramsArg);
   const str: string = paramsToArray
-    .filter(key => paramsArg[key] !== undefined)
+    .filter((key) => paramsArg[key] !== undefined)
     .map(
-      key => `${encodeURIComponent(key)}=${encodeURIComponent(paramsArg[key])}`,
+      (key) =>
+        `${encodeURIComponent(key)}=${encodeURIComponent(paramsArg[key])}`,
     )
     .join('&');
   return str.length ? `?${str}` : '';
@@ -136,7 +138,7 @@ function request(
       // redirect to login page when 401 except for expired password
       // because we want to catch the error on Login/sagas.js
       response.status === 401 &&
-      response.url !== `${API_URL}authentication/refresh_tokens`    
+      response.url !== `${API_URL}authentication/refresh_tokens`
     ) {
       const event = new Event('unauthorizedEvent');
       document.dispatchEvent(event);
@@ -147,7 +149,7 @@ function request(
       (contentType.indexOf('image/png') !== -1 ||
         contentType.indexOf('application/octet-stream') !== -1)
     ) {
-      return response.blob().then(blob => {
+      return response.blob().then((blob) => {
         if (!response.ok) {
           Promise.reject(blob);
         }
@@ -162,7 +164,7 @@ function request(
     }
 
     // Considered as a json response by default
-    return response.json().then(json => {
+    return response.json().then((json) => {
       if (!response.ok) {
         return Promise.reject(json);
       }
@@ -174,6 +176,20 @@ function request(
   return fetch(url, config) // eslint-disable-line no-undef
     .then(checkAndParse);
 }
+
+// ***** start - OVH crisis code *****
+
+const ALLOWED_COMMUNITIES = MCS_CONSTANTS.ALLOWED_COMMUNITIES || {};
+const allowedWrite = ALLOWED_COMMUNITIES.allowed_write || []; // community_id list
+
+const rejectRequest = () => {
+  const error = new Error(
+    'The service you are trying to use is currently unavailable due to the major incident in OVH’s datacenter in Strasbourg. We are working hard to restore it as soon as possible and we apologize for the inconvenience.',
+  );
+  return Promise.reject(error);
+};
+
+// ***** end - OVH crisis code *****
 
 function getRequest<T>(
   endpoint: string,
@@ -197,14 +213,25 @@ function postRequest<T>(
   headers: { [key: string]: any } = {},
   options: ApiOptions = {},
 ): Promise<T> {
-  return request('post', endpoint, {
-    params,
-    headers,
-    body,
-    ...options,
-    authenticated:
-      options.authenticated !== undefined ? options.authenticated : true,
-  }) as Promise<T>;
+  const communityId = (window as any).communityId;
+  if (
+    endpoint === 'audience_segments.tag_feeds/aggregates' ||
+    endpoint === 'authentication/access_tokens' ||
+    endpoint === 'authentication/refresh_token/revoke' ||
+    endpoint === 'authentication/refresh_tokens' ||
+    (communityId && allowedWrite.includes(communityId))
+  ) {
+    return request('post', endpoint, {
+      params,
+      headers,
+      body,
+      ...options,
+      authenticated:
+        options.authenticated !== undefined ? options.authenticated : true,
+    }) as Promise<T>;
+  } else {
+    return rejectRequest();
+  }
 }
 
 function putRequest<T>(
@@ -214,14 +241,20 @@ function putRequest<T>(
   headers: { [key: string]: any } = {},
   options: ApiOptions = {},
 ): Promise<T> {
-  return request('put', endpoint, {
-    params,
-    headers,
-    body,
-    ...options,
-    authenticated:
-      options.authenticated !== undefined ? options.authenticated : true,
-  }) as Promise<T>;
+  const communityId = (window as any).communityId;
+  
+  if (communityId && allowedWrite.includes(communityId)) {
+    return request('put', endpoint, {
+      params,
+      headers,
+      body,
+      ...options,
+      authenticated:
+        options.authenticated !== undefined ? options.authenticated : true,
+    }) as Promise<T>;
+  } else {
+    return rejectRequest();
+  }
 }
 
 function deleteRequest<T>(
@@ -230,13 +263,18 @@ function deleteRequest<T>(
   headers: { [key: string]: any } = {},
   options: ApiOptions = {},
 ): Promise<T> {
-  return request('delete', endpoint, {
-    params,
-    headers,
-    ...options,
-    authenticated:
-      options.authenticated !== undefined ? options.authenticated : true,
-  }) as Promise<T>;
+  const communityId = (window as any).communityId;
+  if (communityId && allowedWrite.includes(communityId)) {
+    return request('delete', endpoint, {
+      params,
+      headers,
+      ...options,
+      authenticated:
+        options.authenticated !== undefined ? options.authenticated : true,
+    }) as Promise<T>;
+  } else {
+    return rejectRequest();
+  }
 }
 
 export default {
