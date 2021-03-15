@@ -25,7 +25,7 @@ import FunnelStepHover, { DimensionMetrics, GlobalMetrics } from './FunnelStepHo
 import cuid from 'cuid';
 import { IUsersAnalyticsService } from '../../services/UsersAnalyticsService';
 import { DimensionsList } from '../../models/datamartUsersAnalytics/datamartUsersAnalytics';
-
+import FunnelEmptyState from './FunnelEmptyState'
 const Option = Select.Option;
 
 interface StepDelta {
@@ -39,9 +39,9 @@ interface State {
   stepsDelta: StepDelta[];
   dimensionMetrics: DimensionMetrics[][];
   lastExecutedQueryAskedTime: number;
-  promiseCanceled: boolean;
   splitByView: boolean;
   dimensionsList: DimensionsList;
+  initialState: boolean;
 }
 
 type FunnelProps = {
@@ -106,6 +106,7 @@ class Funnel extends React.Component<Props, State> {
     super(props);
     this.state = {
       isLoading: false,
+      initialState: true,
       funnelData: {
         global: {
           total: 0,
@@ -116,7 +117,6 @@ class Funnel extends React.Component<Props, State> {
       stepsDelta: [],
       dimensionMetrics: [],
       lastExecutedQueryAskedTime: 0,
-      promiseCanceled: false,
       splitByView: false,
       dimensionsList: {
         dimensions: []
@@ -170,7 +170,7 @@ class Funnel extends React.Component<Props, State> {
     const routeParams = parseSearch(search, FUNNEL_SEARCH_SETTING);
     const funnelFilter = routeParams.filter.length > 0 ? JSON.parse(routeParams.filter) : {};
     if ((prevProps.location.search !== search || lastExecutedQueryAskedTime !== launchExecutionAskedTime) && funnelFilter.length > 0) {
-      this.setState({ lastExecutedQueryAskedTime: launchExecutionAskedTime, promiseCanceled: false })
+      this.setState({ lastExecutedQueryAskedTime: launchExecutionAskedTime })
       this.fetchData(datamartId, funnelFilter, timeRange);
     }
 
@@ -185,7 +185,6 @@ class Funnel extends React.Component<Props, State> {
           grouped_by: []
         },
         stepsDelta: [],
-        promiseCanceled: true,
         splitByView: false
       })
     }
@@ -201,32 +200,30 @@ class Funnel extends React.Component<Props, State> {
 
     this.setState({
       isLoading: !splitBy,
-      splitByView: !!splitBy
+      splitByView: !!splitBy,
+      initialState: false
     }, () => {
       parentCallback(this.state.isLoading)
     });
 
     return this._userActivitiesFunnelService.getUserActivitiesFunnel(datamartId, filter, timeRange, 5).
       then(response => {
-        // Enhance api data with last conversion step
-        if (!this.state.promiseCanceled) {
-          response.data.global.steps.push(deepCopy(response.data.global.steps[response.data.global.steps.length - 1]));
-          response.data.grouped_by?.map((dimension)=> dimension.funnel.steps.push(deepCopy(dimension.funnel.steps[dimension.funnel.steps.length - 1])));
-          this.setState({
-            isLoading: false,
-            funnelData: response.data
-          }, () => {
-            setTimeout(() => {
-              this.drawSteps();
-              const upCountsPerStep = response.data.global.steps.map(step => step.count);
-              upCountsPerStep.unshift(response.data.global.total);
-              upCountsPerStep.pop();
-              this.computeStepDelta(upCountsPerStep);
-              if (response.data.grouped_by && index) this.computeDimensionMetrics(index);
-            });
-            parentCallback(this.state.isLoading);
+        response.data.global.steps.push(deepCopy(response.data.global.steps[response.data.global.steps.length - 1]));
+        response.data.grouped_by?.map((dimension)=> dimension.funnel.steps.push(deepCopy(dimension.funnel.steps[dimension.funnel.steps.length - 1])));
+        this.setState({
+          isLoading: false,
+          funnelData: response.data
+        }, () => {
+          setTimeout(() => {
+            this.drawSteps();
+            const upCountsPerStep = response.data.global.steps.map(step => step.count);
+            upCountsPerStep.unshift(response.data.global.total);
+            upCountsPerStep.pop();
+            this.computeStepDelta(upCountsPerStep);
+            if (response.data.grouped_by && index) this.computeDimensionMetrics(index);
           });
-        }
+          parentCallback(this.state.isLoading);
+        });
       })
       .catch(e => {
         notifyError(e);
@@ -467,9 +464,8 @@ class Funnel extends React.Component<Props, State> {
   }
 
   render() {
-    const { funnelData, stepsDelta, dimensionMetrics, isLoading } = this.state;
-    const { filter } = this.props;
-    const { intl } = this.props;
+    const { funnelData, stepsDelta, dimensionMetrics, isLoading, initialState } = this.state;
+    const { filter, intl} = this.props;
     if (isLoading) return (<LoadingChart />);
     const steps = funnelData.global.steps;
     const total = funnelData.global.total;
@@ -479,7 +475,7 @@ class Funnel extends React.Component<Props, State> {
         <div id="container" >
           {steps.length === 0 || total === 0 ?
             <div className="mcs-funnel_empty">
-              <EmptyChart title={intl.formatMessage(funnelMessages.noData)} icon='warning' />
+              {(filter.length > 0 && !initialState) ? <EmptyChart title={intl.formatMessage(funnelMessages.noData)} icon='warning' /> : <FunnelEmptyState />}
             </div> :
             <div className="mcs-funnel_steps" >
               {steps.map((step, index) => {
