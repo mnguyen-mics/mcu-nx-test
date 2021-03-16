@@ -60,9 +60,13 @@ class SegmentsCard extends React.Component<Props, State> {
     };
 
     return (
-      <Card title={formatMessage(messages.segmentTitle)} isLoading={isLoading} className={"mcs-segmentCard"}>
-        {(segmentsFormatted.length > 0) &&
-          segmentsFormatted.map(segment => {
+      <Card
+        title={formatMessage(messages.segmentTitle)}
+        isLoading={isLoading}
+        className={'mcs-segmentCard'}
+      >
+        {segmentsFormatted.length > 0 &&
+          segmentsFormatted.map((segment) => {
             return (
               <SegmentsTag
                 key={segment.segment_id}
