@@ -33,21 +33,30 @@ import { DATAMART_USERS_ANALYTICS_SETTING } from '../constants';
 import { FILTERS } from '../../../../../containers/Audience/DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import { formatMetric } from '../../../../../utils/MetricHelper';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
+import { ReportViewResponse } from '../../../../../services/ReportService';
 
 const abComparisonMessage: {
   [key: string]: FormattedMessage.MessageDescriptor;
 } = defineMessages({
   avg_number_of_transactions: {
-    id: 'audience.segment.dashboard.ABDetailsTable.numberOfTransactions',
+    id: 'audience.segment.dashboard.ABDetailsTable.avgNumberOfTransactions',
     defaultMessage: 'Average number of transactions',
+  },
+  number_of_transactions: {
+    id: 'audience.segment.dashboard.ABDetailsTable.numberOfTransactions',
+    defaultMessage: 'Number of transactions',
   },
   avg_transaction_amount: {
     id: 'audience.segment.dashboard.ABDetailsTable.avgTransactionAmount',
     defaultMessage: 'Average transaction amount',
   },
   avg_revenue_per_user_point: {
-    id: 'audience.segment.dashboard.ABDetailsTable.revenue',
+    id: 'audience.segment.dashboard.ABDetailsTable.avgRevenuePerUserPoint',
     defaultMessage: 'Average Revenue Per User Point',
+  },
+  revenue: {
+    id: 'audience.segment.dashboard.ABDetailsTable.revenue',
+    defaultMessage: 'Revenue',
   },
   avg_session_duration: {
     id: 'audience.segment.dashboard.ABDetailsTable.avgSessionDuration',
@@ -64,6 +73,10 @@ const abComparisonMessage: {
   user_points: {
     id: 'audience.segment.dashboard.ABDetailsTable.userPoints',
     defaultMessage: 'User Points',
+  },
+  users: {
+    id: 'audience.segment.dashboard.ABDetailsTable.users',
+    defaultMessage: 'Users with transactions',
   },
   export: {
     id: 'audience.segment.dashboard.ABDetailsTable.export',
@@ -168,7 +181,7 @@ class ABDetailsTable extends React.Component<Props, State> {
           [metricName],
           filter.from,
           filter.to,
-          [],
+          metricName === 'users' ? ['number_of_confirmed_transactions'] : [],
           dimensionFilterClauses,
           segmentId,
           isSegmentToAdd && filter.segments.length === 1
@@ -178,21 +191,32 @@ class ABDetailsTable extends React.Component<Props, State> {
       };
       const metricList: DatamartUsersAnalyticsMetric[] = [
         'avg_number_of_transactions',
+        'number_of_transactions',
         'avg_transaction_amount',
         'avg_revenue_per_user_point',
+        'revenue',
         'avg_session_duration',
         'avg_number_of_user_events',
         'conversion_rate',
+        'users',
       ];
-      metricList.map(metric => {
+      metricList.forEach((metric) => {
         return Promise.all([
           getPromise(experimentationSegment.id, metric, true),
           getPromise(controlGroupSegment.id, metric),
         ])
-          .then(res => {
-            const experimentationMetric = res[0].data.report_view.rows[0][0];
-            const controlGroupMetric = res[1].data.report_view.rows[0][0];
+          .then((res) => {
+            let experimentationMetric = res[0].data.report_view.rows[0][0];
+            let controlGroupMetric = res[1].data.report_view.rows[0][0];
             const getComparison = () => {
+              // these metrics are not average values so we don't want comparison
+              if (
+                metric === 'number_of_transactions' ||
+                metric === 'revenue' ||
+                metric === 'users'
+              ) {
+                return '-';
+              }
               return typeof experimentationMetric === 'number' &&
                 typeof controlGroupMetric === 'number' &&
                 controlGroupMetric !== 0
@@ -202,6 +226,21 @@ class ABDetailsTable extends React.Component<Props, State> {
                   )
                 : '-';
             };
+            // For users metric, we have added 'number_of_confirmed_transactions' dimension to the call
+            // (see getPromise function) because we want the number of users with transactions.
+            // Here we just sum users if number of transactions is >= 1
+            if (metric === 'users') {
+              const sumUsers = (reportView: ReportViewResponse) => {
+                return reportView.data.report_view.rows
+                  .filter((r) => r[0] !== 0)
+                  .map((r) => r[1])
+                  .reduce((a, b) => {
+                    return a + b;
+                  }, 0);
+              };
+              experimentationMetric = sumUsers(res[0]);
+              controlGroupMetric = sumUsers(res[1]);
+            }
             return {
               metricName: metric,
               experimentationMetric: experimentationMetric,
@@ -209,8 +248,8 @@ class ABDetailsTable extends React.Component<Props, State> {
               comparison: getComparison(),
             };
           })
-          .then(data => {
-            this.setState(prevState => {
+          .then((data) => {
+            this.setState((prevState) => {
               const newState = {
                 dataSource: prevState.dataSource.concat(data),
                 isLoading: false,
@@ -218,7 +257,7 @@ class ABDetailsTable extends React.Component<Props, State> {
               return newState;
             });
           })
-          .catch(error => {
+          .catch((error) => {
             this.props.notifyError(error);
             this.setState({
               isLoading: false,

@@ -23,7 +23,7 @@ import DatamartUsersAnalyticsWrapper, {
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../../Helpers/injectThemeColors';
-import { Card, Alert, Row, Col } from 'antd';
+import { Card, Alert } from 'antd';
 import {
   McsTabs,
   McsDateRangePicker,
@@ -84,10 +84,10 @@ class ABComparisonDashboard extends React.Component<Props, State> {
     ) {
       this.setState({
         ABComparisonDashboardConfig: this.getABComparisonDashboardConfig().map(
-          dashboardConfig => {
+          (dashboardConfig) => {
             return {
               ...dashboardConfig,
-              config: dashboardConfig.config.map(config => {
+              config: dashboardConfig.config.map((config) => {
                 return {
                   ...config,
                   color: colors['mcs-warning'],
@@ -116,7 +116,7 @@ class ABComparisonDashboard extends React.Component<Props, State> {
     const getFormattedConfigTitle = (
       configs: DatamartUsersAnalyticsWrapperProps[],
     ) => {
-      return configs.map(c => {
+      return configs.map((c) => {
         return {
           ...c,
           title: c.title ? intl.formatMessage(messagesMap[c.title]) : '',
@@ -146,7 +146,7 @@ class ABComparisonDashboard extends React.Component<Props, State> {
     // Hence the code underneath
 
     const firstConfig = ABComparisonDashboardConfig.find(
-      c => c.title === experimentationSegment.target_metric,
+      (c) => c.title === experimentationSegment.target_metric,
     );
 
     return firstConfig
@@ -160,7 +160,7 @@ class ABComparisonDashboard extends React.Component<Props, State> {
         ].concat(
           getFormattedConfigTitle(
             ABComparisonDashboardConfig.filter(
-              c => c.title !== experimentationSegment.target_metric,
+              (c) => c.title !== experimentationSegment.target_metric,
             ),
           ),
         )
@@ -188,7 +188,7 @@ class ABComparisonDashboard extends React.Component<Props, State> {
               messagesMap.controlGroupSegmentName,
             ),
           },
-          charts: config.charts.map(c => {
+          charts: config.charts.map((c) => {
             return {
               ...c,
               options: {
@@ -353,7 +353,7 @@ class ABComparisonDashboard extends React.Component<Props, State> {
           segment={experimentationSegment}
           segmentToCompareWith={controlGroupSegment}
         />
-        <Row className="mcs-datamartUsersAnalytics m-b-20">
+        <div className="mcs-datamartUsersAnalytics m-b-20">
           <SegmentFilter
             className={
               disableFilters
@@ -376,10 +376,8 @@ class ABComparisonDashboard extends React.Component<Props, State> {
             segmentType={'USER_ACTIVATION'}
           />
 
-          <Col className="text-right" offset={6}>
-            {this.renderDatePicker()}
-          </Col>
-        </Row>
+          <div className="text-right">{this.renderDatePicker()}</div>
+        </div>
         {hasFeature('audience-segment_uplift_area_chart') && (
           <Card>
             <McsTabs items={this.buildItems()} />
