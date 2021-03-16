@@ -42,6 +42,14 @@ export default defineMessages({
     id: 'automation.delete.ok',
     defaultMessage: 'Delete',
   },
+  activateScenario: {
+    id: 'automation.activate',
+    defaultMessage: 'Activate',
+  },
+  pauseScenario: {
+    id: 'automation.pause',
+    defaultMessage: 'Pause',
+  },
   automationModalConfirmDeletionCancel: {
     id: 'automation.modal.confirm.cancel',
     defaultMessage: 'Cancel',
