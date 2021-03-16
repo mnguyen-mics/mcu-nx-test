@@ -12,8 +12,7 @@ interface SegmentsTagProps {
   segmentId: string;
 }
 
-type Props = SegmentsTagProps &
-  InjectedIntlProps
+type Props = SegmentsTagProps & InjectedIntlProps;
 
 interface State {
   segment?: AudienceSegmentShape;
@@ -25,12 +24,12 @@ class SegmentsTag extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      segment: undefined
+      segment: undefined,
     };
   }
 
   fetchSegmentData = (segmentId: string) => {
-    this._audienceSegmentService.getSegment(segmentId).then(response => {
+    this._audienceSegmentService.getSegment(segmentId).then((response) => {
       this.setState({
         segment: response.data,
       });
@@ -52,15 +51,22 @@ class SegmentsTag extends React.Component<Props, State> {
   }
 
   render() {
-    
-    return (
-      <Tooltip title={this.state.segment ? this.state.segment.name : ''}>
-        <Tag className="card-tag alone"><SegmentNameDisplay audienceSegmentResource={this.state.segment}/></Tag>
+    const { segment } = this.state;
+
+    // A segment that was automatically created by a feed node in a scenario
+    // shouldn't be displayed.
+    const shouldDisplaySegment =
+      segment &&
+      !(segment.type === 'USER_LIST' && segment.feed_type === 'SCENARIO_FEED');
+
+    return shouldDisplaySegment ? (
+      <Tooltip title={segment ? segment.name : ''}>
+        <Tag className="card-tag alone">
+          <SegmentNameDisplay audienceSegmentResource={segment} />
+        </Tag>
       </Tooltip>
-    );
+    ) : null;
   }
 }
 
-export default compose<Props, SegmentsTagProps>(
-  injectIntl,
-)(SegmentsTag);
+export default compose<Props, SegmentsTagProps>(injectIntl)(SegmentsTag);
