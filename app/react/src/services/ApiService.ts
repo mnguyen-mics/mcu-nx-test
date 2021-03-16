@@ -219,6 +219,7 @@ function postRequest<T>(
     endpoint === 'authentication/access_tokens' ||
     endpoint === 'authentication/refresh_token/revoke' ||
     endpoint === 'authentication/refresh_tokens' ||
+    endpoint === 'authentication/send_password_reset_email' ||
     (communityId && allowedWrite.includes(communityId))
   ) {
     return request('post', endpoint, {
