@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { compose } from 'recompose';
-// import { Link } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { Input, Button, Alert, Col, Row, Form } from 'antd';
 import { FormComponentProps } from '@ant-design/compatible/lib/form';
