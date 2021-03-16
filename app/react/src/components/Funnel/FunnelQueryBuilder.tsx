@@ -573,12 +573,12 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
             <FlagOutlined className={"mcs-funnelQueryBuilder_timeline_icon"} />
             {to && <p className={"mcs-funnelQueryBuilder_timeline_date"}>{to.toMoment().format('DD/MM/YYYY 23:59')}</p>}
           </div>
-          <Button className={"mcs-funnelQueryBuilder_addStepBtn"} onClick={this.addStep}>
+          {steps.length < 4 &&  <Button className={"mcs-funnelQueryBuilder_addStepBtn"} onClick={this.addStep}>
             <FormattedMessage
               id="audience.funnel.querybuilder.newStep"
               defaultMessage="Add a step"
             />
-          </Button>
+          </Button>}
         </div>
       </div>
     </div >)
