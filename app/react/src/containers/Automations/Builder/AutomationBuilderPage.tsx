@@ -368,7 +368,7 @@ class AutomationBuilderPage extends React.Component<Props, State> {
                 {
                   name: intl.formatMessage(messages.automationBuilder),
                 },
-              ]}
+              ]} mention='ALPHA'
             />
             <Loading isFullScreen={false} />
           </Layout>

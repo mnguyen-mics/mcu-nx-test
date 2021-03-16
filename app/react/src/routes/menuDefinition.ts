@@ -9,7 +9,6 @@ import messages from '../containers/Menu/messages'
 import { marketplaceDefinition } from './marketplaceRoutes';
 
 
-
 const audienceMenuDefinition: NavigatorMenuDefinition = {
   iconType: 'users',
   translation: messages.audienceTitle,
@@ -66,6 +65,7 @@ const automationsMenuDefinition: NavigatorMenuDefinition = {
   iconType: 'automation',
   translation: messages.automationTitle,
   type: 'multi',
+  mention: 'ALPHA',
   subMenuItems: [
     {
       ...generateMissingdefinitionItemFromRoute(automationDefinition.automationsList),
@@ -138,6 +138,7 @@ const datastudioMenuDefinition: NavigatorMenuDefinition = {
     {
       ...generateMissingdefinitionItemFromRoute(datastudioDefinition.datastudioFunnel),
       translation: messages.dataStudioFunnel,
+      mention: 'ALPHA'
     },
     {
       ...generateMissingdefinitionItemFromRoute(datastudioDefinition.datastudioReport),
