@@ -108,7 +108,9 @@ export const enumValuesByName = {
   'DEVICE_OS_FAMILY': deviceOsFamilyDimensions,
   'DEVICE_FORM_FACTOR': deviceFormFactorDimensions,
   'DEVICE_BROWSER_FAMILY': deviceBrowserFamilyDimensions,
-}
+} 
+
+export type FunnelTemplate = "RETURN_ON_AD_SPEND" | "BRAND_HALO";
 
 export type BooleanOperator = "OR" | "AND";
 

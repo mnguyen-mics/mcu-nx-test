@@ -18,6 +18,7 @@ import { FunnelFilter } from '../../../models/datamart/UserActivitiesFunnel';
 import McsMoment from '../../../utils/McsMoment';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import { FILTERS } from '../../../containers/Audience/DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
+import FunnelTemplateSelector from '../../../components/Funnel/FunnelTemplateSelector';
 
 const { Content } = Layout;
 
@@ -81,8 +82,8 @@ class FunnelPage extends React.Component<JoinedProps, State> {
   }
 
   handleExecuteQueryButtonClick = () => {
-    const {executeQueryFunction} = this.state
-    if(executeQueryFunction) {
+    const { executeQueryFunction } = this.state
+    if (executeQueryFunction) {
       executeQueryFunction()
     }
   }
@@ -98,8 +99,8 @@ class FunnelPage extends React.Component<JoinedProps, State> {
   }
 
   handleCancelButtonClick = () => {
-    const {cancelQueryFunction} = this.state
-    if(cancelQueryFunction) {
+    const { cancelQueryFunction } = this.state
+    if (cancelQueryFunction) {
       cancelQueryFunction()
       this.setState({
         isLoading: false
@@ -108,9 +109,9 @@ class FunnelPage extends React.Component<JoinedProps, State> {
   }
 
   updateLocationSearch = (params: FILTERS) => {
-    const { 
+    const {
       history,
-      location:{ search: currentSearch, pathname } 
+      location: { search: currentSearch, pathname }
     } = this.props;
     const nextLocation = {
       pathname,
@@ -138,9 +139,10 @@ class FunnelPage extends React.Component<JoinedProps, State> {
   }
 
   render() {
-    const { 
-      selectedDatamartId, 
-      location: { search } 
+    const {
+      selectedDatamartId,
+      location: { search,
+      }
     } = this.props;
     const { exportIsRunning, isLoading, dateRange } = this.state;
     const routeParams = parseSearch(search, FUNNEL_SEARCH_SETTING);
@@ -150,10 +152,12 @@ class FunnelPage extends React.Component<JoinedProps, State> {
         name: 'Funnel Analytics'
       }
     ];
+
     return (
       <div className="ant-layout" >
         <Actionbar paths={breadcrumbPaths}>
-	        <McsDateRangePicker
+          <FunnelTemplateSelector />
+          <McsDateRangePicker
             values={dateRange}
             onChange={this.handleDateRangePickerChangeFunction}
           />
@@ -174,7 +178,7 @@ class FunnelPage extends React.Component<JoinedProps, State> {
           </Button>
         </Actionbar>
         <Content className="mcs-content-container">
-          <FunnelWrapper datamartId={selectedDatamartId} parentCallback={this.handleFunnelWrapperCallback}/>
+          <FunnelWrapper datamartId={selectedDatamartId} parentCallback={this.handleFunnelWrapperCallback} />
         </Content>
       </div>)
   }

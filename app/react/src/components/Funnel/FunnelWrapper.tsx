@@ -85,7 +85,7 @@ class FunnelWrapper extends React.Component<JoinedProp, State> {
      const { launchExecutionAskedTime, cancelQueryAskedTime } = this.state
     return (
       <div>
-        <FunnelQueryBuilder datamartId={datamartId} parentCallback={this.funnelQueryBuilderCallbackFunction} liftFunctionsCallback={this.storeAndLiftFunctions}/>
+        <FunnelQueryBuilder datamartId={datamartId} filter={funnelFilter} parentCallback={this.funnelQueryBuilderCallbackFunction} liftFunctionsCallback={this.storeAndLiftFunctions}/>
         <Funnel datamartId={datamartId} title={"Funnel demo"} filter={funnelFilter} parentCallback={this.funnelCallbackFunction} launchExecutionAskedTime={launchExecutionAskedTime} cancelQueryAskedTime={cancelQueryAskedTime}/>
       </div>
     )
