@@ -47,7 +47,11 @@ import { IAudienceSegmentService } from '../../../../services/AudienceSegmentSer
 import { isFakeId } from '../../../../utils/FakeIdHelper';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
-import FeedNodeAutomationDashboardStats, { FeedNodeAutomationDashboardStatsProps } from './Dashboard/FeedNode/FeedNodeAutomationDashboardStats';
+import FeedNodeAutomationDashboardStats, {
+  FeedNodeAutomationDashboardStatsProps,
+} from './Dashboard/FeedNode/FeedNodeAutomationDashboardStats';
+import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
+import UsersCounter from '../UsersCounter';
 
 interface AutomationNodeProps {
   node: AutomationNodeModel;
@@ -94,6 +98,7 @@ const messages = defineMessages({
 type Props = AutomationNodeProps &
   InjectedDrawerProps &
   InjectedIntlProps &
+  InjectedFeaturesProps &
   RouterProps &
   RouteComponentProps<{ organisationId: string }>;
 
@@ -148,7 +153,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
             const scenarioNodes = Object.values(
               diagramEngine.diagramModel.nodes,
             )
-              .filter(nodeModel => nodeModel.type === 'automation-node')
+              .filter((nodeModel) => nodeModel.type === 'automation-node')
               .map(
                 (nodeModel: AutomationNodeModel) =>
                   nodeModel.storylineNodeModel,
@@ -171,7 +176,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     storylineNodeModels: StorylineNodeModel[],
   ) => {
     const addToSegmentStoryLine = storylineNodeModels.find(
-      storylineNode =>
+      (storylineNode) =>
         isAddToSegmentNode(storylineNode.node) &&
         id === storylineNode.node.formData.audienceSegmentId,
     );
@@ -327,7 +332,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         };
 
         const scenarioNodes = Object.values(diagramEngine.diagramModel.nodes)
-          .filter(nodeModel => nodeModel.type === 'automation-node')
+          .filter((nodeModel) => nodeModel.type === 'automation-node')
           .map(
             (nodeModel: AutomationNodeModel) => nodeModel.storylineNodeModel,
           );
@@ -652,7 +657,9 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     const color = '#ffffff';
     const borderColor = node.getColor();
 
-    const icon = node.iconAnt ? node.iconAnt : (
+    const icon = node.iconAnt ? (
+      node.iconAnt
+    ) : (
       <McsIcon
         type={node.icon as McsIconType}
         className="available-node-icon-gyph"
@@ -700,10 +707,24 @@ class AutomationNodeWidget extends React.Component<Props, State> {
   };
 
   render() {
-    const { node } = this.props;
+    const { node, viewer, hasFeature } = this.props;
     const { nodeName } = this.state;
 
     const icon = this.getIcon(node);
+
+    const nodeCounter =
+      viewer && hasFeature('automations-analytics') ? (
+        <UsersCounter
+          style={{ height: node.getNodeCounterHeight() }}
+          iconName={'user'}
+          numberOfUsers={123456789}
+        />
+      ) : undefined;
+
+    const booleanMenuTop =
+      viewer && hasFeature('automations-analytics')
+        ? node.getNodeCounterHeight() * 0.75
+        : 0;
 
     const onFocus = () => {
       this.setPosition(document.getElementById(this.id) as HTMLDivElement);
@@ -731,6 +752,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
       >
         {icon}
         <div className="node-content">
+          {nodeCounter}
           <Tooltip
             title={
               nodeTitleToDisplayed.length > NODE_NAME_MAX_SIZE
@@ -739,8 +761,10 @@ class AutomationNodeWidget extends React.Component<Props, State> {
             }
             placement="bottom"
           >
-            {`${nodeTitleToDisplayed.substring(0, NODE_NAME_MAX_SIZE) +
-              (nodeTitleToDisplayed.length > NODE_NAME_MAX_SIZE ? '...' : '')}`}
+            {`${
+              nodeTitleToDisplayed.substring(0, NODE_NAME_MAX_SIZE) +
+              (nodeTitleToDisplayed.length > NODE_NAME_MAX_SIZE ? '...' : '')
+            }`}
           </Tooltip>
         </div>
         <div className="node-subtitle">
@@ -824,7 +848,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
               <div
                 className="boolean-menu"
                 style={{
-                  top: this.top,
+                  top: this.top + booleanMenuTop * zoomRatio,
                   left: this.left + node.getNodeSize().width * zoomRatio,
                   zIndex: 1001,
                 }}
@@ -843,4 +867,5 @@ export default compose<{}, AutomationNodeProps>(
   withRouter,
   injectIntl,
   injectDrawer,
+  injectFeatures,
 )(AutomationNodeWidget);
