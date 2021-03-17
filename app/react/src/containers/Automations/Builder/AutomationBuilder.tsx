@@ -511,7 +511,7 @@ class AutomationBuilder extends React.Component<Props, State> {
           exitCondition.formData.query_text &&
           viewer ? (
             <UsersCounter iconName={'user'} numberOfUsers={123456789} />
-          ) : undefined}
+          ) : null}
 
           <div
             className={'edit'}

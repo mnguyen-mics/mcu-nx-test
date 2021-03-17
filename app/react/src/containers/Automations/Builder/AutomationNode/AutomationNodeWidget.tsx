@@ -715,7 +715,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     const nodeCounter =
       viewer && hasFeature('automations-analytics') ? (
         <UsersCounter
-          height={node.getNodeCounterHeight()}
+          style={{ height: node.getNodeCounterHeight() }}
           iconName={'user'}
           numberOfUsers={123456789}
         />

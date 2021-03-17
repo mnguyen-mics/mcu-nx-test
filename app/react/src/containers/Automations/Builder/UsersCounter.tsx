@@ -3,7 +3,7 @@ import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/c
 import * as React from 'react';
 
 interface UsersCounterProps {
-  height?: number;
+  style?: React.CSSProperties;
   iconName: McsIconType;
   numberOfUsers: number;
 }
@@ -12,14 +12,12 @@ type Props = UsersCounterProps;
 
 class UsersCounter extends React.Component<Props> {
   render() {
-    const { height, iconName, numberOfUsers } = this.props;
+    const { style, iconName, numberOfUsers } = this.props;
 
     return (
       <div
         className={'node-users-counter'}
-        style={{
-          height,
-        }}
+        style={style}
       >
         {numberOfUsers.toLocaleString()}
         <McsIcon type={iconName} className={'node-users-counter-icon'} />
