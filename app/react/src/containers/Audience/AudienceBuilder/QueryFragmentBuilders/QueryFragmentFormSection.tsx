@@ -74,29 +74,6 @@ class QueryFragmentFormSection extends React.Component<Props, State> {
     fields.push(newGroupExpression);
   };
 
-  renderQueryBuilderButtons = () => {
-    return (
-      <div className="mcs-audienceBuilder_queryButtons">
-        <Button
-          className="mcs-audienceBuilder_narrowWithButton"
-          onClick={this.addGroupExpression(false)}
-        >
-          Narrow with
-        </Button>
-        <br />
-        - or -
-        <br />
-        <Button
-          className="mcs-audienceBuilder_excludeButton"
-          onClick={this.addGroupExpression(true)}
-        >
-          Exclude
-        </Button>
-      </div>
-    );
-  };
-
-
   addAudienceFeature = (index: number) => (
     audienceFeatures: AudienceFeatureResource[],
   ) => {
@@ -188,6 +165,13 @@ class QueryFragmentFormSection extends React.Component<Props, State> {
           };
           return (
             <React.Fragment key={`${index}_${fields.length}`}>
+              {index !== 0 && (
+                <div className="mcs-audienceBuilder_queryButtons">
+                  {fields.get(index).negation
+                    ? intl.formatMessage(messages.excludingWith)
+                    : intl.formatMessage(messages.narrowingWith)}
+                </div>
+              )}
               <Card
                 className={'mcs-audienceBuilder_categoryCard'}
                 title={
@@ -231,7 +215,6 @@ class QueryFragmentFormSection extends React.Component<Props, State> {
             </React.Fragment>
           );
         })}
-        {this.renderQueryBuilderButtons()}
       </React.Fragment>
     );
   }

@@ -1,5 +1,8 @@
 import {
   AudienceBuilderFormData,
+  NewAudienceBuilderFormData,
+  AudienceBuilderGroupNode,
+  AudienceBuilderParametricPredicateNode,
   QueryDocument,
 } from './../../../models/audienceBuilder/AudienceBuilderResource';
 import { FormattedMessage, defineMessages } from 'react-intl';
@@ -127,12 +130,27 @@ export const INITIAL_AUDIENCE_BUILDER_FORM_DATA: AudienceBuilderFormData = {
   },
 };
 
-export const INITIAL_AUDIENCE_BUILDER_FORM_DATA_2: AudienceBuilderFormData = {
+export const NEW_FORM_ID = 'newAudienceBuilderFormData';
+
+export const NEW_INITIAL_AUDIENCE_BUILDER_FORM_DATA: NewAudienceBuilderFormData = {
   where: {
     type: 'GROUP',
     boolean_operator: 'AND',
-    expressions: [],
-  },
+    expressions: [
+      {
+        type: 'GROUP',
+        boolean_operator: 'AND',
+        negation: false,
+        expressions: [],
+      },
+      {
+        type: 'GROUP',
+        boolean_operator: 'AND',
+        negation: true,
+        expressions: [],
+      },
+    ],
+  }
 };
 
 export const buildQueryDocument = (formData: AudienceBuilderFormData) => {

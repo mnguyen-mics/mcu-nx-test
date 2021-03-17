@@ -14,19 +14,19 @@ import {
   InjectedFormProps,
   getFormValues,
 } from 'redux-form';
-import { FORM_ID, buildQueryDocument, messages } from './constants';
+import { NEW_FORM_ID, buildQueryDocument, messages } from './constants';
 import { Omit } from '../../../utils/Types';
 import {
-  AudienceBuilderFormData,
+  NewAudienceBuilderFormData,
   QueryDocument as AudienceBuilderQueryDocument,
   AudienceBuilderGroupNode,
   isAudienceBuilderParametricPredicateNode,
-  AudienceBuilderResource,
+  AudienceBuilderResource
 } from '../../../models/audienceBuilder/AudienceBuilderResource';
 import AudienceBuilderDashboard from './AudienceBuilderDashboard';
-import QueryFragmentFormSection, {
-  QueryFragmentFormSectionProps,
-} from './QueryFragmentBuilders/QueryFragmentFormSection';
+import NewQueryFragmentFormSection, {
+  NewQueryFragmentFormSectionProps,
+} from './QueryFragmentBuilders/NewQueryFragmentFormSection';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
 import { OTQLResult } from '../../../models/datamart/graphdb/OTQLResult';
 import { lazyInject } from '../../../config/inversify.config';
@@ -45,14 +45,15 @@ import { AudienceFeatureResource } from '../../../models/audienceFeature';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
+import { injectFeatures, InjectedFeaturesProps } from '../../Features';
 
 export const QueryFragmentFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
-  QueryFragmentFormSectionProps
+  NewQueryFragmentFormSectionProps
 >;
 
 export interface AudienceBuilderContainerProps
-  extends Omit<ConfigProps<AudienceBuilderFormData>, 'form'> {
+  extends Omit<ConfigProps<NewAudienceBuilderFormData>, 'form'> {
   audienceBuilder: AudienceBuilderResource;
   renderActionBar: (
     queryDocument: AudienceBuilderQueryDocument,
@@ -61,16 +62,17 @@ export interface AudienceBuilderContainerProps
 }
 
 interface MapStateToProps {
-  formValues: AudienceBuilderFormData;
+  formValues: NewAudienceBuilderFormData;
 }
 
 type Props = InjectedFormProps<
-  AudienceBuilderFormData,
+  NewAudienceBuilderFormData,
   AudienceBuilderContainerProps
 > &
   MapStateToProps &
   AudienceBuilderContainerProps &
   InjectedNotificationProps &
+  InjectedFeaturesProps &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
 
@@ -160,7 +162,8 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
     }
   }
 
-  runQuery = (formData: AudienceBuilderFormData) => {
+  // TODO FIX
+  runQuery = (formData: NewAudienceBuilderFormData) => {
     const { audienceBuilder } = this.props;
     this.setState({
       isQueryRunning: true,
@@ -201,6 +204,51 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
     this.runQuery(formValues);
   };
 
+  renderQueryFragmentForm = () => {
+    const genericFieldArrayProps = {
+      rerenderOnEveryChange: true,
+    };
+
+    const {
+      objectTypes,
+      audienceFeatures,
+    } = this.state;
+
+    const {
+      audienceBuilder,
+      change,
+    } = this.props;
+
+    return (
+      <div>
+        {/* Include Timeline */}
+        <QueryFragmentFieldArray
+          name={`where.expressions[0].expressions`}
+          component={NewQueryFragmentFormSection}
+          datamartId={audienceBuilder.datamart_id}
+          formChange={change}
+          demographicsFeaturesIds={
+            audienceBuilder.demographics_features_ids
+          }
+          audienceFeatures={audienceFeatures}
+          objectTypes={objectTypes}
+          {...genericFieldArrayProps}
+        />
+        {/* Exclude Timeline */}
+        <QueryFragmentFieldArray
+          name={`where.expressions[1].expressions`}
+          component={NewQueryFragmentFormSection}
+          datamartId={audienceBuilder.datamart_id}
+          formChange={change}
+          demographicsFeaturesIds={[]}
+          audienceFeatures={audienceFeatures}
+          objectTypes={objectTypes}
+          {...genericFieldArrayProps}
+        />
+      </div>
+    );
+  }
+
   render() {
     const {
       renderActionBar,
@@ -210,50 +258,24 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
       },
       intl,
       audienceBuilder,
-      change,
     } = this.props;
 
     const {
-      objectTypes,
       queryResult,
       isQueryRunning,
       queryDocument,
       isDashboardToggled,
       isMaskVisible,
       isLoadingObjectTypes,
-      audienceFeatures,
     } = this.state;
-
-    const genericFieldArrayProps = {
-      rerenderOnEveryChange: true,
-    };
-
 
     /**
      * QueryFragmentForm selection
      */
 
-    let queryFragmentForm;
-    if (!isLoadingObjectTypes) {
-      queryFragmentForm = <QueryFragmentFieldArray
-        name={`where.expressions`}
-        component={QueryFragmentFormSection}
-        datamartId={audienceBuilder.datamart_id}
-        formChange={change}
-        demographicsFeaturesIds={
-          audienceBuilder.demographics_features_ids
-        }
-        audienceFeatures={audienceFeatures}
-        objectTypes={objectTypes}
-        {...genericFieldArrayProps}
-      />
-    } else {
-      queryFragmentForm = <Loading className="m-t-40" isFullScreen={true} />
-    }
-
-    /**
-      * QueryFragmentForm selection
-      */
+    let queryFragmentForm = (!isLoadingObjectTypes) ?
+      this.renderQueryFragmentForm() :
+      <Loading className="m-t-40" isFullScreen={true} />
 
     return (
       <React.Fragment>
@@ -261,7 +283,7 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
           {
             operations: [{ directives: [], selections: [{ name: 'id' }] }],
             from: 'UserPoint',
-            where: formValues?.where,
+            where: formValues.where,
           },
           audienceBuilder.datamart_id,
         )}
@@ -311,15 +333,16 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
 }
 
 const mapStateToProps = (state: MicsReduxState) => ({
-  formValues: getFormValues(FORM_ID)(state),
+  formValues: getFormValues(NEW_FORM_ID)(state),
 });
 
 export default compose<Props, AudienceBuilderContainerProps>(
   injectIntl,
   withRouter,
   injectNotifications,
-  reduxForm<AudienceBuilderFormData, AudienceBuilderContainerProps>({
-    form: FORM_ID,
+  injectFeatures,
+  reduxForm<NewAudienceBuilderFormData, AudienceBuilderContainerProps>({
+    form: NEW_FORM_ID,
     enableReinitialize: true,
   }),
   connect(mapStateToProps),

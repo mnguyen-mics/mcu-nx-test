@@ -11,8 +11,7 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { messages } from '../constants';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import {
-  AudienceBuilderGroupNode,
-  AudienceBuilderNodeShape,
+  AudienceBuilderParametricPredicateGroupNode,
   AudienceBuilderParametricPredicateNode,
 } from '../../../../models/audienceBuilder/AudienceBuilderResource';
 import NewAudienceFeatureFormSection, {
@@ -44,7 +43,7 @@ export interface NewQueryFragmentFormSectionProps {
   audienceFeatures?: AudienceFeatureResource[];
 }
 
-type Props = WrappedFieldArrayProps<AudienceBuilderGroupNode> &
+type Props = WrappedFieldArrayProps<AudienceBuilderParametricPredicateGroupNode> &
   InjectedDrawerProps &
   NewQueryFragmentFormSectionProps &
   InjectedFeaturesProps &
@@ -63,18 +62,33 @@ class NewQueryFragmentFormSection extends React.Component<Props, State> {
   };
 
   newAudienceBuilderGroup = (
-    include: boolean = true,
-    expressions: AudienceBuilderNodeShape[] = []
-  ): AudienceBuilderGroupNode => {
+    expressions: AudienceBuilderParametricPredicateNode[] = []
+  ): AudienceBuilderParametricPredicateGroupNode => {
     return {
       type: 'GROUP',
       boolean_operator: 'OR',
-      negation: !include,
+      negation: false,
       expressions: expressions,
     };
   };
 
   renderQueryBuilderButtons = () => {
+    const {
+      fields
+    } = this.props;
+
+    let renderExclude;
+    if (!!fields.getAll() || !!fields.getAll()[1] || fields.getAll()[1].expressions.length < 1) {
+      renderExclude = <span>/
+        <Button
+          className="mcs-audienceBuilder_excludeButton"
+          onClick={this.selectNewAudienceFeature(this.addAudienceFeature())}
+        >
+          Exclude
+        </Button>
+      </span>
+    }
+
     return (
       <div className="mcs-audienceBuilder_queryButtons-2">
         <Button
@@ -83,13 +97,8 @@ class NewQueryFragmentFormSection extends React.Component<Props, State> {
         >
           Include
         </Button>
-        /
-        <Button
-          className="mcs-audienceBuilder_excludeButton"
-          onClick={this.selectNewAudienceFeature(this.addAudienceFeature())}
-        >
-          Exclude
-        </Button>
+
+        {renderExclude}
       </div>
     );
   };
@@ -110,14 +119,18 @@ class NewQueryFragmentFormSection extends React.Component<Props, State> {
 
   addPredicateToGroup(
     predicate: AudienceBuilderParametricPredicateNode,
-    groupIndex?: number
+    groupIndex?: number,
+    exclude?: boolean
   ) {
-    const { formChange, fields } = this.props;
+    const {
+      formChange,
+      fields
+    } = this.props;
 
     let addToGroup = (
       groupIndex: number,
       predicate: AudienceBuilderParametricPredicateNode
-    ): AudienceBuilderGroupNode[] => {
+    ): AudienceBuilderParametricPredicateGroupNode[] => {
       return fields.getAll().map((f, i) => {
         if (i === groupIndex) {
           return {
@@ -132,8 +145,8 @@ class NewQueryFragmentFormSection extends React.Component<Props, State> {
 
     let addToNewGroup = (
       predicate: AudienceBuilderParametricPredicateNode
-    ): AudienceBuilderGroupNode[] => {
-      const newGroup = this.newAudienceBuilderGroup(true, [predicate]);
+    ): AudienceBuilderParametricPredicateGroupNode[] => {
+      const newGroup = this.newAudienceBuilderGroup([predicate]);
       return fields.getAll().concat(newGroup);
     }
 
@@ -141,17 +154,18 @@ class NewQueryFragmentFormSection extends React.Component<Props, State> {
       addToGroup(groupIndex, predicate) :
       addToNewGroup(predicate)
 
-    formChange('where.expressions', updatedGroups);
+    formChange(fields.name, updatedGroups);
   };
 
-  addAudienceFeature = (groupIndex?: number) => (
+  addAudienceFeature = (groupIndex?: number,
+                        exclude?: boolean) => (
     audienceFeatures: AudienceFeatureResource[]
   ) => {
     const { closeNextDrawer } = this.props;
 
     if (audienceFeatures[0]) {
       const predicate = this.newParametricPredicate(audienceFeatures[0])
-      this.addPredicateToGroup(predicate, groupIndex)
+      this.addPredicateToGroup(predicate, groupIndex, exclude)
 
       this.setState({
         audienceFeatures: this.state.audienceFeatures?.concat(
@@ -251,7 +265,7 @@ class NewQueryFragmentFormSection extends React.Component<Props, State> {
             );
           })}
         </div>
-        {this.renderQueryBuilderButtons()}
+        {fields.name == `where.expressions[0].expressions` && this.renderQueryBuilderButtons()}
       </React.Fragment >
     );
   }
