@@ -88,12 +88,9 @@ class Funnel extends React.Component<Props, State> {
 
   updateLocationSearch = (params: any) => {
     const {
-      history
-    } = this.props;
-
-    const {
+      history,
       location: { search: currentSearch, pathname }
-    } = history;
+    } = this.props;
 
     const nextLocation = {
       pathname,
@@ -384,6 +381,12 @@ class Funnel extends React.Component<Props, State> {
     const funnelFilter = routeParams.filter.length > 0 ? JSON.parse(routeParams.filter) : {};
     funnelFilter[index - 1].group_by_dimension = value.toLocaleLowerCase();
     this.fetchData(datamartId, funnelFilter, timeRange, true, index);
+    this.updateLocationSearch({
+      splitBy: JSON.stringify({
+        stepIndex: index > 0 ? index - 1 : 0,
+        groupBy: value
+      })
+    })
     this.setState({
       funnelData
     });
