@@ -1,7 +1,5 @@
 import {
   AudienceBuilderFormData,
-  AudienceBuilderGroupNode,
-  AudienceBuilderParametricPredicateNode,
   QueryDocument,
 } from './../../../models/audienceBuilder/AudienceBuilderResource';
 import { FormattedMessage, defineMessages } from 'react-intl';
@@ -125,40 +123,6 @@ export const INITIAL_AUDIENCE_BUILDER_FORM_DATA: AudienceBuilderFormData = {
   },
 };
 
-export const formatQuery = (query: QueryDocument) => {
-  if (query?.where) {
-    return {
-      ...query,
-      where: {
-        ...query.where,
-        expressions: (query.where as AudienceBuilderGroupNode).expressions.map(
-          (exp: AudienceBuilderGroupNode) => {
-            return {
-              ...exp,
-              expressions: exp.expressions.map(
-                (e: AudienceBuilderParametricPredicateNode) => {
-                  const parameters: any = {};
-                  Object.keys(e.parameters).forEach(p => {
-                    const value = e.parameters[p];
-                    if (value) {
-                      parameters[`${p}`] = value;
-                    }
-                  });
-
-                  return {
-                    ...e,
-                    parameters: parameters,
-                  };
-                },
-              ),
-            };
-          },
-        ),
-      },
-    };
-  } else return query;
-};
-
 export const buildQueryDocument = (formData: AudienceBuilderFormData) => {
   let query: QueryDocument = {
     language_version: 'JSON_OTQL',
@@ -182,5 +146,5 @@ export const buildQueryDocument = (formData: AudienceBuilderFormData) => {
       where: clauseWhere,
     };
   }
-  return formatQuery(query) as any;
+  return query as any;
 };

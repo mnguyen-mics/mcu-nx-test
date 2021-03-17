@@ -10,7 +10,7 @@ import {
   FormSelectField,
   DefaultSelect,
   FormInputNumberField,
-  FormInputNumber
+  FormInputNumber,
 } from '../../../../components/Form';
 import { ValidatorProps } from '../../../../components/Form/withValidators';
 import FormMultiTag from '../../../../components/Form/FormSelect/FormMultiTag';
@@ -49,6 +49,7 @@ export interface AudienceFeatureVariableProps {
   formPath: string;
   objectTypes: ObjectLikeTypeInfoResource[];
   disabled?: boolean;
+  formChange?(field: string, value: any): void;
 }
 
 type Props = AudienceFeatureVariableProps &
@@ -81,7 +82,11 @@ class AudienceFeatureVariable extends React.Component<Props> {
     this.state = {};
   }
 
-  renderSelectField = () => {
+  // The singleStringValue will make FormSearchObjectField copmponent handles only one string value
+  // The matchValue will make FormSearchObjectField copmponent handles multiple values grouped in one string
+  // (example: "val1 val2 val3" see 'JSONOTQL data_type=text' specs for details)
+  // If both are false, the component will handle multiple string values grouped in one array (default behaviour)
+  renderSelectField = (singleStringValue: boolean, matchValue: boolean) => {
     const {
       variable,
       formPath,
@@ -92,22 +97,24 @@ class AudienceFeatureVariable extends React.Component<Props> {
       },
       workspace: { community_id },
       disabled,
+      formChange,
     } = this.props;
-    let name;
-    name = `${formPath}.parameters.${variable.parameter_name}`;
+    const name = `${formPath}.parameters.${variable.parameter_name}`;
     const fieldGridConfig = {
       labelCol: { span: 5 },
       wrapperCol: { span: 18, offset: 1 },
     };
 
-    const userPointObject = objectTypes.find(o => o.name === 'UserPoint')!;
+    const userPointObject = objectTypes.find((o) => o.name === 'UserPoint')!;
     const foundField =
       userPointObject &&
-      userPointObject.fields.find(f => f.name === variable.path[0]);
+      userPointObject.fields.find((f) => f.name === variable.path[0]);
     const schemaType = foundField
-      ? objectTypes.find(ot => foundField.field_type.includes(ot.name))
+      ? objectTypes.find((ot) => foundField.field_type.includes(ot.name))
       : undefined;
-    const field = schemaType?.fields.find(f => f.name === variable.field_name);
+    const field = schemaType?.fields.find(
+      (f) => f.name === variable.field_name,
+    );
     const fieldDirectives = field ? field.directives : undefined;
     let selectProps = {};
     let loadOnlyOnce = false;
@@ -115,7 +122,9 @@ class AudienceFeatureVariable extends React.Component<Props> {
 
     let fetchListMethod = (
       keywords: string,
-    ): Promise<Array<{ key: string; label: JSX.Element | string ; value:string  }>> => {
+    ): Promise<
+      Array<{ key: string; label: JSX.Element | string; value: string }>
+    > => {
       if (variable.field_name && foundField) {
         return this._referenceTableService
           .getReferenceTable(
@@ -124,8 +133,12 @@ class AudienceFeatureVariable extends React.Component<Props> {
             foundField.name,
             variable.field_name,
           )
-          .then(res =>
-            res.data.map(r => ({ key: r.value, label: r.display_value, value: r.value })),
+          .then((res) =>
+            res.data.map((r) => ({
+              key: r.value,
+              label: r.display_value,
+              value: r.value,
+            })),
           );
       }
       return Promise.resolve([]);
@@ -142,19 +155,19 @@ class AudienceFeatureVariable extends React.Component<Props> {
             fetchListMethod = (keywords: string) => {
               return this._datamartService
                 .getUserAccountCompartmentDatamartSelectionResources(datamartId)
-                .then(res =>
-                  res.data.map(r => ({
+                .then((res) =>
+                  res.data.map((r) => ({
                     key: r.compartment_id,
                     label: r.name ? r.name : r.token,
-                    value: r.compartment_id
+                    value: r.compartment_id,
                   })),
                 );
             };
             fetchSingleMethod = (id: string) =>
-              this._compartmentService.getCompartment(id).then(res => ({
+              this._compartmentService.getCompartment(id).then((res) => ({
                 key: res.data.id,
                 label: res.data.name,
-                value: res.data.id
+                value: res.data.id,
               }));
             break;
           case 'CHANNELS':
@@ -166,13 +179,19 @@ class AudienceFeatureVariable extends React.Component<Props> {
                   keywords: keywords,
                   with_source_datamarts: true,
                 })
-                .then(res => res.data.map(r => ({ key: r.id, label: r.name, value: r.id })));
+                .then((res) =>
+                  res.data.map((r) => ({
+                    key: r.id,
+                    label: r.name,
+                    value: r.id,
+                  })),
+                );
             };
             fetchSingleMethod = (id: string) =>
-              this._channelService.getChannel(datamartId, id).then(res => ({
+              this._channelService.getChannel(datamartId, id).then((res) => ({
                 key: res.data.id,
                 label: res.data.name,
-                value: res.data.id
+                value: res.data.id,
               }));
             break;
           case 'SEGMENTS':
@@ -182,19 +201,19 @@ class AudienceFeatureVariable extends React.Component<Props> {
                   keywords: keywords,
                   datamart_id: datamartId,
                 })
-                .then(res =>
-                  res.data.map(r => ({
+                .then((res) =>
+                  res.data.map((r) => ({
                     key: r.id,
                     label: <SegmentNameDisplay audienceSegmentResource={r} />,
-                    value: r.id
+                    value: r.id,
                   })),
                 );
             };
             fetchSingleMethod = (id: string) =>
-              this._audienceSegmentService.getSegment(id).then(res => ({
+              this._audienceSegmentService.getSegment(id).then((res) => ({
                 key: res.data.id,
                 label: res.data.name,
-                value: res.data.id
+                value: res.data.id,
               }));
             break;
         }
@@ -220,7 +239,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
           .runOTQLQuery(datamartId, query, {
             use_cache: true,
           })
-          .then(otqlResultResp => {
+          .then((otqlResultResp) => {
             return otqlResultResp.data.rows[0].aggregations.buckets[0].buckets.map(
               (b: any) => {
                 return {
@@ -233,11 +252,24 @@ class AudienceFeatureVariable extends React.Component<Props> {
       };
       selectProps = {
         ...selectProps,
-        mode: 'tags', 
+        mode: 'tags',
         disabled: !!disabled,
       };
       loadOnlyOnce = true;
       shouldFilterData = true;
+    }
+    let handleSingleStringValue;
+    let handleMatchValue;
+    if (singleStringValue && formChange) {
+      handleSingleStringValue = (value: any) => {
+        formChange(name, value);
+      };
+    }
+
+    if (matchValue && formChange) {
+      handleMatchValue = (value: any) => {
+        formChange(name, value);
+      };
     }
 
     return (
@@ -254,6 +286,8 @@ class AudienceFeatureVariable extends React.Component<Props> {
         selectProps={selectProps}
         loadOnlyOnce={loadOnlyOnce}
         shouldFilterData={shouldFilterData}
+        handleSingleStringValue={handleSingleStringValue}
+        handleMatchValue={handleMatchValue}
       />
     );
   };
@@ -264,6 +298,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
       formPath,
       fieldValidators: { isValidFloat, isValidInteger },
       disabled,
+      formChange,
     } = this.props;
     const name = `${formPath}.parameters.${variable.parameter_name}`;
     const fieldGridConfig = {
@@ -272,15 +307,17 @@ class AudienceFeatureVariable extends React.Component<Props> {
     };
 
     const normalizeInt = (v: any): any => {
-      return parseInt(v, 0) || v
-    }
+      return parseInt(v, 0) || v;
+    };
 
     const normalizeFloat = (v: any): any => {
-      return parseFloat(v) || v
-    }
+      return parseFloat(v) || v;
+    };
 
     if (variable.container_type && variable.container_type.includes('List')) {
-      return this.renderSelectField();
+      return this.renderSelectField(false, false);
+    } else if (variable.data_type && variable.data_type.includes('text')) {
+      return this.renderSelectField(false, true);
     } else {
       switch (variable.type) {
         case 'Boolean':
@@ -305,11 +342,11 @@ class AudienceFeatureVariable extends React.Component<Props> {
               ]}
             />
           );
-        case 'Int' :
+        case 'Int':
           return (
             <FormInputNumberField
               name={name}
-              // Needed normalize hack to save as int in redux state 
+              // Needed normalize hack to save as int in redux state
               normalize={normalizeInt}
               component={FormInputNumber}
               validate={[isValidInteger]}
@@ -327,7 +364,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
           return (
             <FormInputNumberField
               name={name}
-              // Needed normalize hack to save as float in redux state 
+              // Needed normalize hack to save as float in redux state
               normalize={normalizeFloat}
               component={FormInputNumber}
               validate={[isValidFloat]}
@@ -342,9 +379,15 @@ class AudienceFeatureVariable extends React.Component<Props> {
           );
 
         case 'String':
-          return this.renderSelectField();
+          return this.renderSelectField(true, false);
         case 'Timestamp':
         case 'Date':
+          let handleStringValue;
+          if (formChange) {
+            handleStringValue = (value: any) => {
+              formChange(name, value);
+            };
+          }
           return (
             <FormRelativeAbsoluteDateField
               name={name}
@@ -356,6 +399,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
               unixTimstamp={true}
               disabled={!!disabled}
               noListValue={true}
+              handleStringValue={handleStringValue}
             />
           );
         case 'OperatingSystemFamily':
@@ -372,7 +416,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
               selectProps={{
                 options: (builtinEnumTypeOptions[
                   variable.type
-                ] as string[]).map(t => {
+                ] as string[]).map((t) => {
                   return {
                     label: t,
                     value: t,

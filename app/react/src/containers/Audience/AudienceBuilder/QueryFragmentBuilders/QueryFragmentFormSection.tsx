@@ -174,6 +174,7 @@ class QueryFragmentFormSection extends React.Component<Props, State> {
       datamartId,
       demographicsFeaturesIds,
       objectTypes,
+      formChange,
     } = this.props;
 
     const { audienceFeatures } = this.state;
@@ -217,6 +218,7 @@ class QueryFragmentFormSection extends React.Component<Props, State> {
                   datamartId={datamartId}
                   objectTypes={objectTypes}
                   audienceFeatures={audienceFeatures}
+                  formChange={formChange}
                   isDemographicsSection={
                     index === 0 && demographicsFeaturesIds.length >= 1
                   }

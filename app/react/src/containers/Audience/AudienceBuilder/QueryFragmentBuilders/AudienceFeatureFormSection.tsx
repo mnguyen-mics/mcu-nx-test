@@ -15,6 +15,7 @@ export interface AudienceFeatureFormSectionProps extends ReduxFormChangeProps {
   datamartId: string;
   objectTypes: ObjectLikeTypeInfoResource[];
   audienceFeatures?: AudienceFeatureResource[]
+  formChange(field: string, value: any): void;
 }
 
 type Props = WrappedFieldArrayProps<AudienceBuilderParametricPredicateNode> &
@@ -30,7 +31,8 @@ class AudienceFeatureFormSection extends React.Component<Props> {
       isDemographicsSection,
       datamartId,
       objectTypes,
-      audienceFeatures
+      audienceFeatures,
+      formChange
     } = this.props;
 
     return fields.map((name, index) => {
@@ -51,6 +53,7 @@ class AudienceFeatureFormSection extends React.Component<Props> {
               parametricPredicateResource={fields.get(index)}
               objectTypes={objectTypes}
               audienceFeatures={audienceFeatures}
+              formChange={formChange}
             />
           </Col>
 

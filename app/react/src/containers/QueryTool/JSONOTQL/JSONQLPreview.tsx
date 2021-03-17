@@ -13,7 +13,6 @@ import {
   Actionbar,
   McsIcon,
 } from '@mediarithmics-private/mcs-components-library';
-import { formatQuery } from '../../Audience/AudienceBuilder/constants';
 import AudienceBuilderContainer, {
   AudienceBuilderContainerProps,
 } from '../../Audience/AudienceBuilder/AudienceBuilderContainer';
@@ -83,8 +82,7 @@ class JSONQLPreview extends React.Component<Props> {
     if (segmentEditor === 'AUDIENCE_BUILDER') {
       const actionbar = (query: AudienceQueryDocument, datamartId: string) => {
         const onSave = () => {
-          if (this.props.onChange)
-            this.props.onChange(JSON.stringify(formatQuery(query)));
+          if (this.props.onChange) this.props.onChange(JSON.stringify(query));
           this.props.closeNextDrawer();
         };
         const onClose = () => this.props.closeNextDrawer();
@@ -98,9 +96,7 @@ class JSONQLPreview extends React.Component<Props> {
           {
             additionalProps: {
               renderActionBar: actionbar,
-              initialValues: value
-                ? (formatQuery(JSON.parse(value)) as any)
-                : undefined,
+              initialValues: value ? JSON.parse(value) : undefined,
               audienceBuilder: audienceBuilder,
             },
           },

@@ -18,7 +18,7 @@ import { TYPES } from '../../../constants/types';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
-import { INITIAL_AUDIENCE_BUILDER_FORM_DATA, formatQuery } from './constants';
+import { INITIAL_AUDIENCE_BUILDER_FORM_DATA } from './constants';
 import { IQueryService } from '../../../services/QueryService';
 import { IAudienceFeatureService } from '../../../services/AudienceFeatureService';
 import { IAudienceSegmentService } from '../../../services/AudienceSegmentService';
@@ -112,21 +112,21 @@ class AudienceBuilderPage extends React.Component<Props, State> {
       selectedAudienceBuilder: undefined,
       isLoading: true,
     });
-    const promises = workspace.datamarts.map(d => {
+    const promises = workspace.datamarts.map((d) => {
       return this._audienceBuilderService
         .getAudienceBuilders(d.id)
-        .then(res => {
+        .then((res) => {
           return res.data;
         });
     });
     return Promise.all(promises)
-      .then(res => {
+      .then((res) => {
         this.setState({
-          audienceBuildersByDatamartId: res.filter(r => r.length > 0),
+          audienceBuildersByDatamartId: res.filter((r) => r.length > 0),
           isLoading: false,
         });
       })
-      .catch(error => {
+      .catch((error) => {
         this.setState({
           isLoading: false,
         });
@@ -149,7 +149,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
     const { audienceBuildersByDatamartId } = this.state;
     if (audienceBuilderId) {
       const audienceBuilder = _.flattenDeep(audienceBuildersByDatamartId).find(
-        b => b.id === audienceBuilderId,
+        (b) => b.id === audienceBuilderId,
       );
 
       if (
@@ -157,14 +157,14 @@ class AudienceBuilderPage extends React.Component<Props, State> {
         audienceBuilder.demographics_features_ids.length >= 1
       ) {
         const datamartId = audienceBuilder.datamart_id;
-        const promises = audienceBuilder.demographics_features_ids.map(id => {
+        const promises = audienceBuilder.demographics_features_ids.map((id) => {
           return this._audienceFeatureService.getAudienceFeature(
             datamartId,
             id,
           );
         });
-        Promise.all(promises).then(resp => {
-          const parametricPredicates = resp.map(r => {
+        Promise.all(promises).then((resp) => {
+          const parametricPredicates = resp.map((r) => {
             return r.data;
           });
           this.setState({
@@ -177,9 +177,9 @@ class AudienceBuilderPage extends React.Component<Props, State> {
                   {
                     type: 'GROUP',
                     boolean_operator: 'AND',
-                    expressions: parametricPredicates.map(p => {
+                    expressions: parametricPredicates.map((p) => {
                       const parameters: { [key: string]: any } = {};
-                      p.variables.forEach(v => {
+                      p.variables.forEach((v) => {
                         const parameterName = v.parameter_name;
                         parameters[parameterName] = '';
                       });
@@ -220,9 +220,9 @@ class AudienceBuilderPage extends React.Component<Props, State> {
       return this._queryService
         .createQuery(datamartId, {
           query_language: 'JSON_OTQL',
-          query_text: JSON.stringify(formatQuery(query)),
+          query_text: JSON.stringify(query),
         })
-        .then(res => {
+        .then((res) => {
           const userQuerySegment: Partial<UserQuerySegment> = {
             datamart_id: datamartId,
             type: 'USER_QUERY',
@@ -239,7 +239,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
             userQuerySegment,
           );
         })
-        .then(res => {
+        .then((res) => {
           history.push(
             `/v2/o/${match.params.organisationId}/audience/segments/${res.data.id}`,
           );

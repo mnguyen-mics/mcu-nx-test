@@ -25,6 +25,7 @@ export interface AudienceFeatureLayoutProps {
   parametricPredicateResource: AudienceBuilderParametricPredicateNode;
   objectTypes: ObjectLikeTypeInfoResource[];
   audienceFeatures?: AudienceFeatureResource[];
+  formChange(field: string, value: any): void;
 }
 
 type Props = AudienceFeatureLayoutProps & InjectedIntlProps & ValidatorProps;
@@ -52,7 +53,7 @@ class AudienceFeatureLayout extends React.Component<Props, State> {
   render() {
     const { audienceFeature } = this.state;
 
-    const { datamartId, formPath, objectTypes } = this.props;
+    const { datamartId, formPath, objectTypes, formChange } = this.props;
 
     return audienceFeature ? (
       <React.Fragment>
@@ -68,6 +69,7 @@ class AudienceFeatureLayout extends React.Component<Props, State> {
               variable={v}
               formPath={formPath}
               objectTypes={objectTypes}
+              formChange={formChange}
             />
           );
         })}
