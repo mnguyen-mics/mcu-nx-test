@@ -129,7 +129,15 @@ const funnelFilterSearchSetting = {
   isValid: (query: Index<string>) => !query.filter || query.filter.split(',').length > 0,
 };
 
-export const FUNNEL_SEARCH_SETTING: SearchSetting[] = [...DATE_SEARCH_SETTINGS, funnelFilterSearchSetting];
+const funnelTemplateSearchSetting = {
+  paramName: 'template',
+  defaultValue: undefined,
+  deserialize: (query: Index<FunnelTemplate>) => query.template,
+  serialize: (value: FunnelTemplate) => value,
+  isValid: (query: Index<FunnelTemplate>) => !!query.template,
+};
+
+export const FUNNEL_SEARCH_SETTING: SearchSetting[] = [...DATE_SEARCH_SETTINGS, funnelFilterSearchSetting, funnelTemplateSearchSetting];
 
 
 export const funnelMessages = defineMessages({
@@ -168,5 +176,13 @@ export const funnelMessages = defineMessages({
   amount: {
     id: 'funnel.common.amount',
     defaultMessage: 'amount'
-  }
+  },
+  funnelEmptyState: {
+    id: 'funnel.funnelEmptyState',
+    defaultMessage: 'Set up your steps to see the funnel'
+  },
+  showMeAnExample: {
+    id: 'funnel.showMeAnExample',
+    defaultMessage: 'Show me an example'
+  },
 });

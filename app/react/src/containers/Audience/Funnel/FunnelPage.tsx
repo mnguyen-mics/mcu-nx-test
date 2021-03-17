@@ -5,7 +5,7 @@ import * as React from 'react';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { withRouter } from 'react-router';
 import { compose } from 'recompose';
-import { FUNNEL_SEARCH_SETTING } from '../../../components/Funnel/Constants';
+import { FunnelTemplate, FUNNEL_SEARCH_SETTING } from '../../../components/Funnel/Constants';
 import FunnelWrapper from '../../../components/Funnel/FunnelWrapper';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
@@ -28,6 +28,7 @@ interface State {
   executeQueryFunction?: () => void;
   cancelQueryFunction?: () => void;
   dateRange: McsDateRangeValue;
+  selectedTemplate?: FunnelTemplate;
 }
 
 type JoinedProps = WithDatamartSelectorProps & InjectedIntlProps &
@@ -49,6 +50,20 @@ class FunnelPage extends React.Component<JoinedProps, State> {
         to: new McsMoment('now'),
       }
     };
+  }
+
+  componentDidUpdate(prevProps: JoinedProps) {
+    const {
+      location: { search } 
+    } = this.props;
+    const { selectedTemplate } = this.state;
+    const routeParams = parseSearch(search, FUNNEL_SEARCH_SETTING);
+    const template = routeParams.template;
+    if (template && (selectedTemplate !== template)) {
+      this.setState({
+        selectedTemplate: template
+      });
+    }
   }
 
   handleRunExport = () => {
@@ -144,7 +159,7 @@ class FunnelPage extends React.Component<JoinedProps, State> {
       location: { search,
       }
     } = this.props;
-    const { exportIsRunning, isLoading, dateRange } = this.state;
+    const { exportIsRunning, isLoading, dateRange, selectedTemplate } = this.state;
     const routeParams = parseSearch(search, FUNNEL_SEARCH_SETTING);
     const breadcrumbPaths = [
       {
@@ -152,11 +167,11 @@ class FunnelPage extends React.Component<JoinedProps, State> {
         name: 'Funnel Analytics'
       }
     ];
-
+  
     return (
       <div className="ant-layout" >
         <Actionbar paths={breadcrumbPaths}>
-          <FunnelTemplateSelector />
+          <FunnelTemplateSelector selectedValue={selectedTemplate}/>
           <McsDateRangePicker
             values={dateRange}
             onChange={this.handleDateRangePickerChangeFunction}
