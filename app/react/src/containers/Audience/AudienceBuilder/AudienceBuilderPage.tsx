@@ -99,9 +99,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
       audienceBuildersByDatamartId![0].length === 1 &&
       !isLoading
     ) {
-      this.setState({
-        selectedAudienceBuilder: audienceBuildersByDatamartId[0][0],
-      });
+      this.getAudienceBuilder(audienceBuildersByDatamartId[0][0].id);
     } else if (search !== prevSearch) {
       const audienceBuilderId = queryString.parse(search).audienceBuilderId;
       this.getAudienceBuilder(audienceBuilderId);
