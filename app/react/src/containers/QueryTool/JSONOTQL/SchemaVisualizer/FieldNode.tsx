@@ -1,4 +1,3 @@
-
 import * as React from 'react';
 import {
   DragSource,
@@ -6,13 +5,18 @@ import {
   DragSourceConnector,
   DragSourceMonitor,
 } from 'react-dnd';
-import { DragAndDropInterface, SchemaItem, extractFieldType, FieldInfoEnhancedResource } from '../domain';
+import {
+  DragAndDropInterface,
+  SchemaItem,
+  extractFieldType,
+  FieldInfoEnhancedResource,
+} from '../domain';
 import { Tooltip } from 'antd';
 import cuid from 'cuid';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { DashOutlined } from '@ant-design/icons';
 
 export type FieldNodeProps = FieldNodeObjectProps | FieldNodeFieldProps;
-
 
 interface FieldNodeObjectProps extends FieldNodeCommonProps {
   type: 'object';
@@ -26,15 +30,16 @@ interface FieldNodeFieldProps extends FieldNodeCommonProps {
 
 interface FieldNodeCommonProps {
   id: string;
-  connectDragSource?: ConnectDragSource
+  connectDragSource?: ConnectDragSource;
   isDragging?: boolean;
   isDropped?: boolean;
   schemaType?: string;
+  searchString?: string;
+  hasChildren?: boolean;
 }
 
-
 const fieldSource = {
-	beginDrag(props: FieldNodeProps) {
+  beginDrag(props: FieldNodeProps) {
     let draggedObject: DragAndDropInterface;
     if (props.type === 'field') {
       draggedObject = {
@@ -43,8 +48,8 @@ const fieldSource = {
         type: props.type,
         path: props.item.path!,
         item: props.item,
-        fieldType: extractFieldType(props.item)
-      }
+        fieldType: extractFieldType(props.item),
+      };
     } else {
       draggedObject = {
         name: props.item.name,
@@ -53,37 +58,91 @@ const fieldSource = {
         type: props.type,
         path: props.item.path!,
         item: props.item,
-      }
+      };
     }
-		return draggedObject
-	},
-}
+    return draggedObject;
+  },
+};
 
 class FieldNode extends React.Component<FieldNodeProps, any> {
+  formatString(search: string, expression: string): string[] {
+    const diplayableString: string[] = [];
+    const index = expression.toLowerCase().indexOf(search.toLowerCase());
+    diplayableString.push(expression.substring(0, index));
+    diplayableString.push(expression.substring(index, search.length + index));
+    diplayableString.push(expression.substring(index + search.length));
+    return diplayableString;
+  }
 
   render() {
-    const { item, isDragging, connectDragSource, type } = this.props;
+    const {
+      item,
+      isDragging,
+      connectDragSource,
+      type,
+      searchString,
+      hasChildren,
+    } = this.props;
     let itemName = item.name;
     if (item.decorator && item.decorator.hidden === false) {
-      itemName = item.decorator.label
+      itemName = item.decorator.label;
     }
 
-    const Fieldtype = type === 'object' ? (item as SchemaItem).schemaType : (item as FieldInfoEnhancedResource).field_type;
-    let helper = (<span className="field-type">{Fieldtype} <McsIcon type="dots" /></span>);
+    const Fieldtype =
+      type === 'object'
+        ? (item as SchemaItem).schemaType
+        : (item as FieldInfoEnhancedResource).field_type;
+    let helper = (
+      <span className="field-type">
+        {Fieldtype} <McsIcon type="dots" />
+      </span>
+    );
 
-    if (item.decorator && item.decorator.hidden === false && item.decorator.help_text) {
+    if (
+      item.decorator &&
+      item.decorator.hidden === false &&
+      item.decorator.help_text
+    ) {
       const helptext = `${item.decorator.help_text} - ${Fieldtype}`;
       const id = cuid();
-      const getPopupContainer = () => document.getElementById(id)!
-      helper = (<span className="field-type" id={id}><Tooltip placement="left" title={helptext} getPopupContainer={getPopupContainer}><McsIcon type="question" /></Tooltip></span>);
+      const getPopupContainer = () => document.getElementById(id)!;
+      helper = (
+        <span className="field-type" id={id}>
+          <Tooltip
+            placement="left"
+            title={helptext}
+            getPopupContainer={getPopupContainer}>
+            <McsIcon type="question" />
+          </Tooltip>
+        </span>
+      );
     }
 
-
-    return connectDragSource &&
-    connectDragSource(
-      <div className={`field-node-item ${isDragging ? 'dragging' : ''}`}>
-        <div>{itemName} {helper}</div>
-      </div>,
+    return (
+      connectDragSource &&
+      connectDragSource(
+        <div className={`field-node-item ${isDragging ? 'dragging' : ''}`}>
+          <div>
+            {hasChildren ? (
+              ''
+            ) : (
+              <span>
+                <DashOutlined className="mcs-FieldNode_dashes" />
+                <DashOutlined className="mcs-FieldNode_dashes_right" />
+              </span>
+            )}
+            {searchString &&
+            itemName.toLocaleLowerCase().includes(searchString.toLowerCase())
+              ? this.formatString(searchString, itemName).map(expr => {
+                  if (expr.toLowerCase() === searchString.toLowerCase())
+                    return <b className="mcs-shcemaFieldNode_search">{expr}</b>;
+                  return expr;
+                })
+              : itemName}
+            {helper}
+          </div>
+        </div>,
+      )
     );
   }
 }
@@ -92,7 +151,7 @@ export default DragSource(
   (props: FieldNodeProps) => props.type,
   fieldSource,
   (connect: DragSourceConnector, monitor: DragSourceMonitor) => ({
-		connectDragSource: connect.dragSource(),
-		isDragging: monitor.isDragging(),
-	}),
+    connectDragSource: connect.dragSource(),
+    isDragging: monitor.isDragging(),
+  }),
 )(FieldNode);
