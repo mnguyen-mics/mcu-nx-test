@@ -215,6 +215,8 @@ function postRequest<T>(
 ): Promise<T> {
   const communityId = (window as any).communityId;
   if (
+    endpoint.includes('password_validity') ||
+    endpoint.includes('authentication/set_password') ||
     endpoint === 'audience_segments.tag_feeds/aggregates' ||
     endpoint === 'authentication/access_tokens' ||
     endpoint === 'authentication/refresh_token/revoke' ||

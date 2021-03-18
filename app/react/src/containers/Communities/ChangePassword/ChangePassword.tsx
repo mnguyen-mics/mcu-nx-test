@@ -314,7 +314,7 @@ class CommunityChangePassword extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, {}>(
+export default Form.create()(compose<Props, {}>(
   withRouter,
   injectIntl,
-)(CommunityChangePassword);
+)(CommunityChangePassword));
