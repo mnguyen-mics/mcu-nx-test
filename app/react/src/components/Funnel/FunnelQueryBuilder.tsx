@@ -12,7 +12,7 @@ import injectNotifications, { InjectedNotificationProps } from '../../containers
 import { booleanOperator, FUNNEL_SEARCH_SETTING, FilterOperatorLabel } from './Constants';
 import { BooleanOperator, DimensionFilterClause, DimensionFilterOperator } from '../../models/ReportRequestBody';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { updateSearch, isSearchValid, parseSearch } from '../../utils/LocationSearchHelper';
+import { updateSearch, isSearchValid } from '../../utils/LocationSearchHelper';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import McsMoment from '../../utils/McsMoment';
@@ -20,6 +20,7 @@ import {
   FormattedMessage,
 } from 'react-intl';
 import FunnelExpressionInput from './FunnelExpressionInput';
+import { FunnelFilter } from '../../models/datamart/UserActivitiesFunnel';
 
 const Option = Select.Option;
 
@@ -39,6 +40,7 @@ interface State {
 
 interface FunnelQueryBuilderProps {
   datamartId: string;
+  filter: FunnelFilter[];
   parentCallback: (timestampInSec: number) => void;
   liftFunctionsCallback: (executeQueryFunction: () => void) => void;
 }
@@ -94,18 +96,25 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     this.props.liftFunctionsCallback(this.handleExecuteQueryButtonClick)
   }
 
+  componentDidUpdate(prevProps: Props) {
+    const {
+      filter
+    } = this.props;
+    if ((prevProps.filter !== filter) && filter.length > 0) {
+      this.setInitialParams();
+    }
+  }
+
   setInitialParams = () => {
     const {
       location: { search, pathname },
       history,
+      filter
     } = this.props;
 
     const { dateRange } = this.state;
-
-    const parsedSearch = parseSearch(search, FUNNEL_SEARCH_SETTING);
     try {
-      const steps = JSON.parse(parsedSearch.filter)
-      const identifiedSteps = steps.map((step: Step) => {
+      const identifiedSteps = filter.map((step: Step) => {
         step.filter_clause.filters.forEach(f => f.id = this._cuid());
         return {
           ...step,
