@@ -30,7 +30,9 @@ const { SubMenu } = Menu;
 const maximumOrgDisplay = 6;
 const maximumCommunityDisplay = 6;
 
-type Props = StoreProps & InjectedIntlProps & RouteComponentProps<{ organisationId: string }>;
+type Props = StoreProps &
+  InjectedIntlProps &
+  RouteComponentProps<{ organisationId: string }>;
 
 class OrganizationListSwitcher extends React.Component<
   Props,
@@ -96,7 +98,7 @@ class OrganizationListSwitcher extends React.Component<
         <SubMenu
           key={node.organisation_id}
           icon={<HomeOutlined />}
-          title={this.renderOrg(node, true)}
+          title={this.renderOrg(node, false)}
           popupClassName="mcs-organisationListSwitcher_popOverMenu"
         >
           {this.renderChildrenMenu(children)}
@@ -111,7 +113,7 @@ class OrganizationListSwitcher extends React.Component<
     }
   };
 
-  renderNodeFlat = (nodes: UserWorkspaceResource[], isChild: boolean): any => {
+  renderNodeFlat = (nodes: UserWorkspaceResource[], isChild: boolean) => {
     return nodes.map((node, index) => {
       const children = this.getChildren(node);
       const hasChildren = children.length > 0;
@@ -170,26 +172,28 @@ class OrganizationListSwitcher extends React.Component<
   SwitchBySearch = () => {
     const { foundOrgs, foundCommunities } = this.state;
     const {
-      intl: {
-        formatMessage
-      },
+      intl: { formatMessage },
     } = this.props;
     return (
-      <Menu
-      style={{ left: '10px', top: '-10px' }}
-      mode="vertical">
+      <Menu className="mcs-organisationListSwitcher_menu" mode="vertical">
         <Menu.Item disabled={true}>
           <Search
             className="mcs-organisationListSwitcher_searchInput"
             onSearch={this.handleSearch}
           />
         </Menu.Item>
-        <Menu.ItemGroup title={formatMessage(messages.communitiesTitle)} className="mcs-organisationListSwitcher_subtitle">
+        <Menu.ItemGroup
+          title={formatMessage(messages.communitiesTitle)}
+          className="mcs-organisationListSwitcher_subtitle"
+        >
           {foundCommunities.map((org) => {
             return this.renderNodeMenu(org);
           })}
         </Menu.ItemGroup>
-        <Menu.ItemGroup title={formatMessage(messages.organisationsTitle)} className="mcs-organisationListSwitcher_subtitle">
+        <Menu.ItemGroup
+          title={formatMessage(messages.organisationsTitle)}
+          className="mcs-organisationListSwitcher_subtitle"
+        >
           {foundOrgs.map((org) => {
             return this.renderNodeMenu(org);
           })}
@@ -205,11 +209,7 @@ class OrganizationListSwitcher extends React.Component<
       (w) => w.administrator_id === null,
     );
     return (
-      <Menu
-        style={{ left: '10px', top: '-10px' }}
-        className="mcs-organisationListSwitcher_orgList"
-        mode="vertical"
-      >
+      <Menu className="mcs-organisationListSwitcher_orgList" mode="vertical">
         {this.renderNodeFlat(adminOrgs, false)}
       </Menu>
     );
