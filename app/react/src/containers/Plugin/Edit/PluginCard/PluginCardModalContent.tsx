@@ -249,11 +249,6 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
         key: 'configuration',
         display: <div className="tab">{this.renderForm(pluginLayout!)}</div>
       },
-      // {
-      //   title: 'Documentation',
-      //   key: 'documentation',
-      //   display: <div className="tab"><Markdown source={markdown} /><div style={{ height: 50, width: '100%' }} /></div>
-      // }
     ]
 
     if (hasFeature('audience-feeds_stats') && editionMode) {
