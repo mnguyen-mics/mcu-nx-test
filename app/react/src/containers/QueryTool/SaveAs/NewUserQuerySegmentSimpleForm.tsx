@@ -1,5 +1,12 @@
 import * as React from 'react';
-import { reduxForm, InjectedFormProps, ConfigProps } from 'redux-form';
+import {
+  reduxForm,
+  InjectedFormProps,
+  ConfigProps,
+  FieldArray,
+  GenericFieldArray,
+  Field,
+} from 'redux-form';
 import { Omit } from 'react-router';
 import { Form } from '@ant-design/compatible';
 import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
@@ -17,6 +24,11 @@ import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { ValidatorProps } from '../../../components/Form/withValidators';
 import { NormalizerProps } from '../../../components/Form/withNormalizer';
+import ProcessingActivitiesFormSection, {
+  ProcessingActivitiesFormSectionProps,
+} from '../../Settings/DatamartSettings/Common/ProcessingActivitiesFormSection';
+import { InjectedFeaturesProps, injectFeatures } from '../../Features';
+import { ProcessingActivityFieldModel } from '../../Settings/DatamartSettings/Common/domain';
 
 export interface NewUserQuerySimpleFormData {
   name: string;
@@ -24,33 +36,68 @@ export interface NewUserQuerySimpleFormData {
   defaultLifetime?: string;
   defaultLifetimeUnit: 'days' | 'weeks' | 'months';
   persisted: boolean;
+  processingActivities: ProcessingActivityFieldModel[]
 }
 
 const initialFormData: Partial<NewUserQuerySimpleFormData> = {
   defaultLifetimeUnit: 'days',
   persisted: true,
+  processingActivities: []
 };
 
 export const FORM_ID = 'userQuerySegmentSimpleForm';
+
+const ProcessingActivitiesFieldArray = FieldArray as new () => GenericFieldArray<
+  Field,
+  ProcessingActivitiesFormSectionProps
+>;
 
 interface State {
   displayAdvancedSection: boolean;
 }
 
-export interface FormProps extends Omit<ConfigProps<NewUserQuerySimpleFormData, FormProps>, 'form'> {}
+export interface FormProps
+  extends Omit<ConfigProps<NewUserQuerySimpleFormData, FormProps>, 'form'> {}
 
-type Props = FormProps & InjectedIntlProps & ValidatorProps & NormalizerProps;
+type Props = FormProps &
+  InjectedFeaturesProps &
+  InjectedIntlProps &
+  ValidatorProps &
+  NormalizerProps;
 
 class NewUserQuerySegmentSimleForm extends React.Component<
   Props & InjectedFormProps<NewUserQuerySimpleFormData, Props>,
   State
 > {
-  constructor(props: Props & InjectedFormProps<NewUserQuerySimpleFormData, Props>) {
+  constructor(
+    props: Props & InjectedFormProps<NewUserQuerySimpleFormData, Props>,
+  ) {
     super(props);
     this.state = {
       displayAdvancedSection: false,
     };
   }
+
+  renderProcessingActivitiesSection = () => {
+    const { hasFeature, change } = this.props;
+    if (hasFeature('datamart-user_choices')) {
+      const genericFieldArrayProps = {
+        formChange: change,
+        rerenderOnEveryChange: true,
+      };
+      return (
+        <ProcessingActivitiesFieldArray
+          name="processingActivities"
+          component={ProcessingActivitiesFormSection}
+          initialProcessingSelectionsForWarning={undefined}
+          processingsAssociatedType={'SEGMENT'}
+          modalMode={true}
+          {...genericFieldArrayProps}
+        />
+      );
+    }
+    return <div/>;
+  };
 
   render() {
     const { fieldValidators, intl, handleSubmit } = this.props;
@@ -72,32 +119,25 @@ class NewUserQuerySegmentSimleForm extends React.Component<
             component={FormInput}
             validate={[fieldValidators.isRequired]}
             formItemProps={{
-              label: intl.formatMessage(
-                messages.segmentNameLabel,
-              ),
+              label: intl.formatMessage(messages.segmentNameLabel),
               required: true,
             }}
             inputProps={{
-              placeholder: intl.formatMessage(
-                messages.segmentNamePlaceHolder,
-              ),
+              placeholder: intl.formatMessage(messages.segmentNamePlaceHolder),
             }}
             helpToolTipProps={{
-              title: intl.formatMessage(
-                messages.segmentNameTooltip,
-              ),
+              title: intl.formatMessage(messages.segmentNameTooltip),
             }}
             small={true}
           />
+          {this.renderProcessingActivitiesSection()}
           <Button
             className="optional-section-title"
             onClick={toggleAdvancedSection}
           >
             <McsIcon type="settings" />
             <span className="step-title">
-              {intl.formatMessage(
-                messages.segmentAdvancedButtonLabel,
-              )}
+              {intl.formatMessage(messages.segmentAdvancedButtonLabel)}
             </span>
             <McsIcon type="chevron" />
           </Button>
@@ -180,33 +220,25 @@ class NewUserQuerySegmentSimleForm extends React.Component<
                 name="persisted"
                 component={FormBoolean}
                 formItemProps={{
-                  label: intl.formatMessage(
-                    messages.segmentPersistedLabel,
-                  ),
+                  label: intl.formatMessage(messages.segmentPersistedLabel),
                   hasMarginBottom: true,
                 }}
                 helpToolTipProps={{
-                  title: intl.formatMessage(
-                    messages.segmentPersistedTooltip,
-                  ),
+                  title: intl.formatMessage(messages.segmentPersistedTooltip),
                 }}
                 small={true}
               />
               <FormBooleanField
-                  name="paused"
-                  component={FormBoolean}
-                  formItemProps={{
-                    label: intl.formatMessage(
-                        messages.segmentPausedLabel,
-                    ),
-                    hasMarginBottom: true,
-                  }}
-                  helpToolTipProps={{
-                    title: intl.formatMessage(
-                        messages.segmentPausedTooltip,
-                    ),
-                  }}
-                  small={true}
+                name="paused"
+                component={FormBoolean}
+                formItemProps={{
+                  label: intl.formatMessage(messages.segmentPausedLabel),
+                  hasMarginBottom: true,
+                }}
+                helpToolTipProps={{
+                  title: intl.formatMessage(messages.segmentPausedTooltip),
+                }}
+                small={true}
               />
             </div>
           )}
@@ -219,6 +251,7 @@ class NewUserQuerySegmentSimleForm extends React.Component<
 export default compose<Props, FormProps>(
   injectIntl,
   withValidators,
+  injectFeatures,
   withNormalizer,
   reduxForm({
     form: FORM_ID,
@@ -237,7 +270,8 @@ const messages = defineMessages({
   },
   segmentNameTooltip: {
     id: 'query.saveas.segment.name.helper',
-    defaultMessage: 'Give your Audience Segment a name to find it back on the segment screen.',
+    defaultMessage:
+      'Give your Audience Segment a name to find it back on the segment screen.',
   },
   segmentAdvancedButtonLabel: {
     id: 'query.saveas.segment.advanced',
@@ -295,6 +329,6 @@ const messages = defineMessages({
   segmentPausedTooltip: {
     id: 'query.saveas.segment.paused.helper',
     defaultMessage:
-        'When a segment is paused, all related processings (statistics, user insertions and deletions) are stopped.',
+      'When a segment is paused, all related processings (statistics, user insertions and deletions) are stopped.',
   },
 });
