@@ -161,5 +161,5 @@ export default defineMessages({
 	organisationName: {
 		id: 'audienceFeeds.actionBar.export.orgnaisationName',
 		defaultMessage: 'Organisation Name',
-	},
+  },
 });

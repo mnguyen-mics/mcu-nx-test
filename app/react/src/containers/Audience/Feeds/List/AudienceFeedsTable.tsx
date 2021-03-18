@@ -478,11 +478,24 @@ class AudienceFeedsTable extends React.Component<Props, State> {
     const actionsDefinitions: Array<ActionDefinition<RecordType>> = [];
 
     if (record.feed.created_from !== 'AUTOMATION') {
-      if (record.feed.status === 'PAUSED' || record.feed.status === 'INITIAL') {
-        actionsDefinitions.push({
-          callback: this.activateFeed,
-          intlMessage: messages.activate,
-        });
+      if (
+        record.feed.status === 'PAUSED' ||
+        record.feed.status === 'INITIAL'
+      ) {
+         // OVH Crisis code
+         const MCS_CONSTANTS = (window as any).MCS_CONSTANTS || {};
+         const ALLOWED_COMMUNITIES = MCS_CONSTANTS.ALLOWED_COMMUNITIES || {};
+         const allowedActivationOfPausedFeeds =
+           ALLOWED_COMMUNITIES.allowed_activation_of_paused_feeds || [];
+         const communityId = (window as any).communityId;
+        const allowFeedActivation = !!(
+          communityId && allowedActivationOfPausedFeeds.includes(communityId)
+        );
+         actionsDefinitions.push({
+           callback: this.activateFeed,
+           intlMessage: messages.activate,
+           disabled: !allowFeedActivation,
+         });
       } else {
         actionsDefinitions.push({
           callback: this.pauseFeed,
