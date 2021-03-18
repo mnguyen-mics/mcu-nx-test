@@ -208,6 +208,14 @@ export default defineMessages({
     id: 'menu.organisation.title',
     defaultMessage: 'Organisation',
   },
+  organisationsTitle: {
+    id: 'menu.organisations.title',
+    defaultMessage: 'Organisations',
+  },
+  communitiesTitle: {
+    id: 'menu.communities.title',
+    defaultMessage: 'Communities',
+  },
   usersSettingsTitle: {
     id: 'menu.organisation.users',
     defaultMessage: 'Users',
