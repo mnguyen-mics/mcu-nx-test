@@ -220,6 +220,7 @@ function postRequest<T>(
     endpoint === 'authentication/refresh_token/revoke' ||
     endpoint === 'authentication/refresh_tokens' ||
     endpoint === 'authentication/send_password_reset_email' ||
+    endpoint === 'reports/feed_report' ||
     (communityId && allowedWrite.includes(communityId))
   ) {
     return request('post', endpoint, {

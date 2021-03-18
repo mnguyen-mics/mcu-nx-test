@@ -218,8 +218,6 @@ class FeedCard extends React.Component<Props, FeedCardState> {
       .catch(() => this.setState({ isLoading: false }));
   }
 
-  // fetch pluginLayout to render image and title
-
   renderActionButton = () => {
     const { feed, onFeedUpdate, notifyError, intl } = this.props;
 
@@ -263,8 +261,17 @@ class FeedCard extends React.Component<Props, FeedCardState> {
           </Button>
         );
       case 'PAUSED':
+        // OVH Crisis code
+        const MCS_CONSTANTS = (window as any).MCS_CONSTANTS || {};
+        const ALLOWED_COMMUNITIES = MCS_CONSTANTS.ALLOWED_COMMUNITIES || {};
+        const allowedActivationOfPausedFeeds =
+          ALLOWED_COMMUNITIES.allowed_activation_of_paused_feeds || [];
+        const communityId = (window as any).communityId;
+        const allowFeedActivation = !!(
+          communityId && allowedActivationOfPausedFeeds.includes(communityId)
+        );
         return (
-          <Button onClick={editFeed}>
+          <Button onClick={editFeed} disabled={!allowFeedActivation}>
             {intl.formatMessage(messages.resume)}
           </Button>
         );
