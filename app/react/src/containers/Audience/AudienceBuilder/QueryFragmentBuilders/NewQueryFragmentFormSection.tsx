@@ -12,7 +12,6 @@ import { messages } from '../constants';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import {
   AudienceBuilderParametricPredicateGroupNode,
-  AudienceBuilderParametricPredicateNode,
 } from '../../../../models/audienceBuilder/AudienceBuilderResource';
 import NewAudienceFeatureFormSection, {
   NewAudienceFeatureFormSectionProps,
@@ -20,15 +19,12 @@ import NewAudienceFeatureFormSection, {
 import injectDrawer, {
   InjectedDrawerProps,
 } from '../../../../components/Drawer/injectDrawer';
-import AudienceFeatureSelector, {
-  AudienceFeatureSelectorProps,
-} from './AudienceFeatureSelector';
 import { AudienceFeatureResource } from '../../../../models/audienceFeature';
 import { ObjectLikeTypeInfoResource } from '../../../../models/datamart/graphdb/RuntimeSchema';
 import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
-import NewAudienceFeatureSelector, {
-  NewAudienceFeatureSelectorProps,
-} from './NewAudienceFeatureSelector';
+import {
+  AudienceBuilderParametricPredicateNode,
+} from '../../../../models/audienceBuilder/AudienceBuilderResource';
 
 export const NewAudienceFeatureFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
@@ -38,7 +34,8 @@ export const NewAudienceFeatureFieldArray = FieldArray as new () => GenericField
 export interface NewQueryFragmentFormSectionProps {
   datamartId: string;
   demographicsFeaturesIds: string[];
-  formChange(field: string, value: any): void;
+  selectAndAddFeature: (addToGroup: (_: AudienceBuilderParametricPredicateNode) => void) => () => void;
+  change: (field: string, value: any) => void;
   objectTypes: ObjectLikeTypeInfoResource[];
   audienceFeatures?: AudienceFeatureResource[];
 }
@@ -49,160 +46,32 @@ type Props = WrappedFieldArrayProps<AudienceBuilderParametricPredicateGroupNode>
   InjectedFeaturesProps &
   InjectedIntlProps;
 
-interface State {
-  audienceFeatures?: AudienceFeatureResource[];
-}
-
-class NewQueryFragmentFormSection extends React.Component<Props, State> {
+class NewQueryFragmentFormSection extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
-    this.state = {
-      audienceFeatures: this.props.audienceFeatures,
-    };
   };
 
-  newAudienceBuilderGroup = (
-    expressions: AudienceBuilderParametricPredicateNode[] = []
-  ): AudienceBuilderParametricPredicateGroupNode => {
-    return {
-      type: 'GROUP',
-      boolean_operator: 'OR',
-      negation: false,
-      expressions: expressions,
-    };
-  };
+  addToGroup =
+    (groupIndex: number) =>
+      (predicate: AudienceBuilderParametricPredicateNode) => {
+        const {
+          fields,
+          change
+        } = this.props;
 
-  renderQueryBuilderButtons = () => {
-    const {
-      fields
-    } = this.props;
+        const updatedGroups = fields.getAll().map((field, i) => {
+          if (i === groupIndex) {
+            return {
+              ...field,
+              expressions: field.expressions.concat(predicate),
+            };
+          } else {
+            return field;
+          }
+        });
 
-    let renderExclude;
-    if (!!fields.getAll() || !!fields.getAll()[1] || fields.getAll()[1].expressions.length < 1) {
-      renderExclude = <span>/
-        <Button
-          className="mcs-audienceBuilder_excludeButton"
-          onClick={this.selectNewAudienceFeature(this.addAudienceFeature())}
-        >
-          Exclude
-        </Button>
-      </span>
-    }
-
-    return (
-      <div className="mcs-audienceBuilder_queryButtons-2">
-        <Button
-          className="mcs-audienceBuilder_narrowWithButton"
-          onClick={this.selectNewAudienceFeature(this.addAudienceFeature())}
-        >
-          Include
-        </Button>
-
-        {renderExclude}
-      </div>
-    );
-  };
-
-  newParametricPredicate = (audienceFeature: AudienceFeatureResource): AudienceBuilderParametricPredicateNode => {
-    const parameters: { [key: string]: string[] | undefined } = {};
-
-    audienceFeature.variables.forEach(v => {
-      parameters[v.field_name] = undefined;
-    });
-
-    return {
-      type: 'PARAMETRIC_PREDICATE',
-      parametric_predicate_id: audienceFeature.id,
-      parameters: parameters,
-    };
-  };
-
-  addPredicateToGroup(
-    predicate: AudienceBuilderParametricPredicateNode,
-    groupIndex?: number,
-    exclude?: boolean
-  ) {
-    const {
-      formChange,
-      fields
-    } = this.props;
-
-    let addToGroup = (
-      groupIndex: number,
-      predicate: AudienceBuilderParametricPredicateNode
-    ): AudienceBuilderParametricPredicateGroupNode[] => {
-      return fields.getAll().map((f, i) => {
-        if (i === groupIndex) {
-          return {
-            ...f,
-            expressions: f.expressions.concat(predicate),
-          };
-        } else {
-          return f;
-        }
-      });
-    }
-
-    let addToNewGroup = (
-      predicate: AudienceBuilderParametricPredicateNode
-    ): AudienceBuilderParametricPredicateGroupNode[] => {
-      const newGroup = this.newAudienceBuilderGroup([predicate]);
-      return fields.getAll().concat(newGroup);
-    }
-
-    const updatedGroups = groupIndex != undefined ?
-      addToGroup(groupIndex, predicate) :
-      addToNewGroup(predicate)
-
-    formChange(fields.name, updatedGroups);
-  };
-
-  addAudienceFeature = (groupIndex?: number,
-                        exclude?: boolean) => (
-    audienceFeatures: AudienceFeatureResource[]
-  ) => {
-    const { closeNextDrawer } = this.props;
-
-    if (audienceFeatures[0]) {
-      const predicate = this.newParametricPredicate(audienceFeatures[0])
-      this.addPredicateToGroup(predicate, groupIndex, exclude)
-
-      this.setState({
-        audienceFeatures: this.state.audienceFeatures?.concat(
-          audienceFeatures[0],
-        ),
-      });
-
-      closeNextDrawer();
-    }
-  };
-
-  selectNewAudienceFeature = (onSave: (_: AudienceFeatureResource[]) => void) => () => {
-    const {
-      openNextDrawer,
-      datamartId,
-      demographicsFeaturesIds,
-      hasFeature,
-    } = this.props;
-
-    const props: AudienceFeatureSelectorProps = {
-      datamartId: datamartId,
-      close: this.props.closeNextDrawer,
-      save: onSave,
-      demographicIds:
-        demographicsFeaturesIds.length >= 1
-          ? demographicsFeaturesIds
-          : undefined,
-    };
-
-    hasFeature('new-audienceFeatureSelector')
-      ? openNextDrawer<NewAudienceFeatureSelectorProps>(NewAudienceFeatureSelector, {
-        additionalProps: props,
-      })
-      : openNextDrawer<AudienceFeatureSelectorProps>(AudienceFeatureSelector, {
-        additionalProps: props,
-      });
-  };
+        change(fields.name, updatedGroups)
+      }
 
   render() {
     const {
@@ -211,9 +80,12 @@ class NewQueryFragmentFormSection extends React.Component<Props, State> {
       datamartId,
       demographicsFeaturesIds,
       objectTypes,
+      selectAndAddFeature
     } = this.props;
 
-    const { audienceFeatures } = this.state;
+    const {
+      audienceFeatures
+    } = this.props;
 
     const featuresCount = (index: number): number => {
       return fields.get(index).expressions.length
@@ -224,13 +96,15 @@ class NewQueryFragmentFormSection extends React.Component<Props, State> {
     }
 
     return (
-      <React.Fragment>
+      /*key={cuid()}*/
+      <React.Fragment >
         <div className="mcs-timeline">
 
           {fields.map((name, index) => {
             return (
               <React.Fragment key={`${index}_${fields.length}`}>
                 <Timeline.Item
+                  // key={cuid()}
                   dot={<McsIcon type="status" className={'mcs-timeline-initial-dot'} />}
                 >
                   {index == 0 && intl.formatMessage(messages.audienceBuilderTimelineMatchingCriterias)}
@@ -249,10 +123,11 @@ class NewQueryFragmentFormSection extends React.Component<Props, State> {
                 </Timeline.Item>
 
                 <Timeline.Item
+                  // key={cuid()}
                   dot={
                     <Button
                       className="mcs-audienceBuilder_moreButton-2"
-                      onClick={this.selectNewAudienceFeature(this.addAudienceFeature(index))}
+                      onClick={selectAndAddFeature(this.addToGroup(index))}
                     >
                       <McsIcon type="status" className={'mcs-timeline-add-dot'} />
                     </Button>
@@ -265,7 +140,6 @@ class NewQueryFragmentFormSection extends React.Component<Props, State> {
             );
           })}
         </div>
-        {fields.name == `where.expressions[0].expressions` && this.renderQueryBuilderButtons()}
       </React.Fragment >
     );
   }

@@ -46,13 +46,28 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
 import { injectFeatures, InjectedFeaturesProps } from '../../Features';
+import {
+  AudienceBuilderParametricPredicateGroupNode,
+  AudienceBuilderParametricPredicateNode,
+} from '../../../models/audienceBuilder/AudienceBuilderResource';
+import AudienceFeatureSelector, {
+  AudienceFeatureSelectorProps,
+} from './QueryFragmentBuilders/AudienceFeatureSelector';
+import NewAudienceFeatureSelector, {
+  NewAudienceFeatureSelectorProps,
+} from './QueryFragmentBuilders/NewAudienceFeatureSelector';
+
+import injectDrawer, {
+  InjectedDrawerProps,
+} from '../../../components/Drawer/injectDrawer';
+
 
 export const QueryFragmentFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
   NewQueryFragmentFormSectionProps
 >;
 
-export interface AudienceBuilderContainerProps
+export interface NewAudienceBuilderContainerProps
   extends Omit<ConfigProps<NewAudienceBuilderFormData>, 'form'> {
   audienceBuilder: AudienceBuilderResource;
   renderActionBar: (
@@ -67,13 +82,14 @@ interface MapStateToProps {
 
 type Props = InjectedFormProps<
   NewAudienceBuilderFormData,
-  AudienceBuilderContainerProps
+  NewAudienceBuilderContainerProps
 > &
   MapStateToProps &
-  AudienceBuilderContainerProps &
+  NewAudienceBuilderContainerProps &
   InjectedNotificationProps &
   InjectedFeaturesProps &
   InjectedIntlProps &
+  InjectedDrawerProps &
   RouteComponentProps<{ organisationId: string }>;
 
 interface State {
@@ -87,7 +103,7 @@ interface State {
   audienceFeatures?: AudienceFeatureResource[];
 }
 
-class AudienceBuilderContainer extends React.Component<Props, State> {
+class NewAudienceBuilderContainer extends React.Component<Props, State> {
   @lazyInject(TYPES.IRuntimeSchemaService)
   private _runtimeSchemaService: IRuntimeSchemaService;
 
@@ -204,6 +220,146 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
     this.runQuery(formValues);
   };
 
+  saveGroup =
+    (groups: AudienceBuilderParametricPredicateGroupNode[],
+      groupsLocation: string) =>
+      (newGroup: AudienceBuilderParametricPredicateGroupNode) => {
+        const {
+          change,
+        } = this.props;
+
+        change(groupsLocation, groups.concat(newGroup));
+      }
+
+  addToNewGroup =
+    (save: (_: AudienceBuilderParametricPredicateGroupNode) => void) =>
+      (predicate: AudienceBuilderParametricPredicateNode) => {
+
+        let newGroup: AudienceBuilderParametricPredicateGroupNode = {
+          type: 'GROUP',
+          boolean_operator: 'OR',
+          negation: false,
+          expressions: [predicate],
+        };
+
+        save(newGroup)
+      }
+
+  addAudienceFeature =
+    (processPredicate: (_: AudienceBuilderParametricPredicateNode) => void) =>
+      (audienceFeatures: AudienceFeatureResource[]) => {
+        const { closeNextDrawer } = this.props;
+
+        let newParametricPredicate =
+          (audienceFeature: AudienceFeatureResource): AudienceBuilderParametricPredicateNode => {
+            const parameters: { [key: string]: string[] | undefined } = {};
+
+            audienceFeature.variables.forEach(v => {
+              parameters[v.field_name] = undefined;
+            });
+
+            return {
+              type: 'PARAMETRIC_PREDICATE',
+              parametric_predicate_id: audienceFeature.id,
+              parameters: parameters,
+            };
+          };
+
+        if (audienceFeatures[0]) {
+          const predicate = newParametricPredicate(audienceFeatures[0])
+          processPredicate(predicate)
+
+          // TODO put in processPredicate ?
+          this.setState({
+            audienceFeatures: this.state.audienceFeatures?.concat(
+              audienceFeatures[0],
+            ),
+          });
+
+          closeNextDrawer();
+        }
+      };
+
+  selectNewAudienceFeature =
+    (onSelect: (_: AudienceFeatureResource[]) => void) => {
+      const {
+        openNextDrawer,
+        audienceBuilder,
+        hasFeature,
+      } = this.props;
+
+      const props: AudienceFeatureSelectorProps = {
+        datamartId: audienceBuilder.datamart_id,
+        close: this.props.closeNextDrawer,
+        save: onSelect,
+        demographicIds:
+          audienceBuilder.demographics_features_ids.length >= 1
+            ? audienceBuilder.demographics_features_ids
+            : undefined,
+      };
+
+      hasFeature('new-audienceFeatureSelector')
+        ? openNextDrawer<NewAudienceFeatureSelectorProps>(NewAudienceFeatureSelector, {
+          additionalProps: props,
+        })
+        : openNextDrawer<AudienceFeatureSelectorProps>(AudienceFeatureSelector, {
+          additionalProps: props,
+        });
+    };
+
+  selectAndAddFeature =
+    (processPredicate: (_: AudienceBuilderParametricPredicateNode) => void) =>
+      () => {
+        console.log("Select and add");
+        this.selectNewAudienceFeature(
+          this.addAudienceFeature(
+            processPredicate
+          )
+        )
+      }
+
+  renderQueryBuilderButtons = () => {
+    const {
+      formValues
+    } = this.props;
+
+    return (
+      <div className="mcs-audienceBuilder_queryButtons-2">
+        <Button
+          className="mcs-audienceBuilder_narrowWithButton"
+          onClick={
+            this.selectAndAddFeature(
+              this.addToNewGroup(
+                this.saveGroup(
+                  formValues.where.expressions[0].expressions,
+                  'where.expressions[0].expressions'
+                )
+              )
+            )
+          }
+        >
+          Include
+        </Button>
+        {'   /   '}
+        <Button
+          className="mcs-audienceBuilder_excludeButton"
+          onClick={
+            this.selectAndAddFeature(
+              this.addToNewGroup(
+                this.saveGroup(
+                  formValues.where.expressions[1].expressions,
+                  'where.expressions[1].expressions'
+                )
+              )
+            )
+          }
+        >
+          Exclude
+        </Button>
+      </div>
+    );
+  };
+
   renderQueryFragmentForm = () => {
     const genericFieldArrayProps = {
       rerenderOnEveryChange: true,
@@ -216,7 +372,7 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
 
     const {
       audienceBuilder,
-      change,
+      change
     } = this.props;
 
     return (
@@ -226,7 +382,8 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
           name={`where.expressions[0].expressions`}
           component={NewQueryFragmentFormSection}
           datamartId={audienceBuilder.datamart_id}
-          formChange={change}
+          selectAndAddFeature={this.selectAndAddFeature}
+          change={change}
           demographicsFeaturesIds={
             audienceBuilder.demographics_features_ids
           }
@@ -234,12 +391,14 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
           objectTypes={objectTypes}
           {...genericFieldArrayProps}
         />
+        {/* Include / Exclude Buttons */}
+        {this.renderQueryBuilderButtons()}
         {/* Exclude Timeline */}
         <QueryFragmentFieldArray
           name={`where.expressions[1].expressions`}
           component={NewQueryFragmentFormSection}
           datamartId={audienceBuilder.datamart_id}
-          formChange={change}
+          selectAndAddFeature={this.selectAndAddFeature}
           demographicsFeaturesIds={[]}
           audienceFeatures={audienceFeatures}
           objectTypes={objectTypes}
@@ -336,14 +495,15 @@ const mapStateToProps = (state: MicsReduxState) => ({
   formValues: getFormValues(NEW_FORM_ID)(state),
 });
 
-export default compose<Props, AudienceBuilderContainerProps>(
+export default compose<Props, NewAudienceBuilderContainerProps>(
   injectIntl,
   withRouter,
   injectNotifications,
   injectFeatures,
-  reduxForm<NewAudienceBuilderFormData, AudienceBuilderContainerProps>({
+  injectDrawer,
+  reduxForm<NewAudienceBuilderFormData, NewAudienceBuilderContainerProps>({
     form: NEW_FORM_ID,
     enableReinitialize: true,
   }),
   connect(mapStateToProps),
-)(AudienceBuilderContainer);
+)(NewAudienceBuilderContainer);
