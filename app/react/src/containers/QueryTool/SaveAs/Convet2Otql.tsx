@@ -6,7 +6,7 @@ import { DataResponse } from '../../../services/ApiService';
 import { QueryResource } from '../../../models/datamart/DatamartResource';
 import injectNotifications, { InjectedNotificationProps } from '../../Notifications/injectNotifications';
 import { compose } from 'recompose';
-import Code from '../../../components/Markdown/Renderers/Code';
+import Code from '../../../components/Renderers/Code';
 
 export interface Convert2OtqlProps extends ModalProps {
   convertQuery: () => Promise<DataResponse<QueryResource>>;
