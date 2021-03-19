@@ -36,6 +36,9 @@ import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IDatamartService } from '../../../services/DatamartService';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../Notifications/injectNotifications';
 
 const { Content } = Layout;
 
@@ -73,7 +76,7 @@ const messagesMap: {
   oldAutomationModalContent: {
     id: 'automations.list.oldAutomation.modal.content',
     defaultMessage: 'This is automation is not supported anymore.',
-  }
+  },
 });
 
 interface AutomationsTableProps extends MapDispatchToProps {
@@ -89,6 +92,7 @@ interface State {
 
 type JoinedProps = AutomationsTableProps &
   InjectedIntlProps &
+  InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }>;
 
 interface Filters {
@@ -144,6 +148,7 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
       match: {
         params: { organisationId },
       },
+      isUpdatingStatuses,
       history,
     } = this.props;
 
@@ -152,17 +157,22 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
       match: {
         params: { organisationId: previousOrganisationId },
       },
+      isUpdatingStatuses: previousIsUpdatingStatuses,
     } = previousProps;
 
     if (
       !compareSearches(search, previousSearch) ||
-      organisationId !== previousOrganisationId
+      organisationId !== previousOrganisationId ||
+      (isUpdatingStatuses !== previousIsUpdatingStatuses &&
+        isUpdatingStatuses === false)
     ) {
       if (!isSearchValid(search, SCENARIOS_SEARCH_SETTINGS)) {
         history.replace({
           pathname: pathname,
           search: buildDefaultSearch(search, SCENARIOS_SEARCH_SETTINGS),
-          state: { reloadDataSource: organisationId !== previousOrganisationId },
+          state: {
+            reloadDataSource: organisationId !== previousOrganisationId,
+          },
         });
       } else {
         const filter = parseSearch<FilterParams>(
@@ -187,7 +197,7 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
     }
     return this._scenarioService
       .getScenarios(organisationId, options)
-      .then(res => {
+      .then((res) => {
         this.setState({
           isLoading: false,
           dataSource: res.data,
@@ -203,10 +213,10 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
       },
       history,
       location,
-      intl: { formatMessage }
+      intl: { formatMessage },
     } = this.props;
 
-    this._datamartService.getDatamart(record.datamart_id).then(resp => {
+    this._datamartService.getDatamart(record.datamart_id).then((resp) => {
       if (resp.data.storage_model_version !== 'v201506') {
         history.push(`/v2/o/${organisationId}/automations/${record.id}/edit`, {
           from: `${location.pathname}${location.search}`,
@@ -272,6 +282,37 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
     });
   };
 
+  activateOrPauseScenario = (scenario: AutomationResource) => {
+    const {
+      match: {
+        params: { organisationId },
+      },
+      location: { search },
+      notifyError,
+    } = this.props;
+
+    const newStatus: AutomationStatus =
+      scenario.status !== 'ACTIVE' ? 'ACTIVE' : 'PAUSED';
+
+    const scenarioWithUpdatedStatus: AutomationResource = {
+      ...scenario,
+      status: newStatus,
+    };
+
+    this._scenarioService
+      .updateScenario(scenario.id, scenarioWithUpdatedStatus)
+      .then(() => {
+        const filter = parseSearch<FilterParams>(
+          search,
+          SCENARIOS_SEARCH_SETTINGS,
+        );
+        this.fetchAutomationList(organisationId, filter);
+      })
+      .catch((err) => {
+        notifyError(err);
+      });
+  };
+
   updateLocationSearch = (params: any) => {
     const {
       history,
@@ -292,12 +333,10 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
         params: { organisationId },
       },
       history,
-      intl: {
-        formatMessage
-      }
+      intl: { formatMessage },
     } = this.props;
 
-    this._datamartService.getDatamart(record.datamart_id).then(resp => {
+    this._datamartService.getDatamart(record.datamart_id).then((resp) => {
       if (resp.data.storage_model_version !== 'v201506') {
         history.push(`/v2/o/${organisationId}/automations/${record.id}`);
       } else {
@@ -338,13 +377,6 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
         this.updateLocationSearch({
           currentPage: page,
         });
-        if (
-          rowSelection &&
-          rowSelection.unselectAllItemIds &&
-          rowSelection.allRowsAreSelected
-        ) {
-          rowSelection.unselectAllItemIds();
-        }
       },
       onShowSizeChange: (current: number, size: number) =>
         this.updateLocationSearch({
@@ -386,7 +418,7 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
     const actionColumns = [
       {
         key: 'action',
-        actions: () => [
+        actions: (scenario: AutomationResource) => [
           {
             intlMessage: messagesMap.edit,
             callback: this.editAutomation,
@@ -395,11 +427,18 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
             intlMessage: messages.deleteAutomation,
             callback: this.deleteAutomation,
           },
+          {
+            intlMessage:
+              scenario.status !== 'ACTIVE'
+                ? messages.activateScenario
+                : messages.pauseScenario,
+            callback: this.activateOrPauseScenario,
+          },
         ],
       },
     ];
 
-    const statusItems = automationStatuses.map(status => ({
+    const statusItems = automationStatuses.map((status) => ({
       key: status,
       value: status,
     }));
@@ -428,7 +467,7 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
           values: Array<{ key: AutomationStatus; value: AutomationStatus }>,
         ) =>
           this.updateLocationSearch({
-            statuses: values.map(v => v.value),
+            statuses: values.map((v) => v.value),
           }),
       },
     ];
@@ -457,4 +496,5 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
 export default compose<JoinedProps, AutomationsTableProps>(
   withRouter,
   injectIntl,
+  injectNotifications,
 )(AutomationsListTable);

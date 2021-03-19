@@ -7,7 +7,6 @@ import {
   AutomationResource,
   AutomationStatus,
 } from '../../../models/automations/automations';
-import { FilterParams } from '../../Campaigns/Display/List/DisplayCampaignsActionbar';
 import { Label } from '../../Labels/Labels';
 import injectDrawer, {
   InjectedDrawerProps,
@@ -15,13 +14,7 @@ import injectDrawer, {
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
-import {
-  GetAutomationsOptions,
-  SCENARIOS_SEARCH_SETTINGS,
-  IScenarioService,
-} from '../../../services/ScenarioService';
-import { parseSearch } from '../../../utils/LocationSearchHelper';
-import { Task, executeTasksInSequence } from '../../../utils/PromiseHelper';
+import { IScenarioService } from '../../../services/ScenarioService';
 import AutomationListTable from './AutomationListTable';
 import AutomationActionBar from './AutomationActionBar';
 import { lazyInject } from '../../../config/inversify.config';
@@ -34,8 +27,7 @@ export interface MapDispatchToProps {
 const { Content } = Layout;
 
 interface AutomationListPageState {
-  selectedRowKeys: string[];
-  allRowsAreSelected: boolean;
+  selectedScenarios: AutomationResource[];
   visible: boolean;
   isUpdatingStatuses: boolean;
   isArchiving: boolean;
@@ -57,27 +49,17 @@ class AutomationListPage extends React.Component<
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
-      selectedRowKeys: [],
-      allRowsAreSelected: false,
+      selectedScenarios: [],
       visible: false,
       isUpdatingStatuses: false,
       isArchiving: false,
     };
   }
 
-  showModal = () => {
-    this.setState({
-      visible: true,
-    });
-  };
-
   updateAutomationStatus = (
     scenario: AutomationResource,
     status: AutomationStatus,
   ) => {
-    this.setState({
-      isUpdatingStatuses: true,
-    });
     const { notifyError } = this.props;
 
     return this._scenarioService
@@ -88,121 +70,57 @@ class AutomationListPage extends React.Component<
         datamart_id: scenario.datamart_id,
         organisation_id: scenario.organisation_id,
       })
-      .then(() => {
-        this.setState({
-          isUpdatingStatuses: false,
-          selectedRowKeys: [],
-        });
-        return null;
-      })
-      .catch(error => {
+      .catch((error) => {
         notifyError(error);
-        this.setState({
-          isUpdatingStatuses: false,
-          selectedRowKeys: [],
-        });
       });
   };
 
-  onSelectChange = (selectedRowKeys: string[]) => {
-    this.setState({ selectedRowKeys });
-  };
-
-  selectAllItemIds = () => {
-    this.setState({
-      allRowsAreSelected: true,
-    });
-  };
-
-  unselectAllItemIds = () => {
-    this.setState({
-      selectedRowKeys: [],
-      allRowsAreSelected: false,
-    });
-  };
-
-  unsetAllItemsSelectedFlag = () => {
-    this.setState({
-      allRowsAreSelected: false,
-    });
+  onSelectChange = (
+    selectedRowKeys: string[],
+    selectedRows: AutomationResource[],
+  ) => {
+    this.setState({ selectedScenarios: selectedRows });
   };
 
   handleStatusAction = (status: AutomationStatus) => {
-    const {
-      match: {
-        params: { organisationId },
+    const { notifyError } = this.props;
+    const { selectedScenarios } = this.state;
+
+    this.setState(
+      {
+        isUpdatingStatuses: true,
       },
-      location: { search },
-    } = this.props;
-    const { allRowsAreSelected, selectedRowKeys } = this.state;
-    this.setState({
-      isUpdatingStatuses: true,
-    });
-
-    const filter = parseSearch<FilterParams>(search, SCENARIOS_SEARCH_SETTINGS);
-
-    const options: GetAutomationsOptions = {
-      organisation_id: organisationId,
-      keywords: filter.keywords,
-    };
-
-    this._scenarioService
-      .getScenarios(organisationId, options)
-      .then(apiResp => {
-        const scenariosToUpdate = allRowsAreSelected
-          ? apiResp.data
-          : selectedRowKeys
-          ? apiResp.data.filter(scenario =>
-              selectedRowKeys.includes(scenario.id),
-            )
-          : [];
-        const tasks: Task[] = [];
-        scenariosToUpdate.forEach(scenario => {
-          tasks.push(() => {
-            return this.updateAutomationStatus(scenario, status);
-          });
+      () => {
+        const scenariosP = selectedScenarios.map((scenario) => {
+          return this.updateAutomationStatus(scenario, status);
         });
-        executeTasksInSequence(tasks)
+        Promise.all(scenariosP)
           .then(() => {
-            this.setState(
-              {
-                isUpdatingStatuses: false,
-              },
-              () => {
-                this._scenarioService.getScenarios(organisationId, filter);
-              },
-            );
-          })
-          .catch((err: any) => {
             this.setState({
               isUpdatingStatuses: false,
             });
-            this.props.notifyError(err);
+          })
+          .catch((err: any) => {
+            notifyError(err);
+            this.setState({
+              isUpdatingStatuses: false,
+            });
           });
-      });
+      },
+    );
   };
 
   render() {
-    const {
-      selectedRowKeys,
-      isUpdatingStatuses,
-      allRowsAreSelected,
-    } = this.state;
+    const { isUpdatingStatuses, selectedScenarios } = this.state;
 
     const { labels } = this.props;
 
     const rowSelection = {
-      selectedRowKeys,
-      allRowsAreSelected: allRowsAreSelected,
       onChange: this.onSelectChange,
-      selectAllItemIds: this.selectAllItemIds,
-      unselectAllItemIds: this.unselectAllItemIds,
-      onSelectAll: this.unsetAllItemsSelectedFlag,
-      onSelect: this.unsetAllItemsSelectedFlag,
     };
 
     const multiEditProps = {
-      visible: this.state.visible,
+      visible: selectedScenarios.length !== 0,
       handleStatusAction: this.handleStatusAction,
     };
 
@@ -214,7 +132,6 @@ class AutomationListPage extends React.Component<
       <div className="ant-layout">
         <AutomationActionBar
           organisationId={this.props.match.params.organisationId}
-          rowSelection={rowSelection}
           multiEditProps={multiEditProps}
         />
         <div className="ant-layout">

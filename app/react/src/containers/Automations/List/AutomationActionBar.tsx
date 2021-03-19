@@ -2,10 +2,13 @@ import React from 'react';
 import { Button } from 'antd';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
-import { Actionbar, McsIcon, Slide } from '@mediarithmics-private/mcs-components-library';
+import {
+  Actionbar,
+  McsIcon,
+  Slide,
+} from '@mediarithmics-private/mcs-components-library';
 import { compose } from 'recompose';
 import Menu from 'antd/lib/menu';
-import { ExtendedTableRowSelection } from '../../../components/TableView/TableView';
 import { AutomationStatus } from '../../../models/automations/automations';
 import {
   PaginationSearchSettings,
@@ -19,7 +22,6 @@ import messages from './messages';
 
 interface AutomationActionbarProps {
   organisationId: string;
-  rowSelection: ExtendedTableRowSelection;
   multiEditProps: {
     visible: boolean;
     handleStatusAction: (status: AutomationStatus) => void;
@@ -86,10 +88,8 @@ class AutomationActionBar extends React.Component<
     const {
       organisationId,
       intl,
-      rowSelection: { selectedRowKeys },
+      multiEditProps: { visible },
     } = this.props;
-
-    const hasSelected = !!(selectedRowKeys && selectedRowKeys.length > 0);
 
     const breadcrumbPaths = [
       {
@@ -121,7 +121,7 @@ class AutomationActionBar extends React.Component<
           </Button>
         </Link>
         <Slide
-          toShow={hasSelected}
+          toShow={visible}
           horizontal={true}
           content={buildActionElement()}
         />
