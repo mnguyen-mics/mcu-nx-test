@@ -14,6 +14,8 @@ import { compose } from 'recompose';
 import { MenuMode } from 'antd/lib/menu';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
 import { Button } from '@mediarithmics-private/mcs-components-library';
+import { injectFeatures, InjectedFeaturesProps } from '../../Features'
+import OrganisationListSwitcher from '../../Menu/OrganisationListSwitcher';
 
 const { Content, Sider } = Layout;
 
@@ -49,6 +51,7 @@ interface MainLayoutState {
 }
 
 type Props = MainLayoutProps &
+  InjectedFeaturesProps &
   RouteComponentProps<{ organisationId: string }> &
   MainLayoutStoreProps;
 
@@ -192,7 +195,11 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
       collapsed,
       mode,
       orgSelectorSize,
+      hasFeature
     } = this.props;
+
+
+    const listOrganizationSwitcher = hasFeature('new-navigation-system');
 
     const onStateChange = (state: State) =>
       this.setState({ isSelectorOpen: state.isOpen });
@@ -216,11 +223,12 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
 
         <LayoutId id="mcs-main-layout" className="mcs-fullscreen">
           <Sider
-            collapsible={true}
+            collapsible={!listOrganizationSwitcher}
             collapsed={collapsed}
-            trigger={this.renderTrigger()}
+            trigger={listOrganizationSwitcher ? undefined : this.renderTrigger()}
           >
             <Logo mode={mode} />
+            {listOrganizationSwitcher && <OrganisationListSwitcher />}
             <NavigatorMenu mode={mode} onMenuItemClick={this.onMenuItemClick} className="mcs-mainLayout-menu"/>
           </Sider>
           <Layout>
@@ -253,5 +261,6 @@ const mapDispatchToProps = {
 
 export default compose<Props, MainLayoutProps>(
   withRouter,
+  injectFeatures,
   connect(mapStateToProps, mapDispatchToProps),
 )(MainLayout);
