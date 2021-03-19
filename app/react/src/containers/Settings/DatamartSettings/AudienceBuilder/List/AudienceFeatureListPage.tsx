@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
-import { Button, Row, Layout, Modal, Input, Breadcrumb } from 'antd';
+import { Button, Layout, Modal, Input, Breadcrumb } from 'antd';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { messages } from '../messages';
 import {
@@ -343,7 +343,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
     return (
       <div>
         {this.getBreadCrumb()}
-        <Row className="mcs-audienceFeatureSettings_folderTable" gutter={16}>
+        <div className="mcs-audienceFeatureSettings_folderTable">
           {!!selectedFolder &&
             selectedFolder.children.map(folder => {
               return (
@@ -356,7 +356,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
                 />
               );
             })}
-        </Row>
+        </div>
       </div>
     );
   };
@@ -441,7 +441,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
     return (
       <div className="ant-layout">
         <Content className="mcs-content-container">
-          <Row className="mcs-audienceFeatureSettings-table">
+          <div className="mcs-audienceFeatureSettings-table">
             <div className="mcs-card-header mcs-card-title">
               <span className="mcs-card-title">
                 <FormattedMessage {...messages.audienceFeatures} />
@@ -467,7 +467,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
                 relatedTable={this.renderFolderTable()}
               />
             )}
-          </Row>
+          </div>
         </Content>
       </div>
     );

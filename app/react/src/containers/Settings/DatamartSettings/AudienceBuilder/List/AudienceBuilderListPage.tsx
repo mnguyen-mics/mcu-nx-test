@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
-import { Button, Row, Layout, Modal } from 'antd';
+import { Button, Layout, Modal } from 'antd';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { messages } from '../messages';
 import AudienceBuilderTable from './AudienceBuilderTable';
@@ -206,7 +206,7 @@ class AudienceBuilderListPage extends React.Component<Props, State> {
     return (
       <div className="ant-layout">
         <Content className="mcs-content-container">
-          <Row className="mcs-table-container">
+          <div className="mcs-table-container">
             <div>
               <div className="mcs-card-header mcs-card-title">
                 <span className="mcs-card-title">
@@ -227,7 +227,7 @@ class AudienceBuilderListPage extends React.Component<Props, State> {
                 deleteAudienceBuilder={this.deleteAudienceBuilder}
               />
             </div>
-          </Row>
+          </div>
         </Content>
       </div>
     );
