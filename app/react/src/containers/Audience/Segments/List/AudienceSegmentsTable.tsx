@@ -202,6 +202,14 @@ const messageMap: {
     id: 'audience.segments.list.column.emails',
     defaultMessage: 'Emails',
   },
+  mobile_cookie_ids_count: {
+    id: 'audience.segments.list.column.mobileCookie',
+    defaultMessage: 'Mobile Cookies',
+  },
+  mobile_ad_ids_count: {
+    id: 'audience.segments.list.column.mobileId',
+    defaultMessage: 'Mobile IDs',
+  },
 });
 
 export interface AudienceSegmentsTableProps {}
@@ -697,6 +705,20 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         isHideable: true,
         render: (text: string) => this.renderMetricData(text, '0,0'),
       },
+      {
+        title: () => this.getColumnButton('mobile_cookie_ids_count'),
+        key: 'mobile_cookie_ids_count',
+        isVisibleByDefault: true,
+        isHideable: true,
+        render: (text: string) => this.renderMetricData(text, '0,0'),
+      },
+      {
+        title: () => this.getColumnButton('mobile_ad_ids_count'),
+        key: 'mobile_ad_ids_count',
+        isVisibleByDefault: true,
+        isHideable: true,
+        render: (text: string) => this.renderMetricData(text, '0,0'),
+      }
     ];
 
     const additionalColumns = [
