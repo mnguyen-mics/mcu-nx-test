@@ -26,7 +26,6 @@ import cuid from 'cuid';
 import { IUsersAnalyticsService } from '../../services/UsersAnalyticsService';
 import { DimensionsList } from '../../models/datamartUsersAnalytics/datamartUsersAnalytics';
 import FunnelEmptyState from './FunnelEmptyState'
-const Option = Select.Option;
 
 interface StepDelta {
   dropOff?: string;
@@ -71,11 +70,11 @@ const valueFromPercentage = (percentage: number, drawerAreaHeight: number): numb
 }
 
 const colors = [
-  ['#00a1df','#e8f7fc'], 
-  ['#fd7c12','#ffe7d4'], 
-  ['#00ab67','#d1f0e4'],
-  ['#7057d1','#d5ccff'],
-  ['#eb5c5d','#ffcccc']
+  ['#00a1df', '#e8f7fc'],
+  ['#fd7c12', '#ffe7d4'],
+  ['#00ab67', '#d1f0e4'],
+  ['#7057d1', '#d5ccff'],
+  ['#eb5c5d', '#ffcccc']
 ];
 
 class Funnel extends React.Component<Props, State> {
@@ -209,7 +208,7 @@ class Funnel extends React.Component<Props, State> {
     return this._userActivitiesFunnelService.getUserActivitiesFunnel(datamartId, filter, timeRange, 5).
       then(response => {
         response.data.global.steps.push(deepCopy(response.data.global.steps[response.data.global.steps.length - 1]));
-        response.data.grouped_by?.map((dimension)=> dimension.funnel.steps.push(deepCopy(dimension.funnel.steps[dimension.funnel.steps.length - 1])));
+        response.data.grouped_by?.map((dimension) => dimension.funnel.steps.push(deepCopy(dimension.funnel.steps[dimension.funnel.steps.length - 1])));
         this.setState({
           isLoading: false,
           funnelData: response.data
@@ -256,7 +255,7 @@ class Funnel extends React.Component<Props, State> {
     const container = document.getElementById("container");
     const canvas = document.getElementById(`canvas_${StepIndex + 1}`) as HTMLCanvasElement;
 
-    const drawWidth = container && (container.offsetWidth / totalSteps);    
+    const drawWidth = container && (container.offsetWidth / totalSteps);
     canvas.width = drawWidth || 0;
 
     const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
@@ -265,7 +264,7 @@ class Funnel extends React.Component<Props, State> {
   }
 
 
-  drawChart = (ctx: CanvasRenderingContext2D, startCount: number, endCount: number,  drawWidth: number, strokeColors: string[]) => {
+  drawChart = (ctx: CanvasRenderingContext2D, startCount: number, endCount: number, drawWidth: number, strokeColors: string[]) => {
     const { funnelData } = this.state;
     const drawerHeight = 370;
     const percentageStart = getPercentage(startCount, funnelData.global.total);
@@ -308,11 +307,11 @@ class Funnel extends React.Component<Props, State> {
       return value.toExponential(exponentialDigits)
     }
   }
-  
+
   computeStepDelta = (upCountsPerStep: number[]) => {
     const stepsDelta: StepDelta[] = upCountsPerStep.map((step, i) => {
       let dropOff;
-      
+
       if (i < upCountsPerStep.length - 1) {
         const nextStep = upCountsPerStep[i + 1];
         const passThroughPercentage = nextStep > 0 && step > 0 ? (nextStep / step) * 100 : 0;
@@ -323,8 +322,8 @@ class Funnel extends React.Component<Props, State> {
         }
       }
       else {
-        return { 
-          dropOff: this.formatPercentageValue(step > 0 && upCountsPerStep[0] > 0 ? (step / upCountsPerStep[0]) * 100  : 0)
+        return {
+          dropOff: this.formatPercentageValue(step > 0 && upCountsPerStep[0] > 0 ? (step / upCountsPerStep[0]) * 100 : 0)
         };
       }
     });
@@ -347,7 +346,7 @@ class Funnel extends React.Component<Props, State> {
               pourcentage: getPercentage(dimension.funnel.steps[i].count, steps.count),
               color: colors[j][0]
             },
-            conversions: dimension.funnel.steps[i].conversion || dimension.funnel.steps[i].conversion === 0  ? {
+            conversions: dimension.funnel.steps[i].conversion || dimension.funnel.steps[i].conversion === 0 ? {
               value: dimension.funnel.steps[i].conversion as number,
               pourcentage: getPercentage(dimension.funnel.steps[i].conversion as number, steps.conversion as number),
               color: colors[j][0]
@@ -378,7 +377,7 @@ class Funnel extends React.Component<Props, State> {
     } = this.props;
     funnelData.global.steps[index].isLoading = true;
 
-    funnelData.global.steps.forEach((step)=> step.splitedView = false);
+    funnelData.global.steps.forEach((step) => step.splitedView = false);
     const timeRange = extractDatesFromProps(search);
     const routeParams = parseSearch(search, FUNNEL_SEARCH_SETTING);
     const funnelFilter = routeParams.filter.length > 0 ? JSON.parse(routeParams.filter) : {};
@@ -410,7 +409,7 @@ class Funnel extends React.Component<Props, State> {
   getLabelValueForDimension = (dimensionValue: string) => {
     const { dimensionsList } = this.state;
     const dimensionLabelValue = dimensionsList.dimensions.find((d) => d.value === dimensionValue)
-    return dimensionValue === 'CHANNEL_ID' && <Option className="mcs-funnelSplitBy_option" key={this._cuid()} value={dimensionLabelValue?.value || ""}>{dimensionLabelValue?.label}</Option>
+    return (dimensionValue === 'CHANNEL_ID' || dimensionValue === 'DEVICE_FORM_FACTOR') && <Select.Option className="mcs-funnelSplitBy_option" key={this._cuid()} value={dimensionLabelValue?.value || ""}>{dimensionLabelValue?.label}</Select.Option>
   }
 
   private getDurationMessage(stepIndex: number, seconds: number) {
@@ -437,13 +436,13 @@ class Funnel extends React.Component<Props, State> {
 
     });
 
-    return <FunnelStepHover 
-              key={this._cuid()}
-              globalMetrics={globalMetrics} 
-              idByDimension={idByDimension} 
-              dimensionMetrics={dimensionMetrics} 
-              stepNumber={index} 
-              hasTransactionConfirmed={this.hasTransactionConfirmed(filter)} />
+    return <FunnelStepHover
+      key={this._cuid()}
+      globalMetrics={globalMetrics}
+      idByDimension={idByDimension}
+      dimensionMetrics={dimensionMetrics}
+      stepNumber={index}
+      hasTransactionConfirmed={this.hasTransactionConfirmed(filter)} />
   }
 
   private hasTransactionConfirmed = (filter: FunnelFilter) => filter.filter_clause && !!filter.filter_clause.filters.find(f => f.expressions.includes('$transaction_confirmed'));
@@ -451,21 +450,21 @@ class Funnel extends React.Component<Props, State> {
   private getConversionDescription = (filter: FunnelFilter, conversion?: string, amount?: string) => {
     if (this.hasTransactionConfirmed(filter)) {
       return (<p className={'mcs-funnel_stepInfo_desc'}>
-        {conversion && <span>Users bought <span className={'mcs-funnel_stepInfo_metric'}>{conversion}</span> units</span>}{ amount && <span><br /> for a total of <span className={'mcs-funnel_stepInfo_metric'}>{amount}</span></span>}
+        {conversion && <span>Users bought <span className={'mcs-funnel_stepInfo_metric'}>{conversion}</span> units</span>}{amount && <span><br /> for a total of <span className={'mcs-funnel_stepInfo_metric'}>{amount}</span></span>}
       </p>)
     }
     return (<p className={'mcs-funnel_stepInfo_desc'}>
-              {conversion && <span><span className={'mcs-funnel_stepInfo_metric'}>{conversion}</span> units were linked to this step</span>}{ amount && <span><br /> for a total of <span className={'mcs-funnel_stepInfo_metric'}>{amount}</span></span>}
-            </p>)
+      {conversion && <span><span className={'mcs-funnel_stepInfo_metric'}>{conversion}</span> units were linked to this step</span>}{amount && <span><br /> for a total of <span className={'mcs-funnel_stepInfo_metric'}>{amount}</span></span>}
+    </p>)
   }
 
   displaySplitByDropdown = (filter: FunnelFilter) => {
-    return filter.filter_clause.filters.find(f=> f.dimension_name === 'CHANNEL_ID');
+    return filter.filter_clause.filters.find(f => f.dimension_name === 'CHANNEL_ID' || f.dimension_name === 'DEVICE_FORM_FACTOR');
   }
 
   render() {
     const { funnelData, stepsDelta, dimensionMetrics, isLoading, initialState } = this.state;
-    const { filter, intl} = this.props;
+    const { filter, intl } = this.props;
     if (isLoading) return (<LoadingChart />);
     const steps = funnelData.global.steps;
     const total = funnelData.global.total;
@@ -481,43 +480,43 @@ class Funnel extends React.Component<Props, State> {
               {steps.map((step, index) => {
 
                 const conversion = index > 0 && steps[index - 1].hasOwnProperty("conversion") ?
-                    numeral(steps[index - 1].conversion).format('0,0') : undefined;
+                  numeral(steps[index - 1].conversion).format('0,0') : undefined;
                 const amount = index > 0 && steps[index - 1].hasOwnProperty("amount") ?
-                    `${numeral(steps[index - 1].amount).format('0,0')}€` : undefined;
+                  `${numeral(steps[index - 1].amount).format('0,0')}€` : undefined;
                 return <div key={index.toString()} style={{ flex: 1, position: 'relative' }} >
                   <div className={"mcs-funnel_chart"}>
                     <div className={"mcs-funnel_stepInfo"}>
                       <p className={'mcs-funnel_stepInfo_desc'}><span className={'mcs-funnel_stepInfo_metric'}>{numeral(index === 0 ? total : steps[index - 1].count).format('0,0')} </span>{index > 0 ? `user points at step ${index}` : 'total user points'}</p>
                       {index > 0 && filter[index - 1] ? this.getConversionDescription(filter[index - 1], conversion, amount) : undefined}
 
-                      <div className={"mcs-funnel_splitBy"} id="mcs-funnel_splitBy">               
-                        {(index > 0 && steps[index - 1] && steps[index - 1].count > 0 && (filter[index - 1] && this.displaySplitByDropdown(filter[index - 1]))) ?  
-                          <Select 
-                          key={this._cuid()} 
-                          disabled={steps[index].isLoading} 
-                          loading={steps[index].isLoading} 
-                          className="mcs-funnel_splitBy_select" 
-                          value={filter[index - 1].group_by_dimension} 
-                          placeholder="Split by" 
-                          onChange={this.handleSplitByDimension.bind(this, index)}
-                          getPopupContainer={getPopupContainer}
+                      <div className={"mcs-funnel_splitBy"} id="mcs-funnel_splitBy">
+                        {(index > 0 && steps[index - 1] && steps[index - 1].count > 0 && (filter[index - 1] && this.displaySplitByDropdown(filter[index - 1]))) ?
+                          <Select
+                            key={this._cuid()}
+                            disabled={steps[index].isLoading}
+                            loading={steps[index].isLoading}
+                            className="mcs-funnel_splitBy_select"
+                            value={filter[index - 1].group_by_dimension}
+                            placeholder="Split by"
+                            onChange={this.handleSplitByDimension.bind(this, index)}
+                            getPopupContainer={getPopupContainer}
                           >
-                            {uniqBy(filter[index - 1].filter_clause.filters, 'dimension_name').map((dimension)=> this.getLabelValueForDimension(dimension.dimension_name))} 
+                            {uniqBy(filter[index - 1].filter_clause.filters, 'dimension_name').map((dimension) => this.getLabelValueForDimension(dimension.dimension_name))}
                           </Select> : undefined}
                       </div>
                     </div>
-               
-                  {(index > 0 && steps[index].splitedView) ? 
-                    <Button
-                      shape="circle"
-                      icon={<CloseOutlined />}
-                      className={"mcs-funnel_disableStepHover"}
-                      onClick={this.closeSplitByHover.bind(this, index)} /> : undefined}
-                    {index > 0 && filter[index - 1] && steps[index].splitedView ? this.getStepHover(index, dimensionMetrics[index-1], filter[index - 1]) : undefined}
-                
-                    {stepsDelta[index] && stepsDelta[index].passThroughPercentage && (steps[index + 1] && !steps[index + 1].splitedView)? <div className="mcs-funnel_percentageOfSucceeded">
+
+                    {(index > 0 && steps[index].splitedView) ?
+                      <Button
+                        shape="circle"
+                        icon={<CloseOutlined />}
+                        className={"mcs-funnel_disableStepHover"}
+                        onClick={this.closeSplitByHover.bind(this, index)} /> : undefined}
+                    {index > 0 && filter[index - 1] && steps[index].splitedView ? this.getStepHover(index, dimensionMetrics[index - 1], filter[index - 1]) : undefined}
+
+                    {stepsDelta[index] && stepsDelta[index].passThroughPercentage && (steps[index + 1] && !steps[index + 1].splitedView) ? <div className="mcs-funnel_percentageOfSucceeded">
                       <div className="mcs-funnel_arrow mcs_funnel_arrowStep" />
-                      <p className="mcs-funnel_deltaInfo"><span className={"mcs-funnel_metric"}>{`${stepsDelta[index ].passThroughPercentage}%`}</span> have succeeded {this.getDurationMessage(index, steps[index + 1].interaction_duration )}</p>
+                      <p className="mcs-funnel_deltaInfo"><span className={"mcs-funnel_metric"}>{`${stepsDelta[index].passThroughPercentage}%`}</span> have succeeded {this.getDurationMessage(index, steps[index + 1].interaction_duration)}</p>
                     </div> : undefined}
                     <canvas id={`canvas_${index + 1}`} className={"mcs-funnel_canvas"} height="370" />
                     <div className="mcs-funnel_conversionInfo">

@@ -12,7 +12,7 @@ import injectNotifications, { InjectedNotificationProps } from '../../containers
 import { booleanOperator, FUNNEL_SEARCH_SETTING, FilterOperatorLabel } from './Constants';
 import { BooleanOperator, DimensionFilterClause, DimensionFilterOperator } from '../../models/ReportRequestBody';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { updateSearch, isSearchValid } from '../../utils/LocationSearchHelper';
+import { parseSearch, updateSearch, isSearchValid } from '../../utils/LocationSearchHelper';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import McsMoment from '../../utils/McsMoment';
@@ -21,6 +21,7 @@ import {
 } from 'react-intl';
 import FunnelExpressionInput from './FunnelExpressionInput';
 import { FunnelFilter } from '../../models/datamart/UserActivitiesFunnel';
+
 
 const Option = Select.Option;
 
@@ -98,9 +99,11 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
 
   componentDidUpdate(prevProps: Props) {
     const {
-      filter
+      location: { search }
     } = this.props;
-    if ((prevProps.filter !== filter) && filter.length > 0) {
+    const routeParams = parseSearch(search, FUNNEL_SEARCH_SETTING);
+    const filter = routeParams.filter.length > 0 ? JSON.parse(routeParams.filter) : {};
+    if ((prevProps.location.search !== search) && filter.length > 0) {
       this.setInitialParams();
     }
   }
