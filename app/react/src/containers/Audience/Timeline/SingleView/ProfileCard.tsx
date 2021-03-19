@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Row } from 'antd';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import messages from '../messages';
 import { Card } from '@mediarithmics-private/mcs-components-library';
@@ -24,45 +23,48 @@ type Props = ProfileCardProps &
   InjectedIntlProps &
   RouteComponentProps<TimelinePageParams>;
 
-  
-
 class ProfileCard extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
   }
 
   renderProfile = (dataSource: UserProfileGlobal) => {
-    if (dataSource.type === 'pionus' && Object.keys(dataSource.profile).length > 0) {
+    if (
+      dataSource.type === 'pionus' &&
+      Object.keys(dataSource.profile).length > 0
+    ) {
       return Object.keys(dataSource.profile).map(key => {
         return (
-          <Row gutter={10} key={cuid()} className="table-line border-top">
-            <div className="sub-title">{dataSource.profile[key].compartmentName}</div>
+          <div key={cuid()} className="table-line border-top">
+            <div className="sub-title">
+              {dataSource.profile[key].compartmentName}
+            </div>
             <ProfileInfo profiles={dataSource.profile[key].profiles} />
-          </Row>
+          </div>
         );
-      })
+      });
     } else if (dataSource.type === 'legacy') {
       return (
-        <Row gutter={10} key={cuid()} className="table-line border-top">
-            <SingleProfileInfo profileGlobal={dataSource.profile} />
-          </Row>)
+        <div key={cuid()} className="table-line border-top">
+          <SingleProfileInfo profileGlobal={dataSource.profile} />
+        </div>
+      );
     } else {
-      return <span>
-            <FormattedMessage {...messages.emptyProfile} />
-          </span>
+      return (
+        <span>
+          <FormattedMessage {...messages.emptyProfile} />
+        </span>
+      );
     }
-    
-  }
+  };
 
   render() {
-    
     const { dataSource, intl, isLoading } = this.props;
     return (
       <Card
         title={intl.formatMessage(messages.profileTitle)}
         isLoading={isLoading}
-        className={'mcs-profileCard'}
-      >
+        className={'mcs-profileCard'}>
         {this.renderProfile(dataSource)}
       </Card>
     );

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { HomeOutlined } from '@ant-design/icons';
-import { Breadcrumb, Table, Row, Select } from 'antd';
+import { Breadcrumb, Table, Select } from 'antd';
 import {
   OTQLMetric,
   OTQLAggregations,
@@ -234,7 +234,7 @@ export default class AggregationRenderer extends React.Component<Props, State> {
     return (
       <div>
         {this.getBreadcrumb(aggregations)}
-        <Row style={{ marginBottom: 14 }}>
+        <div style={{ marginBottom: 14 }}>
           {showSelect && (
             <div>
               <div className="m-r-10" style={{ display: 'inline-block' }}>
@@ -263,8 +263,8 @@ export default class AggregationRenderer extends React.Component<Props, State> {
               </Select>
             </div>
           )}
-        </Row>
-        <Row>{selectedAggregationData}</Row>
+        </div>
+        <div>{selectedAggregationData}</div>
       </div>
     );
   }
