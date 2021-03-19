@@ -238,7 +238,7 @@ class OrganizationListSwitcher extends React.Component<
         trigger={['click']}
         placement="bottomRight"
       >
-        <div>
+        <div className="mcs-organisationListSwitcher_component">
           <hr />
           <div className="mcs-organisationListSwitcher_currentOrg_box">
             <div className="mcs-organisationListSwitcher_currentOrg">
