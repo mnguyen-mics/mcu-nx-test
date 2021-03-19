@@ -1,4 +1,4 @@
-import ApiService, { DataListResponse, DataResponse } from './ApiService';
+import ApiService, { DataListResponse, DataResponse, ApiResponse } from './ApiService';
 import {
   RuntimeSchemaResource,
   ObjectLikeTypeResource,
@@ -158,6 +158,11 @@ export interface IRuntimeSchemaService {
     runtimeSchemaId: string,
     blob: string,
   ) => Promise<DataListResponse<SchemaDecoratorResource>>;
+
+  deleteSchemaDecorators: (
+    datamartId: string,
+    runtimeSchemaId: string,
+  ) => Promise<ApiResponse>;
 }
 
 @injectable()
@@ -408,6 +413,14 @@ export class RuntimeSchemaService implements IRuntimeSchemaService {
       blob,
       {},
       { 'Content-Type': 'text/plain' },
+    );
+  }
+  deleteSchemaDecorators(
+    datamartId: string,
+    runtimeSchemaId: string,
+  ): Promise<DataListResponse<SchemaDecoratorResource>> {
+    return ApiService.deleteRequest(
+      `datamarts/${datamartId}/graphdb_runtime_schemas/${runtimeSchemaId}/schema_decorators`,
     );
   }
 }
