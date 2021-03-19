@@ -6,6 +6,7 @@
 
 .mcs-organisationListSwitcher_currentOrg {
   margin-left: 10px;
+  width: 100%;
   .mcs-organisationListSwitcher_orgName {
     font-weight: bold;
   }
@@ -31,6 +32,8 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
+  padding-left: 16px;
 }
 
 .mcs-organisationListSwitcher_indent {
@@ -78,11 +81,19 @@
   font-weight: bold;
 }
 
-.mcs-organisationListSwitcher_downlogo {
-  padding-right: 15px;
-  padding-top: 5px;
-}
-
 .mcs-organisationListSwitcher_component {
   cursor: pointer;
+  .mcs-organisationListSwitcher_downlogo {
+    width: 43px;
+    height: 30px;
+    .ant-menu-submenu-arrow {
+      position: relative;
+      top: 50%;
+      right: 50%;
+      left: 7px;
+      bottom: 20px;
+      transform: rotate(90deg);
+      display: block;
+    }
+  }
 }

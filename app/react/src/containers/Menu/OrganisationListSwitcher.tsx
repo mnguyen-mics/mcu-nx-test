@@ -8,9 +8,10 @@ import { Dropdown, Input, Menu } from 'antd';
 import { UserWorkspaceResource } from '../../models/directory/UserProfileResource';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { partition } from 'lodash';
-import { DownOutlined, HomeOutlined } from '@ant-design/icons';
+import { HomeOutlined } from '@ant-design/icons';
 import messages from './messages';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
+// import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 export interface OrganizationListSwitcherState {
   foundOrgs: UserWorkspaceResource[];
@@ -249,7 +250,9 @@ class OrganizationListSwitcher extends React.Component<
                 {currentWorkspace.organisation_id}
               </p>
             </div>
-            <DownOutlined className="mcs-organisationListSwitcher_downlogo" />
+            <div className="mcs-organisationListSwitcher_downlogo">
+              <i className="ant-menu-submenu-arrow" />
+            </div>
           </div>
           <hr />
         </div>
