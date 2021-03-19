@@ -14,7 +14,7 @@ import { withDatamartSelector, WithDatamartSelectorProps } from '../../Datamart/
 import ExportService from '../../../services/ExportService';
 import injectNotifications, { InjectedNotificationProps } from '../../Notifications/injectNotifications';
 import { extractDatesFromProps } from '../../../components/Funnel/Utils';
-import { FunnelFilter } from '../../../models/datamart/UserActivitiesFunnel';
+import { FunnelFilter, FunnelSplitParam } from '../../../models/datamart/UserActivitiesFunnel';
 import McsMoment from '../../../utils/McsMoment';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import { FILTERS } from '../../../containers/Audience/DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
@@ -79,7 +79,10 @@ class FunnelPage extends React.Component<JoinedProps, State> {
 
     const routeParams = parseSearch(search, FUNNEL_SEARCH_SETTING);
     const funnelFilter: FunnelFilter[] = (routeParams.filter.length > 0 ? JSON.parse(routeParams.filter) : {});
-    funnelFilter.forEach(item => item.group_by_dimension = "channel_id")
+    const splitBy: FunnelSplitParam = routeParams.splitBy ?  JSON.parse(routeParams.splitBy) : undefined;
+    if (splitBy) {
+      funnelFilter[splitBy.stepIndex].group_by_dimension = splitBy.groupBy;
+    }
     const funnelTimeRange = extractDatesFromProps(search);
 
     this._userActivitiesFunnelService

@@ -62,5 +62,10 @@ export interface FunnelIdByDimension {
   colors: string[]
 }
 
+
+export interface FunnelSplitParam {
+  stepIndex: number;
+  groupBy: string;
+}
 export type TimeUnit = 'DAY' | 'WEEK' | 'MONTH';
 export type TimeType = 'WINDOW' | 'DATES'

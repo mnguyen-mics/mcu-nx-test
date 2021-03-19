@@ -129,6 +129,7 @@ const funnelFilterSearchSetting = {
   isValid: (query: Index<string>) => !query.filter || query.filter.split(',').length > 0,
 };
 
+
 const funnelTemplateSearchSetting = {
   paramName: 'template',
   defaultValue: undefined,
@@ -137,8 +138,25 @@ const funnelTemplateSearchSetting = {
   isValid: (query: Index<FunnelTemplate>) => !!query.template,
 };
 
-export const FUNNEL_SEARCH_SETTING: SearchSetting[] = [...DATE_SEARCH_SETTINGS, funnelFilterSearchSetting, funnelTemplateSearchSetting];
+const splitBySearchSetting = {
+  paramName: 'splitBy',
+  defaultValue: undefined,
+  deserialize: (query: Index<string>) => {
+    if (query.splitBy) {
+      return query.splitBy
+    }
+    return [];
+  },
+  serialize: (value: string) => value,
+  isValid: (query: Index<string>) => !!query.splitBy
+};
 
+export const FUNNEL_SEARCH_SETTING: SearchSetting[] = [
+  ...DATE_SEARCH_SETTINGS, 
+  funnelFilterSearchSetting, 
+  funnelTemplateSearchSetting, 
+  splitBySearchSetting
+];
 
 export const funnelMessages = defineMessages({
   noData: {
