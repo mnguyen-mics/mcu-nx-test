@@ -34,6 +34,8 @@ import {
   ScenarioExitConditionFormResource,
   CustomActionNodeResource,
   FeedNodeResource,
+  ABNNodeResource,
+  EdgeSelection,
 } from './../../../models/automations/automations';
 import { IScenarioService } from './../../../services/ScenarioService';
 import { injectable, inject } from 'inversify';
@@ -725,11 +727,66 @@ export class AutomationFormService implements IAutomationFormService {
                 );
               }, Promise.resolve() as Promise<any>);
             })
+            .then(this.updateABNNodeSelections(savedAutomationId))
             .then(() => createdAutomation);
         }
         return Promise.resolve(createdAutomation);
       });
   }
+
+  updateABNNodeSelections = (scenarioId: string) => () => {
+    const nodesP = this._scenarioService.getScenarioNodes(scenarioId);
+    const edgesP = this._scenarioService.getScenarioEdges(scenarioId);
+
+    return Promise.all([nodesP, edgesP]).then((res) => {
+      const [nodesData, edgesData] = res;
+      const abnNodes: ABNNodeResource[] = nodesData.data.filter(isAbnNode);
+      const edges = edgesData.data;
+
+      const nodePromises: Array<
+        Promise<DataResponse<ScenarioNodeShape> | undefined>
+      > = abnNodes.map((abnNode) => {
+        const associatedEdges = edges.filter((edge) => {
+          return edge.source_id === abnNode.id;
+        });
+
+        const edgeSelectionIds = Object.keys(abnNode.edges_selection);
+
+        const doSelectionsAndEdgesMatch =
+          edgeSelectionIds.length === associatedEdges.length &&
+          associatedEdges.every((edge) => edgeSelectionIds.includes(edge.id));
+
+        if (!doSelectionsAndEdgesMatch && associatedEdges.length !== 0) {
+          const edgesSelection: EdgeSelection = {};
+          const gap = 100.0 / associatedEdges.length;
+
+          associatedEdges.forEach((edge, index) => {
+            const min = gap * index;
+            const max = gap * (index + 1.0);
+
+            edgesSelection[edge.id] = {
+              min: min,
+              max: max,
+            };
+          });
+
+          const modifiedNode: ABNNodeResource = {
+            ...abnNode,
+            edges_selection: edgesSelection,
+          };
+
+          return this._scenarioService.updateScenarioNode(
+            scenarioId,
+            abnNode.id,
+            modifiedNode,
+          );
+        }
+
+        return Promise.resolve(undefined);
+      });
+      return Promise.all(nodePromises);
+    });
+  };
 
   saveFirstNode = (
     datamartId: string,
