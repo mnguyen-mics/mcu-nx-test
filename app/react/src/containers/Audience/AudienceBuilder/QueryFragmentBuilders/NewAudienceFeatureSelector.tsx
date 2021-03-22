@@ -84,12 +84,12 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
                 parent_id: folder.parent_id,
                 audience_features: features.filter(
                   (f: AudienceFeatureResource) =>
-                    folder.audience_feature_ids.includes(f.id),
+                    folder.audience_features_ids?.includes(f.id),
                 ),
                 children: folderLoop(
                   audienceFeatureFolders.filter(
                     (f: AudienceFeatureFolderResource) =>
-                      f.id !== null && folder.children_ids.includes(f.id),
+                      f.id !== null && folder.children_ids?.includes(f.id),
                   ),
                 ),
               };
@@ -104,7 +104,10 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
                 (f: AudienceFeatureFolderResource) => f.parent_id === null,
               ),
             ),
-            audience_features: [],
+            audience_features: features.filter(
+              (f: AudienceFeatureResource) =>
+                f.folder_id === null,
+            ),
           };
           this.setState({
             audienceFeaturesByFolder: baseFolder,
@@ -147,8 +150,6 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
     if (demographicIds && demographicIds.length >= 1) {
       options.exclude = demographicIds;
     }
-
-    options.fake_dataset = true;
 
     return this._audienceFeatureService
       .getAudienceFeatures(datamartId, options)

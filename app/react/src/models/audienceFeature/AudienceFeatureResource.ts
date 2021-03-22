@@ -38,16 +38,16 @@ export interface AudienceFeatureResource {
   addressable_object: string;
   object_tree_expression: string;
   variables: AudienceFeatureVariableResource[];
-  audienceFeatureFolderId: string;
+  folder_id: string;
 }
 
 export interface AudienceFeatureFolderResource {
   id: string | null;
   name: string;
   datamart_id: string;
-  audience_feature_ids: string[];
+  audience_features_ids: string[] | null;
   parent_id: string | null;
-  children_ids: string[];
+  children_ids: string[] | null;
 }
 
 export interface AudienceFeaturesByFolder {

@@ -94,25 +94,25 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
     this.setState({
       isLoading: true,
     });
-    this.fetchFolders(datamartId).then(audienceFeatureFolders => {
+    this.fetchFolders(datamartId).then((audienceFeatureFolders) => {
       this.fetchAudienceFeatures()
-        .then(features => {
+        .then((features) => {
           const folderLoop = (
             folders: AudienceFeatureFolderResource[],
           ): AudienceFeaturesByFolder[] => {
-            return folders.map(folder => {
+            return folders.map((folder) => {
               return {
                 id: folder.id,
                 name: folder.name,
                 parent_id: folder.parent_id,
                 audience_features: features.filter(
                   (f: AudienceFeatureResource) =>
-                    folder.audience_feature_ids.includes(f.id),
+                    folder.audience_features_ids?.includes(f.id),
                 ),
                 children: folderLoop(
                   audienceFeatureFolders.filter(
                     (f: AudienceFeatureFolderResource) =>
-                      f.id !== null && folder.children_ids.includes(f.id),
+                      f.id !== null && folder.children_ids?.includes(f.id),
                   ),
                 ),
               };
@@ -127,7 +127,10 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
                 (f: AudienceFeatureFolderResource) => f.parent_id === null,
               ),
             ),
-            audience_features: [],
+            audience_features: features.filter(
+              (f: AudienceFeatureResource) =>
+                f.folder_id === null,
+            ),
           };
           this.setState({
             audienceFeaturesByFolder: baseFolder,
@@ -135,7 +138,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
             isLoading: false,
           });
         })
-        .catch(err => {
+        .catch((err) => {
           this.props.notifyError(err);
           this.setState({
             isLoading: false,
@@ -147,10 +150,10 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
   fetchFolders = (datamartId: string) => {
     return this._audienceFeatureService
       .getAudienceFeatureFolders(datamartId)
-      .then(res => {
+      .then((res) => {
         return res.data;
       })
-      .catch(err => {
+      .catch((err) => {
         this.props.notifyError(err);
         return [];
       });
@@ -171,11 +174,9 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
       options.keywords = [filter.keywords];
     }
 
-    options.fake_dataset = true;
-
     return this._audienceFeatureService
       .getAudienceFeatures(datamartId, options)
-      .then(res => {
+      .then((res) => {
         return res.data;
       });
   };
@@ -220,7 +221,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
               this.fetchAudienceFeatures(filter as SearchFilter);
             }
           })
-          .catch(err => {
+          .catch((err) => {
             notifyError(err);
           });
       },
@@ -240,7 +241,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
       .updateAudienceFeatureFolder(datamartId, folderId, {
         name: newName,
       })
-      .catch(err => {
+      .catch((err) => {
         this.props.notifyError(err);
       });
   };
@@ -258,7 +259,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
         datamart_id: datamartId,
         parent_id: selectedFolder?.id,
       })
-      .catch(err => {
+      .catch((err) => {
         this.props.notifyError(err);
       });
   };
@@ -271,7 +272,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
     } = this.props;
     return this._audienceFeatureService
       .deleteAudienceFeatureFolder(datamartId, folderId)
-      .catch(err => {
+      .catch((err) => {
         this.props.notifyError(err);
       });
   };
@@ -283,7 +284,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
       if (id === null) {
         selectedFolder = audienceFeaturesByFolder;
       } else {
-        folder.children.forEach(f => {
+        folder.children.forEach((f) => {
           if (f.id === id) {
             selectedFolder = f;
           } else {
@@ -318,7 +319,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
         };
         pathLoop(selectedFolder);
 
-        return path.map(elt => {
+        return path.map((elt) => {
           return (
             <Breadcrumb.Item key={elt.id ? elt.id : 'root_key'}>
               <McsButton onClick={this.onSelectFolder(elt.id)}>
@@ -345,7 +346,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
         {this.getBreadCrumb()}
         <div className="mcs-audienceFeatureSettings_folderTable">
           {!!selectedFolder &&
-            selectedFolder.children.map(folder => {
+            selectedFolder.children.map((folder) => {
               return (
                 <AudienceFeatureFolder
                   key={folder.id ? folder.id : 'root_key'}
@@ -409,7 +410,9 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
           value={inputValue}
           onChange={this.handleInputChange}
           className="mcs-audienceFeatureSettings-folderInput"
-          placeholder={intl.formatMessage(messages.audienceFeaturePlaceholderFolderInput)}
+          placeholder={intl.formatMessage(
+            messages.audienceFeaturePlaceholderFolderInput,
+          )}
         />
 
         <Button type="primary" onClick={onOk}>
@@ -422,7 +425,11 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
       </div>
     ) : (
       <div>
-        <Button type="primary" onClick={addNewFeature} className="mcs-audienceFeature_creation_button">
+        <Button
+          type="primary"
+          onClick={addNewFeature}
+          className="mcs-audienceFeature_creation_button"
+        >
           <FormattedMessage {...messages.audienceFeatureNew} />
         </Button>
         <Button
