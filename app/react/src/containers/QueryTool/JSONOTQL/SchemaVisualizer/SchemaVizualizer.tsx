@@ -124,6 +124,7 @@ export default class SchemaVizualizer extends React.Component<
                 item={item}
                 type="object"
                 searchString={searchString}
+                hasChildren={true}
               />
             ) : (
               <FieldNode
@@ -211,6 +212,7 @@ export default class SchemaVizualizer extends React.Component<
                   item={item}
                   type="object"
                   searchString={searchString}
+                  hasChildren={true}
                 />
               ) : (
                 <FieldNode
@@ -239,6 +241,7 @@ export default class SchemaVizualizer extends React.Component<
                   item={item}
                   type="object"
                   searchString={searchString}
+                  hasChildren={true}
                 />
               ) : (
                 <FieldNode
@@ -332,7 +335,7 @@ export default class SchemaVizualizer extends React.Component<
     const { expandedKeys, treeData } = this.state;
 
     return schema ? (
-      <div>
+      <div className="mcs-schemaVizualize_content">
         <Search
           className="mcs-schemaVizualizer_search_bar"
           placeholder="Search"

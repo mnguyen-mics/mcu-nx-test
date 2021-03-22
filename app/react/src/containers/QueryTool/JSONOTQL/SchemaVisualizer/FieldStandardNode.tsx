@@ -16,13 +16,19 @@ interface FieldNodeFieldProps extends FieldNodeCommonProps {
   item: FieldInfoEnhancedResource;
 }
 
+interface FieldNodeState {
+  truncated: boolean;
+}
+
 interface FieldNodeCommonProps {
   id: string;
   schemaType?: string;
   searchString?: string;
+  hasChildren?: boolean;
 }
 
-class FieldNode extends React.Component<FieldNodeProps, any> {
+class FieldNode extends React.Component<FieldNodeProps, FieldNodeState> {
+  contentRef: React.RefObject<HTMLDivElement>;
   formatString(search: string, expression: string): string[] {
     const diplayableString: string[] = [];
     const index = expression.toLowerCase().indexOf(search.toLowerCase());
@@ -31,9 +37,28 @@ class FieldNode extends React.Component<FieldNodeProps, any> {
     diplayableString.push(expression.substring(index + search.length));
     return diplayableString;
   }
+  constructor(props: FieldNodeProps) {
+    super(props);
+    this.state = {
+      truncated: false,
+    };
+    this.contentRef = React.createRef();
+  }
+  componentDidMount() {
+    if (
+      this.contentRef &&
+      this.contentRef.current &&
+      this.contentRef.current?.offsetWidth <
+        this.contentRef.current?.scrollWidth
+    )
+      this.setState({
+        truncated: true,
+      });
+  }
 
   render() {
-    const { item, type, searchString } = this.props;
+    const { item, type, searchString, hasChildren } = this.props;
+    const { truncated } = this.state;
     const itemName = item.name;
 
     const Fieldtype =
@@ -67,18 +92,27 @@ class FieldNode extends React.Component<FieldNodeProps, any> {
     }
 
     return (
-      <div className={`field-node-item`}>
-        <div>
-          {searchString &&
-          itemName.toLocaleLowerCase().includes(searchString.toLowerCase())
-            ? this.formatString(searchString, itemName).map(expr => {
-                if (expr.toLowerCase() === searchString.toLowerCase())
-                  return <b className="mcs-shcemaFieldNode_search">{expr}</b>;
-                return expr;
-              })
-            : itemName}
-          {helper}
-        </div>
+      <div className={`field-node-item ${hasChildren ? '' : 'mcs-fieldNode_child'}`}>
+        <Tooltip
+          color="#fafafa"
+          overlayClassName="mcs-fieldNode_truncated_tooltip"
+          title={truncated ? itemName : undefined}>
+          <div
+            ref={this.contentRef}
+            className={`mcs-fieldNode_content ${
+              hasChildren ? 'mcs-fieldNode_parent' : ''
+            }`}>
+            {searchString &&
+            itemName.toLocaleLowerCase().includes(searchString.toLowerCase())
+              ? this.formatString(searchString, itemName).map(expr => {
+                  if (expr.toLowerCase() === searchString.toLowerCase())
+                    return <b className="mcs-shcemaFieldNode_search">{expr}</b>;
+                  return expr;
+                })
+              : itemName}
+            {helper}
+          </div>
+        </Tooltip>
       </div>
     );
   }

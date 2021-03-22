@@ -28,6 +28,10 @@ interface FieldNodeFieldProps extends FieldNodeCommonProps {
   item: FieldInfoEnhancedResource;
 }
 
+interface FieldNodeState {
+  truncated: boolean;
+}
+
 interface FieldNodeCommonProps {
   id: string;
   connectDragSource?: ConnectDragSource;
@@ -64,7 +68,8 @@ const fieldSource = {
   },
 };
 
-class FieldNode extends React.Component<FieldNodeProps, any> {
+class FieldNode extends React.Component<FieldNodeProps, FieldNodeState> {
+  contentRef: React.RefObject<HTMLDivElement>;
   formatString(search: string, expression: string): string[] {
     const diplayableString: string[] = [];
     const index = expression.toLowerCase().indexOf(search.toLowerCase());
@@ -72,6 +77,24 @@ class FieldNode extends React.Component<FieldNodeProps, any> {
     diplayableString.push(expression.substring(index, search.length + index));
     diplayableString.push(expression.substring(index + search.length));
     return diplayableString;
+  }
+  constructor(props: FieldNodeProps) {
+    super(props);
+    this.state = {
+      truncated: false,
+    };
+    this.contentRef = React.createRef();
+  }
+  componentDidMount() {
+    if (
+      this.contentRef &&
+      this.contentRef.current &&
+      this.contentRef.current?.offsetWidth <
+        this.contentRef.current?.scrollWidth
+    )
+      this.setState({
+        truncated: true,
+      });
   }
 
   render() {
@@ -83,6 +106,7 @@ class FieldNode extends React.Component<FieldNodeProps, any> {
       searchString,
       hasChildren,
     } = this.props;
+    const { truncated } = this.state;
     let itemName = item.name;
     if (item.decorator && item.decorator.hidden === false) {
       itemName = item.decorator.label;
@@ -122,25 +146,36 @@ class FieldNode extends React.Component<FieldNodeProps, any> {
       connectDragSource &&
       connectDragSource(
         <div className={`field-node-item ${isDragging ? 'dragging' : ''}`}>
-          <div>
-            {hasChildren ? (
-              ''
-            ) : (
-              <span>
-                <DashOutlined className="mcs-FieldNode_dashes" />
-                <DashOutlined className="mcs-FieldNode_dashes_right" />
-              </span>
-            )}
-            {searchString &&
-            itemName.toLocaleLowerCase().includes(searchString.toLowerCase())
-              ? this.formatString(searchString, itemName).map(expr => {
-                  if (expr.toLowerCase() === searchString.toLowerCase())
-                    return <b className="mcs-shcemaFieldNode_search">{expr}</b>;
-                  return expr;
-                })
-              : itemName}
-            {helper}
-          </div>
+          <Tooltip
+            color="#fafafa"
+            overlayClassName="mcs-fieldNode_truncated_tooltip"
+            title={truncated ? itemName : undefined}>
+            <div
+              ref={this.contentRef}
+              className={`mcs-fieldNode_content ${
+                hasChildren ? 'mcs-fieldNode_parent' : ''
+              }`}>
+              {hasChildren ? (
+                ''
+              ) : (
+                <span>
+                  <DashOutlined className="mcs-FieldNode_dashes" />
+                  <DashOutlined className="mcs-FieldNode_dashes--right" />
+                </span>
+              )}
+              {searchString &&
+              itemName.toLocaleLowerCase().includes(searchString.toLowerCase())
+                ? this.formatString(searchString, itemName).map(expr => {
+                    if (expr.toLowerCase() === searchString.toLowerCase())
+                      return (
+                        <b className="mcs-shcemaFieldNode_search">{expr}</b>
+                      );
+                    return expr;
+                  })
+                : itemName}
+              {helper}
+            </div>
+          </Tooltip>
         </div>,
       )
     );
