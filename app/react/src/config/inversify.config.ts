@@ -209,6 +209,10 @@ import {
   UsersAnalyticsService,
 } from '../services/UsersAnalyticsService';
 import { IUserRolesService, UserRolesService } from '../services/UserRolesService';
+import {
+  IAudienceBuilderQueryService,
+  AudienceBuilderQueryService
+} from '../containers/Audience/AudienceBuilder/AudienceBuilderQueryService';
 
 
 export const container = new Container();
@@ -415,6 +419,9 @@ container.bind<ICustomActionService>(TYPES.ICustomActionService).to(CustomAction
 container
   .bind<IScenarioAnalyticsService>(TYPES.IScenarioAnalyticsService)
   .to(ScenarioAnalyticsService);
+container
+  .bind<IAudienceBuilderQueryService>(TYPES.IAudienceBuilderQueryService)
+  .to(AudienceBuilderQueryService);
 
 export const { lazyInject } = getDecorators(container, false);
 

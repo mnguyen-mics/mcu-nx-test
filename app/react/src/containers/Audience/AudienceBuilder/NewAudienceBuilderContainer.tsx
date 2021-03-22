@@ -14,13 +14,11 @@ import {
   InjectedFormProps,
   getFormValues,
 } from 'redux-form';
-import { NEW_FORM_ID, buildQueryDocument, messages } from './constants';
+import { NEW_FORM_ID, messages } from './constants';
 import { Omit } from '../../../utils/Types';
 import {
   NewAudienceBuilderFormData,
   QueryDocument as AudienceBuilderQueryDocument,
-  AudienceBuilderGroupNode,
-  isAudienceBuilderParametricPredicateNode,
   AudienceBuilderResource
 } from '../../../models/audienceBuilder/AudienceBuilderResource';
 import AudienceBuilderDashboard from './AudienceBuilderDashboard';
@@ -32,7 +30,6 @@ import { OTQLResult } from '../../../models/datamart/graphdb/OTQLResult';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IRuntimeSchemaService } from '../../../services/RuntimeSchemaService';
-import { IQueryService } from '../../../services/QueryService';
 import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/RuntimeSchema';
 import { QueryDocument as GraphDbQueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
 import {
@@ -41,6 +38,7 @@ import {
   Loading,
 } from '@mediarithmics-private/mcs-components-library';
 import { IAudienceFeatureService } from '../../../services/AudienceFeatureService';
+import { IAudienceBuilderQueryService } from './AudienceBuilderQueryService';
 import { AudienceFeatureResource } from '../../../models/audienceFeature';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -107,11 +105,11 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
   @lazyInject(TYPES.IRuntimeSchemaService)
   private _runtimeSchemaService: IRuntimeSchemaService;
 
-  @lazyInject(TYPES.IQueryService)
-  private _queryService: IQueryService;
-
   @lazyInject(TYPES.IAudienceFeatureService)
   private _audienceFeatureService: IAudienceFeatureService;
+
+  @lazyInject(TYPES.IAudienceBuilderQueryService)
+  private _audienceBuilderQueryService: IAudienceBuilderQueryService;
 
   constructor(props: Props) {
     super(props);
@@ -124,9 +122,39 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
     };
   }
 
+  runQuery = () => {
+    const { audienceBuilder, formValues } = this.props;
+
+    this.setState({
+      isQueryRunning: true,
+      isMaskVisible: false,
+    });
+
+    const success = (
+      queryDocument: GraphDbQueryDocument,
+      result: OTQLResult
+    ) => {
+      this.setState({
+        queryResult: result,
+        isQueryRunning: false,
+        queryDocument: queryDocument,
+      });
+    }
+
+    const failure = (err: any) => {
+      this.setState({
+        isQueryRunning: false,
+      });
+      this.props.notifyError(err);
+    }
+
+    this._audienceBuilderQueryService.runQuery(audienceBuilder.datamart_id, formValues, success, failure);
+  }
+
   componentDidMount() {
     const { audienceBuilder, formValues } = this.props;
-    this.runQuery(formValues);
+
+    this.runQuery();
 
     this._runtimeSchemaService
       .getRuntimeSchemas(audienceBuilder.datamart_id)
@@ -145,12 +173,11 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
             });
           });
       });
+
     const audienceFeatureIds: string[] = [];
-    formValues.where.expressions.forEach(exp => {
-      (exp as AudienceBuilderGroupNode).expressions.forEach(e => {
-        if (isAudienceBuilderParametricPredicateNode(e)) {
-          audienceFeatureIds.push(e.parametric_predicate_id);
-        }
+    formValues.include.concat(formValues.exclude).forEach(group => {
+      group.expressions.forEach(exp => {
+        audienceFeatureIds.push(exp.parametric_predicate_id);
       });
     });
     const promises = audienceFeatureIds.map(id => {
@@ -178,31 +205,6 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
     }
   }
 
-  // TODO FIX
-  runQuery = (formData: NewAudienceBuilderFormData) => {
-    const { audienceBuilder } = this.props;
-    this.setState({
-      isQueryRunning: true,
-      isMaskVisible: false,
-    });
-    const queryDocument = buildQueryDocument(formData);
-    this._queryService
-      .runJSONOTQLQuery(audienceBuilder.datamart_id, queryDocument)
-      .then(queryResult => {
-        this.setState({
-          queryResult: queryResult.data,
-          isQueryRunning: false,
-          queryDocument: queryDocument,
-        });
-      })
-      .catch(err => {
-        this.setState({
-          isQueryRunning: false,
-        });
-        this.props.notifyError(err);
-      });
-  };
-
   toggleDashboard = () => {
     this.setState({
       isDashboardToggled: !this.state.isDashboardToggled,
@@ -211,13 +213,6 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
     setTimeout(() => {
       window.dispatchEvent(new Event('resize'));
     }, 50);
-  };
-
-  refreshDashboard = () => {
-    const { formValues } = this.props;
-    console.log("run query");
-    console.log(formValues);
-    this.runQuery(formValues);
   };
 
   saveGroup =
@@ -331,8 +326,8 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
             this.selectAndAddFeature(
               this.addToNewGroup(
                 this.saveGroup(
-                  formValues.where.expressions[0].expressions,
-                  'where.expressions[0].expressions'
+                  formValues.include,
+                  'include'
                 )
               )
             )
@@ -347,8 +342,8 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
             this.selectAndAddFeature(
               this.addToNewGroup(
                 this.saveGroup(
-                  formValues.where.expressions[1].expressions,
-                  'where.expressions[1].expressions'
+                  formValues.exclude,
+                  'exclude'
                 )
               )
             )
@@ -379,7 +374,7 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
       <div>
         {/* Include Timeline */}
         <QueryFragmentFieldArray
-          name={`where.expressions[0].expressions`}
+          name={`include`}
           component={NewQueryFragmentFormSection}
           datamartId={audienceBuilder.datamart_id}
           selectAndAddFeature={this.selectAndAddFeature}
@@ -395,7 +390,7 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
         {this.renderQueryBuilderButtons()}
         {/* Exclude Timeline */}
         <QueryFragmentFieldArray
-          name={`where.expressions[1].expressions`}
+          name={`exclude`}
           component={NewQueryFragmentFormSection}
           datamartId={audienceBuilder.datamart_id}
           selectAndAddFeature={this.selectAndAddFeature}
@@ -442,7 +437,7 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
           {
             operations: [{ directives: [], selections: [{ name: 'id' }] }],
             from: 'UserPoint',
-            where: formValues.where,
+            where: this._audienceBuilderQueryService.buildObjectTreeExpression(formValues)?.where,
           },
           audienceBuilder.datamart_id,
         )}
@@ -470,7 +465,7 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
               </Button>
               {!!isMaskVisible && (
                 <div className="mcs-audienceBuilder_liveDashboardMask">
-                  <Button onClick={this.refreshDashboard} className="mcs-audienceBuilder_dashboard_refresh_button">
+                  <Button onClick={this.runQuery} className="mcs-audienceBuilder_dashboard_refresh_button">
                     {intl.formatMessage(messages.refreshMessage)}
                   </Button>
                 </div>

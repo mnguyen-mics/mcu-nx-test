@@ -127,6 +127,7 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
             });
           });
       });
+
     const audienceFeatureIds: string[] = [];
     formValues.where.expressions.forEach(exp => {
       (exp as AudienceBuilderGroupNode).expressions.forEach(e => {

@@ -133,26 +133,64 @@ export const INITIAL_AUDIENCE_BUILDER_FORM_DATA: AudienceBuilderFormData = {
 export const NEW_FORM_ID = 'newAudienceBuilderFormData';
 
 export const NEW_INITIAL_AUDIENCE_BUILDER_FORM_DATA: NewAudienceBuilderFormData = {
-  where: {
-    type: 'GROUP',
-    boolean_operator: 'AND',
-    expressions: [
-      {
-        type: 'GROUP',
-        boolean_operator: 'AND',
-        negation: false,
-        expressions: [],
-      },
-      {
-        type: 'GROUP',
-        boolean_operator: 'AND',
-        negation: true,
-        expressions: [],
-      },
-    ],
-  }
+  include: [],
+  exclude: []
+  // where: {
+  //   type: 'GROUP',
+  //   boolean_operator: 'AND',
+  //   expressions: [
+  //     {
+  //       type: 'GROUP',
+  //       boolean_operator: 'AND',
+  //       negation: false,
+  //       expressions: [],
+  //     },
+  //     {
+  //       type: 'GROUP',
+  //       boolean_operator: 'AND',
+  //       negation: true,
+  //       expressions: [],
+  //     },
+  //   ],
+  // }
 };
 
+// TODO Move to AudienceBuilderQueryService
+export const formatQuery = (query: QueryDocument) => {
+  if (query?.where) {
+    return {
+      ...query,
+      where: {
+        ...query.where,
+        expressions: (query.where as AudienceBuilderGroupNode).expressions.map(
+          (exp: AudienceBuilderGroupNode) => {
+            return {
+              ...exp,
+              expressions: exp.expressions.map(
+                (e: AudienceBuilderParametricPredicateNode) => {
+                  const parameters: any = {};
+                  Object.keys(e.parameters).forEach(p => {
+                    const value = e.parameters[p];
+                    if (value) {
+                      parameters[`${p}`] = value;
+                    }
+                  });
+
+                  return {
+                    ...e,
+                    parameters: parameters,
+                  };
+                },
+              ),
+            };
+          },
+        ),
+      },
+    };
+  } else return query;
+};
+
+// TODO Move to AudienceBuilderQueryService
 export const buildQueryDocument = (formData: AudienceBuilderFormData) => {
   let query: QueryDocument = {
     language_version: 'JSON_OTQL',
