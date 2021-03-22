@@ -109,12 +109,16 @@ const messages = defineMessages({
   },
   modalTitle: {
     id: 'datamart.schemaEditor.objectTree.decorators.title',
-    defaultMessage: 'Please confirm the deletion',
+    defaultMessage: 'Delete Decorators?',
+  },
+  modalDeleteContent: {
+    id: 'datamart.schemaEditor.objectTree.decorators.delete.content',
+    defaultMessage: 'Delete',
   },
   modalDescription: {
     id: 'datamart.schemaEditor.objectTree.decorators.description',
     defaultMessage:
-      'The decorators will be deleted for this schema. This action cannot be undone.',
+      'You are about to permanently delete the Decorators of this Schema. This action cannot be undone.',
   },
 });
 
@@ -327,6 +331,8 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
       title: formatMessage(messages.modalTitle),
       content: formatMessage(messages.modalDescription),
       onOk: onOk,
+      okButtonProps: {type:"primary", danger: true},
+      okText: formatMessage(messages.modalDeleteContent),
       visible: loadingDeletion,
     });
   };
