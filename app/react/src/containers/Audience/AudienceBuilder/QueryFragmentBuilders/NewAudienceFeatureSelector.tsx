@@ -4,7 +4,6 @@ import { Input, Row, Col, Breadcrumb } from 'antd';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { RouteComponentProps } from 'react-router';
-import { messages } from '../constants';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IAudienceFeatureService } from '../../../../services/AudienceFeatureService';
@@ -21,10 +20,11 @@ import {
 import AudienceFeatureCard from './AudienceFeatureCard';
 import { FolderOutlined } from '@ant-design/icons';
 import {
+  messages,
   fetchFolders,
   fetchAudienceFeatures,
   creatBaseFolder,
-  getFolder
+  getFolder,
 } from '../constants';
 
 const Search = Input.Search;

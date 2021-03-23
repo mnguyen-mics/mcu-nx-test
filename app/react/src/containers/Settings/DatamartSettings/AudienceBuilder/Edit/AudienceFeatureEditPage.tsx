@@ -60,32 +60,40 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
       });
       this._audienceFeatureService
         .getAudienceFeature(datamartId, audienceFeatureId)
-        .then(res => {
+        .then((res) => {
           this.setState({
             audienceFeature: res.data,
             isLoading: false,
           });
         })
 
-        .catch(e => {
+        .catch((e) => {
           notifyError(e);
           this.setState({
             isLoading: false,
           });
         });
     }
-    this._runtimeSchemaService.getRuntimeSchemas(datamartId).then(schemaRes => {
-      const liveSchema = schemaRes.data.find(s => s.status === 'LIVE');
-      if (!liveSchema) return [];
-      return this._runtimeSchemaService
-        .getObjectTypeInfoResources(datamartId, liveSchema.id)
-        .then(r => {
-          this.setState({
-            schema: computeFinalSchemaItem(r, 'UserPoint', false, false, false),
+    this._runtimeSchemaService
+      .getRuntimeSchemas(datamartId)
+      .then((schemaRes) => {
+        const liveSchema = schemaRes.data.find((s) => s.status === 'LIVE');
+        if (!liveSchema) return [];
+        return this._runtimeSchemaService
+          .getObjectTypeInfoResources(datamartId, liveSchema.id)
+          .then((r) => {
+            this.setState({
+              schema: computeFinalSchemaItem(
+                r,
+                'UserPoint',
+                false,
+                false,
+                false,
+              ),
+            });
+            return r;
           });
-          return r;
-        });
-    });
+      });
   }
 
   save = (formData: AudienceFeatureFormData) => {
@@ -141,7 +149,7 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
           state: { activeTab: 'audience_builder' },
         });
       })
-      .catch(err => {
+      .catch((err) => {
         hideSaveInProgress();
         notifyError(err);
         this.setState({

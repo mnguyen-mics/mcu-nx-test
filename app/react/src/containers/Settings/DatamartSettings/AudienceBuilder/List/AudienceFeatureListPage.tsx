@@ -82,21 +82,23 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
       match: {
         params: { datamartId },
       },
-      location: { search },
     } = this.props;
-    const filter = parseSearch(search, AUDIENCE_FEATURE_SEARCH_SETTINGS);
 
-    this.fetchFoldersAndFeatures(datamartId, filter);
+    this.fetchFoldersAndFeatures(datamartId);
   }
 
-  fetchFoldersAndFeatures = (datamartId: string, filter: Index<any>) => {
+  fetchFoldersAndFeatures = (datamartId: string, filter?: Index<any>) => {
     const { intl, notifyError } = this.props;
     this.setState({
       isLoading: true,
     });
     fetchFolders(this._audienceFeatureService, datamartId, notifyError).then(
       (audienceFeatureFolders) => {
-        fetchAudienceFeatures(this._audienceFeatureService, datamartId)
+        fetchAudienceFeatures(
+          this._audienceFeatureService,
+          datamartId,
+          filter as SearchFilter,
+        )
           .then((features) => {
             const baseFolder = creatBaseFolder(
               intl.formatMessage(messages.audienceFeatures),
@@ -293,16 +295,13 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
   };
 
   onFilterChange = (newFilter: SearchFilter) => {
-    const {
-      match: {
-        params: { datamartId },
+    this.setState({
+      filter: {
+        currentPage: newFilter.currentPage,
+        pageSize: newFilter.pageSize,
+        keywords: newFilter.keywords,
       },
-    } = this.props;
-    fetchAudienceFeatures(
-      this._audienceFeatureService,
-      datamartId,
-      newFilter as SearchFilter,
-    );
+    });
   };
 
   handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -334,7 +333,13 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
     };
 
     const onOk = () => {
-      this.createFolder();
+      this.createFolder().then((_) => {
+        this.fetchFoldersAndFeatures(datamartId);
+        this.setState({
+          displayFolderInput: false,
+          inputValue: '',
+        });
+      });
     };
 
     const onCancel = () => {
@@ -400,7 +405,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
                 dataSource={selectedFolder.audience_features}
                 total={
                   selectedFolder &&
-                  selectedFolder.parent_id === 'root' &&
+                  selectedFolder.parent_id === null &&
                   selectedFolder.children.length > 0
                     ? selectedFolder.children.length
                     : 0

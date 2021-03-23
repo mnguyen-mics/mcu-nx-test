@@ -1,25 +1,62 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
+import { lazyInject } from '../../../../../../config/inversify.config';
+import { TYPES } from '../../../../../../constants/types';
+import { IAudienceFeatureService } from '../../../../../../services/AudienceFeatureService';
 import { messages } from '../../messages';
 import {
   FormInput,
   FormSection,
   FormInputField,
+  FormSelectField,
+  DefaultSelect,
 } from '../../../../../../components/Form';
+import { Field, GenericField } from 'redux-form';
+import { FormSearchObjectProps } from '../../../../../../components/Form/FormSelect/FormSearchObject';
 import withValidators, {
   ValidatorProps,
 } from '../../../../../../components/Form/withValidators';
 import withNormalizer, {
   NormalizerProps,
 } from '../../../../../../components/Form/withNormalizer';
+import { RouteComponentProps, withRouter } from 'react-router';
+import { AudienceFeatureFolderResource } from '../../../../../../models/audienceFeature';
 
-type Props = InjectedIntlProps & ValidatorProps & NormalizerProps;
+export const FormSearchObjectField = Field as new () => GenericField<FormSearchObjectProps>;
 
-class AudienceFeatureGeneralSection extends React.Component<Props> {
+type Props = InjectedIntlProps &
+  ValidatorProps &
+  NormalizerProps &
+  RouteComponentProps<{ datamartId: string }>;
+
+interface State {
+  displayAdvancedSection: boolean;
+  audienceFeatureFolders: AudienceFeatureFolderResource[];
+}
+
+class AudienceFeatureGeneralSection extends React.Component<Props, State> {
+  @lazyInject(TYPES.IAudienceFeatureService)
+  private _audienceFeatureService: IAudienceFeatureService;
+
   constructor(props: Props) {
     super(props);
-    this.state = { displayAdvancedSection: false };
+    this.state = { displayAdvancedSection: false, audienceFeatureFolders: [] };
+  }
+
+  componentDidMount() {
+    const {
+      match: {
+        params: { datamartId },
+      },
+    } = this.props;
+    this._audienceFeatureService
+      .getAudienceFeatureFolders(datamartId)
+      .then((folders) =>
+        this.setState({
+          audienceFeatureFolders: folders.data,
+        }),
+      );
   }
 
   render() {
@@ -27,12 +64,10 @@ class AudienceFeatureGeneralSection extends React.Component<Props> {
       fieldValidators: { isRequired },
       intl: { formatMessage },
     } = this.props;
-
+    const { audienceFeatureFolders } = this.state;
     return (
       <div>
-        <FormSection
-          title={messages.audienceFeatureSectionGeneralTitle}
-        />
+        <FormSection title={messages.audienceFeatureSectionGeneralTitle} />
 
         <FormInputField
           name="name"
@@ -43,9 +78,7 @@ class AudienceFeatureGeneralSection extends React.Component<Props> {
             required: true,
           }}
           inputProps={{
-            placeholder: formatMessage(
-              messages.audienceFeatureNamePlaceholder,
-            ),
+            placeholder: formatMessage(messages.audienceFeatureNamePlaceholder),
           }}
           helpToolTipProps={{
             title: formatMessage(messages.audienceFeatureNameTooltip),
@@ -67,13 +100,29 @@ class AudienceFeatureGeneralSection extends React.Component<Props> {
             title: formatMessage(messages.audienceFeatureDescriptionTooltip),
           }}
         />
+        <FormSelectField
+          name="folder_id"
+          component={DefaultSelect}
+          options={audienceFeatureFolders.map((folder) => {
+            return { title: folder.name, value: folder.id };
+          })}
+          formItemProps={{
+            label: formatMessage(messages.audienceFeatureFolderLabel),
+            required: false,
+          }}
+          helpToolTipProps={{
+            title: formatMessage(messages.audienceFeatureFolderTooltip),
+          }}
+          autoSetDefaultValue={false}
+        />
       </div>
     );
   }
 }
 
-export default compose(
+export default compose<Props, State>(
   injectIntl,
   withValidators,
   withNormalizer,
+  withRouter,
 )(AudienceFeatureGeneralSection);

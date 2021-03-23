@@ -180,6 +180,18 @@ export const messages = defineMessages({
     id: 'settings.datamart.audienceFeatures.edit.description.tooltip',
     defaultMessage: 'Enter a description for your audience feature',
   },
+  audienceFeatureFolderLabel: {
+    id: 'settings.datamart.audienceFeatures.edit.folder.label',
+    defaultMessage: 'Folder',
+  },
+  audienceFeatureFolderPlaceholder: {
+    id: 'settings.datamart.audienceFeatures.edit.folder.placeholder',
+    defaultMessage: 'Folder',
+  },
+  audienceFeatureFolderTooltip: {
+    id: 'settings.datamart.audienceFeatures.edit.folder.tooltip',
+    defaultMessage: 'Enter a folder where to store your audience feature. By default, audience features are stored in the root folder',
+  },
   audienceFeatureAssociatedQuery: {
     id: 'settings.datamart.audienceFeatures.edit.query.title',
     defaultMessage: 'Associated Query',

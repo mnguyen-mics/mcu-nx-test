@@ -42,7 +42,7 @@ export interface AudienceFeatureResource {
 }
 
 export interface AudienceFeatureFolderResource {
-  id: string | null;
+  id: string;
   name: string;
   datamart_id: string;
   audience_features_ids: string[] | null;

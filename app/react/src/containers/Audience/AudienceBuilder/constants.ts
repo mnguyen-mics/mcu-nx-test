@@ -6,6 +6,7 @@ import {
   IAudienceFeatureService,
   AudienceFeatureOptions,
 } from '../../../services/AudienceFeatureService';
+import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 import {
   AudienceFeatureResource,
   AudienceFeatureFolderResource,
@@ -183,7 +184,7 @@ export const fetchAudienceFeatures = (
   demographicIds?: string[],
 ) => {
   const options: AudienceFeatureOptions = {
-    // ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
+    ...getPaginatedApiParam(filter?.currentPage, filter?.pageSize),
   };
 
   if (filter?.keywords) {
@@ -266,4 +267,3 @@ export const getFolder = (
   if (audienceFeaturesByFolder) loop(audienceFeaturesByFolder);
   return selectedFolder;
 };
-
