@@ -10,12 +10,13 @@ import { ObjectLikeTypeInfoResource } from '../../../../models/datamart/graphdb/
 import { Card, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { AudienceFeatureResource } from '../../../../models/audienceFeature';
 
-export interface NewAudienceFeatureFormSectionProps extends ReduxFormChangeProps {
+export interface NewAudienceFeatureFormSectionProps
+  extends ReduxFormChangeProps {
   isDemographicsSection: boolean;
   datamartId: string;
   removeGroup: () => void;
   objectTypes: ObjectLikeTypeInfoResource[];
-  audienceFeatures?: AudienceFeatureResource[]
+  audienceFeatures?: AudienceFeatureResource[];
 }
 
 type Props = WrappedFieldArrayProps<AudienceBuilderParametricPredicateNode> &
@@ -23,7 +24,6 @@ type Props = WrappedFieldArrayProps<AudienceBuilderParametricPredicateNode> &
   InjectedIntlProps;
 
 class NewAudienceFeatureFormSection extends React.Component<Props> {
-
   render() {
     const {
       fields,
@@ -31,7 +31,7 @@ class NewAudienceFeatureFormSection extends React.Component<Props> {
       datamartId,
       objectTypes,
       removeGroup,
-      audienceFeatures
+      audienceFeatures,
     } = this.props;
 
     const removeFieldOrGroup = (index: number) => () => {
@@ -40,13 +40,11 @@ class NewAudienceFeatureFormSection extends React.Component<Props> {
       } else {
         fields.remove(index);
       }
-    }
+    };
 
     return fields.map((name, index) => {
       return (
-        <Card
-          className={'mcs-audienceBuilder_categoryCard-2'}
-        >
+        <Card className={'mcs-audienceBuilder_categoryCard-2'}>
           <Row
             key={`${index}_${fields.length}`}
             className={
@@ -55,8 +53,10 @@ class NewAudienceFeatureFormSection extends React.Component<Props> {
                 : 'mcs-audienceBuilder_audienceFeature-2'
             }
           >
-            <Col span={isDemographicsSection ? 24 : 22}>
+            <Col span={24}>
               <NewAudienceFeatureLayout
+                showCloseButton={!isDemographicsSection}
+                onClose={removeFieldOrGroup(index)}
                 formPath={`${name}`}
                 datamartId={datamartId}
                 parametricPredicateResource={fields.get(index)}
@@ -64,22 +64,8 @@ class NewAudienceFeatureFormSection extends React.Component<Props> {
                 audienceFeatures={audienceFeatures}
               />
             </Col>
-
-            {!isDemographicsSection && (
-              <React.Fragment>
-                <Col span={2}>
-                  <Button
-                    className="mcs-audienceBuilder_closeButton"
-                    onClick={removeFieldOrGroup(index)}
-                  >
-                    <McsIcon type="close" />
-                  </Button>
-                </Col>
-              </React.Fragment>
-            )}
           </Row>
         </Card>
-
       );
     });
   }

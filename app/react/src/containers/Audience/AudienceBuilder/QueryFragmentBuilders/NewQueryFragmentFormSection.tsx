@@ -10,9 +10,7 @@ import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { messages } from '../constants';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
-import {
-  AudienceBuilderParametricPredicateGroupNode,
-} from '../../../../models/audienceBuilder/AudienceBuilderResource';
+import { AudienceBuilderParametricPredicateGroupNode } from '../../../../models/audienceBuilder/AudienceBuilderResource';
 import NewAudienceFeatureFormSection, {
   NewAudienceFeatureFormSectionProps,
 } from './NewAudienceFeatureFormSection';
@@ -22,9 +20,7 @@ import injectDrawer, {
 import { AudienceFeatureResource } from '../../../../models/audienceFeature';
 import { ObjectLikeTypeInfoResource } from '../../../../models/datamart/graphdb/RuntimeSchema';
 import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
-import {
-  AudienceBuilderParametricPredicateNode,
-} from '../../../../models/audienceBuilder/AudienceBuilderResource';
+import { AudienceBuilderParametricPredicateNode } from '../../../../models/audienceBuilder/AudienceBuilderResource';
 
 export const NewAudienceFeatureFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
@@ -34,7 +30,9 @@ export const NewAudienceFeatureFieldArray = FieldArray as new () => GenericField
 export interface NewQueryFragmentFormSectionProps {
   datamartId: string;
   demographicsFeaturesIds: string[];
-  selectAndAddFeature: (addToGroup: (_: AudienceBuilderParametricPredicateNode) => void) => () => void;
+  selectAndAddFeature: (
+    addToGroup: (_: AudienceBuilderParametricPredicateNode) => void,
+  ) => () => void;
   change: (field: string, value: any) => void;
   objectTypes: ObjectLikeTypeInfoResource[];
   audienceFeatures?: AudienceFeatureResource[];
@@ -49,29 +47,26 @@ type Props = WrappedFieldArrayProps<AudienceBuilderParametricPredicateGroupNode>
 class NewQueryFragmentFormSection extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
-  };
+  }
 
-  addToGroup =
-    (groupIndex: number) =>
-      (predicate: AudienceBuilderParametricPredicateNode) => {
-        const {
-          fields,
-          change
-        } = this.props;
+  addToGroup = (groupIndex: number) => (
+    predicate: AudienceBuilderParametricPredicateNode,
+  ) => {
+    const { fields, change } = this.props;
 
-        const updatedGroups = fields.getAll().map((field, i) => {
-          if (i === groupIndex) {
-            return {
-              ...field,
-              expressions: field.expressions.concat(predicate),
-            };
-          } else {
-            return field;
-          }
-        });
-
-        change(fields.name, updatedGroups)
+    const updatedGroups = fields.getAll().map((field, i) => {
+      if (i === groupIndex) {
+        return {
+          ...field,
+          expressions: field.expressions.concat(predicate),
+        };
+      } else {
+        return field;
       }
+    });
+
+    change(fields.name, updatedGroups);
+  };
 
   render() {
     const {
@@ -80,67 +75,87 @@ class NewQueryFragmentFormSection extends React.Component<Props> {
       datamartId,
       demographicsFeaturesIds,
       objectTypes,
-      selectAndAddFeature
+      selectAndAddFeature,
     } = this.props;
 
-    const {
-      audienceFeatures
-    } = this.props;
+    const { audienceFeatures } = this.props;
 
-    const featuresCount = (index: number): number => {
-      return fields.get(index).expressions.length
-    }
+    const showCriteriaHelper = (index: number): boolean => {
+      return index == 0 && fields.get(index).expressions.length < 2;
+    };
 
     const removeGroup = (index: number) => () => {
-      fields.remove(index)
-    }
+      fields.remove(index);
+    };
 
     return (
       /*key={cuid()}*/
-      <React.Fragment >
+      <React.Fragment>
         <div className="mcs-timeline">
-
           {fields.map((name, index) => {
             return (
               <React.Fragment key={`${index}_${fields.length}`}>
-                <Timeline.Item
-                  // key={cuid()}
-                  dot={<McsIcon type="status" className={'mcs-timeline-initial-dot'} />}
-                >
-                  {index == 0 && intl.formatMessage(messages.audienceBuilderTimelineMatchingCriterias)}
-
-                  <NewAudienceFeatureFieldArray
-                    name={`${name}.expressions`}
-                    component={NewAudienceFeatureFormSection}
-                    datamartId={datamartId}
-                    removeGroup={removeGroup(index)}
-                    objectTypes={objectTypes}
-                    audienceFeatures={audienceFeatures}
-                    isDemographicsSection={
-                      index === 0 && demographicsFeaturesIds.length >= 1
+                <div className="mcs-timeline-group">
+                  <Timeline.Item
+                    // key={cuid()}
+                    dot={
+                      <McsIcon
+                        type="status"
+                        className={'mcs-timeline-initial-dot'}
+                      />
                     }
-                  />
-                </Timeline.Item>
+                  >
+                    <div className="mcs-timeline-title">
+                      {intl.formatMessage(
+                        messages.audienceBuilderTimelineMatchingCriterias1,
+                      )}
+                      <span className="mcs-timeline-title-highlight">
+                        {intl.formatMessage(
+                          messages.audienceBuilderTimelineMatchingCriterias2,
+                        )}
+                      </span>
+                    </div>
 
-                <Timeline.Item
-                  // key={cuid()}
-                  dot={
-                    <Button
-                      className="mcs-audienceBuilder_moreButton-2"
-                      onClick={selectAndAddFeature(this.addToGroup(index))}
-                    >
-                      <McsIcon type="status" className={'mcs-timeline-add-dot'} />
-                    </Button>
-                  }
-                >
-                  {featuresCount(index) < 2 ? intl.formatMessage(messages.audienceBuilderTimelineAddCriteria) : ""}
-                </Timeline.Item>
+                    <NewAudienceFeatureFieldArray
+                      name={`${name}.expressions`}
+                      component={NewAudienceFeatureFormSection}
+                      datamartId={datamartId}
+                      removeGroup={removeGroup(index)}
+                      objectTypes={objectTypes}
+                      audienceFeatures={audienceFeatures}
+                      isDemographicsSection={
+                        index === 0 && demographicsFeaturesIds.length >= 1
+                      }
+                    />
+                  </Timeline.Item>
 
+                  <Timeline.Item
+                    // key={cuid()}
+                    dot={
+                      <Button
+                        className="mcs-timeline-dot-button"
+                        onClick={selectAndAddFeature(this.addToGroup(index))}
+                      >
+                        <McsIcon type="status" className={'mcs-timeline-dot'} />
+                      </Button>
+                    }
+                  >
+                    <div className="mcs-timeline-dot-title">
+                      {showCriteriaHelper(index) ? (
+                        intl.formatMessage(
+                          messages.audienceBuilderTimelineAddCriteria,
+                        )
+                      ) : (
+                        <div>{' '}</div>
+                      )}
+                    </div>
+                  </Timeline.Item>
+                </div>
               </React.Fragment>
             );
           })}
         </div>
-      </React.Fragment >
+      </React.Fragment>
     );
   }
 }

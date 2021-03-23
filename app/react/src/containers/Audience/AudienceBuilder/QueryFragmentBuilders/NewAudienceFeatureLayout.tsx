@@ -10,16 +10,18 @@ import { Field, GenericField } from 'redux-form';
 import { FormRelativeAbsoluteDateProps } from '../../../QueryTool/JSONOTQL/Edit/Sections/Field/Comparison/FormRelativeAbsoluteDate';
 import AudienceFeatureVariable from './AudienceFeatureVariable';
 import { ObjectLikeTypeInfoResource } from '../../../../models/datamart/graphdb/RuntimeSchema';
+import { Row, Col, Button } from 'antd';
+import { Card, McsIcon } from '@mediarithmics-private/mcs-components-library';
 
-export const FormRelativeAbsoluteDateField = Field as new () => GenericField<
-  FormRelativeAbsoluteDateProps
->;
+export const FormRelativeAbsoluteDateField = Field as new () => GenericField<FormRelativeAbsoluteDateProps>;
 
 interface State {
   audienceFeature?: AudienceFeatureResource;
 }
 
 export interface NewAudienceFeatureLayoutProps {
+  showCloseButton: boolean;
+  onClose: () => void;
   datamartId: string;
   formPath: string;
   parametricPredicateResource: AudienceBuilderParametricPredicateNode;
@@ -43,7 +45,7 @@ class NewAudienceFeatureLayout extends React.Component<Props, State> {
     if (audienceFeatures) {
       this.setState({
         audienceFeature: audienceFeatures.find(
-          f => f.id === parametricPredicateResource.parametric_predicate_id,
+          (f) => f.id === parametricPredicateResource.parametric_predicate_id,
         ),
       });
     }
@@ -52,25 +54,59 @@ class NewAudienceFeatureLayout extends React.Component<Props, State> {
   render() {
     const { audienceFeature } = this.state;
 
-    const { datamartId, formPath, objectTypes } = this.props;
+    const {
+      datamartId,
+      formPath,
+      objectTypes,
+      onClose,
+      showCloseButton,
+    } = this.props;
 
     return audienceFeature ? (
       <React.Fragment>
-        <div className="mcs-audienceBuilder_audienceFeatureName-2">{`${audienceFeature.name}`}</div>
-        {!!audienceFeature.description && (
-          <i className="mcs-audienceBuilder_audienceFeatureDescription-2">{`${audienceFeature.description} `}</i>
-        )}
-        {audienceFeature.variables.map((v, index) => {
-          return (
-            <AudienceFeatureVariable
-              key={index}
-              datamartId={datamartId}
-              variable={v}
-              formPath={formPath}
-              objectTypes={objectTypes}
-            />
-          );
-        })}
+        {/* Title + Close button */}
+        <Row>
+          <Col span={23}>
+            <div className="mcs-audienceBuilder_audienceFeatureName-2">{`${audienceFeature.name}`}</div>
+          </Col>
+          {showCloseButton && (
+            <Col span={1}>
+              <Button
+                className="mcs-audienceBuilder_closeButton-2"
+                onClick={onClose}
+              >
+                <McsIcon type="close" />
+              </Button>
+            </Col>
+          )}
+        </Row>
+
+        {/* Description */}
+        <Row>
+          <Col span={24}>
+            {!!audienceFeature.description && (
+              <i className="mcs-audienceBuilder_audienceFeatureDescription-2">{`${audienceFeature.description} `}</i>
+            )}
+          </Col>
+        </Row>
+
+        {/* Inputs */}
+        <Row>
+          <Col span={24}>
+            {audienceFeature.variables.map((v, index) => {
+              return (
+                <AudienceFeatureVariable
+                  newLayout={true}
+                  key={index}
+                  datamartId={datamartId}
+                  variable={v}
+                  formPath={formPath}
+                  objectTypes={objectTypes}
+                />
+              );
+            })}
+          </Col>
+        </Row>
       </React.Fragment>
     ) : (
       <Spin />

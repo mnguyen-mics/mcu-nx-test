@@ -319,9 +319,9 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
     } = this.props;
 
     return (
-      <div className="mcs-audienceBuilder_queryButtons-2">
+      <div className="mcs-audienceBuilder_queryGroupButtons">
         <Button
-          className="mcs-audienceBuilder_narrowWithButton"
+          className="mcs-queryGroupButton-left"
           onClick={
             this.selectAndAddFeature(
               this.addToNewGroup(
@@ -335,9 +335,9 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
         >
           Include
         </Button>
-        {'   /   '}
+        /
         <Button
-          className="mcs-audienceBuilder_excludeButton"
+          className="mcs-queryGroupButton-right"
           onClick={
             this.selectAndAddFeature(
               this.addToNewGroup(

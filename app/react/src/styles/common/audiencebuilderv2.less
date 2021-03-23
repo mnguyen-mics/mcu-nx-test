@@ -26,25 +26,25 @@
   }
 
   .mcs-audienceBuilder_categoryCard-2 {
-    margin: 10px 40px 10px 0px;
+    margin: 15px 40px 10px 0px;
     padding: 0;
 
     .mcs-card-title {
       font-size: 15px;
       line-height: 50px;
     }
-  
+
     .mcs-card-header {
       padding-left: 15px;
     }
- 
+
     .mcs-audienceBuilder_closeButton {
       border: none;
       font-size: 14px;
       padding: 0 5px;
       float: right;
     }
- 
+
     .ant-select {
       width: 100%;
     }
@@ -58,11 +58,29 @@
     text-align: center;
   }
 
-  .mcs-audienceBuilder_queryButtons-2 {
+  .mcs-audienceBuilder_queryGroupButtons {
     text-align: center;
     border: 1px solid @border-color-split;
-    margin: 10px 40px 10px 40px;
-    padding: 10px;
+    margin: 34px 40px 10px 40px;
+    padding: 11px;
+    height: 40px;
+    font-size: 12px;
+    background: none;
+    box-shadow: none;
+
+    .mcs-queryGroupButton-left {
+      color: @info-color;
+      border: none;
+      font-weight: bold;
+      margin-right: 15px;
+    }
+
+    .mcs-queryGroupButton-right {
+      color: @info-color;
+      font-weight: bold;
+      border: none;
+      margin-left: 15px;
+    }
   }
 
   .mcs-audienceBuilder_narrowWithButton,
@@ -74,16 +92,6 @@
     background: none;
     border: none;
     box-shadow: none;
-  }
-
-  .mcs-audienceBuilder_moreButton-2 {
-    color: @info-color;
-    font-size: 1.2em;
-    font-weight: bold;
-    background: none;
-    border: none;
-    box-shadow: none;
-    padding: 0px;
   }
 
   .mcs-audienceBuilder_liveDashboardContainer {
@@ -191,38 +199,48 @@
 
   // Audience Feature 2
 
-  .mcs-audienceBuilder_audienceFeature-2:not(:first-child) {
-    padding-top: 15px;
-  }
+  // .mcs-audienceBuilder_audienceFeature-2:not(:first-child) {
+  //   padding-top: 15px;
+  // }
 
   .mcs-audienceBuilder_demographicFeature-2,
   .mcs-audienceBuilder_audienceFeature-2 {
-    padding: 20px;
+    padding: 15px 20px 20px 20px;
 
     .mcs-audienceBuilder_audienceFeatureName-2 {
+      line-height: 18px;
       font-size: 12px;
+      color: @text-color;
       font-weight: 500;
     }
-  }
 
-  .mcs-audienceBuilder_audienceFeature-2 {
-    padding-bottom: 15px;
- 
-    .mcs-audienceBuilder_audienceFeatureName-2 {
-      color: @primary-color;
-      line-height: 20px;
-    }
- 
     .mcs-audienceBuilder_audienceFeatureDescription-2 {
-      margin-bottom: 20px;
+      color: @input-placeholder-color;
+      font-size: 10px;
+      font-style: italic;
+      margin-bottom: 10px;
     }
- 
+
     .mcs-audienceBuilder_closeButton-2 {
-      font-size: 15px;
+      line-height: 18px;
+      color: @text-color-secondary;
+      font-size: 14px;
+      padding: 0px;
+      border: none;
+      float: right;
     }
- 
+
     .mcs-audienceBuilder_audienceFeatureInput-2 {
-      margin: 10px 0;
+      .field-label {
+        color: @text-color-secondary;
+      }
+
+      .form-field-wrapper {
+        margin: 0;
+        .ant-row {
+          margin: 0;
+        }
+      }
     }
 
     .ant-btn {
@@ -237,46 +255,75 @@
 
   // Timeline
 
-
   .mcs-timeline {
     margin-left: 31px;
     margin-top: 31px;
 
-    .mcs-timeline-initial-dot {
-      font-size: 20px;
-      margin: 0px;
-      color: @info-color!important;
+    .mcs-timeline-group {
+      margin-bottom: 30px;
     }
 
-    .mcs-timeline-add-dot {
-      font-size: 16px;
-      margin: 0px;
-      color: @info-color!important;
+    .ant-timeline-item {
+      padding-bottom: 0;
     }
 
-    .mcs-title {
-      font-size: 14px;
-      color: @primary-color;
-      font-weight: 500;
-      text-align: left;
-      margin-bottom: 20px;
+    .ant-timeline-item-tail {
+      height: 100%;
     }
 
     .ant-timeline-item-head {
       background-color: @layout-content-background!important;
       padding: 0px;
+      margin: 0px;
 
-      .mcs-timeline-dot {
-        font-size: 22px;
-        margin-right: 0px;
+      .mcs-timeline-initial-dot {
+        font-size: 20px;
+        margin: 5px 0px 0px 0px;
         color: @info-color!important;
+      }
+
+      .mcs-timeline-dot-button {
+        border: none;
+        box-shadow: none;
+        padding: 0px;
+        height: 0px;
+        // margin: 0px 0px 0px -29px;
+
+        .mcs-timeline-dot {
+          margin: 0px;
+          font-size: 16px;
+          color: @info-color!important;
+        }
       }
     }
 
+    .mcs-timeline-item-action {
+      margin-bottom: 20px;
+    }
+
     .ant-timeline-item-content {
+      top: 0;
+
+      .mcs-timeline-title {
+        font-size: 10px;
+        color: @text-color-secondary;
+        text-align: left;
+        margin-bottom: 10px;
+        font-weight: normal;
+
+        .mcs-timeline-title-highlight {
+          color: @text-color;
+          font-weight: 500;
+        }
+      }
 
       .timeline-activity-card-buttons {
         text-align: right;
+      }
+
+      .mcs-timeline-dot-title {
+        font-size: 8px !important;
+        color: @text-color-secondary;
       }
     }
   }

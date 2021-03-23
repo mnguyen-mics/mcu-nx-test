@@ -50,6 +50,7 @@ export interface AudienceFeatureVariableProps {
   objectTypes: ObjectLikeTypeInfoResource[];
   disabled?: boolean;
   formChange?(field: string, value: any): void;
+  newLayout: boolean;
 }
 
 type Props = AudienceFeatureVariableProps &
@@ -438,8 +439,12 @@ class AudienceFeatureVariable extends React.Component<Props> {
   };
 
   render() {
+    const {
+      newLayout
+    } = this.props;
+
     return (
-      <div className="mcs-audienceBuilder_audienceFeatureInput">
+      <div className={newLayout ? "mcs-audienceBuilder_audienceFeatureInput-2" : "mcs-audienceBuilder_audienceFeatureInput"}>
         {this.renderField()}
       </div>
     );
