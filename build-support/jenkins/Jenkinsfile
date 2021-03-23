@@ -3,8 +3,8 @@ pipeline {
     triggers { cron('H 23 * * 6-7') }
     options { disableConcurrentBuilds() }
 	parameters {
-	    string(name: 'END_TO_END_CHECK', 
-	    defaultValue: 'true', 
+	    string(name: 'END_TO_END_CHECK',
+	    defaultValue: 'false',
 	    description: 'set to false to bypass the virtual platform creation and the cypress tests')
         string(name: 'GIVEN_VIRTUAL_PLATFORM_NAME',
         defaultValue: '',
@@ -54,7 +54,7 @@ pipeline {
                         }
                     }
                 }
-            
+
         stage('Cypress Parallel Tests On Given Virtual Platform'){
             when {
                 expression { params.GIVEN_VIRTUAL_PLATFORM_NAME != '' }
