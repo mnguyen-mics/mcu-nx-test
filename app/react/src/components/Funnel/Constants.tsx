@@ -203,4 +203,12 @@ export const funnelMessages = defineMessages({
     id: 'funnel.showMeAnExample',
     defaultMessage: 'Show me an example'
   },
+  share: {
+    id: 'funnel.share',
+    defaultMessage: 'Share'
+  },
+  copied: {
+    id: 'funnel.copied',
+    defaultMessage: 'The funnel url is successfully copied to your clipboard'
+  }
 });
