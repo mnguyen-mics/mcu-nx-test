@@ -4,6 +4,7 @@ import { PropertyResourceShape } from './../../../../../models/plugin/index';
 import {
   CustomActionNodeResource,
   FeedNodeResource,
+  InputNodeResource,
 } from './../../../../../models/automations/automations';
 import { CustomActionAutomationFormProps } from './CustomActionNodeForm/CustomActionAutomationForm';
 import { Moment } from 'moment';
@@ -201,7 +202,7 @@ export interface CustomActionAutomationFormData extends DefaultFormData {
 }
 
 export interface FeedNodeFormData extends DefaultFormData {
-  properties: {[key: string]: PropertyResourceShape};
+  properties: { [key: string]: PropertyResourceShape };
 }
 
 export type AutomationFormDataType =
@@ -288,6 +289,16 @@ export function isOnSegmentExitInputNode(
   return (
     (node as OnSegmentExitInputNodeResource).type ===
     'ON_SEGMENT_EXIT_INPUT_NODE'
+  );
+}
+
+export function isInputNode(
+  node: AutomationNodeShape,
+): node is InputNodeResource {
+  return (
+    isQueryInputNode(node) ||
+    isOnSegmentEntryInputNode(node) ||
+    isOnSegmentExitInputNode(node)
   );
 }
 
