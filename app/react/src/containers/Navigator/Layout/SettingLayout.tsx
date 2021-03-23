@@ -194,7 +194,7 @@ class SettingLayout extends React.Component<Props, SettingLayoutState> {
         </PushMenu>
 
         <LayoutId id="mcs-main-layout" className="mcs-fullscreen">
-          <NavigatorHeader isSetting={true} menu={menu} />
+          <NavigatorHeader menu={menu} isInSettings={true}/>
           <Layout>
             <NavigatorSettingsMainMenu />
             <Layout>
