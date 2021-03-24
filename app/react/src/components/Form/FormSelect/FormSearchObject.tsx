@@ -208,8 +208,7 @@ class FormSearchObject extends React.Component<Props, FormSearchObjectState> {
     } = this.props;
 
     const {
-      // currentValue,
-      filteredData,
+      filteredData
     } = this.state;
 
     let validateStatus = 'success' as

@@ -19,7 +19,7 @@ import { Omit } from '../../../utils/Types';
 import {
   NewAudienceBuilderFormData,
   QueryDocument as AudienceBuilderQueryDocument,
-  AudienceBuilderResource
+  AudienceBuilderResource,
 } from '../../../models/audienceBuilder/AudienceBuilderResource';
 import AudienceBuilderDashboard from './AudienceBuilderDashboard';
 import NewQueryFragmentFormSection, {
@@ -58,7 +58,6 @@ import NewAudienceFeatureSelector, {
 import injectDrawer, {
   InjectedDrawerProps,
 } from '../../../components/Drawer/injectDrawer';
-
 
 export const QueryFragmentFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
@@ -132,24 +131,29 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
 
     const success = (
       queryDocument: GraphDbQueryDocument,
-      result: OTQLResult
+      result: OTQLResult,
     ) => {
       this.setState({
         queryResult: result,
         isQueryRunning: false,
         queryDocument: queryDocument,
       });
-    }
+    };
 
     const failure = (err: any) => {
       this.setState({
         isQueryRunning: false,
       });
       this.props.notifyError(err);
-    }
+    };
 
-    this._audienceBuilderQueryService.runQuery(audienceBuilder.datamart_id, formValues, success, failure);
-  }
+    this._audienceBuilderQueryService.runQuery(
+      audienceBuilder.datamart_id,
+      formValues,
+      success,
+      failure,
+    );
+  };
 
   componentDidMount() {
     const { audienceBuilder, formValues } = this.props;
@@ -158,15 +162,15 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
 
     this._runtimeSchemaService
       .getRuntimeSchemas(audienceBuilder.datamart_id)
-      .then(schemaRes => {
-        const liveSchema = schemaRes.data.find(s => s.status === 'LIVE');
+      .then((schemaRes) => {
+        const liveSchema = schemaRes.data.find((s) => s.status === 'LIVE');
         if (!liveSchema) return;
         return this._runtimeSchemaService
           .getObjectTypeInfoResources(
             audienceBuilder.datamart_id,
             liveSchema.id,
           )
-          .then(objectTypes => {
+          .then((objectTypes) => {
             this.setState({
               objectTypes: objectTypes,
               isLoadingObjectTypes: false,
@@ -175,20 +179,20 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
       });
 
     const audienceFeatureIds: string[] = [];
-    formValues.include.concat(formValues.exclude).forEach(group => {
-      group.expressions.forEach(exp => {
+    formValues.include.concat(formValues.exclude).forEach((group) => {
+      group.expressions.forEach((exp) => {
         audienceFeatureIds.push(exp.parametric_predicate_id);
       });
     });
-    const promises = audienceFeatureIds.map(id => {
+    const promises = audienceFeatureIds.map((id) => {
       return this._audienceFeatureService.getAudienceFeature(
         audienceBuilder.datamart_id,
         id,
       );
     });
 
-    Promise.all(promises).then(res => {
-      const audienceFeatures = res.map(r => r.data);
+    Promise.all(promises).then((res) => {
+      const audienceFeatures = res.map((r) => r.data);
       this.setState({
         audienceFeatures,
       });
@@ -215,142 +219,127 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
     }, 50);
   };
 
-  saveGroup =
-    (groups: AudienceBuilderParametricPredicateGroupNode[],
-      groupsLocation: string) =>
-      (newGroup: AudienceBuilderParametricPredicateGroupNode) => {
-        const {
-          change,
-        } = this.props;
+  saveGroup = (
+    groups: AudienceBuilderParametricPredicateGroupNode[],
+    groupsLocation: string,
+  ) => (newGroup: AudienceBuilderParametricPredicateGroupNode) => {
+    const { change } = this.props;
 
-        change(groupsLocation, groups.concat(newGroup));
-      }
+    change(groupsLocation, groups.concat(newGroup));
+  };
 
-  addToNewGroup =
-    (save: (_: AudienceBuilderParametricPredicateGroupNode) => void) =>
-      (predicate: AudienceBuilderParametricPredicateNode) => {
-
-        let newGroup: AudienceBuilderParametricPredicateGroupNode = {
-          type: 'GROUP',
-          boolean_operator: 'OR',
-          negation: false,
-          expressions: [predicate],
-        };
-
-        save(newGroup)
-      }
-
-  addAudienceFeature =
-    (processPredicate: (_: AudienceBuilderParametricPredicateNode) => void) =>
-      (audienceFeatures: AudienceFeatureResource[]) => {
-        const { closeNextDrawer } = this.props;
-
-        let newParametricPredicate =
-          (audienceFeature: AudienceFeatureResource): AudienceBuilderParametricPredicateNode => {
-            const parameters: { [key: string]: string[] | undefined } = {};
-
-            audienceFeature.variables.forEach(v => {
-              parameters[v.field_name] = undefined;
-            });
-
-            return {
-              type: 'PARAMETRIC_PREDICATE',
-              parametric_predicate_id: audienceFeature.id,
-              parameters: parameters,
-            };
-          };
-
-        if (audienceFeatures[0]) {
-          const predicate = newParametricPredicate(audienceFeatures[0])
-          processPredicate(predicate)
-
-          // TODO put in processPredicate ?
-          this.setState({
-            audienceFeatures: this.state.audienceFeatures?.concat(
-              audienceFeatures[0],
-            ),
-          });
-
-          closeNextDrawer();
-        }
-      };
-
-  selectNewAudienceFeature =
-    (onSelect: (_: AudienceFeatureResource[]) => void) => {
-      const {
-        openNextDrawer,
-        audienceBuilder,
-        hasFeature,
-      } = this.props;
-
-      const props: AudienceFeatureSelectorProps = {
-        datamartId: audienceBuilder.datamart_id,
-        close: this.props.closeNextDrawer,
-        save: onSelect,
-        demographicIds:
-          audienceBuilder.demographics_features_ids.length >= 1
-            ? audienceBuilder.demographics_features_ids
-            : undefined,
-      };
-
-      hasFeature('new-audienceFeatureSelector')
-        ? openNextDrawer<NewAudienceFeatureSelectorProps>(NewAudienceFeatureSelector, {
-          additionalProps: props,
-        })
-        : openNextDrawer<AudienceFeatureSelectorProps>(AudienceFeatureSelector, {
-          additionalProps: props,
-        });
+  addToNewGroup = (
+    save: (_: AudienceBuilderParametricPredicateGroupNode) => void,
+  ) => (predicate: AudienceBuilderParametricPredicateNode) => {
+    let newGroup: AudienceBuilderParametricPredicateGroupNode = {
+      type: 'GROUP',
+      boolean_operator: 'OR',
+      negation: false,
+      expressions: [predicate],
     };
 
-  selectAndAddFeature =
-    (processPredicate: (_: AudienceBuilderParametricPredicateNode) => void) =>
-      () => {
-        console.log("Select and add");
-        this.selectNewAudienceFeature(
-          this.addAudienceFeature(
-            processPredicate
-          )
+    save(newGroup);
+  };
+
+  addAudienceFeature = (
+    processPredicate: (_: AudienceBuilderParametricPredicateNode) => void,
+  ) => (audienceFeatures: AudienceFeatureResource[]) => {
+    const { closeNextDrawer } = this.props;
+
+    let newParametricPredicate = (
+      audienceFeature: AudienceFeatureResource,
+    ): AudienceBuilderParametricPredicateNode => {
+      const parameters: { [key: string]: string[] | undefined } = {};
+
+      audienceFeature.variables.forEach((v) => {
+        parameters[v.field_name] = undefined;
+      });
+
+      return {
+        type: 'PARAMETRIC_PREDICATE',
+        parametric_predicate_id: audienceFeature.id,
+        parameters: parameters,
+      };
+    };
+
+    if (audienceFeatures[0]) {
+      const predicate = newParametricPredicate(audienceFeatures[0]);
+      processPredicate(predicate);
+
+      // TODO put in processPredicate ?
+      this.setState({
+        audienceFeatures: this.state.audienceFeatures?.concat(
+          audienceFeatures[0],
+        ),
+      });
+
+      closeNextDrawer();
+    }
+  };
+
+  selectNewAudienceFeature = (
+    onSelect: (_: AudienceFeatureResource[]) => void,
+  ) => {
+    const { openNextDrawer, audienceBuilder, hasFeature } = this.props;
+
+    const props: AudienceFeatureSelectorProps = {
+      datamartId: audienceBuilder.datamart_id,
+      close: this.props.closeNextDrawer,
+      save: onSelect,
+      demographicIds:
+        audienceBuilder.demographics_features_ids.length >= 1
+          ? audienceBuilder.demographics_features_ids
+          : undefined,
+    };
+
+    hasFeature('new-audienceFeatureSelector')
+      ? openNextDrawer<NewAudienceFeatureSelectorProps>(
+          NewAudienceFeatureSelector,
+          {
+            additionalProps: props,
+          },
         )
-      }
+      : openNextDrawer<AudienceFeatureSelectorProps>(AudienceFeatureSelector, {
+          additionalProps: props,
+        });
+  };
+
+  selectAndAddFeature = (
+    processPredicate: (_: AudienceBuilderParametricPredicateNode) => void,
+  ) => () => {
+    console.log('Select and add');
+    this.selectNewAudienceFeature(this.addAudienceFeature(processPredicate));
+  };
 
   renderQueryBuilderButtons = () => {
-    const {
-      formValues
-    } = this.props;
+    const { formValues } = this.props;
 
     return (
-      <div className="mcs-audienceBuilder_queryGroupButtons">
+      <div className="mcs-audienceBuilder_timelineButtons">
         <Button
-          className="mcs-queryGroupButton-left"
-          onClick={
-            this.selectAndAddFeature(
-              this.addToNewGroup(
-                this.saveGroup(
-                  formValues.include,
-                  'include'
-                )
-              )
-            )
-          }
+          className="mcs-timelineButton-left"
+          onClick={this.selectAndAddFeature(
+            this.addToNewGroup(this.saveGroup(formValues.include, 'include')),
+          )}
         >
           Include
         </Button>
-        /
-        <Button
-          className="mcs-queryGroupButton-right"
-          onClick={
-            this.selectAndAddFeature(
-              this.addToNewGroup(
-                this.saveGroup(
-                  formValues.exclude,
-                  'exclude'
-                )
-              )
-            )
-          }
-        >
-          Exclude
-        </Button>
+
+        {formValues.exclude.length == 0 && (
+          <span>
+            /
+            <Button
+              className="mcs-timelineButton-right"
+              onClick={this.selectAndAddFeature(
+                this.addToNewGroup(
+                  this.saveGroup(formValues.exclude, 'exclude'),
+                ),
+              )}
+            >
+              Exclude
+            </Button>
+          </span>
+        )}
       </div>
     );
   };
@@ -360,15 +349,9 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
       rerenderOnEveryChange: true,
     };
 
-    const {
-      objectTypes,
-      audienceFeatures,
-    } = this.state;
+    const { objectTypes, audienceFeatures } = this.state;
 
-    const {
-      audienceBuilder,
-      change
-    } = this.props;
+    const { audienceBuilder, change } = this.props;
 
     return (
       <div>
@@ -379,9 +362,7 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
           datamartId={audienceBuilder.datamart_id}
           selectAndAddFeature={this.selectAndAddFeature}
           change={change}
-          demographicsFeaturesIds={
-            audienceBuilder.demographics_features_ids
-          }
+          demographicsFeaturesIds={audienceBuilder.demographics_features_ids}
           audienceFeatures={audienceFeatures}
           objectTypes={objectTypes}
           {...genericFieldArrayProps}
@@ -401,7 +382,7 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
         />
       </div>
     );
-  }
+  };
 
   render() {
     const {
@@ -427,9 +408,11 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
      * QueryFragmentForm selection
      */
 
-    let queryFragmentForm = (!isLoadingObjectTypes) ?
-      this.renderQueryFragmentForm() :
+    let queryFragmentForm = !isLoadingObjectTypes ? (
+      this.renderQueryFragmentForm()
+    ) : (
       <Loading className="m-t-40" isFullScreen={true} />
+    );
 
     return (
       <React.Fragment>
@@ -437,7 +420,9 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
           {
             operations: [{ directives: [], selections: [{ name: 'id' }] }],
             from: 'UserPoint',
-            where: this._audienceBuilderQueryService.buildObjectTreeExpression(formValues)?.where,
+            where: this._audienceBuilderQueryService.buildObjectTreeExpression(
+              formValues,
+            )?.where,
           },
           audienceBuilder.datamart_id,
         )}
@@ -446,7 +431,9 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
           <Row className="ant-layout-content mcs-audienceBuilder_container">
             <Col span={isDashboardToggled ? 1 : 12}>
               <div
-                className={`${isDashboardToggled && 'mcs-audienceBuilder_hiddenForm'}`}
+                className={`${
+                  isDashboardToggled && 'mcs-audienceBuilder_hiddenForm'
+                }`}
               >
                 {queryFragmentForm}
               </div>
@@ -457,15 +444,19 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
               className="mcs-audienceBuilder_liveDashboardContainer"
             >
               <Button
-                className={`mcs-audienceBuilder_sizeButton ${isDashboardToggled &&
-                  'mcs-audienceBuilder_rightChevron'}`}
+                className={`mcs-audienceBuilder_sizeButton ${
+                  isDashboardToggled && 'mcs-audienceBuilder_rightChevron'
+                }`}
                 onClick={this.toggleDashboard}
               >
                 <McsIcon type="chevron-right" />
               </Button>
               {!!isMaskVisible && (
                 <div className="mcs-audienceBuilder_liveDashboardMask">
-                  <Button onClick={this.runQuery} className="mcs-audienceBuilder_dashboard_refresh_button">
+                  <Button
+                    onClick={this.runQuery}
+                    className="mcs-audienceBuilder_dashboard_refresh_button"
+                  >
                     {intl.formatMessage(messages.refreshMessage)}
                   </Button>
                 </div>

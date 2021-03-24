@@ -35,13 +35,9 @@ import { injectWorkspace, InjectedWorkspaceProps } from '../../../Datamart';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
 import { SegmentNameDisplay } from '../../Common/SegmentNameDisplay';
 
-export const FormRelativeAbsoluteDateField = Field as new () => GenericField<
-  FormRelativeAbsoluteDateProps
->;
+export const FormRelativeAbsoluteDateField = Field as new () => GenericField<FormRelativeAbsoluteDateProps>;
 
-export const FormSearchObjectField = Field as new () => GenericField<
-  FormSearchObjectProps
->;
+export const FormSearchObjectField = Field as new () => GenericField<FormSearchObjectProps>;
 
 export interface AudienceFeatureVariableProps {
   datamartId: string;
@@ -101,9 +97,10 @@ class AudienceFeatureVariable extends React.Component<Props> {
       formChange,
     } = this.props;
     const name = `${formPath}.parameters.${variable.parameter_name}`;
+
     const fieldGridConfig = {
-      labelCol: { span: 5 },
-      wrapperCol: { span: 18, offset: 1 },
+      labelCol: { span: 4 },
+      wrapperCol: { span: 20 },
     };
 
     const userPointObject = objectTypes.find((o) => o.name === 'UserPoint')!;
@@ -144,8 +141,10 @@ class AudienceFeatureVariable extends React.Component<Props> {
       }
       return Promise.resolve([]);
     };
+
     let fetchSingleMethod = (id: string) =>
       Promise.resolve({ key: id, label: id, value: id });
+
     const modelAndType =
       fieldDirectives && getCoreReferenceTypeAndModel(fieldDirectives);
 
@@ -275,6 +274,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
 
     return (
       <FormSearchObjectField
+        small={true}
         name={name}
         component={FormSearchObject}
         formItemProps={{
@@ -302,9 +302,10 @@ class AudienceFeatureVariable extends React.Component<Props> {
       formChange,
     } = this.props;
     const name = `${formPath}.parameters.${variable.parameter_name}`;
+
     const fieldGridConfig = {
-      labelCol: { span: 5 },
-      wrapperCol: { span: 18, offset: 1 },
+      labelCol: { span: 4 },
+      wrapperCol: { span: 20 },
     };
 
     const normalizeInt = (v: any): any => {
@@ -324,6 +325,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
         case 'Boolean':
           return (
             <FormSelectField
+              small={true}
               name={name}
               component={DefaultSelect}
               formItemProps={{
@@ -346,6 +348,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
         case 'Int':
           return (
             <FormInputNumberField
+              small={true}
               name={name}
               // Needed normalize hack to save as int in redux state
               normalize={normalizeInt}
@@ -364,6 +367,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
         case 'Float':
           return (
             <FormInputNumberField
+              small={true}
               name={name}
               // Needed normalize hack to save as float in redux state
               normalize={normalizeFloat}
@@ -391,6 +395,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
           }
           return (
             <FormRelativeAbsoluteDateField
+              small={true}
               name={name}
               component={FormRelativeAbsoluteDate}
               formItemProps={{
@@ -412,6 +417,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
         case 'UserActivityType':
           return (
             <FormMultiTagField
+              small={true}
               name={name}
               component={FormMultiTag}
               selectProps={{
@@ -439,12 +445,16 @@ class AudienceFeatureVariable extends React.Component<Props> {
   };
 
   render() {
-    const {
-      newLayout
-    } = this.props;
+    const { newLayout } = this.props;
 
     return (
-      <div className={newLayout ? "mcs-audienceBuilder_audienceFeatureInput-2" : "mcs-audienceBuilder_audienceFeatureInput"}>
+      <div
+        className={
+          newLayout
+            ? 'mcs-audienceBuilder_audienceFeatureInput-2'
+            : 'mcs-audienceBuilder_audienceFeatureInput'
+        }
+      >
         {this.renderField()}
       </div>
     );

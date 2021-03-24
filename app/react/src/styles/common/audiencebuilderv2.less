@@ -25,62 +25,12 @@
     }
   }
 
-  .mcs-audienceBuilder_categoryCard-2 {
-    margin: 15px 40px 10px 0px;
-    padding: 0;
-
-    .mcs-card-title {
-      font-size: 15px;
-      line-height: 50px;
-    }
-
-    .mcs-card-header {
-      padding-left: 15px;
-    }
-
-    .mcs-audienceBuilder_closeButton {
-      border: none;
-      font-size: 14px;
-      padding: 0 5px;
-      float: right;
-    }
-
-    .ant-select {
-      width: 100%;
-    }
-  }
-
   .mcs-audienceBuilder_hiddenForm {
     display: none;
   }
 
   .mcs-audienceBuilder_queryButtons {
     text-align: center;
-  }
-
-  .mcs-audienceBuilder_queryGroupButtons {
-    text-align: center;
-    border: 1px solid @border-color-split;
-    margin: 34px 40px 10px 40px;
-    padding: 11px;
-    height: 40px;
-    font-size: 12px;
-    background: none;
-    box-shadow: none;
-
-    .mcs-queryGroupButton-left {
-      color: @info-color;
-      border: none;
-      font-weight: bold;
-      margin-right: 15px;
-    }
-
-    .mcs-queryGroupButton-right {
-      color: @info-color;
-      font-weight: bold;
-      border: none;
-      margin-left: 15px;
-    }
   }
 
   .mcs-audienceBuilder_narrowWithButton,
@@ -197,20 +147,33 @@
     }
   }
 
-  // Audience Feature 2
+  .mcs-audienceBuilder_categoryCardFooter {
+    text-align: center;
+    padding: 20px 25px 25px 25px;
+  }
 
-  // .mcs-audienceBuilder_audienceFeature-2:not(:first-child) {
-  //   padding-top: 15px;
-  // }
+  // -----------------------------------------------
+  // Audience Builder aka 'Standard Segment Builder'
+  // -----------------------------------------------
 
-  .mcs-audienceBuilder_demographicFeature-2,
+  // TODO rename to mcs-audienceBuilder_audienceFeature after cleanup
   .mcs-audienceBuilder_audienceFeature-2 {
+    margin: 10px 40px 10px 0px;
+    padding: 0;
+  }
+
+  // Audience Feature Card Content
+  // TODO remove -2's after cleanup
+
+  .mcs-audienceBuilder_audienceFeatureContent {
     padding: 15px 20px 20px 20px;
+    font-family: @font-family;
 
     .mcs-audienceBuilder_audienceFeatureName-2 {
+      font-family: @font-family-medium;
+      color: @text-color;
       line-height: 18px;
       font-size: 12px;
-      color: @text-color;
       font-weight: 500;
     }
 
@@ -228,11 +191,33 @@
       padding: 0px;
       border: none;
       float: right;
+
+      .mcs-icon {
+        margin: 0;
+      }
     }
 
     .mcs-audienceBuilder_audienceFeatureInput-2 {
+      margin-top: 15px;
+
+      .mcs-relativeAbsoluteDateForm_picker {
+        margin-bottom: 0;
+      }
+
       .field-label {
         color: @text-color-secondary;
+      }
+      
+      .ant-legacy-form-item-label {
+        text-align: left;
+      }
+
+      .ant-legacy-form-item-label label:after {
+        content: none;
+      }
+
+      .ant-select {
+        display: block;
       }
 
       .form-field-wrapper {
@@ -248,12 +233,34 @@
     }
   }
 
-  .mcs-audienceBuilder_categoryCardFooter {
-    text-align: center;
-    padding: 20px 25px 25px 25px;
-  }
+  // ------------------------------------
+  // Audience Builder Timeline
 
-  // Timeline
+  .mcs-audienceBuilder_timelineButtons {
+    font-family: @font-family-medium;
+    text-align: center;
+    border: 1px solid @border-color-split;
+    margin: 34px 40px 10px 40px;
+    padding: 11px;
+    height: 40px;
+    font-size: 12px;
+    background: none;
+    box-shadow: none;
+
+    .mcs-timelineButton-left {
+      color: @info-color;
+      font-weight: 500;
+      border: none;
+      margin-right: 15px;
+    }
+
+    .mcs-timelineButton-right {
+      color: @info-color;
+      font-weight: 500;
+      border: none;
+      margin-left: 15px;
+    }
+  }
 
   .mcs-timeline {
     margin-left: 31px;
@@ -284,21 +291,21 @@
 
       .mcs-timeline-dot-button {
         border: none;
+        outline:none;
         box-shadow: none;
         padding: 0px;
-        height: 0px;
-        // margin: 0px 0px 0px -29px;
-
-        .mcs-timeline-dot {
-          margin: 0px;
-          font-size: 16px;
-          color: @info-color!important;
-        }
+        margin: 0px;
+        width: 16px;
+        height:16px; 
+        border-radius: 50%;
+        font-size: 14px;
+        background: @info-color;
+        color: @layout-content-background;
+        display:flex;
+        text-align:center;
+        justify-content: center;
+        align-items: center;
       }
-    }
-
-    .mcs-timeline-item-action {
-      margin-bottom: 20px;
     }
 
     .ant-timeline-item-content {
@@ -306,12 +313,14 @@
 
       .mcs-timeline-title {
         font-size: 10px;
+        font-family: @font-family;
         color: @text-color-secondary;
         text-align: left;
         margin-bottom: 10px;
         font-weight: normal;
 
         .mcs-timeline-title-highlight {
+          font-family: @font-family-medium;
           color: @text-color;
           font-weight: 500;
         }
@@ -325,8 +334,15 @@
         font-size: 8px !important;
         color: @text-color-secondary;
       }
+
+      .mcs-timeline-dot-no-title {
+        height: 8px;
+      }
     }
   }
+
+  //
+  // ------------------------------------
 }
 
 //  Audience Features Management

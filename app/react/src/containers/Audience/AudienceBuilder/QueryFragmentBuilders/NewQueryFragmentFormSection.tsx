@@ -106,6 +106,14 @@ class NewQueryFragmentFormSection extends React.Component<Props> {
                     }
                   >
                     <div className="mcs-timeline-title">
+                      {index != 0 && (
+                        <span className="mcs-timeline-title-highlight">
+                          {intl.formatMessage(
+                            messages.audienceBuilderTimelineMatchingCriterias0,
+                          )}
+                        </span>
+                      )}
+
                       {intl.formatMessage(
                         messages.audienceBuilderTimelineMatchingCriterias1,
                       )}
@@ -136,19 +144,19 @@ class NewQueryFragmentFormSection extends React.Component<Props> {
                         className="mcs-timeline-dot-button"
                         onClick={selectAndAddFeature(this.addToGroup(index))}
                       >
-                        <McsIcon type="status" className={'mcs-timeline-dot'} />
+                        +
                       </Button>
                     }
                   >
-                    <div className="mcs-timeline-dot-title">
-                      {showCriteriaHelper(index) ? (
-                        intl.formatMessage(
+                    {showCriteriaHelper(index) ? (
+                      <div className="mcs-timeline-dot-title">
+                        {intl.formatMessage(
                           messages.audienceBuilderTimelineAddCriteria,
-                        )
-                      ) : (
-                        <div>{' '}</div>
-                      )}
-                    </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="mcs-timeline-dot-no-title"></div>
+                    )}
                   </Timeline.Item>
                 </div>
               </React.Fragment>

@@ -271,7 +271,7 @@ export default class FormRelativeAbsoluteDate extends React.Component<
         small={this.props.small}
         {...this.props.formItemProps}
       >
-        <div style={{ marginBottom: 20 }}>
+        <div className="mcs-relativeAbsoluteDateForm_picker">
           <RadioGroup
             style={{ width: '100%' }}
             defaultValue={this.state.datePickerType}

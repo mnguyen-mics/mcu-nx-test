@@ -4,10 +4,10 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { ReduxFormChangeProps } from '../../../../utils/FormHelper';
 import { WrappedFieldArrayProps } from 'redux-form';
 import { AudienceBuilderParametricPredicateNode } from '../../../../models/audienceBuilder/AudienceBuilderResource';
-import { Row, Col, Button } from 'antd';
+import { Row, Col } from 'antd';
 import NewAudienceFeatureLayout from './NewAudienceFeatureLayout';
 import { ObjectLikeTypeInfoResource } from '../../../../models/datamart/graphdb/RuntimeSchema';
-import { Card, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { Card } from '@mediarithmics-private/mcs-components-library';
 import { AudienceFeatureResource } from '../../../../models/audienceFeature';
 
 export interface NewAudienceFeatureFormSectionProps
@@ -44,14 +44,13 @@ class NewAudienceFeatureFormSection extends React.Component<Props> {
 
     return fields.map((name, index) => {
       return (
-        <Card className={'mcs-audienceBuilder_categoryCard-2'}>
+        <Card className={'mcs-audienceBuilder_audienceFeature-2'}>
+              {/* // isDemographicsSection
+              //   ? 'mcs-audienceBuilder_demographicFeature-2'
+              //   : 'mcs-audienceBuilder_audienceFeature-2' */}
           <Row
             key={`${index}_${fields.length}`}
-            className={
-              isDemographicsSection
-                ? 'mcs-audienceBuilder_demographicFeature-2'
-                : 'mcs-audienceBuilder_audienceFeature-2'
-            }
+            className={"mcs-audienceBuilder_audienceFeatureContent"}
           >
             <Col span={24}>
               <NewAudienceFeatureLayout

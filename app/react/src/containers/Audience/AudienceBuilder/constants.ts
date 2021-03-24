@@ -95,20 +95,24 @@ export const messages: {
     id: 'audienceBuilder.audienceFeatureSelector.availableFilters',
     defaultMessage: 'Available Filters',
   }, 
+  audienceBuilderTimelineMatchingCriterias0: {
+    id: 'audienceBuilder.timeline.matchingCriterias.and',
+    defaultMessage: 'AND ',
+  },
   audienceBuilderTimelineMatchingCriterias1: {
-    id: 'audienceBuilder.timeline.matchingCriterias',
+    id: 'audienceBuilder.timeline.matchingCriterias.include',
     defaultMessage: 'People should match ',
   },
   audienceBuilderTimelineMatchingCriterias2: {
-    id: 'audienceBuilder.timeline.matchingCriterias',
+    id: 'audienceBuilder.timeline.matchingCriterias.one',
     defaultMessage: 'one of these criterias',
   },
   audienceBuilderTimelineExcludingCriterias1: {
-    id: 'audienceBuilder.timeline.excludingCriterias',
+    id: 'audienceBuilder.timeline.excludingCriterias.exclude',
     defaultMessage: 'Exclude people matching ',
   },
   audienceBuilderTimelineExcludingCriterias2: {
-    id: 'audienceBuilder.timeline.excludingCriterias',
+    id: 'audienceBuilder.timeline.excludingCriterias.one',
     defaultMessage: 'one of these criterias',
   },
   audienceBuilderTimelineAddCriteria: {
