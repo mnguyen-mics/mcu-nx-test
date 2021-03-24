@@ -173,7 +173,7 @@ class FunnelPage extends React.Component<JoinedProps, State> {
   
     return (
       <div className="ant-layout" >
-        <Actionbar paths={breadcrumbPaths}>
+        <Actionbar paths={breadcrumbPaths} mention='ALPHA'>
           <FunnelTemplateSelector selectedValue={selectedTemplate}/>
           <McsDateRangePicker
             values={dateRange}

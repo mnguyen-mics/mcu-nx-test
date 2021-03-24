@@ -20,7 +20,7 @@ import {
 } from '../../routes/domain';
 import { DatamartResource } from '../../models/datamart/DatamartResource';
 import { MicsReduxState } from '../../utils/ReduxHelper';
-import { McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { McsIcon, MentionTag } from '@mediarithmics-private/mcs-components-library';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 
 const { SubMenu } = Menu;
@@ -189,6 +189,7 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
             title={
               <span>
                 <McsIcon type={itemDef.iconType as McsIconType} />
+                {itemDef.mention && <MentionTag mention={itemDef.mention} className='mcs-menuMentionTag mcs-menuMentionTag--west' />}
                 <span className="nav-text">
                   <FormattedMessage {...itemDef.translation} />
                 </span>
@@ -213,6 +214,7 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
                     key={subMenuItem.path}
                     className={`mcs-sideBar-subMenuItem_${subMenuItem.translation.id}`}
                   >
+                    {subMenuItem.mention && <MentionTag mention={subMenuItem.mention} className='mcs-menuMentionTag mcs-menuMentionTag--east'/>}
                     <Link to={linkUrl}>
                       <FormattedMessage {...subMenuItem.translation} />
                     </Link>
