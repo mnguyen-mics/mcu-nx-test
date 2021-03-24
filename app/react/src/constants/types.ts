@@ -76,6 +76,7 @@ const TYPES = {
   IUsersAnalyticsService: Symbol.for('usersAnalyticsService'),
   IUserRolesService: Symbol.for('userRolesService'),
   ICustomActionService: Symbol.for('customActionService'),
+  IScenarioAnalyticsService: Symbol.for('scenarioAnalyticsService'),
 };
 
 export { TYPES };

@@ -1,3 +1,4 @@
+import { ScenarioAnalyticsService, IScenarioAnalyticsService } from './../services/ScenarioAnalyticsService';
 import { CustomActionService, ICustomActionService } from './../services/CustomActionService';
 import {
   AudienceFeatureService,
@@ -411,7 +412,9 @@ container
   .to(UsersAnalyticsService);
 container.bind<IUserRolesService>(TYPES.IUserRolesService).to(UserRolesService);
 container.bind<ICustomActionService>(TYPES.ICustomActionService).to(CustomActionService);
-
+container
+  .bind<IScenarioAnalyticsService>(TYPES.IScenarioAnalyticsService)
+  .to(ScenarioAnalyticsService);
 
 export const { lazyInject } = getDecorators(container, false);
 
