@@ -87,6 +87,19 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
     this.fetchFoldersAndFeatures(datamartId);
   }
 
+  componentDidUpdate(prevProps: Props, prevState: State) {
+    const { filter: prevFilter } = prevState;
+    const { filter } = this.state;
+    const {
+      match: {
+        params: { datamartId },
+      },
+    } = this.props;
+    if (filter.keywords !== prevFilter.keywords) {
+      this.fetchFoldersAndFeatures(datamartId, filter);
+    }
+  }
+
   fetchFoldersAndFeatures = (datamartId: string, filter?: Index<any>) => {
     const { intl, notifyError } = this.props;
     this.setState({
@@ -295,13 +308,23 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
   };
 
   onFilterChange = (newFilter: SearchFilter) => {
-    this.setState({
-      filter: {
-        currentPage: newFilter.currentPage,
-        pageSize: newFilter.pageSize,
-        keywords: newFilter.keywords,
-      },
-    });
+    if (newFilter.keywords !== undefined) {
+      this.setState({
+        filter: {
+          currentPage: newFilter.currentPage,
+          pageSize: newFilter.pageSize,
+          keywords: newFilter.keywords,
+        },
+      });
+    } else {
+      this.setState({
+        filter: {
+          currentPage: newFilter.currentPage,
+          pageSize: newFilter.pageSize,
+          keywords: "",
+        },
+      });
+    }
   };
 
   handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

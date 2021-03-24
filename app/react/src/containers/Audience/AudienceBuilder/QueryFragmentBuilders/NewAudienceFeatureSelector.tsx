@@ -17,6 +17,10 @@ import {
   SelectorLayout,
   Button,
 } from '@mediarithmics-private/mcs-components-library';
+import {
+  Index,
+  SearchFilter,
+} from '@mediarithmics-private/mcs-components-library/lib/utils';
 import AudienceFeatureCard from './AudienceFeatureCard';
 import { FolderOutlined } from '@ant-design/icons';
 import {
@@ -66,16 +70,28 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { datamartId, demographicIds, intl, notifyError } = this.props;
     this.setState({
       isLoading: true,
     });
+    this.fetchFoldersAndFeatures();
+  }
+
+  componentDidUpdate(prevProps: Props, prevState: State) {
+    const { keywords: prevKeywords } = prevState;
+    const { keywords } = this.state;
+    if (keywords !== prevKeywords) {
+      this.fetchFoldersAndFeatures({ keywords: keywords });
+    }
+  }
+
+  fetchFoldersAndFeatures = (filter?: Index<any>) => {
+    const { datamartId, demographicIds, intl, notifyError } = this.props;
     fetchFolders(this._audienceFeatureService, datamartId, notifyError).then(
       (audienceFeatureFolders) => {
         fetchAudienceFeatures(
           this._audienceFeatureService,
           datamartId,
-          undefined,
+          filter as SearchFilter,
           demographicIds,
         )
           .then((features) => {
@@ -98,7 +114,7 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
           });
       },
     );
-  }
+  };
 
   saveAudienceFeatures = (audienceFeatures: AudienceFeatureResource[]) => {
     this.props.save(audienceFeatures);
