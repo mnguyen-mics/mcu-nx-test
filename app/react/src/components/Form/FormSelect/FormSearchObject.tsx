@@ -133,18 +133,10 @@ class FormSearchObject extends React.Component<Props, FormSearchObjectState> {
       handleMatchValue,
     } = this.props;
 
-    if (selectProps && selectProps.mode === 'multiple') {
-      const singleValue = value as LabeledValue;
-      this.setState({ value: [singleValue], currentValue: undefined }, () => {
-        this.filterData();
-      });
-      input.onChange(singleValue.key);
-      if (handleSingleStringValue) {
-        handleSingleStringValue(singleValue.value);
-      } else if (handleMatchValue) {
-        handleMatchValue(singleValue.value);
-      }
-    } else {
+    if (
+      selectProps &&
+      (selectProps.mode === 'multiple' || selectProps.mode === 'tags')
+    ) {
       const multipleValues = value as LabeledValue[];
       this.setState({ value: multipleValues, currentValue: undefined }, () => {
         this.filterData();
@@ -154,6 +146,17 @@ class FormSearchObject extends React.Component<Props, FormSearchObjectState> {
         handleSingleStringValue(multipleValues[0].value);
       } else if (handleMatchValue) {
         handleMatchValue(multipleValues.map((v) => v.value).join(' '));
+      }
+    } else {
+      const singleValue = value as LabeledValue;
+      this.setState({ value: [singleValue], currentValue: undefined }, () => {
+        this.filterData();
+      });
+      input.onChange(singleValue.key);
+      if (handleSingleStringValue) {
+        handleSingleStringValue(singleValue.value);
+      } else if (handleMatchValue) {
+        handleMatchValue(singleValue.value);
       }
     }
   };
