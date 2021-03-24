@@ -11,13 +11,14 @@ import {
   NavigatorDefinition,
   generateRoutesFromDefinition,
 } from './domain';
-import { SegmentBuilderPage } from '../containers/Audience/SegmentBuilder';
 import { AudienceBuilderPage } from '../containers/Audience/AudienceBuilder';
 import HomePage from '../containers/Audience/Home/Dashboard/HomePage';
 import AudienceFeedsActionBar from '../containers/Audience/Feeds/List/AudienceFeedsActionBar';
 import { AudienceFeedsTable } from '../containers/Audience/Feeds/List';
 import FeedsOverviewActionbar from '../containers/Audience/Feeds/Overview/FeedsOverviewActionbar';
 import { AudienceFeedsOverview } from '../containers/Audience/Feeds/Overview';
+import SegmentBuilderSelector from '../containers/Audience/SegmentBuilder/SegmentBuilderSelector';
+import { SegmentBuilderPage } from '../containers/Audience/SegmentBuilder';
 
 export const audienceDefinition: NavigatorDefinition = {
   audienceHome: {
@@ -86,18 +87,25 @@ export const audienceDefinition: NavigatorDefinition = {
     requiredFeature: 'audience-segments',
     requireDatamart: true,
   },
-  audienceSegmentBuilder: {
+  segmentBuilder: {
     path: '/audience/segment-builder',
     layout: 'main',
-    contentComponent: SegmentBuilderPage,
+    contentComponent: SegmentBuilderSelector,
     requiredFeature: 'audience-segment_builder',
     requireDatamart: true,
   },
-  audienceSegmentBuilderV2: {
-    path: '/audience/segment-builder-v2',
+  standardSegmentBuilder: {
+    path: '/audience/segment-builder/standard',
     layout: 'main',
     contentComponent: AudienceBuilderPage,
     requiredFeature: 'audience-segment_builder_v2',
+    requireDatamart: true,
+  },
+  advancedSegmentBuilder: {
+    path: '/audience/segment-builder/advanced',
+    layout: 'main',
+    contentComponent: SegmentBuilderPage,
+    requiredFeature: 'audience-segment_builder',
     requireDatamart: true,
   },
   audienceTimeline: {

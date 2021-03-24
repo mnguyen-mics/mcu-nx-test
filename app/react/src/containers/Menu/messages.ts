@@ -23,12 +23,8 @@ export default defineMessages({
     defaultMessage: 'Feeds',
   },
   audienceSegmentBuilder: {
-    id: 'menu.audience.segmentBuilder',
-    defaultMessage: 'Segment Builder',
-  },
-  audienceSegmentBuilderV2: {
-    id: 'menu.audience.segmentBuilderV2',
-    defaultMessage: 'Audience Builder',
+    id: 'menu.audience.builder',
+    defaultMessage: 'Builder',
   },
   audienceMonitoring: {
     id: 'menu.audience.monitoring',

@@ -41,7 +41,7 @@ class AudienceBuilderActionbar extends React.Component<Props, State> {
 
   handleSaveAsUserQuery = (formData: NewUserQuerySimpleFormData) => {
     this.setState({ segmentModalLoading: true });
-    this.props.save(formData).catch(_ => {
+    this.props.save(formData).catch((_) => {
       this.setState({
         segmentModalVisible: false,
         segmentModalLoading: false,
@@ -75,8 +75,7 @@ class AudienceBuilderActionbar extends React.Component<Props, State> {
     let paths: Path[] = [
       {
         name: intl.formatMessage(messages.title),
-        path: `/v2/o/${organisationId}/audience/segment-builder-v2?audienceBuilderId=`,
-
+        path: `/v2/o/${organisationId}/audience/segment-builder`,
       },
     ];
     if (audienceBuilder) {
@@ -92,16 +91,14 @@ class AudienceBuilderActionbar extends React.Component<Props, State> {
 
     return (
       <Actionbar paths={paths}>
-        {
-          <Dropdown overlay={saveAsMenu} trigger={['click']}>
-            <Button className="mcs-primary" type="primary">
-              <FormattedMessage
-                id="audience.audienceBuilder.actionBar.saveAsButton"
-                defaultMessage="Save As"
-              />
-            </Button>
-          </Dropdown>
-        }
+        <Dropdown overlay={saveAsMenu} trigger={['click']}>
+          <Button className="mcs-primary" type="primary">
+            <FormattedMessage
+              id="audience.audienceBuilder.actionBar.saveAsButton"
+              defaultMessage="Save As"
+            />
+          </Button>
+        </Dropdown>
 
         <SaveAsUserQuerySegmentModal
           onOk={this.handleSaveAsUserQuery}

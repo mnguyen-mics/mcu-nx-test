@@ -39,7 +39,7 @@ type Props = RouteComponentProps<QueryBuilderPageRouteParams> &
 const messages = defineMessages({
   segmentBuilder: {
     id: 'audience.segmentBuilder.actionbar.title',
-    defaultMessage: 'Segment Builder',
+    defaultMessage: 'Advanced Segment Builder',
   },
   noMoreSupported: {
     id: 'audience.segmentBuilder.legacyComponent.noMoreSupported',
