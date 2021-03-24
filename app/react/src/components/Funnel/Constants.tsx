@@ -210,5 +210,9 @@ export const funnelMessages = defineMessages({
   copied: {
     id: 'funnel.copied',
     defaultMessage: 'The funnel url is successfully copied to your clipboard'
-  }
+  },
+  eventsWarning: {
+    id: 'funnel.eventsWarning',
+    defaultMessage: 'You don\'t seem to have compatible events. You need to bind your custom event names.'
+  },
 });

@@ -1,5 +1,4 @@
 export interface ReportRequestBody {
-  date_ranges: DateRange[];
   dimensions: Dimension[];
   dimension_filter_clauses?: DimensionFilterClause;
   metrics: Metric[];
@@ -7,6 +6,7 @@ export interface ReportRequestBody {
   order_by?: OrderBy;
   first_result?: number;
   max_result?: number;
+  date_ranges: DateRange[];
 }
 
 export type DimensionFilterClause = FilterClause<DimensionFilter>;

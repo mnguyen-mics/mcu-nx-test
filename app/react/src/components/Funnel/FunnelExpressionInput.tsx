@@ -9,7 +9,7 @@ import { AdGroupByKeywordSelector } from '../../containers/Audience/DatamartUser
 import { CampaignByKeywordSelector } from '../../containers/Audience/DatamartUsersAnalytics/components/CampaignByNameSelector';
 import { ChannelByKeywordSelector } from '../../containers/Audience/DatamartUsersAnalytics/components/ChannelByNameSelector';
 import { CreativeByKeywordSelector } from '../../containers/Audience/DatamartUsersAnalytics/components/CreativeByNameSelector';
-import { BrandByNameSelector, Category1ByNameSelector, Category2ByNameSelector, Category3ByNameSelector, Category4ByNameSelector, DeviceBrandByNameSelector, DeviceCarrierByNameSelector, DeviceModelByNameSelector, ProductIdByNameSelector, TypeByNameSelector } from '../../containers/Audience/DatamartUsersAnalytics/components/DimensionValueByNameSelector';
+import { BrandByNameSelector, Category1ByNameSelector, Category2ByNameSelector, Category3ByNameSelector, Category4ByNameSelector, DeviceBrandByNameSelector, DeviceCarrierByNameSelector, DeviceModelByNameSelector, EventTypeSelector, ProductIdByNameSelector, TypeByNameSelector } from '../../containers/Audience/DatamartUsersAnalytics/components/DimensionValueByNameSelector';
 import { GoalByKeywordSelector } from '../../containers/Audience/DatamartUsersAnalytics/components/GoalByNameSelector';
 import { ResourceByKeywordSelectorProps } from '../../containers/Audience/DatamartUsersAnalytics/components/helpers/utils';
 import SegmentByNameSelector from '../../containers/Audience/DatamartUsersAnalytics/components/SegmentByNameSelector';
@@ -89,7 +89,8 @@ class FunnelExpressionInput extends React.Component<Props, State> {
     }
     const additionalDimensionFilter = {
       from: from,
-      to: to
+      to: to,
+      noFilterClause: false
     }
 
     const commonEnumProps: CommonEnumProps = {
@@ -122,7 +123,6 @@ class FunnelExpressionInput extends React.Component<Props, State> {
             {"true"}
           </Option>
         </Select>
-      case 'EVENT_TYPE':
       case 'DEVICE_OS_FAMILY':
       case 'DEVICE_FORM_FACTOR':
       case 'DEVICE_BROWSER_FAMILY':
@@ -155,6 +155,15 @@ class FunnelExpressionInput extends React.Component<Props, State> {
               </Option>)
           })}
         </Select>
+
+      case 'EVENT_TYPE':
+        additionalDimensionFilter.noFilterClause = true
+        return (<div id={anchorId}>
+          <EventTypeSelector
+            filter={additionalDimensionFilter}
+            {...commonProps}
+          />
+        </div>)
       case 'SEGMENT_ID':
         return (<div id={anchorId}>
           <SegmentByNameSelector

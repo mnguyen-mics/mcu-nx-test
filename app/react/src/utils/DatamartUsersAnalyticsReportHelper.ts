@@ -16,7 +16,8 @@ export type DatamartUsersAnalyticsDimension = 'date_yyyy_mm_dd'
                                               | 'origin_source'
                                               | 'origin_channel'
                                               | 'resource_name'
-                                              | 'number_of_confirmed_transactions';
+                                              | 'number_of_confirmed_transactions'
+                                              | 'event_type';
 
 export type DatamartUsersAnalyticsMetric = 'users'
                                             | 'sessions' 
@@ -42,29 +43,28 @@ export function buildDatamartUsersAnalyticsRequestBody(
   segmentIdToAdd?: string,
 ): ReportRequestBody {
   const UTC = !(isNowFormat(from.value) && isNowFormat(to.value));
-  const startDate: string = new McsMoment(from.value).toMoment().utc(UTC).startOf('day').format().replace('Z', '');
-  const endDate: string = new McsMoment(to.value).toMoment().utc(UTC).endOf('day').format().replace('Z', '');
+  const startDate = new McsMoment(from.value).toMoment().utc(UTC).startOf('day').format().replace('Z', '');
+  const endDate = new McsMoment(to.value).toMoment().utc(UTC).endOf('day').format().replace('Z', '');
   const dimensionsList: DatamartUsersAnalyticsDimension[] = dimensions || [];
-  return buildReport(startDate, endDate, dimensionsList, metrics, dimensionFilterClauses, segmentId, segmentIdToAdd);
+  return buildReport(dimensionsList, metrics, startDate, endDate, dimensionFilterClauses, segmentId, segmentIdToAdd);
 }
 
 function buildReport(
-  startDate: string,
-  endDate: string,
   dimensionsList: DatamartUsersAnalyticsDimension[],
   metricsList: DatamartUsersAnalyticsMetric[],
+  startDate: string,
+  endDate: string,
   dimensionFilterClauses?: DimensionFilterClause,
   segmentId?: string,
   segmentIdToAggregate?: string,
 ): ReportRequestBody {
 
-  const dateRange: DateRange = {
-    start_date: startDate,
-    end_date: endDate,
-  };
-
-  const dateRanges: DateRange[] = [dateRange];
-
+    const dateRange: DateRange = {
+      start_date: startDate,
+      end_date: endDate,
+    };
+    const dateRanges = [dateRange];
+  
   // DIMENSIONS
   const dimensions: Dimension[] = dimensionsList.map(dimension => {
     return { name: dimension };
