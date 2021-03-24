@@ -69,7 +69,9 @@ class AudienceFeatureFolder extends React.Component<Props, State> {
             </div>
           </Menu.Item>
           <Menu.Item key="1">
-            <div onClick={onDelete}>{intl.formatMessage(messages.audienceFeatureDelete)}</div>
+            <div onClick={onDelete}>
+              {intl.formatMessage(messages.audienceFeatureDelete)}
+            </div>
           </Menu.Item>
         </Menu>
       );
@@ -81,7 +83,8 @@ class AudienceFeatureFolder extends React.Component<Props, State> {
     const { renameFolder } = this.props;
     const { inputValue } = this.state;
     if (id !== null) {
-      return renameFolder(id, inputValue);
+      return renameFolder(id, inputValue).then( _ =>
+        this.cancelEdition());
     }
     return;
   };
@@ -96,45 +99,47 @@ class AudienceFeatureFolder extends React.Component<Props, State> {
     const { folder, onSelectFolder, intl } = this.props;
     const { editionMode, inputValue } = this.state;
     return (
-      <div onClick={onSelectFolder(folder.id)}>
-        <Row
-          key={folder.id ? folder.id : 'root_key'}
-          className="mcs-audienceFeatureSettings_folder"
-        >
-          <Col span={2}>
+      <Row
+        key={folder.id ? folder.id : 'root_key'}
+        className="mcs-audienceFeatureSettings_folder"
+      >
+        <Col span={2}>
+          <div onClick={onSelectFolder(folder.id)}>
             <FolderOutlined className="menu-icon" />
-          </Col>
-          <Col span={21}>
-            {editionMode ? (
-              <div className="mcs-audienceFeatureSettings-folderForm">
-                <Input
-                  value={inputValue}
-                  onChange={this.handleInputChange}
-                  className="mcs-audienceFeatureSettings-folderInput"
-                  placeholder={intl.formatMessage(
-                    messages.audienceFeaturePlaceholderFolderInput,
-                  )}
-                />
+          </div>
+        </Col>
+        <Col span={21}>
+          {editionMode ? (
+            <div className="mcs-audienceFeatureSettings-folderForm">
+              <Input
+                value={inputValue}
+                onChange={this.handleInputChange}
+                className="mcs-audienceFeatureSettings-folderInput"
+                placeholder={intl.formatMessage(
+                  messages.audienceFeaturePlaceholderFolderInput,
+                )}
+              />
 
-                <Button type="primary" onClick={this.renameFolder(folder.id)}>
-                  <FormattedMessage {...messages.audienceFeatureRename} />
-                </Button>
+              <Button type="primary" onClick={this.renameFolder(folder.id)}>
+                <FormattedMessage {...messages.audienceFeatureRename} />
+              </Button>
 
-                <Button onClick={this.cancelEdition}>
-                  <FormattedMessage {...messages.audienceFeatureCancelButton} />
-                </Button>
-              </div>
-            ) : (
-              folder.name
-            )}
-          </Col>
-          <Col span={1}>
-            <Dropdown overlay={this.getMenu(folder.id)} trigger={['click']}>
-              <McsIcon type="chevron" />
-            </Dropdown>
-          </Col>
-        </Row>
-      </div>
+              <Button onClick={this.cancelEdition}>
+                <FormattedMessage {...messages.audienceFeatureCancelButton} />
+              </Button>
+            </div>
+          ) : (
+            <div onClick={onSelectFolder(folder.id)}>
+              {folder.name}
+            </div>
+          )}
+        </Col>
+        <Col span={1}>
+          <Dropdown overlay={this.getMenu(folder.id)} trigger={['click']}>
+            <McsIcon type="chevron" />
+          </Dropdown>
+        </Col>
+      </Row>
     );
   }
 }

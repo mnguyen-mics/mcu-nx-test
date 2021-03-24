@@ -207,7 +207,8 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
       })
       .catch((err) => {
         this.props.notifyError(err);
-      });
+      })
+      .then((_) => this.fetchFoldersAndFeatures(datamartId));
   };
 
   createFolder = () => {
@@ -238,7 +239,8 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
       .deleteAudienceFeatureFolder(datamartId, folderId)
       .catch((err) => {
         this.props.notifyError(err);
-      });
+      })
+      .then((_) => this.fetchFoldersAndFeatures(datamartId));
   };
 
   onSelectFolder = (id: string | null) => () => {
@@ -321,7 +323,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
         filter: {
           currentPage: newFilter.currentPage,
           pageSize: newFilter.pageSize,
-          keywords: "",
+          keywords: '',
         },
       });
     }
