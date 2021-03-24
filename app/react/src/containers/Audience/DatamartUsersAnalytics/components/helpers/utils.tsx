@@ -41,8 +41,11 @@ interface ResourceByKeywordSelectorProps {
   displaySelectAll?: boolean;
 }
 
+interface NoFilterClause {
+  noFilterClause?: boolean
+}
 interface QueryFilter<AdditionalContext> {
-  filter?: AdditionalContext
+  filter?: AdditionalContext & NoFilterClause
 }
 
 
@@ -146,13 +149,13 @@ handleChange = (value: LabeledValue | LabeledValue[]) => {
 render() {
   const { resourcesList, fetching, value, allOptionsSelected } = this.state;
   const selectAllOptionValue = allOptionsSelected ? "Deselect all" : "Select all";
-  const { anchorId, className, multiselect, displaySelectAll } = this.props;
+  const { anchorId, className, multiselect, displaySelectAll, filter } = this.props;
   const getPopupContainer = () => document.getElementById(anchorId)!
   const alwaysTrue = () => true
   return (<Select
     mode={multiselect ? "tags" : undefined}
     tokenSeparators={[',', '	']}
-    showSearch={true}
+    showSearch={!filter?.noFilterClause}
     labelInValue={true}
     autoFocus={true}
     value={value}

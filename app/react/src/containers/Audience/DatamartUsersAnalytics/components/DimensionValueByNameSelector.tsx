@@ -10,13 +10,15 @@ import McsMoment from '@mediarithmics-private/mcs-components-library/lib/utils/M
 
 interface NamedSelectable {
   id: string,
-  name: string
+  name: string,
 }
 
 interface AdditionalOptions {
   from: McsMoment,
-  to: McsMoment
+  to: McsMoment,
+  noFilterClause?: boolean;
 }
+
 
 class DimensionFetcher implements ResourceFetcher<NamedSelectable> {
   @lazyInject(TYPES.IDatamartUsersAnalyticsService)
@@ -34,10 +36,11 @@ class DimensionFetcher implements ResourceFetcher<NamedSelectable> {
       expressions: [options.keywords],
       case_sensitive: false
     }
-    const clause: DimensionFilterClause = {
+    const clause: DimensionFilterClause | undefined = options.noFilterClause ? undefined : {
       operator: 'OR' as BooleanOperator,
       filters: [filter]
-    }
+    };
+
     return this._datamartUsersAnalyticsService.getAnalytics(options.datamart_id, [], options.from, options.to, [this.dimensionName as DatamartUsersAnalyticsDimension], clause).then((reportView: ReportViewResponse) => {
       return reportView.data.report_view.rows.map(x => {
         return { id: x[0].toString(), name: x[0].toString() }
@@ -46,9 +49,9 @@ class DimensionFetcher implements ResourceFetcher<NamedSelectable> {
   }
 }
 
-const DimensionValueByNameSelector = (dimensionName: string) => ResourceByKeywordSelector<NamedSelectable, AdditionalOptions>(displayNameAdapted<NamedSelectable>(),
+const DimensionValueByNameSelector = (dimensionName: string, searchDisabled?: boolean) => ResourceByKeywordSelector<NamedSelectable, AdditionalOptions>(displayNameAdapted<NamedSelectable>(),
   new DimensionFetcher(dimensionName),
-  `Search ${dimensionName} by keyword`)
+  searchDisabled ? `Select ${dimensionName}`: `Search ${dimensionName} by keyword`)
 
 const Category1ByNameSelector = DimensionValueByNameSelector('CATEGORY1');
 const Category2ByNameSelector = DimensionValueByNameSelector('CATEGORY2');
@@ -60,7 +63,7 @@ const DeviceBrandByNameSelector = DimensionValueByNameSelector('DEVICE_BRAND');
 const TypeByNameSelector = DimensionValueByNameSelector('TYPE');
 const DeviceCarrierByNameSelector = DimensionValueByNameSelector('DEVICE_CARRIER');
 const DeviceModelByNameSelector = DimensionValueByNameSelector('DEVICE_MODEL');
-
+const EventTypeSelector = DimensionValueByNameSelector('EVENT_TYPE', true);
 export {
   Category1ByNameSelector,
   Category2ByNameSelector,
@@ -71,5 +74,6 @@ export {
   DeviceBrandByNameSelector,
   TypeByNameSelector,
   DeviceCarrierByNameSelector,
-  DeviceModelByNameSelector
+  DeviceModelByNameSelector,
+  EventTypeSelector
 };

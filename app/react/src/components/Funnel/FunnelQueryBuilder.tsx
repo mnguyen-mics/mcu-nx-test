@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Card, Select, Button, Switch, Input } from "antd";
+import { Card, Select, Button, Switch, Input, Tag } from "antd";
 import messages from '../../containers/Campaigns/Display/Edit/messages';
 import { ArrowUpOutlined, ArrowDownOutlined, CloseOutlined, CalendarOutlined, FlagOutlined } from '@ant-design/icons';
 import cuid from 'cuid';
@@ -9,7 +9,7 @@ import { IUsersAnalyticsService } from '../../services/UsersAnalyticsService';
 import { DimensionsList } from '../../models/datamartUsersAnalytics/datamartUsersAnalytics';
 import { compose } from 'recompose';
 import injectNotifications, { InjectedNotificationProps } from '../../containers/Notifications/injectNotifications';
-import { booleanOperator, FUNNEL_SEARCH_SETTING, FilterOperatorLabel } from './Constants';
+import { booleanOperator, FUNNEL_SEARCH_SETTING, FilterOperatorLabel, funnelMessages } from './Constants';
 import { BooleanOperator, DimensionFilterClause, DimensionFilterOperator } from '../../models/ReportRequestBody';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { parseSearch, updateSearch, isSearchValid } from '../../utils/LocationSearchHelper';
@@ -17,10 +17,12 @@ import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import McsMoment from '../../utils/McsMoment';
 import {
-  FormattedMessage,
+  FormattedMessage, InjectedIntlProps, injectIntl,
 } from 'react-intl';
 import FunnelExpressionInput from './FunnelExpressionInput';
 import { FunnelFilter } from '../../models/datamart/UserActivitiesFunnel';
+import { IDatamartUsersAnalyticsService } from '../../services/DatamartUsersAnalyticsService';
+import { ReportViewResponse } from '../../services/ReportService';
 
 
 const Option = Select.Option;
@@ -30,6 +32,7 @@ export interface Step {
   name: string;
   filter_clause: DimensionFilterClause;
   max_days_after_previous_step?: number;
+  displayEventTypeWarning?: boolean;
 }
 
 interface State {
@@ -47,6 +50,7 @@ interface FunnelQueryBuilderProps {
 }
 
 type Props = FunnelQueryBuilderProps &
+  InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }> &
   InjectedNotificationProps;
 
@@ -54,6 +58,8 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
   private _cuid = cuid;
   @lazyInject(TYPES.IUsersAnalyticsService)
   private _usersAnalyticsService: IUsersAnalyticsService;
+  @lazyInject(TYPES.IDatamartUsersAnalyticsService)
+  private _datamartUsersAnalyticsService: IDatamartUsersAnalyticsService;
 
   constructor(props: Props) {
     super(props);
@@ -256,9 +262,25 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
   }
 
   handleDimensionNameChange(dimensionIndex: number, stepId: string, value: string) {
+
+    if (value.toLocaleLowerCase() === 'event_type') {
+      const { datamartId } = this.props;
+      const { dateRange } = this.state;
+      this._datamartUsersAnalyticsService.getAnalytics(datamartId, [], dateRange.from, dateRange.to, ['event_type'])
+        .then((reportView: ReportViewResponse) => {
+          this.updateStepWithDimensionName(dimensionIndex, stepId, value, reportView.data.report_view.rows.length === 0);
+        });
+    } else {
+      this.updateStepWithDimensionName(dimensionIndex, stepId, value);
+    }
+  }
+
+  updateStepWithDimensionName(dimensionIndex: number, stepId: string, value: string, displayEventTypeWarning?: boolean) {
     const { steps } = this.state;
+
     steps.forEach(step => {
       if (step.id === stepId) {
+        step.displayEventTypeWarning = displayEventTypeWarning;
         step.filter_clause.filters.forEach((filter, index) => {
           if (dimensionIndex === index) {
             filter.dimension_name = value
@@ -306,7 +328,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
       if (step.id === stepId) {
         step.max_days_after_previous_step = parseInt(value.target.value, 10);
       }
-    }); 
+    });
 
     this.setState({ steps });
   }
@@ -389,7 +411,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
       if (step.max_days_after_previous_step === 0) {
         step.max_days_after_previous_step = undefined;
       }
-      step.filter_clause.filters.forEach(filter => { 
+      step.filter_clause.filters.forEach(filter => {
         filter.id = undefined
       });
     });
@@ -465,8 +487,8 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
   render() {
     const { steps, dateRange } = this.state;
     const { from, to } = dateRange
-    const { datamartId } = this.props;
-    
+    const { datamartId, intl } = this.props;
+
     return (<div className={"mcs-funnelQueryBuilder"} >
 
       <div className={"mcs-funnelQueryBuilder_steps"}>
@@ -494,8 +516,8 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
                     </div>
 
                     {index > 0 && <div className={"mcs-funnelQueryBuilder_maximumDaysAfterStep"}>
-                      <Input 
-                        type="number" 
+                      <Input
+                        type="number"
                         className={"mcs-funnelQueryBuilder_maximumDaysAfterStep_input"}
                         min="0"
                         value={step.max_days_after_previous_step}
@@ -574,8 +596,14 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
                   </div>
                 </div>
                 <div className={"mcs-funnelQueryBuilder_step_bullet"}>
-                  <div className={"mcs-funnelQueryBuilder_step_bullet_icon"}/>
+                  <div className={"mcs-funnelQueryBuilder_step_bullet_icon"} />
                 </div>
+                {step.displayEventTypeWarning && <div className={"mcs-funnelQueryBuilder_step_warning"}>
+                  <CloseOutlined className={"mcs-funnelQueryBuilder_step_warning_icon"} />
+                  <Tag className={"mcs-funnelQueryBuilder_step_warning_desc"}>
+                    {intl.formatMessage(funnelMessages.eventsWarning)}
+                  </Tag>
+                </div>}
               </Card>
             )
           })
@@ -585,7 +613,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
             <FlagOutlined className={"mcs-funnelQueryBuilder_timeline_icon"} />
             {to && <p className={"mcs-funnelQueryBuilder_timeline_date"}>{to.toMoment().format('DD/MM/YYYY 23:59')}</p>}
           </div>
-          {steps.length < 4 &&  <Button className={"mcs-funnelQueryBuilder_addStepBtn"} onClick={this.addStep}>
+          {steps.length < 4 && <Button className={"mcs-funnelQueryBuilder_addStepBtn"} onClick={this.addStep}>
             <FormattedMessage
               id="audience.funnel.querybuilder.newStep"
               defaultMessage="Add a step"
@@ -599,5 +627,6 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
 
 export default compose<FunnelQueryBuilderProps, FunnelQueryBuilderProps>(
   injectNotifications,
+  injectIntl,
   withRouter
 )(FunnelQueryBuilder);
