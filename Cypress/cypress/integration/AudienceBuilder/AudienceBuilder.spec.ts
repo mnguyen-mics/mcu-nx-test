@@ -179,5 +179,102 @@ describe('This test should check that the audience feature forms are working pro
         });
       });
     });
-  });
+  }); 
+
+  
+  it('should test the demographics card', () => {
+    cy.readFile('cypress/fixtures/init_infos.json').then((data) => {
+      const audienceBuilderName = faker.random.words(2);
+      const audienceFeatureName = faker.random.words(2);
+      createAudienceBuilder(data.datamartName, audienceBuilderName);
+      cy.request({
+        url: `${Cypress.env('apiDomain')}/v1/datamarts/${
+          data.datamartId
+        }/audience_features`,
+        method: 'POST',
+        headers: { Authorization: data.accessToken },
+        body: {
+          name: audienceFeatureName,
+          description: 'Test - Audience Builder - Cypress',
+          object_tree_expression: 'accounts{match (user_account_id,$id)}',
+          addressable_object: 'UserPoint',
+        },
+      }).then(() => {
+        cy.contains(audienceBuilderName).click();
+        cy.get('.mcs-audienceBuilder_formColumn')
+          .contains('Add from library')
+          .click();
+        cy.contains(audienceFeatureName).click();
+        cy.get('.mcs-actionbar-edit')
+          .find('button').first().click();
+        cy.get('.mcs-form_saveButton_audienceBuilderForm').click();
+      }).then(() => {
+          cy.request({
+            url: `${Cypress.env('apiDomain')}/v1/datamarts/${
+              data.datamartId
+            }/channels`,
+            method: 'POST',
+            headers: { Authorization: data.accessToken },
+            body: {
+              name: 'test',
+              domain: 'test.com',
+              enable_analytics: false,
+              type: 'MOBILE_APPLICATION',
+            },
+          })
+        }).then((responseChannel) => {
+          cy.request({
+            url: `${Cypress.env('apiDomain')}/v1/datamarts/${
+              data.datamartId
+            }/user_activities?processing_pipeline=false`,
+            method: 'POST',
+            headers: { Authorization: data.accessToken },
+            body: {
+              $user_account_id: 'test_match_audience_builder',
+              $type: 'APP_VISIT',
+              $site_id: `${responseChannel.body.data.id}`,
+              $session_status: 'NO_SESSION',
+              $ts: new Date().getTime(),
+              $events: [],
+            },
+          })
+        }).then(() => {
+            cy.wait(20000);
+            cy.goToHome(data.organisationId);
+            cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
+            cy.get(
+              '.mcs-sideBar-subMenuItem_menu\\.audience\\.segmentBuilderV2',
+            ).click();
+            cy.wait(3000);
+            cy.url().then((url) => {
+              if (url.match(/.*segment-builder-v2$/g))
+                cy.contains(audienceBuilderName).click();
+            });
+            cy.get('.mcs-audienceBuilder_totalAudience').should(
+              'contain',
+              '0',
+            );
+
+            cy.get('.mcs-audienceBuilder_demographicFeature')
+              .find('.mcs-audienceBuilder_audienceFeatureName')
+              .should('contain',audienceFeatureName);
+
+            cy.get('.mcs-audienceBuilder_demographicFeature')
+              .find('.mcs-audienceBuilder_audienceFeatureDescription')
+              .should('contain','Test - Audience Builder - Cypress');
+              
+            cy.get('.mcs-audienceBuilder_demographicFeature')  
+              .within(() => {
+                cy.get('input').type('test_match_audience_builder')
+              });
+            
+            cy.get('.mcs-audienceBuilder_dashboard_refresh_button').click();
+            cy.get('.mcs-audienceBuilder_totalAudience').should(
+                'not.contain',
+                '0',
+                );
+        });
+      });
+    });
+
 });
