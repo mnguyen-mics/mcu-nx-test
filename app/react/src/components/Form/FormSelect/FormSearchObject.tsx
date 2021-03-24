@@ -182,7 +182,7 @@ class FormSearchObject extends React.Component<Props, FormSearchObjectState> {
     }
   };
 
-  onInputKeyDown = () => {
+  onBlur = () => {
     const { input } = this.props;
     const { value, currentValue } = this.state;
     let formattedValue: LabeledValue[] = [];
@@ -246,7 +246,7 @@ class FormSearchObject extends React.Component<Props, FormSearchObjectState> {
             defaultActiveFirstOption={true}
             filterOption={false}
             onSearch={loadOnlyOnce ? this.onSearch : this.fetchData}
-            onInputKeyDown={loadOnlyOnce ? this.onInputKeyDown : undefined}
+            onBlur={loadOnlyOnce ? this.onBlur : undefined}
             onChange={this.handleChange}
             notFoundContent={this.state.fetching ? <Spin size="small" /> : null}
             style={{ width: '100%' }}
