@@ -100,29 +100,36 @@ class DatamartDashboardPage extends React.Component<Props, State> {
   componentDidUpdate(prevProps: Props) {
     const {
       match: {
-        params: { datamartId },
+        params: { datamartId, organisationId },
       },
+      history,
     } = this.props;
     const {
       match: {
-        params: { datamartId: prevDatamartId },
+        params: {
+          datamartId: prevDatamartId,
+          organisationId: prevOrganisationId,
+        },
       },
     } = prevProps;
     if (datamartId !== prevDatamartId) {
       this.fetchDatamart(datamartId);
+    }
+    if (organisationId !== prevOrganisationId) {
+      history.push(`/v2/o/${organisationId}/settings/datamart/datamarts`);
     }
   }
 
   fetchDatamart = (datamartId: string) => {
     this._datamartService
       .getDatamart(datamartId)
-      .then(res =>
+      .then((res) =>
         this.setState({
           datamart: res.data,
           isLoading: false,
         }),
       )
-      .catch(err => {
+      .catch((err) => {
         this.setState({ isLoading: false });
         notifyError(err);
       });
