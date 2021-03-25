@@ -13,9 +13,14 @@ import * as MenuActions from '../../../redux/Menu/actions';
 import { compose } from 'recompose';
 import { MenuMode } from 'antd/lib/menu';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
-import { Button } from '@mediarithmics-private/mcs-components-library';
-import { injectFeatures, InjectedFeaturesProps } from '../../Features'
+import {
+  Button,
+  AppsMenu,
+} from '@mediarithmics-private/mcs-components-library';
 import OrganisationListSwitcher from '../../Menu/OrganisationListSwitcher';
+import { UserProfileResource } from '../../../models/directory/UserProfileResource';
+import { InjectedFeaturesProps, injectFeatures } from '../../Features';
+import { AppMenuOption } from '@mediarithmics-private/mcs-components-library/lib/components/apps-navigation/apps-menu';
 
 const { Content, Sider } = Layout;
 
@@ -42,6 +47,7 @@ interface MainLayoutStoreProps {
   collapsed: boolean;
   mode: MenuMode;
   openCloseMenu: (a: { collapsed: boolean; mode: MenuMode }) => void;
+  connectedUser: UserProfileResource;
 }
 
 interface MainLayoutState {
@@ -53,6 +59,7 @@ interface MainLayoutState {
 type Props = MainLayoutProps &
   InjectedFeaturesProps &
   RouteComponentProps<{ organisationId: string }> &
+  InjectedFeaturesProps &
   MainLayoutStoreProps;
 
 const LayoutId = Layout as any;
@@ -187,6 +194,27 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
     );
   };
 
+  getAppUrlsMapForMenu(): Map<AppMenuOption, string> {
+    const { connectedUser } = this.props;
+
+    const isFromMics =
+      connectedUser.workspaces.filter(
+        (workspace) => workspace.organisation_id === '1',
+      ).length > 0;
+
+    if (isFromMics) {
+      return new Map<AppMenuOption, string>([
+        ['PLATFORM_ADMIN', 'https://admin.mediarithmics.com:8493'],
+        [
+          'DEVELOPER_CONSOLE',
+          'https://computing-console-mics.francecentral.cloudapp.azure.com/frontprod/login',
+        ],
+      ]);
+    } else {
+      return new Map<AppMenuOption, string>();
+    }
+  }
+
   render() {
     const {
       contentComponent: ContentComponent,
@@ -195,15 +223,28 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
       collapsed,
       mode,
       orgSelectorSize,
-      hasFeature
+      hasFeature,
     } = this.props;
-
 
     const listOrganizationSwitcher = hasFeature('new-navigation-system');
 
     const onStateChange = (state: State) =>
       this.setState({ isSelectorOpen: state.isOpen });
     const onClick = () => this.setState({ isSelectorOpen: false });
+
+    const appUrlsMapForMenu: Map<
+      AppMenuOption,
+      string
+    > = this.getAppUrlsMapForMenu();
+
+    const menu =
+      appUrlsMapForMenu.size > 0 ? (
+        <AppsMenu
+          availableAppUrlsMap={appUrlsMapForMenu}
+          logo={<Logo mode="inline" />}
+        />
+      ) : undefined;
+
     return (
       <div id="mcs-full-page" className="mcs-fullscreen">
         <PushMenu
@@ -220,37 +261,73 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
             />
           )}
         </PushMenu>
-
-        <LayoutId id="mcs-main-layout" className="mcs-fullscreen">
-          <Sider
-            collapsible={!listOrganizationSwitcher}
-            collapsed={collapsed}
-            trigger={listOrganizationSwitcher ? undefined : this.renderTrigger()}
-          >
-            <Logo mode={mode} />
-            {listOrganizationSwitcher && <OrganisationListSwitcher />}
-            <NavigatorMenu mode={mode} onMenuItemClick={this.onMenuItemClick} className="mcs-mainLayout-menu"/>
-          </Sider>
-          <Layout>
-            <NavigatorHeader />
-            {ActionBarComponent ? <ActionBarComponent /> : null}
-            {ActionBarComponent ? (
-              <div className="ant-layout">
-                <Content className="mcs-content-container">
+        {hasFeature('new-navigation-system') ? (
+          <LayoutId id="mcs-main-layout" className="mcs-fullscreen">
+            <NavigatorHeader menu={menu} isInSettings={false} />
+            <Layout>
+              <Sider
+                collapsible={!listOrganizationSwitcher}
+                collapsed={collapsed}
+                trigger={this.renderTrigger()}
+              >
+                <Logo mode={mode} />
+                {listOrganizationSwitcher && <OrganisationListSwitcher />}
+                <NavigatorMenu
+                  mode={mode}
+                  onMenuItemClick={this.onMenuItemClick}
+                  className="mcs-mainLayout-menu"
+                />
+              </Sider>
+              <Layout>
+                {ActionBarComponent ? <ActionBarComponent /> : null}
+                {ActionBarComponent ? (
+                  <div className="ant-layout">
+                    <Content className="mcs-content-container">
+                      <ContentComponent />
+                    </Content>
+                  </div>
+                ) : (
                   <ContentComponent />
-                </Content>
-              </div>
-            ) : (
-              <ContentComponent />
-            )}
-          </Layout>
-        </LayoutId>
+                )}
+              </Layout>
+            </Layout>
+          </LayoutId>
+        ) : (
+          <LayoutId id="mcs-main-layout" className="mcs-fullscreen">
+            <Sider
+              collapsible={true}
+              collapsed={collapsed}
+              trigger={this.renderTrigger()}
+            >
+              <Logo mode={mode} />
+              <NavigatorMenu
+                mode={mode}
+                onMenuItemClick={this.onMenuItemClick}
+                className="mcs-mainLayout-menu"
+              />
+            </Sider>
+            <Layout>
+              <NavigatorHeader isInSettings={false} />
+              {ActionBarComponent ? <ActionBarComponent /> : null}
+              {ActionBarComponent ? (
+                <div className="ant-layout">
+                  <Content className="mcs-content-container">
+                    <ContentComponent />
+                  </Content>
+                </div>
+              ) : (
+                <ContentComponent />
+              )}
+            </Layout>
+          </LayoutId>
+        )}
       </div>
     );
   }
 }
 
 const mapStateToProps = (state: MicsReduxState) => ({
+  connectedUser: state.session.connectedUser,
   collapsed: state.menu.collapsed,
   mode: state.menu.mode,
 });

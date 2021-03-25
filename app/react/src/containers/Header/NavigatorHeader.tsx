@@ -11,7 +11,11 @@ import { compose } from 'recompose';
 import { injectDatamart, InjectedDatamartProps } from '../Datamart';
 import { UserWorkspaceResource } from '../../models/directory/UserProfileResource';
 import { MicsReduxState } from '../../utils/ReduxHelper';
-import { McsIcon } from '@mediarithmics-private/mcs-components-library';
+import {
+  AppsMenuDropdown,
+  McsIcon,
+} from '@mediarithmics-private/mcs-components-library';
+import { InjectedFeaturesProps, injectFeatures } from '../Features';
 
 const { Header } = Layout;
 
@@ -21,13 +25,14 @@ interface NavigatorHeaderStoreProps {
 }
 
 export interface NavigatorHeaderProps {
-  isSetting?: boolean;
+  isInSettings: boolean;
   menu?: React.ReactElement;
 }
 
 type Props = NavigatorHeaderProps &
   NavigatorHeaderStoreProps &
   RouteComponentProps<{ organisationId: string }> &
+  InjectedFeaturesProps &
   InjectedDatamartProps;
 
 class NavigatorHeader extends React.Component<Props> {
@@ -38,8 +43,9 @@ class NavigatorHeader extends React.Component<Props> {
       },
       workspace,
       userEmail,
-      isSetting,
+      isInSettings: isInSettings,
       menu,
+      hasFeature,
     } = this.props;
 
     const organisationName = workspace(organisationId).organisation_name;
@@ -61,7 +67,10 @@ class NavigatorHeader extends React.Component<Props> {
         </Menu.Item>
         <Menu.Item key="logout">
           <Link to="/logout">
-            <FormattedMessage id="components.header.logOut" defaultMessage="Log out" />
+            <FormattedMessage
+              id="components.header.logOut"
+              defaultMessage="Log out"
+            />
           </Link>
         </Menu.Item>
       </Menu>
@@ -71,33 +80,36 @@ class NavigatorHeader extends React.Component<Props> {
       <Header className="mcs-header">
         <div className="mcs-header-title">
           <span className="left-component">
-            {isSetting && menu ? (
+            {menu ? (
               <span className="launcher">
-                <Dropdown overlay={menu} trigger={['click']}>
-                  <a>
-                    <AppstoreFilled className="menu-icon" />
-                  </a>
-                </Dropdown>
+                {isInSettings ? (
+                  <Dropdown overlay={menu} trigger={['click']}>
+                    <a>
+                      <AppstoreFilled className="menu-icon" />
+                    </a>
+                  </Dropdown>
+                ) : (
+                  <AppsMenuDropdown overlay={menu} />
+                )}
               </span>
             ) : null}
-            {
+            {!hasFeature('new-navigation-system') && (
               <Link
                 to={`/v2/o/${organisationId}/campaigns/display`}
-                className="organisation-name">
-                  {organisationName}
+                className="organisation-name"
+              >
+                {organisationName}
               </Link>
-            }
+            )}
           </span>
-          {
-            process.env.API_ENV === 'prod' ?
-              <Alert
-                className="mcs-header-title-alert"
-                message="You are using production API environment !"
-                type="error"
-                showIcon={true}
-              />
-              : null
-          }
+          {process.env.API_ENV === 'prod' ? (
+            <Alert
+              className="mcs-header-title-alert"
+              message="You are using production API environment !"
+              type="error"
+              showIcon={true}
+            />
+          ) : null}
         </div>
         <div className="mcs-header-actions">
           <Link
@@ -131,5 +143,6 @@ const mapStateToProps = (state: MicsReduxState) => ({
 export default compose<Props, NavigatorHeaderProps>(
   withRouter,
   injectDatamart,
+  injectFeatures,
   connect(mapStateToProps),
 )(NavigatorHeader);
