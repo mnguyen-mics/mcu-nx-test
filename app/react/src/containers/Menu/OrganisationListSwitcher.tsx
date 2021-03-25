@@ -208,20 +208,18 @@ class OrganizationListSwitcher extends React.Component<
     }
   };
 
-  renderNodeFlat = (nodes: UserWorkspaceResource[], isChild: boolean) => {
+  renderNodeFlat = (nodes: UserWorkspaceResource[], level: number) => {
     return nodes.map((node, index) => {
       const children = this.getChildren(node);
       const hasChildren = children.length > 0;
       return (
         <React.Fragment key={index}>
           <Menu.Item key={node.organisation_id}>
-            <div
-              className={isChild ? 'mcs-organisationListSwitcher_indent' : ''}
-            >
+            <div className={`mcs-organisationListSwitcher_indent-${level}`}>
               {this.renderOrg(node, hasChildren)}
             </div>
           </Menu.Item>
-          {hasChildren && this.renderNodeFlat(children, true)}
+          {hasChildren && this.renderNodeFlat(children, level + 1)}
         </React.Fragment>
       );
     });
@@ -346,7 +344,7 @@ class OrganizationListSwitcher extends React.Component<
     const [communities] = partition(workspaces, (w) => this.isCommunity(w));
     return (
       <Menu className="mcs-organisationListSwitcher_orgList" mode="vertical">
-        {this.renderNodeFlat(communities, false)}
+        {this.renderNodeFlat(communities, 0)}
       </Menu>
     );
   };
