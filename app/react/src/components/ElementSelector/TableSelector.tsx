@@ -6,8 +6,7 @@ import { omit } from 'lodash';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { PaginationProps } from 'antd/lib/pagination';
-import { TableView, TableViewFilters } from '../TableView';
-import { DataColumnDefinition, TableViewProps } from '../TableView/TableView';
+import { TableViewFilters } from '../TableView';
 import { normalizeArrayOfObject } from '../../utils/Normalizer';
 import { DataListResponse, DataResponse } from '../../services/ApiService';
 import { SearchFilter, SelectableItem } from './';
@@ -23,6 +22,8 @@ import {
 } from '../../utils/LocationSearchHelper';
 import { MicsReduxState } from '../../utils/ReduxHelper';
 import { SelectorLayout } from '@mediarithmics-private/mcs-components-library';
+import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import TableViewWrapper, { PartialTableViewProps } from '../TableView/TableViewWrapper';
 
 const messages = defineMessages({
   audienceSegment: {
@@ -413,7 +414,7 @@ class TableSelector<T extends SelectableItem> extends React.Component<
         this.setState({ currentPage: 1, pageSize: size }),
     };
 
-    const tableViewProps: TableViewProps<T> = {
+    const tableViewProps: PartialTableViewProps<T> = {
       columns: this.getColumnsDefinitions(),
       dataSource: allElementIds.map(id => elementsById[id]),
       loading: isLoading,
@@ -430,7 +431,7 @@ class TableSelector<T extends SelectableItem> extends React.Component<
         filtersOptions={(filtersOptions !== undefined) ? filtersOptions : this.getFiltersOptions()}
       />
     ) : (
-        <TableView {...tableViewProps as any} />
+        <TableViewWrapper {...tableViewProps as any} />
       );
 
     return (

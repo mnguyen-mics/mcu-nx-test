@@ -3,9 +3,11 @@ import { Row, Tooltip, Modal, Col, Button } from 'antd';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import moment from 'moment';
 import { Card, McsIcon } from '@mediarithmics-private/mcs-components-library';
-import { TableView } from '../../../../components/TableView/index';
 import messages from '../messages';
 import { UserEmailIdentifierInfo } from '../../../../models/timeline/timeline';
+import { TableViewWrapper } from '../../../../components/TableView';
+import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import { UserEmailIdentifierProviderResource } from '@mediarithmics-private/mcs-components-library/lib/models/timeline/timeline';
 
 interface EmailCardProps {
   dataSource: UserEmailIdentifierInfo[];
@@ -79,12 +81,12 @@ class EmailCard extends React.Component<Props, State> {
     const dataSource = selectedAgent.providers
       ? selectedAgent.providers
       : undefined;
-    const columnsDefinitions =
+    const columnsDefinitions: Array<DataColumnDefinition<UserEmailIdentifierProviderResource>> =
       selectedAgent.providers && selectedAgent.providers.length > 0
-        ? Object.keys(selectedAgent.providers[0]).map(key => {
+        ? Object.keys(selectedAgent.providers[0]).map((key) => {
             const upperCaseKey: any = key.toUpperCase();
             return {
-              intlMessage: messages[upperCaseKey],
+              title: formatMessage(messages[upperCaseKey]),
               key: key,
               isHiddable: false,
               render: (text: string) => renderTableCell(key, text),
@@ -110,7 +112,7 @@ class EmailCard extends React.Component<Props, State> {
             </Button>,
           ]}
         >
-          <Row gutter={10} className="table-line" style={{display: "block"}}>
+          <Row gutter={10} className="table-line" style={{ display: 'block' }}>
             <Col span={24} className="title">
               <FormattedMessage {...messages.emailInfo} />
             </Col>
@@ -151,14 +153,14 @@ class EmailCard extends React.Component<Props, State> {
               </Col>
             </Row>
           </Row>
-          <Row style={{display: "block"}}>
+          <Row style={{ display: 'block' }}>
             {selectedAgent.providers ? (
               <div>
                 <Col span={24} className="title">
                   <FormattedMessage {...messages.emailConsent} />
                 </Col>
                 <Col span={24}>
-                  <TableView
+                  <TableViewWrapper
                     dataSource={dataSource}
                     columns={columnsDefinitions}
                     loading={false}
@@ -173,7 +175,7 @@ class EmailCard extends React.Component<Props, State> {
   };
 
   initModal = (selectedAgent: UserEmailIdentifierInfo) => {
-    this.setState(prevState => {
+    this.setState((prevState) => {
       const nextState = {
         ...prevState,
         selectedAgent: {
@@ -186,7 +188,7 @@ class EmailCard extends React.Component<Props, State> {
   };
 
   handleClose = () => {
-    this.setState(prevState => {
+    this.setState((prevState) => {
       const nextState = {
         ...prevState,
       };
@@ -218,10 +220,14 @@ class EmailCard extends React.Component<Props, State> {
     };
 
     return (
-      <Card title={formatMessage(messages.emailTitle)} isLoading={isLoading} className={"mcs-emailCard"}>
+      <Card
+        title={formatMessage(messages.emailTitle)}
+        isLoading={isLoading}
+        className={'mcs-emailCard'}
+      >
         {this.renderModal()}
         {accountsFormatted &&
-          accountsFormatted.map(agent => {
+          accountsFormatted.map((agent) => {
             return (
               <div key={agent.email + agent.hash}>
                 <Row gutter={10} className="table-line">
@@ -241,7 +247,7 @@ class EmailCard extends React.Component<Props, State> {
                     </div>
                   </div>
                 </Row>
-                <Row className="text-right" style={{display: "block"}}>
+                <Row className="text-right" style={{ display: 'block' }}>
                   <button className="button-sm" onClick={handleModal(agent)}>
                     <FormattedMessage {...messages.viewMore} />
                   </button>

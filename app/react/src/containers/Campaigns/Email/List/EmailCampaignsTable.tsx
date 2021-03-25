@@ -22,6 +22,10 @@ import {
   McsIcon,
 } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
+import {
+  ActionsColumnDefinition,
+  DataColumnDefinition,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 interface EmailCampaignsTableProps {
   dataSource: EmailCampaignResourceWithStats[];
@@ -119,9 +123,11 @@ class EmailCampaignsTable extends React.Component<Props> {
       return formatMetric(value, numeralFormat, unlocalizedMoneyPrefix);
     };
 
-    const dataColumns = [
+    const dataColumns: Array<
+      DataColumnDefinition<EmailCampaignResourceWithStats>
+    > = [
       {
-        intlMessage: messages.emailHeaderStatus,
+        title: formatMessage(messages.emailHeaderStatus),
         key: 'status',
         isHideable: false,
         render: (text: string) => (
@@ -133,7 +139,7 @@ class EmailCampaignsTable extends React.Component<Props> {
         ),
       },
       {
-        intlMessage: messages.emailHeaderName,
+        title: formatMessage(messages.emailHeaderName),
         key: 'name',
         isHideable: false,
         render: (text: string, record: EmailCampaignResource) => (
@@ -146,35 +152,35 @@ class EmailCampaignsTable extends React.Component<Props> {
         ),
       },
       {
-        intlMessage: messages.emailHeaderSent,
+        title: formatMessage(messages.emailHeaderSent),
         key: 'email_sent',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: string) => renderMetricData(text, '0,0'),
       },
       {
-        intlMessage: messages.emailHeaderHardBounced,
+        title: formatMessage(messages.emailHeaderHardBounced),
         key: 'email_hard_bounced',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: string) => renderMetricData(text, '0,0'),
       },
       {
-        intlMessage: messages.emailHeaderSoftBounced,
+        title: formatMessage(messages.emailHeaderSoftBounced),
         key: 'email_soft_bounced',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: string) => renderMetricData(text, '0,0'),
       },
       {
-        intlMessage: messages.emailHeaderClicks,
+        title: formatMessage(messages.emailHeaderClicks),
         key: 'clicks',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: string) => renderMetricData(text, '0,0'),
       },
       {
-        intlMessage: messages.emailHeaderImpressions,
+        title: formatMessage(messages.emailHeaderImpressions),
         key: 'impressions',
         isVisibleByDefault: true,
         isHideable: true,
@@ -182,23 +188,25 @@ class EmailCampaignsTable extends React.Component<Props> {
       },
     ];
 
-    const actionColumns = [
+    const actionColumns: Array<
+      ActionsColumnDefinition<EmailCampaignResourceWithStats>
+    > = [
       {
         key: 'action',
         actions: () => [
           {
-            intlMessage: messages.editCampaign,
+            message: formatMessage(messages.editCampaign),
             callback: this.handleEditCampaign,
           },
           {
-            intlMessage: messages.archiveCampaign,
+            message: formatMessage(messages.archiveCampaign),
             callback: archiveCampaign,
           },
         ],
       },
     ];
 
-    const statusItems = campaignStatuses.map(status => ({
+    const statusItems = campaignStatuses.map((status) => ({
       key: status,
       value: status,
     }));
@@ -224,7 +232,7 @@ class EmailCampaignsTable extends React.Component<Props> {
           values: Array<{ key: CampaignStatus; value: CampaignStatus }>,
         ) => {
           onFilterChange({
-            statuses: values.map(item => item.value),
+            statuses: values.map((item) => item.value),
           });
         },
       },

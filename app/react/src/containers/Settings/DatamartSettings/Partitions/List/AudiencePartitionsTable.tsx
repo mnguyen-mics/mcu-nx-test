@@ -12,11 +12,11 @@ import { TableViewFilters } from '../../../../../components/TableView/index';
 import { AudiencePartitionResource } from '../../../../../models/audiencePartition/AudiencePartitionResource';
 import { DataListResponse } from '../../../../../services/ApiService';
 import { PartitionFilterParams } from './AudiencePartitionsPage';
-import {
-  DataColumnDefinition,
-  ActionsColumnDefinition,
-} from '../../../../../components/TableView/TableView';
 import { DatamartWithMetricResource } from '../../../../../models/datamart/DatamartResource';
+import {
+  ActionsColumnDefinition,
+  DataColumnDefinition,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 export interface AudiencePartitionsTableProps {
   organisationId: string;
@@ -31,9 +31,7 @@ export interface AudiencePartitionsTableProps {
 
 type Props = AudiencePartitionsTableProps & InjectedIntlProps;
 
-class AudiencePartitionTable extends TableViewFilters<
-  AudiencePartitionResource
-> {}
+class AudiencePartitionTable extends TableViewFilters<AudiencePartitionResource> {}
 
 class AudiencePartitionsTable extends React.Component<Props> {
   getFiltersOptions = () => {
@@ -41,7 +39,7 @@ class AudiencePartitionsTable extends React.Component<Props> {
 
     if (datamarts.length > 1) {
       const datamartItems = datamarts
-        .map(d => ({
+        .map((d) => ({
           key: d.id,
           value: d.name || d.token,
         }))
@@ -64,7 +62,7 @@ class AudiencePartitionsTable extends React.Component<Props> {
             </div>
           ),
           selectedItems: filter.datamartId
-            ? [datamartItems.find(di => di.key === filter.datamartId)]
+            ? [datamartItems.find((di) => di.key === filter.datamartId)]
             : [datamartItems],
           items: datamartItems,
           singleSelectOnly: true,
@@ -87,14 +85,14 @@ class AudiencePartitionsTable extends React.Component<Props> {
       audiencePartitions,
       fetchingPartitions,
       organisationId,
-      intl,
+      intl: { formatMessage },
       filter,
       onChange,
       onEdit,
     } = this.props;
 
     const searchOptions = {
-      placeholder: intl.formatMessage(messageMap.searchPlaceholder),
+      placeholder: formatMessage(messageMap.searchPlaceholder),
       onSearch: (value: string) =>
         onChange({
           keywords: value,
@@ -119,11 +117,11 @@ class AudiencePartitionsTable extends React.Component<Props> {
         }),
     };
 
-    const dataColumns: Array<DataColumnDefinition<
-      AudiencePartitionResource
-    >> = [
+    const dataColumns: Array<
+      DataColumnDefinition<AudiencePartitionResource>
+    > = [
       {
-        intlMessage: messageMap.columnName,
+        title: formatMessage(messageMap.columnName),
         key: 'name',
         render: (text, partition) => (
           <Link
@@ -135,7 +133,7 @@ class AudiencePartitionsTable extends React.Component<Props> {
         ),
       },
       {
-        intlMessage: messageMap.columnType,
+        title: formatMessage(messageMap.columnType),
         key: 'audience_partition_type',
         isHideable: false,
         render: (text, partition) => (
@@ -143,25 +141,25 @@ class AudiencePartitionsTable extends React.Component<Props> {
         ),
       },
       {
-        intlMessage: messageMap.columnPartCount,
+        title: formatMessage(messageMap.columnPartCount),
         key: 'part_count',
         render: (text, partition) => <span>{partition.part_count}</span>,
       },
       {
-        intlMessage: messageMap.columnStatus,
+        title: formatMessage(messageMap.columnStatus),
         key: 'status',
         render: (text, partition) => <span>{partition.status}</span>,
       },
     ];
 
-    const actionColumns: Array<ActionsColumnDefinition<
-      AudiencePartitionResource
-    >> = [
+    const actionColumns: Array<
+      ActionsColumnDefinition<AudiencePartitionResource>
+    > = [
       {
         key: 'action',
         actions: () => [
           {
-            intlMessage: messageMap.edit,
+            message: formatMessage(messageMap.edit),
             callback: onEdit,
           },
           // waiting backend part

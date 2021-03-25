@@ -18,7 +18,6 @@ import {
 import { UserQuerySegment } from '../../../../../models/audiencesegment/AudienceSegmentResource';
 import { TableViewFilters } from '../../../../../components/TableView';
 import { messagesMap } from './AudienceExperimentationForm';
-import { DataColumnDefinition } from '../../../../../components/TableView/TableView';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IDatamartUsersAnalyticsService } from '../../../../../services/DatamartUsersAnalyticsService';
@@ -34,6 +33,7 @@ import { FILTERS } from '../../../../../containers/Audience/DatamartUsersAnalyti
 import { formatMetric } from '../../../../../utils/MetricHelper';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import { ReportViewResponse } from '../../../../../services/ReportService';
+import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 const abComparisonMessage: {
   [key: string]: FormattedMessage.MessageDescriptor;
@@ -289,15 +289,17 @@ class ABDetailsTable extends React.Component<Props, State> {
   };
 
   buildDataColumns = () => {
-    const { intl } = this.props;
+    const {
+      intl: { formatMessage },
+    } = this.props;
     const dataColumns: Array<DataColumnDefinition<any>> = [
       {
         key: 'metricName',
         isHideable: false,
-        render: (text: string) => intl.formatMessage(abComparisonMessage[text]),
+        render: (text: string) => formatMessage(abComparisonMessage[text]),
       },
       {
-        intlMessage: messagesMap.experimentationSegmentName,
+        title: formatMessage(messagesMap.experimentationSegmentName),
         key: 'experimentationMetric',
         isHideable: false,
         render: (text: string, record: ABDetailsTableDataSource) => {
@@ -308,7 +310,7 @@ class ABDetailsTable extends React.Component<Props, State> {
         },
       },
       {
-        intlMessage: messagesMap.controlGroupSegmentName,
+        title: formatMessage(messagesMap.controlGroupSegmentName),
         key: 'controlGroupMetric',
         isHideable: false,
         render: (text: string, record: ABDetailsTableDataSource) => {
@@ -319,7 +321,7 @@ class ABDetailsTable extends React.Component<Props, State> {
         },
       },
       {
-        intlMessage: messagesMap.uplift,
+        title: formatMessage(messagesMap.uplift),
         key: 'comparison',
         isHideable: false,
         render: (text: string, record: ABDetailsTableDataSource) => {

@@ -16,15 +16,15 @@ import {
   DataResponse,
   DataListResponse,
 } from '../../../../services/ApiService';
-import { DataColumnDefinition } from '../../../../components/TableView/TableView';
 import { ProcessingResource } from '../../../../models/processing';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
+import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
-const ProcessingActivitiesTableSelector: React.ComponentClass<TableSelectorProps<
-  ProcessingResource
->> = TableSelector;
+const ProcessingActivitiesTableSelector: React.ComponentClass<
+  TableSelectorProps<ProcessingResource>
+> = TableSelector;
 
 export interface ProcessingActivitiesSelectorProps {
   selectedProcessingActivityIds: string[];
@@ -70,7 +70,7 @@ class ProcessingActivitiesSelector extends React.Component<Props, State> {
         });
         return comId;
       })
-      .catch(err => {
+      .catch((err) => {
         notifyError(err);
         return null;
       });
@@ -110,11 +110,11 @@ class ProcessingActivitiesSelector extends React.Component<Props, State> {
       ? Promise.resolve(communityId)
       : this.fetchCommunityId(organisationId);
 
-    return communityF.then(comId => {
+    return communityF.then((comId) => {
       if (comId !== null) {
         return this._organisationService
           .getProcessings(comId, options)
-          .catch(err => {
+          .catch((err) => {
             notifyError(err);
             return this.returnEmptyDataListResponse();
           });
@@ -132,12 +132,14 @@ class ProcessingActivitiesSelector extends React.Component<Props, State> {
 
     const columnsDefinition: Array<DataColumnDefinition<ProcessingResource>> = [
       {
-        intlMessage: messages.processingActivitiesSelectorColumnName,
+        title: formatMessage(messages.processingActivitiesSelectorColumnName),
         key: 'name',
         render: (text, record) => <span>{record.name}</span>,
       },
       {
-        intlMessage: messages.processingActivitiesSelectorColumnLegalBasis,
+        title: formatMessage(
+          messages.processingActivitiesSelectorColumnLegalBasis,
+        ),
         key: 'legal_basis',
         render: (text, record) => <span>{record.legal_basis}</span>,
       },

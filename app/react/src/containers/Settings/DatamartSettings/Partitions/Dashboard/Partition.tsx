@@ -3,11 +3,10 @@ import * as React from 'react';
 import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
-import { Card, ContentHeader } from '@mediarithmics-private/mcs-components-library';
-import TableView, {
-  DataColumnDefinition,
-  TableViewProps,
-} from '../../../../../components/TableView/TableView';
+import {
+  Card,
+  ContentHeader,
+} from '@mediarithmics-private/mcs-components-library';
 import {
   AudiencePartitionResource,
   AudiencePartitionStatus,
@@ -32,6 +31,9 @@ import { IAudienceSegmentService } from '../../../../../services/AudienceSegment
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { IQueryService } from '../../../../../services/QueryService';
+import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import { TableViewWrapper } from '../../../../../components/TableView';
+import { PartialTableViewProps } from '../../../../../components/TableView/TableViewWrapper';
 
 const { Content } = Layout;
 
@@ -94,8 +96,8 @@ type JoinedProps = InjectedWorkspaceProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string; partitionId: string }>;
 
-const PartitionTable = TableView as React.ComponentClass<
-  TableViewProps<UserPartitionSegment>
+const PartitionTable = TableViewWrapper as React.ComponentClass<
+  PartialTableViewProps<UserPartitionSegment>
 >;
 
 class Partition extends React.Component<JoinedProps, PartitionState> {
@@ -169,9 +171,9 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
     this.setState({ isLoading: true, isLoadingStats: true });
     this._audiencePartitionsService
       .getPartition(partitionId)
-      .then(partitionRes => {
+      .then((partitionRes) => {
         const datamart = workspace.datamarts.find(
-          d => d.id === partitionRes.data.datamart_id,
+          (d) => d.id === partitionRes.data.datamart_id,
         );
         const audiencePromises: Array<Promise<any>> = [
           this._audienceSegmentService.getSegments(organisationId, {
@@ -197,7 +199,7 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
             ];
 
         return Promise.all(promises)
-          .then(res => {
+          .then((res) => {
             const normalized = normalizeReportView<{
               audience_segment_id: number;
               user_points: number;
@@ -214,9 +216,9 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
               ),
             });
           })
-          .catch(e => Promise.reject(e));
+          .catch((e) => Promise.reject(e));
       })
-      .catch(err => {
+      .catch((err) => {
         this.props.notifyError(err, {
           description: err,
         });
@@ -232,13 +234,13 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
       case 'v201709':
         return this._queryService
           .runOTQLQuery(datamart.id, 'select @count {} from UserPoint')
-          .then(res => {
+          .then((res) => {
             return res.data ? res.data.rows[0].count : 0;
           });
       case 'v201506':
         return this._queryService
           .runSelectorQLQuery(datamart.id)
-          .then(res => res.data.total);
+          .then((res) => res.data.total);
       default:
         return Promise.resolve(0);
     }
@@ -263,7 +265,7 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
     };
     this._audiencePartitionsService
       .publishPartition(partitionId, publishedPartitionData)
-      .then(resp => {
+      .then((resp) => {
         this.loadData(partitionId);
         message.success(intl.formatMessage(messages.partitionPublished));
       });
@@ -272,16 +274,19 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
   buildColumnDefinition = (): Array<
     DataColumnDefinition<UserPartitionSegment>
   > => {
+    const {
+      intl: { formatMessage },
+    } = this.props;
     const { isLoadingStats, statBySegmentId, totalUserPoint } = this.state;
     return [
       {
-        intlMessage: messages.partNumber,
+        title: formatMessage(messages.partNumber),
         key: 'part_number',
         isHideable: false,
         render: (text, record) => record.part_number,
       },
       {
-        intlMessage: messages.users,
+        title: formatMessage(messages.users),
         key: 'users',
         isHideable: false,
         render: (text, record) => {
@@ -293,7 +298,7 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
         },
       },
       {
-        intlMessage: messages.percentage,
+        title: formatMessage(messages.percentage),
         key: 'percentage',
         isHideable: false,
         render: (text, record) => {

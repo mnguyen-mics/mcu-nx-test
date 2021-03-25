@@ -18,12 +18,6 @@ import {
   Status,
 } from '../../../../models/Plugins';
 import {
-  DataColumnDefinition,
-  ActionsColumnDefinition,
-  ActionsRenderer,
-  ActionDefinition,
-} from '../../../../components/TableView/TableView';
-import {
   AudienceFeedType,
   IAudienceSegmentFeedService,
 } from '../../../../services/AudienceSegmentFeedService';
@@ -48,6 +42,7 @@ import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { AutomationResource } from '../../../../models/automations/automations';
 import { IScenarioService } from '../../../../services/ScenarioService';
+import { ActionDefinition, ActionsColumnDefinition, ActionsRenderer, DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 type Props = InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }> &
@@ -474,7 +469,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
   renderActionColumnDefinition: ActionsRenderer<RecordType> = (
     record: RecordType,
   ) => {
-    const { hasFeature } = this.props;
+    const { hasFeature, intl: { formatMessage } } = this.props;
     const actionsDefinitions: Array<ActionDefinition<RecordType>> = [];
 
     if (record.feed.created_from !== 'AUTOMATION') {
@@ -493,31 +488,31 @@ class AudienceFeedsTable extends React.Component<Props, State> {
         );
          actionsDefinitions.push({
            callback: this.activateFeed,
-           intlMessage: messages.activate,
+           message: formatMessage(messages.activate),
            disabled: !allowFeedActivation,
          });
       } else {
         actionsDefinitions.push({
           callback: this.pauseFeed,
-          intlMessage: messages.pause,
+          message: formatMessage(messages.pause),
         });
       }
       actionsDefinitions.push({
-        intlMessage: messages.edit,
+        message: formatMessage(messages.edit),
         callback: this.editFeed,
       });
     }
 
     if (hasFeature('audience-feeds_stats')) {
       actionsDefinitions.push({
-        intlMessage: messages.stats,
+        message: formatMessage(messages.stats),
         callback: this.openFeedStats,
       });
     }
 
     if (record.feed.created_from !== 'AUTOMATION') {
       actionsDefinitions.push({
-        intlMessage: messages.delete,
+        message: formatMessage(messages.delete),
         callback: this.deleteFeed,
       });
     }
@@ -541,12 +536,12 @@ class AudienceFeedsTable extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
-      intl,
+      intl: { formatMessage },
     } = this.props;
 
     const dataColumns: Array<DataColumnDefinition<RecordType>> = [
       {
-        intlMessage: messages.source,
+        title: formatMessage(messages.source),
         key: 'source',
         isHideable: false,
         render: (text: string, record: RecordType) => {
@@ -598,7 +593,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
         },
       },
       {
-        intlMessage: messages.feedName,
+        title: formatMessage(messages.feedName),
         key: 'feedName',
         isHideable: false,
         render: (text: string, record: RecordType) => (
@@ -618,7 +613,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
         ),
       },
       {
-        intlMessage: messages.artifactId,
+        title: formatMessage(messages.artifactId),
         key: 'artifactId',
         isHideable: false,
         render: (text: string, record: RecordType) => (
@@ -626,7 +621,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
         ),
       },
       {
-        intlMessage: messages.createdFrom,
+        title: formatMessage(messages.createdFrom),
         key: 'createdFrom',
         isHideable: false,
         render: (text: string, record: RecordType) => (
@@ -634,7 +629,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
         ),
       },
       {
-        intlMessage: messages.status,
+        title: formatMessage(messages.status),
         key: 'status',
         isHideable: false,
         render: (
@@ -647,7 +642,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
           return (
             <Tooltip
               placement="top"
-              title={intl.formatMessage(messages[record.feed.status])}
+              title={formatMessage(messages[record.feed.status])}
             >
               <McsIcon
                 type="status"

@@ -7,8 +7,6 @@ import {
   CreativeStatData,
   SourceStatData,
 } from './GoalAttribution';
-import { TableView } from '../../../../components/TableView/index';
-import { DataColumnDefinition } from '../../../../components/TableView/TableView';
 import messages from './messages';
 import { Link } from 'react-router-dom';
 import ObjectRenderer from '../../../ObjectRenderer/ObjectRenderer';
@@ -18,6 +16,8 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { ICreativeService } from '../../../../services/CreativeService';
 import { IDisplayCampaignService } from '../../../../services/DisplayCampaignService';
+import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import { TableViewWrapper } from '../../../../components/TableView';
 
 export interface GoalAttributionTableProps {
   dataSource: CampaignStatData | CreativeStatData | SourceStatData;
@@ -51,6 +51,7 @@ class GoalAttributionTable extends React.Component<JoinedProps> {
       match: {
         params: { organisationId },
       },
+      intl: {formatMessage}
     } = this.props;
 
     let columns: Array<DataColumnDefinition<Record>> = [];
@@ -58,12 +59,12 @@ class GoalAttributionTable extends React.Component<JoinedProps> {
     if (dataSource.viewType === 'SOURCE') {
       columns = [
         {
-          intlMessage: messages.marketingChannel,
+          title: formatMessage(messages.marketingChannel),
           key: 'marketingChannel',
           render: (text: string, record: Record, index: number) => record.id,
         },
         {
-          intlMessage: messages.source,
+          title: formatMessage(messages.source),
           key: 'source',
           render: (text: string, record: Record, index: number) => {
             const sourceStat = dataSource.dataSource.find(
@@ -76,7 +77,7 @@ class GoalAttributionTable extends React.Component<JoinedProps> {
     } else if (dataSource.viewType === 'CAMPAIGN') {
       columns = [
         {
-          intlMessage: messages.campaignName,
+          title: formatMessage(messages.campaignName),
           key: 'marketingChannel',
           render: (text: string, record: Record, index: number) => {
             const campaignStat = dataSource.dataSource.find(
@@ -110,7 +111,7 @@ class GoalAttributionTable extends React.Component<JoinedProps> {
     } else if (dataSource.viewType === 'CREATIVES') {
       columns = [
         {
-          intlMessage: messages.creativeName,
+          title: formatMessage(messages.creativeName),
           key: 'marketingChannel',
           render: (text: string, record: Record, index: number) => {
             const creativeName = dataSource.dataSource.find(
@@ -266,7 +267,7 @@ class GoalAttributionTable extends React.Component<JoinedProps> {
       return { id: item };
     });
     return (
-      <TableView
+      <TableViewWrapper
         loading={this.props.isLoading}
         columns={this.buildColumnDefinition().dataColumnsDefinition}
         dataSource={uniq}

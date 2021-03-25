@@ -8,20 +8,17 @@ import {
 import { EditAudienceSegmentParam } from '../Edit/domain';
 import { formatMetric } from '../../../../utils/MetricHelper';
 import { formatUnixTimestamp } from '../../../../utils/DateHelper';
-
 import { JobExecutionStatus } from '../../../../models/Job/JobResource';
-import { TableView } from '../../../../components/TableView';
-import {
-  TableViewProps,
-  DataColumnDefinition,
-} from '../../../../components/TableView/TableView';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import log from '../../../../utils/Logger';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
-import { defineMessages } from 'react-intl';
+import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
+import { TableViewWrapper } from '../../../../components/TableView';
+import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import { PartialTableViewProps } from '../../../../components/TableView/TableViewWrapper';
 
 export interface UserListImportCardProps {
   datamartId: string;
@@ -29,6 +26,7 @@ export interface UserListImportCardProps {
 }
 
 type Props = UserListImportCardProps &
+  InjectedIntlProps &
   InjectedNotificationProps &
   RouteComponentProps<EditAudienceSegmentParam>;
 
@@ -44,8 +42,8 @@ export interface ImportExecutionsData {
   totalUserSegmentImported?: number;
 }
 
-const ImportJobTableView = TableView as React.ComponentClass<
-  TableViewProps<ImportExecutionsData>
+const ImportJobTableView = TableViewWrapper as React.ComponentClass<
+  PartialTableViewProps<ImportExecutionsData>
 >;
 
 const messages = defineMessages({
@@ -104,31 +102,32 @@ class UserListImportCard extends React.Component<Props, State> {
   };
 
   render() {
+    const {intl: {formatMessage}} = this.props;
     const { isLoading } = this.state;
 
     const dataColumns: Array<DataColumnDefinition<ImportExecutionsData>> = [
       {
-        intlMessage: messages.submissionDate,
+        title: formatMessage(messages.submissionDate),
         key: 'submissionDate',
         isVisibleByDefault: true,
         isHideable: false,
         render: (text, record) => formatUnixTimestamp(record.submissionDate),
       },
       {
-        intlMessage: messages.status,
+        title: formatMessage(messages.status),
         key: 'status',
         isHideable: false,
         render: (text, record) => text,
       },
       {
-        intlMessage: messages.totalUserSegmentTreated,
+        title: formatMessage(messages.totalUserSegmentTreated),
         key: 'totalUserSegmentTreated',
         isVisibleByDefault: true,
         isHideable: false,
         render: (text, record) => formatMetric(text, '0', '', ''),
       },
       {
-        intlMessage: messages.totalUserSegmentImported,
+        title: formatMessage(messages.totalUserSegmentImported),
         key: 'totalUserSegmentImported',
         isVisibleByDefault: true,
         isHideable: false,
@@ -161,5 +160,6 @@ class UserListImportCard extends React.Component<Props, State> {
 
 export default compose<Props, UserListImportCardProps>(
   withRouter,
+  injectIntl,
   injectNotifications,
 )(UserListImportCard);

@@ -7,7 +7,7 @@ import ItemList, { Filters } from '../../../../../components/ItemList';
 import {
   PAGINATION_SEARCH_SETTINGS,
   updateSearch,
-  parseSearch
+  parseSearch,
 } from '../../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { messages } from './messages';
@@ -22,7 +22,10 @@ import { IUserRolesService } from '../../../../../services/UserRolesService';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
-import { DataColumnDefinition } from '../../../../../components/TableView/TableView';
+import {
+  ActionsColumnDefinition,
+  DataColumnDefinition,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 const { Content } = Layout;
 
@@ -69,7 +72,7 @@ class UserRolesList extends React.Component<Props, UserListState> {
       };
       this._organisationService
         .getOrganisation(organisationId)
-        .then(response => {
+        .then((response) => {
           this.setState({ communityId: response.data.community_id });
           this._usersService
             .getUsersWithUserRole(response.data.community_id, options)
@@ -86,7 +89,7 @@ class UserRolesList extends React.Component<Props, UserListState> {
                 });
                 this._organisationService
                   .getOrganisations(this.state.communityId)
-                  .then(organisationsResponse =>
+                  .then((organisationsResponse) =>
                     this.setState({
                       communityOrgs: organisationsResponse.data,
                     }),
@@ -107,7 +110,7 @@ class UserRolesList extends React.Component<Props, UserListState> {
 
     history.push({
       pathname: `/v2/o/${organisationId}/settings/organisation/user_roles/${user.role.id}/user/${user.id}/edit`,
-      state: { userOrganisationId: user.organisation_id }
+      state: { userOrganisationId: user.organisation_id },
     });
   };
 
@@ -150,20 +153,29 @@ class UserRolesList extends React.Component<Props, UserListState> {
       this._userRolesService
         .deleteUserRole(user.id, user.role.id)
         .then(this.redirect)
-        .catch(err => {
+        .catch((err) => {
           notifyError(err);
         });
     }
   };
 
   render() {
-    const actionsColumnsDefinition = [
+    const {
+      intl: { formatMessage },
+    } = this.props;
+
+    const actionsColumnsDefinition: Array<
+      ActionsColumnDefinition<UserWithRole>
+    > = [
       {
         key: 'action',
         actions: () => [
-          { intlMessage: messages.editUserRole, callback: this.onClickEdit },
           {
-            intlMessage: messages.deleteUserRole,
+            message: formatMessage(messages.editUserRole),
+            callback: this.onClickEdit,
+          },
+          {
+            message: formatMessage(messages.deleteUserRole),
             callback: this.onClickDelete,
           },
         ],
@@ -172,43 +184,41 @@ class UserRolesList extends React.Component<Props, UserListState> {
 
     const dataColumnsDefinition: Array<DataColumnDefinition<UserWithRole>> = [
       {
-        intlMessage: messages.usersFirstName,
+        title: formatMessage(messages.usersFirstName),
         key: 'first_name',
         isHideable: false,
       },
       {
-        intlMessage: messages.usersLastName,
+        title: formatMessage(messages.usersLastName),
         key: 'last_name',
         isHideable: false,
       },
       {
-        intlMessage: messages.usersEmail,
+        title: formatMessage(messages.usersEmail),
         key: 'email',
         isHideable: false,
       },
       {
-        intlMessage: messages.roleOrg,
+        title: formatMessage(messages.roleOrg),
         key: 'role',
         isHideable: false,
-        render: (value:string,record: UserWithRole) => {
+        render: (value: string, record: UserWithRole) => {
           const organisation:
             | OrganisationResource
             | undefined = this.state.communityOrgs.find(
-            (org: OrganisationResource) => org.id === record.role.organisation_id,
+            (org: OrganisationResource) =>
+              org.id === record.role.organisation_id,
           );
           return organisation ? organisation.name : record.role.organisation_id;
         },
       },
       {
-        intlMessage: messages.roleTitle,
+        title: formatMessage(messages.roleTitle),
         key: 'role',
         isHideable: false,
-        render: (text: string,record: UserWithRole) =>
+        render: (text: string, record: UserWithRole) =>
           record.role.role.charAt(0) +
-          record.role.role
-            .slice(1)
-            .toLowerCase()
-            .replace('_', ' '),
+          record.role.role.slice(1).toLowerCase().replace('_', ' '),
       },
     ];
 

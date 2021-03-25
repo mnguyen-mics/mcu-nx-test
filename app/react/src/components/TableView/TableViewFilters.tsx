@@ -5,15 +5,17 @@ import cuid from 'cuid';
 import { SearchProps } from 'antd/lib/input/Search';
 
 import { MultiSelectProps } from '@mediarithmics-private/mcs-components-library/lib/components/multi-select';
-import TableView, { DataColumnDefinition, TableViewProps } from './TableView';
 import LabelsSelector, { LabelsSelectorProps } from '../LabelsSelector';
 import TreeSelectFilter from '../TreeSelectFilter';
 import { McsDateRangePicker, MultiSelect } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangePickerProps } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker';
+import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import { TableViewWrapper } from '.';
+import { PartialTableViewProps } from './TableViewWrapper';
 
 const Search = Input.Search;
 
-export interface ViewComponentWithFiltersProps<T> extends TableViewProps<T> {
+export interface ViewComponentWithFiltersProps<T> extends PartialTableViewProps<T> {
   searchOptions?: SearchProps;
   dateRangePickerOptions?: McsDateRangePickerProps;
   filtersOptions?: Array<MultiSelectProps<any>>;
@@ -136,7 +138,7 @@ class TableViewFilters<T> extends React.Component<
         {!!relatedTable && relatedTable}
         <Row className="mcs-table-body">
           <Col span={24}>
-            <TableView
+            <TableViewWrapper
               {...(this.props as any)}
               visibilitySelectedColumns={this.state.visibilitySelectedColumns}
             />

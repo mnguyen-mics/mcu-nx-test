@@ -9,9 +9,6 @@ import { Card, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { Filters } from '../../../components/ItemList';
 import { ImportExecution, Import } from '../../../models/imports/imports';
 import ImportActionbar from './ImportActionbar';
-import TableView, {
-  ActionsColumnDefinition,
-} from '../../../components/TableView/TableView';
 import log from '../../../utils/Logger';
 import {
   PAGINATION_SEARCH_SETTINGS,
@@ -35,6 +32,8 @@ import injectNotifications, {
 import LocalStorage from '../../../services/LocalStorage';
 import { getExecutionInfo } from '../../../utils/JobHelpers';
 import { Labels } from '../../Labels';
+import { ActionsColumnDefinition, DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import { TableViewWrapper } from '../../../components/TableView';
 
 const { Content } = Layout;
 
@@ -299,22 +298,22 @@ class Imports extends React.Component<JoinedProps, State> {
       colors,
     } = this.props;
 
-    const dataColumns = [
+    const dataColumns: Array<DataColumnDefinition<ImportExecution>> = [
       {
-        intlMessage: messages.id,
+        title: formatMessage(messages.id),
         key: 'id',
         isHideable: false,
         render: (text: string) => text,
       },
       {
-        intlMessage: messages.status,
+        title: formatMessage(messages.status),
         key: 'status',
         isHideable: false,
         render: (text: string, record: ImportExecution) =>
           this.renderStatuColumn(record),
       },
       {
-        intlMessage: messages.progress,
+        title: formatMessage(messages.progress),
         key: 'progress',
         isHideable: false,
         render: (text: string, record: ImportExecution) => (
@@ -334,7 +333,7 @@ class Imports extends React.Component<JoinedProps, State> {
         ),
       },
       {
-        intlMessage: messages.startDate,
+        title: formatMessage(messages.startDate),
         key: 'start_date',
         isHideable: false,
         render: (text: string) =>
@@ -343,7 +342,7 @@ class Imports extends React.Component<JoinedProps, State> {
             : formatMessage(messages.notStarted),
       },
       {
-        intlMessage: messages.endDate,
+        title: formatMessage(messages.endDate),
         key: 'end_date',
         isHideable: false,
         render: (text: string, record: ImportExecution) =>
@@ -354,7 +353,7 @@ class Imports extends React.Component<JoinedProps, State> {
             : formatMessage(messages.notEnded),
       },
       {
-        intlMessage: messages.creationDate,
+        title: formatMessage(messages.creationDate),
         key: 'creation_date',
         isHideable: false,
         render: (text: string) =>
@@ -364,9 +363,7 @@ class Imports extends React.Component<JoinedProps, State> {
       },
     ];
 
-    return {
-      dataColumnsDefinition: dataColumns,
-    };
+    return dataColumns;
   };
 
   render() {
@@ -410,12 +407,12 @@ class Imports extends React.Component<JoinedProps, State> {
         key: 'action',
         actions: (execution: ImportExecution) => [
           {
-            intlMessage: messages.uploadCancel,
+            message: formatMessage(messages.uploadCancel),
             callback: this.onClickCancel,
             disabled: execution.status !== 'PENDING',
           },
           {
-            intlMessage: messages.downloadErrorFile,
+            message: formatMessage(messages.downloadErrorFile),
             callback: this.onDownloadErrors,
             disabled: !(
               execution.result &&
@@ -424,7 +421,7 @@ class Imports extends React.Component<JoinedProps, State> {
             ),
           },
           {
-            intlMessage: messages.downloadInputFile,
+            message: formatMessage(messages.downloadInputFile),
             callback: this.onDownloadInputs,
             disabled: !(execution.result && execution.result.input_file_uri),
           },
@@ -457,9 +454,9 @@ class Imports extends React.Component<JoinedProps, State> {
             )}
             <Card title={formatMessage(messages.importExecutionsTitle)}>
               <hr />
-              <TableView
+              <TableViewWrapper
                 dataSource={importExecutions.items}
-                columns={this.buildColumnDefinition().dataColumnsDefinition}
+                columns={this.buildColumnDefinition()}
                 actionsColumnsDefinition={actionsColumnsDefinition}
                 pagination={pagination}
                 loading={importExecutions.isLoading}

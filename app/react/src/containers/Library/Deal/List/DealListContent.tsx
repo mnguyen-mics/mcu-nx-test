@@ -17,11 +17,14 @@ import messages from './messages';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import { ActionsColumnDefinition } from '../../../../components/TableView/TableView';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import {
+  ActionsColumnDefinition,
+  DataColumnDefinition,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 const initialState = {
   loading: false,
@@ -60,10 +63,10 @@ class DealListContent extends React.Component<
     this.setState({ loading: true });
     return this._dealsListService
       .deleteDealList(organisationId, dealListId)
-      .then(r =>
+      .then((r) =>
         this.fetchDealList(organisationId, { currentPage: 1, pageSize: 10 }),
       )
-      .catch(err => notifyError(err));
+      .catch((err) => notifyError(err));
   };
 
   fetchDealList = (organisationId: string, filter: Filters) => {
@@ -73,7 +76,7 @@ class DealListContent extends React.Component<
       };
       this._dealsListService
         .getDealLists(organisationId, options)
-        .then(results => {
+        .then((results) => {
           this.setState({
             loading: false,
             data: results.data,
@@ -133,21 +136,33 @@ class DealListContent extends React.Component<
   };
 
   render() {
-    const actionsColumnsDefinition: Array<ActionsColumnDefinition<
-      DealsListResource
-    >> = [
+    const {
+      intl: { formatMessage },
+    } = this.props;
+
+    const actionsColumnsDefinition: Array<
+      ActionsColumnDefinition<DealsListResource>
+    > = [
       {
         key: 'action',
         actions: () => [
-          { intlMessage: messages.edit, callback: this.onClickEdit },
-          { intlMessage: messages.archive, callback: this.onClickArchive },
+          {
+            message: formatMessage(messages.edit),
+            callback: this.onClickEdit,
+          },
+          {
+            message: formatMessage(messages.archive),
+            callback: this.onClickArchive,
+          },
         ],
       },
     ];
 
-    const dataColumnsDefinition = [
+    const dataColumnsDefinition: Array<
+      DataColumnDefinition<DealsListResource>
+    > = [
       {
-        intlMessage: messages.name,
+        title: formatMessage(messages.name),
         key: 'name',
         isHideable: false,
         render: (text: string, record: DealsListResource) => (

@@ -3,7 +3,6 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Layout, Tooltip, Modal } from 'antd';
 import { compose } from 'recompose';
-import { ExtendedTableRowSelection } from '../../../components/TableView/TableView';
 import {
   InjectedIntlProps,
   injectIntl,
@@ -39,6 +38,7 @@ import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
+import { ActionsColumnDefinition, DataColumnDefinition, ExtendedTableRowSelection } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 const { Content } = Layout;
 
@@ -351,7 +351,7 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
   render() {
     const {
       location: { search },
-      intl,
+      intl : { formatMessage },
       rowSelection,
     } = this.props;
 
@@ -360,7 +360,7 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
     const filter = parseSearch(search, SCENARIOS_SEARCH_SETTINGS);
 
     const searchOptions = {
-      placeholder: intl.formatMessage(messages.searchScenarios),
+      placeholder: formatMessage(messages.searchScenarios),
       onSearch: (value: string) =>
         this.updateLocationSearch({
           keywords: value,
@@ -385,15 +385,15 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
         }),
     };
 
-    const dataColumns = [
+    const dataColumns: Array<DataColumnDefinition<AutomationResource>> = [
       {
-        intlMessage: messagesMap.status,
+        title: formatMessage(messagesMap.status),
         key: 'status',
         isHideable: false,
         render: (text: string) => (
           <Tooltip
             placement="top"
-            title={intl.formatMessage(messagesMap[text])}
+            title={formatMessage(messagesMap[text])}
           >
             <span className={`mcs-campaigns-status-${text.toLowerCase()}`}>
               <McsIcon type="status" />
@@ -402,7 +402,7 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
         ),
       },
       {
-        intlMessage: messagesMap.name,
+        title: formatMessage(messagesMap.name),
         key: 'name',
         isHideable: false,
         render: (text: string, record: AutomationResource) => {
@@ -415,16 +415,16 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
       },
     ];
 
-    const actionColumns = [
+    const actionColumns: Array<ActionsColumnDefinition<AutomationResource>> = [
       {
         key: 'action',
         actions: (scenario: AutomationResource) => [
           {
-            intlMessage: messagesMap.edit,
+            message: formatMessage(messagesMap.edit),
             callback: this.editAutomation,
           },
           {
-            intlMessage: messages.deleteAutomation,
+            message: formatMessage(messages.deleteAutomation),
             callback: this.deleteAutomation,
           },
           {

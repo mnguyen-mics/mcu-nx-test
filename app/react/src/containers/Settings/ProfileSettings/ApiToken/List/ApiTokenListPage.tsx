@@ -21,13 +21,16 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
 import { connect } from 'react-redux';
-import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { IApiTokenService } from '../../../../../services/ApiTokenService';
 import { TYPES } from '../../../../../constants/types';
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
+import {
+  ActionsColumnDefinition,
+  DataColumnDefinition,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 const { Content } = Layout;
 
@@ -161,10 +164,9 @@ type Props = RouteComponentProps<RouterProps> &
   InjectedNotificationProps;
 
 class ApiTokenListPage extends React.Component<Props, State> {
-
   @lazyInject(TYPES.IApiTokenService)
   private _apiTokenService: IApiTokenService;
-  
+
   constructor(props: Props) {
     super(props);
     this.state = initialState;
@@ -173,15 +175,16 @@ class ApiTokenListPage extends React.Component<Props, State> {
   fetchApiTokens = (organisationId: string, filter: Filters) => {
     const { connectedUser } = this.props;
     this.setState({ loading: true }, () => {
-      this._apiTokenService.getApiTokens(connectedUser.id, organisationId)
-        .then(results => {
+      this._apiTokenService
+        .getApiTokens(connectedUser.id, organisationId)
+        .then((results) => {
           this.setState({
             loading: false,
             data: results.data,
             total: results.total || results.count,
           });
         })
-        .catch(error => {
+        .catch((error) => {
           this.setState({ loading: false });
           this.props.notifyError(error);
         });
@@ -226,11 +229,8 @@ class ApiTokenListPage extends React.Component<Props, State> {
       cancelText: intl.formatMessage(messages.ApiTokenModalCancelText),
       onOk: () => {
         this.setState({ loading: true });
-        this._apiTokenService.deleteApiToken(
-          apiToken.id,
-          connectedUser.id,
-          organisationId,
-        )
+        this._apiTokenService
+          .deleteApiToken(apiToken.id, connectedUser.id, organisationId)
           .then(() => {
             message.success(
               intl.formatMessage(messages.apiTokenSuccessfullyDeleted),
@@ -241,7 +241,7 @@ class ApiTokenListPage extends React.Component<Props, State> {
             };
             this.fetchApiTokens(organisationId, filters);
           })
-          .catch(err => {
+          .catch((err) => {
             notifyError(err);
           });
       },
@@ -263,7 +263,7 @@ class ApiTokenListPage extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
-      intl,
+      intl: { formatMessage },
     } = this.props;
 
     const { isModalVisible, loading, saving, name } = this.state;
@@ -274,37 +274,43 @@ class ApiTokenListPage extends React.Component<Props, State> {
       {
         key: 'action',
         actions: () => [
-          { intlMessage: messages.editApiToken, callback: this.onClickEdit },
-          { intlMessage: messages.deleteApiToken, callback: this.onDelete },
+          {
+            message: formatMessage(messages.editApiToken),
+            callback: this.onClickEdit,
+          },
+          {
+            message: formatMessage(messages.deleteApiToken),
+            callback: this.onDelete,
+          },
         ],
       },
     ];
 
-    const dataColumnsDefinition = [
+    const dataColumnsDefinition: Array<
+      DataColumnDefinition<ApiTokenResource>
+    > = [
       {
-        intlMessage: messages.apiTokenName,
+        title: formatMessage(messages.apiTokenName),
         key: 'name',
         isVisibleByDefault: true,
         isHideable: false,
         render: (value: string, record: ApiTokenResource) => (
           <Link
-            to={`/v2/o/${organisationId}/settings/account/api_tokens/${
-              record.id
-            }/edit`}
+            to={`/v2/o/${organisationId}/settings/account/api_tokens/${record.id}/edit`}
           >
             {value}
           </Link>
         ),
       },
       {
-        intlMessage: messages.apiTokenValue,
+        title: formatMessage(messages.apiTokenValue),
         key: 'value',
         isVisibleByDefault: true,
         isHideable: false,
         render: (value: string) => <div>{`${value.substring(0, 25)}...`}</div>,
       },
       {
-        intlMessage: messages.apiTokenCreationDate,
+        title: formatMessage(messages.apiTokenCreationDate),
         key: 'creation_date',
         isVisibleByDefault: true,
         isHideable: false,
@@ -312,7 +318,7 @@ class ApiTokenListPage extends React.Component<Props, State> {
           moment(parseInt(value, 10)).format('DD/MM/YYYY'),
       },
       {
-        intlMessage: messages.apiTokenExpirationDate,
+        title: formatMessage(messages.apiTokenExpirationDate),
         key: 'expiration_date',
         isVisibleByDefault: true,
         isHideable: false,
@@ -339,14 +345,10 @@ class ApiTokenListPage extends React.Component<Props, State> {
       message: string;
     } = {
       iconType: 'settings',
-      message: intl.formatMessage(messages.emptyApiTokenList),
+      message: formatMessage(messages.emptyApiTokenList),
     };
 
     const apiTokenModal = (apiTokenData: ApiTokenResource) => {
-      const {
-        intl: { formatMessage },
-      } = this.props;
-
       const handleOnClick = (e: React.ChangeEvent<HTMLInputElement>) => {
         message.info(formatMessage(messages.snippetCodeCopied));
       };
@@ -387,18 +389,19 @@ class ApiTokenListPage extends React.Component<Props, State> {
         saving: true,
       });
 
-      this._apiTokenService.createApiToken(connectedUser.id, organisationId, {
-        name: this.state.name,
-      })
-        .then(resp => resp.data)
-        .then(apiTokenData => {
+      this._apiTokenService
+        .createApiToken(connectedUser.id, organisationId, {
+          name: this.state.name,
+        })
+        .then((resp) => resp.data)
+        .then((apiTokenData) => {
           this.setState({
             saving: false,
           });
           this.handleModal();
           apiTokenModal(apiTokenData);
         })
-        .catch(err => {
+        .catch((err) => {
           this.setState({
             saving: false,
           });
@@ -444,20 +447,20 @@ class ApiTokenListPage extends React.Component<Props, State> {
           />
         </Content>
         <Modal
-          title={intl.formatMessage(messages.createApiTokenModalTitle)}
+          title={formatMessage(messages.createApiTokenModalTitle)}
           visible={isModalVisible}
           onOk={createApiToken}
           confirmLoading={saving}
           onCancel={this.handleModal}
-          cancelText={intl.formatMessage(messages.ApiTokenModalCancelText)}
-          okText={intl.formatMessage(messages.createApiTokenModalOkText)}
+          cancelText={formatMessage(messages.ApiTokenModalCancelText)}
+          okText={formatMessage(messages.createApiTokenModalOkText)}
         >
-          <p>{intl.formatMessage(messages.createApiTokenModalContent)}</p>
+          <p>{formatMessage(messages.createApiTokenModalContent)}</p>
           <br />
           <Input
             onChange={changeName}
             value={name}
-            placeholder={intl.formatMessage(messages.apiTokenName)}
+            placeholder={formatMessage(messages.apiTokenName)}
           />
         </Modal>
       </div>
@@ -473,8 +476,5 @@ export default compose(
   withRouter,
   injectIntl,
   injectNotifications,
-  connect(
-    mapStateToProps,
-    undefined,
-  ),
+  connect(mapStateToProps, undefined),
 )(ApiTokenListPage);

@@ -6,12 +6,14 @@ import TableSelector, {
   TableSelectorProps,
 } from '../../../components/ElementSelector/TableSelector';
 import { SearchFilter } from '../../../components/ElementSelector';
-import { DataColumnDefinition } from '../../../components/TableView/TableView';
 import {
   GetSegmentsOption,
   IAudienceSegmentService,
 } from '../../../services/AudienceSegmentService';
-import { AudienceSegmentResource, AudienceSegmentShape } from '../../../models/audiencesegment';
+import {
+  AudienceSegmentResource,
+  AudienceSegmentShape,
+} from '../../../models/audiencesegment';
 import { formatMetric, normalizeReportView } from '../../../utils/MetricHelper';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 import { Index } from '../../../utils';
@@ -23,6 +25,7 @@ import { normalizeArrayOfObject } from '../../../utils/Normalizer';
 import { TYPES } from '../../../constants/types';
 import { lazyInject } from '../../../config/inversify.config';
 import { SegmentNameDisplay } from '../../Audience/Common/SegmentNameDisplay';
+import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 const SegmentTableSelector: React.ComponentClass<
   TableSelectorProps<AudienceSegmentShape>
@@ -96,7 +99,7 @@ class AudienceSegmentSelector extends React.Component<Props, State> {
       new McsMoment('now'),
       ['audience_segment_id'],
       undefined,
-    ).then(resp => {
+    ).then((resp) => {
       this.setState({
         fetchingReport: false,
         reportBySegmentId: normalizeArrayOfObject(
@@ -161,17 +164,19 @@ class AudienceSegmentSelector extends React.Component<Props, State> {
 
     const columns: Array<DataColumnDefinition<AudienceSegmentShape>> = [
       {
-        intlMessage: messages.segmentSelectorColumnName,
+        title: formatMessage(messages.segmentSelectorColumnName),
         key: 'name',
-        render: (text, record) => <SegmentNameDisplay audienceSegmentResource={record}/>,
+        render: (text, record) => (
+          <SegmentNameDisplay audienceSegmentResource={record} />
+        ),
       },
       {
-        intlMessage: messages.segmentSelectorColumnUserPoints,
+        title: formatMessage(messages.segmentSelectorColumnUserPoints),
         key: 'user_points',
         render: (text, record) => getMetric(record.id, 'user_points'),
       },
       {
-        intlMessage: messages.segmentSelectorColumnCookieIds,
+        title: formatMessage(messages.segmentSelectorColumnCookieIds),
         key: 'desktop_cookie_ids',
         render: (text, record) => getMetric(record.id, 'desktop_cookie_ids'),
       },

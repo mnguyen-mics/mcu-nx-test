@@ -13,12 +13,15 @@ import {
 } from '../../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import messages from './messages';
-import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IVisitAnalyzerService } from '../../../../../services/Library/VisitAnalyzerService';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import {
+  ActionsColumnDefinition,
+  DataColumnDefinition,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 const { Content } = Layout;
 
@@ -90,16 +93,16 @@ class VisitAnalyzersList extends Component<
             total?: number;
             count: number;
           }) => {
-            const promises = results.data.map(va => {
+            const promises = results.data.map((va) => {
               return new Promise((resolve, reject) => {
                 this._pluginService
                   .getEngineVersion(va.version_id)
-                  .then(visitAnalyzer => {
+                  .then((visitAnalyzer) => {
                     return this._pluginService.getEngineProperties(
                       visitAnalyzer.id,
                     );
                   })
-                  .then(v => resolve(v));
+                  .then((v) => resolve(v));
               });
             });
             Promise.all(promises).then((vaProperties: PluginProperty[]) => {
@@ -172,9 +175,7 @@ class VisitAnalyzersList extends Component<
     } = this.props;
 
     history.push(
-      `/v2/o/${organisationId}/settings/datamart/visit_analyzers/${
-        visitAnalyzer.id
-      }/edit`,
+      `/v2/o/${organisationId}/settings/datamart/visit_analyzers/${visitAnalyzer.id}/edit`,
     );
   };
 
@@ -184,6 +185,7 @@ class VisitAnalyzersList extends Component<
         params: { organisationId },
       },
       history,
+      intl: { formatMessage },
     } = this.props;
 
     const actionsColumnsDefinition: Array<
@@ -192,37 +194,41 @@ class VisitAnalyzersList extends Component<
       {
         key: 'action',
         actions: () => [
-          { intlMessage: messages.edit, callback: this.onClickEdit },
-          { intlMessage: messages.archive, callback: this.onClickArchive },
+          {
+            message: formatMessage(messages.edit),
+            callback: this.onClickEdit,
+          },
+          {
+            message: formatMessage(messages.archive),
+            callback: this.onClickArchive,
+          },
         ],
       },
     ];
 
-    const dataColumnsDefinition = [
+    const dataColumnsDefinition: Array<DataColumnDefinition<VisitAnalyzer>> = [
       {
-        intlMessage: messages.name,
+        title: formatMessage(messages.name),
         key: 'name',
         isHideable: false,
         render: (text: string, record: VisitAnalyzer) => (
           <Link
             className="mcs-campaigns-link"
-            to={`/v2/o/${organisationId}/settings/datamart/visit_analyzers/${
-              record.id
-            }/edit`}
+            to={`/v2/o/${organisationId}/settings/datamart/visit_analyzers/${record.id}/edit`}
           >
             {text}
           </Link>
         ),
       },
       {
-        intlMessage: messages.processor,
+        title: formatMessage(messages.processor),
         key: 'version_id',
         isHideable: false,
         render: (text: string, record: VisitAnalyzer) => {
           const property =
             record &&
             record.properties &&
-            record.properties.find(item => item.technical_name === 'name');
+            record.properties.find((item) => item.technical_name === 'name');
           const render =
             property && property.value && property.value.value
               ? property.value.value
@@ -231,14 +237,16 @@ class VisitAnalyzersList extends Component<
         },
       },
       {
-        intlMessage: messages.provider,
+        title: formatMessage(messages.provider),
         key: 'id',
         isHideable: false,
         render: (text: string, record: VisitAnalyzer) => {
           const property =
             record &&
             record.properties &&
-            record.properties.find(item => item.technical_name === 'provider');
+            record.properties.find(
+              (item) => item.technical_name === 'provider',
+            );
           const render =
             property && property.value && property.value.value
               ? property.value.value
@@ -253,7 +261,7 @@ class VisitAnalyzersList extends Component<
       message: string;
     } = {
       iconType: 'settings',
-      message: this.props.intl.formatMessage(messages.empty)
+      message: this.props.intl.formatMessage(messages.empty),
     };
 
     const onClick = () =>
@@ -299,7 +307,4 @@ class VisitAnalyzersList extends Component<
   }
 }
 
-export default compose(
-  withRouter,
-  injectIntl,
-)(VisitAnalyzersList);
+export default compose(withRouter, injectIntl)(VisitAnalyzersList);

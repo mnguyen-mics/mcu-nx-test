@@ -8,17 +8,26 @@ import {
 } from '../../../../../utils/LocationSearchHelper';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
-import { defineMessages, FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
+import {
+  defineMessages,
+  FormattedMessage,
+  injectIntl,
+  InjectedIntlProps,
+} from 'react-intl';
 import { IDatamartService } from '../../../../../services/DatamartService';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
-import { TableView } from '../../../../../components/TableView';
 import { Index } from '../../../../../utils';
 import { Link } from 'react-router-dom';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
-import { EmptyTableView, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import {
+  EmptyTableView,
+  McsIcon,
+} from '@mediarithmics-private/mcs-components-library';
+import { TableViewWrapper } from '../../../../../components/TableView';
+import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 const { Content } = Layout;
 
@@ -57,7 +66,7 @@ type Props = RouteComponentProps<{
   organisationId: string;
   datamartId: string;
 }> &
-  InjectedIntlProps & 
+  InjectedIntlProps &
   InjectedNotificationProps;
 
 class SourcesListPage extends React.Component<Props, State> {
@@ -133,14 +142,14 @@ class SourcesListPage extends React.Component<Props, State> {
     this.setState({ loading: true });
     return this._datamartService
       .getSources(datamartId)
-      .then(res =>
+      .then((res) =>
         this.setState({
           loading: false,
           dataSource: res.data,
           total: res.total || res.count,
         }),
       )
-      .catch(err => {
+      .catch((err) => {
         notifyError(err);
         this.setState({ loading: false });
       });
@@ -149,7 +158,7 @@ class SourcesListPage extends React.Component<Props, State> {
   fetchDatamart = (datamartId: string) => {
     return this._datamartService
       .getDatamart(datamartId)
-      .then(res => this.setState({ datamart: res.data }));
+      .then((res) => this.setState({ datamart: res.data }));
   };
 
   public render() {
@@ -157,18 +166,18 @@ class SourcesListPage extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
-      intl
+      intl: { formatMessage },
     } = this.props;
     const { dataSource, loading, filters, total, datamart } = this.state;
 
-    const dataColumns = [
+    const dataColumns: Array<DataColumnDefinition<DatamartResource>> = [
       {
-        intlMessage: messages.id,
+        title: formatMessage(messages.id),
         key: 'id',
         isHideable: false,
       },
       {
-        intlMessage: messages.name,
+        title: formatMessage(messages.name),
         key: 'name',
         isHideable: false,
       },
@@ -228,11 +237,11 @@ class SourcesListPage extends React.Component<Props, State> {
             {total === 0 && loading === false ? (
               <EmptyTableView
                 iconType="settings"
-                message={intl.formatMessage(messages.noData)}
+                message={formatMessage(messages.noData)}
                 className="mcs-table-view-empty mcs-empty-card"
               />
             ) : (
-              <TableView
+              <TableViewWrapper
                 dataSource={dataSource}
                 loading={loading}
                 columns={dataColumns}

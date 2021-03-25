@@ -6,13 +6,13 @@ import TableSelector, {
   TableSelectorProps,
 } from '../../../../components/ElementSelector/TableSelector';
 import { SearchFilter } from '../../../../components/ElementSelector';
-import { DataColumnDefinition } from '../../../../components/TableView/TableView';
 import { StringPropertyResource } from '../../../../models/plugin';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { VisitAnalyzer } from '../../../../models/Plugins';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IVisitAnalyzerService } from '../../../../services/Library/VisitAnalyzerService';
+import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 const VisitAnalyzerTableSelector: React.ComponentClass<
   TableSelectorProps<VisitAnalyzer>
@@ -88,7 +88,7 @@ class VisitAnalyzerSelector extends React.Component<Props, State> {
 
     return this._visitAnalyzerService
       .getVisitAnalyzers(organisationId, options)
-      .then(res => {
+      .then((res) => {
         // fetch properties to update state
         this.setState(() => ({
           metadataByBidOptmizerId: res.data.reduce(
@@ -102,18 +102,18 @@ class VisitAnalyzerSelector extends React.Component<Props, State> {
           ),
         }));
         Promise.all(
-          res.data.map(bidOptimzer => {
+          res.data.map((bidOptimzer) => {
             return this._visitAnalyzerService
               .getInstanceProperties(bidOptimzer.id)
-              .then(propsRes => {
+              .then((propsRes) => {
                 const nameProp = propsRes.data.find(
-                  prop => prop.technical_name === 'name',
+                  (prop) => prop.technical_name === 'name',
                 );
                 const providerProp = propsRes.data.find(
-                  prop => prop.technical_name === 'provider',
+                  (prop) => prop.technical_name === 'provider',
                 );
                 if (nameProp && providerProp) {
-                  this.setState(prevState => ({
+                  this.setState((prevState) => ({
                     metadataByBidOptmizerId: {
                       ...prevState.metadataByBidOptmizerId,
                       [bidOptimzer.id]: {
@@ -144,12 +144,12 @@ class VisitAnalyzerSelector extends React.Component<Props, State> {
 
     const columns: Array<DataColumnDefinition<VisitAnalyzer>> = [
       {
-        intlMessage: messages.visitAnalyzerSelectorColumnName,
+        title: formatMessage(messages.visitAnalyzerSelectorColumnName),
         key: 'name',
         render: (text, record) => <span>{record.name}</span>,
       },
       {
-        intlMessage: messages.visitAnalyzerSelectorColumnType,
+        title: formatMessage(messages.visitAnalyzerSelectorColumnType),
         key: 'type',
         render: (text, record) => {
           if (metadataByBidOptmizerId[record.id].fetching)
@@ -158,7 +158,7 @@ class VisitAnalyzerSelector extends React.Component<Props, State> {
         },
       },
       {
-        intlMessage: messages.visitAnalyzerSelectorColumnProvider,
+        title: formatMessage(messages.visitAnalyzerSelectorColumnProvider),
         key: 'provider',
         render: (text, record) => {
           if (metadataByBidOptmizerId[record.id].fetching)

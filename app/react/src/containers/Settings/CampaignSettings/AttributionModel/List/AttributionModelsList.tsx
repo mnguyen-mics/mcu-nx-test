@@ -18,11 +18,14 @@ import {
   PluginProperty,
 } from '../../../../../models/Plugins';
 import messages from './messages';
-import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import {
+  ActionsColumnDefinition,
+  DataColumnDefinition,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 const { Content } = Layout;
 
@@ -59,7 +62,9 @@ class AttributionModelsList extends React.Component<
   private _attributionModelService: IAttributionModelService;
 
   archiveAttributionModel = (attributionModelId: string) => {
-    return this._attributionModelService.deleteAttributionModel(attributionModelId);
+    return this._attributionModelService.deleteAttributionModel(
+      attributionModelId,
+    );
   };
 
   fetchAttributionModel = (organisationId: string, filter: Filters) => {
@@ -67,30 +72,29 @@ class AttributionModelsList extends React.Component<
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      this._attributionModelService.getAttributionModels(
-        organisationId,
-        options,
-      ).then(results => {
-        const promises = results.data.map(am => {
-          return this._pluginService.getEngineProperties(
-            am.attribution_processor_id,
-          );
-        });
-        Promise.all(promises).then(amProperties => {
-          const formattedResults = results.data.map((am, i) => {
-            return {
-              ...am,
-              properties: amProperties[i],
-            };
+      this._attributionModelService
+        .getAttributionModels(organisationId, options)
+        .then((results) => {
+          const promises = results.data.map((am) => {
+            return this._pluginService.getEngineProperties(
+              am.attribution_processor_id,
+            );
           });
+          Promise.all(promises).then((amProperties) => {
+            const formattedResults = results.data.map((am, i) => {
+              return {
+                ...am,
+                properties: amProperties[i],
+              };
+            });
 
-          this.setState({
-            loading: false,
-            data: formattedResults,
-            total: results.total || results.count,
+            this.setState({
+              loading: false,
+              data: formattedResults,
+              total: results.total || results.count,
+            });
           });
         });
-      });
     });
   };
 
@@ -145,9 +149,7 @@ class AttributionModelsList extends React.Component<
       },
     } = this.props;
     history.push(
-      `/v2/o/${organisationId}/settings/campaigns/attribution_models/${
-        attribution.id
-      }/edit`,
+      `/v2/o/${organisationId}/settings/campaigns/attribution_models/${attribution.id}/edit`,
     );
   };
 
@@ -157,6 +159,7 @@ class AttributionModelsList extends React.Component<
         params: { organisationId },
       },
       history,
+      intl: { formatMessage },
     } = this.props;
 
     const actionsColumnsDefinition: Array<
@@ -165,37 +168,43 @@ class AttributionModelsList extends React.Component<
       {
         key: 'action',
         actions: () => [
-          { intlMessage: messages.edit, callback: this.onClickEdit },
-          { intlMessage: messages.archive, callback: this.onClickArchive },
+          {
+            message: formatMessage(messages.edit),
+            callback: this.onClickEdit,
+          },
+          {
+            message: formatMessage(messages.archive),
+            callback: this.onClickArchive,
+          },
         ],
       },
     ];
 
-    const dataColumnsDefinition = [
+    const dataColumnsDefinition: Array<
+      DataColumnDefinition<AttributionModelInterface>
+    > = [
       {
-        intlMessage: messages.name,
+        title: formatMessage(messages.name),
         key: 'name',
         isHideable: false,
         render: (text: string, record: AttributionModelInterface) => (
           <Link
             className="mcs-campaigns-link"
-            to={`/v2/o/${organisationId}/settings/campaigns/attribution_models/${
-              record.id
-            }/edit`}
+            to={`/v2/o/${organisationId}/settings/campaigns/attribution_models/${record.id}/edit`}
           >
             {text}
           </Link>
         ),
       },
       {
-        intlMessage: messages.engine,
+        title: formatMessage(messages.engine),
         key: 'id',
         isHideable: false,
         render: (text: string, record: AttributionModelInterface) => {
           const property =
             record &&
             record.properties &&
-            record.properties.find(item => item.technical_name === 'name');
+            record.properties.find((item) => item.technical_name === 'name');
           const render =
             property && property.value && property.value.value
               ? property.value.value
@@ -204,14 +213,16 @@ class AttributionModelsList extends React.Component<
         },
       },
       {
-        intlMessage: messages.miner,
+        title: formatMessage(messages.miner),
         key: '',
         isHideable: false,
         render: (text: string, record: AttributionModelInterface) => {
           const property =
             record &&
             record.properties &&
-            record.properties.find(item => item.technical_name === 'provider');
+            record.properties.find(
+              (item) => item.technical_name === 'provider',
+            );
           const render =
             property && property.value && property.value.value
               ? property.value.value
@@ -223,10 +234,10 @@ class AttributionModelsList extends React.Component<
 
     const emptyTable: {
       iconType: McsIconType;
-      message: string
+      message: string;
     } = {
       iconType: 'settings',
-      message: this.props.intl.formatMessage(messages.empty)
+      message: this.props.intl.formatMessage(messages.empty),
     };
 
     const onClick = () =>
@@ -272,7 +283,4 @@ class AttributionModelsList extends React.Component<
   }
 }
 
-export default compose(
-  withRouter,
-  injectIntl,
-)(AttributionModelsList);
+export default compose(withRouter, injectIntl)(AttributionModelsList);

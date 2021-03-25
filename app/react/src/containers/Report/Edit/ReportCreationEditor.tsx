@@ -37,9 +37,6 @@ import TagSelect, {
 } from '../../../components/Form/FormSelect/TagSelect';
 import messages from './messages';
 import ReportFilterFields from './ReportFilterFields';
-import TableView, {
-  DataColumnDefinition,
-} from '../../../components/TableView/TableView';
 import { ValidatorProps } from '../../../components/Form/withValidators';
 import ReportCreationService, {
   FormValueInterface,
@@ -51,6 +48,8 @@ import {
   linkedSelectOptions,
 } from './constants';
 import * as NotificationActions from '../../../redux/Notifications/actions';
+import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import { TableViewWrapper } from '../../../components/TableView';
 
 const { Content, Sider } = Layout;
 
@@ -154,7 +153,7 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
     if (this.state.dataSource.length !== 0) {
       tablePreviewData = (
         <div className="mcs-table-container">
-          <TableView
+          <TableViewWrapper
             columns={this.state.columns}
             loading={this.state.loadingData}
             dataSource={this.state.dataSource}

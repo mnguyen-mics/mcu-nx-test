@@ -8,7 +8,6 @@ import { DatamartReplicationResourceShape } from '../../../../../models/settings
 import { Filter } from '../../Common/domain';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { compose } from 'recompose';
-import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 import { parseSearch } from '../../../../../utils/LocationSearchHelper';
 import { DATAMART_REPLICATION_SEARCH_SETTINGS } from './DatamartReplicationListContainer';
 import { Modal, Switch, Tooltip } from 'antd';
@@ -16,6 +15,10 @@ import {
   EmptyTableView,
   McsIcon,
 } from '@mediarithmics-private/mcs-components-library';
+import {
+  ActionsColumnDefinition,
+  DataColumnDefinition,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 export interface DatamartReplicationTableProps {
   isLoading: boolean;
@@ -95,8 +98,8 @@ class DatamartReplicationTable extends React.Component<Props> {
     const filter = parseSearch(search, DATAMART_REPLICATION_SEARCH_SETTINGS);
 
     const pagination = {
-      current: filter.currentPage  || 1,
-      pageSize: filter.pageSize  || 10,
+      current: filter.currentPage || 1,
+      pageSize: filter.pageSize || 10,
       total: total,
       onChange: (page: number, size: number) =>
         onFilterChange({
@@ -110,7 +113,9 @@ class DatamartReplicationTable extends React.Component<Props> {
         }),
     };
 
-    const dataColumns = [
+    const dataColumns: Array<
+      DataColumnDefinition<DatamartReplicationResourceShape>
+    > = [
       {
         title: 'ID',
         key: 'id',
@@ -119,7 +124,7 @@ class DatamartReplicationTable extends React.Component<Props> {
         render: (text: string) => text,
       },
       {
-        intlMessage: messages.datamartReplicationStatus,
+        title: formatMessage(messages.datamartReplicationStatus),
         key: 'status',
         isHideable: false,
         render: (text: string, record: DatamartReplicationResourceShape) => {
@@ -157,7 +162,7 @@ class DatamartReplicationTable extends React.Component<Props> {
         },
       },
       {
-        intlMessage: messages.datamartReplicationName,
+        title: formatMessage(messages.datamartReplicationName),
         key: 'name',
         isHideable: false,
         render: (text: string, record: DatamartReplicationResourceShape) => {
@@ -177,7 +182,7 @@ class DatamartReplicationTable extends React.Component<Props> {
         },
       },
       {
-        intlMessage: messages.datamartReplicationType,
+        title: formatMessage(messages.datamartReplicationType),
         key: 'type',
         isVisibleByDefault: true,
         isHideable: true,
@@ -192,15 +197,15 @@ class DatamartReplicationTable extends React.Component<Props> {
         key: 'action',
         actions: () => [
           {
-            intlMessage: messages.editDatamartReplication,
+            message: formatMessage(messages.editDatamartReplication),
             callback: this.onEditDatamartReplication,
           },
           {
-            intlMessage: messages.deleteDatamartReplication,
+            message: formatMessage(messages.deleteDatamartReplication),
             callback: this.onDeleteDatamartReplication,
           },
           {
-            intlMessage: messages.seeReplicationProperties,
+            message: formatMessage(messages.seeReplicationProperties),
             callback: this.handleModal,
           },
         ],

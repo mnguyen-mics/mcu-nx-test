@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { GetServiceItemsOptions, ICatalogService } from '../../../../../services/CatalogService';
 import { ServiceItemShape } from '../../../../../models/servicemanagement/PublicServiceItemResource';
-import { DataColumnDefinition } from '../../../../../components/TableView/TableView';
 import TableSelector, { TableSelectorProps } from '../../../../../components/ElementSelector/TableSelector';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
@@ -12,6 +11,7 @@ import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { IServiceOfferPageService } from '../../ServiceOfferPageService';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
+import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 const ServiceItemTableSelector: React.ComponentClass<TableSelectorProps<ServiceItemShape>> = TableSelector;
 
@@ -76,12 +76,12 @@ class ServiceItemSelector extends React.Component<Props, State> {
 
     const columns: Array<DataColumnDefinition<ServiceItemShape>> = [
       {
-        title: messages.serviceItemSelectorColumnName,
+        title: formatMessage(messages.serviceItemSelectorColumnName),
         key: 'name',
         render: (text, record) => <span>{record.name}</span>,
       },
       {
-        title: messages.serviceItemSelectorColumnType,
+        title: formatMessage(messages.serviceItemSelectorColumnType),
         key: 'type',
         render: (text, record) => <span>{this._serviceOfferPageService.transformServiceType(record.type, formatMessage)}</span>,
       },

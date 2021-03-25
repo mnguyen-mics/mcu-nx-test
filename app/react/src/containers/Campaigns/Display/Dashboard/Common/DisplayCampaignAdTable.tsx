@@ -4,8 +4,6 @@ import { withRouter } from 'react-router-dom';
 import { Switch, Modal } from 'antd';
 import { compose } from 'recompose';
 import { RouteComponentProps } from 'react-router';
-
-import { TableView } from '../../../../../components/TableView/index';
 import { formatMetric } from '../../../../../utils/MetricHelper';
 import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import messages from '../messages';
@@ -15,12 +13,14 @@ import {
 } from '../../../../../models/campaign/display/index';
 import { Popover } from '../../../../../components/PopupContainers/index';
 import { UpdateMessage } from '../ProgrammaticCampaign/DisplayCampaignAdGroupTable';
-import {
-  ExtendedTableRowSelection,
-  ActionsColumnDefinition,
-} from '../../../../../components/TableView/TableView';
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import {
+  ActionsColumnDefinition,
+  DataColumnDefinition,
+  ExtendedTableRowSelection,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import { TableViewWrapper } from '../../../../../components/TableView';
 
 interface DisplayCampaignAdTableProps {
   isFetching: boolean;
@@ -65,9 +65,7 @@ class DisplayCampaignAdTable extends React.Component<
       location,
     } = this.props;
 
-    const editUrl = `/v2/o/${organisationId}/creatives/display/edit/${
-      ad.creative_id
-    }`;
+    const editUrl = `/v2/o/${organisationId}/creatives/display/edit/${ad.creative_id}`;
 
     history.push({
       pathname: editUrl,
@@ -178,7 +176,7 @@ class DisplayCampaignAdTable extends React.Component<
       );
     };
 
-    const dataColumns = [
+    const dataColumns: Array<DataColumnDefinition<AdInfoResource>> = [
       {
         key: 'creative_audit_status',
         isHideable: false,
@@ -210,7 +208,7 @@ class DisplayCampaignAdTable extends React.Component<
         width: 10,
       },
       {
-        intlMessage: messages.status,
+        title: formatMessage(messages.status),
         key: 'status',
         isHideable: false,
         render: (text: string, record: AdResource) => {
@@ -250,9 +248,7 @@ class DisplayCampaignAdTable extends React.Component<
             }}
           >
             <img
-              src={`https://ads.mediarithmics.com/ads/screenshot?rid=${
-                record.creative_id
-              }`}
+              src={`https://ads.mediarithmics.com/ads/screenshot?rid=${record.creative_id}`}
               alt={record.name}
               style={{ maxHeight: 100, maxWidth: 100 }}
             />
@@ -260,15 +256,13 @@ class DisplayCampaignAdTable extends React.Component<
         ),
       },
       {
-        intlMessage: messages.name,
+        title: formatMessage(messages.name),
         key: 'name',
         isHideable: false,
         render: (text: string, record: AdResource) => {
           const editCreative = () => {
             history.push({
-              pathname: `/v2/o/${organisationId}/creatives/display/edit/${
-                record.creative_id
-              }`,
+              pathname: `/v2/o/${organisationId}/creatives/display/edit/${record.creative_id}`,
               state: { from: `${location.pathname}${location.search}` },
             });
           };
@@ -280,7 +274,7 @@ class DisplayCampaignAdTable extends React.Component<
         },
       },
       {
-        intlMessage: messages.impressions,
+        title: formatMessage(messages.impressions),
         key: 'impressions',
         isVisibleByDefault: true,
         isHideable: true,
@@ -288,7 +282,7 @@ class DisplayCampaignAdTable extends React.Component<
         sorter: (a: any, b: any) => sorter(a, b, 'impressions'),
       },
       {
-        intlMessage: messages.clicks,
+        title: formatMessage(messages.clicks),
         key: 'clicks',
         isVisibleByDefault: true,
         isHideable: true,
@@ -296,7 +290,7 @@ class DisplayCampaignAdTable extends React.Component<
         sorter: (a: any, b: any) => sorter(a, b, 'clicks'),
       },
       {
-        intlMessage: messages.cpm,
+        title: formatMessage(messages.cpm),
         key: 'cpm',
         isVisibleByDefault: true,
         isHideable: true,
@@ -304,7 +298,7 @@ class DisplayCampaignAdTable extends React.Component<
         sorter: (a: any, b: any) => sorter(a, b, 'cpm'),
       },
       {
-        intlMessage: messages.ctr,
+        title: formatMessage(messages.ctr),
         key: 'ctr',
         isVisibleByDefault: true,
         isHideable: true,
@@ -313,7 +307,7 @@ class DisplayCampaignAdTable extends React.Component<
         sorter: (a: any, b: any) => sorter(a, b, 'ctr'),
       },
       {
-        intlMessage: messages.cpc,
+        title: formatMessage(messages.cpc),
         key: 'cpc',
         isVisibleByDefault: true,
         isHideable: true,
@@ -321,7 +315,7 @@ class DisplayCampaignAdTable extends React.Component<
         sorter: (a: any, b: any) => sorter(a, b, 'cpc'),
       },
       {
-        intlMessage: messages.impressions_cost,
+        title: formatMessage(messages.impressions_cost),
         key: 'impressions_cost',
         isVisibleByDefault: true,
         isHideable: true,
@@ -335,11 +329,11 @@ class DisplayCampaignAdTable extends React.Component<
         key: 'action',
         actions: () => [
           {
-            intlMessage: messages.editCampaign,
+            message: formatMessage(messages.editCampaign),
             callback: this.editCampaign,
           },
           {
-            intlMessage: messages.archiveCampaign,
+            message: formatMessage(messages.archiveCampaign),
             callback: this.archiveAd,
           },
         ],
@@ -365,7 +359,7 @@ class DisplayCampaignAdTable extends React.Component<
     };
 
     return (
-      <TableView
+      <TableViewWrapper
         columns={dataColumns}
         actionsColumnsDefinition={actionColumns}
         dataSource={dataSet}

@@ -3,9 +3,7 @@ import { withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { RouteComponentProps } from 'react-router';
-import {
-  TableViewFilters,
-} from '../../../../components/TableView/index';
+import { TableViewFilters } from '../../../../components/TableView/index';
 import { NATIVE_SEARCH_SETTINGS } from './constants';
 import {
   updateSearch,
@@ -15,12 +13,13 @@ import CreativeScreenshot from '../../CreativeScreenshot';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
 import { Filters } from '../../../../components/ItemList';
 import { DisplayAdResource } from '../../../../models/creative/CreativeResource';
-import {
-  ExtendedTableRowSelection,
-  ActionsColumnDefinition,
-} from '../../../../components/TableView/TableView';
 import messagesMap from '../../DisplayAds/List/message';
 import { EmptyTableView } from '@mediarithmics-private/mcs-components-library';
+import {
+  ActionsColumnDefinition,
+  DataColumnDefinition,
+  ExtendedTableRowSelection,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 interface NativeAdsTableProps {
   rowSelection: ExtendedTableRowSelection;
@@ -41,10 +40,7 @@ type JoinedProps = NativeAdsTableProps &
   RouteComponentProps<CampaignRouteParams> &
   InjectedIntlProps;
 
-class NativeAdsTable extends React.Component<
-  JoinedProps,
-  State
-> {
+class NativeAdsTable extends React.Component<JoinedProps, State> {
   constructor(props: JoinedProps) {
     super(props);
   }
@@ -62,7 +58,7 @@ class NativeAdsTable extends React.Component<
       pathname: `/v2/o/${organisationId}/creatives/native/edit/${native.id}`,
       state: { from: `${location.pathname}` },
     });
-  }
+  };
 
   updateLocationSearch(params: Filters) {
     const {
@@ -90,7 +86,7 @@ class NativeAdsTable extends React.Component<
     const {
       location: { search },
       rowSelection,
-      intl,
+      intl : { formatMessage },
       totalNativeAds,
       archiveNativeAd,
       hasNativeAds,
@@ -124,9 +120,9 @@ class NativeAdsTable extends React.Component<
         }),
     };
 
-    const dataColumns = [
+    const dataColumns: Array<DataColumnDefinition<DisplayAdResource>> = [
       {
-        intlMessage: messagesMap.preview,
+        title: formatMessage(messagesMap.preview),
         key: 'asset_path',
         isHideable: false,
         className: 'mcs-table-image-col',
@@ -136,7 +132,7 @@ class NativeAdsTable extends React.Component<
         ) => <CreativeScreenshot item={record} />,
       },
       {
-        intlMessage: messagesMap.name,
+        title: formatMessage(messagesMap.name),
         key: 'name',
         isHideable: false,
         render: (text: string, record: any) => {
@@ -152,13 +148,13 @@ class NativeAdsTable extends React.Component<
         },
       },
       {
-        intlMessage: messagesMap.auditStatus,
+        title: formatMessage(messagesMap.auditStatus),
         key: 'audit_status',
         isHideable: false,
         render: (text: string) => <span>{text}</span>,
       },
       {
-        intlMessage: messagesMap.publishedVersion,
+        title: formatMessage(messagesMap.publishedVersion),
         key: 'published_version',
         isHideable: false,
         render: (text: string) => <span>{text}</span>,
@@ -170,11 +166,11 @@ class NativeAdsTable extends React.Component<
         key: 'action',
         actions: () => [
           {
-            intlMessage: messagesMap.edit,
+            message: formatMessage(messagesMap.edit),
             callback: this.editNativeCreatives,
           },
           {
-            intlMessage: messagesMap.archive,
+            message: formatMessage(messagesMap.archive),
             callback: archiveNativeAd,
           },
         ],
@@ -182,7 +178,7 @@ class NativeAdsTable extends React.Component<
     ];
 
     const searchOptions = {
-      placeholder: intl.formatMessage(messagesMap.searchPlaceholder),
+      placeholder: formatMessage(messagesMap.searchPlaceholder),
       onSearch: (value: string) =>
         this.updateLocationSearch({
           keywords: value,
@@ -204,7 +200,10 @@ class NativeAdsTable extends React.Component<
         />
       </div>
     ) : (
-      <EmptyTableView iconType="display" message={intl.formatMessage(messagesMap.noNativeCreative)} />
+      <EmptyTableView
+        iconType="display"
+        message={formatMessage(messagesMap.noNativeCreative)}
+      />
     );
   }
 }

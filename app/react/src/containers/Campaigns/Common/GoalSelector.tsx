@@ -6,12 +6,12 @@ import TableSelector, {
   TableSelectorProps,
 } from '../../../components/ElementSelector/TableSelector';
 import { SearchFilter } from '../../../components/ElementSelector';
-import { DataColumnDefinition } from '../../../components/TableView/TableView';
 import { GoalResource } from '../../../models/goal';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 import { lazyInject } from '../../../config/inversify.config';
 import { IGoalService } from '../../../services/GoalService';
 import { TYPES } from '../../../constants/types';
+import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 const GoalTableSelector: React.ComponentClass<
   TableSelectorProps<GoalResource>
@@ -43,7 +43,6 @@ type Props = GoalSelectorProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class GoalSelector extends React.Component<Props> {
-
   @lazyInject(TYPES.IGoalService)
   private _goalService: IGoalService;
 
@@ -52,7 +51,11 @@ class GoalSelector extends React.Component<Props> {
   };
 
   fetchGoals = (filter: SearchFilter) => {
-    const { match: { params: { organisationId } } } = this.props;
+    const {
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
 
     // TODO type options when GoalService in TS
     const options: any = {
@@ -67,11 +70,15 @@ class GoalSelector extends React.Component<Props> {
   };
 
   render() {
-    const { selectedGoalIds, close, intl: { formatMessage } } = this.props;
+    const {
+      selectedGoalIds,
+      close,
+      intl: { formatMessage },
+    } = this.props;
 
     const columns: Array<DataColumnDefinition<GoalResource>> = [
       {
-        intlMessage: messages.goalSelectorColumnName,
+        title: formatMessage(messages.goalSelectorColumnName),
         key: 'name',
         render: (text, record) => <span>{record.name}</span>,
       },
@@ -97,6 +104,7 @@ class GoalSelector extends React.Component<Props> {
   }
 }
 
-export default compose<Props, GoalSelectorProps>(withRouter, injectIntl)(
-  GoalSelector,
-);
+export default compose<Props, GoalSelectorProps>(
+  withRouter,
+  injectIntl,
+)(GoalSelector);

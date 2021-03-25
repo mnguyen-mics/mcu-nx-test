@@ -17,7 +17,6 @@ import {
   updateSearch,
 } from '../../../../../utils/LocationSearchHelper';
 import moment from 'moment';
-import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 import { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
 import { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
 import { Link } from 'react-router-dom';
@@ -27,6 +26,10 @@ import { IMlAlgorithmVariableService } from '../../../../../services/MlAlgorithm
 import MlAlgorithmModelResource from '../../../../../models/mlAlgorithmModel/MlAlgorithmModelResource';
 import { FormFieldWrapper } from '../../../../../components/Form';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
+import {
+  ActionsColumnDefinition,
+  DataColumnDefinition,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 const { Content } = Layout;
 
@@ -95,14 +98,14 @@ class MlAlgorithmList extends React.Component<
       };
       this._mlAlgorithmService
         .getMlAlgorithms(organisationId, options)
-        .then(results => {
+        .then((results) => {
           this.setState({
             loading: false,
             data: results.data,
             total: results.total || results.count,
           });
         })
-        .catch(err => {
+        .catch((err) => {
           message.error(intl.formatMessage(messages.loadingError));
         });
     });
@@ -135,13 +138,13 @@ class MlAlgorithmList extends React.Component<
 
     this._mlAlgorithmService
       .updateMlAlgorithm(mlAlgorithm.id, mlAlgorithm)
-      .then(res => res.data)
-      .then(mlAlgorithmArchived => {
+      .then((res) => res.data)
+      .then((mlAlgorithmArchived) => {
         const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
         this.fetchMlAlgorithms(organisationId, filter);
         message.success(intl.formatMessage(messages.updateSuccess));
       })
-      .catch(err => {
+      .catch((err) => {
         message.error(intl.formatMessage(messages.updateError));
       });
   };
@@ -172,7 +175,7 @@ class MlAlgorithmList extends React.Component<
         mlAlgorithm.id,
       ),
     ])
-      .then(res => {
+      .then((res) => {
         const models = res[0];
         const variables = res[1];
         if (models.total === 1) {
@@ -198,7 +201,7 @@ class MlAlgorithmList extends React.Component<
           },
         });
       })
-      .catch(error => {
+      .catch((error) => {
         this.props.notifyError(error);
         this.setState({
           mlAlgorithmForkModalData: {
@@ -229,15 +232,15 @@ class MlAlgorithmList extends React.Component<
       intl: { formatMessage },
     } = this.props;
 
-    const dataColumns = [
+    const dataColumns: Array<DataColumnDefinition<MlAlgorithmResource>> = [
       {
-        intlMessage: messages.id,
+        title: formatMessage(messages.id),
         key: 'id',
         isHideable: false,
         render: (text: string) => text,
       },
       {
-        intlMessage: messages.name,
+        title: formatMessage(messages.name),
         key: 'name',
         isHideable: false,
         render: (text: string, record: MlAlgorithmResource) => (
@@ -250,7 +253,7 @@ class MlAlgorithmList extends React.Component<
         ),
       },
       {
-        intlMessage: messages.description,
+        title: formatMessage(messages.description),
         key: 'description',
         isHideable: false,
         render: (text: string, record: MlAlgorithmResource) => (
@@ -263,7 +266,7 @@ class MlAlgorithmList extends React.Component<
         ),
       },
       {
-        intlMessage: messages.lastUpdatedDate,
+        title: formatMessage(messages.lastUpdatedDate),
         key: 'last updated date',
         isHideable: false,
         render: (text: string, record: MlAlgorithmResource) =>
@@ -272,7 +275,7 @@ class MlAlgorithmList extends React.Component<
             : formatMessage(messages.lastUpdatedDate),
       },
       {
-        intlMessage: messages.archived,
+        title: formatMessage(messages.archived),
         key: 'archived',
         isHideable: false,
         render: (text: string, record: MlAlgorithmResource) =>
@@ -282,9 +285,7 @@ class MlAlgorithmList extends React.Component<
       },
     ];
 
-    return {
-      dataColumnsDefinition: dataColumns,
-    };
+    return dataColumns;
   };
 
   renderModal = () => {
@@ -368,8 +369,8 @@ class MlAlgorithmList extends React.Component<
           description: (mlAlgorithm as MlAlgorithmResource).description,
           organisation_id: organisationId,
         })
-        .then(res => res.data)
-        .then(createdMlAlgorithm => {
+        .then((res) => res.data)
+        .then((createdMlAlgorithm) => {
           Promise.all(
             Object.entries(newMlAlgorithmVariables).map(([key, value], idx) => {
               this._mlAlgorithmVariableService.createMlAlgorithmVariable(
@@ -383,7 +384,7 @@ class MlAlgorithmList extends React.Component<
           );
           return createdMlAlgorithm.id;
         })
-        .then(createdMlAlgorithmId => {
+        .then((createdMlAlgorithmId) => {
           return this._mlAlgorithmModelService.createMlAlgorithmModel(
             createdMlAlgorithmId,
             {
@@ -392,13 +393,13 @@ class MlAlgorithmList extends React.Component<
             },
           );
         })
-        .then(createMlAlgorithmModel => {
+        .then((createMlAlgorithmModel) => {
           this.setState({
             mlAlgorithmForkModalData: initialMlAlgorithmForkModalData,
           });
           redirectAndNotify(createMlAlgorithmModel.data.id);
         })
-        .catch(err => redirectAndNotify());
+        .catch((err) => redirectAndNotify());
     };
 
     return (
@@ -424,6 +425,7 @@ class MlAlgorithmList extends React.Component<
         params: { organisationId },
       },
       history,
+      intl: { formatMessage },
     } = this.props;
 
     const emptyTable: {
@@ -431,27 +433,27 @@ class MlAlgorithmList extends React.Component<
       message: string;
     } = {
       iconType: 'settings',
-      message: this.props.intl.formatMessage(messages.empty)
+      message: formatMessage(messages.empty),
     };
 
-    const actionsColumnsDefinition: Array<ActionsColumnDefinition<
-      MlAlgorithmResource
-    >> = [
+    const actionsColumnsDefinition: Array<
+      ActionsColumnDefinition<MlAlgorithmResource>
+    > = [
       {
         key: 'action',
         actions: (mlAlgorithm: MlAlgorithmResource) => [
           {
-            intlMessage: messages.editMlAlgorithmRaw,
+            message: formatMessage(messages.editMlAlgorithmRaw),
             callback: this.handleEditMlAlgorithm,
             disabled: mlAlgorithm.archived,
           },
           {
-            intlMessage: messages.archive,
+            message: formatMessage(messages.archive),
             callback: this.handleArchiveMlAlgorithm,
             disabled: mlAlgorithm.archived,
           },
           {
-            intlMessage: messages.fork,
+            message: formatMessage(messages.fork),
             callback: this.forkMlAlgorithm,
             disabled: mlAlgorithm.archived,
           },
@@ -492,7 +494,7 @@ class MlAlgorithmList extends React.Component<
             dataSource={this.state.data}
             loading={this.state.loading}
             total={this.state.total}
-            columns={this.buildColumnDefinition().dataColumnsDefinition}
+            columns={this.buildColumnDefinition()}
             actionsColumnsDefinition={actionsColumnsDefinition}
             pageSettings={PAGINATION_SEARCH_SETTINGS}
             emptyTable={emptyTable}

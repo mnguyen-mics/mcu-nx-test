@@ -10,13 +10,7 @@ import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import { DownOutlined } from '@ant-design/icons';
 import { Menu } from 'antd';
 import { Dropdown } from '../../../../components/PopupContainers';
-import { TableView } from '../../../../components/TableView';
 import { formatMetric } from '../../../../utils/MetricHelper';
-import {
-  TableViewProps,
-  DataColumnDefinition,
-  ActionsColumnDefinition,
-} from '../../../../components/TableView/TableView';
 import { EmailBlastStatus } from '../../../../models/campaign/email';
 import { EmailCampaignDashboardRouteMatchParam } from './constants';
 import injectDrawer, {
@@ -33,6 +27,12 @@ import { IAudienceSegmentService } from '../../../../services/AudienceSegmentSer
 import { ICreativeService } from '../../../../services/CreativeService';
 import { IResourceHistoryService } from '../../../../services/ResourceHistoryService';
 import { IEmailCampaignService } from '../../../../services/EmailCampaignService';
+import { TableViewWrapper } from '../../../../components/TableView';
+import {
+  ActionsColumnDefinition,
+  DataColumnDefinition,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import { PartialTableViewProps } from '../../../../components/TableView/TableViewWrapper';
 
 const blastStatusMessageMap: {
   [key in EmailBlastStatus]: FormattedMessage.MessageDescriptor;
@@ -138,8 +138,8 @@ type Props = BlastTableProps &
   RouteComponentProps<EmailCampaignDashboardRouteMatchParam> &
   InjectedDrawerProps;
 
-const BlastTableView = TableView as React.ComponentClass<
-  TableViewProps<BlastData>
+const BlastTableView = TableViewWrapper as React.ComponentClass<
+  PartialTableViewProps<BlastData>
 >;
 
 class BlastTable extends React.Component<Props> {
@@ -228,7 +228,7 @@ class BlastTable extends React.Component<Props> {
             getName: (id: string) => {
               return this._emailCampaignService
                 .getEmailCampaign(id)
-                .then(response => {
+                .then((response) => {
                   return response.data.name;
                 });
             },
@@ -248,7 +248,7 @@ class BlastTable extends React.Component<Props> {
             getName: (id: string) => {
               return this._emailCampaignService
                 .getEmailCampaign(id)
-                .then(response => {
+                .then((response) => {
                   return response.data.name;
                 });
             },
@@ -273,10 +273,10 @@ class BlastTable extends React.Component<Props> {
                   id,
                   'CREATIVE',
                 )
-                .then(emailTemplateId => {
+                .then((emailTemplateId) => {
                   return this._creativeService
                     .getEmailTemplate(emailTemplateId)
-                    .then(response => {
+                    .then((response) => {
                       return response.data.name;
                     });
                 });
@@ -289,7 +289,7 @@ class BlastTable extends React.Component<Props> {
                   id,
                   'CREATIVE',
                 )
-                .then(emailTemplateId => {
+                .then((emailTemplateId) => {
                   history.push(
                     `/v2/o/${organisationId}/creatives/email/${emailTemplateId}/edit`,
                   );
@@ -313,10 +313,10 @@ class BlastTable extends React.Component<Props> {
                   id,
                   'AUDIENCE_SEGMENT',
                 )
-                .then(audienceSegmentId => {
+                .then((audienceSegmentId) => {
                   return this._audienceSegmentService
                     .getSegment(audienceSegmentId)
-                    .then(response => {
+                    .then((response) => {
                       return response.data.name;
                     });
                 });
@@ -329,7 +329,7 @@ class BlastTable extends React.Component<Props> {
                   id,
                   'AUDIENCE_SEGMENT',
                 )
-                .then(audienceSegmentId => {
+                .then((audienceSegmentId) => {
                   history.push(
                     `/v2/o/${organisationId}/audience/segments/${audienceSegmentId}`,
                   );
@@ -350,6 +350,7 @@ class BlastTable extends React.Component<Props> {
       data,
       isStatLoading,
       isLoading,
+      intl: { formatMessage },
     } = this.props;
 
     const renderMetricData = (
@@ -366,13 +367,13 @@ class BlastTable extends React.Component<Props> {
 
     const dataColumns: Array<DataColumnDefinition<BlastData>> = [
       {
-        intlMessage: messagesMap.status,
+        title: formatMessage(messagesMap.status),
         key: 'status',
         isHideable: false,
         render: (text, record) => this.renderStatus(record),
       },
       {
-        intlMessage: messagesMap.name,
+        title: formatMessage(messagesMap.name),
         key: 'blast_name',
         isHideable: false,
         render: (text, record) => (
@@ -385,14 +386,14 @@ class BlastTable extends React.Component<Props> {
         ),
       },
       {
-        intlMessage: messagesMap.emailSent,
+        title: formatMessage(messagesMap.emailSent),
         key: 'email_sent',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text, record) => renderMetricData(record.email_sent, '0,0'),
       },
       {
-        intlMessage: messagesMap.emailHardBounced,
+        title: formatMessage(messagesMap.emailHardBounced),
         key: 'email_hard_bounced',
         isVisibleByDefault: true,
         isHideable: true,
@@ -400,7 +401,7 @@ class BlastTable extends React.Component<Props> {
           renderMetricData(record.email_hard_bounced, '0,0'),
       },
       {
-        intlMessage: messagesMap.emailSoftBounced,
+        title: formatMessage(messagesMap.emailSoftBounced),
         key: 'email_soft_bounced',
         isVisibleByDefault: true,
         isHideable: true,
@@ -408,14 +409,14 @@ class BlastTable extends React.Component<Props> {
           renderMetricData(record.email_soft_bounced, '0,0'),
       },
       {
-        intlMessage: messagesMap.clicks,
+        title: formatMessage(messagesMap.clicks),
         key: 'clicks',
         isVisibleByDefault: true,
         isHideable: true,
         render: (text, record) => renderMetricData(record.clicks, '0,0'),
       },
       {
-        intlMessage: messagesMap.impressions,
+        title: formatMessage(messagesMap.impressions),
         key: 'impressions',
         isVisibleByDefault: true,
         isHideable: true,
@@ -428,15 +429,15 @@ class BlastTable extends React.Component<Props> {
         key: 'action',
         actions: () => [
           {
-            intlMessage: messagesMap.editBlast,
+            message: formatMessage(messagesMap.editBlast),
             callback: this.editBlast,
           },
           {
-            intlMessage: messagesMap.blastHistory,
+            message: formatMessage(messagesMap.blastHistory),
             callback: this.openHistoryDrawer,
           },
           {
-            intlMessage: messagesMap.archiveBlast,
+            message: formatMessage(messagesMap.archiveBlast),
             callback: this.props.archiveBlast,
           },
         ],

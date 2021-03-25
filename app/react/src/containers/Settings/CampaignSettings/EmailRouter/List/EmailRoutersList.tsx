@@ -13,12 +13,15 @@ import {
 } from '../../../../../utils/LocationSearchHelper';
 import { EmailRouter } from '../../../../../models/Plugins';
 import messages from './messages';
-import { ActionsColumnDefinition } from '../../../../../components/TableView/TableView';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { IEmailRouterService } from '../../../../../services/Library/EmailRoutersService';
 import { TYPES } from '../../../../../constants/types';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import {
+  ActionsColumnDefinition,
+  DataColumnDefinition,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 const { Content } = Layout;
 
@@ -58,7 +61,7 @@ class EmailRoutersList extends React.Component<
       };
       this._emailRouterService
         .getEmailRouters(organisationId, options)
-        .then(results => {
+        .then((results) => {
           this.setState({
             loading: false,
             data: results.data,
@@ -120,9 +123,7 @@ class EmailRoutersList extends React.Component<
     } = this.props;
 
     history.push(
-      `/v2/o/${organisationId}/settings/campaigns/email_routers/${
-        router.id
-      }/edit`,
+      `/v2/o/${organisationId}/settings/campaigns/email_routers/${router.id}/edit`,
     );
   };
 
@@ -132,6 +133,7 @@ class EmailRoutersList extends React.Component<
         params: { organisationId },
       },
       history,
+      intl: { formatMessage },
     } = this.props;
 
     const actionsColumnsDefinition: Array<
@@ -140,23 +142,27 @@ class EmailRoutersList extends React.Component<
       {
         key: 'action',
         actions: () => [
-          { intlMessage: messages.edit, callback: this.onClickEdit },
-          { intlMessage: messages.archive, callback: this.onClickArchive },
+          {
+            message: formatMessage(messages.edit),
+            callback: this.onClickEdit,
+          },
+          {
+            message: formatMessage(messages.archive),
+            callback: this.onClickArchive,
+          },
         ],
       },
     ];
 
-    const dataColumnsDefinition = [
+    const dataColumnsDefinition: Array<DataColumnDefinition<EmailRouter>> = [
       {
-        intlMessage: messages.name,
+        title: formatMessage(messages.name),
         key: 'name',
         isHideable: false,
         render: (text: string, record: EmailRouter) => (
           <Link
             className="mcs-campaigns-link"
-            to={`/v2/o/${organisationId}/settings/campaigns/email_routers/${
-              record.id
-            }/edit`}
+            to={`/v2/o/${organisationId}/settings/campaigns/email_routers/${record.id}/edit`}
           >
             {text}
           </Link>
@@ -169,7 +175,7 @@ class EmailRoutersList extends React.Component<
       message: string;
     } = {
       iconType: 'settings',
-      message: this.props.intl.formatMessage(messages.empty)
+      message: this.props.intl.formatMessage(messages.empty),
     };
 
     const onClick = () =>
@@ -215,7 +221,4 @@ class EmailRoutersList extends React.Component<
   }
 }
 
-export default compose(
-  withRouter,
-  injectIntl,
-)(EmailRoutersList);
+export default compose(withRouter, injectIntl)(EmailRoutersList);

@@ -9,12 +9,6 @@ import {
 } from '../../../../services/AudienceSegmentService';
 import { formatMetric } from '../../../../utils/MetricHelper';
 import { formatUnixTimestamp } from '../../../../utils/DateHelper';
-
-import { TableView } from '../../../../components/TableView';
-import {
-  TableViewProps,
-  DataColumnDefinition,
-} from '../../../../components/TableView/TableView';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
@@ -35,6 +29,9 @@ import { IDatamartService } from '../../../../services/DatamartService';
 import { Filters } from '../../../../components/ItemList';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import { TableViewWrapper } from '../../../../components/TableView';
+import { PartialTableViewProps } from '../../../../components/TableView/TableViewWrapper';
 
 const InputGroup = Input.Group;
 const Option = Select.Option;
@@ -66,8 +63,8 @@ interface State {
   filter: Filters;
 }
 
-const AudienceSegmentExportJobTableView = TableView as React.ComponentClass<
-  TableViewProps<AudienceSegmentExportJobExecutionResource>
+const AudienceSegmentExportJobTableView = TableViewWrapper as React.ComponentClass<
+  PartialTableViewProps<AudienceSegmentExportJobExecutionResource>
 >;
 
 const messages = defineMessages({
@@ -188,25 +185,23 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
         // with_source_datamarts: true --> For enabling CROSS_DATAMART exports
         with_source_datamarts: true,
       })
-      .then(res => {
+      .then((res) => {
         this.setState({
           compartments: res.data,
           isLoadingCompartments: false,
-          selectedCompartmentId: res.data.filter(c => c.default)[0]
-            ? res.data.filter(c => c.default)[0].compartment_id
+          selectedCompartmentId: res.data.filter((c) => c.default)[0]
+            ? res.data.filter((c) => c.default)[0].compartment_id
             : undefined,
         });
       })
-      .catch(err => {
+      .catch((err) => {
         this.props.notifyError(err);
         this.setState({ isLoadingCompartments: false });
       });
   };
 
   refreshData = (newFilter: Filters) => {
-    const {
-      segmentId
-    } = this.props;
+    const { segmentId } = this.props;
 
     this.setState({ filter: newFilter });
 
@@ -216,7 +211,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
 
     this._audienceSegmentService
       .findAudienceSegmentExportExecutionsBySegment(segmentId, params)
-      .then(res => {
+      .then((res) => {
         this.setState({
           isLoadingExecutions: false,
           executions: {
@@ -225,7 +220,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
           },
         });
       })
-      .catch(err => {
+      .catch((err) => {
         this.props.notifyError(err);
         this.setState({ isLoadingExecutions: false });
       });
@@ -283,9 +278,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
   };
 
   submitModal = () => {
-    const {
-      segmentId
-    } = this.props;
+    const { segmentId } = this.props;
     const { identifierType, selectedCompartmentId } = this.state;
     const exportUserIdentifier =
       identifierType === 'USER_ACCOUNT'
@@ -305,7 +298,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
     this._audienceSegmentService
       .createAudienceSegmentExport(segmentId, exportUserIdentifier)
       .then(() => this.refreshData(newFilter))
-      .catch(err => {
+      .catch((err) => {
         this.props.notifyError(err);
       });
     this.handleModal(false);
@@ -320,8 +313,11 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
   createCompartmentOptions = (
     compartments: UserAccountCompartmentDatamartSelectionResource[],
   ) => {
-    const compartmentOptions = compartments.map(compartment => (
-      <Select.Option key={compartment.compartment_id} value={compartment.compartment_id}>
+    const compartmentOptions = compartments.map((compartment) => (
+      <Select.Option
+        key={compartment.compartment_id}
+        value={compartment.compartment_id}
+      >
         {`${compartment.compartment_id} - ${compartment.name}`}
       </Select.Option>
     ));
@@ -345,6 +341,9 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
   }
 
   render() {
+    const {
+      intl: { formatMessage },
+    } = this.props;
     const {
       isLoadingExecutions,
       isLoadingCompartments,
@@ -375,11 +374,11 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
     const onReturnClick = () => this.handleModal(false);
     const onSubmitClick = (e: any) => this.submitModal();
 
-    const dataColumns: Array<DataColumnDefinition<
-      AudienceSegmentExportJobExecutionResource
-    >> = [
+    const dataColumns: Array<
+      DataColumnDefinition<AudienceSegmentExportJobExecutionResource>
+    > = [
       {
-        intlMessage: messages.submissionDate,
+        title: formatMessage(messages.submissionDate),
         key: 'submissionDate',
         isVisibleByDefault: true,
         isHideable: false,
@@ -387,13 +386,13 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
           formatUnixTimestamp(record.creation_date, 'DD/MM/YYYY HH:mm:ss'),
       },
       {
-        intlMessage: messages.status,
+        title: formatMessage(messages.status),
         key: 'status',
         isHideable: false,
         render: (text, record) => text,
       },
       {
-        intlMessage: messages.progress,
+        title: formatMessage(messages.progress),
         key: 'progress',
         isHideable: false,
         render: (text: string, record) => (
@@ -409,7 +408,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
         ),
       },
       {
-        intlMessage: messages.startDate,
+        title: formatMessage(messages.startDate),
         key: 'startDate',
         isVisibleByDefault: true,
         isHideable: false,
@@ -417,7 +416,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
           formatUnixTimestamp(record.start_date, 'DD/MM/YYYY HH:mm:ss'),
       },
       {
-        intlMessage: messages.endDate,
+        title: formatMessage(messages.endDate),
         key: 'endDate',
         isVisibleByDefault: true,
         isHideable: false,
@@ -430,7 +429,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
           ),
       },
       {
-        intlMessage: messages.userIdentifierType,
+        title: formatMessage(messages.userIdentifierType),
         key: 'userIdentifierType',
         isHideable: false,
         render: (text, record) =>
@@ -439,7 +438,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
             : '',
       },
       {
-        intlMessage: messages.totalUserPoints,
+        title: formatMessage(messages.totalUserPoints),
         key: 'totalUserPoints',
         isVisibleByDefault: true,
         isHideable: false,
@@ -450,7 +449,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
           ),
       },
       {
-        intlMessage: messages.totalExportedUserPoints,
+        title: formatMessage(messages.totalExportedUserPoints),
         key: 'totalExportedUserPoints',
         isVisibleByDefault: true,
         isHideable: false,
@@ -461,7 +460,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
           ),
       },
       {
-        intlMessage: messages.totalExportedIdentifiers,
+        title: formatMessage(messages.totalExportedIdentifiers),
         key: 'totalExportedIdentifiers',
         isVisibleByDefault: true,
         isHideable: false,

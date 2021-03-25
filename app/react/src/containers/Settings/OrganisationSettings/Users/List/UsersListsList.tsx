@@ -22,6 +22,10 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
 import { IUsersService } from '../../../../../services/UsersService';
+import {
+  ActionsColumnDefinition,
+  DataColumnDefinition,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 const { Content } = Layout;
 
@@ -68,7 +72,7 @@ class UserListsList extends React.Component<Props, UserListState> {
       };
       this._organisationService
         .getOrganisation(organisationId)
-        .then(response =>
+        .then((response) =>
           this._communityService.getCommunityUsers(
             response.data.community_id,
             options,
@@ -143,7 +147,7 @@ class UserListsList extends React.Component<Props, UserListState> {
     this._usersService
       .deleteUser(user.id, user.organisation_id)
       .then(this.redirect)
-      .catch(err => {
+      .catch((err) => {
         notifyError(err);
       });
   };
@@ -153,24 +157,30 @@ class UserListsList extends React.Component<Props, UserListState> {
       match: {
         params: { organisationId },
       },
+      intl: { formatMessage },
     } = this.props;
 
-    const actionsColumnsDefinition = [
+    const actionsColumnsDefinition: Array<
+      ActionsColumnDefinition<UserResource>
+    > = [
       {
         key: 'action',
         actions: () => [
-          { intlMessage: messages.editUser, callback: this.onClickEdit },
           {
-            intlMessage: messages.deleteUser,
+            message: formatMessage(messages.editUser),
+            callback: this.onClickEdit,
+          },
+          {
+            message: formatMessage(messages.deleteUser),
             callback: this.onClickDelete,
           },
         ],
       },
     ];
 
-    const dataColumnsDefinition = [
+    const dataColumnsDefinition: Array<DataColumnDefinition<UserResource>> = [
       {
-        intlMessage: messages.usersFirstName,
+        title: formatMessage(messages.usersFirstName),
         key: 'first_name',
         isHideable: false,
         render: (text: string, record: UserResource) => (
@@ -183,12 +193,12 @@ class UserListsList extends React.Component<Props, UserListState> {
         ),
       },
       {
-        intlMessage: messages.usersLastName,
+        title: formatMessage(messages.usersLastName),
         key: 'last_name',
         isHideable: false,
       },
       {
-        intlMessage: messages.usersEmail,
+        title: formatMessage(messages.usersEmail),
         key: 'email',
         isHideable: false,
       },

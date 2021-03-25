@@ -3,9 +3,7 @@ import { Link, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { RouteComponentProps } from 'react-router';
-import {
-  TableViewFilters,
-} from '../../../../components/TableView/index';
+import { TableViewFilters } from '../../../../components/TableView/index';
 import EmailTestModal from './EmailTestModal';
 import { CREATIVE_EMAIL_SEARCH_SETTINGS } from './constants';
 import {
@@ -17,11 +15,12 @@ import CreativeScreenshot from '../../CreativeScreenshot';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
 import { Filters } from '../../../../components/ItemList';
 import { EmailTemplateResource } from '../../../../models/creative/CreativeResource';
-import {
-  ExtendedTableRowSelection,
-  ActionsColumnDefinition,
-} from '../../../../components/TableView/TableView';
 import { EmptyTableView } from '@mediarithmics-private/mcs-components-library';
+import {
+  ActionsColumnDefinition,
+  DataColumnDefinition,
+  ExtendedTableRowSelection,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 interface EmailTemplatesTableProps {
   rowSelection: ExtendedTableRowSelection;
@@ -43,7 +42,6 @@ type JoinedProps = EmailTemplatesTableProps &
   InjectedIntlProps;
 
 class EmailTemplatesTable extends React.Component<JoinedProps, State> {
-
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -88,7 +86,7 @@ class EmailTemplatesTable extends React.Component<JoinedProps, State> {
     } = this.props;
 
     history.push(`/v2/o/${organisationId}/creatives/email/${campaign.id}/edit`);
-  }
+  };
 
   render() {
     const {
@@ -102,7 +100,7 @@ class EmailTemplatesTable extends React.Component<JoinedProps, State> {
       hasEmailTemplates,
       archiveEmailTemplate,
       rowSelection,
-      intl,
+      intl : { formatMessage },
     } = this.props;
 
     const filter = parseSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS);
@@ -114,7 +112,7 @@ class EmailTemplatesTable extends React.Component<JoinedProps, State> {
       onChange: (page: number, size: number) => {
         this.updateLocationSearch({
           currentPage: page,
-          pageSize: size
+          pageSize: size,
         });
         if (
           rowSelection &&
@@ -131,9 +129,9 @@ class EmailTemplatesTable extends React.Component<JoinedProps, State> {
         }),
     };
 
-    const dataColumns = [
+    const dataColumns: Array<DataColumnDefinition<EmailTemplateResource>> = [
       {
-        intlMessage: messagesMap.preview,
+        title: formatMessage(messagesMap.preview),
         key: 'asset_path',
         isHideable: false,
         className: 'mcs-table-image-col',
@@ -142,7 +140,7 @@ class EmailTemplatesTable extends React.Component<JoinedProps, State> {
         ),
       },
       {
-        intlMessage: messagesMap.name,
+        title: formatMessage(messagesMap.name),
         key: 'name',
         isHideable: false,
         render: (text: string, record: any) => (
@@ -155,13 +153,13 @@ class EmailTemplatesTable extends React.Component<JoinedProps, State> {
         ),
       },
       {
-        intlMessage: messagesMap.auditStatus,
+        title: formatMessage(messagesMap.auditStatus),
         key: 'audit_status',
         isHideable: false,
         render: (text: string) => <span>{text}</span>,
       },
       {
-        intlMessage: messagesMap.publishedVersion,
+        title: formatMessage(messagesMap.publishedVersion),
         key: 'published_version',
         isHideable: false,
         render: (text: string) => <span>{text}</span>,
@@ -175,15 +173,15 @@ class EmailTemplatesTable extends React.Component<JoinedProps, State> {
         key: 'action',
         actions: () => [
           {
-            intlMessage: messagesMap.sendTest,
+            message: formatMessage(messagesMap.sendTest),
             callback: this.viewTestModal,
           },
           {
-            intlMessage: messagesMap.edit,
+            message: formatMessage(messagesMap.edit),
             callback: this.editEmailTemplate,
           },
           {
-            intlMessage: messagesMap.archive,
+            message: formatMessage(messagesMap.archive),
             callback: archiveEmailTemplate,
           },
         ],
@@ -191,7 +189,7 @@ class EmailTemplatesTable extends React.Component<JoinedProps, State> {
     ];
 
     const searchOptions = {
-      placeholder: intl.formatMessage(messagesMap.searchPlaceholderEmail),
+      placeholder: formatMessage(messagesMap.searchPlaceholderEmail),
       onSearch: (value: string) =>
         this.updateLocationSearch({
           keywords: value,
@@ -219,7 +217,10 @@ class EmailTemplatesTable extends React.Component<JoinedProps, State> {
         />
       </div>
     ) : (
-      <EmptyTableView iconType="email" message={intl.formatMessage(messagesMap.noEmailTemplate)} />
+      <EmptyTableView
+        iconType="email"
+        message={formatMessage(messagesMap.noEmailTemplate)}
+      />
     );
   }
 }

@@ -3,7 +3,9 @@ import { compose } from 'recompose';
 import { Layout, Row, Breadcrumb } from 'antd';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import messages from '../../messages';
-import injectNotifications, { InjectedNotificationProps } from '../../../Notifications/injectNotifications';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../Notifications/injectNotifications';
 import { Filters } from '../../OrganisationSettings/Labels/LabelsTable';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { ICatalogService } from '../../../../services/CatalogService';
@@ -17,6 +19,7 @@ import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
+import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 const { Content } = Layout;
 
@@ -34,15 +37,10 @@ type Props = RouteComponentProps<RouterProps> &
   InjectedNotificationProps;
 
 class MyOffersPage extends React.Component<Props, State> {
-
   @lazyInject(TYPES.ICatalogService)
   private _catalogService: ICatalogService;
 
   constructor(props: Props) {
-
-
-
-
     super(props);
     this.state = {
       loading: false,
@@ -58,17 +56,18 @@ class MyOffersPage extends React.Component<Props, State> {
 
     const options = {
       organisation_id: organisationId,
-      ...getPaginatedApiParam(filters.currentPage, filters.pageSize)
-    }
-    this._catalogService.getMyOffers(options)
-      .then(myOffersResult => {
+      ...getPaginatedApiParam(filters.currentPage, filters.pageSize),
+    };
+    this._catalogService
+      .getMyOffers(options)
+      .then((myOffersResult) => {
         this.setState({
           loading: false,
           data: myOffersResult.data,
-          total: myOffersResult.total || myOffersResult.count
+          total: myOffersResult.total || myOffersResult.count,
         });
       })
-      .catch(err => {
+      .catch((err) => {
         this.setState({
           loading: false,
         });
@@ -77,37 +76,33 @@ class MyOffersPage extends React.Component<Props, State> {
   };
 
   render() {
-
-    const {
-      loading,
-      data,
-      total
-    } = this.state;
+    const { loading, data, total } = this.state;
 
     const {
       match: {
         params: { organisationId },
       },
+      intl: { formatMessage },
     } = this.props;
 
-    const dataColumnsDefinition = [
+    const dataColumnsDefinition: Array<
+      DataColumnDefinition<ServiceItemOfferResource>
+    > = [
       {
-        intlMessage: messages.name,
+        title: formatMessage(messages.name),
         key: 'name',
         isHideable: false,
         render: (text: string, record: ServiceItemOfferResource) => (
           <Link
             className="mcs-campaigns-link"
-            to={`/v2/o/${organisationId}/settings/services/my_offers/${
-              record.id
-              }/service_item_conditions`}
+            to={`/v2/o/${organisationId}/settings/services/my_offers/${record.id}/service_item_conditions`}
           >
             {text}
           </Link>
         ),
       },
       {
-        intlMessage: messages.creditedAccount,
+        title: formatMessage(messages.creditedAccount),
         key: 'credited_account_name',
         isHideable: false,
         render: (text: string, record: ServiceItemOfferResource) => {
@@ -115,7 +110,7 @@ class MyOffersPage extends React.Component<Props, State> {
         },
       },
       {
-        intlMessage: messages.providerName,
+        title: formatMessage(messages.providerName),
         key: 'provider_name',
         isHideable: false,
         render: (text: string, record: ServiceItemOfferResource) => {
@@ -134,7 +129,9 @@ class MyOffersPage extends React.Component<Props, State> {
 
     const submitButtonProps: ButtonProps = {
       htmlType: 'submit',
-      onClick: () => { return null; },
+      onClick: () => {
+        return null;
+      },
       type: 'primary',
     };
 
@@ -147,11 +144,17 @@ class MyOffersPage extends React.Component<Props, State> {
               separator={<McsIcon type="chevron-right" />}
             >
               <Breadcrumb.Item>
-                <span style={{ lineHeight: "40px" }}>
+                <span style={{ lineHeight: '40px' }}>
                   <FormattedMessage {...messages.myServiceOffersTitle} />
                 </span>
-                <Link to={`/v2/o/${organisationId}/settings/services/my_offers/create`}>
-                  <Button {...submitButtonProps} className="mcs-primary" style={{ float: "right" }}>
+                <Link
+                  to={`/v2/o/${organisationId}/settings/services/my_offers/create`}
+                >
+                  <Button
+                    {...submitButtonProps}
+                    className="mcs-primary"
+                    style={{ float: 'right' }}
+                  >
                     <McsIcon type="plus" />
                     <FormattedMessage {...messages.myServiceOffersAddNew} />
                   </Button>
@@ -171,7 +174,6 @@ class MyOffersPage extends React.Component<Props, State> {
         </Content>
       </div>
     );
-
   }
 }
 
