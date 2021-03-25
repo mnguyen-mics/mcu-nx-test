@@ -4,6 +4,11 @@
   color: @list-switcher-org-id-color;
 }
 
+.mcs-organisationListSwitcher_orgId_searchView {
+  color: @list-switcher-org-id-color;
+  margin-left: 10px;
+}
+
 .mcs-organisationListSwitcher_currentOrg {
   margin-left: 10px;
   width: 100%;
@@ -22,10 +27,20 @@
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
   }
+  .ant-dropdown-menu {
+    background-clip: unset;
+  }
 }
 
 .mcs-organisationListSwitcher_searchInput {
+  
   padding-bottom: 15px;
+  .ant-btn-sm {
+    height: 32px !important;
+  }
+  .ant-input {
+    height: 32px;
+  }
 }
 
 .mcs-organisationListSwitcher_currentOrg_box {
@@ -75,10 +90,6 @@
     font-style: normal;
     color: rgba(0, 0, 0, 0.65);
   }
-}
-
-.mcs-organisationListSwitcher_parent {
-  font-weight: bold;
 }
 
 .mcs-organisationListSwitcher_component {

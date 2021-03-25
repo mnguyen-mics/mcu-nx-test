@@ -216,6 +216,22 @@ export default defineMessages({
     id: 'menu.communities.title',
     defaultMessage: 'Communities',
   },
+  noOrganisationsFound: {
+    id: 'menu.no.organisation.found',
+    defaultMessage: 'No organisations to display',
+  },
+  searchForOrganisationOrCommunity: {
+    id: 'menu.search.for.organisation.or.community',
+    defaultMessage: 'Search for an organisation or community',
+  },
+  lastClickedOrganisation: {
+    id: 'menu.last.clicked.organisation',
+    defaultMessage: 'Last visited organisation',
+  },
+  lastClickedCommunity: {
+    id: 'menu.last.clicked.community',
+    defaultMessage: 'Last visited community',
+  },
   usersSettingsTitle: {
     id: 'menu.organisation.users',
     defaultMessage: 'Users',
