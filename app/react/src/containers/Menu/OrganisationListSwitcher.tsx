@@ -12,6 +12,7 @@ import { HomeOutlined } from '@ant-design/icons';
 import messages from './messages';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import LocalStorage from '../../services/LocalStorage';
+import cuid from 'cuid';
 
 export interface OrganizationListSwitcherState {
   searchKeyword: string;
@@ -46,9 +47,8 @@ class OrganizationListSwitcher extends React.Component<
   constructor(props: Props) {
     super(props);
 
-    const [communities, orgs] = partition(
-      props.workspaces,
-      (w) => this.getChildren(w).length > 0,
+    const [communities, orgs] = partition(props.workspaces, (w) =>
+      this.isCommunity(w),
     );
 
     this.state = {
@@ -69,17 +69,25 @@ class OrganizationListSwitcher extends React.Component<
 
   searchOrgAndCommunities = (value: string) => {
     const { organisations, communities } = this.state;
-    const foundOrgs = this.searchByName(
+    const foundOrgs = this.searchByNameOrId(
       value,
       organisations,
       maxOrgOrCommunity,
     );
-    const foundCommu = this.searchByName(value, communities, maxOrgOrCommunity);
+    const foundCommu = this.searchByNameOrId(
+      value,
+      communities,
+      maxOrgOrCommunity,
+    );
     this.setState({
       foundOrgs: foundOrgs,
       foundCommunities: foundCommu,
     });
   };
+
+  isCommunity(org: UserWorkspaceResource) {
+    return org.organisation_id === org.community_id;
+  }
 
   isObjectWorkspace(obj: any): obj is UserWorkspaceResource {
     return (
@@ -93,7 +101,7 @@ class OrganizationListSwitcher extends React.Component<
     LocalStorage.setItem({ [storageKey]: JSON.stringify(orgs) });
   };
 
-  parseWorkspaceLocalStorage = (
+  localStorageOrgs = (
     storageKey: string,
   ): UserWorkspaceResource[] | undefined => {
     const history = LocalStorage.getItem(storageKey);
@@ -113,7 +121,7 @@ class OrganizationListSwitcher extends React.Component<
   };
 
   upsertClickedWorkspace = (storageKey: string, org: UserWorkspaceResource) => {
-    const history = this.parseWorkspaceLocalStorage(storageKey);
+    const history = this.localStorageOrgs(storageKey);
     if (!history) {
       this.setWorkspaceItem(storageKey, [org]);
     } else {
@@ -175,7 +183,7 @@ class OrganizationListSwitcher extends React.Component<
     if (children.length > 0) {
       return (
         <SubMenu
-          key={node.organisation_id}
+          key={cuid()}
           icon={<HomeOutlined />}
           title={this.renderOrg(node, true)}
           popupClassName="mcs-organisationListSwitcher_popOverMenu"
@@ -215,19 +223,23 @@ class OrganizationListSwitcher extends React.Component<
     const { workspaces } = this.props;
     const c = workspaces.filter(
       (w) =>
-        w.community_id === workspace.organisation_id &&
+        w.administrator_id === workspace.organisation_id &&
         w.organisation_id !== w.community_id,
     );
     return c;
   };
 
-  searchByName = (
+  searchByNameOrId = (
     value: string,
     nodes: UserWorkspaceResource[],
     max: number,
   ) => {
     const regex = new RegExp(value, 'i');
-    return nodes.filter((w) => regex.test(w.organisation_name)).slice(0, max);
+    return nodes
+      .filter(
+        (w) => regex.test(w.organisation_name) || value === w.organisation_id,
+      )
+      .slice(0, max);
   };
 
   handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -320,10 +332,8 @@ class OrganizationListSwitcher extends React.Component<
 
   SwitchBySearch = () => {
     const { foundOrgs, foundCommunities, searchKeyword } = this.state;
-    const savedCommunities = this.parseWorkspaceLocalStorage(
-      savedCommunitiesKey,
-    );
-    const savedOrgs = this.parseWorkspaceLocalStorage(savedOrganisationsKey);
+    const savedCommunities = this.localStorageOrgs(savedCommunitiesKey);
+    const savedOrgs = this.localStorageOrgs(savedOrganisationsKey);
     return (
       <Menu className="mcs-organisationListSwitcher_menu" mode="vertical">
         <Menu.Item disabled={true}>
@@ -343,13 +353,10 @@ class OrganizationListSwitcher extends React.Component<
 
   SwitchByList = () => {
     const { workspaces } = this.props;
-    const [adminOrgs] = partition(
-      workspaces,
-      (w) => w.administrator_id === null,
-    );
+    const [communities] = partition(workspaces, (w) => this.isCommunity(w));
     return (
       <Menu className="mcs-organisationListSwitcher_orgList" mode="vertical">
-        {this.renderNodeFlat(adminOrgs, false)}
+        {this.renderNodeFlat(communities, false)}
       </Menu>
     );
   };
