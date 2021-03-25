@@ -14,7 +14,7 @@ import { withDatamartSelector, WithDatamartSelectorProps } from '../../Datamart/
 import ExportService from '../../../services/ExportService';
 import injectNotifications, { InjectedNotificationProps } from '../../Notifications/injectNotifications';
 import { extractDatesFromProps } from '../../../components/Funnel/Utils';
-import { FunnelFilter, FunnelSplitParam } from '../../../models/datamart/UserActivitiesFunnel';
+import { FunnelFilter, GroupedByFunnel } from '../../../models/datamart/UserActivitiesFunnel';
 import McsMoment from '../../../utils/McsMoment';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import { FILTERS } from '../../../containers/Audience/DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
@@ -30,6 +30,12 @@ interface State {
   cancelQueryFunction?: () => void;
   dateRange: McsDateRangeValue;
   selectedTemplate?: FunnelTemplate;
+}
+
+interface FunnelSheetDescription {
+  title: string,
+  splitIndex?: number,
+  funnelData: GroupedByFunnel
 }
 
 type JoinedProps = WithDatamartSelectorProps & InjectedIntlProps &
@@ -67,6 +73,10 @@ class FunnelPage extends React.Component<JoinedProps, State> {
     }
   }
 
+  private splitIndex(funnelFilter: FunnelFilter[]): number {
+    return funnelFilter.findIndex(x => !!x.group_by_dimension)
+  }
+
   handleRunExport = () => {
     this.setState({ exportIsRunning: true });
     const {
@@ -79,18 +89,46 @@ class FunnelPage extends React.Component<JoinedProps, State> {
     } = this.props;
 
     const routeParams = parseSearch(search, FUNNEL_SEARCH_SETTING);
-    const funnelFilter: FunnelFilter[] = (routeParams.filter.length > 0 ? JSON.parse(routeParams.filter) : {});
-    const splitBy: FunnelSplitParam = routeParams.splitBy ? JSON.parse(routeParams.splitBy) : undefined;
-    if (splitBy) {
-      funnelFilter[splitBy.stepIndex].group_by_dimension = splitBy.groupBy;
+    const funnelFilter: FunnelFilter[] = (routeParams.filter.length > 0 ? JSON.parse(routeParams.filter) : []);
+
+    let splittedByDay = false
+    if (this.splitIndex(funnelFilter) === -1) {
+      funnelFilter[funnelFilter.length-1].group_by_dimension = "DATE_YYYY_MM_DD";
+      splittedByDay = true
     }
     const funnelTimeRange = extractDatesFromProps(search);
+
+    const splitIndex = this.splitIndex(funnelFilter) === -1 ? funnelFilter.length-1 : this.splitIndex(funnelFilter)
 
     this._userActivitiesFunnelService
       .getUserActivitiesFunnel(selectedDatamartId, funnelFilter, funnelTimeRange)
       .then(funnelResponse => {
         this.setState({ exportIsRunning: false });
-        ExportService.exportFunnel(funnelResponse.data, selectedDatamartId, organisationId, formatMessage);
+        let sheets: FunnelSheetDescription[] = [{
+          title: 'Funnel report',
+          splitIndex: splitIndex,
+          funnelData: funnelResponse.data
+        }]
+        if (splittedByDay) {
+          const globalSheet:FunnelSheetDescription = {
+            title: 'Funnel report',
+            splitIndex: undefined,
+            funnelData: {
+              ...funnelResponse.data, grouped_by:undefined
+            }
+          }
+        
+          const byDaySheet:FunnelSheetDescription = {
+            title: 'Funnel report split by day',
+            splitIndex: splitIndex,
+            funnelData: {
+              ...funnelResponse.data,
+              grouped_by: funnelResponse.data.grouped_by?.sort((a, b) => a.dimension_value > b.dimension_value ? 1 : -1)
+            }
+          }
+          sheets = [globalSheet, byDaySheet]
+        }
+        ExportService.exportFunnel(sheets, selectedDatamartId, organisationId, formatMessage);
       })
       .catch(e => {
         this.props.notifyError(e);

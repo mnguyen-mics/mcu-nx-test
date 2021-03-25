@@ -12,7 +12,7 @@ import injectNotifications, { InjectedNotificationProps } from '../../containers
 import { booleanOperator, FUNNEL_SEARCH_SETTING, FilterOperatorLabel, funnelMessages } from './Constants';
 import { BooleanOperator, DimensionFilterClause, DimensionFilterOperator } from '../../models/ReportRequestBody';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { parseSearch, updateSearch, isSearchValid } from '../../utils/LocationSearchHelper';
+import { updateSearch, isSearchValid } from '../../utils/LocationSearchHelper';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import McsMoment from '../../utils/McsMoment';
@@ -23,7 +23,7 @@ import FunnelExpressionInput from './FunnelExpressionInput';
 import { FunnelFilter } from '../../models/datamart/UserActivitiesFunnel';
 import { IDatamartUsersAnalyticsService } from '../../services/DatamartUsersAnalyticsService';
 import { ReportViewResponse } from '../../services/ReportService';
-
+import { shouldUpdateFunnelQueryBuilder, getDefaultStep } from './Utils'
 
 const Option = Select.Option;
 
@@ -49,6 +49,7 @@ interface FunnelQueryBuilderProps {
   liftFunctionsCallback: (executeQueryFunction: () => void) => void;
 }
 
+
 type Props = FunnelQueryBuilderProps &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }> &
@@ -65,24 +66,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     super(props);
 
     this.state = {
-      steps: [{
-        id: this._cuid(),
-        name: "Step 1",
-        max_days_after_previous_step: 0,
-        filter_clause: {
-          operator: 'OR',
-          filters: [
-            {
-              'dimension_name': 'DATE_TIME',
-              'not': false,
-              'operator': 'EXACT' as DimensionFilterOperator,
-              'expressions': [
-              ],
-              'case_sensitive': false
-            }
-          ]
-        }
-      }],
+      steps: [],
       dimensionsList: {
         dimensions: []
       },
@@ -105,13 +89,38 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
 
   componentDidUpdate(prevProps: Props) {
     const {
-      location: { search }
+      location: { search },
+      filter
     } = this.props;
-    const routeParams = parseSearch(search, FUNNEL_SEARCH_SETTING);
-    const filter = routeParams.filter.length > 0 ? JSON.parse(routeParams.filter) : {};
+
     if ((prevProps.location.search !== search) && filter.length > 0) {
       this.setInitialParams();
     }
+  }
+
+  /**
+   * This component should not update if the queries are only different in group_by_dimension
+   */
+  shouldComponentUpdate(nextProps: Props, nextState: State) {
+    const {
+      steps: prevFilter,
+      dimensionsList: previousDimensionsList
+    } = this.state
+
+    const {
+      steps: nextFilter,
+      dimensionsList: nextDimensionsList
+    } = nextState
+
+    const {
+      filter: nextPropsFilter
+    } = this.props
+
+    const shouldUpdate = shouldUpdateFunnelQueryBuilder(prevFilter, nextFilter) || 
+      shouldUpdateFunnelQueryBuilder(prevFilter, nextPropsFilter) || 
+      nextDimensionsList !== previousDimensionsList
+
+    return shouldUpdate;
   }
 
   setInitialParams = () => {
@@ -124,10 +133,14 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     const { dateRange } = this.state;
     try {
       const identifiedSteps = filter.map((step: Step) => {
-        step.filter_clause.filters.forEach(f => f.id = this._cuid());
+        step.filter_clause.filters.forEach(f => {
+          const newFilterId = f.id ? f.id : this._cuid()
+          f.id = newFilterId
+        });
+        const newId = step.id ? step.id : this._cuid()
         return {
           ...step,
-          id: this._cuid()
+          id: newId
         }
       })
 
@@ -196,24 +209,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     const { steps } = this.state;
     const newSteps = steps.slice();
 
-    newSteps.push({
-      id: this._cuid(),
-      name: "",
-      max_days_after_previous_step: 0,
-      filter_clause: {
-        operator: 'AND',
-        filters: [
-          {
-            'dimension_name': 'DATE_TIME',
-            'not': false,
-            'operator': 'EXACT' as DimensionFilterOperator,
-            'expressions': [
-            ],
-            'case_sensitive': false
-          }
-        ]
-      }
-    });
+    newSteps.push(getDefaultStep());
 
     newSteps.forEach((step, index) => {
       step.name = `Step ${index + 1}`
@@ -224,7 +220,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
 
   addDimensionToStep = (stepId: string) => {
     const { steps } = this.state;
-    const newSteps = steps.slice();
+    const newSteps: Step[] = JSON.parse(JSON.stringify(steps))
     newSteps.forEach(step => {
       if (step.id === stepId) {
         step.filter_clause.operator = 'AND';
@@ -241,13 +237,13 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
         );
       }
     });
-
     this.setState({ steps: newSteps });
   }
 
   handleNotSwitcherChange(dimensionIndex: number, stepId: string, value: boolean) {
     const { steps } = this.state;
-    steps.forEach(step => {
+    const newSteps: Step[] = JSON.parse(JSON.stringify(steps))
+    newSteps.forEach(step => {
       if (step.id === stepId) {
         step.filter_clause.filters.forEach((filter, index) => {
           if (dimensionIndex === index) {
@@ -257,7 +253,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
       }
     });
     this.setState({
-      steps
+      steps: newSteps
     });
   }
 
@@ -277,8 +273,9 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
 
   updateStepWithDimensionName(dimensionIndex: number, stepId: string, value: string, displayEventTypeWarning?: boolean) {
     const { steps } = this.state;
-
-    steps.forEach(step => {
+    // make deep copy of data for comparison in shouldComponentUpdate
+    const newSteps: Step[] = JSON.parse(JSON.stringify(steps))
+    newSteps.forEach(step => {
       if (step.id === stepId) {
         step.displayEventTypeWarning = displayEventTypeWarning;
         step.filter_clause.filters.forEach((filter, index) => {
@@ -290,23 +287,25 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
       }
     });
     this.setState({
-      steps
+      steps: newSteps
     });
   }
 
   handleFilterOperatorChange(stepId: string, value: BooleanOperator) {
     const { steps } = this.state;
-    steps.forEach(step => {
+    const newSteps: Step[] = JSON.parse(JSON.stringify(steps))
+    newSteps.forEach(step => {
       if (step.id === stepId) step.filter_clause.operator = value;
     });
     this.setState({
-      steps
+      steps: newSteps
     });
   };
 
   handleDimensionExpressionForSelectorChange(dimensionIndex: number, stepId: string, value: string[]) {
     const { steps } = this.state;
-    steps.forEach(step => {
+    const newSteps: Step[] = JSON.parse(JSON.stringify(steps))
+    newSteps.forEach(step => {
       if (step.id === stepId) {
         step.filter_clause.filters.forEach((filter, index) => {
           if (dimensionIndex === index) {
@@ -319,18 +318,19 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
         });
       }
     });
-    this.setState({ steps });
+    this.setState({ steps: newSteps });
   }
 
   handleMaximumDaysAfterStepChange(stepId: string, value: any) {
     const { steps } = this.state;
-    steps.forEach(step => {
+    const newSteps: Step[] = JSON.parse(JSON.stringify(steps))
+    newSteps.forEach(step => {
       if (step.id === stepId) {
         step.max_days_after_previous_step = parseInt(value.target.value, 10);
       }
     });
 
-    this.setState({ steps });
+    this.setState({ steps: newSteps });
   }
 
 
@@ -407,18 +407,20 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     // deep copy
     const stepsCopy = JSON.parse(JSON.stringify(steps));
     stepsCopy.forEach((step: Step) => {
-      step.id = undefined;
+      // step.id = undefined;
+      
       if (step.max_days_after_previous_step === 0) {
         step.max_days_after_previous_step = undefined;
       }
-      step.filter_clause.filters.forEach(filter => {
-        filter.id = undefined
-      });
+      // step.filter_clause.filters.forEach(filter => { 
+      //   filter.id = undefined
+      // });
     });
 
     const stepsFormated = stepsCopy.filter((s: Step) => s.filter_clause.filters.length > 0)
     const queryParams = {
       filter: [JSON.stringify(stepsFormated)],
+      template: undefined
     };
 
     const nextLocation = {
@@ -431,8 +433,8 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
 
   removeDimensionFromStep = (stepId: string, filterId: string) => {
     const { steps } = this.state;
-    const newSteps = steps.slice();
-
+    const newSteps: Step[] = JSON.parse(JSON.stringify(steps))
+    
     newSteps.forEach(step => {
       if (step.id === stepId) {
         const filterStepDimensions = step.filter_clause.filters.filter((filter) => filter.id !== filterId)

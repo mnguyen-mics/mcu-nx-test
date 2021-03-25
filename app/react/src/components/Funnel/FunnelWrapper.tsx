@@ -5,6 +5,8 @@ import FunnelQueryBuilder from './FunnelQueryBuilder';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { buildDefaultSearch, parseSearch, isSearchValid } from '../../utils/LocationSearchHelper';
 import { FUNNEL_SEARCH_SETTING } from './Constants';
+import { FunnelFilter } from '../../models/datamart/UserActivitiesFunnel';
+import { getDefaultStep } from './Utils';
 
 interface FunnelWrapperProps {
   datamartId: string;
@@ -80,12 +82,14 @@ class FunnelWrapper extends React.Component<JoinedProp, State> {
       location: { search }
      } = this.props;
 
-     const routeParams = parseSearch(search, FUNNEL_SEARCH_SETTING);
-     const funnelFilter = routeParams.filter.length > 0 ? JSON.parse(routeParams.filter) : {};
-     const { launchExecutionAskedTime, cancelQueryAskedTime } = this.state
+    const routeParams = parseSearch(search, FUNNEL_SEARCH_SETTING);
+    const funnelFilter: FunnelFilter[] = routeParams.filter.length > 0 ? JSON.parse(routeParams.filter) : [getDefaultStep()];
+    const filterWithoutGroupBy: FunnelFilter[] = JSON.parse(JSON.stringify(funnelFilter))
+    filterWithoutGroupBy.forEach(x => delete x.group_by_dimension);
+    const { launchExecutionAskedTime, cancelQueryAskedTime } = this.state
     return (
       <div>
-        <FunnelQueryBuilder datamartId={datamartId} filter={funnelFilter} parentCallback={this.funnelQueryBuilderCallbackFunction} liftFunctionsCallback={this.storeAndLiftFunctions}/>
+        <FunnelQueryBuilder datamartId={datamartId} filter={filterWithoutGroupBy} parentCallback={this.funnelQueryBuilderCallbackFunction} liftFunctionsCallback={this.storeAndLiftFunctions}/>
         <Funnel datamartId={datamartId} title={"Funnel demo"} filter={funnelFilter} parentCallback={this.funnelCallbackFunction} launchExecutionAskedTime={launchExecutionAskedTime} cancelQueryAskedTime={cancelQueryAskedTime}/>
       </div>
     )

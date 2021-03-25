@@ -884,85 +884,91 @@ const exportABComparison = (experimentationSegment, dataSource, formatMessage) =
   exportData(sheets, `${experimentationSegment.name}_ab-details`, 'xlsx');
 };
 
-const exportFunnel = (funnelResource, datamartId, organisationId, formatMessage) => {
-  const titleLine = 'Funnel report';
-  const blankLine = [];
+const exportFunnel = (funnelResources, datamartId, organisationId, formatMessage) => {
+  const sheets = funnelResources.map(
+    funnelResource => {
+      const titleLine = funnelResource.title;
+      const blankLine = [];
 
-  const dataSheet = [];
+      const dataSheet = [];
 
-  dataSheet.push(titleLine);
+      dataSheet.push([titleLine]);
 
-  const headerMap = [
-    { name: 'total user points', translation: formatMessage(funnelMessages.stepName) },
-  ];
-  dataSheet.push(blankLine);
-  dataSheet.push(blankLine);
+      const headerMap = [
+        { name: 'total user points', translation: formatMessage(funnelMessages.stepName) },
+      ];
+      dataSheet.push(blankLine);
+      dataSheet.push(blankLine);
 
-  const headerLine = headerMap.map(header => header.name);
+      const headerLine = headerMap.map(header => header.name);
 
-  dataSheet.push(headerLine);
+      dataSheet.push(headerLine);
 
 
-  dataSheet.push([funnelResource.total]);
-  dataSheet.push(blankLine);
-  dataSheet.push(blankLine);
+      dataSheet.push([funnelResource.funnelData.total]);
+      dataSheet.push(blankLine);
+      dataSheet.push(blankLine);
 
-  const headersMap = [
-    { name: 'Step name', translation: formatMessage(funnelMessages.stepName) },
-    { name: 'Channel ID', translation: formatMessage(funnelMessages.channelId) },
-    { name: 'User points', translation: formatMessage(funnelMessages.userPoints) },
-    { name: '# units', translation: formatMessage(funnelMessages.conversion) },
-    { name: 'Amount', translation: formatMessage(funnelMessages.amount) },
-    { name: 'Interaction duration', translation: formatMessage(funnelMessages.duration) },
-  ];
+      const splitByDimension = funnelResource.splitIndex ? funnelResource.funnelData.grouped_by[funnelResource.splitIndex].dimension_name : 'N/A';
+      const headersMap = [
+        { name: 'Step name', translation: formatMessage(funnelMessages.stepName) },
+        { name: splitByDimension, translation: formatMessage(funnelMessages.channelId) },
+        { name: 'User points', translation: formatMessage(funnelMessages.userPoints) },
+        { name: '# units', translation: formatMessage(funnelMessages.conversion) },
+        { name: 'Amount', translation: formatMessage(funnelMessages.amount) },
+        { name: 'Interaction duration', translation: formatMessage(funnelMessages.duration) },
+      ];
 
-  const headersLine = headersMap.map(header => header.name);
+      const headersLine = headersMap.map(header => header.name);
 
-  dataSheet.push(headersLine);
+      dataSheet.push(headersLine);
 
-  funnelResource.global.steps.forEach((step, index) => {
+      funnelResource.funnelData.global.steps.forEach((step, index) => {
 
-    const dataLine = [];
+        const dataLine = [];
 
-    /* eslint-disable camelcase */
-    const {
-      name,
-      count,
-      conversion,
-      amount,
-      interaction_duration
-    } = step;
+        /* eslint-disable camelcase */
+        const {
+          name,
+          count,
+          conversion,
+          amount,
+          interaction_duration
+        } = step;
 
-    dataLine.push(
-      name,
-      '',
-      count,
-      conversion,
-      amount,
-      `${interaction_duration}s`
-    );
-    /* eslint-enable camelcase */
-    dataSheet.push(dataLine);
+        dataLine.push(
+          name,
+          '',
+          count,
+          conversion,
+          amount,
+          `${interaction_duration}s`
+        );
+        /* eslint-enable camelcase */
+        dataSheet.push(dataLine);
 
-    funnelResource.grouped_by.filter(group => group.dimension_value).forEach(group => {
-      const dataLineSplit = [];
+        if (index === funnelResource.splitIndex) {
+          funnelResource.funnelData.grouped_by.filter(group => group.dimension_value).forEach(group => {
+            const dataLineSplit = [];
 
-      dataLineSplit.push(
-        '',
-        group.dimension_value,
-        group.funnel.steps[index].count,
-        group.funnel.steps[index].conversion,
-        group.funnel.steps[index].amount,
-        `${group.funnel.steps[index].interaction_duration}s`
-      );
-      dataSheet.push(dataLineSplit);
-    });
-  });
-
-  const sheets = [{
-    name: titleLine,
-    data: dataSheet,
-  }];
+            dataLineSplit.push(
+              '',
+              group.dimension_value,
+              group.funnel.steps[index].count,
+              group.funnel.steps[index].conversion,
+              group.funnel.steps[index].amount,
+              `${group.funnel.steps[index].interaction_duration}s`
+            );
+            dataSheet.push(dataLineSplit);
+          });
+        }
+      });
+      return {
+        name: titleLine,
+        data: dataSheet,
+      };
+    }
+  );
   exportData(sheets, `${organisationId}_${datamartId}_funnel`, 'xlsx');
 };
 
