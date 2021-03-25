@@ -2,7 +2,6 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { AudienceFeatureResource } from '../../../../models/audienceFeature';
-import { Spin } from 'antd';
 import { withValidators } from '../../../../components/Form';
 import { ValidatorProps } from '../../../../components/Form/withValidators';
 import { AudienceBuilderParametricPredicateNode } from '../../../../models/audienceBuilder/AudienceBuilderResource';
@@ -10,7 +9,7 @@ import { Field, GenericField } from 'redux-form';
 import { FormRelativeAbsoluteDateProps } from '../../../QueryTool/JSONOTQL/Edit/Sections/Field/Comparison/FormRelativeAbsoluteDate';
 import AudienceFeatureVariable from './AudienceFeatureVariable';
 import { ObjectLikeTypeInfoResource } from '../../../../models/datamart/graphdb/RuntimeSchema';
-import { Row, Col, Button } from 'antd';
+import { Spin, Row, Col, Button } from 'antd';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 export const FormRelativeAbsoluteDateField = Field as new () => GenericField<FormRelativeAbsoluteDateProps>;

@@ -1,8 +1,6 @@
 import {
   AudienceBuilderFormData,
   NewAudienceBuilderFormData,
-  AudienceBuilderGroupNode,
-  AudienceBuilderParametricPredicateNode,
   QueryDocument,
 } from './../../../models/audienceBuilder/AudienceBuilderResource';
 import { FormattedMessage, defineMessages } from 'react-intl';
@@ -147,41 +145,6 @@ export const NEW_FORM_ID = 'newAudienceBuilderFormData';
 export const NEW_INITIAL_AUDIENCE_BUILDER_FORM_DATA: NewAudienceBuilderFormData = {
   include: [],
   exclude: []
-};
-
-// TODO Remove along with AudienceBuilderQueryService
-export const formatQuery = (query: QueryDocument) => {
-  if (query?.where) {
-    return {
-      ...query,
-      where: {
-        ...query.where,
-        expressions: (query.where as AudienceBuilderGroupNode).expressions.map(
-          (exp: AudienceBuilderGroupNode) => {
-            return {
-              ...exp,
-              expressions: exp.expressions.map(
-                (e: AudienceBuilderParametricPredicateNode) => {
-                  const parameters: any = {};
-                  Object.keys(e.parameters).forEach(p => {
-                    const value = e.parameters[p];
-                    if (value) {
-                      parameters[`${p}`] = value;
-                    }
-                  });
-
-                  return {
-                    ...e,
-                    parameters: parameters,
-                  };
-                },
-              ),
-            };
-          },
-        ),
-      },
-    };
-  } else return query;
 };
 
 // TODO Remove along with AudienceBuilderQueryService 

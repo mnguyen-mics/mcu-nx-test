@@ -87,13 +87,6 @@ const FormFieldWrapper: React.FunctionComponent<
               </Tooltip>
             </Col>
           ) : undefined}
-          {/* {typeof renderFieldAction !== 'undefined' ? (
-            <Col span={2} className="renderFieldAction">
-              {renderFieldAction()}
-            </Col>
-          ) : (
-            <Col span={2} className="no-renderFieldAction" />
-          )} */}
 
           {actionField}
         </Row>

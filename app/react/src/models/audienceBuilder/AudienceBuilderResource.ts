@@ -61,10 +61,6 @@ export interface NewAudienceBuilderFormData {
   exclude: AudienceBuilderParametricPredicateGroupNode[]
 }
 
-export interface AudienceBuilderExcludeFormData {
-  parametric_predicates: AudienceBuilderParametricPredicateNode[];
-}
-
 export interface QueryDocument {
   language_version?: string;
   operations: SelectionOperation[];

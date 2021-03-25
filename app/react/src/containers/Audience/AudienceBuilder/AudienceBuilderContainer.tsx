@@ -197,8 +197,6 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
 
   refreshDashboard = () => {
     const { formValues } = this.props;
-    console.log("run query");
-    console.log(formValues);
     this.runQuery(formValues);
   };
 
@@ -229,11 +227,7 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
       rerenderOnEveryChange: true,
     };
 
-
-    /**
-     * QueryFragmentForm selection
-     */
-
+    // QueryFragmentForm selection
     let queryFragmentForm;
     if (!isLoadingObjectTypes) {
       queryFragmentForm = <QueryFragmentFieldArray
@@ -251,10 +245,6 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
     } else {
       queryFragmentForm = <Loading className="m-t-40" isFullScreen={true} />
     }
-
-    /**
-      * QueryFragmentForm selection
-      */
 
     return (
       <React.Fragment>

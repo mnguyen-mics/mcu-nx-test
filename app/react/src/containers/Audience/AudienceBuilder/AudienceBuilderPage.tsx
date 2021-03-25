@@ -20,7 +20,7 @@ import { TYPES } from '../../../constants/types';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
-import { INITIAL_AUDIENCE_BUILDER_FORM_DATA, NEW_INITIAL_AUDIENCE_BUILDER_FORM_DATA, formatQuery } from './constants';
+import { INITIAL_AUDIENCE_BUILDER_FORM_DATA, NEW_INITIAL_AUDIENCE_BUILDER_FORM_DATA } from './constants';
 import { IQueryService } from '../../../services/QueryService';
 import { IAudienceFeatureService } from '../../../services/AudienceFeatureService';
 import { IAudienceSegmentService } from '../../../services/AudienceSegmentService';

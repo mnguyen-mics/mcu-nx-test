@@ -247,14 +247,14 @@
     background: none;
     box-shadow: none;
 
-    .mcs-timelineButton-left {
+    .mcs-timelineButton_left {
       color: @info-color;
       font-weight: 500;
       border: none;
       margin-right: 15px;
     }
 
-    .mcs-timelineButton-right {
+    .mcs-timelineButton_right {
       color: @info-color;
       font-weight: 500;
       border: none;
@@ -266,7 +266,7 @@
     margin-left: 31px;
     margin-top: 31px;
 
-    .mcs-timeline-group {
+    .mcs-timeline_group {
       margin-bottom: 30px;
     }
 
@@ -283,20 +283,22 @@
       padding: 0px;
       margin: 0px;
 
-      .mcs-timeline-initial-dot {
+      // mediarithmics timeline edition
+
+      .mcs-timeline_initialDot {
         font-size: 20px;
         margin: 5px 0px 0px 0px;
       }
 
-      .mcs-timeline-initial-dot-color1 {
+      .mcs-timeline_initialDot_color1 {
         color: @info-color;
       }
 
-      .mcs-timeline-initial-dot-color2 {
+      .mcs-timeline_initialDot_color2 {
         color: @error-color;
       }
 
-      .mcs-timeline-action-dot {
+      .mcs-timeline_actionDot {
         border: none;
         outline:none;
         box-shadow: none;
@@ -313,11 +315,11 @@
         align-items: center;
       }
 
-      .mcs-timeline-action-dot-color1 {
+      .mcs-timeline_actionDot_color1 {
         background: @info-color;
       }
 
-      .mcs-timeline-action-dot-color2 {
+      .mcs-timeline_actionDot_color2 {
         background: @error-color;
       }
     }
@@ -325,7 +327,13 @@
     .ant-timeline-item-content {
       top: 0;
 
-      .mcs-timeline-title {
+      .timeline-activity-card-buttons {
+        text-align: right;
+      }
+
+      // mediarithmics content edition
+
+      .mcs-timeline_title {
         font-size: 10px;
         font-family: @font-family;
         color: @text-color-secondary;
@@ -333,23 +341,19 @@
         margin-bottom: 10px;
         font-weight: normal;
 
-        .mcs-timeline-title-highlight {
+        .mcs-timeline_title_highlight {
           font-family: @font-family-medium;
           color: @text-color;
           font-weight: 500;
         }
       }
 
-      .timeline-activity-card-buttons {
-        text-align: right;
-      }
-
-      .mcs-timeline-dot-title {
+      .mcs-timeline_dotTitle {
         font-size: 8px !important;
         color: @text-color-secondary;
       }
 
-      .mcs-timeline-dot-no-title {
+      .mcs-timeline_dotNoTitle {
         height: 8px;
       }
     }

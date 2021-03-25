@@ -1,15 +1,13 @@
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../../constants/types';
+import { IQueryService } from '../../../services/QueryService';
+import { OTQLResult } from '../../../models/datamart/graphdb/OTQLResult';
+import { QueryDocument as GraphDBQueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
 import {
     NewAudienceBuilderFormData,
     AudienceBuilderFormData,
     AudienceBuilderGroupNode,
-} from '../../../models/audienceBuilder/AudienceBuilderResource';
-import { IQueryService } from '../../../services/QueryService';
-import { OTQLResult } from '../../../models/datamart/graphdb/OTQLResult';
-import { QueryDocument as GraphDBQueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
-import { QueryDocument as AudienceBuilderQueryDocument } from '../../../models/audienceBuilder/AudienceBuilderResource';
-import {
+    QueryDocument as AudienceBuilderQueryDocument,
     AudienceBuilderParametricPredicateGroupNode,
     AudienceBuilderParametricPredicateNode,
 } from '../../../models/audienceBuilder/AudienceBuilderResource';
@@ -37,7 +35,7 @@ export class AudienceBuilderQueryService implements IAudienceBuilderQueryService
         formData: AudienceBuilderFormData | undefined
     ): AudienceBuilderQueryDocument => {
 
-        let query: AudienceBuilderQueryDocument = {
+        const query: AudienceBuilderQueryDocument = {
             language_version: 'JSON_OTQL',
             operations: [{
                 directives: [{
@@ -97,14 +95,14 @@ export class AudienceBuilderQueryService implements IAudienceBuilderQueryService
     buildObjectTreeExpression = (
         formData: NewAudienceBuilderFormData
     ): AudienceBuilderFormData | undefined => {
-        const includeGroup: AudienceBuilderGroupNode[] = formData.include.length != 0 ? [{
+        const includeGroup: AudienceBuilderGroupNode[] = formData.include.length !== 0 ? [{
             type: 'GROUP',
             boolean_operator: 'AND',
             negation: false,
             expressions: this.completeGroups(formData.include)
         }] : []
 
-        const excludeGroup: AudienceBuilderGroupNode[] = formData.exclude.length != 0 ? [{
+        const excludeGroup: AudienceBuilderGroupNode[] = formData.exclude.length !== 0 ? [{
             type: 'GROUP',
             boolean_operator: 'AND',
             negation: true,
@@ -113,7 +111,7 @@ export class AudienceBuilderQueryService implements IAudienceBuilderQueryService
 
         const expressions = includeGroup.concat(excludeGroup)
 
-        if (expressions.length != 0) {
+        if (expressions.length !== 0) {
             return {
                 where: {
                     type: 'GROUP',

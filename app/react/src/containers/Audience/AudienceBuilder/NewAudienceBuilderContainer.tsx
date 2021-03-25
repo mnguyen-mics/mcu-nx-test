@@ -20,6 +20,8 @@ import {
   NewAudienceBuilderFormData,
   QueryDocument as AudienceBuilderQueryDocument,
   AudienceBuilderResource,
+  AudienceBuilderParametricPredicateGroupNode,
+  AudienceBuilderParametricPredicateNode,
 } from '../../../models/audienceBuilder/AudienceBuilderResource';
 import AudienceBuilderDashboard from './AudienceBuilderDashboard';
 import NewQueryFragmentFormSection, {
@@ -44,10 +46,6 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
 import { injectFeatures, InjectedFeaturesProps } from '../../Features';
-import {
-  AudienceBuilderParametricPredicateGroupNode,
-  AudienceBuilderParametricPredicateNode,
-} from '../../../models/audienceBuilder/AudienceBuilderResource';
 import AudienceFeatureSelector, {
   AudienceFeatureSelectorProps,
 } from './QueryFragmentBuilders/AudienceFeatureSelector';
@@ -227,7 +225,7 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
   private addToNewGroup = (
     save: (_: AudienceBuilderParametricPredicateGroupNode) => void,
   ) => (predicate: AudienceBuilderParametricPredicateNode) => {
-    let newGroup: AudienceBuilderParametricPredicateGroupNode = {
+    const newGroup: AudienceBuilderParametricPredicateGroupNode = {
       type: 'GROUP',
       boolean_operator: 'OR',
       negation: false,
@@ -242,7 +240,7 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
   ) => (audienceFeatures: AudienceFeatureResource[]) => {
     const { closeNextDrawer } = this.props;
 
-    let newParametricPredicate = (
+    const newParametricPredicate = (
       audienceFeature: AudienceFeatureResource,
     ): AudienceBuilderParametricPredicateNode => {
       const parameters: { [key: string]: string[] | undefined } = {};
@@ -325,7 +323,7 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
     return (
       <div className="mcs-audienceBuilder_timelineButtons">
         <Button
-          className="mcs-timelineButton-left"
+          className="mcs-timelineButton_left"
           onClick={this.selectAndAddFeature(
             this.addToNewGroup(this.saveGroup(formValues.include, 'include')),
           )}
@@ -333,11 +331,11 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
           Include
         </Button>
 
-        {formValues.exclude.length == 0 && (
+        {formValues.exclude.length === 0 && (
           <span>
             /
             <Button
-              className="mcs-timelineButton-right"
+              className="mcs-timelineButton_right"
               onClick={this.selectAndAddFeature(
                 this.addToNewGroup(
                   this.saveGroup(formValues.exclude, 'exclude'),
@@ -369,8 +367,8 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
           timelineConfiguration={{
             titlePart1: messages.audienceBuilderTimelineMatchingCriterias1,
             titlePart2: messages.audienceBuilderTimelineMatchingCriterias2,
-            initialDotColor: 'mcs-timeline-initial-dot-color1',
-            actionDotColor: 'mcs-timeline-action-dot-color1'
+            initialDotColor: 'mcs-timeline_initialDot_color1',
+            actionDotColor: 'mcs-timeline_actionDot_color1'
           }}
           component={NewQueryFragmentFormSection}
           datamartId={audienceBuilder.datamart_id}
@@ -389,8 +387,8 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
           timelineConfiguration={{
             titlePart1: messages.audienceBuilderTimelineExcludingCriterias1,
             titlePart2: messages.audienceBuilderTimelineExcludingCriterias2,
-            initialDotColor: 'mcs-timeline-initial-dot-color2',
-            actionDotColor: 'mcs-timeline-action-dot-color2'
+            initialDotColor: 'mcs-timeline_initialDot_color2',
+            actionDotColor: 'mcs-timeline_actionDot_color2'
           }}
           component={NewQueryFragmentFormSection}
           change={change}
@@ -429,7 +427,7 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
      * QueryFragmentForm selection
      */
 
-    let queryFragmentForm = !isLoadingObjectTypes ? (
+    const queryFragmentForm = !isLoadingObjectTypes ? (
       this.renderQueryFragmentForm()
     ) : (
       <Loading className="m-t-40" isFullScreen={true} />

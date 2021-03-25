@@ -35,7 +35,7 @@ class NewAudienceFeatureFormSection extends React.Component<Props> {
     } = this.props;
 
     const removeFieldOrGroup = (index: number) => () => {
-      if (fields.getAll().length == 1) {
+      if (fields.getAll().length === 1) {
         removeGroup();
       } else {
         fields.remove(index);
@@ -44,10 +44,13 @@ class NewAudienceFeatureFormSection extends React.Component<Props> {
 
     return fields.map((name, index) => {
       return (
-        <Card className={'mcs-audienceBuilder_audienceFeature-2'}>
+        <Card
+          key={`${index}_${fields.length}`}
+          className={'mcs-audienceBuilder_audienceFeature-2'}
+        >
           <Row
             key={`${index}_${fields.length}`}
-            className={"mcs-audienceBuilder_audienceFeatureContent"}
+            className={'mcs-audienceBuilder_audienceFeatureContent'}
           >
             <Col span={24}>
               <NewAudienceFeatureLayout

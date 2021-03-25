@@ -10,7 +10,6 @@ import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { messages } from '../constants';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
-import { AudienceBuilderParametricPredicateGroupNode } from '../../../../models/audienceBuilder/AudienceBuilderResource';
 import NewAudienceFeatureFormSection, {
   NewAudienceFeatureFormSectionProps,
 } from './NewAudienceFeatureFormSection';
@@ -20,7 +19,10 @@ import injectDrawer, {
 import { AudienceFeatureResource } from '../../../../models/audienceFeature';
 import { ObjectLikeTypeInfoResource } from '../../../../models/datamart/graphdb/RuntimeSchema';
 import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
-import { AudienceBuilderParametricPredicateNode } from '../../../../models/audienceBuilder/AudienceBuilderResource';
+import {
+  AudienceBuilderParametricPredicateNode,
+  AudienceBuilderParametricPredicateGroupNode,
+} from '../../../../models/audienceBuilder/AudienceBuilderResource';
 
 export interface TimelineConfiguration {
   titlePart1: ReactIntl.FormattedMessage.MessageDescriptor;
@@ -81,17 +83,17 @@ class NewQueryFragmentFormSection extends React.Component<Props> {
 
   // ----------------------------------
   // Rendering
-  
+
   private renderGroupTitle = (index: number) => {
     const { intl, timelineConfiguration } = this.props;
 
-    let titlePart1 = timelineConfiguration.titlePart1;
-    let titlePart2 = timelineConfiguration.titlePart2;
+    const titlePart1 = timelineConfiguration.titlePart1;
+    const titlePart2 = timelineConfiguration.titlePart2;
 
     return (
-      <div className="mcs-timeline-title">
-        {index != 0 && (
-          <span className="mcs-timeline-title-highlight">
+      <div className="mcs-timeline_title">
+        {index !== 0 && (
+          <span className="mcs-timeline_title_highlight">
             {intl.formatMessage(
               messages.audienceBuilderTimelineMatchingCriterias0,
             )}
@@ -100,7 +102,7 @@ class NewQueryFragmentFormSection extends React.Component<Props> {
 
         {intl.formatMessage(titlePart1)}
 
-        <span className="mcs-timeline-title-highlight">
+        <span className="mcs-timeline_title_highlight">
           {intl.formatMessage(titlePart2)}
         </span>
       </div>
@@ -121,28 +123,26 @@ class NewQueryFragmentFormSection extends React.Component<Props> {
     const { audienceFeatures } = this.props;
 
     const showCriteriaHelper = (index: number): boolean => {
-      return index == 0 && fields.get(index).expressions.length < 2;
+      return index === 0 && fields.get(index).expressions.length < 2;
     };
 
     const removeGroup = (index: number) => () => {
       fields.remove(index);
     };
 
-    let initialDotStyle =
-      'mcs-timeline-initial-dot ' + timelineConfiguration.initialDotColor;
-    let actionDotStyle =
-      'mcs-timeline-action-dot ' + timelineConfiguration.actionDotColor;
+    const initialDotStyle =
+      'mcs-timeline_initialDot ' + timelineConfiguration.initialDotColor;
+    const actionDotStyle =
+      'mcs-timeline_actionDot ' + timelineConfiguration.actionDotColor;
 
     return (
-      /*key={cuid()}*/
       <React.Fragment>
         <div className="mcs-timeline">
           {fields.map((name, index) => {
             return (
               <React.Fragment key={`${index}_${fields.length}`}>
-                <div className="mcs-timeline-group">
+                <div className="mcs-timeline_group">
                   <Timeline.Item
-                    // key={cuid()}
                     dot={<McsIcon type="status" className={initialDotStyle} />}
                   >
                     {this.renderGroupTitle(index)}
@@ -161,7 +161,6 @@ class NewQueryFragmentFormSection extends React.Component<Props> {
                   </Timeline.Item>
 
                   <Timeline.Item
-                    // key={cuid()}
                     dot={
                       <Button
                         className={actionDotStyle}
@@ -172,13 +171,13 @@ class NewQueryFragmentFormSection extends React.Component<Props> {
                     }
                   >
                     {showCriteriaHelper(index) ? (
-                      <div className="mcs-timeline-dot-title">
+                      <div className="mcs-timeline_dotTitle">
                         {intl.formatMessage(
                           messages.audienceBuilderTimelineAddCriteria,
                         )}
                       </div>
                     ) : (
-                      <div className="mcs-timeline-dot-no-title"></div>
+                      <div className="mcs-timeline_dotNoTitle"/>
                     )}
                   </Timeline.Item>
                 </div>
