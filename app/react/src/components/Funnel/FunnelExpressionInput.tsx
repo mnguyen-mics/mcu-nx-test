@@ -106,23 +106,27 @@ class FunnelExpressionInput extends React.Component<Props, State> {
     }
 
     switch (dimensionName) {
-      
       case 'HAS_CONVERSION':
+      case 'HAS_CLICKED':
       case 'HAS_BOUNCED':
-        const handleBooleanEnum = (selectValue: string[]) => {
+        const handleBooleanEnum = (selectValue: string) => {
+          const valueArray : string []=[];
+          valueArray.push(selectValue.toString())
           this.setState({
-            value: selectValue
+            value: valueArray,
           });
-          handleDimensionExpressionForSelectorChange(selectValue)
+          handleDimensionExpressionForSelectorChange(valueArray);
         };
-        return <Select {...commonEnumProps} mode="tags" onChange={handleBooleanEnum}>
-          <Option key={this._cuid()} value={"0"}>
-            {"false"}
-          </Option>
-          <Option key={this._cuid()} value={"1"}>
-            {"true"}
-          </Option>
-        </Select>
+        return (
+          <Select placeholder="Dimension value" value={value[0]} className='mcs-funnelQueryBuilder_dimensionValue' onChange={handleBooleanEnum}>
+            <Option key={this._cuid()} value={'0'}>
+              {'false'}
+            </Option>
+            <Option key={this._cuid()} value={'1'}>
+              {'true'}
+            </Option>
+          </Select>
+        );
       case 'DEVICE_OS_FAMILY':
       case 'DEVICE_FORM_FACTOR':
       case 'DEVICE_BROWSER_FAMILY':
