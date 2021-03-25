@@ -45,9 +45,6 @@ class NewAudienceFeatureFormSection extends React.Component<Props> {
     return fields.map((name, index) => {
       return (
         <Card className={'mcs-audienceBuilder_audienceFeature-2'}>
-              {/* // isDemographicsSection
-              //   ? 'mcs-audienceBuilder_demographicFeature-2'
-              //   : 'mcs-audienceBuilder_audienceFeature-2' */}
           <Row
             key={`${index}_${fields.length}`}
             className={"mcs-audienceBuilder_audienceFeatureContent"}

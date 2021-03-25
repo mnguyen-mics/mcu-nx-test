@@ -279,7 +279,6 @@ class AudienceFeatureVariable extends React.Component<Props> {
         component={FormSearchObject}
         formItemProps={{
           label: variable.parameter_name,
-
           ...fieldGridConfig,
         }}
         fetchListMethod={fetchListMethod}

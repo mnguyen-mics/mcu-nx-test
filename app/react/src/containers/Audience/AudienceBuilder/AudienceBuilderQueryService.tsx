@@ -136,7 +136,6 @@ export class AudienceBuilderQueryService implements IAudienceBuilderQueryService
         const expression = this.buildObjectTreeExpression(formData);
         const queryDocument: AudienceBuilderQueryDocument = this.buildQueryDocument(expression);
 
-        console.log("qweqweqwe", queryDocument);
         // TODO Remove `as any` hack
         // AudienceBuilderQueryDocument and GraphDBQueryDocument could inherit from the same abstraction.
         const genericQueryDocument = queryDocument as any;

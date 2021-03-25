@@ -110,6 +110,9 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
   @lazyInject(TYPES.IAudienceBuilderQueryService)
   private _audienceBuilderQueryService: IAudienceBuilderQueryService;
 
+  // ----------------------------------
+  // Component setup
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -120,41 +123,7 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
       isMaskVisible: false,
     };
   }
-
-  runQuery = () => {
-    const { audienceBuilder, formValues } = this.props;
-
-    this.setState({
-      isQueryRunning: true,
-      isMaskVisible: false,
-    });
-
-    const success = (
-      queryDocument: GraphDbQueryDocument,
-      result: OTQLResult,
-    ) => {
-      this.setState({
-        queryResult: result,
-        isQueryRunning: false,
-        queryDocument: queryDocument,
-      });
-    };
-
-    const failure = (err: any) => {
-      this.setState({
-        isQueryRunning: false,
-      });
-      this.props.notifyError(err);
-    };
-
-    this._audienceBuilderQueryService.runQuery(
-      audienceBuilder.datamart_id,
-      formValues,
-      success,
-      failure,
-    );
-  };
-
+  
   componentDidMount() {
     const { audienceBuilder, formValues } = this.props;
 
@@ -209,17 +178,44 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
     }
   }
 
-  toggleDashboard = () => {
+  // ----------------------------------
+  // Utilities
+
+  private runQuery = () => {
+    const { audienceBuilder, formValues } = this.props;
+
     this.setState({
-      isDashboardToggled: !this.state.isDashboardToggled,
+      isQueryRunning: true,
+      isMaskVisible: false,
     });
-    // Timeout is needed here otherwise graph resizing won't work
-    setTimeout(() => {
-      window.dispatchEvent(new Event('resize'));
-    }, 50);
+
+    const success = (
+      queryDocument: GraphDbQueryDocument,
+      result: OTQLResult,
+    ) => {
+      this.setState({
+        queryResult: result,
+        isQueryRunning: false,
+        queryDocument: queryDocument,
+      });
+    };
+
+    const failure = (err: any) => {
+      this.setState({
+        isQueryRunning: false,
+      });
+      this.props.notifyError(err);
+    };
+
+    this._audienceBuilderQueryService.runQuery(
+      audienceBuilder.datamart_id,
+      formValues,
+      success,
+      failure,
+    );
   };
 
-  saveGroup = (
+  private saveGroup = (
     groups: AudienceBuilderParametricPredicateGroupNode[],
     groupsLocation: string,
   ) => (newGroup: AudienceBuilderParametricPredicateGroupNode) => {
@@ -228,7 +224,7 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
     change(groupsLocation, groups.concat(newGroup));
   };
 
-  addToNewGroup = (
+  private addToNewGroup = (
     save: (_: AudienceBuilderParametricPredicateGroupNode) => void,
   ) => (predicate: AudienceBuilderParametricPredicateNode) => {
     let newGroup: AudienceBuilderParametricPredicateGroupNode = {
@@ -241,7 +237,7 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
     save(newGroup);
   };
 
-  addAudienceFeature = (
+  private addAudienceFeature = (
     processPredicate: (_: AudienceBuilderParametricPredicateNode) => void,
   ) => (audienceFeatures: AudienceFeatureResource[]) => {
     const { closeNextDrawer } = this.props;
@@ -277,7 +273,7 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
     }
   };
 
-  selectNewAudienceFeature = (
+  private selectNewAudienceFeature = (
     onSelect: (_: AudienceFeatureResource[]) => void,
   ) => {
     const { openNextDrawer, audienceBuilder, hasFeature } = this.props;
@@ -304,14 +300,26 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
         });
   };
 
-  selectAndAddFeature = (
+  private selectAndAddFeature = (
     processPredicate: (_: AudienceBuilderParametricPredicateNode) => void,
   ) => () => {
-    console.log('Select and add');
     this.selectNewAudienceFeature(this.addAudienceFeature(processPredicate));
   };
 
-  renderQueryBuilderButtons = () => {
+  private toggleDashboard = () => {
+    this.setState({
+      isDashboardToggled: !this.state.isDashboardToggled,
+    });
+    // Timeout is needed here otherwise graph resizing won't work
+    setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 50);
+  };
+
+  // ----------------------------------
+  // Rendering
+
+  private renderQueryBuilderButtons = () => {
     const { formValues } = this.props;
 
     return (
@@ -344,7 +352,7 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
     );
   };
 
-  renderQueryFragmentForm = () => {
+  private renderQueryFragmentForm = () => {
     const genericFieldArrayProps = {
       rerenderOnEveryChange: true,
     };
@@ -358,6 +366,12 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
         {/* Include Timeline */}
         <QueryFragmentFieldArray
           name={`include`}
+          timelineConfiguration={{
+            titlePart1: messages.audienceBuilderTimelineMatchingCriterias1,
+            titlePart2: messages.audienceBuilderTimelineMatchingCriterias2,
+            initialDotColor: 'mcs-timeline-initial-dot-color1',
+            actionDotColor: 'mcs-timeline-action-dot-color1'
+          }}
           component={NewQueryFragmentFormSection}
           datamartId={audienceBuilder.datamart_id}
           selectAndAddFeature={this.selectAndAddFeature}
@@ -372,7 +386,14 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
         {/* Exclude Timeline */}
         <QueryFragmentFieldArray
           name={`exclude`}
+          timelineConfiguration={{
+            titlePart1: messages.audienceBuilderTimelineExcludingCriterias1,
+            titlePart2: messages.audienceBuilderTimelineExcludingCriterias2,
+            initialDotColor: 'mcs-timeline-initial-dot-color2',
+            actionDotColor: 'mcs-timeline-action-dot-color2'
+          }}
           component={NewQueryFragmentFormSection}
+          change={change}
           datamartId={audienceBuilder.datamart_id}
           selectAndAddFeature={this.selectAndAddFeature}
           demographicsFeaturesIds={[]}

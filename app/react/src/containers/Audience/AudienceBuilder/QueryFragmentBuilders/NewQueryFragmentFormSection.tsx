@@ -22,6 +22,13 @@ import { ObjectLikeTypeInfoResource } from '../../../../models/datamart/graphdb/
 import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
 import { AudienceBuilderParametricPredicateNode } from '../../../../models/audienceBuilder/AudienceBuilderResource';
 
+export interface TimelineConfiguration {
+  titlePart1: ReactIntl.FormattedMessage.MessageDescriptor;
+  titlePart2: ReactIntl.FormattedMessage.MessageDescriptor;
+  initialDotColor: string;
+  actionDotColor: string;
+}
+
 export const NewAudienceFeatureFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
   NewAudienceFeatureFormSectionProps
@@ -30,6 +37,7 @@ export const NewAudienceFeatureFieldArray = FieldArray as new () => GenericField
 export interface NewQueryFragmentFormSectionProps {
   datamartId: string;
   demographicsFeaturesIds: string[];
+  timelineConfiguration: TimelineConfiguration;
   selectAndAddFeature: (
     addToGroup: (_: AudienceBuilderParametricPredicateNode) => void,
   ) => () => void;
@@ -49,7 +57,10 @@ class NewQueryFragmentFormSection extends React.Component<Props> {
     super(props);
   }
 
-  addToGroup = (groupIndex: number) => (
+  // ----------------------------------
+  // Utilities
+
+  private addToGroup = (groupIndex: number) => (
     predicate: AudienceBuilderParametricPredicateNode,
   ) => {
     const { fields, change } = this.props;
@@ -68,6 +79,34 @@ class NewQueryFragmentFormSection extends React.Component<Props> {
     change(fields.name, updatedGroups);
   };
 
+  // ----------------------------------
+  // Rendering
+  
+  private renderGroupTitle = (index: number) => {
+    const { intl, timelineConfiguration } = this.props;
+
+    let titlePart1 = timelineConfiguration.titlePart1;
+    let titlePart2 = timelineConfiguration.titlePart2;
+
+    return (
+      <div className="mcs-timeline-title">
+        {index != 0 && (
+          <span className="mcs-timeline-title-highlight">
+            {intl.formatMessage(
+              messages.audienceBuilderTimelineMatchingCriterias0,
+            )}
+          </span>
+        )}
+
+        {intl.formatMessage(titlePart1)}
+
+        <span className="mcs-timeline-title-highlight">
+          {intl.formatMessage(titlePart2)}
+        </span>
+      </div>
+    );
+  };
+
   render() {
     const {
       fields,
@@ -75,6 +114,7 @@ class NewQueryFragmentFormSection extends React.Component<Props> {
       datamartId,
       demographicsFeaturesIds,
       objectTypes,
+      timelineConfiguration,
       selectAndAddFeature,
     } = this.props;
 
@@ -88,6 +128,11 @@ class NewQueryFragmentFormSection extends React.Component<Props> {
       fields.remove(index);
     };
 
+    let initialDotStyle =
+      'mcs-timeline-initial-dot ' + timelineConfiguration.initialDotColor;
+    let actionDotStyle =
+      'mcs-timeline-action-dot ' + timelineConfiguration.actionDotColor;
+
     return (
       /*key={cuid()}*/
       <React.Fragment>
@@ -98,31 +143,9 @@ class NewQueryFragmentFormSection extends React.Component<Props> {
                 <div className="mcs-timeline-group">
                   <Timeline.Item
                     // key={cuid()}
-                    dot={
-                      <McsIcon
-                        type="status"
-                        className={'mcs-timeline-initial-dot'}
-                      />
-                    }
+                    dot={<McsIcon type="status" className={initialDotStyle} />}
                   >
-                    <div className="mcs-timeline-title">
-                      {index != 0 && (
-                        <span className="mcs-timeline-title-highlight">
-                          {intl.formatMessage(
-                            messages.audienceBuilderTimelineMatchingCriterias0,
-                          )}
-                        </span>
-                      )}
-
-                      {intl.formatMessage(
-                        messages.audienceBuilderTimelineMatchingCriterias1,
-                      )}
-                      <span className="mcs-timeline-title-highlight">
-                        {intl.formatMessage(
-                          messages.audienceBuilderTimelineMatchingCriterias2,
-                        )}
-                      </span>
-                    </div>
+                    {this.renderGroupTitle(index)}
 
                     <NewAudienceFeatureFieldArray
                       name={`${name}.expressions`}
@@ -141,7 +164,7 @@ class NewQueryFragmentFormSection extends React.Component<Props> {
                     // key={cuid()}
                     dot={
                       <Button
-                        className="mcs-timeline-dot-button"
+                        className={actionDotStyle}
                         onClick={selectAndAddFeature(this.addToGroup(index))}
                       >
                         +

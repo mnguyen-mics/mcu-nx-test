@@ -286,10 +286,17 @@
       .mcs-timeline-initial-dot {
         font-size: 20px;
         margin: 5px 0px 0px 0px;
-        color: @info-color!important;
       }
 
-      .mcs-timeline-dot-button {
+      .mcs-timeline-initial-dot-color1 {
+        color: @info-color;
+      }
+
+      .mcs-timeline-initial-dot-color2 {
+        color: @error-color;
+      }
+
+      .mcs-timeline-action-dot {
         border: none;
         outline:none;
         box-shadow: none;
@@ -299,12 +306,19 @@
         height:16px; 
         border-radius: 50%;
         font-size: 14px;
-        background: @info-color;
         color: @layout-content-background;
         display:flex;
         text-align:center;
         justify-content: center;
         align-items: center;
+      }
+
+      .mcs-timeline-action-dot-color1 {
+        background: @info-color;
+      }
+
+      .mcs-timeline-action-dot-color2 {
+        background: @error-color;
       }
     }
 

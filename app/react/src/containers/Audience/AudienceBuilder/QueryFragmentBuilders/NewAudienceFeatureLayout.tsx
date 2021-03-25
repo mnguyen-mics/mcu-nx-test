@@ -11,7 +11,7 @@ import { FormRelativeAbsoluteDateProps } from '../../../QueryTool/JSONOTQL/Edit/
 import AudienceFeatureVariable from './AudienceFeatureVariable';
 import { ObjectLikeTypeInfoResource } from '../../../../models/datamart/graphdb/RuntimeSchema';
 import { Row, Col, Button } from 'antd';
-import { Card, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 export const FormRelativeAbsoluteDateField = Field as new () => GenericField<FormRelativeAbsoluteDateProps>;
 

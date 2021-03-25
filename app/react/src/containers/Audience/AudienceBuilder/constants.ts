@@ -147,27 +147,9 @@ export const NEW_FORM_ID = 'newAudienceBuilderFormData';
 export const NEW_INITIAL_AUDIENCE_BUILDER_FORM_DATA: NewAudienceBuilderFormData = {
   include: [],
   exclude: []
-  // where: {
-  //   type: 'GROUP',
-  //   boolean_operator: 'AND',
-  //   expressions: [
-  //     {
-  //       type: 'GROUP',
-  //       boolean_operator: 'AND',
-  //       negation: false,
-  //       expressions: [],
-  //     },
-  //     {
-  //       type: 'GROUP',
-  //       boolean_operator: 'AND',
-  //       negation: true,
-  //       expressions: [],
-  //     },
-  //   ],
-  // }
 };
 
-// TODO Move to AudienceBuilderQueryService
+// TODO Remove along with AudienceBuilderQueryService
 export const formatQuery = (query: QueryDocument) => {
   if (query?.where) {
     return {
@@ -202,7 +184,7 @@ export const formatQuery = (query: QueryDocument) => {
   } else return query;
 };
 
-// TODO Move to AudienceBuilderQueryService
+// TODO Remove along with AudienceBuilderQueryService 
 export const buildQueryDocument = (formData: AudienceBuilderFormData) => {
   let query: QueryDocument = {
     language_version: 'JSON_OTQL',
