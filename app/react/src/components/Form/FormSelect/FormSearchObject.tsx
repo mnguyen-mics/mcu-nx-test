@@ -128,14 +128,12 @@ class FormSearchObject extends React.Component<Props, FormSearchObjectState> {
   handleChange = (value: LabeledValue | LabeledValue[]) => {
     const {
       input,
-      selectProps,
       handleSingleStringValue,
       handleMatchValue,
     } = this.props;
 
     if (
-      selectProps &&
-      (selectProps.mode === 'multiple' || selectProps.mode === 'tags')
+      Array.isArray(value)
     ) {
       const multipleValues = value as LabeledValue[];
       this.setState({ value: multipleValues, currentValue: undefined }, () => {
