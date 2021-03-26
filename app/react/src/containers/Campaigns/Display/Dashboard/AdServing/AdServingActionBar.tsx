@@ -23,7 +23,12 @@ import resourceHistoryMessages from '../../../../ResourceHistory/ResourceTimelin
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IDisplayCampaignService } from '../../../../../services/DisplayCampaignService';
-
+import ReportService, { ReportViewResponse, } from '../../../../../services/ReportService';
+import { Index } from '../../../../../utils';
+import { normalizeReportView } from '../../../../../utils/MetricHelper';
+import { parseSearch } from '../../../../../utils/LocationSearchHelper';
+import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
+import ExportService from '../../../../../services/ExportService';
 export interface AdServingActionBarProps {
   campaign: DisplayCampaignInfoResource;
   archiveCampaign: (campaignId: string) => void;
@@ -34,9 +39,19 @@ type Props = AdServingActionBarProps &
   InjectedIntlProps &
   InjectedDrawerProps;
 
-class AdServingActionBar extends React.Component<Props> {
+interface AdServingActionBarState {
+  exportIsRunning: boolean;
+  loading: boolean;
+}
+
+class AdServingActionBar extends React.Component<Props, AdServingActionBarState> {
   @lazyInject(TYPES.IDisplayCampaignService)
   private _displayCampaignService: IDisplayCampaignService;
+
+  constructor(props: Props) {
+    super(props);
+    this.state = { exportIsRunning: false, loading: false };
+  }
 
   getSnippet = (type: any) => {
     const {
@@ -195,6 +210,98 @@ class AdServingActionBar extends React.Component<Props> {
     });
   };
 
+
+  exportIsRunningModal = (e: React.MouseEvent) => {
+    const {
+      intl: { formatMessage },
+    } = this.props;
+    Modal.warning({
+      title: formatMessage(modalMessages.exportIsRunningTitle),
+      content: formatMessage(modalMessages.exportIsRunningMessage),
+      icon: <ExclamationCircleOutlined />,
+      okText: formatMessage(modalMessages.confirm),
+      onOk() {
+        // closing modal
+      },
+      // onCancel() {},
+    });
+  };
+
+  filterValueForCampaign = (
+    normalizedReport: Index<any>,
+    campaignId: string,
+  ) => {
+    return normalizedReport.filter(
+      (item: any) => item.campaign_id === campaignId,
+    );
+  };
+
+  handleRunExport = (e: React.MouseEvent) => {
+    const {
+      campaign,
+      match: {
+        params: { organisationId, campaignId },
+      },
+      location: { search },
+      intl: { formatMessage }
+    } = this.props;
+
+    const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
+
+    const lookbackWindow = filter.to.toMoment().unix() - filter.from.toMoment().unix();
+
+    const dimensions =
+      lookbackWindow > 172800
+        ? ['day', 'campaign_id']
+        : ['day,hour_of_day', 'campaign_id'];
+
+    this.setState({ loading: true });
+
+
+    const promiseArray: Array<Promise<ReportViewResponse>> = [];
+    campaign.ad_groups.forEach(adgroup => {
+      adgroup.ads.map(ad => (
+        promiseArray.push(ReportService.getAdDeliveryReport(
+          organisationId,
+          'creative_id',
+          ad.creative_id,
+          filter.from,
+          filter.to,
+          dimensions,
+          undefined,
+          {
+            campaign_id: campaignId,
+            ad_group_id: adgroup.id,
+          },
+        ))
+      ))
+    });
+
+    const apiResults = Promise.all(promiseArray)
+
+    apiResults.then(responses=> {
+      
+      const formatedApiResults = responses.map(res => {
+        return this.filterValueForCampaign(
+          normalizeReportView(res.data.report_view),
+          campaignId,
+        )});
+        campaign.ad_groups.forEach((adgroup, i) => {
+          adgroup.ads.forEach(ad => {
+            if (formatedApiResults[i][0].message_id === ad.id) {
+              formatedApiResults[i].forEach((report: any) => report.adName = ad.name)
+            }
+          })
+        });
+        ExportService.exportAdServingCampaing(organisationId, campaign, formatedApiResults, filter, formatMessage)
+        
+        this.setState({
+          loading: false,
+        });
+      }) 
+  };
+
+
   public render() {
     const {
       match: {
@@ -203,6 +310,7 @@ class AdServingActionBar extends React.Component<Props> {
       intl: { formatMessage },
       campaign,
     } = this.props;
+    const { exportIsRunning } = this.state;
 
     const menu = this.buildMenu();
 
@@ -236,6 +344,17 @@ class AdServingActionBar extends React.Component<Props> {
 
     return (
       <Actionbar paths={breadcrumbPaths}>
+        <Button
+          onClick={
+            exportIsRunning ? this.exportIsRunningModal : this.handleRunExport
+          }
+        >
+          <McsIcon type="download" />
+          <FormattedMessage
+            id="display.campaign.actionbar.exportButton"
+            defaultMessage="Export"
+          />
+        </Button>
         <Dropdown overlay={downloadMenu} trigger={['click']}>
           <Button className="mcs-primary" type="primary">
             <McsIcon type="download" />
