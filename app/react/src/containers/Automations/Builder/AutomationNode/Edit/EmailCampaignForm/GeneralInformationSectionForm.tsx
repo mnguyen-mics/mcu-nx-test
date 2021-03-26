@@ -57,7 +57,7 @@ export const formMessages = defineMessages({
   emailEditorRouterSelectHelper: {
     id: 'automation.builder.emailEditor.step.select.helper.router',
     defaultMessage:
-      'Choose a router for your campaign. A Router is basically a channel through which you will send your email. You can configure you email routers in your {campaignSettings}.',
+      'Choose a router for your campaign. A Router is basically a channel through which you will send your email. You can configure your email routers in your {campaignSettings}.',
   },
   campaignSettings: {
     id:
