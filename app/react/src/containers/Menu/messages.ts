@@ -216,6 +216,18 @@ export default defineMessages({
     id: 'menu.communities.title',
     defaultMessage: 'Communities',
   },
+  more: {
+    id: 'menu.more',
+    defaultMessage: 'More ...',
+  },
+  noOrganisationsFound: {
+    id: 'menu.no.organisation.found',
+    defaultMessage: 'No organisations to display',
+  },
+  searchForOrganisationOrCommunity: {
+    id: 'menu.search.for.organisation.or.community',
+    defaultMessage: 'Search for an organisation or community',
+  },
   usersSettingsTitle: {
     id: 'menu.organisation.users',
     defaultMessage: 'Users',

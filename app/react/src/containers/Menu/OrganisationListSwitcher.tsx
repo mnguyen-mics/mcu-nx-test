@@ -7,13 +7,15 @@ import { getWorkspace } from '../../redux/Session/selectors';
 import { Dropdown, Input, Menu } from 'antd';
 import { UserWorkspaceResource } from '../../models/directory/UserProfileResource';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { partition } from 'lodash';
+import { partition, debounce, uniqBy } from 'lodash';
 import { HomeOutlined } from '@ant-design/icons';
 import messages from './messages';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
-// import { McsIcon } from '@mediarithmics-private/mcs-components-library';
+import LocalStorage from '../../services/LocalStorage';
+import cuid from 'cuid';
 
 export interface OrganizationListSwitcherState {
+  searchKeyword: string;
   foundOrgs: UserWorkspaceResource[];
   organisations: UserWorkspaceResource[];
   foundCommunities: UserWorkspaceResource[];
@@ -28,8 +30,10 @@ export interface StoreProps {
 const Search = Input.Search;
 const { SubMenu } = Menu;
 
-const maximumOrgDisplay = 6;
-const maximumCommunityDisplay = 6;
+const maxOrgOrCommunity = 6;
+
+const savedCommunitiesKey = 'SAVED_COMMUNITY_SEARCHES';
+const savedOrganisationsKey = 'SAVED_ORGANISATIONS_SEARCHES';
 
 type Props = StoreProps &
   InjectedIntlProps &
@@ -39,24 +43,101 @@ class OrganizationListSwitcher extends React.Component<
   Props,
   OrganizationListSwitcherState
 > {
+  private debouncedSearch: (value: string) => void;
   constructor(props: Props) {
     super(props);
 
-    const [communities, orgs] = partition(
-      props.workspaces,
-      (w) => this.getChildren(w).length > 0,
+    const [communities, orgs] = partition(props.workspaces, (w) =>
+      this.isCommunity(w),
     );
 
     this.state = {
+      searchKeyword: '',
       communities: communities,
       organisations: orgs,
-      foundOrgs: orgs.slice(0, maximumOrgDisplay),
-      foundCommunities: communities.slice(0, maximumCommunityDisplay),
+      foundOrgs: [],
+      foundCommunities: [],
     };
+
+    this.debouncedSearch = debounce((value: string) => {
+      this.setState({
+        searchKeyword: value,
+      });
+      this.searchOrgAndCommunities(value);
+    }, 200);
   }
 
-  handleOrgClick = (organisationId: string) =>
-    this.switchWorkspace(organisationId);
+  searchOrgAndCommunities = (value: string) => {
+    const { organisations, communities } = this.state;
+    const foundOrgs = this.searchByNameOrId(value, organisations);
+    const foundCommu = this.searchByNameOrId(value, communities);
+    this.setState({
+      foundOrgs: foundOrgs,
+      foundCommunities: foundCommu,
+    });
+  };
+
+  isCommunity(org: UserWorkspaceResource) {
+    return org.organisation_id === org.community_id;
+  }
+
+  isObjectWorkspace(obj: any): obj is UserWorkspaceResource {
+    return (
+      typeof obj.organisation_id === 'string' &&
+      typeof obj.organisation_name === 'string' &&
+      typeof obj.administrator === 'boolean'
+    );
+  }
+
+  setWorkspaceItem = (storageKey: string, orgs: UserWorkspaceResource[]) => {
+    LocalStorage.setItem({ [storageKey]: JSON.stringify(orgs) });
+  };
+
+  localStorageOrgs = (storageKey: string): UserWorkspaceResource[] => {
+    const history = LocalStorage.getItem(storageKey);
+    if (!history) {
+      return [];
+    } else {
+      const parsedHistory = JSON.parse(history);
+      const areAllWorkspaces = parsedHistory.every((item: any) =>
+        this.isObjectWorkspace(item),
+      );
+      if (areAllWorkspaces) {
+        return parsedHistory as UserWorkspaceResource[];
+      } else {
+        return [];
+      }
+    }
+  };
+
+  upsertClickedWorkspace = (storageKey: string, org: UserWorkspaceResource) => {
+    const history = this.localStorageOrgs(storageKey);
+    if (!history) {
+      this.setWorkspaceItem(storageKey, [org]);
+    } else {
+      history.unshift(org);
+      this.setWorkspaceItem(
+        storageKey,
+        uniqBy(history, 'organisation_id').slice(0, maxOrgOrCommunity),
+      );
+    }
+  };
+
+  saveClickToLocalStorage = (
+    org: UserWorkspaceResource,
+    hasChildren: boolean,
+  ) => {
+    if (hasChildren) {
+      this.upsertClickedWorkspace(savedCommunitiesKey, org);
+    } else {
+      this.upsertClickedWorkspace(savedOrganisationsKey, org);
+    }
+  };
+
+  handleOrgClick = (org: UserWorkspaceResource, hasChildren: boolean) => () => {
+    this.saveClickToLocalStorage(org, hasChildren);
+    this.switchWorkspace(org.organisation_id);
+  };
 
   switchWorkspace = (organisationId: string) => {
     const {
@@ -73,15 +154,10 @@ class OrganizationListSwitcher extends React.Component<
   };
 
   renderOrg = (org: UserWorkspaceResource, hasChildren: boolean) => {
-    const handleClick = () => this.handleOrgClick(org.organisation_id);
     return (
-      <a onClick={handleClick}>
-        <span
-          className={hasChildren ? 'mcs-organisationListSwitcher_parent' : ''}
-        >
-          {org.organisation_name}
-        </span>{' '}
-        <span className="mcs-organisationListSwitcher_orgId">
+      <a onClick={this.handleOrgClick(org, hasChildren)}>
+        {org.organisation_name}
+        <span className="mcs-organisationListSwitcher_orgId_searchView">
           {org.organisation_id}
         </span>
       </a>
@@ -89,7 +165,25 @@ class OrganizationListSwitcher extends React.Component<
   };
 
   renderChildrenMenu = (children: UserWorkspaceResource[]) => {
-    return children.map((child) => this.renderNodeMenu(child));
+    const {
+      intl: { formatMessage },
+    } = this.props;
+    return (
+      <React.Fragment>
+        {children
+          .slice(0, maxOrgOrCommunity * 3)
+          .map((child) => this.renderNodeMenu(child))}
+        {children.length > maxOrgOrCommunity * 3 && (
+          <SubMenu
+            key={cuid()}
+            title={formatMessage(messages.more)}
+            popupClassName="mcs-organisationListSwitcher_popOverMenu"
+          >
+            {this.renderChildrenMenu(children.slice(maxOrgOrCommunity * 3))}
+          </SubMenu>
+        )}
+      </React.Fragment>
+    );
   };
 
   renderNodeMenu = (node: UserWorkspaceResource) => {
@@ -97,9 +191,9 @@ class OrganizationListSwitcher extends React.Component<
     if (children.length > 0) {
       return (
         <SubMenu
-          key={node.organisation_id}
+          key={cuid()}
           icon={<HomeOutlined />}
-          title={this.renderOrg(node, false)}
+          title={this.renderOrg(node, true)}
           popupClassName="mcs-organisationListSwitcher_popOverMenu"
         >
           {this.renderChildrenMenu(children)}
@@ -114,20 +208,18 @@ class OrganizationListSwitcher extends React.Component<
     }
   };
 
-  renderNodeFlat = (nodes: UserWorkspaceResource[], isChild: boolean) => {
+  renderNodeFlat = (nodes: UserWorkspaceResource[], level: number) => {
     return nodes.map((node, index) => {
       const children = this.getChildren(node);
       const hasChildren = children.length > 0;
       return (
         <React.Fragment key={index}>
           <Menu.Item key={node.organisation_id}>
-            <div
-              className={isChild ? 'mcs-organisationListSwitcher_indent' : ''}
-            >
+            <div className={`mcs-organisationListSwitcher_indent-${level}`}>
               {this.renderOrg(node, hasChildren)}
             </div>
           </Menu.Item>
-          {hasChildren && this.renderNodeFlat(children, true)}
+          {hasChildren && this.renderNodeFlat(children, level + 1)}
         </React.Fragment>
       );
     });
@@ -137,81 +229,122 @@ class OrganizationListSwitcher extends React.Component<
     const { workspaces } = this.props;
     const c = workspaces.filter(
       (w) =>
-        w.community_id === workspace.organisation_id &&
+        w.administrator_id === workspace.organisation_id &&
         w.organisation_id !== w.community_id,
     );
     return c;
   };
 
-  searchCaseInsensitive = (
-    value: string,
-    nodes: UserWorkspaceResource[],
-    max: number,
-  ) => {
+  searchByNameOrId = (value: string, nodes: UserWorkspaceResource[]) => {
     const regex = new RegExp(value, 'i');
-    return nodes.filter((w) => regex.test(w.organisation_name)).slice(0, max);
+    return nodes.filter(
+      (w) => regex.test(w.organisation_name) || value === w.organisation_id,
+    );
+  };
+
+  handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    this.debouncedSearch(value);
   };
 
   handleSearch = (value: string) => {
-    const { organisations, communities } = this.state;
-    const foundOrgs = this.searchCaseInsensitive(
-      value,
-      organisations,
-      maximumOrgDisplay,
-    );
-    const foundCommunities = this.searchCaseInsensitive(
-      value,
-      communities,
-      maximumCommunityDisplay,
-    );
-    this.setState({
-      foundOrgs: foundOrgs,
-      foundCommunities: foundCommunities,
-    });
+    this.searchOrgAndCommunities(value);
   };
 
-  SwitchBySearch = () => {
-    const { foundOrgs, foundCommunities } = this.state;
+  renderOrgMenuGroup = (title: string, orgs: UserWorkspaceResource[]) => {
+    return (
+      <React.Fragment>
+        <Menu.ItemGroup
+          title={title}
+          className="mcs-organisationListSwitcher_subtitle"
+        >
+          {orgs.slice(0, maxOrgOrCommunity).map((org) => {
+            return this.renderNodeMenu(org);
+          })}
+        </Menu.ItemGroup>
+        {orgs.length > maxOrgOrCommunity && (
+          <SubMenu
+            key={cuid()}
+            title={'More ...'}
+            popupClassName="mcs-organisationListSwitcher_popOverMenu"
+          >
+            {this.renderChildrenMenu(orgs.slice(maxOrgOrCommunity))}
+          </SubMenu>
+        )}
+      </React.Fragment>
+    );
+  };
+
+  renderOrgsAndCommunities = (
+    savedOrgs: UserWorkspaceResource[],
+    savedCommus: UserWorkspaceResource[],
+    fallbackMessage: string,
+  ) => {
     const {
       intl: { formatMessage },
     } = this.props;
+    const orgIsEmpty = !savedOrgs || savedOrgs.length === 0;
+    const commuIsEmpty = !savedCommus || savedCommus.length === 0;
+    if (orgIsEmpty && commuIsEmpty) {
+      return <Menu.Item disabled={true}>{fallbackMessage}</Menu.Item>;
+    } else {
+      return (
+        <React.Fragment>
+          {savedCommus &&
+            savedCommus.length > 0 &&
+            this.renderOrgMenuGroup(
+              formatMessage(messages.communitiesTitle),
+              savedCommus,
+            )}
+          {savedOrgs &&
+            savedOrgs.length > 0 &&
+            this.renderOrgMenuGroup(
+              formatMessage(messages.organisationsTitle),
+              savedOrgs,
+            )}
+        </React.Fragment>
+      );
+    }
+  };
+
+  SwitchBySearch = () => {
+    const { foundOrgs, foundCommunities, searchKeyword } = this.state;
+    const {
+      intl: { formatMessage },
+    } = this.props;
+    const savedCommunities = this.localStorageOrgs(savedCommunitiesKey);
+    const savedOrgs = this.localStorageOrgs(savedOrganisationsKey);
     return (
       <Menu className="mcs-organisationListSwitcher_menu" mode="vertical">
         <Menu.Item disabled={true}>
           <Search
+            size="small"
             className="mcs-organisationListSwitcher_searchInput"
             onSearch={this.handleSearch}
+            onChange={this.handleChange}
           />
         </Menu.Item>
-        <Menu.ItemGroup
-          title={formatMessage(messages.communitiesTitle)}
-          className="mcs-organisationListSwitcher_subtitle"
-        >
-          {foundCommunities.map((org) => {
-            return this.renderNodeMenu(org);
-          })}
-        </Menu.ItemGroup>
-        <Menu.ItemGroup
-          title={formatMessage(messages.organisationsTitle)}
-          className="mcs-organisationListSwitcher_subtitle"
-        >
-          {foundOrgs.map((org) => {
-            return this.renderNodeMenu(org);
-          })}
-        </Menu.ItemGroup>
+        {searchKeyword === ''
+          ? this.renderOrgsAndCommunities(
+              savedOrgs,
+              savedCommunities,
+              formatMessage(messages.searchForOrganisationOrCommunity),
+            )
+          : this.renderOrgsAndCommunities(
+              foundOrgs,
+              foundCommunities,
+              formatMessage(messages.noOrganisationsFound),
+            )}
       </Menu>
     );
   };
 
   SwitchByList = () => {
     const { workspaces } = this.props;
-    const [adminOrgs] = partition(
-      workspaces,
-      (w) => w.administrator_id === null,
-    );
+    const [communities] = partition(workspaces, (w) => this.isCommunity(w));
     return (
       <Menu className="mcs-organisationListSwitcher_orgList" mode="vertical">
-        {this.renderNodeFlat(adminOrgs, false)}
+        {this.renderNodeFlat(communities, 0)}
       </Menu>
     );
   };
@@ -226,13 +359,12 @@ class OrganizationListSwitcher extends React.Component<
     } = this.props;
 
     const currentWorkspace = workspace(organisationId);
-
     const workspaceNb = workspaces.length;
 
     return (
       <Dropdown
         overlay={
-          workspaceNb > maximumOrgDisplay + maximumCommunityDisplay
+          workspaceNb > maxOrgOrCommunity * 2
             ? this.SwitchBySearch
             : this.SwitchByList
         }
