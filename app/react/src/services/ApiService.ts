@@ -177,20 +177,6 @@ function request(
     .then(checkAndParse);
 }
 
-// ***** start - OVH crisis code *****
-
-const ALLOWED_COMMUNITIES = MCS_CONSTANTS.ALLOWED_COMMUNITIES || {};
-const allowedWrite = ALLOWED_COMMUNITIES.allowed_write || []; // community_id list
-
-const rejectRequest = () => {
-  const error = new Error(
-    'The service you are trying to use is currently unavailable due to the major incident in OVH’s datacenter in Strasbourg. We are working hard to restore it as soon as possible and we apologize for the inconvenience.',
-  );
-  return Promise.reject(error);
-};
-
-// ***** end - OVH crisis code *****
-
 function getRequest<T>(
   endpoint: string,
   params: { [key: string]: any } = {},
@@ -213,29 +199,14 @@ function postRequest<T>(
   headers: { [key: string]: any } = {},
   options: ApiOptions = {},
 ): Promise<T> {
-  const communityId = (window as any).communityId;
-  if (
-    endpoint.includes('password_validity') ||
-    endpoint.includes('authentication/set_password') ||
-    endpoint === 'audience_segments.tag_feeds/aggregates' ||
-    endpoint === 'authentication/access_tokens' ||
-    endpoint === 'authentication/refresh_token/revoke' ||
-    endpoint === 'authentication/refresh_tokens' ||
-    endpoint === 'authentication/send_password_reset_email' ||
-    endpoint === 'reports/feed_report' ||
-    (communityId && allowedWrite.includes(communityId))
-  ) {
-    return request('post', endpoint, {
-      params,
-      headers,
-      body,
-      ...options,
-      authenticated:
-        options.authenticated !== undefined ? options.authenticated : true,
-    }) as Promise<T>;
-  } else {
-    return rejectRequest();
-  }
+  return request('post', endpoint, {
+    params,
+    headers,
+    body,
+    ...options,
+    authenticated:
+      options.authenticated !== undefined ? options.authenticated : true,
+  }) as Promise<T>;
 }
 
 function putRequest<T>(
@@ -245,20 +216,14 @@ function putRequest<T>(
   headers: { [key: string]: any } = {},
   options: ApiOptions = {},
 ): Promise<T> {
-  const communityId = (window as any).communityId;
-  
-  if (communityId && allowedWrite.includes(communityId)) {
-    return request('put', endpoint, {
-      params,
-      headers,
-      body,
-      ...options,
-      authenticated:
-        options.authenticated !== undefined ? options.authenticated : true,
-    }) as Promise<T>;
-  } else {
-    return rejectRequest();
-  }
+  return request('put', endpoint, {
+    params,
+    headers,
+    body,
+    ...options,
+    authenticated:
+      options.authenticated !== undefined ? options.authenticated : true,
+  }) as Promise<T>;
 }
 
 function deleteRequest<T>(
@@ -267,18 +232,13 @@ function deleteRequest<T>(
   headers: { [key: string]: any } = {},
   options: ApiOptions = {},
 ): Promise<T> {
-  const communityId = (window as any).communityId;
-  if (communityId && allowedWrite.includes(communityId)) {
-    return request('delete', endpoint, {
-      params,
-      headers,
-      ...options,
-      authenticated:
-        options.authenticated !== undefined ? options.authenticated : true,
-    }) as Promise<T>;
-  } else {
-    return rejectRequest();
-  }
+  return request('delete', endpoint, {
+    params,
+    headers,
+    ...options,
+    authenticated:
+      options.authenticated !== undefined ? options.authenticated : true,
+  }) as Promise<T>;
 }
 
 export default {

@@ -198,11 +198,6 @@ class Notifications extends React.Component<Props> {
             </div>
           );
         }
-      // OVH crisis - handle string error message
-      } else if (notification.error.message) {
-        notifcationConfig.description = (
-          <span>{notification.error.message}</span>
-        );
       } else if (!notifcationConfig.description) {
         notifcationConfig.description = (
           <span>{formatMessage(messages.errorDescription)}</span>
