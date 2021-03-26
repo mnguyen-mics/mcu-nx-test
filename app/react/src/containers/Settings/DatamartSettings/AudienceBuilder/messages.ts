@@ -5,11 +5,11 @@ export const messages = defineMessages({
 
   audienceBuilderNew: {
     id: 'settings.datamart.audienceBuilder.newAudienceBuilder',
-    defaultMessage: 'New Audience Builder',
+    defaultMessage: 'New Segment Builder',
   },
   audienceBuilders: {
     id: 'settings.datamart.audienceBuilders',
-    defaultMessage: 'Audience Builders',
+    defaultMessage: 'Segment Builders',
   },
   audienceBuilderName: {
     id: 'settings.datamart.audienceBuilders.name',
@@ -29,7 +29,7 @@ export const messages = defineMessages({
   },
   audienceBuilderEmptyList: {
     id: 'settings.datamart.audienceBuilders.emptyList',
-    defaultMessage: 'There are no audience builders',
+    defaultMessage: 'There are no segment builders',
   },
   audienceBuilderSectionGeneralSubtitle: {
     id: 'settings.datamart.audienceBuilders.edit.subtitle',
@@ -45,7 +45,8 @@ export const messages = defineMessages({
   },
   audienceBuilderSectionDemographicsSubtitle: {
     id: 'settings.datamart.audienceBuilders.edit.demographics.subtitle',
-    defaultMessage: 'Audience Features that will always be used when building an audience',
+    defaultMessage:
+      'Audience Features that will always be used when building an audience',
   },
   audienceBuilderSectionDemographicsAddButton: {
     id: 'settings.datamart.audienceBuilders.edit.demographics.add',

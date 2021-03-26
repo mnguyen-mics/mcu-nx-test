@@ -20,7 +20,8 @@ import DatamartUsersAnalyticsWrapper from '../../../../Audience/DatamartUsersAna
 import { sessionInTimeJsonConfig } from '../../../../Audience/DatamartUsersAnalytics/config/AnalyticsConfigJson';
 import { DashboardConfig } from '../../../../Audience/DatamartUsersAnalytics/DatamartUsersAnalyticsContent';
 import DatamartReplicationTab from './DatamartReplicationTab';
-import AudienceBuilderTab from './AudienceBuilderTab';
+import SegmentBuildersTab from './SegmentBuildersTab';
+import AudienceFeaturesTab from './AudienceFeaturesTab'
 
 interface McsTabsItem {
   title: string;
@@ -56,9 +57,13 @@ const messages = defineMessages({
     id: 'settings.datamart.statistics',
     defaultMessage: 'Statistics',
   },
-  audienceBuilder: {
-    id: 'settings.datamart.audienceBuilder',
-    defaultMessage: 'Audience Builder',
+  audienceFeatures: {
+    id: 'settings.datamart.audienceFeatures',
+    defaultMessage: 'Audience Features',
+  },
+  segmentBuilder: {
+    id: 'settings.datamart.segmentBuilder',
+    defaultMessage: 'Segment Builders',
   },
 });
 
@@ -201,9 +206,14 @@ class DatamartDashboardPage extends React.Component<Props, State> {
 
     if (hasFeature('audience-segment_builder_v2')) {
       items.push({
-        title: intl.formatMessage(messages.audienceBuilder),
-        display: <AudienceBuilderTab />,
-        key: 'audience_builder',
+        title: intl.formatMessage(messages.audienceFeatures),
+        display: <AudienceFeaturesTab />,
+        key: 'audience_features',
+      });
+      items.push({
+        title: intl.formatMessage(messages.segmentBuilder),
+        display: <SegmentBuildersTab />,
+        key: 'segment_builder',
       });
     }
 
