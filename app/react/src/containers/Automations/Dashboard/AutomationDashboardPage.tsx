@@ -98,7 +98,7 @@ class AutomationDashboardPage extends React.Component<Props, State> {
         });
     }
     const filter = parseSearch(search, DATE_SEARCH_SETTINGS);
-    if(!filter.from.value || !filter.from.to) {
+    if (!filter.from.value || !filter.from.to) {
       this.updateLocationSearch({
         from: new McsMoment("now-7d"),
         to: new McsMoment("now"),
@@ -277,25 +277,24 @@ class AutomationDashboardPage extends React.Component<Props, State> {
 
     const testButton =
       (automationStatus === 'ACTIVE' || automationStatus === 'PAUSED') &&
-      datamartId &&
-      nodeId &&
-      hasFeature('automations-test-scenario') ? (
-        <Button
-          onClick={this.onTestClick(datamartId, nodeId)}
-          disabled={isLoading}
-        >
-          <McsIcon type={'gears'} />
-          {formatMessage(messages.testTitle)}
-        </Button>
-      ) : null;
+        datamartId &&
+        nodeId &&
+        hasFeature('automations-test-scenario') ? (
+          <Button
+            onClick={this.onTestClick(datamartId, nodeId)}
+            disabled={isLoading}
+          >
+            <McsIcon type={'gears'} />
+            {formatMessage(messages.testTitle)}
+          </Button>
+        ) : null;
 
     const displayDateRange = hasFeature("automations-analytics");
 
     return (
-      <div style={{ height: '100%', display: 'flex' }}>
-        <Layout>
-          <Actionbar paths={breadCrumbPaths}>
-            {automationFormData.automation &&
+      <Layout className="mcs-automationDashboardPage">
+        <Actionbar paths={breadCrumbPaths}>
+          {automationFormData.automation &&
             automationFormData.automation.status &&
             automationFormData.automation.id ? (
               <Button
@@ -312,39 +311,41 @@ class AutomationDashboardPage extends React.Component<Props, State> {
                     style={{ minWidth: 50 }}
                   />
                 ) : (
-                  this.renderStatus(automationFormData.automation.status)
-                )}
+                    this.renderStatus(automationFormData.automation.status)
+                  )}
               </Button>
             ) : null}
-            <Button onClick={this.onEditClick}>
-              <McsIcon type={'pen'} /> Edit
+          <Button onClick={this.onEditClick}>
+            <McsIcon type={'pen'} /> Edit
             </Button>
-            {testButton}
-            {displayDateRange && <span key="label">{formatMessage(messages.timeWindowLabel)}</span>}
-            {displayDateRange && this.renderDatePicker()}
-          </Actionbar>
+          {testButton}
+          {displayDateRange && <span
+            className='mcs-automationDashboardPage_actionBar_dateRange_label'
+            key="label">{formatMessage(messages.timeWindowLabel)}
+          </span>}
+          {displayDateRange && this.renderDatePicker()}
+        </Actionbar>
 
-          <Layout.Content
-            className={`mcs-content-container`}
-            style={{ padding: 0, overflow: 'hidden' }}
-          >
-            <AutomationBuilder
-              datamartId={automationFormData.automation.datamart_id!}
-              automationTreeData={automationFormData.automationTreeData}
-              exitCondition={automationFormData.exitCondition}
-              scenarioId={automationFormData.automation.id!}
-              viewer={true}
-              creation_mode={
-                automationFormData.automationTreeData &&
+        <Layout.Content
+          className={`mcs-content-container`}
+          style={{ padding: 0, overflow: 'hidden' }}
+        >
+          <AutomationBuilder
+            datamartId={automationFormData.automation.datamart_id!}
+            automationTreeData={automationFormData.automationTreeData}
+            exitCondition={automationFormData.exitCondition}
+            scenarioId={automationFormData.automation.id!}
+            viewer={true}
+            creation_mode={
+              automationFormData.automationTreeData &&
                 automationFormData.automationTreeData.node.type ===
-                  'QUERY_INPUT'
-                  ? automationFormData.automationTreeData.node.ui_creation_mode
-                  : 'QUERY'
-              }
-            />
-          </Layout.Content>
-        </Layout>
-      </div>
+                'QUERY_INPUT'
+                ? automationFormData.automationTreeData.node.ui_creation_mode
+                : 'QUERY'
+            }
+          />
+        </Layout.Content>
+      </Layout>
     );
   }
 }

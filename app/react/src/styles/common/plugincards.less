@@ -203,4 +203,30 @@
       background-color: white;
     }
   }
+
+  .mcs-pluginModal_feedChart_container {
+    display: flex;
+    flex-direction: column;
+
+    .mcs-pluginModal_feedChart_container_header {
+      display: flex;
+      flex-direction: row;
+      margin-bottom: 20px;
+
+      .mcs-pluginModal_feedChart_container_header_description {
+        display: flex;
+        flex-direction: column;
+        text-align: justify;
+        
+        :not(:last-child) {
+          margin-bottom: 10px;
+        }
+      }
+
+      .mcs-pluginModal_feedChart_container_header_image {
+        height: 100px;
+        margin-right: 20px;
+      }
+    }
+  }
 }
