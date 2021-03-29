@@ -228,10 +228,10 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
       .then((_) => this.fetchFoldersAndFeatures(datamartId));
   };
 
-  onSelectFolder = (id: string | null) => () => {
+  onSelectFolder = (id?: string) => () => {
     const { audienceFeaturesByFolder } = this.state;
     this.setState({
-      selectedFolder: this._audienceFeatureService.getFolder(
+      selectedFolder: this._audienceFeatureService.getFolderContent(
         id,
         audienceFeaturesByFolder,
       ),
@@ -244,11 +244,11 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
       if (selectedFolder && audienceFeaturesByFolder) {
         const path: AudienceFeaturesByFolder[] = [];
         const pathLoop = (folder: AudienceFeaturesByFolder) => {
-          const parent = this._audienceFeatureService.getFolder(
+          const parent = this._audienceFeatureService.getFolderContent(
             folder.parent_id,
             audienceFeaturesByFolder,
           );
-          if (folder.id === null) {
+          if (!folder.id) {
             path.unshift(audienceFeaturesByFolder);
           } else {
             path.unshift(folder);
@@ -301,21 +301,13 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
   };
 
   onFilterChange = (newFilter: SearchFilter) => {
-    newFilter.keywords
-      ? this.setState({
-          filter: {
-            currentPage: newFilter.currentPage,
-            pageSize: newFilter.pageSize,
-            keywords: newFilter.keywords,
-          },
-        })
-      : this.setState({
-          filter: {
-            currentPage: newFilter.currentPage,
-            pageSize: newFilter.pageSize,
-            keywords: '',
-          },
-        });
+    this.setState({
+      filter: {
+        currentPage: newFilter.currentPage,
+        pageSize: newFilter.pageSize,
+        keywords: newFilter.keywords ? newFilter.keywords : '',
+      },
+    });
   };
 
   handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -419,7 +411,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
                 dataSource={selectedFolder.audience_features}
                 total={
                   selectedFolder &&
-                  selectedFolder.parent_id === null &&
+                  !selectedFolder.parent_id &&
                   selectedFolder.children.length > 0
                     ? selectedFolder.children.length
                     : 0

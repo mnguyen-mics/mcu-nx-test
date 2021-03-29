@@ -14,7 +14,7 @@ import { FolderOutlined } from '@ant-design/icons';
 
 export interface AudienceFeatureFolderProps {
   folder: AudienceFeaturesByFolder;
-  onSelectFolder: (id: string | null) => () => void;
+  onSelectFolder: (id?: string) => () => void;
   renameFolder: (
     id: string,
     name: string,
@@ -50,9 +50,9 @@ class AudienceFeatureFolder extends React.Component<Props, State> {
     this.setState({ inputValue: e.target.value });
   };
 
-  getMenu = (id: string | null) => {
+  getMenu = (id?: string) => {
     const { intl, deleteFolder } = this.props;
-    if (id !== null) {
+    if (id) {
       const displayForm = () => {
         this.setState({
           editionMode: true,
@@ -79,14 +79,14 @@ class AudienceFeatureFolder extends React.Component<Props, State> {
     return <div />;
   };
 
-  renameFolder = (id: string | null) => () => {
+  renameFolder = (id?: string) => () => {
     const { renameFolder } = this.props;
     const { inputValue } = this.state;
-    if (id !== null) {
-      return renameFolder(id, inputValue).then( _ =>
-        this.cancelEdition());
+    if (id) {
+      return renameFolder(id, inputValue).then((_) => this.cancelEdition());
+    } else {
+      return;
     }
-    return;
   };
 
   cancelEdition = () => {
@@ -129,9 +129,7 @@ class AudienceFeatureFolder extends React.Component<Props, State> {
               </Button>
             </div>
           ) : (
-            <div onClick={onSelectFolder(folder.id)}>
-              {folder.name}
-            </div>
+            <div onClick={onSelectFolder(folder.id)}>{folder.name}</div>
           )}
         </Col>
         <Col span={1}>

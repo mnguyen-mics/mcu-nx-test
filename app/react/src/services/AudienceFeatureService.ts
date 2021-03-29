@@ -4,13 +4,12 @@ import {
 } from './../models/audienceFeature/AudienceFeatureResource';
 import { AudienceFeatureResource } from '../models/audienceFeature';
 import { injectable } from 'inversify';
-import { PaginatedApiParam } from '../utils/ApiHelper';
+import { PaginatedApiParam, getPaginatedApiParam } from '../utils/ApiHelper';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import {
   Index,
   SearchFilter,
 } from '@mediarithmics-private/mcs-components-library/lib/utils';
-import { getPaginatedApiParam } from '../utils/ApiHelper';
 import { Action } from 'redux-actions';
 
 export interface AudienceFeatureOptions extends PaginatedApiParam {
@@ -88,8 +87,8 @@ export interface IAudienceFeatureService {
     demographicIds?: string[],
   ) => void;
 
-  getFolder: (
-    id: string | null,
+  getFolderContent: (
+    id?: string,
     audienceFeaturesByFolder?: AudienceFeaturesByFolder,
   ) => AudienceFeaturesByFolder | undefined;
 }
@@ -126,6 +125,9 @@ export class AudienceFeatureService implements IAudienceFeatureService {
     body: Partial<AudienceFeatureResource>,
   ): Promise<DataResponse<AudienceFeatureResource>> {
     const endpoint = `datamarts/${datamartId}/audience_features/${audienceFeatureId}`;
+    if (body.folder_id === '') {
+      body.folder_id = null;
+    }
     return ApiService.putRequest(endpoint, body);
   }
 
@@ -168,6 +170,9 @@ export class AudienceFeatureService implements IAudienceFeatureService {
     body: Partial<AudienceFeatureFolderResource>,
   ): Promise<DataResponse<AudienceFeatureFolderResource>> {
     const endpoint = `datamarts/${datamartId}/audience_feature_folders/${folderId}`;
+    if (body.parent_id === '') {
+      body.parent_id = null;
+    }
     return ApiService.putRequest(endpoint, body);
   }
 
@@ -232,7 +237,7 @@ export class AudienceFeatureService implements IAudienceFeatureService {
     filter?: Index<any>,
     demographicIds?: string[],
   ) => {
-    let res: [
+    const res: [
       Promise<AudienceFeatureFolderResource[]>,
       Promise<AudienceFeatureResource[]>,
     ] = [
@@ -245,9 +250,9 @@ export class AudienceFeatureService implements IAudienceFeatureService {
     ];
     Promise.all(res)
       .then((results: any[]) => {
-        let audienceFeatureFolders: AudienceFeatureFolderResource[] =
+        const audienceFeatureFolders: AudienceFeatureFolderResource[] =
           results[0];
-        let features: AudienceFeatureResource[] = results[1];
+        const features: AudienceFeatureResource[] = results[1];
         const baseFolder = this._createBaseFolder(
           baseFolderName,
           audienceFeatureFolders,
@@ -265,6 +270,9 @@ export class AudienceFeatureService implements IAudienceFeatureService {
     features: AudienceFeatureResource[],
   ): AudienceFeaturesByFolder[] => {
     return folders.map((folder) => {
+      if (!folder.parent_id) {
+        folder.parent_id = undefined;
+      }
       return {
         id: folder.id,
         name: folder.name,
@@ -275,7 +283,7 @@ export class AudienceFeatureService implements IAudienceFeatureService {
         children: this._folderLoop(
           folders.filter(
             (f: AudienceFeatureFolderResource) =>
-              f.id !== null && folder.children_ids?.includes(f.id),
+              f.id && folder.children_ids?.includes(f.id),
           ),
           features,
         ),
@@ -289,28 +297,26 @@ export class AudienceFeatureService implements IAudienceFeatureService {
     features: AudienceFeatureResource[],
   ): AudienceFeaturesByFolder => {
     return {
-      id: null,
+      id: undefined,
       name: name,
       parent_id: 'root',
       children: this._folderLoop(
-        folders.filter(
-          (f: AudienceFeatureFolderResource) => f.parent_id === null,
-        ),
+        folders.filter((f: AudienceFeatureFolderResource) => !f.parent_id),
         features,
       ),
       audience_features: features.filter(
-        (f: AudienceFeatureResource) => f.folder_id === null,
+        (f: AudienceFeatureResource) => !f.folder_id,
       ),
     };
   };
 
-  getFolder = (
-    id: string | null,
+  getFolderContent = (
+    id?: string,
     audienceFeaturesByFolder?: AudienceFeaturesByFolder,
   ) => {
     let selectedFolder: AudienceFeaturesByFolder | undefined;
     const loop = (folder: AudienceFeaturesByFolder) => {
-      if (id === null) {
+      if (!id) {
         selectedFolder = audienceFeaturesByFolder;
       } else {
         folder.children.forEach((f) => {
