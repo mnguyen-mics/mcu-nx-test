@@ -116,7 +116,7 @@ class AudienceBuilderEditPage extends React.Component<Props, State> {
         history.push({
           pathname: `/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`,
           state: {
-            activeTab: 'audience_builder',
+            activeTab: 'segment_builder',
           },
         });
       })
@@ -139,7 +139,7 @@ class AudienceBuilderEditPage extends React.Component<Props, State> {
     return history.push({
       pathname: `/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`,
       state: {
-        activeTab: 'audience_builder',
+        activeTab: 'segment_builder',
       },
     });
   };
@@ -164,7 +164,7 @@ class AudienceBuilderEditPage extends React.Component<Props, State> {
       {
         name: formatMessage(messages.audienceBuilders),
         path: `/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`,
-        state: { activeTab: 'audience_builder' },
+        state: { activeTab: 'segment_builder' },
       },
       {
         name: builderName,
