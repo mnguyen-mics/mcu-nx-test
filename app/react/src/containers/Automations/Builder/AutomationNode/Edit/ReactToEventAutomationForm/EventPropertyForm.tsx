@@ -63,7 +63,8 @@ class EventPropertyForm extends React.Component<Props, State> {
           }) || f.directives.find(dir => dir.name === 'TreeIndex')),
       )
       .map(sourceField => {
-        const objectNode = objectTypes.find(ot => sourceField.field_type === ot.name);
+        const sourceFieldTypeCleaned = sourceField.field_type.match(/\w+/);
+        const objectNode = objectTypes.find(ot => sourceFieldTypeCleaned?.[0] === ot.name);
         const updatedAncestors = objectNode ? [...ancestors, sourceField.name] : ancestors;
         return {
           inputLabel: `${ancestors.length ? `${ancestors.join(" > ")} > ` : ''}${sourceField.name}`,
@@ -111,7 +112,7 @@ class EventPropertyForm extends React.Component<Props, State> {
         f =>
           !objectTypes.find(ot => {
             const match = f.field_type.match(/\w+/);
-            return !!(match && match[0] === ot.name);
+            return !!(match?.[0] === ot.name);
           }) && f.directives.find(dir => dir.name === 'TreeIndex'),
       );
 
@@ -137,7 +138,9 @@ class EventPropertyForm extends React.Component<Props, State> {
     if (isFieldNode(tree)) return currentObjectType;
     else if (isObjectNode(tree)) {
       const correspondingFieldNextObjectType = currentObjectType.fields.find(lot => lot.name === tree.field);
-      const nextObjectType = objectTypes.find(ot => ot.name === correspondingFieldNextObjectType?.field_type);
+      if (!correspondingFieldNextObjectType) return;
+      const fieldTypeCleaned = correspondingFieldNextObjectType.field_type.match(/\w+/);
+      const nextObjectType = objectTypes.find(ot => ot.name === fieldTypeCleaned?.[0]);
       if (!nextObjectType) return;
       return this.getSelectedObjectType(tree.expressions[0], nextObjectType);
     }
@@ -153,7 +156,7 @@ class EventPropertyForm extends React.Component<Props, State> {
         f =>
           !objectTypes.find(ot => {
             const match = f.field_type.match(/\w+/);
-            return !!(match && match[0] === ot.name);
+            return !!(match?.[0] === ot.name);
           }) && f.directives.find(dir => dir.name === 'TreeIndex'),
       ).find(f => f.name === fieldName);
     return field ? field.directives : [];
