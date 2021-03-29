@@ -17,19 +17,10 @@ import {
   SelectorLayout,
   Button,
 } from '@mediarithmics-private/mcs-components-library';
-import {
-  Index,
-  SearchFilter,
-} from '@mediarithmics-private/mcs-components-library/lib/utils';
+import { Index } from '@mediarithmics-private/mcs-components-library/lib/utils';
 import AudienceFeatureCard from './AudienceFeatureCard';
 import { FolderOutlined } from '@ant-design/icons';
-import {
-  messages,
-  fetchFolders,
-  fetchAudienceFeatures,
-  creatBaseFolder,
-  getFolder,
-} from '../constants';
+import { messages } from '../constants';
 
 const Search = Input.Search;
 
@@ -76,7 +67,7 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
     this.fetchFoldersAndFeatures();
   }
 
-  componentDidUpdate(prevProps: Props, prevState: State) {
+  componentDidUpdate(_: Props, prevState: State) {
     const { keywords: prevKeywords } = prevState;
     const { keywords } = this.state;
     if (keywords !== prevKeywords) {
@@ -84,35 +75,31 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
     }
   }
 
+  setBaseFolder = (baseFolder: AudienceFeaturesByFolder) => {
+    this.setState({
+      audienceFeaturesByFolder: baseFolder,
+      selectedFolder: baseFolder,
+      isLoading: false,
+    });
+  };
+
+  onFailure = (err: any) => {
+    this.props.notifyError(err);
+    this.setState({
+      isLoading: false,
+    });
+  };
+
   fetchFoldersAndFeatures = (filter?: Index<any>) => {
     const { datamartId, demographicIds, intl, notifyError } = this.props;
-    fetchFolders(this._audienceFeatureService, datamartId, notifyError).then(
-      (audienceFeatureFolders) => {
-        fetchAudienceFeatures(
-          this._audienceFeatureService,
-          datamartId,
-          filter as SearchFilter,
-          demographicIds,
-        )
-          .then((features) => {
-            const baseFolder = creatBaseFolder(
-              intl.formatMessage(messages.audienceFeatures),
-              audienceFeatureFolders,
-              features,
-            );
-            this.setState({
-              audienceFeaturesByFolder: baseFolder,
-              selectedFolder: baseFolder,
-              isLoading: false,
-            });
-          })
-          .catch((err) => {
-            this.props.notifyError(err);
-            this.setState({
-              isLoading: false,
-            });
-          });
-      },
+    this._audienceFeatureService.fetchFoldersAndFeatures(
+      datamartId,
+      intl.formatMessage(messages.audienceFeatures),
+      this.setBaseFolder,
+      this.onFailure,
+      notifyError,
+      filter,
+      demographicIds,
     );
   };
 
@@ -134,7 +121,10 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
       if (selectedFolder && audienceFeaturesByFolder) {
         const path: AudienceFeaturesByFolder[] = [];
         const pathLoop = (folder: AudienceFeaturesByFolder) => {
-          const parent = getFolder(folder.parent_id, audienceFeaturesByFolder);
+          const parent = this._audienceFeatureService.getFolder(
+            folder.parent_id,
+            audienceFeaturesByFolder,
+          );
           if (folder.id === null) {
             path.unshift(audienceFeaturesByFolder);
           } else {
@@ -164,7 +154,10 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
   onSelectFolder = (id: string | null) => () => {
     const { audienceFeaturesByFolder } = this.state;
     this.setState({
-      selectedFolder: getFolder(id, audienceFeaturesByFolder),
+      selectedFolder: this._audienceFeatureService.getFolder(
+        id,
+        audienceFeaturesByFolder,
+      ),
     });
   };
 

@@ -27,12 +27,6 @@ import { Filter } from '../../Common/domain';
 import { AudienceFeaturesByFolder } from '../../../../../models/audienceFeature/AudienceFeatureResource';
 import { Button as McsButton } from '@mediarithmics-private/mcs-components-library';
 import AudienceFeatureFolder from './AudienceFeatureFolder';
-import {
-  fetchFolders,
-  fetchAudienceFeatures,
-  creatBaseFolder,
-  getFolder,
-} from '../../../../Audience/AudienceBuilder/constants';
 
 const { Content } = Layout;
 
@@ -100,37 +94,30 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
     }
   }
 
+  setBaseFolder = (baseFolder: AudienceFeaturesByFolder) => {
+    this.setState({
+      audienceFeaturesByFolder: baseFolder,
+      selectedFolder: baseFolder,
+      isLoading: false,
+    });
+  };
+
+  onFailure = (err: any) => {
+    this.props.notifyError(err);
+    this.setState({
+      isLoading: false,
+    });
+  };
+
   fetchFoldersAndFeatures = (datamartId: string, filter?: Index<any>) => {
     const { intl, notifyError } = this.props;
-    this.setState({
-      isLoading: true,
-    });
-    fetchFolders(this._audienceFeatureService, datamartId, notifyError).then(
-      (audienceFeatureFolders) => {
-        fetchAudienceFeatures(
-          this._audienceFeatureService,
-          datamartId,
-          filter as SearchFilter,
-        )
-          .then((features) => {
-            const baseFolder = creatBaseFolder(
-              intl.formatMessage(messages.audienceFeatures),
-              audienceFeatureFolders,
-              features,
-            );
-            this.setState({
-              audienceFeaturesByFolder: baseFolder,
-              selectedFolder: baseFolder,
-              isLoading: false,
-            });
-          })
-          .catch((err) => {
-            this.props.notifyError(err);
-            this.setState({
-              isLoading: false,
-            });
-          });
-      },
+    this._audienceFeatureService.fetchFoldersAndFeatures(
+      datamartId,
+      intl.formatMessage(messages.audienceFeatures),
+      this.setBaseFolder,
+      this.onFailure,
+      notifyError,
+      filter,
     );
   };
 
@@ -167,8 +154,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
                 ...filter,
                 currentPage: filter.currentPage - 1,
               };
-              fetchAudienceFeatures(
-                this._audienceFeatureService,
+              this._audienceFeatureService.fetchAudienceFeatures(
                 datamartId,
                 filter as SearchFilter,
               );
@@ -178,8 +164,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
                 state: state,
               });
             } else {
-              fetchAudienceFeatures(
-                this._audienceFeatureService,
+              this._audienceFeatureService.fetchAudienceFeatures(
                 datamartId,
                 filter as SearchFilter,
               );
@@ -246,7 +231,10 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
   onSelectFolder = (id: string | null) => () => {
     const { audienceFeaturesByFolder } = this.state;
     this.setState({
-      selectedFolder: getFolder(id, audienceFeaturesByFolder),
+      selectedFolder: this._audienceFeatureService.getFolder(
+        id,
+        audienceFeaturesByFolder,
+      ),
     });
   };
 
@@ -256,7 +244,10 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
       if (selectedFolder && audienceFeaturesByFolder) {
         const path: AudienceFeaturesByFolder[] = [];
         const pathLoop = (folder: AudienceFeaturesByFolder) => {
-          const parent = getFolder(folder.parent_id, audienceFeaturesByFolder);
+          const parent = this._audienceFeatureService.getFolder(
+            folder.parent_id,
+            audienceFeaturesByFolder,
+          );
           if (folder.id === null) {
             path.unshift(audienceFeaturesByFolder);
           } else {
@@ -310,23 +301,21 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
   };
 
   onFilterChange = (newFilter: SearchFilter) => {
-    if (newFilter.keywords !== undefined) {
-      this.setState({
-        filter: {
-          currentPage: newFilter.currentPage,
-          pageSize: newFilter.pageSize,
-          keywords: newFilter.keywords,
-        },
-      });
-    } else {
-      this.setState({
-        filter: {
-          currentPage: newFilter.currentPage,
-          pageSize: newFilter.pageSize,
-          keywords: '',
-        },
-      });
-    }
+    newFilter.keywords
+      ? this.setState({
+          filter: {
+            currentPage: newFilter.currentPage,
+            pageSize: newFilter.pageSize,
+            keywords: newFilter.keywords,
+          },
+        })
+      : this.setState({
+          filter: {
+            currentPage: newFilter.currentPage,
+            pageSize: newFilter.pageSize,
+            keywords: '',
+          },
+        });
   };
 
   handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
