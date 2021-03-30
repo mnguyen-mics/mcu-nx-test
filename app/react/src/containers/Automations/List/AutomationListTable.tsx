@@ -428,10 +428,10 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
             callback: this.deleteAutomation,
           },
           {
-            intlMessage:
+            message:
               scenario.status !== 'ACTIVE'
-                ? messages.activateScenario
-                : messages.pauseScenario,
+                ? formatMessage(messages.activateScenario)
+                : formatMessage(messages.pauseScenario),
             callback: this.activateOrPauseScenario,
           },
         ],
