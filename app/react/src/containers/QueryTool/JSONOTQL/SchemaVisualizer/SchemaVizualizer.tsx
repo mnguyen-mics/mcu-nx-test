@@ -73,7 +73,9 @@ export default class SchemaVizualizer extends React.Component<
           if (
             searchString &&
             (field.decorator
-              ? field.decorator.label.toLowerCase().includes(searchString.toLowerCase())
+              ? field.decorator.label
+                  .toLowerCase()
+                  .includes(searchString.toLowerCase())
               : field.name.toLowerCase().includes(searchString.toLowerCase()))
           )
             return true;
@@ -82,7 +84,9 @@ export default class SchemaVizualizer extends React.Component<
         if (
           searchString &&
           (field.decorator
-            ? field.decorator.label.toLowerCase().includes(searchString.toLowerCase())
+            ? field.decorator.label
+                .toLowerCase()
+                .includes(searchString.toLowerCase())
             : field.name.toLowerCase().includes(searchString.toLowerCase()))
         )
           return true;
@@ -101,7 +105,8 @@ export default class SchemaVizualizer extends React.Component<
     if (
       this.state.searchValue !== nextState.searchValue ||
       this.state.expandedKeys !== nextState.expandedKeys ||
-      this.state.treeData !== nextState.treeData
+      this.state.treeData !== nextState.treeData ||
+      this.props.schema?.id !== nextProps.schema?.id
     )
       return true;
     return false;
@@ -137,6 +142,7 @@ export default class SchemaVizualizer extends React.Component<
             ),
             key: cuid(),
             selectable: false,
+            className: 'mcs-schemaVizualizer_fieldNode_parent',
             children: this.unfilteredLoop(
               item,
               item.schemaType,
@@ -164,6 +170,7 @@ export default class SchemaVizualizer extends React.Component<
             />
           ),
           key: cuid(),
+          className: 'mcs-schemaVizualizer_fieldNode_child',
           selectable: false,
         };
       },
@@ -181,7 +188,9 @@ export default class SchemaVizualizer extends React.Component<
           isSchemaItem(item) &&
           searchString &&
           !(item.decorator
-            ? item.decorator.label.toLowerCase().includes(searchString.toLowerCase())
+            ? item.decorator.label
+                .toLowerCase()
+                .includes(searchString.toLowerCase())
             : item.name.toLowerCase().includes(searchString.toLowerCase())) &&
           !this.isIncludedInUnderlyingItems(item, searchString)
         )
@@ -190,7 +199,9 @@ export default class SchemaVizualizer extends React.Component<
           !isSchemaItem(item) &&
           searchString &&
           !(item.decorator
-            ? item.decorator.label.toLowerCase().includes(searchString.toLowerCase())
+            ? item.decorator.label
+                .toLowerCase()
+                .includes(searchString.toLowerCase())
             : item.name.toLowerCase().includes(searchString.toLowerCase()))
         )
           return false;
@@ -202,7 +213,9 @@ export default class SchemaVizualizer extends React.Component<
             isSchemaItem(item) &&
             searchString &&
             (item.decorator
-              ? item.decorator.label.toLowerCase().includes(searchString.toLowerCase())
+              ? item.decorator.label
+                  .toLowerCase()
+                  .includes(searchString.toLowerCase())
               : item.name.toLowerCase().includes(searchString.toLowerCase()))
           ) {
             return {
@@ -224,6 +237,7 @@ export default class SchemaVizualizer extends React.Component<
                 />
               ),
               key: cuid(),
+              className: 'mcs-schemaVizualizer_fieldNode_parent',
               selectable: false,
               children: this.unfilteredLoop(
                 item,
@@ -253,8 +267,14 @@ export default class SchemaVizualizer extends React.Component<
                 />
               ),
               key: cuid(),
+              className: 'mcs-schemaVizualizer_fieldNode_parent',
               selectable: false,
-              children: this.loop(item, item.schemaType, searchString,disableDragAndDrop),
+              children: this.loop(
+                item,
+                item.schemaType,
+                searchString,
+                disableDragAndDrop,
+              ),
             };
           }
           return {
@@ -276,6 +296,7 @@ export default class SchemaVizualizer extends React.Component<
               />
             ),
             key: cuid(),
+            className: 'mcs-schemaVizualizer_fieldNode_child',
             selectable: false,
           };
         },
@@ -285,6 +306,7 @@ export default class SchemaVizualizer extends React.Component<
     previousProps: SchemaVizualizerProps,
     previousState: SchemaVizualizerState,
   ) {
+    const { schema, disableDragAndDrop } = this.props;
     if (
       previousState.treeData !== this.state.treeData &&
       this.state.searchValue &&
@@ -293,8 +315,22 @@ export default class SchemaVizualizer extends React.Component<
       this.setState({
         expandedKeys: this.getExpandedKeys(this.state.treeData, []),
       });
-      
     }
+    if (
+      this.props.schema &&
+      previousProps.schema &&
+      this.props.schema !== previousProps.schema
+    )
+      this.setState({
+        treeData: schema
+          ? this.loop(
+              schema,
+              undefined,
+              this.state.searchValue,
+              disableDragAndDrop,
+            )
+          : [],
+      });
   }
 
   componentDidMount() {
@@ -329,7 +365,6 @@ export default class SchemaVizualizer extends React.Component<
     return expandedKeys;
   };
 
-  
   render() {
     const { schema } = this.props;
     const { expandedKeys, treeData } = this.state;

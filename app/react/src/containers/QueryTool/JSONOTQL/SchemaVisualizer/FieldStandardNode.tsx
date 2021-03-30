@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { SchemaItem, FieldInfoEnhancedResource } from '../domain';
 import { Tooltip } from 'antd';
-import cuid from 'cuid';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 export type FieldNodeProps = FieldNodeObjectProps | FieldNodeFieldProps;
@@ -77,14 +76,11 @@ class FieldNode extends React.Component<FieldNodeProps, FieldNodeState> {
       item.decorator.help_text
     ) {
       const helptext = `${item.decorator.help_text} - ${Fieldtype}`;
-      const id = cuid();
-      const getPopupContainer = () => document.getElementById(id)!;
       helper = (
-        <span className="field-type" id={id}>
+        <span className="field-type">
           <Tooltip
             placement="left"
-            title={helptext}
-            getPopupContainer={getPopupContainer}>
+            title={helptext}>
             <McsIcon type="question" />
           </Tooltip>
         </span>
@@ -104,10 +100,10 @@ class FieldNode extends React.Component<FieldNodeProps, FieldNodeState> {
             }`}>
             {searchString &&
             itemName.toLocaleLowerCase().includes(searchString.toLowerCase())
-              ? this.formatString(searchString, itemName).map(expr => {
+              ? this.formatString(searchString, itemName).map((expr,index) => {
                   if (expr.toLowerCase() === searchString.toLowerCase())
-                    return <b className="mcs-shcemaFieldNode_search">{expr}</b>;
-                  return expr;
+                    return <span className="mcs-schemaFieldNode_search">{expr}</span>;
+                  return (<span className="mcs-schemaFieldNode_fragment" key={index}>{expr}</span>);
                 })
               : itemName}
             {helper}
