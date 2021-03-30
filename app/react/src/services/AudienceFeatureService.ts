@@ -1,15 +1,21 @@
-import { AudienceFeatureFolderResource } from './../models/audienceFeature/AudienceFeatureResource';
+import {
+  AudienceFeatureFolderResource,
+  AudienceFeaturesByFolder,
+} from './../models/audienceFeature/AudienceFeatureResource';
 import { AudienceFeatureResource } from '../models/audienceFeature';
 import { injectable } from 'inversify';
-import { PaginatedApiParam } from '../utils/ApiHelper';
+import { PaginatedApiParam, getPaginatedApiParam } from '../utils/ApiHelper';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
+import {
+  Index,
+  SearchFilter,
+} from '@mediarithmics-private/mcs-components-library/lib/utils';
+import { Action } from 'redux-actions';
 
 export interface AudienceFeatureOptions extends PaginatedApiParam {
   keywords?: string[];
   exclude?: string[];
   folder_id?: string;
-  // Fake variable to remove once MICS-7800 is in production
-  fake_dataset?: boolean;
 }
 
 export interface IAudienceFeatureService {
@@ -64,6 +70,27 @@ export interface IAudienceFeatureService {
     datamartId: string,
     parentId: string,
   ) => Promise<DataListResponse<AudienceFeatureFolderResource>>;
+
+  fetchAudienceFeatures: (
+    datamartId: string,
+    filter?: SearchFilter,
+    demographicIds?: string[],
+  ) => Promise<AudienceFeatureResource[]>;
+
+  fetchFoldersAndFeatures: (
+    datamartId: string,
+    baseFolderName: string,
+    setBaseFolder: (features: AudienceFeaturesByFolder) => void,
+    onFailure: (err: any) => void,
+    notifyError: (err: any, notifConfig?: any) => Action<any>,
+    filter?: Index<any>,
+    demographicIds?: string[],
+  ) => void;
+
+  getFolderContent: (
+    id?: string,
+    audienceFeaturesByFolder?: AudienceFeaturesByFolder,
+  ) => AudienceFeaturesByFolder | undefined;
 }
 
 @injectable()
@@ -73,304 +100,6 @@ export class AudienceFeatureService implements IAudienceFeatureService {
     options?: AudienceFeatureOptions,
   ): Promise<DataListResponse<AudienceFeatureResource>> {
     const endpoint = `datamarts/${datamartId}/audience_features`;
-    if (!!options?.fake_dataset) {
-      return Promise.resolve({
-        status: 'ok',
-        data: [
-          {
-            id: '11',
-            name: 'Audience Feature 11',
-            datamart_id: '1',
-            description:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus',
-            token: 'string',
-            addressable_object: 'string',
-            object_tree_expression: 'string',
-            variables: [],
-            audienceFeatureFolderId: 'string',
-          },
-          {
-            id: '12',
-            name: 'Audience Feature 12',
-            datamart_id: '1',
-            description:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus',
-            token: 'string',
-            addressable_object: 'string',
-            object_tree_expression: 'string',
-            variables: [],
-            audienceFeatureFolderId: 'string',
-          },
-          {
-            id: '21',
-            name: 'Audience Feature 21',
-            datamart_id: '1',
-            description:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus',
-            token: 'string',
-            addressable_object: 'string',
-            object_tree_expression: 'string',
-            variables: [],
-            audienceFeatureFolderId: 'string',
-          },
-          {
-            id: '22',
-            name: 'Audience Feature 22',
-            datamart_id: '1',
-            description:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus',
-            token: 'string',
-            addressable_object: 'string',
-            object_tree_expression: 'string',
-            variables: [
-              {
-                field_name: 'creation_ts',
-                parameter_name: 'creation_ts',
-                path: [''],
-                type: 'String',
-              },
-              {
-                field_name: 'marital_situation',
-                parameter_name: 'marital_situation',
-                path: [''],
-                type: 'String',
-              },
-            ],
-            audienceFeatureFolderId: 'string',
-          },
-          {
-            id: '23',
-            name: 'Audience Feature 23',
-            datamart_id: '1',
-            description:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus',
-            token: 'string',
-            addressable_object: 'string',
-            object_tree_expression: 'string',
-            variables: [],
-            audienceFeatureFolderId: 'string',
-          },
-          {
-            id: '31',
-            name: 'Audience Feature 31',
-            datamart_id: '1',
-            description:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus',
-            token: 'string',
-            addressable_object: 'string',
-            object_tree_expression: 'string',
-            variables: [],
-            audienceFeatureFolderId: 'string',
-          },
-          // Audience features in sub folders
-          {
-            id: '41',
-            name: 'Audience Feature 41',
-            datamart_id: '1',
-            description:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus',
-            token: 'string',
-            addressable_object: 'string',
-            object_tree_expression: 'string',
-            variables: [],
-            audienceFeatureFolderId: 'string',
-          },
-          {
-            id: '42',
-            name: 'Audience Feature 42',
-            datamart_id: '1',
-            description:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus',
-            token: 'string',
-            addressable_object: 'string',
-            object_tree_expression: 'string',
-            variables: [],
-            audienceFeatureFolderId: 'string',
-          },
-          {
-            id: '43',
-            name: 'Audience Feature 43',
-            datamart_id: '1',
-            description:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus',
-            token: 'string',
-            addressable_object: 'string',
-            object_tree_expression: 'string',
-            variables: [],
-            audienceFeatureFolderId: 'string',
-          },
-          {
-            id: '51',
-            name: 'Audience Feature 51',
-            datamart_id: '1',
-            description:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus',
-            token: 'string',
-            addressable_object: 'string',
-            object_tree_expression: 'string',
-            variables: [],
-            audienceFeatureFolderId: 'string',
-          },
-          {
-            id: '52',
-            name: 'Audience Feature 52',
-            datamart_id: '1',
-            description:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus',
-            token: 'string',
-            addressable_object: 'string',
-            object_tree_expression: 'string',
-            variables: [],
-            audienceFeatureFolderId: 'string',
-          },
-          {
-            id: '61',
-            name: 'Audience Feature 61',
-            datamart_id: '1',
-            description:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus',
-            token: 'string',
-            addressable_object: 'string',
-            object_tree_expression: 'string',
-            variables: [],
-            audienceFeatureFolderId: 'string',
-          },
-          {
-            id: '62',
-            name: 'Audience Feature 62',
-            datamart_id: '1',
-            description:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus',
-            token: 'string',
-            addressable_object: 'string',
-            object_tree_expression: 'string',
-            variables: [],
-            audienceFeatureFolderId: 'string',
-          },
-          {
-            id: '63',
-            name: 'Audience Feature 63',
-            datamart_id: '1',
-            description:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus',
-            token: 'string',
-            addressable_object: 'string',
-            object_tree_expression: 'string',
-            variables: [],
-            audienceFeatureFolderId: 'string',
-          },
-          {
-            id: '71',
-            name: 'Audience Feature 71',
-            datamart_id: '1',
-            description:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus',
-            token: 'string',
-            addressable_object: 'string',
-            object_tree_expression: 'string',
-            variables: [],
-            audienceFeatureFolderId: 'string',
-          },
-          {
-            id: '72',
-            name: 'Audience Feature 72',
-            datamart_id: '1',
-            description:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus',
-            token: 'string',
-            addressable_object: 'string',
-            object_tree_expression: 'string',
-            variables: [],
-            audienceFeatureFolderId: 'string',
-          },
-          {
-            id: '81',
-            name: 'Audience Feature 81',
-            datamart_id: '1',
-            description:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus',
-            token: 'string',
-            addressable_object: 'string',
-            object_tree_expression: 'string',
-            variables: [],
-            audienceFeatureFolderId: 'string',
-          },
-          {
-            id: '91',
-            name: 'Audience Feature 91',
-            datamart_id: '1',
-            description:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus',
-            token: 'string',
-            addressable_object: 'string',
-            object_tree_expression: 'string',
-            variables: [],
-            audienceFeatureFolderId: 'string',
-          },
-          {
-            id: '101',
-            name: 'Audience Feature 101',
-            datamart_id: '1',
-            description:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus',
-            token: 'string',
-            addressable_object: 'string',
-            object_tree_expression: 'string',
-            variables: [],
-            audienceFeatureFolderId: 'string',
-          },
-          {
-            id: '102',
-            name: 'Audience Feature 102',
-            datamart_id: '1',
-            description:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus',
-            token: 'string',
-            addressable_object: 'string',
-            object_tree_expression: 'string',
-            variables: [],
-            audienceFeatureFolderId: 'string',
-          },
-          {
-            id: '111',
-            name: 'Audience Feature 111',
-            datamart_id: '1',
-            description:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus',
-            token: 'string',
-            addressable_object: 'string',
-            object_tree_expression: 'string',
-            variables: [],
-            audienceFeatureFolderId: 'string',
-          },
-          {
-            id: '112',
-            name: 'Audience Feature 112',
-            datamart_id: '1',
-            description:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus',
-            token: 'string',
-            addressable_object: 'string',
-            object_tree_expression: 'string',
-            variables: [],
-            audienceFeatureFolderId: 'string',
-          },
-          {
-            id: '113',
-            name: 'Audience Feature 113',
-            datamart_id: '1',
-            description:
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus',
-            token: 'string',
-            addressable_object: 'string',
-            object_tree_expression: 'string',
-            variables: [],
-            audienceFeatureFolderId: 'string',
-          },
-        ],
-        count: 2,
-      });
-    }
     return ApiService.getRequest(endpoint, options);
   }
 
@@ -396,6 +125,9 @@ export class AudienceFeatureService implements IAudienceFeatureService {
     body: Partial<AudienceFeatureResource>,
   ): Promise<DataResponse<AudienceFeatureResource>> {
     const endpoint = `datamarts/${datamartId}/audience_features/${audienceFeatureId}`;
+    if (body.folder_id === '') {
+      body.folder_id = null;
+    }
     return ApiService.putRequest(endpoint, body);
   }
 
@@ -412,107 +144,8 @@ export class AudienceFeatureService implements IAudienceFeatureService {
   getAudienceFeatureFolders(
     datamartId: string,
   ): Promise<DataListResponse<AudienceFeatureFolderResource>> {
-    // const endpoint = `datamarts/${datamartId}/audience_feature_folders`;
-    // return ApiService.getRequest(endpoint);
-
-    return Promise.resolve({
-      status: 'ok',
-      data: [
-        // first level
-        {
-          id: '1',
-          name: 'Demographics',
-          datamart_id: '1',
-          audience_feature_ids: ['11', '12'],
-          parent_id: null,
-          children_ids: ['4', '5'],
-        },
-        {
-          id: '2',
-          name: 'Intents',
-          datamart_id: '1',
-          audience_feature_ids: ['21', '22'],
-          parent_id: null,
-          children_ids: ['6', '7', '8'],
-        },
-        {
-          id: '3',
-          name: 'Interests',
-          datamart_id: '1',
-          audience_feature_ids: ['31', '32'],
-          parent_id: null,
-          children_ids: ['9', '10', '11'],
-        },
-        // sub folders Demographics
-        {
-          id: '4',
-          name: 'Sub Folder Demographics 1',
-          datamart_id: '1',
-          audience_feature_ids: ['41', '42', '43'],
-          parent_id: '1',
-          children_ids: [],
-        },
-        {
-          id: '5',
-          name: 'Sub Folder Demographics 2',
-          datamart_id: '1',
-          audience_feature_ids: ['51', '52'],
-          parent_id: '1',
-          children_ids: [],
-        },
-        // sub folders Intents
-        {
-          id: '6',
-          name: 'Sub Folder Intents 1',
-          datamart_id: '1',
-          audience_feature_ids: ['61', '62', '63'],
-          parent_id: '2',
-          children_ids: [],
-        },
-        {
-          id: '7',
-          name: 'Sub Folder Intents 2',
-          datamart_id: '1',
-          audience_feature_ids: ['71', '72'],
-          parent_id: '2',
-          children_ids: [],
-        },
-        {
-          id: '8',
-          name: 'Sub Folder Intents 3',
-          datamart_id: '1',
-          audience_feature_ids: ['81'],
-          parent_id: '2',
-          children_ids: [],
-        },
-        // sub folders Interests
-        {
-          id: '9',
-          name: 'Sub Folder Interests 1',
-          datamart_id: '1',
-          audience_feature_ids: ['91'],
-          parent_id: '3',
-          children_ids: [],
-        },
-        {
-          id: '10',
-          name: 'Sub Folder Interests 2',
-          datamart_id: '1',
-          audience_feature_ids: ['101', '102'],
-          parent_id: '3',
-          children_ids: [],
-        },
-        {
-          id: '11',
-          name: 'Sub Folder Interests 3',
-          datamart_id: '1',
-          audience_feature_ids: ['111', '112', '113'],
-          parent_id: '3',
-          children_ids: [],
-        },
-      ],
-      count: 3,
-    });
+    const endpoint = `datamarts/${datamartId}/audience_feature_folders`;
+    return ApiService.getRequest(endpoint);
   }
 
   createAudienceFeatureFolder(
@@ -537,6 +170,9 @@ export class AudienceFeatureService implements IAudienceFeatureService {
     body: Partial<AudienceFeatureFolderResource>,
   ): Promise<DataResponse<AudienceFeatureFolderResource>> {
     const endpoint = `datamarts/${datamartId}/audience_feature_folders/${folderId}`;
+    if (body.parent_id === '') {
+      body.parent_id = null;
+    }
     return ApiService.putRequest(endpoint, body);
   }
 
@@ -555,4 +191,144 @@ export class AudienceFeatureService implements IAudienceFeatureService {
     const endpoint = `datamarts/${datamartId}/audience_feature_folders`;
     return ApiService.getRequest(endpoint, { parent: parentId });
   }
+
+  private _fetchFolders = (
+    datamartId: string,
+    notifyError: (err: any, notifConfig?: any) => Action<any>,
+  ) => {
+    return this.getAudienceFeatureFolders(datamartId)
+      .then((res) => {
+        return res.data;
+      })
+      .catch((err) => {
+        notifyError(err);
+        return [];
+      });
+  };
+
+  fetchAudienceFeatures = (
+    datamartId: string,
+    filter?: SearchFilter,
+    demographicIds?: string[],
+  ) => {
+    const options: AudienceFeatureOptions = {
+      ...getPaginatedApiParam(filter?.currentPage, filter?.pageSize),
+    };
+
+    if (filter?.keywords) {
+      options.keywords = [filter.keywords];
+    }
+
+    if (demographicIds && demographicIds.length >= 1) {
+      options.exclude = demographicIds;
+    }
+
+    return this.getAudienceFeatures(datamartId, options).then((res) => {
+      return res.data;
+    });
+  };
+
+  fetchFoldersAndFeatures = (
+    datamartId: string,
+    baseFolderName: string,
+    setBaseFolder: (baseFolder: AudienceFeaturesByFolder) => void,
+    onFailure: (err: any) => void,
+    notifyError: (err: any, notifConfig?: any) => Action<any>,
+    filter?: Index<any>,
+    demographicIds?: string[],
+  ) => {
+    const res: [
+      Promise<AudienceFeatureFolderResource[]>,
+      Promise<AudienceFeatureResource[]>,
+    ] = [
+      this._fetchFolders(datamartId, notifyError),
+      this.fetchAudienceFeatures(
+        datamartId,
+        filter as SearchFilter,
+        demographicIds,
+      ),
+    ];
+    Promise.all(res)
+      .then((results: any[]) => {
+        const audienceFeatureFolders: AudienceFeatureFolderResource[] =
+          results[0];
+        const features: AudienceFeatureResource[] = results[1];
+        const baseFolder = this._createBaseFolder(
+          baseFolderName,
+          audienceFeatureFolders,
+          features,
+        );
+        setBaseFolder(baseFolder);
+      })
+      .catch((err) => {
+        onFailure(err);
+      });
+  };
+
+  private _folderLoop = (
+    folders: AudienceFeatureFolderResource[],
+    features: AudienceFeatureResource[],
+  ): AudienceFeaturesByFolder[] => {
+    return folders.map((folder) => {
+      if (!folder.parent_id) {
+        folder.parent_id = undefined;
+      }
+      return {
+        id: folder.id,
+        name: folder.name,
+        parent_id: folder.parent_id,
+        audience_features: features.filter((f: AudienceFeatureResource) =>
+          folder.audience_features_ids?.includes(f.id),
+        ),
+        children: this._folderLoop(
+          folders.filter(
+            (f: AudienceFeatureFolderResource) =>
+              f.id && folder.children_ids?.includes(f.id),
+          ),
+          features,
+        ),
+      };
+    });
+  };
+
+  private _createBaseFolder = (
+    name: string,
+    folders: AudienceFeatureFolderResource[],
+    features: AudienceFeatureResource[],
+  ): AudienceFeaturesByFolder => {
+    return {
+      id: undefined,
+      name: name,
+      parent_id: 'root',
+      children: this._folderLoop(
+        folders.filter((f: AudienceFeatureFolderResource) => !f.parent_id),
+        features,
+      ),
+      audience_features: features.filter(
+        (f: AudienceFeatureResource) => !f.folder_id,
+      ),
+    };
+  };
+
+  getFolderContent = (
+    id?: string,
+    audienceFeaturesByFolder?: AudienceFeaturesByFolder,
+  ) => {
+    let selectedFolder: AudienceFeaturesByFolder | undefined;
+    const loop = (folder: AudienceFeaturesByFolder) => {
+      if (!id) {
+        selectedFolder = audienceFeaturesByFolder;
+      } else {
+        folder.children.forEach((f) => {
+          if (f.id === id) {
+            selectedFolder = f;
+          } else {
+            loop(f);
+          }
+        });
+      }
+    };
+    if (audienceFeaturesByFolder) loop(audienceFeaturesByFolder);
+    return selectedFolder;
+  };
 }

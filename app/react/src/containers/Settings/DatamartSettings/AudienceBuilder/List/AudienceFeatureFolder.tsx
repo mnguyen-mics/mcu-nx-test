@@ -14,7 +14,7 @@ import { FolderOutlined } from '@ant-design/icons';
 
 export interface AudienceFeatureFolderProps {
   folder: AudienceFeaturesByFolder;
-  onSelectFolder: (id: string | null) => () => void;
+  onSelectFolder: (id?: string) => () => void;
   renameFolder: (
     id: string,
     name: string,
@@ -50,9 +50,9 @@ class AudienceFeatureFolder extends React.Component<Props, State> {
     this.setState({ inputValue: e.target.value });
   };
 
-  getMenu = (id: string | null) => {
+  getMenu = (id?: string) => {
     const { intl, deleteFolder } = this.props;
-    if (id !== null) {
+    if (id) {
       const displayForm = () => {
         this.setState({
           editionMode: true,
@@ -69,7 +69,9 @@ class AudienceFeatureFolder extends React.Component<Props, State> {
             </div>
           </Menu.Item>
           <Menu.Item key="1">
-            <div onClick={onDelete}>{intl.formatMessage(messages.audienceFeatureDelete)}</div>
+            <div onClick={onDelete}>
+              {intl.formatMessage(messages.audienceFeatureDelete)}
+            </div>
           </Menu.Item>
         </Menu>
       );
@@ -77,13 +79,14 @@ class AudienceFeatureFolder extends React.Component<Props, State> {
     return <div />;
   };
 
-  renameFolder = (id: string | null) => () => {
+  renameFolder = (id?: string) => () => {
     const { renameFolder } = this.props;
     const { inputValue } = this.state;
-    if (id !== null) {
-      return renameFolder(id, inputValue);
+    if (id) {
+      return renameFolder(id, inputValue).then((_) => this.cancelEdition());
+    } else {
+      return;
     }
-    return;
   };
 
   cancelEdition = () => {
@@ -96,45 +99,45 @@ class AudienceFeatureFolder extends React.Component<Props, State> {
     const { folder, onSelectFolder, intl } = this.props;
     const { editionMode, inputValue } = this.state;
     return (
-      <div onClick={onSelectFolder(folder.id)}>
-        <Row
-          key={folder.id ? folder.id : 'root_key'}
-          className="mcs-audienceFeatureSettings_folder"
-        >
-          <Col span={2}>
+      <Row
+        key={folder.id ? folder.id : 'root_key'}
+        className="mcs-audienceFeatureSettings_folder"
+      >
+        <Col span={2}>
+          <div onClick={onSelectFolder(folder.id)}>
             <FolderOutlined className="menu-icon" />
-          </Col>
-          <Col span={21}>
-            {editionMode ? (
-              <div className="mcs-audienceFeatureSettings-folderForm">
-                <Input
-                  value={inputValue}
-                  onChange={this.handleInputChange}
-                  className="mcs-audienceFeatureSettings-folderInput"
-                  placeholder={intl.formatMessage(
-                    messages.audienceFeaturePlaceholderFolderInput,
-                  )}
-                />
+          </div>
+        </Col>
+        <Col span={21}>
+          {editionMode ? (
+            <div className="mcs-audienceFeatureSettings-folderForm">
+              <Input
+                value={inputValue}
+                onChange={this.handleInputChange}
+                className="mcs-audienceFeatureSettings-folderInput"
+                placeholder={intl.formatMessage(
+                  messages.audienceFeaturePlaceholderFolderInput,
+                )}
+              />
 
-                <Button type="primary" onClick={this.renameFolder(folder.id)}>
-                  <FormattedMessage {...messages.audienceFeatureRename} />
-                </Button>
+              <Button type="primary" onClick={this.renameFolder(folder.id)}>
+                <FormattedMessage {...messages.audienceFeatureRename} />
+              </Button>
 
-                <Button onClick={this.cancelEdition}>
-                  <FormattedMessage {...messages.audienceFeatureCancelButton} />
-                </Button>
-              </div>
-            ) : (
-              folder.name
-            )}
-          </Col>
-          <Col span={1}>
-            <Dropdown overlay={this.getMenu(folder.id)} trigger={['click']}>
-              <McsIcon type="chevron" />
-            </Dropdown>
-          </Col>
-        </Row>
-      </div>
+              <Button onClick={this.cancelEdition}>
+                <FormattedMessage {...messages.audienceFeatureCancelButton} />
+              </Button>
+            </div>
+          ) : (
+            <div onClick={onSelectFolder(folder.id)}>{folder.name}</div>
+          )}
+        </Col>
+        <Col span={1}>
+          <Dropdown overlay={this.getMenu(folder.id)} trigger={['click']}>
+            <McsIcon type="chevron" />
+          </Dropdown>
+        </Col>
+      </Row>
     );
   }
 }

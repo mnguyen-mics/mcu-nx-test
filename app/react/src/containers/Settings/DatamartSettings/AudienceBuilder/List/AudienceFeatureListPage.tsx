@@ -17,20 +17,14 @@ import injectNotifications, {
 } from '../../../../Notifications/injectNotifications';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
-import {
-  IAudienceFeatureService,
-  AudienceFeatureOptions,
-} from '../../../../../services/AudienceFeatureService';
+import { IAudienceFeatureService } from '../../../../../services/AudienceFeatureService';
 import { AudienceFeatureResource } from '../../../../../models/audienceFeature';
 import {
   Index,
   SearchFilter,
 } from '@mediarithmics-private/mcs-components-library/lib/utils';
 import { Filter } from '../../Common/domain';
-import {
-  AudienceFeaturesByFolder,
-  AudienceFeatureFolderResource,
-} from '../../../../../models/audienceFeature/AudienceFeatureResource';
+import { AudienceFeaturesByFolder } from '../../../../../models/audienceFeature/AudienceFeatureResource';
 import { Button as McsButton } from '@mediarithmics-private/mcs-components-library';
 import AudienceFeatureFolder from './AudienceFeatureFolder';
 
@@ -82,102 +76,49 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
       match: {
         params: { datamartId },
       },
-      location: { search },
     } = this.props;
-    const filter = parseSearch(search, AUDIENCE_FEATURE_SEARCH_SETTINGS);
 
-    this.fetchFoldersAndFeatures(datamartId, filter);
+    this.fetchFoldersAndFeatures(datamartId);
   }
 
-  fetchFoldersAndFeatures = (datamartId: string, filter: Index<any>) => {
-    const { intl } = this.props;
-    this.setState({
-      isLoading: true,
-    });
-    this.fetchFolders(datamartId).then(audienceFeatureFolders => {
-      this.fetchAudienceFeatures()
-        .then(features => {
-          const folderLoop = (
-            folders: AudienceFeatureFolderResource[],
-          ): AudienceFeaturesByFolder[] => {
-            return folders.map(folder => {
-              return {
-                id: folder.id,
-                name: folder.name,
-                parent_id: folder.parent_id,
-                audience_features: features.filter(
-                  (f: AudienceFeatureResource) =>
-                    folder.audience_feature_ids.includes(f.id),
-                ),
-                children: folderLoop(
-                  audienceFeatureFolders.filter(
-                    (f: AudienceFeatureFolderResource) =>
-                      f.id !== null && folder.children_ids.includes(f.id),
-                  ),
-                ),
-              };
-            });
-          };
-          const baseFolder = {
-            id: null,
-            name: intl.formatMessage(messages.audienceFeatures),
-            parent_id: 'root',
-            children: folderLoop(
-              audienceFeatureFolders.filter(
-                (f: AudienceFeatureFolderResource) => f.parent_id === null,
-              ),
-            ),
-            audience_features: [],
-          };
-          this.setState({
-            audienceFeaturesByFolder: baseFolder,
-            selectedFolder: baseFolder,
-            isLoading: false,
-          });
-        })
-        .catch(err => {
-          this.props.notifyError(err);
-          this.setState({
-            isLoading: false,
-          });
-        });
-    });
-  };
-
-  fetchFolders = (datamartId: string) => {
-    return this._audienceFeatureService
-      .getAudienceFeatureFolders(datamartId)
-      .then(res => {
-        return res.data;
-      })
-      .catch(err => {
-        this.props.notifyError(err);
-        return [];
-      });
-  };
-
-  fetchAudienceFeatures = (filter?: SearchFilter) => {
+  componentDidUpdate(prevProps: Props, prevState: State) {
+    const { filter: prevFilter } = prevState;
+    const { filter } = this.state;
     const {
       match: {
         params: { datamartId },
       },
     } = this.props;
-
-    const options: AudienceFeatureOptions = {
-      // ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
-    };
-
-    if (filter?.keywords) {
-      options.keywords = [filter.keywords];
+    if (filter.keywords !== prevFilter.keywords) {
+      this.fetchFoldersAndFeatures(datamartId, filter);
     }
+  }
 
-    options.fake_dataset = true;
+  setBaseFolder = (baseFolder: AudienceFeaturesByFolder) => {
+    this.setState({
+      audienceFeaturesByFolder: baseFolder,
+      selectedFolder: baseFolder,
+      isLoading: false,
+    });
+  };
 
-    return this._audienceFeatureService
-      .getAudienceFeatures(datamartId, options)
-      .then(res => {
-        return res.data;
-      });
+  onFailure = (err: any) => {
+    this.props.notifyError(err);
+    this.setState({
+      isLoading: false,
+    });
+  };
+
+  fetchFoldersAndFeatures = (datamartId: string, filter?: Index<any>) => {
+    const { intl, notifyError } = this.props;
+    this._audienceFeatureService.fetchFoldersAndFeatures(
+      datamartId,
+      intl.formatMessage(messages.audienceFeatures),
+      this.setBaseFolder,
+      this.onFailure,
+      notifyError,
+      filter,
+    );
   };
 
   deleteAudienceFeature = (resource: AudienceFeatureResource) => {
@@ -186,6 +127,9 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
       history,
       intl: { formatMessage },
       notifyError,
+      match: {
+        params: { datamartId },
+      },
     } = this.props;
 
     const { selectedFolder } = this.state;
@@ -210,17 +154,23 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
                 ...filter,
                 currentPage: filter.currentPage - 1,
               };
-              this.fetchAudienceFeatures(filter as SearchFilter);
+              this._audienceFeatureService.fetchAudienceFeatures(
+                datamartId,
+                filter as SearchFilter,
+              );
               history.replace({
                 pathname: pathname,
                 search: updateSearch(search, newFilter),
                 state: state,
               });
             } else {
-              this.fetchAudienceFeatures(filter as SearchFilter);
+              this._audienceFeatureService.fetchAudienceFeatures(
+                datamartId,
+                filter as SearchFilter,
+              );
             }
           })
-          .catch(err => {
+          .catch((err) => {
             notifyError(err);
           });
       },
@@ -240,9 +190,10 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
       .updateAudienceFeatureFolder(datamartId, folderId, {
         name: newName,
       })
-      .catch(err => {
+      .catch((err) => {
         this.props.notifyError(err);
-      });
+      })
+      .then((_) => this.fetchFoldersAndFeatures(datamartId));
   };
 
   createFolder = () => {
@@ -258,7 +209,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
         datamart_id: datamartId,
         parent_id: selectedFolder?.id,
       })
-      .catch(err => {
+      .catch((err) => {
         this.props.notifyError(err);
       });
   };
@@ -271,34 +222,19 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
     } = this.props;
     return this._audienceFeatureService
       .deleteAudienceFeatureFolder(datamartId, folderId)
-      .catch(err => {
+      .catch((err) => {
         this.props.notifyError(err);
-      });
+      })
+      .then((_) => this.fetchFoldersAndFeatures(datamartId));
   };
 
-  getFolder = (id: string | null) => {
+  onSelectFolder = (id?: string) => () => {
     const { audienceFeaturesByFolder } = this.state;
-    let selectedFolder: AudienceFeaturesByFolder | undefined;
-    const loop = (folder: AudienceFeaturesByFolder) => {
-      if (id === null) {
-        selectedFolder = audienceFeaturesByFolder;
-      } else {
-        folder.children.forEach(f => {
-          if (f.id === id) {
-            selectedFolder = f;
-          } else {
-            loop(f);
-          }
-        });
-      }
-    };
-    if (audienceFeaturesByFolder) loop(audienceFeaturesByFolder);
-    return selectedFolder;
-  };
-
-  onSelectFolder = (id: string | null) => () => {
     this.setState({
-      selectedFolder: this.getFolder(id),
+      selectedFolder: this._audienceFeatureService.getFolderContent(
+        id,
+        audienceFeaturesByFolder,
+      ),
     });
   };
 
@@ -308,8 +244,11 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
       if (selectedFolder && audienceFeaturesByFolder) {
         const path: AudienceFeaturesByFolder[] = [];
         const pathLoop = (folder: AudienceFeaturesByFolder) => {
-          const parent = this.getFolder(folder.parent_id);
-          if (folder.id === null) {
+          const parent = this._audienceFeatureService.getFolderContent(
+            folder.parent_id,
+            audienceFeaturesByFolder,
+          );
+          if (!folder.id) {
             path.unshift(audienceFeaturesByFolder);
           } else {
             path.unshift(folder);
@@ -318,7 +257,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
         };
         pathLoop(selectedFolder);
 
-        return path.map(elt => {
+        return path.map((elt) => {
           return (
             <Breadcrumb.Item key={elt.id ? elt.id : 'root_key'}>
               <McsButton onClick={this.onSelectFolder(elt.id)}>
@@ -345,7 +284,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
         {this.getBreadCrumb()}
         <div className="mcs-audienceFeatureSettings_folderTable">
           {!!selectedFolder &&
-            selectedFolder.children.map(folder => {
+            selectedFolder.children.map((folder) => {
               return (
                 <AudienceFeatureFolder
                   key={folder.id ? folder.id : 'root_key'}
@@ -362,7 +301,13 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
   };
 
   onFilterChange = (newFilter: SearchFilter) => {
-    this.fetchAudienceFeatures(newFilter);
+    this.setState({
+      filter: {
+        currentPage: newFilter.currentPage,
+        pageSize: newFilter.pageSize,
+        keywords: newFilter.keywords ? newFilter.keywords : '',
+      },
+    });
   };
 
   handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -394,7 +339,13 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
     };
 
     const onOk = () => {
-      this.createFolder();
+      this.createFolder().then((_) => {
+        this.fetchFoldersAndFeatures(datamartId);
+        this.setState({
+          displayFolderInput: false,
+          inputValue: '',
+        });
+      });
     };
 
     const onCancel = () => {
@@ -409,7 +360,9 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
           value={inputValue}
           onChange={this.handleInputChange}
           className="mcs-audienceFeatureSettings-folderInput"
-          placeholder={intl.formatMessage(messages.audienceFeaturePlaceholderFolderInput)}
+          placeholder={intl.formatMessage(
+            messages.audienceFeaturePlaceholderFolderInput,
+          )}
         />
 
         <Button type="primary" onClick={onOk}>
@@ -422,7 +375,11 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
       </div>
     ) : (
       <div>
-        <Button type="primary" onClick={addNewFeature} className="mcs-audienceFeature_creation_button">
+        <Button
+          type="primary"
+          onClick={addNewFeature}
+          className="mcs-audienceFeature_creation_button"
+        >
           <FormattedMessage {...messages.audienceFeatureNew} />
         </Button>
         <Button
@@ -454,7 +411,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
                 dataSource={selectedFolder.audience_features}
                 total={
                   selectedFolder &&
-                  selectedFolder.parent_id === 'root' &&
+                  !selectedFolder.parent_id &&
                   selectedFolder.children.length > 0
                     ? selectedFolder.children.length
                     : 0

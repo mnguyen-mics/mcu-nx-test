@@ -70,7 +70,12 @@ class AudienceFeatureForm extends React.Component<Props> {
     sections.push({
       id: 'general',
       title: messages.audienceFeatureSectionGeneralTitle,
-      component: <AudienceFeatureGeneralSection />,
+      component: (
+        <AudienceFeatureGeneralSection
+          displayAdvancedSection={false}
+          audienceFeatureFolders={[]}
+        />
+      ),
     });
 
     sections.push({
@@ -110,7 +115,9 @@ class AudienceFeatureForm extends React.Component<Props> {
               className="mcs-content-container mcs-form-container"
             >
               <Row>
-                <Col className="mcs-audienceFeature_formColumn" span={12}>{renderedSections}</Col>
+                <Col className="mcs-audienceFeature_formColumn" span={12}>
+                  {renderedSections}
+                </Col>
                 <Col className="mcs-audienceFeature_formColumn" span={12}>
                   <AudienceFeaturePreview
                     schema={schema}

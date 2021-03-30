@@ -38,22 +38,22 @@ export interface AudienceFeatureResource {
   addressable_object: string;
   object_tree_expression: string;
   variables: AudienceFeatureVariableResource[];
-  audienceFeatureFolderId: string;
+  folder_id?: string | null;
 }
 
 export interface AudienceFeatureFolderResource {
-  id: string | null;
+  id: string;
   name: string;
   datamart_id: string;
-  audience_feature_ids: string[];
-  parent_id: string | null;
-  children_ids: string[];
+  audience_features_ids?: string[];
+  parent_id?: string | null;
+  children_ids?: string[];
 }
 
 export interface AudienceFeaturesByFolder {
-  id: string | null;
+  id?: string;
   name: string;
   audience_features: AudienceFeatureResource[];
-  parent_id: string | null;
+  parent_id?: string;
   children: AudienceFeaturesByFolder[];
 }
