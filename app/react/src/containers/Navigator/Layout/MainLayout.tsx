@@ -280,6 +280,7 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
             <NavigatorHeader menu={appMenu} isInSettings={false} />
             <Layout>
               <Sider
+                className="mcs-sider"
                 collapsible={!listOrganizationSwitcher}
                 collapsed={collapsed}
                 trigger={this.renderTrigger()}
