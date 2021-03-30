@@ -27,6 +27,7 @@ export interface FormSearchObjectProps {
   // grouped in one string (ex: 'val1 val2 val3' see 'JSON_OTQL data_type=text' specs for details)
   handleSingleStringValue?: (value: any) => void;
   handleMatchValue?: (value: any) => void;
+  handleEmptyList?: (input: string) => void;
 }
 
 interface FormSearchObjectState {
@@ -126,20 +127,27 @@ class FormSearchObject extends React.Component<Props, FormSearchObjectState> {
   };
 
   handleChange = (value: LabeledValue | LabeledValue[]) => {
-    const { input, handleSingleStringValue, handleMatchValue } = this.props;
+    const {
+      input,
+      handleSingleStringValue,
+      handleMatchValue,
+      handleEmptyList,
+    } = this.props;
 
     if (Array.isArray(value)) {
       const multipleValues = value;
       this.setState({ value: multipleValues, currentValue: undefined }, () => {
         this.filterData();
       });
-      input.onChange(multipleValues.map((i) => i.key));
-      if (handleSingleStringValue) {
-        handleSingleStringValue(
-          multipleValues[0] ? multipleValues[0].value : '',
-        );
-      } else if (handleMatchValue) {
-        handleMatchValue(multipleValues.map((v) => v.value).join(' '));
+      if ((!multipleValues || multipleValues.length === 0) && handleEmptyList) {
+        handleEmptyList(input.name);
+      } else {
+        input.onChange(multipleValues.map((i) => i.key));
+        if (handleSingleStringValue) {
+          handleSingleStringValue(multipleValues[0].value);
+        } else if (handleMatchValue) {
+          handleMatchValue(multipleValues.map((v) => v.value).join(' '));
+        }
       }
     } else {
       const singleValue = value;
@@ -183,17 +191,21 @@ class FormSearchObject extends React.Component<Props, FormSearchObjectState> {
   };
 
   onBlur = () => {
-    const { input } = this.props;
+    const { input, handleEmptyList } = this.props;
     const { value, currentValue } = this.state;
-    let formattedValue: LabeledValue[] = [];
-    if (value) {
-      formattedValue = formattedValue.concat(value);
+    if ((!value || value.length === 0) && !currentValue && handleEmptyList) {
+      handleEmptyList(input.name);
+    } else {
+      let formattedValue: LabeledValue[] = [];
+      if (value) {
+        formattedValue = formattedValue.concat(value);
+      }
+      const finalValue = [...formattedValue.map((i) => i.key)];
+      if (currentValue) {
+        finalValue.push(currentValue);
+      }
+      input.onChange(finalValue);
     }
-    const finalValue = [...formattedValue.map((i) => i.key)];
-    if (currentValue) {
-      finalValue.push(currentValue);
-    }
-    input.onChange(finalValue);
   };
 
   render() {

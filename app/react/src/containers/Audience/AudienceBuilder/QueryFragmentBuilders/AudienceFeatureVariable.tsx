@@ -14,7 +14,7 @@ import {
 } from '../../../../components/Form';
 import { ValidatorProps } from '../../../../components/Form/withValidators';
 import FormMultiTag from '../../../../components/Form/FormSelect/FormMultiTag';
-import { Field, GenericField } from 'redux-form';
+import { Field, GenericField, unregisterField } from 'redux-form';
 import FormRelativeAbsoluteDate, {
   FormRelativeAbsoluteDateProps,
 } from '../../../QueryTool/JSONOTQL/Edit/Sections/Field/Comparison/FormRelativeAbsoluteDate';
@@ -34,6 +34,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { injectWorkspace, InjectedWorkspaceProps } from '../../../Datamart';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
 import { SegmentNameDisplay } from '../../Common/SegmentNameDisplay';
+import { FORM_ID } from '../constants'
 
 export const FormRelativeAbsoluteDateField = Field as new () => GenericField<FormRelativeAbsoluteDateProps>;
 
@@ -264,6 +265,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
     }
     let handleSingleStringValue;
     let handleMatchValue;
+    let handleEmptyList;
     if (singleStringValue && formChange) {
       handleSingleStringValue = (value: any) => {
         formChange(name, value);
@@ -273,6 +275,12 @@ class AudienceFeatureVariable extends React.Component<Props> {
     if (matchValue && formChange) {
       handleMatchValue = (value: any) => {
         formChange(name, value);
+      };
+    }
+    if (formChange) {
+      handleEmptyList = (input: string) => {
+        unregisterField(FORM_ID, input)
+        formChange(name, '');
       };
     }
 
@@ -292,6 +300,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
         shouldFilterData={shouldFilterData}
         handleSingleStringValue={handleSingleStringValue}
         handleMatchValue={handleMatchValue}
+        handleEmptyList={handleEmptyList}
       />
     );
   };
