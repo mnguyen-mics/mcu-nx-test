@@ -199,6 +199,7 @@ class SettingLayout extends React.Component<Props, SettingLayoutState> {
             <NavigatorSettingsMainMenu />
             <Layout>
               <Sider
+                className="mcs-sider"
                 collapsible={true}
                 collapsed={false}
                 trigger={this.renderSettingsTrigger()}
