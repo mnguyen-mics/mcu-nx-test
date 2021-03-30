@@ -514,6 +514,39 @@ const exportGoals = (organisationId, dataSource, filter, formatMessage) => {
   exportData(sheets, `${organisationId}_goals`, 'xlsx');
 };
 
+const exportAdServingCampaing = (organisationId, campaign, campaignData, filter, formatMessage) => {
+  const hourlyPrecision = (datenum(filter.to.raw()) - datenum(filter.from.raw())) <= 1;
+  const dateHeader = hourlyPrecision ? { name: 'hour_of_day', translation: formatMessage(dateMessages.hour) } : { name: 'day', translation: formatMessage(dateMessages.day) };
+  const campaignHeaders = [
+    dateHeader,
+    { name: 'impressions', translation: formatMessage(displayCampaignMessages.impressions) },
+    { name: 'clicks', translation: formatMessage(displayCampaignMessages.clicks) },
+    { name: 'cpm', translation: formatMessage(displayCampaignMessages.cpm) },
+    { name: 'ctr', translation: formatMessage(displayCampaignMessages.ctr) },
+    { name: 'cpc', translation: formatMessage(displayCampaignMessages.cpc) },
+    { name: 'impressions_cost', translation: formatMessage(displayCampaignMessages.impressionCost) },
+    { name: 'cpa', translation: formatMessage(displayCampaignMessages.cpa) }
+  ];
+
+  const otherInfos = campaign ? campaign : null;
+
+  const exportFilter = {
+    ...filter,
+    from: filter.from.toMoment().format('YYYY-MM-DD'),
+    to: filter.to.toMoment().format('YYYY-MM-DD'),
+  };
+  const sheetsList = [];
+  campaignData.forEach((data, i) => {
+    sheetsList.push(addSheet(campaignData[i][0].message_id, campaignData[i], campaignHeaders, exportFilter, formatMessage, campaignData[i][0].adName, otherInfos));
+  });
+  /* eslint-disable */
+  const sheets = sheetsList.filter(x => x);
+
+  if (sheets.length) {
+    exportData(sheets, `${organisationId}_ad-serving-campaign`, 'xlsx');
+  }
+};
+
 const exportGoal = (organisationId, goalData, attributionsData, filter, formatMessage) => {
   const exportFilter = {
     ...filter,
@@ -947,5 +980,6 @@ export default {
   exportServiceUsageReportList,
   exportCreativeAdServingSnippet,
   exportABComparison,
-  exportFunnel
+  exportFunnel,
+  exportAdServingCampaing
 };
