@@ -201,7 +201,11 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
         }/v1/exports/${this.props.match.params.exportId}/executions/${
         execution.id
         }/files/technical_name=${
-        execution.result.output_files[0] || 'export'
+        execution.result
+          ? execution.result.output_files
+            ? execution.result.output_files[0] || 'export'
+            : 'export'
+          : 'export'
         }?access_token=${encodeURIComponent(
           LocalStorage.getItem('access_token')!,
         )}`;
