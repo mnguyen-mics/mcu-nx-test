@@ -1,7 +1,12 @@
 import * as React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { BarsOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
+import {
+  BarsOutlined,
+  CodeSandboxCircleFilled,
+  LeftOutlined,
+  RightOutlined,
+} from '@ant-design/icons';
 import { Layout } from 'antd';
 import { connect } from 'react-redux';
 import { push as PushMenu, State } from 'react-burger-menu';
@@ -20,7 +25,7 @@ import {
 import OrganisationListSwitcher from '../../Menu/OrganisationListSwitcher';
 import { UserProfileResource } from '../../../models/directory/UserProfileResource';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
-import { AppMenuOption } from '@mediarithmics-private/mcs-components-library/lib/components/apps-navigation/apps-menu';
+import { AppsMenuSection } from '@mediarithmics-private/mcs-components-library/lib/components/apps-navigation/apps-menu/AppsMenu';
 
 const { Content, Sider } = Layout;
 
@@ -194,7 +199,7 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
     );
   };
 
-  getAppUrlsMapForMenu(): Map<AppMenuOption, string> {
+  getAppMenuSections(): AppsMenuSection[] {
     const { connectedUser } = this.props;
 
     const isFromMics =
@@ -203,15 +208,30 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
       ).length > 0;
 
     if (isFromMics) {
-      return new Map<AppMenuOption, string>([
-        ['PLATFORM_ADMIN', 'https://admin.mediarithmics.com:8493'],
-        [
-          'DEVELOPER_CONSOLE',
-          'https://computing-console-mics.francecentral.cloudapp.azure.com/frontprod/login',
-        ],
-      ]);
+      return [
+        {
+          items: [
+            {
+              name: 'Platform Admin',
+              url: 'https://admin.mediarithmics.com:8493',
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              name: 'Developer Console',
+              icon: (
+                <CodeSandboxCircleFilled className="mcs-app_icon mcs-app_icon_developer_console" />
+              ),
+              url:
+                'https://computing-console-mics.francecentral.cloudapp.azure.com/frontprod/login',
+            },
+          ],
+        },
+      ];
     } else {
-      return new Map<AppMenuOption, string>();
+      return [];
     }
   }
 
@@ -232,17 +252,11 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
       this.setState({ isSelectorOpen: state.isOpen });
     const onClick = () => this.setState({ isSelectorOpen: false });
 
-    const appUrlsMapForMenu: Map<
-      AppMenuOption,
-      string
-    > = this.getAppUrlsMapForMenu();
+    const appMenuSections: AppsMenuSection[] = this.getAppMenuSections();
 
-    const menu =
-      appUrlsMapForMenu.size > 0 ? (
-        <AppsMenu
-          availableAppUrlsMap={appUrlsMapForMenu}
-          logo={<Logo mode="inline" />}
-        />
+    const appMenu =
+      appMenuSections.length > 0 ? (
+        <AppsMenu sections={appMenuSections} logo={<Logo mode="inline" />} />
       ) : undefined;
 
     return (
@@ -263,7 +277,7 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
         </PushMenu>
         {hasFeature('new-navigation-system') ? (
           <LayoutId id="mcs-main-layout" className="mcs-fullscreen">
-            <NavigatorHeader menu={menu} isInSettings={false} />
+            <NavigatorHeader menu={appMenu} isInSettings={false} />
             <Layout>
               <Sider
                 collapsible={!listOrganizationSwitcher}
