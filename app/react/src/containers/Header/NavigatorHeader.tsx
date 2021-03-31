@@ -77,8 +77,8 @@ class NavigatorHeader extends React.Component<Props> {
     );
 
     return (
-      <Header className="mcs-header">
-        <div className="mcs-header-title">
+      <Header className="mcs-navigator-header">
+        <div className="mcs-navigator-header-title">
           <span className="left-component">
             {menu ? (
               <span className="launcher">
@@ -104,21 +104,21 @@ class NavigatorHeader extends React.Component<Props> {
           </span>
           {process.env.API_ENV === 'prod' ? (
             <Alert
-              className="mcs-header-title-alert"
+              className="mcs-navigator-header-title-alert"
               message="You are using production API environment !"
               type="error"
               showIcon={true}
             />
           ) : null}
         </div>
-        <div className="mcs-header-actions">
+        <div className="mcs-navigator-header-actions">
           <Link
-            className="mcs-header-actions-settings"
+            className="mcs-navigator-header-actions-settings"
             to={`/v2/o/${organisationId}/settings/organisation/labels`}
           >
             <McsIcon type="options" className="menu-icon" />
           </Link>
-          <div className="mcs-header-actions-account">
+          <div className="mcs-navigator-header-actions-account">
             <Dropdown
               overlay={accountMenu}
               trigger={['click']}
