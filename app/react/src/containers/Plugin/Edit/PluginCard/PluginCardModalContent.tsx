@@ -1,5 +1,12 @@
 import * as React from 'react';
-import { Actionbar, Button, McsTabs, ColoredButton, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import {
+  Actionbar,
+  Button,
+  McsTabs,
+  ColoredButton,
+  McsIcon,
+  McsDateRangePicker
+} from '@mediarithmics-private/mcs-components-library';
 import { LayoutablePlugin } from '../../../../models/Plugins';
 import { compose } from 'recompose';
 import injectThemeColors, {
@@ -19,6 +26,9 @@ import { generateFakeId } from '../../../../utils/FakeIdHelper';
 import FeedChart from '../../../Audience/Segments/Dashboard/Feeds/Charts/FeedChart';
 import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
 import { FeedStatsUnit } from '../../../../utils/FeedsStatsReportHelper';
+import McsMoment from '../../../../utils/McsMoment';
+import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 
 const FORM_NAME = 'pluginForm';
@@ -45,8 +55,8 @@ export interface PluginCardModalContentProps<T> {
 }
 
 type Props<T extends LayoutablePlugin> = PluginCardModalContentProps<T> &
-  InjectedThemeColorsProps & 
-  InjectedNotificationProps & 
+  InjectedThemeColorsProps &
+  InjectedNotificationProps &
   InjectedFormProps &
   InjectedFeaturesProps &
   ValidatorProps;
@@ -57,14 +67,15 @@ interface State {
   loading: boolean;
   selectedTab: PluginCardModalTab;
   imageUrl?: string;
+  dateRange: McsDateRangeValue;
 }
 
 class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component<
   Props<T>,
   State
-> {
+  > {
 
-  node?: HTMLDivElement | null;
+  node?: HTMLDivElement | null;
 
   constructor(props: Props<T>) {
     super(props);
@@ -72,7 +83,11 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
       loading: true,
       backgroundColor: '',
       color: '',
-      selectedTab: props.selectedTab
+      selectedTab: props.selectedTab,
+      dateRange: {
+        from: new McsMoment('now-7d'),
+        to: new McsMoment('now'),
+      },
     };
   }
 
@@ -109,15 +124,16 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
     document.removeEventListener('mousedown', this.handleClick, false)
   }
 
+  // This function close the modal when clicking outside
+  // We target the layer behind the modal to detect if the click was outside
   handleClick = (e: any) => {
-    if (this.node && this.node.contains(e.target)) {
-      // click has been triggered from inside the node
+    if (!e.target.className?.includes('mcs-form-card-modal')) {
       return;
     }
     this.props.onClose();
   }
 
-  getData = (assetUrl: string) => { this.setState({ loading: true, imageUrl: assetUrl }); this.getPallette(`${(window as any).MCS_CONSTANTS.ASSETS_URL}${assetUrl}`)};
+  getData = (assetUrl: string) => { this.setState({ loading: true, imageUrl: assetUrl }); this.getPallette(`${(window as any).MCS_CONSTANTS.ASSETS_URL}${assetUrl}`) };
 
 
   getPallette = (url: string) => {
@@ -141,10 +157,10 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
       });
       return {}
     })
-    .catch((err) => {
-      this.props.notifyError(err)
-      this.setState({ loading: false })
-    });
+      .catch((err) => {
+        this.props.notifyError(err)
+        this.setState({ loading: false })
+      });
   };
 
   generateFormFromPluginLayout = (pluginLayout: PluginLayout) => {
@@ -172,7 +188,7 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
             disableFields={!!disableFields}
             pluginVersionId={plugin.current_version_id!}
             nameField={index === 0 && nameField ? nameField : undefined}
-            descriptionField={index === 0 && descriptionField ? descriptionField: undefined}
+            descriptionField={index === 0 && descriptionField ? descriptionField : undefined}
             small={true}
           />
           {hrBooleanCondition ? <hr /> : null}
@@ -205,9 +221,9 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
         };
       });
     save(
-      pluginData, 
-      formattedProperties, 
-      (formValues.plugin && formValues.plugin.name) || (nameField && nameField.value), 
+      pluginData,
+      formattedProperties,
+      (formValues.plugin && formValues.plugin.name) || (nameField && nameField.value),
       formValues.description || (descriptionField && descriptionField.value));
   }
 
@@ -231,17 +247,48 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
 
   renderStats = () => {
     const { plugin, organisationId, feedStatsUnit } = this.props;
+    const { dateRange } = this.state;
 
-    return <FeedChart organisationId={organisationId} feedId={plugin.id} feedStatsUnit={feedStatsUnit}/>;
+    return <div className="mcs-pluginModal_feedChart_container">
+      <div className="mcs-pluginModal_feedChart_container_header">
+        <img
+          className="mcs-pluginModal_feedChart_container_header_image"
+          src="/react/src/assets/images/beta-icon.png"
+        />
+        <div className="mcs-pluginModal_feedChart_container_header_description">
+          <FormattedMessage {...messages.stats_description1} />
+          <FormattedMessage {...messages.stats_description2} />
+        </div>
+      </div>
+      <FeedChart
+        title={this.renderDatePicker()}
+        organisationId={organisationId}
+        feedId={plugin.id}
+        feedStatsUnit={feedStatsUnit}
+        dateRange={dateRange}
+      />
+    </div>;
   }
+
+  renderDatePicker = () => {
+    const onChange = (newValues: McsDateRangeValue) =>
+      this.setState({
+        dateRange: {
+          from: newValues.from,
+          to: newValues.to,
+        }
+      });
+
+    return <McsDateRangePicker values={this.state.dateRange} onChange={onChange} />;
+  };
 
   public render() {
 
     const { onClose, handleSubmit, isLoading, pluginLayout, editionMode, hasFeature } = this.props;
     const { backgroundColor, color, loading, selectedTab } = this.state;
 
-    if (loading || !pluginLayout || isLoading) 
-      return  (<div className="plugin-modal-loading"><Spin size="large"  /></div>);
+    if (loading || !pluginLayout || isLoading)
+      return (<div className="plugin-modal-loading"><Spin size="large" /></div>);
 
     let items = [
       {
@@ -284,25 +331,25 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
           edition={true}
           inverted={color === 'black' ? true : false}
         >
-        <Button
-          onClick={onClose}
-          style={{ marginRight: 0 }}
-        >
-          <McsIcon
-            type="close"
-            className="close-icon"
-            style={{ cursor: 'pointer' }}
-            
-          />
-        </Button>
-          
+          <Button
+            onClick={onClose}
+            style={{ marginRight: 0 }}
+          >
+            <McsIcon
+              type="close"
+              className="close-icon"
+              style={{ cursor: 'pointer' }}
+
+            />
+          </Button>
+
         </Actionbar>
         <div
           className="body"
         >
           <div className="header">
             <div className="logo">
-            {this.state.imageUrl && (<img src={`${(window as any).MCS_CONSTANTS.ASSETS_URL}${this.state.imageUrl}`} />)}
+              {this.state.imageUrl && (<img src={`${(window as any).MCS_CONSTANTS.ASSETS_URL}${this.state.imageUrl}`} />)}
             </div>
             <div className="meta">
               <div>{pluginLayout.version}</div>
@@ -312,15 +359,15 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
               <div className="description">{pluginLayout.metadata.description}</div>
             </div>
           </div>
-           <div className="tabs">
+          <div className="tabs">
             <McsTabs items={items} defaultActiveKey={selectedTab} onChange={onActiveKeyChange} />
           </div>
           {selectedTab === 'configuration' ? <div className="footer">
             <Button className={" m-r-20"} onClick={onClose}>Close</Button>
-            <ColoredButton className="mcs-primary" backgroundColor={backgroundColor} color={color} onClick={handleSubmit(this.onSubmit)}> { isLoading ? (<LoadingOutlined />) : null} Save</ColoredButton>
+            <ColoredButton className="mcs-primary" backgroundColor={backgroundColor} color={color} onClick={handleSubmit(this.onSubmit)}> {isLoading ? (<LoadingOutlined />) : null} Save</ColoredButton>
           </div> : null}
         </div>
-       
+
       </div>
     );
   }
@@ -338,3 +385,24 @@ export default compose<
   injectNotifications,
   injectFeatures
 )(PluginCardModalContent);
+
+
+const messages: {
+  [metric: string]: FormattedMessage.MessageDescriptor;
+} = defineMessages({
+  stats_description1: {
+    id: 'audience.feeds.stats.description1',
+    defaultMessage:
+      'The chart below displays the segment loads sent to the external platform, \
+    day by day: whenever a user is entering / leaving the segment, \
+    this feed is keeping in sync the destination segment.',
+  },
+  stats_description2: {
+    id: 'audience.feeds.stats.description2',
+    defaultMessage:
+      'When the feed is created, the platform is streaming all the users that \
+    entered the segment prior to the feed creation to be sure that the full segment is \
+    shared with the external platform. Hence, it is normal to see a spike in the user \
+    additions load at the creation of the feed and afterwards a decrease in the segment loads size.',
+  },
+});

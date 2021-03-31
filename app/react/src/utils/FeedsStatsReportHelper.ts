@@ -9,7 +9,7 @@ import {
 } from '../models/ReportRequestBody';
 import McsMoment, { formatMcsDate } from './McsMoment';
 
-type FeedsStatsDimension =
+export type FeedsStatsDimension =
   | 'ORGANISATION_ID'
   | 'DATAMART_ID'
   | 'AUDIENCE_SEGMENT_ID'
@@ -79,9 +79,10 @@ export function buildFeedCardStatsRequestBody(
 export function buildFeedStatsByFeedRequestBody(
   feedId: string,
   dateRange: DateRange,
+  timeUnitDimension: 'DAY' | 'HOUR',
   metrics?: FeedsStatsMetric[]
 ): ReportRequestBody {
-  const dimensionsList: FeedsStatsDimension[] = ['FEED_ID', 'DAY', 'SYNC_TYPE'];
+  const dimensionsList: FeedsStatsDimension[] = ['FEED_ID', timeUnitDimension, 'SYNC_TYPE'];
   const metricsList: FeedsStatsMetric[] = metrics ? metrics : ['UNIQ_USER_POINTS_COUNT'];
 
   // DIMENSION FILTERS

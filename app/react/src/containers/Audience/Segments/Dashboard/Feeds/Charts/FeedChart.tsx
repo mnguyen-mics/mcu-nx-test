@@ -17,7 +17,7 @@ import { compose } from 'recompose';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../../../Helpers/injectThemeColors';
-import McsMoment, { formatMcsDate } from '../../../../../../utils/McsMoment';
+import { formatMcsDate } from '../../../../../../utils/McsMoment';
 import { Card } from 'antd';
 import {
   StackedBarPlot,
@@ -27,9 +27,11 @@ import moment from 'moment';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 
 interface FeedChartProps {
+  title?: React.ReactNode;
   organisationId: string;
   feedId: string;
   feedStatsUnit?: FeedStatsUnit;
+  dateRange: McsDateRangeValue;
 }
 
 type Props = FeedChartProps & InjectedThemeColorsProps & InjectedIntlProps;
@@ -43,7 +45,6 @@ interface FeedReport {
 
 interface State {
   dataSource: FeedReport[];
-  dateRange: McsDateRangeValue;
   isLoading: boolean;
 }
 
@@ -57,10 +58,6 @@ class FeedChart extends React.Component<Props, State> {
     this.state = {
       dataSource: [],
       isLoading: true,
-      dateRange: {
-        from: new McsMoment('now-6d'),
-        to: new McsMoment('now'),
-      },
     };
   }
 
@@ -69,16 +66,46 @@ class FeedChart extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
-    const { dateRange } = this.state;
+    const { dateRange } = this.props;
 
-    const { dateRange: prevDateRange } = prevState;
+    const { dateRange: prevDateRange } = prevProps;
 
     if (dateRange !== prevDateRange) this.fetchStats();
   }
 
+  getAllDates = (timeUnit: 'HOUR' | 'DAY', dateRange: { from: string; to: string; }): string[] => {
+    const format = timeUnit === 'HOUR' ? 'YYYY-MM-DD HH:mm:ss' : 'YYYY-MM-DD';
+
+    const allDates = [moment(dateRange.from).format(format)];
+
+    const to = timeUnit === 'HOUR' ?
+      moment(dateRange.to).add(23, 'hours') :
+      moment(dateRange.to);
+
+    while (
+      allDates[allDates.length - 1] !==
+      to.format(format)
+    ) {
+      allDates.push(
+        moment(allDates[allDates.length - 1])
+          .add(1, timeUnit === 'HOUR' ? 'hours' : 'days')
+          .format(format),
+      );
+    }
+
+    return allDates;
+  }
+
+  getTimeUnit(): 'HOUR' | 'DAY' {
+    const { dateRange } = this.props;
+
+    const formatedNonInclusiveDateRange = formatMcsDate(dateRange);
+
+    return formatedNonInclusiveDateRange.from === formatedNonInclusiveDateRange.to ? 'HOUR' : 'DAY';
+  }
+
   fetchStats() {
-    const { organisationId, feedId, feedStatsUnit } = this.props;
-    const { dateRange } = this.state;
+    const { organisationId, feedId, feedStatsUnit, dateRange } = this.props;
 
     this.setState({
       isLoading: true,
@@ -91,18 +118,10 @@ class FeedChart extends React.Component<Props, State> {
     const formatedInclusiveDateRange = formatMcsDate(dateRange, true);
 
     const formatedNonInclusiveDateRange = formatMcsDate(dateRange);
-    const allDates = [formatedNonInclusiveDateRange.from];
 
-    while (
-      allDates[allDates.length - 1] !==
-      moment(formatedNonInclusiveDateRange.to).format('YYYY-MM-DD')
-    ) {
-      allDates.push(
-        moment(allDates[allDates.length - 1])
-          .add(1, 'days')
-          .format('YYYY-MM-DD'),
-      );
-    }
+    const timeUnit = this.getTimeUnit()
+
+    const allDates = this.getAllDates(timeUnit, formatedNonInclusiveDateRange)
 
     const reportBody = buildFeedStatsByFeedRequestBody(
       feedId,
@@ -110,6 +129,7 @@ class FeedChart extends React.Component<Props, State> {
         start_date: formatedInclusiveDateRange.from,
         end_date: formatedInclusiveDateRange.to,
       },
+      timeUnit,
       ['UNIQ_USER_POINTS_COUNT', 'UNIQ_USER_IDENTIFIERS_COUNT'],
     );
 
@@ -117,6 +137,7 @@ class FeedChart extends React.Component<Props, State> {
       .getStats(organisationId, reportBody)
       .then(res => {
         const normalized = normalizeReportView<{
+          hour: string;
           date_yyyy_mm_dd: string;
           sync_type: string;
           uniq_user_points_count: number;
@@ -127,11 +148,11 @@ class FeedChart extends React.Component<Props, State> {
         const deletes = normalized.filter(rv => rv.sync_type === 'DELETE');
 
         let feedReports: FeedReport[] = allDates.map(day => {
-          const upsertedOnDay = upserts.find(r => r.date_yyyy_mm_dd === day);
-          const deletedOnDay = deletes.find(r => r.date_yyyy_mm_dd === day);
+          const upsertedOnDay = upserts.find(r => (timeUnit === 'HOUR' ? r.hour : r.date_yyyy_mm_dd) === day);
+          const deletedOnDay = deletes.find(r => (timeUnit === 'HOUR' ? r.hour : r.date_yyyy_mm_dd) === day);
 
           return {
-            day: day,
+            day: timeUnit === 'HOUR' ? moment(day).format('HH:mm') : day,
             upserted: upsertedOnDay
               ? feedStatsUnit === 'USER_POINTS'
                 ? upsertedOnDay.uniq_user_points_count
@@ -165,6 +186,7 @@ class FeedChart extends React.Component<Props, State> {
   render() {
     const {
       colors,
+      title,
       intl: { formatMessage },
     } = this.props;
     const { dataSource, isLoading } = this.state;
@@ -215,26 +237,19 @@ class FeedChart extends React.Component<Props, State> {
 
     return (
       <div className="mcs-feed-chart">
-        <div className="mcs-feed-chart_header">
-          <img className="mcs-feed-chart_header_image" src="/react/src/assets/images/beta-icon.png" />
-          <div className="mcs-feed-chart_header_description">
-            <FormattedMessage {...messagesMap.stats_description1} />
-            <FormattedMessage {...messagesMap.stats_description2} />
-          </div>
-        </div>
         {isLoading ? (
           <LoadingChart />
         ) : (
-          <Card
-            className="compact"
-            title={formatMessage(messagesMap.graph_title)}
-          >
-            <StackedBarPlot
-              dataset={dataSource as any}
-              options={optionsForChart}
-            />
-          </Card>
-        )}
+            <Card
+              className="compact"
+              title={title}
+            >
+              <StackedBarPlot
+                dataset={dataSource as any}
+                options={optionsForChart}
+              />
+            </Card>
+          )}
       </div>
     );
   }
@@ -263,24 +278,5 @@ const messagesMap: {
   deleted_identifiers: {
     id: 'feed.deleted_identifiers',
     defaultMessage: 'Deleted Identifiers',
-  },
-  graph_title: {
-    id: 'feed.graph_title',
-    defaultMessage: 'Last 7 days',
-  },
-  stats_description1: {
-    id: 'audience.feeds.stats.description1',
-    defaultMessage:
-      'The chart below displays the segment loads sent to the external platform, \
-    day by day: whenever a user is entering / leaving the segment, \
-    this feed is keeping in sync the destination segment.',
-  },
-  stats_description2: {
-    id: 'audience.feeds.stats.description2',
-    defaultMessage:
-      'When the feed is created, the platform is streaming all the users that \
-    entered the segment prior to the feed creation to be sure that the full segment is \
-    shared with the external platform. Hence, it is normal to see a spike in the user \
-    additions load at the creation of the feed and afterwards a decrease in the segment loads size.',
   },
 });
