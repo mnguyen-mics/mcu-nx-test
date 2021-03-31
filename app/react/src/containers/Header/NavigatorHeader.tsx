@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { withRouter, Link, RouteComponentProps } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import { AppstoreFilled } from '@ant-design/icons';
-import { Layout, Menu, Alert } from 'antd';
+import { Layout, Menu } from 'antd';
 import { Dropdown } from '../../components/PopupContainers';
 import * as SessionHelper from '../../redux/Session/selectors';
 import messages from './messages';
@@ -16,6 +16,7 @@ import {
   McsIcon,
 } from '@mediarithmics-private/mcs-components-library';
 import { InjectedFeaturesProps, injectFeatures } from '../Features';
+import { ProductionApiEnvironment } from '../Navigator/Layout/LayoutHelper';
 
 const { Header } = Layout;
 
@@ -102,14 +103,7 @@ class NavigatorHeader extends React.Component<Props> {
               </Link>
             )}
           </span>
-          {process.env.API_ENV === 'prod' ? (
-            <Alert
-              className="mcs-navigator-header-title-alert"
-              message="You are using production API environment !"
-              type="error"
-              showIcon={true}
-            />
-          ) : null}
+          {process.env.API_ENV === 'prod' ? ProductionApiEnvironment : null}
         </div>
         <div className="mcs-navigator-header-actions">
           <Link

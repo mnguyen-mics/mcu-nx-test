@@ -1,4 +1,5 @@
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { Alert } from 'antd';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
 import { Link } from 'react-router-dom';
@@ -25,4 +26,13 @@ export const buildSettingsButton = (organisationId: string) => (
   >
     <McsIcon type="options" className="menu-icon-settings" />
   </Link>
+);
+
+export const ProductionApiEnvironment = (
+  <Alert
+    className="mcs-navigator-header-title-alert"
+    message="You are using production API environment !"
+    type="error"
+    showIcon={true}
+  />
 );

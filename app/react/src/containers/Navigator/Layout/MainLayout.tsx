@@ -28,7 +28,11 @@ import OrganisationListSwitcher from '../../Menu/OrganisationListSwitcher';
 import { UserProfileResource } from '../../../models/directory/UserProfileResource';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import { AppsMenuSection } from '@mediarithmics-private/mcs-components-library/lib/components/apps-navigation/apps-menu/AppsMenu';
-import { buildAccountsMenu, buildSettingsButton } from './LayoutHelper';
+import {
+  buildAccountsMenu,
+  buildSettingsButton,
+  ProductionApiEnvironment,
+} from './LayoutHelper';
 
 const { Content, Sider } = Layout;
 
@@ -298,6 +302,11 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
               accountContent={accounts}
               headerSettings={settings}
               menu={appMenu}
+              devAlert={
+                process.env.API_ENV === 'prod'
+                  ? ProductionApiEnvironment
+                  : undefined
+              }
               menuIcon={<AppstoreOutlined className="mcs-header_menu-icon" />}
             />
             <Layout>
