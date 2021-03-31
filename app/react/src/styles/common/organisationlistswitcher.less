@@ -1,4 +1,5 @@
 @list-switcher-org-id-color: rgba(55, 55, 55, 0.43);
+@list-switcher-box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.2) !important;
 
 .mcs-organisationListSwitcher_orgId {
   color: @list-switcher-org-id-color;
@@ -17,20 +18,7 @@
   }
 }
 
-.mcs-organisationListSwitcher_popOverMenu {
-  .ant-dropdown-menu-sub {
-    left: -10px;
-    top: -8px;
-    border-radius: 6px;
-  }
-  .ant-dropdown-menu {
-    background-clip: unset;
-  }
-}
-
 .mcs-organisationListSwitcher_searchInput {
-  
-  padding-bottom: 15px;
   .ant-btn-sm {
     height: 32px !important;
   }
@@ -48,55 +36,120 @@
 }
 
 .mcs-organisationListSwitcher_indent-0 {
-  padding-left: 10px;
+  padding-left: 0px;
 }
 
 .mcs-organisationListSwitcher_indent-1 {
-  padding-left: 20px;
+  padding-left: 10px;
 }
 
 .mcs-organisationListSwitcher_indent-2 {
-  padding-left: 30px;
+  padding-left: 20px;
 }
 
 .mcs-organisationListSwitcher_indent-3 {
-  padding-left: 40px;
-}
-
-.mcs-organisationListSwitcher_menu {
-  left: 10px;
-  top: -10px;
-}
-
-.mcs-organisationListSwitcher_subtitle {
-  padding-bottom: 15px;
-  font-family: 'LLCircularWeb-Medium';
-
-  .ant-dropdown-menu-submenu-title {
-    padding: 2px 14px;
-  }
-
-  .ant-dropdown-menu-item-group-list {
-    font-family: 'LLCircularWeb-Book';
-    margin: 0;
-  }
-  .ant-dropdown-menu-item-group-title {
-    color: rgba(0, 0, 0, 0.78);
-    padding: 4px 14px 4px 14px;
-  }
-
-  .ant-dropdown-menu-item > a {
-    padding: 2px 13px;
-  }
+  padding-left: 30px;
 }
 
 .mcs-organisationListSwitcher_orgList {
-  left: 10px;
+  position: relative;
+  left: 24px;
   top: -10px;
-  border-radius: 3px;
-  a {
-    font-style: normal;
+  padding: 11px 15px 20px;
+  box-shadow: @list-switcher-box-shadow;
+  border: solid 1px #d3dbe1;
+  border-radius: 6px;
+
+  .mcs-organisationListSwitcher-community {
+    font-family: 'LLCircularWeb-Medium';
+  }
+
+  .item {
+    padding: 0;
+    margin: 0;
+    height: 25px;
+    line-height: 25px;
+    border-left: none !important;
+  }
+}
+
+.mcs-organisationListSwitcher_menu {
+  position: relative;
+  left: 24px;
+  top: -10px;
+  padding: 11px 15px 20px;
+  box-shadow: @list-switcher-box-shadow;
+  border: solid 1px #d3dbe1;
+  border-radius: 6px;
+
+  .ant-menu-item {
+    padding: 0;
+    margin: 0;
+    height: 25px;
+    line-height: 25px;
+  }
+
+  .mcs-organisationListSwitcher_subtitle {
+    font-family: 'LLCircularWeb-Medium';
+    font-size: 12px;
+    .ant-menu-item-group-title {
+      color: rgba(0, 0, 0, 0.78);
+      padding: 16px 0px 5px 0px;
+    }
+    .ant-menu-submenu-title {
+      padding: 0;
+      margin: 0;
+      height: 25px;
+      line-height: 25px;
+      .ant-menu-submenu-arrow {
+        right: 0px;
+      }
+      a {
+        font-family: 'LLCircularWeb-Book';
+        font-weight: normal;
+        color: rgba(0, 0, 0, 0.65);
+      }
+    }
+
+    .ant-menu-item {
+      padding: 0;
+      margin: 0;
+      height: 25px;
+      line-height: 25px;
+      border-left: none;
+      a {
+        color: rgba(0, 0, 0, 0.65);
+        font-family: 'LLCircularWeb-Book';
+        font-weight: normal;
+      }
+    }
+  }
+
+  .mcs-organisationListSwitcher_fallback {
+    padding-top: 25px;
     color: rgba(0, 0, 0, 0.65);
+  }
+}
+
+.mcs-organisationListSwitcher_popOverMenu {
+  .ant-menu-sub {
+    padding: 11px 15px 20px;
+    border-radius: 6px;
+  }
+  .ant-dropdown-menu {
+    background-clip: unset;
+  }
+  .ant-menu-item {
+    padding: 0;
+    margin: 0;
+    height: 25px;
+    line-height: 25px;
+    border-left: none;
+    a {
+      color: rgba(0, 0, 0, 0.65);
+      font-family: 'LLCircularWeb-Book';
+      font-weight: normal;
+    }
   }
 }
 

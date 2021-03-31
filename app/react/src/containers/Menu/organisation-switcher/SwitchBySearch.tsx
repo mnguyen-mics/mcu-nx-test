@@ -1,20 +1,16 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import pathToRegexp from 'path-to-regexp';
-import { MicsReduxState } from '../../utils/ReduxHelper';
-import { getWorkspace } from '../../redux/Session/selectors';
-import { Dropdown, Input, Menu } from 'antd';
-import { UserWorkspaceResource } from '../../models/directory/UserProfileResource';
+import { Input, Menu } from 'antd';
+import { UserWorkspaceResource } from '../../../models/directory/UserProfileResource';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { partition, debounce, uniqBy } from 'lodash';
-import { HomeOutlined } from '@ant-design/icons';
-import messages from './messages';
+import { partition, debounce, uniq } from 'lodash';
+import messages from '../messages';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
-import LocalStorage from '../../services/LocalStorage';
+import LocalStorage from '../../../services/LocalStorage';
 import cuid from 'cuid';
+import { isCommunity, switchWorkspace } from './OrganisationSwitcherHelpers';
 
-export interface OrganizationListSwitcherState {
+export interface SwitchBySearchState {
   searchKeyword: string;
   foundOrgs: UserWorkspaceResource[];
   organisations: UserWorkspaceResource[];
@@ -22,34 +18,37 @@ export interface OrganizationListSwitcherState {
   communities: UserWorkspaceResource[];
 }
 
-export interface StoreProps {
+export interface SwitchBySearchProps {
   workspaces: UserWorkspaceResource[];
-  workspace: (organisationId: string) => UserWorkspaceResource;
+  isVisible?: boolean;
+  maxOrgOrCommunity: number;
+  shouldDropdownBeVisible: (trigger: boolean) => void;
 }
 
 const Search = Input.Search;
-const { SubMenu } = Menu;
 
-const maxOrgOrCommunity = 6;
+const { SubMenu } = Menu;
 
 const savedCommunitiesKey = 'SAVED_COMMUNITY_SEARCHES';
 const savedOrganisationsKey = 'SAVED_ORGANISATIONS_SEARCHES';
 
-type Props = StoreProps &
+type Props = SwitchBySearchProps &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
 
-class OrganizationListSwitcher extends React.Component<
-  Props,
-  OrganizationListSwitcherState
-> {
+class SwitchBySearch extends React.Component<Props, SwitchBySearchState> {
   private debouncedSearch: (value: string) => void;
+
+  private inputRef: React.RefObject<Input>;
+
   constructor(props: Props) {
     super(props);
 
     const [communities, orgs] = partition(props.workspaces, (w) =>
-      this.isCommunity(w),
+      isCommunity(w),
     );
+
+    this.inputRef = React.createRef<Input>();
 
     this.state = {
       searchKeyword: '',
@@ -67,6 +66,14 @@ class OrganizationListSwitcher extends React.Component<
     }, 200);
   }
 
+  componentDidMount() {
+    // Crazy, right ?
+    // https://stackoverflow.com/questions/35522220/react-ref-with-focus-doesnt-work-without-settimeout-my-example
+    setTimeout(() => {
+      this.inputRef.current?.focus();
+    }, 1);
+  }
+
   searchOrgAndCommunities = (value: string) => {
     const { organisations, communities } = this.state;
     const foundOrgs = this.searchByNameOrId(value, organisations);
@@ -77,48 +84,37 @@ class OrganizationListSwitcher extends React.Component<
     });
   };
 
-  isCommunity(org: UserWorkspaceResource) {
-    return org.organisation_id === org.community_id;
-  }
-
-  isObjectWorkspace(obj: any): obj is UserWorkspaceResource {
-    return (
-      typeof obj.organisation_id === 'string' &&
-      typeof obj.organisation_name === 'string' &&
-      typeof obj.administrator === 'boolean'
-    );
-  }
-
-  setWorkspaceItem = (storageKey: string, orgs: UserWorkspaceResource[]) => {
-    LocalStorage.setItem({ [storageKey]: JSON.stringify(orgs) });
+  setWorkspaceItem = (storageKey: string, orgIds: string[]) => {
+    LocalStorage.setItem({ [storageKey]: JSON.stringify(orgIds) });
   };
 
-  localStorageOrgs = (storageKey: string): UserWorkspaceResource[] => {
+  localStorageOrgs = (storageKey: string): string[] => {
     const history = LocalStorage.getItem(storageKey);
     if (!history) {
       return [];
     } else {
       const parsedHistory = JSON.parse(history);
-      const areAllWorkspaces = parsedHistory.every((item: any) =>
-        this.isObjectWorkspace(item),
+      const areAllWorkspaces = parsedHistory.every(
+        (item: any) => typeof item === 'string',
       );
       if (areAllWorkspaces) {
-        return parsedHistory as UserWorkspaceResource[];
+        return parsedHistory as string[];
       } else {
         return [];
       }
     }
   };
 
-  upsertClickedWorkspace = (storageKey: string, org: UserWorkspaceResource) => {
+  upsertClickedWorkspace = (storageKey: string, orgId: string) => {
+    const { maxOrgOrCommunity } = this.props;
     const history = this.localStorageOrgs(storageKey);
     if (!history) {
-      this.setWorkspaceItem(storageKey, [org]);
+      this.setWorkspaceItem(storageKey, [orgId]);
     } else {
-      history.unshift(org);
+      history.unshift(orgId);
       this.setWorkspaceItem(
         storageKey,
-        uniqBy(history, 'organisation_id').slice(0, maxOrgOrCommunity),
+        uniq(history).slice(0, maxOrgOrCommunity),
       );
     }
   };
@@ -128,29 +124,17 @@ class OrganizationListSwitcher extends React.Component<
     hasChildren: boolean,
   ) => {
     if (hasChildren) {
-      this.upsertClickedWorkspace(savedCommunitiesKey, org);
+      this.upsertClickedWorkspace(savedCommunitiesKey, org.organisation_id);
     } else {
-      this.upsertClickedWorkspace(savedOrganisationsKey, org);
+      this.upsertClickedWorkspace(savedOrganisationsKey, org.organisation_id);
     }
   };
 
   handleOrgClick = (org: UserWorkspaceResource, hasChildren: boolean) => () => {
+    const { history, match } = this.props;
     this.saveClickToLocalStorage(org, hasChildren);
-    this.switchWorkspace(org.organisation_id);
-  };
-
-  switchWorkspace = (organisationId: string) => {
-    const {
-      history,
-      match: { path, params },
-    } = this.props;
-
-    const toPath = pathToRegexp.compile(path);
-    const fullUrl = toPath({
-      ...params,
-      organisationId: organisationId,
-    });
-    history.push(fullUrl);
+    switchWorkspace(org.organisation_id, history, match);
+    this.props.shouldDropdownBeVisible(false);
   };
 
   renderOrg = (org: UserWorkspaceResource, hasChildren: boolean) => {
@@ -167,6 +151,7 @@ class OrganizationListSwitcher extends React.Component<
   renderChildrenMenu = (children: UserWorkspaceResource[]) => {
     const {
       intl: { formatMessage },
+      maxOrgOrCommunity,
     } = this.props;
     return (
       <React.Fragment>
@@ -192,7 +177,6 @@ class OrganizationListSwitcher extends React.Component<
       return (
         <SubMenu
           key={cuid()}
-          icon={<HomeOutlined />}
           title={this.renderOrg(node, true)}
           popupClassName="mcs-organisationListSwitcher_popOverMenu"
         >
@@ -206,23 +190,6 @@ class OrganizationListSwitcher extends React.Component<
         </Menu.Item>
       );
     }
-  };
-
-  renderNodeFlat = (nodes: UserWorkspaceResource[], level: number) => {
-    return nodes.map((node, index) => {
-      const children = this.getChildren(node);
-      const hasChildren = children.length > 0;
-      return (
-        <React.Fragment key={index}>
-          <Menu.Item key={node.organisation_id}>
-            <div className={`mcs-organisationListSwitcher_indent-${level}`}>
-              {this.renderOrg(node, hasChildren)}
-            </div>
-          </Menu.Item>
-          {hasChildren && this.renderNodeFlat(children, level + 1)}
-        </React.Fragment>
-      );
-    });
   };
 
   getChildren = (workspace: UserWorkspaceResource): UserWorkspaceResource[] => {
@@ -252,6 +219,7 @@ class OrganizationListSwitcher extends React.Component<
   };
 
   renderOrgMenuGroup = (title: string, orgs: UserWorkspaceResource[]) => {
+    const { maxOrgOrCommunity } = this.props;
     return (
       <React.Fragment>
         <Menu.ItemGroup
@@ -286,7 +254,11 @@ class OrganizationListSwitcher extends React.Component<
     const orgIsEmpty = !savedOrgs || savedOrgs.length === 0;
     const commuIsEmpty = !savedCommus || savedCommus.length === 0;
     if (orgIsEmpty && commuIsEmpty) {
-      return <Menu.Item disabled={true}>{fallbackMessage}</Menu.Item>;
+      return (
+        <div className="mcs-organisationListSwitcher_fallback">
+          {fallbackMessage}
+        </div>
+      );
     } else {
       return (
         <React.Fragment>
@@ -307,23 +279,42 @@ class OrganizationListSwitcher extends React.Component<
     }
   };
 
-  SwitchBySearch = () => {
+  buildWorkspacesFromIds = (
+    ids: string[],
+    allWorkspaces: UserWorkspaceResource[],
+  ): UserWorkspaceResource[] => {
+    return ids
+      .map((id) => allWorkspaces.find((w) => w.organisation_id === id))
+      .filter((x): x is UserWorkspaceResource => x !== null);
+  };
+
+  render() {
     const { foundOrgs, foundCommunities, searchKeyword } = this.state;
     const {
+      workspaces,
       intl: { formatMessage },
     } = this.props;
-    const savedCommunities = this.localStorageOrgs(savedCommunitiesKey);
-    const savedOrgs = this.localStorageOrgs(savedOrganisationsKey);
+    const savedCommunitiesIds = this.localStorageOrgs(savedCommunitiesKey);
+    const savedOrgsIds = this.localStorageOrgs(savedOrganisationsKey);
+
+    const savedOrgs = this.buildWorkspacesFromIds(savedOrgsIds, workspaces);
+    const savedCommunities = this.buildWorkspacesFromIds(
+      savedCommunitiesIds,
+      workspaces,
+    );
+
     return (
-      <Menu className="mcs-organisationListSwitcher_menu" mode="vertical">
-        <Menu.Item disabled={true}>
+      <Menu mode="vertical" className="mcs-organisationListSwitcher_menu">
+        <div className="mcs-organisationListSwitcher_search">
           <Search
+            ref={this.inputRef}
             size="small"
+            placeholder={formatMessage(messages.searchPlaceholder)}
             className="mcs-organisationListSwitcher_searchInput"
             onSearch={this.handleSearch}
             onChange={this.handleChange}
           />
-        </Menu.Item>
+        </div>
         {searchKeyword === ''
           ? this.renderOrgsAndCommunities(
               savedOrgs,
@@ -337,69 +328,10 @@ class OrganizationListSwitcher extends React.Component<
             )}
       </Menu>
     );
-  };
-
-  SwitchByList = () => {
-    const { workspaces } = this.props;
-    const [communities] = partition(workspaces, (w) => this.isCommunity(w));
-    return (
-      <Menu className="mcs-organisationListSwitcher_orgList" mode="vertical">
-        {this.renderNodeFlat(communities, 0)}
-      </Menu>
-    );
-  };
-
-  render() {
-    const {
-      match: {
-        params: { organisationId },
-      },
-      workspace,
-      workspaces,
-    } = this.props;
-
-    const currentWorkspace = workspace(organisationId);
-    const workspaceNb = workspaces.length;
-
-    return (
-      <Dropdown
-        overlay={
-          workspaceNb > maxOrgOrCommunity * 2
-            ? this.SwitchBySearch
-            : this.SwitchByList
-        }
-        trigger={['click']}
-        placement="bottomRight"
-      >
-        <div className="mcs-organisationListSwitcher_component">
-          <hr />
-          <div className="mcs-organisationListSwitcher_currentOrg_box">
-            <div className="mcs-organisationListSwitcher_currentOrg">
-              <p className="mcs-organisationListSwitcher_orgName">
-                {currentWorkspace.organisation_name}
-              </p>
-              <p className="mcs-organisationListSwitcher_orgId">
-                {currentWorkspace.organisation_id}
-              </p>
-            </div>
-            <div className="mcs-organisationListSwitcher_downlogo">
-              <i className="ant-menu-submenu-arrow" />
-            </div>
-          </div>
-          <hr />
-        </div>
-      </Dropdown>
-    );
   }
 }
 
-const mapStateToProps = (state: MicsReduxState) => ({
-  workspaces: state.session.connectedUser.workspaces,
-  workspace: getWorkspace(state),
-});
-
-export default compose<Props, {}>(
+export default compose<Props, SwitchBySearchProps>(
   withRouter,
   injectIntl,
-  connect(mapStateToProps),
-)(OrganizationListSwitcher);
+)(SwitchBySearch);
