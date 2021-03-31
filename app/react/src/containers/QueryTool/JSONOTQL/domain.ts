@@ -553,7 +553,7 @@ export function isFieldInfoEnfancedResource(item: SchemaItem | FieldInfoEnhance
   return !isSchemaItem(item) && (item as FieldInfoEnhancedResource).closestParentType !== undefined;
 }
 
-export const extractFieldType = (field: FieldInfoEnhancedResource) => field.field_type.match(/\w+/)![0] as string
+export const extractFieldType = (field: FieldInfoEnhancedResource) => field?.field_type?.match(/\w+/)![0];
 
 export function filterAvailableFields(schemaItem: SchemaItem): boolean{
   return lodash.flatMap(schemaItem.directives, d => { 
