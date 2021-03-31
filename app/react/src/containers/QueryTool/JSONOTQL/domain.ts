@@ -1,5 +1,10 @@
-import { PortModel, LinkModel, NodeModel, DiagramEngine } from 'storm-react-diagrams';
-import lodash from 'lodash'
+import {
+  PortModel,
+  LinkModel,
+  NodeModel,
+  DiagramEngine,
+} from 'storm-react-diagrams';
+import lodash from 'lodash';
 import { SimpleLinkModel } from './Diagram/Link';
 import { BooleanOperatorNodeModel } from './Diagram/BooleanOperatorNode';
 import { FieldNodeModel } from './Diagram/FieldNode';
@@ -10,13 +15,23 @@ import {
   FieldNode,
   ObjectNode,
 } from '../../../models/datamart/graphdb/QueryDocument';
-import { ObjectLikeTypeInfoResource, FieldInfoResource, ObjectLikeType, ObjectLikeTypeDirectiveInfoResource, SchemaDecoratorResource, FieldDirectiveResource } from '../../../models/datamart/graphdb/RuntimeSchema';
+import {
+  ObjectLikeTypeInfoResource,
+  FieldInfoResource,
+  ObjectLikeType,
+  ObjectLikeTypeDirectiveInfoResource,
+  SchemaDecoratorResource,
+  FieldDirectiveResource,
+} from '../../../models/datamart/graphdb/RuntimeSchema';
 
-export type FieldProposalLookup = (treeNodePath: number[], fieldName: string) => Promise<string[]>;
+export type FieldProposalLookup = (
+  treeNodePath: number[],
+  fieldName: string,
+) => Promise<string[]>;
 
 export enum typesTrigger {
-  "UserActivity",
-  "UserEvent"
+  'UserActivity',
+  'UserEvent',
 }
 
 export const MIN_X = 100;
@@ -67,32 +82,35 @@ export interface Operation {
 }
 
 export class MicsDiagramEngine extends DiagramEngine {
-
   private objectType?: string;
   private copiedObjectTree?: ObjectTreeExpressionNodeShape;
   private treeNodePath?: number[];
 
-  setCopying = (copiedObjectTree: ObjectTreeExpressionNodeShape, objectType: string, treeNodePath: number[]) => {
+  setCopying = (
+    copiedObjectTree: ObjectTreeExpressionNodeShape,
+    objectType: string,
+    treeNodePath: number[],
+  ) => {
     this.objectType = objectType;
     this.copiedObjectTree = copiedObjectTree;
     this.treeNodePath = treeNodePath;
-  }
+  };
 
   getCopiedValue = () => ({
     copiedObjectType: this.copiedObjectTree,
     objectType: this.objectType,
-    treeNodePath: this.treeNodePath
-  })
+    treeNodePath: this.treeNodePath,
+  });
 
   isCopying = () => {
-    return !!(this.objectType && this.copiedObjectTree)
-  }
+    return !!(this.objectType && this.copiedObjectTree);
+  };
 
   emptyClipboard = () => {
     this.objectType = undefined;
     this.copiedObjectTree = undefined;
     this.treeNodePath = undefined;
-  }
+  };
 }
 
 export class AddOperation implements Operation {
@@ -273,8 +291,16 @@ export interface TreeNodeOperations {
   addNode: (nodePath: number[], node: ObjectTreeExpressionNodeShape) => void;
   updateNode: (nodePath: number[], node: ObjectTreeExpressionNodeShape) => void;
   updateLayout: () => void;
-  copyNode: (nodePath: number[], objectLikeType: string, treeNodePath: number[]) => void;
-  cutNode: (nodePath: number[], objectLikeType: string, treeNodePath: number[]) => void;
+  copyNode: (
+    nodePath: number[],
+    objectLikeType: string,
+    treeNodePath: number[],
+  ) => void;
+  cutNode: (
+    nodePath: number[],
+    objectLikeType: string,
+    treeNodePath: number[],
+  ) => void;
   addNewGroupAsRoot: () => void;
 }
 
@@ -302,13 +328,13 @@ function hasTypeChild(
   objectType: ObjectLikeTypeInfoResource,
   objectTypes: ObjectLikeTypeInfoResource[],
 ): boolean {
-  const objectTypeNames = objectTypes.map(ots => ots.name);
-  const fieldTypeNames = objectType.fields.map(f => f.field_type);
+  const objectTypeNames = objectTypes.map((ots) => ots.name);
+  const fieldTypeNames = objectType.fields.map((f) => f.field_type);
   return (
-    fieldTypeNames.filter(ftn => {
+    fieldTypeNames.filter((ftn) => {
       // using a regexp to extract type like [UserEvent!]!
       const match = ftn.match(/\w+/);
-      return !!objectTypeNames.find(otn => !!(match && match[0] === otn));
+      return !!objectTypeNames.find((otn) => !!(match && match[0] === otn));
     }).length > 0
   );
 }
@@ -352,16 +378,14 @@ export function buildNodeModelBTree(
       const objectNode = new ObjectNodeModel(treeNode, treeNodePath);
       objectNode.objectTypeInfo = objectType;
 
-      const field = objectType.fields.find(f => f.name === treeNode.field)!;
-      const fieldType = field.field_type.match(/\w+/)![0]
-      const nextObjectType = objectTypes.find(
-        ot => fieldType === ot.name,
-      )!;
+      const field = objectType.fields.find((f) => f.name === treeNode.field)!;
+      const fieldType = field.field_type.match(/\w+/)![0];
+      const nextObjectType = objectTypes.find((ot) => fieldType === ot.name)!;
       const hidePlusNode = !hasTypeChild(nextObjectType, objectTypes);
       return {
         node: objectNode,
         down: treeNode.expressions
-          .slice() 
+          .slice()
           .reverse()
           .reduce(
             (acc, expr, index) => {
@@ -494,12 +518,7 @@ export function buildLinkList(nodeBTree: NodeModelBTree): LinkModel[] {
         ]
       : []),
     ...(nodeBTree.down
-      ? [
-          createLink(
-            nodeBTree.node.ports.bottom,
-            nodeBTree.down.node.ports.top,
-          ),
-        ]
+      ? [createLink(nodeBTree.node.ports.bottom, nodeBTree.down.node.ports.top)]
       : []),
     ...(nodeBTree.right ? buildLinkList(nodeBTree.right) : []),
     ...(nodeBTree.down ? buildLinkList(nodeBTree.down) : []),
@@ -525,12 +544,11 @@ export function applyTranslation(
   };
 }
 
-
 export interface FieldEnhancedInfo extends FieldInfoResource {
   closestParentType: string;
 }
 
-export type Field = FieldInfoEnhancedResource | SchemaItem | FieldInfoResource
+export type Field = FieldInfoEnhancedResource | SchemaItem | FieldInfoResource;
 
 export interface SchemaItem {
   id: string;
@@ -545,22 +563,36 @@ export interface SchemaItem {
   decorator?: SchemaDecoratorResource;
 }
 
-export function isSchemaItem(item: SchemaItem | FieldInfoEnhancedResource | FieldInfoResource): item is SchemaItem {
-  return (item as SchemaItem).fields && (item as SchemaItem).fields.length > 0
+export function isSchemaItem(
+  item: SchemaItem | FieldInfoEnhancedResource | FieldInfoResource,
+): item is SchemaItem {
+  return (item as SchemaItem).fields && (item as SchemaItem).fields.length > 0;
 }
 
-export function isFieldInfoEnfancedResource(item: SchemaItem | FieldInfoEnhancedResource | FieldInfoResource): item is FieldInfoEnhancedResource {
-  return !isSchemaItem(item) && (item as FieldInfoEnhancedResource).closestParentType !== undefined;
+export function isFieldInfoEnfancedResource(
+  item: SchemaItem | FieldInfoEnhancedResource | FieldInfoResource,
+): item is FieldInfoEnhancedResource {
+  return (
+    !isSchemaItem(item) &&
+    (item as FieldInfoEnhancedResource).closestParentType !== undefined
+  );
 }
 
-export const extractFieldType = (field: FieldInfoEnhancedResource) => field?.field_type?.match(/\w+/)![0];
+export const extractFieldType = (field: FieldInfoEnhancedResource) =>
+  field?.field_type?.match(/\w+/)![0];
 
-export function filterAvailableFields(schemaItem: SchemaItem): boolean{
-  return lodash.flatMap(schemaItem.directives, d => { 
-    return d.arguments.map(a =>
-      Object.values(typesTrigger).includes(a.value.replace(/[^a-zA-Z]+/g,'')))
-     }
-    ).reduce((acc: boolean, val: boolean) => {return acc || val}, false)
+export function filterAvailableFields(schemaItem: SchemaItem): boolean {
+  return lodash
+    .flatMap(schemaItem.directives, (d) => {
+      return d.arguments.map((a) =>
+        Object.values(typesTrigger).includes(
+          a.value.replace(/[^a-zA-Z]+/g, ''),
+        ),
+      );
+    })
+    .reduce((acc: boolean, val: boolean) => {
+      return acc || val;
+    }, false);
 }
 
 export function computeFinalSchemaItem(
@@ -570,14 +602,17 @@ export function computeFinalSchemaItem(
   isTrigger: boolean,
   isEdge: boolean,
 ): SchemaItem {
-  const initialSchemaItem = buildSchemaItem(
-    objectTypes, 
-    {
-      ...objectTypes.find(ot => ot.name === rootObjectTypeName)!,
-      closestParentType: '',
-    }
-  )
-  const filteredSchemaItem = filterSchemaItem(initialSchemaItem, objectTypes, onlyIndexed, isTrigger, isEdge)
+  const initialSchemaItem = buildSchemaItem(objectTypes, {
+    ...objectTypes.find((ot) => ot.name === rootObjectTypeName)!,
+    closestParentType: '',
+  });
+  const filteredSchemaItem = filterSchemaItem(
+    initialSchemaItem,
+    objectTypes,
+    onlyIndexed,
+    isTrigger,
+    isEdge,
+  );
   return computeSchemaItemPath(filteredSchemaItem, objectTypes, '');
 }
 
@@ -587,33 +622,40 @@ function buildSchemaItem(
 ): SchemaItem {
   return {
     ...rootObjectType,
-    fields: rootObjectType.fields.map(field => {
-      const match = extractFieldType(field as FieldInfoEnhancedResource);
-      if (
-        match &&
-        objectTypes.map(ot => ot.name).includes(match)
-      ) {
-        const newRootObject: SchemaItem =  {...objectTypes.find(ot => ot.name === match)!, schemaType: match, name: field.name, closestParentType: rootObjectType.name, decorator: field.decorator}
-        return buildSchemaItem(
-          objectTypes,
-          newRootObject,
-        );
-      } else {
-        return {...field, closestParentType: rootObjectType.name};
-      }
-    }).sort((a, b) => {
-      const isAObjectType = isSchemaItem(a)
-      const isBObjectType = isSchemaItem(b)
-      const aName = (a.decorator && !a.decorator.hidden ? a.decorator.label : a.name)
-      const bName = (b.decorator && !b.decorator.hidden ? b.decorator.label : b.name)
-      return isAObjectType && !isBObjectType ? 1 : (isAObjectType && isBObjectType) || (!isAObjectType && !isBObjectType) ? aName.localeCompare(bName) : -1 
-    }),
+    fields: rootObjectType.fields
+      .map((field) => {
+        const match = extractFieldType(field as FieldInfoEnhancedResource);
+        if (match && objectTypes.map((ot) => ot.name).includes(match)) {
+          const newRootObject: SchemaItem = {
+            ...objectTypes.find((ot) => ot.name === match)!,
+            schemaType: match,
+            name: field.name,
+            closestParentType: rootObjectType.name,
+            decorator: field.decorator,
+          };
+          return buildSchemaItem(objectTypes, newRootObject);
+        } else {
+          return { ...field, closestParentType: rootObjectType.name };
+        }
+      })
+      .sort((a, b) => {
+        const isAObjectType = isSchemaItem(a);
+        const isBObjectType = isSchemaItem(b);
+        const aName =
+          a.decorator && !a.decorator.hidden ? a.decorator.label : a.name;
+        const bName =
+          b.decorator && !b.decorator.hidden ? b.decorator.label : b.name;
+        return isAObjectType && !isBObjectType
+          ? 1
+          : (isAObjectType && isBObjectType) ||
+            (!isAObjectType && !isBObjectType)
+          ? aName.localeCompare(bName)
+          : -1;
+      }),
   };
 }
 
-function checkIfVisible(
-  field: Field
-): boolean {
+function checkIfVisible(field: Field): boolean {
   const isVisible = field.decorator ? !field.decorator.hidden : true;
   return isVisible;
 }
@@ -623,46 +665,71 @@ function filterSchemaItem(
   objectTypes: ObjectLikeTypeInfoResource[],
   onlyIndexed: boolean,
   isTrigger: boolean,
-  isEdge: boolean
+  isEdge: boolean,
 ): SchemaItem {
   return {
     ...schema,
-    fields: schema.fields.filter(field => {
-      if(isTrigger){
-        if(isSchemaItem(field) && field.closestParentType==="UserPoint") return filterAvailableFields(field as SchemaItem) && checkIfVisible(field)
-        else if(isFieldInfoEnfancedResource(field) && field.closestParentType==="UserPoint") return false && checkIfVisible(field)
-        else return true && checkIfVisible(field)
-      }else{
-        if(isFieldInfoEnfancedResource(field) && onlyIndexed){
-          const match = extractFieldType(field as FieldInfoEnhancedResource);
-          if (objectTypes.map(ot => ot.name).includes(match)) return true && checkIfVisible(field);
-          return (field as FieldInfoEnhancedResource).directives && (field as FieldInfoEnhancedResource).directives.length &&  (field as FieldInfoEnhancedResource).directives.find(f => f.name === 'TreeIndex') && (isEdge ? (field as FieldInfoEnhancedResource).directives.find(f => f.name === 'EdgeAvailability'): true) && checkIfVisible(field)
-        } 
-      return true && checkIfVisible(field)
-      }
-    }).map(field => {
-      if (isSchemaItem(field)) return filterSchemaItem(field as SchemaItem, objectTypes, onlyIndexed, isTrigger, isEdge)
-      else return {...field, closestParentType: schema.name};
-    }).filter(field => !('fields' in field) || field.fields.length > 0),
+    fields: schema.fields
+      .filter((field) => {
+        if (isTrigger) {
+          if (isSchemaItem(field) && field.closestParentType === 'UserPoint')
+            return filterAvailableFields(field) && checkIfVisible(field);
+          else if (
+            isFieldInfoEnfancedResource(field) &&
+            field.closestParentType === 'UserPoint'
+          )
+            return checkIfVisible(field);
+          else return checkIfVisible(field);
+        } else {
+          if (isFieldInfoEnfancedResource(field) && onlyIndexed) {
+            const match = extractFieldType(field);
+            if (objectTypes.map((ot) => ot.name).includes(match))
+              return checkIfVisible(field);
+            return (
+              field.directives &&
+              field.directives.length &&
+              field.directives.find((f) => f.name === 'TreeIndex') &&
+              (isEdge
+                ? field.directives.find((f) => f.name === 'EdgeAvailability')
+                : true) &&
+              checkIfVisible(field)
+            );
+          }
+          return checkIfVisible(field);
+        }
+      })
+      .map((field) => {
+        if (isSchemaItem(field))
+          return filterSchemaItem(
+            field,
+            objectTypes,
+            onlyIndexed,
+            isTrigger,
+            isEdge,
+          );
+        else return { ...field, closestParentType: schema.name };
+      })
+      .filter((field) => !('fields' in field) || field.fields.length > 0),
   };
 }
 
 function computeSchemaItemPath(
   schema: SchemaItem,
   objectTypes: ObjectLikeTypeInfoResource[],
-  path: string
+  path: string,
 ): SchemaItem {
   return {
     ...schema,
     path: path,
     fields: schema.fields.map((field, index) => {
       const newPath = `${path}${path ? '.' : ''}${index}`;
-      if (isSchemaItem(field)) return computeSchemaItemPath(field as SchemaItem, objectTypes, newPath)
-      else return {...field, closestParentType: schema.name,  path: newPath};
+      if (isSchemaItem(field))
+        return computeSchemaItemPath(field, objectTypes, newPath);
+      else return { ...field, closestParentType: schema.name, path: newPath };
     }),
   };
 }
-  
+
 export interface FieldInfoEnhancedResource extends FieldInfoResource {
   closestParentType: string;
   path: string;
@@ -670,7 +737,7 @@ export interface FieldInfoEnhancedResource extends FieldInfoResource {
 
 interface DragAndDropCommonInterface {
   name: string;
-  objectSource: string
+  objectSource: string;
   path: string;
 }
 
@@ -686,23 +753,42 @@ interface DragAndDropObjectdInterface extends DragAndDropCommonInterface {
   item: SchemaItem;
 }
 
-export type DragAndDropInterface = DragAndDropFieldInterface |DragAndDropObjectdInterface;
+export type DragAndDropInterface =
+  | DragAndDropFieldInterface
+  | DragAndDropObjectdInterface;
 
-export function computeSchemaPathFromQueryPath(query: ObjectTreeExpressionNodeShape | undefined, path: number[] , schema: SchemaItem | undefined, lastProperty?: string) {
- 
-  function computeElementInPath(_query: ObjectTreeExpressionNodeShape | undefined, _path: number[], elements: string[] = []): string[] {
+export function computeSchemaPathFromQueryPath(
+  query: ObjectTreeExpressionNodeShape | undefined,
+  path: number[],
+  schema: SchemaItem | undefined,
+  lastProperty?: string,
+) {
+  function computeElementInPath(
+    _query: ObjectTreeExpressionNodeShape | undefined,
+    _path: number[],
+    elements: string[] = [],
+  ): string[] {
     if (!_query) {
       return elements;
     }
-    const _elements = _query.type !== 'GROUP' ? [...elements, _query.field] : elements
-    if (_path.length === 0 || isLeafNode(_query!)) {
+    const _elements =
+      _query.type !== 'GROUP' ? [...elements, _query.field] : elements;
+    if (_path.length === 0 || isLeafNode(_query)) {
       return _elements;
     }
     const [head, ...tail] = _path;
-    return computeElementInPath((_query as ObjectNode).expressions[head], tail, _elements);
+    return computeElementInPath(
+      (_query as ObjectNode).expressions[head],
+      tail,
+      _elements,
+    );
   }
 
-  function computePathFromElement(_schema: SchemaItem | undefined, _path: string[], elements: number[] = []): number[] {
+  function computePathFromElement(
+    _schema: SchemaItem | undefined,
+    _path: string[],
+    elements: number[] = [],
+  ): number[] {
     if (!_schema) {
       return elements;
     }
@@ -713,90 +799,119 @@ export function computeSchemaPathFromQueryPath(query: ObjectTreeExpressionNodeSh
       return elements;
     }
     const [head, ...tail] = _path;
-    const fieldIndex =_schema.fields.findIndex(field => field.name === head)!;
+    const fieldIndex = _schema.fields.findIndex((field) => field.name === head);
     const _elements = [...elements, fieldIndex];
-    return computePathFromElement(_schema.fields[fieldIndex] as SchemaItem, tail, _elements);
+    return computePathFromElement(
+      _schema.fields[fieldIndex] as SchemaItem,
+      tail,
+      _elements,
+    );
   }
-  
+
   const newPath = computeElementInPath(query, path);
   if (lastProperty) {
-    newPath.splice(-1,1);
+    newPath.splice(-1, 1);
     newPath.push(lastProperty);
   }
   const newElementPath = computePathFromElement(schema, newPath);
   return newElementPath;
-  
 }
 
-export function computeAdditionalNode(additionalNodePath: number[], offset: number, schema: SchemaItem | undefined) {
-  function computeElementFromPath(_additionalNodePath: number[], _offset: number, _schema: SchemaItem | undefined, _query?: ObjectTreeExpressionNodeShape[]): ObjectTreeExpressionNodeShape[] | undefined {
+export function computeAdditionalNode(
+  additionalNodePath: number[],
+  offset: number,
+  schema: SchemaItem | undefined,
+) {
+  function computeElementFromPath(
+    _additionalNodePath: number[],
+    _offset: number,
+    _schema: SchemaItem | undefined,
+    _query?: ObjectTreeExpressionNodeShape[],
+  ): ObjectTreeExpressionNodeShape[] | undefined {
     if (!_schema) {
-      return _query
+      return _query;
     }
 
     if (_additionalNodePath.length === 0) {
       return _query;
     }
-    
+
     const [head, ...tail] = _additionalNodePath;
     let _newOffset = _offset;
     if (_newOffset > 0) {
-      _newOffset = _newOffset -1;
-      return computeElementFromPath(tail, _newOffset, _schema.fields[head] as SchemaItem)
+      _newOffset = _newOffset - 1;
+      return computeElementFromPath(
+        tail,
+        _newOffset,
+        _schema.fields[head] as SchemaItem,
+      );
     }
 
-    const _newQueryNode: ObjectTreeExpressionNodeShape = (_schema.fields[head] as SchemaItem).fields && (_schema.fields[head] as SchemaItem).fields.length ? {
-      type: 'OBJECT',
-      field: _schema.fields[head].name,
-      expressions: [],
-      boolean_operator: 'OR',
-    } : {
-      type: 'FIELD',
-      field: _schema.fields[head].name,
-    }
+    const _newQueryNode: ObjectTreeExpressionNodeShape =
+      (_schema.fields[head] as SchemaItem).fields &&
+      (_schema.fields[head] as SchemaItem).fields.length
+        ? {
+            type: 'OBJECT',
+            field: _schema.fields[head].name,
+            expressions: [],
+            boolean_operator: 'OR',
+          }
+        : {
+            type: 'FIELD',
+            field: _schema.fields[head].name,
+          };
 
-    const _newQuery =  _query ? [..._query, _newQueryNode] : [_newQueryNode]
-    return computeElementFromPath(tail, _newOffset, _schema.fields[head] as SchemaItem, _newQuery)
+    const _newQuery = _query ? [..._query, _newQueryNode] : [_newQueryNode];
+    return computeElementFromPath(
+      tail,
+      _newOffset,
+      _schema.fields[head] as SchemaItem,
+      _newQuery,
+    );
   }
 
-  const generatedQuery = computeElementFromPath(additionalNodePath, offset, schema);
-  
-
+  const generatedQuery = computeElementFromPath(
+    additionalNodePath,
+    offset,
+    schema,
+  );
 
   if (generatedQuery) {
-
     const reversedArray: ObjectTreeExpressionNodeShape[] = [];
     for (let i = 0; i < generatedQuery.length; i++) {
       reversedArray.push(generatedQuery[generatedQuery.length - 1 - i]);
     }
 
-    const builtUpQuery = reversedArray
-      .reduce((acc: ObjectTreeExpressionNodeShape, val) => {
-        return acc ? {...val, expressions: [acc]} : val;
-      }, undefined)
-    
+    const builtUpQuery = reversedArray.reduce(
+      (acc: ObjectTreeExpressionNodeShape, val) => {
+        return acc ? { ...val, expressions: [acc] } : val;
+      },
+      undefined,
+    );
+
     return builtUpQuery;
   }
   return generatedQuery;
 }
 
-export const getCoreReferenceTypeAndModel = (directives: FieldDirectiveResource[]): { type: string, modelType: string } | undefined => {
-  const ref = directives.find(d => d.name === 'ReferenceTable');
+export const getCoreReferenceTypeAndModel = (
+  directives: FieldDirectiveResource[],
+): { type: string; modelType: string } | undefined => {
+  const ref = directives.find((d) => d.name === 'ReferenceTable');
   if (ref && ref.arguments) {
-    const type = ref.arguments.find(a => a.name === 'type')
-    const modelType = ref.arguments.find(a => a.name === 'model_type')
+    const type = ref.arguments.find((a) => a.name === 'type');
+    const modelType = ref.arguments.find((a) => a.name === 'model_type');
     if (type) {
       const match = type.value.match(/\w+/);
-      if (match && match[0] && match[0] === "CORE_OBJECT") {
+      if (match && match[0] && match[0] === 'CORE_OBJECT') {
         if (modelType) {
           return {
-            type: "CORE_OBJECT",
-            modelType: modelType.value.replace(/\"/g, "")
-          }
+            type: 'CORE_OBJECT',
+            modelType: modelType.value.replace(/\"/g, ''),
+          };
         }
       }
-      
     }
   }
-  return undefined
-}
+  return undefined;
+};
