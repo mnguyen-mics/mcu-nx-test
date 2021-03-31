@@ -12,7 +12,7 @@ describe('This test should check that the audience feature forms are working pro
 
   it('Should test the audience feature forms', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then((data) => {
-      cy.get('.mcs-header-actions-settings').click();
+      cy.get('.mcs-navigator-header-actions-settings').click();
       cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
       cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.myDatamart').click();
       cy.contains(data.datamartName).click();
@@ -85,7 +85,7 @@ describe('This test should check that the audience feature forms are working pro
 
   it('audience feature shouldnt be created if the query is invalid', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then((data) => {
-      cy.get('.mcs-header-actions-settings').click();
+      cy.get('.mcs-navigator-header-actions-settings').click();
       cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
       cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.myDatamart').click();
       cy.contains(data.datamartName).click();

@@ -13,6 +13,10 @@ const messages = defineMessages({
     id: 'header.settings.datamart',
     defaultMessage: 'Datamart Settings',
   },
+  logout: {
+    id: 'header.log out',
+    defaultMessage: 'Log out',
+  },
 });
 
 export default messages;

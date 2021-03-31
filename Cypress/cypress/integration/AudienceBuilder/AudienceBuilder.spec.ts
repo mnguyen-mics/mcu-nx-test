@@ -16,7 +16,7 @@ describe('This test should check that the audience feature forms are working pro
     datamartName: string,
     audienceBuilderName: string,
   ) => {
-    cy.get('.mcs-header-actions-settings').click();
+    cy.get('.mcs-navigator-header-actions-settings').click();
     cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
     cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.myDatamart').click();
     cy.contains(datamartName).click();

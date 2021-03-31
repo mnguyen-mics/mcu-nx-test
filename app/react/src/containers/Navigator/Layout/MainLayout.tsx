@@ -2,6 +2,7 @@ import * as React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import {
+  AppstoreOutlined,
   BarsOutlined,
   CodeSandboxCircleFilled,
   LeftOutlined,
@@ -21,11 +22,17 @@ import { MicsReduxState } from '../../../utils/ReduxHelper';
 import {
   Button,
   AppsMenu,
+  McsHeader,
 } from '@mediarithmics-private/mcs-components-library';
 import OrganisationListSwitcher from '../../Menu/OrganisationListSwitcher';
 import { UserProfileResource } from '../../../models/directory/UserProfileResource';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import { AppsMenuSection } from '@mediarithmics-private/mcs-components-library/lib/components/apps-navigation/apps-menu/AppsMenu';
+import {
+  buildAccountsMenu,
+  buildSettingsButton,
+  ProductionApiEnvironment,
+} from './LayoutHelper';
 
 const { Content, Sider } = Layout;
 
@@ -53,6 +60,7 @@ interface MainLayoutStoreProps {
   mode: MenuMode;
   openCloseMenu: (a: { collapsed: boolean; mode: MenuMode }) => void;
   connectedUser: UserProfileResource;
+  userEmail: string;
 }
 
 interface MainLayoutState {
@@ -244,6 +252,10 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
       mode,
       orgSelectorSize,
       hasFeature,
+      userEmail,
+      match: {
+        params: { organisationId },
+      },
     } = this.props;
 
     const listOrganizationSwitcher = hasFeature('new-navigation-system');
@@ -256,8 +268,15 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
 
     const appMenu =
       appMenuSections.length > 0 ? (
-        <AppsMenu sections={appMenuSections} logo={<Logo mode="inline" />} />
+        <AppsMenu
+          className="mcs-app-menu-main-layout"
+          sections={appMenuSections}
+          logo={<Logo mode="inline" />}
+        />
       ) : undefined;
+
+    const accounts = buildAccountsMenu(organisationId);
+    const settings = buildSettingsButton(organisationId);
 
     return (
       <div id="mcs-full-page" className="mcs-fullscreen">
@@ -277,7 +296,19 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
         </PushMenu>
         {hasFeature('new-navigation-system') ? (
           <LayoutId id="mcs-main-layout" className="mcs-fullscreen">
-            <NavigatorHeader menu={appMenu} isInSettings={false} />
+            <McsHeader
+              className="mcs-header-main-layout"
+              userEmail={userEmail}
+              accountContent={accounts}
+              headerSettings={settings}
+              menu={appMenu}
+              devAlert={
+                process.env.API_ENV === 'prod'
+                  ? ProductionApiEnvironment
+                  : undefined
+              }
+              menuIcon={<AppstoreOutlined className="mcs-header_menu-icon" />}
+            />
             <Layout>
               <Sider
                 className="mcs-sider"
@@ -310,6 +341,7 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
         ) : (
           <LayoutId id="mcs-main-layout" className="mcs-fullscreen">
             <Sider
+              className="mcs-sider"
               collapsible={true}
               collapsed={collapsed}
               trigger={this.renderTrigger()}
@@ -345,6 +377,7 @@ const mapStateToProps = (state: MicsReduxState) => ({
   connectedUser: state.session.connectedUser,
   collapsed: state.menu.collapsed,
   mode: state.menu.mode,
+  userEmail: state.session.connectedUser.email,
 });
 
 const mapDispatchToProps = {

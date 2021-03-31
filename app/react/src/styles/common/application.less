@@ -27,13 +27,57 @@ hr {
   height: 100%;
 }
 
+.mcs-header-main-layout {
+  .mcs-header_menu-icon {
+    margin: 0;
+    color: white;
+    font-size: 20px !important;
+    &:hover {
+      color: @normal-color;
+    }
+  }
+  .mcs-header_menu-link {
+    display: flex;
+  }
+  .menu-icon-settings {
+    display: flex;
+    margin: 0;
+    color: white;
+    font-size: 20px !important;
+    &:hover {
+      color: @normal-color;
+    }
+  }
+}
+
+.mcs-app-menu-main-layout {
+  .mcs-logo-placeholder {
+    display: flex;
+    min-height: 60px !important;
+    align-items: center;
+    justify-content: center;
+    .mcs-logo {
+      display: flex;
+      align-items: center;
+      align-content: center;
+      margin: 10px;
+      padding: 20px;
+      img {
+        max-height: 50px;
+        max-width: 140px;
+      }
+    }
+  }
+
+  .mcs-app_icon_developer_console {
+    color: #7057d1;
+  }
+}
+
 .mcs-sider {
   height: 100%;
   overflow-y: scroll;
-}
-
-/* Hide scrollbar for IE, Edge and Firefox */
-.mcs-sider {
+  /* Hide scrollbar for IE, Edge and Firefox */
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 
@@ -110,10 +154,6 @@ a {
 
 .ant-layout-content {
   background-color: @layout-content-background;
-}
-
-.ant-layout-header {
-  padding: 0 40px;
 }
 
 .ant-btn {
