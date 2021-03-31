@@ -87,10 +87,17 @@ export const audienceDefinition: NavigatorDefinition = {
     requiredFeature: 'audience-segments',
     requireDatamart: true,
   },
+  segmentBuilderSelector: {
+    path: '/audience/segment-builder-selector',
+    layout: 'main',
+    contentComponent: SegmentBuilderSelector,
+    requiredFeature: 'audience-segment_builder_v2',
+    requireDatamart: true,
+  },
   segmentBuilder: {
     path: '/audience/segment-builder',
     layout: 'main',
-    contentComponent: SegmentBuilderSelector,
+    contentComponent: SegmentBuilderPage,
     requiredFeature: 'audience-segment_builder',
     requireDatamart: true,
   },
@@ -105,7 +112,7 @@ export const audienceDefinition: NavigatorDefinition = {
     path: '/audience/segment-builder/advanced',
     layout: 'main',
     contentComponent: SegmentBuilderPage,
-    requiredFeature: 'audience-segment_builder',
+    requiredFeature: 'audience-segment_builder_v2',
     requireDatamart: true,
   },
   audienceTimeline: {

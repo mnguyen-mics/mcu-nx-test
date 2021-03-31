@@ -5,11 +5,11 @@ export const messages = defineMessages({
 
   audienceBuilderNew: {
     id: 'settings.datamart.audienceBuilder.newAudienceBuilder',
-    defaultMessage: 'New Standard Segment Builder',
+    defaultMessage: 'New Segment Builder',
   },
   audienceBuilders: {
     id: 'settings.datamart.audienceBuilders',
-    defaultMessage: 'Standard Segment Builders',
+    defaultMessage: 'Segment Builders',
   },
   audienceBuilderName: {
     id: 'settings.datamart.audienceBuilders.name',
@@ -29,7 +29,7 @@ export const messages = defineMessages({
   },
   audienceBuilderEmptyList: {
     id: 'settings.datamart.audienceBuilders.emptyList',
-    defaultMessage: 'There are no Standard Segment Builder',
+    defaultMessage: 'There are no segment builders',
   },
   audienceBuilderSectionGeneralSubtitle: {
     id: 'settings.datamart.audienceBuilders.edit.subtitle',
@@ -62,7 +62,7 @@ export const messages = defineMessages({
   },
   audienceBuilderNameTooltip: {
     id: 'settings.datamart.audienceBuilders.edit.name.tooltip',
-    defaultMessage: 'Enter a name for your Standard Segment Builder',
+    defaultMessage: 'Enter a name for your audience builder',
   },
   audienceBuilderPreview: {
     id: 'settings.datamart.audienceBuilders.edit.preview',
@@ -75,7 +75,7 @@ export const messages = defineMessages({
   audienceBuilderDeleteListModalTitle: {
     id: 'settings.datamart.audienceBuilders.list.deleteModal.title',
     defaultMessage:
-      'You are about to delete a Standard Segment Builder from your datamart. This action cannot be undone. Do you want to proceed anyway ?',
+      'You are about to delete an Audience Builder from your datamart. This action cannot be undone. Do you want to proceed anyway ?',
   },
   audienceBuilderDeleteListModalOk: {
     id: 'settings.datamart.audienceBuilders.list.deleteModal.ok',

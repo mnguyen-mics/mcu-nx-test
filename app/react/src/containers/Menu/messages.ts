@@ -22,7 +22,11 @@ export default defineMessages({
     id: 'menu.audience.feeds',
     defaultMessage: 'Feeds',
   },
-  audienceSegmentBuilder: {
+  segmentBuilder: {
+    id: 'menu.audience.segmentBuilder',
+    defaultMessage: 'Segment Builder',
+  },
+  builder: {
     id: 'menu.audience.builder',
     defaultMessage: 'Builder',
   },

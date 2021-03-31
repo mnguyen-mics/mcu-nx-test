@@ -3,10 +3,8 @@ import { connect } from 'react-redux';
 import { Link, withRouter, matchPath } from 'react-router-dom';
 import { Menu } from 'antd';
 import { FormattedMessage } from 'react-intl';
-import { MenuInfo } from '../../../../../node_modules/antd/node_modules/rc-menu/lib/interface'
-import {
-  getDefaultDatamart,
-} from '../../redux/Session/selectors';
+import { MenuInfo } from '../../../../../node_modules/antd/node_modules/rc-menu/lib/interface';
+import { getDefaultDatamart } from '../../redux/Session/selectors';
 
 import { menuDefinitions } from '../../routes/menuDefinition';
 
@@ -20,8 +18,10 @@ import {
 } from '../../routes/domain';
 import { DatamartResource } from '../../models/datamart/DatamartResource';
 import { MicsReduxState } from '../../utils/ReduxHelper';
-import { McsIcon, MentionTag } from '@mediarithmics-private/mcs-components-library';
-import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
+import {
+  McsIcon,
+  MentionTag,
+} from '@mediarithmics-private/mcs-components-library';
 
 const { SubMenu } = Menu;
 
@@ -83,13 +83,13 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
   checkInitialState = (pathname: string) => {
     const currentOpenSubMenu = menuDefinitions
       .filter(
-        item =>
+        (item) =>
           item.type === 'multi' &&
           item.subMenuItems &&
           item.subMenuItems.length > 0,
       )
       .find(
-        item =>
+        (item) =>
           item.type === 'multi' &&
           item.subMenuItems.reduce((acc: boolean, val) => {
             return matchPath(pathname, {
@@ -112,7 +112,7 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
 
     if (mode === 'inline') {
       const latestOpenKey = openKeys.find(
-        key => !(state.inlineOpenKeys.indexOf(key) > -1),
+        (key) => !(state.inlineOpenKeys.indexOf(key) > -1),
       );
       let nextOpenKeys: string[] = [];
       if (latestOpenKey) {
@@ -126,9 +126,8 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
   };
 
   onClick = (e: MenuInfo) => {
-    
     const hasClickOnFirstLevelMenuItem = menuDefinitions.find(
-      item => item.iconType === e.key,
+      (item) => item.iconType === e.key,
     );
     if (hasClickOnFirstLevelMenuItem) this.setState({ inlineOpenKeys: [] });
   };
@@ -152,11 +151,16 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
     return menuDefinitions.reduce((acc, item) => {
       if (checkIfHasAtLeastOneFeature(item)) {
         if (item.type === 'multi') {
-          const subMenuItems = (item.subMenuItems || []).filter(subMenuItem =>
-            hasFeature(
-              subMenuItem.requiredFeature,
-              subMenuItem.requireDatamart,
-            ),
+          const subMenuItems = (item.subMenuItems || []).filter(
+            (subMenuItem) =>
+              hasFeature(
+                subMenuItem.requiredFeature,
+                subMenuItem.requireDatamart,
+              ) &&
+              ((subMenuItem.path !== '/audience/segment-builder' &&
+                hasFeature('audience-segment_builder_v2')) ||
+                (subMenuItem.path === '/audience/segment-builder' &&
+                  !hasFeature('audience-segment_builder_v2'))),
           );
           return [...acc, { ...item, subMenuItems }];
         }
@@ -176,7 +180,7 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
 
     const baseUrl = `/v2/o/${organisationId}`;
 
-    return this.getAvailableItems().map(itemDef => {
+    return this.getAvailableItems().map((itemDef) => {
       if (itemDef.type === 'multi') {
         const onTitleClick = () => {
           this.setState({ inlineOpenKeys: [itemDef.iconType] });
@@ -188,8 +192,13 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
             onTitleClick={onTitleClick}
             title={
               <span>
-                <McsIcon type={itemDef.iconType as McsIconType} />
-                {itemDef.mention && <MentionTag mention={itemDef.mention} className='mcs-menuMentionTag mcs-menuMentionTag--west' />}
+                <McsIcon type={itemDef.iconType} />
+                {itemDef.mention && (
+                  <MentionTag
+                    mention={itemDef.mention}
+                    className="mcs-menuMentionTag mcs-menuMentionTag--west"
+                  />
+                )}
                 <span className="nav-text">
                   <FormattedMessage {...itemDef.translation} />
                 </span>
@@ -214,7 +223,12 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
                     key={subMenuItem.path}
                     className={`mcs-sideBar-subMenuItem_${subMenuItem.translation.id}`}
                   >
-                    {subMenuItem.mention && <MentionTag mention={subMenuItem.mention} className='mcs-menuMentionTag mcs-menuMentionTag--east'/>}
+                    {subMenuItem.mention && (
+                      <MentionTag
+                        mention={subMenuItem.mention}
+                        className="mcs-menuMentionTag mcs-menuMentionTag--east"
+                      />
+                    )}
                     <Link to={linkUrl}>
                       <FormattedMessage {...subMenuItem.translation} />
                     </Link>
@@ -229,7 +243,7 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
       return (
         <Menu.Item key={itemDef.iconType}>
           <Link to={`${baseUrl}${itemDef.path}`}>
-            <McsIcon type={itemDef.iconType as McsIconType} />
+            <McsIcon type={itemDef.iconType} />
             <span className="nav-text">
               <FormattedMessage {...itemDef.translation} />
             </span>
@@ -281,11 +295,11 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
     } = this.props;
 
     const getSelectedKeys = (): string[] => {
-      const currentItem = this.getAllKeysWithPath().find(item => {
+      const currentItem = this.getAllKeysWithPath().find((item) => {
         const matched = matchPath(pathname, {
           path: `${basePath}${item.path}`,
         });
-        return matched ? true : false; // && matched.isExact;
+        return !!matched; // && matched.isExact;
       });
       return currentItem ? [currentItem.key] : [];
     };
