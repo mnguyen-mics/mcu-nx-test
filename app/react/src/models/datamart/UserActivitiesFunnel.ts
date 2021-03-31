@@ -2,6 +2,7 @@ import { DataResponse } from "@mediarithmics-private/mcs-components-library/lib/
 import { DimensionFilterClause } from "../ReportRequestBody";
 
 export interface FunnelFilter {
+  id?: string;
   name: string;
   filter_clause: DimensionFilterClause;
   group_by_dimension?: string;
@@ -52,8 +53,6 @@ export interface Steps {
   conversion?: number;
   amount?: number;
   interaction_duration: number;
-  splitedView?: boolean;
-  isLoading?: boolean;
 }
 
 export interface FunnelIdByDimension {
@@ -63,9 +62,5 @@ export interface FunnelIdByDimension {
 }
 
 
-export interface FunnelSplitParam {
-  stepIndex: number;
-  groupBy: string;
-}
 export type TimeUnit = 'DAY' | 'WEEK' | 'MONTH';
 export type TimeType = 'WINDOW' | 'DATES'
