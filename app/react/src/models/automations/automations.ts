@@ -141,6 +141,8 @@ export interface OnSegmentExitInputNodeResource extends ScenarioNodeResource {
   initialFormData: OnSegmentExitInputAutomationFormData;
 }
 
+export type InputNodeResource = QueryInputNodeResource | OnSegmentEntryInputNodeResource | OnSegmentExitInputNodeResource;
+
 export type EdgeSelection = { [edgeId: string]: { min: number; max: number } };
 
 export interface ABNNodeResource extends ScenarioNodeResource {

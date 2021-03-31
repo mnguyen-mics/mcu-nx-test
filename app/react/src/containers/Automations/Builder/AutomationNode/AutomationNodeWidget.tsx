@@ -31,6 +31,8 @@ import {
   isDisplayCampaignNode,
   isEmailCampaignNode,
   isFeedNode,
+  isInputNode,
+  isEndNode,
 } from './Edit/domain';
 
 import { ScenarioNodeType } from '../../../../models/automations/automations';
@@ -52,6 +54,12 @@ import FeedNodeAutomationDashboardStats, {
 } from './Dashboard/FeedNode/FeedNodeAutomationDashboardStats';
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 import UsersCounter from '../UsersCounter';
+import EntryNodeAutomationDashboardStats, {
+  EntryNodeAutomationDashboardStatsProps,
+} from './Dashboard/EntryNode/EntryNodeAutomationDashboardStats';
+import ExitNodeAutomationDashboardStats, {
+  ExitNodeAutomationDashboardStatsProps,
+} from './Dashboard/ExitNode/ExitNodeAutomationDashboardStats';
 
 interface AutomationNodeProps {
   node: AutomationNodeModel;
@@ -237,6 +245,28 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         {
           additionalProps: {
             feedId: selectedNode.feed_id,
+            close: closeNextDrawer,
+          },
+          size: 'medium',
+        },
+      );
+    } else if (isInputNode(selectedNode)) {
+      openNextDrawer<EntryNodeAutomationDashboardStatsProps>(
+        EntryNodeAutomationDashboardStats,
+        {
+          additionalProps: {
+            nodeId: selectedNode.id,
+            close: closeNextDrawer,
+          },
+          size: 'medium',
+        },
+      );
+    } else if (isEndNode(selectedNode)) {
+      openNextDrawer<ExitNodeAutomationDashboardStatsProps>(
+        ExitNodeAutomationDashboardStats,
+        {
+          additionalProps: {
+            nodeId: selectedNode.id,
             close: closeNextDrawer,
           },
           size: 'medium',
@@ -468,6 +498,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
+      hasFeature,
     } = this.props;
     const content: React.ReactNodeArray = [];
 
@@ -478,6 +509,18 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         </div>,
       );
     } else {
+      if (hasFeature('automations-analytics')) {
+        content.push(
+          <div
+            key="stats"
+            onClick={this.viewStats}
+            className="boolean-menu-item"
+          >
+            <FormattedMessage {...messages.stats} />
+          </div>,
+        );
+      }
+
       const gotToSegment = () => {
         if (
           isOnSegmentEntryInputNode(node.storylineNodeModel.node) ||
@@ -488,7 +531,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
           );
       };
       content.push(
-        <div key="stats" onClick={gotToSegment} className="boolean-menu-item">
+        <div key="segment" onClick={gotToSegment} className="boolean-menu-item">
           <FormattedMessage {...messages.goToSegment} />
         </div>,
       );
@@ -542,7 +585,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
   };
 
   renderQueryEdit = (): React.ReactNodeArray => {
-    const { viewer, node } = this.props;
+    const { viewer, node, hasFeature } = this.props;
     const content: React.ReactNodeArray = [];
 
     if (!viewer) {
@@ -573,6 +616,18 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         );
       }
     } else {
+      if (hasFeature('automations-analytics')) {
+        content.push(
+          <div
+            key="stats"
+            onClick={this.viewStats}
+            className="boolean-menu-item"
+          >
+            <FormattedMessage {...messages.stats} />
+          </div>,
+        );
+      }
+
       content.push(
         <div key="view" onClick={this.editNode} className="boolean-menu-item">
           <FormattedMessage {...messages.view} />
@@ -584,7 +639,16 @@ class AutomationNodeWidget extends React.Component<Props, State> {
   };
 
   renderEndNodeEdit = (): React.ReactNodeArray => {
+    const { viewer, hasFeature } = this.props;
     const content: React.ReactNodeArray = [];
+
+    if (viewer && hasFeature('automations-analytics')) {
+      content.push(
+        <div key="stats" onClick={this.viewStats} className="boolean-menu-item">
+          <FormattedMessage {...messages.stats} />
+        </div>,
+      );
+    }
 
     return content;
   };
