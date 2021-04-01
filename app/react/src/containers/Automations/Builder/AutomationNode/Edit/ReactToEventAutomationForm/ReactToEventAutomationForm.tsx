@@ -280,7 +280,7 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
 
   componentDidUpdate(prevProps: Props, prevState: State) {
     const {
-      formValues: { eventPropertyFormSection, query_text, events },
+      formValues: { eventPropertyFormSection, query_text, events, standardEventNames },
       dispatch,
     } = this.props;
 
@@ -296,7 +296,7 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
         comparison: {
           type: 'STRING',
           operator: 'EQ',
-          values: events,
+          values: formMode === 'REACT_TO_EVENT_ADVANCED' ? events : standardEventNames,
         },
       });
 
@@ -543,7 +543,7 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
               change(FORM_ID, 'uiCreationMode', 'REACT_TO_EVENT_ADVANCED'),
             );
             if (standardEventsQueryText)
-              dispatch(change(FORM_ID, 'query_text', advancedQueryText));
+              dispatch(change(FORM_ID, 'query_text', advancedQueryText || standardEventsQueryText));
           }
         });
       else
