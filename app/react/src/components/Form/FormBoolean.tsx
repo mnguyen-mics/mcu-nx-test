@@ -33,7 +33,7 @@ class FormBoolean extends React.Component<
   constructor(props: FormBooleanProps & WrappedFieldProps) {
     super(props);
     this.state = {
-      checked: props.input.checked ? props.input.checked : false,
+      checked: props.input.value ? props.input.value : false,
     };
   }
 
