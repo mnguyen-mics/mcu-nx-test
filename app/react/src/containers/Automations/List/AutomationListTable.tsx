@@ -373,9 +373,10 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
       current: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalAutomations,
-      onChange: (page: number) => {
+      onChange: (page: number,size:number) => {
         this.updateLocationSearch({
           currentPage: page,
+          pageSize:size
         });
       },
       onShowSizeChange: (current: number, size: number) =>
