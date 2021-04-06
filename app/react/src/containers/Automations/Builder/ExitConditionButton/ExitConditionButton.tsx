@@ -11,53 +11,18 @@ import { compose } from 'recompose';
 import {
   ScenarioExitConditionFormData,
   ScenarioExitConditionFormResource,
-} from '../../../models/automations/automations';
-import { InjectedFeaturesProps, injectFeatures } from '../../Features';
-import { INITIAL_AUTOMATION_DATA } from '../Edit/domain';
-import { StorylineNodeModel } from './domain';
-import UsersCounter from './UsersCounter';
+} from '../../../../models/automations/automations';
+import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
+import { INITIAL_AUTOMATION_DATA } from '../../Edit/domain';
+import { StorylineNodeModel } from '../domain';
+import UsersCounter from '../UsersCounter';
 import injectDrawer, {
   InjectedDrawerProps,
-} from '../../../components/Drawer/injectDrawer';
-import ScenarioExitConditionAutomationForm from './ScenarioExitConditionAutomationForm';
+} from '../../../../components/Drawer/injectDrawer';
+import ScenarioExitConditionAutomationForm from '../ScenarioExitConditionAutomationForm';
 import ExitConditionAutomationDashboardStats, {
   ExitConditionAutomationDashboardStatsProps,
-} from './AutomationNode/Dashboard/ExitCondition/ExitConditionDashboardStats';
-
-const messages = defineMessages({
-  eventGlobalExitCondition: {
-    id: 'automation.builder.exitCondition.event',
-    defaultMessage: 'Exit on Event',
-  },
-  addGlobalExitCondition: {
-    id: 'automation.builder.exitCondition.new',
-    defaultMessage: 'Add Exit condition',
-  },
-  noGlobalExitCondition: {
-    id: 'automation.builder.exitCondition.empty',
-    defaultMessage: 'No exit condition',
-  },
-  deleteGlobalExitConditionTitle: {
-    id: 'automation.builder.exitCondition.delete.info',
-    defaultMessage: 'Are you sure you want to delete the exit condition ?',
-  },
-  deleteGlobalExitConditionConfirm: {
-    id: 'automation.builder.exitCondition.delete.confirm',
-    defaultMessage: 'Yes',
-  },
-  deleteGlobalExitConditionCancel: {
-    id: 'automation.builder.exitCondition.delete.cancel',
-    defaultMessage: 'No',
-  },
-  exitConditionStats: {
-    id: 'automation.builder.exitCondition.stats',
-    defaultMessage: 'View Stats.',
-  },
-  exitConditionconfig: {
-    id: 'automation.builder.exitCondition.Config',
-    defaultMessage: 'View Config.',
-  },
-});
+} from '../AutomationNode/Dashboard/ExitCondition/ExitConditionDashboardStats';
 
 interface ExitConditionButtonProps {
   datamartId: string;
@@ -123,9 +88,11 @@ class ExitConditionButton extends React.Component<Props, State> {
       datamartId,
       viewer,
     } = this.props;
+
     const { viewSubmenus } = this.state;
+
     if (exitCondition) {
-      this.setState({ viewSubmenus: !viewSubmenus }, () => {
+      const openNextDrawerExitCondition = () => {
         openNextDrawer<{}>(ScenarioExitConditionAutomationForm, {
           additionalProps: {
             exitCondition: exitCondition,
@@ -145,7 +112,14 @@ class ExitConditionButton extends React.Component<Props, State> {
           },
           size: 'small',
         });
-      });
+      };
+
+      viewer
+        ? this.setState(
+            { viewSubmenus: !viewSubmenus },
+            openNextDrawerExitCondition,
+          )
+        : openNextDrawerExitCondition();
     }
   };
 
@@ -182,7 +156,7 @@ class ExitConditionButton extends React.Component<Props, State> {
           </div>
         ) : null}
         <div
-          key="stats"
+          key="config"
           onClick={this.onGlobalExitConditionSelectConfig}
           className="mcs-exitConditionAutomation_menuItem"
         >
@@ -245,39 +219,73 @@ class ExitConditionButton extends React.Component<Props, State> {
       ) : null;
 
     return (
-      hasFeature('automations-global-exit-condition') && (
-        <div className="button-helpers bottom exit-condition-container">
-          {subMenu}
+      <div className="button-helpers bottom exit-condition-container">
+        {subMenu}
 
-          <div className="exit-condition">
-            <div className="helper exit-condition-buttons">
-              {exitConditionBaseButton}
-              {!viewer && exitCondition && exitCondition.formData.query_text && (
-                <Popconfirm
-                  title={formatMessage(messages.deleteGlobalExitConditionTitle)}
-                  onConfirm={this.onGlobalExitConditionDelete}
-                  placement={'topRight'}
-                  okText={formatMessage(
-                    messages.deleteGlobalExitConditionConfirm,
-                  )}
-                  cancelText={formatMessage(
-                    messages.deleteGlobalExitConditionCancel,
-                  )}
-                >
-                  <div className={'delete'}>
-                    <McsIcon type={'close'} />
-                  </div>
-                </Popconfirm>
-              )}
-            </div>
-
-            {usersCounter}
+        <div className="exit-condition">
+          <div className="helper exit-condition-buttons">
+            {exitConditionBaseButton}
+            {!viewer && exitCondition && exitCondition.formData.query_text && (
+              <Popconfirm
+                title={formatMessage(messages.deleteGlobalExitConditionTitle)}
+                onConfirm={this.onGlobalExitConditionDelete}
+                placement={'topRight'}
+                okText={formatMessage(
+                  messages.deleteGlobalExitConditionConfirm,
+                )}
+                cancelText={formatMessage(
+                  messages.deleteGlobalExitConditionCancel,
+                )}
+              >
+                <div className={'delete'}>
+                  <McsIcon type={'close'} />
+                </div>
+              </Popconfirm>
+            )}
           </div>
+
+          {usersCounter}
         </div>
-      )
+      </div>
     );
   }
 }
+
+const messages = defineMessages({
+  eventGlobalExitCondition: {
+    id: 'automation.builder.exitCondition.event',
+    defaultMessage: 'Exit on Event',
+  },
+  addGlobalExitCondition: {
+    id: 'automation.builder.exitCondition.new',
+    defaultMessage: 'Add Exit condition',
+  },
+  noGlobalExitCondition: {
+    id: 'automation.builder.exitCondition.empty',
+    defaultMessage: 'No exit condition',
+  },
+  deleteGlobalExitConditionTitle: {
+    id: 'automation.builder.exitCondition.delete.info',
+    defaultMessage: 'Are you sure you want to delete the exit condition ?',
+  },
+  deleteGlobalExitConditionConfirm: {
+    id: 'automation.builder.exitCondition.delete.confirm',
+    defaultMessage: 'Yes',
+  },
+  deleteGlobalExitConditionCancel: {
+    id: 'automation.builder.exitCondition.delete.cancel',
+    defaultMessage: 'No',
+  },
+  exitConditionStats: {
+    id: 'automation.builder.exitCondition.stats',
+    defaultMessage: 'View Stats.',
+  },
+  exitConditionconfig: {
+    id: 'automation.builder.exitCondition.Config',
+    defaultMessage: 'View Config.',
+  },
+});
+
 export default compose<Props, ExitConditionButtonProps>(
   injectDrawer,
   injectIntl,

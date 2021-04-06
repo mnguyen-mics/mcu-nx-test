@@ -39,7 +39,8 @@ import { AutomationFormDataType } from './AutomationNode/Edit/domain';
 import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
 import { generateFakeId } from '../../../utils/FakeIdHelper';
 import { compose } from 'recompose';
-import ExitConditionButton from './ExitConditionButton';
+import ExitConditionButton from './ExitConditionButton/ExitConditionButton';
+import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 
 export const messages = defineMessages({
   ifNodeFalsePathLabel: {
@@ -50,30 +51,6 @@ export const messages = defineMessages({
     id: 'automation.builder.ifNode.label.true',
     defaultMessage: 'If Condition True',
   },
-  eventGlobalExitCondition: {
-    id: 'automation.builder.exitCondition.event',
-    defaultMessage: 'Exit on Event',
-  },
-  addGlobalExitCondition: {
-    id: 'automation.builder.exitCondition.new',
-    defaultMessage: 'Add Exit condition',
-  },
-  noGlobalExitCondition: {
-    id: 'automation.builder.exitCondition.empty',
-    defaultMessage: 'No exit condition',
-  },
-  deleteGlobalExitConditionTitle: {
-    id: 'automation.builder.exitCondition.delete.info',
-    defaultMessage: 'Are you sure you want to delete the exit condition ?',
-  },
-  deleteGlobalExitConditionConfirm: {
-    id: 'automation.builder.exitCondition.delete.confirm',
-    defaultMessage: 'Yes',
-  },
-  deleteGlobalExitConditionCancel: {
-    id: 'automation.builder.exitCondition.delete.cancel',
-    defaultMessage: 'No',
-  }
 });
 
 export interface AutomationBuilderBaseProps {
@@ -114,7 +91,7 @@ interface State {
   viewNodeSelector: boolean;
 }
 
-type Props = AutomationBuilderProps & InjectedIntlProps;
+type Props = AutomationBuilderProps & InjectedIntlProps & InjectedFeaturesProps;
 
 class AutomationBuilder extends React.Component<Props, State> {
   engine = new DiagramEngine();
@@ -430,21 +407,8 @@ class AutomationBuilder extends React.Component<Props, State> {
       exitCondition,
       datamartId,
       automationTreeData,
+      hasFeature,
     } = this.props;
-
-    const exitConditionButton = (
-      <ExitConditionButton
-        datamartId={datamartId}
-        automationTreeData={automationTreeData}
-        exitCondition={exitCondition}
-        viewer={viewer}
-        updateAutomationData={
-          isAutomationBuilderEditorProp(this.props)
-            ? this.props.updateAutomationData
-            : undefined
-        }
-      />
-    );
 
     let content = (
       <div className={`automation-builder`} ref={this.div}>
@@ -477,7 +441,19 @@ class AutomationBuilder extends React.Component<Props, State> {
             </Button>
           </div>
 
-          {exitConditionButton}
+          {hasFeature('automations-global-exit-condition') && (
+            <ExitConditionButton
+              datamartId={datamartId}
+              automationTreeData={automationTreeData}
+              exitCondition={exitCondition}
+              viewer={viewer}
+              updateAutomationData={
+                isAutomationBuilderEditorProp(this.props)
+                  ? this.props.updateAutomationData
+                  : undefined
+              }
+            />
+          )}
         </Col>
         <Col
           span={viewNodeSelector ? 6 : 0}
@@ -500,7 +476,19 @@ class AutomationBuilder extends React.Component<Props, State> {
               // allowCanvasTranslation={true}
               inverseZoom={true}
             />
-            {exitConditionButton}
+            {hasFeature('automations-global-exit-condition') && (
+              <ExitConditionButton
+                datamartId={datamartId}
+                automationTreeData={automationTreeData}
+                exitCondition={exitCondition}
+                viewer={viewer}
+                updateAutomationData={
+                  isAutomationBuilderEditorProp(this.props)
+                    ? this.props.updateAutomationData
+                    : undefined
+                }
+              />
+            )}
           </Col>
         </div>
       );
@@ -510,6 +498,7 @@ class AutomationBuilder extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, AutomationBuilderProps>(injectIntl)(
-  withDragDropContext(AutomationBuilder),
-);
+export default compose<Props, AutomationBuilderProps>(
+  injectIntl,
+  injectFeatures,
+)(withDragDropContext(AutomationBuilder));
