@@ -182,7 +182,7 @@ class DeleteFromSegmentGeneralSectionForm extends React.Component<
           fetchSingleMethod={this.fetchSingleMethod}
           selectProps={{
             disabled: !!disabled,
-            mode: 'multiple',
+            mode: undefined,
             showSearch: true,
           }}
           type="Audience"
