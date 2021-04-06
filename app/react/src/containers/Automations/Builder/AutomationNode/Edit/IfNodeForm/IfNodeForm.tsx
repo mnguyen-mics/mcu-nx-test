@@ -21,58 +21,11 @@ import JSONQLBuilderContainer from '../../../../../QueryTool/JSONOTQL/JSONQLBuil
 import { OtqlConsole } from '../../../../../../components';
 import { QueryDocument } from '../../../../../../models/datamart/graphdb/QueryDocument';
 import { StorylineNodeModel } from '../../../domain';
-import { QueryInputNodeResource } from '../../../../../../models/automations/automations';
+import { IfNodeResource } from '../../../../../../models/automations/automations';
 import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 
 const { Content } = Layout;
-
-const localMessages = defineMessages({
-  descriptionTitle: {
-    id:
-      'automation.builder.node.edition.form.query.presentation.description.title',
-    defaultMessage: 'Description',
-  },
-  descriptionSubtitle: {
-    id:
-      'automation.builder.node.edition.form.query.presentation.description.subtitle',
-    defaultMessage:
-      'Using {if}, you can add a check whether the user should proceed to the next step of the automation.',
-  },
-  if: {
-    id:
-      'automation.builder.node.edition.form.query.presentation.description.subtitle.if',
-    defaultMessage: 'If',
-  },
-  configurationTitle: {
-    id:
-      'automation.builder.node.edition.form.query.presentation.configuration.title',
-    defaultMessage: 'Configuration',
-  },
-  save: {
-    id: 'automation.builder.node.edition.form.query.save.button',
-    defaultMessage: 'Update',
-  },
-  or: {
-    id: 'automation.builder.node.edition.form.query.presentation.or',
-    defaultMessage: 'or',
-  },
-  subtitle: {
-    id: 'automation.builder.node.edition.form.query.presentation.subtitle',
-    defaultMessage: 'Please select the query type you want to do.',
-  },
-  title: {
-    id: 'automation.builder.node.edition.form.query.presentation.title',
-    defaultMessage: 'Language Selection.',
-  },
-  noMoreSupported: {
-    id:
-      'automation.builder.node.edition.form.query.legacyComponent.noMoreSupported',
-    defaultMessage:
-      'The query language related to this datamart is no more supported. Please select another datamart or create a new resource based on another datamart.',
-  },
-});
-
-export interface QueryAutomationFormProps {
+export interface IfNodeFormProps {
   close: () => void;
   breadCrumbPaths: Path[];
   storylineNodeModel: StorylineNodeModel;
@@ -81,24 +34,22 @@ export interface QueryAutomationFormProps {
   disabled?: boolean;
 }
 
-type Props = QueryAutomationFormProps &
+type Props = IfNodeFormProps &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
 
 interface State {
   queryLanguage?: QueryLanguage;
   queryText?: string;
-  isTrigger?: boolean;
 }
 
-class QueryAutomationForm extends React.Component<Props, State> {
+class IfNodeForm extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    const node = props.storylineNodeModel.node as QueryInputNodeResource;
+    const node = props.storylineNodeModel.node as IfNodeResource;
     this.state = {
       queryLanguage: node.formData.query_language,
       queryText: node.formData.query_text,
-      isTrigger: node.evaluation_mode === 'LIVE',
     };
   }
 
@@ -113,7 +64,7 @@ class QueryAutomationForm extends React.Component<Props, State> {
       intl,
     } = this.props;
 
-    const { queryLanguage, isTrigger } = this.state;
+    const { queryLanguage } = this.state;
 
     const isDisabled = {
       disabled: disabled,
@@ -193,7 +144,7 @@ class QueryAutomationForm extends React.Component<Props, State> {
       );
     }
 
-    const node = storylineNodeModel.node as QueryInputNodeResource;
+    const node = storylineNodeModel.node as IfNodeResource;
     const datamartId = node.formData.datamart_id
       ? node.formData.datamart_id
       : initialValues.datamart_id!;
@@ -241,7 +192,6 @@ class QueryAutomationForm extends React.Component<Props, State> {
               ? JSON.parse(node.formData.query_text!)
               : undefined
           }
-          isTrigger={isTrigger}
           {...isDisabled}
           hideCounterAndTimeline={true}
         />
@@ -302,7 +252,53 @@ class QueryAutomationForm extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, QueryAutomationFormProps>(
+export default compose<Props, IfNodeFormProps>(
   injectIntl,
   withRouter,
-)(QueryAutomationForm);
+)(IfNodeForm);
+
+const localMessages = defineMessages({
+  descriptionTitle: {
+    id:
+      'automation.builder.node.edition.form.query.presentation.description.title',
+    defaultMessage: 'Description',
+  },
+  descriptionSubtitle: {
+    id:
+      'automation.builder.node.edition.form.query.presentation.description.subtitle',
+    defaultMessage:
+      'Using {if}, you can add a check whether the user should proceed to the next step of the automation.',
+  },
+  if: {
+    id:
+      'automation.builder.node.edition.form.query.presentation.description.subtitle.if',
+    defaultMessage: 'If',
+  },
+  configurationTitle: {
+    id:
+      'automation.builder.node.edition.form.query.presentation.configuration.title',
+    defaultMessage: 'Configuration',
+  },
+  save: {
+    id: 'automation.builder.node.edition.form.query.save.button',
+    defaultMessage: 'Update',
+  },
+  or: {
+    id: 'automation.builder.node.edition.form.query.presentation.or',
+    defaultMessage: 'or',
+  },
+  subtitle: {
+    id: 'automation.builder.node.edition.form.query.presentation.subtitle',
+    defaultMessage: 'Please select the query type you want to do.',
+  },
+  title: {
+    id: 'automation.builder.node.edition.form.query.presentation.title',
+    defaultMessage: 'Language Selection.',
+  },
+  noMoreSupported: {
+    id:
+      'automation.builder.node.edition.form.query.legacyComponent.noMoreSupported',
+    defaultMessage:
+      'The query language related to this datamart is no more supported. Please select another datamart or create a new resource based on another datamart.',
+  },
+});

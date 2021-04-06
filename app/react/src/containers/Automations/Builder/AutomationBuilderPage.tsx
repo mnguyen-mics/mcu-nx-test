@@ -25,7 +25,6 @@ import {
 
 import { IAutomationFormService } from '../Edit/AutomationFormService';
 import AutomationTemplateSelector from './AutomationTemplateSelector';
-import { QueryInputEvaluationMode } from '../../../models/automations/automations';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
 import { Loading } from '../../../components';
 import { Actionbar } from '@mediarithmics-private/mcs-components-library';
@@ -48,7 +47,6 @@ interface MapStateToProps {
 }
 
 export type AutomationSelectedType =
-  | QueryInputEvaluationMode
   | 'REACT_TO_EVENT'
   | 'ON_SEGMENT_ENTRY'
   | 'ON_SEGMENT_EXIT';
@@ -111,7 +109,6 @@ class AutomationBuilderPage extends React.Component<Props, State> {
       match: {
         params: { automationId },
       },
-      hasFeature,
     } = this.props;
     const {
       location: prevLocation,
@@ -122,8 +119,7 @@ class AutomationBuilderPage extends React.Component<Props, State> {
 
     if (
       queryString.parse(location.search).datamartId !==
-        queryString.parse(prevLocation.search).datamartId &&
-      hasFeature('automations-wizard-react-to-event')
+        queryString.parse(prevLocation.search).datamartId
     )
       this.checkReactToEvent();
 
@@ -395,9 +391,6 @@ class AutomationBuilderPage extends React.Component<Props, State> {
         automationFormData={automationFormData}
         saveOrUpdate={this.saveAutomation}
         loading={isLoading}
-        creation_mode={
-          type === 'REACT_TO_EVENT' ? 'REACT_TO_EVENT_STANDARD' : 'QUERY'
-        }
       />
     );
   }

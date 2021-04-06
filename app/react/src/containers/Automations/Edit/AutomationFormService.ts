@@ -1245,9 +1245,6 @@ export class AutomationFormService implements IAutomationFormService {
         scenario_id: automationId,
         type: 'QUERY_INPUT',
         query_id: queryId,
-        evaluation_mode: node.evaluation_mode,
-        evaluation_period: node.evaluation_period,
-        evaluation_period_unit: node.evaluation_period_unit,
         ui_creation_mode: node.formData.uiCreationMode,
       };
       resourceId =

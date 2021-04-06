@@ -70,7 +70,7 @@ class AutomationTemplateSelector extends React.Component<Props> {
       <Layout>
         <Actionbar {...actionbarProps} />
         <Layout.Content className="mcs-content-container mcs-form-container text-center">
-          <FormTitle title={messages.title} subtitle={messages.subTitleStep1} />
+          <FormTitle title={messages.title} subtitle={messages.subTitle} />
           {this.renderSelectionAutomationType()}
         </Layout.Content>
       </Layout>
@@ -88,21 +88,9 @@ const messages = defineMessages({
     id: 'automations-template-selector-title',
     defaultMessage: 'Automations Builder',
   },
-  advanced: {
-    id: 'automations-template-selector-advanced',
-    defaultMessage: 'Advanced',
-  },
-  subTitleStep1: {
+  subTitle: {
     id: 'automations-template-selector-subtitle-step1',
     defaultMessage: 'Choose your automation type',
-  },
-  subTitleStep2: {
-    id: 'automations-template-selector-subtitle-step2',
-    defaultMessage: 'Choose your automation period',
-  },
-  or: {
-    id: 'automations-template-selector-or',
-    defaultMessage: 'or',
   },
   onSegmentEntry: {
     id: 'automations-template-selector-on-segment-entry',
