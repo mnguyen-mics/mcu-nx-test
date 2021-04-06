@@ -6,7 +6,7 @@ import {
   LabelModel,
 } from 'storm-react-diagrams';
 import { ROOT_NODE_POSITION } from '../../QueryTool/JSONOTQL/domain';
-import { Col, Popconfirm } from 'antd';
+import { Col } from 'antd';
 import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import SimplePortFactory from '../../QueryTool/JSONOTQL/Diagram/Port/SimplePortFactory';
 import AutomationNodeFactory from './AutomationNode/AutomationNodeFactory';
@@ -20,7 +20,6 @@ import {
   ScenarioNodeShape,
   QueryInputUiCreationMode,
   ScenarioExitConditionFormResource,
-  ScenarioExitConditionFormData,
 } from '../../../models/automations/automations';
 import {
   StorylineNodeModel,
@@ -37,21 +36,11 @@ import DropNodeModel from './DropNode/DropNodeModel';
 import AutomationLinkModel from './Link/AutomationLinkModel';
 import withDragDropContext from '../../../common/Diagram/withDragDropContext';
 import { AutomationFormDataType } from './AutomationNode/Edit/domain';
-import {
-  defineMessages,
-  FormattedMessage,
-  InjectedIntlProps,
-  injectIntl,
-} from 'react-intl';
+import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
 import { generateFakeId } from '../../../utils/FakeIdHelper';
-import { InjectedFeaturesProps, injectFeatures } from '../../Features';
-import injectDrawer, {
-  InjectedDrawerProps,
-} from '../../../components/Drawer/injectDrawer';
-import ScenarioExitConditionAutomationForm from './ScenarioExitConditionAutomationForm';
-import { INITIAL_AUTOMATION_DATA } from '../Edit/domain';
 import { compose } from 'recompose';
-import UsersCounter from './UsersCounter';
+import ExitConditionButton from './ExitConditionButton/ExitConditionButton';
+import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 
 export const messages = defineMessages({
   ifNodeFalsePathLabel: {
@@ -61,30 +50,6 @@ export const messages = defineMessages({
   ifNodeTruePathLabel: {
     id: 'automation.builder.ifNode.label.true',
     defaultMessage: 'If Condition True',
-  },
-  eventGlobalExitCondition: {
-    id: 'automation.builder.exitCondition.event',
-    defaultMessage: 'Exit on Event',
-  },
-  addGlobalExitCondition: {
-    id: 'automation.builder.exitCondition.new',
-    defaultMessage: 'Add Exit condition',
-  },
-  noGlobalExitCondition: {
-    id: 'automation.builder.exitCondition.empty',
-    defaultMessage: 'No exit condition',
-  },
-  deleteGlobalExitConditionTitle: {
-    id: 'automation.builder.exitCondition.delete.info',
-    defaultMessage: 'Are you sure you want to delete the exit condition ?',
-  },
-  deleteGlobalExitConditionConfirm: {
-    id: 'automation.builder.exitCondition.delete.confirm',
-    defaultMessage: 'Yes',
-  },
-  deleteGlobalExitConditionCancel: {
-    id: 'automation.builder.exitCondition.delete.cancel',
-    defaultMessage: 'No',
   },
 });
 
@@ -126,10 +91,7 @@ interface State {
   viewNodeSelector: boolean;
 }
 
-type Props = AutomationBuilderProps &
-  InjectedDrawerProps &
-  InjectedFeaturesProps &
-  InjectedIntlProps;
+type Props = AutomationBuilderProps & InjectedIntlProps & InjectedFeaturesProps;
 
 class AutomationBuilder extends React.Component<Props, State> {
   engine = new DiagramEngine();
@@ -280,22 +242,6 @@ class AutomationBuilder extends React.Component<Props, State> {
           props.automationTreeData,
         ),
       );
-    }
-  };
-
-  updateExitCondition = (
-    exitConditionFormData: ScenarioExitConditionFormData,
-  ): void => {
-    const props = this.props;
-    if (
-      isAutomationBuilderEditorProp(props) &&
-      props.automationTreeData &&
-      props.exitCondition
-    ) {
-      props.updateAutomationData(props.automationTreeData, {
-        ...props.exitCondition,
-        formData: exitConditionFormData,
-      });
     }
   };
 
@@ -454,99 +400,15 @@ class AutomationBuilder extends React.Component<Props, State> {
     });
   };
 
-  onGlobalExitConditionSelect = () => {
-    const {
-      openNextDrawer,
-      closeNextDrawer,
-      exitCondition,
-      datamartId,
-      viewer,
-    } = this.props;
-
-    if (exitCondition) {
-      openNextDrawer<{}>(ScenarioExitConditionAutomationForm, {
-        additionalProps: {
-          exitCondition: exitCondition,
-          disabled: viewer,
-          initialValues: {
-            ...exitCondition.formData,
-            datamart_id: datamartId,
-            events: [],
-          },
-          close: () => {
-            closeNextDrawer();
-          },
-          onSubmit: (formData: ScenarioExitConditionFormData) => {
-            this.updateExitCondition(formData);
-            closeNextDrawer();
-          },
-        },
-        size: 'small',
-      });
-    }
-  };
-
-  onGlobalExitConditionDelete = () => {
-    this.updateExitCondition(
-      INITIAL_AUTOMATION_DATA.exitCondition.initialFormData,
-    );
-  };
-
   render() {
     const { viewNodeSelector } = this.state;
     const {
-      hasFeature,
       viewer,
-      intl: { formatMessage },
       exitCondition,
+      datamartId,
+      automationTreeData,
+      hasFeature,
     } = this.props;
-
-    const exitConditionButton = hasFeature(
-      'automations-global-exit-condition',
-    ) && (
-      <div className="button-helpers bottom">
-        <div className="helper exit-condition">
-          {hasFeature('automations-analytics') &&
-          exitCondition &&
-          exitCondition.formData.query_text &&
-          viewer ? (
-            <UsersCounter iconName={'user'} numberOfUsers={123456789} />
-          ) : null}
-
-          <div
-            className={'edit'}
-            onClick={
-              viewer && (!exitCondition || !exitCondition.formData.query_text)
-                ? undefined
-                : this.onGlobalExitConditionSelect
-            }
-          >
-            {exitCondition && exitCondition.formData.query_text ? (
-              <FormattedMessage {...messages.eventGlobalExitCondition} />
-            ) : viewer ? (
-              <FormattedMessage {...messages.noGlobalExitCondition} />
-            ) : (
-              <FormattedMessage {...messages.addGlobalExitCondition} />
-            )}
-          </div>
-          {!viewer && exitCondition && exitCondition.formData.query_text && (
-            <Popconfirm
-              title={formatMessage(messages.deleteGlobalExitConditionTitle)}
-              onConfirm={this.onGlobalExitConditionDelete}
-              placement={'topRight'}
-              okText={formatMessage(messages.deleteGlobalExitConditionConfirm)}
-              cancelText={formatMessage(
-                messages.deleteGlobalExitConditionCancel,
-              )}
-            >
-              <div className={'delete'}>
-                <McsIcon type={'close'} />
-              </div>
-            </Popconfirm>
-          )}
-        </div>
-      </div>
-    );
 
     let content = (
       <div className={`automation-builder`} ref={this.div}>
@@ -579,7 +441,19 @@ class AutomationBuilder extends React.Component<Props, State> {
             </Button>
           </div>
 
-          {exitConditionButton}
+          {hasFeature('automations-global-exit-condition') && (
+            <ExitConditionButton
+              datamartId={datamartId}
+              automationTreeData={automationTreeData}
+              exitCondition={exitCondition}
+              viewer={viewer}
+              updateAutomationData={
+                isAutomationBuilderEditorProp(this.props)
+                  ? this.props.updateAutomationData
+                  : undefined
+              }
+            />
+          )}
         </Col>
         <Col
           span={viewNodeSelector ? 6 : 0}
@@ -602,7 +476,19 @@ class AutomationBuilder extends React.Component<Props, State> {
               // allowCanvasTranslation={true}
               inverseZoom={true}
             />
-            {exitConditionButton}
+            {hasFeature('automations-global-exit-condition') && (
+              <ExitConditionButton
+                datamartId={datamartId}
+                automationTreeData={automationTreeData}
+                exitCondition={exitCondition}
+                viewer={viewer}
+                updateAutomationData={
+                  isAutomationBuilderEditorProp(this.props)
+                    ? this.props.updateAutomationData
+                    : undefined
+                }
+              />
+            )}
           </Col>
         </div>
       );
@@ -615,5 +501,4 @@ class AutomationBuilder extends React.Component<Props, State> {
 export default compose<Props, AutomationBuilderProps>(
   injectIntl,
   injectFeatures,
-  injectDrawer,
 )(withDragDropContext(AutomationBuilder));
