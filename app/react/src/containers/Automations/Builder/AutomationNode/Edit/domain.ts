@@ -164,7 +164,7 @@ export interface AddToSegmentAutomationFormData extends DefaultFormData {
   processingActivities: ProcessingActivityFieldModel[];
   ttl: {
     value?: string;
-    unit: 'days' | 'months';
+    unit: 'days' | 'weeks' | 'months';
   };
 }
 

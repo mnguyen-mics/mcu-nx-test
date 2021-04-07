@@ -83,6 +83,10 @@ class AddToSegmentGeneralInformationFormSection extends React.Component<Props> {
                       value: 'days',
                       key: 'days',
                       title: formatMessage(messages.audienceSegmentTTLUnitDays),
+                    },{
+                      value: 'weeks',
+                      key: 'weeks',
+                      title: formatMessage(messages.audienceSegmentTTLUnitWeeks),
                     },
                     {
                       value: 'months',
@@ -159,6 +163,10 @@ export const messages = defineMessages({
   audienceSegmentTTLUnitDays: {
     id: 'automation.builder.node.addToSegmentForm.ttl.unit.days',
     defaultMessage: 'Days',
+  },
+  audienceSegmentTTLUnitWeeks: {
+    id: 'automation.builder.node.addToSegmentForm.ttl.unit.weeks',
+    defaultMessage: 'Weeks',
   },
   audienceSegmentTTLUnitMonths: {
     id: 'automation.builder.node.addToSegmentForm.ttl.unit.months',
