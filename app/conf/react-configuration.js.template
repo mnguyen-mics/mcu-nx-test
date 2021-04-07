@@ -16,7 +16,6 @@
     'automations-list',
     'automations-builder',
     'automations-test-scenario',
-    'automations-wizard-react-to-event',
     'automations-add-delete-to-from-segment-node',
     'creatives-display',
     'creatives-native',

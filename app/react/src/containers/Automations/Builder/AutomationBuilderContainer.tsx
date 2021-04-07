@@ -14,7 +14,6 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { AutomationBuilderPageRouteParams } from './AutomationBuilderPage';
 import { Loading } from '../../../components';
 import {
-  QueryInputUiCreationMode,
   ScenarioExitConditionFormResource,
 } from '../../../models/automations/automations';
 
@@ -23,7 +22,6 @@ export interface AutomationBuilderContainerProps {
   automationFormData?: Partial<AutomationFormData>;
   saveOrUpdate: (formData: Partial<AutomationFormData>) => void;
   loading: boolean;
-  creation_mode: QueryInputUiCreationMode;
   edition?: boolean;
 }
 
@@ -94,7 +92,6 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
       automationFormData,
       saveOrUpdate,
       loading,
-      creation_mode,
     } = this.props;
     const { automationTreeData, exitConditionFormResource } = this.state;
 
@@ -130,7 +127,6 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
               scenarioId={storylineNodeData[0].scenario_id}
               updateAutomationData={this.handleUpdateAutomationData}
               viewer={false}
-              creation_mode={creation_mode}
             />
           </Layout.Content>
         </Layout>

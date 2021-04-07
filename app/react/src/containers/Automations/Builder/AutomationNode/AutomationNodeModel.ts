@@ -5,12 +5,11 @@ import ABNAutomationForm from './Edit/ABNAutomationForm/ABNAutomationForm';
 import DefaultAutomationForm from './Edit/DefaultForm/DefaultAutomationForm';
 import { AutomationFormPropsType } from './Edit/domain';
 import EmailCampaignAutomationForm from './Edit/EmailCampaignForm/EmailCampaignAutomationForm';
-import QueryAutomationForm from './Edit/QueryForm/QueryForm';
+import IfNodeForm from './Edit/IfNodeForm/IfNodeForm';
 import WaitForm from './Edit/WaitForm/WaitForm';
 import AddToSegmentAutomationForm from './Edit/AddToSegmentNodeForm/AddToSegmentSegmentAutomationForm';
 import DeleteFromSegmentAutomationForm from './Edit/DeleteFromSegmentNodeForm/DeleteFromSegmentAutomationForm';
 import ReactToEventAutomationForm from './Edit/ReactToEventAutomationForm/ReactToEventAutomationForm';
-import { QueryInputUiCreationMode } from '../../../../models/automations/automations';
 import OnSegmentEntryInputAutomationForm from './Edit/OnSegmentEntryInputForm/OnSegmentEntryInputAutomationForm';
 import OnSegmentExitInputAutomationForm from './Edit/OnSegmentExitInputForm/OnSegmentExitInputAutomationForm';
 import CustomActionAutomationForm from './Edit/CustomActionNodeForm/CustomActionAutomationForm';
@@ -32,7 +31,6 @@ export default class AutomationNodeModel extends NodeModel {
   iconAssetUrl?: string;
   iconAnt?: React.ReactNode;
   isFirstNode?: boolean;
-  creationMode?: QueryInputUiCreationMode;
 
   constructor(
     datamartId?: string,
@@ -45,7 +43,6 @@ export default class AutomationNodeModel extends NodeModel {
     iconAnt?: React.ReactNode,
     treeNodePath?: number[],
     isFirstNode?: boolean,
-    creationMode?: QueryInputUiCreationMode,
   ) {
     super('automation-node');
 
@@ -70,7 +67,6 @@ export default class AutomationNodeModel extends NodeModel {
     this.iconAnt = iconAnt;
     this.iconAssetUrl = iconAssetUrl;
     this.isFirstNode = isFirstNode;
-    this.creationMode = creationMode;
 
     switch (this.storylineNodeModel.node.type) {
       case 'EMAIL_CAMPAIGN':
@@ -86,10 +82,7 @@ export default class AutomationNodeModel extends NodeModel {
         this.editFormComponent = ABNAutomationForm;
         break;
       case 'QUERY_INPUT':
-        this.creationMode === 'REACT_TO_EVENT_STANDARD' ||
-        this.creationMode === 'REACT_TO_EVENT_ADVANCED'
-          ? (this.editFormComponent = ReactToEventAutomationForm)
-          : (this.editFormComponent = QueryAutomationForm);
+        this.editFormComponent = ReactToEventAutomationForm
         break;
       case 'ON_SEGMENT_ENTRY_INPUT_NODE':
         this.editFormComponent = OnSegmentEntryInputAutomationForm;
@@ -101,7 +94,7 @@ export default class AutomationNodeModel extends NodeModel {
         this.editFormComponent = WaitForm;
         break;
       case 'IF_NODE':
-        this.editFormComponent = QueryAutomationForm;
+        this.editFormComponent = IfNodeForm;
         break;
       case 'CUSTOM_ACTION_NODE':
         this.editFormComponent = CustomActionAutomationForm;

@@ -689,13 +689,10 @@ export const beginNode = (type?: AutomationSelectedType): ScenarioNodeShape => {
     scenario_id: '',
     type: 'QUERY_INPUT',
     query_id: baseQueryId,
-    evaluation_mode: 'LIVE',
-    ui_creation_mode:
-      type === 'REACT_TO_EVENT' ? 'REACT_TO_EVENT_STANDARD' : 'QUERY',
+    ui_creation_mode: 'REACT_TO_EVENT_STANDARD',
     last_added_node: true,
     formData: {
-      uiCreationMode:
-        type === 'REACT_TO_EVENT' ? 'REACT_TO_EVENT_STANDARD' : 'QUERY',
+      uiCreationMode: 'REACT_TO_EVENT_STANDARD',
     },
   };
 };
@@ -766,20 +763,9 @@ export function generateNodeProperties(
         color: '#fc3f48',
       };
     case 'QUERY_INPUT':
-      let subtitle = '';
-      if (node.evaluation_mode === 'PERIODIC') {
-        subtitle = formatMessage(nodeMessages.periodicQueryInputNodeSubtitle, {
-          frequency: node.evaluation_period ? node.evaluation_period : '',
-          timeUnit: node.evaluation_period_unit
-            ? node.evaluation_period_unit
-            : '',
-        });
-      } else {
-        subtitle = formatMessage(nodeMessages.livequeryInputNodeSubtitle);
-      }
       return {
         title: formatMessage(nodeMessages.queryInputNodeTitle),
-        subtitle: subtitle,
+        subtitle: formatMessage(nodeMessages.livequeryInputNodeSubtitle),
         iconAnt: <FlagOutlined className="available-node-icon-gyph" />,
         color: '#fbc02d',
       };
@@ -1172,10 +1158,6 @@ const nodeMessages = defineMessages({
   livequeryInputNodeSubtitle: {
     id: 'automation.builder.node.queryInput.live.subtitle',
     defaultMessage: 'React to an event',
-  },
-  periodicQueryInputNodeSubtitle: {
-    id: 'automation.builder.node.queryInput.periodic.title',
-    defaultMessage: 'Evaluated every {frequency} {timeUnit}',
   },
   onAudienceSegmentEntryNodeTitle: {
     id: 'automation.builder.node.onAudienceSegmentEntry.title',

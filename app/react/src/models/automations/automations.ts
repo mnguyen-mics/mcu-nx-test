@@ -100,10 +100,7 @@ export type QueryInputEvaluationPeriodUnit =
   | 'WEEK'
   | 'MONTH';
 
-export type QueryInputEvaluationMode = 'LIVE' | 'PERIODIC';
-
 export type QueryInputUiCreationMode =
-  | 'QUERY'
   | 'REACT_TO_EVENT_STANDARD'
   | 'REACT_TO_EVENT_ADVANCED';
 
@@ -111,9 +108,6 @@ export interface QueryInputNodeResource extends ScenarioNodeResource {
   type: 'QUERY_INPUT';
   formData: QueryInputAutomationFormData;
   query_id: string;
-  evaluation_mode?: QueryInputEvaluationMode;
-  evaluation_period?: number;
-  evaluation_period_unit?: QueryInputEvaluationPeriodUnit;
   ui_creation_mode: QueryInputUiCreationMode;
 }
 

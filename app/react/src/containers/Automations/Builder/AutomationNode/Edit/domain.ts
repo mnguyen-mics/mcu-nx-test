@@ -34,7 +34,7 @@ import { QueryResource } from '../../../../../models/datamart/DatamartResource';
 import { AddToSegmentAutomationFormProps } from './AddToSegmentNodeForm/AddToSegmentSegmentAutomationForm';
 import { DeleteFromSegmentAutomationFormProps } from './DeleteFromSegmentNodeForm/DeleteFromSegmentAutomationForm';
 import { ReactToEventAutomationFormProps } from './ReactToEventAutomationForm/ReactToEventAutomationForm';
-import { QueryAutomationFormProps } from './QueryForm/QueryForm';
+import { IfNodeFormProps } from './IfNodeForm/IfNodeForm';
 import { WaitAutomationFormProps } from './WaitForm/WaitForm';
 import { OnSegmentExitInputAutomationFormProps } from './OnSegmentExitInputForm/OnSegmentExitInputAutomationForm';
 import { OnSegmentEntryInputAutomationFormProps } from './OnSegmentEntryInputForm/OnSegmentEntryInputAutomationForm';
@@ -138,7 +138,6 @@ export interface QueryInputAutomationFormData
   extends DefaultFormData,
     Partial<QueryResource> {
   uiCreationMode:
-    | 'QUERY'
     | 'REACT_TO_EVENT_STANDARD'
     | 'REACT_TO_EVENT_ADVANCED';
 }
@@ -174,7 +173,7 @@ export type AutomationFormPropsType =
   | AddToSegmentAutomationFormProps
   | DeleteFromSegmentAutomationFormProps
   | ReactToEventAutomationFormProps
-  | QueryAutomationFormProps
+  | IfNodeFormProps
   | WaitAutomationFormProps
   | OnSegmentExitInputAutomationFormProps
   | OnSegmentEntryInputAutomationFormProps

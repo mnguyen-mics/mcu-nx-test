@@ -577,15 +577,6 @@ class AutomationNodeWidget extends React.Component<Props, State> {
           <FormattedMessage {...messages.edit} />
         </div>,
       );
-      content.push(
-        <div
-          key="settings"
-          onClick={this.editNode}
-          className="boolean-menu-item"
-        >
-          <FormattedMessage {...messages.settings} />
-        </div>,
-      );
 
       if (!node.isFirstNode) {
         content.push(

@@ -18,7 +18,6 @@ import {
   StorylineNodeResource,
   EdgeHandler,
   ScenarioNodeShape,
-  QueryInputUiCreationMode,
   ScenarioExitConditionFormResource,
 } from '../../../models/automations/automations';
 import {
@@ -59,7 +58,6 @@ export interface AutomationBuilderBaseProps {
   automationTreeData?: StorylineNodeModel;
   exitCondition?: ScenarioExitConditionFormResource;
   viewer: boolean;
-  creation_mode: QueryInputUiCreationMode;
 }
 
 export interface AutomationBuilderVisualizerProps
@@ -378,7 +376,6 @@ class AutomationBuilder extends React.Component<Props, State> {
         nodeProperties.iconAnt,
         undefined,
         true,
-        this.props.creation_mode,
       );
       rootNode.root = true;
       rootNode.x = ROOT_NODE_POSITION.x;

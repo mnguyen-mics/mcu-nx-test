@@ -168,8 +168,7 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
     if (dispatch) dispatch(change(FORM_ID, 'uiCreationMode', uiCreationMode));
 
     this.state = {
-      formMode:
-        uiCreationMode === 'QUERY' ? 'REACT_TO_EVENT_STANDARD' : uiCreationMode,
+      formMode: uiCreationMode,
       isLoading: true,
       objectTypes: [],
       standardEventNames: [],

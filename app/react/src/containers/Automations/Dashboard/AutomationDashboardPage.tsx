@@ -336,13 +336,6 @@ class AutomationDashboardPage extends React.Component<Props, State> {
             exitCondition={automationFormData.exitCondition}
             scenarioId={automationFormData.automation.id!}
             viewer={true}
-            creation_mode={
-              automationFormData.automationTreeData &&
-                automationFormData.automationTreeData.node.type ===
-                'QUERY_INPUT'
-                ? automationFormData.automationTreeData.node.ui_creation_mode
-                : 'QUERY'
-            }
           />
         </Layout.Content>
       </Layout>
