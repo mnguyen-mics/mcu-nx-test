@@ -903,7 +903,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         key: 'action',
         actions: () => [
           {
-            intlMessage: messages.editSegment,
+            message: intl.formatMessage(messages.editSegment),
             callback: this.editSegment,
           },
           // {
@@ -1011,3 +1011,4 @@ export default compose<Props, {}>(
   injectDatamart,
   connect(mapStateToProps),
 )(AudienceSegmentsTable);
+
