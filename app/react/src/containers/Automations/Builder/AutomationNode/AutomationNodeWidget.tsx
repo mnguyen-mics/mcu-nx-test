@@ -28,7 +28,6 @@ import {
   isDeleteFromSegmentNode,
   isOnSegmentEntryInputNode,
   isOnSegmentExitInputNode,
-  isDisplayCampaignNode,
   isEmailCampaignNode,
   isFeedNode,
   isInputNode,
@@ -36,9 +35,6 @@ import {
 } from './Edit/domain';
 
 import { ScenarioNodeType } from '../../../../models/automations/automations';
-import DisplayCampaignAutomatedDashboardPage, {
-  DisplayCampaignAutomatedDashboardPageProps,
-} from './Dashboard/DisplayCampaign/DisplayCampaignAutomatedDashboardPage';
 import EmailCampaignAutomatedDashboardPage, {
   EmailCampaignAutomatedDashboardPageProps,
 } from './Dashboard/EmailCampaign/EmailCampaignAutomatedDashboardPage';
@@ -216,19 +212,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     const { node, openNextDrawer, closeNextDrawer } = this.props;
     const selectedNode = node.storylineNodeModel.node;
 
-    if (isDisplayCampaignNode(selectedNode)) {
-      const campaignValue = selectedNode.formData;
-      openNextDrawer<DisplayCampaignAutomatedDashboardPageProps>(
-        DisplayCampaignAutomatedDashboardPage,
-        {
-          additionalProps: {
-            campaignId: campaignValue.campaign.id!,
-            close: closeNextDrawer,
-          },
-          size: 'large',
-        },
-      );
-    } else if (isEmailCampaignNode(selectedNode)) {
+    if (isEmailCampaignNode(selectedNode)) {
       openNextDrawer<EmailCampaignAutomatedDashboardPageProps>(
         EmailCampaignAutomatedDashboardPage,
         {
@@ -294,7 +278,6 @@ class AutomationNodeWidget extends React.Component<Props, State> {
 
         switch (scenarioNodeShape.type) {
           case 'ABN_NODE':
-          case 'DISPLAY_CAMPAIGN':
           case 'EMAIL_CAMPAIGN':
           case 'WAIT_NODE':
             initialValue = {
@@ -691,7 +674,6 @@ class AutomationNodeWidget extends React.Component<Props, State> {
       case 'ABN_NODE':
         return this.renderAbnEdit();
       case 'EMAIL_CAMPAIGN':
-      case 'DISPLAY_CAMPAIGN':
       case 'SCENARIO_AUDIENCE_SEGMENT_FEED_NODE':
         return this.renderDefautEdit();
       case 'ADD_TO_SEGMENT_NODE':

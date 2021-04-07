@@ -13,7 +13,6 @@ import { AutomationNodeShape } from './../../domain';
 import {
   ABNNodeResource,
   ScenarioNodeShape,
-  DisplayCampaignNodeResource,
   QueryInputNodeResource,
   EndNodeResource,
   EmailCampaignNodeResource,
@@ -27,12 +26,10 @@ import {
 
 import { ABNAutomationFormProps } from './ABNAutomationForm/ABNAutomationForm';
 import { DefaultAutomationFormProps } from './DefaultForm/DefaultAutomationForm';
-import { DisplayCampaignAutomationFormProps } from './DisplayCampaignForm/DisplayCampaignAutomationForm';
 import { EmailCampaignFormData } from '../../../../Campaigns/Email/Edit/domain';
 
 import { EmailCampaignAutomationFormProps } from './EmailCampaignForm/EmailCampaignAutomationForm';
 import { generateFakeId } from '../../../../../utils/FakeIdHelper';
-import { DisplayCampaignFormData } from '../../../../Campaigns/Display/Edit/domain';
 import { QueryResource } from '../../../../../models/datamart/DatamartResource';
 import { AddToSegmentAutomationFormProps } from './AddToSegmentNodeForm/AddToSegmentSegmentAutomationForm';
 import { DeleteFromSegmentAutomationFormProps } from './DeleteFromSegmentNodeForm/DeleteFromSegmentAutomationForm';
@@ -73,48 +70,6 @@ export const INITIAL_DELETE_FROM_SEGMENT_NODE_FORM_DATA: DeleteFromSegmentAutoma
   segmentId: undefined,
 };
 
-export const INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA: DisplayCampaignAutomationFormData = {
-  campaign: {
-    organisation_id: '',
-    name: 'Display Advertising',
-    editor_version_id: '11',
-    currency_code: 'EUR',
-    technical_name: '',
-    subtype: 'PROGRAMMATIC',
-    max_bid_price: 0,
-    total_budget: 0,
-    max_budget_per_period: 0,
-    max_budget_period: 'WEEK',
-    total_impression_capping: 0,
-    per_day_impression_capping: 0,
-    time_zone: 'Europe/Paris',
-    model_version: 'V2017_09',
-    type: 'DISPLAY',
-    automated: true,
-  },
-  adGroupFields: [
-    {
-      key: generateFakeId(),
-      model: {
-        adGroup: {
-          total_impression_capping: 10,
-          max_budget_period: 'DAY',
-          targeted_operating_systems: 'ALL',
-          targeted_medias: 'WEB',
-          targeted_devices: 'ALL',
-          targeted_connection_types: 'ALL',
-          targeted_browser_families: 'ALL',
-        },
-        adFields: [],
-        inventoryCatalFields: [],
-        locationFields: [],
-        segmentFields: [],
-      },
-    },
-  ],
-  goalFields: [],
-};
-
 export const INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA: EmailCampaignAutomationFormData = {
   blastFields: [
     {
@@ -149,10 +104,6 @@ export const INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA: EmailCampaignAutomationFormD
     type: 'EMAIL',
   },
 };
-
-export interface DisplayCampaignAutomationFormData
-  extends DefaultFormData,
-    DisplayCampaignFormData {}
 
 export interface EmailCampaignAutomationFormData
   extends DefaultFormData,
@@ -208,7 +159,6 @@ export interface FeedNodeFormData extends DefaultFormData {
 export type AutomationFormDataType =
   | DefaultFormData
   | ABNFormData
-  | DisplayCampaignAutomationFormData
   | AddToSegmentAutomationFormData
   | DeleteFromSegmentAutomationFormData
   | EmailCampaignAutomationFormData
@@ -220,7 +170,6 @@ export type AutomationFormDataType =
 export type AutomationFormPropsType =
   | ABNAutomationFormProps
   | DefaultAutomationFormProps
-  | DisplayCampaignAutomationFormProps
   | EmailCampaignAutomationFormProps
   | AddToSegmentAutomationFormProps
   | DeleteFromSegmentAutomationFormProps
@@ -242,12 +191,6 @@ export function isScenarioNodeShape(
 
 export function isAbnNode(node: AutomationNodeShape): node is ABNNodeResource {
   return node.type === 'ABN_NODE';
-}
-
-export function isDisplayCampaignNode(
-  node: AutomationNodeShape,
-): node is DisplayCampaignNodeResource {
-  return node.type === 'DISPLAY_CAMPAIGN';
 }
 
 export function isEmailCampaignNode(

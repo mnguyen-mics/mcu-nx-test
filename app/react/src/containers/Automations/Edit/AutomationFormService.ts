@@ -24,7 +24,6 @@ import {
 } from './../../Audience/Segments/Edit/domain';
 import { IAudienceSegmentFormService } from './../../Audience/Segments/Edit/AudienceSegmentFormService';
 import { ProcessingActivityFieldModel } from './../../Settings/DatamartSettings/Common/domain';
-import { IDisplayCampaignService } from './../../../services/DisplayCampaignService';
 import _ from 'lodash';
 import {
   AutomationResource,
@@ -45,10 +44,7 @@ import { buildAutomationTreeData, StorylineNodeModel } from '../Builder/domain';
 import { DataResponse } from '../../../services/ApiService';
 import {
   isQueryInputNode,
-  isDisplayCampaignNode,
   isScenarioNodeShape,
-  DisplayCampaignAutomationFormData,
-  INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA,
   isEmailCampaignNode,
   INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA,
   EmailCampaignAutomationFormData,
@@ -73,7 +69,6 @@ import { IQueryService } from '../../../services/QueryService';
 import { Task, executeTasksInSequence } from '../../../utils/PromiseHelper';
 import { IEmailCampaignFormService } from '../../Campaigns/Email/Edit/EmailCampaignFormService';
 import { isFakeId } from '../../../utils/FakeIdHelper';
-import { IDisplayCampaignFormService } from '../../Campaigns/Display/Edit/DisplayCampaignFormService';
 import { defineMessages } from 'react-intl';
 import { IAudienceSegmentService } from '../../../services/AudienceSegmentService';
 import moment from 'moment';
@@ -132,12 +127,6 @@ export class AutomationFormService implements IAutomationFormService {
 
   @inject(TYPES.IQueryService)
   private _queryService: IQueryService;
-
-  @inject(TYPES.IDisplayCampaignFormService)
-  private _displayCampaignFormService: IDisplayCampaignFormService;
-
-  @inject(TYPES.IDisplayCampaignService)
-  private _displayCampaignService: IDisplayCampaignService;
 
   @inject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
@@ -264,23 +253,6 @@ export class AutomationFormService implements IAutomationFormService {
               () => ({ ...n }),
             );
             switch (n.type) {
-              case 'DISPLAY_CAMPAIGN':
-                getPromise = this._displayCampaignFormService
-                  .loadCampaign(n.campaign_id)
-                  .then((resp) => {
-                    const initialValues = {
-                      campaign: resp.campaign,
-                      name: resp.campaign.name!,
-                      goalFields: resp.goalFields,
-                      adGroupFields: resp.adGroupFields,
-                    };
-                    return {
-                      ...n,
-                      formData: initialValues,
-                      initialFormData: initialValues,
-                    };
-                  });
-                break;
               case 'EMAIL_CAMPAIGN':
                 getPromise = this._emailCampaignFormService
                   .loadCampaign(n.campaign_id)
@@ -869,35 +841,7 @@ export class AutomationFormService implements IAutomationFormService {
       (storylineNode): Task => () => {
         const node = storylineNode.node;
         if (isScenarioNodeShape(node)) {
-          if (isDisplayCampaignNode(node)) {
-            const saveOrCreateCampaignPromise = this.saveSubDisplayCampaign(
-              organisationId,
-              node.formData,
-              node.initialFormData,
-              node.campaign_id,
-            );
-            return saveOrCreateCampaignPromise.then((campaignIds) => {
-              return this.saveOrCreateNode(
-                automationId,
-                storylineNode,
-                campaignIds,
-              ).then((res) => {
-                return this.saveOrCreateEdges(automationId, {
-                  source_id: parentNodeId,
-                  target_id: res.data.id,
-                  edgeResource: storylineNode.in_edge,
-                }).then(() => {
-                  return this.iterate(
-                    organisationId,
-                    datamartId,
-                    automationId,
-                    storylineNode.out_edges,
-                    res.data.id,
-                  );
-                });
-              });
-            });
-          } else if (isEmailCampaignNode(node)) {
+          if (isEmailCampaignNode(node)) {
             const saveOrCreateCampaignPromise = this.saveSubEmailCampaign(
               organisationId,
               node.formData,
@@ -1216,19 +1160,7 @@ export class AutomationFormService implements IAutomationFormService {
     let saveOrCreateScenarioNode: Promise<DataResponse<ScenarioNodeShape>>;
     let scenarioNodeResource = {};
     let resourceId: string | undefined;
-    if (isDisplayCampaignNode(node)) {
-      scenarioNodeResource = {
-        id: node.id && !isFakeId(node.id) ? node.id : undefined,
-        scenario_id: automationId,
-        type: node.type,
-        ad_group_id: campaignIds ? campaignIds.ad_group_id : undefined,
-        campaign_id: campaignIds ? campaignIds.campaign_id : undefined,
-      };
-      resourceId =
-        node.campaign_id && !isFakeId(node.campaign_id)
-          ? node.campaign_id
-          : undefined;
-    } else if (isEmailCampaignNode(node)) {
+    if (isEmailCampaignNode(node)) {
       scenarioNodeResource = {
         id: node.id && !isFakeId(node.id) ? node.id : undefined,
         scenario_id: automationId,
@@ -1393,29 +1325,6 @@ export class AutomationFormService implements IAutomationFormService {
             this.removeEdgeId(e.data.id);
             return e;
           });
-  };
-
-  saveSubDisplayCampaign = (
-    organisationId: string,
-    formData: DisplayCampaignAutomationFormData,
-    initialFormData: DisplayCampaignAutomationFormData = INITIAL_DISPLAY_CAMPAIGN_NODE_FORM_DATA,
-    campaignId?: string,
-  ): Promise<{ ad_group_id?: string; campaign_id: string }> => {
-    formData.campaign.technical_name = undefined;
-    initialFormData.campaign.technical_name = undefined;
-
-    return this._displayCampaignFormService
-      .saveCampaign(
-        organisationId,
-        formData ? formData : initialFormData,
-        initialFormData,
-      )
-      .then((res) =>
-        this._displayCampaignService.getAdGroups(res).then((r) => ({
-          campaign_id: res,
-          ad_group_id: r && r.data.length ? r.data[0].id : undefined,
-        })),
-      );
   };
 
   saveCustomActionIfNeeded = (

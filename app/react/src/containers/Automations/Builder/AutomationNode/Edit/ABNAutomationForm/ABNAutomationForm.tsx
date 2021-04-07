@@ -32,10 +32,6 @@ const localMessages = defineMessages({
     id: 'automation.builder.abnNode.edition.form.general.title',
     defaultMessage: 'General Information',
   },
-  sectionDisplayCampaignTitle: {
-    id: 'automation.builder.abnNode.edition.form.display.title',
-    defaultMessage: 'Modify the parameters of the display campaign',
-  },
 });
 
 export interface ABNAutomationFormProps
