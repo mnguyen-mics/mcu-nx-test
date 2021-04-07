@@ -1,7 +1,6 @@
 import { StrictlyLayoutablePlugin } from './../Plugins';
 import { FeedNodeFormData } from './../../containers/Automations/Builder/AutomationNode/Edit/domain';
 import {
-  DisplayCampaignAutomationFormData,
   ABNFormData,
   EmailCampaignAutomationFormData,
   WaitFormData,
@@ -50,7 +49,6 @@ export interface StorylineResource {
 }
 
 export type ScenarioNodeType =
-  | 'DISPLAY_CAMPAIGN'
   | 'EMAIL_CAMPAIGN'
   | 'ADD_TO_SEGMENT_NODE'
   | 'DELETE_FROM_SEGMENT_NODE'
@@ -71,14 +69,6 @@ export interface ScenarioNodeResource {
   scenario_id: string;
   type: ScenarioNodeType;
   last_added_node?: boolean;
-}
-
-export interface DisplayCampaignNodeResource extends ScenarioNodeResource {
-  type: 'DISPLAY_CAMPAIGN';
-  campaign_id: string;
-  ad_group_id: string;
-  formData: DisplayCampaignAutomationFormData;
-  initialFormData: DisplayCampaignAutomationFormData;
 }
 
 export interface EmailCampaignNodeResource extends ScenarioNodeResource {
@@ -194,7 +184,6 @@ export interface FeedNodeResource extends ScenarioNodeResource {
 }
 
 export type ScenarioNodeShape =
-  | DisplayCampaignNodeResource
   | EmailCampaignNodeResource
   | AddToSegmentNodeResource
   | DeleteFromSegmentNodeResource

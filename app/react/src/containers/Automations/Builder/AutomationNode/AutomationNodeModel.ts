@@ -1,7 +1,6 @@
 import { NodeModel } from 'storm-react-diagrams';
 import SimplePortModel from '../../../QueryTool/JSONOTQL/Diagram/Port/SimplePortModel';
 import { StorylineNodeModel } from '../domain';
-import DisplayCampaignAutomationForm from './Edit/DisplayCampaignForm/DisplayCampaignAutomationForm';
 import ABNAutomationForm from './Edit/ABNAutomationForm/ABNAutomationForm';
 import DefaultAutomationForm from './Edit/DefaultForm/DefaultAutomationForm';
 import { AutomationFormPropsType } from './Edit/domain';
@@ -74,9 +73,6 @@ export default class AutomationNodeModel extends NodeModel {
     this.creationMode = creationMode;
 
     switch (this.storylineNodeModel.node.type) {
-      case 'DISPLAY_CAMPAIGN':
-        this.editFormComponent = DisplayCampaignAutomationForm;
-        break;
       case 'EMAIL_CAMPAIGN':
         this.editFormComponent = EmailCampaignAutomationForm;
         break;

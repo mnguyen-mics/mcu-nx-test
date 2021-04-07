@@ -32,10 +32,6 @@ const localMessages = defineMessages({
     id: 'automation.builder.node.waitForm.generalTitle',
     defaultMessage: 'General Information',
   },
-  sectionDisplayCampaignTitle: {
-    id: 'automation.builder.node.waitForm.displayTitle',
-    defaultMessage: 'Modify the parameters of the display campaign',
-  },
 });
 
 export interface WaitAutomationFormProps

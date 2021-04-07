@@ -3,7 +3,6 @@ import {
   ScenarioNodeShape,
   ScenarioEdgeResource,
   StorylineResource,
-  DisplayCampaignNodeResource,
   EmailCampaignNodeResource,
   ABNNodeResource,
   QueryInputNodeResource,
@@ -20,7 +19,6 @@ import {
   AutomationFormDataType,
   isAbnNode,
   ABNFormData,
-  DisplayCampaignAutomationFormData,
   EmailCampaignAutomationFormData,
   WaitFormData,
   isIfNode,
@@ -289,8 +287,6 @@ export class AddNodeOperation implements NodeOperation {
         child.in_edge.handler === 'IF_CONDITION_FALSE')
     ) {
       return child.in_edge.handler;
-    } else if (this.node.type === 'DISPLAY_CAMPAIGN') {
-      return 'ON_VISIT';
     } else {
       return 'OUT';
     }
@@ -462,15 +458,6 @@ export class UpdateNodeOperation implements NodeOperation {
     let nodeBody: AutomationNodeShape;
 
     switch (storylineNode.node.type) {
-      case 'DISPLAY_CAMPAIGN':
-        nodeBody = {
-          ...storylineNode.node,
-          ...(this.node as DisplayCampaignNodeResource),
-          formData: this.formData as DisplayCampaignAutomationFormData,
-          initialFormData: this
-            .initialFormData as DisplayCampaignAutomationFormData,
-        };
-        break;
       case 'EMAIL_CAMPAIGN':
         nodeBody = {
           ...storylineNode.node,
@@ -751,15 +738,6 @@ export function generateNodeProperties(
   formatMessage: FormatMessageHandler,
 ): NodeProperties {
   switch (node.type) {
-    case 'DISPLAY_CAMPAIGN':
-      return {
-        title: node.formData.campaign.name
-          ? node.formData.campaign.name
-          : formatMessage(nodeMessages.displayCampaignNodeTitle),
-        subtitle: formatMessage(nodeMessages.displayCampaignNodeSubtitle),
-        iconType: 'display',
-        color: '#0ba6e1',
-      };
     case 'EMAIL_CAMPAIGN':
       return {
         title: node.formData.campaign.name
@@ -1214,14 +1192,6 @@ const nodeMessages = defineMessages({
   onAudienceSegmentExitNodeSubtitle: {
     id: 'automation.builder.node.onAudienceSegmentExit.subtitle',
     defaultMessage: 'On audience segment exit',
-  },
-  displayCampaignNodeTitle: {
-    id: 'automation.builder.node.displayCampaign.title',
-    defaultMessage: 'Display Advertising',
-  },
-  displayCampaignNodeSubtitle: {
-    id: 'automation.builder.node.displayCampaign.subtitle',
-    defaultMessage: 'Exit on visit',
   },
   emailCampaignNodeTitle: {
     id: 'automation.builder.node.emailCampaign.title',

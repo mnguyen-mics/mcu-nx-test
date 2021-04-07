@@ -37,10 +37,6 @@ const localMessages = defineMessages({
     id: 'automation.builder.node.emailCampaignForm.general.title',
     defaultMessage: 'General Information',
   },
-  sectionDisplayCampaignTitle: {
-    id: 'automation.builder.node.emailCampaignForm.display.title',
-    defaultMessage: 'Modify the parameters of the display campaign',
-  },
   sectionSenderInformationTitle: {
     id: 'automation.builder.node.emailCampaignForm.campaign.sender.information',
     defaultMessage: 'Sender information',
