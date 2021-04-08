@@ -185,6 +185,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
                 ],
                 exclude: [],
               },
+              isLoading: false,
             });
           })
           .catch((err) => {
