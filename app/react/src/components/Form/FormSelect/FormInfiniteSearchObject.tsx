@@ -136,17 +136,16 @@ class FormInfiniteSearchObject extends React.Component<
   handleChange = (value: LabeledValue | LabeledValue[]) => {
     const { 
       input,
-      selectProps
     } = this.props;
 
-    if(selectProps && selectProps.mode === "multiple") {
-      const singleValue = value as LabeledValue;
-      this.setState({ value: [singleValue] }, () => { this.fetchData("") });
-      input.onChange(singleValue.key);
-    } else {
+    if(Array.isArray(value)) {
       const multipleValues = value as LabeledValue[];
       this.setState({ value: multipleValues }, () => { this.fetchData("") });
       input.onChange(multipleValues.map(i => i.key));
+    } else {
+      const singleValue = value as LabeledValue;
+      this.setState({ value: [singleValue] }, () => { this.fetchData("") });
+      input.onChange(singleValue.key);
     }
   }
 
