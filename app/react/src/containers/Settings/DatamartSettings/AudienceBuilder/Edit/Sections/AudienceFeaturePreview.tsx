@@ -171,6 +171,7 @@ class AudienceFeaturePreview extends React.Component<Props, State> {
             {variables.map((v, index) => {
               return (
                 <AudienceFeatureVariable
+                  newLayout={false}
                   key={index}
                   disabled={true}
                   datamartId={datamartId}

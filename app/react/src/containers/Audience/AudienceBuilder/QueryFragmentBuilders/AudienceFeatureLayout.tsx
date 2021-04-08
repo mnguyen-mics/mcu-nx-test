@@ -64,6 +64,7 @@ class AudienceFeatureLayout extends React.Component<Props, State> {
         {audienceFeature.variables.map((v, index) => {
           return (
             <AudienceFeatureVariable
+              newLayout={false}
               key={index}
               datamartId={datamartId}
               variable={v}

@@ -49,6 +49,18 @@ export interface AudienceBuilderFormData {
   };
 }
 
+export interface AudienceBuilderParametricPredicateGroupNode {
+  type: 'GROUP';
+  expressions: AudienceBuilderParametricPredicateNode[];
+  negation: false;
+  boolean_operator: 'OR';
+}
+
+export interface NewAudienceBuilderFormData {
+  include: AudienceBuilderParametricPredicateGroupNode[],
+  exclude: AudienceBuilderParametricPredicateGroupNode[]
+}
+
 export interface QueryDocument {
   language_version?: string;
   operations: SelectionOperation[];

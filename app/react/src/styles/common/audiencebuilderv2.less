@@ -1,6 +1,7 @@
 .mcs-audienceBuilder_container {
   min-height: auto;
   height: auto;
+
   .mcs-audienceBuilder_categoryCard {
     .mcs-card-title {
       font-size: 15px;
@@ -126,6 +127,15 @@
       font-weight: 500;
     }
   }
+  .mcs-audienceBuilder_demographicFeature {
+    .ant-legacy-form-item-label {
+      text-align: left;
+    }
+
+    .ant-legacy-form-item-label label:after {
+      content: none;
+    }
+  }
   .mcs-audienceBuilder_audienceFeature {
     border-bottom: 1px solid @border-color-split;
     padding-bottom: 15px;
@@ -142,6 +152,14 @@
     }
     .mcs-audienceBuilder_audienceFeatureInput {
       margin: 10px 0;
+
+      .ant-legacy-form-item-label {
+        text-align: left;
+      }
+  
+      .ant-legacy-form-item-label label:after {
+        content: none;
+      }
     }
   }
 
@@ -149,6 +167,216 @@
     text-align: center;
     padding: 20px 25px 25px 25px;
   }
+
+  // -----------------------------------------------
+  // Audience Builder aka 'Standard Segment Builder'
+  // -----------------------------------------------
+
+  // TODO rename to mcs-audienceBuilder_audienceFeature after cleanup
+  .mcs-audienceBuilder_audienceFeature-2 {
+    margin: 10px 40px 10px 0px;
+    padding: 0;
+  }
+
+  // Audience Feature Card Content
+  // TODO remove -2's after cleanup
+
+  .mcs-audienceBuilder_audienceFeatureContent {
+    padding: 15px 20px 20px 20px;
+    font-family: @font-family;
+
+    .mcs-audienceBuilder_audienceFeatureName-2 {
+      font-family: @font-family-medium;
+      color: @text-color;
+      line-height: 18px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .mcs-audienceBuilder_audienceFeatureDescription-2 {
+      color: @input-placeholder-color;
+      font-size: 10px;
+      font-style: italic;
+      margin-bottom: 10px;
+    }
+
+    .mcs-audienceBuilder_closeButton-2 {
+      line-height: 18px;
+      color: @text-color-secondary;
+      font-size: 14px;
+      padding: 0px;
+      border: none;
+      float: right;
+
+      .mcs-icon {
+        margin: 0;
+      }
+    }
+
+    .mcs-audienceBuilder_audienceFeatureInput-2 {
+      margin-top: 15px;
+
+      .mcs-relativeAbsoluteDateForm_picker {
+        margin-bottom: 0;
+      }
+
+      .field-label {
+        color: @text-color-secondary;
+      }
+      
+      .ant-legacy-form-item-label {
+        text-align: left;
+      }
+
+      .ant-legacy-form-item-label label:after {
+        content: none;
+      }
+
+      .ant-select {
+        display: block;
+      }
+
+      .form-field-wrapper {
+        margin: 0;
+        .ant-row {
+          margin: 0;
+        }
+      }
+    }
+
+    .ant-btn {
+      box-shadow: none;
+    }
+  }
+
+  // ------------------------------------
+  // Audience Builder Timeline
+
+  .mcs-audienceBuilder_timelineButtons {
+    font-family: @font-family-medium;
+    text-align: center;
+    border: 1px solid @border-color-split;
+    margin: 34px 40px 10px 40px;
+    padding: 11px;
+    height: 40px;
+    font-size: 12px;
+    background: none;
+    box-shadow: none;
+
+    .mcs-timelineButton_left {
+      color: @info-color;
+      font-weight: 500;
+      border: none;
+      margin-right: 15px;
+    }
+
+    .mcs-timelineButton_right {
+      color: @info-color;
+      font-weight: 500;
+      border: none;
+      margin-left: 15px;
+    }
+  }
+
+  .mcs-timeline {
+    margin-left: 31px;
+    margin-top: 31px;
+
+    .mcs-timeline_group {
+      margin-bottom: 30px;
+    }
+
+    .ant-timeline-item {
+      padding-bottom: 0;
+    }
+
+    .ant-timeline-item-tail {
+      height: 100%;
+    }
+
+    .ant-timeline-item-head {
+      background-color: @layout-content-background!important;
+      padding: 0px;
+      margin: 0px;
+
+      // mediarithmics timeline edition
+
+      .mcs-timeline_initialDot {
+        font-size: 20px;
+        margin: 5px 0px 0px 0px;
+      }
+
+      .mcs-timeline_initialDot_color1 {
+        color: @info-color;
+      }
+
+      .mcs-timeline_initialDot_color2 {
+        color: @error-color;
+      }
+
+      .mcs-timeline_actionDot {
+        border: none;
+        outline:none;
+        box-shadow: none;
+        padding: 0px;
+        margin: 0px;
+        width: 16px;
+        height:16px; 
+        border-radius: 50%;
+        font-size: 14px;
+        color: @layout-content-background;
+        display:flex;
+        text-align:center;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .mcs-timeline_actionDot_color1 {
+        background: @info-color;
+      }
+
+      .mcs-timeline_actionDot_color2 {
+        background: @error-color;
+      }
+    }
+
+    .ant-timeline-item-content {
+      top: 0;
+
+      .timeline-activity-card-buttons {
+        text-align: right;
+      }
+
+      // mediarithmics content edition
+
+      .mcs-timeline_title {
+        font-size: 10px;
+        font-family: @font-family;
+        color: @text-color-secondary;
+        text-align: left;
+        margin-bottom: 10px;
+        font-weight: normal;
+
+        .mcs-timeline_title_highlight {
+          font-family: @font-family-medium;
+          color: @text-color;
+          font-weight: 500;
+        }
+      }
+
+      .mcs-timeline_dotTitle {
+        font-size: 8px !important;
+        color: @text-color-secondary;
+      }
+
+      .mcs-timeline_dotNoTitle {
+        height: 8px;
+      }
+    }
+  }
+
+  //
+  // ------------------------------------
 }
 
 //  Audience Features Management

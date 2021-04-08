@@ -1,5 +1,6 @@
 import {
   AudienceBuilderFormData,
+  NewAudienceBuilderFormData,
   QueryDocument,
 } from './../../../models/audienceBuilder/AudienceBuilderResource';
 import { FormattedMessage, defineMessages } from 'react-intl';
@@ -99,6 +100,38 @@ export const messages: {
   availableFilters: {
     id: 'audienceBuilder.audienceFeatureSelector.availableFilters',
     defaultMessage: 'Available Filters',
+  }, 
+  audienceBuilderInclude: {
+    id: 'audienceBuilder.include',
+    defaultMessage: 'Include',
+  },
+  audienceBuilderExclude: {
+    id: 'audienceBuilder.exclude',
+    defaultMessage: 'Exclude',
+  },
+  audienceBuilderTimelineMatchingCriterias0: {
+    id: 'audienceBuilder.timeline.matchingCriterias.and',
+    defaultMessage: 'AND ',
+  },
+  audienceBuilderTimelineMatchingCriterias1: {
+    id: 'audienceBuilder.timeline.matchingCriterias.include',
+    defaultMessage: 'People should match ',
+  },
+  audienceBuilderTimelineMatchingCriterias2: {
+    id: 'audienceBuilder.timeline.matchingCriterias.one',
+    defaultMessage: 'one of these criterias',
+  },
+  audienceBuilderTimelineExcludingCriterias1: {
+    id: 'audienceBuilder.timeline.excludingCriterias.exclude',
+    defaultMessage: 'Exclude people matching ',
+  },
+  audienceBuilderTimelineExcludingCriterias2: {
+    id: 'audienceBuilder.timeline.excludingCriterias.one',
+    defaultMessage: 'one of these criterias',
+  },
+  audienceBuilderTimelineAddCriteria: {
+    id: 'audienceBuilder.timeline.addCriteria',
+    defaultMessage: 'add criteria',
   },
 });
 
@@ -123,6 +156,14 @@ export const INITIAL_AUDIENCE_BUILDER_FORM_DATA: AudienceBuilderFormData = {
   },
 };
 
+export const NEW_FORM_ID = 'newAudienceBuilderFormData';
+
+export const NEW_INITIAL_AUDIENCE_BUILDER_FORM_DATA: NewAudienceBuilderFormData = {
+  include: [],
+  exclude: []
+};
+
+// TODO Remove along with AudienceBuilderQueryService 
 export const buildQueryDocument = (formData: AudienceBuilderFormData) => {
   let query: QueryDocument = {
     language_version: 'JSON_OTQL',

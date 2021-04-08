@@ -127,6 +127,7 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
             });
           });
       });
+
     const audienceFeatureIds: string[] = [];
     formValues.where.expressions.forEach(exp => {
       (exp as AudienceBuilderGroupNode).expressions.forEach(e => {
@@ -226,6 +227,25 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
       rerenderOnEveryChange: true,
     };
 
+    // QueryFragmentForm selection
+    let queryFragmentForm;
+    if (!isLoadingObjectTypes) {
+      queryFragmentForm = <QueryFragmentFieldArray
+        name={`where.expressions`}
+        component={QueryFragmentFormSection}
+        datamartId={audienceBuilder.datamart_id}
+        formChange={change}
+        demographicsFeaturesIds={
+          audienceBuilder.demographics_features_ids
+        }
+        audienceFeatures={audienceFeatures}
+        objectTypes={objectTypes}
+        {...genericFieldArrayProps}
+      />
+    } else {
+      queryFragmentForm = <Loading className="m-t-40" isFullScreen={true} />
+    }
+
     return (
       <React.Fragment>
         {renderActionBar(
@@ -236,31 +256,17 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
           },
           audienceBuilder.datamart_id,
         )}
+
         <Layout>
           <Row className="ant-layout-content mcs-audienceBuilder_container">
             <Col span={isDashboardToggled ? 1 : 12}>
               <div
-                className={`${isDashboardToggled &&
-                  'mcs-audienceBuilder_hiddenForm'}`}
+                className={`${isDashboardToggled && 'mcs-audienceBuilder_hiddenForm'}`}
               >
-                {!isLoadingObjectTypes ? (
-                  <QueryFragmentFieldArray
-                    name={`where.expressions`}
-                    component={QueryFragmentFormSection}
-                    datamartId={audienceBuilder.datamart_id}
-                    formChange={change}
-                    demographicsFeaturesIds={
-                      audienceBuilder.demographics_features_ids
-                    }
-                    audienceFeatures={audienceFeatures}
-                    objectTypes={objectTypes}
-                    {...genericFieldArrayProps}
-                  />
-                ) : (
-                  <Loading className="m-t-40" isFullScreen={true} />
-                )}
+                {queryFragmentForm}
               </div>
             </Col>
+
             <Col
               span={isDashboardToggled ? 23 : 12}
               className="mcs-audienceBuilder_liveDashboardContainer"

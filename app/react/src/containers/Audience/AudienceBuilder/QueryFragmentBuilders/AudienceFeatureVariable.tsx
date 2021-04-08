@@ -35,13 +35,9 @@ import { injectWorkspace, InjectedWorkspaceProps } from '../../../Datamart';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
 import { SegmentNameDisplay } from '../../Common/SegmentNameDisplay';
 
-export const FormRelativeAbsoluteDateField = Field as new () => GenericField<
-  FormRelativeAbsoluteDateProps
->;
+export const FormRelativeAbsoluteDateField = Field as new () => GenericField<FormRelativeAbsoluteDateProps>;
 
-export const FormSearchObjectField = Field as new () => GenericField<
-  FormSearchObjectProps
->;
+export const FormSearchObjectField = Field as new () => GenericField<FormSearchObjectProps>;
 
 export interface AudienceFeatureVariableProps {
   datamartId: string;
@@ -50,6 +46,7 @@ export interface AudienceFeatureVariableProps {
   objectTypes: ObjectLikeTypeInfoResource[];
   disabled?: boolean;
   formChange?(field: string, value: any): void;
+  newLayout: boolean;
 }
 
 type Props = AudienceFeatureVariableProps &
@@ -82,8 +79,12 @@ class AudienceFeatureVariable extends React.Component<Props> {
     this.state = {};
   }
 
-  // The singleStringValue will make FormSearchObjectField copmponent handles only one string value
-  // The matchValue will make FormSearchObjectField copmponent handles multiple values grouped in one string
+  private formatLabel = (label: string): string => {
+    return label + ':'
+  }
+
+  // The singleStringValue will make FormSearchObjectField component handle only one string value
+  // The matchValue will make FormSearchObjectField component handle multiple values grouped in one string
   // (example: "val1 val2 val3" see 'JSONOTQL data_type=text' specs for details)
   // If both are false, the component will handle multiple string values grouped in one array (default behaviour)
   renderSelectField = (singleStringValue: boolean, matchValue: boolean) => {
@@ -100,9 +101,10 @@ class AudienceFeatureVariable extends React.Component<Props> {
       formChange,
     } = this.props;
     const name = `${formPath}.parameters.${variable.parameter_name}`;
+
     const fieldGridConfig = {
-      labelCol: { span: 5 },
-      wrapperCol: { span: 18, offset: 1 },
+      labelCol: { span: 6 },
+      wrapperCol: { span: 18 },
     };
 
     const userPointObject = objectTypes.find((o) => o.name === 'UserPoint')!;
@@ -143,8 +145,10 @@ class AudienceFeatureVariable extends React.Component<Props> {
       }
       return Promise.resolve([]);
     };
+
     let fetchSingleMethod = (id: string) =>
       Promise.resolve({ key: id, label: id, value: id });
+
     const modelAndType =
       fieldDirectives && getCoreReferenceTypeAndModel(fieldDirectives);
 
@@ -274,11 +278,11 @@ class AudienceFeatureVariable extends React.Component<Props> {
 
     return (
       <FormSearchObjectField
+        small={true}
         name={name}
         component={FormSearchObject}
         formItemProps={{
-          label: variable.parameter_name,
-
+          label: this.formatLabel(variable.parameter_name),
           ...fieldGridConfig,
         }}
         fetchListMethod={fetchListMethod}
@@ -301,9 +305,10 @@ class AudienceFeatureVariable extends React.Component<Props> {
       formChange,
     } = this.props;
     const name = `${formPath}.parameters.${variable.parameter_name}`;
+
     const fieldGridConfig = {
-      labelCol: { span: 5 },
-      wrapperCol: { span: 18, offset: 1 },
+      labelCol: { span: 6 },
+      wrapperCol: { span: 18 },
     };
 
     const normalizeInt = (v: any): any => {
@@ -323,10 +328,11 @@ class AudienceFeatureVariable extends React.Component<Props> {
         case 'Boolean':
           return (
             <FormSelectField
+              small={true}
               name={name}
               component={DefaultSelect}
               formItemProps={{
-                label: variable.parameter_name,
+                label: this.formatLabel(variable.parameter_name),
                 ...fieldGridConfig,
               }}
               disabled={!!disabled}
@@ -345,13 +351,14 @@ class AudienceFeatureVariable extends React.Component<Props> {
         case 'Int':
           return (
             <FormInputNumberField
+              small={true}
               name={name}
               // Needed normalize hack to save as int in redux state
               normalize={normalizeInt}
               component={FormInputNumber}
               validate={[isValidInteger]}
               formItemProps={{
-                label: variable.parameter_name,
+                label: this.formatLabel(variable.parameter_name),
                 ...fieldGridConfig,
               }}
               inputNumberProps={{
@@ -363,13 +370,14 @@ class AudienceFeatureVariable extends React.Component<Props> {
         case 'Float':
           return (
             <FormInputNumberField
+              small={true}
               name={name}
               // Needed normalize hack to save as float in redux state
               normalize={normalizeFloat}
               component={FormInputNumber}
               validate={[isValidFloat]}
               formItemProps={{
-                label: variable.parameter_name,
+                label: this.formatLabel(variable.parameter_name),
                 ...fieldGridConfig,
               }}
               inputNumberProps={{
@@ -390,10 +398,11 @@ class AudienceFeatureVariable extends React.Component<Props> {
           }
           return (
             <FormRelativeAbsoluteDateField
+              small={true}
               name={name}
               component={FormRelativeAbsoluteDate}
               formItemProps={{
-                label: variable.parameter_name,
+                label: this.formatLabel(variable.parameter_name),
                 ...fieldGridConfig,
               }}
               unixTimstamp={true}
@@ -411,6 +420,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
         case 'UserActivityType':
           return (
             <FormMultiTagField
+              small={true}
               name={name}
               component={FormMultiTag}
               selectProps={{
@@ -425,7 +435,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
                 disabled: !!disabled,
               }}
               formItemProps={{
-                label: variable.parameter_name,
+                label: this.formatLabel(variable.parameter_name),
                 ...fieldGridConfig,
               }}
             />
@@ -438,8 +448,16 @@ class AudienceFeatureVariable extends React.Component<Props> {
   };
 
   render() {
+    const { newLayout } = this.props;
+
     return (
-      <div className="mcs-audienceBuilder_audienceFeatureInput">
+      <div
+        className={
+          newLayout
+            ? 'mcs-audienceBuilder_audienceFeatureInput-2'
+            : 'mcs-audienceBuilder_audienceFeatureInput'
+        }
+      >
         {this.renderField()}
       </div>
     );
