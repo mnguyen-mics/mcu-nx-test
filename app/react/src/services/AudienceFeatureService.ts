@@ -1,6 +1,7 @@
 import {
   AudienceFeatureFolderResource,
   AudienceFeaturesByFolder,
+  AudienceFeatureVariableResource,
 } from './../models/audienceFeature/AudienceFeatureResource';
 import { AudienceFeatureResource } from '../models/audienceFeature';
 import { injectable } from 'inversify';
@@ -40,6 +41,11 @@ export interface IAudienceFeatureService {
     datamartId: string,
     audienceFeatureId: string,
   ) => Promise<DataResponse<AudienceFeatureResource>>;
+  extractAudienceFeatureVariables: (
+    datamartId: string,
+    objectTreeExpression: string,
+    adressableObject?: string,
+  ) => Promise<DataListResponse<AudienceFeatureVariableResource>>;
 
   getAudienceFeatureFolders: (
     datamartId: string,
@@ -137,6 +143,20 @@ export class AudienceFeatureService implements IAudienceFeatureService {
   ): Promise<DataResponse<AudienceFeatureResource>> {
     const endpoint = `datamarts/${datamartId}/audience_features/${audienceFeatureId}`;
     return ApiService.deleteRequest(endpoint);
+  }
+
+  extractAudienceFeatureVariables(
+    datamartId: string,
+    objectTreeExpression: string,
+    adressableObject?: string,
+  ): Promise<DataListResponse<AudienceFeatureVariableResource>> {
+    let endpoint;
+    if (adressableObject === undefined) {
+      endpoint = `datamarts/${datamartId}/audience_features/extract_variables?object_tree_expression=${objectTreeExpression}`;
+    } else {
+      endpoint = `datamarts/${datamartId}/audience_features/extract_variables?object_tree_expression=${objectTreeExpression}&addressable_object=${adressableObject}`;
+    }
+    return ApiService.getRequest(endpoint);
   }
 
   // Folders
