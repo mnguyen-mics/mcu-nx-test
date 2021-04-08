@@ -74,6 +74,28 @@ class QueryFragmentFormSection extends React.Component<Props, State> {
     fields.push(newGroupExpression);
   };
 
+  renderQueryBuilderButtons = () => {
+    return (
+      <div className="mcs-audienceBuilder_queryButtons">
+        <Button
+          className="mcs-audienceBuilder_narrowWithButton"
+          onClick={this.addGroupExpression(false)}
+        >
+          Narrow with
+        </Button>
+        <br />
+        - or -
+        <br />
+        <Button
+          className="mcs-audienceBuilder_excludeButton"
+          onClick={this.addGroupExpression(true)}
+        >
+          Exclude
+        </Button>
+      </div>
+    );
+  };
+
   addAudienceFeature = (index: number) => (
     audienceFeatures: AudienceFeatureResource[],
   ) => {
@@ -81,7 +103,7 @@ class QueryFragmentFormSection extends React.Component<Props, State> {
 
     const parameters: { [key: string]: string[] | undefined } = {};
     if (audienceFeatures[0]) {
-      audienceFeatures[0].variables.forEach(v => {
+      audienceFeatures[0].variables.forEach((v) => {
         if (v.container_type && v.container_type.includes('List')) {
           parameters[v.field_name] = [];
         } else {
@@ -215,6 +237,7 @@ class QueryFragmentFormSection extends React.Component<Props, State> {
             </React.Fragment>
           );
         })}
+        {this.renderQueryBuilderButtons()}
       </React.Fragment>
     );
   }

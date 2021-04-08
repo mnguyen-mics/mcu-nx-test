@@ -103,8 +103,8 @@ class AudienceFeatureVariable extends React.Component<Props> {
     const name = `${formPath}.parameters.${variable.parameter_name}`;
 
     const fieldGridConfig = {
-      labelCol: { span: 4 },
-      wrapperCol: { span: 20 },
+      labelCol: { span: 6 },
+      wrapperCol: { span: 18 },
     };
 
     const userPointObject = objectTypes.find((o) => o.name === 'UserPoint')!;
@@ -307,8 +307,8 @@ class AudienceFeatureVariable extends React.Component<Props> {
     const name = `${formPath}.parameters.${variable.parameter_name}`;
 
     const fieldGridConfig = {
-      labelCol: { span: 4 },
-      wrapperCol: { span: 20 },
+      labelCol: { span: 6 },
+      wrapperCol: { span: 18 },
     };
 
     const normalizeInt = (v: any): any => {

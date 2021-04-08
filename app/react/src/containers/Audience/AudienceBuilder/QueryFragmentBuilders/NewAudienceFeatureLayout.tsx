@@ -19,7 +19,6 @@ interface State {
 }
 
 export interface NewAudienceFeatureLayoutProps {
-  showCloseButton: boolean;
   onClose: () => void;
   datamartId: string;
   formPath: string;
@@ -39,6 +38,7 @@ class NewAudienceFeatureLayout extends React.Component<Props, State> {
   componentDidMount() {
     this.getAudienceFeature();
   }
+
   getAudienceFeature = () => {
     const { parametricPredicateResource, audienceFeatures } = this.props;
     if (audienceFeatures) {
@@ -53,13 +53,7 @@ class NewAudienceFeatureLayout extends React.Component<Props, State> {
   render() {
     const { audienceFeature } = this.state;
 
-    const {
-      datamartId,
-      formPath,
-      objectTypes,
-      onClose,
-      showCloseButton,
-    } = this.props;
+    const { datamartId, formPath, objectTypes, onClose } = this.props;
 
     return audienceFeature ? (
       <React.Fragment>
@@ -68,16 +62,14 @@ class NewAudienceFeatureLayout extends React.Component<Props, State> {
           <Col span={23}>
             <div className="mcs-audienceBuilder_audienceFeatureName-2">{`${audienceFeature.name}`}</div>
           </Col>
-          {showCloseButton && (
-            <Col span={1}>
-              <Button
-                className="mcs-audienceBuilder_closeButton-2"
-                onClick={onClose}
-              >
-                <McsIcon type="close" />
-              </Button>
-            </Col>
-          )}
+          <Col span={1}>
+            <Button
+              className="mcs-audienceBuilder_closeButton-2"
+              onClick={onClose}
+            >
+              <McsIcon type="close" />
+            </Button>
+          </Col>
         </Row>
 
         {/* Description */}

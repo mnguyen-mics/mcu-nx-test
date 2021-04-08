@@ -38,7 +38,6 @@ export const NewAudienceFeatureFieldArray = FieldArray as new () => GenericField
 
 export interface NewQueryFragmentFormSectionProps {
   datamartId: string;
-  demographicsFeaturesIds: string[];
   timelineConfiguration: TimelineConfiguration;
   selectAndAddFeature: (
     addToGroup: (_: AudienceBuilderParametricPredicateNode) => void,
@@ -114,7 +113,6 @@ class NewQueryFragmentFormSection extends React.Component<Props> {
       fields,
       intl,
       datamartId,
-      demographicsFeaturesIds,
       objectTypes,
       timelineConfiguration,
       selectAndAddFeature,
@@ -154,9 +152,6 @@ class NewQueryFragmentFormSection extends React.Component<Props> {
                       removeGroup={removeGroup(index)}
                       objectTypes={objectTypes}
                       audienceFeatures={audienceFeatures}
-                      isDemographicsSection={
-                        index === 0 && demographicsFeaturesIds.length >= 1
-                      }
                     />
                   </Timeline.Item>
 

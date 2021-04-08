@@ -27,7 +27,6 @@ class NewAudienceFeatureFormSection extends React.Component<Props> {
   render() {
     const {
       fields,
-      isDemographicsSection,
       datamartId,
       objectTypes,
       removeGroup,
@@ -54,7 +53,6 @@ class NewAudienceFeatureFormSection extends React.Component<Props> {
           >
             <Col span={24}>
               <NewAudienceFeatureLayout
-                showCloseButton={!isDemographicsSection}
                 onClose={removeFieldOrGroup(index)}
                 formPath={`${name}`}
                 datamartId={datamartId}

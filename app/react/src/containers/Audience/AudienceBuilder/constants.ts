@@ -32,6 +32,14 @@ export const messages: {
     id: 'audienceBuilder.category.demographics.tooltiptLanguage',
     defaultMessage: 'Select the language of your audience.',
   },
+  narrowingWith: {
+    id: 'audienceBuilder.category.narrowingWith',
+    defaultMessage: 'narrowing with',
+  },
+  excludingWith: {
+    id: 'audienceBuilder.category.excludingWith',
+    defaultMessage: 'excluding',
+  },
   refreshMessage: {
     id: 'audienceBuilder.liveDashboard.refreshMessage',
     defaultMessage:
@@ -93,6 +101,14 @@ export const messages: {
     id: 'audienceBuilder.audienceFeatureSelector.availableFilters',
     defaultMessage: 'Available Filters',
   }, 
+  audienceBuilderInclude: {
+    id: 'audienceBuilder.include',
+    defaultMessage: 'Include',
+  },
+  audienceBuilderExclude: {
+    id: 'audienceBuilder.exclude',
+    defaultMessage: 'Exclude',
+  },
   audienceBuilderTimelineMatchingCriterias0: {
     id: 'audienceBuilder.timeline.matchingCriterias.and',
     defaultMessage: 'AND ',

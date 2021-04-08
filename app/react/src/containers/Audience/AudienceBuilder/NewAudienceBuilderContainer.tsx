@@ -121,7 +121,7 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
       isMaskVisible: false,
     };
   }
-  
+
   componentDidMount() {
     const { audienceBuilder, formValues } = this.props;
 
@@ -146,11 +146,13 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
       });
 
     const audienceFeatureIds: string[] = [];
+
     formValues.include.concat(formValues.exclude).forEach((group) => {
       group.expressions.forEach((exp) => {
         audienceFeatureIds.push(exp.parametric_predicate_id);
       });
     });
+
     const promises = audienceFeatureIds.map((id) => {
       return this._audienceFeatureService.getAudienceFeature(
         audienceBuilder.datamart_id,
@@ -318,7 +320,7 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
   // Rendering
 
   private renderQueryBuilderButtons = () => {
-    const { formValues } = this.props;
+    const { formValues, intl } = this.props;
 
     return (
       <div className="mcs-audienceBuilder_timelineButtons">
@@ -328,7 +330,7 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
             this.addToNewGroup(this.saveGroup(formValues.include, 'include')),
           )}
         >
-          Include
+          {intl.formatMessage(messages.audienceBuilderInclude)}
         </Button>
 
         {formValues.exclude.length === 0 && (
@@ -342,7 +344,7 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
                 ),
               )}
             >
-              Exclude
+              {intl.formatMessage(messages.audienceBuilderExclude)}
             </Button>
           </span>
         )}
@@ -368,13 +370,12 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
             titlePart1: messages.audienceBuilderTimelineMatchingCriterias1,
             titlePart2: messages.audienceBuilderTimelineMatchingCriterias2,
             initialDotColor: 'mcs-timeline_initialDot_color1',
-            actionDotColor: 'mcs-timeline_actionDot_color1'
+            actionDotColor: 'mcs-timeline_actionDot_color1',
           }}
           component={NewQueryFragmentFormSection}
           datamartId={audienceBuilder.datamart_id}
           selectAndAddFeature={this.selectAndAddFeature}
           change={change}
-          demographicsFeaturesIds={audienceBuilder.demographics_features_ids}
           audienceFeatures={audienceFeatures}
           objectTypes={objectTypes}
           {...genericFieldArrayProps}
@@ -388,13 +389,12 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
             titlePart1: messages.audienceBuilderTimelineExcludingCriterias1,
             titlePart2: messages.audienceBuilderTimelineExcludingCriterias2,
             initialDotColor: 'mcs-timeline_initialDot_color2',
-            actionDotColor: 'mcs-timeline_actionDot_color2'
+            actionDotColor: 'mcs-timeline_actionDot_color2',
           }}
           component={NewQueryFragmentFormSection}
           change={change}
           datamartId={audienceBuilder.datamart_id}
           selectAndAddFeature={this.selectAndAddFeature}
-          demographicsFeaturesIds={[]}
           audienceFeatures={audienceFeatures}
           objectTypes={objectTypes}
           {...genericFieldArrayProps}
