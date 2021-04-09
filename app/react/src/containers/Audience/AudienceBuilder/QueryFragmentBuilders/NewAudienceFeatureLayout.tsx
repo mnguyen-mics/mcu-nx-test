@@ -12,7 +12,9 @@ import { ObjectLikeTypeInfoResource } from '../../../../models/datamart/graphdb/
 import { Spin, Row, Col, Button } from 'antd';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
-export const FormRelativeAbsoluteDateField = Field as new () => GenericField<FormRelativeAbsoluteDateProps>;
+export const FormRelativeAbsoluteDateField = Field as new () => GenericField<
+  FormRelativeAbsoluteDateProps
+>;
 
 interface State {
   audienceFeature?: AudienceFeatureResource;
@@ -25,6 +27,7 @@ export interface NewAudienceFeatureLayoutProps {
   parametricPredicateResource: AudienceBuilderParametricPredicateNode;
   objectTypes: ObjectLikeTypeInfoResource[];
   audienceFeatures?: AudienceFeatureResource[];
+  formChange(field: string, value: any): void;
 }
 
 type Props = NewAudienceFeatureLayoutProps & InjectedIntlProps & ValidatorProps;
@@ -53,7 +56,7 @@ class NewAudienceFeatureLayout extends React.Component<Props, State> {
   render() {
     const { audienceFeature } = this.state;
 
-    const { datamartId, formPath, objectTypes, onClose } = this.props;
+    const { datamartId, formPath, objectTypes, onClose, formChange } = this.props;
 
     return audienceFeature ? (
       <React.Fragment>
@@ -93,6 +96,7 @@ class NewAudienceFeatureLayout extends React.Component<Props, State> {
                   variable={v}
                   formPath={formPath}
                   objectTypes={objectTypes}
+                  formChange={formChange}
                 />
               );
             })}

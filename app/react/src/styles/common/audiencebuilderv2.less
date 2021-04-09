@@ -92,25 +92,39 @@
       padding: 0px 40px;
       text-align: center;
       .mcs-audienceBuilder_totalAudience {
-        padding: 15px;
-        .ant-statistic-title {
-          font-size: 15px;
+        background-color: @primary-color;
+        padding: 15px 20px;
+        height: 90px;
+        .mcs-audienceBuilder_selectedAudience {
+          display: inline-block;
+          vertical-align: bottom;
+          color: white;
+          margin-bottom: 10px;
+          margin-left: 20px;
         }
-        .ant-statistic-content {
-          font-size: 40px;
+        .mcs-audienceBuilder_totalValue {
+          display: inline-block;
+          vertical-align: middle;
+          font-size: 36px;
+          line-height: 36px;
+          color: white;
         }
-        .mcs-audienceBuilder_timelineSelector {
-          font-weight: bold;
+        .mcs-icon {
+          display: inline-block;
+          vertical-align: middle;
+          font-size: 60px;
           color: @info-color;
-          font-size: 0.9em;
-
-          .error {
-            color: @error-color;
-            font-size: 0.8em;
-          }
-          .timeline-selector {
-            float: none !important;
-          }
+          margin: 0px 20px;
+        }
+      }
+      .mcs-audienceBuilder_timelineSelector {
+        font-weight: bold;
+        color: @info-color;
+        font-size: 0.9em;
+        margin-bottom: 40px;
+        .error {
+          color: @error-color;
+          font-size: 0.8em;
         }
       }
     }
@@ -156,7 +170,7 @@
       .ant-legacy-form-item-label {
         text-align: left;
       }
-  
+
       .ant-legacy-form-item-label label:after {
         content: none;
       }
@@ -223,7 +237,7 @@
       .field-label {
         color: @text-color-secondary;
       }
-      
+
       .ant-legacy-form-item-label {
         text-align: left;
       }
@@ -256,7 +270,7 @@
     font-family: @font-family-medium;
     text-align: center;
     border: 1px solid @border-color-split;
-    margin: 34px 40px 10px 40px;
+    margin: 40px 40px 10px 40px;
     padding: 11px;
     height: 40px;
     font-size: 12px;
@@ -316,17 +330,17 @@
 
       .mcs-timeline_actionDot {
         border: none;
-        outline:none;
+        outline: none;
         box-shadow: none;
         padding: 0px;
         margin: 0px;
         width: 16px;
-        height:16px; 
+        height: 16px;
         border-radius: 50%;
         font-size: 14px;
         color: @layout-content-background;
-        display:flex;
-        text-align:center;
+        display: flex;
+        text-align: center;
         justify-content: center;
         align-items: center;
       }
@@ -422,6 +436,7 @@
   font-size: 1.3em;
   font-weight: bold;
   margin-bottom: 20px;
+  margin-top: 20px;
 }
 
 .mcs-audienceBuilder_featureSelector {

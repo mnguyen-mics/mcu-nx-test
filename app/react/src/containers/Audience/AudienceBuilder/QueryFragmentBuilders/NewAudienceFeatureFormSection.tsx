@@ -17,6 +17,7 @@ export interface NewAudienceFeatureFormSectionProps
   removeGroup: () => void;
   objectTypes: ObjectLikeTypeInfoResource[];
   audienceFeatures?: AudienceFeatureResource[];
+  formChange(field: string, value: any): void;
 }
 
 type Props = WrappedFieldArrayProps<AudienceBuilderParametricPredicateNode> &
@@ -31,6 +32,7 @@ class NewAudienceFeatureFormSection extends React.Component<Props> {
       objectTypes,
       removeGroup,
       audienceFeatures,
+      formChange
     } = this.props;
 
     const removeFieldOrGroup = (index: number) => () => {
@@ -59,6 +61,7 @@ class NewAudienceFeatureFormSection extends React.Component<Props> {
                 parametricPredicateResource={fields.get(index)}
                 objectTypes={objectTypes}
                 audienceFeatures={audienceFeatures}
+                formChange={formChange}
               />
             </Col>
           </Row>

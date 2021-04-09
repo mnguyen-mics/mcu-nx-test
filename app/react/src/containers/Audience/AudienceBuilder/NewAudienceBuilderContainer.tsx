@@ -20,8 +20,9 @@ import {
   NewAudienceBuilderFormData,
   QueryDocument as AudienceBuilderQueryDocument,
   AudienceBuilderResource,
-  AudienceBuilderParametricPredicateGroupNode,
   AudienceBuilderParametricPredicateNode,
+  isAudienceBuilderParametricPredicateNode,
+  AudienceBuilderParametricPredicateGroupNode,
 } from '../../../models/audienceBuilder/AudienceBuilderResource';
 import AudienceBuilderDashboard from './AudienceBuilderDashboard';
 import NewQueryFragmentFormSection, {
@@ -149,7 +150,9 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
 
     formValues.include.concat(formValues.exclude).forEach((group) => {
       group.expressions.forEach((exp) => {
-        audienceFeatureIds.push(exp.parametric_predicate_id);
+        if (isAudienceBuilderParametricPredicateNode(exp)) {
+          audienceFeatureIds.push(exp.parametric_predicate_id);
+        }
       });
     });
 
@@ -217,7 +220,7 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
 
   private saveGroup = (
     groups: AudienceBuilderParametricPredicateGroupNode[],
-    groupsLocation: string,
+    groupsLocation: 'include' | 'exclude',
   ) => (newGroup: AudienceBuilderParametricPredicateGroupNode) => {
     const { change } = this.props;
 
@@ -228,9 +231,6 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
     save: (_: AudienceBuilderParametricPredicateGroupNode) => void,
   ) => (predicate: AudienceBuilderParametricPredicateNode) => {
     const newGroup: AudienceBuilderParametricPredicateGroupNode = {
-      type: 'GROUP',
-      boolean_operator: 'OR',
-      negation: false,
       expressions: [predicate],
     };
 
@@ -439,7 +439,7 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
           {
             operations: [{ directives: [], selections: [{ name: 'id' }] }],
             from: 'UserPoint',
-            where: this._audienceBuilderQueryService.buildObjectTreeExpression(
+            where: this._audienceBuilderQueryService.buildQueryDocument(
               formValues,
             )?.where,
           },

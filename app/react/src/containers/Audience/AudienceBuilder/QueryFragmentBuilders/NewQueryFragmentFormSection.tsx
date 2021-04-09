@@ -21,7 +21,7 @@ import { ObjectLikeTypeInfoResource } from '../../../../models/datamart/graphdb/
 import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
 import {
   AudienceBuilderParametricPredicateNode,
-  AudienceBuilderParametricPredicateGroupNode,
+  AudienceBuilderGroupNode,
 } from '../../../../models/audienceBuilder/AudienceBuilderResource';
 
 export interface TimelineConfiguration {
@@ -47,7 +47,7 @@ export interface NewQueryFragmentFormSectionProps {
   audienceFeatures?: AudienceFeatureResource[];
 }
 
-type Props = WrappedFieldArrayProps<AudienceBuilderParametricPredicateGroupNode> &
+type Props = WrappedFieldArrayProps<AudienceBuilderGroupNode> &
   InjectedDrawerProps &
   NewQueryFragmentFormSectionProps &
   InjectedFeaturesProps &
@@ -116,6 +116,7 @@ class NewQueryFragmentFormSection extends React.Component<Props> {
       objectTypes,
       timelineConfiguration,
       selectAndAddFeature,
+      change,
     } = this.props;
 
     const { audienceFeatures } = this.props;
@@ -152,6 +153,7 @@ class NewQueryFragmentFormSection extends React.Component<Props> {
                       removeGroup={removeGroup(index)}
                       objectTypes={objectTypes}
                       audienceFeatures={audienceFeatures}
+                      formChange={change}
                     />
                   </Timeline.Item>
 
@@ -172,7 +174,7 @@ class NewQueryFragmentFormSection extends React.Component<Props> {
                         )}
                       </div>
                     ) : (
-                      <div className="mcs-timeline_dotNoTitle"/>
+                      <div className="mcs-timeline_dotNoTitle" />
                     )}
                   </Timeline.Item>
                 </div>

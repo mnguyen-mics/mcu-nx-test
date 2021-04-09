@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Statistic } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { messages } from './constants';
 import { compose } from 'recompose';
@@ -10,11 +9,15 @@ import { IDashboardService } from '../../../services/DashboardServices';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
-import { Loading } from '@mediarithmics-private/mcs-components-library';
+import {
+  Loading,
+  McsIcon,
+} from '@mediarithmics-private/mcs-components-library';
 import DashboardWrapper from '../Dashboard/DashboardWrapper';
 import CardFlex from '../Dashboard/Components/CardFlex';
 import { QueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
 import TimelineSelector from '../../QueryTool/JSONOTQL/TimelineSelector';
+import { formatMetric } from '../../../utils/MetricHelper';
 
 interface AudienceBuilderDashboardProps {
   organisationId: string;
@@ -64,10 +67,10 @@ class AudienceBuilderDashboard extends React.Component<Props, State> {
         audienceBuilderId,
         {},
       )
-      .then(d => {
+      .then((d) => {
         this.setState({ dashboards: d.status === 'ok' ? d.data : [] });
       })
-      .catch(err => {
+      .catch((err) => {
         this.props.notifyError(err);
       })
       .finally(() => {
@@ -89,42 +92,44 @@ class AudienceBuilderDashboard extends React.Component<Props, State> {
     const { isDashboardLoading, dashboards } = this.state;
     return (
       <div className="mcs-audienceBuilder_liveDashboard">
-        {isQueryRunning ? (
-          <Loading isFullScreen={true} />
-        ) : (!!totalAudience || totalAudience === 0) ? (
-          <React.Fragment>
-            <CardFlex className="mcs-audienceBuilder_totalAudience">
-              <Statistic
-                title={intl.formatMessage(messages.selectedAudience)}
-                value={totalAudience}
-              />
-              <div className="mcs-audienceBuilder_timelineSelector">
-                <TimelineSelector
-                  stale={false}
-                  datamartId={datamartId}
-                  query={queryDocument?.where}
-                  organisationId={organisationId}
-                />
-              </div>
-            </CardFlex>
-            {isDashboardLoading || !queryDocument ? (
-              <Loading className="m-t-20" isFullScreen={true} />
-            ) : (
-              dashboards.map(d => (
-                <DashboardWrapper
-                  key={d.id}
-                  layout={d.components}
-                  datamartId={d.datamart_id}
-                  source={queryDocument}
-                />
-              ))
-            )}
-          </React.Fragment>
-        ) : (
+        <React.Fragment>
           <CardFlex className="mcs-audienceBuilder_totalAudience">
-            <Statistic title={intl.formatMessage(messages.selectedAudience)} />
+            <McsIcon type="full-users" />
+            <span className="mcs-audienceBuilder_totalValue">
+              {isQueryRunning ? (
+                <Loading isFullScreen={true} />
+              ) : !!totalAudience || totalAudience === 0 ? (
+                formatMetric(totalAudience, '0,0')
+              ) : (
+                '-'
+              )}
+            </span>
+
+            <span className="mcs-audienceBuilder_selectedAudience">
+              {intl.formatMessage(messages.selectedAudience)}
+            </span>
           </CardFlex>
-        )}
+          {isDashboardLoading || !queryDocument ? (
+            <Loading className="m-t-20" isFullScreen={true} />
+          ) : (
+            dashboards.map((d) => (
+              <DashboardWrapper
+                key={d.id}
+                layout={d.components}
+                datamartId={d.datamart_id}
+                source={queryDocument}
+              />
+            ))
+          )}
+          <div className="mcs-audienceBuilder_timelineSelector">
+            <TimelineSelector
+              stale={false}
+              datamartId={datamartId}
+              query={queryDocument?.where}
+              organisationId={organisationId}
+            />
+          </div>
+        </React.Fragment>
       </div>
     );
   }
