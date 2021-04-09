@@ -20,8 +20,9 @@ import {
   NewAudienceBuilderFormData,
   QueryDocument as AudienceBuilderQueryDocument,
   AudienceBuilderResource,
-  AudienceBuilderParametricPredicateGroupNode,
   AudienceBuilderParametricPredicateNode,
+  isAudienceBuilderParametricPredicateNode,
+  AudienceBuilderGroupNode,
 } from '../../../models/audienceBuilder/AudienceBuilderResource';
 import AudienceBuilderDashboard from './AudienceBuilderDashboard';
 import NewQueryFragmentFormSection, {
@@ -149,7 +150,9 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
 
     formValues.include.concat(formValues.exclude).forEach((group) => {
       group.expressions.forEach((exp) => {
-        audienceFeatureIds.push(exp.parametric_predicate_id);
+        if (isAudienceBuilderParametricPredicateNode(exp)) {
+          audienceFeatureIds.push(exp.parametric_predicate_id);
+        }
       });
     });
 
@@ -216,21 +219,22 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
   };
 
   private saveGroup = (
-    groups: AudienceBuilderParametricPredicateGroupNode[],
-    groupsLocation: string,
-  ) => (newGroup: AudienceBuilderParametricPredicateGroupNode) => {
+    groups: AudienceBuilderGroupNode[],
+    groupsLocation: 'include' | 'exclude',
+  ) => (newGroup: AudienceBuilderGroupNode) => {
     const { change } = this.props;
 
     change(groupsLocation, groups.concat(newGroup));
   };
 
   private addToNewGroup = (
-    save: (_: AudienceBuilderParametricPredicateGroupNode) => void,
+    save: (_: AudienceBuilderGroupNode) => void,
+    groupsLocation: 'include' | 'exclude',
   ) => (predicate: AudienceBuilderParametricPredicateNode) => {
-    const newGroup: AudienceBuilderParametricPredicateGroupNode = {
+    const newGroup: AudienceBuilderGroupNode = {
       type: 'GROUP',
       boolean_operator: 'OR',
-      negation: false,
+      negation: groupsLocation === 'exclude',
       expressions: [predicate],
     };
 
@@ -327,7 +331,10 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
         <Button
           className="mcs-timelineButton_left"
           onClick={this.selectAndAddFeature(
-            this.addToNewGroup(this.saveGroup(formValues.include, 'include')),
+            this.addToNewGroup(
+              this.saveGroup(formValues.include, 'include'),
+              'include',
+            ),
           )}
         >
           {intl.formatMessage(messages.audienceBuilderInclude)}
@@ -341,6 +348,7 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
               onClick={this.selectAndAddFeature(
                 this.addToNewGroup(
                   this.saveGroup(formValues.exclude, 'exclude'),
+                  'exclude',
                 ),
               )}
             >
@@ -439,7 +447,7 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
           {
             operations: [{ directives: [], selections: [{ name: 'id' }] }],
             from: 'UserPoint',
-            where: this._audienceBuilderQueryService.buildObjectTreeExpression(
+            where: this._audienceBuilderQueryService.buildQueryDocument(
               formValues,
             )?.where,
           },

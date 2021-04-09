@@ -5,24 +5,20 @@ import { OTQLResult } from '../../../models/datamart/graphdb/OTQLResult';
 import { QueryDocument as GraphDBQueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
 import {
   NewAudienceBuilderFormData,
-  AudienceBuilderFormData,
   AudienceBuilderGroupNode,
   QueryDocument as AudienceBuilderQueryDocument,
-  AudienceBuilderParametricPredicateGroupNode,
-  AudienceBuilderParametricPredicateNode,
 } from '../../../models/audienceBuilder/AudienceBuilderResource';
 
 export interface IAudienceBuilderQueryService {
+  buildQueryDocument: (
+    formData: NewAudienceBuilderFormData,
+  ) => AudienceBuilderQueryDocument;
   runQuery: (
     datamartId: string,
     formData: NewAudienceBuilderFormData,
     success: (queryDocument: GraphDBQueryDocument, result: OTQLResult) => void,
     failure: (err: any) => void,
   ) => void;
-
-  buildObjectTreeExpression: (
-    formData: NewAudienceBuilderFormData,
-  ) => AudienceBuilderFormData | undefined;
 }
 
 @injectable()
@@ -31,9 +27,17 @@ export class AudienceBuilderQueryService
   @inject(TYPES.IQueryService)
   private _queryService: IQueryService;
 
-  private buildQueryDocument = (
-    formData: AudienceBuilderFormData | undefined,
+  buildQueryDocument = (
+    formData: NewAudienceBuilderFormData,
   ): AudienceBuilderQueryDocument => {
+    const includeGroup: AudienceBuilderGroupNode[] =
+      formData.include.length !== 0 ? formData.include : [];
+
+    const excludeGroup: AudienceBuilderGroupNode[] =
+      formData.exclude.length !== 0 ? formData.exclude : [];
+
+    const expressions = includeGroup.concat(excludeGroup);
+
     const query: AudienceBuilderQueryDocument = {
       language_version: 'JSON_OTQL',
       operations: [
@@ -48,94 +52,23 @@ export class AudienceBuilderQueryService
       from: 'UserPoint',
     };
 
-    if (formData) {
-      return {
-        ...query,
-        where: formData.where,
-      };
-    }
-
-    return query;
-  };
-
-  private completeExpression = (
-    expression: AudienceBuilderParametricPredicateNode,
-  ): AudienceBuilderParametricPredicateNode => {
-    const filledParameters: any = [];
-
-    Object.keys(expression.parameters).forEach((key) => {
-      const value = expression.parameters[key];
-      if (value) {
-        filledParameters[`${key}`] = value;
-      }
-    });
-
     return {
-      ...expression,
-      parameters: filledParameters,
+      ...query,
+      where: {
+        type: 'GROUP',
+        boolean_operator: 'AND',
+        expressions:
+          expressions.length !== 0
+            ? expressions
+            : [
+                {
+                  type: 'GROUP',
+                  boolean_operator: 'OR',
+                  expressions: [],
+                },
+              ],
+      },
     };
-  };
-
-  private completeGroup = (
-    group: AudienceBuilderParametricPredicateGroupNode,
-  ): AudienceBuilderParametricPredicateGroupNode => {
-    return {
-      ...group,
-      expressions: group.expressions.map((expression) => {
-        return this.completeExpression(expression);
-      }),
-    };
-  };
-
-  private completeGroups = (
-    groups: AudienceBuilderParametricPredicateGroupNode[],
-  ): AudienceBuilderParametricPredicateGroupNode[] => {
-    return groups.map((group) => {
-      return this.completeGroup(group);
-    });
-  };
-
-  buildObjectTreeExpression = (
-    formData: NewAudienceBuilderFormData,
-  ): AudienceBuilderFormData | undefined => {
-    const includeGroup: AudienceBuilderGroupNode[] =
-      formData.include.length !== 0
-        ? [
-            {
-              type: 'GROUP',
-              boolean_operator: 'AND',
-              negation: false,
-              expressions: this.completeGroups(formData.include),
-            },
-          ]
-        : [];
-
-    const excludeGroup: AudienceBuilderGroupNode[] =
-      formData.exclude.length !== 0
-        ? [
-            {
-              type: 'GROUP',
-              boolean_operator: 'AND',
-              negation: true,
-              expressions: this.completeGroups(formData.exclude),
-            },
-          ]
-        : [];
-
-    const expressions = includeGroup.concat(excludeGroup);
-
-    if (expressions.length !== 0) {
-      return {
-        where: {
-          type: 'GROUP',
-          boolean_operator: 'AND',
-          negation: false,
-          expressions: expressions,
-        },
-      };
-    }
-
-    return undefined;
   };
 
   runQuery = (
@@ -144,19 +77,14 @@ export class AudienceBuilderQueryService
     success: (queryDocument: GraphDBQueryDocument, result: OTQLResult) => void,
     failure: (err: any) => void,
   ) => {
-    const expression = this.buildObjectTreeExpression(formData);
-    const queryDocument: AudienceBuilderQueryDocument = this.buildQueryDocument(
-      expression,
-    );
-
     // TODO Remove `as any` hack
     // AudienceBuilderQueryDocument and GraphDBQueryDocument could inherit from the same abstraction.
-    const genericQueryDocument = queryDocument as any;
+    const queryDocument = this.buildQueryDocument(formData) as any;
 
     this._queryService
-      .runJSONOTQLQuery(datamartId, genericQueryDocument)
+      .runJSONOTQLQuery(datamartId, queryDocument)
       .then((queryResult) => {
-        success(genericQueryDocument, queryResult.data);
+        success(queryDocument, queryResult.data);
       })
       .catch((err) => {
         failure(err);
