@@ -20,6 +20,7 @@ import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library
 import { FILTERS } from '../../../containers/Audience/DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import FunnelTemplateSelector from '../../../components/Funnel/FunnelTemplateSelector';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { CopyOutlined } from '@ant-design/icons';
 
 const { Content } = Layout;
 
@@ -241,7 +242,7 @@ class FunnelPage extends React.Component<JoinedProps, State> {
             Execute Query
           </Button>
           <CopyToClipboard text={window.location.href} onCopy={this.handleAfterFunnelLinkCopy}>
-            <Button>
+            <Button icon={<CopyOutlined />}>
               <FormattedMessage
                 id="funnel.share"
                 defaultMessage="Share"
