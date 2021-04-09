@@ -32,7 +32,7 @@ class AudienceFeatureFormSection extends React.Component<Props> {
       datamartId,
       objectTypes,
       audienceFeatures,
-      formChange
+      formChange,
     } = this.props;
 
     return fields.map((name, index) => {

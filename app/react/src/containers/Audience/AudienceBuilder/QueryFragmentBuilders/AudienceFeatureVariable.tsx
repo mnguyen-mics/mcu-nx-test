@@ -14,7 +14,7 @@ import {
 } from '../../../../components/Form';
 import { ValidatorProps } from '../../../../components/Form/withValidators';
 import FormMultiTag from '../../../../components/Form/FormSelect/FormMultiTag';
-import { Field, GenericField } from 'redux-form';
+import { Field, GenericField, unregisterField } from 'redux-form';
 import FormRelativeAbsoluteDate, {
   FormRelativeAbsoluteDateProps,
 } from '../../../QueryTool/JSONOTQL/Edit/Sections/Field/Comparison/FormRelativeAbsoluteDate';
@@ -26,6 +26,15 @@ import { getCoreReferenceTypeAndModel } from '../../../QueryTool/JSONOTQL/domain
 import FormSearchObject, {
   FormSearchObjectProps,
 } from '../../../../components/Form/FormSelect/FormSearchObject';
+import FormSearchObjectList, {
+  FormSearchObjectListProps,
+} from '../../../../components/Form/FormSelect/FormSearchObjectList';
+import FormSearchMatch, {
+  FormSearchMatchProps,
+} from '../../../../components/Form/FormSelect/FormSearchMatch';
+import FormSearchSingleValue, {
+  FormSearchSingleValueProps,
+} from '../../../../components/Form/FormSelect/FormSearchSingleValue';
 import { IReferenceTableService } from '../../../../services/ReferenceTableService';
 import { IDatamartService } from '../../../../services/DatamartService';
 import { IComparmentService } from '../../../../services/CompartmentService';
@@ -34,10 +43,17 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { injectWorkspace, InjectedWorkspaceProps } from '../../../Datamart';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
 import { SegmentNameDisplay } from '../../Common/SegmentNameDisplay';
+import { FORM_ID } from '../constants';
 
 export const FormRelativeAbsoluteDateField = Field as new () => GenericField<FormRelativeAbsoluteDateProps>;
 
 export const FormSearchObjectField = Field as new () => GenericField<FormSearchObjectProps>;
+
+export const FormSearchObjectListField = Field as new () => GenericField<FormSearchObjectListProps>;
+
+export const FormSearchMatchField = Field as new () => GenericField<FormSearchMatchProps>;
+
+export const FormSearchSingleStringField = Field as new () => GenericField<FormSearchSingleValueProps>;
 
 export interface AudienceFeatureVariableProps {
   datamartId: string;
@@ -262,38 +278,78 @@ class AudienceFeatureVariable extends React.Component<Props> {
       loadOnlyOnce = true;
       shouldFilterData = true;
     }
-    let handleSingleStringValue;
-    let handleMatchValue;
+
+    const formProps = {
+      name: name,
+      formItemProps: {
+        label: variable.parameter_name,
+
+        ...fieldGridConfig,
+      },
+      fetchListMethod: fetchListMethod,
+      fetchSingleMethod: fetchSingleMethod,
+      selectProps: selectProps,
+      loadOnlyOnce: loadOnlyOnce,
+      shouldFilterData: shouldFilterData,
+    };
+
     if (singleStringValue && formChange) {
-      handleSingleStringValue = (value: any) => {
+      const handleSingleValue = (value: any) => {
         formChange(name, value);
       };
-    }
-
-    if (matchValue && formChange) {
-      handleMatchValue = (value: any) => {
+      const handleNoValue = (inputName: string) => {
+        unregisterField(FORM_ID, inputName);
+        formChange(name, '');
+      };
+      return (
+        <FormSearchSingleStringField
+          component={FormSearchSingleValue}
+          handleSingleValue={handleSingleValue}
+          handleNoValue={handleNoValue}
+          {...formProps}
+        />
+      );
+    } else if (matchValue && formChange) {
+      const handleMatchValue = (value: any) => {
         formChange(name, value);
       };
+      return (
+        <FormSearchMatchField
+          component={FormSearchMatch}
+          separator={' '}
+          handleMatchValue={handleMatchValue}
+          {...formProps}
+        />
+      );
+    } else if (variable.container_type === 'List' && formChange) {
+      const handleNoValue = (inputName: string) => {
+        unregisterField(FORM_ID, inputName);
+        formChange(name, '');
+      };
+      return (
+        <FormSearchObjectListField
+          component={FormSearchObjectList}
+          handleNoValue={handleNoValue}
+          {...formProps}
+        />
+      );
+    } else {
+      return (
+        <FormSearchObjectField
+          name={name}
+          component={FormSearchObject}
+          formItemProps={{
+            label: variable.parameter_name,
+            ...fieldGridConfig,
+          }}
+          fetchListMethod={fetchListMethod}
+          fetchSingleMethod={fetchSingleMethod}
+          selectProps={selectProps}
+          loadOnlyOnce={loadOnlyOnce}
+          shouldFilterData={shouldFilterData}
+        />
+      );
     }
-
-    return (
-      <FormSearchObjectField
-        small={true}
-        name={name}
-        component={FormSearchObject}
-        formItemProps={{
-          label: this.formatLabel(variable.parameter_name),
-          ...fieldGridConfig,
-        }}
-        fetchListMethod={fetchListMethod}
-        fetchSingleMethod={fetchSingleMethod}
-        selectProps={selectProps}
-        loadOnlyOnce={loadOnlyOnce}
-        shouldFilterData={shouldFilterData}
-        handleSingleStringValue={handleSingleStringValue}
-        handleMatchValue={handleMatchValue}
-      />
-    );
   };
 
   renderField = () => {

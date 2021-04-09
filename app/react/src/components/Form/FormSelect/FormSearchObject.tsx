@@ -21,12 +21,12 @@ export interface FormSearchObjectProps {
   fetchSingleMethod: (id: string) => Promise<LabeledValue>;
   type?: string;
   small?: boolean;
-  // These 2 props are used in the new Audience Builder. In some cases, we want the exact same behaviour
-  // than this component but with the following differences: if handleSingleStringValue is defined, this component
-  // will store only one string in redux whereas if handleMatchValue is defined, it will store multiple values
-  // grouped in one string (ex: 'val1 val2 val3' see 'JSON_OTQL data_type=text' specs for details)
-  handleSingleStringValue?: (value: any) => void;
-  handleMatchValue?: (value: any) => void;
+  // This prop is used by the Standard Segment Builder to caracterise a specific behavior on value save due to the
+  // value type.
+  handleValue?: (value: any, inputName?: string) => void;
+  // This prop is used by the Standard Segment Builder to specify when the component should handle a single value but
+  // set it in an array by default.
+  isSingleValue?: boolean;
 }
 
 interface FormSearchObjectState {
@@ -125,33 +125,44 @@ class FormSearchObject extends React.Component<Props, FormSearchObjectState> {
       });
   };
 
-  handleChange = (value: LabeledValue | LabeledValue[]) => {
-    const { input, handleSingleStringValue, handleMatchValue } = this.props;
-
-    if (Array.isArray(value)) {
-      const multipleValues = value;
-      this.setState({ value: multipleValues, currentValue: undefined }, () => {
+  handleChangeSingleValue = (value: LabeledValue) => {
+    const { input, handleValue } = this.props;
+      this.setState({ value: [value], currentValue: undefined }, () => {
         this.filterData();
       });
-      input.onChange(multipleValues.map((i) => i.key));
-      if (handleSingleStringValue) {
-        handleSingleStringValue(
-          multipleValues[0] ? multipleValues[0].value : '',
-        );
-      } else if (handleMatchValue) {
-        handleMatchValue(multipleValues.map((v) => v.value).join(' '));
+      input.onChange(value.key);
+      if (handleValue) {
+        handleValue([value], input.name);
+      }
+  }
+
+  handleChangeMultipleValues = (values: LabeledValue[]) => {
+    const { input, handleValue } = this.props;
+    this.setState(
+      {
+        value: values,
+        currentValue: undefined,
+      },
+      () => {
+        this.filterData();
+      },
+    );
+    input.onChange(values.map((i) => i.key));
+    if (handleValue) {
+      handleValue(values, input.name);
+    }
+  }
+
+  handleChange = (value: LabeledValue | LabeledValue[]) => {
+    const { isSingleValue } = this.props;
+    if (Array.isArray(value)) {
+      if (isSingleValue && value[0]) {
+        this.handleChangeSingleValue(value[0]);
+      } else {
+        this.handleChangeMultipleValues(value);
       }
     } else {
-      const singleValue = value;
-      this.setState({ value: [singleValue], currentValue: undefined }, () => {
-        this.filterData();
-      });
-      input.onChange(singleValue.key);
-      if (handleSingleStringValue) {
-        handleSingleStringValue(singleValue.value);
-      } else if (handleMatchValue) {
-        handleMatchValue(singleValue.value);
-      }
+      this.handleChangeSingleValue(value);
     }
   };
 
@@ -182,18 +193,26 @@ class FormSearchObject extends React.Component<Props, FormSearchObjectState> {
     }
   };
 
-  onInputKeyDown = () => {
-    const { input } = this.props;
+  onBlur = () => {
+    const { input, handleValue, isSingleValue } = this.props;
     const { value, currentValue } = this.state;
-    let formattedValue: LabeledValue[] = [];
-    if (value) {
-      formattedValue = formattedValue.concat(value);
+    if (handleValue) {
+      handleValue(value, input.name);
+    } else {
+      let formattedValue: LabeledValue[] = [];
+      if (value) {
+        formattedValue = formattedValue.concat(value);
+      }
+      if (isSingleValue) {
+        input.onChange(currentValue);
+      } else {
+        const finalValue = [...formattedValue.map((i) => i.key)];
+        if (currentValue) {
+          finalValue.push(currentValue);
+        }
+        input.onChange(finalValue);
+      }
     }
-    const finalValue = [...formattedValue.map((i) => i.key)];
-    if (currentValue) {
-      finalValue.push(currentValue);
-    }
-    input.onChange(finalValue);
   };
 
   render() {
@@ -204,7 +223,7 @@ class FormSearchObject extends React.Component<Props, FormSearchObjectState> {
       small,
       selectProps,
       loadOnlyOnce,
-      handleSingleStringValue,
+      isSingleValue,
     } = this.props;
 
     const {
@@ -238,7 +257,7 @@ class FormSearchObject extends React.Component<Props, FormSearchObjectState> {
             mode={'multiple'}
             labelInValue={true}
             value={
-              handleSingleStringValue && this.state.value
+              isSingleValue && this.state.value
                 ? this.state.value[0]
                 : this.state.value
             }
@@ -246,7 +265,7 @@ class FormSearchObject extends React.Component<Props, FormSearchObjectState> {
             defaultActiveFirstOption={true}
             filterOption={false}
             onSearch={loadOnlyOnce ? this.onSearch : this.fetchData}
-            onInputKeyDown={loadOnlyOnce ? this.onInputKeyDown : undefined}
+            onBlur={loadOnlyOnce ? this.onBlur : undefined}
             onChange={this.handleChange}
             notFoundContent={this.state.fetching ? <Spin size="small" /> : null}
             style={{ width: '100%' }}
