@@ -41,6 +41,7 @@ interface State {
   selectedAudienceFeature?: AudienceFeatureResource;
   selectedFolder?: AudienceFeaturesByFolder;
   inputValue: string;
+  totalAudienceFeatures: number;
 
   filter: Filter;
   displayFolderInput: boolean;
@@ -68,6 +69,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
       },
       displayFolderInput: false,
       inputValue: '',
+      totalAudienceFeatures: 0,
     };
   }
 
@@ -77,8 +79,9 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
         params: { datamartId },
       },
     } = this.props;
+    const { filter } = this.state;
 
-    this.fetchFoldersAndFeatures(datamartId);
+    this.fetchFoldersAndFeatures(datamartId, filter);
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
@@ -89,16 +92,20 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
         params: { datamartId },
       },
     } = this.props;
-    if (filter.keywords !== prevFilter.keywords) {
+    if (filter !== prevFilter) {
       this.fetchFoldersAndFeatures(datamartId, filter);
     }
   }
 
-  setBaseFolder = (baseFolder: AudienceFeaturesByFolder) => {
+  setBaseFolder = (
+    baseFolder: AudienceFeaturesByFolder,
+    totalAudienceFeatures: number,
+  ) => {
     this.setState({
       audienceFeaturesByFolder: baseFolder,
       selectedFolder: baseFolder,
       isLoading: false,
+      totalAudienceFeatures: totalAudienceFeatures,
     });
   };
 
@@ -393,7 +400,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
   };
 
   render() {
-    const { isLoading, filter, selectedFolder } = this.state;
+    const { isLoading, filter, selectedFolder, totalAudienceFeatures } = this.state;
 
     return (
       <div className="ant-layout">
@@ -409,13 +416,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
             {!!selectedFolder && (
               <AudienceFeatureTable
                 dataSource={selectedFolder.audience_features}
-                total={
-                  selectedFolder &&
-                  !selectedFolder.parent_id &&
-                  selectedFolder.children.length > 0
-                    ? selectedFolder.children.length
-                    : 0
-                }
+                total={totalAudienceFeatures}
                 isLoading={isLoading}
                 noItem={false}
                 onFilterChange={this.onFilterChange}
