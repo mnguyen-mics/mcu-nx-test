@@ -216,6 +216,10 @@ export default defineMessages({
     id: 'menu.communities.title',
     defaultMessage: 'Communities',
   },
+  searchPlaceholder: {
+    id: 'menu.search.placeholder',
+    defaultMessage: 'Search',
+  },
   more: {
     id: 'menu.more',
     defaultMessage: 'More ...',

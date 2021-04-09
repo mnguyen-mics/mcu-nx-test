@@ -24,7 +24,6 @@ import {
   AppsMenu,
   McsHeader,
 } from '@mediarithmics-private/mcs-components-library';
-import OrganisationListSwitcher from '../../Menu/OrganisationListSwitcher';
 import { UserProfileResource } from '../../../models/directory/UserProfileResource';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import { AppsMenuSection } from '@mediarithmics-private/mcs-components-library/lib/components/apps-navigation/apps-menu/AppsMenu';
@@ -33,6 +32,7 @@ import {
   buildSettingsButton,
   ProductionApiEnvironment,
 } from './LayoutHelper';
+import OrganisationListSwitcher from '../../Menu/organisation-switcher/OrganisationListSwitcher';
 
 const { Content, Sider } = Layout;
 
