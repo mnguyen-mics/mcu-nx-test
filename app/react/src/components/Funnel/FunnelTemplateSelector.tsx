@@ -48,8 +48,8 @@ class FunnelTemplateSelector extends React.Component<Props> {
   render() {
     const { selectedValue } = this.props;
     return (<Select className={"mcs-funnelTemplateSelector"} defaultValue={'Select a template'} onChange={this.handleTemplateSelect} value={selectedValue}>
-      <Option value="RETURN_ON_AD_SPEND">Return On Ad spend</Option>
-      <Option value="BRAND_HALO">Brand halo</Option>
+      <Option value="RETURN_ON_AD_SPEND">Post Campaign Revenue</Option>
+      <Option value="BRAND_HALO">Brand Halo</Option>
     </Select>)
   }
 }
