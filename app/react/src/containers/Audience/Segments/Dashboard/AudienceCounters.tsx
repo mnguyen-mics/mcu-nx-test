@@ -53,6 +53,17 @@ class AudienceCounters extends React.Component<Props, State> {
       },
     });
   }
+
+  componentDidUpdate(previousProps: AudienceCountersProps) {
+    if (previousProps.segment !== this.props.segment) {
+      this.setState({
+        counter: {
+          report: this.props.segment,
+          isLoading: false,
+        },
+      });
+    }
+  }
   adaptKey(
     key:
       | 'user_points'
