@@ -30,15 +30,31 @@ export class AudienceBuilderQueryService
   buildQueryDocument = (
     formData: NewAudienceBuilderFormData,
   ): AudienceBuilderQueryDocument => {
-    const includeGroup: AudienceBuilderGroupNode[] =
-      formData.include.length !== 0 ? formData.include : [];
+    const includeGroup: AudienceBuilderGroupNode[] = formData.include.map(
+      (group) => {
+        return {
+          type: 'GROUP',
+          boolean_operator: 'OR',
+          negation: false,
+          expressions: group.expressions,
+        };
+      },
+    );
 
-    const excludeGroup: AudienceBuilderGroupNode[] =
-      formData.exclude.length !== 0 ? formData.exclude : [];
+    const excludeGroup: AudienceBuilderGroupNode[] = formData.exclude.map(
+      (group) => {
+        return {
+          type: 'GROUP',
+          boolean_operator: 'OR',
+          negation: true,
+          expressions: group.expressions,
+        };
+      },
+    );
 
     const expressions = includeGroup.concat(excludeGroup);
 
-    const query: AudienceBuilderQueryDocument = {
+    const queryDocument: AudienceBuilderQueryDocument = {
       language_version: 'JSON_OTQL',
       operations: [
         {
@@ -52,23 +68,15 @@ export class AudienceBuilderQueryService
       from: 'UserPoint',
     };
 
-    return {
-      ...query,
-      where: {
+    if (expressions.length !== 0) {
+      queryDocument.where = {
         type: 'GROUP',
         boolean_operator: 'AND',
-        expressions:
-          expressions.length !== 0
-            ? expressions
-            : [
-                {
-                  type: 'GROUP',
-                  boolean_operator: 'OR',
-                  expressions: [],
-                },
-              ],
-      },
-    };
+        expressions: expressions,
+      };
+    }
+
+    return queryDocument;
   };
 
   runQuery = (

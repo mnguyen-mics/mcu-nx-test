@@ -16,6 +16,10 @@ export interface AudienceBuilderGroupNode {
   boolean_operator: QueryBooleanOperator;
 }
 
+export interface AudienceBuilderParametricPredicateGroupNode {
+  expressions: AudienceBuilderParametricPredicateNode[];
+}
+
 export interface AudienceBuilderParametricPredicateNode {
   type: 'PARAMETRIC_PREDICATE';
   parametric_predicate_id: string;
@@ -50,8 +54,8 @@ export interface AudienceBuilderFormData {
 }
 
 export interface NewAudienceBuilderFormData {
-  include: AudienceBuilderGroupNode[],
-  exclude: AudienceBuilderGroupNode[]
+  include: AudienceBuilderParametricPredicateGroupNode[];
+  exclude: AudienceBuilderParametricPredicateGroupNode[];
 }
 
 export interface QueryDocument {

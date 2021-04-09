@@ -109,7 +109,7 @@ class AudienceBuilderDashboard extends React.Component<Props, State> {
               {intl.formatMessage(messages.selectedAudience)}
             </span>
           </CardFlex>
-          {isQueryRunning || isDashboardLoading || !queryDocument ? (
+          {isDashboardLoading || !queryDocument ? (
             <Loading className="m-t-20" isFullScreen={true} />
           ) : (
             dashboards.map((d) => (

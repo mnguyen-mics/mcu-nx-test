@@ -22,7 +22,7 @@ import {
   AudienceBuilderResource,
   AudienceBuilderParametricPredicateNode,
   isAudienceBuilderParametricPredicateNode,
-  AudienceBuilderGroupNode,
+  AudienceBuilderParametricPredicateGroupNode,
 } from '../../../models/audienceBuilder/AudienceBuilderResource';
 import AudienceBuilderDashboard from './AudienceBuilderDashboard';
 import NewQueryFragmentFormSection, {
@@ -219,22 +219,18 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
   };
 
   private saveGroup = (
-    groups: AudienceBuilderGroupNode[],
+    groups: AudienceBuilderParametricPredicateGroupNode[],
     groupsLocation: 'include' | 'exclude',
-  ) => (newGroup: AudienceBuilderGroupNode) => {
+  ) => (newGroup: AudienceBuilderParametricPredicateGroupNode) => {
     const { change } = this.props;
 
     change(groupsLocation, groups.concat(newGroup));
   };
 
   private addToNewGroup = (
-    save: (_: AudienceBuilderGroupNode) => void,
-    groupsLocation: 'include' | 'exclude',
+    save: (_: AudienceBuilderParametricPredicateGroupNode) => void,
   ) => (predicate: AudienceBuilderParametricPredicateNode) => {
-    const newGroup: AudienceBuilderGroupNode = {
-      type: 'GROUP',
-      boolean_operator: 'OR',
-      negation: groupsLocation === 'exclude',
+    const newGroup: AudienceBuilderParametricPredicateGroupNode = {
       expressions: [predicate],
     };
 
@@ -331,10 +327,7 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
         <Button
           className="mcs-timelineButton_left"
           onClick={this.selectAndAddFeature(
-            this.addToNewGroup(
-              this.saveGroup(formValues.include, 'include'),
-              'include',
-            ),
+            this.addToNewGroup(this.saveGroup(formValues.include, 'include')),
           )}
         >
           {intl.formatMessage(messages.audienceBuilderInclude)}
@@ -348,7 +341,6 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
               onClick={this.selectAndAddFeature(
                 this.addToNewGroup(
                   this.saveGroup(formValues.exclude, 'exclude'),
-                  'exclude',
                 ),
               )}
             >
