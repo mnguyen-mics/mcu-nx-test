@@ -108,7 +108,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
     } else if (
       selectedAudienceBuilder === undefined &&
       audienceBuildersByDatamartId?.length === 1 &&
-      audienceBuildersByDatamartId![0].length === 1 &&
+      audienceBuildersByDatamartId[0].length === 1 &&
       !isLoading
     ) {
       this.getAudienceBuilder(audienceBuildersByDatamartId[0][0].id);
