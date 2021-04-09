@@ -16,7 +16,7 @@ class UsersCounter extends React.Component<Props> {
 
     return (
       <div
-        className={'node-users-counter'}
+        className={'node-users-counter mcs-automation-userCounter'}
         style={style}
       >
         {numberOfUsers.toLocaleString()}
