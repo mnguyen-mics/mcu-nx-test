@@ -1,4 +1,4 @@
-import { defineMessages } from "react-intl";
+import { defineMessages } from 'react-intl';
 
 export default defineMessages({
   deleteModalTitle: {
@@ -10,10 +10,10 @@ export default defineMessages({
     defaultMessage:
       'Are you sure you want delete this feed ? Careful this action cannot be undone.',
   },
-	segmentId: {
+  segmentId: {
     id: 'audience.feeds.list.column.segmentId',
     defaultMessage: 'Segment ID',
-	},
+  },
   name: {
     id: 'audience.feeds.list.column.name',
     defaultMessage: 'Name',
@@ -22,13 +22,17 @@ export default defineMessages({
     id: 'audience.feeds.list.column.source',
     defaultMessage: 'Source',
   },
-	feedId: {
+  feedId: {
     id: 'audience.feeds.list.column.feedId',
     defaultMessage: 'Feed ID',
   },
   feedName: {
     id: 'audience.feeds.list.column.feedName',
     defaultMessage: 'Feed Name',
+  },
+  segmentName: {
+    id: 'audience.feeds.list.column.segmentName',
+    defaultMessage: 'Segment Name',
   },
   segmentNameNotFound: {
     id: 'audience.feeds.list.column.segmentNameNotFound',
@@ -105,12 +109,12 @@ export default defineMessages({
   delete: {
     id: 'audience.feeds.list.column.action.delete',
     defaultMessage: 'Delete',
-	},
-	audienceFeedsExportTitle: {
-		id: 'audience.feeds.actionbar.export.title',
-		defaultMessage: 'Audience Feed List'
-	},
-	audienceFeeds: {
+  },
+  audienceFeedsExportTitle: {
+    id: 'audience.feeds.actionbar.export.title',
+    defaultMessage: 'Audience Feed List',
+  },
+  audienceFeeds: {
     id: 'audiencefeeds.actionbar.overview',
     defaultMessage: 'Feeds Overview',
   },
@@ -119,47 +123,48 @@ export default defineMessages({
     defaultMessage: 'Feeds',
   },
   exportError: {
-		id: 'audienceFeeds.actionBar.export.error',
-		defaultMessage: 'There was an error generating your export please try again.',
-	},
-	connectorType: {
-		id: 'audienceFeeds.actionBar.export.connectorType',
-		defaultMessage: 'Connector Type',
-	},
-	connectorName: {
-		id: 'audienceFeeds.actionBar.export.connectorName',
-		defaultMessage: 'Connector Name',
-	},
-	filterName: {
-		id: 'audienceFeeds.actionBar.export.filterName',
-		defaultMessage: 'Filter Name',
-	},
-	filterValues: {
-		id: 'audienceFeeds.actionBar.export.filterValues',
-		defaultMessage: 'Values',
+    id: 'audienceFeeds.actionBar.export.error',
+    defaultMessage:
+      'There was an error generating your export please try again.',
+  },
+  connectorType: {
+    id: 'audienceFeeds.actionBar.export.connectorType',
+    defaultMessage: 'Connector Type',
+  },
+  connectorName: {
+    id: 'audienceFeeds.actionBar.export.connectorName',
+    defaultMessage: 'Connector Name',
+  },
+  filterName: {
+    id: 'audienceFeeds.actionBar.export.filterName',
+    defaultMessage: 'Filter Name',
+  },
+  filterValues: {
+    id: 'audienceFeeds.actionBar.export.filterValues',
+    defaultMessage: 'Values',
   },
   filterAll: {
-		id: 'audienceFeeds.actionBar.export.filterAll',
-		defaultMessage: 'All',
-	},
-	date: {
-		id: 'audienceFeeds.actionBar.export.date',
-		defaultMessage: 'Date',
-	},
-	communityId: {
-		id: 'audienceFeeds.actionBar.export.comunnityId',
-		defaultMessage: 'Community ID',
-	},
-	communityName: {
-		id: 'audienceFeeds.actionBar.export.communityName',
-		defaultMessage: 'Community Name',
-	},
-	organisationId: {
-		id: 'audienceFeeds.actionBar.export.organisationId',
-		defaultMessage: 'Organisation ID',
-	},
-	organisationName: {
-		id: 'audienceFeeds.actionBar.export.orgnaisationName',
-		defaultMessage: 'Organisation Name',
+    id: 'audienceFeeds.actionBar.export.filterAll',
+    defaultMessage: 'All',
+  },
+  date: {
+    id: 'audienceFeeds.actionBar.export.date',
+    defaultMessage: 'Date',
+  },
+  communityId: {
+    id: 'audienceFeeds.actionBar.export.comunnityId',
+    defaultMessage: 'Community ID',
+  },
+  communityName: {
+    id: 'audienceFeeds.actionBar.export.communityName',
+    defaultMessage: 'Community Name',
+  },
+  organisationId: {
+    id: 'audienceFeeds.actionBar.export.organisationId',
+    defaultMessage: 'Organisation ID',
+  },
+  organisationName: {
+    id: 'audienceFeeds.actionBar.export.orgnaisationName',
+    defaultMessage: 'Organisation Name',
   },
 });
