@@ -22,6 +22,7 @@ import { MicsReduxState } from '../../../utils/ReduxHelper';
 import { Alert } from 'antd';
 import { UserProfileResource } from '../../../models/directory/UserProfileResource';
 import { calculateDefaultTtl } from '../Segments/Edit/domain';
+import { injectFeatures, InjectedFeaturesProps } from '../../Features';
 
 export interface QueryBuilderPageRouteParams {
   organisationId: string;
@@ -33,6 +34,7 @@ interface MapStateToProps {
 
 type Props = RouteComponentProps<QueryBuilderPageRouteParams> &
   MapStateToProps &
+  InjectedFeaturesProps &
   InjectedNotificationProps &
   InjectedIntlProps;
 
@@ -40,6 +42,10 @@ const messages = defineMessages({
   segmentBuilder: {
     id: 'audience.segmentBuilder.actionbar.title',
     defaultMessage: 'Segment Builder',
+  },
+  advancedSegmentBuilder: {
+    id: 'audience.segmentBuilder.actionbar.title.advancedBuilder',
+    defaultMessage: 'Advanced Segment Builder',
   },
   noMoreSupported: {
     id: 'audience.segmentBuilder.legacyComponent.noMoreSupported',
@@ -56,7 +62,14 @@ class SegmentBuilderPage extends React.Component<Props> {
   private _queryService: IQueryService;
 
   render() {
-    const { intl, connectedUser, location, history, match } = this.props;
+    const {
+      intl,
+      connectedUser,
+      location,
+      history,
+      match,
+      hasFeature,
+    } = this.props;
 
     const handleOnSelectDatamart = (selection: DatamartResource) => {
       // this.setState({ datamart: selection });
@@ -93,7 +106,7 @@ class SegmentBuilderPage extends React.Component<Props> {
             query_language: 'JSON_OTQL',
             query_text: JSON.stringify(query),
           })
-          .then(res => {
+          .then((res) => {
             const userQuerySegment: Partial<UserQuerySegment> = {
               datamart_id: datamartId,
               type: 'USER_QUERY',
@@ -109,7 +122,7 @@ class SegmentBuilderPage extends React.Component<Props> {
               userQuerySegment,
             );
           })
-          .then(res => {
+          .then((res) => {
             history.push(
               `/v2/o/${match.params.organisationId}/audience/segments/${res.data.id}`,
             );
@@ -122,8 +135,8 @@ class SegmentBuilderPage extends React.Component<Props> {
             query_language: 'JSON_OTQL',
             query_text: JSON.stringify(query),
           })
-          .then(d => d.data)
-          .then(d => {
+          .then((d) => d.data)
+          .then((d) => {
             return this._queryService.convertJsonOtql2Otql(datamartId, d);
           });
       };
@@ -134,7 +147,9 @@ class SegmentBuilderPage extends React.Component<Props> {
           convertToOtql={convert2Otql}
           breadcrumb={[
             {
-              name: intl.formatMessage(messages.segmentBuilder),
+              name: hasFeature('audience-segment_builder_v2')
+                ? intl.formatMessage(messages.advancedSegmentBuilder)
+                : intl.formatMessage(messages.segmentBuilder),
             },
           ]}
         />
@@ -151,7 +166,9 @@ class SegmentBuilderPage extends React.Component<Props> {
             actionbarProps={{
               paths: [
                 {
-                  name: intl.formatMessage(messages.segmentBuilder),
+                  name: hasFeature('audience-segment_builder_v2')
+                    ? intl.formatMessage(messages.advancedSegmentBuilder)
+                    : intl.formatMessage(messages.segmentBuilder),
                 },
               ],
             }}
@@ -180,6 +197,7 @@ class SegmentBuilderPage extends React.Component<Props> {
 export default compose(
   injectIntl,
   withRouter,
+  injectFeatures,
   injectNotifications,
   connect((state: MicsReduxState) => ({
     connectedUser: state.session.connectedUser,

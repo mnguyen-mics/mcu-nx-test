@@ -4,15 +4,14 @@ import { compose } from 'recompose';
 import queryString from 'query-string';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { Loading } from '@mediarithmics-private/mcs-components-library';
-import AudienceBuilderSelector, { messages } from './AudienceBuilderSelector';
 import AudienceBuilderContainer from './AudienceBuilderContainer';
 import NewAudienceBuilderContainer from './NewAudienceBuilderContainer';
 import {
-  AudienceBuilderResource,
   AudienceBuilderFormData,
   NewAudienceBuilderFormData,
   AudienceBuilderParametricPredicateNode,
   QueryDocument as AudienceBuilderQueryDocument,
+  AudienceBuilderResource,
 } from '../../../models/audienceBuilder/AudienceBuilderResource';
 import { UserQuerySegment } from '../../../models/audiencesegment/AudienceSegmentResource';
 import { lazyInject } from '../../../config/inversify.config';
@@ -35,9 +34,9 @@ import { calculateDefaultTtl } from '../Segments/Edit/domain';
 import { InjectedWorkspaceProps, injectWorkspace } from '../../Datamart';
 import { injectFeatures, InjectedFeaturesProps } from '../../Features';
 import { AudienceFeatureResource } from '../../../models/audienceFeature';
+import { notifyError } from '../../../redux/Notifications/actions';
 
 interface State {
-  audienceBuildersByDatamartId?: AudienceBuilderResource[][];
   selectedAudienceBuilder?: AudienceBuilderResource;
   formData: AudienceBuilderFormData;
   newFormData: NewAudienceBuilderFormData;
@@ -51,9 +50,6 @@ type Props = InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class AudienceBuilderPage extends React.Component<Props, State> {
-  @lazyInject(TYPES.IAudienceBuilderService)
-  private _audienceBuilderService: IAudienceBuilderService;
-
   @lazyInject(TYPES.IAudienceFeatureService)
   private _audienceFeatureService: IAudienceFeatureService;
 
@@ -62,6 +58,9 @@ class AudienceBuilderPage extends React.Component<Props, State> {
 
   @lazyInject(TYPES.IQueryService)
   private _queryService: IQueryService;
+
+  @lazyInject(TYPES.IAudienceBuilderService)
+  private _audienceBuilderService: IAudienceBuilderService;
 
   constructor(props: Props) {
     super(props);
@@ -77,12 +76,12 @@ class AudienceBuilderPage extends React.Component<Props, State> {
     const {
       location: { search },
     } = this.props;
-    this.getAudienceBuilders().then(() => {
-      const audienceBuilderId = queryString.parse(search).audienceBuilderId;
-      if (audienceBuilderId) {
-        this.getAudienceBuilder(audienceBuilderId);
-      }
-    });
+
+    const audienceBuilderId = queryString.parse(search).audienceBuilderId;
+    const datamartId = queryString.parse(search).datamartId;
+    if (audienceBuilderId) {
+      this.setAudienceBuilder(datamartId, audienceBuilderId);
+    }
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
@@ -91,6 +90,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
         params: { organisationId },
       },
       location: { search },
+      history,
     } = this.props;
     const {
       match: {
@@ -98,79 +98,36 @@ class AudienceBuilderPage extends React.Component<Props, State> {
       },
       location: { search: prevSearch },
     } = prevProps;
-    const {
-      audienceBuildersByDatamartId,
-      selectedAudienceBuilder,
-      isLoading,
-    } = this.state;
-    if (organisationId !== prevOrganisationId) {
-      this.getAudienceBuilders();
-    } else if (
-      selectedAudienceBuilder === undefined &&
-      audienceBuildersByDatamartId?.length === 1 &&
-      audienceBuildersByDatamartId[0].length === 1 &&
-      !isLoading
+    const audienceBuilderId = queryString.parse(search).audienceBuilderId;
+    const datamartId = queryString.parse(search).datamartId;
+    const prevAudienceBuilderId = queryString.parse(prevSearch)
+      .audienceBuilderId;
+    const prevDatamartId = queryString.parse(prevSearch).datamartId;
+    if (
+      !audienceBuilderId ||
+      !datamartId ||
+      organisationId !== prevOrganisationId
     ) {
-      this.getAudienceBuilder(audienceBuildersByDatamartId[0][0].id);
-    } else if (search !== prevSearch) {
-      const audienceBuilderId = queryString.parse(search).audienceBuilderId;
-      this.getAudienceBuilder(audienceBuilderId);
+      history.push(`/v2/o/${organisationId}/audience/segment-builder`);
+    } else if (
+      datamartId !== prevDatamartId ||
+      audienceBuilderId !== prevAudienceBuilderId
+    ) {
+      this.setAudienceBuilder(datamartId, audienceBuilderId);
     }
   }
 
-  getAudienceBuilders = () => {
-    const { workspace } = this.props;
-    this.setState({
-      selectedAudienceBuilder: undefined,
-      isLoading: true,
-    });
-    const promises = workspace.datamarts.map((d) => {
-      return this._audienceBuilderService
-        .getAudienceBuilders(d.id)
-        .then((res) => {
-          return res.data;
-        });
-    });
-    return Promise.all(promises)
+  setAudienceBuilder = (datamartId: string, audienceBuilderId: string) => {
+    this._audienceBuilderService
+      .getAudienceBuilder(datamartId, audienceBuilderId)
       .then((res) => {
         this.setState({
-          audienceBuildersByDatamartId: res.filter((r) => r.length > 0),
-          isLoading: false,
+          selectedAudienceBuilder: res.data,
         });
+        return res.data;
       })
-      .catch((error) => {
-        this.setState({
-          isLoading: false,
-        });
-        this.props.notifyError(error);
-      });
-  };
-
-  selectAudienceBuilder = (audienceBuilderId?: string) => {
-    const {
-      match: {
-        params: { organisationId },
-      },
-    } = this.props;
-    this.props.history.push(
-      `/v2/o/${organisationId}/audience/segment-builder-v2?audienceBuilderId=${audienceBuilderId}`,
-    );
-  };
-
-  getAudienceBuilder = (audienceBuilderId?: string) => {
-    const { audienceBuildersByDatamartId } = this.state;
-
-    if (audienceBuilderId) {
-      const audienceBuilder = _.flattenDeep(audienceBuildersByDatamartId).find(
-        (b) => b.id === audienceBuilderId,
-      );
-
-      if (
-        audienceBuilder &&
-        audienceBuilder.demographics_features_ids.length >= 1
-      ) {
-        const datamartId = audienceBuilder.datamart_id;
-        const demographicsFeatures = audienceBuilder.demographics_features_ids.map(
+      .then((audienceBuilder) => {
+        const demographicsFeaturePromises = audienceBuilder.demographics_features_ids.map(
           (id) => {
             return this._audienceFeatureService.getAudienceFeature(
               datamartId,
@@ -178,7 +135,6 @@ class AudienceBuilderPage extends React.Component<Props, State> {
             );
           },
         );
-
         const setUpPredicates = (
           features: AudienceFeatureResource[],
         ): AudienceBuilderParametricPredicateNode[] => {
@@ -197,48 +153,57 @@ class AudienceBuilderPage extends React.Component<Props, State> {
           });
         };
 
-        Promise.all(demographicsFeatures).then((resp) => {
-          const defaultFeatures = resp.map((r) => {
-            return r.data;
-          });
+        Promise.all(demographicsFeaturePromises)
+          .then((resp) => {
+            const defaultFeatures = resp.map((r) => {
+              return r.data;
+            });
 
-          this.setState({
-            selectedAudienceBuilder: audienceBuilder,
-            formData: {
-              where: {
-                type: 'GROUP',
-                boolean_operator: 'AND',
-                expressions: [
-                  {
-                    type: 'GROUP',
-                    boolean_operator: 'AND',
-                    expressions: setUpPredicates(defaultFeatures),
-                  },
-                ],
-              },
-            },
-            newFormData: {
-              include: [
-                {
-                  expressions: setUpPredicates(defaultFeatures),
+            this.setState({
+              selectedAudienceBuilder: audienceBuilder,
+              formData: {
+                where: {
+                  type: 'GROUP',
+                  boolean_operator: 'AND',
+                  expressions: [
+                    {
+                      type: 'GROUP',
+                      boolean_operator: 'AND',
+                      expressions: setUpPredicates(defaultFeatures),
+                    },
+                  ],
                 },
-              ],
-              exclude: [],
-            },
+              },
+              newFormData: {
+                include:
+                  defaultFeatures.length > 0
+                    ? [
+                        {
+                          expressions: setUpPredicates(defaultFeatures),
+                        },
+                      ]
+                    : [],
+                exclude: [],
+              },
+              isLoading: false,
+            });
+          })
+          .catch((err) => {
+            this.setState({
+              selectedAudienceBuilder: audienceBuilder,
+              newFormData: NEW_INITIAL_AUDIENCE_BUILDER_FORM_DATA,
+              formData: INITIAL_AUDIENCE_BUILDER_FORM_DATA,
+              isLoading: false,
+            });
+            notifyError(err);
           });
-        });
-      } else {
+      })
+      .catch((error) => {
         this.setState({
-          selectedAudienceBuilder: audienceBuilder,
-          newFormData: NEW_INITIAL_AUDIENCE_BUILDER_FORM_DATA,
-          formData: INITIAL_AUDIENCE_BUILDER_FORM_DATA,
+          isLoading: false,
         });
-      }
-    } else {
-      this.setState({
-        selectedAudienceBuilder: undefined,
+        this.props.notifyError(error);
       });
-    }
   };
 
   audienceBuilderActionbar = (
@@ -312,37 +277,15 @@ class AudienceBuilderPage extends React.Component<Props, State> {
   }
 
   render() {
-    const {
-      intl,
-      workspace: { datamarts },
-    } = this.props;
-    const {
-      selectedAudienceBuilder,
-      audienceBuildersByDatamartId,
-      isLoading,
-    } = this.state;
+    const { selectedAudienceBuilder, isLoading } = this.state;
 
     if (isLoading) {
       return <Loading isFullScreen={true} />;
     }
 
-    return selectedAudienceBuilder ? (
-      this.selectBuilderContainer(selectedAudienceBuilder)
-    ) : (
-      <AudienceBuilderSelector
-        audienceBuildersByDatamartId={audienceBuildersByDatamartId}
-        datamarts={datamarts}
-        onSelect={this.selectAudienceBuilder}
-        actionbarProps={{
-          paths: [
-            {
-              name: intl.formatMessage(messages.subTitle),
-            },
-          ],
-        }}
-        isMainlayout={true}
-      />
-    );
+    return selectedAudienceBuilder
+      ? this.selectBuilderContainer(selectedAudienceBuilder)
+      : null;
   }
 }
 

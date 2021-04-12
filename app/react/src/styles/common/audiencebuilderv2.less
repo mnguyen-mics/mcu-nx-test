@@ -551,3 +551,41 @@
 .mcs-audienceBuilderSettings-records {
   font-size: 40px;
 }
+
+// Builder selector
+
+.mcs-segmentBuilderSelector_container {
+  margin-top: 20px;
+  .mcs-segmentBuilderSelector_item {
+    background-color: #ffffff;
+    border: @border-width-base @border-style-base @border-color-base;
+    border-radius: @border-radius-sm @border-radius-sm;
+    padding: 40px;
+    justify-content: center;
+    height: 310px;
+    &:hover {
+      cursor: pointer;
+      background-color: @hover-color;
+    }
+    .mcs-segmentBuilderSelector_itemTitle {
+      padding: 20px;
+      font-size: 1.1em;
+      font-weight: bold;
+      letter-spacing: 0.4px;
+    }
+    .mcs-segmentBuilderSelector_itemSubtitle {
+      font-size: 1em;
+      letter-spacing: 0.4px;
+      color: @text-color-secondary;
+    }
+    img {
+      width: 100%;
+    }
+    span {
+      display: block;
+      margin-top: 60px;
+      font-weight: bold;
+      padding: 0 20px;
+    }
+  }
+}

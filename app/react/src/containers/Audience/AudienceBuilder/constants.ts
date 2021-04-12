@@ -10,7 +10,7 @@ export const messages: {
 } = defineMessages({
   title: {
     id: 'audienceBuilder.title',
-    defaultMessage: 'Audience Builders',
+    defaultMessage: 'Standard Segment Builder',
   },
   demographics: {
     id: 'audienceBuilder.category.demographics',

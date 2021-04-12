@@ -56,7 +56,13 @@ class NewAudienceFeatureLayout extends React.Component<Props, State> {
   render() {
     const { audienceFeature } = this.state;
 
-    const { datamartId, formPath, objectTypes, onClose, formChange } = this.props;
+    const {
+      datamartId,
+      formPath,
+      objectTypes,
+      onClose,
+      formChange,
+    } = this.props;
 
     return audienceFeature ? (
       <React.Fragment>
@@ -87,19 +93,20 @@ class NewAudienceFeatureLayout extends React.Component<Props, State> {
         {/* Inputs */}
         <Row>
           <Col span={24}>
-            {audienceFeature.variables.map((v, index) => {
-              return (
-                <AudienceFeatureVariable
-                  newLayout={true}
-                  key={index}
-                  datamartId={datamartId}
-                  variable={v}
-                  formPath={formPath}
-                  objectTypes={objectTypes}
-                  formChange={formChange}
-                />
-              );
-            })}
+            {audienceFeature.variables &&
+              audienceFeature.variables.map((v, index) => {
+                return (
+                  <AudienceFeatureVariable
+                    newLayout={true}
+                    key={index}
+                    datamartId={datamartId}
+                    variable={v}
+                    formPath={formPath}
+                    objectTypes={objectTypes}
+                    formChange={formChange}
+                  />
+                );
+              })}
           </Col>
         </Row>
       </React.Fragment>

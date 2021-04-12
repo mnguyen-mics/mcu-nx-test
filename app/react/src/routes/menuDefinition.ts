@@ -27,12 +27,13 @@ const audienceMenuDefinition: NavigatorMenuDefinition = {
       translation: messages.audienceFeeds
     },
     {
-      ...generateMissingdefinitionItemFromRoute(audienceDefinition.audienceSegmentBuilder),
-      translation: messages.audienceSegmentBuilder
+      ...generateMissingdefinitionItemFromRoute(audienceDefinition.segmentBuilder),
+      translation: messages.segmentBuilder
     },
     {
-      ...generateMissingdefinitionItemFromRoute(audienceDefinition.audienceSegmentBuilderV2),
-      translation: messages.audienceSegmentBuilderV2
+      ...generateMissingdefinitionItemFromRoute(audienceDefinition.segmentBuilderSelector),
+      translation: messages.builder,
+      mention: 'ALPHA',
     },
     {
       ...generateMissingdefinitionItemFromRoute(audienceDefinition.audienceTimelineHome),
