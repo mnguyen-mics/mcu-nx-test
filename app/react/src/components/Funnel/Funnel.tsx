@@ -19,7 +19,7 @@ import {
   parseSearch
 } from '../../utils/LocationSearchHelper';
 import { funnelMessages, FUNNEL_SEARCH_SETTING } from './Constants';
-import { shouldRefetchFunnelData, extractDatesFromProps } from './Utils';
+import { shouldRefetchFunnelData, extractDatesFromProps, checkExpressionsNotEmpty } from './Utils';
 import numeral from 'numeral';
 import FunnelStepHover, { DimensionMetrics, GlobalMetrics } from './FunnelStepHover';
 import cuid from 'cuid';
@@ -132,7 +132,7 @@ class Funnel extends React.Component<Props, State> {
       filter,
       history: { location: { search } }, } = this.props;
     const timeRange = extractDatesFromProps(search);
-    if (filter.length > 0) {
+    if (filter.length > 0 && checkExpressionsNotEmpty(filter)) {
       const splitIndex = this.splitIndex(filter);
       this.fetchData(datamartId, filter, timeRange, splitIndex);
     }
@@ -208,8 +208,7 @@ class Funnel extends React.Component<Props, State> {
   fetchData = (datamartId: string, filter: FunnelFilter[], timeRange: FunnelTimeRange, splitIndex: number) => {
     const { parentCallback, notifyError } = this.props;
     const { isStepLoading } = this.state;
-    const splitBy = splitIndex !== -1
-
+    const splitBy = splitIndex !== -1;
     this.setState({
       isLoading: !isStepLoading,
       initialState: false

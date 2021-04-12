@@ -4,6 +4,7 @@ import { FunnelDateRange, FunnelFilter } from "../../models/datamart/UserActivit
 import lodash from 'lodash';
 import { BooleanOperator, DimensionFilterOperator } from '../../models/ReportRequestBody';
 import cuid from 'cuid';
+import { Step } from './FunnelQueryBuilder';
 
 interface FormattedDates {
   from: string,
@@ -66,4 +67,21 @@ export const getDefaultStep = () => {
       ]
     }
   }
+}
+
+export const checkExpressionsNotEmpty = (steps: Step[]) => {
+  let result = true;
+  steps.forEach(step => {
+    step.filter_clause.filters.forEach(filter => {
+      if (filter.expressions.length === 0)
+        result = false;
+      else
+        filter.expressions.forEach(exp => {
+          if (!exp || exp.length === 0 || !exp.trim())
+            result = false
+        })
+    })
+  });
+
+  return result
 }
