@@ -175,14 +175,14 @@ class AudienceBuilderPage extends React.Component<Props, State> {
                 },
               },
               newFormData: {
-                include: [
-                  {
-                    type: 'GROUP',
-                    expressions: setUpPredicates(defaultFeatures),
-                    negation: false,
-                    boolean_operator: 'OR',
-                  },
-                ],
+                include:
+                  defaultFeatures.length > 0
+                    ? [
+                        {
+                          expressions: setUpPredicates(defaultFeatures),
+                        },
+                      ]
+                    : [],
                 exclude: [],
               },
               isLoading: false,

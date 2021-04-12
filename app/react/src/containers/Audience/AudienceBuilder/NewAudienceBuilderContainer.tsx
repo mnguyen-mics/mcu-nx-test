@@ -247,9 +247,11 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
     ): AudienceBuilderParametricPredicateNode => {
       const parameters: { [key: string]: string[] | undefined } = {};
 
-      audienceFeature.variables.forEach((v) => {
-        parameters[v.field_name] = undefined;
-      });
+      if (audienceFeature.variables) {
+        audienceFeature.variables.forEach((v) => {
+          parameters[v.field_name] = undefined;
+        });
+      }
 
       return {
         type: 'PARAMETRIC_PREDICATE',
