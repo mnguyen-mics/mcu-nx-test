@@ -22,9 +22,17 @@ import {
   ProcessingResource,
   ProcessingSelectionResource,
 } from '../../../../models/processing';
-import { Alert } from 'antd';
+import { Alert, Select } from 'antd';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { Link } from 'react-router-dom';
+import { lazyInject } from '../../../../config/inversify.config';
+import { TYPES } from '../../../../constants/types';
+import { IOrganisationService } from '../../../../services/OrganisationService';
+import { connect } from 'react-redux';
+import { getWorkspace } from '../../../../redux/Session/selectors';
+import { MicsReduxState } from '../../../../utils/ReduxHelper';
+import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
+import { LabeledValue } from 'antd/lib/tree-select';
 
 export type ProcessingsAssociatedType =
   | 'CHANNEL'
@@ -38,20 +46,50 @@ export interface ProcessingActivitiesFormSectionProps
   initialProcessingSelectionsForWarning?: ProcessingSelectionResource[];
   processingsAssociatedType: ProcessingsAssociatedType;
   disabled?: boolean;
+  // ModalMode is used to render the section in a modal
+  modalMode?: boolean;
+}
+
+interface ModalState {
+  processingActivitiesSearchResult: ProcessingResource[];
+  options: LabeledValue[];
+}
+
+interface MapStateToProps {
+  workspace: (organisationId: string) => UserWorkspaceResource;
 }
 
 type Props = InjectedIntlProps &
   WrappedFieldArrayProps<ProcessingActivityFieldModel> &
   ProcessingActivitiesFormSectionProps &
   InjectedDrawerProps &
+  MapStateToProps &
   RouteComponentProps<{ organisationId: string }>;
 
-class ProcessingActivitiesFormSection extends React.Component<Props> {
+class ProcessingActivitiesFormSection extends React.Component<
+  Props,
+  ModalState
+> {
+  @lazyInject(TYPES.IOrganisationService)
+  private _organisationService: IOrganisationService;
+
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      processingActivitiesSearchResult: [],
+      options: [],
+    };
+  }
+
+  componentDidMount() {
+    this.fetchProcessingActivities();
+  }
+
   updateProcessingActivities = (processingActivities: ProcessingResource[]) => {
     const { fields, formChange } = this.props;
 
     const newField: ProcessingActivityFieldModel[] = processingActivities.map(
-      processingActivity => {
+      (processingActivity) => {
         return {
           key: cuid(),
           model: processingActivity,
@@ -63,12 +101,29 @@ class ProcessingActivitiesFormSection extends React.Component<Props> {
     this.props.closeNextDrawer();
   };
 
+  updateModalProcessingActivities = (
+    processingActivity: ProcessingResource,
+  ) => {
+    const { fields, formChange } = this.props;
+    const alreadyAdded = fields
+      .getAll()
+      .find((f) => f.model.id === processingActivity.id);
+    const newFields: ProcessingActivityFieldModel[] = alreadyAdded
+      ? fields.getAll()
+      : fields.getAll().concat({
+          key: cuid(),
+          model: processingActivity,
+        });
+
+    formChange((fields as any).name, newFields);
+  };
+
   openProcessingActivitySelector = () => {
     const { fields, openNextDrawer } = this.props;
 
     const selectedProcessingActivityIds = fields
       .getAll()
-      .map(processingField => processingField.model.id);
+      .map((processingField) => processingField.model.id);
 
     const props: ProcessingActivitiesSelectorProps = {
       selectedProcessingActivityIds: selectedProcessingActivityIds,
@@ -81,6 +136,71 @@ class ProcessingActivitiesFormSection extends React.Component<Props> {
       {
         additionalProps: props,
       },
+    );
+  };
+
+  onChange = (value: string) => {
+    const { processingActivitiesSearchResult } = this.state;
+    const processingActivityToAdd = processingActivitiesSearchResult.find(
+      (pa) => pa.id === value,
+    );
+    if (processingActivityToAdd) {
+      this.updateModalProcessingActivities(processingActivityToAdd);
+    }
+  };
+
+  fetchProcessingActivities = () => {
+    const {
+      workspace,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
+
+    const options: any = {};
+    const communityId = workspace(organisationId).community_id;
+
+    this._organisationService
+      .getProcessings(communityId, options)
+      .then((res) => {
+        this.setState({
+          processingActivitiesSearchResult: res.data,
+          options: res.data.map((pa) => {
+            return {
+              label: pa.name,
+              value: pa.id,
+            };
+          }),
+        });
+      });
+  };
+
+  onSearch = (value?: string) => {
+    const { processingActivitiesSearchResult } = this.state;
+    const data = value
+      ? processingActivitiesSearchResult.filter((pa) => pa.name.includes(value))
+      : processingActivitiesSearchResult;
+  
+    this.setState({
+      options: data.map((pa) => {
+        return {
+          label: pa.name,
+          value: pa.id,
+        };
+      }),
+    });
+  };
+
+  renderModalProcessingSelector = () => {
+    const { options } = this.state;
+    return (
+      <Select
+        className="mcs-processingActivitiesFormSection_modalSearchBar"
+        placeholder="Search"
+        onChange={this.onChange}
+        onSearch={this.onSearch}
+        options={options}
+      />
     );
   };
 
@@ -137,7 +257,7 @@ class ProcessingActivitiesFormSection extends React.Component<Props> {
 
     if (initialProcessingSelectionsForWarning) {
       const initialProcessingIds = initialProcessingSelectionsForWarning.map(
-        processingSelectionResource =>
+        (processingSelectionResource) =>
           processingSelectionResource.processing_id,
       );
       const processingIds = fields
@@ -146,7 +266,7 @@ class ProcessingActivitiesFormSection extends React.Component<Props> {
 
       return !(
         initialProcessingIds.length === processingIds.length &&
-        initialProcessingIds.every(pId => processingIds.includes(pId))
+        initialProcessingIds.every((pId) => processingIds.includes(pId))
       );
     }
 
@@ -203,6 +323,7 @@ class ProcessingActivitiesFormSection extends React.Component<Props> {
       intl: { formatMessage },
       processingsAssociatedType,
       disabled,
+      modalMode,
     } = this.props;
 
     const sectionSubTitle = this.getSectionSubTitle();
@@ -223,7 +344,7 @@ class ProcessingActivitiesFormSection extends React.Component<Props> {
     ) : null;
 
     const sectionDropdownItems =
-      processingsAssociatedType === 'SEGMENT-EDGE' || disabled
+      processingsAssociatedType === 'SEGMENT-EDGE' || disabled || modalMode
         ? undefined
         : [
             {
@@ -251,12 +372,19 @@ class ProcessingActivitiesFormSection extends React.Component<Props> {
     );
 
     return (
-      <div>
+      <div
+        className={
+          modalMode
+            ? 'mcs-processingActivitiesFormSection_modalFormSection'
+            : ''
+        }
+      >
         <FormSection
           dropdownItems={sectionDropdownItems}
           subtitle={sectionSubTitle}
           title={sectionTitle}
         />
+        {modalMode && this.renderModalProcessingSelector()}
         {relatedRecords}
         {warningTag}
       </div>
@@ -264,8 +392,13 @@ class ProcessingActivitiesFormSection extends React.Component<Props> {
   }
 }
 
+const mapStateToProps = (state: MicsReduxState) => ({
+  workspace: getWorkspace(state),
+});
+
 export default compose<Props, ProcessingActivitiesFormSectionProps>(
   injectIntl,
   withRouter,
   injectDrawer,
+  connect(mapStateToProps, undefined),
 )(ProcessingActivitiesFormSection);

@@ -103,7 +103,7 @@ class ProcessingActivitiesSelector extends React.Component<Props, State> {
     };
 
     if (filter.keywords) {
-      options.name = filter.keywords;
+      options.keywords = filter.keywords;
     }
 
     const communityF: Promise<string | null> = communityId
