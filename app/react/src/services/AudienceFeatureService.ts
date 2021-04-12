@@ -81,12 +81,12 @@ export interface IAudienceFeatureService {
     datamartId: string,
     filter?: SearchFilter,
     demographicIds?: string[],
-  ) => Promise<AudienceFeatureResource[]>;
+  ) => Promise<DataListResponse<AudienceFeatureResource>>;
 
   fetchFoldersAndFeatures: (
     datamartId: string,
     baseFolderName: string,
-    setBaseFolder: (features: AudienceFeaturesByFolder) => void,
+    setBaseFolder: (features: AudienceFeaturesByFolder, total: number) => void,
     onFailure: (err: any) => void,
     notifyError: (err: any, notifConfig?: any) => Action<any>,
     filter?: Index<any>,
@@ -243,15 +243,13 @@ export class AudienceFeatureService implements IAudienceFeatureService {
       options.exclude = demographicIds;
     }
 
-    return this.getAudienceFeatures(datamartId, options).then((res) => {
-      return res.data;
-    });
+    return this.getAudienceFeatures(datamartId, options)
   };
 
   fetchFoldersAndFeatures = (
     datamartId: string,
     baseFolderName: string,
-    setBaseFolder: (baseFolder: AudienceFeaturesByFolder) => void,
+    setBaseFolder: (baseFolder: AudienceFeaturesByFolder, total: number) => void,
     onFailure: (err: any) => void,
     notifyError: (err: any, notifConfig?: any) => Action<any>,
     filter?: Index<any>,
@@ -259,7 +257,7 @@ export class AudienceFeatureService implements IAudienceFeatureService {
   ) => {
     const res: [
       Promise<AudienceFeatureFolderResource[]>,
-      Promise<AudienceFeatureResource[]>,
+      Promise<DataListResponse<AudienceFeatureResource>>,
     ] = [
       this._fetchFolders(datamartId, notifyError),
       this.fetchAudienceFeatures(
@@ -272,13 +270,13 @@ export class AudienceFeatureService implements IAudienceFeatureService {
       .then((results: any[]) => {
         const audienceFeatureFolders: AudienceFeatureFolderResource[] =
           results[0];
-        const features: AudienceFeatureResource[] = results[1];
+        const features: DataListResponse<AudienceFeatureResource> = results[1];
         const baseFolder = this._createBaseFolder(
           baseFolderName,
           audienceFeatureFolders,
-          features,
+          features.data,
         );
-        setBaseFolder(baseFolder);
+        setBaseFolder(baseFolder, features.total || features.count);
       })
       .catch((err) => {
         onFailure(err);
