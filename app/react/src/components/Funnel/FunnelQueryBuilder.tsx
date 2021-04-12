@@ -23,7 +23,7 @@ import FunnelExpressionInput from './FunnelExpressionInput';
 import { FunnelFilter } from '../../models/datamart/UserActivitiesFunnel';
 import { IDatamartUsersAnalyticsService } from '../../services/DatamartUsersAnalyticsService';
 import { ReportViewResponse } from '../../services/ReportService';
-import { shouldUpdateFunnelQueryBuilder, getDefaultStep } from './Utils'
+import { shouldUpdateFunnelQueryBuilder, getDefaultStep, checkExpressionsNotEmpty } from './Utils'
 
 const Option = Select.Option;
 
@@ -334,23 +334,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
   }
 
 
-  checkExpressionsNotEmpty = () => {
-    let result = true;
-    const { steps } = this.state;
-    steps.forEach(step => {
-      step.filter_clause.filters.forEach(filter => {
-        if (filter.expressions.length === 0)
-          result = false;
-        else
-          filter.expressions.forEach(exp => {
-            if (!exp || exp.length === 0 || !exp.trim())
-              result = false
-          })
-      })
-    });
 
-    return result
-  }
 
   checkDimensionsNotEmpty = () => {
     let result = true;
@@ -366,7 +350,8 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
   }
 
   handleExecuteQueryButtonClick = () => {
-    if (this.checkExpressionsNotEmpty() && this.checkDimensionsNotEmpty()) {
+    const { steps } = this.state;
+    if (checkExpressionsNotEmpty(steps) && this.checkDimensionsNotEmpty()) {
       this.updateFilterQueryStringParams();
     } else {
       this.props.notifyWarning({
