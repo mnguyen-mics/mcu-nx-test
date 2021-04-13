@@ -42,9 +42,16 @@ export class TagService implements ITagService {
   googleAnalyticsTrack = (pathname: string) => {
     if (window as any) {
       const dataLayer = (window as any).dataLayer || [];
-      dataLayer.push('config', 'G-S9J3649K5Y', {
+      function gtag(...arg: any) {
+        dataLayer.push(arguments);
+      }
+      gtag('config', 'G-S9J3649K5Y', {
+        send_page_view: false,
+      });
+      gtag('event', 'page_view', {
         page_title: pathname,
         page_path: pathname,
+        send_to: 'G-S9J3649K5Y'
       });
     }
   };
