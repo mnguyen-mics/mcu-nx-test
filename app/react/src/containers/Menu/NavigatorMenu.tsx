@@ -159,8 +159,7 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
               ) &&
               ((subMenuItem.path !== '/audience/segment-builder' &&
                 hasFeature('audience-segment_builder_v2')) ||
-                (subMenuItem.path === '/audience/segment-builder' &&
-                  !hasFeature('audience-segment_builder_v2'))),
+                !hasFeature('audience-segment_builder_v2')),
           );
           return [...acc, { ...item, subMenuItems }];
         }
