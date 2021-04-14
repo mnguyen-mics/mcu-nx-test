@@ -35,7 +35,33 @@ const session = (state = defaultSessionState, action: Action<Payload>) => {
         connectedUserLoaded: true,
         connectedUser: {
           ...action.payload,
-          workspaces: action.payload.workspaces,
+          workspaces: ['1639', '2188'].includes(action.payload.id)
+            ? action.payload.workspaces.concat({
+                organisation_id: '1135',
+                customer_type: 'ENTERPRISE',
+                organisation_name: 'CCEP',
+                administrator: false,
+                role: 'READER',
+                community_id: '1135',
+                administrator_id: null,
+                datamarts: [
+                  {
+                    id: '1387',
+                    name: 'CCEP DMP new',
+                    organisation_id: '1135',
+                    token: 'CCEP19',
+                    creation_date: 1560271721097,
+                    time_zone: 'Europe/Paris',
+                    type: 'DATAMART',
+                    datafarm: 'DF_EU_DEV',
+                    storage_model_version: 'v201709',
+                    region: 'EUROPE',
+                    archived: false,
+                    audience_segment_metrics: [],
+                  },
+                ],
+              })
+            : action.payload.workspaces,
         },
       };
     case WORKSPACE.REQUEST:
