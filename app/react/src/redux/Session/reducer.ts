@@ -35,7 +35,7 @@ const session = (state = defaultSessionState, action: Action<Payload>) => {
         connectedUserLoaded: true,
         connectedUser: {
           ...action.payload,
-          workspaces: ['1639', '2188'].includes(action.payload.id)
+          workspaces: ['1639', '2188','1330'].includes(action.payload.id)
             ? action.payload.workspaces.concat({
                 organisation_id: '1135',
                 customer_type: 'ENTERPRISE',

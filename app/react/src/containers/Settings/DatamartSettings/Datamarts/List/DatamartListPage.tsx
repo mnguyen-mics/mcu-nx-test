@@ -26,6 +26,8 @@ import {
   ActionsRenderer,
   DataColumnDefinition,
 } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import { MicsReduxState } from '../../../../../utils/ReduxHelper';
+import { connect } from 'react-redux';
 
 const { Content } = Layout;
 
@@ -45,9 +47,14 @@ interface RouterProps {
   organisationId: string;
 }
 
+interface MapStateToProps {
+  userId: string;
+}
+
 class DatamartsListPage extends React.Component<
   RouteComponentProps<RouterProps> &
     InjectedIntlProps &
+    MapStateToProps &
     InjectedNotificationProps,
   DatamartsListPageState
 > {
@@ -64,7 +71,9 @@ class DatamartsListPage extends React.Component<
     this.setState({ loading: true }, () => {
       const options = {
         allow_administrator: true,
-        archived: filter.archived,
+        archived: organisationId === '1135' && ['1639', '2188', '1330'].includes(this.props.userId)
+          ? true
+          : filter.archived,
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
       this._datamartService
@@ -153,18 +162,18 @@ class DatamartsListPage extends React.Component<
       return actionsDefinitions;
     };
 
-    const actionsColumnsDefinition: Array<
-      ActionsColumnDefinition<DatamartResource>
-    > = [
+    const actionsColumnsDefinition: Array<ActionsColumnDefinition<
+      DatamartResource
+    >> = [
       {
         key: 'action',
         actions: renderActionColumnDefinition,
       },
     ];
 
-    const dataColumnsDefinition: Array<
-      DataColumnDefinition<DatamartResource>
-    > = [
+    const dataColumnsDefinition: Array<DataColumnDefinition<
+      DatamartResource
+    >> = [
       {
         title: formatMessage(messages.datamartId),
         key: 'id',
@@ -245,8 +254,13 @@ class DatamartsListPage extends React.Component<
   }
 }
 
+const mapStateToProps = (state: MicsReduxState) => ({
+  userId: state.session.connectedUser.id,
+});
+
 export default compose(
   withRouter,
   injectIntl,
   injectNotifications,
+  connect(mapStateToProps),
 )(DatamartsListPage);
