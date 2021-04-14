@@ -136,7 +136,10 @@ export const formatQuery = (
 export const extractOtqlWhereClause = (text: string) => {
   const formattedText = text.toLowerCase();
   const wherePosition = formattedText.indexOf('where');
-  const whereClause = text.substr(wherePosition + 5, formattedText.length);
+  const whereClause =
+  hasWhereClause(text)
+      ? text.substr(wherePosition + 5, formattedText.length)
+      : ' ';
   return whereClause;
 };
 
