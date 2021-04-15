@@ -93,22 +93,38 @@ searchInPreviousFetch(keyword: string, fetchedResourcesList: LabeledValue[]) {
 }
 
 fetchListMethod(keyword: string) {
-  const { datamartId, organisationId, filter, notifyError, showId } = this.props;
+  const { datamartId, organisationId, filter, notifyError, showId, value } = this.props;
   this.setState({ resourcesList: [], fetching: true });
   const options = {
     keywords: keyword,
     datamart_id: datamartId,
     organisation_id: organisationId,
     ...filter
-  }
+  };
+  const newValue = this.state.value as LabeledValue[];
   return resourceFetcher.getForKeyword(options)
     .then(res => {
-      const result = res.filter(re => re.id).map(r => ({ key: r.id, label: <NameDisplay {...r} showId={showId} /> }));
-
+      
+      const result: LabeledValue[] = res.filter(re => re.id).map(r => ({ key: r.id, label: <NameDisplay {...r} showId={showId} />, value: r.id }));
+      
+      value.forEach((v) => {
+        const valueExistInList = result.find(item => item.key === v);   
+        if (!valueExistInList) {
+          const unavailableValue = {
+            name: v,
+            id: v
+          }; 
+          const formatedValue: LabeledValue = { key: v, label: <NameDisplay {...unavailableValue as any} /> , value: v}
+          result.push(formatedValue);
+          newValue.push(formatedValue);
+        }
+      });
+  
       this.setState({
-        resourcesList: result as LabeledValue[],
+        resourcesList: result,
+        value: newValue,
         fetching: false,
-        fetchedResourcesList: result as LabeledValue[],
+        fetchedResourcesList: result,
         fetchedKeyword: keyword
       })
     }).catch(e => {
