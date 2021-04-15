@@ -322,7 +322,7 @@ export class AutomationFormService implements IAutomationFormService {
                 break;
               case 'ABN_NODE':
                 const abnFormData: ABNFormData = {
-                  branch_number: n.branch_number ? n.branch_number : 2,
+                  branch_number: n.edges_selection ? Object.keys(n.edges_selection).length : 2,
                   edges_selection: n.edges_selection,
                 };
                 getPromise = Promise.resolve().then(() => ({

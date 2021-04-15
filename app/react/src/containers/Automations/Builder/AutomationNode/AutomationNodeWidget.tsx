@@ -326,6 +326,9 @@ class AutomationNodeWidget extends React.Component<Props, State> {
 
         let disableEdition = false;
         switch (scenarioNodeShape.type) {
+          case 'ABN_NODE':
+            disableEdition = Object.keys(scenarioNodeShape.edges_selection).length !== 0;
+            break;
           case 'ADD_TO_SEGMENT_NODE':
           case 'DELETE_FROM_SEGMENT_NODE':
             disableEdition = !!scenarioNodeShape.user_list_segment_id;
