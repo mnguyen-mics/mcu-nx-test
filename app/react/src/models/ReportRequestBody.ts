@@ -7,6 +7,7 @@ export interface ReportRequestBody {
   first_result?: number;
   max_result?: number;
   date_ranges: DateRange[];
+  sample_factor?: number;
 }
 
 export type DimensionFilterClause = FilterClause<DimensionFilter>;

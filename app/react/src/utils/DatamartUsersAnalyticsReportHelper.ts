@@ -41,12 +41,13 @@ export function buildDatamartUsersAnalyticsRequestBody(
   dimensionFilterClauses?: DimensionFilterClause,
   segmentId?: string,
   segmentIdToAdd?: string,
+  sampling?: number
 ): ReportRequestBody {
   const UTC = !(isNowFormat(from.value) && isNowFormat(to.value));
   const startDate = new McsMoment(from.value).toMoment().utc(UTC).startOf('day').format().replace('Z', '');
   const endDate = new McsMoment(to.value).toMoment().utc(UTC).endOf('day').format().replace('Z', '');
   const dimensionsList: DatamartUsersAnalyticsDimension[] = dimensions || [];
-  return buildReport(dimensionsList, metrics, startDate, endDate, dimensionFilterClauses, segmentId, segmentIdToAdd);
+  return buildReport(dimensionsList, metrics, startDate, endDate, dimensionFilterClauses, segmentId, segmentIdToAdd, sampling);
 }
 
 function buildReport(
@@ -57,6 +58,7 @@ function buildReport(
   dimensionFilterClauses?: DimensionFilterClause,
   segmentId?: string,
   segmentIdToAggregate?: string,
+  sampling?: number
 ): ReportRequestBody {
 
     const dateRange: DateRange = {
@@ -114,6 +116,7 @@ function buildReport(
     dimensions: dimensions,
     dimension_filter_clauses: dimensionFilterClausesCopy,
     metrics: metrics,
+    sample_factor: sampling
   };
   return report;
 }

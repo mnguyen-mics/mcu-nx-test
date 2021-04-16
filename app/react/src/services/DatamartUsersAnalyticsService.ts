@@ -18,7 +18,8 @@ export interface IDatamartUsersAnalyticsService {
     dimensions?: DatamartUsersAnalyticsDimension[],
     dimensionFilterClauses?: DimensionFilterClause,
     segmentId?: string,
-    segmentIdToAdd?: string
+    segmentIdToAdd?: string,
+    sampling?: number
   ) => Promise<ReportViewResponse>;
 }
 
@@ -32,9 +33,10 @@ export class DatamartUsersAnalyticsService implements IDatamartUsersAnalyticsSer
     dimensions?: DatamartUsersAnalyticsDimension[],
     dimensionFilterClauses?: DimensionFilterClause,
     segmentId?: string,
-    segmentIdToAggregate?: string
+    segmentIdToAggregate?: string,
+    sampling?: number
   ): Promise<ReportViewResponse> {
-    const report: ReportRequestBody = buildDatamartUsersAnalyticsRequestBody(datamartId, metrics, from, to, dimensions, dimensionFilterClauses, segmentId, segmentIdToAggregate);
+    const report: ReportRequestBody = buildDatamartUsersAnalyticsRequestBody(datamartId, metrics, from, to, dimensions, dimensionFilterClauses, segmentId, segmentIdToAggregate, sampling);
     const endpoint = `datamarts/${datamartId}/user_activities_analytics`;
     return ApiService.postRequest(endpoint, report);
   }

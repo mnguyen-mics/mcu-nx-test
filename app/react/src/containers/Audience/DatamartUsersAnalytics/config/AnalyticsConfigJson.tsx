@@ -60,6 +60,7 @@ export const sessionInTimeJsonConfig: DashboardConfig[] = [
           }
         },
         dimensions: ['channel_name', 'channel_id', 'date_yyyy_mm_dd'],
+        sampling: 1,
         filterBy: 'channel_name',
         metricNames: ['sessions'],
         dimensionFilterClauses: {
@@ -241,6 +242,7 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
           }
         },
         dimensions: ['date_yyyy_mm_dd'],
+        sampling: 1,
         metricNames: ['avg_revenue_per_user_point'],
         dimensionFilterClauses: {
           'operator': 'OR',
@@ -311,6 +313,7 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
           }
         },
         dimensions: ['date_yyyy_mm_dd'],
+        sampling: 1,
         metricNames: ['avg_transaction_amount'],
         dimensionFilterClauses: {
           'operator': 'OR',
@@ -381,6 +384,7 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
           }
         },
         dimensions: ['date_yyyy_mm_dd'],
+        sampling: 1,
         metricNames: ['avg_number_of_transactions'],
         dimensionFilterClauses: {
           'operator': 'OR',
@@ -451,6 +455,7 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
           }
         },
         dimensions: ['date_yyyy_mm_dd'],
+        sampling: 1,
         metricNames: ['avg_session_duration'],
         dimensionFilterClauses: {
           'operator': 'OR',
@@ -521,6 +526,7 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
           }
         },
         dimensions: ['date_yyyy_mm_dd'],
+        sampling: 1,
         metricNames: ['avg_number_of_user_events'],
         dimensionFilterClauses: {
           'operator': 'OR',
@@ -591,6 +597,7 @@ export const abTestingDashboardConfig: DashboardConfig[] = [
           }
         },
         dimensions: ['date_yyyy_mm_dd'],
+        sampling: 1,
         metricNames: ['conversion_rate'],
         dimensionFilterClauses: {
           'operator': 'OR',
@@ -771,6 +778,7 @@ export const channelEngagementConfig: DashboardConfig[] = [
           }
         },
         dimensions: ['channel_name', 'channel_id', 'date_yyyy_mm_dd'],
+        sampling: 1,
         filterBy: 'channel_name',
         metricNames: ['sessions'],
         dimensionFilterClauses: {
@@ -1069,6 +1077,7 @@ export const channelEngagementConfig: DashboardConfig[] = [
           }
         },
         dimensions: ['channel_name', 'channel_id', 'date_yyyy_mm_dd'],
+        sampling: 1,
         filterBy: 'channel_name',
         metricNames: ['users'],
         dimensionFilterClauses: {
@@ -1142,6 +1151,7 @@ export const acquisitionEngagementConfig: DashboardConfig[] = [
           }
         },
         dimensions: ['origin_source', 'date_yyyy_mm_dd'],
+        sampling: 1,
         filterBy: 'origin_source',
         metricNames: ['sessions'],
         dimensionFilterClauses: {
@@ -1274,6 +1284,7 @@ export const acquisitionEngagementConfig: DashboardConfig[] = [
           }
         },
         dimensions: ['origin_channel', 'date_yyyy_mm_dd'],
+        sampling: 1,
         filterBy: 'origin_channel',
         metricNames: ['sessions'],
         dimensionFilterClauses: {

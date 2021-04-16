@@ -62,7 +62,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       chart,
       onChange,
       segmentId,
-      compareWithSegmentId,
+      compareWithSegmentId
     } = this.props;
 
     this.fetchAnalytics(
@@ -74,6 +74,8 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       chart.dimensions,
       chart.dimensionFilterClauses,
       segmentId,
+      undefined,
+      chart.sampling
     ).then(() => {
       if (compareWithSegmentId) {
         this.fetchAnalytics(
@@ -86,6 +88,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
           chart.dimensionFilterClauses,
           segmentId,
           compareWithSegmentId,
+          chart.sampling
         );
       }
     });
@@ -100,7 +103,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       segmentId,
       compareWithSegmentId,
       location: { search },
-      segmentToAggregate,
+      segmentToAggregate
     } = this.props;
 
     if (
@@ -118,6 +121,8 @@ class ApiQueryWrapper extends React.Component<Props, State> {
         chart.dimensions,
         chart.dimensionFilterClauses,
         segmentId,
+        undefined,
+        chart.sampling
       ).then(() => {
         if (compareWithSegmentId) {
           this.fetchAnalytics(
@@ -130,6 +135,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
             chart.dimensionFilterClauses,
             segmentId,
             compareWithSegmentId,
+            chart.sampling
           );
         }
       });
@@ -155,6 +161,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
     dimensionFilterClauses?: DimensionFilterClause,
     segmentId?: string,
     compareWithSegmentId?: string,
+    sampling?: number
   ) => {
     const { chart } = this.props;
 
@@ -201,6 +208,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
             segmentId,
             compareWithSegmentId,
             getTenHigherValues,
+            sampling
           );
         });
     }
@@ -215,6 +223,8 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       dimensionFilterClauses,
       segmentId,
       compareWithSegmentId,
+      undefined,
+      sampling
     );
   };
 
@@ -229,6 +239,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
     segmentId?: string,
     compareWithSegmentId?: string,
     tenHigherValues?: string[],
+    sampling?: number
   ) => {
     return this._datamartUsersAnalyticsService
       .getAnalytics(
@@ -240,6 +251,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
         dimensionFilterClauses,
         compareWithSegmentId || segmentId,
         this.getSegmentIdToAddToDimensionFilterClause(!!compareWithSegmentId),
+        sampling
       )
       .then(res => {
         if (tenHigherValues && tenHigherValues.length > 0) {
