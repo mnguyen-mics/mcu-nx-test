@@ -1,27 +1,38 @@
 import * as React from 'react';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
-import { FormSection } from '../../../../../../components/Form';
 import { PropertyResourceShape } from '../../../../../../models/plugin';
 import { PluginFieldGenerator } from '../../../../../Plugin';
 import PluginSectionGenerator from '../../../../../Plugin/PluginSectionGenerator';
-import { ExtendedPluginInformation } from './CustomActionAutomationForm';
+import { ExtendedCustomActionInformation } from './CustomActionAutomationForm';
 import messages from './messages';
 
-interface PluginInstanceFormSectionProps {
-  pluginId?: string;
-  extendedPluginsInformation: ExtendedPluginInformation[];
+interface CustomActionInstanceFormSectionProps {
+  customActionId: string;
+  extendedCustomActionsInformation: ExtendedCustomActionInformation[];
   organisationId: string;
   disabled?: boolean;
 }
 
-type Props = PluginInstanceFormSectionProps & InjectedIntlProps;
+type Props = CustomActionInstanceFormSectionProps & InjectedIntlProps;
 
-class PluginInstanceFormSection extends React.Component<Props> {
+class CustomActionInstanceFormSection extends React.Component<Props> {
   displayPluginInstanceFormSection = (subElement: JSX.Element) => {
+    const {
+      intl: { formatMessage },
+    } = this.props;
+
     return (
-      <div>
-        <FormSection title={messages.sectionPluginSettingsTitle} />
+      <div className="mcs-customActionInstanceFormSection_pluginSettings">
+        <div className="mcs-customActionInstanceFormSection_pluginSettings_title">
+          {formatMessage(messages.sectionPluginSettingsSubtitleFirstPart)}
+          &nbsp;
+          <a href="https://developer.mediarithmics.com/" target="_blank">
+            {formatMessage(messages.developerDocumentation)}
+          </a>
+          &nbsp;
+          {formatMessage(messages.sectionPluginSettingsSubtitleSecondPart)}
+        </div>
         {subElement}
       </div>
     );
@@ -29,25 +40,25 @@ class PluginInstanceFormSection extends React.Component<Props> {
 
   render() {
     const {
-      pluginId,
+      customActionId,
       organisationId,
-      extendedPluginsInformation,
+      extendedCustomActionsInformation,
       disabled,
     } = this.props;
 
-    if (pluginId) {
-      const extendedPluginInformation = extendedPluginsInformation.find(
-        info => {
-          return info.plugin.id === pluginId;
+    if (customActionId) {
+      const extendedCustomActionInformation = extendedCustomActionsInformation.find(
+        (info) => {
+          return info.customAction.id === customActionId;
         },
       );
 
-      if (extendedPluginInformation) {
-        const givenPluginProperties =
-          extendedPluginInformation.pluginProperties || [];
-        const pluginLayout = extendedPluginInformation.pluginLayout;
+      if (extendedCustomActionInformation) {
+        const customActionProperties =
+          extendedCustomActionInformation.customActionProperties || [];
+        const pluginLayout = extendedCustomActionInformation.pluginLayout;
         const pluginVersionId =
-          extendedPluginInformation.plugin.current_version_id;
+          extendedCustomActionInformation.customAction.version_id;
 
         if (pluginVersionId) {
           if (pluginLayout) {
@@ -65,7 +76,7 @@ class PluginInstanceFormSection extends React.Component<Props> {
                   <PluginSectionGenerator
                     pluginLayoutSection={section}
                     organisationId={organisationId}
-                    pluginProperties={givenPluginProperties}
+                    pluginProperties={customActionProperties}
                     disableFields={disabled}
                     pluginVersionId={pluginVersionId}
                     small={true}
@@ -78,7 +89,7 @@ class PluginInstanceFormSection extends React.Component<Props> {
               <div>{subSections}</div>,
             );
           } else {
-            const subElements = givenPluginProperties.map(
+            const subElements = customActionProperties.map(
               (fieldDef: PropertyResourceShape) => {
                 return (
                   <PluginFieldGenerator
@@ -106,6 +117,6 @@ class PluginInstanceFormSection extends React.Component<Props> {
   }
 }
 
-export default compose<Props, PluginInstanceFormSectionProps>(injectIntl)(
-  PluginInstanceFormSection,
+export default compose<Props, CustomActionInstanceFormSectionProps>(injectIntl)(
+  CustomActionInstanceFormSection,
 );

@@ -11,6 +11,7 @@ import {
   reduxForm,
   change,
 } from 'redux-form';
+import { FormSection } from '../../../../../../components/Form';
 import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
 import { FORM_ID, CustomActionAutomationFormData } from '../domain';
 import { StorylineNodeModel } from '../../../domain';
@@ -21,23 +22,23 @@ import { FormLayoutActionbarProps } from '../../../../../../components/Layout/Fo
 import messages from './messages';
 import { McsFormSection } from '../../../../../../utils/FormHelper';
 import GeneralInformationFormSection from './GeneralInformationFormSection';
-import PluginInstanceFormSection from './PluginInstanceFormSection';
-import { PluginResource } from '../../../../../../models/Plugins';
+import CustomActionInstanceFormSection from './CustomActionInstanceFormSection';
+import { CustomActionResource } from '../../../../../../models/Plugins';
 import { PluginLayout } from '../../../../../../models/plugin/PluginLayout';
 import { lazyInject } from '../../../../../../config/inversify.config';
 import { TYPES } from '../../../../../../constants/types';
-import { IPluginService } from '../../../../../../services/PluginService';
 import { PropertyResourceShape } from '../../../../../../models/plugin';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../../Notifications/injectNotifications';
+import { ICustomActionService } from '../../../../../../services/CustomActionService';
 
 const { Content } = Layout;
 
-export interface ExtendedPluginInformation {
-  plugin: PluginResource;
+export interface ExtendedCustomActionInformation {
+  customAction: CustomActionResource;
   pluginLayout?: PluginLayout;
-  pluginProperties?: PropertyResourceShape[];
+  customActionProperties?: PropertyResourceShape[];
 }
 
 export interface CustomActionAutomationFormProps
@@ -64,20 +65,20 @@ type Props = InjectedFormProps<
   InjectedNotificationProps;
 
 interface State {
-  extendedPluginsInformation: ExtendedPluginInformation[];
-  fetchingPluginVersions: boolean;
+  extendedCustomActionsInformation: ExtendedCustomActionInformation[];
+  fetchingCustomActions: boolean;
 }
 
 class CustomActionAutomationForm extends React.Component<Props, State> {
-  @lazyInject(TYPES.IPluginService)
-  private _pluginService: IPluginService;
+  @lazyInject(TYPES.ICustomActionService)
+  private _customActionService: ICustomActionService;
 
   constructor(props: Props) {
     super(props);
 
     this.state = {
-      extendedPluginsInformation: [],
-      fetchingPluginVersions: true,
+      extendedCustomActionsInformation: [],
+      fetchingCustomActions: true,
     };
   }
 
@@ -87,25 +88,35 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
         params: { organisationId },
       },
       initialValues,
+      dispatch,
     } = this.props;
 
-    if (initialValues.pluginId && initialValues.pluginResource) {
-      const extendedPluginInformation: ExtendedPluginInformation = {
-        plugin: initialValues.pluginResource,
-        pluginLayout: initialValues.pluginLayout,
-        pluginProperties: initialValues.pluginVersionProperties,
-      };
+    if (initialValues.extendedCustomActionsInformation) {
       this.setState({
-        extendedPluginsInformation: [extendedPluginInformation],
-        fetchingPluginVersions: false,
+        extendedCustomActionsInformation:
+          initialValues.extendedCustomActionsInformation,
+        fetchingCustomActions: false,
       });
     } else {
-      this.setState({ fetchingPluginVersions: true }, () => {
-        this.getExtendedPluginVersionsWithLayouts(organisationId).then(
-          (extendedPluginsInformation: ExtendedPluginInformation[]) => {
+      this.setState({ fetchingCustomActions: true }, () => {
+        this.getExtendedCustomActionsInformation(
+          organisationId,
+          initialValues.customActionId,
+        ).then(
+          (
+            extendedCustomActionsInformation: ExtendedCustomActionInformation[],
+          ) => {
+            if (dispatch)
+              dispatch(
+                change(
+                  FORM_ID,
+                  'extendedCustomActionsInformation',
+                  extendedCustomActionsInformation,
+                ),
+              );
             this.setState({
-              extendedPluginsInformation,
-              fetchingPluginVersions: false,
+              extendedCustomActionsInformation,
+              fetchingCustomActions: false,
             });
           },
         );
@@ -113,77 +124,52 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
     }
   }
 
-  getExtendedPluginVersionsWithLayouts = (
+  getExtendedCustomActionsInformation = (
     organisationId: string,
-  ): Promise<ExtendedPluginInformation[]> => {
-    const { notifyError, dispatch } = this.props;
-    return this._pluginService
-      .getPlugins({
-        organisation_id: +organisationId,
-        plugin_type: 'SCENARIO_CUSTOM_ACTION',
+    customActionId?: string,
+  ): Promise<ExtendedCustomActionInformation[]> => {
+    const { notifyError } = this.props;
+
+    const customActionsP: Promise<CustomActionResource[]> = customActionId
+      ? this._customActionService
+          .getInstanceById(customActionId)
+          .then((resCustomAction) => [resCustomAction.data])
+      : this._customActionService
+          .getInstances({ organisation_id: +organisationId })
+          .then((resCustomActions) => resCustomActions.data);
+
+    return customActionsP
+      .then((customActions) => {
+        return Promise.all(
+          customActions.map((customActionResource: CustomActionResource) => {
+            const pluginLayoutP = this._customActionService.getLocalizedPluginLayout(
+              customActionResource.id,
+            );
+
+            const propertiesP = this._customActionService
+              .getInstanceProperties(customActionResource.id)
+              .then((resProperties) => resProperties.data)
+              .catch((err) => {
+                notifyError(err);
+                return [];
+              });
+
+            return Promise.all([pluginLayoutP, propertiesP]).then(
+              (resPromises) => {
+                const extendedCustomActionInformation: ExtendedCustomActionInformation = {
+                  customAction: customActionResource,
+                  pluginLayout:
+                    resPromises[0] !== null ? resPromises[0] : undefined,
+                  customActionProperties: resPromises[1],
+                };
+
+                return extendedCustomActionInformation;
+              },
+            );
+          }),
+        );
       })
-      .then(resPlugins => {
-        const pluginsPromises = resPlugins.data.map(plugin => {
-          const {
-            id: pluginId,
-            current_version_id: currentPluginVersionId,
-          } = plugin;
-          const pluginLayoutPromise = currentPluginVersionId
-            ? this._pluginService.getLocalizedPluginLayout(
-                pluginId,
-                currentPluginVersionId,
-              )
-            : Promise.resolve(null);
-          const pluginVersionPropertiesPromise = currentPluginVersionId
-            ? this._pluginService
-                .getPluginVersionProperties(pluginId, currentPluginVersionId)
-                .then(resProperties => {
-                  return resProperties.data;
-                })
-                .catch(err => {
-                  notifyError(err);
-                  return null;
-                })
-            : Promise.resolve(null);
-
-          return Promise.all([
-            pluginLayoutPromise,
-            pluginVersionPropertiesPromise,
-          ]).then(resPromises => {
-            const pluginLayoutOrNull = resPromises[0];
-            const pluginPropertiesOrNull = resPromises[1];
-
-            if (dispatch) {
-              dispatch(
-                change(
-                  FORM_ID,
-                  'pluginVersionProperties',
-                  pluginPropertiesOrNull,
-                ),
-              );
-            }
-
-            const extendedPluginInformation: ExtendedPluginInformation = {
-              plugin,
-              pluginLayout:
-                pluginLayoutOrNull !== null ? pluginLayoutOrNull : undefined,
-              pluginProperties:
-                pluginPropertiesOrNull !== null
-                  ? pluginPropertiesOrNull
-                  : undefined,
-            };
-            return extendedPluginInformation;
-          });
-        });
-
-        return Promise.all(pluginsPromises).then(resPromises => {
-          // We need to remove the plugins that don't have a versionId.
-          return resPromises.filter(pluginInfo => {
-            return pluginInfo.plugin.current_version_id;
-          });
-        });
-      })
-      .catch(err => {
+      .catch((err) => {
         notifyError(err);
         return [];
       });
@@ -196,7 +182,7 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
       },
     } = this.props;
 
-    const { extendedPluginsInformation } = this.state;
+    const { extendedCustomActionsInformation } = this.state;
 
     const sections: McsFormSection[] = [];
 
@@ -208,25 +194,25 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
           initialValues={this.props.initialValues}
           organisationId={organisationId}
           disabled={disabled}
-          extendedPluginsInformation={extendedPluginsInformation}
+          extendedCustomActionsInformation={extendedCustomActionsInformation}
         />
       ),
     };
 
     sections.push(generalSection);
 
-    const pluginId = this.props.formValues?.pluginId;
+    const customActionId = this.props.formValues?.customActionId;
 
-    if (pluginId) {
+    if (customActionId) {
       const pluginInstanceSection = {
         id: 'pluginInstance',
         title: messages.sectionPluginSettingsTitle,
         component: (
-          <PluginInstanceFormSection
-            pluginId={pluginId}
-            extendedPluginsInformation={extendedPluginsInformation}
+          <CustomActionInstanceFormSection
+            customActionId={customActionId}
+            extendedCustomActionsInformation={extendedCustomActionsInformation}
             organisationId={organisationId}
-            disabled={disabled}
+            disabled={true}
           />
         ),
       };
@@ -243,12 +229,12 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
       handleSubmit,
       close,
       disabled,
-      initialValues: { pluginResource },
+      initialValues: { editExistingNode },
     } = this.props;
 
-    const { fetchingPluginVersions } = this.state;
+    const { fetchingCustomActions } = this.state;
 
-    const calculatedDisabled = disabled || pluginResource !== undefined;
+    const calculatedDisabled = disabled || !!editExistingNode;
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
@@ -266,12 +252,11 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
           <div key={section.id} id={section.id}>
             {section.component}
           </div>
-          {index !== sections.length - 1 && <hr />}
         </div>
       );
     });
 
-    const sectionsOrSpin = fetchingPluginVersions ? <Spin /> : renderedSections;
+    const sectionsOrSpin = fetchingCustomActions ? <Spin /> : renderedSections;
 
     return (
       <Layout className="edit-layout">
@@ -286,6 +271,10 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
               id={FORM_ID}
               className="mcs-content-container mcs-form-container automation-form"
             >
+              <FormSection
+                title={messages.sectionGeneralTitle}
+                subtitle={messages.sectionGeneralSubtitle}
+              />
               {sectionsOrSpin}
             </Content>
           </Form>

@@ -37,6 +37,7 @@ export interface IAudienceSegmentFeedService {
   segmentId: string;
   feedType: AudienceFeedType;
 
+  getInstances: (options: object) => Promise<DataListResponse<AudienceFeed>>; 
   getFeeds: (options: GetFeeds) => Promise<DataListResponse<AudienceFeed>>;
   getAudienceFeeds: (
     organisationId: string,

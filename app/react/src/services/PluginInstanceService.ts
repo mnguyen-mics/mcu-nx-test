@@ -7,6 +7,7 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from '../constants/types';
 
 export interface IPluginInstanceService<T> {
+  getInstances: (options: object) => Promise<DataListResponse<T>>;
   getInstanceById: (id: string, options?: object) => Promise<DataResponse<T>>;
   getInstanceProperties: (
     id: string,
@@ -32,11 +33,19 @@ export interface IPluginInstanceService<T> {
 @injectable()
 abstract class PluginInstanceService<T extends PluginInstance>
   implements IPluginInstanceService<T> {
-
   @inject(TYPES.IPluginService)
   _pluginService: IPluginService;
 
   constructor(public entityPath: string) {}
+
+  getInstances = (options: object = {}): Promise<DataListResponse<T>> => {
+    const endpoint = `${this.entityPath}`;
+
+    const params = {
+      ...options,
+    };
+    return ApiService.getRequest(endpoint, params);
+  };
 
   getInstanceById = (
     id: string,

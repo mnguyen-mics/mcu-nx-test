@@ -12,7 +12,6 @@ import { FeedNodeFormData } from './../Builder/AutomationNode/Edit/domain';
 import { IPluginService } from './../../../services/PluginService';
 import {
   AudienceFeed,
-  CustomActionResource,
   PluginPresetResource,
   PluginProperty,
   StrictlyLayoutablePlugin,
@@ -57,7 +56,6 @@ import {
   isAddToSegmentNode,
   AddToSegmentAutomationFormData,
   DeleteFromSegmentAutomationFormData,
-  CustomActionAutomationFormData,
   isDeleteFromSegmentNode,
   isOnSegmentEntryInputNode,
   isOnSegmentExitInputNode,
@@ -276,12 +274,14 @@ export class AutomationFormService implements IAutomationFormService {
                   .then((result: AudienceSegmentFormData) => {
                     const segment = result.audienceSegment;
 
-                    const getTtl = (ttl?: number | null): {
+                    const getTtl = (
+                      ttl?: number | null,
+                    ): {
                       value?: string;
                       unit: 'days' | 'weeks' | 'months';
                     } => {
-                      if(!ttl) return { unit: 'days' };
-                      
+                      if (!ttl) return { unit: 'days' };
+
                       const duration = moment.duration(ttl, 'milliseconds');
                       if (!duration) return { unit: 'days' };
 
@@ -293,8 +293,11 @@ export class AutomationFormService implements IAutomationFormService {
                         if (Number.isInteger(weeks) && weeks > 0)
                           return { value: weeks.toString(), unit: 'weeks' };
                       }
-                      return { value: duration.asDays().toString(), unit: 'days' };;
-                    }
+                      return {
+                        value: duration.asDays().toString(),
+                        unit: 'days',
+                      };
+                    };
 
                     const initialValues: AddToSegmentAutomationFormData = {
                       audienceSegmentName: segment.name,
@@ -406,52 +409,20 @@ export class AutomationFormService implements IAutomationFormService {
               case 'CUSTOM_ACTION_NODE':
                 getPromise = n.custom_action_id
                   ? this._customActionService
-                    .getInstanceById(n.custom_action_id)
-                    .then((resCustomAction) => {
-                      const customActionResource = resCustomAction.data;
-
-                      const pluginLayoutP = this._pluginService.getLocalizedPluginLayoutFromVersionId(
-                        customActionResource.version_id,
-                      );
-
-                      const customActionPropertiesP = this._customActionService
-                        .getInstanceProperties(customActionResource.id)
-                        .then(
-                          (resCustomActionProperties) =>
-                            resCustomActionProperties.data,
-                        );
-
-                      return Promise.all([
-                        pluginLayoutP,
-                        customActionPropertiesP,
-                      ]).then((resPromises) => {
-                        const { plugin, layout } = resPromises[0];
-                        const customActionProperties = resPromises[1];
-
-                        const formProperties: any = {};
-                        customActionProperties.forEach(
-                          (propertyResourceShape) => {
-                            formProperties[
-                              propertyResourceShape.technical_name
-                            ] = { value: propertyResourceShape.value };
-                          },
-                        );
+                      .getInstanceById(n.custom_action_id)
+                      .then((resCustomAction) => {
+                        const customActionResource = resCustomAction.data;
 
                         const constructedNode: CustomActionNodeResource = {
                           ...n,
                           custom_action_id: customActionResource.id,
                           formData: {
-                            name: customActionResource.name,
-                            pluginId: plugin.id,
-                            pluginResource: plugin,
-                            pluginLayout: layout,
-                            pluginVersionProperties: customActionProperties,
-                            properties: formProperties,
+                            customActionId: customActionResource.id,
+                            editExistingNode: true,
                           },
                         };
                         return constructedNode;
-                      });
-                    })
+                      })
                   : Promise.resolve(n);
                 break;
               case 'SCENARIO_AUDIENCE_SEGMENT_FEED_NODE':
@@ -655,13 +626,13 @@ export class AutomationFormService implements IAutomationFormService {
     const saveOrCreatePromise = () =>
       automationId
         ? this._scenarioService.updateScenario(
-          automationId,
-          formData.automation as AutomationResource,
-        )
+            automationId,
+            formData.automation as AutomationResource,
+          )
         : this._scenarioService.createScenario(
-          organisationId,
-          formData.automation as AutomationResource,
-        );
+            organisationId,
+            formData.automation as AutomationResource,
+          );
 
     return saveOrCreatePromise()
       .then((createdAutomation) => {
@@ -799,11 +770,11 @@ export class AutomationFormService implements IAutomationFormService {
     const node = storylineNode.node as QueryInputNodeResource;
     const saveOrCreateQueryPromise = !isFakeId(node.query_id)
       ? this._queryService
-        .updateQuery(datamartId, node.query_id, node.formData)
-        .then((res) => {
-          this.removeNodeId(res.data.id);
-          return res;
-        })
+          .updateQuery(datamartId, node.query_id, node.formData)
+          .then((res) => {
+            this.removeNodeId(res.data.id);
+            return res;
+          })
       : this._queryService.createQuery(datamartId, node.formData);
     return saveOrCreateQueryPromise.then((queryRes) => {
       return this.saveOrCreateNode(
@@ -881,15 +852,20 @@ export class AutomationFormService implements IAutomationFormService {
             const saveOrCreateSegmentPromise = node.user_list_segment_id
               ? Promise.resolve(node.user_list_segment_id)
               : this.saveAudienceSegment(
-                organisationId,
-                datamartId,
-                node.formData.audienceSegmentName
-                  ? node.formData.audienceSegmentName
-                  : '',
-                node.formData.ttl.value ?
-                  moment.duration(Number(node.formData.ttl.value), node.formData.ttl.unit).asMilliseconds() :
-                  undefined
-              );
+                  organisationId,
+                  datamartId,
+                  node.formData.audienceSegmentName
+                    ? node.formData.audienceSegmentName
+                    : '',
+                  node.formData.ttl.value
+                    ? moment
+                        .duration(
+                          Number(node.formData.ttl.value),
+                          node.formData.ttl.unit,
+                        )
+                        .asMilliseconds()
+                    : undefined,
+                );
             return saveOrCreateSegmentPromise
               .then((audienceSegmentId) => {
                 return this.saveProcessingSelections(
@@ -957,10 +933,10 @@ export class AutomationFormService implements IAutomationFormService {
           } else if (isQueryInputNode(node) || isIfNode(node)) {
             const saveOrCreateQueryPromise = node.query_id
               ? this._queryService.updateQuery(
-                datamartId,
-                node.query_id,
-                node.formData,
-              )
+                  datamartId,
+                  node.query_id,
+                  node.formData,
+                )
               : this._queryService.createQuery(datamartId, node.formData);
             return saveOrCreateQueryPromise.then((queryRes) => {
               return this.saveOrCreateNode(
@@ -987,38 +963,32 @@ export class AutomationFormService implements IAutomationFormService {
           } else if (
             isCustomActionNode(node) &&
             node.formData &&
-            node.formData.pluginId
+            node.formData.customActionId
           ) {
-            const customActionIdP = node.custom_action_id
-              ? Promise.resolve(node.custom_action_id)
-              : this.saveCustomActionIfNeeded(
-                organisationId,
-                node.formData,
-                node.formData.pluginId,
-              );
+            const customActionId = node.custom_action_id
+              ? node.custom_action_id
+              : node.formData.customActionId;
 
-            return customActionIdP.then((customActionId) => {
-              return this.saveOrCreateNode(
-                automationId,
-                storylineNode,
-                undefined,
-                undefined,
-                undefined,
-                customActionId,
-              ).then((res) => {
-                return this.saveOrCreateEdges(automationId, {
-                  source_id: parentNodeId,
-                  target_id: res.data.id,
-                  edgeResource: storylineNode.in_edge,
-                }).then(() => {
-                  return this.iterate(
-                    organisationId,
-                    datamartId,
-                    automationId,
-                    storylineNode.out_edges,
-                    res.data.id,
-                  );
-                });
+            return this.saveOrCreateNode(
+              automationId,
+              storylineNode,
+              undefined,
+              undefined,
+              undefined,
+              customActionId,
+            ).then((res) => {
+              return this.saveOrCreateEdges(automationId, {
+                source_id: parentNodeId,
+                target_id: res.data.id,
+                edgeResource: storylineNode.in_edge,
+              }).then(() => {
+                return this.iterate(
+                  organisationId,
+                  datamartId,
+                  automationId,
+                  storylineNode.out_edges,
+                  res.data.id,
+                );
               });
             });
           } else if (
@@ -1029,13 +999,13 @@ export class AutomationFormService implements IAutomationFormService {
             const feedIdP =
               !node.feed_id && node.strictlyLayoutablePlugin.plugin_preset
                 ? this.saveFeedIfNeeded(
-                  organisationId,
-                  datamartId,
-                  automationId,
-                  node.formData,
-                  node.strictlyLayoutablePlugin,
-                  node.strictlyLayoutablePlugin.plugin_preset,
-                )
+                    organisationId,
+                    datamartId,
+                    automationId,
+                    node.formData,
+                    node.strictlyLayoutablePlugin,
+                    node.strictlyLayoutablePlugin.plugin_preset,
+                  )
                 : Promise.resolve(node.feed_id);
 
             return feedIdP.then((feedId) => {
@@ -1287,15 +1257,15 @@ export class AutomationFormService implements IAutomationFormService {
     }
     saveOrCreateScenarioNode = resourceId
       ? this._scenarioService
-        .updateScenarioNode(automationId, node.id, scenarioNodeResource)
-        .then((e) => {
-          this.removeNodeId(e.data.id);
-          return e;
-        })
+          .updateScenarioNode(automationId, node.id, scenarioNodeResource)
+          .then((e) => {
+            this.removeNodeId(e.data.id);
+            return e;
+          })
       : this._scenarioService.createScenarioNode(automationId, {
-        ...scenarioNodeResource,
-        id: undefined,
-      });
+          ...scenarioNodeResource,
+          id: undefined,
+        });
     return saveOrCreateScenarioNode;
   };
 
@@ -1306,84 +1276,30 @@ export class AutomationFormService implements IAutomationFormService {
     const resource = customEdgeData.edgeResource;
     return resource && resource.id && !isFakeId(resource.id)
       ? // update does not work therefore we are deleting the old one and creating a new one
-      this._scenarioService
-        .deleteScenarioEdge(automationId, resource.id)
-        .then(() =>
-          this._scenarioService.createScenarioEdge(automationId, {
+        this._scenarioService
+          .deleteScenarioEdge(automationId, resource.id)
+          .then(() =>
+            this._scenarioService.createScenarioEdge(automationId, {
+              ..._.omit(customEdgeData.edgeResource, ['id']),
+              source_id: customEdgeData.source_id,
+              target_id: customEdgeData.target_id,
+            }),
+          )
+          .then(() => {
+            this.removeEdgeId(resource.id);
+            return resource;
+          })
+      : this._scenarioService
+          .createScenarioEdge(automationId, {
             ..._.omit(customEdgeData.edgeResource, ['id']),
+            scenario_id: automationId,
             source_id: customEdgeData.source_id,
             target_id: customEdgeData.target_id,
-          }),
-        )
-        .then(() => {
-          this.removeEdgeId(resource.id);
-          return resource;
-        })
-      : this._scenarioService
-        .createScenarioEdge(automationId, {
-          ..._.omit(customEdgeData.edgeResource, ['id']),
-          scenario_id: automationId,
-          source_id: customEdgeData.source_id,
-          target_id: customEdgeData.target_id,
-        })
-        .then((e) => {
-          this.removeEdgeId(e.data.id);
-          return e;
-        });
-  };
-
-  saveCustomActionIfNeeded = (
-    organisationId: string,
-    customActionFormData: CustomActionAutomationFormData,
-    pluginId: string,
-  ): Promise<string> => {
-    return this._pluginService.getPlugin(pluginId).then((resPlugin) => {
-      const pluginResource = resPlugin.data;
-
-      const customActionResourceP: Partial<CustomActionResource> = {
-        name: customActionFormData.name,
-        organisation_id: organisationId,
-        group_id: pluginResource.group_id,
-        artifact_id: pluginResource.artifact_id,
-      };
-
-      return this._customActionService
-        .createPluginInstance(organisationId, customActionResourceP)
-        .then((resCustomAction) => {
-          const createdCustomAction = resCustomAction.data;
-          const customActionId = createdCustomAction.id;
-
-          const propertyKeysAndValues = Object.entries<any>(
-            customActionFormData.properties || {},
-          );
-          const propertyPromises = propertyKeysAndValues.map((keyAndValue) => {
-            const [key, valueObj] = keyAndValue;
-            const value = valueObj.value;
-            const associatedPluginVersionProperty = customActionFormData.pluginVersionProperties
-              ? customActionFormData.pluginVersionProperties.find(
-                (property) => property.technical_name === key,
-              )
-              : undefined;
-
-            const propertyToBeCreated = {
-              ...associatedPluginVersionProperty,
-              technical_name: key,
-              value: value,
-            };
-
-            return this._customActionService.updatePluginInstanceProperty(
-              organisationId,
-              customActionId,
-              key,
-              propertyToBeCreated,
-            );
+          })
+          .then((e) => {
+            this.removeEdgeId(e.data.id);
+            return e;
           });
-
-          return Promise.all(propertyPromises).then((resPropertyPromises) => {
-            return customActionId;
-          });
-        });
-    });
   };
 
   saveFeedIfNeeded = (
@@ -1410,7 +1326,7 @@ export class AutomationFormService implements IAutomationFormService {
     const feedP = audienceSegmentP.then((audienceSegmentId) => {
       const createFeed =
         strictlyLayoutablePlugin.plugin_type ===
-          'AUDIENCE_SEGMENT_EXTERNAL_FEED'
+        'AUDIENCE_SEGMENT_EXTERNAL_FEED'
           ? this._audienceSegmentService.createAudienceExternalFeeds
           : this._audienceSegmentService.createAudienceTagFeeds;
 
@@ -1430,9 +1346,9 @@ export class AutomationFormService implements IAutomationFormService {
         const feed = audienceSegmentAndFeed[1];
         const updateProperty =
           strictlyLayoutablePlugin.plugin_type ===
-            'AUDIENCE_SEGMENT_EXTERNAL_FEED'
+          'AUDIENCE_SEGMENT_EXTERNAL_FEED'
             ? this._audienceSegmentService
-              .updateAudienceSegmentExternalFeedProperty
+                .updateAudienceSegmentExternalFeedProperty
             : this._audienceSegmentService.updateAudienceSegmentTagFeedProperty;
 
         return Promise.all(
