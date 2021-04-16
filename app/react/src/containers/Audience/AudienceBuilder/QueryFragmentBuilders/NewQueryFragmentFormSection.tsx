@@ -95,11 +95,11 @@ class NewQueryFragmentFormSection extends React.Component<Props> {
           <span className="mcs-timeline_title_highlight">
             {intl.formatMessage(
               messages.audienceBuilderTimelineMatchingCriterias0,
-            )}
+            )}&nbsp;
           </span>
         )}
 
-        {intl.formatMessage(titlePart1)}
+        {intl.formatMessage(titlePart1)}&nbsp;
 
         <span className="mcs-timeline_title_highlight">
           {intl.formatMessage(titlePart2)}

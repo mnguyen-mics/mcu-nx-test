@@ -111,11 +111,11 @@ export const messages: {
   },
   audienceBuilderTimelineMatchingCriterias0: {
     id: 'audienceBuilder.timeline.matchingCriterias.and',
-    defaultMessage: 'AND ',
+    defaultMessage: 'AND',
   },
   audienceBuilderTimelineMatchingCriterias1: {
     id: 'audienceBuilder.timeline.matchingCriterias.include',
-    defaultMessage: 'People should match ',
+    defaultMessage: 'People should match',
   },
   audienceBuilderTimelineMatchingCriterias2: {
     id: 'audienceBuilder.timeline.matchingCriterias.one',
@@ -123,7 +123,7 @@ export const messages: {
   },
   audienceBuilderTimelineExcludingCriterias1: {
     id: 'audienceBuilder.timeline.excludingCriterias.exclude',
-    defaultMessage: 'Exclude people matching ',
+    defaultMessage: 'Exclude people matching',
   },
   audienceBuilderTimelineExcludingCriterias2: {
     id: 'audienceBuilder.timeline.excludingCriterias.one',
