@@ -107,6 +107,8 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     defaultLiftime?: number;
     defaultLiftimeUnit?: DefaultLiftimeUnit;
   } => {
+    if(!audienceSegmentFormData.audienceSegment.default_ttl) return { defaultLiftimeUnit: 'days' };
+
     let lifetime = moment
       .duration(
         audienceSegmentFormData.audienceSegment.default_ttl,
@@ -348,7 +350,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
 
       const audienceSegment = {
         ...audienceSegmentFormData.audienceSegment,
-        default_ttl: countTTL(audienceSegmentFormData),
+        default_ttl: audienceSegmentFormData.defaultLifetime ? countTTL(audienceSegmentFormData) : null,
         datamart_id: datamartId,
         organisation_id: organisationId,
       };

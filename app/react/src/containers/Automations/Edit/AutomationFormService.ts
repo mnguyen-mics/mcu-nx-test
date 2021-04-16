@@ -276,27 +276,30 @@ export class AutomationFormService implements IAutomationFormService {
                   .then((result: AudienceSegmentFormData) => {
                     const segment = result.audienceSegment;
 
-                    const getTtl = (ttl?: moment.Duration): {
+                    const getTtl = (ttl?: number | null): {
                       value?: string;
                       unit: 'days' | 'weeks' | 'months';
                     } => {
-                      if (!ttl) return { unit: 'days' };
+                      if(!ttl) return { unit: 'days' };
+                      
+                      const duration = moment.duration(ttl, 'milliseconds');
+                      if (!duration) return { unit: 'days' };
 
-                      const months = ttl.asMonths();
+                      const months = duration.asMonths();
                       if (Number.isInteger(months) && months > 0) {
                         return { value: months.toString(), unit: 'months' };
                       } else {
-                        const weeks = ttl.asWeeks();
+                        const weeks = duration.asWeeks();
                         if (Number.isInteger(weeks) && weeks > 0)
                           return { value: weeks.toString(), unit: 'weeks' };
                       }
-                      return { value: ttl.asDays().toString(), unit: 'days' };;
+                      return { value: duration.asDays().toString(), unit: 'days' };;
                     }
 
                     const initialValues: AddToSegmentAutomationFormData = {
                       audienceSegmentName: segment.name,
                       processingActivities: result.processingActivities,
-                      ttl: getTtl(moment.duration(segment.default_ttl, 'milliseconds')),
+                      ttl: getTtl(segment.default_ttl),
                     };
                     return {
                       ...n,
@@ -885,7 +888,7 @@ export class AutomationFormService implements IAutomationFormService {
                   : '',
                 node.formData.ttl.value ?
                   moment.duration(Number(node.formData.ttl.value), node.formData.ttl.unit).asMilliseconds() :
-                  0
+                  undefined
               );
             return saveOrCreateSegmentPromise
               .then((audienceSegmentId) => {
@@ -1455,7 +1458,7 @@ export class AutomationFormService implements IAutomationFormService {
     organisationId: string,
     datamartId: string,
     name: string,
-    defaultTtl: number,
+    defaultTtl?: number,
   ): Promise<string> => {
     return this._audienceSegmentService
       .createAudienceSegment(organisationId, {
