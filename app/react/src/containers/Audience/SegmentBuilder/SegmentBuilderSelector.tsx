@@ -26,7 +26,7 @@ import { AudienceBuilderResource } from '../../../models/audienceBuilder';
 const messages = defineMessages({
   builder: {
     id: 'audience.builderSelector.builder',
-    defaultMessage: 'Builder',
+    defaultMessage: 'Builders',
   },
   segmentBuilders: {
     id: 'audience.builderSelector.segmentBuilders',

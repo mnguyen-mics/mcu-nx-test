@@ -26,9 +26,9 @@ export default defineMessages({
     id: 'menu.audience.segmentBuilder',
     defaultMessage: 'Segment Builder',
   },
-  builder: {
+  builders: {
     id: 'menu.audience.builder',
-    defaultMessage: 'Builder',
+    defaultMessage: 'Builders',
   },
   audienceMonitoring: {
     id: 'menu.audience.monitoring',
