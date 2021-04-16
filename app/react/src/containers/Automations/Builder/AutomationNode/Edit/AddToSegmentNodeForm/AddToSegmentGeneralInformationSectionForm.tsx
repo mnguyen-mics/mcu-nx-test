@@ -29,7 +29,7 @@ type Props = GeneralInformationFormSectionProps &
 class AddToSegmentGeneralInformationFormSection extends React.Component<Props> {
   render() {
     const {
-      fieldValidators: { isRequired, isValidInteger },
+      fieldValidators: { isRequired, isValidInteger, isNotZero },
       intl: { formatMessage },
       disabled,
     } = this.props;
@@ -64,7 +64,7 @@ class AddToSegmentGeneralInformationFormSection extends React.Component<Props> {
           <FormInputField
             name="ttl.value"
             component={FormInput}
-            validate={[isValidInteger]}
+            validate={[isValidInteger, isNotZero]}
             formItemProps={{
               label: formatMessage(messages.audienceSegmentTTLTitle),
             }}
@@ -154,7 +154,7 @@ export const messages = defineMessages({
   audienceSegmentTTLSubtitle: {
     id: 'automation.builder.node.addToSegmentForm.ttl.subtitle',
     defaultMessage:
-      'The time that users will be in the segment for (0 means forever). If not filled, a default TTL will be applied.',
+      'The time that users will be in the segment for (empty means forever).',
   },
   audienceSegmentTTLPlaceholder: {
     id: 'automation.builder.node.addToSegmentForm.ttl.placeholder',

@@ -55,7 +55,7 @@ export interface AudienceSegmentFormData {
   audienceSegment: Partial<AudienceSegmentShape>;
   initialProcessingSelectionResources: ProcessingSelectionResource[];
   processingActivities: ProcessingActivityFieldModel[];
-  defaultLifetime?: number;
+  defaultLifetime?: number | null;
   defaultLifetimeUnit?: DefaultLiftimeUnit;
   query?: QueryResource;
   userListFiles?: UploadFile[];
