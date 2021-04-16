@@ -24,6 +24,7 @@ export interface Chart {
   tabs?: TabItem[];
   unit?: 'time' | '%' | 'number' | '€';
   filterBy?: DatamartUsersAnalyticsDimension;
+  sampling?: number;
 }
 
 export interface TabItem extends Chart {
