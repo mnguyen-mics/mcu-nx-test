@@ -6,6 +6,9 @@ import PluginInstanceService from './PluginInstanceService';
 import { CustomActionResource } from '../models/Plugins';
 
 export interface ICustomActionService {
+  getInstances: (
+    options?: object,
+  ) => Promise<DataListResponse<CustomActionResource>>;
   getInstanceById: (
     id: string,
     options?: object,
@@ -40,11 +43,11 @@ export class CustomActionService
   }
 
   getLocalizedPluginLayout(pInstanceId: string): Promise<PluginLayout | null> {
-    return this.getInstanceById(pInstanceId).then(res => {
+    return this.getInstanceById(pInstanceId).then((res) => {
       const customAction = res.data;
       return this._pluginService
         .findPluginFromVersionId(customAction.version_id)
-        .then(pluginResourceRes => {
+        .then((pluginResourceRes) => {
           const pluginResource = pluginResourceRes.data;
           return this._pluginService.getLocalizedPluginLayout(
             pluginResource.id,

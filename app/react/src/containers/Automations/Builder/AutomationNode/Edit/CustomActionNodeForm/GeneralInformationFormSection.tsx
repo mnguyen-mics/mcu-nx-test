@@ -8,17 +8,15 @@ import { CustomActionAutomationFormData } from '../domain';
 import {
   DefaultSelect,
   FormSelectField,
-  FormInput,
-  FormInputField,
   FormSection,
 } from '../../../../../../components/Form';
 import { compose } from 'recompose';
-import { ExtendedPluginInformation } from './CustomActionAutomationForm';
+import { ExtendedCustomActionInformation } from './CustomActionAutomationForm';
 import { DefaultOptionProps } from '../../../../../../components/Form/FormSelect/DefaultSelect';
 
 interface GeneralInformationFormSectionProps {
   initialValues: Partial<CustomActionAutomationFormData>;
-  extendedPluginsInformation: ExtendedPluginInformation[];
+  extendedCustomActionsInformation: ExtendedCustomActionInformation[];
   organisationId: string;
   disabled?: boolean;
 }
@@ -33,45 +31,40 @@ class GeneralInformationFormSection extends React.Component<Props> {
       fieldValidators: { isRequired },
       intl: { formatMessage },
       disabled,
-      extendedPluginsInformation,
+      extendedCustomActionsInformation,
     } = this.props;
 
-    const options: DefaultOptionProps[] = extendedPluginsInformation.map(
-      extendedPluginInformation => ({
-        value: extendedPluginInformation.plugin.id,
-        title:
-          extendedPluginInformation.pluginLayout?.metadata.display_name ||
-          extendedPluginInformation.plugin.name ||
-          extendedPluginInformation.plugin.artifact_id,
+    const options: DefaultOptionProps[] = extendedCustomActionsInformation.map(
+      (extendedCustomActionInformation) => ({
+        value: extendedCustomActionInformation.customAction.id,
+        title: extendedCustomActionInformation.customAction.name,
       }),
+    );
+
+    const tooltip = (
+      <span>
+        {formatMessage(messages.pluginInstanceTooltip)}
+        &nbsp;
+        <a href="https://developer.mediarithmics.com/" target="_blank">
+          {formatMessage(messages.developerDocumentation)}
+        </a>
+        . &nbsp;
+      </span>
     );
 
     return (
       <div>
-        <FormSection title={messages.sectionGeneralTitle} />
+        <FormSection title={messages.sectionGeneralConfigurationTitle} />
         <div>
-          <FormInputField
-            name="name"
-            component={FormInput}
-            validate={[isRequired]}
-            formItemProps={{
-              label: formatMessage(messages.customActionNameTitle),
-              required: true,
-            }}
-            inputProps={{
-              placeholder: formatMessage(messages.customActionNamePlaceholder),
-              disabled: !!disabled,
-            }}
-            small={true}
-          />
           <FormSelectField
-            name="pluginId"
+            name="customActionId"
             component={DefaultSelect}
             validate={[isRequired]}
             formItemProps={{
-              label: formatMessage(messages.pluginVersionLabel),
+              label: formatMessage(messages.pluginInstanceLabel),
               required: true,
             }}
+            helpToolTipProps={{ title: tooltip }}
             options={options}
             small={true}
             disabled={!!disabled}

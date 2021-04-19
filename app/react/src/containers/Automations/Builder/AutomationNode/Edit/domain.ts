@@ -1,12 +1,10 @@
-import { PluginLayout } from './../../../../../models/plugin/PluginLayout';
-import { PluginResource } from './../../../../../models/Plugins';
 import { PropertyResourceShape } from './../../../../../models/plugin/index';
 import {
   CustomActionNodeResource,
   FeedNodeResource,
   InputNodeResource,
 } from './../../../../../models/automations/automations';
-import { CustomActionAutomationFormProps } from './CustomActionNodeForm/CustomActionAutomationForm';
+import { CustomActionAutomationFormProps, ExtendedCustomActionInformation } from './CustomActionNodeForm/CustomActionAutomationForm';
 import { Moment } from 'moment';
 import { ProcessingActivityFieldModel } from './../../../../Settings/DatamartSettings/Common/domain';
 import { AutomationNodeShape } from './../../domain';
@@ -137,18 +135,13 @@ export interface OnSegmentExitInputAutomationFormData extends DefaultFormData {
 export interface QueryInputAutomationFormData
   extends DefaultFormData,
     Partial<QueryResource> {
-  uiCreationMode:
-    | 'REACT_TO_EVENT_STANDARD'
-    | 'REACT_TO_EVENT_ADVANCED';
+  uiCreationMode: 'REACT_TO_EVENT_STANDARD' | 'REACT_TO_EVENT_ADVANCED';
 }
 
 export interface CustomActionAutomationFormData extends DefaultFormData {
-  name: string;
-  pluginId?: string;
-  pluginResource?: PluginResource;
-  pluginLayout?: PluginLayout;
-  properties?: any;
-  pluginVersionProperties?: PropertyResourceShape[];
+  customActionId?: string;
+  editExistingNode?: boolean;
+  extendedCustomActionsInformation?: ExtendedCustomActionInformation[];
 }
 
 export interface FeedNodeFormData extends DefaultFormData {
