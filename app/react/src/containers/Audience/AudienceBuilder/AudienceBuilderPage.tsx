@@ -108,7 +108,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
       !datamartId ||
       organisationId !== prevOrganisationId
     ) {
-      history.push(`/v2/o/${organisationId}/audience/segment-builder`);
+      history.push(`/v2/o/${organisationId}/audience/segment-builder-selector`);
     } else if (
       datamartId !== prevDatamartId ||
       audienceBuilderId !== prevAudienceBuilderId

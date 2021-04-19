@@ -2,6 +2,7 @@ import * as React from 'react';
 import { InjectedIntlProps, FormattedMessage, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { messages } from './constants';
+import menuMessages from '../../../containers/Menu/messages'
 import { Button, Menu, Dropdown } from 'antd';
 import { SaveAsUserQuerySegmentModal } from '../../QueryTool/SaveAs';
 import { NewUserQuerySimpleFormData } from '../../QueryTool/SaveAs/NewUserQuerySegmentSimpleForm';
@@ -74,8 +75,11 @@ class AudienceBuilderActionbar extends React.Component<Props, State> {
     );
     let paths: Path[] = [
       {
+        name: intl.formatMessage(menuMessages.builders),
+        path: `/v2/o/${organisationId}/audience/segment-builder-selector`,
+      },
+      {
         name: intl.formatMessage(messages.title),
-        path: `/v2/o/${organisationId}/audience/segment-builder`,
       },
     ];
     if (audienceBuilder) {
