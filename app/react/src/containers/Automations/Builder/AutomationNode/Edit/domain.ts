@@ -141,6 +141,7 @@ export interface QueryInputAutomationFormData
 export interface CustomActionAutomationFormData extends DefaultFormData {
   customActionId?: string;
   editExistingNode?: boolean;
+  properties?: any;
   extendedCustomActionsInformation?: ExtendedCustomActionInformation[];
 }
 
