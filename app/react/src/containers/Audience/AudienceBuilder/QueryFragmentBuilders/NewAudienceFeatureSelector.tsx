@@ -14,13 +14,17 @@ import injectNotifications, {
 } from '../../../Notifications/injectNotifications';
 import { AudienceFeaturesByFolder } from '../../../../models/audienceFeature/AudienceFeatureResource';
 import {
-  SelectorLayout,
   Button,
+  Actionbar,
+  McsIcon,
+  EmptyTableView,
+  Loading,
 } from '@mediarithmics-private/mcs-components-library';
 import { Index } from '@mediarithmics-private/mcs-components-library/lib/utils';
 import AudienceFeatureCard from './AudienceFeatureCard';
 import { FolderOutlined } from '@ant-design/icons';
 import { messages } from '../constants';
+import Layout from 'antd/lib/layout/layout';
 
 const Search = Input.Search;
 
@@ -41,6 +45,9 @@ interface State {
   selectedAudienceFeature?: AudienceFeatureResource;
   selectedFolder?: AudienceFeaturesByFolder;
   keywords?: string;
+  // allAudienceFeatures variable is defined when user searches feature with the searchbar
+  // In that case, UI changes to display only features and NOT features by folders
+  allAudienceFeatures?: AudienceFeatureResource[];
 }
 
 type Props = MapStateToProps &
@@ -75,11 +82,16 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
     }
   }
 
-  setBaseFolder = (baseFolder: AudienceFeaturesByFolder) => {
+  setBaseFolder = (searchMode: boolean = false) => (
+    baseFolder: AudienceFeaturesByFolder,
+    total: number,
+    allFeatures: AudienceFeatureResource[],
+  ) => {
     this.setState({
       audienceFeaturesByFolder: baseFolder,
-      selectedFolder: baseFolder,
+      selectedFolder: searchMode ? undefined : baseFolder,
       isLoading: false,
+      allAudienceFeatures: searchMode ? allFeatures : undefined,
     });
   };
 
@@ -92,10 +104,11 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
 
   fetchFoldersAndFeatures = (filter?: Index<any>) => {
     const { datamartId, demographicIds, intl, notifyError } = this.props;
+    const searchMode = !!filter?.keywords;
     this._audienceFeatureService.fetchFoldersAndFeatures(
       datamartId,
       intl.formatMessage(messages.audienceFeatures),
-      this.setBaseFolder,
+      this.setBaseFolder(searchMode),
       this.onFailure,
       notifyError,
       filter,
@@ -158,6 +171,7 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
   };
 
   onSelectFeature = (id: string) => () => {
+    const { save } = this.props;
     const { audienceFeaturesByFolder } = this.state;
     let selectedAudienceFeature = audienceFeaturesByFolder?.audience_features.find(
       (f) => f.id === id,
@@ -177,45 +191,41 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
       };
       if (audienceFeaturesByFolder) loop(audienceFeaturesByFolder.children);
     }
-
-    this.setState({
-      selectedAudienceFeature,
-    });
+    this.setState(
+      {
+        selectedAudienceFeature,
+      },
+      () => {
+        if (selectedAudienceFeature) save([selectedAudienceFeature]);
+      },
+    );
   };
 
-  render() {
+  renderSelector = () => {
     const {
       audienceFeaturesByFolder,
       selectedAudienceFeature,
       selectedFolder,
+      allAudienceFeatures,
+      isLoading,
     } = this.state;
-
-    const {
-      intl: { formatMessage },
-      save,
-      close,
-    } = this.props;
-
-    const handleAdd = () => {
-      if (selectedAudienceFeature) {
-        save([selectedAudienceFeature]);
-      }
-    };
-
+    const disabled =
+      !!audienceFeaturesByFolder &&
+      audienceFeaturesByFolder.children.length === 0 &&
+      audienceFeaturesByFolder.audience_features.length === 0;
+    const featuresToDisplay = !!selectedFolder
+      ? selectedFolder.audience_features
+      : allAudienceFeatures
+      ? allAudienceFeatures
+      : [];
+    if (isLoading) {
+      return <Loading className="m-t-40" isFullScreen={true} />;
+    }
+    if (disabled) {
+      return <EmptyTableView iconType="warning" message={''} />;
+    }
     return (
-      <SelectorLayout
-        className="mcs-audienceBuilder_featureSelector"
-        actionBarTitle={formatMessage(messages.addAudienceFeature)}
-        handleAdd={handleAdd}
-        handleClose={close}
-        disabled={
-          !!audienceFeaturesByFolder &&
-          audienceFeaturesByFolder.children.length === 0 &&
-          audienceFeaturesByFolder.audience_features.length === 0
-        }
-        addButtonText={formatMessage(messages.addAudienceFeatureButton)}
-        noElementText=""
-      >
+      <React.Fragment>
         <Search className="mcs-search-input" {...this.getSearchOptions()} />
         {this.getBreadCrumb()}
         <Row gutter={16}>
@@ -227,7 +237,7 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
                     className="mcs-audienceBuilder_folder"
                     onClick={this.onSelectFolder(folder.id)}
                   >
-                    <FolderOutlined className="menu-icon" />
+                    <FolderOutlined className="mcs-audienceBuilder_folderIcon" />
                     <br />
                     <span>{folder.name}</span>
                     <br />
@@ -240,20 +250,47 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
             })}
         </Row>
         <Row className="mcs-audienceBuilder_featureCardContainer" gutter={16}>
-          {!!selectedFolder &&
-            selectedFolder.audience_features.map((feature) => {
-              return (
-                <Col key={feature.id} span={6}>
-                  <AudienceFeatureCard
-                    audienceFeature={feature}
-                    selectedAudienceFeature={selectedAudienceFeature}
-                    onSelectFeature={this.onSelectFeature}
-                  />
-                </Col>
-              );
-            })}
+          {featuresToDisplay.map((feature) => {
+            return (
+              <Col key={feature.id} span={6}>
+                <AudienceFeatureCard
+                  audienceFeature={feature}
+                  selectedAudienceFeature={selectedAudienceFeature}
+                  onSelectFeature={this.onSelectFeature}
+                />
+              </Col>
+            );
+          })}
         </Row>
-      </SelectorLayout>
+      </React.Fragment>
+    );
+  };
+
+  render() {
+    const {
+      intl: { formatMessage },
+      close,
+    } = this.props;
+
+    const path = {
+      name: formatMessage(messages.addAudienceFeature),
+    };
+
+    return (
+      <Layout className={'mcs-selector-layout'}>
+        <Actionbar paths={[path]} edition={true}>
+          <McsIcon
+            type="close"
+            className="close-icon mcs-table-cursor"
+            onClick={close}
+          />
+        </Actionbar>
+        <Layout
+          className={`mcs-edit-container mcs-audienceBuilder_featureSelector`}
+        >
+          {this.renderSelector()}
+        </Layout>
+      </Layout>
     );
   }
 }

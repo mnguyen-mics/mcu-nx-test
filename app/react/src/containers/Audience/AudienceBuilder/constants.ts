@@ -100,6 +100,10 @@ export const messages: {
   availableFilters: {
     id: 'audienceBuilder.audienceFeatureSelector.availableFilters',
     defaultMessage: 'Available Filters',
+  },
+  noAvailableFilters: {
+    id: 'audienceBuilder.audienceFeatureSelector.noAvailableFilters',
+    defaultMessage: 'There is no filter for this audience feature.',
   }, 
   audienceBuilderInclude: {
     id: 'audienceBuilder.include',

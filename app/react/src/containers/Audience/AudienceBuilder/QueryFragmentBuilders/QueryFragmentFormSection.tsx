@@ -103,7 +103,7 @@ class QueryFragmentFormSection extends React.Component<Props, State> {
 
     const parameters: { [key: string]: string[] | undefined } = {};
     if (audienceFeatures[0]) {
-      audienceFeatures[0].variables.forEach((v) => {
+      audienceFeatures[0].variables?.forEach((v) => {
         parameters[v.field_name] = undefined;
       });
       const newFeature: AudienceBuilderParametricPredicateNode = {

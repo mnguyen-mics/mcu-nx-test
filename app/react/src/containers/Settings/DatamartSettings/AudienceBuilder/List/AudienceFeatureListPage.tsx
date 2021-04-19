@@ -98,12 +98,12 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
   }
 
   setBaseFolder = (
-    baseFolder: AudienceFeaturesByFolder,
+    baseFolderFeatures: AudienceFeaturesByFolder,
     totalAudienceFeatures: number,
   ) => {
     this.setState({
-      audienceFeaturesByFolder: baseFolder,
-      selectedFolder: baseFolder,
+      audienceFeaturesByFolder: baseFolderFeatures,
+      selectedFolder: baseFolderFeatures,
       isLoading: false,
       totalAudienceFeatures: totalAudienceFeatures,
     });

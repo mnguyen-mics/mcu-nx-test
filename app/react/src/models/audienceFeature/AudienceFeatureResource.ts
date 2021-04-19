@@ -37,7 +37,7 @@ export interface AudienceFeatureResource {
   token: string;
   addressable_object: string;
   object_tree_expression: string;
-  variables: AudienceFeatureVariableResource[];
+  variables?: AudienceFeatureVariableResource[];
   folder_id?: string | null;
 }
 

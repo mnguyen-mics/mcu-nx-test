@@ -61,7 +61,7 @@ class AudienceFeatureLayout extends React.Component<Props, State> {
         {!!audienceFeature.description && (
           <i className="mcs-audienceBuilder_audienceFeatureDescription">{`${audienceFeature.description} `}</i>
         )}
-        {audienceFeature.variables.map((v, index) => {
+        {audienceFeature.variables?.map((v, index) => {
           return (
             <AudienceFeatureVariable
               newLayout={false}
