@@ -5,7 +5,7 @@ import { ACCESS_TOKEN } from './AuthService';
 
 export type StatusCode = 'ok' | 'error';
 
-interface ApiResponse {
+export interface ApiResponse {
   status: StatusCode;
 }
 
