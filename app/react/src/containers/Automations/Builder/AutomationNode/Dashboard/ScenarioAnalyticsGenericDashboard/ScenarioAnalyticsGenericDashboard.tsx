@@ -87,11 +87,7 @@ class ScenarioAnalyticsGenericDashboard extends React.Component<Props, State> {
     return (
       <div className="mcs-scenarioAnalyticsGenericDashboard ant-layout">
         <Actionbar
-          paths={[
-            {
-              name: dashboardTitle,
-            },
-          ]}
+          pathItems={[dashboardTitle]}
           edition={true}
         >
           <McsIcon

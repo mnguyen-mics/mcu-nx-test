@@ -99,11 +99,7 @@ class DisplayCreativeRendererSelector extends React.Component<Props, State> {
     const actionBarProps: FormLayoutActionbarProps = {
       formId: 'typePickerForm',
       onClose: this.props.close,
-      paths: [
-        {
-          name: formatMessage(messages.creativeCreationBreadCrumb),
-        },
-      ],
+      pathItems: [formatMessage(messages.creativeCreationBreadCrumb)],
     };
 
     return (

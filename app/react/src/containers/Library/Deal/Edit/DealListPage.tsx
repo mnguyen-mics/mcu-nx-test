@@ -14,6 +14,7 @@ import { TYPES } from '../../../../constants/types';
 import { IDealListService } from '../../../../services/Library/DealListService';
 import { lazyInject } from '../../../../config/inversify.config';
 import { IDealListFormService } from './DealListFormService';
+import { Link } from 'react-router-dom';
 
 const messages = defineMessages({
   editDealList: {
@@ -155,19 +156,16 @@ class DealListPage extends React.Component<JoinedProps, DealListPageState> {
       const dealListName =
         dealListId && dealListFormData
           ? intl.formatMessage(messages.editDealList, {
-              name: dealListFormData.name
-                ? dealListFormData.name
-                : intl.formatMessage(messages.dealList),
-            })
+            name: dealListFormData.name
+              ? dealListFormData.name
+              : intl.formatMessage(messages.dealList),
+          })
           : intl.formatMessage(messages.newDealList);
       const breadcrumbPaths = [
-        {
-          name: intl.formatMessage(messages.dealLists),
-          path: `/v2/o/${organisationId}/library/deallist`,
-        },
-        {
-          name: dealListName,
-        },
+        <Link key="1" to={`/v2/o/${organisationId}/library/deallist`}>
+          {intl.formatMessage(messages.dealLists)}
+        </Link>,
+        dealListName,
       ];
       return (
         <DealListForm

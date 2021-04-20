@@ -351,10 +351,6 @@ class CreateEmailTemplate extends React.Component<
 
     const { isLoading } = this.state;
 
-    const breadcrumbPaths = [
-      { name: formatMessage(messages.emailTemplateBreadCrumb) },
-    ];
-
     const sections =
       this.state.pluginLayout === undefined
         ? [
@@ -400,7 +396,7 @@ class CreateEmailTemplate extends React.Component<
       </div>
     ) : (
       <EditContentLayout
-        paths={breadcrumbPaths}
+        pathItems={[formatMessage(messages.emailTemplateBreadCrumb)]}
         items={sidebarItems}
         scrollId={formId}
         {...actionbarProps}

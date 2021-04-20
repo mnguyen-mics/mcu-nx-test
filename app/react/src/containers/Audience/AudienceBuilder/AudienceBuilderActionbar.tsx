@@ -8,8 +8,8 @@ import { SaveAsUserQuerySegmentModal } from '../../QueryTool/SaveAs';
 import { NewUserQuerySimpleFormData } from '../../QueryTool/SaveAs/NewUserQuerySegmentSimpleForm';
 import { Actionbar } from '@mediarithmics-private/mcs-components-library';
 import { AudienceBuilderResource } from '../../../models/audienceBuilder/AudienceBuilderResource';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { withRouter, RouteComponentProps } from 'react-router';
+import { Link } from 'react-router-dom';
 
 interface AudienceBuilderActionbarProps {
   save: (formData: NewUserQuerySimpleFormData) => Promise<any>;
@@ -73,14 +73,11 @@ class AudienceBuilderActionbar extends React.Component<Props, State> {
         </Menu.Item>
       </Menu>
     );
-    let paths: Path[] = [
-      {
-        name: intl.formatMessage(menuMessages.builders),
-        path: `/v2/o/${organisationId}/audience/segment-builder-selector`,
-      },
-      {
-        name: intl.formatMessage(messages.title),
-      },
+    let paths: React.ReactNode[] = [
+      <Link key="1" to={`/v2/o/${organisationId}/audience/segment-builder-selector`}>
+        {intl.formatMessage(menuMessages.builders)}
+      </Link>,
+      intl.formatMessage(messages.title),
     ];
     if (audienceBuilder) {
       paths = paths.concat({
@@ -94,7 +91,7 @@ class AudienceBuilderActionbar extends React.Component<Props, State> {
     }
 
     return (
-      <Actionbar paths={paths}>
+      <Actionbar pathItems={paths}>
         <Dropdown overlay={saveAsMenu} trigger={['click']}>
           <Button className="mcs-primary" type="primary">
             <FormattedMessage

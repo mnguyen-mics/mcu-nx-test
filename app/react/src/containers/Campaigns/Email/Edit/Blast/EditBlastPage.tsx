@@ -19,6 +19,7 @@ import { TYPES } from '../../../../../constants/types';
 import { IEmailCampaignService } from '../../../../../services/EmailCampaignService';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { IEmailCampaignFormService } from '../EmailCampaignFormService';
+import { Link } from 'react-router-dom';
 
 interface State {
   campaign?: EmailCampaignResource;
@@ -152,13 +153,10 @@ class EditBlastPage extends React.Component<Props, State> {
       : formatMessage(messages.emailBlastEditorBreadcrumbTitleNewBlast);
 
     const breadcrumbPaths = [
-      {
-        name: campaignName,
-        path: `/v2/o/${organisationId}/campaigns/email/${campaignId}`,
-      },
-      {
-        name: blastName,
-      },
+      <Link key="1" to={`/v2/o/${organisationId}/campaigns/email/${campaignId}`}>
+        {campaignName}
+      </Link>,
+      blastName,
     ];
 
     return (

@@ -17,7 +17,6 @@ import { IPluginInstanceService } from '../../../services/PluginInstanceService'
 import * as actions from '../../../redux/Notifications/actions';
 import { EditContentLayout } from '../../../components/Layout';
 import messages from './messages';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { SideBarItem } from '../../../components/Layout/ScrollspySider';
 import { PluginLayout } from '../../../models/plugin/PluginLayout';
 import { PropertyResourceShape } from '../../../models/plugin';
@@ -50,7 +49,7 @@ export interface PluginContentOuterProps<T extends PluginInstance> {
   listSubTitle: FormattedMessage.MessageDescriptor;
   pluginPresetListTitle?: FormattedMessage.MessageDescriptor;
   pluginPresetListSubTitle?: FormattedMessage.MessageDescriptor;
-  breadcrumbPaths: (pluginInstance?: T) => Path[];
+  breadcrumbPaths: (pluginInstance?: T) => React.ReactNode[];
   pluginInstanceService: IPluginInstanceService<T>;
   pluginInstanceId?: string;
   onClose: () => void;
@@ -593,7 +592,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<
     if (isCardLayout) {
       return (
         <EditContentLayout
-          paths={breadcrumbPaths(initialValues && initialValues.pluginInstance)}
+          pathItems={breadcrumbPaths(initialValues && initialValues.pluginInstance)}
           {...actionbarProps}
         >
           <PluginCardSelector
@@ -666,7 +665,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<
     if (pluginProperties.length || pluginInstanceId) {
       return (
         <EditContentLayout
-          paths={breadcrumbPaths(initialValues && initialValues.pluginInstance)}
+          pathItems={breadcrumbPaths(initialValues && initialValues.pluginInstance)}
           items={sidebarItems}
           scrollId={formId}
           {...actionbarProps}
@@ -695,7 +694,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<
 
     return (
       <EditContentLayout
-        paths={breadcrumbPaths(initialValues && initialValues.pluginInstance)}
+        pathItems={breadcrumbPaths(initialValues && initialValues.pluginInstance)}
         {...actionbarProps}
       >
         <PluginEditSelector

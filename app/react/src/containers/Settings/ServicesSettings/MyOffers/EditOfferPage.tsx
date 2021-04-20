@@ -13,6 +13,7 @@ import { IServiceOfferPageService } from '../ServiceOfferPageService';
 import { Loading } from '../../../../components';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
+import { Link } from 'react-router-dom';
 
 export enum OfferType {
   Automatic,
@@ -152,13 +153,10 @@ class EditOfferPage extends React.Component<Props, State> {
         : undefined;
 
     const breadcrumbPaths = [
-      {
-        name: formatMessage(messages.breadcrumbTitle),
-        path: `/v2/o/${organisationId}/settings/services/my_offers`,
-      },
-      {
-        name: formatMessage(messages.newOffer),
-      },
+      <Link key="1" to={`/v2/o/${organisationId}/settings/services/my_offers`}>
+        {formatMessage(messages.breadcrumbTitle)}
+      </Link>,
+      formatMessage(messages.newOffer),
     ];
 
     if (offerType === undefined) {

@@ -5,6 +5,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 
 import { Actionbar } from '@mediarithmics-private/mcs-components-library';
 import messages from './messages';
+import { Link } from 'react-router-dom';
 
 class CatalogActionBar extends React.Component<
   RouteComponentProps<{ organisationId: string }> & InjectedIntlProps,
@@ -19,13 +20,10 @@ class CatalogActionBar extends React.Component<
     } = this.props;
 
     const breadcrumbPaths = [
-      {
-        name: formatMessage(messages.catalog),
-        path: `/v2/o/${organisationId}/library/catalog`,
-      },
+      <Link key='1' to={`/v2/o/${organisationId}/library/catalog`}>{formatMessage(messages.catalog)}</Link>
     ];
 
-    return <Actionbar paths={breadcrumbPaths} />;
+    return <Actionbar pathItems={breadcrumbPaths} />;
   }
 }
 

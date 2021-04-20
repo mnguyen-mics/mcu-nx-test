@@ -179,7 +179,7 @@ class ScenarioExitConditionAutomationForm extends React.Component<
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      paths: [{ name: formatMessage(messages.title) }],
+      pathItems: [ formatMessage(messages.title) ],
       message: messages.save,
       onClose: close,
       disabled: disabled || isLoading,

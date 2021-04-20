@@ -92,10 +92,7 @@ class AutomationActionBar extends React.Component<
     } = this.props;
 
     const breadcrumbPaths = [
-      {
-        name: intl.formatMessage(messages.automationListTitle),
-        path: `/v2/o/${organisationId}/automations`,
-      },
+      <Link key='1' to={`/v2/o/${organisationId}/automations`}>{intl.formatMessage(messages.automationListTitle)}</Link>,
     ];
 
     const buildActionElement = () => {
@@ -110,7 +107,7 @@ class AutomationActionBar extends React.Component<
     };
 
     return (
-      <Actionbar paths={breadcrumbPaths}>
+      <Actionbar pathItems={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/automation-builder`}>
           <Button className="mcs-primary" type="primary">
             <McsIcon type="plus" />{' '}

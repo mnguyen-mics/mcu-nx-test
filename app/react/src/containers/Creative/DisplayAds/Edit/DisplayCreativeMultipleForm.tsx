@@ -9,7 +9,6 @@ import {
   isExistingCreative,
 } from './domain';
 import messages from './messages';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import {
   AuditFormSection,
   PropertiesFormSection,
@@ -31,7 +30,7 @@ export interface DisplayCreativeFormProps
   extends Omit<ConfigProps<DisplayCreativeFormData>, 'form'> {
   actionBarButtonText: FormattedMessage.MessageDescriptor;
   close: () => void;
-  breadCrumbPaths: Path[];
+  breadCrumbPaths: React.ReactNode[];
   goToCreativeTypeSelection?: () => void;
 }
 

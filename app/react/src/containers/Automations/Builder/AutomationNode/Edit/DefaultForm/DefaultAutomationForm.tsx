@@ -19,7 +19,6 @@ import { DefaultFormData, FORM_ID } from '../domain';
 import GeneralInformationFormSection from './GeneralInformationFormSection';
 import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
 import { StorylineNodeModel } from '../../../domain';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 
 const { Content } = Layout;
 
@@ -37,7 +36,7 @@ const localMessages = defineMessages({
 export interface DefaultAutomationFormProps
   extends Omit<ConfigProps<DefaultFormData>, 'form'> {
   close: () => void;
-  breadCrumbPaths: Path[];
+  breadCrumbPaths: React.ReactNode[];
   storylineNodeModel: StorylineNodeModel;
   disabled?: boolean;
 }
@@ -75,7 +74,7 @@ class DefaultAutomationForm extends React.Component<Props> {
     const { breadCrumbPaths, handleSubmit, close, disabled } = this.props;
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      paths: breadCrumbPaths,
+      pathItems: breadCrumbPaths,
       message: localMessages.save,
       onClose: close,
       disabled: disabled,

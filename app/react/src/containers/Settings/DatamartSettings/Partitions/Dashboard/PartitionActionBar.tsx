@@ -62,16 +62,13 @@ class PartitionActionBar extends React.Component<
         : intl.formatMessage(messages.partitionOverview);
 
     const breadcrumbPaths = [
-      {
-        name: intl.formatMessage(messages.partitions),
-        path: `/v2/o/${organisationId}/settings/datamart/audience/partitions`,
-      },
-      {
-        name: partitionName,
-      },
+      <Link key="1" to={`/v2/o/${organisationId}/settings/datamart/audience/partitions`}>
+        {intl.formatMessage(messages.partitions)}
+      </Link>,
+      partitionName,
     ];
     return (
-      <Actionbar paths={breadcrumbPaths}>
+      <Actionbar pathItems={breadcrumbPaths}>
         {partition && partition.status !== 'PUBLISHED' && (
           <Button
             className="mcs-primary"

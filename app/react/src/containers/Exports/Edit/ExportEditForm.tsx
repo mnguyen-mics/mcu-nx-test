@@ -19,7 +19,6 @@ import ScrollspySider, {
   SidebarWrapperProps,
 } from '../../../components/Layout/ScrollspySider';
 import { McsFormSection } from '../../../utils/FormHelper';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import GeneralFormSection from './Sections/GeneralFormSection';
 import OTQLInputEditor, {
   OTQLInputEditorProps,
@@ -69,7 +68,7 @@ interface ExportEditFormProps
   extends Omit<ConfigProps<ExportFormData>, 'form'> {
   onClose: () => void;
   onSave: (formData: ExportFormData) => void;
-  breadCrumbPaths: Path[];
+  breadCrumbPaths: React.ReactNode[];
   datamart?: DatamartResource;
 }
 
@@ -145,7 +144,7 @@ class ExportEditForm extends React.Component<Props> {
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      paths: this.props.breadCrumbPaths,
+      pathItems: this.props.breadCrumbPaths,
       message: messages.saveExport,
       onClose: this.props.onClose,
     };

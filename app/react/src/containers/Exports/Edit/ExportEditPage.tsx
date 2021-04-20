@@ -22,6 +22,7 @@ import { DataResponse } from '../../../services/ApiService';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IQueryService } from '../../../services/QueryService';
+import { Link } from 'react-router-dom';
 
 const messages = defineMessages({
   newExports: {
@@ -263,14 +264,10 @@ class ExportEditPage extends React.Component<Props, ExportEditPageState> {
             : formatMessage(messages.exports),
         })
       : formatMessage(messages.newExports);
+
     const breadcrumbPaths = [
-      {
-        name: formatMessage(messages.exports),
-        path: `/v2/o/${organisationId}/datastudio/exports`,
-      },
-      {
-        name: exportName,
-      },
+      <Link key='1' to={`/v2/o/${organisationId}/datastudio/exports`}>{formatMessage(messages.exports)}</Link>,
+      exportName,
     ];
 
     if (loading) {
@@ -301,7 +298,7 @@ class ExportEditPage extends React.Component<Props, ExportEditPageState> {
       <DatamartSelector
         onSelect={this.onDatamartSelect}
         actionbarProps={{
-          paths: breadcrumbPaths,
+          pathItems: breadcrumbPaths,
           formId: 'EXPORT',
           onClose: this.close,
         }}

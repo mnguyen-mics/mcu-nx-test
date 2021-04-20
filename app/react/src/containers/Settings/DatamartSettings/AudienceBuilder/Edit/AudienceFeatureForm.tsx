@@ -12,7 +12,6 @@ import {
 import { FormLayoutActionbarProps } from '../../../../../components/Layout/FormLayoutActionbar';
 import { McsFormSection } from '../../../../../utils/FormHelper';
 import AudienceFeatureGeneralSection from './Sections/AudienceFeatureGeneralSection';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { messages } from '../messages';
 import { compose } from 'recompose';
@@ -27,7 +26,7 @@ const Content = Layout.Content;
 export interface AudienceFeatureFormProps
   extends Omit<ConfigProps<AudienceFeatureFormData>, 'form'> {
   close: () => void;
-  breadCrumbPaths: Path[];
+  breadCrumbPaths: React.ReactNode[];
   schema?: SchemaItem;
 }
 
@@ -61,7 +60,7 @@ class AudienceFeatureForm extends React.Component<Props> {
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: AUDIENCE_FEATURE_FORM_ID,
-      paths: breadCrumbPaths,
+      pathItems: breadCrumbPaths,
       message: messages.audienceFeatureSave,
       onClose: close,
     };

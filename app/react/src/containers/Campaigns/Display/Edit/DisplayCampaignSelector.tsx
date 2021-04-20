@@ -74,11 +74,7 @@ class DisplayCampaignSelector extends React.Component<
     const actionBarProps: FormLayoutActionbarProps = {
       formId: 'typePickerForm',
       onClose: close,
-      paths: [
-        {
-          name: formatMessage(messages.campaignSelectionBreadcrumb),
-        },
-      ],
+      pathItems: [ formatMessage(messages.campaignSelectionBreadcrumb) ],
     };
 
 

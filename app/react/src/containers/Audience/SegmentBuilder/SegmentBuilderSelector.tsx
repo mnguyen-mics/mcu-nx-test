@@ -174,10 +174,8 @@ class SegmentBuilderSelector extends React.Component<Props, State> {
     };
 
     const actionBarProps: ActionbarProps = {
-      paths: [
-        {
-          name: formatMessage(messages.builder),
-        },
+      pathItems: [
+        formatMessage(messages.builder),
       ],
     };
 

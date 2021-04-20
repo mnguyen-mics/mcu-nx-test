@@ -4,6 +4,7 @@ import { Actionbar } from '@mediarithmics-private/mcs-components-library';
 import { RouteComponentProps } from 'react-router';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import messages from './messages';
+import { Link } from 'react-router-dom';
 
 interface OfferCatalogActionbarProps {
   organisationId: string;
@@ -26,14 +27,13 @@ class OfferCatalogActionBar extends React.Component<JoinedProps> {
     } = this.props;
 
     const breadcrumbPaths = [
-      {
-        name: intl.formatMessage(messages.offerCatalogTitle),
-        path: `/v2/o/${organisationId}/marketplace/offercatalog`,
-      },
+      <Link key='1' to={`/v2/o/${organisationId}/marketplace/offercatalog`}>
+        {intl.formatMessage(messages.offerCatalogTitle)}
+      </Link>
     ];
 
     return (
-      <Actionbar paths={breadcrumbPaths} />
+      <Actionbar pathItems={breadcrumbPaths} />
     );
   }
 }

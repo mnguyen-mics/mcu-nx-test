@@ -12,7 +12,6 @@ import ScrollspySider, {
   SidebarWrapperProps,
 } from '../../../components/Layout/ScrollspySider';
 import { McsFormSection } from '../../../utils/FormHelper';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import GeneralFormSection from './Sections/GeneralFormSection';
 import { Import } from '../../../models/imports/imports';
 import { Omit } from '../../../utils/Types';
@@ -42,7 +41,7 @@ interface ImportEditFormProps
   extends Omit<ConfigProps<Partial<Import>>, 'form'> {
   onClose: () => void;
   onSave: (formData: Partial<Import>) => void;
-  breadCrumbPaths: Path[];
+  breadCrumbPaths: React.ReactNode[];
 }
 
 type Props = InjectedFormProps<Partial<Import>, ImportEditFormProps> &
@@ -72,7 +71,7 @@ class ImportEditForm extends React.Component<Props> {
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      paths: this.props.breadCrumbPaths,
+      pathItems: this.props.breadCrumbPaths,
       message: messages.saveImport,
       onClose: this.props.onClose,
     };

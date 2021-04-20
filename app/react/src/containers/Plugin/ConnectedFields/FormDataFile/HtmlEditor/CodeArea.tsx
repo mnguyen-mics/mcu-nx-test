@@ -54,7 +54,7 @@ class CodeArea extends React.Component<Props> {
   render() {
     const { handleSubmit } = this.props;
 
-    const breadcrumbPaths = [{ name: 'Code Edit' }];
+    const breadcrumbPaths = [ 'Code Edit' ];
 
     const actionbarProps = {
       formId: 'codeAreaForm',
@@ -63,7 +63,7 @@ class CodeArea extends React.Component<Props> {
     };
 
     return (
-      <EditContentLayout paths={breadcrumbPaths} {...actionbarProps}>
+      <EditContentLayout pathItems={breadcrumbPaths} {...actionbarProps}>
         <Layout>
           <Form
             onSubmit={handleSubmit as any}

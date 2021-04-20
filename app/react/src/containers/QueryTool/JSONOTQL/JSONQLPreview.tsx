@@ -49,13 +49,11 @@ class JSONQLPreview extends React.Component<Props> {
       return (
         <Actionbar
           edition={true}
-          paths={[
-            {
-              name: intl.formatMessage({
-                id: 'jsonql.querytool.query.edit',
-                defaultMessage: 'Edit Your Query',
-              }),
-            },
+          pathItems={[
+            intl.formatMessage({
+              id: 'jsonql.querytool.query.edit',
+              defaultMessage: 'Edit Your Query',
+            }),
           ]}
         >
           <Button
@@ -139,27 +137,27 @@ class JSONQLPreview extends React.Component<Props> {
         })}
       </div>
     ) : (
-      <div className="text-center m-t-20">
-        {queryHasChanged && (
-          <Alert
-            message={
-              <div>
-                <McsIcon type={'warning'} />
-                {intl.formatMessage(messages.queryHasChanged)}
-              </div>
-            }
-            type={'warning'}
-          />
-        )}
-        <br />
-        <Button onClick={this.openEditor}>
-          {this.props.intl.formatMessage({
-            id: 'jsonql.button.query.edit',
-            defaultMessage: 'Edit Query',
-          })}
-        </Button>
-      </div>
-    );
+        <div className="text-center m-t-20">
+          {queryHasChanged && (
+            <Alert
+              message={
+                <div>
+                  <McsIcon type={'warning'} />
+                  {intl.formatMessage(messages.queryHasChanged)}
+                </div>
+              }
+              type={'warning'}
+            />
+          )}
+          <br />
+          <Button onClick={this.openEditor}>
+            {this.props.intl.formatMessage({
+              id: 'jsonql.button.query.edit',
+              defaultMessage: 'Edit Query',
+            })}
+          </Button>
+        </div>
+      );
   }
 }
 

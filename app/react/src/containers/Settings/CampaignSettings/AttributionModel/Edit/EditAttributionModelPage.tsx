@@ -9,6 +9,7 @@ import { DefaultSelect, FormSelectField } from '../../../../../components/Form';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IAttributionModelService } from '../../../../../services/AttributionModelService';
+import { Link } from 'react-router-dom';
 
 const AttributionModelPluginContent = GenericPluginContent as React.ComponentClass<PluginContentOuterProps<AttributionModel>>
 
@@ -76,7 +77,7 @@ class EditAttributionModelPage extends React.Component<Props> {
 
     history.push(`/v2/o/${organisationId}/settings/campaigns/attribution_models`);
 
-    
+
   };
 
   createPluginInstance = (
@@ -105,21 +106,18 @@ class EditAttributionModelPage extends React.Component<Props> {
     } = this.props;
 
     const breadcrumbPaths = (attributionModel?: AttributionModel) => [
-      {
-        name: formatMessage(messages.listTitle),
-        path: `/v2/o/${organisationId}/settings/campaigns/attribution_models`
-      },
-      {
-        name: attributionModel ? 
-        formatMessage(messages.attributionModelEditBreadcrumb, { name: attributionModel.name }) 
+      <Link key="1" to={`/v2/o/${organisationId}/settings/campaigns/attribution_models`}>
+        {formatMessage(messages.listTitle)}
+      </Link>,
+      attributionModel ?
+        formatMessage(messages.attributionModelEditBreadcrumb, { name: attributionModel.name })
         : formatMessage(messages.attributionModelNewBreadcrumb)
-      },
-    ];    
+    ];
 
 
     const renderSpecificFields = (disabled: boolean, prefix: string) => {
       return (
-        <FormSelectField 
+        <FormSelectField
           name={`${prefix}.mode`}
           component={DefaultSelect}
           formItemProps={{

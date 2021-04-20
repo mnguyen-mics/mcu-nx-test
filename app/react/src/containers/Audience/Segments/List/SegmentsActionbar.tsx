@@ -204,14 +204,11 @@ class SegmentsActionbar extends React.Component<Props, State> {
     const exportIsRunning = this.state.exportIsRunning;
 
     const breadcrumbPaths = [
-      {
-        name: intl.formatMessage(messages.audienceSegment),
-        path: `/v2/o/${organisationId}/audience/segments`,
-      },
+      <Link key='1' to={`/v2/o/${organisationId}/audience/segments`}>{intl.formatMessage(messages.audienceSegment)}</Link>
     ];
 
     return (
-      <Actionbar paths={breadcrumbPaths}>
+      <Actionbar pathItems={breadcrumbPaths}>
         <Link
           to={{
             pathname: `/v2/o/${organisationId}/audience/segments/create`,

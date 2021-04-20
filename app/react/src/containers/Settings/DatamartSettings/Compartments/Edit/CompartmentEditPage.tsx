@@ -30,6 +30,7 @@ import { TYPES } from '../../../../../constants/types';
 import { IOrganisationService } from '../../../../../services/OrganisationService';
 import { createFieldArrayModel } from '../../../../../utils/FormHelper';
 import { ProcessingSelectionResource } from '../../../../../models/processing';
+import { Link } from 'react-router-dom';
 
 interface State {
   compartmentFormData: CompartmentFormData;
@@ -415,15 +416,14 @@ class CompartmentEditPage extends React.Component<Props, State> {
     }
 
     const breadcrumbPaths = [
-      {
-        name: formatMessage(messages.breadcrumbTitle),
-        path: `/v2/o/${organisationId}/settings/datamart/compartments`,
-      },
+      <Link key='1' to={`/v2/o/${organisationId}/settings/datamart/compartments`}>
+        {formatMessage(messages.breadcrumbTitle)}
+      </Link>
     ];
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      paths: breadcrumbPaths,
+      pathItems: breadcrumbPaths,
       onClose: this.onClose,
     };
 

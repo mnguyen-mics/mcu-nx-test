@@ -70,14 +70,11 @@ class AudiencePartitionsActionbar extends React.Component<Props> {
     );
 
     const breadcrumbPaths = [
-      {
-        name: intl.formatMessage(messages.AUDIENCE_PARTITIONS),
-        path: `/v2/o/${organisationId}/settings/datamart/audience/partitions`,
-      },
+      <Link key="1" to={`/v2/o/${organisationId}/settings/datamart/audience/partitions`}>{intl.formatMessage(messages.AUDIENCE_PARTITIONS)}</Link>
     ];
 
     return (
-      <Actionbar paths={breadcrumbPaths}>
+      <Actionbar pathItems={breadcrumbPaths}>
         <Dropdown overlay={addMenu} trigger={['click']}>
           <Button className="mcs-primary" type="primary">
             <McsIcon type="plus" />{' '}

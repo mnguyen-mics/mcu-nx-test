@@ -11,6 +11,7 @@ import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IUsersService } from '../../../../../services/UsersService';
 import { ErrorResponse } from '../../../../../services/ApiService';
+import { Link } from 'react-router-dom';
 
 const messages = defineMessages({
   newUser: {
@@ -175,13 +176,10 @@ class EditUserPage extends React.Component<Props, State> {
         })
       : formatMessage(messages.newUser);
     const breadcrumbPaths = [
-      {
-        name: formatMessage(messages.users),
-        path: `/v2/o/${organisationId}/settings/organisation/users`,
-      },
-      {
-        name: userName,
-      },
+      <Link key="1" to={`/v2/o/${organisationId}/settings/organisation/users`}>
+        {formatMessage(messages.users)}
+      </Link>,
+      userName,
     ];
 
     if (loading) {

@@ -16,6 +16,7 @@ import { Omit } from '../../../../../utils/Types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import PluginInstanceService from '../../../../../services/PluginInstanceService';
+import { Link } from 'react-router-dom';
 
 const EmailRouterPluginContent = GenericPluginContent as React.ComponentClass<
   PluginContentOuterProps<EmailRouter>
@@ -83,17 +84,14 @@ class EditEmailRouterPage extends React.Component<JoinedProps> {
     } = this.props;
 
     const breadcrumbPaths = (emailRouter?: EmailRouter) => [
-      {
-        name: formatMessage(messages.listTitle),
-        path: `/v2/o/${organisationId}/settings/campaigns/email_routers`
-      },
-      {
-        name: emailRouter
+      <Link key="1" to={`/v2/o/${organisationId}/settings/campaigns/email_routers`}>
+        {formatMessage(messages.listTitle)}
+      </Link>,
+      emailRouter
           ? formatMessage(messages.emailRouterEditBreadcrumb, {
               name: emailRouter.name,
             })
           : formatMessage(messages.emailRouterNewBreadcrumb),
-      },
     ];
 
     return (

@@ -25,6 +25,7 @@ import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { Loading } from '@mediarithmics-private/mcs-components-library';
+import { Link } from 'react-router-dom';
 
 interface State {
   datamartFormData: DatamartFormData;
@@ -219,13 +220,10 @@ class DatamartEditPage extends React.Component<Props, State> {
         : formatMessage(messages.createDatamartTitle);
 
     const breadcrumbPaths = [
-      {
-        name: formatMessage(messages.breadcrumbTitle1),
-        path: `/v2/o/${organisationId}/settings/datamart/datamarts`,
-      },
-      {
-        name: datamartName,
-      },
+      <Link key="1" to={`/v2/o/${organisationId}/settings/datamart/datamarts`}>
+        {formatMessage(messages.breadcrumbTitle1)}
+      </Link>,
+      datamartName,
     ];
 
     const datamartId = this.getDatamartId();

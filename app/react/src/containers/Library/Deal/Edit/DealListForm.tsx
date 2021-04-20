@@ -16,7 +16,6 @@ import { defineMessages } from 'react-intl';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../components/Layout/FormLayoutActionbar';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { DealListFormData } from './domain';
 import {
   McsFormSection,
@@ -58,7 +57,7 @@ interface DealListFormProps
   extends Omit<ConfigProps<DealListFormData>, 'form'> {
   save: (formData: DealListFormData) => void;
   close: () => void;
-  breadCrumbPaths: Path[];
+  breadCrumbPaths: React.ReactNode[];
 }
 interface DealListFormState {}
 
@@ -106,7 +105,7 @@ class DealListForm extends React.Component<
     const { breadCrumbPaths, handleSubmit, save, close } = this.props;
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      paths: breadCrumbPaths,
+      pathItems: breadCrumbPaths,
       message: messages.saveDealList,
       onClose: close,
     };

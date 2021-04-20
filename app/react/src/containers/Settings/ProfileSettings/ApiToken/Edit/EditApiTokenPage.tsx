@@ -13,6 +13,7 @@ import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IApiTokenService } from '../../../../../services/ApiTokenService';
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
+import { Link } from 'react-router-dom';
 
 const messages = defineMessages({
   newApiToken: {
@@ -166,13 +167,10 @@ class EditApiTokenPage extends React.Component<Props, State> {
         })
       : formatMessage(messages.apiToken);
     const breadcrumbPaths = [
-      {
-        name: formatMessage(messages.apiTokens),
-        path: `/v2/o/${organisationId}/settings/account/api_tokens`,
-      },
-      {
-        name: apiTokenName,
-      },
+      <Link key="1" to={`/v2/o/${organisationId}/settings/account/api_tokens`}>
+        {formatMessage(messages.apiTokens)}
+      </Link>,
+      apiTokenName,
     ];
 
     if (loading) {

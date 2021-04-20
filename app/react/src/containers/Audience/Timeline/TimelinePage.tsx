@@ -121,11 +121,7 @@ class TimelinePage extends React.Component<JoinedProps> {
       <DatamartSelector
         onSelect={this.onDatamartSelect}
         actionbarProps={{
-          paths: [
-            {
-              name: intl.formatMessage(messages.selectMonitoringDatamart),
-            },
-          ],
+          pathItems: [intl.formatMessage(messages.selectMonitoringDatamart)],
         }}
         isMainlayout={true}
       />

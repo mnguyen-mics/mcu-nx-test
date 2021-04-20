@@ -24,7 +24,6 @@ import { BlastTemplateSectionFieldArray } from '../../../../../Campaigns/Email/E
 import GeneralInformationFormSection from './GeneralInformationSectionForm';
 import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
 import { StorylineNodeModel } from '../../../domain';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 
 const { Content } = Layout;
 
@@ -46,7 +45,7 @@ const localMessages = defineMessages({
 export interface EmailCampaignAutomationFormProps
   extends Omit<ConfigProps<EmailCampaignAutomationFormData>, 'form'> {
   close: () => void;
-  breadCrumbPaths: Path[];
+  breadCrumbPaths: React.ReactNode[];
   storylineNodeModel: StorylineNodeModel;
   disabled?: boolean;
 }
@@ -113,7 +112,7 @@ class EmailCampaignAutomationForm extends React.Component<Props> {
     const { breadCrumbPaths, handleSubmit, close, disabled } = this.props;
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      paths: breadCrumbPaths,
+      pathItems: breadCrumbPaths,
       message: localMessages.save,
       onClose: close,
       disabled: disabled

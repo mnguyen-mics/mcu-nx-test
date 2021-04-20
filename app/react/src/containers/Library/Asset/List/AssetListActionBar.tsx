@@ -19,6 +19,7 @@ import injectNotifications, {
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IAssetFileService } from '../../../../services/Library/AssetFileService';
+import { Link } from 'react-router-dom';
 
 const maxFileSize = 200 * 1024;
 
@@ -181,14 +182,11 @@ class AssetsActionbar extends React.Component<Props, AssetsActionbarState> {
     } = this.props;
 
     const breadcrumbPaths = [
-      {
-        name: formatMessage(messages.assets),
-        path: `/v2/o/${organisationId}/library/assets`,
-      },
+      <Link key='1' to={`/v2/o/${organisationId}/library/assets`}>{formatMessage(messages.assets)}</Link>
     ];
 
     return (
-      <Actionbar paths={breadcrumbPaths}>
+      <Actionbar pathItems={breadcrumbPaths}>
         {this.renderModal()}
         <Button
           className="mcs-primary"

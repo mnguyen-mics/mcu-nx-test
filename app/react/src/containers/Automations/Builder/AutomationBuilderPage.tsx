@@ -27,7 +27,7 @@ import { IAutomationFormService } from '../Edit/AutomationFormService';
 import AutomationTemplateSelector from './AutomationTemplateSelector';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
 import { Loading } from '../../../components';
-import { Actionbar } from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, MentionTag } from '@mediarithmics-private/mcs-components-library';
 import { injectFeatures, InjectedFeaturesProps } from '../../Features';
 import {
   wizardValidObjectTypes,
@@ -36,6 +36,7 @@ import {
 } from './domain';
 import { reducePromises } from '../../../utils/PromiseHelper';
 import { IRuntimeSchemaService } from '../../../services/RuntimeSchemaService';
+import { FormLayoutActionbarProps } from '../../../components/Layout/FormLayoutActionbar';
 
 export interface AutomationBuilderPageRouteParams {
   organisationId: string;
@@ -119,7 +120,7 @@ class AutomationBuilderPage extends React.Component<Props, State> {
 
     if (
       queryString.parse(location.search).datamartId !==
-        queryString.parse(prevLocation.search).datamartId
+      queryString.parse(prevLocation.search).datamartId
     )
       this.checkReactToEvent();
 
@@ -199,7 +200,7 @@ class AutomationBuilderPage extends React.Component<Props, State> {
                   !!validObjectTypes.find(
                     validObjectType =>
                       validObjectType.objectType.name ===
-                        automationWizardValidObjectType.objectTypeName &&
+                      automationWizardValidObjectType.objectTypeName &&
                       !!validObjectType.validFields.find(
                         of =>
                           of.name === automationWizardValidObjectType.fieldName,
@@ -339,17 +340,20 @@ class AutomationBuilderPage extends React.Component<Props, State> {
 
     const selectedDatamart = this.getSelectedDatamart();
 
+    const actionBarProps: FormLayoutActionbarProps = {
+      pathItems: [
+        <span className="mcs-pathItem" key='1'>
+          {intl.formatMessage(messages.automationBuilder)}
+          <MentionTag className="mcs-pathItem_mentionTag" mention='ALPHA' />
+        </span>
+      ]
+    };
+
     if (!selectedDatamart) {
       return (
         <DatamartSelector
           onSelect={handleOnSelectDatamart}
-          actionbarProps={{
-            paths: [
-              {
-                name: intl.formatMessage(messages.automationBuilder),
-              },
-            ],
-          }}
+          actionbarProps={actionBarProps}
           isMainlayout={true}
         />
       );
@@ -360,11 +364,7 @@ class AutomationBuilderPage extends React.Component<Props, State> {
         return (
           <Layout>
             <Actionbar
-              paths={[
-                {
-                  name: intl.formatMessage(messages.automationBuilder),
-                },
-              ]} mention='ALPHA'
+              {...actionBarProps}
             />
             <Loading isFullScreen={false} />
           </Layout>
@@ -374,13 +374,7 @@ class AutomationBuilderPage extends React.Component<Props, State> {
         <AutomationTemplateSelector
           onSelectTemplate={this.hasSelectedType}
           disableReactToEvent={disableReactToEvent}
-          actionbarProps={{
-            paths: [
-              {
-                name: intl.formatMessage(messages.automationBuilder),
-              },
-            ],
-          }}
+          actionbarProps={actionBarProps}
         />
       );
     }

@@ -29,6 +29,7 @@ import { DatamartResource } from '../../../../../models/datamart/DatamartResourc
 import { isEmpty } from 'lodash';
 import { Loading } from '@mediarithmics-private/mcs-components-library';
 import { InjectedFeaturesProps, injectFeatures } from '../../../../Features';
+import { Link } from 'react-router-dom';
 
 interface State {
   datamartReplicationData: DatamartReplicationFormData;
@@ -292,7 +293,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: 'datamartReplicationForm',
-      paths: breadcrumbPaths,
+      pathItems: breadcrumbPaths,
       onClose: this.onClose,
     };
 
@@ -301,11 +302,8 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
         onSelect={this.onDatamartSelect}
         isMainlayout={true}
         actionbarProps={{
-          paths: [
-            {
-              name: formatMessage(messages.datamartReplications),
-              path: this.getPreviousUrl(),
-            },
+          pathItems: [
+            <Link key='1' to={this.getPreviousUrl()}>formatMessage(messages.datamartReplications)</Link>
           ],
         }}
       />

@@ -24,6 +24,7 @@ import { TYPES } from '../../../../../constants/types';
 import { IDisplayCampaignService } from '../../../../../services/DisplayCampaignService';
 import { IAdGroupFormService } from './AdGroupFormService';
 import { Loading } from '@mediarithmics-private/mcs-components-library';
+import { Link } from 'react-router-dom';
 
 interface State {
   campaign?: DisplayCampaignResource;
@@ -67,10 +68,10 @@ class EditAdGroupPage extends React.Component<Props, State> {
       this._displayCampaignService.getCampaignDisplay(campaignId),
       adGroupId
         ? this._adGroupFormService.loadAdGroup(
-            campaignId,
-            adGroupId,
-            !!adGroupIdFromLocState,
-          )
+          campaignId,
+          adGroupId,
+          !!adGroupIdFromLocState,
+        )
         : Promise.resolve(null),
     ])
       .then(([campaignApiRes, adGroupFormData]) => {
@@ -169,25 +170,21 @@ class EditAdGroupPage extends React.Component<Props, State> {
     const campaignName = campaign ? campaign.name : campaignId;
     const adGroupName = adGroupId
       ? formatMessage(messages.breadcrumbTitle3, {
-          name:
-            adGroupFormData.adGroup && adGroupFormData.adGroup.name
-              ? adGroupFormData.adGroup.name
-              : adGroupId,
-        })
+        name:
+          adGroupFormData.adGroup && adGroupFormData.adGroup.name
+            ? adGroupFormData.adGroup.name
+            : adGroupId,
+      })
       : formatMessage(messages.breadcrumbTitle2);
 
     const breadcrumbPaths = [
-      {
-        name: formatMessage(messages.breadcrumbTitle1),
-        path: `/v2/o/${organisationId}/campaigns/display`,
-      },
-      {
-        name: campaignName,
-        path: `/v2/o/${organisationId}/campaigns/display/${campaignId}`,
-      },
-      {
-        name: adGroupName,
-      },
+      <Link key="1" to={`/v2/o/${organisationId}/campaigns/display`}>
+        {formatMessage(messages.breadcrumbTitle1)}
+      </Link>,
+      <Link key="2" to={`/v2/o/${organisationId}/campaigns/display/${campaignId}`}>
+        {campaignName}
+      </Link>,
+      adGroupName,
     ];
 
     return (

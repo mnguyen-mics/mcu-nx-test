@@ -65,7 +65,6 @@ import { IQueryService } from '../../../../../../services/QueryService';
 import { ObjectLikeTypeInfoResource } from '../../../../../../models/datamart/graphdb/RuntimeSchema';
 import { QueryInputAutomationFormData } from './../../../AutomationNode/Edit/domain';
 import { QueryInputNodeResource } from '../../../../../../models/automations/automations';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import EventPropertyFormSection, { EventPropertyFormSectionProps } from './EventPropertyFormSection';
 
 export const FORM_ID = 'reactToEventForm';
@@ -78,7 +77,7 @@ const EventProperFormFieldArray = FieldArray as new () => GenericFieldArray<
 export interface ReactToEventAutomationFormProps {
   storylineNodeModel: StorylineNodeModel;
   close: () => void;
-  breadCrumbPaths: Path[];
+  breadCrumbPaths: React.ReactNode[];
   disabled: boolean;
   initialValues: QueryInputAutomationFormData;
 }
@@ -521,7 +520,7 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      paths: breadCrumbPaths,
+      pathItems: breadCrumbPaths,
       message: messages.save,
       onClose: close,
       disabled: disabled || isLoading,

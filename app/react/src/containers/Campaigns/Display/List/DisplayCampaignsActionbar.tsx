@@ -253,10 +253,7 @@ class DisplayCampaignsActionbar extends React.Component<
     const hasSelected = !!(selectedRowKeys && selectedRowKeys.length > 0);
 
     const breadcrumbPaths = [
-      {
-        name: intl.formatMessage(messagesMap.breadCrumbPath),
-        path: `/v2/o/${organisationId}/campaigns/display`,
-      },
+      <Link key='1' to={`/v2/o/${organisationId}/campaigns/display`}>{intl.formatMessage(messagesMap.breadCrumbPath)}</Link>,
     ];
 
     const buildActionElement = () => {
@@ -271,7 +268,7 @@ class DisplayCampaignsActionbar extends React.Component<
     };
 
     return (
-      <Actionbar paths={breadcrumbPaths}>
+      <Actionbar pathItems={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/campaigns/display/create`}>
           <Button className="mcs-primary" type="primary">
             <McsIcon type="plus" />{' '}

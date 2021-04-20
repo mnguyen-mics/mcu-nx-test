@@ -36,6 +36,7 @@ import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 import { IOrganisationService } from '../../../../../services/OrganisationService';
 import { ProcessingSelectionResource } from '../../../../../models/processing';
 import { Loading } from '@mediarithmics-private/mcs-components-library';
+import { Link } from 'react-router-dom';
 
 interface State {
   siteData: SiteFormData;
@@ -139,11 +140,11 @@ class SiteEditPage extends React.Component<Props, State> {
             ),
             visitAnalyzerFields: res[0].data.visit_analyzer_model_id
               ? [
-                  createFieldArrayModel({
-                    visit_analyzer_model_id:
-                      res[0].data.visit_analyzer_model_id,
-                  }),
-                ]
+                createFieldArrayModel({
+                  visit_analyzer_model_id:
+                    res[0].data.visit_analyzer_model_id,
+                }),
+              ]
               : [],
             eventRulesFields: res[1].data.map((er: EventRules) =>
               createFieldArrayModel(er),
@@ -319,11 +320,11 @@ class SiteEditPage extends React.Component<Props, State> {
       const deletePromises = startIds.map(sid =>
         sid && !savedIds.includes(sid)
           ? this._channelService.deleteEventRules(
-              datamartId,
-              site.id,
-              organisationId,
-              sid,
-            )
+            datamartId,
+            site.id,
+            organisationId,
+            sid,
+          )
           : Promise.resolve(),
       );
       return [...saveCreatePromises, ...deletePromises];
@@ -360,11 +361,11 @@ class SiteEditPage extends React.Component<Props, State> {
       const deletePromises = startId.map(sid =>
         sid && !savedIds.includes(sid)
           ? this._channelService.deleteAliases(
-              datamartId,
-              site.id,
-              organisationId,
-              sid,
-            )
+            datamartId,
+            site.id,
+            organisationId,
+            sid,
+          )
           : Promise.resolve(),
       );
       return [...saveCreatePromises, ...deletePromises];
@@ -519,23 +520,20 @@ class SiteEditPage extends React.Component<Props, State> {
     const siteName =
       siteData.site && siteData.site.name
         ? formatMessage(messages.editSiteTitle, {
-            name: siteData.site.name,
-          })
+          name: siteData.site.name,
+        })
         : formatMessage(messages.createSiteTitle);
 
     const breadcrumbPaths = [
-      {
-        name: formatMessage(messages.breadcrumbTitle1),
-        path: `/v2/o/${organisationId}/settings/datamart/channels`,
-      },
-      {
-        name: siteName,
-      },
+      <Link key="1" to={`/v2/o/${organisationId}/settings/datamart/channels`}>
+        {formatMessage(messages.breadcrumbTitle1)}
+      </Link>,
+      siteName,
     ];
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      paths: breadcrumbPaths,
+      pathItems: breadcrumbPaths,
       onClose: this.onClose,
     };
 
@@ -558,11 +556,11 @@ class SiteEditPage extends React.Component<Props, State> {
         }
       />
     ) : (
-      <DatamartSelector
-        onSelect={this.onDatamartSelect}
-        actionbarProps={actionBarProps}
-      />
-    );
+        <DatamartSelector
+          onSelect={this.onDatamartSelect}
+          actionbarProps={actionBarProps}
+        />
+      );
   }
 }
 

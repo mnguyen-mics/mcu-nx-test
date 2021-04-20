@@ -79,10 +79,7 @@ class DisplayAdsActionBar extends React.Component<JoinedProps> {
     const hasSelected = !!(selectedRowKeys && selectedRowKeys.length > 0);
 
     const breadcrumbPaths = [
-      {
-        name: intl.formatMessage(messagesMap.displayAds),
-        path: `/v2/o/${organisationId}/creatives/display`,
-      },
+      <Link key='1' to={`/v2/o/${organisationId}/creatives/display`}>{intl.formatMessage(messagesMap.displayAds)}</Link>,
     ];
 
     const buildAuditMenu = () => {
@@ -121,7 +118,7 @@ class DisplayAdsActionBar extends React.Component<JoinedProps> {
     };
 
     return (
-      <Actionbar paths={breadcrumbPaths}>
+      <Actionbar pathItems={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/creatives/display/create`}>
           <Button className="mcs-primary" type="primary">
             <McsIcon type="plus" />{' '}

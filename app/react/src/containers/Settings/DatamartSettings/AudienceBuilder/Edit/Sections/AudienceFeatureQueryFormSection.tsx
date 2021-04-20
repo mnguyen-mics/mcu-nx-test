@@ -55,13 +55,11 @@ class AudienceFeatureQueryFormSection extends React.Component<Props> {
       return (
         <Actionbar
           edition={true}
-          paths={[
-            {
-              name: intl.formatMessage({
-                id: 'settings.datamart.audienceFeature.edit.query',
-                defaultMessage: 'Edit with OTQL',
-              }),
-            },
+          pathItems={[
+            intl.formatMessage({
+              id: 'settings.datamart.audienceFeature.edit.query',
+              defaultMessage: 'Edit with OTQL',
+            }),
           ]}
         >
           <Button

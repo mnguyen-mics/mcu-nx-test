@@ -7,7 +7,6 @@ import { BasicProps } from 'antd/lib/layout/layout';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../../components/Layout/FormLayoutActionbar';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 
 import ScrollspySider, {
   SidebarWrapperProps,
@@ -37,7 +36,7 @@ const messages = defineMessages({
 interface AudiencePartitionFormProps
   extends Omit<ConfigProps<AudiencePartitionFormData>, 'form'> {
   close: () => void;
-  breadCrumbPaths: Path[];
+  breadCrumbPaths: React.ReactNode[];
 }
 
 interface AudiencePartitionFormState {}
@@ -71,7 +70,7 @@ class AudiencePartitionForm extends React.Component<
     const { breadCrumbPaths, handleSubmit, close } = this.props;
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      paths: breadCrumbPaths,
+      pathItems: breadCrumbPaths,
       message: messages.savePartition,
       onClose: close,
     };

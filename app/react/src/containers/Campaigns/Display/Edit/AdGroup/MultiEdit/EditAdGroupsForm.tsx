@@ -174,10 +174,8 @@ class EditAdGroupsForm extends React.Component<
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      paths: [
-        {
-          name: formatMessage(messages.editAdGroups),
-        },
+      pathItems: [
+        formatMessage(messages.editAdGroups),
       ],
       message: messages.saveAdGroup,
       onClose: close,

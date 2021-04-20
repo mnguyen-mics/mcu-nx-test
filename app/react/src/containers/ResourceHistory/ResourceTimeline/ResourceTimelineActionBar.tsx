@@ -24,8 +24,8 @@ export class ResourceTimelineActionBar extends React.Component<Props> {
     return (
       <Actionbar
         edition={true}
-        paths={[
-          { name: formatMessage(formatProperty('history_title').message) || formatMessage(messages.defaultTitle) }
+        pathItems={[
+          formatMessage(formatProperty('history_title').message) || formatMessage(messages.defaultTitle)
         ]
         }>
         <McsIcon

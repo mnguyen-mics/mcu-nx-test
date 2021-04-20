@@ -17,6 +17,7 @@ import { Omit } from '../../../../../utils/Types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IRecommenderService } from '../../../../../services/Library/RecommenderService';
+import { Link } from 'react-router-dom';
 
 const RecommenderPluginContent = GenericPluginContent as React.ComponentClass<
   PluginContentOuterProps<Recommender>
@@ -84,17 +85,14 @@ class EditRecommenderPage extends React.Component<JoinedProps> {
     } = this.props;
 
     const breadcrumbPaths = (recommender?: Recommender) => [
-      {
-        name: formatMessage(messages.listTitle),
-        path: `/v2/o/${organisationId}/settings/campaigns/recommenders`,
-      },
-      {
-        name: recommender
-          ? formatMessage(messages.recommenderEditBreadcrumb, {
-              name: recommender.name,
-            })
-          : formatMessage(messages.recommenderNewBreadcrumb),
-      },
+      <Link key="1" to={`/v2/o/${organisationId}/settings/campaigns/recommenders`}>
+        {formatMessage(messages.listTitle)}
+      </Link>,
+      recommender
+        ? formatMessage(messages.recommenderEditBreadcrumb, {
+          name: recommender.name,
+        })
+        : formatMessage(messages.recommenderNewBreadcrumb),
     ];
 
     return (

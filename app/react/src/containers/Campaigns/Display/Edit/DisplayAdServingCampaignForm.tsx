@@ -2,7 +2,6 @@ import * as React from 'react';
 import { DisplayCampaignFormData } from './domain';
 import { ConfigProps, reduxForm, InjectedFormProps, Form, GenericFieldArray, Field, FieldArray } from 'redux-form';
 import { Omit } from '../../../../utils/Types';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
@@ -20,7 +19,7 @@ const { Content } = Layout;
 export interface DisplayAdServingCampaignFormProps
   extends Omit<ConfigProps<DisplayCampaignFormData>, 'form'> {
   close: () => void;
-  breadCrumbPaths: Path[];
+  breadCrumbPaths: React.ReactNode[];
 }
 
 type Props = InjectedFormProps<
@@ -55,7 +54,7 @@ class DisplayAdServingCampaignForm extends React.Component<Props, any> {
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      paths: breadCrumbPaths,
+      pathItems: breadCrumbPaths,
       message: messages.saveAdGroup,
       onClose: close,
     };

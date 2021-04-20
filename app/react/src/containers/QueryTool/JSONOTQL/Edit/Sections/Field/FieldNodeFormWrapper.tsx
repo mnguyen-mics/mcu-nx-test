@@ -13,11 +13,10 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
 import FieldNodeForm from './FieldNodeForm';
 import { FieldProposalLookup } from '../../../domain';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 
 export interface FieldNodeFormWrapperProps
   extends ConfigProps<FieldNodeFormDataValues> {
-  breadCrumbPaths: Path[];
+  breadCrumbPaths: React.ReactNode[];
   objectType: ObjectLikeTypeInfoResource;
   objectTypes: ObjectLikeTypeInfoResource[];
   idToAttachDropDowns?: string;

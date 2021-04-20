@@ -18,6 +18,7 @@ import { TYPES } from '../../../../constants/types';
 import { IGoalFormService } from './GoalFormService';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
 import { Loading } from '@mediarithmics-private/mcs-components-library';
+import { Link } from 'react-router-dom';
 
 const messages = defineMessages({
   errorFormMessage: {
@@ -194,13 +195,10 @@ class EditGoalPage extends React.Component<Props, State> {
         : formatMessage(messages.breadcrumbNewGoalTitle);
 
     const breadCrumbPaths = [
-      {
-        name: formatMessage(messages.breadcrumbGoalsTitle),
-        path: `/v2/o/${organisationId}/campaigns/goals`,
-      },
-      {
-        name: goalName,
-      },
+      <Link key="1" to={`/v2/o/${organisationId}/campaigns/goals`}>
+        {formatMessage(messages.breadcrumbGoalsTitle)}
+      </Link>,
+      goalName,
     ];
 
     return (

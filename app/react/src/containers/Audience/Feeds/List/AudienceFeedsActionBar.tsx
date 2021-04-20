@@ -20,6 +20,7 @@ import { IAudienceTagFeedService } from '../../../../services/AudienceTagFeedSer
 import { IAudienceExternalFeedService } from '../../../../services/AudienceExternalFeedService';
 import { AudienceTagFeed } from '../../../../models/Plugins';
 import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { Link } from 'react-router-dom';
 
 type Props = RouteComponentProps<{ organisationId: string }> &
   InjectedIntlProps &
@@ -163,18 +164,12 @@ class AudienceFeedsActionBar extends React.Component<Props, State> {
     } = this.state;
 
     const breadcrumbPaths = [
-      {
-        name: intl.formatMessage(messages.audienceFeeds),
-        path: `/v2/o/${organisationId}/audience/feeds`,
-      },
-      {
-        name: intl.formatMessage(messages.audienceFeedsList),
-        path: `/v2/o/${organisationId}/audience/feeds/list`,
-      },
+      <Link key='1' to={`/v2/o/${organisationId}/audience/feeds`}>{intl.formatMessage(messages.audienceFeeds)}</Link>,
+      <Link key='2' to={`/v2/o/${organisationId}/audience/feeds/list`}>{intl.formatMessage(messages.audienceFeedsList)}</Link>,
     ];
 
     return (
-      <Actionbar paths={breadcrumbPaths}>
+      <Actionbar pathItems={breadcrumbPaths}>
         <Button onClick={this.handleExport} loading={exportRunning}>
             <McsIcon type="download" />
             <FormattedMessage

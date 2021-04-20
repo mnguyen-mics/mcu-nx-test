@@ -42,6 +42,7 @@ import { MicsReduxState } from '../../../../utils/ReduxHelper';
 import { ProcessingSelectionResource } from '../../../../models/processing';
 import { IAudienceBuilderService } from '../../../../services/AudienceBuilderService';
 import { AudienceBuilderResource } from '../../../../models/audienceBuilder/AudienceBuilderResource';
+import { Link } from 'react-router-dom';
 
 const messagesMap = defineMessages({
   breadcrumbEditAudienceSegment: {
@@ -601,13 +602,8 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         : formatMessage(messages.audienceSegmentBreadCrumb);
 
     const breadcrumbPaths = [
-      {
-        name: formatMessage(messagesMap.breadcrumbAudienceSegmentList),
-        path: `/v2/o/${organisationId}/audience/segments`,
-      },
-      {
-        name: audienceSegmentName,
-      },
+      <Link key='1' to={`/v2/o/${organisationId}/audience/segments`}>{formatMessage(messagesMap.breadcrumbAudienceSegmentList)}</Link>,
+      audienceSegmentName,
     ];
 
     let resetFormData;
@@ -673,10 +669,10 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     ) : displayDatamartSelector ? (
       <DatamartSelector
         onSelect={this.onDatamartSelect}
-        actionbarProps={{ paths: breadcrumbPaths, onClose: this.onClose }}
+        actionbarProps={{ pathItems: breadcrumbPaths, onClose: this.onClose }}
       />
     ) : (
-      <EditContentLayout paths={breadcrumbPaths} {...actionbarProps}>
+      <EditContentLayout pathItems={breadcrumbPaths} {...actionbarProps}>
         <SegmentTypeSelector
           onSelect={this.onSegmentTypeSelect}
           segmentTypesToDisplay={this.getSegmentTypesToDisplay()}

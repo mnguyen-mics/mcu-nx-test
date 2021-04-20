@@ -322,11 +322,7 @@ class PluginCardModalContent<T extends LayoutablePlugin> extends React.Component
           {`.ant-tabs-ink-bar { background-color: ${backgroundColor}; height: 3px; }`}
         </style>
         <Actionbar
-          paths={[
-            {
-              name: pluginLayout.metadata.display_name
-            },
-          ]}
+          pathItems={[pluginLayout.metadata.display_name]}
           backgroundColor={backgroundColor}
           edition={true}
           inverted={color === 'black' ? true : false}

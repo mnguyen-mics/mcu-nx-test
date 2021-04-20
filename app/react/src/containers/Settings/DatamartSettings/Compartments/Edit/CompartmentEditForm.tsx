@@ -10,7 +10,6 @@ import {
   Field,
 } from 'redux-form';
 import { Omit } from '../../../../../utils/Types';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
@@ -48,7 +47,7 @@ const ProcessingActivitiesFieldArray = FieldArray as new () => GenericFieldArray
 export interface CompartmentEditFormProps
   extends Omit<ConfigProps<CompartmentFormData>, 'form'> {
   close: () => void;
-  breadCrumbPaths: Path[];
+  breadCrumbPaths: React.ReactNode[];
   datamartId: string;
   goToDatamartSelector: () => void;
   initialProcessingSelectionsForWarning?: ProcessingSelectionResource[];
@@ -79,7 +78,7 @@ class CompartmentEditForm extends React.Component<Props> {
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      paths: breadCrumbPaths,
+      pathItems: breadCrumbPaths,
       message: messages.saveCompartment,
       onClose: close,
     };

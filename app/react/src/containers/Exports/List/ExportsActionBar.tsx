@@ -24,14 +24,11 @@ class ExportsActionbar extends React.Component<
     } = this.props;
 
     const breadcrumbPaths = [
-      {
-        name: formatMessage(messages.exports),
-        path: `/v2/o/${organisationId}/datastudio/exports`,
-      },
+      <Link key='1' to={`/v2/o/${organisationId}/datastudio/exports`}>{formatMessage(messages.exports)}</Link>
     ];
 
     return (
-      <Actionbar paths={breadcrumbPaths}>
+      <Actionbar pathItems={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/datastudio/exports/create`}>
           <Button className="mcs-primary" type="primary">
             <McsIcon type="plus" /> <FormattedMessage {...messages.newExport} />

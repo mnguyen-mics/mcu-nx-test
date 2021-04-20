@@ -154,11 +154,7 @@ class EditCampaignsForm extends React.Component<
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      paths: [
-        {
-          name: formatMessage(messages.editCampaigns),
-        },
-      ],
+      pathItems: [ formatMessage(messages.editCampaigns) ],
       message: messages.saveCampaigns,
       onClose: close,
     };

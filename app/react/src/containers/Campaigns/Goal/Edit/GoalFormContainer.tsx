@@ -13,7 +13,6 @@ import {
   QueryLanguage,
 } from '../../../../models/datamart/DatamartResource';
 import { Omit } from '../../../../utils/Types';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { EditContentLayout } from '../../../../components/Layout';
 import DatamartSelector from '../../../../containers/Datamart/DatamartSelector';
 import {
@@ -30,7 +29,7 @@ export interface GoalFormContainerProps
   extends Omit<ConfigProps<GoalFormData>, 'form'> {
   save?: (goalFormData: GoalFormData) => void;
   close: () => void;
-  breadCrumbPaths: Path[];
+  breadCrumbPaths: React.ReactNode[];
 }
 
 type Props = GoalFormContainerProps &
@@ -144,7 +143,7 @@ class GoalFormContainer extends React.Component<Props, State> {
       />
     ) : showTriggerTypeSelector && selectedDatamart ? (
       <EditContentLayout
-        paths={breadCrumbPaths}
+        pathItems={breadCrumbPaths}
         formId={FORM_ID}
         onClose={close}
       >
@@ -159,7 +158,7 @@ class GoalFormContainer extends React.Component<Props, State> {
         onSelect={this.onDatamartSelect}
         actionbarProps={{
           onClose: close,
-          paths: breadCrumbPaths,
+          pathItems: breadCrumbPaths,
         }}
       />
     );

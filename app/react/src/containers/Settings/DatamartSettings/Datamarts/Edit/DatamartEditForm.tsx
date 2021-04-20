@@ -13,7 +13,6 @@ import { Layout } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { BasicProps } from 'antd/lib/layout/layout';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../../components/Layout/FormLayoutActionbar';
@@ -42,7 +41,7 @@ const EventRulesFieldArray = FieldArray as new () => GenericFieldArray<
 export interface DatamartEditFormProps
   extends Omit<ConfigProps<DatamartFormData>, 'form'> {
   close: () => void;
-  breadCrumbPaths: Path[];
+  breadCrumbPaths: React.ReactNode[];
   datamartId: string;
   isCrossDatamart: boolean;
 }
@@ -96,7 +95,7 @@ class DatamartEditForm extends React.Component<Props> {
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      paths: breadCrumbPaths,
+      pathItems: breadCrumbPaths,
       message: messages.saveDatamart,
       onClose: close,
     };

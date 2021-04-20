@@ -32,6 +32,7 @@ import { IDisplayCampaignService } from '../../../../services/DisplayCampaignSer
 import { TYPES } from '../../../../constants/types';
 import { IResourceHistoryService } from '../../../../services/ResourceHistoryService';
 import { IGoalService } from '../../../../services/GoalService';
+import { Link } from 'react-router-dom';
 
 interface ExportActionbarProps {
   goal?: GoalResource;
@@ -254,15 +255,12 @@ class ExportsActionbar extends React.Component<
     const menu = this.buildMenu();
 
     const breadcrumbPaths = [
-      {
-        name: intl.formatMessage(messages.goals),
-        path: `/v2/o/${organisationId}/campaigns/goals`,
-      },
-      { name: goal && goal.name ? goal.name : '' },
+      <Link key='1' to={`/v2/o/${organisationId}/campaigns/goals`}>{intl.formatMessage(messages.goals)}</Link>,
+      goal && goal.name ? goal.name : '',
     ];
 
     return (
-      <Actionbar paths={breadcrumbPaths}>
+      <Actionbar pathItems={breadcrumbPaths}>
         {goal && (
           <Button
             type="primary"

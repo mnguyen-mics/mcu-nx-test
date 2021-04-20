@@ -18,6 +18,7 @@ import { TYPES } from '../../../../constants/types';
 import { ICreativeService } from '../../../../services/CreativeService';
 import { IDisplayCreativeFormService } from './DisplayCreativeFormService';
 import { Loading } from '@mediarithmics-private/mcs-components-library';
+import { Link } from 'react-router-dom';
 
 interface State {
   loading: boolean;
@@ -140,13 +141,13 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
     const savePromise =
       creativeData.repeatFields && creativeData.repeatFields.length
         ? this._displayCreativeFormService.handleSaveMutipleCreatives(
-            organisationId,
-            creativeData,
-          )
+          organisationId,
+          creativeData,
+        )
         : this._displayCreativeFormService.saveDisplayCreative(
-            organisationId,
-            creativeData,
-          );
+          organisationId,
+          creativeData,
+        );
 
     savePromise
       .then(savedId => {
@@ -187,24 +188,17 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
     const actionBarButtonSave = messages.saveCreative;
     const actionBarButtonSaveRefresh = messages.creativeCreationSaveButton;
 
-    const breadCrumbToList = {
-            name: formatMessage(messages.displayListBreadCrumb),
-            path: `/v2/o/${organisationId}/creatives/display`,
-          };
-
     const creaName = creativeId
       ? formatMessage(messages.creativeEditionBreadCrumb, {
-          name: creativeName,
-        }) 
+        name: creativeName,
+      })
       : formatMessage(messages.creativeCreationBreadCrumb);
 
     const breadCrumbPaths = [
-      {
-        ...breadCrumbToList,
-      },
-      {
-        name: creaName,
-      },
+      <Link key="1" to={`/v2/o/${organisationId}/creatives/display`}>
+          {formatMessage(messages.displayListBreadCrumb)}
+      </Link>,
+      creaName,
     ];
 
     const props = {

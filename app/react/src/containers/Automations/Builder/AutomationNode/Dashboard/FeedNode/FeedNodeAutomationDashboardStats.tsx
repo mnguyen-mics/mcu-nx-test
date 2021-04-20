@@ -73,11 +73,7 @@ class FeedNodeAutomationDashboardStats extends React.Component<
     return (
       <div className="mcs-feedNodeAutomationDashboardStats ant-layout">
         <Actionbar
-          paths={[
-            {
-              name: formatMessage(messages.actionbarName),
-            },
-          ]}
+          pathItems={[ formatMessage(messages.actionbarName) ]}
           edition={true}>
           <McsIcon
             type="close"
