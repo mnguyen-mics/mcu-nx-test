@@ -17,6 +17,7 @@ const messages = defineMessages({
 });
 
 export interface ExitConditionAutomationDashboardStatsProps {
+  datamartId: string;
   exitConditionId: string;
   close: () => void;
 }
@@ -28,6 +29,7 @@ class ExitConditionAutomationDashboardStats extends React.Component<Props> {
     const {
       intl: { formatMessage },
       exitConditionId,
+      datamartId,
       close,
     } = this.props;
 
@@ -38,6 +40,7 @@ class ExitConditionAutomationDashboardStats extends React.Component<Props> {
       >
         <UserPointsLineChart
           graphTitle={formatMessage(messages.upGraphTitle)}
+          datamartId={datamartId}
           analyticsEntity={{
             analyticsEntityType: 'EXIT_CONDITION',
             entityId: exitConditionId,

@@ -40,6 +40,7 @@ import { generateFakeId } from '../../../utils/FakeIdHelper';
 import { compose } from 'recompose';
 import ExitConditionButton from './ExitConditionButton/ExitConditionButton';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
+import { ScenarioCountersData } from '../../../utils/ScenarioAnalyticsReportHelper';
 
 export const messages = defineMessages({
   ifNodeFalsePathLabel: {
@@ -63,6 +64,7 @@ export interface AutomationBuilderBaseProps {
 export interface AutomationBuilderVisualizerProps
   extends AutomationBuilderBaseProps {
   viewer: true;
+  scenarioCountersData?: ScenarioCountersData;
 }
 
 export interface AutomationBuilderEditorProps
@@ -77,6 +79,12 @@ export interface AutomationBuilderEditorProps
 export type AutomationBuilderProps =
   | AutomationBuilderEditorProps
   | AutomationBuilderVisualizerProps;
+
+const isAutomationBuilderVisualizerProps = (
+  props: AutomationBuilderProps,
+): props is AutomationBuilderVisualizerProps => {
+  return props.viewer === true;
+};
 
 const isAutomationBuilderEditorProp = (
   props: AutomationBuilderProps,
@@ -116,6 +124,14 @@ class AutomationBuilder extends React.Component<Props, State> {
       viewNodeSelector: true,
     };
   }
+
+  getScenarioCountersData = (): ScenarioCountersData | undefined => {
+    if (isAutomationBuilderVisualizerProps(this.props)) {
+      const { scenarioCountersData } = this.props;
+
+      return scenarioCountersData;
+    } else return undefined;
+  };
 
   getTreeNodeOperations = (): TreeNodeOperations => {
     return {
@@ -255,6 +271,7 @@ class AutomationBuilder extends React.Component<Props, State> {
     const storylineNode = new AutomationNodeModel(
       this.props.datamartId,
       nodeModel,
+      this.getScenarioCountersData,
       nodeProperties.title,
       nodeProperties.subtitle,
       nodeProperties.color,
@@ -368,6 +385,7 @@ class AutomationBuilder extends React.Component<Props, State> {
       const rootNode = new AutomationNodeModel(
         this.props.datamartId,
         automationData,
+        this.getScenarioCountersData,
         nodeProperties.title,
         nodeProperties.subtitle,
         nodeProperties.color,
@@ -407,6 +425,10 @@ class AutomationBuilder extends React.Component<Props, State> {
       hasFeature,
     } = this.props;
 
+    const scenarioCountersData = isAutomationBuilderVisualizerProps(this.props)
+      ? this.props.scenarioCountersData
+      : undefined;
+
     let content = (
       <div className={`automation-builder`} ref={this.div}>
         <Col span={viewNodeSelector ? 18 : 24} className={'diagram'}>
@@ -442,6 +464,7 @@ class AutomationBuilder extends React.Component<Props, State> {
             <ExitConditionButton
               datamartId={datamartId}
               automationTreeData={automationTreeData}
+              scenarioCountersData={scenarioCountersData}
               exitCondition={exitCondition}
               viewer={viewer}
               updateAutomationData={
@@ -479,6 +502,7 @@ class AutomationBuilder extends React.Component<Props, State> {
                 automationTreeData={automationTreeData}
                 exitCondition={exitCondition}
                 viewer={viewer}
+                scenarioCountersData={scenarioCountersData}
                 updateAutomationData={
                   isAutomationBuilderEditorProp(this.props)
                     ? this.props.updateAutomationData

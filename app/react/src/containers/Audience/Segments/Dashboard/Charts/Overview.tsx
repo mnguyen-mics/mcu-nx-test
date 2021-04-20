@@ -27,6 +27,7 @@ import {
 } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import chroma from 'chroma-js';
+import { StackedAreaPlotProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/time-based-charts/stacked-area-plot';
 
 interface OverviewProps {
   isFetching: boolean;
@@ -96,14 +97,14 @@ class Overview extends React.Component<Props> {
     const metrics =
       dataSource && dataSource[0]
         ? Object.keys(dataSource[0]).filter(
-            el =>
+            (el) =>
               el !== 'day' &&
               el !== 'user_point_additions' &&
               el !== 'user_point_deletions',
           )
         : [];
 
-    const datamart = datamarts && datamarts.find(dm => dm.id === datamartId);
+    const datamart = datamarts && datamarts.find((dm) => dm.id === datamartId);
 
     const chartColors = [
       colors['mcs-warning'],
@@ -119,24 +120,27 @@ class Overview extends React.Component<Props> {
     if (chartColors.length < metrics.length) {
       let i = chartColors.length;
       for (i = chartColors.length; i < metrics.length; i++) {
-        chartColors.push( chroma.random().hex());
+        chartColors.push(chroma.random().hex());
       }
-    };
+    }
 
-    const optionsForChart = {
-      xKey: 'day',
-      yKeys: metrics.map(metric => {
-        return {
-          key: metric,
-          message:
-            this.getMetricsDisplayName(metric, datamart) ||
-            formatMessage(messagesMap[metric]),
-        };
-      }),
-      colors: chartColors,
+    const stackedAreaPlotProps: StackedAreaPlotProps = {
+      dataset: dataSource as any,
+      options: {
+        xKey: { key: 'day', mode: 'DAY' },
+        yKeys: metrics.map((metric) => {
+          return {
+            key: metric,
+            message:
+              this.getMetricsDisplayName(metric, datamart) ||
+              formatMessage(messagesMap[metric]),
+          };
+        }),
+        colors: chartColors,
+      },
     };
     return !isFetching ? (
-      <StackedAreaPlot dataset={dataSource as any} options={optionsForChart} />
+      <StackedAreaPlot {...stackedAreaPlotProps} />
     ) : (
       <LoadingChart />
     );
@@ -149,7 +153,7 @@ class Overview extends React.Component<Props> {
     const metricName =
       datamart &&
       datamart.audience_segment_metrics.find(
-        el => el.technical_name === metric,
+        (el) => el.technical_name === metric,
       );
     return metricName ? metricName.display_name : undefined;
   };

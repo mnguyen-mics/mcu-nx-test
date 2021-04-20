@@ -5,7 +5,7 @@ import * as React from 'react';
 interface UsersCounterProps {
   style?: React.CSSProperties;
   iconName: McsIconType;
-  numberOfUsers: number;
+  numberOfUsers?: number;
 }
 
 type Props = UsersCounterProps;
@@ -19,7 +19,7 @@ class UsersCounter extends React.Component<Props> {
         className={'node-users-counter mcs-automation-userCounter'}
         style={style}
       >
-        {numberOfUsers.toLocaleString()}
+        {numberOfUsers ? numberOfUsers.toLocaleString() : '0'}
         <McsIcon type={iconName} className={'node-users-counter-icon'} />
       </div>
     );

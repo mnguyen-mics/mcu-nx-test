@@ -56,6 +56,7 @@ import EntryNodeAutomationDashboardStats, {
 import ExitNodeAutomationDashboardStats, {
   ExitNodeAutomationDashboardStatsProps,
 } from './Dashboard/ExitNode/ExitNodeAutomationDashboardStats';
+import { ScenarioCountersData } from '../../../../utils/ScenarioAnalyticsReportHelper';
 
 interface AutomationNodeProps {
   node: AutomationNodeModel;
@@ -209,7 +210,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
   };
 
   viewStats = () => {
-    const { node, openNextDrawer, closeNextDrawer } = this.props;
+    const { node, openNextDrawer, closeNextDrawer, datamartId } = this.props;
     const selectedNode = node.storylineNodeModel.node;
 
     if (isEmailCampaignNode(selectedNode)) {
@@ -239,6 +240,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         EntryNodeAutomationDashboardStats,
         {
           additionalProps: {
+            datamartId: datamartId,
             nodeId: selectedNode.id,
             close: closeNextDrawer,
           },
@@ -250,6 +252,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         ExitNodeAutomationDashboardStats,
         {
           additionalProps: {
+            datamartId: datamartId,
             nodeId: selectedNode.id,
             close: closeNextDrawer,
           },
@@ -296,9 +299,9 @@ class AutomationNodeWidget extends React.Component<Props, State> {
             size =
               scenarioNodeShape.type === 'QUERY_INPUT'
                 ? scenarioNodeShape.ui_creation_mode ===
-                  'REACT_TO_EVENT_STANDARD' ||
+                    'REACT_TO_EVENT_STANDARD' ||
                   scenarioNodeShape.ui_creation_mode ===
-                  'REACT_TO_EVENT_ADVANCED'
+                    'REACT_TO_EVENT_ADVANCED'
                   ? 'small'
                   : 'large'
                 : 'large';
@@ -327,7 +330,8 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         let disableEdition = false;
         switch (scenarioNodeShape.type) {
           case 'ABN_NODE':
-            disableEdition = Object.keys(scenarioNodeShape.edges_selection).length !== 0;
+            disableEdition =
+              Object.keys(scenarioNodeShape.edges_selection).length !== 0;
             break;
           case 'ADD_TO_SEGMENT_NODE':
           case 'DELETE_FROM_SEGMENT_NODE':
@@ -696,11 +700,11 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     const icon = node.iconAnt ? (
       node.iconAnt
     ) : (
-        <McsIcon
-          type={node.icon as McsIconType}
-          className="available-node-icon-gyph"
-        />
-      );
+      <McsIcon
+        type={node.icon as McsIconType}
+        className="available-node-icon-gyph"
+      />
+    );
 
     if (node.iconAssetUrl) {
       return (
@@ -716,8 +720,9 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         >
           <img
             className="available-node-icon-img"
-            src={`${(window as any).MCS_CONSTANTS.ASSETS_URL}${node.iconAssetUrl
-              }`}
+            src={`${(window as any).MCS_CONSTANTS.ASSETS_URL}${
+              node.iconAssetUrl
+            }`}
           />
         </div>
       );
@@ -741,6 +746,21 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     }
   };
 
+  getNumberOfUsers = (): number | undefined => {
+    const { node } = this.props;
+
+    const scenarioCountersData:
+      | ScenarioCountersData
+      | undefined = node.getScenarioCountersData();
+
+    if (!scenarioCountersData) return undefined;
+
+    const count = scenarioCountersData.nodeCountersData.find(
+      (line) => line.nodeId === node.storylineNodeModel.node.id,
+    )?.userPointsCount;
+    return count ? +count : undefined;
+  };
+
   render() {
     const { node, viewer, hasFeature } = this.props;
     const { nodeName } = this.state;
@@ -752,7 +772,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         <UsersCounter
           style={{ height: node.getNodeCounterHeight() }}
           iconName={'user'}
-          numberOfUsers={123456789}
+          numberOfUsers={this.getNumberOfUsers()}
         />
       ) : undefined;
 
@@ -796,9 +816,10 @@ class AutomationNodeWidget extends React.Component<Props, State> {
             }
             placement="bottom"
           >
-            {`${nodeTitleToDisplayed.substring(0, NODE_NAME_MAX_SIZE) +
+            {`${
+              nodeTitleToDisplayed.substring(0, NODE_NAME_MAX_SIZE) +
               (nodeTitleToDisplayed.length > NODE_NAME_MAX_SIZE ? '...' : '')
-              }`}
+            }`}
           </Tooltip>
         </div>
         <div className="node-subtitle">
@@ -830,16 +851,16 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         </div>
         {(node.y !== ROOT_NODE_POSITION.y ||
           node.x !== ROOT_NODE_POSITION.x) && (
-            <div
-              style={{
-                position: 'absolute',
-                top: node.getNodeSize().height / 2 - 6,
-                left: -10,
-              }}
-            >
-              <McsIcon type="chevron-right" className="arrow" />
-            </div>
-          )}
+          <div
+            style={{
+              position: 'absolute',
+              top: node.getNodeSize().height / 2 - 6,
+              left: -10,
+            }}
+          >
+            <McsIcon type="chevron-right" className="arrow" />
+          </div>
+        )}
         {this.state.focus && (
           <WindowBodyPortal>
             <div className="automation-builder focus">

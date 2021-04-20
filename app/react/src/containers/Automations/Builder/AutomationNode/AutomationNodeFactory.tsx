@@ -4,9 +4,7 @@ import AutomationNodeWidget from './AutomationNodeWidget';
 import AutomationNodeModel from './AutomationNodeModel';
 import { TreeNodeOperations } from '../domain';
 
-export default class AutomationNodeFactory extends AbstractNodeFactory<
-  AutomationNodeModel
-> {
+export default class AutomationNodeFactory extends AbstractNodeFactory<AutomationNodeModel> {
   nodeOperations: TreeNodeOperations;
   lockGlobalInteraction: (locked: boolean) => void;
   viewer: boolean;
@@ -19,10 +17,10 @@ export default class AutomationNodeFactory extends AbstractNodeFactory<
     viewer: boolean,
   ) {
     super('automation-node');
-    this.nodeOperations = nodeOperations
+    this.nodeOperations = nodeOperations;
     this.lockGlobalInteraction = _lockGlobalInteraction;
     this.viewer = viewer;
-    this.datamartId = datamartId
+    this.datamartId = datamartId;
   }
 
   generateReactWidget(

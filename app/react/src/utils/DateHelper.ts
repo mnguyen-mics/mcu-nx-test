@@ -31,6 +31,30 @@ export function truncateUpToHour(date: Date, hourOfDay: number) {
   }
 }
 
+export function getAllDates(
+  timeUnit: 'HOUR' | 'DAY',
+  dateRange: { from: string; to: string },
+): string[] {
+  const format = timeUnit === 'HOUR' ? 'YYYY-MM-DD HH:mm:ss' : 'YYYY-MM-DD';
+
+  const allDates = [moment(dateRange.from).format(format)];
+
+  const to =
+    timeUnit === 'HOUR'
+      ? moment(dateRange.to).add(23, 'hours')
+      : moment(dateRange.to);
+
+  while (allDates[allDates.length - 1] !== to.format(format)) {
+    allDates.push(
+      moment(allDates[allDates.length - 1])
+        .add(1, timeUnit === 'HOUR' ? 'hours' : 'days')
+        .format(format),
+    );
+  }
+
+  return allDates;
+}
+
 export type WeekDay =
   | 'MONDAY'
   | 'TUESDAY'
