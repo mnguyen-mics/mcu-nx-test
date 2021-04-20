@@ -92,6 +92,12 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
     } = this.props;
 
     if (initialValues.extendedCustomActionsInformation) {
+      if (initialValues.customActionId) {
+        this.dispatchPropertiesToBeDisplayed(
+          initialValues.customActionId,
+          initialValues.extendedCustomActionsInformation,
+        );
+      }
       this.setState({
         extendedCustomActionsInformation:
           initialValues.extendedCustomActionsInformation,
@@ -106,6 +112,13 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
           (
             extendedCustomActionsInformation: ExtendedCustomActionInformation[],
           ) => {
+            if (initialValues.customActionId) {
+              this.dispatchPropertiesToBeDisplayed(
+                initialValues.customActionId,
+                extendedCustomActionsInformation,
+              );
+            }
+
             if (dispatch)
               dispatch(
                 change(
@@ -123,6 +136,51 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
       });
     }
   }
+
+  componentDidUpdate(previousProps: Props) {
+    const { formValues: previousFormValues } = previousProps;
+    const { formValues } = this.props;
+
+    const { extendedCustomActionsInformation } = this.state;
+
+    if (formValues && previousFormValues) {
+      const { customActionId: previousCustomActionId } = previousFormValues;
+      const { customActionId } = formValues;
+      if (customActionId !== previousCustomActionId && customActionId) {
+        this.dispatchPropertiesToBeDisplayed(
+          customActionId,
+          extendedCustomActionsInformation,
+        );
+      }
+    }
+  }
+
+  dispatchPropertiesToBeDisplayed = (
+    customActionId: string,
+    extendedCustomActionsInformation: ExtendedCustomActionInformation[],
+  ) => {
+    const { dispatch } = this.props;
+
+    const customActionInfoOpt = extendedCustomActionsInformation.find(
+      (extendedCustomActionInformation) => {
+        return (
+          extendedCustomActionInformation.customAction.id === customActionId
+        );
+      },
+    );
+
+    if (
+      dispatch &&
+      customActionInfoOpt &&
+      customActionInfoOpt.customActionProperties
+    ) {
+      const modifiedProps: { [index: string]: any } = {};
+      customActionInfoOpt.customActionProperties.forEach((prop) => {
+        modifiedProps[prop.technical_name] = prop;
+      });
+      if (dispatch) dispatch(change(FORM_ID, 'properties', modifiedProps));
+    }
+  };
 
   getExtendedCustomActionsInformation = (
     organisationId: string,
