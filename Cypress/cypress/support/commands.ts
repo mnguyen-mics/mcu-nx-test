@@ -626,13 +626,13 @@ Cypress.Commands.add(
                     cy.request({
                       url: `${Cypress.env(
                         'apiDomain',
-                      )}/v1/datamarts/${datamartId}/user_activities?processing_pipeline=true`,
+                      )}/v1/datamarts/${datamartId}/user_activities?processing_pipeline=false`,
                       method: 'POST',
                       headers: { Authorization: accessToken },
                       body: {
                         $ts: `${timestamp}`,
                         $type: 'SITE_VISIT',
-                        $session_status: 'CLOSED_SESSION',
+                        $session_status: 'NO_SESSION',
                         $user_account_id: `${userAccountId}`,
                         $user_agent_id: 'vec:123',
                         $site_id: `${siteId}`,
