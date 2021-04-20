@@ -95,19 +95,20 @@ class AudienceBuilderDashboard extends React.Component<Props, State> {
         <React.Fragment>
           <CardFlex className="mcs-audienceBuilder_totalAudience">
             <McsIcon type="full-users" />
-            <span className="mcs-audienceBuilder_totalValue">
-              {isQueryRunning ? (
-                <Loading isFullScreen={true} />
-              ) : !!totalAudience || totalAudience === 0 ? (
-                formatMetric(totalAudience, '0,0')
-              ) : (
-                '-'
-              )}
-            </span>
-
-            <span className="mcs-audienceBuilder_selectedAudience">
-              {intl.formatMessage(messages.selectedAudience)}
-            </span>
+            {isQueryRunning ? (
+              <span />
+            ) : !!totalAudience || totalAudience === 0 ? (
+              <span>
+                <span className="mcs-audienceBuilder_totalValue">
+                  {formatMetric(totalAudience, '0,0')}
+                </span>
+                <span className="mcs-audienceBuilder_selectedAudience">
+                  {intl.formatMessage(messages.selectedAudience)}
+                </span>
+              </span>
+            ) : (
+              '-'
+            )}
           </CardFlex>
           {isDashboardLoading || !queryDocument ? (
             <Loading className="m-t-20" isFullScreen={true} />

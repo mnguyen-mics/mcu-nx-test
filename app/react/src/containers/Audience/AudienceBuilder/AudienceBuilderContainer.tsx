@@ -163,18 +163,18 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
 
   runQuery = (formData: AudienceBuilderFormData) => {
     const { audienceBuilder } = this.props;
+    const queryDocument = buildQueryDocument(formData);
     this.setState({
       isQueryRunning: true,
       isMaskVisible: false,
+      queryDocument: queryDocument,
     });
-    const queryDocument = buildQueryDocument(formData);
     this._queryService
       .runJSONOTQLQuery(audienceBuilder.datamart_id, queryDocument)
       .then(queryResult => {
         this.setState({
           queryResult: queryResult.data,
           isQueryRunning: false,
-          queryDocument: queryDocument,
         });
       })
       .catch(err => {
