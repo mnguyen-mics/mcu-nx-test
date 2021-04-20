@@ -10,19 +10,19 @@
 <!--<![endif]-->
 
 <head>
+  <script src="conf/react-configuration.js"></script>
   <script type="text/javascript">
     // Global site tag (gtag.js) - Google Analytics
-    // Only used on navigator.mediarithmics.com
-    if(window.location.href.includes('navigator.mediarithmics')) {
+    if (window.MCS_CONSTANTS.USE_GTAG) {
       const head = document.getElementsByTagName('head')[0];
       const js = document.createElement("script");
       js.type = "text/javascript";
-      js.src = "https://www.googletagmanager.com/gtag/js?id=G-S9J3649K5Y";
+      js.src = "https://www.googletagmanager.com/gtag/js?id=" + window.MCS_CONSTANTS.GTAG_ID;
       head.appendChild(js);
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'G-S9J3649K5Y');
+      gtag('config', window.MCS_CONSTANTS.GTAG_ID);
       // The global varibale userId can be undefined if user is logged out
       gtag('config', 'GA_MEASUREMENT_ID', {
         'user_id': window.userId
@@ -97,7 +97,6 @@
 
   </script>
   <script src="conf/plugins-configuration.js"></script>
-  <script src="conf/react-configuration.js"></script>
   <script>document.title = window.MCS_CONSTANTS.SITE_NAME</script>
   <script type="text/javascript">
     if (window.MCS_CONSTANTS && window.MCS_CONSTANTS.ENABLE_TRACKING === true) {

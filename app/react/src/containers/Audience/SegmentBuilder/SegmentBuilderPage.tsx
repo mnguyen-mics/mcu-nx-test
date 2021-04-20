@@ -23,6 +23,7 @@ import { Alert } from 'antd';
 import { UserProfileResource } from '../../../models/directory/UserProfileResource';
 import { calculateDefaultTtl } from '../Segments/Edit/domain';
 import { injectFeatures, InjectedFeaturesProps } from '../../Features';
+import { ITagService } from '../../../services/TagService';
 
 export interface QueryBuilderPageRouteParams {
   organisationId: string;
@@ -60,6 +61,9 @@ class SegmentBuilderPage extends React.Component<Props> {
 
   @lazyInject(TYPES.IQueryService)
   private _queryService: IQueryService;
+
+  @lazyInject(TYPES.ITagService)
+  private _tagService: ITagService;
 
   render() {
     const {
@@ -123,6 +127,7 @@ class SegmentBuilderPage extends React.Component<Props> {
             );
           })
           .then((res) => {
+            this._tagService.sendEvent("create_segment", "Advanced Segment Builder", "Save Segment");
             history.push(
               `/v2/o/${match.params.organisationId}/audience/segments/${res.data.id}`,
             );

@@ -36,6 +36,7 @@ import { InjectedWorkspaceProps, injectWorkspace } from '../../Datamart';
 import { injectFeatures, InjectedFeaturesProps } from '../../Features';
 import { AudienceFeatureResource } from '../../../models/audienceFeature';
 import { notifyError } from '../../../redux/Notifications/actions';
+import { ITagService } from '../../../services/TagService';
 
 interface State {
   selectedAudienceBuilder?: AudienceBuilderResource;
@@ -62,6 +63,9 @@ class AudienceBuilderPage extends React.Component<Props, State> {
 
   @lazyInject(TYPES.IAudienceBuilderService)
   private _audienceBuilderService: IAudienceBuilderService;
+
+  @lazyInject(TYPES.ITagService)
+  private _tagService: ITagService;
 
   constructor(props: Props) {
     super(props);
@@ -243,6 +247,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
           );
         })
         .then((res) => {
+          this._tagService.sendEvent("create_segment", "Segment Builder", "Save Segment");
           history.push(
             `/v2/o/${match.params.organisationId}/audience/segments/${res.data.id}`,
           );

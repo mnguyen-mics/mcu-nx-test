@@ -19,6 +19,7 @@ import { IExportService } from '../../services/Library/ExportService';
 import QueryToolSelector from '../QueryTool/QueryToolSelector';
 import { MicsReduxState } from '../../utils/ReduxHelper';
 import { Alert } from 'antd';
+import { ITagService } from '../../services/TagService';
 
 export interface QueryToolPageRouteParams {
   organisationId: string;
@@ -53,6 +54,9 @@ class QueryToolPage extends React.Component<Props> {
 
   @lazyInject(TYPES.IExportService)
   private _exportService: IExportService;
+
+  @lazyInject(TYPES.ITagService)
+  private _tagService: ITagService;
 
   getSelectedDatamart = () => {
     const { connectedUser, location } = this.props;
@@ -107,6 +111,7 @@ class QueryToolPage extends React.Component<Props> {
           return this._audienceSegmentService
             .saveSegment(match.params.organisationId, userQuerySegment)
             .then(res => {
+              this._tagService.sendEvent("create_segment", "Query Tool", "Save Segment");
               history.push(
                 `/v2/o/${match.params.organisationId}/audience/segments/${
                   res.data.id
@@ -131,6 +136,7 @@ class QueryToolPage extends React.Component<Props> {
                 type: 'QUERY',
               })
               .then(res => {
+                this._tagService.sendEvent("create_segment", "Query Tool", "Save Segment");
                 history.push(
                   `/v2/o/${match.params.organisationId}/datastudio/exports/${res.data.id}`,
                 );
