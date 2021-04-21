@@ -19,7 +19,7 @@ import TopInfo from './Vizualisation/TopInfo';
 import MapRadarChart from './Vizualisation/MapRadarChart';
 import { QueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
 
-const BASE_FRAMEWORK_HEIGHT = 150;
+const BASE_FRAMEWORK_HEIGHT = 96;
 const BASE_PADDING = 5;
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
@@ -102,6 +102,7 @@ export default class DashboardContent extends React.Component<Props, State> {
             data={comp.data}
             labels={comp.labels}
             tooltip={comp.tooltip}
+            height={height}
           />
         );
       case 'MAP_RADAR_CHART':
@@ -235,6 +236,7 @@ export default class DashboardContent extends React.Component<Props, State> {
         // Disable dragging & resizabling
         isDraggable={false}
         isResizable={false}
+        rowHeight={BASE_FRAMEWORK_HEIGHT}
       >
         {this.generateDOM()}
       </ResponsiveReactGridLayout>

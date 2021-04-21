@@ -36,7 +36,9 @@ class DashboardWrapper extends React.Component<Props, State> {
 
     return (
       <div>
-        <ContentHeader title={title} size={source ? 'medium' : `large`} />
+        {title && (
+          <ContentHeader title={title} size={source ? 'medium' : `large`} />
+        )}
         <DashboardContent
           layout={layout}
           onLayoutChange={this.onLayoutChange}
