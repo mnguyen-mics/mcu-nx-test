@@ -79,14 +79,14 @@ class DropNodeWidget extends React.Component<Props, State> {
     return (
       connectDropTarget &&
       connectDropTarget(
-        <div className={'drop-container'}>
+        <div className={'drop-container mcs-dropNodeWidget'}>
           <div
             className={'drop-area'}
             onMouseEnter={onHover('enter')}
             onMouseLeave={onHover('leave')}
           >
             <div
-              className={'drop-node'}
+              className={'drop-node mcs-dropNodeWidget_area_node'}
               onMouseEnter={onHover('enter')}
               onMouseLeave={onHover('leave')}
               style={{
