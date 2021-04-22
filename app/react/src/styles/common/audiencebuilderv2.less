@@ -192,77 +192,6 @@
     padding: 0;
   }
 
-  // Audience Feature Card Content
-  // TODO remove -2's after cleanup
-
-  .mcs-audienceBuilder_audienceFeatureContent {
-    padding: 15px 20px 20px 20px;
-    font-family: @font-family;
-
-    .mcs-audienceBuilder_audienceFeatureName-2 {
-      font-family: @font-family-medium;
-      color: @text-color;
-      line-height: 18px;
-      font-size: 12px;
-      font-weight: 500;
-    }
-
-    .mcs-audienceBuilder_audienceFeatureDescription-2 {
-      color: @input-placeholder-color;
-      font-size: 10px;
-      font-style: italic;
-      margin-bottom: 10px;
-    }
-
-    .mcs-audienceBuilder_closeButton-2 {
-      line-height: 18px;
-      color: @text-color-secondary;
-      font-size: 14px;
-      padding: 0px;
-      border: none;
-      float: right;
-
-      .mcs-icon {
-        margin: 0;
-      }
-    }
-
-    .mcs-audienceBuilder_audienceFeatureInput-2 {
-      margin-top: 15px;
-
-      .mcs-relativeAbsoluteDateForm_picker {
-        margin-bottom: 0;
-      }
-
-      .field-label {
-        color: @text-color-secondary;
-      }
-
-      .ant-legacy-form-item-label {
-        text-align: left;
-      }
-
-      .ant-legacy-form-item-label label:after {
-        content: none;
-      }
-
-      .ant-select {
-        display: block;
-      }
-
-      .form-field-wrapper {
-        margin: 0;
-        .ant-row {
-          margin: 0;
-        }
-      }
-    }
-
-    .ant-btn {
-      box-shadow: none;
-    }
-  }
-
   // ------------------------------------
   // Audience Builder Timeline
 
@@ -388,45 +317,81 @@
       }
     }
   }
-
-  //
-  // ------------------------------------
 }
 
-//  Audience Features Management
+// Audience Feature Card Content (Builder & Settings)
+// TODO remove -2's after cleanup
 
+.mcs-audienceBuilder_audienceFeatureContent,
 .mcs-audienceFeature-preview {
-  .mcs-audienceFeature_card {
-    .mcs-audienceFeature_cardContainer {
-      padding: 20px;
+  padding: 15px 20px 20px 20px;
+  font-family: @font-family;
+
+  .mcs-audienceBuilder_audienceFeatureName-2 {
+    font-family: @font-family-medium;
+    color: @text-color;
+    line-height: 18px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .mcs-audienceBuilder_audienceFeatureDescription-2 {
+    color: @input-placeholder-color;
+    font-size: 10px;
+    font-style: italic;
+    margin-bottom: 10px;
+  }
+
+  .mcs-audienceBuilder_closeButton-2 {
+    line-height: 18px;
+    color: @text-color-secondary;
+    font-size: 14px;
+    padding: 0px;
+    border: none;
+    float: right;
+
+    .mcs-icon {
+      margin: 0;
     }
-    .mcs-card-title {
-      font-size: 15px;
-      line-height: 50px;
+  }
+
+  .mcs-audienceBuilder_audienceFeatureInput-2 {
+    margin-top: 15px;
+
+    .mcs-relativeAbsoluteDateForm_picker {
+      margin-bottom: 0;
     }
-    padding: 0px 0px 15px 0px;
-    .mcs-card-header {
-      padding-left: 15px;
-      border-bottom: 1px solid #d3dbe1;
+
+    .field-label {
+      color: @text-color-secondary;
+    }
+
+    .ant-legacy-form-item-label {
+      text-align: left;
+    }
+
+    .ant-legacy-form-item-label label:after {
+      content: none;
     }
 
     .ant-select {
-      width: 100%;
+      display: block;
     }
-    .mcs-audienceFeature_name {
-      font-size: 12px;
-      font-weight: 500;
-      color: @primary-color;
-      line-height: 20px;
-    }
-    .mcs-audienceFeature_description {
-      margin-bottom: 20px;
-    }
-    .mcs-audienceBuilder_audienceFeatureInput {
-      margin: 10px 0;
+
+    .form-field-wrapper {
+      margin: 0;
+      .ant-row {
+        margin: 0;
+      }
     }
   }
+
+  .ant-btn {
+    box-shadow: none;
+  }
 }
+
+//  Audience Features Management
 
 .mcs-audienceFeature_formColumn {
   padding: 30px;

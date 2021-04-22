@@ -6,9 +6,10 @@ import { messages } from '../../messages';
 import { FormSection } from '../../../../../../components/Form';
 import { SchemaItem } from '../../../../../QueryTool/JSONOTQL/domain';
 import { Card } from '@mediarithmics-private/mcs-components-library';
-import AudienceFeatureVariable from '../../../../../Audience/AudienceBuilder/QueryFragmentBuilders/AudienceFeatureVariable';
+import NewAudienceFeatureLayout from '../../../../../Audience/AudienceBuilder/QueryFragmentBuilders/NewAudienceFeatureLayout';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { AudienceFeatureFormData } from '../domain';
+import { AudienceFeatureResource } from '../../../../../../models/audienceFeature';
 
 interface AudienceFeaturePreviewProps {
   schema?: SchemaItem;
@@ -26,39 +27,26 @@ class AudienceFeaturePreview extends React.Component<Props> {
 
   render() {
     const {
-      intl: { formatMessage },
       match: {
         params: { datamartId },
       },
       formValues,
     } = this.props;
 
+    const audienceFeature = formValues && [
+      formValues as AudienceFeatureResource,
+    ];
+
     return (
       <div className="mcs-audienceFeature-preview">
         <FormSection title={messages.audienceFeaturePreview} />
-        <Card
-          className="mcs-audienceFeature_card"
-          title={formatMessage(messages.audienceFeatures)}
-        >
-          <div className="mcs-audienceFeature_cardContainer">
-            <div className="mcs-audienceFeature_name">{formValues?.name}</div>
-            <i className="mcs-audienceFeature_description">
-              {formValues?.description}
-            </i>
-            {formValues?.variables?.map((v, index) => {
-              return (
-                <AudienceFeatureVariable
-                  newLayout={false}
-                  key={index}
-                  disabled={true}
-                  datamartId={datamartId}
-                  variable={v}
-                  objectTypes={[]}
-                  formPath={''}
-                />
-              );
-            })}
-          </div>
+        <Card className="mcs-audienceFeature_card">
+          <NewAudienceFeatureLayout
+            formPath={''}
+            datamartId={datamartId}
+            objectTypes={[]}
+            audienceFeatures={audienceFeature}
+          />
         </Card>
       </div>
     );
