@@ -42,7 +42,6 @@ const { Content } = Layout;
 
 interface MapStateToProps {
   workspace: (organisationId: string) => UserWorkspaceResource;
-  userId: string;
 }
 
 interface State {
@@ -212,7 +211,7 @@ class AudiencePartitionsPage extends React.Component<Props, State> {
 
     options = {
       ...options,
-      archived: organisationId === '1135' && ['1639', '2188','1330'].includes(this.props.userId),
+      archived: false,
     };
 
     let promise: Promise<DataListResponse<AudiencePartitionResource>>;
@@ -313,7 +312,6 @@ class AudiencePartitionsPage extends React.Component<Props, State> {
 
 const mapStateToProps = (state: MicsReduxState) => ({
   workspace: getWorkspace(state),
-  userId: state.session.connectedUser.id
 });
 
 export default compose(
