@@ -12,6 +12,7 @@ import {
   AudienceBuilderParametricPredicateNode,
   QueryDocument as AudienceBuilderQueryDocument,
   AudienceBuilderResource,
+  AudienceBuilderParametricPredicateGroupNode,
 } from '../../../models/audienceBuilder/AudienceBuilderResource';
 import { UserQuerySegment } from '../../../models/audiencesegment/AudienceSegmentResource';
 import { lazyInject } from '../../../config/inversify.config';
@@ -135,20 +136,31 @@ class AudienceBuilderPage extends React.Component<Props, State> {
             );
           },
         );
+
+        const setUpPredicate = (
+          feature: AudienceFeatureResource,
+        ): AudienceBuilderParametricPredicateNode => {
+          return {
+            type: 'PARAMETRIC_PREDICATE',
+            parametric_predicate_id: feature.id,
+            parameters: {},
+          };
+        };
+
         const setUpPredicates = (
           features: AudienceFeatureResource[],
         ): AudienceBuilderParametricPredicateNode[] => {
-          return features.map((p) => {
-            const parameters: { [key: string]: any } = {};
-            p.variables.forEach((v) => {
-              const parameterName = v.parameter_name;
-              parameters[parameterName] = '';
-            });
+          return features.map((feature) => {
+            return setUpPredicate(feature);
+          });
+        };
 
+        const setUpDefaultPredicates = (
+          features: AudienceFeatureResource[],
+        ): AudienceBuilderParametricPredicateGroupNode[] => {
+          return features.map((feature) => {
             return {
-              type: 'PARAMETRIC_PREDICATE',
-              parametric_predicate_id: p.id,
-              parameters: parameters,
+              expressions: [setUpPredicate(feature)]
             };
           });
         };
@@ -175,14 +187,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
                 },
               },
               newFormData: {
-                include:
-                  defaultFeatures.length > 0
-                    ? [
-                        {
-                          expressions: setUpPredicates(defaultFeatures),
-                        },
-                      ]
-                    : [],
+                include: setUpDefaultPredicates(defaultFeatures),
                 exclude: [],
               },
               isLoading: false,
