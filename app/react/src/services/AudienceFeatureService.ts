@@ -86,12 +86,16 @@ export interface IAudienceFeatureService {
   fetchFoldersAndFeatures: (
     datamartId: string,
     baseFolderName: string,
-    setBaseFolder: (features: AudienceFeaturesByFolder, total: number) => void,
+    setBaseFolder: (
+      baseFolder: AudienceFeaturesByFolder,
+      total: number,
+      allFeatures?: AudienceFeatureResource[],
+    ) => void,
     onFailure: (err: any) => void,
     notifyError: (err: any, notifConfig?: any) => Action<any>,
     filter?: Index<any>,
     demographicIds?: string[],
-  ) => void;
+  ) => Promise<void>;
 
   getFolderContent: (
     id?: string,
@@ -243,13 +247,17 @@ export class AudienceFeatureService implements IAudienceFeatureService {
       options.exclude = demographicIds;
     }
 
-    return this.getAudienceFeatures(datamartId, options)
+    return this.getAudienceFeatures(datamartId, options);
   };
 
   fetchFoldersAndFeatures = (
     datamartId: string,
     baseFolderName: string,
-    setBaseFolder: (baseFolder: AudienceFeaturesByFolder, total: number) => void,
+    setBaseFolder: (
+      baseFolder: AudienceFeaturesByFolder,
+      total: number,
+      allFeatures?: AudienceFeatureResource[],
+    ) => void,
     onFailure: (err: any) => void,
     notifyError: (err: any, notifConfig?: any) => Action<any>,
     filter?: Index<any>,
@@ -266,7 +274,7 @@ export class AudienceFeatureService implements IAudienceFeatureService {
         demographicIds,
       ),
     ];
-    Promise.all(res)
+    return Promise.all(res)
       .then((results: any[]) => {
         const audienceFeatureFolders: AudienceFeatureFolderResource[] =
           results[0];
@@ -276,7 +284,11 @@ export class AudienceFeatureService implements IAudienceFeatureService {
           audienceFeatureFolders,
           features.data,
         );
-        setBaseFolder(baseFolder, features.total || features.count);
+        setBaseFolder(
+          baseFolder,
+          features.total || features.count,
+          features.data,
+        );
       })
       .catch((err) => {
         onFailure(err);
