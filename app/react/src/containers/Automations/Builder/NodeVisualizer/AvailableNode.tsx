@@ -91,7 +91,7 @@ class AvailableNode extends React.Component<AvailableNodeProps> {
     return (
       connectDragSource &&
       connectDragSource(
-        <div className="available-node">
+        <div className="available-node mcs-availableNode">
           {iconElement}
           <div className="available-node-text">{name}</div>
         </div>,
