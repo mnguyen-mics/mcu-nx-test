@@ -6,7 +6,11 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { RouteComponentProps } from 'react-router';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
-import { IAudienceFeatureService, AudienceFeatureSearchSettings } from '../../../../services/AudienceFeatureService';
+import {
+  IAudienceFeatureService,
+  AudienceFeatureSearchSettings,
+  AudienceFeatureOptions,
+} from '../../../../services/AudienceFeatureService';
 import { AudienceBuilderFormData } from '../../../../models/audienceBuilder/AudienceBuilderResource';
 import { AudienceFeatureResource } from '../../../../models/audienceFeature';
 import injectNotifications, {
@@ -75,9 +79,41 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
 
   componentDidUpdate(prevProps: Props, prevState: State) {
     const { keywords: prevKeywords } = prevState;
-    const { keywords } = this.state;
+    const { keywords, audienceFeaturesByFolder } = this.state;
+    const { datamartId, demographicIds, notifyError } = this.props;
     if (keywords !== prevKeywords) {
-      this.fetchFoldersAndFeatures({ keywords: keywords });
+      this.setState({
+        isLoading: true,
+      });
+      const options: AudienceFeatureOptions = {
+        keywords: keywords ? [keywords] : undefined,
+        exclude: demographicIds,
+      };
+
+      if (!keywords) {
+        options.max_results = 500;
+      }
+
+      this._audienceFeatureService
+        .getAudienceFeatures(datamartId, options)
+        .then((res) => {
+          if (audienceFeaturesByFolder)
+            this.setState({
+              selectedFolder: {
+                ...audienceFeaturesByFolder,
+                audience_features: !!keywords
+                  ? res.data
+                  : res.data.filter((f) => !f.folder_id),
+              },
+              isLoading: false,
+            });
+        })
+        .catch((err) => {
+          notifyError(err);
+          this.setState({
+            isLoading: false,
+          });
+        });
     }
   }
 
@@ -204,6 +240,7 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
       selectedAudienceFeature,
       selectedFolder,
       allAudienceFeatures,
+      keywords,
       isLoading,
     } = this.state;
     const disabled =
@@ -224,9 +261,10 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
     return (
       <React.Fragment>
         <Search className="mcs-search-input" {...this.getSearchOptions()} />
-        {this.getBreadCrumb()}
+        {!keywords && this.getBreadCrumb()}
         <Row gutter={16}>
           {!!selectedFolder &&
+            !keywords &&
             selectedFolder.children.map((folder) => {
               return (
                 <Col key={folder.id ? folder.id : 'root_key'} span={4}>
@@ -247,17 +285,22 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
             })}
         </Row>
         <Row className="mcs-audienceBuilder_featureCardContainer" gutter={16}>
-          {featuresToDisplay.map((feature) => {
-            return (
-              <Col key={feature.id} span={6}>
-                <AudienceFeatureCard
-                  audienceFeature={feature}
-                  selectedAudienceFeature={selectedAudienceFeature}
-                  onSelectFeature={this.onSelectFeature}
-                />
-              </Col>
-            );
-          })}
+          {isLoading ? (
+            <Loading className="m-t-20" isFullScreen={true} />
+          ) : (
+            !!selectedFolder &&
+            selectedFolder.audience_features.map((feature) => {
+              return (
+                <Col key={feature.id} span={6}>
+                  <AudienceFeatureCard
+                    audienceFeature={feature}
+                    selectedAudienceFeature={selectedAudienceFeature}
+                    onSelectFeature={this.onSelectFeature}
+                  />
+                </Col>
+              );
+            })
+          )}
         </Row>
       </React.Fragment>
     );
