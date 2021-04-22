@@ -65,6 +65,7 @@ class AutomationSimpleForm extends React.Component<
             }}
             inputProps={{
               placeholder: intl.formatMessage(messages.automationNamePlaceHolder),
+              className: 'mcs-automationName',
             }}
             helpToolTipProps={{
               title: intl.formatMessage(messages.automationNameTooltip),

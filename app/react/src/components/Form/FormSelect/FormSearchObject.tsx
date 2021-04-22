@@ -243,6 +243,7 @@ class FormSearchObject extends React.Component<Props, FormSearchObjectState> {
       >
         <Spin spinning={this.state.initialFetch}>
           <Select
+            className='mcs-formSearchInput'
             mode={'multiple'}
             labelInValue={true}
             value={isSingleValue && this.state.value ? this.state.value[0] : this.state.value}
