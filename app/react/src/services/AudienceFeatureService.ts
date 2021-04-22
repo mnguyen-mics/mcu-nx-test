@@ -23,6 +23,7 @@ export interface AudienceFeatureOptions extends PaginatedApiParam {
 }
 
 export interface IAudienceFeatureService {
+  // Audience Features
   getAudienceFeatures: (
     datamartId: string,
     options?: AudienceFeatureOptions,
@@ -49,43 +50,27 @@ export interface IAudienceFeatureService {
     objectTreeExpression: string,
     adressableObject?: string,
   ) => Promise<DataListResponse<AudienceFeatureVariableResource>>;
-
+  // Audience Feature Folders
   getAudienceFeatureFolders: (
     datamartId: string,
   ) => Promise<DataListResponse<AudienceFeatureFolderResource>>;
-
   createAudienceFeatureFolder: (
     datamartId: string,
     body: Partial<AudienceFeatureFolderResource>,
   ) => Promise<DataResponse<AudienceFeatureFolderResource>>;
-
   getAudienceFeatureFolder: (
     datamartId: string,
     folderId: string,
   ) => Promise<DataResponse<AudienceFeatureFolderResource>>;
-
   updateAudienceFeatureFolder: (
     datamartId: string,
     folderId: string,
     body: Partial<AudienceFeatureFolderResource>,
   ) => Promise<DataResponse<AudienceFeatureFolderResource>>;
-
   deleteAudienceFeatureFolder: (
     datamartId: string,
     folderId: string,
   ) => Promise<DataResponse<AudienceFeatureFolderResource>>;
-
-  getAudienceFeatureChildFolders: (
-    datamartId: string,
-    parentId: string,
-  ) => Promise<DataListResponse<AudienceFeatureFolderResource>>;
-
-  fetchAudienceFeatures: (
-    datamartId: string,
-    filter?: AudienceFeatureSearchSettings,
-    demographicIds?: string[],
-  ) => Promise<DataListResponse<AudienceFeatureResource>>;
-
   fetchFoldersAndFeatures: (
     datamartId: string,
     baseFolderName: string,
@@ -93,8 +78,7 @@ export interface IAudienceFeatureService {
     onFailure: (err: any) => void,
     filter?: AudienceFeatureSearchSettings,
     demographicIds?: string[],
-  ) => Promise<void>;
-
+  ) => void;
   getFolderContent: (
     id?: string,
     audienceFeaturesByFolder?: AudienceFeaturesByFolder,
@@ -206,22 +190,17 @@ export class AudienceFeatureService implements IAudienceFeatureService {
     return ApiService.deleteRequest(endpoint);
   }
 
-  getAudienceFeatureChildFolders(
-    datamartId: string,
-    parentId: string,
-  ): Promise<DataListResponse<AudienceFeatureFolderResource>> {
-    const endpoint = `datamarts/${datamartId}/audience_feature_folders`;
-    return ApiService.getRequest(endpoint, { parent: parentId });
-  }
-
   private _fetchFolders = (datamartId: string) => {
     return this.getAudienceFeatureFolders(datamartId).then((res) => {
       return res.data;
     });
   };
 
-  fetchAudienceFeatures = (
+  fetchFoldersAndFeatures = (
     datamartId: string,
+    baseFolderName: string,
+    setBaseFolder: (baseFolder: AudienceFeaturesByFolder) => void,
+    onFailure: (err: any) => void,
     filter?: AudienceFeatureSearchSettings,
     demographicIds?: string[],
   ) => {
@@ -236,24 +215,12 @@ export class AudienceFeatureService implements IAudienceFeatureService {
     if (demographicIds && demographicIds.length >= 1) {
       options.exclude = demographicIds;
     }
-
-    return this.getAudienceFeatures(datamartId, options);
-  };
-
-  fetchFoldersAndFeatures = (
-    datamartId: string,
-    baseFolderName: string,
-    setBaseFolder: (baseFolder: AudienceFeaturesByFolder) => void,
-    onFailure: (err: any) => void,
-    filter?: AudienceFeatureSearchSettings,
-    demographicIds?: string[],
-  ) => {
     const res: [
       Promise<AudienceFeatureFolderResource[]>,
       Promise<DataListResponse<AudienceFeatureResource>>,
     ] = [
       this._fetchFolders(datamartId),
-      this.fetchAudienceFeatures(datamartId, filter, demographicIds),
+      this.getAudienceFeatures(datamartId, options),
     ];
     return Promise.all(res)
       .then((results: any[]) => {
