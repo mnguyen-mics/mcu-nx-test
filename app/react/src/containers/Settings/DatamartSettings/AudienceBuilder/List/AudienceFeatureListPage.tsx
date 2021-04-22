@@ -19,7 +19,10 @@ import injectNotifications, {
 } from '../../../../Notifications/injectNotifications';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
-import { IAudienceFeatureService } from '../../../../../services/AudienceFeatureService';
+import {
+  IAudienceFeatureService,
+  AudienceFeatureOptions,
+} from '../../../../../services/AudienceFeatureService';
 import { AudienceFeatureResource } from '../../../../../models/audienceFeature';
 import { SearchFilter } from '@mediarithmics-private/mcs-components-library/lib/utils';
 import { AudienceFeaturesByFolder } from '../../../../../models/audienceFeature/AudienceFeatureResource';
@@ -68,37 +71,48 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
         params: { datamartId },
       },
     } = this.props;
+    this.setState({
+      isLoading: true,
+    });
     this.fetchFoldersAndFeatures(datamartId);
   }
 
   componentDidUpdate(prevProps: Props) {
     const {
-      location: { search },
+      location: { search: prevSearch },
     } = prevProps;
     const {
-      location: { search: prevSearch },
+      location: { search },
       match: {
         params: { datamartId },
       },
       notifyError,
     } = this.props;
-    const { selectedFolder } = this.state;
+    const { audienceFeaturesByFolder } = this.state;
     const keywords = queryString.parse(search).keywords;
     const prevKeywords = queryString.parse(prevSearch).keywords;
     if (keywords !== prevKeywords) {
       this.setState({
         isLoading: true,
       });
+      const options: AudienceFeatureOptions = {
+        keywords: keywords,
+      };
+
+      if (!keywords) {
+        options.max_results = 500;
+      }
+
       this._audienceFeatureService
-        .getAudienceFeatures(datamartId, {
-          keywords: keywords,
-        })
+        .getAudienceFeatures(datamartId, options)
         .then((res) => {
-          if (selectedFolder)
+          if (audienceFeaturesByFolder)
             this.setState({
               selectedFolder: {
-                ...selectedFolder,
-                audience_features: res.data,
+                ...audienceFeaturesByFolder,
+                audience_features: !!keywords
+                  ? res.data
+                  : res.data.filter((f) => !f.folder_id),
               },
               isLoading: false,
             });

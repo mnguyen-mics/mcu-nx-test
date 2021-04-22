@@ -14,6 +14,7 @@ import {
   ActionsColumnDefinition,
   DataColumnDefinition,
 } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import { AudienceFeatureSearchSettings } from '../../../../../services/AudienceFeatureService';
 
 export interface AudienceFeatureTableProps {
   isLoading: boolean;
@@ -21,7 +22,7 @@ export interface AudienceFeatureTableProps {
   total?: number;
   noItem: boolean;
   onFilterChange: (newFilter: Partial<Filter>) => void;
-  filter: Filter;
+  filter?: AudienceFeatureSearchSettings;
   deleteAudienceFeature: (audienceFeature: AudienceFeatureResource) => void;
   relatedTable?: JSX.Element;
 }
@@ -62,8 +63,8 @@ class AudienceFeatureTable extends React.Component<Props> {
     } = this.props;
 
     const pagination = {
-      current: filter.currentPage,
-      pageSize: filter.pageSize,
+      current: filter?.currentPage || 1,
+      pageSize: filter?.pageSize || 10,
       total: total,
       onChange: (page: number, size: number) =>
         onFilterChange({
@@ -145,7 +146,7 @@ class AudienceFeatureTable extends React.Component<Props> {
           keywords: value,
           currentPage: 1,
         }),
-      defaultValue: filter.keywords,
+      defaultValue: filter?.keywords,
     };
 
     return noItem && !isLoading ? (
