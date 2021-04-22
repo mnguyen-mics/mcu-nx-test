@@ -21,7 +21,7 @@ export interface AudienceFeatureFolderProps {
   ) => Promise<DataResponse<AudienceFeatureFolderResource> | void>;
   deleteFolder: (
     id: string,
-  ) => Promise<DataResponse<AudienceFeatureFolderResource> | void>;
+  ) => void;
 }
 
 type Props = AudienceFeatureFolderProps & InjectedIntlProps;

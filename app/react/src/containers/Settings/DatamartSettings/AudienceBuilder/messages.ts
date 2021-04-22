@@ -190,7 +190,8 @@ export const messages = defineMessages({
   },
   audienceFeatureFolderTooltip: {
     id: 'settings.datamart.audienceFeatures.edit.folder.tooltip',
-    defaultMessage: 'Enter a folder where to store your audience feature. By default, audience features are stored in the root folder',
+    defaultMessage:
+      'Enter a folder where to store your audience feature. By default, audience features are stored in the root folder',
   },
   audienceFeatureAssociatedQuery: {
     id: 'settings.datamart.audienceFeatures.edit.query.title',
@@ -212,6 +213,11 @@ export const messages = defineMessages({
     id: 'settings.datamart.audienceFeatures.list.deleteModal.title',
     defaultMessage:
       'You are about to delete an Audience Feature from your datamart. This action cannot be undone. Do you want to proceed anyway ?',
+  },
+  audienceFolderDeleteListModalTitle: {
+    id: 'settings.datamart.audienceFolders.list.deleteModal.title',
+    defaultMessage:
+      'You are about to delete a folder from your datamart. It will delete every audience feature inside. This action cannot be undone. Do you want to proceed anyway?',
   },
   audienceFeatureDeleteListModalOk: {
     id: 'settings.datamart.audienceFeatures.list.deleteModal.ok',

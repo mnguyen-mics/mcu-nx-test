@@ -18,7 +18,7 @@ import {
 export interface AudienceFeatureTableProps {
   isLoading: boolean;
   dataSource: AudienceFeatureResource[];
-  total: number;
+  total?: number;
   noItem: boolean;
   onFilterChange: (newFilter: Partial<Filter>) => void;
   filter: Filter;
@@ -120,9 +120,9 @@ class AudienceFeatureTable extends React.Component<Props> {
       },
     ];
 
-    const actionColumns: Array<
-      ActionsColumnDefinition<AudienceFeatureResource>
-    > = [
+    const actionColumns: Array<ActionsColumnDefinition<
+      AudienceFeatureResource
+    >> = [
       {
         key: 'action',
         actions: () => [

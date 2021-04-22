@@ -6,7 +6,7 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { RouteComponentProps } from 'react-router';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
-import { IAudienceFeatureService } from '../../../../services/AudienceFeatureService';
+import { IAudienceFeatureService, AudienceFeatureSearchSettings } from '../../../../services/AudienceFeatureService';
 import { AudienceBuilderFormData } from '../../../../models/audienceBuilder/AudienceBuilderResource';
 import { AudienceFeatureResource } from '../../../../models/audienceFeature';
 import injectNotifications, {
@@ -20,7 +20,6 @@ import {
   EmptyTableView,
   Loading,
 } from '@mediarithmics-private/mcs-components-library';
-import { Index } from '@mediarithmics-private/mcs-components-library/lib/utils';
 import AudienceFeatureCard from './AudienceFeatureCard';
 import { FolderOutlined } from '@ant-design/icons';
 import { messages } from '../constants';
@@ -102,15 +101,13 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
     });
   };
 
-  fetchFoldersAndFeatures = (filter?: Index<any>) => {
-    const { datamartId, demographicIds, intl, notifyError } = this.props;
-    const searchMode = !!filter?.keywords;
+  fetchFoldersAndFeatures = (filter?: AudienceFeatureSearchSettings) => {
+    const { datamartId, demographicIds, intl } = this.props;
     this._audienceFeatureService.fetchFoldersAndFeatures(
       datamartId,
       intl.formatMessage(messages.audienceFeatures),
       this.setBaseFolder(searchMode),
       this.onFailure,
-      notifyError,
       filter,
       demographicIds,
     );
