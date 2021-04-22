@@ -34,10 +34,14 @@ import { ICustomActionService } from '../../../../../../services/CustomActionSer
 
 const { Content } = Layout;
 
-export interface ExtendedCustomActionInformation {
-  customAction: CustomActionResource;
+export interface CustomActionLayoutInformation {
   pluginLayout?: PluginLayout;
   customActionProperties?: PropertyResourceShape[];
+}
+
+export interface ExtendedCustomActionInformation {
+  customAction: CustomActionResource;
+  layoutInformation?: CustomActionLayoutInformation;
 }
 
 export interface CustomActionAutomationFormProps
@@ -65,7 +69,8 @@ type Props = InjectedFormProps<
 
 interface State {
   extendedCustomActionsInformation: ExtendedCustomActionInformation[];
-  fetchingCustomActions: boolean;
+  isFetchingCustomActions: boolean;
+  isFetchingCustomActionProperties: boolean;
 }
 
 class CustomActionAutomationForm extends React.Component<Props, State> {
@@ -77,7 +82,8 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
 
     this.state = {
       extendedCustomActionsInformation: [],
-      fetchingCustomActions: true,
+      isFetchingCustomActions: false,
+      isFetchingCustomActionProperties: false,
     };
   }
 
@@ -87,52 +93,27 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
         params: { organisationId },
       },
       initialValues,
-      dispatch,
     } = this.props;
 
     if (initialValues.extendedCustomActionsInformation) {
       if (initialValues.customActionId) {
-        this.dispatchPropertiesToBeDisplayed(
+        this.onCustomActionChange(
           initialValues.customActionId,
           initialValues.extendedCustomActionsInformation,
         );
+      } else {
+        this.setState({
+          extendedCustomActionsInformation:
+            initialValues.extendedCustomActionsInformation,
+          isFetchingCustomActions: false,
+          isFetchingCustomActionProperties: false,
+        });
       }
-      this.setState({
-        extendedCustomActionsInformation:
-          initialValues.extendedCustomActionsInformation,
-        fetchingCustomActions: false,
-      });
     } else {
-      this.setState({ fetchingCustomActions: true }, () => {
-        this.getExtendedCustomActionsInformation(
-          organisationId,
-          initialValues.customActionId,
-        ).then(
-          (
-            extendedCustomActionsInformation: ExtendedCustomActionInformation[],
-          ) => {
-            if (initialValues.customActionId) {
-              this.dispatchPropertiesToBeDisplayed(
-                initialValues.customActionId,
-                extendedCustomActionsInformation,
-              );
-            }
-
-            if (dispatch)
-              dispatch(
-                change(
-                  FORM_ID,
-                  'extendedCustomActionsInformation',
-                  extendedCustomActionsInformation,
-                ),
-              );
-            this.setState({
-              extendedCustomActionsInformation,
-              fetchingCustomActions: false,
-            });
-          },
-        );
-      });
+      const customActionId = initialValues.editExistingNode
+        ? initialValues.customActionId
+        : undefined;
+      this.fetchCustomActions(organisationId, customActionId);
     }
   }
 
@@ -140,96 +121,189 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
     const { formValues: previousFormValues } = previousProps;
     const { formValues } = this.props;
 
-    const { extendedCustomActionsInformation } = this.state;
-
     if (formValues && previousFormValues) {
       const { customActionId: previousCustomActionId } = previousFormValues;
       const { customActionId } = formValues;
       if (customActionId !== previousCustomActionId && customActionId) {
-        this.dispatchPropertiesToBeDisplayed(
-          customActionId,
-          extendedCustomActionsInformation,
-        );
+        this.onCustomActionChange(customActionId);
       }
     }
   }
 
-  dispatchPropertiesToBeDisplayed = (
+  onCustomActionChange = (
     customActionId: string,
-    extendedCustomActionsInformation: ExtendedCustomActionInformation[],
+    extendedCustomActionsInformation?: ExtendedCustomActionInformation[],
   ) => {
-    const { dispatch } = this.props;
+    const {
+      extendedCustomActionsInformation: customActionsFromState,
+    } = this.state;
+    const customActionsInfo = extendedCustomActionsInformation
+      ? extendedCustomActionsInformation
+      : customActionsFromState;
 
-    const customActionInfoOpt = extendedCustomActionsInformation.find(
-      (extendedCustomActionInformation) => {
-        return (
-          extendedCustomActionInformation.customAction.id === customActionId
-        );
-      },
+    const foundCustomActionInfo = customActionsInfo.find(
+      (customActionInfo) => customActionInfo.customAction.id === customActionId,
     );
 
-    if (
-      dispatch &&
-      customActionInfoOpt &&
-      customActionInfoOpt.customActionProperties
-    ) {
+    if (foundCustomActionInfo) {
+      if (foundCustomActionInfo.layoutInformation) {
+        this.dispatchProperties(
+          foundCustomActionInfo.layoutInformation.customActionProperties,
+        );
+      } else {
+        this.fetchCustomActionLayoutInformation(
+          foundCustomActionInfo.customAction,
+        );
+      }
+    }
+    if (extendedCustomActionsInformation) {
+      this.setState({
+        extendedCustomActionsInformation: extendedCustomActionsInformation,
+        isFetchingCustomActions: false,
+        isFetchingCustomActionProperties: false,
+      });
+    }
+  };
+
+  dispatchProperties = (
+    customActionProperties: PropertyResourceShape[] | undefined,
+  ) => {
+    const { dispatch } = this.props;
+    if (customActionProperties) {
       const modifiedProps: { [index: string]: any } = {};
-      customActionInfoOpt.customActionProperties.forEach((prop) => {
+      customActionProperties.forEach((prop) => {
         modifiedProps[prop.technical_name] = prop;
       });
       if (dispatch) dispatch(change(FORM_ID, 'properties', modifiedProps));
     }
   };
 
-  getExtendedCustomActionsInformation = (
-    organisationId: string,
-    customActionId?: string,
-  ): Promise<ExtendedCustomActionInformation[]> => {
+  dispatchExtendedCustomActionsInformation = (
+    extendedCustomActionsInformation: ExtendedCustomActionInformation[],
+  ) => {
+    const { dispatch } = this.props;
+    if (dispatch)
+      dispatch(
+        change(
+          FORM_ID,
+          'extendedCustomActionsInformation',
+          extendedCustomActionsInformation,
+        ),
+      );
+  };
+
+  fetchCustomActionLayoutInformation = (
+    customActionResource: CustomActionResource,
+  ) => {
+    const { notifyError } = this.props;
+    const { extendedCustomActionsInformation } = this.state;
+
+    this.setState({ isFetchingCustomActionProperties: true }, () => {
+      const pluginLayoutP = this._customActionService.getLocalizedPluginLayout(
+        customActionResource.id,
+      );
+      const propertiesP = this._customActionService
+        .getInstanceProperties(customActionResource.id)
+        .then((resProperties) => resProperties.data)
+        .catch((err) => {
+          notifyError(err);
+          return [];
+        });
+
+      Promise.all([pluginLayoutP, propertiesP])
+        .then((resPromises) => {
+          const customActionInformation: ExtendedCustomActionInformation = {
+            customAction: customActionResource,
+            layoutInformation: {
+              pluginLayout:
+                resPromises[0] !== null ? resPromises[0] : undefined,
+              customActionProperties: resPromises[1],
+            },
+          };
+
+          const returnedExtendedCustomActionsInformation: ExtendedCustomActionInformation[] = extendedCustomActionsInformation.map(
+            (extendedCustomActionInformation) => {
+              if (
+                extendedCustomActionInformation.customAction.id !==
+                customActionResource.id
+              ) {
+                return extendedCustomActionInformation;
+              } else return customActionInformation;
+            },
+          );
+          this.dispatchProperties(
+            customActionInformation.layoutInformation?.customActionProperties,
+          );
+          this.dispatchExtendedCustomActionsInformation(
+            returnedExtendedCustomActionsInformation,
+          );
+
+          this.setState({
+            isFetchingCustomActionProperties: false,
+            extendedCustomActionsInformation: returnedExtendedCustomActionsInformation,
+          });
+        })
+        .catch((err) => {
+          notifyError(err);
+          this.setState({ isFetchingCustomActionProperties: false });
+        });
+    });
+  };
+
+  fetchCustomActions = (organisationId: string, customActionId?: string) => {
+    // The case when customActionId is defined is when we have to fetch only
+    // one customAction, for example in the view mode when the form is
+    // disabled.
+    // Otherwise, we have to fetch multiple custom actions.
     const { notifyError } = this.props;
 
-    const customActionsP: Promise<CustomActionResource[]> = customActionId
-      ? this._customActionService
-          .getInstanceById(customActionId)
-          .then((resCustomAction) => [resCustomAction.data])
-      : this._customActionService
-          .getInstances({ organisation_id: +organisationId })
-          .then((resCustomActions) => resCustomActions.data);
+    this.setState({ isFetchingCustomActions: true }, () => {
+      const customActionsP: Promise<CustomActionResource[]> = customActionId
+        ? this._customActionService
+            .getInstanceById(customActionId)
+            .then((resCustomAction) => [resCustomAction.data])
+        : this._customActionService
+            .getInstances({ organisation_id: +organisationId })
+            .then((resCustomActions) => resCustomActions.data);
 
-    return customActionsP
-      .then((customActions) => {
-        return Promise.all(
-          customActions.map((customActionResource: CustomActionResource) => {
-            const pluginLayoutP = this._customActionService.getLocalizedPluginLayout(
-              customActionResource.id,
-            );
-
-            const propertiesP = this._customActionService
-              .getInstanceProperties(customActionResource.id)
-              .then((resProperties) => resProperties.data)
-              .catch((err) => {
-                notifyError(err);
-                return [];
-              });
-
-            return Promise.all([pluginLayoutP, propertiesP]).then(
-              (resPromises) => {
-                const extendedCustomActionInformation: ExtendedCustomActionInformation = {
-                  customAction: customActionResource,
-                  pluginLayout:
-                    resPromises[0] !== null ? resPromises[0] : undefined,
-                  customActionProperties: resPromises[1],
-                };
-
-                return extendedCustomActionInformation;
-              },
-            );
-          }),
-        );
-      })
-      .catch((err) => {
-        notifyError(err);
-        return [];
-      });
+      customActionsP
+        .then((customActions) => {
+          const extendedCustomActionsInformation: ExtendedCustomActionInformation[] = customActions.map(
+            (customActionResource: CustomActionResource) => {
+              return {
+                customAction: customActionResource,
+              };
+            },
+          );
+          this.dispatchExtendedCustomActionsInformation(
+            extendedCustomActionsInformation,
+          );
+          this.setState(
+            {
+              isFetchingCustomActions: false,
+              extendedCustomActionsInformation: extendedCustomActionsInformation,
+            },
+            () => {
+              if (customActionId) {
+                const associatedCustomAction = customActions.find(
+                  (customAction) => customAction.id === customActionId,
+                );
+                if (associatedCustomAction)
+                  this.fetchCustomActionLayoutInformation(
+                    associatedCustomAction,
+                  );
+              }
+            },
+          );
+        })
+        .catch((err) => {
+          notifyError(err);
+          this.setState({
+            isFetchingCustomActions: false,
+            extendedCustomActionsInformation: [],
+          });
+        });
+    });
   };
 
   buildFormSections = (disabled: boolean) => {
@@ -239,7 +313,10 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
       },
     } = this.props;
 
-    const { extendedCustomActionsInformation } = this.state;
+    const {
+      extendedCustomActionsInformation,
+      isFetchingCustomActionProperties,
+    } = this.state;
 
     const sections: McsFormSection[] = [];
 
@@ -268,6 +345,7 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
           <CustomActionInstanceFormSection
             customActionId={customActionId}
             extendedCustomActionsInformation={extendedCustomActionsInformation}
+            isFetchingCustomActionProperties={isFetchingCustomActionProperties}
             organisationId={organisationId}
             disabled={true}
           />
@@ -289,7 +367,7 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
       initialValues: { editExistingNode },
     } = this.props;
 
-    const { fetchingCustomActions } = this.state;
+    const { isFetchingCustomActions } = this.state;
 
     const calculatedDisabled = disabled || !!editExistingNode;
 
@@ -313,7 +391,11 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
       );
     });
 
-    const sectionsOrSpin = fetchingCustomActions ? <Spin /> : renderedSections;
+    const sectionsOrSpin = isFetchingCustomActions ? (
+      <Spin />
+    ) : (
+      renderedSections
+    );
 
     return (
       <Layout className="edit-layout">
