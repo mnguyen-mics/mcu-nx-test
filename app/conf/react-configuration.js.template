@@ -18,7 +18,6 @@
     'automations-test-scenario',
     'automations-add-delete-to-from-segment-node',
     'creatives-display',
-    'creatives-native',
     'creatives-email',
     'library-catalog',
     'library-ad_layouts',

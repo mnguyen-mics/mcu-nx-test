@@ -59,14 +59,6 @@ export default defineMessages({
     id: 'archive.creatives.success.msg',
     defaultMessage: 'Creatives successfully archived',
   },
-  archiveNativeSuccess: {
-    id: 'archive.native.success.msg',
-    defaultMessage: 'Native creative successfully archived',
-  },
-  searchPlaceholder: {
-    id: 'creative.native.list.searchPlaceholder',
-    defaultMessage: 'Search Native Creatives',
-  },
   archiveEmailSuccess: {
     id: 'archive.email.success.msg',
     defaultMessage: 'Email templates successfully archived',
@@ -82,10 +74,6 @@ export default defineMessages({
   noDisplayCreative: {
     id: 'creative.display.list.noCreative',
     defaultMessage: 'No Display Creatives',
-  },
-  noNativeCreative: {
-    id: 'creative.native.list.noCreative',
-    defaultMessage: 'No Native Creatives',
   },
   noEmailTemplate: {
     id: 'creative.email.list.noTemplate',

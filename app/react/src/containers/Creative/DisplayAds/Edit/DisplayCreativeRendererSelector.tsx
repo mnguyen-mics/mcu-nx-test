@@ -28,8 +28,6 @@ const { Content } = Layout;
 const imageAdRendererId = IMAGE_AD_RENDERER;
 const htmlAdRendererId = HTML_AD_RENDRER;
 const externalAdRendererId = EXTERNAL_AD_RENDERER;
-// const nativeIvidenceAdRendererId = MicsPLuginDefinition.nativeIvidenceAdRendererId.id;
-// const nativeQuantumAdRendererId = MicsPLuginDefinition.nativeQuantumAdRendererId.id;
 const imageSkinsAdRendererId = IMAGE_SKINS_AD_RENDERER;
 
 export interface DisplayCreativeRendererSelectorProps {

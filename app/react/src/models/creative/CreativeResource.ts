@@ -8,8 +8,7 @@ export type CreativeSubtype =
   'BANNER' |
   'VIDEO' |
   'FACEBOOK_RIGHT_HAND_SIDE' |
-  'FACEBOOK_NEWS_FEED' |
-  'NATIVE';
+  'FACEBOOK_NEWS_FEED';
 
 export type CreativeStatus =
   'DRAFT' |
