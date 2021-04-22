@@ -77,10 +77,6 @@ export default defineMessages({
     id: 'creatives.create.actionbar.breadcrumb.label',
     defaultMessage: 'New Display Creative',
   },
-  nativeCreationBreadCrumb: {
-    id: 'natives.create.actionbar.breadcrumb.label',
-    defaultMessage: 'New Native Creative',
-  },
   creativeEditionBreadCrumb: {
     id: 'creatives.edition.actionbar.breadcrumb.label',
     defaultMessage: 'Edit {name}',
@@ -88,10 +84,6 @@ export default defineMessages({
   displayListBreadCrumb: {
     id: 'display.creatives.list.actionbar.breadcrumb.label',
     defaultMessage: 'Display Ads',
-  },
-  nativeListBreadCrumb: {
-    id: 'native.creatives.list.actionbar.breadcrumb.label',
-    defaultMessage: 'Natives',
   },
   creativeCreationGeneralNameFieldTitle: {
     id: 'creatives.create.section.general.field.name.title',
@@ -180,10 +172,6 @@ export default defineMessages({
   creativeTypeSkin: {
     id: 'creatives.type.skin',
     defaultMessage: 'Skins'
-  },
-  creativeTypeNative: {
-    id: 'creatives.type.native',
-    defaultMessage: 'Native'
   },
   allRendererList: {
     id: 'creatives.type.all.renderer.list',

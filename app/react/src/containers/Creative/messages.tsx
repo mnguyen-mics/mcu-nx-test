@@ -28,10 +28,6 @@ const creativeSubtypeMessages: {
     id: 'creative.fields.subtype.facebookNewsFeed',
     defaultMessage: 'FACEBOOK_NEWS_FEED',
   },
-  NATIVE: {
-    id: 'creative.fields.subtype.native',
-    defaultMessage: 'NATIVE',
-  },
 });
 
 const creativePropertiesMessageMap: {

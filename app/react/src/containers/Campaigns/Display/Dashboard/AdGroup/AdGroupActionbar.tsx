@@ -316,17 +316,10 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                                   creativeResponse.data,
                                 )
                               ) {
-                                if (
-                                  creativeResponse.data.subtype === 'NATIVE'
-                                ) {
-                                  return history.push(
-                                    `/v2/o/${organisationId}/creatives/native/edit/${creativeResponse.data.id}`,
-                                  );
-                                } else {
                                   return history.push(
                                     `/v2/o/${organisationId}/creatives/display/edit/${creativeResponse.data.id}`,
                                   );
-                                }
+                                
                               } else {
                                 return history.push(
                                   `/v2/o/${organisationId}/creatives/email/edit/${creativeResponse.data.id}`,
