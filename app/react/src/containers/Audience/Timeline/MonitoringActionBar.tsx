@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Input, Select, Button, Modal } from 'antd';
-import { withRouter, RouteComponentProps } from 'react-router-dom';
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
@@ -154,10 +154,7 @@ class MonitoringActionbar extends React.Component<Props, State> {
     } = this.state;
 
     const breadcrumbPaths = [
-      {
-        name: formatMessage(messages.monitoring),
-        path: `/v2/o/${organisationId}/audience/timeline`,
-      },
+      <Link key='1' to={`/v2/o/${organisationId}/audience/timeline`}>{formatMessage(messages.monitoring)}</Link>
     ];
 
     const onReturnClick = () => handleModal(false);
@@ -189,7 +186,7 @@ class MonitoringActionbar extends React.Component<Props, State> {
         );
 
       return (
-        <Actionbar paths={breadcrumbPaths}>
+        <Actionbar pathItems={breadcrumbPaths}>
           <Modal
             title="Enter the user identifier you want to lookup"
             wrapClassName="vertical-center-modal"

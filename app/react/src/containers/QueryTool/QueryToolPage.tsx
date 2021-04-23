@@ -143,9 +143,7 @@ class QueryToolPage extends React.Component<Props> {
           saveAsExort={saveAsExport}
           csvExportDisabled={true}
           breadcrumb={[
-            {
-              name: intl.formatMessage(messages.queryBuilder),
-            },
+            intl.formatMessage(messages.queryBuilder),
           ]}
         />
       );
@@ -157,11 +155,7 @@ class QueryToolPage extends React.Component<Props> {
           <DatamartSelector
             onSelect={handleOnSelectDatamart}
             actionbarProps={{
-              paths: [
-                {
-                  name: intl.formatMessage(messages.queryBuilder),
-                },
-              ],
+              pathItems: [intl.formatMessage(messages.queryBuilder)],
             }}
             isMainlayout={true}
           />

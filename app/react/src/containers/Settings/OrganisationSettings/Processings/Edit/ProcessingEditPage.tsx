@@ -17,6 +17,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
 import { LegalBasis, ProcessingResource } from '../../../../../models/processing';
+import { Link } from 'react-router-dom';
 
 export interface EditProcessingRouteMatchParams {
   organisationId: string;
@@ -170,18 +171,15 @@ class ProcessingEditPage extends React.Component<Props, State> {
       : formatMessage(messages.newProcessing);
 
     const breadCrumbPaths = [
-      {
-        name: formatMessage(messages.processingActivities),
-        path: `/v2/o/${organisationId}/settings/organisation/processings`,
-      },
-      {
-        name: newOrEditProcessing,
-      },
+      <Link key="1" to={`/v2/o/${organisationId}/settings/organisation/processings`}>
+        {formatMessage(messages.processingActivities)}
+      </Link>,
+      newOrEditProcessing,
     ];
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      paths: breadCrumbPaths,
+      pathItems: breadCrumbPaths,
       onClose: this.onClose,
     };
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, message, Dropdown, Menu } from 'antd';
-import { withRouter, RouteComponentProps } from 'react-router-dom';
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { compose } from 'recompose';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import injectNotifications, {
@@ -248,12 +248,8 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
         additionalProps: {
           close: this.props.closeNextDrawer,
           breadCrumbPaths: [
-            {
-              name: (segment as AudienceSegmentResource).name || '',
-            },
-            {
-              name: formatMessage(segmentMessages.experimentationCreation),
-            },
+            (segment as AudienceSegmentResource).name || '',
+            formatMessage(segmentMessages.experimentationCreation),
           ],
           segment: segment as UserQuerySegment,
         },
@@ -279,15 +275,8 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
     const datamartId = segment && segment.datamart_id;
 
     const breadcrumbPaths = [
-      {
-        key: formatMessage(segmentMessages.audienceSegment),
-        name: formatMessage(segmentMessages.audienceSegment),
-        path: `/v2/o/${organisationId}/audience/segments`,
-      },
-      {
-        key: segment ? (segment as AudienceSegmentResource).name : '',
-        name: segment ? (segment as AudienceSegmentResource).name : '',
-      },
+      <Link key='1' to={`/v2/o/${organisationId}/audience/segments`}>{formatMessage(segmentMessages.audienceSegment)}</Link>,
+      segment ? (segment as AudienceSegmentResource).name : '',
     ];
 
     const onClick = () => {
@@ -300,12 +289,8 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
             datamartId: datamartId,
             close: this.props.closeNextDrawer,
             breadCrumbPaths: [
-              {
-                name: (segment as AudienceSegmentResource).name || '',
-              },
-              {
-                name: formatMessage(segmentMessages.lookAlikeCreation),
-              },
+              (segment as AudienceSegmentResource).name || '',
+              formatMessage(segmentMessages.lookAlikeCreation),
             ],
             initialValues: {
               source_segment_id: (segment as AudienceSegmentResource).id,
@@ -483,7 +468,7 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
     };
 
     return (
-      <Actionbar paths={breadcrumbPaths}>
+      <Actionbar pathItems={breadcrumbPaths}>
         {actionButton}
         <Button
           className="mcs-primary"

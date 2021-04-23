@@ -291,7 +291,7 @@ class FormDataFileDrawer extends React.Component<
     return (
       <Layout>
         <div className="edit-layout ant-layout">
-          <Actionbar paths={[{ name: 'Add a Data File' }]} edition={true}>
+          <Actionbar pathItems={['Add a Data File']} edition={true}>
             <Button
               type="primary"
               className="mcs-primary"

@@ -22,12 +22,11 @@ import { OtqlConsole } from '../../../../../../components';
 import { QueryDocument } from '../../../../../../models/datamart/graphdb/QueryDocument';
 import { StorylineNodeModel } from '../../../domain';
 import { IfNodeResource } from '../../../../../../models/automations/automations';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 
 const { Content } = Layout;
 export interface IfNodeFormProps {
   close: () => void;
-  breadCrumbPaths: Path[];
+  breadCrumbPaths: React.ReactNode[];
   storylineNodeModel: StorylineNodeModel;
   onSubmit: (data: QueryInputAutomationFormData) => void;
   initialValues: QueryInputAutomationFormData;
@@ -88,7 +87,7 @@ class IfNodeForm extends React.Component<Props, State> {
       return (
         <Layout>
           <div className="edit-layout ant-layout">
-            <Actionbar edition={true} paths={breadCrumbPaths}>
+            <Actionbar edition={true} pathItems={breadCrumbPaths}>
               <McsIcon
                 type="close"
                 className="close-icon"
@@ -161,7 +160,7 @@ class IfNodeForm extends React.Component<Props, State> {
         };
 
         return (
-          <Actionbar edition={true} paths={breadCrumbPaths}>
+          <Actionbar edition={true} pathItems={breadCrumbPaths}>
             {!disabled && (
               <Button onClick={onSave} type="primary" className={'mcs-primary'}>
                 Save
@@ -212,7 +211,7 @@ class IfNodeForm extends React.Component<Props, State> {
     return (
       <Layout className="edit-layout">
         <Layout className={'ant-layout'}>
-          <Actionbar edition={true} paths={breadCrumbPaths}>
+          <Actionbar edition={true} pathItems={breadCrumbPaths}>
             <Button
               onClick={onOtqlSave}
               type="primary"

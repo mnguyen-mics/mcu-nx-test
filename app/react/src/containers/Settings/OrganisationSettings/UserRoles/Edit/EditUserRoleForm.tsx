@@ -20,7 +20,6 @@ import ScrollspySider, {
 import {
   McsFormSection,
 } from '../../../../../utils/FormHelper';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { Omit } from '../../../../../utils/Types';
 import UserResource from '../../../../../models/directory/UserResource';
 import { UserWithRole } from '../domain';
@@ -51,7 +50,7 @@ const messages = defineMessages({
 interface EditUserRoleFormProps extends Omit<ConfigProps<Partial<UserResource>>, 'form'> {
   onClose: () => void;
   onSave: (formData: Partial<UserResource>) => void;
-  breadCrumbPaths: Path[];
+  breadCrumbPaths: React.ReactNode[];
 }
 
 type Props = InjectedFormProps<Partial<UserResource>, EditUserRoleFormProps> &
@@ -65,7 +64,7 @@ class EditUserRoleForm extends React.Component<Props> {
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      paths: this.props.breadCrumbPaths,
+      pathItems: this.props.breadCrumbPaths,
       message: messages.saveUserRole,
       onClose: this.props.onClose,
     };

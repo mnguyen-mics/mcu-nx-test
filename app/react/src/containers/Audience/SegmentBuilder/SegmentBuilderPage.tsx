@@ -146,11 +146,9 @@ class SegmentBuilderPage extends React.Component<Props> {
           saveAsUserQuery={saveAsUserQuery}
           convertToOtql={convert2Otql}
           breadcrumb={[
-            {
-              name: hasFeature('audience-segment_builder_v2')
+            hasFeature('audience-segment_builder_v2')
                 ? intl.formatMessage(messages.advancedSegmentBuilder)
                 : intl.formatMessage(messages.segmentBuilder),
-            },
           ]}
         />
       );
@@ -164,12 +162,10 @@ class SegmentBuilderPage extends React.Component<Props> {
           <DatamartSelector
             onSelect={handleOnSelectDatamart}
             actionbarProps={{
-              paths: [
-                {
-                  name: hasFeature('audience-segment_builder_v2')
-                    ? intl.formatMessage(messages.advancedSegmentBuilder)
-                    : intl.formatMessage(messages.segmentBuilder),
-                },
+              pathItems: [
+                hasFeature('audience-segment_builder_v2')
+                  ? intl.formatMessage(messages.advancedSegmentBuilder)
+                  : intl.formatMessage(messages.segmentBuilder),
               ],
             }}
             isMainlayout={true}

@@ -22,6 +22,7 @@ import { DatamartResource } from '../../../../../models/datamart/DatamartResourc
 import { IAudiencePartitionsService } from '../../../../../services/AudiencePartitionsService';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
+import { Link } from 'react-router-dom';
 
 const messages = defineMessages({
   editPartition: {
@@ -60,7 +61,7 @@ type JoinedProps = InjectedWorkspaceProps &
 class AudiencePartitionPage extends React.Component<
   JoinedProps,
   AudiencePartitionPageState
-> {
+  > {
   @lazyInject(TYPES.IAudiencePartitionsService)
   private _audiencePartitionsService: IAudiencePartitionsService;
   constructor(props: JoinedProps) {
@@ -135,9 +136,9 @@ class AudiencePartitionPage extends React.Component<
           const url = `/v2/o/${organisationId}/settings/datamart/audience/partitions/${newAudiencePartition.data.id}`;
           location.pathname
             ? history.push({
-                pathname: url,
-                state: { from: `${location.pathname}` },
-              })
+              pathname: url,
+              state: { from: `${location.pathname}` },
+            })
             : history.push(url);
           message.success(intl.formatMessage(messages.partitionSaved));
           this.setState({
@@ -161,9 +162,8 @@ class AudiencePartitionPage extends React.Component<
       },
       location,
     } = this.props;
-    const defaultRedirectUrl = `/v2/o/${organisationId}/settings/datamart/audience/partitions${
-      partitionId ? `/${partitionId}` : ''
-    }`;
+    const defaultRedirectUrl = `/v2/o/${organisationId}/settings/datamart/audience/partitions${partitionId ? `/${partitionId}` : ''
+      }`;
 
     return location.state && location.state.from
       ? history.push(location.state.from)
@@ -190,31 +190,30 @@ class AudiencePartitionPage extends React.Component<
       return <Loading isFullScreen={true} />;
     } else {
       const breadcrumbPaths = [
-        {
-          name: intl.formatMessage(messages.partitions),
-          path: `/v2/o/${organisationId}/settings/datamart/audience/partitions`,
-        }
+        <Link key="1" to={`/v2/o/${organisationId}/settings/datamart/audience/partitions`}>
+          {intl.formatMessage(messages.partitions)}
+        </Link>,
       ];
       const actionbarProps = {
         onClose: this.redirect,
         formId: 'audienceSegmentForm',
-        paths: breadcrumbPaths,
+        pathItems: breadcrumbPaths,
       };
       return partitionId ||
         workspace.datamarts.length === 1 ||
         selectedDatamart ? (
-        <AudiencePartitionForm
-          initialValues={partitionFormData}
-          onSubmit={this.save}
-          close={this.redirect}
-          breadCrumbPaths={breadcrumbPaths}
-        />
-      ) : (
-        <DatamartSelector
-          onSelect={this.onDatamartSelect}
-          actionbarProps={actionbarProps}
-        />
-      );
+          <AudiencePartitionForm
+            initialValues={partitionFormData}
+            onSubmit={this.save}
+            close={this.redirect}
+            breadCrumbPaths={breadcrumbPaths}
+          />
+        ) : (
+          <DatamartSelector
+            onSelect={this.onDatamartSelect}
+            actionbarProps={actionbarProps}
+          />
+        );
     }
   }
 }

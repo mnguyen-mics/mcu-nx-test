@@ -36,6 +36,7 @@ import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 import { IOrganisationService } from '../../../../../services/OrganisationService';
 import { ProcessingSelectionResource } from '../../../../../models/processing';
 import { Loading } from '@mediarithmics-private/mcs-components-library';
+import { Link } from 'react-router-dom';
 
 interface State {
   mobileApplicationData: MobileApplicationFormData;
@@ -501,18 +502,15 @@ class EditMobileAppPage extends React.Component<Props, State> {
         : formatMessage(messages.createMobileApplicationTitle);
 
     const breadcrumbPaths = [
-      {
-        name: formatMessage(messages.breadcrumbTitle1),
-        path: `/v2/o/${organisationId}/settings/datamart/channels`,
-      },
-      {
-        name: mobileName,
-      },
+      <Link key="1" to={`/v2/o/${organisationId}/settings/datamart/channels`}>
+        {formatMessage(messages.breadcrumbTitle1)}
+      </Link>,
+      mobileName,
     ];
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      paths: breadcrumbPaths,
+      pathItems: breadcrumbPaths,
       onClose: this.onClose,
     };
 

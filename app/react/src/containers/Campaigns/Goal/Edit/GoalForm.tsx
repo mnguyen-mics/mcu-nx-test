@@ -21,7 +21,6 @@ import {
 } from './Sections';
 import { GoalFormData } from './domain';
 import messages from './messages';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { Omit } from '../../../../utils/Types';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
@@ -43,7 +42,7 @@ const AttributionModelFieldArray = FieldArray as new () => GenericFieldArray<
 
 export interface GoalFormProps extends Omit<ConfigProps<GoalFormData>, 'form'> {
   close: () => void;
-  breadCrumbPaths: Path[];
+  breadCrumbPaths: React.ReactNode[];
   datamart: DatamartResource;
   goToTriggerTypeSelection?: () => void;
 }
@@ -84,7 +83,7 @@ class GoalForm extends React.Component<Props> {
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      paths: breadCrumbPaths,
+      pathItems: breadCrumbPaths,
       message: messages.saveGoal,
       onClose: close,
     };

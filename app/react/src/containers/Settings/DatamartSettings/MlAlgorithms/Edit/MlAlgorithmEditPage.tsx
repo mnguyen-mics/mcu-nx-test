@@ -14,6 +14,7 @@ import MlAlgorithmForm from './MlAlgorithmForm';
 import { IMlAlgorithmVariableService } from '../../../../../services/MlAlgorithmVariableService';
 import MlAlgorithmVariableResource from '../../../../../models/mlAlgorithmVariable/MlAlgorithmVariableResource';
 import { FormLinkedTextInputModel } from '../../../../../components/Form/FormProperties';
+import { Link } from 'react-router-dom';
 
 interface MlAlgorithmCreateEditState {
   loading: boolean;
@@ -309,11 +310,10 @@ class MlAlgorithmEditPage extends React.Component<
       : formatMessage(messages.newMlAlgorithm);
 
     const breadcrumbPaths = [
-      {
-        name: formatMessage(messages.mlAlgorithms),
-        path: `/v2/o/${organisationId}/settings/datamart/ml_algorithms`,
-      },
-      { name },
+      <Link key="1" to={`/v2/o/${organisationId}/settings/datamart/ml_algorithms`}>
+        {formatMessage(messages.mlAlgorithms)}
+      </Link>,
+      name,
     ];
 
     if (loading) {

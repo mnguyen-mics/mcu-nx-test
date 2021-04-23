@@ -9,14 +9,13 @@ import messages from '../../messages';
 import { FormTitle } from '../../../../components/Form';
 import { MenuPresentational } from '@mediarithmics-private/mcs-components-library';
 import { OfferType } from './EditOfferPage';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 
 const { Content } = Layout;
 
 export interface OfferTypeSelectorProps {
   onSelect: (offerType: OfferType) => void;
   close: () => void;
-  breadCrumbPaths: Path[];
+  breadCrumbPaths: React.ReactNode[];
 }
 
 type Props = OfferTypeSelectorProps &
@@ -38,7 +37,7 @@ class OfferTypeSelector extends React.Component<Props> {
     const actionBarProps: FormLayoutActionbarProps = {
       formId: 'typePickerForm',
       onClose: this.props.close,
-      paths: breadCrumbPaths,
+      pathItems: breadCrumbPaths,
     };
 
     return (

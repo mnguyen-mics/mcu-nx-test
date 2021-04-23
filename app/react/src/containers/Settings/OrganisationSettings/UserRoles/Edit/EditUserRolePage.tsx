@@ -12,6 +12,7 @@ import { IUserRolesService } from '../../../../../services/UserRolesService';
 import { notifyError } from '../../../../../redux/Notifications/actions';
 import { IOrganisationService } from '../../../../../services/OrganisationService';
 import { message } from 'antd';
+import { Link } from 'react-router-dom';
 
 const messages = defineMessages({
   newUserRole: {
@@ -219,13 +220,10 @@ class EditUserPage extends React.Component<Props, State> {
     const { userRoleData, loading } = this.state;
 
     const breadcrumbPaths = [
-      {
-        name: formatMessage(messages.userRoles),
-        path: `/v2/o/${organisationId}/settings/organisation/user_roles`,
-      },
-      {
-        name: formatMessage(messages.editUserRole),
-      },
+      <Link key="1" to={`/v2/o/${organisationId}/settings/organisation/user_roles`}>
+        {formatMessage(messages.userRoles)}
+      </Link>,
+      formatMessage(messages.editUserRole),
     ];
 
     if (loading) {

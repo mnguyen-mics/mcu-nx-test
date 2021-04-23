@@ -4,7 +4,6 @@ import { Form } from '@ant-design/compatible';
 import { BasicProps } from 'antd/lib/layout/layout';
 import { ConfigProps, InjectedFormProps, reduxForm } from 'redux-form';
 import { CleaningRuleFormData } from './domain';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
@@ -32,7 +31,7 @@ const Content = Layout.Content as unknown as React.ComponentClass<
 export interface CleaningRuleEditFormProps
   extends Omit<ConfigProps<CleaningRuleFormData>, 'form'> {
   close: () => void;
-  breadCrumbPaths: Path[];
+  breadCrumbPaths: React.ReactNode[];
   goToDatamartSelector: () => void;
   datamartId: string;
   options: DefaultOptionProps[];
@@ -61,7 +60,7 @@ class CleaningRuleEditForm extends React.Component<Props> {
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      paths: breadCrumbPaths,
+      pathItems: breadCrumbPaths,
       message:
         cleaningRuleType === 'USER_EVENT_CLEANING_RULE'
           ? messages.saveUserEventCleaningRule

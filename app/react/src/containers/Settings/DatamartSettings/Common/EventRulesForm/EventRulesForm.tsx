@@ -11,7 +11,6 @@ import { Layout } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { BasicProps } from 'antd/lib/layout/layout';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../../components/Layout/FormLayoutActionbar';
@@ -47,7 +46,7 @@ const Content = Layout.Content as unknown as React.ComponentClass<
 export interface EventRulesFormProps
   extends Omit<ConfigProps<EventRulesFormData>, 'form'> {
   close: () => void;
-  breadCrumbPaths: Path[];
+  breadCrumbPaths: React.ReactNode[];
   datamartId: string;
 }
 
@@ -98,7 +97,7 @@ class EventRulesForm extends React.Component<Props, State> {
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      paths: breadCrumbPaths,
+      pathItems: breadCrumbPaths,
       message: messages.saveEventRules,
       onClose: close,
     };

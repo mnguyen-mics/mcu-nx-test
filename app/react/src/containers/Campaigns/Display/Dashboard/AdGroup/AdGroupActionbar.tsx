@@ -484,24 +484,13 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
     const menu = this.buildMenu();
 
     const breadcrumbPaths = [
-      {
-        name: formatMessage(messages.display),
-        path: `/v2/o/${organisationId}/campaigns/display`,
-        key: formatMessage(messages.display),
-      },
-      {
-        name: displayCampaign ? displayCampaign.name : '',
-        path: `/v2/o/${organisationId}/campaigns/display/${campaignId}`,
-        key: displayCampaign && displayCampaign.id,
-      },
-      {
-        name: adGroup ? adGroup.name || adGroup.id : '',
-        key: adGroup ? adGroup.id : '',
-      },
+      <Link key='1' to={`/v2/o/${organisationId}/campaigns/display`}>{formatMessage(messages.display)}</Link>,
+      <Link key='2' to={`/v2/o/${organisationId}/campaigns/display/${campaignId}`}>{displayCampaign ? displayCampaign.name : ''}</Link>,
+      adGroup ? adGroup.name || adGroup.id : '',
     ];
 
     return (
-      <Actionbar paths={breadcrumbPaths}>
+      <Actionbar pathItems={breadcrumbPaths}>
         {actionElement}
         {displayCampaign && displayCampaign.model_version !== 'V2014_06' ? (
           <Link

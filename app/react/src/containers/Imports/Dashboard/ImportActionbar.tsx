@@ -17,6 +17,7 @@ import { UploadFile } from 'antd/lib/upload/interface';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
+import { Link } from 'react-router-dom';
 
 const Dragger = Upload.Dragger;
 
@@ -232,12 +233,12 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
     const menu = this.buildMenu();
 
     const breadcrumbPaths = [
-      { name: 'Imports', path: `/v2/o/${organisationId}/datastudio/imports` },
-      { name: importObject && importObject.name ? importObject.name : '' },
+      <Link key='1' to={`/v2/o/${organisationId}/datastudio/imports`}>Imports</Link>,
+      importObject && importObject.name ? importObject.name : '',
     ];
 
     return (
-      <Actionbar paths={breadcrumbPaths}>
+      <Actionbar pathItems={breadcrumbPaths}>
         {this.renderModal()}
         <Button
           className="mcs-primary mcs-importExecution_newExecution"

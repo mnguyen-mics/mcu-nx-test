@@ -4,7 +4,6 @@ import { FormTitle } from '../../../../../components/Form';
 import { defineMessages, injectIntl, InjectedIntlProps } from 'react-intl';
 import { AudienceFeedType } from '../../../../../services/AudienceSegmentFeedService';
 import { compose } from 'recompose';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { EditContentLayout } from '../../../../../components/Layout';
 import { IPluginService } from '../../../../../services/PluginService';
 import {
@@ -22,7 +21,7 @@ import { TYPES } from '../../../../../constants/types';
 
 type CreateFeedPresetSelectionPageProps = {
   feedType: AudienceFeedType;
-  breadcrumbPaths: Path[];
+  breadcrumbPaths: React.ReactNode[];
   onClose: () => void;
   onPresetSave: (feedType: AudienceFeedType) => void;
 };
@@ -254,7 +253,7 @@ class CreateFeedPresetSelectionPage extends React.Component<Props, State> {
 
     return (
       <EditContentLayout
-        paths={breadcrumbPaths}
+        pathItems={breadcrumbPaths}
         formId="createPreset"
         onClose={onClose}
       >

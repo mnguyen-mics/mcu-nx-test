@@ -10,7 +10,6 @@ import messages from './messages';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../components/Layout/FormLayoutActionbar';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { BasicProps } from 'antd/lib/layout/layout';
 import { McsFormSection } from '../../../../utils/FormHelper';
 
@@ -21,7 +20,7 @@ const Content = Layout.Content as unknown as React.ComponentClass<
 export interface DisplayCreativeFormLayoutProps {
   actionBarButtonText: FormattedMessage.MessageDescriptor;
   close: () => void;
-  breadCrumbPaths: Path[];
+  breadCrumbPaths: React.ReactNode[];
   leftFormSections: McsFormSection[];
   rightFormSections: McsFormSection[];
   pristine: boolean;
@@ -122,7 +121,7 @@ class DisplayCreativeFormLayout extends React.Component<Props> {
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: DISPLAY_CREATIVE_FORM,
-      paths: breadCrumbPaths,
+      pathItems: breadCrumbPaths,
       message: actionBarButtonText,
       onClose: this.onClose,
     };

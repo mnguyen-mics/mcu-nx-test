@@ -18,6 +18,7 @@ import {
 } from '../../../../QueryTool/JSONOTQL/domain';
 import { message } from 'antd';
 import { Loading } from '../../../../../components';
+import { Link } from 'react-router-dom';
 
 type Props = InjectedNotificationProps &
   InjectedIntlProps &
@@ -188,14 +189,10 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
         : formatMessage(messages.audienceFeatureNew);
 
     const breadcrumbPaths = [
-      {
-        name: formatMessage(messages.audienceFeatures),
-        path: `/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`,
-        state: { activeTab: 'audience_builder' },
-      },
-      {
-        name: replicationName,
-      },
+      <Link key="1" to={`/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`}>
+        {formatMessage(messages.audienceFeatures)}
+      </Link>,
+      replicationName,
     ];
 
     if (isLoading) {

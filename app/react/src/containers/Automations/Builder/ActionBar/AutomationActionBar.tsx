@@ -70,12 +70,12 @@ class AutomationActionBar extends React.Component<Props, State> {
     const formData: AutomationFormData = {
       automation: automationData
         ? {
-            ...automationData.automation,
-            ...formValues,
-          }
+          ...automationData.automation,
+          ...formValues,
+        }
         : {
-            ...formValues,
-          },
+          ...formValues,
+        },
       exitCondition:
         automationData && automationData.exitCondition
           ? automationData.exitCondition
@@ -113,28 +113,23 @@ class AutomationActionBar extends React.Component<Props, State> {
 
     return (
       <Actionbar
-        paths={[
-          {
-            name: intl.formatMessage(messages.automationBuilder),
-          },
-          {
-            name:
-              automationData &&
-              automationData.automation &&
-              automationData.automation.name
-                ? automationData.automation.name
-                : intl.formatMessage(messages.newAutomation),
-          },
+        pathItems={[
+          intl.formatMessage(messages.automationBuilder),
+          automationData &&
+            automationData.automation &&
+            automationData.automation.name
+            ? automationData.automation.name
+            : intl.formatMessage(messages.newAutomation),
         ]}
       >
         <Button className="mcs-primary" type="primary" onClick={this.onClick}>
-          <McsIcon type={"plus"} /> 
+          <McsIcon type={"plus"} />
           {automationId
             ? intl.formatMessage(messages.updateAutomation)
             : intl.formatMessage(messages.saveAutomation)}
         </Button>
-        
-       {visible && (
+
+        {visible && (
           <AutomationSimpleForm
             onSubmit={this.onSave}
             initialValues={initialFormData}

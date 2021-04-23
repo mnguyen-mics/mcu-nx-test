@@ -186,10 +186,8 @@ class EmailCampaignAutomatedDashboardPage extends React.Component<
     return (
       <div className="ant-layout">
         <Actionbar
-          paths={[
-            {
-              name: campaign ? campaign.name : '',
-            },
+          pathItems={[
+            campaign ? campaign.name : '',
           ]}
           edition={true}
         >

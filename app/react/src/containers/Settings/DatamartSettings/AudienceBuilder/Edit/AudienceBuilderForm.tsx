@@ -18,7 +18,6 @@ import {
 import { FormLayoutActionbarProps } from '../../../../../components/Layout/FormLayoutActionbar';
 import { McsFormSection } from '../../../../../utils/FormHelper';
 import AudienceBuilderGeneralSection from './Sections/AudienceBuilderGeneralSection';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { messages } from '../messages';
 import { compose } from 'recompose';
@@ -32,7 +31,7 @@ const Content = Layout.Content;
 export interface AudienceBuilderFormProps
   extends Omit<ConfigProps<AudienceBuilderFormData>, 'form'> {
   close: () => void;
-  breadCrumbPaths: Path[];
+  breadCrumbPaths: React.ReactNode[];
 }
 
 const DemographicsFieldArray = FieldArray as new () => GenericFieldArray<
@@ -68,7 +67,7 @@ class AudienceBuilderForm extends React.Component<Props> {
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: AUDIENCE_BUILDER_FORM_ID,
-      paths: breadCrumbPaths,
+      pathItems: breadCrumbPaths,
       message: messages.audienceBuilderSave,
       onClose: close,
     };

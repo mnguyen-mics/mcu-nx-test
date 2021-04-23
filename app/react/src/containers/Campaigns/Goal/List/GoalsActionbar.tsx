@@ -152,14 +152,11 @@ class GoalsActionbar extends React.Component<GoalsActionbarProps, State> {
     const exportIsRunning = this.state.exportIsRunning;
 
     const breadcrumbPaths = [
-      {
-        name: intl.formatMessage(messages.goals),
-        path: `/v2/o/${organisationId}/campaigns/goals`,
-      },
+      <Link key='1' to={`/v2/o/${organisationId}/campaigns/goals`}>{intl.formatMessage(messages.goals)}</Link>
     ];
 
     return (
-      <Actionbar paths={breadcrumbPaths}>
+      <Actionbar pathItems={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/campaigns/goals/create`}>
           <Button className="mcs-primary" type="primary">
             <McsIcon type="plus" />

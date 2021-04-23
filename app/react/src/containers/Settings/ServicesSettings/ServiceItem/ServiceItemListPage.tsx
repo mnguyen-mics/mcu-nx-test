@@ -87,11 +87,13 @@ class ServiceItemListPage extends React.Component<Props, State> {
     }
   }
 
-  fetchData = (
-    organisationId: string,
-    offerId: string,
-    options: InfiniteListFilters,
-  ) => {
+  fetchData = (options: InfiniteListFilters) => {
+    const {
+      match: {
+        params: { organisationId, offerId },
+      },
+    } = this.props;
+
     const { offerOwnership } = this.props;
     const fetchOptions: GetServiceOptions = {
       first_result: options.page,
@@ -111,14 +113,14 @@ class ServiceItemListPage extends React.Component<Props, State> {
     const serviceItemsPromise =
       offerOwnership === 'subscribed_offer'
         ? this._catalogService.getSubscribedServiceItems(
-            organisationId,
-            offerId,
-            fetchOptions,
-          )
+          organisationId,
+          offerId,
+          fetchOptions,
+        )
         : this._catalogService.getServiceItems(
-            organisationId,
-            fetchServiceItemOptions,
-          );
+          organisationId,
+          fetchServiceItemOptions,
+        );
 
     return serviceItemsPromise
       .then(resp => {
@@ -126,6 +128,7 @@ class ServiceItemListPage extends React.Component<Props, State> {
       })
       .catch(err => {
         this.props.notifyError(err);
+        return [];
       });
   };
 
@@ -148,10 +151,10 @@ class ServiceItemListPage extends React.Component<Props, State> {
     const serviceItemConditionsPromise =
       offerOwnership === 'subscribed_offer'
         ? this._catalogService.getSubscribedServiceItemConditions(
-            organisationId,
-            offerId,
-            item.id,
-          )
+          organisationId,
+          offerId,
+          item.id,
+        )
         : this._catalogService.getOfferConditions(offerId);
 
     serviceItemConditionsPromise.then(resp => {
@@ -184,8 +187,8 @@ class ServiceItemListPage extends React.Component<Props, State> {
         </McsButton>
       </List.Item>
     ) : (
-      <div />
-    );
+        <div />
+      );
   };
 
   render() {
@@ -255,8 +258,8 @@ class ServiceItemListPage extends React.Component<Props, State> {
     const priceChart = dataset ? (
       <StackedBarPlot dataset={dataset} options={optionsForChart} />
     ) : (
-      undefined
-    );
+        undefined
+      );
 
     const hasPriceChart = priceChart !== undefined;
 
@@ -283,8 +286,8 @@ class ServiceItemListPage extends React.Component<Props, State> {
           </Button>
         </Link>
       ) : (
-        undefined
-      );
+          undefined
+        );
 
     return (
       <div className="ant-layout mcs-service-item-list-page">
@@ -310,16 +313,16 @@ class ServiceItemListPage extends React.Component<Props, State> {
                   {offer ? (
                     <span>{offer.name}</span>
                   ) : (
-                    <span>
-                      <FormattedMessage {...messages.unknownOffer} />
-                    </span>
-                  )}
+                      <span>
+                        <FormattedMessage {...messages.unknownOffer} />
+                      </span>
+                    )}
                 </span>
                 {addedButton}
               </Breadcrumb.Item>
             </Breadcrumb>
           </Row>
-          <Row className="mcs-table-container mcs-settings-card" style={{display: "flex"}}>
+          <Row className="mcs-table-container mcs-settings-card" style={{ display: "flex" }}>
             <Col span={6}>
               <InfiniteList
                 fetchData={this.fetchData}

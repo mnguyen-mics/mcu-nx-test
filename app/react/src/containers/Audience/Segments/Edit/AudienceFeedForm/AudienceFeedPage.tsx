@@ -17,8 +17,8 @@ import { IAudienceSegmentService } from '../../../../../services/AudienceSegment
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import CreateFeedPresetSelectionPage from './CreateFeedPresetSelectionPage';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { AudienceFeedType } from '../../../../../services/AudienceSegmentFeedService';
+import { Link } from 'react-router-dom';
 
 type JoinedProps = InjectedIntlProps &
   RouteComponentProps<FeedRouteParams> &
@@ -35,7 +35,7 @@ interface AudienceFeedPageState {
 class AudienceFeedPage extends React.Component<
   JoinedProps,
   AudienceFeedPageState
-> {
+  > {
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
   @lazyInject(TYPES.IAudienceFeedFormService)
@@ -193,25 +193,20 @@ class AudienceFeedPage extends React.Component<
       return <Loading isFullScreen={true} />;
     }
 
-    const breadcrumbPaths: Path[] = [
-      {
-        name: formatMessage(messages.actionBarSegmentTitle),
-        path: `/v2/o/${organisationId}/audience/segments`,
-      },
-      {
-        name:
-          this.state.audienceSegment && this.state.audienceSegment.name
-            ? this.state.audienceSegment.name
-            : '',
-        path: `/v2/o/${organisationId}/audience/segments/${segmentId}`,
-      },
+    const breadcrumbPaths: React.ReactNode[] = [
+      <Link key='1' to={`/v2/o/${organisationId}/audience/segments`}>{formatMessage(messages.actionBarSegmentTitle)}</Link>,
+      <Link key='2' to={`/v2/o/${organisationId}/audience/segments/${segmentId}`}>
+        {this.state.audienceSegment && this.state.audienceSegment.name
+          ? this.state.audienceSegment.name
+          : ''}
+      </Link>,
     ];
 
-    const feedBreadcrumbPaths: Path[] = breadcrumbPaths.concat({
-      name: feedId
+    const feedBreadcrumbPaths: React.ReactNode[] = breadcrumbPaths.concat(
+      feedId
         ? formatMessage(messages.actionBarSegmentFeedsEdit)
         : formatMessage(messages.actionBarSegmentFeedsCreate),
-    });
+    );
 
     if (!feedType && !type) {
       const actionbarProps = {
@@ -220,16 +215,16 @@ class AudienceFeedPage extends React.Component<
       };
 
       return (
-        <EditContentLayout paths={breadcrumbPaths} {...actionbarProps}>
+        <EditContentLayout pathItems={breadcrumbPaths} {...actionbarProps}>
           <AudienceFeedSelector onSelect={this.onSelectFeedType} />
         </EditContentLayout>
       );
     }
 
     if (type === 'create_external_preset' || type === 'create_tag_preset') {
-      const presetBreadcrumbPaths: Path[] = breadcrumbPaths.concat({
-        name: formatMessage(messages.actionBarSegmentPresetCreate),
-      });
+      const presetBreadcrumbPaths: React.ReactNode[] = breadcrumbPaths.concat(
+        formatMessage(messages.actionBarSegmentPresetCreate)
+      );
 
       return (
         <CreateFeedPresetSelectionPage

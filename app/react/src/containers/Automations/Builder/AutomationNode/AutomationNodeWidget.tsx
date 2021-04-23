@@ -296,9 +296,9 @@ class AutomationNodeWidget extends React.Component<Props, State> {
             size =
               scenarioNodeShape.type === 'QUERY_INPUT'
                 ? scenarioNodeShape.ui_creation_mode ===
-                    'REACT_TO_EVENT_STANDARD' ||
+                  'REACT_TO_EVENT_STANDARD' ||
                   scenarioNodeShape.ui_creation_mode ===
-                    'REACT_TO_EVENT_ADVANCED'
+                  'REACT_TO_EVENT_ADVANCED'
                   ? 'small'
                   : 'large'
                 : 'large';
@@ -357,12 +357,10 @@ class AutomationNodeWidget extends React.Component<Props, State> {
             scenarioNodes: scenarioNodes,
             close: close,
             breadCrumbPaths: [
-              {
-                name: generateNodeProperties(
-                  node.storylineNodeModel.node,
-                  formatMessage,
-                ).title,
-              },
+              generateNodeProperties(
+                node.storylineNodeModel.node,
+                formatMessage,
+              ).title,
             ],
             disabled: viewer || disableEdition,
             onSubmit: (formData: AutomationFormDataType) => {
@@ -698,11 +696,11 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     const icon = node.iconAnt ? (
       node.iconAnt
     ) : (
-      <McsIcon
-        type={node.icon as McsIconType}
-        className="available-node-icon-gyph"
-      />
-    );
+        <McsIcon
+          type={node.icon as McsIconType}
+          className="available-node-icon-gyph"
+        />
+      );
 
     if (node.iconAssetUrl) {
       return (
@@ -718,9 +716,8 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         >
           <img
             className="available-node-icon-img"
-            src={`${(window as any).MCS_CONSTANTS.ASSETS_URL}${
-              node.iconAssetUrl
-            }`}
+            src={`${(window as any).MCS_CONSTANTS.ASSETS_URL}${node.iconAssetUrl
+              }`}
           />
         </div>
       );
@@ -799,10 +796,9 @@ class AutomationNodeWidget extends React.Component<Props, State> {
             }
             placement="bottom"
           >
-            {`${
-              nodeTitleToDisplayed.substring(0, NODE_NAME_MAX_SIZE) +
+            {`${nodeTitleToDisplayed.substring(0, NODE_NAME_MAX_SIZE) +
               (nodeTitleToDisplayed.length > NODE_NAME_MAX_SIZE ? '...' : '')
-            }`}
+              }`}
           </Tooltip>
         </div>
         <div className="node-subtitle">
@@ -834,16 +830,16 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         </div>
         {(node.y !== ROOT_NODE_POSITION.y ||
           node.x !== ROOT_NODE_POSITION.x) && (
-          <div
-            style={{
-              position: 'absolute',
-              top: node.getNodeSize().height / 2 - 6,
-              left: -10,
-            }}
-          >
-            <McsIcon type="chevron-right" className="arrow" />
-          </div>
-        )}
+            <div
+              style={{
+                position: 'absolute',
+                top: node.getNodeSize().height / 2 - 6,
+                left: -10,
+              }}
+            >
+              <McsIcon type="chevron-right" className="arrow" />
+            </div>
+          )}
         {this.state.focus && (
           <WindowBodyPortal>
             <div className="automation-builder focus">

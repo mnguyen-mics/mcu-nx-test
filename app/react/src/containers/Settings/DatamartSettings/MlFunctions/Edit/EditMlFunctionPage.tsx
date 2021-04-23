@@ -212,10 +212,8 @@ class EditMlFunctionPage extends React.Component<JoinedProps, IState> {
       <DatamartSelector
         onSelect={this.onDatamartSelect}
         actionbarProps={{
-          paths: [
-            {
-              name: formatMessage(messages.createBreadcrumb),
-            },
+          pathItems: [
+            formatMessage(messages.createBreadcrumb),
           ],
         }}
       />

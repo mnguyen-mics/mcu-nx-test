@@ -29,6 +29,7 @@ import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import { parseSearch } from '../../../../../utils/LocationSearchHelper';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import ExportService from '../../../../../services/ExportService';
+import { Link } from 'react-router-dom';
 export interface AdServingActionBarProps {
   campaign: DisplayCampaignInfoResource;
   archiveCampaign: (campaignId: string) => void;
@@ -315,11 +316,8 @@ class AdServingActionBar extends React.Component<Props, AdServingActionBarState>
     const menu = this.buildMenu();
 
     const breadcrumbPaths = [
-      {
-        name: formatMessage(messages.display),
-        path: `/v2/o/${organisationId}/campaigns/display`,
-      },
-      { name: campaign && campaign.name ? campaign.name : '' },
+      <Link key='1' to={`/v2/o/${organisationId}/campaigns/display`}>{formatMessage(messages.display)}</Link>,
+      campaign && campaign.name ? campaign.name : '',
     ];
 
     const downloadMenu = (
@@ -343,7 +341,7 @@ class AdServingActionBar extends React.Component<Props, AdServingActionBarState>
     );
 
     return (
-      <Actionbar paths={breadcrumbPaths}>
+      <Actionbar pathItems={breadcrumbPaths}>
         <Button
           onClick={
             exportIsRunning ? this.exportIsRunningModal : this.handleRunExport

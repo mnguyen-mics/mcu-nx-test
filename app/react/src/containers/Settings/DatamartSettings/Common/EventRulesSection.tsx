@@ -204,11 +204,9 @@ class EventRulesSection extends React.Component<Props> {
       close: this.props.closeNextDrawer,
       onSubmit: this.updateEventRules,
       breadCrumbPaths: [
-        {
-          name: this.props.intl.formatMessage(
-            messages.sectionTitleCreateEventRule,
-          ),
-        },
+        this.props.intl.formatMessage(
+          messages.sectionTitleCreateEventRule,
+        ),
       ],
       initialValues: initialValues,
       datamartId: this.props.datamartId

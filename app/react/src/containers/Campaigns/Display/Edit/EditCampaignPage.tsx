@@ -25,6 +25,7 @@ import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
 import { Loading } from '@mediarithmics-private/mcs-components-library';
+import { Link } from 'react-router-dom';
 
 interface State {
   displayCampaignFormData: DisplayCampaignFormData;
@@ -168,13 +169,10 @@ class EditCampaignPage extends React.Component<Props, State> {
         : formatMessage(messages.createCampaingTitle);
 
     const breadcrumbPaths = [
-      {
-        name: formatMessage(messages.breadcrumbTitle1),
-        path: `/v2/o/${organisationId}/campaigns/display`,
-      },
-      {
-        name: campaignName,
-      },
+      <Link key="1" to={`/v2/o/${organisationId}/campaigns/display`}>
+        {formatMessage(messages.breadcrumbTitle1)}
+      </Link>,
+      campaignName,
     ];
 
     const onSelect = (e: DisplayCampaignSubType) =>

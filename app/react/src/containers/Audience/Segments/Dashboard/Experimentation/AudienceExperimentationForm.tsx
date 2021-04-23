@@ -41,7 +41,6 @@ import { SidebarWrapperProps } from '../../../../../components/Layout/ScrollspyS
 import { injectDrawer } from '../../../../../components/Drawer';
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import PartitionSelector from '../../../../Settings/DatamartSettings/Partitions/Common/PartitionSelector';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 
 export const messagesMap: {
   [key: string]: FormattedMessage.MessageDescriptor;
@@ -138,7 +137,7 @@ interface MapStateToProps {
 
 export interface AudienceExperimentationFormProps
   extends Omit<ConfigProps<ExperimentationFormData>, 'form'> {
-  breadCrumbPaths: Path[];
+  breadCrumbPaths: React.ReactNode[];
   close: () => void;
   partitions: AudiencePartitionResource[];
   loadingPartitions: boolean;
@@ -195,7 +194,7 @@ class AudienceExperimentationForm extends React.Component<Props, State> {
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      paths: breadCrumbPaths,
+      pathItems: breadCrumbPaths,
       message: messages.experimentationCreation,
       onClose: close,
     };
@@ -304,10 +303,8 @@ class AudienceExperimentationForm extends React.Component<Props, State> {
         isLoading={loadingPartitions}
         onSelect={this.onSelectPartition}
         actionbarProps={{
-          paths: [
-            {
-              name: intl.formatMessage(messagesMap.partitionSelectorTitle),
-            },
+          pathItems: [
+            intl.formatMessage(messagesMap.partitionSelectorTitle),
           ],
           onClose: close,
         }}

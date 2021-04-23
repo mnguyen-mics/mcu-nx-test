@@ -11,7 +11,6 @@ import { ProcessingFormData } from '../domain';
 import { InjectedFormProps, ConfigProps, reduxForm } from 'redux-form';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { compose } from 'recompose';
 import { BasicProps } from 'antd/lib/layout/layout';
 import { McsFormSection } from '../../../../../utils/FormHelper';
@@ -27,7 +26,7 @@ const Content = Layout.Content as unknown as React.ComponentClass<
 export interface ProcessingEditFormProps
   extends Omit<ConfigProps<ProcessingFormData>, 'form'> {
   close: () => void;
-  breadCrumbPaths: Path[];
+  breadCrumbPaths: React.ReactNode[];
   goToLegalBasisSelector?: () => void;
 }
 
@@ -49,7 +48,7 @@ class ProcessingEditForm extends React.Component<Props> {
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      paths: breadCrumbPaths,
+      pathItems: breadCrumbPaths,
       message: messages.saveProcessing,
       onClose: close,
     };

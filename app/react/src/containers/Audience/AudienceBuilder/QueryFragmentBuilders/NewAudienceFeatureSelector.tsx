@@ -272,13 +272,9 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
       close,
     } = this.props;
 
-    const path = {
-      name: formatMessage(messages.addAudienceFeature),
-    };
-
     return (
       <Layout className={'mcs-selector-layout'}>
-        <Actionbar paths={[path]} edition={true}>
+        <Actionbar pathItems={[formatMessage(messages.addAudienceFeature)]} edition={true}>
           <McsIcon
             type="close"
             className="close-icon mcs-table-cursor"

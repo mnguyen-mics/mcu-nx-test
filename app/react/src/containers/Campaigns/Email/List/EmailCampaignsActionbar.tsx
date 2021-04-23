@@ -140,14 +140,11 @@ class EmailCampaignsActionbar extends React.Component<Props, State> {
     const exportIsRunning = this.state.exportIsRunning;
 
     const breadcrumbPaths = [
-      {
-        name: intl.formatMessage(messages.emails),
-        path: `/v2/o/${organisationId}/campaigns/email`,
-      },
+      <Link key='1' to={`/v2/o/${organisationId}/campaigns/email`}>{intl.formatMessage(messages.emails)}</Link>,
     ];
 
     return (
-      <Actionbar paths={breadcrumbPaths}>
+      <Actionbar pathItems={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/campaigns/email/create`}>
           <Button type="primary" className="mcs-primary">
             <McsIcon type="plus" />{' '}

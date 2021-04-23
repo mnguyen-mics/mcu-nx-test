@@ -22,7 +22,6 @@ import { SegmentFormSectionProps } from './Sections/SegmentFormSection';
 import { TemplateFormSectionProps } from './Sections/TemplateFormSection';
 import { EmailBlastFormData } from '../domain';
 import messages from '../messages';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../../components/Layout/FormLayoutActionbar';
@@ -46,7 +45,7 @@ const BlastSegmentSectionFieldArray = FieldArray as new () => GenericFieldArray<
 export interface EmailBlastFormProps
   extends Omit<ConfigProps<EmailBlastFormData>, 'form'> {
   close: () => void;
-  breadCrumbPaths: Path[];
+  breadCrumbPaths: React.ReactNode[];
 }
 
 type Props = InjectedFormProps<EmailBlastFormData, EmailBlastFormProps> &
@@ -85,7 +84,7 @@ class EmailBlastForm extends React.Component<Props> {
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      paths: breadCrumbPaths,
+      pathItems: breadCrumbPaths,
       message: messages.emailEditorSave,
       onClose: close,
     };

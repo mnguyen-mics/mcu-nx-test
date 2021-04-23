@@ -1,4 +1,3 @@
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import * as React from 'react';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { connect, DispatchProp } from 'react-redux';
@@ -44,7 +43,7 @@ export interface ExtendedCustomActionInformation {
 export interface CustomActionAutomationFormProps
   extends Omit<ConfigProps<CustomActionAutomationFormData>, 'form'> {
   close: () => void;
-  breadCrumbPaths: Path[];
+  breadCrumbPaths: React.ReactNode[];
   storylineNodeModel: StorylineNodeModel;
   disabled?: boolean;
 }
@@ -296,7 +295,7 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      paths: breadCrumbPaths,
+      pathItems: breadCrumbPaths,
       message: messages.save,
       onClose: close,
       disabled: calculatedDisabled,

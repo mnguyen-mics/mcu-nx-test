@@ -233,11 +233,7 @@ class DealForm extends React.Component<JoinedProps, State> {
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      paths: [
-        {
-          name: dealName,
-        },
-      ],
+      pathItems: [dealName],
       message: messages.addDealDescriptor,
       onClose: this.props.closeNextDrawer,
     };

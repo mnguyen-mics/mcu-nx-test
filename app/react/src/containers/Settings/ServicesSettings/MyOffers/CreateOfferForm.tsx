@@ -11,7 +11,6 @@ import { FormLayoutActionbarProps } from '../../../../components/Layout/FormLayo
 import messages from '../../messages';
 import { SidebarWrapperProps } from '../../../../components/Layout/ScrollspySider';
 import { McsFormSection } from '../../../../utils/FormHelper';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { Omit } from '../../../../utils/Types';
 import { OfferFormData } from '../domain';
 import { FormSection, FormInputField, FormInput, FormSelectField, DefaultSelect } from '../../../../components/Form';
@@ -24,7 +23,7 @@ const Content = Layout.Content as unknown as React.ComponentClass<
 
 export interface OfferFormProps extends Omit<ConfigProps<OfferFormData>, 'form'> {
   close: () => void;
-  breadCrumbPaths: Path[];
+  breadCrumbPaths: React.ReactNode[];
   offerType: OfferType;
   goToOfferTypeSelection?: () => void;
 }
@@ -59,7 +58,7 @@ class CreateOfferForm extends React.Component<Props> {
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      paths: breadCrumbPaths,
+      pathItems: breadCrumbPaths,
       message: messages.saveOffer,
       onClose: close,
     };

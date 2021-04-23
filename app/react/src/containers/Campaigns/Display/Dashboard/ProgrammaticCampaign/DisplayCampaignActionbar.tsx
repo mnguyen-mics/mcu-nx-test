@@ -39,6 +39,7 @@ import { TYPES } from '../../../../../constants/types';
 import { IDisplayCampaignService } from '../../../../../services/DisplayCampaignService';
 import { IResourceHistoryService } from '../../../../../services/ResourceHistoryService';
 import { IGoalService } from '../../../../../services/GoalService';
+import { Link } from 'react-router-dom';
 
 interface DisplayCampaignActionBarProps {
   campaign: Omit<DisplayCampaignInfoResource, 'ad_groups'>;
@@ -193,17 +194,12 @@ class DisplayCampaignActionbar extends React.Component<
     const menu = this.buildMenu();
 
     const breadcrumbPaths = [
-      {
-        name: formatMessage(messages.display),
-        path: `/v2/o/${organisationId}/campaigns/display`,
-      },
-      {
-        name: (campaign && campaign.name) || '',
-      },
+      <Link key='1' to={`/v2/o/${organisationId}/campaigns/display`}>{formatMessage(messages.display)}</Link>,
+      (campaign && campaign.name) || '',
     ];
 
     return (
-      <Actionbar paths={breadcrumbPaths}>
+      <Actionbar pathItems={breadcrumbPaths}>
         {actionElement}
         <Button
           onClick={

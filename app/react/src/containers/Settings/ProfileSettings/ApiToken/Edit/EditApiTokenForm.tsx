@@ -13,7 +13,6 @@ import ScrollspySider, {
   SidebarWrapperProps,
 } from '../../../../../components/Layout/ScrollspySider';
 import { McsFormSection } from '../../../../../utils/FormHelper';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import GeneralFormSection from './Sections/GeneralFormSection';
 import { Omit } from '../../../../../utils/Types';
 import ApiTokenResource from '../../../../../models/directory/ApiTokenResource';
@@ -39,7 +38,7 @@ interface EditUserFormProps
   extends Omit<ConfigProps<Partial<ApiTokenResource>>, 'form'> {
   onClose: () => void;
   onSave: (formData: Partial<ApiTokenResource>) => void;
-  breadCrumbPaths: Path[];
+  breadCrumbPaths: React.ReactNode[];
 }
 
 type Props = InjectedFormProps<Partial<ApiTokenResource>, EditUserFormProps> &
@@ -64,7 +63,7 @@ class EditUserForm extends React.Component<Props> {
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      paths: this.props.breadCrumbPaths,
+      pathItems: this.props.breadCrumbPaths,
       message: messages.saveApiToken,
       onClose: this.props.onClose,
     };

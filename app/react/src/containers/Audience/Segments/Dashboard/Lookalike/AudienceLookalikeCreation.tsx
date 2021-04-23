@@ -47,7 +47,6 @@ import { injectFeatures, InjectedFeaturesProps } from '../../../../Features';
 import { McsIcon, MenuList } from '@mediarithmics-private/mcs-components-library';
 import { IQueryService } from '../../../../../services/QueryService';
 import { connect } from 'react-redux';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 
 const FORM_ID = 'lookalikeForm';
 const { Content } = Layout;
@@ -72,7 +71,7 @@ interface MapStateToProps {
 
 export interface AudienceLookalikeCreationProps
   extends Omit<ConfigProps<any>, 'form'> {
-  breadCrumbPaths: Path[];
+  breadCrumbPaths: React.ReactNode[];
   close: () => void;
   datamartId: string;
 }
@@ -313,7 +312,7 @@ class AudienceLookalikeCreation extends React.Component<
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      paths: breadCrumbPaths,
+      pathItems: breadCrumbPaths,
       message: messages.lookAlikeCreation,
       onClose: close,
     };

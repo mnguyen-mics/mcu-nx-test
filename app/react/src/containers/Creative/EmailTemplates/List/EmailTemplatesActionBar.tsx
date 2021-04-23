@@ -63,10 +63,7 @@ class EmailTemplatesActionBar extends React.Component<JoinedProps> {
     } = this.props;
 
     const breadcrumbPaths = [
-      {
-        name: intl.formatMessage(messages.emailTemplates),
-        path: `/v2/o/${organisationId}/creatives/email`,
-      },
+      <Link key='1' to={`/v2/o/${organisationId}/creatives/email`}>{intl.formatMessage(messages.emailTemplates)}</Link>,
     ];
 
     const hasSelected = !!(
@@ -74,7 +71,7 @@ class EmailTemplatesActionBar extends React.Component<JoinedProps> {
     );
 
     return (
-      <Actionbar paths={breadcrumbPaths}>
+      <Actionbar pathItems={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/creatives/email/create`}>
           <Button className="mcs-primary" type="primary">
             <McsIcon type="plus" />{' '}

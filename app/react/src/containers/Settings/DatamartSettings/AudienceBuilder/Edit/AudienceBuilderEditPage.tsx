@@ -16,6 +16,7 @@ import {
 } from './domain';
 import { message } from 'antd';
 import { Loading } from '../../../../../components';
+import { Link } from 'react-router-dom';
 
 type Props = InjectedNotificationProps &
   InjectedIntlProps &
@@ -161,14 +162,10 @@ class AudienceBuilderEditPage extends React.Component<Props, State> {
         : formatMessage(messages.audienceBuilderNew);
 
     const breadcrumbPaths = [
-      {
-        name: formatMessage(messages.audienceBuilders),
-        path: `/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`,
-        state: { activeTab: 'segment_builder' },
-      },
-      {
-        name: builderName,
-      },
+      <Link key="1" to={`/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`}>
+        {formatMessage(messages.audienceBuilders)}
+      </Link>,
+      builderName,
     ];
 
     if (isLoading) {

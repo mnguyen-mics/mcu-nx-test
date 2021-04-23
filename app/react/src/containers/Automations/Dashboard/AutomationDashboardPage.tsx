@@ -18,7 +18,6 @@ import {
   McsDateRangePicker,
   McsIcon,
 } from '@mediarithmics-private/mcs-components-library';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import injectDrawer, {
   InjectedDrawerProps,
@@ -30,6 +29,7 @@ import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import { DateSearchSettings, DATE_SEARCH_SETTINGS, parseSearch, updateSearch } from '../../../utils/LocationSearchHelper';
 import McsMoment from '../../../utils/McsMoment';
+import { Link } from 'react-router-dom';
 
 export interface AutomationDashboardrams {
   organisationId: string;
@@ -258,16 +258,11 @@ class AutomationDashboardPage extends React.Component<Props, State> {
       return 'this automation does not seem to exist!';
     }
 
-    const breadCrumbPaths: Path[] = [
-      {
-        name: 'Automations',
-        path: `/v2/o/${organisationId}/automations`,
-      },
-      {
-        name: automationFormData.automation.name
+    const breadCrumbPaths: React.ReactNode[] = [
+      <Link key='1' to={`/v2/o/${organisationId}/automations`}>Automations</Link>,
+      automationFormData.automation.name
           ? automationFormData.automation.name
           : '',
-      },
     ];
 
     const automationStatus = automationFormData.automation.status;
@@ -293,7 +288,7 @@ class AutomationDashboardPage extends React.Component<Props, State> {
 
     return (
       <Layout className="mcs-automationDashboardPage">
-        <Actionbar paths={breadCrumbPaths}>
+        <Actionbar pathItems={breadCrumbPaths}>
           {automationFormData.automation &&
             automationFormData.automation.status &&
             automationFormData.automation.id ? (

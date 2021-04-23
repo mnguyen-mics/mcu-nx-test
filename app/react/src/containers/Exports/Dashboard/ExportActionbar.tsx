@@ -16,6 +16,7 @@ import { IExportService } from '../../../services/Library/ExportService';
 import ResourceTimelinePage, { ResourceTimelinePageProps } from '../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
 import resourceHistoryMessages from '../../ResourceHistory/ResourceTimeline/messages';
 import injectDrawer, { InjectedDrawerProps } from '../../../components/Drawer/injectDrawer';
+import { Link } from 'react-router-dom';
 
 interface ExportActionbarProps {
   exportObject?: Export;
@@ -99,12 +100,12 @@ class ExportsActionbar extends React.Component<
     const menu = this.buildMenu();
 
     const breadcrumbPaths = [
-      { name: 'Exports', path: `/v2/o/${organisationId}/datastudio/exports` },
-      { name: exportObject && exportObject.name ? exportObject.name : '' },
+      <Link key='1' to={`/v2/o/${organisationId}/datastudio/exports`}>Exports</Link>,
+      exportObject && exportObject.name ? exportObject.name : '',
     ];
 
     return (
-      <Actionbar paths={breadcrumbPaths}>
+      <Actionbar pathItems={breadcrumbPaths}>
         <Button
           className="mcs-primary"
           type="primary"

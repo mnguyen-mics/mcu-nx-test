@@ -1,4 +1,4 @@
-import { Actionbar, McsIcon, McsDateRangePicker } from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, McsIcon, McsDateRangePicker, MentionTag } from '@mediarithmics-private/mcs-components-library';
 import { parseSearch, updateSearch } from '../../../utils/LocationSearchHelper';
 import { Button, Layout } from 'antd';
 import * as React from 'react';
@@ -94,12 +94,12 @@ class FunnelPage extends React.Component<JoinedProps, State> {
 
     let splittedByDay = false
     if (this.splitIndex(funnelFilter) === -1) {
-      funnelFilter[funnelFilter.length-1].group_by_dimension = "DATE_YYYY_MM_DD";
+      funnelFilter[funnelFilter.length - 1].group_by_dimension = "DATE_YYYY_MM_DD";
       splittedByDay = true
     }
     const funnelTimeRange = extractDatesFromProps(search);
 
-    const splitIndex = this.splitIndex(funnelFilter) === -1 ? funnelFilter.length-1 : this.splitIndex(funnelFilter)
+    const splitIndex = this.splitIndex(funnelFilter) === -1 ? funnelFilter.length - 1 : this.splitIndex(funnelFilter)
 
     this._userActivitiesFunnelService
       .getUserActivitiesFunnel(selectedDatamartId, funnelFilter, funnelTimeRange)
@@ -111,15 +111,15 @@ class FunnelPage extends React.Component<JoinedProps, State> {
           funnelData: funnelResponse.data
         }]
         if (splittedByDay) {
-          const globalSheet:FunnelSheetDescription = {
+          const globalSheet: FunnelSheetDescription = {
             title: 'Funnel report',
             splitIndex: undefined,
             funnelData: {
-              ...funnelResponse.data, grouped_by:undefined
+              ...funnelResponse.data, grouped_by: undefined
             }
           }
-        
-          const byDaySheet:FunnelSheetDescription = {
+
+          const byDaySheet: FunnelSheetDescription = {
             title: 'Funnel report split by day',
             splitIndex: splitIndex,
             funnelData: {
@@ -212,15 +212,15 @@ class FunnelPage extends React.Component<JoinedProps, State> {
     const { exportIsRunning, isLoading, dateRange, selectedTemplate } = this.state;
     const routeParams = parseSearch(search, FUNNEL_SEARCH_SETTING);
     const breadcrumbPaths = [
-      {
-        key: 'Funnel Analytics',
-        name: 'Funnel Analytics'
-      }
+      <span className="mcs-pathItem" key='1'>
+        Funnel Analytics
+        <MentionTag className="mcs-pathItem_mentionTag" mention='ALPHA' />
+      </span>
     ];
 
     return (
       <div className="ant-layout" >
-        <Actionbar paths={breadcrumbPaths} mention='ALPHA'>
+        <Actionbar pathItems={breadcrumbPaths}>
           <FunnelTemplateSelector selectedValue={selectedTemplate} />
           <McsDateRangePicker
             values={dateRange}

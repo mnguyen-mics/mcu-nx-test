@@ -5,6 +5,7 @@ import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { Button } from 'antd';
 import messages from './messages';
+import { Link } from 'react-router-dom';
 
 type Props = RouteComponentProps<{ organisationId: string; datamartId: string }> &
   InjectedIntlProps;
@@ -45,14 +46,11 @@ class DatamartActionBar extends React.Component<Props> {
     } = this.props;
 
     const breadcrumbPaths = [
-      {
-        name: formatMessage(messages.datamart),
-        path: `/v2/o/${organisationId}/settings/datamart/datamarts`,
-      },
+      <Link key='1' to={`/v2/o/${organisationId}/settings/datamart/datamarts`} >{formatMessage(messages.datamart)}</Link>
     ];
 
     return (
-      <Actionbar paths={breadcrumbPaths}>
+      <Actionbar pathItems={breadcrumbPaths}>
         <Button onClick={this.onEditClick} type="primary" className={"mcs-primary"}>
           <McsIcon type="pen" />
           <FormattedMessage {...messages.edit} />

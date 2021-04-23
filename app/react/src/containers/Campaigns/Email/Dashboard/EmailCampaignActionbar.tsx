@@ -303,15 +303,12 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
     const menu = this.buildMenu();
 
     const breadcrumbPaths = [
-      {
-        name: formatMessage(messages.email),
-        path: `/v2/o/${organisationId}/campaigns/email`,
-      },
-      { name: campaign ? campaign.name : '' },
+      <Link key='1' to={`/v2/o/${organisationId}/campaigns/email`}>{formatMessage(messages.email)}</Link>,
+      campaign ? campaign.name : '',
     ];
 
     return (
-      <Actionbar paths={breadcrumbPaths}>
+      <Actionbar pathItems={breadcrumbPaths}>
         {actionElement}
         <Button
           onClick={

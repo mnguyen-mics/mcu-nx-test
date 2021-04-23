@@ -11,7 +11,6 @@ import {
   getFormValues,
 } from 'redux-form';
 import { ObjectNodeFormData, FORM_ID, FrequencyFormData } from './domain';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { Layout } from 'antd';
 import { Form } from '@ant-design/compatible';
 import FormLayoutActionbar, {
@@ -36,7 +35,7 @@ const { Content } = Layout;
 export interface ObjectNodeFormProps
   extends Omit<ConfigProps<ObjectNodeFormData>, 'form'> {
   close: () => void;
-  breadCrumbPaths: Path[];
+  breadCrumbPaths: React.ReactNode[];
   objectType: ObjectLikeTypeInfoResource;
   objectTypes: ObjectLikeTypeInfoResource[];
   isTrigger: boolean;
@@ -155,7 +154,7 @@ class ObjectNodeForm extends React.Component<Props> {
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      paths: breadCrumbPaths,
+      pathItems: breadCrumbPaths,
       message: messages.save,
       onClose: close,
     };

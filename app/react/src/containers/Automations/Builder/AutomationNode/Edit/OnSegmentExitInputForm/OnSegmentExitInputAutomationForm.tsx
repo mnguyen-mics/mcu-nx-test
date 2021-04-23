@@ -18,7 +18,6 @@ import FormLayoutActionbar, {
 import { McsFormSection } from '../../../../../../utils/FormHelper';
 import OnSegmentExitInputGeneralSectionForm from './OnSegmentExitInputGeneralSectionForm';
 import { StorylineNodeModel } from '../../../domain';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 
 const { Content } = Layout;
 
@@ -36,7 +35,7 @@ const messages = defineMessages({
 export interface OnSegmentExitInputAutomationFormProps
   extends Omit<ConfigProps<OnSegmentExitInputAutomationFormData>, 'form'> {
   close: () => void;
-  breadCrumbPaths: Path[];
+  breadCrumbPaths: React.ReactNode[];
   storylineNodeModel: StorylineNodeModel;
   disabled?: boolean;
 }
@@ -79,7 +78,7 @@ class OnSegmentExitInputAutomationForm extends React.Component<Props> {
     const { breadCrumbPaths, handleSubmit, close, disabled } = this.props;
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      paths: breadCrumbPaths,
+      pathItems: breadCrumbPaths,
       message: messages.save,
       onClose: close,
       disabled: disabled,

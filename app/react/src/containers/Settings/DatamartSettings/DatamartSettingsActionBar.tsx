@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { withRouter, RouteComponentProps } from 'react-router-dom';
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { injectIntl, defineMessages, InjectedIntlProps } from 'react-intl';
 
 import { Actionbar } from '@mediarithmics-private/mcs-components-library';
@@ -25,15 +25,9 @@ class SettingsActionBar extends React.Component<Props> {
     });
 
     const breadcrumbPaths = [
-      {
-        name: formatMessage(breadcrumbMessages.settings),
-        url: {
-          pathname: `/v2/o/${organisationId}/settings`,
-          search: '&tab=sites',
-        },
-      },
+      <Link key="1" to={`/v2/o/${organisationId}/settings&tab=sites`}>{formatMessage(breadcrumbMessages.settings)}</Link>
     ];
-    return <Actionbar paths={breadcrumbPaths} />;
+    return <Actionbar pathItems={breadcrumbPaths} />;
   }
 }
 

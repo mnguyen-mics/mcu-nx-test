@@ -31,7 +31,6 @@ import {
 } from '../../../../../services/AudienceSegmentFeedService';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 
 const titleMessages: {
   [key: string]: FormattedMessage.MessageDescriptor;
@@ -109,7 +108,7 @@ export interface CreateAudienceFeedProps<T = any> {
   onClose: () => void;
   onSave: (a: T) => void;
   type: PluginType;
-  breadcrumbPaths: Path[];
+  breadcrumbPaths: React.ReactNode[];
 }
 
 type JoinedProps<T = any> = CreateAudienceFeedProps<T> &

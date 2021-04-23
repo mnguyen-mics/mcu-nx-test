@@ -11,14 +11,13 @@ import { NewUserQuerySimpleFormData } from './NewUserQuerySegmentSimpleForm';
 import { DataResponse } from '../../../services/ApiService';
 import { QueryResource } from '../../../models/datamart/DatamartResource';
 import Convert2Otql from './Convet2Otql';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { Actionbar } from '@mediarithmics-private/mcs-components-library';
 
 export interface SaveQueryAsActionBarProps {
   saveAsUserQuery?: (formData: NewUserQuerySimpleFormData) => Promise<any>;
   saveAsExort?: (formData: NewExportSimpleFormData) => Promise<any>;
   convertToOtql?: () => Promise<DataResponse<QueryResource>>;
-  breadcrumb: Path[];
+  breadcrumb: React.ReactNode[];
   csvExportDisabled?: boolean;
 }
 
@@ -113,7 +112,7 @@ class SaveQueryAsActionBar extends React.Component<Props, State> {
     );
 
     return (
-      <Actionbar paths={breadcrumb}>
+      <Actionbar pathItems={breadcrumb}>
         <Dropdown overlay={saveAsMenu} trigger={['click']}>
           <Button className="mcs-primary" type="primary">
             <FormattedMessage

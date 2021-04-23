@@ -12,7 +12,6 @@ import { injectDatamart, InjectedDatamartProps } from '../Datamart';
 import { UserWorkspaceResource } from '../../models/directory/UserProfileResource';
 import { MicsReduxState } from '../../utils/ReduxHelper';
 import {
-  AppsMenuDropdown,
   McsIcon,
 } from '@mediarithmics-private/mcs-components-library';
 import { InjectedFeaturesProps, injectFeatures } from '../Features';
@@ -44,7 +43,6 @@ class NavigatorHeader extends React.Component<Props> {
       },
       workspace,
       userEmail,
-      isInSettings: isInSettings,
       menu,
       hasFeature,
     } = this.props;
@@ -83,15 +81,11 @@ class NavigatorHeader extends React.Component<Props> {
           <span className="left-component">
             {menu ? (
               <span className="launcher">
-                {isInSettings ? (
-                  <Dropdown overlay={menu} trigger={['click']}>
-                    <a>
-                      <AppstoreFilled className="menu-icon" />
-                    </a>
-                  </Dropdown>
-                ) : (
-                  <AppsMenuDropdown overlay={menu} />
-                )}
+                <Dropdown overlay={menu} trigger={['click']}>
+                  <a>
+                    <AppstoreFilled className="menu-icon" />
+                  </a>
+                </Dropdown>
               </span>
             ) : null}
             {!hasFeature('new-navigation-system') && (

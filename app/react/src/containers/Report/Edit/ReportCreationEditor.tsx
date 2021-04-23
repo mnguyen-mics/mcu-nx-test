@@ -186,7 +186,7 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
           {/* this button enables submit on enter */}
           <button type="submit" style={{ display: 'none' }} />
           <Actionbar
-            paths={[{ name: intl.formatMessage(messages.actionBarTitle) }]}
+            pathItems={[ intl.formatMessage(messages.actionBarTitle) ]}
             edition={true}
           >
             <Button

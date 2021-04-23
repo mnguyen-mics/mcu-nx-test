@@ -17,6 +17,7 @@ import injectNotifications, {
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IEmailCampaignFormService } from '../EmailCampaignFormService';
+import { Link } from 'react-router-dom';
 
 interface State {
   campaignFormData: EmailCampaignFormData;
@@ -31,7 +32,7 @@ class EditCampaignPage extends React.Component<Props, State> {
 
   @lazyInject(TYPES.IEmailCampaignFormService)
   private _emailCampaignFormService: IEmailCampaignFormService;
-  
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -139,18 +140,15 @@ class EditCampaignPage extends React.Component<Props, State> {
     const campaignName =
       campaignFormData.campaign && campaignFormData.campaign.name
         ? formatMessage(messages.emailEditorBreadcrumbEditCampaignTitle, {
-            campaignName: campaignFormData.campaign.name,
-          })
+          campaignName: campaignFormData.campaign.name,
+        })
         : formatMessage(messages.emailEditorBreadcrumbNewCampaignTitle);
 
     const breadcrumbPaths = [
-      {
-        name: formatMessage(messages.emailEditorBreadcrumbTitle1),
-        path: `/v2/o/${organisationId}/campaigns/email`,
-      },
-      {
-        name: campaignName,
-      },
+      <Link key="1" to={`/v2/o/${organisationId}/campaigns/email`}>
+        {formatMessage(messages.emailEditorBreadcrumbTitle1)}
+      </Link>,
+      campaignName,
     ];
 
     return (

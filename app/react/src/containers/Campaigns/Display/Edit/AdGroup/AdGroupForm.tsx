@@ -18,7 +18,6 @@ import FeatureSwitch from '../../../../../components/FeatureSwitch';
 import messages from '../messages';
 import { AdGroupFormData, EditAdGroupRouteMatchParam } from './domain';
 import { Omit } from '../../../../../utils/Types';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../../components/Layout/FormLayoutActionbar';
@@ -77,7 +76,7 @@ export const InventoryCatalogFieldArray = FieldArray as new () => GenericFieldAr
 export interface AdGroupFormProps
   extends Omit<ConfigProps<AdGroupFormData>, 'form'> {
   close: () => void;
-  breadCrumbPaths: Path[];
+  breadCrumbPaths: React.ReactNode[];
 }
 
 interface MapStateToProps {
@@ -196,7 +195,7 @@ class AdGroupForm extends React.Component<Props> {
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      paths: breadCrumbPaths,
+      pathItems: breadCrumbPaths,
       message: messages.saveAdGroup,
       onClose: close,
     };

@@ -27,7 +27,6 @@ import {
 } from '../../../../../models/audiencesegment/AudienceSegmentResource';
 import { message } from 'antd';
 import { getFormattedExperimentationQuery } from '../../../Dashboard/domain';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 
 type Engagement = 'E_COMMERCE_ENGAGEMENT' | 'CHANNEL_ENGAGEMENT';
 
@@ -38,7 +37,7 @@ export const INITIAL_EXPERIMENTATION_FORM_DATA = {
 
 export interface AudienceExperimentationEditPageProps
   extends Omit<ConfigProps<any>, 'form'> {
-  breadCrumbPaths: Path[];
+  breadCrumbPaths: React.ReactNode[];
   close: () => void;
   segment: UserQuerySegment;
 }

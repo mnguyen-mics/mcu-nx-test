@@ -19,7 +19,6 @@ import {
 import { BlastFormSectionProps } from './Sections/BlastFormSection';
 import { EmailCampaignFormData } from '../domain';
 import messages from '../messages';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../../components/Layout/FormLayoutActionbar';
@@ -40,7 +39,7 @@ export interface EmailCampaignFormProps
   extends Omit<ConfigProps<EmailCampaignFormData>, 'form'> {
   save: (formData: EmailCampaignFormData) => void;
   close: () => void;
-  breadCrumbPaths: Path[];
+  breadCrumbPaths: React.ReactNode[];
 }
 
 type Props = InjectedFormProps<EmailCampaignFormData, EmailCampaignFormProps> &
@@ -69,7 +68,7 @@ class EmailCampaignForm extends React.Component<Props> {
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      paths: breadCrumbPaths,
+      pathItems: breadCrumbPaths,
       message: messages.emailEditorSaveCampaign,
       onClose: close,
     };

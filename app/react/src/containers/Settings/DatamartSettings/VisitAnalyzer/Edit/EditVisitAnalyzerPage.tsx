@@ -17,6 +17,7 @@ import { Omit } from '../../../../../utils/Types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { IVisitAnalyzerService } from '../../../../../services/Library/VisitAnalyzerService';
 import { TYPES } from '../../../../../constants/types';
+import { Link } from 'react-router-dom';
 
 const VisitAnalyzerPluginContent = GenericPluginContent as React.ComponentClass<
   PluginContentOuterProps<VisitAnalyzer>
@@ -85,17 +86,14 @@ class EditVisitAnalyzerPage extends React.Component<JoinedProps> {
     } = this.props;
 
     const breadcrumbPaths = (visitAnalyzer?: VisitAnalyzer) => [
-      {
-        name: formatMessage(messages.listTitle),
-        path: `/v2/o/${organisationId}/settings/datamart/visit_analyzers`,
-      },
-      {
-        name: visitAnalyzer
-          ? formatMessage(messages.visitAnalyzerEditBreadcrumb, {
-              name: visitAnalyzer.name,
-            })
-          : formatMessage(messages.visitAnalyzerBreadcrumb),
-      },
+      <Link key="1" to={`/v2/o/${organisationId}/settings/datamart/visit_analyzers`}>
+        {formatMessage(messages.listTitle)}
+      </Link>,
+      visitAnalyzer
+        ? formatMessage(messages.visitAnalyzerEditBreadcrumb, {
+          name: visitAnalyzer.name,
+        })
+        : formatMessage(messages.visitAnalyzerBreadcrumb),
     ];
 
     return (

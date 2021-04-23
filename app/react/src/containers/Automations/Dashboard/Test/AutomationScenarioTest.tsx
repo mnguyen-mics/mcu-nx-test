@@ -210,13 +210,11 @@ class AutomationScenarioTest extends React.Component<Props, State> {
     const { isFetchingUserPointId } = this.state;
 
     const breadcrumbPaths = [
-      {
-        name: formatMessage(messages.testActionbarTitle),
-      },
+      formatMessage(messages.testActionbarTitle),
     ];
 
     const actionBarProps = {
-      paths: breadcrumbPaths,
+      pathItems: breadcrumbPaths,
       onClose: close,
     };
 

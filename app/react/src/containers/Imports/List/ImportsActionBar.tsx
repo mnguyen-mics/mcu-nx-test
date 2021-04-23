@@ -18,7 +18,7 @@ interface RouterProps {
 
 class ImportsActionbar extends React.Component<
   RouteComponentProps<RouterProps> & InjectedIntlProps & InjectedDatamartProps
-> {
+  > {
   render() {
     const {
       match: {
@@ -28,14 +28,11 @@ class ImportsActionbar extends React.Component<
     } = this.props;
 
     const breadcrumbPaths = [
-      {
-        name: formatMessage(messages.imports),
-        path: `/v2/o/${organisationId}/datastudio/imports`,
-      },
+      <Link key='1' to={`/v2/o/${organisationId}/datastudio/imports`}>{formatMessage(messages.imports)}</Link>
     ];
 
     return (
-      <Actionbar paths={breadcrumbPaths}>
+      <Actionbar pathItems={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/datastudio/imports/create`}>
           <Button className="mcs-primary mcs-imports_creationButton" type="primary">
             <McsIcon type="plus" /> <FormattedMessage {...messages.newImport} />

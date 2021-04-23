@@ -57,7 +57,6 @@ import { IQueryService } from '../../../../services/QueryService';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { connect } from 'react-redux';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { AudienceBuilderResource } from '../../../../models/audienceBuilder/AudienceBuilderResource';
 
 export const FORM_ID = 'audienceSegmentForm';
@@ -84,7 +83,7 @@ export interface AudienceSegmentFormProps
   extends Omit<ConfigProps<AudienceSegmentFormData>, 'form'> {
   close: () => void;
   onSubmit: (audienceSegmentFormData: AudienceSegmentFormData) => void;
-  breadCrumbPaths: Path[];
+  breadCrumbPaths: React.ReactNode[];
   audienceSegmentFormData: AudienceSegmentFormData;
   datamart?: DatamartResource;
   feedType?: FeedType;
@@ -267,7 +266,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      paths: breadCrumbPaths,
+      pathItems: breadCrumbPaths,
       message: messages.audienceSegmentSaveButton,
       onClose: close,
     };

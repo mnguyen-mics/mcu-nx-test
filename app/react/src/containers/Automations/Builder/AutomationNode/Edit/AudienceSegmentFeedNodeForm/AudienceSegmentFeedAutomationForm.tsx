@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Path } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar/Actionbar';
 import { StorylineNodeModel } from '../../../domain';
 import { FeedNodeFormData, FORM_ID } from '../domain';
 import {
@@ -25,7 +24,7 @@ const { Content } = Layout;
 export interface AudienceSegmentFeedAutomationFormProps
   extends Omit<ConfigProps<FeedNodeFormData>, 'form'> {
   close: () => void;
-  breadCrumbPaths: Path[];
+  breadCrumbPaths: React.ReactNode[];
   storylineNodeModel: StorylineNodeModel;
   disabled?: boolean;
 }
@@ -87,7 +86,7 @@ class AudienceSegmentFeedAutomationForm extends React.Component<Props> {
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      paths: breadCrumbPaths,
+      pathItems: breadCrumbPaths,
       message: messages.save,
       onClose: close,
       disabled: disabled,

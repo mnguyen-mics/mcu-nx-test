@@ -14,6 +14,7 @@ import { Import } from '../../../models/imports/imports';
 import { lazyInject } from '../../../config/inversify.config';
 import { IImportService } from '../../../services/ImportService';
 import { TYPES } from '../../../constants/types';
+import { Link } from 'react-router-dom';
 
 const messages = defineMessages({
   newImports: {
@@ -229,14 +230,10 @@ class ImportEditPage extends React.Component<Props, ImportEditPageState> {
             : formatMessage(messages.imports),
         })
       : formatMessage(messages.newImports);
+      
     const breadcrumbPaths = [
-      {
-        name: formatMessage(messages.imports),
-        path: `/v2/o/${organisationId}/datastudio/imports`,
-      },
-      {
-        name: importName,
-      },
+      <Link key='1' to={`/v2/o/${organisationId}/datastudio/imports`}>{formatMessage(messages.imports)}</Link>,
+      importName,
     ];
 
     if (loading) {
@@ -265,7 +262,7 @@ class ImportEditPage extends React.Component<Props, ImportEditPageState> {
       <DatamartSelector
         onSelect={this.onDatamartSelect}
         actionbarProps={{
-          paths: breadcrumbPaths,
+          pathItems: breadcrumbPaths,
           formId: 'IMPORT',
           onClose: this.close,
         }}

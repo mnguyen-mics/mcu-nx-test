@@ -8,6 +8,7 @@ import injectNotifications, {
 import { compose } from 'recompose';
 import { Button } from 'antd';
 import { Actionbar } from '@mediarithmics-private/mcs-components-library';
+import { Link } from 'react-router-dom';
 
 type Props = RouteComponentProps<{ organisationId: string }> &
   InjectedIntlProps &
@@ -32,10 +33,7 @@ class FeedsOverviewActionBar extends React.Component<Props, {}> {
     } = this.props;
 
     const breadcrumbPaths = [
-      {
-        name: intl.formatMessage(messages.audienceFeeds),
-        path: `/v2/o/${organisationId}/audience/feeds`,
-      },
+      <Link key='1' to={`/v2/o/${organisationId}/audience/feeds`}>{intl.formatMessage(messages.audienceFeeds)}</Link>
     ];
 
     const viewDetails = () => {
@@ -43,7 +41,7 @@ class FeedsOverviewActionBar extends React.Component<Props, {}> {
     };
 
     return (
-      <Actionbar paths={breadcrumbPaths}>
+      <Actionbar pathItems={breadcrumbPaths}>
 
         <Button onClick={viewDetails}>
           <FormattedMessage

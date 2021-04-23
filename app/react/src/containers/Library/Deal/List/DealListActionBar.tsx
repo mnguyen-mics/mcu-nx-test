@@ -27,14 +27,11 @@ class DealListActionbar extends React.Component<
     } = this.props;
 
     const breadcrumbPaths = [
-      {
-        name: formatMessage(messages.dealList),
-        path: `/v2/o/${organisationId}/library/deallist`,
-      },
+      <Link key='1' to={`/v2/o/${organisationId}/library/deallist`}>{formatMessage(messages.dealList)}</Link>
     ];
 
     return (
-      <Actionbar paths={breadcrumbPaths}>
+      <Actionbar pathItems={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/library/deallist/create`}>
           <Button className="mcs-primary" type="primary">
             <McsIcon type="plus" />{' '}
