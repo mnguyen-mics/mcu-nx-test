@@ -112,16 +112,16 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
 
     if (isEmpty(credentials_uri) && !datamartReplicationId) {
       switch (type) {
-        case 'AZURE_EVENT_HUBS': 
+        case 'AZURE_EVENT_HUBS':
           notifyError(new Error('A Connection String must be defined'), {
             intlDescription: messages.datamartReplicationEventHubsConnectionStringUriError,
           });
-          return; 
+          return;
         default:
           notifyError(new Error('Credentials must be defined'), {
-           intlDescription: messages.datamartReplicationPubSubCredentialsUriError,
-         });
-         return; 
+            intlDescription: messages.datamartReplicationPubSubCredentialsUriError,
+          });
+          return;
       }
     }
 
@@ -147,14 +147,14 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
 
       const promise = datamartReplicationId
         ? this._datamartReplicationService.updateDatamartReplication(
-            datamartId,
-            datamartReplicationId,
-            newFormData,
-          )
+          datamartId,
+          datamartReplicationId,
+          newFormData,
+        )
         : this._datamartReplicationService.createDatamartReplication(
-            datamartId,
-            newFormData,
-          );
+          datamartId,
+          newFormData,
+        );
 
       promise
         .then(response => {
@@ -166,7 +166,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
                 datamartReplicationFormData.credentials_uri,
               )
               .catch(error => {
-                if(error) notifyError(error);
+                if (error) notifyError(error);
                 this.setState({
                   isLoading: false,
                 });
@@ -200,8 +200,8 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
     return state && !!state.datamartId
       ? `/v2/o/${organisationId}/settings/datamart/datamarts/${state.datamartId}`
       : datamartId
-      ? `/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`
-      : `/v2/o/${organisationId}/settings/datamart/datamarts`;
+        ? `/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`
+        : `/v2/o/${organisationId}/settings/datamart/datamarts`;
   };
 
   onClose = () => {
@@ -228,14 +228,14 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
     const { replicationTypes } = this.state;
 
     const cards = replicationTypes
-    .filter(type => type !== 'AZURE_EVENT_HUBS' || hasFeature('datamartSettings-event_hubs_replication'))
-    .map(type => {
-      return (
-        <Col key={type} span={4}>
+      .filter(type => type !== 'AZURE_EVENT_HUBS' || hasFeature('datamartSettings-event_hubs_replication'))
+      .map(type => {
+        return (
+          <Col key={type} span={4}>
             <DatamartReplicationCard type={type} onClick={this.onSelectType} />
-        </Col>
-      );
-    });
+          </Col>
+        );
+      });
 
     while (cards.length > 0) array.push(cards.splice(0, size));
 
@@ -281,14 +281,13 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
         : formatMessage(messages.newDatamartReplication);
 
     const breadcrumbPaths = [
-      {
-        name: formatMessage(messages.datamartReplications),
-        path: this.getPreviousUrl(),
-        state: { activeTab: 'replications' },
-      },
-      {
-        name: replicationName,
-      },
+      <Link key="1" to={{
+        pathname: this.getPreviousUrl(),
+        state: { activeTab: 'replications' }
+      }}>
+        {formatMessage(messages.datamartReplications)}
+      </Link>,
+      replicationName,
     ];
 
     const actionBarProps: FormLayoutActionbarProps = {
@@ -316,20 +315,20 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
         type={selectedType}
       />
     ) : (
-      <Layout className="edit-layout">
-        <FormLayoutActionbar {...actionBarProps} />
-        <Layout
-          className={
-            'mcs-content-container ant-layout-content mcs-form-container'
-          }>
-          <FormTitle
-            title={messages.datamartReplicationTypeSelectionTitle}
-            subtitle={messages.datamartReplicationTypeSelectionSubtitle}
-          />
-          {this.renderReplicationCards()}
-        </Layout>
-      </Layout>
-    );
+          <Layout className="edit-layout">
+            <FormLayoutActionbar {...actionBarProps} />
+            <Layout
+              className={
+                'mcs-content-container ant-layout-content mcs-form-container'
+              }>
+              <FormTitle
+                title={messages.datamartReplicationTypeSelectionTitle}
+                subtitle={messages.datamartReplicationTypeSelectionSubtitle}
+              />
+              {this.renderReplicationCards()}
+            </Layout>
+          </Layout>
+        );
   }
 }
 

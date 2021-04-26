@@ -25,7 +25,12 @@ class OrganisationSettingsActionBar extends React.Component<Props> {
     });
 
     const breadcrumbPaths = [
-      <Link key="1" to={`/v2/o/${organisationId}/settings/organisation&tab=labels`}>{formatMessage(breadcrumbMessages.settings)}</Link>
+      <Link key="1" to={{ 
+        pathname: `/v2/o/${organisationId}/settings/organisation`,
+        search: '?tab=labels'
+      }}>
+        {formatMessage(breadcrumbMessages.settings)}
+      </Link>
     ];
     return <Actionbar pathItems={breadcrumbPaths} />;
   }

@@ -20,7 +20,7 @@ import {
 } from '../../AdGroup/domain';
 import { InjectedDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
 
-export interface AdGroupFormSectionProps extends ReduxFormChangeProps {}
+export interface AdGroupFormSectionProps extends ReduxFormChangeProps { }
 
 type Props = InjectedIntlProps &
   WrappedFieldArrayProps<AdGroupFieldModel> &
@@ -65,14 +65,11 @@ class AdGroupFormSection extends React.Component<Props> {
     } = this.props;
 
     const breadCrumbPaths = [
-      {
-        name:
-          field && field.model.adGroup.name
-            ? formatMessage(messages.editAdGroup, {
-                adGroupName: field.model.adGroup.name,
-              })
-            : formatMessage(messages.breadcrumbTitle2),
-      },
+      field && field.model.adGroup.name
+        ? formatMessage(messages.editAdGroup, {
+          adGroupName: field.model.adGroup.name,
+        })
+        : formatMessage(messages.breadcrumbTitle2),
     ];
 
     const handleSave = (formData: AdGroupFormData) =>

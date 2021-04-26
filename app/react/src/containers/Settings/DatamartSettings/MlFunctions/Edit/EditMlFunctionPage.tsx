@@ -183,12 +183,9 @@ class EditMlFunctionPage extends React.Component<JoinedProps, IState> {
 
     const { loading, datamartId } = this.state;
 
-    const breadcrumbPaths = (mlFunction?: MlFunctionResource) => [
-      {
-        name: mlFunction
-          ? formatMessage(messages.editBreadcrumb, { name: mlFunction.name })
-          : formatMessage(messages.createBreadcrumb),
-      },
+    const breadcrumbPaths = (mlFunction?: MlFunctionResource) => [mlFunction
+      ? formatMessage(messages.editBreadcrumb, { name: mlFunction.name })
+      : formatMessage(messages.createBreadcrumb),
     ];
 
     if (loading) {
@@ -209,15 +206,15 @@ class EditMlFunctionPage extends React.Component<JoinedProps, IState> {
         renderSpecificFields={this.renderSpecificFields}
       />
     ) : (
-      <DatamartSelector
-        onSelect={this.onDatamartSelect}
-        actionbarProps={{
-          pathItems: [
-            formatMessage(messages.createBreadcrumb),
-          ],
-        }}
-      />
-    );
+        <DatamartSelector
+          onSelect={this.onDatamartSelect}
+          actionbarProps={{
+            pathItems: [
+              formatMessage(messages.createBreadcrumb),
+            ],
+          }}
+        />
+      );
   }
 }
 
