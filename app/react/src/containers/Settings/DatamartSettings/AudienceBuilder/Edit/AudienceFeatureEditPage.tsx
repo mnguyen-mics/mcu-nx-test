@@ -189,7 +189,10 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
         : formatMessage(messages.audienceFeatureNew);
 
     const breadcrumbPaths = [
-      <Link key="1" to={`/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`}>
+      <Link key="1" to={{ 
+        pathname: `/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`,
+        state: { activeTab: 'audience_features' },
+      }}>
         {formatMessage(messages.audienceFeatures)}
       </Link>,
       replicationName,

@@ -80,13 +80,9 @@ class AudienceBuilderActionbar extends React.Component<Props, State> {
       intl.formatMessage(messages.title),
     ];
     if (audienceBuilder) {
-      paths = paths.concat({
-        name: audienceBuilder.name,
-      });
+      paths = paths.concat(audienceBuilder.name);
       if (!segmentId) {
-        paths = paths.concat({
-          name: intl.formatMessage(messages.newAudienceSegment),
-        });
+        paths = paths.concat(intl.formatMessage(messages.newAudienceSegment));
       }
     }
 

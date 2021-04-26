@@ -103,14 +103,14 @@ class AudienceBuilderEditPage extends React.Component<Props, State> {
 
     const promise = audienceBuilderId
       ? this._audienceBuilderService.updateAudienceBuilder(
-          datamartId,
-          audienceBuilderId,
-          newFormData,
-        )
+        datamartId,
+        audienceBuilderId,
+        newFormData,
+      )
       : this._audienceBuilderService.createAudienceBuilder(
-          datamartId,
-          newFormData,
-        );
+        datamartId,
+        newFormData,
+      );
     promise
       .then(() => {
         hideSaveInProgress();
@@ -162,7 +162,10 @@ class AudienceBuilderEditPage extends React.Component<Props, State> {
         : formatMessage(messages.audienceBuilderNew);
 
     const breadcrumbPaths = [
-      <Link key="1" to={`/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`}>
+      <Link key="1" to={{
+        pathname: `/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`,
+        state: { activeTab: 'segment_builder' },
+      }}>
         {formatMessage(messages.audienceBuilders)}
       </Link>,
       builderName,
