@@ -40,7 +40,6 @@ import { ActionsColumnDefinition, DataColumnDefinition } from '@mediarithmics-pr
 
 interface MapStateToProps {
   labels: Label[];
-  userId: string
 }
 
 interface ImportFilterParams
@@ -93,7 +92,6 @@ class ImportsContentContainer extends React.Component<Props, State> {
       noFilterDatamart,
       location: { search, pathname },
       history,
-      userId
     } = this.props;
 
     this.setState({
@@ -102,7 +100,7 @@ class ImportsContentContainer extends React.Component<Props, State> {
 
     const options = {
       allow_administrator: true,
-      archived: organisationId === '1135' && ['1639', '2188','1330'].includes(userId),
+      archived: false,
     };
 
     if (!isSearchValid(search, IMPORTS_SEARCH_SETTINGS)) {
@@ -144,7 +142,6 @@ class ImportsContentContainer extends React.Component<Props, State> {
       },
       location: { search },
       noFilterDatamart,
-      userId
     } = this.props;
 
     const {
@@ -165,7 +162,7 @@ class ImportsContentContainer extends React.Component<Props, State> {
     ) {
       const options = {
         allow_administrator: true,
-        archived: organisationId === '1135' && ['1639', '2188','1330'].includes(userId),
+        archived: false,
       };
 
       if (!noFilterDatamart) {
@@ -476,7 +473,6 @@ class ImportsContentContainer extends React.Component<Props, State> {
 
 const mapStateToProps = (state: MicsReduxState) => ({
   labels: state.labels.labelsApi.data,
-  userId: state.session.connectedUser.id
 });
 
 export default compose<Props, ImportsContentContainerProps>(

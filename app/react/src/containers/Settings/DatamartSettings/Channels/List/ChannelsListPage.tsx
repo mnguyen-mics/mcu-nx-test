@@ -67,7 +67,6 @@ interface ChannelsListPageState {
 
 interface MapStateToProps {
   workspace: (organisationId: string) => UserWorkspaceResource;
-  userId: string
 }
 
 type Props = ChannelsListPageProps &
@@ -215,7 +214,7 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
   };
 
   fetchChannels = (organisationId: string, filter: ChannelFilter) => {
-    const { notifyError, userId } = this.props;
+    const { notifyError } = this.props;
     const buildChannelsOptions = () => {
       const filterType =
         filter.types && filter.types.length === 1 ? filter.types[0] : undefined;
@@ -252,7 +251,7 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
       const analyticsPromise = this._datamartService
         .getDatamarts(organisationId, {
           allow_administrator: true,
-          archived: organisationId === '1135' && ['1639', '2188','1330'].includes(userId),
+          archived: false,
         })
         .then(datamartsResponse => {
           const datamartIds = datamartsResponse.data.map(_ => _.id);
@@ -556,7 +555,6 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
 
 const mapStateToProps = (state: MicsReduxState) => ({
   workspace: getWorkspace(state),
-  userId: state.session.connectedUser.id
 });
 
 export default compose<Props, ChannelsListPageProps>(
