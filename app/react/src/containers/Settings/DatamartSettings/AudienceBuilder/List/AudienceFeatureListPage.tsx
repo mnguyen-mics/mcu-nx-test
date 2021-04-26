@@ -102,11 +102,10 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
       if (!keywords) {
         options.max_results = 500;
       }
-
-      this._audienceFeatureService
-        .getAudienceFeatures(datamartId, options)
-        .then((res) => {
-          if (audienceFeaturesByFolder)
+      if (audienceFeaturesByFolder) {
+        this._audienceFeatureService
+          .getAudienceFeatures(datamartId, options)
+          .then((res) => {
             this.setState({
               selectedFolder: {
                 ...audienceFeaturesByFolder,
@@ -116,13 +115,18 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
               },
               isLoading: false,
             });
-        })
-        .catch((err) => {
-          notifyError(err);
-          this.setState({
-            isLoading: false,
+          })
+          .catch((err) => {
+            notifyError(err);
+            this.setState({
+              isLoading: false,
+            });
           });
+      } else {
+        this.setState({
+          isLoading: false,
         });
+      }
     }
   }
 
