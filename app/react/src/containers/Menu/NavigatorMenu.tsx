@@ -171,6 +171,7 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
 
   buildItems = () => {
     const {
+      mode,
       match: {
         params: { organisationId },
       },
@@ -195,7 +196,7 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
                 {itemDef.mention && (
                   <MentionTag
                     mention={itemDef.mention}
-                    className="mcs-menuMentionTag mcs-menuMentionTag--west"
+                    className={`mcs-menuMentionTag ${mode === 'vertical' ? 'mcs-verticalMenuMentionTag--west' : 'mcs-menuMentionTag--west'}`}
                   />
                 )}
                 <span className="nav-text">
@@ -225,7 +226,7 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
                     {subMenuItem.mention && (
                       <MentionTag
                         mention={subMenuItem.mention}
-                        className="mcs-menuMentionTag mcs-menuMentionTag--east"
+                        className={`mcs-menuMentionTag ${mode === 'vertical' ? 'mcs-verticalMenuMentionTag--east' : 'mcs-menuMentionTag--east'}`}
                       />
                     )}
                     <Link to={linkUrl}>
