@@ -191,7 +191,7 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
     const breadcrumbPaths = [
       <Link key="1" to={{ 
         pathname: `/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`,
-        state: { activeTab: 'audience_builder' },
+        state: { activeTab: 'audience_features' },
       }}>
         {formatMessage(messages.audienceFeatures)}
       </Link>,
