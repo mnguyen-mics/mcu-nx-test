@@ -179,6 +179,9 @@ class SegmentBuilderSelector extends React.Component<Props, State> {
       ],
     };
 
+    const getPopupContainer = () =>
+      document.getElementById('mcs-standardSegmentBuilder_dropdownContainer')!;
+
     return (
       <Layout>
         <Actionbar {...actionBarProps} />
@@ -204,24 +207,33 @@ class SegmentBuilderSelector extends React.Component<Props, State> {
                   <span>{formatMessage(messages.noStandardBuilders)}</span>
                 </div>
               ) : (
-                <Dropdown
-                  overlay={this.getMenu()}
-                  placement="bottomCenter"
-                  trigger={['hover']}
+                <div
+                  id="mcs-standardSegmentBuilder_dropdownContainer"
+                  className="mcs-standardSegmentBuilder_dropdownContainer"
                 >
-                  <div
-                    className="mcs-segmentBuilderSelector_item"
-                    onClick={onTypeSelect('standard')}
+                  <Dropdown
+                    overlay={this.getMenu()}
+                    placement="bottomCenter"
+                    trigger={['hover']}
+                    getPopupContainer={getPopupContainer}
+                    overlayClassName="mcs-standardSegmentBuilder_dropdown"
+                    align={{ overflow: { adjustY:false } }}
                   >
-                    <img src="https://assets.mediarithmics.io/504/public/assets/1617024875777-cyNFPfPn/standardsegmentbuilder-icon.png" />
-                    <div className="mcs-segmentBuilderSelector_itemTitle">
-                      {formatMessage(messages.standardTitle)}
+                    <div
+                      className="mcs-segmentBuilderSelector_item"
+                      onClick={onTypeSelect('standard')}
+                      data-flip="false"
+                    >
+                      <img src="https://assets.mediarithmics.io/504/public/assets/1617024875777-cyNFPfPn/standardsegmentbuilder-icon.png" />
+                      <div className="mcs-segmentBuilderSelector_itemTitle">
+                        {formatMessage(messages.standardTitle)}
+                      </div>
+                      <div className="mcs-segmentBuilderSelector_itemSubtitle">
+                        {formatMessage(messages.standardSubtitle)}
+                      </div>
                     </div>
-                    <div className="mcs-segmentBuilderSelector_itemSubtitle">
-                      {formatMessage(messages.standardSubtitle)}
-                    </div>
-                  </div>
-                </Dropdown>
+                  </Dropdown>
+                </div>
               )}
             </Col>
 
