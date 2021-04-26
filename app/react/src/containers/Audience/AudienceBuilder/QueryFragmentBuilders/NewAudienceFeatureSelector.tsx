@@ -48,9 +48,6 @@ interface State {
   selectedAudienceFeature?: AudienceFeatureResource;
   selectedFolder?: AudienceFeaturesByFolder;
   keywords?: string;
-  // allAudienceFeatures variable is defined when user searches feature with the searchbar
-  // In that case, UI changes to display only features and NOT features by folders
-  allAudienceFeatures?: AudienceFeatureResource[];
 }
 
 type Props = MapStateToProps &
@@ -117,16 +114,11 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
     }
   }
 
-  setBaseFolder = (searchMode: boolean = false) => (
-    baseFolder: AudienceFeaturesByFolder,
-    total: number,
-    allFeatures: AudienceFeatureResource[],
-  ) => {
+  setBaseFolder = (baseFolder: AudienceFeaturesByFolder) => {
     this.setState({
       audienceFeaturesByFolder: baseFolder,
-      selectedFolder: searchMode ? undefined : baseFolder,
+      selectedFolder: baseFolder,
       isLoading: false,
-      allAudienceFeatures: searchMode ? allFeatures : undefined,
     });
   };
 
@@ -142,7 +134,7 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
     this._audienceFeatureService.fetchFoldersAndFeatures(
       datamartId,
       intl.formatMessage(messages.audienceFeatures),
-      this.setBaseFolder(searchMode),
+      this.setBaseFolder,
       this.onFailure,
       filter,
       demographicIds,
@@ -239,7 +231,6 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
       audienceFeaturesByFolder,
       selectedAudienceFeature,
       selectedFolder,
-      allAudienceFeatures,
       keywords,
       isLoading,
     } = this.state;
@@ -247,11 +238,7 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
       !!audienceFeaturesByFolder &&
       audienceFeaturesByFolder.children.length === 0 &&
       audienceFeaturesByFolder.audience_features.length === 0;
-    const featuresToDisplay = !!selectedFolder
-      ? selectedFolder.audience_features
-      : allAudienceFeatures
-      ? allAudienceFeatures
-      : [];
+
     if (isLoading) {
       return <Loading className="m-t-40" isFullScreen={true} />;
     }
@@ -314,7 +301,10 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
 
     return (
       <Layout className={'mcs-selector-layout'}>
-        <Actionbar pathItems={[formatMessage(messages.addAudienceFeature)]} edition={true}>
+        <Actionbar
+          pathItems={[formatMessage(messages.addAudienceFeature)]}
+          edition={true}
+        >
           <McsIcon
             type="close"
             className="close-icon mcs-table-cursor"

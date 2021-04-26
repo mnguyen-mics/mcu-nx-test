@@ -2,7 +2,7 @@ import * as React from 'react';
 import { InjectedIntlProps, FormattedMessage, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { messages } from './constants';
-import menuMessages from '../../../containers/Menu/messages'
+import menuMessages from '../../../containers/Menu/messages';
 import { Button, Menu, Dropdown } from 'antd';
 import { SaveAsUserQuerySegmentModal } from '../../QueryTool/SaveAs';
 import { NewUserQuerySimpleFormData } from '../../QueryTool/SaveAs/NewUserQuerySegmentSimpleForm';
@@ -74,19 +74,18 @@ class AudienceBuilderActionbar extends React.Component<Props, State> {
       </Menu>
     );
     let paths: React.ReactNode[] = [
-      <Link key="1" to={`/v2/o/${organisationId}/audience/segment-builder-selector`}>
+      <Link
+        key="1"
+        to={`/v2/o/${organisationId}/audience/segment-builder-selector`}
+      >
         {intl.formatMessage(menuMessages.builders)}
       </Link>,
       intl.formatMessage(messages.title),
     ];
     if (audienceBuilder) {
-      paths = paths.concat({
-        name: audienceBuilder.name,
-      });
+      paths = paths.concat(audienceBuilder.name);
       if (!segmentId) {
-        paths = paths.concat({
-          name: intl.formatMessage(messages.newAudienceSegment),
-        });
+        paths = paths.concat(intl.formatMessage(messages.newAudienceSegment));
       }
     }
 
