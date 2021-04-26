@@ -131,14 +131,7 @@ export default class Percentage extends React.Component<PercentageProps, State> 
       <CardFlex>
         <div className="dashboard-counter">
           <div className="count-title">
-            {this.state.loading ? (
-              <i
-                className="mcs-table-cell-loading"
-                style={{ maxWidth: '40%' }}
-              />
-            ) : (
-              this.props.title
-            )}
+              {this.props.title}
           </div>
           <div className="count-result">
             {this.state.loading ? (

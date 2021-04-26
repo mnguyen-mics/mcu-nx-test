@@ -284,6 +284,7 @@ class MapBarChart extends React.Component<Props, State> {
       sortKey,
       labels,
       tooltip,
+      height,
     } = this.props;
 
     const restKey = shouldCompare ? [{ key: COMPARED_YKEY, message: '' }] : [];
@@ -328,6 +329,7 @@ class MapBarChart extends React.Component<Props, State> {
             <StackedBarPlot
               dataset={this.state.queryResult as any}
               options={optionsForChart}
+              height={height}
             />
           )
         );

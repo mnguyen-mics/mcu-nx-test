@@ -18,7 +18,7 @@ export const messages: {
   },
   selectedAudience: {
     id: 'audienceBuilder.selectedAudience',
-    defaultMessage: 'Selected Audience',
+    defaultMessage: 'users selected',
   },
   tooltipGender: {
     id: 'audienceBuilder.category.demographics.tooltiptGender',
