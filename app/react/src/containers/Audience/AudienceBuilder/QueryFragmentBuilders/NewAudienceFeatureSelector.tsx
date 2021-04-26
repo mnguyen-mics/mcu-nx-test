@@ -6,7 +6,11 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { RouteComponentProps } from 'react-router';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
-import { IAudienceFeatureService } from '../../../../services/AudienceFeatureService';
+import {
+  IAudienceFeatureService,
+  AudienceFeatureSearchSettings,
+  AudienceFeatureOptions,
+} from '../../../../services/AudienceFeatureService';
 import { AudienceBuilderFormData } from '../../../../models/audienceBuilder/AudienceBuilderResource';
 import { AudienceFeatureResource } from '../../../../models/audienceFeature';
 import injectNotifications, {
@@ -20,7 +24,6 @@ import {
   EmptyTableView,
   Loading,
 } from '@mediarithmics-private/mcs-components-library';
-import { Index } from '@mediarithmics-private/mcs-components-library/lib/utils';
 import AudienceFeatureCard from './AudienceFeatureCard';
 import { FolderOutlined } from '@ant-design/icons';
 import { messages } from '../constants';
@@ -45,9 +48,6 @@ interface State {
   selectedAudienceFeature?: AudienceFeatureResource;
   selectedFolder?: AudienceFeaturesByFolder;
   keywords?: string;
-  // allAudienceFeatures variable is defined when user searches feature with the searchbar
-  // In that case, UI changes to display only features and NOT features by folders
-  allAudienceFeatures?: AudienceFeatureResource[];
 }
 
 type Props = MapStateToProps &
@@ -76,22 +76,53 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
 
   componentDidUpdate(prevProps: Props, prevState: State) {
     const { keywords: prevKeywords } = prevState;
-    const { keywords } = this.state;
+    const { keywords, audienceFeaturesByFolder } = this.state;
+    const { datamartId, demographicIds, notifyError } = this.props;
     if (keywords !== prevKeywords) {
-      this.fetchFoldersAndFeatures({ keywords: keywords });
+      this.setState({
+        isLoading: true,
+      });
+      const options: AudienceFeatureOptions = {
+        keywords: keywords ? [keywords] : undefined,
+        exclude: demographicIds,
+      };
+
+      if (!keywords) {
+        options.max_results = 500;
+      }
+      if (audienceFeaturesByFolder) {
+        this._audienceFeatureService
+          .getAudienceFeatures(datamartId, options)
+          .then((res) => {
+            this.setState({
+              selectedFolder: {
+                ...audienceFeaturesByFolder,
+                audience_features: !!keywords
+                  ? res.data
+                  : res.data.filter((f) => !f.folder_id),
+              },
+              isLoading: false,
+            });
+          })
+          .catch((err) => {
+            notifyError(err);
+            this.setState({
+              isLoading: false,
+            });
+          });
+      } else {
+        this.setState({
+          isLoading: false,
+        });
+      }
     }
   }
 
-  setBaseFolder = (searchMode: boolean = false) => (
-    baseFolder: AudienceFeaturesByFolder,
-    total: number,
-    allFeatures: AudienceFeatureResource[],
-  ) => {
+  setBaseFolder = (baseFolder: AudienceFeaturesByFolder) => {
     this.setState({
       audienceFeaturesByFolder: baseFolder,
-      selectedFolder: searchMode ? undefined : baseFolder,
+      selectedFolder: baseFolder,
       isLoading: false,
-      allAudienceFeatures: searchMode ? allFeatures : undefined,
     });
   };
 
@@ -102,15 +133,13 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
     });
   };
 
-  fetchFoldersAndFeatures = (filter?: Index<any>) => {
-    const { datamartId, demographicIds, intl, notifyError } = this.props;
-    const searchMode = !!filter?.keywords;
+  fetchFoldersAndFeatures = (filter?: AudienceFeatureSearchSettings) => {
+    const { datamartId, demographicIds, intl } = this.props;
     this._audienceFeatureService.fetchFoldersAndFeatures(
       datamartId,
       intl.formatMessage(messages.audienceFeatures),
-      this.setBaseFolder(searchMode),
+      this.setBaseFolder,
       this.onFailure,
-      notifyError,
       filter,
       demographicIds,
     );
@@ -206,18 +235,14 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
       audienceFeaturesByFolder,
       selectedAudienceFeature,
       selectedFolder,
-      allAudienceFeatures,
+      keywords,
       isLoading,
     } = this.state;
     const disabled =
       !!audienceFeaturesByFolder &&
       audienceFeaturesByFolder.children.length === 0 &&
       audienceFeaturesByFolder.audience_features.length === 0;
-    const featuresToDisplay = !!selectedFolder
-      ? selectedFolder.audience_features
-      : allAudienceFeatures
-      ? allAudienceFeatures
-      : [];
+
     if (isLoading) {
       return <Loading className="m-t-40" isFullScreen={true} />;
     }
@@ -227,9 +252,10 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
     return (
       <React.Fragment>
         <Search className="mcs-search-input" {...this.getSearchOptions()} />
-        {this.getBreadCrumb()}
+        {!keywords && this.getBreadCrumb()}
         <Row gutter={16}>
           {!!selectedFolder &&
+            !keywords &&
             selectedFolder.children.map((folder) => {
               return (
                 <Col key={folder.id ? folder.id : 'root_key'} span={4}>
@@ -250,17 +276,22 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
             })}
         </Row>
         <Row className="mcs-audienceBuilder_featureCardContainer" gutter={16}>
-          {featuresToDisplay.map((feature) => {
-            return (
-              <Col key={feature.id} span={6}>
-                <AudienceFeatureCard
-                  audienceFeature={feature}
-                  selectedAudienceFeature={selectedAudienceFeature}
-                  onSelectFeature={this.onSelectFeature}
-                />
-              </Col>
-            );
-          })}
+          {isLoading ? (
+            <Loading className="m-t-20" isFullScreen={true} />
+          ) : (
+            !!selectedFolder &&
+            selectedFolder.audience_features.map((feature) => {
+              return (
+                <Col key={feature.id} span={6}>
+                  <AudienceFeatureCard
+                    audienceFeature={feature}
+                    selectedAudienceFeature={selectedAudienceFeature}
+                    onSelectFeature={this.onSelectFeature}
+                  />
+                </Col>
+              );
+            })
+          )}
         </Row>
       </React.Fragment>
     );
@@ -274,7 +305,10 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
 
     return (
       <Layout className={'mcs-selector-layout'}>
-        <Actionbar pathItems={[formatMessage(messages.addAudienceFeature)]} edition={true}>
+        <Actionbar
+          pathItems={[formatMessage(messages.addAudienceFeature)]}
+          edition={true}
+        >
           <McsIcon
             type="close"
             className="close-icon mcs-table-cursor"

@@ -147,7 +147,7 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
         hideSaveInProgress();
         history.push({
           pathname: `/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`,
-          state: { activeTab: 'audience_builder' },
+          state: { activeTab: 'audience_features' },
         });
       })
       .catch((err) => {
@@ -169,7 +169,7 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
     return history.push({
       pathname: `/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`,
       state: {
-        activeTab: 'audience_builder',
+        activeTab: 'audience_features',
       },
     });
   };

@@ -7,11 +7,14 @@ import { AudienceFeatureResource } from '../models/audienceFeature';
 import { injectable } from 'inversify';
 import { PaginatedApiParam, getPaginatedApiParam } from '../utils/ApiHelper';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
-import {
-  Index,
-  SearchFilter,
-} from '@mediarithmics-private/mcs-components-library/lib/utils';
-import { Action } from 'redux-actions';
+
+export interface AudienceFeatureSearchSettings {
+  currentPage?: number;
+  pageSize?: number;
+  keywords?: string;
+  exclude?: string[];
+  folder_id?: string;
+}
 
 export interface AudienceFeatureOptions extends PaginatedApiParam {
   keywords?: string[];
@@ -20,6 +23,7 @@ export interface AudienceFeatureOptions extends PaginatedApiParam {
 }
 
 export interface IAudienceFeatureService {
+  // Audience Features
   getAudienceFeatures: (
     datamartId: string,
     options?: AudienceFeatureOptions,
@@ -46,57 +50,35 @@ export interface IAudienceFeatureService {
     objectTreeExpression: string,
     adressableObject?: string,
   ) => Promise<DataListResponse<AudienceFeatureVariableResource>>;
-
+  // Audience Feature Folders
   getAudienceFeatureFolders: (
     datamartId: string,
   ) => Promise<DataListResponse<AudienceFeatureFolderResource>>;
-
   createAudienceFeatureFolder: (
     datamartId: string,
     body: Partial<AudienceFeatureFolderResource>,
   ) => Promise<DataResponse<AudienceFeatureFolderResource>>;
-
   getAudienceFeatureFolder: (
     datamartId: string,
     folderId: string,
   ) => Promise<DataResponse<AudienceFeatureFolderResource>>;
-
   updateAudienceFeatureFolder: (
     datamartId: string,
     folderId: string,
     body: Partial<AudienceFeatureFolderResource>,
   ) => Promise<DataResponse<AudienceFeatureFolderResource>>;
-
   deleteAudienceFeatureFolder: (
     datamartId: string,
     folderId: string,
   ) => Promise<DataResponse<AudienceFeatureFolderResource>>;
-
-  getAudienceFeatureChildFolders: (
-    datamartId: string,
-    parentId: string,
-  ) => Promise<DataListResponse<AudienceFeatureFolderResource>>;
-
-  fetchAudienceFeatures: (
-    datamartId: string,
-    filter?: SearchFilter,
-    demographicIds?: string[],
-  ) => Promise<DataListResponse<AudienceFeatureResource>>;
-
   fetchFoldersAndFeatures: (
     datamartId: string,
     baseFolderName: string,
-    setBaseFolder: (
-      baseFolder: AudienceFeaturesByFolder,
-      total: number,
-      allFeatures?: AudienceFeatureResource[],
-    ) => void,
+    setBaseFolder: (features: AudienceFeaturesByFolder) => void,
     onFailure: (err: any) => void,
-    notifyError: (err: any, notifConfig?: any) => Action<any>,
-    filter?: Index<any>,
+    filter?: AudienceFeatureSearchSettings,
     demographicIds?: string[],
-  ) => Promise<void>;
-
+  ) => void;
   getFolderContent: (
     id?: string,
     audienceFeaturesByFolder?: AudienceFeaturesByFolder,
@@ -208,31 +190,18 @@ export class AudienceFeatureService implements IAudienceFeatureService {
     return ApiService.deleteRequest(endpoint);
   }
 
-  getAudienceFeatureChildFolders(
-    datamartId: string,
-    parentId: string,
-  ): Promise<DataListResponse<AudienceFeatureFolderResource>> {
-    const endpoint = `datamarts/${datamartId}/audience_feature_folders`;
-    return ApiService.getRequest(endpoint, { parent: parentId });
-  }
-
-  private _fetchFolders = (
-    datamartId: string,
-    notifyError: (err: any, notifConfig?: any) => Action<any>,
-  ) => {
-    return this.getAudienceFeatureFolders(datamartId)
-      .then((res) => {
-        return res.data;
-      })
-      .catch((err) => {
-        notifyError(err);
-        return [];
-      });
+  private _fetchFolders = (datamartId: string) => {
+    return this.getAudienceFeatureFolders(datamartId).then((res) => {
+      return res.data;
+    });
   };
 
-  fetchAudienceFeatures = (
+  fetchFoldersAndFeatures = (
     datamartId: string,
-    filter?: SearchFilter,
+    baseFolderName: string,
+    setBaseFolder: (baseFolder: AudienceFeaturesByFolder) => void,
+    onFailure: (err: any) => void,
+    filter?: AudienceFeatureSearchSettings,
     demographicIds?: string[],
   ) => {
     const options: AudienceFeatureOptions = {
@@ -246,33 +215,12 @@ export class AudienceFeatureService implements IAudienceFeatureService {
     if (demographicIds && demographicIds.length >= 1) {
       options.exclude = demographicIds;
     }
-
-    return this.getAudienceFeatures(datamartId, options);
-  };
-
-  fetchFoldersAndFeatures = (
-    datamartId: string,
-    baseFolderName: string,
-    setBaseFolder: (
-      baseFolder: AudienceFeaturesByFolder,
-      total: number,
-      allFeatures?: AudienceFeatureResource[],
-    ) => void,
-    onFailure: (err: any) => void,
-    notifyError: (err: any, notifConfig?: any) => Action<any>,
-    filter?: Index<any>,
-    demographicIds?: string[],
-  ) => {
     const res: [
       Promise<AudienceFeatureFolderResource[]>,
       Promise<DataListResponse<AudienceFeatureResource>>,
     ] = [
-      this._fetchFolders(datamartId, notifyError),
-      this.fetchAudienceFeatures(
-        datamartId,
-        filter as SearchFilter,
-        demographicIds,
-      ),
+      this._fetchFolders(datamartId),
+      this.getAudienceFeatures(datamartId, options),
     ];
     return Promise.all(res)
       .then((results: any[]) => {
@@ -284,11 +232,7 @@ export class AudienceFeatureService implements IAudienceFeatureService {
           audienceFeatureFolders,
           features.data,
         );
-        setBaseFolder(
-          baseFolder,
-          features.total || features.count,
-          features.data,
-        );
+        setBaseFolder(baseFolder);
       })
       .catch((err) => {
         onFailure(err);

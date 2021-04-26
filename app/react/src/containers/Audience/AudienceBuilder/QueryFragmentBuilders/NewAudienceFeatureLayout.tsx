@@ -21,13 +21,13 @@ interface State {
 }
 
 export interface NewAudienceFeatureLayoutProps {
-  onClose: () => void;
+  onClose?: () => void;
   datamartId: string;
   formPath: string;
-  parametricPredicateResource: AudienceBuilderParametricPredicateNode;
+  parametricPredicateResource?: AudienceBuilderParametricPredicateNode;
   objectTypes: ObjectLikeTypeInfoResource[];
   audienceFeatures?: AudienceFeatureResource[];
-  formChange(field: string, value: any): void;
+  formChange?(field: string, value: any): void;
 }
 
 type Props = NewAudienceFeatureLayoutProps & InjectedIntlProps & ValidatorProps;
@@ -45,10 +45,17 @@ class NewAudienceFeatureLayout extends React.Component<Props, State> {
   getAudienceFeature = () => {
     const { parametricPredicateResource, audienceFeatures } = this.props;
     if (audienceFeatures) {
+      // if parametricPredicateResource is not defined it means we are in edition mode
+      // and audienceFeature doesn't exist yet so we take audienceFeatures[0]
+      // which is in fact the formData from audienceFeature form
+
       this.setState({
-        audienceFeature: audienceFeatures.find(
-          (f) => f.id === parametricPredicateResource.parametric_predicate_id,
-        ),
+        audienceFeature: parametricPredicateResource
+          ? audienceFeatures.find(
+              (f) =>
+                f.id === parametricPredicateResource.parametric_predicate_id,
+            )
+          : audienceFeatures[0],
       });
     }
   };
@@ -72,12 +79,14 @@ class NewAudienceFeatureLayout extends React.Component<Props, State> {
             <div className="mcs-audienceBuilder_audienceFeatureName-2">{`${audienceFeature.name}`}</div>
           </Col>
           <Col span={1}>
-            <Button
-              className="mcs-audienceBuilder_closeButton-2"
-              onClick={onClose}
-            >
-              <McsIcon type="close" />
-            </Button>
+            {onClose && (
+              <Button
+                className="mcs-audienceBuilder_closeButton-2"
+                onClick={onClose}
+              >
+                <McsIcon type="close" />
+              </Button>
+            )}
           </Col>
         </Row>
 
