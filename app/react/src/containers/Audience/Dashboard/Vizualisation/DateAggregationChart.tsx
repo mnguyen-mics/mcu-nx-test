@@ -270,7 +270,6 @@ class DateAggregationChart extends React.Component<Props, State> {
 
     return (
       <CardFlex title={title}>
-        <hr />
         {generateChart()}
       </CardFlex>
     );
