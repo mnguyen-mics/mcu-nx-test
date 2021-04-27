@@ -261,17 +261,8 @@ class FeedCard extends React.Component<Props, FeedCardState> {
           </Button>
         );
       case 'PAUSED':
-        // OVH Crisis code
-        const MCS_CONSTANTS = (window as any).MCS_CONSTANTS || {};
-        const ALLOWED_COMMUNITIES = MCS_CONSTANTS.ALLOWED_COMMUNITIES || {};
-        const allowedActivationOfPausedFeeds =
-          ALLOWED_COMMUNITIES.allowed_activation_of_paused_feeds || [];
-        const communityId = (window as any).communityId;
-        const allowFeedActivation = !!(
-          communityId && allowedActivationOfPausedFeeds.includes(communityId)
-        );
         return (
-          <Button onClick={editFeed} disabled={!allowFeedActivation}>
+          <Button onClick={editFeed}>
             {intl.formatMessage(messages.resume)}
           </Button>
         );
