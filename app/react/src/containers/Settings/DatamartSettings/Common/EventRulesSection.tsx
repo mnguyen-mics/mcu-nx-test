@@ -157,7 +157,7 @@ class EventRulesSection extends React.Component<Props> {
     const props: EventRulesFormProps = {
       close: this.props.closeNextDrawer,
       onSubmit: this.updateEventRules,
-      breadCrumbPaths: [{ name: 'Create Event Rule' }],
+      breadCrumbPaths: ['Create Event Rule'],
       initialValues: initialValues,
       datamartId: this.props.datamartId
     };

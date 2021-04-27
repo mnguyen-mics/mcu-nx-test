@@ -68,14 +68,11 @@ class BlastFormSection extends React.Component<Props> {
     } = this.props;
 
     const breadCrumbPaths = [
-      {
-        name:
-          field && field.model.blast.blast_name
-            ? formatMessage(messages.emailBlastEditorBreadcrumbTitleEditBlast, {
-                blastName: field.model.blast.blast_name,
-              })
-            : formatMessage(messages.emailBlastEditorBreadcrumbTitleNewBlast),
-      },
+      field && field.model.blast.blast_name
+        ? formatMessage(messages.emailBlastEditorBreadcrumbTitleEditBlast, {
+            blastName: field.model.blast.blast_name,
+          })
+        : formatMessage(messages.emailBlastEditorBreadcrumbTitleNewBlast),
     ];
 
     const handleSave = (formData: EmailBlastFormData) =>
