@@ -197,14 +197,11 @@ class GoalFormSection extends React.Component<Props, State> {
     } = this.props;
 
     const breadCrumbPaths = [
-      {
-        name:
-          field && field.meta.name
-            ? formatMessage(messages.editGoal, {
-                goalName: field.meta.name,
-              })
-            : formatMessage(messages.newGoal),
-      },
+      field && field.meta.name
+        ? formatMessage(messages.editGoal, {
+            goalName: field.meta.name,
+          })
+        : formatMessage(messages.newGoal),
     ];
 
     const handleOnSubmit = (formData: GoalFormData) => {

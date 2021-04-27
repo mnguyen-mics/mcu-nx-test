@@ -142,7 +142,7 @@ class ObjectNodeWidget extends React.Component<Props, State> {
       this.props.openNextDrawer<ObjectNodeFormProps>(ObjectNodeForm, {
         additionalProps: {
           close: this.props.closeNextDrawer,
-          breadCrumbPaths: [{ name: node.objectTypeInfo.name }],
+          breadCrumbPaths: [node.objectTypeInfo.name],
           objectTypes: this.props.objectTypes,
           objectType: node.objectTypeInfo,
           onSubmit: (e: ObjectNodeFormData) => {
