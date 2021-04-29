@@ -285,7 +285,7 @@ class SwitchBySearch extends React.Component<Props, SwitchBySearchState> {
   ): UserWorkspaceResource[] => {
     return ids
       .map((id) => allWorkspaces.find((w) => w.organisation_id === id))
-      .filter((x): x is UserWorkspaceResource => x !== null);
+      .filter((x): x is UserWorkspaceResource => x !== undefined);
   };
 
   render() {
