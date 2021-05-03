@@ -15,15 +15,10 @@ import inventoryCatalogMsgs from './messages';
 import {
   ServiceCategoryTree,
   AdexInventoryServiceItemPublicResource,
-  DealListServiceItemPublicResource,
   DisplayNetworkServiceItemPublicResource,
 } from '../../../../../../../models/servicemanagement/PublicServiceItemResource';
 import { Button } from '@mediarithmics-private/mcs-components-library';
 import { ReduxFormChangeProps } from '../../../../../../../utils/FormHelper';
-import {
-  DealsListResource,
-  DealsListSelectionCreateRequest,
-} from '../../../../../../../models/dealList/dealList';
 import { AdExchangeSelectionCreateRequest } from '../../../../../../../models/adexchange/adexchange';
 import { DisplayNetworkSelectionCreateRequest } from '../../../../../../../models/displayNetworks/displayNetworks';
 import TreeSelectWithList, {
@@ -49,7 +44,6 @@ interface State {
 
 type ServicesType =
   | AdexInventoryServiceItemPublicResource
-  | DealListServiceItemPublicResource
   | DisplayNetworkServiceItemPublicResource;
 
 class InventoryCatalogFormSection extends React.Component<Props, State> {
@@ -63,61 +57,34 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
   }
 
   componentDidUpdate(previousProps: Props) {
-    const {
-      inventoryCategoryTree,
-      dealList,
-    } = this.props;
+    const { inventoryCategoryTree } = this.props;
 
     const {
       inventoryCategoryTree: previousInventoryCategoryTree,
-      dealList: previousDealList,
     } = previousProps;
 
-    if (
-      inventoryCategoryTree !== previousInventoryCategoryTree ||
-      dealList !== previousDealList
-    ) {
-      this.buildIncludedDataSet(
-        dealList,
-        inventoryCategoryTree,
-      );
-      this.buildExcludedDataSet(
-        inventoryCategoryTree,
-      );
+    if (inventoryCategoryTree !== previousInventoryCategoryTree) {
+      this.buildIncludedDataSet(inventoryCategoryTree);
+      this.buildExcludedDataSet(inventoryCategoryTree);
     }
   }
 
   buildIncludedDataSet = (
-    dealList: DataLoadingContainer<DealsListResource[]>,
     inventoryCategoryTree: DataLoadingContainer<ServiceCategoryTree[]>,
   ) => {
-    const { intl } = this.props;
-
-    const dealListTree =
-      dealList.data.length > 0
-        ? // add datamart's segments to tree if any
-          this.buildTreeDataFromOwnSegments(
-            dealList.data,
-            'dealList',
-            intl.formatMessage(inventoryCatalogMsgs.myDealListCategory),
-          )
-        : [];
-
-    const includedDataSource = inventoryCategoryTree.data
-      .map(child =>
-        toTreeData(
-          child,
-          [
-            {
-              value: child.node.id,
-              label: child.node.name,
-              isLeaf: false,
-            },
-          ],
-          'services',
-        ),
-      )
-      .concat(dealListTree);
+    const includedDataSource = inventoryCategoryTree.data.map((child) =>
+      toTreeData(
+        child,
+        [
+          {
+            value: child.node.id,
+            label: child.node.name,
+            isLeaf: false,
+          },
+        ],
+        'services',
+      ),
+    );
 
     this.setState({ includedDataSource });
   };
@@ -125,34 +92,27 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
   buildExcludedDataSet = (
     inventoryCategoryTree: DataLoadingContainer<ServiceCategoryTree[]>,
   ) => {
-    const excludedDataSource = inventoryCategoryTree.data
-      .map(child =>
-        toTreeData(
-          child,
-          [
-            {
-              value: child.node.id,
-              label: child.node.name,
-              isLeaf: false,
-            },
-          ],
-          'services',
-        ),
-      )
+    const excludedDataSource = inventoryCategoryTree.data.map((child) =>
+      toTreeData(
+        child,
+        [
+          {
+            value: child.node.id,
+            label: child.node.name,
+            isLeaf: false,
+          },
+        ],
+        'services',
+      ),
+    );
 
     this.setState({ excludedDataSource });
   };
 
-  getSelectedInventory = (
-    serviceItems: ServicesType[],
-    otherData: DealsListResource[],
-    excluded: boolean = false,
-  ): string[] => {
+  getSelectedInventory = (excluded: boolean = false): string[] => {
     const selectedInventoryIds: string[] = [];
-    this.props.fields.getAll().forEach(field => {
-      if (field.model.type === 'DEAL_LIST' && !excluded) {
-        selectedInventoryIds.push(`dealList_${field.model.data.deal_list_id}`);
-      } else if (
+    this.props.fields.getAll().forEach((field) => {
+      if (
         field.model.type === 'AD_EXCHANGE' &&
         field.model.data.exclude === excluded
       ) {
@@ -188,7 +148,6 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
 
   handleChange = (
     inventoryCategoryTree: ServiceCategoryTree[],
-    dealList: DealsListResource[],
     exclude: boolean = false,
   ) => (inventoryIds: string[]) => {
     const { fields, formChange } = this.props;
@@ -197,35 +156,24 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
 
     const newFields: InventoryCatalFieldsModel[] = [];
 
-    const otherData = [...dealList];
-
-    const currentlySelectedIds = this.getSelectedInventory(
-      getServices(inventoryCategoryTree),
-      otherData,
-      exclude,
-    );
+    const currentlySelectedIds = this.getSelectedInventory(exclude);
 
     const unrelatedSelectedFields = allFields.filter(
-      field => !currentlySelectedIds.includes(this.getId(field)),
+      (field) => !currentlySelectedIds.includes(this.getId(field)),
     );
 
     newFields.push(...unrelatedSelectedFields);
 
     // Leave already checked ids and add new ones
-    inventoryIds.forEach(inventoryId => {
+    inventoryIds.forEach((inventoryId) => {
       const inventory = {
         type: inventoryId.split('_')[0],
         value: inventoryId.split('_')[1],
       };
 
       if (inventory.value) {
-        const found = allFields.find(field => {
+        const found = allFields.find((field) => {
           switch (inventory.type) {
-            case 'dealList':
-              return (
-                (field.model.data as DealsListSelectionCreateRequest)
-                  .deal_list_id === inventory.value
-              );
             case 'adExchange':
               return (
                 (field.model.data as AdExchangeSelectionCreateRequest)
@@ -256,7 +204,7 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
     });
 
     // Don't add those that are not checked anymore
-    allFields.forEach(field => {
+    allFields.forEach((field) => {
       const found = inventoryIds.includes(this.getId(field));
       if (found) {
         newFields.push({ ...field });
@@ -272,25 +220,12 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
     inventoryCategoryTree: ServiceCategoryTree[],
     exclude: boolean = false,
   ): InventoryCatalFieldsModel | undefined => {
-    switch (type) {
-      case 'dealList':
-        return {
-          key: cuid(),
-          model: {
-            data: {
-              deal_list_id: value,
-            },
-            type: 'DEAL_LIST',
-          },
-        };
-      default:
-        return this.generateFieldBasedOnService(
-          type,
-          value,
-          inventoryCategoryTree,
-          exclude,
-        );
-    }
+    return this.generateFieldBasedOnService(
+      type,
+      value,
+      inventoryCategoryTree,
+      exclude,
+    );
   };
 
   generateFieldBasedOnService = (
@@ -299,7 +234,7 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
     inventoryCategoryTree: ServiceCategoryTree[],
     exclude: boolean = false,
   ): InventoryCatalFieldsModel | undefined => {
-    const foundService = getServices(inventoryCategoryTree).find(s => {
+    const foundService = getServices(inventoryCategoryTree).find((s) => {
       switch (type) {
         case 'displayNetwork':
           return (
@@ -310,10 +245,6 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
           return (
             s.type === 'inventory_access_ad_exchange' &&
             s.ad_exchange_id === value
-          );
-        case 'dealList':
-          return (
-            s.type === 'inventory_access_deal_list' && s.deal_list_id === value
           );
       }
       return false;
@@ -343,16 +274,6 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
               type: 'DISPLAY_NETWORK',
             },
           };
-        case 'inventory_access_deal_list':
-          return {
-            key: cuid(),
-            model: {
-              data: {
-                deal_list_id: foundService.deal_list_id,
-              },
-              type: 'DEAL_LIST',
-            },
-          };
       }
     }
     return undefined;
@@ -360,8 +281,6 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
 
   getId = (field: InventoryCatalFieldsModel) => {
     switch (field.model.type) {
-      case 'DEAL_LIST':
-        return `dealList_${field.model.data.deal_list_id}`;
       case 'AD_EXCHANGE':
         return `adExchange_${field.model.data.ad_exchange_id}`;
       case 'DISPLAY_NETWORK':
@@ -379,7 +298,7 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
       value: key,
       label: title,
       isLeaf: false,
-      children: audienceSegments.map(segment => ({
+      children: audienceSegments.map((segment) => ({
         value: `${key}_${segment.id}`,
         label: segment.name,
         type: key,
@@ -389,27 +308,13 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
   };
 
   toogleShowExclude = () => {
-    this.setState(prevState => ({ showExclude: !prevState.showExclude }));
+    this.setState((prevState) => ({ showExclude: !prevState.showExclude }));
   };
 
   render() {
-    const {
-      intl,
-      inventoryCategoryTree,
-      dealList,
-      small,
-      disabled,
-    } = this.props;
+    const { intl, inventoryCategoryTree, small, disabled } = this.props;
 
-    const otherData = [
-      ...dealList.data,
-    ];
-
-    const excludedSegmentFound = !!this.getSelectedInventory(
-      getServices(inventoryCategoryTree.data),
-      otherData,
-      true,
-    ).length;
+    const excludedSegmentFound = !!this.getSelectedInventory(true).length;
     const showExclude = excludedSegmentFound || this.state.showExclude;
 
     return (
@@ -435,23 +340,16 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
               inventoryCatalogMsgs.selectPlaceholder,
             )}
             dataSource={this.state.includedDataSource}
-            loading={
-              inventoryCategoryTree.loading ||
-              dealList.loading
-            }
+            loading={inventoryCategoryTree.loading}
             tooltipProps={{
               title: intl.formatMessage(
                 inventoryCatalogMsgs.detailedTargetingTooltip,
               ),
             }}
-            value={this.getSelectedInventory(
-              getServices(inventoryCategoryTree.data),
-              otherData,
-            )}
+            value={this.getSelectedInventory()}
             handleClickOnRemove={this.markAsDeleted()}
             handleOnChange={this.handleChange(
-              inventoryCategoryTree.data,
-              dealList.data,
+              inventoryCategoryTree.data
             )}
             disabled={disabled}
             small={small}
@@ -472,24 +370,18 @@ class InventoryCatalogFormSection extends React.Component<Props, State> {
                 inventoryCatalogMsgs.selectPlaceholder,
               )}
               dataSource={this.state.excludedDataSource}
-              loading={
-                inventoryCategoryTree.loading ||
-                dealList.loading
-              }
+              loading={inventoryCategoryTree.loading}
               tooltipProps={{
                 title: intl.formatMessage(
                   inventoryCatalogMsgs.detailedTargetingExclusionTooltip,
                 ),
               }}
               value={this.getSelectedInventory(
-                getServices(inventoryCategoryTree.data),
-                otherData,
                 true,
               )}
               handleClickOnRemove={this.markAsDeleted(true)}
               handleOnChange={this.handleChange(
                 inventoryCategoryTree.data,
-                dealList.data,
                 true,
               )}
               disabled={disabled}
@@ -521,8 +413,6 @@ function generateServiceType(service: ServicesType) {
     return `adExchange_${service.ad_exchange_id}`;
   } else if (service.type === 'inventory_access_display_network') {
     return `displayNetwork_${service.display_network_id}`;
-  } else if (service.type === 'inventory_access_deal_list') {
-    return `dealList_${service.deal_list_id}`;
   }
   return '';
 }
@@ -536,7 +426,7 @@ function toTreeData(
   ancestors: TreeData[],
   type: string,
 ): TreeData {
-  const categoryChildren = (category.children || []).map(child => {
+  const categoryChildren = (category.children || []).map((child) => {
     const ancestor = {
       value: `${type}_${child.node.id}`,
       label: child.node.name,
@@ -545,7 +435,7 @@ function toTreeData(
     return toTreeData(child, ancestors.concat(ancestor), type);
   });
 
-  const serviceChildren = (category.services || []).map(service => ({
+  const serviceChildren = (category.services || []).map((service) => ({
     // TODO remove as any
     value: generateServiceType(service as any),
     label: service.name,

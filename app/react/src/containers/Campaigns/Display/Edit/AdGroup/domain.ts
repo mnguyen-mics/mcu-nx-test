@@ -16,7 +16,6 @@ import {
   LocationSelectionCreateRequest,
 } from '../AdGroup/sections/Location/domain';
 import { DisplayCreativeFormData } from '../../../../Creative/DisplayAds/Edit/domain';
-import { DealsListSelectionCreateRequest, DealsListSelectionResource } from '../../../../../models/dealList/dealList';
 import { AdExchangeSelectionResource, AdExchangeSelectionCreateRequest } from '../../../../../models/adexchange/adexchange';
 import { DisplayNetworkSelectionResource, DisplayNetworkSelectionCreateRequest } from '../../../../../models/displayNetworks/displayNetworks';
 
@@ -44,10 +43,6 @@ export type SegmentFieldModel = FieldArrayModelWithMeta<
   { name: string }
 >;
 
-export type DealListSelectionShape =
-  | DealsListSelectionResource
-  | DealsListSelectionCreateRequest;
-
 export type AdExchangeSelectionShape =
   | AdExchangeSelectionResource
   | AdExchangeSelectionCreateRequest;
@@ -55,10 +50,6 @@ export type AdExchangeSelectionShape =
 export type DisplayNetworkSelectionShape =
   | DisplayNetworkSelectionResource
   | DisplayNetworkSelectionCreateRequest;
-
-export type DealListFieldModel = FieldArrayModel<
-  DealListSelectionShape
->;
 
 export type AdExchangeFieldModel = FieldArrayModel<
   AdExchangeSelectionShape
@@ -74,9 +65,6 @@ export type InventoryCatalFieldsModel = FieldArrayModel<{
 } | {
   type: 'DISPLAY_NETWORK'
   data: DisplayNetworkSelectionCreateRequest | DisplayNetworkSelectionResource
-} | {
-  type: 'DEAL_LIST'
-  data: DealsListSelectionCreateRequest | DealsListSelectionResource
 }>
 
 export type LocationSelectionShape =
@@ -165,12 +153,6 @@ export function isLocationSelectionResource(
   model: LocationSelectionShape,
 ): model is LocationSelectionResource {
   return (model as LocationSelectionResource).id !== undefined;
-}
-
-export function isDealListSelectionResource(
-  model: DealListSelectionShape,
-): model is DealsListSelectionResource {
-  return (model as DealsListSelectionResource).id !== undefined;
 }
 
 export function isAdExchangeSelectionResource(

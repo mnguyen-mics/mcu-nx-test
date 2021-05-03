@@ -43,7 +43,6 @@ export interface GetServiceItemsOptions extends PaginatedApiParam {
   parent_categoryi_id?: string;
   label_id?: string;
   audience_segment_id?: string;
-  deal_list_id?: string;
   offer_id?: string;
   keywords?: string;
   order_by?: string;
@@ -279,7 +278,6 @@ export class CatalogService implements ICatalogService {
       {
         type: [
           "AUDIENCE_SEGMENT",
-          "INVENTORY_ACCESS_DEAL_LIST",
           "USER_ACCOUNT_COMPARTMENT"
         ]
       } :

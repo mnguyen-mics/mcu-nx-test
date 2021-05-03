@@ -12,8 +12,6 @@ const TYPES = {
   IImportService: Symbol.for('importService'),
   IDatamartService: Symbol.for('datamartService'),
   IDisplayNetworkService: Symbol.for('displayNetworkService'),
-  IDealListService: Symbol.for('dealListService'),
-  IDealListFormService: Symbol.for('dealListFormService'),
   ICompartmentService: Symbol.for('compartmentService'),
   IScenarioService: Symbol.for('scenarioService'),
   IScenarioExitConditionService: Symbol.for('scenarioExitConditionService'),

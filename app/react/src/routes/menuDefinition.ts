@@ -113,10 +113,6 @@ const libraryMenuDefinition: NavigatorMenuDefinition = {
       legacyPath: true,
     },
     {
-      ...generateMissingdefinitionItemFromRoute(libraryDefinition.libraryDealList),
-      translation: messages.libraryDealList,
-    },
-    {
       ...generateMissingdefinitionItemFromRoute(libraryDefinition.libraryAssetList),
       translation: messages.libraryAssets,
     },

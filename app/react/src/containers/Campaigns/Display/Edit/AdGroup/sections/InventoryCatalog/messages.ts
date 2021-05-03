@@ -33,8 +33,4 @@ export default defineMessages({
     id: 'inventory.catalog.exclude-inventory.link.label',
     defaultMessage: 'Exclude Inventory',
   },
-  myDealListCategory: {
-    id: 'inventory.catalog.my-deal-category.label',
-    defaultMessage: 'My Deal Lists',
-  },
 });

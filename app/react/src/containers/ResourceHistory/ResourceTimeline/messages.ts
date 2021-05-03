@@ -51,10 +51,6 @@ const messages: {
     id: 'timeline.resourceType.keywordsList',
     defaultMessage: 'Keywords List',
   },
-  dealListResourceType: {
-    id: 'timeline.resourceType.dealList',
-    defaultMessage: 'Deal List',
-  },
   adExchangeResourceType: {
     id: 'timeline.resourceType.adxExchange',
     defaultMessage: 'Ad Exchange',

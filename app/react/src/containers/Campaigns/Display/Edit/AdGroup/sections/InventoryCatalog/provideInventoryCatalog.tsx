@@ -7,8 +7,6 @@ import { EditAdGroupRouteMatchParam } from '../../domain';
 import injectDatamart, {
   InjectedDatamartProps,
 } from '../../../../../../Datamart/injectDatamart';
-import { IDealListService } from '../../../../../../../services/Library/DealListService';
-import { DealsListResource } from '../../../../../../../models/dealList/dealList';
 import { TYPES } from '../../../../../../../constants/types';
 import { lazyInject } from '../../../../../../../config/inversify.config';
 import { ICatalogService } from '../../../../../../../services/CatalogService';
@@ -20,7 +18,6 @@ export interface DataLoadingContainer<T> {
 
 export interface InjectedInventoryCatalogProps {
   inventoryCategoryTree: DataLoadingContainer<ServiceCategoryTree[]>;
-  dealList: DataLoadingContainer<DealsListResource[]>;
 }
 
 type State = InjectedInventoryCatalogProps;
@@ -37,9 +34,6 @@ const provideInventoryCatalog = (
   Component: React.ComponentClass<InjectedInventoryCatalogProps>,
 ) => {
   class ProvidedComponent extends React.Component<Props, State> {
-    @lazyInject(TYPES.IDealListService)
-    private _dealsListService: IDealListService;
-
     @lazyInject(TYPES.ICatalogService)
     private _catalogService: ICatalogService;
 
@@ -50,18 +44,11 @@ const provideInventoryCatalog = (
           data: [],
           loading: false,
         },
-        dealList: {
-          data: [],
-          loading: false,
-        },
       };
     }
 
     componentDidMount() {
       this.fetchDetailedTargetingData();
-      if (!this.props.isScenario) {
-        this.fetchOwnDealList();
-      }
     }
 
     fetchDetailedTargetingData = () => {
@@ -121,35 +108,6 @@ const provideInventoryCatalog = (
                     ? categoryTree
                     : categoryTree[0].children
                   : categoryTree,
-              loading: false,
-            },
-          }));
-        });
-    };
-
-    fetchOwnDealList = () => {
-      const {
-        match: {
-          params: { organisationId },
-        },
-      } = this.props;
-
-      this.setState(prevState => ({
-        dealList: {
-          ...prevState.dealList,
-          loading: true,
-        },
-      }));
-
-      this._dealsListService
-        .getDealLists(organisationId, {
-          max_results: 500,
-        })
-        .then(res => res.data)
-        .then(dealList => {
-          this.setState(prevState => ({
-            dealList: {
-              data: dealList,
               loading: false,
             },
           }));

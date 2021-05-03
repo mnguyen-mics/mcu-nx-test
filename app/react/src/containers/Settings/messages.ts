@@ -130,10 +130,6 @@ const messages = defineMessages({
     id: 'audience_segmentType',
     defaultMessage: 'Audience Segment',
   },
-  inventory_access_deal_listType: {
-    id: 'inventory_access_deal_listType',
-    defaultMessage: 'Deal List',
-  },
   user_account_compartmentType: {
     id: 'user_account_compartmentType',
     defaultMessage: 'User Account Compartment',
