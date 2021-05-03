@@ -9,7 +9,14 @@ set -eu
 # If you're not (for local tests for instance), don't give any localhost:900 will be used as the base url.
 
 set +u
-if [ "$#" -eq 2 ]; then
+if [ "$#" -eq 3 ]; then
+# used for running tests locally but using the backend of a vp, for cypress coverage.
+  NAVIGATOR_URL="http://localhost:9000"
+  API_URL="https://api."$1".mics-sandbox.com"
+  VIRTUAL_PLATFORM_NAME="$1"
+  USER_NAME=""
+  RECORD_VIDEO=false
+elif [ "$#" -eq 2 ]; then
 # used for CI pipeline -> we don't record videos, and execute the tests against a sandbox.
   NAVIGATOR_URL="https://navigator."$1".mics-sandbox.com"
   API_URL="https://api."$1".mics-sandbox.com"
