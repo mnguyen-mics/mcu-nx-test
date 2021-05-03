@@ -187,19 +187,22 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
   private runQuery = () => {
     const { audienceBuilder, formValues } = this.props;
 
+    // TODO Remove `as any` hack
+    // AudienceBuilderQueryDocument and GraphDBQueryDocument could inherit from the same abstraction.
+    const queryDocument = this._audienceBuilderQueryService.buildQueryDocument(
+      formValues,
+    ) as any;
+
     this.setState({
       isQueryRunning: true,
       isMaskVisible: false,
+      queryDocument: queryDocument,
     });
 
-    const success = (
-      queryDocument: GraphDbQueryDocument,
-      result: OTQLResult,
-    ) => {
+    const success = (result: OTQLResult) => {
       this.setState({
         queryResult: result,
         isQueryRunning: false,
-        queryDocument: queryDocument,
       });
     };
 
@@ -213,6 +216,7 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
     this._audienceBuilderQueryService.runQuery(
       audienceBuilder.datamart_id,
       formValues,
+      queryDocument,
       success,
       failure,
     );

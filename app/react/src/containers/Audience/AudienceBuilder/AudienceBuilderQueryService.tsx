@@ -2,12 +2,12 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from '../../../constants/types';
 import { IQueryService } from '../../../services/QueryService';
 import { OTQLResult } from '../../../models/datamart/graphdb/OTQLResult';
-import { QueryDocument as GraphDBQueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
 import {
   NewAudienceBuilderFormData,
   AudienceBuilderGroupNode,
   QueryDocument as AudienceBuilderQueryDocument,
 } from '../../../models/audienceBuilder/AudienceBuilderResource';
+import { QueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
 
 export interface IAudienceBuilderQueryService {
   buildQueryDocument: (
@@ -16,7 +16,8 @@ export interface IAudienceBuilderQueryService {
   runQuery: (
     datamartId: string,
     formData: NewAudienceBuilderFormData,
-    success: (queryDocument: GraphDBQueryDocument, result: OTQLResult) => void,
+    queryDocument: QueryDocument,
+    success: (result: OTQLResult) => void,
     failure: (err: any) => void,
   ) => void;
 }
@@ -82,17 +83,15 @@ export class AudienceBuilderQueryService
   runQuery = (
     datamartId: string,
     formData: NewAudienceBuilderFormData,
-    success: (queryDocument: GraphDBQueryDocument, result: OTQLResult) => void,
+    queryDocument: QueryDocument,
+    success: (result: OTQLResult) => void,
     failure: (err: any) => void,
   ) => {
-    // TODO Remove `as any` hack
-    // AudienceBuilderQueryDocument and GraphDBQueryDocument could inherit from the same abstraction.
-    const queryDocument = this.buildQueryDocument(formData) as any;
 
     this._queryService
       .runJSONOTQLQuery(datamartId, queryDocument)
       .then((queryResult) => {
-        success(queryDocument, queryResult.data);
+        success(queryResult.data);
       })
       .catch((err) => {
         failure(err);
