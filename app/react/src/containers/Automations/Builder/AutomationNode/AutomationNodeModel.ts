@@ -15,6 +15,7 @@ import OnSegmentExitInputAutomationForm from './Edit/OnSegmentExitInputForm/OnSe
 import CustomActionAutomationForm from './Edit/CustomActionNodeForm/CustomActionAutomationForm';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 import AudienceSegmentFeedAutomationForm from './Edit/AudienceSegmentFeedNodeForm/AudienceSegmentFeedAutomationForm';
+import { ScenarioCountersData } from '../../../../utils/ScenarioAnalyticsReportHelper';
 
 export default class AutomationNodeModel extends NodeModel {
   collapsed = false;
@@ -25,6 +26,7 @@ export default class AutomationNodeModel extends NodeModel {
   subtitle?: string;
   color: string;
   storylineNodeModel: StorylineNodeModel;
+  getScenarioCountersData: () => ScenarioCountersData | undefined;
   editFormComponent: React.ComponentClass<AutomationFormPropsType>;
   root?: boolean;
   icon?: McsIconType;
@@ -35,6 +37,7 @@ export default class AutomationNodeModel extends NodeModel {
   constructor(
     datamartId?: string,
     storylineNodeModel?: StorylineNodeModel,
+    getScenarioCountersData?: () => ScenarioCountersData | undefined,
     title?: string,
     subtitle?: string,
     color?: string,
@@ -55,7 +58,8 @@ export default class AutomationNodeModel extends NodeModel {
       datamartId === undefined ||
       title === undefined ||
       color === undefined ||
-      storylineNodeModel === undefined
+      storylineNodeModel === undefined ||
+      getScenarioCountersData === undefined
     ) {
       throw new Error('missing parameters');
     }
@@ -64,6 +68,7 @@ export default class AutomationNodeModel extends NodeModel {
     this.subtitle = subtitle;
     this.color = color;
     this.storylineNodeModel = storylineNodeModel;
+    this.getScenarioCountersData = getScenarioCountersData;
     this.iconAnt = iconAnt;
     this.iconAssetUrl = iconAssetUrl;
     this.isFirstNode = isFirstNode;
@@ -82,7 +87,7 @@ export default class AutomationNodeModel extends NodeModel {
         this.editFormComponent = ABNAutomationForm;
         break;
       case 'QUERY_INPUT':
-        this.editFormComponent = ReactToEventAutomationForm
+        this.editFormComponent = ReactToEventAutomationForm;
         break;
       case 'ON_SEGMENT_ENTRY_INPUT_NODE':
         this.editFormComponent = OnSegmentEntryInputAutomationForm;

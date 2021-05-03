@@ -4,7 +4,7 @@ import { DownOutlined } from '@ant-design/icons';
 import { Row, Col, Menu, Button } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
-import { MenuInfo } from '../../../../../../../../node_modules/antd/node_modules/rc-menu/lib/interface'
+import { MenuInfo } from '../../../../../../../../node_modules/antd/node_modules/rc-menu/lib/interface';
 import { Dropdown } from '../../../../../components/PopupContainers';
 import { LegendChart } from '../../../../../components/LegendChart';
 
@@ -36,6 +36,7 @@ import {
   StackedAreaPlot,
 } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
+import { StackedAreaPlotProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/time-based-charts/stacked-area-plot';
 
 const LegendChartTS = LegendChart as any;
 
@@ -235,10 +236,10 @@ class GoalStackedAreaChart extends React.Component<
         ['day'],
         undefined,
       )
-        .then(results =>
+        .then((results) =>
           normalizeReportView<PerformanceValue>(results.data.report_view),
         )
-        .then(results => {
+        .then((results) => {
           this.setState({
             performance: results,
             isFetchingPerformance: false,
@@ -247,7 +248,7 @@ class GoalStackedAreaChart extends React.Component<
             error: false,
           });
         })
-        .catch(err => {
+        .catch((err) => {
           log.error(err);
           this.setState({
             isFetchingPerformance: false,
@@ -290,20 +291,23 @@ class GoalStackedAreaChart extends React.Component<
 
     const { performance, isFetchingPerformance } = this.state;
 
-    const optionsForChart = {
-      xKey: 'day',
-      yKeys: [
-        {
-          key: 'weighted_conversions',
-          message: formatMessage(messages.weightedConversion),
-        },
-      ],
-      colors: [colors['mcs-success']],
-      isDraggable: false,
+    const stackedAreaPlotProps: StackedAreaPlotProps = {
+      dataset: performance as any,
+      options: {
+        xKey: { key: 'day', mode: 'DAY' },
+        yKeys: [
+          {
+            key: 'weighted_conversions',
+            message: formatMessage(messages.weightedConversion),
+          },
+        ],
+        colors: [colors['mcs-success']],
+        isDraggable: false,
+      },
     };
 
     return !isFetchingPerformance && performance.length !== 0 ? (
-      <StackedAreaPlot dataset={performance as any} options={optionsForChart} />
+      <StackedAreaPlot {...stackedAreaPlotProps} />
     ) : (
       <LoadingChart />
     );
@@ -320,9 +324,9 @@ class GoalStackedAreaChart extends React.Component<
 
     const handleClick = (e: MenuInfo) => {
       const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
-      this.setState(prevState => {
+      this.setState((prevState) => {
         const selectedAttributionModel = goal.attribution.find(
-          item => item.id === e.key,
+          (item) => item.id === e.key,
         );
 
         this.getPerformanceForGoalAndAttribution(
@@ -342,7 +346,7 @@ class GoalStackedAreaChart extends React.Component<
 
     const menu = (
       <Menu onClick={handleClick}>
-        {goal.attribution.map(attribution => {
+        {goal.attribution.map((attribution) => {
           return this.state.selectedAttributionModel &&
             attribution.id !== this.state.selectedAttributionModel.id ? (
             <Menu.Item key={attribution.id}>

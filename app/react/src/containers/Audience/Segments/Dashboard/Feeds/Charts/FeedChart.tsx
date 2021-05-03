@@ -25,6 +25,7 @@ import {
 } from '@mediarithmics-private/mcs-components-library';
 import moment from 'moment';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
+import { getAllDates } from '../../../../../../utils/DateHelper';
 
 interface FeedChartProps {
   title?: React.ReactNode;
@@ -73,35 +74,15 @@ class FeedChart extends React.Component<Props, State> {
     if (dateRange !== prevDateRange) this.fetchStats();
   }
 
-  getAllDates = (timeUnit: 'HOUR' | 'DAY', dateRange: { from: string; to: string; }): string[] => {
-    const format = timeUnit === 'HOUR' ? 'YYYY-MM-DD HH:mm:ss' : 'YYYY-MM-DD';
-
-    const allDates = [moment(dateRange.from).format(format)];
-
-    const to = timeUnit === 'HOUR' ?
-      moment(dateRange.to).add(23, 'hours') :
-      moment(dateRange.to);
-
-    while (
-      allDates[allDates.length - 1] !==
-      to.format(format)
-    ) {
-      allDates.push(
-        moment(allDates[allDates.length - 1])
-          .add(1, timeUnit === 'HOUR' ? 'hours' : 'days')
-          .format(format),
-      );
-    }
-
-    return allDates;
-  }
-
   getTimeUnit(): 'HOUR' | 'DAY' {
     const { dateRange } = this.props;
 
     const formatedNonInclusiveDateRange = formatMcsDate(dateRange);
 
-    return formatedNonInclusiveDateRange.from === formatedNonInclusiveDateRange.to ? 'HOUR' : 'DAY';
+    return formatedNonInclusiveDateRange.from ===
+      formatedNonInclusiveDateRange.to
+      ? 'HOUR'
+      : 'DAY';
   }
 
   fetchStats() {
@@ -119,9 +100,9 @@ class FeedChart extends React.Component<Props, State> {
 
     const formatedNonInclusiveDateRange = formatMcsDate(dateRange);
 
-    const timeUnit = this.getTimeUnit()
+    const timeUnit = this.getTimeUnit();
 
-    const allDates = this.getAllDates(timeUnit, formatedNonInclusiveDateRange)
+    const allDates = getAllDates(timeUnit, formatedNonInclusiveDateRange);
 
     const reportBody = buildFeedStatsByFeedRequestBody(
       feedId,
@@ -135,7 +116,7 @@ class FeedChart extends React.Component<Props, State> {
 
     return this._feedsStatsService
       .getStats(organisationId, reportBody)
-      .then(res => {
+      .then((res) => {
         const normalized = normalizeReportView<{
           hour: string;
           date_yyyy_mm_dd: string;
@@ -144,12 +125,16 @@ class FeedChart extends React.Component<Props, State> {
           uniq_user_identifiers_count: number;
         }>(res.data.report_view);
 
-        const upserts = normalized.filter(rv => rv.sync_type === 'UPSERT');
-        const deletes = normalized.filter(rv => rv.sync_type === 'DELETE');
+        const upserts = normalized.filter((rv) => rv.sync_type === 'UPSERT');
+        const deletes = normalized.filter((rv) => rv.sync_type === 'DELETE');
 
-        let feedReports: FeedReport[] = allDates.map(day => {
-          const upsertedOnDay = upserts.find(r => (timeUnit === 'HOUR' ? r.hour : r.date_yyyy_mm_dd) === day);
-          const deletedOnDay = deletes.find(r => (timeUnit === 'HOUR' ? r.hour : r.date_yyyy_mm_dd) === day);
+        let feedReports: FeedReport[] = allDates.map((day) => {
+          const upsertedOnDay = upserts.find(
+            (r) => (timeUnit === 'HOUR' ? r.hour : r.date_yyyy_mm_dd) === day,
+          );
+          const deletedOnDay = deletes.find(
+            (r) => (timeUnit === 'HOUR' ? r.hour : r.date_yyyy_mm_dd) === day,
+          );
 
           return {
             day: timeUnit === 'HOUR' ? moment(day).format('HH:mm') : day,
@@ -193,12 +178,14 @@ class FeedChart extends React.Component<Props, State> {
 
     const metrics =
       dataSource && dataSource[0]
-        ? Object.keys(dataSource[0]).filter(el => el !== 'day' && el !== 'unit')
+        ? Object.keys(dataSource[0]).filter(
+            (el) => el !== 'day' && el !== 'unit',
+          )
         : [];
 
     const optionsForChart = {
       xKey: 'day',
-      yKeys: metrics.map(metric => {
+      yKeys: metrics.map((metric) => {
         if (dataSource[0].unit === 'USER_POINTS') {
           if (metric === 'upserted') {
             return {
@@ -240,16 +227,13 @@ class FeedChart extends React.Component<Props, State> {
         {isLoading ? (
           <LoadingChart />
         ) : (
-            <Card
-              className="compact"
-              title={title}
-            >
-              <StackedBarPlot
-                dataset={dataSource as any}
-                options={optionsForChart}
-              />
-            </Card>
-          )}
+          <Card className="compact" title={title}>
+            <StackedBarPlot
+              dataset={dataSource as any}
+              options={optionsForChart}
+            />
+          </Card>
+        )}
       </div>
     );
   }

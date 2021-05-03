@@ -7,6 +7,24 @@ import {
 } from '../models/ReportRequestBody';
 import McsMoment, { isNowFormat } from './McsMoment';
 
+export interface NodeCounterData {
+  nodeId: string;
+  userPointsCount: string;
+}
+
+export interface ExitConditionCounterData {
+  exitConditionId: string;
+  userPointsCount: string;
+}
+
+export interface ScenarioCountersData {
+  scenarioId: string;
+  from: McsMoment;
+  to: McsMoment;
+  nodeCountersData: NodeCounterData[];
+  exitConditionCounterData: ExitConditionCounterData[];
+}
+
 export type ScenarioAnalyticsDimension =
   | 'organisation_id'
   | 'datamart_id'
@@ -15,8 +33,8 @@ export type ScenarioAnalyticsDimension =
   | 'exit_condition_id'
   | 'user_point_id'
   | 'execution_id'
-  | 'date_yyyy_mm_dd'
-  | 'date_yyyy_mm_dd_hh'
+  | 'date_yyyymmdd'
+  | 'date_yyyymmddhh'
   | 'ts';
 
 export type ScenarioAnalyticsMetric =

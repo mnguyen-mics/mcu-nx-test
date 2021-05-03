@@ -23,11 +23,13 @@ import ScenarioExitConditionAutomationForm from '../ScenarioExitConditionAutomat
 import ExitConditionAutomationDashboardStats, {
   ExitConditionAutomationDashboardStatsProps,
 } from '../AutomationNode/Dashboard/ExitCondition/ExitConditionDashboardStats';
+import { ScenarioCountersData } from '../../../../utils/ScenarioAnalyticsReportHelper';
 
 interface ExitConditionButtonProps {
   datamartId: string;
   automationTreeData?: StorylineNodeModel;
   exitCondition?: ScenarioExitConditionFormResource;
+  scenarioCountersData?: ScenarioCountersData;
   viewer: boolean;
   updateAutomationData?: (
     automationData: StorylineNodeModel,
@@ -124,7 +126,12 @@ class ExitConditionButton extends React.Component<Props, State> {
   };
 
   onGlobalExitConditionSelectStats = () => {
-    const { openNextDrawer, closeNextDrawer, exitCondition } = this.props;
+    const {
+      openNextDrawer,
+      closeNextDrawer,
+      exitCondition,
+      datamartId,
+    } = this.props;
     const { viewSubmenus } = this.state;
     if (exitCondition) {
       this.setState({ viewSubmenus: !viewSubmenus }, () => {
@@ -132,6 +139,7 @@ class ExitConditionButton extends React.Component<Props, State> {
           ExitConditionAutomationDashboardStats,
           {
             additionalProps: {
+              datamartId: datamartId,
               exitConditionId: exitCondition.id,
               close: closeNextDrawer,
             },
@@ -197,6 +205,14 @@ class ExitConditionButton extends React.Component<Props, State> {
     );
   };
 
+  getNumberOfUsers = (): number | undefined => {
+    const { scenarioCountersData } = this.props;
+
+    const userPointsCount =
+      scenarioCountersData?.exitConditionCounterData?.[0].userPointsCount;
+    return userPointsCount ? +userPointsCount : undefined;
+  };
+
   render() {
     const {
       exitCondition,
@@ -215,7 +231,10 @@ class ExitConditionButton extends React.Component<Props, State> {
       exitCondition &&
       exitCondition.formData.query_text &&
       viewer ? (
-        <UsersCounter iconName={'user'} numberOfUsers={123456789} />
+        <UsersCounter
+          iconName={'user'}
+          numberOfUsers={this.getNumberOfUsers()}
+        />
       ) : null;
 
     return (

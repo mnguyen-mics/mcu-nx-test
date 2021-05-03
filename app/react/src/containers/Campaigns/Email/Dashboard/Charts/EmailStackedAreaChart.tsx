@@ -16,6 +16,7 @@ import {
   StackedAreaPlot,
 } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
+import { StackedAreaPlotProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/time-based-charts/stacked-area-plot';
 
 export interface EmailStackedAreaChartProps {
   dateRangeValue: McsDateRangeValue;
@@ -37,29 +38,32 @@ class EmailStackedAreaChart extends React.Component<Props> {
       intl: { formatMessage },
     } = this.props;
 
-    const optionsForChart = {
-      xKey: 'day',
-      yKeys: [
-        { key: 'email_sent', message: formatMessage(messages.emailSent) },
-        { key: 'clicks', message: formatMessage(messages.emailClicks) },
-        {
-          key: 'impressions',
-          message: formatMessage(messages.emailImpressions),
-        },
-        {
-          key: 'email_hard_bounced',
-          message: formatMessage(messages.emailHardBounce),
-        },
-      ],
-      colors: [
-        colors['mcs-warning'],
-        colors['mcs-info'],
-        colors['mcs-success'],
-        colors['mcs-error'],
-      ],
+    const stackedAreaPlotProps: StackedAreaPlotProps = {
+      dataset: emailReport,
+      options: {
+        xKey: { key: 'day', mode: 'DAY' },
+        yKeys: [
+          { key: 'email_sent', message: formatMessage(messages.emailSent) },
+          { key: 'clicks', message: formatMessage(messages.emailClicks) },
+          {
+            key: 'impressions',
+            message: formatMessage(messages.emailImpressions),
+          },
+          {
+            key: 'email_hard_bounced',
+            message: formatMessage(messages.emailHardBounce),
+          },
+        ],
+        colors: [
+          colors['mcs-warning'],
+          colors['mcs-info'],
+          colors['mcs-success'],
+          colors['mcs-error'],
+        ],
+      },
     };
     return !isLoading ? (
-      <StackedAreaPlot dataset={emailReport} options={optionsForChart} />
+      <StackedAreaPlot {...stackedAreaPlotProps} />
     ) : (
       <LoadingChart />
     );
