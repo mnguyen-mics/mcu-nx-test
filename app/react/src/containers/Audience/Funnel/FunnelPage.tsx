@@ -214,7 +214,7 @@ class FunnelPage extends React.Component<JoinedProps, State> {
     const breadcrumbPaths = [
       <span className="mcs-pathItem" key='1'>
         Funnel Analytics
-        <MentionTag className="mcs-pathItem_mentionTag" mention='ALPHA' />
+        <MentionTag className="mcs-pathItem_mentionTag" mention='BETA' />
       </span>
     ];
 
