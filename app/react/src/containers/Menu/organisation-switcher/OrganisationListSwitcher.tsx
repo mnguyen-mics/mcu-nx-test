@@ -9,6 +9,8 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import SwitchBySearch from './SwitchBySearch';
 import SwitchByList from './SwitchByList';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { ApartmentOutlined } from '@ant-design/icons';
 
 export interface OrganizationListSwitcherState {
   isVisible: boolean;
@@ -54,7 +56,6 @@ class OrganizationListSwitcher extends React.Component<
 
     const currentWorkspace = workspace(organisationId);
     const workspaceNb = workspaces.length;
-
     return (
       <Dropdown
         overlay={
@@ -76,22 +77,19 @@ class OrganizationListSwitcher extends React.Component<
         placement="bottomRight"
         onVisibleChange={this.handleVisibleChange}
       >
+
         <div className="mcs-organisationListSwitcher_component">
-          <hr />
+          <ApartmentOutlined className="mcs-orgnisationListSwitcher_icon" />
           <div className="mcs-organisationListSwitcher_currentOrg_box">
             <div className="mcs-organisationListSwitcher_currentOrg">
               <p className="mcs-organisationListSwitcher_orgName">
                 {currentWorkspace.organisation_name}
               </p>
-              <p className="mcs-organisationListSwitcher_orgId">
-                {currentWorkspace.organisation_id}
-              </p>
             </div>
             <div className="mcs-organisationListSwitcher_downlogo">
-              <i className="ant-menu-submenu-arrow" />
+              <McsIcon type={"chevron"} />
             </div>
           </div>
-          <hr />
         </div>
       </Dropdown>
     );

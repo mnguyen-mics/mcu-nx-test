@@ -307,7 +307,8 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
                   ? ProductionApiEnvironment
                   : undefined
               }
-              menuIcon={<AppstoreOutlined className="mcs-header_menu-icon" />}
+              menuIcon={<AppstoreOutlined className="mcs-header_menu-icon"/>}
+              organisationSwitcher={listOrganizationSwitcher && <OrganisationListSwitcher />} 
             />
             <Layout>
               <Sider
@@ -317,7 +318,7 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
                 trigger={this.renderTrigger()}
               >
                 <Logo mode={mode} />
-                {listOrganizationSwitcher && <OrganisationListSwitcher />}
+
                 <NavigatorMenu
                   mode={mode}
                   onMenuItemClick={this.onMenuItemClick}
