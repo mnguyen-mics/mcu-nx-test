@@ -209,7 +209,7 @@ class ExitConditionButton extends React.Component<Props, State> {
     const { scenarioCountersData } = this.props;
 
     const userPointsCount =
-      scenarioCountersData?.exitConditionCounterData?.[0].userPointsCount;
+      scenarioCountersData?.exitConditionCounterData?.[0]?.userPointsCount;
     return userPointsCount ? +userPointsCount : undefined;
   };
 

@@ -11,7 +11,7 @@ const messages = defineMessages({
   },
   upGraphTitle: {
     id: 'automation.exitNode.dashboard.stats.graphs.upLineGraph.title',
-    defaultMessage: 'Number of users exiting the scenario',
+    defaultMessage: 'Number of users leaving the scenario at this node',
   },
 });
 

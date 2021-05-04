@@ -28,16 +28,12 @@ import {
   isDeleteFromSegmentNode,
   isOnSegmentEntryInputNode,
   isOnSegmentExitInputNode,
-  isEmailCampaignNode,
   isFeedNode,
   isInputNode,
   isEndNode,
 } from './Edit/domain';
 
 import { ScenarioNodeType } from '../../../../models/automations/automations';
-import EmailCampaignAutomatedDashboardPage, {
-  EmailCampaignAutomatedDashboardPageProps,
-} from './Dashboard/EmailCampaign/EmailCampaignAutomatedDashboardPage';
 import { withRouter, RouterProps, RouteComponentProps } from 'react-router';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
@@ -213,18 +209,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     const { node, openNextDrawer, closeNextDrawer, datamartId } = this.props;
     const selectedNode = node.storylineNodeModel.node;
 
-    if (isEmailCampaignNode(selectedNode)) {
-      openNextDrawer<EmailCampaignAutomatedDashboardPageProps>(
-        EmailCampaignAutomatedDashboardPage,
-        {
-          additionalProps: {
-            campaignId: selectedNode.campaign_id,
-            close: closeNextDrawer,
-          },
-          size: 'large',
-        },
-      );
-    } else if (isFeedNode(selectedNode) && selectedNode.feed_id) {
+    if (isFeedNode(selectedNode) && selectedNode.feed_id) {
       openNextDrawer<FeedNodeAutomationDashboardStatsProps>(
         FeedNodeAutomationDashboardStats,
         {
@@ -669,7 +654,6 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     switch (nodeType) {
       case 'ABN_NODE':
         return this.renderAbnEdit();
-      case 'EMAIL_CAMPAIGN':
       case 'SCENARIO_AUDIENCE_SEGMENT_FEED_NODE':
         return this.renderDefautEdit();
       case 'ADD_TO_SEGMENT_NODE':
@@ -679,6 +663,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         return this.renderQueryEdit();
       case 'END_NODE':
         return this.renderEndNodeEdit();
+      case 'EMAIL_CAMPAIGN':
       case 'CUSTOM_ACTION_NODE':
       case 'IF_NODE':
       case 'WAIT_NODE':
