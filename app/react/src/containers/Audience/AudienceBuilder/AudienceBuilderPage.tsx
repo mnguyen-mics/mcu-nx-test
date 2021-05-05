@@ -10,7 +10,7 @@ import {
   AudienceBuilderFormData,
   NewAudienceBuilderFormData,
   AudienceBuilderParametricPredicateNode,
-  QueryDocument as AudienceBuilderQueryDocument,
+  AudienceBuilderQueryDocument,
   AudienceBuilderResource,
   AudienceBuilderParametricPredicateGroupNode,
 } from '../../../models/audienceBuilder/AudienceBuilderResource';

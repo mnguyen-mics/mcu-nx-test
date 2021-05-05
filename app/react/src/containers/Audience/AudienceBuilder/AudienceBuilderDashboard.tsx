@@ -12,16 +12,17 @@ import injectNotifications, {
 import { Loading, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import DashboardWrapper from '../Dashboard/DashboardWrapper';
 import CardFlex from '../Dashboard/Components/CardFlex';
-import { QueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
+import { AudienceBuilderQueryDocument } from '../../../models/audienceBuilder/AudienceBuilderResource';
 import TimelineSelector from '../../QueryTool/JSONOTQL/TimelineSelector';
 import { formatMetric } from '../../../utils/MetricHelper';
+import { QueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
 
 interface AudienceBuilderDashboardProps {
   organisationId: string;
   datamartId: string;
   audienceBuilderId: string;
   totalAudience?: number;
-  queryDocument?: QueryDocument;
+  queryDocument?: AudienceBuilderQueryDocument;
   isQueryRunning: boolean;
 }
 
@@ -112,7 +113,9 @@ class AudienceBuilderDashboard extends React.Component<Props, State> {
             <TimelineSelector
               stale={false}
               datamartId={datamartId}
-              query={queryDocument?.where}
+              // TODO Remove `as QueryDocument` hack
+              // AudienceBuilderQueryDocument and QueryDocument could inherit from the same abstraction.
+              query={(queryDocument as QueryDocument)?.where}
               organisationId={organisationId}
             />
           </div>

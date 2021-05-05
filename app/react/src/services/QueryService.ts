@@ -15,15 +15,18 @@ import { injectable } from 'inversify';
 
 export interface IQueryService {
   getQuery: (datamartId: string, queryId: string) => Promise<DataResponse<QueryResource>>;
+
   createQuery: (
     datamartId: string,
     query: Partial<QueryResource>,
   ) => Promise<DataResponse<QueryResource>>;
+ 
   updateQuery: (
     datamartId: string,
     queryId: string,
     query: Partial<QueryResource>,
   ) => Promise<DataResponse<QueryResource>>;
+ 
   runOTQLQuery: (
     datamartId: string,
     query: string,
@@ -38,6 +41,7 @@ export interface IQueryService {
       content_type?: string;
     },
   ) => Promise<DataResponse<OTQLResult>>;
+  
   runGraphQLQuery: (
     datamartId: string,
     query: string,
@@ -45,6 +49,7 @@ export interface IQueryService {
       use_cache?: boolean;
     },
   ) => Promise<DataResponse<GraphQLResult>>;
+ 
   runJSONOTQLQuery: (
     datamartId: string,
     query: QueryDocument,
@@ -59,17 +64,21 @@ export interface IQueryService {
   ) => Promise<DataResponse<OTQLResult>>;
 
   runSelectorQLQuery: (datamartId: string) => Promise<DataResponse<{ total: number }>>;
+
   autocompleteOtqlQuery: (
     datamartId: string,
     query: string,
     row: number,
     col: number,
   ) => Promise<AutoCompleteResource[] | undefined>;
+
   checkOtqlQuery: (datamartId: string, query: string) => Promise<DataResponse<ErrorQueryResource>>;
+
   convertJsonOtql2Otql: (
     datamartId: string,
     query: QueryResource,
   ) => Promise<DataResponse<QueryResource>>;
+
   getWhereClause: (datamartId: string, queryId: string) => Promise<DataResponse<string>>;
 }
 

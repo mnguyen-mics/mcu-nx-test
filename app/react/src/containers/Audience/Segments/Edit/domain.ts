@@ -1,4 +1,3 @@
-import { QueryDocument } from './../../../../models/datamart/graphdb/QueryDocument';
 import { ProcessingActivityFieldModel } from './../../../Settings/DatamartSettings/Common/domain';
 import { ProcessingSelectionResource } from './../../../../models/processing';
 import { UploadFile } from 'antd/lib/upload/interface';
@@ -13,6 +12,7 @@ import {
 } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import { NewUserQuerySimpleFormData } from '../../../QueryTool/SaveAs/NewUserQuerySegmentSimpleForm';
 import * as moment from 'moment';
+import { AudienceBuilderQueryDocument } from '../../../../models/audienceBuilder/AudienceBuilderResource';
 
 export interface EditAudienceSegmentParam {
   organisationId: string;
@@ -64,7 +64,7 @@ export const INITIAL_AUDIENCE_SEGMENT_FORM_DATA: AudienceSegmentFormData = {
 };
 
 export function isAudienceSegmentShape(
-  source?: AudienceSegmentShape | QueryDocument,
+  source?: AudienceSegmentShape | AudienceBuilderQueryDocument,
 ): source is AudienceSegmentShape {
   return source !== undefined && (source as AudienceSegmentShape).type !== undefined;
 }

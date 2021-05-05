@@ -5,16 +5,16 @@ import { OTQLResult } from '../../../models/datamart/graphdb/OTQLResult';
 import {
   NewAudienceBuilderFormData,
   AudienceBuilderGroupNode,
-  QueryDocument as AudienceBuilderQueryDocument,
+  AudienceBuilderQueryDocument,
 } from '../../../models/audienceBuilder/AudienceBuilderResource';
 import { QueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
 
 export interface IAudienceBuilderQueryService {
   buildQueryDocument: (formData: NewAudienceBuilderFormData) => AudienceBuilderQueryDocument;
+
   runQuery: (
     datamartId: string,
-    formData: NewAudienceBuilderFormData,
-    queryDocument: QueryDocument,
+    queryDocument: AudienceBuilderQueryDocument,
     success: (result: OTQLResult) => void,
     failure: (err: any) => void,
   ) => void;
@@ -73,14 +73,15 @@ export class AudienceBuilderQueryService implements IAudienceBuilderQueryService
 
   runQuery = (
     datamartId: string,
-    formData: NewAudienceBuilderFormData,
-    queryDocument: QueryDocument,
+    queryDocument: AudienceBuilderQueryDocument,
     success: (result: OTQLResult) => void,
     failure: (err: any) => void,
   ) => {
+    // TODO Remove `as QueryDocument` hack
+    // AudienceBuilderQueryDocument and QueryDocument could inherit from the same abstraction.
     this._queryService
-      .runJSONOTQLQuery(datamartId, queryDocument)
-      .then(queryResult => {
+      .runJSONOTQLQuery(datamartId, queryDocument as QueryDocument)
+      .then((queryResult) => {
         success(queryResult.data);
       })
       .catch(err => {

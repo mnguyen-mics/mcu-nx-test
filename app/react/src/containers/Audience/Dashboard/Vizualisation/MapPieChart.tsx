@@ -19,11 +19,11 @@ import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { getFormattedQuery } from '../domain';
 import { PiePlot, EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
 import { DatasetProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/category-based-charts/pie-plot/PiePlot';
-import { QueryDocument } from '../../../../models/datamart/graphdb/QueryDocument';
+import { AudienceBuilderQueryDocument } from '../../../../models/audienceBuilder/AudienceBuilderResource';
 
 export interface MapPieChartProps {
   title?: string;
-  source?: AudienceSegmentShape | QueryDocument;
+  source?: AudienceSegmentShape | AudienceBuilderQueryDocument;
   queryId: string;
   data?: OTQLResult;
   datamartId: string;
@@ -132,7 +132,7 @@ class MapPieChart extends React.Component<Props, State> {
   fetchData = (
     chartQueryId: string,
     datamartId: string,
-    source?: AudienceSegmentShape | QueryDocument,
+    source?: AudienceSegmentShape | AudienceBuilderQueryDocument,
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
 

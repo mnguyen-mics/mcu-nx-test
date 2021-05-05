@@ -8,13 +8,13 @@ import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import { getFormattedQuery } from '../domain';
-import { QueryDocument } from '../../../../models/datamart/graphdb/QueryDocument';
+import { AudienceBuilderQueryDocument } from '../../../../models/audienceBuilder/AudienceBuilderResource';
 
 export interface CountProps {
   queryId: string;
   datamartId: string;
   title: string;
-  source?: AudienceSegmentShape | QueryDocument;
+  source?: AudienceSegmentShape | AudienceBuilderQueryDocument;
 }
 
 interface State {
@@ -60,7 +60,7 @@ export default class Count extends React.Component<CountProps, State> {
   fetchData = (
     chartQueryId: string,
     datamartId: string,
-    source?: AudienceSegmentShape | QueryDocument,
+    source?: AudienceSegmentShape | AudienceBuilderQueryDocument,
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
     return this._queryService

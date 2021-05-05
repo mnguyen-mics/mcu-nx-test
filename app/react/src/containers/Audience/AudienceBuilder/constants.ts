@@ -1,7 +1,7 @@
 import {
   AudienceBuilderFormData,
-  NewAudienceBuilderFormData,
-  QueryDocument,
+  AudienceBuilderQueryDocument,
+  NewAudienceBuilderFormData
 } from './../../../models/audienceBuilder/AudienceBuilderResource';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
@@ -168,7 +168,7 @@ export const NEW_INITIAL_AUDIENCE_BUILDER_FORM_DATA: NewAudienceBuilderFormData 
 
 // TODO Remove along with AudienceBuilderQueryService
 export const buildQueryDocument = (formData: AudienceBuilderFormData) => {
-  let query: QueryDocument = {
+  let query: AudienceBuilderQueryDocument = {
     language_version: 'JSON_OTQL',
     operations: [
       {

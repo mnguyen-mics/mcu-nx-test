@@ -223,6 +223,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       initialProcessingSelectionsForWarning,
       audienceSegmentFormData,
       queryLanguage,
+      audienceBuilder,
     } = this.props;
 
     const type = segmentType
@@ -241,7 +242,9 @@ class EditAudienceSegmentForm extends React.Component<Props> {
     const query = audienceSegmentFormData.query;
     if (type === 'USER_QUERY' && queryLanguage === 'JSON_OTQL' && datamart && query) {
       actionBarProps.convert2Otql = () => {
-        return this._queryService.convertJsonOtql2Otql(datamart.id, query);
+        return audienceBuilder
+          ? this._queryService.convertParameterizedJsonOtql2Otql(datamart.id, query)
+          : this._queryService.convertJsonOtql2Otql(datamart.id, query);
       };
     }
 
