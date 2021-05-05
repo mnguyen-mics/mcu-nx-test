@@ -86,7 +86,7 @@ class FunnelStepHover extends React.Component<Props> {
       </div>
       <div className={'mcs-funnelStepHover_totalsByDimension'}>
         { idByDimension.map((item: FunnelIdByDimension)=> {
-          return <Tag key={this._cuid()} className={'mcs-funnelStepHover_totalsByDimension_tags'} color={item.colors[1]} style={{color: item.colors[0]}}>{item.id}</Tag>
+          return <Tag key={this._cuid()} className={'mcs-funnelStepHover_totalsByDimension_tags'} color={item.colors[1]} style={{color: item.colors[0]}}>{item.decorator ? `${item.decorator} : ${item.id}` : item.id}</Tag>
         })}
       </div>
     </div>;

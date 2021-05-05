@@ -448,7 +448,8 @@ class Funnel extends React.Component<Props, State> {
         idByDimension.push({
           name: dimension.dimension_name,
           id: dimension.dimension_value,
-          colors: colors[i]
+          colors: colors[i],
+          decorator: dimension.dimension_decorator
         });
       }
 
