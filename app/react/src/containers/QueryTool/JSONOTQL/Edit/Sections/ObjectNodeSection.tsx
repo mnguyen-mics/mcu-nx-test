@@ -7,8 +7,6 @@ import {
   FormInputField,
   FormSelectField,
   DefaultSelect,
-  FormAddonSelectField,
-  AddonSelect,
   FormCheckbox,
   FormCheckboxField,
 } from '../../../../../components/Form';
@@ -156,21 +154,7 @@ class ObjectNodeSection extends React.Component<Props> {
                 ),
                 type: 'number',
                 addonBefore: (
-                  <FormAddonSelectField
-                    name="frequency.mode"
-                    component={AddonSelect}
-                    options={[
-                      {
-                        value: 'AT_LEAST',
-                        title: formatMessage(frequencyModeMessageMap.AT_LEAST),
-                      },
-                      {
-                        value: 'AT_MOST',
-                        title: formatMessage(frequencyModeMessageMap.AT_MOST),
-                        // disabled: true,
-                      },
-                    ]}
-                  />
+                  <FormattedMessage {...frequencyModeMessageMap.AT_LEAST}/>
                 ),
                 addonAfter: (
                   <FormattedMessage
