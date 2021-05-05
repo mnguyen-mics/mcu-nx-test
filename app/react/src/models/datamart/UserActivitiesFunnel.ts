@@ -46,6 +46,7 @@ export interface FieldValueFunnelResource {
   dimension_name: string;
   dimension_value: string;
   funnel: FunnelResource;
+  dimension_decorator?: string;
 }
 export interface Steps {
   name: string;
@@ -56,11 +57,12 @@ export interface Steps {
 }
 
 export interface FunnelIdByDimension {
-  name: string,
-  id: string,
-  colors: string[]
+  name: string;
+  id: string;
+  colors: string[];
+  decorator?: string;
 }
 
 
 export type TimeUnit = 'DAY' | 'WEEK' | 'MONTH';
-export type TimeType = 'WINDOW' | 'DATES'
+export type TimeType = 'WINDOW' | 'DATES';
