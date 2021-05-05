@@ -317,7 +317,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
   ): DatamartUsersAnalyticsWrapperProps[] => {
     const config = [
       {
-        title: 'Channel engagment',
+        title: 'Channel engagement',
         datamartId: datamartId,
         organisationId: organisationId,
         config: averageSessionDurationConfig,
@@ -325,7 +325,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
         showFilter: true,
       },
       {
-        title: 'E-commerce engagment',
+        title: 'E-commerce engagement',
         datamartId: datamartId,
         organisationId: organisationId,
         config: ecommerceEngagementConfig,
