@@ -186,7 +186,6 @@ class FeedCardList extends React.Component<Props, FeedCardListState> {
       match: {
         params: { segmentId, organisationId },
       },
-      hasFeature,
     } = this.props;
 
     const { feeds, isLoading, feedsStatsByFeedId } = this.state;
@@ -209,8 +208,8 @@ class FeedCardList extends React.Component<Props, FeedCardListState> {
 
     return (
       <div ref={this.getRef}>
-        {hasFeature('audience-dashboards') && feeds.length >= 1 && (
-          <ContentHeader title={`Feed Card List`} size={`medium`} />
+        {feeds.length >= 1 && (
+          <ContentHeader title={`Feeds`} size={`medium`} />
         )}
         <Row gutter={24}>
           {feeds &&
