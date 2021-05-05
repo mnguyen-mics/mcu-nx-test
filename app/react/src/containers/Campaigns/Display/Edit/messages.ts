@@ -1021,6 +1021,6 @@ export default defineMessages({
 
   sectionInventorySubTitle: {
     id: 'campaignEditor.sectionInventory.subtitle',
-    defaultMessage: 'Add Display Networks, Ad Exchanges and Deal Lists to your Adgroup.',
+    defaultMessage: 'Add Display Networks and Ad Exchanges to your Adgroup.',
   },
 });

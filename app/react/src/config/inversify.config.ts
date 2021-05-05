@@ -95,14 +95,6 @@ import {
   IDisplayNetworkService,
   DisplayNetworkService,
 } from '../services/DisplayNetworkService';
-import {
-  IDealListService,
-  DealListService,
-} from '../services/Library/DealListService';
-import {
-  IDealListFormService,
-  DealListFormService,
-} from '../containers/Library/Deal/Edit/DealListFormService';
 import CompartmentService, {
   IComparmentService,
 } from '../services/CompartmentService';
@@ -263,10 +255,6 @@ container.bind<IDatamartService>(TYPES.IDatamartService).to(DatamartService);
 container
   .bind<IDisplayNetworkService>(TYPES.IDisplayNetworkService)
   .to(DisplayNetworkService);
-container.bind<IDealListService>(TYPES.IDealListService).to(DealListService);
-container
-  .bind<IDealListFormService>(TYPES.IDealListFormService)
-  .to(DealListFormService);
 container
   .bind<IComparmentService>(TYPES.ICompartmentService)
   .to(CompartmentService);

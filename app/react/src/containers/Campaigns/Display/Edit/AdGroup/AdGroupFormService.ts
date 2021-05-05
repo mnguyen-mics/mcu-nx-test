@@ -17,7 +17,6 @@ import {
   isDisplayCreativeFormData,
   InventoryCatalFieldsModel,
   SegmentFieldModel,
-  isDealListSelectionResource,
   isAdExchangeSelectionResource,
   isDisplayNetworkSelectionResource,
 } from './domain';
@@ -125,9 +124,6 @@ export class AdGroupFormService implements IAdGroupFormService {
         .getLocations(displayCampaignId, adGroupId)
         .then(extractDataList),
       this._displayCampaignService
-        .getDealsLists(displayCampaignId, adGroupId)
-        .then(extractDataList),
-      this._displayCampaignService
         .getAdex(displayCampaignId, adGroupId)
         .then(extractDataList),
       this._displayCampaignService
@@ -138,7 +134,6 @@ export class AdGroupFormService implements IAdGroupFormService {
         audienceSegmentSelections,
         adSelections,
         locarionSelections,
-        dealListSelections,
         adExchangeSelections,
         displayNetworkSelections,
       ]) => {
@@ -153,16 +148,6 @@ export class AdGroupFormService implements IAdGroupFormService {
         const locationFields = locarionSelections.map(el =>
           createFieldArrayModel(duplicate ? omit(el, 'id') : el),
         );
-
-        const dealListFields = dealListSelections.map(el => {
-          const model = {
-            data: duplicate ? omit(el, 'id') : el,
-            type: 'DEAL_LIST',
-          };
-          return createFieldArrayModelWithMeta(model, {
-            name: el.name,
-          });
-        });
 
         const adExchangeFields = adExchangeSelections.map(el => {
           const model = {
@@ -186,8 +171,7 @@ export class AdGroupFormService implements IAdGroupFormService {
 
         const inventoryCatalFields = [
           ...displayNetworkFields,
-          ...adExchangeFields,
-          ...dealListFields,
+          ...adExchangeFields
         ];
 
         return {
@@ -473,17 +457,10 @@ export class AdGroupFormService implements IAdGroupFormService {
     initialInventoryCatalFields: InventoryCatalFieldsModel[],
   ): Task[] {
     // get initial values
-    const initialDealListIds: string[] = [];
     const initialAdExchangeIds: string[] = [];
     const initialDisplayNetworkIds: string[] = [];
 
     initialInventoryCatalFields.forEach(field => {
-      if (
-        field.model.type === 'DEAL_LIST' &&
-        isDealListSelectionResource(field.model.data)
-      ) {
-        initialDealListIds.push(field.model.data.id);
-      }
       if (
         field.model.type === 'AD_EXCHANGE' &&
         isAdExchangeSelectionResource(field.model.data)
@@ -499,17 +476,10 @@ export class AdGroupFormService implements IAdGroupFormService {
     });
 
     // get current values
-    const currentDealListIds: string[] = [];
     const currentAdExchangeIds: string[] = [];
     const currentDisplayNetworkIds: string[] = [];
 
     inventoryCatalFields.forEach(field => {
-      if (
-        field.model.type === 'DEAL_LIST' &&
-        isDealListSelectionResource(field.model.data)
-      ) {
-        currentDealListIds.push(field.model.data.id);
-      }
       if (
         field.model.type === 'AD_EXCHANGE' &&
         isAdExchangeSelectionResource(field.model.data)
@@ -526,29 +496,6 @@ export class AdGroupFormService implements IAdGroupFormService {
 
     const tasks: Task[] = [];
     inventoryCatalFields.forEach(field => {
-      if (field.model.type === 'DEAL_LIST') {
-        const data = field.model.data;
-        if (isDealListSelectionResource(field.model.data)) {
-          const id = field.model.data.id;
-          tasks.push(() =>
-            this._displayCampaignService.updateDealsList(
-              campaignId,
-              adGroupId,
-              id,
-              data,
-            ),
-          );
-        } else {
-          tasks.push(() =>
-            this._displayCampaignService.createDealsList(
-              campaignId,
-              adGroupId,
-              data,
-            ),
-          );
-        }
-      }
-
       if (field.model.type === 'AD_EXCHANGE') {
         const data = field.model.data;
         if (isAdExchangeSelectionResource(field.model.data)) {
@@ -597,17 +544,6 @@ export class AdGroupFormService implements IAdGroupFormService {
     });
 
     // delete requests
-    initialDealListIds
-      .filter(id => !currentDealListIds.includes(id))
-      .forEach(id => {
-        tasks.push(() =>
-          this._displayCampaignService.deleteDealsList(
-            campaignId,
-            adGroupId,
-            id,
-          ),
-        );
-      });
     initialAdExchangeIds
       .filter(id => !currentAdExchangeIds.includes(id))
       .forEach(id => {

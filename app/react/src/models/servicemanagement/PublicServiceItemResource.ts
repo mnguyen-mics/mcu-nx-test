@@ -47,12 +47,6 @@ export interface DisplayNetworkServiceItemPublicResource
   display_network_id: string;
 }
 
-export interface DealListServiceItemPublicResource
-  extends ServiceItemPublicResource {
-  type: 'inventory_access_deal_list';
-  deal_list_id: string;
-}
-
 export interface AdexInventoryServiceItemPublicResource
   extends ServiceItemPublicResource {
   type: 'inventory_access_ad_exchange';
@@ -74,7 +68,6 @@ export type ServiceItemModel = FieldArrayModel<ServiceItemShape>;
 export type ServiceItemShape =
   | AudienceSegmentServiceItemPublicResource
   | DisplayNetworkServiceItemPublicResource
-  | DealListServiceItemPublicResource
   | AdexInventoryServiceItemPublicResource
   | AdExchangeHubInventoryServiceItemPublicResource
   | BaseServiceItemPublicResource;
@@ -147,9 +140,7 @@ export interface CombinedServiceItemData {
   serviceItem: ServiceItemShape;
 }
 
-export type AutomaticRecordType =
-  | 'AUDIENCE_SEGMENT'
-  | 'DEAL_LIST';
+export type AutomaticRecordType = 'AUDIENCE_SEGMENT';
 
 export type ServiceItemConditionShape =
   | LinearServiceItemConditionResource

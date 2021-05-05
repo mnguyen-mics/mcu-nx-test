@@ -23,7 +23,6 @@ import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { IDisplayNetworkService } from '../../../../../services/DisplayNetworkService';
 import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
-import { IDealListService } from '../../../../../services/Library/DealListService';
 import { AdexInventoryServiceItemPublicResource } from '../../../../../models/servicemanagement/PublicServiceItemResource';
 import { IGeonameService } from '../../../../../services/GeonameService';
 import { ICatalogService } from '../../../../../services/CatalogService';
@@ -53,9 +52,6 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
 
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
-
-  @lazyInject(TYPES.IDealListService)
-  private _dealsListService: IDealListService;
 
   @lazyInject(TYPES.ICreativeService)
   private _creativeService: ICreativeService;
@@ -326,46 +322,6 @@ class AdGroupActionbar extends React.Component<JoinedProps> {
                                 );
                               }
                             });
-                        });
-                    },
-                  },
-                  DEAL_LIST_SELECTION: {
-                    direction: 'CHILD',
-                    getType: () => {
-                      return (
-                        <FormattedMessage
-                          {...resourceHistoryMessages.dealListResourceType}
-                        />
-                      );
-                    },
-                    getName: (id: string) => {
-                      return this._resourceHistoryService
-                        .getLinkedResourceIdInSelection(
-                          organisationId,
-                          'DEAL_LIST_SELECTION',
-                          id,
-                          'DEAL_LIST',
-                        )
-                        .then(dealListId => {
-                          return this._dealsListService
-                            .getDealList(organisationId, dealListId)
-                            .then(res => {
-                              return res.data.name;
-                            });
-                        });
-                    },
-                    goToResource: (id: string) => {
-                      return this._resourceHistoryService
-                        .getLinkedResourceIdInSelection(
-                          organisationId,
-                          'DEAL_LIST_SELECTION',
-                          id,
-                          'DEAL_LIST',
-                        )
-                        .then(dealListId => {
-                          history.push(
-                            `/v2/o/${organisationId}/library/deallist/${dealListId}/edit`,
-                          );
                         });
                     },
                   },

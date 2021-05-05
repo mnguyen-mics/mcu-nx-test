@@ -16,10 +16,6 @@ import {
 } from '../containers/Campaigns/Display/Edit/AdGroup/sections/Location/domain';
 import { GoalSelectionCreateRequest } from '../models/goal/index';
 import {
-  DealsListSelectionCreateRequest,
-  DealsListSelectionResource,
-} from '../models/dealList/dealList';
-import {
   AdExchangeSelectionCreateRequest,
   AdExchangeSelectionResource,
 } from '../models/adexchange/adexchange';
@@ -207,31 +203,6 @@ export interface IDisplayCampaignService {
     id: string,
     body: Partial<LocationSelectionCreateRequest>,
   ) => Promise<DataResponse<LocationSelectionResource>>;
-
-  // DEAL LIST
-  getDealsLists: (
-    campaignId: string,
-    adGroupId: string,
-  ) => Promise<DataListResponse<DealsListSelectionResource>>;
-
-  createDealsList: (
-    campaignId: string,
-    adGroupId: string,
-    body: Partial<DealsListSelectionCreateRequest>,
-  ) => Promise<DataResponse<DealsListSelectionResource>>;
-
-  updateDealsList: (
-    campaignId: string,
-    adGroupId: string,
-    id: string,
-    body: Partial<DealsListSelectionResource>,
-  ) => Promise<DataResponse<DealsListSelectionResource>>;
-
-  deleteDealsList: (
-    campaignId: string,
-    adGroupId: string,
-    id: string,
-  ) => Promise<any>;
 
   // ADEX
   getAdex: (
@@ -605,43 +576,6 @@ export class DisplayCampaignService implements IDisplayCampaignService {
   ): Promise<DataResponse<LocationSelectionResource>> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/locations/${id}`;
     return ApiService.putRequest(endpoint, body);
-  }
-
-  // DEAL LIST
-  getDealsLists(
-    campaignId: string,
-    adGroupId: string,
-  ): Promise<DataListResponse<DealsListSelectionResource>> {
-    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/deal_lists`;
-    return ApiService.getRequest(endpoint);
-  }
-
-  createDealsList(
-    campaignId: string,
-    adGroupId: string,
-    body: Partial<DealsListSelectionCreateRequest>,
-  ): Promise<DataResponse<DealsListSelectionResource>> {
-    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/deal_lists`;
-    return ApiService.postRequest(endpoint, body);
-  }
-
-  updateDealsList(
-    campaignId: string,
-    adGroupId: string,
-    id: string,
-    body: Partial<DealsListSelectionResource>,
-  ): Promise<DataResponse<DealsListSelectionResource>> {
-    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/deal_lists/${id}`;
-    return ApiService.putRequest(endpoint, body);
-  }
-
-  deleteDealsList(
-    campaignId: string,
-    adGroupId: string,
-    id: string,
-  ): Promise<any> {
-    const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/deal_lists/${id}`;
-    return ApiService.deleteRequest(endpoint, {});
   }
 
   // ADEX

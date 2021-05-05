@@ -151,8 +151,6 @@ export class ServiceOfferPageService implements IServiceOfferPageService {
   transformServiceType(type: string | undefined, formatMessage: any) {
     if (type === 'audience_segment') {
       return formatMessage(messages.audience_segmentType);
-    } else if (type === 'inventory_access_deal_list') {
-      return formatMessage(messages.inventory_access_deal_listType);
     } else if (type === 'user_account_compartment') {
       return formatMessage(messages.user_account_compartmentType);
     } else return type;

@@ -14,7 +14,6 @@ import { BasicProps } from 'antd/lib/layout/layout';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 
-import FeatureSwitch from '../../../../../components/FeatureSwitch';
 import messages from '../messages';
 import { AdGroupFormData, EditAdGroupRouteMatchParam } from './domain';
 import { Omit } from '../../../../../utils/Types';
@@ -32,30 +31,19 @@ import LocationTargetingFormSection, {
 import AudienceSegmentFormSection, {
   AudienceSegmentFormSectionProps,
 } from './sections/AudienceSegment/AudienceSegmentFormSection';
-import AudienceCatalogFormSection, {
-  AudienceCatalogFormSectionProps,
-} from './sections/AudienceSegment/AudienceCatalogFormSection';
-import {
-  InventoryCatalogFormSectionProps,
-} from './sections/InventoryCatalog/InventoryCatalogFormSection';
 import * as SessionSelectors from '../../../../../redux/Session/selectors';
 import { McsFormSection } from '../../../../../utils/FormHelper';
 import AdFormSection, { AdFormSectionProps } from './sections/AdFormSection';
 import DeviceFormSection from './sections/DeviceFormSection';
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 
-const Content = Layout.Content  as unknown as React.ComponentClass<
+const Content = (Layout.Content as unknown) as React.ComponentClass<
   BasicProps & { id: string }
 >;
 
 const AudienceSegmentFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
   AudienceSegmentFormSectionProps
->;
-
-const AudienceCatalogFieldArray = FieldArray as new () => GenericFieldArray<
-  Field,
-  AudienceCatalogFormSectionProps
 >;
 
 export const LocationTargetingFieldArray = FieldArray as new () => GenericFieldArray<
@@ -66,11 +54,6 @@ export const LocationTargetingFieldArray = FieldArray as new () => GenericFieldA
 export const AdFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
   AdFormSectionProps
->;
-
-export const InventoryCatalogFieldArray = FieldArray as new () => GenericFieldArray<
-  Field,
-  InventoryCatalogFormSectionProps
 >;
 
 export interface AdGroupFormProps
@@ -126,22 +109,10 @@ class AdGroupForm extends React.Component<Props> {
       id: 'audience',
       title: messages.sectionTitleAudience,
       component: (
-        <FeatureSwitch
-          featureName="campaigns.display.edition.audience_catalog"
-          enabledComponent={
-            <AudienceCatalogFieldArray
-              name="segmentFields"
-              component={AudienceCatalogFormSection}
-              {...genericFieldArrayProps}
-            />
-          }
-          disabledComponent={
-            <AudienceSegmentFieldArray
-              name="segmentFields"
-              component={AudienceSegmentFormSection}
-              {...genericFieldArrayProps}
-            />
-          }
+        <AudienceSegmentFieldArray
+          name="segmentFields"
+          component={AudienceSegmentFormSection}
+          {...genericFieldArrayProps}
         />
       ),
     };
@@ -203,7 +174,7 @@ class AdGroupForm extends React.Component<Props> {
     const sections = this.buildFormSections();
 
     const sideBarProps: SidebarWrapperProps = {
-      items: sections.map(s => ({ sectionId: s.id, title: s.title })),
+      items: sections.map((s) => ({ sectionId: s.id, title: s.title })),
       scrollId: FORM_ID,
     };
 
@@ -248,5 +219,7 @@ export default compose<Props, AdGroupFormProps>(
     form: FORM_ID,
     enableReinitialize: true,
   }),
-  connect((state: MicsReduxState) => ({ hasDatamarts: SessionSelectors.hasDatamarts(state) })),
+  connect((state: MicsReduxState) => ({
+    hasDatamarts: SessionSelectors.hasDatamarts(state),
+  })),
 )(AdGroupForm);

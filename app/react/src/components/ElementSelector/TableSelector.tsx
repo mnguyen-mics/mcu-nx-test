@@ -30,10 +30,6 @@ const messages = defineMessages({
     id: 'components.elementSelector.tableSelector.audienceSegment',
     defaultMessage: 'Audience Segment',
   },
-  dealList: {
-    id: 'components.elementSelector.tableSelector.dealList',
-    defaultMessage: 'Deal List',
-  },
   userAccountCompartment: {
     id: 'components.elementSelector.tableSelector.userAccountCompartment',
     defaultMessage: 'User Account Compartment',
@@ -283,10 +279,6 @@ class TableSelector<T extends SelectableItem> extends React.Component<
               {
                 key: "AUDIENCE_SEGMENT",
                 value: intl.formatMessage(messages.audienceSegment),
-              },
-              {
-                key: "INVENTORY_ACCESS_DEAL_LIST",
-                value: intl.formatMessage(messages.dealList),
               },
               {
                 key: "USER_ACCOUNT_COMPARTMENT",

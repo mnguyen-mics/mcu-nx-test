@@ -1,34 +1,9 @@
 import AssetList from '../containers/Library/Asset/List';
 import Catalog from '../containers/Library/Catalog';
 
-import DealListPage from '../containers/Library/Deal/Edit/DealListPage';
-import DealList from '../containers/Library/Deal/List'
 import { NavigatorRoute, NavigatorDefinition, generateRoutesFromDefinition } from './domain';
 
 export const libraryDefinition: NavigatorDefinition = {
-  // ========================================
-  //            DEAL LIST
-  // ========================================
-  libraryDealList: {
-    path: '/library/deallist',
-    layout: 'main',
-    actionBarComponent: DealList.actionBarComponent,
-    contentComponent: DealList.contentComponent,
-    requiredFeature: 'library-keywords'
-  },
-  libraryDealEdition: {
-    path: '/library/deallist/:dealListId(\\d+)/edit',
-    layout: 'edit',
-    editComponent: DealListPage,
-    requiredFeature: 'library-keywords'
-  },
-  libraryDealCreation: {
-    path: '/library/deallist/create',
-    layout: 'edit',
-    editComponent: DealListPage,
-    requiredFeature: 'library-keywords'
-  },
-
   // ========================================
   //            Assets
   // ========================================
