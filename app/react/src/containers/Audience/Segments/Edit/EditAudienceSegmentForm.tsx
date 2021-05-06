@@ -243,7 +243,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
     if (type === 'USER_QUERY' && queryLanguage === 'JSON_OTQL' && datamart && query) {
       actionBarProps.convert2Otql = () => {
         return audienceBuilder
-          ? this._queryService.convertParameterizedJsonOtql2Otql(datamart.id, query)
+          ? this._queryService.convertJsonOtql2Otql(datamart.id, query, { parameterized: true })
           : this._queryService.convertJsonOtql2Otql(datamart.id, query);
       };
     }

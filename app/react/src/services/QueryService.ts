@@ -19,14 +19,15 @@ export interface IQueryService {
   createQuery: (
     datamartId: string,
     query: Partial<QueryResource>,
+    options?: { parameterized?: boolean },
   ) => Promise<DataResponse<QueryResource>>;
- 
+
   updateQuery: (
     datamartId: string,
     queryId: string,
     query: Partial<QueryResource>,
   ) => Promise<DataResponse<QueryResource>>;
- 
+
   runOTQLQuery: (
     datamartId: string,
     query: string,
@@ -41,7 +42,7 @@ export interface IQueryService {
       content_type?: string;
     },
   ) => Promise<DataResponse<OTQLResult>>;
-  
+
   runGraphQLQuery: (
     datamartId: string,
     query: string,
@@ -49,7 +50,7 @@ export interface IQueryService {
       use_cache?: boolean;
     },
   ) => Promise<DataResponse<GraphQLResult>>;
- 
+
   runJSONOTQLQuery: (
     datamartId: string,
     query: QueryDocument,
@@ -60,6 +61,7 @@ export interface IQueryService {
       offset?: number;
       precision?: QueryPrecisionMode;
       use_cache?: boolean;
+      parameterized?: boolean;
     },
   ) => Promise<DataResponse<OTQLResult>>;
 
@@ -77,6 +79,9 @@ export interface IQueryService {
   convertJsonOtql2Otql: (
     datamartId: string,
     query: QueryResource,
+    options?: {
+      parameterized?: boolean;
+    },
   ) => Promise<DataResponse<QueryResource>>;
 
   getWhereClause: (datamartId: string, queryId: string) => Promise<DataResponse<string>>;
@@ -88,13 +93,16 @@ export class QueryService implements IQueryService {
     const endpoint = `datamarts/${datamartId}/queries/${queryId}`;
     return ApiService.getRequest(endpoint);
   }
+
   createQuery(
     datamartId: string,
     query: Partial<QueryResource>,
+    options: { parameterized: boolean },
   ): Promise<DataResponse<QueryResource>> {
     const endpoint = `datamarts/${datamartId}/queries`;
-    return ApiService.postRequest(endpoint, query);
+    return ApiService.postRequest(endpoint, query, options);
   }
+
   updateQuery(
     datamartId: string,
     queryId: string,
@@ -150,6 +158,7 @@ export class QueryService implements IQueryService {
       offset?: number;
       use_cache?: boolean;
       precision?: QueryPrecisionMode;
+      parameterized?: boolean;
     } = {},
   ): Promise<DataResponse<OTQLResult>> {
     const endpoint = `datamarts/${datamartId}/query_executions/jsonotql`;
@@ -193,8 +202,15 @@ export class QueryService implements IQueryService {
   convertJsonOtql2Otql(
     datamartId: string,
     query: QueryResource,
+    options: {
+      parameterized?: boolean;
+    },
   ): Promise<DataResponse<QueryResource>> {
-    return ApiService.postRequest(`datamarts/${datamartId}/query_translations/to/otql`, query);
+    return ApiService.postRequest(
+      `datamarts/${datamartId}/query_translations/to/otql`,
+      query,
+      options,
+    );
   }
 
   getWhereClause(datamartId: string, queryId: string): Promise<DataResponse<any>> {

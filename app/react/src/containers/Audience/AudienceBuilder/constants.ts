@@ -1,7 +1,7 @@
 import {
   AudienceBuilderFormData,
   AudienceBuilderQueryDocument,
-  NewAudienceBuilderFormData
+  NewAudienceBuilderFormData,
 } from './../../../models/audienceBuilder/AudienceBuilderResource';
 import { FormattedMessage, defineMessages } from 'react-intl';
 

@@ -14,9 +14,7 @@ import Percentage from './Vizualisation/Percentage';
 import CountPieChart from './Vizualisation/CountPieChart';
 import TopInfo from './Vizualisation/TopInfo';
 import MapRadarChart from './Vizualisation/MapRadarChart';
-import {
-  AudienceBuilderQueryDocument,
-} from '../../../models/audienceBuilder/AudienceBuilderResource';
+import { AudienceBuilderQueryDocument } from '../../../models/audienceBuilder/AudienceBuilderResource';
 
 const BASE_FRAMEWORK_HEIGHT = 96;
 const BASE_PADDING = 5;

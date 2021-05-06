@@ -4,9 +4,7 @@ import { Layout, Layouts } from 'react-grid-layout';
 import { ContentHeader } from '@mediarithmics-private/mcs-components-library';
 import { ComponentLayout } from '../../../models/dashboards/dashboards';
 import { AudienceSegmentShape } from '../../../models/audiencesegment';
-import {
-  AudienceBuilderQueryDocument,
-} from '../../../models/audienceBuilder/AudienceBuilderResource';
+import { AudienceBuilderQueryDocument } from '../../../models/audienceBuilder/AudienceBuilderResource';
 
 interface DashboardWrapperProps {
   key?: any;

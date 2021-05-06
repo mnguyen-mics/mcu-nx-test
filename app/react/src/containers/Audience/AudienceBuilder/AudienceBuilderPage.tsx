@@ -209,10 +209,14 @@ class AudienceBuilderPage extends React.Component<Props, State> {
       const { name, technical_name, persisted } = userQueryFormData;
 
       return this._queryService
-        .createQuery(datamartId, {
-          query_language: 'JSON_OTQL',
-          query_text: JSON.stringify(query),
-        })
+        .createQuery(
+          datamartId,
+          {
+            query_language: 'JSON_OTQL',
+            query_text: JSON.stringify(query),
+          },
+          { parameterized: true },
+        )
         .then(res => {
           const userQuerySegment: Partial<UserQuerySegment> = {
             datamart_id: datamartId,

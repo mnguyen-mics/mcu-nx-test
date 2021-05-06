@@ -168,7 +168,7 @@ class MapBarChart extends React.Component<Props, State> {
     chartQueryId: string,
     datamartId: string,
     shouldCompare?: boolean,
-    source?: AudienceSegmentShape | AudienceBuilderQueryDocument
+    source?: AudienceSegmentShape | AudienceBuilderQueryDocument,
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
 

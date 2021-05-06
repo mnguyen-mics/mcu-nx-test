@@ -17,6 +17,7 @@ export interface TimelineSelectorProps {
   datamartId: string;
   organisationId: string;
   stale: boolean;
+  parameterizedQuery?: boolean;
 }
 
 interface State {
@@ -55,7 +56,7 @@ class TimelineSelector extends React.Component<Props, State> {
   }
 
   runQuery = () => {
-    const { organisationId, datamartId, query, stale } = this.props;
+    const { organisationId, datamartId, query, stale, parameterizedQuery } = this.props;
     const queryDocument: QueryDocument = {
       operations: [{ directives: [], selections: [{ name: 'id' }] }],
       from: 'UserPoint',
@@ -67,8 +68,9 @@ class TimelineSelector extends React.Component<Props, State> {
       error: false,
       results: undefined,
     });
+
     this._queryService
-      .runJSONOTQLQuery(datamartId, queryDocument)
+      .runJSONOTQLQuery(datamartId, queryDocument, { parameterized: parameterizedQuery })
       .then(res => {
         if (res.data.rows.length !== 0 && !stale) {
           window.open(

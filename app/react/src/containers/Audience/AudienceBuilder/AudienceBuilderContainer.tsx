@@ -154,7 +154,7 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
       queryDocument: queryDocument,
     });
     this._queryService
-      .runJSONOTQLQuery(audienceBuilder.datamart_id, queryDocument)
+      .runJSONOTQLQuery(audienceBuilder.datamart_id, queryDocument, { parameterized: true })
       .then(queryResult => {
         this.setState({
           queryResult: queryResult.data,

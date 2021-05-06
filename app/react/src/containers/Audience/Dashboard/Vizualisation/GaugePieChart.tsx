@@ -116,10 +116,7 @@ class GaugePieChart extends React.Component<Props, State> {
               isCountResult(otqlResultList[1].rows)
             ) {
               this.setState({
-                queryResult: this.formatData(
-                  otqlResultList[0].rows,
-                  otqlResultList[1].rows,
-                ),
+                queryResult: this.formatData(otqlResultList[0].rows, otqlResultList[1].rows),
                 loading: false,
                 totalNumber1: otqlResultList[1].rows[0].count,
                 totalNumber2: otqlResultList[0].rows[0].count,

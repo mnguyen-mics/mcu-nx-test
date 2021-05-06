@@ -169,9 +169,7 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
   private runQuery = () => {
     const { audienceBuilder, formValues } = this.props;
 
-    const queryDocument = this._audienceBuilderQueryService.buildQueryDocument(
-      formValues,
-    ) ;
+    const queryDocument = this._audienceBuilderQueryService.buildQueryDocument(formValues);
 
     this.setState({
       isQueryRunning: true,

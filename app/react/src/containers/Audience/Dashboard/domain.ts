@@ -75,13 +75,8 @@ export const getFormattedQuery = (
           }
         });
     }
-    return Promise.resolve(
-      formatQuery(dashboardQuery, `segments { id = \"${source.id}\"}`),
-    );
-  } else if (
-    isAudienceBuilderQueryDocument(source) &&
-    source.language_version === 'JSON_OTQL'
-  ) {
+    return Promise.resolve(formatQuery(dashboardQuery, `segments { id = \"${source.id}\"}`));
+  } else if (isAudienceBuilderQueryDocument(source) && source.language_version === 'JSON_OTQL') {
     const queryResource = {
       datamart_id: datamartId,
       query_language: 'JSON_OTQL',
@@ -89,7 +84,7 @@ export const getFormattedQuery = (
     };
 
     return queryService
-      .convertParameterizedJsonOtql2Otql(datamartId, queryResource as QueryResource)
+      .convertJsonOtql2Otql(datamartId, queryResource as QueryResource, { parameterized: true })
       .then(otqlQ => otqlQ.data)
       .then(otqlQ => {
         return Promise.resolve(
@@ -131,7 +126,6 @@ function isAudienceBuilderQueryDocument(
   source?: AudienceSegmentShape | AudienceBuilderQueryDocument,
 ): source is AudienceBuilderQueryDocument {
   return (
-    source !== undefined &&
-    (source as AudienceBuilderQueryDocument).language_version !== undefined
+    source !== undefined && (source as AudienceBuilderQueryDocument).language_version !== undefined
   );
 }

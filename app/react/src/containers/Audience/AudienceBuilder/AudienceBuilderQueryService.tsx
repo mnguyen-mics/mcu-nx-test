@@ -80,8 +80,8 @@ export class AudienceBuilderQueryService implements IAudienceBuilderQueryService
     // TODO Remove `as QueryDocument` hack
     // AudienceBuilderQueryDocument and QueryDocument could inherit from the same abstraction.
     this._queryService
-      .runJSONOTQLQuery(datamartId, queryDocument as QueryDocument)
-      .then((queryResult) => {
+      .runJSONOTQLQuery(datamartId, queryDocument as QueryDocument, { parameterized: true })
+      .then(queryResult => {
         success(queryResult.data);
       })
       .catch(err => {
