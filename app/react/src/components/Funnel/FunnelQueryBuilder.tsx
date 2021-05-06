@@ -15,7 +15,6 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import { updateSearch, isSearchValid } from '../../utils/LocationSearchHelper';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
-import McsMoment from '../../utils/McsMoment';
 import {
   FormattedMessage, InjectedIntlProps, injectIntl,
 } from 'react-intl';
@@ -39,7 +38,6 @@ interface State {
   steps: Step[];
   isLoading: boolean;
   dimensionsList: DimensionsList;
-  dateRange: McsDateRangeValue;
 }
 
 interface FunnelQueryBuilderProps {
@@ -47,6 +45,7 @@ interface FunnelQueryBuilderProps {
   filter: FunnelFilter[];
   parentCallback: (timestampInSec: number) => void;
   liftFunctionsCallback: (executeQueryFunction: () => void) => void;
+  dateRange: McsDateRangeValue;
 }
 
 
@@ -70,13 +69,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
       dimensionsList: {
         dimensions: []
       },
-      isLoading: false,
-      dateRange: {
-        from: new McsMoment(
-          `now-7d`,
-        ),
-        to: new McsMoment('now'),
-      }
+      isLoading: false
     };
   }
 
@@ -127,10 +120,10 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     const {
       location: { search, pathname },
       history,
-      filter
+      filter,
+      dateRange
     } = this.props;
 
-    const { dateRange } = this.state;
     try {
       const identifiedSteps = filter.map((step: Step) => {
         step.filter_clause.filters.forEach(f => {
@@ -260,8 +253,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
   handleDimensionNameChange(dimensionIndex: number, stepId: string, value: string) {
 
     if (value.toLocaleLowerCase() === 'event_type') {
-      const { datamartId } = this.props;
-      const { dateRange } = this.state;
+      const { datamartId, dateRange } = this.props;
       this._datamartUsersAnalyticsService.getAnalytics(datamartId, [], dateRange.from, dateRange.to, ['event_type'])
         .then((reportView: ReportViewResponse) => {
           this.updateStepWithDimensionName(dimensionIndex, stepId, value, reportView.data.report_view.rows.length === 0);
@@ -472,9 +464,9 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
   }
 
   render() {
-    const { steps, dateRange } = this.state;
+    const { steps } = this.state;
+    const { datamartId, intl, dateRange } = this.props;
     const { from, to } = dateRange
-    const { datamartId, intl } = this.props;
 
     return (<div className={"mcs-funnelQueryBuilder"} >
 

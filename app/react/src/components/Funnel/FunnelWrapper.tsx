@@ -7,10 +7,12 @@ import { buildDefaultSearch, parseSearch, isSearchValid } from '../../utils/Loca
 import { FUNNEL_SEARCH_SETTING } from './Constants';
 import { FunnelFilter } from '../../models/datamart/UserActivitiesFunnel';
 import { getDefaultStep } from './Utils';
+import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 
 interface FunnelWrapperProps {
   datamartId: string;
   parentCallback: (executeQueryFunction: () => void, cancelQueryFunction: () => void, isLoading: boolean) => void;
+  dateRange: McsDateRangeValue;
 }
 
 interface State {
@@ -30,7 +32,7 @@ class FunnelWrapper extends React.Component<JoinedProp, State> {
     this.state = { 
       isLoading: false,
       launchExecutionAskedTime: 0,
-      cancelQueryAskedTime: 0
+      cancelQueryAskedTime: 0,
     }
   }
 
@@ -77,7 +79,7 @@ class FunnelWrapper extends React.Component<JoinedProp, State> {
     }
   }
   render() {
-    const { datamartId } = this.props;
+    const { datamartId, dateRange } = this.props;
     const { 
       location: { search }
      } = this.props;
@@ -88,8 +90,8 @@ class FunnelWrapper extends React.Component<JoinedProp, State> {
     filterWithoutGroupBy.forEach(x => delete x.group_by_dimension);
     const { launchExecutionAskedTime, cancelQueryAskedTime } = this.state
     return (
-      <div>
-        <FunnelQueryBuilder datamartId={datamartId} filter={filterWithoutGroupBy} parentCallback={this.funnelQueryBuilderCallbackFunction} liftFunctionsCallback={this.storeAndLiftFunctions}/>
+      <div key={`${dateRange.from.toString().toString()}${dateRange.to.toString().toString()}`}>
+        <FunnelQueryBuilder datamartId={datamartId} filter={filterWithoutGroupBy} parentCallback={this.funnelQueryBuilderCallbackFunction} liftFunctionsCallback={this.storeAndLiftFunctions} dateRange={dateRange}/>
         <Funnel datamartId={datamartId} title={"Funnel demo"} filter={funnelFilter} parentCallback={this.funnelCallbackFunction} launchExecutionAskedTime={launchExecutionAskedTime} cancelQueryAskedTime={cancelQueryAskedTime}/>
       </div>
     )
