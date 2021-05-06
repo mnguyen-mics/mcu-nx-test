@@ -3,24 +3,19 @@ import { withRouter } from 'react-router-dom';
 
 import moment from 'moment';
 import { ContentHeader } from '@mediarithmics-private/mcs-components-library';
-import {
-  AudienceSegmentShape,
-  UserListSegment,
-} from '../../../../models/audiencesegment';
-import {
-  InjectedIntlProps,
-  FormattedMessage,
-  injectIntl,
-  defineMessages,
-} from 'react-intl';
+import { AudienceSegmentShape, UserListSegment } from '../../../../models/audiencesegment';
+import { InjectedIntlProps, FormattedMessage, injectIntl, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { SegmentNameDisplay } from '../../Common/SegmentNameDisplay';
 import { isUserQuerySegment } from '../Edit/domain';
+import { audienceSegmentTypeMessages, userQuerySegmentSubtypeMessages } from './messages';
 import {
-  audienceSegmentTypeMessages,
-  userQuerySegmentSubtypeMessages,
-} from './messages';
-import { ApiOutlined, DatabaseOutlined, RocketOutlined, SolutionOutlined, UsergroupAddOutlined } from '@ant-design/icons';
+  ApiOutlined,
+  DatabaseOutlined,
+  RocketOutlined,
+  SolutionOutlined,
+  UsergroupAddOutlined,
+} from '@ant-design/icons';
 
 const localMessages = defineMessages({
   createdOn: {
@@ -62,31 +57,23 @@ class AudienceSegmentHeader extends React.Component<Props> {
 
     const renderName = () => {
       const edge = 'EDGE';
-      const edgeMessage = (
-        <FormattedMessage {...audienceSegmentTypeMessages[edge]} />
-      );
+      const edgeMessage = <FormattedMessage {...audienceSegmentTypeMessages[edge]} />;
       if (segment) {
         const subtype = (segment as UserListSegment).subtype;
         if (subtype === 'USER_CLIENT' || subtype === 'EDGE') return edgeMessage;
-        return (
-          <FormattedMessage {...audienceSegmentTypeMessages[segment.type]} />
-        );
+        return <FormattedMessage {...audienceSegmentTypeMessages[segment.type]} />;
       }
       return;
     };
 
     const dateCreatedOn =
-      segment && segment.creation_ts
-        ? moment.unix(segment.creation_ts / 1000).toDate()
-        : undefined;
+      segment && segment.creation_ts ? moment.unix(segment.creation_ts / 1000).toDate() : undefined;
 
     const createdOn = dateCreatedOn ? (
-      <span className="mcs-audienceSegmentDashboard_createdOn">{`${formatMessage(
+      <span className='mcs-audienceSegmentDashboard_createdOn'>{`${formatMessage(
         localMessages.createdOn,
       )} ${dateCreatedOn.toLocaleDateString()} - ${dateCreatedOn.toLocaleTimeString()}`}</span>
-    ) : (
-      undefined
-    );
+    ) : undefined;
 
     const segmentType = segment ? (
       <React.Fragment>
@@ -94,10 +81,8 @@ class AudienceSegmentHeader extends React.Component<Props> {
         {isUserQuerySegment(segment) &&
           segment.subtype &&
           segment.subtype === 'AB_TESTING_EXPERIMENT' && (
-            <div className="mcs-audienceSegmentDashboard_subtype">
-              <FormattedMessage
-                {...userQuerySegmentSubtypeMessages[segment.subtype]}
-              />
+            <div className='mcs-audienceSegmentDashboard_subtype'>
+              <FormattedMessage {...userQuerySegmentSubtypeMessages[segment.subtype]} />
             </div>
           )}
         {createdOn}

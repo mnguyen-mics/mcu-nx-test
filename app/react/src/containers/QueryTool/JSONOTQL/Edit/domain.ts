@@ -1,8 +1,5 @@
 import cuid from 'cuid';
-import {
-  ObjectNode,
-  FieldNode,
-} from '../../../../models/datamart/graphdb/QueryDocument';
+import { ObjectNode, FieldNode } from '../../../../models/datamart/graphdb/QueryDocument';
 import { FieldArrayModel } from '../../../../utils/FormHelper';
 import { Omit } from '../../../../utils/Types';
 
@@ -57,7 +54,7 @@ export const FrequencyConverter = {
         enabled: true,
         mode: 'AT_LEAST',
         value: `${objectNode.min_score}`,
-      }
+      };
     }
     return {
       enabled: false,
@@ -70,34 +67,28 @@ export const FrequencyConverter = {
       return {
         min_score: Number(frequency.value),
         score_function: 'SUM',
-      }
+      };
     }
     return {
       min_score: undefined,
       score_function: undefined,
     };
-  }
-}
+  },
+};
 
-export const generateFormDataFromObjectNode = (
-  objectNode: ObjectNode,
-): ObjectNodeFormData => {
+export const generateFormDataFromObjectNode = (objectNode: ObjectNode): ObjectNodeFormData => {
   const { expressions, ...rest } = objectNode;
   return {
     objectNodeForm: rest,
     fieldNodeForm: expressions
       .filter(expr => expr.type === 'FIELD')
       .map(expr => ({ ...expr, key: cuid() })) as FieldNodeFormData[],
-    untouchedExpressions: expressions.filter(
-      expr => expr.type === 'OBJECT',
-    ) as ObjectNode[],
+    untouchedExpressions: expressions.filter(expr => expr.type === 'OBJECT') as ObjectNode[],
     frequency: FrequencyConverter.toFrequency(objectNode),
   };
 };
 
-export const generateObjectNodeFromFormData = (
-  formData: ObjectNodeFormData,
-): ObjectNode => {
+export const generateObjectNodeFromFormData = (formData: ObjectNodeFormData): ObjectNode => {
   const { objectNodeForm, fieldNodeForm, frequency } = formData;
   return {
     ...objectNodeForm,
@@ -118,11 +109,9 @@ export const FORM_ID = 'queryDocumentForm';
 
 export type FieldConditionsFieldModel = FieldArrayModel<FieldNode>;
 
-export const QUERY_DOCUMENT_INITIAL_VALUE: ObjectNodeFormData = generateFormDataFromObjectNode(
-  {
-    boolean_operator: 'OR',
-    field: '',
-    type: 'OBJECT',
-    expressions: [],
-  },
-);
+export const QUERY_DOCUMENT_INITIAL_VALUE: ObjectNodeFormData = generateFormDataFromObjectNode({
+  boolean_operator: 'OR',
+  field: '',
+  type: 'OBJECT',
+  expressions: [],
+});

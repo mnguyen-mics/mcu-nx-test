@@ -38,7 +38,6 @@ interface State {
 }
 
 class MonitoringActionbar extends React.Component<Props, State> {
-
   @lazyInject(TYPES.IDatamartService)
   private _datamartService: IDatamartService;
 
@@ -51,21 +50,15 @@ class MonitoringActionbar extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const {
-      selectedDatamart
-    } = this.props;
+    const { selectedDatamart } = this.props;
 
     this.fetchCompartments(selectedDatamart.id);
   }
 
   componentDidUpdate(previousProps: Props) {
-    const {
-      selectedDatamart
-    } = this.props;
+    const { selectedDatamart } = this.props;
 
-    const {
-      selectedDatamart: previousSelectedDatamart
-    } = previousProps;
+    const { selectedDatamart: previousSelectedDatamart } = previousProps;
 
     if (selectedDatamart !== previousSelectedDatamart) {
       this.fetchCompartments(selectedDatamart.id);
@@ -74,28 +67,29 @@ class MonitoringActionbar extends React.Component<Props, State> {
 
   fetchCompartments = (datamartId: string) => {
     this.setState({
-      isLoading: true
+      isLoading: true,
     });
 
-    this._datamartService.getUserAccountCompartmentDatamartSelectionResources(datamartId)
+    this._datamartService
+      .getUserAccountCompartmentDatamartSelectionResources(datamartId)
       .then(res => {
         this.setState({
           compartments: res.data,
-          isLoading: false
+          isLoading: false,
         });
 
         // console.log(res.data)
         // console.log(this.props)
 
-        const defaultCompartment = res.data.length > 0 ? res.data.filter(c => c.default)[0] : undefined;
+        const defaultCompartment =
+          res.data.length > 0 ? res.data.filter(c => c.default)[0] : undefined;
         if (defaultCompartment) {
           this.setState({
             selectedCompartment: defaultCompartment.compartment_id,
-          })
+          });
         }
       });
-
-  }
+  };
 
   updateCompartment = (compartmentId: string) => {
     this.setState({
@@ -154,7 +148,9 @@ class MonitoringActionbar extends React.Component<Props, State> {
     } = this.state;
 
     const breadcrumbPaths = [
-      <Link key='1' to={`/v2/o/${organisationId}/audience/timeline`}>{formatMessage(messages.monitoring)}</Link>
+      <Link key='1' to={`/v2/o/${organisationId}/audience/timeline`}>
+        {formatMessage(messages.monitoring)}
+      </Link>,
     ];
 
     const onReturnClick = () => handleModal(false);
@@ -167,8 +163,7 @@ class MonitoringActionbar extends React.Component<Props, State> {
 
     if (isLoading || !compartments) {
       return <Loading isFullScreen={true} />;
-    }
-    else {
+    } else {
       const showCompartment =
         this.state.identifierType === 'user_account_id' &&
         selectedDatamart.datafarm !== 'DF_EU_LEGACY' &&
@@ -180,30 +175,28 @@ class MonitoringActionbar extends React.Component<Props, State> {
       const compartmentOptions = this.createCompartmentOptions(compartments);
 
       const addOnAfterContent = showCompartment ? (
-        <span title="compartment id">comp. id</span>
-      ) : (
-          undefined
-        );
+        <span title='compartment id'>comp. id</span>
+      ) : undefined;
 
       return (
         <Actionbar pathItems={breadcrumbPaths}>
           <Modal
-            title="Enter the user identifier you want to lookup"
-            wrapClassName="vertical-center-modal"
+            title='Enter the user identifier you want to lookup'
+            wrapClassName='vertical-center-modal'
             visible={isModalVisible}
             footer={[
-              <Button key="back" size="large" onClick={onReturnClick}>
+              <Button key='back' size='large' onClick={onReturnClick}>
                 Return
-            </Button>,
+              </Button>,
               <Button
                 disabled={identifierId === null || identifierType === null}
-                key="submit"
-                type="primary"
-                size="large"
+                key='submit'
+                type='primary'
+                size='large'
                 onClick={onSubmitClick}
               >
                 Submit
-            </Button>,
+              </Button>,
             ]}
             onCancel={onReturnClick}
           >
@@ -213,14 +206,14 @@ class MonitoringActionbar extends React.Component<Props, State> {
                 defaultValue={identifierType || 'user_point_id'}
                 onChange={this.updateType}
               >
-                <Option value="user_point_id">User Point Id</Option>
-                <Option value="user_account_id">User Account Id</Option>
-                <Option value="user_agent_id">Vector Id</Option>
-                <Option value="email_hash">Email Hash</Option>
+                <Option value='user_point_id'>User Point Id</Option>
+                <Option value='user_account_id'>User Account Id</Option>
+                <Option value='user_agent_id'>Vector Id</Option>
+                <Option value='email_hash'>Email Hash</Option>
               </Select>
               <Input
-                name="value"
-                placeholder="input your value"
+                name='value'
+                placeholder='input your value'
                 style={{ width: inputValueWidth }}
                 onChange={onValueChange}
                 addonAfter={addOnAfterContent}
@@ -236,13 +229,8 @@ class MonitoringActionbar extends React.Component<Props, State> {
               )}
             </InputGroup>
           </Modal>
-          <Button
-            className="mcs-primary"
-            type="primary"
-            onClick={onUserLookupClick}
-          >
-            <McsIcon type="refresh" />{' '}
-            <FormattedMessage {...messages.lookUpUser} />
+          <Button className='mcs-primary' type='primary' onClick={onUserLookupClick}>
+            <McsIcon type='refresh' /> <FormattedMessage {...messages.lookUpUser} />
           </Button>
         </Actionbar>
       );

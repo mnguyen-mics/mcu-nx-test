@@ -80,10 +80,7 @@ class FormSearchObject extends React.Component<Props, FormSearchObjectState> {
     const { fetchSingleMethod, selectProps } = this.props;
     this.setState({ initialFetch: true });
 
-    if (
-      (selectProps && selectProps.mode === 'multiple') ||
-      typeof values === 'string'
-    ) {
+    if ((selectProps && selectProps.mode === 'multiple') || typeof values === 'string') {
       const singleValue = values as string;
 
       if (!singleValue) {
@@ -91,16 +88,14 @@ class FormSearchObject extends React.Component<Props, FormSearchObjectState> {
         return;
       }
 
-      fetchSingleMethod(singleValue).then((res) => {
+      fetchSingleMethod(singleValue).then(res => {
         this.setState({ value: [res], initialFetch: false });
       });
     } else {
       const multipleValues = values as string[];
-      Promise.all(multipleValues.map((i) => fetchSingleMethod(i))).then(
-        (res) => {
-          this.setState({ value: res, initialFetch: false });
-        },
-      );
+      Promise.all(multipleValues.map(i => fetchSingleMethod(i))).then(res => {
+        this.setState({ value: res, initialFetch: false });
+      });
     }
   };
 
@@ -109,7 +104,7 @@ class FormSearchObject extends React.Component<Props, FormSearchObjectState> {
 
     this.setState({ fetching: true });
     fetchListMethod(value)
-      .then((res) => {
+      .then(res => {
         this.setState(
           {
             data: res,
@@ -127,14 +122,14 @@ class FormSearchObject extends React.Component<Props, FormSearchObjectState> {
 
   handleChangeSingleValue = (value: LabeledValue) => {
     const { input, handleValue } = this.props;
-      this.setState({ value: [value], currentValue: undefined }, () => {
-        this.filterData();
-      });
-      input.onChange(value.key);
-      if (handleValue) {
-        handleValue([value], input.name);
-      }
-  }
+    this.setState({ value: [value], currentValue: undefined }, () => {
+      this.filterData();
+    });
+    input.onChange(value.key);
+    if (handleValue) {
+      handleValue([value], input.name);
+    }
+  };
 
   handleChangeMultipleValues = (values: LabeledValue[]) => {
     const { input, handleValue } = this.props;
@@ -147,11 +142,11 @@ class FormSearchObject extends React.Component<Props, FormSearchObjectState> {
         this.filterData();
       },
     );
-    input.onChange(values.map((i) => i.key));
+    input.onChange(values.map(i => i.key));
     if (handleValue) {
       handleValue(values, input.name);
     }
-  }
+  };
 
   handleChange = (value: LabeledValue | LabeledValue[]) => {
     const { isSingleValue } = this.props;
@@ -183,7 +178,7 @@ class FormSearchObject extends React.Component<Props, FormSearchObjectState> {
       };
       const typedValue = getLatestTypedValue();
       const opts = this.state.data
-        .filter((v) => {
+        .filter(v => {
           return v.key?.toLocaleLowerCase().startsWith(typedValue);
         })
         .slice(0, 100);
@@ -206,7 +201,7 @@ class FormSearchObject extends React.Component<Props, FormSearchObjectState> {
       if (isSingleValue) {
         input.onChange(currentValue);
       } else {
-        const finalValue = [...formattedValue.map((i) => i.key)];
+        const finalValue = [...formattedValue.map(i => i.key)];
         if (currentValue) {
           finalValue.push(currentValue);
         }
@@ -226,19 +221,13 @@ class FormSearchObject extends React.Component<Props, FormSearchObjectState> {
       isSingleValue,
     } = this.props;
 
-    const {
-      filteredData
-    } = this.state;
+    const { filteredData } = this.state;
 
-    let validateStatus = 'success' as
-      | 'success'
-      | 'warning'
-      | 'error'
-      | 'validating';
+    let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
     if (meta.touched && meta.invalid) validateStatus = 'error';
     if (meta.touched && meta.warning) validateStatus = 'warning';
 
-    const options = filteredData.map((d) => (
+    const options = filteredData.map(d => (
       <Option key={d.key} value={d.value}>
         {d.label}
       </Option>
@@ -256,18 +245,14 @@ class FormSearchObject extends React.Component<Props, FormSearchObjectState> {
           <Select
             mode={'multiple'}
             labelInValue={true}
-            value={
-              isSingleValue && this.state.value
-                ? this.state.value[0]
-                : this.state.value
-            }
+            value={isSingleValue && this.state.value ? this.state.value[0] : this.state.value}
             placeholder={'Search'}
             defaultActiveFirstOption={true}
             filterOption={false}
             onSearch={loadOnlyOnce ? this.onSearch : this.fetchData}
             onBlur={loadOnlyOnce ? this.onBlur : undefined}
             onChange={this.handleChange}
-            notFoundContent={this.state.fetching ? <Spin size="small" /> : null}
+            notFoundContent={this.state.fetching ? <Spin size='small' /> : null}
             style={{ width: '100%' }}
             {...selectProps}
           >

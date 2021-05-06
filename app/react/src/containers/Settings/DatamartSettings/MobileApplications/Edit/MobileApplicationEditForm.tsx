@@ -28,18 +28,14 @@ import { McsFormSection } from '../../../../../utils/FormHelper';
 import VisitAnalyzerSection, {
   VisitAnalyzerSectionProps,
 } from '../../Common/VisitAnalyzerFormSection';
-import EventRulesSection, {
-  EventRulesSectionProps,
-} from '../../Common/EventRulesSection';
+import EventRulesSection, { EventRulesSectionProps } from '../../Common/EventRulesSection';
 import ProcessingActivitiesFormSection, {
   ProcessingActivitiesFormSectionProps,
 } from '../../Common/ProcessingActivitiesFormSection';
 import { ProcessingSelectionResource } from '../../../../../models/processing';
 import { InjectedFeaturesProps, injectFeatures } from '../../../../Features';
 
-const Content = Layout.Content as unknown as React.ComponentClass<
-  BasicProps & { id: string }
->;
+const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
 
 const ProcessingActivitiesFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
@@ -59,10 +55,7 @@ export interface MobileApplicationEditFormProps
   initialProcessingSelectionsForWarning?: ProcessingSelectionResource[];
 }
 
-type Props = InjectedFormProps<
-  MobileApplicationFormData,
-  MobileApplicationEditFormProps
-> &
+type Props = InjectedFormProps<MobileApplicationFormData, MobileApplicationEditFormProps> &
   MobileApplicationEditFormProps &
   InjectedIntlProps &
   InjectedFeaturesProps &
@@ -116,7 +109,7 @@ class MobileApplicationEditForm extends React.Component<Props> {
         title: messages.sectionProcessingActivitiesTitle,
         component: (
           <ProcessingActivitiesFieldArray
-            name="processingActivities"
+            name='processingActivities'
             component={ProcessingActivitiesFormSection}
             processingsAssociatedType={'CHANNEL'}
             {...propsForProcessingActivities}
@@ -130,7 +123,7 @@ class MobileApplicationEditForm extends React.Component<Props> {
       title: messages.sectionEventRulesTitle,
       component: (
         <EventRulesFieldArray
-          name="eventRulesFields"
+          name='eventRulesFields'
           component={EventRulesSection}
           datamartId={this.props.datamartId}
           {...genericFieldArrayProps}
@@ -143,7 +136,7 @@ class MobileApplicationEditForm extends React.Component<Props> {
       title: messages.sectionVisitAnalyzerTitle,
       component: (
         <VisitAnalyzerFieldArray
-          name="visitAnalyzerFields"
+          name='visitAnalyzerFields'
           component={VisitAnalyzerSection}
           {...genericFieldArrayProps}
         />
@@ -167,20 +160,14 @@ class MobileApplicationEditForm extends React.Component<Props> {
     });
 
     return (
-      <Layout className="edit-layout">
+      <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
           <ScrollspySider {...sideBarProps} />
-          <Form
-            className="edit-layout ant-layout"
-            onSubmit={handleSubmit as any}
-          >
+          <Form className='edit-layout ant-layout' onSubmit={handleSubmit as any}>
             {/* this button enables submit on enter */}
-            <button type="submit" style={{ display: 'none' }} />
-            <Content
-              id={FORM_ID}
-              className="mcs-content-container mcs-form-container"
-            >
+            <button type='submit' style={{ display: 'none' }} />
+            <Content id={FORM_ID} className='mcs-content-container mcs-form-container'>
               {renderedSections}
             </Content>
           </Form>

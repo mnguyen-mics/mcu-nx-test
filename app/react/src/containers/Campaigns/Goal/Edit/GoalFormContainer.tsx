@@ -8,25 +8,18 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import { withRouter, RouteComponentProps } from 'react-router';
-import {
-  DatamartResource,
-  QueryLanguage,
-} from '../../../../models/datamart/DatamartResource';
+import { DatamartResource, QueryLanguage } from '../../../../models/datamart/DatamartResource';
 import { Omit } from '../../../../utils/Types';
 import { EditContentLayout } from '../../../../components/Layout';
 import DatamartSelector from '../../../../containers/Datamart/DatamartSelector';
-import {
-  injectWorkspace,
-  InjectedWorkspaceProps,
-} from '../../../Datamart/index';
+import { injectWorkspace, InjectedWorkspaceProps } from '../../../Datamart/index';
 import { Loading } from '../../../../components';
 import GoalTriggerTypeSelector from '../Common/GoalTriggerTypeSelector';
 import { GoalTriggerType } from '../../../../models/goal/GoalResource';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
 
-export interface GoalFormContainerProps
-  extends Omit<ConfigProps<GoalFormData>, 'form'> {
+export interface GoalFormContainerProps extends Omit<ConfigProps<GoalFormData>, 'form'> {
   save?: (goalFormData: GoalFormData) => void;
   close: () => void;
   breadCrumbPaths: React.ReactNode[];
@@ -100,10 +93,7 @@ class GoalFormContainer extends React.Component<Props, State> {
     });
   };
 
-  handleTriggerTypeSelect = (
-    triggerType: GoalTriggerType,
-    queryLanguage?: QueryLanguage,
-  ) => {
+  handleTriggerTypeSelect = (triggerType: GoalTriggerType, queryLanguage?: QueryLanguage) => {
     this.setState(prevState => ({
       ...prevState,
       showTriggerTypeSelector: false,
@@ -118,12 +108,7 @@ class GoalFormContainer extends React.Component<Props, State> {
   render() {
     const { save, close, onSubmitFail, breadCrumbPaths, onSubmit } = this.props;
 
-    const {
-      selectedDatamart,
-      initialValues,
-      loading,
-      showTriggerTypeSelector,
-    } = this.state;
+    const { selectedDatamart, initialValues, loading, showTriggerTypeSelector } = this.state;
 
     if (loading) return <Loading isFullScreen={true} />;
 
@@ -142,11 +127,7 @@ class GoalFormContainer extends React.Component<Props, State> {
         goToTriggerTypeSelection={resetTriggerType}
       />
     ) : showTriggerTypeSelector && selectedDatamart ? (
-      <EditContentLayout
-        pathItems={breadCrumbPaths}
-        formId={FORM_ID}
-        onClose={close}
-      >
+      <EditContentLayout pathItems={breadCrumbPaths} formId={FORM_ID} onClose={close}>
         (
         <GoalTriggerTypeSelector
           onSelect={this.handleTriggerTypeSelect}

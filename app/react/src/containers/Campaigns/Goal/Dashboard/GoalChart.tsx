@@ -15,16 +15,11 @@ import {
   isSearchValid,
   buildDefaultSearch,
 } from '../../../../utils/LocationSearchHelper';
-import {
-  formatMetric,
-  normalizeReportView,
-} from '../../../../utils/MetricHelper';
+import { formatMetric, normalizeReportView } from '../../../../utils/MetricHelper';
 import McsMoment from '../../../../utils/McsMoment';
 import ReportService from '../../../../services/ReportService';
 import { takeLatest } from '../../../../utils/ApiHelper';
-import injectThemeColors, {
-  InjectedThemeColorsProps,
-} from '../../../Helpers/injectThemeColors';
+import injectThemeColors, { InjectedThemeColorsProps } from '../../../Helpers/injectThemeColors';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
@@ -69,13 +64,9 @@ type JoinedProps = InjectedIntlProps &
 
 type OuterProps = {};
 
-const dailyPerformanceFetch = takeLatest(
-  ReportService.getSingleConversionPerformanceReport,
-);
+const dailyPerformanceFetch = takeLatest(ReportService.getSingleConversionPerformanceReport);
 
-const overallPerformanceFetch = takeLatest(
-  ReportService.getSingleConversionPerformanceReport,
-);
+const overallPerformanceFetch = takeLatest(ReportService.getSingleConversionPerformanceReport);
 
 const initialState: GoalStackedAreaChartState = {
   key1: 'value',
@@ -87,10 +78,7 @@ const initialState: GoalStackedAreaChartState = {
   },
 };
 
-class GoalStackedAreaChart extends React.Component<
-  JoinedProps,
-  GoalStackedAreaChartState
-> {
+class GoalStackedAreaChart extends React.Component<JoinedProps, GoalStackedAreaChartState> {
   constructor(props: JoinedProps) {
     super(props);
 
@@ -123,10 +111,7 @@ class GoalStackedAreaChart extends React.Component<
 
     const {
       match: {
-        params: {
-          organisationId: previousOrganisationId,
-          goalId: previousGoalId,
-        },
+        params: { organisationId: previousOrganisationId, goalId: previousGoalId },
       },
       location: { search: previousSearch },
     } = previousProps;
@@ -283,16 +268,11 @@ class GoalStackedAreaChart extends React.Component<
       {
         name: 'conversions',
         value:
-          !isLoading && overall.length
-            ? formatMetric(overall[0].conversions, '0,0')
-            : undefined,
+          !isLoading && overall.length ? formatMetric(overall[0].conversions, '0,0') : undefined,
       },
       {
         name: 'value',
-        value:
-          !isLoading && overall.length
-            ? formatMetric(overall[0].value, '0,0')
-            : undefined,
+        value: !isLoading && overall.length ? formatMetric(overall[0].value, '0,0') : undefined,
       },
       {
         name: 'price',
@@ -349,13 +329,13 @@ class GoalStackedAreaChart extends React.Component<
 
     const chartArea = (
       <div>
-        <Row className="mcs-chart-header">
+        <Row className='mcs-chart-header'>
           <Col span={12}>
             {items.length === 0 && isLoading ? (
               <div />
             ) : (
               <LegendChartWithModal
-                identifier="chartLegend"
+                identifier='chartLegend'
                 options={legendOptions}
                 legends={legends}
                 onLegendChange={onLegendChange}
@@ -364,10 +344,7 @@ class GoalStackedAreaChart extends React.Component<
           </Col>
         </Row>
         {items.length === 0 && !isLoading ? (
-          <EmptyChart
-            title={formatMessage(messages.noStatAvailable)}
-            icon="warning"
-          />
+          <EmptyChart title={formatMessage(messages.noStatAvailable)} icon='warning' />
         ) : (
           <Row gutter={20}>
             <Col span={24}>{this.renderStackedAreaCharts()}</Col>

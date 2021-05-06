@@ -1,12 +1,7 @@
 import * as React from 'react';
 import { Button, Modal, Menu } from 'antd';
 import { Link, withRouter } from 'react-router-dom';
-import {
-  FormattedMessage,
-  InjectedIntlProps,
-  defineMessages,
-  injectIntl,
-} from 'react-intl';
+import { FormattedMessage, InjectedIntlProps, defineMessages, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { Dropdown } from '../../../../components/PopupContainers';
 import { Actionbar, McsIcon, Slide } from '@mediarithmics-private/mcs-components-library';
@@ -79,7 +74,9 @@ class DisplayAdsActionBar extends React.Component<JoinedProps> {
     const hasSelected = !!(selectedRowKeys && selectedRowKeys.length > 0);
 
     const breadcrumbPaths = [
-      <Link key='1' to={`/v2/o/${organisationId}/creatives/display`}>{intl.formatMessage(messagesMap.displayAds)}</Link>,
+      <Link key='1' to={`/v2/o/${organisationId}/creatives/display`}>
+        {intl.formatMessage(messagesMap.displayAds)}
+      </Link>,
     ];
 
     const buildAuditMenu = () => {
@@ -96,10 +93,10 @@ class DisplayAdsActionBar extends React.Component<JoinedProps> {
 
       return (
         <Menu onClick={onClick}>
-          <Menu.Item key="start">
+          <Menu.Item key='start'>
             <FormattedMessage {...messagesMap.startAll} />
           </Menu.Item>
-          <Menu.Item key="reset">
+          <Menu.Item key='reset'>
             <FormattedMessage {...messagesMap.resetAll} />
           </Menu.Item>
         </Menu>
@@ -109,8 +106,8 @@ class DisplayAdsActionBar extends React.Component<JoinedProps> {
     const buildAuditActionAdsElement = () => {
       return (
         <Dropdown overlay={buildAuditMenu()} trigger={['click']}>
-          <Button className="button-glow" style={{ marginRight: '20px' }}>
-            <McsIcon type="chevron" />
+          <Button className='button-glow' style={{ marginRight: '20px' }}>
+            <McsIcon type='chevron' />
             <FormattedMessage {...messagesMap.auditAction} />
           </Button>
         </Dropdown>
@@ -120,11 +117,11 @@ class DisplayAdsActionBar extends React.Component<JoinedProps> {
     return (
       <Actionbar pathItems={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/creatives/display/create`}>
-          <Button className="mcs-primary" type="primary">
-            <McsIcon type="plus" />{' '}
+          <Button className='mcs-primary' type='primary'>
+            <McsIcon type='plus' />{' '}
             <FormattedMessage
-              id="creatives.display.list.actionbar.newDisplatAd"
-              defaultMessage="New Display Ad"
+              id='creatives.display.list.actionbar.newDisplatAd'
+              defaultMessage='New Display Ad'
             />
           </Button>
         </Link>
@@ -133,12 +130,12 @@ class DisplayAdsActionBar extends React.Component<JoinedProps> {
           toShow={hasSelected}
           horizontal={true}
           content={
-            <Button
-              onClick={archiveCreatives}
-              className="button-slider button-glow"
-            >
-              <McsIcon type="delete" />
-              <FormattedMessage id="creatives.display.list.actionbar.archive" defaultMessage="Archive" />
+            <Button onClick={archiveCreatives} className='button-slider button-glow'>
+              <McsIcon type='delete' />
+              <FormattedMessage
+                id='creatives.display.list.actionbar.archive'
+                defaultMessage='Archive'
+              />
             </Button>
           }
         />
@@ -151,16 +148,10 @@ class DisplayAdsActionBar extends React.Component<JoinedProps> {
             onCancel={handleCancel}
             confirmLoading={isArchiving}
           >
-            <p>
-              {intl.formatMessage(messagesMap.archiveCreativesModalMessage)}
-            </p>
+            <p>{intl.formatMessage(messagesMap.archiveCreativesModalMessage)}</p>
           </Modal>
         ) : null}
-        <Slide
-          toShow={hasSelected}
-          horizontal={true}
-          content={buildAuditActionAdsElement()}
-        />
+        <Slide toShow={hasSelected} horizontal={true} content={buildAuditActionAdsElement()} />
       </Actionbar>
     );
   }

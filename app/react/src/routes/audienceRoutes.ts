@@ -1,16 +1,9 @@
-import {
-  AudienceSegmentsTable,
-  SegmentsActionbar,
-} from '../containers/Audience/Segments/List';
+import { AudienceSegmentsTable, SegmentsActionbar } from '../containers/Audience/Segments/List';
 import { EditAudienceSegmentPage } from '../containers/Audience/Segments/Edit';
 import { AudienceSegmentPage } from '../containers/Audience/Segments/Dashboard';
 import AudienceFeedPage from '../containers/Audience/Segments/Edit/AudienceFeedForm/AudienceFeedPage';
 import TimelinePage from '../containers/Audience/Timeline/TimelinePage';
-import {
-  NavigatorRoute,
-  NavigatorDefinition,
-  generateRoutesFromDefinition,
-} from './domain';
+import { NavigatorRoute, NavigatorDefinition, generateRoutesFromDefinition } from './domain';
 import { AudienceBuilderPage } from '../containers/Audience/AudienceBuilder';
 import HomePage from '../containers/Audience/Home/Dashboard/HomePage';
 import AudienceFeedsActionBar from '../containers/Audience/Feeds/List/AudienceFeedsActionBar';
@@ -22,8 +15,8 @@ import { SegmentBuilderPage } from '../containers/Audience/SegmentBuilder';
 
 export const audienceDefinition: NavigatorDefinition = {
   audienceHome: {
-    path: "/audience/home",
-    layout: "main",
+    path: '/audience/home',
+    layout: 'main',
     contentComponent: HomePage,
     requiredFeature: 'audience-dashboards',
     requireDatamart: true,
@@ -131,6 +124,4 @@ export const audienceDefinition: NavigatorDefinition = {
   },
 };
 
-export const audienceRoutes: NavigatorRoute[] = generateRoutesFromDefinition(
-  audienceDefinition,
-);
+export const audienceRoutes: NavigatorRoute[] = generateRoutesFromDefinition(audienceDefinition);

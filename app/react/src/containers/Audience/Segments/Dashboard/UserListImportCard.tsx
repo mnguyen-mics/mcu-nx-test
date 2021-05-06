@@ -81,10 +81,7 @@ class UserListImportCard extends React.Component<Props, State> {
   }
 
   refreshData = () => {
-    const {
-      datamartId,
-      segmentId
-    } = this.props;
+    const { datamartId, segmentId } = this.props;
     this.setState({ isLoading: true });
     this._audienceSegmentService
       .findUserListImportExecutionsBySegment(datamartId, segmentId)
@@ -102,7 +99,9 @@ class UserListImportCard extends React.Component<Props, State> {
   };
 
   render() {
-    const {intl: {formatMessage}} = this.props;
+    const {
+      intl: { formatMessage },
+    } = this.props;
     const { isLoading } = this.state;
 
     const dataColumns: Array<DataColumnDefinition<ImportExecutionsData>> = [
@@ -149,11 +148,7 @@ class UserListImportCard extends React.Component<Props, State> {
     });
 
     return (
-      <ImportJobTableView
-        columns={dataColumns}
-        dataSource={executionsData}
-        loading={isLoading}
-      />
+      <ImportJobTableView columns={dataColumns} dataSource={executionsData} loading={isLoading} />
     );
   }
 }

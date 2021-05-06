@@ -17,16 +17,10 @@ import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../components/Layout/FormLayoutActionbar';
 import { Omit } from '../../../../utils/Types';
-import ScrollspySider, {
-  SidebarWrapperProps,
-} from '../../../../components/Layout/ScrollspySider';
-import withValidators, {
-  ValidatorProps,
-} from '../../../../components/Form/withValidators';
+import ScrollspySider, { SidebarWrapperProps } from '../../../../components/Layout/ScrollspySider';
+import withValidators, { ValidatorProps } from '../../../../components/Form/withValidators';
 import messages from './messages';
-import withNormalizer, {
-  NormalizerProps,
-} from '../../../../components/Form/withNormalizer';
+import withNormalizer, { NormalizerProps } from '../../../../components/Form/withNormalizer';
 import { AudienceSegmentFormData } from './domain';
 import {
   FeedType,
@@ -36,10 +30,7 @@ import {
 import GeneralFormSection from './Sections/GeneralFormSection';
 import { UserListSection } from './Sections/list';
 import { McsFormSection } from '../../../../utils/FormHelper';
-import {
-  QueryLanguage,
-  DatamartResource,
-} from '../../../../models/datamart/DatamartResource';
+import { QueryLanguage, DatamartResource } from '../../../../models/datamart/DatamartResource';
 import { FormSection, FieldCtor } from '../../../../components/Form';
 import FormCodeSnippet from '../../../../components/Form/FormCodeSnippet';
 import OTQLInputEditor, { OTQLInputEditorProps } from './Sections/query/OTQL';
@@ -61,14 +52,10 @@ import { AudienceBuilderResource } from '../../../../models/audienceBuilder/Audi
 
 export const FORM_ID = 'audienceSegmentForm';
 
-const Content = Layout.Content
+const Content = Layout.Content;
 
-const FormOTQL: FieldCtor<OTQLInputEditorProps> = Field as new () => GenericField<
-  OTQLInputEditorProps
->;
-const FormJSONQL: FieldCtor<JSONQLInputEditorProps> = Field as new () => GenericField<
-  JSONQLInputEditorProps
->;
+const FormOTQL: FieldCtor<OTQLInputEditorProps> = Field as new () => GenericField<OTQLInputEditorProps>;
+const FormJSONQL: FieldCtor<JSONQLInputEditorProps> = Field as new () => GenericField<JSONQLInputEditorProps>;
 
 const ProcessingActivitiesFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
@@ -127,23 +114,20 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       initialValues,
       segmentType,
       audienceSegmentFormData,
-      audienceBuilder
+      audienceBuilder,
     } = this.props;
     const type = segmentType
       ? segmentType
       : initialValues && initialValues.audienceSegment
       ? initialValues.audienceSegment.type
       : undefined;
-    const datamartId = datamart
-      ? datamart.id
-      : audienceSegmentFormData.audienceSegment.datamart_id;
+    const datamartId = datamart ? datamart.id : audienceSegmentFormData.audienceSegment.datamart_id;
 
     switch (type) {
       case 'USER_LIST':
         return initialValues &&
           initialValues.audienceSegment &&
-          (initialValues.audienceSegment as UserListSegment).feed_type ===
-            'TAG' ? (
+          (initialValues.audienceSegment as UserListSegment).feed_type === 'TAG' ? (
           this.generateUserQueryTemplate(
             <FormJSONQL
               name={'query.query_text'}
@@ -151,23 +135,18 @@ class EditAudienceSegmentForm extends React.Component<Props> {
               inputProps={{
                 datamartId: datamartId!,
                 context: 'GOALS',
-                isEdge:
-                  (initialValues.audienceSegment as UserListSegment).subtype ===
-                  'EDGE',
+                isEdge: (initialValues.audienceSegment as UserListSegment).subtype === 'EDGE',
                 queryHasChanged: this.hasQueryChanged(),
               }}
             />,
           )
         ) : (
-          <UserListSection
-            segmentId={audienceSegmentFormData.audienceSegment.id as string}
-          />
+          <UserListSection segmentId={audienceSegmentFormData.audienceSegment.id as string} />
         );
       case 'USER_PIXEL':
-        return datamart &&
-          audienceSegmentFormData.audienceSegment.technical_name ? (
+        return datamart && audienceSegmentFormData.audienceSegment.technical_name ? (
           <FormCodeSnippet
-            language="html"
+            language='html'
             codeSnippet={`<img style="display:none" src="https://events.mediarithmics.com/v1/user_lists/pixel?$dat_token=${
               datamart.token
             }&$segtn=${encodeURIComponent(
@@ -177,10 +156,8 @@ class EditAudienceSegmentForm extends React.Component<Props> {
           />
         ) : (
           <Alert
-            message={intl.formatMessage(
-              messages.configureAudienceSegmentTechnicalName,
-            )}
-            type="warning"
+            message={intl.formatMessage(messages.configureAudienceSegmentTechnicalName)}
+            type='warning'
           />
         );
       case 'USER_QUERY':
@@ -190,14 +167,10 @@ class EditAudienceSegmentForm extends React.Component<Props> {
               name={'query.query_text'}
               component={OTQLInputEditor}
               formItemProps={{
-                label: intl.formatMessage(
-                  messages.audienceSegmentSectionQueryTitle,
-                ),
+                label: intl.formatMessage(messages.audienceSegmentSectionQueryTitle),
               }}
               helpToolTipProps={{
-                title: intl.formatMessage(
-                  messages.audienceSegmentCreationUserQueryFieldHelper,
-                ),
+                title: intl.formatMessage(messages.audienceSegmentCreationUserQueryFieldHelper),
               }}
               datamartId={datamartId!}
             />,
@@ -211,17 +184,13 @@ class EditAudienceSegmentForm extends React.Component<Props> {
                 datamartId: datamartId!,
                 context: 'GOALS',
                 queryHasChanged: this.hasQueryChanged(),
-                segmentEditor: (initialValues.audienceSegment as UserQuerySegment)
-                  .segment_editor,
+                segmentEditor: (initialValues.audienceSegment as UserQuerySegment).segment_editor,
                 audienceBuilder: audienceBuilder,
               }}
             />,
           )
         ) : (
-          <Alert
-            message={intl.formatMessage(messages.noMoreSupported)}
-            type="warning"
-          />
+          <Alert message={intl.formatMessage(messages.noMoreSupported)} type='warning' />
         );
       default:
         return <div>Not Supported</div>;
@@ -235,9 +204,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       (formValues.query &&
         initialValues.query &&
         formValues.query.query_text !== initialValues.query.query_text) ||
-      (formValues.query &&
-        !!formValues.query.query_text &&
-        !initialValues.query)
+      (formValues.query && !!formValues.query.query_text && !initialValues.query)
     );
   };
 
@@ -272,12 +239,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
     };
 
     const query = audienceSegmentFormData.query;
-    if (
-      type === 'USER_QUERY' &&
-      queryLanguage === 'JSON_OTQL' &&
-      datamart &&
-      query
-    ) {
+    if (type === 'USER_QUERY' && queryLanguage === 'JSON_OTQL' && datamart && query) {
       actionBarProps.convert2Otql = () => {
         return this._queryService.convertJsonOtql2Otql(datamart.id, query);
       };
@@ -309,8 +271,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       };
 
       const isEdge =
-        isPartialUserListSegment(audienceSegment) &&
-        audienceSegment.subtype === 'EDGE';
+        isPartialUserListSegment(audienceSegment) && audienceSegment.subtype === 'EDGE';
 
       const processingAssociatedType = isEdge ? 'SEGMENT-EDGE' : 'SEGMENT';
 
@@ -319,11 +280,9 @@ class EditAudienceSegmentForm extends React.Component<Props> {
         title: messages.sectionProcessingActivitiesTitle,
         component: (
           <ProcessingActivitiesFieldArray
-            name="processingActivities"
+            name='processingActivities'
             component={ProcessingActivitiesFormSection}
-            initialProcessingSelectionsForWarning={
-              initialProcessingSelectionsForWarning
-            }
+            initialProcessingSelectionsForWarning={initialProcessingSelectionsForWarning}
             processingsAssociatedType={processingAssociatedType}
             {...genericFieldArrayProps}
           />
@@ -336,14 +295,12 @@ class EditAudienceSegmentForm extends React.Component<Props> {
         (type === 'USER_LIST' &&
           initialValues &&
           initialValues.audienceSegment &&
-          (initialValues.audienceSegment as UserListSegment).feed_type ===
-            'TAG')) &&
+          (initialValues.audienceSegment as UserListSegment).feed_type === 'TAG')) &&
       !(
         type === 'USER_LIST' &&
         initialValues &&
         initialValues.audienceSegment &&
-        (initialValues.audienceSegment as UserListSegment).feed_type ===
-          'SCENARIO'
+        (initialValues.audienceSegment as UserListSegment).feed_type === 'SCENARIO'
       )
     ) {
       sections.push({
@@ -352,9 +309,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
           type === 'USER_PIXEL'
             ? messages.audienceSegmentSiderMenuProperties
             : type === 'USER_QUERY' ||
-              (type === 'USER_LIST' &&
-                initialValues &&
-                initialValues.feedType === 'TAG')
+              (type === 'USER_LIST' && initialValues && initialValues.feedType === 'TAG')
             ? messages.audienceSegmentSectionQueryTitle
             : messages.audienceSegmentSiderMenuImport,
         component: this.renderPropertiesField(),
@@ -387,20 +342,14 @@ class EditAudienceSegmentForm extends React.Component<Props> {
     });
 
     return (
-      <Layout className="edit-layout">
+      <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
           <ScrollspySider {...sideBarProps} />
-          <Form
-            className="edit-layout ant-layout"
-            onSubmit={handleSubmit as any}
-          >
+          <Form className='edit-layout ant-layout' onSubmit={handleSubmit as any}>
             {/* this button enables submit on enter */}
-            <button type="submit" style={{ display: 'none' }} />
-            <Content
-              id={FORM_ID}
-              className="mcs-content-container mcs-form-container"
-            >
+            <button type='submit' style={{ display: 'none' }} />
+            <Content id={FORM_ID} className='mcs-content-container mcs-form-container'>
               {renderedSections}
             </Content>
           </Form>

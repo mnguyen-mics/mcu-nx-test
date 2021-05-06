@@ -149,16 +149,14 @@ class FormDateRangePicker extends React.Component<JoinedProps> {
     // if (meta.touched && meta.warning) validateStatus = 'warning';
 
     const startDateValue =
-      input.value[startDateFieldName] === undefined ||
-      input.value[startDateFieldName] === null
+      input.value[startDateFieldName] === undefined || input.value[startDateFieldName] === null
         ? undefined
         : unixTimestamp
         ? moment(input.value[startDateFieldName])
         : input.value[startDateFieldName];
 
     const endDateValue =
-      input.value[endDateFieldName] === undefined ||
-      input.value[endDateFieldName] === null
+      input.value[endDateFieldName] === undefined || input.value[endDateFieldName] === null
         ? undefined
         : unixTimestamp
         ? moment(input.value[endDateFieldName])
@@ -172,8 +170,8 @@ class FormDateRangePicker extends React.Component<JoinedProps> {
         small={small}
         {...formItemProps}
       >
-        <div className="range-picker">
-          <div className="date-picker">
+        <div className='range-picker'>
+          <div className='date-picker'>
             <DatePicker
               allowClear={false}
               {...startDatePickerProps}
@@ -185,10 +183,10 @@ class FormDateRangePicker extends React.Component<JoinedProps> {
               size={'middle'}
             />
           </div>
-          <div className="range-picker-separator">
-            <p className="form-split">-</p>
+          <div className='range-picker-separator'>
+            <p className='form-split'>-</p>
           </div>
-          <div className="date-picker">
+          <div className='date-picker'>
             <DatePicker
               allowClear={false}
               {...endDatePickerProps}

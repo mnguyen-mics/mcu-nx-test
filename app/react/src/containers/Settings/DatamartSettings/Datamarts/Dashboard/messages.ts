@@ -13,6 +13,5 @@ export default defineMessages({
   edit: {
     id: 'settings.datamart.edit',
     defaultMessage: 'Edit',
-  }
-})
-;
+  },
+});

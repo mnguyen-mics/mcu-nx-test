@@ -72,9 +72,7 @@ class TimelineSelector extends React.Component<Props, State> {
       .then(res => {
         if (res.data.rows.length !== 0 && !stale) {
           window.open(
-            `${
-              window.location.origin
-            }/#/v2/o/${organisationId}/audience/timeline/user_point_id/${
+            `${window.location.origin}/#/v2/o/${organisationId}/audience/timeline/user_point_id/${
               res.data.rows[Math.floor(Math.random() * res.data.rows.length)]
             }?datamartId=${datamartId}`,
           );
@@ -101,7 +99,7 @@ class TimelineSelector extends React.Component<Props, State> {
     const onClick = () => this.runQuery();
     return (
       <div
-        className="m-t-5 timeline-selector"
+        className='m-t-5 timeline-selector'
         style={{
           float: 'left',
           padding: '0 8px',
@@ -111,25 +109,17 @@ class TimelineSelector extends React.Component<Props, State> {
         {this.state.loading ? (
           <Spin size={'small'} />
         ) : (
-          <Button onClick={onClick}>
-            {formatMessage(messages.buttonLabel)}
-          </Button>
+          <Button onClick={onClick}>{formatMessage(messages.buttonLabel)}</Button>
         )}
         {this.state.error && !this.state.loading && (
-          <div className="error">{formatMessage(messages.errorLabel)}</div>
+          <div className='error'>{formatMessage(messages.errorLabel)}</div>
         )}
-        {this.state.results &&
-          this.state.results.length === 0 &&
-          !this.state.loading && (
-            <div className="error">
-              {formatMessage(messages.noResultsLabel)}
-            </div>
-          )}
+        {this.state.results && this.state.results.length === 0 && !this.state.loading && (
+          <div className='error'>{formatMessage(messages.noResultsLabel)}</div>
+        )}
       </div>
     );
   }
 }
 
-export default compose<Props, TimelineSelectorProps>(injectIntl)(
-  TimelineSelector,
-);
+export default compose<Props, TimelineSelectorProps>(injectIntl)(TimelineSelector);

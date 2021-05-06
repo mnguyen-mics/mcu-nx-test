@@ -27,8 +27,7 @@ interface RecommenderRouteParam {
   recommenderId?: string;
 }
 
-type JoinedProps = RouteComponentProps<RecommenderRouteParam> &
-  InjectedIntlProps;
+type JoinedProps = RouteComponentProps<RecommenderRouteParam> & InjectedIntlProps;
 
 class EditRecommenderPage extends React.Component<JoinedProps> {
   @lazyInject(TYPES.IRecommenderService)
@@ -45,10 +44,7 @@ class EditRecommenderPage extends React.Component<JoinedProps> {
     history.push(attributionModelUrl);
   };
 
-  onSaveOrCreatePluginInstance = (
-    plugin: Recommender,
-    properties: PluginProperty[],
-  ) => {
+  onSaveOrCreatePluginInstance = (plugin: Recommender, properties: PluginProperty[]) => {
     const {
       match: {
         params: { organisationId },
@@ -85,13 +81,13 @@ class EditRecommenderPage extends React.Component<JoinedProps> {
     } = this.props;
 
     const breadcrumbPaths = (recommender?: Recommender) => [
-      <Link key="1" to={`/v2/o/${organisationId}/settings/campaigns/recommenders`}>
+      <Link key='1' to={`/v2/o/${organisationId}/settings/campaigns/recommenders`}>
         {formatMessage(messages.listTitle)}
       </Link>,
       recommender
         ? formatMessage(messages.recommenderEditBreadcrumb, {
-          name: recommender.name,
-        })
+            name: recommender.name,
+          })
         : formatMessage(messages.recommenderNewBreadcrumb),
     ];
 
@@ -111,7 +107,4 @@ class EditRecommenderPage extends React.Component<JoinedProps> {
   }
 }
 
-export default compose<JoinedProps, {}>(
-  injectIntl,
-  withRouter,
-)(EditRecommenderPage);
+export default compose<JoinedProps, {}>(injectIntl, withRouter)(EditRecommenderPage);

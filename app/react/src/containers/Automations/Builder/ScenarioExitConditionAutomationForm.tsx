@@ -3,19 +3,10 @@ import { compose } from 'recompose';
 import { Layout, message } from 'antd';
 import { Form } from '@ant-design/compatible';
 import { change, reduxForm, getFormValues } from 'redux-form';
-import {
-  injectIntl,
-  InjectedIntlProps,
-  defineMessages,
-  FormattedMessage,
-} from 'react-intl';
+import { injectIntl, InjectedIntlProps, defineMessages, FormattedMessage } from 'react-intl';
 import { FormSection, withValidators } from '../../../components/Form';
 import { ValidatorProps } from '../../../components/Form/withValidators';
-import {
-  WizardValidObjectTypeField,
-  getValidObjectType,
-  getEventsNames,
-} from './domain';
+import { WizardValidObjectTypeField, getValidObjectType, getEventsNames } from './domain';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
 import { connect, DispatchProp } from 'react-redux';
 import {
@@ -68,10 +59,7 @@ type Props = ScenarioExitConditionAutomationFormProps &
   MapStateToProps &
   InjectedNotificationProps;
 
-class ScenarioExitConditionAutomationForm extends React.Component<
-  Props,
-  State
-> {
+class ScenarioExitConditionAutomationForm extends React.Component<Props, State> {
   @lazyInject(TYPES.IQueryService)
   private _queryService: IQueryService;
 
@@ -83,22 +71,14 @@ class ScenarioExitConditionAutomationForm extends React.Component<
 
     let events: string[] = [];
     if (props.exitCondition.formData.query_text) {
-      const query = JSON.parse(
-        props.exitCondition.formData.query_text,
-      ) as QueryDocument;
-      const where: ObjectNode | undefined = query.where
-        ? (query.where as ObjectNode)
-        : undefined;
+      const query = JSON.parse(props.exitCondition.formData.query_text) as QueryDocument;
+      const where: ObjectNode | undefined = query.where ? (query.where as ObjectNode) : undefined;
       const expressions: FieldNode | undefined = where
         ? (where.expressions[0] as FieldNode)
         : undefined;
-      events =
-        expressions && expressions.comparison
-          ? expressions.comparison.values
-          : [];
+      events = expressions && expressions.comparison ? expressions.comparison.values : [];
 
-      if (this.props.dispatch)
-        this.props.dispatch(change(FORM_ID, 'events', events));
+      if (this.props.dispatch) this.props.dispatch(change(FORM_ID, 'events', events));
     }
 
     this.state = {
@@ -179,7 +159,7 @@ class ScenarioExitConditionAutomationForm extends React.Component<
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      pathItems: [ formatMessage(messages.title) ],
+      pathItems: [formatMessage(messages.title)],
       message: messages.save,
       onClose: close,
       disabled: disabled || isLoading,
@@ -193,7 +173,7 @@ class ScenarioExitConditionAutomationForm extends React.Component<
     };
 
     return (
-      <Layout className="mcs-reactToEventAutomation edit-layout">
+      <Layout className='mcs-reactToEventAutomation edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-content'}>
           {isLoading ? (
@@ -201,22 +181,20 @@ class ScenarioExitConditionAutomationForm extends React.Component<
           ) : (
             <Form
               id={FORM_ID}
-              className="edit-layout mcs-content-container mcs-form-container"
+              className='edit-layout mcs-content-container mcs-form-container'
               layout={'vertical'}
             >
-              <div className="mcs-exitConditionAutomation_description">
+              <div className='mcs-exitConditionAutomation_description'>
                 <FormSection title={messages.descriptionTitle} />
-                <div className="mcs-exitConditionAutomation_descriptionSubtitle">
+                <div className='mcs-exitConditionAutomation_descriptionSubtitle'>
                   <FormattedMessage {...messages.descriptionSubtitle} />
                 </div>
-                <div className="mcs-exitConditionAutomation_descriptionSubtitle">
-                  <FormattedMessage
-                    {...messages.descriptionSubtitleExplanation}
-                  />
+                <div className='mcs-exitConditionAutomation_descriptionSubtitle'>
+                  <FormattedMessage {...messages.descriptionSubtitleExplanation} />
                 </div>
               </div>
               <FormSection title={messages.configurationTitle} />
-              <div className="mcs-reactToEventAutomation_chooseEventNameContainer">
+              <div className='mcs-reactToEventAutomation_chooseEventNameContainer'>
                 <FormSearchObjectField
                   name={'events'}
                   component={FormSearchObject}
@@ -281,8 +259,7 @@ const messages = defineMessages({
       'When receiving one of these events, the user will instantly leave the automation.',
   },
   schemaNotSuitableForAction: {
-    id:
-      'automation.builder.node.scenarioExitConditionForm.schemaNotSuitableForAction',
+    id: 'automation.builder.node.scenarioExitConditionForm.schemaNotSuitableForAction',
     defaultMessage: 'Schema is not suitable for this action.',
   },
   descriptionTitle: {
@@ -290,14 +267,12 @@ const messages = defineMessages({
     defaultMessage: 'Description',
   },
   descriptionSubtitle: {
-    id:
-      'automation.builder.node.scenarioExitConditionForm.description.subtitle',
+    id: 'automation.builder.node.scenarioExitConditionForm.description.subtitle',
     defaultMessage:
       'If you add an exit condition, users will leave the automation as soon as this condition is met.',
   },
   descriptionSubtitleExplanation: {
-    id:
-      'automation.builder.node.scenarioExitConditionForm.description.subtitle.explanation',
+    id: 'automation.builder.node.scenarioExitConditionForm.description.subtitle.explanation',
     defaultMessage: `For instance, if you plan to send an email to all users who've added an item to their cart but have not completed a transaction,
     you could set a "transaction confirmed" event as an exit condition. This way, if a "transaction confirmed" event is received,
     the users will leave the automation and not receive an email.`,

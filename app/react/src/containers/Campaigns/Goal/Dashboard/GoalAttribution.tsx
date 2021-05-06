@@ -13,10 +13,7 @@ import {
   updateSearch,
   DateSearchSettings,
 } from '../../../../utils/LocationSearchHelper';
-import {
-  normalizeReportView,
-  formatMetric,
-} from '../../../../utils/MetricHelper';
+import { normalizeReportView, formatMetric } from '../../../../utils/MetricHelper';
 import GoalAttributionTable from './GoalAttributionTable';
 import { Row, Select } from 'antd';
 import messages from './messages';
@@ -79,11 +76,7 @@ export interface SourceStatData {
 
 interface Filters extends DateSearchSettings {}
 
-const ReportType: Array<'SOURCE' | 'CAMPAIGN' | 'CREATIVES'> = [
-  'SOURCE',
-  'CAMPAIGN',
-  'CREATIVES',
-];
+const ReportType: Array<'SOURCE' | 'CAMPAIGN' | 'CREATIVES'> = ['SOURCE', 'CAMPAIGN', 'CREATIVES'];
 
 // export type SelectedView = 'SOURCE' | 'CAMPAIGN' | 'CREATIVES';
 export type SelectedView = CampaignStatData | CreativeStatData | SourceStatData;
@@ -105,14 +98,9 @@ interface Router {
   goalId: string;
 }
 
-type JoinedProps = GoalAttributionProps &
-  RouteComponentProps<Router> &
-  InjectedIntlProps;
+type JoinedProps = GoalAttributionProps & RouteComponentProps<Router> & InjectedIntlProps;
 
-class GoalAttribution extends React.Component<
-  JoinedProps,
-  GoalAttributionState
-> {
+class GoalAttribution extends React.Component<JoinedProps, GoalAttributionState> {
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -151,13 +139,7 @@ class GoalAttribution extends React.Component<
       const filter = parseSearch<Filters>(search, DATE_SEARCH_SETTINGS);
 
       this.fetchOverall(organisationId, goalId, attributionModelId, filter);
-      this.fetchDetailled(
-        organisationId,
-        goalId,
-        attributionModelId,
-        filter,
-        ReportType[0],
-      );
+      this.fetchDetailled(organisationId, goalId, attributionModelId, filter, ReportType[0]);
     }
   }
 
@@ -173,10 +155,7 @@ class GoalAttribution extends React.Component<
 
     const {
       match: {
-        params: {
-          organisationId: previousOrganisationId,
-          goalId: previousGoalId,
-        },
+        params: { organisationId: previousOrganisationId, goalId: previousGoalId },
       },
       location: { search: previousSearch },
       attributionModelId: previousAttributionModelId,
@@ -251,26 +230,11 @@ class GoalAttribution extends React.Component<
       },
       () => {
         if (viewType === 'SOURCE') {
-          this.fetchChannel(
-            organisationId,
-            goalId,
-            attributionModelId,
-            filters,
-          );
+          this.fetchChannel(organisationId, goalId, attributionModelId, filters);
         } else if (viewType === 'CAMPAIGN') {
-          this.fetchCampaign(
-            organisationId,
-            goalId,
-            attributionModelId,
-            filters,
-          );
+          this.fetchCampaign(organisationId, goalId, attributionModelId, filters);
         } else if (viewType === 'CREATIVES') {
-          this.fetchCreative(
-            organisationId,
-            goalId,
-            attributionModelId,
-            filters,
-          );
+          this.fetchCreative(organisationId, goalId, attributionModelId, filters);
         }
       },
     );
@@ -437,10 +401,7 @@ class GoalAttribution extends React.Component<
       0,
     );
 
-    const InteractionDuration = Math.max(
-      postViewInteractionDuration,
-      postClickInteractionDuration,
-    );
+    const InteractionDuration = Math.max(postViewInteractionDuration, postClickInteractionDuration);
 
     const metrics = [
       {
@@ -472,8 +433,7 @@ class GoalAttribution extends React.Component<
                   '0,0',
                 ),
                 duration:
-                  postViewInteractionDuration &&
-                  !isNaN(postViewInteractionDuration)
+                  postViewInteractionDuration && !isNaN(postViewInteractionDuration)
                     ? formatSecondsIntoDhmsFormat(postViewInteractionDuration)
                     : '--',
               })
@@ -495,8 +455,7 @@ class GoalAttribution extends React.Component<
                   '0,0',
                 ),
                 duration:
-                  postClickInteractionDuration &&
-                  !isNaN(postClickInteractionDuration)
+                  postClickInteractionDuration && !isNaN(postClickInteractionDuration)
                     ? formatSecondsIntoDhmsFormat(postClickInteractionDuration)
                     : '--',
               })
@@ -515,11 +474,8 @@ class GoalAttribution extends React.Component<
 
     return (
       <div>
-        <Row className="m-t-10 m-b-10">
-          <MetricsHighlight
-            metrics={metrics}
-            isLoading={this.state.overall.isLoading}
-          />
+        <Row className='m-t-10 m-b-10'>
+          <MetricsHighlight metrics={metrics} isLoading={this.state.overall.isLoading} />
         </Row>
         <Row>
           <div
@@ -531,13 +487,9 @@ class GoalAttribution extends React.Component<
               marginTop: '10px',
             }}
           >
-            <div className="float-right">{this.renderDatePicker()}</div>
-            <div className="float-right m-r-5">
-              <Select
-                defaultValue={'SOURCE'}
-                style={{ width: 120 }}
-                onChange={onChange}
-              >
+            <div className='float-right'>{this.renderDatePicker()}</div>
+            <div className='float-right m-r-5'>
+              <Select defaultValue={'SOURCE'} style={{ width: 120 }} onChange={onChange}>
                 {ReportType.map(item => (
                   <Option value={item} key={item}>
                     {formatMessage(messages[item])}
@@ -559,7 +511,4 @@ class GoalAttribution extends React.Component<
   }
 }
 
-export default compose<JoinedProps, GoalAttributionProps>(
-  withRouter,
-  injectIntl,
-)(GoalAttribution);
+export default compose<JoinedProps, GoalAttributionProps>(withRouter, injectIntl)(GoalAttribution);

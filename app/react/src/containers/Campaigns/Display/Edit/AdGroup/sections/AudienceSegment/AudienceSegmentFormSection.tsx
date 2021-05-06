@@ -7,26 +7,19 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
 
 import { SegmentFieldModel, EditAdGroupRouteMatchParam } from '../../domain';
-import {
-  FormSection,
-  FormSwitchField,
-} from '../../../../../../../components/Form';
+import { FormSection, FormSwitchField } from '../../../../../../../components/Form';
 import AudienceSegmentSelector, {
   AudienceSegmentSelectorProps,
 } from '../../../../../Common/AudienceSegmentSelector';
-import SharedAudienceSegmentSelector, { SharedAudienceSegmentSelectorProps } from '../../../../../Common/SharedAudienceSegmentSelector';
-import {
-  RelatedRecords,
-  RecordElement,
-} from '../../../../../../../components/RelatedRecord';
+import SharedAudienceSegmentSelector, {
+  SharedAudienceSegmentSelectorProps,
+} from '../../../../../Common/SharedAudienceSegmentSelector';
+import { RelatedRecords, RecordElement } from '../../../../../../../components/RelatedRecord';
 import { AudienceSegmentResource } from '../../../../../../../models/audiencesegment';
 import ReportService from '../../../../../../../services/ReportService';
 import { Index } from '../../../../../../../utils';
 import { normalizeArrayOfObject } from '../../../../../../../utils/Normalizer';
-import {
-  normalizeReportView,
-  formatMetric,
-} from '../../../../../../../utils/MetricHelper';
+import { normalizeReportView, formatMetric } from '../../../../../../../utils/MetricHelper';
 import messages from '../../../messages';
 import McsMoment from '../../../../../../../utils/McsMoment';
 import FormSwitch from '../../../../../../../components/Form/FormSwitch';
@@ -58,7 +51,11 @@ class AudienceSegmentFormSection extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { match: { params: { organisationId } } } = this.props;
+    const {
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
     this.setState({ fetchingReport: true });
     ReportService.getAudienceSegmentReport(
       organisationId,
@@ -79,12 +76,9 @@ class AudienceSegmentFormSection extends React.Component<Props, State> {
 
   updateSegments = (segments: AudienceSegmentResource[]) => {
     const { fields, formChange } = this.props;
-    const fieldSegmentIds = fields
-      .getAll()
-      .map(field => field.model.audience_segment_id);
+    const fieldSegmentIds = fields.getAll().map(field => field.model.audience_segment_id);
 
-    const keptSegments = fields
-      .getAll()
+    const keptSegments = fields.getAll();
     const addedSegments = segments
       .filter(s => !fieldSegmentIds.includes(s.id))
       .map(segment => ({
@@ -112,14 +106,11 @@ class AudienceSegmentFormSection extends React.Component<Props, State> {
       close: this.props.closeNextDrawer,
       save: this.updateServices,
     };
-    if (type === 'first_party' ) {
+    if (type === 'first_party') {
       const options = {
         additionalProps: audienceSegmentSelectorProps,
       };
-      this.props.openNextDrawer<AudienceSegmentSelectorProps>(
-        AudienceSegmentSelector,
-        options,
-      );
+      this.props.openNextDrawer<AudienceSegmentSelectorProps>(AudienceSegmentSelector, options);
     }
     if (type === 'second_party') {
       const options = {
@@ -130,17 +121,13 @@ class AudienceSegmentFormSection extends React.Component<Props, State> {
         options,
       );
     }
-   
   };
 
   updateServices = (segments: AudienceSegmentServiceItemPublicResource[]) => {
     const { fields, formChange } = this.props;
-    const fieldSegmentIds = fields
-      .getAll()
-      .map(field => field.model.audience_segment_id);
+    const fieldSegmentIds = fields.getAll().map(field => field.model.audience_segment_id);
 
-    const keptSegments = fields
-      .getAll()
+    const keptSegments = fields.getAll();
     const addedSegments = segments
       .filter(s => !fieldSegmentIds.includes(s.segment_id))
       .map(segment => ({
@@ -166,7 +153,7 @@ class AudienceSegmentFormSection extends React.Component<Props, State> {
       const segmentId = segmentField.model.audience_segment_id;
 
       if (fetchingReport) {
-        return <Spin size="small" />;
+        return <Spin size='small' />;
       }
 
       const hasStats = reportBySegmentId && reportBySegmentId[segmentId];
@@ -175,17 +162,12 @@ class AudienceSegmentFormSection extends React.Component<Props, State> {
 
       return (
         <span>
-          <span className="m-r-20">
+          <span className='m-r-20'>
             Cookies:{' '}
-            {hasStats.desktop_cookie_ids
-              ? formatMetric(hasStats.desktop_cookie_ids, '0,00')
-              : '-'}
+            {hasStats.desktop_cookie_ids ? formatMetric(hasStats.desktop_cookie_ids, '0,00') : '-'}
           </span>
           <span>
-            User Points:{' '}
-            {hasStats.user_points
-              ? formatMetric(hasStats.user_points, '0,00')
-              : '-'}
+            User Points: {hasStats.user_points ? formatMetric(hasStats.user_points, '0,00') : '-'}
           </span>
         </span>
       );
@@ -201,7 +183,7 @@ class AudienceSegmentFormSection extends React.Component<Props, State> {
               name={`${name}.model.exclude`}
               component={FormSwitch}
               invert={true}
-              className="mcs-table-switch m-r-10"
+              className='mcs-table-switch m-r-10'
             />
             {record.model.exclude ? 'Exclude' : 'Target'}
           </span>
@@ -213,7 +195,7 @@ class AudienceSegmentFormSection extends React.Component<Props, State> {
       return (
         <RecordElement
           key={segmentField.key}
-          recordIconType="users"
+          recordIconType='users'
           record={segmentField}
           title={getName}
           additionalData={getStats}
@@ -225,7 +207,9 @@ class AudienceSegmentFormSection extends React.Component<Props, State> {
   };
 
   render() {
-    const { intl: { formatMessage } } = this.props;
+    const {
+      intl: { formatMessage },
+    } = this.props;
 
     return (
       <div>

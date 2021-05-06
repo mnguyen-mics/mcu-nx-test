@@ -90,7 +90,7 @@ class DisplayCampaign extends React.Component<JoinedProps> {
     } = this.props;
 
     return (
-      <div className="ant-layout">
+      <div className='ant-layout'>
         <DisplayCampaignActionbar
           campaign={campaign}
           updateCampaign={updateCampaign}
@@ -101,20 +101,20 @@ class DisplayCampaign extends React.Component<JoinedProps> {
             dashboardPerformance.media.isLoading
           }
         />
-        <div className="ant-layout">
-          <Content className="mcs-content-container">
+        <div className='ant-layout'>
+          <Content className='mcs-content-container'>
             <CampaignDashboardHeader campaign={campaign} />
             {campaign && campaign.model_version === 'V2014_06' ? (
               <Alert
-                className="m-b-20"
+                className='m-b-20'
                 message={formatMessage(messages.editionNotAllowed)}
-                type="warning"
+                type='warning'
               />
             ) : null}
             <Labels
               labellableId={campaignId}
               organisationId={organisationId}
-              labellableType="DISPLAY_CAMPAIGN"
+              labellableType='DISPLAY_CAMPAIGN'
             />
             <DisplayCampaignDashboard
               isFetchingCampaignStat={dashboardPerformance.campaign.isLoading}

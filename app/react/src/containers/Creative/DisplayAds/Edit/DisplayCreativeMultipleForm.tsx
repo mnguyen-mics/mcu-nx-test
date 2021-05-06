@@ -1,24 +1,29 @@
 import * as React from 'react';
-import { reduxForm, InjectedFormProps, ConfigProps,  FieldArray, GenericFieldArray, Field  } from 'redux-form';
+import {
+  reduxForm,
+  InjectedFormProps,
+  ConfigProps,
+  FieldArray,
+  GenericFieldArray,
+  Field,
+} from 'redux-form';
 import { compose } from 'recompose';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 
-import {
-  DisplayCreativeFormData,
-  DISPLAY_CREATIVE_FORM,
-  isExistingCreative,
-} from './domain';
+import { DisplayCreativeFormData, DISPLAY_CREATIVE_FORM, isExistingCreative } from './domain';
 import messages from './messages';
 import {
   AuditFormSection,
   PropertiesFormSection,
   PreviewFormSection,
-  GeneralMultipleSection
+  GeneralMultipleSection,
 } from './Sections';
 import { Omit } from '../../../../utils/Types';
 import { McsFormSection } from '../../../../utils/FormHelper';
 import DisplayCreativeFormLayout from './DisplayCreativeFormLayout';
-import CustomMultipleImageLoader, { CustomMultipleImageLoaderProps } from './CustomLoaders/CustomMultipleImageLoader';
+import CustomMultipleImageLoader, {
+  CustomMultipleImageLoaderProps,
+} from './CustomLoaders/CustomMultipleImageLoader';
 import NotSupportedPlaceholder from './CustomLoaders/NotSupportedPlaceholder';
 
 const ImageLoaderFieldArray = FieldArray as new () => GenericFieldArray<
@@ -35,14 +40,13 @@ export interface DisplayCreativeFormProps
 }
 
 type Props = DisplayCreativeFormProps &
-  InjectedFormProps<DisplayCreativeFormData, DisplayCreativeFormProps> & InjectedIntlProps;
+  InjectedFormProps<DisplayCreativeFormData, DisplayCreativeFormProps> &
+  InjectedIntlProps;
 
 class DisplayCreativeForm extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
   }
-
-  
 
   buildFormSections = () => {
     const { initialValues, change } = this.props;
@@ -71,9 +75,7 @@ class DisplayCreativeForm extends React.Component<Props> {
       });
     }
 
-
     if (initialValues.pluginLayout === undefined) {
-
       rightFormSections.push({
         id: 'properties',
         title: messages.creativeSectionPropertyTitle,
@@ -84,16 +86,21 @@ class DisplayCreativeForm extends React.Component<Props> {
         rightFormSections.push({
           id: section.title,
           title: section.title,
-          component: <PropertiesFormSection sectionTitle={section.title} small={true}/>,
+          component: <PropertiesFormSection sectionTitle={section.title} small={true} />,
         });
-      })
+      });
     }
 
     if (existingCreative) {
       leftFormSections.push({
         id: 'preview',
         title: messages.creativeSectionPreviewTitle,
-        component: initialValues.rendererPlugin && initialValues.rendererPlugin.archived ? <NotSupportedPlaceholder /> : <PreviewFormSection />,
+        component:
+          initialValues.rendererPlugin && initialValues.rendererPlugin.archived ? (
+            <NotSupportedPlaceholder />
+          ) : (
+            <PreviewFormSection />
+          ),
       });
     }
 
@@ -101,32 +108,29 @@ class DisplayCreativeForm extends React.Component<Props> {
       leftFormSections.push({
         id: 'loader',
         title: messages.creativeSectionPreviewTitle,
-        component: <ImageLoaderFieldArray
-          name='repeatFields'
-          component={CustomMultipleImageLoader}
-          inputProps={{
-            multiple: true
-          }}
-          {...genericFieldArrayProps}
-        />,
+        component: (
+          <ImageLoaderFieldArray
+            name='repeatFields'
+            component={CustomMultipleImageLoader}
+            inputProps={{
+              multiple: true,
+            }}
+            {...genericFieldArrayProps}
+          />
+        ),
       });
     }
 
     return {
       leftPanel: leftFormSections,
-      rightPanel: rightFormSections
+      rightPanel: rightFormSections,
     };
-  }; 
+  };
 
   render() {
-    const {
-      actionBarButtonText,
-      breadCrumbPaths,
-      pristine,
-      close
-    } = this.props;
+    const { actionBarButtonText, breadCrumbPaths, pristine, close } = this.props;
 
-    const sections = this.buildFormSections()
+    const sections = this.buildFormSections();
     return (
       <DisplayCreativeFormLayout
         actionBarButtonText={actionBarButtonText}
@@ -145,5 +149,5 @@ export default compose<Props, DisplayCreativeFormProps>(
     form: DISPLAY_CREATIVE_FORM,
     enableReinitialize: true,
   }),
-  injectIntl
+  injectIntl,
 )(DisplayCreativeForm);

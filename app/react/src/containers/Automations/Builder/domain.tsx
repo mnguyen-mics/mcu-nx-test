@@ -47,14 +47,15 @@ import { IRuntimeSchemaService } from '../../../services/RuntimeSchemaService';
 import { reducePromises } from '../../../utils/PromiseHelper';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
-import { BranchesOutlined, ClockCircleOutlined, FlagOutlined, ForkOutlined } from '@ant-design/icons';
+import {
+  BranchesOutlined,
+  ClockCircleOutlined,
+  FlagOutlined,
+  ForkOutlined,
+} from '@ant-design/icons';
 
 export interface TreeNodeOperations {
-  addNode: (
-    parentNodeId: string,
-    childNodeId: string,
-    node: ScenarioNodeShape,
-  ) => void;
+  addNode: (parentNodeId: string, childNodeId: string, node: ScenarioNodeShape) => void;
   deleteNode: (nodeId: string) => void;
   updateNode: (
     node: ScenarioNodeShape,
@@ -74,11 +75,7 @@ export class DropNode {
   name: string;
   outNode: StorylineNodeModel;
   parentNode: StorylineNodeModel;
-  constructor(
-    id: string,
-    outNode: StorylineNodeModel,
-    parentNode: StorylineNodeModel,
-  ) {
+  constructor(id: string, outNode: StorylineNodeModel, parentNode: StorylineNodeModel) {
     this.id = id;
     this.parentNode = parentNode;
     this.outNode = outNode;
@@ -93,9 +90,7 @@ export const findLastAddedNode = (
   automationData: StorylineNodeModel,
 ): StorylineNodeModel | undefined => {
   if (automationData.out_edges.length > 0) {
-    const findNode = (
-      nodeModel: StorylineNodeModel,
-    ): StorylineNodeModel | undefined => {
+    const findNode = (nodeModel: StorylineNodeModel): StorylineNodeModel | undefined => {
       if (nodeModel.out_edges.length === 0) {
         return undefined;
       } else {
@@ -103,11 +98,7 @@ export const findLastAddedNode = (
           if (nodeModel.node.last_added_node) return nodeModel;
         }
         return nodeModel.out_edges.reduce((previous, current) => {
-          if (
-            previous &&
-            isScenarioNodeShape(previous.node) &&
-            previous.node.last_added_node
-          )
+          if (previous && isScenarioNodeShape(previous.node) && previous.node.last_added_node)
             return previous;
           return findNode(current);
         }, undefined as StorylineNodeModel | undefined);
@@ -117,15 +108,12 @@ export const findLastAddedNode = (
     return findNode(automationData);
   }
 
-  return isScenarioNodeShape(automationData.node) &&
-    automationData.node.last_added_node
+  return isScenarioNodeShape(automationData.node) && automationData.node.last_added_node
     ? automationData
     : undefined;
 };
 
-export const cleanLastAdded = (
-  automationData: StorylineNodeModel,
-): StorylineNodeModel => {
+export const cleanLastAdded = (automationData: StorylineNodeModel): StorylineNodeModel => {
   const outEdges: StorylineNodeModel[] = automationData.out_edges.map(child => {
     if (child.out_edges.length === 0) {
       return child;
@@ -160,11 +148,7 @@ export class AddNodeOperation implements NodeOperation {
   childNodeId: string;
   node: ScenarioNodeShape;
 
-  constructor(
-    parentNodeId: string,
-    childNodeId: string,
-    node: ScenarioNodeShape,
-  ) {
+  constructor(parentNodeId: string, childNodeId: string, node: ScenarioNodeShape) {
     this.childNodeId = childNodeId;
     this.parentNodeId = parentNodeId;
     this.node = node;
@@ -184,66 +168,64 @@ export class AddNodeOperation implements NodeOperation {
     parentNodeId: string,
     childNodeId: string,
   ): StorylineNodeModel {
-    const outEdges: StorylineNodeModel[] = automationData.out_edges.map(
-      (child, index) => {
-        if (child.node.id === childNodeId) {
-          const inEdgeId: string = generateFakeId();
-          const childNode: StorylineNodeModel = {
-            node: child.node,
-            in_edge: {
-              id: inEdgeId,
-              source_id: this.node.id,
-              target_id: child.node.id,
-              handler: 'OUT',
-              scenario_id: child.in_edge!.scenario_id,
-            },
-            out_edges: child.out_edges,
-          };
+    const outEdges: StorylineNodeModel[] = automationData.out_edges.map((child, index) => {
+      if (child.node.id === childNodeId) {
+        const inEdgeId: string = generateFakeId();
+        const childNode: StorylineNodeModel = {
+          node: child.node,
+          in_edge: {
+            id: inEdgeId,
+            source_id: this.node.id,
+            target_id: child.node.id,
+            handler: 'OUT',
+            scenario_id: child.in_edge!.scenario_id,
+          },
+          out_edges: child.out_edges,
+        };
 
-          let newOutEdges: StorylineNodeModel[] = [];
+        let newOutEdges: StorylineNodeModel[] = [];
 
-          if (isAbnNode(this.node)) {
-            const emptyNodes = this.generateNewEmptyOutEdges(
-              child,
-              this.node.formData ? this.node.formData.branch_number : 2,
-            );
-            newOutEdges = [childNode].concat(emptyNodes);
-          } else if (isIfNode(this.node)) {
-            const emptyNodes = this.generateNewEmptyOutEdges(child, 2);
-            newOutEdges = [childNode].concat(emptyNodes);
+        if (isAbnNode(this.node)) {
+          const emptyNodes = this.generateNewEmptyOutEdges(
+            child,
+            this.node.formData ? this.node.formData.branch_number : 2,
+          );
+          newOutEdges = [childNode].concat(emptyNodes);
+        } else if (isIfNode(this.node)) {
+          const emptyNodes = this.generateNewEmptyOutEdges(child, 2);
+          newOutEdges = [childNode].concat(emptyNodes);
 
-            const firstEdge = newOutEdges[0];
-            const secondEdge = newOutEdges[1];
+          const firstEdge = newOutEdges[0];
+          const secondEdge = newOutEdges[1];
 
-            if (firstEdge.in_edge !== undefined) {
-              firstEdge.in_edge.handler = 'IF_CONDITION_TRUE';
-            }
-            if (secondEdge.in_edge !== undefined) {
-              secondEdge.in_edge.handler = 'IF_CONDITION_FALSE';
-            }
-          } else {
-            newOutEdges = [childNode];
+          if (firstEdge.in_edge !== undefined) {
+            firstEdge.in_edge.handler = 'IF_CONDITION_TRUE';
           }
-          const newNode: StorylineNodeModel = {
-            node: {
-              ...this.node,
-              last_added_node: true,
-            },
-            in_edge: {
-              id: generateFakeId(),
-              source_id: parentNodeId,
-              target_id: this.node.id,
-              handler: this.getInEdgeHandler(child),
-              scenario_id: '',
-            },
-            out_edges: newOutEdges,
-          };
-          return newNode;
+          if (secondEdge.in_edge !== undefined) {
+            secondEdge.in_edge.handler = 'IF_CONDITION_FALSE';
+          }
         } else {
-          return this.iterateData(child, parentNodeId, childNodeId);
+          newOutEdges = [childNode];
         }
-      },
-    );
+        const newNode: StorylineNodeModel = {
+          node: {
+            ...this.node,
+            last_added_node: true,
+          },
+          in_edge: {
+            id: generateFakeId(),
+            source_id: parentNodeId,
+            target_id: this.node.id,
+            handler: this.getInEdgeHandler(child),
+            scenario_id: '',
+          },
+          out_edges: newOutEdges,
+        };
+        return newNode;
+      } else {
+        return this.iterateData(child, parentNodeId, childNodeId);
+      }
+    });
 
     return {
       node: automationData.node,
@@ -305,10 +287,7 @@ export class DeleteNodeOperation implements NodeOperation {
   execute(automationData: StorylineNodeModel): StorylineNodeModel {
     return cleanLastAdded(
       this.iterateData(
-        this.removeSegmentFromDeletedAddToSegmentNode(
-          this.idNodeToBeDeleted,
-          automationData,
-        ),
+        this.removeSegmentFromDeletedAddToSegmentNode(this.idNodeToBeDeleted, automationData),
         this.idNodeToBeDeleted,
       ),
     );
@@ -319,49 +298,43 @@ export class DeleteNodeOperation implements NodeOperation {
     idNodeToBeDeleted: string,
     parentData?: StorylineNodeModel,
   ): StorylineNodeModel {
-    const outEdges: StorylineNodeModel[] = automationData.out_edges.map(
-      (storyLineModel, index) => {
-        if (
-          storyLineModel.node.id === idNodeToBeDeleted &&
-          (isAbnNode(storyLineModel.node) || isIfNode(storyLineModel.node))
-        ) {
-          const newNode: StorylineNodeModel = {
-            node: {
-              id: storyLineModel.node.id,
-              scenario_id: '',
-              type: 'END_NODE',
-            },
-            in_edge: storyLineModel.in_edge,
-            out_edges: [],
-          };
-          return newNode;
-        } else if (
-          storyLineModel.node.id === idNodeToBeDeleted &&
-          !isAbnNode(storyLineModel.node) &&
-          !isIfNode(storyLineModel.node)
-        ) {
-          const inEdge = storyLineModel.in_edge;
-          const storylineNodeModel: StorylineNodeModel = {
-            node: storyLineModel.out_edges[0].node,
-            in_edge: inEdge
-              ? {
-                  ...inEdge,
-                  source_id: automationData.node.id,
-                  target_id: inEdge.target_id,
-                }
-              : undefined,
-            out_edges: storyLineModel.out_edges[0].out_edges,
-          };
-          return storylineNodeModel;
-        } else {
-          return this.iterateData(
-            storyLineModel,
-            idNodeToBeDeleted,
-            automationData,
-          );
-        }
-      },
-    );
+    const outEdges: StorylineNodeModel[] = automationData.out_edges.map((storyLineModel, index) => {
+      if (
+        storyLineModel.node.id === idNodeToBeDeleted &&
+        (isAbnNode(storyLineModel.node) || isIfNode(storyLineModel.node))
+      ) {
+        const newNode: StorylineNodeModel = {
+          node: {
+            id: storyLineModel.node.id,
+            scenario_id: '',
+            type: 'END_NODE',
+          },
+          in_edge: storyLineModel.in_edge,
+          out_edges: [],
+        };
+        return newNode;
+      } else if (
+        storyLineModel.node.id === idNodeToBeDeleted &&
+        !isAbnNode(storyLineModel.node) &&
+        !isIfNode(storyLineModel.node)
+      ) {
+        const inEdge = storyLineModel.in_edge;
+        const storylineNodeModel: StorylineNodeModel = {
+          node: storyLineModel.out_edges[0].node,
+          in_edge: inEdge
+            ? {
+                ...inEdge,
+                source_id: automationData.node.id,
+                target_id: inEdge.target_id,
+              }
+            : undefined,
+          out_edges: storyLineModel.out_edges[0].out_edges,
+        };
+        return storylineNodeModel;
+      } else {
+        return this.iterateData(storyLineModel, idNodeToBeDeleted, automationData);
+      }
+    });
 
     return {
       node: automationData.node,
@@ -463,13 +436,11 @@ export class UpdateNodeOperation implements NodeOperation {
           ...storylineNode.node,
           ...(this.node as EmailCampaignNodeResource),
           formData: this.formData as EmailCampaignAutomationFormData,
-          initialFormData: this
-            .initialFormData as EmailCampaignAutomationFormData,
+          initialFormData: this.initialFormData as EmailCampaignAutomationFormData,
         };
         break;
       case 'ADD_TO_SEGMENT_NODE':
-        const addToSegmentFormData = this
-          .formData as AddToSegmentAutomationFormData;
+        const addToSegmentFormData = this.formData as AddToSegmentAutomationFormData;
 
         // generate fake id if id null
         const audienceSegmentId = addToSegmentFormData.audienceSegmentId
@@ -485,19 +456,16 @@ export class UpdateNodeOperation implements NodeOperation {
           ...storylineNode.node,
           ...(this.node as AddToSegmentNodeResource),
           formData: addToSegmentFormDataUpdated,
-          initialFormData: this
-            .initialFormData as AddToSegmentAutomationFormData,
+          initialFormData: this.initialFormData as AddToSegmentAutomationFormData,
         };
         break;
       case 'DELETE_FROM_SEGMENT_NODE':
-        const deleteFromSegmentFormData = this
-          .formData as DeleteFromSegmentAutomationFormData;
+        const deleteFromSegmentFormData = this.formData as DeleteFromSegmentAutomationFormData;
         nodeBody = {
           ...storylineNode.node,
           ...(this.node as DeleteFromSegmentNodeResource),
           formData: deleteFromSegmentFormData,
-          initialFormData: this
-            .initialFormData as DeleteFromSegmentAutomationFormData,
+          initialFormData: this.initialFormData as DeleteFromSegmentAutomationFormData,
         };
         break;
       case 'ABN_NODE':
@@ -515,8 +483,7 @@ export class UpdateNodeOperation implements NodeOperation {
           ...storylineNode.node,
           ...(this.node as OnSegmentEntryInputNodeResource),
           formData: this.formData as OnSegmentEntryInputAutomationFormData,
-          initialFormData: this
-            .initialFormData as OnSegmentEntryInputAutomationFormData,
+          initialFormData: this.initialFormData as OnSegmentEntryInputAutomationFormData,
         };
         break;
       case 'QUERY_INPUT':
@@ -571,9 +538,7 @@ export class UpdateNodeOperation implements NodeOperation {
     let newOutEdges: StorylineNodeModel[] = [];
     if (isAbnNode(this.node)) {
       const formBranchNumber = (this.formData as ABNFormData).branch_number;
-      const nodeBranchNumber = this.node.formData
-        ? this.node.formData.branch_number
-        : 2;
+      const nodeBranchNumber = this.node.formData ? this.node.formData.branch_number : 2;
       const diff = formBranchNumber - nodeBranchNumber;
       if (diff > 0) {
         const newEmptyOutEdges = this.generateNewEmptyOutEdges(diff, node);
@@ -627,17 +592,15 @@ export class UpdateNodeOperation implements NodeOperation {
       node = this.buildUpdatedNode(automationData) as StorylineNodeModel;
     }
 
-    const outEdges: StorylineNodeModel[] = automationData.out_edges.map(
-      (child, index) => {
-        if (child.node.id === id) {
-          const updatedNode: StorylineNodeModel = this.buildUpdatedNode(child);
-          return {
-            ...updatedNode,
-            out_edges: this.generateOutEdges(child),
-          };
-        } else return this.iterateData(child, id);
-      },
-    );
+    const outEdges: StorylineNodeModel[] = automationData.out_edges.map((child, index) => {
+      if (child.node.id === id) {
+        const updatedNode: StorylineNodeModel = this.buildUpdatedNode(child);
+        return {
+          ...updatedNode,
+          out_edges: this.generateOutEdges(child),
+        };
+      } else return this.iterateData(child, id);
+    });
 
     return {
       ...node,
@@ -766,30 +729,28 @@ export function generateNodeProperties(
       return {
         title: formatMessage(nodeMessages.queryInputNodeTitle),
         subtitle: formatMessage(nodeMessages.livequeryInputNodeSubtitle),
-        iconAnt: <FlagOutlined className="available-node-icon-gyph" />,
+        iconAnt: <FlagOutlined className='available-node-icon-gyph' />,
         color: '#fbc02d',
       };
     case 'ON_SEGMENT_ENTRY_INPUT_NODE':
       return {
         title: formatMessage(nodeMessages.onAudienceSegmentEntryNodeTitle),
-        subtitle: formatMessage(
-          nodeMessages.onAudienceSegmentEntryNodeSubtitle,
-        ),
-        iconAnt: <FlagOutlined className="available-node-icon-gyph" />,
+        subtitle: formatMessage(nodeMessages.onAudienceSegmentEntryNodeSubtitle),
+        iconAnt: <FlagOutlined className='available-node-icon-gyph' />,
         color: '#fbc02d',
       };
     case 'ON_SEGMENT_EXIT_INPUT_NODE':
       return {
         title: formatMessage(nodeMessages.onAudienceSegmentExitNodeTitle),
         subtitle: formatMessage(nodeMessages.onAudienceSegmentExitNodeSubtitle),
-        iconAnt: <FlagOutlined className="available-node-icon-gyph" />,
+        iconAnt: <FlagOutlined className='available-node-icon-gyph' />,
         color: '#fbc02d',
       };
     case 'ABN_NODE':
       return {
         title: formatMessage(nodeMessages.abnNodeTitle),
         subtitle: '',
-        iconAnt: <ForkOutlined className="available-node-icon-gyph" />,
+        iconAnt: <ForkOutlined className='available-node-icon-gyph' />,
         color: '#fbc02d',
         branchNumber: node.branch_number,
       };
@@ -797,7 +758,7 @@ export function generateNodeProperties(
       return {
         title: formatMessage(nodeMessages.ifNodeTitle),
         subtitle: '',
-        iconAnt: <BranchesOutlined className="available-node-icon-gyph" />,
+        iconAnt: <BranchesOutlined className='available-node-icon-gyph' />,
         color: '#fbc02d',
       };
     case 'END_NODE':
@@ -811,7 +772,7 @@ export function generateNodeProperties(
       return {
         title: formatMessage(nodeMessages.waitNodeTitle),
         subtitle: '',
-        iconAnt: <ClockCircleOutlined className="available-node-icon-gyph" />,
+        iconAnt: <ClockCircleOutlined className='available-node-icon-gyph' />,
         color: '#fbc02d',
       };
     case 'CUSTOM_ACTION_NODE':
@@ -830,9 +791,7 @@ export function generateNodeProperties(
         title: title,
         subtitle: '',
         color: '#ffffff',
-        iconAssetUrl:
-          node.strictlyLayoutablePlugin?.plugin_layout.metadata
-            .small_icon_asset_url,
+        iconAssetUrl: node.strictlyLayoutablePlugin?.plugin_layout.metadata.small_icon_asset_url,
       };
     default:
       return {
@@ -851,23 +810,13 @@ export const buildAutomationTreeData = (
   queryService: IQueryService,
   datamartId?: string,
 ): Promise<StorylineNodeModel> => {
-  const node: AutomationNodeShape = nodeData.filter(
-    n => n.id === storylineData.begin_node_id,
-  )[0];
+  const node: AutomationNodeShape = nodeData.filter(n => n.id === storylineData.begin_node_id)[0];
   const outNodesId: string[] = edgeData
     .filter(e => node && e.source_id === node.id)
     .map(e => e.target_id);
-  const outNodes: ScenarioNodeShape[] = nodeData.filter(n =>
-    outNodesId.includes(n.id),
-  );
+  const outNodes: ScenarioNodeShape[] = nodeData.filter(n => outNodesId.includes(n.id));
 
-  if (
-    node &&
-    node.type === 'QUERY_INPUT' &&
-    node.query_id &&
-    datamartId &&
-    queryService
-  ) {
+  if (node && node.type === 'QUERY_INPUT' && node.query_id && datamartId && queryService) {
     return queryService.getQuery(datamartId, node.query_id).then(res => {
       const queryInputNode: QueryInputNodeResource = {
         ...node,
@@ -882,17 +831,13 @@ export const buildAutomationTreeData = (
       };
       return {
         node: queryInputNode,
-        out_edges: outNodes.map(n =>
-          buildStorylineNodeModel(n, nodeData, edgeData, node),
-        ),
+        out_edges: outNodes.map(n => buildStorylineNodeModel(n, nodeData, edgeData, node)),
       };
     });
   } else {
     return Promise.resolve({
       node: node,
-      out_edges: outNodes.map(n =>
-        buildStorylineNodeModel(n, nodeData, edgeData, node),
-      ),
+      out_edges: outNodes.map(n => buildStorylineNodeModel(n, nodeData, edgeData, node)),
     });
   }
 };
@@ -903,12 +848,8 @@ export function buildStorylineNodeModel(
   edgeData: ScenarioEdgeResource[],
   parentNode: AutomationNodeShape,
 ): any {
-  const outNodesId: string[] = edgeData
-    .filter(e => e.source_id === node.id)
-    .map(e => e.target_id);
-  const outNodes: ScenarioNodeShape[] = nodeData.filter(n =>
-    outNodesId.includes(n.id),
-  );
+  const outNodesId: string[] = edgeData.filter(e => e.source_id === node.id).map(e => e.target_id);
+  const outNodes: ScenarioNodeShape[] = nodeData.filter(n => outNodesId.includes(n.id));
   const inEdge: ScenarioEdgeResource = edgeData.filter(
     e => e.source_id === parentNode.id && e.target_id === node.id,
   )[0];
@@ -916,9 +857,7 @@ export function buildStorylineNodeModel(
   return {
     node: node,
     in_edge: inEdge,
-    out_edges: outNodes.map(n =>
-      buildStorylineNodeModel(n, nodeData, edgeData, node),
-    ),
+    out_edges: outNodes.map(n => buildStorylineNodeModel(n, nodeData, edgeData, node)),
   };
 }
 
@@ -964,8 +903,7 @@ export const getEventsNames = (
   validObjectType: WizardValidObjectTypeField,
   queryService: IQueryService,
 ): Promise<LabeledValue[]> => {
-  if (!validObjectType || !validObjectType.objectTypeQueryName)
-    return Promise.resolve([]);
+  if (!validObjectType || !validObjectType.objectTypeQueryName) return Promise.resolve([]);
 
   const query: QueryDocument = {
     from: 'UserPoint',
@@ -1036,8 +974,7 @@ export const getDatamartPredefinedEventNames = (
   validObjectType: WizardValidObjectTypeField,
   queryService: IQueryService,
 ): Promise<PredefinedEventNames[]> => {
-  if (!validObjectType || !validObjectType.objectTypeQueryName)
-    return Promise.resolve([]);
+  if (!validObjectType || !validObjectType.objectTypeQueryName) return Promise.resolve([]);
 
   const query = `select {${validObjectType.objectTypeQueryName}{${validObjectType.fieldName}@map(limit:500)}} from UserPoint `;
 
@@ -1056,9 +993,7 @@ export const getDatamartPredefinedEventNames = (
     .then(oTQLBuckets => {
       return oTQLBuckets.buckets
         .map(({ key }) => key)
-        .filter(eventName =>
-          predefinedEventNames.includes(eventName),
-        ) as PredefinedEventNames[];
+        .filter(eventName => predefinedEventNames.includes(eventName)) as PredefinedEventNames[];
     })
     .catch(() => {
       return [];
@@ -1069,85 +1004,74 @@ export const getValidObjectType = (
   datamartId: string,
   runtimeSchemaService: IRuntimeSchemaService,
 ): Promise<WizardValidObjectTypeField | undefined> => {
-  return runtimeSchemaService
-    .getRuntimeSchemas(datamartId)
-    .then(({ data: schemas }) => {
-      const runtimeSchema = schemas.find(schema => schema.status === 'LIVE');
+  return runtimeSchemaService.getRuntimeSchemas(datamartId).then(({ data: schemas }) => {
+    const runtimeSchema = schemas.find(schema => schema.status === 'LIVE');
 
-      if (!runtimeSchema) return;
+    if (!runtimeSchema) return;
 
-      return runtimeSchemaService
-        .getObjectTypes(datamartId, runtimeSchema.id)
-        .then(({ data: objectTypes }) => {
-          return reducePromises(
-            getValidObjectTypesForWizardReactToEvent(objectTypes).map(
-              validObjectType => {
-                return runtimeSchemaService
-                  .getFields(datamartId, runtimeSchema.id, validObjectType.id)
-                  .then(({ data: fields }) => {
-                    return {
-                      objectType: validObjectType,
-                      validFields: getValidFieldsForWizardReactToEvent(
-                        validObjectType,
-                        fields,
-                      ),
-                    };
-                  });
-              },
-            ),
-          ).then(validObjectTypes => {
-            /*
+    return runtimeSchemaService
+      .getObjectTypes(datamartId, runtimeSchema.id)
+      .then(({ data: objectTypes }) => {
+        return reducePromises(
+          getValidObjectTypesForWizardReactToEvent(objectTypes).map(validObjectType => {
+            return runtimeSchemaService
+              .getFields(datamartId, runtimeSchema.id, validObjectType.id)
+              .then(({ data: fields }) => {
+                return {
+                  objectType: validObjectType,
+                  validFields: getValidFieldsForWizardReactToEvent(validObjectType, fields),
+                };
+              });
+          }),
+        ).then(validObjectTypes => {
+          /*
 				Here we need to find a WizardValidObjectTypeField
 				For each WizardValidObjectTypeField we check if we have an objectType with 
 				the same WizardValidObjectTypeField.objectTypeName in validObjectTypes and if 
 				its fields contain at least one with the WizardValidObjectTypeField.fieldName.
 				*/
-            const wizardValidObjectTypesFitlered = wizardValidObjectTypes.find(
-              automationWizardValidObjectType =>
-                !!validObjectTypes.find(
-                  validObjectType =>
-                    validObjectType.objectType.name ===
-                      automationWizardValidObjectType.objectTypeName &&
-                    !!validObjectType.validFields.find(
-                      of =>
-                        of.name === automationWizardValidObjectType.fieldName,
-                    ),
-                ),
-            );
+          const wizardValidObjectTypesFitlered = wizardValidObjectTypes.find(
+            automationWizardValidObjectType =>
+              !!validObjectTypes.find(
+                validObjectType =>
+                  validObjectType.objectType.name ===
+                    automationWizardValidObjectType.objectTypeName &&
+                  !!validObjectType.validFields.find(
+                    of => of.name === automationWizardValidObjectType.fieldName,
+                  ),
+              ),
+          );
 
-            if (!wizardValidObjectTypesFitlered) return;
+          if (!wizardValidObjectTypesFitlered) return;
 
-            /*
+          /*
 				We need to fetch the ObjectType UserPoint as it refers to our valid object type, 
 				thus we can have its usable name to use in a query.
 				For example: ActivityEvent => activity_events
 				*/
-            const userPointObjectType = objectTypes.find(
-              o => o.name === 'UserPoint',
-            );
+          const userPointObjectType = objectTypes.find(o => o.name === 'UserPoint');
 
-            if (userPointObjectType) {
-              return runtimeSchemaService
-                .getFields(datamartId, runtimeSchema.id, userPointObjectType.id)
-                .then(upFields => {
-                  const field = upFields.data.find(
-                    f =>
-                      f.field_type.match(/\w+/)![0] ===
-                      wizardValidObjectTypesFitlered.objectTypeName,
-                  );
+          if (userPointObjectType) {
+            return runtimeSchemaService
+              .getFields(datamartId, runtimeSchema.id, userPointObjectType.id)
+              .then(upFields => {
+                const field = upFields.data.find(
+                  f =>
+                    f.field_type.match(/\w+/)![0] === wizardValidObjectTypesFitlered.objectTypeName,
+                );
 
-                  if (field)
-                    return {
-                      ...wizardValidObjectTypesFitlered,
-                      objectTypeQueryName: field ? field.name : undefined,
-                    };
+                if (field)
+                  return {
+                    ...wizardValidObjectTypesFitlered,
+                    objectTypeQueryName: field ? field.name : undefined,
+                  };
 
-                  return;
-                });
-            } else return;
-          });
+                return;
+              });
+          } else return;
         });
-    });
+      });
+  });
 };
 
 const nodeMessages = defineMessages({

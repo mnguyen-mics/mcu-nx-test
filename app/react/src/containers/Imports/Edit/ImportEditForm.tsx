@@ -8,9 +8,7 @@ import { InjectedIntlProps, defineMessages, injectIntl } from 'react-intl';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../components/Layout/FormLayoutActionbar';
-import ScrollspySider, {
-  SidebarWrapperProps,
-} from '../../../components/Layout/ScrollspySider';
+import ScrollspySider, { SidebarWrapperProps } from '../../../components/Layout/ScrollspySider';
 import { McsFormSection } from '../../../utils/FormHelper';
 import GeneralFormSection from './Sections/GeneralFormSection';
 import { Import } from '../../../models/imports/imports';
@@ -18,9 +16,7 @@ import { Omit } from '../../../utils/Types';
 
 export const FORM_ID = 'importForm';
 
-const Content = Layout.Content as unknown as React.ComponentClass<
-  BasicProps & { id: string }
->;
+const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
 
 const messages = defineMessages({
   sectionTitleGeneral: {
@@ -37,8 +33,7 @@ const messages = defineMessages({
   },
 });
 
-interface ImportEditFormProps
-  extends Omit<ConfigProps<Partial<Import>>, 'form'> {
+interface ImportEditFormProps extends Omit<ConfigProps<Partial<Import>>, 'form'> {
   onClose: () => void;
   onSave: (formData: Partial<Import>) => void;
   breadCrumbPaths: React.ReactNode[];
@@ -92,19 +87,13 @@ class ImportEditForm extends React.Component<Props> {
       );
     });
     return (
-      <Layout className="edit-layout">
+      <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
           <ScrollspySider {...sideBarProps} />
-          <Form
-            className="edit-layout ant-layout"
-            onSubmit={handleSubmit(onSave as any) as any}
-          >
-            <Content
-              id={FORM_ID}
-              className="mcs-content-container mcs-form-container"
-            >
-              <div className="placement-list-form">{renderedSections}</div>
+          <Form className='edit-layout ant-layout' onSubmit={handleSubmit(onSave as any) as any}>
+            <Content id={FORM_ID} className='mcs-content-container mcs-form-container'>
+              <div className='placement-list-form'>{renderedSections}</div>
             </Content>
           </Form>
         </Layout>

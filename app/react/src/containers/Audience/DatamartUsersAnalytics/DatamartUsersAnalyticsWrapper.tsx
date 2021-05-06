@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { Layout } from 'react-grid-layout';
-import DatamartUsersAnalyticsContent, {
-  DashboardConfig,
-} from './DatamartUsersAnalyticsContent';
+import DatamartUsersAnalyticsContent, { DashboardConfig } from './DatamartUsersAnalyticsContent';
 import { Row, Col } from 'antd';
 import { compose } from 'recompose';
 import { RouteComponentProps, withRouter } from 'react-router';
@@ -19,10 +17,7 @@ import {
 import SegmentFilter from './components/SegmentFilter';
 import { DATAMART_USERS_ANALYTICS_SETTING } from '../Segments/Dashboard/constants';
 import { LabeledValue } from 'antd/lib/select';
-import {
-  ContentHeader,
-  McsDateRangePicker,
-} from '@mediarithmics-private/mcs-components-library';
+import { ContentHeader, McsDateRangePicker } from '@mediarithmics-private/mcs-components-library';
 import McsMoment from '../../../utils/McsMoment';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 
@@ -47,13 +42,9 @@ export interface DatamartUsersAnalyticsWrapperProps {
   segmentToAggregate?: boolean;
 }
 
-export type FILTERS =
-  | DateSearchSettings
-  | SegmentsSearchSettings
-  | AllUsersSettings;
+export type FILTERS = DateSearchSettings | SegmentsSearchSettings | AllUsersSettings;
 
-type JoinedProp = RouteComponentProps<{ segmentId?: string }> &
-  DatamartUsersAnalyticsWrapperProps;
+type JoinedProp = RouteComponentProps<{ segmentId?: string }> & DatamartUsersAnalyticsWrapperProps;
 
 class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
   constructor(props: JoinedProp) {
@@ -102,9 +93,7 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
     const queryParamsWithDate = comparisonStartDate
       ? {
           ...queryParms,
-          from: new McsMoment(
-            `now-${convertTimestampToDayNumber(comparisonStartDate)}d`,
-          ),
+          from: new McsMoment(`now-${convertTimestampToDayNumber(comparisonStartDate)}d`),
           to: new McsMoment('now-1d'),
         }
       : undefined;
@@ -127,11 +116,7 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
 
     const nextLocation = {
       pathname,
-      search: updateSearch(
-        currentSearch,
-        params,
-        DATAMART_USERS_ANALYTICS_SETTING,
-      ),
+      search: updateSearch(currentSearch, params, DATAMART_USERS_ANALYTICS_SETTING),
     };
 
     history.push(nextLocation);
@@ -205,12 +190,10 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
     return (
       <div className={'mcs-datamartUsersAnalytics'}>
         <Row>
-          <Col span={12}>
-            {pageTitle && <ContentHeader title={pageTitle} size={'large'} />}
-          </Col>
+          <Col span={12}>{pageTitle && <ContentHeader title={pageTitle} size={'large'} />}</Col>
         </Row>
         {!refresh && (
-          <Row justify="space-between">
+          <Row justify='space-between'>
             {showFilter && (
               <SegmentFilter
                 className={
@@ -227,7 +210,7 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
               />
             )}
             {showDateRangePicker && (
-              <Col className="text-right" offset={6}>
+              <Col className='text-right' offset={6}>
                 {this.renderDatePicker()}
               </Col>
             )}
@@ -237,12 +220,8 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
           <Col span={12}>
             {title && (
               <div>
-                <div className={'mcs-datamartUsersAnalytics_title'}>
-                  {title}
-                </div>
-                <div className={'mcs-datamartUsersAnalytics_subTitle'}>
-                  {subTitle}
-                </div>
+                <div className={'mcs-datamartUsersAnalytics_title'}>{title}</div>
+                <div className={'mcs-datamartUsersAnalytics_subTitle'}>{subTitle}</div>
               </div>
             )}
           </Col>
@@ -261,7 +240,6 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
   }
 }
 
-export default compose<
-  DatamartUsersAnalyticsWrapperProps,
-  DatamartUsersAnalyticsWrapperProps
->(withRouter)(DatamartUsersAnalyticsWrapper);
+export default compose<DatamartUsersAnalyticsWrapperProps, DatamartUsersAnalyticsWrapperProps>(
+  withRouter,
+)(DatamartUsersAnalyticsWrapper);

@@ -4,33 +4,21 @@ import FormLayoutActionbar, { FormLayoutActionbarProps } from './FormLayoutActio
 import ScrollspySider, { SideBarItem } from './ScrollspySider';
 
 export interface EditContentLayoutProps extends FormLayoutActionbarProps {
-  scrollId?: string
-  items?: SideBarItem[]
+  scrollId?: string;
+  items?: SideBarItem[];
 }
 
-
 class EditContentLayout extends React.Component<EditContentLayoutProps> {
-
   render() {
-    const {
-      scrollId,
-      items,
-      children,
-      ...rest
-    } = this.props;
+    const { scrollId, items, children, ...rest } = this.props;
 
     const eventualSidebar = items && items.length && (
-      <ScrollspySider
-        items={items}
-        scrollId={scrollId || rest.formId}
-      />
+      <ScrollspySider items={items} scrollId={scrollId || rest.formId} />
     );
 
     return (
-      <Layout className="edit-layout">
-        <FormLayoutActionbar          
-          {...rest}
-        />
+      <Layout className='edit-layout'>
+        <FormLayoutActionbar {...rest} />
 
         <Layout>
           {eventualSidebar}

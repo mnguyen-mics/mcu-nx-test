@@ -17,8 +17,7 @@ export interface FormCheckboxGroupProps {
 
 const CheckboxGroup = Checkbox.Group;
 
-const FormCheckboxGroup: React.SFC<FormCheckboxGroupProps &
-  WrappedFieldProps> = props => {
+const FormCheckboxGroup: React.SFC<FormCheckboxGroupProps & WrappedFieldProps> = props => {
   const { options, input, disabled, className } = props;
 
   const defaultValue =
@@ -35,11 +34,7 @@ const FormCheckboxGroup: React.SFC<FormCheckboxGroupProps &
     return input.onChange(valueOnChange);
   };
 
-  let validateStatus = 'success' as
-    | 'success'
-    | 'warning'
-    | 'error'
-    | 'validating';
+  let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
 
   if (props.meta.touched && props.meta.invalid) validateStatus = 'error';
   if (props.meta.touched && props.meta.warning) validateStatus = 'warning';

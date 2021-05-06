@@ -104,9 +104,7 @@ class AudienceBuilderTable extends React.Component<Props> {
       },
     ];
 
-    const actionColumns: Array<
-      ActionsColumnDefinition<AudienceBuilderResource>
-    > = [
+    const actionColumns: Array<ActionsColumnDefinition<AudienceBuilderResource>> = [
       {
         key: 'action',
         actions: () => [
@@ -124,9 +122,9 @@ class AudienceBuilderTable extends React.Component<Props> {
 
     return noItem && !isLoading ? (
       <EmptyTableView
-        iconType="settings"
+        iconType='settings'
         message={formatMessage(messages.audienceBuilderEmptyList)}
-        className="mcs-table-view-empty mcs-empty-card"
+        className='mcs-table-view-empty mcs-empty-card'
       />
     ) : (
       <TableViewWrapper

@@ -1,9 +1,5 @@
 import ApiService, { DataListResponse, DataResponse } from '../ApiService';
-import {
-  CatalogRessource,
-  CategoryRessource,
-  ItemRessource,
-} from '../../models/catalog/catalog';
+import { CatalogRessource, CategoryRessource, ItemRessource } from '../../models/catalog/catalog';
 import { injectable } from 'inversify';
 
 interface CategoryOptions {
@@ -13,13 +9,8 @@ interface CategoryOptions {
 }
 
 export interface ILibraryCatalogService {
-  getCatalogs: (
-    datamartId: string,
-  ) => Promise<DataListResponse<CatalogRessource>>;
-  getCatalog: (
-    datamartId: string,
-    catalogToken: string,
-  ) => Promise<DataResponse<CatalogRessource>>;
+  getCatalogs: (datamartId: string) => Promise<DataListResponse<CatalogRessource>>;
+  getCatalog: (datamartId: string, catalogToken: string) => Promise<DataResponse<CatalogRessource>>;
   getCatalogMainCategories: (
     datamartId: string,
     catalogToken: string,
@@ -51,10 +42,7 @@ export class LibraryCatalogService {
     const endpoint = `datamarts/${datamartId}/catalogs`;
     return ApiService.getRequest(endpoint);
   }
-  getCatalog(
-    datamartId: string,
-    catalogToken: string,
-  ): Promise<DataResponse<CatalogRessource>> {
+  getCatalog(datamartId: string, catalogToken: string): Promise<DataResponse<CatalogRessource>> {
     const endpoint = `datamarts/${datamartId}/catalogs/token=${catalogToken}`;
     return ApiService.getRequest(endpoint);
   }

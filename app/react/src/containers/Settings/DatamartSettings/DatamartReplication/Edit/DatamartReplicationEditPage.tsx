@@ -104,11 +104,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
       },
     } = this.props;
 
-    const {
-      credentials_uri,
-      type,
-      ...formDataWithoutCredentialsUri
-    } = datamartReplicationFormData;
+    const { credentials_uri, type, ...formDataWithoutCredentialsUri } = datamartReplicationFormData;
 
     if (isEmpty(credentials_uri) && !datamartReplicationId) {
       switch (type) {
@@ -130,13 +126,9 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
       isLoading: true,
     });
 
-    const hideSaveInProgress = message.loading(
-      intl.formatMessage(messages.savingInProgress),
-      0,
-    );
+    const hideSaveInProgress = message.loading(intl.formatMessage(messages.savingInProgress), 0);
 
-    const datamartId =
-      datamartReplicationFormData.datamart_id || (state && state.datamartId);
+    const datamartId = datamartReplicationFormData.datamart_id || (state && state.datamartId);
 
     if (datamartId) {
       const newFormData = {
@@ -147,14 +139,11 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
 
       const promise = datamartReplicationId
         ? this._datamartReplicationService.updateDatamartReplication(
-          datamartId,
-          datamartReplicationId,
-          newFormData,
-        )
-        : this._datamartReplicationService.createDatamartReplication(
-          datamartId,
-          newFormData,
-        );
+            datamartId,
+            datamartReplicationId,
+            newFormData,
+          )
+        : this._datamartReplicationService.createDatamartReplication(datamartId, newFormData);
 
       promise
         .then(response => {
@@ -200,8 +189,8 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
     return state && !!state.datamartId
       ? `/v2/o/${organisationId}/settings/datamart/datamarts/${state.datamartId}`
       : datamartId
-        ? `/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`
-        : `/v2/o/${organisationId}/settings/datamart/datamarts`;
+      ? `/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`
+      : `/v2/o/${organisationId}/settings/datamart/datamarts`;
   };
 
   onClose = () => {
@@ -228,7 +217,10 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
     const { replicationTypes } = this.state;
 
     const cards = replicationTypes
-      .filter(type => type !== 'AZURE_EVENT_HUBS' || hasFeature('datamartSettings-event_hubs_replication'))
+      .filter(
+        type =>
+          type !== 'AZURE_EVENT_HUBS' || hasFeature('datamartSettings-event_hubs_replication'),
+      )
       .map(type => {
         return (
           <Col key={type} span={4}>
@@ -244,7 +236,8 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
         key={i}
         style={{ marginTop: 30, marginBottom: 40 }}
         // type={'flex'}
-        gutter={40}>
+        gutter={40}
+      >
         {arr}
       </Row>
     ));
@@ -264,12 +257,7 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
       intl: { formatMessage },
     } = this.props;
 
-    const {
-      isLoading,
-      datamartReplicationData,
-      selectedType,
-      datamartId,
-    } = this.state;
+    const { isLoading, datamartReplicationData, selectedType, datamartId } = this.state;
 
     if (isLoading) {
       return <Loading isFullScreen={true} />;
@@ -281,10 +269,13 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
         : formatMessage(messages.newDatamartReplication);
 
     const breadcrumbPaths = [
-      <Link key="1" to={{
-        pathname: this.getPreviousUrl(),
-        state: { activeTab: 'replications' }
-      }}>
+      <Link
+        key='1'
+        to={{
+          pathname: this.getPreviousUrl(),
+          state: { activeTab: 'replications' },
+        }}
+      >
         {formatMessage(messages.datamartReplications)}
       </Link>,
       replicationName,
@@ -302,7 +293,9 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
         isMainlayout={true}
         actionbarProps={{
           pathItems: [
-            <Link key='1' to={this.getPreviousUrl()}>formatMessage(messages.datamartReplications)</Link>
+            <Link key='1' to={this.getPreviousUrl()}>
+              formatMessage(messages.datamartReplications)
+            </Link>,
           ],
         }}
       />
@@ -315,20 +308,17 @@ class EditDatamartReplicationPage extends React.Component<Props, State> {
         type={selectedType}
       />
     ) : (
-          <Layout className="edit-layout">
-            <FormLayoutActionbar {...actionBarProps} />
-            <Layout
-              className={
-                'mcs-content-container ant-layout-content mcs-form-container'
-              }>
-              <FormTitle
-                title={messages.datamartReplicationTypeSelectionTitle}
-                subtitle={messages.datamartReplicationTypeSelectionSubtitle}
-              />
-              {this.renderReplicationCards()}
-            </Layout>
-          </Layout>
-        );
+      <Layout className='edit-layout'>
+        <FormLayoutActionbar {...actionBarProps} />
+        <Layout className={'mcs-content-container ant-layout-content mcs-form-container'}>
+          <FormTitle
+            title={messages.datamartReplicationTypeSelectionTitle}
+            subtitle={messages.datamartReplicationTypeSelectionSubtitle}
+          />
+          {this.renderReplicationCards()}
+        </Layout>
+      </Layout>
+    );
   }
 }
 

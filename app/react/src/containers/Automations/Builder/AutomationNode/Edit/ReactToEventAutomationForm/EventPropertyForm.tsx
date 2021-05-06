@@ -1,15 +1,22 @@
-import React from "react";
-import { defineMessages, InjectedIntlProps, injectIntl } from "react-intl";
-import { connect, DispatchProp } from "react-redux";
-import { compose } from "recompose";
-import { change, formValueSelector, InjectedFormProps } from "redux-form";
-import { ObjectLikeTypeInfoResource } from "../../../../../../models/datamart/graphdb/RuntimeSchema";
-import { MicsReduxState } from "../../../../../../utils/ReduxHelper";
-import { FieldNode, isFieldNode, isObjectNode, ObjectTreeExpressionNodeShape } from "../../../../../../models/datamart/graphdb/QueryDocument";
-import withValidators, { ValidatorProps } from "../../../../../../components/Form/withValidators";
-import FormTreeSelect, { FormTreeSelectDataNode } from "../../../../../../components/Form/FormTreeSelect";
-import { FormTreeSelectField } from "../../../../../../components/Form";
-import EventPropertyFormComparator from "./EventPropertyFormComparator";
+import React from 'react';
+import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
+import { connect, DispatchProp } from 'react-redux';
+import { compose } from 'recompose';
+import { change, formValueSelector, InjectedFormProps } from 'redux-form';
+import { ObjectLikeTypeInfoResource } from '../../../../../../models/datamart/graphdb/RuntimeSchema';
+import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
+import {
+  FieldNode,
+  isFieldNode,
+  isObjectNode,
+  ObjectTreeExpressionNodeShape,
+} from '../../../../../../models/datamart/graphdb/QueryDocument';
+import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
+import FormTreeSelect, {
+  FormTreeSelectDataNode,
+} from '../../../../../../components/Form/FormTreeSelect';
+import { FormTreeSelectField } from '../../../../../../components/Form';
+import EventPropertyFormComparator from './EventPropertyFormComparator';
 
 export interface EventPropertyFormProps {
   name: string;
@@ -42,10 +49,9 @@ type Props = EventPropertyFormProps &
   DispatchProp<any> &
   InjectedFormProps<EventPropertyFormData, EventPropertyFormProps>;
 
-type State = {}
+type State = {};
 
 class EventPropertyForm extends React.Component<Props, State> {
-
   constructTreeData = (
     sourceObjectType: ObjectLikeTypeInfoResource,
     objectTypes: ObjectLikeTypeInfoResource[],
@@ -60,61 +66,64 @@ class EventPropertyForm extends React.Component<Props, State> {
           (objectTypes.find(ot => {
             const match = f.field_type.match(/\w+/);
             return !!(match && match[0] === ot.name);
-          }) || f.directives.find(dir => dir.name === 'TreeIndex')),
+          }) ||
+            f.directives.find(dir => dir.name === 'TreeIndex')),
       )
       .map(sourceField => {
         const sourceFieldTypeCleaned = sourceField.field_type.match(/\w+/);
         const objectNode = objectTypes.find(ot => sourceFieldTypeCleaned?.[0] === ot.name);
         const updatedAncestors = objectNode ? [...ancestors, sourceField.name] : ancestors;
         return {
-          inputLabel: `${ancestors.length ? `${ancestors.join(" > ")} > ` : ''}${sourceField.name}`,
-          children: objectNode ? this.constructTreeData(objectNode, objectTypes, updatedAncestors) : [],
+          inputLabel: `${ancestors.length ? `${ancestors.join(' > ')} > ` : ''}${sourceField.name}`,
+          children: objectNode
+            ? this.constructTreeData(objectNode, objectTypes, updatedAncestors)
+            : [],
           selectable: !objectNode,
-          value: `${ancestors.length ? `${ancestors.join(" ")} ` : ''}${sourceField.name}`,
+          value: `${ancestors.length ? `${ancestors.join(' ')} ` : ''}${sourceField.name}`,
           label: sourceField.name,
           expression: this.generateExpression(ancestors, sourceField.name),
-          objectType: sourceObjectType
+          objectType: sourceObjectType,
         };
-      })
-  }
+      });
+  };
 
   generateExpression = (objectNodes: string[], field: string): ObjectTreeExpressionNodeShape => {
     if (objectNodes.length > 0) {
       return {
-        boolean_operator: "AND",
+        boolean_operator: 'AND',
         field: objectNodes[0],
-        type: "OBJECT",
+        type: 'OBJECT',
         expressions: [this.generateExpression(objectNodes.slice(1), field)],
-      }
+      };
     } else {
       return {
-        type: "FIELD",
+        type: 'FIELD',
         field: field,
-      }
+      };
     }
-  }
+  };
 
   getFieldAndDepth = (tree: ObjectTreeExpressionNodeShape, depth = 0): [FieldNode, number] => {
-    if (tree.type === "FIELD") return [tree, depth];
-    return this.getFieldAndDepth(tree.expressions[0], depth + 1)
-  }
+    if (tree.type === 'FIELD') return [tree, depth];
+    return this.getFieldAndDepth(tree.expressions[0], depth + 1);
+  };
 
   getSelectedFieldType = (fieldName: string | undefined) => {
     const { objectTypes, formValues, sourceObjectType } = this.props;
 
-    const selectedObjectType: ObjectLikeTypeInfoResource | undefined =
-      formValues?.expression ? this.getSelectedObjectType(formValues?.expression, sourceObjectType) : undefined;
+    const selectedObjectType: ObjectLikeTypeInfoResource | undefined = formValues?.expression
+      ? this.getSelectedObjectType(formValues?.expression, sourceObjectType)
+      : undefined;
 
     if (!selectedObjectType) return;
 
-    const availableFields = selectedObjectType.fields
-      .filter(
-        f =>
-          !objectTypes.find(ot => {
-            const match = f.field_type.match(/\w+/);
-            return !!(match?.[0] === ot.name);
-          }) && f.directives.find(dir => dir.name === 'TreeIndex'),
-      );
+    const availableFields = selectedObjectType.fields.filter(
+      f =>
+        !objectTypes.find(ot => {
+          const match = f.field_type.match(/\w+/);
+          return !!(match?.[0] === ot.name);
+        }) && f.directives.find(dir => dir.name === 'TreeIndex'),
+    );
 
     const possibleFieldType = availableFields.find(i => i.name === fieldName);
     if (possibleFieldType) {
@@ -124,20 +133,25 @@ class EventPropertyForm extends React.Component<Props, State> {
     }
 
     return;
-  }
+  };
 
   onSelectTreeSelect = (value: any, option: FormTreeSelectDataNode) => {
     const { dispatch, formId, name, formValues } = this.props;
     if (dispatch && formValues?.value !== option.value) {
       dispatch(change(formId, name, option));
     }
-  }
+  };
 
-  getSelectedObjectType = (tree: ObjectTreeExpressionNodeShape, currentObjectType: ObjectLikeTypeInfoResource): ObjectLikeTypeInfoResource | undefined => {
+  getSelectedObjectType = (
+    tree: ObjectTreeExpressionNodeShape,
+    currentObjectType: ObjectLikeTypeInfoResource,
+  ): ObjectLikeTypeInfoResource | undefined => {
     const { objectTypes } = this.props;
     if (isFieldNode(tree)) return currentObjectType;
     else if (isObjectNode(tree)) {
-      const correspondingFieldNextObjectType = currentObjectType.fields.find(lot => lot.name === tree.field);
+      const correspondingFieldNextObjectType = currentObjectType.fields.find(
+        lot => lot.name === tree.field,
+      );
       if (!correspondingFieldNextObjectType) return;
       const fieldTypeCleaned = correspondingFieldNextObjectType.field_type.match(/\w+/);
       const nextObjectType = objectTypes.find(ot => ot.name === fieldTypeCleaned?.[0]);
@@ -146,7 +160,7 @@ class EventPropertyForm extends React.Component<Props, State> {
     }
 
     return;
-  }
+  };
 
   getDirectives = (fieldName?: string, objectType?: ObjectLikeTypeInfoResource) => {
     const { objectTypes } = this.props;
@@ -158,9 +172,10 @@ class EventPropertyForm extends React.Component<Props, State> {
             const match = f.field_type.match(/\w+/);
             return !!(match?.[0] === ot.name);
           }) && f.directives.find(dir => dir.name === 'TreeIndex'),
-      ).find(f => f.name === fieldName);
+      )
+      .find(f => f.name === fieldName);
     return field ? field.directives : [];
-  }
+  };
 
   render() {
     const {
@@ -176,10 +191,14 @@ class EventPropertyForm extends React.Component<Props, State> {
       formChange,
     } = this.props;
 
-    const [fieldNode, depth] = formValues?.expression ? this.getFieldAndDepth(formValues.expression) : [undefined, 0];
-    const comparatorName = `${name}.expression${".expressions[0]".repeat(depth)}`;
+    const [fieldNode, depth] = formValues?.expression
+      ? this.getFieldAndDepth(formValues.expression)
+      : [undefined, 0];
+    const comparatorName = `${name}.expression${'.expressions[0]'.repeat(depth)}`;
     const fieldType = this.getSelectedFieldType(fieldNode?.field);
-    const selectedObjectType = formValues?.expression ? this.getSelectedObjectType(formValues?.expression, sourceObjectType) : undefined;
+    const selectedObjectType = formValues?.expression
+      ? this.getSelectedObjectType(formValues?.expression, sourceObjectType)
+      : undefined;
     const directives = this.getDirectives(fieldNode?.field, selectedObjectType);
 
     return (
@@ -215,10 +234,10 @@ class EventPropertyForm extends React.Component<Props, State> {
 }
 
 const mapStateToProps = (state: MicsReduxState, props: EventPropertyFormProps) => {
-  const selector = formValueSelector(props.formId)
+  const selector = formValueSelector(props.formId);
   return {
     formValues: selector(state, props.name),
-  }
+  };
 };
 
 export default compose<Props, EventPropertyFormProps>(
@@ -230,6 +249,6 @@ export default compose<Props, EventPropertyFormProps>(
 const messages = defineMessages({
   treeSelectLabel: {
     id: 'eventPropertyForm.treeSelect.label',
-    defaultMessage: 'Field Name'
+    defaultMessage: 'Field Name',
   },
 });

@@ -2,17 +2,9 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import messages from '../../List/messages';
-import {
-  FormInput,
-  FormSection,
-  FormInputField,
-} from '../../../../../../components/Form';
-import withValidators, {
-  ValidatorProps,
-} from '../../../../../../components/Form/withValidators';
-import withNormalizer, {
-  NormalizerProps,
-} from '../../../../../../components/Form/withNormalizer';
+import { FormInput, FormSection, FormInputField } from '../../../../../../components/Form';
+import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
+import withNormalizer, { NormalizerProps } from '../../../../../../components/Form/withNormalizer';
 import {
   FormDataFileField,
   FormDataFile,
@@ -48,20 +40,16 @@ class EventHubsCustomFormSection extends React.Component<Props> {
         />
 
         <FormDataFileField
-          name="credentials_uri"
+          name='credentials_uri'
           component={FormDataFile}
           validate={[isRequired]}
           disabled={!!datamartReplicationId}
           formItemProps={{
-            label: formatMessage(
-              messages.datamartReplicationEventHubsConnectionStringUriLabel,
-            ),
+            label: formatMessage(messages.datamartReplicationEventHubsConnectionStringUriLabel),
             required: true,
           }}
           helpToolTipProps={{
-            title: formatMessage(
-              messages.datamartReplicationEventHubsConnectionStringUriTooltip,
-            ),
+            title: formatMessage(messages.datamartReplicationEventHubsConnectionStringUriTooltip),
           }}
           buttonText={formatMessage(
             messages.datamartReplicationEventHubsConnectionStringUriPlaceHolder,
@@ -69,7 +57,7 @@ class EventHubsCustomFormSection extends React.Component<Props> {
           accept={`*`}
         />
         <FormInputField
-          name="event_hub_name"
+          name='event_hub_name'
           component={FormInput}
           validate={[isRequired]}
           formItemProps={{
@@ -77,10 +65,8 @@ class EventHubsCustomFormSection extends React.Component<Props> {
             required: true,
           }}
           inputProps={{
-            placeholder: formatMessage(
-              messages.datamartReplicationEventHubNamePlaceholder,
-            ),
-            disabled: !!datamartReplicationId
+            placeholder: formatMessage(messages.datamartReplicationEventHubNamePlaceholder),
+            disabled: !!datamartReplicationId,
           }}
           helpToolTipProps={{
             title: formatMessage(messages.datamartReplicationEventHubNameTooltip),

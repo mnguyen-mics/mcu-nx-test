@@ -44,9 +44,7 @@ class AddonSelect extends React.Component<Props, State> {
     const { didMount } = this.state;
 
     const formValue = input.value || options[0];
-    const filteredOptions = options.filter(
-      option => option.value !== formValue.key,
-    );
+    const filteredOptions = options.filter(option => option.value !== formValue.key);
 
     const optionsToDisplay = filteredOptions.map(option => (
       <Option key={option.key || cuid()} {...option}>
@@ -58,7 +56,7 @@ class AddonSelect extends React.Component<Props, State> {
     const handleOnBlur = () => input.onBlur(input.value);
 
     return (
-      <span id={this.id} className="mcs-addonSelect">
+      <span id={this.id} className='mcs-addonSelect'>
         {didMount && (
           <Select
             id={input.name}

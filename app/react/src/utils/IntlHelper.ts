@@ -1,8 +1,6 @@
 import { FormattedMessage } from 'react-intl';
 
-const isValidFormattedMessageProps = (
-  object: FormattedMessage.MessageDescriptor,
-) => {
+const isValidFormattedMessageProps = (object: FormattedMessage.MessageDescriptor) => {
   return object && object.id && object.defaultMessage;
 };
 

@@ -35,7 +35,11 @@ interface State {
 type Props = InjectedIntlProps &
   InjectedNotificationProps &
   InjectedDatamartProps &
-  RouteComponentProps<EditDisplayCampaignRouteMatchParam, StaticContext, { from?: string, campaignId?: string }>;
+  RouteComponentProps<
+    EditDisplayCampaignRouteMatchParam,
+    StaticContext,
+    { from?: string; campaignId?: string }
+  >;
 
 class EditCampaignPage extends React.Component<Props, State> {
   @lazyInject(TYPES.IDisplayCampaignFormService)
@@ -95,14 +99,9 @@ class EditCampaignPage extends React.Component<Props, State> {
       datamart,
     } = this.props;
 
-    const {
-      displayCampaignFormData: initialDisplayCampaignFormData,
-    } = this.state;
+    const { displayCampaignFormData: initialDisplayCampaignFormData } = this.state;
 
-    const hideSaveInProgress = message.loading(
-      intl.formatMessage(messages.savingInProgress),
-      0,
-    );
+    const hideSaveInProgress = message.loading(intl.formatMessage(messages.savingInProgress), 0);
 
     this.setState({
       loading: true,
@@ -169,7 +168,7 @@ class EditCampaignPage extends React.Component<Props, State> {
         : formatMessage(messages.createCampaingTitle);
 
     const breadcrumbPaths = [
-      <Link key="1" to={`/v2/o/${organisationId}/campaigns/display`}>
+      <Link key='1' to={`/v2/o/${organisationId}/campaigns/display`}>
         {formatMessage(messages.breadcrumbTitle1)}
       </Link>,
       campaignName,
@@ -187,9 +186,7 @@ class EditCampaignPage extends React.Component<Props, State> {
       });
 
     if (!displayCampaignFormData.campaign.subtype)
-      return (
-        <DisplayCampaignSelector onSelect={onSelect} close={this.onClose} />
-      );
+      return <DisplayCampaignSelector onSelect={onSelect} close={this.onClose} />;
 
     switch (displayCampaignFormData.campaign.subtype) {
       case 'PROGRAMMATIC':

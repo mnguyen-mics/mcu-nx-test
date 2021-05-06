@@ -86,8 +86,7 @@ class AudienceSegmentPage extends React.Component<Props, State> {
           .then(segment => {
             if (
               segment.type === 'USER_LOOKALIKE' &&
-              (segment.status === 'CALIBRATED' ||
-                segment.status === 'CALIBRATION_ERROR')
+              (segment.status === 'CALIBRATED' || segment.status === 'CALIBRATION_ERROR')
             ) {
               clearInterval(this.interval);
               this.setState({ segment: segment });
@@ -106,13 +105,11 @@ class AudienceSegmentPage extends React.Component<Props, State> {
     const { segment } = this.state;
 
     if (segment && segment.id) {
-      this._audienceSegmentService
-        .recalibrateAudienceLookAlike(segment.id)
-        .then(res => {
-          this.fetchAudienceSegment(segment.id).then(() => {
-            this.refreshAudienceSegment(segment.id);
-          });
+      this._audienceSegmentService.recalibrateAudienceLookAlike(segment.id).then(res => {
+        this.fetchAudienceSegment(segment.id).then(() => {
+          this.refreshAudienceSegment(segment.id);
         });
+      });
     }
     return Promise.resolve();
   };
@@ -123,11 +120,7 @@ class AudienceSegmentPage extends React.Component<Props, State> {
       .then(res => {
         const segment = res.data;
         this.setState({ isLoading: false, segment: segment });
-        if (
-          segment &&
-          isUserQuerySegment(segment) &&
-          segment.control_group_id
-        ) {
+        if (segment && isUserQuerySegment(segment) && segment.control_group_id) {
           this._audienceSegmentService
             .getSegment(segment.control_group_id)
             .then(resp => {
@@ -157,10 +150,7 @@ class AudienceSegmentPage extends React.Component<Props, State> {
     const {
       location: { search: previousSearch },
       match: {
-        params: {
-          segmentId: previousSegmentId,
-          organisationId: previousOrganisationId,
-        },
+        params: { segmentId: previousSegmentId, organisationId: previousOrganisationId },
       },
     } = previousProps;
 
@@ -185,14 +175,9 @@ class AudienceSegmentPage extends React.Component<Props, State> {
   }
 
   render() {
-    const {
-      isLoading,
-      segment,
-      datamarts,
-      controlGroupSegment,
-    } = this.state;
+    const { isLoading, segment, datamarts, controlGroupSegment } = this.state;
     return (
-      <div className="ant-layout">
+      <div className='ant-layout'>
         <AudienceSegmentActionbar
           isLoading={isLoading}
           segment={segment}
@@ -200,8 +185,8 @@ class AudienceSegmentPage extends React.Component<Props, State> {
           datamarts={datamarts}
           controlGroupSegment={controlGroupSegment}
         />
-        <div className="ant-layout">
-          <Content className="mcs-content-container">
+        <div className='ant-layout'>
+          <Content className='mcs-content-container'>
             <AudienceSegment
               isLoading={isLoading}
               segment={segment}

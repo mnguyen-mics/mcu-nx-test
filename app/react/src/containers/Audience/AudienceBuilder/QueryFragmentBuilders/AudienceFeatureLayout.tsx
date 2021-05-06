@@ -11,9 +11,7 @@ import { FormRelativeAbsoluteDateProps } from '../../../QueryTool/JSONOTQL/Edit/
 import AudienceFeatureVariable from './AudienceFeatureVariable';
 import { ObjectLikeTypeInfoResource } from '../../../../models/datamart/graphdb/RuntimeSchema';
 
-export const FormRelativeAbsoluteDateField = Field as new () => GenericField<
-  FormRelativeAbsoluteDateProps
->;
+export const FormRelativeAbsoluteDateField = Field as new () => GenericField<FormRelativeAbsoluteDateProps>;
 
 interface State {
   audienceFeature?: AudienceFeatureResource;
@@ -57,9 +55,9 @@ class AudienceFeatureLayout extends React.Component<Props, State> {
 
     return audienceFeature ? (
       <React.Fragment>
-        <div className="mcs-audienceBuilder_audienceFeatureName">{`${audienceFeature.name}`}</div>
+        <div className='mcs-audienceBuilder_audienceFeatureName'>{`${audienceFeature.name}`}</div>
         {!!audienceFeature.description && (
-          <i className="mcs-audienceBuilder_audienceFeatureDescription">{`${audienceFeature.description} `}</i>
+          <i className='mcs-audienceBuilder_audienceFeatureDescription'>{`${audienceFeature.description} `}</i>
         )}
         {audienceFeature.variables?.map((v, index) => {
           return (

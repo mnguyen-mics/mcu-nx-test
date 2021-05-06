@@ -22,12 +22,10 @@ class LocationHelper extends React.Component<LocationProps> {
       doubleClickZoom: false,
     };
 
-    const containerWidth = this.props.containerWidth
-      ? this.props.containerWidth
-      : 0;
+    const containerWidth = this.props.containerWidth ? this.props.containerWidth : 0;
 
     return longitude && latitude ? (
-      <Row gutter={10} className="table-line section border-top">
+      <Row gutter={10} className='table-line section border-top'>
         <Col span={24} style={{ height: '100px', margin: '-5px -20px' }}>
           <ReactMapGL
             {...settings}
@@ -38,13 +36,11 @@ class LocationHelper extends React.Component<LocationProps> {
             zoom={9}
             attributionControl={false}
             preventStyleDiffing={true}
-            mapboxApiAccessToken={
-              (global as any).window.MCS_CONSTANTS.MAPBOX_TOKEN
-            }
+            mapboxApiAccessToken={(global as any).window.MCS_CONSTANTS.MAPBOX_TOKEN}
           >
             <Marker latitude={latitude} longitude={longitude}>
-              <svg width="10" height="10">
-                <circle cx="5" cy="5" r="5" fill="#00a1df" />
+              <svg width='10' height='10'>
+                <circle cx='5' cy='5' r='5' fill='#00a1df' />
               </svg>
             </Marker>
           </ReactMapGL>

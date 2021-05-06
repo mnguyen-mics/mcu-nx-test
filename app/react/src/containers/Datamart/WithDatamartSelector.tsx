@@ -10,8 +10,7 @@ import { FormTitle } from '../../components/Form';
 import { defineMessages } from 'react-intl';
 import { MicsReduxState } from '../../utils/ReduxHelper';
 
-export interface WithDatamartSelectorProps
-  extends RouteComponentProps<{ organisationId: string }> {
+export interface WithDatamartSelectorProps extends RouteComponentProps<{ organisationId: string }> {
   selectedDatamartId: string;
   selectedDatafarm: string;
   connectedUser: UserProfileResource;
@@ -35,9 +34,7 @@ const messages = defineMessages({
   },
 });
 
-export function withDatamartSelector<T>(
-  WrappedComponent: React.ComponentClass,
-) {
+export function withDatamartSelector<T>(WrappedComponent: React.ComponentClass) {
   class NewComponent extends React.Component<Props<T>, IState> {
     constructor(props: Props<T>) {
       super(props);
@@ -47,13 +44,9 @@ export function withDatamartSelector<T>(
       );
       this.state = {
         datamartId:
-          foundDatamarts && foundDatamarts.length === 1
-            ? foundDatamarts[0].id
-            : undefined,
+          foundDatamarts && foundDatamarts.length === 1 ? foundDatamarts[0].id : undefined,
         datafarm:
-          foundDatamarts && foundDatamarts.length === 1
-            ? foundDatamarts[0].datafarm
-            : undefined,
+          foundDatamarts && foundDatamarts.length === 1 ? foundDatamarts[0].datafarm : undefined,
       };
     }
 
@@ -65,10 +58,7 @@ export function withDatamartSelector<T>(
     }
 
     componentDidUpdate(prevProps: Props<T>, prevState: IState) {
-      if (
-        prevProps.match.params.organisationId !==
-        this.props.match.params.organisationId
-      ) {
+      if (prevProps.match.params.organisationId !== this.props.match.params.organisationId) {
         this.assignAvailableDatamart(
           this.props.connectedUser,
           this.props.match.params.organisationId,
@@ -80,10 +70,7 @@ export function withDatamartSelector<T>(
       connectedUser: UserProfileResource,
       currentOrganisationId: string,
     ) => {
-      const foundDatamarts = this.findAvailableDatamarts(
-        connectedUser,
-        currentOrganisationId,
-      );
+      const foundDatamarts = this.findAvailableDatamarts(connectedUser, currentOrganisationId);
       if (foundDatamarts && foundDatamarts.length === 1) {
         this.setState({ datamartId: foundDatamarts[0].id });
       } else {
@@ -124,26 +111,17 @@ export function withDatamartSelector<T>(
       const { datamartId, datafarm } = this.state;
 
       if (!datamartId) {
-        const datamarts = this.findAvailableDatamarts(
-          connectedUser,
-          organisationId,
-        );
+        const datamarts = this.findAvailableDatamarts(connectedUser, organisationId);
 
         return (
           <Layout>
-            <Layout.Content className="mcs-content-container mcs-form-container text-center">
+            <Layout.Content className='mcs-content-container mcs-form-container text-center'>
               <FormTitle title={messages.title} subtitle={messages.subTitle} />
-              <Row className="mcs-selector_container">
-                <Row className="menu">
+              <Row className='mcs-selector_container'>
+                <Row className='menu'>
                   {datamarts.map(d => {
                     const handleSelect = () => this.onSelectDatamart(d);
-                    return (
-                      <MenuList
-                        key={d.id}
-                        title={d.name || d.token}
-                        select={handleSelect}
-                      />
-                    );
+                    return <MenuList key={d.id} title={d.name || d.token} select={handleSelect} />;
                   })}
                 </Row>
               </Row>

@@ -1,8 +1,5 @@
 import { createFieldArrayModelWithMeta } from './../../../../utils/FormHelper';
-import {
-  Task,
-  executeTasksInSequence,
-} from './../../../../utils/PromiseHelper';
+import { Task, executeTasksInSequence } from './../../../../utils/PromiseHelper';
 import {
   isGoalResource,
   GoalFormData,
@@ -94,15 +91,9 @@ export class GoalFormService implements IGoalFormService {
 
     return goalDataToUpload.then(goalData => {
       if (goalFormData.goal && isGoalResource(goalFormData.goal)) {
-        createOrUpdateGoalPromise = this._goalService.updateGoal(
-          goalFormData.goal.id,
-          goalData,
-        );
+        createOrUpdateGoalPromise = this._goalService.updateGoal(goalFormData.goal.id, goalData);
       } else {
-        createOrUpdateGoalPromise = this._goalService.createGoal(
-          organisationId,
-          goalData,
-        );
+        createOrUpdateGoalPromise = this._goalService.createGoal(organisationId, goalData);
       }
 
       return createOrUpdateGoalPromise.then(resp => {
@@ -162,14 +153,10 @@ export class GoalFormService implements IGoalFormService {
       } else {
         const attributionSelectionRes = field.model;
         tasks.push(() =>
-          this._goalService.updateLinkAttributionModel(
-            goalId,
-            attributionSelectionRes.id,
-            {
-              ...attributionSelectionRes,
-              default: field.meta.default,
-            },
-          ),
+          this._goalService.updateLinkAttributionModel(goalId, attributionSelectionRes.id, {
+            ...attributionSelectionRes,
+            default: field.meta.default,
+          }),
         );
       }
     });

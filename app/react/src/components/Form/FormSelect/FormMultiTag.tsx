@@ -20,15 +20,7 @@ export interface FormMultiTagProps extends FormFieldWrapperProps {
 type Props = FormMultiTagProps & WrappedFieldProps & InjectedIntlProps;
 
 const FormMultiTag: React.SFC<Props> = props => {
-
-  const {
-    formItemProps,
-    helpToolTipProps,
-    input,
-    meta,
-    selectProps,
-    small,
-  } = props;
+  const { formItemProps, helpToolTipProps, input, meta, selectProps, small } = props;
 
   let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
   const mode = 'tags' as 'multiple' | 'tags';

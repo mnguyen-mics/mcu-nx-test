@@ -1,16 +1,10 @@
-import { 
+import {
   AttributionSelectionResource,
   AttributionSelectionCreateRequest,
 } from './AttributionSelectionResource';
-import {
-  GoalSelectionResource,
-  GoalSelectionCreateRequest,
-} from './GoalSelectionResource';
+import { GoalSelectionResource, GoalSelectionCreateRequest } from './GoalSelectionResource';
 import { GoalSelectionType } from './GoalSelectionType';
-import {
-  GoalResource,
-  GoalCreateRequest,
-} from './GoalResource';
+import { GoalResource, GoalCreateRequest } from './GoalResource';
 
 export {
   AttributionSelectionResource,
@@ -19,5 +13,5 @@ export {
   GoalSelectionCreateRequest,
   GoalSelectionType,
   GoalCreateRequest,
-  GoalResource
+  GoalResource,
 };

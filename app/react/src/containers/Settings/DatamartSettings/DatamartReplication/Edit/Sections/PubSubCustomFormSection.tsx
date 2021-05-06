@@ -2,17 +2,9 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import messages from '../../List/messages';
-import {
-  FormInput,
-  FormSection,
-  FormInputField,
-} from '../../../../../../components/Form';
-import withValidators, {
-  ValidatorProps,
-} from '../../../../../../components/Form/withValidators';
-import withNormalizer, {
-  NormalizerProps,
-} from '../../../../../../components/Form/withNormalizer';
+import { FormInput, FormSection, FormInputField } from '../../../../../../components/Form';
+import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
+import withNormalizer, { NormalizerProps } from '../../../../../../components/Form/withNormalizer';
 import {
   FormDataFileField,
   FormDataFile,
@@ -48,28 +40,22 @@ class PubSubCustomFormSection extends React.Component<Props> {
         />
 
         <FormDataFileField
-          name="credentials_uri"
+          name='credentials_uri'
           component={FormDataFile}
           validate={[isRequired]}
           disabled={!!datamartReplicationId}
           formItemProps={{
-            label: formatMessage(
-              messages.datamartReplicationPubSubCredentialsUriLabel,
-            ),
+            label: formatMessage(messages.datamartReplicationPubSubCredentialsUriLabel),
             required: true,
           }}
           helpToolTipProps={{
-            title: formatMessage(
-              messages.datamartReplicationPubSubCredentialsUriTooltip,
-            ),
+            title: formatMessage(messages.datamartReplicationPubSubCredentialsUriTooltip),
           }}
-          buttonText={formatMessage(
-            messages.datamartReplicationPubSubCredentialsUriPlaceHolder,
-          )}
+          buttonText={formatMessage(messages.datamartReplicationPubSubCredentialsUriPlaceHolder)}
           accept={`*`}
         />
         <FormInputField
-          name="project_id"
+          name='project_id'
           component={FormInput}
           validate={[isRequired]}
           formItemProps={{
@@ -77,17 +63,15 @@ class PubSubCustomFormSection extends React.Component<Props> {
             required: true,
           }}
           inputProps={{
-            placeholder: formatMessage(
-              messages.datamartReplicationPubSubProjectIdPlaceholder,
-            ),
-            disabled: !!datamartReplicationId
+            placeholder: formatMessage(messages.datamartReplicationPubSubProjectIdPlaceholder),
+            disabled: !!datamartReplicationId,
           }}
           helpToolTipProps={{
             title: formatMessage(messages.datamartReplicationPubSubProjectIdTooltip),
           }}
         />
         <FormInputField
-          name="topic_id"
+          name='topic_id'
           component={FormInput}
           validate={[isRequired]}
           formItemProps={{
@@ -95,10 +79,8 @@ class PubSubCustomFormSection extends React.Component<Props> {
             required: true,
           }}
           inputProps={{
-            placeholder: formatMessage(
-              messages.datamartReplicationPubSubTopicIdPlaceHolder,
-            ),
-            disabled: !!datamartReplicationId
+            placeholder: formatMessage(messages.datamartReplicationPubSubTopicIdPlaceHolder),
+            disabled: !!datamartReplicationId,
           }}
           helpToolTipProps={{
             title: formatMessage(messages.datamartReplicationPubSubTopicIdTooltip),

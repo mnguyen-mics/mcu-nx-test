@@ -15,7 +15,8 @@ export default defineMessages({
   },
   resetPasswordDescription: {
     id: 'authentication.forgotPasswordForm.resetPassword',
-    defaultMessage: 'Having trouble logging in? Just type your email address bellow and we will sent you an email with a link to reset your password.',
+    defaultMessage:
+      'Having trouble logging in? Just type your email address bellow and we will sent you an email with a link to reset your password.',
   },
   resetPasswordEmailRequired: {
     id: 'authentication.forgotPasswordForm.emaiRequired',
@@ -35,10 +36,10 @@ export default defineMessages({
   },
   resetPasswordPasswordSent: {
     id: 'authentication.forgotPasswordMailSent.passsordSent',
-    defaultMessage: 'We\'ve sent you an email with a link to finish reseting your password.',
+    defaultMessage: "We've sent you an email with a link to finish reseting your password.",
   },
   resetPasswordEmailSpan: {
     id: 'authentication.forgotPasswordMailSent.emailSpan',
-    defaultMessage: 'Can\'t find the email ? Try checking your spam folder.',
+    defaultMessage: "Can't find the email ? Try checking your spam folder.",
   },
 });

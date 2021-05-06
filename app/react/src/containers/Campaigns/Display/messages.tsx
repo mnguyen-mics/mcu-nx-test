@@ -1,14 +1,7 @@
 import * as React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import {
-  AdGroupResource,
-  DisplayCampaignResource,
-} from '../../../models/campaign/display';
-import {
-  HistoryKeys,
-  formatToFormattingFunction,
-  ValueFormat,
-} from '../../ResourceHistory/utils';
+import { AdGroupResource, DisplayCampaignResource } from '../../../models/campaign/display';
+import { HistoryKeys, formatToFormattingFunction, ValueFormat } from '../../ResourceHistory/utils';
 import {
   BudgetPeriod,
   TargetedMedia,
@@ -586,9 +579,7 @@ const campaignStatusMessages: {
 });
 
 const campaignPropertiesMessageMap: {
-  [propertyName in
-    | keyof DisplayCampaignResource
-    | HistoryKeys]: FormattedMessage.MessageDescriptor;
+  [propertyName in keyof DisplayCampaignResource | HistoryKeys]: FormattedMessage.MessageDescriptor;
 } = defineMessages({
   id: {
     id: 'campaign.display.fields.id',

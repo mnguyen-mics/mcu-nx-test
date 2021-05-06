@@ -15,9 +15,11 @@ export interface Filter {
 export function parseFilter(filterList?: Filter[]): string[] | undefined {
   if (filterList !== undefined && filterList.length !== 0) {
     const parsedFilters = filterList
-      .filter(filter => (filter !== undefined) && (filter.name !== '') && (filter.value !== ''))
-      .map(filter => `${encodeURIComponent(filter.name)}==${encodeURIComponent(String(filter.value))}`);
-    return (parsedFilters.length !== 0) ? parsedFilters : undefined;
+      .filter(filter => filter !== undefined && filter.name !== '' && filter.value !== '')
+      .map(
+        filter => `${encodeURIComponent(filter.name)}==${encodeURIComponent(String(filter.value))}`,
+      );
+    return parsedFilters.length !== 0 ? parsedFilters : undefined;
   } else {
     return undefined;
   }
@@ -33,7 +35,14 @@ const ReportService = {
     filterList?: Filter[],
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/display_campaign_performance_report';
-    const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost'/*, 'cpa'*/];
+    const DEFAULT_METRICS = [
+      'impressions',
+      'clicks',
+      'cpm',
+      'ctr',
+      'cpc',
+      'impressions_cost' /*, 'cpa'*/,
+    ];
     const range = { from: startDate, to: endDate };
     const formattedDates = formatMcsDate(range, true);
     const parsedFilters = parseFilter(filterList);
@@ -63,7 +72,13 @@ const ReportService = {
     options: object = {},
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/delivery_report';
-    const DEFAULT_METRICS = ['email_sent', 'email_hard_bounced', 'email_soft_bounced', 'clicks', 'impressions'];
+    const DEFAULT_METRICS = [
+      'email_sent',
+      'email_hard_bounced',
+      'email_soft_bounced',
+      'clicks',
+      'impressions',
+    ];
     const range = { from: startDate, to: endDate };
     const formattedDates = formatMcsDate(range, true);
     const parsedFilters = parseFilter(filterList);
@@ -123,7 +138,14 @@ const ReportService = {
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/ad_group_performance_report';
     const DEFAULT_DIMENSIONS = [''];
-    const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost'/*, 'cpa'*/];
+    const DEFAULT_METRICS = [
+      'impressions',
+      'clicks',
+      'cpm',
+      'ctr',
+      'cpc',
+      'impressions_cost' /*, 'cpa'*/,
+    ];
     const range = { from: startDate, to: endDate };
     const formattedDates = formatMcsDate(range, true);
     const params = {
@@ -151,7 +173,14 @@ const ReportService = {
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/ad_performance_report';
     const DEFAULT_DIMENSIONS = [''];
-    const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost'/*, 'cpa'*/];
+    const DEFAULT_METRICS = [
+      'impressions',
+      'clicks',
+      'cpm',
+      'ctr',
+      'cpc',
+      'impressions_cost' /*, 'cpa'*/,
+    ];
     const range = { from: startDate, to: endDate };
     const formattedDates = formatMcsDate(range, true);
     const params = {
@@ -177,7 +206,14 @@ const ReportService = {
     options: object = {},
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/media_performance_report';
-    const DEFAULT_METRICS = ['impressions', 'clicks', 'cpm', 'ctr', 'cpc', 'impressions_cost'/*, 'cpa'*/];
+    const DEFAULT_METRICS = [
+      'impressions',
+      'clicks',
+      'cpm',
+      'ctr',
+      'cpc',
+      'impressions_cost' /*, 'cpa'*/,
+    ];
     const range = { from: startDate, to: endDate };
     const formattedDates = formatMcsDate(range, true);
     const DEFAULT_DIMENSIONS = ['display_network_id', 'display_network_name', 'format'];
@@ -236,7 +272,11 @@ const ReportService = {
     return ApiService.getRequest(endpoint, params).then((response: ReportViewResponse) => {
       const data = response.data.report_view.rows;
       const formattedData = [];
-      for (const d = moment(params.start_date); d.diff(moment(params.end_date)) < 0; d.add('days', 1)) {
+      for (
+        const d = moment(params.start_date);
+        d.diff(moment(params.end_date)) < 0;
+        d.add('days', 1)
+      ) {
         const dataForDay = data.find(a => {
           if (typeof a[0] === 'string') {
             // YYYY-MM-DD
@@ -441,7 +481,14 @@ const ReportService = {
   ): Promise<ReportViewResponse> {
     const endpoint = 'reports/visit_report';
     const DEFAULT_DIMENSIONS = ['day'];
-    const DEFAULT_METRICS = ['max_duration', 'min_duration', 'avg_duration', 'unique_user', 'count', 'unique_visitor'];
+    const DEFAULT_METRICS = [
+      'max_duration',
+      'min_duration',
+      'avg_duration',
+      'unique_user',
+      'count',
+      'unique_visitor',
+    ];
     const range = { from: startDate, to: endDate };
     const formattedDates = formatMcsDate(range, true);
     const params = {

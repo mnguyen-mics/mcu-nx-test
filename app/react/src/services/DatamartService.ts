@@ -47,17 +47,12 @@ export interface IDatamartService {
     body: Partial<EventRules>,
   ) => Promise<DataResponse<EventRules>>;
 
-  deleteEventRules: (
-    datamartId: string,
-    eventRuleId: string,
-  ) => Promise<DataResponse<EventRules>>;
+  deleteEventRules: (datamartId: string, eventRuleId: string) => Promise<DataResponse<EventRules>>;
 
   getUserAccountCompartmentDatamartSelectionResources: (
     datamartId: string,
     options?: object,
-  ) => Promise<
-    DataListResponse<UserAccountCompartmentDatamartSelectionResource>
-  >;
+  ) => Promise<DataListResponse<UserAccountCompartmentDatamartSelectionResource>>;
 
   getUserAccountCompartmentDatamartSelectionResource: (
     datamartId: string,
@@ -88,9 +83,7 @@ export interface IDatamartService {
     compartment: Partial<UserAccountCompartmentResource>,
   ) => Promise<DataResponse<UserAccountCompartmentResource>>;
 
-  getSources: (
-    datamartId: string,
-  ) => Promise<DataListResponse<DatamartResource>>;
+  getSources: (datamartId: string) => Promise<DataListResponse<DatamartResource>>;
 
   getCleaningRules: (
     datamartId: string,
@@ -137,10 +130,7 @@ export interface IDatamartService {
     resource: Partial<UserEventContentFilterResource>,
   ) => Promise<DataResponse<UserEventContentFilterResource>>;
 
-  deleteContentFilter: (
-    datamartId: string,
-    ruleId: string,
-  ) => Promise<DataResponse<{}>>;
+  deleteContentFilter: (datamartId: string, ruleId: string) => Promise<DataResponse<{}>>;
 
   getProcessingSelectionsByCompartment: (
     datamartId: string,
@@ -203,10 +193,7 @@ export class DatamartService implements IDatamartService {
     return ApiService.postRequest(endpoint, datamart);
   }
 
-  getEventRules(
-    datamartId: string,
-    organisationId: string,
-  ): Promise<DataListResponse<EventRules>> {
+  getEventRules(datamartId: string, organisationId: string): Promise<DataListResponse<EventRules>> {
     const endpoint = `datamarts/${datamartId}/event_rules`;
     return ApiService.getRequest(endpoint, { organisation_id: organisationId });
   }
@@ -228,10 +215,7 @@ export class DatamartService implements IDatamartService {
     return ApiService.putRequest(endpoint, body);
   }
 
-  deleteEventRules(
-    datamartId: string,
-    eventRuleId: string,
-  ): Promise<DataResponse<EventRules>> {
+  deleteEventRules(datamartId: string, eventRuleId: string): Promise<DataResponse<EventRules>> {
     const endpoint = `datamarts/${datamartId}/event_rules/${eventRuleId}`;
     return ApiService.deleteRequest(endpoint);
   }
@@ -239,9 +223,7 @@ export class DatamartService implements IDatamartService {
   getUserAccountCompartmentDatamartSelectionResources(
     datamartId: string,
     options: object = {},
-  ): Promise<
-    DataListResponse<UserAccountCompartmentDatamartSelectionResource>
-  > {
+  ): Promise<DataListResponse<UserAccountCompartmentDatamartSelectionResource>> {
     const endpoint = `datamarts/${datamartId}/compartments`;
     return ApiService.getRequest(endpoint, options);
   }
@@ -366,10 +348,7 @@ export class DatamartService implements IDatamartService {
     return ApiService.putRequest(endpoint, resource);
   }
 
-  deleteContentFilter(
-    datamartId: string,
-    ruleId: string,
-  ): Promise<DataResponse<{}>> {
+  deleteContentFilter(datamartId: string, ruleId: string): Promise<DataResponse<{}>> {
     const endpoint = `datamarts/${datamartId}/cleaning_rules/${ruleId}/content_filter`;
     return ApiService.deleteRequest(endpoint);
   }

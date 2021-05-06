@@ -82,6 +82,6 @@ class AuditComponentContainer extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, AuditComponentContainerProps>(
-  injectNotifications,
-)(AuditComponentContainer);
+export default compose<Props, AuditComponentContainerProps>(injectNotifications)(
+  AuditComponentContainer,
+);

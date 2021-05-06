@@ -4,7 +4,6 @@ import ConversionValueFormSection from './ConversionValueFormSection';
 import TriggerFormSection from './TriggerFormSection';
 import AttributionModelFormSection from './AttributionModelFormSection';
 
-
 export {
   AttributionFormSection,
   GeneralFormSection,

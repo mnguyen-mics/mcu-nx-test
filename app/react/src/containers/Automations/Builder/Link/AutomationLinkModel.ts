@@ -1,8 +1,4 @@
-import {
-  DefaultLinkModelListener,
-  BaseEvent,
-  LinkModel,
-} from 'storm-react-diagrams';
+import { DefaultLinkModelListener, BaseEvent, LinkModel } from 'storm-react-diagrams';
 
 export default class AutomationLinkModel extends LinkModel {
   color: string;
@@ -13,12 +9,10 @@ export default class AutomationLinkModel extends LinkModel {
 
   setColor(color: string) {
     this.color = color;
-    this.iterateListeners(
-      (listener: DefaultLinkModelListener, event: BaseEvent) => {
-        if (listener.colorChanged) {
-          listener.colorChanged({ ...event, color: color });
-        }
-      },
-    );
+    this.iterateListeners((listener: DefaultLinkModelListener, event: BaseEvent) => {
+      if (listener.colorChanged) {
+        listener.colorChanged({ ...event, color: color });
+      }
+    });
   }
 }

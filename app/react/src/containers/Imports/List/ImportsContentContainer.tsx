@@ -3,7 +3,7 @@ import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { TableViewFilters } from '../../../components/TableView';
-import { MultiSelectProps } from '@mediarithmics-private/mcs-components-library/lib/components/multi-select';;
+import { MultiSelectProps } from '@mediarithmics-private/mcs-components-library/lib/components/multi-select';
 import messages from './messages';
 import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Modal, Row } from 'antd';
@@ -11,10 +11,7 @@ import { Import } from '../../../models/imports/imports';
 import { Link } from 'react-router-dom';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
-import {
-  IImportService,
-  GetImportsOptions,
-} from '../../../services/ImportService';
+import { IImportService, GetImportsOptions } from '../../../services/ImportService';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 import { formatDocumentTypeText, formatMimeTypeText } from '../domain';
 import { DatamartResource } from '../../../models/datamart/DatamartResource';
@@ -36,7 +33,10 @@ import { IMPORTS_SEARCH_SETTINGS } from './constants';
 import { connect } from 'react-redux';
 import { Label } from '../../Labels/Labels';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
-import { ActionsColumnDefinition, DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import {
+  ActionsColumnDefinition,
+  DataColumnDefinition,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 interface MapStateToProps {
   labels: Label[];
@@ -109,21 +109,18 @@ class ImportsContentContainer extends React.Component<Props, State> {
         search: buildDefaultSearch(search, IMPORTS_SEARCH_SETTINGS),
       });
     } else {
-      const filter = parseSearch<ImportFilterParams>(
-        search,
-        IMPORTS_SEARCH_SETTINGS,
-      );
+      const filter = parseSearch<ImportFilterParams>(search, IMPORTS_SEARCH_SETTINGS);
 
       if (!noFilterDatamart) {
         this._datamartService
           .getDatamarts(organisationId, options)
-          .then((res) => {
+          .then(res => {
             this.setState({
               datamarts: res.data,
               loading: false,
             });
           })
-          .catch((err) => {
+          .catch(err => {
             this.setState({
               loading: false,
             });
@@ -151,34 +148,23 @@ class ImportsContentContainer extends React.Component<Props, State> {
       location: { search: previousSearch },
     } = previousProps;
 
-    const filter = parseSearch<ImportFilterParams>(
-      search,
-      IMPORTS_SEARCH_SETTINGS,
-    );
+    const filter = parseSearch<ImportFilterParams>(search, IMPORTS_SEARCH_SETTINGS);
 
-    if (
-      organisationId !== previousOrganisationId ||
-      !compareSearches(search, previousSearch)
-    ) {
+    if (organisationId !== previousOrganisationId || !compareSearches(search, previousSearch)) {
       const options = {
         allow_administrator: true,
         archived: false,
       };
 
       if (!noFilterDatamart) {
-        this._datamartService
-          .getDatamarts(organisationId, options)
-          .then((res) => {
-            this.setState({
-              datamarts: res.data,
-            });
+        this._datamartService.getDatamarts(organisationId, options).then(res => {
+          this.setState({
+            datamarts: res.data,
           });
+        });
       }
 
-      this.fetchImport(
-        filter.datamartId || datamartId || this.props.datamartId,
-        filter,
-      );
+      this.fetchImport(filter.datamartId || datamartId || this.props.datamartId, filter);
     }
   }
 
@@ -197,7 +183,7 @@ class ImportsContentContainer extends React.Component<Props, State> {
       if (filter.label_id && filter.label_id.length) {
         options.label_ids = filter.label_id;
       }
-      this._importService.getImportList(datamartId, options).then((results) => {
+      this._importService.getImportList(datamartId, options).then(results => {
         this.setState({
           loading: false,
           data: results.data,
@@ -217,10 +203,7 @@ class ImportsContentContainer extends React.Component<Props, State> {
 
     const { data } = this.state;
 
-    const filter = parseSearch<ImportFilterParams>(
-      search,
-      IMPORTS_SEARCH_SETTINGS,
-    );
+    const filter = parseSearch<ImportFilterParams>(search, IMPORTS_SEARCH_SETTINGS);
 
     Modal.confirm({
       icon: <ExclamationCircleOutlined />,
@@ -298,10 +281,7 @@ class ImportsContentContainer extends React.Component<Props, State> {
 
     const { data, loading, datamarts } = this.state;
 
-    const filter = parseSearch<ImportFilterParams>(
-      search,
-      IMPORTS_SEARCH_SETTINGS,
-    );
+    const filter = parseSearch<ImportFilterParams>(search, IMPORTS_SEARCH_SETTINGS);
 
     const actionsColumnsDefinition: Array<ActionsColumnDefinition<Import>> = [
       {
@@ -332,7 +312,7 @@ class ImportsContentContainer extends React.Component<Props, State> {
         isHideable: false,
         render: (text: string, record: Import) => (
           <Link
-            className="mcs-campaigns-link"
+            className='mcs-campaigns-link'
             to={`/v2/o/${organisationId}/datastudio/datamart/${record.datamart_id}/imports/${record.id}`}
           >
             {text}
@@ -343,9 +323,7 @@ class ImportsContentContainer extends React.Component<Props, State> {
         title: formatMessage(messages.documentType),
         key: 'document_type',
         isHideable: false,
-        render: (text: string, record: Import) => (
-          <span>{formatDocumentTypeText(text)}</span>
-        ),
+        render: (text: string, record: Import) => <span>{formatDocumentTypeText(text)}</span>,
       },
       {
         title: formatMessage(messages.priority),
@@ -357,13 +335,11 @@ class ImportsContentContainer extends React.Component<Props, State> {
         title: formatMessage(messages.mimeType),
         key: 'mime_type',
         isHideable: false,
-        render: (text: string, record: Import) => (
-          <span>{formatMimeTypeText(text)}</span>
-        ),
+        render: (text: string, record: Import) => <span>{formatMimeTypeText(text)}</span>,
       },
     ];
 
-    const datamartItems = datamarts.map((d) => ({
+    const datamartItems = datamarts.map(d => ({
       key: d.id,
       value: d.name || d.token,
     }));
@@ -374,22 +350,18 @@ class ImportsContentContainer extends React.Component<Props, State> {
       const datamartFilter = {
         displayElement: (
           <div>
-            <FormattedMessage
-              id="imports.list.datamartFilter"
-              defaultMessage="Datamart"
-            />{' '}
+            <FormattedMessage id='imports.list.datamartFilter' defaultMessage='Datamart' />{' '}
             <DownOutlined />
           </div>
         ),
-        selectedItems: [datamartItems.find((di) => di.key === datamartId)],
+        selectedItems: [datamartItems.find(di => di.key === datamartId)],
         items: datamartItems,
         singleSelectOnly: true,
         getKey: (item: any) => (item && item.key ? item.key : ''),
         display: (item: any) => item.value,
         handleItemClick: (datamartItem: { key: string; value: string }) => {
           this.updateLocationSearch({
-            datamartId:
-              datamartItem && datamartItem.key ? datamartItem.key : undefined,
+            datamartId: datamartItem && datamartItem.key ? datamartItem.key : undefined,
             currentPage: 1,
             pageSize: filter.pageSize,
           });
@@ -431,13 +403,11 @@ class ImportsContentContainer extends React.Component<Props, State> {
 
     const labelsOptions = {
       labels: labels,
-      selectedLabels: labels.filter((label) => {
-        return filter.label_id.some(
-          (filteredLabelId: string) => filteredLabelId === label.id,
-        );
+      selectedLabels: labels.filter(label => {
+        return filter.label_id.some((filteredLabelId: string) => filteredLabelId === label.id);
       }),
       onChange: (newLabels: Label[]) => {
-        const formattedLabels = newLabels.map((label) => label.id);
+        const formattedLabels = newLabels.map(label => label.id);
         this.updateLocationSearch({
           label_id: formattedLabels,
           currentPage: 1,
@@ -447,14 +417,14 @@ class ImportsContentContainer extends React.Component<Props, State> {
     };
 
     return (
-      <Row className="mcs-table-container">
+      <Row className='mcs-table-container'>
         <div>
-          <div className="mcs-card-header mcs-card-title">
-            <span className="mcs-card-title">
+          <div className='mcs-card-header mcs-card-title'>
+            <span className='mcs-card-title'>
               <FormattedMessage {...messages.imports} />
             </span>
           </div>
-          <hr className="mcs-separator" />
+          <hr className='mcs-separator' />
           <TableViewFilters
             columns={dataColumns}
             actionsColumnsDefinition={actionsColumnsDefinition}

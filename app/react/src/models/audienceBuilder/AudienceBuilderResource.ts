@@ -1,7 +1,4 @@
-import {
-  QueryBooleanOperator,
-  SelectionOperation,
-} from './../datamart/graphdb/QueryDocument';
+import { QueryBooleanOperator, SelectionOperation } from './../datamart/graphdb/QueryDocument';
 export interface AudienceBuilderResource {
   id: string;
   name: string;

@@ -67,9 +67,7 @@ interface RouterProps {
   organisationId: string;
 }
 
-type Props = RouteComponentProps<RouterProps> &
-  InjectedIntlProps &
-  InjectedNotificationProps;
+type Props = RouteComponentProps<RouterProps> & InjectedIntlProps & InjectedNotificationProps;
 
 class MlFunctionsContent extends Component<Props, MlFunctionsContentState> {
   @lazyInject(TYPES.IMlFunctionService)
@@ -94,15 +92,15 @@ class MlFunctionsContent extends Component<Props, MlFunctionsContentState> {
       };
       this._mlFunctionService
         .listMlFunctions(organisationId, options)
-        .then((results) => {
-          const promises = results.data.map((sp) => {
+        .then(results => {
+          const promises = results.data.map(sp => {
             return new Promise((resolve, reject) => {
               this._pluginService
                 .getEngineVersion(sp.version_id)
-                .then((mlFunction) => {
+                .then(mlFunction => {
                   return this._pluginService.getEngineProperties(mlFunction.id);
                 })
-                .then((v) => resolve(v));
+                .then(v => resolve(v));
             });
           });
           Promise.all(promises).then((spProperties: PluginProperty[]) => {
@@ -119,7 +117,7 @@ class MlFunctionsContent extends Component<Props, MlFunctionsContentState> {
             });
           });
         })
-        .catch((err) => {
+        .catch(err => {
           this.props.notifyError(err);
           this.setState({ loading: false });
         });
@@ -177,9 +175,7 @@ class MlFunctionsContent extends Component<Props, MlFunctionsContentState> {
       },
     } = this.props;
 
-    history.push(
-      `/v2/o/${organisationId}/settings/datamart/ml_functions/${mlFunction.id}/edit`,
-    );
+    history.push(`/v2/o/${organisationId}/settings/datamart/ml_functions/${mlFunction.id}/edit`);
   };
 
   render() {
@@ -191,9 +187,7 @@ class MlFunctionsContent extends Component<Props, MlFunctionsContentState> {
       intl: { formatMessage },
     } = this.props;
 
-    const actionsColumnsDefinition: Array<
-      ActionsColumnDefinition<MlFunction>
-    > = [
+    const actionsColumnsDefinition: Array<ActionsColumnDefinition<MlFunction>> = [
       {
         key: 'action',
         actions: () => [
@@ -216,7 +210,7 @@ class MlFunctionsContent extends Component<Props, MlFunctionsContentState> {
         isHideable: false,
         render: (text: string, record: MlFunction) => (
           <span className={`mcs-campaigns-status-${text.toLowerCase()}`}>
-            <McsIcon type="status" />
+            <McsIcon type='status' />
           </span>
         ),
       },
@@ -226,7 +220,7 @@ class MlFunctionsContent extends Component<Props, MlFunctionsContentState> {
         isHideable: false,
         render: (text: string, record: MlFunction) => (
           <Link
-            className="mcs-campaigns-link"
+            className='mcs-campaigns-link'
             to={`/v2/o/${organisationId}/settings/datamart/ml_functions/${record.id}/edit`}
           >
             {text}
@@ -244,31 +238,29 @@ class MlFunctionsContent extends Component<Props, MlFunctionsContentState> {
     };
 
     const onClick = () =>
-      history.push(
-        `/v2/o/${organisationId}/settings/datamart/ml_functions/create`,
-      );
+      history.push(`/v2/o/${organisationId}/settings/datamart/ml_functions/create`);
 
     const buttons = [
-      <Button key="create" type="primary" onClick={onClick}>
+      <Button key='create' type='primary' onClick={onClick}>
         <FormattedMessage {...messages.newMlFunction} />
       </Button>,
     ];
 
     const additionnalComponent = (
       <div>
-        <div className="mcs-card-header mcs-card-title">
-          <span className="mcs-card-title">
+        <div className='mcs-card-header mcs-card-title'>
+          <span className='mcs-card-title'>
             <FormattedMessage {...messages.mlFunction} />
           </span>
-          <span className="mcs-card-button">{buttons}</span>
+          <span className='mcs-card-button'>{buttons}</span>
         </div>
-        <hr className="mcs-separator" />
+        <hr className='mcs-separator' />
       </div>
     );
 
     return (
-      <div className="ant-layout">
-        <Content className="mcs-content-container">
+      <div className='ant-layout'>
+        <Content className='mcs-content-container'>
           <ItemList
             fetchList={this.fetchMlFunctions}
             dataSource={this.state.data}
@@ -286,8 +278,4 @@ class MlFunctionsContent extends Component<Props, MlFunctionsContentState> {
   }
 }
 
-export default compose<Props, {}>(
-  withRouter,
-  injectIntl,
-  injectNotifications,
-)(MlFunctionsContent);
+export default compose<Props, {}>(withRouter, injectIntl, injectNotifications)(MlFunctionsContent);

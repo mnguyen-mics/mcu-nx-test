@@ -6,28 +6,18 @@ import { Spin } from 'antd';
 import cuid from 'cuid';
 import { WrappedFieldArrayProps, getFormValues } from 'redux-form';
 import { withRouter, RouteComponentProps } from 'react-router';
-import {
-  EmailBlastFormData,
-  SegmentFieldModel,
-  ConsentFieldModel,
-} from '../../domain';
+import { EmailBlastFormData, SegmentFieldModel, ConsentFieldModel } from '../../domain';
 import { FormSection } from '../../../../../../components/Form';
 import SegmentReach from '../../SegmentReach';
 import AudienceSegmentSelector, {
   AudienceSegmentSelectorProps,
 } from '../../../../Common/AudienceSegmentSelector';
-import {
-  RelatedRecords,
-  RecordElement,
-} from '../../../../../../components/RelatedRecord';
+import { RelatedRecords, RecordElement } from '../../../../../../components/RelatedRecord';
 import { AudienceSegmentResource } from '../../../../../../models/audiencesegment';
 import ReportService from '../../../../../../services/ReportService';
 import { Index } from '../../../../../../utils';
 import { normalizeArrayOfObject } from '../../../../../../utils/Normalizer';
-import {
-  normalizeReportView,
-  formatMetric,
-} from '../../../../../../utils/MetricHelper';
+import { normalizeReportView, formatMetric } from '../../../../../../utils/MetricHelper';
 import messages from '../../messages';
 import McsMoment from '../../../../../../utils/McsMoment';
 import { ReduxFormChangeProps } from '../../../../../../utils/FormHelper';
@@ -65,7 +55,11 @@ class SegmentFormSection extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { match: { params: { organisationId } } } = this.props;
+    const {
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
     this.setState({ fetchingReport: true });
     ReportService.getAudienceSegmentReport(
       organisationId,
@@ -87,9 +81,7 @@ class SegmentFormSection extends React.Component<Props, State> {
   updateSegments = (segments: AudienceSegmentResource[]) => {
     const { fields, formChange } = this.props;
     const segmentIds = segments.map(s => s.id);
-    const fieldSegmentIds = fields
-      .getAll()
-      .map(field => field.model.audience_segment_id);
+    const fieldSegmentIds = fields.getAll().map(field => field.model.audience_segment_id);
 
     const keptSegments = fields
       .getAll()
@@ -112,9 +104,7 @@ class SegmentFormSection extends React.Component<Props, State> {
   openAudienceSegmentSelector = () => {
     const { openNextDrawer, closeNextDrawer, fields } = this.props;
 
-    const selectedSegmentIds = fields
-      .getAll()
-      .map(field => field.model.audience_segment_id);
+    const selectedSegmentIds = fields.getAll().map(field => field.model.audience_segment_id);
 
     const audienceSegmentSelectorProps = {
       selectedSegmentIds,
@@ -126,10 +116,7 @@ class SegmentFormSection extends React.Component<Props, State> {
       additionalProps: audienceSegmentSelectorProps,
     };
 
-    openNextDrawer<AudienceSegmentSelectorProps>(
-      AudienceSegmentSelector,
-      options,
-    );
+    openNextDrawer<AudienceSegmentSelectorProps>(AudienceSegmentSelector, options);
   };
 
   getSegmentRecords = () => {
@@ -142,7 +129,7 @@ class SegmentFormSection extends React.Component<Props, State> {
       const segmentId = segmentField.model.audience_segment_id;
 
       if (fetchingReport) {
-        return <Spin size="small" />;
+        return <Spin size='small' />;
       }
 
       const hasStats = reportBySegmentId && reportBySegmentId[segmentId];
@@ -151,17 +138,12 @@ class SegmentFormSection extends React.Component<Props, State> {
 
       return (
         <span>
-          <span className="m-r-20">
+          <span className='m-r-20'>
             Cookies:{' '}
-            {hasStats.desktop_cookie_ids
-              ? formatMetric(hasStats.desktop_cookie_ids, '0,00')
-              : '-'}
+            {hasStats.desktop_cookie_ids ? formatMetric(hasStats.desktop_cookie_ids, '0,00') : '-'}
           </span>
           <span>
-            User Points:{' '}
-            {hasStats.user_points
-              ? formatMetric(hasStats.user_points, '0,00')
-              : '-'}
+            User Points: {hasStats.user_points ? formatMetric(hasStats.user_points, '0,00') : '-'}
           </span>
         </span>
       );
@@ -172,7 +154,7 @@ class SegmentFormSection extends React.Component<Props, State> {
       return (
         <RecordElement
           key={segmentField.key}
-          recordIconType="users"
+          recordIconType='users'
           record={segmentField}
           title={getName}
           additionalData={getStats}
@@ -183,13 +165,17 @@ class SegmentFormSection extends React.Component<Props, State> {
   };
 
   render() {
-    const { fields, consents, intl: { formatMessage } } = this.props;
+    const {
+      fields,
+      consents,
+      intl: { formatMessage },
+    } = this.props;
 
     const showReach = fields.length > 0;
     const segmentIds = fields
       .getAll()
       .map(segmentSelection => segmentSelection.model.audience_segment_id);
-    const providerTechnicalNames = consents.map(c => c.model ? c.model.technical_name: '-');
+    const providerTechnicalNames = consents.map(c => (c.model ? c.model.technical_name : '-'));
 
     return (
       <div>
@@ -213,11 +199,8 @@ class SegmentFormSection extends React.Component<Props, State> {
           {this.getSegmentRecords()}
         </RelatedRecords>
         {showReach && (
-          <div className="section-footer">
-            <SegmentReach
-              segmentIds={segmentIds}
-              providerTechnicalNames={providerTechnicalNames}
-            />
+          <div className='section-footer'>
+            <SegmentReach segmentIds={segmentIds} providerTechnicalNames={providerTechnicalNames} />
           </div>
         )}
       </div>
@@ -225,10 +208,7 @@ class SegmentFormSection extends React.Component<Props, State> {
   }
 }
 
-const getEmailBlastFormData = (
-  formName: string,
-  state: MicsReduxState,
-): EmailBlastFormData => {
+const getEmailBlastFormData = (formName: string, state: MicsReduxState): EmailBlastFormData => {
   return getFormValues(formName)(state) as EmailBlastFormData;
 };
 

@@ -31,7 +31,7 @@ interface PropertiesFormSectionProps {
   sectionTitle?: string;
 }
 
-type Props = PropertiesFormSectionProps & 
+type Props = PropertiesFormSectionProps &
   MapStateProps &
   InjectedIntlProps &
   RouteComponentProps<EditDisplayCreativeRouteMatchParams>;
@@ -58,12 +58,12 @@ class PropertiesFormSection extends React.Component<Props> {
         creative,
         rendererPlugin: { id: pluginVersionId },
         properties,
-        pluginLayout
+        pluginLayout,
       },
       match: {
         params: { organisationId },
       },
-      small
+      small,
     } = this.props;
 
     // TODO the following properties of PluginFieldGenerator should
@@ -73,13 +73,12 @@ class PropertiesFormSection extends React.Component<Props> {
 
     let isDisabled = false;
     const additionnalProps: any = {
-      small: small
+      small: small,
     };
 
     if (isDisplayAdResource(creative)) {
       isDisabled =
-        creative.audit_status === 'AUDIT_PASSED' ||
-        creative.audit_status === 'AUDIT_PENDING';
+        creative.audit_status === 'AUDIT_PASSED' || creative.audit_status === 'AUDIT_PENDING';
 
       additionnalProps.noUploadModal = this.noUploadModal(creative);
       additionnalProps.small = small;
@@ -108,7 +107,6 @@ class PropertiesFormSection extends React.Component<Props> {
         </div>
       );
     } else {
-
       const propertiesToSectionGenerator: PropertyResourceShape[] = [];
 
       for (const propertyName in properties) {
@@ -117,15 +115,13 @@ class PropertiesFormSection extends React.Component<Props> {
       }
 
       if (this.props.sectionTitle === undefined) {
-
         return null;
-
       } else {
-
-        const possibleSections = pluginLayout.sections.filter(section => section.title === this.props.sectionTitle);
+        const possibleSections = pluginLayout.sections.filter(
+          section => section.title === this.props.sectionTitle,
+        );
 
         if (possibleSections.length !== 0) {
-
           const chosenSection = possibleSections[0];
 
           return (
@@ -137,7 +133,7 @@ class PropertiesFormSection extends React.Component<Props> {
               pluginVersionId={pluginVersionId}
               {...additionnalProps}
             />
-          )
+          );
         }
       }
     }
@@ -149,8 +145,6 @@ export default compose<Props, PropertiesFormSectionProps>(
   withRouter,
   injectIntl,
   connect((state: MicsReduxState, ownProps: Props) => ({
-    initialValue: getFormInitialValues(DISPLAY_CREATIVE_FORM)(
-      state,
-    ) as DisplayCreativeFormData,
+    initialValue: getFormInitialValues(DISPLAY_CREATIVE_FORM)(state) as DisplayCreativeFormData,
   })),
 )(PropertiesFormSection);

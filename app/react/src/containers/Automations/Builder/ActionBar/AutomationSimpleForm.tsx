@@ -21,8 +21,7 @@ export type AutomationSimpleFormData = Partial<AutomationResource>;
 
 export const FORM_ID = 'automationSimpleForm';
 
-export interface FormProps
-  extends Omit<ConfigProps<AutomationSimpleFormData, FormProps>, 'form'> {
+export interface FormProps extends Omit<ConfigProps<AutomationSimpleFormData, FormProps>, 'form'> {
   visible: boolean;
   onClose: () => void;
   onHandleOk: () => void;
@@ -33,21 +32,12 @@ type Props = FormProps & InjectedIntlProps & ValidatorProps & NormalizerProps;
 class AutomationSimpleForm extends React.Component<
   Props & InjectedFormProps<AutomationSimpleFormData, Props>
 > {
-  constructor(
-    props: Props & InjectedFormProps<AutomationSimpleFormData, Props>,
-  ) {
+  constructor(props: Props & InjectedFormProps<AutomationSimpleFormData, Props>) {
     super(props);
   }
 
   render() {
-    const {
-      fieldValidators,
-      intl,
-      handleSubmit,
-      visible,
-      onClose,
-      onHandleOk,
-    } = this.props;
+    const { fieldValidators, intl, handleSubmit, visible, onClose, onHandleOk } = this.props;
 
     const submitButtonProps: ButtonProps = {
       htmlType: 'submit',
@@ -56,22 +46,17 @@ class AutomationSimpleForm extends React.Component<
     };
 
     const modalFooter = (
-      <Button {...submitButtonProps} className="mcs-primary">
-        <McsIcon type="plus" />
+      <Button {...submitButtonProps} className='mcs-primary'>
+        <McsIcon type='plus' />
         Save
       </Button>
     );
 
     return (
-      <Form className="edit-layout ant-layout" onSubmit={handleSubmit as any}>
-        <BlurredModal
-          onClose={onClose}
-          formId={FORM_ID}
-          opened={visible}
-          footer={modalFooter}
-        >
+      <Form className='edit-layout ant-layout' onSubmit={handleSubmit as any}>
+        <BlurredModal onClose={onClose} formId={FORM_ID} opened={visible} footer={modalFooter}>
           <FormInputField
-            name="name"
+            name='name'
             component={FormInput}
             validate={[fieldValidators.isRequired]}
             formItemProps={{
@@ -79,9 +64,7 @@ class AutomationSimpleForm extends React.Component<
               required: true,
             }}
             inputProps={{
-              placeholder: intl.formatMessage(
-                messages.automationNamePlaceHolder,
-              ),
+              placeholder: intl.formatMessage(messages.automationNamePlaceHolder),
             }}
             helpToolTipProps={{
               title: intl.formatMessage(messages.automationNameTooltip),
@@ -113,7 +96,6 @@ const messages = defineMessages({
   },
   automationNameTooltip: {
     id: 'automation.builder.page.actionbar.form.name.helper',
-    defaultMessage:
-      'Give your Automation a name to find it back on the automation screen.',
+    defaultMessage: 'Give your Automation a name to find it back on the automation screen.',
   },
 });

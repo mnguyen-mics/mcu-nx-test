@@ -1,14 +1,10 @@
 import { createAction } from 'redux-actions';
 import log from '../../utils/Logger';
 
-import {
-  NOTIFICATIONS_ADD,
-  NOTIFICATIONS_REMOVE,
-  NOTIFICATIONS_RESET,
-} from '../action-types';
+import { NOTIFICATIONS_ADD, NOTIFICATIONS_REMOVE, NOTIFICATIONS_RESET } from '../action-types';
 import { Notification } from '../../containers/Notifications/Notifications';
 
-const addNotification = (opts: any, level:string = 'success') => {
+const addNotification = (opts: any, level: string = 'success') => {
   return createAction(NOTIFICATIONS_ADD)({
     ...opts,
     uid: opts.uid || Date.now(),
@@ -22,7 +18,7 @@ const removeNotification = (key: string) => {
 
 const resetNotifications = createAction(NOTIFICATIONS_RESET);
 
-const notifyError = (error: any, notifConfig:Notification | {} = {}) => {
+const notifyError = (error: any, notifConfig: Notification | {} = {}) => {
   log.error(error);
   return addNotification(
     {

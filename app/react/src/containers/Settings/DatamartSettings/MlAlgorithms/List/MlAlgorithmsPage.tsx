@@ -72,10 +72,7 @@ type JoinedProps = RouteComponentProps<RouterProps> &
   InjectedThemeColorsProps &
   InjectedNotificationProps;
 
-class MlAlgorithmList extends React.Component<
-  JoinedProps,
-  MlAlgorithmListState
-> {
+class MlAlgorithmList extends React.Component<JoinedProps, MlAlgorithmListState> {
   @lazyInject(TYPES.IMlAlgorithmService)
   private _mlAlgorithmService: IMlAlgorithmService;
 
@@ -98,14 +95,14 @@ class MlAlgorithmList extends React.Component<
       };
       this._mlAlgorithmService
         .getMlAlgorithms(organisationId, options)
-        .then((results) => {
+        .then(results => {
           this.setState({
             loading: false,
             data: results.data,
             total: results.total || results.count,
           });
         })
-        .catch((err) => {
+        .catch(err => {
           message.error(intl.formatMessage(messages.loadingError));
         });
     });
@@ -138,13 +135,13 @@ class MlAlgorithmList extends React.Component<
 
     this._mlAlgorithmService
       .updateMlAlgorithm(mlAlgorithm.id, mlAlgorithm)
-      .then((res) => res.data)
-      .then((mlAlgorithmArchived) => {
+      .then(res => res.data)
+      .then(mlAlgorithmArchived => {
         const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
         this.fetchMlAlgorithms(organisationId, filter);
         message.success(intl.formatMessage(messages.updateSuccess));
       })
-      .catch((err) => {
+      .catch(err => {
         message.error(intl.formatMessage(messages.updateError));
       });
   };
@@ -165,17 +162,12 @@ class MlAlgorithmList extends React.Component<
       },
     } = this.props;
     Promise.all([
-      this._mlAlgorithmModelService.getMlAlgorithmModels(
-        organisationId,
-        mlAlgorithm.id,
-        { status: 'LIVE' },
-      ),
-      this._mlAlgorithmVariableService.getMlAlgorithmVariables(
-        organisationId,
-        mlAlgorithm.id,
-      ),
+      this._mlAlgorithmModelService.getMlAlgorithmModels(organisationId, mlAlgorithm.id, {
+        status: 'LIVE',
+      }),
+      this._mlAlgorithmVariableService.getMlAlgorithmVariables(organisationId, mlAlgorithm.id),
     ])
-      .then((res) => {
+      .then(res => {
         const models = res[0];
         const variables = res[1];
         if (models.total === 1) {
@@ -201,7 +193,7 @@ class MlAlgorithmList extends React.Component<
           },
         });
       })
-      .catch((error) => {
+      .catch(error => {
         this.props.notifyError(error);
         this.setState({
           mlAlgorithmForkModalData: {
@@ -245,7 +237,7 @@ class MlAlgorithmList extends React.Component<
         isHideable: false,
         render: (text: string, record: MlAlgorithmResource) => (
           <Link
-            className="mcs-campaigns-link"
+            className='mcs-campaigns-link'
             to={`/v2/o/${record.organisation_id}/settings/datamart/ml_algorithms/${record.id}/models`}
           >
             {record.name}
@@ -258,7 +250,7 @@ class MlAlgorithmList extends React.Component<
         isHideable: false,
         render: (text: string, record: MlAlgorithmResource) => (
           <Link
-            className="mcs-campaigns-link"
+            className='mcs-campaigns-link'
             to={`/v2/o/${record.organisation_id}/settings/datamart/ml_algorithms/${record.id}/models`}
           >
             {text}
@@ -294,9 +286,7 @@ class MlAlgorithmList extends React.Component<
     const redirectAndNotify = (id?: string) => {
       if (id) {
         message.success(intl.formatMessage(messages.forkSuccess));
-        return history.push(
-          `/v2/o/${organisationId}/settings/datamart/ml_algorithms`,
-        );
+        return history.push(`/v2/o/${organisationId}/settings/datamart/ml_algorithms`);
       } else {
         this.setState({
           loading: false,
@@ -311,11 +301,7 @@ class MlAlgorithmList extends React.Component<
     };
 
     const {
-      mlAlgorithmForkModalData: {
-        isModalOpen,
-        mlAlgorithmVariables,
-        modalLoading,
-      },
+      mlAlgorithmForkModalData: { isModalOpen, mlAlgorithmVariables, modalLoading },
     } = this.state;
 
     const {
@@ -355,11 +341,7 @@ class MlAlgorithmList extends React.Component<
 
     const onOk = () => {
       const {
-        mlAlgorithmForkModalData: {
-          newMlAlgorithmVariables,
-          mlAlgorithm,
-          mlAlgorithmModel,
-        },
+        mlAlgorithmForkModalData: { newMlAlgorithmVariables, mlAlgorithm, mlAlgorithmModel },
       } = this.state;
 
       this._mlAlgorithmService
@@ -369,37 +351,31 @@ class MlAlgorithmList extends React.Component<
           description: (mlAlgorithm as MlAlgorithmResource).description,
           organisation_id: organisationId,
         })
-        .then((res) => res.data)
-        .then((createdMlAlgorithm) => {
+        .then(res => res.data)
+        .then(createdMlAlgorithm => {
           Promise.all(
             Object.entries(newMlAlgorithmVariables).map(([key, value], idx) => {
-              this._mlAlgorithmVariableService.createMlAlgorithmVariable(
-                createdMlAlgorithm.id,
-                {
-                  key,
-                  value,
-                },
-              );
+              this._mlAlgorithmVariableService.createMlAlgorithmVariable(createdMlAlgorithm.id, {
+                key,
+                value,
+              });
             }),
           );
           return createdMlAlgorithm.id;
         })
-        .then((createdMlAlgorithmId) => {
-          return this._mlAlgorithmModelService.createMlAlgorithmModel(
-            createdMlAlgorithmId,
-            {
-              id: undefined,
-              ...mlAlgorithmModel,
-            },
-          );
+        .then(createdMlAlgorithmId => {
+          return this._mlAlgorithmModelService.createMlAlgorithmModel(createdMlAlgorithmId, {
+            id: undefined,
+            ...mlAlgorithmModel,
+          });
         })
-        .then((createMlAlgorithmModel) => {
+        .then(createMlAlgorithmModel => {
           this.setState({
             mlAlgorithmForkModalData: initialMlAlgorithmForkModalData,
           });
           redirectAndNotify(createMlAlgorithmModel.data.id);
         })
-        .catch((err) => redirectAndNotify());
+        .catch(err => redirectAndNotify());
     };
 
     return (
@@ -436,9 +412,7 @@ class MlAlgorithmList extends React.Component<
       message: formatMessage(messages.empty),
     };
 
-    const actionsColumnsDefinition: Array<
-      ActionsColumnDefinition<MlAlgorithmResource>
-    > = [
+    const actionsColumnsDefinition: Array<ActionsColumnDefinition<MlAlgorithmResource>> = [
       {
         key: 'action',
         actions: (mlAlgorithm: MlAlgorithmResource) => [
@@ -462,32 +436,30 @@ class MlAlgorithmList extends React.Component<
     ];
 
     const onClick = () => {
-      history.push(
-        `/v2/o/${organisationId}/settings/datamart/ml_algorithms/create`,
-      );
+      history.push(`/v2/o/${organisationId}/settings/datamart/ml_algorithms/create`);
     };
 
     const buttons = [
-      <Button key="create" type="primary" onClick={onClick}>
+      <Button key='create' type='primary' onClick={onClick}>
         <FormattedMessage {...messages.newMlAlgorithm} />
       </Button>,
     ];
 
     const additionnalComponent = (
       <div>
-        <div className="mcs-card-header mcs-card-title">
-          <span className="mcs-card-title">
+        <div className='mcs-card-header mcs-card-title'>
+          <span className='mcs-card-title'>
             <FormattedMessage {...messages.mlAlgorithms} />
           </span>
-          <span className="mcs-card-button">{buttons}</span>
+          <span className='mcs-card-button'>{buttons}</span>
         </div>
-        <hr className="mcs-separator" />
+        <hr className='mcs-separator' />
       </div>
     );
 
     return (
-      <div className="ant-layout">
-        <Content className="mcs-content-container">
+      <div className='ant-layout'>
+        <Content className='mcs-content-container'>
           {this.renderModal()}
           <ItemList
             fetchList={this.fetchMlAlgorithms}

@@ -1,9 +1,4 @@
-import {
-  BudgetPeriod,
-  CampaignStatus,
-  DisplayCampaignSubType,
-  ModelVersion,
-} from '../constants';
+import { BudgetPeriod, CampaignStatus, DisplayCampaignSubType, ModelVersion } from '../constants';
 
 export interface DisplayCampaignResource extends DisplayCampaignCreateRequest {
   id: string;

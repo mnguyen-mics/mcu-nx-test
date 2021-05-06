@@ -8,12 +8,7 @@ import {
 } from '../../../../../utils/LocationSearchHelper';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
-import {
-  defineMessages,
-  FormattedMessage,
-  injectIntl,
-  InjectedIntlProps,
-} from 'react-intl';
+import { defineMessages, FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { IDatamartService } from '../../../../../services/DatamartService';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -22,10 +17,7 @@ import { Index } from '../../../../../utils';
 import { Link } from 'react-router-dom';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
-import {
-  EmptyTableView,
-  McsIcon,
-} from '@mediarithmics-private/mcs-components-library';
+import { EmptyTableView, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { TableViewWrapper } from '../../../../../components/TableView';
 import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
@@ -113,10 +105,7 @@ class SourcesListPage extends React.Component<Props, State> {
       location: { search: previousSearch },
     } = previousProps;
 
-    if (
-      datamartId !== previousDatamartId ||
-      compareSearches(search, previousSearch)
-    ) {
+    if (datamartId !== previousDatamartId || compareSearches(search, previousSearch)) {
       const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
       this.fetchList(datamartId, filter);
       if (datamartId !== previousDatamartId) {
@@ -142,14 +131,14 @@ class SourcesListPage extends React.Component<Props, State> {
     this.setState({ loading: true });
     return this._datamartService
       .getSources(datamartId)
-      .then((res) =>
+      .then(res =>
         this.setState({
           loading: false,
           dataSource: res.data,
           total: res.total || res.count,
         }),
       )
-      .catch((err) => {
+      .catch(err => {
         notifyError(err);
         this.setState({ loading: false });
       });
@@ -158,7 +147,7 @@ class SourcesListPage extends React.Component<Props, State> {
   fetchDatamart = (datamartId: string) => {
     return this._datamartService
       .getDatamart(datamartId)
-      .then((res) => this.setState({ datamart: res.data }));
+      .then(res => this.setState({ datamart: res.data }));
   };
 
   public render() {
@@ -200,17 +189,12 @@ class SourcesListPage extends React.Component<Props, State> {
     };
 
     return (
-      <div className="ant-layout">
-        <Content className="mcs-content-container">
-          <Row className="mcs-table-container">
-            <Breadcrumb
-              className={'mcs-breadcrumb'}
-              separator={<McsIcon type="chevron-right" />}
-            >
+      <div className='ant-layout'>
+        <Content className='mcs-content-container'>
+          <Row className='mcs-table-container'>
+            <Breadcrumb className={'mcs-breadcrumb'} separator={<McsIcon type='chevron-right' />}>
               <Breadcrumb.Item>
-                <Link
-                  to={`/v2/o/${organisationId}/settings/datamart/datamarts`}
-                >
+                <Link to={`/v2/o/${organisationId}/settings/datamart/datamarts`}>
                   <FormattedMessage {...messages.datamarts} />
                 </Link>
               </Breadcrumb.Item>
@@ -222,23 +206,23 @@ class SourcesListPage extends React.Component<Props, State> {
                     '...'
                   )
                 ) : (
-                  <i className="mcs-table-cell-loading" />
+                  <i className='mcs-table-cell-loading' />
                 )}
               </Breadcrumb.Item>
             </Breadcrumb>
           </Row>
-          <Row className="mcs-table-container">
-            <div className="mcs-card-header mcs-card-title">
-              <span className="mcs-card-title">
+          <Row className='mcs-table-container'>
+            <div className='mcs-card-header mcs-card-title'>
+              <span className='mcs-card-title'>
                 <FormattedMessage {...messages.title} />
               </span>
             </div>
-            <hr className="mcs-separator" />
+            <hr className='mcs-separator' />
             {total === 0 && loading === false ? (
               <EmptyTableView
-                iconType="settings"
+                iconType='settings'
                 message={formatMessage(messages.noData)}
-                className="mcs-table-view-empty mcs-empty-card"
+                className='mcs-table-view-empty mcs-empty-card'
               />
             ) : (
               <TableViewWrapper
@@ -255,8 +239,4 @@ class SourcesListPage extends React.Component<Props, State> {
   }
 }
 
-export default compose<{}, Props>(
-  withRouter,
-  injectIntl,
-  injectNotifications,
-)(SourcesListPage);
+export default compose<{}, Props>(withRouter, injectIntl, injectNotifications)(SourcesListPage);

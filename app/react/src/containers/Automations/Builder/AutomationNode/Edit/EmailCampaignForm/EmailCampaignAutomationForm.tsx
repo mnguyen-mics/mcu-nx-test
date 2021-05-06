@@ -1,11 +1,6 @@
 import * as React from 'react';
 import { Omit, connect } from 'react-redux';
-import {
-  reduxForm,
-  InjectedFormProps,
-  ConfigProps,
-  getFormValues,
-} from 'redux-form';
+import { reduxForm, InjectedFormProps, ConfigProps, getFormValues } from 'redux-form';
 import { Form } from '@ant-design/compatible';
 import { Layout } from 'antd';
 import FormLayoutActionbar, {
@@ -54,10 +49,7 @@ interface MapStateToProps {
   formValues: EmailCampaignAutomationFormData;
 }
 
-type Props = InjectedFormProps<
-  EmailCampaignAutomationFormData,
-  EmailCampaignAutomationFormProps
-> &
+type Props = InjectedFormProps<EmailCampaignAutomationFormData, EmailCampaignAutomationFormProps> &
   EmailCampaignAutomationFormProps &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }> &
@@ -84,7 +76,13 @@ class EmailCampaignAutomationForm extends React.Component<Props> {
     const senderInformation = {
       id: 'senderInformation',
       title: localMessages.sectionSenderInformationTitle,
-      component: <BlastFormSection small={true} disabled={disabled} fieldName={'blastFields[0].model.blast'} />,
+      component: (
+        <BlastFormSection
+          small={true}
+          disabled={disabled}
+          fieldName={'blastFields[0].model.blast'}
+        />
+      ),
     };
 
     const emailTemplate = {
@@ -92,7 +90,7 @@ class EmailCampaignAutomationForm extends React.Component<Props> {
       title: localMessages.sectionSenderInformationTitle,
       component: (
         <BlastTemplateSectionFieldArray
-          name="blastFields[0].model.templateFields"
+          name='blastFields[0].model.templateFields'
           component={TemplateFormSection}
           formChange={change}
           rerenderOnEveryChange={true}
@@ -115,7 +113,7 @@ class EmailCampaignAutomationForm extends React.Component<Props> {
       pathItems: breadCrumbPaths,
       message: localMessages.save,
       onClose: close,
-      disabled: disabled
+      disabled: disabled,
     };
 
     const sections = this.buildFormSections();
@@ -132,17 +130,13 @@ class EmailCampaignAutomationForm extends React.Component<Props> {
     });
 
     return (
-      <Layout className="edit-layout">
+      <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
-          <Form
-            className="edit-layout ant-layout"
-            onSubmit={handleSubmit}
-            layout="vertical"
-          >
+          <Form className='edit-layout ant-layout' onSubmit={handleSubmit} layout='vertical'>
             <Content
               id={FORM_ID}
-              className="mcs-content-container mcs-form-container automation-form"
+              className='mcs-content-container mcs-form-container automation-form'
             >
               {renderedSections}
             </Content>

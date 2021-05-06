@@ -32,7 +32,6 @@ type Props = InjectedIntlProps &
   RouteComponentProps<EditEmailBlastRouteMatchParam>;
 
 class EditBlastPage extends React.Component<Props, State> {
-
   @lazyInject(TYPES.IEmailCampaignService)
   private _emailCampaignService: IEmailCampaignService;
 
@@ -48,7 +47,11 @@ class EditBlastPage extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { match: { params: { campaignId, blastId } } } = this.props;
+    const {
+      match: {
+        params: { campaignId, blastId },
+      },
+    } = this.props;
 
     Promise.all([
       this._emailCampaignService.getEmailCampaign(campaignId),
@@ -80,7 +83,9 @@ class EditBlastPage extends React.Component<Props, State> {
 
   redirect = () => {
     const {
-      match: { params: { organisationId, campaignId } },
+      match: {
+        params: { organisationId, campaignId },
+      },
       history,
     } = this.props;
 
@@ -91,27 +96,23 @@ class EditBlastPage extends React.Component<Props, State> {
 
   save = (blastFormData: EmailBlastFormData) => {
     const {
-      match: { params: { campaignId } },
+      match: {
+        params: { campaignId },
+      },
       intl: { formatMessage },
       notifyError,
     } = this.props;
 
     const { blastFormData: initialBlastFormData } = this.state;
 
-    const hideSaveInProgress = message.loading(
-      formatMessage(messages.savingInProgress),
-      0,
-    );
+    const hideSaveInProgress = message.loading(formatMessage(messages.savingInProgress), 0);
 
     this.setState({
       loading: true,
     });
 
-    return this._emailCampaignFormService.saveBlast(
-      campaignId,
-      blastFormData,
-      initialBlastFormData,
-    )
+    return this._emailCampaignFormService
+      .saveBlast(campaignId, blastFormData, initialBlastFormData)
       .then(() => {
         hideSaveInProgress();
         this.redirect();
@@ -132,7 +133,9 @@ class EditBlastPage extends React.Component<Props, State> {
 
   render() {
     const {
-      match: { params: { organisationId, campaignId, blastId } },
+      match: {
+        params: { organisationId, campaignId, blastId },
+      },
       intl: { formatMessage },
     } = this.props;
 
@@ -153,7 +156,7 @@ class EditBlastPage extends React.Component<Props, State> {
       : formatMessage(messages.emailBlastEditorBreadcrumbTitleNewBlast);
 
     const breadcrumbPaths = [
-      <Link key="1" to={`/v2/o/${organisationId}/campaigns/email/${campaignId}`}>
+      <Link key='1' to={`/v2/o/${organisationId}/campaigns/email/${campaignId}`}>
         {campaignName}
       </Link>,
       blastName,
@@ -171,8 +174,4 @@ class EditBlastPage extends React.Component<Props, State> {
   }
 }
 
-export default compose(
-  injectIntl,
-  withRouter,
-  injectNotifications,
-)(EditBlastPage);
+export default compose(injectIntl, withRouter, injectNotifications)(EditBlastPage);

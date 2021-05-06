@@ -26,10 +26,7 @@ export interface DatamartReplicationEditFormProps
   type: string;
 }
 
-type Props = InjectedFormProps<
-  DatamartReplicationFormData,
-  DatamartReplicationEditFormProps
-> &
+type Props = InjectedFormProps<DatamartReplicationFormData, DatamartReplicationEditFormProps> &
   DatamartReplicationEditFormProps &
   InjectedIntlProps;
 
@@ -86,20 +83,14 @@ class DatamartReplicationEditForm extends React.Component<Props> {
     });
 
     return (
-      <Layout className="edit-layout">
+      <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
           <ScrollspySider {...sideBarProps} />
-          <Form
-            className="edit-layout ant-layout"
-            onSubmit={handleSubmit as any}
-          >
+          <Form className='edit-layout ant-layout' onSubmit={handleSubmit as any}>
             {/* this button enables submit on enter */}
-            <button type="submit" style={{ display: 'none' }} />
-            <Content
-              id={FORM_ID}
-              className="mcs-content-container mcs-form-container"
-            >
+            <button type='submit' style={{ display: 'none' }} />
+            <Content id={FORM_ID} className='mcs-content-container mcs-form-container'>
               {renderedSections}
             </Content>
           </Form>

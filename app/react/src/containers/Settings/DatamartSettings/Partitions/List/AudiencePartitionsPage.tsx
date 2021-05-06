@@ -90,10 +90,7 @@ class AudiencePartitionsPage extends React.Component<Props, State> {
         state: { reloadDataSource: true },
       });
     } else {
-      const filter = parseSearch<PartitionFilterParams>(
-        search,
-        PARTITIONS_SEARCH_SETTINGS,
-      );
+      const filter = parseSearch<PartitionFilterParams>(search, PARTITIONS_SEARCH_SETTINGS);
       this.fetchPartitions(params.organisationId, filter, true);
     }
   }
@@ -121,10 +118,7 @@ class AudiencePartitionsPage extends React.Component<Props, State> {
           state: { reloadDataSource: true },
         });
       } else {
-        const filter = parseSearch<PartitionFilterParams>(
-          search,
-          PARTITIONS_SEARCH_SETTINGS,
-        );
+        const filter = parseSearch<PartitionFilterParams>(search, PARTITIONS_SEARCH_SETTINGS);
         this.fetchPartitions(
           params.organisationId,
           filter,
@@ -143,9 +137,7 @@ class AudiencePartitionsPage extends React.Component<Props, State> {
       location,
     } = this.props;
 
-    const editUrl = `/v2/o/${organisationId}/settings/datamart/audience/partitions/${
-      partition.id
-    }/edit`;
+    const editUrl = `/v2/o/${organisationId}/settings/datamart/audience/partitions/${partition.id}/edit`;
 
     history.push({
       pathname: editUrl,
@@ -223,17 +215,11 @@ class AudiencePartitionsPage extends React.Component<Props, State> {
             this.setState({ hasAudiencePartitions: false });
           }
           this.setState({ hasAudiencePartitions: true });
-          return this._audiencePartitionsService.getPartitions(
-            organisationId,
-            options,
-          );
+          return this._audiencePartitionsService.getPartitions(organisationId, options);
         });
     } else {
       this.setState({ hasAudiencePartitions: true });
-      promise = this._audiencePartitionsService.getPartitions(
-        organisationId,
-        options,
-      );
+      promise = this._audiencePartitionsService.getPartitions(organisationId, options);
     }
 
     promise
@@ -259,7 +245,7 @@ class AudiencePartitionsPage extends React.Component<Props, State> {
       match: { params },
       location: { search },
       workspace,
-      intl
+      intl,
     } = this.props;
     const {
       hasAudiencePartitions,
@@ -268,20 +254,17 @@ class AudiencePartitionsPage extends React.Component<Props, State> {
       audiencePartitions,
     } = this.state;
 
-    const filter = parseSearch<PartitionFilterParams>(
-      search,
-      PARTITIONS_SEARCH_SETTINGS,
-    );
+    const filter = parseSearch<PartitionFilterParams>(search, PARTITIONS_SEARCH_SETTINGS);
 
     const handleOnArchive = () => {
       //
     };
 
     const content = (
-      <Content className="mcs-content-container">
+      <Content className='mcs-content-container'>
         {!initialFetching && !hasAudiencePartitions && (
           <EmptyTableView
-            iconType="users"
+            iconType='users'
             message={intl.formatMessage(messageMap.noPartitionYet)}
           />
         )}
@@ -324,7 +307,6 @@ export default compose(
 const messageMap = defineMessages({
   noPartitionYet: {
     id: 'audience.partitions.empty.get-started',
-    defaultMessage:
-      'There is no Partitions created yet! Click on New to get started',
+    defaultMessage: 'There is no Partitions created yet! Click on New to get started',
   },
 });

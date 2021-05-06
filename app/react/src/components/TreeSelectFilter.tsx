@@ -61,19 +61,13 @@ class TreeSelectFilter extends React.Component<TreeSelectFilterProps, State> {
           filterName: parent.childrenFilterName,
           values: parent.children
             ? parent.children
-                .filter(children =>
-                  value.some(v => v === `${parent.value}_${children.value}`),
-                )
+                .filter(children => value.some(v => v === `${parent.value}_${children.value}`))
                 .map(children => children.value)
             : [],
         };
       })
       .reduce((acc: Array<{ filterName: string; values: string[] }>, val) => {
-        if (
-          val.filterName !== undefined &&
-          val.values !== undefined &&
-          val.values.length > 0
-        )
+        if (val.filterName !== undefined && val.values !== undefined && val.values.length > 0)
           return acc.concat({
             filterName: val.filterName,
             values: val.values,
@@ -83,9 +77,7 @@ class TreeSelectFilter extends React.Component<TreeSelectFilterProps, State> {
 
     // We want to push parent filter if we have one of its children
     childrenFilters.forEach(childrenFilter => {
-      const parent = tree.find(
-        p => p.childrenFilterName === childrenFilter.filterName,
-      );
+      const parent = tree.find(p => p.childrenFilterName === childrenFilter.filterName);
 
       if (parent && !parentFilter.values.some(f => f === parent.value))
         parentFilter.values.push(parent.value);
@@ -104,14 +96,7 @@ class TreeSelectFilter extends React.Component<TreeSelectFilterProps, State> {
   };
 
   render() {
-    const {
-      className,
-      tree,
-      placeholder,
-      style,
-      maxTagCount,
-      selectedItems,
-    } = this.props;
+    const { className, tree, placeholder, style, maxTagCount, selectedItems } = this.props;
 
     const { didMount } = this.state;
 
@@ -140,18 +125,13 @@ class TreeSelectFilter extends React.Component<TreeSelectFilterProps, State> {
         const parent = tree.find(p => p.value === item);
 
         if (parent && parent.children) {
-          const children = parent.children.map(
-            c => `${parent.value}_${c.value}`,
-          );
+          const children = parent.children.map(c => `${parent.value}_${c.value}`);
           let childrensSelected = 0;
           children.forEach(c => {
             if (filteredSelectedItems.includes(c)) childrensSelected++;
           });
           if (childrensSelected !== 0 && childrensSelected !== children.length)
-            filteredSelectedItems.splice(
-              filteredSelectedItems.indexOf(parent.value),
-              1,
-            );
+            filteredSelectedItems.splice(filteredSelectedItems.indexOf(parent.value), 1);
         }
       });
     }
@@ -159,14 +139,14 @@ class TreeSelectFilter extends React.Component<TreeSelectFilterProps, State> {
     const getRef = () => document.getElementById(this.id)!;
 
     return (
-      <span id={this.id} className="mcs-treeSelectFilter">
+      <span id={this.id} className='mcs-treeSelectFilter'>
         {didMount && (
           <TreeSelect
             className={className}
             treeData={treeData}
             treeCheckable={true}
             placeholder={placeholder}
-            showCheckedStrategy="SHOW_PARENT"
+            showCheckedStrategy='SHOW_PARENT'
             showSearch={false}
             maxTagCount={maxTagCount}
             onChange={this.onTreeSelectChange}

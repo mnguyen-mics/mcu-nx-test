@@ -8,10 +8,8 @@ type Props = InjectedIntlProps;
 
 class NoAccess extends React.Component<Props> {
   render() {
-    const {
-      intl
-    } = this.props;
-  
+    const { intl } = this.props;
+
     return (
       <div style={{ display: 'flex', flex: 1 }}>
         <Error message={intl.formatMessage(messages.noAccess)} />

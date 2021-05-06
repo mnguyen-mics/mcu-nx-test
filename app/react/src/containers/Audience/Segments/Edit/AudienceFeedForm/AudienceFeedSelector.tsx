@@ -1,16 +1,8 @@
 import * as React from 'react';
 import { Layout, Row } from 'antd';
 import { FormTitle } from '../../../../../components/Form';
-import {
-  defineMessages,
-  FormattedMessage,
-  injectIntl,
-  InjectedIntlProps,
-} from 'react-intl';
-import {
-  MenuList,
-  MenuPresentational,
-} from '@mediarithmics-private/mcs-components-library';
+import { defineMessages, FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
+import { MenuList, MenuPresentational } from '@mediarithmics-private/mcs-components-library';
 import { FeedAction } from './domain';
 import { compose } from 'recompose';
 import { injectFeatures, InjectedFeaturesProps } from '../../../../Features';
@@ -64,11 +56,7 @@ class AudienceFeedSelector extends React.Component<Props> {
       workspace: { role },
     } = this.props;
 
-    if (
-      role === 'ORGANISATION_ADMIN' ||
-      role === 'COMMUNITY_ADMIN' ||
-      role === 'CUSTOMER_ADMIN'
-    )
+    if (role === 'ORGANISATION_ADMIN' || role === 'COMMUNITY_ADMIN' || role === 'CUSTOMER_ADMIN')
       return true;
 
     return false;
@@ -82,44 +70,36 @@ class AudienceFeedSelector extends React.Component<Props> {
 
     return (
       <Layout>
-        <div className="edit-layout ant-layout">
+        <div className='edit-layout ant-layout'>
           <Layout>
-            <Content className="mcs-content-container mcs-form-container text-center">
-              <FormTitle
-                title={messages.listTitle}
-                subtitle={messages.listSubtitle}
-              />
-              <Row className="mcs-selector_container">
-                <Row className="menu">
-                  <div className="presentation">
+            <Content className='mcs-content-container mcs-form-container text-center'>
+              <FormTitle title={messages.listTitle} subtitle={messages.listSubtitle} />
+              <Row className='mcs-selector_container'>
+                <Row className='menu'>
+                  <div className='presentation'>
                     <MenuPresentational
                       title={'Server side'}
-                      subtitles={[
-                        'Triggered when users are added / deleted from segment',
-                      ]}
-                      type="data"
+                      subtitles={['Triggered when users are added / deleted from segment']}
+                      type='data'
                       select={this.onSelect('create_external')}
                     />
-                    <div className="separator">
+                    <div className='separator'>
                       <FormattedMessage {...messages.segmentTypeOr} />
                     </div>
                     <MenuPresentational
                       title={'Client side'}
-                      subtitles={[
-                        'Triggered when users are visiting your webpages / apps',
-                      ]}
-                      type="code"
+                      subtitles={['Triggered when users are visiting your webpages / apps']}
+                      type='code'
                       select={this.onSelect('create_tag')}
                     />
                   </div>
                 </Row>
-                {hasFeature('plugins-presets') &&
-                this.hasRightToCreatePreset() ? (
+                {hasFeature('plugins-presets') && this.hasRightToCreatePreset() ? (
                   <div>
-                    <Row className="intermediate-title">
+                    <Row className='intermediate-title'>
                       <FormattedMessage {...messages.feedAdvanced} />
                     </Row>
-                    <Row className="menu">
+                    <Row className='menu'>
                       <MenuList
                         title={formatMessage(messages.createServerSidePreset)}
                         select={this.onSelect('create_external_preset')}

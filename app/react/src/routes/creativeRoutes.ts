@@ -3,11 +3,7 @@ import DisplayAdsPage from '../containers/Creative/DisplayAds/List/DisplayAdsPag
 import { CreateEmailTemplate } from '../containers/Creative/EmailTemplates/Edit';
 import { EmailTemplatesPage } from '../containers/Creative/EmailTemplates/List';
 
-import {
-  NavigatorRoute,
-  NavigatorDefinition,
-  generateRoutesFromDefinition,
-} from './domain';
+import { NavigatorRoute, NavigatorDefinition, generateRoutesFromDefinition } from './domain';
 
 export const creativesDefinition: NavigatorDefinition = {
   creativeDisplayList: {
@@ -48,6 +44,4 @@ export const creativesDefinition: NavigatorDefinition = {
   },
 };
 
-export const creativeRoutes: NavigatorRoute[] = generateRoutesFromDefinition(
-  creativesDefinition,
-);
+export const creativeRoutes: NavigatorRoute[] = generateRoutesFromDefinition(creativesDefinition);

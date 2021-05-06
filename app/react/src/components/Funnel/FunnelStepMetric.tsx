@@ -9,15 +9,18 @@ interface FunnelStepMetricProps {
 }
 
 type Props = FunnelStepMetricProps;
-class FunnelStepMetric extends React.Component <Props> {
+class FunnelStepMetric extends React.Component<Props> {
   render() {
-    const { value, pourcentage, color, unit} = this.props;
+    const { value, pourcentage, color, unit } = this.props;
     return (
       <div className={'mcs-funnelQueryBuilder_metric'}>
-        <div>{numeral(value).format('0,0')}{unit}</div>
-        <Progress showInfo={false} percent={pourcentage} strokeColor={color}/>
+        <div>
+          {numeral(value).format('0,0')}
+          {unit}
+        </div>
+        <Progress showInfo={false} percent={pourcentage} strokeColor={color} />
       </div>
-    )
+    );
   }
 }
 

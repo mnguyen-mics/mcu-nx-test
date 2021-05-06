@@ -13,20 +13,14 @@ export interface IPluginInstanceService<T> {
     id: string,
     options?: object,
   ) => Promise<DataListResponse<PropertyResourceShape>>;
-  updatePluginInstance: (
-    id: string,
-    options: object,
-  ) => Promise<DataResponse<T>>;
+  updatePluginInstance: (id: string, options: object) => Promise<DataResponse<T>>;
   updatePluginInstanceProperty: (
     organisationId: string,
     id: string,
     technicalName: string,
     params: object,
   ) => Promise<DataResponse<PropertyResourceShape> | void>;
-  createPluginInstance: (
-    organisationId: string,
-    options: object,
-  ) => Promise<DataResponse<T>>;
+  createPluginInstance: (organisationId: string, options: object) => Promise<DataResponse<T>>;
   getLocalizedPluginLayout(pInstanceId: string): Promise<PluginLayout | null>;
 }
 
@@ -47,10 +41,7 @@ abstract class PluginInstanceService<T extends PluginInstance>
     return ApiService.getRequest(endpoint, params);
   };
 
-  getInstanceById = (
-    id: string,
-    options: object = {},
-  ): Promise<DataResponse<T>> => {
+  getInstanceById = (id: string, options: object = {}): Promise<DataResponse<T>> => {
     const endpoint = `${this.entityPath}/${id}`;
 
     const params = {
@@ -68,10 +59,7 @@ abstract class PluginInstanceService<T extends PluginInstance>
     return ApiService.getRequest(endpoint, options);
   };
 
-  updatePluginInstance = (
-    id: string,
-    options: object = {},
-  ): Promise<DataResponse<T>> => {
+  updatePluginInstance = (id: string, options: object = {}): Promise<DataResponse<T>> => {
     const endpoint = `${this.entityPath}/${id}`;
 
     const params = {
@@ -110,9 +98,7 @@ abstract class PluginInstanceService<T extends PluginInstance>
     return ApiService.postRequest(endpoint, params);
   };
 
-  abstract getLocalizedPluginLayout(
-    pInstanceId: string,
-  ): Promise<PluginLayout | null>;
+  abstract getLocalizedPluginLayout(pInstanceId: string): Promise<PluginLayout | null>;
 }
 
 export default PluginInstanceService;

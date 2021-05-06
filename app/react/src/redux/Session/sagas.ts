@@ -10,10 +10,7 @@ function* fetchOrganisationWorkspace({ payload }: Payload) {
   const _organisationService = yield getContext('organisationService');
   try {
     const organisationId = payload;
-    const response = yield call(
-      _organisationService.getWorkspace,
-      organisationId,
-    );
+    const response = yield call(_organisationService.getWorkspace, organisationId);
     yield put(getWorkspace.success(response.data));
     yield put(fetchAllLabels.request(organisationId));
   } catch (e) {

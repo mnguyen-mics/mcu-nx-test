@@ -19,67 +19,67 @@ const messages = defineMessages({
   },
   mlAlgorithms: {
     id: 'settings.organisation.ml-algorithms.placeholder',
-    defaultMessage: 'ML Algorithms'
+    defaultMessage: 'ML Algorithms',
   },
   downloadNotebook: {
     id: 'settings.organisation.ml-algorithms.download-notebook',
-    defaultMessage: 'Download Notebook'
+    defaultMessage: 'Download Notebook',
   },
   archive: {
     id: 'settings.organisation.ml-algorithms.archive',
-    defaultMessage: 'Archive'
+    defaultMessage: 'Archive',
   },
   fork: {
     id: 'settings.organisation.ml-algorithms.fork',
-    defaultMessage: 'Fork ML Algorithm'
+    defaultMessage: 'Fork ML Algorithm',
   },
   forkMlAlgorithmModalTitle: {
     id: 'settings.organisation.ml-algorithms.fork-modal.title',
-    defaultMessage: 'Fork ML Algorithm'
+    defaultMessage: 'Fork ML Algorithm',
   },
   forkMlAlgorithmModalSubtitle: {
     id: 'settings.organisation.ml-algorithms.fork-modal.subtitle',
-    defaultMessage: 'Specify the ML Algorithm variable values for the new ML Algorithm'
+    defaultMessage: 'Specify the ML Algorithm variable values for the new ML Algorithm',
   },
   archived: {
     id: 'settings.organisation.ml-algorithms.archived',
-    defaultMessage: 'Archived'
+    defaultMessage: 'Archived',
   },
   isArchived: {
     id: 'settings.organisation.ml-algorithms.is-archived',
-    defaultMessage: 'Yes'
+    defaultMessage: 'Yes',
   },
   notArchived: {
     id: 'settings.organisation.ml-algorithms.not-archived',
-    defaultMessage: 'No'
+    defaultMessage: 'No',
   },
   newMlAlgorithm: {
     id: 'settings.organisation.ml-algorithms.new',
-    defaultMessage: 'New ML Algorithm'
+    defaultMessage: 'New ML Algorithm',
   },
   empty: {
     id: 'settings.organisation.ml-algorithms.empty',
-    defaultMessage: 'No Ml Algorithms'
+    defaultMessage: 'No Ml Algorithms',
   },
   editMlAlgorithmRaw: {
     id: 'settings.organisation.ml-algorithms.edit-raw',
-    defaultMessage: 'Edit'
+    defaultMessage: 'Edit',
   },
   editMlAlgorithm: {
     id: 'settings.organisation.ml-algorithms.edit',
-    defaultMessage: 'Edit {name}'
+    defaultMessage: 'Edit {name}',
   },
   sectionTitleGeneral: {
     id: 'settings.organisation.ml-algorithms.edit.general-section',
-    defaultMessage: 'General Information'
+    defaultMessage: 'General Information',
   },
   sectionSubTitleGeneral: {
     id: 'settings.organisation.ml-algorithms.edit.subtitle',
-    defaultMessage: 'Give your Ml Algorithm a name'
+    defaultMessage: 'Give your Ml Algorithm a name',
   },
   saveMlAlgorithm: {
     id: 'settings.organisation.ml-algorithms.edit.save',
-    defaultMessage: 'Save'
+    defaultMessage: 'Save',
   },
   labelMlAlgorithmName: {
     id: 'settings.organisation.ml-algorithms.edit.label.name',
@@ -129,7 +129,7 @@ const messages = defineMessages({
   mlVariableValuePlaceholder: {
     id: 'settings.organisation.ml-algorithms.ml-variable.placeholder.value',
     defaultMessage: 'Value',
-  }
+  },
 });
 
 export default messages;

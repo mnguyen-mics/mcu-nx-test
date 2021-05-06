@@ -17,10 +17,7 @@ import { TYPES } from '../../../../../constants/types';
 import { IDatamartReplicationService } from '../../../../../services/DatamartReplicationService';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { Index } from '../../../../../utils';
-import {
-  parseSearch,
-  compareSearches,
-} from '../../../../../utils/LocationSearchHelper';
+import { parseSearch, compareSearches } from '../../../../../utils/LocationSearchHelper';
 import DatamartReplicationListContainer, {
   DATAMART_REPLICATION_SEARCH_SETTINGS,
 } from '../../DatamartReplication/List/DatamartReplicationListContainer';
@@ -52,9 +49,7 @@ class DatamartReplicationTab extends React.Component<Props, State> {
     } = this.props;
 
     const { jobExecutions } = this.state;
-    const runningExecution = jobExecutions.find(
-      execution => execution.status === 'RUNNING',
-    );
+    const runningExecution = jobExecutions.find(execution => execution.status === 'RUNNING');
     if (!!runningExecution) {
       const filter = parseSearch(search, DATAMART_REPLICATION_SEARCH_SETTINGS);
       this.fetchReplicationsAndJobs(datamartId, filter);
@@ -100,10 +95,7 @@ class DatamartReplicationTab extends React.Component<Props, State> {
 
     const {
       match: {
-        params: {
-          organisationId: prevOrganisationId,
-          datamartId: prevDatamartId,
-        },
+        params: { organisationId: prevOrganisationId, datamartId: prevDatamartId },
       },
       location: { search: prevSearch },
     } = prevProps;
@@ -187,9 +179,7 @@ class DatamartReplicationTab extends React.Component<Props, State> {
     );
   };
 
-  onDeleteDatamartReplication = (
-    resource: DatamartReplicationResourceShape,
-  ) => {
+  onDeleteDatamartReplication = (resource: DatamartReplicationResourceShape) => {
     const {
       match: {
         params: { datamartId },
@@ -202,10 +192,7 @@ class DatamartReplicationTab extends React.Component<Props, State> {
     const filter = parseSearch(search, DATAMART_REPLICATION_SEARCH_SETTINGS);
 
     const deleteReplication = () => {
-      return this._datamartReplicationService.deleteDatamartReplication(
-        datamartId,
-        resource.id,
-      );
+      return this._datamartReplicationService.deleteDatamartReplication(datamartId, resource.id);
     };
 
     Modal.confirm({
@@ -243,10 +230,7 @@ class DatamartReplicationTab extends React.Component<Props, State> {
         status: status ? 'ACTIVE' : 'PAUSED',
       })
       .then(() => {
-        const filter = parseSearch(
-          search,
-          DATAMART_REPLICATION_SEARCH_SETTINGS,
-        );
+        const filter = parseSearch(search, DATAMART_REPLICATION_SEARCH_SETTINGS);
         return this.fetchDatamartReplications(datamartId, filter);
       })
       .catch(error => {
@@ -275,25 +259,21 @@ class DatamartReplicationTab extends React.Component<Props, State> {
   isLastExecutionRunning = () => {
     const { jobExecutions } = this.state;
 
-    const runningExecution = jobExecutions.find(
-      execution => execution.status === 'RUNNING',
-    );
+    const runningExecution = jobExecutions.find(execution => execution.status === 'RUNNING');
 
     return !!runningExecution;
   };
 
   createJobExecution = (datamartId: string) => {
-    const {
-      notifyError,
-    } = this.props;
+    const { notifyError } = this.props;
 
     return this._datamartReplicationService
-    .createJobExecution(datamartId)
-    .then(result => result.data)
-    .catch(error => {
-      notifyError(error);
-    });
-  }
+      .createJobExecution(datamartId)
+      .then(result => result.data)
+      .catch(error => {
+        notifyError(error);
+      });
+  };
 
   public render() {
     const {

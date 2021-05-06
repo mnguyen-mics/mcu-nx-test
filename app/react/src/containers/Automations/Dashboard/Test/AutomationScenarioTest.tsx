@@ -10,10 +10,7 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { UserScenarioResource } from '../../../../models/automations/automations';
 import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
-import {
-  Cookies,
-  isUserPointIdentifier,
-} from '../../../../models/timeline/timeline';
+import { Cookies, isUserPointIdentifier } from '../../../../models/timeline/timeline';
 import { getWorkspace } from '../../../../redux/Session/selectors';
 import { IScenarioService } from '../../../../services/ScenarioService';
 import { IUserDataService } from '../../../../services/UserDataService';
@@ -91,18 +88,11 @@ class AutomationScenarioTest extends React.Component<Props, State> {
           const datamartId = resAutomationResource.data.datamart_id;
 
           return this._userDataService
-            .getIdentifiers(
-              organisationId,
-              datamartId,
-              'user_agent_id',
-              `vec:${micsVid}`,
-            )
+            .getIdentifiers(organisationId, datamartId, 'user_agent_id', `vec:${micsVid}`)
             .then(resUserIdentifierInfo => {
               this.setState({
                 isFetchingUserPointId: false,
-                userPointId: resUserIdentifierInfo.data.find(
-                  isUserPointIdentifier,
-                )?.user_point_id,
+                userPointId: resUserIdentifierInfo.data.find(isUserPointIdentifier)?.user_point_id,
               });
             });
         })
@@ -128,7 +118,7 @@ class AutomationScenarioTest extends React.Component<Props, State> {
         userPointId: (
           <Link
             to={`/v2/o/${organisationId}/audience/timeline/user_point_id/${userPointId}`}
-            target="_blank"
+            target='_blank'
           >
             {userPointId}
           </Link>
@@ -139,16 +129,18 @@ class AutomationScenarioTest extends React.Component<Props, State> {
 
     const spinOrTitle = isLaunchingTest ? (
       <div>
-        <Spin size="small" className="text-center" />
+        <Spin size='small' className='text-center' />
       </div>
-    ) : <FormattedMessage {...messages.buttonTitle} />;
+    ) : (
+      <FormattedMessage {...messages.buttonTitle} />
+    );
 
     return userPointId ? (
       <div>
         <FormSection title={messages.contentTitle} subtitle={baseSubtitle} />
         <Button
           className={'mcs-primary'}
-          type="primary"
+          type='primary'
           disabled={isLaunchingTest}
           onClick={this.launchTest(datamartId, nodeId, userPointId)}
         >
@@ -156,18 +148,11 @@ class AutomationScenarioTest extends React.Component<Props, State> {
         </Button>
       </div>
     ) : (
-      <FormSection
-        title={messages.contentTitle}
-        subtitle={messages.contentSubtitleNoUserPoint}
-      />
+      <FormSection title={messages.contentTitle} subtitle={messages.contentSubtitleNoUserPoint} />
     );
   };
 
-  launchTest = (
-    datamartId: string,
-    nodeId: string,
-    userPointId: string,
-  ) => () => {
+  launchTest = (datamartId: string, nodeId: string, userPointId: string) => () => {
     const {
       match: {
         params: { automationId },
@@ -209,9 +194,7 @@ class AutomationScenarioTest extends React.Component<Props, State> {
 
     const { isFetchingUserPointId } = this.state;
 
-    const breadcrumbPaths = [
-      formatMessage(messages.testActionbarTitle),
-    ];
+    const breadcrumbPaths = [formatMessage(messages.testActionbarTitle)];
 
     const actionBarProps = {
       pathItems: breadcrumbPaths,
@@ -219,17 +202,15 @@ class AutomationScenarioTest extends React.Component<Props, State> {
     };
 
     const content = isFetchingUserPointId ? (
-      <Spin size="small" className="text-center" />
+      <Spin size='small' className='text-center' />
     ) : (
       this.getContent()
     );
 
     return (
-      <Layout className="ant-layout">
+      <Layout className='ant-layout'>
         <FormLayoutActionbar {...actionBarProps} />
-        <Content className="mcs-content-container mcs-form-container">
-          {content}
-        </Content>
+        <Content className='mcs-content-container mcs-form-container'>{content}</Content>
       </Layout>
     );
   }

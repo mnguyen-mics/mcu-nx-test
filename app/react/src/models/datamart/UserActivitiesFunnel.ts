@@ -1,28 +1,27 @@
-import { DataResponse } from "@mediarithmics-private/mcs-components-library/lib/utils/ApiResponses";
-import { DimensionFilterClause } from "../ReportRequestBody";
+import { DataResponse } from '@mediarithmics-private/mcs-components-library/lib/utils/ApiResponses';
+import { DimensionFilterClause } from '../ReportRequestBody';
 
 export interface FunnelFilter {
   id?: string;
   name: string;
   filter_clause: DimensionFilterClause;
   group_by_dimension?: string;
-  max_days_after_previous_step?: number
+  max_days_after_previous_step?: number;
 }
 
 export interface FunnelDateRange {
-  type: string,
-  start_date: string,
-  end_date: string
+  type: string;
+  start_date: string;
+  end_date: string;
 }
 
 export interface FunnelWindowRange {
-  type: string,
-  unit: TimeUnit,
-  offset: number
+  type: string;
+  unit: TimeUnit;
+  offset: number;
 }
 
-export type FunnelTimeRange = FunnelDateRange
-
+export type FunnelTimeRange = FunnelDateRange;
 
 export interface FunnelRequestBody {
   for: FunnelFilter[];
@@ -31,7 +30,7 @@ export interface FunnelRequestBody {
   limit?: number;
 }
 
-export type FunnelResponse = DataResponse<GroupedByFunnel>
+export type FunnelResponse = DataResponse<GroupedByFunnel>;
 
 export interface FunnelResource {
   total: number;
@@ -39,7 +38,7 @@ export interface FunnelResource {
 }
 
 export interface GroupedByFunnel {
-  global: FunnelResource; 
+  global: FunnelResource;
   grouped_by?: FieldValueFunnelResource[];
 }
 export interface FieldValueFunnelResource {
@@ -62,7 +61,6 @@ export interface FunnelIdByDimension {
   colors: string[];
   decorator?: string;
 }
-
 
 export type TimeUnit = 'DAY' | 'WEEK' | 'MONTH';
 export type TimeType = 'WINDOW' | 'DATES';

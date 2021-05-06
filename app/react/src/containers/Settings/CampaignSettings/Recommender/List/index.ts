@@ -1,5 +1,3 @@
 import RecommenderContent from './RecommendersList';
 
-export {
-  RecommenderContent,
-};
+export { RecommenderContent };

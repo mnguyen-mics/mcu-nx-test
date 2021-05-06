@@ -1,5 +1,3 @@
 import AudienceSegmentFormSection from './AudienceSegmentFormSection';
 
-export {
-  AudienceSegmentFormSection
-};
+export { AudienceSegmentFormSection };

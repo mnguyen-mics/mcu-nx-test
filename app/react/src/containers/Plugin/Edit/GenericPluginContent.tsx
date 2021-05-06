@@ -53,10 +53,7 @@ export interface PluginContentOuterProps<T extends PluginInstance> {
   pluginInstanceService: IPluginInstanceService<T>;
   pluginInstanceId?: string;
   onClose: () => void;
-  onSaveOrCreatePluginInstance: (
-    pluginInstance: T,
-    properties: PropertyResourceShape[],
-  ) => void;
+  onSaveOrCreatePluginInstance: (pluginInstance: T, properties: PropertyResourceShape[]) => void;
   createPluginInstance: (
     organisationId: string,
     plugin: PluginResource,
@@ -200,10 +197,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<
                 .then(resultPluginLayout => {
                   return Promise.resolve({
                     ...pResourceWoutLayout,
-                    plugin_layout:
-                      resultPluginLayout !== null
-                        ? resultPluginLayout
-                        : undefined,
+                    plugin_layout: resultPluginLayout !== null ? resultPluginLayout : undefined,
                   });
                 }),
             ];
@@ -226,23 +220,17 @@ class PluginContent<T extends PluginInstance> extends React.Component<
       })
       .then(res => res.data)
       .then((response: PluginPresetResource[]) => {
-        const pluginPresets: LayoutablePlugin[] = response.reduce(
-          (pluginsWithPresets, preset) => {
-            const foundPlugin = plugins.find(
-              plugin => plugin.id === preset.plugin_id,
-            );
-            if (!foundPlugin || !foundPlugin.plugin_layout)
-              return pluginsWithPresets;
-            return [
-              ...pluginsWithPresets,
-              {
-                ...foundPlugin,
-                plugin_preset: preset,
-              },
-            ];
-          },
-          [],
-        );
+        const pluginPresets: LayoutablePlugin[] = response.reduce((pluginsWithPresets, preset) => {
+          const foundPlugin = plugins.find(plugin => plugin.id === preset.plugin_id);
+          if (!foundPlugin || !foundPlugin.plugin_layout) return pluginsWithPresets;
+          return [
+            ...pluginsWithPresets,
+            {
+              ...foundPlugin,
+              plugin_preset: preset,
+            },
+          ];
+        }, []);
         return pluginPresets;
       });
   }
@@ -255,26 +243,16 @@ class PluginContent<T extends PluginInstance> extends React.Component<
     const promiseInstanceProperties = pluginInstanceService
       .getInstanceProperties(pInstanceId)
       .then(res => res.data);
-    const promisePluginLayout = pluginInstanceService.getLocalizedPluginLayout(
-      pInstanceId,
-    );
+    const promisePluginLayout = pluginInstanceService.getLocalizedPluginLayout(pInstanceId);
     this.setState(
       {
         isLoadingPlugin: true,
         isLoadingList: false,
       },
       () => {
-        Promise.all([
-          promisePluginInstance,
-          promiseInstanceProperties,
-          promisePluginLayout,
-        ])
+        Promise.all([promisePluginInstance, promiseInstanceProperties, promisePluginLayout])
           .then(result => {
-            const [
-              resultPluginInstance,
-              resultInstanceProperties,
-              resultPluginLayout,
-            ] = result;
+            const [resultPluginInstance, resultInstanceProperties, resultPluginLayout] = result;
             const initialValues: PluginInstanceForm<T> = {
               pluginInstance: resultPluginInstance,
               properties: resultInstanceProperties,
@@ -328,11 +306,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<
         );
 
         const updatePropertiesPromise = updateInstancePromise.then(() => {
-          return this.updatePropertiesValue(
-            properties,
-            organisationId,
-            pluginInstance.id!,
-          );
+          return this.updatePropertiesValue(properties, organisationId, pluginInstance.id!);
         });
         Promise.all([updateInstancePromise, updatePropertiesPromise])
           .then(res => {
@@ -576,9 +550,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<
     const actionbarProps = {
       formId,
       message:
-        (pluginProperties.length || pluginInstanceId) && !disableFields
-          ? messages.save
-          : undefined,
+        (pluginProperties.length || pluginInstanceId) && !disableFields ? messages.save : undefined,
       onClose: onClose,
     };
 
@@ -619,44 +591,42 @@ class PluginContent<T extends PluginInstance> extends React.Component<
             pluginProperties={pluginProperties}
             disableFields={isLoadingPlugin || disableFields ? true : false}
             pluginLayout={this.state.pluginLayout!}
-            isLoading={
-              isLoadingPlugin || isLoadingList || !this.state.pluginLayout
-            }
+            isLoading={isLoadingPlugin || isLoadingList || !this.state.pluginLayout}
             pluginVersionId={plugin.id}
             editionMode={false}
             nameField={{
               label: formatMessage(messages.feedModalNameFieldLabel),
-              title: plugin.plugin_preset ? 
+              title: plugin.plugin_preset ? (
                 <div>
                   {formatMessage(messages.feedPresetModalNameFieldTitle)}
-                  <br/>
+                  <br />
                   <b>{formatMessage(messages.feedModalNameFieldTitleWarning)}</b>
-                </div> : 
-                  <div>
-                    {formatMessage(messages.feedModalNameFieldTitle)}
-                    <br/>
-                    <b>{formatMessage(messages.feedModalNameFieldTitleWarning)}</b>
-                  </div>,
+                </div>
+              ) : (
+                <div>
+                  {formatMessage(messages.feedModalNameFieldTitle)}
+                  <br />
+                  <b>{formatMessage(messages.feedModalNameFieldTitleWarning)}</b>
+                </div>
+              ),
               placeholder: formatMessage(messages.feedModalNameFieldPlaceholder),
-              display: true, 
-              disabled: !!plugin.plugin_preset, 
+              display: true,
+              disabled: !!plugin.plugin_preset,
               value: plugin.plugin_preset ? plugin.plugin_preset.name : plugin.name,
-              validator: [isRequired]
+              validator: [isRequired],
             }}
             descriptionField={
               plugin.plugin_preset && {
                 label: formatMessage(messages.feedModalDescriptionFieldLabel),
                 title: formatMessage(messages.feedModalDescriptionFieldTitle),
-                placeholder: formatMessage(
-                  messages.feedModalDescriptionFieldPlaceholder,
-                ),
+                placeholder: formatMessage(messages.feedModalDescriptionFieldPlaceholder),
                 display: true,
                 disabled: true,
                 value: plugin.plugin_preset.description,
                 validator: [isRequired],
               }
             }
-            selectedTab="configuration"
+            selectedTab='configuration'
           />
         </EditContentLayout>
       );
@@ -682,9 +652,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<
             formId={formId}
             initialValues={this.formatInitialValues(initialValues)}
             showGeneralInformation={
-              showGeneralInformation !== undefined
-                ? showGeneralInformation
-                : true
+              showGeneralInformation !== undefined ? showGeneralInformation : true
             }
             renderSpecificFields={renderSpecificFields}
           />
@@ -708,10 +676,7 @@ class PluginContent<T extends PluginInstance> extends React.Component<
   }
 }
 
-export default compose<
-  JoinedProps<PluginInstance>,
-  PluginContentOuterProps<PluginInstance>
->(
+export default compose<JoinedProps<PluginInstance>, PluginContentOuterProps<PluginInstance>>(
   withRouter,
   injectIntl,
   withValidators,

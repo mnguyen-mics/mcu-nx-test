@@ -3,12 +3,8 @@ import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import queryString from 'query-string';
 
-import withValidators, {
-  ValidatorProps,
-} from '../../../../../../components/Form/withValidators';
-import withNormalizer, {
-  NormalizerProps,
-} from '../../../../../../components/Form/withNormalizer';
+import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
+import withNormalizer, { NormalizerProps } from '../../../../../../components/Form/withNormalizer';
 import {
   FormInput,
   FormSection,
@@ -22,8 +18,7 @@ import { AudiencePartitionFormData } from '../domain';
 const messages = defineMessages({
   sectionSubtitleGeneral: {
     id: 'edit.partition.form.general.subtitle',
-    defaultMessage:
-      'Configure your partition, give it a name and select your model.',
+    defaultMessage: 'Configure your partition, give it a name and select your model.',
   },
   sectionTitleGeneral: {
     id: 'edit.partition.form.general.title',
@@ -47,8 +42,7 @@ const messages = defineMessages({
   },
   tootltipPartitionName: {
     id: 'edit.partition.general.infos.tooltip.name',
-    defaultMessage:
-      "The partition's name will help you identify it on the different screens.",
+    defaultMessage: "The partition's name will help you identify it on the different screens.",
   },
   tootltipPartitionType: {
     id: 'edit.partition.general.infos.tooltip.type',
@@ -91,9 +85,7 @@ class GeneralFormSection extends React.Component<Props, State> {
 
     const query = queryString.parse(search);
 
-    const isPublished =
-      this.props.initialValues &&
-      this.props.initialValues.status === 'PUBLISHED';
+    const isPublished = this.props.initialValues && this.props.initialValues.status === 'PUBLISHED';
 
     return (
       <div>
@@ -103,7 +95,7 @@ class GeneralFormSection extends React.Component<Props, State> {
         />
 
         <FormInputField
-          name="name"
+          name='name'
           component={FormInput}
           validate={[isRequired]}
           formItemProps={{
@@ -119,7 +111,7 @@ class GeneralFormSection extends React.Component<Props, State> {
           }}
         />
         <FormSelectField
-          name="audience_partition_type"
+          name='audience_partition_type'
           component={DefaultSelect}
           validate={[isRequired]}
           formItemProps={{
@@ -138,7 +130,7 @@ class GeneralFormSection extends React.Component<Props, State> {
           disabled={true}
         />
         <FormInputField
-          name="part_count"
+          name='part_count'
           component={FormInput}
           validate={[isRequired, isValidInteger]}
           formItemProps={{
@@ -155,7 +147,7 @@ class GeneralFormSection extends React.Component<Props, State> {
         />
         {query.type === 'CLUSTERING' && (
           <FormInputField
-            name="clustering_model_data_file_uri"
+            name='clustering_model_data_file_uri'
             component={FormInput}
             validate={[isRequired]}
             formItemProps={{

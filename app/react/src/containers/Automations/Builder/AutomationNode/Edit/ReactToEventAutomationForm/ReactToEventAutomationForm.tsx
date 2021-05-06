@@ -12,12 +12,7 @@ import {
   Field,
   InjectedFormProps,
 } from 'redux-form';
-import {
-  injectIntl,
-  InjectedIntlProps,
-  defineMessages,
-  FormattedMessage,
-} from 'react-intl';
+import { injectIntl, InjectedIntlProps, defineMessages, FormattedMessage } from 'react-intl';
 import {
   withValidators,
   FormSection,
@@ -65,7 +60,9 @@ import { IQueryService } from '../../../../../../services/QueryService';
 import { ObjectLikeTypeInfoResource } from '../../../../../../models/datamart/graphdb/RuntimeSchema';
 import { QueryInputAutomationFormData } from './../../../AutomationNode/Edit/domain';
 import { QueryInputNodeResource } from '../../../../../../models/automations/automations';
-import EventPropertyFormSection, { EventPropertyFormSectionProps } from './EventPropertyFormSection';
+import EventPropertyFormSection, {
+  EventPropertyFormSectionProps,
+} from './EventPropertyFormSection';
 
 export const FORM_ID = 'reactToEventForm';
 
@@ -112,10 +109,7 @@ type State = {
 };
 
 type Props = ReactToEventAutomationFormProps &
-  InjectedFormProps<
-    ReactToEventAutomationFormData,
-    ReactToEventAutomationFormProps
-  > &
+  InjectedFormProps<ReactToEventAutomationFormData, ReactToEventAutomationFormProps> &
   InjectedIntlProps &
   ValidatorProps &
   DispatchProp<any> &
@@ -210,33 +204,24 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
             booleanOperator: query.where.boolean_operator,
           });
 
-          if (
-            query.where &&
-            isObjectNode(query.where) &&
-            query.where.expressions
-          ) {
-            const expressionEventNames = query.where.expressions.filter(
-              (expression: FieldNode) => {
-                if (isFieldNode(expression))
-                  return expression.field === validObjectType.fieldName;
-                return true;
-              },
-            );
+          if (query.where && isObjectNode(query.where) && query.where.expressions) {
+            const expressionEventNames = query.where.expressions.filter((expression: FieldNode) => {
+              if (isFieldNode(expression)) return expression.field === validObjectType.fieldName;
+              return true;
+            });
 
-            if (expressionEventNames.length > 0)
-              events = expressionEventNames[0].comparison.values;
+            if (expressionEventNames.length > 0) events = expressionEventNames[0].comparison.values;
 
             eventPropertyFormSection = query.where.expressions
               .filter((expression: FieldNode) => {
-                if (isFieldNode(expression))
-                  return expression.field !== validObjectType.fieldName;
+                if (isFieldNode(expression)) return expression.field !== validObjectType.fieldName;
                 return true;
               })
               .map((expression: ObjectNode | FieldNode) => {
                 const generateValue = (n: ObjectNode | FieldNode): string => {
                   if (isFieldNode(n)) return n.field;
                   return `${n.field} ${generateValue(n.expressions[0] as ObjectNode | FieldNode)}`;
-                }
+                };
                 return {
                   expression: expression,
                   value: generateValue(expression),
@@ -262,9 +247,7 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
           validObjectType,
         });
 
-        const datamartId = datamart_id
-          ? datamart_id
-          : initialValues.datamart_id!;
+        const datamartId = datamart_id ? datamart_id : initialValues.datamart_id!;
         return getDatamartPredefinedEventNames(
           datamartId,
           validObjectType!,
@@ -304,7 +287,7 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
             const hasValues = (tree: ObjectTreeExpressionNodeShape): boolean => {
               if (tree.type === 'FIELD') return !!tree.comparison?.values?.[0];
               return hasValues(tree.expressions[0]);
-            }
+            };
 
             if (hasValues(eventProperty.expression))
               newQuery.where.expressions.push(eventProperty.expression);
@@ -344,21 +327,16 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
           .getObjectTypesDeep(datamartId, runtimeSchema.id)
           .then(({ data: objectTypes }) => {
             return reducePromises(
-              getValidObjectTypesForWizardReactToEvent(objectTypes).map(
-                validObjectType => {
-                  return this._runtimeSchemaService
-                    .getFields(datamartId, runtimeSchema.id, validObjectType.id)
-                    .then(({ data: fields }) => {
-                      return {
-                        objectType: validObjectType,
-                        validFields: getValidFieldsForWizardReactToEvent(
-                          validObjectType,
-                          fields,
-                        ),
-                      };
-                    });
-                },
-              ),
+              getValidObjectTypesForWizardReactToEvent(objectTypes).map(validObjectType => {
+                return this._runtimeSchemaService
+                  .getFields(datamartId, runtimeSchema.id, validObjectType.id)
+                  .then(({ data: fields }) => {
+                    return {
+                      objectType: validObjectType,
+                      validFields: getValidFieldsForWizardReactToEvent(validObjectType, fields),
+                    };
+                  });
+              }),
             ).then(validObjectTypes => {
               /*
               Here we need to find a WizardValidObjectTypeField
@@ -371,10 +349,9 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
                   !!validObjectTypes.find(
                     validObjectType =>
                       validObjectType.objectType.name ===
-                      automationWizardValidObjectType.objectTypeName &&
+                        automationWizardValidObjectType.objectTypeName &&
                       !!validObjectType.validFields.find(
-                        of =>
-                          of.name === automationWizardValidObjectType.fieldName,
+                        of => of.name === automationWizardValidObjectType.fieldName,
                       ),
                   ),
               );
@@ -386,20 +363,19 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
               thus we can have its usable name to use in a query.
               For example: ActivityEvent => activity_events
               */
-              const userPointObjectType = objectTypes.find(
-                o => o.name === 'UserPoint',
-              );
+              const userPointObjectType = objectTypes.find(o => o.name === 'UserPoint');
 
               if (userPointObjectType) {
                 const field = userPointObjectType.fields.find(
                   f =>
-                    f.field_type.match(/\w+/)![0] ===
-                    wizardValidObjectTypesFiltered.objectTypeName,
+                    f.field_type.match(/\w+/)![0] === wizardValidObjectTypesFiltered.objectTypeName,
                 );
 
                 if (field) {
                   this.setState({
-                    objectType: objectTypes.find(ot => ot.name === wizardValidObjectTypesFiltered.objectTypeName),
+                    objectType: objectTypes.find(
+                      ot => ot.name === wizardValidObjectTypesFiltered.objectTypeName,
+                    ),
                     objectTypes,
                   });
                   return {
@@ -430,8 +406,7 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
 
     if (where && isObjectNode(where)) {
       const extractExpressions = where.expressions.filter(expression => {
-        if (isFieldNode(expression))
-          return expression.field !== validObjectType.fieldName;
+        if (isFieldNode(expression)) return expression.field !== validObjectType.fieldName;
         return true;
       }) as ObjectTreeExpressionNodeShape[];
 
@@ -460,8 +435,7 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
         ? this.setState({ standardEventsQueryText: newQueryText })
         : this.setState({ advancedQueryText: newQueryText });
 
-      if (this.props.dispatch)
-        this.props.dispatch(change(FORM_ID, 'query_text', newQueryText));
+      if (this.props.dispatch) this.props.dispatch(change(FORM_ID, 'query_text', newQueryText));
     }
   };
 
@@ -537,9 +511,7 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
       if (formMode === 'REACT_TO_EVENT_STANDARD')
         this.setState({ formMode: 'REACT_TO_EVENT_ADVANCED' }, () => {
           if (dispatch) {
-            dispatch(
-              change(FORM_ID, 'uiCreationMode', 'REACT_TO_EVENT_ADVANCED'),
-            );
+            dispatch(change(FORM_ID, 'uiCreationMode', 'REACT_TO_EVENT_ADVANCED'));
             if (standardEventsQueryText)
               dispatch(change(FORM_ID, 'query_text', advancedQueryText || standardEventsQueryText));
           }
@@ -547,9 +519,7 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
       else
         this.setState({ formMode: 'REACT_TO_EVENT_STANDARD' }, () => {
           if (dispatch) {
-            dispatch(
-              change(FORM_ID, 'uiCreationMode', 'REACT_TO_EVENT_STANDARD'),
-            );
+            dispatch(change(FORM_ID, 'uiCreationMode', 'REACT_TO_EVENT_STANDARD'));
             if (standardEventsQueryText)
               dispatch(change(FORM_ID, 'query_text', standardEventsQueryText));
           }
@@ -557,13 +527,14 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
     };
 
     return (
-      <Layout className="mcs-reactToEventAutomation edit-layout">
+      <Layout className='mcs-reactToEventAutomation edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-content'}>
           <Form
             id={FORM_ID}
-            className="mcs-reactToEventAutomation_form edit-layout mcs-content-container mcs-form-container"
-            layout={'vertical'}>
+            className='mcs-reactToEventAutomation_form edit-layout mcs-content-container mcs-form-container'
+            layout={'vertical'}
+          >
             <FormSection
               title={messages.reactToEventFormSectionTitle}
               subtitle={messages.reactToEventFormSectionSubtitle}
@@ -573,27 +544,28 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
               subtitle={messages.reactToEventFormSectionConfigurationSubtitle}
             />
             <Radio.Group
-              className="mcs-reactToEventAutomation_buttonSwitchMode"
+              className='mcs-reactToEventAutomation_buttonSwitchMode'
               defaultValue={formMode}
               onChange={switchMode}
-              buttonStyle="solid"
-              disabled={isLoading}>
-              <Radio.Button value="REACT_TO_EVENT_STANDARD">
+              buttonStyle='solid'
+              disabled={isLoading}
+            >
+              <Radio.Button value='REACT_TO_EVENT_STANDARD'>
                 {formatMessage(messages.standardEvents)}
               </Radio.Button>
-              <Radio.Button value="REACT_TO_EVENT_ADVANCED">
+              <Radio.Button value='REACT_TO_EVENT_ADVANCED'>
                 {formatMessage(messages.advanced)}
               </Radio.Button>
             </Radio.Group>
 
             {formMode === 'REACT_TO_EVENT_STANDARD' ? (
-              <div className="mcs-reactToEventAutomation_standardEventsForm">
+              <div className='mcs-reactToEventAutomation_standardEventsForm'>
                 {isLoading ? (
                   <Loading isFullScreen={true} />
                 ) : standardEventNames.length > 0 ? (
                   <FormCheckboxGroupField
-                    name="standardEventNames"
-                    className="mcs-reactToEventAutomation_standardEventsForm-options"
+                    name='standardEventNames'
+                    className='mcs-reactToEventAutomation_standardEventsForm-options'
                     component={FormCheckboxGroup}
                     disabled={disabled}
                     validate={isRequired}
@@ -606,35 +578,36 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
                     })}
                   />
                 ) : (
-                      <FormattedMessage {...messages.noStandardEvents} />
-                    )}
+                  <FormattedMessage {...messages.noStandardEvents} />
+                )}
               </div>
             ) : (
-                <div className="mcs-reactToEventAutomation_advancedForm">
-                  {runtimeSchemaId && validObjectType ? (
-                    <div>
-                      <div className="mcs-reactToEventAutomation_chooseEventNameContainer">
-                        <FormSearchObjectField
-                          name='events'
-                          component={FormSearchObject}
-                          onChange={this.onEventsChange}
-                          fetchListMethod={fetchListMethod}
-                          fetchSingleMethod={fetchSingleMethod}
-                          formItemProps={{
-                            label: formatMessage(messages.eventName),
-                            required: true,
-                          }}
-                          small={true}
-                          validate={isRequired}
-                          selectProps={{
-                            mode: 'tags',
-                            disabled,
-                          }}
-                          loadOnlyOnce={true}
-                        />
-                      </div>
-                      <hr />
-                      {objectType && <EventProperFormFieldArray
+              <div className='mcs-reactToEventAutomation_advancedForm'>
+                {runtimeSchemaId && validObjectType ? (
+                  <div>
+                    <div className='mcs-reactToEventAutomation_chooseEventNameContainer'>
+                      <FormSearchObjectField
+                        name='events'
+                        component={FormSearchObject}
+                        onChange={this.onEventsChange}
+                        fetchListMethod={fetchListMethod}
+                        fetchSingleMethod={fetchSingleMethod}
+                        formItemProps={{
+                          label: formatMessage(messages.eventName),
+                          required: true,
+                        }}
+                        small={true}
+                        validate={isRequired}
+                        selectProps={{
+                          mode: 'tags',
+                          disabled,
+                        }}
+                        loadOnlyOnce={true}
+                      />
+                    </div>
+                    <hr />
+                    {objectType && (
+                      <EventProperFormFieldArray
                         name='eventPropertyFormSection'
                         component={EventPropertyFormSection}
                         formId={FORM_ID}
@@ -647,15 +620,18 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
                         booleanOperator={booleanOperator}
                         onBooleanOperatorChange={this.onBooleanOperatorChange}
                         formChange={injectedFormPropsChange}
-                        filterOutFields={validObjectType?.fieldName ? [validObjectType.fieldName] : []}
+                        filterOutFields={
+                          validObjectType?.fieldName ? [validObjectType.fieldName] : []
+                        }
                         disabled={disabled}
-                      />}
-                    </div>
-                  ) : (
-                      <Loading isFullScreen={true} />
+                      />
                     )}
-                </div>
-              )}
+                  </div>
+                ) : (
+                  <Loading isFullScreen={true} />
+                )}
+              </div>
+            )}
           </Form>
         </Layout>
       </Layout>
@@ -725,14 +701,12 @@ const messages = defineMessages({
     defaultMessage: 'Schema is not suitable for this action.',
   },
   noStandardEvents: {
-    id:
-      'automation.builder.node.reactToEventForm.standardEventsForm.noStandardEvents',
+    id: 'automation.builder.node.reactToEventForm.standardEventsForm.noStandardEvents',
     defaultMessage:
       'You have no standard events in your datamart. For more options, please switch to the "Advanced" mode above.',
   },
   $home_view: {
-    id:
-      'automation.builder.node.reactToEventForm.standardEventsForm.predefinedMessage.homeView',
+    id: 'automation.builder.node.reactToEventForm.standardEventsForm.predefinedMessage.homeView',
     defaultMessage: 'When the user views the site home page',
   },
   $item_list_view: {
@@ -742,13 +716,11 @@ const messages = defineMessages({
       'When the user views a list of products in a category page or in a search results page',
   },
   $item_view: {
-    id:
-      'automation.builder.node.reactToEventForm.standardEventsForm.predefinedMessage.itemView',
+    id: 'automation.builder.node.reactToEventForm.standardEventsForm.predefinedMessage.itemView',
     defaultMessage: 'When the user views a product page',
   },
   $basket_view: {
-    id:
-      'automation.builder.node.reactToEventForm.standardEventsForm.predefinedMessage.basketView',
+    id: 'automation.builder.node.reactToEventForm.standardEventsForm.predefinedMessage.basketView',
     defaultMessage: 'When the user views the basket page',
   },
   $transaction_confirmed: {
@@ -757,28 +729,23 @@ const messages = defineMessages({
     defaultMessage: 'When the user views the transaction confirmation page',
   },
   $conversion: {
-    id:
-      'automation.builder.node.reactToEventForm.standardEventsForm.predefinedMessage.conversion',
+    id: 'automation.builder.node.reactToEventForm.standardEventsForm.predefinedMessage.conversion',
     defaultMessage: 'When the user has completed a Goal',
   },
   $ad_click: {
-    id:
-      'automation.builder.node.reactToEventForm.standardEventsForm.predefinedMessage.adClick',
+    id: 'automation.builder.node.reactToEventForm.standardEventsForm.predefinedMessage.adClick',
     defaultMessage: 'When the user clicked on an Ad',
   },
   $ad_view: {
-    id:
-      'automation.builder.node.reactToEventForm.standardEventsForm.predefinedMessage.adView',
+    id: 'automation.builder.node.reactToEventForm.standardEventsForm.predefinedMessage.adView',
     defaultMessage: 'When the user views an Ad',
   },
   $email_click: {
-    id:
-      'automation.builder.node.reactToEventForm.standardEventsForm.predefinedMessage.emailClick',
+    id: 'automation.builder.node.reactToEventForm.standardEventsForm.predefinedMessage.emailClick',
     defaultMessage: 'When the user clicks in an Email',
   },
   $email_view: {
-    id:
-      'automation.builder.node.reactToEventForm.standardEventsForm.predefinedMessage.emailView',
+    id: 'automation.builder.node.reactToEventForm.standardEventsForm.predefinedMessage.emailView',
     defaultMessage: 'When the user opened an Email',
   },
 });

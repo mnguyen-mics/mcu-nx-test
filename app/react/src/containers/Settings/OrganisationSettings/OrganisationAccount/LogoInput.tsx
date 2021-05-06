@@ -14,32 +14,20 @@ export interface LogoInputProps {
 
 class LogoInput extends React.Component<LogoInputProps & WrappedFieldProps> {
   render() {
-    const {
-      meta,
-      formItemProps,
-      inputProps,
-      helpToolTipProps,
-      input,
-    } = this.props;
+    const { meta, formItemProps, inputProps, helpToolTipProps, input } = this.props;
 
-    let validateStatus = 'success' as
-      | 'success'
-      | 'warning'
-      | 'error'
-      | 'validating';
+    let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
     if (meta.touched && meta.invalid) validateStatus = 'error';
     if (meta.touched && meta.warning) validateStatus = 'warning';
     return (
-    <FormFieldWrapper
-      helpToolTipProps={helpToolTipProps}
-      validateStatus={validateStatus}
-      {...formItemProps}
-    >
-      <EditableLogo id="editable_logo" mode="inline" 
-        {...input}
-        {...inputProps}
-      />
-    </FormFieldWrapper>);
+      <FormFieldWrapper
+        helpToolTipProps={helpToolTipProps}
+        validateStatus={validateStatus}
+        {...formItemProps}
+      >
+        <EditableLogo id='editable_logo' mode='inline' {...input} {...inputProps} />
+      </FormFieldWrapper>
+    );
   }
 }
 

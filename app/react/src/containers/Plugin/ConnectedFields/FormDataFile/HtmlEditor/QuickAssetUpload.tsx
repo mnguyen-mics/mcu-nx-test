@@ -39,10 +39,7 @@ type OuterProps = QuickAssetUploadProps &
 
 type JoinedProps = OuterProps & InjectedDrawerProps & InjectedNotificationProps;
 
-class QuickAssetUpload extends React.Component<
-  JoinedProps,
-  QuickAssetUploadState
-> {
+class QuickAssetUpload extends React.Component<JoinedProps, QuickAssetUploadState> {
   @lazyInject(TYPES.IAssetFileService)
   private _assetFileService: IAssetFileService;
   constructor(props: JoinedProps) {
@@ -66,9 +63,7 @@ class QuickAssetUpload extends React.Component<
         .uploadAssetsFile(this.props.match.params.organisationId, formData)
         .then(item => item.data)
         .then(item => {
-          const imageUrl = `${(global as any).window.MCS_CONSTANTS.ASSETS_URL}${
-            item.path
-          }`;
+          const imageUrl = `${(global as any).window.MCS_CONSTANTS.ASSETS_URL}${item.path}`;
           this.setState({ loading: false, imageUrl: imageUrl });
           this.props.input.onChange(imageUrl);
           return false;
@@ -93,19 +88,13 @@ class QuickAssetUpload extends React.Component<
   };
 
   render() {
-    let validateStatus = 'success' as
-      | 'success'
-      | 'warning'
-      | 'error'
-      | 'validating';
-    if (this.props.meta.touched && this.props.meta.invalid)
-      validateStatus = 'error';
-    if (this.props.meta.touched && this.props.meta.warning)
-      validateStatus = 'warning';
+    let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
+    if (this.props.meta.touched && this.props.meta.invalid) validateStatus = 'error';
+    if (this.props.meta.touched && this.props.meta.warning) validateStatus = 'warning';
     const uploadButton = (
-      <div className="m-r-20 m-t-10">
+      <div className='m-r-20 m-t-10'>
         <Button>
-          {this.state.loading ? <LoadingOutlined /> : <PlusOutlined /> }
+          {this.state.loading ? <LoadingOutlined /> : <PlusOutlined />}
           Upload
         </Button>
       </div>
@@ -120,10 +109,7 @@ class QuickAssetUpload extends React.Component<
 
     return (
       <FormFieldWrapper
-        help={
-          this.props.meta.touched &&
-          (this.props.meta.warning || this.props.meta.error)
-        }
+        help={this.props.meta.touched && (this.props.meta.warning || this.props.meta.error)}
         helpToolTipProps={this.props.helpToolTipProps}
         validateStatus={validateStatus}
         {...this.props.formItemProps}
@@ -132,7 +118,7 @@ class QuickAssetUpload extends React.Component<
           {this.state.loading ? (
             <LoadingOutlined />
           ) : (
-            <img src={imageUrl} alt="" style={{ maxWidth: '100%' }} />
+            <img src={imageUrl} alt='' style={{ maxWidth: '100%' }} />
           )}
         </div>
         {!this.state.loading && (
@@ -140,7 +126,7 @@ class QuickAssetUpload extends React.Component<
             {...this.props.input}
             {...this.props.inputProps}
             showUploadList={false}
-            action="/"
+            action='/'
             beforeUpload={this.beforeUpload}
             accept={acceptedFormat}
           >

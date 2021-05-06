@@ -9,9 +9,8 @@ const LANGUAGE_KEY = 'language';
 const LOCAL_STORAGE_TEST = 'localStorageSupported';
 
 function isLocalStorageSupported() {
-
   try {
-    localStorage.setItem(LOCAL_STORAGE_TEST, "true");
+    localStorage.setItem(LOCAL_STORAGE_TEST, 'true');
     localStorage.removeItem(LOCAL_STORAGE_TEST);
     return true;
   } catch (e) {
@@ -28,20 +27,16 @@ function getItemCookie(property: string) {
   return Cookies.get(property);
 }
 
-function setItemLocalStorage(property: {[key: string]: string}) {
-
+function setItemLocalStorage(property: { [key: string]: string }) {
   Object.keys(property).forEach(key => {
     localStorage.setItem(key, property[key]);
   });
-
 }
 
-function setItemCookie(property: {[key: string]: string}) {
-
+function setItemCookie(property: { [key: string]: string }) {
   Object.keys(property).forEach(key => {
     Cookies.set(key, property[key]);
   });
-
 }
 
 function removeItemLocalStorage(property: string) {
@@ -54,12 +49,11 @@ function removeItemCookie(property: string) {
   return Cookies.remove(property);
 }
 
-
 const getItem = (property: string) => {
   return isLocalStorageSupported() ? getItemLocalStorage(property) : getItemCookie(property);
 };
 
-const setItem = (property: {[key: string]: string}) => {
+const setItem = (property: { [key: string]: string }) => {
   return isLocalStorageSupported() ? setItemLocalStorage(property) : setItemCookie(property);
 };
 

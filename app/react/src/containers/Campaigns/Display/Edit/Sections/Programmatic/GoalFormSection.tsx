@@ -9,43 +9,18 @@ import SyntaxHighlighter from 'react-syntax-highlighter';
 
 import messages from '../../messages';
 import { injectDrawer } from '../../../../../../components/Drawer';
-import {
-  EditDisplayCampaignRouteMatchParam,
-  GoalFieldModel,
-  isGoalFormData,
-} from '../../domain';
-import GoalSelector, {
-  GoalSelectorProps,
-} from '../../../../Common/GoalSelector';
+import { EditDisplayCampaignRouteMatchParam, GoalFieldModel, isGoalFormData } from '../../domain';
+import GoalSelector, { GoalSelectorProps } from '../../../../Common/GoalSelector';
 import { InjectedDatamartProps, injectDatamart } from '../../../../../Datamart';
 import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
-import {
-  RelatedRecords,
-  RecordElement,
-} from '../../../../../../components/RelatedRecord';
-import {
-  GoalResource,
-  GoalSelectionCreateRequest,
-} from '../../../../../../models/goal';
+import { RelatedRecords, RecordElement } from '../../../../../../components/RelatedRecord';
+import { GoalResource, GoalSelectionCreateRequest } from '../../../../../../models/goal';
 import { FormSection } from '../../../../../../components/Form';
-import {
-  ReduxFormChangeProps,
-} from '../../../../../../utils/FormHelper';
-import {
-  Task,
-  executeTasksInSequence,
-} from '../../../../../../utils/PromiseHelper';
-import {
-  isGoalResource,
-  INITIAL_GOAL_FORM_DATA,
-  GoalFormData,
-} from '../../../../Goal/Edit/domain';
-import GoalFormContainer, {
-  GoalFormContainerProps,
-} from '../../../../Goal/Edit/GoalFormContainer';
-import GoalFormLoader, {
-  GoalFormLoaderProps,
-} from '../../../../Goal/Edit/GoalFormLoader';
+import { ReduxFormChangeProps } from '../../../../../../utils/FormHelper';
+import { Task, executeTasksInSequence } from '../../../../../../utils/PromiseHelper';
+import { isGoalResource, INITIAL_GOAL_FORM_DATA, GoalFormData } from '../../../../Goal/Edit/domain';
+import GoalFormContainer, { GoalFormContainerProps } from '../../../../Goal/Edit/GoalFormContainer';
+import GoalFormLoader, { GoalFormLoaderProps } from '../../../../Goal/Edit/GoalFormLoader';
 import { IGoalFormService } from '../../../../Goal/Edit/GoalFormService';
 import { InjectedDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
 import { lazyInject } from '../../../../../../config/inversify.config';
@@ -72,7 +47,6 @@ interface State {
 }
 
 class GoalFormSection extends React.Component<Props, State> {
-  
   @lazyInject(TYPES.IGoalFormService)
   private _goalFormService: IGoalFormService;
 
@@ -141,7 +115,8 @@ class GoalFormSection extends React.Component<Props, State> {
           goal_selection_type: 'CONVERSION',
           default: true,
         };
-        return this._goalService.getGoal(model.goal_id)
+        return this._goalService
+          .getGoal(model.goal_id)
           .then(resp => resp.data)
           .then(goalResource => {
             const triggerMode = goalResource.new_query_id ? 'QUERY' : 'PIXEL';
@@ -246,7 +221,7 @@ class GoalFormSection extends React.Component<Props, State> {
         onClick={this.handleCodeSnippetClick(field)}
         title={formatMessage(messages.getCodeSnippet)}
       >
-        <McsIcon type="code" className="big" />
+        <McsIcon type='code' className='big' />
       </Button>
     );
   };
@@ -258,7 +233,8 @@ class GoalFormSection extends React.Component<Props, State> {
     const tasks: Task[] = [];
     fields.getAll().forEach(_field => {
       tasks.push(() => {
-        return this._goalService.getGoal(goalId)
+        return this._goalService
+          .getGoal(goalId)
           .then(resp => resp.data)
           .then(goalResource => {
             if (field && _field.key === field.key) {
@@ -297,17 +273,15 @@ class GoalFormSection extends React.Component<Props, State> {
         loading: true,
       });
       const goalFormData = field.model as GoalFormData;
-      this._goalFormService
-        .saveGoal(organisationId, goalFormData)
-        .then(goalResource => {
-          this.setState({
-            loading: false,
-            visible: false,
-          });
-          this.showPixelSnippet(goalResource.id, () =>
-            this.updateFields(goalResource.id, goalResource.name),
-          );
+      this._goalFormService.saveGoal(organisationId, goalFormData).then(goalResource => {
+        this.setState({
+          loading: false,
+          visible: false,
         });
+        this.showPixelSnippet(goalResource.id, () =>
+          this.updateFields(goalResource.id, goalResource.name),
+        );
+      });
     }
   };
 
@@ -326,9 +300,7 @@ class GoalFormSection extends React.Component<Props, State> {
           recordIconType={'goals'}
           record={field}
           title={getGoalName}
-          additionalActionButtons={
-            displayPixelSnippet ? this.getPixelSnippet : undefined
-          }
+          additionalActionButtons={displayPixelSnippet ? this.getPixelSnippet : undefined}
           onEdit={handleEdit}
           onRemove={handleRemove}
         />
@@ -361,10 +333,8 @@ class GoalFormSection extends React.Component<Props, State> {
         <div>
           <p>{formatMessage(messages.goalPixelModalContent)}</p>
           <br />
-          <SyntaxHighlighter language="html" style={docco}>
-            {`<img style="display:none" src="https://events.mediarithmics.com/v1/touches/pixel?$ev=$conversion&$dat_token=${
-              datamart.token
-            }&$goal_id=${goalId}" />`}
+          <SyntaxHighlighter language='html' style={docco}>
+            {`<img style="display:none" src="https://events.mediarithmics.com/v1/touches/pixel?$ev=$conversion&$dat_token=${datamart.token}&$goal_id=${goalId}" />`}
           </SyntaxHighlighter>
         </div>
       ),
@@ -392,7 +362,7 @@ class GoalFormSection extends React.Component<Props, State> {
     const { visible, loading } = this.state;
 
     return (
-      <div id="goals">
+      <div id='goals'>
         <FormSection
           dropdownItems={[
             {

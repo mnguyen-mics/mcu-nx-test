@@ -22,7 +22,9 @@ import FormLayoutActionbar, {
 import { McsFormSection } from '../../../../../../utils/FormHelper';
 import GeneralInformationFormSection from './AddToSegmentGeneralInformationSectionForm';
 import { StorylineNodeModel } from '../../../domain';
-import ProcessingActivitiesFormSection, { ProcessingActivitiesFormSectionProps } from '../../../../../Settings/DatamartSettings/Common/ProcessingActivitiesFormSection';
+import ProcessingActivitiesFormSection, {
+  ProcessingActivitiesFormSectionProps,
+} from '../../../../../Settings/DatamartSettings/Common/ProcessingActivitiesFormSection';
 
 const { Content } = Layout;
 
@@ -54,10 +56,7 @@ interface MapStateToProps {
   formValues: AddToSegmentAutomationFormData;
 }
 
-type Props = InjectedFormProps<
-  AddToSegmentAutomationFormData,
-  AddToSegmentAutomationFormProps
-> &
+type Props = InjectedFormProps<AddToSegmentAutomationFormData, AddToSegmentAutomationFormProps> &
   AddToSegmentAutomationFormProps &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }> &
@@ -88,7 +87,7 @@ class AddToSegmentAutomationForm extends React.Component<Props> {
       title: messages.sectionGeneralTitle,
       component: (
         <ProcessingActivitiesFieldArray
-          name="processingActivities"
+          name='processingActivities'
           component={ProcessingActivitiesFormSection}
           initialProcessingSelectionsForWarning={[]}
           processingsAssociatedType={'ADD-TO-SEGMENT-AUTOMATION'}
@@ -98,7 +97,7 @@ class AddToSegmentAutomationForm extends React.Component<Props> {
       ),
     };
 
-    sections.push(userChoicesSection)
+    sections.push(userChoicesSection);
 
     return sections;
   };
@@ -127,17 +126,13 @@ class AddToSegmentAutomationForm extends React.Component<Props> {
     });
 
     return (
-      <Layout className="edit-layout">
+      <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
-          <Form
-            className="edit-layout ant-layout"
-            onSubmit={handleSubmit}
-            layout="vertical"
-          >
+          <Form className='edit-layout ant-layout' onSubmit={handleSubmit} layout='vertical'>
             <Content
               id={FORM_ID}
-              className="mcs-content-container mcs-form-container automation-form"
+              className='mcs-content-container mcs-form-container automation-form'
             >
               {renderedSections}
             </Content>

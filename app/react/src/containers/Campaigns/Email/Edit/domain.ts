@@ -15,10 +15,7 @@ import {
 
 import { ConsentSelectionResource } from '../../../../models/consent';
 
-import {
-  FieldArrayModel,
-  FieldArrayModelWithMeta,
-} from '../../../../utils/FormHelper';
+import { FieldArrayModel, FieldArrayModelWithMeta } from '../../../../utils/FormHelper';
 
 export interface EditEmailCampaignRouteMatchParam {
   organisationId: string;
@@ -33,11 +30,13 @@ export interface EditEmailBlastRouteMatchParam {
 
 export type TemplateFieldModel = FieldArrayModelWithMeta<
   EmailTemplateSelectionResource | EmailTemplateSelectionCreateRequest,
-  { name: string } >;
+  { name: string }
+>;
 export type ConsentFieldModel = FieldArrayModel<ConsentSelectionResource>;
 export type SegmentFieldModel = FieldArrayModelWithMeta<
   AudienceSegmentSelectionResource | AudienceSegmentSelectionCreateRequest,
-  { name: string } >;
+  { name: string }
+>;
 export type RouterFieldModel = FieldArrayModel<EmailRouterSelectionResource>;
 export type BlastFieldModel = FieldArrayModel<EmailBlastFormData>;
 

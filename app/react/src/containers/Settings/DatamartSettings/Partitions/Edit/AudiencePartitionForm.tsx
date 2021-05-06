@@ -16,9 +16,7 @@ import GeneralFormSection from './Sections/GeneralFormSection';
 import { AudiencePartitionFormData } from './domain';
 import { Omit } from '../../../../../utils/Types';
 
-const Content = Layout.Content as unknown as React.ComponentClass<
-  BasicProps & { id: string }
->;
+const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
 
 const FORM_ID = 'partitionForm';
 
@@ -33,8 +31,7 @@ const messages = defineMessages({
   },
 });
 
-interface AudiencePartitionFormProps
-  extends Omit<ConfigProps<AudiencePartitionFormData>, 'form'> {
+interface AudiencePartitionFormProps extends Omit<ConfigProps<AudiencePartitionFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: React.ReactNode[];
 }
@@ -44,10 +41,7 @@ interface AudiencePartitionFormState {}
 type JoinedProps = AudiencePartitionFormProps &
   InjectedFormProps<AudiencePartitionFormData, AudiencePartitionFormProps>;
 
-class AudiencePartitionForm extends React.Component<
-  JoinedProps,
-  AudiencePartitionFormState
-> {
+class AudiencePartitionForm extends React.Component<JoinedProps, AudiencePartitionFormState> {
   buildFormSections = () => {
     const {} = this.props;
 
@@ -56,9 +50,7 @@ class AudiencePartitionForm extends React.Component<
     const general = {
       id: 'general',
       title: messages.sectionTitleGeneral,
-      component: (
-        <GeneralFormSection initialValues={this.props.initialValues} />
-      ),
+      component: <GeneralFormSection initialValues={this.props.initialValues} />,
     };
 
     sections.push(general);
@@ -92,19 +84,13 @@ class AudiencePartitionForm extends React.Component<
     });
 
     return (
-      <Layout className="edit-layout">
+      <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
           <ScrollspySider {...sideBarProps} />
-          <Form
-            className="edit-layout ant-layout"
-            onSubmit={handleSubmit as any}
-          >
-            <Content
-              id={FORM_ID}
-              className="mcs-content-container mcs-form-container"
-            >
-              <div className="ad-group-form">{renderedSections}</div>
+          <Form className='edit-layout ant-layout' onSubmit={handleSubmit as any}>
+            <Content id={FORM_ID} className='mcs-content-container mcs-form-container'>
+              <div className='ad-group-form'>{renderedSections}</div>
             </Content>
           </Form>
         </Layout>

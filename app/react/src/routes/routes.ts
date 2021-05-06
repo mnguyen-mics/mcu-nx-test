@@ -6,9 +6,9 @@ import { libraryRoutes } from './libraryRoutes';
 import { settingsRoutes } from './settingsRoutes';
 import { datastudioRoutes } from './datastudioRoutes';
 import { marketplaceRoutes } from './marketplaceRoutes';
-import { NavigatorRoute } from './domain'
+import { NavigatorRoute } from './domain';
 import { featureFlagRoutes } from './featuresFlagRoutes';
-import { createBrowserHistory } from 'history'
+import { createBrowserHistory } from 'history';
 import { Modal } from 'antd';
 
 const browserHistory = createBrowserHistory();

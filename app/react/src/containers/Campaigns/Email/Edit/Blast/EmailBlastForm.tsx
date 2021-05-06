@@ -30,9 +30,7 @@ import ScrollspySider, {
 } from '../../../../../components/Layout/ScrollspySider';
 import { Omit } from '../../../../../utils/Types';
 
-const Content = Layout.Content as unknown as React.ComponentClass<
-  BasicProps & { id: string }
->;
+const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
 export const BlastTemplateSectionFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
   TemplateFormSectionProps
@@ -42,26 +40,18 @@ const BlastSegmentSectionFieldArray = FieldArray as new () => GenericFieldArray<
   SegmentFormSectionProps
 >;
 
-export interface EmailBlastFormProps
-  extends Omit<ConfigProps<EmailBlastFormData>, 'form'> {
+export interface EmailBlastFormProps extends Omit<ConfigProps<EmailBlastFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: React.ReactNode[];
 }
 
-type Props = InjectedFormProps<EmailBlastFormData, EmailBlastFormProps> &
-  EmailBlastFormProps;
+type Props = InjectedFormProps<EmailBlastFormData, EmailBlastFormProps> & EmailBlastFormProps;
 
 const FORM_ID = 'emailBlastForm';
 
 class EmailBlastForm extends React.Component<Props> {
   render() {
-    const {
-      breadCrumbPaths,
-      handleSubmit,
-      close,
-      form,
-      change,
-    } = this.props;
+    const { breadCrumbPaths, handleSubmit, close, form, change } = this.props;
 
     const sections = {
       general: {
@@ -95,18 +85,12 @@ class EmailBlastForm extends React.Component<Props> {
     };
 
     return (
-      <Layout className="edit-layout">
+      <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
           <ScrollspySider {...sideBarProps} />
-          <Form
-            className="edit-layout ant-layout"
-            onSubmit={handleSubmit as any}
-          >
-            <Content
-              id={FORM_ID}
-              className="mcs-content-container mcs-form-container"
-            >
+          <Form className='edit-layout ant-layout' onSubmit={handleSubmit as any}>
+            <Content id={FORM_ID} className='mcs-content-container mcs-form-container'>
               <div id={sections.general.sectionId}>
                 <GeneralFormSection />
               </div>
@@ -117,7 +101,7 @@ class EmailBlastForm extends React.Component<Props> {
               <hr />
               <div id={sections.templates.sectionId}>
                 <BlastTemplateSectionFieldArray
-                  name="templateFields"
+                  name='templateFields'
                   component={TemplateFormSection}
                   formChange={change}
                   rerenderOnEveryChange={true}
@@ -126,7 +110,7 @@ class EmailBlastForm extends React.Component<Props> {
               <hr />
               <div id={sections.segments.sectionId}>
                 <BlastSegmentSectionFieldArray
-                  name="segmentFields"
+                  name='segmentFields'
                   component={SegmentFormSection}
                   formName={form}
                   formChange={change}
@@ -145,5 +129,5 @@ export default compose<Props, EmailBlastFormProps>(
   reduxForm<EmailBlastFormData, EmailBlastFormProps>({
     form: FORM_ID,
     enableReinitialize: true,
-  })
+  }),
 )(EmailBlastForm);

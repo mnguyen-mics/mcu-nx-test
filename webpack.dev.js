@@ -33,15 +33,16 @@ module.exports = merge(common, {
         use: [
           {
             loader: 'babel-loader',
-          }, {
+          },
+          {
             loader: 'ts-loader',
             options: {
-              transpileOnly: true
+              transpileOnly: true,
             },
           },
         ],
       },
-    ]
+    ],
   },
 
   plugins: [
@@ -54,19 +55,21 @@ module.exports = merge(common, {
       'process.env.NODE_ENV': JSON.stringify('dev'),
       'process.env.API_ENV': JSON.stringify(process.env.API_ENV),
     }),
-    new CopyWebpackPlugin([{
-      from: 'app/conf/react-configuration.js',
-      to: 'conf/react-configuration.js',
-      transform(content) {
-        return content
-          .toString()
-          .replace(
-            /'API_URL'\ *:\ *'.*'/,
-            process.env.API_ENV === 'prod'
-              ? "'API_URL' : 'https://api.mediarithmics.com'"
-              : "'API_URL' : 'https://api.mediarithmics.local'"
-          );
+    new CopyWebpackPlugin([
+      {
+        from: 'app/conf/react-configuration.js',
+        to: 'conf/react-configuration.js',
+        transform(content) {
+          return content
+            .toString()
+            .replace(
+              /'API_URL'\ *:\ *'.*'/,
+              process.env.API_ENV === 'prod'
+                ? "'API_URL' : 'https://api.mediarithmics.com'"
+                : "'API_URL' : 'https://api.mediarithmics.local'",
+            );
+        },
       },
-    }]),
+    ]),
   ],
 });

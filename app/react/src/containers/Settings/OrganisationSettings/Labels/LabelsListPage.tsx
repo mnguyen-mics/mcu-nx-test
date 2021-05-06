@@ -116,7 +116,7 @@ class LabelsListPage extends React.Component<Props, LabelsListState> {
       });
     };
     return (
-      <Button key="new" type="primary" htmlType="submit" onClick={onClick}>
+      <Button key='new' type='primary' htmlType='submit' onClick={onClick}>
         <FormattedMessage {...messages.newLabel} />
       </Button>
     );
@@ -133,11 +133,7 @@ class LabelsListPage extends React.Component<Props, LabelsListState> {
     const { selectedLabelId, inputValue } = this.state;
     const promise =
       selectedLabelId !== ''
-        ? this._labelService.updateLabel(
-            selectedLabelId,
-            inputValue,
-            organisationId,
-          )
+        ? this._labelService.updateLabel(selectedLabelId, inputValue, organisationId)
         : this._labelService.createLabel(inputValue, organisationId);
 
     this.setState({ isCreatingLabels: true }, () =>
@@ -181,7 +177,7 @@ class LabelsListPage extends React.Component<Props, LabelsListState> {
           <FormattedMessage {...messages.cancelLabel} />
         </Button>
         <Button
-          type="primary"
+          type='primary'
           onClick={this.handleOk}
           loading={isCreatingLabels}
           disabled={hasError}
@@ -203,26 +199,24 @@ class LabelsListPage extends React.Component<Props, LabelsListState> {
     const onChange = (e: any) =>
       this.setState({
         inputValue: e.target.value,
-        hasError: labels.find(label => label.name === e.target.value)
-          ? true
-          : false,
+        hasError: labels.find(label => label.name === e.target.value) ? true : false,
       });
     const onLabelArchive = (label: Label) => {
       this.handleArchiveLabels(label, this);
     };
 
     return (
-      <div className="ant-layout">
-        <Content className="mcs-content-container">
-          <Row className="mcs-table-container">
+      <div className='ant-layout'>
+        <Content className='mcs-content-container'>
+          <Row className='mcs-table-container'>
             <div>
-              <div className="mcs-card-header mcs-card-title">
-                <span className="mcs-card-title">
+              <div className='mcs-card-header mcs-card-title'>
+                <span className='mcs-card-title'>
                   <FormattedMessage {...settingsMessages.labels} />
                 </span>
-                <span className="mcs-card-button">{buttons}</span>
+                <span className='mcs-card-button'>{buttons}</span>
               </div>
-              <hr className="mcs-separator" />
+              <hr className='mcs-separator' />
               <LabelsTable
                 dataSource={labels}
                 totalLabels={totalLabels}
@@ -247,17 +241,15 @@ class LabelsListPage extends React.Component<Props, LabelsListState> {
               >
                 {hasError ? (
                   <Alert
-                    message={
-                      <FormattedMessage {...messages.labelAlreadyExists} />
-                    }
-                    type="error"
+                    message={<FormattedMessage {...messages.labelAlreadyExists} />}
+                    type='error'
                     style={{ marginBottom: 16 }}
                   />
                 ) : null}
                 <Input
                   defaultValue={this.state.inputValue}
                   onChange={onChange}
-                  placeholder="Name"
+                  placeholder='Name'
                 />
               </Modal>
             </div>

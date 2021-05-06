@@ -1,10 +1,6 @@
 import * as React from 'react';
 
-import {
-  MainLayout,
-  EditLayout,
-  SettingLayout
-} from './';
+import { MainLayout, EditLayout, SettingLayout } from './';
 
 import log from '../../../utils/Logger';
 
@@ -32,7 +28,6 @@ interface LayoutManagerDefaultProps {
 }
 
 class LayoutManager extends React.Component<LayoutManagerProps & LayoutManagerDefaultProps> {
-
   public static defaultProps: LayoutManagerDefaultProps = {
     contentComponent: () => <div>no content</div>,
     editComponent: () => <div>no edit</div>,
@@ -40,10 +35,9 @@ class LayoutManager extends React.Component<LayoutManagerProps & LayoutManagerDe
     showOrgSelector: false,
     actionBarComponent: null,
     orgSelectorSize: 200,
-  }
+  };
 
   render() {
-
     const {
       layout,
       contentComponent,
@@ -58,28 +52,32 @@ class LayoutManager extends React.Component<LayoutManagerProps & LayoutManagerDe
 
     switch (layout) {
       case 'main':
-        return  (
+        return (
           <MainLayout
             contentComponent={contentComponent}
             actionBarComponent={actionBarComponent ? actionBarComponent : null}
-            organisationSelector={organisationSelector ? organisationSelector : () => <div>no org selector</div>}
+            organisationSelector={
+              organisationSelector ? organisationSelector : () => <div>no org selector</div>
+            }
             showOrgSelector={showOrgSelector ? showOrgSelector : false}
             orgSelectorSize={orgSelectorSize ? orgSelectorSize : 200}
           />
         );
       case 'settings':
-        return  (
+        return (
           <SettingLayout
             contentComponent={contentComponent}
             actionBarComponent={actionBarComponent ? actionBarComponent : null}
-            organisationSelector={organisationSelector ? organisationSelector : () => <div>no org selector</div>}
+            organisationSelector={
+              organisationSelector ? organisationSelector : () => <div>no org selector</div>
+            }
             showOrgSelector={showOrgSelector ? showOrgSelector : false}
             orgSelectorSize={orgSelectorSize ? orgSelectorSize : 200}
           />
         );
       case 'edit':
         return editComponent && <EditLayout editComponent={editComponent} />;
-  
+
       default: {
         const errMsg = `Unhandled layout ${layout}`;
         log.error(errMsg);

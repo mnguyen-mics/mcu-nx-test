@@ -16,9 +16,7 @@ import {
 import { Omit } from '../../../../../utils/Types';
 import { AudiencePartitionResource } from '../../../../../models/audiencePartition/AudiencePartitionResource';
 import { ReduxFormChangeProps } from '../../../../../utils/FormHelper';
-import AudienceExperimentationForm, {
-  messagesMap,
-} from './AudienceExperimentationForm';
+import AudienceExperimentationForm, { messagesMap } from './AudienceExperimentationForm';
 import { IAudienceSegmentService } from '../../../../../services/AudienceSegmentService';
 import { IQueryService } from '../../../../../services/QueryService';
 import {
@@ -35,8 +33,7 @@ export const INITIAL_EXPERIMENTATION_FORM_DATA = {
   weight: 0,
 };
 
-export interface AudienceExperimentationEditPageProps
-  extends Omit<ConfigProps<any>, 'form'> {
+export interface AudienceExperimentationEditPageProps extends Omit<ConfigProps<any>, 'form'> {
   breadCrumbPaths: React.ReactNode[];
   close: () => void;
   segment: UserQuerySegment;
@@ -122,18 +119,14 @@ class AudienceExperimentationEditPage extends React.Component<Props, State> {
       intl,
       notifyError,
       history,
-      close
+      close,
     } = this.props;
     this.setState({
       isSaving: true,
     });
-    const hideSaveInProgress = message.loading(
-      intl.formatMessage(messagesMap.savingInProgress),
-      0,
-    );
+    const hideSaveInProgress = message.loading(intl.formatMessage(messagesMap.savingInProgress), 0);
     const datamartId = segment.datamart_id;
-    const partitionId =
-      formData.selectedPartition && formData.selectedPartition.id;
+    const partitionId = formData.selectedPartition && formData.selectedPartition.id;
     const queryId = segment.query_id;
     if (partitionId && queryId) {
       this._audienceSegmentService
@@ -143,7 +136,7 @@ class AudienceExperimentationEditPage extends React.Component<Props, State> {
           max_results: 500,
         })
         .then(segmentsRes => {
-          const numberOfSegments = Math.round((formData.weight/100) * segmentsRes.data.length);
+          const numberOfSegments = Math.round((formData.weight / 100) * segmentsRes.data.length);
           getFormattedExperimentationQuery(
             datamartId,
             queryId,
@@ -196,9 +189,7 @@ class AudienceExperimentationEditPage extends React.Component<Props, State> {
                               .then(res => {
                                 hideSaveInProgress();
                                 message.success(
-                                  intl.formatMessage(
-                                    messagesMap.successfullyCreated,
-                                  ),
+                                  intl.formatMessage(messagesMap.successfullyCreated),
                                   3,
                                 );
                                 history.push(

@@ -12,10 +12,7 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { messages } from '../messages';
 import { AudienceFeatureFormData } from './domain';
 import { IRuntimeSchemaService } from '../../../../../services/RuntimeSchemaService';
-import {
-  computeFinalSchemaItem,
-  SchemaItem,
-} from '../../../../QueryTool/JSONOTQL/domain';
+import { computeFinalSchemaItem, SchemaItem } from '../../../../QueryTool/JSONOTQL/domain';
 import { message } from 'antd';
 import { Loading } from '../../../../../components';
 import { Link } from 'react-router-dom';
@@ -61,40 +58,32 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
       });
       this._audienceFeatureService
         .getAudienceFeature(datamartId, audienceFeatureId)
-        .then((res) => {
+        .then(res => {
           this.setState({
             audienceFeature: res.data,
             isLoading: false,
           });
         })
 
-        .catch((e) => {
+        .catch(e => {
           notifyError(e);
           this.setState({
             isLoading: false,
           });
         });
     }
-    this._runtimeSchemaService
-      .getRuntimeSchemas(datamartId)
-      .then((schemaRes) => {
-        const liveSchema = schemaRes.data.find((s) => s.status === 'LIVE');
-        if (!liveSchema) return [];
-        return this._runtimeSchemaService
-          .getObjectTypeInfoResources(datamartId, liveSchema.id)
-          .then((r) => {
-            this.setState({
-              schema: computeFinalSchemaItem(
-                r,
-                'UserPoint',
-                false,
-                false,
-                false,
-              ),
-            });
-            return r;
+    this._runtimeSchemaService.getRuntimeSchemas(datamartId).then(schemaRes => {
+      const liveSchema = schemaRes.data.find(s => s.status === 'LIVE');
+      if (!liveSchema) return [];
+      return this._runtimeSchemaService
+        .getObjectTypeInfoResources(datamartId, liveSchema.id)
+        .then(r => {
+          this.setState({
+            schema: computeFinalSchemaItem(r, 'UserPoint', false, false, false),
           });
-      });
+          return r;
+        });
+    });
   }
 
   save = (formData: AudienceFeatureFormData) => {
@@ -138,10 +127,7 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
           audienceFeatureId,
           newFormData,
         )
-      : this._audienceFeatureService.createAudienceFeature(
-          datamartId,
-          newFormData,
-        );
+      : this._audienceFeatureService.createAudienceFeature(datamartId, newFormData);
     promise
       .then(() => {
         hideSaveInProgress();
@@ -150,7 +136,7 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
           state: { activeTab: 'audience_features' },
         });
       })
-      .catch((err) => {
+      .catch(err => {
         hideSaveInProgress();
         notifyError(err);
         this.setState({
@@ -189,10 +175,13 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
         : formatMessage(messages.audienceFeatureNew);
 
     const breadcrumbPaths = [
-      <Link key="1" to={{ 
-        pathname: `/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`,
-        state: { activeTab: 'audience_features' },
-      }}>
+      <Link
+        key='1'
+        to={{
+          pathname: `/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`,
+          state: { activeTab: 'audience_features' },
+        }}
+      >
         {formatMessage(messages.audienceFeatures)}
       </Link>,
       replicationName,
@@ -214,8 +203,4 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
   }
 }
 
-export default compose(
-  withRouter,
-  injectIntl,
-  injectNotifications,
-)(AudienceFeatureEditPage);
+export default compose(withRouter, injectIntl, injectNotifications)(AudienceFeatureEditPage);

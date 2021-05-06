@@ -9,24 +9,19 @@ import {
   ObjectLikeTypeInfoResource,
   SchemaDecoratorResource,
   RuntimeSchemaValidationInfoResource,
-  RuntimeSchemaPublicationInfoResource
+  RuntimeSchemaPublicationInfoResource,
 } from '../models/datamart/graphdb/RuntimeSchema';
 import { injectable } from 'inversify';
 
 export interface IRuntimeSchemaService {
-  getRuntimeSchemas: (
-    datamartId: string,
-  ) => Promise<DataListResponse<RuntimeSchemaResource>>;
+  getRuntimeSchemas: (datamartId: string) => Promise<DataListResponse<RuntimeSchemaResource>>;
 
   getRuntimeSchema: (
     datamartId: string,
     runtimeSchemaId: string,
   ) => Promise<DataResponse<RuntimeSchemaResource>>;
 
-  getRuntimeSchemaText: (
-    datamartId: string,
-    runtimeSchemaId: string,
-  ) => Promise<string>;
+  getRuntimeSchemaText: (datamartId: string, runtimeSchemaId: string) => Promise<string>;
 
   updateRuntimeSchema: (
     datamartId: string,
@@ -159,20 +154,13 @@ export interface IRuntimeSchemaService {
     blob: string,
   ) => Promise<DataListResponse<SchemaDecoratorResource>>;
 
-  deleteSchemaDecorators: (
-    datamartId: string,
-    runtimeSchemaId: string,
-  ) => Promise<ApiResponse>;
+  deleteSchemaDecorators: (datamartId: string, runtimeSchemaId: string) => Promise<ApiResponse>;
 }
 
 @injectable()
 export class RuntimeSchemaService implements IRuntimeSchemaService {
-  getRuntimeSchemas(
-    datamartId: string,
-  ): Promise<DataListResponse<RuntimeSchemaResource>> {
-    return ApiService.getRequest(
-      `datamarts/${datamartId}/graphdb_runtime_schemas`,
-    );
+  getRuntimeSchemas(datamartId: string): Promise<DataListResponse<RuntimeSchemaResource>> {
+    return ApiService.getRequest(`datamarts/${datamartId}/graphdb_runtime_schemas`);
   }
 
   getRuntimeSchema(
@@ -184,10 +172,7 @@ export class RuntimeSchemaService implements IRuntimeSchemaService {
     );
   }
 
-  getRuntimeSchemaText(
-    datamartId: string,
-    runtimeSchemaId: string,
-  ): Promise<string> {
+  getRuntimeSchemaText(datamartId: string, runtimeSchemaId: string): Promise<string> {
     return ApiService.getRequest(
       `datamarts/${datamartId}/graphdb_runtime_schemas/${runtimeSchemaId}/text`,
     );

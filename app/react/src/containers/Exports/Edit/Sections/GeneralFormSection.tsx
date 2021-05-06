@@ -2,17 +2,9 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 
-import withValidators, {
-  ValidatorProps,
-} from '../../../../components/Form/withValidators';
-import withNormalizer, {
-  NormalizerProps,
-} from '../../../../components/Form/withNormalizer';
-import {
-  FormInput,
-  FormSection,
-  FormInputField,
-} from '../../../../components/Form';
+import withValidators, { ValidatorProps } from '../../../../components/Form/withValidators';
+import withNormalizer, { NormalizerProps } from '../../../../components/Form/withNormalizer';
+import { FormInput, FormSection, FormInputField } from '../../../../components/Form';
 
 const messages = defineMessages({
   sectionTitleGeneral: {
@@ -29,8 +21,7 @@ const messages = defineMessages({
   },
   tootltipExportName: {
     id: 'exports.edit.generalInfoSection.tooltip.name',
-    defaultMessage:
-      'Give your Export a Name so you can find it back in the different screens.',
+    defaultMessage: 'Give your Export a Name so you can find it back in the different screens.',
   },
 });
 
@@ -67,7 +58,7 @@ class GeneralFormSection extends React.Component<Props, State> {
 
         <div>
           <FormInputField
-            name="export.name"
+            name='export.name'
             component={FormInput}
             validate={[isRequired]}
             formItemProps={{
@@ -87,8 +78,4 @@ class GeneralFormSection extends React.Component<Props, State> {
   }
 }
 
-export default compose(
-  injectIntl,
-  withValidators,
-  withNormalizer,
-)(GeneralFormSection);
+export default compose(injectIntl, withValidators, withNormalizer)(GeneralFormSection);

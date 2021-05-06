@@ -11,9 +11,9 @@ export const libraryDefinition: NavigatorDefinition = {
     path: '/library/assets',
     layout: 'main',
     contentComponent: AssetList.contentComponent,
-    requiredFeature: 'library-assets'
+    requiredFeature: 'library-assets',
   },
-  
+
   // ========================================
   //           CATALOG
   // ========================================
@@ -25,7 +25,6 @@ export const libraryDefinition: NavigatorDefinition = {
     requiredFeature: 'library-catalog',
     requireDatamart: true,
   },
-}
+};
 
-
-export const libraryRoutes: NavigatorRoute[] = generateRoutesFromDefinition(libraryDefinition)
+export const libraryRoutes: NavigatorRoute[] = generateRoutesFromDefinition(libraryDefinition);

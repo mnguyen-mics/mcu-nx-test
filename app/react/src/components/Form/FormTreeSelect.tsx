@@ -7,7 +7,9 @@ import { WrappedFieldProps } from 'redux-form';
 import { LabeledValue, TreeSelectProps } from 'antd/lib/tree-select';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-export type FormTreeSelectDataNode = Required<Pick<TreeSelectProps<LabeledValue>, 'treeData'>>['treeData'][number];
+export type FormTreeSelectDataNode = Required<
+  Pick<TreeSelectProps<LabeledValue>, 'treeData'>
+>['treeData'][number];
 export interface FormTreeSelectProps extends FormFieldWrapperProps {
   treeData: FormTreeSelectDataNode[];
   onSelect?: (value: any, option: FormTreeSelectDataNode) => void;
@@ -18,9 +20,9 @@ export interface FormTreeSelectProps extends FormFieldWrapperProps {
   defaultValueTitle?: string;
 }
 
-type Props = FormTreeSelectProps & WrappedFieldProps
+type Props = FormTreeSelectProps & WrappedFieldProps;
 
-type State = {}
+type State = {};
 
 class FormTreeSelect extends React.Component<Props, State> {
   id: string = cuid();
@@ -41,11 +43,7 @@ class FormTreeSelect extends React.Component<Props, State> {
 
     const getRef = () => document.getElementById(this.id)!;
 
-    let validateStatus = 'success' as
-      | 'success'
-      | 'warning'
-      | 'error'
-      | 'validating';
+    let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
 
     if (meta && meta.touched && meta.invalid) validateStatus = 'error';
     if (meta && meta.touched && meta.warning) validateStatus = 'warning';

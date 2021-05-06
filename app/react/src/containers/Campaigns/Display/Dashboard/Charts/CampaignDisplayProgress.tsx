@@ -17,8 +17,7 @@ interface RouterProps {
   campaignId: string;
 }
 
-type CampaignDisplayProgressProps = InjectedIntlProps &
-  RouteComponentProps<RouterProps>;
+type CampaignDisplayProgressProps = InjectedIntlProps & RouteComponentProps<RouterProps>;
 
 interface CampaignDisplayProgressState {
   isLoading: boolean;
@@ -59,17 +58,11 @@ class CampaignDisplayProgress extends React.Component<
 
     const {
       match: {
-        params: {
-          organisationId: previousOrganisationId,
-          campaignId: previousCampaignId,
-        },
+        params: { organisationId: previousOrganisationId, campaignId: previousCampaignId },
       },
     } = previousProps;
 
-    if (
-      previousCampaignId !== campaignId &&
-      previousOrganisationId !== organisationId
-    ) {
+    if (previousCampaignId !== campaignId && previousOrganisationId !== organisationId) {
       this.fetchAll(campaignId);
     }
   }
@@ -143,10 +136,7 @@ class CampaignDisplayProgress extends React.Component<
 
     const totalMessage = formatMessage(messages.totalBudgetConsumption);
 
-    return campaign &&
-      campaign.id &&
-      campaign.organisation_id &&
-      campaign.max_budget_period ? (
+    return campaign && campaign.id && campaign.organisation_id && campaign.max_budget_period ? (
       <Row gutter={100}>
         <Col span={12}>
           <TotalConsumption
@@ -154,7 +144,7 @@ class CampaignDisplayProgress extends React.Component<
             loading={isLoading}
             id={campaign && campaign.id}
             organisationId={campaign.organisation_id}
-            objectType="campaign"
+            objectType='campaign'
             totalBudget={totalBudgetGlobal}
             from={fromInfiniteAndBeyond}
             to={to}
@@ -166,7 +156,7 @@ class CampaignDisplayProgress extends React.Component<
             loading={isLoading}
             id={campaign.id}
             organisationId={campaign.organisation_id}
-            objectType="campaign"
+            objectType='campaign'
             totalBudget={totalBudgetPeriod}
             from={from}
             to={to}
@@ -176,13 +166,13 @@ class CampaignDisplayProgress extends React.Component<
     ) : (
       <Row gutter={100}>
         <Col span={12}>
-          <div className="mcs-progress-wrapper">
-            <i className="mcs-table-cell-loading" style={{ width: '100%' }} />
+          <div className='mcs-progress-wrapper'>
+            <i className='mcs-table-cell-loading' style={{ width: '100%' }} />
           </div>
         </Col>
         <Col span={12}>
-          <div className="mcs-progress-wrapper">
-            <i className="mcs-table-cell-loading" style={{ width: '100%' }} />
+          <div className='mcs-progress-wrapper'>
+            <i className='mcs-table-cell-loading' style={{ width: '100%' }} />
           </div>
         </Col>
       </Row>
@@ -190,7 +180,4 @@ class CampaignDisplayProgress extends React.Component<
   }
 }
 
-export default compose(
-  injectIntl,
-  withRouter,
-)(CampaignDisplayProgress);
+export default compose(injectIntl, withRouter)(CampaignDisplayProgress);

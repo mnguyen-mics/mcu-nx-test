@@ -1,9 +1,6 @@
 import * as React from 'react';
 import cuid from 'cuid';
-import {
-  OTQLCountResult,
-  isCountResult,
-} from '../../../../models/datamart/graphdb/OTQLResult';
+import { OTQLCountResult, isCountResult } from '../../../../models/datamart/graphdb/OTQLResult';
 import injectThemeColors, {
   InjectedThemeColorsProps,
   ThemeColorsShape,
@@ -17,7 +14,10 @@ import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { getFormattedQuery } from '../domain';
-import { DatasetProps, PiePlotOptionsProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/category-based-charts/pie-plot/PiePlot';
+import {
+  DatasetProps,
+  PiePlotOptionsProps,
+} from '@mediarithmics-private/mcs-components-library/lib/components/charts/category-based-charts/pie-plot/PiePlot';
 import { PiePlot, EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
 
 export interface CountPieChartProps {
@@ -63,7 +63,7 @@ class CountPieChart extends React.Component<Props, State> {
     const {
       segment: previousSegment,
       queryIds: previousChartQueryIds,
-      datamartId: previousDatamartId
+      datamartId: previousDatamartId,
     } = previousProps;
 
     if (
@@ -75,25 +75,26 @@ class CountPieChart extends React.Component<Props, State> {
     }
   }
 
-  formatDataQuery = (otqlResults: OTQLCountResult[], plotLabelName: string, i: number): DatasetProps[] => {
-
+  formatDataQuery = (
+    otqlResults: OTQLCountResult[],
+    plotLabelName: string,
+    i: number,
+  ): DatasetProps[] => {
     const { colors } = this.props;
 
-      if (
-        otqlResults.length &&
-        otqlResults[0].count
-      ) {
+    if (otqlResults.length && otqlResults[0].count) {
+      const colorArray = Object.keys(colors);
+      const color = colorArray[i % colorArray.length];
 
-        const colorArray = Object.keys(colors);
-        const color = colorArray[i%colorArray.length];
-
-        return [{
+      return [
+        {
           value: otqlResults[0].count,
           key: plotLabelName,
           color: color,
-        }];
-      }
-      return [];
+        },
+      ];
+    }
+    return [];
   };
 
   fetchData = (
@@ -101,7 +102,7 @@ class CountPieChart extends React.Component<Props, State> {
     datamartId: string,
     segment?: AudienceSegmentShape,
   ): Promise<void> => {
-    this.setState({ error: false, loading: true})
+    this.setState({ error: false, loading: true });
     const promises = chartQueryIds.map((chartQueryId, i) => {
       return this.fetchQuery(chartQueryId, datamartId, i);
     });
@@ -110,11 +111,11 @@ class CountPieChart extends React.Component<Props, State> {
         this.setState({
           loading: false,
           queryResult: queryListResp.reduce((acc, v, i) => {
-            return acc.concat(v)
-          }, [])
+            return acc.concat(v);
+          }, []),
         });
       })
-     
+
       .catch(() => {
         this.setState({
           error: true,
@@ -151,7 +152,7 @@ class CountPieChart extends React.Component<Props, State> {
                   this.props.plotLabels[plotLabelIndex]
                     ? this.props.plotLabels[plotLabelIndex]
                     : plotLabelIndex.toString(),
-                    plotLabelIndex
+                  plotLabelIndex,
                 ),
               );
             }
@@ -161,10 +162,10 @@ class CountPieChart extends React.Component<Props, State> {
   };
 
   public render() {
-    const { title, colors, intl, height, queryIds, } = this.props;
+    const { title, colors, intl, height, queryIds } = this.props;
 
     const computeChartColors = () => {
-      const availableColors = Object.keys(colors).filter(c => c !== "mcs-normal");
+      const availableColors = Object.keys(colors).filter(c => c !== 'mcs-normal');
       return queryIds.map((q, i) => {
         return colors[
           availableColors[i % (availableColors.length - 1)] as keyof ThemeColorsShape
@@ -184,12 +185,7 @@ class CountPieChart extends React.Component<Props, State> {
       if (this.state.loading) {
         return <LoadingChart />;
       } else if (this.state.error) {
-        return (
-          <EmptyChart
-            title={intl.formatMessage(messages.error)}
-            icon={'close-big'}
-          />
-        );
+        return <EmptyChart title={intl.formatMessage(messages.error)} icon={'close-big'} />;
       } else if (
         (this.state.queryResult && this.state.queryResult.length === 0) ||
         !this.state.queryResult
@@ -210,7 +206,4 @@ class CountPieChart extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, CountPieChartProps>(
-  injectThemeColors,
-  injectIntl,
-)(CountPieChart);
+export default compose<Props, CountPieChartProps>(injectThemeColors, injectIntl)(CountPieChart);

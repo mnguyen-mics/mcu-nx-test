@@ -1,10 +1,5 @@
 import PluginInstanceService from './PluginInstanceService';
-import {
-  AudienceTagFeed,
-  AudienceFeed,
-  Status,
-  PluginProperty,
-} from '../models/Plugins';
+import { AudienceTagFeed, AudienceFeed, Status, PluginProperty } from '../models/Plugins';
 import { DataListResponse, DataResponse } from './ApiService';
 import { PropertyResourceShape } from '../models/plugin';
 import { PluginLayout } from '../models/plugin/PluginLayout';
@@ -37,28 +32,19 @@ export interface IAudienceSegmentFeedService {
   segmentId: string;
   feedType: AudienceFeedType;
 
-  getInstances: (options: object) => Promise<DataListResponse<AudienceFeed>>; 
+  getInstances: (options: object) => Promise<DataListResponse<AudienceFeed>>;
   getFeeds: (options: GetFeeds) => Promise<DataListResponse<AudienceFeed>>;
   getAudienceFeeds: (
     organisationId: string,
     options: object,
   ) => Promise<DataListResponse<AudienceFeed>>;
-  deleteAudienceFeed: (
-    id: string,
-    options?: object,
-  ) => Promise<DataResponse<any>>;
-  getInstanceById: (
-    id: string,
-    options: object,
-  ) => Promise<DataResponse<AudienceFeed>>;
+  deleteAudienceFeed: (id: string, options?: object) => Promise<DataResponse<any>>;
+  getInstanceById: (id: string, options: object) => Promise<DataResponse<AudienceFeed>>;
   getInstanceProperties: (
     id: string,
     options?: object,
   ) => Promise<DataListResponse<PropertyResourceShape>>;
-  updatePluginInstance: (
-    id: string,
-    options: object,
-  ) => Promise<DataResponse<AudienceTagFeed>>;
+  updatePluginInstance: (id: string, options: object) => Promise<DataResponse<AudienceTagFeed>>;
   updatePluginInstanceProperty: (
     organisationId: string,
     id: string,
@@ -69,13 +55,8 @@ export interface IAudienceSegmentFeedService {
     organisationId: string,
     options: object,
   ) => Promise<DataResponse<AudienceTagFeed>>;
-  getLocalizedPluginLayout: (
-    pInstanceId: string,
-  ) => Promise<PluginLayout | null>;
-  getAudienceFeed: (
-    feedId: string,
-    options: object,
-  ) => Promise<DataResponse<AudienceFeed>>;
+  getLocalizedPluginLayout: (pInstanceId: string) => Promise<PluginLayout | null>;
+  getAudienceFeed: (feedId: string, options: object) => Promise<DataResponse<AudienceFeed>>;
   createAudienceFeed: (
     audienceFeed: Partial<AudienceFeed>,
     options: object,
@@ -137,19 +118,13 @@ export default abstract class AudienceSegmentFeedService<T extends AudienceFeed>
     return this.service.getAudienceFeeds(organisationId, options);
   }
 
-  deleteAudienceFeed(
-    id: string,
-    options: object = {},
-  ): Promise<DataResponse<any>> {
+  deleteAudienceFeed(id: string, options: object = {}): Promise<DataResponse<any>> {
     return this.service.deleteAudienceFeed(id, options);
   }
 
   // START reimplementation of method
 
-  getInstanceById = (
-    id: string,
-    options: object = {},
-  ): Promise<DataResponse<AudienceFeed>> => {
+  getInstanceById = (id: string, options: object = {}): Promise<DataResponse<AudienceFeed>> => {
     return this.service.getInstanceById(id, options);
   };
 
@@ -173,12 +148,7 @@ export default abstract class AudienceSegmentFeedService<T extends AudienceFeed>
     technicalName: string,
     params: object = {},
   ): Promise<DataResponse<PropertyResourceShape> | void> => {
-    return this.service.updatePluginInstanceProperty(
-      organisationId,
-      id,
-      technicalName,
-      params,
-    );
+    return this.service.updatePluginInstanceProperty(organisationId, id, technicalName, params);
   };
 
   createPluginInstance = (
@@ -195,33 +165,18 @@ export default abstract class AudienceSegmentFeedService<T extends AudienceFeed>
   // reimplemention of audience segment service to make them type agnostic
   getAudienceFeed = (feedId: string, options: object = {}) => {
     return this.feedType === 'EXTERNAL_FEED'
-      ? this.audienceSegmentService.getAudienceExternalFeed(
-          this.segmentId,
-          feedId,
-          options,
-        )
-      : this.audienceSegmentService.getAudienceTagFeed(
-          this.segmentId,
-          feedId,
-          options,
-        );
+      ? this.audienceSegmentService.getAudienceExternalFeed(this.segmentId, feedId, options)
+      : this.audienceSegmentService.getAudienceTagFeed(this.segmentId, feedId, options);
   };
 
-  createAudienceFeed = (
-    audienceFeed: Partial<AudienceFeed>,
-    options: object = {},
-  ) => {
+  createAudienceFeed = (audienceFeed: Partial<AudienceFeed>, options: object = {}) => {
     return this.feedType === 'EXTERNAL_FEED'
       ? this.audienceSegmentService.createAudienceExternalFeeds(
           this.segmentId,
           audienceFeed,
           options,
         )
-      : this.audienceSegmentService.createAudienceTagFeeds(
-          this.segmentId,
-          audienceFeed,
-          options,
-        );
+      : this.audienceSegmentService.createAudienceTagFeeds(this.segmentId, audienceFeed, options);
   };
 
   updateAudienceFeed = (
@@ -251,11 +206,7 @@ export default abstract class AudienceSegmentFeedService<T extends AudienceFeed>
           feedId,
           options,
         )
-      : this.audienceSegmentService.getAudienceTagFeedProperties(
-          this.segmentId,
-          feedId,
-          options,
-        );
+      : this.audienceSegmentService.getAudienceTagFeedProperties(this.segmentId, feedId, options);
   };
 
   updateAudienceFeedProperty = (

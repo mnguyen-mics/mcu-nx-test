@@ -4,16 +4,15 @@ import SingleProfileInfo from './SingleProfileInfo';
 import cuid from 'cuid';
 
 export interface ProfileInfoProps {
-  profiles: UserProfileWithAccountId[]
+  profiles: UserProfileWithAccountId[];
 }
 
 interface State {}
 
 export default class ProfileInfo extends React.Component<ProfileInfoProps, State> {
-
   static defaultProps = {
-    profiles: []
-  }
+    profiles: [],
+  };
 
   constructor(props: ProfileInfoProps) {
     super(props);
@@ -24,10 +23,9 @@ export default class ProfileInfo extends React.Component<ProfileInfoProps, State
 
     return (
       <div>
-        {
-          profiles.map(profil => {
-            return <SingleProfileInfo key={cuid()} profileGlobal={profil} />
-          })}
+        {profiles.map(profil => {
+          return <SingleProfileInfo key={cuid()} profileGlobal={profil} />;
+        })}
       </div>
     );
   }

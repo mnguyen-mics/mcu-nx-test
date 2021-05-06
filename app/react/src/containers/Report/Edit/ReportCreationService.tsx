@@ -33,13 +33,11 @@ interface RequestValuesInterface {
   durationStartDate: McsMoment;
   durationEndDate: McsMoment;
   filters: Filter[];
-
 }
 
 type ReportViewResponse = DataResponse<ReportViewResource>;
 
 const ReportCreationService = {
-
   filterToObject(filter: FilterInterface): Filter {
     return {
       name: filter.leftValue,
@@ -60,7 +58,7 @@ const ReportCreationService = {
       filters.push(ReportCreationService.filterToObject(formValue.filter));
     }
 
-    for (const filter of additionalFilters ||  []) {
+    for (const filter of additionalFilters || []) {
       filters.push(ReportCreationService.filterToObject(filter));
     }
 
@@ -75,7 +73,10 @@ const ReportCreationService = {
     };
   },
 
-  askRequest(organisationId: string, requestValues: RequestValuesInterface): Promise<ReportViewResponse> {
+  askRequest(
+    organisationId: string,
+    requestValues: RequestValuesInterface,
+  ): Promise<ReportViewResponse> {
     const {
       reportType: reportType,
       dimensions: dimensions,
@@ -87,100 +88,106 @@ const ReportCreationService = {
 
     switch (reportType) {
       case 'display_campaign_performance_report': {
-        return ReportService.getDisplayCampaignPerformanceReport(organisationId,
+        return ReportService.getDisplayCampaignPerformanceReport(
+          organisationId,
           durationStartDate,
           durationEndDate,
           dimensions,
           metrics,
-          filters);
+          filters,
+        );
       }
 
       case 'email_delivery_report': {
-        return ReportService.getEmailDeliveryReport(organisationId,
+        return ReportService.getEmailDeliveryReport(
+          organisationId,
           durationStartDate,
           durationEndDate,
           dimensions,
           metrics,
-          filters);
+          filters,
+        );
       }
 
       case 'conversion_performance_report': {
-        return ReportService.getConversionPerformanceReport(organisationId,
+        return ReportService.getConversionPerformanceReport(
+          organisationId,
           durationStartDate,
           durationEndDate,
           dimensions,
           metrics,
-          filters);
+          filters,
+        );
       }
 
       case 'audience_segment_report': {
-        return ReportService.getAudienceSegmentReport(organisationId,
+        return ReportService.getAudienceSegmentReport(
+          organisationId,
           durationStartDate,
           durationEndDate,
           dimensions,
           metrics,
-          filters);
+          filters,
+        );
       }
 
       case 'conversion_attribution_performance': {
-        return ReportService.getConversionAttributionPerformance(organisationId,
+        return ReportService.getConversionAttributionPerformance(
+          organisationId,
           durationStartDate,
           durationEndDate,
           [],
           dimensions,
           metrics,
-          filters);
+          filters,
+        );
       }
 
       default: {
         return Promise.reject(new Error('Unsupported report type'));
       }
     }
-
   },
 
   exportReport(formValue: FormValueInterface, organisationId: string): Promise<string> {
     const requestValues = ReportCreationService.prepareRequest(formValue, false);
 
-    return ReportCreationService.askRequest(organisationId, requestValues)
-      .then((res) => {
-        const dataSheet = {
-          data: [res.data.report_view.columns_headers].concat(res.data.report_view.rows),
-          name: 'test',
-        };
-        ExportService.exportData([dataSheet], 'test', 'xlsx');
+    return ReportCreationService.askRequest(organisationId, requestValues).then(res => {
+      const dataSheet = {
+        data: [res.data.report_view.columns_headers].concat(res.data.report_view.rows),
+        name: 'test',
+      };
+      ExportService.exportData([dataSheet], 'test', 'xlsx');
 
-        return 'Done';
-      });
+      return 'Done';
+    });
   },
 
   preview(formValue: FormValueInterface, organisationId: string) {
     const requestValues = ReportCreationService.prepareRequest(formValue, true);
 
-    return ReportCreationService.askRequest(organisationId, requestValues)
-      .then((res) => {
-        const headers = res.data.report_view.columns_headers;
+    return ReportCreationService.askRequest(organisationId, requestValues).then(res => {
+      const headers = res.data.report_view.columns_headers;
 
-        const columns = headers.map(value => ({
-          intlMessage: { id: value, defaultMessage: value },
-          key: value,
-        }))
+      const columns = headers.map(value => ({
+        intlMessage: { id: value, defaultMessage: value },
+        key: value,
+      }));
 
-        const noPreviewValues = (res.data.report_view.total_items === 0);
-        let dataSource = normalizeReportView(res.data.report_view);
+      const noPreviewValues = res.data.report_view.total_items === 0;
+      let dataSource = normalizeReportView(res.data.report_view);
 
-        if (dataSource.length > 10) {
-          dataSource = dataSource.slice(0, 10);
-        }
+      if (dataSource.length > 10) {
+        dataSource = dataSource.slice(0, 10);
+      }
 
-        return {
-          noPreviewValues,
-          dataSource,
-          columns,
-        };
-      });
+      return {
+        noPreviewValues,
+        dataSource,
+        columns,
+      };
+    });
   },
-
 };
 
 export default ReportCreationService;

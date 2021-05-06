@@ -64,8 +64,8 @@ export default class AggregationRenderer extends React.Component<Props, State> {
     if (buckets.buckets.length === 0)
       return (
         <FormattedMessage
-          id="queryTool.otql-result-renderer-aggrations-no-result"
-          defaultMessage="No Result"
+          id='queryTool.otql-result-renderer-aggrations-no-result'
+          defaultMessage='No Result'
         />
       );
 
@@ -73,10 +73,7 @@ export default class AggregationRenderer extends React.Component<Props, State> {
       if (bucket.aggregations && bucketHasData(bucket)) {
         const aggregations = bucket.aggregations;
         this.setState(prevState => ({
-          aggregationsPath: [
-            ...prevState.aggregationsPath,
-            { aggregationBucket: buckets, bucket },
-          ],
+          aggregationsPath: [...prevState.aggregationsPath, { aggregationBucket: buckets, bucket }],
           selectedView: this.getDefaultView(aggregations),
         }));
       }
@@ -95,9 +92,9 @@ export default class AggregationRenderer extends React.Component<Props, State> {
     };
 
     const getRowClassName = (record: OTQLBucket) => {
-      if ( bucketHasData(record) ) return 'mcs-table-cursor';
+      if (bucketHasData(record)) return 'mcs-table-cursor';
       return '';
-    }
+    };
 
     return (
       <Table<OTQLBucket>
@@ -116,8 +113,8 @@ export default class AggregationRenderer extends React.Component<Props, State> {
             render: (text, record) => {
               if (bucketHasData(record)) {
                 return (
-                  <div className="float-right">
-                    <McsIcon type="chevron-right" />
+                  <div className='float-right'>
+                    <McsIcon type='chevron-right' />
                   </div>
                 );
               }
@@ -150,9 +147,7 @@ export default class AggregationRenderer extends React.Component<Props, State> {
     );
 
     if (bucketAggregation) {
-      const countBucket = bucketAggregation.buckets.find(
-        bucket => bucket.key === head.bucket.key,
-      );
+      const countBucket = bucketAggregation.buckets.find(bucket => bucket.key === head.bucket.key);
 
       if (countBucket && countBucket.aggregations) {
         return this.findAggregations(countBucket.aggregations, tail);
@@ -180,9 +175,7 @@ export default class AggregationRenderer extends React.Component<Props, State> {
         </Breadcrumb.Item>
         {aggregationsPath.map((path, index) => {
           const isLast = index === aggregationsPath.length - 1;
-          const pathToStr = `${path.aggregationBucket.fieldName} @${
-            path.aggregationBucket.type
-          } { ${path.bucket.key} }`;
+          const pathToStr = `${path.aggregationBucket.fieldName} @${path.aggregationBucket.type} { ${path.bucket.key} }`;
           const goToPath = () => {
             this.setState({
               aggregationsPath: aggregationsPath.slice(0, index + 1),
@@ -191,13 +184,7 @@ export default class AggregationRenderer extends React.Component<Props, State> {
           };
           return (
             <Breadcrumb.Item key={index}>
-              {isLast ? (
-                pathToStr
-              ) : (
-                <Button onClick={goToPath}>
-                  {pathToStr}
-                </Button>
-              )}
+              {isLast ? pathToStr : <Button onClick={goToPath}>{pathToStr}</Button>}
             </Breadcrumb.Item>
           );
         })}
@@ -209,23 +196,17 @@ export default class AggregationRenderer extends React.Component<Props, State> {
     const { rootAggregations } = this.props;
     const { aggregationsPath, selectedView } = this.state;
 
-    const aggregations = this.findAggregations(
-      rootAggregations,
-      aggregationsPath,
-    )!;
+    const aggregations = this.findAggregations(rootAggregations, aggregationsPath)!;
 
     let selectedAggregationData = null;
     if (selectedView === 'metrics') {
       selectedAggregationData = this.getMetrics(aggregations.metrics);
     } else {
       // selectedView is a buckets indice;
-      selectedAggregationData = this.getBuckets(
-        aggregations.buckets[parseInt(selectedView, 0)],
-      );
+      selectedAggregationData = this.getBuckets(aggregations.buckets[parseInt(selectedView, 0)]);
     }
 
-    const handleOnSelect = (value: string) =>
-      this.setState({ selectedView: value });
+    const handleOnSelect = (value: string) => this.setState({ selectedView: value });
 
     const showSelect =
       (aggregations.buckets.length > 0 && aggregations.metrics.length > 0) ||
@@ -237,28 +218,25 @@ export default class AggregationRenderer extends React.Component<Props, State> {
         <div style={{ marginBottom: 14 }}>
           {showSelect && (
             <div>
-              <div className="m-r-10" style={{ display: 'inline-block' }}>
+              <div className='m-r-10' style={{ display: 'inline-block' }}>
                 <FormattedMessage
-                  id="queryTool.otql-result-renderer-aggrations-viewing"
-                  defaultMessage="Viewing :"
+                  id='queryTool.otql-result-renderer-aggrations-viewing'
+                  defaultMessage='Viewing :'
                 />
               </div>
-              <Select
-                value={selectedView}
-                onSelect={handleOnSelect}
-                style={{ width: 150 }}
-              >
+              <Select value={selectedView} onSelect={handleOnSelect} style={{ width: 150 }}>
                 {aggregations.buckets.length > 0 && (
-                  <Select.OptGroup label="Buckets">
+                  <Select.OptGroup label='Buckets'>
                     {aggregations.buckets.map((bucket, index) => (
-                      <Select.Option key={index.toString()} value={index.toString()}>{`${
-                        bucket.fieldName
-                      } @${bucket.type}`}</Select.Option>
+                      <Select.Option
+                        key={index.toString()}
+                        value={index.toString()}
+                      >{`${bucket.fieldName} @${bucket.type}`}</Select.Option>
                     ))}
                   </Select.OptGroup>
                 )}
                 {aggregations.metrics.length > 0 && (
-                  <Select.Option value="metrics">Metrics</Select.Option>
+                  <Select.Option value='metrics'>Metrics</Select.Option>
                 )}
               </Select>
             </div>

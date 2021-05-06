@@ -1,12 +1,7 @@
 import * as React from 'react';
 import cuid from 'cuid';
-import {
-  OTQLCountResult,
-  isCountResult,
-} from '../../../../models/datamart/graphdb/OTQLResult';
-import injectThemeColors, {
-  InjectedThemeColorsProps,
-} from '../../../Helpers/injectThemeColors';
+import { OTQLCountResult, isCountResult } from '../../../../models/datamart/graphdb/OTQLResult';
+import injectThemeColors, { InjectedThemeColorsProps } from '../../../Helpers/injectThemeColors';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import messages from './messages';
@@ -78,15 +73,9 @@ class CountBarChart extends React.Component<Props, State> {
 
   componentDidUpdate(previousProps: CountBarChartProps) {
     const { queryIds, datamartId } = this.props;
-    const {
-      queryIds: previousChartQueryIds,
-      datamartId: previousDatamartId,
-    } = previousProps;
+    const { queryIds: previousChartQueryIds, datamartId: previousDatamartId } = previousProps;
 
-    if (
-      queryIds !== previousChartQueryIds ||
-      datamartId !== previousDatamartId
-    ) {
+    if (queryIds !== previousChartQueryIds || datamartId !== previousDatamartId) {
       this.fetchData(queryIds, datamartId);
     }
   }
@@ -197,22 +186,12 @@ class CountBarChart extends React.Component<Props, State> {
       if (this.state.loading) {
         return <LoadingChart />;
       } else if (this.state.error) {
-        return (
-          <EmptyChart
-            title={intl.formatMessage(messages.error)}
-            icon={'close-big'}
-          />
-        );
+        return <EmptyChart title={intl.formatMessage(messages.error)} icon={'close-big'} />;
       } else if (
         (this.state.queryResult && this.state.queryResult.length === 0) ||
         !this.state.queryResult
       ) {
-        return (
-          <EmptyChart
-            title={intl.formatMessage(messages.noData)}
-            icon="warning"
-          />
-        );
+        return <EmptyChart title={intl.formatMessage(messages.noData)} icon='warning' />;
       } else {
         return (
           <StackedBarPlot
@@ -228,7 +207,4 @@ class CountBarChart extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, CountBarChartProps>(
-  injectThemeColors,
-  injectIntl,
-)(CountBarChart);
+export default compose<Props, CountBarChartProps>(injectThemeColors, injectIntl)(CountBarChart);

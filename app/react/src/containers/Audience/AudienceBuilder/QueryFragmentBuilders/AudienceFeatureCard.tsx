@@ -33,35 +33,28 @@ class AudienceFeatureCard extends React.Component<Props, State> {
   };
 
   render() {
-    const {
-      audienceFeature,
-      selectedAudienceFeature,
-      onSelectFeature,
-      intl,
-    } = this.props;
+    const { audienceFeature, selectedAudienceFeature, onSelectFeature, intl } = this.props;
     const { cardToggled } = this.state;
     return (
       <div
         className={`mcs-audienceBuilder_featureCard ${
-          selectedAudienceFeature &&
-          selectedAudienceFeature.id === audienceFeature.id &&
-          'selected'
+          selectedAudienceFeature && selectedAudienceFeature.id === audienceFeature.id && 'selected'
         } ${!!cardToggled && 'toggled'}`}
       >
         {cardToggled ? (
-          <McsIcon type="close" onClick={this.toggleCard} />
+          <McsIcon type='close' onClick={this.toggleCard} />
         ) : (
-          <McsIcon type="info" onClick={this.toggleCard} />
+          <McsIcon type='info' onClick={this.toggleCard} />
         )}
         <div onClick={onSelectFeature(audienceFeature.id)}>
           {cardToggled ? (
             <React.Fragment>
-              <span className="mcs-audienceBuilder_featureCardToggledTitle">
+              <span className='mcs-audienceBuilder_featureCardToggledTitle'>
                 {intl.formatMessage(messages.availableFilters)}
               </span>
-              <div className="mcs-audienceBuilder_featureCardDescritpion">
+              <div className='mcs-audienceBuilder_featureCardDescritpion'>
                 {audienceFeature.variables
-                  ? audienceFeature.variables.map((v) => {
+                  ? audienceFeature.variables.map(v => {
                       return (
                         <div key={v.parameter_name}>
                           <CalendarOutlined />
@@ -75,11 +68,9 @@ class AudienceFeatureCard extends React.Component<Props, State> {
             </React.Fragment>
           ) : (
             <React.Fragment>
-              <span className="mcs-audienceBuilder_featureCardTitle">
-                {audienceFeature.name}
-              </span>
+              <span className='mcs-audienceBuilder_featureCardTitle'>{audienceFeature.name}</span>
 
-              <div className="mcs-audienceBuilder_featureCardDescritpion">
+              <div className='mcs-audienceBuilder_featureCardDescritpion'>
                 {audienceFeature.description}
               </div>
             </React.Fragment>
@@ -90,6 +81,4 @@ class AudienceFeatureCard extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, AudienceFeatureCardProps>(injectIntl)(
-  AudienceFeatureCard,
-);
+export default compose<Props, AudienceFeatureCardProps>(injectIntl)(AudienceFeatureCard);

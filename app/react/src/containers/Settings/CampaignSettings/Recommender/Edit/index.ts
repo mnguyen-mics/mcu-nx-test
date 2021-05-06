@@ -1,5 +1,3 @@
 import CreateEditRecommender from './EditRecommenderPage';
 
-export {
-    CreateEditRecommender,
-};
+export { CreateEditRecommender };

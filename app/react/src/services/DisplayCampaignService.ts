@@ -5,10 +5,7 @@ import { DisplayCampaignInfoResource } from './../models/campaign/display/Displa
 import ApiService, { DataResponse, DataListResponse } from './ApiService';
 import { injectable } from 'inversify';
 import { AudienceSegmentSelectionResource } from '../models/audiencesegment';
-import {
-  AdResource,
-  AdCreateRequest,
-} from '../models/campaign/display/AdResource';
+import { AdResource, AdCreateRequest } from '../models/campaign/display/AdResource';
 import { GoalSelectionResource } from '../models/goal/GoalSelectionResource';
 import {
   LocationSelectionResource,
@@ -42,9 +39,7 @@ export interface AdGroupOptions extends PaginatedApiParam {
 }
 
 export interface IDisplayCampaignService {
-  getCampaignDisplay: (
-    campaignId: string,
-  ) => Promise<DataResponse<DisplayCampaignResource>>;
+  getCampaignDisplay: (campaignId: string) => Promise<DataResponse<DisplayCampaignResource>>;
 
   getCampaignDisplayViewDeep: (
     campaignId: string,
@@ -65,24 +60,16 @@ export interface IDisplayCampaignService {
   deleteCampaign: (campaignId: string) => Promise<any>;
 
   /* AD GROUP SERVICES */
-  getAdGroup: (
-    campaignId: string,
-    adGroupId: string,
-  ) => Promise<DataResponse<AdGroupResource>>;
+  getAdGroup: (campaignId: string, adGroupId: string) => Promise<DataResponse<AdGroupResource>>;
 
-  getAdGroups: (
-    campaignId: string
-  ) => Promise<DataListResponse<AdGroupResource>>;
+  getAdGroups: (campaignId: string) => Promise<DataListResponse<AdGroupResource>>;
 
   findAdGroups: (
     organisationId: string,
-    adGroupOptions: AdGroupOptions
-  ) => Promise<DataListResponse<AdGroupResource>>
+    adGroupOptions: AdGroupOptions,
+  ) => Promise<DataListResponse<AdGroupResource>>;
 
-  createAdGroup: (
-    campaignId: string,
-    body: object,
-  ) => Promise<DataResponse<AdGroupResource>>;
+  createAdGroup: (campaignId: string, body: object) => Promise<DataResponse<AdGroupResource>>;
 
   updateAdGroup: (
     campaignId: string,
@@ -90,10 +77,7 @@ export interface IDisplayCampaignService {
     body: object,
   ) => Promise<DataResponse<AdGroupResource>>;
 
-  deleteAdGroup: (
-    campaignId: string,
-    adGroupId: string,
-  ) => Promise<AdGroupResource>;
+  deleteAdGroup: (campaignId: string, adGroupId: string) => Promise<AdGroupResource>;
 
   /* AUDIENCE SERVICES */
   getAudienceSegments: (
@@ -117,35 +101,18 @@ export interface IDisplayCampaignService {
     body: Partial<AudienceSegmentSelectionResource>,
   ) => Promise<DataResponse<AudienceSegmentSelectionResource>>;
 
-  deleteAudienceSegment: (
-    campaignId: string,
-    adGroupId: string,
-    id: string,
-  ) => Promise<any>;
+  deleteAudienceSegment: (campaignId: string, adGroupId: string, id: string) => Promise<any>;
 
   /* PUBLISHER SERVICES */
   getPublishers: (campaignId: string) => Promise<InventorySourceResource[]>;
-  createPublisher: (
-    campaignId: string,
-    body: object,
-  ) => Promise<InventorySourceResource>;
+  createPublisher: (campaignId: string, body: object) => Promise<InventorySourceResource>;
 
-  deletePublisher: (
-    campaignId: string,
-    id: string,
-  ) => Promise<InventorySourceResource>;
+  deletePublisher: (campaignId: string, id: string) => Promise<InventorySourceResource>;
 
   /* AD SERVICES */
-  getAd: (
-    campaignId: string,
-    adGroupId: string,
-    adId: string,
-  ) => Promise<DataResponse<AdResource>>;
+  getAd: (campaignId: string, adGroupId: string, adId: string) => Promise<DataResponse<AdResource>>;
 
-  getAds: (
-    campaignId: string,
-    adGroupId: string,
-  ) => Promise<DataListResponse<AdResource>>;
+  getAds: (campaignId: string, adGroupId: string) => Promise<DataListResponse<AdResource>>;
 
   updateAd: (
     adId: string,
@@ -154,18 +121,12 @@ export interface IDisplayCampaignService {
     body: object,
   ) => Promise<DataResponse<AdResource>>;
 
-  createAd: (
-    campaignId: string,
-    adGroupId: string,
-    body: AdCreateRequest,
-  ) => Promise<AdResource>;
+  createAd: (campaignId: string, adGroupId: string, body: AdCreateRequest) => Promise<AdResource>;
 
   deleteAd: (campaignId: string, adGroupId: string, id: string) => Promise<any>;
 
   /* GOAL SERVICES */
-  getGoals: (
-    campaignId: string,
-  ) => Promise<DataListResponse<GoalSelectionResource>>;
+  getGoals: (campaignId: string) => Promise<DataListResponse<GoalSelectionResource>>;
 
   createGoal: (
     campaignId: string,
@@ -188,11 +149,7 @@ export interface IDisplayCampaignService {
     body: Partial<LocationSelectionCreateRequest>,
   ) => Promise<DataResponse<LocationSelectionResource>>;
 
-  deleteLocation: (
-    campaignId: string,
-    adGroupId: string,
-    id: string,
-  ) => Promise<any>;
+  deleteLocation: (campaignId: string, adGroupId: string, id: string) => Promise<any>;
   getLocations: (
     campaignId: string,
     adGroupId: string,
@@ -223,11 +180,7 @@ export interface IDisplayCampaignService {
     body: Partial<AdExchangeSelectionResource>,
   ) => Promise<DataResponse<AdExchangeSelectionResource>>;
 
-  deleteAdex: (
-    campaignId: string,
-    adGroupId: string,
-    id: string,
-  ) => Promise<any>;
+  deleteAdex: (campaignId: string, adGroupId: string, id: string) => Promise<any>;
 
   // ADEX
   getDisplayNetworks: (
@@ -254,11 +207,7 @@ export interface IDisplayCampaignService {
     body: Partial<DisplayNetworkSelectionResource>,
   ) => Promise<DataResponse<DisplayNetworkSelectionResource>>;
 
-  deleteDisplayNetwork: (
-    campaignId: string,
-    adGroupId: string,
-    id: string,
-  ) => Promise<any>;
+  deleteDisplayNetwork: (campaignId: string, adGroupId: string, id: string) => Promise<any>;
 
   getDisplayCampaigns: (
     organisationId: string,
@@ -270,9 +219,7 @@ export interface IDisplayCampaignService {
 @injectable()
 export class DisplayCampaignService implements IDisplayCampaignService {
   /* CAMPAIGN SERVICES */
-  getCampaignDisplay(
-    campaignId: string,
-  ): Promise<DataResponse<DisplayCampaignResource>> {
+  getCampaignDisplay(campaignId: string): Promise<DataResponse<DisplayCampaignResource>> {
     const endpoint = `display_campaigns/${campaignId}`;
     return ApiService.getRequest(endpoint);
   }
@@ -327,10 +274,7 @@ export class DisplayCampaignService implements IDisplayCampaignService {
   }
 
   /* AD GROUP SERVICES */
-  getAdGroup(
-    campaignId: string,
-    adGroupId: string,
-  ): Promise<DataResponse<AdGroupResource>> {
+  getAdGroup(campaignId: string, adGroupId: string): Promise<DataResponse<AdGroupResource>> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}`;
     return ApiService.getRequest(endpoint);
   }
@@ -340,7 +284,10 @@ export class DisplayCampaignService implements IDisplayCampaignService {
     return ApiService.getRequest(endpoint);
   }
 
-  findAdGroups(organisationId: string, options: AdGroupOptions): Promise<DataListResponse<AdGroupResource>> {
+  findAdGroups(
+    organisationId: string,
+    options: AdGroupOptions,
+  ): Promise<DataListResponse<AdGroupResource>> {
     const endpoint = `display_campaigns.ad_groups`;
     const params = {
       organisation_id: organisationId,
@@ -349,10 +296,7 @@ export class DisplayCampaignService implements IDisplayCampaignService {
     return ApiService.getRequest(endpoint, params);
   }
 
-  createAdGroup(
-    campaignId: string,
-    body: object,
-  ): Promise<DataResponse<AdGroupResource>> {
+  createAdGroup(campaignId: string, body: object): Promise<DataResponse<AdGroupResource>> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups`;
     return ApiService.postRequest(endpoint, body);
   }
@@ -366,10 +310,7 @@ export class DisplayCampaignService implements IDisplayCampaignService {
     return ApiService.putRequest(endpoint, body);
   }
 
-  deleteAdGroup(
-    campaignId: string,
-    adGroupId: string,
-  ): Promise<AdGroupResource> {
+  deleteAdGroup(campaignId: string, adGroupId: string): Promise<AdGroupResource> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}`;
     return ApiService.deleteRequest(endpoint);
   }
@@ -388,13 +329,7 @@ export class DisplayCampaignService implements IDisplayCampaignService {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments`;
     return ApiService.getRequest(endpoint).then((res: any) =>
       res.data.map((segment: any) => {
-        const {
-          audience_segment_id,
-          exclude,
-          id,
-          technical_name,
-          ...relevantData
-        } = segment;
+        const { audience_segment_id, exclude, id, technical_name, ...relevantData } = segment;
 
         // code smell...
         return {
@@ -427,11 +362,7 @@ export class DisplayCampaignService implements IDisplayCampaignService {
     return ApiService.putRequest(endpoint, body);
   }
 
-  deleteAudienceSegment(
-    campaignId: string,
-    adGroupId: string,
-    id: string,
-  ): Promise<any> {
+  deleteAudienceSegment(campaignId: string, adGroupId: string, id: string): Promise<any> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/audience_segments/${id}`;
     return ApiService.deleteRequest(endpoint);
   }
@@ -439,51 +370,37 @@ export class DisplayCampaignService implements IDisplayCampaignService {
   /* PUBLISHER SERVICES */
   getPublishers(campaignId: string): Promise<InventorySourceResource[]> {
     const endpoint = `display_campaigns/${campaignId}/inventory_sources`;
-    return ApiService.getRequest(endpoint).then(
-      (res: DataResponse<InventorySourceResource[]>) =>
-        res.data.map((elem: InventorySourceResource) => {
-          const { display_network_access_id, id, ...publisher } = elem;
+    return ApiService.getRequest(endpoint).then((res: DataResponse<InventorySourceResource[]>) =>
+      res.data.map((elem: InventorySourceResource) => {
+        const { display_network_access_id, id, ...publisher } = elem;
 
-          return {
-            ...publisher,
-            display_network_access_id,
-            id: display_network_access_id,
-            modelId: id,
-            toBeRemoved: false,
-          };
-        }),
+        return {
+          ...publisher,
+          display_network_access_id,
+          id: display_network_access_id,
+          modelId: id,
+          toBeRemoved: false,
+        };
+      }),
     );
   }
-  createPublisher(
-    campaignId: string,
-    body: object,
-  ): Promise<InventorySourceResource> {
+  createPublisher(campaignId: string, body: object): Promise<InventorySourceResource> {
     const endpoint = `display_campaigns/${campaignId}/inventory_sources/`;
     return ApiService.postRequest(endpoint, body);
   }
 
-  deletePublisher(
-    campaignId: string,
-    id: string,
-  ): Promise<InventorySourceResource> {
+  deletePublisher(campaignId: string, id: string): Promise<InventorySourceResource> {
     const endpoint = `display_campaigns/${campaignId}/inventory_sources/${id}`;
     return ApiService.deleteRequest(endpoint);
   }
 
   /* AD SERVICES */
-  getAd(
-    campaignId: string,
-    adGroupId: string,
-    adId: string,
-  ): Promise<DataResponse<AdResource>> {
+  getAd(campaignId: string, adGroupId: string, adId: string): Promise<DataResponse<AdResource>> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/ads/${adId}`;
     return ApiService.getRequest(endpoint);
   }
 
-  getAds(
-    campaignId: string,
-    adGroupId: string,
-  ): Promise<DataListResponse<AdResource>> {
+  getAds(campaignId: string, adGroupId: string): Promise<DataListResponse<AdResource>> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/ads`;
     return ApiService.getRequest(endpoint);
   }
@@ -498,11 +415,7 @@ export class DisplayCampaignService implements IDisplayCampaignService {
     return ApiService.putRequest(endpoint, body);
   }
 
-  createAd(
-    campaignId: string,
-    adGroupId: string,
-    body: AdCreateRequest,
-  ): Promise<AdResource> {
+  createAd(campaignId: string, adGroupId: string, body: AdCreateRequest): Promise<AdResource> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/ads`;
     return ApiService.postRequest(endpoint, body);
   }
@@ -513,17 +426,12 @@ export class DisplayCampaignService implements IDisplayCampaignService {
   }
 
   /* GOAL SERVICES */
-  getGoals(
-    campaignId: string,
-  ): Promise<DataListResponse<GoalSelectionResource>> {
+  getGoals(campaignId: string): Promise<DataListResponse<GoalSelectionResource>> {
     const endpoint = `campaigns/${campaignId}/goal_selections`;
     return ApiService.getRequest(endpoint);
   }
 
-  createGoal(
-    campaignId: string,
-    body: GoalSelectionCreateRequest,
-  ): Promise<GoalSelectionResource> {
+  createGoal(campaignId: string, body: GoalSelectionCreateRequest): Promise<GoalSelectionResource> {
     const endpoint = `campaigns/${campaignId}/goal_selections`;
     return ApiService.postRequest(endpoint, body);
   }
@@ -553,11 +461,7 @@ export class DisplayCampaignService implements IDisplayCampaignService {
     return ApiService.postRequest(endpoint, body);
   }
 
-  deleteLocation(
-    campaignId: string,
-    adGroupId: string,
-    id: string,
-  ): Promise<any> {
+  deleteLocation(campaignId: string, adGroupId: string, id: string): Promise<any> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/locations/${id}`;
     return ApiService.deleteRequest(endpoint);
   }
@@ -648,11 +552,7 @@ export class DisplayCampaignService implements IDisplayCampaignService {
     return ApiService.putRequest(endpoint, body);
   }
 
-  deleteDisplayNetwork(
-    campaignId: string,
-    adGroupId: string,
-    id: string,
-  ): Promise<any> {
+  deleteDisplayNetwork(campaignId: string, adGroupId: string, id: string): Promise<any> {
     const endpoint = `display_campaigns/${campaignId}/ad_groups/${adGroupId}/display_networks/${id}`;
     return ApiService.deleteRequest(endpoint, {});
   }

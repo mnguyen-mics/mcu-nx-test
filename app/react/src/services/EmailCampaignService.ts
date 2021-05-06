@@ -13,9 +13,7 @@ import { injectable } from 'inversify';
 const EMAIL_CAMPAIGNS_BASE_URL = `email_campaigns`;
 
 export interface IEmailCampaignService {
-  getEmailCampaign: (
-    campaignId: string,
-  ) => Promise<DataResponse<EmailCampaignResource>>;
+  getEmailCampaign: (campaignId: string) => Promise<DataResponse<EmailCampaignResource>>;
 
   getEmailCampaigns: (
     organisationId: string,
@@ -23,9 +21,7 @@ export interface IEmailCampaignService {
     options?: CampaignsOptions,
   ) => Promise<DataListResponse<EmailCampaignResource>>;
 
-  deleteEmailCampaign: (
-    campaignId: string,
-  ) => Promise<DataResponse<EmailCampaignResource>>;
+  deleteEmailCampaign: (campaignId: string) => Promise<DataResponse<EmailCampaignResource>>;
 
   createEmailCampaign: (
     organisationId: string,
@@ -37,13 +33,9 @@ export interface IEmailCampaignService {
     resource: Partial<EmailCampaignResource>,
   ) => Promise<DataResponse<EmailCampaignResource>>;
 
-  archiveEmailCampaign: (
-    campaignId: string,
-  ) => Promise<DataResponse<EmailCampaignResource>>;
+  archiveEmailCampaign: (campaignId: string) => Promise<DataResponse<EmailCampaignResource>>;
 
-  getRouters: (
-    campaignId: string,
-  ) => Promise<DataListResponse<EmailRouterSelectionResource>>;
+  getRouters: (campaignId: string) => Promise<DataListResponse<EmailRouterSelectionResource>>;
 
   getRouter: (
     campaignId: string,
@@ -60,14 +52,9 @@ export interface IEmailCampaignService {
     routerSelectionId: string,
   ) => Promise<DataResponse<EmailRouterSelectionResource>>;
 
-  getBlasts: (
-    campaignId: string,
-  ) => Promise<DataListResponse<EmailBlastResource>>;
+  getBlasts: (campaignId: string) => Promise<DataListResponse<EmailBlastResource>>;
 
-  getBlast: (
-    campaignId: string,
-    blastId: string,
-  ) => Promise<DataResponse<EmailBlastResource>>;
+  getBlast: (campaignId: string, blastId: string) => Promise<DataResponse<EmailBlastResource>>;
 
   createBlast: (
     campaignId: string,
@@ -80,10 +67,7 @@ export interface IEmailCampaignService {
     resource: Partial<EmailBlastResource>,
   ) => Promise<DataResponse<EmailBlastResource>>;
 
-  deleteBlast: (
-    campaignId: string,
-    blastId: string,
-  ) => Promise<DataResponse<EmailBlastResource>>;
+  deleteBlast: (campaignId: string, blastId: string) => Promise<DataResponse<EmailBlastResource>>;
 
   getEmailTemplates: (
     campaignId: string,
@@ -145,9 +129,7 @@ export interface IEmailCampaignService {
 
 @injectable()
 export class EmailCampaignService implements IEmailCampaignService {
-  getEmailCampaign(
-    campaignId: string,
-  ): Promise<DataResponse<EmailCampaignResource>> {
+  getEmailCampaign(campaignId: string): Promise<DataResponse<EmailCampaignResource>> {
     const endpoint = `${EMAIL_CAMPAIGNS_BASE_URL}/${campaignId}`;
     return ApiService.getRequest(endpoint);
   }
@@ -195,17 +177,13 @@ export class EmailCampaignService implements IEmailCampaignService {
     return ApiService.putRequest(endpoint, { ...resource, type: 'EMAIL' });
   }
 
-  archiveEmailCampaign(
-    campaignId: string,
-  ): Promise<DataResponse<EmailCampaignResource>> {
+  archiveEmailCampaign(campaignId: string): Promise<DataResponse<EmailCampaignResource>> {
     return this.updateEmailCampaign(campaignId, {
       archived: true,
     });
   }
 
-  getRouters(
-    campaignId: string,
-  ): Promise<DataListResponse<EmailRouterSelectionResource>> {
+  getRouters(campaignId: string): Promise<DataListResponse<EmailRouterSelectionResource>> {
     const endpoint = `${EMAIL_CAMPAIGNS_BASE_URL}/${campaignId}/email_routers`;
     return ApiService.getRequest(endpoint);
   }
@@ -236,10 +214,7 @@ export class EmailCampaignService implements IEmailCampaignService {
     return ApiService.getRequest(endpoint);
   }
 
-  getBlast(
-    campaignId: string,
-    blastId: string,
-  ): Promise<DataResponse<EmailBlastResource>> {
+  getBlast(campaignId: string, blastId: string): Promise<DataResponse<EmailBlastResource>> {
     const endpoint = `${EMAIL_CAMPAIGNS_BASE_URL}/${campaignId}/email_blasts/${blastId}`;
     return ApiService.getRequest(endpoint);
   }
@@ -309,11 +284,7 @@ export class EmailCampaignService implements IEmailCampaignService {
     return ApiService.postRequest(endpoint, resource);
   }
 
-  deleteConsent(
-    campaignId: string,
-    blastId: string,
-    consentSelectionId: string,
-  ): Promise<any> {
+  deleteConsent(campaignId: string, blastId: string, consentSelectionId: string): Promise<any> {
     const endpoint = `${EMAIL_CAMPAIGNS_BASE_URL}/${campaignId}/email_blasts/${blastId}/email_consents/${consentSelectionId}`;
     return ApiService.deleteRequest(endpoint);
   }
@@ -335,11 +306,7 @@ export class EmailCampaignService implements IEmailCampaignService {
     return ApiService.postRequest(endpoint, resource);
   }
 
-  deleteSegment(
-    campaignId: string,
-    blastId: string,
-    segmentSelectionId: string,
-  ): Promise<any> {
+  deleteSegment(campaignId: string, blastId: string, segmentSelectionId: string): Promise<any> {
     const endpoint = `${EMAIL_CAMPAIGNS_BASE_URL}/${campaignId}/email_blasts/${blastId}/audience_segments/${segmentSelectionId}`;
     return ApiService.deleteRequest(endpoint);
   }
@@ -356,9 +323,7 @@ export class EmailCampaignService implements IEmailCampaignService {
       provider_technical_names: providerTechnicalNames,
     };
 
-    return ApiService.getRequest(endpoint, params).then(
-      res => (res as any).count,
-    );
+    return ApiService.getRequest(endpoint, params).then(res => (res as any).count);
   }
 }
 

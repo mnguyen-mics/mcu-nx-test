@@ -147,9 +147,7 @@ const emailBlastStatusMessages: {
 });
 
 const emailBlastPropertiesMessageMap: {
-  [propertyName in
-    | keyof EmailBlastResource
-    | HistoryKeys]: FormattedMessage.MessageDescriptor;
+  [propertyName in keyof EmailBlastResource | HistoryKeys]: FormattedMessage.MessageDescriptor;
 } = defineMessages({
   id: {
     id: 'emailBlast.fields.id',
@@ -276,9 +274,7 @@ const emailCampaignStatusMessages: {
 });
 
 const emailCampaignPropertiesMessageMap: {
-  [propertyName in
-    | keyof EmailCampaignResource
-    | HistoryKeys]: FormattedMessage.MessageDescriptor;
+  [propertyName in keyof EmailCampaignResource | HistoryKeys]: FormattedMessage.MessageDescriptor;
 } = defineMessages({
   id: {
     id: 'campaign.email.fields.id',

@@ -62,9 +62,8 @@ You can only upload image files with the following format .jpg,.jpeg,.png,.gif,.
     id: 'assets.modal.upload.button',
     defaultMessage: 'Upload',
   },
- archive: {
+  archive: {
     id: 'assets.list.actionColumn.archive',
     defaultMessage: 'Archive',
   },
-})
-;
+});

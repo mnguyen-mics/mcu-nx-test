@@ -40,7 +40,11 @@ interface State {
 
 type Props = InjectedIntlProps &
   InjectedNotificationProps &
-  RouteComponentProps<EditCompartmentRouteMatchParam, StaticContext, { from?: string, compartmentId?: string }> &
+  RouteComponentProps<
+    EditCompartmentRouteMatchParam,
+    StaticContext,
+    { from?: string; compartmentId?: string }
+  > &
   InjectedDatamartProps;
 
 class CompartmentEditPage extends React.Component<Props, State> {
@@ -71,11 +75,9 @@ class CompartmentEditPage extends React.Component<Props, State> {
       notifyError,
     } = this.props;
 
-    const compartmentIdFromLocState =
-      location.state && location.state.compartmentId;
+    const compartmentIdFromLocState = location.state && location.state.compartmentId;
 
-    const compartmentId =
-      compartmentIdFromURLParam || compartmentIdFromLocState;
+    const compartmentId = compartmentIdFromURLParam || compartmentIdFromLocState;
 
     if (compartmentId) {
       const getCompartment = this._datamartService.getUserAccountCompartmentDatamartSelectionResource(
@@ -108,8 +110,7 @@ class CompartmentEditPage extends React.Component<Props, State> {
           const formData: CompartmentFormData = {
             compartment: res[0].data,
             initialProcessingSelectionResources: res[1].map(
-              processingAndSelection =>
-                processingAndSelection.processingSelectionResource,
+              processingAndSelection => processingAndSelection.processingSelectionResource,
             ),
             processingActivities: res[1].map(processingAndSelection =>
               createFieldArrayModel(processingAndSelection.processingResource),
@@ -139,9 +140,7 @@ class CompartmentEditPage extends React.Component<Props, State> {
     }
   }
 
-  shouldWarnProcessings = (
-    compartmentFormData: CompartmentFormData,
-  ): boolean => {
+  shouldWarnProcessings = (compartmentFormData: CompartmentFormData): boolean => {
     const initialProcessingSelectionResources =
       compartmentFormData.initialProcessingSelectionResources;
     const processingActivities = compartmentFormData.processingActivities;
@@ -199,10 +198,7 @@ class CompartmentEditPage extends React.Component<Props, State> {
       intl,
     } = this.props;
 
-    const hideSaveInProgress = message.loading(
-      intl.formatMessage(messages.savingInProgress),
-      0,
-    );
+    const hideSaveInProgress = message.loading(intl.formatMessage(messages.savingInProgress), 0);
 
     const generateProcessingSelectionsTasks = (
       compartmentResource: UserAccountCompartmentDatamartSelectionResource,
@@ -271,9 +267,7 @@ class CompartmentEditPage extends React.Component<Props, State> {
       : this.createCompartment(organisationId, compartmentFormData);
 
     return createOrUpdateCompartment
-      .then(compartment =>
-        Promise.all(generateProcessingSelectionsTasks(compartment.data)),
-      )
+      .then(compartment => Promise.all(generateProcessingSelectionsTasks(compartment.data)))
       .then(() => {
         hideSaveInProgress();
         this.setState({
@@ -418,7 +412,7 @@ class CompartmentEditPage extends React.Component<Props, State> {
     const breadcrumbPaths = [
       <Link key='1' to={`/v2/o/${organisationId}/settings/datamart/compartments`}>
         {formatMessage(messages.breadcrumbTitle)}
-      </Link>
+      </Link>,
     ];
 
     const actionBarProps: FormLayoutActionbarProps = {
@@ -429,8 +423,7 @@ class CompartmentEditPage extends React.Component<Props, State> {
 
     const datamartId = this.getDatamartId();
 
-    const initialProcessingSelectionsForWarning = compartmentFormData
-      .compartment.id
+    const initialProcessingSelectionsForWarning = compartmentFormData.compartment.id
       ? compartmentFormData.initialProcessingSelectionResources
       : undefined;
 
@@ -442,15 +435,10 @@ class CompartmentEditPage extends React.Component<Props, State> {
         breadCrumbPaths={breadcrumbPaths}
         datamartId={datamartId}
         goToDatamartSelector={this.goToDatamartSelector}
-        initialProcessingSelectionsForWarning={
-          initialProcessingSelectionsForWarning
-        }
+        initialProcessingSelectionsForWarning={initialProcessingSelectionsForWarning}
       />
     ) : (
-      <DatamartSelector
-        onSelect={this.onSelectDatamart}
-        actionbarProps={actionBarProps}
-      />
+      <DatamartSelector onSelect={this.onSelectDatamart} actionbarProps={actionBarProps} />
     );
   }
 }

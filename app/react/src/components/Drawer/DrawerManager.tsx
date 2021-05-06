@@ -22,10 +22,7 @@ export interface DrawerManagerState {
   viewportWidth: number;
 }
 
-class DrawerManager extends React.Component<
-  DrawerManagerProps,
-  DrawerManagerState
-> {
+class DrawerManager extends React.Component<DrawerManagerProps, DrawerManagerState> {
   drawerDiv: HTMLDivElement | null;
 
   constructor(props: DrawerManagerProps) {
@@ -57,8 +54,7 @@ class DrawerManager extends React.Component<
     window.removeEventListener('resize', this.updateDimensions.bind(this));
   }
 
-  getDimensions = (size: DrawerSize) =>
-    Math.round(window.innerWidth * viewportDrawerRatio[size]);
+  getDimensions = (size: DrawerSize) => Math.round(window.innerWidth * viewportDrawerRatio[size]);
 
   getDrawerStyle(xPos: number, size: DrawerSize = 'large') {
     return {
@@ -67,15 +63,10 @@ class DrawerManager extends React.Component<
     };
   }
 
-  getForegroundContentSize = (
-    drawableContents: DrawableContent[],
-  ): DrawerSize => {
+  getForegroundContentSize = (drawableContents: DrawableContent[]): DrawerSize => {
     const foregroundContent =
-      drawableContents.length > 0 &&
-      drawableContents[drawableContents.length - 1];
-    return foregroundContent && foregroundContent.size
-      ? foregroundContent.size
-      : 'large';
+      drawableContents.length > 0 && drawableContents[drawableContents.length - 1];
+    return foregroundContent && foregroundContent.size ? foregroundContent.size : 'large';
   };
 
   canProgramaticallyCloseDrawer = () => {
@@ -94,9 +85,7 @@ class DrawerManager extends React.Component<
     const drawableContents = nextDrawableContents.length
       ? nextDrawableContents
       : this.props.drawableContents;
-    const foregroundContentSize = this.getForegroundContentSize(
-      drawableContents,
-    );
+    const foregroundContentSize = this.getForegroundContentSize(drawableContents);
 
     this.setState({
       drawerMaxWidth: this.getDimensions(foregroundContentSize),
@@ -119,36 +108,25 @@ class DrawerManager extends React.Component<
   render() {
     const { drawableContents } = this.props;
     const { drawerMaxWidth, viewportWidth } = this.state;
-    const foregroundContentSize = this.getForegroundContentSize(
-      drawableContents,
-    );
+    const foregroundContentSize = this.getForegroundContentSize(drawableContents);
 
     const drawerStyles = {
       ready: this.getDrawerStyle(viewportWidth),
-      foreground: this.getDrawerStyle(
-        viewportWidth - drawerMaxWidth,
-        foregroundContentSize,
-      ),
+      foreground: this.getDrawerStyle(viewportWidth - drawerMaxWidth, foregroundContentSize),
       background: this.getDrawerStyle(0),
     };
     // TODO fix react unique key issue
     const drawersWithOverlay: JSX.Element[] = [];
 
     drawableContents.forEach(
-      (
-        { component: WrappedComponent, additionalProps, size, ...others },
-        index,
-      ) => {
+      ({ component: WrappedComponent, additionalProps, size, ...others }, index) => {
         // can be undefined when booting from store
         if (WrappedComponent) {
           const lastElement = index === drawableContents.length - 1;
           const displayInForeground = lastElement;
 
           drawersWithOverlay.push(
-            <div
-              className={'drawer-overlay'}
-              onClick={this.handleClickOnBackground}
-            />,
+            <div className={'drawer-overlay'} onClick={this.handleClickOnBackground} />,
           );
 
           drawersWithOverlay.push(
@@ -158,11 +136,7 @@ class DrawerManager extends React.Component<
               }}
               tabIndex={0}
               className={'drawer'}
-              style={
-                displayInForeground
-                  ? drawerStyles.foreground
-                  : drawerStyles.background
-              }
+              style={displayInForeground ? drawerStyles.foreground : drawerStyles.background}
             >
               <WrappedComponent {...additionalProps} {...others} />
             </div>,
@@ -171,13 +145,11 @@ class DrawerManager extends React.Component<
       },
     );
 
-    drawersWithOverlay.push(<div className="drawer-overlay" />);
-    drawersWithOverlay.push(
-      <div className="drawer" style={drawerStyles.ready} />,
-    );
+    drawersWithOverlay.push(<div className='drawer-overlay' />);
+    drawersWithOverlay.push(<div className='drawer' style={drawerStyles.ready} />);
 
     return (
-      <div onKeyDown={this.handleOnKeyDown} className="drawer-container">
+      <div onKeyDown={this.handleOnKeyDown} className='drawer-container'>
         {this.generateDrawer(drawersWithOverlay)}
       </div>
     );

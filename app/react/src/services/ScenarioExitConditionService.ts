@@ -1,6 +1,9 @@
 import { injectable } from 'inversify';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
-import { ScenarioExitConditionResource, ScenarioExitConditionCreateResource } from '../models/automations/automations';
+import {
+  ScenarioExitConditionResource,
+  ScenarioExitConditionCreateResource,
+} from '../models/automations/automations';
 
 export interface IScenarioExitConditionService {
   getScenarioExitConditions: (
@@ -17,15 +20,11 @@ export interface IScenarioExitConditionService {
     exitCondition: ScenarioExitConditionCreateResource,
   ) => Promise<DataResponse<ScenarioExitConditionResource>>;
 
-  deleteScenarioExitConditions: (
-    scenarioId: string,
-    exitConditionId: string,
-  ) => Promise<void>;
+  deleteScenarioExitConditions: (scenarioId: string, exitConditionId: string) => Promise<void>;
 }
 
 @injectable()
-export class ScenarioExitConditionService
-  implements IScenarioExitConditionService {
+export class ScenarioExitConditionService implements IScenarioExitConditionService {
   getScenarioExitConditions(
     scenarioId: string,
   ): Promise<DataListResponse<ScenarioExitConditionResource>> {
@@ -49,10 +48,7 @@ export class ScenarioExitConditionService
     return ApiService.postRequest(endpoint, exitCondition);
   }
 
-  deleteScenarioExitConditions(
-    scenarioId: string,
-    exitConditionId: string,
-  ): Promise<void> {
+  deleteScenarioExitConditions(scenarioId: string, exitConditionId: string): Promise<void> {
     const endpoint = `scenarios/${scenarioId}/exit_conditions/${exitConditionId}`;
     return ApiService.deleteRequest(endpoint);
   }

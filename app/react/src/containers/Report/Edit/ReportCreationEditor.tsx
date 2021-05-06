@@ -18,10 +18,7 @@ import { Layout, Row, Button, Col } from 'antd';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 
-import {
-  Actionbar,
-  McsIcon,
-} from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { FormTitle, withValidators } from '../../../components/Form';
 import FormDateRangePicker, {
   FormDateRangePickerProps,
@@ -32,15 +29,11 @@ import FormLinkedSelectInput, {
 import DefaultSelect, {
   DefaultSelectProps,
 } from '../../../components/Form/FormSelect/DefaultSelect';
-import TagSelect, {
-  FormTagSelectProps,
-} from '../../../components/Form/FormSelect/TagSelect';
+import TagSelect, { FormTagSelectProps } from '../../../components/Form/FormSelect/TagSelect';
 import messages from './messages';
 import ReportFilterFields from './ReportFilterFields';
 import { ValidatorProps } from '../../../components/Form/withValidators';
-import ReportCreationService, {
-  FormValueInterface,
-} from './ReportCreationService';
+import ReportCreationService, { FormValueInterface } from './ReportCreationService';
 import {
   typeOptions,
   availableDimensions,
@@ -106,11 +99,11 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
     let loadingData = true;
     this.setState({ loadingData });
     ReportCreationService.exportReport(formValue, this.props.organisationId)
-      .then((res) => {
+      .then(res => {
         loadingData = false;
         this.setState({ loadingData });
       })
-      .catch((err) => {
+      .catch(err => {
         loadingData = false;
         this.setState({ loadingData });
         this.props.notifyError(err);
@@ -125,12 +118,12 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
     this.setState({ loadingData });
 
     ReportCreationService.preview(formValue, organisationId)
-      .then((res) => {
+      .then(res => {
         this.setState(res);
         loadingData = false;
         this.setState({ loadingData });
       })
-      .catch((err) => {
+      .catch(err => {
         loadingData = false;
         this.setState({ loadingData });
         this.props.notifyError(err);
@@ -152,7 +145,7 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
     let tablePreviewData = null;
     if (this.state.dataSource.length !== 0) {
       tablePreviewData = (
-        <div className="mcs-table-container">
+        <div className='mcs-table-container'>
           <TableViewWrapper
             columns={this.state.columns}
             loading={this.state.loadingData}
@@ -163,7 +156,7 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
     }
     if (this.state.noPreviewValues === true) {
       tablePreviewData = (
-        <Row className="report-previewNoValues">
+        <Row className='report-previewNoValues'>
           <p>
             <FormattedMessage {...messages.previewSectionNoValues} />
           </p>
@@ -179,68 +172,54 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
 
     return (
       <Layout>
-        <Form
-          className="edit-layout ant-layout"
-          onSubmit={handleSubmit(this.exportReport)}
-        >
+        <Form className='edit-layout ant-layout' onSubmit={handleSubmit(this.exportReport)}>
           {/* this button enables submit on enter */}
-          <button type="submit" style={{ display: 'none' }} />
-          <Actionbar
-            pathItems={[ intl.formatMessage(messages.actionBarTitle) ]}
-            edition={true}
-          >
+          <button type='submit' style={{ display: 'none' }} />
+          <Actionbar pathItems={[intl.formatMessage(messages.actionBarTitle)]} edition={true}>
             <Button
-              type="primary"
-              className="mcs-primary"
-              htmlType="submit"
+              type='primary'
+              className='mcs-primary'
+              htmlType='submit'
               loading={this.state.loadingData}
             >
               <FormattedMessage {...messages.reportCreationSaveButton} />
             </Button>
-            <McsIcon
-              type="close"
-              className="close-icon"
-              onClick={handleClose}
-            />
+            <McsIcon type='close' className='close-icon' onClick={handleClose} />
           </Actionbar>
           <Layout>
-            <Sider className="stepper">
+            <Sider className='stepper'>
               <Scrollspy
-                rootEl="#reportSteps"
+                rootEl='#reportSteps'
                 items={['general_information', 'detailed_information']}
-                currentClassName="currentStep"
+                currentClassName='currentStep'
               >
                 <li>
                   <Link to={`${url}#general_information`}>
-                    <McsIcon type="check-rounded-inverted" />
-                    <span className="step-title">
-                      <FormattedMessage
-                        {...messages.reportSiderMenuGeneralInformation}
-                      />
+                    <McsIcon type='check-rounded-inverted' />
+                    <span className='step-title'>
+                      <FormattedMessage {...messages.reportSiderMenuGeneralInformation} />
                     </span>
                   </Link>
                 </li>
                 <li>
                   <Link to={`${url}#detailed_information`}>
-                    <McsIcon type="check-rounded-inverted" />
-                    <span className="step-title">
-                      <FormattedMessage
-                        {...messages.reportSiderMenuDetailedInformation}
-                      />
+                    <McsIcon type='check-rounded-inverted' />
+                    <span className='step-title'>
+                      <FormattedMessage {...messages.reportSiderMenuDetailedInformation} />
                     </span>
                   </Link>
                 </li>
               </Scrollspy>
             </Sider>
             <Layout>
-              <div id={'reportSteps'} className="ant-layout">
-                <Content className="mcs-content-container mcs-form-container">
+              <div id={'reportSteps'} className='ant-layout'>
+                <Content className='mcs-content-container mcs-form-container'>
                   <div id={'general_information'}>
                     <Row
                       style={{ display: 'block' }}
-                      align="middle"
-                      justify="space-between"
-                      className="section-header"
+                      align='middle'
+                      justify='space-between'
+                      className='section-header'
                     >
                       <FormTitle
                         title={messages.reportSectionGeneralTitle}
@@ -249,32 +228,24 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
                     </Row>
                     <Row style={{ display: 'block' }}>
                       <DefaultSelectField
-                        name="type"
+                        name='type'
                         component={DefaultSelect}
                         validate={[isRequired]}
                         options={typeOptions}
                         formItemProps={{
-                          label: intl.formatMessage(
-                            messages.reportSectionGeneralTypeLabel,
-                          ),
+                          label: intl.formatMessage(messages.reportSectionGeneralTypeLabel),
                           colon: false,
                           required: true,
                         }}
                         helpToolTipProps={{
-                          title: intl.formatMessage(
-                            messages.reportSectionGeneralTypeTooltip,
-                          ),
+                          title: intl.formatMessage(messages.reportSectionGeneralTypeTooltip),
                         }}
                       />
                     </Row>
                   </div>
                   <hr />
                   <div id={'detailed_information'}>
-                    <Row
-                      align="middle"
-                      justify="space-between"
-                      className="section-header"
-                    >
+                    <Row align='middle' justify='space-between' className='section-header'>
                       <FormTitle
                         title={messages.reportSectionDetailedTitle}
                         subtitle={messages.reportSectionDetailedSubTitle}
@@ -282,14 +253,12 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
                     </Row>
                     <Row style={{ display: 'block' }}>
                       <TagSelectField
-                        name="dimensions"
+                        name='dimensions'
                         component={TagSelect}
                         validate={[isRequired]}
                         selectProps={{ options: availableDimensions }}
                         formItemProps={{
-                          label: intl.formatMessage(
-                            messages.reportSectionDetailedDimensionsLabel,
-                          ),
+                          label: intl.formatMessage(messages.reportSectionDetailedDimensionsLabel),
                           colon: false,
                           required: true,
                         }}
@@ -300,38 +269,30 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
                         }}
                       />
                       <TagSelectField
-                        name="metrics"
+                        name='metrics'
                         component={TagSelect}
                         validate={[isRequired]}
                         selectProps={selectPropsMetrics}
                         formItemProps={{
-                          label: intl.formatMessage(
-                            messages.reportSectionDetailedMetricsLabel,
-                          ),
+                          label: intl.formatMessage(messages.reportSectionDetailedMetricsLabel),
                           colon: false,
                           required: true,
                         }}
                         helpToolTipProps={{
-                          title: intl.formatMessage(
-                            messages.reportSectionDetailedMetricsTooltip,
-                          ),
+                          title: intl.formatMessage(messages.reportSectionDetailedMetricsTooltip),
                         }}
                       />
                       <FormDateRangePickerField
-                        name="duration"
+                        name='duration'
                         component={FormDateRangePicker}
                         validate={[isRequired]}
                         formItemProps={{
-                          label: intl.formatMessage(
-                            messages.reportSectionDetailedDurationLabel,
-                          ),
+                          label: intl.formatMessage(messages.reportSectionDetailedDurationLabel),
                           colon: false,
                           required: true,
                         }}
                         helpToolTipProps={{
-                          title: intl.formatMessage(
-                            messages.reportSectionDetailedDurationTooltip,
-                          ),
+                          title: intl.formatMessage(messages.reportSectionDetailedDurationTooltip),
                         }}
                         allowPastDate={true}
                         startDatePickerProps={
@@ -350,18 +311,14 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
                         }
                       />
                       <FormLinkedSelectInputField
-                        name="filter"
+                        name='filter'
                         component={FormLinkedSelectInput}
                         formItemProps={{
-                          label: intl.formatMessage(
-                            messages.reportSectionDetailedFilterLabel,
-                          ),
+                          label: intl.formatMessage(messages.reportSectionDetailedFilterLabel),
                           colon: false,
                         }}
                         helpToolTipProps={{
-                          title: intl.formatMessage(
-                            messages.reportSectionDetailedFilterTooltip,
-                          ),
+                          title: intl.formatMessage(messages.reportSectionDetailedFilterTooltip),
                         }}
                         leftFormSelectProps={{
                           placeholder: intl.formatMessage(
@@ -372,7 +329,7 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
                       />
 
                       <ReportCreationEditorFieldArray
-                        name="additionalFilters"
+                        name='additionalFilters'
                         component={ReportFilterFields}
                         formItemProps={{ colon: false }}
                         leftFormSelectProps={{
@@ -385,7 +342,7 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
                     </Row>
                     <Row>
                       <Col span={15} offset={4}>
-                        <Col span={20} className="report-previewButton">
+                        <Col span={20} className='report-previewButton'>
                           <Button
                             onClick={this.preview}
                             loading={this.state.loadingData}
@@ -416,7 +373,7 @@ export default compose<JoinedProps, ReportCreationEditorProps>(
   reduxForm({ form: FORM_NAME }),
   withValidators,
   connect(
-    (state) => ({
+    state => ({
       formValue: getFormValues(FORM_NAME)(state),
       isFormValid: isValid(FORM_NAME)(state),
     }),

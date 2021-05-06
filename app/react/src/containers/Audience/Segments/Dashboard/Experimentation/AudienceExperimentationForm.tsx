@@ -2,13 +2,7 @@ import * as React from 'react';
 import { Layout, Tag } from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { connect } from 'react-redux';
-import {
-  Form,
-  InjectedFormProps,
-  reduxForm,
-  getFormValues,
-  ConfigProps,
-} from 'redux-form';
+import { Form, InjectedFormProps, reduxForm, getFormValues, ConfigProps } from 'redux-form';
 import { compose } from 'recompose';
 import {
   FormSliderField,
@@ -18,12 +12,7 @@ import {
   FormRadioGroupField,
   FormFieldWrapper,
 } from '../../../../../components/Form';
-import {
-  injectIntl,
-  InjectedIntlProps,
-  defineMessages,
-  FormattedMessage,
-} from 'react-intl';
+import { injectIntl, InjectedIntlProps, defineMessages, FormattedMessage } from 'react-intl';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../../components/Layout/FormLayoutActionbar';
@@ -91,8 +80,7 @@ export const messagesMap: {
   },
   tooltipWeight: {
     id: 'audience.segments.experimentation.control.tooltip',
-    defaultMessage:
-      'Select the datamart percentage on which you want to do your experimentation.',
+    defaultMessage: 'Select the datamart percentage on which you want to do your experimentation.',
   },
   tooltipEngagement: {
     id: 'audience.segments.experimentation.engagement.tooltip',
@@ -121,7 +109,7 @@ export const messagesMap: {
   abDashboardSegmentFilterPlaceholder: {
     id: 'audience.segment.dashboard.abDashboard.segmentFilterPlaceholder',
     defaultMessage: 'Select an activation you want to refine your experimentation with',
-  }
+  },
 });
 
 const FORM_ID = 'experimentationForm';
@@ -216,20 +204,15 @@ class AudienceExperimentationForm extends React.Component<Props, State> {
       scrollId: FORM_ID,
     };
 
-    return formValues &&
-      formValues.selectedPartition &&
-      formValues.selectedPartition.id ? (
-      <Layout className="edit-layout">
+    return formValues && formValues.selectedPartition && formValues.selectedPartition.id ? (
+      <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
         <Layout>
           <ScrollspySider {...sideBarProps} />
           <Form onSubmit={handleSubmit} className={'edit-layout ant-layout'}>
-            <Content
-              id={FORM_ID}
-              className="mcs-content-container mcs-form-container"
-            >
+            <Content id={FORM_ID} className='mcs-content-container mcs-form-container'>
               <FormattedMessage
-                id="audience.segments.experimentation.form.title"
+                id='audience.segments.experimentation.form.title'
                 defaultMessage={`You have selected the following partition: {partitionName}.
                     Continue your experimentation creation by selecting an engagement type and a percentage of experimentation.`}
                 values={{
@@ -238,8 +221,8 @@ class AudienceExperimentationForm extends React.Component<Props, State> {
               />
 
               <div
-                className="mcs-audienceExperimentationForm_experimentationSection"
-                id="section-experimentation"
+                className='mcs-audienceExperimentationForm_experimentationSection'
+                id='section-experimentation'
               >
                 <FormFieldWrapper
                   label={intl.formatMessage(messagesMap.engagementMetric)}
@@ -249,28 +232,24 @@ class AudienceExperimentationForm extends React.Component<Props, State> {
                   {...fieldGridConfig}
                 >
                   <FormRadioGroupField
-                    name="engagement"
+                    name='engagement'
                     component={FormRadioGroup}
                     elements={[
                       {
                         id: 'E_COMMERCE_ENGAGEMENT',
                         value: 'E_COMMERCE_ENGAGEMENT',
-                        title: intl.formatMessage(
-                          messagesMap.E_COMMERCE_ENGAGEMENT,
-                        ),
+                        title: intl.formatMessage(messagesMap.E_COMMERCE_ENGAGEMENT),
                       },
                       {
                         id: 'CHANNEL_ENGAGEMENT',
                         value: 'CHANNEL_ENGAGEMENT',
-                        title: intl.formatMessage(
-                          messagesMap.CHANNEL_ENGAGEMENT,
-                        ),
+                        title: intl.formatMessage(messagesMap.CHANNEL_ENGAGEMENT),
                       },
                     ]}
                   />
                 </FormFieldWrapper>
                 <FormSliderField
-                  name="weight"
+                  name='weight'
                   component={FormSlider}
                   formItemProps={{
                     label: intl.formatMessage(messagesMap.weight),
@@ -283,9 +262,7 @@ class AudienceExperimentationForm extends React.Component<Props, State> {
                     tipFormatter: (value: any) => {
                       return <span>{Math.round(value * 100) / 100}%</span>;
                     },
-                    step: this.getSliderStep(
-                      formValues.selectedPartition.part_count,
-                    ),
+                    step: this.getSliderStep(formValues.selectedPartition.part_count),
                     disabled: !formValues.selectedPartition.part_count,
                   }}
                   helpToolTipProps={{
@@ -303,9 +280,7 @@ class AudienceExperimentationForm extends React.Component<Props, State> {
         isLoading={loadingPartitions}
         onSelect={this.onSelectPartition}
         actionbarProps={{
-          pathItems: [
-            intl.formatMessage(messagesMap.partitionSelectorTitle),
-          ],
+          pathItems: [intl.formatMessage(messagesMap.partitionSelectorTitle)],
           onClose: close,
         }}
       />

@@ -33,7 +33,9 @@ class FeedsOverviewActionBar extends React.Component<Props, {}> {
     } = this.props;
 
     const breadcrumbPaths = [
-      <Link key='1' to={`/v2/o/${organisationId}/audience/feeds`}>{intl.formatMessage(messages.audienceFeeds)}</Link>
+      <Link key='1' to={`/v2/o/${organisationId}/audience/feeds`}>
+        {intl.formatMessage(messages.audienceFeeds)}
+      </Link>,
     ];
 
     const viewDetails = () => {
@@ -42,15 +44,13 @@ class FeedsOverviewActionBar extends React.Component<Props, {}> {
 
     return (
       <Actionbar pathItems={breadcrumbPaths}>
-
         <Button onClick={viewDetails}>
           <FormattedMessage
-            id="audiencefeedsOverview.actionbar.view-details"
-            defaultMessage="View Details"
+            id='audiencefeedsOverview.actionbar.view-details'
+            defaultMessage='View Details'
           />
         </Button>
-
-      </Actionbar >
+      </Actionbar>
     );
   }
 }

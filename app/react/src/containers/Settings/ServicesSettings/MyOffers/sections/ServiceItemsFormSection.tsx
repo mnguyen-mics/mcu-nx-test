@@ -1,8 +1,8 @@
 import * as React from 'react';
 import cuid from 'cuid';
-import { ReduxFormChangeProps } from "../../../../../utils/FormHelper";
-import injectDrawer, { InjectedDrawerProps } from "../../../../../components/Drawer/injectDrawer";
-import { InjectedIntlProps, injectIntl } from "react-intl";
+import { ReduxFormChangeProps } from '../../../../../utils/FormHelper';
+import injectDrawer, { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
+import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { RecordElement, RelatedRecords } from '../../../../../components/RelatedRecord';
 import { FormSection } from '../../../../../components/Form';
@@ -15,9 +15,7 @@ import { IServiceOfferPageService } from '../../ServiceOfferPageService';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
 
-export interface ServiceItemsFormSectionProps extends ReduxFormChangeProps { }
-
-
+export interface ServiceItemsFormSectionProps extends ReduxFormChangeProps {}
 
 type Props = InjectedIntlProps &
   WrappedFieldArrayProps<ServiceConditionsModel> &
@@ -25,21 +23,15 @@ type Props = InjectedIntlProps &
   InjectedDrawerProps;
 
 class ServiceItemsFormSection extends React.Component<Props> {
-
   @lazyInject(TYPES.IServiceOfferPageService)
   private _serviceOfferPageService: IServiceOfferPageService;
 
   updateServiceConditions = (serviceItems: ServiceItemShape[]) => {
-    const {
-      fields,
-      formChange
-    } = this.props;
+    const { fields, formChange } = this.props;
 
     const serviceItemIds = serviceItems.map(serviceItem => serviceItem.id);
 
-    const fieldServiceItemIds = fields
-      .getAll()
-      .map(field => field.model.service_item_id);
+    const fieldServiceItemIds = fields.getAll().map(field => field.model.service_item_id);
 
     const keptServiceConditions = fields
       .getAll()
@@ -48,8 +40,8 @@ class ServiceItemsFormSection extends React.Component<Props> {
       .filter(serviceItem => !fieldServiceItemIds.includes(serviceItem.id))
       .map(serviceItem => ({
         key: cuid(),
-        model: { id: "-1", service_item_id: serviceItem.id },
-        meta: { name: serviceItem.name, type: serviceItem.type || "" }
+        model: { id: '-1', service_item_id: serviceItem.id },
+        meta: { name: serviceItem.name, type: serviceItem.type || '' },
       }));
 
     formChange((fields as any).name, keptServiceConditions.concat(addedServiceConditions));
@@ -57,13 +49,9 @@ class ServiceItemsFormSection extends React.Component<Props> {
   };
 
   openServiceItemsSelector = () => {
-    const {
-      fields,
-    } = this.props;
+    const { fields } = this.props;
 
-    const selectedServiceItemIds = fields
-      .getAll()
-      .map(field => field.model.service_item_id);
+    const selectedServiceItemIds = fields.getAll().map(field => field.model.service_item_id);
 
     const serviceItemSelectorProps = {
       selectedServiceItemIds,
@@ -75,10 +63,7 @@ class ServiceItemsFormSection extends React.Component<Props> {
       additionalProps: serviceItemSelectorProps,
     };
 
-    this.props.openNextDrawer<ServiceItemSelectorProps>(
-      ServiceItemSelector,
-      options
-    );
+    this.props.openNextDrawer<ServiceItemSelectorProps>(ServiceItemSelector, options);
   };
 
   getServiceItemsRecords = () => {
@@ -91,7 +76,10 @@ class ServiceItemsFormSection extends React.Component<Props> {
       serviceConditionField.meta.name;
 
     const getServiceItemServiceType = (serviceConditionField: ServiceConditionsModel) =>
-      this._serviceOfferPageService.transformServiceType(serviceConditionField.meta.type, formatMessage);
+      this._serviceOfferPageService.transformServiceType(
+        serviceConditionField.meta.type,
+        formatMessage,
+      );
 
     return fields.getAll().map((serviceConditionField, index) => {
       const removeRecord = () => fields.remove(index);
@@ -110,7 +98,9 @@ class ServiceItemsFormSection extends React.Component<Props> {
   };
 
   render() {
-    const { intl: { formatMessage } } = this.props;
+    const {
+      intl: { formatMessage },
+    } = this.props;
 
     return (
       <div>
@@ -125,7 +115,7 @@ class ServiceItemsFormSection extends React.Component<Props> {
         <RelatedRecords
           emptyOption={{
             iconType: 'gears',
-            message: formatMessage(messages.contentSectionServiceItemsEmptyTitle)
+            message: formatMessage(messages.contentSectionServiceItemsEmptyTitle),
           }}
         >
           {this.getServiceItemsRecords()}

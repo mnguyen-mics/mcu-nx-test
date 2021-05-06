@@ -3,18 +3,10 @@ import { compose } from 'recompose';
 import { Link, withRouter } from 'react-router-dom';
 import { DownOutlined } from '@ant-design/icons';
 import { Tooltip, message } from 'antd';
-import {
-  FormattedMessage,
-  InjectedIntlProps,
-  injectIntl,
-  defineMessages,
-} from 'react-intl';
+import { FormattedMessage, InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import { TableViewFilters } from '../../../../components/TableView/index';
 import { DISPLAY_SEARCH_SETTINGS } from './constants';
-import {
-  parseSearch,
-  updateSearch,
-} from '../../../../utils/LocationSearchHelper';
+import { parseSearch, updateSearch } from '../../../../utils/LocationSearchHelper';
 import { formatMetric } from '../../../../utils/MetricHelper';
 import { campaignStatuses } from '../../constants';
 import { messages } from '../messages';
@@ -26,12 +18,13 @@ import {
 } from '../../../../models/campaign/display/DisplayCampaignResource';
 import { Label } from '../../../Labels/Labels';
 import { MapDispatchToProps } from './DisplayCampaignsPage';
-import {
-  EmptyTableView,
-  McsIcon,
-} from '@mediarithmics-private/mcs-components-library';
+import { EmptyTableView, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
-import { ActionsColumnDefinition, DataColumnDefinition, ExtendedTableRowSelection } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import {
+  ActionsColumnDefinition,
+  DataColumnDefinition,
+  ExtendedTableRowSelection,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 const messagesMap: {
   [key: string]: FormattedMessage.MessageDescriptor;
@@ -141,7 +134,7 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
       labels,
       rowSelection,
       isUpdatingStatuses,
-      intl : { formatMessage },
+      intl: { formatMessage },
     } = this.props;
 
     const filter = parseSearch(search, DISPLAY_SEARCH_SETTINGS);
@@ -182,11 +175,7 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
           currentPage: page,
           pageSize: size,
         });
-        if (
-          rowSelection &&
-          rowSelection.unselectAllItemIds &&
-          rowSelection.allRowsAreSelected
-        ) {
+        if (rowSelection && rowSelection.unselectAllItemIds && rowSelection.allRowsAreSelected) {
           rowSelection.unselectAllItemIds();
         }
       },
@@ -197,13 +186,9 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
         }),
     };
 
-    const renderMetricData = (
-      value: any,
-      numeralFormat: string,
-      currency = '',
-    ) => {
+    const renderMetricData = (value: any, numeralFormat: string, currency = '') => {
       if (isFetchingStats) {
-        return <i className="mcs-table-cell-loading" />;
+        return <i className='mcs-table-cell-loading' />;
       }
       switch (currency) {
         case 'EUR': {
@@ -223,12 +208,9 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
         key: 'status',
         isHideable: false,
         render: (text: string) => (
-          <Tooltip
-            placement="top"
-            title={formatMessage(messagesMap[text])}
-          >
+          <Tooltip placement='top' title={formatMessage(messagesMap[text])}>
             <span className={`mcs-campaigns-status-${text.toLowerCase()}`}>
-              <McsIcon type="status" />
+              <McsIcon type='status' />
             </span>
           </Tooltip>
         ),
@@ -239,7 +221,7 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
         isHideable: false,
         render: (text: string, record: DisplayCampaignResource) => (
           <Link
-            className="mcs-campaigns-link"
+            className='mcs-campaigns-link'
             to={`/v2/o/${organisationId}/campaigns/display/${record.id}`}
           >
             {text}
@@ -283,8 +265,7 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
         key: 'ctr',
         isVisibleByDefault: true,
         isHideable: true,
-        render: (text: any) =>
-          renderMetricData(parseFloat(text) / 100, '0.000%'),
+        render: (text: any) => renderMetricData(parseFloat(text) / 100, '0.000%'),
       },
       {
         title: formatMessage(messages.cpc),
@@ -303,9 +284,7 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
       // },
     ];
 
-    const actionColumns: Array<
-      ActionsColumnDefinition<DisplayCampaignResource>
-    > = [
+    const actionColumns: Array<ActionsColumnDefinition<DisplayCampaignResource>> = [
       {
         key: 'action',
         actions: () => [
@@ -325,7 +304,7 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
       },
     ];
 
-    const statusItems = campaignStatuses.map((status) => ({
+    const statusItems = campaignStatuses.map(status => ({
       key: status,
       value: status,
     }));
@@ -334,10 +313,7 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
       {
         displayElement: (
           <div>
-            <FormattedMessage
-              id="display.campaigns.list.filterStatus"
-              defaultMessage="Status"
-            />{' '}
+            <FormattedMessage id='display.campaigns.list.filterStatus' defaultMessage='Status' />{' '}
             <DownOutlined />
           </div>
         ),
@@ -346,37 +322,31 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
           value: status,
         })),
         items: statusItems,
-        getKey: (item: { key: CampaignStatus; value: CampaignStatus }) =>
-          item.key,
-        display: (item: { key: CampaignStatus; value: CampaignStatus }) =>
-          item.value,
-        handleMenuClick: (
-          values: Array<{ key: CampaignStatus; value: CampaignStatus }>,
-        ) =>
+        getKey: (item: { key: CampaignStatus; value: CampaignStatus }) => item.key,
+        display: (item: { key: CampaignStatus; value: CampaignStatus }) => item.value,
+        handleMenuClick: (values: Array<{ key: CampaignStatus; value: CampaignStatus }>) =>
           this.updateLocationSearch({
-            statuses: values.map((v) => v.value),
+            statuses: values.map(v => v.value),
           }),
       },
     ];
 
     const labelsOptions = {
       labels: this.props.labels,
-      selectedLabels: labels.filter((label) => {
-        return filter.label_id.find(
-          (filteredLabelId: any) => filteredLabelId === label.id,
-        )
+      selectedLabels: labels.filter(label => {
+        return filter.label_id.find((filteredLabelId: any) => filteredLabelId === label.id)
           ? true
           : false;
       }),
       onChange: (newLabels: Label[]) => {
-        const formattedLabels = newLabels.map((label) => label.id);
+        const formattedLabels = newLabels.map(label => label.id);
         this.updateLocationSearch({ label_id: formattedLabels });
       },
       buttonMessage: messages.filterByLabel,
     };
 
     return hasCampaigns ? (
-      <div className="mcs-table-container">
+      <div className='mcs-table-container'>
         <TableViewFilters
           columns={dataColumns}
           actionsColumnsDefinition={actionColumns}
@@ -392,10 +362,7 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
         />
       </div>
     ) : (
-      <EmptyTableView
-        iconType="display"
-        message={formatMessage(messagesMap.noCampaign)}
-      />
+      <EmptyTableView iconType='display' message={formatMessage(messagesMap.noCampaign)} />
     );
   }
 }

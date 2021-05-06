@@ -1,5 +1,3 @@
 import AudienceSegmentPage from './AudienceSegmentPage';
 
-export {
-  AudienceSegmentPage
-};
+export { AudienceSegmentPage };

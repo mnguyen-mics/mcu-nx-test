@@ -1,10 +1,3 @@
-import {
-  PasswordRequirementResource,
-  PasswordValidityResource,
+import { PasswordRequirementResource, PasswordValidityResource } from './CommunityResource';
 
-} from './CommunityResource';
-
-export {
-  PasswordRequirementResource,
-  PasswordValidityResource,
-};
+export { PasswordRequirementResource, PasswordValidityResource };

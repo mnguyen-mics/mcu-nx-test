@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  ConnectDragSource,
-  DragSource,
-  DragSourceConnector,
-  DragSourceMonitor,
-} from 'react-dnd';
+import { ConnectDragSource, DragSource, DragSourceConnector, DragSourceMonitor } from 'react-dnd';
 
 import { ScenarioNodeShape } from '../../../../models/automations/automations';
 import { generateNodeProperties, NodeProperties } from '../domain';
@@ -43,31 +38,24 @@ const fieldSource = {
 
 class AvailableNode extends React.Component<AvailableNodeProps> {
   getIcon = (nodeProperties: NodeProperties) => {
-    const icon = nodeProperties.iconAnt ? 
-      nodeProperties.iconAnt : (
-      <McsIcon
-        type={nodeProperties.iconType as McsIconType}
-        className="available-node-icon-gyph"
-      />
+    const icon = nodeProperties.iconAnt ? (
+      nodeProperties.iconAnt
+    ) : (
+      <McsIcon type={nodeProperties.iconType as McsIconType} className='available-node-icon-gyph' />
     );
 
     if (nodeProperties.iconAssetUrl) {
       return (
-        <div className="available-node-icon">
+        <div className='available-node-icon'>
           <img
-            className="available-node-icon-img"
-            src={`${(window as any).MCS_CONSTANTS.ASSETS_URL}${
-              nodeProperties.iconAssetUrl
-            }`}
+            className='available-node-icon-img'
+            src={`${(window as any).MCS_CONSTANTS.ASSETS_URL}${nodeProperties.iconAssetUrl}`}
           />
         </div>
       );
     } else
       return (
-        <div
-          className="available-node-icon"
-          style={{ backgroundColor: nodeProperties.color }}
-        >
+        <div className='available-node-icon' style={{ backgroundColor: nodeProperties.color }}>
           {icon}
         </div>
       );
@@ -79,10 +67,7 @@ class AvailableNode extends React.Component<AvailableNodeProps> {
       connectDragSource,
       intl: { formatMessage },
     } = this.props;
-    const nodeProperties: NodeProperties = generateNodeProperties(
-      node,
-      formatMessage,
-    );
+    const nodeProperties: NodeProperties = generateNodeProperties(node, formatMessage);
 
     const name = nodeProperties.title;
 
@@ -91,9 +76,9 @@ class AvailableNode extends React.Component<AvailableNodeProps> {
     return (
       connectDragSource &&
       connectDragSource(
-        <div className="available-node mcs-availableNode">
+        <div className='available-node mcs-availableNode'>
           {iconElement}
-          <div className="available-node-text">{name}</div>
+          <div className='available-node-text'>{name}</div>
         </div>,
       )
     );

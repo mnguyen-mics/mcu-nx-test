@@ -1,11 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
-import {
-  InjectedIntlProps,
-  injectIntl,
-  FormattedMessage,
-  defineMessages,
-} from 'react-intl';
+import { InjectedIntlProps, injectIntl, FormattedMessage, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import {
   AudienceFeedType,
@@ -64,13 +59,9 @@ class AudienceFeedsOverview extends React.Component<Props, State> {
     feedType: AudienceFeedType,
   ) => (segmentId: string) => IAudienceSegmentFeedService;
 
-  private _audienceExternalFeedServiceFactory: (
-    segmentId: string,
-  ) => IAudienceSegmentFeedService;
+  private _audienceExternalFeedServiceFactory: (segmentId: string) => IAudienceSegmentFeedService;
 
-  private _audienceTagFeedServiceFactory: (
-    segmentId: string,
-  ) => IAudienceSegmentFeedService;
+  private _audienceTagFeedServiceFactory: (segmentId: string) => IAudienceSegmentFeedService;
 
   constructor(props: Props) {
     super(props);
@@ -84,9 +75,7 @@ class AudienceFeedsOverview extends React.Component<Props, State> {
     this._audienceExternalFeedServiceFactory = this._audienceSegmentFeedServiceFactory(
       'EXTERNAL_FEED',
     );
-    this._audienceTagFeedServiceFactory = this._audienceSegmentFeedServiceFactory(
-      'TAG_FEED',
-    );
+    this._audienceTagFeedServiceFactory = this._audienceSegmentFeedServiceFactory('TAG_FEED');
 
     this.externalfeedService = this._audienceExternalFeedServiceFactory('');
     this.tagfeedService = this._audienceTagFeedServiceFactory('');
@@ -137,13 +126,9 @@ class AudienceFeedsOverview extends React.Component<Props, State> {
       max_results: 100,
     };
 
-    const externalFeedsAggregates = this.externalfeedService.getFeedsAggregationMetrics(
-      body,
-    );
+    const externalFeedsAggregates = this.externalfeedService.getFeedsAggregationMetrics(body);
 
-    const tagFeedsAggregates = this.tagfeedService.getFeedsAggregationMetrics(
-      body,
-    );
+    const tagFeedsAggregates = this.tagfeedService.getFeedsAggregationMetrics(body);
 
     Promise.all([externalFeedsAggregates, tagFeedsAggregates])
       .then(responses => {
@@ -154,29 +139,24 @@ class AudienceFeedsOverview extends React.Component<Props, State> {
 
         const tmpAggregates: StatusAggregatesByPluginVersion = {};
 
-        const externalFeedTypedAggregation: Aggregation[] = responses[0].data.rows.map(
-          ra => {
-            const aggregation: Aggregation = {
-              rowAggregation: ra,
-              feedType: 'EXTERNAL_FEED',
-            };
-            return aggregation;
-          },
-        );
+        const externalFeedTypedAggregation: Aggregation[] = responses[0].data.rows.map(ra => {
+          const aggregation: Aggregation = {
+            rowAggregation: ra,
+            feedType: 'EXTERNAL_FEED',
+          };
+          return aggregation;
+        });
 
-        const tagFeedTypedFeed: Aggregation[] = responses[1].data.rows.map(
-          ra => {
-            const aggregation: Aggregation = {
-              rowAggregation: ra,
-              feedType: 'TAG_FEED',
-            };
-            return aggregation;
-          },
-        );
+        const tagFeedTypedFeed: Aggregation[] = responses[1].data.rows.map(ra => {
+          const aggregation: Aggregation = {
+            rowAggregation: ra,
+            feedType: 'TAG_FEED',
+          };
+          return aggregation;
+        });
 
         externalFeedTypedAggregation.concat(tagFeedTypedFeed).map(agg => {
-          const pluginVersionId =
-            agg.rowAggregation.primary_dimension_value.value;
+          const pluginVersionId = agg.rowAggregation.primary_dimension_value.value;
 
           const tmpStatusAggregate: AggregatesByStatus = {};
           agg.rowAggregation.cells.map(cell => {
@@ -210,26 +190,21 @@ class AudienceFeedsOverview extends React.Component<Props, State> {
     const { feedsAggregationMetrics } = this.state;
 
     return feedsAggregationMetrics.isLoading ? (
-      <Loading isFullScreen={true} className="full-height" />
+      <Loading isFullScreen={true} className='full-height' />
     ) : Object.keys(feedsAggregationMetrics.aggregates).length > 0 ? (
-      <div className="feed-overview">
-        {Object.keys(feedsAggregationMetrics.aggregates).map(
-          pluginVersionId => {
-            const obj = feedsAggregationMetrics.aggregates[pluginVersionId];
-            return (
-              <div
-                className="feed-overview-card"
-                key={`card-${pluginVersionId}`}
-              >
-                <AudienceFeedsOverviewCard
-                  pluginVersionId={pluginVersionId}
-                  aggregatesByStatus={obj.aggregation}
-                  feedType={obj.feedType}
-                />
-              </div>
-            );
-          },
-        )}
+      <div className='feed-overview'>
+        {Object.keys(feedsAggregationMetrics.aggregates).map(pluginVersionId => {
+          const obj = feedsAggregationMetrics.aggregates[pluginVersionId];
+          return (
+            <div className='feed-overview-card' key={`card-${pluginVersionId}`}>
+              <AudienceFeedsOverviewCard
+                pluginVersionId={pluginVersionId}
+                aggregatesByStatus={obj.aggregation}
+                feedType={obj.feedType}
+              />
+            </div>
+          );
+        })}
       </div>
     ) : (
       <EmptyTableView iconType={'users'} message={this.props.intl.formatMessage(messages.noData)} />

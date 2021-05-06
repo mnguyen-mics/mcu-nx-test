@@ -1,8 +1,19 @@
-import { DatamartUsersAnalyticsMetric, DatamartUsersAnalyticsDimension } from "../../utils/DatamartUsersAnalyticsReportHelper";
-import { DimensionFilterClause } from "../ReportRequestBody";
-import { CounterProps } from "@mediarithmics-private/mcs-components-library/lib/components/counters/counter";
+import {
+  DatamartUsersAnalyticsMetric,
+  DatamartUsersAnalyticsDimension,
+} from '../../utils/DatamartUsersAnalyticsReportHelper';
+import { DimensionFilterClause } from '../ReportRequestBody';
+import { CounterProps } from '@mediarithmics-private/mcs-components-library/lib/components/counters/counter';
 
-type ChartType = 'PIE' | 'AREA' | 'WORLD_MAP' | 'STACKED_BAR' | 'COUNT' | 'TABS' | 'SINGLE_STAT' | 'COLUMN';
+type ChartType =
+  | 'PIE'
+  | 'AREA'
+  | 'WORLD_MAP'
+  | 'STACKED_BAR'
+  | 'COUNT'
+  | 'TABS'
+  | 'SINGLE_STAT'
+  | 'COLUMN';
 
 export type Dataset = { [key: string]: string | number | undefined };
 
@@ -15,12 +26,12 @@ export interface Chart {
   dimensionFilterClauses?: DimensionFilterClause;
   icons?: string[];
   counterFormatedProps?: CounterProps[];
-  dataset?: 
-  Highcharts.SeriesPieDataOptions[] | 
-  Highcharts.SeriesLineDataOptions[] | 
-  Highcharts.SeriesMapDataOptions[] | 
-  Highcharts.SeriesBarDataOptions[] |
-  Highcharts.SeriesColumnDataOptions[] ;
+  dataset?:
+    | Highcharts.SeriesPieDataOptions[]
+    | Highcharts.SeriesLineDataOptions[]
+    | Highcharts.SeriesMapDataOptions[]
+    | Highcharts.SeriesBarDataOptions[]
+    | Highcharts.SeriesColumnDataOptions[];
   tabs?: TabItem[];
   unit?: 'time' | '%' | 'number' | '€';
   filterBy?: DatamartUsersAnalyticsDimension;
@@ -64,9 +75,8 @@ export interface ColumnSeriesDataOptions {
   name: string;
 }
 
-export type DimensionsWithLabel = { label: string; value: string}
+export type DimensionsWithLabel = { label: string; value: string };
 
 export interface DimensionsList {
-  dimensions: DimensionsWithLabel[]
+  dimensions: DimensionsWithLabel[];
 }
-

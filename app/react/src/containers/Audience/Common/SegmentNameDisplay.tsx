@@ -14,7 +14,7 @@ interface SegmentNameDisplayProps {
   audienceSegmentResource?: AudienceSegmentShape;
   onLoad?: (segment?: AudienceSegmentShape) => void;
   tableViewMode?: boolean;
-  showId?: boolean
+  showId?: boolean;
 }
 
 interface State {
@@ -32,9 +32,7 @@ const localMessages = defineMessages({
   },
 });
 
-type Props = SegmentNameDisplayProps &
-  InjectedNotificationProps &
-  InjectedIntlProps;
+type Props = SegmentNameDisplayProps & InjectedNotificationProps & InjectedIntlProps;
 
 /**
  * This component can either be passed:
@@ -93,8 +91,7 @@ class SegmentNameDisplayWrapped extends React.Component<Props, State> {
       audienceSegmentResourceFromProps &&
       (!previousPros.audienceSegmentResource ||
         (previousPros.audienceSegmentResource &&
-          audienceSegmentResourceFromProps.id !==
-            previousPros.audienceSegmentResource.id))
+          audienceSegmentResourceFromProps.id !== previousPros.audienceSegmentResource.id))
     ) {
       this.setState({
         audienceSegmentResource: audienceSegmentResourceFromProps,
@@ -106,8 +103,7 @@ class SegmentNameDisplayWrapped extends React.Component<Props, State> {
     } else if (
       audienceSegmentId &&
       (!previousPros.audienceSegmentId ||
-        (previousPros.audienceSegmentId &&
-          audienceSegmentId !== previousPros.audienceSegmentId))
+        (previousPros.audienceSegmentId && audienceSegmentId !== previousPros.audienceSegmentId))
     ) {
       this.fetchAudienceSegmentResource(audienceSegmentId)
         .then(audienceSegment => {
@@ -130,8 +126,12 @@ class SegmentNameDisplayWrapped extends React.Component<Props, State> {
   displayId = () => {
     const { audienceSegmentResource } = this.state;
     if (!audienceSegmentResource) return <span />;
-    return audienceSegmentResource.name === audienceSegmentResource.id ? <span /> : <span> {audienceSegmentResource.id} - </span>;
-  }
+    return audienceSegmentResource.name === audienceSegmentResource.id ? (
+      <span />
+    ) : (
+      <span> {audienceSegmentResource.id} - </span>
+    );
+  };
 
   render() {
     const { intl, showId } = this.props;
@@ -154,7 +154,7 @@ class SegmentNameDisplayWrapped extends React.Component<Props, State> {
     }
     return (
       <span title={audienceSegmentResource.name}>
-        { showId && this.displayId()} {this.ellipsizeSegmentName(audienceSegmentName)}
+        {showId && this.displayId()} {this.ellipsizeSegmentName(audienceSegmentName)}
       </span>
     );
   }
@@ -162,6 +162,6 @@ class SegmentNameDisplayWrapped extends React.Component<Props, State> {
 const SegmentNameDisplay = compose<Props, SegmentNameDisplayProps>(
   injectIntl,
   injectNotifications,
-)(SegmentNameDisplayWrapped)
+)(SegmentNameDisplayWrapped);
 
-export { SegmentNameDisplay, SegmentNameDisplayProps }
+export { SegmentNameDisplay, SegmentNameDisplayProps };

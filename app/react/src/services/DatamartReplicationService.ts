@@ -3,10 +3,7 @@ import {
   DatamartReplicationJobExecutionResource,
 } from './../models/settings/settings';
 import { PaginatedApiParam } from './../utils/ApiHelper';
-import ApiService, {
-  DataListResponse,
-  DataResponse
-} from './ApiService';
+import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import { injectable } from 'inversify';
 
 export interface DatamartReplicationOptions extends PaginatedApiParam {

@@ -10,10 +10,7 @@ import injectNotifications, {
 } from '../../../../Notifications/injectNotifications';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { messages } from '../messages';
-import {
-  AudienceBuilderFormData,
-  INITIAL_AUDIENCE_BUILDER_FORM_DATA,
-} from './domain';
+import { AudienceBuilderFormData, INITIAL_AUDIENCE_BUILDER_FORM_DATA } from './domain';
 import { message } from 'antd';
 import { Loading } from '../../../../../components';
 import { Link } from 'react-router-dom';
@@ -103,14 +100,11 @@ class AudienceBuilderEditPage extends React.Component<Props, State> {
 
     const promise = audienceBuilderId
       ? this._audienceBuilderService.updateAudienceBuilder(
-        datamartId,
-        audienceBuilderId,
-        newFormData,
-      )
-      : this._audienceBuilderService.createAudienceBuilder(
-        datamartId,
-        newFormData,
-      );
+          datamartId,
+          audienceBuilderId,
+          newFormData,
+        )
+      : this._audienceBuilderService.createAudienceBuilder(datamartId, newFormData);
     promise
       .then(() => {
         hideSaveInProgress();
@@ -162,10 +156,13 @@ class AudienceBuilderEditPage extends React.Component<Props, State> {
         : formatMessage(messages.audienceBuilderNew);
 
     const breadcrumbPaths = [
-      <Link key="1" to={{
-        pathname: `/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`,
-        state: { activeTab: 'segment_builder' },
-      }}>
+      <Link
+        key='1'
+        to={{
+          pathname: `/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}`,
+          state: { activeTab: 'segment_builder' },
+        }}
+      >
         {formatMessage(messages.audienceBuilders)}
       </Link>,
       builderName,
@@ -186,8 +183,4 @@ class AudienceBuilderEditPage extends React.Component<Props, State> {
   }
 }
 
-export default compose(
-  withRouter,
-  injectIntl,
-  injectNotifications,
-)(AudienceBuilderEditPage);
+export default compose(withRouter, injectIntl, injectNotifications)(AudienceBuilderEditPage);

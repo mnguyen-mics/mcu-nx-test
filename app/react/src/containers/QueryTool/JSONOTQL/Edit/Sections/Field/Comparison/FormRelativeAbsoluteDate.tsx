@@ -142,9 +142,7 @@ export default class FormRelativeAbsoluteDate extends React.Component<
     return this.props.input.onChange(
       noListValue
         ? `now-${value}${this.state.relativePeriod}/${this.state.relativePeriod}`
-        : [
-            `now-${value}${this.state.relativePeriod}/${this.state.relativePeriod}`,
-          ],
+        : [`now-${value}${this.state.relativePeriod}/${this.state.relativePeriod}`],
     );
   };
 
@@ -167,11 +165,7 @@ export default class FormRelativeAbsoluteDate extends React.Component<
   };
 
   componentDidUpdate(prevProps: Props) {
-    const {
-      dateComparisonOperator,
-      noListValue,
-      handleStringValue,
-    } = this.props;
+    const { dateComparisonOperator, noListValue, handleStringValue } = this.props;
 
     const { dateComparisonOperator: prevDateComparisonOperator } = prevProps;
 
@@ -195,15 +189,9 @@ export default class FormRelativeAbsoluteDate extends React.Component<
   render() {
     const { disabled, noListValue, handleStringValue } = this.props;
 
-    let validateStatus = 'success' as
-      | 'success'
-      | 'warning'
-      | 'error'
-      | 'validating';
-    if (this.props.meta.touched && this.props.meta.invalid)
-      validateStatus = 'error';
-    if (this.props.meta.touched && this.props.meta.warning)
-      validateStatus = 'warning';
+    let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
+    if (this.props.meta.touched && this.props.meta.invalid) validateStatus = 'error';
+    if (this.props.meta.touched && this.props.meta.warning) validateStatus = 'warning';
 
     // By default, input.value is initialised to '' by redux-form
     // But antd DatePicker doesn't like that
@@ -214,11 +202,7 @@ export default class FormRelativeAbsoluteDate extends React.Component<
     if (this.state.datePickerType === 'ABSOLUTE') {
       value = !!this.props.input.value
         ? this.getAdjustedAbsoluteTimestamp(
-            moment(
-              noListValue
-                ? parseInt(this.props.input.value, 10)
-                : this.props.input.value[0],
-            ),
+            moment(noListValue ? parseInt(this.props.input.value, 10) : this.props.input.value[0]),
           )
         : this.getAdjustedAbsoluteTimestamp();
     } else {
@@ -262,26 +246,23 @@ export default class FormRelativeAbsoluteDate extends React.Component<
     };
     return (
       <FormFieldWrapper
-        help={
-          this.props.meta.touched &&
-          (this.props.meta.warning || this.props.meta.error)
-        }
+        help={this.props.meta.touched && (this.props.meta.warning || this.props.meta.error)}
         helpToolTipProps={this.props.helpToolTipProps}
         validateStatus={validateStatus}
         small={this.props.small}
         {...this.props.formItemProps}
       >
-        <div className="mcs-relativeAbsoluteDateForm_picker">
+        <div className='mcs-relativeAbsoluteDateForm_picker'>
           <RadioGroup
             style={{ width: '100%' }}
             defaultValue={this.state.datePickerType}
             onChange={onRadioChange}
             disabled={disabled}
           >
-            <RadioButton style={{ width: '50%' }} value="ABSOLUTE">
+            <RadioButton style={{ width: '50%' }} value='ABSOLUTE'>
               <FormattedMessage {...messages.absolute} />
             </RadioButton>
-            <RadioButton style={{ width: '50%' }} value="RELATIVE">
+            <RadioButton style={{ width: '50%' }} value='RELATIVE'>
               <FormattedMessage {...messages.relative} />
             </RadioButton>
           </RadioGroup>
@@ -314,18 +295,17 @@ export default class FormRelativeAbsoluteDate extends React.Component<
                     defaultValue={this.state.relativePeriod}
                     onChange={onPeriodChange}
                     getPopupContainer={
-                      this.props.datePickerProps &&
-                      this.props.datePickerProps.getPopupContainer
+                      this.props.datePickerProps && this.props.datePickerProps.getPopupContainer
                     }
                     disabled={disabled}
                   >
-                    <Select.Option value="d">
+                    <Select.Option value='d'>
                       <FormattedMessage {...messages.days} />
                     </Select.Option>
-                    <Select.Option value="M">
+                    <Select.Option value='M'>
                       <FormattedMessage {...messages.month} />
                     </Select.Option>
-                    <Select.Option value="y">
+                    <Select.Option value='y'>
                       <FormattedMessage {...messages.year} />
                     </Select.Option>
                   </Select>

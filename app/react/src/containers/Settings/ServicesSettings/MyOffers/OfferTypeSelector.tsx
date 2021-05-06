@@ -18,9 +18,7 @@ export interface OfferTypeSelectorProps {
   breadCrumbPaths: React.ReactNode[];
 }
 
-type Props = OfferTypeSelectorProps &
-  InjectedIntlProps &
-  RouteComponentProps<{}>;
+type Props = OfferTypeSelectorProps & InjectedIntlProps & RouteComponentProps<{}>;
 
 class OfferTypeSelector extends React.Component<Props> {
   render() {
@@ -42,29 +40,29 @@ class OfferTypeSelector extends React.Component<Props> {
 
     return (
       <Layout>
-        <div className="edit-layout ant-layout">
+        <div className='edit-layout ant-layout'>
           <FormLayoutActionbar {...actionBarProps} />
           <Layout>
-            <Content className="mcs-content-container mcs-form-container text-center">
+            <Content className='mcs-content-container mcs-form-container text-center'>
               <FormTitle
                 title={messages.offerTypePickerTitle}
                 subtitle={messages.offerTypePickerSubTitle}
               />
 
-              <Row className="mcs-selector_container">
-                <Row className="menu">
-                  <div className="presentation">
+              <Row className='mcs-selector_container'>
+                <Row className='menu'>
+                  <div className='presentation'>
                     <MenuPresentational
                       title={formatMessage(messages.automaticOfferType)}
-                      type="automation"
+                      type='automation'
                       select={onTypeSelect(OfferType.Automatic)}
                     />
-                    <div className="separator">
+                    <div className='separator'>
                       <FormattedMessage {...messages.offerTypeOr} />
                     </div>
                     <MenuPresentational
                       title={formatMessage(messages.manualOfferType)}
-                      type="pen"
+                      type='pen'
                       select={onTypeSelect(OfferType.Manual)}
                     />
                   </div>
@@ -78,7 +76,4 @@ class OfferTypeSelector extends React.Component<Props> {
   }
 }
 
-export default compose<Props, OfferTypeSelectorProps>(
-  withRouter,
-  injectIntl,
-)(OfferTypeSelector);
+export default compose<Props, OfferTypeSelectorProps>(withRouter, injectIntl)(OfferTypeSelector);

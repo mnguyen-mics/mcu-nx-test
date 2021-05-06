@@ -4,11 +4,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
 import { RouteComponentProps, StaticContext, withRouter } from 'react-router';
-import {
-  InjectedDatamartProps,
-  injectDatamart,
-  DatamartSelector,
-} from '../../../../Datamart';
+import { InjectedDatamartProps, injectDatamart, DatamartSelector } from '../../../../Datamart';
 import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 import { getWorkspace } from '../../../../../redux/Session/selectors';
@@ -44,10 +40,7 @@ import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IChannelService } from '../../../../../services/ChannelService';
 import { IDatamartService } from '../../../../../services/DatamartService';
-import {
-  DataListResponse,
-  DataResponse,
-} from '../../../../../services/ApiService';
+import { DataListResponse, DataResponse } from '../../../../../services/ApiService';
 import { ChannelResourceShape } from '../../../../../models/settings/settings';
 import { message } from 'antd';
 import moment from 'moment';
@@ -130,16 +123,12 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
 
     const {
       match: {
-        params: {
-          datamartId: previousDatamartId,
-          cleaningRuleId: previousCleaningRuleId,
-        },
+        params: { datamartId: previousDatamartId, cleaningRuleId: previousCleaningRuleId },
       },
     } = previousProps;
 
     if (
-      (datamartId !== previousDatamartId ||
-        cleaningRuleId !== previousCleaningRuleId) &&
+      (datamartId !== previousDatamartId || cleaningRuleId !== previousCleaningRuleId) &&
       datamartId &&
       cleaningRuleId
     ) {
@@ -178,47 +167,41 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
     datamartId: string,
     cleaningRuleId: string,
     cleaningRuleType: CleaningRuleType,
-  ): Promise<
-    UserEventCleaningRuleAndOptionalFilter | UserProfileCleaningRuleResource
-  > => {
+  ): Promise<UserEventCleaningRuleAndOptionalFilter | UserProfileCleaningRuleResource> => {
     const cleaningRuleP: Promise<ExtendedCleaningRuleResource> = this._datamartService
       .getCleaningRule(datamartId, cleaningRuleId, cleaningRuleType)
       .then(resultCleaningRule => resultCleaningRule.data);
     const contentFilterP: Promise<UserEventContentFilterResource | undefined> =
       cleaningRuleType === 'USER_EVENT_CLEANING_RULE'
         ? this._datamartService
-          .getContentFilter(datamartId, cleaningRuleId)
-          .then(resultContentFilter => resultContentFilter.data)
-          .catch(err => Promise.resolve(undefined))
+            .getContentFilter(datamartId, cleaningRuleId)
+            .then(resultContentFilter => resultContentFilter.data)
+            .catch(err => Promise.resolve(undefined))
         : Promise.resolve(undefined);
 
-    return Promise.all([cleaningRuleP, contentFilterP]).then(
-      cleaningRuleAndContentFilter => {
-        const cleaningRule = cleaningRuleAndContentFilter[0];
-        const contentFilter = cleaningRuleAndContentFilter[1];
+    return Promise.all([cleaningRuleP, contentFilterP]).then(cleaningRuleAndContentFilter => {
+      const cleaningRule = cleaningRuleAndContentFilter[0];
+      const contentFilter = cleaningRuleAndContentFilter[1];
 
-        if (cleaningRule) {
-          if (isUserEventCleaningRuleResource(cleaningRule)) {
-            const ruleAndPartialFilter: UserEventCleaningRuleAndOptionalFilter = {
-              rule: cleaningRule,
-              filter: contentFilter || undefined,
-            };
+      if (cleaningRule) {
+        if (isUserEventCleaningRuleResource(cleaningRule)) {
+          const ruleAndPartialFilter: UserEventCleaningRuleAndOptionalFilter = {
+            rule: cleaningRule,
+            filter: contentFilter || undefined,
+          };
 
-            return Promise.resolve<
-              | UserEventCleaningRuleAndOptionalFilter
-              | UserProfileCleaningRuleResource
-            >(ruleAndPartialFilter);
-          } else {
-            // User Profile cleaning rule
-            return Promise.resolve<
-              | UserEventCleaningRuleAndOptionalFilter
-              | UserProfileCleaningRuleResource
-            >(cleaningRule);
-          }
+          return Promise.resolve<
+            UserEventCleaningRuleAndOptionalFilter | UserProfileCleaningRuleResource
+          >(ruleAndPartialFilter);
+        } else {
+          // User Profile cleaning rule
+          return Promise.resolve<
+            UserEventCleaningRuleAndOptionalFilter | UserProfileCleaningRuleResource
+          >(cleaningRule);
         }
-        return Promise.reject(undefined);
-      },
-    );
+      }
+      return Promise.reject(undefined);
+    });
   };
 
   fetchOptions = (
@@ -234,27 +217,22 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
     } = this.props;
 
     const isUserAccountCompartmentDatamartSelectionResource = (
-      optionData:
-        | ChannelResourceShape
-        | UserAccountCompartmentDatamartSelectionResource,
+      optionData: ChannelResourceShape | UserAccountCompartmentDatamartSelectionResource,
     ): optionData is UserAccountCompartmentDatamartSelectionResource => {
       return (
-        (optionData as UserAccountCompartmentDatamartSelectionResource)
-          .compartment_id !== undefined
+        (optionData as UserAccountCompartmentDatamartSelectionResource).compartment_id !== undefined
       );
     };
 
-    const optionsResponseP: Promise<DataListResponse<
-      ChannelResourceShape | UserAccountCompartmentDatamartSelectionResource
-    >> =
+    const optionsResponseP: Promise<
+      DataListResponse<ChannelResourceShape | UserAccountCompartmentDatamartSelectionResource>
+    > =
       cleaningRuleType === 'USER_EVENT_CLEANING_RULE'
         ? this._channelService.getChannels(organisationId, datamartId, {
-          datamart_id: datamartId,
-          with_source_datamarts: false,
-        })
-        : this._datamartService.getUserAccountCompartmentDatamartSelectionResources(
-          datamartId,
-        );
+            datamart_id: datamartId,
+            with_source_datamarts: false,
+          })
+        : this._datamartService.getUserAccountCompartmentDatamartSelectionResources(datamartId);
 
     return optionsResponseP
       .then(optionsResponse => optionsResponse.data)
@@ -265,16 +243,14 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
 
         return noFilterOptionList.concat(
           optionsData.map((optionData: any, i) => {
-            const usedId = isUserAccountCompartmentDatamartSelectionResource(
-              optionData,
-            )
+            const usedId = isUserAccountCompartmentDatamartSelectionResource(optionData)
               ? optionData.compartment_id
               : optionData.id;
 
             const option: DefaultOptionProps = {
               value: usedId,
               title: `${usedId} - ${optionData.name}`,
-              key: optionData.type ? `${optionData.type}-${i}` : `${i}`
+              key: optionData.type ? `${optionData.type}-${i}` : `${i}`,
             };
 
             return option;
@@ -298,11 +274,8 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
   saveFetchedDataInState = (cleaningRuleType: CleaningRuleType) => {
     return (
       ruleAndOptions: [
-        (
-          | UserEventCleaningRuleAndOptionalFilter
-          | UserProfileCleaningRuleResource
-        ),
-        DefaultOptionProps[]
+        UserEventCleaningRuleAndOptionalFilter | UserProfileCleaningRuleResource,
+        DefaultOptionProps[],
       ],
     ) => {
       const isUserEventCleaningRuleAndOptionalFilter = (
@@ -310,10 +283,7 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
           | UserEventCleaningRuleAndOptionalFilter
           | UserProfileCleaningRuleResource,
       ): ruleAndOptionalFilter is UserEventCleaningRuleAndOptionalFilter => {
-        return (
-          (ruleAndOptionalFilter as UserEventCleaningRuleAndOptionalFilter)
-            .rule !== undefined
-        );
+        return (ruleAndOptionalFilter as UserEventCleaningRuleAndOptionalFilter).rule !== undefined;
       };
 
       const ruleAndFilterOpt = ruleAndOptions[0];
@@ -322,17 +292,17 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
       const cleaningRule:
         | UserEventCleaningRuleResource
         | UserProfileCleaningRuleResource = isUserEventCleaningRuleAndOptionalFilter(
-          ruleAndFilterOpt,
-        )
-          ? ruleAndFilterOpt.rule
-          : ruleAndFilterOpt;
+        ruleAndFilterOpt,
+      )
+        ? ruleAndFilterOpt.rule
+        : ruleAndFilterOpt;
 
       const period = cleaningRule.life_duration
         ? this.getPeriodNumberAndUnit(cleaningRule.life_duration)
         : {
-          periodNumber: 1,
-          periodUnit: 'D',
-        };
+            periodNumber: 1,
+            periodUnit: 'D',
+          };
 
       const actionAndPeriod = {
         selectedValue: cleaningRule.action,
@@ -343,16 +313,12 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
         isUserEventCleaningRuleResource(cleaningRule) &&
         cleaningRuleType === 'USER_EVENT_CLEANING_RULE'
       ) {
-        const filter = isUserEventCleaningRuleAndOptionalFilter(
-          ruleAndFilterOpt,
-        )
+        const filter = isUserEventCleaningRuleAndOptionalFilter(ruleAndFilterOpt)
           ? ruleAndFilterOpt.filter
           : undefined;
 
         const eventNameFilter =
-          filter && filter.content_type === 'EVENT_NAME_FILTER'
-            ? filter.filter
-            : undefined;
+          filter && filter.content_type === 'EVENT_NAME_FILTER' ? filter.filter : undefined;
 
         this.setState({
           cleaningRuleFormData: {
@@ -397,9 +363,7 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
 
     const { selectedDatamartId, cleaningRuleType } = this.state;
 
-    const datamartIdUrl = selectedDatamartId
-      ? `&datamartId=${selectedDatamartId}`
-      : '';
+    const datamartIdUrl = selectedDatamartId ? `&datamartId=${selectedDatamartId}` : '';
 
     const defaultRedirectUrl = `/v2/o/${organisationId}/settings/datamart/cleaning_rules?type=${cleaningRuleType}${datamartIdUrl}`;
 
@@ -425,14 +389,9 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
             loading: false,
             selectedDatamartId: datamart.id,
             cleaningRuleFormData: cleaningRuleData,
-            channelOptions:
-              cleaningRuleType === 'USER_EVENT_CLEANING_RULE'
-                ? options
-                : undefined,
+            channelOptions: cleaningRuleType === 'USER_EVENT_CLEANING_RULE' ? options : undefined,
             compartmentOptions:
-              cleaningRuleType === 'USER_PROFILE_CLEANING_RULE'
-                ? options
-                : undefined,
+              cleaningRuleType === 'USER_PROFILE_CLEANING_RULE' ? options : undefined,
           });
         })
         .catch(err => {
@@ -442,12 +401,8 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
             loading: false,
             selectedDatamartId: datamart.id,
             cleaningRuleFormData: cleaningRuleData,
-            channelOptions:
-              cleaningRuleType === 'USER_EVENT_CLEANING_RULE' ? [] : undefined,
-            compartmentOptions:
-              cleaningRuleType === 'USER_PROFILE_CLEANING_RULE'
-                ? []
-                : undefined,
+            channelOptions: cleaningRuleType === 'USER_EVENT_CLEANING_RULE' ? [] : undefined,
+            compartmentOptions: cleaningRuleType === 'USER_PROFILE_CLEANING_RULE' ? [] : undefined,
           });
         });
     });
@@ -470,15 +425,13 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
 
     const { cleaningRuleFormData, selectedDatamartId } = this.state;
 
-    const datamartId: string | undefined = isUserEventCleaningRuleFormData(
-      cleaningRuleFormData,
-    )
+    const datamartId: string | undefined = isUserEventCleaningRuleFormData(cleaningRuleFormData)
       ? cleaningRuleId && cleaningRuleFormData.userEventCleaningRule
         ? cleaningRuleFormData.userEventCleaningRule.datamart_id
         : selectedDatamartId
       : cleaningRuleId && cleaningRuleFormData.userProfileCleaningRule
-        ? cleaningRuleFormData.userProfileCleaningRule.datamart_id
-        : selectedDatamartId;
+      ? cleaningRuleFormData.userProfileCleaningRule.datamart_id
+      : selectedDatamartId;
 
     return datamartId;
   };
@@ -525,22 +478,15 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
 
     this.setState({ loading: true });
 
-    if (
-      cleaningRuleId &&
-      userProfileCleaningRuleFormData.userProfileCleaningRule
-    ) {
+    if (cleaningRuleId && userProfileCleaningRuleFormData.userProfileCleaningRule) {
       // Update user profile cleaning rule
 
-      const datamartId =
-        userProfileCleaningRuleFormData.userProfileCleaningRule.datamart_id;
+      const datamartId = userProfileCleaningRuleFormData.userProfileCleaningRule.datamart_id;
 
       const compartmentFilter =
-        userProfileCleaningRuleFormData.userProfileCleaningRule
-          .compartment_filter !== undefined
-          ? userProfileCleaningRuleFormData.userProfileCleaningRule
-            .compartment_filter !== ''
-            ? userProfileCleaningRuleFormData.userProfileCleaningRule
-              .compartment_filter
+        userProfileCleaningRuleFormData.userProfileCleaningRule.compartment_filter !== undefined
+          ? userProfileCleaningRuleFormData.userProfileCleaningRule.compartment_filter !== ''
+            ? userProfileCleaningRuleFormData.userProfileCleaningRule.compartment_filter
             : null
           : undefined;
 
@@ -567,10 +513,8 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
       // Create user profile cleaning rule
 
       const compartmentFilter = userProfileCleaningRuleFormData.userProfileCleaningRule
-        ? userProfileCleaningRuleFormData.userProfileCleaningRule
-          .compartment_filter !== ''
-          ? userProfileCleaningRuleFormData.userProfileCleaningRule
-            .compartment_filter
+        ? userProfileCleaningRuleFormData.userProfileCleaningRule.compartment_filter !== ''
+          ? userProfileCleaningRuleFormData.userProfileCleaningRule.compartment_filter
           : undefined
         : undefined;
 
@@ -606,26 +550,21 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
   ): Promise<DataResponse<UserEventContentFilterResource | {}> | undefined> => {
     if (previousContentFilter) {
       if (!nextEventNameFilter || nextEventNameFilter === '') {
-        return this._datamartService.deleteContentFilter(
-          datamartId,
-          cleaningRuleId,
-        );
+        return this._datamartService.deleteContentFilter(datamartId, cleaningRuleId);
       } else {
-        return this._datamartService.updateContentFilter(
-          datamartId,
-          cleaningRuleId,
-          { content_type: 'EVENT_NAME_FILTER', filter: nextEventNameFilter },
-        );
+        return this._datamartService.updateContentFilter(datamartId, cleaningRuleId, {
+          content_type: 'EVENT_NAME_FILTER',
+          filter: nextEventNameFilter,
+        });
       }
     } else {
       if (!nextEventNameFilter || nextEventNameFilter === '') {
         return Promise.resolve(undefined);
       } else {
-        return this._datamartService.createContentFilter(
-          datamartId,
-          cleaningRuleId,
-          { content_type: 'EVENT_NAME_FILTER', filter: nextEventNameFilter },
-        );
+        return this._datamartService.createContentFilter(datamartId, cleaningRuleId, {
+          content_type: 'EVENT_NAME_FILTER',
+          filter: nextEventNameFilter,
+        });
       }
     }
   };
@@ -647,8 +586,7 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
     if (cleaningRuleId && userEventCleaningRuleFormData.userEventCleaningRule) {
       // Update user event cleaning rule
 
-      const datamartId =
-        userEventCleaningRuleFormData.userEventCleaningRule.datamart_id;
+      const datamartId = userEventCleaningRuleFormData.userEventCleaningRule.datamart_id;
 
       const channelFilter =
         userEventCleaningRuleFormData.channelFilter !== undefined
@@ -672,7 +610,8 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
         life_duration: `P${userEventCleaningRuleFormData.actionAndPeriod.periodNumber}${userEventCleaningRuleFormData.actionAndPeriod.periodUnit}`,
       };
 
-      this._datamartService.updateCleaningRule(datamartId, cleaningRuleId, userEventCleaningRule)
+      this._datamartService
+        .updateCleaningRule(datamartId, cleaningRuleId, userEventCleaningRule)
         .then(_ => {
           const previousContentFilter = userEventCleaningRuleFormData.userEventContentFilter;
           const nextEventNameFilter = userEventCleaningRuleFormData.eventNameFilter;
@@ -681,11 +620,11 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
             datamartId,
             cleaningRuleId,
             previousContentFilter,
-            nextEventNameFilter
+            nextEventNameFilter,
           ).then(resContentFilter => {
             this.setState({ loading: false });
             this.onClose();
-          })
+          });
         })
         .catch(err => {
           this.setState({ loading: false });
@@ -731,14 +670,10 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
             DataResponse<UserEventContentFilterResource> | undefined
           > =
             eventNameFilter && eventNameFilter !== ''
-              ? this._datamartService.createContentFilter(
-                selectedDatamartId,
-                newCleaningRuleId,
-                {
+              ? this._datamartService.createContentFilter(selectedDatamartId, newCleaningRuleId, {
                   content_type: 'EVENT_NAME_FILTER',
                   filter: eventNameFilter,
-                },
-              )
+                })
               : Promise.resolve(undefined);
 
           return eventNameFilterP.then(_ => {
@@ -777,15 +712,18 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
     const breadcrumbPaths =
       cleaningRuleType === 'USER_EVENT_CLEANING_RULE'
         ? [
-          <Link key='1' to={`/v2/o/${organisationId}/settings/datamart/cleaning_rules`}>
-            {formatMessage(messages.userEventBreadcrumbTitle)}
-          </Link>
-        ]
+            <Link key='1' to={`/v2/o/${organisationId}/settings/datamart/cleaning_rules`}>
+              {formatMessage(messages.userEventBreadcrumbTitle)}
+            </Link>,
+          ]
         : [
-          <Link key='2' to={`/v2/o/${organisationId}/settings/datamart/cleaning_rules?type=USER_PROFILE_CLEANING_RULE`}>
-            {formatMessage(messages.userProfileBreadcrumbTitle)}
-          </Link>
-        ];
+            <Link
+              key='2'
+              to={`/v2/o/${organisationId}/settings/datamart/cleaning_rules?type=USER_PROFILE_CLEANING_RULE`}
+            >
+              {formatMessage(messages.userProfileBreadcrumbTitle)}
+            </Link>,
+          ];
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
@@ -794,9 +732,7 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
     };
 
     const options =
-      cleaningRuleType === 'USER_EVENT_CLEANING_RULE'
-        ? channelOptions
-        : compartmentOptions;
+      cleaningRuleType === 'USER_EVENT_CLEANING_RULE' ? channelOptions : compartmentOptions;
 
     const datamartId = this.getDatamartId();
 
@@ -813,11 +749,8 @@ class CleaningRuleEditPage extends React.Component<Props, State> {
         cleaningRuleType={cleaningRuleType}
       />
     ) : (
-        <DatamartSelector
-          onSelect={this.onDatamartSelect}
-          actionbarProps={actionBarProps}
-        />
-      );
+      <DatamartSelector onSelect={this.onDatamartSelect} actionbarProps={actionBarProps} />
+    );
   }
 }
 

@@ -2,22 +2,14 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 
-import withValidators, {
-  ValidatorProps,
-} from '../../../../../../components/Form/withValidators';
-import withNormalizer, {
-  NormalizerProps,
-} from '../../../../../../components/Form/withNormalizer';
-import {
-  FormInput,
-  FormSection,
-  FormInputField,
-} from '../../../../../../components/Form';
+import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
+import withNormalizer, { NormalizerProps } from '../../../../../../components/Form/withNormalizer';
+import { FormInput, FormSection, FormInputField } from '../../../../../../components/Form';
 
 const messages = defineMessages({
   sectionSubtitleGeneral: {
     id: 'settings.organisation.users.edit.generalInfoSection.subtitle',
-    defaultMessage: 'Modify your User\'s data.',
+    defaultMessage: "Modify your User's data.",
   },
   sectionTitleGeneral: {
     id: 'settings.organisation.users.edit.generalInfoSection.title',
@@ -51,10 +43,10 @@ const messages = defineMessages({
     id: 'settings.organisation.users.edit.generalInfoSection.advanced.button',
     defaultMessage: 'Advanced',
   },
-//   tootltipTechnicalName: {
-//     id: 'edit.user.general.infos.tooltip.technical.name',
-//     defaultMessage: 'The technical Name is used for custom integrations.',
-//   },
+  //   tootltipTechnicalName: {
+  //     id: 'edit.user.general.infos.tooltip.technical.name',
+  //     defaultMessage: 'The technical Name is used for custom integrations.',
+  //   },
 });
 
 type Props = InjectedIntlProps & ValidatorProps & NormalizerProps;
@@ -90,7 +82,7 @@ class GeneralFormSection extends React.Component<Props, State> {
 
         <div>
           <FormInputField
-            name="first_name"
+            name='first_name'
             component={FormInput}
             validate={[isRequired]}
             formItemProps={{
@@ -105,7 +97,7 @@ class GeneralFormSection extends React.Component<Props, State> {
             }}
           />
           <FormInputField
-            name="last_name"
+            name='last_name'
             component={FormInput}
             validate={[isRequired]}
             formItemProps={{
@@ -120,7 +112,7 @@ class GeneralFormSection extends React.Component<Props, State> {
             }}
           />
           <FormInputField
-            name="email"
+            name='email'
             component={FormInput}
             validate={[isRequired]}
             formItemProps={{
@@ -135,12 +127,9 @@ class GeneralFormSection extends React.Component<Props, State> {
             }}
           />
         </div>
-
       </div>
     );
   }
 }
 
-export default compose(injectIntl, withValidators, withNormalizer)(
-  GeneralFormSection,
-);
+export default compose(injectIntl, withValidators, withNormalizer)(GeneralFormSection);

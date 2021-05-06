@@ -13,7 +13,7 @@ type Props = FormSearchMatchProps & WrappedFieldProps;
 class FormSearchMatch extends React.Component<Props, FormSearchMatchProps> {
   handleValue = (value: LabeledValue[]) => {
     const { separator, handleMatchValue } = this.props;
-    handleMatchValue(value.map((v) => v.value).join(separator));
+    handleMatchValue(value.map(v => v.value).join(separator));
     return value;
   };
 

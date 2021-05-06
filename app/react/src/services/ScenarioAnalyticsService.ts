@@ -1,10 +1,7 @@
 import ApiService from './ApiService';
 import { injectable } from 'inversify';
 import { ReportViewResponse } from './ReportService';
-import {
-  ReportRequestBody,
-  DimensionFilterClause,
-} from '../models/ReportRequestBody';
+import { ReportRequestBody, DimensionFilterClause } from '../models/ReportRequestBody';
 import {
   buildScenarioAnalyticsRequestBody,
   ScenarioAnalyticsDimension,
@@ -63,14 +60,9 @@ export class ScenarioAnalyticsService implements IScenarioAnalyticsService {
     to: McsMoment,
     exitConditionIdOpt?: string,
   ): Promise<ScenarioCountersData> => {
-    const getReportViewPromise = (
-      nodeOrExitCondition: ScenarioAnalyticsDimension,
-    ) => {
+    const getReportViewPromise = (nodeOrExitCondition: ScenarioAnalyticsDimension) => {
       const metrics: ScenarioAnalyticsMetric[] = ['user_points_count'];
-      const dimensions: ScenarioAnalyticsDimension[] = [
-        nodeOrExitCondition,
-        'scenario_id',
-      ];
+      const dimensions: ScenarioAnalyticsDimension[] = [nodeOrExitCondition, 'scenario_id'];
       const dimensionFilterClauses: DimensionFilterClause = {
         operator: 'OR',
         filters: [
@@ -89,7 +81,7 @@ export class ScenarioAnalyticsService implements IScenarioAnalyticsService {
         to,
         dimensions,
         dimensionFilterClauses,
-      ).then((res) => {
+      ).then(res => {
         return res.data.report_view;
       });
 
@@ -97,56 +89,48 @@ export class ScenarioAnalyticsService implements IScenarioAnalyticsService {
     };
 
     const nodesReportViewP = getReportViewPromise('node_id');
-    const exitConditionReportViewP: Promise<
-      ReportView | undefined
-    > = exitConditionIdOpt
+    const exitConditionReportViewP: Promise<ReportView | undefined> = exitConditionIdOpt
       ? getReportViewPromise('exit_condition_id')
       : Promise.resolve(undefined);
 
-    return Promise.all([nodesReportViewP, exitConditionReportViewP]).then(
-      (resReports) => {
-        const nodesReportView = resReports[0];
-        const exitConditionReportView = resReports[1];
+    return Promise.all([nodesReportViewP, exitConditionReportViewP]).then(resReports => {
+      const nodesReportView = resReports[0];
+      const exitConditionReportView = resReports[1];
 
-        const nodeCountersDataL: NodeCounterData[] = normalizeReportView(
-          nodesReportView,
-        )
-          .map((line) => {
-            if (line.node_id !== '') {
-              const nodeCounterData: NodeCounterData = {
-                nodeId: line.node_id,
-                userPointsCount: line.user_points_count,
-              };
-              return nodeCounterData;
-            } else return undefined;
-          })
-          .filter((line): line is NodeCounterData => line !== undefined);
-        const exitConditionCounterDataL: ExitConditionCounterData[] = exitConditionReportView
-          ? normalizeReportView(exitConditionReportView)
-              .map((line) => {
-                if (line.exit_condition_id !== '') {
-                  const exitConditionCounterData: ExitConditionCounterData = {
-                    exitConditionId: line.exit_condition_id,
-                    userPointsCount: line.user_points_count,
-                  };
-                  return exitConditionCounterData;
-                } else return undefined;
-              })
-              .filter(
-                (line): line is ExitConditionCounterData => line !== undefined,
-              )
-          : [];
+      const nodeCountersDataL: NodeCounterData[] = normalizeReportView(nodesReportView)
+        .map(line => {
+          if (line.node_id !== '') {
+            const nodeCounterData: NodeCounterData = {
+              nodeId: line.node_id,
+              userPointsCount: line.user_points_count,
+            };
+            return nodeCounterData;
+          } else return undefined;
+        })
+        .filter((line): line is NodeCounterData => line !== undefined);
+      const exitConditionCounterDataL: ExitConditionCounterData[] = exitConditionReportView
+        ? normalizeReportView(exitConditionReportView)
+            .map(line => {
+              if (line.exit_condition_id !== '') {
+                const exitConditionCounterData: ExitConditionCounterData = {
+                  exitConditionId: line.exit_condition_id,
+                  userPointsCount: line.user_points_count,
+                };
+                return exitConditionCounterData;
+              } else return undefined;
+            })
+            .filter((line): line is ExitConditionCounterData => line !== undefined)
+        : [];
 
-        const scenarioCountersData: ScenarioCountersData = {
-          scenarioId: scenarioId,
-          from: from,
-          to: to,
-          nodeCountersData: nodeCountersDataL,
-          exitConditionCounterData: exitConditionCounterDataL,
-        };
+      const scenarioCountersData: ScenarioCountersData = {
+        scenarioId: scenarioId,
+        from: from,
+        to: to,
+        nodeCountersData: nodeCountersDataL,
+        exitConditionCounterData: exitConditionCounterDataL,
+      };
 
-        return scenarioCountersData;
-      },
-    );
+      return scenarioCountersData;
+    });
   };
 }

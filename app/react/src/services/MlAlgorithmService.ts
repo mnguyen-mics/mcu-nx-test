@@ -4,27 +4,25 @@ import { injectable } from 'inversify';
 import MlAlgorithmResource from '../models/mlAlgorithm/MlAlgorithmResource';
 
 export interface IMlAlgorithmService {
-    getMlAlgorithms: (
-        organisationId: string,
-        filters?: object,
-    ) => Promise<DataListResponse<MlAlgorithmResource>>;
-    getMlAlgorithm: (
-        mlAlgorithmId: string,
-    ) => Promise<DataResponse<MlAlgorithmResource>>;
-    createMlAlgorithm: (
-        body: Partial<MlAlgorithmResource>
-    ) => Promise<DataResponse<MlAlgorithmResource>>;
-    updateMlAlgorithm: (
-        mlAlgorithmId: string,
-        body: Partial<MlAlgorithmResource>,
-    ) => Promise<DataResponse<MlAlgorithmResource>>
+  getMlAlgorithms: (
+    organisationId: string,
+    filters?: object,
+  ) => Promise<DataListResponse<MlAlgorithmResource>>;
+  getMlAlgorithm: (mlAlgorithmId: string) => Promise<DataResponse<MlAlgorithmResource>>;
+  createMlAlgorithm: (
+    body: Partial<MlAlgorithmResource>,
+  ) => Promise<DataResponse<MlAlgorithmResource>>;
+  updateMlAlgorithm: (
+    mlAlgorithmId: string,
+    body: Partial<MlAlgorithmResource>,
+  ) => Promise<DataResponse<MlAlgorithmResource>>;
 }
 
 @injectable()
 export class MlAlgorithmService implements IMlAlgorithmService {
-    getMlAlgorithms(
-        organisationId: string,
-        filters: object = {},
+  getMlAlgorithms(
+    organisationId: string,
+    filters: object = {},
   ): Promise<DataListResponse<MlAlgorithmResource>> {
     const endpoint = `ml_algorithms`;
     const options = {
@@ -33,9 +31,7 @@ export class MlAlgorithmService implements IMlAlgorithmService {
     };
     return ApiService.getRequest(endpoint, options);
   }
-  getMlAlgorithm(
-    mlAlgorithmId: string,
-  ): Promise<DataResponse<MlAlgorithmResource>> {
+  getMlAlgorithm(mlAlgorithmId: string): Promise<DataResponse<MlAlgorithmResource>> {
     const endpoint = `ml_algorithms/${mlAlgorithmId}`;
     return ApiService.getRequest(endpoint);
   }
@@ -49,8 +45,7 @@ export class MlAlgorithmService implements IMlAlgorithmService {
     mlAlgorithmId: string,
     body: Partial<MlAlgorithmResource>,
   ): Promise<DataResponse<MlAlgorithmResource>> {
-    const endpoint =  `ml_algorithms/${mlAlgorithmId}`;
+    const endpoint = `ml_algorithms/${mlAlgorithmId}`;
     return ApiService.putRequest(endpoint, body);
   }
-
 }

@@ -40,9 +40,7 @@ class DatamartSelector extends React.Component<Props> {
     } = this.props;
 
     let datamarts: DatamartResource[] = [];
-    const found = connectedUser.workspaces.find(
-      (w: any) => w.organisation_id === organisationId,
-    );
+    const found = connectedUser.workspaces.find((w: any) => w.organisation_id === organisationId);
     if (found) {
       datamarts = found.datamarts;
     }
@@ -54,19 +52,13 @@ class DatamartSelector extends React.Component<Props> {
         ) : (
           <FormLayoutActionbar {...actionbarProps} />
         )}
-        <Layout.Content className="mcs-content-container mcs-form-container text-center">
+        <Layout.Content className='mcs-content-container mcs-form-container text-center'>
           <FormTitle title={messages.title} subtitle={messages.subTitle} />
-          <Row className="mcs-selector_container">
-            <Row className="menu">
+          <Row className='mcs-selector_container'>
+            <Row className='menu'>
               {datamarts.map(d => {
                 const handleSelect = () => onSelect(d);
-                return (
-                  <MenuList
-                    key={d.id}
-                    title={d.name || d.token}
-                    select={handleSelect}
-                  />
-                );
+                return <MenuList key={d.id} title={d.name || d.token} select={handleSelect} />;
               })}
             </Row>
           </Row>

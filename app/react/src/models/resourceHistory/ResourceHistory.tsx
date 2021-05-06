@@ -62,7 +62,7 @@ export type ResourceLinkHelper = {
     getType: () => React.ReactNode;
     getName: (id: string) => Promise<string>;
     goToResource: (id: string) => void;
-  }
+  };
 };
 
 export interface HistoryCreateEventResource extends HistoryEventResource {
@@ -97,13 +97,11 @@ export interface HistoryLinkEventResource extends HistoryEventResource {
   resourceName?: string;
 }
 
-export interface HistoryCreateLinkEventResource
-  extends HistoryLinkEventResource {
+export interface HistoryCreateLinkEventResource extends HistoryLinkEventResource {
   type: 'CREATE_LINK_EVENT';
 }
 
-export interface HistoryDeleteLinkEventResource
-  extends HistoryLinkEventResource {
+export interface HistoryDeleteLinkEventResource extends HistoryLinkEventResource {
   type: 'DELETE_LINK_EVENT';
 }
 
@@ -115,9 +113,7 @@ export type HistoryEventActionShape =
   | HistoryCreateLinkEventResource
   | HistoryDeleteLinkEventResource;
 
-export type HistoryEventShape =
-  | HistoryEventActionShape
-  | HistoryAlertEventResource;
+export type HistoryEventShape = HistoryEventActionShape | HistoryAlertEventResource;
 
 export function isHistoryCreateEvent(
   model: HistoryEventShape,
@@ -137,12 +133,8 @@ export function isHistoryDeleteEvent(
   return model.type === 'DELETE_EVENT';
 }
 
-export function isHistoryLinkEvent(
-  model: HistoryEventShape,
-): model is HistoryLinkEventResource {
-  return (
-    model.type === 'CREATE_LINK_EVENT' || model.type === 'DELETE_LINK_EVENT'
-  );
+export function isHistoryLinkEvent(model: HistoryEventShape): model is HistoryLinkEventResource {
+  return model.type === 'CREATE_LINK_EVENT' || model.type === 'DELETE_LINK_EVENT';
 }
 
 export function isHistoryCreateLinkEvent(
@@ -157,8 +149,6 @@ export function isHistoryDeleteLinkEvent(
   return model.type === 'DELETE_LINK_EVENT';
 }
 
-export function isHistoryEventAction(
-  model: HistoryEventShape,
-): model is HistoryEventActionShape {
+export function isHistoryEventAction(model: HistoryEventShape): model is HistoryEventActionShape {
   return model.event_type === 'ACTION';
 }

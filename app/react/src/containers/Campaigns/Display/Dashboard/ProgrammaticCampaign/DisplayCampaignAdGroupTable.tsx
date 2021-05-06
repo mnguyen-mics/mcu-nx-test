@@ -112,13 +112,9 @@ class DisplayCampaignAdGroupTable extends React.Component<
       updateAdGroup,
     } = this.props;
 
-    const renderMetricData = (
-      value: any,
-      numeralFormat: string,
-      currency = '',
-    ) => {
+    const renderMetricData = (value: any, numeralFormat: string, currency = '') => {
       if (isFetchingStat) {
-        return <i className="mcs-table-cell-loading" />;
+        return <i className='mcs-table-cell-loading' />;
       }
       const unlocalizedMoneyPrefix = currency === 'EUR' ? '€ ' : '';
       return formatMetric(value, numeralFormat, unlocalizedMoneyPrefix);
@@ -179,15 +175,11 @@ class DisplayCampaignAdGroupTable extends React.Component<
           return (
             <span>
               <Switch
-                className="mcs-table-switch"
+                className='mcs-table-switch'
                 checked={text === 'ACTIVE'}
                 onChange={onChange}
-                checkedChildren={
-                  <McsIcon style={{ verticalAlign: 'middle' }} type="play" />
-                }
-                unCheckedChildren={
-                  <McsIcon style={{ verticalAlign: 'middle' }} type="pause" />
-                }
+                checkedChildren={<McsIcon style={{ verticalAlign: 'middle' }} type='play' />}
+                unCheckedChildren={<McsIcon style={{ verticalAlign: 'middle' }} type='pause' />}
               />
             </span>
           );
@@ -238,8 +230,7 @@ class DisplayCampaignAdGroupTable extends React.Component<
         key: 'ctr',
         isVisibleByDefault: true,
         isHideable: true,
-        render: (text: any) =>
-          renderMetricData(parseFloat(text) / 100, '0.000 %'),
+        render: (text: any) => renderMetricData(parseFloat(text) / 100, '0.000 %'),
       },
       {
         title: formatMessage(messages.cpc),
@@ -267,10 +258,7 @@ class DisplayCampaignAdGroupTable extends React.Component<
 
     const actions: Array<ActionDefinition<AdGroupResource>> = [];
 
-    if (
-      this.props.campaign &&
-      this.props.campaign.model_version !== 'V2014_06'
-    ) {
+    if (this.props.campaign && this.props.campaign.model_version !== 'V2014_06') {
       actions.push(
         {
           message: formatMessage(messages.editCampaign),
@@ -298,11 +286,7 @@ class DisplayCampaignAdGroupTable extends React.Component<
           pageSize: size,
         }),
       onChange: (page: number) => {
-        if (
-          rowSelection &&
-          rowSelection.unselectAllItemIds &&
-          rowSelection.allRowsAreSelected
-        ) {
+        if (rowSelection && rowSelection.unselectAllItemIds && rowSelection.allRowsAreSelected) {
           rowSelection.unselectAllItemIds();
         }
       },

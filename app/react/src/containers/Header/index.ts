@@ -1,5 +1,3 @@
 import NavigatorHeader from './NavigatorHeader';
 
-export {
-  NavigatorHeader,
-};
+export { NavigatorHeader };

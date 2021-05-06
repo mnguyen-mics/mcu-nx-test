@@ -4,10 +4,7 @@ import {
   formatToFormattingFunction,
   ValueFormat,
 } from '../../containers/ResourceHistory/utils';
-import {
-  GenericCreativeResource,
-  CreativeSubtype,
-} from '../../models/creative/CreativeResource';
+import { GenericCreativeResource, CreativeSubtype } from '../../models/creative/CreativeResource';
 
 const creativeSubtypeMessages: {
   [key in CreativeSubtype]: FormattedMessage.MessageDescriptor;
@@ -31,9 +28,7 @@ const creativeSubtypeMessages: {
 });
 
 const creativePropertiesMessageMap: {
-  [propertyName in
-    | keyof GenericCreativeResource
-    | HistoryKeys]: FormattedMessage.MessageDescriptor;
+  [propertyName in keyof GenericCreativeResource | HistoryKeys]: FormattedMessage.MessageDescriptor;
 } = defineMessages({
   id: {
     id: 'creative.fields.id',

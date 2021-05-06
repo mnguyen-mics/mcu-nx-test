@@ -21,9 +21,7 @@ const goalStatusMessages: {
 });
 
 const goalPropertiesMessageMap: {
-  [propertyName in
-    | keyof GoalResource
-    | HistoryKeys]: FormattedMessage.MessageDescriptor;
+  [propertyName in keyof GoalResource | HistoryKeys]: FormattedMessage.MessageDescriptor;
 } = defineMessages({
   id: {
     id: 'goal.fields.id',

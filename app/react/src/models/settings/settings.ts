@@ -26,8 +26,7 @@ export interface MobileApplicationResource extends ChannelResource {
   type: 'MOBILE_APPLICATION';
 }
 
-export interface MobileApplicationCreationResource
-  extends Partial<ChannelResource> {
+export interface MobileApplicationCreationResource extends Partial<ChannelResource> {
   type: 'MOBILE_APPLICATION';
 }
 
@@ -67,14 +66,7 @@ export interface EventRuleUrlMatch extends EventRuleResource {
 
 export interface EventRuleUserIdentifierInsertion extends EventRuleResource {
   type: 'USER_IDENTIFIER_INSERTION';
-  hash_function:
-    | 'MD2'
-    | 'NO_HASH'
-    | 'SHA_256'
-    | 'MD5'
-    | 'SHA_1'
-    | 'SHA_384'
-    | 'SHA_512';
+  hash_function: 'MD2' | 'NO_HASH' | 'SHA_256' | 'MD5' | 'SHA_1' | 'SHA_384' | 'SHA_512';
   identifier_creation: 'USER_ACCOUNT' | 'EMAIL_HASH';
   property_source: string;
   remove_source: boolean;
@@ -112,7 +104,9 @@ export type ReplicationType = 'GOOGLE_PUBSUB' | 'AZURE_EVENT_HUBS';
 
 export type ReplicationStatus = 'PAUSED' | 'ACTIVE' | 'ERROR';
 
-export type DatamartReplicationResourceShape = PubSubReplicationResource | EventHubsReplicationResource;
+export type DatamartReplicationResourceShape =
+  | PubSubReplicationResource
+  | EventHubsReplicationResource;
 
 export interface DatamartReplicationResource {
   id: string;

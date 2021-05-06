@@ -38,7 +38,9 @@ interface DatamartReplicationJobListContainerProps {
   onFilterChange: (newFilter: Index<string | number>) => void;
   replications: DatamartReplicationResourceShape[];
   fetchReplicationsAndJobs: (datamartId: string, filter: Index<any>) => void;
-  createJobExecution: (datamartId: string) => Promise<void | DatamartReplicationJobExecutionResource>;
+  createJobExecution: (
+    datamartId: string,
+  ) => Promise<void | DatamartReplicationJobExecutionResource>;
 }
 
 type Props = DatamartReplicationJobListContainerProps &
@@ -64,7 +66,9 @@ class DatamartReplicationJobListContainer extends React.Component<Props> {
       intl: { formatMessage },
     } = this.props;
     const lastExecutionIsLessThan7days = jobExecutions.find(
-      execution => execution.status === 'SUCCEEDED' && execution.creation_date > Date.now() - 7 * 24 * 3600 * 1000,
+      execution =>
+        execution.status === 'SUCCEEDED' &&
+        execution.creation_date > Date.now() - 7 * 24 * 3600 * 1000,
     );
     const onClick = () => {
       const {
@@ -78,12 +82,9 @@ class DatamartReplicationJobListContainer extends React.Component<Props> {
       const liveReplications = replications.filter(rep => rep.status === 'ACTIVE');
 
       if (liveReplications.length >= 1) {
-        const filter = parseSearch(
-          search,
-          DATAMART_REPLICATION_SEARCH_SETTINGS,
-        );
+        const filter = parseSearch(search, DATAMART_REPLICATION_SEARCH_SETTINGS);
         const replicationExecution = () => {
-          return this.props.createJobExecution(datamartId)
+          return this.props.createJobExecution(datamartId);
         };
         Modal.confirm({
           icon: <ExclamationCircleOutlined />,
@@ -116,10 +117,7 @@ class DatamartReplicationJobListContainer extends React.Component<Props> {
     };
     const ToolTipWrapper = (button: React.ReactNode) => {
       return (
-        <Tooltip
-          placement="top"
-          title={formatMessage(messages.noExecutionPossible)}
-        >
+        <Tooltip placement='top' title={formatMessage(messages.noExecutionPossible)}>
           {button}
         </Tooltip>
       );
@@ -127,17 +125,15 @@ class DatamartReplicationJobListContainer extends React.Component<Props> {
     const executionButton = (
       <Button
         key={messages.newDatamartReplication.id}
-        type="primary"
+        type='primary'
         onClick={onClick}
         disabled={!!lastExecutionIsLessThan7days}
-        className={"mcs-replicationNewExecution_button"}
+        className={'mcs-replicationNewExecution_button'}
       >
         <FormattedMessage {...messages.newExecution} />
       </Button>
     );
-    return !!lastExecutionIsLessThan7days
-      ? ToolTipWrapper(executionButton)
-      : executionButton;
+    return !!lastExecutionIsLessThan7days ? ToolTipWrapper(executionButton) : executionButton;
   };
 
   render() {
@@ -150,19 +146,17 @@ class DatamartReplicationJobListContainer extends React.Component<Props> {
     } = this.props;
 
     return (
-      <div className="ant-layout">
-        <Content className="mcs-content-container">
-          <Row className="mcs-table-container">
+      <div className='ant-layout'>
+        <Content className='mcs-content-container'>
+          <Row className='mcs-table-container'>
             <div>
-              <div className="mcs-card-header mcs-card-title">
-                <span className="mcs-card-title">
+              <div className='mcs-card-header mcs-card-title'>
+                <span className='mcs-card-title'>
                   <FormattedMessage {...messages.initialSynchronization} />
                 </span>
-                <span className="mcs-card-button">
-                  {this.buildNewActionElement()}
-                </span>
+                <span className='mcs-card-button'>{this.buildNewActionElement()}</span>
               </div>
-              <hr className="mcs-separator" />
+              <hr className='mcs-separator' />
               <DatamartReplicationJobTable
                 dataSource={jobExecutions}
                 total={totalJobExecutions}

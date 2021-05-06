@@ -3,9 +3,7 @@ import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import cuid from 'cuid';
 import * as Antd from 'antd';
 import messages from '../../../messages';
-import {
-  Geoname, IGeonameService,
-} from '../../../../../../../services/GeonameService';
+import { Geoname, IGeonameService } from '../../../../../../../services/GeonameService';
 import { LocationFieldModel } from '../../domain';
 import { Select } from '../../../../../../../components/PopupContainers';
 import { lazyInject } from '../../../../../../../config/inversify.config';
@@ -265,7 +263,7 @@ const allCountries = [
 interface Props {
   onGeonameSelect?: (locationField: LocationFieldModel) => void;
   hiddenGeonameIds: string[];
-  disabled?: boolean
+  disabled?: boolean;
 }
 
 interface State {
@@ -313,14 +311,13 @@ class SelectGeoname extends React.Component<JoinedProps, State> {
     countryCode = foundCountry ? foundCountry.code : 'FR';
 
     this.setState({ fetchingGeonames: true });
-    this._geonameService.getGeonames(value, 'fr', countryCode)
+    this._geonameService
+      .getGeonames(value, 'fr', countryCode)
       .then(res => res.data)
       .then(geonames => {
         const listOfGeonamesToDisplay = geonames.filter(geoname => {
           return (
-            (geoname.name.indexOf(
-              value.charAt(0).toUpperCase() + value.slice(1),
-            ) >= 0 ||
+            (geoname.name.indexOf(value.charAt(0).toUpperCase() + value.slice(1)) >= 0 ||
               geoname.name.indexOf(value) >= 0) &&
             !hiddenGeonameIds.includes(geoname.id)
           );
@@ -335,11 +332,9 @@ class SelectGeoname extends React.Component<JoinedProps, State> {
   handleChange = (geonameId: string) => {
     const { onGeonameSelect } = this.props;
 
-    const selectedGeoname = this.state.listOfGeonamesToDisplay.find(
-      filteredGeoname => {
-        return filteredGeoname.id === geonameId[0];
-      },
-    );
+    const selectedGeoname = this.state.listOfGeonamesToDisplay.find(filteredGeoname => {
+      return filteredGeoname.id === geonameId[0];
+    });
 
     if (selectedGeoname && onGeonameSelect) {
       const locationField = {
@@ -366,30 +361,30 @@ class SelectGeoname extends React.Component<JoinedProps, State> {
 
     const {
       intl: { formatMessage },
-      disabled
+      disabled,
     } = this.props;
 
     return (
       <InputGroup compact={true}>
-        <div className="small-select">
-          <Select defaultValue="INC" disabled={!!disabled} onChange={this.handleIncOrExcChange}>
-            <Option
-              value="INC"
-              title={formatMessage(messages.contentSectionLocationOption1)}
-            >
-              <McsIcon type="check" />
-              <FormattedMessage id="display.campaign.edit.adGroup.locationTargetingSection.include" defaultMessage="Include" />
+        <div className='small-select'>
+          <Select defaultValue='INC' disabled={!!disabled} onChange={this.handleIncOrExcChange}>
+            <Option value='INC' title={formatMessage(messages.contentSectionLocationOption1)}>
+              <McsIcon type='check' />
+              <FormattedMessage
+                id='display.campaign.edit.adGroup.locationTargetingSection.include'
+                defaultMessage='Include'
+              />
             </Option>
-            <Option
-              value="EXC"
-              title={formatMessage(messages.contentSectionLocationOption2)}
-            >
-              <McsIcon type="close-big" />
-              <FormattedMessage id="display.campaign.edit.adGroup.locationTargetingSection.exclude" defaultMessage="Exclude" />
+            <Option value='EXC' title={formatMessage(messages.contentSectionLocationOption2)}>
+              <McsIcon type='close-big' />
+              <FormattedMessage
+                id='display.campaign.edit.adGroup.locationTargetingSection.exclude'
+                defaultMessage='Exclude'
+              />
             </Option>
           </Select>
         </div>
-        <div className="small-select small-select-right">
+        <div className='small-select small-select-right'>
           <Select
             showSearch={true}
             defaultValue={'France'}
@@ -397,25 +392,27 @@ class SelectGeoname extends React.Component<JoinedProps, State> {
             disabled={!!disabled}
           >
             {allCountries.map(country => (
-              <Option key={country.name} value={country.name}>{country.name}</Option>
+              <Option key={country.name} value={country.name}>
+                {country.name}
+              </Option>
             ))}
           </Select>
         </div>
-        <div className="big-select">
+        <div className='big-select'>
           <Select
-            mode="multiple"
+            mode='multiple'
             value={[]}
-            placeholder={formatMessage(
-              messages.contentSectionLocationInputPlaceholder,
-            )}
-            notFoundContent={fetchingGeonames ? <Spin size="small" /> : null}
+            placeholder={formatMessage(messages.contentSectionLocationInputPlaceholder)}
+            notFoundContent={fetchingGeonames ? <Spin size='small' /> : null}
             filterOption={false}
             onSearch={this.fetchGeonames}
             onChange={this.handleChange}
             disabled={!!disabled}
           >
             {listOfGeonamesToDisplay.map(country => (
-              <Option key={country.id} value={country.id}>{country.name}</Option>
+              <Option key={country.id} value={country.id}>
+                {country.name}
+              </Option>
             ))}
           </Select>
         </div>

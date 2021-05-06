@@ -12,23 +12,15 @@ interface Props {
 const renderLine = (key: string, value: string | number) => {
   return (
     <div key={key}>
-      <Col className="table-left" span={12}>
+      <Col className='table-left' span={12}>
         <span>
           <Tooltip title={key}>{key}</Tooltip>
         </span>
       </Col>
-      <Col className="table-right" span={12}>
+      <Col className='table-right' span={12}>
         <span>
-          <Tooltip
-            title={
-              key === '$ts'
-                ? moment(value).format('YYYY MM DD, hh:mm:ss')
-                : value
-            }
-          >
-            {key === '$ts'
-              ? moment(value).format('YYYY MM DD, hh:mm:ss')
-              : value}
+          <Tooltip title={key === '$ts' ? moment(value).format('YYYY MM DD, hh:mm:ss') : value}>
+            {key === '$ts' ? moment(value).format('YYYY MM DD, hh:mm:ss') : value}
           </Tooltip>
         </span>
       </Col>
@@ -41,8 +33,8 @@ class Origin extends React.Component<Props> {
     const { origin } = this.props;
 
     return (
-      <Row gutter={10} className="section table-line border-top">
-        <Col span={5} className="section-title">
+      <Row gutter={10} className='section table-line border-top'>
+        <Col span={5} className='section-title'>
           <FormattedMessage {...messages.origin} />
         </Col>
         <Col span={19}>

@@ -22,11 +22,7 @@ import { CreateEditRecommender } from '../containers/Settings/CampaignSettings/R
 
 import { VisitAnalyzerContent } from '../containers/Settings/DatamartSettings/VisitAnalyzer/List';
 import { CreateEditVisitAnalyzer } from '../containers/Settings/DatamartSettings/VisitAnalyzer/Edit';
-import {
-  NavigatorRoute,
-  NavigatorDefinition,
-  generateRoutesFromDefinition,
-} from './domain';
+import { NavigatorRoute, NavigatorDefinition, generateRoutesFromDefinition } from './domain';
 
 import ServiceUsageReportListPage from '../containers/Settings/DatamartSettings/ServiceUsageReport/List/ServiceUsageReportListPage';
 import EditUserPage from '../containers/Settings/OrganisationSettings/Users/Edit/EditUserPage';
@@ -91,8 +87,7 @@ export const settingsDefinition: NavigatorDefinition = {
     requireDatamart: true,
   },
   settingsDatamartMobileAppEdition: {
-    path:
-      '/settings/datamart/:datamartId/mobile_application/:mobileApplicationId/edit',
+    path: '/settings/datamart/:datamartId/mobile_application/:mobileApplicationId/edit',
     layout: 'edit',
     editComponent: MobileApplicationEditPage,
     requiredFeature: 'datamartSettings-channels',
@@ -200,8 +195,7 @@ export const settingsDefinition: NavigatorDefinition = {
     requireDatamart: true,
   },
   settingsDatamartReplicationEdition: {
-    path:
-      '/settings/datamart/:datamartId/datamart_replication/:datamartReplicationId/edit',
+    path: '/settings/datamart/:datamartId/datamart_replication/:datamartReplicationId/edit',
     layout: 'edit',
     editComponent: DatamartReplicationEditPage,
     requiredFeature: 'datamartSettings-datamart_replication',
@@ -210,16 +204,14 @@ export const settingsDefinition: NavigatorDefinition = {
 
   // Audience Builder and audience feature
   settingsDatamartAudienceFeatureEdition: {
-    path:
-      '/settings/datamart/:datamartId/audience_feature/:audienceFeatureId/edit',
+    path: '/settings/datamart/:datamartId/audience_feature/:audienceFeatureId/edit',
     layout: 'edit',
     editComponent: AudienceFeatureEditPage,
     requiredFeature: 'audience-segment_builder_v2',
     requireDatamart: true,
   },
   settingsDatamartAudienceFeatureCreation: {
-    path:
-      '/settings/datamart/:datamartId/audience_feature/create',
+    path: '/settings/datamart/:datamartId/audience_feature/create',
     layout: 'edit',
     editComponent: AudienceFeatureEditPage,
     requiredFeature: 'audience-segment_builder_v2',
@@ -227,16 +219,14 @@ export const settingsDefinition: NavigatorDefinition = {
   },
 
   settingsDatamartAudienceBuilderEdition: {
-    path:
-      '/settings/datamart/:datamartId/audience_builder/:audienceBuilderId/edit',
+    path: '/settings/datamart/:datamartId/audience_builder/:audienceBuilderId/edit',
     layout: 'edit',
     editComponent: AudienceBuilderEditPage,
     requiredFeature: 'audience-segment_builder_v2',
     requireDatamart: true,
   },
   settingsDatamartAudienceBuilderCreation: {
-    path:
-      '/settings/datamart/:datamartId/audience_builder/create',
+    path: '/settings/datamart/:datamartId/audience_builder/create',
     layout: 'edit',
     editComponent: AudienceBuilderEditPage,
     requiredFeature: 'audience-segment_builder_v2',
@@ -469,8 +459,7 @@ export const settingsDefinition: NavigatorDefinition = {
   },
 
   settingsCampaignAttributionModelEdition: {
-    path:
-      '/settings/campaigns/attribution_models/:attributionModelId(\\d+)/edit',
+    path: '/settings/campaigns/attribution_models/:attributionModelId(\\d+)/edit',
     layout: 'edit',
     editComponent: EditAttributionModelPage,
     requiredFeature: 'campaignsSettings-attribution_models',
@@ -541,8 +530,7 @@ export const settingsDefinition: NavigatorDefinition = {
     requiredFeature: 'servicesSettings-my_offers',
   },
   settingsSubscribedOfferServiceItemConditionList: {
-    path:
-      '/settings/services/subscribed_offers/:offerId/service_item_conditions',
+    path: '/settings/services/subscribed_offers/:offerId/service_item_conditions',
     layout: 'settings',
     contentComponent: SubscribedOfferServiceItemListPage,
     requiredFeature: 'servicesSettings-subscribed_offers',
@@ -579,6 +567,4 @@ export const settingsDefinition: NavigatorDefinition = {
   // },
 };
 
-export const settingsRoutes: NavigatorRoute[] = generateRoutesFromDefinition(
-  settingsDefinition,
-);
+export const settingsRoutes: NavigatorRoute[] = generateRoutesFromDefinition(settingsDefinition);

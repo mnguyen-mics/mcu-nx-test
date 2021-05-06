@@ -10,10 +10,7 @@ export interface FormSearchSingleValueProps extends FormSearchObjectProps {
 
 type Props = FormSearchSingleValueProps & WrappedFieldProps;
 
-class FormSearchSingleValue extends React.Component<
-  Props,
-  FormSearchSingleValueProps
-> {
+class FormSearchSingleValue extends React.Component<Props, FormSearchSingleValueProps> {
   handleValue = (value: LabeledValue[], inputName?: string) => {
     const { handleSingleValue, handleNoValue } = this.props;
     if (!value || value.length === 0) {
@@ -24,13 +21,7 @@ class FormSearchSingleValue extends React.Component<
   };
 
   render() {
-    return (
-      <FormSearchObject
-        handleValue={this.handleValue}
-        isSingleValue={true}
-        {...this.props}
-      />
-    );
+    return <FormSearchObject handleValue={this.handleValue} isSingleValue={true} {...this.props} />;
   }
 }
 

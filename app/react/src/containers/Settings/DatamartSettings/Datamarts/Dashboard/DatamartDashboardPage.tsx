@@ -21,7 +21,7 @@ import { sessionInTimeJsonConfig } from '../../../../Audience/DatamartUsersAnaly
 import { DashboardConfig } from '../../../../Audience/DatamartUsersAnalytics/DatamartUsersAnalyticsContent';
 import DatamartReplicationTab from './DatamartReplicationTab';
 import SegmentBuildersTab from './SegmentBuildersTab';
-import AudienceFeaturesTab from './AudienceFeaturesTab'
+import AudienceFeaturesTab from './AudienceFeaturesTab';
 
 interface McsTabsItem {
   title: string;
@@ -111,10 +111,7 @@ class DatamartDashboardPage extends React.Component<Props, State> {
     } = this.props;
     const {
       match: {
-        params: {
-          datamartId: prevDatamartId,
-          organisationId: prevOrganisationId,
-        },
+        params: { datamartId: prevDatamartId, organisationId: prevOrganisationId },
       },
     } = prevProps;
     if (datamartId !== prevDatamartId) {
@@ -128,13 +125,13 @@ class DatamartDashboardPage extends React.Component<Props, State> {
   fetchDatamart = (datamartId: string) => {
     this._datamartService
       .getDatamart(datamartId)
-      .then((res) =>
+      .then(res =>
         this.setState({
           datamart: res.data,
           isLoading: false,
         }),
       )
-      .catch((err) => {
+      .catch(err => {
         this.setState({ isLoading: false });
         notifyError(err);
       });
@@ -185,14 +182,11 @@ class DatamartDashboardPage extends React.Component<Props, State> {
       });
     }
 
-    if (
-      hasFeature('audience-dashboards-datamart_users_analytics') &&
-      datamart
-    ) {
+    if (hasFeature('audience-dashboards-datamart_users_analytics') && datamart) {
       items.push({
         title: intl.formatMessage(messages.statistics),
         display: (
-          <Content className="mcs-content-container">
+          <Content className='mcs-content-container'>
             <DatamartUsersAnalyticsWrapper
               datamartId={datamart.id}
               organisationId={organisationId}
@@ -218,12 +212,12 @@ class DatamartDashboardPage extends React.Component<Props, State> {
     }
 
     return (
-      <div className="ant-layout">
+      <div className='ant-layout'>
         <DatamartActionBar />
-        <div className="ant-layout">
-          <div className="ant-layout-content">
-            <div className="mcs-content-channel">
-              <div className="mcs-datamart-title">
+        <div className='ant-layout'>
+          <div className='ant-layout-content'>
+            <div className='mcs-content-channel'>
+              <div className='mcs-datamart-title'>
                 <DatamartHeader datamart={datamart} isLoading={isLoading} />
               </div>
             </div>
@@ -232,8 +226,7 @@ class DatamartDashboardPage extends React.Component<Props, State> {
                 items={items}
                 tabBarStyle={{ margin: '0 40px' }}
                 defaultActiveKey={
-                  (location && location.state && location.state.activeTab) ||
-                  'configuration'
+                  (location && location.state && location.state.activeTab) || 'configuration'
                 }
               />
             </div>

@@ -20,9 +20,7 @@ import UserResource from '../../../../../models/directory/UserResource';
 
 const FORM_ID = 'userForm';
 
-const Content = Layout.Content as unknown as React.ComponentClass<
-  BasicProps & { id: string }
->;
+const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
 
 const messages = defineMessages({
   sectionTitleGeneral: {
@@ -39,8 +37,7 @@ const messages = defineMessages({
   },
 });
 
-interface EditUserFormProps
-  extends Omit<ConfigProps<Partial<UserResource>>, 'form'> {
+interface EditUserFormProps extends Omit<ConfigProps<Partial<UserResource>>, 'form'> {
   onClose: () => void;
   onSave: (formData: Partial<UserResource>) => void;
   breadCrumbPaths: React.ReactNode[];
@@ -95,21 +92,15 @@ class EditUserForm extends React.Component<Props> {
       );
     });
     return (
-      <Layout className="edit-layout">
+      <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
           <ScrollspySider {...sideBarProps} />
-          <Form
-            className="edit-layout ant-layout"
-            onSubmit={handleSubmit(onSave) as any}
-          >
+          <Form className='edit-layout ant-layout' onSubmit={handleSubmit(onSave) as any}>
             {/* this button enables submit on enter */}
-            <button type="submit" style={{ display: 'none' }} />
-            <Content
-              id={FORM_ID}
-              className="mcs-content-container mcs-form-container"
-            >
-              <div className="placement-list-form">{renderedSections}</div>
+            <button type='submit' style={{ display: 'none' }} />
+            <Content id={FORM_ID} className='mcs-content-container mcs-form-container'>
+              <div className='placement-list-form'>{renderedSections}</div>
             </Content>
           </Form>
         </Layout>

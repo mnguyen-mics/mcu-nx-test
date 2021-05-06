@@ -10,10 +10,7 @@ import {
   GetSegmentsOption,
   IAudienceSegmentService,
 } from '../../../services/AudienceSegmentService';
-import {
-  AudienceSegmentResource,
-  AudienceSegmentShape,
-} from '../../../models/audiencesegment';
+import { AudienceSegmentResource, AudienceSegmentShape } from '../../../models/audiencesegment';
 import { formatMetric, normalizeReportView } from '../../../utils/MetricHelper';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 import { Index } from '../../../utils';
@@ -99,7 +96,7 @@ class AudienceSegmentSelector extends React.Component<Props, State> {
       new McsMoment('now'),
       ['audience_segment_id'],
       undefined,
-    ).then((resp) => {
+    ).then(resp => {
       this.setState({
         fetchingReport: false,
         reportBySegmentId: normalizeArrayOfObject(
@@ -110,10 +107,7 @@ class AudienceSegmentSelector extends React.Component<Props, State> {
     });
   }
 
-  saveSegments = (
-    segmentIds: string[],
-    segments: AudienceSegmentResource[],
-  ) => {
+  saveSegments = (segmentIds: string[], segments: AudienceSegmentResource[]) => {
     this.props.save(segments);
   };
 
@@ -155,7 +149,7 @@ class AudienceSegmentSelector extends React.Component<Props, State> {
 
     const getMetric = (segmentId: string, metricName: string) => {
       if (fetchingReport) {
-        return <i className="mcs-table-cell-loading" />;
+        return <i className='mcs-table-cell-loading' />;
       }
       const report = reportBySegmentId[segmentId];
       const metric = report && report[metricName];
@@ -166,9 +160,7 @@ class AudienceSegmentSelector extends React.Component<Props, State> {
       {
         title: formatMessage(messages.segmentSelectorColumnName),
         key: 'name',
-        render: (text, record) => (
-          <SegmentNameDisplay audienceSegmentResource={record} />
-        ),
+        render: (text, record) => <SegmentNameDisplay audienceSegmentResource={record} />,
       },
       {
         title: formatMessage(messages.segmentSelectorColumnUserPoints),
@@ -186,9 +178,7 @@ class AudienceSegmentSelector extends React.Component<Props, State> {
       <SegmentTableSelector
         actionBarTitle={formatMessage(messages.segmentSelectorTitle)}
         displayFiltering={true}
-        searchPlaceholder={formatMessage(
-          messages.segmentSelectorSearchPlaceholder,
-        )}
+        searchPlaceholder={formatMessage(messages.segmentSelectorSearchPlaceholder)}
         selectedIds={selectedSegmentIds}
         fetchDataList={this.fetchSegments}
         fetchData={this.fetchSegment}

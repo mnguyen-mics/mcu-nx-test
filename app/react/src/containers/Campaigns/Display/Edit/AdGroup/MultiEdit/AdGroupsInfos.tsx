@@ -2,12 +2,7 @@ import * as React from 'react';
 import { WrappedFieldArrayProps, Validator } from 'redux-form';
 import { Button, Row, Col } from 'antd';
 import { compose } from 'recompose';
-import {
-  InjectedIntlProps,
-  injectIntl,
-  defineMessages,
-  FormattedMessage,
-} from 'react-intl';
+import { InjectedIntlProps, injectIntl, defineMessages, FormattedMessage } from 'react-intl';
 
 import { AdGroupsInfosFieldModel } from '../domain';
 import {
@@ -19,9 +14,7 @@ import {
   FormDatePicker,
 } from '../../../../../../components/Form/index';
 import { AdGroupResource } from '../../../../../../models/campaign/display/AdGroupResource';
-import withValidators, {
-  ValidatorProps,
-} from '../../../../../../components/Form/withValidators';
+import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 const editableAdGroupProperties: Array<keyof AdGroupResource> = [
@@ -40,9 +33,7 @@ class AdGroupsInfos extends React.Component<JoinedProps> {
   getAvailableOptions = () => {
     const { fields, intl } = this.props;
 
-    const selected = fields.getAll()
-      ? fields.getAll().map(f => f.adGroupProperty)
-      : [];
+    const selected = fields.getAll() ? fields.getAll().map(f => f.adGroupProperty) : [];
 
     return editableAdGroupProperties.map(adGroupProperty => {
       return {
@@ -94,9 +85,7 @@ class AdGroupsInfos extends React.Component<JoinedProps> {
     ];
 
     const adField = () => {
-      const firstSelectableOptions = this.getAvailableOptions().filter(
-        option => !option.disabled,
-      );
+      const firstSelectableOptions = this.getAvailableOptions().filter(option => !option.disabled);
       fields.push({
         adGroupProperty: firstSelectableOptions[0].value,
         action: 'equals',
@@ -128,7 +117,7 @@ class AdGroupsInfos extends React.Component<JoinedProps> {
             }
             return (
               <Row key={index} gutter={16}>
-                <Col className="gutter-row" span={7}>
+                <Col className='gutter-row' span={7}>
                   <FormSelectField
                     name={`${name}.adGroupProperty`}
                     component={DefaultSelect}
@@ -140,7 +129,7 @@ class AdGroupsInfos extends React.Component<JoinedProps> {
                     }}
                   />
                 </Col>
-                <Col className="gutter-row" span={7}>
+                <Col className='gutter-row' span={7}>
                   <FormSelectField
                     name={`${name}.action`}
                     component={DefaultSelect}
@@ -152,7 +141,7 @@ class AdGroupsInfos extends React.Component<JoinedProps> {
                     options={isTimeInput ? [actionOptions[0]] : actionOptions}
                   />
                 </Col>
-                <Col className="gutter-row" span={7}>
+                <Col className='gutter-row' span={7}>
                   {isTimeInput ? (
                     <FormDatePickerField
                       name={`${name}.value`}
@@ -180,32 +169,27 @@ class AdGroupsInfos extends React.Component<JoinedProps> {
                     />
                   )}
                 </Col>
-                <Col className="gutter-row" span={3}>
-                  <Button className="delete-fieldarray" onClick={removeField}>
-                    <McsIcon type="close" />
+                <Col className='gutter-row' span={3}>
+                  <Button className='delete-fieldarray' onClick={removeField}>
+                    <McsIcon type='close' />
                   </Button>
                 </Col>
               </Row>
             );
           })}
         </Row>
-        {fields.getAll() &&
-          fields.getAll().length <= editableAdGroupProperties.length - 1 && (
-            <Row>
-              <div onClick={adField}>
-                <Col
-                  span={22}
-                  offset={1}
-                  className="gutter-row add-field-button"
-                >
-                  <p>
-                    <McsIcon type="plus" />
-                    Add Field
-                  </p>
-                </Col>
-              </div>
-            </Row>
-          )}
+        {fields.getAll() && fields.getAll().length <= editableAdGroupProperties.length - 1 && (
+          <Row>
+            <div onClick={adField}>
+              <Col span={22} offset={1} className='gutter-row add-field-button'>
+                <p>
+                  <McsIcon type='plus' />
+                  Add Field
+                </p>
+              </Col>
+            </div>
+          </Row>
+        )}
       </div>
     );
   }
@@ -214,9 +198,7 @@ class AdGroupsInfos extends React.Component<JoinedProps> {
 export default compose(injectIntl, withValidators)(AdGroupsInfos);
 
 const adGroupPropertiesMessageMap: {
-  [propertyName in keyof Partial<
-    AdGroupResource
-  >]: FormattedMessage.MessageDescriptor
+  [propertyName in keyof Partial<AdGroupResource>]: FormattedMessage.MessageDescriptor;
 } = defineMessages({
   max_bid_price: {
     id: 'display.campaigns.edit.adgroup.multiEdit.option.maxBidPrice',

@@ -11,22 +11,10 @@ export interface FormTimePickerProps {
   disabled?: boolean;
 }
 
-const FormTimePicker: React.SFC<FormTimePickerProps &
-  WrappedFieldProps> = props => {
-  const {
-    timeFormat,
-    disabled,
-    className,
-    allowClear,
-    minuteStep,
-    input,
-  } = props;
+const FormTimePicker: React.SFC<FormTimePickerProps & WrappedFieldProps> = props => {
+  const { timeFormat, disabled, className, allowClear, minuteStep, input } = props;
 
-  let validateStatus = 'success' as
-    | 'success'
-    | 'warning'
-    | 'error'
-    | 'validating';
+  let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
 
   if (props.meta.invalid) validateStatus = 'error';
   if (props.meta.warning) validateStatus = 'warning';

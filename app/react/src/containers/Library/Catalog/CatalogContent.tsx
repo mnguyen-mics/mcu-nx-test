@@ -7,16 +7,14 @@ import {
   CategoryRessource,
   ItemRessource,
 } from '../../../models/catalog/catalog';
-import {
-  Card,
-  Button,
-  McsIcon,
-} from '@mediarithmics-private/mcs-components-library';
+import { Card, Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import CatalogItemTable from './CatalogItemTable';
 import messages from './messages';
 import { HomeOutlined } from '@ant-design/icons';
 import { Select, Table, Breadcrumb } from 'antd';
-import injectNotifications, { InjectedNotificationProps } from '../../Notifications/injectNotifications';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../Notifications/injectNotifications';
 import { injectDatamart, InjectedDatamartProps } from '../../Datamart';
 import { TYPES } from '../../../constants/types';
 import { lazyInject } from '../../../config/inversify.config';
@@ -131,23 +129,17 @@ class CatalogContent extends React.Component<Props, CatalogContentState> {
       .then(res => {
         const promises = res.map(category => {
           return this._libraryCatalogService
-            .getCatalogSubCategories(
-              datamartId,
-              catalogToken,
-              category.category_id,
-            )
+            .getCatalogSubCategories(datamartId, catalogToken, category.category_id)
             .then(r => r.data)
             .then(r => {
               return { ...category, hasSubCategory: r.length > 0 };
             })
             .then(r => {
               return this._libraryCatalogService
-                .getCatalogCategoryItems(
-                  datamartId,
-                  catalogToken,
-                  category.category_id,
-                  { first_result: 0, max_results: 500 },
-                )
+                .getCatalogCategoryItems(datamartId, catalogToken, category.category_id, {
+                  first_result: 0,
+                  max_results: 500,
+                })
                 .then(i => i.data)
                 .then(i => {
                   return { ...r, hasItems: i.length > 0, subItems: i };
@@ -156,9 +148,7 @@ class CatalogContent extends React.Component<Props, CatalogContentState> {
         });
         return Promise.all(promises);
       })
-      .then(categories =>
-        this.setState({ categories: { items: categories, loading: false } }),
-      )
+      .then(categories => this.setState({ categories: { items: categories, loading: false } }))
       .catch(err => this.handleError(err));
   };
 
@@ -177,11 +167,7 @@ class CatalogContent extends React.Component<Props, CatalogContentState> {
     });
   };
 
-  fetchSubCategories = (
-    datamartId: string,
-    catalogToken: string,
-    categoryId: string,
-  ) => {
+  fetchSubCategories = (datamartId: string, catalogToken: string, categoryId: string) => {
     this.setState(
       {
         categories: {
@@ -200,11 +186,7 @@ class CatalogContent extends React.Component<Props, CatalogContentState> {
           .then(res => {
             const promises = res.map(category => {
               return this._libraryCatalogService
-                .getCatalogSubCategories(
-                  datamartId,
-                  catalogToken,
-                  category.category_id,
-                )
+                .getCatalogSubCategories(datamartId, catalogToken, category.category_id)
                 .then(r => r.data)
                 .then(r => {
                   return { ...category, hasSubCategory: r.length > 0 };
@@ -213,11 +195,7 @@ class CatalogContent extends React.Component<Props, CatalogContentState> {
                   return r.hasSubCategory
                     ? { ...r, hasItems: false, subItems: [] }
                     : this._libraryCatalogService
-                        .getCatalogCategoryItems(
-                          datamartId,
-                          catalogToken,
-                          category.category_id,
-                        )
+                        .getCatalogCategoryItems(datamartId, catalogToken, category.category_id)
                         .then(i => i.data)
                         .then(i => {
                           return { ...r, hasItems: i.length > 0, subItems: i };
@@ -278,28 +256,18 @@ class CatalogContent extends React.Component<Props, CatalogContentState> {
     const { datamart } = this.props;
 
     const onHomeClick = () => {
-      this.setState(
-        { path: [], categories: { items: [], loading: true } },
-        () => {
-          if (this.state.catalogs.selectedId) {
-            this.fetchInitialCategories(
-              datamart.id,
-              this.state.catalogs.selectedId,
-            );
-          }
-        },
-      );
+      this.setState({ path: [], categories: { items: [], loading: true } }, () => {
+        if (this.state.catalogs.selectedId) {
+          this.fetchInitialCategories(datamart.id, this.state.catalogs.selectedId);
+        }
+      });
     };
     const onCategoryClick = (item: Category) => () => {
       const newPath = [...this.state.path];
       const index = newPath.findIndex(i => i.category_id === item.category_id);
       this.setState({ path: newPath.slice(0, index + 1) }, () => {
         if (this.state.catalogs.selectedId) {
-          this.fetchSubCategories(
-            datamart.id,
-            this.state.catalogs.selectedId,
-            item.category_id,
-          );
+          this.fetchSubCategories(datamart.id, this.state.catalogs.selectedId, item.category_id);
         }
       });
     };
@@ -317,9 +285,7 @@ class CatalogContent extends React.Component<Props, CatalogContentState> {
               {i === this.state.path.length - 1 ? (
                 item.category_id
               ) : (
-                <Button onClick={onCategoryClick(item)}>
-                  {item.category_id}
-                </Button>
+                <Button onClick={onCategoryClick(item)}>{item.category_id}</Button>
               )}
             </Breadcrumb.Item>
           );
@@ -383,8 +349,8 @@ class CatalogContent extends React.Component<Props, CatalogContentState> {
                 render: (text, record) => {
                   if (record.hasSubCategory) {
                     return (
-                      <div className="float-right">
-                        <McsIcon type="chevron-right" />
+                      <div className='float-right'>
+                        <McsIcon type='chevron-right' />
                       </div>
                     );
                   }
@@ -394,10 +360,8 @@ class CatalogContent extends React.Component<Props, CatalogContentState> {
             ]}
             onRow={handleOnRow}
             rowClassName={getRowClassName}
-            rowKey="category_id"
-            loading={
-              this.state.catalogs.loading || this.state.categories.loading
-            }
+            rowKey='category_id'
+            loading={this.state.catalogs.loading || this.state.categories.loading}
             dataSource={this.state.categories.items}
             expandedRowRender={this.renderEmbededView}
             pagination={{

@@ -35,11 +35,7 @@ import { TYPES } from '../../../constants/types';
 import { IRuntimeSchemaService } from '../../../services/RuntimeSchemaService';
 import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/RuntimeSchema';
 import { QueryDocument as GraphDbQueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
-import {
-  McsIcon,
-  Button,
-  Loading,
-} from '@mediarithmics-private/mcs-components-library';
+import { McsIcon, Button, Loading } from '@mediarithmics-private/mcs-components-library';
 import { IAudienceFeatureService } from '../../../services/AudienceFeatureService';
 import { IAudienceBuilderQueryService } from './AudienceBuilderQueryService';
 import { AudienceFeatureResource } from '../../../models/audienceFeature';
@@ -54,9 +50,7 @@ import NewAudienceFeatureSelector, {
   NewAudienceFeatureSelectorProps,
 } from './QueryFragmentBuilders/NewAudienceFeatureSelector';
 
-import injectDrawer, {
-  InjectedDrawerProps,
-} from '../../../components/Drawer/injectDrawer';
+import injectDrawer, { InjectedDrawerProps } from '../../../components/Drawer/injectDrawer';
 
 export const QueryFragmentFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
@@ -76,10 +70,7 @@ interface MapStateToProps {
   formValues: NewAudienceBuilderFormData;
 }
 
-type Props = InjectedFormProps<
-  NewAudienceBuilderFormData,
-  NewAudienceBuilderContainerProps
-> &
+type Props = InjectedFormProps<NewAudienceBuilderFormData, NewAudienceBuilderContainerProps> &
   MapStateToProps &
   NewAudienceBuilderContainerProps &
   InjectedNotificationProps &
@@ -128,43 +119,35 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
 
     this.runQuery();
 
-    this._runtimeSchemaService
-      .getRuntimeSchemas(audienceBuilder.datamart_id)
-      .then((schemaRes) => {
-        const liveSchema = schemaRes.data.find((s) => s.status === 'LIVE');
-        if (!liveSchema) return;
-        return this._runtimeSchemaService
-          .getObjectTypeInfoResources(
-            audienceBuilder.datamart_id,
-            liveSchema.id,
-          )
-          .then((objectTypes) => {
-            this.setState({
-              objectTypes: objectTypes,
-              isLoadingObjectTypes: false,
-            });
+    this._runtimeSchemaService.getRuntimeSchemas(audienceBuilder.datamart_id).then(schemaRes => {
+      const liveSchema = schemaRes.data.find(s => s.status === 'LIVE');
+      if (!liveSchema) return;
+      return this._runtimeSchemaService
+        .getObjectTypeInfoResources(audienceBuilder.datamart_id, liveSchema.id)
+        .then(objectTypes => {
+          this.setState({
+            objectTypes: objectTypes,
+            isLoadingObjectTypes: false,
           });
-      });
+        });
+    });
 
     const audienceFeatureIds: string[] = [];
 
-    formValues.include.concat(formValues.exclude).forEach((group) => {
-      group.expressions.forEach((exp) => {
+    formValues.include.concat(formValues.exclude).forEach(group => {
+      group.expressions.forEach(exp => {
         if (isAudienceBuilderParametricPredicateNode(exp)) {
           audienceFeatureIds.push(exp.parametric_predicate_id);
         }
       });
     });
 
-    const promises = audienceFeatureIds.map((id) => {
-      return this._audienceFeatureService.getAudienceFeature(
-        audienceBuilder.datamart_id,
-        id,
-      );
+    const promises = audienceFeatureIds.map(id => {
+      return this._audienceFeatureService.getAudienceFeature(audienceBuilder.datamart_id, id);
     });
 
-    Promise.all(promises).then((res) => {
-      const audienceFeatures = res.map((r) => r.data);
+    Promise.all(promises).then(res => {
+      const audienceFeatures = res.map(r => r.data);
       this.setState({
         audienceFeatures,
       });
@@ -189,9 +172,7 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
 
     // TODO Remove `as any` hack
     // AudienceBuilderQueryDocument and GraphDBQueryDocument could inherit from the same abstraction.
-    const queryDocument = this._audienceBuilderQueryService.buildQueryDocument(
-      formValues,
-    ) as any;
+    const queryDocument = this._audienceBuilderQueryService.buildQueryDocument(formValues) as any;
 
     this.setState({
       isQueryRunning: true,
@@ -231,9 +212,9 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
     change(groupsLocation, groups.concat(newGroup));
   };
 
-  private addToNewGroup = (
-    save: (_: AudienceBuilderParametricPredicateGroupNode) => void,
-  ) => (predicate: AudienceBuilderParametricPredicateNode) => {
+  private addToNewGroup = (save: (_: AudienceBuilderParametricPredicateGroupNode) => void) => (
+    predicate: AudienceBuilderParametricPredicateNode,
+  ) => {
     const newGroup: AudienceBuilderParametricPredicateGroupNode = {
       expressions: [predicate],
     };
@@ -252,7 +233,7 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
       const parameters: { [key: string]: string[] | undefined } = {};
 
       if (audienceFeature.variables) {
-        audienceFeature.variables.forEach((v) => {
+        audienceFeature.variables.forEach(v => {
           parameters[v.field_name] = undefined;
         });
       }
@@ -270,18 +251,14 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
 
       // TODO put in processPredicate ?
       this.setState({
-        audienceFeatures: this.state.audienceFeatures?.concat(
-          audienceFeatures[0],
-        ),
+        audienceFeatures: this.state.audienceFeatures?.concat(audienceFeatures[0]),
       });
 
       closeNextDrawer();
     }
   };
 
-  private selectNewAudienceFeature = (
-    onSelect: (_: AudienceFeatureResource[]) => void,
-  ) => {
+  private selectNewAudienceFeature = (onSelect: (_: AudienceFeatureResource[]) => void) => {
     const { openNextDrawer, audienceBuilder, hasFeature } = this.props;
 
     const props: AudienceFeatureSelectorProps = {
@@ -295,12 +272,9 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
     };
 
     hasFeature('new-audienceFeatureSelector')
-      ? openNextDrawer<NewAudienceFeatureSelectorProps>(
-          NewAudienceFeatureSelector,
-          {
-            additionalProps: props,
-          },
-        )
+      ? openNextDrawer<NewAudienceFeatureSelectorProps>(NewAudienceFeatureSelector, {
+          additionalProps: props,
+        })
       : openNextDrawer<AudienceFeatureSelectorProps>(AudienceFeatureSelector, {
           additionalProps: props,
         });
@@ -329,9 +303,9 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
     const { formValues, intl } = this.props;
 
     return (
-      <div className="mcs-audienceBuilder_timelineButtons">
+      <div className='mcs-audienceBuilder_timelineButtons'>
         <Button
-          className="mcs-timelineButton_left"
+          className='mcs-timelineButton_left'
           onClick={this.selectAndAddFeature(
             this.addToNewGroup(this.saveGroup(formValues.include, 'include')),
           )}
@@ -343,11 +317,9 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
           <span>
             /
             <Button
-              className="mcs-timelineButton_right"
+              className='mcs-timelineButton_right'
               onClick={this.selectAndAddFeature(
-                this.addToNewGroup(
-                  this.saveGroup(formValues.exclude, 'exclude'),
-                ),
+                this.addToNewGroup(this.saveGroup(formValues.exclude, 'exclude')),
               )}
             >
               {intl.formatMessage(messages.audienceBuilderExclude)}
@@ -436,7 +408,7 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
     const queryFragmentForm = !isLoadingObjectTypes ? (
       this.renderQueryFragmentForm()
     ) : (
-      <Loading className="m-t-40" isFullScreen={true} />
+      <Loading className='m-t-40' isFullScreen={true} />
     );
 
     return (
@@ -445,28 +417,22 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
           {
             operations: [{ directives: [], selections: [{ name: 'id' }] }],
             from: 'UserPoint',
-            where: this._audienceBuilderQueryService.buildQueryDocument(
-              formValues,
-            )?.where,
+            where: this._audienceBuilderQueryService.buildQueryDocument(formValues)?.where,
           },
           audienceBuilder.datamart_id,
         )}
 
         <Layout>
-          <Row className="ant-layout-content mcs-audienceBuilder_container">
+          <Row className='ant-layout-content mcs-audienceBuilder_container'>
             <Col span={isDashboardToggled ? 1 : 12}>
-              <div
-                className={`${
-                  isDashboardToggled && 'mcs-audienceBuilder_hiddenForm'
-                }`}
-              >
+              <div className={`${isDashboardToggled && 'mcs-audienceBuilder_hiddenForm'}`}>
                 {queryFragmentForm}
               </div>
             </Col>
 
             <Col
               span={isDashboardToggled ? 23 : 12}
-              className="mcs-audienceBuilder_liveDashboardContainer"
+              className='mcs-audienceBuilder_liveDashboardContainer'
             >
               <Button
                 className={`mcs-audienceBuilder_sizeButton ${
@@ -474,13 +440,13 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
                 }`}
                 onClick={this.toggleDashboard}
               >
-                <McsIcon type="chevron-right" />
+                <McsIcon type='chevron-right' />
               </Button>
               {!!isMaskVisible && (
-                <div className="mcs-audienceBuilder_liveDashboardMask">
+                <div className='mcs-audienceBuilder_liveDashboardMask'>
                   <Button
                     onClick={this.runQuery}
-                    className="mcs-audienceBuilder_dashboard_refresh_button"
+                    className='mcs-audienceBuilder_dashboard_refresh_button'
                   >
                     {intl.formatMessage(messages.refreshMessage)}
                   </Button>

@@ -4,8 +4,7 @@ import PluginInstanceService from '../PluginInstanceService';
 import { PluginLayout } from '../../models/plugin/PluginLayout';
 import { injectable } from 'inversify';
 
-export interface IRecommenderService
-  extends PluginInstanceService<Recommender> {
+export interface IRecommenderService extends PluginInstanceService<Recommender> {
   getRecommenders: (
     organisationId: string,
     options: object,
@@ -15,31 +14,24 @@ export interface IRecommenderService
     options: object,
   ) => Promise<DataListResponse<PluginProperty>>;
   deleteRecommender: (id: string) => Promise<DataResponse<Recommender>>;
-  getRecommender: (
-    id: string,
-    options: object,
-  ) => Promise<DataResponse<Recommender>>;
+  getRecommender: (id: string, options: object) => Promise<DataResponse<Recommender>>;
   createRecommender: (
     organisationId: string,
     options: object,
   ) => Promise<DataResponse<Recommender>>;
-  updateRecommender: (
-    id: string,
-    options: object,
-  ) => Promise<DataResponse<Recommender>>;
+  updateRecommender: (id: string, options: object) => Promise<DataResponse<Recommender>>;
   updateRecommenderProperty: (
     organisationId: string,
     id: string,
     technicalName: string,
     params: object,
   ) => Promise<DataResponse<PluginProperty> | void>;
-  getLocalizedPluginLayout: (
-    pInstanceId: string,
-  ) => Promise<PluginLayout | null>;
+  getLocalizedPluginLayout: (pInstanceId: string) => Promise<PluginLayout | null>;
 }
 
 @injectable()
-export class RecommenderService extends PluginInstanceService<Recommender>
+export class RecommenderService
+  extends PluginInstanceService<Recommender>
   implements IRecommenderService {
   constructor() {
     super('recommenders');
@@ -73,10 +65,7 @@ export class RecommenderService extends PluginInstanceService<Recommender>
     return ApiService.deleteRequest(endpoint);
   }
 
-  getRecommender(
-    id: string,
-    options: object = {},
-  ): Promise<DataResponse<Recommender>> {
+  getRecommender(id: string, options: object = {}): Promise<DataResponse<Recommender>> {
     const endpoint = `recommenders/${id}`;
 
     const params = {
@@ -98,10 +87,7 @@ export class RecommenderService extends PluginInstanceService<Recommender>
     return ApiService.postRequest(endpoint, params);
   }
 
-  updateRecommender(
-    id: string,
-    options: object = {},
-  ): Promise<DataResponse<Recommender>> {
+  updateRecommender(id: string, options: object = {}): Promise<DataResponse<Recommender>> {
     const endpoint = `recommenders/${id}`;
 
     const params = {

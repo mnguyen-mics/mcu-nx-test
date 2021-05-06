@@ -3,44 +3,36 @@ import { AudienceTagFeed } from '../models/Plugins';
 import { PluginLayout } from '../models/plugin/PluginLayout';
 import { PropertyResourceShape } from '../models/plugin';
 import AudienceSegmentFeedService, { GetFeeds } from './AudienceSegmentFeedService';
-import { FeedAggregationResponse, FeedAggregationRequest } from '../models/audiencesegment/AudienceFeedsAggregation';
+import {
+  FeedAggregationResponse,
+  FeedAggregationRequest,
+} from '../models/audiencesegment/AudienceFeedsAggregation';
 import { injectable } from 'inversify';
 
 export interface IAudienceTagFeedService {
   segmentId: string;
 
-  getFeeds: (
-    options: GetFeeds
-  ) => Promise<DataListResponse<AudienceTagFeed>>;
+  getFeeds: (options: GetFeeds) => Promise<DataListResponse<AudienceTagFeed>>;
 
   getFeedsAggregationMetrics: (
     body: FeedAggregationRequest,
   ) => Promise<DataResponse<FeedAggregationResponse>>;
-  
+
   getAudienceFeeds: (
     organisationId: string,
     options: object,
   ) => Promise<DataListResponse<AudienceTagFeed>>;
 
-  deleteAudienceFeed: (
-    id: string,
-    options: object,
-  ) => Promise<DataResponse<any>>;
+  deleteAudienceFeed: (id: string, options: object) => Promise<DataResponse<any>>;
 
-  getInstanceById: (
-    id: string,
-    options: object,
-  ) => Promise<DataResponse<AudienceTagFeed>>;
+  getInstanceById: (id: string, options: object) => Promise<DataResponse<AudienceTagFeed>>;
 
   getInstanceProperties: (
     id: string,
     options: object,
   ) => Promise<DataListResponse<PropertyResourceShape>>;
 
-  updatePluginInstance: (
-    id: string,
-    options: object,
-  ) => Promise<DataResponse<AudienceTagFeed>>;
+  updatePluginInstance: (id: string, options: object) => Promise<DataResponse<AudienceTagFeed>>;
 
   updatePluginInstanceProperty: (
     organisationId: string,
@@ -59,7 +51,6 @@ export interface IAudienceTagFeedService {
 export class AudienceTagFeedService
   extends AudienceSegmentFeedService<AudienceTagFeed>
   implements IAudienceTagFeedService {
-
   getFeeds(options: GetFeeds): Promise<DataListResponse<AudienceTagFeed>> {
     const endpoint = 'audience_segments.tag_feeds';
     return ApiService.getRequest(endpoint, options);
@@ -68,10 +59,10 @@ export class AudienceTagFeedService
   getFeedsAggregationMetrics = (
     body: FeedAggregationRequest,
   ): Promise<DataResponse<FeedAggregationResponse>> => {
-    const endpoint = `audience_segments.tag_feeds/aggregates`
+    const endpoint = `audience_segments.tag_feeds/aggregates`;
 
-    return ApiService.postRequest(endpoint, body)
-  }
+    return ApiService.postRequest(endpoint, body);
+  };
 
   getAudienceFeeds(
     organisationId: string,
@@ -88,10 +79,7 @@ export class AudienceTagFeedService
     return ApiService.getRequest(endpoint, params);
   }
 
-  deleteAudienceFeed(
-    id: string,
-    options: object = {},
-  ): Promise<DataResponse<any>> {
+  deleteAudienceFeed(id: string, options: object = {}): Promise<DataResponse<any>> {
     const endpoint = `audience_segments/${this.segmentId}/tag_feeds/${id}`;
 
     return ApiService.deleteRequest(endpoint, options);
@@ -99,10 +87,7 @@ export class AudienceTagFeedService
 
   // START reimplementation of method
 
-  getInstanceById = (
-    id: string,
-    options: object = {},
-  ): Promise<DataResponse<AudienceTagFeed>> => {
+  getInstanceById = (id: string, options: object = {}): Promise<DataResponse<AudienceTagFeed>> => {
     const endpoint = `audience_segments/${this.segmentId}/tag_feeds/${id}`;
 
     const params = {

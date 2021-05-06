@@ -19,12 +19,8 @@ import {
   McsIcon,
 } from '@mediarithmics-private/mcs-components-library';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
-import injectDrawer, {
-  InjectedDrawerProps,
-} from '../../../components/Drawer/injectDrawer';
-import AutomationScenarioTest, {
-  AutomationScenarioTestProps,
-} from './Test/AutomationScenarioTest';
+import injectDrawer, { InjectedDrawerProps } from '../../../components/Drawer/injectDrawer';
+import AutomationScenarioTest, { AutomationScenarioTestProps } from './Test/AutomationScenarioTest';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import {
@@ -99,8 +95,7 @@ class AutomationDashboardPage extends React.Component<Props, State> {
     } = this.props;
 
     const filter = parseSearch(search, DATE_SEARCH_SETTINGS);
-    const hasDateRangeFilter: boolean =
-      !!filter.from.value && !!filter.to.value;
+    const hasDateRangeFilter: boolean = !!filter.from.value && !!filter.to.value;
 
     this.loadData(!!automationId, !hasDateRangeFilter, !!automationId);
   }
@@ -129,15 +124,10 @@ class AutomationDashboardPage extends React.Component<Props, State> {
       } else {
         const hasAutomationIdChanged = automationId !== previousAutomationId;
         const filter = parseSearch(search, DATE_SEARCH_SETTINGS);
-        const hasDateRangeFilter: boolean =
-          !!filter.from.value && !!filter.to.value;
+        const hasDateRangeFilter: boolean = !!filter.from.value && !!filter.to.value;
         const hasSearchBeenModified = search !== previousSearch;
 
-        this.loadData(
-          hasAutomationIdChanged,
-          !hasDateRangeFilter,
-          hasSearchBeenModified,
-        );
+        this.loadData(hasAutomationIdChanged, !hasDateRangeFilter, hasSearchBeenModified);
       }
     }
   }
@@ -148,11 +138,7 @@ class AutomationDashboardPage extends React.Component<Props, State> {
     needToGetCountersAnalytics: boolean,
   ) => {
     const { hasFeature } = this.props;
-    if (
-      needToLoadAutomationValues ||
-      needToUpdateLocationSearch ||
-      needToGetCountersAnalytics
-    ) {
+    if (needToLoadAutomationValues || needToUpdateLocationSearch || needToGetCountersAnalytics) {
       const {
         match: {
           params: { automationId },
@@ -179,25 +165,16 @@ class AutomationDashboardPage extends React.Component<Props, State> {
         },
         () => {
           const loadAutomationValuesP = needToLoadAutomationValues
-            ? this._automationFormService.loadInitialAutomationValues(
-                automationId,
-              )
+            ? this._automationFormService.loadInitialAutomationValues(automationId)
             : Promise.resolve(automationFormData);
 
           loadAutomationValuesP
             .then((partialAutomationFormData: Partial<AutomationFormData>) => {
-              const datamartIdOpt =
-                partialAutomationFormData.automation?.datamart_id;
-              const exitConditionIdOpt =
-                partialAutomationFormData.exitCondition?.id;
+              const datamartIdOpt = partialAutomationFormData.automation?.datamart_id;
+              const exitConditionIdOpt = partialAutomationFormData.exitCondition?.id;
 
-              const nodeCountersAnalyticsP: Promise<
-                ScenarioCountersData | undefined
-              > =
-                shouldUpdateCountersAnalytics &&
-                datamartIdOpt &&
-                filter.from &&
-                filter.to
+              const nodeCountersAnalyticsP: Promise<ScenarioCountersData | undefined> =
+                shouldUpdateCountersAnalytics && datamartIdOpt && filter.from && filter.to
                   ? this._scenarioAnalyticsService.getNodeCountersAnalytics(
                       datamartIdOpt,
                       automationId,
@@ -208,7 +185,7 @@ class AutomationDashboardPage extends React.Component<Props, State> {
                   : Promise.resolve(undefined);
 
               nodeCountersAnalyticsP
-                .then((scenarioCountersDataOpt) => {
+                .then(scenarioCountersDataOpt => {
                   this.setState({
                     isLoading: false,
                     isLoadingScenarioCountersData: false,
@@ -216,7 +193,7 @@ class AutomationDashboardPage extends React.Component<Props, State> {
                     scenarioCountersData: scenarioCountersDataOpt,
                   });
                 })
-                .catch((err) => {
+                .catch(err => {
                   notifyError(err);
                   this.setState({
                     isLoading: false,
@@ -226,7 +203,7 @@ class AutomationDashboardPage extends React.Component<Props, State> {
                   });
                 });
             })
-            .catch((err) => {
+            .catch(err => {
               notifyError(err);
               this.setState({
                 isLoading: false,
@@ -249,14 +226,14 @@ class AutomationDashboardPage extends React.Component<Props, State> {
       case 'ACTIVE':
         return (
           <span>
-            <McsIcon type="pause" /> Pause
+            <McsIcon type='pause' /> Pause
           </span>
         );
       case 'NEW':
       case 'PAUSED':
         return (
           <span>
-            <McsIcon type="play" /> Activate
+            <McsIcon type='play' /> Activate
           </span>
         );
     }
@@ -271,17 +248,15 @@ class AutomationDashboardPage extends React.Component<Props, State> {
     };
 
     this.setState({ updating: true });
-    return this._scenarioService
-      .updateScenario(automationId, payload)
-      .then((r) =>
-        this.setState({
-          automationFormData: {
-            ...this.state.automationFormData,
-            automation: r.data,
-          },
-          updating: false,
-        }),
-      );
+    return this._scenarioService.updateScenario(automationId, payload).then(r =>
+      this.setState({
+        automationFormData: {
+          ...this.state.automationFormData,
+          automation: r.data,
+        },
+        updating: false,
+      }),
+    );
   };
 
   onEditClick = () => {
@@ -355,31 +330,21 @@ class AutomationDashboardPage extends React.Component<Props, State> {
       intl: { formatMessage },
       hasFeature,
     } = this.props;
-    const {
-      automationFormData,
-      isLoading,
-      updating,
-      scenarioCountersData,
-    } = this.state;
+    const { automationFormData, isLoading, updating, scenarioCountersData } = this.state;
 
     if (isLoading) {
       return <Loading isFullScreen={true} />;
     }
 
-    if (
-      !automationFormData.automation ||
-      !automationFormData.automationTreeData
-    ) {
+    if (!automationFormData.automation || !automationFormData.automationTreeData) {
       return 'this automation does not seem to exist!';
     }
 
     const breadCrumbPaths: React.ReactNode[] = [
-      <Link key="1" to={`/v2/o/${organisationId}/automations`}>
+      <Link key='1' to={`/v2/o/${organisationId}/automations`}>
         Automations
       </Link>,
-      automationFormData.automation.name
-        ? automationFormData.automation.name
-        : '',
+      automationFormData.automation.name ? automationFormData.automation.name : '',
     ];
 
     const automationStatus = automationFormData.automation.status;
@@ -392,10 +357,7 @@ class AutomationDashboardPage extends React.Component<Props, State> {
       datamartId &&
       nodeId &&
       hasFeature('automations-test-scenario') ? (
-        <Button
-          onClick={this.onTestClick(datamartId, nodeId)}
-          disabled={isLoading}
-        >
+        <Button onClick={this.onTestClick(datamartId, nodeId)} disabled={isLoading}>
           <McsIcon type={'gears'} />
           {formatMessage(messages.testTitle)}
         </Button>
@@ -404,7 +366,7 @@ class AutomationDashboardPage extends React.Component<Props, State> {
     const displayDateRange = hasFeature('automations-analytics');
 
     return (
-      <Layout className="mcs-automationDashboardPage">
+      <Layout className='mcs-automationDashboardPage'>
         <Actionbar pathItems={breadCrumbPaths}>
           {automationFormData.automation &&
           automationFormData.automation.status &&
@@ -415,13 +377,10 @@ class AutomationDashboardPage extends React.Component<Props, State> {
                 automationFormData.automation.status,
               )}
               className={'mcs-primary'}
-              type="primary"
+              type='primary'
             >
               {updating ? (
-                <i
-                  className="mcs-table-cell-loading"
-                  style={{ minWidth: 50 }}
-                />
+                <i className='mcs-table-cell-loading' style={{ minWidth: 50 }} />
               ) : (
                 this.renderStatus(automationFormData.automation.status)
               )}
@@ -432,10 +391,7 @@ class AutomationDashboardPage extends React.Component<Props, State> {
           </Button>
           {testButton}
           {displayDateRange && (
-            <span
-              className="mcs-automationDashboardPage_actionBar_dateRange_label"
-              key="label"
-            >
+            <span className='mcs-automationDashboardPage_actionBar_dateRange_label' key='label'>
               {formatMessage(messages.timeWindowLabel)}
             </span>
           )}

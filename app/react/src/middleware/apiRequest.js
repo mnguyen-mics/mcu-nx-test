@@ -1,17 +1,26 @@
-
 import ApiService from '../services/ApiService.ts';
 
 export const CALL_API = Symbol('Call Api');
 
 export default store => next => action => {
-
   const callAPI = action[CALL_API];
 
   if (typeof callAPI === 'undefined') {
     return next(action);
   }
 
-  const { method, endpoint, params, headers, body, types, authenticated, adminApi, localUrl, others = {} } = callAPI;
+  const {
+    method,
+    endpoint,
+    params,
+    headers,
+    body,
+    types,
+    authenticated,
+    adminApi,
+    localUrl,
+    others = {},
+  } = callAPI;
   const [requestType, failureType, successType] = types;
   const { dispatch } = store;
   const options = {
@@ -19,7 +28,7 @@ export default store => next => action => {
     localUrl,
   };
 
-  const onRequest = (type) => {
+  const onRequest = type => {
     return {
       type,
       others,
@@ -52,5 +61,4 @@ export default store => next => action => {
       dispatch(onRequestFailure(failureType, error));
       return Promise.reject(error);
     });
-
 };

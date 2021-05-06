@@ -25,15 +25,11 @@ import { Omit } from '../../../../utils/Types';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../components/Layout/FormLayoutActionbar';
-import ScrollspySider, {
-  SidebarWrapperProps,
-} from '../../../../components/Layout/ScrollspySider';
+import ScrollspySider, { SidebarWrapperProps } from '../../../../components/Layout/ScrollspySider';
 import { ReduxFormChangeProps } from '../../../../utils/FormHelper';
 import { DatamartResource } from '../../../../models/datamart/DatamartResource';
 
-const Content = Layout.Content as unknown as React.ComponentClass<
-  BasicProps & { id: string }
->;
+const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
 
 const AttributionModelFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
@@ -47,20 +43,13 @@ export interface GoalFormProps extends Omit<ConfigProps<GoalFormData>, 'form'> {
   goToTriggerTypeSelection?: () => void;
 }
 
-type Props = InjectedFormProps<GoalFormData, GoalFormProps> &
-  GoalFormProps &
-  InjectedIntlProps;
+type Props = InjectedFormProps<GoalFormData, GoalFormProps> & GoalFormProps & InjectedIntlProps;
 
 export const FORM_ID = 'goalForm';
 
 class GoalForm extends React.Component<Props> {
   render() {
-    const {
-      breadCrumbPaths,
-      handleSubmit,
-      close,
-      goToTriggerTypeSelection,
-    } = this.props;
+    const { breadCrumbPaths, handleSubmit, close, goToTriggerTypeSelection } = this.props;
 
     const sections = {
       general: {
@@ -103,20 +92,14 @@ class GoalForm extends React.Component<Props> {
     }
 
     return (
-      <Layout className="edit-layout">
+      <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
           <ScrollspySider {...sideBarProps} />
-          <Form
-            className="edit-layout ant-layout"
-            onSubmit={handleSubmit as any}
-          >
+          <Form className='edit-layout ant-layout' onSubmit={handleSubmit as any}>
             {/* this button enables submit on enter */}
-            <button type="submit" style={{ display: 'none' }} />
-            <Content
-              id={FORM_ID}
-              className="mcs-content-container mcs-form-container"
-            >
+            <button type='submit' style={{ display: 'none' }} />
+            <Content id={FORM_ID} className='mcs-content-container mcs-form-container'>
               <div id={sections.general.sectionId}>
                 <GeneralFormSection />
               </div>
@@ -138,7 +121,7 @@ class GoalForm extends React.Component<Props> {
               <hr />
               <div id={sections.attribution_models.sectionId}>
                 <AttributionModelFieldArray
-                  name="attributionModels"
+                  name='attributionModels'
                   component={AttributionModelFormSection}
                   formChange={this.props.change}
                   rerenderOnEveryChange={true}

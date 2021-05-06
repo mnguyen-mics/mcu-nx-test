@@ -11,20 +11,13 @@ type Props = RouteComponentProps<{ organisationId: string; datamartId: string }>
   InjectedIntlProps;
 
 class DatamartActionBar extends React.Component<Props> {
-
   onEditClick = () => {
     const {
       match: {
-        params: {
-          organisationId,
-          datamartId,
-        },
+        params: { organisationId, datamartId },
       },
       history,
-      location: {
-        pathname,
-        search
-      }
+      location: { pathname, search },
     } = this.props;
 
     const editUrl = `/v2/o/${organisationId}/settings/datamart/datamarts/${datamartId}/edit`;
@@ -32,8 +25,8 @@ class DatamartActionBar extends React.Component<Props> {
     history.push({
       pathname: editUrl,
       state: {
-        from: `${pathname}${search}`
-      }
+        from: `${pathname}${search}`,
+      },
     });
   };
 
@@ -46,21 +39,20 @@ class DatamartActionBar extends React.Component<Props> {
     } = this.props;
 
     const breadcrumbPaths = [
-      <Link key='1' to={`/v2/o/${organisationId}/settings/datamart/datamarts`} >{formatMessage(messages.datamart)}</Link>
+      <Link key='1' to={`/v2/o/${organisationId}/settings/datamart/datamarts`}>
+        {formatMessage(messages.datamart)}
+      </Link>,
     ];
 
     return (
       <Actionbar pathItems={breadcrumbPaths}>
-        <Button onClick={this.onEditClick} type="primary" className={"mcs-primary"}>
-          <McsIcon type="pen" />
+        <Button onClick={this.onEditClick} type='primary' className={'mcs-primary'}>
+          <McsIcon type='pen' />
           <FormattedMessage {...messages.edit} />
         </Button>
       </Actionbar>
-    )
+    );
   }
 }
 
-export default compose<Props, {}>(
-  withRouter,
-  injectIntl,
-)(DatamartActionBar);
+export default compose<Props, {}>(withRouter, injectIntl)(DatamartActionBar);

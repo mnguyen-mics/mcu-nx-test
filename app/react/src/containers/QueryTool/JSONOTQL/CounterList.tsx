@@ -15,10 +15,7 @@ export interface CounterListProps {
   hideCounterAndTimeline?: boolean;
 }
 
-export default class CounterList extends React.Component<
-  CounterListProps,
-  any
-> {
+export default class CounterList extends React.Component<CounterListProps, any> {
   generateWidth = () => {
     const { queryResults } = this.props;
     if (queryResults.length === 1) {
@@ -41,9 +38,7 @@ export default class CounterList extends React.Component<
     if (queryResults.length === 0) {
       return null;
     }
-    const style: React.CSSProperties = editionLayout
-      ? {}
-      : { position: 'relative', height: 0 };
+    const style: React.CSSProperties = editionLayout ? {} : { position: 'relative', height: 0 };
 
     const timelineSelector = !hideCounterAndTimeline && (
       <TimelineSelector
@@ -63,21 +58,17 @@ export default class CounterList extends React.Component<
             left: 0,
             zIndex: 10000,
             display: 'inline-block',
-            width:
-              queryResults.length <= 5
-                ? `${20 * queryResults.length}%`
-                : '100%',
+            width: queryResults.length <= 5 ? `${20 * queryResults.length}%` : '100%',
             cursor: 'auto',
           }}
         >
           {queryResults.map((v, i) => {
             const value = v.otqlResult ? v.otqlResult.rows[0].count : undefined;
-            const error =
-              v.error || (v.otqlResult ? v.otqlResult.timed_out : undefined);
+            const error = v.error || (v.otqlResult ? v.otqlResult.timed_out : undefined);
             return (
               <Counter
                 key={i}
-                name="UserPoint"
+                name='UserPoint'
                 value={value}
                 loading={v.loading}
                 stale={staleQueryResult}

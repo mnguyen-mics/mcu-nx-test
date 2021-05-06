@@ -11,11 +11,7 @@ import { normalizeArrayOfObject } from '../utils/Normalizer';
 import { normalizeReportView } from '../utils/MetricHelper';
 import McsMoment from '../utils/McsMoment';
 import { PaginatedApiParam } from '../utils/ApiHelper';
-import {
-  PluginProperty,
-  AudienceExternalFeed,
-  AudienceTagFeed,
-} from '../models/Plugins';
+import { PluginProperty, AudienceExternalFeed, AudienceTagFeed } from '../models/Plugins';
 
 import { IPluginService } from './PluginService';
 import { BaseExecutionResource } from '../models/Job/JobResource';
@@ -39,10 +35,7 @@ export interface ExportUserIdentifier {
   compartment_id?: string;
 }
 
-export type AudienceSegmentExportJobIdentifierType =
-  | 'USER_ACCOUNT'
-  | 'USER_EMAIL'
-  | 'USER_AGENT';
+export type AudienceSegmentExportJobIdentifierType = 'USER_ACCOUNT' | 'USER_EMAIL' | 'USER_AGENT';
 
 export type AudienceSegmentExportJobResultMimeType = 'TEXT_CSV';
 
@@ -86,9 +79,7 @@ export interface IAudienceSegmentService {
     options?: GetSegmentsOption,
   ) => Promise<DataListResponse<AudienceSegmentShape>>;
 
-  getSegment: (
-    segmentId: string,
-  ) => Promise<DataResponse<AudienceSegmentShape>>;
+  getSegment: (segmentId: string) => Promise<DataResponse<AudienceSegmentShape>>;
 
   updateAudienceSegment: (
     segmentId: string,
@@ -150,10 +141,7 @@ export interface IAudienceSegmentService {
   getSegmentMetaData: (organisationId: string) => Promise<any>;
 
   // DEPRECATED, will be removed in a near future
-  getSegmentsWithMetadata: (
-    organisationId: string,
-    options: GetSegmentsOption,
-  ) => Promise<any>;
+  getSegmentsWithMetadata: (organisationId: string, options: GetSegmentsOption) => Promise<any>;
 
   createAudienceSegment: (
     organisationId: string,
@@ -235,9 +223,7 @@ export interface IAudienceSegmentService {
     technicalName: string,
     params: object,
   ) => Promise<DataResponse<PluginProperty> | void>;
-  recalibrateAudienceLookAlike: (
-    segmentId: string,
-  ) => Promise<DataResponse<void>>;
+  recalibrateAudienceLookAlike: (segmentId: string) => Promise<DataResponse<void>>;
   getProcessingSelectionsByAudienceSegment: (
     segmentId: string,
   ) => Promise<DataListResponse<ProcessingSelectionResource>>;
@@ -257,7 +243,6 @@ export interface IAudienceSegmentService {
 
 @injectable()
 export default class AudienceSegmentService implements IAudienceSegmentService {
-  
   @inject(TYPES.IPluginService)
   private _pluginService: IPluginService;
 
@@ -273,9 +258,7 @@ export default class AudienceSegmentService implements IAudienceSegmentService {
     return ApiService.getRequest(endpoint, params);
   };
 
-  getSegment = (
-    segmentId: string,
-  ): Promise<DataResponse<AudienceSegmentShape>> => {
+  getSegment = (segmentId: string): Promise<DataResponse<AudienceSegmentShape>> => {
     const endpoint = `audience_segments/${segmentId}`;
     return ApiService.getRequest(endpoint);
   };
@@ -299,15 +282,9 @@ export default class AudienceSegmentService implements IAudienceSegmentService {
   ): Promise<DataResponse<AudienceSegmentShape>> => {
     let createOrUpdatePromise;
     if (audienceSegment.id) {
-      createOrUpdatePromise = this.updateAudienceSegment(
-        audienceSegment.id,
-        audienceSegment,
-      );
+      createOrUpdatePromise = this.updateAudienceSegment(audienceSegment.id, audienceSegment);
     } else {
-      createOrUpdatePromise = this.createAudienceSegment(
-        organisationId,
-        audienceSegment,
-      );
+      createOrUpdatePromise = this.createAudienceSegment(organisationId, audienceSegment);
     }
 
     return createOrUpdatePromise;
@@ -414,10 +391,7 @@ export default class AudienceSegmentService implements IAudienceSegmentService {
       new McsMoment('now'),
       ['audience_segment_id'],
     ).then(res =>
-      normalizeArrayOfObject(
-        normalizeReportView(res.data.report_view),
-        'audience_segment_id',
-      ),
+      normalizeArrayOfObject(normalizeReportView(res.data.report_view), 'audience_segment_id'),
     );
   };
 
@@ -433,8 +407,7 @@ export default class AudienceSegmentService implements IAudienceSegmentService {
       const augmentedSegments = segmentApiResp.data.map((segment: any) => {
         const meta = metadata[segment.id];
         const userPoints = meta && meta.user_points ? meta.user_points : '-';
-        const desktopCookieIds =
-          meta && meta.desktop_cookie_ids ? meta.desktop_cookie_ids : '-';
+        const desktopCookieIds = meta && meta.desktop_cookie_ids ? meta.desktop_cookie_ids : '-';
 
         return {
           ...segment,
@@ -592,9 +565,7 @@ export default class AudienceSegmentService implements IAudienceSegmentService {
     );
   };
 
-  recalibrateAudienceLookAlike = (
-    segmentId: string,
-  ): Promise<DataResponse<void>> => {
+  recalibrateAudienceLookAlike = (segmentId: string): Promise<DataResponse<void>> => {
     const endpoint = `audience_segment_lookalikes/${segmentId}/calibrate`;
     return ApiService.postRequest(endpoint, {});
   };

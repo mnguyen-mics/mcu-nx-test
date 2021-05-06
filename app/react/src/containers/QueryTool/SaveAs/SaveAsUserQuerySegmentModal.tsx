@@ -4,14 +4,14 @@ import { ModalProps } from 'antd/lib/modal';
 import { FormattedMessage } from 'react-intl';
 import { Omit } from '../../../utils/Types';
 import NewUserQuerySegmentSimpleForm, {
-  FORM_ID, NewUserQuerySimpleFormData
+  FORM_ID,
+  NewUserQuerySimpleFormData,
 } from './NewUserQuerySegmentSimpleForm';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { submit as rxfSubmit } from 'redux-form';
 
-export interface SaveAsUserQuerySegmentModalProps
-  extends Omit<ModalProps, 'onOk'> {
+export interface SaveAsUserQuerySegmentModalProps extends Omit<ModalProps, 'onOk'> {
   onOk: (segmentFormData: NewUserQuerySimpleFormData) => void;
 }
 
@@ -30,8 +30,8 @@ class SaveAsUserQuerySegmentModal extends React.Component<Props> {
     };
 
     const handleOnSubmit = (segmentFormData: NewUserQuerySimpleFormData) => {
-      onOk(segmentFormData) 
-    }
+      onOk(segmentFormData);
+    };
 
     return (
       <Modal
@@ -40,17 +40,17 @@ class SaveAsUserQuerySegmentModal extends React.Component<Props> {
         onOk={handleOnOk}
         title={
           <FormattedMessage
-            id="queryTool.queryTool.query-tool-modal-saveas-export"
-            defaultMessage="Save As User Query Segment"
+            id='queryTool.queryTool.query-tool-modal-saveas-export'
+            defaultMessage='Save As User Query Segment'
           />
         }
       >
-        { visible && <NewUserQuerySegmentSimpleForm onSubmit={handleOnSubmit} /> }
+        {visible && <NewUserQuerySegmentSimpleForm onSubmit={handleOnSubmit} />}
       </Modal>
     );
   }
 }
 
-export default compose<Props, SaveAsUserQuerySegmentModalProps>(connect(undefined, { submit: rxfSubmit }))(
-  SaveAsUserQuerySegmentModal,
-);
+export default compose<Props, SaveAsUserQuerySegmentModalProps>(
+  connect(undefined, { submit: rxfSubmit }),
+)(SaveAsUserQuerySegmentModal);

@@ -24,10 +24,7 @@ interface State {
   loading: boolean;
 }
 
-export default class WorldMapChart extends React.Component<
-  WorldMapChartProps,
-  State
-> {
+export default class WorldMapChart extends React.Component<WorldMapChartProps, State> {
   @lazyInject(TYPES.IQueryService)
   private _queryService: IQueryService;
 
@@ -47,10 +44,7 @@ export default class WorldMapChart extends React.Component<
 
   componentDidUpdate(previousProps: WorldMapChartProps) {
     const { queryId, datamartId } = this.props;
-    const {
-      queryId: previousChartQueryId,
-      datamartId: previousDatamartId,
-    } = previousProps;
+    const { queryId: previousChartQueryId, datamartId: previousDatamartId } = previousProps;
 
     if (queryId !== previousChartQueryId || datamartId !== previousDatamartId) {
       this.fetchData(queryId, datamartId);

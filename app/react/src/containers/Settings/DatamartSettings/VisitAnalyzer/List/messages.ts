@@ -40,8 +40,7 @@ export default defineMessages({
   },
   empty: {
     id: 'settings.visitAnalyzer.list.empty',
-    defaultMessage:
-      'There is no Visit Analyzer List created yet! Click on New to get started',
+    defaultMessage: 'There is no Visit Analyzer List created yet! Click on New to get started',
   },
   edit: {
     id: 'settings.visitAnalyzer.list.actionColumn.edit',

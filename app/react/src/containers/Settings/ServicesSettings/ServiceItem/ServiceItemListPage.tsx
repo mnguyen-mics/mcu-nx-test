@@ -26,9 +26,7 @@ import {
   isLinearServiceItemConditionsResource,
 } from '../../../../models/servicemanagement/PublicServiceItemResource';
 import { messages } from '../SubscribedOffers/List/SubscribedOffersListPage';
-import injectThemeColors, {
-  InjectedThemeColorsProps,
-} from '../../../Helpers/injectThemeColors';
+import injectThemeColors, { InjectedThemeColorsProps } from '../../../Helpers/injectThemeColors';
 import ServiceItem from './ServiceItem';
 import { offerType } from '../domain';
 import { ButtonProps } from 'antd/lib/button';
@@ -112,15 +110,8 @@ class ServiceItemListPage extends React.Component<Props, State> {
 
     const serviceItemsPromise =
       offerOwnership === 'subscribed_offer'
-        ? this._catalogService.getSubscribedServiceItems(
-          organisationId,
-          offerId,
-          fetchOptions,
-        )
-        : this._catalogService.getServiceItems(
-          organisationId,
-          fetchServiceItemOptions,
-        );
+        ? this._catalogService.getSubscribedServiceItems(organisationId, offerId, fetchOptions)
+        : this._catalogService.getServiceItems(organisationId, fetchServiceItemOptions);
 
     return serviceItemsPromise
       .then(resp => {
@@ -150,11 +141,7 @@ class ServiceItemListPage extends React.Component<Props, State> {
 
     const serviceItemConditionsPromise =
       offerOwnership === 'subscribed_offer'
-        ? this._catalogService.getSubscribedServiceItemConditions(
-          organisationId,
-          offerId,
-          item.id,
-        )
+        ? this._catalogService.getSubscribedServiceItemConditions(organisationId, offerId, item.id)
         : this._catalogService.getOfferConditions(offerId);
 
     serviceItemConditionsPromise.then(resp => {
@@ -170,25 +157,19 @@ class ServiceItemListPage extends React.Component<Props, State> {
   };
 
   renderItem = (item: ServiceItemShape) => {
-    const isItemSelected =
-      item && this.state.serviceItem && item.id === this.state.serviceItem.id;
+    const isItemSelected = item && this.state.serviceItem && item.id === this.state.serviceItem.id;
     return item ? (
       <List.Item
         key={item.id}
-        className={
-          isItemSelected ? 'infinite-list-item-selected' : 'infinite-list-item'
-        }
+        className={isItemSelected ? 'infinite-list-item-selected' : 'infinite-list-item'}
       >
-        <McsButton
-          onClick={this.onItemClick(item)}
-          style={{ textAlign: 'left' }}
-        >
+        <McsButton onClick={this.onItemClick(item)} style={{ textAlign: 'left' }}>
           <List.Item.Meta title={this.getItemTitle(item)} />
         </McsButton>
       </List.Item>
     ) : (
-        <div />
-      );
+      <div />
+    );
   };
 
   render() {
@@ -207,42 +188,21 @@ class ServiceItemListPage extends React.Component<Props, State> {
     const optionsForChart = {
       xKey: 'cost',
       xLabel: formatMessage(messages.usageCost),
-      yKeys: [
-        { key: 'usage_price', message: formatMessage(messages.usagePrice) },
-      ],
+      yKeys: [{ key: 'usage_price', message: formatMessage(messages.usagePrice) }],
       colors: [colors['mcs-primary']],
     };
 
     const servicePrice = (usageCost: number) => {
-      if (
-        serviceItemCondition &&
-        isLinearServiceItemConditionsResource(serviceItemCondition)
-      ) {
-        return (
-          serviceItemCondition.percent_value * usageCost +
-          serviceItemCondition.fixed_value
-        );
+      if (serviceItemCondition && isLinearServiceItemConditionsResource(serviceItemCondition)) {
+        return serviceItemCondition.percent_value * usageCost + serviceItemCondition.fixed_value;
       }
       return 0;
     };
 
     const generateDataSource = () => {
-      if (
-        serviceItemCondition &&
-        isLinearServiceItemConditionsResource(serviceItemCondition)
-      ) {
+      if (serviceItemCondition && isLinearServiceItemConditionsResource(serviceItemCondition)) {
         const dataSource = [];
-        for (const i of [
-          0,
-          10,
-          100,
-          1000,
-          10000,
-          100000,
-          1000000,
-          10000000,
-          100000000,
-        ]) {
+        for (const i of [0, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000]) {
           dataSource.push({
             usage_price: Math.round(servicePrice(i) * 100) / 100,
             cost: Math.round(Math.log(i) / Math.log(10)),
@@ -257,9 +217,7 @@ class ServiceItemListPage extends React.Component<Props, State> {
 
     const priceChart = dataset ? (
       <StackedBarPlot dataset={dataset} options={optionsForChart} />
-    ) : (
-        undefined
-      );
+    ) : undefined;
 
     const hasPriceChart = priceChart !== undefined;
 
@@ -273,35 +231,22 @@ class ServiceItemListPage extends React.Component<Props, State> {
 
     const addedButton =
       offerOwnership === 'my_offer' ? (
-        <Link
-          to={`/v2/o/${organisationId}/settings/services/my_offers/${offerId}/edit`}
-        >
-          <Button
-            {...submitButtonProps}
-            className="mcs-primary"
-            style={{ float: 'right' }}
-          >
-            <McsIcon type="plus" />
+        <Link to={`/v2/o/${organisationId}/settings/services/my_offers/${offerId}/edit`}>
+          <Button {...submitButtonProps} className='mcs-primary' style={{ float: 'right' }}>
+            <McsIcon type='plus' />
             <FormattedMessage {...messages.myServiceOffersEdit} />
           </Button>
         </Link>
-      ) : (
-          undefined
-        );
+      ) : undefined;
 
     return (
-      <div className="ant-layout mcs-service-item-list-page">
-        <Content className="mcs-content-container">
-          <Row className="mcs-table-container">
-            <Breadcrumb
-              className={'mcs-breadcrumb'}
-              separator={<McsIcon type="chevron-right" />}
-            >
+      <div className='ant-layout mcs-service-item-list-page'>
+        <Content className='mcs-content-container'>
+          <Row className='mcs-table-container'>
+            <Breadcrumb className={'mcs-breadcrumb'} separator={<McsIcon type='chevron-right' />}>
               <Breadcrumb.Item>
                 <span style={{ lineHeight: '40px' }}>
-                  <Link
-                    to={`/v2/o/${organisationId}/settings/services/${offerOwnership}s`}
-                  >
+                  <Link to={`/v2/o/${organisationId}/settings/services/${offerOwnership}s`}>
                     {offerOwnership === 'subscribed_offer'
                       ? intl.formatMessage(messages.subscribedOffersTitle)
                       : intl.formatMessage(messages.myOffersTitle)}
@@ -313,16 +258,16 @@ class ServiceItemListPage extends React.Component<Props, State> {
                   {offer ? (
                     <span>{offer.name}</span>
                   ) : (
-                      <span>
-                        <FormattedMessage {...messages.unknownOffer} />
-                      </span>
-                    )}
+                    <span>
+                      <FormattedMessage {...messages.unknownOffer} />
+                    </span>
+                  )}
                 </span>
                 {addedButton}
               </Breadcrumb.Item>
             </Breadcrumb>
           </Row>
-          <Row className="mcs-table-container mcs-settings-card" style={{ display: "flex" }}>
+          <Row className='mcs-table-container mcs-settings-card' style={{ display: 'flex' }}>
             <Col span={6}>
               <InfiniteList
                 fetchData={this.fetchData}
@@ -330,16 +275,12 @@ class ServiceItemListPage extends React.Component<Props, State> {
                 storeItemData={this.storeItemData}
               />
             </Col>
-            <Col span={18} className="mcs-settings-card-separator">
-              <div className="mcs-card-title service-container-header">
-                {serviceItem && serviceItem.name
-                  ? `${serviceItem.name} `
-                  : undefined}
-                {serviceItem && serviceItem.type
-                  ? `(${serviceItem.type})`
-                  : undefined}
+            <Col span={18} className='mcs-settings-card-separator'>
+              <div className='mcs-card-title service-container-header'>
+                {serviceItem && serviceItem.name ? `${serviceItem.name} ` : undefined}
+                {serviceItem && serviceItem.type ? `(${serviceItem.type})` : undefined}
               </div>
-              <div className="service-container">
+              <div className='service-container'>
                 <ServiceItem
                   serviceItemCondition={serviceItemCondition}
                   serviceItem={serviceItem}

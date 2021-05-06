@@ -17,9 +17,7 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../components/Layout/FormLayoutActionbar';
-import ScrollspySider, {
-  SidebarWrapperProps,
-} from '../../../../components/Layout/ScrollspySider';
+import ScrollspySider, { SidebarWrapperProps } from '../../../../components/Layout/ScrollspySider';
 import messages from './messages';
 import { DisplayCampaignFormData } from './domain';
 import { Omit } from '../../../../utils/Types';
@@ -32,19 +30,14 @@ import AdGroupFormSection, {
 import * as SessionSelectors from '../../../../redux/Session/selectors';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
 
-const Content = Layout.Content as unknown as React.ComponentClass<
-  BasicProps & { id: string }
->;
+const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
 
 export const GoalFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
   GoalFormSectionProps
 >;
 
-const AdGroupFieldArray = FieldArray as new () => GenericFieldArray<
-  Field,
-  AdGroupFormSectionProps
->;
+const AdGroupFieldArray = FieldArray as new () => GenericFieldArray<Field, AdGroupFormSectionProps>;
 
 export interface DisplayCampaignFormProps
   extends Omit<ConfigProps<DisplayCampaignFormData>, 'form'> {
@@ -56,10 +49,7 @@ interface MapStateToProps {
   hasDatamarts: (organisationId: string) => boolean;
 }
 
-type Props = InjectedFormProps<
-  DisplayCampaignFormData,
-  DisplayCampaignFormProps
-> &
+type Props = InjectedFormProps<DisplayCampaignFormData, DisplayCampaignFormProps> &
   DisplayCampaignFormProps &
   MapStateToProps &
   InjectedIntlProps &
@@ -74,7 +64,9 @@ class DisplayCampaignForm extends React.Component<Props> {
       breadCrumbPaths,
       close,
       change,
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       hasDatamarts,
     } = this.props;
 
@@ -103,7 +95,7 @@ class DisplayCampaignForm extends React.Component<Props> {
         title: messages.sectionTitle2,
         component: (
           <GoalFieldArray
-            name="goalFields"
+            name='goalFields'
             component={GoalFormSection}
             {...genericFieldArrayProps}
           />
@@ -116,7 +108,7 @@ class DisplayCampaignForm extends React.Component<Props> {
       title: messages.sectionTitle3,
       component: (
         <AdGroupFieldArray
-          name="adGroupFields"
+          name='adGroupFields'
           component={AdGroupFormSection}
           {...genericFieldArrayProps}
         />
@@ -140,20 +132,14 @@ class DisplayCampaignForm extends React.Component<Props> {
     });
 
     return (
-      <Layout className="edit-layout">
+      <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
           <ScrollspySider {...sideBarProps} />
-          <Form
-            className="edit-layout ant-layout"
-            onSubmit={handleSubmit as any}
-          >
+          <Form className='edit-layout ant-layout' onSubmit={handleSubmit as any}>
             {/* this button enables submit on enter */}
-            <button type="submit" style={{ display: 'none' }} />
-            <Content
-              id={FORM_ID}
-              className="mcs-content-container mcs-form-container"
-            >
+            <button type='submit' style={{ display: 'none' }} />
+            <Content id={FORM_ID} className='mcs-content-container mcs-form-container'>
               {renderedSections}
             </Content>
           </Form>

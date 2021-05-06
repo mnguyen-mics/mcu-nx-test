@@ -51,54 +51,56 @@ export default defineMessages({
   },
   editCleaningRule: {
     id: 'settings.cleaningRules.table.column.action.edit',
-    defaultMessage: 'View'
+    defaultMessage: 'View',
   },
   deleteCleaningRule: {
     id: 'settings.cleaningRules.table.column.action.delete',
-    defaultMessage: 'Delete'
+    defaultMessage: 'Delete',
   },
   deleteCleaningRuleModalTitle: {
     id: 'settings.cleaningRules.delete.modal.title',
-    defaultMessage: 'You are about to delete a cleaning rule. Do you want to proceed anyway?'
+    defaultMessage: 'You are about to delete a cleaning rule. Do you want to proceed anyway?',
   },
   deleteCleaningRuleModalOk: {
     id: 'settings.cleaningRules.delete.modal.ok',
-    defaultMessage: 'Delete now'
+    defaultMessage: 'Delete now',
   },
   deleteCleaningRuleModalCancel: {
     id: 'settings.cleaningRules.delete.modal.cancel',
-    defaultMessage: 'Cancel'
+    defaultMessage: 'Cancel',
   },
   newCleaningRule: {
     id: 'settings.cleaningRules.list.new',
-    defaultMessage: 'New Cleaning Rule'
+    defaultMessage: 'New Cleaning Rule',
   },
   updateStatusModalTitle: {
     id: 'settings.cleaningRules.table.column.updateStatus.modal.title',
-    defaultMessage: 'Update cleaning rule status'
+    defaultMessage: 'Update cleaning rule status',
   },
   updateStatusModalConfirm: {
     id: 'settings.cleaningRules.table.column.updateStatus.modal.confirm',
-    defaultMessage: 'Confirm'
+    defaultMessage: 'Confirm',
   },
   updateStatusToLiveButton: {
     id: 'settings.cleaningRules.table.column.updateStatus.draftToLiveButton',
-    defaultMessage: 'Activate the rule'
+    defaultMessage: 'Activate the rule',
   },
   updateStatusToArchivedButton: {
     id: 'settings.cleaningRules.table.column.updateStatus.liveToArchivedButton',
-    defaultMessage: 'Archive the rule'
+    defaultMessage: 'Archive the rule',
   },
   updateStatusToLiveModalText: {
     id: 'settings.cleaningRule.updateStatus.modal.draftToLiveText',
-    defaultMessage: 'You are about to activate the cleaning rule. This means that this rule will be applied to all new incoming activities.'
+    defaultMessage:
+      'You are about to activate the cleaning rule. This means that this rule will be applied to all new incoming activities.',
   },
   updateStatusToArchivedText: {
     id: 'settings.cleaningRules.updateStatus.modal.liveToArchivedText',
-    defaultMessage: 'You are about to archive the cleaning rule. This means that this rule will not be applied anymore to all new incoming activites.'
+    defaultMessage:
+      'You are about to archive the cleaning rule. This means that this rule will not be applied anymore to all new incoming activites.',
   },
   updateCleaningRuleModalCancel: {
     id: 'settings.cleaningRules.updateStatus.modal.cancel',
-    defaultMessage: 'Cancel'
+    defaultMessage: 'Cancel',
   },
 });

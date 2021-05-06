@@ -12,10 +12,7 @@ import {
   DisplayAdResource,
   CreativeAuditAction,
 } from '../../../../models/creative/CreativeResource';
-import {
-  CreativesOptions,
-  ICreativeService,
-} from '../../../../services/CreativeService';
+import { CreativesOptions, ICreativeService } from '../../../../services/CreativeService';
 import {
   parseSearch,
   updateSearch,
@@ -113,34 +110,21 @@ class DisplayAdsPage extends React.Component<JoinedProps, State> {
 
     const checkEmptyDataSource = state && state.reloadDataSource;
 
-    if (
-      !compareSearches(search, previousSearch) ||
-      organisationId !== previousOrganisationId
-    ) {
+    if (!compareSearches(search, previousSearch) || organisationId !== previousOrganisationId) {
       if (!isSearchValid(search, CREATIVE_DISPLAY_SEARCH_SETTINGS)) {
         history.replace({
           pathname: pathname,
-          search: buildDefaultSearch(
-            search,
-            CREATIVE_DISPLAY_SEARCH_SETTINGS,
-          ),
+          search: buildDefaultSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS),
           state: { reloadDataSource: organisationId !== previousOrganisationId },
         });
       } else {
-        const filter = parseSearch(
-          search,
-          CREATIVE_DISPLAY_SEARCH_SETTINGS,
-        );
+        const filter = parseSearch(search, CREATIVE_DISPLAY_SEARCH_SETTINGS);
         this.fetchDisplayAds(organisationId, filter, checkEmptyDataSource);
       }
     }
   }
 
-  fetchDisplayAds = (
-    organisationId: string,
-    filter: Index<any>,
-    init: boolean = false,
-  ) => {
+  fetchDisplayAds = (organisationId: string, filter: Index<any>, init: boolean = false) => {
     this.setState({
       isLoadingDisplayAds: true,
     });
@@ -156,22 +140,20 @@ class DisplayAdsPage extends React.Component<JoinedProps, State> {
         keywords: filter.keywords,
       };
     }
-    this._creativeService
-      .getDisplayAds(organisationId, options)
-      .then(result => {
-        const data = result.data;
-        const displayAdsById = normalizeArrayOfObject(data, 'id');
-        this.setState({
-          dataSource: Object.keys(displayAdsById).map(id => {
-            return {
-              ...displayAdsById[id],
-            };
-          }),
-          isLoadingDisplayAds: false,
-          hasDisplayAds: init ? result.count !== 0 : true,
-          totalDisplayAds: result.total || 0,
-        });
+    this._creativeService.getDisplayAds(organisationId, options).then(result => {
+      const data = result.data;
+      const displayAdsById = normalizeArrayOfObject(data, 'id');
+      this.setState({
+        dataSource: Object.keys(displayAdsById).map(id => {
+          return {
+            ...displayAdsById[id],
+          };
+        }),
+        isLoadingDisplayAds: false,
+        hasDisplayAds: init ? result.count !== 0 : true,
+        totalDisplayAds: result.total || 0,
       });
+    });
   };
 
   getAllCreativesIds = () => {
@@ -190,9 +172,7 @@ class DisplayAdsPage extends React.Component<JoinedProps, State> {
     };
     return this._creativeService
       .getDisplayAds(organisationId, options)
-      .then(apiResp =>
-        apiResp.data.map(creativeResource => creativeResource.id),
-      )
+      .then(apiResp => apiResp.data.map(creativeResource => creativeResource.id))
       .catch(err => {
         notifyError(err);
       });
@@ -344,9 +324,7 @@ class DisplayAdsPage extends React.Component<JoinedProps, State> {
           selectedRowKeys: [],
         },
         () => {
-          message.success(
-            this.props.intl.formatMessage(messages.archiveSuccess),
-          );
+          message.success(this.props.intl.formatMessage(messages.archiveSuccess));
           this.redirect();
           this.setState({
             isArchiving: false,
@@ -384,9 +362,7 @@ class DisplayAdsPage extends React.Component<JoinedProps, State> {
     if (creative.audit_status === 'NOT_AUDITED') {
       Modal.confirm({
         title: intl.formatMessage(messages.creativeModalConfirmArchivedTitle),
-        content: intl.formatMessage(
-          messages.creativeModalConfirmArchivedContent,
-        ),
+        content: intl.formatMessage(messages.creativeModalConfirmArchivedContent),
         icon: <ExclamationCircleOutlined />,
         okText: intl.formatMessage(messages.creativeModalConfirmArchivedOk),
         cancelText: intl.formatMessage(messages.cancelText),
@@ -463,13 +439,13 @@ class DisplayAdsPage extends React.Component<JoinedProps, State> {
     };
 
     return (
-      <div className="ant-layout">
+      <div className='ant-layout'>
         <DisplayAdsActionBar
           selectedRowKeys={rowSelection.selectedRowKeys}
           multiEditProps={multiEditProps}
         />
-        <div className="ant-layout">
-          <Content className="mcs-content-container">
+        <div className='ant-layout'>
+          <Content className='mcs-content-container'>
             <DisplayAdsTable
               rowSelection={rowSelection}
               isUpdatingAuditStatus={isUpdatingAuditStatus}

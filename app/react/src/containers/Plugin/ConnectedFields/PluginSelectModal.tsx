@@ -44,10 +44,7 @@ class PluginSelectModal extends React.Component<Props, State> {
     this.state = {
       open: false,
       loading: false,
-      id:
-        props.input && props.input.value && props.input.value.id
-          ? props.input.value.id
-          : '',
+      id: props.input && props.input.value && props.input.value.id ? props.input.value.id : '',
       selectedVersion:
         props.input && props.input.value && props.input.value.version
           ? props.input.value.version
@@ -76,16 +73,10 @@ class PluginSelectModal extends React.Component<Props, State> {
     } = this.props;
 
     const {
-      options: {
-        pluginVersionId: previousPluginVersionId,
-        organisationId: previousOrganisationId,
-      },
+      options: { pluginVersionId: previousPluginVersionId, organisationId: previousOrganisationId },
     } = previousProps;
 
-    if (
-      pluginVersionId !== previousPluginVersionId ||
-      organisationId !== previousOrganisationId
-    ) {
+    if (pluginVersionId !== previousPluginVersionId || organisationId !== previousOrganisationId) {
       if (type === 'formAdLayout') {
         this.getAdLayouts(organisationId, pluginVersionId);
       } else if (type === 'stylesheet') {
@@ -216,9 +207,9 @@ class PluginSelectModal extends React.Component<Props, State> {
       .then(versions => {
         this.setState({
           pluginVersions: versions.map(item => {
-            const title = `${item.filename} ${item.filename ? '-' : ''} ${
-              item.status
-            } (${item.id})`;
+            const title = `${item.filename} ${item.filename ? '-' : ''} ${item.status} (${
+              item.id
+            })`;
             return {
               key: item.id,
               disabled: disabled,
@@ -249,9 +240,9 @@ class PluginSelectModal extends React.Component<Props, State> {
       .then(versions => {
         this.setState({
           pluginVersions: versions.map(item => {
-            const title = `${item.description} ${item.description ? '-' : ''} ${
-              item.status
-            } (${item.id})`;
+            const title = `${item.description} ${item.description ? '-' : ''} ${item.status} (${
+              item.id
+            })`;
             return {
               key: item.id,
               disabled: disabled,
@@ -295,32 +286,18 @@ class PluginSelectModal extends React.Component<Props, State> {
     let secondSelectLabel;
     let noItemSelected;
     if (type === 'formAdLayout') {
-      changeButtonText = (
-        <FormattedMessage {...messages.adLayoutButtonChange} />
-      );
-      chooseButtonText = (
-        <FormattedMessage {...messages.adLayoutButtonChoose} />
-      );
+      changeButtonText = <FormattedMessage {...messages.adLayoutButtonChange} />;
+      chooseButtonText = <FormattedMessage {...messages.adLayoutButtonChoose} />;
       modalTitle = <FormattedMessage {...messages.adLayoutModalTitle} />;
-      firstSelectLabel = (
-        <FormattedMessage {...messages.adLayoutModalElement} />
-      );
+      firstSelectLabel = <FormattedMessage {...messages.adLayoutModalElement} />;
       secondSelectLabel = <FormattedMessage {...messages.adLayoutModalLabel} />;
       noItemSelected = <FormattedMessage {...messages.noAdLayoutSelected} />;
     } else {
-      changeButtonText = (
-        <FormattedMessage {...messages.styleSheetButtonChange} />
-      );
-      chooseButtonText = (
-        <FormattedMessage {...messages.styleSheetButtonChoose} />
-      );
+      changeButtonText = <FormattedMessage {...messages.styleSheetButtonChange} />;
+      chooseButtonText = <FormattedMessage {...messages.styleSheetButtonChoose} />;
       modalTitle = <FormattedMessage {...messages.styleSheetModalTitle} />;
-      firstSelectLabel = (
-        <FormattedMessage {...messages.styleSheetModalElement} />
-      );
-      secondSelectLabel = (
-        <FormattedMessage {...messages.styleSheetModalVersions} />
-      );
+      firstSelectLabel = <FormattedMessage {...messages.styleSheetModalElement} />;
+      secondSelectLabel = <FormattedMessage {...messages.styleSheetModalVersions} />;
       noItemSelected = <FormattedMessage {...messages.noStyleSheetSelected} />;
     }
 
@@ -380,7 +357,7 @@ class PluginSelectModal extends React.Component<Props, State> {
                 onClick={this.delete}
                 style={{ verticalAlign: 'bottom', marginLeft: '5px' }}
               >
-                <McsIcon type="delete" className="big" />
+                <McsIcon type='delete' className='big' />
               </McsButton>
             </span>
           ) : (

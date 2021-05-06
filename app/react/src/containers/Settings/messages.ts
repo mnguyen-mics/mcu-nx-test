@@ -19,27 +19,26 @@ const messages = defineMessages({
   },
   labels: {
     id: 'settings.tab.title.labels',
-    defaultMessage: 'Labels'
+    defaultMessage: 'Labels',
   },
   myServiceOffersTitle: {
     id: 'settings.serviceOffers.title',
-    defaultMessage: 'My Service Offers'
+    defaultMessage: 'My Service Offers',
   },
   myServiceOffersAddNew: {
     id: 'settings.serviceOffers.add.new',
-    defaultMessage: 'Add new offer'
+    defaultMessage: 'Add new offer',
   },
   myServiceCatalogTitle: {
     id: 'settings.serviceCatalog.title',
-    defaultMessage: 'My Service Catalog'
+    defaultMessage: 'My Service Catalog',
   },
   name: {
     id: 'settings.serviceCatalog.offers.list.column.name',
     defaultMessage: 'Name',
   },
   creditedAccount: {
-    id:
-      'settings.serviceCatalog.offers.list.column.credited.account',
+    id: 'settings.serviceCatalog.offers.list.column.credited.account',
     defaultMessage: 'Credited Account',
   },
   providerName: {

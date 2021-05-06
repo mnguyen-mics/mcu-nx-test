@@ -13,6 +13,4 @@ class SegmentBuildersTab extends React.Component<InjectedFeaturesProps> {
   }
 }
 
-export default compose<InjectedFeaturesProps, {}>(injectFeatures)(
-  SegmentBuildersTab,
-);
+export default compose<InjectedFeaturesProps, {}>(injectFeatures)(SegmentBuildersTab);

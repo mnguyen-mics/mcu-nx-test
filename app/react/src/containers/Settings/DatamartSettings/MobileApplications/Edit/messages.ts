@@ -53,8 +53,7 @@ export default defineMessages({
 
   errorFormMessage: {
     id: 'settings.mobileapp.form.errorMessage',
-    defaultMessage:
-      'There is an error with the data you have inputed, please check',
+    defaultMessage: 'There is an error with the data you have inputed, please check',
   },
   savingInProgress: {
     id: 'settings.mobileapp.form.savingInProgress',

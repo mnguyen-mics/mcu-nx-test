@@ -58,10 +58,10 @@ class QueryToolSelector extends React.Component<Props, State> {
 
     return (
       <Layout>
-        <Layout.Content className="mcs-content-container mcs-form-container text-center">
+        <Layout.Content className='mcs-content-container mcs-form-container text-center'>
           <FormTitle title={messages.title} subtitle={messages.subTitle} />
-          <Row className="mcs-selector_container">
-            <Row className="menu">
+          <Row className='mcs-selector_container'>
+            <Row className='menu'>
               <MenuList title={'OTQL'} select={this.onSelect('OTQL')} />
               <MenuList title={'GraphQL'} select={this.onSelect('GRAPHQL')} />
             </Row>
@@ -72,6 +72,4 @@ class QueryToolSelector extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, IQueryToolSelectorProps>(injectFeatures)(
-  QueryToolSelector,
-);
+export default compose<Props, IQueryToolSelectorProps>(injectFeatures)(QueryToolSelector);

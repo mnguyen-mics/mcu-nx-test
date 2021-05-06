@@ -11,10 +11,7 @@ export function areDatesSameDay(date1: Moment, date2: Moment) {
 
 export const DEFAULT_DATE_FORMAT = 'DD/MM/YYYY';
 
-export function formatUnixTimestamp(
-  ts: number | null | undefined,
-  format?: string,
-) {
+export function formatUnixTimestamp(ts: number | null | undefined, format?: string) {
   if (!ts) return '--/--/----';
   return moment(ts).format(format || DEFAULT_DATE_FORMAT);
 }
@@ -39,10 +36,7 @@ export function getAllDates(
 
   const allDates = [moment(dateRange.from).format(format)];
 
-  const to =
-    timeUnit === 'HOUR'
-      ? moment(dateRange.to).add(23, 'hours')
-      : moment(dateRange.to);
+  const to = timeUnit === 'HOUR' ? moment(dateRange.to).add(23, 'hours') : moment(dateRange.to);
 
   while (allDates[allDates.length - 1] !== to.format(format)) {
     allDates.push(

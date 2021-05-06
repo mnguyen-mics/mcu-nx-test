@@ -12,7 +12,7 @@ const messages = defineMessages({
   datamarts: {
     id: 'settings.tab.title.datamarts',
     defaultMessage: 'Datamarts',
-  }
+  },
 });
 
 export default messages;

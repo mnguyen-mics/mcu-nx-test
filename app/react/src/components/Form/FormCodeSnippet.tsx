@@ -6,9 +6,7 @@ import { WrappedFieldProps } from 'redux-form';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/styles/hljs';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import FormFieldWrapper, {
-  FormFieldWrapperProps,
-} from '../../components/Form/FormFieldWrapper';
+import FormFieldWrapper, { FormFieldWrapperProps } from '../../components/Form/FormFieldWrapper';
 import { compose } from 'recompose';
 
 const messages = defineMessages({
@@ -22,8 +20,7 @@ const messages = defineMessages({
   },
   pixelSectionCodeSnippetIndication: {
     id: 'pixel.section.codesnippet.indication',
-    defaultMessage:
-      'The code snippet to copy on your web page for custom intergration',
+    defaultMessage: 'The code snippet to copy on your web page for custom intergration',
   },
   pixelSectionCodeSnippetTooltipHover: {
     id: 'pixel.section.codesnippet.tooltiphover',
@@ -44,21 +41,13 @@ export interface FormCodeSnippetProps extends FormFieldWrapperProps {
 type Props = FormCodeSnippetProps & InjectedIntlProps;
 
 const FormCodeSnippet: React.SFC<Props & WrappedFieldProps> = props => {
-  let validateStatus = 'success' as
-    | 'success'
-    | 'warning'
-    | 'error'
-    | 'validating';
+  let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
 
-  if (props.meta && props.meta.touched && props.meta.invalid)
-    validateStatus = 'error';
-  if (props.meta && props.meta.touched && props.meta.warning)
-    validateStatus = 'warning';
+  if (props.meta && props.meta.touched && props.meta.invalid) validateStatus = 'error';
+  if (props.meta && props.meta.touched && props.meta.warning) validateStatus = 'warning';
 
   const handleOnClick = (e: React.ChangeEvent<HTMLInputElement>) => {
-    message.info(
-      props.intl.formatMessage(messages.pixelSectionCodeSnippetCodeCopied),
-    );
+    message.info(props.intl.formatMessage(messages.pixelSectionCodeSnippetCodeCopied));
   };
 
   const codeSnippetFieldProps = {
@@ -66,14 +55,10 @@ const FormCodeSnippet: React.SFC<Props & WrappedFieldProps> = props => {
       label: props.intl.formatMessage(messages.pixelSectionCodeSnippet),
     },
     helpToolTipProps: {
-      title: props.intl.formatMessage(
-        messages.pixelSectionCodeSnippetIndication,
-      ),
+      title: props.intl.formatMessage(messages.pixelSectionCodeSnippetIndication),
     },
     hoverToolTipProps: {
-      title: props.intl.formatMessage(
-        messages.pixelSectionCodeSnippetTooltipHover,
-      ),
+      title: props.intl.formatMessage(messages.pixelSectionCodeSnippetTooltipHover),
     },
   };
 
@@ -86,11 +71,7 @@ const FormCodeSnippet: React.SFC<Props & WrappedFieldProps> = props => {
   return (
     <div>
       <FormFieldWrapper
-        help={
-          props.meta &&
-          props.meta.touched &&
-          (props.meta.warning || props.meta.error)
-        }
+        help={props.meta && props.meta.touched && (props.meta.warning || props.meta.error)}
         helpToolTipProps={props.helpToolTipProps}
         hoverToolTipProps={props.hoverToolTipProps}
         validateStatus={validateStatus}
@@ -108,6 +89,4 @@ const FormCodeSnippet: React.SFC<Props & WrappedFieldProps> = props => {
   );
 };
 
-export default compose<Props, FormCodeSnippetProps>(injectIntl)(
-  FormCodeSnippet,
-);
+export default compose<Props, FormCodeSnippetProps>(injectIntl)(FormCodeSnippet);

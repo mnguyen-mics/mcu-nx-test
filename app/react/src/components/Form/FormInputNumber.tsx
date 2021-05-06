@@ -16,8 +16,9 @@ export interface FormInputNumberProps extends FormFieldWrapperProps {
   small?: boolean;
 }
 
-const FormInputNumber: React.FunctionComponent<FormInputNumberProps & WrappedFieldProps> = props => {
-
+const FormInputNumber: React.FunctionComponent<
+  FormInputNumberProps & WrappedFieldProps
+> = props => {
   let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
 
   if (props.meta.touched && props.meta.invalid) validateStatus = 'error';
@@ -31,11 +32,7 @@ const FormInputNumber: React.FunctionComponent<FormInputNumberProps & WrappedFie
       small={props.small}
       {...props.formItemProps}
     >
-      <InputNumber
-        id={props.input.name}
-        {...props.input}
-        {...props.inputNumberProps}
-      />
+      <InputNumber id={props.input.name} {...props.input} {...props.inputNumberProps} />
     </FormFieldWrapper>
   );
 };

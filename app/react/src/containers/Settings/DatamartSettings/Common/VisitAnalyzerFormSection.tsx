@@ -8,19 +8,11 @@ import { VisitAnalyzerFieldModel } from './domain';
 import FormSection from '../../../../components/Form/FormSection';
 import RelatedRecords from '../../../../components/RelatedRecord/RelatedRecords';
 import RecordElement from '../../../../components/RelatedRecord/RecordElement';
-import VisitAnalyzerSelector, {
-  VisitAnalyzerSelectorProps,
-} from '../Common/VisitAnalyzerSelector';
+import VisitAnalyzerSelector, { VisitAnalyzerSelectorProps } from '../Common/VisitAnalyzerSelector';
 import { VisitAnalyzer } from '../../../../models/Plugins';
-import {
-  PropertyResourceShape,
-  StringPropertyResource,
-} from '../../../../models/plugin/index';
+import { PropertyResourceShape, StringPropertyResource } from '../../../../models/plugin/index';
 import { ReduxFormChangeProps } from '../../../../utils/FormHelper';
-import {
-  DataResponse,
-  DataListResponse,
-} from '../../../../services/ApiService';
+import { DataResponse, DataListResponse } from '../../../../services/ApiService';
 import { makeCancelable, CancelablePromise } from '../../../../utils/ApiHelper';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import { lazyInject } from '../../../../config/inversify.config';
@@ -81,20 +73,16 @@ class VisitAnalyzerSection extends React.Component<Props, State> {
   componentDidMount() {
     const visitAnalyzerField = this.props.fields.getAll()[0];
     if (visitAnalyzerField)
-      this.fetchActivityAnalyzer(
-        visitAnalyzerField.model.visit_analyzer_model_id,
-      );
+      this.fetchActivityAnalyzer(visitAnalyzerField.model.visit_analyzer_model_id);
   }
 
   componentDidUpdate(previousProps: Props) {
     const previousVisitAnalyzerField = previousProps.fields.getAll()[0];
-    
+
     const visitAnalyzerField = this.props.fields.getAll()[0];
-    
-    if (visitAnalyzerField && (previousVisitAnalyzerField !== visitAnalyzerField)) {
-      this.fetchActivityAnalyzer(
-        visitAnalyzerField.model.visit_analyzer_model_id,
-      );
+
+    if (visitAnalyzerField && previousVisitAnalyzerField !== visitAnalyzerField) {
+      this.fetchActivityAnalyzer(visitAnalyzerField.model.visit_analyzer_model_id);
     }
   }
 
@@ -137,9 +125,7 @@ class VisitAnalyzerSection extends React.Component<Props, State> {
   openActivityAnalyzerSelector = () => {
     const { fields } = this.props;
 
-    const selectedVisitAnalyzerIds = fields
-      .getAll()
-      .map(p => p.model.visit_analyzer_model_id);
+    const selectedVisitAnalyzerIds = fields.getAll().map(p => p.model.visit_analyzer_model_id);
 
     const props: VisitAnalyzerSelectorProps = {
       selectedVisitAnalyzerIds,
@@ -147,12 +133,9 @@ class VisitAnalyzerSection extends React.Component<Props, State> {
       save: this.updateActivityAnalyzer,
     };
 
-    this.props.openNextDrawer<VisitAnalyzerSelectorProps>(
-      VisitAnalyzerSelector,
-      {
-        additionalProps: props,
-      },
-    );
+    this.props.openNextDrawer<VisitAnalyzerSelectorProps>(VisitAnalyzerSelector, {
+      additionalProps: props,
+    });
   };
 
   getActivityAnalyzerRecords = () => {
@@ -160,14 +143,9 @@ class VisitAnalyzerSection extends React.Component<Props, State> {
     const { visitAnalyzerData } = this.state;
 
     const getName = (field: VisitAnalyzerFieldModel) => {
-      const name =
-        visitAnalyzerData.visitAnalyzer && visitAnalyzerData.visitAnalyzer.name;
-      const typeP = visitAnalyzerData.properties.find(
-        p => p.technical_name === 'name',
-      );
-      const providerP = visitAnalyzerData.properties.find(
-        p => p.technical_name === 'provider',
-      );
+      const name = visitAnalyzerData.visitAnalyzer && visitAnalyzerData.visitAnalyzer.name;
+      const typeP = visitAnalyzerData.properties.find(p => p.technical_name === 'name');
+      const providerP = visitAnalyzerData.properties.find(p => p.technical_name === 'provider');
 
       if (name && typeP && providerP) {
         return `${name} (${(typeP as StringPropertyResource).value.value} - ${
@@ -186,7 +164,7 @@ class VisitAnalyzerSection extends React.Component<Props, State> {
       return (
         <RecordElement
           key={field.key}
-          recordIconType="optimization"
+          recordIconType='optimization'
           record={field}
           title={getName}
           onRemove={removeField}

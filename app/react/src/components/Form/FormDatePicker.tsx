@@ -19,14 +19,8 @@ export interface FormDatePickerProps extends FormFieldWrapperProps {
   isoDate?: boolean;
 }
 
-const FormDatePicker: React.SFC<
-  FormDatePickerProps & WrappedFieldProps
-> = props => {
-  let validateStatus = 'success' as
-    | 'success'
-    | 'warning'
-    | 'error'
-    | 'validating';
+const FormDatePicker: React.SFC<FormDatePickerProps & WrappedFieldProps> = props => {
+  let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
   if (props.meta.touched && props.meta.invalid) validateStatus = 'error';
   if (props.meta.touched && props.meta.warning) validateStatus = 'warning';
 
@@ -34,10 +28,10 @@ const FormDatePicker: React.SFC<
   // But antd DatePicker doesn't like that
   // So we don't pass this props if equal to ''
   let value = props.input.value;
-  if (value === '') { 
-    value = undefined; 
-  } else if (props.unixTimestamp || props.isoDate) { 
-    value = moment(value); 
+  if (value === '') {
+    value = undefined;
+  } else if (props.unixTimestamp || props.isoDate) {
+    value = moment(value);
   }
 
   const onChange = (date: moment.Moment, dateString: string) => {
@@ -72,8 +66,7 @@ const FormDatePicker: React.SFC<
 FormDatePicker.defaultProps = {
   formItemProps: {},
   datePickerProps: {},
-  helpToolTipProps: {title: ''},
+  helpToolTipProps: { title: '' },
 };
-
 
 export default FormDatePicker;

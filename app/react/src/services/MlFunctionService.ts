@@ -4,15 +4,12 @@ import PluginInstanceService from './PluginInstanceService';
 import { PluginLayout } from '../models/plugin/PluginLayout';
 import { injectable } from 'inversify';
 
-export interface IMlFunctionService
-  extends PluginInstanceService<MlFunctionResource> {
+export interface IMlFunctionService extends PluginInstanceService<MlFunctionResource> {
   listMlFunctions: (
     organisationId: string,
     options?: MlFunctionQueryStringParameters,
   ) => Promise<DataListResponse<MlFunctionResource>>;
-  getMlFunctions: (
-    mlFunctionId: string,
-  ) => Promise<DataResponse<MlFunctionResource>>;
+  getMlFunctions: (mlFunctionId: string) => Promise<DataResponse<MlFunctionResource>>;
   createMlFunctions: (
     mlFunction: Partial<MlFunctionResource>,
   ) => Promise<DataResponse<MlFunctionResource>>;
@@ -27,7 +24,8 @@ export interface MlFunctionQueryStringParameters {
 }
 
 @injectable()
-export class MlFunctionService extends PluginInstanceService<MlFunctionResource>
+export class MlFunctionService
+  extends PluginInstanceService<MlFunctionResource>
   implements IMlFunctionService {
   constructor() {
     super('ml_functions');
@@ -44,9 +42,7 @@ export class MlFunctionService extends PluginInstanceService<MlFunctionResource>
     };
     return ApiService.getRequest(endpoint, params);
   }
-  getMlFunctions(
-    mlFunctionId: string,
-  ): Promise<DataResponse<MlFunctionResource>> {
+  getMlFunctions(mlFunctionId: string): Promise<DataResponse<MlFunctionResource>> {
     const endpoint = `ml_functions/${mlFunctionId}`;
     return ApiService.getRequest(endpoint, {});
   }

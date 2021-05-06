@@ -1,13 +1,20 @@
-import React from "react";
-import { RouteComponentProps, withRouter } from "react-router";
-import injectNotifications, { InjectedNotificationProps } from "../../../../../Notifications/injectNotifications";
-import { InjectedIntlProps, injectIntl, defineMessages } from "react-intl";
-import { compose } from "recompose";
-import { Actionbar, McsIcon, Card, McsDateRangePicker } from "@mediarithmics-private/mcs-components-library";
-import FeedChart from "../../../../../Audience/Segments/Dashboard/Feeds/Charts/FeedChart";
-import McsMoment from "../../../../../../utils/McsMoment";
-import { McsDateRangeValue } from "@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker";
-import { DATE_SEARCH_SETTINGS, parseSearch } from "../../../../../../utils/LocationSearchHelper";
+import React from 'react';
+import { RouteComponentProps, withRouter } from 'react-router';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../../../Notifications/injectNotifications';
+import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
+import { compose } from 'recompose';
+import {
+  Actionbar,
+  McsIcon,
+  Card,
+  McsDateRangePicker,
+} from '@mediarithmics-private/mcs-components-library';
+import FeedChart from '../../../../../Audience/Segments/Dashboard/Feeds/Charts/FeedChart';
+import McsMoment from '../../../../../../utils/McsMoment';
+import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
+import { DATE_SEARCH_SETTINGS, parseSearch } from '../../../../../../utils/LocationSearchHelper';
 
 export interface FeedNodeAutomationDashboardStatsProps {
   feedId: string;
@@ -17,17 +24,13 @@ export interface FeedNodeAutomationDashboardStatsProps {
 type Props = InjectedIntlProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }> &
-  FeedNodeAutomationDashboardStatsProps
+  FeedNodeAutomationDashboardStatsProps;
 
 type State = {
   dateRange: McsDateRangeValue;
-}
+};
 
-class FeedNodeAutomationDashboardStats extends React.Component<
-  Props,
-  State
-  > {
-
+class FeedNodeAutomationDashboardStats extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
@@ -35,15 +38,14 @@ class FeedNodeAutomationDashboardStats extends React.Component<
       location: { search },
     } = props;
 
-
     const filters = parseSearch(search, DATE_SEARCH_SETTINGS);
 
     this.state = {
       dateRange: {
         from: filters.from || new McsMoment('now-7d'),
         to: filters.to || new McsMoment('now'),
-      }
-    }
+      },
+    };
   }
 
   onDatePickerChange = (newValues: McsDateRangeValue) => {
@@ -51,46 +53,40 @@ class FeedNodeAutomationDashboardStats extends React.Component<
       dateRange: {
         from: newValues.from,
         to: newValues.to,
-      }
+      },
     });
-  }
+  };
 
   render() {
     const {
-      intl: {
-        formatMessage,
-      },
+      intl: { formatMessage },
       match: {
         params: { organisationId },
       },
       feedId,
     } = this.props;
 
-    const {
-      dateRange
-    } = this.state;
+    const { dateRange } = this.state;
 
     return (
-      <div className="mcs-feedNodeAutomationDashboardStats ant-layout">
-        <Actionbar
-          pathItems={[ formatMessage(messages.actionbarName) ]}
-          edition={true}>
+      <div className='mcs-feedNodeAutomationDashboardStats ant-layout'>
+        <Actionbar pathItems={[formatMessage(messages.actionbarName)]} edition={true}>
           <McsIcon
-            type="close"
-            className="close-icon"
+            type='close'
+            className='close-icon'
             style={{ cursor: 'pointer' }}
             onClick={this.props.close}
           />
         </Actionbar>
-        <div className="mcs-feedNodeAutomationDashboardStats_content ant-layout ant-layout-content mcs-content-container">
-          <div className="mcs-feedNodeAutomationDashboardStats_content_dateRangePicker">
+        <div className='mcs-feedNodeAutomationDashboardStats_content ant-layout ant-layout-content mcs-content-container'>
+          <div className='mcs-feedNodeAutomationDashboardStats_content_dateRangePicker'>
             <McsDateRangePicker values={this.state.dateRange} onChange={this.onDatePickerChange} />
           </div>
           <Card>
             <FeedChart
               organisationId={organisationId}
               feedId={feedId}
-              feedStatsUnit="USER_POINTS"
+              feedStatsUnit='USER_POINTS'
               dateRange={dateRange}
             />
           </Card>

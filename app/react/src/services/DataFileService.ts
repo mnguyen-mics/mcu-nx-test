@@ -10,11 +10,7 @@ export interface IDataFileService {
     fileName: string,
     formData: Blob,
   ) => Promise<string>;
-  editDataFile: (
-    fileName: string,
-    uri: string,
-    formData: Blob,
-  ) => Promise<DataResponse<any>>;
+  editDataFile: (fileName: string, uri: string, formData: Blob) => Promise<DataResponse<any>>;
 }
 
 @injectable()
@@ -40,11 +36,7 @@ export default class DataFileService implements IDataFileService {
 
     return ApiService.putRequest(endpoint, formData).then(() => uri);
   }
-  editDataFile(
-    fileName: string,
-    uri: string,
-    formData: Blob,
-  ): Promise<DataResponse<any>> {
+  editDataFile(fileName: string, uri: string, formData: Blob): Promise<DataResponse<any>> {
     const endpoint = `data_file/data?uri=${uri}&name=${fileName}`;
     return ApiService.putRequest(endpoint, formData);
   }

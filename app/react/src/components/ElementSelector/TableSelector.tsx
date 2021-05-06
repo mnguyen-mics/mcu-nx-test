@@ -67,9 +67,9 @@ interface MapStateToProps {
 
 interface State<T>
   extends PaginationSearchSettings,
-  KeywordSearchSettings,
-  TypeSearchSettings,
-  DatamartSearchSettings {
+    KeywordSearchSettings,
+    TypeSearchSettings,
+    DatamartSearchSettings {
   selectedElementsById: { [elementId: string]: T };
   elementsById: { [elementId: string]: T };
   allElementIds: string[];
@@ -83,15 +83,12 @@ type Props<T extends SelectableItem> = TableSelectorProps<T> &
   MapStateToProps &
   InjectedIntlProps;
 
-class TableSelector<T extends SelectableItem> extends React.Component<
-  Props<T>,
-  State<T>
-  > {
+class TableSelector<T extends SelectableItem> extends React.Component<Props<T>, State<T>> {
   static defaultProps: Partial<TableSelectorProps<any>> = {
     displayFiltering: false,
     selectedIds: [],
     singleSelection: false,
-    defaultSelectedKey: 'id'
+    defaultSelectedKey: 'id',
   };
 
   constructor(props: Props<T>) {
@@ -107,7 +104,7 @@ class TableSelector<T extends SelectableItem> extends React.Component<
       currentPage: 1,
       keywords: '',
       datamartId: '',
-      type: []
+      type: [],
     };
   }
 
@@ -144,20 +141,13 @@ class TableSelector<T extends SelectableItem> extends React.Component<
   };
 
   componentDidUpdate(prevProps: TableSelectorProps<T>, prevState: State<T>) {
-    const {
-      currentPage,
-      pageSize,
-      keywords,
-      selectedElementsById,
-      datamartId,
-      type
-    } = this.state;
+    const { currentPage, pageSize, keywords, selectedElementsById, datamartId, type } = this.state;
     const {
       currentPage: prevCurrentPage,
       pageSize: prevPageSize,
       keywords: prevKeywords,
       datamartId: prevDatamartId,
-      type: prevType
+      type: prevType,
     } = prevState;
 
     if (
@@ -181,9 +171,7 @@ class TableSelector<T extends SelectableItem> extends React.Component<
         render: (text: string, record: T) => {
           const Field = this.props.singleSelection ? Radio : Checkbox;
           const key = selectedElementsById[(record[defaultSelectedKey!] as {}).toString()];
-          return (
-            <Field checked={!!key}>{text}</Field>
-          );
+          return <Field checked={!!key}>{text}</Field>;
         },
       },
       ...columnsDefinitions,
@@ -206,15 +194,12 @@ class TableSelector<T extends SelectableItem> extends React.Component<
       match: {
         params: { organisationId },
       },
-      intl
+      intl,
     } = this.props;
 
     const filtersOptions: Array<MultiSelectProps<any>> = [];
 
-    if (
-      workspace(organisationId).datamarts.length > 1 &&
-      displayDatamartSelector
-    ) {
+    if (workspace(organisationId).datamarts.length > 1 && displayDatamartSelector) {
       const datamartItems = workspace(organisationId)
         .datamarts.map(d => ({
           key: d.id,
@@ -227,74 +212,70 @@ class TableSelector<T extends SelectableItem> extends React.Component<
           },
         ]);
 
-      filtersOptions.push(
-        {
-          displayElement: (
-            <div>
-              <FormattedMessage id="components.elementSelector.tableSelector.filterDatamart.button" defaultMessage="Datamart" />{' '}
-              <DownOutlined />
-            </div>
-          ),
-          selectedItems: this.state.datamartId
-            ? [datamartItems.find(d => d.key === this.state.datamartId)]
-            : [datamartItems],
-          items: datamartItems,
-          singleSelectOnly: true,
-          getKey: (item: any) => (item && item.key ? item.key : ''),
-          display: (item: any) => item.value,
-          handleItemClick: (datamartItem: { key: string; value: string }) => {
-            this.setState(
-              {
-                datamartId:
-                  datamartItem && datamartItem.key ? datamartItem.key : '',
-              },
-              () => {
-                this.populateTable(
-                  Object.keys(this.state.selectedElementsById),
-                );
-              },
-            );
-          },
+      filtersOptions.push({
+        displayElement: (
+          <div>
+            <FormattedMessage
+              id='components.elementSelector.tableSelector.filterDatamart.button'
+              defaultMessage='Datamart'
+            />{' '}
+            <DownOutlined />
+          </div>
+        ),
+        selectedItems: this.state.datamartId
+          ? [datamartItems.find(d => d.key === this.state.datamartId)]
+          : [datamartItems],
+        items: datamartItems,
+        singleSelectOnly: true,
+        getKey: (item: any) => (item && item.key ? item.key : ''),
+        display: (item: any) => item.value,
+        handleItemClick: (datamartItem: { key: string; value: string }) => {
+          this.setState(
+            {
+              datamartId: datamartItem && datamartItem.key ? datamartItem.key : '',
+            },
+            () => {
+              this.populateTable(Object.keys(this.state.selectedElementsById));
+            },
+          );
         },
-      );
+      });
     }
 
     if (displayTypeFilter) {
-      filtersOptions.push(
-        {
-          displayElement: (
-            <div>
-              <FormattedMessage {...messages.serviceType} />
-              <DownOutlined />
-            </div>
-          ),
-          selectedItems: this.state.type !== undefined ?
-            this.state.type.map((type: string) => ({
-              key: type,
-              value: type,
-            })) :
-            [],
-          items:
-            [
-              {
-                key: "AUDIENCE_SEGMENT",
-                value: intl.formatMessage(messages.audienceSegment),
-              },
-              {
-                key: "USER_ACCOUNT_COMPARTMENT",
-                value: intl.formatMessage(messages.userAccountCompartment),
-              },
-            ],
-          getKey: (item: { key: string; value: string }) => item.key,
-          display: (item: { key: string; value: string }) => item.value,
-          handleMenuClick: (values: Array<{ key: string; value: string }>) =>
-            this.setState({
-              type: values.map(v => v.key),
-              currentPage: 1,
-            }),
-        }
-      );
-    };
+      filtersOptions.push({
+        displayElement: (
+          <div>
+            <FormattedMessage {...messages.serviceType} />
+            <DownOutlined />
+          </div>
+        ),
+        selectedItems:
+          this.state.type !== undefined
+            ? this.state.type.map((type: string) => ({
+                key: type,
+                value: type,
+              }))
+            : [],
+        items: [
+          {
+            key: 'AUDIENCE_SEGMENT',
+            value: intl.formatMessage(messages.audienceSegment),
+          },
+          {
+            key: 'USER_ACCOUNT_COMPARTMENT',
+            value: intl.formatMessage(messages.userAccountCompartment),
+          },
+        ],
+        getKey: (item: { key: string; value: string }) => item.key,
+        display: (item: { key: string; value: string }) => item.value,
+        handleMenuClick: (values: Array<{ key: string; value: string }>) =>
+          this.setState({
+            type: values.map(v => v.key),
+            currentPage: 1,
+          }),
+      });
+    }
 
     return filtersOptions;
   };
@@ -303,9 +284,7 @@ class TableSelector<T extends SelectableItem> extends React.Component<
     const { save } = this.props;
     const { selectedElementsById } = this.state;
     const selectedElementIds = Object.keys(selectedElementsById);
-    const selectedElement = selectedElementIds.map(
-      id => selectedElementsById[id],
-    );
+    const selectedElement = selectedElementIds.map(id => selectedElementsById[id]);
 
     save(selectedElementIds, selectedElement);
   };
@@ -317,36 +296,34 @@ class TableSelector<T extends SelectableItem> extends React.Component<
     const filterOptions = displayFiltering
       ? { currentPage, keywords, pageSize, datamartId, type }
       : undefined;
-    this.setState({ isLoading: true })
-    return this.props
-      .fetchDataList(filterOptions)
-      .then(({ data, total }) => {
-        const allElementIds = data.map(element => (element[defaultSelectedKey!] as {}).toString());
-        const elementsById = normalizeArrayOfObject(data, defaultSelectedKey!);
-        const selectedElementsById = {
-          ...this.state.selectedElementsById,
-          ...selectedIds.reduce((acc, elementId) => {
-            if (!this.state.selectedElementsById[elementId]) {
-              return { ...acc, [elementId]: elementsById[elementId] };
-            }
-            return acc;
-          }, {}),
-        };
+    this.setState({ isLoading: true });
+    return this.props.fetchDataList(filterOptions).then(({ data, total }) => {
+      const allElementIds = data.map(element => (element[defaultSelectedKey!] as {}).toString());
+      const elementsById = normalizeArrayOfObject(data, defaultSelectedKey!);
+      const selectedElementsById = {
+        ...this.state.selectedElementsById,
+        ...selectedIds.reduce((acc, elementId) => {
+          if (!this.state.selectedElementsById[elementId]) {
+            return { ...acc, [elementId]: elementsById[elementId] };
+          }
+          return acc;
+        }, {}),
+      };
 
-        this.setState({
-          allElementIds,
-          elementsById,
-          selectedElementsById,
-          isLoading: false,
-          total: total || data.length,
-        });
-
-        return data;
+      this.setState({
+        allElementIds,
+        elementsById,
+        selectedElementsById,
+        isLoading: false,
+        total: total || data.length,
       });
+
+      return data;
+    });
   };
 
   toggleElementSelection = (element: T) => {
-    const elementId = (element[(this.props.defaultSelectedKey!)] as {}).toString();
+    const elementId = (element[this.props.defaultSelectedKey!] as {}).toString();
     this.setState(prevState => {
       const isElementSelected = prevState.selectedElementsById[elementId];
 
@@ -377,14 +354,12 @@ class TableSelector<T extends SelectableItem> extends React.Component<
   };
 
   render() {
-    const { 
-      actionBarTitle, 
-      close, 
-      displayFiltering, 
+    const {
+      actionBarTitle,
+      close,
+      displayFiltering,
       filtersOptions,
-      intl: {
-        formatMessage,
-      }
+      intl: { formatMessage },
     } = this.props;
 
     const {
@@ -402,8 +377,7 @@ class TableSelector<T extends SelectableItem> extends React.Component<
       pageSize,
       total,
       onChange: page => this.setState({ currentPage: page }),
-      onShowSizeChange: (current, size) =>
-        this.setState({ currentPage: 1, pageSize: size }),
+      onShowSizeChange: (current, size) => this.setState({ currentPage: 1, pageSize: size }),
     };
 
     const tableViewProps: PartialTableViewProps<T> = {
@@ -416,19 +390,20 @@ class TableSelector<T extends SelectableItem> extends React.Component<
       pagination: pagination,
     };
 
-    const renderedTable = (displayFiltering || filtersOptions !== undefined) ? (
-      <TableViewFilters
-        {...tableViewProps}
-        searchOptions={this.getSearchOptions()}
-        filtersOptions={(filtersOptions !== undefined) ? filtersOptions : this.getFiltersOptions()}
-      />
-    ) : (
-        <TableViewWrapper {...tableViewProps as any} />
+    const renderedTable =
+      displayFiltering || filtersOptions !== undefined ? (
+        <TableViewFilters
+          {...tableViewProps}
+          searchOptions={this.getSearchOptions()}
+          filtersOptions={filtersOptions !== undefined ? filtersOptions : this.getFiltersOptions()}
+        />
+      ) : (
+        <TableViewWrapper {...(tableViewProps as any)} />
       );
 
     return (
       <SelectorLayout
-        className="mcs-table-edit-container"
+        className='mcs-table-edit-container'
         actionBarTitle={actionBarTitle}
         handleAdd={this.handleAdd}
         handleClose={close}

@@ -1,14 +1,10 @@
 import { NodeModel } from 'storm-react-diagrams';
 import SimplePortModel from '../Port/SimplePortModel';
 import { QueryBuilderNode } from '../../domain';
-import {
-  GroupNode,
-  ObjectNode,
-} from '../../../../../models/datamart/graphdb/QueryDocument';
+import { GroupNode, ObjectNode } from '../../../../../models/datamart/graphdb/QueryDocument';
 import { ObjectLikeTypeInfoResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
 
-export default class PlusNodeModel extends NodeModel
-  implements QueryBuilderNode {
+export default class PlusNodeModel extends NodeModel implements QueryBuilderNode {
   collapsed = false;
   negation = false;
   treeNodePath: number[] = [];

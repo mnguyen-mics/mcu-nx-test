@@ -15,7 +15,7 @@ export interface FormDragAndDropProps {
   uploadTitle: FormattedMessage.MessageDescriptor;
   uploadMessage: FormattedMessage.MessageDescriptor;
   uploadError: FormattedMessage.MessageDescriptor;
-  fileMasks:string
+  fileMasks: string;
 }
 
 const Dragger = Upload.Dragger;
@@ -23,7 +23,6 @@ const Dragger = Upload.Dragger;
 type JoinedProps = FormDragAndDropProps & WrappedFieldProps & InjectedIntlProps;
 
 class FormDragAndDrop extends React.Component<JoinedProps> {
-
   render() {
     const {
       intl: { formatMessage },
@@ -55,10 +54,7 @@ class FormDragAndDrop extends React.Component<JoinedProps> {
         accept: fileMasks,
         beforeUpload: (file: UploadFile, fileList: UploadFile[]) => {
           checkIfSizeOK(file);
-          const newFileList = [
-            ...input.value,
-            ...filterFileList(fileList),
-          ];
+          const newFileList = [...input.value, ...filterFileList(fileList)];
           input.onChange(newFileList);
           return false;
         },
@@ -71,8 +67,8 @@ class FormDragAndDrop extends React.Component<JoinedProps> {
 
     return (
       <Dragger {...builProps()}>
-        <p className="ant-upload-text">{formatMessage(uploadTitle)}</p>
-        <p className="ant-upload-hint">{formatMessage(uploadMessage)}</p>
+        <p className='ant-upload-text'>{formatMessage(uploadTitle)}</p>
+        <p className='ant-upload-hint'>{formatMessage(uploadMessage)}</p>
       </Dragger>
     );
   }

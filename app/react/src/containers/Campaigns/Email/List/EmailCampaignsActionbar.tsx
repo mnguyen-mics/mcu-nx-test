@@ -21,8 +21,7 @@ interface State {
   exportIsRunning: boolean;
 }
 
-type Props = InjectedIntlProps &
-  RouteComponentProps<{ organisationId: string }>;
+type Props = InjectedIntlProps & RouteComponentProps<{ organisationId: string }>;
 
 class EmailCampaignsActionbar extends React.Component<Props, State> {
   @lazyInject(TYPES.IEmailCampaignService)
@@ -63,12 +62,7 @@ class EmailCampaignsActionbar extends React.Component<Props, State> {
         campaignType,
         buildOptionsForGetCampaigns(),
       ),
-      ReportService.getEmailDeliveryReport(
-        organisationId,
-        startDate,
-        endDate,
-        dimension,
-      ),
+      ReportService.getEmailDeliveryReport(organisationId, startDate, endDate, dimension),
     ]);
 
     return apiResults.then(results => {
@@ -97,25 +91,14 @@ class EmailCampaignsActionbar extends React.Component<Props, State> {
       intl,
     } = this.props;
 
-    const filter = parseSearch(
-      this.props.location.search,
-      EMAIL_SEARCH_SETTINGS,
-    );
+    const filter = parseSearch(this.props.location.search, EMAIL_SEARCH_SETTINGS);
 
     this.setState({ exportIsRunning: true });
-    const hideExportLoadingMsg = message.loading(
-      intl.formatMessage(messages.exportInProgress),
-      0,
-    );
+    const hideExportLoadingMsg = message.loading(intl.formatMessage(messages.exportInProgress), 0);
 
     this.fetchExportData(organisationId, filter)
       .then(data => {
-        ExportService.exportEmailCampaigns(
-          organisationId,
-          data,
-          filter,
-          intl.formatMessage,
-        );
+        ExportService.exportEmailCampaigns(organisationId, data, filter, intl.formatMessage);
         this.setState({
           exportIsRunning: false,
         });
@@ -140,26 +123,25 @@ class EmailCampaignsActionbar extends React.Component<Props, State> {
     const exportIsRunning = this.state.exportIsRunning;
 
     const breadcrumbPaths = [
-      <Link key='1' to={`/v2/o/${organisationId}/campaigns/email`}>{intl.formatMessage(messages.emails)}</Link>,
+      <Link key='1' to={`/v2/o/${organisationId}/campaigns/email`}>
+        {intl.formatMessage(messages.emails)}
+      </Link>,
     ];
 
     return (
       <Actionbar pathItems={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/campaigns/email/create`}>
-          <Button type="primary" className="mcs-primary">
-            <McsIcon type="plus" />{' '}
+          <Button type='primary' className='mcs-primary'>
+            <McsIcon type='plus' />{' '}
             <FormattedMessage
-              id="email.campaigns.list.actionbar.newCampaign"
-              defaultMessage="New Campaign"
+              id='email.campaigns.list.actionbar.newCampaign'
+              defaultMessage='New Campaign'
             />
           </Button>
         </Link>
         <Button onClick={this.handleRunExport} loading={exportIsRunning}>
-          {!exportIsRunning && <McsIcon type="download" />}
-          <FormattedMessage
-            id="email.campaigns.list.actionbar.export"
-            defaultMessage="Export"
-          />
+          {!exportIsRunning && <McsIcon type='download' />}
+          <FormattedMessage id='email.campaigns.list.actionbar.export' defaultMessage='Export' />
         </Button>
       </Actionbar>
     );

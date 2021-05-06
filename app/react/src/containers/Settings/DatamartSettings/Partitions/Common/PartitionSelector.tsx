@@ -1,11 +1,6 @@
 import * as React from 'react';
 import { Layout, Row } from 'antd';
-import {
-  defineMessages,
-  injectIntl,
-  InjectedIntlProps,
-  FormattedMessage,
-} from 'react-intl';
+import { defineMessages, injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { FormTitle } from '../../../../../components/Form';
 import { MenuList } from '@mediarithmics-private/mcs-components-library';
 import FormLayoutActionbar, {
@@ -40,13 +35,7 @@ type Props = PartitionSelectorProps & InjectedIntlProps;
 
 class PartitionSelector extends React.Component<Props> {
   render() {
-    const {
-      partitions,
-      isLoading,
-      onSelect,
-      actionbarProps,
-      intl,
-    } = this.props;
+    const { partitions, isLoading, onSelect, actionbarProps, intl } = this.props;
 
     return isLoading ? (
       <Loading isFullScreen={true} />
@@ -54,20 +43,19 @@ class PartitionSelector extends React.Component<Props> {
       <Layout>
         <FormLayoutActionbar {...actionbarProps} />
 
-        <Layout.Content className="mcs-content-container mcs-form-container text-center">
+        <Layout.Content className='mcs-content-container mcs-form-container text-center'>
           <FormTitle title={messages.title} subtitle={messages.subTitle} />
-          <Row className="mcs-selector_container">
-            <Row className="menu">
+          <Row className='mcs-selector_container'>
+            <Row className='menu'>
               {partitions.length === 0 ? (
                 <FormattedMessage
-                  id="audience.segments.experimentation.form.noPartition"
-                  defaultMessage="You need a partition to create a Experimentation, please contact your support to create one."
+                  id='audience.segments.experimentation.form.noPartition'
+                  defaultMessage='You need a partition to create a Experimentation, please contact your support to create one.'
                 />
               ) : (
                 partitions.map(p => {
                   const handleSelect = () => onSelect(p);
-                  const partitionName =
-                    p.name || intl.formatMessage(messages.noName);
+                  const partitionName = p.name || intl.formatMessage(messages.noName);
                   return (
                     <MenuList
                       key={p.id}

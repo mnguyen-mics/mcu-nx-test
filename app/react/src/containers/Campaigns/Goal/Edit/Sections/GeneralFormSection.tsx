@@ -3,9 +3,7 @@ import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { FormSection, FormInputField } from '../../../../../components/Form';
-import withValidators, {
-  ValidatorProps,
-} from '../../../../../components/Form/withValidators';
+import withValidators, { ValidatorProps } from '../../../../../components/Form/withValidators';
 import FormInput from '../../../../../components/Form/FormInput';
 import messages from '../messages';
 
@@ -35,14 +33,11 @@ class GeneralFormSection extends React.Component<Props, State> {
 
     return (
       <div>
-        <FormSection
-          subtitle={messages.sectionSubtitle1}
-          title={messages.sectionTitle1}
-        />
+        <FormSection subtitle={messages.sectionSubtitle1} title={messages.sectionTitle1} />
 
         <div>
           <FormInputField
-            name="goal.name"
+            name='goal.name'
             component={FormInput}
             validate={[isRequired]}
             formItemProps={{
@@ -50,9 +45,7 @@ class GeneralFormSection extends React.Component<Props, State> {
               required: true,
             }}
             inputProps={{
-              placeholder: formatMessage(
-                messages.contentSectionGeneralRow1Placeholder,
-              ),
+              placeholder: formatMessage(messages.contentSectionGeneralRow1Placeholder),
             }}
             helpToolTipProps={{
               title: formatMessage(messages.contentSectionGeneralRow1Tooltip),
@@ -61,31 +54,24 @@ class GeneralFormSection extends React.Component<Props, State> {
         </div>
 
         <div>
-          <Button
-            className="optional-section-title"
-            onClick={this.toggleAdvancedSection}
-          >
-            <McsIcon type="settings" />
-            <span className="step-title">
+          <Button className='optional-section-title' onClick={this.toggleAdvancedSection}>
+            <McsIcon type='settings' />
+            <span className='step-title'>
               {formatMessage(messages.contentSectionGeneralAdvancedPartTitle)}
             </span>
-            <McsIcon type="chevron" />
+            <McsIcon type='chevron' />
           </Button>
 
           <div
             className={
-              !this.state.displayAdvancedSection
-                ? 'hide-section'
-                : 'optional-section-content'
+              !this.state.displayAdvancedSection ? 'hide-section' : 'optional-section-content'
             }
           >
             <FormInputField
-              name="goal.technical_name"
+              name='goal.technical_name'
               component={FormInput}
               formItemProps={{
-                label: formatMessage(
-                  messages.contentSectionGeneralAdvancedPartRow1Label,
-                ),
+                label: formatMessage(messages.contentSectionGeneralAdvancedPartRow1Label),
               }}
               inputProps={{
                 placeholder: formatMessage(
@@ -93,9 +79,7 @@ class GeneralFormSection extends React.Component<Props, State> {
                 ),
               }}
               helpToolTipProps={{
-                title: formatMessage(
-                  messages.contentSectionGeneralAdvancedPartRow1Tooltip,
-                ),
+                title: formatMessage(messages.contentSectionGeneralAdvancedPartRow1Tooltip),
               }}
             />
           </div>

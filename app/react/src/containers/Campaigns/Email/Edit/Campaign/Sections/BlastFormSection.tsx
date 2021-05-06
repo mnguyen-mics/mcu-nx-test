@@ -7,19 +7,10 @@ import { WrappedFieldArrayProps } from 'redux-form';
 import { withRouter, RouteComponentProps } from 'react-router';
 
 import { FormSection } from '../../../../../../components/Form';
-import {
-  RelatedRecords,
-  RecordElement,
-} from '../../../../../../components/RelatedRecord';
+import { RelatedRecords, RecordElement } from '../../../../../../components/RelatedRecord';
 import messages from '../../messages';
-import {
-  BlastFieldModel,
-  EmailBlastFormData,
-  INITIAL_EMAIL_BLAST_FORM_DATA,
-} from '../../domain';
-import EmailBlastForm, {
-  EmailBlastFormProps,
-} from '../../Blast/EmailBlastForm';
+import { BlastFieldModel, EmailBlastFormData, INITIAL_EMAIL_BLAST_FORM_DATA } from '../../domain';
+import EmailBlastForm, { EmailBlastFormProps } from '../../Blast/EmailBlastForm';
 import { ReduxFormChangeProps } from '../../../../../../utils/FormHelper';
 import { injectDrawer } from '../../../../../../components/Drawer/index';
 import { InjectedDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
@@ -94,10 +85,12 @@ class BlastFormSection extends React.Component<Props> {
   };
 
   getBlastRecords = () => {
-    const { fields, intl: { formatMessage } } = this.props;
+    const {
+      fields,
+      intl: { formatMessage },
+    } = this.props;
 
-    const getBlastName = (blastField: BlastFieldModel) =>
-      blastField.model.blast.blast_name;
+    const getBlastName = (blastField: BlastFieldModel) => blastField.model.blast.blast_name;
 
     const getAdditionalData = (blastField: BlastFieldModel) => {
       const sendDate = blastField.model.blast.send_date;
@@ -130,7 +123,9 @@ class BlastFormSection extends React.Component<Props> {
   };
 
   render() {
-    const { intl: { formatMessage } } = this.props;
+    const {
+      intl: { formatMessage },
+    } = this.props;
 
     const newBlast = () => this.openEmailBlastForm();
 
@@ -138,9 +133,7 @@ class BlastFormSection extends React.Component<Props> {
       <div>
         <FormSection
           button={{
-            message: formatMessage(
-              messages.emailBlastEditorBreadcrumbTitleNewBlast,
-            ),
+            message: formatMessage(messages.emailBlastEditorBreadcrumbTitleNewBlast),
             onClick: newBlast,
           }}
           subtitle={messages.emailEditorEmailBlastSubTitle}

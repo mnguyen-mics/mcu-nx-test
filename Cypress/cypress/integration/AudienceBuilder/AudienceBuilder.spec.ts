@@ -3,7 +3,7 @@ import faker from 'faker';
 describe('This test should check that the audience feature forms are working properly', () => {
   beforeEach(() => {
     cy.login();
-    cy.readFile('cypress/fixtures/init_infos.json').then((data) => {
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.switchOrg(data.organisationName);
     });
   });
@@ -12,10 +12,7 @@ describe('This test should check that the audience feature forms are working pro
     cy.clearLocalStorage();
   });
 
-  const createAudienceBuilder = (
-    datamartName: string,
-    audienceBuilderName: string,
-  ) => {
+  const createAudienceBuilder = (datamartName: string, audienceBuilderName: string) => {
     cy.get('.mcs-navigator-header-actions-settings').click();
     cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
     cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.myDatamart').click();
@@ -27,14 +24,12 @@ describe('This test should check that the audience feature forms are working pro
   };
 
   it('Should test the audience builder', () => {
-    cy.readFile('cypress/fixtures/init_infos.json').then((data) => {
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       const audienceBuilderName = faker.random.words(2);
       const audienceFeatureName = faker.random.words(2);
       createAudienceBuilder(data.datamartName, audienceBuilderName);
       cy.request({
-        url: `${Cypress.env('apiDomain')}/v1/datamarts/${
-          data.datamartId
-        }/audience_features`,
+        url: `${Cypress.env('apiDomain')}/v1/datamarts/${data.datamartId}/audience_features`,
         method: 'POST',
         headers: { Authorization: data.accessToken },
         body: {
@@ -45,9 +40,7 @@ describe('This test should check that the audience feature forms are working pro
         },
       }).then(() => {
         cy.request({
-          url: `${Cypress.env('apiDomain')}/v1/datamarts/${
-            data.datamartId
-          }/channels`,
+          url: `${Cypress.env('apiDomain')}/v1/datamarts/${data.datamartId}/channels`,
           method: 'POST',
           headers: { Authorization: data.accessToken },
           body: {
@@ -56,7 +49,7 @@ describe('This test should check that the audience feature forms are working pro
             enable_analytics: false,
             type: 'MOBILE_APPLICATION',
           },
-        }).then((responseChannel) => {
+        }).then(responseChannel => {
           cy.request({
             url: `${Cypress.env('apiDomain')}/v1/datamarts/${
               data.datamartId
@@ -75,14 +68,12 @@ describe('This test should check that the audience feature forms are working pro
             cy.wait(20000);
             cy.goToHome(data.organisationId);
             cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
-            cy.get(
-              '.mcs-sideBar-subMenuItem_menu\\.audience\\.builder',
-            ).click();
+            cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.builder').click();
             cy.wait(3000);
-            cy.url().then((url) => {
+            cy.url().then(url => {
               if (url.match(/.*segment-builder-selector$/g))
                 cy.get('.mcs-segmentBuilderSelector_item').eq(0).trigger('mouseover');
-                cy.contains(audienceBuilderName).click();
+              cy.contains(audienceBuilderName).click();
             });
             cy.get('.mcs-audienceBuilder_totalAudience').should('not.contain', '0');
             cy.get('.mcs-timelineButton_left').click();
@@ -102,14 +93,12 @@ describe('This test should check that the audience feature forms are working pro
   });
 
   it('should test the audience builder using match clause', () => {
-    cy.readFile('cypress/fixtures/init_infos.json').then((data) => {
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       const audienceBuilderName = faker.random.words(2);
       const audienceFeatureName = faker.random.words(2);
       createAudienceBuilder(data.datamartName, audienceBuilderName);
       cy.request({
-        url: `${Cypress.env('apiDomain')}/v1/datamarts/${
-          data.datamartId
-        }/audience_features`,
+        url: `${Cypress.env('apiDomain')}/v1/datamarts/${data.datamartId}/audience_features`,
         method: 'POST',
         headers: { Authorization: data.accessToken },
         body: {
@@ -120,9 +109,7 @@ describe('This test should check that the audience feature forms are working pro
         },
       }).then(() => {
         cy.request({
-          url: `${Cypress.env('apiDomain')}/v1/datamarts/${
-            data.datamartId
-          }/channels`,
+          url: `${Cypress.env('apiDomain')}/v1/datamarts/${data.datamartId}/channels`,
           method: 'POST',
           headers: { Authorization: data.accessToken },
           body: {
@@ -131,7 +118,7 @@ describe('This test should check that the audience feature forms are working pro
             enable_analytics: false,
             type: 'MOBILE_APPLICATION',
           },
-        }).then((responseChannel) => {
+        }).then(responseChannel => {
           cy.request({
             url: `${Cypress.env('apiDomain')}/v1/datamarts/${
               data.datamartId
@@ -150,23 +137,18 @@ describe('This test should check that the audience feature forms are working pro
             cy.wait(20000);
             cy.goToHome(data.organisationId);
             cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
-            cy.get(
-              '.mcs-sideBar-subMenuItem_menu\\.audience\\.builder',
-            ).click();
+            cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.builder').click();
             cy.wait(3000);
-            cy.url().then((url) => {
+            cy.url().then(url => {
               if (url.match(/.*segment-builder-selector$/g))
                 cy.get('.mcs-segmentBuilderSelector_item').eq(0).trigger('mouseover');
-                cy.contains(audienceBuilderName).click();
+              cy.contains(audienceBuilderName).click();
             });
-            cy.get('.mcs-audienceBuilder_totalAudience').should(
-              'not.contain',
-              '0',
-            );
+            cy.get('.mcs-audienceBuilder_totalAudience').should('not.contain', '0');
             cy.get('.mcs-timelineButton_left').click();
             cy.get('.mcs-audienceBuilder_featureCard').contains(audienceFeatureName).click();
             cy.get('.add-button').click();
-            cy.get('.mcs-timeline_actionDot').eq(0).click()
+            cy.get('.mcs-timeline_actionDot').eq(0).click();
             cy.get('.mcs-audienceBuilder_featureCard').contains(audienceFeatureName).click();
             cy.get('.add-button').click();
             cy.get('.mcs-audienceBuilder_audienceFeatureContent')
@@ -175,25 +157,20 @@ describe('This test should check that the audience feature forms are working pro
                 cy.get('input').type('test_match_audience_builder');
               });
             cy.get('.mcs-audienceBuilder_dashboard_refresh_button').click();
-            cy.get('.mcs-audienceBuilder_totalAudience').should(
-              'not.contain',
-              '0',
-            );
+            cy.get('.mcs-audienceBuilder_totalAudience').should('not.contain', '0');
           });
         });
       });
     });
-  }); 
+  });
 
   it('should test to add an audience feature from library to an audience builder on creation', () => {
-    cy.readFile('cypress/fixtures/init_infos.json').then((data) => {
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       const audienceBuilderName = faker.random.words(2);
       const audienceFeatureName = faker.random.words(2);
       createAudienceBuilder(data.datamartName, audienceBuilderName);
       cy.request({
-        url: `${Cypress.env('apiDomain')}/v1/datamarts/${
-          data.datamartId
-        }/audience_features`,
+        url: `${Cypress.env('apiDomain')}/v1/datamarts/${data.datamartId}/audience_features`,
         method: 'POST',
         headers: { Authorization: data.accessToken },
         body: {
@@ -202,20 +179,17 @@ describe('This test should check that the audience feature forms are working pro
           object_tree_expression: 'accounts{match (user_account_id,$id)}',
           addressable_object: 'UserPoint',
         },
-      }).then(() => {
-        cy.contains(audienceBuilderName).click();
-        cy.get('.mcs-audienceBuilder_formColumn')
-          .contains('Add from library')
-          .click();
-        cy.contains(audienceFeatureName).click();
-        cy.get('.mcs-actionbar-edit')
-          .find('button').first().click();
-        cy.get('.mcs-form_saveButton_audienceBuilderForm').click();
-      }).then(() => {
+      })
+        .then(() => {
+          cy.contains(audienceBuilderName).click();
+          cy.get('.mcs-audienceBuilder_formColumn').contains('Add from library').click();
+          cy.contains(audienceFeatureName).click();
+          cy.get('.mcs-actionbar-edit').find('button').first().click();
+          cy.get('.mcs-form_saveButton_audienceBuilderForm').click();
+        })
+        .then(() => {
           cy.request({
-            url: `${Cypress.env('apiDomain')}/v1/datamarts/${
-              data.datamartId
-            }/channels`,
+            url: `${Cypress.env('apiDomain')}/v1/datamarts/${data.datamartId}/channels`,
             method: 'POST',
             headers: { Authorization: data.accessToken },
             body: {
@@ -224,8 +198,9 @@ describe('This test should check that the audience feature forms are working pro
               enable_analytics: false,
               type: 'MOBILE_APPLICATION',
             },
-          })
-        }).then((responseChannel) => {
+          });
+        })
+        .then(responseChannel => {
           cy.request({
             url: `${Cypress.env('apiDomain')}/v1/datamarts/${
               data.datamartId
@@ -240,44 +215,39 @@ describe('This test should check that the audience feature forms are working pro
               $ts: new Date().getTime(),
               $events: [],
             },
-          })
-        }).then(() => {
-            cy.wait(20000);
-            cy.goToHome(data.organisationId);
-            cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
-            cy.get(
-              '.mcs-sideBar-subMenuItem_menu\\.audience\\.builder',
-            ).click();
-            cy.wait(3000);
-            cy.url().then((url) => {
-              if (url.match(/.*segment-builder-selector$/g))
-                cy.get('.mcs-segmentBuilderSelector_item').eq(0).trigger('mouseover');
-                cy.contains(audienceBuilderName).click();
-            });
+          });
+        })
+        .then(() => {
+          cy.wait(20000);
+          cy.goToHome(data.organisationId);
+          cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
+          cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.builder').click();
+          cy.wait(3000);
+          cy.url().then(url => {
+            if (url.match(/.*segment-builder-selector$/g))
+              cy.get('.mcs-segmentBuilderSelector_item').eq(0).trigger('mouseover');
+            cy.contains(audienceBuilderName).click();
+          });
 
-            cy.get('.mcs-audienceBuilder_totalAudience').should(
-              'not.contain',
-              '0',
-            );
+          cy.get('.mcs-audienceBuilder_totalAudience').should('not.contain', '0');
 
-            cy.get('.mcs-audienceBuilder_audienceFeatureContent')
-              .should('contain',audienceFeatureName);
+          cy.get('.mcs-audienceBuilder_audienceFeatureContent').should(
+            'contain',
+            audienceFeatureName,
+          );
 
-            cy.get('.mcs-audienceBuilder_audienceFeatureContent')
-              .should('contain','Test - Audience Builder - Cypress');
-              
-            cy.get('.mcs-audienceBuilder_audienceFeatureContent') 
-              .within(() => {
-                cy.get('input').type('test_match_audience_builder{enter}')
-              });
-            
-            cy.get('.mcs-audienceBuilder_dashboard_refresh_button').click();
-            cy.get('.mcs-audienceBuilder_totalAudience').should(
-                'not.contain',
-                '0',
-                );
+          cy.get('.mcs-audienceBuilder_audienceFeatureContent').should(
+            'contain',
+            'Test - Audience Builder - Cypress',
+          );
+
+          cy.get('.mcs-audienceBuilder_audienceFeatureContent').within(() => {
+            cy.get('input').type('test_match_audience_builder{enter}');
+          });
+
+          cy.get('.mcs-audienceBuilder_dashboard_refresh_button').click();
+          cy.get('.mcs-audienceBuilder_totalAudience').should('not.contain', '0');
         });
-      });
     });
-
+  });
 });

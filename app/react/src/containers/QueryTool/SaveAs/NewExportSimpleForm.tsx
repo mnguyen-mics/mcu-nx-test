@@ -24,19 +24,16 @@ const initialFormData: Partial<NewExportSimpleFormData> = {
 
 export const FORM_ID = 'exportSimpleForm';
 
-export interface FormProps
-  extends Omit<ConfigProps<NewExportSimpleFormData, FormProps>, 'form'> {
-    csvExportDisabled?: boolean;
-  }
+export interface FormProps extends Omit<ConfigProps<NewExportSimpleFormData, FormProps>, 'form'> {
+  csvExportDisabled?: boolean;
+}
 
 type Props = FormProps & InjectedIntlProps & ValidatorProps;
 
 class NewExportSimleForm extends React.Component<
   Props & InjectedFormProps<NewExportSimpleFormData, Props>
 > {
-  constructor(
-    props: Props & InjectedFormProps<NewExportSimpleFormData, Props>,
-  ) {
+  constructor(props: Props & InjectedFormProps<NewExportSimpleFormData, Props>) {
     super(props);
     this.state = {
       displayAdvancedSection: false,
@@ -69,39 +66,29 @@ class NewExportSimleForm extends React.Component<
     const { fieldValidators, intl, handleSubmit, csvExportDisabled } = this.props;
 
     return (
-      <Form
-        className="edit-layout ant-layout"
-        layout="vertical"
-        onSubmit={handleSubmit}
-      >
-        <div className="mcs-form-container" style={{ paddingTop: '0px' }}>
+      <Form className='edit-layout ant-layout' layout='vertical' onSubmit={handleSubmit}>
+        <div className='mcs-form-container' style={{ paddingTop: '0px' }}>
           <FormInputField
-            name="name"
+            name='name'
             component={FormInput}
             validate={[fieldValidators.isRequired]}
             formItemProps={{
-              label: intl.formatMessage(
-                messages.exportNameLabel,
-              ),
+              label: intl.formatMessage(messages.exportNameLabel),
               required: true,
             }}
             inputProps={{
-              placeholder: intl.formatMessage(
-                messages.exportNamelPlaceholder,
-              ),
+              placeholder: intl.formatMessage(messages.exportNamelPlaceholder),
               addonAfter: (
-                <FormAddonSelectField 
-                  name="outputFormat"
+                <FormAddonSelectField
+                  name='outputFormat'
                   component={AddonSelect}
                   options={this.getOptionList(csvExportDisabled)}
                 />
-              )
+              ),
             }}
             helpToolTipProps={{
-              title: intl.formatMessage(
-                messages.exportNameTooltip,
-              ),
-            }}            
+              title: intl.formatMessage(messages.exportNameTooltip),
+            }}
             small={true}
           />
         </div>

@@ -1,11 +1,7 @@
 import { AttributionSelectionCreateRequest } from './../models/goal/AttributionSelectionResource';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import { PaginatedApiParam } from '../utils/ApiHelper';
-import {
-  GoalResource,
-  GoalCreateRequest,
-  AttributionSelectionResource,
-} from '../models/goal';
+import { GoalResource, GoalCreateRequest, AttributionSelectionResource } from '../models/goal';
 import { injectable } from 'inversify';
 
 export interface GoalsOptions extends PaginatedApiParam {
@@ -45,9 +41,7 @@ export interface IGoalService {
     resource: Partial<AttributionSelectionResource>,
   ) => Promise<DataResponse<AttributionSelectionResource>>;
 
-  getAttributionModels: (
-    goalId: string,
-  ) => Promise<DataListResponse<AttributionSelectionResource>>;
+  getAttributionModels: (goalId: string) => Promise<DataListResponse<AttributionSelectionResource>>;
 
   deleteAttributionModel: (
     goalId: string,
@@ -121,17 +115,12 @@ export class GoalService implements IGoalService {
     return ApiService.putRequest(endpoint, resource);
   }
 
-  getAttributionModels(
-    goalId: string,
-  ): Promise<DataListResponse<AttributionSelectionResource>> {
+  getAttributionModels(goalId: string): Promise<DataListResponse<AttributionSelectionResource>> {
     const endpoint = `goals/${goalId}/attribution_models`;
     return ApiService.getRequest(endpoint);
   }
 
-  deleteAttributionModel(
-    goalId: string,
-    attributionModelId: string,
-  ): Promise<any> {
+  deleteAttributionModel(goalId: string, attributionModelId: string): Promise<any> {
     const endpoint = `goals/${goalId}/attribution_models/${attributionModelId}`;
     return ApiService.deleteRequest(endpoint);
   }

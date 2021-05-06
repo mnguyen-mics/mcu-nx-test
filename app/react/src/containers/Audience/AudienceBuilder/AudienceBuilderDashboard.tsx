@@ -9,10 +9,7 @@ import { IDashboardService } from '../../../services/DashboardServices';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
-import {
-  Loading,
-  McsIcon,
-} from '@mediarithmics-private/mcs-components-library';
+import { Loading, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import DashboardWrapper from '../Dashboard/DashboardWrapper';
 import CardFlex from '../Dashboard/Components/CardFlex';
 import { QueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
@@ -28,9 +25,7 @@ interface AudienceBuilderDashboardProps {
   isQueryRunning: boolean;
 }
 
-type Props = InjectedIntlProps &
-  InjectedNotificationProps &
-  AudienceBuilderDashboardProps;
+type Props = InjectedIntlProps & InjectedNotificationProps & AudienceBuilderDashboardProps;
 
 interface State {
   isDashboardLoading: boolean;
@@ -54,23 +49,14 @@ class AudienceBuilderDashboard extends React.Component<Props, State> {
     this.loadData(organisationId, datamartId, audienceBuilderId);
   }
 
-  loadData = (
-    organisationId: string,
-    selectedDatamartId: string,
-    audienceBuilderId: string,
-  ) => {
+  loadData = (organisationId: string, selectedDatamartId: string, audienceBuilderId: string) => {
     this.setState({ isDashboardLoading: true });
     this._dashboardService
-      .getAudienceBuilderDashboards(
-        organisationId,
-        selectedDatamartId,
-        audienceBuilderId,
-        {},
-      )
-      .then((d) => {
+      .getAudienceBuilderDashboards(organisationId, selectedDatamartId, audienceBuilderId, {})
+      .then(d => {
         this.setState({ dashboards: d.status === 'ok' ? d.data : [] });
       })
-      .catch((err) => {
+      .catch(err => {
         this.props.notifyError(err);
       })
       .finally(() => {
@@ -91,18 +77,18 @@ class AudienceBuilderDashboard extends React.Component<Props, State> {
     } = this.props;
     const { isDashboardLoading, dashboards } = this.state;
     return (
-      <div className="mcs-audienceBuilder_liveDashboard">
+      <div className='mcs-audienceBuilder_liveDashboard'>
         <React.Fragment>
-          <CardFlex className="mcs-audienceBuilder_totalAudience">
-            <McsIcon type="full-users" />
+          <CardFlex className='mcs-audienceBuilder_totalAudience'>
+            <McsIcon type='full-users' />
             {isQueryRunning ? (
               <span />
             ) : !!totalAudience || totalAudience === 0 ? (
               <span>
-                <span className="mcs-audienceBuilder_totalValue">
+                <span className='mcs-audienceBuilder_totalValue'>
                   {formatMetric(totalAudience, '0,0')}
                 </span>
-                <span className="mcs-audienceBuilder_selectedAudience">
+                <span className='mcs-audienceBuilder_selectedAudience'>
                   {intl.formatMessage(messages.selectedAudience)}
                 </span>
               </span>
@@ -111,9 +97,9 @@ class AudienceBuilderDashboard extends React.Component<Props, State> {
             )}
           </CardFlex>
           {isDashboardLoading || !queryDocument ? (
-            <Loading className="m-t-20" isFullScreen={true} />
+            <Loading className='m-t-20' isFullScreen={true} />
           ) : (
-            dashboards.map((d) => (
+            dashboards.map(d => (
               <DashboardWrapper
                 key={d.id}
                 layout={d.components}
@@ -122,7 +108,7 @@ class AudienceBuilderDashboard extends React.Component<Props, State> {
               />
             ))
           )}
-          <div className="mcs-audienceBuilder_timelineSelector">
+          <div className='mcs-audienceBuilder_timelineSelector'>
             <TimelineSelector
               stale={false}
               datamartId={datamartId}

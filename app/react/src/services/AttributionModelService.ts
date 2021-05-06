@@ -10,14 +10,10 @@ export interface IAttributionModelService extends PluginInstanceService<Attribut
     organisationId: string,
     options: PaginatedApiParam,
   ) => Promise<DataListResponse<AttributionModel>>;
-  getAttributionModel: (
-    attributionModelId: string,
-  ) => Promise<DataResponse<AttributionModel>>;
+  getAttributionModel: (attributionModelId: string) => Promise<DataResponse<AttributionModel>>;
 
   deleteAttributionModel: (attributionModelId: string) => Promise<any>;
-  getLocalizedPluginLayout: (
-    pInstanceId: string,
-  ) => Promise<PluginLayout | null>;
+  getLocalizedPluginLayout: (pInstanceId: string) => Promise<PluginLayout | null>;
 }
 
 @injectable()
@@ -41,9 +37,7 @@ export class AttributionModelService
     return ApiService.getRequest(endpoint, params);
   }
 
-  getAttributionModel(
-    attributionModelId: string,
-  ): Promise<DataResponse<AttributionModel>> {
+  getAttributionModel(attributionModelId: string): Promise<DataResponse<AttributionModel>> {
     const endpoint = `attribution_models/${attributionModelId}`;
 
     return ApiService.getRequest(endpoint);

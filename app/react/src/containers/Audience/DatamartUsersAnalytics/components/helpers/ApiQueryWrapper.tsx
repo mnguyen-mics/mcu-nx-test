@@ -24,9 +24,7 @@ import { orderBy, intersection, isEqual } from 'lodash';
 import { LoadingChart } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 
-type Props = ApiQueryWrapperProps &
-  InjectedNotificationProps &
-  RouteComponentProps<{}>;
+type Props = ApiQueryWrapperProps & InjectedNotificationProps & RouteComponentProps<{}>;
 
 export interface ApiQueryWrapperProps {
   chart: Chart;
@@ -57,13 +55,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
     };
   }
   componentDidMount() {
-    const {
-      datamartId,
-      chart,
-      onChange,
-      segmentId,
-      compareWithSegmentId
-    } = this.props;
+    const { datamartId, chart, onChange, segmentId, compareWithSegmentId } = this.props;
 
     this.fetchAnalytics(
       onChange,
@@ -75,7 +67,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       chart.dimensionFilterClauses,
       segmentId,
       undefined,
-      chart.sampling
+      chart.sampling,
     ).then(() => {
       if (compareWithSegmentId) {
         this.fetchAnalytics(
@@ -88,7 +80,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
           chart.dimensionFilterClauses,
           segmentId,
           compareWithSegmentId,
-          chart.sampling
+          chart.sampling,
         );
       }
     });
@@ -103,7 +95,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       segmentId,
       compareWithSegmentId,
       location: { search },
-      segmentToAggregate
+      segmentToAggregate,
     } = this.props;
 
     if (
@@ -122,7 +114,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
         chart.dimensionFilterClauses,
         segmentId,
         undefined,
-        chart.sampling
+        chart.sampling,
       ).then(() => {
         if (compareWithSegmentId) {
           this.fetchAnalytics(
@@ -135,7 +127,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
             chart.dimensionFilterClauses,
             segmentId,
             compareWithSegmentId,
-            chart.sampling
+            chart.sampling,
           );
         }
       });
@@ -161,7 +153,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
     dimensionFilterClauses?: DimensionFilterClause,
     segmentId?: string,
     compareWithSegmentId?: string,
-    sampling?: number
+    sampling?: number,
   ) => {
     const { chart } = this.props;
 
@@ -173,9 +165,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
     let getTenHigherValues: string[] = [];
 
     if (dimensions && dimensions.includes('date_yyyy_mm_dd')) {
-      const dimensionsWithoutTime = dimensions
-        .slice()
-        .filter(d => d !== 'date_yyyy_mm_dd');
+      const dimensionsWithoutTime = dimensions.slice().filter(d => d !== 'date_yyyy_mm_dd');
       return this._datamartUsersAnalyticsService
         .getAnalytics(
           datamartId,
@@ -208,7 +198,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
             segmentId,
             compareWithSegmentId,
             getTenHigherValues,
-            sampling
+            sampling,
           );
         });
     }
@@ -224,7 +214,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
       segmentId,
       compareWithSegmentId,
       undefined,
-      sampling
+      sampling,
     );
   };
 
@@ -239,7 +229,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
     segmentId?: string,
     compareWithSegmentId?: string,
     tenHigherValues?: string[],
-    sampling?: number
+    sampling?: number,
   ) => {
     return this._datamartUsersAnalyticsService
       .getAnalytics(
@@ -251,7 +241,7 @@ class ApiQueryWrapper extends React.Component<Props, State> {
         dimensionFilterClauses,
         compareWithSegmentId || segmentId,
         this.getSegmentIdToAddToDimensionFilterClause(!!compareWithSegmentId),
-        sampling
+        sampling,
       )
       .then(res => {
         if (tenHigherValues && tenHigherValues.length > 0) {
@@ -296,18 +286,9 @@ class ApiQueryWrapper extends React.Component<Props, State> {
 
   render() {
     const { chart, segmentName, compareWithSegmentName } = this.props;
-    const {
-      loading,
-      reportViewApiResponse,
-      reportViewApiResponseToCompareWith,
-    } = this.state;
+    const { loading, reportViewApiResponse, reportViewApiResponseToCompareWith } = this.state;
 
-    if (loading)
-      return chart.type !== 'SINGLE_STAT' ? (
-        <LoadingChart />
-      ) : (
-        <MetricCounterLoader />
-      );
+    if (loading) return chart.type !== 'SINGLE_STAT' ? <LoadingChart /> : <MetricCounterLoader />;
 
     return (
       <div className={'mcs-datamartUsersAnalytics_component_charts'}>

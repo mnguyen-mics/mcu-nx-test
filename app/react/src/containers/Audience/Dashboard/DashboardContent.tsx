@@ -9,10 +9,7 @@ import GaugePieChart from './Vizualisation/GaugePieChart';
 import WorldMapChart from './Vizualisation/WorldMapChart';
 import { AudienceSegmentShape } from '../../../models/audiencesegment/AudienceSegmentResource';
 import CountBarChart from './Vizualisation/CountBarChart';
-import {
-  ComponentLayout,
-  Component,
-} from '../../../models/dashboards/dashboards';
+import { ComponentLayout, Component } from '../../../models/dashboards/dashboards';
 import Percentage from './Vizualisation/Percentage';
 import CountPieChart from './Vizualisation/CountPieChart';
 import TopInfo from './Vizualisation/TopInfo';

@@ -1,13 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
-import {
-  reduxForm,
-  InjectedFormProps,
-  Form,
-  ConfigProps,
-  getFormValues,
-} from 'redux-form';
+import { reduxForm, InjectedFormProps, Form, ConfigProps, getFormValues } from 'redux-form';
 import {
   FormInputField,
   FormInput,
@@ -21,12 +15,7 @@ import {
 } from '../../../../../components/Form';
 import { injectDatamart } from '../../../../Datamart';
 import { AudiencePartitionResource } from '../../../../../models/audiencePartition/AudiencePartitionResource';
-import {
-  injectIntl,
-  InjectedIntlProps,
-  defineMessages,
-  FormattedMessage,
-} from 'react-intl';
+import { injectIntl, InjectedIntlProps, defineMessages, FormattedMessage } from 'react-intl';
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../../../components/Layout/FormLayoutActionbar';
@@ -69,8 +58,7 @@ interface MapStateToProps {
   formValues: any;
 }
 
-export interface AudienceLookalikeCreationProps
-  extends Omit<ConfigProps<any>, 'form'> {
+export interface AudienceLookalikeCreationProps extends Omit<ConfigProps<any>, 'form'> {
   breadCrumbPaths: React.ReactNode[];
   close: () => void;
   datamartId: string;
@@ -102,10 +90,7 @@ const fieldGridConfig = {
   wrapperCol: { span: 19, offset: 1 },
 };
 
-class AudienceLookalikeCreation extends React.Component<
-  Props,
-  AudienceLookalikeState
-> {
+class AudienceLookalikeCreation extends React.Component<Props, AudienceLookalikeState> {
   @lazyInject(TYPES.IAudiencePartitionsService)
   private _audiencePartitionsService: IAudiencePartitionsService;
   @lazyInject(TYPES.IAudienceSegmentService)
@@ -170,10 +155,7 @@ class AudienceLookalikeCreation extends React.Component<
         : { ...rest };
       const promise =
         lookalikeType === 'partition_based_lookalike'
-          ? this._audienceSegmentService.createAudienceSegment(
-              organisationId,
-              formattedFormData,
-            )
+          ? this._audienceSegmentService.createAudienceSegment(organisationId, formattedFormData)
           : this._queryService
               .createQuery(datamartId, {
                 datamart_id: datamartId,
@@ -186,15 +168,12 @@ class AudienceLookalikeCreation extends React.Component<
                 return resp.data;
               })
               .then(queryResource => {
-                return this._audienceSegmentService.createAudienceSegment(
-                  organisationId,
-                  {
-                    ...rest,
-                    type: 'USER_QUERY',
-                    query_id: queryResource.id,
-                    extension_factor: similarity / 100,
-                  },
-                );
+                return this._audienceSegmentService.createAudienceSegment(organisationId, {
+                  ...rest,
+                  type: 'USER_QUERY',
+                  query_id: queryResource.id,
+                  extension_factor: similarity / 100,
+                });
               });
 
       promise
@@ -221,16 +200,14 @@ class AudienceLookalikeCreation extends React.Component<
   getMinValue = () => {
     const { datamartId } = this.props;
 
-    const q =
-      'SELECT { segment_scores { scores { score @min } } } FROM UserPoint';
+    const q = 'SELECT { segment_scores { scores { score @min } } } FROM UserPoint';
 
     return this._queryService
       .runOTQLQuery(datamartId, q, {
         use_cache: true,
       })
       .then(otqlResultResp => {
-        return otqlResultResp.data.rows[0].aggregations.metric_aggregations[0]
-          .value;
+        return otqlResultResp.data.rows[0].aggregations.metric_aggregations[0].value;
       })
       .then(result => {
         this.setState({
@@ -242,16 +219,14 @@ class AudienceLookalikeCreation extends React.Component<
   getMaxValue = () => {
     const { datamartId } = this.props;
 
-    const q =
-      'SELECT { segment_scores { scores { score @max } } } FROM UserPoint';
+    const q = 'SELECT { segment_scores { scores { score @max } } } FROM UserPoint';
 
     return this._queryService
       .runOTQLQuery(datamartId, q, {
         use_cache: true,
       })
       .then(otqlResultResp => {
-        return otqlResultResp.data.rows[0].aggregations.metric_aggregations[0]
-          .value;
+        return otqlResultResp.data.rows[0].aggregations.metric_aggregations[0].value;
       })
       .then(result => {
         this.setState({
@@ -327,53 +302,41 @@ class AudienceLookalikeCreation extends React.Component<
       lookalikeType === 'partition_based_lookalike'
     ) {
       return (
-        <Layout className="edit-layout">
+        <Layout className='edit-layout'>
           <FormLayoutActionbar {...actionBarProps} />
           <Layout>
-            <Form
-              onSubmit={handleSubmit(this.save) as any}
-              className={'edit-layout ant-layout'}
-            >
-              <Content
-                id={FORM_ID}
-                className="mcs-content-container mcs-form-container"
-              >
-                <div className="m-t-20 m-b-20">
+            <Form onSubmit={handleSubmit(this.save) as any} className={'edit-layout ant-layout'}>
+              <Content id={FORM_ID} className='mcs-content-container mcs-form-container'>
+                <div className='m-t-20 m-b-20'>
                   {intl.formatMessage(messages.lookAlikeModalHelper)}
                 </div>
                 <div>
                   <FormInputField
-                    name="name"
+                    name='name'
                     component={FormInput}
                     validate={[isRequired]}
                     props={{
                       formItemProps: {
-                        label: intl.formatMessage(
-                          messages.lookAlikeModalNameLabel,
-                        ),
+                        label: intl.formatMessage(messages.lookAlikeModalNameLabel),
                         required: true,
                         ...fieldGridConfig,
                       },
                       inputProps: {
-                        placeholder: intl.formatMessage(
-                          messages.lookAlikeModalNameLabel,
-                        ),
+                        placeholder: intl.formatMessage(messages.lookAlikeModalNameLabel),
                       },
                     }}
                   />
                 </div>
                 <div>
                   <FormSelectField
-                    name="audience_partition_id"
+                    name='audience_partition_id'
                     component={DefaultSelect}
                     options={this.state.partitions.map(i => {
                       return { title: i.name || i.id, value: i.id };
                     })}
                     validate={[isRequired]}
                     formItemProps={{
-                      label: intl.formatMessage(
-                        messages.lookAlikeModalPartitionLabel,
-                      ),
+                      label: intl.formatMessage(messages.lookAlikeModalPartitionLabel),
                       required: true,
                       ...fieldGridConfig,
                     }}
@@ -383,13 +346,11 @@ class AudienceLookalikeCreation extends React.Component<
                 <div>
                   {this.props.formValues.audience_partition_id ? (
                     <FormSliderField
-                      name="extension_factor"
+                      name='extension_factor'
                       component={FormSlider}
                       validate={[isRequired]}
                       formItemProps={{
-                        label: intl.formatMessage(
-                          messages.lookAlikeModalExtentionFactorLabel,
-                        ),
+                        label: intl.formatMessage(messages.lookAlikeModalExtentionFactorLabel),
                         required: true,
                         ...fieldGridConfig,
                       }}
@@ -398,15 +359,12 @@ class AudienceLookalikeCreation extends React.Component<
                         max: this.state.partitions
                           .filter(
                             partition =>
-                              partition.id ===
-                              this.props.formValues.audience_partition_id,
+                              partition.id === this.props.formValues.audience_partition_id,
                           )
                           .map(p => p.part_count)[0],
                       }}
                       helpToolTipProps={{
-                        title: intl.formatMessage(
-                          messages.tooltipExtensionFactor,
-                        ),
+                        title: intl.formatMessage(messages.tooltipExtensionFactor),
                       }}
                     />
                   ) : (
@@ -416,9 +374,7 @@ class AudienceLookalikeCreation extends React.Component<
                           message={
                             <div>
                               <McsIcon type={'warning'} />
-                              {intl.formatMessage(
-                                messages.extensionFactorError,
-                              )}
+                              {intl.formatMessage(messages.extensionFactorError)}
                             </div>
                           }
                           type={'error'}
@@ -434,37 +390,27 @@ class AudienceLookalikeCreation extends React.Component<
       );
     } else if (lookalikeType === 'score_based_lookalike') {
       return (
-        <Layout className="edit-layout">
+        <Layout className='edit-layout'>
           <FormLayoutActionbar {...actionBarProps} />
           <Layout>
-            <Form
-              onSubmit={handleSubmit(this.save) as any}
-              className={'edit-layout ant-layout'}
-            >
-              <Content
-                id={FORM_ID}
-                className="mcs-content-container mcs-form-container"
-              >
-                <div className="m-t-20 m-b-20">
+            <Form onSubmit={handleSubmit(this.save) as any} className={'edit-layout ant-layout'}>
+              <Content id={FORM_ID} className='mcs-content-container mcs-form-container'>
+                <div className='m-t-20 m-b-20'>
                   {intl.formatMessage(messages.lookAlikeModalHelper)}
                 </div>
                 <div>
                   <FormInputField
-                    name="name"
+                    name='name'
                     component={FormInput}
                     validate={[isRequired]}
                     props={{
                       formItemProps: {
-                        label: intl.formatMessage(
-                          messages.lookAlikeModalNameLabel,
-                        ),
+                        label: intl.formatMessage(messages.lookAlikeModalNameLabel),
                         required: true,
                         ...fieldGridConfig,
                       },
                       inputProps: {
-                        placeholder: intl.formatMessage(
-                          messages.lookAlikeModalNameLabel,
-                        ),
+                        placeholder: intl.formatMessage(messages.lookAlikeModalNameLabel),
                       },
                     }}
                   />
@@ -473,7 +419,7 @@ class AudienceLookalikeCreation extends React.Component<
                 <div>
                   {min && max ? (
                     <FormSliderField
-                      name="extension_factor"
+                      name='extension_factor'
                       component={FormSlider}
                       validate={[isRequired]}
                       formItemProps={{
@@ -499,7 +445,7 @@ class AudienceLookalikeCreation extends React.Component<
                     label={intl.formatMessage(messages.extensionFactor)}
                     {...fieldGridConfig}
                   >
-                    <span className="lookalike-form-extensionFactor">
+                    <span className='lookalike-form-extensionFactor'>
                       {`${extensionRatio ? extensionRatio.toFixed(2) : '-'} %`}
                     </span>
                   </FormFieldWrapper>
@@ -508,7 +454,7 @@ class AudienceLookalikeCreation extends React.Component<
                   <Alert
                     className={'m-b-20'}
                     message={intl.formatMessage(messages.lookalikeTooBroad)}
-                    type="warning"
+                    type='warning'
                   />
                 )}
               </Content>
@@ -518,15 +464,15 @@ class AudienceLookalikeCreation extends React.Component<
       );
     } else {
       return (
-        <Layout className="edit-layout">
+        <Layout className='edit-layout'>
           <FormLayoutActionbar {...actionBarProps} />
-          <Layout.Content className="mcs-content-container mcs-form-container text-center">
+          <Layout.Content className='mcs-content-container mcs-form-container text-center'>
             <FormTitle
               title={messages.lookalikeTypeSelectorTitle}
               subtitle={messages.lookalikeTypeSelectorsubTitle}
             />
-            <Row className="mcs-selector_container">
-              <Row className="menu">
+            <Row className='mcs-selector_container'>
+              <Row className='menu'>
                 {lookalikeTypes.map(type => {
                   const handleSelect = () => this.onSelectLookalikeType(type);
                   return (

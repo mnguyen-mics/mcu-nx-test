@@ -2,9 +2,8 @@
 
 import 'brace/mode/sql';
 
-export class CustomHighlightRules extends window.ace.acequire(
-  'ace/mode/text_highlight_rules',
-).TextHighlightRules {
+export class CustomHighlightRules extends window.ace.acequire('ace/mode/text_highlight_rules')
+  .TextHighlightRules {
   constructor() {
     super();
     var keywords = 'select|from|where|and|or';
@@ -81,8 +80,7 @@ export class CustomHighlightRules extends window.ace.acequire(
   }
 }
 
-export default class CustomSqlMode extends window.ace.acequire('ace/mode/sql')
-  .Mode {
+export default class CustomSqlMode extends window.ace.acequire('ace/mode/sql').Mode {
   constructor() {
     super();
     this.HighlightRules = CustomHighlightRules;

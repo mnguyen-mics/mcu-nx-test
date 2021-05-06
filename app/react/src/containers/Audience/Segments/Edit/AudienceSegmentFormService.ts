@@ -4,10 +4,7 @@ import { DataListResponse } from './../../../../services/ApiService';
 import { IAudienceSegmentService } from './../../../../services/AudienceSegmentService';
 import moment from 'moment';
 import { AudienceSegmentFormData } from './domain';
-import {
-  QueryResource,
-  QueryLanguage,
-} from '../../../../models/datamart/DatamartResource';
+import { QueryResource, QueryLanguage } from '../../../../models/datamart/DatamartResource';
 import {
   UserQuerySegment,
   AudienceSegmentShape,
@@ -19,9 +16,7 @@ import { IQueryService } from '../../../../services/QueryService';
 import { createFieldArrayModel } from '../../../../utils/FormHelper';
 
 export interface IAudienceSegmentFormService {
-  loadSegmentInitialValue: (
-    segmentId: string,
-  ) => Promise<AudienceSegmentFormData>;
+  loadSegmentInitialValue: (segmentId: string) => Promise<AudienceSegmentFormData>;
 
   saveOrCreateAudienceSegment: (
     organisationId: string,
@@ -80,17 +75,14 @@ export class AudienceSegmentFormService implements IAudienceSegmentFormService {
       const resSegment = res[0];
       const resProcessingSelections = res[1];
       const initialProcessingSelectionResources = resProcessingSelections.map(
-        processingAndSelection =>
-          processingAndSelection.processingSelectionResource,
+        processingAndSelection => processingAndSelection.processingSelectionResource,
       );
-      const processingActivities = resProcessingSelections.map(
-        processingAndSelection =>
-          createFieldArrayModel(processingAndSelection.processingResource),
+      const processingActivities = resProcessingSelections.map(processingAndSelection =>
+        createFieldArrayModel(processingAndSelection.processingResource),
       );
 
       if (
-        (resSegment.data.type === 'USER_QUERY' ||
-          resSegment.data.type === 'USER_LIST') &&
+        (resSegment.data.type === 'USER_QUERY' || resSegment.data.type === 'USER_LIST') &&
         resSegment.data.query_id
       ) {
         return this._queryService
@@ -133,10 +125,7 @@ export class AudienceSegmentFormService implements IAudienceSegmentFormService {
               audienceSegmentFormData,
               queryLanguage as QueryLanguage,
             )
-          : this.createOrUpdateAudienceSegmentUserList(
-              organisationId,
-              audienceSegmentFormData,
-            );
+          : this.createOrUpdateAudienceSegmentUserList(organisationId, audienceSegmentFormData);
       case 'USER_QUERY':
         return this.createOrUpdateAudienceSegmentUserQuery(
           organisationId,
@@ -153,9 +142,7 @@ export class AudienceSegmentFormService implements IAudienceSegmentFormService {
   ): Promise<DataResponse<AudienceSegmentShape>> => {
     const formattedResponse = {
       ...audienceSegmentFormData.audienceSegment,
-      techincal_name: this.fillTechnicalNameForUserPixel(
-        audienceSegmentFormData,
-      ),
+      techincal_name: this.fillTechnicalNameForUserPixel(audienceSegmentFormData),
     };
     return this._audienceSegmentService
       .saveSegment(organisationId, formattedResponse)
@@ -192,20 +179,12 @@ export class AudienceSegmentFormService implements IAudienceSegmentFormService {
     audienceSegmentFormData: AudienceSegmentFormData,
     queryLanguage: QueryLanguage,
   ) => {
-    return this.createOrUpdateQuery(
-      queryLanguage,
-      audienceSegmentFormData,
-    ).then(query => {
+    return this.createOrUpdateQuery(queryLanguage, audienceSegmentFormData).then(query => {
       const formattedResponse: Partial<UserQuerySegment> = {
-        ...(audienceSegmentFormData.audienceSegment as Partial<
-          UserQuerySegment
-        >),
+        ...(audienceSegmentFormData.audienceSegment as Partial<UserQuerySegment>),
         query_id: query.id,
       };
-      return this._audienceSegmentService.saveSegment(
-        organisationId,
-        formattedResponse,
-      );
+      return this._audienceSegmentService.saveSegment(organisationId, formattedResponse);
     });
   };
 
@@ -213,16 +192,11 @@ export class AudienceSegmentFormService implements IAudienceSegmentFormService {
     queryLanguage: QueryLanguage,
     audienceSegmentFormData: AudienceSegmentFormData,
   ) => {
-    const datamartId = audienceSegmentFormData.audienceSegment
-      .datamart_id as string;
+    const datamartId = audienceSegmentFormData.audienceSegment.datamart_id as string;
 
     if (audienceSegmentFormData.query && audienceSegmentFormData.query.id) {
       return this._queryService
-        .updateQuery(
-          datamartId,
-          audienceSegmentFormData.query.id,
-          audienceSegmentFormData.query,
-        )
+        .updateQuery(datamartId, audienceSegmentFormData.query.id, audienceSegmentFormData.query)
         .then(query => query.data);
     }
     return this._queryService
@@ -240,11 +214,7 @@ export class AudienceSegmentFormService implements IAudienceSegmentFormService {
       formData.audienceSegment.type === 'USER_LIST' &&
       formData.audienceSegment.feed_type === 'TAG'
     ) {
-      if (
-        technicalName === undefined ||
-        technicalName === null ||
-        technicalName === ''
-      ) {
+      if (technicalName === undefined || technicalName === null || technicalName === '') {
         return `${formData.audienceSegment.name}-${moment().unix()}`;
       }
     }
@@ -255,9 +225,7 @@ export class AudienceSegmentFormService implements IAudienceSegmentFormService {
   getProcessingSelectionsByAudienceSegment(
     segmentId: string,
   ): Promise<DataListResponse<ProcessingSelectionResource>> {
-    return this._audienceSegmentService.getProcessingSelectionsByAudienceSegment(
-      segmentId,
-    );
+    return this._audienceSegmentService.getProcessingSelectionsByAudienceSegment(segmentId);
   }
   createProcessingSelectionForAudienceSegment(
     segmentId: string,

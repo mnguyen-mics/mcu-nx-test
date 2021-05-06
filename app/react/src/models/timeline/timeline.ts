@@ -1,10 +1,7 @@
 import { Identifier } from './../../containers/Audience/Timeline/Monitoring';
 import { Index } from '../../utils';
 import { UserActivityEventResource } from '../datamart/UserActivityResource';
-import {
-  OperatingSystemFamily,
-  BrowserFamily,
-} from '../datamart/graphdb/RuntimeSchema';
+import { OperatingSystemFamily, BrowserFamily } from '../datamart/graphdb/RuntimeSchema';
 import { Dictionary } from 'lodash';
 import { UserAccountCompartmentDatamartSelectionResource } from '../datamart/DatamartResource';
 import UserChoiceResource from '../userchoice/UserChoiceResource';
@@ -18,11 +15,7 @@ export interface Activity {
   };
   $origin: object;
   $session_duration: number;
-  $session_status:
-    | 'IN_SESSION'
-    | 'SESSION_SNAPSHOT'
-    | 'CLOSED_SESSION'
-    | 'NO_SESSION';
+  $session_status: 'IN_SESSION' | 'SESSION_SNAPSHOT' | 'CLOSED_SESSION' | 'NO_SESSION';
   $site_id: string;
   $topics: Index<Index<number>>;
   $ts: number;

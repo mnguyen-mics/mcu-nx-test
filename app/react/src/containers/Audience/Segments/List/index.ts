@@ -1,7 +1,4 @@
 import AudienceSegmentsTable from './AudienceSegmentsTable';
 import SegmentsActionbar from './SegmentsActionbar';
 
-export {
-  AudienceSegmentsTable,
-  SegmentsActionbar,
-};
+export { AudienceSegmentsTable, SegmentsActionbar };

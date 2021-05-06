@@ -7,9 +7,7 @@ export function getExecutionInfo(
   colors: ThemeColorsShape,
 ) {
   const tasks = execution.num_tasks ? execution.num_tasks : 0;
-  const completedTasks = execution.completed_tasks
-    ? execution.completed_tasks
-    : 0;
+  const completedTasks = execution.completed_tasks ? execution.completed_tasks : 0;
 
   const setColor = (status: string) => {
     switch (status) {

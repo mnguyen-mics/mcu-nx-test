@@ -13,9 +13,7 @@ import { AutomationFormData, INITIAL_AUTOMATION_DATA } from '../Edit/domain';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { AutomationBuilderPageRouteParams } from './AutomationBuilderPage';
 import { Loading } from '../../../components';
-import {
-  ScenarioExitConditionFormResource,
-} from '../../../models/automations/automations';
+import { ScenarioExitConditionFormResource } from '../../../models/automations/automations';
 
 export interface AutomationBuilderContainerProps {
   datamartId: string;
@@ -87,12 +85,7 @@ class AutomationBuilderContainer extends React.Component<Props, State> {
   };
 
   render() {
-    const {
-      datamartId,
-      automationFormData,
-      saveOrUpdate,
-      loading,
-    } = this.props;
+    const { datamartId, automationFormData, saveOrUpdate, loading } = this.props;
     const { automationTreeData, exitConditionFormResource } = this.state;
 
     if (loading) {

@@ -6,9 +6,7 @@ import { UploadProps } from 'antd/lib/upload/interface';
 import { WrappedFieldProps } from 'redux-form';
 import { TooltipPropsWithTitle } from 'antd/lib/tooltip';
 import { compose } from 'recompose';
-import FormDataFileDrawer, {
-  FormDataFileDrawerProps,
-} from './FormDataFileDrawer';
+import FormDataFileDrawer, { FormDataFileDrawerProps } from './FormDataFileDrawer';
 import { Button as McsButton, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { FormFieldWrapper } from '../../../../components/Form';
 
@@ -44,10 +42,8 @@ export interface FormDataFileState {
 type JoinedProps = FormDataFileProps & WrappedFieldProps & InjectedDrawerProps;
 
 class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
-
   @lazyInject(TYPES.IDataFileService)
   private _dataFileService: IDataFileService;
-
 
   constructor(props: JoinedProps) {
     super(props);
@@ -157,14 +153,9 @@ class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
 
     const { canEdit } = this.state;
 
-    let validateStatus = 'success' as
-      | 'success'
-      | 'warning'
-      | 'error'
-      | 'validating';
+    let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
     if (meta.touched && meta.invalid) validateStatus = 'error';
     if (meta.touched && meta.warning) validateStatus = 'warning';
-
 
     const editProps = {
       onClick: () => {
@@ -183,10 +174,7 @@ class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
           isModal: true,
         };
 
-        this.props.openNextDrawer<FormDataFileDrawerProps>(
-          FormDataFileDrawer,
-          options,
-        );
+        this.props.openNextDrawer<FormDataFileDrawerProps>(FormDataFileDrawer, options);
       },
     };
 
@@ -231,10 +219,7 @@ class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
 
     return (
       <FormFieldWrapper
-        help={
-          this.props.meta.touched &&
-          (this.props.meta.warning || this.props.meta.error)
-        }
+        help={this.props.meta.touched && (this.props.meta.warning || this.props.meta.error)}
         helpToolTipProps={this.props.helpToolTipProps}
         validateStatus={validateStatus}
         {...this.props.formItemProps}
@@ -251,12 +236,12 @@ class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
 
           {canEdit ? (
             <span>
-              <span className="m-r-20">{this.state.fileName}</span>
+              <span className='m-r-20'>{this.state.fileName}</span>
               <McsButton {...editProps}>
-                <McsIcon type="pen" />
+                <McsIcon type='pen' />
               </McsButton>
               <McsButton {...removeProps}>
-                <McsIcon type="close" />
+                <McsIcon type='close' />
               </McsButton>
             </span>
           ) : null}

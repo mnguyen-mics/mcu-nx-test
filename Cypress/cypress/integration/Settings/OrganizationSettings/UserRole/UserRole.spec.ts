@@ -6,15 +6,9 @@ describe('User role test', () => {
         method: 'POST',
         headers: { Authorization: data.accessToken },
         body: {
-          first_name: `fn-${Math.random()
-            .toString(36)
-            .substring(2, 10)}`,
-          last_name: `ln-${Math.random()
-            .toString(36)
-            .substring(2, 10)}`,
-          email: `email.-${Math.random()
-            .toString(36)
-            .substring(2, 10)}@test.com`,
+          first_name: `fn-${Math.random().toString(36).substring(2, 10)}`,
+          last_name: `ln-${Math.random().toString(36).substring(2, 10)}`,
+          email: `email.-${Math.random().toString(36).substring(2, 10)}@test.com`,
           role: `READER`,
           organisation_id: data.organisationId,
           community_id: data.organisation_id,
@@ -47,15 +41,10 @@ describe('User role test', () => {
       cy.get('.mcs-tableActions_dropdown').click();
 
       // Click on delete User Role button
-      cy.get(
-        '.mcs-tableActions_settings\\.organisation\\.users\\.roles\\.list\\.delete',
-      ).click();
+      cy.get('.mcs-tableActions_settings\\.organisation\\.users\\.roles\\.list\\.delete').click();
 
       // Assertion to check if the user roles has been correctly deleted.
-      cy.get('.mcs-userRoles_table').should(
-        'contain',
-        'There is no User created yet!',
-      );
+      cy.get('.mcs-userRoles_table').should('contain', 'There is no User created yet!');
     });
   });
 });

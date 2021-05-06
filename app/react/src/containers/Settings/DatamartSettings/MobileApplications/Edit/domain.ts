@@ -1,10 +1,7 @@
 import { ProcessingActivityFieldModel } from './../../Common/domain';
 import { ProcessingSelectionResource } from './../../../../../models/processing';
 import { MobileApplicationResource } from '../../../../../models/settings/settings';
-import {
-  VisitAnalyzerFieldModel,
-  EventRuleFieldModel,
-} from '../../Common/domain';
+import { VisitAnalyzerFieldModel, EventRuleFieldModel } from '../../Common/domain';
 
 export interface MobileApplicationFormData {
   mobileapplication: Partial<MobileApplicationResource>;

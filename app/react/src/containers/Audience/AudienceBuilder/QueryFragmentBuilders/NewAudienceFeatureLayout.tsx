@@ -12,9 +12,7 @@ import { ObjectLikeTypeInfoResource } from '../../../../models/datamart/graphdb/
 import { Spin, Row, Col, Button } from 'antd';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
-export const FormRelativeAbsoluteDateField = Field as new () => GenericField<
-  FormRelativeAbsoluteDateProps
->;
+export const FormRelativeAbsoluteDateField = Field as new () => GenericField<FormRelativeAbsoluteDateProps>;
 
 interface State {
   audienceFeature?: AudienceFeatureResource;
@@ -51,10 +49,7 @@ class NewAudienceFeatureLayout extends React.Component<Props, State> {
 
       this.setState({
         audienceFeature: parametricPredicateResource
-          ? audienceFeatures.find(
-              (f) =>
-                f.id === parametricPredicateResource.parametric_predicate_id,
-            )
+          ? audienceFeatures.find(f => f.id === parametricPredicateResource.parametric_predicate_id)
           : audienceFeatures[0],
       });
     }
@@ -63,28 +58,19 @@ class NewAudienceFeatureLayout extends React.Component<Props, State> {
   render() {
     const { audienceFeature } = this.state;
 
-    const {
-      datamartId,
-      formPath,
-      objectTypes,
-      onClose,
-      formChange,
-    } = this.props;
+    const { datamartId, formPath, objectTypes, onClose, formChange } = this.props;
 
     return audienceFeature ? (
       <React.Fragment>
         {/* Title + Close button */}
         <Row>
           <Col span={23}>
-            <div className="mcs-audienceBuilder_audienceFeatureName-2">{`${audienceFeature.name}`}</div>
+            <div className='mcs-audienceBuilder_audienceFeatureName-2'>{`${audienceFeature.name}`}</div>
           </Col>
           <Col span={1}>
             {onClose && (
-              <Button
-                className="mcs-audienceBuilder_closeButton-2"
-                onClick={onClose}
-              >
-                <McsIcon type="close" />
+              <Button className='mcs-audienceBuilder_closeButton-2' onClick={onClose}>
+                <McsIcon type='close' />
               </Button>
             )}
           </Col>
@@ -94,7 +80,7 @@ class NewAudienceFeatureLayout extends React.Component<Props, State> {
         <Row>
           <Col span={24}>
             {!!audienceFeature.description && (
-              <i className="mcs-audienceBuilder_audienceFeatureDescription-2">{`${audienceFeature.description} `}</i>
+              <i className='mcs-audienceBuilder_audienceFeatureDescription-2'>{`${audienceFeature.description} `}</i>
             )}
           </Col>
         </Row>

@@ -121,10 +121,7 @@ class EditGoalPage extends React.Component<Props, State> {
     } = this.props;
 
     const { goalFormData: initialGoalFormData } = this.state;
-    const hideSaveInProgress = message.loading(
-      intl.formatMessage(messages.savingInProgress),
-      0,
-    );
+    const hideSaveInProgress = message.loading(intl.formatMessage(messages.savingInProgress), 0);
 
     this.setState({
       loading: true,
@@ -195,7 +192,7 @@ class EditGoalPage extends React.Component<Props, State> {
         : formatMessage(messages.breadcrumbNewGoalTitle);
 
     const breadCrumbPaths = [
-      <Link key="1" to={`/v2/o/${organisationId}/campaigns/goals`}>
+      <Link key='1' to={`/v2/o/${organisationId}/campaigns/goals`}>
         {formatMessage(messages.breadcrumbGoalsTitle)}
       </Link>,
       goalName,
@@ -222,8 +219,5 @@ export default compose(
   withRouter,
   injectIntl,
   injectNotifications,
-  connect(
-    mapStateToProps,
-    undefined,
-  ),
+  connect(mapStateToProps, undefined),
 )(EditGoalPage);

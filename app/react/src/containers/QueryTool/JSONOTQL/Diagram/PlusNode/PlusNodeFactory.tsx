@@ -6,9 +6,7 @@ import { TreeNodeOperations, MicsDiagramEngine } from '../../domain';
 import { ObjectLikeTypeInfoResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
 import { JSONQLBuilderContext } from '../../JSONQLBuilderContext';
 
-export default class PlusNodeFactory extends AbstractNodeFactory<
-  PlusNodeModel
-> {
+export default class PlusNodeFactory extends AbstractNodeFactory<PlusNodeModel> {
   treeNodeOperations: TreeNodeOperations;
   objectTypes: ObjectLikeTypeInfoResource[];
   lockGlobalInteraction: (locked: boolean) => void;
@@ -30,10 +28,7 @@ export default class PlusNodeFactory extends AbstractNodeFactory<
     this.runtimeSchemaId = _runtimeSchemaId;
   }
 
-  generateReactWidget(
-    diagramEngine: MicsDiagramEngine,
-    node: PlusNodeModel,
-  ): JSX.Element {
+  generateReactWidget(diagramEngine: MicsDiagramEngine, node: PlusNodeModel): JSX.Element {
     if (node.extras.collapsed) {
       return <div />;
     }
@@ -51,7 +46,7 @@ export default class PlusNodeFactory extends AbstractNodeFactory<
             isTrigger: isTrigger,
             isEdge: isEdge,
             datamartId: this.datamartId,
-            runtimeSchemaId: this.runtimeSchemaId
+            runtimeSchemaId: this.runtimeSchemaId,
           })
         }
       </JSONQLBuilderContext.Consumer>

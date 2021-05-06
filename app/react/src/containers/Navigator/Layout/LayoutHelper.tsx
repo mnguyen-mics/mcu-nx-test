@@ -14,25 +14,25 @@ export const buildAccountsMenu = (organisationId: string) => [
   >
     <FormattedMessage {...messages.account} />
   </Link>,
-  <Link to="/logout" key={1}>
+  <Link to='/logout' key={1}>
     <FormattedMessage {...messages.logout} />
   </Link>,
 ];
 
 export const buildSettingsButton = (organisationId: string) => (
   <Link
-    className="mcs-header_menu-link"
+    className='mcs-header_menu-link'
     to={`/v2/o/${organisationId}/settings/organisation/labels`}
   >
-    <McsIcon type="options" className="menu-icon-settings" />
+    <McsIcon type='options' className='menu-icon-settings' />
   </Link>
 );
 
 export const ProductionApiEnvironment = (
   <Alert
-    className="mcs-navigator-header-title-alert"
-    message="You are using production API environment !"
-    type="error"
+    className='mcs-navigator-header-title-alert'
+    message='You are using production API environment !'
+    type='error'
     showIcon={true}
   />
 );

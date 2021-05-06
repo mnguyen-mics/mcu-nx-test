@@ -71,13 +71,13 @@ class CleaningRulesDashboardPage extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    this.refreshCleaningRule()
+    this.refreshCleaningRule();
   }
 
   refreshCleaningRule = () => {
     const { filter } = this.state;
     this.fetchCleaningRules(filter);
-  }
+  };
 
   componentDidUpdate(previousProps: Props) {
     const {
@@ -95,10 +95,7 @@ class CleaningRulesDashboardPage extends React.Component<Props, State> {
       },
     } = previousProps;
 
-    if (
-      !compareSearches(search, previousSearch) ||
-      organisationId !== previousOrganisationId
-    ) {
+    if (!compareSearches(search, previousSearch) || organisationId !== previousOrganisationId) {
       if (!isSearchValid(search, CLEANING_RULES_SEARCH_SETTINGS)) {
         history.replace({
           pathname,
@@ -185,9 +182,9 @@ class CleaningRulesDashboardPage extends React.Component<Props, State> {
       this._datamartService
         .getCleaningRules(filter.datamartId, options)
         .then(resultCleaningRules => {
-          const cleaningRulesP: Array<Promise<
-            ExtendedCleaningRuleResourceWithFilter
-          >> = resultCleaningRules.data.map(cleaningRule => {
+          const cleaningRulesP: Array<
+            Promise<ExtendedCleaningRuleResourceWithFilter>
+          > = resultCleaningRules.data.map(cleaningRule => {
             return filter.type === 'USER_EVENT_CLEANING_RULE'
               ? this._datamartService
                   .getContentFilter(filter.datamartId, cleaningRule.id)
@@ -214,7 +211,7 @@ class CleaningRulesDashboardPage extends React.Component<Props, State> {
             })
             .catch(err => {
               notifyError(err);
-              this.setState({isFetchingCleaningRules: false});
+              this.setState({ isFetchingCleaningRules: false });
             });
         });
     });
@@ -225,42 +222,35 @@ class CleaningRulesDashboardPage extends React.Component<Props, State> {
   };
 
   render() {
-    const {
-      filter,
-      cleaningRules,
-      totalCleaningRules,
-      isFetchingCleaningRules,
-    } = this.state;
+    const { filter, cleaningRules, totalCleaningRules, isFetchingCleaningRules } = this.state;
 
     const cleaningRuleType = filter.type;
 
-    const items = this.getCleaningRuleTypeItems().map(
-      (typeItem: CleaningRuleTypeItem) => {
-        return {
-          title: typeItem.title,
-          display: (
-            <CleaningRulesContainer
-              filter={filter}
-              cleaningRules={cleaningRules}
-              total={totalCleaningRules}
-              isFetchingCleaningRules={isFetchingCleaningRules}
-              onFilterChange={this.onFilterChange}
-              onCleaningRuleUpdate={this.refreshCleaningRule}
-            />
-          ),
-          key: typeItem.cleaningRuleType,
-        };
-      },
-    );
+    const items = this.getCleaningRuleTypeItems().map((typeItem: CleaningRuleTypeItem) => {
+      return {
+        title: typeItem.title,
+        display: (
+          <CleaningRulesContainer
+            filter={filter}
+            cleaningRules={cleaningRules}
+            total={totalCleaningRules}
+            isFetchingCleaningRules={isFetchingCleaningRules}
+            onFilterChange={this.onFilterChange}
+            onCleaningRuleUpdate={this.refreshCleaningRule}
+          />
+        ),
+        key: typeItem.cleaningRuleType,
+      };
+    });
 
     return (
-      <div className="ant-layout">
-        <div className="ant-layout-content">
-            <McsTabs
-              items={items}
-              activeKey={cleaningRuleType}
-              onChange={this.onChangeCleaningRuleType}
-            />
+      <div className='ant-layout'>
+        <div className='ant-layout-content'>
+          <McsTabs
+            items={items}
+            activeKey={cleaningRuleType}
+            onChange={this.onChangeCleaningRuleType}
+          />
         </div>
       </div>
     );

@@ -2,29 +2,21 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import messages from '../messages';
-import {
-  FormInputField,
-  FormInput,
-} from '../../../../../../components/Form';
-import withValidators, {
-  ValidatorProps,
-} from '../../../../../../components/Form/withValidators';
-import withNormalizer, {
-  NormalizerProps,
-} from '../../../../../../components/Form/withNormalizer';
+import { FormInputField, FormInput } from '../../../../../../components/Form';
+import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
+import withNormalizer, { NormalizerProps } from '../../../../../../components/Form/withNormalizer';
 import PropertyFields from './Properties';
 import { FieldArray, GenericFieldArray, Field } from 'redux-form';
 import { FormLinkedTextInputProps } from '../../../../../../components/Form/FormLinkedTextInput';
 
-
 const PropertyFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
-  FormLinkedTextInputProps>;
+  FormLinkedTextInputProps
+>;
 
 type Props = InjectedIntlProps & ValidatorProps & NormalizerProps;
 
 class UriMatch extends React.Component<Props> {
-
   render() {
     const {
       fieldValidators: { isRequired },
@@ -34,60 +26,47 @@ class UriMatch extends React.Component<Props> {
     return (
       <div>
         <FormInputField
-          name="model.pattern"
+          name='model.pattern'
           component={FormInput}
           validate={[isRequired]}
           formItemProps={{
-            label: formatMessage(
-              messages.contentUriMatchPatternLabel,
-            ),
+            label: formatMessage(messages.contentUriMatchPatternLabel),
             required: true,
           }}
           inputProps={{
-            placeholder: formatMessage(
-              messages.contentUriMatchPatternPlaceholder,
-            ),
+            placeholder: formatMessage(messages.contentUriMatchPatternPlaceholder),
           }}
           helpToolTipProps={{
-            title: formatMessage(
-              messages.contentUriMatchPatternTooltip,
-            ),
+            title: formatMessage(messages.contentUriMatchPatternTooltip),
           }}
         />
         <FormInputField
-          name="model.event_template.$event_name"
+          name='model.event_template.$event_name'
           component={FormInput}
           validate={[isRequired]}
           formItemProps={{
-            label: formatMessage(
-              messages.contentUriMatchEventNameLabel,
-            ),
+            label: formatMessage(messages.contentUriMatchEventNameLabel),
             required: true,
           }}
           inputProps={{
-            placeholder: formatMessage(
-              messages.contentUriMatchEventNamePlaceholder,
-            ),
+            placeholder: formatMessage(messages.contentUriMatchEventNamePlaceholder),
           }}
           helpToolTipProps={{
-            title: formatMessage(
-              messages.contentUriMatchEventNameTooltip,
-            ),
+            title: formatMessage(messages.contentUriMatchEventNameTooltip),
           }}
         />
         <PropertyFieldArray
-          name="model.event_template.$properties"
+          name='model.event_template.$properties'
           component={PropertyFields}
-          formItemProps={{ label: formatMessage(messages.contentUriMatchPropertyLabel), colon: false }}
+          formItemProps={{
+            label: formatMessage(messages.contentUriMatchPropertyLabel),
+            colon: false,
+          }}
           leftFormInput={{
-            placeholder: formatMessage(
-              messages.contentUriMatchPropertyNamePlaceholder,
-            ),
+            placeholder: formatMessage(messages.contentUriMatchPropertyNamePlaceholder),
           }}
           rightFormInput={{
-            placeholder: formatMessage(
-              messages.contentUriMatchPropertyValuePlaceholder,
-            ),
+            placeholder: formatMessage(messages.contentUriMatchPropertyValuePlaceholder),
           }}
         />
       </div>

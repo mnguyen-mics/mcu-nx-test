@@ -39,9 +39,7 @@ interface MapStateToProps {
   workspace: (organisationId: string) => UserWorkspaceResource;
 }
 
-type Props = RouteComponentProps<RouterProps> &
-  InjectedIntlProps &
-  MapStateToProps;
+type Props = RouteComponentProps<RouterProps> & InjectedIntlProps & MapStateToProps;
 
 class ImportContent extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -94,10 +92,7 @@ class ImportContent extends React.Component<Props, State> {
       },
     } = previousProps;
 
-    if (
-      !compareSearches(search, previousSearch) ||
-      organisationId !== previousOrganisationId
-    ) {
+    if (!compareSearches(search, previousSearch) || organisationId !== previousOrganisationId) {
       if (!isSearchValid(search, this.getSearchSetting())) {
         history.replace({
           pathname: pathname,
@@ -123,10 +118,7 @@ class ImportContent extends React.Component<Props, State> {
     const { selectedDatamartId } = this.state;
 
     return selectedDatamartId ? (
-      <ImportsContentContainer
-        datamartId={selectedDatamartId}
-        noFilterDatamart={false}
-      />
+      <ImportsContentContainer datamartId={selectedDatamartId} noFilterDatamart={false} />
     ) : null;
   }
 }
@@ -135,8 +127,4 @@ const mapStateToProps = (state: MicsReduxState) => ({
   workspace: getWorkspace(state),
 });
 
-export default compose(
-  withRouter,
-  injectIntl,
-  connect(mapStateToProps),
-)(ImportContent);
+export default compose(withRouter, injectIntl, connect(mapStateToProps))(ImportContent);

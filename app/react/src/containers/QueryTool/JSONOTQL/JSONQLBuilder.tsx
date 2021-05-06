@@ -73,14 +73,9 @@ class JSONQLBuilder extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    const runtimeSchemaId = props.objectTypes[0]
-      ? props.objectTypes[0].runtime_schema_id
-      : '';
+    const runtimeSchemaId = props.objectTypes[0] ? props.objectTypes[0].runtime_schema_id : '';
     this.engine.registerNodeFactory(
-      new BooleanOperatorNodeFactory(
-        this.getTreeNodeOperations(),
-        this.lockInteraction,
-      ),
+      new BooleanOperatorNodeFactory(this.getTreeNodeOperations(), this.lockInteraction),
     );
     this.engine.registerNodeFactory(
       new PlusNodeFactory(
@@ -150,26 +145,15 @@ class JSONQLBuilder extends React.Component<Props, State> {
     };
   };
 
-  cutNode = (
-    nodePath: number[],
-    objectLikeType: string,
-    treeNodePath: number[],
-  ) => {
+  cutNode = (nodePath: number[], objectLikeType: string, treeNodePath: number[]) => {
     this.copyNode(nodePath, objectLikeType, treeNodePath);
     this.deleteNode(nodePath);
   };
 
-  copyNode = (
-    nodePath: number[],
-    objectLikeType: string,
-    treeNodePath: number[],
-  ) => {
+  copyNode = (nodePath: number[], objectLikeType: string, treeNodePath: number[]) => {
     const { query } = this.props;
     if (query) {
-      const partialObjectTree = this.getObjectTreeExpressionFromNodePath(
-        nodePath,
-        query,
-      );
+      const partialObjectTree = this.getObjectTreeExpressionFromNodePath(nodePath, query);
       this.engine.setCopying(partialObjectTree, objectLikeType, treeNodePath);
     }
   };
@@ -227,16 +211,10 @@ class JSONQLBuilder extends React.Component<Props, State> {
           };
         },
         () => {
-          if (
-            this.state.keydown.includes('f') &&
-            this.state.keydown.length === 1
-          ) {
+          if (this.state.keydown.includes('f') && this.state.keydown.length === 1) {
             this.engine.zoomToFit();
           }
-          if (
-            this.state.keydown.includes('r') &&
-            this.state.keydown.length === 1
-          ) {
+          if (this.state.keydown.includes('r') && this.state.keydown.length === 1) {
             this.engine.getDiagramModel().setZoomLevel(100);
             this.engine.getDiagramModel().setOffset(0, 0);
           }
@@ -249,8 +227,7 @@ class JSONQLBuilder extends React.Component<Props, State> {
           }
           if (
             this.state.keydown.includes('Control') &&
-            (this.state.keydown.includes('z') ||
-              this.state.keydown.includes('Z')) &&
+            (this.state.keydown.includes('z') || this.state.keydown.includes('Z')) &&
             this.state.keydown.includes('Shift') &&
             this.props.undoRedo.enableRedo
           ) {
@@ -259,8 +236,7 @@ class JSONQLBuilder extends React.Component<Props, State> {
           if (
             this.state.keydown.includes('Control') &&
             (this.state.keydown.includes('y') ||
-              (this.state.keydown.includes('Y') &&
-                this.props.undoRedo.enableRedo))
+              (this.state.keydown.includes('Y') && this.props.undoRedo.enableRedo))
           ) {
             this.props.undoRedo.handleRedo();
           }
@@ -320,10 +296,7 @@ class JSONQLBuilder extends React.Component<Props, State> {
     const { hideCounterAndTimeline } = this.props;
     const position: Point = {
       x: ROOT_NODE_POSITION.x,
-      y:
-        hideCounterAndTimeline
-          ? ROOT_NODE_POSITION.x
-          : ROOT_NODE_POSITION.y,
+      y: hideCounterAndTimeline ? ROOT_NODE_POSITION.x : ROOT_NODE_POSITION.y,
     };
 
     return position;
@@ -339,11 +312,7 @@ class JSONQLBuilder extends React.Component<Props, State> {
     rootNode.objectTypeInfo = initialObjectType;
     model.addNode(rootNode);
     if (query) {
-      const nodeBTree = buildNodeModelBTree(
-        query,
-        initialObjectType,
-        objectTypes,
-      );
+      const nodeBTree = buildNodeModelBTree(query, initialObjectType, objectTypes);
       setUniqueModelId(nodeBTree);
       computeNodeExtras(nodeBTree);
       layout(
@@ -351,17 +320,11 @@ class JSONQLBuilder extends React.Component<Props, State> {
         applyTranslation(
           this.getRootNodePosition(),
           MIN_X,
-          (rootNode.getSize().height +
-            (rootNode.getSize().borderWidth || 0) * 2) /
-            2 -
-            (nodeBTree.node.getSize().height +
-              (nodeBTree.node.getSize().borderWidth || 0) * 2) /
-              2,
+          (rootNode.getSize().height + (rootNode.getSize().borderWidth || 0) * 2) / 2 -
+            (nodeBTree.node.getSize().height + (nodeBTree.node.getSize().borderWidth || 0) * 2) / 2,
         ),
       );
-      model.addLink(
-        createLink(rootNode.ports.right, nodeBTree.node.ports.left),
-      );
+      model.addLink(createLink(rootNode.ports.right, nodeBTree.node.ports.left));
       toNodeList(nodeBTree).forEach(n => model.addNode(n));
       buildLinkList(nodeBTree).forEach(l => model.addLink(l));
       this.nodeBTreeCache = nodeBTree;
@@ -381,14 +344,10 @@ class JSONQLBuilder extends React.Component<Props, State> {
 
     const { viewSchema } = this.state;
 
-    const onSchemaSelectorClick = () =>
-      this.setState({ viewSchema: !viewSchema });
+    const onSchemaSelectorClick = () => this.setState({ viewSchema: !viewSchema });
 
     return (
-      <div
-        className={`query-builder ${this.props.edition ? 'edition-mode' : ''}`}
-        ref={this.div}
-      >
+      <div className={`query-builder ${this.props.edition ? 'edition-mode' : ''}`} ref={this.div}>
         <CounterList
           queryResults={[queryResult]}
           staleQueryResult={staleQueryResult}
@@ -407,8 +366,8 @@ class JSONQLBuilder extends React.Component<Props, State> {
             inverseZoom={true}
           />
           <BuilderMenu undoRedo={this.props.undoRedo} />
-          <div className="button-helpers top">
-            <Button onClick={onSchemaSelectorClick} className="helper">
+          <div className='button-helpers top'>
+            <Button onClick={onSchemaSelectorClick} className='helper'>
               <McsIcon
                 type={'chevron-right'}
                 style={
@@ -423,12 +382,12 @@ class JSONQLBuilder extends React.Component<Props, State> {
             </Button>
           </div>
         </Col>
-        <Col span={viewSchema ? 6 : 24} className="schema-visualizer">
+        <Col span={viewSchema ? 6 : 24} className='schema-visualizer'>
           <JSONQLBuilderContext.Consumer>
             {({ schema }) => <SchemaVizualizer schema={schema} />}
           </JSONQLBuilderContext.Consumer>
         </Col>
-        <div id="popoverId" />
+        <div id='popoverId' />
       </div>
     );
   }

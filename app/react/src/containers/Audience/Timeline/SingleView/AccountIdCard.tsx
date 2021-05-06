@@ -32,9 +32,7 @@ class AccountIdCard extends React.Component<Props, State> {
   renderCompartmentName = (compartmentId: string) => {
     const { userAccountCompartments } = this.props;
     if (userAccountCompartments) {
-      const compartment = userAccountCompartments.find(
-        c => c.compartment_id === compartmentId,
-      );
+      const compartment = userAccountCompartments.find(c => c.compartment_id === compartmentId);
       return compartment
         ? compartment.name
           ? compartment.name
@@ -59,9 +57,7 @@ class AccountIdCard extends React.Component<Props, State> {
         if (state.expandedItems.indexOf(expandedItemsKey) === -1) {
           expandedItems = [...state.expandedItems, expandedItemsKey];
         } else {
-          expandedItems = state.expandedItems.filter(
-            e => e !== expandedItemsKey,
-          );
+          expandedItems = state.expandedItems.filter(e => e !== expandedItemsKey);
         }
         return {
           expandedItems,
@@ -72,7 +68,11 @@ class AccountIdCard extends React.Component<Props, State> {
     const isLoading = userAccountsByCompartmentId === undefined;
 
     return (
-      <Card title={formatMessage(messages.accountTitle)} isLoading={isLoading}  className={"mcs-accountIdCard"}>
+      <Card
+        title={formatMessage(messages.accountTitle)}
+        isLoading={isLoading}
+        className={'mcs-accountIdCard'}
+      >
         {userAccountsByCompartmentId ? (
           Object.keys(userAccountsByCompartmentId).length === 0 ? (
             <span>
@@ -80,47 +80,46 @@ class AccountIdCard extends React.Component<Props, State> {
             </span>
           ) : (
             Object.keys(userAccountsByCompartmentId).map(key => {
-              const userAccountsLength =
-                userAccountsByCompartmentId[key].length;
+              const userAccountsLength = userAccountsByCompartmentId[key].length;
               const compartmentName = this.renderCompartmentName(key);
-              const userAccountsByCompartmentIdCopy = userAccountsByCompartmentId[
-                key
-              ].slice();
+              const userAccountsByCompartmentIdCopy = userAccountsByCompartmentId[key].slice();
               const accountsFormatted =
-                userAccountsLength > 5 &&
-                !this.state.expandedItems.find(e => e === key)
+                userAccountsLength > 5 && !this.state.expandedItems.find(e => e === key)
                   ? userAccountsByCompartmentIdCopy.splice(0, 5)
                   : userAccountsByCompartmentId[key];
               return (
-                <Row gutter={10} key={key} className="table-line border-top" style={{display: "block"}}>
-                  <div className="sub-title">{compartmentName}</div>
+                <Row
+                  gutter={10}
+                  key={key}
+                  className='table-line border-top'
+                  style={{ display: 'block' }}
+                >
+                  <div className='sub-title'>{compartmentName}</div>
                   {accountsFormatted.map(account => {
                     return (
                       <Tooltip
                         key={account.user_account_id}
-                        placement="topRight"
+                        placement='topRight'
                         title={account.user_account_id}
                       >
-                        <Tag className="card-tag alone">
-                          {account.user_account_id}
-                        </Tag>{' '}
+                        <Tag className='card-tag alone'>{account.user_account_id}</Tag>{' '}
                       </Tooltip>
                     );
                   })}
                   {userAccountsLength > 5 ? (
                     !this.state.expandedItems.find(e => e === key) ? (
-                      <div className="mcs-card-footer">
+                      <div className='mcs-card-footer'>
                         <button
-                          className="mcs-card-footer-link mcs-accountIdCard_viewMoreLink"
+                          className='mcs-card-footer-link mcs-accountIdCard_viewMoreLink'
                           onClick={handleShowMore(key)}
                         >
                           <FormattedMessage {...messages.viewMore} />
                         </button>
                       </div>
                     ) : (
-                      <div className="mcs-card-footer">
+                      <div className='mcs-card-footer'>
                         <button
-                          className="mcs-card-footer-link mcs-accountIdCard_viewLessLink"
+                          className='mcs-card-footer-link mcs-accountIdCard_viewLessLink'
                           onClick={handleShowMore(key)}
                         >
                           <FormattedMessage {...messages.viewLess} />
@@ -132,9 +131,7 @@ class AccountIdCard extends React.Component<Props, State> {
               );
             })
           )
-        ) : (
-          undefined
-        )}
+        ) : undefined}
       </Card>
     );
   }

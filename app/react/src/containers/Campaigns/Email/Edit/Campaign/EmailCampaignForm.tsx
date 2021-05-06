@@ -11,11 +11,7 @@ import {
 import { Layout } from 'antd';
 import { BasicProps } from 'antd/lib/layout/layout';
 
-import {
-  BlastFormSection,
-  GeneralFormSection,
-  RouterFormSection,
-} from './Sections';
+import { BlastFormSection, GeneralFormSection, RouterFormSection } from './Sections';
 import { BlastFormSectionProps } from './Sections/BlastFormSection';
 import { EmailCampaignFormData } from '../domain';
 import messages from '../messages';
@@ -27,16 +23,13 @@ import ScrollspySider, {
 } from '../../../../../components/Layout/ScrollspySider';
 import { Omit } from '../../../../../utils/Types';
 
-const Content = Layout.Content as unknown as React.ComponentClass<
-  BasicProps & { id: string }
->;
+const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
 const BlastSectionFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
   BlastFormSectionProps
 >;
 
-export interface EmailCampaignFormProps
-  extends Omit<ConfigProps<EmailCampaignFormData>, 'form'> {
+export interface EmailCampaignFormProps extends Omit<ConfigProps<EmailCampaignFormData>, 'form'> {
   save: (formData: EmailCampaignFormData) => void;
   close: () => void;
   breadCrumbPaths: React.ReactNode[];
@@ -79,20 +72,14 @@ class EmailCampaignForm extends React.Component<Props> {
     };
 
     return (
-      <Layout className="edit-layout">
+      <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
           <ScrollspySider {...sideBarProps} />
-          <Form
-            className="edit-layout ant-layout"
-            onSubmit={handleSubmit(save)}
-          >
-          {/* this button enables submit on enter */}
-          <button type="submit" style={{ display: 'none' }} />
-            <Content
-              id={FORM_ID}
-              className="mcs-content-container mcs-form-container"
-            >
+          <Form className='edit-layout ant-layout' onSubmit={handleSubmit(save)}>
+            {/* this button enables submit on enter */}
+            <button type='submit' style={{ display: 'none' }} />
+            <Content id={FORM_ID} className='mcs-content-container mcs-form-container'>
               <div id={sections.general.sectionId}>
                 <GeneralFormSection />
               </div>
@@ -103,7 +90,7 @@ class EmailCampaignForm extends React.Component<Props> {
               <hr />
               <div id={sections.blasts.sectionId}>
                 <BlastSectionFieldArray
-                  name="blastFields"
+                  name='blastFields'
                   component={BlastFormSection}
                   formChange={change}
                   rerenderOnEveryChange={true}

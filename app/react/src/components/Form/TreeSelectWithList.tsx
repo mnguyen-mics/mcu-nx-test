@@ -91,9 +91,7 @@ class TreeSelectWithList extends React.Component<Props, State> {
       return {
         key: treeData.value,
         title: treeData.label,
-        children: treeData.children
-          ? treeData.children.map(getTreeDataBase)
-          : undefined,
+        children: treeData.children ? treeData.children.map(getTreeDataBase) : undefined,
         disabled: treeData.disabled,
         disableCheckbox: treeData.disableCheckbox,
       };
@@ -144,7 +142,7 @@ class TreeSelectWithList extends React.Component<Props, State> {
     const selectedItemsView: JSX.Element[] = [];
     Object.keys(groupedByCategories).forEach(category => {
       selectedItemsView.push(
-        <div key={category} className="audience-service-item as-category">
+        <div key={category} className='audience-service-item as-category'>
           {category}
         </div>,
       );
@@ -157,14 +155,10 @@ class TreeSelectWithList extends React.Component<Props, State> {
         };
 
         selectedItemsView.push(
-          <div key={leave.key} className="audience-service-subitem">
+          <div key={leave.key} className='audience-service-subitem'>
             {leave.label}
-            <Button
-              disabled={disabled}
-              className="remove-button"
-              onClick={handleClick}
-            >
-              <McsIcon type="close" />
+            <Button disabled={disabled} className='remove-button' onClick={handleClick}>
+              <McsIcon type='close' />
             </Button>
           </div>,
         );
@@ -173,7 +167,7 @@ class TreeSelectWithList extends React.Component<Props, State> {
 
     const getRef = () => document.getElementById(this.id)!;
 
-    const placeholderF = () => placeholder
+    const placeholderF = () => placeholder;
 
     const flexAlign = value.length > 0 ? 'top' : 'middle';
     return (
@@ -182,26 +176,20 @@ class TreeSelectWithList extends React.Component<Props, State> {
         rowProps={{ align: flexAlign }}
         helpToolTipProps={tooltipProps}
         small={small}
-        className="mcs-treeSelectWithList"
+        className='mcs-treeSelectWithList'
       >
         <Col span={24}>
-          <div
-            className={
-              value.length || loading
-                ? 'selected-audience-services-container'
-                : ''
-            }
-          >
+          <div className={value.length || loading ? 'selected-audience-services-container' : ''}>
             {loading ? (
-              <div className="text-center">
-                <Spin size="small" />
+              <div className='text-center'>
+                <Spin size='small' />
               </div>
             ) : (
               selectedItemsView
             )}
           </div>
 
-          <div id={this.id} className="mcs-treeSelectWithList_container">
+          <div id={this.id} className='mcs-treeSelectWithList_container'>
             <TreeSelect
               treeData={treeData}
               value={value}

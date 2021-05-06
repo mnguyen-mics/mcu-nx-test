@@ -19,19 +19,14 @@ type Props = SimpleLinkProps & DroppedItemProps;
 
 const addinTarget = {
   canDrop() {
-   return false
+    return false;
   },
 };
 
-
- class SimpleLinkWidget extends React.Component<Props> {
+class SimpleLinkWidget extends React.Component<Props> {
   generateLink(extraProps: any, id: string | number): JSX.Element {
     const Bottom = (
-      <path
-        strokeWidth="2"
-        stroke={`url(#${this.props.link.getID()})`}
-        {...extraProps}
-      />
+      <path strokeWidth='2' stroke={`url(#${this.props.link.getID()})`} {...extraProps} />
     );
 
     return <g key={'link-' + id}>{Bottom}</g>;
@@ -43,12 +38,8 @@ const addinTarget = {
     const points = link.points;
     const paths: JSX.Element[] = [];
 
-    const sourcePortParent = link
-      .getSourcePort()
-      .getParent() as CustomNodeShape;
-    const targetPortParent = link
-      .getTargetPort()
-      .getParent() as CustomNodeShape;
+    const sourcePortParent = link.getSourcePort().getParent() as CustomNodeShape;
+    const targetPortParent = link.getTargetPort().getParent() as CustomNodeShape;
 
     const drawLink = !targetPortParent.extras.collapsed;
     if (points.length === 2 && drawLink) {
@@ -68,10 +59,10 @@ const addinTarget = {
             y1={pointLeft.y}
             x2={pointRight.x}
             y2={pointRight.y}
-            gradientUnits="userSpaceOnUse"
+            gradientUnits='userSpaceOnUse'
           >
-            <stop stopColor={sourcePortParent.getColor()} offset="0" />
-            <stop stopColor={targetPortParent.getColor()} offset="1" />
+            <stop stopColor={sourcePortParent.getColor()} offset='0' />
+            <stop stopColor={targetPortParent.getColor()} offset='1' />
           </linearGradient>
         </defs>,
       );
@@ -86,17 +77,13 @@ const addinTarget = {
       );
     }
 
-    const opacity = isDragging ? 0.3 : 1; 
+    const opacity = isDragging ? 0.3 : 1;
 
-    return connectDropTarget &&
-    connectDropTarget(<g style={{ opacity }}>{paths}</g>);
+    return connectDropTarget && connectDropTarget(<g style={{ opacity }}>{paths}</g>);
   }
 }
 
-function generateLinePath(
-  firstPoint: PointModel,
-  lastPoint: PointModel,
-): string {
+function generateLinePath(firstPoint: PointModel, lastPoint: PointModel): string {
   return `M${firstPoint.x} ${firstPoint.y} L${lastPoint.x} ${lastPoint.y}`;
 }
 
@@ -108,7 +95,7 @@ export default compose<Props, SimpleLinkProps>(
     addinTarget,
     (connect, monitor) => ({
       connectDropTarget: connect.dropTarget(),
-      isDragging: !!monitor.getItemType()
+      isDragging: !!monitor.getItemType(),
     }),
   ),
-)(SimpleLinkWidget)
+)(SimpleLinkWidget);

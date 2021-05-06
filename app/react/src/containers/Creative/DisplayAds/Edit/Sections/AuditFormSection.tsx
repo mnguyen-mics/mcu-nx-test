@@ -13,8 +13,8 @@ class AuditFormSection extends React.Component<AuditFormSectionProps> {
 
     return (
       <Row
-        align="middle"
-        justify="space-between"
+        align='middle'
+        justify='space-between'
         className={'mcs-actionbar'}
         style={{ backgroundColor: 'white' }}
       >

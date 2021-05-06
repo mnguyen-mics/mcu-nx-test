@@ -32,18 +32,14 @@ class ServiceItem extends React.Component<Props, State> {
   onChange = (e: any) => {
     const { serviceItemCondition } = this.props;
     const { intl } = this.props;
-    if (
-      serviceItemCondition &&
-      isLinearServiceItemConditionsResource(serviceItemCondition)
-    ) {
-      const isValidValue =
-        e.target.value && /^[0-9]+(\.[0-9]{1,2})?$/i.test(e.target.value);
+    if (serviceItemCondition && isLinearServiceItemConditionsResource(serviceItemCondition)) {
+      const isValidValue = e.target.value && /^[0-9]+(\.[0-9]{1,2})?$/i.test(e.target.value);
       this.setState({
         price: isValidValue
           ? `${intl.formatMessage(messages.serviceItemPrice)} ${(
-            parseFloat(e.target.value) * serviceItemCondition.percent_value +
-            serviceItemCondition.fixed_value
-          ).toFixed(2)} €`
+              parseFloat(e.target.value) * serviceItemCondition.percent_value +
+              serviceItemCondition.fixed_value
+            ).toFixed(2)} €`
           : intl.formatMessage(messages.invalidImpressionCost),
       });
     }
@@ -52,31 +48,28 @@ class ServiceItem extends React.Component<Props, State> {
   render() {
     const { intl, serviceItem, hasPriceChart } = this.props;
 
-    const serviceItemElements = (hasPriceChart === true) ?
-      [
-        (
-          <div className="service-price">{this.state.price}</div>
-        ),
-        (
-        <div>
-          <div className="service-text">
-            {intl.formatMessage(messages.serviceItemPriceSimulatorText)}
-          </div>
-          <Input
-            addonBefore={intl.formatMessage(
-              messages.serviceItemPriceSimulatorInputPlaceholder,
-            )}
-            onChange={this.onChange}
-          />
-        </div>
-      )
-      ] :
-      [undefined, undefined];
+    const serviceItemElements =
+      hasPriceChart === true
+        ? [
+            <div className='service-price' key={0}>
+              {this.state.price}
+            </div>,
+            <div key={1}>
+              <div className='service-text'>
+                {intl.formatMessage(messages.serviceItemPriceSimulatorText)}
+              </div>
+              <Input
+                addonBefore={intl.formatMessage(messages.serviceItemPriceSimulatorInputPlaceholder)}
+                onChange={this.onChange}
+              />
+            </div>,
+          ]
+        : [undefined, undefined];
 
     return (
       <div>
         {serviceItemElements[0]}
-        <div className="service-text">
+        <div className='service-text'>
           {serviceItem && serviceItem.description
             ? serviceItem.description
             : intl.formatMessage(messages.serviceItemNoDescription)}

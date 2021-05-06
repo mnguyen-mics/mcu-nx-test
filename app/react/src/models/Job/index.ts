@@ -1,8 +1,2 @@
-import { 
-  BaseExecutionResource,
-  JobExecutionStatus,
-} from './JobResource';
-export {
-  BaseExecutionResource,
-  JobExecutionStatus,
-};
+import { BaseExecutionResource, JobExecutionStatus } from './JobResource';
+export { BaseExecutionResource, JobExecutionStatus };

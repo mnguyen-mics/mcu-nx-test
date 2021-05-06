@@ -8,23 +8,23 @@ interface CustomPropertyRendererProps {
   nameNewLineValue?: boolean;
 }
 
-class CustomPropertyRenderer extends React.Component<
-  CustomPropertyRendererProps
-> {
+class CustomPropertyRenderer extends React.Component<CustomPropertyRendererProps> {
   render() {
     const { name, value, nameNewLineValue } = this.props;
 
     return name ? (
-      <div className={nameNewLineValue ? "PropertyWithNameAndNewLine" : "PropertyWithNameNoNewLine"}>
+      <div
+        className={nameNewLineValue ? 'PropertyWithNameAndNewLine' : 'PropertyWithNameNoNewLine'}
+      >
         <Tooltip title={name}>
-          <Tag className="card-tag">{name}</Tag>
+          <Tag className='card-tag'>{name}</Tag>
         </Tooltip>
         {' : '}
         {nameNewLineValue && <br />}
         {value}
       </div>
     ) : (
-      <span className="PropertyValueOnly">{value}</span>
+      <span className='PropertyValueOnly'>{value}</span>
     );
   }
 }

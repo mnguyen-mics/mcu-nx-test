@@ -49,9 +49,7 @@ interface RouterProps {
   organisationId: string;
 }
 
-type Props = RouteComponentProps<RouterProps> &
-  InjectedIntlProps &
-  InjectedNotificationProps;
+type Props = RouteComponentProps<RouterProps> & InjectedIntlProps & InjectedNotificationProps;
 
 class UserRolesList extends React.Component<Props, UserListState> {
   state = initialState;
@@ -70,33 +68,25 @@ class UserRolesList extends React.Component<Props, UserListState> {
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      this._organisationService
-        .getOrganisation(organisationId)
-        .then((response) => {
-          this.setState({ communityId: response.data.community_id });
-          this._usersService
-            .getUsersWithUserRole(response.data.community_id, options)
-            .then(
-              (results: {
-                data: UserWithRole[];
-                total?: number;
-                count: number;
-              }) => {
+      this._organisationService.getOrganisation(organisationId).then(response => {
+        this.setState({ communityId: response.data.community_id });
+        this._usersService
+          .getUsersWithUserRole(response.data.community_id, options)
+          .then((results: { data: UserWithRole[]; total?: number; count: number }) => {
+            this.setState({
+              loading: false,
+              data: results.data,
+              total: results.total || results.count,
+            });
+            this._organisationService
+              .getOrganisations(this.state.communityId)
+              .then(organisationsResponse =>
                 this.setState({
-                  loading: false,
-                  data: results.data,
-                  total: results.total || results.count,
-                });
-                this._organisationService
-                  .getOrganisations(this.state.communityId)
-                  .then((organisationsResponse) =>
-                    this.setState({
-                      communityOrgs: organisationsResponse.data,
-                    }),
-                  );
-              },
-            );
-        });
+                  communityOrgs: organisationsResponse.data,
+                }),
+              );
+          });
+      });
     });
   };
 
@@ -134,11 +124,7 @@ class UserRolesList extends React.Component<Props, UserListState> {
 
       const nextLocation = {
         pathname,
-        search: updateSearch(
-          currentSearch,
-          computedFilter,
-          PAGINATION_SEARCH_SETTINGS,
-        ),
+        search: updateSearch(currentSearch, computedFilter, PAGINATION_SEARCH_SETTINGS),
       };
 
       history.push(nextLocation);
@@ -153,7 +139,7 @@ class UserRolesList extends React.Component<Props, UserListState> {
       this._userRolesService
         .deleteUserRole(user.id, user.role.id)
         .then(this.redirect)
-        .catch((err) => {
+        .catch(err => {
           notifyError(err);
         });
     }
@@ -164,9 +150,7 @@ class UserRolesList extends React.Component<Props, UserListState> {
       intl: { formatMessage },
     } = this.props;
 
-    const actionsColumnsDefinition: Array<
-      ActionsColumnDefinition<UserWithRole>
-    > = [
+    const actionsColumnsDefinition: Array<ActionsColumnDefinition<UserWithRole>> = [
       {
         key: 'action',
         actions: () => [
@@ -203,11 +187,8 @@ class UserRolesList extends React.Component<Props, UserListState> {
         key: 'role',
         isHideable: false,
         render: (value: string, record: UserWithRole) => {
-          const organisation:
-            | OrganisationResource
-            | undefined = this.state.communityOrgs.find(
-            (org: OrganisationResource) =>
-              org.id === record.role.organisation_id,
+          const organisation: OrganisationResource | undefined = this.state.communityOrgs.find(
+            (org: OrganisationResource) => org.id === record.role.organisation_id,
           );
           return organisation ? organisation.name : record.role.organisation_id;
         },
@@ -217,8 +198,7 @@ class UserRolesList extends React.Component<Props, UserListState> {
         key: 'role',
         isHideable: false,
         render: (text: string, record: UserWithRole) =>
-          record.role.role.charAt(0) +
-          record.role.role.slice(1).toLowerCase().replace('_', ' '),
+          record.role.role.charAt(0) + record.role.role.slice(1).toLowerCase().replace('_', ' '),
       },
     ];
 
@@ -232,18 +212,18 @@ class UserRolesList extends React.Component<Props, UserListState> {
 
     const additionnalComponent = (
       <div>
-        <div className="mcs-card-header mcs-card-title">
-          <span className="mcs-card-title">
+        <div className='mcs-card-header mcs-card-title'>
+          <span className='mcs-card-title'>
             <FormattedMessage {...messages.userRoles} />
           </span>
         </div>
-        <hr className="mcs-separator" />
+        <hr className='mcs-separator' />
       </div>
     );
 
     return (
-      <div className="ant-layout">
-        <Content className="mcs-content-container">
+      <div className='ant-layout'>
+        <Content className='mcs-content-container'>
           <ItemList
             fetchList={this.fetchUsers}
             dataSource={this.state.data}
@@ -254,7 +234,7 @@ class UserRolesList extends React.Component<Props, UserListState> {
             pageSettings={PAGINATION_SEARCH_SETTINGS}
             emptyTable={emptyTable}
             additionnalComponent={additionnalComponent}
-            className="mcs-userRoles_table"
+            className='mcs-userRoles_table'
           />
         </Content>
       </div>
@@ -262,8 +242,4 @@ class UserRolesList extends React.Component<Props, UserListState> {
   }
 }
 
-export default compose<Props, {}>(
-  withRouter,
-  injectIntl,
-  injectNotifications,
-)(UserRolesList);
+export default compose<Props, {}>(withRouter, injectIntl, injectNotifications)(UserRolesList);

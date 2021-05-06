@@ -20,8 +20,7 @@ const messages = defineMessages({
   },
   nameFieldDisabledTitle: {
     id: 'automation.builder.node.FeedNodeForm.nameField.title.disabled',
-    defaultMessage:
-      'The base preset name for this feed.',
+    defaultMessage: 'The base preset name for this feed.',
   },
   nameFieldPlaceholder: {
     id: 'automation.builder.node.FeedNodeForm.nameField.placeholder',

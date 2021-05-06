@@ -21,9 +21,7 @@ import {
 } from '../../Edit/domain';
 import { DropTargetMonitor, ConnectDropTarget, DropTarget } from 'react-dnd';
 import { ObjectTreeExpressionNodeShape } from '../../../../../models/datamart/graphdb/QueryDocument';
-import injectThemeColors, {
-  InjectedThemeColorsProps,
-} from '../../../../Helpers/injectThemeColors';
+import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
 import FourAnchorPortWidget from '../Common/FourAnchorPortWidget';
 import messages from '../Common/messages';
 import { FormattedMessage } from 'react-intl';
@@ -61,27 +59,18 @@ const addinTarget = {
   drop(props: PlusNodeProps, monitor: DropTargetMonitor) {
     const releasedItem = monitor.getItem() as DragAndDropInterface;
 
-    const releasedItemPath = releasedItem.path
-      .split('.')
-      .map(i => parseInt(i, 10));
+    const releasedItemPath = releasedItem.path.split('.').map(i => parseInt(i, 10));
 
     const hostObjectPath = computeSchemaPathFromQueryPath(
-          props.query,
-          props.node.treeNodePath,
-          props.schema,
-        );
-
-    const newQuery = computeAdditionalNode(
-      releasedItemPath,
-      hostObjectPath.length,
+      props.query,
+      props.node.treeNodePath,
       props.schema,
     );
 
+    const newQuery = computeAdditionalNode(releasedItemPath, hostObjectPath.length, props.schema);
+
     if (newQuery) {
-      return props.treeNodeOperations.addNode(
-        props.node.treeNodePath,
-        newQuery,
-      );
+      return props.treeNodeOperations.addNode(props.node.treeNodePath, newQuery);
     }
   },
   canDrop(props: PlusNodeProps, monitor: DropTargetMonitor) {
@@ -97,18 +86,13 @@ const addinTarget = {
       props.node.treeNodePath,
       props.schema,
     ).join('.');
-    const canDrop = (monitor.getItem() as DragAndDropInterface).path.startsWith(
-      itemTypeSchemaPath,
-    );
+    const canDrop = (monitor.getItem() as DragAndDropInterface).path.startsWith(itemTypeSchemaPath);
 
     return canDrop;
   },
 };
 
-class PlusNodeWidget extends React.Component<
-  Props & InjectedDrawerProps,
-  State
-> {
+class PlusNodeWidget extends React.Component<Props & InjectedDrawerProps, State> {
   top: number = 0;
   left: number = 0;
 
@@ -139,7 +123,7 @@ class PlusNodeWidget extends React.Component<
           isTrigger: this.props.isTrigger,
           isEdge: this.props.isEdge,
           datamartId: this.props.datamartId,
-          runtimeSchemaId: this.props.runtimeSchemaId
+          runtimeSchemaId: this.props.runtimeSchemaId,
         },
         size: 'small',
       });
@@ -162,35 +146,33 @@ class PlusNodeWidget extends React.Component<
   };
 
   pasteNode = () => {
-    const {node, treeNodeOperations, lockGlobalInteraction} = this.props;
+    const { node, treeNodeOperations, lockGlobalInteraction } = this.props;
 
     const canPasteObject = this.canPasteHere();
     if (canPasteObject) {
       if (node.objectOrGroupNode && node.objectOrGroupNode.type === 'GROUP') {
         const newObject = {
-          ...node.objectOrGroupNode
-        }
-        newObject.expressions.push(canPasteObject)
+          ...node.objectOrGroupNode,
+        };
+        newObject.expressions.push(canPasteObject);
         treeNodeOperations.updateNode(node.treeNodePath, newObject);
-        this.props.diagramEngine.emptyClipboard()
+        this.props.diagramEngine.emptyClipboard();
       }
-      
+
       lockGlobalInteraction(false);
     }
-  }
+  };
 
-  canPasteHere = (): ObjectTreeExpressionNodeShape | undefined => {
-    if (
-      !this.props.node.root &&
-      this.props.diagramEngine.isCopying()
-    ) {
+  canPasteHere = (): ObjectTreeExpressionNodeShape | undefined => {
+    if (!this.props.node.root && this.props.diagramEngine.isCopying()) {
       const copying = this.props.diagramEngine.getCopiedValue();
       if (
         copying &&
         copying.copiedObjectType &&
         copying.objectType &&
         copying.objectType === 'UserPoint' &&
-        copying.treeNodePath && copying.treeNodePath.length === this.props.node.treeNodePath.length &&
+        copying.treeNodePath &&
+        copying.treeNodePath.length === this.props.node.treeNodePath.length &&
         copying.treeNodePath !== this.props.node.treeNodePath
       ) {
         return copying.copiedObjectType;
@@ -206,14 +188,7 @@ class PlusNodeWidget extends React.Component<
   };
 
   render() {
-    const {
-      node,
-      isDragging,
-      connectDropTarget,
-      canDrop,
-      isOver,
-      colors,
-    } = this.props;
+    const { node, isDragging, connectDropTarget, canDrop, isOver, colors } = this.props;
 
     const handleClickOnPlus = () => {
       this.props.lockGlobalInteraction(!this.state.focus);
@@ -254,11 +229,7 @@ class PlusNodeWidget extends React.Component<
     return (
       connectDropTarget &&
       connectDropTarget(
-        <div
-          className="plus-node noFocus"
-          style={{ opacity }}
-          ref={ref => this.setPosition(ref)}
-        >
+        <div className='plus-node noFocus' style={{ opacity }} ref={ref => this.setPosition(ref)}>
           <div
             style={{
               width: node.getSize().width,
@@ -274,14 +245,14 @@ class PlusNodeWidget extends React.Component<
             onMouseLeave={onHover('leave')}
             className={`plus-button ${this.state.focus ? 'plus-clicked' : ''}`}
           >
-            <McsIcon type="plus" />
+            <McsIcon type='plus' />
           </div>
 
           <FourAnchorPortWidget node={node} />
 
           {this.state.focus && (
             <WindowBodyPortal>
-              <div className="query-builder">
+              <div className='query-builder'>
                 <div
                   onClick={handleClickOnPlus}
                   style={{
@@ -296,28 +267,24 @@ class PlusNodeWidget extends React.Component<
                   }}
                 />
                 <span
-                  className={`plus-button ${
-                    this.state.focus ? 'plus-clicked' : ''
-                  }`}
+                  className={`plus-button ${this.state.focus ? 'plus-clicked' : ''}`}
                   style={{
                     ...node.getSize(),
                     backgroundColor: node.getColor(),
                     color: '#ffffff',
                     borderColor: node.getColor(),
-                    top:
-                      this.top - node.getSize().height * ((1 - zoomRatio) / 2),
-                    left:
-                      this.left - node.getSize().width * ((1 - zoomRatio) / 2),
+                    top: this.top - node.getSize().height * ((1 - zoomRatio) / 2),
+                    left: this.left - node.getSize().width * ((1 - zoomRatio) / 2),
                     position: 'absolute',
                     zIndex: 1002,
                     transform: `scale(${zoomRatio})`,
                   }}
                   onClick={handleClickOnPlus}
                 >
-                  <McsIcon type="plus" />
+                  <McsIcon type='plus' />
                 </span>
                 <div
-                  className="boolean-menu"
+                  className='boolean-menu'
                   style={{
                     top: this.top,
                     left: this.left + node.getSize().width,
@@ -325,29 +292,22 @@ class PlusNodeWidget extends React.Component<
                   }}
                 >
                   {(!node.root ||
-                    Object.keys(this.props.diagramEngine.diagramModel.nodes)
-                      .length === 1) && (
-                    <div
-                      onClick={this.addObjectNode}
-                      className="boolean-menu-item"
-                    >
+                    Object.keys(this.props.diagramEngine.diagramModel.nodes).length === 1) && (
+                    <div onClick={this.addObjectNode} className='boolean-menu-item'>
                       <FormattedMessage {...messages.object} />
                     </div>
                   )}
                   {(node.root ||
-                    (node.objectOrGroupNode &&
-                      node.objectOrGroupNode.type === 'GROUP')) && (
-                    <div onClick={this.addGroup} className="boolean-menu-item">
+                    (node.objectOrGroupNode && node.objectOrGroupNode.type === 'GROUP')) && (
+                    <div onClick={this.addGroup} className='boolean-menu-item'>
                       <FormattedMessage {...messages.group} />
                     </div>
                   )}
-                  {
-                    canPaste && (
-                      <div onClick={this.pasteNode} className="boolean-menu-item">
-                        <FormattedMessage {...messages.paste} />
-                      </div>
-                    )
-                  }
+                  {canPaste && (
+                    <div onClick={this.pasteNode} className='boolean-menu-item'>
+                      <FormattedMessage {...messages.paste} />
+                    </div>
+                  )}
                 </div>
               </div>
             </WindowBodyPortal>

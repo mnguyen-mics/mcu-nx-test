@@ -1,10 +1,7 @@
 import * as React from 'react';
 import { Row, Collapse } from 'antd';
 import AvailableNode from './AvailableNode';
-import {
-  ScenarioNodeShape,
-  IfNodeResource,
-} from '../../../../models/automations/automations';
+import { ScenarioNodeShape, IfNodeResource } from '../../../../models/automations/automations';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import {
   INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA,
@@ -39,8 +36,7 @@ const messages = defineMessages({
   },
   availableNodeSubtitle: {
     id: 'automation.builder.availableNode.subtitle',
-    defaultMessage:
-      'Drag and drop your components in the builder to create your automation.',
+    defaultMessage: 'Drag and drop your components in the builder to create your automation.',
   },
   actionsTitle: {
     id: 'automation.builder.availableNode.actions.title',
@@ -128,15 +124,7 @@ const conditionNode2: ScenarioNodeShape = {
       unit: 'hours',
       value: '1',
     },
-    day_window: [
-      'MONDAY',
-      'TUESDAY',
-      'WEDNESDAY',
-      'THURSDAY',
-      'FRIDAY',
-      'SATURDAY',
-      'SUNDAY',
-    ],
+    day_window: ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'],
   },
 };
 
@@ -152,9 +140,7 @@ interface RouterProps {
   organisationId: string;
 }
 
-type Props = RouteComponentProps<RouterProps> &
-  InjectedFeaturesProps &
-  InjectedIntlProps;
+type Props = RouteComponentProps<RouterProps> & InjectedFeaturesProps & InjectedIntlProps;
 
 class AvailableNodeVisualizer extends React.Component<Props, State> {
   @lazyInject(TYPES.IPluginService)
@@ -169,11 +155,7 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
           ? [addToSegmentNode, deleteFromSegmentNode]
           : [],
       )
-      .concat(
-        this.props.hasFeature('automations-custom-action-node')
-          ? [customActionNode]
-          : [],
-      );
+      .concat(this.props.hasFeature('automations-custom-action-node') ? [customActionNode] : []);
 
     this.state = {
       actionNodes: actionNodesList,
@@ -185,7 +167,7 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
   componentDidMount() {
     const { actionNodes } = this.state;
 
-    this.getFeedPresetNodes().then((feedPresetNodes) => {
+    this.getFeedPresetNodes().then(feedPresetNodes => {
       const actionNodesList = actionNodes.concat(feedPresetNodes);
 
       this.setState({
@@ -205,20 +187,17 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
         'AUDIENCE_SEGMENT_EXTERNAL_FEED',
         'AUDIENCE_SEGMENT_TAG_FEED',
       ].reduce(
-        (
-          accPromisePresets: Promise<PluginPresetResource[]>,
-          currentFeedType: PluginType,
-        ) => {
+        (accPromisePresets: Promise<PluginPresetResource[]>, currentFeedType: PluginType) => {
           const currentFeedTypePresets = this._pluginService
             .getPluginPresets({
               organisation_id: +organisationId,
               plugin_type: currentFeedType,
             })
-            .then((resPresets) => resPresets.data)
-            .catch((_) => [] as PluginPresetResource[]);
+            .then(resPresets => resPresets.data)
+            .catch(_ => [] as PluginPresetResource[]);
 
           return Promise.all([accPromisePresets, currentFeedTypePresets]).then(
-            (resAccAndCurrentType) => {
+            resAccAndCurrentType => {
               return resAccAndCurrentType[0].concat(resAccAndCurrentType[1]);
             },
           );
@@ -228,21 +207,21 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
 
       const pluginLayoutsAndVersionPropertiesP: Promise<
         PluginLayoutAndVersionProperties[]
-      > = pluginPresetFeedsP.then((pluginPresets) => {
+      > = pluginPresetFeedsP.then(pluginPresets => {
         const distinctPluginVersionIds = [
-          ...new Set(pluginPresets.map((preset) => preset.plugin_version_id)),
+          ...new Set(pluginPresets.map(preset => preset.plugin_version_id)),
         ];
 
         return Promise.all(
-          distinctPluginVersionIds.map((pluginVersionId) => {
+          distinctPluginVersionIds.map(pluginVersionId => {
             const associatedPluginId = pluginPresets.find(
-              (preset) => preset.plugin_version_id === pluginVersionId,
+              preset => preset.plugin_version_id === pluginVersionId,
             )?.plugin_id;
 
             const pluginLayoutP = associatedPluginId
               ? this._pluginService
                   .getLocalizedPluginLayout(associatedPluginId, pluginVersionId)
-                  .then((pluginLayout) => {
+                  .then(pluginLayout => {
                     return pluginLayout !== null ? pluginLayout : undefined;
                   })
               : Promise.resolve(undefined);
@@ -250,99 +229,71 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
             const pluginVersionP = associatedPluginId
               ? this._pluginService
                   .getPluginVersion(associatedPluginId, pluginVersionId)
-                  .then((resPluginVersion) => resPluginVersion.data)
-                  .catch((err) => undefined)
+                  .then(resPluginVersion => resPluginVersion.data)
+                  .catch(err => undefined)
               : Promise.resolve(undefined);
 
             const pluginVersionPropertiesP = associatedPluginId
               ? this._pluginService
-                  .getPluginVersionProperties(
-                    associatedPluginId,
-                    pluginVersionId,
-                  )
-                  .then(
-                    (resPluginVersionProperties) =>
-                      resPluginVersionProperties.data,
-                  )
-                  .catch((err) => undefined)
+                  .getPluginVersionProperties(associatedPluginId, pluginVersionId)
+                  .then(resPluginVersionProperties => resPluginVersionProperties.data)
+                  .catch(err => undefined)
               : Promise.resolve(undefined);
 
-            return Promise.all([
-              pluginLayoutP,
-              pluginVersionP,
-              pluginVersionPropertiesP,
-            ]).then((resPluginLayoutAndVersion) => {
-              const pluginLayout = resPluginLayoutAndVersion[0];
-              const pluginVersion = resPluginLayoutAndVersion[1];
-              const pluginVersionProperties = resPluginLayoutAndVersion[2];
+            return Promise.all([pluginLayoutP, pluginVersionP, pluginVersionPropertiesP]).then(
+              resPluginLayoutAndVersion => {
+                const pluginLayout = resPluginLayoutAndVersion[0];
+                const pluginVersion = resPluginLayoutAndVersion[1];
+                const pluginVersionProperties = resPluginLayoutAndVersion[2];
 
-              return { pluginLayout, pluginVersion, pluginVersionProperties };
-            });
+                return { pluginLayout, pluginVersion, pluginVersionProperties };
+              },
+            );
           }),
-        ).then((resPluginLayoutsAndVersions) =>
-          resPluginLayoutsAndVersions.reduce(
-            (acc: PluginLayoutAndVersionProperties[], el) => {
-              if (
-                el.pluginLayout &&
-                el.pluginVersion &&
-                el.pluginVersionProperties
-              ) {
-                return acc.concat([
-                  {
-                    pluginLayout: el.pluginLayout,
-                    pluginVersion: el.pluginVersion,
-                    pluginVersionProperties: el.pluginVersionProperties,
-                  },
-                ]);
-              }
-              return acc;
-            },
-            [],
-          ),
+        ).then(resPluginLayoutsAndVersions =>
+          resPluginLayoutsAndVersions.reduce((acc: PluginLayoutAndVersionProperties[], el) => {
+            if (el.pluginLayout && el.pluginVersion && el.pluginVersionProperties) {
+              return acc.concat([
+                {
+                  pluginLayout: el.pluginLayout,
+                  pluginVersion: el.pluginVersion,
+                  pluginVersionProperties: el.pluginVersionProperties,
+                },
+              ]);
+            }
+            return acc;
+          }, []),
         );
       });
 
-      return Promise.all([
-        pluginLayoutsAndVersionPropertiesP,
-        pluginPresetFeedsP,
-      ])
-        .then((resLayoutsAndPresets) => {
+      return Promise.all([pluginLayoutsAndVersionPropertiesP, pluginPresetFeedsP])
+        .then(resLayoutsAndPresets => {
           const layoutsAndVersionProperties: PluginLayoutAndVersionProperties[] =
             resLayoutsAndPresets[0];
           const presets: PluginPresetResource[] = resLayoutsAndPresets[1];
 
-          return presets.map((pluginPreset) => {
+          return presets.map(pluginPreset => {
             const associatedLayoutAndVersionProperties = layoutsAndVersionProperties.find(
-              (layoutAndVersionProperties) => {
+              layoutAndVersionProperties => {
                 return (
-                  layoutAndVersionProperties.pluginVersion?.id ===
-                  pluginPreset.plugin_version_id
+                  layoutAndVersionProperties.pluginVersion?.id === pluginPreset.plugin_version_id
                 );
               },
             );
 
-            if (
-              associatedLayoutAndVersionProperties &&
-              pluginPreset.plugin_type
-            ) {
+            if (associatedLayoutAndVersionProperties && pluginPreset.plugin_type) {
               const strictlyLayoutablePlugin: StrictlyLayoutablePlugin = {
-                plugin_layout:
-                  associatedLayoutAndVersionProperties.pluginLayout,
+                plugin_layout: associatedLayoutAndVersionProperties.pluginLayout,
                 plugin_preset: pluginPreset,
                 plugin_version_properties:
                   associatedLayoutAndVersionProperties.pluginVersionProperties,
-                id:
-                  associatedLayoutAndVersionProperties.pluginVersion.plugin_id,
+                id: associatedLayoutAndVersionProperties.pluginVersion.plugin_id,
                 name: pluginPreset.name,
                 organisation_id: pluginPreset.organisation_id,
                 plugin_type: pluginPreset.plugin_type,
-                group_id:
-                  associatedLayoutAndVersionProperties.pluginVersion.group_id,
-                artifact_id:
-                  associatedLayoutAndVersionProperties.pluginVersion
-                    .artifact_id,
-                current_version_id:
-                  associatedLayoutAndVersionProperties.pluginVersion.id,
+                group_id: associatedLayoutAndVersionProperties.pluginVersion.group_id,
+                artifact_id: associatedLayoutAndVersionProperties.pluginVersion.artifact_id,
+                current_version_id: associatedLayoutAndVersionProperties.pluginVersion.id,
               };
 
               const reduceFunctionForPropertyResourceShape = (
@@ -404,7 +355,7 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
             return undefined;
           });
         })
-        .then((resLayoutablesOrUndefined) =>
+        .then(resLayoutablesOrUndefined =>
           resLayoutablesOrUndefined.reduce(
             (acc: ScenarioNodeShape[], el: ScenarioNodeShape | undefined) => {
               if (el) return acc.concat([el]);
@@ -418,33 +369,33 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
 
   createNodeGrid = (nodes: ScenarioNodeShape[]) => {
     const { intl } = this.props;
-    return nodes.map((n) => <AvailableNode node={n} intl={intl} key={n.id} />);
+    return nodes.map(n => <AvailableNode node={n} intl={intl} key={n.id} />);
   };
 
   render() {
     const { intl } = this.props;
     return (
-      <div className="mcs-availableNodeVisualizer">
-        <Row className="mcs-availableNodeVisualizer_header">
-          <div className="mcs-availableNodeVisualizer_title">
+      <div className='mcs-availableNodeVisualizer'>
+        <Row className='mcs-availableNodeVisualizer_header'>
+          <div className='mcs-availableNodeVisualizer_title'>
             {intl.formatMessage(messages.availableNodeTitle)}
           </div>
-          <div className="mcs-availableNodeVisualizer_subtitle">
+          <div className='mcs-availableNodeVisualizer_subtitle'>
             {intl.formatMessage(messages.availableNodeSubtitle)}
           </div>
         </Row>
         <Collapse defaultActiveKey={['1']} bordered={false}>
           <Panel
             header={intl.formatMessage(messages.actionsTitle)}
-            key="1"
-            className="mcs-availableNodeVisualizer_panel"
+            key='1'
+            className='mcs-availableNodeVisualizer_panel'
           >
             {this.createNodeGrid(this.state.actionNodes)}
           </Panel>
           <Panel
             header={intl.formatMessage(messages.flowControlTitle)}
-            key="2"
-            className="mcs-availableNodeVisualizer_panel"
+            key='2'
+            className='mcs-availableNodeVisualizer_panel'
           >
             {this.createNodeGrid(this.state.conditionNodes)}
           </Panel>
@@ -454,8 +405,4 @@ class AvailableNodeVisualizer extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, {}>(
-  withRouter,
-  injectIntl,
-  injectFeatures,
-)(AvailableNodeVisualizer);
+export default compose<Props, {}>(withRouter, injectIntl, injectFeatures)(AvailableNodeVisualizer);

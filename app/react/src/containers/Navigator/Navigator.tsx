@@ -81,17 +81,14 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
             /^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i,
           );
           return rgbTested && rgbTested.length === 4
-            ? `#${`0${parseInt(rgbTested[1], 10).toString(16)}`.slice(
-                -2,
-              )}${`0${parseInt(rgbTested[2], 10).toString(16)}`.slice(
-                -2,
-              )}${`0${parseInt(rgbTested[3], 10).toString(16)}`.slice(-2)}`
+            ? `#${`0${parseInt(rgbTested[1], 10).toString(16)}`.slice(-2)}${`0${parseInt(
+                rgbTested[2],
+                10,
+              ).toString(16)}`.slice(-2)}${`0${parseInt(rgbTested[3], 10).toString(16)}`.slice(-2)}`
             : '';
         };
 
-        const elemts = (global as any).document.getElementsByClassName(
-          'mcs-colors',
-        )[0].children;
+        const elemts = (global as any).document.getElementsByClassName('mcs-colors')[0].children;
 
         const mcsColors: { [key: string]: string } = {};
         for (const elemt of [...elemts]) {
@@ -143,9 +140,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
 
     let selectorSize = 200;
 
-    const nbWorkspaces = this.props.workspaces
-      ? Object.keys(this.props.workspaces).length
-      : 0;
+    const nbWorkspaces = this.props.workspaces ? Object.keys(this.props.workspaces).length : 0;
 
     if (nbWorkspaces > 20) {
       selectorSize = 800;
@@ -159,14 +154,11 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
       defaultWorkspaceOrganisationId &&
       workspaces[parseInt(defaultWorkspaceOrganisationId, 0)] &&
       workspaces[parseInt(defaultWorkspaceOrganisationId, 0)].datamarts &&
-      workspaces[parseInt(defaultWorkspaceOrganisationId, 0)].datamarts.length >
-        0
+      workspaces[parseInt(defaultWorkspaceOrganisationId, 0)].datamarts.length > 0
         ? `/v2/o/${defaultWorkspaceOrganisationId}/audience/segments`
         : `/v2/o/${defaultWorkspaceOrganisationId}/campaigns/display`;
 
-    const renderRoute = ({
-      match,
-    }: RouteComponentProps<{ organisationId: string }>) => {
+    const renderRoute = ({ match }: RouteComponentProps<{ organisationId: string }>) => {
       const authenticated = this._authService.isAuthenticated();
       let redirectToUrl = '/login';
       if (authenticated) {
@@ -178,7 +170,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
     };
     const loginRouteRender = () => {
       const authenticated =
-      this._authService.isAuthenticated() || this._authService.canAuthenticate();
+        this._authService.isAuthenticated() || this._authService.canAuthenticate();
       if (authenticated) return <Redirect to={homeUrl} />;
       this.props.logOut();
       return <Login />;
@@ -215,7 +207,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
         return (
           <Datalayer datalayer={datalayer}>
             <Notifications />
-            <div className="drawer-wrapper">
+            <div className='drawer-wrapper'>
               <DrawerManager />
             </div>
             <LayoutManager
@@ -226,7 +218,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
               {...comps}
               {...props}
             />
-            <div id="mcs-edit-modal" />
+            <div id='mcs-edit-modal' />
           </Datalayer>
         );
       };
@@ -248,7 +240,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
         return (
           <Datalayer datalayer={datalayer}>
             <Notifications />
-            <div className="drawer-wrapper">
+            <div className='drawer-wrapper'>
               <DrawerManager />
             </div>
             <LayoutManager
@@ -259,7 +251,7 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
               {...comps}
               {...props}
             />
-            <div id="mcs-edit-modal" />
+            <div id='mcs-edit-modal' />
           </Datalayer>
         );
       };
@@ -280,30 +272,26 @@ class Navigator extends React.Component<JoinedProps, NavigatorState> {
 
     return (
       <Switch>
-        <Route exact={true} path="/set-password" component={SetPassword} />
-        <Route exact={true} path="/" render={renderRoute} />
+        <Route exact={true} path='/set-password' component={SetPassword} />
+        <Route exact={true} path='/' render={renderRoute} />
 
         {routeMapping}
 
-        <Route exact={true} path="/login" render={loginRouteRender} />
-        <Route exact={true} path="/logout" render={logoutRouteRender} />
+        <Route exact={true} path='/login' render={loginRouteRender} />
+        <Route exact={true} path='/logout' render={logoutRouteRender} />
 
         <Route
           exact={true}
-          path="/:communityToken/change-password"
+          path='/:communityToken/change-password'
           component={CommunityChangePassword}
         />
         <Route
           exact={true}
-          path="/:communityToken/set-password"
+          path='/:communityToken/set-password'
           component={CommunityChangePassword}
         />
 
-        <Route
-          exact={true}
-          path="/v2/forgot_password"
-          component={ForgotPassword}
-        />
+        <Route exact={true} path='/v2/forgot_password' component={ForgotPassword} />
 
         <Route render={errorRouteRender} />
       </Switch>
@@ -315,9 +303,7 @@ const mapStateToProps = (state: MicsReduxState) => ({
   initialized: isAppInitialized(state),
   initializationError: state.app.initializationError,
   workspaces: SessionHelper.getWorkspaces(state),
-  defaultWorkspaceOrganisationId: SessionHelper.getDefaultWorkspaceOrganisationId(
-    state,
-  ),
+  defaultWorkspaceOrganisationId: SessionHelper.getDefaultWorkspaceOrganisationId(state),
 });
 
 const mapDispatchToProps = {

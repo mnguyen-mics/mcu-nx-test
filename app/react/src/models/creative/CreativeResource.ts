@@ -1,40 +1,28 @@
-export type CreativeType =
-  'DISPLAY_AD' |
-  'VIDEO_AD' |
-  'EMAIL_TEMPLATE' |
-  'LANDING_PAGE';
+export type CreativeType = 'DISPLAY_AD' | 'VIDEO_AD' | 'EMAIL_TEMPLATE' | 'LANDING_PAGE';
 
 export type CreativeSubtype =
-  'BANNER' |
-  'VIDEO' |
-  'FACEBOOK_RIGHT_HAND_SIDE' |
-  'FACEBOOK_NEWS_FEED';
+  | 'BANNER'
+  | 'VIDEO'
+  | 'FACEBOOK_RIGHT_HAND_SIDE'
+  | 'FACEBOOK_NEWS_FEED';
 
-export type CreativeStatus =
-  'DRAFT' |
-  'PENDING' |
-  'PUBLISHED' |
-  'ARCHIVED';
+export type CreativeStatus = 'DRAFT' | 'PENDING' | 'PUBLISHED' | 'ARCHIVED';
 
 export type CreativeAuditStatus =
-  'NOT_AUDITED' |
-  'AUDIT_PENDING' |
-  'AUDIT_FAILED' |
-  'AUDIT_PASSED' |
-  'AUDIT_PARTIALLY_PASSED';
+  | 'NOT_AUDITED'
+  | 'AUDIT_PENDING'
+  | 'AUDIT_FAILED'
+  | 'AUDIT_PASSED'
+  | 'AUDIT_PARTIALLY_PASSED';
 
-export type CreativeAuditAction =
-  'START_AUDIT' |
-  'FAIL_AUDIT' |
-  'PASS_AUDIT' |
-  'RESET_AUDIT';
+export type CreativeAuditAction = 'START_AUDIT' | 'FAIL_AUDIT' | 'PASS_AUDIT' | 'RESET_AUDIT';
 
 export type CreativeScreenshotStatus =
-  'NOT_TAKEN' |
-  'PENDING' |
-  'PROCESSING' |
-  'SUCCEEDED' |
-  'FAILED';
+  | 'NOT_TAKEN'
+  | 'PENDING'
+  | 'PROCESSING'
+  | 'SUCCEEDED'
+  | 'FAILED';
 
 export type AdType = 'DISPLAY_AD' | 'VIDEO_AD';
 export interface AdFormatResource {
@@ -75,7 +63,7 @@ export interface DisplayAdResource extends DisplayAdCreateRequest {
   published_version: number;
   creative_kit: string;
   ad_layout: string;
-  locale: string;  
+  locale: string;
   audit_status: CreativeAuditStatus;
   available_user_audit_actions: CreativeAuditAction[];
 }
@@ -97,15 +85,9 @@ export interface EmailTemplateResource extends GenericCreativeResource {
   type: 'EMAIL_TEMPLATE';
 }
 
-export type CreativeResourceShape =
-  DisplayAdResource |
-  VideoAdResource |
-  EmailTemplateResource;
+export type CreativeResourceShape = DisplayAdResource | VideoAdResource | EmailTemplateResource;
 
-export type AuditStatus =
-  'AUDIT_PENDING' |
-  'AUDIT_FAILURE' |
-  'AUDIT_SUCCESS';
+export type AuditStatus = 'AUDIT_PENDING' | 'AUDIT_FAILURE' | 'AUDIT_SUCCESS';
 
 export interface AuditStatusResource {
   display_network: string;

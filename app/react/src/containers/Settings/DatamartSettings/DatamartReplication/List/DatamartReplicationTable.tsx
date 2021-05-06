@@ -11,10 +11,7 @@ import { compose } from 'recompose';
 import { parseSearch } from '../../../../../utils/LocationSearchHelper';
 import { DATAMART_REPLICATION_SEARCH_SETTINGS } from './DatamartReplicationListContainer';
 import { Modal, Switch, Tooltip } from 'antd';
-import {
-  EmptyTableView,
-  McsIcon,
-} from '@mediarithmics-private/mcs-components-library';
+import { EmptyTableView, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import {
   ActionsColumnDefinition,
   DataColumnDefinition,
@@ -27,10 +24,7 @@ export interface DatamartReplicationTableProps {
   noItem: boolean;
   onFilterChange: (newFilter: Partial<Filter>) => void;
   deleteReplication: (resource: DatamartReplicationResourceShape) => void;
-  updateReplication: (
-    resource: DatamartReplicationResourceShape,
-    status: boolean,
-  ) => void;
+  updateReplication: (resource: DatamartReplicationResourceShape, status: boolean) => void;
   lastExecutionIsRunning: boolean;
 }
 
@@ -46,7 +40,7 @@ class DatamartReplicationTable extends React.Component<Props> {
       okText: 'Ok',
       width: '650px',
       content: (
-        <SyntaxHighlighter language="json" style={docco}>
+        <SyntaxHighlighter language='json' style={docco}>
           {JSON.stringify(record, undefined, 4)}
         </SyntaxHighlighter>
       ),
@@ -66,17 +60,12 @@ class DatamartReplicationTable extends React.Component<Props> {
     });
   };
 
-  onDeleteDatamartReplication = (
-    replication: DatamartReplicationResourceShape,
-  ) => {
+  onDeleteDatamartReplication = (replication: DatamartReplicationResourceShape) => {
     const { deleteReplication } = this.props;
     deleteReplication(replication);
   };
 
-  updateReplicationStatus = (
-    replication: DatamartReplicationResourceShape,
-    status: boolean,
-  ) => {
+  updateReplicationStatus = (replication: DatamartReplicationResourceShape, status: boolean) => {
     const { updateReplication } = this.props;
     updateReplication(replication, status);
   };
@@ -113,9 +102,7 @@ class DatamartReplicationTable extends React.Component<Props> {
         }),
     };
 
-    const dataColumns: Array<
-      DataColumnDefinition<DatamartReplicationResourceShape>
-    > = [
+    const dataColumns: Array<DataColumnDefinition<DatamartReplicationResourceShape>> = [
       {
         title: 'ID',
         key: 'id',
@@ -129,34 +116,22 @@ class DatamartReplicationTable extends React.Component<Props> {
         isHideable: false,
         render: (text: string, record: DatamartReplicationResourceShape) => {
           const onChange = (checked: boolean) => {
-            return (
-              text !== 'ERROR' && this.updateReplicationStatus(record, checked)
-            );
+            return text !== 'ERROR' && this.updateReplicationStatus(record, checked);
           };
           return (
             <Tooltip
-              placement="top"
-              title={
-                lastExecutionIsRunning
-                  ? formatMessage(messages.jobIsRunning)
-                  : record.status
-              }
+              placement='top'
+              title={lastExecutionIsRunning ? formatMessage(messages.jobIsRunning) : record.status}
             >
               <Switch
-                className="mcs-table-switch"
+                className='mcs-table-switch'
                 checked={text === 'ACTIVE'}
                 disabled={text === 'ERROR' || lastExecutionIsRunning}
                 onChange={onChange}
-                checkedChildren={
-                  <McsIcon style={{ verticalAlign: 'middle' }} type="play" />
-                }
-                unCheckedChildren={
-                  <McsIcon style={{ verticalAlign: 'middle' }} type="pause" />
-                }
+                checkedChildren={<McsIcon style={{ verticalAlign: 'middle' }} type='play' />}
+                unCheckedChildren={<McsIcon style={{ verticalAlign: 'middle' }} type='pause' />}
               />
-              {text === 'ERROR' && (
-                <McsIcon className={'font-error status-error'} type={'close'} />
-              )}
+              {text === 'ERROR' && <McsIcon className={'font-error status-error'} type={'close'} />}
             </Tooltip>
           );
         },
@@ -168,7 +143,7 @@ class DatamartReplicationTable extends React.Component<Props> {
         render: (text: string, record: DatamartReplicationResourceShape) => {
           return (
             <Link
-              className="mcs-datamartSettings_datamartReplicationTableItem"
+              className='mcs-datamartSettings_datamartReplicationTableItem'
               to={{
                 pathname: `/v2/o/${organisationId}/settings/datamart/${record.datamart_id}/datamart_replication/${record.id}/edit`,
                 state: {
@@ -190,9 +165,7 @@ class DatamartReplicationTable extends React.Component<Props> {
       },
     ];
 
-    const actionColumns: Array<
-      ActionsColumnDefinition<DatamartReplicationResourceShape>
-    > = [
+    const actionColumns: Array<ActionsColumnDefinition<DatamartReplicationResourceShape>> = [
       {
         key: 'action',
         actions: () => [
@@ -223,9 +196,9 @@ class DatamartReplicationTable extends React.Component<Props> {
 
     return noItem && !isLoading ? (
       <EmptyTableView
-        iconType="settings"
+        iconType='settings'
         message={formatMessage(messages.emptyDatamartReplicationList)}
-        className="mcs-table-view-empty mcs-empty-card"
+        className='mcs-table-view-empty mcs-empty-card'
       />
     ) : (
       <TableViewFilters

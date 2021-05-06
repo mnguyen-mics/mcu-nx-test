@@ -34,7 +34,11 @@ interface State {
 
 type Props = InjectedIntlProps &
   InjectedNotificationProps &
-  RouteComponentProps<EditDatamartRouteMatchParam, StaticContext, { from?: string, datamartId?: string }> &
+  RouteComponentProps<
+    EditDatamartRouteMatchParam,
+    StaticContext,
+    { from?: string; datamartId?: string }
+  > &
   InjectedDatamartProps;
 
 class DatamartEditPage extends React.Component<Props, State> {
@@ -57,14 +61,12 @@ class DatamartEditPage extends React.Component<Props, State> {
       location,
     } = this.props;
 
-    const datamartIdFromLocState =
-      location.state && location.state.datamartId;
+    const datamartIdFromLocState = location.state && location.state.datamartId;
 
-    const datamartId =
-      datamartIdFromLocState || datamartIdFromURLParam;
+    const datamartId = datamartIdFromLocState || datamartIdFromURLParam;
 
     return datamartId;
-  }
+  };
 
   componentDidMount() {
     const {
@@ -76,15 +78,11 @@ class DatamartEditPage extends React.Component<Props, State> {
     const datamartId = this.getDatamartId();
 
     if (datamartId) {
-      const getSites = this._datamartService.getDatamart(
-        datamartId,
-      );
-      const getEventRules = this._datamartService.getEventRules(
-        datamartId,
-        organisationId,
-      );
+      const getSites = this._datamartService.getDatamart(datamartId);
+      const getEventRules = this._datamartService.getEventRules(datamartId, organisationId);
 
-      Promise.all([getSites, getEventRules]).then(res => {
+      Promise.all([getSites, getEventRules])
+        .then(res => {
           const formData = {
             datamart: res[0].data,
             eventRulesFields: res[1].data.map((er: EventRules) => createFieldArrayModel(er)),
@@ -109,64 +107,65 @@ class DatamartEditPage extends React.Component<Props, State> {
 
   save = (datamartFormData: DatamartFormData) => {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       notifyError,
       history,
       intl,
     } = this.props;
 
-    const hideSaveInProgress = message.loading(
-      intl.formatMessage(messages.savingInProgress),
-      0,
-    );
+    const hideSaveInProgress = message.loading(intl.formatMessage(messages.savingInProgress), 0);
 
     this.setState({
       loading: true,
     });
 
-
     const generateEventRulesTasks = (dmrt: DatamartResource): Array<Promise<any>> => {
-      const startIds = this.state.datamartFormData.eventRulesFields.map(erf => erf.model.id)
+      const startIds = this.state.datamartFormData.eventRulesFields.map(erf => erf.model.id);
       const savedIds: string[] = [];
       const saveCreatePromises = datamartFormData.eventRulesFields.map(erf => {
         if (!erf.model.id) {
-          return this._datamartService.createEventRules(dmrt.id, { organisation_id: organisationId, properties: {...erf.model, datamart_id: dmrt.id, site_id: dmrt.id} })
+          return this._datamartService.createEventRules(dmrt.id, {
+            organisation_id: organisationId,
+            properties: { ...erf.model, datamart_id: dmrt.id, site_id: dmrt.id },
+          });
         } else if (startIds.includes(erf.model.id)) {
           savedIds.push(erf.model.id);
-          const eventRuleBody = {...erf.model, datamart_id: dmrt.id, site_id: dmrt.id};
+          const eventRuleBody = { ...erf.model, datamart_id: dmrt.id, site_id: dmrt.id };
           if (
-            eventRuleBody.type === 'USER_IDENTIFIER_INSERTION' && 
-            eventRuleBody.identifier_creation === 'USER_ACCOUNT' && 
+            eventRuleBody.type === 'USER_IDENTIFIER_INSERTION' &&
+            eventRuleBody.identifier_creation === 'USER_ACCOUNT' &&
             !eventRuleBody.compartment_id
           ) {
             eventRuleBody.compartment_id = null;
           }
-          return this._datamartService.updateEventRules(dmrt.id, erf.model.id, eventRuleBody)
+          return this._datamartService.updateEventRules(dmrt.id, erf.model.id, eventRuleBody);
         }
         return Promise.resolve();
       });
-      const deletePromises = startIds.map(sid => sid && !savedIds.includes(sid) ? this._datamartService.deleteEventRules(dmrt.id, sid) : Promise.resolve())
-      return [...saveCreatePromises, ...deletePromises]
-    }
+      const deletePromises = startIds.map(sid =>
+        sid && !savedIds.includes(sid)
+          ? this._datamartService.deleteEventRules(dmrt.id, sid)
+          : Promise.resolve(),
+      );
+      return [...saveCreatePromises, ...deletePromises];
+    };
 
-    const generateSavingPromise = (): Promise<
-      any
-    > => {
+    const generateSavingPromise = (): Promise<any> => {
       if (datamartFormData.datamart.id) {
         const dtmrt = {
           ...datamartFormData.datamart,
         };
 
-        return this._datamartService.updateDatamart(
-            datamartFormData.datamart.id,
-          dtmrt,
-        ).then((datamart) => Promise.all(generateEventRulesTasks(datamart.data)));
+        return this._datamartService
+          .updateDatamart(datamartFormData.datamart.id, dtmrt)
+          .then(datamart => Promise.all(generateEventRulesTasks(datamart.data)));
       }
 
-      return this._datamartService.createDatamart(
-        this.props.match.params.organisationId,
-        datamartFormData.datamart,
-      ).then((datamart) => Promise.all(generateEventRulesTasks(datamart.data)));
+      return this._datamartService
+        .createDatamart(this.props.match.params.organisationId, datamartFormData.datamart)
+        .then(datamart => Promise.all(generateEventRulesTasks(datamart.data)));
     };
 
     generateSavingPromise()
@@ -188,7 +187,9 @@ class DatamartEditPage extends React.Component<Props, State> {
     const {
       history,
       location,
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
     } = this.props;
 
     const defaultRedirectUrl = `/v2/o/${organisationId}/settings/datamart/datamarts`;
@@ -198,10 +199,11 @@ class DatamartEditPage extends React.Component<Props, State> {
       : history.push(defaultRedirectUrl);
   };
 
-  
   render() {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       intl: { formatMessage },
     } = this.props;
 
@@ -212,15 +214,14 @@ class DatamartEditPage extends React.Component<Props, State> {
     }
 
     const datamartName =
-    datamartFormData.datamart &&
-    datamartFormData.datamart.name
+      datamartFormData.datamart && datamartFormData.datamart.name
         ? formatMessage(messages.editDatamartTitle, {
             name: datamartFormData.datamart.name,
           })
         : formatMessage(messages.createDatamartTitle);
 
     const breadcrumbPaths = [
-      <Link key="1" to={`/v2/o/${organisationId}/settings/datamart/datamarts`}>
+      <Link key='1' to={`/v2/o/${organisationId}/settings/datamart/datamarts`}>
         {formatMessage(messages.breadcrumbTitle1)}
       </Link>,
       datamartName,

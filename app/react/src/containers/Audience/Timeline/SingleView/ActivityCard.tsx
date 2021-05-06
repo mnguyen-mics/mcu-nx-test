@@ -6,10 +6,7 @@ import { compose } from 'recompose';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/styles/hljs';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
-import {
-  Activity,
-  UserAgentIdentifierInfo,
-} from '../../../../models/timeline/timeline';
+import { Activity, UserAgentIdentifierInfo } from '../../../../models/timeline/timeline';
 import { Card, Button } from '@mediarithmics-private/mcs-components-library';
 import EventActivity from './EventActivity';
 import Device from './Device';
@@ -72,15 +69,24 @@ class ActivityCard extends React.Component<Props, State> {
   }
 
   getChannelInformation(activity: Activity) {
-    const { selectedDatamart, workspace: { community_id, organisation_id }  } = this.props;
+    const {
+      selectedDatamart,
+      workspace: { community_id, organisation_id },
+    } = this.props;
 
     if (activity && needToDisplayDurationFor.indexOf(activity.$type) > -1) {
       const id = activity.$site_id ? activity.$site_id : activity.$app_id;
       const prefix = activity.$site_id ? 'Site' : 'App';
       this.getChannelPromise = makeCancelable(
-        (community_id === organisation_id) ?
-          this._userDataService.getChannel(id, { community_id: community_id, with_source_datamarts: true }) :
-          this._userDataService.getChannel(id, { organisation_id: organisation_id, datamart_id: selectedDatamart.id })
+        community_id === organisation_id
+          ? this._userDataService.getChannel(id, {
+              community_id: community_id,
+              with_source_datamarts: true,
+            })
+          : this._userDataService.getChannel(id, {
+              organisation_id: organisation_id,
+              datamart_id: selectedDatamart.id,
+            }),
       );
       this.getChannelPromise.promise
         .then(response => {
@@ -136,10 +142,7 @@ class ActivityCard extends React.Component<Props, State> {
       },
       selectedDatamart: prevSelectedDatamart,
     } = prevProps;
-    if (
-      organisationId !== prevOrganisationId ||
-      selectedDatamart !== prevSelectedDatamart
-    ) {
+    if (organisationId !== prevOrganisationId || selectedDatamart !== prevSelectedDatamart) {
       this.getChannelInformation(activity);
     }
   }
@@ -155,15 +158,9 @@ class ActivityCard extends React.Component<Props, State> {
   };
 
   diplayVisitDuration = (activity: Activity) => {
-    const secs = moment
-      .duration(activity.$session_duration, 'seconds')
-      .seconds();
-    const min = moment
-      .duration(activity.$session_duration, 'seconds')
-      .minutes();
-    const hours = moment
-      .duration(activity.$session_duration, 'seconds')
-      .hours();
+    const secs = moment.duration(activity.$session_duration, 'seconds').seconds();
+    const min = moment.duration(activity.$session_duration, 'seconds').minutes();
+    const hours = moment.duration(activity.$session_duration, 'seconds').hours();
     const days = moment.duration(activity.$session_duration, 'seconds').days();
 
     const {
@@ -173,17 +170,13 @@ class ActivityCard extends React.Component<Props, State> {
     if (days > 1) {
       return `${days} ${formatMessage(messages.day)} ${hours} ${formatMessage(
         messages.hours,
-      )} ${min} ${formatMessage(messages.minutes)} ${secs} ${formatMessage(
-        messages.seconds,
-      )}`;
+      )} ${min} ${formatMessage(messages.minutes)} ${secs} ${formatMessage(messages.seconds)}`;
     } else if (hours >= 1) {
       return `${hours} ${formatMessage(messages.hours)} ${min} ${formatMessage(
         messages.minutes,
       )} ${secs} ${formatMessage(messages.seconds)}`;
     } else if (min >= 1) {
-      return `${min} ${formatMessage(messages.minutes)} ${secs} ${formatMessage(
-        messages.seconds,
-      )}`;
+      return `${min} ${formatMessage(messages.minutes)} ${secs} ${formatMessage(messages.seconds)}`;
     }
     return `${secs} ${formatMessage(messages.seconds)}`;
   };
@@ -200,7 +193,7 @@ class ActivityCard extends React.Component<Props, State> {
         ? parseInt(activity.$location.$latlon[0], 10)
         : 0;
     return (
-      <Row style={{display: "block"  }}>
+      <Row style={{ display: 'block' }}>
         <Device vectorId={activity.$user_agent_id} device={device} />
         <Origin origin={activity.$origin} />
         <Location longitude={longitude} latitude={latitude} />
@@ -211,12 +204,7 @@ class ActivityCard extends React.Component<Props, State> {
               return (b.$ts || 0) - (a.$ts || 0);
             })
             .map(event => {
-              return (
-                <EventActivity
-                  key={event.$event_name + event.$ts}
-                  event={event}
-                />
-              );
+              return <EventActivity key={event.$event_name + event.$ts} event={event} />;
             })}
         </div>
       </Row>
@@ -230,7 +218,7 @@ class ActivityCard extends React.Component<Props, State> {
       okText: intl.formatMessage(messages.eventJsonModalOkText),
       width: '650px',
       content: (
-        <SyntaxHighlighter language="json" style={docco}>
+        <SyntaxHighlighter language='json' style={docco}>
           {JSON.stringify(activity, undefined, 4)}
         </SyntaxHighlighter>
       ),
@@ -244,26 +232,26 @@ class ActivityCard extends React.Component<Props, State> {
     } else {
       const displayDuration = this.diplayVisitDuration(activity);
       const buttons = (
-        <div className="timeline-activity-card-buttons">
+        <div className='timeline-activity-card-buttons'>
           {needToDisplayDurationFor.indexOf(activity.$type) > -1 ? (
             <span>
               <ClockCircleOutlined /> {displayDuration || 0}
               <br />
             </span>
           ) : null}
-          <Button
-            onClick={this.handleJSONViewModal}
-            className="mcs-card-inner-action"
-          >
+          <Button onClick={this.handleJSONViewModal} className='mcs-card-inner-action'>
             <FormattedMessage {...messages.viewActivityJson} />
           </Button>
         </div>
       );
 
       return (
-        <Card title={this.state.siteName} buttons={buttons} className={"mcs-activityCard"}>
+        <Card title={this.state.siteName} buttons={buttons} className={'mcs-activityCard'}>
           {this.generateCardContent(activity)}
-          <Row className="border-top sm-footer timed-footer text-right" style={{display: "block"}}>
+          <Row
+            className='border-top sm-footer timed-footer text-right'
+            style={{ display: 'block' }}
+          >
             {moment(activity.$ts).format('H:mm:ss')}
           </Row>
         </Card>

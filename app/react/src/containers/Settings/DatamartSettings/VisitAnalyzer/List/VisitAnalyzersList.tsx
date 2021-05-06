@@ -75,9 +75,7 @@ class VisitAnalyzersList extends Component<
   private _visitAnalyzerService: IVisitAnalyzerService;
 
   archiveVisitAnalyzer = (visitAnalyzerId: string) => {
-    return this._visitAnalyzerService.deleteVisitAnalyzerProperty(
-      visitAnalyzerId,
-    );
+    return this._visitAnalyzerService.deleteVisitAnalyzerProperty(visitAnalyzerId);
   };
 
   fetchVisitAnalyzer = (organisationId: string, filter: Filters) => {
@@ -87,39 +85,31 @@ class VisitAnalyzersList extends Component<
       };
       this._visitAnalyzerService
         .getVisitAnalyzers(organisationId, options)
-        .then(
-          (results: {
-            data: VisitAnalyzer[];
-            total?: number;
-            count: number;
-          }) => {
-            const promises = results.data.map((va) => {
-              return new Promise((resolve, reject) => {
-                this._pluginService
-                  .getEngineVersion(va.version_id)
-                  .then((visitAnalyzer) => {
-                    return this._pluginService.getEngineProperties(
-                      visitAnalyzer.id,
-                    );
-                  })
-                  .then((v) => resolve(v));
-              });
+        .then((results: { data: VisitAnalyzer[]; total?: number; count: number }) => {
+          const promises = results.data.map(va => {
+            return new Promise((resolve, reject) => {
+              this._pluginService
+                .getEngineVersion(va.version_id)
+                .then(visitAnalyzer => {
+                  return this._pluginService.getEngineProperties(visitAnalyzer.id);
+                })
+                .then(v => resolve(v));
             });
-            Promise.all(promises).then((vaProperties: PluginProperty[]) => {
-              const formattedResults: any = results.data.map((va, i) => {
-                return {
-                  ...va,
-                  properties: vaProperties[i],
-                };
-              });
-              this.setState({
-                loading: false,
-                data: formattedResults,
-                total: results.total || results.count,
-              });
+          });
+          Promise.all(promises).then((vaProperties: PluginProperty[]) => {
+            const formattedResults: any = results.data.map((va, i) => {
+              return {
+                ...va,
+                properties: vaProperties[i],
+              };
             });
-          },
-        );
+            this.setState({
+              loading: false,
+              data: formattedResults,
+              total: results.total || results.count,
+            });
+          });
+        });
     });
   };
 
@@ -188,9 +178,7 @@ class VisitAnalyzersList extends Component<
       intl: { formatMessage },
     } = this.props;
 
-    const actionsColumnsDefinition: Array<
-      ActionsColumnDefinition<VisitAnalyzer>
-    > = [
+    const actionsColumnsDefinition: Array<ActionsColumnDefinition<VisitAnalyzer>> = [
       {
         key: 'action',
         actions: () => [
@@ -213,7 +201,7 @@ class VisitAnalyzersList extends Component<
         isHideable: false,
         render: (text: string, record: VisitAnalyzer) => (
           <Link
-            className="mcs-campaigns-link"
+            className='mcs-campaigns-link'
             to={`/v2/o/${organisationId}/settings/datamart/visit_analyzers/${record.id}/edit`}
           >
             {text}
@@ -228,11 +216,9 @@ class VisitAnalyzersList extends Component<
           const property =
             record &&
             record.properties &&
-            record.properties.find((item) => item.technical_name === 'name');
+            record.properties.find(item => item.technical_name === 'name');
           const render =
-            property && property.value && property.value.value
-              ? property.value.value
-              : null;
+            property && property.value && property.value.value ? property.value.value : null;
           return <span>{render}</span>;
         },
       },
@@ -244,13 +230,9 @@ class VisitAnalyzersList extends Component<
           const property =
             record &&
             record.properties &&
-            record.properties.find(
-              (item) => item.technical_name === 'provider',
-            );
+            record.properties.find(item => item.technical_name === 'provider');
           const render =
-            property && property.value && property.value.value
-              ? property.value.value
-              : null;
+            property && property.value && property.value.value ? property.value.value : null;
           return <span>{render}</span>;
         },
       },
@@ -265,31 +247,29 @@ class VisitAnalyzersList extends Component<
     };
 
     const onClick = () =>
-      history.push(
-        `/v2/o/${organisationId}/settings/datamart/visit_analyzers/create`,
-      );
+      history.push(`/v2/o/${organisationId}/settings/datamart/visit_analyzers/create`);
 
     const buttons = [
-      <Button key="create" type="primary" onClick={onClick}>
+      <Button key='create' type='primary' onClick={onClick}>
         <FormattedMessage {...messages.newVisitAnalyzer} />
       </Button>,
     ];
 
     const additionnalComponent = (
       <div>
-        <div className="mcs-card-header mcs-card-title">
-          <span className="mcs-card-title">
+        <div className='mcs-card-header mcs-card-title'>
+          <span className='mcs-card-title'>
             <FormattedMessage {...messages.visitAnalyzer} />
           </span>
-          <span className="mcs-card-button">{buttons}</span>
+          <span className='mcs-card-button'>{buttons}</span>
         </div>
-        <hr className="mcs-separator" />
+        <hr className='mcs-separator' />
       </div>
     );
 
     return (
-      <div className="ant-layout">
-        <Content className="mcs-content-container">
+      <div className='ant-layout'>
+        <Content className='mcs-content-container'>
           <ItemList
             fetchList={this.fetchVisitAnalyzer}
             dataSource={this.state.data}

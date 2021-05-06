@@ -2,12 +2,8 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 
-import withValidators, {
-  ValidatorProps,
-} from '../../../../../../components/Form/withValidators';
-import withNormalizer, {
-  NormalizerProps,
-} from '../../../../../../components/Form/withNormalizer';
+import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
+import withNormalizer, { NormalizerProps } from '../../../../../../components/Form/withNormalizer';
 import {
   FormInput,
   FormSection,
@@ -49,13 +45,11 @@ class UserInfoFormSection extends React.Component<Props> {
 
     return (
       <div>
-        <FormSection
-          title={messages.sectionTitleGeneral}
-        />
+        <FormSection title={messages.sectionTitleGeneral} />
 
         <div>
           <FormInputField
-            name="user_name"
+            name='user_name'
             component={FormInput}
             formItemProps={{
               label: formatMessage(messages.labelUserName),
@@ -66,7 +60,7 @@ class UserInfoFormSection extends React.Component<Props> {
             }}
           />
           <FormInputField
-            name="email"
+            name='email'
             component={FormInput}
             formItemProps={{
               label: formatMessage(messages.labelUserEmail),
@@ -77,7 +71,7 @@ class UserInfoFormSection extends React.Component<Props> {
             }}
           />
           <FormSelectField
-            name="organisation_name"
+            name='organisation_name'
             component={DefaultSelect}
             disabled={true}
             formItemProps={{
@@ -85,12 +79,9 @@ class UserInfoFormSection extends React.Component<Props> {
             }}
           />
         </div>
-
       </div>
     );
   }
 }
 
-export default compose(injectIntl, withValidators, withNormalizer)(
-  UserInfoFormSection,
-);
+export default compose(injectIntl, withValidators, withNormalizer)(UserInfoFormSection);

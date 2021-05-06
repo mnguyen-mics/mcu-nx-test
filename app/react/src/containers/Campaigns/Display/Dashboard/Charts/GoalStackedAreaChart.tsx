@@ -8,10 +8,7 @@ import { MenuInfo } from '../../../../../../../../node_modules/antd/node_modules
 import { Dropdown } from '../../../../../components/PopupContainers';
 import { LegendChart } from '../../../../../components/LegendChart';
 
-import {
-  GoalSelectionResource,
-  AttributionSelectionResource,
-} from '../../../../../models/goal';
+import { GoalSelectionResource, AttributionSelectionResource } from '../../../../../models/goal';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';
 
@@ -26,9 +23,7 @@ import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import ReportService from '../../../../../services/ReportService';
 import McsMoment from '../../../../../utils/McsMoment';
 import log from '../../../../../utils/Logger';
-import injectThemeColors, {
-  InjectedThemeColorsProps,
-} from '../../../../Helpers/injectThemeColors';
+import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
 import {
   EmptyChart,
   LoadingChart,
@@ -73,10 +68,7 @@ type JoinedProps = GoalStackedAreaChartProps &
   InjectedThemeColorsProps &
   InjectedIntlProps;
 
-class GoalStackedAreaChart extends React.Component<
-  JoinedProps,
-  GoalStackedAreaChartState
-> {
+class GoalStackedAreaChart extends React.Component<JoinedProps, GoalStackedAreaChartState> {
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -96,11 +88,7 @@ class GoalStackedAreaChart extends React.Component<
 
     const nextLocation = {
       pathname,
-      search: updateSearch(
-        currentSearch,
-        params,
-        DISPLAY_DASHBOARD_SEARCH_SETTINGS,
-      ),
+      search: updateSearch(currentSearch, params, DISPLAY_DASHBOARD_SEARCH_SETTINGS),
     };
 
     history.push(nextLocation);
@@ -139,28 +127,19 @@ class GoalStackedAreaChart extends React.Component<
     let attributionId = null;
     if (state.selectedAttributionModel !== undefined) {
       attributionId = state.selectedAttributionModel.id;
-    } else if (
-      state.selectedAttributionModel === undefined &&
-      goal.attribution.length
-    ) {
+    } else if (state.selectedAttributionModel === undefined && goal.attribution.length) {
       this.setState({ selectedAttributionModel: goal.attribution[0] });
       attributionId = goal.attribution[0].id;
     }
     return attributionId;
   };
 
-  componentWillUpdate(
-    nextProps: JoinedProps,
-    nextState: GoalStackedAreaChartState,
-  ) {
+  componentWillUpdate(nextProps: JoinedProps, nextState: GoalStackedAreaChartState) {
     const {
       goal: nextGoal,
       location: { search: nextSearch, pathname: nextPathname },
       match: {
-        params: {
-          campaignId: nextCampaignId,
-          organisationId: nextOrganisationId,
-        },
+        params: { campaignId: nextCampaignId, organisationId: nextOrganisationId },
       },
     } = nextProps;
 
@@ -175,9 +154,7 @@ class GoalStackedAreaChart extends React.Component<
 
     const { selectedAttributionModel } = this.state;
 
-    const {
-      selectedAttributionModel: nextSelectedAttributionModel,
-    } = nextState;
+    const { selectedAttributionModel: nextSelectedAttributionModel } = nextState;
 
     if (
       !compareSearches(search, nextSearch) ||
@@ -189,16 +166,10 @@ class GoalStackedAreaChart extends React.Component<
       if (!isSearchValid(nextSearch, DISPLAY_DASHBOARD_SEARCH_SETTINGS)) {
         history.replace({
           pathname: nextPathname,
-          search: buildDefaultSearch(
-            nextSearch,
-            DISPLAY_DASHBOARD_SEARCH_SETTINGS,
-          ),
+          search: buildDefaultSearch(nextSearch, DISPLAY_DASHBOARD_SEARCH_SETTINGS),
         });
       } else {
-        const filter = parseSearch(
-          nextSearch,
-          DISPLAY_DASHBOARD_SEARCH_SETTINGS,
-        );
+        const filter = parseSearch(nextSearch, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
         const nextAttributionId = nextSelectedAttributionModel
           ? nextSelectedAttributionModel.id
           : null;
@@ -236,10 +207,8 @@ class GoalStackedAreaChart extends React.Component<
         ['day'],
         undefined,
       )
-        .then((results) =>
-          normalizeReportView<PerformanceValue>(results.data.report_view),
-        )
-        .then((results) => {
+        .then(results => normalizeReportView<PerformanceValue>(results.data.report_view))
+        .then(results => {
           this.setState({
             performance: results,
             isFetchingPerformance: false,
@@ -248,7 +217,7 @@ class GoalStackedAreaChart extends React.Component<
             error: false,
           });
         })
-        .catch((err) => {
+        .catch(err => {
           log.error(err);
           this.setState({
             isFetchingPerformance: false,
@@ -324,10 +293,8 @@ class GoalStackedAreaChart extends React.Component<
 
     const handleClick = (e: MenuInfo) => {
       const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
-      this.setState((prevState) => {
-        const selectedAttributionModel = goal.attribution.find(
-          (item) => item.id === e.key,
-        );
+      this.setState(prevState => {
+        const selectedAttributionModel = goal.attribution.find(item => item.id === e.key);
 
         this.getPerformanceForGoalAndAttribution(
           organisationId,
@@ -346,12 +313,10 @@ class GoalStackedAreaChart extends React.Component<
 
     const menu = (
       <Menu onClick={handleClick}>
-        {goal.attribution.map((attribution) => {
+        {goal.attribution.map(attribution => {
           return this.state.selectedAttributionModel &&
             attribution.id !== this.state.selectedAttributionModel.id ? (
-            <Menu.Item key={attribution.id}>
-              {attribution.attribution_model_name}
-            </Menu.Item>
+            <Menu.Item key={attribution.id}>{attribution.attribution_model_name}</Menu.Item>
           ) : null;
         })}
       </Menu>
@@ -376,11 +341,7 @@ class GoalStackedAreaChart extends React.Component<
       intl: { formatMessage },
     } = this.props;
 
-    const {
-      hasFetchedPerformance,
-      hasData,
-      isFetchingPerformance,
-    } = this.state;
+    const { hasFetchedPerformance, hasData, isFetchingPerformance } = this.state;
 
     const legendOptions = [
       {
@@ -391,26 +352,23 @@ class GoalStackedAreaChart extends React.Component<
 
     const chartArea = (
       <div>
-        <Row className="mcs-chart-header">
+        <Row className='mcs-chart-header'>
           <Col span={12}>
             {hasData && isFetchingPerformance ? (
               <div />
             ) : (
-              <LegendChartTS identifier="chartLegend" options={legendOptions} />
+              <LegendChartTS identifier='chartLegend' options={legendOptions} />
             )}
           </Col>
           <Col span={12}>
-            <span className="mcs-card-button">
+            <span className='mcs-card-button'>
               {this.renderAttributionSelect()}
               {this.renderDatePicker()}
             </span>
           </Col>
         </Row>
         {!hasData && hasFetchedPerformance ? (
-          <EmptyChart
-            title={formatMessage(messages.noGoalStatAvailable)}
-            icon="warning"
-          />
+          <EmptyChart title={formatMessage(messages.noGoalStatAvailable)} icon='warning' />
         ) : (
           <Row>
             <Col span={24}>{this.renderStackedAreaCharts()}</Col>

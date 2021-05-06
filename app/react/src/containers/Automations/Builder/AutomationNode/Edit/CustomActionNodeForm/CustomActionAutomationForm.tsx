@@ -3,13 +3,7 @@ import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { connect, DispatchProp } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
-import {
-  ConfigProps,
-  getFormValues,
-  InjectedFormProps,
-  reduxForm,
-  change,
-} from 'redux-form';
+import { ConfigProps, getFormValues, InjectedFormProps, reduxForm, change } from 'redux-form';
 import { FormSection } from '../../../../../../components/Form';
 import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
 import { FORM_ID, CustomActionAutomationFormData } from '../domain';
@@ -52,10 +46,7 @@ interface MapStateToProps {
   formValues: CustomActionAutomationFormData;
 }
 
-type Props = InjectedFormProps<
-  CustomActionAutomationFormData,
-  CustomActionAutomationFormProps
-> &
+type Props = InjectedFormProps<CustomActionAutomationFormData, CustomActionAutomationFormProps> &
   DispatchProp<any> &
   CustomActionAutomationFormProps &
   InjectedIntlProps &
@@ -98,19 +89,13 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
         );
       }
       this.setState({
-        extendedCustomActionsInformation:
-          initialValues.extendedCustomActionsInformation,
+        extendedCustomActionsInformation: initialValues.extendedCustomActionsInformation,
         fetchingCustomActions: false,
       });
     } else {
       this.setState({ fetchingCustomActions: true }, () => {
-        this.getExtendedCustomActionsInformation(
-          organisationId,
-          initialValues.customActionId,
-        ).then(
-          (
-            extendedCustomActionsInformation: ExtendedCustomActionInformation[],
-          ) => {
+        this.getExtendedCustomActionsInformation(organisationId, initialValues.customActionId).then(
+          (extendedCustomActionsInformation: ExtendedCustomActionInformation[]) => {
             if (initialValues.customActionId) {
               this.dispatchPropertiesToBeDisplayed(
                 initialValues.customActionId,
@@ -146,10 +131,7 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
       const { customActionId: previousCustomActionId } = previousFormValues;
       const { customActionId } = formValues;
       if (customActionId !== previousCustomActionId && customActionId) {
-        this.dispatchPropertiesToBeDisplayed(
-          customActionId,
-          extendedCustomActionsInformation,
-        );
+        this.dispatchPropertiesToBeDisplayed(customActionId, extendedCustomActionsInformation);
       }
     }
   }
@@ -161,20 +143,14 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
     const { dispatch } = this.props;
 
     const customActionInfoOpt = extendedCustomActionsInformation.find(
-      (extendedCustomActionInformation) => {
-        return (
-          extendedCustomActionInformation.customAction.id === customActionId
-        );
+      extendedCustomActionInformation => {
+        return extendedCustomActionInformation.customAction.id === customActionId;
       },
     );
 
-    if (
-      dispatch &&
-      customActionInfoOpt &&
-      customActionInfoOpt.customActionProperties
-    ) {
+    if (dispatch && customActionInfoOpt && customActionInfoOpt.customActionProperties) {
       const modifiedProps: { [index: string]: any } = {};
-      customActionInfoOpt.customActionProperties.forEach((prop) => {
+      customActionInfoOpt.customActionProperties.forEach(prop => {
         modifiedProps[prop.technical_name] = prop;
       });
       if (dispatch) dispatch(change(FORM_ID, 'properties', modifiedProps));
@@ -190,13 +166,13 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
     const customActionsP: Promise<CustomActionResource[]> = customActionId
       ? this._customActionService
           .getInstanceById(customActionId)
-          .then((resCustomAction) => [resCustomAction.data])
+          .then(resCustomAction => [resCustomAction.data])
       : this._customActionService
           .getInstances({ organisation_id: +organisationId })
-          .then((resCustomActions) => resCustomActions.data);
+          .then(resCustomActions => resCustomActions.data);
 
     return customActionsP
-      .then((customActions) => {
+      .then(customActions => {
         return Promise.all(
           customActions.map((customActionResource: CustomActionResource) => {
             const pluginLayoutP = this._customActionService.getLocalizedPluginLayout(
@@ -205,28 +181,25 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
 
             const propertiesP = this._customActionService
               .getInstanceProperties(customActionResource.id)
-              .then((resProperties) => resProperties.data)
-              .catch((err) => {
+              .then(resProperties => resProperties.data)
+              .catch(err => {
                 notifyError(err);
                 return [];
               });
 
-            return Promise.all([pluginLayoutP, propertiesP]).then(
-              (resPromises) => {
-                const extendedCustomActionInformation: ExtendedCustomActionInformation = {
-                  customAction: customActionResource,
-                  pluginLayout:
-                    resPromises[0] !== null ? resPromises[0] : undefined,
-                  customActionProperties: resPromises[1],
-                };
+            return Promise.all([pluginLayoutP, propertiesP]).then(resPromises => {
+              const extendedCustomActionInformation: ExtendedCustomActionInformation = {
+                customAction: customActionResource,
+                pluginLayout: resPromises[0] !== null ? resPromises[0] : undefined,
+                customActionProperties: resPromises[1],
+              };
 
-                return extendedCustomActionInformation;
-              },
-            );
+              return extendedCustomActionInformation;
+            });
           }),
         );
       })
-      .catch((err) => {
+      .catch(err => {
         notifyError(err);
         return [];
       });
@@ -316,17 +289,13 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
     const sectionsOrSpin = fetchingCustomActions ? <Spin /> : renderedSections;
 
     return (
-      <Layout className="edit-layout">
+      <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
-          <Form
-            className="edit-layout ant-layout"
-            onSubmit={handleSubmit}
-            layout="vertical"
-          >
+          <Form className='edit-layout ant-layout' onSubmit={handleSubmit} layout='vertical'>
             <Content
               id={FORM_ID}
-              className="mcs-content-container mcs-form-container automation-form"
+              className='mcs-content-container mcs-form-container automation-form'
             >
               <FormSection
                 title={messages.sectionGeneralTitle}

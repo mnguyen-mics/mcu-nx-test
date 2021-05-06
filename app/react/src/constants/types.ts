@@ -48,13 +48,9 @@ const TYPES = {
   IEmailRouterService: Symbol.for('emailRouterService'),
   IVisitAnalyzerService: Symbol.for('visitAnalyzerService'),
   IRecommenderService: Symbol.for('recommenderService'),
-  IAudienceExternalFeedServiceFactory: Symbol.for(
-    'audienceExternalFeedServiceFactory',
-  ),
+  IAudienceExternalFeedServiceFactory: Symbol.for('audienceExternalFeedServiceFactory'),
   IAudienceTagFeedServiceFactory: Symbol.for('audienceTagFeedServiceFactory'),
-  IAudienceSegmentFeedServiceFactory: Symbol.for(
-    'audienceSegmentFeedServiceFactory',
-  ),
+  IAudienceSegmentFeedServiceFactory: Symbol.for('audienceSegmentFeedServiceFactory'),
   IAuthService: Symbol.for('authService'),
   ITagService: Symbol.for('tagService'),
   ILabelService: Symbol.for('labelService'),

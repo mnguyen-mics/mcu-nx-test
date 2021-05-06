@@ -85,12 +85,7 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
     // init
   };
 
-  fetchExportData = (
-    organisationId: string,
-    segmentId: string,
-    from: McsMoment,
-    to: McsMoment,
-  ) => {
+  fetchExportData = (organisationId: string, segmentId: string, from: McsMoment, to: McsMoment) => {
     const fetchCounters = this.fetchCounterView(organisationId, [
       { name: 'audience_segment_id', value: segmentId },
     ]);
@@ -163,19 +158,14 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
     } = this.props;
     const filters = parseSearch(search, SEGMENT_QUERY_SETTINGS);
     this.setState({ exportIsRunning: true });
-    const hideExportLoadingMsg = message.loading(
-      formatMessage(exportMessages.exportInProgress),
-      0,
-    );
+    const hideExportLoadingMsg = message.loading(formatMessage(exportMessages.exportInProgress), 0);
 
     const datamartId = segment && segment.datamart_id;
     const datamart = datamarts.find(dm => dm.id === datamartId);
 
     const additionalMetrics =
       datamart && datamart.audience_segment_metrics
-        ? datamart.audience_segment_metrics.filter(
-            metric => metric.status === 'LIVE',
-          )
+        ? datamart.audience_segment_metrics.filter(metric => metric.status === 'LIVE')
         : undefined;
 
     this.fetchExportData(organisationId, segmentId, filters.from, filters.to)
@@ -197,10 +187,7 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
       })
       .catch(err => {
         hideExportLoadingMsg();
-        message.error(
-          'There was an error generating your export please try again.',
-          5,
-        );
+        message.error('There was an error generating your export please try again.', 5);
         this.setState({ exportIsRunning: false });
       });
   };
@@ -242,19 +229,16 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
       openNextDrawer,
     } = this.props;
 
-    openNextDrawer<AudienceExperimentationEditPageProps>(
-      AudienceExperimentationEditPage,
-      {
-        additionalProps: {
-          close: this.props.closeNextDrawer,
-          breadCrumbPaths: [
-            (segment as AudienceSegmentResource).name || '',
-            formatMessage(segmentMessages.experimentationCreation),
-          ],
-          segment: segment as UserQuerySegment,
-        },
+    openNextDrawer<AudienceExperimentationEditPageProps>(AudienceExperimentationEditPage, {
+      additionalProps: {
+        close: this.props.closeNextDrawer,
+        breadCrumbPaths: [
+          (segment as AudienceSegmentResource).name || '',
+          formatMessage(segmentMessages.experimentationCreation),
+        ],
+        segment: segment as UserQuerySegment,
       },
-    );
+    });
   };
 
   render() {
@@ -275,95 +259,71 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
     const datamartId = segment && segment.datamart_id;
 
     const breadcrumbPaths = [
-      <Link key='1' to={`/v2/o/${organisationId}/audience/segments`}>{formatMessage(segmentMessages.audienceSegment)}</Link>,
+      <Link key='1' to={`/v2/o/${organisationId}/audience/segments`}>
+        {formatMessage(segmentMessages.audienceSegment)}
+      </Link>,
       segment ? (segment as AudienceSegmentResource).name : '',
     ];
 
     const onClick = () => {
       if (!datamartId) return;
 
-      this.props.openNextDrawer<AudienceLookalikeCreationProps>(
-        AudienceLookalikeCreation,
-        {
-          additionalProps: {
-            datamartId: datamartId,
-            close: this.props.closeNextDrawer,
-            breadCrumbPaths: [
-              (segment as AudienceSegmentResource).name || '',
-              formatMessage(segmentMessages.lookAlikeCreation),
-            ],
-            initialValues: {
-              source_segment_id: (segment as AudienceSegmentResource).id,
-              persisted: true,
-              type: 'USER_LOOKALIKE',
-              lookalike_algorithm: 'CLUSTER_OVERLAP',
-              extension_factor: 1,
-              datamart_id: datamartId,
-              organisation_id: organisationId,
-            },
+      this.props.openNextDrawer<AudienceLookalikeCreationProps>(AudienceLookalikeCreation, {
+        additionalProps: {
+          datamartId: datamartId,
+          close: this.props.closeNextDrawer,
+          breadCrumbPaths: [
+            (segment as AudienceSegmentResource).name || '',
+            formatMessage(segmentMessages.lookAlikeCreation),
+          ],
+          initialValues: {
+            source_segment_id: (segment as AudienceSegmentResource).id,
+            persisted: true,
+            type: 'USER_LOOKALIKE',
+            lookalike_algorithm: 'CLUSTER_OVERLAP',
+            extension_factor: 1,
+            datamart_id: datamartId,
+            organisation_id: organisationId,
           },
         },
-      );
+      });
     };
 
     const onRecalibrateClick = () => onCalibrationClick();
 
     let actionButton = null;
 
-    if (
-      segment &&
-      (segment as AudienceSegmentResource).type === 'USER_LOOKALIKE'
-    ) {
+    if (segment && (segment as AudienceSegmentResource).type === 'USER_LOOKALIKE') {
       switch ((segment as UserLookalikeSegment).status) {
         case 'DRAFT':
           actionButton = (
-            <Button
-              className="mcs-primary"
-              type="primary"
-              onClick={onRecalibrateClick}
-            >
-              <McsIcon type="bolt" />
-              <FormattedMessage
-                {...segmentMessages.lookAlikeCalibrationExecution}
-              />
+            <Button className='mcs-primary' type='primary' onClick={onRecalibrateClick}>
+              <McsIcon type='bolt' />
+              <FormattedMessage {...segmentMessages.lookAlikeCalibrationExecution} />
             </Button>
           );
           break;
         case 'CALIBRATING':
           actionButton = (
-            <Button className="mcs-primary" type="primary" disabled={true}>
-              <McsIcon type="bolt" />
-              <FormattedMessage
-                {...segmentMessages.lookAlikeCalibrationRunning}
-              />
+            <Button className='mcs-primary' type='primary' disabled={true}>
+              <McsIcon type='bolt' />
+              <FormattedMessage {...segmentMessages.lookAlikeCalibrationRunning} />
             </Button>
           );
           break;
         case 'CALIBRATION_ERROR':
           actionButton = (
-            <Button
-              className="mcs-primary"
-              type="primary"
-              onClick={onRecalibrateClick}
-            >
-              <McsIcon type="bolt" />
-              <FormattedMessage
-                {...segmentMessages.lookAlikeCalibrationErrorSuccess}
-              />
+            <Button className='mcs-primary' type='primary' onClick={onRecalibrateClick}>
+              <McsIcon type='bolt' />
+              <FormattedMessage {...segmentMessages.lookAlikeCalibrationErrorSuccess} />
             </Button>
           );
           break;
         case 'CALIBRATED':
           actionButton = (
-            <Button
-              className="mcs-primary"
-              type="primary"
-              onClick={onRecalibrateClick}
-            >
-              <McsIcon type="bolt" />
-              <FormattedMessage
-                {...segmentMessages.lookAlikeCalibrationErrorSuccess}
-              />
+            <Button className='mcs-primary' type='primary' onClick={onRecalibrateClick}>
+              <McsIcon type='bolt' />
+              <FormattedMessage {...segmentMessages.lookAlikeCalibrationErrorSuccess} />
             </Button>
           );
           break;
@@ -375,55 +335,38 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
         case 'LOOKALIKE':
           return onClick();
         case 'EXPERIMENTATION':
-          return (
-            segment &&
-            isUserQuerySegment(segment) &&
-            this.onCreateExperimentationClick()
-          );
+          return segment && isUserQuerySegment(segment) && this.onCreateExperimentationClick();
         case 'CONTROL_GROUP_SEGMENT':
           return (
             controlGroupSegment &&
-            history.push(
-              `/v2/o/${organisationId}/audience/segments/${controlGroupSegment.id}`,
-            )
+            history.push(`/v2/o/${organisationId}/audience/segments/${controlGroupSegment.id}`)
           );
         case 'HISTORY':
-          return this.props.openNextDrawer<ResourceTimelinePageProps>(
-            ResourceTimelinePage,
-            {
-              additionalProps: {
-                resourceType: 'AUDIENCE_SEGMENT',
-                resourceId: (segment as AudienceSegmentResource).id,
-                handleClose: () => this.props.closeNextDrawer(),
-                formatProperty: formatAudienceSegmentProperty,
-                resourceLinkHelper: {
-                  AUDIENCE_SEGMENT: {
-                    direction: 'CHILD',
-                    getType: () => {
-                      return (
-                        <FormattedMessage
-                          {...resourceHistoryMessages.segmentResourceType}
-                        />
-                      );
-                    },
-                    getName: (id: string) => {
-                      return this._audienceSegmentService
-                        .getSegment(id)
-                        .then(response => {
-                          return response.data.name || id;
-                        });
-                    },
-                    goToResource: (id: string) => {
-                      history.push(
-                        `/v2/o/${organisationId}/audience/segments/${id}`,
-                      );
-                    },
+          return this.props.openNextDrawer<ResourceTimelinePageProps>(ResourceTimelinePage, {
+            additionalProps: {
+              resourceType: 'AUDIENCE_SEGMENT',
+              resourceId: (segment as AudienceSegmentResource).id,
+              handleClose: () => this.props.closeNextDrawer(),
+              formatProperty: formatAudienceSegmentProperty,
+              resourceLinkHelper: {
+                AUDIENCE_SEGMENT: {
+                  direction: 'CHILD',
+                  getType: () => {
+                    return <FormattedMessage {...resourceHistoryMessages.segmentResourceType} />;
+                  },
+                  getName: (id: string) => {
+                    return this._audienceSegmentService.getSegment(id).then(response => {
+                      return response.data.name || id;
+                    });
+                  },
+                  goToResource: (id: string) => {
+                    history.push(`/v2/o/${organisationId}/audience/segments/${id}`);
                   },
                 },
               },
-              size: 'small',
             },
-          );
+            size: 'small',
+          });
         default:
           return () => ({});
       }
@@ -431,22 +374,22 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
 
     const dropdowMenu = (
       <Menu onClick={onMenuClick}>
-        <Menu.Item key="HISTORY">
+        <Menu.Item key='HISTORY'>
           <FormattedMessage {...segmentMessages.history} />
         </Menu.Item>
-        <Menu.Item key="LOOKALIKE">
+        <Menu.Item key='LOOKALIKE'>
           <FormattedMessage {...segmentMessages.lookAlikeCreation} />
         </Menu.Item>
         {segment &&
           segment.type === 'USER_QUERY' &&
           hasFeature('audience-segment_uplift') &&
           segment.subtype === 'STANDARD' && (
-            <Menu.Item key="EXPERIMENTATION">
+            <Menu.Item key='EXPERIMENTATION'>
               <FormattedMessage {...segmentMessages.experimentationCreation} />
             </Menu.Item>
           )}
         {controlGroupSegment && (
-          <Menu.Item key="CONTROL_GROUP_SEGMENT">
+          <Menu.Item key='CONTROL_GROUP_SEGMENT'>
             <FormattedMessage {...segmentMessages.seeToControlGroupDashboard} />
           </Menu.Item>
         )}
@@ -460,7 +403,7 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
         (segment as UserListSegment).subtype !== 'EDGE' && (
           <Dropdown overlay={dropdowMenu} trigger={['click']}>
             <Button>
-              <McsIcon className="compact" type={'dots'} />
+              <McsIcon className='compact' type={'dots'} />
             </Button>
           </Dropdown>
         )
@@ -470,29 +413,25 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
     return (
       <Actionbar pathItems={breadcrumbPaths}>
         {actionButton}
-        <Button
-          className="mcs-primary"
-          type="primary"
-          onClick={this.handleCreateNewFeed}
-        >
-          <McsIcon type="bolt" />
+        <Button className='mcs-primary' type='primary' onClick={this.handleCreateNewFeed}>
+          <McsIcon type='bolt' />
           <FormattedMessage
-            id="audience.segments.dashboard.actionbar.feedButton"
-            defaultMessage="Add a Feed"
+            id='audience.segments.dashboard.actionbar.feedButton'
+            defaultMessage='Add a Feed'
           />
         </Button>
         <Button onClick={this.onEditClick}>
-          <McsIcon type="pen" />
+          <McsIcon type='pen' />
           <FormattedMessage
-            id="audience.segments.dashboard.actionbar.editButton"
-            defaultMessage="Edit"
+            id='audience.segments.dashboard.actionbar.editButton'
+            defaultMessage='Edit'
           />
         </Button>
         <Button onClick={this.handleRunExport} loading={exportIsRunning}>
-          <McsIcon type="download" />
+          <McsIcon type='download' />
           <FormattedMessage
-            id="audience.segments.dashboard.actionbar.exportButton"
-            defaultMessage="Export stats"
+            id='audience.segments.dashboard.actionbar.exportButton'
+            defaultMessage='Export stats'
           />
         </Button>
         {renderDotsMenu()}

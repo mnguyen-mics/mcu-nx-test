@@ -6,10 +6,7 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import DisplayCreativeFormLoader from './DisplayCreativeFormLoader';
 import { DisplayCreativeCreator } from './index';
 import messages from './messages';
-import {
-  DisplayCreativeFormData,
-  EditDisplayCreativeRouteMatchParams,
-} from './domain';
+import { DisplayCreativeFormData, EditDisplayCreativeRouteMatchParams } from './domain';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
@@ -25,7 +22,11 @@ interface State {
   creativeName: string;
 }
 
-type Props = RouteComponentProps<EditDisplayCreativeRouteMatchParams, StaticContext, { from?: string }> &
+type Props = RouteComponentProps<
+  EditDisplayCreativeRouteMatchParams,
+  StaticContext,
+  { from?: string }
+> &
   InjectedNotificationProps &
   InjectedIntlProps;
 
@@ -56,9 +57,7 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
         .then(resp => resp.data)
         .then(creativeData => {
           this.setState({
-            creativeName: creativeData.name
-              ? creativeData.name
-              : `creative ${creativeData.id}`,
+            creativeName: creativeData.name ? creativeData.name : `creative ${creativeData.id}`,
           });
         })
         .catch(err => {
@@ -89,9 +88,7 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
         .then(creativeData => {
           this.setState({
             loading: false,
-            creativeName: creativeData.name
-              ? creativeData.name
-              : `creative ${creativeData.id}`,
+            creativeName: creativeData.name ? creativeData.name : `creative ${creativeData.id}`,
           });
         })
         .catch(err => {
@@ -110,10 +107,7 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
       },
     } = this.props;
 
-    let url =
-      state && state.from
-        ? state.from
-        : `/v2/o/${organisationId}/creatives/display`;
+    let url = state && state.from ? state.from : `/v2/o/${organisationId}/creatives/display`;
 
     if (savedId) {
       url = `/v2/o/${organisationId}/creatives/display/edit/${savedId}`;
@@ -129,10 +123,7 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
       intl,
     } = this.props;
 
-    const hideSaveInProgress = message.loading(
-      intl.formatMessage(messages.savingInProgress),
-      0,
-    );
+    const hideSaveInProgress = message.loading(intl.formatMessage(messages.savingInProgress), 0);
 
     this.setState({
       loading: true,
@@ -140,14 +131,8 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
 
     const savePromise =
       creativeData.repeatFields && creativeData.repeatFields.length
-        ? this._displayCreativeFormService.handleSaveMutipleCreatives(
-          organisationId,
-          creativeData,
-        )
-        : this._displayCreativeFormService.saveDisplayCreative(
-          organisationId,
-          creativeData,
-        );
+        ? this._displayCreativeFormService.handleSaveMutipleCreatives(organisationId, creativeData)
+        : this._displayCreativeFormService.saveDisplayCreative(organisationId, creativeData);
 
     savePromise
       .then(savedId => {
@@ -190,13 +175,13 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
 
     const creaName = creativeId
       ? formatMessage(messages.creativeEditionBreadCrumb, {
-        name: creativeName,
-      })
+          name: creativeName,
+        })
       : formatMessage(messages.creativeCreationBreadCrumb);
 
     const breadCrumbPaths = [
-      <Link key="1" to={`/v2/o/${organisationId}/creatives/display`}>
-          {formatMessage(messages.displayListBreadCrumb)}
+      <Link key='1' to={`/v2/o/${organisationId}/creatives/display`}>
+        {formatMessage(messages.displayListBreadCrumb)}
       </Link>,
       creaName,
     ];
@@ -204,9 +189,7 @@ class EditDisplayCreativePage extends React.Component<Props, State> {
     const props = {
       close: () => this.redirect(),
       onSubmit: this.onSave,
-      actionBarButtonText: creativeId
-        ? actionBarButtonSaveRefresh
-        : actionBarButtonSave,
+      actionBarButtonText: creativeId ? actionBarButtonSaveRefresh : actionBarButtonSave,
       breadCrumbPaths: breadCrumbPaths,
       onSubmitFail: this.onSubmitFail,
     };

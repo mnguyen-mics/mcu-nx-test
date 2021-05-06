@@ -2,10 +2,7 @@ import * as React from 'react';
 import { Row } from 'antd';
 import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { LocationFieldModel } from '../../domain';
-import {
-  Geoname,
-  IGeonameService,
-} from '../../../../../../../services/GeonameService';
+import { Geoname, IGeonameService } from '../../../../../../../services/GeonameService';
 import ObjectRenderer from '../../../../../../../containers/ObjectRenderer/ObjectRenderer';
 import { lazyInject } from '../../../../../../../config/inversify.config';
 import { TYPES } from '../../../../../../../constants/types';
@@ -31,21 +28,15 @@ class LocationSelectionRenderer extends React.Component<Props> {
     return (
       <div>
         <Row
-          align="middle"
-          justify="space-between"
-          className={
-            locationFields.length !== 0 ? 'search-result-box' : 'hide-section'
-          }
+          align='middle'
+          justify='space-between'
+          className={locationFields.length !== 0 ? 'search-result-box' : 'hide-section'}
         >
           {locationFields.map((locationField, index) => {
             const handleOnClick = () =>
               !!disabled ? undefined : onClickOnRemove(locationField, index);
-            const iconType: McsIconType = locationField.model.exclude
-              ? 'close-big'
-              : 'check';
-            const renderGeoname = (geoname: Geoname) => (
-              <span>{geoname.name}</span>
-            );
+            const iconType: McsIconType = locationField.model.exclude ? 'close-big' : 'check';
+            const renderGeoname = (geoname: Geoname) => <span>{geoname.name}</span>;
 
             return (
               <div className={'search-result-box-item'} key={locationField.key}>
@@ -56,12 +47,8 @@ class LocationSelectionRenderer extends React.Component<Props> {
                   renderMethod={renderGeoname}
                   fetchingMethod={this._geonameService.getGeoname}
                 />
-                <Button
-                  className="close-button"
-                  onClick={handleOnClick}
-                  disabled={!!disabled}
-                >
-                  <McsIcon type="close" />
+                <Button className='close-button' onClick={handleOnClick} disabled={!!disabled}>
+                  <McsIcon type='close' />
                 </Button>
               </div>
             );

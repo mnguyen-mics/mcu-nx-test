@@ -24,6 +24,4 @@ class AudienceFeaturesTab extends React.Component<InjectedFeaturesProps> {
   }
 }
 
-export default compose<InjectedFeaturesProps, {}>(injectFeatures)(
-  AudienceFeaturesTab,
-);
+export default compose<InjectedFeaturesProps, {}>(injectFeatures)(AudienceFeaturesTab);

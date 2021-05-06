@@ -1,39 +1,26 @@
 import { ProcessingResource } from './../models/processing';
 import ApiService, { DataResponse, DataListResponse } from './ApiService';
-import {
-  Cookie,
-  OrganisationResource,
-} from '../models/organisation/organisation';
+import { Cookie, OrganisationResource } from '../models/organisation/organisation';
 import { UserWorkspaceResource } from '../models/directory/UserProfileResource';
 import { BillingAccountResource } from '../models/billingAccounts/BillingAccountResource';
 import { injectable } from 'inversify';
 
 export interface IOrganisationService {
-  getWorkspace: (
-    organisationId: string,
-  ) => Promise<DataResponse<UserWorkspaceResource>>;
+  getWorkspace: (organisationId: string) => Promise<DataResponse<UserWorkspaceResource>>;
 
   getCookies: () => Promise<DataResponse<Cookie>>;
   getStandardLogo: () => Promise<Blob>;
   getLogoCache: (organisationId: string) => Blob | null;
   getLogo: (organisationId: string) => Promise<Blob>;
   putLogo: (organisationId: string, formData: FormData) => Promise<any>;
-  getBillingAccounts: (
-    organisationId: string,
-  ) => Promise<DataListResponse<BillingAccountResource>>;
-  getOrganisation: (
-    organisationId: string,
-  ) => Promise<DataResponse<OrganisationResource>>;
-  getOrganisations: (
-    communityId: string,
-  ) => Promise<DataListResponse<OrganisationResource>>;
+  getBillingAccounts: (organisationId: string) => Promise<DataListResponse<BillingAccountResource>>;
+  getOrganisation: (organisationId: string) => Promise<DataResponse<OrganisationResource>>;
+  getOrganisations: (communityId: string) => Promise<DataListResponse<OrganisationResource>>;
   getProcessings: (
     communityId: string,
     filters?: object,
   ) => Promise<DataListResponse<ProcessingResource>>;
-  getProcessing: (
-    processingId: string,
-  ) => Promise<DataResponse<ProcessingResource>>;
+  getProcessing: (processingId: string) => Promise<DataResponse<ProcessingResource>>;
   createProcessing: (
     communityId: string,
     processingResource: ProcessingResource,
@@ -46,17 +33,12 @@ export interface IOrganisationService {
     communityId: string,
     processingId: string,
   ) => Promise<DataResponse<ProcessingResource>>;
-  deleteProcessing: (
-    communityId: string,
-    processingId: string,
-  ) => Promise<DataResponse<any>>;
+  deleteProcessing: (communityId: string, processingId: string) => Promise<DataResponse<any>>;
 }
 
 @injectable()
 export default class OrganisationService implements IOrganisationService {
-  getWorkspace(
-    organisationId: string,
-  ): Promise<DataResponse<UserWorkspaceResource>> {
+  getWorkspace(organisationId: string): Promise<DataResponse<UserWorkspaceResource>> {
     const endpoint = `organisations/${organisationId}/workspace`;
     return ApiService.getRequest(endpoint);
   }
@@ -85,38 +67,30 @@ export default class OrganisationService implements IOrganisationService {
         this.logoCache[organisationId] = blobLogo;
         return blobLogo;
       });
-  }
+  };
 
   getLogoCache = (organisationId: string) => {
     return this.logoCache[organisationId];
-  }
+  };
 
   getLogo = (organisationId: string) => {
     const cachedValue = this.logoCache[organisationId];
-    return cachedValue
-      ? Promise.resolve(cachedValue)
-      : this.doGetLogo(organisationId);
-  }
+    return cachedValue ? Promise.resolve(cachedValue) : this.doGetLogo(organisationId);
+  };
 
   putLogo(organisationId: string, formData: FormData): Promise<any> {
     const endpoint = `organisations/${organisationId}/logo`;
     return ApiService.putRequest(endpoint, formData);
   }
-  getBillingAccounts(
-    organisationId: string,
-  ): Promise<DataListResponse<BillingAccountResource>> {
+  getBillingAccounts(organisationId: string): Promise<DataListResponse<BillingAccountResource>> {
     const endpoint = `billing_accounts?organisation_id=${organisationId}`;
     return ApiService.getRequest(endpoint);
   }
-  getOrganisation(
-    organisationId: string,
-  ): Promise<DataResponse<OrganisationResource>> {
+  getOrganisation(organisationId: string): Promise<DataResponse<OrganisationResource>> {
     const endpoint = `organisations/${organisationId}`;
     return ApiService.getRequest(endpoint);
   }
-  getOrganisations(
-    communityId: string,
-  ): Promise<DataListResponse<OrganisationResource>> {
+  getOrganisations(communityId: string): Promise<DataListResponse<OrganisationResource>> {
     const endpoint = `organisations?community_id=${communityId}`;
     return ApiService.getRequest(endpoint);
   }
@@ -131,9 +105,7 @@ export default class OrganisationService implements IOrganisationService {
     };
     return ApiService.getRequest(endpoint, options);
   }
-  getProcessing(
-    processingId: string,
-  ): Promise<DataResponse<ProcessingResource>> {
+  getProcessing(processingId: string): Promise<DataResponse<ProcessingResource>> {
     const endpoint = `processings/${processingId}`;
     return ApiService.getRequest(endpoint);
   }
@@ -163,10 +135,7 @@ export default class OrganisationService implements IOrganisationService {
     const resource = { archived: true, community_id: communityId };
     return ApiService.putRequest(endpoint, resource);
   }
-  deleteProcessing(
-    communityId: string,
-    processingId: string,
-  ): Promise<DataResponse<any>> {
+  deleteProcessing(communityId: string, processingId: string): Promise<DataResponse<any>> {
     const endpoint = `processings/${processingId}`;
     const options = {
       community_id: communityId,

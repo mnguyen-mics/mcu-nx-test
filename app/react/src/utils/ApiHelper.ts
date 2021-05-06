@@ -3,7 +3,10 @@ export interface PaginatedApiParam {
   max_results?: number;
 }
 
-export function getPaginatedApiParam(page: number = 1, pageSize: number = 500): {
+export function getPaginatedApiParam(
+  page: number = 1,
+  pageSize: number = 500,
+): {
   first_result: number;
   max_results: number;
 } {
@@ -24,7 +27,7 @@ export function takeLatest<T>(promiseFactory: PromiseFactory<T>): PromiseFactory
   let lastAdded: Promise<T>;
   let pending: Promise<T> | null;
 
-  let resolve: (value?: T |  PromiseLike<T> | undefined) => void;
+  let resolve: (value?: T | PromiseLike<T> | undefined) => void;
   let reject: (reason?: any) => void;
 
   const success = (promise: Promise<T>, value: T) => {
@@ -64,8 +67,8 @@ export function makeCancelable<T>(promise: Promise<T>): CancelablePromise<T> {
 
   const wrappedPromise = new Promise<T>((resolve, reject) => {
     promise.then(
-      val => hasCanceled ? reject({ isCanceled: true }) : resolve(val),
-      error => hasCanceled ? reject({ isCanceled: true }) : reject(error),
+      val => (hasCanceled ? reject({ isCanceled: true }) : resolve(val)),
+      error => (hasCanceled ? reject({ isCanceled: true }) : reject(error)),
     );
   });
 

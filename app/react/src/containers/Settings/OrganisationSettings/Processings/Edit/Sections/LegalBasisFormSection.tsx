@@ -1,14 +1,8 @@
 import * as React from 'react';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import messages from '../../messages';
-import {
-  FormSection,
-  FormInputField,
-  FormInput,
-} from '../../../../../../components/Form';
-import withValidators, {
-  ValidatorProps,
-} from '../../../../../../components/Form/withValidators';
+import { FormSection, FormInputField, FormInput } from '../../../../../../components/Form';
+import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
 import { compose } from 'recompose';
 
 type Props = InjectedIntlProps & ValidatorProps;
@@ -27,7 +21,7 @@ class LegalBasisFormSection extends React.Component<Props> {
           title={messages.legalBasisSectionTitle}
         />
         <FormInputField
-          name="legal_basis"
+          name='legal_basis'
           component={FormInput}
           validate={[isRequired]}
           formItemProps={{

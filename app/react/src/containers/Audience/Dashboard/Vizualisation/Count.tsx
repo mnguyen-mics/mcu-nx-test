@@ -45,11 +45,11 @@ export default class Count extends React.Component<CountProps, State> {
     const {
       source: previousSource,
       queryId: previousChartQueryId,
-      datamartId: previousDatamartId
+      datamartId: previousDatamartId,
     } = previousProps;
 
     if (
-      !_.isEqual(previousSource, source) || 
+      !_.isEqual(previousSource, source) ||
       queryId !== previousChartQueryId ||
       datamartId !== previousDatamartId
     ) {
@@ -105,16 +105,11 @@ export default class Count extends React.Component<CountProps, State> {
   public render() {
     return (
       <CardFlex>
-        <div className="dashboard-counter">
-          <div className="count-title">
-              {this.props.title}
-          </div>
-          <div className="count-result">
+        <div className='dashboard-counter'>
+          <div className='count-title'>{this.props.title}</div>
+          <div className='count-result'>
             {this.state.loading ? (
-              <i
-                className="mcs-table-cell-loading-large"
-                style={{ maxWidth: '100%' }}
-              />
+              <i className='mcs-table-cell-loading-large' style={{ maxWidth: '100%' }} />
             ) : (
               formatMetric(this.state.queryResult, '0,0')
             )}

@@ -45,8 +45,7 @@ export const messages = defineMessages({
   },
   audienceBuilderSectionDemographicsSubtitle: {
     id: 'settings.datamart.audienceBuilders.edit.demographics.subtitle',
-    defaultMessage:
-      'Audience Features that will always be used when building an audience',
+    defaultMessage: 'Audience Features that will always be used when building an audience',
   },
   audienceBuilderSectionDemographicsAddButton: {
     id: 'settings.datamart.audienceBuilders.edit.demographics.add',

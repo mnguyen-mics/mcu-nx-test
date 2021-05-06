@@ -6,9 +6,7 @@ import { TYPES } from '../../../../../../constants/types';
 import { lazyInject } from '../../../../../../config/inversify.config';
 import { IAudienceSegmentService } from '../../../../../../services/AudienceSegmentService';
 import { compose } from 'recompose';
-import withNormalizer, {
-  NormalizerProps,
-} from '../../../../../../components/Form/withNormalizer';
+import withNormalizer, { NormalizerProps } from '../../../../../../components/Form/withNormalizer';
 import { withValidators, FormSection } from '../../../../../../components/Form';
 import { FormSearchObjectField } from '../../../../../QueryTool/JSONOTQL/Edit/Sections/Field/FieldNodeForm';
 import FormSearchObject from '../../../../../../components/Form/FormSelect/FormSearchObject';
@@ -32,10 +30,7 @@ type Props = OnSegmentEntryInputGeneralSectionFormProps &
   RouteComponentProps<{ organisationId: string }> &
   NormalizerProps;
 
-class OnSegmentEntryInputGeneralSectionForm extends React.Component<
-  Props,
-  State
-> {
+class OnSegmentEntryInputGeneralSectionForm extends React.Component<Props, State> {
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
 
@@ -86,7 +81,7 @@ class OnSegmentEntryInputGeneralSectionForm extends React.Component<
       .then(({ data: segment }) => ({
         key: segment.id,
         label: <SegmentNameDisplay audienceSegmentResource={segment} />,
-        value: segment.id
+        value: segment.id,
       }))
       .catch(error => {
         this.props.notifyError(error);
@@ -107,11 +102,9 @@ class OnSegmentEntryInputGeneralSectionForm extends React.Component<
           subtitle={messages.sectionGeneralSubtitle}
           title={messages.sectionGeneralTitle}
         />
-        <FormSection
-          title={messages.configurationTitle}
-        />
+        <FormSection title={messages.configurationTitle} />
         <FormSearchObjectField
-          name="segmentId"
+          name='segmentId'
           component={FormSearchObject}
           validate={[isRequired]}
           formItemProps={{
@@ -125,7 +118,7 @@ class OnSegmentEntryInputGeneralSectionForm extends React.Component<
             mode: undefined,
             showSearch: true,
           }}
-          type="Audience"
+          type='Audience'
           small={true}
         />
       </div>
@@ -143,8 +136,7 @@ export default compose<Props, OnSegmentEntryInputGeneralSectionFormProps>(
 
 export const messages = defineMessages({
   sectionGeneralTitle: {
-    id:
-      'automation.builder.node.onSegmentEntryInputForm.generalInfoSection.title',
+    id: 'automation.builder.node.onSegmentEntryInputForm.generalInfoSection.title',
     defaultMessage: 'Description',
   },
   sectionGeneralSubtitle: {
@@ -157,7 +149,6 @@ export const messages = defineMessages({
   },
   segmentEntryInputNameTitle: {
     id: 'automation.builder.node.onSegmentEntryInputForm.name.title',
-    defaultMessage:
-      'Users will enter this automation when they enter this segment',
+    defaultMessage: 'Users will enter this automation when they enter this segment',
   },
 });

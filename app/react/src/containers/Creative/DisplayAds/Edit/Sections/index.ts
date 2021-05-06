@@ -5,9 +5,9 @@ import PropertiesFormSection from './PropertiesFormSection';
 import GeneralMultipleSection from './GeneralMultipleSection';
 
 export {
-    AuditFormSection,
-    GeneralFormSection,
-    PreviewFormSection,
-    PropertiesFormSection,
-    GeneralMultipleSection,
-}
+  AuditFormSection,
+  GeneralFormSection,
+  PreviewFormSection,
+  PropertiesFormSection,
+  GeneralMultipleSection,
+};

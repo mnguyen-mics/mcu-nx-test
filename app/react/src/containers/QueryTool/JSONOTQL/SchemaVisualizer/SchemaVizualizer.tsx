@@ -44,12 +44,7 @@ export default class SchemaVizualizer extends React.Component<
         disableDragAndDrop?: boolean,
       ) =>
         this.setState({
-          treeData: this.loop(
-            gData,
-            objectType,
-            searchString,
-            disableDragAndDrop,
-          ),
+          treeData: this.loop(gData, objectType, searchString, disableDragAndDrop),
         }),
       300,
     );
@@ -61,10 +56,7 @@ export default class SchemaVizualizer extends React.Component<
     });
   };
 
-  isIncludedInUnderlyingItems(
-    item: SchemaItem,
-    searchString?: string,
-  ): boolean {
+  isIncludedInUnderlyingItems(item: SchemaItem, searchString?: string): boolean {
     return (
       item &&
       item.fields &&
@@ -73,9 +65,7 @@ export default class SchemaVizualizer extends React.Component<
           if (
             searchString &&
             (field.decorator
-              ? field.decorator.label
-                  .toLowerCase()
-                  .includes(searchString.toLowerCase())
+              ? field.decorator.label.toLowerCase().includes(searchString.toLowerCase())
               : field.name.toLowerCase().includes(searchString.toLowerCase()))
           )
             return true;
@@ -84,9 +74,7 @@ export default class SchemaVizualizer extends React.Component<
         if (
           searchString &&
           (field.decorator
-            ? field.decorator.label
-                .toLowerCase()
-                .includes(searchString.toLowerCase())
+            ? field.decorator.label.toLowerCase().includes(searchString.toLowerCase())
             : field.name.toLowerCase().includes(searchString.toLowerCase()))
         )
           return true;
@@ -98,10 +86,7 @@ export default class SchemaVizualizer extends React.Component<
   // we disable component update.
   // Since schema or disableDragAndDrop props should not change when this component
   // is first mounted, I believe it is safe to disable component update.
-  shouldComponentUpdate(
-    nextProps: SchemaVizualizerProps,
-    nextState: SchemaVizualizerState,
-  ) {
+  shouldComponentUpdate(nextProps: SchemaVizualizerProps, nextState: SchemaVizualizerState) {
     if (
       this.state.searchValue !== nextState.searchValue ||
       this.state.expandedKeys !== nextState.expandedKeys ||
@@ -127,7 +112,7 @@ export default class SchemaVizualizer extends React.Component<
               <FieldStandardNode
                 id={item.id}
                 item={item}
-                type="object"
+                type='object'
                 searchString={searchString}
                 hasChildren={true}
               />
@@ -135,7 +120,7 @@ export default class SchemaVizualizer extends React.Component<
               <FieldNode
                 id={item.id}
                 item={item}
-                type="object"
+                type='object'
                 searchString={searchString}
                 hasChildren={true}
               />
@@ -143,19 +128,14 @@ export default class SchemaVizualizer extends React.Component<
             key: cuid(),
             selectable: false,
             className: 'mcs-schemaVizualizer_fieldNode_parent',
-            children: this.unfilteredLoop(
-              item,
-              item.schemaType,
-              disableDragAndDrop,
-              searchString,
-            ),
+            children: this.unfilteredLoop(item, item.schemaType, disableDragAndDrop, searchString),
           };
         }
         return {
           title: disableDragAndDrop ? (
             <FieldStandardNode
               id={item.id}
-              type="field"
+              type='field'
               schemaType={objectType}
               item={item as FieldInfoEnhancedResource}
               searchString={searchString}
@@ -163,7 +143,7 @@ export default class SchemaVizualizer extends React.Component<
           ) : (
             <FieldNode
               id={item.id}
-              type="field"
+              type='field'
               schemaType={objectType}
               item={item as FieldInfoEnhancedResource}
               searchString={searchString}
@@ -188,9 +168,7 @@ export default class SchemaVizualizer extends React.Component<
           isSchemaItem(item) &&
           searchString &&
           !(item.decorator
-            ? item.decorator.label
-                .toLowerCase()
-                .includes(searchString.toLowerCase())
+            ? item.decorator.label.toLowerCase().includes(searchString.toLowerCase())
             : item.name.toLowerCase().includes(searchString.toLowerCase())) &&
           !this.isIncludedInUnderlyingItems(item, searchString)
         )
@@ -199,9 +177,7 @@ export default class SchemaVizualizer extends React.Component<
           !isSchemaItem(item) &&
           searchString &&
           !(item.decorator
-            ? item.decorator.label
-                .toLowerCase()
-                .includes(searchString.toLowerCase())
+            ? item.decorator.label.toLowerCase().includes(searchString.toLowerCase())
             : item.name.toLowerCase().includes(searchString.toLowerCase()))
         )
           return false;
@@ -213,9 +189,7 @@ export default class SchemaVizualizer extends React.Component<
             isSchemaItem(item) &&
             searchString &&
             (item.decorator
-              ? item.decorator.label
-                  .toLowerCase()
-                  .includes(searchString.toLowerCase())
+              ? item.decorator.label.toLowerCase().includes(searchString.toLowerCase())
               : item.name.toLowerCase().includes(searchString.toLowerCase()))
           ) {
             return {
@@ -223,7 +197,7 @@ export default class SchemaVizualizer extends React.Component<
                 <FieldStandardNode
                   id={item.id}
                   item={item}
-                  type="object"
+                  type='object'
                   searchString={searchString}
                   hasChildren={true}
                 />
@@ -231,7 +205,7 @@ export default class SchemaVizualizer extends React.Component<
                 <FieldNode
                   id={item.id}
                   item={item}
-                  type="object"
+                  type='object'
                   searchString={searchString}
                   hasChildren={true}
                 />
@@ -253,7 +227,7 @@ export default class SchemaVizualizer extends React.Component<
                 <FieldStandardNode
                   id={item.id}
                   item={item}
-                  type="object"
+                  type='object'
                   searchString={searchString}
                   hasChildren={true}
                 />
@@ -261,7 +235,7 @@ export default class SchemaVizualizer extends React.Component<
                 <FieldNode
                   id={item.id}
                   item={item}
-                  type="object"
+                  type='object'
                   searchString={searchString}
                   hasChildren={true}
                 />
@@ -269,19 +243,14 @@ export default class SchemaVizualizer extends React.Component<
               key: cuid(),
               className: 'mcs-schemaVizualizer_fieldNode_parent',
               selectable: false,
-              children: this.loop(
-                item,
-                item.schemaType,
-                searchString,
-                disableDragAndDrop,
-              ),
+              children: this.loop(item, item.schemaType, searchString, disableDragAndDrop),
             };
           }
           return {
             title: disableDragAndDrop ? (
               <FieldStandardNode
                 id={item.id}
-                type="field"
+                type='field'
                 schemaType={objectType}
                 item={item as FieldInfoEnhancedResource}
                 searchString={searchString}
@@ -289,7 +258,7 @@ export default class SchemaVizualizer extends React.Component<
             ) : (
               <FieldNode
                 id={item.id}
-                type="field"
+                type='field'
                 schemaType={objectType}
                 item={item as FieldInfoEnhancedResource}
                 searchString={searchString}
@@ -302,10 +271,7 @@ export default class SchemaVizualizer extends React.Component<
         },
       );
 
-  componentDidUpdate(
-    previousProps: SchemaVizualizerProps,
-    previousState: SchemaVizualizerState,
-  ) {
+  componentDidUpdate(previousProps: SchemaVizualizerProps, previousState: SchemaVizualizerState) {
     const { schema, disableDragAndDrop } = this.props;
     if (
       previousState.treeData !== this.state.treeData &&
@@ -316,19 +282,10 @@ export default class SchemaVizualizer extends React.Component<
         expandedKeys: this.getExpandedKeys(this.state.treeData, []),
       });
     }
-    if (
-      this.props.schema &&
-      previousProps.schema &&
-      this.props.schema !== previousProps.schema
-    )
+    if (this.props.schema && previousProps.schema && this.props.schema !== previousProps.schema)
       this.setState({
         treeData: schema
-          ? this.loop(
-              schema,
-              undefined,
-              this.state.searchValue,
-              disableDragAndDrop,
-            )
+          ? this.loop(schema, undefined, this.state.searchValue, disableDragAndDrop)
           : [],
       });
   }
@@ -337,12 +294,7 @@ export default class SchemaVizualizer extends React.Component<
     const { schema, disableDragAndDrop } = this.props;
     this.setState({
       treeData: schema
-        ? this.loop(
-            schema,
-            undefined,
-            this.state.searchValue,
-            disableDragAndDrop,
-          )
+        ? this.loop(schema, undefined, this.state.searchValue, disableDragAndDrop)
         : [],
     });
   }
@@ -352,8 +304,7 @@ export default class SchemaVizualizer extends React.Component<
     this.setState({
       searchValue: e.target.value,
     });
-    if (schema)
-      this.debouncedLoop(schema, undefined, e.target.value, disableDragAndDrop);
+    if (schema) this.debouncedLoop(schema, undefined, e.target.value, disableDragAndDrop);
   };
 
   getExpandedKeys = (tree: DataNode[], expandedKeys: string[]): string[] => {
@@ -370,10 +321,10 @@ export default class SchemaVizualizer extends React.Component<
     const { expandedKeys, treeData } = this.state;
 
     return schema ? (
-      <div className="mcs-schemaVizualize_content">
+      <div className='mcs-schemaVizualize_content'>
         <Search
-          className="mcs-schemaVizualizer_search_bar"
-          placeholder="Search"
+          className='mcs-schemaVizualizer_search_bar'
+          placeholder='Search'
           onChange={this.onChange}
         />
         <Tree

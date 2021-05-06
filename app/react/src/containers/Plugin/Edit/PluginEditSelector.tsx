@@ -27,12 +27,12 @@ class PluginEditSelector<T extends LayoutablePlugin> extends React.Component<
 
     return (
       <Layout>
-        <div className="edit-layout ant-layout">
+        <div className='edit-layout ant-layout'>
           <Layout>
-            <Content className="mcs-content-container mcs-form-container text-center">
+            <Content className='mcs-content-container mcs-form-container text-center'>
               <FormTitle title={listTitle} subtitle={listSubTitle} />
-              <Row className="mcs-selector_container">
-                <Row className="menu">
+              <Row className='mcs-selector_container'>
+                <Row className='menu'>
                   {this.props.availablePlugins.map(item => {
                     return (
                       <MenuList

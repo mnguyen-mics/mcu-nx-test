@@ -32,7 +32,7 @@ class ErrorBoundary extends React.Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="ant-layout">
+        <div className='ant-layout'>
           <FormattedMessage {...messageProps} />
         </div>
       );

@@ -73,10 +73,7 @@ class AssetsActionbar extends React.Component<Props, AssetsActionbarState> {
       this.state.fileList.map(item => {
         const formData = new FormData(); /* global FormData */
         formData.append('file', item as any, item.name);
-        return this._assetFileService.uploadAssetsFile(
-          organisationId,
-          formData,
-        );
+        return this._assetFileService.uploadAssetsFile(organisationId, formData);
       }),
     )
       .then(item => {
@@ -135,10 +132,7 @@ class AssetsActionbar extends React.Component<Props, AssetsActionbarState> {
       accept: '.jpg,.jpeg,.png,.gif,.svg',
       beforeUpload: (file: UploadFile, fileList: UploadFile[]) => {
         this.checkIfSizeOK(file);
-        const newFileList = [
-          ...this.state.fileList,
-          ...this.filterFileList(fileList),
-        ];
+        const newFileList = [...this.state.fileList, ...this.filterFileList(fileList)];
         this.setState({ fileList: newFileList });
         return false;
       },
@@ -161,12 +155,8 @@ class AssetsActionbar extends React.Component<Props, AssetsActionbarState> {
       >
         <Spin spinning={this.state.isLoading}>
           <Dragger {...props}>
-            <p className="ant-upload-text">
-              {formatMessage(messages.uploadTitle)}
-            </p>
-            <p className="ant-upload-hint">
-              {formatMessage(messages.uploadMessage)}
-            </p>
+            <p className='ant-upload-text'>{formatMessage(messages.uploadTitle)}</p>
+            <p className='ant-upload-hint'>{formatMessage(messages.uploadMessage)}</p>
           </Dragger>
         </Spin>
       </Modal>
@@ -182,18 +172,16 @@ class AssetsActionbar extends React.Component<Props, AssetsActionbarState> {
     } = this.props;
 
     const breadcrumbPaths = [
-      <Link key='1' to={`/v2/o/${organisationId}/library/assets`}>{formatMessage(messages.assets)}</Link>
+      <Link key='1' to={`/v2/o/${organisationId}/library/assets`}>
+        {formatMessage(messages.assets)}
+      </Link>,
     ];
 
     return (
       <Actionbar pathItems={breadcrumbPaths}>
         {this.renderModal()}
-        <Button
-          className="mcs-primary"
-          type="primary"
-          onClick={this.handleOpenClose}
-        >
-          <McsIcon type="plus" /> <FormattedMessage {...messages.newAsset} />
+        <Button className='mcs-primary' type='primary' onClick={this.handleOpenClose}>
+          <McsIcon type='plus' /> <FormattedMessage {...messages.newAsset} />
         </Button>
       </Actionbar>
     );

@@ -24,19 +24,9 @@ class FormAdLayout extends React.Component<Props> {
   }
 
   render() {
-    const {
-      meta,
-      formItemProps,
-      helpToolTipProps,
-      input,
-      options,
-    } = this.props;
+    const { meta, formItemProps, helpToolTipProps, input, options } = this.props;
 
-    let validateStatus = 'success' as
-      | 'success'
-      | 'warning'
-      | 'error'
-      | 'validating';
+    let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
     if (meta.touched && meta.invalid) validateStatus = 'error';
     if (meta.touched && meta.warning) validateStatus = 'warning';
 

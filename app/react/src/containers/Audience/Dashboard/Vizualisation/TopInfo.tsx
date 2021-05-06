@@ -50,7 +50,7 @@ class TopInfo extends React.Component<Props, State> {
     const {
       source: previousSource,
       queryId: previousChartQueryId,
-      datamartId: previousDatamartId
+      datamartId: previousDatamartId,
     } = previousProps;
 
     if (
@@ -90,7 +90,10 @@ class TopInfo extends React.Component<Props, State> {
           .then(r => {
             if (isAggregateResult(r.rows)) {
               this.setState({
-                queryResult: r.rows[0].aggregations.buckets[0] && r.rows[0].aggregations.buckets[0].buckets ? r.rows[0].aggregations.buckets[0].buckets : [],
+                queryResult:
+                  r.rows[0].aggregations.buckets[0] && r.rows[0].aggregations.buckets[0].buckets
+                    ? r.rows[0].aggregations.buckets[0].buckets
+                    : [],
                 loading: false,
               });
               return Promise.resolve();
@@ -114,39 +117,28 @@ class TopInfo extends React.Component<Props, State> {
       return <LoadingChart />;
     }
     if (error) {
-      return <EmptyChart
-        title={intl.formatMessage(messages.error)}
-        icon={'close-big'}
-      />
+      return <EmptyChart title={intl.formatMessage(messages.error)} icon={'close-big'} />;
     }
     if (!queryResult || queryResult.length === 0) {
-      return <EmptyChart
-        title={intl.formatMessage(messages.noData)}
-        icon={'close-big'}
-      />
+      return <EmptyChart title={intl.formatMessage(messages.noData)} icon={'close-big'} />;
     }
     return (
       <div>
         {queryResult.map(qr => {
-          return <div key={qr.key} style={{ padding: "5px 5px", width: "100%" }}>
-            <div style={{ display: "inline" }}>{qr.key}</div>
-            <div style={{ float: "right" }}>{qr.count}</div>
-          </div>
+          return (
+            <div key={qr.key} style={{ padding: '5px 5px', width: '100%' }}>
+              <div style={{ display: 'inline' }}>{qr.key}</div>
+              <div style={{ float: 'right' }}>{qr.count}</div>
+            </div>
+          );
         })}
       </div>
-    )
-  }
+    );
+  };
 
   public render() {
-   
-    return (
-      <CardFlex title={this.props.title}>
-        {this.renderChart()}
-      </CardFlex>
-    );
+    return <CardFlex title={this.props.title}>{this.renderChart()}</CardFlex>;
   }
 }
 
-export default compose<Props, TopInfoProps>(
-  injectIntl
-)(TopInfo)
+export default compose<Props, TopInfoProps>(injectIntl)(TopInfo);

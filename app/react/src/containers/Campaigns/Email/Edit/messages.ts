@@ -75,7 +75,8 @@ export default defineMessages({
   },
   warningOnTokenEdition: {
     id: 'emailEditor.steps.general.technical_name.warning',
-    defaultMessage: 'Danger Zone: Editing this technical name may cause any integrations to fail if not updated properly. Please make sure you have reviewed all your integration before saving.',
+    defaultMessage:
+      'Danger Zone: Editing this technical name may cause any integrations to fail if not updated properly. Please make sure you have reviewed all your integration before saving.',
   },
   emailEditorRouterTitle: {
     id: 'emailEditor.step.title.router',
@@ -171,8 +172,7 @@ export default defineMessages({
   },
   emailBlastEditorInputHelperBlastName: {
     id: 'emailBlastEditor.input.helper.blast_name',
-    defaultMessage:
-      'The blast name will reflect accross all the screen so make it memorable!',
+    defaultMessage: 'The blast name will reflect accross all the screen so make it memorable!',
   },
   emailBlastEditorDatePickerLabelSentDate: {
     id: 'emailBlastEditor.datepicker.label.send_date',
@@ -217,8 +217,7 @@ export default defineMessages({
   },
   emailBlastEditorInputHelperFromEmail: {
     id: 'emailBlastEditor.input.helper.from_email',
-    defaultMessage:
-      'The From email is the email address your audience will receive the mail from.',
+    defaultMessage: 'The From email is the email address your audience will receive the mail from.',
   },
   emailBlastEditorInputPlaceholderFromEmail: {
     id: 'emailBlastEditor.input.placeholder.from_email',
@@ -230,8 +229,7 @@ export default defineMessages({
   },
   emailBlastEditorInputHelperFromName: {
     id: 'emailBlastEditor.input.helper.from_name',
-    defaultMessage:
-      'The From name is the sender name users will see.',
+    defaultMessage: 'The From name is the sender name users will see.',
   },
   emailBlastEditorInputPlaceholderFromName: {
     id: 'emailBlastEditor.input.placeholder.from_name',
@@ -243,8 +241,7 @@ export default defineMessages({
   },
   emailBlastEditorInputHelperReplyTo: {
     id: 'emailBlastEditor.input.helper.reply_to',
-    defaultMessage:
-      'The Reply to is the email address users will be able to reply to.',
+    defaultMessage: 'The Reply to is the email address users will be able to reply to.',
   },
   emailBlastEditorInputPlaceholderReplyTo: {
     id: 'emailBlastEditor.input.placeholder.reply_to',
@@ -288,6 +285,7 @@ export default defineMessages({
   },
   errorFormMessage: {
     id: 'email.campaigns.edit.generic.errorMessage',
-    defaultMessage: 'There is an error with some fields in your form. Please review the data you entered.',
+    defaultMessage:
+      'There is an error with some fields in your form. Please review the data you entered.',
   },
 });

@@ -10,10 +10,10 @@ class CampaignStatusIndicator extends React.Component<Props> {
   render() {
     const { status } = this.props;
     return (
-      <div className="campaign-status-indicator">
+      <div className='campaign-status-indicator'>
         <div className={status.toLowerCase()} />
-        <span className="divider">|</span>
-        <div className="status-value">{formatStatus(status)}</div>
+        <span className='divider'>|</span>
+        <div className='status-value'>{formatStatus(status)}</div>
       </div>
     );
   }

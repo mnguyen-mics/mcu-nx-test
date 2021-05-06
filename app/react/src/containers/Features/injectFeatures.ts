@@ -8,10 +8,7 @@ import { UserProfileResource } from '../../models/directory/UserProfileResource'
 import { MicsReduxState } from '../../utils/ReduxHelper';
 
 export interface InjectedFeaturesProps {
-  hasFeature: (
-    requiredFeatures?: string | string[],
-    requireDatamart?: boolean,
-  ) => boolean;
+  hasFeature: (requiredFeatures?: string | string[], requireDatamart?: boolean) => boolean;
 }
 
 interface RouteParams {
@@ -57,17 +54,18 @@ export default compose<any, InjectedFeaturesProps>(
 
     const attributes: SplitIO.Attributes = {
       user_id: connectedUser.id,
-      is_mics: !!connectedUser.workspaces.find(ws => ws.organisation_id === "1"),
+      is_mics: !!connectedUser.workspaces.find(ws => ws.organisation_id === '1'),
       organisation_ids: connectedUser.workspaces.map(ws => ws.organisation_id),
       locale: connectedUser.locale,
-      domain: (window as any).MCS_CONSTANTS ? (window as any).MCS_CONSTANTS.NAVIGATOR_URL : window.location.host
+      domain: (window as any).MCS_CONSTANTS
+        ? (window as any).MCS_CONSTANTS.NAVIGATOR_URL
+        : window.location.host,
     };
 
     const hasFeature = (
       requiredFeatures?: string | string[],
       requireDatamart?: boolean,
     ): boolean => {
-
       // we first check if the feature is part of the experience defined at the domain name level
       if (requiredFeatures && typeof requiredFeatures === 'string') {
         if (hasFeatureStore(requiredFeatures)) {
@@ -78,7 +76,7 @@ export default compose<any, InjectedFeaturesProps>(
           return hasFeatureStore(val) && (!!defaultDatamart || !requireDatamart);
         }, false);
         if (hasAccess) {
-          return hasAccess
+          return hasAccess;
         }
       } else if (!requiredFeatures) {
         return !!defaultDatamart || !requireDatamart;
@@ -88,10 +86,7 @@ export default compose<any, InjectedFeaturesProps>(
       if (client) {
         if (requiredFeatures && typeof requiredFeatures === 'string') {
           if (!!defaultDatamart || !requireDatamart) {
-            const treatment: SplitIO.Treatment = client.getTreatment(
-              requiredFeatures,
-              attributes,
-            );
+            const treatment: SplitIO.Treatment = client.getTreatment(requiredFeatures, attributes);
             return treatment === 'on';
           }
           return false;
@@ -111,7 +106,7 @@ export default compose<any, InjectedFeaturesProps>(
         }
         return true;
       }
-      return false
+      return false;
     };
 
     return {

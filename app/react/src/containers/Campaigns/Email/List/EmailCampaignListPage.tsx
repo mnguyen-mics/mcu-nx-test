@@ -37,9 +37,7 @@ import { TYPES } from '../../../../constants/types';
 import { IEmailCampaignService } from '../../../../services/EmailCampaignService';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 
-const getLatestDeliveryReport = takeLatest(
-  ReportService.getEmailDeliveryReport,
-);
+const getLatestDeliveryReport = takeLatest(ReportService.getEmailDeliveryReport);
 
 export interface FilterParams
   extends DateSearchSettings,
@@ -124,10 +122,7 @@ class EmailCampaignListPage extends React.Component<Props, State> {
       location: { search: previousSearch },
     } = previousProps;
 
-    if (
-      !compareSearches(search, previousSearch) ||
-      organisationId !== previousOrganisationId
-    ) {
+    if (!compareSearches(search, previousSearch) || organisationId !== previousOrganisationId) {
       if (!isSearchValid(search, EMAIL_SEARCH_SETTINGS)) {
         history.replace({
           pathname: pathname,
@@ -207,11 +202,7 @@ class EmailCampaignListPage extends React.Component<Props, State> {
     history.push(nextLocation);
   };
 
-  fetchCampaignAndStats = (
-    organisationId: string,
-    filter: Index<any>,
-    init: boolean = false,
-  ) => {
+  fetchCampaignAndStats = (organisationId: string, filter: Index<any>, init: boolean = false) => {
     const buildGetCampaignsOptions = () => {
       const options: CampaignsOptions = {
         archived: filter.statuses.includes('ARCHIVED'),
@@ -219,9 +210,7 @@ class EmailCampaignListPage extends React.Component<Props, State> {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
 
-      const apiStatuses = filter.statuses.filter(
-        (status: string) => status !== 'ARCHIVED',
-      );
+      const apiStatuses = filter.statuses.filter((status: string) => status !== 'ARCHIVED');
 
       if (filter.keywords) {
         options.keywords = filter.keywords;
@@ -256,12 +245,7 @@ class EmailCampaignListPage extends React.Component<Props, State> {
         });
       });
 
-    getLatestDeliveryReport(
-      organisationId,
-      filter.from,
-      filter.to,
-      'campaign_id',
-    )
+    getLatestDeliveryReport(organisationId, filter.from, filter.to, 'campaign_id')
       .then(response => {
         this.setState({
           isFetchingStats: false,
@@ -280,11 +264,7 @@ class EmailCampaignListPage extends React.Component<Props, State> {
   };
 
   buildTableDataSource = () => {
-    const {
-      emailCampaignsById,
-      deliveryReportByCampaignId,
-      allCampaignIds,
-    } = this.state;
+    const { emailCampaignsById, deliveryReportByCampaignId, allCampaignIds } = this.state;
 
     return allCampaignIds.map(campaignId => {
       return {
@@ -295,12 +275,7 @@ class EmailCampaignListPage extends React.Component<Props, State> {
   };
 
   render() {
-    const {
-      isFetchingCampaigns,
-      isFetchingStats,
-      totalCampaigns,
-      hasEmailCampaigns,
-    } = this.state;
+    const { isFetchingCampaigns, isFetchingStats, totalCampaigns, hasEmailCampaigns } = this.state;
 
     const {
       location: { search },
@@ -312,9 +287,7 @@ class EmailCampaignListPage extends React.Component<Props, State> {
     const labelsOptions = {
       labels: this.props.labels,
       selectedLabels: labels.filter(label => {
-        return filter.label_id.find(
-          (filteredLabelId: string) => filteredLabelId === label.id,
-        )
+        return filter.label_id.find((filteredLabelId: string) => filteredLabelId === label.id)
           ? true
           : false;
       }),

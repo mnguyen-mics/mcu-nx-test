@@ -10,7 +10,11 @@ import { getDefaultStep } from './Utils';
 
 interface FunnelWrapperProps {
   datamartId: string;
-  parentCallback: (executeQueryFunction: () => void, cancelQueryFunction: () => void, isLoading: boolean) => void;
+  parentCallback: (
+    executeQueryFunction: () => void,
+    cancelQueryFunction: () => void,
+    isLoading: boolean,
+  ) => void;
 }
 
 interface State {
@@ -20,47 +24,46 @@ interface State {
   executeQueryFunction?: () => void;
 }
 
-type JoinedProp = RouteComponentProps &
-  FunnelWrapperProps;
+type JoinedProp = RouteComponentProps & FunnelWrapperProps;
 
 class FunnelWrapper extends React.Component<JoinedProp, State> {
   constructor(props: JoinedProp) {
     super(props);
 
-    this.state = { 
+    this.state = {
       isLoading: false,
       launchExecutionAskedTime: 0,
-      cancelQueryAskedTime: 0
-    }
+      cancelQueryAskedTime: 0,
+    };
   }
 
   funnelCallbackFunction = (loading: boolean) => {
     this.setState({
-      isLoading: loading
-    })
-    const { executeQueryFunction } = this.state
-    if(executeQueryFunction )
-      this.props.parentCallback(executeQueryFunction, this.cancelQueryFunction, loading)
-  }
+      isLoading: loading,
+    });
+    const { executeQueryFunction } = this.state;
+    if (executeQueryFunction)
+      this.props.parentCallback(executeQueryFunction, this.cancelQueryFunction, loading);
+  };
 
   storeAndLiftFunctions = (executeQueryFunction: () => void) => {
-    const {isLoading} = this.state
-    this.props.parentCallback(executeQueryFunction, this.cancelQueryFunction, isLoading)
+    const { isLoading } = this.state;
+    this.props.parentCallback(executeQueryFunction, this.cancelQueryFunction, isLoading);
     this.setState({
-      executeQueryFunction: executeQueryFunction
-    })
-  }
+      executeQueryFunction: executeQueryFunction,
+    });
+  };
 
   funnelQueryBuilderCallbackFunction = (timestampInSec: number) => {
-    this.setState({launchExecutionAskedTime: timestampInSec})
-  }
+    this.setState({ launchExecutionAskedTime: timestampInSec });
+  };
 
   cancelQueryFunction = () =>
     this.setState({
-      cancelQueryAskedTime: new Date().getTime(), 
-      isLoading: false
+      cancelQueryAskedTime: new Date().getTime(),
+      isLoading: false,
     });
-  
+
   componentDidUpdate(prevProps: JoinedProp) {
     const {
       location: { search, pathname },
@@ -78,25 +81,35 @@ class FunnelWrapper extends React.Component<JoinedProp, State> {
   }
   render() {
     const { datamartId } = this.props;
-    const { 
-      location: { search }
-     } = this.props;
+    const {
+      location: { search },
+    } = this.props;
 
     const routeParams = parseSearch(search, FUNNEL_SEARCH_SETTING);
-    const funnelFilter: FunnelFilter[] = routeParams.filter.length > 0 ? JSON.parse(routeParams.filter) : [getDefaultStep()];
-    const filterWithoutGroupBy: FunnelFilter[] = JSON.parse(JSON.stringify(funnelFilter))
+    const funnelFilter: FunnelFilter[] =
+      routeParams.filter.length > 0 ? JSON.parse(routeParams.filter) : [getDefaultStep()];
+    const filterWithoutGroupBy: FunnelFilter[] = JSON.parse(JSON.stringify(funnelFilter));
     filterWithoutGroupBy.forEach(x => delete x.group_by_dimension);
-    const { launchExecutionAskedTime, cancelQueryAskedTime } = this.state
+    const { launchExecutionAskedTime, cancelQueryAskedTime } = this.state;
     return (
       <div>
-        <FunnelQueryBuilder datamartId={datamartId} filter={filterWithoutGroupBy} parentCallback={this.funnelQueryBuilderCallbackFunction} liftFunctionsCallback={this.storeAndLiftFunctions}/>
-        <Funnel datamartId={datamartId} title={"Funnel demo"} filter={funnelFilter} parentCallback={this.funnelCallbackFunction} launchExecutionAskedTime={launchExecutionAskedTime} cancelQueryAskedTime={cancelQueryAskedTime}/>
+        <FunnelQueryBuilder
+          datamartId={datamartId}
+          filter={filterWithoutGroupBy}
+          parentCallback={this.funnelQueryBuilderCallbackFunction}
+          liftFunctionsCallback={this.storeAndLiftFunctions}
+        />
+        <Funnel
+          datamartId={datamartId}
+          title={'Funnel demo'}
+          filter={funnelFilter}
+          parentCallback={this.funnelCallbackFunction}
+          launchExecutionAskedTime={launchExecutionAskedTime}
+          cancelQueryAskedTime={cancelQueryAskedTime}
+        />
       </div>
-    )
+    );
   }
 }
 
-export default compose<
-  FunnelWrapperProps,
-  FunnelWrapperProps
->(withRouter)(FunnelWrapper);
+export default compose<FunnelWrapperProps, FunnelWrapperProps>(withRouter)(FunnelWrapper);

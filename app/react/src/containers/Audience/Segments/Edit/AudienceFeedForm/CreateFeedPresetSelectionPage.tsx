@@ -6,10 +6,7 @@ import { AudienceFeedType } from '../../../../../services/AudienceSegmentFeedSer
 import { compose } from 'recompose';
 import { EditContentLayout } from '../../../../../components/Layout';
 import { IPluginService } from '../../../../../services/PluginService';
-import {
-  PluginResource,
-  LayoutablePlugin,
-} from '../../../../../models/Plugins';
+import { PluginResource, LayoutablePlugin } from '../../../../../models/Plugins';
 import PluginCard from '../../../../Plugin/Edit/PluginCard/PluginCard';
 import { Loading } from '../../../../../components';
 import PluginCardModal from '../../../../Plugin/Edit/PluginCard/PluginCardModal';
@@ -39,12 +36,12 @@ interface State {
   plugins: LayoutablePlugin[];
   isLoading: boolean;
   selectedPlugin?: LayoutablePluginWithProperties;
-};
+}
 
 class CreateFeedPresetSelectionPage extends React.Component<Props, State> {
   @lazyInject(TYPES.IPluginService)
   private _pluginService: IPluginService;
-  
+
   constructor(props: Props) {
     super(props);
 
@@ -60,12 +57,13 @@ class CreateFeedPresetSelectionPage extends React.Component<Props, State> {
 
   getPluginsList() {
     this.setState({ isLoading: true }, () => {
-      this._pluginService.getPlugins({
-        plugin_type:
-          this.props.feedType === 'EXTERNAL_FEED'
-            ? 'AUDIENCE_SEGMENT_EXTERNAL_FEED'
-            : 'AUDIENCE_SEGMENT_TAG_FEED',
-      })
+      this._pluginService
+        .getPlugins({
+          plugin_type:
+            this.props.feedType === 'EXTERNAL_FEED'
+              ? 'AUDIENCE_SEGMENT_EXTERNAL_FEED'
+              : 'AUDIENCE_SEGMENT_TAG_FEED',
+        })
         .then(res => res.data)
         .then((pluginsResponse: PluginResource[]) => {
           const promises = pluginsResponse.reduce((plugins, plugin) => {
@@ -78,10 +76,7 @@ class CreateFeedPresetSelectionPage extends React.Component<Props, State> {
                   plugin.id,
                   plugin.current_version_id,
                 ),
-                this._pluginService.getLocalizedPluginLayout(
-                  plugin.id,
-                  plugin.current_version_id,
-                ),
+                this._pluginService.getLocalizedPluginLayout(plugin.id, plugin.current_version_id),
               ]).then(response => {
                 const properties = response[0].data;
                 let layout = response[1];
@@ -148,28 +143,22 @@ class CreateFeedPresetSelectionPage extends React.Component<Props, State> {
     } = this.props;
     const { selectedPlugin } = this.state;
 
-    if (
-      selectedPlugin &&
-      selectedPlugin.current_version_id &&
-      selectedPlugin.plugin_type &&
-      name
-    )
-    this._pluginService.createPluginPreset(
-        selectedPlugin.id,
-        selectedPlugin.current_version_id,
-        {
+    if (selectedPlugin && selectedPlugin.current_version_id && selectedPlugin.plugin_type && name)
+      this._pluginService
+        .createPluginPreset(selectedPlugin.id, selectedPlugin.current_version_id, {
           organisation_id: organisationId,
           name: name,
           description: description,
           plugin_type: selectedPlugin.plugin_type,
           properties: propertiesValue,
-        },
-      ).then(() => {
-        this.modalOnClose();
-        onPresetSave(feedType);
-      }).catch(() => {
-        onPresetSave(feedType);
-      });
+        })
+        .then(() => {
+          this.modalOnClose();
+          onPresetSave(feedType);
+        })
+        .catch(() => {
+          onPresetSave(feedType);
+        });
   };
 
   modalOnClose = () => {
@@ -180,31 +169,25 @@ class CreateFeedPresetSelectionPage extends React.Component<Props, State> {
 
   renderPluginCards() {
     const cards = this.state.plugins
-    .filter(layoutablePlugin => layoutablePlugin && layoutablePlugin.plugin_layout)
-    .map(layoutablePlugin => {
-      const onPluginSelect = () => this.onSelect(layoutablePlugin);
-      return (
-        !!layoutablePlugin.plugin_layout && (
-          <Col
-            key={
-              layoutablePlugin.id +
-              (layoutablePlugin.plugin_preset
-                ? '-' + layoutablePlugin.plugin_preset.id
-                : '')
-            }
-            span={4}
-            className="text-center"
-          >
-            <PluginCard
-              plugin={layoutablePlugin}
-              onSelect={onPluginSelect}
-              hoverable={true}
-            />
-          </Col>
-        )
-      );
-    })
-    .filter(a => !!a);
+      .filter(layoutablePlugin => layoutablePlugin && layoutablePlugin.plugin_layout)
+      .map(layoutablePlugin => {
+        const onPluginSelect = () => this.onSelect(layoutablePlugin);
+        return (
+          !!layoutablePlugin.plugin_layout && (
+            <Col
+              key={
+                layoutablePlugin.id +
+                (layoutablePlugin.plugin_preset ? '-' + layoutablePlugin.plugin_preset.id : '')
+              }
+              span={4}
+              className='text-center'
+            >
+              <PluginCard plugin={layoutablePlugin} onSelect={onPluginSelect} hoverable={true} />
+            </Col>
+          )
+        );
+      })
+      .filter(a => !!a);
 
     const array = [];
     const size = 6;
@@ -231,12 +214,8 @@ class CreateFeedPresetSelectionPage extends React.Component<Props, State> {
       feedType,
       breadcrumbPaths,
       onClose,
-      intl: {
-        formatMessage
-      },
-      fieldValidators: {
-        isRequired
-      }
+      intl: { formatMessage },
+      fieldValidators: { isRequired },
     } = this.props;
 
     const { selectedPlugin } = this.state;
@@ -252,19 +231,13 @@ class CreateFeedPresetSelectionPage extends React.Component<Props, State> {
         : messages.createTagFeedPresetSubtitle;
 
     return (
-      <EditContentLayout
-        pathItems={breadcrumbPaths}
-        formId="createPreset"
-        onClose={onClose}
-      >
+      <EditContentLayout pathItems={breadcrumbPaths} formId='createPreset' onClose={onClose}>
         {this.state.isLoading ? (
           <Loading isFullScreen={true} />
         ) : (
-          <Layout className="mcs-content-container mcs-form-container ant-layout-content">
+          <Layout className='mcs-content-container mcs-form-container ant-layout-content'>
             <FormTitle title={title} subtitle={subtitle} />
-            <div>
-              {this.renderPluginCards()}
-            </div>
+            <div>{this.renderPluginCards()}</div>
             {selectedPlugin &&
               selectedPlugin.current_version_id &&
               selectedPlugin.plugin_layout &&
@@ -281,27 +254,29 @@ class CreateFeedPresetSelectionPage extends React.Component<Props, State> {
                   pluginVersionId={selectedPlugin.current_version_id}
                   editionMode={false}
                   isLoading={false}
-                  nameField={{ 
+                  nameField={{
                     label: formatMessage(messages.feedModalNameFieldLabel),
-                    title: <div>
+                    title: (
+                      <div>
                         {formatMessage(messages.feedModalNameFieldTitle)}
-                        <br/>
+                        <br />
                         <b>{formatMessage(messages.feedModalNameFieldTitleWarning)}</b>
-                    </div>,
+                      </div>
+                    ),
                     placeholder: formatMessage(messages.feedModalNameFieldPlaceholder),
                     display: true,
                     disabled: false,
-                    validator: [isRequired]
+                    validator: [isRequired],
                   }}
-                  descriptionField={{ 
+                  descriptionField={{
                     label: formatMessage(messages.feedModalDescriptionFieldLabel),
                     title: formatMessage(messages.feedModalDescriptionFieldTitle),
                     placeholder: formatMessage(messages.feedModalDescriptionFieldPlaceholder),
                     display: true,
                     disabled: false,
-                    validator: [isRequired]
+                    validator: [isRequired],
                   }}
-                  selectedTab="configuration"
+                  selectedTab='configuration'
                 />
               )}
           </Layout>
@@ -311,9 +286,11 @@ class CreateFeedPresetSelectionPage extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, CreateFeedPresetSelectionPageProps>(withRouter, injectIntl, withValidators)(
-  CreateFeedPresetSelectionPage,
-);
+export default compose<Props, CreateFeedPresetSelectionPageProps>(
+  withRouter,
+  injectIntl,
+  withValidators,
+)(CreateFeedPresetSelectionPage);
 
 const messages = defineMessages({
   createExternalFeedPresetTitle: {
@@ -338,7 +315,8 @@ const messages = defineMessages({
   },
   feedModalNameFieldTitle: {
     id: 'audience.segment.feed.createPreset.nameField.title',
-    defaultMessage: 'The name that will be used to identify this feed preset and the feeds created with it.',
+    defaultMessage:
+      'The name that will be used to identify this feed preset and the feeds created with it.',
   },
   feedModalNameFieldPlaceholder: {
     id: 'audience.segment.feed.createPreset.nameField.placeholder',
@@ -350,7 +328,8 @@ const messages = defineMessages({
   },
   feedModalDescriptionFieldTitle: {
     id: 'audience.segment.feed.createPreset.descriptionField.title',
-    defaultMessage: 'A description of the feed preset to help understand what this preset is about.',
+    defaultMessage:
+      'A description of the feed preset to help understand what this preset is about.',
   },
   feedModalDescriptionFieldPlaceholder: {
     id: 'audience.segment.feed.createPreset.descriptionField.placeholder',
@@ -358,6 +337,7 @@ const messages = defineMessages({
   },
   feedModalNameFieldTitleWarning: {
     id: 'audience.segment.feed.preset.create.nameField.title.warning',
-    defaultMessage: "Warning: This name is only used in the platform, it won't be visible on the external system.",
+    defaultMessage:
+      "Warning: This name is only used in the platform, it won't be visible on the external system.",
   },
 });

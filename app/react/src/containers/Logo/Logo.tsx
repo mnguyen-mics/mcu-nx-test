@@ -9,7 +9,6 @@ import { MicsReduxState } from '../../utils/ReduxHelper';
 
 export interface LogoProps {
   mode: MenuMode;
-  
 }
 
 interface LogoStoreProps {
@@ -17,13 +16,12 @@ interface LogoStoreProps {
   getLogoRequest: (a: { organisationId: string }) => void;
 }
 
-type Props = LogoProps & RouteComponentProps<{organisationId: string}> & LogoStoreProps
+type Props = LogoProps & RouteComponentProps<{ organisationId: string }> & LogoStoreProps;
 
 class Logo extends React.Component<Props> {
-
   static defaultProps = {
-    logoUrl: ''
-  }
+    logoUrl: '',
+  };
 
   componentDidMount() {
     const {
@@ -51,7 +49,6 @@ class Logo extends React.Component<Props> {
     if (organisationId !== previousOrganisationId) {
       this.props.getLogoRequest({ organisationId: organisationId });
     }
-
   }
 
   render() {
@@ -64,14 +61,14 @@ class Logo extends React.Component<Props> {
     } = this.props;
 
     return (
-      <div className="mcs-logo-placeholder">
-        { mode === 'inline' &&
-          <div className="mcs-logo" >
-            <Link to={`/v2/o/${organisationId}/campaigns/display`} id="logo">
-              <img alt="logo" src={logoUrl} />
+      <div className='mcs-logo-placeholder'>
+        {mode === 'inline' && (
+          <div className='mcs-logo'>
+            <Link to={`/v2/o/${organisationId}/campaigns/display`} id='logo'>
+              <img alt='logo' src={logoUrl} />
             </Link>
           </div>
-        }
+        )}
       </div>
     );
   }

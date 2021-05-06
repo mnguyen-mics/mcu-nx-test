@@ -1,4 +1,9 @@
-import { CombinedServiceItemsAndConditions, ServiceOfferLocaleResource, ServiceProviderResource, ServiceItemConditionShape } from './../models/servicemanagement/PublicServiceItemResource';
+import {
+  CombinedServiceItemsAndConditions,
+  ServiceOfferLocaleResource,
+  ServiceProviderResource,
+  ServiceItemConditionShape,
+} from './../models/servicemanagement/PublicServiceItemResource';
 import { PaginatedApiParam } from './../utils/ApiHelper';
 import { injectable } from 'inversify';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
@@ -63,7 +68,7 @@ export interface ICatalogService {
   getCategory: (
     organisationId: string,
     categoryId: string,
-  ) =>  Promise<ServiceCategoryPublicResource>;
+  ) => Promise<ServiceCategoryPublicResource>;
 
   getCategories: (
     organisationId: string,
@@ -83,9 +88,7 @@ export interface ICatalogService {
     options?: GetServiceItemOptions,
   ) => Promise<DataListResponse<ServiceItemConditionShape>>;
 
-  getService: (
-    serviceId: string,
-  ) => Promise<DataResponse<ServiceItemShape>>;
+  getService: (serviceId: string) => Promise<DataResponse<ServiceItemShape>>;
 
   getServiceItems: (
     organisationId: string,
@@ -107,9 +110,7 @@ export interface ICatalogService {
     options: GetServiceOptions,
   ) => Promise<DataListResponse<AudienceSegmentServiceItemPublicResource>>;
 
-  getMyOffers: (
-    options: PaginatedApiParam
-  ) => Promise<DataListResponse<ServiceItemOfferResource>>;
+  getMyOffers: (options: PaginatedApiParam) => Promise<DataListResponse<ServiceItemOfferResource>>;
 
   getMyOffer: (
     organisationId: string,
@@ -123,27 +124,19 @@ export interface ICatalogService {
 
   createServiceOffer: (
     organisationId: string,
-    offer: Partial<ServiceItemOfferResource>
+    offer: Partial<ServiceItemOfferResource>,
   ) => Promise<DataResponse<ServiceItemOfferResource>>;
 
-  findServiceItem: (
-    serviceItemId: string
-  ) => Promise<DataResponse<ServiceItemShape>>;
+  findServiceItem: (serviceItemId: string) => Promise<DataResponse<ServiceItemShape>>;
 
   createServiceItemCondition: (
     serviceItemId: string,
-    serviceItemCondition: Partial<ServiceItemConditionShape>
+    serviceItemCondition: Partial<ServiceItemConditionShape>,
   ) => Promise<DataResponse<ServiceItemConditionShape>>;
 
-  addConditionToOffer: (
-    offerId: string,
-    conditionId: string,
-  ) => Promise<DataResponse<{}>>;
+  addConditionToOffer: (offerId: string, conditionId: string) => Promise<DataResponse<{}>>;
 
-  removeConditionFromOffer: (
-    offerId: string,
-    conditionId: string,
-  ) => Promise<DataResponse<{}>>;
+  removeConditionFromOffer: (offerId: string, conditionId: string) => Promise<DataResponse<{}>>;
 
   deleteServiceItemCondition: (
     serviceItemId: string,
@@ -180,7 +173,6 @@ export interface ICatalogService {
 
 @injectable()
 export class CatalogService implements ICatalogService {
-
   getServices(
     organisationId: string,
     options: GetServiceOptions = {},
@@ -216,10 +208,7 @@ export class CatalogService implements ICatalogService {
     );
   }
 
-  getCategory(
-    organisationId: string,
-    categoryId: string,
-  ): Promise<ServiceCategoryPublicResource> {
+  getCategory(organisationId: string, categoryId: string): Promise<ServiceCategoryPublicResource> {
     const endpoint = `subscribed_services/${organisationId}/categories/${categoryId}`;
     return ApiService.getRequest(endpoint).then(
       (res: any) => res.data as ServiceCategoryPublicResource,
@@ -264,9 +253,7 @@ export class CatalogService implements ICatalogService {
     return ApiService.getRequest(endpoint, options);
   }
 
-  getService(
-    serviceId: string,
-  ): Promise<DataResponse<ServiceItemShape>> {
+  getService(serviceId: string): Promise<DataResponse<ServiceItemShape>> {
     return ApiService.getRequest(`service_items/${serviceId}`);
   }
 
@@ -274,20 +261,17 @@ export class CatalogService implements ICatalogService {
     organisationId: string,
     options: GetServiceItemsOptions = {},
   ): Promise<DataListResponse<ServiceItemShape>> {
-    const emptyTypeOption = (options.type === undefined || options.type.length === 0) ?
-      {
-        type: [
-          "AUDIENCE_SEGMENT",
-          "USER_ACCOUNT_COMPARTMENT"
-        ]
-      } :
-      undefined;
-    return ApiService.getRequest(`service_items`,
-      {
-        organisation_id: organisationId,
-        ...options,
-        ...emptyTypeOption
-      });
+    const emptyTypeOption =
+      options.type === undefined || options.type.length === 0
+        ? {
+            type: ['AUDIENCE_SEGMENT', 'USER_ACCOUNT_COMPARTMENT'],
+          }
+        : undefined;
+    return ApiService.getRequest(`service_items`, {
+      organisation_id: organisationId,
+      ...options,
+      ...emptyTypeOption,
+    });
   }
 
   getSubscribedOffers(
@@ -320,9 +304,7 @@ export class CatalogService implements ICatalogService {
     }) as Promise<DataListResponse<AudienceSegmentServiceItemPublicResource>>;
   }
 
-  getMyOffers(
-    options: PaginatedApiParam
-  ): Promise<DataListResponse<ServiceItemOfferResource>> {
+  getMyOffers(options: PaginatedApiParam): Promise<DataListResponse<ServiceItemOfferResource>> {
     const endpoint = `service_offers`;
     return ApiService.getRequest(endpoint, options);
   }
@@ -345,39 +327,31 @@ export class CatalogService implements ICatalogService {
 
   createServiceOffer(
     organisationId: string,
-    offer: Partial<ServiceItemOfferResource>
+    offer: Partial<ServiceItemOfferResource>,
   ): Promise<DataResponse<ServiceItemOfferResource>> {
     const endpoint = `service_offers?organisation_id=${organisationId}`;
     return ApiService.postRequest(endpoint, { ...offer });
   }
 
-  findServiceItem(
-    serviceItemId: string
-  ): Promise<DataResponse<ServiceItemShape>> {
+  findServiceItem(serviceItemId: string): Promise<DataResponse<ServiceItemShape>> {
     const endpoint = `service_items/${serviceItemId}`;
     return ApiService.getRequest(endpoint);
   }
 
   createServiceItemCondition(
     serviceItemId: string,
-    serviceItemCondition: Partial<ServiceItemConditionShape>
+    serviceItemCondition: Partial<ServiceItemConditionShape>,
   ): Promise<DataResponse<ServiceItemConditionShape>> {
     const endpoint = `service_items/${serviceItemId}/service_item_conditions`;
     return ApiService.postRequest(endpoint, serviceItemCondition);
   }
 
-  addConditionToOffer(
-    offerId: string,
-    conditionId: string,
-  ): Promise<DataResponse<{}>> {
+  addConditionToOffer(offerId: string, conditionId: string): Promise<DataResponse<{}>> {
     const endpoint = `service_offers/${offerId}/service_item_conditions/${conditionId}`;
     return ApiService.putRequest(endpoint, {});
   }
 
-  removeConditionFromOffer(
-    offerId: string,
-    conditionId: string,
-  ): Promise<DataResponse<{}>> {
+  removeConditionFromOffer(offerId: string, conditionId: string): Promise<DataResponse<{}>> {
     const endpoint = `service_offers/${offerId}/service_item_conditions/${conditionId}`;
     return ApiService.deleteRequest(endpoint);
   }
@@ -393,7 +367,6 @@ export class CatalogService implements ICatalogService {
   findAvailableServiceItems(): Promise<DataListResponse<ServiceItemShape>> {
     const endpoint = `available_service_items`;
     return ApiService.getRequest(endpoint);
-
   }
 
   findAvailableCombinedServiceItemsIds(
@@ -439,4 +412,4 @@ export class CatalogService implements ICatalogService {
     const endpoint = `organisations/${organisationId}/available_service_items?offer_id=${offerIdsStr}`;
     return ApiService.getRequest(endpoint);
   }
-};
+}

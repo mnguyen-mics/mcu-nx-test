@@ -2,21 +2,13 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import messages from '../messages';
-import {
-  DefaultSelect,
-  FormSelectField,
-} from '../../../../../../components/Form';
-import withValidators, {
-  ValidatorProps,
-} from '../../../../../../components/Form/withValidators';
-import withNormalizer, {
-  NormalizerProps,
-} from '../../../../../../components/Form/withNormalizer';
+import { DefaultSelect, FormSelectField } from '../../../../../../components/Form';
+import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
+import withNormalizer, { NormalizerProps } from '../../../../../../components/Form/withNormalizer';
 
 type Props = InjectedIntlProps & ValidatorProps & NormalizerProps;
 
 class CatalogAutoMatch extends React.Component<Props> {
-
   render() {
     const {
       fieldValidators: { isRequired },
@@ -41,7 +33,7 @@ class CatalogAutoMatch extends React.Component<Props> {
     return (
       <div>
         <FormSelectField
-          name="model.auto_match_type"
+          name='model.auto_match_type'
           component={DefaultSelect}
           validate={[isRequired]}
           formItemProps={{
@@ -50,7 +42,7 @@ class CatalogAutoMatch extends React.Component<Props> {
           }}
           options={optionsProps}
           helpToolTipProps={{
-            title: formatMessage(messages.contentAutoMatchTooltip)
+            title: formatMessage(messages.contentAutoMatchTooltip),
           }}
         />
       </div>
@@ -58,6 +50,4 @@ class CatalogAutoMatch extends React.Component<Props> {
   }
 }
 
-export default compose(injectIntl, withValidators, withNormalizer)(
-  CatalogAutoMatch,
-);
+export default compose(injectIntl, withValidators, withNormalizer)(CatalogAutoMatch);

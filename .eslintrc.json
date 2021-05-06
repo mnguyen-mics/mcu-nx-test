@@ -1,76 +1,58 @@
 {
-    "extends": "airbnb",
-    "globals": {
-      "window": true,
-      "Event": true
-    },
-    "plugins": [
-        "react",
-        "import"
+  "extends": "airbnb",
+  "globals": {
+    "window": true,
+    "Event": true
+  },
+  "plugins": ["react", "import"],
+  "parser": "babel-eslint",
+  "rules": {
+    "comma-dangle": "off",
+    "max-len": "off",
+    "padded-blocks": "off",
+    "no-unused-vars": ["warn"],
+    "arrow-parens": "off",
+    "no-nested-ternary": "off",
+    "no-unneeded-ternary": "off",
+    "arrow-body-style": ["off"],
+    "class-methods-use-this": ["off"],
+    "no-class-assign": "off",
+    "object-shorthand": "off",
+    "import/no-unresolved": "off",
+    "import/prefer-default-export": "off",
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": true,
+        "optionalDependencies": true,
+        "peerDependencies": true
+      }
     ],
-    "parser": "babel-eslint",
-    "rules": {
-        "comma-dangle": "off",
-        "max-len": "off",
-        "padded-blocks": "off",
-        "no-unused-vars": [
-            "warn"
-        ],
-        "arrow-parens": "off",
-        "no-nested-ternary": "off",
-        "no-unneeded-ternary": "off",
-        "arrow-body-style": [
-            "off"
-        ],
-        "class-methods-use-this": [
-            "off"
-        ],
-        "no-class-assign": "off",
-        "object-shorthand": "off",
-        "import/no-unresolved": "off",
-        "import/prefer-default-export": "off",
-        "import/no-extraneous-dependencies": [
-            "error",
-            {
-                "devDependencies": true,
-                "optionalDependencies": true,
-                "peerDependencies": true
-            }
-        ],
-        "react/jsx-filename-extension": [
-            "warn",
-            {
-                "extensions": [
-                    ".js",
-                    ".jsx"
-                ]
-            }
-        ],
-        "react/prefer-stateless-function": [
-            "off",
-            {
-                "ignorePureComponents": false
-            }
-        ],
-        "react/prop-types": [
-            "error",
-            {
-                "ignore": [
-                    "children"
-                ]
-            }
-        ],
-        "react/sort-comp": [
-            "off"
-        ],
-        "react/no-unused-prop-types": [
-            "warn",
-            {
-                "skipShapeProps": true
-            }
-        ],
-        "react/require-extension": [
-            "off"
-        ]
-    }
+    "react/jsx-filename-extension": [
+      "warn",
+      {
+        "extensions": [".js", ".jsx"]
+      }
+    ],
+    "react/prefer-stateless-function": [
+      "off",
+      {
+        "ignorePureComponents": false
+      }
+    ],
+    "react/prop-types": [
+      "error",
+      {
+        "ignore": ["children"]
+      }
+    ],
+    "react/sort-comp": ["off"],
+    "react/no-unused-prop-types": [
+      "warn",
+      {
+        "skipShapeProps": true
+      }
+    ],
+    "react/require-extension": ["off"]
+  }
 }

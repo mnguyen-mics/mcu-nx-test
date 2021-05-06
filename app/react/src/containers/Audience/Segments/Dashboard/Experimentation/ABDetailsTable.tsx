@@ -1,30 +1,19 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import {
-  Card,
-  McsDateRangePicker,
-} from '@mediarithmics-private/mcs-components-library';
+import { Card, McsDateRangePicker } from '@mediarithmics-private/mcs-components-library';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Button } from 'antd';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
-import {
-  InjectedIntlProps,
-  injectIntl,
-  defineMessages,
-  FormattedMessage,
-} from 'react-intl';
+import { InjectedIntlProps, injectIntl, defineMessages, FormattedMessage } from 'react-intl';
 import { UserQuerySegment } from '../../../../../models/audiencesegment/AudienceSegmentResource';
 import { TableViewFilters } from '../../../../../components/TableView';
 import { messagesMap } from './AudienceExperimentationForm';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { IDatamartUsersAnalyticsService } from '../../../../../services/DatamartUsersAnalyticsService';
-import {
-  parseSearch,
-  updateSearch,
-} from '../../../../../utils/LocationSearchHelper';
+import { parseSearch, updateSearch } from '../../../../../utils/LocationSearchHelper';
 import { DatamartUsersAnalyticsMetric } from '../../../../../utils/DatamartUsersAnalyticsReportHelper';
 import { DimensionFilterClause } from '../../../../../models/ReportRequestBody';
 import ExportService from '../../../../../services/ExportService';
@@ -143,11 +132,7 @@ class ABDetailsTable extends React.Component<Props, State> {
 
     const filter = parseSearch(search, DATAMART_USERS_ANALYTICS_SETTING);
 
-    if (
-      experimentationSegment &&
-      !!controlGroupSegment &&
-      !!controlGroupSegment.creation_ts
-    ) {
+    if (experimentationSegment && !!controlGroupSegment && !!controlGroupSegment.creation_ts) {
       this.setState({
         dataSource: [
           {
@@ -184,9 +169,7 @@ class ABDetailsTable extends React.Component<Props, State> {
           metricName === 'users' ? ['number_of_confirmed_transactions'] : [],
           dimensionFilterClauses,
           segmentId,
-          isSegmentToAdd && filter.segments.length === 1
-            ? filter.segments[0]
-            : undefined,
+          isSegmentToAdd && filter.segments.length === 1 ? filter.segments[0] : undefined,
         );
       };
       const metricList: DatamartUsersAnalyticsMetric[] = [
@@ -200,12 +183,12 @@ class ABDetailsTable extends React.Component<Props, State> {
         'conversion_rate',
         'users',
       ];
-      metricList.forEach((metric) => {
+      metricList.forEach(metric => {
         return Promise.all([
           getPromise(experimentationSegment.id, metric, true),
           getPromise(controlGroupSegment.id, metric),
         ])
-          .then((res) => {
+          .then(res => {
             let experimentationMetric = res[0].data.report_view.rows[0][0];
             let controlGroupMetric = res[1].data.report_view.rows[0][0];
             const getComparison = () => {
@@ -220,10 +203,7 @@ class ABDetailsTable extends React.Component<Props, State> {
               return typeof experimentationMetric === 'number' &&
                 typeof controlGroupMetric === 'number' &&
                 controlGroupMetric !== 0
-                ? Math.abs(
-                    (controlGroupMetric - experimentationMetric) /
-                      controlGroupMetric,
-                  )
+                ? Math.abs((controlGroupMetric - experimentationMetric) / controlGroupMetric)
                 : '-';
             };
             // For users metric, we have added 'number_of_confirmed_transactions' dimension to the call
@@ -232,8 +212,8 @@ class ABDetailsTable extends React.Component<Props, State> {
             if (metric === 'users') {
               const sumUsers = (reportView: ReportViewResponse) => {
                 return reportView.data.report_view.rows
-                  .filter((r) => r[0] !== 0)
-                  .map((r) => r[1])
+                  .filter(r => r[0] !== 0)
+                  .map(r => r[1])
                   .reduce((a, b) => {
                     return a + b;
                   }, 0);
@@ -248,8 +228,8 @@ class ABDetailsTable extends React.Component<Props, State> {
               comparison: getComparison(),
             };
           })
-          .then((data) => {
-            this.setState((prevState) => {
+          .then(data => {
+            this.setState(prevState => {
               const newState = {
                 dataSource: prevState.dataSource.concat(data),
                 isLoading: false,
@@ -257,7 +237,7 @@ class ABDetailsTable extends React.Component<Props, State> {
               return newState;
             });
           })
-          .catch((error) => {
+          .catch(error => {
             this.props.notifyError(error);
             this.setState({
               isLoading: false,
@@ -277,11 +257,7 @@ class ABDetailsTable extends React.Component<Props, State> {
       isExportLoading: true,
     });
     if (experimentationSegment) {
-      ExportService.exportABComparison(
-        experimentationSegment,
-        dataSource,
-        formatMessage,
-      );
+      ExportService.exportABComparison(experimentationSegment, dataSource, formatMessage);
       this.setState({
         isExportLoading: false,
       });
@@ -325,9 +301,7 @@ class ABDetailsTable extends React.Component<Props, State> {
         key: 'comparison',
         isHideable: false,
         render: (text: string, record: ABDetailsTableDataSource) => {
-          return record.metricName !== 'User Points'
-            ? `${formatMetric(text, '0.00%')}`
-            : text;
+          return record.metricName !== 'User Points' ? `${formatMetric(text, '0.00%')}` : text;
         },
       },
     ];
@@ -343,11 +317,7 @@ class ABDetailsTable extends React.Component<Props, State> {
 
     const nextLocation = {
       pathname,
-      search: updateSearch(
-        currentSearch,
-        params,
-        DATAMART_USERS_ANALYTICS_SETTING,
-      ),
+      search: updateSearch(currentSearch, params, DATAMART_USERS_ANALYTICS_SETTING),
     };
 
     history.push(nextLocation);
@@ -395,8 +365,8 @@ class ABDetailsTable extends React.Component<Props, State> {
             <Button
               onClick={this.getExport}
               loading={isExportLoading}
-              type="primary"
-              className="mcs-audienceSegmentDashboard_abExportButton"
+              type='primary'
+              className='mcs-audienceSegmentDashboard_abExportButton'
             >
               <FormattedMessage {...abComparisonMessage.export} />
             </Button>

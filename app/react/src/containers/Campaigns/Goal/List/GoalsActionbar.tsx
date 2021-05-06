@@ -1,12 +1,7 @@
 import React from 'react';
 import { Button, message } from 'antd';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
-import {
-  FormattedMessage,
-  InjectedIntlProps,
-  defineMessages,
-  injectIntl,
-} from 'react-intl';
+import { FormattedMessage, InjectedIntlProps, defineMessages, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import ExportService from '../../../../services/ExportService';
@@ -31,8 +26,7 @@ const messages = defineMessages({
   },
 });
 
-type GoalsActionbarProps = InjectedIntlProps &
-  RouteComponentProps<{ organisationId: string }>;
+type GoalsActionbarProps = InjectedIntlProps & RouteComponentProps<{ organisationId: string }>;
 
 interface State {
   exportIsRunning: boolean;
@@ -74,12 +68,7 @@ class GoalsActionbar extends React.Component<GoalsActionbarProps, State> {
 
     const apiResults = Promise.all([
       this._goalService.getGoals(organisationId, buildOptionsForGetGoals()),
-      ReportService.getConversionPerformanceReport(
-        organisationId,
-        startDate,
-        endDate,
-        dimension,
-      ),
+      ReportService.getConversionPerformanceReport(organisationId, startDate, endDate, dimension),
     ]);
 
     return apiResults.then(results => {
@@ -108,25 +97,14 @@ class GoalsActionbar extends React.Component<GoalsActionbarProps, State> {
       intl,
     } = this.props;
 
-    const filter = parseSearch(
-      this.props.location.search,
-      GOAL_SEARCH_SETTINGS,
-    );
+    const filter = parseSearch(this.props.location.search, GOAL_SEARCH_SETTINGS);
 
     this.setState({ exportIsRunning: true });
-    const hideExportLoadingMsg = message.loading(
-      intl.formatMessage(messages.exportInProgress),
-      0,
-    );
+    const hideExportLoadingMsg = message.loading(intl.formatMessage(messages.exportInProgress), 0);
 
     this.fetchExportData(organisationId, filter)
       .then(data => {
-        ExportService.exportGoals(
-          organisationId,
-          data,
-          filter,
-          intl.formatMessage,
-        );
+        ExportService.exportGoals(organisationId, data, filter, intl.formatMessage);
         this.setState({
           exportIsRunning: false,
         });
@@ -152,26 +130,22 @@ class GoalsActionbar extends React.Component<GoalsActionbarProps, State> {
     const exportIsRunning = this.state.exportIsRunning;
 
     const breadcrumbPaths = [
-      <Link key='1' to={`/v2/o/${organisationId}/campaigns/goals`}>{intl.formatMessage(messages.goals)}</Link>
+      <Link key='1' to={`/v2/o/${organisationId}/campaigns/goals`}>
+        {intl.formatMessage(messages.goals)}
+      </Link>,
     ];
 
     return (
       <Actionbar pathItems={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/campaigns/goals/create`}>
-          <Button className="mcs-primary" type="primary">
-            <McsIcon type="plus" />
-            <FormattedMessage
-              id="goals.list.actionbar.newGoal"
-              defaultMessage="New Goal"
-            />
+          <Button className='mcs-primary' type='primary'>
+            <McsIcon type='plus' />
+            <FormattedMessage id='goals.list.actionbar.newGoal' defaultMessage='New Goal' />
           </Button>
         </Link>
         <Button onClick={this.handleRunExport} loading={exportIsRunning}>
-          {!exportIsRunning && <McsIcon type="download" />}
-          <FormattedMessage
-            id="goals.list.actionbar.export"
-            defaultMessage="Export"
-          />
+          {!exportIsRunning && <McsIcon type='download' />}
+          <FormattedMessage id='goals.list.actionbar.export' defaultMessage='Export' />
         </Button>
       </Actionbar>
     );

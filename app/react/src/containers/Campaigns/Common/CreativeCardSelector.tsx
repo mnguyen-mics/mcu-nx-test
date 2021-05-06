@@ -2,22 +2,11 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import Button, { ButtonProps } from 'antd/lib/button/button';
 import { withRouter, RouteComponentProps } from 'react-router';
-import {
-  FormattedMessage,
-  injectIntl,
-  InjectedIntlProps,
-  defineMessages,
-} from 'react-intl';
+import { FormattedMessage, injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { SearchFilter } from '../../../components/ElementSelector';
-import {
-  CreativesOptions,
-  ICreativeService,
-} from '../../../services/CreativeService';
+import { CreativesOptions, ICreativeService } from '../../../services/CreativeService';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
-import {
-  CreativeType,
-  CreativeResourceShape,
-} from '../../../models/creative/CreativeResource';
+import { CreativeType, CreativeResourceShape } from '../../../models/creative/CreativeResource';
 import CreativeCard, { CreativeCardProps } from './CreativeCard';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
@@ -105,7 +94,7 @@ class CreativeCardSelector extends React.Component<Props> {
     }
 
     if (creativeType === 'EMAIL_TEMPLATE') {
-      options.archived=false
+      options.archived = false;
       return this._creativeService.getEmailTemplates(organisationId, options);
     }
     return this._creativeService.getDisplayAds(organisationId, options);
@@ -155,10 +144,7 @@ class CreativeCardSelector extends React.Component<Props> {
     );
   };
 
-  saveCreatives = (
-    creativeIds: string[],
-    creatives: CreativeResourceShape[],
-  ) => {
+  saveCreatives = (creativeIds: string[], creatives: CreativeResourceShape[]) => {
     this.props.save(creatives);
   };
 

@@ -28,7 +28,4 @@ const mapDispatchToProps = {
   resetNotifications,
 };
 
-export default connect(
-  undefined,
-  mapDispatchToProps,
-);
+export default connect(undefined, mapDispatchToProps);

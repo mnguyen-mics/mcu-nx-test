@@ -47,8 +47,7 @@ class FieldNode extends React.Component<FieldNodeProps, FieldNodeState> {
     if (
       this.contentRef &&
       this.contentRef.current &&
-      this.contentRef.current?.offsetWidth <
-        this.contentRef.current?.scrollWidth
+      this.contentRef.current?.offsetWidth < this.contentRef.current?.scrollWidth
     )
       this.setState({
         truncated: true,
@@ -65,23 +64,17 @@ class FieldNode extends React.Component<FieldNodeProps, FieldNodeState> {
         ? (item as SchemaItem).schemaType
         : (item as FieldInfoEnhancedResource).field_type;
     let helper = (
-      <span className="field-type">
-        {Fieldtype} <McsIcon type="dots" />
+      <span className='field-type'>
+        {Fieldtype} <McsIcon type='dots' />
       </span>
     );
 
-    if (
-      item.decorator &&
-      item.decorator.hidden === false &&
-      item.decorator.help_text
-    ) {
+    if (item.decorator && item.decorator.hidden === false && item.decorator.help_text) {
       const helptext = `${item.decorator.help_text} - ${Fieldtype}`;
       helper = (
-        <span className="field-type">
-          <Tooltip
-            placement="left"
-            title={helptext}>
-            <McsIcon type="question" />
+        <span className='field-type'>
+          <Tooltip placement='left' title={helptext}>
+            <McsIcon type='question' />
           </Tooltip>
         </span>
       );
@@ -90,20 +83,23 @@ class FieldNode extends React.Component<FieldNodeProps, FieldNodeState> {
     return (
       <div className={`field-node-item ${hasChildren ? '' : 'mcs-fieldNode_child'}`}>
         <Tooltip
-          color="#fafafa"
-          overlayClassName="mcs-fieldNode_truncated_tooltip"
-          title={truncated ? itemName : undefined}>
+          color='#fafafa'
+          overlayClassName='mcs-fieldNode_truncated_tooltip'
+          title={truncated ? itemName : undefined}
+        >
           <div
             ref={this.contentRef}
-            className={`mcs-fieldNode_content ${
-              hasChildren ? 'mcs-fieldNode_parent' : ''
-            }`}>
-            {searchString &&
-            itemName.toLocaleLowerCase().includes(searchString.toLowerCase())
-              ? this.formatString(searchString, itemName).map((expr,index) => {
+            className={`mcs-fieldNode_content ${hasChildren ? 'mcs-fieldNode_parent' : ''}`}
+          >
+            {searchString && itemName.toLocaleLowerCase().includes(searchString.toLowerCase())
+              ? this.formatString(searchString, itemName).map((expr, index) => {
                   if (expr.toLowerCase() === searchString.toLowerCase())
-                    return <span className="mcs-schemaFieldNode_search">{expr}</span>;
-                  return (<span className="mcs-schemaFieldNode_fragment" key={index}>{expr}</span>);
+                    return <span className='mcs-schemaFieldNode_search'>{expr}</span>;
+                  return (
+                    <span className='mcs-schemaFieldNode_fragment' key={index}>
+                      {expr}
+                    </span>
+                  );
                 })
               : itemName}
             {helper}

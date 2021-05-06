@@ -6,10 +6,7 @@ import { Modal } from 'antd';
 import { ModalProps } from 'antd/lib/modal';
 import { FormattedMessage } from 'react-intl';
 import { Omit } from '../../../utils/Types';
-import NewExportSimpleForm, {
-  NewExportSimpleFormData,
-  FORM_ID,
-} from './NewExportSimpleForm';
+import NewExportSimpleForm, { NewExportSimpleFormData, FORM_ID } from './NewExportSimpleForm';
 
 export interface SaveAsExportModalProps extends Omit<ModalProps, 'onOk'> {
   onOk: (exportFormData: NewExportSimpleFormData) => void;
@@ -41,17 +38,19 @@ class SaveAsExportModal extends React.Component<Props, FormData> {
         onOk={handleOnOk}
         title={
           <FormattedMessage
-            id="queryTool.query-tool-modal-saveas-export-title"
-            defaultMessage="Save As Export"
+            id='queryTool.query-tool-modal-saveas-export-title'
+            defaultMessage='Save As Export'
           />
         }
       >
-        { visible && <NewExportSimpleForm onSubmit={handleOnSubmit} csvExportDisabled={csvExportDisabled} /> }
+        {visible && (
+          <NewExportSimpleForm onSubmit={handleOnSubmit} csvExportDisabled={csvExportDisabled} />
+        )}
       </Modal>
     );
   }
 }
 
-export default compose<Props, SaveAsExportModalProps>(
-  connect(undefined, { submit: rxfSubmit }),
-)(SaveAsExportModal);
+export default compose<Props, SaveAsExportModalProps>(connect(undefined, { submit: rxfSubmit }))(
+  SaveAsExportModal,
+);

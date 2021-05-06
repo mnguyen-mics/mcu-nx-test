@@ -13,7 +13,7 @@ export interface SideBarItem {
   sectionId: string;
   title: FormattedMessage.MessageDescriptor | string;
   onClick?: (sectionId: string) => void;
-  type?: 'validated' // potential other values : 'error' | 'warning'
+  type?: 'validated'; // potential other values : 'error' | 'warning'
 }
 
 export interface SidebarWrapperProps {
@@ -25,14 +25,21 @@ type Props = SidebarWrapperProps & RouteComponentProps<{}> & InjectedIntlProps;
 
 class ScrollspySider extends React.Component<Props> {
   render() {
-    const { items, scrollId, intl, match: { url } } = this.props;
+    const {
+      items,
+      scrollId,
+      intl,
+      match: { url },
+    } = this.props;
 
     const scrollItems: string[] = items.map(d => d.sectionId);
     const options = items.map(item => {
       const iconAndText = (
         <div>
-          <McsIcon type="check-rounded-inverted" />
-          <span className="step-title">{typeof item.title !== 'string' ? intl.formatMessage(item.title) : item.title}</span>
+          <McsIcon type='check-rounded-inverted' />
+          <span className='step-title'>
+            {typeof item.title !== 'string' ? intl.formatMessage(item.title) : item.title}
+          </span>
         </div>
       );
       if (item.onClick) {
@@ -53,12 +60,8 @@ class ScrollspySider extends React.Component<Props> {
     });
 
     return (
-      <Sider className="stepper">
-        <Scrollspy
-          currentClassName="currentStep"
-          items={scrollItems}
-          rootEl={`#${scrollId}`}
-        >
+      <Sider className='stepper'>
+        <Scrollspy currentClassName='currentStep' items={scrollItems} rootEl={`#${scrollId}`}>
           {options}
         </Scrollspy>
       </Sider>
@@ -72,6 +75,4 @@ class ScrollspySider extends React.Component<Props> {
  */
 // (ScrollspySider as any).__ANT_LAYOUT_SIDER = true; // eslint-disable-line
 
-export default compose<Props, SidebarWrapperProps>(injectIntl, withRouter)(
-  ScrollspySider,
-);
+export default compose<Props, SidebarWrapperProps>(injectIntl, withRouter)(ScrollspySider);

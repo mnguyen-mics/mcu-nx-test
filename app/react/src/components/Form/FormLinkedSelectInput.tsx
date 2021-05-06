@@ -32,7 +32,7 @@ class FormLinkedSelectInput extends React.Component<JoinedProps> {
 
   createLeftOptions = () => {
     const { leftOptionsProps } = this.props;
-    const leftOptions = leftOptionsProps.map((option) => (
+    const leftOptions = leftOptionsProps.map(option => (
       <Select.Option key={option.value} value={option.value}>
         {option.label}
       </Select.Option>
@@ -52,11 +52,7 @@ class FormLinkedSelectInput extends React.Component<JoinedProps> {
     } = this.props;
 
     const leftOptions = this.createLeftOptions();
-    let validateStatus = 'success' as
-      | 'success'
-      | 'warning'
-      | 'error'
-      | 'validating';
+    let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
     if (meta.touched && meta.invalid) validateStatus = 'error';
     if (meta.touched && meta.warning) validateStatus = 'warning';
 
@@ -69,8 +65,8 @@ class FormLinkedSelectInput extends React.Component<JoinedProps> {
         small={small}
         {...formItemProps}
       >
-        <div className="range-filter">
-          <div className="filter-input">
+        <div className='range-filter'>
+          <div className='filter-input'>
             <Select
               value={input.value.leftValue}
               onChange={this.updateLeftSelect}
@@ -79,14 +75,11 @@ class FormLinkedSelectInput extends React.Component<JoinedProps> {
               {leftOptions}
             </Select>
           </div>
-          <div className="range-filter-separator">
-            <p className="form-split">=</p>
+          <div className='range-filter-separator'>
+            <p className='form-split'>=</p>
           </div>
-          <div className="filter-input">
-            <Input
-              value={input.value.rightValue}
-              onChange={this.updateRightInput}
-            />
+          <div className='filter-input'>
+            <Input value={input.value.rightValue} onChange={this.updateRightInput} />
           </div>
         </div>
       </FormFieldWrapper>

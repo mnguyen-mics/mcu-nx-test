@@ -2,9 +2,7 @@ import { fork, put, take, race, call } from 'redux-saga/effects';
 
 import { setOrgFeature } from './actions';
 
-import {
-  APP_STARTUP,
-} from '../action-types';
+import { APP_STARTUP } from '../action-types';
 import log from '../../utils/Logger';
 
 function* watchInitializationSuccess() {
@@ -32,9 +30,6 @@ function* watchInitializationComplete() {
     }
     yield put(setOrgFeature(features));
   }
-
 }
 
-export const featuresSagas = [
-  fork(watchInitializationComplete),
-];
+export const featuresSagas = [fork(watchInitializationComplete)];

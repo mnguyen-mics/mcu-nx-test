@@ -42,7 +42,7 @@ class AudienceBuilderActionbar extends React.Component<Props, State> {
 
   handleSaveAsUserQuery = (formData: NewUserQuerySimpleFormData) => {
     this.setState({ segmentModalLoading: true });
-    this.props.save(formData).catch((_) => {
+    this.props.save(formData).catch(_ => {
       this.setState({
         segmentModalVisible: false,
         segmentModalLoading: false,
@@ -65,19 +65,16 @@ class AudienceBuilderActionbar extends React.Component<Props, State> {
     };
     const saveAsMenu = (
       <Menu onClick={handleMenuClick}>
-        <Menu.Item key="USER_QUERY">
+        <Menu.Item key='USER_QUERY'>
           <FormattedMessage
-            id="audience.audienceBuilder.actionbar.saveAsButton.userQuerySegment"
-            defaultMessage="User Query Segment"
+            id='audience.audienceBuilder.actionbar.saveAsButton.userQuerySegment'
+            defaultMessage='User Query Segment'
           />
         </Menu.Item>
       </Menu>
     );
     let paths: React.ReactNode[] = [
-      <Link
-        key="1"
-        to={`/v2/o/${organisationId}/audience/segment-builder-selector`}
-      >
+      <Link key='1' to={`/v2/o/${organisationId}/audience/segment-builder-selector`}>
         {intl.formatMessage(menuMessages.builders)}
       </Link>,
       intl.formatMessage(messages.title),
@@ -92,10 +89,10 @@ class AudienceBuilderActionbar extends React.Component<Props, State> {
     return (
       <Actionbar pathItems={paths}>
         <Dropdown overlay={saveAsMenu} trigger={['click']}>
-          <Button className="mcs-primary" type="primary">
+          <Button className='mcs-primary' type='primary'>
             <FormattedMessage
-              id="audience.audienceBuilder.actionBar.saveAsButton"
-              defaultMessage="Save As"
+              id='audience.audienceBuilder.actionBar.saveAsButton'
+              defaultMessage='Save As'
             />
           </Button>
         </Dropdown>

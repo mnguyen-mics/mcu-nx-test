@@ -2,12 +2,7 @@ import * as React from 'react';
 import { compose, Omit } from 'recompose';
 import { connect } from 'react-redux';
 import { Alert } from 'antd';
-import {
-  injectIntl,
-  InjectedIntlProps,
-  defineMessages,
-  FormattedMessage,
-} from 'react-intl';
+import { injectIntl, InjectedIntlProps, defineMessages, FormattedMessage } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import * as actions from '../../../../../redux/Notifications/actions';
 import {
@@ -124,26 +119,17 @@ class CreateAudienceFeed<T> extends React.Component<JoinedProps<T>> {
     feedType: AudienceFeedType,
   ) => (segmentId: string) => IAudienceSegmentFeedService;
 
-  private _audienceExternalFeedServiceFactory: (
-    segmentId: string,
-  ) => IAudienceSegmentFeedService;
-  private _audienceTagFeedServiceFactory: (
-    segmentId: string,
-  ) => IAudienceSegmentFeedService;
+  private _audienceExternalFeedServiceFactory: (segmentId: string) => IAudienceSegmentFeedService;
+  private _audienceTagFeedServiceFactory: (segmentId: string) => IAudienceSegmentFeedService;
 
   constructor(props: JoinedProps<T>) {
     super(props);
-    const type =
-      props.type === 'AUDIENCE_SEGMENT_EXTERNAL_FEED'
-        ? 'EXTERNAL_FEED'
-        : 'TAG_FEED';
+    const type = props.type === 'AUDIENCE_SEGMENT_EXTERNAL_FEED' ? 'EXTERNAL_FEED' : 'TAG_FEED';
 
     this._audienceExternalFeedServiceFactory = this._audienceSegmentFeedServiceFactory(
       'EXTERNAL_FEED',
     );
-    this._audienceTagFeedServiceFactory = this._audienceSegmentFeedServiceFactory(
-      'TAG_FEED',
-    );
+    this._audienceTagFeedServiceFactory = this._audienceSegmentFeedServiceFactory('TAG_FEED');
 
     this.feedService =
       type === 'EXTERNAL_FEED'
@@ -202,7 +188,7 @@ class CreateAudienceFeed<T> extends React.Component<JoinedProps<T>> {
       organisation_id: organisationId,
       audience_segment_id: segmentId,
       status: 'INITIAL',
-      created_from: 'SEGMENT'
+      created_from: 'SEGMENT',
     };
     return result;
   };
@@ -223,13 +209,8 @@ class CreateAudienceFeed<T> extends React.Component<JoinedProps<T>> {
 
     const showedMessage =
       initialValues && initialValues.plugin.status === 'ACTIVE' ? (
-        <Alert
-          message={formatMessage(messages.audienceFeedWarningMessage)}
-          type="warning"
-        />
-      ) : (
-        undefined
-      );
+        <Alert message={formatMessage(messages.audienceFeedWarningMessage)} type='warning' />
+      ) : undefined;
 
     return (
       <GenericPluginContent
@@ -237,12 +218,10 @@ class CreateAudienceFeed<T> extends React.Component<JoinedProps<T>> {
         listTitle={titleMessages[type] || titleMessages.genericPlugin}
         listSubTitle={subtitleMessages[type] || titleMessages.genericPlugin}
         pluginPresetListTitle={
-          pluginPresetTitleMessages[type] ||
-          pluginPresetTitleMessages.genericPlugin
+          pluginPresetTitleMessages[type] || pluginPresetTitleMessages.genericPlugin
         }
         pluginPresetListSubTitle={
-          pluginPresetSubtitleMessages[type] ||
-          pluginPresetSubtitleMessages.genericPlugin
+          pluginPresetSubtitleMessages[type] || pluginPresetSubtitleMessages.genericPlugin
         }
         breadcrumbPaths={paths}
         pluginInstanceService={this.feedService}
@@ -254,8 +233,7 @@ class CreateAudienceFeed<T> extends React.Component<JoinedProps<T>> {
         showedMessage={showedMessage}
         disableFields={
           initialValues &&
-          (initialValues.plugin.status === 'ACTIVE' ||
-            initialValues.plugin.status === 'PUBLISHED')
+          (initialValues.plugin.status === 'ACTIVE' || initialValues.plugin.status === 'PUBLISHED')
         }
         isCardLayout={true}
       />

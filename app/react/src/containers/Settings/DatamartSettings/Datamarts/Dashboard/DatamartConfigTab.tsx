@@ -65,6 +65,4 @@ class DatamartConfigTab extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, DatamartConfigTabProps>(injectFeatures)(
-  DatamartConfigTab,
-);
+export default compose<Props, DatamartConfigTabProps>(injectFeatures)(DatamartConfigTab);

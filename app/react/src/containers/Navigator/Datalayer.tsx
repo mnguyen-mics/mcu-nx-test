@@ -23,9 +23,7 @@ class Datalayer extends React.Component<Props> {
       },
       location: { pathname },
     } = this.props;
-    this.pushEvent(
-      this.buildFinalDatalayer(organisationId, pathname, datalayer),
-    );
+    this.pushEvent(this.buildFinalDatalayer(organisationId, pathname, datalayer));
     this.googleAnalyticsTrack(pathname);
   }
   componentDidUpdate(previousProps: Props) {
@@ -50,18 +48,12 @@ class Datalayer extends React.Component<Props> {
       previousPathname !== pathname ||
       organisationId !== previousOrganisationId
     ) {
-      this.pushEvent(
-        this.buildFinalDatalayer(organisationId, pathname, datalayer),
-      );
+      this.pushEvent(this.buildFinalDatalayer(organisationId, pathname, datalayer));
       this.googleAnalyticsTrack(pathname);
     }
   }
 
-  buildFinalDatalayer = (
-    organisationId: string,
-    path: string,
-    dataLayer?: DataLayerDefinition,
-  ) => {
+  buildFinalDatalayer = (organisationId: string, path: string, dataLayer?: DataLayerDefinition) => {
     return {
       ...dataLayer,
       organisation_id: organisationId,

@@ -16,16 +16,8 @@ export interface FormRadioGroupProps {
 
 const RadioGroup = Radio.Group;
 
-const FormRadioGroup: React.SFC<FormRadioGroupProps &
-  WrappedFieldProps> = props => {
-  const {
-    elementClassName,
-    groupClassName,
-    elements,
-    input,
-    disabled,
-    radioButton,
-  } = props;
+const FormRadioGroup: React.SFC<FormRadioGroupProps & WrappedFieldProps> = props => {
+  const { elementClassName, groupClassName, elements, input, disabled, radioButton } = props;
 
   const elementsToMap = elements.map(element => {
     return radioButton ? (

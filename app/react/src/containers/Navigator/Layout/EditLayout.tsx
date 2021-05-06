@@ -9,8 +9,8 @@ interface EditLayoutProps {
 const EditLayout: React.SFC<EditLayoutProps> = props => {
   const EditComponent = props.editComponent;
   return (
-    <Layout id="mcs-full-page" className="mcs-fullscreen">
-      <NavigatorHeader isInSettings={false}/>
+    <Layout id='mcs-full-page' className='mcs-fullscreen'>
+      <NavigatorHeader isInSettings={false} />
       <EditComponent />
     </Layout>
   );

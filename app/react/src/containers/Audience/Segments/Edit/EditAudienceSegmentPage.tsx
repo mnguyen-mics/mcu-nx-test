@@ -5,11 +5,7 @@ import { withRouter, RouteComponentProps, StaticContext } from 'react-router';
 import { message, Modal } from 'antd';
 import moment from 'moment';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
-import {
-  EditAudienceSegmentParam,
-  AudienceSegmentFormData,
-  DefaultLiftimeUnit,
-} from './domain';
+import { EditAudienceSegmentParam, AudienceSegmentFormData, DefaultLiftimeUnit } from './domain';
 import { INITIAL_AUDIENCE_SEGMENT_FORM_DATA } from '../Edit/domain';
 import { UserListSegment } from '../../../../models/audiencesegment';
 import messages from './messages';
@@ -19,10 +15,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 
-import {
-  QueryLanguage,
-  DatamartResource,
-} from '../../../../models/datamart/DatamartResource';
+import { QueryLanguage, DatamartResource } from '../../../../models/datamart/DatamartResource';
 import {
   UserQuerySegment,
   AudienceSegmentType,
@@ -108,13 +101,10 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     defaultLiftime?: number;
     defaultLiftimeUnit?: DefaultLiftimeUnit;
   } => {
-    if(!audienceSegmentFormData.audienceSegment.default_ttl) return { defaultLiftimeUnit: 'days' };
+    if (!audienceSegmentFormData.audienceSegment.default_ttl) return { defaultLiftimeUnit: 'days' };
 
     let lifetime = moment
-      .duration(
-        audienceSegmentFormData.audienceSegment.default_ttl,
-        'milliseconds',
-      )
+      .duration(audienceSegmentFormData.audienceSegment.default_ttl, 'milliseconds')
       .asMonths();
     if (Number.isInteger(lifetime) && lifetime > 0) {
       return {
@@ -123,10 +113,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       };
     } else {
       lifetime = moment
-        .duration(
-          audienceSegmentFormData.audienceSegment.default_ttl,
-          'milliseconds',
-        )
+        .duration(audienceSegmentFormData.audienceSegment.default_ttl, 'milliseconds')
         .asWeeks();
       if (Number.isInteger(lifetime) && lifetime > 0) {
         return {
@@ -135,10 +122,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         };
       } else {
         lifetime = moment
-          .duration(
-            audienceSegmentFormData.audienceSegment.default_ttl,
-            'milliseconds',
-          )
+          .duration(audienceSegmentFormData.audienceSegment.default_ttl, 'milliseconds')
           .asDays();
         return {
           defaultLiftime: lifetime,
@@ -166,10 +150,8 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
               const newState: Partial<State> = {
                 audienceSegmentFormData: {
                   ...initialData,
-                  defaultLifetime: this.countDefaultLifetime(initialData)
-                    .defaultLiftime,
-                  defaultLifetimeUnit: this.countDefaultLifetime(initialData)
-                    .defaultLiftimeUnit,
+                  defaultLifetime: this.countDefaultLifetime(initialData).defaultLiftime,
+                  defaultLifetimeUnit: this.countDefaultLifetime(initialData).defaultLiftimeUnit,
                 },
                 selectedDatamart: datamartResource,
                 loading: false,
@@ -206,9 +188,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       this.setState({
         loading: false,
         displayDatamartSelector: multipleDatamarts,
-        selectedDatamart: multipleDatamarts
-          ? undefined
-          : workspace(organisationId).datamarts[0],
+        selectedDatamart: multipleDatamarts ? undefined : workspace(organisationId).datamarts[0],
       });
     }
   };
@@ -253,9 +233,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       : history.push(defaultRedirectUrl);
   };
 
-  shouldWarnProcessings = (
-    audienceSegmentFormData: AudienceSegmentFormData,
-  ): boolean => {
+  shouldWarnProcessings = (audienceSegmentFormData: AudienceSegmentFormData): boolean => {
     const initialProcessingSelectionResources =
       audienceSegmentFormData.initialProcessingSelectionResources;
     const processingActivities = audienceSegmentFormData.processingActivities;
@@ -270,16 +248,13 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     return (
       audienceSegmentFormData.audienceSegment.id !== undefined &&
       !(
-        initialProcessingSelectionResources.length ===
-          processingActivityIds.length &&
+        initialProcessingSelectionResources.length === processingActivityIds.length &&
         initialProcessingIds.every(pId => processingActivityIds.includes(pId))
       )
     );
   };
 
-  checkProcessingsAndSave = (
-    audienceSegmentFormData: AudienceSegmentFormData,
-  ) => {
+  checkProcessingsAndSave = (audienceSegmentFormData: AudienceSegmentFormData) => {
     const {
       intl: { formatMessage },
     } = this.props;
@@ -319,10 +294,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     const countTTL = (formData: AudienceSegmentFormData) => {
       if (formData.defaultLifetimeUnit && formData.defaultLifetime) {
         return moment
-          .duration(
-            Number(formData.defaultLifetime),
-            formData.defaultLifetimeUnit,
-          )
+          .duration(Number(formData.defaultLifetime), formData.defaultLifetimeUnit)
           .asMilliseconds();
       }
       return undefined;
@@ -338,9 +310,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         !audienceSegmentFormData.query)
     ) {
       message.error(intl.formatMessage(messagesMap.noQueryText));
-    } else if (
-      audienceSegmentFormData.audienceSegment.type === 'USER_ACTIVATION'
-    ) {
+    } else if (audienceSegmentFormData.audienceSegment.type === 'USER_ACTIVATION') {
       message.error(intl.formatMessage(messagesMap.editionNotAllowed));
     } else {
       this.setState({ loading: true });
@@ -351,7 +321,9 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
 
       const audienceSegment = {
         ...audienceSegmentFormData.audienceSegment,
-        default_ttl: audienceSegmentFormData.defaultLifetime ? countTTL(audienceSegmentFormData) : null,
+        default_ttl: audienceSegmentFormData.defaultLifetime
+          ? countTTL(audienceSegmentFormData)
+          : null,
         datamart_id: datamartId,
         organisation_id: organisationId,
       };
@@ -360,18 +332,12 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         audienceSegment: audienceSegment,
       };
 
-      const hideSaveInProgress = message.loading(
-        intl.formatMessage(messages.savingInProgress),
-        0,
-      );
+      const hideSaveInProgress = message.loading(intl.formatMessage(messages.savingInProgress), 0);
 
-      const generateProcessingSelectionsTasks = (
-        segmentId: string,
-      ): Array<Promise<any>> => {
+      const generateProcessingSelectionsTasks = (segmentId: string): Array<Promise<any>> => {
         const initialProcessingSelectionResources =
           audienceSegmentFormData.initialProcessingSelectionResources;
-        const processingActivities =
-          audienceSegmentFormData.processingActivities;
+        const processingActivities = audienceSegmentFormData.processingActivities;
 
         const initialProcessingIds = initialProcessingSelectionResources.map(
           processingSelection => processingSelection.processing_id,
@@ -427,16 +393,10 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       };
 
       this._audienceSegmentFormService
-        .saveOrCreateAudienceSegment(
-          organisationId,
-          audienceSegmentFormData,
-          queryLanguage,
-        )
+        .saveOrCreateAudienceSegment(organisationId, audienceSegmentFormData, queryLanguage)
         .then(response => {
           if (!!response) {
-            Promise.all([
-              ...generateProcessingSelectionsTasks(response.data.id),
-            ]);
+            Promise.all([...generateProcessingSelectionsTasks(response.data.id)]);
           }
           return response;
         })
@@ -447,8 +407,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
             if (
               response.data.type === 'USER_LIST' &&
               !audienceSegmentFormData.audienceSegment.id &&
-              (audienceSegmentFormData.audienceSegment as UserListSegment)
-                .subtype === 'USER_PIXEL'
+              (audienceSegmentFormData.audienceSegment as UserListSegment).subtype === 'USER_PIXEL'
             ) {
               redirect = `/v2/o/${organisationId}/audience/segments/${response.data.id}/edit`;
             } else {
@@ -485,18 +444,14 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     });
   };
 
-  onSegmentTypeSelect = (
-    segmentType: AudienceSegmentType,
-    queryLang: QueryLanguage = 'OTQL',
-  ) => {
+  onSegmentTypeSelect = (segmentType: AudienceSegmentType, queryLang: QueryLanguage = 'OTQL') => {
     const queryLanguage: QueryLanguage = queryLang;
     if (segmentType === 'USER_PIXEL') {
       this.setState({
         audienceSegmentFormData: {
           ...this.state.audienceSegmentFormData,
           audienceSegment: {
-            ...(this.state.audienceSegmentFormData
-              .audienceSegment as UserListSegment),
+            ...(this.state.audienceSegmentFormData.audienceSegment as UserListSegment),
             type: 'USER_LIST',
             feed_type: 'TAG',
             subtype: 'USER_PIXEL',
@@ -508,8 +463,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         audienceSegmentFormData: {
           ...this.state.audienceSegmentFormData,
           audienceSegment: {
-            ...(this.state.audienceSegmentFormData
-              .audienceSegment as UserListSegment),
+            ...(this.state.audienceSegmentFormData.audienceSegment as UserListSegment),
             type: 'USER_LIST',
             feed_type: 'FILE_IMPORT',
             subtype: 'STANDARD',
@@ -522,8 +476,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         audienceSegmentFormData: {
           ...this.state.audienceSegmentFormData,
           audienceSegment: {
-            ...(this.state.audienceSegmentFormData
-              .audienceSegment as UserQuerySegment),
+            ...(this.state.audienceSegmentFormData.audienceSegment as UserQuerySegment),
             type: 'USER_QUERY',
           },
         },
@@ -534,8 +487,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         audienceSegmentFormData: {
           ...this.state.audienceSegmentFormData,
           audienceSegment: {
-            ...(this.state.audienceSegmentFormData
-              .audienceSegment as UserListSegment),
+            ...(this.state.audienceSegmentFormData.audienceSegment as UserListSegment),
             type: 'USER_LIST',
             feed_type: 'TAG',
             subtype: 'EDGE',
@@ -552,10 +504,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       title: string;
       value: AudienceSegmentType;
     }> = [];
-    if (
-      selectedDatamart &&
-      selectedDatamart.storage_model_version === 'v201709'
-    ) {
+    if (selectedDatamart && selectedDatamart.storage_model_version === 'v201709') {
       segmentTypesToDisplay.push(
         {
           title: 'User Pixel',
@@ -594,15 +543,16 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
     } = this.state;
 
     const audienceSegmentName =
-      audienceSegmentFormData.audienceSegment &&
-      audienceSegmentFormData.audienceSegment.name
+      audienceSegmentFormData.audienceSegment && audienceSegmentFormData.audienceSegment.name
         ? formatMessage(messagesMap.breadcrumbEditAudienceSegment, {
             name: audienceSegmentFormData.audienceSegment.name,
           })
         : formatMessage(messages.audienceSegmentBreadCrumb);
 
     const breadcrumbPaths = [
-      <Link key='1' to={`/v2/o/${organisationId}/audience/segments`}>{formatMessage(messagesMap.breadcrumbAudienceSegmentList)}</Link>,
+      <Link key='1' to={`/v2/o/${organisationId}/audience/segments`}>
+        {formatMessage(messagesMap.breadcrumbAudienceSegmentList)}
+      </Link>,
       audienceSegmentName,
     ];
 
@@ -628,8 +578,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       return <Loading isFullScreen={true} />;
     }
 
-    const initialProcessingSelectionsForWarning = audienceSegmentFormData
-      .audienceSegment.id
+    const initialProcessingSelectionsForWarning = audienceSegmentFormData.audienceSegment.id
       ? audienceSegmentFormData.initialProcessingSelectionResources
       : undefined;
 
@@ -661,9 +610,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         queryLanguage={getQueryLanguageToDisplay}
         segmentType={selectedSegmentType}
         goToSegmentTypeSelection={resetFormData}
-        initialProcessingSelectionsForWarning={
-          initialProcessingSelectionsForWarning
-        }
+        initialProcessingSelectionsForWarning={initialProcessingSelectionsForWarning}
         audienceBuilder={audienceBuilder}
       />
     ) : displayDatamartSelector ? (

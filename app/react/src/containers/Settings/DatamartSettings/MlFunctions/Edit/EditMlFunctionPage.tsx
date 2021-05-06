@@ -5,11 +5,7 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import GenericPluginContent, {
   PluginContentOuterProps,
 } from '../../../../Plugin/Edit/GenericPluginContent';
-import {
-  PluginProperty,
-  PluginResource,
-  PluginInstance,
-} from '../../../../../models/Plugins';
+import { PluginProperty, PluginResource, PluginInstance } from '../../../../../models/Plugins';
 import { DatamartSelector } from '../../../../Datamart';
 import messages from './messages';
 import { Omit } from '../../../../../utils/Types';
@@ -85,10 +81,7 @@ class EditMlFunctionPage extends React.Component<JoinedProps, IState> {
       .then(schemaRes => {
         const liveSchema = schemaRes.data.find(s => s.status === 'LIVE');
         if (!liveSchema) return [];
-        return this._runtimeSchemaService.getObjectTypeInfoResources(
-          datamartId,
-          liveSchema.id,
-        );
+        return this._runtimeSchemaService.getObjectTypeInfoResources(datamartId, liveSchema.id);
       })
       .then(r =>
         this.setState({
@@ -113,24 +106,14 @@ class EditMlFunctionPage extends React.Component<JoinedProps, IState> {
     history.push(attributionModelUrl);
   };
 
-  renderSpecificFields: SpecificFieldsFunction = (
-    disabled: boolean,
-    fieldNamePrefix: string,
-  ) => {
+  renderSpecificFields: SpecificFieldsFunction = (disabled: boolean, fieldNamePrefix: string) => {
     const { objects } = this.state;
     return (
-      <GeneralInformation
-        disabled={disabled}
-        fieldNamePrefix={fieldNamePrefix}
-        objects={objects}
-      />
+      <GeneralInformation disabled={disabled} fieldNamePrefix={fieldNamePrefix} objects={objects} />
     );
   };
 
-  onSaveOrCreatePluginInstance = (
-    plugin: MlFunctionResource,
-    properties: PluginProperty[],
-  ) => {
+  onSaveOrCreatePluginInstance = (plugin: MlFunctionResource, properties: PluginProperty[]) => {
     const {
       match: {
         params: { organisationId },
@@ -145,9 +128,7 @@ class EditMlFunctionPage extends React.Component<JoinedProps, IState> {
     plugin: PluginResource,
     pluginInstance: MlFunctionResource,
   ): PluginInstance => {
-    const datamartId = this.state.datamartId
-      ? this.state.datamartId
-      : pluginInstance.datamart_id;
+    const datamartId = this.state.datamartId ? this.state.datamartId : pluginInstance.datamart_id;
 
     const result: Omit<MlFunctionResource, 'id'> = {
       version_id: pluginInstance.version_id,
@@ -183,9 +164,10 @@ class EditMlFunctionPage extends React.Component<JoinedProps, IState> {
 
     const { loading, datamartId } = this.state;
 
-    const breadcrumbPaths = (mlFunction?: MlFunctionResource) => [mlFunction
-      ? formatMessage(messages.editBreadcrumb, { name: mlFunction.name })
-      : formatMessage(messages.createBreadcrumb),
+    const breadcrumbPaths = (mlFunction?: MlFunctionResource) => [
+      mlFunction
+        ? formatMessage(messages.editBreadcrumb, { name: mlFunction.name })
+        : formatMessage(messages.createBreadcrumb),
     ];
 
     if (loading) {
@@ -206,20 +188,14 @@ class EditMlFunctionPage extends React.Component<JoinedProps, IState> {
         renderSpecificFields={this.renderSpecificFields}
       />
     ) : (
-        <DatamartSelector
-          onSelect={this.onDatamartSelect}
-          actionbarProps={{
-            pathItems: [
-              formatMessage(messages.createBreadcrumb),
-            ],
-          }}
-        />
-      );
+      <DatamartSelector
+        onSelect={this.onDatamartSelect}
+        actionbarProps={{
+          pathItems: [formatMessage(messages.createBreadcrumb)],
+        }}
+      />
+    );
   }
 }
 
-export default compose(
-  withRouter,
-  injectNotifications,
-  injectIntl,
-)(EditMlFunctionPage);
+export default compose(withRouter, injectNotifications, injectIntl)(EditMlFunctionPage);

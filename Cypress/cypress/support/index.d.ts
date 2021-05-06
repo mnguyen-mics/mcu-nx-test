@@ -36,7 +36,7 @@ declare namespace Cypress {
 
     /**
      * Fill the form of an Expert Query Segment?
-     * 
+     *
      * /!\ The queryText field will not be emptied -> queryText is appended to the already existing query text !
      */
     fillExpertQuerySegmentForm(segmentName: string, queryText: string): void;
@@ -44,16 +44,16 @@ declare namespace Cypress {
     /**
      * Creates a new organization, its datamart and publishes a runtime schema
      */
-    initTestContext():void;
+    initTestContext(): void;
 
     /**
      * Creates a activities and user scenario allowing testing automation
      */
-    setDataSetForAutomation(accessToken: string, datamartId: string, organisationId:string): void;
+    setDataSetForAutomation(accessToken: string, datamartId: string, organisationId: string): void;
 
     /**
      * Create a segment using the UI
      */
-    createSegmentFromUI(type:string):void;
+    createSegmentFromUI(type: string): void;
   }
 }

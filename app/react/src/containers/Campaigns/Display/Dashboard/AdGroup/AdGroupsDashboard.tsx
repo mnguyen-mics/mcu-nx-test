@@ -45,10 +45,7 @@ class AdGroupDashboard extends React.Component<JoinedProps> {
       {
         title: intl.formatMessage(messages.dashboardTopSites),
         display: (
-          <MediaPerformanceTable
-            isFetchingMediaStat={isFetchingMediaStat}
-            dataSet={mediaStat}
-          />
+          <MediaPerformanceTable isFetchingMediaStat={isFetchingMediaStat} dataSet={mediaStat} />
         ),
       },
     ];

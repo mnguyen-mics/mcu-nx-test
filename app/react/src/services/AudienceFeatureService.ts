@@ -191,7 +191,7 @@ export class AudienceFeatureService implements IAudienceFeatureService {
   }
 
   private _fetchFolders = (datamartId: string) => {
-    return this.getAudienceFeatureFolders(datamartId).then((res) => {
+    return this.getAudienceFeatureFolders(datamartId).then(res => {
       return res.data;
     });
   };
@@ -218,14 +218,10 @@ export class AudienceFeatureService implements IAudienceFeatureService {
     const res: [
       Promise<AudienceFeatureFolderResource[]>,
       Promise<DataListResponse<AudienceFeatureResource>>,
-    ] = [
-      this._fetchFolders(datamartId),
-      this.getAudienceFeatures(datamartId, options),
-    ];
+    ] = [this._fetchFolders(datamartId), this.getAudienceFeatures(datamartId, options)];
     return Promise.all(res)
       .then((results: any[]) => {
-        const audienceFeatureFolders: AudienceFeatureFolderResource[] =
-          results[0];
+        const audienceFeatureFolders: AudienceFeatureFolderResource[] = results[0];
         const features: DataListResponse<AudienceFeatureResource> = results[1];
         const baseFolder = this._createBaseFolder(
           baseFolderName,
@@ -234,7 +230,7 @@ export class AudienceFeatureService implements IAudienceFeatureService {
         );
         setBaseFolder(baseFolder);
       })
-      .catch((err) => {
+      .catch(err => {
         onFailure(err);
       });
   };
@@ -243,7 +239,7 @@ export class AudienceFeatureService implements IAudienceFeatureService {
     folders: AudienceFeatureFolderResource[],
     features: AudienceFeatureResource[],
   ): AudienceFeaturesByFolder[] => {
-    return folders.map((folder) => {
+    return folders.map(folder => {
       if (!folder.parent_id) {
         folder.parent_id = undefined;
       }
@@ -256,8 +252,7 @@ export class AudienceFeatureService implements IAudienceFeatureService {
         ),
         children: this._folderLoop(
           folders.filter(
-            (f: AudienceFeatureFolderResource) =>
-              f.id && folder.children_ids?.includes(f.id),
+            (f: AudienceFeatureFolderResource) => f.id && folder.children_ids?.includes(f.id),
           ),
           features,
         ),
@@ -278,22 +273,17 @@ export class AudienceFeatureService implements IAudienceFeatureService {
         folders.filter((f: AudienceFeatureFolderResource) => !f.parent_id),
         features,
       ),
-      audience_features: features.filter(
-        (f: AudienceFeatureResource) => !f.folder_id,
-      ),
+      audience_features: features.filter((f: AudienceFeatureResource) => !f.folder_id),
     };
   };
 
-  getFolderContent = (
-    id?: string,
-    audienceFeaturesByFolder?: AudienceFeaturesByFolder,
-  ) => {
+  getFolderContent = (id?: string, audienceFeaturesByFolder?: AudienceFeaturesByFolder) => {
     let selectedFolder: AudienceFeaturesByFolder | undefined;
     const loop = (folder: AudienceFeaturesByFolder) => {
       if (!id) {
         selectedFolder = audienceFeaturesByFolder;
       } else {
-        folder.children.forEach((f) => {
+        folder.children.forEach(f => {
           if (f.id === id) {
             selectedFolder = f;
           } else {

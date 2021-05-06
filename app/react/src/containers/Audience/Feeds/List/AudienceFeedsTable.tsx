@@ -12,11 +12,7 @@ import {
 } from '../../../../utils/LocationSearchHelper';
 import { Index } from '../../../../utils';
 import { FEEDS_SEARCH_SETTINGS } from './constants';
-import {
-  AudienceExternalFeed,
-  PluginResource,
-  Status,
-} from '../../../../models/Plugins';
+import { AudienceExternalFeed, PluginResource, Status } from '../../../../models/Plugins';
 import {
   AudienceFeedType,
   IAudienceSegmentFeedService,
@@ -42,7 +38,12 @@ import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { AutomationResource } from '../../../../models/automations/automations';
 import { IScenarioService } from '../../../../services/ScenarioService';
-import { ActionDefinition, ActionsColumnDefinition, ActionsRenderer, DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import {
+  ActionDefinition,
+  ActionsColumnDefinition,
+  ActionsRenderer,
+  DataColumnDefinition,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 type Props = InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }> &
@@ -79,12 +80,8 @@ class AudienceFeedsTable extends React.Component<Props, State> {
   @lazyInject(TYPES.IScenarioService)
   private _scenarioService: IScenarioService;
 
-  private _audienceExternalFeedServiceFactory: (
-    segmentId: string,
-  ) => IAudienceSegmentFeedService;
-  private _audienceTagFeedServiceFactory: (
-    segmentId: string,
-  ) => IAudienceSegmentFeedService;
+  private _audienceExternalFeedServiceFactory: (segmentId: string) => IAudienceSegmentFeedService;
+  private _audienceTagFeedServiceFactory: (segmentId: string) => IAudienceSegmentFeedService;
   @lazyInject(TYPES.IPluginService)
   private _pluginService: IPluginService;
 
@@ -93,9 +90,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
     this._audienceExternalFeedServiceFactory = this._audienceSegmentFeedServiceFactory(
       'EXTERNAL_FEED',
     );
-    this._audienceTagFeedServiceFactory = this._audienceSegmentFeedServiceFactory(
-      'TAG_FEED',
-    );
+    this._audienceTagFeedServiceFactory = this._audienceSegmentFeedServiceFactory('TAG_FEED');
     this.state = {
       list: {
         feeds: [],
@@ -147,11 +142,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
 
     const { list, externalPlugins: plugins, modalFeed } = this.state;
 
-    const {
-      list: nextList,
-      externalPlugins: nextPlugins,
-      modalFeed: nextModalFeed,
-    } = nextState;
+    const { list: nextList, externalPlugins: nextPlugins, modalFeed: nextModalFeed } = nextState;
 
     return (
       !compareSearches(search, nextSearch) ||
@@ -189,20 +180,15 @@ class AudienceFeedsTable extends React.Component<Props, State> {
 
     const filter = parseSearch(search, FEEDS_SEARCH_SETTINGS);
 
-    return filter.feedType && filter.feedType.length > 0
-      ? filter.feedType[0]
-      : 'EXTERNAL_FEED';
+    return filter.feedType && filter.feedType.length > 0 ? filter.feedType[0] : 'EXTERNAL_FEED';
   }
 
   buildApiSearchFilters = (filter: Index<any>) => {
     return {
       ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
-      status:
-        filter.status && filter.status.length > 0 ? filter.status : undefined,
+      status: filter.status && filter.status.length > 0 ? filter.status : undefined,
       artifact_id:
-        filter.artifactId && filter.artifactId.length > 0
-          ? filter.artifactId
-          : undefined,
+        filter.artifactId && filter.artifactId.length > 0 ? filter.artifactId : undefined,
     };
   };
 
@@ -226,9 +212,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
         ...this.buildApiSearchFilters(filter),
       })
       .then(feedResults => {
-        const distinctScenarioIds = [
-          ...new Set(feedResults.data.map(feed => feed.scenario_id)),
-        ];
+        const distinctScenarioIds = [...new Set(feedResults.data.map(feed => feed.scenario_id))];
 
         const scenariosPromise = Promise.all(
           distinctScenarioIds.map(scenarioId => {
@@ -258,41 +242,37 @@ class AudienceFeedsTable extends React.Component<Props, State> {
           ),
         );
 
-        return Promise.all([scenariosPromise, audienceSegmentsPromise]).then(
-          resPromise => {
-            const resScenarios = resPromise[0];
-            const resAudienceSegments = resPromise[1];
+        return Promise.all([scenariosPromise, audienceSegmentsPromise]).then(resPromise => {
+          const resScenarios = resPromise[0];
+          const resAudienceSegments = resPromise[1];
 
-            const feeds = feedResults.data.map(feed => {
-              const feedTyped: AudienceFeedTyped =
-                this.getFeedType() === 'TAG_FEED'
-                  ? { ...feed, type: 'TAG_FEED' }
-                  : { ...feed, type: 'EXTERNAL_FEED' };
+          const feeds = feedResults.data.map(feed => {
+            const feedTyped: AudienceFeedTyped =
+              this.getFeedType() === 'TAG_FEED'
+                ? { ...feed, type: 'TAG_FEED' }
+                : { ...feed, type: 'EXTERNAL_FEED' };
 
-              const recordType: RecordType = {
-                feed: feedTyped,
-                audienceSegment: resAudienceSegments.find(segment => {
-                  return !!segment && segment.id === feed.audience_segment_id;
-                }),
-                scenarioResource: resScenarios.find(scenario => {
-                  return !!scenario && scenario.id === feed.scenario_id;
-                }),
-              };
+            const recordType: RecordType = {
+              feed: feedTyped,
+              audienceSegment: resAudienceSegments.find(segment => {
+                return !!segment && segment.id === feed.audience_segment_id;
+              }),
+              scenarioResource: resScenarios.find(scenario => {
+                return !!scenario && scenario.id === feed.scenario_id;
+              }),
+            };
 
-              return recordType;
-            });
+            return recordType;
+          });
 
-            this.setState({
-              list: {
-                feeds: feeds,
-                total: feedResults.total
-                  ? feedResults.total
-                  : feedResults.count,
-                isLoading: false,
-              },
-            });
-          },
-        );
+          this.setState({
+            list: {
+              feeds: feeds,
+              total: feedResults.total ? feedResults.total : feedResults.count,
+              isLoading: false,
+            },
+          });
+        });
       })
       .catch(() => {
         this.setState({
@@ -442,22 +422,23 @@ class AudienceFeedsTable extends React.Component<Props, State> {
 
     const filter = parseSearch(search, FEEDS_SEARCH_SETTINGS);
 
-    const onOkDelete = () => feedService
-      .deleteAudienceFeed(record.feed.id)
-      .then(() => {
-        if (feeds.length === 1 && filter.currentPage !== 1) {
-          const newFilter = {
-            ...filter,
-            currentPage: filter.currentPage - 1,
-          };
-          this.fetchFeeds(record.feed.organisation_id, newFilter);
-        } else {
-          this.fetchFeeds(record.feed.organisation_id, filter);
-        }
-      })
-      .catch(err => {
-        notifyError(err);
-      });
+    const onOkDelete = () =>
+      feedService
+        .deleteAudienceFeed(record.feed.id)
+        .then(() => {
+          if (feeds.length === 1 && filter.currentPage !== 1) {
+            const newFilter = {
+              ...filter,
+              currentPage: filter.currentPage - 1,
+            };
+            this.fetchFeeds(record.feed.organisation_id, newFilter);
+          } else {
+            this.fetchFeeds(record.feed.organisation_id, filter);
+          }
+        })
+        .catch(err => {
+          notifyError(err);
+        });
 
     Modal.confirm({
       title: intl.formatMessage(messages.deleteModalTitle),
@@ -466,21 +447,19 @@ class AudienceFeedsTable extends React.Component<Props, State> {
     });
   };
 
-  renderActionColumnDefinition: ActionsRenderer<RecordType> = (
-    record: RecordType,
-  ) => {
-    const { hasFeature, intl: { formatMessage } } = this.props;
+  renderActionColumnDefinition: ActionsRenderer<RecordType> = (record: RecordType) => {
+    const {
+      hasFeature,
+      intl: { formatMessage },
+    } = this.props;
     const actionsDefinitions: Array<ActionDefinition<RecordType>> = [];
 
     if (record.feed.created_from !== 'AUTOMATION') {
-      if (
-        record.feed.status === 'PAUSED' ||
-        record.feed.status === 'INITIAL'
-      ) {
-         actionsDefinitions.push({
-           callback: this.activateFeed,
-           message: formatMessage(messages.activate),
-         });
+      if (record.feed.status === 'PAUSED' || record.feed.status === 'INITIAL') {
+        actionsDefinitions.push({
+          callback: this.activateFeed,
+          message: formatMessage(messages.activate),
+        });
       } else {
         actionsDefinitions.push({
           callback: this.pauseFeed,
@@ -542,7 +521,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
                   <FormattedMessage {...messages.segmentDeleted} />
                 ) : record.audienceSegment.name ? (
                   <Link
-                    className="mcs-campaigns-link"
+                    className='mcs-campaigns-link'
                     to={`/v2/o/${organisationId}/audience/segments/${record.audienceSegment.id}`}
                   >
                     {record.audienceSegment.name.length > 40 ? (
@@ -563,7 +542,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
               <span>
                 {record.scenarioResource ? (
                   <Link
-                    className="mcs-campaigns-link"
+                    className='mcs-campaigns-link'
                     to={`/v2/o/${organisationId}/automations/${record.scenarioResource.id}`}
                   >
                     {record.scenarioResource.name.length > 40 ? (
@@ -590,9 +569,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
           <span>
             {record.feed.name ? (
               record.feed.name.length > 40 ? (
-                <Tooltip title={record.feed.name}>
-                  {record.feed.name.substring(0, 40)}...
-                </Tooltip>
+                <Tooltip title={record.feed.name}>{record.feed.name.substring(0, 40)}...</Tooltip>
               ) : (
                 record.feed.name
               )
@@ -606,17 +583,13 @@ class AudienceFeedsTable extends React.Component<Props, State> {
         title: formatMessage(messages.artifactId),
         key: 'artifactId',
         isHideable: false,
-        render: (text: string, record: RecordType) => (
-          <span>{record.feed.artifact_id}</span>
-        ),
+        render: (text: string, record: RecordType) => <span>{record.feed.artifact_id}</span>,
       },
       {
         title: formatMessage(messages.createdFrom),
         key: 'createdFrom',
         isHideable: false,
-        render: (text: string, record: RecordType) => (
-          <span>{record.feed.created_from}</span>
-        ),
+        render: (text: string, record: RecordType) => <span>{record.feed.created_from}</span>,
       },
       {
         title: formatMessage(messages.status),
@@ -630,12 +603,9 @@ class AudienceFeedsTable extends React.Component<Props, State> {
           },
         ) => {
           return (
-            <Tooltip
-              placement="top"
-              title={formatMessage(messages[record.feed.status])}
-            >
+            <Tooltip placement='top' title={formatMessage(messages[record.feed.status])}>
               <McsIcon
-                type="status"
+                type='status'
                 className={`mcs-feeds-status-${record.feed.status.toLowerCase()}`}
               />
             </Tooltip>
@@ -732,15 +702,12 @@ class AudienceFeedsTable extends React.Component<Props, State> {
     const plugins = feedType === 'TAG_FEED' ? tagPlugins : externalPlugins;
 
     if (plugins.length > 0) {
-      const artifactIds = Array.from(
-        new Set(plugins.map(plugin => plugin.artifact_id)),
-      ).sort();
+      const artifactIds = Array.from(new Set(plugins.map(plugin => plugin.artifact_id))).sort();
 
       filtersOptions.push({
         displayElement: (
           <div>
-            <FormattedMessage {...messages.filterArtifactId} />{' '}
-            <DownOutlined />
+            <FormattedMessage {...messages.filterArtifactId} /> <DownOutlined />
           </div>
         ),
         selectedItems: filter.artifactId,
@@ -776,7 +743,7 @@ class AudienceFeedsTable extends React.Component<Props, State> {
     });
 
     return (
-      <div className="mcs-table-container">
+      <div className='mcs-table-container'>
         {modalFeed && (
           <EditPluginModal
             feed={modalFeed}

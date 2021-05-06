@@ -124,10 +124,7 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
       },
     } = previousProps;
 
-    if (
-      !compareSearches(search, previousSearch) ||
-      organisationId !== previousOrganisationId
-    ) {
+    if (!compareSearches(search, previousSearch) || organisationId !== previousOrganisationId) {
       if (!isSearchValid(search, PAGINATION_SEARCH_SETTINGS)) {
         history.replace({
           pathname: pathname,
@@ -146,15 +143,13 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
 
   fetchExportExecution = (exportId: string) => {
     const {
-      location: { search }
+      location: { search },
     } = this.props;
     const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
     const fetchExport = this._exportService
       .getExport(exportId)
       .then(res => res.data)
-      .then(res =>
-        this.setState({ exportObject: { item: res, isLoading: false } }),
-      )
+      .then(res => this.setState({ exportObject: { item: res, isLoading: false } }))
       .catch(err => log.error(err));
     const fetchExportExecution = this._exportService
       .getExportExecutions(exportId, getPaginatedApiParam(filter.currentPage, filter.pageSize))
@@ -196,19 +191,15 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
     } else if (execution.status === 'FAILED') {
       message.error(formatMessage(messages.exportFailed));
     } else if (execution.status === 'SUCCEEDED') {
-      (window as any).location = `${
-        (window as any).MCS_CONSTANTS.API_URL
-        }/v1/exports/${this.props.match.params.exportId}/executions/${
-        execution.id
-        }/files/technical_name=${
+      (window as any).location = `${(window as any).MCS_CONSTANTS.API_URL}/v1/exports/${
+        this.props.match.params.exportId
+      }/executions/${execution.id}/files/technical_name=${
         execution.result
           ? execution.result.output_files
             ? execution.result.output_files[0] || 'export'
             : 'export'
           : 'export'
-        }?access_token=${encodeURIComponent(
-          LocalStorage.getItem('access_token')!,
-        )}`;
+      }?access_token=${encodeURIComponent(LocalStorage.getItem('access_token')!)}`;
     }
   };
 
@@ -235,16 +226,14 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
         key: 'start_date',
         isHideable: false,
         render: (text: string) =>
-          text
-            ? moment(text).format('DD/MM/YYYY HH:mm:ss')
-            : formatMessage(messages.notStarted),
+          text ? moment(text).format('DD/MM/YYYY HH:mm:ss') : formatMessage(messages.notStarted),
       },
       {
         key: 'action',
         render: (text: string, record: ExportExecution, index: number) => {
           return (
             record.status === 'SUCCEEDED' && (
-              <Button type="primary" onClick={this.downloadFile(record)}>
+              <Button type='primary' onClick={this.downloadFile(record)}>
                 {' '}
                 {formatMessage(messages.download)}
               </Button>
@@ -288,9 +277,7 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
     };
 
     const onNewExecution = () => {
-      return this.fetchExportExecution(
-        this.props.match.params.exportId
-      );
+      return this.fetchExportExecution(this.props.match.params.exportId);
     };
 
     const handleArchive = () => {
@@ -304,26 +291,26 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
     };
 
     return (
-      <div className="ant-layout">
+      <div className='ant-layout'>
         <ExportActionbar
           exportObject={exportObject.item}
           archiveObject={handleArchive}
           isExportExecutionRunning={
             exportExecutions.items.length &&
-              (exportExecutions.items[0].status === 'PENDING' ||
-                exportExecutions.items[0].status === 'RUNNING')
+            (exportExecutions.items[0].status === 'PENDING' ||
+              exportExecutions.items[0].status === 'RUNNING')
               ? true
               : false
           }
           onNewExecution={onNewExecution}
         />
-        <div className="ant-layout">
-          <Content className="mcs-content-container">
+        <div className='ant-layout'>
+          <Content className='mcs-content-container'>
             <ExportHeader object={exportObject.item && exportObject.item} />
             {exportObject.item && (
               <Labels
                 labellableId={exportObject.item.id}
-                labellableType="EXPORT"
+                labellableType='EXPORT'
                 organisationId={organisationId}
               />
             )}

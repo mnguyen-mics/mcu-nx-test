@@ -66,13 +66,8 @@ class SegmentsCard extends React.Component<Props, State> {
         className={'mcs-segmentCard'}
       >
         {segmentsFormatted.length > 0 &&
-          segmentsFormatted.map((segment) => {
-            return (
-              <SegmentsTag
-                key={segment.segment_id}
-                segmentId={segment.segment_id}
-              />
-            );
+          segmentsFormatted.map(segment => {
+            return <SegmentsTag key={segment.segment_id} segmentId={segment.segment_id} />;
           })}
         {segmentsFormatted.length === 0 && (
           <span>
@@ -81,18 +76,18 @@ class SegmentsCard extends React.Component<Props, State> {
         )}
         {canViewMore ? (
           !this.state.showMore ? (
-            <div className="mcs-card-footer">
+            <div className='mcs-card-footer'>
               <button
-                className="mcs-card-footer-link mcs-segmentCard_viewMoreLink"
+                className='mcs-card-footer-link mcs-segmentCard_viewMoreLink'
                 onClick={onViewMoreClick}
               >
                 <FormattedMessage {...messages.viewMore} />
               </button>
             </div>
           ) : (
-            <div className="mcs-card-footer">
+            <div className='mcs-card-footer'>
               <button
-                className="mcs-card-footer-link mcs-segmentCard_viewLessLink"
+                className='mcs-card-footer-link mcs-segmentCard_viewLessLink'
                 onClick={onViewLessClick}
               >
                 <FormattedMessage {...messages.viewLess} />.

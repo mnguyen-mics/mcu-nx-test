@@ -58,9 +58,7 @@ class EditOfferPage extends React.Component<Props, State> {
           this.setState({
             loading: false,
             offerType:
-              formData.offer.automatic_on === null
-                ? OfferType.Manual
-                : OfferType.Automatic,
+              formData.offer.automatic_on === null ? OfferType.Manual : OfferType.Automatic,
             offerFormData: formData,
           });
         })
@@ -111,11 +109,7 @@ class EditOfferPage extends React.Component<Props, State> {
     });
 
     this._serviceOfferPageService
-      .createOrUpdateServiceOffer(
-        organisationId,
-        offerFormData,
-        initialOfferFormData,
-      )
+      .createOrUpdateServiceOffer(organisationId, offerFormData, initialOfferFormData)
       .then((returnedOfferId: string) => {
         const displayOfferUrl = `/v2/o/${organisationId}/settings/services/my_offers/${returnedOfferId}/service_item_conditions`;
         this.setState({
@@ -153,7 +147,7 @@ class EditOfferPage extends React.Component<Props, State> {
         : undefined;
 
     const breadcrumbPaths = [
-      <Link key="1" to={`/v2/o/${organisationId}/settings/services/my_offers`}>
+      <Link key='1' to={`/v2/o/${organisationId}/settings/services/my_offers`}>
         {formatMessage(messages.breadcrumbTitle)}
       </Link>,
       formatMessage(messages.newOffer),
@@ -182,8 +176,4 @@ class EditOfferPage extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, {}>(
-  injectIntl,
-  withRouter,
-  injectNotifications,
-)(EditOfferPage);
+export default compose<Props, {}>(injectIntl, withRouter, injectNotifications)(EditOfferPage);

@@ -59,11 +59,7 @@ class EmailCard extends React.Component<Props, State> {
         );
       }
       if (typeof text === 'boolean') {
-        return (
-          <span>
-            {text ? <McsIcon type="check" /> : <McsIcon type="close" />}
-          </span>
-        );
+        return <span>{text ? <McsIcon type='check' /> : <McsIcon type='close' />}</span>;
       }
       return (
         <span>
@@ -78,12 +74,10 @@ class EmailCard extends React.Component<Props, State> {
       );
     };
 
-    const dataSource = selectedAgent.providers
-      ? selectedAgent.providers
-      : undefined;
+    const dataSource = selectedAgent.providers ? selectedAgent.providers : undefined;
     const columnsDefinitions: Array<DataColumnDefinition<UserEmailIdentifierProviderResource>> =
       selectedAgent.providers && selectedAgent.providers.length > 0
-        ? Object.keys(selectedAgent.providers[0]).map((key) => {
+        ? Object.keys(selectedAgent.providers[0]).map(key => {
             const upperCaseKey: any = key.toUpperCase();
             return {
               title: formatMessage(messages[upperCaseKey]),
@@ -98,65 +92,56 @@ class EmailCard extends React.Component<Props, State> {
         <Modal
           title={formatMessage(messages.titleModalEmail)}
           visible={showModal}
-          width="70%"
+          width='70%'
           onOk={this.handleClose}
           onCancel={this.handleClose}
           footer={[
-            <Button
-              key="submit"
-              type="primary"
-              size="large"
-              onClick={this.handleClose}
-            >
+            <Button key='submit' type='primary' size='large' onClick={this.handleClose}>
               <FormattedMessage {...messages.okModalEmail} />
             </Button>,
           ]}
         >
-          <Row gutter={10} className="table-line" style={{ display: 'block' }}>
-            <Col span={24} className="title">
+          <Row gutter={10} className='table-line' style={{ display: 'block' }}>
+            <Col span={24} className='title'>
               <FormattedMessage {...messages.emailInfo} />
             </Col>
             <Row>
-              <Col className="table-left" span={12}>
+              <Col className='table-left' span={12}>
                 <FormattedMessage {...messages.emailAddress} />
               </Col>
-              <Col className="table-right" span={12}>
+              <Col className='table-right' span={12}>
                 {selectedAgent.email}
               </Col>
             </Row>
             <Row>
-              <Col className="table-left" span={12}>
+              <Col className='table-left' span={12}>
                 <FormattedMessage {...messages.emailHash} />
               </Col>
-              <Col className="table-right" span={12}>
+              <Col className='table-right' span={12}>
                 {selectedAgent.hash}
               </Col>
             </Row>
             <Row>
-              <Col className="table-left" span={12}>
+              <Col className='table-left' span={12}>
                 <FormattedMessage {...messages.emailCreation} />
               </Col>
-              <Col className="table-right" span={12}>
-                {moment(selectedAgent.creation_ts).format(
-                  'YYYY-MM-DD HH:mm:ss',
-                )}
+              <Col className='table-right' span={12}>
+                {moment(selectedAgent.creation_ts).format('YYYY-MM-DD HH:mm:ss')}
               </Col>
             </Row>
             <Row>
-              <Col className="table-left" span={12}>
+              <Col className='table-left' span={12}>
                 <FormattedMessage {...messages.emailActivity} />
               </Col>
-              <Col className="table-right" span={12}>
-                {moment(selectedAgent.last_activity_ts).format(
-                  'YYYY-MM-DD HH:mm:ss',
-                )}
+              <Col className='table-right' span={12}>
+                {moment(selectedAgent.last_activity_ts).format('YYYY-MM-DD HH:mm:ss')}
               </Col>
             </Row>
           </Row>
           <Row style={{ display: 'block' }}>
             {selectedAgent.providers ? (
               <div>
-                <Col span={24} className="title">
+                <Col span={24} className='title'>
                   <FormattedMessage {...messages.emailConsent} />
                 </Col>
                 <Col span={24}>
@@ -175,7 +160,7 @@ class EmailCard extends React.Component<Props, State> {
   };
 
   initModal = (selectedAgent: UserEmailIdentifierInfo) => {
-    this.setState((prevState) => {
+    this.setState(prevState => {
       const nextState = {
         ...prevState,
         selectedAgent: {
@@ -188,7 +173,7 @@ class EmailCard extends React.Component<Props, State> {
   };
 
   handleClose = () => {
-    this.setState((prevState) => {
+    this.setState(prevState => {
       const nextState = {
         ...prevState,
       };
@@ -206,9 +191,7 @@ class EmailCard extends React.Component<Props, State> {
 
     const userAgents = dataSource || [];
     const accountsFormatted =
-      userAgents.length > 5 && !this.state.showMore
-        ? userAgents.splice(0, 5)
-        : userAgents;
+      userAgents.length > 5 && !this.state.showMore ? userAgents.splice(0, 5) : userAgents;
     const canViewMore = userAgents.length > 5 ? true : false;
 
     const handleModal = (agent: UserEmailIdentifierInfo) => () => {
@@ -227,28 +210,28 @@ class EmailCard extends React.Component<Props, State> {
       >
         {this.renderModal()}
         {accountsFormatted &&
-          accountsFormatted.map((agent) => {
+          accountsFormatted.map(agent => {
             return (
               <div key={agent.email + agent.hash}>
-                <Row gutter={10} className="table-line">
-                  <div className="mcs-icon-left">
-                    <McsIcon type="email" />
+                <Row gutter={10} className='table-line'>
+                  <div className='mcs-icon-left'>
+                    <McsIcon type='email' />
                   </div>
-                  <div className="info-right">
+                  <div className='info-right'>
                     <div>
-                      <Tooltip placement="topRight" title={agent.email}>
+                      <Tooltip placement='topRight' title={agent.email}>
                         {agent.email}
                       </Tooltip>
                     </div>
                     <div>
-                      <Tooltip placement="topRight" title={agent.hash}>
+                      <Tooltip placement='topRight' title={agent.hash}>
                         {agent.hash}
                       </Tooltip>
                     </div>
                   </div>
                 </Row>
-                <Row className="text-right" style={{ display: 'block' }}>
-                  <button className="button-sm" onClick={handleModal(agent)}>
+                <Row className='text-right' style={{ display: 'block' }}>
+                  <button className='button-sm' onClick={handleModal(agent)}>
                     <FormattedMessage {...messages.viewMore} />
                   </button>
                 </Row>
@@ -262,18 +245,18 @@ class EmailCard extends React.Component<Props, State> {
         )}
         {canViewMore ? (
           !this.state.showMore ? (
-            <div className="mcs-card-footer">
+            <div className='mcs-card-footer'>
               <button
-                className="mcs-card-footer-link mcs-emailCard_viewMoreLink"
+                className='mcs-card-footer-link mcs-emailCard_viewMoreLink'
                 onClick={handleShowMore(true)}
               >
                 <FormattedMessage {...messages.viewMore} />
               </button>
             </div>
           ) : (
-            <div className="mcs-card-footer">
+            <div className='mcs-card-footer'>
               <button
-                className="mcs-card-footer-link mcs-emailCard_viewLessLink"
+                className='mcs-card-footer-link mcs-emailCard_viewLessLink'
                 onClick={handleShowMore(false)}
               >
                 <FormattedMessage {...messages.viewLess} />

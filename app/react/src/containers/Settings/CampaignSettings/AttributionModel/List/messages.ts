@@ -40,8 +40,7 @@ export default defineMessages({
   },
   empty: {
     id: 'settings.attributionmodel.list.empty',
-    defaultMessage:
-      'There is no Attribution Models created yet! Click on New to get started',
+    defaultMessage: 'There is no Attribution Models created yet! Click on New to get started',
   },
   edit: {
     id: 'settings.attributionmodel.list.actionColumn.edit',

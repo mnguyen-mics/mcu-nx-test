@@ -32,9 +32,7 @@ interface State {
   total: number;
 }
 
-type Props = RouteComponentProps<RouterProps> &
-  InjectedIntlProps &
-  InjectedNotificationProps;
+type Props = RouteComponentProps<RouterProps> & InjectedIntlProps & InjectedNotificationProps;
 
 class MyOffersPage extends React.Component<Props, State> {
   @lazyInject(TYPES.ICatalogService)
@@ -60,14 +58,14 @@ class MyOffersPage extends React.Component<Props, State> {
     };
     this._catalogService
       .getMyOffers(options)
-      .then((myOffersResult) => {
+      .then(myOffersResult => {
         this.setState({
           loading: false,
           data: myOffersResult.data,
           total: myOffersResult.total || myOffersResult.count,
         });
       })
-      .catch((err) => {
+      .catch(err => {
         this.setState({
           loading: false,
         });
@@ -85,16 +83,14 @@ class MyOffersPage extends React.Component<Props, State> {
       intl: { formatMessage },
     } = this.props;
 
-    const dataColumnsDefinition: Array<
-      DataColumnDefinition<ServiceItemOfferResource>
-    > = [
+    const dataColumnsDefinition: Array<DataColumnDefinition<ServiceItemOfferResource>> = [
       {
         title: formatMessage(messages.name),
         key: 'name',
         isHideable: false,
         render: (text: string, record: ServiceItemOfferResource) => (
           <Link
-            className="mcs-campaigns-link"
+            className='mcs-campaigns-link'
             to={`/v2/o/${organisationId}/settings/services/my_offers/${record.id}/service_item_conditions`}
           >
             {text}
@@ -136,26 +132,17 @@ class MyOffersPage extends React.Component<Props, State> {
     };
 
     return (
-      <div className="ant-layout">
-        <Content className="mcs-content-container">
-          <Row className="mcs-table-container">
-            <Breadcrumb
-              className={'mcs-breadcrumb'}
-              separator={<McsIcon type="chevron-right" />}
-            >
+      <div className='ant-layout'>
+        <Content className='mcs-content-container'>
+          <Row className='mcs-table-container'>
+            <Breadcrumb className={'mcs-breadcrumb'} separator={<McsIcon type='chevron-right' />}>
               <Breadcrumb.Item>
                 <span style={{ lineHeight: '40px' }}>
                   <FormattedMessage {...messages.myServiceOffersTitle} />
                 </span>
-                <Link
-                  to={`/v2/o/${organisationId}/settings/services/my_offers/create`}
-                >
-                  <Button
-                    {...submitButtonProps}
-                    className="mcs-primary"
-                    style={{ float: 'right' }}
-                  >
-                    <McsIcon type="plus" />
+                <Link to={`/v2/o/${organisationId}/settings/services/my_offers/create`}>
+                  <Button {...submitButtonProps} className='mcs-primary' style={{ float: 'right' }}>
+                    <McsIcon type='plus' />
                     <FormattedMessage {...messages.myServiceOffersAddNew} />
                   </Button>
                 </Link>
@@ -177,8 +164,4 @@ class MyOffersPage extends React.Component<Props, State> {
   }
 }
 
-export default compose(
-  withRouter,
-  injectIntl,
-  injectNotifications,
-)(MyOffersPage);
+export default compose(withRouter, injectIntl, injectNotifications)(MyOffersPage);

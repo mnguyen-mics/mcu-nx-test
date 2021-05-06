@@ -14,10 +14,7 @@ import log from '../utils/Logger';
 import { injectable } from 'inversify';
 
 export interface IQueryService {
-  getQuery: (
-    datamartId: string,
-    queryId: string,
-  ) => Promise<DataResponse<QueryResource>>;
+  getQuery: (datamartId: string, queryId: string) => Promise<DataResponse<QueryResource>>;
   createQuery: (
     datamartId: string,
     query: Partial<QueryResource>,
@@ -61,35 +58,24 @@ export interface IQueryService {
     },
   ) => Promise<DataResponse<OTQLResult>>;
 
-  runSelectorQLQuery: (
-    datamartId: string,
-  ) => Promise<DataResponse<{ total: number }>>;
+  runSelectorQLQuery: (datamartId: string) => Promise<DataResponse<{ total: number }>>;
   autocompleteOtqlQuery: (
     datamartId: string,
     query: string,
     row: number,
     col: number,
   ) => Promise<AutoCompleteResource[] | undefined>;
-  checkOtqlQuery: (
-    datamartId: string,
-    query: string,
-  ) => Promise<DataResponse<ErrorQueryResource>>;
+  checkOtqlQuery: (datamartId: string, query: string) => Promise<DataResponse<ErrorQueryResource>>;
   convertJsonOtql2Otql: (
     datamartId: string,
     query: QueryResource,
   ) => Promise<DataResponse<QueryResource>>;
-  getWhereClause: (
-    datamartId: string,
-    queryId: string,
-  ) => Promise<DataResponse<string>>;
+  getWhereClause: (datamartId: string, queryId: string) => Promise<DataResponse<string>>;
 }
 
 @injectable()
 export class QueryService implements IQueryService {
-  getQuery(
-    datamartId: string,
-    queryId: string,
-  ): Promise<DataResponse<QueryResource>> {
+  getQuery(datamartId: string, queryId: string): Promise<DataResponse<QueryResource>> {
     const endpoint = `datamarts/${datamartId}/queries/${queryId}`;
     return ApiService.getRequest(endpoint);
   }
@@ -127,9 +113,7 @@ export class QueryService implements IQueryService {
 
     const headers = {
       'Content-Type': `${
-        options.content_type
-          ? options.content_type
-          : 'text/plain; charset=utf-8'
+        options.content_type ? options.content_type : 'text/plain; charset=utf-8'
       }`,
     }; // to finish
     return ApiService.postRequest(endpoint, query, options, headers);
@@ -164,9 +148,7 @@ export class QueryService implements IQueryService {
   }
 
   // TODO add query body and return type
-  runSelectorQLQuery(
-    datamartId: string,
-  ): Promise<DataResponse<{ total: number }>> {
+  runSelectorQLQuery(datamartId: string): Promise<DataResponse<{ total: number }>> {
     const endpoint = `datamarts/${datamartId}/query_executions`;
     return ApiService.postRequest(endpoint, {});
   }
@@ -178,16 +160,13 @@ export class QueryService implements IQueryService {
     col: number,
   ): Promise<AutoCompleteResource[] | undefined> {
     const endpoint = `datamarts/${datamartId}/query_autocomplete/otql`;
-    return ApiService.postRequest<DataListResponse<AutoCompleteResource>>(
-      endpoint,
-      {
-        query,
-        position: {
-          row: row,
-          col: col,
-        },
+    return ApiService.postRequest<DataListResponse<AutoCompleteResource>>(endpoint, {
+      query,
+      position: {
+        row: row,
+        col: col,
       },
-    )
+    })
       .then(res => res.data)
       .catch(() => {
         log.warn('cannot resolve autocompleters');
@@ -195,33 +174,21 @@ export class QueryService implements IQueryService {
       });
   }
 
-  checkOtqlQuery(
-    datamartId: string,
-    query: string,
-  ): Promise<DataResponse<ErrorQueryResource>> {
+  checkOtqlQuery(datamartId: string, query: string): Promise<DataResponse<ErrorQueryResource>> {
     const payload = {
       query: query,
     };
-    return ApiService.postRequest(
-      `datamarts/${datamartId}/query_check/otql`,
-      payload,
-    );
+    return ApiService.postRequest(`datamarts/${datamartId}/query_check/otql`, payload);
   }
 
   convertJsonOtql2Otql(
     datamartId: string,
     query: QueryResource,
   ): Promise<DataResponse<QueryResource>> {
-    return ApiService.postRequest(
-      `datamarts/${datamartId}/query_translations/to/otql`,
-      query,
-    );
+    return ApiService.postRequest(`datamarts/${datamartId}/query_translations/to/otql`, query);
   }
 
-  getWhereClause(
-    datamartId: string,
-    queryId: string,
-  ): Promise<DataResponse<any>> {
+  getWhereClause(datamartId: string, queryId: string): Promise<DataResponse<any>> {
     return ApiService.getRequest(
       `datamarts/${datamartId}/queries/${queryId}/object_tree_expression`,
     );

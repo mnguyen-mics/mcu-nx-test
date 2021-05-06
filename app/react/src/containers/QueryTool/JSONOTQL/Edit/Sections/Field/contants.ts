@@ -17,9 +17,7 @@ import {
   UserAgentType,
 } from '../../../../../../models/datamart/graphdb/RuntimeSchema';
 
-type defaultValue =
-  | { type: string; operator: string; values: any[] }
-  | undefined;
+type defaultValue = { type: string; operator: string; values: any[] } | undefined;
 
 export interface ComparisonValues<T> {
   values: Array<{
@@ -80,9 +78,7 @@ const comparisonOperators = {
       defaultValue: { type: 'BOOLEAN', operator: 'EQUAL', values: [] },
     };
   },
-  generateEnumComparisonOperator(
-    intl: InjectedIntl,
-  ): ComparisonValues<EnumComparisonOperator> {
+  generateEnumComparisonOperator(intl: InjectedIntl): ComparisonValues<EnumComparisonOperator> {
     return {
       values: [
         {
@@ -97,9 +93,7 @@ const comparisonOperators = {
       defaultValue: { type: 'ENUM', operator: 'EQUAL', values: [] },
     };
   },
-  generateTimeComparisonOperator(
-    intl: InjectedIntl,
-  ): ComparisonValues<TimeComparisonOperator> {
+  generateTimeComparisonOperator(intl: InjectedIntl): ComparisonValues<TimeComparisonOperator> {
     return {
       values: [
         {
@@ -126,7 +120,7 @@ const comparisonOperators = {
   generateStringComparisonOperator(
     intl: InjectedIntl,
     indexDataType: string = 'keyword',
-    isEdge: boolean = false
+    isEdge: boolean = false,
   ): ComparisonValues<StringComparisonOperator> {
     switch (indexDataType) {
       case 'text':
@@ -178,8 +172,7 @@ const comparisonOperators = {
             ],
             defaultValue: { type: 'STRING', operator: 'EQ', values: [] },
           };
-        }
-        else {
+        } else {
           return {
             values: [
               {
@@ -212,13 +205,7 @@ export const builtinEnumTypeOptions: {
   BrowserFamily: BrowserFamily[];
   UserAgentType: UserAgentType[];
 } = {
-  ActivitySource: [
-    'PIXEL_TRACKING',
-    'API',
-    'INTERNAL',
-    'SESSION_AGGREGATOR',
-    'ACTIVITY_STORE',
-  ],
+  ActivitySource: ['PIXEL_TRACKING', 'API', 'INTERNAL', 'SESSION_AGGREGATOR', 'ACTIVITY_STORE'],
   UserActivityType: [
     'ALL',
     'USER_PLATFORM',
@@ -235,23 +222,8 @@ export const builtinEnumTypeOptions: {
     'USER_SCENARIO_NODE_ENTER',
     'USER_SCENARIO_NODE_EXIT',
   ],
-  OperatingSystemFamily: [
-    'OTHER',
-    'WINDOWS',
-    'MAC_OS',
-    'LINUX',
-    'ANDROID',
-    'IOS',
-  ],
-  HashFunction: [
-    'MD2',
-    'MD5',
-    'SHA_1',
-    'SHA_256',
-    'SHA_384',
-    'SHA_512',
-    'NO_HASH',
-  ],
+  OperatingSystemFamily: ['OTHER', 'WINDOWS', 'MAC_OS', 'LINUX', 'ANDROID', 'IOS'],
+  HashFunction: ['MD2', 'MD5', 'SHA_1', 'SHA_256', 'SHA_384', 'SHA_512', 'NO_HASH'],
   FormFactor: [
     'OTHER',
     'PERSONAL_COMPUTER',

@@ -1,9 +1,5 @@
 import * as React from 'react';
-import {
-  AdGroupFormData,
-  AD_GROUP_FORM_NAME,
-  LocationFieldModel,
-} from '../../domain';
+import { AdGroupFormData, AD_GROUP_FORM_NAME, LocationFieldModel } from '../../domain';
 import { getFormValues } from 'redux-form';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
@@ -22,18 +18,21 @@ interface MapStateProps {
 type Props = MapStateProps & InjectedIntlProps;
 
 class LocationSummary extends React.Component<Props> {
-
   @lazyInject(TYPES.IGeonameService)
   private _geonameService: IGeonameService;
 
   printGeonames(geonameIds: string[] = []) {
     return geonameIds.map((id, index) => {
       const isLast = index === geonameIds.length - 1;
-      const renderMethod = (g: Geoname) => <span>{g.name}</span>
+      const renderMethod = (g: Geoname) => <span>{g.name}</span>;
       return (
         <span key={id}>
-          <ObjectRenderer id={id} fetchingMethod={this._geonameService.getGeoname} renderMethod={renderMethod} />
-          { isLast ? '' : ', ' }
+          <ObjectRenderer
+            id={id}
+            fetchingMethod={this._geonameService.getGeoname}
+            renderMethod={renderMethod}
+          />
+          {isLast ? '' : ', '}
         </span>
       );
     });
@@ -55,53 +54,53 @@ class LocationSummary extends React.Component<Props> {
     if (includedLocations.length === 0 && excludedLocations.length === 0) {
       content = (
         <FormattedMessage
-          id="display.campaign.edit.adGroup.locationSummary.noLocaton"
-          defaultMessage="Your ad group is not restricted on a particular location"
+          id='display.campaign.edit.adGroup.locationSummary.noLocaton'
+          defaultMessage='Your ad group is not restricted on a particular location'
         />
       );
     } else if (includedLocations.length > 0 && excludedLocations.length === 0) {
       content = (
         <div>
           <FormattedMessage
-            id="display.campaign.edit.adGroup.locationSummary.includeOnly"
-            defaultMessage="Your ad group is restrited to the following {locationCount, plural , one {location} other {locations} }"
+            id='display.campaign.edit.adGroup.locationSummary.includeOnly'
+            defaultMessage='Your ad group is restrited to the following {locationCount, plural , one {location} other {locations} }'
             values={{
               locationCount: includedLocations.length,
             }}
           />
-          <p className="info-color">{this.printGeonames(includedLocations)}</p>
+          <p className='info-color'>{this.printGeonames(includedLocations)}</p>
         </div>
       );
     } else if (includedLocations.length === 0 && excludedLocations.length > 0) {
       content = (
         <div>
           <FormattedMessage
-            id="display.campaign.edit.adGroup.locationSummary.excludeonly"
-            defaultMessage="Your ad group will run everywhere except on the following {locationCount, plural , one {location} other {locations} }"
+            id='display.campaign.edit.adGroup.locationSummary.excludeonly'
+            defaultMessage='Your ad group will run everywhere except on the following {locationCount, plural , one {location} other {locations} }'
             values={{
               locationCount: excludedLocations.length,
             }}
           />
-          <p className="info-color">{this.printGeonames(excludedLocations)}</p>
+          <p className='info-color'>{this.printGeonames(excludedLocations)}</p>
         </div>
       );
     } else if (includedLocations.length > 0 && excludedLocations.length > 0) {
       content = (
         <div>
           <FormattedMessage
-            id="display.campaign.edit.adGroup.locationSummary.include"
-            defaultMessage="Your ad group is restrited to the following {locationCount, plural , one {location} other {locations} }"
+            id='display.campaign.edit.adGroup.locationSummary.include'
+            defaultMessage='Your ad group is restrited to the following {locationCount, plural , one {location} other {locations} }'
             values={{
               locationCount: includedLocations.length,
             }}
           />
-          <p className="info-color">{this.printGeonames(includedLocations)}</p>
+          <p className='info-color'>{this.printGeonames(includedLocations)}</p>
           <br />
           <FormattedMessage
-            id="display.campaign.edit.adGroup.locationSummary.exclude"
-            defaultMessage="Except"
+            id='display.campaign.edit.adGroup.locationSummary.exclude'
+            defaultMessage='Except'
           />
-          <p className="info-color">{this.printGeonames(excludedLocations)}</p>
+          <p className='info-color'>{this.printGeonames(excludedLocations)}</p>
         </div>
       );
     }

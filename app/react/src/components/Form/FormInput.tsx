@@ -18,7 +18,6 @@ export interface FormInputProps extends FormFieldWrapperProps {
 }
 
 const FormInput: React.FunctionComponent<FormInputProps & WrappedFieldProps> = props => {
-
   let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
 
   if (props.meta.touched && props.meta.invalid) validateStatus = 'error';
@@ -35,11 +34,7 @@ const FormInput: React.FunctionComponent<FormInputProps & WrappedFieldProps> = p
       {...props.formItemProps}
     >
       {/* @ts-ignore */}
-      <InputComponent
-        id={props.input.name}
-        {...props.input}
-        {...props.inputProps}
-      />
+      <InputComponent id={props.input.name} {...props.input} {...props.inputProps} />
     </FormFieldWrapper>
   );
 };
@@ -47,7 +42,7 @@ const FormInput: React.FunctionComponent<FormInputProps & WrappedFieldProps> = p
 FormInput.defaultProps = {
   formItemProps: {},
   inputProps: {},
-  helpToolTipProps: {title: ''},
+  helpToolTipProps: { title: '' },
 };
 
 export default FormInput;

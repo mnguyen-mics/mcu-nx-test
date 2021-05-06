@@ -47,10 +47,7 @@ interface MapStateToProps {
   connectedUser: UserProfileResource;
 }
 
-export type AutomationSelectedType =
-  | 'REACT_TO_EVENT'
-  | 'ON_SEGMENT_ENTRY'
-  | 'ON_SEGMENT_EXIT';
+export type AutomationSelectedType = 'REACT_TO_EVENT' | 'ON_SEGMENT_ENTRY' | 'ON_SEGMENT_EXIT';
 
 interface State {
   isLoading: boolean;
@@ -93,14 +90,12 @@ class AutomationBuilderPage extends React.Component<Props, State> {
       this.setState({
         isLoading: true,
       });
-      this._automationFormService
-        .loadInitialAutomationValues(automationId)
-        .then(res => {
-          this.setState({
-            automationFormData: res,
-            isLoading: false,
-          });
+      this._automationFormService.loadInitialAutomationValues(automationId).then(res => {
+        this.setState({
+          automationFormData: res,
+          isLoading: false,
         });
+      });
     }
   }
 
@@ -133,14 +128,12 @@ class AutomationBuilderPage extends React.Component<Props, State> {
         isLoading: true,
       });
 
-      this._automationFormService
-        .loadInitialAutomationValues(automationId)
-        .then(res => {
-          this.setState({
-            automationFormData: res,
-            isLoading: false,
-          });
+      this._automationFormService.loadInitialAutomationValues(automationId).then(res => {
+        this.setState({
+          automationFormData: res,
+          isLoading: false,
         });
+      });
     }
   }
 
@@ -159,9 +152,7 @@ class AutomationBuilderPage extends React.Component<Props, State> {
     this._runtimeSchemaService
       .getRuntimeSchemas(selectedDatamart.id)
       .then(schemasResponse => {
-        const runtimeSchema = schemasResponse.data.find(
-          schema => schema.status === 'LIVE',
-        );
+        const runtimeSchema = schemasResponse.data.find(schema => schema.status === 'LIVE');
 
         if (!runtimeSchema) return;
 
@@ -169,25 +160,16 @@ class AutomationBuilderPage extends React.Component<Props, State> {
           .getObjectTypes(selectedDatamart.id, runtimeSchema.id)
           .then(({ data: objectTypes }) => {
             return reducePromises(
-              getValidObjectTypesForWizardReactToEvent(objectTypes).map(
-                validObjectType => {
-                  return this._runtimeSchemaService
-                    .getFields(
-                      selectedDatamart.id,
-                      runtimeSchema.id,
-                      validObjectType.id,
-                    )
-                    .then(({ data: fields }) => {
-                      return {
-                        objectType: validObjectType,
-                        validFields: getValidFieldsForWizardReactToEvent(
-                          validObjectType,
-                          fields,
-                        ),
-                      };
-                    });
-                },
-              ),
+              getValidObjectTypesForWizardReactToEvent(objectTypes).map(validObjectType => {
+                return this._runtimeSchemaService
+                  .getFields(selectedDatamart.id, runtimeSchema.id, validObjectType.id)
+                  .then(({ data: fields }) => {
+                    return {
+                      objectType: validObjectType,
+                      validFields: getValidFieldsForWizardReactToEvent(validObjectType, fields),
+                    };
+                  });
+              }),
             ).then(validObjectTypes => {
               /*
             Here we need to find a WizardValidObjectTypeField
@@ -200,10 +182,9 @@ class AutomationBuilderPage extends React.Component<Props, State> {
                   !!validObjectTypes.find(
                     validObjectType =>
                       validObjectType.objectType.name ===
-                      automationWizardValidObjectType.objectTypeName &&
+                        automationWizardValidObjectType.objectTypeName &&
                       !!validObjectType.validFields.find(
-                        of =>
-                          of.name === automationWizardValidObjectType.fieldName,
+                        of => of.name === automationWizardValidObjectType.fieldName,
                       ),
                   ),
               );
@@ -237,10 +218,7 @@ class AutomationBuilderPage extends React.Component<Props, State> {
 
     const { automationFormData } = this.state;
 
-    const hideSaveInProgress = message.loading(
-      intl.formatMessage(messages.savingInProgress),
-      0,
-    );
+    const hideSaveInProgress = message.loading(intl.formatMessage(messages.savingInProgress), 0);
     this.setState({
       isLoading: true,
     });
@@ -295,17 +273,12 @@ class AutomationBuilderPage extends React.Component<Props, State> {
     let selectedDatamart: DatamartResource | undefined;
 
     const orgWp = connectedUser.workspaces.find(
-      (w: UserWorkspaceResource) =>
-        w.organisation_id === this.props.match.params.organisationId,
+      (w: UserWorkspaceResource) => w.organisation_id === this.props.match.params.organisationId,
     );
 
     const datamartIdQueryString = queryString.parse(location.search).datamartId;
 
-    if (
-      orgWp !== undefined &&
-      orgWp.datamarts &&
-      orgWp.datamarts.length === 1
-    ) {
+    if (orgWp !== undefined && orgWp.datamarts && orgWp.datamarts.length === 1) {
       selectedDatamart = orgWp.datamarts[0];
     }
 
@@ -342,11 +315,11 @@ class AutomationBuilderPage extends React.Component<Props, State> {
 
     const actionBarProps: FormLayoutActionbarProps = {
       pathItems: [
-        <span className="mcs-pathItem" key='1'>
+        <span className='mcs-pathItem' key='1'>
           {intl.formatMessage(messages.automationBuilder)}
-          <MentionTag className="mcs-pathItem_mentionTag" mention='ALPHA' />
-        </span>
-      ]
+          <MentionTag className='mcs-pathItem_mentionTag' mention='ALPHA' />
+        </span>,
+      ],
     };
 
     if (!selectedDatamart) {
@@ -363,9 +336,7 @@ class AutomationBuilderPage extends React.Component<Props, State> {
       if (isCheckingReactToEventAvailable)
         return (
           <Layout>
-            <Actionbar
-              {...actionBarProps}
-            />
+            <Actionbar {...actionBarProps} />
             <Loading isFullScreen={false} />
           </Layout>
         );

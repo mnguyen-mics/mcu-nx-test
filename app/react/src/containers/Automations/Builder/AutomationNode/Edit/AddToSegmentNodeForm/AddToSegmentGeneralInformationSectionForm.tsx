@@ -3,9 +3,7 @@ import { AddToSegmentAutomationFormData } from '../domain';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import { ValidatorProps } from '../../../../../../components/Form/withValidators';
 import { compose } from 'recompose';
-import withNormalizer, {
-  NormalizerProps,
-} from '../../../../../../components/Form/withNormalizer';
+import withNormalizer, { NormalizerProps } from '../../../../../../components/Form/withNormalizer';
 import {
   withValidators,
   FormSection,
@@ -43,7 +41,7 @@ class AddToSegmentGeneralInformationFormSection extends React.Component<Props> {
         <FormSection title={messages.sectionGeneralConfigurationTitle} />
         <div>
           <FormInputField
-            name="audienceSegmentName"
+            name='audienceSegmentName'
             component={FormInput}
             validate={[isRequired]}
             formItemProps={{
@@ -51,9 +49,7 @@ class AddToSegmentGeneralInformationFormSection extends React.Component<Props> {
               required: true,
             }}
             inputProps={{
-              placeholder: formatMessage(
-                messages.audienceSegmentNamePlaceholder,
-              ),
+              placeholder: formatMessage(messages.audienceSegmentNamePlaceholder),
               disabled: !!disabled,
             }}
             helpToolTipProps={{
@@ -62,7 +58,7 @@ class AddToSegmentGeneralInformationFormSection extends React.Component<Props> {
             small={true}
           />
           <FormInputField
-            name="ttl.value"
+            name='ttl.value'
             component={FormInput}
             validate={[isValidInteger, isNotZero]}
             formItemProps={{
@@ -70,12 +66,10 @@ class AddToSegmentGeneralInformationFormSection extends React.Component<Props> {
             }}
             inputProps={{
               disabled: disabled,
-              placeholder: formatMessage(
-                messages.audienceSegmentTTLPlaceholder,
-              ),
+              placeholder: formatMessage(messages.audienceSegmentTTLPlaceholder),
               addonAfter: (
                 <FormAddonSelectField
-                  name="ttl.unit"
+                  name='ttl.unit'
                   component={AddonSelect}
                   disabled={disabled}
                   options={[
@@ -83,7 +77,8 @@ class AddToSegmentGeneralInformationFormSection extends React.Component<Props> {
                       value: 'days',
                       key: 'days',
                       title: formatMessage(messages.audienceSegmentTTLUnitDays),
-                    },{
+                    },
+                    {
                       value: 'weeks',
                       key: 'weeks',
                       title: formatMessage(messages.audienceSegmentTTLUnitWeeks),
@@ -91,9 +86,7 @@ class AddToSegmentGeneralInformationFormSection extends React.Component<Props> {
                     {
                       value: 'months',
                       key: 'months',
-                      title: formatMessage(
-                        messages.audienceSegmentTTLUnitMonths,
-                      ),
+                      title: formatMessage(messages.audienceSegmentTTLUnitMonths),
                     },
                   ]}
                 />
@@ -141,7 +134,7 @@ export const messages = defineMessages({
   audienceSegmentNameSubtitle: {
     id: 'automation.builder.node.addToSegmentForm.name.subtitle',
     defaultMessage:
-      "The segment name will help you identify it on the different screens. Make it as memorable as you want your results to be!",
+      'The segment name will help you identify it on the different screens. Make it as memorable as you want your results to be!',
   },
   audienceSegmentNamePlaceholder: {
     id: 'automation.builder.node.addToSegmentForm.name.placeholder',
@@ -153,8 +146,7 @@ export const messages = defineMessages({
   },
   audienceSegmentTTLSubtitle: {
     id: 'automation.builder.node.addToSegmentForm.ttl.subtitle',
-    defaultMessage:
-      'The time that users will be in the segment for (empty means forever).',
+    defaultMessage: 'The time that users will be in the segment for (empty means forever).',
   },
   audienceSegmentTTLPlaceholder: {
     id: 'automation.builder.node.addToSegmentForm.ttl.placeholder',

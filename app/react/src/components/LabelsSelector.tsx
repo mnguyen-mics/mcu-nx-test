@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Tag, Tooltip, Input, Button, Menu } from 'antd';
-import { MenuInfo } from '../../../../node_modules/antd/node_modules/rc-menu/lib/interface'
+import { MenuInfo } from '../../../../node_modules/antd/node_modules/rc-menu/lib/interface';
 import { FormattedMessage, defineMessages } from 'react-intl';
 import { Dropdown } from '../components/PopupContainers';
 import { Label } from '../containers/Labels/Labels';
@@ -30,10 +30,7 @@ const messages = defineMessages({
   },
 });
 
-class LabelsSelector extends React.PureComponent<
-  LabelsSelectorProps,
-  LabelsSelectorState
-> {
+class LabelsSelector extends React.PureComponent<LabelsSelectorProps, LabelsSelectorState> {
   constructor(props: LabelsSelectorProps) {
     super(props);
     this.state = {
@@ -46,18 +43,13 @@ class LabelsSelector extends React.PureComponent<
 
   handleClose = (removedLabel: Label) => {
     const labels = [
-      ...this.props.selectedLabels.filter(
-        selectedLabel => selectedLabel.id !== removedLabel.id,
-      ),
+      ...this.props.selectedLabels.filter(selectedLabel => selectedLabel.id !== removedLabel.id),
     ];
     this.props.onChange(labels);
   };
 
   showInput = () => {
-    this.setState(
-      { inputVisible: true },
-      () => this.state.input && this.state.input.focus(),
-    );
+    this.setState({ inputVisible: true }, () => this.state.input && this.state.input.focus());
   };
 
   handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,9 +57,7 @@ class LabelsSelector extends React.PureComponent<
   };
 
   handleInputConfirm = () => {
-    const selectedValue = this.props.labels.find(
-      label => label.name === this.state.inputValue,
-    );
+    const selectedValue = this.props.labels.find(label => label.name === this.state.inputValue);
     const labels = [...this.props.selectedLabels];
     if (selectedValue) {
       labels.push(selectedValue);
@@ -113,7 +103,7 @@ class LabelsSelector extends React.PureComponent<
 
     const overlayMenu = () => {
       return (
-        <Menu onClick={onClick} className="mcs-label-dropdown" style={{}}>
+        <Menu onClick={onClick} className='mcs-label-dropdown' style={{}}>
           {results.length ? (
             results.map(label => {
               return <Menu.Item key={label.id}>{label.name}</Menu.Item>;
@@ -128,16 +118,11 @@ class LabelsSelector extends React.PureComponent<
     };
 
     return (
-      <div className="mcs-labels">
+      <div className='mcs-labels'>
         {selectedLabels.map((label, index) => {
           const isLongTag = label.name.length > 20;
           const labelelem = (
-            <Tag
-              className="label"
-              key={label.id}
-              closable={true}
-              onClose={onClose(label)}
-            >
+            <Tag className='label' key={label.id} closable={true} onClose={onClose(label)}>
               {isLongTag ? `${label.name.slice(0, 20)}...` : label.name}
             </Tag>
           );
@@ -158,26 +143,22 @@ class LabelsSelector extends React.PureComponent<
           >
             <Input
               autoFocus={true}
-              id="labelInput"
+              id='labelInput'
               ref={this.saveInputRef}
-              type="text"
-              size="small"
+              type='text'
+              size='small'
               style={{ width: 100, height: '22px', padding: '2px 7px' }}
               value={inputValue}
               onChange={this.handleInputChange}
               onPressEnter={this.handleInputConfirm}
-              prefix={<McsIcon type="magnifier" />}
+              prefix={<McsIcon type='magnifier' />}
             />
           </Dropdown>
         )}
         {!inputVisible && (
-          <Button
-            size="small"
-            className="label-button"
-            onClick={this.showInput}
-          >
-            <McsIcon type="plus" />
-            <FormattedMessage {...buttonMessage || messages.labelButton} />
+          <Button size='small' className='label-button' onClick={this.showInput}>
+            <McsIcon type='plus' />
+            <FormattedMessage {...(buttonMessage || messages.labelButton)} />
           </Button>
         )}
       </div>

@@ -45,8 +45,7 @@ export default defineMessages({
   },
   exportRunningDownload: {
     id: 'exports.dashboard.actionbar.running.download',
-    defaultMessage:
-      'This export is being created, please try again when the export is succeeded.',
+    defaultMessage: 'This export is being created, please try again when the export is succeeded.',
   },
   wait: {
     id: 'exports.dashboard.actionbar.wait',
@@ -67,9 +66,7 @@ export default defineMessages({
 });
 
 const exportPropertiesMessageMap: {
-  [propertyName in
-    | keyof Export
-    | HistoryKeys]: FormattedMessage.MessageDescriptor;
+  [propertyName in keyof Export | HistoryKeys]: FormattedMessage.MessageDescriptor;
 } = defineMessages({
   id: {
     id: 'export.fields.id',

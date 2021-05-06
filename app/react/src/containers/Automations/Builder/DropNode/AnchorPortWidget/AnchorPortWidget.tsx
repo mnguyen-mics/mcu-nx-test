@@ -6,10 +6,7 @@ export interface AnchorPortWidgetProps {
   node: DropNodeModel;
 }
 
-export default class AnchorPortWidget extends React.Component<
-  AnchorPortWidgetProps,
-  any
-> {
+export default class AnchorPortWidget extends React.Component<AnchorPortWidgetProps, any> {
   public render() {
     const { node } = this.props;
     return (
@@ -21,7 +18,7 @@ export default class AnchorPortWidget extends React.Component<
             left: 10,
           }}
         >
-          <PortWidget name="center" node={node} />
+          <PortWidget name='center' node={node} />
         </div>
         <div
           style={{
@@ -30,7 +27,7 @@ export default class AnchorPortWidget extends React.Component<
             left: 40,
           }}
         >
-          <PortWidget name="right" node={node} />
+          <PortWidget name='right' node={node} />
         </div>
       </div>
     );

@@ -28,16 +28,11 @@ export default compose<any, InjectedDatamartProps>(
       } & { [key: string]: any },
     ) => {
       const { getDefaultDatamart, ...rest } = props;
-      const defaultDatamart = getDefaultDatamart(
-        rest.match.params.organisationId,
-      );
+      const defaultDatamart = getDefaultDatamart(rest.match.params.organisationId);
       if (!defaultDatamart && limiter === 0) {
         limiter = 1;
-        log.error(
-          'No datamart found for organisationId ',
-          rest.match.params.organisationId,
-        );
-      } 
+        log.error('No datamart found for organisationId ', rest.match.params.organisationId);
+      }
       return {
         datamart: defaultDatamart,
         ...rest,

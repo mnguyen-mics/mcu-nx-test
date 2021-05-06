@@ -1,14 +1,13 @@
-/* tslint:disable */ 
+/* tslint:disable */
 import * as React from 'react';
-import {createPortal} from 'react-dom';
+import { createPortal } from 'react-dom';
 
 export default class WindowBodyPortal extends React.Component<any> {
-  el = document.createElement('div')
+  el = document.createElement('div');
 
   constructor(props: any) {
     super(props);
     // this.el.setAttribute('class', 'query-builder')
-
   }
 
   componentDidMount() {
@@ -29,9 +28,6 @@ export default class WindowBodyPortal extends React.Component<any> {
 
   render() {
     this.el.focus();
-    return createPortal(
-      this.props.children,
-      this.el,
-    );
+    return createPortal(this.props.children, this.el);
   }
 }

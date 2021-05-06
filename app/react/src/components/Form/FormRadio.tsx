@@ -7,7 +7,6 @@ export interface FormRadioProps {
 }
 
 const FormCheckbox: React.SFC<RadioProps & FormRadioProps> = props => {
-
   const { title, ...otherProps } = props;
 
   return <Radio {...otherProps}>{title}</Radio>;

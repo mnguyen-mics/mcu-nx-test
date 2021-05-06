@@ -20,10 +20,7 @@ before(() => {
 // -- This is a parent command --
 Cypress.Commands.add(
   'login',
-  (
-    email = `${Cypress.env('devMail')}`,
-    password = `${Cypress.env('devPwd')}`,
-  ) => {
+  (email = `${Cypress.env('devMail')}`, password = `${Cypress.env('devPwd')}`) => {
     const loginPage = new LoginPage();
     const baseUrl = Cypress.config().baseUrl;
     // cy.server()
@@ -37,15 +34,14 @@ Cypress.Commands.add(
 
     const waitForAccessTokenInLocalStorage = () => {
       cy.wait(50).then(() => {
-        if (!localStorage.getItem('access_token'))
-          waitForAccessTokenInLocalStorage();
+        if (!localStorage.getItem('access_token')) waitForAccessTokenInLocalStorage();
       });
     };
     waitForAccessTokenInLocalStorage();
   },
 );
 
-Cypress.Commands.add('switchOrg', (organisationName) => {
+Cypress.Commands.add('switchOrg', organisationName => {
   cy.get('.mcs-button').first().trigger('mouseover');
   cy.get('.mcs-button').contains('Switch Org.').click();
   cy.get('[placeholder="Search Organisation"]').type(organisationName);
@@ -55,13 +51,13 @@ Cypress.Commands.add('switchOrg', (organisationName) => {
   cy.get('.mcs-button').first().trigger('mouseout');
 });
 
-Cypress.Commands.add('goToHome', (organisationId) => {
+Cypress.Commands.add('goToHome', organisationId => {
   cy.visit(
     `#/v2/o/${organisationId}/campaigns/display?currentPage=1&from=now-7d&pageSize=10&to=now`,
   );
 });
 
-Cypress.Commands.add('createSegmentFromUI', (type) => {
+Cypress.Commands.add('createSegmentFromUI', type => {
   // Click on "new Segment"
   cy.contains('New Segment').click();
 
@@ -69,9 +65,7 @@ Cypress.Commands.add('createSegmentFromUI', (type) => {
   cy.contains(type).click();
 
   // Fill the name of the segement
-  cy.get('[id="audienceSegment.name"]').type(
-    'Test Audience Segment Form - Test ' + type,
-  );
+  cy.get('[id="audienceSegment.name"]').type('Test Audience Segment Form - Test ' + type);
 
   // Fill the descritpion
   cy.get('[id="audienceSegment.short_description"]').type(
@@ -111,45 +105,36 @@ Cypress.Commands.add('createSegmentFromUI', (type) => {
   cy.url({ timeout: 20000 }).should('not.contain', 'create');
 });
 
-Cypress.Commands.add(
-  'fillExpertQuerySegmentForm',
-  (segmentName: string, queryText: string) => {
-    cy.contains('Save', { timeout: 5000 });
-    cy.get('input[name="audienceSegment.name"]').clear().type(segmentName);
-    cy.get('textarea[name="audienceSegment.short_description"]')
-      .clear()
-      .type(faker.random.words(6));
-    cy.contains('Advanced').click();
-    cy.get('input[name="audienceSegment.technical_name"]')
-      .clear()
-      .type(faker.random.words(2));
-    cy.get('input[name="defaultLifetime"]').clear().type('1');
-    cy.get('[id="defaultLifetimeUnit"]').click();
-    cy.contains('Days').click();
-    cy.get('[id="properties"').within(() => {
-      cy.get('[id="brace-editor"]')
-        .get('textarea[class="ace_text-input"]')
-        .type(queryText, {
-          force: true,
-          parseSpecialCharSequences: false,
-          delay: 0,
-        });
+Cypress.Commands.add('fillExpertQuerySegmentForm', (segmentName: string, queryText: string) => {
+  cy.contains('Save', { timeout: 5000 });
+  cy.get('input[name="audienceSegment.name"]').clear().type(segmentName);
+  cy.get('textarea[name="audienceSegment.short_description"]').clear().type(faker.random.words(6));
+  cy.contains('Advanced').click();
+  cy.get('input[name="audienceSegment.technical_name"]').clear().type(faker.random.words(2));
+  cy.get('input[name="defaultLifetime"]').clear().type('1');
+  cy.get('[id="defaultLifetimeUnit"]').click();
+  cy.contains('Days').click();
+  cy.get('[id="properties"').within(() => {
+    cy.get('[id="brace-editor"]').get('textarea[class="ace_text-input"]').type(queryText, {
+      force: true,
+      parseSpecialCharSequences: false,
+      delay: 0,
     });
-  },
-);
+  });
+});
 
 // Storing local storage cache between tests
 // https://blog.liplex.de/keep-local-storage-in-cypress/
 const LOCAL_STORAGE_MEMORY: { [key: string]: any } = {};
 
 Cypress.Commands.add('saveLocalStorageCache', () => {
-  Object.keys(localStorage).forEach((key) => {
+  Object.keys(localStorage).forEach(key => {
     LOCAL_STORAGE_MEMORY[key] = localStorage[key];
   });
 });
 
 Cypress.Commands.add('restoreLocalStorageCache', () => {
-  Object.keys(LOCAL_STORAGE_MEMORY).forEach((key) => {
+  Object.keys(LOCAL_STORAGE_MEMORY).forEach(key => {
     localStorage.setItem(key, LOCAL_STORAGE_MEMORY[key]);
   });
 });
@@ -162,19 +147,13 @@ Cypress.Commands.add('initTestContext', () => {
   const datamartName: string = faker.random.words(3);
   const organisationName: string = faker.random.words(3);
   // api Identification
-  cy.request(
-    'POST',
-    `${Cypress.env('apiDomain')}/v1/authentication/refresh_tokens`,
-    {
-      email: `${Cypress.env('devMail')}`,
-      password: `${Cypress.env('devPwd')}`,
-    },
-  ).then((refreshTokenResponse) => {
-    cy.request(
-      'POST',
-      `${Cypress.env('apiDomain')}/v1/authentication/access_tokens`,
-      { refresh_token: `${refreshTokenResponse.body.data.refresh_token}` },
-    ).then((accessTokenResponse) => {
+  cy.request('POST', `${Cypress.env('apiDomain')}/v1/authentication/refresh_tokens`, {
+    email: `${Cypress.env('devMail')}`,
+    password: `${Cypress.env('devPwd')}`,
+  }).then(refreshTokenResponse => {
+    cy.request('POST', `${Cypress.env('apiDomain')}/v1/authentication/access_tokens`, {
+      refresh_token: `${refreshTokenResponse.body.data.refresh_token}`,
+    }).then(accessTokenResponse => {
       accessToken = accessTokenResponse.body.data.access_token;
       // organisation creation
       cy.request({
@@ -190,7 +169,7 @@ Cypress.Commands.add('initTestContext', () => {
           }`,
           market_id: '1',
         },
-      }).then((orgResponse) => {
+      }).then(orgResponse => {
         organisationId = orgResponse.body.data.id;
         // datamart creation
         cy.request({
@@ -205,16 +184,14 @@ Cypress.Commands.add('initTestContext', () => {
             type: 'DATAMART',
             datafarm: 'DF_EU_DEV',
           },
-        }).then((datamartResponse) => {
+        }).then(datamartResponse => {
           datamartId = datamartResponse.body.data.id;
           // schema publication
           cy.request({
-            url: `${Cypress.env(
-              'apiDomain',
-            )}/v1/datamarts/${datamartId}/graphdb_runtime_schemas`,
+            url: `${Cypress.env('apiDomain')}/v1/datamarts/${datamartId}/graphdb_runtime_schemas`,
             method: 'GET',
             headers: { Authorization: accessToken },
-          }).then((schemaResponse) => {
+          }).then(schemaResponse => {
             schemaId = schemaResponse.body.data[0].id;
             cy.request({
               url: `${Cypress.env(
@@ -322,10 +299,7 @@ Cypress.Commands.add('initTestContext', () => {
                   method: 'POST',
                   headers: { Authorization: accessToken },
                 }).then(() => {
-                  if (
-                    Cypress.env('apiDomain') ===
-                    'https://api.mediarithmics.local'
-                  ) {
+                  if (Cypress.env('apiDomain') === 'https://api.mediarithmics.local') {
                     cy.exec(
                       `curl -k -H "Authorization: ${accessToken}" -H Content-Type: application/json -X POST ${Cypress.env(
                         'apiDomain',
@@ -346,9 +320,7 @@ Cypress.Commands.add('initTestContext', () => {
                       });
                   } else if (Cypress.env('userName') !== '') {
                     cy.exec(
-                      `ssh -o StrictHostKeyChecking=no -l ${Cypress.env(
-                        'userName',
-                      )} ${Cypress.env(
+                      `ssh -o StrictHostKeyChecking=no -l ${Cypress.env('userName')} ${Cypress.env(
                         'virtualPlatformName',
                       )}.mics-sandbox.com 'curl -k -H "Authorization: ${accessToken}" -H "Content-Type: application/json" -X POST https://10.0.1.3:8493/v1/datamarts/${datamartId}/graphdb_runtime_schemas/${schemaId}/publication -H "Host: admin-api.mediarithmics.local:8493"'`,
                     )
@@ -415,18 +387,15 @@ Cypress.Commands.add(
       body: {
         type: 'SITE',
         name: `${
-          Math.random().toString(36).substring(2, 10) +
-          Math.random().toString(36).substring(2, 10)
+          Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10)
         }`,
         domain: 'test.com',
       },
-    }).then((siteResponse) => {
+    }).then(siteResponse => {
       siteId = siteResponse.body.data.id;
       // User Scenario creation
       cy.request({
-        url: `${Cypress.env(
-          'apiDomain',
-        )}/v1/scenarios?organisation_id=${organisationId}`,
+        url: `${Cypress.env('apiDomain')}/v1/scenarios?organisation_id=${organisationId}`,
         method: 'POST',
         headers: { Authorization: accessToken },
         body: {
@@ -434,7 +403,7 @@ Cypress.Commands.add(
           name: 'React To Event for test Automation e2e',
           status: 'ACTIVE',
         },
-      }).then((scenarioCreationResponse) => {
+      }).then(scenarioCreationResponse => {
         scenarioId = scenarioCreationResponse.body.data.id;
         // Query for user scenario creation
         cy.request({
@@ -450,13 +419,11 @@ Cypress.Commands.add(
               '{"from":"UserPoint","operations":[{"directives":[],"selections":[{"name":"id"}]}],"where":{"boolean_operator":"AND","field":"activity_events","type":"OBJECT","expressions":[{"type":"FIELD","field":"nature","comparison":{"type":"STRING","operator":"EQ","values":["$basket_view"]}}]}}',
             query_language: 'JSON_OTQL',
           },
-        }).then((queryResponse) => {
+        }).then(queryResponse => {
           queryId = queryResponse.body.data.id;
           // Add ENTRY node
           cy.request({
-            url: `${Cypress.env(
-              'apiDomain',
-            )}/v1/scenarios/${scenarioId}/storyline/nodes`,
+            url: `${Cypress.env('apiDomain')}/v1/scenarios/${scenarioId}/storyline/nodes`,
             method: 'POST',
             headers: { Authorization: accessToken },
             body: {
@@ -466,13 +433,11 @@ Cypress.Commands.add(
               evaluation_mode: 'LIVE',
               ui_creation_mode: 'REACT_TO_EVENT_ADVANCED',
             },
-          }).then((entryNodeResponse) => {
+          }).then(entryNodeResponse => {
             entryNodeId = entryNodeResponse.body.data.id;
             // Add IF node
             cy.request({
-              url: `${Cypress.env(
-                'apiDomain',
-              )}/v1/scenarios/${scenarioId}/storyline/nodes`,
+              url: `${Cypress.env('apiDomain')}/v1/scenarios/${scenarioId}/storyline/nodes`,
               method: 'POST',
               headers: { Authorization: accessToken },
               body: {
@@ -480,12 +445,10 @@ Cypress.Commands.add(
                 query_id: `${queryId}`,
                 type: 'IF_NODE',
               },
-            }).then((entryNodeResponse) => {
+            }).then(entryNodeResponse => {
               ifNodeId = entryNodeResponse.body.data.id;
               cy.request({
-                url: `${Cypress.env(
-                  'apiDomain',
-                )}/v1/scenarios/${scenarioId}/storyline/nodes`,
+                url: `${Cypress.env('apiDomain')}/v1/scenarios/${scenarioId}/storyline/nodes`,
                 method: 'POST',
                 headers: { Authorization: accessToken },
                 body: {
@@ -493,35 +456,25 @@ Cypress.Commands.add(
                   delay_period: 'PT1H',
                   time_window_start: 'T9',
                   time_window_end: 'T18',
-                  day_window: [
-                    'TUESDAY',
-                    'WEDNESDAY',
-                    'THURSDAY',
-                    'FRIDAY',
-                    'SATURDAY',
-                  ],
+                  day_window: ['TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'],
                   type: 'WAIT_NODE',
                 },
-              }).then((waitNodeResponse) => {
+              }).then(waitNodeResponse => {
                 waitNodeId = waitNodeResponse.body.data.id;
                 // Add END node
                 cy.request({
-                  url: `${Cypress.env(
-                    'apiDomain',
-                  )}/v1/scenarios/${scenarioId}/storyline/nodes`,
+                  url: `${Cypress.env('apiDomain')}/v1/scenarios/${scenarioId}/storyline/nodes`,
                   method: 'POST',
                   headers: { Authorization: accessToken },
                   body: {
                     scenario_id: `${scenarioId}`,
                     type: 'END_NODE',
                   },
-                }).then((endNodeResponse) => {
+                }).then(endNodeResponse => {
                   endNodeId = endNodeResponse.body.data.id;
                   // Add EDGE between the ENTRY and IF nodes
                   cy.request({
-                    url: `${Cypress.env(
-                      'apiDomain',
-                    )}/v1/scenarios/${scenarioId}/storyline/edges`,
+                    url: `${Cypress.env('apiDomain')}/v1/scenarios/${scenarioId}/storyline/edges`,
                     method: 'POST',
                     headers: { Authorization: accessToken },
                     body: {
@@ -533,9 +486,7 @@ Cypress.Commands.add(
                   });
                   // Add EDGE between the WAIT and END nodes
                   cy.request({
-                    url: `${Cypress.env(
-                      'apiDomain',
-                    )}/v1/scenarios/${scenarioId}/storyline/edges`,
+                    url: `${Cypress.env('apiDomain')}/v1/scenarios/${scenarioId}/storyline/edges`,
                     method: 'POST',
                     headers: { Authorization: accessToken },
                     body: {
@@ -547,9 +498,7 @@ Cypress.Commands.add(
                   });
                   // Add EDGE between the WAIT and END nodes
                   cy.request({
-                    url: `${Cypress.env(
-                      'apiDomain',
-                    )}/v1/scenarios/${scenarioId}/storyline/edges`,
+                    url: `${Cypress.env('apiDomain')}/v1/scenarios/${scenarioId}/storyline/edges`,
                     method: 'POST',
                     headers: { Authorization: accessToken },
                     body: {
@@ -561,9 +510,7 @@ Cypress.Commands.add(
                   });
                   // Add EDGE between IF and END nodes
                   cy.request({
-                    url: `${Cypress.env(
-                      'apiDomain',
-                    )}/v1/scenarios/${scenarioId}/storyline/edges`,
+                    url: `${Cypress.env('apiDomain')}/v1/scenarios/${scenarioId}/storyline/edges`,
                     method: 'POST',
                     headers: { Authorization: accessToken },
                     body: {
@@ -575,9 +522,7 @@ Cypress.Commands.add(
                   });
                   // Add EDGE between IF and WAIT nodes
                   cy.request({
-                    url: `${Cypress.env(
-                      'apiDomain',
-                    )}/v1/scenarios/${scenarioId}/storyline/edges`,
+                    url: `${Cypress.env('apiDomain')}/v1/scenarios/${scenarioId}/storyline/edges`,
                     method: 'POST',
                     headers: { Authorization: accessToken },
                     body: {
@@ -594,9 +539,8 @@ Cypress.Commands.add(
                     )}/v1/datamarts/${datamartId}/compartments?default=true`,
                     method: 'GET',
                     headers: { Authorization: accessToken },
-                  }).then((compartmentsResponse) => {
-                    compartmentId =
-                      compartmentsResponse.body.data[0].compartment_id;
+                  }).then(compartmentsResponse => {
+                    compartmentId = compartmentsResponse.body.data[0].compartment_id;
                     // Post a User Point Id
                     cy.request({
                       url: `${Cypress.env(

@@ -23,9 +23,7 @@ interface State {
   creativeFormData: Partial<DisplayCreativeFormData>;
 }
 
-type Props = DisplayCreativeCreatorProps &
-  InjectedIntlProps &
-  InjectedNotificationProps;
+type Props = DisplayCreativeCreatorProps & InjectedIntlProps & InjectedNotificationProps;
 
 class DisplayCreativeCreator extends React.Component<Props, State> {
   @lazyInject(TYPES.IDisplayCreativeFormService)
@@ -93,10 +91,7 @@ class DisplayCreativeCreator extends React.Component<Props, State> {
 
     if (!Object.keys(initialValues).length) {
       return (
-        <DisplayCreativeRendererSelector
-          onSelect={this.loadFormData}
-          close={this.props.close}
-        />
+        <DisplayCreativeRendererSelector onSelect={this.loadFormData} close={this.props.close} />
       );
     }
 

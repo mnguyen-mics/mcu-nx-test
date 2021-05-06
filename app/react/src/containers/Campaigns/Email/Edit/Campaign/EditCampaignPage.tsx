@@ -29,7 +29,6 @@ type Props = InjectedIntlProps &
   RouteComponentProps<EditEmailCampaignRouteMatchParam, StaticContext, { from?: string }>;
 
 class EditCampaignPage extends React.Component<Props, State> {
-
   @lazyInject(TYPES.IEmailCampaignFormService)
   private _emailCampaignFormService: IEmailCampaignFormService;
 
@@ -42,10 +41,15 @@ class EditCampaignPage extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { match: { params: { campaignId } } } = this.props;
+    const {
+      match: {
+        params: { campaignId },
+      },
+    } = this.props;
 
     if (campaignId) {
-      this._emailCampaignFormService.loadCampaign(campaignId)
+      this._emailCampaignFormService
+        .loadCampaign(campaignId)
         .then(formData => {
           this.setState({
             loading: false,
@@ -70,7 +74,9 @@ class EditCampaignPage extends React.Component<Props, State> {
     const {
       history,
       location,
-      match: { params: { campaignId, organisationId } },
+      match: {
+        params: { campaignId, organisationId },
+      },
     } = this.props;
 
     const defaultRedirectUrl = campaignId
@@ -84,7 +90,9 @@ class EditCampaignPage extends React.Component<Props, State> {
 
   save = (campaignFormData: EmailCampaignFormData) => {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       intl: { formatMessage },
       notifyError,
       history,
@@ -92,20 +100,14 @@ class EditCampaignPage extends React.Component<Props, State> {
 
     const { campaignFormData: initialCampaignFormData } = this.state;
 
-    const hideSaveInProgress = message.loading(
-      formatMessage(messages.savingInProgress),
-      0,
-    );
+    const hideSaveInProgress = message.loading(formatMessage(messages.savingInProgress), 0);
 
     this.setState({
       loading: true,
     });
 
-    return this._emailCampaignFormService.saveCampaign(
-      organisationId,
-      campaignFormData,
-      initialCampaignFormData,
-    )
+    return this._emailCampaignFormService
+      .saveCampaign(organisationId, campaignFormData, initialCampaignFormData)
       .then(campaignId => {
         hideSaveInProgress();
         const emailCampaignDashboardUrl = `/v2/o/${organisationId}/campaigns/email/${campaignId}`;
@@ -127,7 +129,9 @@ class EditCampaignPage extends React.Component<Props, State> {
 
   render() {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       intl: { formatMessage },
     } = this.props;
 
@@ -140,12 +144,12 @@ class EditCampaignPage extends React.Component<Props, State> {
     const campaignName =
       campaignFormData.campaign && campaignFormData.campaign.name
         ? formatMessage(messages.emailEditorBreadcrumbEditCampaignTitle, {
-          campaignName: campaignFormData.campaign.name,
-        })
+            campaignName: campaignFormData.campaign.name,
+          })
         : formatMessage(messages.emailEditorBreadcrumbNewCampaignTitle);
 
     const breadcrumbPaths = [
-      <Link key="1" to={`/v2/o/${organisationId}/campaigns/email`}>
+      <Link key='1' to={`/v2/o/${organisationId}/campaigns/email`}>
         {formatMessage(messages.emailEditorBreadcrumbTitle1)}
       </Link>,
       campaignName,
@@ -163,6 +167,4 @@ class EditCampaignPage extends React.Component<Props, State> {
   }
 }
 
-export default compose(injectIntl, withRouter, injectNotifications)(
-  EditCampaignPage,
-);
+export default compose(injectIntl, withRouter, injectNotifications)(EditCampaignPage);

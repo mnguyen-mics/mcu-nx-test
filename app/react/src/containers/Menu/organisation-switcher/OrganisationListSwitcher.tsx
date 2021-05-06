@@ -23,14 +23,9 @@ export interface StoreProps {
 
 const maxOrgOrCommunity = 6;
 
-type Props = StoreProps &
-  InjectedIntlProps &
-  RouteComponentProps<{ organisationId: string }>;
+type Props = StoreProps & InjectedIntlProps & RouteComponentProps<{ organisationId: string }>;
 
-class OrganizationListSwitcher extends React.Component<
-  Props,
-  OrganizationListSwitcherState
-> {
+class OrganizationListSwitcher extends React.Component<Props, OrganizationListSwitcherState> {
   constructor(props: Props) {
     super(props);
 
@@ -74,20 +69,19 @@ class OrganizationListSwitcher extends React.Component<
           )
         }
         trigger={['click']}
-        placement="bottomRight"
+        placement='bottomRight'
         onVisibleChange={this.handleVisibleChange}
       >
-
-        <div className="mcs-organisationListSwitcher_component">
-          <ApartmentOutlined className="mcs-orgnisationListSwitcher_icon" />
-          <div className="mcs-organisationListSwitcher_currentOrg_box">
-            <div className="mcs-organisationListSwitcher_currentOrg">
-              <p className="mcs-organisationListSwitcher_orgName">
+        <div className='mcs-organisationListSwitcher_component'>
+          <ApartmentOutlined className='mcs-orgnisationListSwitcher_icon' />
+          <div className='mcs-organisationListSwitcher_currentOrg_box'>
+            <div className='mcs-organisationListSwitcher_currentOrg'>
+              <p className='mcs-organisationListSwitcher_orgName'>
                 {currentWorkspace.organisation_name}
               </p>
             </div>
-            <div className="mcs-organisationListSwitcher_downlogo">
-              <McsIcon type={"chevron"} />
+            <div className='mcs-organisationListSwitcher_downlogo'>
+              <McsIcon type={'chevron'} />
             </div>
           </div>
         </div>

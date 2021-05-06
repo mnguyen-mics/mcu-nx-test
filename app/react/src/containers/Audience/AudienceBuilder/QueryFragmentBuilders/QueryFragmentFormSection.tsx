@@ -1,10 +1,5 @@
 import * as React from 'react';
-import {
-  WrappedFieldArrayProps,
-  FieldArray,
-  GenericFieldArray,
-  Field,
-} from 'redux-form';
+import { WrappedFieldArrayProps, FieldArray, GenericFieldArray, Field } from 'redux-form';
 import { Button } from 'antd';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
@@ -17,12 +12,8 @@ import {
 import AudienceFeatureFormSection, {
   AudienceFeatureFormSectionProps,
 } from './AudienceFeatureFormSection';
-import injectDrawer, {
-  InjectedDrawerProps,
-} from '../../../../components/Drawer/injectDrawer';
-import AudienceFeatureSelector, {
-  AudienceFeatureSelectorProps,
-} from './AudienceFeatureSelector';
+import injectDrawer, { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
+import AudienceFeatureSelector, { AudienceFeatureSelectorProps } from './AudienceFeatureSelector';
 import { AudienceFeatureResource } from '../../../../models/audienceFeature';
 import { ObjectLikeTypeInfoResource } from '../../../../models/datamart/graphdb/RuntimeSchema';
 import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
@@ -76,9 +67,9 @@ class QueryFragmentFormSection extends React.Component<Props, State> {
 
   renderQueryBuilderButtons = () => {
     return (
-      <div className="mcs-audienceBuilder_queryButtons">
+      <div className='mcs-audienceBuilder_queryButtons'>
         <Button
-          className="mcs-audienceBuilder_narrowWithButton"
+          className='mcs-audienceBuilder_narrowWithButton'
           onClick={this.addGroupExpression(false)}
         >
           Narrow with
@@ -87,7 +78,7 @@ class QueryFragmentFormSection extends React.Component<Props, State> {
         - or -
         <br />
         <Button
-          className="mcs-audienceBuilder_excludeButton"
+          className='mcs-audienceBuilder_excludeButton'
           onClick={this.addGroupExpression(true)}
         >
           Exclude
@@ -96,14 +87,12 @@ class QueryFragmentFormSection extends React.Component<Props, State> {
     );
   };
 
-  addAudienceFeature = (index: number) => (
-    audienceFeatures: AudienceFeatureResource[],
-  ) => {
+  addAudienceFeature = (index: number) => (audienceFeatures: AudienceFeatureResource[]) => {
     const { formChange, fields, closeNextDrawer } = this.props;
 
     const parameters: { [key: string]: string[] | undefined } = {};
     if (audienceFeatures[0]) {
-      audienceFeatures[0].variables?.forEach((v) => {
+      audienceFeatures[0].variables?.forEach(v => {
         parameters[v.field_name] = undefined;
       });
       const newFeature: AudienceBuilderParametricPredicateNode = {
@@ -124,9 +113,7 @@ class QueryFragmentFormSection extends React.Component<Props, State> {
       });
 
       this.setState({
-        audienceFeatures: this.state.audienceFeatures?.concat(
-          audienceFeatures[0],
-        ),
+        audienceFeatures: this.state.audienceFeatures?.concat(audienceFeatures[0]),
       });
 
       formChange('where.expressions', newFields);
@@ -135,29 +122,18 @@ class QueryFragmentFormSection extends React.Component<Props, State> {
   };
 
   addFeature = (index: number) => () => {
-    const {
-      openNextDrawer,
-      datamartId,
-      demographicsFeaturesIds,
-      hasFeature,
-    } = this.props;
+    const { openNextDrawer, datamartId, demographicsFeaturesIds, hasFeature } = this.props;
 
     const props: AudienceFeatureSelectorProps = {
       datamartId: datamartId,
       close: this.props.closeNextDrawer,
       save: this.addAudienceFeature(index),
-      demographicIds:
-        demographicsFeaturesIds.length >= 1
-          ? demographicsFeaturesIds
-          : undefined,
+      demographicIds: demographicsFeaturesIds.length >= 1 ? demographicsFeaturesIds : undefined,
     };
     hasFeature('new-audienceFeatureSelector')
-      ? openNextDrawer<NewAudienceFeatureSelectorProps>(
-          NewAudienceFeatureSelector,
-          {
-            additionalProps: props,
-          },
-        )
+      ? openNextDrawer<NewAudienceFeatureSelectorProps>(NewAudienceFeatureSelector, {
+          additionalProps: props,
+        })
       : openNextDrawer<AudienceFeatureSelectorProps>(AudienceFeatureSelector, {
           additionalProps: props,
         });
@@ -184,7 +160,7 @@ class QueryFragmentFormSection extends React.Component<Props, State> {
           return (
             <React.Fragment key={`${index}_${fields.length}`}>
               {index !== 0 && (
-                <div className="mcs-audienceBuilder_queryButtons">
+                <div className='mcs-audienceBuilder_queryButtons'>
                   {fields.get(index).negation
                     ? intl.formatMessage(messages.excludingWith)
                     : intl.formatMessage(messages.narrowingWith)}
@@ -199,11 +175,8 @@ class QueryFragmentFormSection extends React.Component<Props, State> {
                 }
                 buttons={
                   index !== 0 && (
-                    <Button
-                      className="mcs-audienceBuilder_closeButton"
-                      onClick={handleRemove}
-                    >
-                      <McsIcon type="close" />
+                    <Button className='mcs-audienceBuilder_closeButton' onClick={handleRemove}>
+                      <McsIcon type='close' />
                     </Button>
                   )
                 }
@@ -215,15 +188,13 @@ class QueryFragmentFormSection extends React.Component<Props, State> {
                   objectTypes={objectTypes}
                   audienceFeatures={audienceFeatures}
                   formChange={formChange}
-                  isDemographicsSection={
-                    index === 0 && demographicsFeaturesIds.length >= 1
-                  }
+                  isDemographicsSection={index === 0 && demographicsFeaturesIds.length >= 1}
                 />
                 {(index !== 0 || demographicsFeaturesIds.length === 0) && (
-                  <div className="mcs-audienceBuilder_categoryCardFooter">
+                  <div className='mcs-audienceBuilder_categoryCardFooter'>
                     <Button
                       onClick={this.addFeature(index)}
-                      className="mcs-audienceBuilder_moreButton"
+                      className='mcs-audienceBuilder_moreButton'
                     >
                       {intl.formatMessage(messages.addAudienceFeature)}
                     </Button>

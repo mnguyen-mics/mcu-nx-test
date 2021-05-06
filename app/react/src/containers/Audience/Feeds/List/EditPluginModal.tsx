@@ -55,7 +55,8 @@ const messages = defineMessages({
   },
   feedModalNameFieldTitleWarning: {
     id: 'audience.segment.feed.list.create.nameField.title.warning',
-    defaultMessage: "Warning: This name is only used in the platform, it won't be visible on the external system.",
+    defaultMessage:
+      "Warning: This name is only used in the platform, it won't be visible on the external system.",
   },
 
   feedModalNameFieldPlaceholder: {
@@ -72,12 +73,8 @@ class EditPluginModal extends React.Component<Props, State> {
     feedType: AudienceFeedType,
   ) => (segmentId: string) => IAudienceSegmentFeedService;
 
-  private _audienceExternalFeedServiceFactory: (
-    segmentId: string,
-  ) => IAudienceSegmentFeedService;
-  private _audienceTagFeedServiceFactory: (
-    segmentId: string,
-  ) => IAudienceSegmentFeedService;
+  private _audienceExternalFeedServiceFactory: (segmentId: string) => IAudienceSegmentFeedService;
+  private _audienceTagFeedServiceFactory: (segmentId: string) => IAudienceSegmentFeedService;
 
   @lazyInject(TYPES.IPluginService)
   private _pluginService: IPluginService;
@@ -93,15 +90,11 @@ class EditPluginModal extends React.Component<Props, State> {
     this._audienceExternalFeedServiceFactory = this._audienceSegmentFeedServiceFactory(
       'EXTERNAL_FEED',
     );
-    this._audienceTagFeedServiceFactory = this._audienceSegmentFeedServiceFactory(
-      'TAG_FEED',
-    );
+    this._audienceTagFeedServiceFactory = this._audienceSegmentFeedServiceFactory('TAG_FEED');
 
     this.feedService =
       props.feed.type === 'EXTERNAL_FEED'
-        ? this._audienceExternalFeedServiceFactory(
-          props.feed.audience_segment_id,
-        )
+        ? this._audienceExternalFeedServiceFactory(props.feed.audience_segment_id)
         : this._audienceTagFeedServiceFactory(props.feed.audience_segment_id);
   }
 
@@ -111,14 +104,11 @@ class EditPluginModal extends React.Component<Props, State> {
         isLoading: true,
       },
       () => {
-        Promise.all([
-          this.getPluginLayout(),
-          this.getProperties(),
-          this.getInitialValues(),
-        ]).then(() =>
-          this.setState({
-            isLoading: false,
-          }),
+        Promise.all([this.getPluginLayout(), this.getProperties(), this.getInitialValues()]).then(
+          () =>
+            this.setState({
+              isLoading: false,
+            }),
         );
       },
     );
@@ -187,26 +177,14 @@ class EditPluginModal extends React.Component<Props, State> {
     const { notifyError, feed, onClose, onChange } = this.props;
 
     this.setState({ isLoading: true });
-    const {
-      type,
-      version_value,
-      version_id,
-      status,
-      ...newPluginInstance
-    } = pluginInstance;
+    const { type, version_value, version_id, status, ...newPluginInstance } = pluginInstance;
 
     return this.feedService
       .updatePluginInstance(
         pluginInstance.id,
         name ? { ...newPluginInstance, name: name } : newPluginInstance,
       )
-      .then(() =>
-        this.updatePropertiesValue(
-          properties,
-          feed.organisation_id,
-          pluginInstance.id,
-        ),
-      )
+      .then(() => this.updatePropertiesValue(properties, feed.organisation_id, pluginInstance.id))
       .then(() => {
         onChange();
         onClose();
@@ -227,12 +205,7 @@ class EditPluginModal extends React.Component<Props, State> {
     const propertiesPromises: Array<Promise<any>> = [];
     properties.forEach(item => {
       propertiesPromises.push(
-        updatePromise(
-          organisationId,
-          pluginInstanceId,
-          item.technical_name,
-          item,
-        ),
+        updatePromise(organisationId, pluginInstanceId, item.technical_name, item),
       );
     });
     return Promise.all(propertiesPromises);
@@ -276,11 +249,13 @@ class EditPluginModal extends React.Component<Props, State> {
         selectedTab={modalTab}
         nameField={{
           label: formatMessage(messages.feedModalNameFieldLabel),
-          title: <div>
-            {formatMessage(messages.feedModalNameFieldTitle)}
-            <br />
-            <b>{formatMessage(messages.feedModalNameFieldTitleWarning)}</b>
-          </div>,
+          title: (
+            <div>
+              {formatMessage(messages.feedModalNameFieldTitle)}
+              <br />
+              <b>{formatMessage(messages.feedModalNameFieldTitleWarning)}</b>
+            </div>
+          ),
           placeholder: formatMessage(messages.feedModalNameFieldPlaceholder),
           display: true,
           disabled: feed.status === 'ACTIVE' || feed.status === 'PUBLISHED',

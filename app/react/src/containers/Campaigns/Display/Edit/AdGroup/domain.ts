@@ -1,23 +1,23 @@
 import { AdGroupResource } from './../../../../../models/campaign/display/AdGroupResource';
-import {
-  FieldArrayModel,
-  FieldArrayModelWithMeta,
-} from '../../../../../utils/FormHelper';
+import { FieldArrayModel, FieldArrayModelWithMeta } from '../../../../../utils/FormHelper';
 import {
   AudienceSegmentSelectionResource,
   AudienceSegmentSelectionCreateRequest,
 } from '../../../../../models/audiencesegment';
-import {
-  AdResource,
-  AdCreateRequest,
-} from '../../../../../models/campaign/display/AdResource';
+import { AdResource, AdCreateRequest } from '../../../../../models/campaign/display/AdResource';
 import {
   LocationSelectionResource,
   LocationSelectionCreateRequest,
 } from '../AdGroup/sections/Location/domain';
 import { DisplayCreativeFormData } from '../../../../Creative/DisplayAds/Edit/domain';
-import { AdExchangeSelectionResource, AdExchangeSelectionCreateRequest } from '../../../../../models/adexchange/adexchange';
-import { DisplayNetworkSelectionResource, DisplayNetworkSelectionCreateRequest } from '../../../../../models/displayNetworks/displayNetworks';
+import {
+  AdExchangeSelectionResource,
+  AdExchangeSelectionCreateRequest,
+} from '../../../../../models/adexchange/adexchange';
+import {
+  DisplayNetworkSelectionResource,
+  DisplayNetworkSelectionCreateRequest,
+} from '../../../../../models/displayNetworks/displayNetworks';
 
 export const AD_GROUP_FORM_NAME = 'adGroupForm';
 
@@ -27,10 +27,7 @@ export interface EditAdGroupRouteMatchParam {
   adGroupId?: string;
 }
 
-export type AdModelShape =
-  | AdResource
-  | AdCreateRequest
-  | DisplayCreativeFormData;
+export type AdModelShape = AdResource | AdCreateRequest | DisplayCreativeFormData;
 
 export type AdFieldModel = FieldArrayModel<AdModelShape>;
 
@@ -51,25 +48,22 @@ export type DisplayNetworkSelectionShape =
   | DisplayNetworkSelectionResource
   | DisplayNetworkSelectionCreateRequest;
 
-export type AdExchangeFieldModel = FieldArrayModel<
-  AdExchangeSelectionShape
+export type AdExchangeFieldModel = FieldArrayModel<AdExchangeSelectionShape>;
+
+export type DisplayNetworkFieldModel = FieldArrayModel<DisplayNetworkSelectionShape>;
+
+export type InventoryCatalFieldsModel = FieldArrayModel<
+  | {
+      type: 'AD_EXCHANGE';
+      data: AdExchangeSelectionCreateRequest | AdExchangeSelectionResource;
+    }
+  | {
+      type: 'DISPLAY_NETWORK';
+      data: DisplayNetworkSelectionCreateRequest | DisplayNetworkSelectionResource;
+    }
 >;
 
-export type DisplayNetworkFieldModel = FieldArrayModel<
-  DisplayNetworkSelectionShape
->;
-
-export type InventoryCatalFieldsModel = FieldArrayModel<{
-  type: 'AD_EXCHANGE'
-  data: AdExchangeSelectionCreateRequest | AdExchangeSelectionResource
-} | {
-  type: 'DISPLAY_NETWORK'
-  data: DisplayNetworkSelectionCreateRequest | DisplayNetworkSelectionResource
-}>
-
-export type LocationSelectionShape =
-  | LocationSelectionResource
-  | LocationSelectionCreateRequest;
+export type LocationSelectionShape = LocationSelectionResource | LocationSelectionCreateRequest;
 
 export type LocationFieldModel = FieldArrayModel<LocationSelectionShape>;
 
@@ -114,22 +108,16 @@ const operationMap = {
     propertyValue - propertyValue * percentValue * 0.01,
 };
 
-const operation = (chosenOperation: operationType,
-  propertyValue: number,
-  targetValue: number,
-) => {
+const operation = (chosenOperation: operationType, propertyValue: number, targetValue: number) => {
   return operationMap[chosenOperation](propertyValue, targetValue);
 };
 
 export default operation;
 
-
 ///////////////////////////
 // PREDEFINED TYPE GUARD //
 ///////////////////////////
-export function isDisplayCreativeFormData(
-  model: AdModelShape,
-): model is DisplayCreativeFormData {
+export function isDisplayCreativeFormData(model: AdModelShape): model is DisplayCreativeFormData {
   return (
     (model as DisplayCreativeFormData).creative !== undefined &&
     (model as DisplayCreativeFormData).properties !== undefined
@@ -137,10 +125,7 @@ export function isDisplayCreativeFormData(
 }
 
 export function isAdResource(model: AdModelShape): model is AdResource {
-  return (
-    (model as AdResource).id !== undefined &&
-    (model as AdResource).creative_id !== undefined
-  );
+  return (model as AdResource).id !== undefined && (model as AdResource).creative_id !== undefined;
 }
 
 export function isAudienceSegmentSelectionResource(
@@ -166,5 +151,3 @@ export function isDisplayNetworkSelectionResource(
 ): model is DisplayNetworkSelectionResource {
   return (model as DisplayNetworkSelectionResource).id !== undefined;
 }
-
-

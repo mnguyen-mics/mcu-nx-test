@@ -19,9 +19,7 @@ export interface AudienceFeatureFolderProps {
     id: string,
     name: string,
   ) => Promise<DataResponse<AudienceFeatureFolderResource> | void>;
-  deleteFolder: (
-    id: string,
-  ) => void;
+  deleteFolder: (id: string) => void;
 }
 
 type Props = AudienceFeatureFolderProps & InjectedIntlProps;
@@ -63,15 +61,11 @@ class AudienceFeatureFolder extends React.Component<Props, State> {
       };
       return (
         <Menu>
-          <Menu.Item key="0">
-            <div onClick={displayForm}>
-              {intl.formatMessage(messages.audienceFeatureRename)}
-            </div>
+          <Menu.Item key='0'>
+            <div onClick={displayForm}>{intl.formatMessage(messages.audienceFeatureRename)}</div>
           </Menu.Item>
-          <Menu.Item key="1">
-            <div onClick={onDelete}>
-              {intl.formatMessage(messages.audienceFeatureDelete)}
-            </div>
+          <Menu.Item key='1'>
+            <div onClick={onDelete}>{intl.formatMessage(messages.audienceFeatureDelete)}</div>
           </Menu.Item>
         </Menu>
       );
@@ -83,7 +77,7 @@ class AudienceFeatureFolder extends React.Component<Props, State> {
     const { renameFolder } = this.props;
     const { inputValue } = this.state;
     if (id) {
-      return renameFolder(id, inputValue).then((_) => this.cancelEdition());
+      return renameFolder(id, inputValue).then(_ => this.cancelEdition());
     } else {
       return;
     }
@@ -99,28 +93,23 @@ class AudienceFeatureFolder extends React.Component<Props, State> {
     const { folder, onSelectFolder, intl } = this.props;
     const { editionMode, inputValue } = this.state;
     return (
-      <Row
-        key={folder.id ? folder.id : 'root_key'}
-        className="mcs-audienceFeatureSettings_folder"
-      >
+      <Row key={folder.id ? folder.id : 'root_key'} className='mcs-audienceFeatureSettings_folder'>
         <Col span={2}>
           <div onClick={onSelectFolder(folder.id)}>
-            <FolderOutlined className="menu-icon" />
+            <FolderOutlined className='menu-icon' />
           </div>
         </Col>
         <Col span={21}>
           {editionMode ? (
-            <div className="mcs-audienceFeatureSettings-folderForm">
+            <div className='mcs-audienceFeatureSettings-folderForm'>
               <Input
                 value={inputValue}
                 onChange={this.handleInputChange}
-                className="mcs-audienceFeatureSettings-folderInput"
-                placeholder={intl.formatMessage(
-                  messages.audienceFeaturePlaceholderFolderInput,
-                )}
+                className='mcs-audienceFeatureSettings-folderInput'
+                placeholder={intl.formatMessage(messages.audienceFeaturePlaceholderFolderInput)}
               />
 
-              <Button type="primary" onClick={this.renameFolder(folder.id)}>
+              <Button type='primary' onClick={this.renameFolder(folder.id)}>
                 <FormattedMessage {...messages.audienceFeatureRename} />
               </Button>
 
@@ -134,7 +123,7 @@ class AudienceFeatureFolder extends React.Component<Props, State> {
         </Col>
         <Col span={1}>
           <Dropdown overlay={this.getMenu(folder.id)} trigger={['click']}>
-            <McsIcon type="chevron" />
+            <McsIcon type='chevron' />
           </Dropdown>
         </Col>
       </Row>
@@ -142,6 +131,4 @@ class AudienceFeatureFolder extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, AudienceFeatureFolderProps>(injectIntl)(
-  AudienceFeatureFolder,
-);
+export default compose<Props, AudienceFeatureFolderProps>(injectIntl)(AudienceFeatureFolder);

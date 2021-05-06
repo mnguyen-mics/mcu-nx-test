@@ -8,7 +8,7 @@ import { compose } from 'recompose';
 import { FormLayoutActionbarProps } from '../../../../components/Layout/FormLayoutActionbar';
 import { DisplayCampaignSubType } from '../../../../models/campaign/constants';
 
-const { Content } = Layout
+const { Content } = Layout;
 
 export interface DisplayCampaignSelectorProps {
   onSelect: (e: DisplayCampaignSubType) => void;
@@ -17,54 +17,48 @@ export interface DisplayCampaignSelectorProps {
 
 type Props = DisplayCampaignSelectorProps & InjectedIntlProps;
 
-
 const messages = defineMessages({
   displayCampaignTypePickerTitle: {
     id: 'display.campaign.edit.select.title',
-    defaultMessage: 'Select Your Campaign Type'
+    defaultMessage: 'Select Your Campaign Type',
   },
   displayCampaignTypePickerSubTitle: {
     id: 'display.campaign.edit.select.subtitle',
-    defaultMessage: 'Select your campaign type, if you don\'t know which type you should use, please contact your representative.'
+    defaultMessage:
+      "Select your campaign type, if you don't know which type you should use, please contact your representative.",
   },
   programmaticType: {
     id: 'display.campaign.edit.select.programmatic',
-    defaultMessage: 'Programmatic'
+    defaultMessage: 'Programmatic',
   },
   adServingType: {
     id: 'display.campaign.edit.select.adserving',
-    defaultMessage: 'Ad Serving'
+    defaultMessage: 'Ad Serving',
   },
   displayTypeOr: {
     id: 'display.campaign.edit.select.or',
-    defaultMessage: 'Or'
+    defaultMessage: 'Or',
   },
   displayTypeAdvanced: {
     id: 'display.campaign.edit.select.advanced',
-    defaultMessage: 'Advanced'
+    defaultMessage: 'Advanced',
   },
   trackingType: {
     id: 'display.campaign.edit.select.tracking',
-    defaultMessage: 'Tracking'
+    defaultMessage: 'Tracking',
   },
   campaignSelectionBreadcrumb: {
     id: 'display.campaign.edit.select.breadcrumb',
-    defaultMessage: 'New Campaign'
-  }
-})
+    defaultMessage: 'New Campaign',
+  },
+});
 
-
-class DisplayCampaignSelector extends React.Component<
-  Props
-> {
+class DisplayCampaignSelector extends React.Component<Props> {
   public render() {
-
     const {
-      intl: {
-        formatMessage
-      },
+      intl: { formatMessage },
       onSelect,
-      close
+      close,
     } = this.props;
 
     const onTypeSelect = (campaignType: DisplayCampaignSubType) => () => {
@@ -74,39 +68,36 @@ class DisplayCampaignSelector extends React.Component<
     const actionBarProps: FormLayoutActionbarProps = {
       formId: 'typePickerForm',
       onClose: close,
-      pathItems: [ formatMessage(messages.campaignSelectionBreadcrumb) ],
+      pathItems: [formatMessage(messages.campaignSelectionBreadcrumb)],
     };
-
 
     return (
       <Layout>
-        <div className="edit-layout ant-layout">
+        <div className='edit-layout ant-layout'>
           <FormLayoutActionbar {...actionBarProps} />
           <Layout>
-            <Content className="mcs-content-container mcs-form-container text-center">
-              <FormTitle
-                title={messages.displayCampaignTypePickerTitle}
-              />
+            <Content className='mcs-content-container mcs-form-container text-center'>
+              <FormTitle title={messages.displayCampaignTypePickerTitle} />
 
-              <Row className="mcs-selector_container">
-                <Row className="menu">
-                  <div className="presentation">
+              <Row className='mcs-selector_container'>
+                <Row className='menu'>
+                  <div className='presentation'>
                     <MenuPresentational
                       title={formatMessage(messages.programmaticType)}
-                      type="image"
+                      type='image'
                       select={onTypeSelect('PROGRAMMATIC')}
                     />
-                    <div className="separator">
+                    <div className='separator'>
                       <FormattedMessage {...messages.displayTypeOr} />
                     </div>
                     <MenuPresentational
                       title={formatMessage(messages.adServingType)}
-                      type="code"
+                      type='code'
                       select={onTypeSelect('AD_SERVING')}
                     />
                   </div>
                 </Row>
-                { /* to be uncommented when this feature is available */ }
+                {/* to be uncommented when this feature is available */}
                 {/* <Row className="intermediate-title">
                   <FormattedMessage {...messages.displayTypeAdvanced} />
                 </Row>
@@ -125,6 +116,4 @@ class DisplayCampaignSelector extends React.Component<
   }
 }
 
-export default compose<Props, DisplayCampaignSelectorProps>(
-  injectIntl
-)(DisplayCampaignSelector)
+export default compose<Props, DisplayCampaignSelectorProps>(injectIntl)(DisplayCampaignSelector);

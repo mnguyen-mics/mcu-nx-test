@@ -5,11 +5,27 @@
 */
 
 export function shadeColor(color: string, percent: number) {
-  // tslint:disable-next-line
- const f=parseInt(color.slice(1),16), t=percent<0?0:255, p=percent<0 ? percent*-1 : percent, R=f>>16,G=f>>8&0x00FF,B=f&0x0000FF;
- return "#"+(0x1000000+(Math.round((t-R)*p)+R)*0x10000+(Math.round((t-G)*p)+G)*0x100+(Math.round((t-B)*p)+B)).toString(16).slice(1);
+  const f = parseInt(color.slice(1), 16),
+    t = percent < 0 ? 0 : 255,
+    p = percent < 0 ? percent * -1 : percent,
+    // tslint:disable-next-line
+    R = f >> 16,
+    // tslint:disable-next-line
+    G = (f >> 8) & 0x00ff,
+    // tslint:disable-next-line
+    B = f & 0x0000ff;
+  return (
+    '#' +
+    (
+      0x1000000 +
+      (Math.round((t - R) * p) + R) * 0x10000 +
+      (Math.round((t - G) * p) + G) * 0x100 +
+      (Math.round((t - B) * p) + B)
+    )
+      .toString(16)
+      .slice(1)
+  );
 }
-
 
 export interface ColorPalletteOption {
   paletteCount: number;
@@ -23,7 +39,7 @@ export function getColorPalettes(url: string, options: ColorPalletteOption) {
   const { paletteCount = 3, paletteType = 'average' } = options;
 
   const imageElement = new Image();
-  imageElement.crossOrigin = "Anonymous";
+  imageElement.crossOrigin = 'Anonymous';
   imageElement.src = `${url}?${Date.now()}`;
 
   // const pluginElement = document.getElementsByClassName(plugin.id)
@@ -34,25 +50,19 @@ export function getColorPalettes(url: string, options: ColorPalletteOption) {
       imageElement.addEventListener('load', () => {
         const canvas = document.createElement('canvas');
         const canvasContext = canvas.getContext && canvas.getContext('2d');
-  
+
         if (!canvasContext) return [0, 0, 0, 1];
-  
+
         const imageWidth = (canvas.width =
-          imageElement.naturalWidth ||
-          imageElement.offsetWidth ||
-          imageElement.width);
-  
+          imageElement.naturalWidth || imageElement.offsetWidth || imageElement.width);
+
         const imageHeight = (canvas.height =
-          imageElement.naturalHeight ||
-          imageElement.offsetHeight ||
-          imageElement.height);
-  
+          imageElement.naturalHeight || imageElement.offsetHeight || imageElement.height);
+
         canvasContext.drawImage(imageElement, 0, 0);
-  
+
         if (paletteType === 'average') {
-          return resolve(
-            getAveragePalette(imageWidth, imageHeight, canvasContext),
-          );
+          return resolve(getAveragePalette(imageWidth, imageHeight, canvasContext));
         } else {
           return resolve(
             getDominantPalettes(
@@ -62,11 +72,9 @@ export function getColorPalettes(url: string, options: ColorPalletteOption) {
           );
         }
       });
+    } catch (e) {
+      reject(e);
     }
-    catch(e) {
-      reject(e)
-    }
-   
   });
 }
 
@@ -116,21 +124,17 @@ function getAveragePalette(
   }
 }
 
-function getAllPalettes(
-  width: number,
-  height: number,
-  context: CanvasRenderingContext2D,
-) {
+function getAllPalettes(width: number, height: number, context: CanvasRenderingContext2D) {
   const distinctPalettes = [];
 
   try {
     const imgData = context.getImageData(0, 0, height, width).data;
 
     for (let i = 0; i <= width * height; i += 4) {
-        const pixelData = imgData.slice(i, i + 4)
-        if (pixelData.toString().trim() !== '0,0,0,0') {
-          distinctPalettes.push(pixelData);
-        }
+      const pixelData = imgData.slice(i, i + 4);
+      if (pixelData.toString().trim() !== '0,0,0,0') {
+        distinctPalettes.push(pixelData);
+      }
     }
   } catch (e) {
     return [];
@@ -139,19 +143,16 @@ function getAllPalettes(
   return distinctPalettes;
 }
 
-function getDominantPalettes(
-  allPalettes: Uint8ClampedArray[],
-  distinctCount: number,
-) {
+function getDominantPalettes(allPalettes: Uint8ClampedArray[], distinctCount: number) {
   const combinations = getPaletteOccurrences(allPalettes);
   const palettes = combinations[0];
   const occurrences = combinations[1];
   const dominantPalettes = [];
 
   // Handle the case were the palette detection don't return anything
-  if(allPalettes.length === 0) {
-    for(let i = 0; i < distinctCount; i++) {
-      dominantPalettes.push([10,50,84,255]);
+  if (allPalettes.length === 0) {
+    for (let i = 0; i < distinctCount; i++) {
+      dominantPalettes.push([10, 50, 84, 255]);
     }
     return dominantPalettes;
   }
@@ -193,14 +194,11 @@ function getPaletteOccurrences(palettes: Uint8ClampedArray[]) {
   return [paletteList, occurrenceList];
 }
 
-
 /*
   Usage: pass value for red green and blue between 0 and 255 and the function will return a value between 0 and 260.
   if the value is between 0 and 130 the color is dark else it is light
 */
 
 export function getPerceivedBrightness(red: number, green: number, blue: number) {
-  return Math.sqrt(
-    red * red * 0.241 + green * green * 0.691 + blue * blue * 0.068,
-  );
+  return Math.sqrt(red * red * 0.241 + green * green * 0.691 + blue * blue * 0.068);
 }

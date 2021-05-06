@@ -2,12 +2,7 @@ import * as React from 'react';
 import { Layout, Alert } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
-import {
-  FormattedMessage,
-  injectIntl,
-  InjectedIntlProps,
-  defineMessages,
-} from 'react-intl';
+import { FormattedMessage, injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { makeCancelable, CancelablePromise } from '../../../utils/ApiHelper';
 import { ContentHeader } from '@mediarithmics-private/mcs-components-library';
 import { GraphQLResult } from '../../../models/datamart/graphdb/OTQLResult';
@@ -84,23 +79,18 @@ class GraphQLConsoleContainer extends React.Component<Props, State> {
     }
   }
 
-  fetchObjectTypes = (
-    datamartId: string,
-  ): Promise<ObjectLikeTypeInfoResource[]> => {
+  fetchObjectTypes = (datamartId: string): Promise<ObjectLikeTypeInfoResource[]> => {
     this.setState({ schemaLoading: true });
-    return this._runtimeSchemaService.getRuntimeSchemas(datamartId).then(
-      schemaRes => {
-        const liveSchema = schemaRes.data.find(s => s.status === 'LIVE');
-        if (!liveSchema) return [];
-        return this._runtimeSchemaService.getObjectTypeInfoResources(
-          datamartId,
-          liveSchema.id,
-        ).then(r => {
+    return this._runtimeSchemaService.getRuntimeSchemas(datamartId).then(schemaRes => {
+      const liveSchema = schemaRes.data.find(s => s.status === 'LIVE');
+      if (!liveSchema) return [];
+      return this._runtimeSchemaService
+        .getObjectTypeInfoResources(datamartId, liveSchema.id)
+        .then(r => {
           this.setState({ rawSchema: r, schemaLoading: false });
           return r;
         });
-      },
-    );
+    });
   };
 
   runQuery = (otqlQuery: string) => {
@@ -111,9 +101,7 @@ class GraphQLConsoleContainer extends React.Component<Props, State> {
       queryAborted: false,
       queryResult: null,
     });
-    this.asyncQuery = makeCancelable(
-      this._queryService.runGraphQLQuery(datamartId, otqlQuery),
-    );
+    this.asyncQuery = makeCancelable(this._queryService.runGraphQLQuery(datamartId, otqlQuery));
     this.asyncQuery.promise
       .then(result => {
         this.setState({ runningQuery: false, queryResult: result.data });
@@ -152,7 +140,7 @@ class GraphQLConsoleContainer extends React.Component<Props, State> {
 
     const errorMsg = error && (
       <Alert
-        message="Error"
+        message='Error'
         style={{ marginBottom: 40 }}
         description={
           error.error_id ? (
@@ -165,21 +153,15 @@ class GraphQLConsoleContainer extends React.Component<Props, State> {
             intl.formatMessage(messages.queryErrorDefaultMsg)
           )
         }
-        type="error"
+        type='error'
         showIcon={true}
         closable={true}
         onClose={this.dismissError}
       />
     );
 
-    const queryResultRenderer: React.ReactNode = (runningQuery ||
-      queryAborted ||
-      queryResult) && (
-      <GraphQLResultRenderer
-        loading={runningQuery}
-        result={queryResult}
-        aborted={queryAborted}
-      />
+    const queryResultRenderer: React.ReactNode = (runningQuery || queryAborted || queryResult) && (
+      <GraphQLResultRenderer loading={runningQuery} result={queryResult} aborted={queryAborted} />
     );
 
     const onChange = (q: string) => this.setState({ query: q });
@@ -189,12 +171,12 @@ class GraphQLConsoleContainer extends React.Component<Props, State> {
         {this.props.renderActionBar(this.state.query, datamartId)}
         <Layout>
           <Layout>
-            <Content className="mcs-content-container">
+            <Content className='mcs-content-container'>
               <ContentHeader
                 title={
                   <FormattedMessage
-                    id="queryTool.query-tool-page-title"
-                    defaultMessage="Query Tool"
+                    id='queryTool.query-tool-page-title'
+                    defaultMessage='Query Tool'
                   />
                 }
               />
@@ -211,7 +193,7 @@ class GraphQLConsoleContainer extends React.Component<Props, State> {
             </Content>
           </Layout>
           <Sider width={schemaVizOpen ? 250 : 0}>
-            <div className="schema-visualizer">
+            <div className='schema-visualizer'>
               <SchemaVizualizer
                 schema={
                   rawSchema

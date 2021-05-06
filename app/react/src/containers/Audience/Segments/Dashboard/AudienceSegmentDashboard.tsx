@@ -8,12 +8,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import UserListImportCard from './UserListImportCard';
-import {
-  InjectedIntlProps,
-  injectIntl,
-  defineMessages,
-  InjectedIntl,
-} from 'react-intl';
+import { InjectedIntlProps, injectIntl, defineMessages, InjectedIntl } from 'react-intl';
 import AudienceCounters from './AudienceCounters';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import ReportService, { Filter } from '../../../../services/ReportService';
@@ -26,11 +21,7 @@ import {
   SearchSetting,
   buildDefaultSearch,
 } from '../../../../utils/LocationSearchHelper';
-import {
-  SEGMENT_QUERY_SETTINGS,
-  AudienceReport,
-  AudienceReportData,
-} from './constants';
+import { SEGMENT_QUERY_SETTINGS, AudienceReport, AudienceReportData } from './constants';
 import FeedCardList from './Feeds/FeedCardList';
 import { DatamartWithMetricResource } from '../../../../models/datamart/DatamartResource';
 import AudienceSegmentExportsCard from './AudienceSegmentExportsCard';
@@ -47,7 +38,7 @@ import {
   ecommerceEngagementConfig,
   averageSessionDurationConfig,
 } from '../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
-import {Alert} from "antd";
+import { Alert } from 'antd';
 
 interface State {
   loading: boolean;
@@ -96,7 +87,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
       segment,
       datamarts,
       history,
-      hasFeature
+      hasFeature,
     } = this.props;
     if (
       !isSearchValid(search, this.getSearchSetting()) &&
@@ -107,13 +98,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
         search: buildDefaultSearch(search, this.getSearchSetting()),
       });
     }
-    this.fetchDashboardView(
-      search,
-      organisationId,
-      segmentId,
-      datamarts,
-      segment,
-    );
+    this.fetchDashboardView(search, organisationId, segmentId, datamarts, segment);
   }
 
   componentDidUpdate(previousProps: Props) {
@@ -140,13 +125,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
       segmentId !== previousSegmentId ||
       segment !== prevSegment
     ) {
-      this.fetchDashboardView(
-        search,
-        organisationId,
-        segmentId,
-        datamarts,
-        segment,
-      );
+      this.fetchDashboardView(search, organisationId, segmentId, datamarts, segment);
       if (segment && segment.datamart_id) {
         this.setState({
           datamartAnalyticsDashboardConfig: this.getDatamartAnaylicsDashboardConfig(
@@ -171,11 +150,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
     segment?: AudienceSegmentShape,
   ) => {
     const nextFilters = parseSearch(search, SEGMENT_QUERY_SETTINGS);
-    const metrics: string[] = [
-      'user_points',
-      'user_point_additions',
-      'user_point_deletions',
-    ];
+    const metrics: string[] = ['user_points', 'user_point_additions', 'user_point_deletions'];
     let additionalMetrics;
 
     if (datamarts && segment) {
@@ -201,7 +176,11 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
     );
   };
 
-  fetchDashboardChartView = (organisationId: string, selectedDatamartId: string, segmentId: string) => {
+  fetchDashboardChartView = (
+    organisationId: string,
+    selectedDatamartId: string,
+    segmentId: string,
+  ) => {
     this._dashboardService
       .getSegmentDashboards(organisationId, selectedDatamartId, segmentId)
       .then(d => {
@@ -232,9 +211,9 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
       this.setState({
         dashboard: {
           isLoading: false,
-          reports: normalizeReportView<AudienceReportData>(
-            res.data.report_view,
-          ).filter(r => r.user_points !== undefined || r.user_points !== null),
+          reports: normalizeReportView<AudienceReportData>(res.data.report_view).filter(
+            r => r.user_points !== undefined || r.user_points !== null,
+          ),
         },
       }),
     );
@@ -268,10 +247,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
       items.push({
         title: intl.formatMessage(messages.additionDeletion),
         display: (
-          <AdditionDeletion
-            isFetching={dashboard.isLoading}
-            dataSource={dashboard.reports}
-          />
+          <AdditionDeletion isFetching={dashboard.isLoading} dataSource={dashboard.reports} />
         ),
       });
     }
@@ -283,12 +259,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
       if (segment.type === 'USER_LIST') {
         items.push({
           title: intl.formatMessage(messages.imports),
-          display: (
-            <UserListImportCard
-              datamartId={segment.datamart_id}
-              segmentId={segment.id}
-            />
-          ),
+          display: <UserListImportCard datamartId={segment.datamart_id} segmentId={segment.id} />,
         });
       }
       if (
@@ -299,10 +270,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
         items.push({
           title: intl.formatMessage(messages.exports),
           display: (
-            <AudienceSegmentExportsCard
-              datamartId={segment.datamart_id}
-              segmentId={segment.id}
-            />
+            <AudienceSegmentExportsCard datamartId={segment.datamart_id} segmentId={segment.id} />
           ),
         });
       }
@@ -346,8 +314,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
         }
       : undefined;
 
-    const datamart =
-      segment && datamarts.find(d => d.id === segment.datamart_id);
+    const datamart = segment && datamarts.find(d => d.id === segment.datamart_id);
 
     const shouldDisplayAnalyticsFeature =
       charts.length === 0 &&
@@ -359,16 +326,14 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
 
     return (
       <div>
-        {segment && segment.paused &&
-            <Alert
-                className="m-b-20"
-                message={intl.formatMessage(messages.pausedSegment)}
-                type="warning"
-            />
-        }
-        {segment && (
-          <AudienceCounters datamarts={datamarts} segment={segment} />
+        {segment && segment.paused && (
+          <Alert
+            className='m-b-20'
+            message={intl.formatMessage(messages.pausedSegment)}
+            type='warning'
+          />
         )}
+        {segment && <AudienceCounters datamarts={datamarts} segment={segment} />}
         {charts.map(c => (
           <DashboardWrapper
             key={c.id}
@@ -378,9 +343,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
             source={segment}
           />
         ))}
-        {charts.length ? (
-          <ContentHeader size="medium" title="Technical Information" />
-        ) : null}
+        {charts.length ? <ContentHeader size='medium' title='Technical Information' /> : null}
         <Card>
           <McsTabs items={this.buildItems()} />
         </Card>
@@ -437,6 +400,7 @@ const messages = defineMessages({
   },
   pausedSegment: {
     id: 'audience-segment-dashboard-warning-paused-segment',
-    defaultMessage: 'Warning: This segment has been paused and is no longer refreshed (statistics, user insertions and deletions won\'t be computed).',
+    defaultMessage:
+      "Warning: This segment has been paused and is no longer refreshed (statistics, user insertions and deletions won't be computed).",
   },
 });

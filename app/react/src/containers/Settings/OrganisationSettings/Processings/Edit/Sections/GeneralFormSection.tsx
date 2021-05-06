@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
-import withValidators, {
-  ValidatorProps,
-} from '../../../../../../components/Form/withValidators';
+import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
 import { compose } from 'recompose';
 import {
   FormSection,
@@ -18,7 +16,9 @@ import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { EditProcessingRouteMatchParams } from '../ProcessingEditPage';
 import { RouteComponentProps, withRouter } from 'react-router';
 
-type Props = InjectedIntlProps & ValidatorProps & RouteComponentProps<EditProcessingRouteMatchParams>;
+type Props = InjectedIntlProps &
+  ValidatorProps &
+  RouteComponentProps<EditProcessingRouteMatchParams>;
 
 interface State {
   displayAdvancedSection: boolean;
@@ -48,7 +48,7 @@ class GeneralFormSection extends React.Component<Props, State> {
 
     const tokenField = processingId ? (
       <FormAlertInputField
-        name="token"
+        name='token'
         component={FormAlertInput}
         formItemProps={{
           label: formatMessage(messages.generalSectionTokenLabel),
@@ -61,13 +61,11 @@ class GeneralFormSection extends React.Component<Props, State> {
         helpToolTipProps={{
           title: formatMessage(messages.generalSectionTokenTooltip),
         }}
-        iconType="warning"
-        type="warning"
+        iconType='warning'
+        type='warning'
         message={formatMessage(messages.warningOnTokenEdition)}
       />
-    ) : (
-      undefined
-    );
+    ) : undefined;
 
     return (
       <div>
@@ -76,7 +74,7 @@ class GeneralFormSection extends React.Component<Props, State> {
           subtitle={messages.generalSectionSubTitle}
         />
         <FormInputField
-          name="name"
+          name='name'
           component={FormInput}
           validate={[isRequired]}
           formItemProps={{
@@ -91,7 +89,7 @@ class GeneralFormSection extends React.Component<Props, State> {
           }}
         />
         <FormTextAreaField
-          name="purpose"
+          name='purpose'
           component={FormTextArea}
           validate={[isRequired]}
           formItemProps={{
@@ -99,9 +97,7 @@ class GeneralFormSection extends React.Component<Props, State> {
             required: true,
           }}
           inputProps={{
-            placeholder: formatMessage(
-              messages.generalSectionPurposePlaceholder,
-            ),
+            placeholder: formatMessage(messages.generalSectionPurposePlaceholder),
           }}
           helpToolTipProps={{
             title: formatMessage(messages.generalSectionPurposeTooltip),
@@ -109,37 +105,27 @@ class GeneralFormSection extends React.Component<Props, State> {
         />
         <div>
           <Button
-            className="optional-section-title  clickable-on-hover"
+            className='optional-section-title  clickable-on-hover'
             onClick={this.toggleAdvancedSection}
           >
-            <McsIcon type="settings" />
-            <span className="step-title">
+            <McsIcon type='settings' />
+            <span className='step-title'>
               {formatMessage(messages.generalSectionAdvancedPartTitle)}
             </span>
-            <McsIcon type="chevron" />
+            <McsIcon type='chevron' />
           </Button>
-          <div
-            className={
-              displayAdvancedSection
-                ? 'optional-section-content'
-                : 'hide-section'
-            }
-          >
+          <div className={displayAdvancedSection ? 'optional-section-content' : 'hide-section'}>
             <FormInputField
-              name="technical_name"
+              name='technical_name'
               component={FormInput}
               formItemProps={{
                 label: formatMessage(messages.generalSectionTechnicalNameLabel),
               }}
               inputProps={{
-                placeholder: formatMessage(
-                  messages.generalSectionTechnicalNamePlaceholder,
-                ),
+                placeholder: formatMessage(messages.generalSectionTechnicalNamePlaceholder),
               }}
               helpToolTipProps={{
-                title: formatMessage(
-                  messages.generalSectionTechnicalNameTooltip,
-                ),
+                title: formatMessage(messages.generalSectionTechnicalNameTooltip),
               }}
             />
             {tokenField}
@@ -150,8 +136,4 @@ class GeneralFormSection extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, {}>(
-  withRouter,
-  injectIntl,
-  withValidators,
-)(GeneralFormSection);
+export default compose<Props, {}>(withRouter, injectIntl, withValidators)(GeneralFormSection);

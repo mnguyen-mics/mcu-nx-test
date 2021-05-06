@@ -4,20 +4,11 @@ import { DiagramEngine, PortWidget } from 'storm-react-diagrams';
 import AutomationNodeModel from './AutomationNodeModel';
 import { WindowBodyPortal } from '../../../../components';
 import { ROOT_NODE_POSITION } from '../../../QueryTool/JSONOTQL/domain';
-import {
-  injectIntl,
-  FormattedMessage,
-  defineMessages,
-  InjectedIntlProps,
-} from 'react-intl';
+import { injectIntl, FormattedMessage, defineMessages, InjectedIntlProps } from 'react-intl';
 import { injectDrawer } from '../../../../components/Drawer';
 import { compose } from 'recompose';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
-import {
-  TreeNodeOperations,
-  generateNodeProperties,
-  StorylineNodeModel,
-} from '../domain';
+import { TreeNodeOperations, generateNodeProperties, StorylineNodeModel } from '../domain';
 import { Tooltip } from 'antd';
 import {
   isScenarioNodeShape,
@@ -151,14 +142,9 @@ class AutomationNodeWidget extends React.Component<Props, State> {
                 this.setState({ nodeName: undefined });
               });
           } else {
-            const scenarioNodes = Object.values(
-              diagramEngine.diagramModel.nodes,
-            )
-              .filter((nodeModel) => nodeModel.type === 'automation-node')
-              .map(
-                (nodeModel: AutomationNodeModel) =>
-                  nodeModel.storylineNodeModel,
-              );
+            const scenarioNodes = Object.values(diagramEngine.diagramModel.nodes)
+              .filter(nodeModel => nodeModel.type === 'automation-node')
+              .map((nodeModel: AutomationNodeModel) => nodeModel.storylineNodeModel);
             const nodeName = this.findSegmentNameFromAddToSegmentNode(
               nodeShape.formData.segmentId,
               scenarioNodes,
@@ -172,19 +158,13 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     }
   }
 
-  findSegmentNameFromAddToSegmentNode = (
-    id: string,
-    storylineNodeModels: StorylineNodeModel[],
-  ) => {
+  findSegmentNameFromAddToSegmentNode = (id: string, storylineNodeModels: StorylineNodeModel[]) => {
     const addToSegmentStoryLine = storylineNodeModels.find(
-      (storylineNode) =>
+      storylineNode =>
         isAddToSegmentNode(storylineNode.node) &&
         id === storylineNode.node.formData.audienceSegmentId,
     );
-    if (
-      addToSegmentStoryLine &&
-      isAddToSegmentNode(addToSegmentStoryLine.node)
-    ) {
+    if (addToSegmentStoryLine && isAddToSegmentNode(addToSegmentStoryLine.node)) {
       return addToSegmentStoryLine.node.formData.audienceSegmentName || '';
     }
     return '';
@@ -199,9 +179,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
 
   removeNode = () => {
     this.setState({ focus: false }, () => {
-      this.props.nodeOperations.deleteNode(
-        this.props.node.storylineNodeModel.node.id,
-      );
+      this.props.nodeOperations.deleteNode(this.props.node.storylineNodeModel.node.id);
     });
   };
 
@@ -210,40 +188,31 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     const selectedNode = node.storylineNodeModel.node;
 
     if (isFeedNode(selectedNode) && selectedNode.feed_id) {
-      openNextDrawer<FeedNodeAutomationDashboardStatsProps>(
-        FeedNodeAutomationDashboardStats,
-        {
-          additionalProps: {
-            feedId: selectedNode.feed_id,
-            close: closeNextDrawer,
-          },
-          size: 'medium',
+      openNextDrawer<FeedNodeAutomationDashboardStatsProps>(FeedNodeAutomationDashboardStats, {
+        additionalProps: {
+          feedId: selectedNode.feed_id,
+          close: closeNextDrawer,
         },
-      );
+        size: 'medium',
+      });
     } else if (isInputNode(selectedNode)) {
-      openNextDrawer<EntryNodeAutomationDashboardStatsProps>(
-        EntryNodeAutomationDashboardStats,
-        {
-          additionalProps: {
-            datamartId: datamartId,
-            nodeId: selectedNode.id,
-            close: closeNextDrawer,
-          },
-          size: 'medium',
+      openNextDrawer<EntryNodeAutomationDashboardStatsProps>(EntryNodeAutomationDashboardStats, {
+        additionalProps: {
+          datamartId: datamartId,
+          nodeId: selectedNode.id,
+          close: closeNextDrawer,
         },
-      );
+        size: 'medium',
+      });
     } else if (isEndNode(selectedNode)) {
-      openNextDrawer<ExitNodeAutomationDashboardStatsProps>(
-        ExitNodeAutomationDashboardStats,
-        {
-          additionalProps: {
-            datamartId: datamartId,
-            nodeId: selectedNode.id,
-            close: closeNextDrawer,
-          },
-          size: 'medium',
+      openNextDrawer<ExitNodeAutomationDashboardStatsProps>(ExitNodeAutomationDashboardStats, {
+        additionalProps: {
+          datamartId: datamartId,
+          nodeId: selectedNode.id,
+          close: closeNextDrawer,
         },
-      );
+        size: 'medium',
+      });
     }
   };
 
@@ -283,10 +252,8 @@ class AutomationNodeWidget extends React.Component<Props, State> {
             } as any;
             size =
               scenarioNodeShape.type === 'QUERY_INPUT'
-                ? scenarioNodeShape.ui_creation_mode ===
-                    'REACT_TO_EVENT_STANDARD' ||
-                  scenarioNodeShape.ui_creation_mode ===
-                    'REACT_TO_EVENT_ADVANCED'
+                ? scenarioNodeShape.ui_creation_mode === 'REACT_TO_EVENT_STANDARD' ||
+                  scenarioNodeShape.ui_creation_mode === 'REACT_TO_EVENT_ADVANCED'
                   ? 'small'
                   : 'large'
                 : 'large';
@@ -315,8 +282,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         let disableEdition = false;
         switch (scenarioNodeShape.type) {
           case 'ABN_NODE':
-            disableEdition =
-              Object.keys(scenarioNodeShape.edges_selection).length !== 0;
+            disableEdition = Object.keys(scenarioNodeShape.edges_selection).length !== 0;
             break;
           case 'ADD_TO_SEGMENT_NODE':
           case 'DELETE_FROM_SEGMENT_NODE':
@@ -335,10 +301,8 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         };
 
         const scenarioNodes = Object.values(diagramEngine.diagramModel.nodes)
-          .filter((nodeModel) => nodeModel.type === 'automation-node')
-          .map(
-            (nodeModel: AutomationNodeModel) => nodeModel.storylineNodeModel,
-          );
+          .filter(nodeModel => nodeModel.type === 'automation-node')
+          .map((nodeModel: AutomationNodeModel) => nodeModel.storylineNodeModel);
 
         openNextDrawer<AutomationFormPropsType>(node.editFormComponent, {
           additionalProps: {
@@ -346,18 +310,11 @@ class AutomationNodeWidget extends React.Component<Props, State> {
             scenarioNodes: scenarioNodes,
             close: close,
             breadCrumbPaths: [
-              generateNodeProperties(
-                node.storylineNodeModel.node,
-                formatMessage,
-              ).title,
+              generateNodeProperties(node.storylineNodeModel.node, formatMessage).title,
             ],
             disabled: viewer || disableEdition,
             onSubmit: (formData: AutomationFormDataType) => {
-              nodeOperations.updateNode(
-                scenarioNodeShape,
-                formData,
-                initialValue,
-              );
+              nodeOperations.updateNode(scenarioNodeShape, formData, initialValue);
               closeNextDrawer();
             },
             initialValues: initialValue,
@@ -386,18 +343,14 @@ class AutomationNodeWidget extends React.Component<Props, State> {
 
     if (!viewer) {
       content.push(
-        <div key="edit" onClick={this.editNode} className="boolean-menu-item">
+        <div key='edit' onClick={this.editNode} className='boolean-menu-item'>
           <FormattedMessage {...messages.edit} />
         </div>,
       );
 
       if (!node.isFirstNode) {
         content.push(
-          <div
-            key="remove"
-            onClick={this.removeNode}
-            className="boolean-menu-item"
-          >
+          <div key='remove' onClick={this.removeNode} className='boolean-menu-item'>
             <FormattedMessage {...messages.remove} />
           </div>,
         );
@@ -421,18 +374,14 @@ class AutomationNodeWidget extends React.Component<Props, State> {
 
     if (!viewer) {
       content.push(
-        <div key="edit" onClick={this.editNode} className="boolean-menu-item">
+        <div key='edit' onClick={this.editNode} className='boolean-menu-item'>
           <FormattedMessage {...messages.edit} />
         </div>,
       );
 
       if (!node.isFirstNode) {
         content.push(
-          <div
-            key="remove"
-            onClick={this.removeNode}
-            className="boolean-menu-item"
-          >
+          <div key='remove' onClick={this.removeNode} className='boolean-menu-item'>
             <FormattedMessage {...messages.remove} />
           </div>,
         );
@@ -448,13 +397,13 @@ class AutomationNodeWidget extends React.Component<Props, State> {
           );
       };
       content.push(
-        <div key="stats" onClick={gotToSegment} className="boolean-menu-item">
+        <div key='stats' onClick={gotToSegment} className='boolean-menu-item'>
           <FormattedMessage {...messages.goToSegment} />
         </div>,
       );
 
       content.push(
-        <div key="view" onClick={this.editNode} className="boolean-menu-item">
+        <div key='view' onClick={this.editNode} className='boolean-menu-item'>
           <FormattedMessage {...messages.view} />
         </div>,
       );
@@ -477,18 +426,14 @@ class AutomationNodeWidget extends React.Component<Props, State> {
 
     if (!viewer) {
       content.push(
-        <div key="edit" onClick={this.editNode} className="boolean-menu-item">
+        <div key='edit' onClick={this.editNode} className='boolean-menu-item'>
           <FormattedMessage {...messages.edit} />
         </div>,
       );
     } else {
       if (hasFeature('automations-analytics')) {
         content.push(
-          <div
-            key="stats"
-            onClick={this.viewStats}
-            className="boolean-menu-item"
-          >
+          <div key='stats' onClick={this.viewStats} className='boolean-menu-item'>
             <FormattedMessage {...messages.stats} />
           </div>,
         );
@@ -504,12 +449,12 @@ class AutomationNodeWidget extends React.Component<Props, State> {
           );
       };
       content.push(
-        <div key="segment" onClick={gotToSegment} className="boolean-menu-item">
+        <div key='segment' onClick={gotToSegment} className='boolean-menu-item'>
           <FormattedMessage {...messages.goToSegment} />
         </div>,
       );
       content.push(
-        <div key="view" onClick={this.editNode} className="boolean-menu-item">
+        <div key='view' onClick={this.editNode} className='boolean-menu-item'>
           <FormattedMessage {...messages.view} />
         </div>,
       );
@@ -524,31 +469,27 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     const content: React.ReactNodeArray = [];
     if (!viewer) {
       content.push(
-        <div key="edit" onClick={this.editNode} className="boolean-menu-item">
+        <div key='edit' onClick={this.editNode} className='boolean-menu-item'>
           <FormattedMessage {...messages.edit} />
         </div>,
       );
 
       if (!node.isFirstNode) {
         content.push(
-          <div
-            key="remove"
-            onClick={this.removeNode}
-            className="boolean-menu-item"
-          >
+          <div key='remove' onClick={this.removeNode} className='boolean-menu-item'>
             <FormattedMessage {...messages.remove} />
           </div>,
         );
       }
     } else {
       content.push(
-        <div key="stats" onClick={this.viewStats} className="boolean-menu-item">
+        <div key='stats' onClick={this.viewStats} className='boolean-menu-item'>
           <FormattedMessage {...messages.stats} />
         </div>,
       );
 
       content.push(
-        <div key="view" onClick={this.editNode} className="boolean-menu-item">
+        <div key='view' onClick={this.editNode} className='boolean-menu-item'>
           <FormattedMessage {...messages.view} />
         </div>,
       );
@@ -563,18 +504,14 @@ class AutomationNodeWidget extends React.Component<Props, State> {
 
     if (!viewer) {
       content.push(
-        <div key="edit" onClick={this.editNode} className="boolean-menu-item">
+        <div key='edit' onClick={this.editNode} className='boolean-menu-item'>
           <FormattedMessage {...messages.edit} />
         </div>,
       );
 
       if (!node.isFirstNode) {
         content.push(
-          <div
-            key="remove"
-            onClick={this.removeNode}
-            className="boolean-menu-item"
-          >
+          <div key='remove' onClick={this.removeNode} className='boolean-menu-item'>
             <FormattedMessage {...messages.remove} />
           </div>,
         );
@@ -582,18 +519,14 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     } else {
       if (hasFeature('automations-analytics')) {
         content.push(
-          <div
-            key="stats"
-            onClick={this.viewStats}
-            className="boolean-menu-item"
-          >
+          <div key='stats' onClick={this.viewStats} className='boolean-menu-item'>
             <FormattedMessage {...messages.stats} />
           </div>,
         );
       }
 
       content.push(
-        <div key="view" onClick={this.editNode} className="boolean-menu-item">
+        <div key='view' onClick={this.editNode} className='boolean-menu-item'>
           <FormattedMessage {...messages.view} />
         </div>,
       );
@@ -608,7 +541,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
 
     if (viewer && hasFeature('automations-analytics')) {
       content.push(
-        <div key="stats" onClick={this.viewStats} className="boolean-menu-item">
+        <div key='stats' onClick={this.viewStats} className='boolean-menu-item'>
           <FormattedMessage {...messages.stats} />
         </div>,
       );
@@ -623,25 +556,21 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     const content: React.ReactNodeArray = [];
     if (!viewer) {
       content.push(
-        <div key="edit" onClick={this.editNode} className="boolean-menu-item">
+        <div key='edit' onClick={this.editNode} className='boolean-menu-item'>
           <FormattedMessage {...messages.edit} />
         </div>,
       );
 
       if (!node.isFirstNode) {
         content.push(
-          <div
-            key="remove"
-            onClick={this.removeNode}
-            className="boolean-menu-item"
-          >
+          <div key='remove' onClick={this.removeNode} className='boolean-menu-item'>
             <FormattedMessage {...messages.remove} />
           </div>,
         );
       }
     } else {
       content.push(
-        <div key="view" onClick={this.editNode} className="boolean-menu-item">
+        <div key='view' onClick={this.editNode} className='boolean-menu-item'>
           <FormattedMessage {...messages.view} />
         </div>,
       );
@@ -685,10 +614,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     const icon = node.iconAnt ? (
       node.iconAnt
     ) : (
-      <McsIcon
-        type={node.icon as McsIconType}
-        className="available-node-icon-gyph"
-      />
+      <McsIcon type={node.icon as McsIconType} className='available-node-icon-gyph' />
     );
 
     if (node.iconAssetUrl) {
@@ -704,10 +630,8 @@ class AutomationNodeWidget extends React.Component<Props, State> {
           }}
         >
           <img
-            className="available-node-icon-img"
-            src={`${(window as any).MCS_CONSTANTS.ASSETS_URL}${
-              node.iconAssetUrl
-            }`}
+            className='available-node-icon-img'
+            src={`${(window as any).MCS_CONSTANTS.ASSETS_URL}${node.iconAssetUrl}`}
           />
         </div>
       );
@@ -734,14 +658,12 @@ class AutomationNodeWidget extends React.Component<Props, State> {
   getNumberOfUsers = (): number | undefined => {
     const { node } = this.props;
 
-    const scenarioCountersData:
-      | ScenarioCountersData
-      | undefined = node.getScenarioCountersData();
+    const scenarioCountersData: ScenarioCountersData | undefined = node.getScenarioCountersData();
 
     if (!scenarioCountersData) return undefined;
 
     const count = scenarioCountersData.nodeCountersData.find(
-      (line) => line.nodeId === node.storylineNodeModel.node.id,
+      line => line.nodeId === node.storylineNodeModel.node.id,
     )?.userPointsCount;
     return count ? +count : undefined;
   };
@@ -762,9 +684,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
       ) : undefined;
 
     const booleanMenuTop =
-      viewer && hasFeature('automations-analytics')
-        ? node.getNodeCounterHeight() * 0.75
-        : 0;
+      viewer && hasFeature('automations-analytics') ? node.getNodeCounterHeight() * 0.75 : 0;
 
     const onFocus = () => {
       this.setPosition(document.getElementById(this.id) as HTMLDivElement);
@@ -783,7 +703,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     const NODE_NAME_MAX_SIZE = 20;
     const renderedAutomationNode = (
       <div
-        className="node-body"
+        className='node-body'
         style={{
           width: `${node.getNodeSize().width}px`,
           height: `${node.getNodeSize().height}px`,
@@ -791,15 +711,13 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         }}
       >
         {icon}
-        <div className="node-content">
+        <div className='node-content'>
           {nodeCounter}
           <Tooltip
             title={
-              nodeTitleToDisplayed.length > NODE_NAME_MAX_SIZE
-                ? nodeTitleToDisplayed
-                : undefined
+              nodeTitleToDisplayed.length > NODE_NAME_MAX_SIZE ? nodeTitleToDisplayed : undefined
             }
-            placement="bottom"
+            placement='bottom'
           >
             {`${
               nodeTitleToDisplayed.substring(0, NODE_NAME_MAX_SIZE) +
@@ -807,9 +725,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
             }`}
           </Tooltip>
         </div>
-        <div className="node-subtitle">
-          {node.subtitle ? node.subtitle : ''}
-        </div>
+        <div className='node-subtitle'>{node.subtitle ? node.subtitle : ''}</div>
       </div>
     );
 
@@ -823,7 +739,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
             left: node.getNodeSize().width / 2,
           }}
         >
-          <PortWidget name="center" node={this.props.node} />
+          <PortWidget name='center' node={this.props.node} />
         </div>
         <div
           style={{
@@ -832,10 +748,9 @@ class AutomationNodeWidget extends React.Component<Props, State> {
             left: node.getNodeSize().width + 20,
           }}
         >
-          <PortWidget name="right" node={this.props.node} />
+          <PortWidget name='right' node={this.props.node} />
         </div>
-        {(node.y !== ROOT_NODE_POSITION.y ||
-          node.x !== ROOT_NODE_POSITION.x) && (
+        {(node.y !== ROOT_NODE_POSITION.y || node.x !== ROOT_NODE_POSITION.x) && (
           <div
             style={{
               position: 'absolute',
@@ -843,12 +758,12 @@ class AutomationNodeWidget extends React.Component<Props, State> {
               left: -10,
             }}
           >
-            <McsIcon type="chevron-right" className="arrow" />
+            <McsIcon type='chevron-right' className='arrow' />
           </div>
         )}
         {this.state.focus && (
           <WindowBodyPortal>
-            <div className="automation-builder focus">
+            <div className='automation-builder focus'>
               <div
                 onClick={onFocus}
                 style={{
@@ -863,7 +778,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
                 }}
               />
               <span
-                className="object-node no-hover"
+                className='object-node no-hover'
                 style={{
                   width: node.getNodeSize().width,
                   height: node.getNodeSize().height,
@@ -871,12 +786,8 @@ class AutomationNodeWidget extends React.Component<Props, State> {
                   fontWeight: 'bold',
                   color: '#ffffff',
                   borderColor: node.getColor(),
-                  top:
-                    this.top -
-                    node.getNodeSize().height * ((1 - zoomRatio) / 2),
-                  left:
-                    this.left -
-                    node.getNodeSize().width * ((1 - zoomRatio) / 2),
+                  top: this.top - node.getNodeSize().height * ((1 - zoomRatio) / 2),
+                  left: this.left - node.getNodeSize().width * ((1 - zoomRatio) / 2),
                   position: 'absolute',
                   zIndex: 1002,
                   transform: `scale(${zoomRatio})`,
@@ -886,7 +797,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
                 {renderedAutomationNode}
               </span>
               <div
-                className="boolean-menu"
+                className='boolean-menu'
                 style={{
                   top: this.top + booleanMenuTop * zoomRatio,
                   left: this.left + node.getNodeSize().width * zoomRatio,

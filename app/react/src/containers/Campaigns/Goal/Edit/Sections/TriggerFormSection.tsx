@@ -3,9 +3,7 @@ import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { Row, Col, Alert } from 'antd';
 import { FormSection } from '../../../../../components/Form';
-import withValidators, {
-  ValidatorProps,
-} from '../../../../../components/Form/withValidators';
+import withValidators, { ValidatorProps } from '../../../../../components/Form/withValidators';
 import OTQLInputEditor, {
   OTQLInputEditorProps,
 } from '../../../../Audience/Segments/Edit/Sections/query/OTQL';
@@ -21,12 +19,8 @@ import JSONQL, {
 } from '../../../../Audience/Segments/Edit/Sections/query/JSONQL';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
 
-const FormJSONQL: FieldCtor<JSONQLInputEditorProps> = Field as new () => GenericField<
-  JSONQLInputEditorProps
->;
-const FormOTQL: FieldCtor<OTQLInputEditorProps> = Field as new () => GenericField<
-  OTQLInputEditorProps
->;
+const FormJSONQL: FieldCtor<JSONQLInputEditorProps> = Field as new () => GenericField<JSONQLInputEditorProps>;
+const FormOTQL: FieldCtor<OTQLInputEditorProps> = Field as new () => GenericField<OTQLInputEditorProps>;
 
 const messages = defineMessages({
   sectionSubtitle1: {
@@ -39,8 +33,7 @@ const messages = defineMessages({
   },
   triggerPixelHelpTooltip: {
     id: 'goalEditor.section.trigger.pixel.modal.title',
-    defaultMessage:
-      'Pixel for goal. Use this pixel url tracking to capture a conversion goal.',
+    defaultMessage: 'Pixel for goal. Use this pixel url tracking to capture a conversion goal.',
   },
   audienceSegmentSectionQueryTitle: {
     id: 'edit.goal.form.section.query.title',
@@ -62,8 +55,7 @@ const messages = defineMessages({
   },
   configureDatamartToken: {
     id: 'edit.goal.form.section.pixel.configureDatamartToken',
-    defaultMessage:
-      'The datamart token needs to be configured on the datamart.',
+    defaultMessage: 'The datamart token needs to be configured on the datamart.',
   },
   noMoreSupported: {
     id: 'edit.goal.legacyComponent.noMoreSupported',
@@ -81,10 +73,7 @@ interface TriggerFormSectionProps extends ReduxFormChangeProps {
   datamart: DatamartResource;
 }
 
-type Props = TriggerFormSectionProps &
-  InjectedIntlProps &
-  ValidatorProps &
-  MapStateToProps;
+type Props = TriggerFormSectionProps & InjectedIntlProps & ValidatorProps & MapStateToProps;
 
 class TriggerFormSection extends React.Component<Props> {
   constructor(props: Props) {
@@ -103,9 +92,7 @@ class TriggerFormSection extends React.Component<Props> {
           label: intl.formatMessage(messages.audienceSegmentSectionQueryTitle),
         }}
         helpToolTipProps={{
-          title: intl.formatMessage(
-            messages.audienceSegmentCreationUserQueryFieldHelper,
-          ),
+          title: intl.formatMessage(messages.audienceSegmentCreationUserQueryFieldHelper),
         }}
         datamartId={datamart.id!}
       />
@@ -125,10 +112,7 @@ class TriggerFormSection extends React.Component<Props> {
     );
 
     const noMoreSupportedComponent = (
-      <Alert
-        message={intl.formatMessage(messages.noMoreSupported)}
-        type="warning"
-      />
+      <Alert message={intl.formatMessage(messages.noMoreSupported)} type='warning' />
     );
 
     switch (this.props.formValues.queryLanguage) {
@@ -148,9 +132,7 @@ class TriggerFormSection extends React.Component<Props> {
       (formValues.query &&
         initialValues.query &&
         formValues.query.query_text !== initialValues.query.query_text) ||
-      (formValues.query &&
-        !!formValues.query.query_text &&
-        !initialValues.query)
+      (formValues.query && !!formValues.query.query_text && !initialValues.query)
     );
   };
 
@@ -164,7 +146,7 @@ class TriggerFormSection extends React.Component<Props> {
         {isExistingGoal(this.props.formValues.goal) ? (
           datamart.token ? (
             <FormCodeSnippet
-              language="html"
+              language='html'
               codeSnippet={`<img style="display:none" src="https://events.mediarithmics.com/v1/touches/pixel?$ev=$conversion&$dat_token=${datamart.token}&$goal_id=${this.props.formValues.goal.id}" />`}
               copyToClipboard={true}
               helpToolTipProps={{
@@ -172,16 +154,10 @@ class TriggerFormSection extends React.Component<Props> {
               }}
             />
           ) : (
-            <Alert
-              message={formatMessage(messages.configureDatamartToken)}
-              type="warning"
-            />
+            <Alert message={formatMessage(messages.configureDatamartToken)} type='warning' />
           )
         ) : (
-          <Alert
-            message={formatMessage(messages.newGoalPixelSection)}
-            type="warning"
-          />
+          <Alert message={formatMessage(messages.newGoalPixelSection)} type='warning' />
         )}
       </div>
     );
@@ -192,15 +168,10 @@ class TriggerFormSection extends React.Component<Props> {
 
     return (
       <div>
-        <FormSection
-          subtitle={messages.sectionSubtitle1}
-          title={messages.sectionTitle1}
-        />
+        <FormSection subtitle={messages.sectionSubtitle1} title={messages.sectionTitle1} />
         <Row>
           <Col span={24}>
-            {pixelSectionVisible
-              ? this.displayPixelSection()
-              : this.renderQueryField()}
+            {pixelSectionVisible ? this.displayPixelSection() : this.renderQueryField()}
           </Col>
         </Row>
       </div>

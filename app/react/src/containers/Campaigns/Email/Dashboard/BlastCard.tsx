@@ -12,10 +12,7 @@ import {
 } from './constants';
 import BlastTable, { BlastData } from './BlastTable';
 import { ReportViewResource } from '../../../../models/ReportView';
-import {
-  EmailBlastResource,
-  EmailBlastStatus,
-} from '../../../../models/campaign/email';
+import { EmailBlastResource, EmailBlastStatus } from '../../../../models/campaign/email';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
@@ -44,10 +41,9 @@ interface State {
 }
 
 class BlastCard extends React.Component<Props, State> {
-
   @lazyInject(TYPES.IEmailCampaignService)
   private _emailCampaignService: IEmailCampaignService;
-  
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -59,7 +55,7 @@ class BlastCard extends React.Component<Props, State> {
   componentDidMount() {
     this.refreshData();
   }
-  
+
   refreshData = () => {
     const {
       location: { search },
@@ -73,12 +69,10 @@ class BlastCard extends React.Component<Props, State> {
       EMAIL_DASHBOARD_SEARCH_SETTINGS,
     );
     Promise.all([
-      ReportService.getEmailDeliveryReport(
-        organisationId,
-        filter.from,
-        filter.to,
-        ['campaign_id', 'sub_campaign_id'],
-      ).then(report => {
+      ReportService.getEmailDeliveryReport(organisationId, filter.from, filter.to, [
+        'campaign_id',
+        'sub_campaign_id',
+      ]).then(report => {
         return normalizeArrayOfObject(
           normalizeReportView(report.data.report_view),
           'sub_campaign_id',
@@ -109,7 +103,8 @@ class BlastCard extends React.Component<Props, State> {
       },
     } = this.props;
     this.setState({ isLoading: true });
-    this._emailCampaignService.updateBlast(campaignId, id, { status: nextStatus })
+    this._emailCampaignService
+      .updateBlast(campaignId, id, { status: nextStatus })
       .then(res => {
         this.props.notifySuccess({
           intlMessage: messages.blastStatusUpdateSuccessMessage,
@@ -152,13 +147,11 @@ class BlastCard extends React.Component<Props, State> {
     const { isLoading, blasts } = this.state;
 
     const newBlastButton = (
-      <Link
-        to={`/v2/o/${organisationId}/campaigns/email/${campaignId}/blasts/create`}
-      >
-        <Button type="primary">
+      <Link to={`/v2/o/${organisationId}/campaigns/email/${campaignId}/blasts/create`}>
+        <Button type='primary'>
           <FormattedMessage
-            id="email.campaign.dashboard.blastCard.newEmailBlast"
-            defaultMessage="New Email Blast"
+            id='email.campaign.dashboard.blastCard.newEmailBlast'
+            defaultMessage='New Email Blast'
           />
         </Button>
       </Link>
@@ -167,10 +160,7 @@ class BlastCard extends React.Component<Props, State> {
     // todo add blast stats when api working
 
     return (
-      <Card
-        title={intl.formatMessage(messages.emailBlast)}
-        buttons={newBlastButton}
-      >
+      <Card title={intl.formatMessage(messages.emailBlast)} buttons={newBlastButton}>
         <BlastTable
           isLoading={isLoading}
           data={blasts}

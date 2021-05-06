@@ -1,5 +1,3 @@
 import EditCampaignPage from './EditCampaignPage';
 
-export {
-    EditCampaignPage,
-};
+export { EditCampaignPage };

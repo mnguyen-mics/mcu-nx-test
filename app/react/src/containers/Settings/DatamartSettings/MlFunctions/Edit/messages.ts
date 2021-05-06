@@ -1,4 +1,4 @@
-import { defineMessages } from "react-intl";
+import { defineMessages } from 'react-intl';
 
 export default defineMessages({
   listTitle: {
@@ -23,7 +23,8 @@ export default defineMessages({
   },
   tootltipHostingObjectType: {
     id: 'mlFunction.create.field.hosting_object_type.tooltip',
-    defaultMessage: 'The Hosting Object Type is the name of the object on which you want to create the field for your new Ml Function. Typically it is UserPoint.',
+    defaultMessage:
+      'The Hosting Object Type is the name of the object on which you want to create the field for your new Ml Function. Typically it is UserPoint.',
   },
   labelFieldTypeName: {
     id: 'mlFunction.create.field.field_type_name.label',
@@ -39,7 +40,8 @@ export default defineMessages({
   },
   tootltipFieldName: {
     id: 'mlFunction.create.field.field_name.tooltip',
-    defaultMessage: ' The Field Name is the name of the field on which you want to attach your new Ml Function.',
+    defaultMessage:
+      ' The Field Name is the name of the field on which you want to attach your new Ml Function.',
   },
   labelQuery: {
     id: 'mlFunction.create.field.query.label',
@@ -47,6 +49,7 @@ export default defineMessages({
   },
   tootltipQuery: {
     id: 'mlFunction.create.field.query.tooltip',
-    defaultMessage: ' The GraphQL Query that will be executed before each call to your Ml Function.',
-  }
-})
+    defaultMessage:
+      ' The GraphQL Query that will be executed before each call to your Ml Function.',
+  },
+});

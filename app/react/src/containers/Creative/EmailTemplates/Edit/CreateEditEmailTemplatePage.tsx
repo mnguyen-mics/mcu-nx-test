@@ -44,10 +44,7 @@ type JoinedProps = InjectedNotificationProps &
   RouteComponentProps<EmailTemplateRouteParam> &
   InjectedIntlProps;
 
-class CreateEmailTemplate extends React.Component<
-  JoinedProps,
-  CreateEmailTemplateState
-> {
+class CreateEmailTemplate extends React.Component<JoinedProps, CreateEmailTemplateState> {
   @lazyInject(TYPES.ICreativeService)
   private _creativeService: ICreativeService;
 
@@ -104,16 +101,12 @@ class CreateEmailTemplate extends React.Component<
 
     const {
       match: {
-        params: {
-          organisationId: previousOrganisationId,
-          creativeId: previousCreativeId,
-        },
+        params: { organisationId: previousOrganisationId, creativeId: previousCreativeId },
       },
     } = previousProps;
 
     if (
-      (organisationId !== previousOrganisationId ||
-        creativeId !== previousCreativeId) &&
+      (organisationId !== previousOrganisationId || creativeId !== previousCreativeId) &&
       creativeId
     ) {
       this.setState(() => {
@@ -144,8 +137,7 @@ class CreateEmailTemplate extends React.Component<
         return a.writable === false ? -1 : 1;
       })
       .map(prop => {
-        return prop.technical_name === 'template_file' &&
-          prop.property_type === 'DATA_FILE'
+        return prop.technical_name === 'template_file' && prop.property_type === 'DATA_FILE'
           ? {
               ...prop,
               value: { ...prop.value, acceptedFile: 'text/html' },
@@ -172,60 +164,51 @@ class CreateEmailTemplate extends React.Component<
   };
 
   fetchCreationValue = (organisationId: string): Promise<any> => {
-    return this._pluginService
-      .getPluginVersions(CreativeRendererId)
-      .then(res => {
-        const lastVersion = res.data[res.data.length - 1];
+    return this._pluginService.getPluginVersions(CreativeRendererId).then(res => {
+      const lastVersion = res.data[res.data.length - 1];
 
-        return Promise.all([
-          this._pluginService
-            .getPluginVersionProperties(CreativeRendererId, lastVersion.id)
-            .then(res1 => res1.data),
-          this._pluginService.getLocalizedPluginLayout(
-            CreativeRendererId,
-            lastVersion.id,
-          ),
-        ]).then(results => {
-          this.promisesValues(results[0], results[1], lastVersion);
-          return results;
-        });
+      return Promise.all([
+        this._pluginService
+          .getPluginVersionProperties(CreativeRendererId, lastVersion.id)
+          .then(res1 => res1.data),
+        this._pluginService.getLocalizedPluginLayout(CreativeRendererId, lastVersion.id),
+      ]).then(results => {
+        this.promisesValues(results[0], results[1], lastVersion);
+        return results;
       });
+    });
   };
 
   fetchInitialValues = (emailTemplateId: string): Promise<any> => {
-    return this._pluginService
-      .getPluginVersions(CreativeRendererId)
-      .then(res => {
-        return this._creativeService
-          .getEmailTemplate(emailTemplateId)
-          .then(resultGetEmailTemplate => {
-            return Promise.all([
-              this._creativeService
-                .getEmailTemplateProperties(emailTemplateId)
-                .then(res1 => res1.data),
-              this._pluginService.getLocalizedPluginLayout(
-                resultGetEmailTemplate.data.renderer_plugin_id,
-                resultGetEmailTemplate.data.renderer_version_id,
-              ),
-            ]).then(results => {
-              this.promisesValues(results[0], results[1]);
+    return this._pluginService.getPluginVersions(CreativeRendererId).then(res => {
+      return this._creativeService
+        .getEmailTemplate(emailTemplateId)
+        .then(resultGetEmailTemplate => {
+          return Promise.all([
+            this._creativeService
+              .getEmailTemplateProperties(emailTemplateId)
+              .then(res1 => res1.data),
+            this._pluginService.getLocalizedPluginLayout(
+              resultGetEmailTemplate.data.renderer_plugin_id,
+              resultGetEmailTemplate.data.renderer_version_id,
+            ),
+          ]).then(results => {
+            this.promisesValues(results[0], results[1]);
 
-              this.setState(prevState => {
-                const nextState = {
-                  ...prevState,
-                  initialValues: {
-                    properties: prevState.initialValues
-                      ? prevState.initialValues.properties
-                      : [],
-                    plugin: resultGetEmailTemplate.data,
-                  },
-                };
-                return nextState;
-              });
-              return results;
+            this.setState(prevState => {
+              const nextState = {
+                ...prevState,
+                initialValues: {
+                  properties: prevState.initialValues ? prevState.initialValues.properties : [],
+                  plugin: resultGetEmailTemplate.data,
+                },
+              };
+              return nextState;
             });
+            return results;
           });
-      });
+        });
+    });
   };
 
   redirect = () => {
@@ -257,11 +240,7 @@ class CreateEmailTemplate extends React.Component<
         this._creativeService
           .updateEmailTemplate(plugin.id, plugin)
           .then(res => {
-            return this.updatePropertiesValue(
-              properties,
-              organisationId,
-              plugin.id,
-            );
+            return this.updatePropertiesValue(properties, organisationId, plugin.id);
           })
           .then(res => {
             this.setState({ isLoading: false }, () => {
@@ -303,14 +282,13 @@ class CreateEmailTemplate extends React.Component<
     organisationId: string,
     id: string,
   ) => {
-    const propertiesPromises: Array<
-      Promise<DataResponse<PropertyResourceShape>>
-    > = [];
+    const propertiesPromises: Array<Promise<DataResponse<PropertyResourceShape>>> = [];
     properties.forEach(item => {
-      if(item.property_type==="DATA_FILE" && item.technical_name === "template_file"){
-        const fileValues = item.value as any
-        fileValues.fileName = fileValues && fileValues.fileName ? fileValues.fileName.replace(/\s/g,'_') : undefined
-        item.value = fileValues
+      if (item.property_type === 'DATA_FILE' && item.technical_name === 'template_file') {
+        const fileValues = item.value as any;
+        fileValues.fileName =
+          fileValues && fileValues.fileName ? fileValues.fileName.replace(/\s/g, '_') : undefined;
+        item.value = fileValues;
       }
       propertiesPromises.push(
         this._creativeService.updateEmailTemplateProperty(
@@ -405,17 +383,12 @@ class CreateEmailTemplate extends React.Component<
           editionMode={!!creativeId}
           organisationId={organisationId}
           save={this.saveOrCreatePluginInstance}
-          pluginProperties={
-            (this.state.initialValues && this.state.initialValues.properties) ||
-            []
-          }
+          pluginProperties={(this.state.initialValues && this.state.initialValues.properties) || []}
           disableFields={isLoading}
           pluginLayout={this.state.pluginLayout}
           isLoading={isLoading}
           pluginVersionId={
-            (this.state.emailTemplateRenderer &&
-              this.state.emailTemplateRenderer.id) ||
-            ''
+            (this.state.emailTemplateRenderer && this.state.emailTemplateRenderer.id) || ''
           }
           formId={formId}
           initialValues={this.formatInitialValues(this.state.initialValues)}
@@ -427,8 +400,4 @@ class CreateEmailTemplate extends React.Component<
   }
 }
 
-export default compose(
-  injectIntl,
-  withRouter,
-  injectNotifications,
-)(CreateEmailTemplate);
+export default compose(injectIntl, withRouter, injectNotifications)(CreateEmailTemplate);

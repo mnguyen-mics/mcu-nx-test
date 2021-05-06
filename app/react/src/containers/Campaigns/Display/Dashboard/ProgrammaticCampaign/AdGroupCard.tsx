@@ -2,30 +2,20 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { Button, Modal, message, Menu } from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router';
-import {
-  InjectedIntlProps,
-  injectIntl,
-  FormattedMessage,
-  defineMessages,
-} from 'react-intl';
+import { InjectedIntlProps, injectIntl, FormattedMessage, defineMessages } from 'react-intl';
 import { Dropdown } from '../../../../../components/PopupContainers';
 import messages from '../messages';
 import {
   Card,
   McsIcon,
   McsDateRangePicker,
-  Slide
+  Slide,
 } from '@mediarithmics-private/mcs-components-library';
 import { CardProps } from '@mediarithmics-private/mcs-components-library/lib/components/card/Card';
 import { AdGroupResource } from '../../../../../models/campaign/display/AdGroupResource';
-import DisplayCampaignAdGroupTable, {
-  UpdateMessage,
-} from './DisplayCampaignAdGroupTable';
+import DisplayCampaignAdGroupTable, { UpdateMessage } from './DisplayCampaignAdGroupTable';
 import { CampaignRouteParams } from '../../../../../models/campaign/CampaignResource';
-import {
-  parseSearch,
-  updateSearch,
-} from '../../../../../utils/LocationSearchHelper';
+import { parseSearch, updateSearch } from '../../../../../utils/LocationSearchHelper';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import { injectDrawer } from '../../../../../components/Drawer/index';
@@ -33,10 +23,7 @@ import EditAdGroupsForm, {
   EditAdGroupsFormProps,
   EditAdGroupsFormData,
 } from '../../Edit/AdGroup/MultiEdit/EditAdGroupsForm';
-import {
-  Task,
-  executeTasksInSequence,
-} from '../../../../../utils/PromiseHelper';
+import { Task, executeTasksInSequence } from '../../../../../utils/PromiseHelper';
 import { AdGroupStatus } from '../../../../../models/campaign/constants/index';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -120,11 +107,7 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
 
     const nextLocation = {
       pathname,
-      search: updateSearch(
-        currentSearch,
-        params,
-        DISPLAY_DASHBOARD_SEARCH_SETTINGS,
-      ),
+      search: updateSearch(currentSearch, params, DISPLAY_DASHBOARD_SEARCH_SETTINGS),
     };
 
     history.push(nextLocation);
@@ -307,10 +290,10 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
 
     return (
       <Menu onClick={onClick}>
-        <Menu.Item key="pause">
+        <Menu.Item key='pause'>
           <FormattedMessage {...messagesMap.pauseAll} />
         </Menu.Item>
-        <Menu.Item key="activate">
+        <Menu.Item key='activate'>
           <FormattedMessage {...messagesMap.activeAll} />
         </Menu.Item>
       </Menu>
@@ -331,19 +314,15 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
       campaign,
     } = this.props;
 
-    const {
-      selectedRowKeys,
-      allRowsAreSelected,
-      isUpdatingStatuses,
-    } = this.state;
+    const { selectedRowKeys, allRowsAreSelected, isUpdatingStatuses } = this.state;
 
     const hasSelected = !!(selectedRowKeys && selectedRowKeys.length > 0);
 
     const buildActionElement = () => {
       return (
         <Dropdown overlay={this.buildMenu()} trigger={['click']}>
-          <Button className="button-glow">
-            <McsIcon type="chevron" />
+          <Button className='button-glow'>
+            <McsIcon type='chevron' />
             <FormattedMessage {...messagesMap.setStatus} />
           </Button>
         </Dropdown>
@@ -359,7 +338,7 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
     const adGroupButtons: JSX.Element = (
       <span>
         {campaign && campaign.model_version !== 'V2014_06' && (
-          <Button className="m-r-10" type="primary" onClick={onClick}>
+          <Button className='m-r-10' type='primary' onClick={onClick}>
             <FormattedMessage {...messages.newAdGroups} />
           </Button>
         )}
@@ -368,11 +347,8 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
           toShow={hasSelected}
           horizontal={true}
           content={
-            <Button
-              className="m-r-10 button-slider button-glow"
-              onClick={this.archiveAdGroups}
-            >
-              <McsIcon type="delete" />
+            <Button className='m-r-10 button-slider button-glow' onClick={this.archiveAdGroups}>
+              <McsIcon type='delete' />
               <FormattedMessage {...messages.archiveAdGroup} />
             </Button>
           }
@@ -395,20 +371,16 @@ class AdGroupCard extends React.Component<JoinedProps, AdGroupCardState> {
             horizontal={true}
             content={
               <Button
-                className="m-r-10 button-slider button-glow"
+                className='m-r-10 button-slider button-glow'
                 onClick={this.openEditAdGroupsDrawer}
               >
-                <McsIcon type="pen" />
+                <McsIcon type='pen' />
                 <FormattedMessage {...messages.editAdGroup} />
               </Button>
             }
           />
         ) : null}
-        <Slide
-          toShow={hasSelected}
-          horizontal={true}
-          content={buildActionElement()}
-        />
+        <Slide toShow={hasSelected} horizontal={true} content={buildActionElement()} />
       </span>
     );
 

@@ -7,22 +7,14 @@ import { IFeedsStatsService } from '../../../../../../services/FeedsStatsService
 import { TYPES } from '../../../../../../constants/types';
 import { lazyInject } from '../../../../../../config/inversify.config';
 import { normalizeReportView } from '../../../../../../utils/MetricHelper';
-import {
-  defineMessages,
-  FormattedMessage,
-  injectIntl,
-  InjectedIntlProps,
-} from 'react-intl';
+import { defineMessages, FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import injectThemeColors, {
   InjectedThemeColorsProps,
 } from '../../../../../Helpers/injectThemeColors';
 import { formatMcsDate } from '../../../../../../utils/McsMoment';
 import { Card } from 'antd';
-import {
-  StackedBarPlot,
-  LoadingChart,
-} from '@mediarithmics-private/mcs-components-library';
+import { StackedBarPlot, LoadingChart } from '@mediarithmics-private/mcs-components-library';
 import moment from 'moment';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import { getAllDates } from '../../../../../../utils/DateHelper';
@@ -79,10 +71,7 @@ class FeedChart extends React.Component<Props, State> {
 
     const formatedNonInclusiveDateRange = formatMcsDate(dateRange);
 
-    return formatedNonInclusiveDateRange.from ===
-      formatedNonInclusiveDateRange.to
-      ? 'HOUR'
-      : 'DAY';
+    return formatedNonInclusiveDateRange.from === formatedNonInclusiveDateRange.to ? 'HOUR' : 'DAY';
   }
 
   fetchStats() {
@@ -116,7 +105,7 @@ class FeedChart extends React.Component<Props, State> {
 
     return this._feedsStatsService
       .getStats(organisationId, reportBody)
-      .then((res) => {
+      .then(res => {
         const normalized = normalizeReportView<{
           hour: string;
           date_yyyy_mm_dd: string;
@@ -125,15 +114,15 @@ class FeedChart extends React.Component<Props, State> {
           uniq_user_identifiers_count: number;
         }>(res.data.report_view);
 
-        const upserts = normalized.filter((rv) => rv.sync_type === 'UPSERT');
-        const deletes = normalized.filter((rv) => rv.sync_type === 'DELETE');
+        const upserts = normalized.filter(rv => rv.sync_type === 'UPSERT');
+        const deletes = normalized.filter(rv => rv.sync_type === 'DELETE');
 
-        let feedReports: FeedReport[] = allDates.map((day) => {
+        let feedReports: FeedReport[] = allDates.map(day => {
           const upsertedOnDay = upserts.find(
-            (r) => (timeUnit === 'HOUR' ? r.hour : r.date_yyyy_mm_dd) === day,
+            r => (timeUnit === 'HOUR' ? r.hour : r.date_yyyy_mm_dd) === day,
           );
           const deletedOnDay = deletes.find(
-            (r) => (timeUnit === 'HOUR' ? r.hour : r.date_yyyy_mm_dd) === day,
+            r => (timeUnit === 'HOUR' ? r.hour : r.date_yyyy_mm_dd) === day,
           );
 
           return {
@@ -178,14 +167,12 @@ class FeedChart extends React.Component<Props, State> {
 
     const metrics =
       dataSource && dataSource[0]
-        ? Object.keys(dataSource[0]).filter(
-            (el) => el !== 'day' && el !== 'unit',
-          )
+        ? Object.keys(dataSource[0]).filter(el => el !== 'day' && el !== 'unit')
         : [];
 
     const optionsForChart = {
       xKey: 'day',
-      yKeys: metrics.map((metric) => {
+      yKeys: metrics.map(metric => {
         if (dataSource[0].unit === 'USER_POINTS') {
           if (metric === 'upserted') {
             return {
@@ -223,15 +210,12 @@ class FeedChart extends React.Component<Props, State> {
     };
 
     return (
-      <div className="mcs-feed-chart">
+      <div className='mcs-feed-chart'>
         {isLoading ? (
           <LoadingChart />
         ) : (
-          <Card className="compact" title={title}>
-            <StackedBarPlot
-              dataset={dataSource as any}
-              options={optionsForChart}
-            />
+          <Card className='compact' title={title}>
+            <StackedBarPlot dataset={dataSource as any} options={optionsForChart} />
           </Card>
         )}
       </div>
@@ -239,10 +223,7 @@ class FeedChart extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, FeedChartProps>(
-  injectThemeColors,
-  injectIntl,
-)(FeedChart);
+export default compose<Props, FeedChartProps>(injectThemeColors, injectIntl)(FeedChart);
 
 const messagesMap: {
   [metric: string]: FormattedMessage.MessageDescriptor;

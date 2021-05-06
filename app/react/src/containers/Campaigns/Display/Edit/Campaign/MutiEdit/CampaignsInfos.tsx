@@ -2,12 +2,7 @@ import * as React from 'react';
 import { WrappedFieldArrayProps, Validator } from 'redux-form';
 import { Button, Row, Col } from 'antd';
 import { compose } from 'recompose';
-import {
-  InjectedIntlProps,
-  injectIntl,
-  defineMessages,
-  FormattedMessage,
-} from 'react-intl';
+import { InjectedIntlProps, injectIntl, defineMessages, FormattedMessage } from 'react-intl';
 
 import { CampaignsInfosFieldModel } from '../domain';
 import {
@@ -17,9 +12,7 @@ import {
   FormInputField,
 } from '../../../../../../components/Form/index';
 import { DisplayCampaignResource } from '../../../../../../models/campaign/display/index';
-import withValidators, {
-  ValidatorProps,
-} from '../../../../../../components/Form/withValidators';
+import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
 const editableCampaignProperties: Array<keyof DisplayCampaignResource> = [
@@ -37,15 +30,11 @@ class CampaignsInfos extends React.Component<JoinedProps> {
   getAvailableOptions = () => {
     const { fields, intl } = this.props;
 
-    const selected = fields.getAll()
-      ? fields.getAll().map(f => f.campaignProperty)
-      : [];
+    const selected = fields.getAll() ? fields.getAll().map(f => f.campaignProperty) : [];
 
     return editableCampaignProperties.map(campaignProperty => {
       return {
-        title: intl.formatMessage(
-          campaignPropertiesMessageMap[campaignProperty]!,
-        ),
+        title: intl.formatMessage(campaignPropertiesMessageMap[campaignProperty]!),
         value: campaignProperty,
         disabled: selected.includes(campaignProperty),
       };
@@ -92,9 +81,7 @@ class CampaignsInfos extends React.Component<JoinedProps> {
     ];
 
     const adField = () => {
-      const firstSelectableOptions = this.getAvailableOptions().filter(
-        option => !option.disabled,
-      );
+      const firstSelectableOptions = this.getAvailableOptions().filter(option => !option.disabled);
       fields.push({
         campaignProperty: firstSelectableOptions[0].value,
         action: 'equals',
@@ -102,8 +89,8 @@ class CampaignsInfos extends React.Component<JoinedProps> {
     };
 
     return (
-      <div style={{width: "70%", margin: "auto"}}>
-        <Row style={{display: "block"}}>
+      <div style={{ width: '70%', margin: 'auto' }}>
+        <Row style={{ display: 'block' }}>
           {fields.map((name: string, index: number) => {
             const removeField = () => fields.remove(index);
             let validates: Validator[] = [];
@@ -124,7 +111,7 @@ class CampaignsInfos extends React.Component<JoinedProps> {
             }
             return (
               <Row key={index} gutter={16}>
-                <Col className="gutter-row" span={7}>
+                <Col className='gutter-row' span={7}>
                   <FormSelectField
                     name={`${name}.campaignProperty`}
                     component={DefaultSelect}
@@ -136,7 +123,7 @@ class CampaignsInfos extends React.Component<JoinedProps> {
                     }}
                   />
                 </Col>
-                <Col className="gutter-row" span={7}>
+                <Col className='gutter-row' span={7}>
                   <FormSelectField
                     name={`${name}.action`}
                     component={DefaultSelect}
@@ -148,7 +135,7 @@ class CampaignsInfos extends React.Component<JoinedProps> {
                     options={actionOptions}
                   />
                 </Col>
-                <Col className="gutter-row" span={7}>
+                <Col className='gutter-row' span={7}>
                   <FormInputField
                     name={`${name}.value`}
                     component={FormInput}
@@ -161,32 +148,27 @@ class CampaignsInfos extends React.Component<JoinedProps> {
                     inputProps={{}}
                   />
                 </Col>
-                <Col className="gutter-row" span={3}>
-                  <Button className="delete-fieldarray" onClick={removeField}>
-                    <McsIcon type="close" />
+                <Col className='gutter-row' span={3}>
+                  <Button className='delete-fieldarray' onClick={removeField}>
+                    <McsIcon type='close' />
                   </Button>
                 </Col>
               </Row>
             );
           })}
         </Row>
-        {fields.getAll() &&
-          fields.getAll().length <= editableCampaignProperties.length - 1 && (
-            <Row style={{display: "block"}}>
-              <div onClick={adField}>
-                <Col
-                  span={22}
-                  offset={1}
-                  className="gutter-row add-field-button"
-                >
-                  <p>
-                    <McsIcon type="plus" />
-                    Add Field
-                  </p>
-                </Col>
-              </div>
-            </Row>
-          )}
+        {fields.getAll() && fields.getAll().length <= editableCampaignProperties.length - 1 && (
+          <Row style={{ display: 'block' }}>
+            <div onClick={adField}>
+              <Col span={22} offset={1} className='gutter-row add-field-button'>
+                <p>
+                  <McsIcon type='plus' />
+                  Add Field
+                </p>
+              </Col>
+            </div>
+          </Row>
+        )}
       </div>
     );
   }
@@ -195,9 +177,7 @@ class CampaignsInfos extends React.Component<JoinedProps> {
 export default compose(injectIntl, withValidators)(CampaignsInfos);
 
 const campaignPropertiesMessageMap: {
-  [propertyName in keyof Partial<
-    DisplayCampaignResource
-  >]: FormattedMessage.MessageDescriptor
+  [propertyName in keyof Partial<DisplayCampaignResource>]: FormattedMessage.MessageDescriptor;
 } = defineMessages({
   total_impression_capping: {
     id: 'display.campaigns.multiEdit.option.totalImpressionCapping',

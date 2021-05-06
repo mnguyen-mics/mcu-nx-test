@@ -9,15 +9,10 @@ import CampaignDisplayProgress from './CampaignDisplayProgress';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';
 
-import {
-  updateSearch,
-  parseSearch,
-} from '../../../../../utils/LocationSearchHelper';
+import { updateSearch, parseSearch } from '../../../../../utils/LocationSearchHelper';
 import { formatMetric } from '../../../../../utils/MetricHelper';
 import McsMoment from '../../../../../utils/McsMoment';
-import injectThemeColors, {
-  InjectedThemeColorsProps,
-} from '../../../../Helpers/injectThemeColors';
+import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
 import DoubleStackedAreaPlot from '../../../../../components/Charts/TimeBased/DoubleStackedAreaPlot';
 import {
   EmptyChart,
@@ -116,11 +111,7 @@ class DisplayStackedAreaChart<T> extends React.Component<
 
     const nextLocation = {
       pathname,
-      search: updateSearch(
-        currentSearch,
-        params,
-        DISPLAY_DASHBOARD_SEARCH_SETTINGS,
-      ),
+      search: updateSearch(currentSearch, params, DISPLAY_DASHBOARD_SEARCH_SETTINGS),
     };
 
     history.push(nextLocation);
@@ -257,22 +248,19 @@ class DisplayStackedAreaChart<T> extends React.Component<
       },
     ];
     const legends = this.createLegend();
-    const onLegendChange = (a: string, b: string) =>
-      this.setState({ key1: a, key2: b });
+    const onLegendChange = (a: string, b: string) => this.setState({ key1: a, key2: b });
 
     const chartArea = (
       <div>
         {renderCampaignProgress ? <CampaignDisplayProgress /> : null}
         {renderCampaignProgress ? <hr /> : null}
-        <Row className="mcs-chart-header">
+        <Row className='mcs-chart-header'>
           <Col span={12}>
-            {dataSource &&
-            dataSource.length === 0 &&
-            !isFetchingCampaignStat ? (
+            {dataSource && dataSource.length === 0 && !isFetchingCampaignStat ? (
               <div />
             ) : (
               <LegendChartWithModalJS
-                identifier="chartLegend"
+                identifier='chartLegend'
                 options={legendOptions}
                 legends={legends}
                 onLegendChange={onLegendChange}
@@ -280,14 +268,11 @@ class DisplayStackedAreaChart<T> extends React.Component<
             )}
           </Col>
           <Col span={12}>
-            <span className="mcs-card-button">{this.renderDatePicker()}</span>
+            <span className='mcs-card-button'>{this.renderDatePicker()}</span>
           </Col>
         </Row>
         {dataSource && dataSource.length === 0 && !isFetchingCampaignStat ? (
-          <EmptyChart
-            title={formatMessage(messages.noStatAvailable)}
-            icon="warning"
-          />
+          <EmptyChart title={formatMessage(messages.noStatAvailable)} icon='warning' />
         ) : (
           <Row gutter={20}>
             <Col span={24}>{this.renderStackedAreaCharts()}</Col>

@@ -4,15 +4,12 @@ import { Button } from 'antd';
 import SegmentByNameSelector from './SegmentByNameSelector';
 import chroma from 'chroma-js';
 import { LabeledValue } from 'antd/lib/select';
-import injectThemeColors, {
-  InjectedThemeColorsProps,
-} from '../../../Helpers/injectThemeColors';
+import injectThemeColors, { InjectedThemeColorsProps } from '../../../Helpers/injectThemeColors';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { AudienceSegmentType } from '../../../../models/audiencesegment';
 
-
-type RawValue = string | number
+type RawValue = string | number;
 
 const messages = defineMessages({
   allUsers: {
@@ -53,9 +50,7 @@ interface AppliedSegmentFilter extends LabeledValue {
   color: string;
 }
 
-type JoinedProp = SegmentFilterProps &
-  InjectedThemeColorsProps &
-  InjectedIntlProps;
+type JoinedProp = SegmentFilterProps & InjectedThemeColorsProps & InjectedIntlProps;
 
 class SegmentFilter extends React.Component<JoinedProp, SegmentFilterState> {
   private _lastFilterColor = '#000';
@@ -73,20 +68,12 @@ class SegmentFilter extends React.Component<JoinedProp, SegmentFilterState> {
   }
 
   componentDidMount() {
-    const {
-      colors,
-      defaultSegment,
-      disableAllUserFilter,
-      segmentcolors,
-    } = this.props;
+    const { colors, defaultSegment, disableAllUserFilter, segmentcolors } = this.props;
     const { lastFilterColor } = this.state;
     this.setState({
       filterColors: segmentcolors
         ? segmentcolors
-        : chroma
-            .scale([colors['mcs-info'], lastFilterColor])
-            .mode('lch')
-            .colors(3),
+        : chroma.scale([colors['mcs-info'], lastFilterColor]).mode('lch').colors(3),
     });
 
     if (defaultSegment) {
@@ -131,18 +118,18 @@ class SegmentFilter extends React.Component<JoinedProp, SegmentFilterState> {
     const usedColors = appliedSegmentFilters.map(item => item.color);
     if (!exist) {
       this.setState(state => {
-        const newAppliedSegmentFilters: AppliedSegmentFilter[] = state.appliedSegmentFilters.concat({
-          ...newValue,
-          color:
-            newValue.color ||
-            (usedColors.includes(filterColors[0])
-              ? filterColors[1]
-              : filterColors[0]),
-        });
+        const newAppliedSegmentFilters: AppliedSegmentFilter[] = state.appliedSegmentFilters.concat(
+          {
+            ...newValue,
+            color:
+              newValue.color ||
+              (usedColors.includes(filterColors[0]) ? filterColors[1] : filterColors[0]),
+          },
+        );
 
         const segmentIds: RawValue[] = newAppliedSegmentFilters
           .slice()
-          .map((item: AppliedSegmentFilter) => item.key!)
+          .map((item: AppliedSegmentFilter) => item.key!);
         onChange(segmentIds);
         return {
           appliedSegmentFilters: newAppliedSegmentFilters,
@@ -155,8 +142,8 @@ class SegmentFilter extends React.Component<JoinedProp, SegmentFilterState> {
   removeFilter = (segmentId: RawValue) => {
     const { onChange, defaultSegment, defaultSegmentCanBeRemoved } = this.props;
 
-    if (segmentId &&
-      !defaultSegment ||
+    if (
+      (segmentId && !defaultSegment) ||
       (defaultSegment && defaultSegment.key !== segmentId) ||
       defaultSegmentCanBeRemoved
     ) {
@@ -184,8 +171,7 @@ class SegmentFilter extends React.Component<JoinedProp, SegmentFilterState> {
     });
   };
 
-  handleOnSegmentNameFilterClick = (segmentId: string) =>
-    this.removeFilter(segmentId);
+  handleOnSegmentNameFilterClick = (segmentId: string) => this.removeFilter(segmentId);
 
   handleOnAllUserFilterToggle = () => this.toggleAllUserFilter();
 
@@ -207,57 +193,44 @@ class SegmentFilter extends React.Component<JoinedProp, SegmentFilterState> {
       segmentType,
     } = this.props;
     const appliedSegmentFiltersLength = segmentFiltersLength || 2;
-    const filterId = "mcs-segmentFilter"
+    const filterId = 'mcs-segmentFilter';
     return (
-      <div className={className} id={filterId} style={{position: "relative"}}>
+      <div className={className} id={filterId} style={{ position: 'relative' }}>
         {!hideAllUsersButton && (
           <Button
-            className={
-              allUsersEnabled
-                ? 'appliedSegmentName'
-                : 'appliedSegmentName _is_disable'
-            }
+            className={allUsersEnabled ? 'appliedSegmentName' : 'appliedSegmentName _is_disable'}
             ghost={true}
             style={{ border: `1px solid ${allUsersFilterColor}` }}
             onClick={this.handleOnAllUserFilterToggle}
           >
-            <span
-              className="oval"
-              style={{ border: `5px solid ${allUsersFilterColor}` }}
-            />
-            <span className="name">
-              {intl.formatMessage(messages.allUsers)}
-            </span>
+            <span className='oval' style={{ border: `5px solid ${allUsersFilterColor}` }} />
+            <span className='name'>{intl.formatMessage(messages.allUsers)}</span>
           </Button>
         )}
         {appliedSegmentFilters.map((item: AppliedSegmentFilter) => (
           <Button
             key={item.key}
-            className="appliedSegmentName"
+            className='appliedSegmentName'
             ghost={true}
             style={{ border: `1px solid ${item.color}` }}
             onClick={this.handleOnSegmentNameFilterClick.bind(this, item.key)}
           >
-            <span
-              className="oval"
-              style={{ border: `5px solid ${item.color}` }}
-            />
-            <span className="name">{item.label}</span>
+            <span className='oval' style={{ border: `5px solid ${item.color}` }} />
+            <span className='name'>{item.label}</span>
           </Button>
         ))}
 
         {appliedSegmentFilters.length < appliedSegmentFiltersLength &&
           (!segmentSearchDisplayed ? (
             <Button
-              type="dashed"
+              type='dashed'
               ghost={true}
-              className="segmentFilter"
+              className='segmentFilter'
               icon={<PlusOutlined />}
               onClick={this.showSegmentSearch}
             >
-              <span className="placeholder">
-                {placeholder ||
-                  intl.formatMessage(messages.segmentFilterPlaceholder)}
+              <span className='placeholder'>
+                {placeholder || intl.formatMessage(messages.segmentFilterPlaceholder)}
               </span>
             </Button>
           ) : (
@@ -266,7 +239,7 @@ class SegmentFilter extends React.Component<JoinedProp, SegmentFilterState> {
               datamartId={datamartId}
               organisationId={organisationId}
               onchange={this.onSegmentByNameSelectorChange}
-              filter={{segmentType: segmentType}}
+              filter={{ segmentType: segmentType }}
               anchorId={filterId}
             />
           ))}

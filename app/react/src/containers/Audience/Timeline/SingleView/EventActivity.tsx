@@ -36,7 +36,7 @@ class EventActivity extends React.Component<Props, State> {
       okText: intl.formatMessage(messages.eventJsonModalOkText),
       width: '650px',
       content: (
-        <SyntaxHighlighter language="json" style={docco}>
+        <SyntaxHighlighter language='json' style={docco}>
           {JSON.stringify(event, undefined, 4)}
         </SyntaxHighlighter>
       ),
@@ -58,38 +58,32 @@ class EventActivity extends React.Component<Props, State> {
     const changeVisibility = () => this.setState({ showMore: !showMore });
 
     return (
-      <Row className="section border-top">
-        <Col className="section-ts" span={5}>
+      <Row className='section border-top'>
+        <Col className='section-ts' span={5}>
           {moment(event.$ts).format('HH:mm:ss')}
         </Col>
         <Col span={19}>
-          <div className="section-title">{event.$event_name}</div>
-          <div className="section-cta">
+          <div className='section-title'>{event.$event_name}</div>
+          <div className='section-cta'>
             {event.$properties && showMore ? (
               <div>
                 <Button
                   onClick={this.handleJSONViewModal}
-                  className="mcs-card-inner-action"
+                  className='mcs-card-inner-action'
                   style={{ marginRight: '10px' }}
                 >
                   <FormattedMessage {...messages.viewEventJson} />
                 </Button>
-                <button
-                  className="mcs-card-inner-action"
-                  onClick={changeVisibility}
-                >
-                  <McsIcon className="mcs-icon-inverted" type="chevron" />
+                <button className='mcs-card-inner-action' onClick={changeVisibility}>
+                  <McsIcon className='mcs-icon-inverted' type='chevron' />
                   &nbsp;
                   <FormattedMessage {...messages.less} />
                 </button>
               </div>
             ) : (
               <div>
-                <button
-                  className="mcs-card-inner-action"
-                  onClick={changeVisibility}
-                >
-                  <McsIcon type="chevron" />
+                <button className='mcs-card-inner-action' onClick={changeVisibility}>
+                  <McsIcon type='chevron' />
                   &nbsp;
                   <FormattedMessage {...messages.detail} />
                 </button>
@@ -98,7 +92,7 @@ class EventActivity extends React.Component<Props, State> {
           </div>
         </Col>
         {event.$properties && showMore && (
-          <div className="event-properties-list">
+          <div className='event-properties-list'>
             <CustomObjectRendererWrapper
               customObject={event.$properties}
               customRenderingTemplates={renderingTemplates}

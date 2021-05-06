@@ -7,10 +7,7 @@ import { RouteComponentProps } from 'react-router';
 import { formatMetric } from '../../../../../utils/MetricHelper';
 import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import messages from '../messages';
-import {
-  AdResource,
-  AdInfoResource,
-} from '../../../../../models/campaign/display/index';
+import { AdResource, AdInfoResource } from '../../../../../models/campaign/display/index';
 import { Popover } from '../../../../../components/PopupContainers/index';
 import { UpdateMessage } from '../ProgrammaticCampaign/DisplayCampaignAdGroupTable';
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
@@ -45,10 +42,7 @@ type JoinedProps = DisplayCampaignAdTableProps &
   RouteComponentProps<{ organisationId: string; campaignId: string }> &
   InjectedDrawerProps;
 
-class DisplayCampaignAdTable extends React.Component<
-  JoinedProps,
-  DisplayCampaignAdTableState
-> {
+class DisplayCampaignAdTable extends React.Component<JoinedProps, DisplayCampaignAdTableState> {
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -107,13 +101,9 @@ class DisplayCampaignAdTable extends React.Component<
       rowSelection,
     } = this.props;
 
-    const renderMetricData = (
-      value: any,
-      numeralFormat: string,
-      currency = '',
-    ) => {
+    const renderMetricData = (value: any, numeralFormat: string, currency = '') => {
       if (isFetchingStat) {
-        return <i className="mcs-table-cell-loading" />;
+        return <i className='mcs-table-cell-loading' />;
       }
       const unlocalizedMoneyPrefix = currency === 'EUR' ? '€ ' : '';
       return formatMetric(value, numeralFormat, unlocalizedMoneyPrefix);
@@ -186,21 +176,19 @@ class DisplayCampaignAdTable extends React.Component<
             content={
               text === 'AUDIT_PASSED' ? (
                 <FormattedMessage
-                  id="display.campaign.adtable.ad.auditpassed.msg"
-                  defaultMessage="Audit successful"
+                  id='display.campaign.adtable.ad.auditpassed.msg'
+                  defaultMessage='Audit successful'
                 />
               ) : (
                 <FormattedMessage
-                  id="display.campaign.adtable.ad.noaudit.msg"
-                  defaultMessage="You need to pass the Audit first"
+                  id='display.campaign.adtable.ad.noaudit.msg'
+                  defaultMessage='You need to pass the Audit first'
                 />
               )
             }
           >
             <McsIcon
-              className={
-                text === 'AUDIT_PASSED' ? 'font-success' : 'font-error'
-              }
+              className={text === 'AUDIT_PASSED' ? 'font-success' : 'font-error'}
               type={text === 'AUDIT_PASSED' ? 'check' : 'close'}
             />
           </Popover>
@@ -218,15 +206,11 @@ class DisplayCampaignAdTable extends React.Component<
           return (
             <span>
               <Switch
-                className="mcs-table-switch"
+                className='mcs-table-switch'
                 checked={text === 'ACTIVE'}
                 onChange={onChange}
-                checkedChildren={
-                  <McsIcon style={{ verticalAlign: 'middle' }} type="play" />
-                }
-                unCheckedChildren={
-                  <McsIcon style={{ verticalAlign: 'middle' }} type="pause" />
-                }
+                checkedChildren={<McsIcon style={{ verticalAlign: 'middle' }} type='play' />}
+                unCheckedChildren={<McsIcon style={{ verticalAlign: 'middle' }} type='pause' />}
               />
             </span>
           );
@@ -302,8 +286,7 @@ class DisplayCampaignAdTable extends React.Component<
         key: 'ctr',
         isVisibleByDefault: true,
         isHideable: true,
-        render: (text: string) =>
-          renderMetricData(parseFloat(text) / 100, '0.000 %'),
+        render: (text: string) => renderMetricData(parseFloat(text) / 100, '0.000 %'),
         sorter: (a: any, b: any) => sorter(a, b, 'ctr'),
       },
       {
@@ -348,11 +331,7 @@ class DisplayCampaignAdTable extends React.Component<
           pageSize: size,
         }),
       onChange: (page: number) => {
-        if (
-          rowSelection &&
-          rowSelection.unselectAllItemIds &&
-          rowSelection.allRowsAreSelected
-        ) {
+        if (rowSelection && rowSelection.unselectAllItemIds && rowSelection.allRowsAreSelected) {
           rowSelection.unselectAllItemIds();
         }
       },

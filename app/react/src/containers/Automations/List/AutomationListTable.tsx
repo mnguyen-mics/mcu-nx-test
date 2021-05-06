@@ -3,12 +3,7 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Layout, Tooltip, Modal } from 'antd';
 import { compose } from 'recompose';
-import {
-  InjectedIntlProps,
-  injectIntl,
-  FormattedMessage,
-  defineMessages,
-} from 'react-intl';
+import { InjectedIntlProps, injectIntl, FormattedMessage, defineMessages } from 'react-intl';
 import {
   AutomationResource,
   AutomationStatus,
@@ -38,7 +33,11 @@ import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
-import { ActionsColumnDefinition, DataColumnDefinition, ExtendedTableRowSelection } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import {
+  ActionsColumnDefinition,
+  DataColumnDefinition,
+  ExtendedTableRowSelection,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 const { Content } = Layout;
 
@@ -134,10 +133,7 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
         state: { reloadDataSource: true },
       });
     } else {
-      const filter = parseSearch<FilterParams>(
-        search,
-        SCENARIOS_SEARCH_SETTINGS,
-      );
+      const filter = parseSearch<FilterParams>(search, SCENARIOS_SEARCH_SETTINGS);
       this.fetchAutomationList(organisationId, filter);
     }
   }
@@ -163,8 +159,7 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
     if (
       !compareSearches(search, previousSearch) ||
       organisationId !== previousOrganisationId ||
-      (isUpdatingStatuses !== previousIsUpdatingStatuses &&
-        isUpdatingStatuses === false)
+      (isUpdatingStatuses !== previousIsUpdatingStatuses && isUpdatingStatuses === false)
     ) {
       if (!isSearchValid(search, SCENARIOS_SEARCH_SETTINGS)) {
         history.replace({
@@ -175,10 +170,7 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
           },
         });
       } else {
-        const filter = parseSearch<FilterParams>(
-          search,
-          SCENARIOS_SEARCH_SETTINGS,
-        );
+        const filter = parseSearch<FilterParams>(search, SCENARIOS_SEARCH_SETTINGS);
         this.fetchAutomationList(organisationId, filter);
       }
     }
@@ -195,15 +187,13 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
     if (filter.statuses && filter.statuses.length) {
       options.status = filter.statuses;
     }
-    return this._scenarioService
-      .getScenarios(organisationId, options)
-      .then((res) => {
-        this.setState({
-          isLoading: false,
-          dataSource: res.data,
-          totalAutomations: res.total || res.count,
-        });
+    return this._scenarioService.getScenarios(organisationId, options).then(res => {
+      this.setState({
+        isLoading: false,
+        dataSource: res.data,
+        totalAutomations: res.total || res.count,
       });
+    });
   };
 
   editAutomation = (record: AutomationResource) => {
@@ -216,7 +206,7 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
       intl: { formatMessage },
     } = this.props;
 
-    this._datamartService.getDatamart(record.datamart_id).then((resp) => {
+    this._datamartService.getDatamart(record.datamart_id).then(resp => {
       if (resp.data.storage_model_version !== 'v201506') {
         history.push(`/v2/o/${organisationId}/automations/${record.id}/edit`, {
           from: `${location.pathname}${location.search}`,
@@ -263,14 +253,10 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
     };
     Modal.confirm({
       title: intl.formatMessage(messages.automationModalConfirmDeletionTitle),
-      content: intl.formatMessage(
-        messages.automationModalConfirmDeletionContent,
-      ),
+      content: intl.formatMessage(messages.automationModalConfirmDeletionContent),
       icon: <ExclamationCircleOutlined />,
       okText: intl.formatMessage(messages.deleteAutomation),
-      cancelText: intl.formatMessage(
-        messages.automationModalConfirmDeletionCancel,
-      ),
+      cancelText: intl.formatMessage(messages.automationModalConfirmDeletionCancel),
       onOk() {
         deleteMethod(record.id).then(() => {
           fetchMethod();
@@ -291,8 +277,7 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
       notifyError,
     } = this.props;
 
-    const newStatus: AutomationStatus =
-      scenario.status !== 'ACTIVE' ? 'ACTIVE' : 'PAUSED';
+    const newStatus: AutomationStatus = scenario.status !== 'ACTIVE' ? 'ACTIVE' : 'PAUSED';
 
     const scenarioWithUpdatedStatus: AutomationResource = {
       ...scenario,
@@ -302,13 +287,10 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
     this._scenarioService
       .updateScenario(scenario.id, scenarioWithUpdatedStatus)
       .then(() => {
-        const filter = parseSearch<FilterParams>(
-          search,
-          SCENARIOS_SEARCH_SETTINGS,
-        );
+        const filter = parseSearch<FilterParams>(search, SCENARIOS_SEARCH_SETTINGS);
         this.fetchAutomationList(organisationId, filter);
       })
-      .catch((err) => {
+      .catch(err => {
         notifyError(err);
       });
   };
@@ -336,7 +318,7 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
       intl: { formatMessage },
     } = this.props;
 
-    this._datamartService.getDatamart(record.datamart_id).then((resp) => {
+    this._datamartService.getDatamart(record.datamart_id).then(resp => {
       if (resp.data.storage_model_version !== 'v201506') {
         history.push(`/v2/o/${organisationId}/automations/${record.id}`);
       } else {
@@ -351,7 +333,7 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
   render() {
     const {
       location: { search },
-      intl : { formatMessage },
+      intl: { formatMessage },
       rowSelection,
     } = this.props;
 
@@ -373,10 +355,10 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
       current: filter.currentPage,
       pageSize: filter.pageSize,
       total: totalAutomations,
-      onChange: (page: number,size:number) => {
+      onChange: (page: number, size: number) => {
         this.updateLocationSearch({
           currentPage: page,
-          pageSize:size
+          pageSize: size,
         });
       },
       onShowSizeChange: (current: number, size: number) =>
@@ -392,12 +374,9 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
         key: 'status',
         isHideable: false,
         render: (text: string) => (
-          <Tooltip
-            placement="top"
-            title={formatMessage(messagesMap[text])}
-          >
+          <Tooltip placement='top' title={formatMessage(messagesMap[text])}>
             <span className={`mcs-campaigns-status-${text.toLowerCase()}`}>
-              <McsIcon type="status" />
+              <McsIcon type='status' />
             </span>
           </Tooltip>
         ),
@@ -409,7 +388,7 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
         render: (text: string, record: AutomationResource) => {
           return (
             <a onClick={this.viewAutomation(record)}>
-              <span className="mcs-automation-link">{text}</span>
+              <span className='mcs-automation-link'>{text}</span>
             </a>
           );
         },
@@ -439,7 +418,7 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
       },
     ];
 
-    const statusItems = automationStatuses.map((status) => ({
+    const statusItems = automationStatuses.map(status => ({
       key: status,
       value: status,
     }));
@@ -448,10 +427,7 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
       {
         displayElement: (
           <div>
-            <FormattedMessage
-              id="automations.list.filterStatus"
-              defaultMessage="Status"
-            />{' '}
+            <FormattedMessage id='automations.list.filterStatus' defaultMessage='Status' />{' '}
             <DownOutlined />
           </div>
         ),
@@ -460,23 +436,19 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
           value: status,
         })),
         items: statusItems,
-        getKey: (item: { key: AutomationStatus; value: AutomationStatus }) =>
-          item.key,
-        display: (item: { key: AutomationStatus; value: AutomationStatus }) =>
-          item.value,
-        handleMenuClick: (
-          values: Array<{ key: AutomationStatus; value: AutomationStatus }>,
-        ) =>
+        getKey: (item: { key: AutomationStatus; value: AutomationStatus }) => item.key,
+        display: (item: { key: AutomationStatus; value: AutomationStatus }) => item.value,
+        handleMenuClick: (values: Array<{ key: AutomationStatus; value: AutomationStatus }>) =>
           this.updateLocationSearch({
-            statuses: values.map((v) => v.value),
+            statuses: values.map(v => v.value),
           }),
       },
     ];
 
     return (
-      <div className="ant-layout">
-        <Content className="mcs-content-container">
-          <div className="mcs-table-container">
+      <div className='ant-layout'>
+        <Content className='mcs-content-container'>
+          <div className='mcs-table-container'>
             <TableViewFilters
               columns={dataColumns}
               actionsColumnsDefinition={actionColumns}

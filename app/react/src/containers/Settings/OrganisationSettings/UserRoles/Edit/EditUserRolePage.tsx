@@ -46,7 +46,7 @@ const messages = defineMessages({
 });
 
 interface UserRoleExtended extends UserRoleResource {
-  user_id: string
+  user_id: string;
   user_name: string;
   organisation_name: string;
   email: string;
@@ -56,7 +56,7 @@ const INITIAL_USER_ROLE_FORM_DATA: Partial<UserRoleExtended> = {
   user_name: '',
   email: '',
   organisation_name: '',
-}
+};
 
 interface State {
   loading: boolean;
@@ -64,7 +64,7 @@ interface State {
 }
 
 type Props = InjectedIntlProps &
-  RouteComponentProps<{ organisationId: string; userId: string, roleId: string }>;
+  RouteComponentProps<{ organisationId: string; userId: string; roleId: string }>;
 
 class EditUserPage extends React.Component<Props, State> {
   @lazyInject(TYPES.IUsersService)
@@ -76,8 +76,6 @@ class EditUserPage extends React.Component<Props, State> {
   @lazyInject(TYPES.IOrganisationService)
   private _organisationService: IOrganisationService;
 
-  
-
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -86,7 +84,6 @@ class EditUserPage extends React.Component<Props, State> {
     };
   }
 
-  
   componentDidMount() {
     const {
       match: {
@@ -98,56 +95,53 @@ class EditUserPage extends React.Component<Props, State> {
 
     const userOrganisationId = location.state?.userOrganisationId;
     if (!userId || !roleId || !userOrganisationId) {
-      return history.replace(
-        `/v2/o/${organisationId}/settings/organisation/user_roles`,
-      );
+      return history.replace(`/v2/o/${organisationId}/settings/organisation/user_roles`);
     }
 
-    this.setState({loading: true});
-    this._userRolesService.getUserRoles(userId)
-    .then(response => {
-      return response.data.find((role: UserRoleResource) => role.id === roleId)
-    })
-    .then(role => {
-      if (role) {
-        this._usersService
-          .getUser(userId, userOrganisationId)
-          .then(resp => {
-            const userWithRole: UserRoleExtended = {
-              ...role,
-              user_id: resp.data.id,
-              user_name: `${resp.data.first_name} ${resp.data.last_name}`,
-              email: resp.data.email,
-              organisation_name: "",
-            }
-            this.setState({
-              userRoleData: userWithRole,
-            });
-            this._organisationService.getOrganisation(userOrganisationId)
-            .then(orgRessource => 
+    this.setState({ loading: true });
+    this._userRolesService
+      .getUserRoles(userId)
+      .then(response => {
+        return response.data.find((role: UserRoleResource) => role.id === roleId);
+      })
+      .then(role => {
+        if (role) {
+          this._usersService
+            .getUser(userId, userOrganisationId)
+            .then(resp => {
+              const userWithRole: UserRoleExtended = {
+                ...role,
+                user_id: resp.data.id,
+                user_name: `${resp.data.first_name} ${resp.data.last_name}`,
+                email: resp.data.email,
+                organisation_name: '',
+              };
               this.setState({
-                userRoleData: {
-                  ...this.state.userRoleData,
-                  organisation_name: orgRessource.data.name,
-                },
-                loading: false,
-              })
-            )
-          })
-          .catch(err => {
-            this.redirectAndNotify(false);
-            notifyError(err);
-          })
-      }
-      else {
-        notifyError("UserRole not found");
-        this.setState({loading: false});
-      }
-    })
-    .catch(err => {
-      this.redirectAndNotify(false);
-      notifyError(err);
-    })
+                userRoleData: userWithRole,
+              });
+              this._organisationService.getOrganisation(userOrganisationId).then(orgRessource =>
+                this.setState({
+                  userRoleData: {
+                    ...this.state.userRoleData,
+                    organisation_name: orgRessource.data.name,
+                  },
+                  loading: false,
+                }),
+              );
+            })
+            .catch(err => {
+              this.redirectAndNotify(false);
+              notifyError(err);
+            });
+        } else {
+          notifyError('UserRole not found');
+          this.setState({ loading: false });
+        }
+      })
+      .catch(err => {
+        this.redirectAndNotify(false);
+        notifyError(err);
+      });
   }
 
   close = () => {
@@ -164,9 +158,7 @@ class EditUserPage extends React.Component<Props, State> {
   };
 
   redirectAndNotify(success: boolean = false) {
-    const {
-      intl,
-    } = this.props;
+    const { intl } = this.props;
 
     this.setState({
       loading: false,
@@ -176,7 +168,7 @@ class EditUserPage extends React.Component<Props, State> {
     success
       ? message.success(intl.formatMessage(messages.updateSuccess))
       : message.error(intl.formatMessage(messages.updateError));
-  };
+  }
 
   save = (formData: UserRoleExtended) => {
     const {
@@ -186,7 +178,7 @@ class EditUserPage extends React.Component<Props, State> {
     } = this.props;
     this.setState({
       loading: true,
-    });    
+    });
 
     const newRole: UserRoleResource = {
       organisation_id: formData.organisation_id,
@@ -194,20 +186,17 @@ class EditUserPage extends React.Component<Props, State> {
     };
 
     if (formData.id) {
-      this._userRolesService.deleteUserRole(userId, formData.id)
-      .then( _ => 
-        this._userRolesService.createUserRole(userId, newRole)
-      )
-      .then(() => {
-        this.redirectAndNotify(true);
-      })
-      .catch(err => {
-        this.redirectAndNotify();
-        notifyError(err);
-      })
-
+      this._userRolesService
+        .deleteUserRole(userId, formData.id)
+        .then(_ => this._userRolesService.createUserRole(userId, newRole))
+        .then(() => {
+          this.redirectAndNotify(true);
+        })
+        .catch(err => {
+          this.redirectAndNotify();
+          notifyError(err);
+        });
     }
-
   };
 
   render() {
@@ -220,7 +209,7 @@ class EditUserPage extends React.Component<Props, State> {
     const { userRoleData, loading } = this.state;
 
     const breadcrumbPaths = [
-      <Link key="1" to={`/v2/o/${organisationId}/settings/organisation/user_roles`}>
+      <Link key='1' to={`/v2/o/${organisationId}/settings/organisation/user_roles`}>
         {formatMessage(messages.userRoles)}
       </Link>,
       formatMessage(messages.editUserRole),

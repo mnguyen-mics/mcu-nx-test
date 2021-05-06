@@ -7,11 +7,7 @@ import { Row, Col, Spin } from 'antd';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import messages from '../../messages';
-import {
-  EditAdGroupRouteMatchParam,
-  AdFieldModel,
-  isDisplayCreativeFormData,
-} from '../domain';
+import { EditAdGroupRouteMatchParam, AdFieldModel, isDisplayCreativeFormData } from '../domain';
 import { injectDrawer } from '../../../../../../components/Drawer/index';
 import { ReduxFormChangeProps } from '../../../../../../utils/FormHelper';
 import {
@@ -34,10 +30,7 @@ import AuditStatusRenderer from '../../../../../Creative/DisplayAds/Audit/AuditS
 import CreativeCard from '../../../../Common/CreativeCard';
 import FormSection from '../../../../../../components/Form/FormSection';
 import EmptyRecords from '../../../../../../components/RelatedRecord/EmptyRecords';
-import {
-  makeCancelable,
-  CancelablePromise,
-} from '../../../../../../utils/ApiHelper';
+import { makeCancelable, CancelablePromise } from '../../../../../../utils/ApiHelper';
 import { InjectedDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
 import { lazyInject } from '../../../../../../config/inversify.config';
 import { TYPES } from '../../../../../../constants/types';
@@ -114,10 +107,7 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
     if (this.cancelablePromise) this.cancelablePromise.cancel();
   }
 
-  updateAds = (
-    creativeFormData: DisplayCreativeFormData,
-    fieldKey?: string,
-  ) => {
+  updateAds = (creativeFormData: DisplayCreativeFormData, fieldKey?: string) => {
     const { fields, formChange } = this.props;
 
     const newFields: AdFieldModel[] = [];
@@ -171,10 +161,7 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
       additionalProps: displayAdsSelectorProps,
     };
 
-    this.props.openNextDrawer<CreativeCardSelectorProps>(
-      CreativeCardSelector,
-      options,
-    );
+    this.props.openNextDrawer<CreativeCardSelectorProps>(CreativeCardSelector, options);
   };
 
   updateExistingAds = (creatives: DisplayAdResource[]) => {
@@ -216,10 +203,7 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
     const { fields, disabled } = this.props;
 
     const format = split(data.creativeResource.format, 'x');
-    const dimensions = computeDimensionsByRatio(
-      Number(format[0]),
-      Number(format[1]),
-    );
+    const dimensions = computeDimensionsByRatio(Number(format[0]), Number(format[1]));
 
     const shapeStyle = {
       backgroundColor: '#e8e8e8',
@@ -236,19 +220,19 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
 
     return (
       <div>
-        <Row className="footer">
-          <Col className="inline formatWrapper" span={16}>
+        <Row className='footer'>
+          <Col className='inline formatWrapper' span={16}>
             <div style={shapeStyle} />
-            <div className="dimensions">{data.creativeResource.format}</div>
+            <div className='dimensions'>{data.creativeResource.format}</div>
           </Col>
-          <Col className="inline buttons" span={4}>
+          <Col className='inline buttons' span={4}>
             <Button disabled={disabled} onClick={removeField}>
-              <McsIcon className="button" type="delete" />
+              <McsIcon className='button' type='delete' />
             </Button>
           </Col>
         </Row>
-        <Row className="footer">
-          <Col className="inline formatWrapper" span={22}>
+        <Row className='footer'>
+          <Col className='inline formatWrapper' span={22}>
             <AuditStatusRenderer auditStatus={auditStatus} />
           </Col>
         </Row>
@@ -289,7 +273,7 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
       const getFooter = () => this.getCreativeCardFooter(data);
       return (
         <Col key={data.fieldModel.key} span={small ? 12 : 6}>
-          <div className="ad-group-card">
+          <div className='ad-group-card'>
             <CreativeCard
               key={data.fieldModel.key}
               creative={data.creativeResource}
@@ -314,14 +298,14 @@ class AdFormSection extends React.Component<Props, AdsSectionState> {
           title={messages.sectionTitleAds}
         />
         <Spin spinning={this.state.loading}>
-          <div className="ad-group-ad-section" style={{ overflow: 'hidden' }}>
-            <div className="mcs-table-card content">
+          <div className='ad-group-ad-section' style={{ overflow: 'hidden' }}>
+            <div className='mcs-table-card content'>
               <Row gutter={20}>{cards}</Row>
             </div>
 
             {!fields.length && (
               <EmptyRecords
-                iconType="ads"
+                iconType='ads'
                 message={formatMessage(messages.contentSectionAdEmptyTitle)}
               />
             )}

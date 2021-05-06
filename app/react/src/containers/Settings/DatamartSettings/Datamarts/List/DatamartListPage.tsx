@@ -46,9 +46,7 @@ interface RouterProps {
 }
 
 class DatamartsListPage extends React.Component<
-  RouteComponentProps<RouterProps> &
-    InjectedIntlProps &
-    InjectedNotificationProps,
+  RouteComponentProps<RouterProps> & InjectedIntlProps & InjectedNotificationProps,
   DatamartsListPageState
 > {
   state = initialState;
@@ -69,14 +67,14 @@ class DatamartsListPage extends React.Component<
       };
       this._datamartService
         .getDatamarts(organisationId, options)
-        .then((results) => {
+        .then(results => {
           this.setState({
             loading: false,
             data: results.data,
             total: results.total || results.count,
           });
         })
-        .catch((error) => {
+        .catch(error => {
           this.setState({ loading: false });
           this.props.notifyError(error);
         });
@@ -91,9 +89,7 @@ class DatamartsListPage extends React.Component<
       },
     } = this.props;
 
-    history.push(
-      `/v2/o/${organisationId}/settings/datamart/datamarts/${datamart.id}/edit`,
-    );
+    history.push(`/v2/o/${organisationId}/settings/datamart/datamarts/${datamart.id}/edit`);
   };
 
   onClickSUR = (datamart: DatamartResource) => {
@@ -117,9 +113,7 @@ class DatamartsListPage extends React.Component<
       },
     } = this.props;
 
-    history.push(
-      `/v2/o/${organisationId}/settings/datamart/datamarts/${datamart.id}/sources`,
-    );
+    history.push(`/v2/o/${organisationId}/settings/datamart/datamarts/${datamart.id}/sources`);
   };
 
   render() {
@@ -153,18 +147,14 @@ class DatamartsListPage extends React.Component<
       return actionsDefinitions;
     };
 
-    const actionsColumnsDefinition: Array<
-      ActionsColumnDefinition<DatamartResource>
-    > = [
+    const actionsColumnsDefinition: Array<ActionsColumnDefinition<DatamartResource>> = [
       {
         key: 'action',
         actions: renderActionColumnDefinition,
       },
     ];
 
-    const dataColumnsDefinition: Array<
-      DataColumnDefinition<DatamartResource>
-    > = [
+    const dataColumnsDefinition: Array<DataColumnDefinition<DatamartResource>> = [
       {
         title: formatMessage(messages.datamartId),
         key: 'id',
@@ -176,9 +166,7 @@ class DatamartsListPage extends React.Component<
         isVisibleByDefault: true,
         isHideable: false,
         render: (value: string, record: DatamartResource) => (
-          <Link
-            to={`/v2/o/${organisationId}/settings/datamart/datamarts/${record.id}`}
-          >
+          <Link to={`/v2/o/${organisationId}/settings/datamart/datamarts/${record.id}`}>
             {value}
           </Link>
         ),
@@ -213,18 +201,18 @@ class DatamartsListPage extends React.Component<
 
     const additionnalComponent = (
       <div>
-        <div className="mcs-card-header mcs-card-title">
-          <span className="mcs-card-title">
+        <div className='mcs-card-header mcs-card-title'>
+          <span className='mcs-card-title'>
             <FormattedMessage {...settingsMessages.datamarts} />
           </span>
         </div>
-        <hr className="mcs-separator" />
+        <hr className='mcs-separator' />
       </div>
     );
 
     return (
-      <div className="ant-layout">
-        <Content className="mcs-content-container">
+      <div className='ant-layout'>
+        <Content className='mcs-content-container'>
           <ItemList
             fetchList={this.fetchDatamarts}
             dataSource={this.state.data}
@@ -232,10 +220,7 @@ class DatamartsListPage extends React.Component<
             total={this.state.total}
             columns={dataColumnsDefinition}
             actionsColumnsDefinition={actionsColumnsDefinition}
-            pageSettings={[
-              ...PAGINATION_SEARCH_SETTINGS,
-              ...ARCHIVED_SEARCH_SETTINGS,
-            ]}
+            pageSettings={[...PAGINATION_SEARCH_SETTINGS, ...ARCHIVED_SEARCH_SETTINGS]}
             emptyTable={emptyTable}
             additionnalComponent={additionnalComponent}
           />
@@ -245,8 +230,4 @@ class DatamartsListPage extends React.Component<
   }
 }
 
-export default compose(
-  withRouter,
-  injectIntl,
-  injectNotifications,
-)(DatamartsListPage);
+export default compose(withRouter, injectIntl, injectNotifications)(DatamartsListPage);

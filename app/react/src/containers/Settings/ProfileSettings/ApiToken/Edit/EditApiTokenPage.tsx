@@ -113,10 +113,7 @@ class EditApiTokenPage extends React.Component<Props, State> {
     this.setState({
       loading: true,
     });
-    const hideSaveInProgress = message.loading(
-      intl.formatMessage(messages.savingInProgress),
-      0,
-    );
+    const hideSaveInProgress = message.loading(intl.formatMessage(messages.savingInProgress), 0);
     const redirectAndNotify = (success: boolean = false) => {
       this.setState({
         loading: false,
@@ -167,7 +164,7 @@ class EditApiTokenPage extends React.Component<Props, State> {
         })
       : formatMessage(messages.apiToken);
     const breadcrumbPaths = [
-      <Link key="1" to={`/v2/o/${organisationId}/settings/account/api_tokens`}>
+      <Link key='1' to={`/v2/o/${organisationId}/settings/account/api_tokens`}>
         {formatMessage(messages.apiTokens)}
       </Link>,
       apiTokenName,

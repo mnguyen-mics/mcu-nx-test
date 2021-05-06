@@ -1,19 +1,10 @@
 import { IDisplayCampaignService } from './../../../../services/DisplayCampaignService';
-import {
-  INITIAL_GOAL_FORM_DATA,
-  isExistingGoal,
-} from './../../Goal/Edit/domain';
+import { INITIAL_GOAL_FORM_DATA, isExistingGoal } from './../../Goal/Edit/domain';
 import { DisplayCampaignResource } from './../../../../models/campaign/display/DisplayCampaignResource';
 import { omit } from 'lodash';
 import { extractDataList, extractData } from '../../../../services/ApiService';
-import {
-  createFieldArrayModelWithMeta,
-  createFieldArrayModel,
-} from '../../../../utils/FormHelper';
-import {
-  Task,
-  executeTasksInSequence,
-} from '../../../../utils/PromiseHelper';
+import { createFieldArrayModelWithMeta, createFieldArrayModel } from '../../../../utils/FormHelper';
+import { Task, executeTasksInSequence } from '../../../../utils/PromiseHelper';
 import {
   DisplayCampaignFormData,
   GoalFieldModel,
@@ -55,10 +46,7 @@ export interface IDisplayCampaignFormService {
     datamartId?: string,
   ) => Promise<DisplayCampaignId>;
 
-  saveCampaigns: (
-    campaignIds: string[],
-    formData: EditCampaignsFormData,
-  ) => Promise<any>;
+  saveCampaigns: (campaignIds: string[], formData: EditCampaignsFormData) => Promise<any>;
 }
 
 @injectable()
@@ -78,14 +66,9 @@ export class DisplayCampaignFormService implements IDisplayCampaignFormService {
   @inject(TYPES.IGoalService)
   private _goalService: IGoalService;
 
-  loadCampaign(
-    displayCampaignId: string,
-    duplicate?: boolean,
-  ): Promise<DisplayCampaignFormData> {
+  loadCampaign(displayCampaignId: string, duplicate?: boolean): Promise<DisplayCampaignFormData> {
     return Promise.all([
-      this._displayCampaignService
-        .getCampaignDisplay(displayCampaignId)
-        .then(extractData),
+      this._displayCampaignService.getCampaignDisplay(displayCampaignId).then(extractData),
       this.loadCampaignDependencies(displayCampaignId, duplicate),
     ]).then(([campaign, dependencies]) => {
       return {
@@ -103,17 +86,11 @@ export class DisplayCampaignFormService implements IDisplayCampaignFormService {
     adGroupFields: AdGroupFieldModel[];
   }> {
     return Promise.all([
-      this._displayCampaignService
-        .getGoals(displayCampaignId)
-        .then(extractDataList),
+      this._displayCampaignService.getGoals(displayCampaignId).then(extractDataList),
       this._displayCampaignService.getAdGroups(displayCampaignId).then(res => {
         return Promise.all(
           res.data.map(adGroup => {
-            return this._adGroupFormService.loadAdGroup(
-              displayCampaignId,
-              adGroup.id,
-              duplicate,
-            );
+            return this._adGroupFormService.loadAdGroup(displayCampaignId, adGroup.id, duplicate);
           }),
         );
       }),
@@ -122,17 +99,15 @@ export class DisplayCampaignFormService implements IDisplayCampaignFormService {
       const tasks: Task[] = [];
       goalSelections.forEach(el => {
         tasks.push(() => {
-          return this._goalService.getGoal(el.goal_id)
+          return this._goalService
+            .getGoal(el.goal_id)
             .then(resp => resp.data)
             .then(goalResource => {
               goalFields.push({
-                ...createFieldArrayModelWithMeta(
-                  duplicate ? omit(el, 'id') : el,
-                  {
-                    name: el.goal_name,
-                    triggerMode: goalResource.new_query_id ? 'QUERY' : 'PIXEL',
-                  },
-                ),
+                ...createFieldArrayModelWithMeta(duplicate ? omit(el, 'id') : el, {
+                  name: el.goal_name,
+                  triggerMode: goalResource.new_query_id ? 'QUERY' : 'PIXEL',
+                }),
               });
             });
         });
@@ -168,11 +143,7 @@ export class DisplayCampaignFormService implements IDisplayCampaignFormService {
         .then(res => {
           return datamartId
             ? executeTasksInSequence(
-                this.getExposedClickersTasks(
-                  organisationId,
-                  res.data.id,
-                  datamartId,
-                ),
+                this.getExposedClickersTasks(organisationId, res.data.id, datamartId),
               ).then(() => {
                 return res;
               })
@@ -214,8 +185,7 @@ export class DisplayCampaignFormService implements IDisplayCampaignFormService {
           .then(apiRes => apiRes.data)
           .then((campaignData: any) => {
             const updatedData = formData.fields.reduce((acc, field) => {
-              const campaignProperty: keyof DisplayCampaignResource =
-                field.campaignProperty;
+              const campaignProperty: keyof DisplayCampaignResource = field.campaignProperty;
               return {
                 ...acc,
                 [field.campaignProperty]: operation(
@@ -225,10 +195,7 @@ export class DisplayCampaignFormService implements IDisplayCampaignFormService {
                 ),
               };
             }, {});
-            return this._displayCampaignService.updateCampaign(
-              campaignId,
-              updatedData,
-            );
+            return this._displayCampaignService.updateCampaign(campaignId, updatedData);
           });
       });
     });
@@ -307,10 +274,7 @@ export class DisplayCampaignFormService implements IDisplayCampaignFormService {
       } else if (!isGoalSelectionResource(field.model)) {
         const goalSelectionCreateRequest = field.model;
         tasks.push(() =>
-          this._displayCampaignService.createGoal(
-            campaignId,
-            goalSelectionCreateRequest,
-          ),
+          this._displayCampaignService.createGoal(campaignId, goalSelectionCreateRequest),
         );
       }
     });
@@ -318,9 +282,7 @@ export class DisplayCampaignFormService implements IDisplayCampaignFormService {
     initialIds
       .filter(id => !currentIds.includes(id))
       .forEach(id => {
-        tasks.push(() =>
-          this._displayCampaignService.deleteGoal(campaignId, id),
-        );
+        tasks.push(() => this._displayCampaignService.deleteGoal(campaignId, id));
       });
 
     return tasks;
@@ -362,9 +324,7 @@ export class DisplayCampaignFormService implements IDisplayCampaignFormService {
     initialIds
       .filter(id => !currentIds.includes(id))
       .forEach(id => {
-        tasks.push(() =>
-          this._displayCampaignService.deleteAdGroup(campaignId, id),
-        );
+        tasks.push(() => this._displayCampaignService.deleteAdGroup(campaignId, id));
       });
 
     return tasks;

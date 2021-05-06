@@ -1,23 +1,14 @@
 import * as React from 'react';
 import { Layout, Alert } from 'antd';
 import { compose } from 'recompose';
-import {
-  Form,
-  reduxForm,
-  InjectedFormProps,
-  ConfigProps,
-  Field,
-  GenericField,
-} from 'redux-form';
+import { Form, reduxForm, InjectedFormProps, ConfigProps, Field, GenericField } from 'redux-form';
 import { BasicProps } from 'antd/lib/layout/layout';
 import { InjectedIntlProps, defineMessages, injectIntl } from 'react-intl';
 
 import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../components/Layout/FormLayoutActionbar';
-import ScrollspySider, {
-  SidebarWrapperProps,
-} from '../../../components/Layout/ScrollspySider';
+import ScrollspySider, { SidebarWrapperProps } from '../../../components/Layout/ScrollspySider';
 import { McsFormSection } from '../../../utils/FormHelper';
 import GeneralFormSection from './Sections/GeneralFormSection';
 import OTQLInputEditor, {
@@ -31,9 +22,7 @@ import { DatamartResource } from '../../../models/datamart/DatamartResource';
 
 const FORM_ID = 'exportForm';
 
-const Content = Layout.Content as unknown as React.ComponentClass<
-  BasicProps & { id: string }
->;
+const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
 
 const messages = defineMessages({
   sectionTitleGeneral: {
@@ -46,8 +35,7 @@ const messages = defineMessages({
   },
   sectionSubTitleQuery: {
     id: 'exports.form.query.subtitle',
-    defaultMessage:
-      'Create the query of objects your want to export from your Datamart',
+    defaultMessage: 'Create the query of objects your want to export from your Datamart',
   },
   saveExport: {
     id: 'save.export',
@@ -64,17 +52,14 @@ const messages = defineMessages({
   },
 });
 
-interface ExportEditFormProps
-  extends Omit<ConfigProps<ExportFormData>, 'form'> {
+interface ExportEditFormProps extends Omit<ConfigProps<ExportFormData>, 'form'> {
   onClose: () => void;
   onSave: (formData: ExportFormData) => void;
   breadCrumbPaths: React.ReactNode[];
   datamart?: DatamartResource;
 }
 
-const FormOTQL: FieldCtor<OTQLInputEditorProps> = Field as new () => GenericField<
-  OTQLInputEditorProps
->;
+const FormOTQL: FieldCtor<OTQLInputEditorProps> = Field as new () => GenericField<OTQLInputEditorProps>;
 
 type Props = InjectedFormProps<ExportFormData, ExportEditFormProps> &
   ExportEditFormProps &
@@ -84,10 +69,7 @@ class ExportEditForm extends React.Component<Props> {
   generateUserQueryTemplate = (renderedSection: JSX.Element) => {
     return (
       <div>
-        <FormSection
-          title={messages.sectionTitleQuery}
-          subtitle={messages.sectionSubTitleQuery}
-        />
+        <FormSection title={messages.sectionTitleQuery} subtitle={messages.sectionSubTitleQuery} />
         {renderedSection}
       </div>
     );
@@ -98,10 +80,7 @@ class ExportEditForm extends React.Component<Props> {
 
     if (datamart!.storage_model_version === 'v201506') {
       return this.props.initialValues.query ? (
-        <Alert
-          message={intl.formatMessage(messages.noMoreSupported)}
-          type="warning"
-        />
+        <Alert message={intl.formatMessage(messages.noMoreSupported)} type='warning' />
       ) : null;
     } else {
       return this.generateUserQueryTemplate(
@@ -165,19 +144,13 @@ class ExportEditForm extends React.Component<Props> {
       );
     });
     return (
-      <Layout className="edit-layout">
+      <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
           <ScrollspySider {...sideBarProps} />
-          <Form
-            className="edit-layout ant-layout"
-            onSubmit={handleSubmit(onSave as any) as any}
-          >
-            <Content
-              id={FORM_ID}
-              className="mcs-content-container mcs-form-container"
-            >
-              <div className="placement-list-form">{renderedSections}</div>
+          <Form className='edit-layout ant-layout' onSubmit={handleSubmit(onSave as any) as any}>
+            <Content id={FORM_ID} className='mcs-content-container mcs-form-container'>
+              <div className='placement-list-form'>{renderedSections}</div>
             </Content>
           </Form>
         </Layout>

@@ -104,11 +104,7 @@ class DefaultSelect extends React.Component<Props, State> {
 
     const { didMount } = this.state;
 
-    let validateStatus = 'success' as
-      | 'success'
-      | 'warning'
-      | 'error'
-      | 'validating';
+    let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
     if (meta.touched && meta.invalid) validateStatus = 'error';
     if (meta && meta.touched && meta.warning) validateStatus = 'warning';
 
@@ -144,7 +140,11 @@ class DefaultSelect extends React.Component<Props, State> {
               onFocus={input.onFocus}
               value={input.value}
               disabled={disabled}
-              getPopupContainer={selectProps && selectProps.getPopupContainer ? selectProps.getPopupContainer : getRef}
+              getPopupContainer={
+                selectProps && selectProps.getPopupContainer
+                  ? selectProps.getPopupContainer
+                  : getRef
+              }
             >
               {defaultOption}
               {optionsToDisplay}

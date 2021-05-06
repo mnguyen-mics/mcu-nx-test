@@ -1,8 +1,5 @@
 import * as React from 'react';
-import {
-  AdGroupFormData,
-  AD_GROUP_FORM_NAME,
-} from '../../domain';
+import { AdGroupFormData, AD_GROUP_FORM_NAME } from '../../domain';
 import { getFormValues } from 'redux-form';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
@@ -32,67 +29,55 @@ class AudienceSegmentSummary extends React.Component<Props> {
 
     let content = null;
 
-    if (
-      includedSegmentNames.length === 0 &&
-      excludedSegmentNames.length === 0
-    ) {
+    if (includedSegmentNames.length === 0 && excludedSegmentNames.length === 0) {
       content = (
         <FormattedMessage
-          id="display.campaign.edit.adGroup.summarySection.noSegment"
-          defaultMessage="Your ads will target everyone"
+          id='display.campaign.edit.adGroup.summarySection.noSegment'
+          defaultMessage='Your ads will target everyone'
         />
       );
-    } else if (
-      includedSegmentNames.length > 0 &&
-      excludedSegmentNames.length === 0
-    ) {
+    } else if (includedSegmentNames.length > 0 && excludedSegmentNames.length === 0) {
       content = (
         <div>
           <FormattedMessage
-            id="display.campaign.edit.adGroup.summarySection.includeOnly"
-            defaultMessage="Your ads will target the following {segmentCount, plural , one {segment} other {segments} }"
+            id='display.campaign.edit.adGroup.summarySection.includeOnly'
+            defaultMessage='Your ads will target the following {segmentCount, plural , one {segment} other {segments} }'
             values={{
-              segmentCount: includedSegmentNames.length
+              segmentCount: includedSegmentNames.length,
             }}
           />
-          <p className="info-color">{printStringArray(includedSegmentNames)}</p>
+          <p className='info-color'>{printStringArray(includedSegmentNames)}</p>
         </div>
       );
-    } else if (
-      includedSegmentNames.length === 0 &&
-      excludedSegmentNames.length > 0
-    ) {
+    } else if (includedSegmentNames.length === 0 && excludedSegmentNames.length > 0) {
       content = (
-        <div className="error-color">
+        <div className='error-color'>
           <FormattedMessage
-            id="display.campaign.edit.adGroup.summarySection.excludeOnly"
-            defaultMessage="Please target at least one segment"
+            id='display.campaign.edit.adGroup.summarySection.excludeOnly'
+            defaultMessage='Please target at least one segment'
           />
         </div>
       );
-    } else if (
-      includedSegmentNames.length > 0 &&
-      excludedSegmentNames.length > 0
-    ) {
+    } else if (includedSegmentNames.length > 0 && excludedSegmentNames.length > 0) {
       content = (
         <div>
           <FormattedMessage
-            id="display.campaign.edit.adGroup.summarySection.include"
-            defaultMessage="Your ads will target the following {segmentCount, plural , one {segment} other {segments} }"
+            id='display.campaign.edit.adGroup.summarySection.include'
+            defaultMessage='Your ads will target the following {segmentCount, plural , one {segment} other {segments} }'
             values={{
-              segmentCount: includedSegmentNames.length
+              segmentCount: includedSegmentNames.length,
             }}
           />
-          <p className="info-color">{printStringArray(includedSegmentNames)}</p>
+          <p className='info-color'>{printStringArray(includedSegmentNames)}</p>
           <br />
           <FormattedMessage
-            id="display.campaign.edit.adGroup.summarySection.exclude"
-            defaultMessage="Your ads will no target the following {segmentCount, plural , one {segment} other {segments} }"
+            id='display.campaign.edit.adGroup.summarySection.exclude'
+            defaultMessage='Your ads will no target the following {segmentCount, plural , one {segment} other {segments} }'
             values={{
-              segmentCount: excludedSegmentNames.length
+              segmentCount: excludedSegmentNames.length,
             }}
           />
-          <p className="info-color">{printStringArray(excludedSegmentNames)}</p>
+          <p className='info-color'>{printStringArray(excludedSegmentNames)}</p>
         </div>
       );
     }

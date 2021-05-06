@@ -121,9 +121,7 @@ class AudienceFeatureTable extends React.Component<Props> {
       },
     ];
 
-    const actionColumns: Array<ActionsColumnDefinition<
-      AudienceFeatureResource
-    >> = [
+    const actionColumns: Array<ActionsColumnDefinition<AudienceFeatureResource>> = [
       {
         key: 'action',
         actions: () => [
@@ -151,9 +149,9 @@ class AudienceFeatureTable extends React.Component<Props> {
 
     return noItem && !isLoading ? (
       <EmptyTableView
-        iconType="settings"
+        iconType='settings'
         message={formatMessage(messages.audienceFeatureEmptyList)}
-        className="mcs-table-view-empty mcs-empty-card mcs-audienceFeature_table"
+        className='mcs-table-view-empty mcs-empty-card mcs-audienceFeature_table'
       />
     ) : (
       <TableViewFilters
@@ -164,7 +162,7 @@ class AudienceFeatureTable extends React.Component<Props> {
         loading={isLoading}
         pagination={pagination}
         relatedTable={relatedTable}
-        className="mcs-audienceFeature_table"
+        className='mcs-audienceFeature_table'
       />
     );
   }

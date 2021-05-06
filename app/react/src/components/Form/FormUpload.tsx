@@ -2,11 +2,7 @@ import * as React from 'react';
 import { UploadOutlined } from '@ant-design/icons';
 import { Upload, Button } from 'antd';
 import { FormItemProps } from 'antd/lib/form/FormItem';
-import {
-  UploadProps,
-  UploadFile,
-  UploadChangeParam,
-} from 'antd/lib/upload/interface';
+import { UploadProps, UploadFile, UploadChangeParam } from 'antd/lib/upload/interface';
 import { WrappedFieldProps } from 'redux-form';
 import { TooltipPropsWithTitle } from 'antd/lib/tooltip';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
@@ -63,11 +59,7 @@ class FormUpload extends React.Component<JoinedProps, State> {
 
     const { file } = this.state;
 
-    let validateStatus = 'success' as
-      | 'success'
-      | 'warning'
-      | 'error'
-      | 'validating';
+    let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
     if (meta.touched && meta.invalid) validateStatus = 'error';
     if (meta.touched && meta.warning) validateStatus = 'warning';
 
@@ -101,10 +93,7 @@ class FormUpload extends React.Component<JoinedProps, State> {
         {...formItemProps}
       >
         <Upload fileList={fileList} {...inputProps} {...uploadDetailProps} disabled={disabled}>
-          <Button
-            onClick={this.props.noUploadModal}
-            disabled={disabled}
-          >
+          <Button onClick={this.props.noUploadModal} disabled={disabled}>
             <UploadOutlined /> {this.props.buttonText}
           </Button>
         </Upload>

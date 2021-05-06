@@ -12,16 +12,10 @@ import { compose } from 'recompose';
 import { RouteComponentProps } from 'react-router';
 import { MenuMode } from 'antd/lib/menu';
 import { injectFeatures, InjectedFeaturesProps } from '../Features';
-import {
-  NavigatorMenuDefinition,
-  NavigatorSubMenuDefinition,
-} from '../../routes/domain';
+import { NavigatorMenuDefinition, NavigatorSubMenuDefinition } from '../../routes/domain';
 import { DatamartResource } from '../../models/datamart/DatamartResource';
 import { MicsReduxState } from '../../utils/ReduxHelper';
-import {
-  McsIcon,
-  MentionTag,
-} from '@mediarithmics-private/mcs-components-library';
+import { McsIcon, MentionTag } from '@mediarithmics-private/mcs-components-library';
 
 const { SubMenu } = Menu;
 
@@ -82,14 +76,9 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
 
   checkInitialState = (pathname: string) => {
     const currentOpenSubMenu = menuDefinitions
-      .filter(
-        (item) =>
-          item.type === 'multi' &&
-          item.subMenuItems &&
-          item.subMenuItems.length > 0,
-      )
+      .filter(item => item.type === 'multi' && item.subMenuItems && item.subMenuItems.length > 0)
       .find(
-        (item) =>
+        item =>
           item.type === 'multi' &&
           item.subMenuItems.reduce((acc: boolean, val) => {
             return matchPath(pathname, {
@@ -102,8 +91,7 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
           }, false),
       );
 
-    if (currentOpenSubMenu)
-      this.setState({ inlineOpenKeys: [currentOpenSubMenu.iconType] });
+    if (currentOpenSubMenu) this.setState({ inlineOpenKeys: [currentOpenSubMenu.iconType] });
   };
 
   onOpenChange = (openKeys: string[]) => {
@@ -111,9 +99,7 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
     const { mode } = this.props;
 
     if (mode === 'inline') {
-      const latestOpenKey = openKeys.find(
-        (key) => !(state.inlineOpenKeys.indexOf(key) > -1),
-      );
+      const latestOpenKey = openKeys.find(key => !(state.inlineOpenKeys.indexOf(key) > -1));
       let nextOpenKeys: string[] = [];
       if (latestOpenKey) {
         nextOpenKeys = [latestOpenKey];
@@ -126,18 +112,14 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
   };
 
   onClick = (e: MenuInfo) => {
-    const hasClickOnFirstLevelMenuItem = menuDefinitions.find(
-      (item) => item.iconType === e.key,
-    );
+    const hasClickOnFirstLevelMenuItem = menuDefinitions.find(item => item.iconType === e.key);
     if (hasClickOnFirstLevelMenuItem) this.setState({ inlineOpenKeys: [] });
   };
 
   getAvailableItems = (): NavigatorMenuDefinition[] => {
     const { hasFeature } = this.props;
 
-    const checkIfHasAtLeastOneFeature = (
-      item: NavigatorMenuDefinition,
-    ): boolean => {
+    const checkIfHasAtLeastOneFeature = (item: NavigatorMenuDefinition): boolean => {
       if (item.type === 'simple') {
         return hasFeature(item.requiredFeature, item.requireDatamart);
       }
@@ -152,11 +134,8 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
       if (checkIfHasAtLeastOneFeature(item)) {
         if (item.type === 'multi') {
           const subMenuItems = (item.subMenuItems || []).filter(
-            (subMenuItem) =>
-              hasFeature(
-                subMenuItem.requiredFeature,
-                subMenuItem.requireDatamart,
-              ) &&
+            subMenuItem =>
+              hasFeature(subMenuItem.requiredFeature, subMenuItem.requireDatamart) &&
               ((subMenuItem.path !== '/audience/segment-builder' &&
                 hasFeature('audience-segment_builder_v2')) ||
                 !hasFeature('audience-segment_builder_v2')),
@@ -180,7 +159,7 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
 
     const baseUrl = `/v2/o/${organisationId}`;
 
-    return this.getAvailableItems().map((itemDef) => {
+    return this.getAvailableItems().map(itemDef => {
       if (itemDef.type === 'multi') {
         const onTitleClick = () => {
           this.setState({ inlineOpenKeys: [itemDef.iconType] });
@@ -196,46 +175,52 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
                 {itemDef.mention && (
                   <MentionTag
                     mention={itemDef.mention}
-                    className={`mcs-menuMentionTag ${mode === 'vertical' ? 'mcs-verticalMenuMentionTag--west' : 'mcs-menuMentionTag--west'}`}
+                    className={`mcs-menuMentionTag ${
+                      mode === 'vertical'
+                        ? 'mcs-verticalMenuMentionTag--west'
+                        : 'mcs-menuMentionTag--west'
+                    }`}
                   />
                 )}
-                <span className="nav-text">
+                <span className='nav-text'>
                   <FormattedMessage {...itemDef.translation} />
                 </span>
               </span>
             }
             className={`mcs-sideBar-subMenu_${itemDef.translation.id}`}
           >
-            {itemDef.subMenuItems.map(
-              (subMenuItem: NavigatorSubMenuDefinition) => {
-                let linkUrl = `${baseUrl}${subMenuItem.path}`;
-                if (subMenuItem.legacyPath) {
-                  if (subMenuItem.requireDatamart) {
-                    linkUrl = `/o${organisationId}d${
-                      defaultDatamart(organisationId).id
-                    }${subMenuItem.path}`;
-                  } else {
-                    linkUrl = `/${organisationId}${subMenuItem.path}`;
-                  }
+            {itemDef.subMenuItems.map((subMenuItem: NavigatorSubMenuDefinition) => {
+              let linkUrl = `${baseUrl}${subMenuItem.path}`;
+              if (subMenuItem.legacyPath) {
+                if (subMenuItem.requireDatamart) {
+                  linkUrl = `/o${organisationId}d${defaultDatamart(organisationId).id}${
+                    subMenuItem.path
+                  }`;
+                } else {
+                  linkUrl = `/${organisationId}${subMenuItem.path}`;
                 }
-                return (
-                  <Menu.Item
-                    key={subMenuItem.path}
-                    className={`mcs-sideBar-subMenuItem_${subMenuItem.translation.id}`}
-                  >
-                    {subMenuItem.mention && (
-                      <MentionTag
-                        mention={subMenuItem.mention}
-                        className={`mcs-menuMentionTag ${mode === 'vertical' ? 'mcs-verticalMenuMentionTag--east' : 'mcs-menuMentionTag--east'}`}
-                      />
-                    )}
-                    <Link to={linkUrl}>
-                      <FormattedMessage {...subMenuItem.translation} />
-                    </Link>
-                  </Menu.Item>
-                );
-              },
-            )}
+              }
+              return (
+                <Menu.Item
+                  key={subMenuItem.path}
+                  className={`mcs-sideBar-subMenuItem_${subMenuItem.translation.id}`}
+                >
+                  {subMenuItem.mention && (
+                    <MentionTag
+                      mention={subMenuItem.mention}
+                      className={`mcs-menuMentionTag ${
+                        mode === 'vertical'
+                          ? 'mcs-verticalMenuMentionTag--east'
+                          : 'mcs-menuMentionTag--east'
+                      }`}
+                    />
+                  )}
+                  <Link to={linkUrl}>
+                    <FormattedMessage {...subMenuItem.translation} />
+                  </Link>
+                </Menu.Item>
+              );
+            })}
           </SubMenu>
         );
       }
@@ -244,7 +229,7 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
         <Menu.Item key={itemDef.iconType}>
           <Link to={`${baseUrl}${itemDef.path}`}>
             <McsIcon type={itemDef.iconType} />
-            <span className="nav-text">
+            <span className='nav-text'>
               <FormattedMessage {...itemDef.translation} />
             </span>
           </Link>
@@ -295,7 +280,7 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
     } = this.props;
 
     const getSelectedKeys = (): string[] => {
-      const currentItem = this.getAllKeysWithPath().find((item) => {
+      const currentItem = this.getAllKeysWithPath().find(item => {
         const matched = matchPath(pathname, {
           path: `${basePath}${item.path}`,
         });

@@ -4,7 +4,15 @@ import HighchartsReact from 'highcharts-react-official';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import moment from 'moment';
-import { AREA_OPACITY, generateXAxisGridLine, generateYAxisGridLine, generateTooltip, BASE_CHART_HEIGHT, OnDragEnd, generateDraggable } from '../domain';
+import {
+  AREA_OPACITY,
+  generateXAxisGridLine,
+  generateYAxisGridLine,
+  generateTooltip,
+  BASE_CHART_HEIGHT,
+  OnDragEnd,
+  generateDraggable,
+} from '../domain';
 
 export interface DoubleStackedAreaPlotProps {
   dataset: Dataset;
@@ -27,7 +35,6 @@ type yKey = { key: string; message: FormattedMessage.MessageDescriptor };
 type Props = DoubleStackedAreaPlotProps & InjectedIntlProps;
 
 class DoubleStackedAreaPlot extends React.Component<Props, {}> {
-
   constructor(props: Props) {
     super(props);
     this.state = {};
@@ -48,7 +55,14 @@ class DoubleStackedAreaPlot extends React.Component<Props, {}> {
         data: dataset.map(data => {
           const yValue = data[y.key];
           return [
-            this.formatDateToTs(data[xKey] as string, data.hour_of_day ? data.hour_of_day as number : data.hour ? data.hour as number : undefined),
+            this.formatDateToTs(
+              data[xKey] as string,
+              data.hour_of_day
+                ? (data.hour_of_day as number)
+                : data.hour
+                ? (data.hour as number)
+                : undefined,
+            ),
             yValue && typeof yValue === 'string' ? parseFloat(yValue) : yValue,
           ];
         }),
@@ -64,20 +78,8 @@ class DoubleStackedAreaPlot extends React.Component<Props, {}> {
             y2: 1,
           },
           stops: [
-            [
-              0,
-              (Highcharts as any)
-                .Color(colors[i])
-                .setOpacity(AREA_OPACITY)
-                .get('rgba'),
-            ],
-            [
-              1,
-              (Highcharts as any)
-                .Color(colors[i])
-                .setOpacity(0)
-                .get('rgba'),
-            ],
+            [0, (Highcharts as any).Color(colors[i]).setOpacity(AREA_OPACITY).get('rgba')],
+            [1, (Highcharts as any).Color(colors[i]).setOpacity(0).get('rgba')],
           ],
         },
       };
@@ -98,28 +100,28 @@ class DoubleStackedAreaPlot extends React.Component<Props, {}> {
     return dataset.map(d => this.formatDateToTs(d[xKey] as string));
   };
 
-  generateMinValue = (dataset: Dataset, yKeys: yKey[],) => {
+  generateMinValue = (dataset: Dataset, yKeys: yKey[]) => {
     const values: number[] = [];
     dataset.forEach(d => {
       yKeys.forEach(y => {
         values.push(d[y.key] as number);
-      })
-    })
+      });
+    });
     return Math.min(...values);
-  }
+  };
 
   render() {
     const {
       dataset,
       options: { xKey, yKeys, colors, isDraggable, onDragEnd },
       style,
-      intl
+      intl,
     } = this.props;
 
     const options: Highcharts.Options = {
       chart: {
         height: BASE_CHART_HEIGHT,
-        ...isDraggable ? generateDraggable(onDragEnd) : {}
+        ...(isDraggable ? generateDraggable(onDragEnd) : {}),
       },
       title: {
         text: '',
@@ -147,50 +149,47 @@ class DoubleStackedAreaPlot extends React.Component<Props, {}> {
       xAxis: {
         type: 'datetime',
         dateTimeLabelFormats: {
-          month: { main: '%e. %b'},
-          year: { main: '%b'},
+          month: { main: '%e. %b' },
+          year: { main: '%b' },
         },
-        ...generateXAxisGridLine()
+        ...generateXAxisGridLine(),
       },
       time: {
         useUTC: true,
       },
-      yAxis: [{
-        title: {
-          text: intl.formatMessage(yKeys[0].message),
+      yAxis: [
+        {
+          title: {
+            text: intl.formatMessage(yKeys[0].message),
+          },
+          ...generateYAxisGridLine(),
         },
-        ...generateYAxisGridLine()
-      }, {
-        title: {
-          text: intl.formatMessage(yKeys[1].message),
+        {
+          title: {
+            text: intl.formatMessage(yKeys[1].message),
+          },
+          opposite: true,
         },
-        opposite: true
-      }],
+      ],
       series: this.formatSeries(dataset, xKey, yKeys, colors),
       credits: {
         enabled: false,
       },
       tooltip: {
         shared: true,
-        ...generateTooltip()
+        ...generateTooltip(),
       },
       legend: {
-        enabled: false
-      }
+        enabled: false,
+      },
     };
 
     return (
       <div style={style}>
-        <HighchartsReact
-          highcharts={Highcharts}
-          options={options}
-          style={{ width: '100%' }}
-        />
+        <HighchartsReact highcharts={Highcharts} options={options} style={{ width: '100%' }} />
       </div>
     );
   }
 }
 
-export default compose<Props, DoubleStackedAreaPlotProps>(injectIntl)(
-  DoubleStackedAreaPlot,
-);
+export default compose<Props, DoubleStackedAreaPlotProps>(injectIntl)(DoubleStackedAreaPlot);

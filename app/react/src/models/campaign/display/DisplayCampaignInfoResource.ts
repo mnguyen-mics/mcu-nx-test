@@ -1,10 +1,6 @@
 import { AdResource } from './AdResource';
 import { AdGroupResource } from './AdGroupResource';
-import {
-  CampaignStatus,
-  DisplayCampaignSubType,
-  CreativeAuditStatus,
-} from './../constants';
+import { CampaignStatus, DisplayCampaignSubType, CreativeAuditStatus } from './../constants';
 import { InventorySourceResource } from './InventorySourceResource';
 import { GoalSelectionResource } from './../../goal/GoalSelectionResource';
 

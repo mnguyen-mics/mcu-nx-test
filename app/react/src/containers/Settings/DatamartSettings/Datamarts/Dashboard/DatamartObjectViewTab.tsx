@@ -43,8 +43,7 @@ interface State {
 const messages = defineMessages({
   validationSuccess: {
     id: 'datamart.schemaEditor.objectTree.validation.success',
-    defaultMessage:
-      'Your schema is valid. Please press publish to turn it live.',
+    defaultMessage: 'Your schema is valid. Please press publish to turn it live.',
   },
   validationError: {
     id: 'datamart.schemaEditor.objectTree.validation.error',
@@ -156,16 +155,16 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
     this.setState({ loadingList: true });
     return this._runtimeSchemaService
       .getRuntimeSchemas(datamartId)
-      .then((r) => {
+      .then(r => {
         this.setState({ loadingList: false, schemas: r.data });
-        const liveSchema = r.data.find((s) => s.status === 'LIVE');
+        const liveSchema = r.data.find(s => s.status === 'LIVE');
         if (shouldSelectLive && liveSchema) {
           this.setState({ selectedSchema: liveSchema });
           return this.fetchSchemaDetail(datamartId, liveSchema.id);
         }
         return this.fetchSchemaDetail(datamartId, r.data[0].id);
       })
-      .catch((err) => {
+      .catch(err => {
         this.setState({ loadingList: false });
         this.props.notifyError(err);
       });
@@ -175,18 +174,18 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
     this.setState({ loadingSingle: true });
     return this._runtimeSchemaService
       .getRuntimeSchemaText(datamartId, schemaId)
-      .then((r) => {
+      .then(r => {
         this.setState({ selectedSchemaText: r });
         return this._runtimeSchemaService
           .getSchemaDecorator(datamartId, schemaId)
-          .then((decorators) => {
+          .then(decorators => {
             this.setState({
               loadingSingle: false,
               schemaDecorator: decorators.data,
             });
           });
       })
-      .catch((err) => {
+      .catch(err => {
         this.setState({ loadingSingle: false });
         this.props.notifyError(err);
       });
@@ -201,13 +200,13 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
     this.setState({ loadingList: true, loadingSingle: true });
     return this._runtimeSchemaService
       .cloneRuntimeSchema(schema.datamart_id, schema.id)
-      .then((s) => {
+      .then(s => {
         return Promise.all([
           this.fetchSchemaDetail(s.data.datamart_id, s.data.id),
           this.fetchSchemas(s.data.datamart_id, false),
         ]);
       })
-      .catch((err) => {
+      .catch(err => {
         this.props.notifyError(err);
         this.setState({ loadingList: false, loadingSingle: false });
       });
@@ -219,9 +218,7 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
       this.setState({ loadingSingle: true });
       return this._runtimeSchemaService
         .validateRuntimeSchema(selectedSchema.datamart_id, selectedSchema.id)
-        .then((r) =>
-          this.setState({ schemaValidation: r.data, loadingSingle: false }),
-        )
+        .then(r => this.setState({ schemaValidation: r.data, loadingSingle: false }))
         .catch(() => this.setState({ loadingSingle: false }));
     }
     return Promise.resolve();
@@ -232,12 +229,8 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
     if (selectedSchema && changedSchemaValue) {
       this.setState({ loadingSingle: true, schemaValidation: undefined });
       return this._runtimeSchemaService
-        .updateRuntimeSchema(
-          selectedSchema.datamart_id,
-          selectedSchema.id,
-          changedSchemaValue,
-        )
-        .then((r) =>
+        .updateRuntimeSchema(selectedSchema.datamart_id, selectedSchema.id, changedSchemaValue)
+        .then(r =>
           this.setState({
             selectedSchemaText: changedSchemaValue,
             changedSchemaValue: undefined,
@@ -245,7 +238,7 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
             loadingSingle: false,
           }),
         )
-        .catch((err) => {
+        .catch(err => {
           this.props.notifyError(err);
           this.setState({ loadingSingle: false });
         });
@@ -263,24 +256,15 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
       });
       return this._runtimeSchemaService
         .publishRuntimeSchema(selectedSchema.datamart_id, selectedSchema.id)
-        .then((r) => this.fetchSchemas(r.data.datamart_id, true))
-        .catch(() =>
-          this.setState({ loadingSingle: false, loadingList: false }),
-        );
+        .then(r => this.fetchSchemas(r.data.datamart_id, true))
+        .catch(() => this.setState({ loadingSingle: false, loadingList: false }));
     }
     return Promise.resolve();
   };
 
   downloadDecoratorsTemplate = () => {
     const rowsToDownload = [
-      [
-        'UserPoint',
-        'profiles',
-        'false',
-        'Profile',
-        'Uploaded CRM Profiles',
-        'en-US',
-      ],
+      ['UserPoint', 'profiles', 'false', 'Profile', 'Uploaded CRM Profiles', 'en-US'],
     ];
     this.downloadCSVFile(rowsToDownload);
   };
@@ -288,7 +272,7 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
   downloadDecorators = () => {
     const { schemaDecorator } = this.state;
     if (schemaDecorator) {
-      const rowsToDownload = schemaDecorator.map((decorator) => {
+      const rowsToDownload = schemaDecorator.map(decorator => {
         return [
           decorator.object_name,
           decorator.field_name,
@@ -305,7 +289,7 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
   handleDeleteDecorators = (schemaId: string) => () => {
     const {
       intl: { formatMessage },
-      datamartId
+      datamartId,
     } = this.props;
     const { loadingDeletion } = this.state;
     const onOk = () => {
@@ -320,7 +304,7 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
           });
           message.success(formatMessage(messages.deletionSuccess));
         })
-        .catch((error) => {
+        .catch(error => {
           this.setState({
             loadingDeletion: false,
           });
@@ -331,7 +315,7 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
       title: formatMessage(messages.modalTitle),
       content: formatMessage(messages.modalDescription),
       onOk: onOk,
-      okButtonProps: {type:"primary", danger: true},
+      okButtonProps: { type: 'primary', danger: true },
       okText: formatMessage(messages.modalDeleteContent),
       visible: loadingDeletion,
     });
@@ -339,15 +323,8 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
 
   downloadCSVFile = (rowsToDownload: string[][]) => {
     const rows: string[][] = [];
-    rows.push([
-      'OBJECT_NAME',
-      'FIELD_NAME',
-      'HIDDEN',
-      'LABEL',
-      'HELP_TEXT',
-      'LOCALE',
-    ]);
-    rowsToDownload.forEach((rowToDownload) => {
+    rows.push(['OBJECT_NAME', 'FIELD_NAME', 'HIDDEN', 'LABEL', 'HELP_TEXT', 'LOCALE']);
+    rowsToDownload.forEach(rowToDownload => {
       rows.push([
         rowToDownload[0],
         rowToDownload[1],
@@ -358,7 +335,7 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
       ]);
     });
     let csvContent = 'data:text/csv;charset=utf-8,';
-    rows.forEach((rowArray) => {
+    rows.forEach(rowArray => {
       const row = rowArray.join(',');
       csvContent += row + '\r\n';
     });
@@ -391,7 +368,7 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
     this.setState({ uploadingDecorator: true });
 
     return this.onFileUpdate(file)
-      .then((fileContent) => {
+      .then(fileContent => {
         return this._runtimeSchemaService
           .createSchemaDecorator(
             selectedSchema.datamart_id,
@@ -404,18 +381,18 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
               selectedSchema.id,
             ),
           )
-          .then((decorators) => {
+          .then(decorators => {
             this.setState({
               uploadingDecorator: false,
               schemaDecorator: decorators.data,
             });
           })
-          .catch((err) => {
+          .catch(err => {
             this.props.notifyError(err);
             this.setState({ uploadingDecorator: false });
           });
       })
-      .catch((e) => {
+      .catch(e => {
         this.props.notifyError(e);
       });
   };
@@ -427,8 +404,7 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
     });
   };
 
-  onClickOnSelect = (schema: RuntimeSchemaResource) => () =>
-    this.selectSchema(schema);
+  onClickOnSelect = (schema: RuntimeSchemaResource) => () => this.selectSchema(schema);
 
   public render() {
     const {
@@ -461,17 +437,11 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
     const validationError =
       schemaValidation &&
       (schemaValidation.schema_errors.length ||
-        schemaValidation.tree_index_operations.find(
-          (ti) => ti.init_strategy !== 'FORCE_NO_BUILD',
-        ));
+        schemaValidation.tree_index_operations.find(ti => ti.init_strategy !== 'FORCE_NO_BUILD'));
 
-    if (
-      changedSchemaValue &&
-      selectedSchema &&
-      selectedSchema.status === 'DRAFT'
-    ) {
+    if (changedSchemaValue && selectedSchema && selectedSchema.status === 'DRAFT') {
       additionnalButton = (
-        <Button size="small" type="primary" onClick={this.saveSchema}>
+        <Button size='small' type='primary' onClick={this.saveSchema}>
           <FormattedMessage {...messages.saveButton} />
         </Button>
       );
@@ -484,7 +454,7 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
       !isInValidationMode
     ) {
       additionnalButton = (
-        <Button size="small" type="primary" onClick={this.validateSchema}>
+        <Button size='small' type='primary' onClick={this.validateSchema}>
           <FormattedMessage {...messages.validationButton} />
         </Button>
       );
@@ -498,7 +468,7 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
       !validationError
     ) {
       additionnalButton = (
-        <Button size="small" type="primary" onClick={this.publishSchema}>
+        <Button size='small' type='primary' onClick={this.publishSchema}>
           <FormattedMessage {...messages.publicationButton} />
         </Button>
       );
@@ -508,14 +478,10 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
       selectedSchema &&
       selectedSchema.status === 'LIVE' &&
       schemas &&
-      !schemas.find((s) => s.status === 'DRAFT')
+      !schemas.find(s => s.status === 'DRAFT')
     ) {
       additionnalButton = (
-        <Button
-          size="small"
-          type="primary"
-          onClick={this.createNewSchemaVersion(selectedSchema)}
-        >
+        <Button size='small' type='primary' onClick={this.createNewSchemaVersion(selectedSchema)}>
           <FormattedMessage {...messages.createVersion} />
         </Button>
       );
@@ -524,24 +490,24 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
     const hasDecorators = schemaDecorator && schemaDecorator.length > 0;
 
     return (
-      <div className="schema-editor">
-        <Row className="title-line">
-          <Col className="title" span={6}>
+      <div className='schema-editor'>
+        <Row className='title-line'>
+          <Col className='title' span={6}>
             <FormattedMessage {...messages.history} />
           </Col>
-          <Col className="title" span={18}>
+          <Col className='title' span={18}>
             <span style={{ float: 'right' }}>{additionnalButton}</span>
             <FormattedMessage {...messages.schema} />
           </Col>
         </Row>
-        <Row className="content-line">
-          <Col span={6} className="content">
+        <Row className='content-line'>
+          <Col span={6} className='content'>
             {loadingList ? (
               <Spin />
             ) : (
               schemas
                 .sort((a, b) => b.creation_date - a.creation_date)
-                .map((s) => {
+                .map(s => {
                   return (
                     <div
                       key={s.id}
@@ -552,38 +518,35 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
                       }
                       onClick={this.onClickOnSelect(s)}
                     >
-                      <span className="title">{s.status}</span>
-                      <span className="date">
-                        {moment(s.creation_date).fromNow()}
-                      </span>
+                      <span className='title'>{s.status}</span>
+                      <span className='date'>{moment(s.creation_date).fromNow()}</span>
                     </div>
                   );
                 })
             )}
           </Col>
-          <Col span={18} className="content">
+          <Col span={18} className='content'>
             {loadingSingle ? (
               <Loading isFullScreen={false} />
             ) : (
               <div>
-                {isInValidationMode &&
-                  selectedSchema?.id === schemaValidation?.schema_id && (
-                    <Alert
-                      style={{ marginBottom: 10 }}
-                      message={
-                        validationError ? (
-                          <FormattedMessage {...messages.validationError} />
-                        ) : (
-                          <FormattedMessage {...messages.validationSuccess} />
-                        )
-                      }
-                      type={validationError ? 'error' : 'success'}
-                    />
-                  )}
+                {isInValidationMode && selectedSchema?.id === schemaValidation?.schema_id && (
+                  <Alert
+                    style={{ marginBottom: 10 }}
+                    message={
+                      validationError ? (
+                        <FormattedMessage {...messages.validationError} />
+                      ) : (
+                        <FormattedMessage {...messages.validationSuccess} />
+                      )
+                    }
+                    type={validationError ? 'error' : 'success'}
+                  />
+                )}
                 <AceEditor
-                  width="100%"
-                  mode="graphqlschema"
-                  theme="github"
+                  width='100%'
+                  mode='graphqlschema'
+                  theme='github'
                   setOptions={{
                     showGutter: true,
                   }}
@@ -592,17 +555,16 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
                   // changedSchemaValue can be equal to '' and in this case we don't want to display selectedSchemaText
                   // hence the use of: changedSchemaValue !== undefined
                   value={
-                    changedSchemaValue !== undefined &&
-                    changedSchemaId === selectedSchema?.id
+                    changedSchemaValue !== undefined && changedSchemaId === selectedSchema?.id
                       ? changedSchemaValue
                       : selectedSchemaText
                   }
                 />
-                <Row className="decorators">
-                  <Col span={12} className="text">
+                <Row className='decorators'>
+                  <Col span={12} className='text'>
                     {hasDecorators ? (
-                      <div className="success">
-                        <McsIcon type="check-rounded" />{' '}
+                      <div className='success'>
+                        <McsIcon type='check-rounded' />{' '}
                         <FormattedMessage {...messages.hasDecorators} />
                       </div>
                     ) : (
@@ -611,32 +573,28 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
                       </div>
                     )}
                   </Col>
-                  <Col span={12} className="buttons">
+                  <Col span={12} className='buttons'>
                     <Upload {...uploadProps}>
-                      <Button type="primary" className="spacing" size="small">
+                      <Button type='primary' className='spacing' size='small'>
                         <FormattedMessage {...messages.uploadDecorators} />
                       </Button>
                     </Upload>
                     <Button
-                      size="small"
-                      className="spacing"
+                      size='small'
+                      className='spacing'
                       onClick={this.downloadDecoratorsTemplate}
                     >
                       <FormattedMessage {...messages.downloadTemplate} />
                     </Button>
                     {hasDecorators && (
-                      <Button
-                        size="small"
-                        className="spacing"
-                        onClick={this.downloadDecorators}
-                      >
+                      <Button size='small' className='spacing' onClick={this.downloadDecorators}>
                         <FormattedMessage {...messages.downloadDecorators} />
                       </Button>
                     )}
                     {hasDecorators && selectedSchema && (
                       <Button
-                        type="primary"
-                        size="small"
+                        type='primary'
+                        size='small'
                         danger={true}
                         onClick={this.handleDeleteDecorators(selectedSchema.id)}
                       >
@@ -654,6 +612,7 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, IDatamartObjectViewTabProps>(injectNotifications, injectIntl)(
-  DatamartObjectViewTab,
-);
+export default compose<Props, IDatamartObjectViewTabProps>(
+  injectNotifications,
+  injectIntl,
+)(DatamartObjectViewTab);

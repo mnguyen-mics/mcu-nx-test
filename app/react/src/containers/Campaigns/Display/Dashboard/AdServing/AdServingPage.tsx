@@ -65,10 +65,7 @@ class AdServing extends React.Component<Props> {
       if (!isSearchValid(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS)) {
         history.replace({
           pathname: pathname,
-          search: buildDefaultSearch(
-            search,
-            DISPLAY_DASHBOARD_SEARCH_SETTINGS,
-          ),
+          search: buildDefaultSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS),
         });
       }
     }
@@ -103,34 +100,25 @@ class AdServing extends React.Component<Props> {
 
     const adCards = flatten(
       campaign.ad_groups.map(adgroup => {
-        return adgroup.ads.map(ad => (
-          <AdCard key={ad.id} ad={ad} adGroupId={adgroup.id} />
-        ));
+        return adgroup.ads.map(ad => <AdCard key={ad.id} ad={ad} adGroupId={adgroup.id} />);
       }),
     );
 
     return (
-      <div className="ant-layout">
-        <AdServingActionBar
-          campaign={campaign}
-          archiveCampaign={this.archiveCampaign}
-        />
-        <div className="ant-layout">
-          <Content className="mcs-content-container">
+      <div className='ant-layout'>
+        <AdServingActionBar campaign={campaign} archiveCampaign={this.archiveCampaign} />
+        <div className='ant-layout'>
+          <Content className='mcs-content-container'>
             <CampaignDashboardHeader campaign={campaign} showStatus={false} />
             <Labels
               labellableId={campaign.id}
               organisationId={organisationId}
-              labellableType="DISPLAY_CAMPAIGN"
+              labellableType='DISPLAY_CAMPAIGN'
             />
             {adCards}
             {adCards.length === 0 && (
               <Row>
-                <Col
-                  span={24}
-                  className="mcs-table-view-empty"
-                  style={{ marginTop: 200 }}
-                >
+                <Col span={24} className='mcs-table-view-empty' style={{ marginTop: 200 }}>
                   <FormattedMessage {...messages.emptyAds} />
                 </Col>
               </Row>
@@ -142,7 +130,4 @@ class AdServing extends React.Component<Props> {
   }
 }
 
-export default compose<Props, DisplayCampaignProps>(
-  withRouter,
-  injectNotifications,
-)(AdServing);
+export default compose<Props, DisplayCampaignProps>(withRouter, injectNotifications)(AdServing);

@@ -14,7 +14,7 @@ export interface AudienceFeatureFormSectionProps extends ReduxFormChangeProps {
   isDemographicsSection: boolean;
   datamartId: string;
   objectTypes: ObjectLikeTypeInfoResource[];
-  audienceFeatures?: AudienceFeatureResource[]
+  audienceFeatures?: AudienceFeatureResource[];
   formChange(field: string, value: any): void;
 }
 
@@ -23,8 +23,6 @@ type Props = WrappedFieldArrayProps<AudienceBuilderParametricPredicateNode> &
   InjectedIntlProps;
 
 class AudienceFeatureFormSection extends React.Component<Props> {
-
-
   render() {
     const {
       fields,
@@ -60,11 +58,8 @@ class AudienceFeatureFormSection extends React.Component<Props> {
           {!isDemographicsSection && (
             <React.Fragment>
               <Col span={2}>
-                <Button
-                  className="mcs-audienceBuilder_closeButton"
-                  onClick={handleRemove}
-                >
-                  <McsIcon type="close" />
+                <Button className='mcs-audienceBuilder_closeButton' onClick={handleRemove}>
+                  <McsIcon type='close' />
                 </Button>
               </Col>
             </React.Fragment>

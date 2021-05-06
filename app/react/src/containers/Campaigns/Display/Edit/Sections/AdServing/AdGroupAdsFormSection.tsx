@@ -10,10 +10,7 @@ import { FormSection } from '../../../../../../components/Form';
 import messages from '../../messages';
 import { ReduxFormChangeProps } from '../../../../../../utils/FormHelper';
 import { AdGroupFieldModel } from '../../domain';
-import {
-  isDisplayCreativeFormData,
-  INITIAL_AD_GROUP_FORM_DATA,
-} from '../../AdGroup/domain';
+import { isDisplayCreativeFormData, INITIAL_AD_GROUP_FORM_DATA } from '../../AdGroup/domain';
 import { InjectedDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
 import CreativeCardSelector, {
   CreativeCardSelectorProps,
@@ -51,10 +48,7 @@ interface AdGroupAdsFormSectionState {
   loading: boolean;
 }
 
-class AdGroupAdsFormSection extends React.Component<
-  Props,
-  AdGroupAdsFormSectionState
-> {
+class AdGroupAdsFormSection extends React.Component<Props, AdGroupAdsFormSectionState> {
   cancelablePromise: CancelablePromise<DisplayAdResource[]>;
 
   @lazyInject(TYPES.ICreativeService)
@@ -180,10 +174,7 @@ class AdGroupAdsFormSection extends React.Component<
       additionalProps: displayAdsSelectorProps,
     };
 
-    this.props.openNextDrawer<CreativeCardSelectorProps>(
-      CreativeCardSelector,
-      options,
-    );
+    this.props.openNextDrawer<CreativeCardSelectorProps>(CreativeCardSelector, options);
   };
 
   getAdsAdGroupRecords = () => {
@@ -216,7 +207,7 @@ class AdGroupAdsFormSection extends React.Component<
       const getFooter = () => this.getCreativeCardFooter(data);
       return (
         <Col key={data.fieldModel.key} span={6}>
-          <div className="ad-group-card">
+          <div className='ad-group-card'>
             <CreativeCard
               key={data.fieldModel.key}
               creative={data.creativeResource}
@@ -232,10 +223,7 @@ class AdGroupAdsFormSection extends React.Component<
     const { fields } = this.props;
 
     const format = split(data.creativeResource.format, 'x');
-    const dimensions = computeDimensionsByRatio(
-      Number(format[0]),
-      Number(format[1]),
-    );
+    const dimensions = computeDimensionsByRatio(Number(format[0]), Number(format[1]));
 
     const shapeStyle = {
       backgroundColor: '#e8e8e8',
@@ -252,19 +240,19 @@ class AdGroupAdsFormSection extends React.Component<
 
     return (
       <div>
-        <Row className="footer">
-          <Col className="inline formatWrapper" span={20}>
+        <Row className='footer'>
+          <Col className='inline formatWrapper' span={20}>
             <div style={shapeStyle} />
-            <div className="dimensions">{data.creativeResource.format}</div>
+            <div className='dimensions'>{data.creativeResource.format}</div>
           </Col>
-          <Col className="inline buttons" span={2}>
+          <Col className='inline buttons' span={2}>
             <Button onClick={removeField}>
-              <McsIcon className="button" type="delete" />
+              <McsIcon className='button' type='delete' />
             </Button>
           </Col>
         </Row>
-        <Row className="footer">
-          <Col className="inline formatWrapper" span={22}>
+        <Row className='footer'>
+          <Col className='inline formatWrapper' span={22}>
             <AuditStatusRenderer auditStatus={auditStatus} />
           </Col>
         </Row>
@@ -289,14 +277,14 @@ class AdGroupAdsFormSection extends React.Component<
           title={messages.sectionTitleAds}
         />
         <Spin spinning={this.state.loading}>
-          <div className="ad-group-ad-section" style={{ overflow: 'hidden' }}>
-            <div className="mcs-table-card content">
+          <div className='ad-group-ad-section' style={{ overflow: 'hidden' }}>
+            <div className='mcs-table-card content'>
               <Row gutter={20}>{this.getAdsAdGroupRecords()}</Row>
             </div>
 
             {!fields.length && (
               <EmptyRecords
-                iconType="ads"
+                iconType='ads'
                 message={formatMessage(messages.contentSectionAdEmptyTitle)}
               />
             )}

@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import injectThemeColors, {
-  InjectedThemeColorsProps,
-} from '../../../../Helpers/injectThemeColors';
+import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
 import { messages } from '../AudienceSegment';
 import { UserQuerySegment } from '../../../../../models/audiencesegment/AudienceSegmentResource';
 import { formatMetric } from '../../../../../utils/MetricHelper';
@@ -14,9 +12,7 @@ export interface ABComparisonGaugeProps {
   weight?: number;
 }
 
-type Props = ABComparisonGaugeProps &
-  InjectedIntlProps &
-  InjectedThemeColorsProps;
+type Props = ABComparisonGaugeProps & InjectedIntlProps & InjectedThemeColorsProps;
 
 class ABComparisonGauge extends React.Component<Props> {
   getGaugeRatio = (percent: number) => {
@@ -37,16 +33,13 @@ class ABComparisonGauge extends React.Component<Props> {
 
     return (
       percent && (
-        <div className="mcs-audienceSegmentDashboard_abGauge">
+        <div className='mcs-audienceSegmentDashboard_abGauge'>
           <div
             style={{ width: `${this.getGaugeRatio(percent)[0]}%` }}
             className={`mcs-audienceSegmentDashboard_abGaugeLeft`}
           >
             {intl.formatMessage(messages.experimentation)} ({percent}%)
-            <span>{` - ${formatMetric(
-              segment.user_points_count,
-              '0,0',
-            )} User Points`}</span>
+            <span>{` - ${formatMetric(segment.user_points_count, '0,0')} User Points`}</span>
           </div>
 
           <div
@@ -56,10 +49,7 @@ class ABComparisonGauge extends React.Component<Props> {
             {intl.formatMessage(messages.controlGroup)} ({100 - percent}%)
             <span>
               {segmentToCompareWith &&
-                ` - ${formatMetric(
-                  segmentToCompareWith.user_points_count,
-                  '0,0',
-                )} User Points`}
+                ` - ${formatMetric(segmentToCompareWith.user_points_count, '0,0')} User Points`}
             </span>
           </div>
         </div>

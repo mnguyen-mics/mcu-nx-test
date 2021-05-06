@@ -5,9 +5,9 @@ import EditDisplayCreativePage from './EditDisplayCreativePage';
 import DisplayCreativeCreator from './DisplayCreativeCreator';
 
 export {
-    DisplayCreativeForm,
-    DisplayCreativeFormLoader,
-    DisplayCreativeRendererSelector,
-    EditDisplayCreativePage,
-    DisplayCreativeCreator,
+  DisplayCreativeForm,
+  DisplayCreativeFormLoader,
+  DisplayCreativeRendererSelector,
+  EditDisplayCreativePage,
+  DisplayCreativeCreator,
 };

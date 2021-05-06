@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
-import withValidators, {
-  ValidatorProps,
-} from '../../../../../../components/Form/withValidators';
+import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
 import { compose } from 'recompose';
 import messages from '../messages';
 import {
@@ -51,7 +49,7 @@ class GeneralFormSection extends React.Component<Props, State> {
           title={messages.sectionGeneralTitle}
         />
         <FormInputField
-          name="compartment.name"
+          name='compartment.name'
           component={FormInput}
           validate={[isRequired]}
           formItemProps={{
@@ -66,7 +64,7 @@ class GeneralFormSection extends React.Component<Props, State> {
           }}
         />
         <FormAlertInputField
-          name="compartment.token"
+          name='compartment.token'
           component={FormAlertInput}
           validate={[isRequired]}
           formItemProps={{
@@ -79,29 +77,20 @@ class GeneralFormSection extends React.Component<Props, State> {
           helpToolTipProps={{
             title: formatMessage(messages.sectionGeneralTokenTooltip),
           }}
-          iconType="warning"
-          type="warning"
+          iconType='warning'
+          type='warning'
           message={formatMessage(messages.warningOnTokenEdition)}
         />
         <div>
-          <Button
-            className="optional-section-title"
-            onClick={this.toggleAdvancedSection}
-          >
-            <McsIcon type="settings" />
-            <span className="step-title">
+          <Button className='optional-section-title' onClick={this.toggleAdvancedSection}>
+            <McsIcon type='settings' />
+            <span className='step-title'>
               {formatMessage(messages.sectionGeneralAdvancedTitle)}
             </span>
-            <McsIcon type="chevron" />
+            <McsIcon type='chevron' />
           </Button>
 
-          <div
-            className={
-              displayAdvancedSection
-                ? 'optional-section-content'
-                : 'hide-section'
-            }
-          >
+          <div className={displayAdvancedSection ? 'optional-section-content' : 'hide-section'}>
             <FormFieldWrapper
               {...{
                 label: formatMessage(messages.sectionGeneralDefaultLabel),
@@ -110,7 +99,7 @@ class GeneralFormSection extends React.Component<Props, State> {
                 title: formatMessage(messages.sectionGeneralDefaultTooltip),
               }}
             >
-              <FormSwitchField name="compartment.default" component={FormSwitch} />
+              <FormSwitchField name='compartment.default' component={FormSwitch} />
             </FormFieldWrapper>
           </div>
         </div>

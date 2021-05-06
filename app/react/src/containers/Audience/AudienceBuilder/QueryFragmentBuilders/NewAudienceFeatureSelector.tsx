@@ -93,18 +93,16 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
       if (audienceFeaturesByFolder) {
         this._audienceFeatureService
           .getAudienceFeatures(datamartId, options)
-          .then((res) => {
+          .then(res => {
             this.setState({
               selectedFolder: {
                 ...audienceFeaturesByFolder,
-                audience_features: !!keywords
-                  ? res.data
-                  : res.data.filter((f) => !f.folder_id),
+                audience_features: !!keywords ? res.data : res.data.filter(f => !f.folder_id),
               },
               isLoading: false,
             });
           })
-          .catch((err) => {
+          .catch(err => {
             notifyError(err);
             this.setState({
               isLoading: false,
@@ -172,7 +170,7 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
         };
         pathLoop(selectedFolder);
 
-        return path.map((elt) => {
+        return path.map(elt => {
           return (
             <Breadcrumb.Item key={elt.id ? elt.id : 'root_key'}>
               <Button onClick={this.onSelectFolder(elt.id)}>{elt.name}</Button>
@@ -182,20 +180,13 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
       }
       return;
     };
-    return (
-      <Breadcrumb className="mcs-audienceBuilder_breadCrumb">
-        {buildBreadCrumbs()}
-      </Breadcrumb>
-    );
+    return <Breadcrumb className='mcs-audienceBuilder_breadCrumb'>{buildBreadCrumbs()}</Breadcrumb>;
   };
 
   onSelectFolder = (id?: string) => () => {
     const { audienceFeaturesByFolder } = this.state;
     this.setState({
-      selectedFolder: this._audienceFeatureService.getFolderContent(
-        id,
-        audienceFeaturesByFolder,
-      ),
+      selectedFolder: this._audienceFeatureService.getFolderContent(id, audienceFeaturesByFolder),
     });
   };
 
@@ -203,14 +194,12 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
     const { save } = this.props;
     const { audienceFeaturesByFolder } = this.state;
     let selectedAudienceFeature = audienceFeaturesByFolder?.audience_features.find(
-      (f) => f.id === id,
+      f => f.id === id,
     );
     if (!selectedAudienceFeature) {
       const loop = (children: AudienceFeaturesByFolder[]) => {
-        children.forEach((folder) => {
-          const childFeature = folder.audience_features.find(
-            (f) => f.id === id,
-          );
+        children.forEach(folder => {
+          const childFeature = folder.audience_features.find(f => f.id === id);
           if (childFeature) {
             selectedAudienceFeature = childFeature;
           } else {
@@ -244,30 +233,30 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
       audienceFeaturesByFolder.audience_features.length === 0;
 
     if (isLoading) {
-      return <Loading className="m-t-40" isFullScreen={true} />;
+      return <Loading className='m-t-40' isFullScreen={true} />;
     }
     if (disabled) {
-      return <EmptyTableView iconType="warning" message={''} />;
+      return <EmptyTableView iconType='warning' message={''} />;
     }
     return (
       <React.Fragment>
-        <Search className="mcs-search-input" {...this.getSearchOptions()} />
+        <Search className='mcs-search-input' {...this.getSearchOptions()} />
         {!keywords && this.getBreadCrumb()}
         <Row gutter={16}>
           {!!selectedFolder &&
             !keywords &&
-            selectedFolder.children.map((folder) => {
+            selectedFolder.children.map(folder => {
               return (
                 <Col key={folder.id ? folder.id : 'root_key'} span={4}>
                   <div
-                    className="mcs-audienceBuilder_folder"
+                    className='mcs-audienceBuilder_folder'
                     onClick={this.onSelectFolder(folder.id)}
                   >
-                    <FolderOutlined className="mcs-audienceBuilder_folderIcon" />
+                    <FolderOutlined className='mcs-audienceBuilder_folderIcon' />
                     <br />
                     <span>{folder.name}</span>
                     <br />
-                    <span className="mcs-audienceBuilder_folderChildNumber">
+                    <span className='mcs-audienceBuilder_folderChildNumber'>
                       {folder.audience_features.length} features
                     </span>
                   </div>
@@ -275,12 +264,12 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
               );
             })}
         </Row>
-        <Row className="mcs-audienceBuilder_featureCardContainer" gutter={16}>
+        <Row className='mcs-audienceBuilder_featureCardContainer' gutter={16}>
           {isLoading ? (
-            <Loading className="m-t-20" isFullScreen={true} />
+            <Loading className='m-t-20' isFullScreen={true} />
           ) : (
             !!selectedFolder &&
-            selectedFolder.audience_features.map((feature) => {
+            selectedFolder.audience_features.map(feature => {
               return (
                 <Col key={feature.id} span={6}>
                   <AudienceFeatureCard
@@ -305,19 +294,10 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
 
     return (
       <Layout className={'mcs-selector-layout'}>
-        <Actionbar
-          pathItems={[formatMessage(messages.addAudienceFeature)]}
-          edition={true}
-        >
-          <McsIcon
-            type="close"
-            className="close-icon mcs-table-cursor"
-            onClick={close}
-          />
+        <Actionbar pathItems={[formatMessage(messages.addAudienceFeature)]} edition={true}>
+          <McsIcon type='close' className='close-icon mcs-table-cursor' onClick={close} />
         </Actionbar>
-        <Layout
-          className={`mcs-edit-container mcs-audienceBuilder_featureSelector`}
-        >
+        <Layout className={`mcs-edit-container mcs-audienceBuilder_featureSelector`}>
           {this.renderSelector()}
         </Layout>
       </Layout>

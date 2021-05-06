@@ -10,17 +10,10 @@ export const isAChild = (
   org: UserWorkspaceResource,
   workspaces: UserWorkspaceResource[],
 ): boolean => {
-  return (
-    workspaces.find((w) => w.organisation_id === org.administrator_id) !==
-    undefined
-  );
+  return workspaces.find(w => w.organisation_id === org.administrator_id) !== undefined;
 };
 
-export const switchWorkspace = (
-  organisationId: string,
-  history: History<any>,
-  match: any,
-) => {
+export const switchWorkspace = (organisationId: string, history: History<any>, match: any) => {
   const toPath = pathToRegexp.compile(match.path);
   const fullUrl = toPath({
     ...match.params,

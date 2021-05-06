@@ -17,10 +17,7 @@ import { parseSearch } from '../../../../utils/LocationSearchHelper';
 import { EMAIL_SEARCH_SETTINGS } from './constants';
 import { compose } from 'recompose';
 import { CampaignStatus } from '../../../../models/campaign/constants';
-import {
-  EmptyTableView,
-  McsIcon,
-} from '@mediarithmics-private/mcs-components-library';
+import { EmptyTableView, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import {
   ActionsColumnDefinition,
@@ -111,29 +108,23 @@ class EmailCampaignsTable extends React.Component<Props> {
         }),
     };
 
-    const renderMetricData = (
-      value: any,
-      numeralFormat: string,
-      currency = '',
-    ) => {
+    const renderMetricData = (value: any, numeralFormat: string, currency = '') => {
       if (isFetchingStats) {
-        return <i className="mcs-table-cell-loading" />; // (<span>loading...</span>);
+        return <i className='mcs-table-cell-loading' />; // (<span>loading...</span>);
       }
       const unlocalizedMoneyPrefix = currency === 'EUR' ? '€ ' : '';
       return formatMetric(value, numeralFormat, unlocalizedMoneyPrefix);
     };
 
-    const dataColumns: Array<
-      DataColumnDefinition<EmailCampaignResourceWithStats>
-    > = [
+    const dataColumns: Array<DataColumnDefinition<EmailCampaignResourceWithStats>> = [
       {
         title: formatMessage(messages.emailHeaderStatus),
         key: 'status',
         isHideable: false,
         render: (text: string) => (
-          <Tooltip placement="top" title={formatMessage(messages[text])}>
+          <Tooltip placement='top' title={formatMessage(messages[text])}>
             <span className={`mcs-campaigns-status-${text.toLowerCase()}`}>
-              <McsIcon type="status" />
+              <McsIcon type='status' />
             </span>
           </Tooltip>
         ),
@@ -144,7 +135,7 @@ class EmailCampaignsTable extends React.Component<Props> {
         isHideable: false,
         render: (text: string, record: EmailCampaignResource) => (
           <Link
-            className="mcs-campaigns-link"
+            className='mcs-campaigns-link'
             to={`/v2/o/${record.organisation_id}/campaigns/email/${record.id}`}
           >
             {text}
@@ -188,9 +179,7 @@ class EmailCampaignsTable extends React.Component<Props> {
       },
     ];
 
-    const actionColumns: Array<
-      ActionsColumnDefinition<EmailCampaignResourceWithStats>
-    > = [
+    const actionColumns: Array<ActionsColumnDefinition<EmailCampaignResourceWithStats>> = [
       {
         key: 'action',
         actions: () => [
@@ -206,7 +195,7 @@ class EmailCampaignsTable extends React.Component<Props> {
       },
     ];
 
-    const statusItems = campaignStatuses.map((status) => ({
+    const statusItems = campaignStatuses.map(status => ({
       key: status,
       value: status,
     }));
@@ -224,22 +213,18 @@ class EmailCampaignsTable extends React.Component<Props> {
           value: status,
         })),
         items: statusItems,
-        getKey: (item: { key: CampaignStatus; value: CampaignStatus }) =>
-          item.key,
-        display: (item: { key: CampaignStatus; value: CampaignStatus }) =>
-          item.value,
-        handleMenuClick: (
-          values: Array<{ key: CampaignStatus; value: CampaignStatus }>,
-        ) => {
+        getKey: (item: { key: CampaignStatus; value: CampaignStatus }) => item.key,
+        display: (item: { key: CampaignStatus; value: CampaignStatus }) => item.value,
+        handleMenuClick: (values: Array<{ key: CampaignStatus; value: CampaignStatus }>) => {
           onFilterChange({
-            statuses: values.map((item) => item.value),
+            statuses: values.map(item => item.value),
           });
         },
       },
     ];
 
     return hasEmailCampaigns ? (
-      <div className="mcs-table-container">
+      <div className='mcs-table-container'>
         <TableViewFilters
           columns={dataColumns}
           actionsColumnsDefinition={actionColumns}
@@ -254,10 +239,7 @@ class EmailCampaignsTable extends React.Component<Props> {
         />
       </div>
     ) : (
-      <EmptyTableView
-        iconType="email"
-        message={formatMessage(messages.noCampaign)}
-      />
+      <EmptyTableView iconType='email' message={formatMessage(messages.noCampaign)} />
     );
   }
 }

@@ -1,25 +1,17 @@
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import { injectable } from 'inversify';
-import UserResource, {
-  UserCreationWithRoleResource,
-} from '../models/directory/UserResource';
+import UserResource, { UserCreationWithRoleResource } from '../models/directory/UserResource';
 import { UserWithRole } from '../containers/Settings/OrganisationSettings/UserRoles/domain';
 
 export interface IUsersService {
-  getUsers: (
-    organisationId: string,
-    filters?: object,
-  ) => Promise<DataListResponse<UserResource>>;
+  getUsers: (organisationId: string, filters?: object) => Promise<DataListResponse<UserResource>>;
 
   getUsersWithUserRole: (
     organisationId: string,
     filters?: object,
   ) => Promise<DataListResponse<UserWithRole>>;
 
-  getUser: (
-    userId: string,
-    organisationId: string,
-  ) => Promise<DataResponse<UserResource>>;
+  getUser: (userId: string, organisationId: string) => Promise<DataResponse<UserResource>>;
 
   createUser: (
     organisationId: string,
@@ -32,18 +24,12 @@ export interface IUsersService {
     body: Partial<UserResource>,
   ) => Promise<DataResponse<UserResource>>;
 
-  deleteUser: (
-    userId: string,
-    organisationId: string,
-  ) => Promise<DataResponse<UserResource>>;
+  deleteUser: (userId: string, organisationId: string) => Promise<DataResponse<UserResource>>;
 }
 
 @injectable()
 export class UsersService implements IUsersService {
-  getUsers(
-    organisationId: string,
-    filters: object = {},
-  ): Promise<DataListResponse<UserResource>> {
+  getUsers(organisationId: string, filters: object = {}): Promise<DataListResponse<UserResource>> {
     const endpoint = `users`;
     const options = {
       organisation_id: organisationId,
@@ -60,10 +46,7 @@ export class UsersService implements IUsersService {
     return ApiService.getRequest(endpoint, options);
   }
 
-  getUser(
-    userId: string,
-    organisationId: string,
-  ): Promise<DataResponse<UserResource>> {
+  getUser(userId: string, organisationId: string): Promise<DataResponse<UserResource>> {
     const endpoint = `users/${userId}?organisation_id=${organisationId}`;
     return ApiService.getRequest(endpoint);
   }
@@ -85,10 +68,7 @@ export class UsersService implements IUsersService {
     return ApiService.putRequest(endpoint, body);
   }
 
-  deleteUser(
-    userId: string,
-    organisationId: string,
-  ): Promise<DataResponse<UserResource>> {
+  deleteUser(userId: string, organisationId: string): Promise<DataResponse<UserResource>> {
     const endpoint = `users/${userId}?organisation_id=${organisationId}`;
     return ApiService.deleteRequest(endpoint);
   }

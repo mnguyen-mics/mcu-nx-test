@@ -1,125 +1,126 @@
-import { defineMessages } from "react-intl";
+import { defineMessages } from 'react-intl';
 
 export default defineMessages({
   goals: {
     id: 'goals.title',
-    defaultMessage: 'Goals'
+    defaultMessage: 'Goals',
   },
   edit: {
     id: 'goals.stats.edit',
-    defaultMessage: 'Edit'
+    defaultMessage: 'Edit',
   },
   archive: {
     id: 'goals.stats.archive',
-    defaultMessage: 'Archive'
+    defaultMessage: 'Archive',
   },
   history: {
     id: 'goals.stats.history',
-    defaultMessage: 'History'
+    defaultMessage: 'History',
   },
   delete: {
     id: 'goals.stats.delete',
-    defaultMessage: 'Delete'
+    defaultMessage: 'Delete',
   },
   pause: {
     id: 'goals.status.pause',
-    defaultMessage: 'Pause Goal'
+    defaultMessage: 'Pause Goal',
   },
   activate: {
     id: 'goals.status.activate',
-    defaultMessage: 'Activate Goal'
+    defaultMessage: 'Activate Goal',
   },
   archiveGoalModalTitle: {
     id: 'goals.stats.archive.modal.title',
-    defaultMessage: 'Are you sure you want to archive this Goal?'
+    defaultMessage: 'Are you sure you want to archive this Goal?',
   },
   archiveGoalModalBody: {
     id: 'goals.stats.archive.modal.body',
-    defaultMessage: 'By archiving this Goal all its activities will be suspended. Are you sure to perform this action ?'
+    defaultMessage:
+      'By archiving this Goal all its activities will be suspended. Are you sure to perform this action ?',
   },
   value: {
     id: 'goals.stats.value',
-    defaultMessage: 'Conversion Value'
+    defaultMessage: 'Conversion Value',
   },
   conversions: {
     id: 'goals.stats.conversion',
-    defaultMessage: 'Conversions'
+    defaultMessage: 'Conversions',
   },
   price: {
     id: 'goals.stats.price',
-    defaultMessage: 'Conversion Price'
+    defaultMessage: 'Conversion Price',
   },
   noStatAvailable: {
     id: 'goals.stats.noStatAvailable',
-    defaultMessage: 'There is no stats available'
+    defaultMessage: 'There is no stats available',
   },
   day: {
     id: 'goals.stats.day',
-    defaultMessage: 'Day'
+    defaultMessage: 'Day',
   },
   marketingChannel: {
     id: 'goals.stats.marketingChannel',
-    defaultMessage: 'Marketing Channel'
+    defaultMessage: 'Marketing Channel',
   },
   source: {
     id: 'goals.stats.source',
-    defaultMessage: 'Source'
+    defaultMessage: 'Source',
   },
   campaignName: {
     id: 'goals.stats.campaignName',
-    defaultMessage: 'Campaign Name'
+    defaultMessage: 'Campaign Name',
   },
   creativeName: {
     id: 'goals.stats.creativeName',
-    defaultMessage: 'Creative Name'
+    defaultMessage: 'Creative Name',
   },
   weightedConversions: {
     id: 'goals.stats.weightedConversions',
-    defaultMessage: 'Weighted Conversions'
+    defaultMessage: 'Weighted Conversions',
   },
   weightedValue: {
     id: 'goals.stats.weightedValue',
-    defaultMessage: 'Weighted Value'
+    defaultMessage: 'Weighted Value',
   },
   postViewWeightedConversions: {
     id: 'goals.stats.postViewWeightedConversions',
-    defaultMessage: 'Post View Weighted Conversions'
+    defaultMessage: 'Post View Weighted Conversions',
   },
   postClickWeightedConversions: {
     id: 'goals.stats.postClickWeightedConversions',
-    defaultMessage: 'Post Click Weighted Conversions'
+    defaultMessage: 'Post Click Weighted Conversions',
   },
   postView: {
     id: 'goals.stats.postView',
-    defaultMessage: 'Post View'
+    defaultMessage: 'Post View',
   },
   postClick: {
     id: 'goals.stats.postClick',
-    defaultMessage: 'Post Click'
+    defaultMessage: 'Post Click',
   },
   interactionToConversionDuration: {
     id: 'goals.stats.interactionToConversionDuration',
-    defaultMessage: 'Interaction to Conversion Duration'
+    defaultMessage: 'Interaction to Conversion Duration',
   },
   interactionType: {
     id: 'goals.stats.interactionType',
-    defaultMessage: 'Interaction type'
+    defaultMessage: 'Interaction type',
   },
   SOURCE: {
     id: 'goals.stats.source',
-    defaultMessage: 'Source'
+    defaultMessage: 'Source',
   },
   CAMPAIGN: {
     id: 'goals.stats.campaign',
-    defaultMessage: 'Campaign'
+    defaultMessage: 'Campaign',
   },
   CREATIVES: {
     id: 'goals.stats.creative',
-    defaultMessage: 'Creative'
+    defaultMessage: 'Creative',
   },
   pCpVFormatDuration: {
     id: 'goals.stats.pcpvduration',
-    defaultMessage: '{ value } in { duration }'
+    defaultMessage: '{ value } in { duration }',
   },
   exportInProgress: {
     id: 'goal.dashboard.actionbar.button.export',
@@ -149,4 +150,4 @@ export default defineMessages({
     id: 'goal.dashboard.actionbar.export.column.creativeId',
     defaultMessage: 'Creative ID',
   },
-})
+});

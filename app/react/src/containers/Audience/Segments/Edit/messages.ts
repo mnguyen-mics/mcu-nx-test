@@ -3,8 +3,7 @@ import { defineMessages } from 'react-intl';
 export default defineMessages({
   audienceFeedWarningMessage: {
     id: 'audience.warning',
-    defaultMessage:
-      'You cannot edit an active plugin. Pause it in order to edit it.',
+    defaultMessage: 'You cannot edit an active plugin. Pause it in order to edit it.',
   },
   audienceSegmentBreadCrumb: {
     id: 'audience.segment.actionbar.breadcrumb.label',
@@ -87,7 +86,7 @@ export default defineMessages({
   audienceSegmentCreationGeneralPausedFieldHelper: {
     id: 'audience.segment.create.section.general.field.paused.helper',
     defaultMessage:
-        'When a segment is paused, all related processings (statistics, user insertions and deletions) are stopped.',
+      'When a segment is paused, all related processings (statistics, user insertions and deletions) are stopped.',
   },
   audienceSegmentCreationGeneralNameFieldPlaceHolder: {
     id: 'audience.segment.create.section.general.field.name.placeholder',
@@ -103,7 +102,8 @@ export default defineMessages({
   },
   audienceSegmentCreationGeneralDescriptionFieldHelper: {
     id: 'audience.segment.create.section.general.field.description.helper',
-    defaultMessage: 'This is the description of your audience segment. You can for instance describe how this segment is built or what its usage is for.',
+    defaultMessage:
+      'This is the description of your audience segment. You can for instance describe how this segment is built or what its usage is for.',
   },
   audienceSegmentCreationUserQueryFieldHelper: {
     id: 'audience.segment.create.section.general.field.query.helper',
@@ -139,8 +139,7 @@ export default defineMessages({
   },
   contentSectionPropertiesPartRow1Tooltip: {
     id: 'audience.segment.section2advancedPart.row1.tooltip',
-    defaultMessage:
-      'The code snippet to copy on your web page for custom intergration',
+    defaultMessage: 'The code snippet to copy on your web page for custom intergration',
   },
   contentSectionPropertiesPartRow1TooltipHover: {
     id: 'audience.segment.section2advancedPart.row1.tooltiphover',
@@ -152,8 +151,7 @@ export default defineMessages({
   },
   configureAudienceSegmentTechnicalName: {
     id: 'audience.segment.form.codesnippet.noTechnicalNameConfigured',
-    defaultMessage:
-      'The Audience Segment technical name needs to be configured.',
+    defaultMessage: 'The Audience Segment technical name needs to be configured.',
   },
   // Default lifetime
   contentSectionGeneralAdvancedPartRow2Label: {
@@ -244,8 +242,7 @@ export default defineMessages({
 
   audienceFeedDisableExplanation: {
     id: 'audience.segment.audiencefeed.disable.explanation',
-    defaultMessage:
-      "You need to save your Feed before setting it to 'Started.'",
+    defaultMessage: "You need to save your Feed before setting it to 'Started.'",
   },
   addExisting: {
     id: 'audience.segment.addExisting',
@@ -308,6 +305,7 @@ export default defineMessages({
   // Legacy components
   noMoreSupported: {
     id: 'audience.segment.edit.legacyComponent.noMoreSupported',
-    defaultMessage: 'The query language related to this datamart is no more supported. Please select another datamart or create a new resource based on another datamart.',
-  }
+    defaultMessage:
+      'The query language related to this datamart is no more supported. Please select another datamart or create a new resource based on another datamart.',
+  },
 });

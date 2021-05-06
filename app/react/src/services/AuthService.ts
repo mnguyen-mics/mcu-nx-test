@@ -64,11 +64,7 @@ export interface IAuthService {
 
   sendPassword: (email: string) => Promise<any>;
 
-  resetPassword: (
-    email: string,
-    token: string,
-    password: string,
-  ) => Promise<any>;
+  resetPassword: (email: string, token: string, password: string) => Promise<any>;
 }
 
 @injectable()
@@ -90,9 +86,7 @@ export class AuthService implements IAuthService {
   };
 
   tokenExpiresIn = (tokenExpirationDate: moment.MomentInput) => {
-    return moment(tokenExpirationDate)
-      .subtract('10', 'minutes')
-      .diff(moment(), 'ms');
+    return moment(tokenExpirationDate).subtract('10', 'minutes').diff(moment(), 'ms');
   };
 
   isTokenExpired = (token: moment.MomentInput) => {
@@ -177,9 +171,7 @@ export class AuthService implements IAuthService {
     LocalStorage.removeItem(REFRESH_TOKEN_EXPIRATION_DATE);
   };
 
-  createAccessToken = (
-    credentialsOrRefreshToken: CredentialsOrRefreshToken,
-  ) => {
+  createAccessToken = (credentialsOrRefreshToken: CredentialsOrRefreshToken) => {
     const { email, password, refreshToken } = credentialsOrRefreshToken;
 
     const body = {
@@ -223,9 +215,7 @@ export class AuthService implements IAuthService {
   getConnectedUser = () => {
     const endpoint = 'connected_user';
 
-    return ApiService.getRequest<DataResponse<UserProfileResource>>(
-      endpoint,
-    ).then(res => res.data);
+    return ApiService.getRequest<DataResponse<UserProfileResource>>(endpoint).then(res => res.data);
   };
 
   sendPassword = (email: string) => {
@@ -235,13 +225,7 @@ export class AuthService implements IAuthService {
       email,
     };
 
-    return ApiService.postRequest(
-      endpoint,
-      body,
-      {},
-      {},
-      { authenticated: false },
-    );
+    return ApiService.postRequest(endpoint, body, {}, {}, { authenticated: false });
   };
 
   resetPassword = (email: string, token: string, password: string) => {
@@ -251,12 +235,6 @@ export class AuthService implements IAuthService {
       token,
       password,
     };
-    return ApiService.postRequest(
-      endpoint,
-      body,
-      {},
-      {},
-      { authenticated: false },
-    );
+    return ApiService.postRequest(endpoint, body, {}, {}, { authenticated: false });
   };
 }

@@ -74,16 +74,10 @@ export class OverlapInterval implements IOverlapInterval {
     });
   }
 
-  createOverlapAnalysis(
-    datamartId: string,
-    segmentId: string,
-    organisationId: string,
-  ) {
-    return this._audienceSegmentService
-      .createOverlap(datamartId, segmentId)
-      .then(res => {
-        return this.fetchOverlapAnalysisLoop(segmentId);
-      });
+  createOverlapAnalysis(datamartId: string, segmentId: string, organisationId: string) {
+    return this._audienceSegmentService.createOverlap(datamartId, segmentId).then(res => {
+      return this.fetchOverlapAnalysisLoop(segmentId);
+    });
   }
   fetchOverlapAnalysis = (segmentId: string): Promise<OverlapData> => {
     const formattedResponse = {
@@ -157,17 +151,13 @@ export class OverlapInterval implements IOverlapInterval {
     overlapResult: OverlapFileResource,
     segmentId: string,
   ): Promise<Data | null> {
-    const topOverlaps: OverlapItemResult[] = overlapResult.overlaps.sort(
-      (a, b) => {
-        return a.overlap_number > b.overlap_number ? -1 : 1;
-      },
-    ); // sort overlaps
+    const topOverlaps: OverlapItemResult[] = overlapResult.overlaps.sort((a, b) => {
+      return a.overlap_number > b.overlap_number ? -1 : 1;
+    }); // sort overlaps
 
     const topSegments = topOverlaps.map(overlap => {
       return (
-        overlapResult.segments.find(
-          s => s.segment_id === overlap.segment_intersect_with,
-        ) || null
+        overlapResult.segments.find(s => s.segment_id === overlap.segment_intersect_with) || null
       );
     });
 
@@ -198,9 +188,7 @@ export class OverlapInterval implements IOverlapInterval {
             const segmentInOverlap = topSegments.find(ts =>
               ts ? ts.segment_id.toString() === isInOverlap.id : false,
             );
-            const segmentSize = segmentInOverlap
-              ? segmentInOverlap.segment_size
-              : 1;
+            const segmentSize = segmentInOverlap ? segmentInOverlap.segment_size : 1;
             formattedvalues.push({
               ...to,
               segment_source_id: to.segment_source_id.toString(),

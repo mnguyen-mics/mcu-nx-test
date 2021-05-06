@@ -14,13 +14,8 @@ export function formatMetric(
   return '-';
 }
 
-export function unformatMetric(
-  value: any,
-) {
-  return (value !== undefined
-    ? parseInt(value.toString().replace(/[.,]/g, ''), 10)
-    : 0
-  );
+export function unformatMetric(value: any) {
+  return value !== undefined ? parseInt(value.toString().replace(/[.,]/g, ''), 10) : 0;
 }
 
 /**
@@ -44,16 +39,17 @@ export function unformatMetric(
  * @param {Object} reportView an object comming from performance api
  * @return {Object} normalized object
  */
-export function normalizeReportView<T = Index<any>>(
-  reportView: ReportView,
-): T[] {
+export function normalizeReportView<T = Index<any>>(reportView: ReportView): T[] {
   const headers = reportView.columns_headers;
   const rows = reportView.rows;
   return rows.map(row => {
-    return headers.reduce((acc, header, index) => ({
-      ...acc,
-      [header]: row[index],
-    }), {});
+    return headers.reduce(
+      (acc, header, index) => ({
+        ...acc,
+        [header]: row[index],
+      }),
+      {},
+    );
   }) as T[];
 }
 
@@ -79,9 +75,7 @@ export function normalizeReportView<T = Index<any>>(
  * @param {Object} normilizedReportView an object comming from performance api
  * @return {Object} normalized object
  */
-export function formatNormalizeReportView(
-  normilizedReportView: Array<Index<any>>,
-) {
+export function formatNormalizeReportView(normilizedReportView: Array<Index<any>>) {
   const returnValue: Index<any> = {};
   if (normilizedReportView.length > 0) {
     Object.keys(normilizedReportView[0]).forEach(key => {

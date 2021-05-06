@@ -1,6 +1,4 @@
-export type CleaningRuleType =
-  | 'USER_EVENT_CLEANING_RULE'
-  | 'USER_PROFILE_CLEANING_RULE';
+export type CleaningRuleType = 'USER_EVENT_CLEANING_RULE' | 'USER_PROFILE_CLEANING_RULE';
 
 export type CleaningRuleAction = 'KEEP' | 'DELETE';
 
@@ -46,9 +44,7 @@ export type ExtendedCleaningRuleResource =
   | UserEventCleaningRuleResource
   | UserProfileCleaningRuleResource;
 
-export type ContentFilterType =
-  | 'EVENT_NAME_FILTER'
-  | 'OBJECT_TREE_EXPRESSION_FILTER';
+export type ContentFilterType = 'EVENT_NAME_FILTER' | 'OBJECT_TREE_EXPRESSION_FILTER';
 
 export interface UserEventContentFilterResource {
   content_type: ContentFilterType;
@@ -75,13 +71,11 @@ export function isUserProfileCleaningRuleResource(
   return cleaningRule.type === 'USER_PROFILE_CLEANING_RULE';
 }
 
-export function getNextCleaningRuleStatus(
-  status: CleaningRuleStatus
-): CleaningRuleStatus {
-  switch(status) {
+export function getNextCleaningRuleStatus(status: CleaningRuleStatus): CleaningRuleStatus {
+  switch (status) {
     case 'DRAFT':
-      return 'LIVE'
+      return 'LIVE';
     default:
-      return 'ARCHIVED'
+      return 'ARCHIVED';
   }
 }

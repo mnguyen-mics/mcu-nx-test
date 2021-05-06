@@ -5,10 +5,7 @@ import { RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
 import { TableViewFilters } from '../../../../components/TableView';
 import { CREATIVE_DISPLAY_SEARCH_SETTINGS } from './constants';
-import {
-  updateSearch,
-  parseSearch,
-} from '../../../../utils/LocationSearchHelper';
+import { updateSearch, parseSearch } from '../../../../utils/LocationSearchHelper';
 import CreativeScreenshot from '../../CreativeScreenshot';
 import messages from './message';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
@@ -47,11 +44,7 @@ class DisplayAdsTable extends React.Component<JoinedProps> {
 
     const nextLocation = {
       pathname,
-      search: updateSearch(
-        currentSearch,
-        params,
-        CREATIVE_DISPLAY_SEARCH_SETTINGS,
-      ),
+      search: updateSearch(currentSearch, params, CREATIVE_DISPLAY_SEARCH_SETTINGS),
     };
 
     history.push(nextLocation);
@@ -65,9 +58,7 @@ class DisplayAdsTable extends React.Component<JoinedProps> {
       history,
     } = this.props;
 
-    history.push(
-      `/v2/o/${organisationId}/creatives/display/edit/${creative.id}`,
-    );
+    history.push(`/v2/o/${organisationId}/creatives/display/edit/${creative.id}`);
   };
 
   render() {
@@ -81,7 +72,7 @@ class DisplayAdsTable extends React.Component<JoinedProps> {
       rowSelection,
       isUpdatingAuditStatus,
       totalDisplayAds,
-      intl : { formatMessage },
+      intl: { formatMessage },
       hasDisplayAds,
       archiveDisplayAd,
     } = this.props;
@@ -107,11 +98,7 @@ class DisplayAdsTable extends React.Component<JoinedProps> {
           currentPage: page,
           pageSize: size,
         });
-        if (
-          rowSelection &&
-          rowSelection.unselectAllItemIds &&
-          rowSelection.allRowsAreSelected
-        ) {
+        if (rowSelection && rowSelection.unselectAllItemIds && rowSelection.allRowsAreSelected) {
           rowSelection.unselectAllItemIds();
         }
       },
@@ -128,9 +115,7 @@ class DisplayAdsTable extends React.Component<JoinedProps> {
         key: 'asset_path',
         isHideable: false,
         className: 'mcs-table-image-col',
-        render: (text: string, record: DisplayAdResource) => (
-          <CreativeScreenshot item={record} />
-        ),
+        render: (text: string, record: DisplayAdResource) => <CreativeScreenshot item={record} />,
       },
       {
         title: formatMessage(messages.name),
@@ -138,7 +123,7 @@ class DisplayAdsTable extends React.Component<JoinedProps> {
         isHideable: false,
         render: (text: string, record: DisplayAdResource) => (
           <Link
-            className="mcs-campaigns-link"
+            className='mcs-campaigns-link'
             to={`/v2/o/${organisationId}/creatives/display/edit/${record.id}`}
           >
             {text}
@@ -176,7 +161,7 @@ class DisplayAdsTable extends React.Component<JoinedProps> {
     ];
 
     return hasDisplayAds ? (
-      <div className="mcs-table-container">
+      <div className='mcs-table-container'>
         <TableViewFilters
           columns={dataColumns}
           actionsColumnsDefinition={actionColumns}
@@ -188,15 +173,9 @@ class DisplayAdsTable extends React.Component<JoinedProps> {
         />
       </div>
     ) : (
-      <EmptyTableView
-        iconType="display"
-        message={formatMessage(messages.noDisplayCreative)}
-      />
+      <EmptyTableView iconType='display' message={formatMessage(messages.noDisplayCreative)} />
     );
   }
 }
 
-export default compose<JoinedProps, DisplayAdsTableProps>(
-  withRouter,
-  injectIntl,
-)(DisplayAdsTable);
+export default compose<JoinedProps, DisplayAdsTableProps>(withRouter, injectIntl)(DisplayAdsTable);
