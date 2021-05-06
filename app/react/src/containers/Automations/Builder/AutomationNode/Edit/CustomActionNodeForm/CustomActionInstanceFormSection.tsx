@@ -59,8 +59,9 @@ class CustomActionInstanceFormSection extends React.Component<Props> {
       });
 
       if (extendedCustomActionInformation) {
-        const customActionProperties = extendedCustomActionInformation.customActionProperties || [];
-        const pluginLayout = extendedCustomActionInformation.pluginLayout;
+        const customActionProperties =
+          extendedCustomActionInformation.layoutInformation?.customActionProperties || [];
+        const pluginLayout = extendedCustomActionInformation.layoutInformation?.pluginLayout;
         const pluginVersionId = extendedCustomActionInformation.customAction.version_id;
 
         if (pluginVersionId) {
