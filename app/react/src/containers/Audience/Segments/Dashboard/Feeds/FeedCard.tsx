@@ -27,23 +27,23 @@ import {
 } from '../../../../../services/AudienceSegmentFeedService';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
-import { FeedStatsUnit, getFeedStatsUnit, FeedStatsCounts } from '../../../../../utils/FeedsStatsReportHelper';
+import {
+  FeedStatsUnit,
+  getFeedStatsUnit,
+  FeedStatsCounts,
+} from '../../../../../utils/FeedsStatsReportHelper';
 
 export interface FeedCardProps {
   feed: AudienceFeedTyped;
-  onFeedUpdate: (
-    newFeed: AudienceFeedTyped,
-  ) => void;
-  onFeedDelete: (
-    feed: AudienceFeedTyped,
-  ) => void;
+  onFeedUpdate: (newFeed: AudienceFeedTyped) => void;
+  onFeedDelete: (feed: AudienceFeedTyped) => void;
   segmentId: string;
   organisationId: string;
   exportedUserPointsCount?: number;
   exportedUserIdentifiersCount?: number;
 }
 
-type FeedStatsDisplayStatus = "LOADING" | "READY" | "READY-NO-DATA";
+type FeedStatsDisplayStatus = 'LOADING' | 'READY' | 'READY-NO-DATA';
 
 interface FeedCardState {
   isLoading: boolean;
@@ -136,7 +136,8 @@ const messages = defineMessages({
   },
   feedModalNameFieldTitleWarning: {
     id: 'audience.segment.feed.card.create.nameField.title.warning',
-    defaultMessage: "Warning: This name is only used in the platform, it won't be visible on the external system.",
+    defaultMessage:
+      "Warning: This name is only used in the platform, it won't be visible on the external system.",
   },
   feedModalNameFieldPlaceholder: {
     id: 'audience.segment.feed.card.create.nameField.placeholder',
@@ -154,12 +155,8 @@ class FeedCard extends React.Component<Props, FeedCardState> {
 
   private feedService: IAudienceSegmentFeedService;
 
-  private _audienceExternalFeedServiceFactory: (
-    segmentId: string,
-  ) => IAudienceSegmentFeedService;
-  private _audienceTagFeedServiceFactory: (
-    segmentId: string,
-  ) => IAudienceSegmentFeedService;
+  private _audienceExternalFeedServiceFactory: (segmentId: string) => IAudienceSegmentFeedService;
+  private _audienceTagFeedServiceFactory: (segmentId: string) => IAudienceSegmentFeedService;
 
   @lazyInject(TYPES.IPluginService)
   private _pluginService: IPluginService;
@@ -177,9 +174,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
     this._audienceExternalFeedServiceFactory = this._audienceSegmentFeedServiceFactory(
       'EXTERNAL_FEED',
     );
-    this._audienceTagFeedServiceFactory = this._audienceSegmentFeedServiceFactory(
-      'TAG_FEED',
-    );
+    this._audienceTagFeedServiceFactory = this._audienceSegmentFeedServiceFactory('TAG_FEED');
 
     if (this.props.feed) {
       this.feedService =
@@ -195,19 +190,14 @@ class FeedCard extends React.Component<Props, FeedCardState> {
     this._pluginService
       .findPluginFromVersionId(feed.version_id)
       .then(res => {
-        if (
-          res !== null &&
-          res.status !== 'error' &&
-          res.data.current_version_id
-        ) {
+        if (res !== null && res.status !== 'error' && res.data.current_version_id) {
           this._pluginService
             .getLocalizedPluginLayout(res.data.id, res.data.current_version_id)
             .then(resultPluginLayout => {
               if (resultPluginLayout !== null) {
                 this.setState({
                   cardHeaderTitle: resultPluginLayout.metadata.display_name,
-                  cardHeaderThumbnail:
-                    resultPluginLayout.metadata.small_icon_asset_url,
+                  cardHeaderThumbnail: resultPluginLayout.metadata.small_icon_asset_url,
                   pluginLayout: resultPluginLayout,
                   isLoading: false,
                 });
@@ -249,25 +239,13 @@ class FeedCard extends React.Component<Props, FeedCardState> {
 
     switch (feed.status) {
       case 'ACTIVE':
-        return (
-          <Button onClick={editFeed}>
-            {intl.formatMessage(messages.pause)}
-          </Button>
-        );
+        return <Button onClick={editFeed}>{intl.formatMessage(messages.pause)}</Button>;
       case 'INITIAL':
-        return (
-          <Button onClick={editFeed}>
-            {intl.formatMessage(messages.activate)}
-          </Button>
-        );
+        return <Button onClick={editFeed}>{intl.formatMessage(messages.activate)}</Button>;
       case 'PAUSED':
-        return (
-          <Button onClick={editFeed}>
-            {intl.formatMessage(messages.resume)}
-          </Button>
-        );
+        return <Button onClick={editFeed}>{intl.formatMessage(messages.resume)}</Button>;
       case 'PUBLISHED':
-        return <div className="feedcard-placeholder" />;
+        return <div className='feedcard-placeholder' />;
     }
   };
 
@@ -307,10 +285,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
     return this._pluginService
       .findPluginFromVersionId(feed.version_id)
       .then(res =>
-        this._pluginService.getPluginVersionProperties(
-          res.data.id,
-          res.data.current_version_id!,
-        ),
+        this._pluginService.getPluginVersionProperties(res.data.id, res.data.current_version_id!),
       )
       .then(res => this.setState({ pluginProperties: res.data }));
   };
@@ -344,12 +319,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
     const propertiesPromises: Array<Promise<any>> = [];
     properties.forEach(item => {
       propertiesPromises.push(
-        updatePromise(
-          organisationId,
-          pluginInstanceId,
-          item.technical_name,
-          item,
-        ),
+        updatePromise(organisationId, pluginInstanceId, item.technical_name, item),
       );
     });
     return Promise.all(propertiesPromises);
@@ -365,25 +335,18 @@ class FeedCard extends React.Component<Props, FeedCardState> {
     // if edition update and redirect
     const editPromise = this.feedService.updatePluginInstance;
     this.setState({ isLoadingCard: true });
-    const {
-      type,
-      version_value,
-      version_id,
-      status,
-      ...newPluginInstance
-    } = pluginInstance;
+    const { type, version_value, version_id, status, ...newPluginInstance } = pluginInstance;
 
-    return editPromise(pluginInstance.id!, name ? { ...newPluginInstance, name: name } : newPluginInstance)
+    return editPromise(
+      pluginInstance.id!,
+      name ? { ...newPluginInstance, name: name } : newPluginInstance,
+    )
       .then(() => {
-        return this.updatePropertiesValue(
-          properties,
-          organisationId,
-          pluginInstance.id!,
-        );
+        return this.updatePropertiesValue(properties, organisationId, pluginInstance.id!);
       })
       .then(() => {
         this.setState({ isLoadingCard: false, opened: false });
-        onFeedUpdate(name ? { ...pluginInstance, name: name } : pluginInstance)
+        onFeedUpdate(name ? { ...pluginInstance, name: name } : pluginInstance);
       })
       .catch((err: any) => {
         notifyError(err);
@@ -392,33 +355,44 @@ class FeedCard extends React.Component<Props, FeedCardState> {
   };
 
   getFeedStatsDisplayStatus(counts: FeedStatsCounts): FeedStatsDisplayStatus {
-
     // If the count is null, the stat request is not complete yet
-    if (counts.exportedUserIdentifiersCount == null && counts.exportedUserPointsCount == null) return "LOADING";
+    if (counts.exportedUserIdentifiersCount == null && counts.exportedUserPointsCount == null)
+      return 'LOADING';
     // If both counts are 0, we'll display a message to tell that nothing was sent
-    else if (counts.exportedUserIdentifiersCount === 0 && counts.exportedUserPointsCount === 0) return "READY-NO-DATA";
-    else return "READY";
+    else if (counts.exportedUserIdentifiersCount === 0 && counts.exportedUserPointsCount === 0)
+      return 'READY-NO-DATA';
+    else return 'READY';
   }
 
-  getFeedStatsDisplayMsg(intl: InjectedIntl, status: FeedStatsDisplayStatus, unit: FeedStatsUnit, counts: FeedStatsCounts): string {
-
+  getFeedStatsDisplayMsg(
+    intl: InjectedIntl,
+    status: FeedStatsDisplayStatus,
+    unit: FeedStatsUnit,
+    counts: FeedStatsCounts,
+  ): string {
     switch (status) {
-      case "LOADING":
+      case 'LOADING':
         return intl.formatMessage(messages.loadingStats);
-      case "READY-NO-DATA":
+      case 'READY-NO-DATA':
         return intl.formatMessage(messages.nothingSent);
-      case "READY":
+      case 'READY':
         switch (unit) {
-          case "USER_POINTS":
-            return `${counts.exportedUserPointsCount ? counts.exportedUserPointsCount.toLocaleString() : '-'} ${intl.formatMessage(messages.userPointsSent)}`;
-          case "USER_IDENTIFIERS":
-            return `${counts.exportedUserIdentifiersCount ? counts.exportedUserIdentifiersCount.toLocaleString() : '-'} ${intl.formatMessage(messages.identifiersSent)}`;
+          case 'USER_POINTS':
+            return `${
+              counts.exportedUserPointsCount ? counts.exportedUserPointsCount.toLocaleString() : '-'
+            } ${intl.formatMessage(messages.userPointsSent)}`;
+          case 'USER_IDENTIFIERS':
+            return `${
+              counts.exportedUserIdentifiersCount
+                ? counts.exportedUserIdentifiersCount.toLocaleString()
+                : '-'
+            } ${intl.formatMessage(messages.identifiersSent)}`;
           // Should not happen
           default:
-            return "error";
+            return 'error';
         }
       default:
-        return "error";
+        return 'error';
     }
   }
 
@@ -434,12 +408,8 @@ class FeedCard extends React.Component<Props, FeedCardState> {
       hasFeature,
       history,
       intl,
-      fieldValidators: {
-        isRequired
-      },
-      intl: {
-        formatMessage,
-      },
+      fieldValidators: { isRequired },
+      intl: { formatMessage },
     } = this.props;
 
     const { isLoading, cardHeaderTitle, cardHeaderThumbnail } = this.state;
@@ -484,10 +454,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
         return history.push(editFeed());
       } else {
         this.setState({ opened: true, isLoadingCard: true, modalTab: tab });
-        return Promise.all([
-          this.getPluginProperties(),
-          this.getInitialValues(),
-        ])
+        return Promise.all([this.getPluginProperties(), this.getInitialValues()])
           .then(() => this.setState({ isLoadingCard: false }))
           .catch(err => {
             notifyError(err);
@@ -498,19 +465,15 @@ class FeedCard extends React.Component<Props, FeedCardState> {
 
     const menu = (
       <Menu>
-        <Menu.Item key="0">
-          <a onClick={openModal('configuration')}>
-            {intl.formatMessage(messages.edit)}
-          </a>
+        <Menu.Item key='0'>
+          <a onClick={openModal('configuration')}>{intl.formatMessage(messages.edit)}</a>
         </Menu.Item>
         {hasFeature('audience-feeds_stats') ? (
-          <Menu.Item key="1">
-            <a onClick={openModal('stats')}>
-              {intl.formatMessage(messages.stats)}
-            </a>
+          <Menu.Item key='1'>
+            <a onClick={openModal('stats')}>{intl.formatMessage(messages.stats)}</a>
           </Menu.Item>
         ) : null}
-        <Menu.Item key="2">
+        <Menu.Item key='2'>
           <a onClick={removeFeed}>{intl.formatMessage(messages.delete)}</a>
         </Menu.Item>
       </Menu>
@@ -519,103 +482,89 @@ class FeedCard extends React.Component<Props, FeedCardState> {
     const popupContainer = () => document.getElementById(this.id)!;
     const onClose = () => this.setState({ opened: false });
 
-
     const counts: FeedStatsCounts = { exportedUserPointsCount, exportedUserIdentifiersCount };
     const feedStatsStatus = this.getFeedStatsDisplayStatus(counts);
     const feedStatsUnit = getFeedStatsUnit(feed);
-    const feedStatsDisplayMsg = this.getFeedStatsDisplayMsg(intl, feedStatsStatus, feedStatsUnit, counts);
+    const feedStatsDisplayMsg = this.getFeedStatsDisplayMsg(
+      intl,
+      feedStatsStatus,
+      feedStatsUnit,
+      counts,
+    );
 
     return (
-      <Card className="hoverable-card actionable-card compact feed-card">
-        <div className="top-menu" id={this.id}>
-          <Dropdown
-            overlay={menu}
-            trigger={['click']}
-            getPopupContainer={popupContainer}
-          >
+      <Card className='hoverable-card actionable-card compact feed-card'>
+        <div className='top-menu' id={this.id}>
+          <Dropdown overlay={menu} trigger={['click']} getPopupContainer={popupContainer}>
             <a>
-              <McsIcon type="dots" />
+              <McsIcon type='dots' />
             </a>
           </Dropdown>
         </div>
-        <div className="wrapper">
-          <div className="card-header">
+        <div className='wrapper'>
+          <div className='card-header'>
             {cardHeaderThumbnail ? (
               <img
-                className="image-title"
-                src={`${
-                  (window as any).MCS_CONSTANTS.ASSETS_URL
-                  }${cardHeaderThumbnail}`}
+                className='image-title'
+                src={`${(window as any).MCS_CONSTANTS.ASSETS_URL}${cardHeaderThumbnail}`}
               />
-            ) : (
-                undefined
-              )}
-            <div className="title">
-              {
-                feed.name &&
-                <div className="feed-name">
-                  {feed.name}
-                </div>
-              }
-              <div className="plugin-name">
-                {cardHeaderTitle
-                  ? cardHeaderTitle
-                  : feed.artifact_id}
+            ) : undefined}
+            <div className='title'>
+              {feed.name && <div className='feed-name'>{feed.name}</div>}
+              <div className='plugin-name'>
+                {cardHeaderTitle ? cardHeaderTitle : feed.artifact_id}
               </div>
             </div>
           </div>
-          <div className="content">
-            <div className="content-left">
-              <McsIcon type="status" className={this.generateStatusColor()} />{' '}
-              {feed.status}
+          <div className='content'>
+            <div className='content-left'>
+              <McsIcon type='status' className={this.generateStatusColor()} /> {feed.status}
             </div>
             {hasFeature('audience-feeds_stats') && (
-              <div className="content-right">
+              <div className='content-right'>
                 {feedStatsDisplayMsg}{' '}
-                <Tooltip placement="topRight" title={intl.formatMessage(messages.inTheLast7Days)}>
+                <Tooltip placement='topRight' title={intl.formatMessage(messages.inTheLast7Days)}>
                   {' '}
-                  <McsIcon style={{ marginRight: '0px' }} type="info" />
+                  <McsIcon style={{ marginRight: '0px' }} type='info' />
                 </Tooltip>
               </div>
             )}
           </div>
-          <div className="actions">{this.renderActionButton()}</div>
+          <div className='actions'>{this.renderActionButton()}</div>
         </div>
-        {this.state.opened &&
-          this.state.pluginLayout &&
-          this.state.pluginProperties && (
-            <FeedCardModal
-              editionMode={true}
-              disableFields={
-                feed.status === 'ACTIVE' || feed.status === 'PUBLISHED'
-              }
-              initialValues={this.state.initialValue}
-              isLoading={this.state.isLoadingCard}
-              onClose={onClose}
-              opened={!!this.state.opened}
-              organisationId={organisationId}
-              plugin={feed}
-              pluginLayout={this.state.pluginLayout!}
-              pluginProperties={this.state.pluginProperties!}
-              pluginVersionId={feed.version_id}
-              save={this.saveOrCreatePluginInstance}
-              selectedTab={this.state.modalTab}
-              feedStatsUnit={feedStatsUnit}
-              nameField={{
-                label: formatMessage(messages.feedModalNameFieldLabel),
-                title: <div>
+        {this.state.opened && this.state.pluginLayout && this.state.pluginProperties && (
+          <FeedCardModal
+            editionMode={true}
+            disableFields={feed.status === 'ACTIVE' || feed.status === 'PUBLISHED'}
+            initialValues={this.state.initialValue}
+            isLoading={this.state.isLoadingCard}
+            onClose={onClose}
+            opened={!!this.state.opened}
+            organisationId={organisationId}
+            plugin={feed}
+            pluginLayout={this.state.pluginLayout!}
+            pluginProperties={this.state.pluginProperties!}
+            pluginVersionId={feed.version_id}
+            save={this.saveOrCreatePluginInstance}
+            selectedTab={this.state.modalTab}
+            feedStatsUnit={feedStatsUnit}
+            nameField={{
+              label: formatMessage(messages.feedModalNameFieldLabel),
+              title: (
+                <div>
                   {formatMessage(messages.feedModalNameFieldTitle)}
                   <br />
                   <b>{formatMessage(messages.feedModalNameFieldTitleWarning)}</b>
-                </div>,
-                placeholder: formatMessage(messages.feedModalNameFieldPlaceholder),
-                display: true,
-                disabled: feed.status === 'ACTIVE' || feed.status === 'PUBLISHED',
-                value: feed.name,
-                validator: [isRequired]
-              }}
-            />
-          )}
+                </div>
+              ),
+              placeholder: formatMessage(messages.feedModalNameFieldPlaceholder),
+              display: true,
+              disabled: feed.status === 'ACTIVE' || feed.status === 'PUBLISHED',
+              value: feed.name,
+              validator: [isRequired],
+            }}
+          />
+        )}
       </Card>
     );
   }
@@ -626,5 +575,5 @@ export default compose<Props, FeedCardProps>(
   injectIntl,
   injectFeatures,
   injectNotifications,
-  withValidators
+  withValidators,
 )(FeedCard);

@@ -39,7 +39,7 @@ class IntlApp extends React.Component<{}> {
         // messages={messages[language]}
         formats={formats}
         defaultFormats={formats}
-        locale="en"
+        locale='en'
       >
         <ConfigProvider locale={enUS}>
           <Router>

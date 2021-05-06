@@ -48,9 +48,14 @@ export const INITIAL_USER_PROFILE_CLEANING_RULE_FORM_DATA: UserProfileCleaningRu
 
 export type CleaningRuleFormData = UserEventCleaningRuleFormData | UserProfileCleaningRuleFormData;
 
-export const isUserEventCleaningRuleFormData = (cleaningRuleFormData: CleaningRuleFormData): cleaningRuleFormData is UserEventCleaningRuleFormData => {
-  return ((cleaningRuleFormData as UserEventCleaningRuleFormData).cleaningRuleType === 'USER_EVENT_CLEANING_RULE');
-}
+export const isUserEventCleaningRuleFormData = (
+  cleaningRuleFormData: CleaningRuleFormData,
+): cleaningRuleFormData is UserEventCleaningRuleFormData => {
+  return (
+    (cleaningRuleFormData as UserEventCleaningRuleFormData).cleaningRuleType ===
+    'USER_EVENT_CLEANING_RULE'
+  );
+};
 
 export const USER_EVENT_CLEANING_RULE_MIN_LIFE_DURATION = 'P1D';
 

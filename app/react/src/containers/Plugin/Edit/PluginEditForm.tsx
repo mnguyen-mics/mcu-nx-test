@@ -1,21 +1,9 @@
 import * as React from 'react';
-import {
-  Form,
-  reduxForm,
-  InjectedFormProps,
-  Field,
-  GenericField,
-  ConfigProps,
-} from 'redux-form';
+import { Form, reduxForm, InjectedFormProps, Field, GenericField, ConfigProps } from 'redux-form';
 import { compose } from 'recompose';
 import { Layout, Row } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import {
-  FormTitle,
-  withValidators,
-  FieldCtor,
-  FormFieldWrapper,
-} from '../../../components/Form';
+import { FormTitle, withValidators, FieldCtor, FormFieldWrapper } from '../../../components/Form';
 import { ValidatorProps } from '../../../components/Form/withValidators';
 import FormInput, { FormInputProps } from '../../../components/Form/FormInput';
 import { generateFakeId } from '../../../utils/FakeIdHelper';
@@ -34,9 +22,7 @@ import { PropertyResourceShape } from '../../../models/plugin';
 
 const FORM_NAME = 'pluginForm';
 
-const Content = Layout.Content as unknown as React.ComponentClass<
-  BasicProps & { id: string }
->;
+const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
 interface PluginEditFormProps extends Omit<ConfigProps<any>, 'form'> {
   // formValues: any;
   editionMode: boolean;
@@ -126,12 +112,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
   };
 
   pluginFieldGenerated = () => {
-    const {
-      disableFields,
-      organisationId,
-      pluginVersionId,
-      pluginProperties,
-    } = this.props;
+    const { disableFields, organisationId, pluginVersionId, pluginProperties } = this.props;
 
     return pluginProperties.map((fieldDef: PropertyResourceShape) => {
       return (
@@ -148,38 +129,27 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
 
   renderTechnicalName = () => {
     const { intl } = this.props;
-    const InputField: FieldCtor<FormInputProps> = Field as new () => GenericField<
-      FormInputProps
-    >;
+    const InputField: FieldCtor<FormInputProps> = Field as new () => GenericField<FormInputProps>;
     return (
       <div>
-        <Button
-          className="optional-section-title"
-          onClick={this.toggleAdvancedSection}
-        >
-          <McsIcon type="settings" />
-          <span className="step-title">
-            {intl.formatMessage(messages.advanced)}
-          </span>
-          <McsIcon type="chevron" />
+        <Button className='optional-section-title' onClick={this.toggleAdvancedSection}>
+          <McsIcon type='settings' />
+          <span className='step-title'>{intl.formatMessage(messages.advanced)}</span>
+          <McsIcon type='chevron' />
         </Button>
         <div
           className={
-            !this.state.displayAdvancedSection
-              ? 'hide-section'
-              : 'optional-section-content'
+            !this.state.displayAdvancedSection ? 'hide-section' : 'optional-section-content'
           }
         >
           <InputField
-            name="plugin.technical_name"
+            name='plugin.technical_name'
             component={FormInput}
             formItemProps={{
               label: intl.formatMessage(messages.sectionTechnicalName),
             }}
             inputProps={{
-              placeholder: intl.formatMessage(
-                messages.sectionTechnicalPlaceholder,
-              ),
+              placeholder: intl.formatMessage(messages.sectionTechnicalPlaceholder),
             }}
             helpToolTipProps={{
               title: intl.formatMessage(messages.sectionTechnicalHelper),
@@ -191,22 +161,14 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
   };
 
   generateFormFromPluginLayout = (pluginLayout: PluginLayout) => {
-    const {
-      organisationId,
-      pluginVersionId,
-      pluginProperties,
-      disableFields,
-    } = this.props;
+    const { organisationId, pluginVersionId, pluginProperties, disableFields } = this.props;
 
     return pluginLayout.sections.map((section, index) => {
       const indexCondition = index !== pluginLayout.sections.length - 1;
-      const fieldsCondition =
-        section.fields !== null && section.fields.length !== 0;
+      const fieldsCondition = section.fields !== null && section.fields.length !== 0;
       const advancedFieldsCondition =
-        section.advanced_fields !== null &&
-        section.advanced_fields.length !== 0;
-      const hrBooleanCondition =
-        indexCondition && (fieldsCondition || advancedFieldsCondition);
+        section.advanced_fields !== null && section.advanced_fields.length !== 0;
+      const hrBooleanCondition = indexCondition && (fieldsCondition || advancedFieldsCondition);
       return (
         <div key={section.title}>
           <PluginSectionGenerator
@@ -236,9 +198,7 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
       renderSpecificFields,
     } = this.props;
 
-    const InputField: FieldCtor<FormInputProps> = Field as new () => GenericField<
-      FormInputProps
-    >;
+    const InputField: FieldCtor<FormInputProps> = Field as new () => GenericField<FormInputProps>;
     const fieldProps: FormInputProps = {
       formItemProps: {
         label: formatMessage(messages.sectionGeneralName),
@@ -256,40 +216,29 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
     return (
       <Layout>
         <Form
-          className={
-            this.state.loading ? 'hide-section' : 'edit-layout ant-layout'
-          }
+          className={this.state.loading ? 'hide-section' : 'edit-layout ant-layout'}
           onSubmit={handleSubmit(this.onSubmit)}
           id={formId}
         >
-          <Content
-            className="mcs-content-container mcs-form-container ad-group-form"
-            id={formId}
-          >
+          <Content className='mcs-content-container mcs-form-container ad-group-form' id={formId}>
             <Row>
-              <span className="ant-col-3" />
+              <span className='ant-col-3' />
               <FormFieldWrapper>{showedMessage}</FormFieldWrapper>
             </Row>
             {showGeneralInformation ? (
               <div>
                 <div id={'general'}>
-                  <Row
-                    align="middle"
-                    justify="space-between"
-                    className="section-header"
-                  >
+                  <Row align='middle' justify='space-between' className='section-header'>
                     <FormTitle title={messages.sectionGeneralTitle} />
                   </Row>
                   <div>
                     <InputField
-                      name="plugin.name"
+                      name='plugin.name'
                       component={FormInput}
                       validate={[isRequired]}
                       {...fieldProps}
                     />
-                    {renderSpecificFields
-                      ? renderSpecificFields(disableFields, 'plugin')
-                      : null}
+                    {renderSpecificFields ? renderSpecificFields(disableFields, 'plugin') : null}
                     {showTechnicalName ? this.renderTechnicalName() : null}
                   </div>
                 </div>
@@ -298,14 +247,10 @@ class PluginEditForm extends React.Component<JoinedProps, PluginEditFormState> {
             ) : null}
             {pluginLayout === undefined ? (
               <div id={'properties'}>
-                <Row
-                  align="middle"
-                  justify="space-between"
-                  className="section-header"
-                >
+                <Row align='middle' justify='space-between' className='section-header'>
                   <FormTitle title={messages.sectionPropertiesTitle} />
                 </Row>
-                <div style={{display: "block"}}>{this.pluginFieldGenerated()}</div>
+                <div style={{ display: 'block' }}>{this.pluginFieldGenerated()}</div>
               </div>
             ) : (
               <div>{this.generateFormFromPluginLayout(pluginLayout)}</div>

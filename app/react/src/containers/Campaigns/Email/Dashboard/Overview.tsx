@@ -2,10 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { ReportViewResource } from '../../../../models/ReportView';
 import { EmailPieCharts } from './Charts';
-import {
-  normalizeReportView,
-  formatNormalizeReportView,
-} from '../../../../utils/MetricHelper';
+import { normalizeReportView, formatNormalizeReportView } from '../../../../utils/MetricHelper';
 import { EmailDeliveryReport } from './Charts/EmailPieCharts';
 import ReportService from '../../../../services/ReportService';
 import { EmailCampaignResource } from '../../../../models/campaign/email';
@@ -47,10 +44,7 @@ class Overview extends React.Component<Props, State> {
     const { campaign: previousCampaign } = previousProps;
     const { campaign } = this.props;
 
-    if (
-      campaign &&
-      (!previousCampaign || campaign.id !== previousCampaign.id)
-    ) {
+    if (campaign && (!previousCampaign || campaign.id !== previousCampaign.id)) {
       this.fetchData(campaign);
     }
   }
@@ -93,8 +87,7 @@ class Overview extends React.Component<Props, State> {
       } = formatNormalizeReportView(normlizedRV);
 
       deliveryReport = {
-        emailDelivered:
-          email_sent - uniq_email_hard_bounced - uniq_email_soft_bounced,
+        emailDelivered: email_sent - uniq_email_hard_bounced - uniq_email_soft_bounced,
         emailOpened: uniq_impressions,
         emailUnsubscribed: uniq_email_unsubscribed,
         emailClicks: uniq_clicks,
@@ -102,9 +95,7 @@ class Overview extends React.Component<Props, State> {
       };
     }
 
-    return (
-      <EmailPieCharts isLoading={isLoading} deliveryReport={deliveryReport} />
-    );
+    return <EmailPieCharts isLoading={isLoading} deliveryReport={deliveryReport} />;
   }
 }
 

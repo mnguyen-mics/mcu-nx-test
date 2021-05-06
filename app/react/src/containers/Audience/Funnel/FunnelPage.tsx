@@ -1,18 +1,32 @@
-import { Actionbar, McsIcon, McsDateRangePicker, MentionTag } from '@mediarithmics-private/mcs-components-library';
+import {
+  Actionbar,
+  McsIcon,
+  McsDateRangePicker,
+  MentionTag,
+} from '@mediarithmics-private/mcs-components-library';
 import { parseSearch, updateSearch } from '../../../utils/LocationSearchHelper';
 import { Button, Layout } from 'antd';
 import * as React from 'react';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { withRouter } from 'react-router';
 import { compose } from 'recompose';
-import { FunnelTemplate, FUNNEL_SEARCH_SETTING, funnelMessages } from '../../../components/Funnel/Constants';
+import {
+  FunnelTemplate,
+  FUNNEL_SEARCH_SETTING,
+  funnelMessages,
+} from '../../../components/Funnel/Constants';
 import FunnelWrapper from '../../../components/Funnel/FunnelWrapper';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IUserActivitiesFunnelService } from '../../../services/UserActivitiesFunnelService';
-import { withDatamartSelector, WithDatamartSelectorProps } from '../../Datamart/WithDatamartSelector';
+import {
+  withDatamartSelector,
+  WithDatamartSelectorProps,
+} from '../../Datamart/WithDatamartSelector';
 import ExportService from '../../../services/ExportService';
-import injectNotifications, { InjectedNotificationProps } from '../../Notifications/injectNotifications';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../Notifications/injectNotifications';
 import { extractDatesFromProps } from '../../../components/Funnel/Utils';
 import { FunnelFilter, GroupedByFunnel } from '../../../models/datamart/UserActivitiesFunnel';
 import McsMoment from '../../../utils/McsMoment';
@@ -34,13 +48,12 @@ interface State {
 }
 
 interface FunnelSheetDescription {
-  title: string,
-  splitIndex?: number,
-  funnelData: GroupedByFunnel
+  title: string;
+  splitIndex?: number;
+  funnelData: GroupedByFunnel;
 }
 
-type JoinedProps = WithDatamartSelectorProps & InjectedIntlProps &
-  InjectedNotificationProps;
+type JoinedProps = WithDatamartSelectorProps & InjectedIntlProps & InjectedNotificationProps;
 
 class FunnelPage extends React.Component<JoinedProps, State> {
   @lazyInject(TYPES.IUserActivitiesFunnelService)
@@ -52,34 +65,35 @@ class FunnelPage extends React.Component<JoinedProps, State> {
     this.state = {
       exportIsRunning: false,
       isLoading: false,
-      dateRange: routeParams.from && routeParams.to && routeParams.from.value && routeParams.to.value ? {
-          from: new McsMoment(routeParams.from.value),
-          to: new McsMoment(routeParams.to.value)
-      } :  {
-        from: new McsMoment(
-          `now-7d`,
-        ),
-        to: new McsMoment('now'),
-      } 
+      dateRange:
+        routeParams.from && routeParams.to && routeParams.from.value && routeParams.to.value
+          ? {
+              from: new McsMoment(routeParams.from.value),
+              to: new McsMoment(routeParams.to.value),
+            }
+          : {
+              from: new McsMoment(`now-7d`),
+              to: new McsMoment('now'),
+            },
     };
   }
 
   componentDidUpdate(prevProps: JoinedProps) {
     const {
-      location: { search }
+      location: { search },
     } = this.props;
     const { selectedTemplate } = this.state;
     const routeParams = parseSearch(search, FUNNEL_SEARCH_SETTING);
     const template = routeParams.template;
-    if (template && (selectedTemplate !== template)) {
+    if (template && selectedTemplate !== template) {
       this.setState({
-        selectedTemplate: template
+        selectedTemplate: template,
       });
     }
   }
 
   private splitIndex(funnelFilter: FunnelFilter[]): number {
-    return funnelFilter.findIndex(x => !!x.group_by_dimension)
+    return funnelFilter.findIndex(x => !!x.group_by_dimension);
   }
 
   handleRunExport = () => {
@@ -94,44 +108,53 @@ class FunnelPage extends React.Component<JoinedProps, State> {
     } = this.props;
 
     const routeParams = parseSearch(search, FUNNEL_SEARCH_SETTING);
-    const funnelFilter: FunnelFilter[] = (routeParams.filter.length > 0 ? JSON.parse(routeParams.filter) : []);
+    const funnelFilter: FunnelFilter[] =
+      routeParams.filter.length > 0 ? JSON.parse(routeParams.filter) : [];
 
-    let splittedByDay = false
+    let splittedByDay = false;
     if (this.splitIndex(funnelFilter) === -1) {
-      funnelFilter[funnelFilter.length - 1].group_by_dimension = "DATE_YYYY_MM_DD";
-      splittedByDay = true
+      funnelFilter[funnelFilter.length - 1].group_by_dimension = 'DATE_YYYY_MM_DD';
+      splittedByDay = true;
     }
     const funnelTimeRange = extractDatesFromProps(search);
 
-    const splitIndex = this.splitIndex(funnelFilter) === -1 ? funnelFilter.length - 1 : this.splitIndex(funnelFilter)
+    const splitIndex =
+      this.splitIndex(funnelFilter) === -1
+        ? funnelFilter.length - 1
+        : this.splitIndex(funnelFilter);
 
     this._userActivitiesFunnelService
       .getUserActivitiesFunnel(selectedDatamartId, funnelFilter, funnelTimeRange)
       .then(funnelResponse => {
         this.setState({ exportIsRunning: false });
-        let sheets: FunnelSheetDescription[] = [{
-          title: 'Funnel report',
-          splitIndex: splitIndex,
-          funnelData: funnelResponse.data
-        }]
+        let sheets: FunnelSheetDescription[] = [
+          {
+            title: 'Funnel report',
+            splitIndex: splitIndex,
+            funnelData: funnelResponse.data,
+          },
+        ];
         if (splittedByDay) {
           const globalSheet: FunnelSheetDescription = {
             title: 'Funnel report',
             splitIndex: undefined,
             funnelData: {
-              ...funnelResponse.data, grouped_by: undefined
-            }
-          }
+              ...funnelResponse.data,
+              grouped_by: undefined,
+            },
+          };
 
           const byDaySheet: FunnelSheetDescription = {
             title: 'Funnel report split by day',
             splitIndex: splitIndex,
             funnelData: {
               ...funnelResponse.data,
-              grouped_by: funnelResponse.data.grouped_by?.sort((a, b) => a.dimension_value > b.dimension_value ? 1 : -1)
-            }
-          }
-          sheets = [globalSheet, byDaySheet]
+              grouped_by: funnelResponse.data.grouped_by?.sort((a, b) =>
+                a.dimension_value > b.dimension_value ? 1 : -1,
+              ),
+            },
+          };
+          sheets = [globalSheet, byDaySheet];
         }
         ExportService.exportFunnel(sheets, selectedDatamartId, organisationId, formatMessage);
       })
@@ -141,47 +164,47 @@ class FunnelPage extends React.Component<JoinedProps, State> {
           exportIsRunning: false,
         });
       });
-  }
+  };
 
   handleExecuteQueryButtonClick = () => {
-    const { executeQueryFunction } = this.state
+    const { executeQueryFunction } = this.state;
     if (executeQueryFunction) {
-      executeQueryFunction()
+      executeQueryFunction();
     }
-  }
+  };
 
-  handleFunnelWrapperCallback = (executeQueryFunction: () => void, cancelQueryFunction: () => void, isLoading: boolean) => {
-    const { exportIsRunning } = this.state
+  handleFunnelWrapperCallback = (
+    executeQueryFunction: () => void,
+    cancelQueryFunction: () => void,
+    isLoading: boolean,
+  ) => {
+    const { exportIsRunning } = this.state;
     this.setState({
       exportIsRunning: exportIsRunning,
       isLoading: isLoading,
       executeQueryFunction: executeQueryFunction,
-      cancelQueryFunction: cancelQueryFunction
-    })
-  }
+      cancelQueryFunction: cancelQueryFunction,
+    });
+  };
 
   handleCancelButtonClick = () => {
-    const { cancelQueryFunction } = this.state
+    const { cancelQueryFunction } = this.state;
     if (cancelQueryFunction) {
-      cancelQueryFunction()
+      cancelQueryFunction();
       this.setState({
-        isLoading: false
-      })
+        isLoading: false,
+      });
     }
-  }
+  };
 
   updateLocationSearch = (params: FILTERS) => {
     const {
       history,
-      location: { search: currentSearch, pathname }
+      location: { search: currentSearch, pathname },
     } = this.props;
     const nextLocation = {
       pathname,
-      search: updateSearch(
-        currentSearch,
-        params,
-        FUNNEL_SEARCH_SETTING,
-      ),
+      search: updateSearch(currentSearch, params, FUNNEL_SEARCH_SETTING),
     };
 
     history.push(nextLocation);
@@ -195,76 +218,89 @@ class FunnelPage extends React.Component<JoinedProps, State> {
     this.setState({
       dateRange: {
         from: newValues.from,
-        to: newValues.to
-      }
+        to: newValues.to,
+      },
     });
-  }
+  };
 
   handleAfterFunnelLinkCopy = () => {
     this.props.notifySuccess({
       message: funnelMessages.copied.defaultMessage,
-      description: "",
+      description: '',
     });
-  }
+  };
 
   render() {
     const {
       selectedDatamartId,
-      location: { search,
-      }
+      location: { search },
     } = this.props;
     const { exportIsRunning, isLoading, dateRange, selectedTemplate } = this.state;
     const routeParams = parseSearch(search, FUNNEL_SEARCH_SETTING);
     const breadcrumbPaths = [
-      <span className="mcs-pathItem" key='1'>
+      <span className='mcs-pathItem' key='1'>
         Funnel Analytics
-        <MentionTag className="mcs-pathItem_mentionTag" mention='BETA' />
-      </span>
+        <MentionTag className='mcs-pathItem_mentionTag' mention='BETA' />
+      </span>,
     ];
 
     return (
-      <div className="ant-layout" >
+      <div className='ant-layout'>
         <Actionbar pathItems={breadcrumbPaths}>
           <FunnelTemplateSelector selectedValue={selectedTemplate} />
           <McsDateRangePicker
             values={dateRange}
             onChange={this.handleDateRangePickerChangeFunction}
           />
-          {routeParams.filter.length > 0 && <Button className="mcs-funnelQueryBuilder_exportBtn"
-            onClick={this.handleRunExport} loading={exportIsRunning} >
-            {!exportIsRunning && <McsIcon type="download" />}
-            <FormattedMessage
-              id="funnel.actionbar.exportButton"
-              defaultMessage="Export"
-            />
-          </Button>}
-          {isLoading && <Button className="mcs-funnelQueryBuilder_cancelBtn" type="default" onClick={this.handleCancelButtonClick}>
-            Cancel
-          </Button>}
-          <Button className="mcs-primary mcs-funnelQueryBuilder_executeQueryBtn" type="primary" onClick={this.handleExecuteQueryButtonClick} loading={isLoading}>
-            {!isLoading && <McsIcon type="play" />}
+          {routeParams.filter.length > 0 && (
+            <Button
+              className='mcs-funnelQueryBuilder_exportBtn'
+              onClick={this.handleRunExport}
+              loading={exportIsRunning}
+            >
+              {!exportIsRunning && <McsIcon type='download' />}
+              <FormattedMessage id='funnel.actionbar.exportButton' defaultMessage='Export' />
+            </Button>
+          )}
+          {isLoading && (
+            <Button
+              className='mcs-funnelQueryBuilder_cancelBtn'
+              type='default'
+              onClick={this.handleCancelButtonClick}
+            >
+              Cancel
+            </Button>
+          )}
+          <Button
+            className='mcs-primary mcs-funnelQueryBuilder_executeQueryBtn'
+            type='primary'
+            onClick={this.handleExecuteQueryButtonClick}
+            loading={isLoading}
+          >
+            {!isLoading && <McsIcon type='play' />}
             Execute Query
           </Button>
           <CopyToClipboard text={window.location.href} onCopy={this.handleAfterFunnelLinkCopy}>
             <Button icon={<CopyOutlined />}>
-              <FormattedMessage
-                id="funnel.share"
-                defaultMessage="Share"
-              />
+              <FormattedMessage id='funnel.share' defaultMessage='Share' />
             </Button>
           </CopyToClipboard>
         </Actionbar>
-        <Content className="mcs-content-container">
-          <FunnelWrapper datamartId={selectedDatamartId} parentCallback={this.handleFunnelWrapperCallback} dateRange={dateRange}/>
+        <Content className='mcs-content-container'>
+          <FunnelWrapper
+            datamartId={selectedDatamartId}
+            parentCallback={this.handleFunnelWrapperCallback}
+            dateRange={dateRange}
+          />
         </Content>
-      </div>)
+      </div>
+    );
   }
 }
-
 
 export default compose(
   withDatamartSelector,
   withRouter,
   injectIntl,
-  injectNotifications
+  injectNotifications,
 )(FunnelPage);

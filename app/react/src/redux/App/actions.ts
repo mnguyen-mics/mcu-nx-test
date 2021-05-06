@@ -1,8 +1,6 @@
 import { createAction } from 'redux-actions';
 
-import {
-  APP_STARTUP,
-} from '../action-types';
+import { APP_STARTUP } from '../action-types';
 
 const appStartup = {
   request: createAction(APP_STARTUP.REQUEST),
@@ -10,7 +8,4 @@ const appStartup = {
   failure: createAction(APP_STARTUP.FAILURE),
 };
 
-
-export {
-  appStartup,
-};
+export { appStartup };

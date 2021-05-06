@@ -16,10 +16,7 @@ interface State {
   annotations: Annotation[];
 }
 
-export default class OtqlConsole extends React.Component<
-  OtqlConsoleProps,
-  State
-> {
+export default class OtqlConsole extends React.Component<OtqlConsoleProps, State> {
   aceEditor: any = null;
   debouncing: any;
 
@@ -43,12 +40,7 @@ export default class OtqlConsole extends React.Component<
   }
 
   findCompleters = (query: string, row: number, col: number) => {
-    return this._queryService.autocompleteOtqlQuery(
-      this.props.datamartId,
-      query,
-      row,
-      col,
-    );
+    return this._queryService.autocompleteOtqlQuery(this.props.datamartId, query, row, col);
   };
 
   onChange = (value: string, event?: any) => {
@@ -65,8 +57,8 @@ export default class OtqlConsole extends React.Component<
     this.debouncing = setTimeout(() => {
       this._queryService
         .checkOtqlQuery(this.props.datamartId, value)
-        .then((d) => d.data)
-        .then((d) => {
+        .then(d => d.data)
+        .then(d => {
           if (d.status === 'error') {
             const annotation: Annotation = {
               row: d.error.position.row - 1,
@@ -94,13 +86,9 @@ export default class OtqlConsole extends React.Component<
         prefix: any,
         callback: any,
       ) => {
-        this.findCompleters(
-          editor.getValue() as string,
-          pos.row + 1,
-          pos.column + 1,
-        ).then((res) => {
+        this.findCompleters(editor.getValue() as string, pos.row + 1, pos.column + 1).then(res => {
           const valueFromServer = res
-            ? res.map((r) => ({
+            ? res.map(r => ({
                 name: r.field_name,
                 value: r.field_name,
                 meta: r.type,
@@ -119,8 +107,7 @@ export default class OtqlConsole extends React.Component<
   };
 
   render() {
-    const setAceEditorRef = (aceEditorRef: any) =>
-      (this.aceEditor = aceEditorRef);
+    const setAceEditorRef = (aceEditorRef: any) => (this.aceEditor = aceEditorRef);
 
     defineAce();
 
@@ -130,10 +117,10 @@ export default class OtqlConsole extends React.Component<
           {...this.props}
           onChange={this.onChange}
           annotations={this.state.annotations}
-          mode="otql"
-          theme="otql"
+          mode='otql'
+          theme='otql'
           ref={setAceEditorRef}
-          width="100%"
+          width='100%'
           setOptions={{
             showGutter: true,
           }}

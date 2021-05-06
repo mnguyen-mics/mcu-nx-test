@@ -6,10 +6,7 @@ import { RouteComponentProps } from 'react-router';
 import { TableViewFilters } from '../../../../components/TableView/index';
 import EmailTestModal from './EmailTestModal';
 import { CREATIVE_EMAIL_SEARCH_SETTINGS } from './constants';
-import {
-  updateSearch,
-  parseSearch,
-} from '../../../../utils/LocationSearchHelper';
+import { updateSearch, parseSearch } from '../../../../utils/LocationSearchHelper';
 import messagesMap from '../../DisplayAds/List/message';
 import CreativeScreenshot from '../../CreativeScreenshot';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
@@ -59,11 +56,7 @@ class EmailTemplatesTable extends React.Component<JoinedProps, State> {
 
     const nextLocation = {
       pathname,
-      search: updateSearch(
-        currentSearch,
-        params,
-        CREATIVE_EMAIL_SEARCH_SETTINGS,
-      ),
+      search: updateSearch(currentSearch, params, CREATIVE_EMAIL_SEARCH_SETTINGS),
     };
 
     history.push(nextLocation);
@@ -100,7 +93,7 @@ class EmailTemplatesTable extends React.Component<JoinedProps, State> {
       hasEmailTemplates,
       archiveEmailTemplate,
       rowSelection,
-      intl : { formatMessage },
+      intl: { formatMessage },
     } = this.props;
 
     const filter = parseSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS);
@@ -114,11 +107,7 @@ class EmailTemplatesTable extends React.Component<JoinedProps, State> {
           currentPage: page,
           pageSize: size,
         });
-        if (
-          rowSelection &&
-          rowSelection.unselectAllItemIds &&
-          rowSelection.allRowsAreSelected
-        ) {
+        if (rowSelection && rowSelection.unselectAllItemIds && rowSelection.allRowsAreSelected) {
           rowSelection.unselectAllItemIds();
         }
       },
@@ -145,7 +134,7 @@ class EmailTemplatesTable extends React.Component<JoinedProps, State> {
         isHideable: false,
         render: (text: string, record: any) => (
           <Link
-            className="mcs-campaigns-link"
+            className='mcs-campaigns-link'
             to={`/v2/o/${organisationId}/creatives/email/${record.id}/edit`}
           >
             {text}
@@ -166,9 +155,7 @@ class EmailTemplatesTable extends React.Component<JoinedProps, State> {
       },
     ];
 
-    const actionColumns: Array<
-      ActionsColumnDefinition<EmailTemplateResource>
-    > = [
+    const actionColumns: Array<ActionsColumnDefinition<EmailTemplateResource>> = [
       {
         key: 'action',
         actions: () => [
@@ -199,7 +186,7 @@ class EmailTemplatesTable extends React.Component<JoinedProps, State> {
     };
 
     return hasEmailTemplates ? (
-      <div className="mcs-table-container">
+      <div className='mcs-table-container'>
         <EmailTestModal
           organisationId={this.props.match.params.organisationId}
           isModalVisible={this.state.modalVisible}
@@ -217,10 +204,7 @@ class EmailTemplatesTable extends React.Component<JoinedProps, State> {
         />
       </div>
     ) : (
-      <EmptyTableView
-        iconType="email"
-        message={formatMessage(messagesMap.noEmailTemplate)}
-      />
+      <EmptyTableView iconType='email' message={formatMessage(messagesMap.noEmailTemplate)} />
     );
   }
 }

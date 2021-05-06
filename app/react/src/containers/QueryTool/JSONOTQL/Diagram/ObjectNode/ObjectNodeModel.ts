@@ -4,8 +4,7 @@ import { QueryBuilderNode } from '../../domain';
 import { ObjectNode } from '../../../../../models/datamart/graphdb/QueryDocument';
 import { ObjectLikeTypeInfoResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
 
-export default class ObjectNodeModel extends NodeModel
-  implements QueryBuilderNode {
+export default class ObjectNodeModel extends NodeModel implements QueryBuilderNode {
   collapsed = false;
   negation = false;
   treeNodePath: number[] = [];

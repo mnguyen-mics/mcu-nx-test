@@ -2,10 +2,7 @@ import * as React from 'react';
 import { Layout, Row } from 'antd';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { FormTitle } from '../../../components/Form';
-import {
-  MenuList,
-  MenuPresentational,
-} from '@mediarithmics-private/mcs-components-library';
+import { MenuList, MenuPresentational } from '@mediarithmics-private/mcs-components-library';
 import { AudienceSegmentType } from '../../../models/audiencesegment';
 import { QueryLanguage } from '../../../models/datamart/DatamartResource';
 
@@ -38,10 +35,7 @@ interface SegmentTypeSelectorProps {
 type Props = SegmentTypeSelectorProps;
 
 class SegmentTypeSelector extends React.Component<Props> {
-  onSelect = (
-    item: AudienceSegmentType,
-    expertQuery: boolean = false,
-  ) => () => {
+  onSelect = (item: AudienceSegmentType, expertQuery: boolean = false) => () => {
     this.props.onSelect(item, expertQuery ? 'OTQL' : 'JSON_OTQL');
   };
 
@@ -49,37 +43,34 @@ class SegmentTypeSelector extends React.Component<Props> {
     const { segmentTypesToDisplay } = this.props;
     return (
       <Layout>
-        <div className="edit-layout ant-layout">
+        <div className='edit-layout ant-layout'>
           <Layout>
-            <Content className="mcs-content-container mcs-form-container text-center">
-              <FormTitle
-                title={messages.listTitle}
-                subtitle={messages.listSubtitle}
-              />
-              <Row className="mcs-selector_container">
-                <Row className="menu">
-                  <div className="presentation">
+            <Content className='mcs-content-container mcs-form-container text-center'>
+              <FormTitle title={messages.listTitle} subtitle={messages.listSubtitle} />
+              <Row className='mcs-selector_container'>
+                <Row className='menu'>
+                  <div className='presentation'>
                     <MenuPresentational
                       title={'User Query'}
-                      type="user-query"
+                      type='user-query'
                       select={this.onSelect('USER_QUERY')}
                     />
-                    <div className="separator">
+                    <div className='separator'>
                       <FormattedMessage {...messages.segmentTypeOr} />
                     </div>
                     <MenuPresentational
                       title={'User List'}
-                      type="user-list"
+                      type='user-list'
                       select={this.onSelect('USER_LIST')}
                     />
                   </div>
                 </Row>
                 {segmentTypesToDisplay.length > 0 && (
                   <div>
-                    <Row className="intermediate-title">
+                    <Row className='intermediate-title'>
                       <FormattedMessage {...messages.otherSegmentTypes} />
                     </Row>
-                    <Row className="menu">
+                    <Row className='menu'>
                       {segmentTypesToDisplay.map(item => {
                         return (
                           <MenuList

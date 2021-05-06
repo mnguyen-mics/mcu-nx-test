@@ -6,12 +6,12 @@ export function formatDocumentTypeText(docType: string): string {
       return 'User Profile';
     case 'USER_SEGMENT':
       return 'User Segment';
-    case'USER_IDENTIFIERS_ASSOCIATION_DECLARATIONS':
-      return 'User Identifiers Association'; 
+    case 'USER_IDENTIFIERS_ASSOCIATION_DECLARATIONS':
+      return 'User Identifiers Association';
     case 'USER_IDENTIFIERS_DISSOCIATION_DECLARATIONS':
       return 'User Identifiers Dissociation';
     case 'USER_IDENTIFIERS_DELETION':
-      return 'User Identifiers Deletion'
+      return 'User Identifiers Deletion';
     default:
       return '';
   }

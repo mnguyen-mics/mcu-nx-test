@@ -13,11 +13,7 @@ import {
   WithDatamartSelectorProps,
 } from '../../Datamart/WithDatamartSelector';
 import { FormTitle } from '../../../components/Form';
-import {
-  Actionbar,
-  MenuList,
-  Loading,
-} from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, MenuList, Loading } from '@mediarithmics-private/mcs-components-library';
 import { ActionbarProps } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar';
 import { Row, Col, Dropdown } from 'antd';
 import { IAudienceBuilderService } from '../../../services/AudienceBuilderService';
@@ -38,8 +34,7 @@ const messages = defineMessages({
   },
   standardSubtitle: {
     id: 'audience.builderSelector.standardSubtitle',
-    defaultMessage:
-      'Pick some audience features and visualize the segment you are creating',
+    defaultMessage: 'Pick some audience features and visualize the segment you are creating',
   },
   advancedTitle: {
     id: 'audience.builderSelector.advancedTitle',
@@ -47,8 +42,7 @@ const messages = defineMessages({
   },
   advancedSubtitle: {
     id: 'audience.builderSelector.advancedSubtitle',
-    defaultMessage:
-      'Use the visual OTQL tool to create an advanced query based on your schema',
+    defaultMessage: 'Use the visual OTQL tool to create an advanced query based on your schema',
   },
   expertTitle: {
     id: 'audience.builderSelector.expertTitle',
@@ -94,13 +88,13 @@ class SegmentBuilderSelector extends React.Component<Props, State> {
 
     this._audienceBuilderService
       .getAudienceBuilders(selectedDatamartId)
-      .then((res) => {
+      .then(res => {
         this.setState({
           audienceBuilders: res.data,
           isLoadingBuilders: false,
         });
       })
-      .catch((err) => {
+      .catch(err => {
         this.setState({
           isLoadingBuilders: false,
         });
@@ -123,7 +117,7 @@ class SegmentBuilderSelector extends React.Component<Props, State> {
       <div />
     ) : (
       <React.Fragment>
-        {audienceBuilders?.map((b) => {
+        {audienceBuilders?.map(b => {
           const handleSelect = (builderId: string) => {
             return this.makeStandardBuilderRedirection(
               organisationId,
@@ -131,9 +125,7 @@ class SegmentBuilderSelector extends React.Component<Props, State> {
               builderId,
             );
           };
-          return (
-            <MenuList key={b.id} title={b.name} select={handleSelect(b.id)} />
-          );
+          return <MenuList key={b.id} title={b.name} select={handleSelect(b.id)} />;
         })}
       </React.Fragment>
     );
@@ -174,9 +166,7 @@ class SegmentBuilderSelector extends React.Component<Props, State> {
     };
 
     const actionBarProps: ActionbarProps = {
-      pathItems: [
-        formatMessage(messages.builder),
-      ],
+      pathItems: [formatMessage(messages.builder)],
     };
 
     const getPopupContainer = () =>
@@ -185,10 +175,10 @@ class SegmentBuilderSelector extends React.Component<Props, State> {
     return (
       <Layout>
         <Actionbar {...actionBarProps} />
-        <Content className="mcs-content-container mcs-form-container text-center">
+        <Content className='mcs-content-container mcs-form-container text-center'>
           <FormTitle title={messages.segmentBuilders} />
 
-          <Row className="mcs-segmentBuilderSelector_container" gutter={60}>
+          <Row className='mcs-segmentBuilderSelector_container' gutter={60}>
             <Col
               span={6}
               offset={3}
@@ -203,32 +193,32 @@ class SegmentBuilderSelector extends React.Component<Props, State> {
               }
             >
               {audienceBuilders?.length === 0 ? (
-                <div className="mcs-segmentBuilderSelector_item">
+                <div className='mcs-segmentBuilderSelector_item'>
                   <span>{formatMessage(messages.noStandardBuilders)}</span>
                 </div>
               ) : (
                 <div
-                  id="mcs-standardSegmentBuilder_dropdownContainer"
-                  className="mcs-standardSegmentBuilder_dropdownContainer"
+                  id='mcs-standardSegmentBuilder_dropdownContainer'
+                  className='mcs-standardSegmentBuilder_dropdownContainer'
                 >
                   <Dropdown
                     overlay={this.getMenu()}
-                    placement="bottomCenter"
+                    placement='bottomCenter'
                     trigger={['hover']}
                     getPopupContainer={getPopupContainer}
-                    overlayClassName="mcs-standardSegmentBuilder_dropdown"
-                    align={{ overflow: { adjustY:false } }}
+                    overlayClassName='mcs-standardSegmentBuilder_dropdown'
+                    align={{ overflow: { adjustY: false } }}
                   >
                     <div
-                      className="mcs-segmentBuilderSelector_item"
+                      className='mcs-segmentBuilderSelector_item'
                       onClick={onTypeSelect('standard')}
-                      data-flip="false"
+                      data-flip='false'
                     >
-                      <img src="https://assets.mediarithmics.io/504/public/assets/1617024875777-cyNFPfPn/standardsegmentbuilder-icon.png" />
-                      <div className="mcs-segmentBuilderSelector_itemTitle">
+                      <img src='https://assets.mediarithmics.io/504/public/assets/1617024875777-cyNFPfPn/standardsegmentbuilder-icon.png' />
+                      <div className='mcs-segmentBuilderSelector_itemTitle'>
                         {formatMessage(messages.standardTitle)}
                       </div>
-                      <div className="mcs-segmentBuilderSelector_itemSubtitle">
+                      <div className='mcs-segmentBuilderSelector_itemSubtitle'>
                         {formatMessage(messages.standardSubtitle)}
                       </div>
                     </div>
@@ -238,29 +228,23 @@ class SegmentBuilderSelector extends React.Component<Props, State> {
             </Col>
 
             <Col span={6}>
-              <div
-                className="mcs-segmentBuilderSelector_item"
-                onClick={onTypeSelect('advanced')}
-              >
-                <img src="https://assets.mediarithmics.io/504/public/assets/1617024854221-SdHpCYce/advancedsegmentbuilder-icon.png" />
-                <div className="mcs-segmentBuilderSelector_itemTitle">
+              <div className='mcs-segmentBuilderSelector_item' onClick={onTypeSelect('advanced')}>
+                <img src='https://assets.mediarithmics.io/504/public/assets/1617024854221-SdHpCYce/advancedsegmentbuilder-icon.png' />
+                <div className='mcs-segmentBuilderSelector_itemTitle'>
                   {formatMessage(messages.advancedTitle)}
                 </div>
-                <div className="mcs-segmentBuilderSelector_itemSubtitle">
+                <div className='mcs-segmentBuilderSelector_itemSubtitle'>
                   {formatMessage(messages.advancedSubtitle)}
                 </div>
               </div>
             </Col>
             <Col span={6}>
-              <div
-                className="mcs-segmentBuilderSelector_item"
-                onClick={onTypeSelect('expert')}
-              >
-                <img src="https://assets.mediarithmics.io/504/public/assets/1617024867713-wyQSumrW/otqlquery-icon.png" />
-                <div className="mcs-segmentBuilderSelector_itemTitle">
+              <div className='mcs-segmentBuilderSelector_item' onClick={onTypeSelect('expert')}>
+                <img src='https://assets.mediarithmics.io/504/public/assets/1617024867713-wyQSumrW/otqlquery-icon.png' />
+                <div className='mcs-segmentBuilderSelector_itemTitle'>
                   {formatMessage(messages.expertTitle)}
                 </div>
-                <div className="mcs-segmentBuilderSelector_itemSubtitle">
+                <div className='mcs-segmentBuilderSelector_itemSubtitle'>
                   {formatMessage(messages.expertSubtitle)}
                 </div>
               </div>

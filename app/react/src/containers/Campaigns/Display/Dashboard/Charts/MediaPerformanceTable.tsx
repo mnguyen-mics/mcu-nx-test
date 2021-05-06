@@ -7,10 +7,7 @@ import messages from '../messages';
 import { formatMetric } from '../../../../../utils/MetricHelper';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 
-import {
-  parseSearch,
-  updateSearch,
-} from '../../../../../utils/LocationSearchHelper';
+import { parseSearch, updateSearch } from '../../../../../utils/LocationSearchHelper';
 import { McsDateRangePicker } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import { TableViewWrapper } from '../../../../../components/TableView';
@@ -52,11 +49,7 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
 
     const nextLocation = {
       pathname,
-      search: updateSearch(
-        currentSearch,
-        params,
-        DISPLAY_DASHBOARD_SEARCH_SETTINGS,
-      ),
+      search: updateSearch(currentSearch, params, DISPLAY_DASHBOARD_SEARCH_SETTINGS),
     };
 
     history.push(nextLocation);
@@ -100,17 +93,13 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
       currency: string = '',
     ) => {
       if (isFetchingMediaStat) {
-        return <i className="mcs-table-cell-loading" />;
+        return <i className='mcs-table-cell-loading' />;
       }
       const unlocalizedMoneyPrefix = currency === 'EUR' ? '€ ' : '';
       return formatMetric(value, numeralFormat, unlocalizedMoneyPrefix);
     };
 
-    const sorter = (
-      a: MediaPerformance,
-      b: MediaPerformance,
-      key: keyof MediaPerformance,
-    ) => {
+    const sorter = (a: MediaPerformance, b: MediaPerformance, key: keyof MediaPerformance) => {
       if (a[key] === '-') {
         return -1;
       }
@@ -129,9 +118,7 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
           text ? (
             <span>{text}</span>
           ) : (
-            <span>
-              {formatMessage(messages.displayNetworkNameUncategorized)}
-            </span>
+            <span>{formatMessage(messages.displayNetworkNameUncategorized)}</span>
           ),
       },
       {
@@ -152,8 +139,7 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: string) => renderMetricData(text, '0,0'),
-        sorter: (a: MediaPerformance, b: MediaPerformance) =>
-          sorter(a, b, 'impressions'),
+        sorter: (a: MediaPerformance, b: MediaPerformance) => sorter(a, b, 'impressions'),
       },
       {
         title: formatMessage(messages.clicks),
@@ -161,8 +147,7 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: string) => renderMetricData(text, '0,0'),
-        sorter: (a: MediaPerformance, b: MediaPerformance) =>
-          sorter(a, b, 'clicks'),
+        sorter: (a: MediaPerformance, b: MediaPerformance) => sorter(a, b, 'clicks'),
       },
       {
         title: formatMessage(messages.cpm),
@@ -170,18 +155,15 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: string) => renderMetricData(text, '0,0.00', 'EUR'),
-        sorter: (a: MediaPerformance, b: MediaPerformance) =>
-          sorter(a, b, 'cpm'),
+        sorter: (a: MediaPerformance, b: MediaPerformance) => sorter(a, b, 'cpm'),
       },
       {
         title: formatMessage(messages.ctr),
         key: 'ctr',
         isVisibleByDefault: true,
         isHideable: true,
-        render: (text: string) =>
-          renderMetricData(parseFloat(text) / 100, '0.000 %'),
-        sorter: (a: MediaPerformance, b: MediaPerformance) =>
-          sorter(a, b, 'ctr'),
+        render: (text: string) => renderMetricData(parseFloat(text) / 100, '0.000 %'),
+        sorter: (a: MediaPerformance, b: MediaPerformance) => sorter(a, b, 'ctr'),
       },
       {
         title: formatMessage(messages.cpc),
@@ -189,8 +171,7 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: string) => renderMetricData(text, '0,0.00', 'EUR'),
-        sorter: (a: MediaPerformance, b: MediaPerformance) =>
-          sorter(a, b, 'cpc'),
+        sorter: (a: MediaPerformance, b: MediaPerformance) => sorter(a, b, 'cpc'),
       },
       {
         title: formatMessage(messages.impressions_cost),
@@ -198,8 +179,7 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
         isVisibleByDefault: true,
         isHideable: true,
         render: (text: string) => renderMetricData(text, '0,0.00', 'EUR'),
-        sorter: (a: MediaPerformance, b: MediaPerformance) =>
-          sorter(a, b, 'impressions_cost'),
+        sorter: (a: MediaPerformance, b: MediaPerformance) => sorter(a, b, 'impressions_cost'),
       },
       // TODO UNCOMMENT WHEN BACKEND IS FIXED
       // {
@@ -215,7 +195,7 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
     return (
       <Row>
         <Col span={24}>
-          <div className="mcs-card-button">{this.renderDatePicker()}</div>
+          <div className='mcs-card-button'>{this.renderDatePicker()}</div>
         </Col>
         <Col span={24}>
           <TableViewWrapper

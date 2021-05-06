@@ -57,19 +57,11 @@ function configureStore(
   middlewares.push(apiRequest);
   middlewares.push(sagaMiddleware);
 
-  const composeEnhancers =
-    (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose; // eslint-disable-line no-undef, no-underscore-dangle
+  const composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose; // eslint-disable-line no-undef, no-underscore-dangle
 
   const store = preloadedState
-    ? createStore(
-        rootReducer,
-        preloadedState,
-        composeEnhancers(applyMiddleware(...middlewares)),
-      )
-    : createStore(
-        rootReducer,
-        composeEnhancers(applyMiddleware(...middlewares)),
-      );
+    ? createStore(rootReducer, preloadedState, composeEnhancers(applyMiddleware(...middlewares)))
+    : createStore(rootReducer, composeEnhancers(applyMiddleware(...middlewares)));
 
   sagaMiddleware.run(sagas);
 

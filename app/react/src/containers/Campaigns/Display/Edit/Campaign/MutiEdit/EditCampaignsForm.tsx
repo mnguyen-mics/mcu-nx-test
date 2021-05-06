@@ -9,12 +9,7 @@ import {
   InjectedFormProps,
 } from 'redux-form';
 import { RouteComponentProps } from 'react-router';
-import {
-  InjectedIntlProps,
-  injectIntl,
-  defineMessages,
-  FormattedMessage,
-} from 'react-intl';
+import { InjectedIntlProps, injectIntl, defineMessages, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 import { BasicProps } from 'antd/lib/layout/layout';
 
@@ -42,8 +37,7 @@ const messageMap = defineMessages({
   },
   oldCampaignsNames: {
     id: 'display.campaigns.multiEdit.oldCampaignsSelected',
-    defaultMessage:
-      'It is not recommended to edit these campaigns because they are deprecated :',
+    defaultMessage: 'It is not recommended to edit these campaigns because they are deprecated :',
   },
 });
 
@@ -71,14 +65,9 @@ type JoinedProps = EditCampaignsFormProps &
   RouteComponentProps<{ organisationId: string }> &
   InjectedFormProps<EditCampaignsFormData>;
 
-const Content = (Layout.Content as unknown) as React.ComponentClass<
-  BasicProps & { id: string }
->;
+const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
 
-class EditCampaignsForm extends React.Component<
-  JoinedProps,
-  EditCampaignsFormState
-> {
+class EditCampaignsForm extends React.Component<JoinedProps, EditCampaignsFormState> {
   @lazyInject(TYPES.IDisplayCampaignService)
   private _displayCampaignService: IDisplayCampaignService;
 
@@ -105,18 +94,18 @@ class EditCampaignsForm extends React.Component<
   fetchData = (selectedRowKeys: string[]) => {
     const v2014CampaignNames: string[] = [];
     Promise.all(
-      selectedRowKeys.map((campaignId) => {
+      selectedRowKeys.map(campaignId => {
         return this._displayCampaignService
           .getCampaignDisplay(campaignId)
-          .then((apiResp) => apiResp.data)
-          .then((campaignData) => {
+          .then(apiResp => apiResp.data)
+          .then(campaignData => {
             if (campaignData.model_version === 'V2014_06') {
               v2014CampaignNames.push(campaignData.name);
             }
             return campaignData.name || '';
           });
       }),
-    ).then((campaignNames) => {
+    ).then(campaignNames => {
       this.setState({
         campaignNames: campaignNames,
         v2014CampaignNames: v2014CampaignNames,
@@ -135,7 +124,7 @@ class EditCampaignsForm extends React.Component<
           loading: false,
         });
       })
-      .catch((err) => {
+      .catch(err => {
         this.props.notifyError(err);
         this.setState({
           loading: false,
@@ -154,7 +143,7 @@ class EditCampaignsForm extends React.Component<
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      pathItems: [ formatMessage(messages.editCampaigns) ],
+      pathItems: [formatMessage(messages.editCampaigns)],
       message: messages.saveCampaigns,
       onClose: close,
     };
@@ -164,21 +153,15 @@ class EditCampaignsForm extends React.Component<
     }
 
     return (
-      <Layout className="edit-layout">
+      <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
           <Form
-            className="edit-layout ant-layout edit-campaigns-form"
+            className='edit-layout ant-layout edit-campaigns-form'
             onSubmit={handleSubmit(this.save)}
           >
-            <Content
-              id={FORM_ID}
-              className="mcs-content-container mcs-form-container"
-            >
-              <FormSection
-                subtitle={messages.multiEditSubtitle}
-                title={messages.multiEditTitle}
-              />
+            <Content id={FORM_ID} className='mcs-content-container mcs-form-container'>
+              <FormSection subtitle={messages.multiEditSubtitle} title={messages.multiEditTitle} />
               <Row style={{ marginBottom: '1em' }}>
                 {campaignNames.map((campaignName, index) => (
                   <Tag key={index}>{campaignName}</Tag>
@@ -198,7 +181,7 @@ class EditCampaignsForm extends React.Component<
               </Row>
               <Row>
                 <CampaignsInfosFieldArray
-                  name="fields"
+                  name='fields'
                   component={CampaignsInfos}
                   rerenderOnEveryChange={true}
                 />

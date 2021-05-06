@@ -73,8 +73,7 @@ class DisplayCampaign extends React.Component<Props, State> {
   };
 
   public render() {
-    if (this.state.loading || !this.state.campaign)
-      return <Loading isFullScreen={true} />;
+    if (this.state.loading || !this.state.campaign) return <Loading isFullScreen={true} />;
 
     switch (this.state.campaign.subtype) {
       case 'PROGRAMMATIC':
@@ -86,7 +85,4 @@ class DisplayCampaign extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, {}>(
-  withRouter,
-  injectNotifications,
-)(DisplayCampaign);
+export default compose<Props, {}>(withRouter, injectNotifications)(DisplayCampaign);

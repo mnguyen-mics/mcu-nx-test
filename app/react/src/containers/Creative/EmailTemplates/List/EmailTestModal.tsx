@@ -54,9 +54,7 @@ interface EmailTestModalState {
   error: boolean;
 }
 
-type JoinedProps = EmailTestModalProps &
-  InjectedNotificationProps &
-  InjectedIntlProps;
+type JoinedProps = EmailTestModalProps & InjectedNotificationProps & InjectedIntlProps;
 
 class EmailTestModal extends React.Component<JoinedProps, EmailTestModalState> {
   @lazyInject(TYPES.ICreativeService)
@@ -121,12 +119,12 @@ class EmailTestModal extends React.Component<JoinedProps, EmailTestModalState> {
         <p>{formatMessage(messages.modalBody2)}</p>
         <br />
         {this.state.error ? (
-          <Alert message={formatMessage(messages.inputError)} type="error" />
+          <Alert message={formatMessage(messages.inputError)} type='error' />
         ) : null}
 
         <Input
           onChange={onChange}
-          defaultValue=""
+          defaultValue=''
           placeholder={formatMessage(messages.inputPlaceholder)}
         />
       </Modal>

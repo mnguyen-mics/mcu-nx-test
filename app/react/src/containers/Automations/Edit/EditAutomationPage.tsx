@@ -4,12 +4,7 @@ import { connect } from 'react-redux';
 import queryString from 'query-string';
 import { withRouter, RouteComponentProps, StaticContext } from 'react-router';
 import { message } from 'antd';
-import {
-  injectIntl,
-  InjectedIntlProps,
-  FormattedMessage,
-  defineMessages,
-} from 'react-intl';
+import { injectIntl, InjectedIntlProps, FormattedMessage, defineMessages } from 'react-intl';
 import * as NotificationActions from '../../../redux/Notifications/actions';
 import * as FeatureSelectors from '../../../redux/Features/selectors';
 import { EditAutomationParam, AutomationFormData } from './domain';
@@ -97,11 +92,7 @@ class EditAutomationPage extends React.Component<Props, State> {
     }
     const datamartId = queryString.parse(search).datamartId;
     const preDatamartId = queryString.parse(prevSearch).datamartId;
-    if (
-      !automationId &&
-      automationId !== prevAutomationId &&
-      datamartId !== preDatamartId
-    ) {
+    if (!automationId && automationId !== prevAutomationId && datamartId !== preDatamartId) {
       this.fetchDatamart(datamartId);
     }
   }
@@ -123,15 +114,13 @@ class EditAutomationPage extends React.Component<Props, State> {
       .getScenario(automationId)
       .then(r => this._datamartService.getDatamart(r.data.datamart_id))
       .then(({ data: datamartResource }) => {
-        return this._automationFormService
-          .loadInitialAutomationValues(automationId)
-          .then(data => {
-            this.setState({
-              datamart: datamartResource,
-              automationFormData: data,
-              loading: false,
-            });
+        return this._automationFormService.loadInitialAutomationValues(automationId).then(data => {
+          this.setState({
+            datamart: datamartResource,
+            automationFormData: data,
+            loading: false,
           });
+        });
       })
       .catch((err: any) => {
         this.props.notifyError(err);
@@ -189,9 +178,7 @@ class EditAutomationPage extends React.Component<Props, State> {
       },
       location: { state },
     } = this.props;
-    history.push(
-      state && state.from ? state.from : `/v2/o/${organisationId}/automations`,
-    );
+    history.push(state && state.from ? state.from : `/v2/o/${organisationId}/automations`);
   };
 
   render() {

@@ -22,9 +22,7 @@ import messages from './messages';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IImportService } from '../../../services/ImportService';
-import injectThemeColors, {
-  InjectedThemeColorsProps,
-} from '../../Helpers/injectThemeColors';
+import injectThemeColors, { InjectedThemeColorsProps } from '../../Helpers/injectThemeColors';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -32,7 +30,10 @@ import injectNotifications, {
 import LocalStorage from '../../../services/LocalStorage';
 import { getExecutionInfo } from '../../../utils/JobHelpers';
 import { Labels } from '../../Labels';
-import { ActionsColumnDefinition, DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import {
+  ActionsColumnDefinition,
+  DataColumnDefinition,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 import { TableViewWrapper } from '../../../components/TableView';
 
 const { Content } = Layout;
@@ -141,10 +142,7 @@ class Imports extends React.Component<JoinedProps, State> {
       },
     } = previousProps;
 
-    if (
-      !compareSearches(search, previousSearch) ||
-      organisationId !== previousOrganisationId
-    ) {
+    if (!compareSearches(search, previousSearch) || organisationId !== previousOrganisationId) {
       if (!isSearchValid(search, PAGINATION_SEARCH_SETTINGS)) {
         history.replace({
           pathname: pathname,
@@ -164,17 +162,11 @@ class Imports extends React.Component<JoinedProps, State> {
     window.clearInterval(this.fetchLoop);
   }
 
-  fetchImportAndExecutions = (
-    datamartId: string,
-    importId: string,
-    options: Filters,
-  ) => {
+  fetchImportAndExecutions = (datamartId: string, importId: string, options: Filters) => {
     const fetchImport = this._importService
       .getImport(datamartId, importId)
       .then(res => res.data)
-      .then(res =>
-        this.setState({ importObject: { item: res, isLoading: false } }),
-      )
+      .then(res => this.setState({ importObject: { item: res, isLoading: false } }))
       .catch(err => log.error(err));
 
     const params = {
@@ -221,16 +213,11 @@ class Imports extends React.Component<JoinedProps, State> {
             {record.result && record.result.total_failure > 0 ? (
               <span>
                 - with errors{' '}
-                <Tooltip
-                  placement="top"
-                  title={record.error && record.error.message}
-                >
-                  <McsIcon type="question" />
+                <Tooltip placement='top' title={record.error && record.error.message}>
+                  <McsIcon type='question' />
                 </Tooltip>
               </span>
-            ) : (
-              undefined
-            )}
+            ) : undefined}
           </div>
         );
       default:
@@ -263,13 +250,9 @@ class Imports extends React.Component<JoinedProps, State> {
   download = (uri: string) => {
     try {
       (window as any).open(
-        `${
-          (window as any).MCS_CONSTANTS.API_URL
-        }/v1/data_file/data?uri=${encodeURIComponent(
+        `${(window as any).MCS_CONSTANTS.API_URL}/v1/data_file/data?uri=${encodeURIComponent(
           uri,
-        )}&access_token=${encodeURIComponent(
-          LocalStorage.getItem('access_token')!,
-        )}`,
+        )}&access_token=${encodeURIComponent(LocalStorage.getItem('access_token')!)}`,
       );
     } catch (err) {
       log.error(err);
@@ -309,8 +292,7 @@ class Imports extends React.Component<JoinedProps, State> {
         title: formatMessage(messages.status),
         key: 'status',
         isHideable: false,
-        render: (text: string, record: ImportExecution) =>
-          this.renderStatuColumn(record),
+        render: (text: string, record: ImportExecution) => this.renderStatuColumn(record),
       },
       {
         title: formatMessage(messages.progress),
@@ -337,9 +319,7 @@ class Imports extends React.Component<JoinedProps, State> {
         key: 'start_date',
         isHideable: false,
         render: (text: string) =>
-          text
-            ? moment(text).format('DD/MM/YYYY HH:mm:ss')
-            : formatMessage(messages.notStarted),
+          text ? moment(text).format('DD/MM/YYYY HH:mm:ss') : formatMessage(messages.notStarted),
       },
       {
         title: formatMessage(messages.endDate),
@@ -347,9 +327,7 @@ class Imports extends React.Component<JoinedProps, State> {
         isHideable: false,
         render: (text: string, record: ImportExecution) =>
           record.start_date && record.duration
-            ? moment(record.start_date + record.duration).format(
-                'DD/MM/YYYY HH:mm:ss',
-              )
+            ? moment(record.start_date + record.duration).format('DD/MM/YYYY HH:mm:ss')
             : formatMessage(messages.notEnded),
       },
       {
@@ -357,9 +335,7 @@ class Imports extends React.Component<JoinedProps, State> {
         key: 'creation_date',
         isHideable: false,
         render: (text: string) =>
-          text
-            ? moment(text).format('DD/MM/YYYY HH:mm:ss')
-            : formatMessage(messages.notCreated),
+          text ? moment(text).format('DD/MM/YYYY HH:mm:ss') : formatMessage(messages.notCreated),
       },
     ];
 
@@ -400,9 +376,7 @@ class Imports extends React.Component<JoinedProps, State> {
       );
     };
 
-    const actionsColumnsDefinition: Array<ActionsColumnDefinition<
-      ImportExecution
-    >> = [
+    const actionsColumnsDefinition: Array<ActionsColumnDefinition<ImportExecution>> = [
       {
         key: 'action',
         actions: (execution: ImportExecution) => [
@@ -430,7 +404,7 @@ class Imports extends React.Component<JoinedProps, State> {
     ];
 
     return (
-      <div className="ant-layout">
+      <div className='ant-layout'>
         <ImportActionbar
           importObject={importObject.item}
           isImportExecutionRunning={
@@ -442,13 +416,13 @@ class Imports extends React.Component<JoinedProps, State> {
           }
           onNewExecution={onNewExecution}
         />
-        <div className="ant-layout">
-          <Content className="mcs-content-container">
+        <div className='ant-layout'>
+          <Content className='mcs-content-container'>
             <ImportHeader object={importObject.item} />
             {importObject.item && (
               <Labels
                 labellableId={importObject.item.id}
-                labellableType="IMPORT"
+                labellableType='IMPORT'
                 organisationId={organisationId}
               />
             )}
@@ -460,7 +434,7 @@ class Imports extends React.Component<JoinedProps, State> {
                 actionsColumnsDefinition={actionsColumnsDefinition}
                 pagination={pagination}
                 loading={importExecutions.isLoading}
-                className="mcs-importExecution_table"
+                className='mcs-importExecution_table'
               />
             </Card>
           </Content>

@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
-import withValidators, {
-  ValidatorProps,
-} from '../../../../../../components/Form/withValidators';
+import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
 import { compose } from 'recompose';
 import messages from '../messages';
 import { FormSection } from '../../../../../../components/Form';
@@ -66,9 +64,7 @@ class ActionFormSection extends React.Component<Props> {
       },
     ];
 
-    const CleaningRuleLifeTimeDurationField = Field as new () => GenericField<
-      CleaningRuleLifeTimeDurationProps
-    >;
+    const CleaningRuleLifeTimeDurationField = Field as new () => GenericField<CleaningRuleLifeTimeDurationProps>;
 
     return (
       <div>
@@ -81,7 +77,7 @@ class ActionFormSection extends React.Component<Props> {
           title={messages.sectionActionTitle}
         />
         <CleaningRuleLifeTimeDurationField
-          name="actionAndPeriod"
+          name='actionAndPeriod'
           component={CleaningRuleLifeTimeDuration}
           validate={[isRequired, this.checkLifeDuration()]}
           formItemProps={{

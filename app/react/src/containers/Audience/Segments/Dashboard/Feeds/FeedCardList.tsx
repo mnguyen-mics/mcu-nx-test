@@ -20,7 +20,11 @@ import { Index } from '../../../../../utils';
 import { InjectedFeaturesProps, injectFeatures } from '../../../../Features';
 
 type Props = InjectedFeaturesProps &
-  RouteComponentProps<{ organisationId: string; segmentId: string }, StaticContext, { scrollToFeed?: boolean }>;
+  RouteComponentProps<
+    { organisationId: string; segmentId: string },
+    StaticContext,
+    { scrollToFeed?: boolean }
+  >;
 
 export interface FeedCardListState {
   isLoading: boolean;
@@ -46,9 +50,7 @@ class FeedCardList extends React.Component<Props, FeedCardListState> {
       isLoading: true,
       feeds: [],
       shouldScrollWhenLoaded:
-        props.location.state && props.location.state.scrollToFeed
-          ? true
-          : false,
+        props.location.state && props.location.state.scrollToFeed ? true : false,
       feedsStatsByFeedId: {},
     };
   }
@@ -153,32 +155,30 @@ class FeedCardList extends React.Component<Props, FeedCardListState> {
       },
     } = this.props;
 
-    return this._feedsStatsService
-      .getSegmentStats(organisationId, segmentId)
-      .then(res => {
-        const normalized = normalizeReportView<{
-          feed_id: string;
-          uniq_user_points_count: number;
-          uniq_user_identifiers_count: number;
-        }>(res.data.report_view);
+    return this._feedsStatsService.getSegmentStats(organisationId, segmentId).then(res => {
+      const normalized = normalizeReportView<{
+        feed_id: string;
+        uniq_user_points_count: number;
+        uniq_user_identifiers_count: number;
+      }>(res.data.report_view);
 
-        const normalizedObjects = normalizeArrayOfObject(normalized, 'feed_id');
+      const normalizedObjects = normalizeArrayOfObject(normalized, 'feed_id');
 
-        // For each feed that doesn't have any stats in the response, we add it with '0' identifiers count.
-        this.state.feeds.forEach(feed => {
-          if (!normalizedObjects[feed.id]) {
-            normalizedObjects[feed.id] = {
-              feed_id: feed.id,
-              uniq_user_points_count: 0,
-              uniq_user_identifiers_count: 0,
-            };
-          }
-        });
-
-        return this.setState({
-          feedsStatsByFeedId: normalizedObjects,
-        });
+      // For each feed that doesn't have any stats in the response, we add it with '0' identifiers count.
+      this.state.feeds.forEach(feed => {
+        if (!normalizedObjects[feed.id]) {
+          normalizedObjects[feed.id] = {
+            feed_id: feed.id,
+            uniq_user_points_count: 0,
+            uniq_user_identifiers_count: 0,
+          };
+        }
       });
+
+      return this.setState({
+        feedsStatsByFeedId: normalizedObjects,
+      });
+    });
   };
 
   render() {
@@ -208,9 +208,7 @@ class FeedCardList extends React.Component<Props, FeedCardListState> {
 
     return (
       <div ref={this.getRef}>
-        {feeds.length >= 1 && (
-          <ContentHeader title={`Feeds`} size={`medium`} />
-        )}
+        {feeds.length >= 1 && <ContentHeader title={`Feeds`} size={`medium`} />}
         <Row gutter={24}>
           {feeds &&
             feeds.map(cf => {

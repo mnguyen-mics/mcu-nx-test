@@ -41,9 +41,9 @@ export class TagService implements ITagService {
     }
   };
 
-/**
- * gtag for Google Analytics
- */
+  /**
+   * gtag for Google Analytics
+   */
 
   // Google Analytics Tracker function for navigator's virtual pageviews
   // (https://developers.google.com/analytics/devguides/collection/analyticsjs/single-page-applications)
@@ -59,7 +59,7 @@ export class TagService implements ITagService {
       gtag('event', 'page_view', {
         page_title: pathname,
         page_path: pathname,
-        send_to: (global as any).window.MCS_CONSTANTS.GTAG_ID
+        send_to: (global as any).window.MCS_CONSTANTS.GTAG_ID,
       });
     }
   };
@@ -72,7 +72,7 @@ export class TagService implements ITagService {
       }
       gtag('event', eventName, {
         category: category,
-        action: action
+        action: action,
       });
     }
   };

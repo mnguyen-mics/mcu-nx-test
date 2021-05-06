@@ -1,8 +1,4 @@
-import {
-  NOTIFICATIONS_ADD,
-  NOTIFICATIONS_REMOVE,
-  NOTIFICATIONS_RESET,
-} from '../action-types';
+import { NOTIFICATIONS_ADD, NOTIFICATIONS_REMOVE, NOTIFICATIONS_RESET } from '../action-types';
 import { Action } from 'redux-actions';
 import { Payload } from '../../utils/ReduxHelper';
 import { Notification } from '../../containers/Notifications/Notifications';

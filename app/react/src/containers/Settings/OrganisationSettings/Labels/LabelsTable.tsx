@@ -87,10 +87,7 @@ function LabelsTable(props: LabelsTableProps & InjectedIntlProps) {
   ];
 
   return noLabelYet ? (
-    <EmptyTableView
-      iconType="full-users"
-      message={formatMessage(messages.emptyLabels)}
-    />
+    <EmptyTableView iconType='full-users' message={formatMessage(messages.emptyLabels)} />
   ) : (
     <TableViewWrapper
       actionsColumnsDefinition={actionColumns}

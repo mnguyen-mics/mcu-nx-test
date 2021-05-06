@@ -16,8 +16,8 @@ import { MicsReduxState } from '../../../../../../../utils/ReduxHelper';
 const Section: React.SFC = props => {
   if (!props.children) return null;
   return (
-    <div className="section sectionPaddingTop">
-      <Row className="textPadding">
+    <div className='section sectionPaddingTop'>
+      <Row className='textPadding'>
         <Col span={16}>{props.children}</Col>
       </Row>
     </div>
@@ -39,8 +39,8 @@ class SummaryFormSection extends React.Component<Props> {
           title={messages.sectionTitleSummary}
           subtitle={messages.sectionSubtitleSummary}
         />
-        <Row className="ad-group-summary-section">
-          <Col span={16} className="content">
+        <Row className='ad-group-summary-section'>
+          <Col span={16} className='content'>
             <Section>
               <GeneralSettingSummary />
             </Section>
@@ -55,16 +55,14 @@ class SummaryFormSection extends React.Component<Props> {
 
             <Section>
               <FormattedMessage
-                id="display.campaign.edit.adGroup.summaryFormSection.creative"
+                id='display.campaign.edit.adGroup.summaryFormSection.creative'
                 defaultMessage={`You have { creativeCountLabeled } 
                   { creativeCount , plural, 
                     zero {creative} one {creative} other {creatives} }
                   attached to your ad group`}
                 values={{
                   creativeCountLabeled: (
-                    <span className="info-color">
-                      {adGroupFormData.adFields.length}
-                    </span>
+                    <span className='info-color'>{adGroupFormData.adFields.length}</span>
                   ),
                   creativeCount: adGroupFormData.adFields.length,
                 }}

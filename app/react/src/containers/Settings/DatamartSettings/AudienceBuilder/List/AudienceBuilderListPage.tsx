@@ -30,7 +30,6 @@ export const AUDIENCE_BUILDER_SEARCH_SETTINGS = [
   ...PAGINATION_SEARCH_SETTINGS,
 ];
 
-
 interface State {
   isLoading: boolean;
   audienceBuilders: AudienceBuilderResource[];
@@ -178,7 +177,7 @@ class AudienceBuilderListPage extends React.Component<Props, State> {
       });
     };
     return (
-      <Button type="primary" className="mcs-audienceBuilder_creation_button" onClick={onClick}>
+      <Button type='primary' className='mcs-audienceBuilder_creation_button' onClick={onClick}>
         <FormattedMessage {...messages.audienceBuilderNew} />
       </Button>
     );
@@ -193,7 +192,6 @@ class AudienceBuilderListPage extends React.Component<Props, State> {
     this.fetchAudienceBuilders(datamartId, newFilter);
   };
 
-
   render() {
     const {
       isLoading,
@@ -204,19 +202,17 @@ class AudienceBuilderListPage extends React.Component<Props, State> {
     } = this.state;
 
     return (
-      <div className="ant-layout">
-        <Content className="mcs-content-container">
-          <div className="mcs-table-container">
+      <div className='ant-layout'>
+        <Content className='mcs-content-container'>
+          <div className='mcs-table-container'>
             <div>
-              <div className="mcs-card-header mcs-card-title">
-                <span className="mcs-card-title">
+              <div className='mcs-card-header mcs-card-title'>
+                <span className='mcs-card-title'>
                   <FormattedMessage {...messages.audienceBuilders} />
                 </span>
-                <span className="mcs-card-button">
-                  {this.buildNewActionElement()}
-                </span>
+                <span className='mcs-card-button'>{this.buildNewActionElement()}</span>
               </div>
-              <hr className="mcs-separator" />
+              <hr className='mcs-separator' />
               <AudienceBuilderTable
                 dataSource={audienceBuilders}
                 total={totalAudienceBuilder}

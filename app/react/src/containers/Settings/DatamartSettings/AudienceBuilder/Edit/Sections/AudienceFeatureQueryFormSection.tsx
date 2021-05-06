@@ -2,10 +2,7 @@ import * as React from 'react';
 import { Button } from 'antd';
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
-import {
-  Actionbar,
-  McsIcon,
-} from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { injectDrawer } from '../../../../../../components/Drawer';
 import { InjectedDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
 import OTQLConsoleContainer, {
@@ -47,11 +44,7 @@ class AudienceFeatureQueryFormSection extends React.Component<Props> {
   }
   openEditor = () => {
     const { intl, associatedQuery } = this.props;
-    const createActionBar = (
-      onSave: () => void,
-      onClose: () => void,
-      query: string,
-    ) => {
+    const createActionBar = (onSave: () => void, onClose: () => void, query: string) => {
       return (
         <Actionbar
           edition={true}
@@ -64,18 +57,18 @@ class AudienceFeatureQueryFormSection extends React.Component<Props> {
         >
           <Button
             disabled={!query}
-            className="mcs-primary mcs-audienceFeature_update_query"
-            type="primary"
+            className='mcs-primary mcs-audienceFeature_update_query'
+            type='primary'
             onClick={onSave}
           >
             <FormattedMessage
-              id="settings.datamart.audienceFeature.edit.update"
-              defaultMessage="Update"
+              id='settings.datamart.audienceFeature.edit.update'
+              defaultMessage='Update'
             />
           </Button>
           <McsIcon
-            type="close"
-            className="close-icon"
+            type='close'
+            className='close-icon'
             style={{ cursor: 'pointer' }}
             onClick={onClose}
           />
@@ -90,15 +83,12 @@ class AudienceFeatureQueryFormSection extends React.Component<Props> {
             this.props.match.params.datamartId,
             objectTreeExpression!,
           )
-          .then((response) => {
+          .then(response => {
             this.props.formChange('variables', response.data);
-            this.props.formChange(
-              'object_tree_expression',
-              objectTreeExpression,
-            );
+            this.props.formChange('object_tree_expression', objectTreeExpression);
             this.props.closeNextDrawer();
           })
-          .catch((err) => {
+          .catch(err => {
             this.props.notifyError(err);
           });
       };
@@ -116,8 +106,7 @@ class AudienceFeatureQueryFormSection extends React.Component<Props> {
   };
   render() {
     const { associatedQuery } = this.props;
-    const setAceEditorRef = (aceEditorRef: any) =>
-      (this.aceEditor = aceEditorRef);
+    const setAceEditorRef = (aceEditorRef: any) => (this.aceEditor = aceEditorRef);
     return (
       <React.Fragment>
         <FormSection
@@ -126,7 +115,7 @@ class AudienceFeatureQueryFormSection extends React.Component<Props> {
         />
         <Button
           onClick={this.openEditor}
-          className="m-b-20 float-right mcs-audienceFeature_edit_query_button"
+          className='m-b-20 float-right mcs-audienceFeature_edit_query_button'
         >
           {this.props.intl.formatMessage({
             id: 'jsonql.button.query.edit',
@@ -135,10 +124,10 @@ class AudienceFeatureQueryFormSection extends React.Component<Props> {
         </Button>
 
         <AceEditor
-          mode="otql"
-          theme="otql"
-          width="100%"
-          height="100px"
+          mode='otql'
+          theme='otql'
+          width='100%'
+          height='100px'
           readOnly={true}
           ref={setAceEditorRef}
           value={'SELECT @count{} FROM UserPoint where ' + associatedQuery}

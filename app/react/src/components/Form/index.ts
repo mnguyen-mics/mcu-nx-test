@@ -26,7 +26,7 @@ import FormCodeSnippet from './FormCodeSnippet';
 import TagSelect, { FormTagSelectProps } from './FormSelect/TagSelect';
 import FormDragAndDrop from './FormDragAndDrop';
 import { CheckboxProps } from 'antd/lib/checkbox';
-import FormRate, { FormRateProps } from './FormRate'
+import FormRate, { FormRateProps } from './FormRate';
 import FormAlertInput, { FormAlertInputProps } from './FormAlertInput';
 import FormTimePicker, { FormTimePickerProps } from './FormTimePicker';
 import FormTreeSelect, { FormTreeSelectProps } from './FormTreeSelect';
@@ -116,6 +116,6 @@ export const TagSelectField = Field as new () => GenericField<FormTagSelectProps
 export const FormRadioField = Field as new () => GenericField<FormRadioProps>;
 export const FormRadioGroupField = Field as new () => GenericField<FormRadioGroupProps>;
 export const FormCheckboxGroupField = Field as new () => GenericField<FormCheckboxGroupProps>;
-export const FormRateField = Field as new() => GenericField<FormRateProps>;
-export const FormAlertInputField = Field as new() => GenericField<FormAlertInputProps>;
-export const FormTimePickerField = Field as new() => GenericField<FormTimePickerProps>;
+export const FormRateField = Field as new () => GenericField<FormRateProps>;
+export const FormAlertInputField = Field as new () => GenericField<FormAlertInputProps>;
+export const FormTimePickerField = Field as new () => GenericField<FormTimePickerProps>;

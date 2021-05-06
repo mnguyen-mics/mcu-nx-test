@@ -6,10 +6,7 @@ import EmailTemplatesTable from './EmailTemplatesTable';
 import { CampaignRouteParams } from '../../../../models/campaign/CampaignResource';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, StaticContext, withRouter } from 'react-router';
-import {
-  CreativesOptions,
-  ICreativeService,
-} from '../../../../services/CreativeService';
+import { CreativesOptions, ICreativeService } from '../../../../services/CreativeService';
 import { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import { injectDrawer } from '../../../../components/Drawer/index';
 import {
@@ -108,35 +105,21 @@ class EmailTemplatesPage extends React.Component<JoinedProps, State> {
 
     const checkEmptyDataSource = state && state.reloadDataSource;
 
-    if (
-      !compareSearches(search, previousSearch) ||
-      organisationId !== previousOrganisationId
-    ) {
+    if (!compareSearches(search, previousSearch) || organisationId !== previousOrganisationId) {
       if (!isSearchValid(search, CREATIVE_EMAIL_SEARCH_SETTINGS)) {
         history.replace({
           pathname: pathname,
-          search: buildDefaultSearch(
-            search,
-            CREATIVE_EMAIL_SEARCH_SETTINGS,
-          ),
+          search: buildDefaultSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS),
           state: { reloadDataSource: organisationId !== previousOrganisationId },
         });
       } else {
         const filter = parseSearch(search, CREATIVE_EMAIL_SEARCH_SETTINGS);
-        this.fetchCreativeEmails(
-          organisationId,
-          filter,
-          checkEmptyDataSource,
-        );
+        this.fetchCreativeEmails(organisationId, filter, checkEmptyDataSource);
       }
     }
   }
 
-  fetchCreativeEmails = (
-    organisationId: string,
-    filter: Index<any>,
-    init: boolean = false,
-  ) => {
+  fetchCreativeEmails = (organisationId: string, filter: Index<any>, init: boolean = false) => {
     this.setState({
       isLoadingEmailTemplates: true,
     });
@@ -151,22 +134,20 @@ class EmailTemplatesPage extends React.Component<JoinedProps, State> {
         keywords: filter.keywords,
       };
     }
-    this._creativeService
-      .getEmailTemplates(organisationId, options)
-      .then(result => {
-        const data = result.data;
-        const emailTemplatesById = normalizeArrayOfObject(data, 'id');
-        this.setState({
-          dataSource: Object.keys(emailTemplatesById).map(id => {
-            return {
-              ...emailTemplatesById[id],
-            };
-          }),
-          isLoadingEmailTemplates: false,
-          hasEmailTemplates: init ? result.count !== 0 : true,
-          totalEmailTemplates: result.total || 0,
-        });
+    this._creativeService.getEmailTemplates(organisationId, options).then(result => {
+      const data = result.data;
+      const emailTemplatesById = normalizeArrayOfObject(data, 'id');
+      this.setState({
+        dataSource: Object.keys(emailTemplatesById).map(id => {
+          return {
+            ...emailTemplatesById[id],
+          };
+        }),
+        isLoadingEmailTemplates: false,
+        hasEmailTemplates: init ? result.count !== 0 : true,
+        totalEmailTemplates: result.total || 0,
       });
+    });
   };
 
   onSelectChange = (selectedRowKeys: string[]) => {
@@ -218,9 +199,7 @@ class EmailTemplatesPage extends React.Component<JoinedProps, State> {
     };
     return this._creativeService
       .getEmailTemplates(organisationId, options)
-      .then(apiResp =>
-        apiResp.data.map(emailTemplateResource => emailTemplateResource.id),
-      )
+      .then(apiResp => apiResp.data.map(emailTemplateResource => emailTemplateResource.id))
       .catch(err => {
         notifyError(err);
       });
@@ -347,11 +326,9 @@ class EmailTemplatesPage extends React.Component<JoinedProps, State> {
     const { selectedRowKeys, allRowsAreSelected } = this.state;
 
     if (allRowsAreSelected) {
-      return this.getAllEmailTemplatesIds().then(
-        (allTemplatesIds: string[]) => {
-          this.makeArchiveAction(allTemplatesIds);
-        },
-      );
+      return this.getAllEmailTemplatesIds().then((allTemplatesIds: string[]) => {
+        this.makeArchiveAction(allTemplatesIds);
+      });
     } else {
       return this.makeArchiveAction(selectedRowKeys);
     }
@@ -392,13 +369,10 @@ class EmailTemplatesPage extends React.Component<JoinedProps, State> {
     };
 
     return (
-      <div className="ant-layout">
-        <EmailTemplatesActionBar
-          rowSelection={rowSelection}
-          multiEditProps={multiEditProps}
-        />
-        <div className="ant-layout">
-          <Content className="mcs-content-container">
+      <div className='ant-layout'>
+        <EmailTemplatesActionBar rowSelection={rowSelection} multiEditProps={multiEditProps} />
+        <div className='ant-layout'>
+          <Content className='mcs-content-container'>
             <EmailTemplatesTable
               rowSelection={rowSelection}
               dataSource={dataSource}

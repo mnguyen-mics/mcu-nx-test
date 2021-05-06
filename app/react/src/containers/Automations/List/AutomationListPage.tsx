@@ -3,14 +3,9 @@ import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { Layout } from 'antd';
 import { compose } from 'recompose';
-import {
-  AutomationResource,
-  AutomationStatus,
-} from '../../../models/automations/automations';
+import { AutomationResource, AutomationStatus } from '../../../models/automations/automations';
 import { Label } from '../../Labels/Labels';
-import injectDrawer, {
-  InjectedDrawerProps,
-} from '../../../components/Drawer/injectDrawer';
+import injectDrawer, { InjectedDrawerProps } from '../../../components/Drawer/injectDrawer';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
@@ -39,10 +34,7 @@ type JoinedProps = InjectedIntlProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }>;
 
-class AutomationListPage extends React.Component<
-  JoinedProps,
-  AutomationListPageState
-> {
+class AutomationListPage extends React.Component<JoinedProps, AutomationListPageState> {
   @lazyInject(TYPES.IScenarioService)
   private _scenarioService: IScenarioService;
 
@@ -56,10 +48,7 @@ class AutomationListPage extends React.Component<
     };
   }
 
-  updateAutomationStatus = (
-    scenario: AutomationResource,
-    status: AutomationStatus,
-  ) => {
+  updateAutomationStatus = (scenario: AutomationResource, status: AutomationStatus) => {
     const { notifyError } = this.props;
 
     return this._scenarioService
@@ -70,15 +59,12 @@ class AutomationListPage extends React.Component<
         datamart_id: scenario.datamart_id,
         organisation_id: scenario.organisation_id,
       })
-      .catch((error) => {
+      .catch(error => {
         notifyError(error);
       });
   };
 
-  onSelectChange = (
-    selectedRowKeys: string[],
-    selectedRows: AutomationResource[],
-  ) => {
+  onSelectChange = (selectedRowKeys: string[], selectedRows: AutomationResource[]) => {
     this.setState({ selectedScenarios: selectedRows });
   };
 
@@ -91,7 +77,7 @@ class AutomationListPage extends React.Component<
         isUpdatingStatuses: true,
       },
       () => {
-        const scenariosP = selectedScenarios.map((scenario) => {
+        const scenariosP = selectedScenarios.map(scenario => {
           return this.updateAutomationStatus(scenario, status);
         });
         Promise.all(scenariosP)
@@ -129,13 +115,13 @@ class AutomationListPage extends React.Component<
     };
 
     return (
-      <div className="ant-layout">
+      <div className='ant-layout'>
         <AutomationActionBar
           organisationId={this.props.match.params.organisationId}
           multiEditProps={multiEditProps}
         />
-        <div className="ant-layout">
-          <Content className="mcs-content-container">
+        <div className='ant-layout'>
+          <Content className='mcs-content-container'>
             <AutomationListTable
               rowSelection={rowSelection}
               isUpdatingStatuses={isUpdatingStatuses}

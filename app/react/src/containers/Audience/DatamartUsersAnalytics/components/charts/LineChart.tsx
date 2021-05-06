@@ -4,7 +4,7 @@ import HighchartsReact from 'highcharts-react-official';
 import cuid from 'cuid';
 
 export interface LineChartProps {
-  options:  Highcharts.Options;
+  options: Highcharts.Options;
 }
 
 type Props = LineChartProps;
@@ -18,14 +18,9 @@ class LineChart extends React.Component<Props, {}> {
   }
 
   render() {
-    
     const { options } = this.props;
 
-    return (
-      <HighchartsReact
-        highcharts={Highcharts}
-        options={options}
-      />)
+    return <HighchartsReact highcharts={Highcharts} options={options} />;
   }
 }
 

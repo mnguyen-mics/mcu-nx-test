@@ -3,17 +3,11 @@ import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { submit as rxfSubmit, getFormValues } from 'redux-form';
 import { RouteComponentProps, withRouter } from 'react-router';
-import {
-  messages,
-  AutomationBuilderPageRouteParams,
-} from '../AutomationBuilderPage';
+import { messages, AutomationBuilderPageRouteParams } from '../AutomationBuilderPage';
 import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { Button } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import AutomationSimpleForm, {
-  FORM_ID,
-  AutomationSimpleFormData,
-} from './AutomationSimpleForm';
+import AutomationSimpleForm, { FORM_ID, AutomationSimpleFormData } from './AutomationSimpleForm';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
@@ -58,7 +52,6 @@ class AutomationActionBar extends React.Component<Props, State> {
     this.handleModal();
   };
 
-
   handleModal = () => {
     this.setState({
       visible: !this.state.visible,
@@ -70,12 +63,12 @@ class AutomationActionBar extends React.Component<Props, State> {
     const formData: AutomationFormData = {
       automation: automationData
         ? {
-          ...automationData.automation,
-          ...formValues,
-        }
+            ...automationData.automation,
+            ...formValues,
+          }
         : {
-          ...formValues,
-        },
+            ...formValues,
+          },
       exitCondition:
         automationData && automationData.exitCondition
           ? automationData.exitCondition
@@ -101,10 +94,7 @@ class AutomationActionBar extends React.Component<Props, State> {
     const { visible } = this.state;
 
     const initialFormData: Partial<AutomationSimpleFormData> = {
-      name:
-        automationData && automationData.automation
-          ? automationData.automation.name
-          : '',
+      name: automationData && automationData.automation ? automationData.automation.name : '',
     };
 
     const handleOnOk = () => {
@@ -115,15 +105,13 @@ class AutomationActionBar extends React.Component<Props, State> {
       <Actionbar
         pathItems={[
           intl.formatMessage(messages.automationBuilder),
-          automationData &&
-            automationData.automation &&
-            automationData.automation.name
+          automationData && automationData.automation && automationData.automation.name
             ? automationData.automation.name
             : intl.formatMessage(messages.newAutomation),
         ]}
       >
-        <Button className="mcs-primary" type="primary" onClick={this.onClick}>
-          <McsIcon type={"plus"} />
+        <Button className='mcs-primary' type='primary' onClick={this.onClick}>
+          <McsIcon type={'plus'} />
           {automationId
             ? intl.formatMessage(messages.updateAutomation)
             : intl.formatMessage(messages.saveAutomation)}
@@ -152,8 +140,5 @@ export default compose<Props, AutomationActionBarProps>(
   injectNotifications,
   withRouter,
   connect(mapStateToProps),
-  connect(
-    undefined,
-    { submit: rxfSubmit },
-  ),
+  connect(undefined, { submit: rxfSubmit }),
 )(AutomationActionBar);

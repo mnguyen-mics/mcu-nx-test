@@ -24,14 +24,16 @@ class ExportsActionbar extends React.Component<
     } = this.props;
 
     const breadcrumbPaths = [
-      <Link key='1' to={`/v2/o/${organisationId}/datastudio/exports`}>{formatMessage(messages.exports)}</Link>
+      <Link key='1' to={`/v2/o/${organisationId}/datastudio/exports`}>
+        {formatMessage(messages.exports)}
+      </Link>,
     ];
 
     return (
       <Actionbar pathItems={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/datastudio/exports/create`}>
-          <Button className="mcs-primary" type="primary">
-            <McsIcon type="plus" /> <FormattedMessage {...messages.newExport} />
+          <Button className='mcs-primary' type='primary'>
+            <McsIcon type='plus' /> <FormattedMessage {...messages.newExport} />
           </Button>
         </Link>
       </Actionbar>
@@ -39,8 +41,4 @@ class ExportsActionbar extends React.Component<
   }
 }
 
-export default compose(
-  injectIntl,
-  withRouter,
-  injectDatamart,
-)(ExportsActionbar);
+export default compose(injectIntl, withRouter, injectDatamart)(ExportsActionbar);

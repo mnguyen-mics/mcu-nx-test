@@ -64,19 +64,18 @@ export interface IUserDataService {
 
   getChannel: (
     channelId: string,
-    options?: object
+    options?: object,
   ) => Promise<DataResponse<ChannelResource> | undefined>;
 
   getUserChoices: (
     datamartId: string,
     identifier: Identifier,
-    options?: object
+    options?: object,
   ) => Promise<DataListResponse<UserChoiceResource>>;
 }
 
 @injectable()
 export class UserDataService implements IUserDataService {
-
   // Deprecated: Rely on a deprecated route
   // TO DO: Remove it
   getProfile(
@@ -86,9 +85,7 @@ export class UserDataService implements IUserDataService {
   ): Promise<DataResponse<UserProfileResource> | undefined> {
     const endpoint =
       identifier.type !== 'user_point_id'
-        ? `datamarts/${datamartId}/user_profiles/${identifier.type}=${
-            identifier.id
-          }`
+        ? `datamarts/${datamartId}/user_profiles/${identifier.type}=${identifier.id}`
         : `datamarts/${datamartId}/user_profiles/${identifier.id}`;
 
     const params = {
@@ -113,16 +110,15 @@ export class UserDataService implements IUserDataService {
     identifier: Identifier,
     options: object = {},
   ): Promise<DataListResponse<UserProfileResource> | undefined> {
-
     if (identifier.type !== 'user_point_id') {
-      return Promise.reject(new Error(`Only the 'user_point_id' identifier is currently supported by the backend.`));
+      return Promise.reject(
+        new Error(`Only the 'user_point_id' identifier is currently supported by the backend.`),
+      );
     }
 
     const endpoint =
       identifier.type !== 'user_point_id'
-        ? `datamarts/${datamartId}/user_points/${identifier.type}=${
-            identifier.id
-          }/user_profiles`
+        ? `datamarts/${datamartId}/user_points/${identifier.type}=${identifier.id}/user_profiles`
         : `datamarts/${datamartId}/user_points/${identifier.id}/user_profiles`;
 
     return ApiService.getRequest<DataListResponse<UserProfileResource> | undefined>(
@@ -148,33 +144,28 @@ export class UserDataService implements IUserDataService {
     const endpoint =
       identifier.type !== 'user_point_id'
         ? identifier.type === 'user_account_id'
-          ? `datamarts/${datamartId}/user_segments/${inBetweenCompartmentId}${
-              identifier.type
-            }=${identifier.id}`
-          : `datamarts/${datamartId}/user_segments/${identifier.type}=${
-              identifier.id
-            }`
+          ? `datamarts/${datamartId}/user_segments/${inBetweenCompartmentId}${identifier.type}=${identifier.id}`
+          : `datamarts/${datamartId}/user_segments/${identifier.type}=${identifier.id}`
         : `datamarts/${datamartId}/user_segments/${identifier.id}`;
 
     const params = {
       ...options,
     };
 
-    return ApiService.getRequest<DataListResponse<UserSegmentResource>>(
-      endpoint,
-      params,
-    ).catch(error => {
-      // api send 404 when segments don't exist
-      if (error && error.error === 'Resource Not Found') {
-        const result: DataListResponse<UserSegmentResource> = {
-          data: [],
-          status: 'ok',
-          count: 0,
-        };
-        return Promise.resolve(result);
-      }
-      throw error;
-    });
+    return ApiService.getRequest<DataListResponse<UserSegmentResource>>(endpoint, params).catch(
+      error => {
+        // api send 404 when segments don't exist
+        if (error && error.error === 'Resource Not Found') {
+          const result: DataListResponse<UserSegmentResource> = {
+            data: [],
+            status: 'ok',
+            count: 0,
+          };
+          return Promise.resolve(result);
+        }
+        throw error;
+      },
+    );
   }
 
   getIdentifiersEndpoint(
@@ -214,21 +205,20 @@ export class UserDataService implements IUserDataService {
       ...options,
     };
 
-    return ApiService.getRequest<DataListResponse<UserIdentifierInfo>>(
-      endpoint,
-      params,
-    ).catch(error => {
-      // api send 404 when identifiers don't exist
-      if (error && error.error === 'Resource Not Found') {
-        const result: DataListResponse<UserIdentifierInfo> = {
-          data: [],
-          status: 'ok',
-          count: 0,
-        };
-        return Promise.resolve(result);
-      }
-      throw error;
-    });
+    return ApiService.getRequest<DataListResponse<UserIdentifierInfo>>(endpoint, params).catch(
+      error => {
+        // api send 404 when identifiers don't exist
+        if (error && error.error === 'Resource Not Found') {
+          const result: DataListResponse<UserIdentifierInfo> = {
+            data: [],
+            status: 'ok',
+            count: 0,
+          };
+          return Promise.resolve(result);
+        }
+        throw error;
+      },
+    );
   }
 
   getActivities(
@@ -242,24 +232,15 @@ export class UserDataService implements IUserDataService {
     const endpoint =
       identifier.type !== 'user_point_id'
         ? identifier.type === 'user_account_id'
-          ? `datamarts/${datamartId}/user_timelines/${inBetweenCompartmentId}${
-              identifier.type
-            }=${identifier.id}/user_activities`
-          : `datamarts/${datamartId}/user_timelines/${identifier.type}=${
-              identifier.id
-            }/user_activities`
-        : `datamarts/${datamartId}/user_timelines/${
-            identifier.id
-          }/user_activities`;
+          ? `datamarts/${datamartId}/user_timelines/${inBetweenCompartmentId}${identifier.type}=${identifier.id}/user_activities`
+          : `datamarts/${datamartId}/user_timelines/${identifier.type}=${identifier.id}/user_activities`
+        : `datamarts/${datamartId}/user_timelines/${identifier.id}/user_activities`;
 
     const params = {
       ...options,
     };
 
-    return ApiService.getRequest<DataListResponse<Activity>>(
-      endpoint,
-      params,
-    ).catch(error => {
+    return ApiService.getRequest<DataListResponse<Activity>>(endpoint, params).catch(error => {
       // api send 404 when activities don't exist
       if (error && error.error === 'Resource Not Found') {
         const result: DataListResponse<Activity> = {
@@ -281,7 +262,7 @@ export class UserDataService implements IUserDataService {
 
     return ApiService.getRequest<DataResponse<ChannelResource> | undefined>(
       endpoint,
-      options
+      options,
     ).catch(error => {
       // api send 404 when channel doesn't exist
       if (error && error.error === 'Resource Not Found') {
@@ -297,34 +278,33 @@ export class UserDataService implements IUserDataService {
     options: object = {},
   ): Promise<DataListResponse<UserChoiceResource>> {
     const inBetweenCompartmentId = identifier.compartmentId
-    ? `compartment_id=${identifier.compartmentId}/`
-    : ``;
-  const endpoint =
-    identifier.type !== 'user_point_id'
-      ? identifier.type === 'user_account_id'
-        ? `datamarts/${datamartId}/user_points/${inBetweenCompartmentId}${identifier.type}=${identifier.id}/user_choices`
-        : `datamarts/${datamartId}/user_points/${identifier.type}=${identifier.id}/user_choices`
-      : `datamarts/${datamartId}/user_points/${identifier.id}/user_choices`;
+      ? `compartment_id=${identifier.compartmentId}/`
+      : ``;
+    const endpoint =
+      identifier.type !== 'user_point_id'
+        ? identifier.type === 'user_account_id'
+          ? `datamarts/${datamartId}/user_points/${inBetweenCompartmentId}${identifier.type}=${identifier.id}/user_choices`
+          : `datamarts/${datamartId}/user_points/${identifier.type}=${identifier.id}/user_choices`
+        : `datamarts/${datamartId}/user_points/${identifier.id}/user_choices`;
 
-  const params = {
-    ...options,
-  };
+    const params = {
+      ...options,
+    };
 
-  return ApiService.getRequest<DataListResponse<UserChoiceResource>>(
-    endpoint,
-    params,
-  ).catch(error => {
-    // api send 404 when consents don't exist
-    if (error && error.error === 'Resource Not Found') {
-      const result: DataListResponse<UserChoiceResource> = {
-        data: [],
-        status: 'ok',
-        count: 0,
-      };
-      return Promise.resolve(result);
-    }
-    throw error;
-  });
+    return ApiService.getRequest<DataListResponse<UserChoiceResource>>(endpoint, params).catch(
+      error => {
+        // api send 404 when consents don't exist
+        if (error && error.error === 'Resource Not Found') {
+          const result: DataListResponse<UserChoiceResource> = {
+            data: [],
+            status: 'ok',
+            count: 0,
+          };
+          return Promise.resolve(result);
+        }
+        throw error;
+      },
+    );
   }
 }
 

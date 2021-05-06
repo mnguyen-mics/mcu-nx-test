@@ -6,11 +6,7 @@ import { message } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { injectDrawer } from '../../../../../components/Drawer/index';
 import * as FeatureSelectors from '../../../../../redux/Features/selectors';
-import {
-  AdGroupFormData,
-  EditAdGroupRouteMatchParam,
-  INITIAL_AD_GROUP_FORM_DATA,
-} from './domain';
+import { AdGroupFormData, EditAdGroupRouteMatchParam, INITIAL_AD_GROUP_FORM_DATA } from './domain';
 import { DisplayCampaignResource } from '../../../../../models/campaign/display/DisplayCampaignResource';
 import messages from '../messages';
 import AdGroupForm from './AdGroupForm';
@@ -67,11 +63,7 @@ class EditAdGroupPage extends React.Component<Props, State> {
     Promise.all([
       this._displayCampaignService.getCampaignDisplay(campaignId),
       adGroupId
-        ? this._adGroupFormService.loadAdGroup(
-          campaignId,
-          adGroupId,
-          !!adGroupIdFromLocState,
-        )
+        ? this._adGroupFormService.loadAdGroup(campaignId, adGroupId, !!adGroupIdFromLocState)
         : Promise.resolve(null),
     ])
       .then(([campaignApiRes, adGroupFormData]) => {
@@ -108,22 +100,14 @@ class EditAdGroupPage extends React.Component<Props, State> {
 
     const { adGroupFormData: initialAdGroupFormData } = this.state;
 
-    const hideSaveInProgress = message.loading(
-      intl.formatMessage(messages.savingInProgress),
-      0,
-    );
+    const hideSaveInProgress = message.loading(intl.formatMessage(messages.savingInProgress), 0);
 
     this.setState({
       loading: true,
     });
 
     return this._adGroupFormService
-      .saveAdGroup(
-        organisationId,
-        campaignId,
-        adGroupFormData,
-        initialAdGroupFormData,
-      )
+      .saveAdGroup(organisationId, campaignId, adGroupFormData, initialAdGroupFormData)
       .then(adGroupId => {
         hideSaveInProgress();
         const adGroupDashboardUrl = `/v2/o/${organisationId}/campaigns/display/${campaignId}/adgroups/${adGroupId}`;
@@ -170,18 +154,18 @@ class EditAdGroupPage extends React.Component<Props, State> {
     const campaignName = campaign ? campaign.name : campaignId;
     const adGroupName = adGroupId
       ? formatMessage(messages.breadcrumbTitle3, {
-        name:
-          adGroupFormData.adGroup && adGroupFormData.adGroup.name
-            ? adGroupFormData.adGroup.name
-            : adGroupId,
-      })
+          name:
+            adGroupFormData.adGroup && adGroupFormData.adGroup.name
+              ? adGroupFormData.adGroup.name
+              : adGroupId,
+        })
       : formatMessage(messages.breadcrumbTitle2);
 
     const breadcrumbPaths = [
-      <Link key="1" to={`/v2/o/${organisationId}/campaigns/display`}>
+      <Link key='1' to={`/v2/o/${organisationId}/campaigns/display`}>
         {formatMessage(messages.breadcrumbTitle1)}
       </Link>,
-      <Link key="2" to={`/v2/o/${organisationId}/campaigns/display/${campaignId}`}>
+      <Link key='2' to={`/v2/o/${organisationId}/campaigns/display/${campaignId}`}>
         {campaignName}
       </Link>,
       adGroupName,
@@ -208,8 +192,5 @@ export default compose(
   injectIntl,
   injectDrawer,
   injectNotifications,
-  connect(
-    mapStateToProps,
-    undefined,
-  ),
+  connect(mapStateToProps, undefined),
 )(EditAdGroupPage);

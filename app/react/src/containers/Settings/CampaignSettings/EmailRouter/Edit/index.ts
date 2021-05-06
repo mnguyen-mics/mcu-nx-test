@@ -1,5 +1,3 @@
 import CreateEditEmailRouter from './EditEmailRouterPage';
 
-export {
-    CreateEditEmailRouter,
-};
+export { CreateEditEmailRouter };

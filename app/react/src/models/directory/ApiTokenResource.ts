@@ -4,4 +4,4 @@ export default interface ApiTokenResource {
   creation_date: number;
   expiration_date: number;
   value: string;
-};
+}

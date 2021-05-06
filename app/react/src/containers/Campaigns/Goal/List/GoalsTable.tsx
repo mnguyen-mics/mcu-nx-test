@@ -19,10 +19,7 @@ import {
   LabelsSearchSettings,
   DatamartSearchSettings,
 } from '../../../../utils/LocationSearchHelper';
-import {
-  formatMetric,
-  normalizeReportView,
-} from '../../../../utils/MetricHelper';
+import { formatMetric, normalizeReportView } from '../../../../utils/MetricHelper';
 import { getWorkspace } from '../../../../redux/Session/selectors';
 import { GoalsOptions, IGoalService } from '../../../../services/GoalService';
 import { Label } from '../../../Labels/Labels';
@@ -34,22 +31,19 @@ import injectNotifications, {
 } from '../../../Notifications/injectNotifications';
 import { messages } from './messages';
 import { Index } from '../../../../utils';
-import {
-  GoalTableResource,
-  GoalResource,
-} from '../../../../models/goal/GoalResource';
+import { GoalTableResource, GoalResource } from '../../../../models/goal/GoalResource';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import ReportService from '../../../../services/ReportService';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
-import {
-  EmptyTableView,
-  McsIcon,
-} from '@mediarithmics-private/mcs-components-library';
+import { EmptyTableView, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { StaticContext } from 'react-router';
-import { ActionsColumnDefinition, DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import {
+  ActionsColumnDefinition,
+  DataColumnDefinition,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 export interface ParamFilters
   extends PaginationSearchSettings,
@@ -76,11 +70,7 @@ interface MapStateToProps {
 type Props = MapStateToProps &
   InjectedIntlProps &
   InjectedNotificationProps &
-  RouteComponentProps<
-    { organisationId: string },
-    StaticContext,
-    { reloadDataSource?: boolean }
-  >;
+  RouteComponentProps<{ organisationId: string }, StaticContext, { reloadDataSource?: boolean }>;
 
 class GoalsTable extends React.Component<Props, State> {
   @lazyInject(TYPES.IGoalService)
@@ -135,10 +125,7 @@ class GoalsTable extends React.Component<Props, State> {
 
     const checkEmptyDataSource = state && state.reloadDataSource;
 
-    if (
-      !compareSearches(search, previousSearch) ||
-      organisationId !== previousOrganisationId
-    ) {
+    if (!compareSearches(search, previousSearch) || organisationId !== previousOrganisationId) {
       if (!isSearchValid(search, GOAL_SEARCH_SETTINGS)) {
         history.replace({
           pathname: pathname,
@@ -154,11 +141,7 @@ class GoalsTable extends React.Component<Props, State> {
     }
   }
 
-  loadGoalsDataSource = (
-    organisationId: string,
-    filter: Index<any>,
-    init: boolean = false,
-  ) => {
+  loadGoalsDataSource = (organisationId: string, filter: Index<any>, init: boolean = false) => {
     this.setState({
       isLoadingGoals: true,
       isLoadingStats: true,
@@ -177,10 +160,10 @@ class GoalsTable extends React.Component<Props, State> {
     if (filter.datamartId) {
       options.datamart_id = filter.datamartId;
     }
-    this._goalService.getGoals(organisationId, options).then((result) => {
+    this._goalService.getGoals(organisationId, options).then(result => {
       const goalsById = normalizeArrayOfObject(result.data, 'id');
       this.setState({
-        dataSource: Object.keys(goalsById).map((goalId) => {
+        dataSource: Object.keys(goalsById).map(goalId => {
           return {
             ...goalsById[goalId],
           };
@@ -190,19 +173,16 @@ class GoalsTable extends React.Component<Props, State> {
         hasGoals: init ? result.count !== 0 : true,
       });
 
-      ReportService.getConversionPerformanceReport(
-        organisationId,
-        filter.from,
-        filter.to,
-        ['goal_id'],
-      ).then((statsResult) => {
+      ReportService.getConversionPerformanceReport(organisationId, filter.from, filter.to, [
+        'goal_id',
+      ]).then(statsResult => {
         const statsByGoalId = normalizeArrayOfObject(
           normalizeReportView(statsResult.data.report_view),
           'goal_id',
         );
         this.setState({
           isLoadingStats: false,
-          dataSource: Object.keys(goalsById).map((goalId) => {
+          dataSource: Object.keys(goalsById).map(goalId => {
             return {
               ...statsByGoalId[goalId],
               ...goalsById[goalId],
@@ -245,10 +225,7 @@ class GoalsTable extends React.Component<Props, State> {
       onOk() {
         return updateGoal()
           .then(() => {
-            if (
-              Object.keys(dataSource).length === 1 &&
-              filter.currentPage !== 1
-            ) {
+            if (Object.keys(dataSource).length === 1 && filter.currentPage !== 1) {
               const newFilter = {
                 ...filter,
                 currentPage: filter.currentPage - 1,
@@ -263,7 +240,7 @@ class GoalsTable extends React.Component<Props, State> {
               fetchGoals(organisationId, filter);
             }
           })
-          .catch((err) => {
+          .catch(err => {
             notifyError(err);
           });
       },
@@ -304,17 +281,11 @@ class GoalsTable extends React.Component<Props, State> {
       },
       location: { search },
       labels,
-      intl : { formatMessage },
+      intl: { formatMessage },
       workspace,
     } = this.props;
 
-    const {
-      dataSource,
-      totalGoals,
-      isLoadingStats,
-      isLoadingGoals,
-      hasGoals,
-    } = this.state;
+    const { dataSource, totalGoals, isLoadingStats, isLoadingGoals, hasGoals } = this.state;
 
     const filter = parseSearch(search, GOAL_SEARCH_SETTINGS);
 
@@ -360,13 +331,9 @@ class GoalsTable extends React.Component<Props, State> {
         }),
     };
 
-    const renderMetricData = (
-      value: any,
-      numeralFormat: string,
-      currency = '',
-    ) => {
+    const renderMetricData = (value: any, numeralFormat: string, currency = '') => {
       if (isLoadingStats) {
-        return <i className="mcs-table-cell-loading" />;
+        return <i className='mcs-table-cell-loading' />;
       }
       const unlocalizedMoneyPrefix = currency === 'EUR' ? '€ ' : '';
       return formatMetric(value, numeralFormat, unlocalizedMoneyPrefix);
@@ -378,9 +345,9 @@ class GoalsTable extends React.Component<Props, State> {
         key: 'status',
         isHideable: false,
         render: (text: string, record: GoalResource) => (
-          <Tooltip placement="top" title={formatMessage(messages[text])}>
+          <Tooltip placement='top' title={formatMessage(messages[text])}>
             <span className={`mcs-campaigns-status-${text.toLowerCase()}`}>
-              <McsIcon type="status" />
+              <McsIcon type='status' />
             </span>
           </Tooltip>
         ),
@@ -391,7 +358,7 @@ class GoalsTable extends React.Component<Props, State> {
         isHideable: false,
         render: (text: string, record: GoalResource) => (
           <Link
-            className="mcs-campaigns-link"
+            className='mcs-campaigns-link'
             to={`/v2/o/${organisationId}/campaigns/goals/${record.id}`}
           >
             {text}
@@ -434,10 +401,7 @@ class GoalsTable extends React.Component<Props, State> {
       {
         displayElement: (
           <div>
-            <FormattedMessage
-              id="goals.list.statusFilter"
-              defaultMessage="Status"
-            />{' '}
+            <FormattedMessage id='goals.list.statusFilter' defaultMessage='Status' />{' '}
             <DownOutlined />
           </div>
         ),
@@ -450,7 +414,7 @@ class GoalsTable extends React.Component<Props, State> {
         display: (item: { key: string; value: string }) => item.value,
         handleMenuClick: (values: Array<{ key: string; value: string }>) => {
           this.updateLocationSearch({
-            statuses: values.map((item) => item.value),
+            statuses: values.map(item => item.value),
           });
         },
       },
@@ -458,7 +422,7 @@ class GoalsTable extends React.Component<Props, State> {
 
     if (workspace(organisationId).datamarts.length > 1) {
       const datamartItems = workspace(organisationId)
-        .datamarts.map((d) => ({
+        .datamarts.map(d => ({
           key: d.id,
           value: d.name || d.token,
         }))
@@ -472,15 +436,12 @@ class GoalsTable extends React.Component<Props, State> {
       const datamartFilterOptions: MultiSelectProps<any> = {
         displayElement: (
           <div>
-            <FormattedMessage
-              id="goals.list.datamartFilter"
-              defaultMessage="Datamart"
-            />{' '}
+            <FormattedMessage id='goals.list.datamartFilter' defaultMessage='Datamart' />{' '}
             <DownOutlined />
           </div>
         ),
         selectedItems: filter.datamartId
-          ? [datamartItems.find((di) => di.key === filter.datamartId)]
+          ? [datamartItems.find(di => di.key === filter.datamartId)]
           : [datamartItems],
         items: datamartItems,
         singleSelectOnly: true,
@@ -488,8 +449,7 @@ class GoalsTable extends React.Component<Props, State> {
         display: (item: any) => item.value,
         handleItemClick: (datamartItem: { key: string; value: string }) => {
           this.updateLocationSearch({
-            datamartId:
-              datamartItem && datamartItem.key ? datamartItem.key : undefined,
+            datamartId: datamartItem && datamartItem.key ? datamartItem.key : undefined,
           });
         },
       };
@@ -499,22 +459,20 @@ class GoalsTable extends React.Component<Props, State> {
 
     const labelsOptions = {
       labels: this.props.labels,
-      selectedLabels: labels.filter((label) => {
-        return filter.label_id.find(
-          (filteredLabelId: string) => filteredLabelId === label.id,
-        )
+      selectedLabels: labels.filter(label => {
+        return filter.label_id.find((filteredLabelId: string) => filteredLabelId === label.id)
           ? true
           : false;
       }),
       onChange: (newLabels: Label[]) => {
-        const formattedLabels = newLabels.map((label) => label.id);
+        const formattedLabels = newLabels.map(label => label.id);
         this.updateLocationSearch({ label_id: formattedLabels });
       },
       buttonMessage: messages.labelFilterBy,
     };
 
     return hasGoals ? (
-      <div className="mcs-table-container">
+      <div className='mcs-table-container'>
         <TableViewFilters
           columns={dataColumns}
           actionsColumnsDefinition={actionColumns}
@@ -529,10 +487,7 @@ class GoalsTable extends React.Component<Props, State> {
         />
       </div>
     ) : (
-      <EmptyTableView
-        iconType="goals"
-        message={formatMessage(messages.noGoal)}
-      />
+      <EmptyTableView iconType='goals' message={formatMessage(messages.noGoal)} />
     );
   }
 }

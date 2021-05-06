@@ -1,12 +1,7 @@
 import * as React from 'react';
 import { StorylineNodeModel } from '../../../domain';
 import { FeedNodeFormData, FORM_ID } from '../domain';
-import {
-  ConfigProps,
-  getFormValues,
-  InjectedFormProps,
-  reduxForm,
-} from 'redux-form';
+import { ConfigProps, getFormValues, InjectedFormProps, reduxForm } from 'redux-form';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
@@ -33,10 +28,7 @@ interface MapStateToProps {
   formValues: FeedNodeFormData;
 }
 
-type Props = InjectedFormProps<
-  FeedNodeFormData,
-  AudienceSegmentFeedAutomationFormProps
-> &
+type Props = InjectedFormProps<FeedNodeFormData, AudienceSegmentFeedAutomationFormProps> &
   AudienceSegmentFeedAutomationFormProps &
   MapStateToProps &
   InjectedIntlProps;
@@ -50,10 +42,7 @@ class AudienceSegmentFeedAutomationForm extends React.Component<Props> {
 
     const sections: McsFormSection[] = [];
 
-    if (
-      node.type === 'SCENARIO_AUDIENCE_SEGMENT_FEED_NODE' &&
-      node.strictlyLayoutablePlugin
-    ) {
+    if (node.type === 'SCENARIO_AUDIENCE_SEGMENT_FEED_NODE' && node.strictlyLayoutablePlugin) {
       const calculatedDisabled = node.strictlyLayoutablePlugin?.disabled
         ? node.strictlyLayoutablePlugin?.disabled
         : disabled;
@@ -106,16 +95,16 @@ class AudienceSegmentFeedAutomationForm extends React.Component<Props> {
     });
 
     return (
-      <Layout className="edit-layout">
+      <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
           <Form
             id={FORM_ID}
-            className="edit-layout ant-layout"
+            className='edit-layout ant-layout'
             onSubmit={handleSubmit}
-            layout="vertical"
+            layout='vertical'
           >
-            <Content className="mcs-content-container mcs-form-container automation-form">
+            <Content className='mcs-content-container mcs-form-container automation-form'>
               {renderedSections}
             </Content>
           </Form>

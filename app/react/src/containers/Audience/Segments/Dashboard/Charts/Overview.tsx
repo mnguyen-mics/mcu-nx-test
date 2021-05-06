@@ -3,21 +3,11 @@ import { withRouter } from 'react-router-dom';
 import { Row, Col } from 'antd';
 import { RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
-import {
-  injectIntl,
-  InjectedIntlProps,
-  defineMessages,
-  FormattedMessage,
-} from 'react-intl';
+import { injectIntl, InjectedIntlProps, defineMessages, FormattedMessage } from 'react-intl';
 import { SEGMENT_QUERY_SETTINGS, AudienceReport } from '../constants';
-import {
-  updateSearch,
-  parseSearch,
-} from '../../../../../utils/LocationSearchHelper';
+import { updateSearch, parseSearch } from '../../../../../utils/LocationSearchHelper';
 import messages from '../messages';
-import injectThemeColors, {
-  InjectedThemeColorsProps,
-} from '../../../../Helpers/injectThemeColors';
+import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
 import { DatamartWithMetricResource } from '../../../../../models/datamart/DatamartResource';
 import {
   EmptyChart,
@@ -76,13 +66,7 @@ class Overview extends React.Component<Props> {
         to: newValues.to,
       });
 
-    return (
-      <McsDateRangePicker
-        values={values}
-        onChange={onChange}
-        excludeToday={true}
-      />
-    );
+    return <McsDateRangePicker values={values} onChange={onChange} excludeToday={true} />;
   }
 
   renderStackedAreaCharts() {
@@ -97,14 +81,11 @@ class Overview extends React.Component<Props> {
     const metrics =
       dataSource && dataSource[0]
         ? Object.keys(dataSource[0]).filter(
-            (el) =>
-              el !== 'day' &&
-              el !== 'user_point_additions' &&
-              el !== 'user_point_deletions',
+            el => el !== 'day' && el !== 'user_point_additions' && el !== 'user_point_deletions',
           )
         : [];
 
-    const datamart = datamarts && datamarts.find((dm) => dm.id === datamartId);
+    const datamart = datamarts && datamarts.find(dm => dm.id === datamartId);
 
     const chartColors = [
       colors['mcs-warning'],
@@ -128,33 +109,22 @@ class Overview extends React.Component<Props> {
       dataset: dataSource as any,
       options: {
         xKey: { key: 'day', mode: 'DAY' },
-        yKeys: metrics.map((metric) => {
+        yKeys: metrics.map(metric => {
           return {
             key: metric,
             message:
-              this.getMetricsDisplayName(metric, datamart) ||
-              formatMessage(messagesMap[metric]),
+              this.getMetricsDisplayName(metric, datamart) || formatMessage(messagesMap[metric]),
           };
         }),
         colors: chartColors,
       },
     };
-    return !isFetching ? (
-      <StackedAreaPlot {...stackedAreaPlotProps} />
-    ) : (
-      <LoadingChart />
-    );
+    return !isFetching ? <StackedAreaPlot {...stackedAreaPlotProps} /> : <LoadingChart />;
   }
 
-  getMetricsDisplayName = (
-    metric: string,
-    datamart?: DatamartWithMetricResource,
-  ) => {
+  getMetricsDisplayName = (metric: string, datamart?: DatamartWithMetricResource) => {
     const metricName =
-      datamart &&
-      datamart.audience_segment_metrics.find(
-        (el) => el.technical_name === metric,
-      );
+      datamart && datamart.audience_segment_metrics.find(el => el.technical_name === metric);
     return metricName ? metricName.display_name : undefined;
   };
 
@@ -163,19 +133,16 @@ class Overview extends React.Component<Props> {
 
     return (
       <div>
-        <Row className="mcs-chart-header">
+        <Row className='mcs-chart-header'>
           <Col span={12}>
             <div />
           </Col>
           <Col span={12}>
-            <span className="mcs-card-button">{this.renderDatePicker()}</span>
+            <span className='mcs-card-button'>{this.renderDatePicker()}</span>
           </Col>
         </Row>
         {dataSource.length === 0 && !isFetching ? (
-          <EmptyChart
-            title={intl.formatMessage(messages.noAdditionDeletion)}
-            icon="warning"
-          />
+          <EmptyChart title={intl.formatMessage(messages.noAdditionDeletion)} icon='warning' />
         ) : (
           this.renderStackedAreaCharts()
         )}
@@ -184,11 +151,7 @@ class Overview extends React.Component<Props> {
   }
 }
 
-export default compose<Props, OverviewProps>(
-  withRouter,
-  injectIntl,
-  injectThemeColors,
-)(Overview);
+export default compose<Props, OverviewProps>(withRouter, injectIntl, injectThemeColors)(Overview);
 
 const messagesMap: {
   [metric: string]: FormattedMessage.MessageDescriptor;

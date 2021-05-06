@@ -1,6 +1,3 @@
-import EditAudienceSegmentPage from './EditAudienceSegmentPage'
+import EditAudienceSegmentPage from './EditAudienceSegmentPage';
 
-export {
-  EditAudienceSegmentPage,
-};
-
+export { EditAudienceSegmentPage };

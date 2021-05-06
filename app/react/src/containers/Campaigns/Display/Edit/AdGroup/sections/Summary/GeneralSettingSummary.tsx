@@ -2,12 +2,7 @@ import * as React from 'react';
 import { AdGroupFormData, AD_GROUP_FORM_NAME } from '../../domain';
 import { getFormValues } from 'redux-form';
 import { compose } from 'recompose';
-import {
-  injectIntl,
-  InjectedIntlProps,
-  FormattedMessage,
-  defineMessages,
-} from 'react-intl';
+import { injectIntl, InjectedIntlProps, FormattedMessage, defineMessages } from 'react-intl';
 import { connect } from 'react-redux';
 import { AdGroupResource } from '../../../../../../../models/campaign/display/index';
 import { BudgetPeriod } from '../../../../../../../models/campaign/constants/index';
@@ -27,36 +22,28 @@ class GeneralSettingSummary extends React.Component<Props> {
     return (
       <div>
         <FormattedMessage
-          id="display.campaign.edit.adGroup.generalSettingSummary.scheduleDate"
+          id='display.campaign.edit.adGroup.generalSettingSummary.scheduleDate'
           defaultMessage={`Your ad group will run from 
           the { startDate } to the { endDate }`}
           values={{
             startDate: (
-              <span className="info-color">
-                {formatUnixTimestamp(adGroup.start_date)}
-              </span>
+              <span className='info-color'>{formatUnixTimestamp(adGroup.start_date)}</span>
             ),
-            endDate: (
-              <span className="info-color">
-                {formatUnixTimestamp(adGroup.end_date)}
-              </span>
-            ),
+            endDate: <span className='info-color'>{formatUnixTimestamp(adGroup.end_date)}</span>,
           }}
         />
         <br />
         <FormattedMessage
-          id="display.campaign.edit.adGroup.generalSettingSummary.bugetPeriod"
+          id='display.campaign.edit.adGroup.generalSettingSummary.bugetPeriod'
           defaultMessage={`Your ad group will run with a { budgetPeriod } budget of { budgetAmount }`}
           values={{
             budgetPeriod: (
-              <span className="info-color">
-                {intl.formatMessage(
-                  budgetPeriodMessageMap[adGroup.max_budget_period || 'DAY'],
-                )}
+              <span className='info-color'>
+                {intl.formatMessage(budgetPeriodMessageMap[adGroup.max_budget_period || 'DAY'])}
               </span>
             ),
             budgetAmount: (
-              <span className="info-color">
+              <span className='info-color'>
                 {adGroup.max_budget_per_period
                   ? intl.formatNumber(adGroup.max_budget_per_period, {
                       style: 'currency',
@@ -85,7 +72,7 @@ export default compose(
 )(GeneralSettingSummary);
 
 const budgetPeriodMessageMap: {
-  [key in BudgetPeriod]: FormattedMessage.MessageDescriptor
+  [key in BudgetPeriod]: FormattedMessage.MessageDescriptor;
 } = defineMessages({
   DAY: {
     id: 'adgroup-budget-period-day',

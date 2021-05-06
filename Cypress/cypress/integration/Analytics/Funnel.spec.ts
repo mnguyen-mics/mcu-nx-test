@@ -1,11 +1,7 @@
 describe('Should test the funnel', () => {
   let createdChannelId: string;
 
-  const getDate = (
-    diffDays: number,
-    diffMonths: number,
-    euFormat?: boolean,
-  ) => {
+  const getDate = (diffDays: number, diffMonths: number, euFormat?: boolean) => {
     const wantedDate = new Date(
       new Date().setDate(new Date().getDate() + diffDays + diffMonths * 30),
     );
@@ -36,9 +32,7 @@ describe('Should test the funnel', () => {
         data: {
           global: {
             total: stepCount,
-            steps: [
-              { name: 'Step 1', count: stepCount, interaction_duration: 10 },
-            ],
+            steps: [{ name: 'Step 1', count: stepCount, interaction_duration: 10 }],
             grouped_by: [],
           },
         },
@@ -86,17 +80,14 @@ describe('Should test the funnel', () => {
           'Accept, Content-Type, Origin, Authorization, X-Requested-With, X-Requested-By',
         'access-control-allow-methods': 'POST, GET, PUT, DELETE',
         'content-length': '97',
-        'strict-transport-security':
-          'max-age=63072000;includeSubDomains;preload',
+        'strict-transport-security': 'max-age=63072000;includeSubDomains;preload',
       },
     };
   };
   before(() => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.request({
-        url: `${Cypress.env('apiDomain')}/v1/datamarts/${
-          data.datamartId
-        }/channels`,
+        url: `${Cypress.env('apiDomain')}/v1/datamarts/${data.datamartId}/channels`,
         method: 'POST',
         headers: { Authorization: data.accessToken },
         body: {
@@ -120,9 +111,7 @@ describe('Should test the funnel', () => {
       goToFunnelAndClickOnDimensions(data.organisationName);
       cy.get('.mcs-funnelQueryBuilder_select--dimensions').click();
       cy.contains('Channel Id').click();
-      cy.get('.mcs-funnelQueryBuilder_dimensionValue').type(
-        createdChannelId + '{enter}',
-      );
+      cy.get('.mcs-funnelQueryBuilder_dimensionValue').type(createdChannelId + '{enter}');
       cy.get('.mcs-funnelQueryBuilder_executeQueryBtn button:first').click();
       cy.get('.mcs-funnel_empty', { timeout: 20000 }).should(
         'contain',
@@ -160,23 +149,13 @@ describe('Should test the funnel', () => {
         cy.wait(5000);
         cy.get('.mcs-funnelQueryBuilder_select--dimensions').click();
         cy.contains('Channel Id').click();
-        cy.get('.mcs-funnelQueryBuilder_dimensionValue').type(
-          createdChannelId + '{enter}',
-        );
+        cy.get('.mcs-funnelQueryBuilder_dimensionValue').type(createdChannelId + '{enter}');
         cy.get('.mcs-funnelQueryBuilder_executeQueryBtn button:first').click();
         cy.wait(2000);
-        cy.get('.mcs-funnel_conversionInfo')
-          .first()
-          .should('contain', '0%');
-        cy.get('.mcs-funnel_percentageOfSucceeded')
-          .first()
-          .should('contain', '100.00%');
-        cy.get('.mcs-funnel_stepInfo')
-          .first()
-          .should('contain', '1');
-        cy.get('.mcs-funnel_stepInfo')
-          .eq(1)
-          .should('contain', '1');
+        cy.get('.mcs-funnel_conversionInfo').first().should('contain', '0%');
+        cy.get('.mcs-funnel_percentageOfSucceeded').first().should('contain', '100.00%');
+        cy.get('.mcs-funnel_stepInfo').first().should('contain', '1');
+        cy.get('.mcs-funnel_stepInfo').eq(1).should('contain', '1');
       });
     });
   });
@@ -189,25 +168,15 @@ describe('Should test the funnel', () => {
       cy.get('.mcs-sideBar-subMenuItem_menu\\.dataStudio\\.funnel').click();
       cy.get('.mcs-funnelQueryBuilder_addStepBtn').click();
       cy.get('.mcs-funnelQueryBuilder_addStepBtn').click();
-      cy.get('.mcs-funnelQueryBuilder_select--dimensions')
-        .first()
-        .click();
+      cy.get('.mcs-funnelQueryBuilder_select--dimensions').first().click();
       cy.contains('Activity Date').click();
       cy.get('.mcs-funnelQueryBuilder_select--dimensions')
         .first()
         .should('contain', 'Activity Date');
-      cy.get('.mcs-funnelQueryBuilder_sortBtn')
-        .first()
-        .click();
-      cy.get('.mcs-funnelQueryBuilder_sortBtn')
-        .eq(2)
-        .click();
-      cy.get('.mcs-funnelQueryBuilder_sortBtn')
-        .eq(3)
-        .click();
-      cy.get('.mcs-funnelQueryBuilder_sortBtn')
-        .eq(1)
-        .click();
+      cy.get('.mcs-funnelQueryBuilder_sortBtn').first().click();
+      cy.get('.mcs-funnelQueryBuilder_sortBtn').eq(2).click();
+      cy.get('.mcs-funnelQueryBuilder_sortBtn').eq(3).click();
+      cy.get('.mcs-funnelQueryBuilder_sortBtn').eq(1).click();
       cy.get('.mcs-funnelQueryBuilder_select--dimensions')
         .first()
         .should('contain', 'Activity Date');
@@ -259,38 +228,23 @@ describe('Should test the funnel', () => {
         cy.get('.mcs-funnelQueryBuilder_select--dimensions').click();
         cy.contains('Brand').click();
         cy.get('.mcs-funnelQueryBuilder_dimensionValue').type('test');
-        cy.get('#mcs-funnel_expression_select_anchor').should(
-          'contain',
-          'test_autocomplete',
-        );
+        cy.get('#mcs-funnel_expression_select_anchor').should('contain', 'test_autocomplete');
         cy.get('.mcs-funnelQueryBuilder_select--dimensions').click();
         cy.contains('Category 1').click();
         cy.get('.mcs-funnelQueryBuilder_dimensionValue').type('test');
-        cy.get('#mcs-funnel_expression_select_anchor').should(
-          'contain',
-          'test_autocomplete',
-        );
+        cy.get('#mcs-funnel_expression_select_anchor').should('contain', 'test_autocomplete');
         cy.get('.mcs-funnelQueryBuilder_select--dimensions').click();
         cy.contains('Category 2').click();
         cy.get('.mcs-funnelQueryBuilder_dimensionValue').type('test');
-        cy.get('#mcs-funnel_expression_select_anchor').should(
-          'contain',
-          'test_autocomplete',
-        );
+        cy.get('#mcs-funnel_expression_select_anchor').should('contain', 'test_autocomplete');
         cy.get('.mcs-funnelQueryBuilder_select--dimensions').click();
         cy.contains('Category 3').click();
         cy.get('.mcs-funnelQueryBuilder_dimensionValue').type('test');
-        cy.get('#mcs-funnel_expression_select_anchor').should(
-          'contain',
-          'test_autocomplete',
-        );
+        cy.get('#mcs-funnel_expression_select_anchor').should('contain', 'test_autocomplete');
         cy.get('.mcs-funnelQueryBuilder_select--dimensions').click();
         cy.contains('Category 4').click();
         cy.get('.mcs-funnelQueryBuilder_dimensionValue').type('test');
-        cy.get('#mcs-funnel_expression_select_anchor').should(
-          'contain',
-          'test_autocomplete',
-        );
+        cy.get('#mcs-funnel_expression_select_anchor').should('contain', 'test_autocomplete');
       });
     });
   });
@@ -305,24 +259,11 @@ describe('Should test the funnel', () => {
       cy.get('.mcs-funnelQueryBuilder_step').should('have.length', 1);
       cy.get('.mcs-funnelQueryBuilder_addStepBtn').click();
       cy.get('.mcs-funnelQueryBuilder_step').should('have.length', 2);
-      cy.get('.mcs-funnelQueryBuilder_step_dimensions').should(
-        'have.length',
-        2,
-      );
-      cy.get('.mcs-funnelQueryBuilder_removeFilterBtn')
-        .first()
-        .click();
-      cy.get('.mcs-funnelQueryBuilder_step_dimensions').should(
-        'have.length',
-        1,
-      );
-      cy.get('.mcs-funnelQueryBuilder_addDimensionBtn')
-        .first()
-        .click();
-      cy.get('.mcs-funnelQueryBuilder_step_dimensions').should(
-        'have.length',
-        2,
-      );
+      cy.get('.mcs-funnelQueryBuilder_step_dimensions').should('have.length', 2);
+      cy.get('.mcs-funnelQueryBuilder_removeFilterBtn').first().click();
+      cy.get('.mcs-funnelQueryBuilder_step_dimensions').should('have.length', 1);
+      cy.get('.mcs-funnelQueryBuilder_addDimensionBtn').first().click();
+      cy.get('.mcs-funnelQueryBuilder_step_dimensions').should('have.length', 2);
     });
   });
 
@@ -500,38 +441,25 @@ describe('Should test the funnel', () => {
                     'test_percentage' + '{enter}',
                   );
                   cy.get('.mcs-funnelQueryBuilder_addStepBtn').click();
-                  cy.get('.mcs-funnelQueryBuilder_select--dimensions')
-                    .eq(1)
-                    .click();
+                  cy.get('.mcs-funnelQueryBuilder_select--dimensions').eq(1).click();
                   cy.wait(1000);
-                  cy.get('.ant-select-dropdown')
-                    .eq(2)
-                    .contains('Brand')
-                    .click({ force: true });
+                  cy.get('.ant-select-dropdown').eq(2).contains('Brand').click({ force: true });
                   cy.get('.mcs-funnelQueryBuilder_dimensionValue')
                     .eq(1)
                     .type('percentage' + '{enter}');
                   cy.get('.mcs-date-range-picker').click();
                   cy.contains('Today').click();
-                  cy.get(
-                    '.mcs-funnelQueryBuilder_executeQueryBtn button:first',
-                  ).click();
+                  cy.get('.mcs-funnelQueryBuilder_executeQueryBtn button:first').click();
                   cy.get('.mcs-funnel_metric')
                     .eq(1)
                     .then($stepPercetange => {
-                      const stepPercentage: number = parseInt(
-                        $stepPercetange.text(),
-                        10,
-                      );
+                      const stepPercentage: number = parseInt($stepPercetange.text(), 10);
                       cy.get('.mcs-funnel_stepInfo_desc')
                         .eq(1)
                         .children()
                         .first()
                         .then($firstStepNumber => {
-                          const firstStepNumber: number = parseInt(
-                            $firstStepNumber.text(),
-                            10,
-                          );
+                          const firstStepNumber: number = parseInt($firstStepNumber.text(), 10);
                           cy.get('.mcs-funnel_stepInfo_desc')
                             .eq(3)
                             .children()
@@ -542,10 +470,7 @@ describe('Should test the funnel', () => {
                                 10,
                               );
                               expect(
-                                Math.ceil(
-                                  100 -
-                                    (secondStepNumber / firstStepNumber) * 100,
-                                ),
+                                Math.ceil(100 - (secondStepNumber / firstStepNumber) * 100),
                               ).to.eq(100 - stepPercentage);
                             });
                         });
@@ -563,38 +488,25 @@ describe('Should test the funnel', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       goToFunnelAndClickOnDimensions(data.organisationName);
       cy.contains('Channel Id').click();
-      cy.get('.mcs-funnelQueryBuilder_dimensionValue').type(
-        createdChannelId + '{enter}',
-      );
+      cy.get('.mcs-funnelQueryBuilder_dimensionValue').type(createdChannelId + '{enter}');
       cy.get('.mcs-funnelQueryBuilder_executeQueryBtn button:first').click();
-      cy.intercept(
-        { pathname: /.*\/user_activities_funnel/, method: 'POST' },
-        req => {
-          expect(req.body.in.end_date).to.eq(getDate(1, 0));
-          expect(req.body.in.start_date).to.eq(getDate(-7, 0));
-          req.reply(res => {
-            res.send(
-              funnelStubbedResponse(100).status,
-              funnelStubbedResponse(100).body,
-              funnelStubbedResponse(100).headers,
-            );
-          });
-        },
-      );
-      cy.get('.mcs-funnel_stepInfo')
-        .eq(0)
-        .should('contain', '100');
+      cy.intercept({ pathname: /.*\/user_activities_funnel/, method: 'POST' }, req => {
+        expect(req.body.in.end_date).to.eq(getDate(1, 0));
+        expect(req.body.in.start_date).to.eq(getDate(-7, 0));
+        req.reply(res => {
+          res.send(
+            funnelStubbedResponse(100).status,
+            funnelStubbedResponse(100).body,
+            funnelStubbedResponse(100).headers,
+          );
+        });
+      });
+      cy.get('.mcs-funnel_stepInfo').eq(0).should('contain', '100');
       cy.get('.mcs-funnelQueryBuilder_step_timelineStart').within(() => {
-        cy.get('.mcs-funnelQueryBuilder_timeline_date').should(
-          'contain',
-          getDate(-7, 0, true),
-        );
+        cy.get('.mcs-funnelQueryBuilder_timeline_date').should('contain', getDate(-7, 0, true));
       });
       cy.get('.mcs-funnelQueryBuilder_step_timelineEnd').within(() => {
-        cy.get('.mcs-funnelQueryBuilder_timeline_date').should(
-          'contain',
-          getDate(0, 0, true),
-        );
+        cy.get('.mcs-funnelQueryBuilder_timeline_date').should('contain', getDate(0, 0, true));
       });
     });
   });
@@ -603,40 +515,27 @@ describe('Should test the funnel', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       goToFunnelAndClickOnDimensions(data.organisationName);
       cy.contains('Channel Id').click();
-      cy.get('.mcs-funnelQueryBuilder_dimensionValue').type(
-        createdChannelId + '{enter}',
-      );
+      cy.get('.mcs-funnelQueryBuilder_dimensionValue').type(createdChannelId + '{enter}');
       cy.get('.mcs-date-range-picker').click();
       cy.contains('Today').click();
       cy.get('.mcs-funnelQueryBuilder_executeQueryBtn button:first').click();
-      cy.intercept(
-        { pathname: /.*\/user_activities_funnel/, method: 'POST' },
-        req => {
-          expect(req.body.in.end_date).to.eq(getDate(1, 0));
-          expect(req.body.in.start_date).to.eq(getDate(0, 0));
-          req.reply(res => {
-            res.send(
-              funnelStubbedResponse(200).status,
-              funnelStubbedResponse(200).body,
-              funnelStubbedResponse(200).headers,
-            );
-          });
-        },
-      );
-      cy.get('.mcs-funnel_stepInfo')
-        .eq(0)
-        .should('contain', '200');
+      cy.intercept({ pathname: /.*\/user_activities_funnel/, method: 'POST' }, req => {
+        expect(req.body.in.end_date).to.eq(getDate(1, 0));
+        expect(req.body.in.start_date).to.eq(getDate(0, 0));
+        req.reply(res => {
+          res.send(
+            funnelStubbedResponse(200).status,
+            funnelStubbedResponse(200).body,
+            funnelStubbedResponse(200).headers,
+          );
+        });
+      });
+      cy.get('.mcs-funnel_stepInfo').eq(0).should('contain', '200');
       cy.get('.mcs-funnelQueryBuilder_step_timelineStart').within(() => {
-        cy.get('.mcs-funnelQueryBuilder_timeline_date').should(
-          'contain',
-          getDate(0, 0, true),
-        );
+        cy.get('.mcs-funnelQueryBuilder_timeline_date').should('contain', getDate(0, 0, true));
       });
       cy.get('.mcs-funnelQueryBuilder_step_timelineEnd').within(() => {
-        cy.get('.mcs-funnelQueryBuilder_timeline_date').should(
-          'contain',
-          getDate(0, 0, true),
-        );
+        cy.get('.mcs-funnelQueryBuilder_timeline_date').should('contain', getDate(0, 0, true));
       });
     });
   });
@@ -645,40 +544,27 @@ describe('Should test the funnel', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       goToFunnelAndClickOnDimensions(data.organisationName);
       cy.contains('Channel Id').click();
-      cy.get('.mcs-funnelQueryBuilder_dimensionValue').type(
-        createdChannelId + '{enter}',
-      );
+      cy.get('.mcs-funnelQueryBuilder_dimensionValue').type(createdChannelId + '{enter}');
       cy.get('.mcs-date-range-picker').click();
       cy.contains('Last 30 days').click();
       cy.get('.mcs-funnelQueryBuilder_executeQueryBtn button:first').click();
-      cy.intercept(
-        { pathname: /.*\/user_activities_funnel/, method: 'POST' },
-        req => {
-          expect(req.body.in.end_date).to.eq(getDate(1, 0));
-          expect(req.body.in.start_date).to.eq(getDate(0, -1));
-          req.reply(res => {
-            res.send(
-              funnelStubbedResponse(300).status,
-              funnelStubbedResponse(300).body,
-              funnelStubbedResponse(300).headers,
-            );
-          });
-        },
-      );
-      cy.get('.mcs-funnel_stepInfo')
-        .eq(0)
-        .should('contain', '300');
+      cy.intercept({ pathname: /.*\/user_activities_funnel/, method: 'POST' }, req => {
+        expect(req.body.in.end_date).to.eq(getDate(1, 0));
+        expect(req.body.in.start_date).to.eq(getDate(0, -1));
+        req.reply(res => {
+          res.send(
+            funnelStubbedResponse(300).status,
+            funnelStubbedResponse(300).body,
+            funnelStubbedResponse(300).headers,
+          );
+        });
+      });
+      cy.get('.mcs-funnel_stepInfo').eq(0).should('contain', '300');
       cy.get('.mcs-funnelQueryBuilder_step_timelineStart').within(() => {
-        cy.get('.mcs-funnelQueryBuilder_timeline_date').should(
-          'contain',
-          getDate(0, -1, true),
-        );
+        cy.get('.mcs-funnelQueryBuilder_timeline_date').should('contain', getDate(0, -1, true));
       });
       cy.get('.mcs-funnelQueryBuilder_step_timelineEnd').within(() => {
-        cy.get('.mcs-funnelQueryBuilder_timeline_date').should(
-          'contain',
-          getDate(0, 0, true),
-        );
+        cy.get('.mcs-funnelQueryBuilder_timeline_date').should('contain', getDate(0, 0, true));
       });
     });
   });
@@ -687,50 +573,31 @@ describe('Should test the funnel', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       goToFunnelAndClickOnDimensions(data.organisationName);
       cy.contains('Channel Id').click();
-      cy.get('.mcs-funnelQueryBuilder_dimensionValue').type(
-        createdChannelId + '{enter}',
-      );
+      cy.get('.mcs-funnelQueryBuilder_dimensionValue').type(createdChannelId + '{enter}');
       cy.get('.mcs-date-range-picker').click();
       cy.contains('Custom').click();
-      cy.get('.ant-calendar-input')
-        .eq(0)
-        .clear()
-        .type(getDate(0, -3));
+      cy.get('.ant-calendar-input').eq(0).clear().type(getDate(0, -3));
       cy.get('.mcs-date-range-picker').click();
       cy.contains('Custom').click();
-      cy.get('.ant-calendar-input')
-        .eq(1)
-        .clear()
-        .type(getDate(0, -2));
+      cy.get('.ant-calendar-input').eq(1).clear().type(getDate(0, -2));
       cy.get('.mcs-funnelQueryBuilder_executeQueryBtn button:first').click();
-      cy.intercept(
-        { pathname: /.*\/user_activities_funnel/, method: 'POST' },
-        req => {
-          expect(req.body.in.end_date).to.eq(getDate(1, -2));
-          expect(req.body.in.start_date).to.eq(getDate(0, -3));
-          req.reply(res => {
-            res.send(
-              funnelStubbedResponse(400).status,
-              funnelStubbedResponse(400).body,
-              funnelStubbedResponse(400).headers,
-            );
-          });
-        },
-      );
-      cy.get('.mcs-funnel_stepInfo')
-        .eq(0)
-        .should('contain', '400');
+      cy.intercept({ pathname: /.*\/user_activities_funnel/, method: 'POST' }, req => {
+        expect(req.body.in.end_date).to.eq(getDate(1, -2));
+        expect(req.body.in.start_date).to.eq(getDate(0, -3));
+        req.reply(res => {
+          res.send(
+            funnelStubbedResponse(400).status,
+            funnelStubbedResponse(400).body,
+            funnelStubbedResponse(400).headers,
+          );
+        });
+      });
+      cy.get('.mcs-funnel_stepInfo').eq(0).should('contain', '400');
       cy.get('.mcs-funnelQueryBuilder_step_timelineStart').within(() => {
-        cy.get('.mcs-funnelQueryBuilder_timeline_date').should(
-          'contain',
-          getDate(0, -3, true),
-        );
+        cy.get('.mcs-funnelQueryBuilder_timeline_date').should('contain', getDate(0, -3, true));
       });
       cy.get('.mcs-funnelQueryBuilder_step_timelineEnd').within(() => {
-        cy.get('.mcs-funnelQueryBuilder_timeline_date').should(
-          'contain',
-          getDate(0, -2, true),
-        );
+        cy.get('.mcs-funnelQueryBuilder_timeline_date').should('contain', getDate(0, -2, true));
       });
     });
   });
@@ -739,45 +606,28 @@ describe('Should test the funnel', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       goToFunnelAndClickOnDimensions(data.organisationName);
       cy.contains('Channel Id').click();
-      cy.get('.mcs-funnelQueryBuilder_dimensionValue').type(
-        createdChannelId + '{enter}',
-      );
+      cy.get('.mcs-funnelQueryBuilder_dimensionValue').type(createdChannelId + '{enter}');
       cy.get('.mcs-date-range-picker').click();
       cy.contains('Custom').click();
-      cy.get('.ant-calendar-input')
-        .eq(0)
-        .clear()
-        .type(getDate(0, -3));
+      cy.get('.ant-calendar-input').eq(0).clear().type(getDate(0, -3));
       cy.get('.mcs-date-range-picker').click();
       cy.contains('Custom').click();
-      cy.get('.ant-calendar-input')
-        .eq(1)
-        .clear()
-        .type(getDate(0, -2));
+      cy.get('.ant-calendar-input').eq(1).clear().type(getDate(0, -2));
       cy.get('.mcs-funnelQueryBuilder_executeQueryBtn button:first').click();
-      cy.intercept(
-        { pathname: /.*\/user_activities_funnel/, method: 'POST' },
-        req => {
-          expect(req.body.in.end_date).to.eq(getDate(1, -2));
-          expect(req.body.in.start_date).to.eq(getDate(0, -3));
-          req.reply(res => {
-            res.send(
-              funnelStubbedResponse(400).status,
-              funnelStubbedResponse(400).conversionBody,
-              funnelStubbedResponse(400).headers,
-            );
-          });
-        },
-      );
-      cy.get('.mcs-funnel_stepInfo')
-        .eq(0)
-        .should('contain', '400');
-      cy.get('.mcs-funnel_stepInfo')
-        .eq(1)
-        .should('contain', '5,000');
-      cy.get('.mcs-funnel_stepInfo')
-        .eq(1)
-        .should('contain', '8,000€');
+      cy.intercept({ pathname: /.*\/user_activities_funnel/, method: 'POST' }, req => {
+        expect(req.body.in.end_date).to.eq(getDate(1, -2));
+        expect(req.body.in.start_date).to.eq(getDate(0, -3));
+        req.reply(res => {
+          res.send(
+            funnelStubbedResponse(400).status,
+            funnelStubbedResponse(400).conversionBody,
+            funnelStubbedResponse(400).headers,
+          );
+        });
+      });
+      cy.get('.mcs-funnel_stepInfo').eq(0).should('contain', '400');
+      cy.get('.mcs-funnel_stepInfo').eq(1).should('contain', '5,000');
+      cy.get('.mcs-funnel_stepInfo').eq(1).should('contain', '8,000€');
     });
   });
 
@@ -785,48 +635,33 @@ describe('Should test the funnel', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       goToFunnelAndClickOnDimensions(data.organisationName);
       cy.contains('Channel Id').click();
-      cy.get('.mcs-funnelQueryBuilder_dimensionValue').type(
-        createdChannelId + '{enter}',
-      );
+      cy.get('.mcs-funnelQueryBuilder_dimensionValue').type(createdChannelId + '{enter}');
       cy.get('.mcs-date-range-picker').click();
       cy.contains('Custom').click();
-      cy.get('.ant-calendar-input')
-        .eq(0)
-        .clear()
-        .type(getDate(0, -3));
+      cy.get('.ant-calendar-input').eq(0).clear().type(getDate(0, -3));
       cy.get('.mcs-date-range-picker').click();
       cy.contains('Custom').click();
-      cy.get('.ant-calendar-input')
-        .eq(1)
-        .clear()
-        .type(getDate(0, -2));
+      cy.get('.ant-calendar-input').eq(1).clear().type(getDate(0, -2));
       cy.get('.mcs-funnelQueryBuilder_executeQueryBtn button:first').click();
-      cy.intercept(
-        { pathname: /.*\/user_activities_funnel/, method: 'POST' },
-        req => {
-          expect(req.body.in.end_date).to.eq(getDate(1, -2));
-          expect(req.body.in.start_date).to.eq(getDate(0, -3));
-          req.reply(res => {
-            res.send(
-              funnelStubbedResponse(400).status,
-              funnelStubbedResponse(400).percentageBody,
-              funnelStubbedResponse(400).headers,
-            );
-          });
-        },
-      );
-      cy.get('.mcs-funnel_conversionInfo')
-        .eq(1)
-        .should('contain', '1.00e-6%');
+      cy.intercept({ pathname: /.*\/user_activities_funnel/, method: 'POST' }, req => {
+        expect(req.body.in.end_date).to.eq(getDate(1, -2));
+        expect(req.body.in.start_date).to.eq(getDate(0, -3));
+        req.reply(res => {
+          res.send(
+            funnelStubbedResponse(400).status,
+            funnelStubbedResponse(400).percentageBody,
+            funnelStubbedResponse(400).headers,
+          );
+        });
+      });
+      cy.get('.mcs-funnel_conversionInfo').eq(1).should('contain', '1.00e-6%');
     });
   });
 
   it('should test the group by feature', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.request({
-        url: `${Cypress.env('apiDomain')}/v1/datamarts/${
-          data.datamartId
-        }/channels`,
+        url: `${Cypress.env('apiDomain')}/v1/datamarts/${data.datamartId}/channels`,
         method: 'POST',
         headers: { Authorization: data.accessToken },
         body: {
@@ -861,9 +696,7 @@ describe('Should test the funnel', () => {
         }).then(() => {
           cy.wait(2000);
           cy.request({
-            url: `${Cypress.env('apiDomain')}/v1/datamarts/${
-              data.datamartId
-            }/channels`,
+            url: `${Cypress.env('apiDomain')}/v1/datamarts/${data.datamartId}/channels`,
             method: 'POST',
             headers: { Authorization: data.accessToken },
             body: {
@@ -900,22 +733,12 @@ describe('Should test the funnel', () => {
               cy.get('.mcs-funnelQueryBuilder_dimensionValue').click();
               cy.contains(secondChannelResp.body.data.id).click();
               cy.contains(channelResp.body.data.id).click();
-              cy.get(
-                '.mcs-funnelQueryBuilder_executeQueryBtn button:first',
-              ).click();
+              cy.get('.mcs-funnelQueryBuilder_executeQueryBtn button:first').click();
               cy.wait(2000);
               cy.get('.mcs-funnel_splitBy_select').click({ force: true });
-              cy.get('.mcs-funnelSplitBy_option')
-                .first()
-                .click({ force: true });
-              cy.get('.mcs-funnelStepHover').should(
-                'contain',
-                channelResp.body.data.id,
-              );
-              cy.get('.mcs-funnelStepHover').should(
-                'contain',
-                secondChannelResp.body.data.id,
-              );
+              cy.get('.mcs-funnelSplitBy_option').first().click({ force: true });
+              cy.get('.mcs-funnelStepHover').should('contain', channelResp.body.data.id);
+              cy.get('.mcs-funnelStepHover').should('contain', secondChannelResp.body.data.id);
             });
           });
         });

@@ -1,4 +1,4 @@
-import { Button, Loading } from '@mediarithmics-private/mcs-components-library';
+import { Button, Loading } from '@mediarithmics-private/mcs-components-library';
 import EmptyRecords from './RelatedRecord/EmptyRecords';
 import Form from './Form';
 import TableSelector from './ElementSelector/TableSelector';

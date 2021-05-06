@@ -20,19 +20,13 @@ export interface IChannelService {
     organisationId: string,
     options?: object,
   ) => Promise<DataListResponse<ChannelResourceShape>>;
-  getChannel: (
-    datamartId: string,
-    channelId: string,
-  ) => Promise<DataResponse<ChannelResource>>;
+  getChannel: (datamartId: string, channelId: string) => Promise<DataResponse<ChannelResource>>;
   updateSite: (
     datamartId: string,
     siteId: string,
     body: Partial<SiteResource>,
   ) => Promise<DataResponse<SiteResource>>;
-  deleteSite: (
-    datamartId: string,
-    siteId: string,
-  ) => Promise<DataResponse<SiteResource>>;
+  deleteSite: (datamartId: string, siteId: string) => Promise<DataResponse<SiteResource>>;
   updateMobileApplication: (
     datamartId: string,
     mobileApplicationId: string,
@@ -138,10 +132,7 @@ export class ChannelService implements IChannelService {
 
     return ApiService.getRequest(endpoint, params);
   }
-  getChannel(
-    datamartId: string,
-    channelId: string,
-  ): Promise<DataResponse<ChannelResource>> {
+  getChannel(datamartId: string, channelId: string): Promise<DataResponse<ChannelResource>> {
     const endpoint = `datamarts/${datamartId}/channels/${channelId}`;
     return ApiService.getRequest(endpoint);
   }
@@ -153,10 +144,7 @@ export class ChannelService implements IChannelService {
     const endpoint = `datamarts/${datamartId}/sites/${siteId}`;
     return ApiService.putRequest(endpoint, body);
   }
-  deleteSite(
-    datamartId: string,
-    siteId: string,
-  ): Promise<DataResponse<SiteResource>> {
+  deleteSite(datamartId: string, siteId: string): Promise<DataResponse<SiteResource>> {
     const endpoint = `datamarts/${datamartId}/sites/${siteId}`;
     return ApiService.deleteRequest(endpoint);
   }

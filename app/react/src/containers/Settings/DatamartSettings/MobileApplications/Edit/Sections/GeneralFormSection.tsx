@@ -9,12 +9,8 @@ import {
   FormInputField,
   FormAlertInputField,
 } from '../../../../../../components/Form';
-import withValidators, {
-  ValidatorProps,
-} from '../../../../../../components/Form/withValidators';
-import withNormalizer, {
-  NormalizerProps,
-} from '../../../../../../components/Form/withNormalizer';
+import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
+import withNormalizer, { NormalizerProps } from '../../../../../../components/Form/withNormalizer';
 
 type Props = InjectedIntlProps & ValidatorProps & NormalizerProps;
 
@@ -48,7 +44,7 @@ class GeneralFormSection extends React.Component<Props, State> {
         />
 
         <FormInputField
-          name="mobileapplication.name"
+          name='mobileapplication.name'
           component={FormInput}
           validate={[isRequired]}
           formItemProps={{
@@ -56,9 +52,7 @@ class GeneralFormSection extends React.Component<Props, State> {
             required: true,
           }}
           inputProps={{
-            placeholder: formatMessage(
-              messages.contentSectionGeneralNamePlaceholder,
-            ),
+            placeholder: formatMessage(messages.contentSectionGeneralNamePlaceholder),
           }}
           helpToolTipProps={{
             title: formatMessage(messages.contentSectionGeneralNameTooltip),
@@ -66,7 +60,7 @@ class GeneralFormSection extends React.Component<Props, State> {
         />
 
         <FormAlertInputField
-          name="mobileapplication.token"
+          name='mobileapplication.token'
           component={FormAlertInput}
           validate={[isRequired]}
           formItemProps={{
@@ -74,15 +68,13 @@ class GeneralFormSection extends React.Component<Props, State> {
             required: true,
           }}
           inputProps={{
-            placeholder: formatMessage(
-              messages.contentSectionGeneralTokenPlaceholder,
-            ),
+            placeholder: formatMessage(messages.contentSectionGeneralTokenPlaceholder),
           }}
           helpToolTipProps={{
             title: formatMessage(messages.contentSectionGeneralTokenTooltip),
           }}
-          iconType="warning"
-          type="warning"
+          iconType='warning'
+          type='warning'
           message={formatMessage(messages.warningOnTokenEdition)}
         />
       </div>
@@ -90,8 +82,4 @@ class GeneralFormSection extends React.Component<Props, State> {
   }
 }
 
-export default compose(
-  injectIntl,
-  withValidators,
-  withNormalizer,
-)(GeneralFormSection);
+export default compose(injectIntl, withValidators, withNormalizer)(GeneralFormSection);

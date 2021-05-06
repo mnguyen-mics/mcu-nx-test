@@ -4,13 +4,8 @@ import { Row, Col } from 'antd';
 import { compose } from 'recompose';
 import messages from '../messages';
 import { SEGMENT_QUERY_SETTINGS, AudienceReport } from '../constants';
-import {
-  updateSearch,
-  parseSearch,
-} from '../../../../../utils/LocationSearchHelper';
-import injectThemeColors, {
-  InjectedThemeColorsProps,
-} from '../../../../Helpers/injectThemeColors';
+import { updateSearch, parseSearch } from '../../../../../utils/LocationSearchHelper';
+import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
 import { RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import {
@@ -80,9 +75,7 @@ class AdditionDeletion extends React.Component<Props> {
           return {
             ...item,
             user_point_deletions:
-              item && item.user_point_deletions
-                ? -item.user_point_deletions
-                : 0,
+              item && item.user_point_deletions ? -item.user_point_deletions : 0,
           };
         })
       : [];
@@ -112,19 +105,16 @@ class AdditionDeletion extends React.Component<Props> {
 
     return (
       <div>
-        <Row className="mcs-chart-header">
+        <Row className='mcs-chart-header'>
           <Col span={12}>
             <div />
           </Col>
           <Col span={12}>
-            <span className="mcs-card-button">{this.renderDatePicker()}</span>
+            <span className='mcs-card-button'>{this.renderDatePicker()}</span>
           </Col>
         </Row>
         {dataSource.length === 0 && !isFetching ? (
-          <EmptyChart
-            title={intl.formatMessage(messages.noAdditionDeletion)}
-            icon="warning"
-          />
+          <EmptyChart title={intl.formatMessage(messages.noAdditionDeletion)} icon='warning' />
         ) : (
           this.renderStackedAreaCharts()
         )}

@@ -50,6 +50,6 @@ class ExitNodeAutomationDashboardStats extends React.Component<Props> {
   }
 }
 
-export default compose<Props, ExitNodeAutomationDashboardStatsProps>(
-  injectIntl,
-)(ExitNodeAutomationDashboardStats);
+export default compose<Props, ExitNodeAutomationDashboardStatsProps>(injectIntl)(
+  ExitNodeAutomationDashboardStats,
+);

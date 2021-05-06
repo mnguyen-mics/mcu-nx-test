@@ -24,9 +24,7 @@ interface MapStateProps {
   defaultDatamart: (organisationId: string) => { id: string };
 }
 
-type Props = SegmentReachProps &
-  MapStateProps &
-  RouteComponentProps<EditEmailBlastRouteMatchParam>;
+type Props = SegmentReachProps & MapStateProps & RouteComponentProps<EditEmailBlastRouteMatchParam>;
 
 class SegmentReach extends React.Component<Props, State> {
   @lazyInject(TYPES.IEmailCampaignService)
@@ -86,10 +84,10 @@ class SegmentReach extends React.Component<Props, State> {
     if (segmentIds && segmentIds.length > 0) {
       if (providerTechnicalNames && providerTechnicalNames.length === 0) {
         return (
-          <div className="segment-user-reach">
+          <div className='segment-user-reach'>
             <FormattedMessage
-              id="email.campaign.edit.segmentReach.missing-provider"
-              defaultMessage="Please select a provider to have the potential reach number"
+              id='email.campaign.edit.segmentReach.missing-provider'
+              defaultMessage='Please select a provider to have the potential reach number'
             />
           </div>
         );
@@ -97,26 +95,24 @@ class SegmentReach extends React.Component<Props, State> {
 
       if (count === 0) {
         return (
-          <div className="segment-user-reach">
+          <div className='segment-user-reach'>
             <FormattedMessage
-              id="email.campaign.edit.segmentReach.potential-reach-zero"
-              defaultMessage="There are no email to reach"
+              id='email.campaign.edit.segmentReach.potential-reach-zero'
+              defaultMessage='There are no email to reach'
             />
           </div>
         );
       }
 
       return (
-        <div className="segment-user-reach">
+        <div className='segment-user-reach'>
           <FormattedMessage
-            id="email.campaign.edit.segmentReach.potential-reach"
+            id='email.campaign.edit.segmentReach.potential-reach'
             defaultMessage={`Potential Reach: {emailCountLabeled} 
               { emailCount, plural, one { email } other { emails }} `}
             values={{
               emailCountLabeled: (
-                <span className="reach-number">
-                  {formatMetric(count, '0,00')}
-                </span>
+                <span className='reach-number'>{formatMetric(count, '0,00')}</span>
               ),
               emailCount: count,
             }}

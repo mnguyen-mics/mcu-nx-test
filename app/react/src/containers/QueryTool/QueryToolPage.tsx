@@ -29,9 +29,7 @@ interface MapStateToProps {
   connectedUser: any;
 }
 
-type Props = RouteComponentProps<QueryToolPageRouteParams> &
-  MapStateToProps &
-  InjectedIntlProps;
+type Props = RouteComponentProps<QueryToolPageRouteParams> & MapStateToProps & InjectedIntlProps;
 
 const messages = defineMessages({
   queryBuilder: {
@@ -94,31 +92,32 @@ class QueryToolPage extends React.Component<Props> {
 
     const OTQLActionbar = (query: string, datamartId: string) => {
       const saveAsUserQuery = (segmentFormData: NewUserQuerySimpleFormData) => {
-        return this._queryService.createQuery(datamartId, {
-          query_language: "OTQL",
-          query_text: query
-        }).then(d => d.data).then(queryResource => {
-          const { name, technical_name, persisted } = segmentFormData;
-          const userQuerySegment: Partial<UserQuerySegment> = {
-            datamart_id: datamartId,
-            type: 'USER_QUERY',
-            name,
-            technical_name,
-            persisted,
-            default_ttl: calculateDefaultTtl(segmentFormData),
-            query_id: queryResource.id,
-          };
-          return this._audienceSegmentService
-            .saveSegment(match.params.organisationId, userQuerySegment)
-            .then(res => {
-              this._tagService.sendEvent("create_segment", "Query Tool", "Save Segment");
-              history.push(
-                `/v2/o/${match.params.organisationId}/audience/segments/${
-                  res.data.id
-                }`,
-              );
-            });
-        });
+        return this._queryService
+          .createQuery(datamartId, {
+            query_language: 'OTQL',
+            query_text: query,
+          })
+          .then(d => d.data)
+          .then(queryResource => {
+            const { name, technical_name, persisted } = segmentFormData;
+            const userQuerySegment: Partial<UserQuerySegment> = {
+              datamart_id: datamartId,
+              type: 'USER_QUERY',
+              name,
+              technical_name,
+              persisted,
+              default_ttl: calculateDefaultTtl(segmentFormData),
+              query_id: queryResource.id,
+            };
+            return this._audienceSegmentService
+              .saveSegment(match.params.organisationId, userQuerySegment)
+              .then(res => {
+                this._tagService.sendEvent('create_segment', 'Query Tool', 'Save Segment');
+                history.push(
+                  `/v2/o/${match.params.organisationId}/audience/segments/${res.data.id}`,
+                );
+              });
+          });
       };
       const saveAsExport = (exportFormData: NewExportSimpleFormData) => {
         return this._queryService
@@ -136,7 +135,7 @@ class QueryToolPage extends React.Component<Props> {
                 type: 'QUERY',
               })
               .then(res => {
-                this._tagService.sendEvent("create_segment", "Query Tool", "Save Segment");
+                this._tagService.sendEvent('create_segment', 'Query Tool', 'Save Segment');
                 history.push(
                   `/v2/o/${match.params.organisationId}/datastudio/exports/${res.data.id}`,
                 );
@@ -148,9 +147,7 @@ class QueryToolPage extends React.Component<Props> {
           saveAsUserQuery={saveAsUserQuery}
           saveAsExort={saveAsExport}
           csvExportDisabled={true}
-          breadcrumb={[
-            intl.formatMessage(messages.queryBuilder),
-          ]}
+          breadcrumb={[intl.formatMessage(messages.queryBuilder)]}
         />
       );
     };
@@ -166,20 +163,12 @@ class QueryToolPage extends React.Component<Props> {
             isMainlayout={true}
           />
         )}
-        {selectedDatamart &&
-          selectedDatamart.storage_model_version === 'v201709' && (
-            <QueryToolSelector
-              renderActionBar={OTQLActionbar}
-              datamartId={selectedDatamart.id}
-            />
-          )}
-        {selectedDatamart &&
-          selectedDatamart.storage_model_version === 'v201506' && (
-            <Alert
-            message={intl.formatMessage(messages.noMoreSupported)}
-            type="warning"
-          />
-          )}
+        {selectedDatamart && selectedDatamart.storage_model_version === 'v201709' && (
+          <QueryToolSelector renderActionBar={OTQLActionbar} datamartId={selectedDatamart.id} />
+        )}
+        {selectedDatamart && selectedDatamart.storage_model_version === 'v201506' && (
+          <Alert message={intl.formatMessage(messages.noMoreSupported)} type='warning' />
+        )}
       </div>
     );
   }

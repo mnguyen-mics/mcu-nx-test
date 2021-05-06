@@ -24,9 +24,7 @@ export interface McsFormSection {
 
 // take the model id key if present
 // usefull for domain object coming from api
-export function createFieldArrayModel(model: {
-  [key: string]: any;
-}): FieldArrayModel {
+export function createFieldArrayModel(model: { [key: string]: any }): FieldArrayModel {
   return {
     model: model,
     key: model.id || cuid(),

@@ -13,23 +13,14 @@ export interface IImportService {
     datamartId: string,
     options: GetImportsOptions,
   ) => Promise<DataListResponse<Import>>;
-  getImport: (
-    datamartId: string,
-    importId: string,
-  ) => Promise<DataResponse<Import>>;
-  createImport: (
-    datamartId: string,
-    body: Partial<Import>,
-  ) => Promise<DataResponse<Import>>;
+  getImport: (datamartId: string, importId: string) => Promise<DataResponse<Import>>;
+  createImport: (datamartId: string, body: Partial<Import>) => Promise<DataResponse<Import>>;
   updateImport: (
     datamartId: string,
     importId: string,
     body: Partial<Import>,
   ) => Promise<DataResponse<Import>>;
-  deleteImport: (
-    datamartId: string,
-    importId: string,
-  ) => Promise<DataResponse<Import>>;
+  deleteImport: (datamartId: string, importId: string) => Promise<DataResponse<Import>>;
   createImportExecution: (
     datamartId: string,
     importId: string,
@@ -43,33 +34,24 @@ export interface IImportService {
   cancelImportExecution: (
     datamartId: string,
     importId: string,
-    executionId: string
-  ) => Promise<DataResponse<ImportExecution>>
+    executionId: string,
+  ) => Promise<DataResponse<ImportExecution>>;
 }
 
 @injectable()
 export class ImportService implements IImportService {
-  getImportList(
-    datamartId: string,
-    options: object = {},
-  ): Promise<DataListResponse<Import>> {
+  getImportList(datamartId: string, options: object = {}): Promise<DataListResponse<Import>> {
     const endpoint = `datamarts/${datamartId}/document_imports`;
     const params = {
       ...options,
     };
     return ApiService.getRequest(endpoint, params);
   }
-  getImport(
-    datamartId: string,
-    importId: string,
-  ): Promise<DataResponse<Import>> {
+  getImport(datamartId: string, importId: string): Promise<DataResponse<Import>> {
     const endpoint = `datamarts/${datamartId}/document_imports/${importId}`;
     return ApiService.getRequest(endpoint);
   }
-  createImport(
-    datamartId: string,
-    body: Partial<Import>,
-  ): Promise<DataResponse<Import>> {
+  createImport(datamartId: string, body: Partial<Import>): Promise<DataResponse<Import>> {
     const endpoint = `datamarts/${datamartId}/document_imports`;
     return ApiService.postRequest(endpoint, body);
   }
@@ -81,10 +63,7 @@ export class ImportService implements IImportService {
     const endpoint = `datamarts/${datamartId}/document_imports/${importId}`;
     return ApiService.putRequest(endpoint, body);
   }
-  deleteImport(
-    datamartId: string,
-    importId: string,
-  ): Promise<DataResponse<Import>> {
+  deleteImport(datamartId: string, importId: string): Promise<DataResponse<Import>> {
     const endpoint = `datamarts/${datamartId}/document_imports/${importId}`;
     return ApiService.deleteRequest(endpoint);
   }
@@ -111,9 +90,8 @@ export class ImportService implements IImportService {
   ): Promise<DataResponse<ImportExecution>> {
     const endpoint = `datamarts/${datamartId}/document_imports/${importId}/executions/${executionId}/action`;
     const action: MakeJobExecutionAction = {
-      'action': 'CANCEL'
-    }
+      action: 'CANCEL',
+    };
     return ApiService.postRequest(endpoint, action);
   }
-
 }

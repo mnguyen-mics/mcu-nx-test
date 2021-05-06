@@ -26,8 +26,10 @@ interface LegendChartWithModalState {
   key2: string;
 }
 
-class LegendChartWithModal extends React.Component<LegendChartWithModalProps, LegendChartWithModalState> {
-
+class LegendChartWithModal extends React.Component<
+  LegendChartWithModalProps,
+  LegendChartWithModalState
+> {
   constructor(props: LegendChartWithModalProps) {
     super(props);
 
@@ -53,17 +55,15 @@ class LegendChartWithModal extends React.Component<LegendChartWithModalProps, Le
       });
 
       const onChangeValueLeft = (e: RadioChangeEvent) => {
-        this.setState(
-          (oldState: LegendChartWithModalState) => {
-            return {
-              ...oldState,
-              key1: e.target.value,
-            };
-          });
+        this.setState((oldState: LegendChartWithModalState) => {
+          return {
+            ...oldState,
+            key1: e.target.value,
+          };
+        });
       };
       const onChangeValueRight = (e: RadioChangeEvent) => {
-        this.setState(
-      (oldState: LegendChartWithModalState) => {
+        this.setState((oldState: LegendChartWithModalState) => {
           return {
             ...oldState,
             key2: e.target.value,
@@ -74,10 +74,7 @@ class LegendChartWithModal extends React.Component<LegendChartWithModalProps, Le
       return (
         <Row>
           <Col span={12}>
-            <Radio.Group
-              defaultValue={options[0].key}
-              onChange={onChangeValueLeft}
-            >
+            <Radio.Group defaultValue={options[0].key} onChange={onChangeValueLeft}>
               {legends.map(legend => {
                 return (
                   <Radio key={legend.key} style={radioStyle} value={legend.key}>
@@ -88,10 +85,7 @@ class LegendChartWithModal extends React.Component<LegendChartWithModalProps, Le
             </Radio.Group>
           </Col>
           <Col span={12}>
-            <Radio.Group
-              defaultValue={options[1].key}
-              onChange={onChangeValueRight}
-            >
+            <Radio.Group defaultValue={options[1].key} onChange={onChangeValueRight}>
               {legends.map(legend => {
                 return (
                   <Radio key={legend.key} style={radioStyle} value={legend.key}>
@@ -119,9 +113,9 @@ class LegendChartWithModal extends React.Component<LegendChartWithModalProps, Le
       });
     };
 
-    const onClick =  () => renderModal(this);
+    const onClick = () => renderModal(this);
     return (
-      <div className="mcs-legend-container">
+      <div className='mcs-legend-container'>
         {options.map(option => {
           return (
             <div key={option.domain} style={{ float: 'left' }}>
@@ -157,14 +151,8 @@ class LegendChartWithModal extends React.Component<LegendChartWithModalProps, Le
             lineHeight: '40px',
           }}
         >
-          <button
-            className="mcs-invisible-button"
-            onClick={onClick}
-          >
-            <McsIcon
-              style={{ marginLeft: '10px', color: '#d0d0d0' }}
-              type="pen"
-            />
+          <button className='mcs-invisible-button' onClick={onClick}>
+            <McsIcon style={{ marginLeft: '10px', color: '#d0d0d0' }} type='pen' />
           </button>
         </div>
       </div>

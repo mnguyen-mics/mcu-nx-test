@@ -3,10 +3,7 @@ import {
   createFieldArrayModel,
   createFieldArrayModelWithMeta,
 } from './../../../../utils/FormHelper';
-import {
-  Task,
-  executeTasksInSequence,
-} from './../../../../utils/PromiseHelper';
+import { Task, executeTasksInSequence } from './../../../../utils/PromiseHelper';
 
 import {
   EmailTemplateSelectionResource,
@@ -39,10 +36,7 @@ type TCampaignId = string;
 
 export interface IEmailCampaignFormService {
   loadCampaign: (emailCampaignId: string) => Promise<EmailCampaignFormData>;
-  loadBlast: (
-    emailCampaignId: string,
-    blastId: string,
-  ) => Promise<EmailBlastFormData>;
+  loadBlast: (emailCampaignId: string, blastId: string) => Promise<EmailBlastFormData>;
   loadCampaignDependencies: (
     campaignId: string,
   ) => Promise<{
@@ -89,10 +83,7 @@ export class EmailCampaignFormService implements IEmailCampaignFormService {
     });
   }
 
-  loadBlast(
-    emailCampaignId: string,
-    blastId: string,
-  ): Promise<EmailBlastFormData> {
+  loadBlast(emailCampaignId: string, blastId: string): Promise<EmailBlastFormData> {
     return Promise.all([
       this._emailCampaignService.getBlast(emailCampaignId, blastId),
       this.loadBlastDependencies(emailCampaignId, blastId),
@@ -117,14 +108,12 @@ export class EmailCampaignFormService implements IEmailCampaignFormService {
       this._emailCampaignService.getBlasts(campaignId).then(resp => {
         return Promise.all(
           resp.data.map(blast => {
-            return this.loadBlastDependencies(campaignId, blast.id).then(
-              dependencies => {
-                return createFieldArrayModel({
-                  blast: blast,
-                  ...dependencies,
-                });
-              },
-            );
+            return this.loadBlastDependencies(campaignId, blast.id).then(dependencies => {
+              return createFieldArrayModel({
+                blast: blast,
+                ...dependencies,
+              });
+            });
           }),
         );
       }),
@@ -138,13 +127,11 @@ export class EmailCampaignFormService implements IEmailCampaignFormService {
 
   loadBlastDependencies(campaignId: string, blastId: string): Promise<any> {
     return Promise.all([
-      this._emailCampaignService
-        .getEmailTemplates(campaignId, blastId)
-        .then(resp =>
-          resp.data.map(template => ({
-            ...createFieldArrayModelWithMeta(template, { name: template.name }),
-          })),
-        ),
+      this._emailCampaignService.getEmailTemplates(campaignId, blastId).then(resp =>
+        resp.data.map(template => ({
+          ...createFieldArrayModelWithMeta(template, { name: template.name }),
+        })),
+      ),
       this._emailCampaignService
         .getConsents(campaignId, blastId)
         .then(resp => resp.data.map(createFieldArrayModel)),
@@ -170,9 +157,7 @@ export class EmailCampaignFormService implements IEmailCampaignFormService {
     let createOrUpdateCampaignPromise;
     if (
       formData.campaign &&
-      hasId<EmailCampaignResource, Partial<EmailCampaignCreateRequest>>(
-        formData.campaign,
-      )
+      hasId<EmailCampaignResource, Partial<EmailCampaignCreateRequest>>(formData.campaign)
     ) {
       createOrUpdateCampaignPromise = this._emailCampaignService.updateEmailCampaign(
         formData.campaign.id,
@@ -191,16 +176,8 @@ export class EmailCampaignFormService implements IEmailCampaignFormService {
       const tasks: Task[] = [];
 
       tasks.push(
-        ...this.getRouterTasks(
-          campaignId,
-          formData.routerFields,
-          initialFormData.routerFields,
-        ),
-        ...this.getBlastTasks(
-          campaignId,
-          formData.blastFields,
-          initialFormData.blastFields,
-        ),
+        ...this.getRouterTasks(campaignId, formData.routerFields, initialFormData.routerFields),
+        ...this.getBlastTasks(campaignId, formData.blastFields, initialFormData.blastFields),
       );
 
       return executeTasksInSequence(tasks).then(() => campaignId);
@@ -216,9 +193,7 @@ export class EmailCampaignFormService implements IEmailCampaignFormService {
 
     if (
       formData.blast &&
-      hasId<EmailBlastResource, Partial<EmailBlastCreateRequest>>(
-        formData.blast,
-      )
+      hasId<EmailBlastResource, Partial<EmailBlastCreateRequest>>(formData.blast)
     ) {
       createOrUpdateBlastPromise = this._emailCampaignService.updateBlast(
         campaignId,
@@ -271,10 +246,7 @@ export class EmailCampaignFormService implements IEmailCampaignFormService {
     const initialSegmentIds: string[] = [];
     initialSegmentFields.forEach(field => {
       if (
-        hasId<
-          AudienceSegmentSelectionResource,
-          AudienceSegmentSelectionCreateRequest
-        >(field.model)
+        hasId<AudienceSegmentSelectionResource, AudienceSegmentSelectionCreateRequest>(field.model)
       ) {
         initialSegmentIds.push(field.model.id);
       }
@@ -282,10 +254,7 @@ export class EmailCampaignFormService implements IEmailCampaignFormService {
     const currentSegmentIds: string[] = [];
     segmentFields.forEach(field => {
       if (
-        hasId<
-          AudienceSegmentSelectionResource,
-          AudienceSegmentSelectionCreateRequest
-        >(field.model)
+        hasId<AudienceSegmentSelectionResource, AudienceSegmentSelectionCreateRequest>(field.model)
       ) {
         currentSegmentIds.push(field.model.id);
       }
@@ -295,17 +264,10 @@ export class EmailCampaignFormService implements IEmailCampaignFormService {
     // new segment tasks
     segmentFields.forEach(field => {
       if (
-        !hasId<
-          AudienceSegmentSelectionResource,
-          AudienceSegmentSelectionCreateRequest
-        >(field.model)
+        !hasId<AudienceSegmentSelectionResource, AudienceSegmentSelectionCreateRequest>(field.model)
       ) {
         tasks.push(() =>
-          this._emailCampaignService.createSegment(
-            campaignId,
-            blastId,
-            field.model,
-          ),
+          this._emailCampaignService.createSegment(campaignId, blastId, field.model),
         );
       }
     });
@@ -313,9 +275,7 @@ export class EmailCampaignFormService implements IEmailCampaignFormService {
     initialSegmentIds
       .filter(id => !currentSegmentIds.includes(id))
       .forEach(id => {
-        tasks.push(() =>
-          this._emailCampaignService.deleteSegment(campaignId, blastId, id),
-        );
+        tasks.push(() => this._emailCampaignService.deleteSegment(campaignId, blastId, id));
       });
     return tasks;
   }
@@ -328,23 +288,13 @@ export class EmailCampaignFormService implements IEmailCampaignFormService {
   ): Task[] {
     const initialTemplateIds: string[] = [];
     initialTemplateFields.forEach(field => {
-      if (
-        hasId<
-          EmailTemplateSelectionResource,
-          EmailTemplateSelectionCreateRequest
-        >(field.model)
-      ) {
+      if (hasId<EmailTemplateSelectionResource, EmailTemplateSelectionCreateRequest>(field.model)) {
         initialTemplateIds.push(field.model.id);
       }
     });
     const currentTemplateIds: string[] = [];
     templateFields.forEach(field => {
-      if (
-        hasId<
-          EmailTemplateSelectionResource,
-          EmailTemplateSelectionCreateRequest
-        >(field.model)
-      ) {
+      if (hasId<EmailTemplateSelectionResource, EmailTemplateSelectionCreateRequest>(field.model)) {
         currentTemplateIds.push(field.model.id);
       }
     });
@@ -353,17 +303,10 @@ export class EmailCampaignFormService implements IEmailCampaignFormService {
     // new segment tasks
     templateFields.forEach(field => {
       if (
-        !hasId<
-          EmailTemplateSelectionResource,
-          EmailTemplateSelectionCreateRequest
-        >(field.model)
+        !hasId<EmailTemplateSelectionResource, EmailTemplateSelectionCreateRequest>(field.model)
       ) {
         tasks.push(() =>
-          this._emailCampaignService.createEmailTemplate(
-            campaignId,
-            blastId,
-            field.model,
-          ),
+          this._emailCampaignService.createEmailTemplate(campaignId, blastId, field.model),
         );
       }
     });
@@ -371,13 +314,7 @@ export class EmailCampaignFormService implements IEmailCampaignFormService {
     initialTemplateIds
       .filter(id => !currentTemplateIds.includes(id))
       .forEach(id => {
-        tasks.push(() =>
-          this._emailCampaignService.deleteEmailTemplate(
-            campaignId,
-            blastId,
-            id,
-          ),
-        );
+        tasks.push(() => this._emailCampaignService.deleteEmailTemplate(campaignId, blastId, id));
       });
     return tasks;
   }
@@ -406,11 +343,7 @@ export class EmailCampaignFormService implements IEmailCampaignFormService {
     consentFields.forEach(field => {
       if (!field.model.id) {
         tasks.push(() =>
-          this._emailCampaignService.createConsent(
-            campaignId,
-            blastId,
-            field.model,
-          ),
+          this._emailCampaignService.createConsent(campaignId, blastId, field.model),
         );
       }
     });
@@ -418,9 +351,7 @@ export class EmailCampaignFormService implements IEmailCampaignFormService {
     initialConsentIds
       .filter(id => !currentConsentIds.includes(id))
       .forEach(id => {
-        tasks.push(() =>
-          this._emailCampaignService.deleteConsent(campaignId, blastId, id),
-        );
+        tasks.push(() => this._emailCampaignService.deleteConsent(campaignId, blastId, id));
       });
     return tasks;
   }
@@ -447,18 +378,14 @@ export class EmailCampaignFormService implements IEmailCampaignFormService {
     // new segment tasks
     routerFields.forEach(field => {
       if (!field.model.id) {
-        tasks.push(() =>
-          this._emailCampaignService.createRouter(campaignId, field.model),
-        );
+        tasks.push(() => this._emailCampaignService.createRouter(campaignId, field.model));
       }
     });
     // removed segment tasks
     initialRouterIds
       .filter(id => !currentRouterIds.includes(id))
       .forEach(id => {
-        tasks.push(() =>
-          this._emailCampaignService.deleteRouter(campaignId, id),
-        );
+        tasks.push(() => this._emailCampaignService.deleteRouter(campaignId, id));
       });
     return tasks;
   }
@@ -470,22 +397,14 @@ export class EmailCampaignFormService implements IEmailCampaignFormService {
   ): Task[] {
     const initialBlastIds: string[] = [];
     initialBlastFields.forEach(field => {
-      if (
-        hasId<EmailBlastResource, Partial<EmailBlastCreateRequest>>(
-          field.model.blast,
-        )
-      ) {
+      if (hasId<EmailBlastResource, Partial<EmailBlastCreateRequest>>(field.model.blast)) {
         initialBlastIds.push(field.model.blast.id);
       }
     });
 
     const currentBlastIds: string[] = [];
     blastFields.forEach(field => {
-      if (
-        hasId<EmailBlastResource, Partial<EmailBlastCreateRequest>>(
-          field.model.blast,
-        )
-      ) {
+      if (hasId<EmailBlastResource, Partial<EmailBlastCreateRequest>>(field.model.blast)) {
         currentBlastIds.push(field.model.blast.id);
       }
     });
@@ -495,11 +414,7 @@ export class EmailCampaignFormService implements IEmailCampaignFormService {
     blastFields.forEach(field => {
       const initialField = initialBlastFields.find(f => f.key === field.key);
       tasks.push(() =>
-        this.saveBlast(
-          campaignId,
-          field.model,
-          initialField ? initialField.model : undefined,
-        ),
+        this.saveBlast(campaignId, field.model, initialField ? initialField.model : undefined),
       );
     });
 
@@ -507,9 +422,7 @@ export class EmailCampaignFormService implements IEmailCampaignFormService {
     initialBlastIds
       .filter(id => !currentBlastIds.includes(id))
       .forEach(id => {
-        tasks.push(() =>
-          this._emailCampaignService.deleteBlast(campaignId, id),
-        );
+        tasks.push(() => this._emailCampaignService.deleteBlast(campaignId, id));
       });
 
     return tasks;

@@ -2,11 +2,11 @@ import {
   AudienceFeatureResource,
   AudienceFeatureType,
   AudienceFeatureVariableResource,
-  AudienceFeatureFolderResource
+  AudienceFeatureFolderResource,
 } from './AudienceFeatureResource';
 export {
   AudienceFeatureResource,
   AudienceFeatureType,
   AudienceFeatureVariableResource,
-  AudienceFeatureFolderResource
+  AudienceFeatureFolderResource,
 };

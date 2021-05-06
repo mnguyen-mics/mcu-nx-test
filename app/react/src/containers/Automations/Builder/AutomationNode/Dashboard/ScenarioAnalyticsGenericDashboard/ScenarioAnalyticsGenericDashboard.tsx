@@ -12,10 +12,7 @@ import {
 } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import McsMoment from '../../../../../../utils/McsMoment';
-import {
-  DATE_SEARCH_SETTINGS,
-  parseSearch,
-} from '../../../../../../utils/LocationSearchHelper';
+import { DATE_SEARCH_SETTINGS, parseSearch } from '../../../../../../utils/LocationSearchHelper';
 
 export type AnalyticsEntityType = 'NODE' | 'EXIT_CONDITION';
 
@@ -77,7 +74,7 @@ class ScenarioAnalyticsGenericDashboard extends React.Component<Props, State> {
     const { close, dashboardTitle, children } = this.props;
     const { dateRange } = this.state;
 
-    const childrenWithDateRangeProps = React.Children.map(children, (child) => {
+    const childrenWithDateRangeProps = React.Children.map(children, child => {
       if (React.isValidElement(child)) {
         return React.cloneElement(child, { dateRange: dateRange });
       }
@@ -85,26 +82,20 @@ class ScenarioAnalyticsGenericDashboard extends React.Component<Props, State> {
     });
 
     return (
-      <div className="mcs-scenarioAnalyticsGenericDashboard ant-layout">
-        <Actionbar
-          pathItems={[dashboardTitle]}
-          edition={true}
-        >
+      <div className='mcs-scenarioAnalyticsGenericDashboard ant-layout'>
+        <Actionbar pathItems={[dashboardTitle]} edition={true}>
           <McsIcon
-            type="close"
-            className="close-icon"
+            type='close'
+            className='close-icon'
             style={{ cursor: 'pointer' }}
             onClick={close}
           />
         </Actionbar>
-        <div className="mcs-scenarioAnalyticsGenericDashboard_content ant-layout ant-layout-content mcs-content-container">
-          <Row className="mcs-scenarioAnalyticsGenericDashboard_datePicker">
+        <div className='mcs-scenarioAnalyticsGenericDashboard_content ant-layout ant-layout-content mcs-content-container'>
+          <Row className='mcs-scenarioAnalyticsGenericDashboard_datePicker'>
             <Col span={24}>
-              <span className="mcs-card-button">
-                <McsDateRangePicker
-                  values={dateRange}
-                  onChange={this.onDatePickerChange}
-                />
+              <span className='mcs-card-button'>
+                <McsDateRangePicker values={dateRange} onChange={this.onDatePickerChange} />
               </span>
             </Col>
           </Row>

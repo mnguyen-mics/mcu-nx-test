@@ -18,9 +18,7 @@ type JoinedProps = InjectedIntlProps &
   FormLinkedTextInputProps &
   WrappedFieldArrayProps<FormLinkedTextInputModel>;
 
-const FormLinkedTextInputField = Field as new () => GenericField<
-  FormLinkedTextInputProps
->;
+const FormLinkedTextInputField = Field as new () => GenericField<FormLinkedTextInputProps>;
 
 class PropertyFields extends React.Component<JoinedProps> {
   render() {
@@ -28,24 +26,26 @@ class PropertyFields extends React.Component<JoinedProps> {
 
     const handleOnClick = () => fields.push({ leftValue: '', rightValue: '' });
 
-    const renderedFields = fields.length ? ((fields || [])).map((name, index, _fields) => {
-      const handleRemove = () => fields.remove(index);
-      const removeButton = () => (
-        <div onClick={handleRemove}>
-          <McsIcon type="close" />
-        </div>
-      );
-      return (
-        <div key={index}>
-          <FormLinkedTextInputField
-            {...this.props}
-            name={`${name}`}
-            component={FormLinkedTextInput}
-            renderFieldAction={removeButton}
-          />
-        </div>
-      );
-    }) : null;
+    const renderedFields = fields.length
+      ? (fields || []).map((name, index, _fields) => {
+          const handleRemove = () => fields.remove(index);
+          const removeButton = () => (
+            <div onClick={handleRemove}>
+              <McsIcon type='close' />
+            </div>
+          );
+          return (
+            <div key={index}>
+              <FormLinkedTextInputField
+                {...this.props}
+                name={`${name}`}
+                component={FormLinkedTextInput}
+                renderFieldAction={removeButton}
+              />
+            </div>
+          );
+        })
+      : null;
 
     return (
       <div>
@@ -55,12 +55,11 @@ class PropertyFields extends React.Component<JoinedProps> {
           </Col>
         </Row>
         <Row>
-          <Col span={15
-          } offset={4}>
+          <Col span={15} offset={4}>
             <div onClick={handleOnClick}>
-              <Col span={20} className="add-field-button">
+              <Col span={20} className='add-field-button'>
                 <p>
-                  <McsIcon type="plus" />
+                  <McsIcon type='plus' />
                   {intl.formatMessage(messages.AddFilterButtonText)}
                 </p>
               </Col>

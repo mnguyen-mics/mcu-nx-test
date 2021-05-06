@@ -64,10 +64,7 @@ class VisitAnalyzerSelector extends React.Component<Props, State> {
     };
   }
 
-  saveVisitAnalyzers = (
-    visitAnalyzerIds: string[],
-    visitAnalyzers: VisitAnalyzer[],
-  ) => {
+  saveVisitAnalyzers = (visitAnalyzerIds: string[], visitAnalyzers: VisitAnalyzer[]) => {
     this.props.save(visitAnalyzers);
   };
 
@@ -86,52 +83,43 @@ class VisitAnalyzerSelector extends React.Component<Props, State> {
       options.name = filter.keywords;
     }
 
-    return this._visitAnalyzerService
-      .getVisitAnalyzers(organisationId, options)
-      .then((res) => {
-        // fetch properties to update state
-        this.setState(() => ({
-          metadataByBidOptmizerId: res.data.reduce(
-            (acc, value) => ({
-              ...acc,
-              [value.id]: {
-                fetching: true,
-              },
-            }),
-            {},
-          ),
-        }));
-        Promise.all(
-          res.data.map((bidOptimzer) => {
-            return this._visitAnalyzerService
-              .getInstanceProperties(bidOptimzer.id)
-              .then((propsRes) => {
-                const nameProp = propsRes.data.find(
-                  (prop) => prop.technical_name === 'name',
-                );
-                const providerProp = propsRes.data.find(
-                  (prop) => prop.technical_name === 'provider',
-                );
-                if (nameProp && providerProp) {
-                  this.setState((prevState) => ({
-                    metadataByBidOptmizerId: {
-                      ...prevState.metadataByBidOptmizerId,
-                      [bidOptimzer.id]: {
-                        type: (nameProp as StringPropertyResource).value.value,
-                        provider: (providerProp as StringPropertyResource).value
-                          .value,
-                        fetching: false,
-                      },
-                    },
-                  }));
-                }
-              });
+    return this._visitAnalyzerService.getVisitAnalyzers(organisationId, options).then(res => {
+      // fetch properties to update state
+      this.setState(() => ({
+        metadataByBidOptmizerId: res.data.reduce(
+          (acc, value) => ({
+            ...acc,
+            [value.id]: {
+              fetching: true,
+            },
           }),
-        );
+          {},
+        ),
+      }));
+      Promise.all(
+        res.data.map(bidOptimzer => {
+          return this._visitAnalyzerService.getInstanceProperties(bidOptimzer.id).then(propsRes => {
+            const nameProp = propsRes.data.find(prop => prop.technical_name === 'name');
+            const providerProp = propsRes.data.find(prop => prop.technical_name === 'provider');
+            if (nameProp && providerProp) {
+              this.setState(prevState => ({
+                metadataByBidOptmizerId: {
+                  ...prevState.metadataByBidOptmizerId,
+                  [bidOptimzer.id]: {
+                    type: (nameProp as StringPropertyResource).value.value,
+                    provider: (providerProp as StringPropertyResource).value.value,
+                    fetching: false,
+                  },
+                },
+              }));
+            }
+          });
+        }),
+      );
 
-        // return original list for TableSelector
-        return res;
-      });
+      // return original list for TableSelector
+      return res;
+    });
   };
 
   render() {
@@ -153,7 +141,7 @@ class VisitAnalyzerSelector extends React.Component<Props, State> {
         key: 'type',
         render: (text, record) => {
           if (metadataByBidOptmizerId[record.id].fetching)
-            return <i className="mcs-table-cell-loading" />;
+            return <i className='mcs-table-cell-loading' />;
           return <span>{metadataByBidOptmizerId[record.id].type}</span>;
         },
       },
@@ -162,14 +150,13 @@ class VisitAnalyzerSelector extends React.Component<Props, State> {
         key: 'provider',
         render: (text, record) => {
           if (metadataByBidOptmizerId[record.id].fetching)
-            return <i className="mcs-table-cell-loading" />;
+            return <i className='mcs-table-cell-loading' />;
           return <span>{metadataByBidOptmizerId[record.id].provider}</span>;
         },
       },
     ];
 
-    const fetchVisitAnalyzer = (id: string) =>
-      this._visitAnalyzerService.getInstanceById(id);
+    const fetchVisitAnalyzer = (id: string) => this._visitAnalyzerService.getInstanceById(id);
 
     return (
       <VisitAnalyzerTableSelector

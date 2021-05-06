@@ -67,7 +67,7 @@ class FieldNodeSection extends React.Component<JoinedProps> {
         <div className={'form-input-group'} key={_fields.get(index).key}>
           {!disabled && (
             <div className={'action-buttons'} onClick={handleRemove}>
-              <McsIcon type="close" />
+              <McsIcon type='close' />
             </div>
           )}
           <div>
@@ -88,27 +88,21 @@ class FieldNodeSection extends React.Component<JoinedProps> {
       );
     });
 
-    const onClick = () =>
-      onBooleanOperatorChange(booleanOperator === 'OR' ? 'AND' : 'OR');
+    const onClick = () => onBooleanOperatorChange(booleanOperator === 'OR' ? 'AND' : 'OR');
 
     const generateOperator = (key: string) => {
       return (
         <div key={key} className={'form-input-group-separator'}>
-          <div className="wrapper">
+          <div className='wrapper'>
             <div className={'item'}>
               <input
                 id={key}
-                className="tgl tgl-operator"
-                type="checkbox"
+                className='tgl tgl-operator'
+                type='checkbox'
                 checked={booleanOperator === 'OR' ? true : false}
                 onChange={onClick}
               />
-              <label
-                className="tgl-btn"
-                data-tg-off="AND"
-                data-tg-on="OR"
-                htmlFor={key}
-              />
+              <label className='tgl-btn' data-tg-off='AND' data-tg-on='OR' htmlFor={key} />
             </div>
           </div>
         </div>
@@ -126,14 +120,14 @@ class FieldNodeSection extends React.Component<JoinedProps> {
     return (
       <div>
         <FormSection title={title} subtitle={subtitle} />
-        <div className="form-field-wrapper">{renderedFields}</div>
+        <div className='form-field-wrapper'>{renderedFields}</div>
         {!disabled && (
           <Row>
             <Col span={24}>
               <div onClick={handleOnClick}>
-                <Col span={24} className="add-field-button">
+                <Col span={24} className='add-field-button'>
                   <p>
-                    <McsIcon type="plus" />
+                    <McsIcon type='plus' />
                     {intl.formatMessage(messages.fieldConditionAdditionButton)}
                   </p>
                 </Col>

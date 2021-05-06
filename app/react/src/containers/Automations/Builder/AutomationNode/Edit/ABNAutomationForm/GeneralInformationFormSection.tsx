@@ -1,22 +1,9 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import {
-  InjectedIntlProps,
-  injectIntl,
-  defineMessages,
-  FormattedMessage,
-} from 'react-intl';
-import {
-  FormSection,
-  FormSlider,
-  FormSliderField,
-} from '../../../../../../components/Form';
-import withValidators, {
-  ValidatorProps,
-} from '../../../../../../components/Form/withValidators';
-import withNormalizer, {
-  NormalizerProps,
-} from '../../../../../../components/Form/withNormalizer';
+import { InjectedIntlProps, injectIntl, defineMessages, FormattedMessage } from 'react-intl';
+import { FormSection, FormSlider, FormSliderField } from '../../../../../../components/Form';
+import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
+import withNormalizer, { NormalizerProps } from '../../../../../../components/Form/withNormalizer';
 import { ABNFormData } from '../domain';
 
 export const messages = defineMessages({
@@ -34,11 +21,10 @@ export const messages = defineMessages({
   },
   split: {
     id: 'automation.builder.abnNode.edition.form.generalInfoSection.subtitle.split',
-    defaultMessage: 'Split'
+    defaultMessage: 'Split',
   },
   sectionGeneralConfigurationTitle: {
-    id:
-      'automation.builder.abnNode.edition.form.generalInfoSection.configuration.title',
+    id: 'automation.builder.abnNode.edition.form.generalInfoSection.configuration.title',
     defaultMessage: 'Configuration',
   },
   automationNodeName: {
@@ -91,7 +77,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
       ...messages.sectionGeneralSubtitle,
       values: {
         split: (
-          <span className="mcs-automation_nodeName">
+          <span className='mcs-automation_nodeName'>
             <FormattedMessage {...messages.split} />
           </span>
         ),
@@ -100,14 +86,11 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
 
     return (
       <div>
-        <FormSection
-          subtitle={sectionGeneralSubtitle}
-          title={messages.sectionGeneralTitle}
-        />
+        <FormSection subtitle={sectionGeneralSubtitle} title={messages.sectionGeneralTitle} />
         <FormSection title={messages.sectionGeneralConfigurationTitle} />
         <div>
           <FormSliderField
-            name="branch_number"
+            name='branch_number'
             component={FormSlider}
             formItemProps={{
               label: formatMessage(messages.branchNumber),

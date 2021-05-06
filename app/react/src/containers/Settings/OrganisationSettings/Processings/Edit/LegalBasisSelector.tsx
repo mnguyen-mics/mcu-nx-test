@@ -72,9 +72,7 @@ class LegalBasisSelector extends React.Component<Props> {
     }): JSX.Element => {
       const { value, subtitle } = item;
 
-      const title = this.uppercaseFirstLetter(
-        value.toLowerCase().replace(/_/gi, ' '),
-      );
+      const title = this.uppercaseFirstLetter(value.toLowerCase().replace(/_/gi, ' '));
 
       return (
         <MenuList
@@ -88,17 +86,12 @@ class LegalBasisSelector extends React.Component<Props> {
 
     return (
       <Layout>
-        <div className="edit-layout ant-layout">
+        <div className='edit-layout ant-layout'>
           <Layout>
-            <Content className="mcs-content-container mcs-form-container text-center">
-              <FormTitle
-                title={messages.legalBasisTitle}
-                subtitle={messages.legalBasisSubTitle}
-              />
-              <Row className="mcs-selector_container">
-                <Row className="menu">
-                  {legalBasisValues.map(returnMenuList)}
-                </Row>
+            <Content className='mcs-content-container mcs-form-container text-center'>
+              <FormTitle title={messages.legalBasisTitle} subtitle={messages.legalBasisSubTitle} />
+              <Row className='mcs-selector_container'>
+                <Row className='menu'>{legalBasisValues.map(returnMenuList)}</Row>
               </Row>
             </Content>
           </Layout>

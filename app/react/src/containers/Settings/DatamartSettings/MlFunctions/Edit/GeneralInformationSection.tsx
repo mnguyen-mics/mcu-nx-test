@@ -1,11 +1,14 @@
 import * as React from 'react';
-import { FormInputField, FormInput, DefaultSelect, FormSelectField } from '../../../../../components/Form';
+import {
+  FormInputField,
+  FormInput,
+  DefaultSelect,
+  FormSelectField,
+} from '../../../../../components/Form';
 import { compose } from 'recompose';
-import withValidators, {
-  ValidatorProps,
-} from '../../../../../components/Form/withValidators';
+import withValidators, { ValidatorProps } from '../../../../../components/Form/withValidators';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import messages from "./messages"
+import messages from './messages';
 
 export interface IGeneralInformationProps {
   fieldNamePrefix: string;
@@ -21,7 +24,7 @@ class GeneralInformation extends React.Component<Props, {}> {
       fieldValidators: { isRequired },
       intl: { formatMessage },
       disabled,
-      fieldNamePrefix
+      fieldNamePrefix,
     } = this.props;
     return (
       <div>
@@ -50,7 +53,7 @@ class GeneralInformation extends React.Component<Props, {}> {
           }}
           inputProps={{
             placeholder: formatMessage(messages.labelFieldTypeName),
-            disabled
+            disabled,
           }}
           helpToolTipProps={{
             title: formatMessage(messages.tootltipFieldTypeName),
@@ -66,7 +69,7 @@ class GeneralInformation extends React.Component<Props, {}> {
           }}
           inputProps={{
             placeholder: formatMessage(messages.labelFieldName),
-            disabled
+            disabled,
           }}
           helpToolTipProps={{
             title: formatMessage(messages.tootltipFieldName),
@@ -82,7 +85,7 @@ class GeneralInformation extends React.Component<Props, {}> {
           }}
           inputProps={{
             placeholder: formatMessage(messages.labelQuery),
-            disabled
+            disabled,
           }}
           helpToolTipProps={{
             title: formatMessage(messages.tootltipQuery),

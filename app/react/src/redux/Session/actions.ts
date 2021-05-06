@@ -1,12 +1,6 @@
 import { createAction } from 'redux-actions';
 
-import {
-  CONNECTED_USER,
-  WORKSPACE,
-  FETCH_COOKIES,
-  GET_LOGO,
-  PUT_LOGO,
-} from '../action-types';
+import { CONNECTED_USER, WORKSPACE, FETCH_COOKIES, GET_LOGO, PUT_LOGO } from '../action-types';
 
 const getConnectedUser = {
   request: createAction(CONNECTED_USER.REQUEST),
@@ -38,10 +32,4 @@ const getLogo = {
   failure: createAction(GET_LOGO.FAILURE),
 };
 
-export {
-  getConnectedUser,
-  getWorkspace,
-  getLogo,
-  getCookies,
-  putLogo,
-};
+export { getConnectedUser, getWorkspace, getLogo, getCookies, putLogo };

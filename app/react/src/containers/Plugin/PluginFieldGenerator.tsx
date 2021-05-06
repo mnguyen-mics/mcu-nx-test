@@ -1,10 +1,7 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { InjectedIntlProps, defineMessages } from 'react-intl';
-import {
-  FormDataFileField,
-  FormDataFile,
-} from './ConnectedFields/FormDataFile';
+import { FormDataFileField, FormDataFile } from './ConnectedFields/FormDataFile';
 import { ValidatorProps } from '../../components/Form/withValidators';
 import { PluginProperty, PluginPresetProperty } from '../../models/Plugins';
 import { injectDrawer } from '../../components/Drawer/index';
@@ -33,17 +30,11 @@ import {
   FormCheckboxGroup,
   withValidators,
 } from '../../components/Form/index';
-import FormSelect, {
-  DefaultSelectField,
-  TagSelectField,
-} from '../../components/Form/';
+import FormSelect, { DefaultSelectField, TagSelectField } from '../../components/Form/';
 import { InputProps } from 'antd/lib/input';
 import { FormItemProps } from 'antd/lib/form';
 import { TooltipPropsWithTitle } from 'antd/lib/tooltip';
-import {
-  StringPropertyResource,
-  PropertyResourceShape,
-} from '../../models/plugin';
+import { StringPropertyResource, PropertyResourceShape } from '../../models/plugin';
 import { Field, Validator } from 'redux-form';
 import FormStyleSheet from './ConnectedFields/FormStyleSheet';
 import FormAdLayout from './ConnectedFields/FormAdLayout';
@@ -121,12 +112,8 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
         defaultValue: (fieldDefinition.value as StringPropertyResource).value,
         ...additionalInputProps,
       },
-      buttonText: additionalInputProps.buttonText
-        ? additionalInputProps.buttonText
-        : undefined,
-      accept: additionalInputProps.accept
-        ? additionalInputProps.accept
-        : undefined,
+      buttonText: additionalInputProps.buttonText ? additionalInputProps.buttonText : undefined,
+      accept: additionalInputProps.accept ? additionalInputProps.accept : undefined,
       options,
       helpToolTipProps: {},
       noUploadModal: additionalInputProps.noUploadModal
@@ -289,10 +276,8 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
           [],
           {
             buttonText: 'Upload File',
-            accept: (fieldDefinition.value as AcceptedFilePropertyResource)
-              .acceptedFile
-              ? (fieldDefinition.value as AcceptedFilePropertyResource)
-                  .acceptedFile
+            accept: (fieldDefinition.value as AcceptedFilePropertyResource).acceptedFile
+              ? (fieldDefinition.value as AcceptedFilePropertyResource).acceptedFile
               : '*',
           },
         );
@@ -307,12 +292,8 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
           FormInput,
           `${fieldDefinition.technical_name}.value.value`,
           fieldDefinition,
-          this.getErrorValidatorForNativeFieldProperty(
-            fieldDefinition.value.type,
-          ),
-          this.getWarningValidatorForNativeFieldProperty(
-            fieldDefinition.value.type,
-          ),
+          this.getErrorValidatorForNativeFieldProperty(fieldDefinition.value.type),
+          this.getWarningValidatorForNativeFieldProperty(fieldDefinition.value.type),
         );
       case 'NATIVE_TITLE':
         return this.renderFieldBasedOnConfig(
@@ -414,11 +395,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
               inputProps={{
                 disabled: fieldDisabled,
               }}
-              validate={
-                pluginFieldProps.formItemProps.required === true
-                  ? [isRequired]
-                  : undefined
-              }
+              validate={pluginFieldProps.formItemProps.required === true ? [isRequired] : undefined}
               name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value.value`}
               key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
               small={pluginFieldProps.small}
@@ -429,11 +406,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
             <FormInputField
               {...pluginFieldProps}
               component={FormInput}
-              validate={
-                pluginFieldProps.formItemProps.required === true
-                  ? [isRequired]
-                  : undefined
-              }
+              validate={pluginFieldProps.formItemProps.required === true ? [isRequired] : undefined}
               name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value.url`}
               key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
             />
@@ -449,11 +422,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
             <FormDataFileField
               key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
               name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value`}
-              validate={
-                pluginFieldProps.formItemProps.required === true
-                  ? [isRequired]
-                  : undefined
-              }
+              validate={pluginFieldProps.formItemProps.required === true ? [isRequired] : undefined}
               component={FormDataFile}
               disabled={fieldDisabled}
               {...dataFileProps}
@@ -466,11 +435,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
             <FormCodeEditField
               key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
               name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value.value`}
-              validate={
-                pluginFieldProps.formItemProps.required === true
-                  ? [isRequired]
-                  : undefined
-              }
+              validate={pluginFieldProps.formItemProps.required === true ? [isRequired] : undefined}
               component={FormCodeEdit}
               formItemProps={pluginFieldProps.formItemProps}
               inputProps={{
@@ -489,11 +454,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
             <FormInputField
               key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
               name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value.value`}
-              validate={
-                pluginFieldProps.formItemProps.required === true
-                  ? [isRequired]
-                  : undefined
-              }
+              validate={pluginFieldProps.formItemProps.required === true ? [isRequired] : undefined}
               component={FormInput}
               {...pluginFieldProps}
               inputProps={{ ...pluginFieldProps.inputProps, type: 'number' }}
@@ -505,11 +466,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
             <DefaultSelectField
               key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
               name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value.value`}
-              validate={
-                pluginFieldProps.formItemProps.required === true
-                  ? [isRequired]
-                  : undefined
-              }
+              validate={pluginFieldProps.formItemProps.required === true ? [isRequired] : undefined}
               component={DefaultSelect}
               options={
                 pluginLayoutFieldDefinition.enum !== undefined
@@ -530,11 +487,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
             <TagSelectField
               key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
               name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value.value`}
-              validate={
-                pluginFieldProps.formItemProps.required === true
-                  ? [isRequired]
-                  : undefined
-              }
+              validate={pluginFieldProps.formItemProps.required === true ? [isRequired] : undefined}
               component={TagSelect}
               selectProps={{
                 options:
@@ -555,11 +508,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
             <FormUploadField
               key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
               name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value`}
-              validate={
-                pluginFieldProps.formItemProps.required === true
-                  ? [isRequired]
-                  : undefined
-              }
+              validate={pluginFieldProps.formItemProps.required === true ? [isRequired] : undefined}
               component={FormUpload}
               buttonText={intl.formatMessage(messages.uploadFileImage)}
               noUploadModal={this.props.noUploadModal}
@@ -575,11 +524,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
             <FormInputField
               key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
               name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value.value`}
-              validate={
-                pluginFieldProps.formItemProps.required === true
-                  ? [isRequired]
-                  : undefined
-              }
+              validate={pluginFieldProps.formItemProps.required === true ? [isRequired] : undefined}
               component={FormInput}
               {...pluginFieldProps}
             />
@@ -589,11 +534,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
             <FormInputField
               key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
               name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value.value`}
-              validate={
-                pluginFieldProps.formItemProps.required === true
-                  ? [isRequired]
-                  : undefined
-              }
+              validate={pluginFieldProps.formItemProps.required === true ? [isRequired] : undefined}
               component={FormInput}
               {...pluginFieldProps}
               inputProps={{ ...pluginFieldProps.inputProps, type: 'number' }}
@@ -613,9 +554,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
                 key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
                 name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value.value`}
                 validate={
-                  pluginFieldProps.formItemProps.required === true
-                    ? [isRequired]
-                    : undefined
+                  pluginFieldProps.formItemProps.required === true ? [isRequired] : undefined
                 }
                 component={FormSwitch}
                 disabled={fieldDisabled}
@@ -644,9 +583,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
                 key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
                 name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value.value`}
                 validate={
-                  pluginFieldProps.formItemProps.required === true
-                    ? [isRequired]
-                    : undefined
+                  pluginFieldProps.formItemProps.required === true ? [isRequired] : undefined
                 }
                 component={FormRadioGroup}
                 elements={elements}
@@ -658,9 +595,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
 
         case 'CHECKBOX':
           const options =
-            pluginLayoutFieldDefinition.enum !== undefined
-              ? pluginLayoutFieldDefinition.enum
-              : [];
+            pluginLayoutFieldDefinition.enum !== undefined ? pluginLayoutFieldDefinition.enum : [];
 
           return (
             <FormFieldWrapper
@@ -674,9 +609,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
                 key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
                 name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value.value`}
                 validate={
-                  pluginFieldProps.formItemProps.required === true
-                    ? [isRequired]
-                    : undefined
+                  pluginFieldProps.formItemProps.required === true ? [isRequired] : undefined
                 }
                 component={FormCheckboxGroup}
                 options={options}
@@ -692,11 +625,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
             <FormDatePickerField
               key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
               name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value.value`}
-              validate={
-                pluginFieldProps.formItemProps.required === true
-                  ? [isRequired]
-                  : undefined
-              }
+              validate={pluginFieldProps.formItemProps.required === true ? [isRequired] : undefined}
               component={FormDatePicker}
               datePickerProps={{}}
               isoDate={true}
@@ -710,11 +639,7 @@ class PluginFieldGenerator extends React.Component<JoinedProps, State> {
             <FormDateRangePickerField
               key={`properties.${pluginLayoutFieldDefinition.property_technical_name}`}
               name={`properties.${pluginLayoutFieldDefinition.property_technical_name}.value.value`}
-              validate={
-                pluginFieldProps.formItemProps.required === true
-                  ? [isRequired]
-                  : undefined
-              }
+              validate={pluginFieldProps.formItemProps.required === true ? [isRequired] : undefined}
               component={FormDateRangePicker}
               startDatePickerProps={{}}
               endDatePickerProps={{}}

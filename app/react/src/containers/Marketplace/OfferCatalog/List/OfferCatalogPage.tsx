@@ -8,35 +8,30 @@ import { compose } from 'recompose';
 
 const { Content } = Layout;
 
-type JoinedProps = 
-  RouteComponentProps<{ organisationId: string }>;
+type JoinedProps = RouteComponentProps<{ organisationId: string }>;
 
-class OfferCatalogPage extends React.Component<JoinedProps>  {
+class OfferCatalogPage extends React.Component<JoinedProps> {
+  constructor(props: JoinedProps) {
+    super(props);
+  }
+  render() {
+    const {
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
 
-    constructor(props: JoinedProps) {
-        super(props);
-      }
-    render() {
-        const {
-            match: {
-              params: { organisationId },
-            },
-          } = this.props;
-
-
-        return (
-            <div className="ant-layout">
-                <OfferCatalogActionBar organisationId={organisationId} />
-                <div className="ant-layout">
-                    <Content className="mcs-content-container" >
-                        <OfferCatalogTable organisationId={organisationId} />
-                    </Content>
-                </div>
-            </div>
-        )
-    }
+    return (
+      <div className='ant-layout'>
+        <OfferCatalogActionBar organisationId={organisationId} />
+        <div className='ant-layout'>
+          <Content className='mcs-content-container'>
+            <OfferCatalogTable organisationId={organisationId} />
+          </Content>
+        </div>
+      </div>
+    );
+  }
 }
 
-export default compose<{}, JoinedProps>(
-  withRouter,
-)(OfferCatalogPage);
+export default compose<{}, JoinedProps>(withRouter)(OfferCatalogPage);

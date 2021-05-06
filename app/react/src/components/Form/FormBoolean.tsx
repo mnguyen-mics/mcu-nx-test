@@ -10,7 +10,7 @@ import { CheckboxProps } from 'antd/lib/checkbox/Checkbox';
 import FormFieldWrapper, { FormFieldWrapperProps } from './FormFieldWrapper';
 
 export interface FormBooleanProps extends FormFieldWrapperProps {
-  formItemProps?: FormItemProps & { hasMarginBottom?: boolean; };
+  formItemProps?: FormItemProps & { hasMarginBottom?: boolean };
   inputProps?: CheckboxProps;
   helpToolTipProps?: TooltipPropsWithTitle;
   small?: boolean;
@@ -20,10 +20,7 @@ interface StateInterface {
   checked: boolean;
 }
 
-class FormBoolean extends React.Component<
-  FormBooleanProps & WrappedFieldProps,
-  StateInterface
-> {
+class FormBoolean extends React.Component<FormBooleanProps & WrappedFieldProps, StateInterface> {
   static defaultprops = {
     formItemProps: {},
     inputProps: {},
@@ -46,20 +43,9 @@ class FormBoolean extends React.Component<
   };
 
   render() {
-    const {
-      meta,
-      formItemProps,
-      inputProps,
-      helpToolTipProps,
-      input,
-      small,
-    } = this.props;
+    const { meta, formItemProps, inputProps, helpToolTipProps, input, small } = this.props;
 
-    let validateStatus = 'success' as
-      | 'success'
-      | 'warning'
-      | 'error'
-      | 'validating';
+    let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
     if (meta.touched && meta.invalid) validateStatus = 'error';
     if (meta.touched && meta.warning) validateStatus = 'warning';
 
@@ -71,11 +57,7 @@ class FormBoolean extends React.Component<
         small={small}
         {...formItemProps}
       >
-        <Checkbox
-          {...input}
-          {...inputProps}
-          defaultChecked={this.state.checked}
-        />
+        <Checkbox {...input} {...inputProps} defaultChecked={this.state.checked} />
       </FormFieldWrapper>
     );
   }

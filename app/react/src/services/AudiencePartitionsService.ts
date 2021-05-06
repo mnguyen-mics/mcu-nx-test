@@ -21,9 +21,7 @@ export interface IAudiencePartitionsService {
     organisationId: string,
     options: GetPartitionOption,
   ): Promise<DataListResponse<AudiencePartitionResource>>;
-  getPartition(
-    partitionId: string,
-  ): Promise<DataResponse<AudiencePartitionResource>>;
+  getPartition(partitionId: string): Promise<DataResponse<AudiencePartitionResource>>;
   savePartition(
     partitionId: string,
     body: Partial<AudiencePartitionResource>,
@@ -58,9 +56,7 @@ export class AudiencePartitionsService implements IAudiencePartitionsService {
 
     return ApiService.getRequest(endpoint, params);
   }
-  getPartition(
-    partitionId: string,
-  ): Promise<DataResponse<AudiencePartitionResource>> {
+  getPartition(partitionId: string): Promise<DataResponse<AudiencePartitionResource>> {
     const endpoint = `audience_partitions/${partitionId}`;
     return ApiService.getRequest(endpoint);
   }

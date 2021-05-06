@@ -40,9 +40,7 @@ export const INITIAL_AUTOMATION_DATA: AutomationFormData = {
   },
 };
 
-export const generateInitialAutomationData = (
-  type: AutomationSelectedType,
-): AutomationFormData => {
+export const generateInitialAutomationData = (type: AutomationSelectedType): AutomationFormData => {
   return {
     automation: {},
     exitCondition: {

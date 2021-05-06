@@ -3,12 +3,7 @@ import { Button } from 'antd';
 import { Link } from 'react-router-dom';
 import { compose } from 'recompose';
 import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
-import {
-  FormattedMessage,
-  defineMessages,
-  InjectedIntlProps,
-  injectIntl,
-} from 'react-intl';
+import { FormattedMessage, defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { AudiencePartitionResource } from '../../../../../models/audiencePartition/AudiencePartitionResource';
 
@@ -42,10 +37,7 @@ type JoinedProps = PartitionActionBarProps &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string; datamart: string }>;
 
-class PartitionActionBar extends React.Component<
-  JoinedProps,
-  PartitionActionBarState
-> {
+class PartitionActionBar extends React.Component<JoinedProps, PartitionActionBarState> {
   render() {
     const {
       match: {
@@ -57,12 +49,10 @@ class PartitionActionBar extends React.Component<
     } = this.props;
 
     const partitionName =
-      partition && partition.name
-        ? partition.name
-        : intl.formatMessage(messages.partitionOverview);
+      partition && partition.name ? partition.name : intl.formatMessage(messages.partitionOverview);
 
     const breadcrumbPaths = [
-      <Link key="1" to={`/v2/o/${organisationId}/settings/datamart/audience/partitions`}>
+      <Link key='1' to={`/v2/o/${organisationId}/settings/datamart/audience/partitions`}>
         {intl.formatMessage(messages.partitions)}
       </Link>,
       partitionName,
@@ -70,25 +60,19 @@ class PartitionActionBar extends React.Component<
     return (
       <Actionbar pathItems={breadcrumbPaths}>
         {partition && partition.status !== 'PUBLISHED' && (
-          <Button
-            className="mcs-primary"
-            type="primary"
-            onClick={publishPartition}
-          >
-            <McsIcon type="bolt" /> <FormattedMessage {...messages.publish} />
+          <Button className='mcs-primary' type='primary' onClick={publishPartition}>
+            <McsIcon type='bolt' /> <FormattedMessage {...messages.publish} />
           </Button>
         )}
         <Link
           to={
             partition
-              ? `/v2/o/${organisationId}/settings/datamart/audience/partitions/${
-                  partition.id
-                }/edit`
+              ? `/v2/o/${organisationId}/settings/datamart/audience/partitions/${partition.id}/edit`
               : ''
           }
         >
-          <Button className="mcs-primary">
-            <McsIcon type="pen" /> <FormattedMessage {...messages.edit} />
+          <Button className='mcs-primary'>
+            <McsIcon type='pen' /> <FormattedMessage {...messages.edit} />
           </Button>
         </Link>
       </Actionbar>

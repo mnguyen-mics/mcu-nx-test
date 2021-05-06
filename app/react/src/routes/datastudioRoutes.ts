@@ -4,11 +4,7 @@ import Exports from '../containers/Exports/Dashboard/Exports';
 import Imports from '../containers/Imports/Dashboard/Imports';
 import ExportsList from '../containers/Exports/List';
 import ImportsList from '../containers/Imports/List';
-import {
-  NavigatorRoute,
-  NavigatorDefinition,
-  generateRoutesFromDefinition,
-} from './domain';
+import { NavigatorRoute, NavigatorDefinition, generateRoutesFromDefinition } from './domain';
 import ExportEditPage from '../containers/Exports/Edit/ExportEditPage';
 import ImportEditPage from '../containers/Imports/Edit/ImportEditPage';
 import FunnelPage from '../containers/Audience/Funnel/FunnelPage';

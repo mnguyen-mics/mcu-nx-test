@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <!--[if lt IE 7]>
 <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>
@@ -7,105 +7,142 @@
 <html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!-->
 <html class="no-js">
-<!--<![endif]-->
+  <!--<![endif]-->
 
-<head>
-  <script src="conf/react-configuration.js"></script>
-  <script type="text/javascript">
-    // Global site tag (gtag.js) - Google Analytics
-    if (window.MCS_CONSTANTS.USE_GTAG) {
-      const head = document.getElementsByTagName('head')[0];
-      const js = document.createElement("script");
-      js.type = "text/javascript";
-      js.src = "https://www.googletagmanager.com/gtag/js?id=" + window.MCS_CONSTANTS.GTAG_ID;
-      head.appendChild(js);
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', window.MCS_CONSTANTS.GTAG_ID);
-      // The global varibale userId can be undefined if user is logged out
-      gtag('config', 'GA_MEASUREMENT_ID', {
-        'user_id': window.userId
-      });
-    }
-  </script>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <!-- the page title is init with the organisation name in Session init -->
-  <title>mediarithmics</title>
-  <meta name="description" content="">
-  <meta name="viewport" content="width=device-width">
-  <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-  <link rel="icon" href="react/src/assets/images/favicon.ico" type="image/x-icon" />
+  <head>
+    <script src="conf/react-configuration.js"></script>
+    <script type="text/javascript">
+      // Global site tag (gtag.js) - Google Analytics
+      if (window.MCS_CONSTANTS.USE_GTAG) {
+        const head = document.getElementsByTagName('head')[0];
+        const js = document.createElement('script');
+        js.type = 'text/javascript';
+        js.src = 'https://www.googletagmanager.com/gtag/js?id=' + window.MCS_CONSTANTS.GTAG_ID;
+        head.appendChild(js);
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {
+          dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+        gtag('config', window.MCS_CONSTANTS.GTAG_ID);
+        // The global varibale userId can be undefined if user is logged out
+        gtag('config', 'GA_MEASUREMENT_ID', {
+          user_id: window.userId,
+        });
+      }
+    </script>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!-- the page title is init with the organisation name in Session init -->
+    <title>mediarithmics</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width" />
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <link rel="icon" href="react/src/assets/images/favicon.ico" type="image/x-icon" />
 
-  <!-- CSS -->
+    <!-- CSS -->
 
-  <!-- endbuild -->
-  <!-- endbuild -->
-  <!-- endbuild -->
-</head>
+    <!-- endbuild -->
+    <!-- endbuild -->
+    <!-- endbuild -->
+  </head>
 
-<body>
-  <!--[if lt IE 7]>
-<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please
-  <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-<![endif]-->
+  <body>
+    <!--[if lt IE 7]>
+      <p class="browsehappy">
+        You are using an
+        <strong>outdated</strong>
+        browser. Please
+        <a href="http://browsehappy.com/">upgrade your browser</a>
+        to improve your experience.
+      </p>
+    <![endif]-->
 
-  <div id="mcs-react-app" class="mcs-react-app"></div>
-  
-  <div class="mcs-colors">
-    <div class="mcs-primary"></div>
-    <div class="mcs-normal"></div>
-    <div class="mcs-info"></div>
-    <div class="mcs-success"></div>
-    <div class="mcs-error"></div>
-    <div class="mcs-highlight"></div>
-    <div class="mcs-warning"></div>
-  </div>
+    <div id="mcs-react-app" class="mcs-react-app"></div>
 
-  <noscript>
-    <h1>Mediarithmics navigator</h1>
+    <div class="mcs-colors">
+      <div class="mcs-primary"></div>
+      <div class="mcs-normal"></div>
+      <div class="mcs-info"></div>
+      <div class="mcs-success"></div>
+      <div class="mcs-error"></div>
+      <div class="mcs-highlight"></div>
+      <div class="mcs-warning"></div>
+    </div>
 
-    <h2>This website requires javascript to work properly.</h2>
+    <noscript>
+      <h1>Mediarithmics navigator</h1>
 
-    <p>
-      If you don't know how to enable javascript in your browser, please see
-      <a href="http://www.enable-javascript.com/" target="_blank">here</a>.
-    </p>
+      <h2>This website requires javascript to work properly.</h2>
 
-    <p>
-      <!--   TODO : explain why our website is awesome and you should allow js here to manage your campaigns. -->
-    </p>
-  </noscript>
+      <p>
+        If you don't know how to enable javascript in your browser, please see
+        <a href="http://www.enable-javascript.com/" target="_blank">here</a>
+        .
+      </p>
 
-  <!-- Filters used in the css -->
-  <div style="position:absolute;top:-1000px;left:-1000px;">
-    <svg width="0" height="0"
-      xmlns="http://www.w3.org/2000/svg"
-      xmlns:xlink="http://www.w3.org/1999/xlink"
-    >
-      <defs>
-        <filter id="blurfilter">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="13"/>
-        </filter>
-      </defs>
-    </svg>
-  </div>
-  
-  <!-- endbuild -->
-  <script>
+      <p>
+        <!--   TODO : explain why our website is awesome and you should allow js here to manage your campaigns. -->
+      </p>
+    </noscript>
 
-  </script>
-  <script src="conf/plugins-configuration.js"></script>
-  <script>document.title = window.MCS_CONSTANTS.SITE_NAME</script>
-  <script type="text/javascript">
-    if (window.MCS_CONSTANTS && window.MCS_CONSTANTS.ENABLE_TRACKING === true) {
-      !function(a,b,c){"use strict";function d(a){var b=e[c]||{};e[c]=b,b[a]||(b[a]=function(){e._queue[c].push({method:a,args:Array.prototype.slice.apply(arguments)})})}var e=a.scimhtiraidem||{},f="init call config push pushDefault addProperties addProperty onFinish onStart _reset".split(" ");e._queue=e._queue||{},e._names=e._names||[],e._names.push(c),e._queue[c]=e._queue[c]||[],e._startTime=(new Date).getTime(),e._snippetVersion="2.0";for(var g=0;g<f.length;g++)d(f[g]);a.scimhtiraidem=e,a[c]=e[c];var h=b.createElement("script");h.setAttribute("type","text/javascript"),h.setAttribute("src","https://static.mediarithmics.com/tag/1/tag.min.js"),h.setAttribute("async","true"),b.getElementsByTagName("script")[0].parentNode.appendChild(h)}(window,document,"mics");
-      mics.init("navigator18")
-    }
-  </script>
-  <script>window.mainRev='main.js'</script>
+    <!-- Filters used in the css -->
+    <div style="position: absolute; top: -1000px; left: -1000px">
+      <svg
+        width="0"
+        height="0"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+      >
+        <defs>
+          <filter id="blurfilter">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="13" />
+          </filter>
+        </defs>
+      </svg>
+    </div>
 
-</body>
-
+    <!-- endbuild -->
+    <script></script>
+    <script src="conf/plugins-configuration.js"></script>
+    <script>
+      document.title = window.MCS_CONSTANTS.SITE_NAME;
+    </script>
+    <script type="text/javascript">
+      if (window.MCS_CONSTANTS && window.MCS_CONSTANTS.ENABLE_TRACKING === true) {
+        !(function (a, b, c) {
+          'use strict';
+          function d(a) {
+            var b = e[c] || {};
+            (e[c] = b),
+              b[a] ||
+                (b[a] = function () {
+                  e._queue[c].push({ method: a, args: Array.prototype.slice.apply(arguments) });
+                });
+          }
+          var e = a.scimhtiraidem || {},
+            f = 'init call config push pushDefault addProperties addProperty onFinish onStart _reset'.split(
+              ' ',
+            );
+          (e._queue = e._queue || {}),
+            (e._names = e._names || []),
+            e._names.push(c),
+            (e._queue[c] = e._queue[c] || []),
+            (e._startTime = new Date().getTime()),
+            (e._snippetVersion = '2.0');
+          for (var g = 0; g < f.length; g++) d(f[g]);
+          (a.scimhtiraidem = e), (a[c] = e[c]);
+          var h = b.createElement('script');
+          h.setAttribute('type', 'text/javascript'),
+            h.setAttribute('src', 'https://static.mediarithmics.com/tag/1/tag.min.js'),
+            h.setAttribute('async', 'true'),
+            b.getElementsByTagName('script')[0].parentNode.appendChild(h);
+        })(window, document, 'mics');
+        mics.init('navigator18');
+      }
+    </script>
+    <script>
+      window.mainRev = 'main.js';
+    </script>
+  </body>
 </html>

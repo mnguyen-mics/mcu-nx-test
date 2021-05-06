@@ -12,9 +12,7 @@ export interface JSONQLInputEditorProps {
   helpToolTipProps?: TooltipPropsWithTitle;
 }
 
-class JSONQLInputEditor extends React.Component<
-  JSONQLInputEditorProps & WrappedFieldProps
-> {
+class JSONQLInputEditor extends React.Component<JSONQLInputEditorProps & WrappedFieldProps> {
   render() {
     return (
       <JSONQLPreview

@@ -23,10 +23,7 @@ export default class AutomationNodeFactory extends AbstractNodeFactory<Automatio
     this.datamartId = datamartId;
   }
 
-  generateReactWidget(
-    diagramEngine: DiagramEngine,
-    node: AutomationNodeModel,
-  ): JSX.Element {
+  generateReactWidget(diagramEngine: DiagramEngine, node: AutomationNodeModel): JSX.Element {
     if (node.extras.collapsed) {
       return <div />;
     }

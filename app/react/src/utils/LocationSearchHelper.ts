@@ -7,21 +7,16 @@ function getOrSetInitialSessionValue(value: McsMoment, key: string): McsMoment {
   if (window.sessionStorage && window.sessionStorage.getItem(key)) {
     return new McsMoment(window.sessionStorage.getItem(key) as string);
   } else {
-    if (window.sessionStorage)
-      window.sessionStorage.setItem(key, value.raw() as string);
+    if (window.sessionStorage) window.sessionStorage.setItem(key, value.raw() as string);
     return value;
   }
 }
 
 function setSessionValue(value: McsMoment, key: string) {
-  if (window.sessionStorage)
-    window.sessionStorage.setItem(key, value.raw() as string);
+  if (window.sessionStorage) window.sessionStorage.setItem(key, value.raw() as string);
 }
 
-const defaultFromValue = getOrSetInitialSessionValue(
-  new McsMoment('now-7d'),
-  'from',
-);
+const defaultFromValue = getOrSetInitialSessionValue(new McsMoment('now-7d'), 'from');
 const defaultToValue = getOrSetInitialSessionValue(new McsMoment('now'), 'to');
 
 export interface SearchSetting {
@@ -43,8 +38,7 @@ export const LABELS_SEARCH_SETTINGS: SearchSetting[] = [
       return [];
     },
     serialize: (value: string[]) => value.join(','),
-    isValid: (query: Index<string>) =>
-      !query.label_id || query.label_id.split(',').length > 0,
+    isValid: (query: Index<string>) => !query.label_id || query.label_id.split(',').length > 0,
   },
 ];
 
@@ -80,8 +74,7 @@ export const PAGINATION_SEARCH_SETTINGS: SearchSetting[] = [
     defaultValue: 10,
     deserialize: (query: Index<string>) => parseInt(query.pageSize, 0),
     serialize: (value: number) => value.toString(),
-    isValid: (query: Index<string>) =>
-      !!(query.pageSize && !isNaN(parseInt(query.pageSize, 0))),
+    isValid: (query: Index<string>) => !!(query.pageSize && !isNaN(parseInt(query.pageSize, 0))),
   },
 ];
 
@@ -136,8 +129,7 @@ export const FILTERS_SEARCH_SETTINGS: SearchSetting[] = [
       return [];
     },
     serialize: (value: string[]) => value.join(','),
-    isValid: (query: Index<string>) =>
-      !query.statuses || query.statuses.split(',').length > 0,
+    isValid: (query: Index<string>) => !query.statuses || query.statuses.split(',').length > 0,
   },
 ];
 
@@ -157,10 +149,7 @@ export const SEGMENTS_FILTERS_SEARCH_SETTINGS: SearchSetting[] = [
     },
     serialize: (value: string[]) => value.join(','),
     isValid: (query: Index<string>) =>
-      !!(
-        query.segments &&
-        (query.segments.length === 0 || query.segments.split(',').length > 0)
-      ),
+      !!(query.segments && (query.segments.length === 0 || query.segments.split(',').length > 0)),
   },
 ];
 
@@ -178,11 +167,7 @@ export const DATE_SEARCH_SETTINGS: SearchSetting[] = [
       return value.raw() as string;
     },
     isValid: (query: Index<string>) =>
-      !!(
-        query.from &&
-        query.from.length &&
-        new McsMoment(query.from).isValid()
-      ),
+      !!(query.from && query.from.length && new McsMoment(query.from).isValid()),
   },
   {
     paramName: 'to',
@@ -208,11 +193,7 @@ export const DATE_SEARCH_SETTINGS_WITHOUT_CURRENT_DAY: SearchSetting[] = [
       return value.raw() as string;
     },
     isValid: (query: Index<string>) =>
-      !!(
-        query.from &&
-        query.from.length &&
-        new McsMoment(query.from).isValid()
-      ),
+      !!(query.from && query.from.length && new McsMoment(query.from).isValid()),
   },
   {
     paramName: 'to',
@@ -229,21 +210,15 @@ export const DATE_SEARCH_SETTINGS_WITHOUT_CURRENT_DAY: SearchSetting[] = [
 
 export const convertTimestampToDayNumber = (comparisonStartDate: number) => {
   const comparisonDurationInSeconds = (Date.now() - comparisonStartDate) / 1000;
-  const comparisonDurationInDays = Math.floor(
-    comparisonDurationInSeconds / (3600 * 24),
-  );
+  const comparisonDurationInDays = Math.floor(comparisonDurationInSeconds / (3600 * 24));
   return comparisonDurationInDays;
 };
 
-export const getComparisonDateSearchSettings = (
-  comparisonStartDate: number,
-) => {
+export const getComparisonDateSearchSettings = (comparisonStartDate: number) => {
   return [
     {
       paramName: 'from',
-      defaultValue: new McsMoment(
-        `now-${convertTimestampToDayNumber(comparisonStartDate)}d`,
-      ),
+      defaultValue: new McsMoment(`now-${convertTimestampToDayNumber(comparisonStartDate)}d`),
       deserialize: (query: Index<string>) => new McsMoment(query.from),
       serialize: (value: McsMoment) => {
         setSessionValue(value, 'from');
@@ -255,9 +230,7 @@ export const getComparisonDateSearchSettings = (
           query.from.length &&
           new McsMoment(query.from).isValid() &&
           new McsMoment(query.from).toMoment() >
-            new McsMoment(
-              `now-${convertTimestampToDayNumber(comparisonStartDate)}d`,
-            ).toMoment()
+            new McsMoment(`now-${convertTimestampToDayNumber(comparisonStartDate)}d`).toMoment()
         ),
     },
     {
@@ -270,8 +243,7 @@ export const getComparisonDateSearchSettings = (
       },
       isValid: (query: Index<string>) =>
         !!(query.to && query.to.length && new McsMoment(query.to).isValid()) &&
-        new McsMoment(query.to).toMoment() >
-          new McsMoment(query.from).toMoment(),
+        new McsMoment(query.to).toMoment() > new McsMoment(query.from).toMoment(),
     },
   ];
 };
@@ -281,7 +253,7 @@ export interface DateSearchSettings {
   to: McsMoment;
 }
 
-export interface SegmentsSearchSettings { 
+export interface SegmentsSearchSettings {
   segments: string[];
 }
 
@@ -357,10 +329,7 @@ export const isSearchValid = (search: string, settings: SearchSetting[]) => {
 };
 
 // add missing and/or replace invalid params with default value
-export const buildDefaultSearch = (
-  existingSearch: string,
-  settings: SearchSetting[],
-) => {
+export const buildDefaultSearch = (existingSearch: string, settings: SearchSetting[]) => {
   const existingQuery = queryString.parse(existingSearch);
   const defaultQuery = settings.reduce((acc, setting) => {
     const newAcc: any = acc;
@@ -377,11 +346,7 @@ export const buildDefaultSearch = (
 };
 
 // merge query with serialized params object
-export const updateSearch = (
-  search: string,
-  params: Index<any>,
-  settings?: SearchSetting[],
-) => {
+export const updateSearch = (search: string, params: Index<any>, settings?: SearchSetting[]) => {
   const query = queryString.parse(search);
 
   if (!settings) {
@@ -412,10 +377,7 @@ export const updateSearch = (
  * @param {Array} settings (optional) type settings
  * @returns the parsed search string into object
  */
-export function parseSearch<T = Index<any>>(
-  search: string,
-  settings?: SearchSetting[],
-): T {
+export function parseSearch<T = Index<any>>(search: string, settings?: SearchSetting[]): T {
   const query = queryString.parse(search);
   if (!settings) return query;
   return settings.reduce(
@@ -436,8 +398,5 @@ export function parseSearch<T = Index<any>>(
  * @returns true if two objects are equals
  */
 export const compareSearches = (currentSearch: string, nextSearch: string) => {
-  return lodash.isEqual(
-    queryString.parse(currentSearch),
-    queryString.parse(nextSearch),
-  );
+  return lodash.isEqual(queryString.parse(currentSearch), queryString.parse(nextSearch));
 };

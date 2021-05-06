@@ -66,14 +66,7 @@ class SegmentBuilderPage extends React.Component<Props> {
   private _tagService: ITagService;
 
   render() {
-    const {
-      intl,
-      connectedUser,
-      location,
-      history,
-      match,
-      hasFeature,
-    } = this.props;
+    const { intl, connectedUser, location, history, match, hasFeature } = this.props;
 
     const handleOnSelectDatamart = (selection: DatamartResource) => {
       // this.setState({ datamart: selection });
@@ -110,7 +103,7 @@ class SegmentBuilderPage extends React.Component<Props> {
             query_language: 'JSON_OTQL',
             query_text: JSON.stringify(query),
           })
-          .then((res) => {
+          .then(res => {
             const userQuerySegment: Partial<UserQuerySegment> = {
               datamart_id: datamartId,
               type: 'USER_QUERY',
@@ -126,11 +119,13 @@ class SegmentBuilderPage extends React.Component<Props> {
               userQuerySegment,
             );
           })
-          .then((res) => {
-            this._tagService.sendEvent("create_segment", "Advanced Segment Builder", "Save Segment");
-            history.push(
-              `/v2/o/${match.params.organisationId}/audience/segments/${res.data.id}`,
+          .then(res => {
+            this._tagService.sendEvent(
+              'create_segment',
+              'Advanced Segment Builder',
+              'Save Segment',
             );
+            history.push(`/v2/o/${match.params.organisationId}/audience/segments/${res.data.id}`);
           });
       };
 
@@ -140,8 +135,8 @@ class SegmentBuilderPage extends React.Component<Props> {
             query_language: 'JSON_OTQL',
             query_text: JSON.stringify(query),
           })
-          .then((d) => d.data)
-          .then((d) => {
+          .then(d => d.data)
+          .then(d => {
             return this._queryService.convertJsonOtql2Otql(datamartId, d);
           });
       };
@@ -152,8 +147,8 @@ class SegmentBuilderPage extends React.Component<Props> {
           convertToOtql={convert2Otql}
           breadcrumb={[
             hasFeature('audience-segment_builder_v2')
-                ? intl.formatMessage(messages.advancedSegmentBuilder)
-                : intl.formatMessage(messages.segmentBuilder),
+              ? intl.formatMessage(messages.advancedSegmentBuilder)
+              : intl.formatMessage(messages.segmentBuilder),
           ]}
         />
       );
@@ -176,20 +171,15 @@ class SegmentBuilderPage extends React.Component<Props> {
             isMainlayout={true}
           />
         )}
-        {selectedDatamart &&
-          selectedDatamart.storage_model_version === 'v201709' && (
-            <JSONQLBuilderContainer
-              datamartId={selectedDatamart.id}
-              renderActionBar={jsonQLActionbar}
-            />
-          )}
-        {selectedDatamart &&
-          selectedDatamart.storage_model_version === 'v201506' && (
-            <Alert
-              message={intl.formatMessage(messages.noMoreSupported)}
-              type="warning"
-            />
-          )}
+        {selectedDatamart && selectedDatamart.storage_model_version === 'v201709' && (
+          <JSONQLBuilderContainer
+            datamartId={selectedDatamart.id}
+            renderActionBar={jsonQLActionbar}
+          />
+        )}
+        {selectedDatamart && selectedDatamart.storage_model_version === 'v201506' && (
+          <Alert message={intl.formatMessage(messages.noMoreSupported)} type='warning' />
+        )}
       </div>
     );
   }

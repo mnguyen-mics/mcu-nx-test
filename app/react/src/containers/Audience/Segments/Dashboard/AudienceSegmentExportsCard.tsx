@@ -14,15 +14,8 @@ import injectNotifications, {
 } from '../../../Notifications/injectNotifications';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
-import {
-  defineMessages,
-  InjectedIntlProps,
-  injectIntl,
-  FormattedMessage,
-} from 'react-intl';
-import injectThemeColors, {
-  InjectedThemeColorsProps,
-} from '../../../Helpers/injectThemeColors';
+import { defineMessages, InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
+import injectThemeColors, { InjectedThemeColorsProps } from '../../../Helpers/injectThemeColors';
 import LocalStorage from '../../../../services/LocalStorage';
 import { UserAccountCompartmentDatamartSelectionResource } from '../../../../models/datamart/DatamartResource';
 import { IDatamartService } from '../../../../services/DatamartService';
@@ -97,13 +90,11 @@ const messages = defineMessages({
     defaultMessage: 'User Points in segment',
   },
   totalExportedUserPoints: {
-    id:
-      'audience.segments.dashboard.segmentExportsList.totalExportedUserPoints',
+    id: 'audience.segments.dashboard.segmentExportsList.totalExportedUserPoints',
     defaultMessage: 'Exported User Points (with identifiers)',
   },
   totalExportedIdentifiers: {
-    id:
-      'audience.segments.dashboard.segmentExportsList.totalExportedIdentifiers',
+    id: 'audience.segments.dashboard.segmentExportsList.totalExportedIdentifiers',
     defaultMessage: 'Exported Identifiers',
   },
   download: {
@@ -120,8 +111,7 @@ const messages = defineMessages({
   },
   exportRunningDownload: {
     id: 'audience.segments.dashboard.segmentExportsList.running.download',
-    defaultMessage:
-      'This export is being created, please try again when the export has succeeded.',
+    defaultMessage: 'This export is being created, please try again when the export has succeeded.',
   },
   createExport: {
     id: 'audience.segments.dashboard.segmentExportsList.startNew',
@@ -139,8 +129,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
     if (
       executions.items.length > 0 &&
       executions.items.some(
-        (value, index, array) =>
-          value.status === 'PENDING' || value.status === 'RUNNING',
+        (value, index, array) => value.status === 'PENDING' || value.status === 'RUNNING',
       )
     ) {
       this.refreshData(filter);
@@ -185,16 +174,16 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
         // with_source_datamarts: true --> For enabling CROSS_DATAMART exports
         with_source_datamarts: true,
       })
-      .then((res) => {
+      .then(res => {
         this.setState({
           compartments: res.data,
           isLoadingCompartments: false,
-          selectedCompartmentId: res.data.filter((c) => c.default)[0]
-            ? res.data.filter((c) => c.default)[0].compartment_id
+          selectedCompartmentId: res.data.filter(c => c.default)[0]
+            ? res.data.filter(c => c.default)[0].compartment_id
             : undefined,
         });
       })
-      .catch((err) => {
+      .catch(err => {
         this.props.notifyError(err);
         this.setState({ isLoadingCompartments: false });
       });
@@ -211,7 +200,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
 
     this._audienceSegmentService
       .findAudienceSegmentExportExecutionsBySegment(segmentId, params)
-      .then((res) => {
+      .then(res => {
         this.setState({
           isLoadingExecutions: false,
           executions: {
@@ -220,15 +209,13 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
           },
         });
       })
-      .catch((err) => {
+      .catch(err => {
         this.props.notifyError(err);
         this.setState({ isLoadingExecutions: false });
       });
   };
 
-  getExecutionProgress = (
-    execution: AudienceSegmentExportJobExecutionResource,
-  ) => {
+  getExecutionProgress = (execution: AudienceSegmentExportJobExecutionResource) => {
     const { colors } = this.props;
     const tasks = execution.num_tasks || 0;
     const completedTasks =
@@ -257,9 +244,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
     };
   };
 
-  downloadFile = (execution: AudienceSegmentExportJobExecutionResource) => (
-    e: any,
-  ) => {
+  downloadFile = (execution: AudienceSegmentExportJobExecutionResource) => (e: any) => {
     const {
       intl: { formatMessage },
     } = this.props;
@@ -298,7 +283,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
     this._audienceSegmentService
       .createAudienceSegmentExport(segmentId, exportUserIdentifier)
       .then(() => this.refreshData(newFilter))
-      .catch((err) => {
+      .catch(err => {
         this.props.notifyError(err);
       });
     this.handleModal(false);
@@ -310,14 +295,9 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
     });
   };
 
-  createCompartmentOptions = (
-    compartments: UserAccountCompartmentDatamartSelectionResource[],
-  ) => {
-    const compartmentOptions = compartments.map((compartment) => (
-      <Select.Option
-        key={compartment.compartment_id}
-        value={compartment.compartment_id}
-      >
+  createCompartmentOptions = (compartments: UserAccountCompartmentDatamartSelectionResource[]) => {
+    const compartmentOptions = compartments.map(compartment => (
+      <Select.Option key={compartment.compartment_id} value={compartment.compartment_id}>
         {`${compartment.compartment_id} - ${compartment.name}`}
       </Select.Option>
     ));
@@ -374,16 +354,13 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
     const onReturnClick = () => this.handleModal(false);
     const onSubmitClick = (e: any) => this.submitModal();
 
-    const dataColumns: Array<
-      DataColumnDefinition<AudienceSegmentExportJobExecutionResource>
-    > = [
+    const dataColumns: Array<DataColumnDefinition<AudienceSegmentExportJobExecutionResource>> = [
       {
         title: formatMessage(messages.submissionDate),
         key: 'submissionDate',
         isVisibleByDefault: true,
         isHideable: false,
-        render: (text, record) =>
-          formatUnixTimestamp(record.creation_date, 'DD/MM/YYYY HH:mm:ss'),
+        render: (text, record) => formatUnixTimestamp(record.creation_date, 'DD/MM/YYYY HH:mm:ss'),
       },
       {
         title: formatMessage(messages.status),
@@ -400,10 +377,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
           // currently we can't pass color
           // https://github.com/ant-design/ant-design/blob/master/components/progress/progress.tsx
           <div>
-            <Progress
-              showInfo={false}
-              percent={this.getExecutionProgress(record).percent * 100}
-            />
+            <Progress showInfo={false} percent={this.getExecutionProgress(record).percent * 100} />
           </div>
         ),
       },
@@ -412,8 +386,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
         key: 'startDate',
         isVisibleByDefault: true,
         isHideable: false,
-        render: (text, record) =>
-          formatUnixTimestamp(record.start_date, 'DD/MM/YYYY HH:mm:ss'),
+        render: (text, record) => formatUnixTimestamp(record.start_date, 'DD/MM/YYYY HH:mm:ss'),
       },
       {
         title: formatMessage(messages.endDate),
@@ -422,9 +395,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
         isHideable: false,
         render: (text, record) =>
           formatUnixTimestamp(
-            record.start_date && record.duration
-              ? record.start_date + record.duration
-              : undefined,
+            record.start_date && record.duration ? record.start_date + record.duration : undefined,
             'DD/MM/YYYY HH:mm:ss',
           ),
       },
@@ -433,9 +404,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
         key: 'userIdentifierType',
         isHideable: false,
         render: (text, record) =>
-          record.parameters
-            ? record.parameters.export_user_identifier.type
-            : '',
+          record.parameters ? record.parameters.export_user_identifier.type : '',
       },
       {
         title: formatMessage(messages.totalUserPoints),
@@ -443,10 +412,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
         isVisibleByDefault: true,
         isHideable: false,
         render: (text, record) =>
-          formatMetric(
-            record.result ? record.result.total_user_points_in_segment : '-',
-            '0',
-          ),
+          formatMetric(record.result ? record.result.total_user_points_in_segment : '-', '0'),
       },
       {
         title: formatMessage(messages.totalExportedUserPoints),
@@ -454,10 +420,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
         isVisibleByDefault: true,
         isHideable: false,
         render: (text, record) =>
-          formatMetric(
-            record.result ? record.result.total_exported_user_points : '-',
-            '0',
-          ),
+          formatMetric(record.result ? record.result.total_exported_user_points : '-', '0'),
       },
       {
         title: formatMessage(messages.totalExportedIdentifiers),
@@ -465,10 +428,7 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
         isVisibleByDefault: true,
         isHideable: false,
         render: (text, record) =>
-          formatMetric(
-            record.result ? record.result.total_exported_identifiers : '-',
-            '0',
-          ),
+          formatMetric(record.result ? record.result.total_exported_identifiers : '-', '0'),
       },
       {
         key: 'action',
@@ -477,9 +437,8 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
             record.status === 'SUCCEEDED' &&
             record.result &&
             record.result.export_file_uri && (
-              <Button type="primary" onClick={this.downloadFile(record)}>
-                <McsIcon type="download" />{' '}
-                {this.props.intl.formatMessage(messages.download)}
+              <Button type='primary' onClick={this.downloadFile(record)}>
+                <McsIcon type='download' /> {this.props.intl.formatMessage(messages.download)}
               </Button>
             )
           );
@@ -489,29 +448,28 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
 
     const executionsData = this.state.executions.items;
 
-    const showCompartment =
-      this.state.identifierType === 'USER_ACCOUNT' && compartments.length > 0;
+    const showCompartment = this.state.identifierType === 'USER_ACCOUNT' && compartments.length > 0;
 
     const compartmentOptions = this.createCompartmentOptions(compartments);
 
     const onClickNewExport = () => this.handleModal(true);
 
     return (
-      <div className="ant-layout">
+      <div className='ant-layout'>
         <Modal
           title={<FormattedMessage {...messages.popupTitle} />}
-          wrapClassName="vertical-center-modal"
+          wrapClassName='vertical-center-modal'
           visible={this.state.isModalVisible}
           footer={
             <React.Fragment>
-              <Button key="back" size="large" onClick={onReturnClick}>
+              <Button key='back' size='large' onClick={onReturnClick}>
                 Return
               </Button>
               <Button
                 disabled={false}
-                key="submit"
-                type="primary"
-                size="large"
+                key='submit'
+                type='primary'
+                size='large'
                 onClick={onSubmitClick}
               >
                 Submit
@@ -526,9 +484,9 @@ class AudienceSegmentExportsCard extends React.Component<Props, State> {
               defaultValue={this.state.identifierType}
               onChange={this.updateIdentifierType}
             >
-              <Option value="USER_AGENT">User Agents</Option>
-              <Option value="USER_ACCOUNT">User Accounts</Option>
-              <Option value="USER_EMAIL">Email Hash</Option>
+              <Option value='USER_AGENT'>User Agents</Option>
+              <Option value='USER_ACCOUNT'>User Accounts</Option>
+              <Option value='USER_EMAIL'>Email Hash</Option>
             </Select>
             {showCompartment && (
               <div style={{ display: 'flex' }}>

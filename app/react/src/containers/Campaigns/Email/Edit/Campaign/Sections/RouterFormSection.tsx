@@ -6,9 +6,7 @@ import { Spin } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 
 import { FormSection } from '../../../../../../components/Form';
-import withValidators, {
-  ValidatorProps,
-} from '../../../../../../components/Form/withValidators';
+import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
 import DefaultSelect, {
   DefaultSelectProps,
 } from '../../../../../../components/Form/FormSelect/DefaultSelect';
@@ -67,7 +65,7 @@ class RouterFormSection extends React.Component<Props, State> {
           title={messages.emailEditorRouterTitle}
         />
         <FormSelectField
-          name="routerFields[0].model.email_router_id"
+          name='routerFields[0].model.email_router_id'
           component={DefaultSelect}
           validate={[isRequired]}
           formItemProps={{
@@ -75,9 +73,7 @@ class RouterFormSection extends React.Component<Props, State> {
             required: true,
           }}
           selectProps={{
-            notFoundContent: this.state.fetchingRouters ? (
-              <Spin size="small" />
-            ) : null,
+            notFoundContent: this.state.fetchingRouters ? <Spin size='small' /> : null,
           }}
           options={this.state.routers.map(router => ({
             value: router.id,
@@ -92,8 +88,4 @@ class RouterFormSection extends React.Component<Props, State> {
   }
 }
 
-export default compose(
-  injectIntl,
-  withRouter,
-  withValidators,
-)(RouterFormSection);
+export default compose(injectIntl, withRouter, withValidators)(RouterFormSection);

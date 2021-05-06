@@ -47,16 +47,13 @@ class HtmlEditor extends React.Component<Props, HtmlEditorState> {
     for (let i = 0; i <= listOfSelector.length - 1; i += 1) {
       if (listOfSelector[i].getAttribute('data-mcs-type') === 'image') {
         const element = listOfSelector[i] as HTMLImageElement;
-        element.src =
-          values[listOfSelector[i].getAttribute('data-mcs-name') || ''];
+        element.src = values[listOfSelector[i].getAttribute('data-mcs-name') || ''];
       } else if (listOfSelector[i].getAttribute('data-mcs-type') === 'link') {
         const element = listOfSelector[i] as HTMLLinkElement;
-        element.href =
-          values[listOfSelector[i].getAttribute('data-mcs-name') || ''];
+        element.href = values[listOfSelector[i].getAttribute('data-mcs-name') || ''];
         element.target = '_blank';
       } else if (listOfSelector[i].getAttribute('data-mcs-type') === 'text') {
-        listOfSelector[i].innerHTML =
-          values[listOfSelector[i].getAttribute('data-mcs-name') || ''];
+        listOfSelector[i].innerHTML = values[listOfSelector[i].getAttribute('data-mcs-name') || ''];
       }
     }
     this.props.onChange(d.innerHTML);
@@ -71,8 +68,8 @@ class HtmlEditor extends React.Component<Props, HtmlEditorState> {
     const codeEdit = (
       <AceEditor
         value={this.props.content}
-        theme="monokai"
-        name="code"
+        theme='monokai'
+        name='code'
         width={'100%'}
         height={'800px'}
         mode={'handlebars'}
@@ -91,30 +88,27 @@ class HtmlEditor extends React.Component<Props, HtmlEditorState> {
       />
     );
 
-    const onSizeChange = (e: RadioChangeEvent) =>
-      this.setState({ size: e.target.value as Size });
-    const onTypeChange = (e: RadioChangeEvent) =>
-      this.setState({ type: e.target.value as Type });
+    const onSizeChange = (e: RadioChangeEvent) => this.setState({ size: e.target.value as Size });
+    const onTypeChange = (e: RadioChangeEvent) => this.setState({ type: e.target.value as Type });
 
-    const changedSize =
-      this.state.size === 'LARGE' ? -4 : this.state.size === 'SMALL' ? 4 : 0;
+    const changedSize = this.state.size === 'LARGE' ? -4 : this.state.size === 'SMALL' ? 4 : 0;
 
     return (
       <div>
         <Row style={{ marginBottom: 10 }}>
           <Col span={12 - changedSize}>
             <Radio.Group onChange={onTypeChange} defaultValue={this.state.type}>
-              <Radio.Button value="CODE">
-                <McsIcon type="code" />
+              <Radio.Button value='CODE'>
+                <McsIcon type='code' />
                 Code
               </Radio.Button>
             </Radio.Group>
           </Col>
           <Col span={12 + changedSize} style={{ textAlign: 'right' }}>
             <Radio.Group onChange={onSizeChange} defaultValue={this.state.size}>
-              <Radio.Button value="SMALL">Large</Radio.Button>
-              <Radio.Button value="MEDIUM">Medium</Radio.Button>
-              <Radio.Button value="LARGE">Small</Radio.Button>
+              <Radio.Button value='SMALL'>Large</Radio.Button>
+              <Radio.Button value='MEDIUM'>Medium</Radio.Button>
+              <Radio.Button value='LARGE'>Small</Radio.Button>
             </Radio.Group>
           </Col>
         </Row>
@@ -129,10 +123,7 @@ class HtmlEditor extends React.Component<Props, HtmlEditorState> {
             {this.state.type === 'CODE' && codeEdit}
           </Col>
 
-          <Col
-            span={12 + changedSize}
-            style={{ overflowY: 'scroll', maxHeight: 800 }}
-          >
+          <Col span={12 + changedSize} style={{ overflowY: 'scroll', maxHeight: 800 }}>
             {iframe}
           </Col>
         </Row>
@@ -141,6 +132,4 @@ class HtmlEditor extends React.Component<Props, HtmlEditorState> {
   }
 }
 
-export default compose<HtmlEditorProps, HtmlEditorProps>(injectDrawer)(
-  HtmlEditor,
-);
+export default compose<HtmlEditorProps, HtmlEditorProps>(injectDrawer)(HtmlEditor);

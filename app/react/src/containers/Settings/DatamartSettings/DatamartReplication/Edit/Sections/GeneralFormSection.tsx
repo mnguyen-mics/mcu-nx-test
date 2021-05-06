@@ -2,17 +2,9 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import messages from '../../List/messages';
-import {
-  FormInput,
-  FormSection,
-  FormInputField,
-} from '../../../../../../components/Form';
-import withValidators, {
-  ValidatorProps,
-} from '../../../../../../components/Form/withValidators';
-import withNormalizer, {
-  NormalizerProps,
-} from '../../../../../../components/Form/withNormalizer';
+import { FormInput, FormSection, FormInputField } from '../../../../../../components/Form';
+import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
+import withNormalizer, { NormalizerProps } from '../../../../../../components/Form/withNormalizer';
 
 type Props = InjectedIntlProps & ValidatorProps & NormalizerProps;
 
@@ -36,7 +28,7 @@ class GeneralFormSection extends React.Component<Props> {
         />
 
         <FormInputField
-          name="name"
+          name='name'
           component={FormInput}
           validate={[isRequired]}
           formItemProps={{
@@ -44,9 +36,7 @@ class GeneralFormSection extends React.Component<Props> {
             required: true,
           }}
           inputProps={{
-            placeholder: formatMessage(
-              messages.datamartReplicationNamePlaceHolder,
-            ),
+            placeholder: formatMessage(messages.datamartReplicationNamePlaceHolder),
           }}
           helpToolTipProps={{
             title: formatMessage(messages.datamartReplicationNameTooltip),
@@ -57,8 +47,4 @@ class GeneralFormSection extends React.Component<Props> {
   }
 }
 
-export default compose(
-  injectIntl,
-  withValidators,
-  withNormalizer,
-)(GeneralFormSection);
+export default compose(injectIntl, withValidators, withNormalizer)(GeneralFormSection);

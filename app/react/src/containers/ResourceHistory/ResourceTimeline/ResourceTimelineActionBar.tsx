@@ -10,8 +10,7 @@ export interface ResourceTimelineActionBarProps {
   formatProperty: FormatProperty;
 }
 
-type Props = ResourceTimelineActionBarProps &
-  InjectedIntlProps;
+type Props = ResourceTimelineActionBarProps & InjectedIntlProps;
 
 export class ResourceTimelineActionBar extends React.Component<Props> {
   render() {
@@ -25,19 +24,14 @@ export class ResourceTimelineActionBar extends React.Component<Props> {
       <Actionbar
         edition={true}
         pathItems={[
-          formatMessage(formatProperty('history_title').message) || formatMessage(messages.defaultTitle)
-        ]
-        }>
-        <McsIcon
-          type="close"
-          className="close-icon"
-          onClick={handleClose}
-        />
-      </Actionbar >
+          formatMessage(formatProperty('history_title').message) ||
+            formatMessage(messages.defaultTitle),
+        ]}
+      >
+        <McsIcon type='close' className='close-icon' onClick={handleClose} />
+      </Actionbar>
     );
   }
 }
 
-export default compose(
-  injectIntl,
-)(ResourceTimelineActionBar);
+export default compose(injectIntl)(ResourceTimelineActionBar);

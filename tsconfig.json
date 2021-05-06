@@ -20,7 +20,7 @@
     "strictNullChecks": true,
     "pretty": true,
     "removeComments": true,
-    "experimentalDecorators": true,
+    "experimentalDecorators": true
     // "types": ["reflect-metadata"]
   },
   "exclude": ["node_modules", "ts-build", ".history", "dist", "Cypress"]

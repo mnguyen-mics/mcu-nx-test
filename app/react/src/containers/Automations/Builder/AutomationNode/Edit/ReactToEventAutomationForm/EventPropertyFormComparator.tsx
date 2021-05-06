@@ -1,26 +1,47 @@
-import React from "react";
-import { defineMessages, InjectedIntlProps, injectIntl } from "react-intl";
-import { compose } from "recompose";
-import { DefaultSelect, FormMultiTagField, FormSelectField, TagSelect, withValidators } from "../../../../../../components/Form";
-import { BuitinEnumerationType, FieldDirectiveInfoResource, FieldDirectiveResource, ObjectLikeTypeInfoResource } from "../../../../../../models/datamart/graphdb/RuntimeSchema";
-import constants, { builtinEnumTypeOptions, ComparisonValues } from "../../../../../QueryTool/JSONOTQL/Edit/Sections/Field/contants";
-import { FieldProposalLookup, getCoreReferenceTypeAndModel } from "../../../../../QueryTool/JSONOTQL/domain";
-import { FormRelativeAbsoluteDateField, FormSearchObjectField, FormTagSelectField } from "../../../../../QueryTool/JSONOTQL/Edit/Sections/Field/FieldNodeForm";
-import FormRelativeAbsoluteDate from "../../../../../QueryTool/JSONOTQL/Edit/Sections/Field/Comparison/FormRelativeAbsoluteDate";
-import FormMultiTag from "../../../../../../components/Form/FormSelect/FormMultiTag";
-import { SegmentNameDisplay } from "../../../../../Audience/Common/SegmentNameDisplay";
-import FormSearchObject from "../../../../../../components/Form/FormSelect/FormSearchObject";
-import { lazyInject } from "../../../../../../config/inversify.config";
-import { TYPES } from "../../../../../../constants/types";
-import { IAudienceSegmentService } from "../../../../../../services/AudienceSegmentService";
-import { IComparmentService } from "../../../../../../services/CompartmentService";
-import { IChannelService } from "../../../../../../services/ChannelService";
-import { IDatamartService } from "../../../../../../services/DatamartService";
-import { IReferenceTableService } from "../../../../../../services/ReferenceTableService";
-import { ValidatorProps } from "../../../../../../components/Form/withValidators";
-import { RouteComponentProps, withRouter } from "react-router";
-import { InjectedWorkspaceProps, injectWorkspace } from "../../../../../Datamart";
-import { FieldNode } from "../../../../../../models/datamart/graphdb/QueryDocument";
+import React from 'react';
+import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
+import { compose } from 'recompose';
+import {
+  DefaultSelect,
+  FormMultiTagField,
+  FormSelectField,
+  TagSelect,
+  withValidators,
+} from '../../../../../../components/Form';
+import {
+  BuitinEnumerationType,
+  FieldDirectiveInfoResource,
+  FieldDirectiveResource,
+  ObjectLikeTypeInfoResource,
+} from '../../../../../../models/datamart/graphdb/RuntimeSchema';
+import constants, {
+  builtinEnumTypeOptions,
+  ComparisonValues,
+} from '../../../../../QueryTool/JSONOTQL/Edit/Sections/Field/contants';
+import {
+  FieldProposalLookup,
+  getCoreReferenceTypeAndModel,
+} from '../../../../../QueryTool/JSONOTQL/domain';
+import {
+  FormRelativeAbsoluteDateField,
+  FormSearchObjectField,
+  FormTagSelectField,
+} from '../../../../../QueryTool/JSONOTQL/Edit/Sections/Field/FieldNodeForm';
+import FormRelativeAbsoluteDate from '../../../../../QueryTool/JSONOTQL/Edit/Sections/Field/Comparison/FormRelativeAbsoluteDate';
+import FormMultiTag from '../../../../../../components/Form/FormSelect/FormMultiTag';
+import { SegmentNameDisplay } from '../../../../../Audience/Common/SegmentNameDisplay';
+import FormSearchObject from '../../../../../../components/Form/FormSelect/FormSearchObject';
+import { lazyInject } from '../../../../../../config/inversify.config';
+import { TYPES } from '../../../../../../constants/types';
+import { IAudienceSegmentService } from '../../../../../../services/AudienceSegmentService';
+import { IComparmentService } from '../../../../../../services/CompartmentService';
+import { IChannelService } from '../../../../../../services/ChannelService';
+import { IDatamartService } from '../../../../../../services/DatamartService';
+import { IReferenceTableService } from '../../../../../../services/ReferenceTableService';
+import { ValidatorProps } from '../../../../../../components/Form/withValidators';
+import { RouteComponentProps, withRouter } from 'react-router';
+import { InjectedWorkspaceProps, injectWorkspace } from '../../../../../Datamart';
+import { FieldNode } from '../../../../../../models/datamart/graphdb/QueryDocument';
 
 type FieldComparisonGenerator = ComparisonValues<any> & {
   component: React.ReactNode;
@@ -41,17 +62,16 @@ export type EventPropertyFormComparatorProps = {
   runtimeSchemaId: string;
   runFieldProposal?: FieldProposalLookup;
   formChange: (fieldName: string, value: any) => void;
-}
+};
 
-type Props = EventPropertyFormComparatorProps
-  & InjectedIntlProps
-  & ValidatorProps
-  & InjectedWorkspaceProps
-  & RouteComponentProps<{ organisationId: string }>;;
+type Props = EventPropertyFormComparatorProps &
+  InjectedIntlProps &
+  ValidatorProps &
+  InjectedWorkspaceProps &
+  RouteComponentProps<{ organisationId: string }>;
 
-type State = {}
+type State = {};
 class EventPropertyFormComparator extends React.Component<Props, State> {
-
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
 
@@ -80,19 +100,13 @@ class EventPropertyFormComparator extends React.Component<Props, State> {
       fieldNode,
     } = this.props;
 
-    const {
-      fieldNode: previousFieldNode
-    } = previousProps;
+    const { fieldNode: previousFieldNode } = previousProps;
 
     if (fieldType && fieldNode && fieldNode.field !== previousFieldNode?.field) {
       formChange(
         name ? `${name}.comparison` : 'comparison',
-        this.generateAvailableConditionOptions(
-          fieldType,
-          fieldIndexDataType,
-          directive,
-          isEdge,
-        ).defaultValue,
+        this.generateAvailableConditionOptions(fieldType, fieldIndexDataType, directive, isEdge)
+          .defaultValue,
       );
     }
   }
@@ -101,7 +115,7 @@ class EventPropertyFormComparator extends React.Component<Props, State> {
     fieldType?: string,
     fieldIndexDataType?: string,
     directives?: FieldDirectiveResource[],
-    isEdge?: boolean
+    isEdge?: boolean,
   ): FieldComparisonGenerator => {
     const { intl } = this.props;
 
@@ -129,9 +143,7 @@ class EventPropertyFormComparator extends React.Component<Props, State> {
       case 'Date':
         return {
           ...constants.generateTimeComparisonOperator(intl),
-          component: shouldRenderDirective(
-            this.generateTimestampComparisonField(),
-          ),
+          component: shouldRenderDirective(this.generateTimestampComparisonField()),
         };
       case 'String':
         return {
@@ -140,19 +152,14 @@ class EventPropertyFormComparator extends React.Component<Props, State> {
             fieldIndexDataType || undefined,
             isEdge,
           ),
-          component: shouldRenderDirective(
-            this.generateStringComparisonField(),
-            true,
-          ),
+          component: shouldRenderDirective(this.generateStringComparisonField(), true),
           fetchPredicate: undefined,
         };
       case 'Bool':
       case 'Boolean':
         return {
           ...constants.generateBooleanComparisonOperator(intl),
-          component: shouldRenderDirective(
-            this.generateBooleanComparisonField(),
-          ),
+          component: shouldRenderDirective(this.generateBooleanComparisonField()),
         };
       case 'Enum':
         return {
@@ -166,9 +173,7 @@ class EventPropertyFormComparator extends React.Component<Props, State> {
       case 'BigDecimal':
         return {
           ...constants.generateNumericComparisonOperator(intl),
-          component: shouldRenderDirective(
-            this.generateNumericComparisonField(),
-          ),
+          component: shouldRenderDirective(this.generateNumericComparisonField()),
         };
       case 'ID':
         return {
@@ -186,9 +191,10 @@ class EventPropertyFormComparator extends React.Component<Props, State> {
           ...constants.generateEnumComparisonOperator(intl),
           component: shouldRenderDirective(
             this.generateTagSelectComparisonField(
-              (builtinEnumTypeOptions[
-                fieldType as BuitinEnumerationType
-              ] as string[]).map(v => ({ label: v, value: v })),
+              (builtinEnumTypeOptions[fieldType as BuitinEnumerationType] as string[]).map(v => ({
+                label: v,
+                value: v,
+              })),
             ),
           ),
         };
@@ -199,7 +205,7 @@ class EventPropertyFormComparator extends React.Component<Props, State> {
           component: undefined,
         };
     }
-  }
+  };
 
   generateTimestampComparisonField() {
     const { intl, name, disabled, idToAttachDropDowns, fieldNode } = this.props;
@@ -208,8 +214,7 @@ class EventPropertyFormComparator extends React.Component<Props, State> {
 
     if (idToAttachDropDowns) {
       popUpProps = {
-        getCalendarContainer: (e: HTMLElement) =>
-          document.getElementById(idToAttachDropDowns)!,
+        getCalendarContainer: (e: HTMLElement) => document.getElementById(idToAttachDropDowns)!,
       };
     }
 
@@ -241,8 +246,7 @@ class EventPropertyFormComparator extends React.Component<Props, State> {
 
     if (idToAttachDropDowns) {
       popUpProps = {
-        getCalendarContainer: (e: HTMLElement) =>
-          document.getElementById(idToAttachDropDowns)!,
+        getCalendarContainer: (e: HTMLElement) => document.getElementById(idToAttachDropDowns)!,
       };
     }
 
@@ -282,17 +286,14 @@ class EventPropertyFormComparator extends React.Component<Props, State> {
     );
   }
 
-  generateTagSelectComparisonField(
-    options: Array<{ label: string; value: string }>,
-  ) {
+  generateTagSelectComparisonField(options: Array<{ label: string; value: string }>) {
     const { intl, name, idToAttachDropDowns, fieldValidators } = this.props;
 
     let popUpProps = {};
 
     if (idToAttachDropDowns) {
       popUpProps = {
-        getPopupContainer: (e: HTMLElement) =>
-          document.getElementById(idToAttachDropDowns)!,
+        getPopupContainer: (e: HTMLElement) => document.getElementById(idToAttachDropDowns)!,
       };
     }
 
@@ -337,8 +338,7 @@ class EventPropertyFormComparator extends React.Component<Props, State> {
 
     if (idToAttachDropDowns) {
       popUpProps = {
-        getPopupContainer: (e: HTMLElement) =>
-          document.getElementById(idToAttachDropDowns)!,
+        getPopupContainer: (e: HTMLElement) => document.getElementById(idToAttachDropDowns)!,
       };
     }
 
@@ -347,10 +347,7 @@ class EventPropertyFormComparator extends React.Component<Props, State> {
       <FormMultiTagField
         name={name ? `${name}.comparison.values` : 'comparison.values'}
         component={FormMultiTag}
-        validate={[
-          fieldValidators.isRequired,
-          fieldValidators.isValidArrayOfNumber,
-        ]}
+        validate={[fieldValidators.isRequired, fieldValidators.isValidArrayOfNumber]}
         formItemProps={{
           label: intl.formatMessage(messages.fieldConditionValuesNumberLabel),
           required: true,
@@ -403,8 +400,7 @@ class EventPropertyFormComparator extends React.Component<Props, State> {
 
     if (idToAttachDropDowns) {
       popUpProps = {
-        getPopupContainer: (e: HTMLElement) =>
-          document.getElementById(idToAttachDropDowns)!,
+        getPopupContainer: (e: HTMLElement) => document.getElementById(idToAttachDropDowns)!,
       };
     }
 
@@ -428,8 +424,8 @@ class EventPropertyFormComparator extends React.Component<Props, State> {
         small={true}
       />
     ) : (
-        this.generateStringComparisonField()
-      );
+      this.generateStringComparisonField()
+    );
   }
 
   generateReferenceTableComparisonField(type: string, modelType?: string) {
@@ -446,9 +442,7 @@ class EventPropertyFormComparator extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
-      workspace: {
-        community_id
-      },
+      workspace: { community_id },
     } = this.props;
 
     let fetchListMethod = (
@@ -456,12 +450,7 @@ class EventPropertyFormComparator extends React.Component<Props, State> {
     ): Promise<Array<{ key: string; label: JSX.Element | string; value: string }>> => {
       if (fieldNode) {
         return this._referenceTableService
-          .getReferenceTable(
-            datamartId,
-            runtimeSchemaId,
-            objectType.name,
-            fieldNode.field,
-          )
+          .getReferenceTable(datamartId, runtimeSchemaId, objectType.name, fieldNode.field)
           .then(res =>
             res.data.map(r => ({ key: r.value, label: r.display_value, value: r.value })),
           );
@@ -469,8 +458,7 @@ class EventPropertyFormComparator extends React.Component<Props, State> {
       return Promise.resolve([]);
     };
 
-    let fetchSingleMethod = (id: string) =>
-      Promise.resolve({ key: id, label: id, value: id });
+    let fetchSingleMethod = (id: string) => Promise.resolve({ key: id, label: id, value: id });
     let selectProps = {};
     let loadOnlyOnce = false;
     let shouldFilterData = false;
@@ -486,7 +474,7 @@ class EventPropertyFormComparator extends React.Component<Props, State> {
                   res.data.map(r => ({
                     key: r.compartment_id,
                     label: r.name ? r.name : r.token,
-                    value: r.compartment_id
+                    value: r.compartment_id,
                   })),
                 );
             };
@@ -499,8 +487,7 @@ class EventPropertyFormComparator extends React.Component<Props, State> {
             fetchListMethod = (keywords: string) => {
               return this._channelService
                 .getChannelsByOrganisation(organisationId, {
-                  community_id:
-                    organisationId === community_id ? community_id : undefined,
+                  community_id: organisationId === community_id ? community_id : undefined,
                   keywords: keywords,
                   with_source_datamarts: true,
                 })
@@ -522,7 +509,7 @@ class EventPropertyFormComparator extends React.Component<Props, State> {
                   res.data.map(r => ({
                     key: r.id,
                     label: <SegmentNameDisplay audienceSegmentResource={r} />,
-                    value: r.id
+                    value: r.id,
                   })),
                 );
             };
@@ -535,10 +522,9 @@ class EventPropertyFormComparator extends React.Component<Props, State> {
       }
     } else if (type && type === 'COMPUTED') {
       fetchListMethod = (keywords: string) =>
-        this.fetchPredicates(
-          this._computedTreeNodePath,
-          fieldNode ? fieldNode.field : '',
-        ).then(r => r.map(e => ({ key: e, label: e, value: e })));
+        this.fetchPredicates(this._computedTreeNodePath, fieldNode ? fieldNode.field : '').then(r =>
+          r.map(e => ({ key: e, label: e, value: e })),
+        );
       selectProps = {
         ...selectProps,
         mode: 'tags',
@@ -550,8 +536,7 @@ class EventPropertyFormComparator extends React.Component<Props, State> {
     if (idToAttachDropDowns) {
       selectProps = {
         ...selectProps,
-        getPopupContainer: (e: HTMLElement) =>
-          document.getElementById(idToAttachDropDowns)!,
+        getPopupContainer: (e: HTMLElement) => document.getElementById(idToAttachDropDowns)!,
       };
     }
 
@@ -591,15 +576,7 @@ class EventPropertyFormComparator extends React.Component<Props, State> {
   };
 
   render() {
-    const {
-      name,
-      intl,
-      disabled,
-      fieldIndexDataType,
-      directives,
-      isEdge,
-      fieldType,
-    } = this.props;
+    const { name, intl, disabled, fieldIndexDataType, directives, isEdge, fieldType } = this.props;
 
     const generatedAvailableConditionOptions = this.generateAvailableConditionOptions(
       fieldType,
@@ -641,118 +618,118 @@ export default compose<Props, EventPropertyFormComparatorProps>(
 const messages = defineMessages({
   fieldConditionTitle: {
     id: 'eventPropertyFormComparator.fieldCondition.title',
-    defaultMessage: 'Field Conditions'
+    defaultMessage: 'Field Conditions',
   },
   fieldConditionSubTitle: {
     id: 'eventPropertyFormComparator.fieldCondition.subtitle',
-    defaultMessage: 'Add Field Conditions to the selected object'
+    defaultMessage: 'Add Field Conditions to the selected object',
   },
   fieldConditionFieldLabel: {
     id: 'eventPropertyFormComparator.fieldCondition.field.label',
-    defaultMessage: 'Field Name'
+    defaultMessage: 'Field Name',
   },
   fieldConditionConditionLabel: {
     id: 'eventPropertyFormComparator.fieldCondition.condition.label',
-    defaultMessage: 'Condition'
+    defaultMessage: 'Condition',
   },
   fieldConditionValuesLabel: {
     id: 'eventPropertyFormComparator.fieldCondition.values.label',
-    defaultMessage: 'Field Values'
+    defaultMessage: 'Field Values',
   },
   fieldConditionValuesNumberLabel: {
     id: 'eventPropertyFormComparator.fieldCondition.valuesNumbers.label',
-    defaultMessage: 'Field Values (Numbers Only)'
+    defaultMessage: 'Field Values (Numbers Only)',
   },
   fieldConditionValuesStringLabel: {
     id: 'eventPropertyFormComparator.fieldCondition.valuesString.label',
-    defaultMessage: 'Field Values (Strings)'
+    defaultMessage: 'Field Values (Strings)',
   },
   fieldConditionMultiValuesTooltip: {
     id: 'eventPropertyFormComparator.fieldCondition.multivalues.tooltip',
-    defaultMessage: 'The query will be evaluated to match at least one of the values.'
+    defaultMessage: 'The query will be evaluated to match at least one of the values.',
   },
   fieldConditionValuesTooltip: {
     id: 'eventPropertyFormComparator.fieldCondition.values.tooltip',
-    defaultMessage: 'The query will be evaluated to match your value.'
+    defaultMessage: 'The query will be evaluated to match your value.',
   },
   fieldConditionBooleanOperatorTitle: {
     id: 'eventPropertyFormComparator.fieldCondition.booleanOperator.title',
-    defaultMessage: 'Operator'
+    defaultMessage: 'Operator',
   },
   fieldTypeNotSupported: {
     id: 'eventPropertyFormComparator.fieldCondition.fieldTypeNotSupported.title',
-    defaultMessage: 'Field Type Not Supported'
+    defaultMessage: 'Field Type Not Supported',
   },
   EQ: {
     id: 'eventPropertyFormComparator.fieldCondition.condition.EQ',
-    defaultMessage: 'Equals'
+    defaultMessage: 'Equals',
   },
   NOT_EQ: {
     id: 'eventPropertyFormComparator.fieldCondition.condition.NOT_EQ',
-    defaultMessage: 'Does Not Equal'
+    defaultMessage: 'Does Not Equal',
   },
   MATCHES: {
     id: 'eventPropertyFormComparator.fieldCondition.condition.MATCHES',
-    defaultMessage: 'Matches'
+    defaultMessage: 'Matches',
   },
   DOES_NOT_MATCH: {
     id: 'eventPropertyFormComparator.fieldCondition.condition.DOES_NOT_MATCH',
-    defaultMessage: 'Does Not Match'
+    defaultMessage: 'Does Not Match',
   },
   STARTS_WITH: {
     id: 'eventPropertyFormComparator.fieldCondition.condition.STARTS_WITH',
-    defaultMessage: 'Starts With'
+    defaultMessage: 'Starts With',
   },
   DOES_NOT_START_WITH: {
     id: 'eventPropertyFormComparator.fieldCondition.condition.DOES_NOT_START_WITH',
-    defaultMessage: 'Does Not Start With'
+    defaultMessage: 'Does Not Start With',
   },
   CONTAINS: {
     id: 'eventPropertyFormComparator.fieldCondition.condition.CONTAINS',
-    defaultMessage: 'Contains'
+    defaultMessage: 'Contains',
   },
   DOES_NOT_CONTAIN: {
     id: 'eventPropertyFormComparator.fieldCondition.condition.DOES_NOT_CONTAIN',
-    defaultMessage: 'Does Not Contain'
+    defaultMessage: 'Does Not Contain',
   },
   BEFORE: {
     id: 'eventPropertyFormComparator.fieldCondition.condition.BEFORE',
-    defaultMessage: 'Before'
+    defaultMessage: 'Before',
   },
   BEFORE_OR_EQUAL: {
     id: 'eventPropertyFormComparator.fieldCondition.condition.BEFORE_OR_EQUAL',
-    defaultMessage: 'Before Or Equal'
+    defaultMessage: 'Before Or Equal',
   },
   AFTER: {
     id: 'eventPropertyFormComparator.fieldCondition.condition.AFTER',
-    defaultMessage: 'After'
+    defaultMessage: 'After',
   },
   AFTER_OR_EQUAL: {
     id: 'eventPropertyFormComparator.fieldCondition.condition.AFTER_OR_EQUAL',
-    defaultMessage: 'After Or Equal'
+    defaultMessage: 'After Or Equal',
   },
   EQUAL: {
     id: 'eventPropertyFormComparator.fieldCondition.condition.EQUAL',
-    defaultMessage: 'Equals'
+    defaultMessage: 'Equals',
   },
   NOT_EQUAL: {
     id: 'eventPropertyFormComparator.fieldCondition.condition.NOT_EQUAL',
-    defaultMessage: 'Does Not Equal'
+    defaultMessage: 'Does Not Equal',
   },
   LT: {
     id: 'eventPropertyFormComparator.fieldCondition.condition.LT',
-    defaultMessage: 'Is Less Than'
+    defaultMessage: 'Is Less Than',
   },
   LTE: {
     id: 'eventPropertyFormComparator.fieldCondition.condition.LTE',
-    defaultMessage: 'Is Less Than Or Equals To'
+    defaultMessage: 'Is Less Than Or Equals To',
   },
   GT: {
     id: 'eventPropertyFormComparator.fieldCondition.condition.GT',
-    defaultMessage: 'Is Greater Than'
+    defaultMessage: 'Is Greater Than',
   },
   GTE: {
     id: 'eventPropertyFormComparator.fieldCondition.condition.GTE',
-    defaultMessage: 'Is Greater Than Or Equals'
+    defaultMessage: 'Is Greater Than Or Equals',
   },
 });

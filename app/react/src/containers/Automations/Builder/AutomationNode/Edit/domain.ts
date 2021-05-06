@@ -4,7 +4,10 @@ import {
   FeedNodeResource,
   InputNodeResource,
 } from './../../../../../models/automations/automations';
-import { CustomActionAutomationFormProps, ExtendedCustomActionInformation } from './CustomActionNodeForm/CustomActionAutomationForm';
+import {
+  CustomActionAutomationFormProps,
+  ExtendedCustomActionInformation,
+} from './CustomActionNodeForm/CustomActionAutomationForm';
 import { Moment } from 'moment';
 import { ProcessingActivityFieldModel } from './../../../../Settings/DatamartSettings/Common/domain';
 import { AutomationNodeShape } from './../../domain';
@@ -103,9 +106,7 @@ export const INITIAL_EMAIL_CAMPAIGN_NODE_FORM_DATA: EmailCampaignAutomationFormD
   },
 };
 
-export interface EmailCampaignAutomationFormData
-  extends DefaultFormData,
-    EmailCampaignFormData {}
+export interface EmailCampaignAutomationFormData extends DefaultFormData, EmailCampaignFormData {}
 
 export interface AddToSegmentAutomationFormData extends DefaultFormData {
   audienceSegmentName?: string;
@@ -132,9 +133,7 @@ export interface OnSegmentExitInputAutomationFormData extends DefaultFormData {
   segmentId?: string;
 }
 
-export interface QueryInputAutomationFormData
-  extends DefaultFormData,
-    Partial<QueryResource> {
+export interface QueryInputAutomationFormData extends DefaultFormData, Partial<QueryResource> {
   uiCreationMode: 'REACT_TO_EVENT_STANDARD' | 'REACT_TO_EVENT_ADVANCED';
 }
 
@@ -176,9 +175,7 @@ export type AutomationFormPropsType =
 
 export const FORM_ID = 'automationNodeForm';
 
-export function isScenarioNodeShape(
-  node: AutomationNodeShape,
-): node is ScenarioNodeShape {
+export function isScenarioNodeShape(node: AutomationNodeShape): node is ScenarioNodeShape {
   return node.type !== 'DROP_NODE';
 }
 
@@ -186,15 +183,11 @@ export function isAbnNode(node: AutomationNodeShape): node is ABNNodeResource {
   return node.type === 'ABN_NODE';
 }
 
-export function isEmailCampaignNode(
-  node: AutomationNodeShape,
-): node is EmailCampaignNodeResource {
+export function isEmailCampaignNode(node: AutomationNodeShape): node is EmailCampaignNodeResource {
   return node.type === 'EMAIL_CAMPAIGN';
 }
 
-export function isAddToSegmentNode(
-  node: AutomationNodeShape,
-): node is AddToSegmentNodeResource {
+export function isAddToSegmentNode(node: AutomationNodeShape): node is AddToSegmentNodeResource {
   return node.type === 'ADD_TO_SEGMENT_NODE';
 }
 
@@ -204,57 +197,37 @@ export function isDeleteFromSegmentNode(
   return node.type === 'DELETE_FROM_SEGMENT_NODE';
 }
 
-export function isQueryInputNode(
-  node: AutomationNodeShape,
-): node is QueryInputNodeResource {
+export function isQueryInputNode(node: AutomationNodeShape): node is QueryInputNodeResource {
   return (node as QueryInputNodeResource).type === 'QUERY_INPUT';
 }
 
 export function isOnSegmentEntryInputNode(
   node: AutomationNodeShape,
 ): node is OnSegmentEntryInputNodeResource {
-  return (
-    (node as OnSegmentEntryInputNodeResource).type ===
-    'ON_SEGMENT_ENTRY_INPUT_NODE'
-  );
+  return (node as OnSegmentEntryInputNodeResource).type === 'ON_SEGMENT_ENTRY_INPUT_NODE';
 }
 
 export function isOnSegmentExitInputNode(
   node: AutomationNodeShape,
 ): node is OnSegmentExitInputNodeResource {
+  return (node as OnSegmentExitInputNodeResource).type === 'ON_SEGMENT_EXIT_INPUT_NODE';
+}
+
+export function isInputNode(node: AutomationNodeShape): node is InputNodeResource {
   return (
-    (node as OnSegmentExitInputNodeResource).type ===
-    'ON_SEGMENT_EXIT_INPUT_NODE'
+    isQueryInputNode(node) || isOnSegmentEntryInputNode(node) || isOnSegmentExitInputNode(node)
   );
 }
 
-export function isInputNode(
-  node: AutomationNodeShape,
-): node is InputNodeResource {
-  return (
-    isQueryInputNode(node) ||
-    isOnSegmentEntryInputNode(node) ||
-    isOnSegmentExitInputNode(node)
-  );
-}
-
-export function isCustomActionNode(
-  node: AutomationNodeShape,
-): node is CustomActionNodeResource {
+export function isCustomActionNode(node: AutomationNodeShape): node is CustomActionNodeResource {
   return (node as CustomActionNodeResource).type === 'CUSTOM_ACTION_NODE';
 }
 
-export function isFeedNode(
-  node: AutomationNodeShape,
-): node is FeedNodeResource {
-  return (
-    (node as FeedNodeResource).type === 'SCENARIO_AUDIENCE_SEGMENT_FEED_NODE'
-  );
+export function isFeedNode(node: AutomationNodeShape): node is FeedNodeResource {
+  return (node as FeedNodeResource).type === 'SCENARIO_AUDIENCE_SEGMENT_FEED_NODE';
 }
 
-export function isWaitNode(
-  node: AutomationNodeShape,
-): node is WaitNodeResource {
+export function isWaitNode(node: AutomationNodeShape): node is WaitNodeResource {
   return (node as WaitNodeResource).type === 'WAIT_NODE';
 }
 

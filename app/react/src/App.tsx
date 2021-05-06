@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import configureStore from './store';
 import IntlApp from './IntlApp';
 import { IocProvider } from './config/inversify.react';
-import { container } from "./config/inversify.config";
+import { container } from './config/inversify.config';
 
 const store = configureStore();
 

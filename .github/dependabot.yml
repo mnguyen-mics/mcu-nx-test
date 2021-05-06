@@ -6,21 +6,21 @@
 version: 2
 updates:
   # Maintain dependencies for npm
-  - package-ecosystem: "npm"
-    directory: "/"
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
-      interval: "weekly"
+      interval: 'weekly'
       # Check for npm updates on Monday
-      day: "monday"
+      day: 'monday'
       # Check for npm updates at 5am UTC
-      time: "05:00"
-    target-branch: "staging"
+      time: '05:00'
+    target-branch: 'staging'
     # Disable rebasing for npm pull requests
-    rebase-strategy: "auto"
+    rebase-strategy: 'auto'
     commit-message:
       # Prefix all commit messages with "npm"
-      prefix: "MICS-dependabot"
+      prefix: 'MICS-dependabot'
     labels:
-          - "dependencies"
+      - 'dependencies'
     # Allow up to 10 open pull requests for pip dependencies
     open-pull-requests-limit: 10

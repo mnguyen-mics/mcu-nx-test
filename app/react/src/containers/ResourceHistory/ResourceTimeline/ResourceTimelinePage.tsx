@@ -5,7 +5,7 @@ import { ResourceType, ResourceLinkHelper } from '../../../models/resourceHistor
 import ResourceTimelineActionBar from './ResourceTimelineActionBar';
 import { FormatProperty } from './domain';
 
-const { Content } = Layout
+const { Content } = Layout;
 
 export interface ResourceTimelinePageProps {
   resourceType: ResourceType;
@@ -15,14 +15,13 @@ export interface ResourceTimelinePageProps {
   resourceLinkHelper?: ResourceLinkHelper;
 }
 
-type Props =
-  ResourceTimelinePageProps;
-  
+type Props = ResourceTimelinePageProps;
+
 class ResourceTimelinePage extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
   }
-    
+
   render() {
     const {
       resourceType,
@@ -32,11 +31,11 @@ class ResourceTimelinePage extends React.Component<Props> {
       resourceLinkHelper,
     } = this.props;
     return (
-      <div className="ant-layout edit-layout">
-        <ResourceTimelineActionBar handleClose={handleClose} formatProperty={formatProperty}/>
-        <div className="ant-layout">
-          <Content className="mcs-content-container p-t-40">
-            <Row className="mcs-history">
+      <div className='ant-layout edit-layout'>
+        <ResourceTimelineActionBar handleClose={handleClose} formatProperty={formatProperty} />
+        <div className='ant-layout'>
+          <Content className='mcs-content-container p-t-40'>
+            <Row className='mcs-history'>
               <ResourceTimeline
                 resourceType={resourceType}
                 resourceId={resourceId}
@@ -47,9 +46,8 @@ class ResourceTimelinePage extends React.Component<Props> {
           </Content>
         </div>
       </div>
-      
     );
   }
 }
 
-export default ResourceTimelinePage
+export default ResourceTimelinePage;

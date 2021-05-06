@@ -27,8 +27,7 @@ interface EmailRouterRouteParam {
   emailRouterId?: string;
 }
 
-type JoinedProps = RouteComponentProps<EmailRouterRouteParam> &
-  InjectedIntlProps;
+type JoinedProps = RouteComponentProps<EmailRouterRouteParam> & InjectedIntlProps;
 
 class EditEmailRouterPage extends React.Component<JoinedProps> {
   @lazyInject(TYPES.IEmailRouterService)
@@ -45,10 +44,7 @@ class EditEmailRouterPage extends React.Component<JoinedProps> {
     history.push(attributionModelUrl);
   };
 
-  onSaveOrCreatePluginInstance = (
-    plugin: EmailRouter,
-    properties: PluginProperty[],
-  ) => {
+  onSaveOrCreatePluginInstance = (plugin: EmailRouter, properties: PluginProperty[]) => {
     const {
       match: {
         params: { organisationId },
@@ -84,14 +80,14 @@ class EditEmailRouterPage extends React.Component<JoinedProps> {
     } = this.props;
 
     const breadcrumbPaths = (emailRouter?: EmailRouter) => [
-      <Link key="1" to={`/v2/o/${organisationId}/settings/campaigns/email_routers`}>
+      <Link key='1' to={`/v2/o/${organisationId}/settings/campaigns/email_routers`}>
         {formatMessage(messages.listTitle)}
       </Link>,
       emailRouter
-          ? formatMessage(messages.emailRouterEditBreadcrumb, {
-              name: emailRouter.name,
-            })
-          : formatMessage(messages.emailRouterNewBreadcrumb),
+        ? formatMessage(messages.emailRouterEditBreadcrumb, {
+            name: emailRouter.name,
+          })
+        : formatMessage(messages.emailRouterNewBreadcrumb),
     ];
 
     return (
@@ -110,7 +106,4 @@ class EditEmailRouterPage extends React.Component<JoinedProps> {
   }
 }
 
-export default compose<JoinedProps, {}>(
-  injectIntl,
-  withRouter,
-)(EditEmailRouterPage);
+export default compose<JoinedProps, {}>(injectIntl, withRouter)(EditEmailRouterPage);

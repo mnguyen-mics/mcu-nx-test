@@ -46,8 +46,7 @@ export default defineMessages({
   },
   multiEditSubtitle: {
     id: 'editCampaigns.subtitle',
-    defaultMessage:
-      'In this section you will be able to edit campaigns you just selected : ',
+    defaultMessage: 'In this section you will be able to edit campaigns you just selected : ',
   },
   multiEditAdGroupsTitle: {
     id: 'editAdGroups.title',
@@ -128,8 +127,7 @@ export default defineMessages({
   */
   notificationWarning: {
     id: 'notification.warning',
-    defaultMessage:
-      'Click on this button and you will lose your custom targeting.',
+    defaultMessage: 'Click on this button and you will lose your custom targeting.',
   },
 
   /*
@@ -242,7 +240,7 @@ export default defineMessages({
   contentSectionGeneralRow1Tooltip: {
     id: 'adGroupEditor.section.general.row1.tooltip',
     defaultMessage:
-      "The campaign name will help you identify it on the different screens. Make it as memorable as you want your results to be!",
+      'The campaign name will help you identify it on the different screens. Make it as memorable as you want your results to be!',
   },
 
   /* Row 2 */
@@ -588,8 +586,7 @@ export default defineMessages({
 
   contentSectionDeviceModal1: {
     id: 'adGroupEditor.section.device.modal1',
-    defaultMessage:
-      "You can't add a device that is inside an already included or excluded device.",
+    defaultMessage: "You can't add a device that is inside an already included or excluded device.",
   },
   contentSectionDeviceModal1Title: {
     id: 'adGroupEditor.section.device.modal1Title',
@@ -635,8 +632,7 @@ export default defineMessages({
   },
   contentSectionLocationModal1: {
     id: 'adGroupEditor.section.location.modal1',
-    defaultMessage:
-      "You can't add a area that is inside an already included or excluded area.",
+    defaultMessage: "You can't add a area that is inside an already included or excluded area.",
   },
   contentSectionLocationModal1Title: {
     id: 'adGroupEditor.section.location.modal1Title',
@@ -787,7 +783,7 @@ export default defineMessages({
     id: 'goal.pixel.modal.title',
     defaultMessage: 'Your Goal Pixel',
   },
-  
+
   getCodeSnippet: {
     id: 'goal.pixel.get.code.snippet',
     defaultMessage: 'Get code snippet',
@@ -801,7 +797,7 @@ export default defineMessages({
   goalPixelModalSaveGoal: {
     id: 'goal.pixel.modal.saveGoal',
     defaultMessage:
-      "Before getting your pixel, we need to save your Goal. After saving you will still be able to modify your goal. Do you want to continue?",
+      'Before getting your pixel, we need to save your Goal. After saving you will still be able to modify your goal. Do you want to continue?',
   },
   errorFormMessage: {
     id: 'display.campaigns.edit.generic.errorMessage',
@@ -896,8 +892,7 @@ export default defineMessages({
   },
   contentSectionGeneralAdvancedPartRow1Tooltip: {
     id: 'campaignEditor.section1.advancedPart.row1.tooltip',
-    defaultMessage:
-      'Use the Technical Name for custom integration with other DSPs',
+    defaultMessage: 'Use the Technical Name for custom integration with other DSPs',
   },
 
   /* Row 3 */
@@ -911,8 +906,7 @@ export default defineMessages({
   },
   contentSectionGeneralAdvancedPartRow2Tooltip: {
     id: 'campaignEditor.section1.advancedPart.row2.tooltip',
-    defaultMessage:
-      "The capping is at the device level, if you don't want any capping set it to 0",
+    defaultMessage: "The capping is at the device level, if you don't want any capping set it to 0",
   },
 
   /* Row 4 */
@@ -926,8 +920,7 @@ export default defineMessages({
   },
   contentSectionGeneralAdvancedPartRow3Tooltip: {
     id: 'campaignEditor.section1.advancedPart.row3.tooltip',
-    defaultMessage:
-      "The capping is at the device level, if you don't want any capping set it to 0",
+    defaultMessage: "The capping is at the device level, if you don't want any capping set it to 0",
   },
 
   /* Row 4 */

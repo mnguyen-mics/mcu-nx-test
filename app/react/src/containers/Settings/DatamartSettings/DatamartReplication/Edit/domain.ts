@@ -1,10 +1,6 @@
-import {
-  DatamartReplicationResourceShape
-} from './../../../../../models/settings/settings';
+import { DatamartReplicationResourceShape } from './../../../../../models/settings/settings';
 
-export type DatamartReplicationFormData = Partial<
-  DatamartReplicationResourceShape
->;
+export type DatamartReplicationFormData = Partial<DatamartReplicationResourceShape>;
 
 export const INITIAL_DATAMART_REPLICATION_FORM_DATA: DatamartReplicationFormData = {
   status: 'PAUSED',

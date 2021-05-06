@@ -18,7 +18,7 @@ class AuditStatusRenderer extends React.Component<AuditStatusRendererProps> {
       <div>
         <McsIcon
           type={auditIconConfig[status].type}
-          className="m-r-10"
+          className='m-r-10'
           style={{
             verticalAlign: 'middle',
             color: auditIconConfig[status].color,
@@ -36,7 +36,7 @@ export const auditIconConfig: {
   [key in CreativeAuditStatus]: {
     type: McsIconType;
     color: string;
-  }
+  };
 } = {
   NOT_AUDITED: {
     type: 'close-big',
@@ -61,7 +61,7 @@ export const auditIconConfig: {
 };
 
 export const creativeAuditStatusMessages: {
-  [key in CreativeAuditStatus]: FormattedMessage.MessageDescriptor
+  [key in CreativeAuditStatus]: FormattedMessage.MessageDescriptor;
 } = defineMessages({
   NOT_AUDITED: {
     id: 'creatives.audit.status.notAudited',

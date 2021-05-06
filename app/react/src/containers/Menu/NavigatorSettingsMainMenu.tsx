@@ -58,22 +58,14 @@ class NavigatorSettingsMainMenu extends React.Component<Props, State> {
       location: { pathname: previousPathname },
     } = previousProps;
 
-    if (
-      previousPathname !== pathname ||
-      previousOrganisationId !== organisationId
-    ) {
+    if (previousPathname !== pathname || previousOrganisationId !== organisationId) {
       this.initMenu(pathname, organisationId);
     }
   }
 
   initMenu = (pathname: string, organisationId: string) => {
     const currentOpenMenu = settingsDefinitions
-      .filter(
-        item =>
-          item.type === 'multi' &&
-          item.subMenuItems &&
-          item.subMenuItems.length > 0,
-      )
+      .filter(item => item.type === 'multi' && item.subMenuItems && item.subMenuItems.length > 0)
       .find(
         item =>
           item.type === 'multi' &&
@@ -101,9 +93,7 @@ class NavigatorSettingsMainMenu extends React.Component<Props, State> {
   getAvailableItems = (): NavigatorMenuDefinition[] => {
     const { hasFeature } = this.props;
 
-    const checkIfHasAtLeastOneFeature = (
-      item: NavigatorMenuDefinition,
-    ): boolean => {
+    const checkIfHasAtLeastOneFeature = (item: NavigatorMenuDefinition): boolean => {
       if (item.type === 'simple') {
         return hasFeature(item.requiredFeature, item.requireDatamart);
       }
@@ -118,10 +108,7 @@ class NavigatorSettingsMainMenu extends React.Component<Props, State> {
       if (checkIfHasAtLeastOneFeature(item)) {
         if (item.type === 'multi') {
           const subMenuItems = (item.subMenuItems || []).filter(subMenuItem =>
-            hasFeature(
-              subMenuItem.requiredFeature,
-              subMenuItem.requireDatamart,
-            ),
+            hasFeature(subMenuItem.requiredFeature, subMenuItem.requireDatamart),
           );
           return [...acc, { ...item, subMenuItems }];
         }
@@ -143,9 +130,7 @@ class NavigatorSettingsMainMenu extends React.Component<Props, State> {
         <Menu.Item key={item.iconType}>
           <Link
             to={`${baseUrl}${
-              item.type === 'multi' &&
-              item.subMenuItems &&
-              item.subMenuItems.length
+              item.type === 'multi' && item.subMenuItems && item.subMenuItems.length
                 ? item.subMenuItems[0].path
                 : item.type === 'simple' && item.path
             }`}
@@ -163,7 +148,7 @@ class NavigatorSettingsMainMenu extends React.Component<Props, State> {
       <Menu
         onClick={this.handleClick}
         selectedKeys={[this.state.current]}
-        mode="horizontal"
+        mode='horizontal'
         style={{ padding: '0 40px' }}
       >
         {this.generateMenuItems()}

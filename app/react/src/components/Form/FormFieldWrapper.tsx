@@ -25,9 +25,7 @@ const defaultRowProps: Partial<RowProps> = {
   align: 'middle',
 };
 
-const FormFieldWrapper: React.FunctionComponent<
-  FormItemProps & FormFieldWrapperProps
-> = (props) => {
+const FormFieldWrapper: React.FunctionComponent<FormItemProps & FormFieldWrapperProps> = props => {
   const {
     children,
     hasMarginBottom,
@@ -42,13 +40,11 @@ const FormFieldWrapper: React.FunctionComponent<
 
   const renderedLabel = small ? (
     <span>
-      <span className="field-label">{label}</span>
-      <div className="field-helper">
-        {helpToolTipProps && helpToolTipProps.title}
-      </div>
+      <span className='field-label'>{label}</span>
+      <div className='field-helper'>{helpToolTipProps && helpToolTipProps.title}</div>
     </span>
   ) : (
-    <span className="field-label">{label}</span>
+    <span className='field-label'>{label}</span>
   );
 
   // TODO. In case of small=true, adding 2 to 24 makes 26 columns.
@@ -56,12 +52,12 @@ const FormFieldWrapper: React.FunctionComponent<
   let actionField;
   if (typeof renderFieldAction !== 'undefined') {
     actionField = (
-      <Col span={2} className="renderFieldAction">
+      <Col span={2} className='renderFieldAction'>
         {renderFieldAction()}
       </Col>
     );
   } else if (!small) {
-    actionField = <Col span={2} className="no-renderFieldAction" />;
+    actionField = <Col span={2} className='no-renderFieldAction' />;
   }
 
   return (
@@ -73,7 +69,7 @@ const FormFieldWrapper: React.FunctionComponent<
       >
         <Row {...defaultRowProps} {...rowProps}>
           {hoverToolTipProps && hoverToolTipProps.title && !small ? (
-            <Tooltip placement="top" {...hoverToolTipProps}>
+            <Tooltip placement='top' {...hoverToolTipProps}>
               <Col span={20}>{children}</Col>
             </Tooltip>
           ) : (
@@ -82,8 +78,8 @@ const FormFieldWrapper: React.FunctionComponent<
 
           {helpToolTipProps && helpToolTipProps.title && !small ? (
             <Col span={2} className={`field-tooltip`}>
-              <Tooltip title={helpToolTipProps?.title} placement="right">
-                <McsIcon type="info" />
+              <Tooltip title={helpToolTipProps?.title} placement='right'>
+                <McsIcon type='info' />
               </Tooltip>
             </Col>
           ) : undefined}

@@ -13,10 +13,7 @@ import {
   updateSearch,
 } from '../../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
-import {
-  AttributionModel,
-  PluginProperty,
-} from '../../../../../models/Plugins';
+import { AttributionModel, PluginProperty } from '../../../../../models/Plugins';
 import messages from './messages';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
@@ -62,9 +59,7 @@ class AttributionModelsList extends React.Component<
   private _attributionModelService: IAttributionModelService;
 
   archiveAttributionModel = (attributionModelId: string) => {
-    return this._attributionModelService.deleteAttributionModel(
-      attributionModelId,
-    );
+    return this._attributionModelService.deleteAttributionModel(attributionModelId);
   };
 
   fetchAttributionModel = (organisationId: string, filter: Filters) => {
@@ -72,29 +67,25 @@ class AttributionModelsList extends React.Component<
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      this._attributionModelService
-        .getAttributionModels(organisationId, options)
-        .then((results) => {
-          const promises = results.data.map((am) => {
-            return this._pluginService.getEngineProperties(
-              am.attribution_processor_id,
-            );
+      this._attributionModelService.getAttributionModels(organisationId, options).then(results => {
+        const promises = results.data.map(am => {
+          return this._pluginService.getEngineProperties(am.attribution_processor_id);
+        });
+        Promise.all(promises).then(amProperties => {
+          const formattedResults = results.data.map((am, i) => {
+            return {
+              ...am,
+              properties: amProperties[i],
+            };
           });
-          Promise.all(promises).then((amProperties) => {
-            const formattedResults = results.data.map((am, i) => {
-              return {
-                ...am,
-                properties: amProperties[i],
-              };
-            });
 
-            this.setState({
-              loading: false,
-              data: formattedResults,
-              total: results.total || results.count,
-            });
+          this.setState({
+            loading: false,
+            data: formattedResults,
+            total: results.total || results.count,
           });
         });
+      });
     });
   };
 
@@ -162,9 +153,7 @@ class AttributionModelsList extends React.Component<
       intl: { formatMessage },
     } = this.props;
 
-    const actionsColumnsDefinition: Array<
-      ActionsColumnDefinition<AttributionModelInterface>
-    > = [
+    const actionsColumnsDefinition: Array<ActionsColumnDefinition<AttributionModelInterface>> = [
       {
         key: 'action',
         actions: () => [
@@ -180,16 +169,14 @@ class AttributionModelsList extends React.Component<
       },
     ];
 
-    const dataColumnsDefinition: Array<
-      DataColumnDefinition<AttributionModelInterface>
-    > = [
+    const dataColumnsDefinition: Array<DataColumnDefinition<AttributionModelInterface>> = [
       {
         title: formatMessage(messages.name),
         key: 'name',
         isHideable: false,
         render: (text: string, record: AttributionModelInterface) => (
           <Link
-            className="mcs-campaigns-link"
+            className='mcs-campaigns-link'
             to={`/v2/o/${organisationId}/settings/campaigns/attribution_models/${record.id}/edit`}
           >
             {text}
@@ -204,11 +191,9 @@ class AttributionModelsList extends React.Component<
           const property =
             record &&
             record.properties &&
-            record.properties.find((item) => item.technical_name === 'name');
+            record.properties.find(item => item.technical_name === 'name');
           const render =
-            property && property.value && property.value.value
-              ? property.value.value
-              : null;
+            property && property.value && property.value.value ? property.value.value : null;
           return <span>{render}</span>;
         },
       },
@@ -220,13 +205,9 @@ class AttributionModelsList extends React.Component<
           const property =
             record &&
             record.properties &&
-            record.properties.find(
-              (item) => item.technical_name === 'provider',
-            );
+            record.properties.find(item => item.technical_name === 'provider');
           const render =
-            property && property.value && property.value.value
-              ? property.value.value
-              : null;
+            property && property.value && property.value.value ? property.value.value : null;
           return <span>{render}</span>;
         },
       },
@@ -241,31 +222,29 @@ class AttributionModelsList extends React.Component<
     };
 
     const onClick = () =>
-      history.push(
-        `/v2/o/${organisationId}/settings/campaigns/attribution_models/create`,
-      );
+      history.push(`/v2/o/${organisationId}/settings/campaigns/attribution_models/create`);
 
     const buttons = [
-      <Button key="create" type="primary" onClick={onClick}>
+      <Button key='create' type='primary' onClick={onClick}>
         <FormattedMessage {...messages.newAttributionModel} />
       </Button>,
     ];
 
     const additionnalComponent = (
       <div>
-        <div className="mcs-card-header mcs-card-title">
-          <span className="mcs-card-title">
+        <div className='mcs-card-header mcs-card-title'>
+          <span className='mcs-card-title'>
             <FormattedMessage {...messages.attributionmodel} />
           </span>
-          <span className="mcs-card-button">{buttons}</span>
+          <span className='mcs-card-button'>{buttons}</span>
         </div>
-        <hr className="mcs-separator" />
+        <hr className='mcs-separator' />
       </div>
     );
 
     return (
-      <div className="ant-layout">
-        <Content className="mcs-content-container">
+      <div className='ant-layout'>
+        <Content className='mcs-content-container'>
           <ItemList
             fetchList={this.fetchAttributionModel}
             dataSource={this.state.data}

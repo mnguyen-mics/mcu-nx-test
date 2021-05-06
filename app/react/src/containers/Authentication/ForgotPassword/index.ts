@@ -1,5 +1,3 @@
 import ForgotPassword from './ForgotPassword';
 
-export {
-  ForgotPassword,
-};
+export { ForgotPassword };

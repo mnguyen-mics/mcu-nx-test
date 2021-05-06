@@ -4,11 +4,7 @@ import { ProcessingSelectionResource } from './../../../../models/processing';
 import { UploadFile } from 'antd/lib/upload/interface';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment/';
 import { FieldArrayModel } from '../../../../utils/FormHelper';
-import {
-  PluginProperty,
-  AudienceExternalFeed,
-  AudienceTagFeed,
-} from '../../../../models/Plugins';
+import { PluginProperty, AudienceExternalFeed, AudienceTagFeed } from '../../../../models/Plugins';
 import { QueryResource } from '../../../../models/datamart/DatamartResource';
 import {
   UserQuerySegment,
@@ -43,13 +39,9 @@ export interface AudienceTagFeedTyped extends AudienceTagFeed {
 
 export type AudienceFeedTyped = AudienceExternalFeedTyped | AudienceTagFeedTyped;
 
-export type AudienceExternalFeedsFieldModel = FieldArrayModel<
-  AudienceExternalFeedResource
->;
+export type AudienceExternalFeedsFieldModel = FieldArrayModel<AudienceExternalFeedResource>;
 
-export type AudienceTagFeedsFieldModel = FieldArrayModel<
-  AudienceTagFeedResource
->;
+export type AudienceTagFeedsFieldModel = FieldArrayModel<AudienceTagFeedResource>;
 
 export interface AudienceSegmentFormData {
   audienceSegment: Partial<AudienceSegmentShape>;
@@ -77,15 +69,11 @@ export function isAudienceSegmentShape(
   return source !== undefined && (source as AudienceSegmentShape).type !== undefined;
 }
 
-export function isUserQuerySegment(
-  segment: AudienceSegmentShape,
-): segment is UserQuerySegment {
+export function isUserQuerySegment(segment: AudienceSegmentShape): segment is UserQuerySegment {
   return (segment as UserQuerySegment).query_id !== undefined;
 }
 
-export function isUserListSegment(
-  segment: AudienceSegmentShape,
-): segment is UserListSegment {
+export function isUserListSegment(segment: AudienceSegmentShape): segment is UserListSegment {
   return (
     (segment as UserListSegment).type === 'USER_LIST' &&
     (segment as UserListSegment).subtype === 'STANDARD'
@@ -98,18 +86,14 @@ export function isUserActivationSegment(
   return (segment as UserActivationSegment).type === 'USER_ACTIVATION';
 }
 
-export function isUserPixelSegment(
-  segment: AudienceSegmentShape,
-): segment is UserListSegment {
+export function isUserPixelSegment(segment: AudienceSegmentShape): segment is UserListSegment {
   return (
     (segment as UserListSegment).type === 'USER_LIST' &&
     (segment as UserListSegment).subtype !== 'USER_PIXEL'
   );
 }
 
-export function isEdgeSegment(
-  segment: AudienceSegmentShape,
-): segment is UserListSegment {
+export function isEdgeSegment(segment: AudienceSegmentShape): segment is UserListSegment {
   return (
     (segment as UserListSegment).type === 'USER_LIST' &&
     (segment as UserListSegment).subtype !== 'USER_CLIENT'

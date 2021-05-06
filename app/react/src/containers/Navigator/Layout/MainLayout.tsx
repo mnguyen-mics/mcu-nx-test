@@ -19,19 +19,11 @@ import * as MenuActions from '../../../redux/Menu/actions';
 import { compose } from 'recompose';
 import { MenuMode } from 'antd/lib/menu';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
-import {
-  Button,
-  AppsMenu,
-  McsHeader,
-} from '@mediarithmics-private/mcs-components-library';
+import { Button, AppsMenu, McsHeader } from '@mediarithmics-private/mcs-components-library';
 import { UserProfileResource } from '../../../models/directory/UserProfileResource';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import { AppsMenuSection } from '@mediarithmics-private/mcs-components-library/lib/components/apps-navigation/apps-menu/AppsMenu';
-import {
-  buildAccountsMenu,
-  buildSettingsButton,
-  ProductionApiEnvironment,
-} from './LayoutHelper';
+import { buildAccountsMenu, buildSettingsButton, ProductionApiEnvironment } from './LayoutHelper';
 import OrganisationListSwitcher from '../../Menu/organisation-switcher/OrganisationListSwitcher';
 
 const { Content, Sider } = Layout;
@@ -81,9 +73,7 @@ const ColAny = Col as any;
 // waiting for https://github.com/ant-design/ant-design/commit/518c424ca4a023f3faebce0adf64219989be0018 to be released to remove any
 
 class MainLayout extends React.Component<Props, MainLayoutState> {
-  public static defaultProps: Partial<
-    MainLayoutProps & MainLayoutStoreProps
-  > = {
+  public static defaultProps: Partial<MainLayoutProps & MainLayoutStoreProps> = {
     actionBarComponent: null,
     collapsed: false,
     mode: 'inline',
@@ -145,7 +135,7 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
       <Row>
         <ColAny
           span={this.state.leftColumnSize}
-          className="left"
+          className='left'
           onMouseEnter={resizeBox('left')}
           onMouseLeave={resizeBox()}
         >
@@ -160,7 +150,7 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
         </ColAny>
         <ColAny
           span={this.state.rightColumnSize}
-          className="right"
+          className='right'
           onMouseEnter={resizeBox('right')}
           onMouseLeave={resizeBox()}
         >
@@ -170,9 +160,7 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
             ) : (
               <React.Fragment>
                 <LeftOutlined />{' '}
-                {this.state.rightColumnSize > 12 && (
-                  <FormattedMessage {...messages.collapse} />
-                )}
+                {this.state.rightColumnSize > 12 && <FormattedMessage {...messages.collapse} />}
               </React.Fragment>
             )}
           </Button>
@@ -180,7 +168,7 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
       </Row>
     ) : (
       <Row>
-        <Col span={24} className="all">
+        <Col span={24} className='all'>
           <Button
             onClick={onCollapse}
             style={{ width: '100%' }}
@@ -192,11 +180,7 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
             ) : (
               <span>
                 <LeftOutlined />{' '}
-                <span
-                  className={
-                    this.state.rightColumnSize > 12 ? 'visible' : 'hidden'
-                  }
-                >
+                <span className={this.state.rightColumnSize > 12 ? 'visible' : 'hidden'}>
                   <FormattedMessage {...messages.collapse} />
                 </span>
               </span>
@@ -211,9 +195,7 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
     const { connectedUser } = this.props;
 
     const isFromMics =
-      connectedUser.workspaces.filter(
-        (workspace) => workspace.organisation_id === '1',
-      ).length > 0;
+      connectedUser.workspaces.filter(workspace => workspace.organisation_id === '1').length > 0;
 
     if (isFromMics) {
       return [
@@ -230,7 +212,7 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
             {
               name: 'Developer Console',
               icon: (
-                <CodeSandboxCircleFilled className="mcs-app_icon mcs-app_icon_developer_console" />
+                <CodeSandboxCircleFilled className='mcs-app_icon mcs-app_icon_developer_console' />
               ),
               url:
                 'https://computing-console-mics.francecentral.cloudapp.azure.com/frontprod/login',
@@ -260,8 +242,7 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
 
     const listOrganizationSwitcher = hasFeature('new-navigation-system');
 
-    const onStateChange = (state: State) =>
-      this.setState({ isSelectorOpen: state.isOpen });
+    const onStateChange = (state: State) => this.setState({ isSelectorOpen: state.isOpen });
     const onClick = () => this.setState({ isSelectorOpen: false });
 
     const appMenuSections: AppsMenuSection[] = this.getAppMenuSections();
@@ -269,9 +250,9 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
     const appMenu =
       appMenuSections.length > 0 ? (
         <AppsMenu
-          className="mcs-app-menu-main-layout"
+          className='mcs-app-menu-main-layout'
           sections={appMenuSections}
-          logo={<Logo mode="inline" />}
+          logo={<Logo mode='inline' />}
         />
       ) : undefined;
 
@@ -279,7 +260,7 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
     const settings = buildSettingsButton(organisationId);
 
     return (
-      <div id="mcs-full-page" className="mcs-fullscreen">
+      <div id='mcs-full-page' className='mcs-fullscreen'>
         <PushMenu
           pageWrapId={'mcs-main-layout'}
           outerContainerId={'mcs-full-page'}
@@ -288,31 +269,24 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
           width={orgSelectorSize}
         >
           {this.state.isSelectorOpen && (
-            <OrganisationSelector
-              size={orgSelectorSize}
-              onItemClick={onClick}
-            />
+            <OrganisationSelector size={orgSelectorSize} onItemClick={onClick} />
           )}
         </PushMenu>
         {hasFeature('new-navigation-system') ? (
-          <LayoutId id="mcs-main-layout" className="mcs-fullscreen">
+          <LayoutId id='mcs-main-layout' className='mcs-fullscreen'>
             <McsHeader
-              className="mcs-header-main-layout"
+              className='mcs-header-main-layout'
               userEmail={userEmail}
               accountContent={accounts}
               headerSettings={settings}
               menu={appMenu}
-              devAlert={
-                process.env.API_ENV === 'prod'
-                  ? ProductionApiEnvironment
-                  : undefined
-              }
-              menuIcon={<AppstoreOutlined className="mcs-header_menu-icon"/>}
-              organisationSwitcher={listOrganizationSwitcher && <OrganisationListSwitcher />} 
+              devAlert={process.env.API_ENV === 'prod' ? ProductionApiEnvironment : undefined}
+              menuIcon={<AppstoreOutlined className='mcs-header_menu-icon' />}
+              organisationSwitcher={listOrganizationSwitcher && <OrganisationListSwitcher />}
             />
             <Layout>
               <Sider
-                className="mcs-sider"
+                className='mcs-sider'
                 collapsible={!listOrganizationSwitcher}
                 collapsed={collapsed}
                 trigger={this.renderTrigger()}
@@ -322,14 +296,14 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
                 <NavigatorMenu
                   mode={mode}
                   onMenuItemClick={this.onMenuItemClick}
-                  className="mcs-mainLayout-menu"
+                  className='mcs-mainLayout-menu'
                 />
               </Sider>
               <Layout>
                 {ActionBarComponent ? <ActionBarComponent /> : null}
                 {ActionBarComponent ? (
-                  <div className="ant-layout">
-                    <Content className="mcs-content-container">
+                  <div className='ant-layout'>
+                    <Content className='mcs-content-container'>
                       <ContentComponent />
                     </Content>
                   </div>
@@ -340,9 +314,9 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
             </Layout>
           </LayoutId>
         ) : (
-          <LayoutId id="mcs-main-layout" className="mcs-fullscreen">
+          <LayoutId id='mcs-main-layout' className='mcs-fullscreen'>
             <Sider
-              className="mcs-sider"
+              className='mcs-sider'
               collapsible={true}
               collapsed={collapsed}
               trigger={this.renderTrigger()}
@@ -351,15 +325,15 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
               <NavigatorMenu
                 mode={mode}
                 onMenuItemClick={this.onMenuItemClick}
-                className="mcs-mainLayout-menu"
+                className='mcs-mainLayout-menu'
               />
             </Sider>
             <Layout>
               <NavigatorHeader isInSettings={false} />
               {ActionBarComponent ? <ActionBarComponent /> : null}
               {ActionBarComponent ? (
-                <div className="ant-layout">
-                  <Content className="mcs-content-container">
+                <div className='ant-layout'>
+                  <Content className='mcs-content-container'>
                     <ContentComponent />
                   </Content>
                 </div>

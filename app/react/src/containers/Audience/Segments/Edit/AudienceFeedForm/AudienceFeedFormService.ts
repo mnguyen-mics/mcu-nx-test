@@ -7,14 +7,8 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from '../../../../../constants/types';
 
 export interface IAudienceFeedFormService {
-  loadTagInitialValue: (
-    segmentId: string,
-    feedId: string,
-  ) => Promise<AudienceFeedFormModel>;
-  loadExternalInitialValue: (
-    segmentId: string,
-    feedId: string,
-  ) => Promise<AudienceFeedFormModel>;
+  loadTagInitialValue: (segmentId: string, feedId: string) => Promise<AudienceFeedFormModel>;
+  loadExternalInitialValue: (segmentId: string, feedId: string) => Promise<AudienceFeedFormModel>;
   saveOrCreateTagFeed: (
     organisationId: string,
     segmentId: string,
@@ -33,10 +27,7 @@ export interface IAudienceFeedFormService {
 export class AudienceFeedFormService implements IAudienceFeedFormService {
   @inject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
-  loadTagInitialValue(
-    segmentId: string,
-    feedId: string,
-  ): Promise<AudienceFeedFormModel> {
+  loadTagInitialValue(segmentId: string, feedId: string): Promise<AudienceFeedFormModel> {
     return this._audienceSegmentService
       .getAudienceTagFeed(segmentId, feedId)
       .then(res => res.data)
@@ -47,10 +38,7 @@ export class AudienceFeedFormService implements IAudienceFeedFormService {
           .then(prop => ({ plugin: res, properties: prop }));
       });
   }
-  loadExternalInitialValue(
-    segmentId: string,
-    feedId: string,
-  ): Promise<AudienceFeedFormModel> {
+  loadExternalInitialValue(segmentId: string, feedId: string): Promise<AudienceFeedFormModel> {
     return this._audienceSegmentService
       .getAudienceExternalFeed(segmentId, feedId)
       .then(res => res.data)
@@ -105,18 +93,13 @@ export class AudienceFeedFormService implements IAudienceFeedFormService {
   ) {
     if (edition) {
       return this._audienceSegmentService
-        .updateAudienceExternalFeeds(
-          segmentId,
-          formData.plugin.id,
-          formData.plugin,
-        )
+        .updateAudienceExternalFeeds(segmentId, formData.plugin.id, formData.plugin)
         .then(() =>
           updateOrCreatePluginProperties(
             organisationId,
             segmentId,
             formData.plugin.id,
-            this._audienceSegmentService
-              .updateAudienceSegmentExternalFeedProperty,
+            this._audienceSegmentService.updateAudienceSegmentExternalFeedProperty,
             formData.properties,
           ),
         );
@@ -133,8 +116,7 @@ export class AudienceFeedFormService implements IAudienceFeedFormService {
           organisationId,
           segmentId,
           res.data.id,
-          this._audienceSegmentService
-            .updateAudienceSegmentExternalFeedProperty,
+          this._audienceSegmentService.updateAudienceSegmentExternalFeedProperty,
           formData.properties,
         ),
       );

@@ -29,12 +29,9 @@ interface State {
   conversionModalVisible: boolean;
 }
 
-type Props = SaveQueryAsActionBarProps &
-  InjectedIntlProps &
-  InjectedNotificationProps;
+type Props = SaveQueryAsActionBarProps & InjectedIntlProps & InjectedNotificationProps;
 
 class SaveQueryAsActionBar extends React.Component<Props, State> {
-
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -42,13 +39,18 @@ class SaveQueryAsActionBar extends React.Component<Props, State> {
       segmentModalVisible: false,
       exportModalLoading: false,
       exportModalVisible: false,
-      conversionModalVisible: false
-
+      conversionModalVisible: false,
     };
   }
 
   render() {
-    const { saveAsExort, saveAsUserQuery, convertToOtql, breadcrumb, csvExportDisabled } = this.props;
+    const {
+      saveAsExort,
+      saveAsUserQuery,
+      convertToOtql,
+      breadcrumb,
+      csvExportDisabled,
+    } = this.props;
     const handleMenuClick = (e: any) => {
       if (e.key === 'USER_QUERY') {
         this.setState({ segmentModalVisible: true });
@@ -69,8 +71,8 @@ class SaveQueryAsActionBar extends React.Component<Props, State> {
         exportModalLoading: false,
       });
 
-    const openConversionModal = () => this.setState({ conversionModalVisible: true })
-    const closeConversionModal = () => this.setState({ conversionModalVisible: false })
+    const openConversionModal = () => this.setState({ conversionModalVisible: true });
+    const closeConversionModal = () => this.setState({ conversionModalVisible: false });
 
     const handleSaveAsUserQuery = (formData: NewUserQuerySimpleFormData) => {
       this.setState({ segmentModalLoading: true });
@@ -96,44 +98,50 @@ class SaveQueryAsActionBar extends React.Component<Props, State> {
 
     const saveAsMenu = (
       <Menu onClick={handleMenuClick}>
-        <Menu.Item key="USER_QUERY" disabled={!saveAsUserQuery}>
+        <Menu.Item key='USER_QUERY' disabled={!saveAsUserQuery}>
           <FormattedMessage
-            id="queryTool.query-builder-page-actionbar-saveas-segment"
-            defaultMessage="User Query Segment"
+            id='queryTool.query-builder-page-actionbar-saveas-segment'
+            defaultMessage='User Query Segment'
           />
         </Menu.Item>
-        {saveAsExort && <Menu.Item key="EXPORT">
-          <FormattedMessage
-            id="queryTool.query-builder-page-actionbar-saveas-export"
-            defaultMessage="Export"
-          />
-        </Menu.Item>}
+        {saveAsExort && (
+          <Menu.Item key='EXPORT'>
+            <FormattedMessage
+              id='queryTool.query-builder-page-actionbar-saveas-export'
+              defaultMessage='Export'
+            />
+          </Menu.Item>
+        )}
       </Menu>
     );
 
     return (
       <Actionbar pathItems={breadcrumb}>
         <Dropdown overlay={saveAsMenu} trigger={['click']}>
-          <Button className="mcs-primary" type="primary">
+          <Button className='mcs-primary' type='primary'>
             <FormattedMessage
-              id="queryTool.query-builder.actionbar.save"
-              defaultMessage="Save As"
+              id='queryTool.query-builder.actionbar.save'
+              defaultMessage='Save As'
             />
           </Button>
         </Dropdown>
-        {convertToOtql && <Button onClick={openConversionModal}>
-          <FormattedMessage
-            id="queryTool.query-builder.actionbar.convert"
-            defaultMessage="Convert to OTQL"
+        {convertToOtql && (
+          <Button onClick={openConversionModal}>
+            <FormattedMessage
+              id='queryTool.query-builder.actionbar.convert'
+              defaultMessage='Convert to OTQL'
+            />
+          </Button>
+        )}
+        {convertToOtql && this.state.conversionModalVisible && (
+          <Convert2Otql
+            onOk={closeConversionModal}
+            onCancel={closeConversionModal}
+            footer={null}
+            visible={this.state.conversionModalVisible}
+            convertQuery={convertToOtql}
           />
-        </Button>}
-       {convertToOtql && this.state.conversionModalVisible && <Convert2Otql 
-          onOk={closeConversionModal}
-          onCancel={closeConversionModal}
-          footer={null}
-          visible={this.state.conversionModalVisible}
-          convertQuery={convertToOtql}
-        />}
+        )}
         <SaveAsUserQuerySegmentModal
           onOk={handleSaveAsUserQuery}
           onCancel={closeSegmentModal}

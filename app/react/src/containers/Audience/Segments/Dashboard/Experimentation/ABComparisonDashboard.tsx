@@ -20,14 +20,9 @@ import DatamartUsersAnalyticsWrapper, {
   DatamartUsersAnalyticsWrapperProps,
   FILTERS,
 } from '../../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
-import injectThemeColors, {
-  InjectedThemeColorsProps,
-} from '../../../../Helpers/injectThemeColors';
+import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
 import { Card, Alert } from 'antd';
-import {
-  McsTabs,
-  McsDateRangePicker,
-} from '@mediarithmics-private/mcs-components-library';
+import { McsTabs, McsDateRangePicker } from '@mediarithmics-private/mcs-components-library';
 import { Loading } from '../../../../../components';
 import DatamartUsersAnalyticsContent, {
   DashboardConfig,
@@ -35,10 +30,7 @@ import DatamartUsersAnalyticsContent, {
 import { injectFeatures, InjectedFeaturesProps } from '../../../../Features';
 import SegmentFilter from '../../../DatamartUsersAnalytics/components/SegmentFilter';
 import { DATAMART_USERS_ANALYTICS_SETTING } from '../constants';
-import {
-  parseSearch,
-  updateSearch,
-} from '../../../../../utils/LocationSearchHelper';
+import { parseSearch, updateSearch } from '../../../../../utils/LocationSearchHelper';
 import { SegmentNameDisplay } from '../../../Common/SegmentNameDisplay';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 
@@ -83,23 +75,21 @@ class ABComparisonDashboard extends React.Component<Props, State> {
       controlGroupSegment.id
     ) {
       this.setState({
-        ABComparisonDashboardConfig: this.getABComparisonDashboardConfig().map(
-          (dashboardConfig) => {
-            return {
-              ...dashboardConfig,
-              config: dashboardConfig.config.map((config) => {
-                return {
-                  ...config,
-                  color: colors['mcs-warning'],
-                  segments: {
-                    segmentIdToCompareWith: experimentationSegment.id,
-                    baseSegmentId: controlGroupSegment.id,
-                  },
-                };
-              }),
-            };
-          },
-        ),
+        ABComparisonDashboardConfig: this.getABComparisonDashboardConfig().map(dashboardConfig => {
+          return {
+            ...dashboardConfig,
+            config: dashboardConfig.config.map(config => {
+              return {
+                ...config,
+                color: colors['mcs-warning'],
+                segments: {
+                  segmentIdToCompareWith: experimentationSegment.id,
+                  baseSegmentId: controlGroupSegment.id,
+                },
+              };
+            }),
+          };
+        }),
         isLoading: false,
       });
     }
@@ -113,10 +103,8 @@ class ABComparisonDashboard extends React.Component<Props, State> {
       },
       intl,
     } = this.props;
-    const getFormattedConfigTitle = (
-      configs: DatamartUsersAnalyticsWrapperProps[],
-    ) => {
-      return configs.map((c) => {
+    const getFormattedConfigTitle = (configs: DatamartUsersAnalyticsWrapperProps[]) => {
+      return configs.map(c => {
         return {
           ...c,
           title: c.title ? intl.formatMessage(messagesMap[c.title]) : '',
@@ -146,21 +134,19 @@ class ABComparisonDashboard extends React.Component<Props, State> {
     // Hence the code underneath
 
     const firstConfig = ABComparisonDashboardConfig.find(
-      (c) => c.title === experimentationSegment.target_metric,
+      c => c.title === experimentationSegment.target_metric,
     );
 
     return firstConfig
       ? [
           {
             ...firstConfig,
-            title: firstConfig.title
-              ? intl.formatMessage(messagesMap[firstConfig.title])
-              : '',
+            title: firstConfig.title ? intl.formatMessage(messagesMap[firstConfig.title]) : '',
           },
         ].concat(
           getFormattedConfigTitle(
             ABComparisonDashboardConfig.filter(
-              (c) => c.title !== experimentationSegment.target_metric,
+              c => c.title !== experimentationSegment.target_metric,
             ),
           ),
         )
@@ -168,12 +154,7 @@ class ABComparisonDashboard extends React.Component<Props, State> {
   };
 
   buildItems = () => {
-    const {
-      experimentationSegment,
-      controlGroupSegment,
-      intl,
-      colors,
-    } = this.props;
+    const { experimentationSegment, controlGroupSegment, intl, colors } = this.props;
     if (controlGroupSegment) {
       return abTestingDashboardConfig.map((config, i) => {
         const enhancedConfig: DashboardConfig = {
@@ -181,14 +162,10 @@ class ABComparisonDashboard extends React.Component<Props, State> {
           segments: {
             segmentIdToCompareWith: experimentationSegment.id,
             baseSegmentId: controlGroupSegment.id,
-            segmentToCompareWithName: intl.formatMessage(
-              messagesMap.experimentationSegmentName,
-            ),
-            baseSegmentName: intl.formatMessage(
-              messagesMap.controlGroupSegmentName,
-            ),
+            segmentToCompareWithName: intl.formatMessage(messagesMap.experimentationSegmentName),
+            baseSegmentName: intl.formatMessage(messagesMap.controlGroupSegmentName),
           },
-          charts: config.charts.map((c) => {
+          charts: config.charts.map(c => {
             return {
               ...c,
               options: {
@@ -233,11 +210,7 @@ class ABComparisonDashboard extends React.Component<Props, State> {
 
     const nextLocation = {
       pathname,
-      search: updateSearch(
-        currentSearch,
-        params,
-        DATAMART_USERS_ANALYTICS_SETTING,
-      ),
+      search: updateSearch(currentSearch, params, DATAMART_USERS_ANALYTICS_SETTING),
     };
 
     history.push(nextLocation);
@@ -282,8 +255,7 @@ class ABComparisonDashboard extends React.Component<Props, State> {
     });
   };
 
-  getLoadingState = (disableFilters: boolean) =>
-    this.setState({ disableFilters });
+  getLoadingState = (disableFilters: boolean) => this.setState({ disableFilters });
 
   getSegmentToAddToDimensionFilterClause = () => {
     const segmentId = this.getFilter().segments && this.getFilter().segments[0];
@@ -297,18 +269,8 @@ class ABComparisonDashboard extends React.Component<Props, State> {
   };
 
   render() {
-    const {
-      experimentationSegment,
-      controlGroupSegment,
-      hasFeature,
-      colors,
-      intl,
-    } = this.props;
-    const {
-      ABComparisonDashboardConfig,
-      isLoading,
-      disableFilters,
-    } = this.state;
+    const { experimentationSegment, controlGroupSegment, hasFeature, colors, intl } = this.props;
+    const { ABComparisonDashboardConfig, isLoading, disableFilters } = this.state;
     if (isLoading) {
       return <Loading isFullScreen={true} />;
     }
@@ -318,8 +280,8 @@ class ABComparisonDashboard extends React.Component<Props, State> {
       <Alert
         message={
           <FormattedMessage
-            id="audience.segments.experimentation.dashboard.noUserPoint"
-            defaultMessage="Your {segmentName} segment has no data. If you feel this is not normal, please contact support."
+            id='audience.segments.experimentation.dashboard.noUserPoint'
+            defaultMessage='Your {segmentName} segment has no data. If you feel this is not normal, please contact support.'
             values={{
               segmentName: !experimentationSegment.user_points_count
                 ? 'Experimentation'
@@ -327,15 +289,15 @@ class ABComparisonDashboard extends React.Component<Props, State> {
             }}
           />
         }
-        type="warning"
+        type='warning'
       />
     ) : experimentationSegment.user_points_count === 0 ||
       (controlGroupSegment && controlGroupSegment.user_points_count === 0) ? (
       <Alert
         message={
           <FormattedMessage
-            id="audience.segments.experimentation.dashboard.zeroUserPoint"
-            defaultMessage="Your {segmentName} segment has 0 User Point. If you feel this is not normal, please contact support."
+            id='audience.segments.experimentation.dashboard.zeroUserPoint'
+            defaultMessage='Your {segmentName} segment has 0 User Point. If you feel this is not normal, please contact support.'
             values={{
               segmentName:
                 experimentationSegment.user_points_count === 0
@@ -344,7 +306,7 @@ class ABComparisonDashboard extends React.Component<Props, State> {
             }}
           />
         }
-        type="warning"
+        type='warning'
       />
     ) : (
       <React.Fragment>
@@ -353,7 +315,7 @@ class ABComparisonDashboard extends React.Component<Props, State> {
           segment={experimentationSegment}
           segmentToCompareWith={controlGroupSegment}
         />
-        <div className="mcs-datamartUsersAnalytics m-b-20">
+        <div className='mcs-datamartUsersAnalytics m-b-20'>
           <SegmentFilter
             className={
               disableFilters
@@ -370,13 +332,11 @@ class ABComparisonDashboard extends React.Component<Props, State> {
             segmentFiltersLength={1}
             defaultSegment={this.getSegmentToAddToDimensionFilterClause()}
             defaultSegmentCanBeRemoved={true}
-            placeholder={intl.formatMessage(
-              messagesMap.abDashboardSegmentFilterPlaceholder,
-            )}
+            placeholder={intl.formatMessage(messagesMap.abDashboardSegmentFilterPlaceholder)}
             segmentType={'USER_ACTIVATION'}
           />
 
-          <div className="text-right">{this.renderDatePicker()}</div>
+          <div className='text-right'>{this.renderDatePicker()}</div>
         </div>
         {hasFeature('audience-segment_uplift_area_chart') && (
           <Card>

@@ -47,11 +47,11 @@ export default class Percentage extends React.Component<PercentageProps, State> 
       source: previousSource,
       queryId: previousChartQueryId,
       datamartId: previousDatamartId,
-      totalQueryId: previousTotalQueryId
+      totalQueryId: previousTotalQueryId,
     } = previousProps;
 
     if (
-      !_.isEqual(previousSource, source) || 
+      !_.isEqual(previousSource, source) ||
       queryId !== previousChartQueryId ||
       datamartId !== previousDatamartId ||
       totalQueryId !== previousTotalQueryId
@@ -68,34 +68,33 @@ export default class Percentage extends React.Component<PercentageProps, State> 
   ): Promise<void> => {
     return Promise.all([
       this.fetchQuery(chartQueryId, datamartId, source),
-      this.fetchQuery(totalQueryId, datamartId, source)
+      this.fetchQuery(totalQueryId, datamartId, source),
     ])
-    .then(q => {
-      const left = q[0]
-      const right = q[1];
-      if (typeof left === "number" &&  typeof right === "number") {
+      .then(q => {
+        const left = q[0];
+        const right = q[1];
+        if (typeof left === 'number' && typeof right === 'number') {
+          this.setState({
+            queryResult: Math.round((left / right) * 1000) / 10,
+            loading: false,
+          });
+        }
+        return Promise.reject(new Error('Error'));
+      })
+      .catch(() => {
         this.setState({
-          queryResult: Math.round(left / right * 1000) / 10,
+          error: true,
           loading: false,
         });
-      }
-      return Promise.reject(new Error("Error"))
-    })
-    .catch(() => {
-      this.setState({
-        error: true,
-        loading: false,
       });
-    });
-  }
+  };
 
   fetchQuery = (
     chartQueryId: string,
     datamartId: string,
     source?: AudienceSegmentShape | QueryDocument,
-  ): Promise<number | void> => {
+  ): Promise<number | void> => {
     this.setState({ error: false, loading: true });
-
 
     return this._queryService
       .getQuery(datamartId, chartQueryId)
@@ -118,29 +117,23 @@ export default class Percentage extends React.Component<PercentageProps, State> 
           })
           .then(r => {
             if (isCountResult(r.rows)) {
-              return r.rows[0].count as number
+              return r.rows[0].count as number;
             }
             throw new Error('wrong query type');
           });
-      })
-     
+      });
   };
 
   public render() {
     return (
       <CardFlex>
-        <div className="dashboard-counter">
-          <div className="count-title">
-              {this.props.title}
-          </div>
-          <div className="count-result">
+        <div className='dashboard-counter'>
+          <div className='count-title'>{this.props.title}</div>
+          <div className='count-result'>
             {this.state.loading ? (
-              <i
-                className="mcs-table-cell-loading-large"
-                style={{ maxWidth: '100%' }}
-              />
+              <i className='mcs-table-cell-loading-large' style={{ maxWidth: '100%' }} />
             ) : (
-              formatMetric(this.state.queryResult, '0,0', "", "%")
+              formatMetric(this.state.queryResult, '0,0', '', '%')
             )}
           </div>
         </div>

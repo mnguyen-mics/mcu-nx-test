@@ -5,10 +5,7 @@ import { compose } from 'recompose';
 import { Button } from 'antd';
 import { Link } from 'react-router-dom';
 
-import {
-  Actionbar,
-  McsIcon,
-} from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import messages from './messages';
 import { InjectedDatamartProps, injectDatamart } from '../../Datamart';
 
@@ -18,7 +15,7 @@ interface RouterProps {
 
 class ImportsActionbar extends React.Component<
   RouteComponentProps<RouterProps> & InjectedIntlProps & InjectedDatamartProps
-  > {
+> {
   render() {
     const {
       match: {
@@ -28,14 +25,16 @@ class ImportsActionbar extends React.Component<
     } = this.props;
 
     const breadcrumbPaths = [
-      <Link key='1' to={`/v2/o/${organisationId}/datastudio/imports`}>{formatMessage(messages.imports)}</Link>
+      <Link key='1' to={`/v2/o/${organisationId}/datastudio/imports`}>
+        {formatMessage(messages.imports)}
+      </Link>,
     ];
 
     return (
       <Actionbar pathItems={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/datastudio/imports/create`}>
-          <Button className="mcs-primary mcs-imports_creationButton" type="primary">
-            <McsIcon type="plus" /> <FormattedMessage {...messages.newImport} />
+          <Button className='mcs-primary mcs-imports_creationButton' type='primary'>
+            <McsIcon type='plus' /> <FormattedMessage {...messages.newImport} />
           </Button>
         </Link>
       </Actionbar>
@@ -43,8 +42,4 @@ class ImportsActionbar extends React.Component<
   }
 }
 
-export default compose(
-  injectIntl,
-  withRouter,
-  injectDatamart,
-)(ImportsActionbar);
+export default compose(injectIntl, withRouter, injectDatamart)(ImportsActionbar);

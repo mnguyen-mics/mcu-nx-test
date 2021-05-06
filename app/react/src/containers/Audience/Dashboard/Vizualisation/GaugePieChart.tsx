@@ -5,9 +5,7 @@ import {
   isCountResult,
   OTQLCountResult,
 } from '../../../../models/datamart/graphdb/OTQLResult';
-import injectThemeColors, {
-  InjectedThemeColorsProps,
-} from '../../../Helpers/injectThemeColors';
+import injectThemeColors, { InjectedThemeColorsProps } from '../../../Helpers/injectThemeColors';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import messages from './messages';
@@ -68,23 +66,14 @@ class GaugePieChart extends React.Component<Props, State> {
 
   componentDidUpdate(previousProps: GaugePieChartProps) {
     const { queryIds, datamartId } = this.props;
-    const {
-      queryIds: previousChartQueryIds,
-      datamartId: previousDatamartId
-    } = previousProps;
+    const { queryIds: previousChartQueryIds, datamartId: previousDatamartId } = previousProps;
 
-    if (
-      queryIds !== previousChartQueryIds ||
-      datamartId !== previousDatamartId
-    ) {
+    if (queryIds !== previousChartQueryIds || datamartId !== previousDatamartId) {
       this.fetchData(queryIds, datamartId);
     }
   }
 
-  formatData = (
-    result0: OTQLCountResult[],
-    result1: OTQLCountResult[],
-  ): DatasetProps[] => {
+  formatData = (result0: OTQLCountResult[], result1: OTQLCountResult[]): DatasetProps[] => {
     const { colors } = this.state;
     return [
       {
@@ -100,57 +89,47 @@ class GaugePieChart extends React.Component<Props, State> {
     ];
   };
 
-  fetchData = (
-    chartQueryIds: string[],
-    datamartId: string,
-   
-  ): Promise<void> => {
+  fetchData = (chartQueryIds: string[], datamartId: string): Promise<void> => {
     this.setState({ error: false, loading: true });
-        const promises = chartQueryIds.map(chartQueryId => {
-          return this._queryService.getQuery(datamartId, chartQueryId);
+    const promises = chartQueryIds.map(chartQueryId => {
+      return this._queryService.getQuery(datamartId, chartQueryId);
+    });
+    return Promise.all(promises)
+      .then(queryListResp => {
+        return queryListResp.map(ql => ql.data);
+      })
+      .then(queryList => {
+        const queryListPromises = queryList.map(q => {
+          return this._queryService.runOTQLQuery(datamartId, q.query_text, {
+            use_cache: true,
+          });
         });
-        return Promise.all(promises)
-          .then(queryListResp => {
-            return queryListResp.map(ql => ql.data);
+        return Promise.all(queryListPromises)
+          .then(otqlResultListResp => {
+            return otqlResultListResp.map(otqlResultResp => otqlResultResp.data);
           })
-          .then(queryList => {
-            const queryListPromises = queryList.map(q => {
-              return this._queryService.runOTQLQuery(
-                datamartId,
-                q.query_text,
-                {
-                  use_cache: true,
-                },
-              );
-            });
-            return Promise.all(queryListPromises)
-              .then(otqlResultListResp => {
-                return otqlResultListResp.map(
-                  otqlResultResp => otqlResultResp.data,
-                );
-              })
-              .then(otqlResultList => {
-                if (
-                  !isAggregateResult(otqlResultList[0].rows) &&
-                  isCountResult(otqlResultList[0].rows) &&
-                  !isAggregateResult(otqlResultList[1].rows) &&
-                  isCountResult(otqlResultList[1].rows)
-                ) {
-                  this.setState({
-                    queryResult: this.formatData(
-                      otqlResultList[0].rows as OTQLCountResult[],
-                      otqlResultList[1].rows as OTQLCountResult[],
-                    ),
-                    loading: false,
-                    totalNumber1: otqlResultList[1].rows[0].count,
-                    totalNumber2: otqlResultList[0].rows[0].count,
-                  });
-                  return Promise.resolve();
-                }
-                const mapErr = new Error('wrong query type');
-                return Promise.reject(mapErr);
+          .then(otqlResultList => {
+            if (
+              !isAggregateResult(otqlResultList[0].rows) &&
+              isCountResult(otqlResultList[0].rows) &&
+              !isAggregateResult(otqlResultList[1].rows) &&
+              isCountResult(otqlResultList[1].rows)
+            ) {
+              this.setState({
+                queryResult: this.formatData(
+                  otqlResultList[0].rows as OTQLCountResult[],
+                  otqlResultList[1].rows as OTQLCountResult[],
+                ),
+                loading: false,
+                totalNumber1: otqlResultList[1].rows[0].count,
+                totalNumber2: otqlResultList[0].rows[0].count,
               });
-          })
+              return Promise.resolve();
+            }
+            const mapErr = new Error('wrong query type');
+            return Promise.reject(mapErr);
+          });
+      })
       .catch(() => {
         this.setState({
           error: true,
@@ -168,14 +147,8 @@ class GaugePieChart extends React.Component<Props, State> {
           ? {
               value:
                 totalNumber1 - totalNumber2 > 0
-                  ? `${(
-                      (totalNumber1 / (totalNumber1 + totalNumber2)) *
-                      100
-                    ).toFixed(2)}% Female`
-                  : `${(
-                      (totalNumber2 / (totalNumber1 + totalNumber2)) *
-                      100
-                    ).toFixed(2)}% Male`,
+                  ? `${((totalNumber1 / (totalNumber1 + totalNumber2)) * 100).toFixed(2)}% Female`
+                  : `${((totalNumber2 / (totalNumber1 + totalNumber2)) * 100).toFixed(2)}% Male`,
               text: '',
             }
           : {},
@@ -196,12 +169,7 @@ class GaugePieChart extends React.Component<Props, State> {
       if (this.state.loading) {
         return <LoadingChart />;
       } else if (this.state.error) {
-        return (
-          <EmptyChart
-            title={intl.formatMessage(messages.error)}
-            icon={'close-big'}
-          />
-        );
+        return <EmptyChart title={intl.formatMessage(messages.error)} icon={'close-big'} />;
       } else if (
         (this.state.queryResult && this.state.queryResult.length === 0) ||
         !this.state.queryResult
@@ -209,11 +177,7 @@ class GaugePieChart extends React.Component<Props, State> {
         return <EmptyChart title={intl.formatMessage(messages.noData)} icon='warning' />;
       } else {
         return (
-          <PiePlot
-            dataset={this.state.queryResult}
-            options={pieChartsOptions}
-            height={height}
-          />
+          <PiePlot dataset={this.state.queryResult} options={pieChartsOptions} height={height} />
         );
       }
     };
@@ -222,7 +186,4 @@ class GaugePieChart extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, GaugePieChartProps>(
-  injectThemeColors,
-  injectIntl,
-)(GaugePieChart);
+export default compose<Props, GaugePieChartProps>(injectThemeColors, injectIntl)(GaugePieChart);

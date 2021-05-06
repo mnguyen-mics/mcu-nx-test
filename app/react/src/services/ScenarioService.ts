@@ -6,10 +6,7 @@ import {
   UserScenarioResource,
 } from './../models/automations/automations';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
-import {
-  AutomationResource,
-  AutomationCreateResource,
-} from '../models/automations/automations';
+import { AutomationResource, AutomationCreateResource } from '../models/automations/automations';
 import { PaginatedApiParam } from '../utils/ApiHelper';
 import {
   PAGINATION_SEARCH_SETTINGS,
@@ -50,21 +47,15 @@ export interface IScenarioService {
     scenarioId: string,
     scenario: Partial<AutomationResource>,
   ) => Promise<DataResponse<AutomationResource>>;
-  deleteScenario: (
-    scenarioId: string,
-  ) => Promise<DataResponse<AutomationResource>>;
+  deleteScenario: (scenarioId: string) => Promise<DataResponse<AutomationResource>>;
   /*****   STORYLINE RESOURCE   *****/
-  getScenarioStoryline: (
-    scenarioId: string,
-  ) => Promise<DataResponse<StorylineResource>>;
+  getScenarioStoryline: (scenarioId: string) => Promise<DataResponse<StorylineResource>>;
   updateScenarioStoryline: (
     scenarioId: string,
     storyline: StorylineResource,
   ) => Promise<DataResponse<StorylineResource>>;
   /*****   SCENARIO NODE RESOURCE   *****/
-  getScenarioNodes: (
-    scenarioId: string,
-  ) => Promise<DataListResponse<ScenarioNodeShape>>;
+  getScenarioNodes: (scenarioId: string) => Promise<DataListResponse<ScenarioNodeShape>>;
   createScenarioNode: (
     scenarioId: string,
     scenarioNode: any,
@@ -79,9 +70,7 @@ export interface IScenarioService {
     scenarioNode: any,
   ) => Promise<DataResponse<ScenarioNodeShape>>;
   /*****   SCENARION EDGE RESOURCE   *****/
-  getScenarioEdges: (
-    scenarioId: string,
-  ) => Promise<DataListResponse<ScenarioEdgeResource>>;
+  getScenarioEdges: (scenarioId: string) => Promise<DataListResponse<ScenarioEdgeResource>>;
   createScenarioEdge: (
     scenarioId: string,
     scenarioEdge: Partial<ScenarioEdgeResource>,
@@ -113,16 +102,11 @@ export class ScenarioService implements IScenarioService {
     };
     return ApiService.getRequest(endpoint, params);
   }
-  getScenario(
-    scenarioId: string,
-    options: object = {},
-  ): Promise<DataResponse<AutomationResource>> {
+  getScenario(scenarioId: string, options: object = {}): Promise<DataResponse<AutomationResource>> {
     const endpoint = `scenarios/${scenarioId}`;
     return ApiService.getRequest(endpoint, options);
   }
-  deleteScenario(
-    scenarioId: string,
-  ): Promise<DataResponse<AutomationResource>> {
+  deleteScenario(scenarioId: string): Promise<DataResponse<AutomationResource>> {
     const endpoint = `scenarios/${scenarioId}`;
     return ApiService.deleteRequest(endpoint);
   }
@@ -141,9 +125,7 @@ export class ScenarioService implements IScenarioService {
     return ApiService.putRequest(endpoint, scenario);
   }
   // Storyline
-  getScenarioStoryline(
-    scenarioId: string,
-  ): Promise<DataResponse<StorylineResource>> {
+  getScenarioStoryline(scenarioId: string): Promise<DataResponse<StorylineResource>> {
     const endpoint = `scenarios/${scenarioId}/storyline`;
     return ApiService.getRequest(endpoint);
   }
@@ -155,9 +137,7 @@ export class ScenarioService implements IScenarioService {
     return ApiService.putRequest(endpoint, storyline);
   }
   // Storyline Nodes
-  getScenarioNodes(
-    scenarioId: string,
-  ): Promise<DataListResponse<ScenarioNodeShape>> {
+  getScenarioNodes(scenarioId: string): Promise<DataListResponse<ScenarioNodeShape>> {
     const endpoint = `scenarios/${scenarioId}/storyline/nodes`;
     return ApiService.getRequest(endpoint);
   }
@@ -168,10 +148,7 @@ export class ScenarioService implements IScenarioService {
     const endpoint = `scenarios/${scenarioId}/storyline/nodes`;
     return ApiService.postRequest(endpoint, scenarioNode);
   }
-  deleteScenarioNode(
-    scenarioId: string,
-    nodeId: string,
-  ): Promise<DataResponse<ScenarioNodeShape>> {
+  deleteScenarioNode(scenarioId: string, nodeId: string): Promise<DataResponse<ScenarioNodeShape>> {
     const endpoint = `scenarios/${scenarioId}/storyline/nodes/${nodeId}`;
     return ApiService.deleteRequest(endpoint);
   }
@@ -184,9 +161,7 @@ export class ScenarioService implements IScenarioService {
     return ApiService.putRequest(endpoint, scenarioNode);
   }
   // Storyline Edges
-  getScenarioEdges(
-    scenarioId: string,
-  ): Promise<DataListResponse<ScenarioEdgeResource>> {
+  getScenarioEdges(scenarioId: string): Promise<DataListResponse<ScenarioEdgeResource>> {
     const endpoint = `scenarios/${scenarioId}/storyline/edges`;
     return ApiService.getRequest(endpoint);
   }

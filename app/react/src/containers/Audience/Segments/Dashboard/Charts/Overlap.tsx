@@ -7,19 +7,19 @@ import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import { RouteComponentProps } from 'react-router';
 import messages from '../messages';
-import injectThemeColors, {
-  InjectedThemeColorsProps,
-} from '../../../../Helpers/injectThemeColors';
-import {
-  injectDatamart,
-  InjectedDatamartProps,
-} from '../../../../Datamart/index';
+import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
+import { injectDatamart, InjectedDatamartProps } from '../../../../Datamart/index';
 import { IOverlapInterval } from '../OverlapServices';
 import { OverlapData } from '../constants';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { AudienceSegmentShape } from '../../../../../models/audiencesegment';
-import { EmptyChart, LoadingChart, McsIcon, StackedBarPlot } from '@mediarithmics-private/mcs-components-library';
+import {
+  EmptyChart,
+  LoadingChart,
+  McsIcon,
+  StackedBarPlot,
+} from '@mediarithmics-private/mcs-components-library';
 import { StackedBarPlotOptions } from '@mediarithmics-private/mcs-components-library/lib/components/charts/category-based-charts/stacked-bar-plot/StackedBarPlot';
 
 interface State {
@@ -64,9 +64,7 @@ class Overlap extends React.Component<Props, State> {
       .fetchOverlapAnalysisLoop(segment.id)
       .then(() => this._overlapInterval.fetchOverlapAnalysis(segment.id))
       .then(res => this.setState({ data: res, isFetchingOverlap: false }))
-      .catch(() =>
-        this.setState({ overlapFetchingError: true, isFetchingOverlap: false }),
-      );
+      .catch(() => this.setState({ overlapFetchingError: true, isFetchingOverlap: false }));
   }
 
   componentDidUpdate(previousProps: Props) {
@@ -88,7 +86,10 @@ class Overlap extends React.Component<Props, State> {
   }
 
   renderStackedAreaCharts() {
-    const { colors, intl: { formatMessage } } = this.props;
+    const {
+      colors,
+      intl: { formatMessage },
+    } = this.props;
     const { data, isFetchingOverlap } = this.state;
 
     if (isFetchingOverlap) return <LoadingChart />;
@@ -149,9 +150,7 @@ class Overlap extends React.Component<Props, State> {
         .then(() => {
           this._overlapInterval
             .fetchOverlapAnalysis(segment.id)
-            .then(res =>
-              this.setState({ data: res, isFetchingOverlap: false }),
-            );
+            .then(res => this.setState({ data: res, isFetchingOverlap: false }));
         });
     };
 
@@ -178,20 +177,20 @@ class Overlap extends React.Component<Props, State> {
 
     const chartArea = (
       <div>
-        <Row className="mcs-chart-header">
+        <Row className='mcs-chart-header'>
           <Col span={12}>
             <div />
           </Col>
-          <Col span={12} className="text-right">
+          <Col span={12} className='text-right'>
             {!isFetchingOverlap && data.hasOverlap && (
-              <span className="generated">
+              <span className='generated'>
                 <FormattedMessage {...messages.generated} />{' '}
                 {moment(data.data ? data.data.date : 0).fromNow()}
               </span>
             )}{' '}
             {!isFetchingOverlap && (
               <Button onClick={this.renderModalExtend}>
-                <McsIcon type="extend" />{' '}
+                <McsIcon type='extend' />{' '}
                 {data.hasOverlap ? (
                   <FormattedMessage {...messages.refresh} />
                 ) : (
@@ -202,15 +201,9 @@ class Overlap extends React.Component<Props, State> {
           </Col>
         </Row>
         {overlapFetchingError ? (
-          <EmptyChart
-            title={intl.formatMessage(messages.overlapFetchingError)}
-            icon='warning'
-          />
+          <EmptyChart title={intl.formatMessage(messages.overlapFetchingError)} icon='warning' />
         ) : !data.hasOverlap && !isFetchingOverlap ? (
-          <EmptyChart
-            title={intl.formatMessage(messages.noAdditionDeletion)}
-            icon='warning'
-          />
+          <EmptyChart title={intl.formatMessage(messages.noAdditionDeletion)} icon='warning' />
         ) : (
           this.renderStackedAreaCharts()
         )}

@@ -7,9 +7,7 @@ import messages from '../messages';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/styles/hljs';
 import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
-import injectThemeColors, {
-  InjectedThemeColorsProps,
-} from '../../../Helpers/injectThemeColors';
+import injectThemeColors, { InjectedThemeColorsProps } from '../../../Helpers/injectThemeColors';
 import moment from 'moment';
 import CustomObjectRendererWrapper, {
   RenderingTemplates,
@@ -107,20 +105,16 @@ class UserChoicesCard extends React.Component<Props, State> {
     );
     const userChoice = processingUserChoice.userChoice;
     return (
-      <Row
-        gutter={10}
-        key={processingUserChoice.processing.id}
-        className="table-line border-top"
-      >
+      <Row gutter={10} key={processingUserChoice.processing.id} className='table-line border-top'>
         <Row>
           <Col span={21}>
-            <span className="title">
+            <span className='title'>
               {processing.name} ({legalBasis})
             </span>
           </Col>
           <Col span={3}>
-            <Tooltip title={processing.purpose} placement="right">
-              <McsIcon className="mcs-timeline-info" type="info" />
+            <Tooltip title={processing.purpose} placement='right'>
+              <McsIcon className='mcs-timeline-info' type='info' />
             </Tooltip>
           </Col>
         </Row>
@@ -138,7 +132,7 @@ class UserChoicesCard extends React.Component<Props, State> {
         okText: intl.formatMessage(messages.userChoicesJsonModalOkText),
         width: '650px',
         content: (
-          <SyntaxHighlighter language="json" style={docco}>
+          <SyntaxHighlighter language='json' style={docco}>
             {JSON.stringify(filteredData, undefined, 4)}
           </SyntaxHighlighter>
         ),
@@ -165,13 +159,11 @@ class UserChoicesCard extends React.Component<Props, State> {
       const viewJsonButton =
         filteredData.length !== 0 ? (
           <Row>
-            <button className="button-sm" onClick={handleViewJsonModal}>
+            <button className='button-sm' onClick={handleViewJsonModal}>
               <FormattedMessage {...messages.userChoicesviewJsonButton} />
             </button>
           </Row>
-        ) : (
-          null
-        );
+        ) : null;
 
       return (
         <Card

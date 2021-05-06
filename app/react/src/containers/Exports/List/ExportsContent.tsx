@@ -5,10 +5,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import { Modal, Row } from 'antd';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
-import {
-  GetExportOptions,
-  IExportService,
-} from '../../../services/Library/ExportService';
+import { GetExportOptions, IExportService } from '../../../services/Library/ExportService';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 import {
   PAGINATION_SEARCH_SETTINGS,
@@ -61,9 +58,7 @@ interface RouterProps {
   organisationId: string;
 }
 
-type Props = RouteComponentProps<RouterProps> &
-  InjectedIntlProps &
-  MapStateToProps;
+type Props = RouteComponentProps<RouterProps> & InjectedIntlProps & MapStateToProps;
 
 class ExportContent extends React.Component<Props, ExportContentState> {
   state = initialState;
@@ -86,10 +81,7 @@ class ExportContent extends React.Component<Props, ExportContentState> {
         search: buildDefaultSearch(search, EXPORT_SEARCH_SETTINGS),
       });
     } else {
-      const filter = parseSearch<ExportFilterParams>(
-        search,
-        EXPORT_SEARCH_SETTINGS,
-      );
+      const filter = parseSearch<ExportFilterParams>(search, EXPORT_SEARCH_SETTINGS);
       this.fetchExport(organisationId, filter);
     }
   }
@@ -110,20 +102,14 @@ class ExportContent extends React.Component<Props, ExportContentState> {
       },
     } = previousProps;
 
-    if (
-      !compareSearches(search, previousSearch) ||
-      organisationId !== previousOrganisationId
-    ) {
+    if (!compareSearches(search, previousSearch) || organisationId !== previousOrganisationId) {
       if (!isSearchValid(search, EXPORT_SEARCH_SETTINGS)) {
         history.replace({
           pathname: pathname,
           search: buildDefaultSearch(search, EXPORT_SEARCH_SETTINGS),
         });
       } else {
-        const filter = parseSearch<ExportFilterParams>(
-          search,
-          EXPORT_SEARCH_SETTINGS,
-        );
+        const filter = parseSearch<ExportFilterParams>(search, EXPORT_SEARCH_SETTINGS);
         this.fetchExport(organisationId, filter);
       }
     }
@@ -145,7 +131,7 @@ class ExportContent extends React.Component<Props, ExportContentState> {
       if (filter.label_id && filter.label_id.length) {
         options.label_ids = filter.label_id;
       }
-      this._exportService.getExports(options).then((results) => {
+      this._exportService.getExports(options).then(results => {
         this.setState({
           loading: false,
           data: results.data,
@@ -260,7 +246,7 @@ class ExportContent extends React.Component<Props, ExportContentState> {
         isHideable: false,
         render: (text: string, record: Export) => (
           <Link
-            className="mcs-campaigns-link"
+            className='mcs-campaigns-link'
             to={`/v2/o/${organisationId}/datastudio/exports/${record.id}`}
           >
             {text}
@@ -306,13 +292,11 @@ class ExportContent extends React.Component<Props, ExportContentState> {
 
     const labelsOptions = {
       labels: labels,
-      selectedLabels: labels.filter((label) => {
-        return filter.label_id.some(
-          (filteredLabelId: string) => filteredLabelId === label.id,
-        );
+      selectedLabels: labels.filter(label => {
+        return filter.label_id.some((filteredLabelId: string) => filteredLabelId === label.id);
       }),
       onChange: (newLabels: Label[]) => {
-        const formattedLabels = newLabels.map((label) => label.id);
+        const formattedLabels = newLabels.map(label => label.id);
         this.updateLocationSearch({
           label_id: formattedLabels,
           currentPage: 1,
@@ -322,14 +306,14 @@ class ExportContent extends React.Component<Props, ExportContentState> {
     };
 
     return (
-      <Row className="mcs-table-container">
+      <Row className='mcs-table-container'>
         <div>
-          <div className="mcs-card-header mcs-card-title">
-            <span className="mcs-card-title">
+          <div className='mcs-card-header mcs-card-title'>
+            <span className='mcs-card-title'>
               <FormattedMessage {...messages.exports} />
             </span>
           </div>
-          <hr className="mcs-separator" />
+          <hr className='mcs-separator' />
           <TableViewFilters
             columns={dataColumnsDefinition}
             actionsColumnsDefinition={actionsColumnsDefinition}
@@ -349,8 +333,4 @@ const mapStateToProps = (state: MicsReduxState) => ({
   labels: state.labels.labelsApi.data,
 });
 
-export default compose(
-  withRouter,
-  injectIntl,
-  connect(mapStateToProps),
-)(ExportContent);
+export default compose(withRouter, injectIntl, connect(mapStateToProps))(ExportContent);

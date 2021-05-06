@@ -9,7 +9,7 @@ import {
 } from '../../../models/datamart/graphdb/OTQLResult';
 import { Card } from '@mediarithmics-private/mcs-components-library';
 import AggregationRenderer from './AggregationRenderer';
-import  injectThemeColors, { InjectedThemeColorsProps } from '../../Helpers/injectThemeColors';
+import injectThemeColors, { InjectedThemeColorsProps } from '../../Helpers/injectThemeColors';
 import { compose } from 'recompose';
 
 export interface OTQLResultRendererProps {
@@ -18,7 +18,7 @@ export interface OTQLResultRendererProps {
   aborted?: boolean;
 }
 
-type Props = OTQLResultRendererProps & InjectedThemeColorsProps
+type Props = OTQLResultRendererProps & InjectedThemeColorsProps;
 
 class OTQLResultRenderer extends React.Component<Props> {
   render() {
@@ -27,30 +27,24 @@ class OTQLResultRenderer extends React.Component<Props> {
     let content: React.ReactNode;
     if (loading) {
       content = (
-        <div className="text-center">
-          <Spin size="large" />
+        <div className='text-center'>
+          <Spin size='large' />
         </div>
       );
     } else if (aborted) {
       content = (
-        <div className="text-center">
+        <div className='text-center'>
           <FormattedMessage
-            id="queryTool.otql-result-renderer-aborted"
-            defaultMessage="Aborted..."
+            id='queryTool.otql-result-renderer-aborted'
+            defaultMessage='Aborted...'
           />
         </div>
       );
     } else if (result && isCountResult(result.rows)) {
       const count = result.rows[0].count;
       content = (
-        <div className="text-center" style={{ fontSize: '5em' }}>
-          <CountUp
-            start={0}
-            end={count}
-            separator=","
-            decimal="."
-            duration={0.5}
-          />
+        <div className='text-center' style={{ fontSize: '5em' }}>
+          <CountUp start={0} end={count} separator=',' decimal='.' duration={0.5} />
         </div>
       );
     } else if (result && isAggregateResult(result.rows)) {
@@ -68,10 +62,10 @@ class OTQLResultRenderer extends React.Component<Props> {
       );
     } else {
       content = (
-        <div className="text-center">
+        <div className='text-center'>
           <FormattedMessage
-            id="queryTool.otql-result-renderer-empty"
-            defaultMessage="Empty Result"
+            id='queryTool.otql-result-renderer-empty'
+            defaultMessage='Empty Result'
           />
         </div>
       );
@@ -81,26 +75,28 @@ class OTQLResultRenderer extends React.Component<Props> {
       <Card
         title={
           <FormattedMessage
-            id="queryTool.otql-result-renderer-card-title"
-            defaultMessage="Result"
+            id='queryTool.otql-result-renderer-card-title'
+            defaultMessage='Result'
           />
         }
         buttons={
           result ? (
             <React.Fragment>
-              <Tag color={colors["mcs-info"]}>
+              <Tag color={colors['mcs-info']}>
                 <FormattedMessage
-                  id="otql-result-renderer-card-subtitle-duration"
-                  defaultMessage="Took {duration}ms"
+                  id='otql-result-renderer-card-subtitle-duration'
+                  defaultMessage='Took {duration}ms'
                   values={{ duration: result.took }}
                 />
               </Tag>
-              {result.cache_hit && <Tag color={colors["mcs-success"]}>
-                <FormattedMessage
-                  id="otql-result-renderer-card-subtitle-cache"
-                  defaultMessage="From Cache"
-                />
-              </Tag>}
+              {result.cache_hit && (
+                <Tag color={colors['mcs-success']}>
+                  <FormattedMessage
+                    id='otql-result-renderer-card-subtitle-cache'
+                    defaultMessage='From Cache'
+                  />
+                </Tag>
+              )}
             </React.Fragment>
           ) : undefined
         }
@@ -111,6 +107,4 @@ class OTQLResultRenderer extends React.Component<Props> {
   }
 }
 
-export default compose<Props, OTQLResultRendererProps>(
-  injectThemeColors
-)(OTQLResultRenderer);
+export default compose<Props, OTQLResultRendererProps>(injectThemeColors)(OTQLResultRenderer);

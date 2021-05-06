@@ -33,7 +33,7 @@ module.exports = merge(common, {
         include: paths.reactAppSrc,
         use: ['babel-loader', 'ts-loader'],
       },
-    ]
+    ],
   },
 
   plugins: [

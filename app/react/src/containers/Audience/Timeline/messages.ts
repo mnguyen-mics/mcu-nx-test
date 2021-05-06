@@ -245,8 +245,7 @@ const messages: {
   },
   pleaseFillInformations: {
     id: 'audience.monitoring.timeline.no.cookie.please.fill.infos',
-    defaultMessage:
-      'There is no user linked to your browser, please select a user to continue',
+    defaultMessage: 'There is no user linked to your browser, please select a user to continue',
   },
   userScenarioStartTitle: {
     id: 'audience.monitoring.timeline.activity.scenario.start.title',
@@ -290,8 +289,7 @@ const messages: {
   },
   userScenarioNodeMovementContent: {
     id: 'audience.monitoring.timeline.activity.scenario.node.movement.content',
-    defaultMessage:
-      'Moved from {scenarioOldNodeName} to {scenarioNodeName} within {scenarioName}',
+    defaultMessage: 'Moved from {scenarioOldNodeName} to {scenarioNodeName} within {scenarioName}',
   },
   userChoicesTitle: {
     id: 'audience.monitoring.timeline.card.userChoices.title',

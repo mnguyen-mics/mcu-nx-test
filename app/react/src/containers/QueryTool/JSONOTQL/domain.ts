@@ -1,9 +1,4 @@
-import {
-  PortModel,
-  LinkModel,
-  NodeModel,
-  DiagramEngine,
-} from 'storm-react-diagrams';
+import { PortModel, LinkModel, NodeModel, DiagramEngine } from 'storm-react-diagrams';
 import lodash from 'lodash';
 import { SimpleLinkModel } from './Diagram/Link';
 import { BooleanOperatorNodeModel } from './Diagram/BooleanOperatorNode';
@@ -24,10 +19,7 @@ import {
   FieldDirectiveResource,
 } from '../../../models/datamart/graphdb/RuntimeSchema';
 
-export type FieldProposalLookup = (
-  treeNodePath: number[],
-  fieldName: string,
-) => Promise<string[]>;
+export type FieldProposalLookup = (treeNodePath: number[], fieldName: string) => Promise<string[]>;
 
 export enum typesTrigger {
   'UserActivity',
@@ -76,9 +68,7 @@ export interface NodeModelBTree {
 export interface Operation {
   path: number[];
 
-  execute(
-    treeNode: ObjectTreeExpressionNodeShape,
-  ): ObjectTreeExpressionNodeShape | undefined;
+  execute(treeNode: ObjectTreeExpressionNodeShape): ObjectTreeExpressionNodeShape | undefined;
 }
 
 export class MicsDiagramEngine extends DiagramEngine {
@@ -122,9 +112,7 @@ export class AddOperation implements Operation {
     this.node = node;
   }
 
-  execute(
-    treeNode?: ObjectTreeExpressionNodeShape,
-  ): ObjectTreeExpressionNodeShape | undefined {
+  execute(treeNode?: ObjectTreeExpressionNodeShape): ObjectTreeExpressionNodeShape | undefined {
     if (!treeNode) return this.node;
 
     if (isLeafNode(treeNode)) {
@@ -158,9 +146,7 @@ export class DeleteOperation implements Operation {
     this.path = path;
   }
 
-  execute(
-    treeNode: ObjectTreeExpressionNodeShape,
-  ): ObjectTreeExpressionNodeShape | undefined {
+  execute(treeNode: ObjectTreeExpressionNodeShape): ObjectTreeExpressionNodeShape | undefined {
     const result = this.deleteNode(treeNode, this.path);
     if (result !== undefined) {
       return this.removeNestedEmptyGroupNode(result);
@@ -207,10 +193,7 @@ export class DeleteOperation implements Operation {
     ): ObjectTreeExpressionNodeShape | undefined {
       if (isLeafNode(_treeNode)) {
         return _treeNode;
-      } else if (
-        _treeNode.type === 'GROUP' &&
-        _treeNode.expressions.length === 0
-      ) {
+      } else if (_treeNode.type === 'GROUP' && _treeNode.expressions.length === 0) {
         return undefined;
       }
       return {
@@ -222,10 +205,7 @@ export class DeleteOperation implements Operation {
       };
     }
 
-    function nodeCount(
-      _treeNode: ObjectTreeExpressionNodeShape,
-      countAcc: number = 0,
-    ): number {
+    function nodeCount(_treeNode: ObjectTreeExpressionNodeShape, countAcc: number = 0): number {
       const count = countAcc + 1;
 
       if (isLeafNode(_treeNode) || _treeNode.expressions.length === 0) {
@@ -261,9 +241,7 @@ export class UpdateOperation implements Operation {
     this.node = node;
   }
 
-  execute(
-    treeNode: ObjectTreeExpressionNodeShape,
-  ): ObjectTreeExpressionNodeShape | undefined {
+  execute(treeNode: ObjectTreeExpressionNodeShape): ObjectTreeExpressionNodeShape | undefined {
     if (this.path.length === 0) {
       return this.node;
     }
@@ -277,9 +255,7 @@ export class UpdateOperation implements Operation {
       ...treeNode,
       expressions: [
         ...treeNode.expressions.slice(0, head),
-        new UpdateOperation(tail, this.node).execute(
-          treeNode.expressions[head],
-        )!,
+        new UpdateOperation(tail, this.node).execute(treeNode.expressions[head])!,
         ...treeNode.expressions.slice(head + 1),
       ],
     };
@@ -291,22 +267,12 @@ export interface TreeNodeOperations {
   addNode: (nodePath: number[], node: ObjectTreeExpressionNodeShape) => void;
   updateNode: (nodePath: number[], node: ObjectTreeExpressionNodeShape) => void;
   updateLayout: () => void;
-  copyNode: (
-    nodePath: number[],
-    objectLikeType: string,
-    treeNodePath: number[],
-  ) => void;
-  cutNode: (
-    nodePath: number[],
-    objectLikeType: string,
-    treeNodePath: number[],
-  ) => void;
+  copyNode: (nodePath: number[], objectLikeType: string, treeNodePath: number[]) => void;
+  cutNode: (nodePath: number[], objectLikeType: string, treeNodePath: number[]) => void;
   addNewGroupAsRoot: () => void;
 }
 
-export function isLeafNode(
-  node: ObjectTreeExpressionNodeShape,
-): node is FieldNode {
+export function isLeafNode(node: ObjectTreeExpressionNodeShape): node is FieldNode {
   return node.type === 'FIELD';
 }
 
@@ -328,13 +294,13 @@ function hasTypeChild(
   objectType: ObjectLikeTypeInfoResource,
   objectTypes: ObjectLikeTypeInfoResource[],
 ): boolean {
-  const objectTypeNames = objectTypes.map((ots) => ots.name);
-  const fieldTypeNames = objectType.fields.map((f) => f.field_type);
+  const objectTypeNames = objectTypes.map(ots => ots.name);
+  const fieldTypeNames = objectType.fields.map(f => f.field_type);
   return (
-    fieldTypeNames.filter((ftn) => {
+    fieldTypeNames.filter(ftn => {
       // using a regexp to extract type like [UserEvent!]!
       const match = ftn.match(/\w+/);
-      return !!objectTypeNames.find((otn) => !!(match && match[0] === otn));
+      return !!objectTypeNames.find(otn => !!(match && match[0] === otn));
     }).length > 0
   );
 }
@@ -378,9 +344,9 @@ export function buildNodeModelBTree(
       const objectNode = new ObjectNodeModel(treeNode, treeNodePath);
       objectNode.objectTypeInfo = objectType;
 
-      const field = objectType.fields.find((f) => f.name === treeNode.field)!;
+      const field = objectType.fields.find(f => f.name === treeNode.field)!;
       const fieldType = field.field_type.match(/\w+/)![0];
-      const nextObjectType = objectTypes.find((ot) => fieldType === ot.name)!;
+      const nextObjectType = objectTypes.find(ot => fieldType === ot.name)!;
       const hidePlusNode = !hasTypeChild(nextObjectType, objectTypes);
       return {
         node: objectNode,
@@ -401,11 +367,7 @@ export function buildNodeModelBTree(
             hidePlusNode
               ? undefined
               : {
-                  node: new PlusNodeModel(
-                    treeNode,
-                    treeNodePath,
-                    nextObjectType,
-                  ),
+                  node: new PlusNodeModel(treeNode, treeNodePath, nextObjectType),
                 },
           ),
       };
@@ -427,8 +389,7 @@ export function layout(
   parentNodeBTRee?: NodeModelBTree,
 ): Point {
   const isCollapsed =
-    (tree.node instanceof ObjectNodeModel && tree.node.collapsed) ||
-    tree.node.extras.collapsed;
+    (tree.node instanceof ObjectNodeModel && tree.node.collapsed) || tree.node.extras.collapsed;
 
   tree.node.setPosition(position.x, position.y);
 
@@ -441,9 +402,7 @@ export function layout(
         : applyTranslation(
             position,
             MIN_X,
-            (tree.node.getSize().height +
-              (tree.node.getSize().borderWidth || 0) * 2) /
-              2 -
+            (tree.node.getSize().height + (tree.node.getSize().borderWidth || 0) * 2) / 2 -
               (tree.right.node.getSize().height +
                 (tree.right.node.getSize().borderWidth || 0) * 2) /
                 2,
@@ -459,11 +418,8 @@ export function layout(
         ? position
         : applyTranslation(
             { x: position.x, y: rightP.y },
-            (tree.node.getSize().width +
-              (tree.node.getSize().borderWidth || 0) * 2) /
-              2 -
-              (tree.down.node.getSize().width +
-                (tree.down.node.getSize().borderWidth || 0) * 2) /
+            (tree.node.getSize().width + (tree.node.getSize().borderWidth || 0) * 2) / 2 -
+              (tree.down.node.getSize().width + (tree.down.node.getSize().borderWidth || 0) * 2) /
                 2,
             MIN_Y,
           ),
@@ -510,12 +466,7 @@ export function computeNodeExtras(
 export function buildLinkList(nodeBTree: NodeModelBTree): LinkModel[] {
   return [
     ...(nodeBTree.right
-      ? [
-          createLink(
-            nodeBTree.node.ports.right,
-            nodeBTree.right.node.ports.left,
-          ),
-        ]
+      ? [createLink(nodeBTree.node.ports.right, nodeBTree.right.node.ports.left)]
       : []),
     ...(nodeBTree.down
       ? [createLink(nodeBTree.node.ports.bottom, nodeBTree.down.node.ports.top)]
@@ -533,11 +484,7 @@ export function toNodeList(nodeBTree: NodeModelBTree): NodeModel[] {
   ];
 }
 
-export function applyTranslation(
-  position: Point,
-  tx: number = 0,
-  ty: number = 0,
-): Point {
+export function applyTranslation(position: Point, tx: number = 0, ty: number = 0): Point {
   return {
     x: position.x + tx,
     y: position.y + ty,
@@ -572,10 +519,7 @@ export function isSchemaItem(
 export function isFieldInfoEnfancedResource(
   item: SchemaItem | FieldInfoEnhancedResource | FieldInfoResource,
 ): item is FieldInfoEnhancedResource {
-  return (
-    !isSchemaItem(item) &&
-    (item as FieldInfoEnhancedResource).closestParentType !== undefined
-  );
+  return !isSchemaItem(item) && (item as FieldInfoEnhancedResource).closestParentType !== undefined;
 }
 
 export const extractFieldType = (field: FieldInfoEnhancedResource) =>
@@ -583,11 +527,9 @@ export const extractFieldType = (field: FieldInfoEnhancedResource) =>
 
 export function filterAvailableFields(schemaItem: SchemaItem): boolean {
   return lodash
-    .flatMap(schemaItem.directives, (d) => {
-      return d.arguments.map((a) =>
-        Object.values(typesTrigger).includes(
-          a.value.replace(/[^a-zA-Z]+/g, ''),
-        ),
+    .flatMap(schemaItem.directives, d => {
+      return d.arguments.map(a =>
+        Object.values(typesTrigger).includes(a.value.replace(/[^a-zA-Z]+/g, '')),
       );
     })
     .reduce((acc: boolean, val: boolean) => {
@@ -603,7 +545,7 @@ export function computeFinalSchemaItem(
   isEdge: boolean,
 ): SchemaItem {
   const initialSchemaItem = buildSchemaItem(objectTypes, {
-    ...objectTypes.find((ot) => ot.name === rootObjectTypeName)!,
+    ...objectTypes.find(ot => ot.name === rootObjectTypeName)!,
     closestParentType: '',
   });
   const filteredSchemaItem = filterSchemaItem(
@@ -623,11 +565,11 @@ function buildSchemaItem(
   return {
     ...rootObjectType,
     fields: rootObjectType.fields
-      .map((field) => {
+      .map(field => {
         const match = extractFieldType(field as FieldInfoEnhancedResource);
-        if (match && objectTypes.map((ot) => ot.name).includes(match)) {
+        if (match && objectTypes.map(ot => ot.name).includes(match)) {
           const newRootObject: SchemaItem = {
-            ...objectTypes.find((ot) => ot.name === match)!,
+            ...objectTypes.find(ot => ot.name === match)!,
             schemaType: match,
             name: field.name,
             closestParentType: rootObjectType.name,
@@ -641,14 +583,11 @@ function buildSchemaItem(
       .sort((a, b) => {
         const isAObjectType = isSchemaItem(a);
         const isBObjectType = isSchemaItem(b);
-        const aName =
-          a.decorator && !a.decorator.hidden ? a.decorator.label : a.name;
-        const bName =
-          b.decorator && !b.decorator.hidden ? b.decorator.label : b.name;
+        const aName = a.decorator && !a.decorator.hidden ? a.decorator.label : a.name;
+        const bName = b.decorator && !b.decorator.hidden ? b.decorator.label : b.name;
         return isAObjectType && !isBObjectType
           ? 1
-          : (isAObjectType && isBObjectType) ||
-            (!isAObjectType && !isBObjectType)
+          : (isAObjectType && isBObjectType) || (!isAObjectType && !isBObjectType)
           ? aName.localeCompare(bName)
           : -1;
       }),
@@ -670,46 +609,34 @@ function filterSchemaItem(
   return {
     ...schema,
     fields: schema.fields
-      .filter((field) => {
+      .filter(field => {
         if (isTrigger) {
           if (isSchemaItem(field) && field.closestParentType === 'UserPoint')
             return filterAvailableFields(field) && checkIfVisible(field);
-          else if (
-            isFieldInfoEnfancedResource(field) &&
-            field.closestParentType === 'UserPoint'
-          )
+          else if (isFieldInfoEnfancedResource(field) && field.closestParentType === 'UserPoint')
             return checkIfVisible(field);
           else return checkIfVisible(field);
         } else {
           if (isFieldInfoEnfancedResource(field) && onlyIndexed) {
             const match = extractFieldType(field);
-            if (objectTypes.map((ot) => ot.name).includes(match))
-              return checkIfVisible(field);
+            if (objectTypes.map(ot => ot.name).includes(match)) return checkIfVisible(field);
             return (
               field.directives &&
               field.directives.length &&
-              field.directives.find((f) => f.name === 'TreeIndex') &&
-              (isEdge
-                ? field.directives.find((f) => f.name === 'EdgeAvailability')
-                : true) &&
+              field.directives.find(f => f.name === 'TreeIndex') &&
+              (isEdge ? field.directives.find(f => f.name === 'EdgeAvailability') : true) &&
               checkIfVisible(field)
             );
           }
           return checkIfVisible(field);
         }
       })
-      .map((field) => {
+      .map(field => {
         if (isSchemaItem(field))
-          return filterSchemaItem(
-            field,
-            objectTypes,
-            onlyIndexed,
-            isTrigger,
-            isEdge,
-          );
+          return filterSchemaItem(field, objectTypes, onlyIndexed, isTrigger, isEdge);
         else return { ...field, closestParentType: schema.name };
       })
-      .filter((field) => !('fields' in field) || field.fields.length > 0),
+      .filter(field => !('fields' in field) || field.fields.length > 0),
   };
 }
 
@@ -723,8 +650,7 @@ function computeSchemaItemPath(
     path: path,
     fields: schema.fields.map((field, index) => {
       const newPath = `${path}${path ? '.' : ''}${index}`;
-      if (isSchemaItem(field))
-        return computeSchemaItemPath(field, objectTypes, newPath);
+      if (isSchemaItem(field)) return computeSchemaItemPath(field, objectTypes, newPath);
       else return { ...field, closestParentType: schema.name, path: newPath };
     }),
   };
@@ -753,9 +679,7 @@ interface DragAndDropObjectdInterface extends DragAndDropCommonInterface {
   item: SchemaItem;
 }
 
-export type DragAndDropInterface =
-  | DragAndDropFieldInterface
-  | DragAndDropObjectdInterface;
+export type DragAndDropInterface = DragAndDropFieldInterface | DragAndDropObjectdInterface;
 
 export function computeSchemaPathFromQueryPath(
   query: ObjectTreeExpressionNodeShape | undefined,
@@ -771,17 +695,12 @@ export function computeSchemaPathFromQueryPath(
     if (!_query) {
       return elements;
     }
-    const _elements =
-      _query.type !== 'GROUP' ? [...elements, _query.field] : elements;
+    const _elements = _query.type !== 'GROUP' ? [...elements, _query.field] : elements;
     if (_path.length === 0 || isLeafNode(_query)) {
       return _elements;
     }
     const [head, ...tail] = _path;
-    return computeElementInPath(
-      (_query as ObjectNode).expressions[head],
-      tail,
-      _elements,
-    );
+    return computeElementInPath((_query as ObjectNode).expressions[head], tail, _elements);
   }
 
   function computePathFromElement(
@@ -799,13 +718,9 @@ export function computeSchemaPathFromQueryPath(
       return elements;
     }
     const [head, ...tail] = _path;
-    const fieldIndex = _schema.fields.findIndex((field) => field.name === head);
+    const fieldIndex = _schema.fields.findIndex(field => field.name === head);
     const _elements = [...elements, fieldIndex];
-    return computePathFromElement(
-      _schema.fields[fieldIndex] as SchemaItem,
-      tail,
-      _elements,
-    );
+    return computePathFromElement(_schema.fields[fieldIndex] as SchemaItem, tail, _elements);
   }
 
   const newPath = computeElementInPath(query, path);
@@ -840,11 +755,7 @@ export function computeAdditionalNode(
     let _newOffset = _offset;
     if (_newOffset > 0) {
       _newOffset = _newOffset - 1;
-      return computeElementFromPath(
-        tail,
-        _newOffset,
-        _schema.fields[head] as SchemaItem,
-      );
+      return computeElementFromPath(tail, _newOffset, _schema.fields[head] as SchemaItem);
     }
 
     const _newQueryNode: ObjectTreeExpressionNodeShape =
@@ -862,19 +773,10 @@ export function computeAdditionalNode(
           };
 
     const _newQuery = _query ? [..._query, _newQueryNode] : [_newQueryNode];
-    return computeElementFromPath(
-      tail,
-      _newOffset,
-      _schema.fields[head] as SchemaItem,
-      _newQuery,
-    );
+    return computeElementFromPath(tail, _newOffset, _schema.fields[head] as SchemaItem, _newQuery);
   }
 
-  const generatedQuery = computeElementFromPath(
-    additionalNodePath,
-    offset,
-    schema,
-  );
+  const generatedQuery = computeElementFromPath(additionalNodePath, offset, schema);
 
   if (generatedQuery) {
     const reversedArray: ObjectTreeExpressionNodeShape[] = [];
@@ -882,12 +784,9 @@ export function computeAdditionalNode(
       reversedArray.push(generatedQuery[generatedQuery.length - 1 - i]);
     }
 
-    const builtUpQuery = reversedArray.reduce(
-      (acc: ObjectTreeExpressionNodeShape, val) => {
-        return acc ? { ...val, expressions: [acc] } : val;
-      },
-      undefined,
-    );
+    const builtUpQuery = reversedArray.reduce((acc: ObjectTreeExpressionNodeShape, val) => {
+      return acc ? { ...val, expressions: [acc] } : val;
+    }, undefined);
 
     return builtUpQuery;
   }
@@ -897,10 +796,10 @@ export function computeAdditionalNode(
 export const getCoreReferenceTypeAndModel = (
   directives: FieldDirectiveResource[],
 ): { type: string; modelType: string } | undefined => {
-  const ref = directives.find((d) => d.name === 'ReferenceTable');
+  const ref = directives.find(d => d.name === 'ReferenceTable');
   if (ref && ref.arguments) {
-    const type = ref.arguments.find((a) => a.name === 'type');
-    const modelType = ref.arguments.find((a) => a.name === 'model_type');
+    const type = ref.arguments.find(a => a.name === 'type');
+    const modelType = ref.arguments.find(a => a.name === 'model_type');
     if (type) {
       const match = type.value.match(/\w+/);
       if (match && match[0] && match[0] === 'CORE_OBJECT') {

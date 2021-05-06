@@ -37,10 +37,7 @@ interface NavigatorSettingsSideMenuState {
   vecticalOpenKeys: string[];
 }
 
-class NavigatorSettingsSideMenu extends React.Component<
-  Props,
-  NavigatorSettingsSideMenuState
-> {
+class NavigatorSettingsSideMenu extends React.Component<Props, NavigatorSettingsSideMenuState> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -58,12 +55,7 @@ class NavigatorSettingsSideMenu extends React.Component<
 
   checkInitialState = (pathname: string) => {
     const currentOpenSubMenu = settingsDefinitions
-      .filter(
-        item =>
-          item.type === 'multi' &&
-          item.subMenuItems &&
-          item.subMenuItems.length > 0,
-      )
+      .filter(item => item.type === 'multi' && item.subMenuItems && item.subMenuItems.length > 0)
       .find(
         item =>
           item.type === 'multi' &&
@@ -78,8 +70,7 @@ class NavigatorSettingsSideMenu extends React.Component<
           }, false),
       );
 
-    if (currentOpenSubMenu)
-      this.setState({ inlineOpenKeys: [currentOpenSubMenu.iconType] }); // eslint-disable-line react/no-did-mount-set-state
+    if (currentOpenSubMenu) this.setState({ inlineOpenKeys: [currentOpenSubMenu.iconType] }); // eslint-disable-line react/no-did-mount-set-state
   };
 
   onOpenChange = (openKeys: string[]) => {
@@ -87,9 +78,7 @@ class NavigatorSettingsSideMenu extends React.Component<
     const { mode } = this.props;
 
     if (mode === 'inline') {
-      const latestOpenKey = openKeys.find(
-        key => !(state.inlineOpenKeys.indexOf(key) > -1),
-      );
+      const latestOpenKey = openKeys.find(key => !(state.inlineOpenKeys.indexOf(key) > -1));
       let nextOpenKeys: string[] = [];
       if (latestOpenKey) {
         nextOpenKeys = [latestOpenKey];
@@ -102,18 +91,14 @@ class NavigatorSettingsSideMenu extends React.Component<
   };
 
   onClick = (e: any) => {
-    const hasClickOnFirstLevelMenuItem = settingsDefinitions.find(
-      item => item.iconType === e.key,
-    );
+    const hasClickOnFirstLevelMenuItem = settingsDefinitions.find(item => item.iconType === e.key);
     if (hasClickOnFirstLevelMenuItem) this.setState({ inlineOpenKeys: [] });
   };
 
   getAvailableItems() {
     const { hasFeature } = this.props;
 
-    const checkIfHasAtLeastOneFeature = (
-      item: NavigatorMultipleLevelMenuDefinition,
-    ): boolean => {
+    const checkIfHasAtLeastOneFeature = (item: NavigatorMultipleLevelMenuDefinition): boolean => {
       return item.subMenuItems.reduce((acc, val) => {
         return hasFeature(val.requiredFeature, val.requireDatamart)
           ? hasFeature(val.requiredFeature, val.requireDatamart)
@@ -144,12 +129,7 @@ class NavigatorSettingsSideMenu extends React.Component<
     const baseUrl = `/v2/o/${organisationId}`;
 
     const currentOpenMenu = settingsDefinitions
-      .filter(
-        item =>
-          item.type === 'multi' &&
-          item.subMenuItems &&
-          item.subMenuItems.length > 0,
-      )
+      .filter(item => item.type === 'multi' && item.subMenuItems && item.subMenuItems.length > 0)
       .find(
         item =>
           item.type === 'multi' &&
@@ -173,9 +153,10 @@ class NavigatorSettingsSideMenu extends React.Component<
           <Menu.Item key={itemDef.path}>
             <Link
               to={`${baseUrl}${itemDef.path}`}
-              className={`mcs-settingsSideMenu_${itemDef.translation.id}`}>
+              className={`mcs-settingsSideMenu_${itemDef.translation.id}`}
+            >
               <McsIcon type={itemDef.iconType as McsIconType} />
-              <span className="nav-text">
+              <span className='nav-text'>
                 <FormattedMessage {...itemDef.translation} />
               </span>
             </Link>
@@ -247,7 +228,8 @@ class NavigatorSettingsSideMenu extends React.Component<
         selectedKeys={getSelectedKeys()}
         openKeys={getOpenKeysInMode()}
         onOpenChange={this.onOpenChange}
-        onClick={this.onClick}>
+        onClick={this.onClick}
+      >
         {this.buildItems()}
       </Menu>
     );

@@ -1,5 +1,3 @@
 import Labels from './Labels';
 
-export {
-    Labels,
-};
+export { Labels };

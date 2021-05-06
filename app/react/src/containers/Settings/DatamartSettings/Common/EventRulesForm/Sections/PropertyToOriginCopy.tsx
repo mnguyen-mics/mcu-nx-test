@@ -2,18 +2,18 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import messages from '../messages';
-import { DefaultSelect, FormSelectField, FormInputField, FormInput } from '../../../../../../components/Form';
-import withValidators, {
-  ValidatorProps,
-} from '../../../../../../components/Form/withValidators';
-import withNormalizer, {
-  NormalizerProps,
-} from '../../../../../../components/Form/withNormalizer';
+import {
+  DefaultSelect,
+  FormSelectField,
+  FormInputField,
+  FormInput,
+} from '../../../../../../components/Form';
+import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
+import withNormalizer, { NormalizerProps } from '../../../../../../components/Form/withNormalizer';
 
 type Props = InjectedIntlProps & ValidatorProps & NormalizerProps;
 
 class PropertyToOriginCopy extends React.Component<Props> {
-
   render() {
     const {
       fieldValidators: { isRequired },
@@ -38,24 +38,22 @@ class PropertyToOriginCopy extends React.Component<Props> {
     return (
       <div>
         <FormInputField
-            name="model.property_name"
-            component={FormInput}
-            validate={[isRequired]}
-            formItemProps={{
-              label: formatMessage(messages.contentProperty2OriginPropertyNameLabel),
-              required: true,
-            }}
-            inputProps={{
-              placeholder: formatMessage(
-                messages.contentProperty2OriginPropertyNamePlaceholder,
-              ),
-            }}
-            helpToolTipProps={{
-              title: formatMessage(messages.contentProperty2OriginPropertyNameTooltip),
-            }}
-          />
+          name='model.property_name'
+          component={FormInput}
+          validate={[isRequired]}
+          formItemProps={{
+            label: formatMessage(messages.contentProperty2OriginPropertyNameLabel),
+            required: true,
+          }}
+          inputProps={{
+            placeholder: formatMessage(messages.contentProperty2OriginPropertyNamePlaceholder),
+          }}
+          helpToolTipProps={{
+            title: formatMessage(messages.contentProperty2OriginPropertyNameTooltip),
+          }}
+        />
         <FormSelectField
-          name="model.property_source"
+          name='model.property_source'
           component={DefaultSelect}
           validate={[isRequired]}
           formItemProps={{
@@ -68,7 +66,7 @@ class PropertyToOriginCopy extends React.Component<Props> {
           }}
         />
         <FormInputField
-          name="model.destination"
+          name='model.destination'
           component={FormInput}
           validate={[isRequired]}
           formItemProps={{
@@ -76,9 +74,7 @@ class PropertyToOriginCopy extends React.Component<Props> {
             required: true,
           }}
           inputProps={{
-            placeholder: formatMessage(
-              messages.contentProperty2OriginDestinationPlaceholder,
-            ),
+            placeholder: formatMessage(messages.contentProperty2OriginDestinationPlaceholder),
           }}
           helpToolTipProps={{
             title: formatMessage(messages.contentProperty2OriginDestinationTooltip),
@@ -89,6 +85,4 @@ class PropertyToOriginCopy extends React.Component<Props> {
   }
 }
 
-export default compose(injectIntl, withValidators, withNormalizer)(
-  PropertyToOriginCopy,
-);
+export default compose(injectIntl, withValidators, withNormalizer)(PropertyToOriginCopy);

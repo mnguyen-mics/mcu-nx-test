@@ -28,8 +28,7 @@ interface VisitAnalyzerRouteParam {
   visitAnalyzerId?: string;
 }
 
-type JoinedProps = RouteComponentProps<VisitAnalyzerRouteParam> &
-  InjectedIntlProps;
+type JoinedProps = RouteComponentProps<VisitAnalyzerRouteParam> & InjectedIntlProps;
 
 class EditVisitAnalyzerPage extends React.Component<JoinedProps> {
   @lazyInject(TYPES.IVisitAnalyzerService)
@@ -46,10 +45,7 @@ class EditVisitAnalyzerPage extends React.Component<JoinedProps> {
     history.push(attributionModelUrl);
   };
 
-  onSaveOrCreatePluginInstance = (
-    plugin: VisitAnalyzer,
-    properties: PluginProperty[],
-  ) => {
+  onSaveOrCreatePluginInstance = (plugin: VisitAnalyzer, properties: PluginProperty[]) => {
     const {
       match: {
         params: { organisationId },
@@ -86,13 +82,13 @@ class EditVisitAnalyzerPage extends React.Component<JoinedProps> {
     } = this.props;
 
     const breadcrumbPaths = (visitAnalyzer?: VisitAnalyzer) => [
-      <Link key="1" to={`/v2/o/${organisationId}/settings/datamart/visit_analyzers`}>
+      <Link key='1' to={`/v2/o/${organisationId}/settings/datamart/visit_analyzers`}>
         {formatMessage(messages.listTitle)}
       </Link>,
       visitAnalyzer
         ? formatMessage(messages.visitAnalyzerEditBreadcrumb, {
-          name: visitAnalyzer.name,
-        })
+            name: visitAnalyzer.name,
+          })
         : formatMessage(messages.visitAnalyzerBreadcrumb),
     ];
 

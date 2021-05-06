@@ -4,7 +4,7 @@ import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { UserAccountCompartmentDatamartSelectionResource } from '../../../../../models/datamart/DatamartResource';
 import { compose } from 'recompose';
 import { Filter } from '../../Common/domain';
-import { MultiSelectProps } from '@mediarithmics-private/mcs-components-library/lib/components/multi-select';;
+import { MultiSelectProps } from '@mediarithmics-private/mcs-components-library/lib/components/multi-select';
 import { TableViewFilters } from '../../../../../components/TableView';
 import messages from './messages';
 import {
@@ -27,9 +27,7 @@ type Props = CompartmentsTableProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class CompartmentsTable extends React.Component<Props> {
-  editCompartment = (
-    compartment: UserAccountCompartmentDatamartSelectionResource,
-  ) => {
+  editCompartment = (compartment: UserAccountCompartmentDatamartSelectionResource) => {
     const {
       match: {
         params: { organisationId },
@@ -47,9 +45,7 @@ class CompartmentsTable extends React.Component<Props> {
     });
   };
 
-  voidFunction = (
-    compartment: UserAccountCompartmentDatamartSelectionResource,
-  ) => {
+  voidFunction = (compartment: UserAccountCompartmentDatamartSelectionResource) => {
     return undefined;
   };
 
@@ -89,10 +85,7 @@ class CompartmentsTable extends React.Component<Props> {
         title: formatMessage(messages.compartment_id),
         key: 'compartment_id',
         isHideable: false,
-        render: (
-          text: string,
-          record: UserAccountCompartmentDatamartSelectionResource,
-        ) => (
+        render: (text: string, record: UserAccountCompartmentDatamartSelectionResource) => (
           <span>
             {text} {record.default && ' (Default)'}
           </span>
@@ -102,19 +95,17 @@ class CompartmentsTable extends React.Component<Props> {
         title: formatMessage(messages.name),
         key: 'name',
         isHideable: false,
-        render: (
-          text: string,
-          record: UserAccountCompartmentDatamartSelectionResource,
-        ) => <span>{text}</span>,
+        render: (text: string, record: UserAccountCompartmentDatamartSelectionResource) => (
+          <span>{text}</span>
+        ),
       },
       {
         title: formatMessage(messages.token),
         key: 'token',
         isHideable: false,
-        render: (
-          text: string,
-          record: UserAccountCompartmentDatamartSelectionResource,
-        ) => <span>{text}</span>,
+        render: (text: string, record: UserAccountCompartmentDatamartSelectionResource) => (
+          <span>{text}</span>
+        ),
       },
     ];
 
@@ -155,7 +146,4 @@ class CompartmentsTable extends React.Component<Props> {
   }
 }
 
-export default compose<Props, CompartmentsTableProps>(
-  injectIntl,
-  withRouter,
-)(CompartmentsTable);
+export default compose<Props, CompartmentsTableProps>(injectIntl, withRouter)(CompartmentsTable);

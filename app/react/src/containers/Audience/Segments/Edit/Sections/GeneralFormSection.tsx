@@ -2,13 +2,9 @@ import * as React from 'react';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { Row } from 'antd/lib/grid';
-import withValidators, {
-  ValidatorProps,
-} from '../../../../../components/Form/withValidators';
+import withValidators, { ValidatorProps } from '../../../../../components/Form/withValidators';
 import messages from '../messages';
-import withNormalizer, {
-  NormalizerProps,
-} from '../../../../../components/Form/withNormalizer';
+import withNormalizer, { NormalizerProps } from '../../../../../components/Form/withNormalizer';
 import {
   FormInput,
   FormAlertInput,
@@ -47,10 +43,7 @@ export interface GeneralFormSectionProps {
   datamart?: DatamartResource;
 }
 
-type Props = InjectedIntlProps &
-  ValidatorProps &
-  NormalizerProps &
-  GeneralFormSectionProps;
+type Props = InjectedIntlProps & ValidatorProps & NormalizerProps & GeneralFormSectionProps;
 
 interface State {
   technicalName?: string;
@@ -84,26 +77,20 @@ class GeneralFormSection extends React.Component<Props, State> {
 
     return (
       <FormAlertInputField
-        name="audienceSegment.technical_name"
+        name='audienceSegment.technical_name'
         component={FormAlertInput}
         onChange={this.handleOnchangeTechnicalName}
         formItemProps={{
-          label: formatMessage(
-            messages.contentSectionGeneralAdvancedPartRow1Label,
-          ),
+          label: formatMessage(messages.contentSectionGeneralAdvancedPartRow1Label),
         }}
         inputProps={{
-          placeholder: formatMessage(
-            messages.contentSectionGeneralAdvancedPartRow1Placeholder,
-          ),
+          placeholder: formatMessage(messages.contentSectionGeneralAdvancedPartRow1Placeholder),
         }}
         helpToolTipProps={{
-          title: formatMessage(
-            messages.contentSectionGeneralAdvancedPartRow1Tooltip,
-          ),
+          title: formatMessage(messages.contentSectionGeneralAdvancedPartRow1Tooltip),
         }}
-        iconType="warning"
-        type="warning"
+        iconType='warning'
+        type='warning'
         message={formatMessage(messages.warningOnTokenEdition)}
       />
     );
@@ -117,23 +104,17 @@ class GeneralFormSection extends React.Component<Props, State> {
     const typeOptions = [
       {
         value: 'USER_LIST',
-        title: formatMessage(
-          messagesMap.audienceSegmentFormSelectTypeOptionUserList,
-        ),
+        title: formatMessage(messagesMap.audienceSegmentFormSelectTypeOptionUserList),
       },
       {
         value: 'USER_QUERY',
-        title: formatMessage(
-          messagesMap.audienceSegmentFormSelectTypeOptionUserQuery,
-        ),
+        title: formatMessage(messagesMap.audienceSegmentFormSelectTypeOptionUserQuery),
       },
     ];
     if (datamart && datamart.storage_model_version === 'v201709') {
       typeOptions.push({
         value: 'USER_PIXEL',
-        title: formatMessage(
-          messagesMap.audienceSegmentFormSelectTypeOptionUserPixel,
-        ),
+        title: formatMessage(messagesMap.audienceSegmentFormSelectTypeOptionUserPixel),
       });
     }
     return typeOptions;
@@ -152,16 +133,14 @@ class GeneralFormSection extends React.Component<Props, State> {
           title={messages.audienceSegmentSectionGeneralTitle}
           subtitle={messages.audienceSegmentSectionGeneralSubTitle}
         />
-        <div id="general">
+        <div id='general'>
           <div>
             <FormInputField
-              name="audienceSegment.name"
+              name='audienceSegment.name'
               component={FormInput}
               validate={[isRequired]}
               formItemProps={{
-                label: formatMessage(
-                  messages.audienceSegmentCreationGeneralNameFieldTitle,
-                ),
+                label: formatMessage(messages.audienceSegmentCreationGeneralNameFieldTitle),
                 required: true,
               }}
               inputProps={{
@@ -170,21 +149,17 @@ class GeneralFormSection extends React.Component<Props, State> {
                 ),
               }}
               helpToolTipProps={{
-                title: formatMessage(
-                  messages.audienceSegmentCreationGeneralNameFieldHelper,
-                ),
+                title: formatMessage(messages.audienceSegmentCreationGeneralNameFieldHelper),
               }}
             />
           </div>
           <div>
             <FormTextAreaField
-              name="audienceSegment.short_description"
+              name='audienceSegment.short_description'
               component={FormTextArea}
               validate={[isCharLengthLessThan(255)]}
               formItemProps={{
-                label: formatMessage(
-                  messages.audienceSegmentCreationGeneralDescriptionFieldTitle,
-                ),
+                label: formatMessage(messages.audienceSegmentCreationGeneralDescriptionFieldTitle),
               }}
               inputProps={{
                 placeholder: formatMessage(
@@ -192,42 +167,33 @@ class GeneralFormSection extends React.Component<Props, State> {
                 ),
               }}
               helpToolTipProps={{
-                title: formatMessage(
-                  messages.audienceSegmentCreationGeneralDescriptionFieldHelper,
-                ),
+                title: formatMessage(messages.audienceSegmentCreationGeneralDescriptionFieldHelper),
               }}
             />
           </div>
           <div>
-            <Button
-              className="optional-section-title"
-              onClick={this.toggleAdvancedSection}
-            >
-              <McsIcon type="settings" />
-              <span className="step-title">
+            <Button className='optional-section-title' onClick={this.toggleAdvancedSection}>
+              <McsIcon type='settings' />
+              <span className='step-title'>
                 {formatMessage(messages.contentSectionGeneralAdvancedPartTitle)}
               </span>
-              <McsIcon type="chevron" />
+              <McsIcon type='chevron' />
             </Button>
 
             <div
               className={
-                !this.state.displayAdvancedSection
-                  ? 'hide-section'
-                  : 'optional-section-content'
+                !this.state.displayAdvancedSection ? 'hide-section' : 'optional-section-content'
               }
             >
               {this.getTechnicalNameField()}
               <div>
-                <div className="custom-lifetime">
+                <div className='custom-lifetime'>
                   <FormInputField
-                    name="defaultLifetime"
+                    name='defaultLifetime'
                     component={FormInput}
                     validate={[isValidInteger, isNotZero]}
                     formItemProps={{
-                      label: formatMessage(
-                        messages.contentSectionGeneralAdvancedPartRow2Label,
-                      ),
+                      label: formatMessage(messages.contentSectionGeneralAdvancedPartRow2Label),
                     }}
                     inputProps={{
                       disabled: this.state.neverExpire,
@@ -235,15 +201,13 @@ class GeneralFormSection extends React.Component<Props, State> {
                         <div>
                           <Row>
                             <FormAddonSelectField
-                              name="defaultLifetimeUnit"
+                              name='defaultLifetimeUnit'
                               component={AddonSelect}
                               disabled={this.state.neverExpire}
                               options={[
                                 {
                                   value: 'days',
-                                  title: formatMessage(
-                                    messages.contentSectionGeneralRow5OptionDAY,
-                                  ),
+                                  title: formatMessage(messages.contentSectionGeneralRow5OptionDAY),
                                 },
                                 {
                                   value: 'weeks',
@@ -268,19 +232,16 @@ class GeneralFormSection extends React.Component<Props, State> {
                       style: { width: '100%' },
                     }}
                     helpToolTipProps={{
-                      title: formatMessage(
-                        messages.contentSectionGeneralAdvancedPartRow2Tooltip,
-                      ),
+                      title: formatMessage(messages.contentSectionGeneralAdvancedPartRow2Tooltip),
                     }}
                   />
                 </div>
               </div>
 
-              {segmentType === 'USER_QUERY' ||
-              segmentType === 'USER_LOOKALIKE' ? (
+              {segmentType === 'USER_QUERY' || segmentType === 'USER_LOOKALIKE' ? (
                 <div>
                   <FormBooleanField
-                    name="audienceSegment.persisted"
+                    name='audienceSegment.persisted'
                     component={FormBoolean}
                     formItemProps={{
                       label: formatMessage(
@@ -298,18 +259,14 @@ class GeneralFormSection extends React.Component<Props, State> {
 
               <div>
                 <FormBooleanField
-                    name="audienceSegment.paused"
-                    component={FormBoolean}
-                    formItemProps={{
-                      label: formatMessage(
-                          messages.audienceSegmentCreationGeneralPausedFieldTitle,
-                      ),
-                    }}
-                    helpToolTipProps={{
-                      title: formatMessage(
-                          messages.audienceSegmentCreationGeneralPausedFieldHelper,
-                      ),
-                    }}
+                  name='audienceSegment.paused'
+                  component={FormBoolean}
+                  formItemProps={{
+                    label: formatMessage(messages.audienceSegmentCreationGeneralPausedFieldTitle),
+                  }}
+                  helpToolTipProps={{
+                    title: formatMessage(messages.audienceSegmentCreationGeneralPausedFieldHelper),
+                  }}
                 />
               </div>
             </div>

@@ -51,19 +51,17 @@ class GoalFormLoader extends React.Component<Props, State> {
     this._goalFormService
       .loadGoalData(goalId)
       .then(goalData => {
-        return this._datamartService.getDatamart(goalData.goal.datamart_id!).then(
-          datamartRes => {
-            this.setState({
-              loading: false,
-              goalFormData: {
-                ...goalData,
-                attributionModels: goalData.attributionModels,
-              },
-              datamart: datamartRes.data,
-            });
-            return datamartRes;
-          },
-        );
+        return this._datamartService.getDatamart(goalData.goal.datamart_id!).then(datamartRes => {
+          this.setState({
+            loading: false,
+            goalFormData: {
+              ...goalData,
+              attributionModels: goalData.attributionModels,
+            },
+            datamart: datamartRes.data,
+          });
+          return datamartRes;
+        });
       })
       .catch(err => {
         this.setState({ loading: false });
@@ -75,19 +73,10 @@ class GoalFormLoader extends React.Component<Props, State> {
     const { goalId, ...rest } = this.props;
     const { loading, datamart } = this.state;
 
-    if (loading || !datamart)
-      return <Loading isFullScreen={true} />;
+    if (loading || !datamart) return <Loading isFullScreen={true} />;
 
-    return (
-      <GoalForm
-        {...rest}
-        initialValues={this.state.goalFormData}
-        datamart={datamart}
-      />
-    );
+    return <GoalForm {...rest} initialValues={this.state.goalFormData} datamart={datamart} />;
   }
 }
 
-export default compose<Props, GoalFormProps>(injectNotifications)(
-  GoalFormLoader,
-);
+export default compose<Props, GoalFormProps>(injectNotifications)(GoalFormLoader);

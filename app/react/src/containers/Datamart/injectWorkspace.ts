@@ -26,15 +26,10 @@ export default compose<any, InjectedWorkspaceProps>(
       } & { [key: string]: any },
     ) => {
       const { getWorkspace, ...rest } = props;
-      const workspace = getWorkspace(
-        rest.match.params.organisationId,
-      );
+      const workspace = getWorkspace(rest.match.params.organisationId);
       if (!workspace) {
-        log.error(
-          'No datamart found for organisationId ',
-          rest.match.params.organisationId,
-        );
-      } 
+        log.error('No datamart found for organisationId ', rest.match.params.organisationId);
+      }
       return {
         workspace,
         ...rest,

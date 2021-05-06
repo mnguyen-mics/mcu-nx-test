@@ -20,8 +20,7 @@ const typeSearchSetting = {
     return [];
   },
   serialize: (value: string[]) => value.join(','),
-  isValid: (query: QueryType) =>
-    !query.types || query.types.split(',').length > 0,
+  isValid: (query: QueryType) => !query.types || query.types.split(',').length > 0,
 };
 
 export const SEGMENT_QUERY_SETTINGS = [
@@ -31,20 +30,19 @@ export const SEGMENT_QUERY_SETTINGS = [
   typeSearchSetting,
 ];
 
-
 export const DATAMART_USERS_ANALYTICS_SETTING = [
   ...SEGMENTS_FILTERS_SEARCH_SETTINGS,
   ...DATE_SEARCH_SETTINGS_WITHOUT_CURRENT_DAY,
-  ...ALL_USERS
-]
+  ...ALL_USERS,
+];
 
 export const getComparisonDatamartUsersAnalyticsSetting = (comparisonStartDate: number) => {
   return [
     ...SEGMENTS_FILTERS_SEARCH_SETTINGS,
     ...getComparisonDateSearchSettings(comparisonStartDate),
-    ...ALL_USERS
-  ]
-}
+    ...ALL_USERS,
+  ];
+};
 
 export interface AudienceReportData {
   day: string;

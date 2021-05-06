@@ -31,7 +31,8 @@ export default defineMessages({
   },
   sectionGeneralHelper: {
     id: 'plugin.edit.section.general.button.helper',
-    defaultMessage: 'Select a name and make it memorable so you can find it back across different screens.',
+    defaultMessage:
+      'Select a name and make it memorable so you can find it back across different screens.',
   },
   sectionPropertiesTitle: {
     id: 'plugin.edit.section.properties.title',
@@ -47,7 +48,8 @@ export default defineMessages({
   },
   sectionTechnicalHelper: {
     id: 'plugin.edit.section.technic.button.helper',
-    defaultMessage: 'Give your Email Template a technical name to leverage integrations such as external click tracking.',
+    defaultMessage:
+      'Give your Email Template a technical name to leverage integrations such as external click tracking.',
   },
   advanced: {
     id: 'plugin.edit.advanced.button',
@@ -63,11 +65,13 @@ export default defineMessages({
   },
   feedModalNameFieldTitleWarning: {
     id: 'audience.segment.feed.create.nameField.title.warning',
-    defaultMessage: "Warning: This name is only used in the platform, it won't be visible on the external system.",
+    defaultMessage:
+      "Warning: This name is only used in the platform, it won't be visible on the external system.",
   },
   feedPresetModalNameFieldTitle: {
     id: 'audience.segment.feed.preset.create.nameField.title',
-    defaultMessage: 'The name that will be used to identify this feed preset and the feeds created with it.',
+    defaultMessage:
+      'The name that will be used to identify this feed preset and the feeds created with it.',
   },
 
   feedModalNameFieldPlaceholder: {
@@ -80,7 +84,8 @@ export default defineMessages({
   },
   feedModalDescriptionFieldTitle: {
     id: 'audience.segment.feed.create.descriptionField.title',
-    defaultMessage: 'A description of the feed preset to help understand what this preset is about.',
+    defaultMessage:
+      'A description of the feed preset to help understand what this preset is about.',
   },
   feedModalDescriptionFieldPlaceholder: {
     id: 'audience.segment.feed.create.descriptionField.placeholder',

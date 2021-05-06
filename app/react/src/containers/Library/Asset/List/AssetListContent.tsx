@@ -18,7 +18,10 @@ import { TYPES } from '../../../../constants/types';
 import { IAssetFileService } from '../../../../services/Library/AssetFileService';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { ActionsColumnDefinition, DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import {
+  ActionsColumnDefinition,
+  DataColumnDefinition,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 const { Content } = Layout;
 
@@ -56,15 +59,13 @@ class AssetListContent extends React.Component<
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      this._assetFileService
-        .getAssetsFiles(organisationId, options)
-        .then((results) => {
-          this.setState({
-            loading: false,
-            data: results.data,
-            total: results.total || results.count,
-          });
+      this._assetFileService.getAssetsFiles(organisationId, options).then(results => {
+        this.setState({
+          loading: false,
+          data: results.data,
+          total: results.total || results.count,
         });
+      });
     });
   };
 
@@ -116,9 +117,7 @@ class AssetListContent extends React.Component<
       intl: { formatMessage },
     } = this.props;
 
-    const actionsColumnsDefinition: Array<
-      ActionsColumnDefinition<AssetFileResource>
-    > = [
+    const actionsColumnsDefinition: Array<ActionsColumnDefinition<AssetFileResource>> = [
       {
         key: 'action',
         actions: () => [
@@ -137,17 +136,15 @@ class AssetListContent extends React.Component<
         isHideable: false,
         className: 'mcs-table-image-col',
         render: (text: string, record: AssetFileResource) => (
-          <div className="mcs-table-cell-thumbnail">
+          <div className='mcs-table-cell-thumbnail'>
             <a
-              target="_blank"
-              rel="noreferrer noopener"
+              target='_blank'
+              rel='noreferrer noopener'
               href={`${(global as any).window.MCS_CONSTANTS.ASSETS_URL}${text}`}
             >
-              <span className="thumbnail-helper" />
+              <span className='thumbnail-helper' />
               <img
-                src={`${
-                  (global as any).window.MCS_CONSTANTS.ASSETS_URL
-                }${text}`}
+                src={`${(global as any).window.MCS_CONSTANTS.ASSETS_URL}${text}`}
                 alt={record.original_name}
               />
             </a>
@@ -160,11 +157,9 @@ class AssetListContent extends React.Component<
         isHideable: false,
         render: (text: string, record: AssetFileResource) => (
           <a
-            href={`${(global as any).window.MCS_CONSTANTS.ASSETS_URL}${
-              record.path
-            }`}
-            rel="noreferrer noopener"
-            target="_blank"
+            href={`${(global as any).window.MCS_CONSTANTS.ASSETS_URL}${record.path}`}
+            rel='noreferrer noopener'
+            target='_blank'
           >
             {text}
           </a>
@@ -197,10 +192,10 @@ class AssetListContent extends React.Component<
     };
 
     return (
-      <div className="ant-layout">
+      <div className='ant-layout'>
         <AssetListActionBar onUploadDone={this.fetchAssetList} />
-        <div className="ant-layout">
-          <Content className="mcs-content-container">
+        <div className='ant-layout'>
+          <Content className='mcs-content-container'>
             <ItemList
               fetchList={this.fetchAssetList}
               dataSource={this.state.data}

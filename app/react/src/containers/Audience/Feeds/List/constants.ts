@@ -7,10 +7,10 @@ const feedTypeSearchSetting = {
   paramName: 'feedType',
   defaultValue: ['EXTERNAL_FEED'],
   deserialize: (query: Index<string>) => {
-      if (query.feedType) {
-          return query.feedType.split(',');
-      }
-      return [];
+    if (query.feedType) {
+      return query.feedType.split(',');
+    }
+    return [];
   },
   serialize: (value: AudienceFeedType[]) => value.join(','),
   isValid: (query: Index<string>) => !query.feedType || query.feedType.split(',').length > 0,
@@ -26,21 +26,25 @@ const artifactIdSearchSetting = {
     return [];
   },
   serialize: (value: string[]) => value.join(','),
-  isValid: (query: Index<string>) =>
-    !query.artifactId || query.artifactId.split(',').length > 0,
+  isValid: (query: Index<string>) => !query.artifactId || query.artifactId.split(',').length > 0,
 };
 
 const statusSearchSetting = {
-    paramName: 'status',
-    defaultValue: [],
-    deserialize: (query: Index<string>) => {
-        if (query.status) {
-            return query.status.split(',');
-        }
-        return [];
-    },
-    serialize: (value: Status[]) => value.join(','),
-    isValid: (query: Index<string>) => !query.status || query.status.split(',').length > 0,
+  paramName: 'status',
+  defaultValue: [],
+  deserialize: (query: Index<string>) => {
+    if (query.status) {
+      return query.status.split(',');
+    }
+    return [];
+  },
+  serialize: (value: Status[]) => value.join(','),
+  isValid: (query: Index<string>) => !query.status || query.status.split(',').length > 0,
 };
 
-export const FEEDS_SEARCH_SETTINGS: SearchSetting[] = [...PAGINATION_SEARCH_SETTINGS, feedTypeSearchSetting, artifactIdSearchSetting, statusSearchSetting];
+export const FEEDS_SEARCH_SETTINGS: SearchSetting[] = [
+  ...PAGINATION_SEARCH_SETTINGS,
+  feedTypeSearchSetting,
+  artifactIdSearchSetting,
+  statusSearchSetting,
+];

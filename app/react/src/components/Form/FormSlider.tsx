@@ -16,9 +16,7 @@ export interface FormSliderProps {
   small?: boolean;
 }
 
-class FormSlider extends React.Component<
-  FormSliderProps & WrappedFieldProps
-> {
+class FormSlider extends React.Component<FormSliderProps & WrappedFieldProps> {
   static defaultprops = {
     formItemProps: {},
     inputProps: {},
@@ -34,20 +32,9 @@ class FormSlider extends React.Component<
   };
 
   render() {
-    const {
-      meta,
-      formItemProps,
-      inputProps,
-      helpToolTipProps,
-      input,
-      small
-    } = this.props;
+    const { meta, formItemProps, inputProps, helpToolTipProps, input, small } = this.props;
 
-    let validateStatus = 'success' as
-      | 'success'
-      | 'warning'
-      | 'error'
-      | 'validating';
+    let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
     if (meta.touched && meta.invalid) validateStatus = 'error';
     if (meta.touched && meta.warning) validateStatus = 'warning';
 
@@ -59,10 +46,7 @@ class FormSlider extends React.Component<
         small={small}
         {...formItemProps}
       >
-        <Slider
-          {...input}
-          {...inputProps}
-        />
+        <Slider {...input} {...inputProps} />
       </FormFieldWrapper>
     );
   }

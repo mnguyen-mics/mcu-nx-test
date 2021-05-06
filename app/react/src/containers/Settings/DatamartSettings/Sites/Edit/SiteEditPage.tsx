@@ -6,11 +6,7 @@ import { message, Modal } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 
 import * as FeatureSelectors from '../../../../../redux/Features/selectors';
-import {
-  EditSiteRouteMatchParam,
-  INITIAL_SITE_FORM_DATA,
-  SiteFormData,
-} from './domain';
+import { EditSiteRouteMatchParam, INITIAL_SITE_FORM_DATA, SiteFormData } from './domain';
 import messages from './messages';
 import SiteEditForm, { FORM_ID } from './SiteEditForm';
 import injectNotifications, {
@@ -18,10 +14,7 @@ import injectNotifications, {
 } from '../../../../Notifications/injectNotifications';
 import { injectDatamart, InjectedDatamartProps } from '../../../../Datamart';
 import { createFieldArrayModel } from '../../../../../utils/FormHelper';
-import {
-  ChannelResource,
-  EventRules,
-} from '../../../../../models/settings/settings';
+import { ChannelResource, EventRules } from '../../../../../models/settings/settings';
 import { VisitAnalyzerFieldModel } from '../../Common/domain';
 import DatamartSelector from '../../../../../containers/Datamart/DatamartSelector';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
@@ -50,7 +43,7 @@ interface MapStateToProps {
 
 type Props = InjectedIntlProps &
   InjectedNotificationProps &
-  RouteComponentProps<EditSiteRouteMatchParam, StaticContext, { from?: string, siteId: string }> &
+  RouteComponentProps<EditSiteRouteMatchParam, StaticContext, { from?: string; siteId: string }> &
   MapStateToProps &
   InjectedDatamartProps;
 
@@ -88,10 +81,7 @@ class SiteEditPage extends React.Component<Props, State> {
     const siteId = siteIdFromURLParam || siteIdFromLocState;
 
     if (siteId) {
-      const getSites = this._channelService.getChannel(
-        this.state.selectedDatamartId,
-        siteId,
-      );
+      const getSites = this._channelService.getChannel(this.state.selectedDatamartId, siteId);
       const getEventRules = this._channelService.getEventRules(
         this.state.selectedDatamartId,
         siteId,
@@ -122,33 +112,24 @@ class SiteEditPage extends React.Component<Props, State> {
           );
         });
 
-      Promise.all([
-        getSites,
-        getEventRules,
-        getAliases,
-        getProcessingSelections,
-      ])
+      Promise.all([getSites, getEventRules, getAliases, getProcessingSelections])
         .then(res => {
           const formData = {
             site: res[0].data,
             initialProcessingSelectionResources: res[3].map(
-              processingAndSelection =>
-                processingAndSelection.processingSelectionResource,
+              processingAndSelection => processingAndSelection.processingSelectionResource,
             ),
             processingActivities: res[3].map(processingAndSelection =>
               createFieldArrayModel(processingAndSelection.processingResource),
             ),
             visitAnalyzerFields: res[0].data.visit_analyzer_model_id
               ? [
-                createFieldArrayModel({
-                  visit_analyzer_model_id:
-                    res[0].data.visit_analyzer_model_id,
-                }),
-              ]
+                  createFieldArrayModel({
+                    visit_analyzer_model_id: res[0].data.visit_analyzer_model_id,
+                  }),
+                ]
               : [],
-            eventRulesFields: res[1].data.map((er: EventRules) =>
-              createFieldArrayModel(er),
-            ),
+            eventRulesFields: res[1].data.map((er: EventRules) => createFieldArrayModel(er)),
             aliases: res[2].data.map(al => createFieldArrayModel(al)),
           };
           return formData;
@@ -157,9 +138,7 @@ class SiteEditPage extends React.Component<Props, State> {
           this.setState({
             loading: false,
             siteData: formData,
-            selectedDatamartId: formData.site.datamart_id
-              ? formData.site.datamart_id
-              : datamart.id,
+            selectedDatamartId: formData.site.datamart_id ? formData.site.datamart_id : datamart.id,
           }),
         )
         .catch(err => {
@@ -187,9 +166,7 @@ class SiteEditPage extends React.Component<Props, State> {
 
     let datamartId: string;
     if (siteId) {
-      datamartId = siteData.site.datamart_id
-        ? siteData.site.datamart_id
-        : datamart.id;
+      datamartId = siteData.site.datamart_id ? siteData.site.datamart_id : datamart.id;
     } else {
       datamartId = selectedDatamartId;
     }
@@ -197,8 +174,7 @@ class SiteEditPage extends React.Component<Props, State> {
   };
 
   shouldWarnProcessings = (siteFormData: SiteFormData): boolean => {
-    const initialProcessingSelectionResources =
-      siteFormData.initialProcessingSelectionResources;
+    const initialProcessingSelectionResources = siteFormData.initialProcessingSelectionResources;
     const processingActivities = siteFormData.processingActivities;
 
     const initialProcessingIds = initialProcessingSelectionResources.map(
@@ -257,18 +233,13 @@ class SiteEditPage extends React.Component<Props, State> {
 
     const datamartId = this.getDatamartId();
 
-    const hideSaveInProgress = message.loading(
-      intl.formatMessage(messages.savingInProgress),
-      0,
-    );
+    const hideSaveInProgress = message.loading(intl.formatMessage(messages.savingInProgress), 0);
 
     this.setState({
       loading: true,
     });
 
-    const getVisitAnalyzerId = (
-      visitAnalyzerFields: VisitAnalyzerFieldModel[],
-    ) => {
+    const getVisitAnalyzerId = (visitAnalyzerFields: VisitAnalyzerFieldModel[]) => {
       if (
         visitAnalyzerFields.length &&
         visitAnalyzerFields[0].model &&
@@ -279,12 +250,8 @@ class SiteEditPage extends React.Component<Props, State> {
       return null;
     };
 
-    const generateEventRulesTasks = (
-      site: ChannelResource,
-    ): Array<Promise<any>> => {
-      const startIds = this.state.siteData.eventRulesFields.map(
-        erf => erf.model.id,
-      );
+    const generateEventRulesTasks = (site: ChannelResource): Array<Promise<any>> => {
+      const startIds = this.state.siteData.eventRulesFields.map(erf => erf.model.id);
       const savedIds: string[] = [];
       const saveCreatePromises = siteFormData.eventRulesFields.map(erf => {
         if (!erf.model.id) {
@@ -319,20 +286,13 @@ class SiteEditPage extends React.Component<Props, State> {
       });
       const deletePromises = startIds.map(sid =>
         sid && !savedIds.includes(sid)
-          ? this._channelService.deleteEventRules(
-            datamartId,
-            site.id,
-            organisationId,
-            sid,
-          )
+          ? this._channelService.deleteEventRules(datamartId, site.id, organisationId, sid)
           : Promise.resolve(),
       );
       return [...saveCreatePromises, ...deletePromises];
     };
 
-    const generateAliasesTasks = (
-      site: ChannelResource,
-    ): Array<Promise<any>> => {
+    const generateAliasesTasks = (site: ChannelResource): Array<Promise<any>> => {
       const startId = this.state.siteData.aliases.map(alias => alias.model.id);
       const savedIds: string[] = [];
       const saveCreatePromises = siteFormData.aliases.map(alias => {
@@ -360,22 +320,14 @@ class SiteEditPage extends React.Component<Props, State> {
       });
       const deletePromises = startId.map(sid =>
         sid && !savedIds.includes(sid)
-          ? this._channelService.deleteAliases(
-            datamartId,
-            site.id,
-            organisationId,
-            sid,
-          )
+          ? this._channelService.deleteAliases(datamartId, site.id, organisationId, sid)
           : Promise.resolve(),
       );
       return [...saveCreatePromises, ...deletePromises];
     };
 
-    const generateProcessingSelectionsTasks = (
-      site: ChannelResource,
-    ): Array<Promise<any>> => {
-      const initialProcessingSelectionResources =
-        siteFormData.initialProcessingSelectionResources;
+    const generateProcessingSelectionsTasks = (site: ChannelResource): Array<Promise<any>> => {
+      const initialProcessingSelectionResources = siteFormData.initialProcessingSelectionResources;
       const processingActivities = siteFormData.processingActivities;
 
       const initialProcessingIds = initialProcessingSelectionResources.map(
@@ -431,9 +383,7 @@ class SiteEditPage extends React.Component<Props, State> {
       return [...savePromises, ...deletePromises];
     };
 
-    const generateAllPromises = (
-      site: ChannelResource,
-    ): Array<Promise<any>> => {
+    const generateAllPromises = (site: ChannelResource): Array<Promise<any>> => {
       return [
         ...generateEventRulesTasks(site),
         ...generateAliasesTasks(site),
@@ -445,9 +395,7 @@ class SiteEditPage extends React.Component<Props, State> {
       if (siteFormData.site.id) {
         const mbApp = {
           ...siteFormData.site,
-          visit_analyzer_model_id: getVisitAnalyzerId(
-            siteFormData.visitAnalyzerFields,
-          ),
+          visit_analyzer_model_id: getVisitAnalyzerId(siteFormData.visitAnalyzerFields),
         };
 
         return this._channelService
@@ -458,9 +406,7 @@ class SiteEditPage extends React.Component<Props, State> {
       return this._channelService
         .createChannel(this.props.match.params.organisationId, datamartId, {
           ...siteFormData.site,
-          visit_analyzer_model_id: getVisitAnalyzerId(
-            siteFormData.visitAnalyzerFields,
-          ),
+          visit_analyzer_model_id: getVisitAnalyzerId(siteFormData.visitAnalyzerFields),
           type: 'SITE',
         })
         .then(site => Promise.all(generateAllPromises(site.data)));
@@ -520,12 +466,12 @@ class SiteEditPage extends React.Component<Props, State> {
     const siteName =
       siteData.site && siteData.site.name
         ? formatMessage(messages.editSiteTitle, {
-          name: siteData.site.name,
-        })
+            name: siteData.site.name,
+          })
         : formatMessage(messages.createSiteTitle);
 
     const breadcrumbPaths = [
-      <Link key="1" to={`/v2/o/${organisationId}/settings/datamart/channels`}>
+      <Link key='1' to={`/v2/o/${organisationId}/settings/datamart/channels`}>
         {formatMessage(messages.breadcrumbTitle1)}
       </Link>,
       siteName,
@@ -551,16 +497,11 @@ class SiteEditPage extends React.Component<Props, State> {
         breadCrumbPaths={breadcrumbPaths}
         onSubmitFail={this.onSubmitFail}
         datamartId={datamartId}
-        initialProcessingSelectionsForWarning={
-          initialProcessingSelectionsForWarning
-        }
+        initialProcessingSelectionsForWarning={initialProcessingSelectionsForWarning}
       />
     ) : (
-        <DatamartSelector
-          onSelect={this.onDatamartSelect}
-          actionbarProps={actionBarProps}
-        />
-      );
+      <DatamartSelector onSelect={this.onDatamartSelect} actionbarProps={actionBarProps} />
+    );
   }
 }
 

@@ -42,9 +42,7 @@ type InnerProps = InjectedIntlProps &
 class OrgSelector extends React.Component<InnerProps, OrgSelectorState> {
   @lazyInject(TYPES.IOrganisationService)
   private _organisationService: IOrganisationService;
-  private fetchLogosDebounced: (
-    orgLogoToFetch: UserWorkspaceResource[],
-  ) => void;
+  private fetchLogosDebounced: (orgLogoToFetch: UserWorkspaceResource[]) => void;
 
   constructor(props: InnerProps) {
     super(props);
@@ -61,15 +59,12 @@ class OrgSelector extends React.Component<InnerProps, OrgSelectorState> {
     }
   }
 
-  showOrgs = () =>
-    this.props.workspaces.length < 49 || this.state.search !== '';
+  showOrgs = () => this.props.workspaces.length < 49 || this.state.search !== '';
 
   getCachedOrgLogoMap = () => {
     return this.props.workspaces
       .filter(wp => {
-        const logoIsInCache = this._organisationService.getLogoCache(
-          wp.organisation_id,
-        );
+        const logoIsInCache = this._organisationService.getLogoCache(wp.organisation_id);
         return !!logoIsInCache;
       })
       .reduce(
@@ -87,9 +82,7 @@ class OrgSelector extends React.Component<InnerProps, OrgSelectorState> {
 
   fetchNotInCacheOrgLogoMap = () => {
     const notInCacheLogos = this.getFilteredWorkspaces().filter(wp => {
-      const logoIsInCache = this._organisationService.getLogoCache(
-        wp.organisation_id,
-      );
+      const logoIsInCache = this._organisationService.getLogoCache(wp.organisation_id);
       return !logoIsInCache;
     });
 
@@ -107,7 +100,7 @@ class OrgSelector extends React.Component<InnerProps, OrgSelectorState> {
         },
       }),
       () => {
-        this.fetchLogosDebounced(notInCacheLogos)
+        this.fetchLogosDebounced(notInCacheLogos);
       },
     );
   };
@@ -118,9 +111,7 @@ class OrgSelector extends React.Component<InnerProps, OrgSelectorState> {
       return workspaces;
     }
     return workspaces.filter(wp =>
-      wp.organisation_name
-        .toLocaleLowerCase()
-        .includes(this.state.search.toLowerCase()),
+      wp.organisation_name.toLocaleLowerCase().includes(this.state.search.toLowerCase()),
     );
   };
 
@@ -189,13 +180,13 @@ class OrgSelector extends React.Component<InnerProps, OrgSelectorState> {
     }
 
     return (
-      <div className="mcs-org-selector">
+      <div className='mcs-org-selector'>
         <Row gutter={20} style={{ marginRight: 20, marginLeft: 20 }}>
           <Col span={24}>
             <Search
-              placeholder="Search Organisation"
+              placeholder='Search Organisation'
               onSearch={this.onSearch}
-              className="search-input"
+              className='search-input'
               onChange={this.onChange}
               autoFocus={true}
             />
@@ -212,47 +203,39 @@ class OrgSelector extends React.Component<InnerProps, OrgSelectorState> {
                   >
                     <Card
                       hoverable={true}
-                      className="mcs-org-card"
+                      className='mcs-org-card'
                       cover={
                         <OrgLogo
                           organisationId={item.organisation_id}
                           isLoading={
                             this.state.orgLogoMap[item.organisation_id]
-                              ? this.state.orgLogoMap[item.organisation_id]
-                                  .isLoading
+                              ? this.state.orgLogoMap[item.organisation_id].isLoading
                               : false
                           }
                           logoUrl={
                             this.state.orgLogoMap[item.organisation_id]
-                              ? this.state.orgLogoMap[item.organisation_id]
-                                  .logoUrl
+                              ? this.state.orgLogoMap[item.organisation_id].logoUrl
                               : null
                           }
                         />
                       }
                       style={{ height: '100%' }}
                     >
-                      <Meta
-                        className="mcs-card-body"
-                        description={item.organisation_name}
-                      />
+                      <Meta className='mcs-card-body' description={item.organisation_name} />
                     </Card>
                   </Button>
                 </Col>
               ))
             ) : (
-              <div className="mcs-no-results">
-                <FormattedMessage
-                  id="orgSelector.noResult"
-                  defaultMessage="No Results"
-                />
+              <div className='mcs-no-results'>
+                <FormattedMessage id='orgSelector.noResult' defaultMessage='No Results' />
               </div>
             )
           ) : (
             <Col span={24}>
               <FormattedMessage
-                id="orgSelector.tooManyOrgs"
-                defaultMessage="You have access to too many organisations, please use the search to narrow your selection down"
+                id='orgSelector.tooManyOrgs'
+                defaultMessage='You have access to too many organisations, please use the search to narrow your selection down'
               />
             </Col>
           )}

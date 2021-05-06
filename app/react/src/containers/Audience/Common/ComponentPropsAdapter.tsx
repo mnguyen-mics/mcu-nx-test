@@ -1,12 +1,15 @@
-import * as React from 'react'
+import * as React from 'react';
 
-function ComponentPropsAdapter<T, S>(Display: React.ComponentType<S>, adapter: (t: T) => S): React.ComponentClass<T> {
+function ComponentPropsAdapter<T, S>(
+  Display: React.ComponentType<S>,
+  adapter: (t: T) => S,
+): React.ComponentClass<T> {
   return class extends React.Component<T> {
     render() {
       const props = this.props;
-      const adapted = adapter(props)
-      return <Display {...props} {...adapted}/>
+      const adapted = adapter(props);
+      return <Display {...props} {...adapted} />;
     }
-  }
+  };
 }
-export default ComponentPropsAdapter
+export default ComponentPropsAdapter;

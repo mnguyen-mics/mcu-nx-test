@@ -4,8 +4,7 @@ import { QueryBuilderNode } from '../../domain';
 import { FieldNode } from '../../../../../models/datamart/graphdb/QueryDocument';
 import { ObjectLikeTypeInfoResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
 
-export default class FieldNodeModel extends NodeModel
-  implements QueryBuilderNode {
+export default class FieldNodeModel extends NodeModel implements QueryBuilderNode {
   collapsed = false;
   negation = false;
   edition = false;
@@ -39,7 +38,7 @@ export default class FieldNodeModel extends NodeModel
 
   getColor = () => {
     if (this.extras.edition) {
-      return '#00a1df'
+      return '#00a1df';
     }
     if (this.extras.negation) {
       return '#ff5959';

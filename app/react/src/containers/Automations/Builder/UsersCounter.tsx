@@ -15,10 +15,7 @@ class UsersCounter extends React.Component<Props> {
     const { style, iconName, numberOfUsers } = this.props;
 
     return (
-      <div
-        className={'node-users-counter mcs-automation-userCounter'}
-        style={style}
-      >
+      <div className={'node-users-counter mcs-automation-userCounter'} style={style}>
         {numberOfUsers ? numberOfUsers.toLocaleString() : '0'}
         <McsIcon type={iconName} className={'node-users-counter-icon'} />
       </div>

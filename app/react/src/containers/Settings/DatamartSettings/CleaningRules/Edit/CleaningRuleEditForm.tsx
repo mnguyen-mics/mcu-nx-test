@@ -24,12 +24,9 @@ import { DefaultOptionProps } from '../../../../../components/Form/FormSelect/De
 
 export const FORM_ID = 'cleaningRuleForm';
 
-const Content = Layout.Content as unknown as React.ComponentClass<
-  BasicProps & { id: string }
->;
+const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
 
-export interface CleaningRuleEditFormProps
-  extends Omit<ConfigProps<CleaningRuleFormData>, 'form'> {
+export interface CleaningRuleEditFormProps extends Omit<ConfigProps<CleaningRuleFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: React.ReactNode[];
   goToDatamartSelector: () => void;
@@ -38,10 +35,7 @@ export interface CleaningRuleEditFormProps
   cleaningRuleType: CleaningRuleType;
 }
 
-type Props = InjectedFormProps<
-  CleaningRuleFormData,
-  CleaningRuleEditFormProps
-> &
+type Props = InjectedFormProps<CleaningRuleFormData, CleaningRuleEditFormProps> &
   CleaningRuleEditFormProps &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }>;
@@ -55,7 +49,7 @@ class CleaningRuleEditForm extends React.Component<Props> {
       goToDatamartSelector,
       options,
       cleaningRuleType,
-      change
+      change,
     } = this.props;
 
     const actionBarProps: FormLayoutActionbarProps = {
@@ -117,20 +111,14 @@ class CleaningRuleEditForm extends React.Component<Props> {
     });
 
     return (
-      <Layout className="edit-layout">
+      <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
-        <Layout className="ant-layout-has-sider">
+        <Layout className='ant-layout-has-sider'>
           <ScrollspySider {...sideBarProps} />
-          <Form
-            className="edit-layout ant-layout"
-            onSubmit={handleSubmit}
-          >
+          <Form className='edit-layout ant-layout' onSubmit={handleSubmit}>
             {/* This button enables submit on enter */}
-            <button type="submit" style={{ display: 'none' }} />
-            <Content
-              id={FORM_ID}
-              className="mcs-content-container mcs-form-container"
-            >
+            <button type='submit' style={{ display: 'none' }} />
+            <Content id={FORM_ID} className='mcs-content-container mcs-form-container'>
               {renderedSections}
             </Content>
           </Form>

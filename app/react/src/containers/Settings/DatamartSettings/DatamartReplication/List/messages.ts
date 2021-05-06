@@ -43,8 +43,7 @@ export const messages = defineMessages({
   },
   deleteDatamartReplicationModalTitle: {
     id: 'settings.datamart.datamartReplication.list.deleteModalTitle',
-    defaultMessage:
-      'Are you sure you want to delete this Replication ?',
+    defaultMessage: 'Are you sure you want to delete this Replication ?',
   },
   deleteDatamartReplicationModalContent: {
     id: 'settings.datamart.datamartReplication.list.deleteModalContent',
@@ -67,8 +66,7 @@ export const messages = defineMessages({
   },
   emptyJobExecution: {
     id: 'settings.datamart.datamartReplicationJob.emptyList',
-    defaultMessage:
-      "There are no Replication Jobs. Click on 'New Execution' to run one.",
+    defaultMessage: "There are no Replication Jobs. Click on 'New Execution' to run one.",
   },
   sectionGeneralSubTitle: {
     id: 'settings.datamart.datamartReplication.edit.generalSection.subTitle',
@@ -80,8 +78,7 @@ export const messages = defineMessages({
   },
   sectionActivationSubTitle: {
     id: 'settings.datamart.datamartReplication.edit.activationSection.subTitle',
-    defaultMessage:
-      'Choose to activate your Replication after creation',
+    defaultMessage: 'Choose to activate your Replication after creation',
   },
   sectionActivationTitle: {
     id: 'settings.datamart.datamartReplication.edit.activationSection.title',
@@ -156,7 +153,7 @@ export const messages = defineMessages({
     id: 'settings.datamart.datamartReplication.pubsub.edit.topic.label',
     defaultMessage: 'Topic ID',
   },
-   // --------- MICROSOFT AZURE EVENT HUBS ---------
+  // --------- MICROSOFT AZURE EVENT HUBS ---------
   // Connection String (put in credentials_uri)
   datamartReplicationEventHubsConnectionStringUriPlaceHolder: {
     id: 'settings.datamart.datamartReplication.eventHubs.edit.connectionStringUri.placeholder',
@@ -210,13 +207,11 @@ export const messages = defineMessages({
   },
   archiveReplicationModalTitle: {
     id: 'settings.datamart.datamartReplication.dashboard.archiveModalTitle',
-    defaultMessage:
-      'Are you sure you want to delete this Replication ?',
+    defaultMessage: 'Are you sure you want to delete this Replication ?',
   },
   archiveReplicationModalContent: {
     id: 'settings.datamart.datamartReplication.dashboard.archiveModalContent',
-    defaultMessage:
-      "By deleting this Replication you won't be able to retrieve it. Are you sure ?",
+    defaultMessage: "By deleting this Replication you won't be able to retrieve it. Are you sure ?",
   },
   archiveReplicationModalOk: {
     id: 'settings.datamart.datamartReplication.dashboard.archiveModalOk',
@@ -275,14 +270,11 @@ export const messages = defineMessages({
     defaultMessage: 'Not ended',
   },
   noExecutionModalTitle: {
-    id:
-      'settings.datamart.datamartReplication.dashboard.executionModal.title.no',
-    defaultMessage:
-      "You don't have any ACTIVE Replication (Replication with status 'ACTIVE')",
+    id: 'settings.datamart.datamartReplication.dashboard.executionModal.title.no',
+    defaultMessage: "You don't have any ACTIVE Replication (Replication with status 'ACTIVE')",
   },
   noExecutionModalContent: {
-    id:
-      'settings.datamart.datamartReplication.dashboard.executionModal.content.no',
+    id: 'settings.datamart.datamartReplication.dashboard.executionModal.content.no',
     defaultMessage: "You can't execute an Initial Synchronization.",
   },
   executionModalTitle: {
@@ -291,15 +283,13 @@ export const messages = defineMessages({
       'You are about to execute an Initial Synchronization. This operation will replicate every current data from your datamart to your external solution for the following Replication(s):',
   },
   executionModalContent: {
-    id:
-      'settings.datamart.datamartReplication.dashboard.executionModal.content',
+    id: 'settings.datamart.datamartReplication.dashboard.executionModal.content',
     defaultMessage:
       'When Initial Synchronization is running, you can’t change status of any of your replications until synchronization is completed. You can execute an Initial Synchronization once a week. Would you like to execute an Initial Synchronization now ?',
   },
   noExecutionPossible: {
     id: 'settings.datamart.datamartReplication.dashboard.noExecutionPossible',
-    defaultMessage:
-      "You can't execute Initial Synchronization more than once a week.",
+    defaultMessage: "You can't execute Initial Synchronization more than once a week.",
   },
 });
 

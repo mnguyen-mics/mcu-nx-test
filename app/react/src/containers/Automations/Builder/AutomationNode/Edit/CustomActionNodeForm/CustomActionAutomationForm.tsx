@@ -3,13 +3,7 @@ import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { connect, DispatchProp } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
-import {
-  ConfigProps,
-  getFormValues,
-  InjectedFormProps,
-  reduxForm,
-  change,
-} from 'redux-form';
+import { ConfigProps, getFormValues, InjectedFormProps, reduxForm, change } from 'redux-form';
 import { FormSection } from '../../../../../../components/Form';
 import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
 import { FORM_ID, CustomActionAutomationFormData } from '../domain';
@@ -56,10 +50,7 @@ interface MapStateToProps {
   formValues: CustomActionAutomationFormData;
 }
 
-type Props = InjectedFormProps<
-  CustomActionAutomationFormData,
-  CustomActionAutomationFormProps
-> &
+type Props = InjectedFormProps<CustomActionAutomationFormData, CustomActionAutomationFormProps> &
   DispatchProp<any> &
   CustomActionAutomationFormProps &
   InjectedIntlProps &
@@ -103,8 +94,7 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
         );
       } else {
         this.setState({
-          extendedCustomActionsInformation:
-            initialValues.extendedCustomActionsInformation,
+          extendedCustomActionsInformation: initialValues.extendedCustomActionsInformation,
           isFetchingCustomActions: false,
           isFetchingCustomActionProperties: false,
         });
@@ -134,26 +124,20 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
     customActionId: string,
     extendedCustomActionsInformation?: ExtendedCustomActionInformation[],
   ) => {
-    const {
-      extendedCustomActionsInformation: customActionsFromState,
-    } = this.state;
+    const { extendedCustomActionsInformation: customActionsFromState } = this.state;
     const customActionsInfo = extendedCustomActionsInformation
       ? extendedCustomActionsInformation
       : customActionsFromState;
 
     const foundCustomActionInfo = customActionsInfo.find(
-      (customActionInfo) => customActionInfo.customAction.id === customActionId,
+      customActionInfo => customActionInfo.customAction.id === customActionId,
     );
 
     if (foundCustomActionInfo) {
       if (foundCustomActionInfo.layoutInformation) {
-        this.dispatchProperties(
-          foundCustomActionInfo.layoutInformation.customActionProperties,
-        );
+        this.dispatchProperties(foundCustomActionInfo.layoutInformation.customActionProperties);
       } else {
-        this.fetchCustomActionLayoutInformation(
-          foundCustomActionInfo.customAction,
-        );
+        this.fetchCustomActionLayoutInformation(foundCustomActionInfo.customAction);
       }
     }
     if (extendedCustomActionsInformation) {
@@ -165,13 +149,11 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
     }
   };
 
-  dispatchProperties = (
-    customActionProperties: PropertyResourceShape[] | undefined,
-  ) => {
+  dispatchProperties = (customActionProperties: PropertyResourceShape[] | undefined) => {
     const { dispatch } = this.props;
     if (customActionProperties) {
       const modifiedProps: { [index: string]: any } = {};
-      customActionProperties.forEach((prop) => {
+      customActionProperties.forEach(prop => {
         modifiedProps[prop.technical_name] = prop;
       });
       if (dispatch) dispatch(change(FORM_ID, 'properties', modifiedProps));
@@ -184,17 +166,11 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
     const { dispatch } = this.props;
     if (dispatch)
       dispatch(
-        change(
-          FORM_ID,
-          'extendedCustomActionsInformation',
-          extendedCustomActionsInformation,
-        ),
+        change(FORM_ID, 'extendedCustomActionsInformation', extendedCustomActionsInformation),
       );
   };
 
-  fetchCustomActionLayoutInformation = (
-    customActionResource: CustomActionResource,
-  ) => {
+  fetchCustomActionLayoutInformation = (customActionResource: CustomActionResource) => {
     const { notifyError } = this.props;
     const { extendedCustomActionsInformation } = this.state;
 
@@ -204,29 +180,25 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
       );
       const propertiesP = this._customActionService
         .getInstanceProperties(customActionResource.id)
-        .then((resProperties) => resProperties.data)
-        .catch((err) => {
+        .then(resProperties => resProperties.data)
+        .catch(err => {
           notifyError(err);
           return [];
         });
 
       Promise.all([pluginLayoutP, propertiesP])
-        .then((resPromises) => {
+        .then(resPromises => {
           const customActionInformation: ExtendedCustomActionInformation = {
             customAction: customActionResource,
             layoutInformation: {
-              pluginLayout:
-                resPromises[0] !== null ? resPromises[0] : undefined,
+              pluginLayout: resPromises[0] !== null ? resPromises[0] : undefined,
               customActionProperties: resPromises[1],
             },
           };
 
           const returnedExtendedCustomActionsInformation: ExtendedCustomActionInformation[] = extendedCustomActionsInformation.map(
-            (extendedCustomActionInformation) => {
-              if (
-                extendedCustomActionInformation.customAction.id !==
-                customActionResource.id
-              ) {
+            extendedCustomActionInformation => {
+              if (extendedCustomActionInformation.customAction.id !== customActionResource.id) {
                 return extendedCustomActionInformation;
               } else return customActionInformation;
             },
@@ -234,16 +206,14 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
           this.dispatchProperties(
             customActionInformation.layoutInformation?.customActionProperties,
           );
-          this.dispatchExtendedCustomActionsInformation(
-            returnedExtendedCustomActionsInformation,
-          );
+          this.dispatchExtendedCustomActionsInformation(returnedExtendedCustomActionsInformation);
 
           this.setState({
             isFetchingCustomActionProperties: false,
             extendedCustomActionsInformation: returnedExtendedCustomActionsInformation,
           });
         })
-        .catch((err) => {
+        .catch(err => {
           notifyError(err);
           this.setState({ isFetchingCustomActionProperties: false });
         });
@@ -261,13 +231,13 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
       const customActionsP: Promise<CustomActionResource[]> = customActionId
         ? this._customActionService
             .getInstanceById(customActionId)
-            .then((resCustomAction) => [resCustomAction.data])
+            .then(resCustomAction => [resCustomAction.data])
         : this._customActionService
             .getInstances({ organisation_id: +organisationId })
-            .then((resCustomActions) => resCustomActions.data);
+            .then(resCustomActions => resCustomActions.data);
 
       customActionsP
-        .then((customActions) => {
+        .then(customActions => {
           const extendedCustomActionsInformation: ExtendedCustomActionInformation[] = customActions.map(
             (customActionResource: CustomActionResource) => {
               return {
@@ -275,9 +245,7 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
               };
             },
           );
-          this.dispatchExtendedCustomActionsInformation(
-            extendedCustomActionsInformation,
-          );
+          this.dispatchExtendedCustomActionsInformation(extendedCustomActionsInformation);
           this.setState(
             {
               isFetchingCustomActions: false,
@@ -286,17 +254,15 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
             () => {
               if (customActionId) {
                 const associatedCustomAction = customActions.find(
-                  (customAction) => customAction.id === customActionId,
+                  customAction => customAction.id === customActionId,
                 );
                 if (associatedCustomAction)
-                  this.fetchCustomActionLayoutInformation(
-                    associatedCustomAction,
-                  );
+                  this.fetchCustomActionLayoutInformation(associatedCustomAction);
               }
             },
           );
         })
-        .catch((err) => {
+        .catch(err => {
           notifyError(err);
           this.setState({
             isFetchingCustomActions: false,
@@ -313,10 +279,7 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
       },
     } = this.props;
 
-    const {
-      extendedCustomActionsInformation,
-      isFetchingCustomActionProperties,
-    } = this.state;
+    const { extendedCustomActionsInformation, isFetchingCustomActionProperties } = this.state;
 
     const sections: McsFormSection[] = [];
 
@@ -391,24 +354,16 @@ class CustomActionAutomationForm extends React.Component<Props, State> {
       );
     });
 
-    const sectionsOrSpin = isFetchingCustomActions ? (
-      <Spin />
-    ) : (
-      renderedSections
-    );
+    const sectionsOrSpin = isFetchingCustomActions ? <Spin /> : renderedSections;
 
     return (
-      <Layout className="edit-layout">
+      <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
-          <Form
-            className="edit-layout ant-layout"
-            onSubmit={handleSubmit}
-            layout="vertical"
-          >
+          <Form className='edit-layout ant-layout' onSubmit={handleSubmit} layout='vertical'>
             <Content
               id={FORM_ID}
-              className="mcs-content-container mcs-form-container automation-form"
+              className='mcs-content-container mcs-form-container automation-form'
             >
               <FormSection
                 title={messages.sectionGeneralTitle}

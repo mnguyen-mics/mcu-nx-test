@@ -63,13 +63,7 @@ export function buildScenarioAnalyticsRequestBody(
     .format()
     .replace('Z', '');
   const dimensionsList: ScenarioAnalyticsDimension[] = dimensions || [];
-  return buildReport(
-    startDate,
-    endDate,
-    dimensionsList,
-    metrics,
-    dimensionFilterClauses,
-  );
+  return buildReport(startDate, endDate, dimensionsList, metrics, dimensionFilterClauses);
 }
 
 function buildReport(
@@ -87,12 +81,12 @@ function buildReport(
   const dateRanges: DateRange[] = [dateRange];
 
   // DIMENSIONS
-  const dimensions: Dimension[] = dimensionsList.map((dimension) => {
+  const dimensions: Dimension[] = dimensionsList.map(dimension => {
     return { name: dimension };
   });
 
   // METRICS
-  const metrics: Metric[] = metricsList.map((metric) => {
+  const metrics: Metric[] = metricsList.map(metric => {
     return { expression: metric };
   });
 

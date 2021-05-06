@@ -19,9 +19,7 @@ function isProfileWithAccountId(
   return (profile as UserProfileWithAccountId).userAccountId !== undefined;
 }
 
-export default class SingleProfileInfo extends React.Component<
-  SingleProfileInfoProps
-> {
+export default class SingleProfileInfo extends React.Component<SingleProfileInfoProps> {
   static defaultProps = {
     profileWithAccountId: {},
   };
@@ -32,9 +30,7 @@ export default class SingleProfileInfo extends React.Component<
     const userAccountId = isProfileWithAccountId(profileGlobal)
       ? profileGlobal.userAccountId
       : undefined;
-    const profile = isProfileWithAccountId(profileGlobal)
-      ? profileGlobal.profile
-      : profileGlobal;
+    const profile = isProfileWithAccountId(profileGlobal) ? profileGlobal.profile : profileGlobal;
 
     const functionTimestamp = (timestampValue: number) =>
       moment(timestampValue).format('YYYY-MM-DD, hh:mm:ss');
@@ -50,12 +46,12 @@ export default class SingleProfileInfo extends React.Component<
     };
 
     return (
-      <div className="single-profile-info">
+      <div className='single-profile-info'>
         {userAccountId && (
-          <div className="sub-title">
+          <div className='sub-title'>
             User Account Id: <br />
             <Tooltip title={userAccountId}>
-              <Tag className="card-tag alone">{userAccountId}</Tag>
+              <Tag className='card-tag alone'>{userAccountId}</Tag>
             </Tooltip>
           </div>
         )}

@@ -9,15 +9,11 @@ export interface OrgLogoProps {
 
 const OrgLogo = ({ organisationId, logoUrl, isLoading }: OrgLogoProps) => {
   return (
-    <div className="mcs-card-cover">
+    <div className='mcs-card-cover'>
       {isLoading ? (
         <Spin />
       ) : (
-        <img
-          src={logoUrl || ''}
-          alt={organisationId}
-          className="mcs-cover-image"
-        />
+        <img src={logoUrl || ''} alt={organisationId} className='mcs-cover-image' />
       )}
     </div>
   );

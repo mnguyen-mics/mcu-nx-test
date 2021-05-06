@@ -2,18 +2,17 @@ import * as React from 'react';
 import { Spin, Tag } from 'antd';
 import { FormattedMessage } from 'react-intl';
 import { Card } from '@mediarithmics-private/mcs-components-library';
-import  injectThemeColors, { InjectedThemeColorsProps } from '../../Helpers/injectThemeColors';
+import injectThemeColors, { InjectedThemeColorsProps } from '../../Helpers/injectThemeColors';
 import { compose } from 'recompose';
 import { GraphQLResult } from '../../../models/datamart/graphdb/OTQLResult';
 
-
 export interface GraphQLResultRendererProps {
-  result: GraphQLResult | null;
+  result: GraphQLResult | null;
   loading?: boolean;
   aborted?: boolean;
 }
 
-type Props = GraphQLResultRendererProps & InjectedThemeColorsProps
+type Props = GraphQLResultRendererProps & InjectedThemeColorsProps;
 
 class GraphQLResultRenderer extends React.Component<Props> {
   render() {
@@ -22,20 +21,20 @@ class GraphQLResultRenderer extends React.Component<Props> {
     let content: React.ReactNode;
     if (loading) {
       content = (
-        <div className="text-center">
-          <Spin size="large" />
+        <div className='text-center'>
+          <Spin size='large' />
         </div>
       );
     } else if (aborted) {
       content = (
-        <div className="text-center">
+        <div className='text-center'>
           <FormattedMessage
-            id="queryTool.otql-result-renderer-aborted"
-            defaultMessage="Aborted..."
+            id='queryTool.otql-result-renderer-aborted'
+            defaultMessage='Aborted...'
           />
         </div>
       );
-    } else  if (result) {
+    } else if (result) {
       content = (
         <div>
           <pre>{JSON.stringify(result.data, null, 2)}</pre>
@@ -43,10 +42,10 @@ class GraphQLResultRenderer extends React.Component<Props> {
       );
     } else {
       content = (
-        <div className="text-center">
+        <div className='text-center'>
           <FormattedMessage
-            id="queryTool.otql-result-renderer-empty"
-            defaultMessage="Empty Result"
+            id='queryTool.otql-result-renderer-empty'
+            defaultMessage='Empty Result'
           />
         </div>
       );
@@ -56,26 +55,28 @@ class GraphQLResultRenderer extends React.Component<Props> {
       <Card
         title={
           <FormattedMessage
-            id="queryTool.otql-result-renderer-card-title"
-            defaultMessage="Result"
+            id='queryTool.otql-result-renderer-card-title'
+            defaultMessage='Result'
           />
         }
         buttons={
           result ? (
             <React.Fragment>
-              <Tag color={colors["mcs-info"]}>
+              <Tag color={colors['mcs-info']}>
                 <FormattedMessage
-                  id="otql-result-renderer-card-subtitle-duration"
-                  defaultMessage="Took {duration}ms"
+                  id='otql-result-renderer-card-subtitle-duration'
+                  defaultMessage='Took {duration}ms'
                   values={{ duration: result.took }}
                 />
               </Tag>
-              {result.cache_hit && <Tag color={colors["mcs-success"]}>
-                <FormattedMessage
-                  id="otql-result-renderer-card-subtitle-cache"
-                  defaultMessage="From Cache"
-                />
-              </Tag>}
+              {result.cache_hit && (
+                <Tag color={colors['mcs-success']}>
+                  <FormattedMessage
+                    id='otql-result-renderer-card-subtitle-cache'
+                    defaultMessage='From Cache'
+                  />
+                </Tag>
+              )}
             </React.Fragment>
           ) : undefined
         }
@@ -86,6 +87,4 @@ class GraphQLResultRenderer extends React.Component<Props> {
   }
 }
 
-export default compose<Props, GraphQLResultRendererProps>(
-  injectThemeColors
-)(GraphQLResultRenderer);
+export default compose<Props, GraphQLResultRendererProps>(injectThemeColors)(GraphQLResultRenderer);

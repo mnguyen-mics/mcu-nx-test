@@ -33,14 +33,12 @@ class AudienceFeaturePreview extends React.Component<Props> {
       formValues,
     } = this.props;
 
-    const audienceFeature = formValues && [
-      formValues as AudienceFeatureResource,
-    ];
+    const audienceFeature = formValues && [formValues as AudienceFeatureResource];
 
     return (
-      <div className="mcs-audienceFeature-preview">
+      <div className='mcs-audienceFeature-preview'>
         <FormSection title={messages.audienceFeaturePreview} />
-        <Card className="mcs-audienceFeature_card">
+        <Card className='mcs-audienceFeature_card'>
           <NewAudienceFeatureLayout
             formPath={''}
             datamartId={datamartId}

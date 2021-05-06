@@ -1,11 +1,7 @@
 import { ICreativeService } from './../../../../services/CreativeService';
 import { IPluginService } from './../../../../services/PluginService';
 import { CreativeSubtype } from './../../../../models/creative/CreativeResource';
-import {
-  DisplayCreativeFormData,
-  isDisplayAdResource,
-  DisplayAdShape,
-} from './domain';
+import { DisplayCreativeFormData, isDisplayAdResource, DisplayAdShape } from './domain';
 import { extractData, extractDataList } from '../../../../services/ApiService';
 import { DisplayAdCreateRequest } from '../../../../models/creative/CreativeResource';
 import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
@@ -65,14 +61,8 @@ export class DisplayCreativeFormService implements IDisplayCreativeFormService {
           const lastVersion = resp.data;
 
           return Promise.all([
-            this._pluginService.getPluginVersionProperties(
-              adRendererId,
-              lastVersion.id,
-            ),
-            this._pluginService.getLocalizedPluginLayout(
-              adRendererId,
-              lastVersion.id,
-            ),
+            this._pluginService.getPluginVersionProperties(adRendererId, lastVersion.id),
+            this._pluginService.getLocalizedPluginLayout(adRendererId, lastVersion.id),
           ]).then(res => {
             const properties = res[0].data;
             const pLayoutRes = res[1];
@@ -99,16 +89,11 @@ export class DisplayCreativeFormService implements IDisplayCreativeFormService {
   loadFormData(creativeId: string): Promise<DisplayCreativeFormData> {
     return Promise.all([
       this._creativeService.getDisplayAd(creativeId).then(extractData),
-      this._creativeService
-        .getCreativeRendererProperties(creativeId)
-        .then(extractDataList),
+      this._creativeService.getCreativeRendererProperties(creativeId).then(extractDataList),
     ]).then(([creative, rendererProperties]) => {
       return Promise.all([
         this._pluginService
-          .getPluginVersion(
-            creative.renderer_plugin_id,
-            creative.renderer_version_id,
-          )
+          .getPluginVersion(creative.renderer_plugin_id, creative.renderer_version_id)
           .then(extractData),
         this._pluginService.getLocalizedPluginLayout(
           creative.renderer_plugin_id,
@@ -138,10 +123,7 @@ export class DisplayCreativeFormService implements IDisplayCreativeFormService {
 
     let createOrUpdatePromise;
     if (isDisplayAdResource(creative)) {
-      createOrUpdatePromise = this._creativeService.updateDisplayCreative(
-        creative.id,
-        creative,
-      );
+      createOrUpdatePromise = this._creativeService.updateDisplayCreative(creative.id, creative);
     } else {
       const resource: Partial<DisplayAdCreateRequest> = {
         renderer_artifact_id: rendererPlugin.artifact_id,
@@ -151,10 +133,7 @@ export class DisplayCreativeFormService implements IDisplayCreativeFormService {
         subtype: formData.creative.subtype,
         ...creative,
       };
-      createOrUpdatePromise = this._creativeService.createDisplayCreative(
-        organisationId,
-        resource,
-      );
+      createOrUpdatePromise = this._creativeService.createDisplayCreative(organisationId, resource);
     }
 
     return createOrUpdatePromise.then(resp => {

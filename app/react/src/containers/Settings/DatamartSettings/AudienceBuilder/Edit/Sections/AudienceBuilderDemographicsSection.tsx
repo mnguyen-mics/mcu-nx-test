@@ -4,34 +4,31 @@ import { messages } from '../../messages';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import cuid from 'cuid';
-import {
-  FormSection,
-} from '../../../../../../components/Form';
+import { FormSection } from '../../../../../../components/Form';
 import { AudienceFeatureResource } from '../../../../../../models/audienceFeature';
-import injectDrawer, { InjectedDrawerProps } from "../../../../../../components/Drawer/injectDrawer";
-import {
-  RelatedRecords,
-  RecordElement,
-} from '../../../../../../components/RelatedRecord';
+import injectDrawer, {
+  InjectedDrawerProps,
+} from '../../../../../../components/Drawer/injectDrawer';
+import { RelatedRecords, RecordElement } from '../../../../../../components/RelatedRecord';
 import { WrappedFieldArrayProps } from 'redux-form';
 import { AudienceFeatureModel } from '../domain';
-import { ReduxFormChangeProps } from "../../../../../../utils/FormHelper";
+import { ReduxFormChangeProps } from '../../../../../../utils/FormHelper';
 import AudienceFeatureSelector, {
   AudienceFeatureSelectorProps,
 } from '../../../../../Audience/AudienceBuilder/QueryFragmentBuilders/AudienceFeatureSelector';
 import { InfoCircleFilled } from '@ant-design/icons';
 
-export interface DemographicsFormSectionProps extends ReduxFormChangeProps { }
+export interface DemographicsFormSectionProps extends ReduxFormChangeProps {}
 
 type Props = DemographicsFormSectionProps &
-InjectedIntlProps &
-WrappedFieldArrayProps<AudienceFeatureModel> &
-InjectedDrawerProps & 
-RouteComponentProps<{
-  datamartId: string;
-  organisationId: string;
-  audienceBuilderId: string;
-}>;
+  InjectedIntlProps &
+  WrappedFieldArrayProps<AudienceFeatureModel> &
+  InjectedDrawerProps &
+  RouteComponentProps<{
+    datamartId: string;
+    organisationId: string;
+    audienceBuilderId: string;
+  }>;
 
 class AudienceBuilderDemographicsSection extends React.Component<Props> {
   constructor(props: Props) {
@@ -40,9 +37,7 @@ class AudienceBuilderDemographicsSection extends React.Component<Props> {
   }
 
   getDemographicsRecords = () => {
-    const {
-      fields,
-    } = this.props;
+    const { fields } = this.props;
 
     const getAudienceFeatureName = (field: AudienceFeatureModel) => field.model.name;
 
@@ -60,11 +55,9 @@ class AudienceBuilderDemographicsSection extends React.Component<Props> {
     });
   };
 
-  addAudienceFeature = (
-    audienceFeatures: AudienceFeatureResource[],
-  ) => {
+  addAudienceFeature = (audienceFeatures: AudienceFeatureResource[]) => {
     const { fields, formChange, closeNextDrawer } = this.props;
-    
+
     const newFields: AudienceFeatureModel[] = [];
     newFields.push(...fields.getAll());
     newFields.push({
@@ -74,10 +67,10 @@ class AudienceBuilderDemographicsSection extends React.Component<Props> {
 
     formChange((fields as any).name, newFields);
     closeNextDrawer();
-  }
+  };
 
   openDemographicsSelector = () => {
-    const { 
+    const {
       openNextDrawer,
       match: {
         params: { datamartId },
@@ -90,24 +83,26 @@ class AudienceBuilderDemographicsSection extends React.Component<Props> {
       close: this.props.closeNextDrawer,
       save: this.addAudienceFeature,
       demographicIds: fields.map((_, index) => {
-          return fields.get(index).model.id
+        return fields.get(index).model.id;
       }),
     };
 
     openNextDrawer<AudienceFeatureSelectorProps>(AudienceFeatureSelector, {
       additionalProps: props,
     });
-  }
+  };
 
   render() {
-    const { intl: { formatMessage } } = this.props;
+    const {
+      intl: { formatMessage },
+    } = this.props;
 
     return (
       <div>
         <FormSection
           button={{
             message: formatMessage(messages.audienceBuilderSectionDemographicsAddButton),
-            onClick: this.openDemographicsSelector
+            onClick: this.openDemographicsSelector,
           }}
           title={messages.audienceBuilderSectionDemographicsTitle}
           subtitle={messages.audienceBuilderSectionDemographicsSubtitle}
@@ -115,13 +110,13 @@ class AudienceBuilderDemographicsSection extends React.Component<Props> {
 
         <RelatedRecords
           emptyOption={{
-            genericIconProps: <InfoCircleFilled className="mcs-audienceBuilderSettings-records" />,
+            genericIconProps: <InfoCircleFilled className='mcs-audienceBuilderSettings-records' />,
             message: formatMessage(messages.audienceBuilderSectionDemographicsSubtitle),
           }}
         >
           {this.getDemographicsRecords()}
         </RelatedRecords>
-    </div>
+      </div>
     );
   }
 }

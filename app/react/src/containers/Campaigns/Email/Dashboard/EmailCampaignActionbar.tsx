@@ -22,9 +22,7 @@ import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-librar
 import ReportService from '../../../../services/ReportService';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
 import log from '../../../../utils/Logger';
-import injectDrawer, {
-  InjectedDrawerProps,
-} from '../../../../components/Drawer/injectDrawer';
+import injectDrawer, { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import { formatCampaignProperty } from '../../Email/messages';
 import ResourceTimelinePage, {
   ResourceTimelinePageProps,
@@ -82,10 +80,7 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
 
     const filter = parseSearch(search, EMAIL_DASHBOARD_SEARCH_SETTINGS);
 
-    const hideExportLoadingMsg = message.loading(
-      formatMessage(exportMessages.exportInProgress),
-      0,
-    );
+    const hideExportLoadingMsg = message.loading(formatMessage(exportMessages.exportInProgress), 0);
 
     Promise.all([
       this._emailCampaignService.getBlasts(campaignId).then(res => res.data),
@@ -120,20 +115,20 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
     const { campaign, activateCampaign, pauseCampaign } = this.props;
 
     const activeCampaignElement = (
-      <Button className="mcs-primary" type="primary" onClick={activateCampaign}>
-        <McsIcon type="play" />
+      <Button className='mcs-primary' type='primary' onClick={activateCampaign}>
+        <McsIcon type='play' />
         <FormattedMessage
-          id="email.campaign.dashboard.actionbar.activateCampaign"
-          defaultMessage="Activate Campaign"
+          id='email.campaign.dashboard.actionbar.activateCampaign'
+          defaultMessage='Activate Campaign'
         />
       </Button>
     );
     const pauseCampaignElement = (
-      <Button className="mcs-primary" type="primary" onClick={pauseCampaign}>
-        <McsIcon type="pause" />
+      <Button className='mcs-primary' type='primary' onClick={pauseCampaign}>
+        <McsIcon type='pause' />
         <FormattedMessage
-          id="email.campaign.dashboard.actionbar.pauseCampaign"
-          defaultMessage="Pause Campaign"
+          id='email.campaign.dashboard.actionbar.pauseCampaign'
+          defaultMessage='Pause Campaign'
         />
       </Button>
     );
@@ -175,82 +170,71 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
 
       switch (param.key) {
         case 'HISTORY':
-          return this.props.openNextDrawer<ResourceTimelinePageProps>(
-            ResourceTimelinePage,
-            {
-              size: 'small',
-              additionalProps: {
-                resourceType: 'CAMPAIGN',
-                resourceId: campaignId,
-                handleClose: () => this.props.closeNextDrawer(),
-                formatProperty: formatCampaignProperty,
-                resourceLinkHelper: {
-                  EMAIL_BLAST: {
-                    direction: 'CHILD',
-                    getType: () => {
-                      return (
-                        <FormattedMessage
-                          {...resourceHistoryMessages.emailBlastResourceType}
-                        />
-                      );
-                    },
-                    getName: (id: string) => {
-                      return this._emailCampaignService
-                        .getBlast(campaignId, id)
-                        .then(response => {
-                          return response.data.blast_name || id;
-                        });
-                    },
-                    goToResource: (id: string) => {
-                      history.push(
-                        `/v2/o/${organisationId}/campaigns/email/${campaignId}/blasts/${id}/edit`,
-                      );
-                    },
+          return this.props.openNextDrawer<ResourceTimelinePageProps>(ResourceTimelinePage, {
+            size: 'small',
+            additionalProps: {
+              resourceType: 'CAMPAIGN',
+              resourceId: campaignId,
+              handleClose: () => this.props.closeNextDrawer(),
+              formatProperty: formatCampaignProperty,
+              resourceLinkHelper: {
+                EMAIL_BLAST: {
+                  direction: 'CHILD',
+                  getType: () => {
+                    return <FormattedMessage {...resourceHistoryMessages.emailBlastResourceType} />;
                   },
-                  EMAIL_ROUTER_SELECTION: {
-                    direction: 'CHILD',
-                    getType: () => {
-                      return (
-                        <FormattedMessage
-                          {...resourceHistoryMessages.emailRouterResourceType}
-                        />
-                      );
-                    },
-                    getName: (id: string) => {
-                      return this._resourceHistoryService
-                        .getLinkedResourceIdInSelection(
-                          organisationId,
-                          'EMAIL_ROUTER_SELECTION',
-                          id,
-                          'EMAIL_ROUTER',
-                        )
-                        .then(emailRouterId => {
-                          return this._emailRoutersService
-                            .getEmailRouter(emailRouterId)
-                            .then(response => {
-                              return response.data.name;
-                            });
-                        });
-                    },
-                    goToResource: (id: string) => {
-                      return this._resourceHistoryService
-                        .getLinkedResourceIdInSelection(
-                          organisationId,
-                          'EMAIL_ROUTER_SELECTION',
-                          id,
-                          'EMAIL_ROUTER',
-                        )
-                        .then(emailRouterId => {
-                          history.push(
-                            `/v2/o/${organisationId}/settings/campaigns/email_routers/${emailRouterId}/edit`,
-                          );
-                        });
-                    },
+                  getName: (id: string) => {
+                    return this._emailCampaignService.getBlast(campaignId, id).then(response => {
+                      return response.data.blast_name || id;
+                    });
+                  },
+                  goToResource: (id: string) => {
+                    history.push(
+                      `/v2/o/${organisationId}/campaigns/email/${campaignId}/blasts/${id}/edit`,
+                    );
+                  },
+                },
+                EMAIL_ROUTER_SELECTION: {
+                  direction: 'CHILD',
+                  getType: () => {
+                    return (
+                      <FormattedMessage {...resourceHistoryMessages.emailRouterResourceType} />
+                    );
+                  },
+                  getName: (id: string) => {
+                    return this._resourceHistoryService
+                      .getLinkedResourceIdInSelection(
+                        organisationId,
+                        'EMAIL_ROUTER_SELECTION',
+                        id,
+                        'EMAIL_ROUTER',
+                      )
+                      .then(emailRouterId => {
+                        return this._emailRoutersService
+                          .getEmailRouter(emailRouterId)
+                          .then(response => {
+                            return response.data.name;
+                          });
+                      });
+                  },
+                  goToResource: (id: string) => {
+                    return this._resourceHistoryService
+                      .getLinkedResourceIdInSelection(
+                        organisationId,
+                        'EMAIL_ROUTER_SELECTION',
+                        id,
+                        'EMAIL_ROUTER',
+                      )
+                      .then(emailRouterId => {
+                        history.push(
+                          `/v2/o/${organisationId}/settings/campaigns/email_routers/${emailRouterId}/edit`,
+                        );
+                      });
                   },
                 },
               },
             },
-          );
+          });
         case 'ARCHIVED':
           return campaign && handleArchiveCampaign(campaign.id);
         default:
@@ -262,13 +246,13 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
 
     return (
       <Menu onClick={onClick}>
-        <Menu.Item key="HISTORY">
+        <Menu.Item key='HISTORY'>
           <FormattedMessage {...messages.history} />
         </Menu.Item>
-        <Menu.Item key="ARCHIVED">
+        <Menu.Item key='ARCHIVED'>
           <FormattedMessage
-            id="email.campaign.dashboard.actionbar.archive"
-            defaultMessage="Archive"
+            id='email.campaign.dashboard.actionbar.archive'
+            defaultMessage='Archive'
           />
         </Menu.Item>
       </Menu>
@@ -303,7 +287,9 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
     const menu = this.buildMenu();
 
     const breadcrumbPaths = [
-      <Link key='1' to={`/v2/o/${organisationId}/campaigns/email`}>{formatMessage(messages.email)}</Link>,
+      <Link key='1' to={`/v2/o/${organisationId}/campaigns/email`}>
+        {formatMessage(messages.email)}
+      </Link>,
       campaign ? campaign.name : '',
     ];
 
@@ -311,25 +297,18 @@ class EmailCampaignActionbar extends React.Component<Props, State> {
       <Actionbar pathItems={breadcrumbPaths}>
         {actionElement}
         <Button
-          onClick={
-            this.state.exportIsRunning
-              ? this.exportIsRunningModal
-              : this.handleRunExport
-          }
+          onClick={this.state.exportIsRunning ? this.exportIsRunningModal : this.handleRunExport}
         >
-          <McsIcon type="download" />
+          <McsIcon type='download' />
           <FormattedMessage
-            id="email.campaign.dashboard.actionbar.export"
-            defaultMessage="Export"
+            id='email.campaign.dashboard.actionbar.export'
+            defaultMessage='Export'
           />
         </Button>
         <Link to={`/v2/o/${organisationId}/campaigns/email/${campaignId}/edit`}>
           <Button>
             <EditOutlined />
-            <FormattedMessage
-              id="email.campaign.dashboard.actionbar.edit"
-              defaultMessage="Edit"
-            />
+            <FormattedMessage id='email.campaign.dashboard.actionbar.edit' defaultMessage='Edit' />
           </Button>
         </Link>
         <Dropdown overlay={menu} trigger={['click']}>

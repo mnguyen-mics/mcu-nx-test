@@ -1,12 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import {
-  FormattedMessage,
-  injectIntl,
-  InjectedIntlProps,
-  defineMessages,
-} from 'react-intl';
+import { FormattedMessage, injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { InboxOutlined } from '@ant-design/icons';
 import { Upload } from 'antd';
@@ -62,30 +57,30 @@ class EditableLogo extends React.Component<Props> {
 
   buildDragLabel() {
     return (
-      <div className="mcs-logo-dragger">
-        <p className="ant-upload-drag-icon">
+      <div className='mcs-logo-dragger'>
+        <p className='ant-upload-drag-icon'>
           <InboxOutlined />
         </p>
-        <p className="ant-upload-text">
+        <p className='ant-upload-text'>
           <FormattedMessage
-            id="components.logo.draggerMessage"
-            defaultMessage="Click or drag an image in this area to upload"
+            id='components.logo.draggerMessage'
+            defaultMessage='Click or drag an image in this area to upload'
           />
         </p>
-        <p className="ant-upload-hint" />
+        <p className='ant-upload-hint' />
       </div>
     );
   }
 
   buildLogoImageWithUpload(logoUrl: string) {
     return (
-      <div className="mcs-logo-dragger">
-        <img alt="logo" src={logoUrl} />
-        <span id="logoDropzone" className="mcs-dropzone-overlay">
-          <label htmlFor="logoDropzone" className="mcs-dropzone-overlay-label">
+      <div className='mcs-logo-dragger'>
+        <img alt='logo' src={logoUrl} />
+        <span id='logoDropzone' className='mcs-dropzone-overlay'>
+          <label htmlFor='logoDropzone' className='mcs-dropzone-overlay-label'>
             <FormattedMessage
-              id="components.logo.uploadImageMessage"
-              defaultMessage="Upload image"
+              id='components.logo.uploadImageMessage'
+              defaultMessage='Upload image'
             />
           </label>
         </span>
@@ -114,14 +109,9 @@ class EditableLogo extends React.Component<Props> {
         params: { organisationId },
       },
     } = this.props;
-    const customRequest = (uploadData: any) =>
-      this.handleUpload(organisationId, uploadData);
+    const customRequest = (uploadData: any) => this.handleUpload(organisationId, uploadData);
     return (
-      <Dragger
-        {...this.props}
-        showUploadList={false}
-        customRequest={customRequest}
-      >
+      <Dragger {...this.props} showUploadList={false} customRequest={customRequest}>
         {component}
       </Dragger>
     );
@@ -136,16 +126,13 @@ class EditableLogo extends React.Component<Props> {
     const uploadLogoComponent = this.wrapInDraggerComponent(insideComponent);
 
     return (
-      <div className="mcs-logo-placeholder">
+      <div className='mcs-logo-placeholder'>
         {mode === 'inline' && (
-          <div className="mcs-logo">
+          <div className='mcs-logo'>
             {uploadLogoComponent}
             {isUploadingLogo && (
               <div>
-                <FormattedMessage
-                  id="components.logo.loading"
-                  defaultMessage="Logo is loading"
-                />
+                <FormattedMessage id='components.logo.loading' defaultMessage='Logo is loading' />
               </div>
             )}
           </div>
@@ -166,10 +153,7 @@ const mapDispatchToProps = {
 };
 
 export default compose<Props, EditableLogo>(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withRouter,
   injectNotifications,
   injectIntl,

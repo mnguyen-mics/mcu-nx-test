@@ -11,8 +11,8 @@ export interface InjectedDrawerProps {
 }
 
 const mapDispatchToProps = {
-    closeNextDrawer,
-    openNextDrawer
-  }; 
+  closeNextDrawer,
+  openNextDrawer,
+};
 
 export default connect(undefined, mapDispatchToProps);

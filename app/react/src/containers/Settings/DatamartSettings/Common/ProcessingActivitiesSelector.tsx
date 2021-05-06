@@ -12,10 +12,7 @@ import { IOrganisationService } from '../../../../services/OrganisationService';
 import { SearchFilter } from '../../../../components/ElementSelector';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { OrganisationResource } from '../../../../models/organisation/organisation';
-import {
-  DataResponse,
-  DataListResponse,
-} from '../../../../services/ApiService';
+import { DataResponse, DataListResponse } from '../../../../services/ApiService';
 import { ProcessingResource } from '../../../../models/processing';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -70,7 +67,7 @@ class ProcessingActivitiesSelector extends React.Component<Props, State> {
         });
         return comId;
       })
-      .catch((err) => {
+      .catch(err => {
         notifyError(err);
         return null;
       });
@@ -110,14 +107,12 @@ class ProcessingActivitiesSelector extends React.Component<Props, State> {
       ? Promise.resolve(communityId)
       : this.fetchCommunityId(organisationId);
 
-    return communityF.then((comId) => {
+    return communityF.then(comId => {
       if (comId !== null) {
-        return this._organisationService
-          .getProcessings(comId, options)
-          .catch((err) => {
-            notifyError(err);
-            return this.returnEmptyDataListResponse();
-          });
+        return this._organisationService.getProcessings(comId, options).catch(err => {
+          notifyError(err);
+          return this.returnEmptyDataListResponse();
+        });
       }
       return this.returnEmptyDataListResponse();
     });
@@ -137,26 +132,19 @@ class ProcessingActivitiesSelector extends React.Component<Props, State> {
         render: (text, record) => <span>{record.name}</span>,
       },
       {
-        title: formatMessage(
-          messages.processingActivitiesSelectorColumnLegalBasis,
-        ),
+        title: formatMessage(messages.processingActivitiesSelectorColumnLegalBasis),
         key: 'legal_basis',
         render: (text, record) => <span>{record.legal_basis}</span>,
       },
     ];
 
-    const fetchProcessingActivity = (id: string) =>
-      this._organisationService.getProcessing(id);
+    const fetchProcessingActivity = (id: string) => this._organisationService.getProcessing(id);
 
     return (
       <ProcessingActivitiesTableSelector
-        actionBarTitle={formatMessage(
-          messages.processingActivitiesSelectorTitle,
-        )}
+        actionBarTitle={formatMessage(messages.processingActivitiesSelectorTitle)}
         displayFiltering={true}
-        searchPlaceholder={formatMessage(
-          messages.processingActivitiesSelectorSearchPlaceholder,
-        )}
+        searchPlaceholder={formatMessage(messages.processingActivitiesSelectorSearchPlaceholder)}
         selectedIds={selectedProcessingActivityIds}
         fetchDataList={this.fetchProcessingActivities}
         fetchData={fetchProcessingActivity}

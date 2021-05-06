@@ -8,8 +8,7 @@ export interface AttributionSelectionCreateRequest {
   default?: boolean;
 }
 
-export interface AttributionSelectionResource
-  extends AttributionSelectionCreateRequest {
+export interface AttributionSelectionResource extends AttributionSelectionCreateRequest {
   id: string;
   attribution_model_mode: AttributionModelMode;
   attribution_model_name: string;

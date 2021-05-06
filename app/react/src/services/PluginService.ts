@@ -7,11 +7,7 @@ import {
 } from './../models/Plugins';
 import { PaginatedApiParam } from './../utils/ApiHelper';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
-import {
-  PluginResource,
-  PluginPresetResource,
-  PluginVersionResource,
-} from '../models/Plugins';
+import { PluginResource, PluginPresetResource, PluginVersionResource } from '../models/Plugins';
 import { PropertyResourceShape } from '../models/plugin';
 import { IDataFileService } from './DataFileService';
 import { PluginLayout } from '../models/plugin/PluginLayout';
@@ -30,8 +26,7 @@ interface GetPluginOptions extends Omit<PaginatedApiParam, 'first_result'> {
   organisation_id?: number;
 }
 
-interface GetPluginPresetOptions
-  extends Omit<PaginatedApiParam, 'first_result'> {
+interface GetPluginPresetOptions extends Omit<PaginatedApiParam, 'first_result'> {
   plugin_type?: PluginType;
   organisation_id?: number;
 }
@@ -54,9 +49,7 @@ export interface IPluginService {
     pluginId: string,
     params?: object,
   ) => Promise<DataListResponse<PluginVersionResource>>;
-  findPluginFromVersionId: (
-    versionId: string,
-  ) => Promise<DataResponse<PluginResource>>;
+  findPluginFromVersionId: (versionId: string) => Promise<DataResponse<PluginResource>>;
   getPluginVersion: (
     pluginId: string,
     versionId: string,
@@ -66,9 +59,7 @@ export interface IPluginService {
     pluginVersionId: string,
     params?: object,
   ) => Promise<DataListResponse<PropertyResourceShape>>;
-  getEngineProperties: (
-    engineVersionId: string,
-  ) => Promise<PropertyResourceShape[]>;
+  getEngineProperties: (engineVersionId: string) => Promise<PropertyResourceShape[]>;
   getEngineVersion: (engineVersionId: string) => Promise<PluginVersionResource>;
   getAdLayouts: (
     organisationId: string,
@@ -127,41 +118,37 @@ export class PluginService implements IPluginService {
     withArchivedPluginVersion: boolean = false,
   ): Promise<DataListResponse<PluginResource>> {
     const endpoint = 'plugins';
-    return ApiService.getRequest<DataListResponse<PluginResource>>(
-      endpoint,
-      options,
-    ).then(plugins => {
-      if (!withArchivedPluginVersion) {
-        return Promise.all(
-          plugins.data.reduce((filteredPlugins, p) => {
-            if (p.current_version_id) {
-              return [
-                ...filteredPlugins,
-                this.getPluginVersion(p.id, p.current_version_id).then(
-                  pv => pv.data,
-                ),
-              ];
-            }
-            return filteredPlugins;
-          }, []),
-        ).then(pluginVersions => {
-          const archivedPVersion = pluginVersions.filter(
-            (pv: PluginVersionResource) => !!pv.archived,
-          );
-          return {
-            ...plugins,
-            data: plugins.data.filter(
-              p =>
-                !archivedPVersion.find(
-                  (apv: PluginVersionResource) =>
-                    apv.id === p.current_version_id,
-                ),
-            ),
-          };
-        });
-      }
-      return plugins;
-    });
+    return ApiService.getRequest<DataListResponse<PluginResource>>(endpoint, options).then(
+      plugins => {
+        if (!withArchivedPluginVersion) {
+          return Promise.all(
+            plugins.data.reduce((filteredPlugins, p) => {
+              if (p.current_version_id) {
+                return [
+                  ...filteredPlugins,
+                  this.getPluginVersion(p.id, p.current_version_id).then(pv => pv.data),
+                ];
+              }
+              return filteredPlugins;
+            }, []),
+          ).then(pluginVersions => {
+            const archivedPVersion = pluginVersions.filter(
+              (pv: PluginVersionResource) => !!pv.archived,
+            );
+            return {
+              ...plugins,
+              data: plugins.data.filter(
+                p =>
+                  !archivedPVersion.find(
+                    (apv: PluginVersionResource) => apv.id === p.current_version_id,
+                  ),
+              ),
+            };
+          });
+        }
+        return plugins;
+      },
+    );
   }
   getPluginVersions(
     pluginId: string,
@@ -174,9 +161,7 @@ export class PluginService implements IPluginService {
     const endpoint = `plugins/${pluginId}`;
     return ApiService.getRequest(endpoint);
   }
-  findPluginFromVersionId(
-    versionId: string,
-  ): Promise<DataResponse<PluginResource>> {
+  findPluginFromVersionId(versionId: string): Promise<DataResponse<PluginResource>> {
     const endpoint = `plugins/version/${versionId}`;
     return ApiService.getRequest(endpoint);
   }
@@ -219,9 +204,7 @@ export class PluginService implements IPluginService {
 
     return ApiService.putRequest(endpoint, resource);
   }
-  getEngineProperties(
-    engineVersionId: string,
-  ): Promise<PropertyResourceShape[]> {
+  getEngineProperties(engineVersionId: string): Promise<PropertyResourceShape[]> {
     const endpoint = `plugins/${engineVersionId}/properties`;
 
     return ApiService.getRequest(endpoint).then(
@@ -230,11 +213,9 @@ export class PluginService implements IPluginService {
   }
   getEngineVersion(engineVersionId: string): Promise<PluginVersionResource> {
     const endpoint = `plugins/version/${engineVersionId}`;
-    return ApiService.getRequest(endpoint).then(
-      (res: DataResponse<PluginVersionResource>) => {
-        return res.data;
-      },
-    );
+    return ApiService.getRequest(endpoint).then((res: DataResponse<PluginVersionResource>) => {
+      return res.data;
+    });
   }
   getAdLayouts(
     organisationId: string,
@@ -291,25 +272,22 @@ export class PluginService implements IPluginService {
         return Promise.resolve();
       }
 
-      const fileValue =
-        params.value && params.value.file ? params.value.file : null;
+      const fileValue = params.value && params.value.file ? params.value.file : null;
 
       if (fileValue !== null) {
         const formData = new FormData(); /* global FormData */
         formData.append('file', fileValue, fileValue.name);
-        return ApiService.postRequest(uploadEndpoint, formData).then(
-          (res: any) => {
-            const newParams = {
-              ...params,
-            };
-            newParams.value = {
-              original_name: res.data.original_name,
-              path: res.data.path,
-              asset_id: res.data.id,
-            };
-            ApiService.putRequest(endpoint, newParams);
-          },
-        );
+        return ApiService.postRequest(uploadEndpoint, formData).then((res: any) => {
+          const newParams = {
+            ...params,
+          };
+          newParams.value = {
+            original_name: res.data.original_name,
+            path: res.data.path,
+            asset_id: res.data.id,
+          };
+          ApiService.putRequest(endpoint, newParams);
+        });
       }
       return Promise.resolve();
     } else if (params.property_type === 'NATIVE_IMAGE') {
@@ -317,30 +295,27 @@ export class PluginService implements IPluginService {
         return Promise.resolve();
       }
 
-      const fileValue =
-        params.value && params.value.file ? params.value.file : null;
+      const fileValue = params.value && params.value.file ? params.value.file : null;
 
       if (fileValue !== null) {
         const formData = new FormData(); /* global FormData */
         formData.append('file', fileValue, fileValue.name);
 
-        return this._assetFileService
-          .uploadAssetsFile(organisationId, formData)
-          .then(res => {
-            const newParams = {
-              ...params,
-            };
-            newParams.value = {
-              original_file_name: res.data.original_name,
-              file_path: res.data.path,
-              asset_id: res.data.id,
-              require_display: true,
-              height: res.data.height,
-              width: res.data.width,
-              type: 1,
-            };
-            ApiService.putRequest(endpoint, newParams);
-          });
+        return this._assetFileService.uploadAssetsFile(organisationId, formData).then(res => {
+          const newParams = {
+            ...params,
+          };
+          newParams.value = {
+            original_file_name: res.data.original_name,
+            file_path: res.data.path,
+            asset_id: res.data.id,
+            require_display: true,
+            height: res.data.height,
+            width: res.data.width,
+            type: 1,
+          };
+          ApiService.putRequest(endpoint, newParams);
+        });
       }
       return Promise.resolve();
     } else if (params.property_type === 'DATA_FILE') {
@@ -350,47 +325,37 @@ export class PluginService implements IPluginService {
       }); /* global Blob */
       if (params.value.uri) {
         // edit
-        return this._dataFileService.editDataFile(
-          params.value.fileName,
-          params.value.uri,
-          blob,
-        ).then(() => {
-          const newParams = {
-            ...params,
-          };
-          newParams.value = {
-            uri: params.value.uri,
-            last_modified: null,
-          };
-          return ApiService.putRequest(endpoint, newParams) as Promise<
-            DataResponse<PropertyResourceShape>
-          >;
-        });
+        return this._dataFileService
+          .editDataFile(params.value.fileName, params.value.uri, blob)
+          .then(() => {
+            const newParams = {
+              ...params,
+            };
+            newParams.value = {
+              uri: params.value.uri,
+              last_modified: null,
+            };
+            return ApiService.putRequest(endpoint, newParams) as Promise<
+              DataResponse<PropertyResourceShape>
+            >;
+          });
       } else if (params.value.fileName && params.value.fileContent) {
         // create
-        return this._dataFileService.createDatafile(
-          organisationId,
-          objectType,
-          objectId,
-          params.value.fileName,
-          blob,
-        ).then((res: any) => {
-          const newParams = {
-            ...params,
-          };
-          newParams.value = {
-            uri: res,
-            last_modified: null,
-          };
-          return ApiService.putRequest(endpoint, newParams) as Promise<
-            DataResponse<PropertyResourceShape>
-          >;
-        });
-      } else if (
-        !params.value.fileName &&
-        !params.value.fileContent &&
-        !params.value.uri
-      ) {
+        return this._dataFileService
+          .createDatafile(organisationId, objectType, objectId, params.value.fileName, blob)
+          .then((res: any) => {
+            const newParams = {
+              ...params,
+            };
+            newParams.value = {
+              uri: res,
+              last_modified: null,
+            };
+            return ApiService.putRequest(endpoint, newParams) as Promise<
+              DataResponse<PropertyResourceShape>
+            >;
+          });
+      } else if (!params.value.fileName && !params.value.fileContent && !params.value.uri) {
         // delete
         const newParams = {
           ...params,
@@ -425,22 +390,17 @@ export class PluginService implements IPluginService {
   getLocalizedPluginLayoutFromVersionId(
     pluginVersionId: string,
   ): Promise<{ plugin: PluginResource; layout?: PluginLayout }> {
-    return this.findPluginFromVersionId(pluginVersionId).then(
-      pluginResponse => {
-        if (
-          pluginResponse !== null &&
-          pluginResponse.status !== 'error' &&
-          pluginResponse.data.current_version_id
-        ) {
-          return this.getLocalizedPluginLayout(
-            pluginResponse.data.id,
-            pluginVersionId,
-          ).then(res => {
-            return { plugin: pluginResponse.data, layout: res || undefined };
-          });
-        } else return { plugin: pluginResponse.data, layout: undefined };
-      },
-    );
+    return this.findPluginFromVersionId(pluginVersionId).then(pluginResponse => {
+      if (
+        pluginResponse !== null &&
+        pluginResponse.status !== 'error' &&
+        pluginResponse.data.current_version_id
+      ) {
+        return this.getLocalizedPluginLayout(pluginResponse.data.id, pluginVersionId).then(res => {
+          return { plugin: pluginResponse.data, layout: res || undefined };
+        });
+      } else return { plugin: pluginResponse.data, layout: undefined };
+    });
   }
 }
 

@@ -11,17 +11,13 @@ export interface NormalizerProps {
 }
 
 function normalizeFloat(value: any, prevValue: any): Normalizer {
-  return (!value || (value && value.length < 16 && /^[0-9]+(\.([0-9]{1,2})?)?$/i.test(value))
+  return !value || (value && value.length < 16 && /^[0-9]+(\.([0-9]{1,2})?)?$/i.test(value))
     ? value
-    : prevValue
-  );
+    : prevValue;
 }
 
 function normalizeInteger(value: any, prevValue: any): Normalizer {
-  return (!value || (value && value.length < 16 && /^\d+$/.test(value))
-    ? value
-    : prevValue
-  );
+  return !value || (value && value.length < 16 && /^\d+$/.test(value)) ? value : prevValue;
 }
 
 export default compose<{}, NormalizerProps>(

@@ -4,15 +4,8 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { Layout } from 'antd';
 import { compose } from 'recompose';
 import GoalHeader from './GoalHeader';
-import {
-  Card,
-  McsTabs,
-  McsDateRangePicker,
-} from '@mediarithmics-private/mcs-components-library';
-import {
-  GoalResource,
-  AttributionSelectionResource,
-} from '../../../../models/goal';
+import { Card, McsTabs, McsDateRangePicker } from '@mediarithmics-private/mcs-components-library';
+import { GoalResource, AttributionSelectionResource } from '../../../../models/goal';
 import GoalActionbar from './GoalActionbar';
 import {
   DATE_SEARCH_SETTINGS,
@@ -114,10 +107,7 @@ class GoalDashboard extends React.Component<JoinedProps, GoalDashboardState> {
       },
     } = previousProps;
 
-    if (
-      !compareSearches(search, previousSearch) ||
-      organisationId !== previousOrganisationId
-    ) {
+    if (!compareSearches(search, previousSearch) || organisationId !== previousOrganisationId) {
       if (!isSearchValid(search, DATE_SEARCH_SETTINGS)) {
         history.replace({
           pathname: pathname,
@@ -139,9 +129,7 @@ class GoalDashboard extends React.Component<JoinedProps, GoalDashboardState> {
         return this._goalService.getAttributionModels(res.id);
       })
       .then(res => res.data)
-      .then(res =>
-        this.setState({ attributionModels: { isLoading: false, items: res } }),
-      );
+      .then(res => this.setState({ attributionModels: { isLoading: false, items: res } }));
   };
 
   updateLocationSearch = (params: Filters) => {
@@ -189,10 +177,7 @@ class GoalDashboard extends React.Component<JoinedProps, GoalDashboardState> {
     return this.state.attributionModels.items
       .sort((a, b) => a.id.localeCompare(b.id))
       .map(am => {
-        const title =
-          am.attribution_type === 'DIRECT'
-            ? 'Direct'
-            : am.attribution_model_name;
+        const title = am.attribution_type === 'DIRECT' ? 'Direct' : am.attribution_model_name;
         return {
           title: title,
           display: <GoalAttribution attributionModelId={am.id} />,
@@ -205,27 +190,19 @@ class GoalDashboard extends React.Component<JoinedProps, GoalDashboardState> {
       intl: { formatMessage },
     } = this.props;
     return (
-      <div className="ant-layout">
-        <GoalActionbar
-          goal={this.state.goalObject.item}
-          fetchGoal={this.fetchGoal}
-        />
-        <div className="ant-layout">
-          <Content className="mcs-content-container">
+      <div className='ant-layout'>
+        <GoalActionbar goal={this.state.goalObject.item} fetchGoal={this.fetchGoal} />
+        <div className='ant-layout'>
+          <Content className='mcs-content-container'>
             <GoalHeader goal={this.state.goalObject.item} />
-            <Card
-              title={formatMessage(messages.conversions)}
-              buttons={this.renderDatePicker()}
-            >
+            <Card title={formatMessage(messages.conversions)} buttons={this.renderDatePicker()}>
               <GoalStackedAreaChart />
             </Card>
             {this.state.attributionModels.items.length ? (
               <Card>
                 <McsTabs items={this.renderItems()} />
               </Card>
-            ) : (
-              undefined
-            )}
+            ) : undefined}
           </Content>
         </div>
       </div>

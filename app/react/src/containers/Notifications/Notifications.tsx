@@ -2,12 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { notification as antNotification, Button } from 'antd';
-import {
-  injectIntl,
-  defineMessages,
-  InjectedIntlProps,
-  FormattedMessage,
-} from 'react-intl';
+import { injectIntl, defineMessages, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import * as notificationsActions from '../../redux/Notifications/actions';
 import { isValidFormattedMessageProps } from '../../utils/IntlHelper';
 import { ArgsProps } from 'antd/lib/notification';
@@ -80,9 +75,7 @@ class Notifications extends React.Component<Props> {
 
     if (notifications.length > 0) {
       const notificationIds = notifications.map(notif => notif.uid);
-      const previousNotificationIds = previousNotifications.map(
-        notif => notif.uid,
-      );
+      const previousNotificationIds = previousNotifications.map(notif => notif.uid);
 
       const notifIdsToClose = previousNotificationIds.filter(id => {
         return notificationIds.indexOf(id) < 0;
@@ -140,17 +133,13 @@ class Notifications extends React.Component<Props> {
       notifcationConfig.message = formatMessage(notification.intlMessage);
     }
     if (isValidFormattedMessageProps(notification.intlDescription)) {
-      notifcationConfig.description = formatMessage(
-        notification.intlDescription,
-      );
+      notifcationConfig.description = formatMessage(notification.intlDescription);
     }
 
     // handle Error
     if (notification.error) {
       if (!notifcationConfig.message) {
-        notifcationConfig.message = (
-          <span>{formatMessage(messages.errorMessage)}</span>
-        );
+        notifcationConfig.message = <span>{formatMessage(messages.errorMessage)}</span>;
       }
 
       if (notification.error.error_id) {
@@ -199,31 +188,25 @@ class Notifications extends React.Component<Props> {
           );
         }
       } else if (!notifcationConfig.description) {
-        notifcationConfig.description = (
-          <span>{formatMessage(messages.errorDescription)}</span>
-        );
+        notifcationConfig.description = <span>{formatMessage(messages.errorDescription)}</span>;
       }
     }
 
     // handle new version notification
     if (notification.newVersion) {
-      notifcationConfig.message = (
-        <span>{formatMessage(messages.newVersionMessage)}</span>
-      );
-      notifcationConfig.description = (
-        <span>{formatMessage(messages.newVersionDescription)}</span>
-      );
+      notifcationConfig.message = <span>{formatMessage(messages.newVersionMessage)}</span>;
+      notifcationConfig.description = <span>{formatMessage(messages.newVersionDescription)}</span>;
 
       const onClick = () => window.location.reload();
       notifcationConfig.btn = (
-        <Button type="primary" size="small" onClick={onClick}>
+        <Button type='primary' size='small' onClick={onClick}>
           <span>{formatMessage(messages.newVersionReloadBtn)}</span>
         </Button>
       );
     }
 
     // OVH Crisis: There are many error notifications due to OVH crisis
-    // Let's make these notifications disappear after 3 seconds 
+    // Let's make these notifications disappear after 3 seconds
     notifcationConfig.duration = 3;
 
     return notifcationConfig;
@@ -235,9 +218,8 @@ class Notifications extends React.Component<Props> {
 }
 
 export default compose(
-  connect(
-    (state: MicsReduxState) => ({ notifications: state.notifications }),
-    { removeNotification: notificationsActions.removeNotification },
-  ),
+  connect((state: MicsReduxState) => ({ notifications: state.notifications }), {
+    removeNotification: notificationsActions.removeNotification,
+  }),
   injectIntl,
 )(Notifications);

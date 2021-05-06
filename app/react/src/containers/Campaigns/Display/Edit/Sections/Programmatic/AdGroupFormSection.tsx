@@ -6,21 +6,15 @@ import { WrappedFieldArrayProps } from 'redux-form';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectDrawer } from '../../../../../../components/Drawer';
 import { FormSection } from '../../../../../../components/Form';
-import {
-  RelatedRecords,
-  RecordElement,
-} from '../../../../../../components/RelatedRecord';
+import { RelatedRecords, RecordElement } from '../../../../../../components/RelatedRecord';
 import messages from '../../messages';
 import { ReduxFormChangeProps } from '../../../../../../utils/FormHelper';
 import AdGroupForm, { AdGroupFormProps } from '../../AdGroup/AdGroupForm';
 import { AdGroupFieldModel } from '../../domain';
-import {
-  AdGroupFormData,
-  INITIAL_AD_GROUP_FORM_DATA,
-} from '../../AdGroup/domain';
+import { AdGroupFormData, INITIAL_AD_GROUP_FORM_DATA } from '../../AdGroup/domain';
 import { InjectedDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
 
-export interface AdGroupFormSectionProps extends ReduxFormChangeProps { }
+export interface AdGroupFormSectionProps extends ReduxFormChangeProps {}
 
 type Props = InjectedIntlProps &
   WrappedFieldArrayProps<AdGroupFieldModel> &
@@ -67,8 +61,8 @@ class AdGroupFormSection extends React.Component<Props> {
     const breadCrumbPaths = [
       field && field.model.adGroup.name
         ? formatMessage(messages.editAdGroup, {
-          adGroupName: field.model.adGroup.name,
-        })
+            adGroupName: field.model.adGroup.name,
+          })
         : formatMessage(messages.breadcrumbTitle2),
     ];
 
@@ -93,8 +87,7 @@ class AdGroupFormSection extends React.Component<Props> {
   getAdGroupRecords = () => {
     const { fields } = this.props;
 
-    const getAdGroupName = (adGroupField: AdGroupFieldModel) =>
-      adGroupField.model.adGroup.name;
+    const getAdGroupName = (adGroupField: AdGroupFieldModel) => adGroupField.model.adGroup.name;
 
     return fields.getAll().map((adGroupField, index) => {
       const removeRecord = () => fields.remove(index);

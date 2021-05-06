@@ -13,10 +13,7 @@ interface OrgLogoState {
   isLoading: boolean;
 }
 
-export default class OrgLogoContainer extends React.Component<
-  OrgLogoProps,
-  OrgLogoState
-> {
+export default class OrgLogoContainer extends React.Component<OrgLogoProps, OrgLogoState> {
   @lazyInject(TYPES.IOrganisationService)
   private _organisationService: IOrganisationService;
 

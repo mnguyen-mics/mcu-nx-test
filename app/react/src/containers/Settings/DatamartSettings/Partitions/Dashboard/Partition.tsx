@@ -3,10 +3,7 @@ import * as React from 'react';
 import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
-import {
-  Card,
-  ContentHeader,
-} from '@mediarithmics-private/mcs-components-library';
+import { Card, ContentHeader } from '@mediarithmics-private/mcs-components-library';
 import {
   AudiencePartitionResource,
   AudiencePartitionStatus,
@@ -18,10 +15,7 @@ import { Index } from '../../../../../utils';
 import McsMoment from '../../../../../utils/McsMoment';
 import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import { normalizeArrayOfObject } from '../../../../../utils/Normalizer';
-import {
-  InjectedWorkspaceProps,
-  injectWorkspace,
-} from '../../../../Datamart/index';
+import { InjectedWorkspaceProps, injectWorkspace } from '../../../../Datamart/index';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
@@ -152,9 +146,7 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
       audiencePartition.organisation_id &&
       audiencePartition.organisation_id !== organisationId
     ) {
-      history.push(
-        `/v2/o/${organisationId}/settings/datamart/audience/partitions`,
-      );
+      history.push(`/v2/o/${organisationId}/settings/datamart/audience/partitions`);
     }
 
     if (previousPartitionId !== partitionId) this.loadData(partitionId);
@@ -171,10 +163,8 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
     this.setState({ isLoading: true, isLoadingStats: true });
     this._audiencePartitionsService
       .getPartition(partitionId)
-      .then((partitionRes) => {
-        const datamart = workspace.datamarts.find(
-          (d) => d.id === partitionRes.data.datamart_id,
-        );
+      .then(partitionRes => {
+        const datamart = workspace.datamarts.find(d => d.id === partitionRes.data.datamart_id);
         const audiencePromises: Array<Promise<any>> = [
           this._audienceSegmentService.getSegments(organisationId, {
             audience_partition_id: partitionId,
@@ -192,14 +182,10 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
 
         const promises = datamart
           ? audiencePromises.concat(this.fetchTotalUsers(datamart))
-          : [
-              Promise.reject(
-                intl.formatMessage(messages.datamartNotFoundError),
-              ),
-            ];
+          : [Promise.reject(intl.formatMessage(messages.datamartNotFoundError))];
 
         return Promise.all(promises)
-          .then((res) => {
+          .then(res => {
             const normalized = normalizeReportView<{
               audience_segment_id: number;
               user_points: number;
@@ -210,15 +196,12 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
               userPartitionSegments: res[0].data as UserPartitionSegment[],
               isLoadingStats: false,
               totalUserPoint: res[2] ? res[2] : 0,
-              statBySegmentId: normalizeArrayOfObject(
-                normalized,
-                'audience_segment_id',
-              ),
+              statBySegmentId: normalizeArrayOfObject(normalized, 'audience_segment_id'),
             });
           })
-          .catch((e) => Promise.reject(e));
+          .catch(e => Promise.reject(e));
       })
-      .catch((err) => {
+      .catch(err => {
         this.props.notifyError(err, {
           description: err,
         });
@@ -234,13 +217,11 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
       case 'v201709':
         return this._queryService
           .runOTQLQuery(datamart.id, 'select @count {} from UserPoint')
-          .then((res) => {
+          .then(res => {
             return res.data ? res.data.rows[0].count : 0;
           });
       case 'v201506':
-        return this._queryService
-          .runSelectorQLQuery(datamart.id)
-          .then((res) => res.data.total);
+        return this._queryService.runSelectorQLQuery(datamart.id).then(res => res.data.total);
       default:
         return Promise.resolve(0);
     }
@@ -265,15 +246,13 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
     };
     this._audiencePartitionsService
       .publishPartition(partitionId, publishedPartitionData)
-      .then((resp) => {
+      .then(resp => {
         this.loadData(partitionId);
         message.success(intl.formatMessage(messages.partitionPublished));
       });
   };
 
-  buildColumnDefinition = (): Array<
-    DataColumnDefinition<UserPartitionSegment>
-  > => {
+  buildColumnDefinition = (): Array<DataColumnDefinition<UserPartitionSegment>> => {
     const {
       intl: { formatMessage },
     } = this.props;
@@ -291,7 +270,7 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
         isHideable: false,
         render: (text, record) => {
           if (isLoadingStats) {
-            return <i className="mcs-table-cell-loading" />;
+            return <i className='mcs-table-cell-loading' />;
           }
           const value = statBySegmentId[record.id];
           return value ? value.user_points : '-';
@@ -303,7 +282,7 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
         isHideable: false,
         render: (text, record) => {
           if (isLoadingStats) {
-            return <i className="mcs-table-cell-loading" />;
+            return <i className='mcs-table-cell-loading' />;
           }
           const value = statBySegmentId[record.id];
           if (value && totalUserPoint) {
@@ -333,13 +312,13 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
     const partitionName = audiencePartition ? audiencePartition.name : '';
 
     return (
-      <div className="ant-layout">
+      <div className='ant-layout'>
         <PartitionActionBar
           partition={this.state.audiencePartition}
           publishPartition={this.displayHidePublishModal}
         />
-        <div className="ant-layout">
-          <Content className="mcs-content-container">
+        <div className='ant-layout'>
+          <Content className='mcs-content-container'>
             <ContentHeader title={partitionName} loading={isLoading} />
             <Card title={intl.formatMessage(messages.overview)}>
               <hr />
@@ -356,9 +335,4 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
   }
 }
 
-export default compose(
-  withRouter,
-  injectIntl,
-  injectWorkspace,
-  injectNotifications,
-)(Partition);
+export default compose(withRouter, injectIntl, injectWorkspace, injectNotifications)(Partition);

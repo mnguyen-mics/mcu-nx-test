@@ -20,24 +20,16 @@ class OfferCatalogActionBar extends React.Component<JoinedProps> {
   }
 
   render() {
-
-    const { 
-      organisationId, 
-      intl 
-    } = this.props;
+    const { organisationId, intl } = this.props;
 
     const breadcrumbPaths = [
       <Link key='1' to={`/v2/o/${organisationId}/marketplace/offercatalog`}>
         {intl.formatMessage(messages.offerCatalogTitle)}
-      </Link>
+      </Link>,
     ];
 
-    return (
-      <Actionbar pathItems={breadcrumbPaths} />
-    );
+    return <Actionbar pathItems={breadcrumbPaths} />;
   }
 }
 
-export default compose<JoinedProps, OfferCatalogActionbarProps>(
-  injectIntl,
-)(OfferCatalogActionBar);
+export default compose<JoinedProps, OfferCatalogActionbarProps>(injectIntl)(OfferCatalogActionBar);

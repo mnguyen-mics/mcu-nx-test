@@ -10,17 +10,14 @@ interface MapStateProps {
   notifyError: (err: any) => void;
 }
 
-type Props = InjectedIntlProps & MapStateProps & RouteComponentProps<{organisationId: string}>;
+type Props = InjectedIntlProps & MapStateProps & RouteComponentProps<{ organisationId: string }>;
 
 class CreateReportPage extends React.Component<Props> {
-
   render() {
     const organisationId = this.props.match.params.organisationId;
 
-    return (<ReportCreationEditor organisationId={organisationId} />);
+    return <ReportCreationEditor organisationId={organisationId} />;
   }
 }
 
-export default compose(
-  withRouter,
-)(CreateReportPage);
+export default compose(withRouter)(CreateReportPage);

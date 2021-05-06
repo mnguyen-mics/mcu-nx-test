@@ -2,10 +2,7 @@ import { IDisplayCampaignService } from './../../../../../services/DisplayCampai
 import { IDisplayCreativeFormService } from './../../../../Creative/DisplayAds/Edit/DisplayCreativeFormService';
 import { AdGroupResource } from './../../../../../models/campaign/display/AdGroupResource';
 import { omit } from 'lodash';
-import {
-  extractDataList,
-  extractData,
-} from '../../../../../services/ApiService';
+import { extractDataList, extractData } from '../../../../../services/ApiService';
 import {
   AdGroupFormData,
   AdFieldModel,
@@ -24,10 +21,7 @@ import {
   createFieldArrayModelWithMeta,
   createFieldArrayModel,
 } from '../../../../../utils/FormHelper';
-import {
-  Task,
-  executeTasksInSequence,
-} from '../../../../../utils/PromiseHelper';
+import { Task, executeTasksInSequence } from '../../../../../utils/PromiseHelper';
 import { EditAdGroupsFormData } from './MultiEdit/EditAdGroupsForm';
 import operation from '../../Edit/AdGroup/domain';
 import { injectable, inject } from 'inversify';
@@ -87,12 +81,9 @@ export class AdGroupFormService implements IAdGroupFormService {
     duplicate?: boolean,
   ): Promise<AdGroupFormData> {
     return Promise.all([
-      this._displayCampaignService
-        .getAdGroup(displayCampaignId, adGroupId)
-        .then(extractData),
+      this._displayCampaignService.getAdGroup(displayCampaignId, adGroupId).then(extractData),
       this.loadAdGroupDependencies(displayCampaignId, adGroupId, duplicate),
     ]).then(([adGroup, dependencies]) => {
-
       return {
         adGroup: {
           ...INITIAL_AD_GROUP_FORM_DATA.adGroup,
@@ -117,15 +108,9 @@ export class AdGroupFormService implements IAdGroupFormService {
       this._displayCampaignService
         .getAudienceSegments(displayCampaignId, adGroupId)
         .then(extractDataList),
-      this._displayCampaignService
-        .getAds(displayCampaignId, adGroupId)
-        .then(extractDataList),
-      this._displayCampaignService
-        .getLocations(displayCampaignId, adGroupId)
-        .then(extractDataList),
-      this._displayCampaignService
-        .getAdex(displayCampaignId, adGroupId)
-        .then(extractDataList),
+      this._displayCampaignService.getAds(displayCampaignId, adGroupId).then(extractDataList),
+      this._displayCampaignService.getLocations(displayCampaignId, adGroupId).then(extractDataList),
+      this._displayCampaignService.getAdex(displayCampaignId, adGroupId).then(extractDataList),
       this._displayCampaignService
         .getDisplayNetworks(displayCampaignId, adGroupId)
         .then(extractDataList),
@@ -169,10 +154,7 @@ export class AdGroupFormService implements IAdGroupFormService {
           });
         });
 
-        const inventoryCatalFields = [
-          ...displayNetworkFields,
-          ...adExchangeFields
-        ];
+        const inventoryCatalFields = [...displayNetworkFields, ...adExchangeFields];
 
         return {
           segmentFields,
@@ -241,11 +223,7 @@ export class AdGroupFormService implements IAdGroupFormService {
     });
   }
 
-  saveAdGroups(
-    campaignId: string,
-    adGroupIds: string[],
-    formData: EditAdGroupsFormData,
-  ) {
+  saveAdGroups(campaignId: string, adGroupIds: string[], formData: EditAdGroupsFormData) {
     const tasks: Task[] = [];
     adGroupIds.forEach(adGroupId => {
       tasks.push(() => {
@@ -254,8 +232,7 @@ export class AdGroupFormService implements IAdGroupFormService {
           .then(apiRes => apiRes.data)
           .then((adGroupData: any) => {
             const updatedData = formData.fields.reduce((acc, field) => {
-              const adGroupProperty: keyof AdGroupResource =
-                field.adGroupProperty;
+              const adGroupProperty: keyof AdGroupResource = field.adGroupProperty;
               return {
                 ...acc,
                 [field.adGroupProperty]: operation(
@@ -265,11 +242,7 @@ export class AdGroupFormService implements IAdGroupFormService {
                 ),
               };
             }, {});
-            return this._displayCampaignService.updateAdGroup(
-              campaignId,
-              adGroupId,
-              updatedData,
-            );
+            return this._displayCampaignService.updateAdGroup(campaignId, adGroupId, updatedData);
           });
       });
     });
@@ -311,13 +284,9 @@ export class AdGroupFormService implements IAdGroupFormService {
           this._displayCreativeFormService
             .saveDisplayCreative(organisationId, creativeFormData)
             .then(creativeId => {
-              return this._displayCampaignService.createAd(
-                campaignId,
-                adGroupId,
-                {
-                  creative_id: creativeId,
-                },
-              );
+              return this._displayCampaignService.createAd(campaignId, adGroupId, {
+                creative_id: creativeId,
+              });
             }),
         );
       } else if (!isAdResource(field.model)) {
@@ -333,9 +302,7 @@ export class AdGroupFormService implements IAdGroupFormService {
     initialIds
       .filter(id => !currentIds.includes(id))
       .forEach(id => {
-        tasks.push(() =>
-          this._displayCampaignService.deleteAd(campaignId, adGroupId, id),
-        );
+        tasks.push(() => this._displayCampaignService.deleteAd(campaignId, adGroupId, id));
       });
     return tasks;
   }
@@ -373,11 +340,7 @@ export class AdGroupFormService implements IAdGroupFormService {
         );
       } else {
         tasks.push(() =>
-          this._displayCampaignService.createAudienceSegment(
-            campaignId,
-            adGroupId,
-            field.model,
-          ),
+          this._displayCampaignService.createAudienceSegment(campaignId, adGroupId, field.model),
         );
       }
     });
@@ -385,11 +348,7 @@ export class AdGroupFormService implements IAdGroupFormService {
       .filter(id => !currentIds.includes(id))
       .forEach(id => {
         tasks.push(() =>
-          this._displayCampaignService.deleteAudienceSegment(
-            campaignId,
-            adGroupId,
-            id,
-          ),
+          this._displayCampaignService.deleteAudienceSegment(campaignId, adGroupId, id),
         );
       });
     return tasks;
@@ -419,33 +378,18 @@ export class AdGroupFormService implements IAdGroupFormService {
       if (isLocationSelectionResource(field.model)) {
         const id = field.model.id;
         tasks.push(() =>
-          this._displayCampaignService.updateLocation(
-            campaignId,
-            adGroupId,
-            id,
-            field.model,
-          ),
+          this._displayCampaignService.updateLocation(campaignId, adGroupId, id, field.model),
         );
       } else {
         tasks.push(() =>
-          this._displayCampaignService.createLocation(
-            campaignId,
-            adGroupId,
-            field.model,
-          ),
+          this._displayCampaignService.createLocation(campaignId, adGroupId, field.model),
         );
       }
     });
     initialIds
       .filter(id => !currentIds.includes(id))
       .forEach(id => {
-        tasks.push(() =>
-          this._displayCampaignService.deleteLocation(
-            campaignId,
-            adGroupId,
-            id,
-          ),
-        );
+        tasks.push(() => this._displayCampaignService.deleteLocation(campaignId, adGroupId, id));
       });
     return tasks;
   }
@@ -461,10 +405,7 @@ export class AdGroupFormService implements IAdGroupFormService {
     const initialDisplayNetworkIds: string[] = [];
 
     initialInventoryCatalFields.forEach(field => {
-      if (
-        field.model.type === 'AD_EXCHANGE' &&
-        isAdExchangeSelectionResource(field.model.data)
-      ) {
+      if (field.model.type === 'AD_EXCHANGE' && isAdExchangeSelectionResource(field.model.data)) {
         initialAdExchangeIds.push(field.model.data.id);
       }
       if (
@@ -480,10 +421,7 @@ export class AdGroupFormService implements IAdGroupFormService {
     const currentDisplayNetworkIds: string[] = [];
 
     inventoryCatalFields.forEach(field => {
-      if (
-        field.model.type === 'AD_EXCHANGE' &&
-        isAdExchangeSelectionResource(field.model.data)
-      ) {
+      if (field.model.type === 'AD_EXCHANGE' && isAdExchangeSelectionResource(field.model.data)) {
         currentAdExchangeIds.push(field.model.data.id);
       }
       if (
@@ -501,21 +439,10 @@ export class AdGroupFormService implements IAdGroupFormService {
         if (isAdExchangeSelectionResource(field.model.data)) {
           const id = field.model.data.id;
           tasks.push(() =>
-            this._displayCampaignService.updateAdex(
-              campaignId,
-              adGroupId,
-              id,
-              data,
-            ),
+            this._displayCampaignService.updateAdex(campaignId, adGroupId, id, data),
           );
         } else {
-          tasks.push(() =>
-            this._displayCampaignService.createAdex(
-              campaignId,
-              adGroupId,
-              data,
-            ),
-          );
+          tasks.push(() => this._displayCampaignService.createAdex(campaignId, adGroupId, data));
         }
       }
 
@@ -524,20 +451,11 @@ export class AdGroupFormService implements IAdGroupFormService {
         if (isDisplayNetworkSelectionResource(field.model.data)) {
           const id = field.model.data.id;
           tasks.push(() =>
-            this._displayCampaignService.updateDisplayNetwork(
-              campaignId,
-              adGroupId,
-              id,
-              data,
-            ),
+            this._displayCampaignService.updateDisplayNetwork(campaignId, adGroupId, id, data),
           );
         } else {
           tasks.push(() =>
-            this._displayCampaignService.createDisplayNetwork(
-              campaignId,
-              adGroupId,
-              data,
-            ),
+            this._displayCampaignService.createDisplayNetwork(campaignId, adGroupId, data),
           );
         }
       }
@@ -547,19 +465,13 @@ export class AdGroupFormService implements IAdGroupFormService {
     initialAdExchangeIds
       .filter(id => !currentAdExchangeIds.includes(id))
       .forEach(id => {
-        tasks.push(() =>
-          this._displayCampaignService.deleteAdex(campaignId, adGroupId, id),
-        );
+        tasks.push(() => this._displayCampaignService.deleteAdex(campaignId, adGroupId, id));
       });
     initialDisplayNetworkIds
       .filter(id => !currentDisplayNetworkIds.includes(id))
       .forEach(id => {
         tasks.push(() =>
-          this._displayCampaignService.deleteDisplayNetwork(
-            campaignId,
-            adGroupId,
-            id,
-          ),
+          this._displayCampaignService.deleteDisplayNetwork(campaignId, adGroupId, id),
         );
       });
     return tasks;

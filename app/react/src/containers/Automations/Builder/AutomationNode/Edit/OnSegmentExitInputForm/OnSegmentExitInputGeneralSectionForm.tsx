@@ -6,9 +6,7 @@ import { TYPES } from '../../../../../../constants/types';
 import { lazyInject } from '../../../../../../config/inversify.config';
 import { IAudienceSegmentService } from '../../../../../../services/AudienceSegmentService';
 import { compose } from 'recompose';
-import withNormalizer, {
-  NormalizerProps,
-} from '../../../../../../components/Form/withNormalizer';
+import withNormalizer, { NormalizerProps } from '../../../../../../components/Form/withNormalizer';
 import { withValidators, FormSection } from '../../../../../../components/Form';
 import { FormInfiniteSearchObjectField } from '../../../../../QueryTool/JSONOTQL/Edit/Sections/Field/FieldNodeForm';
 import { SegmentNameDisplay } from '../../../../../Audience/Common/SegmentNameDisplay';
@@ -32,10 +30,7 @@ type Props = OnSegmentExitInputGeneralSectionFormProps &
   RouteComponentProps<{ organisationId: string }> &
   NormalizerProps;
 
-class OnSegmentExitInputGeneralSectionForm extends React.Component<
-  Props,
-  State
-> {
+class OnSegmentExitInputGeneralSectionForm extends React.Component<Props, State> {
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
 
@@ -43,11 +38,7 @@ class OnSegmentExitInputGeneralSectionForm extends React.Component<
     super(props);
   }
 
-  fetchListMethod = (
-    keywords: string,
-    firstResult: number,
-    maxResults: number,
-  ) => {
+  fetchListMethod = (keywords: string, firstResult: number, maxResults: number) => {
     const {
       match: {
         params: { organisationId },
@@ -84,7 +75,7 @@ class OnSegmentExitInputGeneralSectionForm extends React.Component<
       .then(({ data: segment }) => ({
         key: segment.id,
         label: <SegmentNameDisplay audienceSegmentResource={segment} />,
-        value: segment.id
+        value: segment.id,
       }))
       .catch(error => {
         this.props.notifyError(error);
@@ -107,7 +98,7 @@ class OnSegmentExitInputGeneralSectionForm extends React.Component<
         />
         <FormSection title={messages.configurationTitle} />
         <FormInfiniteSearchObjectField
-          name="segmentId"
+          name='segmentId'
           component={FormInfiniteSearchObject}
           validate={[isRequired]}
           formItemProps={{
@@ -121,7 +112,7 @@ class OnSegmentExitInputGeneralSectionForm extends React.Component<
             mode: undefined,
             showSearch: true,
           }}
-          type="Audience"
+          type='Audience'
           small={true}
         />
       </div>
@@ -139,8 +130,7 @@ export default compose<Props, OnSegmentExitInputGeneralSectionFormProps>(
 
 export const messages = defineMessages({
   sectionGeneralTitle: {
-    id:
-      'automation.builder.node.onSegmentExitInputForm.generalInfoSection.title',
+    id: 'automation.builder.node.onSegmentExitInputForm.generalInfoSection.title',
     defaultMessage: 'Description',
   },
   sectionGeneralSubtitle: {
@@ -148,13 +138,11 @@ export const messages = defineMessages({
     defaultMessage: 'This is the starting point for your automation.',
   },
   configurationTitle: {
-    id:
-      'automation.builder.node.onSegmentExitInputForm.generalInfoSection.configuration.title',
+    id: 'automation.builder.node.onSegmentExitInputForm.generalInfoSection.configuration.title',
     defaultMessage: 'Configuration',
   },
   segmentExitInputNameTitle: {
     id: 'automation.builder.node.onSegmentExitInputForm.name.title',
-    defaultMessage:
-      'Users will enter this automation when they leave this segment.',
+    defaultMessage: 'Users will enter this automation when they leave this segment.',
   },
 });

@@ -8,12 +8,8 @@ import {
   FormInputField,
   FormAlertInputField,
 } from '../../../../../../components/Form';
-import withValidators, {
-  ValidatorProps,
-} from '../../../../../../components/Form/withValidators';
-import withNormalizer, {
-  NormalizerProps,
-} from '../../../../../../components/Form/withNormalizer';
+import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
+import withNormalizer, { NormalizerProps } from '../../../../../../components/Form/withNormalizer';
 import FormAlertInput from '../../../../../../components/Form/FormAlertInput';
 
 type Props = InjectedIntlProps & ValidatorProps & NormalizerProps;
@@ -48,7 +44,7 @@ class GeneralFormSection extends React.Component<Props, State> {
         />
 
         <FormInputField
-          name="site.name"
+          name='site.name'
           component={FormInput}
           validate={[isRequired]}
           formItemProps={{
@@ -56,9 +52,7 @@ class GeneralFormSection extends React.Component<Props, State> {
             required: true,
           }}
           inputProps={{
-            placeholder: formatMessage(
-              messages.contentSectionGeneralNamePlaceholder,
-            ),
+            placeholder: formatMessage(messages.contentSectionGeneralNamePlaceholder),
           }}
           helpToolTipProps={{
             title: formatMessage(messages.contentSectionGeneralNameTooltip),
@@ -66,7 +60,7 @@ class GeneralFormSection extends React.Component<Props, State> {
         />
 
         <FormAlertInputField
-          name="site.token"
+          name='site.token'
           component={FormAlertInput}
           validate={[isRequired]}
           formItemProps={{
@@ -74,20 +68,18 @@ class GeneralFormSection extends React.Component<Props, State> {
             required: true,
           }}
           inputProps={{
-            placeholder: formatMessage(
-              messages.contentSectionGeneralTokenPlaceholder,
-            ),
+            placeholder: formatMessage(messages.contentSectionGeneralTokenPlaceholder),
           }}
           helpToolTipProps={{
             title: formatMessage(messages.contentSectionGeneralTokenTooltip),
           }}
-          iconType="warning"
-          type="warning"
+          iconType='warning'
+          type='warning'
           message={formatMessage(messages.warningOnTokenEdition)}
         />
 
         <FormInputField
-          name="site.domain"
+          name='site.domain'
           component={FormInput}
           validate={[isRequired, isValidDomain]}
           formItemProps={{
@@ -95,9 +87,7 @@ class GeneralFormSection extends React.Component<Props, State> {
             required: true,
           }}
           inputProps={{
-            placeholder: formatMessage(
-              messages.contentSectionGeneralDomainPlaceholder,
-            ),
+            placeholder: formatMessage(messages.contentSectionGeneralDomainPlaceholder),
           }}
           helpToolTipProps={{
             title: formatMessage(messages.contentSectionGeneralDomainTooltip),
@@ -108,8 +98,4 @@ class GeneralFormSection extends React.Component<Props, State> {
   }
 }
 
-export default compose(
-  injectIntl,
-  withValidators,
-  withNormalizer,
-)(GeneralFormSection);
+export default compose(injectIntl, withValidators, withNormalizer)(GeneralFormSection);

@@ -201,9 +201,7 @@ class Monitoring extends React.Component<Props, State> {
       `/v2/o/${organisationId}/audience/timeline/${identifier.type}/${
         identifier.id
       }?datamartId=${datamartId}${
-        identifier.compartmentId
-          ? `&compartmentId=${identifier.compartmentId}`
-          : ''
+        identifier.compartmentId ? `&compartmentId=${identifier.compartmentId}` : ''
       }`,
     );
   };
@@ -214,84 +212,68 @@ class Monitoring extends React.Component<Props, State> {
     const { isModalVisible, monitoringData, isLoading } = this.state;
 
     return (
-      <div className="ant-layout">
+      <div className='ant-layout'>
         <MonitoringActionbar
           selectedDatamart={selectedDatamart}
           onIdentifierChange={this.onIdentifierChange}
           isModalVisible={isModalVisible}
           handleModal={this.handleModal}
         />
-        <div className="ant-layout">
-          { !isLoading ? <Content className="mcs-content-container">
-            {monitoringData.isUserFound ? (
-              <div>
-                <TimelineHeader
-                  dataSource={monitoringData}
-                  isLoading={isLoading}
-                />
-                <Row
-                  gutter={20}
-                  style={{ marginTop: '20px' }}
-                  className="mcs-monitoring"
-                >
-                  <Col span={6}>
-                    <div className="mcs-subtitle">
-                      <FormattedMessage {...messages.visitor} />
-                    </div>
-                    <ProfileCard
-                      dataSource={monitoringData.userProfile}
-                      isLoading={isLoading}
-                    />
-                    <SegmentsCard
-                      dataSource={monitoringData.userSegmentList}
-                      isLoading={isLoading}
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <div className="mcs-subtitle">
-                      <FormattedMessage {...messages.activities} />
-                    </div>
+        <div className='ant-layout'>
+          {!isLoading ? (
+            <Content className='mcs-content-container'>
+              {monitoringData.isUserFound ? (
+                <div>
+                  <TimelineHeader dataSource={monitoringData} isLoading={isLoading} />
+                  <Row gutter={20} style={{ marginTop: '20px' }} className='mcs-monitoring'>
+                    <Col span={6}>
+                      <div className='mcs-subtitle'>
+                        <FormattedMessage {...messages.visitor} />
+                      </div>
+                      <ProfileCard dataSource={monitoringData.userProfile} isLoading={isLoading} />
+                      <SegmentsCard
+                        dataSource={monitoringData.userSegmentList}
+                        isLoading={isLoading}
+                      />
+                    </Col>
+                    <Col span={12}>
+                      <div className='mcs-subtitle'>
+                        <FormattedMessage {...messages.activities} />
+                      </div>
 
-                    <ActivitiesTimeline
-                      selectedDatamart={selectedDatamart}
-                      userIdentifier={monitoringData.userIdentifier}
-                    />
-                  </Col>
-                  <Col span={6}>
-                    <div className="mcs-subtitle">
-                      <FormattedMessage {...messages.identifiers} />
-                    </div>
-                    <AccountIdCard
-                      userAccountCompartments={
-                        monitoringData.userAccountCompartments
-                      }
-                      userAccountsByCompartmentId={
-                        monitoringData.userAccountsByCompartmentId
-                      }
-                      isLoading={isLoading}
-                    />
-                    <DeviceCard
-                      dataSource={monitoringData.userAgentList}
-                      isLoading={isLoading}
-                    />
-                    <EmailCard
-                      dataSource={monitoringData.userEmailList}
-                      isLoading={isLoading}
-                    />
-                    <UserChoicesCard
-                      dataSource={monitoringData.userChoices}
-                      isLoading={isLoading}
-                    />
-                  </Col>
-                </Row>
-              </div>
-            ) : (
-              <EmptyTableView
-                iconType="user"
-                message={this.props.intl.formatMessage(messages.pleaseFillInformations)}
-              />
-            )}
-          </Content> : <Loading isFullScreen={true} />}
+                      <ActivitiesTimeline
+                        selectedDatamart={selectedDatamart}
+                        userIdentifier={monitoringData.userIdentifier}
+                      />
+                    </Col>
+                    <Col span={6}>
+                      <div className='mcs-subtitle'>
+                        <FormattedMessage {...messages.identifiers} />
+                      </div>
+                      <AccountIdCard
+                        userAccountCompartments={monitoringData.userAccountCompartments}
+                        userAccountsByCompartmentId={monitoringData.userAccountsByCompartmentId}
+                        isLoading={isLoading}
+                      />
+                      <DeviceCard dataSource={monitoringData.userAgentList} isLoading={isLoading} />
+                      <EmailCard dataSource={monitoringData.userEmailList} isLoading={isLoading} />
+                      <UserChoicesCard
+                        dataSource={monitoringData.userChoices}
+                        isLoading={isLoading}
+                      />
+                    </Col>
+                  </Row>
+                </div>
+              ) : (
+                <EmptyTableView
+                  iconType='user'
+                  message={this.props.intl.formatMessage(messages.pleaseFillInformations)}
+                />
+              )}
+            </Content>
+          ) : (
+            <Loading isFullScreen={true} />
+          )}
         </div>
       </div>
     );

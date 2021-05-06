@@ -64,14 +64,10 @@ class MetricInfo extends React.Component<Props, State> {
     const { isTooltipVisible } = this.state;
 
     return (
-      <Tooltip
-        placement="top"
-        title={formatMessage(tooltipMessage)}
-        visible={isTooltipVisible}
-      >
+      <Tooltip placement='top' title={formatMessage(tooltipMessage)} visible={isTooltipVisible}>
         <div
           onClick={onClick}
-          className="metric-info"
+          className='metric-info'
           onMouseEnter={this.showTooltip}
           onMouseLeave={this.hideTooltip}
         >
@@ -80,8 +76,8 @@ class MetricInfo extends React.Component<Props, State> {
             type={iconType}
             className={this.generateStatusColor(color)}
           />
-          <div className="metric-label">{formatMessage(message)}</div>
-          <div className="metric-value">{metricValue}</div>
+          <div className='metric-label'>{formatMessage(message)}</div>
+          <div className='metric-value'>{metricValue}</div>
         </div>
       </Tooltip>
     );

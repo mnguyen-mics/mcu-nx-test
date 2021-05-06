@@ -59,15 +59,16 @@ const messages = defineMessages({
   },
   deleteChannelModalTitle: {
     id: 'settings.datamart.channel.delete.modal.title',
-    defaultMessage: "You are about to delete a channel from your datamart. This action cannot be undone. Do you want to proceed anyway ?",
+    defaultMessage:
+      'You are about to delete a channel from your datamart. This action cannot be undone. Do you want to proceed anyway ?',
   },
   deleteChannelModalOk: {
     id: 'settings.datamart.channel.delete.modal.ok',
-    defaultMessage: "Delete Now",
+    defaultMessage: 'Delete Now',
   },
   deleteChannelModalCancel: {
     id: 'settings.datamart.channel.delete.modal.cancel',
-    defaultMessage: "Cancel",
+    defaultMessage: 'Cancel',
   },
   emptyChannels: {
     id: 'settings.datamart.channels.list.empty',

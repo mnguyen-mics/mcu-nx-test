@@ -4,11 +4,7 @@ import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Layout } from 'antd';
 import CampaignDashboardHeader from '../../../../../Campaigns/Common/CampaignDashboardHeader';
-import {
-  Card,
-  Actionbar,
-  McsIcon,
-} from '@mediarithmics-private/mcs-components-library';
+import { Card, Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../../Notifications/injectNotifications';
@@ -47,8 +43,7 @@ const messageMap = defineMessages({
   },
   statusUpdateFailure: {
     id: 'email.automatedCampaigns.dashboard.status-update-failure',
-    defaultMessage:
-      'There was an error updating your campaign... Please try again...',
+    defaultMessage: 'There was an error updating your campaign... Please try again...',
   },
   notifSuccess: {
     id: 'email.automatedCampaigns.dashboard.notification-success',
@@ -73,10 +68,7 @@ interface State {
   dateRange: McsDateRangeValue;
 }
 
-class EmailCampaignAutomatedDashboardPage extends React.Component<
-  Props,
-  State
-> {
+class EmailCampaignAutomatedDashboardPage extends React.Component<Props, State> {
   @lazyInject(TYPES.IEmailCampaignService)
   private _emailCampaignService: IEmailCampaignService;
 
@@ -184,22 +176,17 @@ class EmailCampaignAutomatedDashboardPage extends React.Component<
       this.setState({ dateRange: newRange });
 
     return (
-      <div className="ant-layout">
-        <Actionbar
-          pathItems={[
-            campaign ? campaign.name : '',
-          ]}
-          edition={true}
-        >
+      <div className='ant-layout'>
+        <Actionbar pathItems={[campaign ? campaign.name : '']} edition={true}>
           <McsIcon
-            type="close"
-            className="close-icon"
+            type='close'
+            className='close-icon'
             style={{ cursor: 'pointer' }}
             onClick={this.props.close}
           />
         </Actionbar>
-        <div className="ant-layout">
-          <Content className="mcs-content-container">
+        <div className='ant-layout'>
+          <Content className='mcs-content-container'>
             <CampaignDashboardHeader campaign={campaign} />
             <Card title={intl.formatMessage(messageMap.overview)}>
               <Overview campaign={campaign} isLoading={isLoadingCampaign} />

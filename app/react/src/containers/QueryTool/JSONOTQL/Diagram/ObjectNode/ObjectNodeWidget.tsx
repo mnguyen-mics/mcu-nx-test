@@ -3,7 +3,14 @@ import cuid from 'cuid';
 import { compose } from 'recompose';
 import ObjectNodeModel from './ObjectNodeModel';
 import { WindowBodyPortal } from '../../../../../components';
-import { TreeNodeOperations, DragAndDropInterface, computeSchemaPathFromQueryPath, computeAdditionalNode, SchemaItem, MicsDiagramEngine } from '../../domain';
+import {
+  TreeNodeOperations,
+  DragAndDropInterface,
+  computeSchemaPathFromQueryPath,
+  computeAdditionalNode,
+  SchemaItem,
+  MicsDiagramEngine,
+} from '../../domain';
 import { injectDrawer } from '../../../../../components/Drawer';
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import { ObjectLikeTypeInfoResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
@@ -14,7 +21,7 @@ import {
   generateFormDataFromObjectNode,
   FrequencyConverter,
 } from '../../Edit/domain';
-import { injectIntl, InjectedIntlProps, FormattedMessage,  } from 'react-intl';
+import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { frequencyModeMessageMap } from '../../messages';
 import { DropTarget, ConnectDropTarget, DropTargetMonitor } from 'react-dnd';
 import { ObjectTreeExpressionNodeShape } from '../../../../../models/datamart/graphdb/QueryDocument';
@@ -44,19 +51,27 @@ const addinTarget = {
   drop(props: Props, monitor: DropTargetMonitor) {
     const releasedItem = monitor.getItem() as DragAndDropInterface;
     const releasedItemPath = releasedItem.path.split('.').map(i => parseInt(i, 10));
-    const hostObjectPath =  computeSchemaPathFromQueryPath(props.query, props.node.treeNodePath, props.schema);
+    const hostObjectPath = computeSchemaPathFromQueryPath(
+      props.query,
+      props.node.treeNodePath,
+      props.schema,
+    );
 
     const newQuery = computeAdditionalNode(releasedItemPath, hostObjectPath.length, props.schema);
-    if (newQuery) props.treeNodeOperations.addNode(props.node.treeNodePath, newQuery)
+    if (newQuery) props.treeNodeOperations.addNode(props.node.treeNodePath, newQuery);
   },
   canDrop(props: ObjectNodeWidgetProps, monitor: DropTargetMonitor) {
     // compute path in schema and compare to the one sent from the grabbed item
 
-    const itemTypeSchemaPath = computeSchemaPathFromQueryPath(props.query, props.node.treeNodePath, props.schema).join('.');
+    const itemTypeSchemaPath = computeSchemaPathFromQueryPath(
+      props.query,
+      props.node.treeNodePath,
+      props.schema,
+    ).join('.');
     const canDrop = (monitor.getItem() as DragAndDropInterface).path.startsWith(itemTypeSchemaPath);
 
     return canDrop;
-  }
+  },
 };
 
 interface DroppedItemProps {
@@ -69,7 +84,7 @@ interface DroppedItemProps {
 type Props = ObjectNodeWidgetProps &
   InjectedIntlProps &
   InjectedDrawerProps &
-  DroppedItemProps & 
+  DroppedItemProps &
   InjectedThemeColorsProps;
 
 class ObjectNodeWidget extends React.Component<Props, State> {
@@ -100,14 +115,22 @@ class ObjectNodeWidget extends React.Component<Props, State> {
 
   copyNode = () => {
     this.setState({ focus: false }, () => {
-      this.props.treeNodeOperations.copyNode(this.props.node.treeNodePath, this.props.node.objectTypeInfo.name, this.props.node.treeNodePath);
+      this.props.treeNodeOperations.copyNode(
+        this.props.node.treeNodePath,
+        this.props.node.objectTypeInfo.name,
+        this.props.node.treeNodePath,
+      );
       this.props.treeNodeOperations.updateLayout();
     });
   };
 
   cutNode = () => {
     this.setState({ focus: false }, () => {
-      this.props.treeNodeOperations.cutNode(this.props.node.treeNodePath, this.props.node.objectTypeInfo.name, this.props.node.treeNodePath);
+      this.props.treeNodeOperations.cutNode(
+        this.props.node.treeNodePath,
+        this.props.node.objectTypeInfo.name,
+        this.props.node.treeNodePath,
+      );
       this.props.treeNodeOperations.updateLayout();
     });
   };
@@ -118,17 +141,16 @@ class ObjectNodeWidget extends React.Component<Props, State> {
       if (pasteValue) {
         const newObject = {
           ...this.props.node.objectNode,
-        }
+        };
         newObject.expressions.push(pasteValue);
-        this.props.treeNodeOperations.updateNode(this.props.node.treeNodePath, newObject)
-      };
+        this.props.treeNodeOperations.updateNode(this.props.node.treeNodePath, newObject);
+      }
       this.props.diagramEngine.emptyClipboard();
       this.props.treeNodeOperations.updateLayout();
-    })
-  }
+    });
+  };
 
   removeNode = () => {
-
     this.setState({ focus: false }, () => {
       this.props.treeNodeOperations.deleteNode(this.props.node.treeNodePath);
       this.props.treeNodeOperations.updateLayout();
@@ -163,15 +185,14 @@ class ObjectNodeWidget extends React.Component<Props, State> {
     });
   };
 
-
-  canPasteHere = (): ObjectTreeExpressionNodeShape | undefined => {
+  canPasteHere = (): ObjectTreeExpressionNodeShape | undefined => {
     const copiedValues = this.props.diagramEngine.getCopiedValue();
     if (copiedValues && copiedValues.copiedObjectType && copiedValues.objectType) {
       const copiedObjectType = copiedValues.copiedObjectType;
-      if (copiedObjectType.type === 'FIELD' || copiedObjectType.type === 'OBJECT') {
+      if (copiedObjectType.type === 'FIELD' || copiedObjectType.type === 'OBJECT') {
         const objectTypeLike = this.props.node.objectTypeInfo.fields.find(f => {
           const match = f.field_type.match(/\w+/);
-          return match ? match[0] === copiedValues.objectType : false
+          return match ? match[0] === copiedValues.objectType : false;
         });
         if (objectTypeLike) {
           return copiedValues.copiedObjectType;
@@ -179,18 +200,10 @@ class ObjectNodeWidget extends React.Component<Props, State> {
       }
     }
     return undefined;
-  }
+  };
 
   render() {
-    const {
-      node,
-      intl,
-      isOver,
-      isDragging,
-      canDrop,
-      connectDropTarget,
-      colors
-    } = this.props;
+    const { node, intl, isOver, isDragging, canDrop, connectDropTarget, colors } = this.props;
 
     const isActive = isOver && canDrop;
 
@@ -206,17 +219,19 @@ class ObjectNodeWidget extends React.Component<Props, State> {
 
     const frequency = FrequencyConverter.toFrequency(node.objectNode);
 
-    const objectInfo =  node.objectTypeInfo.fields.find(f => f.name === node.objectNode.field);
-    const objectName = objectInfo && objectInfo.decorator && objectInfo.decorator.hidden === false ? objectInfo.decorator.label : node.objectNode.field;
+    const objectInfo = node.objectTypeInfo.fields.find(f => f.name === node.objectNode.field);
+    const objectName =
+      objectInfo && objectInfo.decorator && objectInfo.decorator.hidden === false
+        ? objectInfo.decorator.label
+        : node.objectNode.field;
 
     const renderedObjectNode = (
-      <div className="field">
-        <div className="objectValue">
+      <div className='field'>
+        <div className='objectValue'>
           <span>{objectName}</span>
           {frequency.enabled && (
             <div>
-              {intl.formatMessage(frequencyModeMessageMap[frequency.mode])}{' '}
-              {frequency.value} times
+              {intl.formatMessage(frequencyModeMessageMap[frequency.mode])} {frequency.value} times
             </div>
           )}
         </div>
@@ -227,127 +242,127 @@ class ObjectNodeWidget extends React.Component<Props, State> {
     let borderColor = node.getColor();
 
     if (canDrop) {
-      backgroundColor = colors["mcs-info"];
-      borderColor = colors["mcs-info"];
+      backgroundColor = colors['mcs-info'];
+      borderColor = colors['mcs-info'];
     }
 
     if (isActive) {
-      backgroundColor = colors["mcs-success"];
-      borderColor = colors["mcs-success"];
+      backgroundColor = colors['mcs-success'];
+      borderColor = colors['mcs-success'];
     }
 
     const opacity = isDragging && !canDrop ? 0.3 : 1;
 
     const renderEditMenu = [
-     ( <div onClick={this.editNode} className="boolean-menu-item" key="EDIT"> 
-                  <FormattedMessage {...messages.edit} />
-                </div>)
-                
+      <div onClick={this.editNode} className='boolean-menu-item' key='EDIT'>
+        <FormattedMessage {...messages.edit} />
+      </div>,
     ];
 
     if (this.props.diagramEngine.isCopying()) {
       if (!!this.canPasteHere()) {
         renderEditMenu.push(
-          <div onClick={this.pasteNode} className="boolean-menu-item" key="PASTE">
+          <div onClick={this.pasteNode} className='boolean-menu-item' key='PASTE'>
             <FormattedMessage {...messages.paste} />
-          </div>
-        )
+          </div>,
+        );
       }
     } else {
       renderEditMenu.push(
-        <div onClick={this.copyNode} className="boolean-menu-item" key="COPY">
+        <div onClick={this.copyNode} className='boolean-menu-item' key='COPY'>
           <FormattedMessage {...messages.copy} />
-        </div>
-      )
+        </div>,
+      );
       renderEditMenu.push(
-        <div onClick={this.cutNode} className="boolean-menu-item" key="CUT">
+        <div onClick={this.cutNode} className='boolean-menu-item' key='CUT'>
           <FormattedMessage {...messages.cut} />
-        </div>
-      )
+        </div>,
+      );
     }
-    
-    renderEditMenu.push(
-      <div onClick={this.removeNode} className="boolean-menu-item" key="REMOVE">
-        <FormattedMessage {...messages.remove} />
-      </div>
-    )
 
-    return connectDropTarget &&
-    connectDropTarget (
-      <div
-        id={this.id}
-        className="object-node"
-        onClick={onFocus}
-        onMouseEnter={onHover('enter')}
-        onMouseLeave={onHover('leave')}
-        style={{
-          ...node.getSize(),
-          borderRadius: 4,
-          borderStyle: 'solid',
-          fontWeight: 'bold',
-          color: '#ffffff',
-          borderColor: borderColor,
-          backgroundColor: backgroundColor,
-          opacity
-        }}
-      >
-        {renderedObjectNode}
-        
-        <FourAnchorPortWidget node={node} />
-        
-        {this.state.focus && (
-          <WindowBodyPortal>
-            <div className="query-builder">
-              <div
-                onClick={onFocus}
-                style={{
-                  position: 'fixed',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  backgroundColor: 'black',
-                  zIndex: 1000,
-                  opacity: 0.6,
-                }}
-              />
-              <span
-                className="object-node no-hover"
-                style={{
-                  ...node.getSize(),
-                  borderRadius: 4,
-                  borderStyle: 'solid',
-                  fontWeight: 'bold',
-                  color: '#ffffff',
-                  borderColor: node.getColor(),
-                  backgroundColor: node.getColor(),
-                  top: this.top - node.getSize().height * ((1 - zoomRatio) / 2),
-                  left:
-                    this.left - node.getSize().width * ((1 - zoomRatio) / 2),
-                  position: 'absolute',
-                  zIndex: 1002,
-                  transform: `scale(${zoomRatio})`,
-                }}
-                onClick={onFocus}
-              >
-                {renderedObjectNode}
-              </span>
-              <div
-                className="boolean-menu"
-                style={{
-                  top: this.top,
-                  left: this.left + node.getSize().width * zoomRatio,
-                  zIndex: 1001,
-                }}
-              >
-                {/* Uncomment when feature is ready */}
-                {/* <div onClick={this.toggleCollapsed} className='boolean-menu-item'>Collapse</div> */}
-                {renderEditMenu}
+    renderEditMenu.push(
+      <div onClick={this.removeNode} className='boolean-menu-item' key='REMOVE'>
+        <FormattedMessage {...messages.remove} />
+      </div>,
+    );
+
+    return (
+      connectDropTarget &&
+      connectDropTarget(
+        <div
+          id={this.id}
+          className='object-node'
+          onClick={onFocus}
+          onMouseEnter={onHover('enter')}
+          onMouseLeave={onHover('leave')}
+          style={{
+            ...node.getSize(),
+            borderRadius: 4,
+            borderStyle: 'solid',
+            fontWeight: 'bold',
+            color: '#ffffff',
+            borderColor: borderColor,
+            backgroundColor: backgroundColor,
+            opacity,
+          }}
+        >
+          {renderedObjectNode}
+
+          <FourAnchorPortWidget node={node} />
+
+          {this.state.focus && (
+            <WindowBodyPortal>
+              <div className='query-builder'>
+                <div
+                  onClick={onFocus}
+                  style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: 'black',
+                    zIndex: 1000,
+                    opacity: 0.6,
+                  }}
+                />
+                <span
+                  className='object-node no-hover'
+                  style={{
+                    ...node.getSize(),
+                    borderRadius: 4,
+                    borderStyle: 'solid',
+                    fontWeight: 'bold',
+                    color: '#ffffff',
+                    borderColor: node.getColor(),
+                    backgroundColor: node.getColor(),
+                    top: this.top - node.getSize().height * ((1 - zoomRatio) / 2),
+                    left: this.left - node.getSize().width * ((1 - zoomRatio) / 2),
+                    position: 'absolute',
+                    zIndex: 1002,
+                    transform: `scale(${zoomRatio})`,
+                  }}
+                  onClick={onFocus}
+                >
+                  {renderedObjectNode}
+                </span>
+                <div
+                  className='boolean-menu'
+                  style={{
+                    top: this.top,
+                    left: this.left + node.getSize().width * zoomRatio,
+                    zIndex: 1001,
+                  }}
+                >
+                  {/* Uncomment when feature is ready */}
+                  {/* <div onClick={this.toggleCollapsed} className='boolean-menu-item'>Collapse</div> */}
+                  {renderEditMenu}
+                </div>
               </div>
-            </div>
-          </WindowBodyPortal>
-        )}
-      </div>
+            </WindowBodyPortal>
+          )}
+        </div>,
+      )
     );
   }
 }
@@ -363,8 +378,8 @@ export default compose<Props, ObjectNodeWidgetProps>(
       connectDropTarget: connect.dropTarget(),
       isOver: monitor.isOver(),
       canDrop: monitor.canDrop(),
-      isDragging: monitor.getItemType()
-    })
+      isDragging: monitor.getItemType(),
+    }),
   ),
   injectIntl,
   injectDrawer,

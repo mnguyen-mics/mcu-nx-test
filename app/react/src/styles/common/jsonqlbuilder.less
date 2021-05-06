@@ -1,4 +1,3 @@
-
 .query-builder {
   width: 100%;
   &.full-screen {
@@ -11,24 +10,24 @@
 
   &.overlay {
     -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -o-user-select: none;
-  user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
   }
 
   &.edition-mode {
     display: flex;
     flex: auto;
     .schema-visualizer {
-      height: 100%
+      height: 100%;
     }
     .diagram {
       height: 100%;
     }
   }
 
-  .diagram.ant-col-18{
+  .diagram.ant-col-18 {
     width: 100%;
     float: left;
   }
@@ -37,7 +36,6 @@
     height: inherit;
     transition: max-width 0.3s ease !important;
   }
-
 
   // margin-bottom: 20px;
   height: inherit;
@@ -50,7 +48,7 @@
     align-items: center;
     border-radius: 50%;
     border-style: solid;
-    font-weight: bold;  
+    font-weight: bold;
     transition: 0.8s all ease;
     cursor: pointer;
     z-index: 100;
@@ -60,7 +58,7 @@
     position: absolute;
     display: grid;
     .boolean-menu-item {
-      background: rgba(0,0,0,.6);
+      background: rgba(0, 0, 0, 0.6);
       border-radius: 3px;
       color: #e6e6e6;
       display: block;
@@ -71,19 +69,18 @@
       -webkit-transition: -webkit-transform 85ms ease-in;
       transition: -webkit-transform 85ms ease-in;
       transition: transform 85ms ease-in;
-      transition: transform 85ms ease-in,-webkit-transform 85ms ease-in;
-      
+      transition: transform 85ms ease-in, -webkit-transform 85ms ease-in;
+
       cursor: pointer;
       &:hover {
-        background: rgba(0,0,0,.8);
+        background: rgba(0, 0, 0, 0.8);
         color: #fff;
         -webkit-transform: translateX(5px);
         transform: translateX(5px);
       }
     }
-    
   }
-  
+
   .object-button {
     z-index: -99;
     opacity: 0;
@@ -111,7 +108,8 @@
     }
   }
 
-  .field-node, .object-node {
+  .field-node,
+  .object-node {
     opacity: 1 !important;
     border-radius: 4px;
     display: flex;
@@ -125,7 +123,7 @@
     &.no-hover:hover {
       box-shadow: none;
     }
-   
+
     .field {
       width: 100%;
       transition: background-color 0.3s ease;
@@ -136,7 +134,8 @@
         opacity: 0;
         transition: opacity 100ms ease-in-out;
       }
-      .comparison, .objectValue {
+      .comparison,
+      .objectValue {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -163,7 +162,7 @@
       }
     }
   }
-  
+
   .group-button {
     z-index: -99;
     opacity: 0;
@@ -190,19 +189,19 @@
       color: #ffffff;
     }
   }
-  
+
   .object-clicked {
     z-index: 100;
-    opacity: 1;  
+    opacity: 1;
     transform: translateX(70px);
   }
-  
+
   .group-clicked {
     z-index: 99;
     opacity: 1;
     transform: translateX(163px);
   }
-  
+
   .plus-button {
     transition: 0.3s ease;
     transform: rotateZ(0deg);
@@ -216,35 +215,56 @@
     justify-content: center;
     align-items: center;
     .mcs-icon {
-      margin-right: 0px!important;
+      margin-right: 0px !important;
     }
-    &:focus{
+    &:focus {
       outline: none;
     }
   }
-  
+
   .plus-clicked {
     transform: rotateZ(45deg);
   }
 
-  .plus-node{
+  .plus-node {
     opacity: 1 !important;
   }
 
   .srd-diagram {
     height: inherit;
-    background-image: 
-      linear-gradient(0deg, transparent 24%, rgba(255, 255, 255, 0.5) 25%, rgba(255, 255, 255, 0.5) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, 0.5) 75%, rgba(255, 255, 255, 0.5) 76%, transparent 77%, transparent),
-      linear-gradient(90deg, transparent 24%, rgba(255, 255, 255, 0.5) 25%, rgba(255, 255, 255, 0.5) 26%, transparent 27%, transparent 74%, rgba(255, 255, 255, 0.5) 75%, rgba(255, 255, 255, 0.5) 76%, transparent 77%, transparent);
+    background-image: linear-gradient(
+        0deg,
+        transparent 24%,
+        rgba(255, 255, 255, 0.5) 25%,
+        rgba(255, 255, 255, 0.5) 26%,
+        transparent 27%,
+        transparent 74%,
+        rgba(255, 255, 255, 0.5) 75%,
+        rgba(255, 255, 255, 0.5) 76%,
+        transparent 77%,
+        transparent
+      ),
+      linear-gradient(
+        90deg,
+        transparent 24%,
+        rgba(255, 255, 255, 0.5) 25%,
+        rgba(255, 255, 255, 0.5) 26%,
+        transparent 27%,
+        transparent 74%,
+        rgba(255, 255, 255, 0.5) 75%,
+        rgba(255, 255, 255, 0.5) 76%,
+        transparent 77%,
+        transparent
+      );
     background-size: 100px 100px;
   }
-  
+
   .srd-port {
     width: 1px;
     height: 1px;
     background: rgba(255, 255, 255, 0.1);
   }
-  
+
   .mcs-card {
     .view-name {
       font-size: 0.8em;
@@ -261,8 +281,6 @@
   }
 
   .button-helpers {
-
-    
     position: absolute;
     right: 20px;
     z-index: 10000;
@@ -277,7 +295,7 @@
     &.top {
       top: 30px;
     }
-    
+
     .helper {
       width: 30px;
       height: 30px;
@@ -301,7 +319,7 @@
         color: white;
       }
       .mcs-icon {
-        margin: 0!important;
+        margin: 0 !important;
       }
     }
   }
@@ -340,7 +358,6 @@
     background-color: black;
     z-index: 1000;
     opacity: 0.6;
-    
   }
   .mcs-modal {
     position: fixed;
@@ -357,7 +374,7 @@
         color: white;
         font-size: 1.3em;
         font-weight: bold;
-        width: 40px
+        width: 40px;
       }
       .keyboard-about {
         padding: 10px;
@@ -366,8 +383,7 @@
         font-weight: bold;
       }
     }
-    
-  } 
+  }
 }
 
 .result-view {
@@ -394,8 +410,8 @@
     font-size: 1.5em;
     color: white;
     cursor: pointer;
-    .mcs-icon {
-      margin: 0!important
+    .mcs-icon  {
+      margin: 0 !important;
     }
 
     &.error {
@@ -433,7 +449,7 @@
     }
 
     .ant-tree-child-tree {
-      >.ant-tree-treenode {
+      > .ant-tree-treenode {
         border-top: @border-width-base @border-style-base @border-color-base;
         // &:hover {
         //   background-color: @hover-color;
@@ -478,8 +494,8 @@
     }
   }
 }
-  .srd-node{
-    >div{
-      opacity: 1 !important;
-    }
+.srd-node {
+  > div {
+    opacity: 1 !important;
   }
+}

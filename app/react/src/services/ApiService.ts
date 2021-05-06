@@ -65,11 +65,8 @@ function paramsToQueryString(paramsArg: { [key: string]: any } = {}) {
   if (!paramsArg) return '';
   const paramsToArray: string[] = Object.keys(paramsArg);
   const str: string = paramsToArray
-    .filter((key) => paramsArg[key] !== undefined)
-    .map(
-      (key) =>
-        `${encodeURIComponent(key)}=${encodeURIComponent(paramsArg[key])}`,
-    )
+    .filter(key => paramsArg[key] !== undefined)
+    .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(paramsArg[key])}`)
     .join('&');
   return str.length ? `?${str}` : '';
 }
@@ -87,11 +84,7 @@ function request(
     authenticated?: boolean;
   } = {},
 ) {
-  const baseUrl = options.adminApi
-    ? ADMIN_API_URL
-    : options.localUrl
-    ? LOCAL_URL
-    : API_URL;
+  const baseUrl = options.adminApi ? ADMIN_API_URL : options.localUrl ? LOCAL_URL : API_URL;
 
   const url = `${baseUrl}${endpoint}${paramsToQueryString(options.params)}`;
 
@@ -103,9 +96,7 @@ function request(
     if (token) {
       requestHeaders.append('Authorization', token);
     } else {
-      Promise.reject(
-        `Error. Authenticated without token, endpoint:${endpoint}`,
-      );
+      Promise.reject(`Error. Authenticated without token, endpoint:${endpoint}`);
     }
   }
 
@@ -149,22 +140,20 @@ function request(
       (contentType.indexOf('image/png') !== -1 ||
         contentType.indexOf('application/octet-stream') !== -1)
     ) {
-      return response.blob().then((blob) => {
+      return response.blob().then(blob => {
         if (!response.ok) {
           Promise.reject(blob);
         }
         return blob;
       });
     } else if (contentType && contentType.indexOf('text/html') !== -1) {
-      return response.status < 400
-        ? Promise.resolve()
-        : Promise.reject(response);
+      return response.status < 400 ? Promise.resolve() : Promise.reject(response);
     } else if (contentType && contentType.indexOf('text/plain') !== -1) {
       return response.status < 400 ? response.text() : Promise.reject(response);
     }
 
     // Considered as a json response by default
-    return response.json().then((json) => {
+    return response.json().then(json => {
       if (!response.ok) {
         return Promise.reject(json);
       }
@@ -187,8 +176,7 @@ function getRequest<T>(
     params,
     headers,
     ...options,
-    authenticated:
-      options.authenticated !== undefined ? options.authenticated : true,
+    authenticated: options.authenticated !== undefined ? options.authenticated : true,
   }) as Promise<T>;
 }
 
@@ -204,8 +192,7 @@ function postRequest<T>(
     headers,
     body,
     ...options,
-    authenticated:
-      options.authenticated !== undefined ? options.authenticated : true,
+    authenticated: options.authenticated !== undefined ? options.authenticated : true,
   }) as Promise<T>;
 }
 
@@ -221,8 +208,7 @@ function putRequest<T>(
     headers,
     body,
     ...options,
-    authenticated:
-      options.authenticated !== undefined ? options.authenticated : true,
+    authenticated: options.authenticated !== undefined ? options.authenticated : true,
   }) as Promise<T>;
 }
 
@@ -236,8 +222,7 @@ function deleteRequest<T>(
     params,
     headers,
     ...options,
-    authenticated:
-      options.authenticated !== undefined ? options.authenticated : true,
+    authenticated: options.authenticated !== undefined ? options.authenticated : true,
   }) as Promise<T>;
 }
 

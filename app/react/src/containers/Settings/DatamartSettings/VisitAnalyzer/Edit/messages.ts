@@ -16,6 +16,5 @@ export default defineMessages({
   visitAnalyzerEditBreadcrumb: {
     id: 'visitanalyzer.create.breadcrumb.editTitle',
     defaultMessage: 'Edit {name}',
-  }
-})
-;
+  },
+});

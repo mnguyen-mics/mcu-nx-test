@@ -84,22 +84,18 @@ class ResourceTimeline extends React.Component<Props, State> {
   }
 
   groupByDate = (array: any[], key: any) => {
-    return lodash.groupBy(array, (value) => {
+    return lodash.groupBy(array, value => {
       return moment(value[key]).format('YYYY-MM-DD');
     });
   };
 
   groupByTime = (array: any[], key: any) => {
-    return lodash.groupBy(array, (value) => {
+    return lodash.groupBy(array, value => {
       return moment(value[key]).format('YYYY-MM-DD HH:mm:ss');
     });
   };
 
-  fetchEvents = (
-    organisationId: string,
-    resourceType: ResourceType,
-    resourceId: string,
-  ) => {
+  fetchEvents = (organisationId: string, resourceType: ResourceType, resourceId: string) => {
     const { nextTime, eventCountOnOldestTime } = this.state;
     const params = nextTime
       ? {
@@ -126,7 +122,7 @@ class ResourceTimeline extends React.Component<Props, State> {
       () =>
         this._resourceHistoryService
           .getResourceHistory(organisationId, params)
-          .then((response) => {
+          .then(response => {
             response.count === 0
               ? this.setState({
                   events: {
@@ -143,12 +139,12 @@ class ResourceTimeline extends React.Component<Props, State> {
                     ...params,
                     max_results: params.max_results + 1,
                   })
-                  .then((extendedResponse) => {
-                    this.setState((prevState) => {
+                  .then(extendedResponse => {
+                    this.setState(prevState => {
                       const newData = prevState.events.items.concat(
                         response.data
                           .slice(eventCountOnOldestTime)
-                          .map((rhr) => {
+                          .map(rhr => {
                             return rhr.events;
                           })
                           .reduce((x, y) => x.concat(y), []),
@@ -168,8 +164,7 @@ class ResourceTimeline extends React.Component<Props, State> {
                           response.data[response.data.length - 1]
                             ? moment(
                                 response.data[response.data.length - 1].events[
-                                  response.data[response.data.length - 1].events
-                                    .length - 1
+                                  response.data[response.data.length - 1].events.length - 1
                                 ].timestamp,
                               ).format('x')
                             : undefined,
@@ -185,8 +180,8 @@ class ResourceTimeline extends React.Component<Props, State> {
                     });
                   });
           })
-          .catch((err) => {
-            this.setState((prevState) => {
+          .catch(err => {
+            this.setState(prevState => {
               const nextState = {
                 events: {
                   isLoading: false,
@@ -219,15 +214,15 @@ class ResourceTimeline extends React.Component<Props, State> {
   renderPendingTimeline = (events: Events) => {
     if (events.hasItems) {
       return events.isLoading ? (
-        <Spin size="small" />
+        <Spin size='small' />
       ) : (
-        <button className="mcs-card-inner-action" onClick={this.fetchNewEvents}>
+        <button className='mcs-card-inner-action' onClick={this.fetchNewEvents}>
           <FormattedMessage {...messages.seeMore} />
         </button>
       );
     } else {
       return (
-        <div className="mcs-title">
+        <div className='mcs-title'>
           {events.items.length === 0 ? (
             <FormattedMessage {...messages.noHistory} />
           ) : (
@@ -259,34 +254,30 @@ class ResourceTimeline extends React.Component<Props, State> {
 
     const keys = Object.keys(events.byDay);
     return events.isLoading && !events.hasItems ? (
-      <Col span={24} className="text-center">
+      <Col span={24} className='text-center'>
         <Spin />
       </Col>
     ) : (
       <Timeline
         pending={this.renderPendingTimeline(events)}
-        pendingDot={<McsIcon type="status" className="mcs-timeline-last-dot" />}
+        pendingDot={<McsIcon type='status' className='mcs-timeline-last-dot' />}
       >
-        {keys.map((day) => {
+        {keys.map(day => {
           const eventsOnDay = events.byDay[day];
           const eventsOnTime = this.groupByTime(eventsOnDay, 'timestamp');
 
           const dayToFormattedMessage = this.renderDate(day);
           return (
-            <div className="mcs-timeline" key={day}>
-              <Timeline.Item
-                dot={<FlagOutlined className="mcs-timeline-dot" />}
-              >
-                <div className="mcs-title">{dayToFormattedMessage}</div>
+            <div className='mcs-timeline' key={day}>
+              <Timeline.Item dot={<FlagOutlined className='mcs-timeline-dot' />}>
+                <div className='mcs-title'>{dayToFormattedMessage}</div>
               </Timeline.Item>
               {eventsOnDay.length !== 0 &&
-                Object.keys(eventsOnTime).map((time) => {
+                Object.keys(eventsOnTime).map(time => {
                   return (
                     <Timeline.Item
                       key={`${day}_${time}`}
-                      dot={
-                        <McsIcon type="status" className={'mcs-timeline-dot'} />
-                      }
+                      dot={<McsIcon type='status' className={'mcs-timeline-dot'} />}
                     >
                       <HistoryEventCard
                         resourceType={resourceType}

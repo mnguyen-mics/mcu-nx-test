@@ -1,10 +1,5 @@
 import * as React from 'react';
-import {
-  WrappedFieldArrayProps,
-  FieldArray,
-  GenericFieldArray,
-  Field,
-} from 'redux-form';
+import { WrappedFieldArrayProps, FieldArray, GenericFieldArray, Field } from 'redux-form';
 import { Button, Timeline } from 'antd';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
@@ -13,9 +8,7 @@ import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import NewAudienceFeatureFormSection, {
   NewAudienceFeatureFormSectionProps,
 } from './NewAudienceFeatureFormSection';
-import injectDrawer, {
-  InjectedDrawerProps,
-} from '../../../../components/Drawer/injectDrawer';
+import injectDrawer, { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import { AudienceFeatureResource } from '../../../../models/audienceFeature';
 import { ObjectLikeTypeInfoResource } from '../../../../models/datamart/graphdb/RuntimeSchema';
 import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
@@ -90,20 +83,14 @@ class NewQueryFragmentFormSection extends React.Component<Props> {
     const titlePart2 = timelineConfiguration.titlePart2;
 
     return (
-      <div className="mcs-timeline_title">
+      <div className='mcs-timeline_title'>
         {index !== 0 && (
-          <span className="mcs-timeline_title_highlight">
-            {intl.formatMessage(
-              messages.audienceBuilderTimelineMatchingCriterias0,
-            )}&nbsp;
+          <span className='mcs-timeline_title_highlight'>
+            {intl.formatMessage(messages.audienceBuilderTimelineMatchingCriterias0)}&nbsp;
           </span>
         )}
-
         {intl.formatMessage(titlePart1)}&nbsp;
-
-        <span className="mcs-timeline_title_highlight">
-          {intl.formatMessage(titlePart2)}
-        </span>
+        <span className='mcs-timeline_title_highlight'>{intl.formatMessage(titlePart2)}</span>
       </div>
     );
   };
@@ -129,21 +116,17 @@ class NewQueryFragmentFormSection extends React.Component<Props> {
       fields.remove(index);
     };
 
-    const initialDotStyle =
-      'mcs-timeline_initialDot ' + timelineConfiguration.initialDotColor;
-    const actionDotStyle =
-      'mcs-timeline_actionDot ' + timelineConfiguration.actionDotColor;
+    const initialDotStyle = 'mcs-timeline_initialDot ' + timelineConfiguration.initialDotColor;
+    const actionDotStyle = 'mcs-timeline_actionDot ' + timelineConfiguration.actionDotColor;
 
     return (
       <React.Fragment>
-        <div className="mcs-timeline">
+        <div className='mcs-timeline'>
           {fields.map((name, index) => {
             return (
               <React.Fragment key={`${index}_${fields.length}`}>
-                <div className="mcs-timeline_group">
-                  <Timeline.Item
-                    dot={<McsIcon type="status" className={initialDotStyle} />}
-                  >
+                <div className='mcs-timeline_group'>
+                  <Timeline.Item dot={<McsIcon type='status' className={initialDotStyle} />}>
                     {this.renderGroupTitle(index)}
 
                     <NewAudienceFeatureFieldArray
@@ -168,13 +151,11 @@ class NewQueryFragmentFormSection extends React.Component<Props> {
                     }
                   >
                     {showCriteriaHelper(index) ? (
-                      <div className="mcs-timeline_dotTitle">
-                        {intl.formatMessage(
-                          messages.audienceBuilderTimelineAddCriteria,
-                        )}
+                      <div className='mcs-timeline_dotTitle'>
+                        {intl.formatMessage(messages.audienceBuilderTimelineAddCriteria)}
                       </div>
                     ) : (
-                      <div className="mcs-timeline_dotNoTitle" />
+                      <div className='mcs-timeline_dotNoTitle' />
                     )}
                   </Timeline.Item>
                 </div>

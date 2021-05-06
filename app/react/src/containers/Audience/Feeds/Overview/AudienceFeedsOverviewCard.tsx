@@ -1,11 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
-import {
-  InjectedIntlProps,
-  injectIntl,
-  defineMessages,
-  FormattedMessage,
-} from 'react-intl';
+import { InjectedIntlProps, injectIntl, defineMessages, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 import { Card } from '@mediarithmics-private/mcs-components-library';
 import MetricInfo, { IconColor } from '../../../../components/MetricInfo';
@@ -29,7 +24,7 @@ export type AgggregatesByStatus = { [status in IconColor]?: string };
 type AudienceFeedsOverviewCardProps = {
   aggregatesByStatus: AgggregatesByStatus;
   pluginVersionId: string;
-  feedType:string;
+  feedType: string;
 };
 
 interface State {
@@ -99,26 +94,24 @@ class AudienceFeedsOverviewCard extends React.Component<Props, State> {
       .getLocalizedPluginLayoutFromVersionId(pluginVersionId)
       .then(res => {
         const { plugin, layout } = res;
-        this._pluginService
-          .getPluginVersion(plugin.id, pluginVersionId)
-          .then(pluginVersion => {
-            if (layout) {
-              this.setState({
-                feedTitle: layout.metadata.display_name,
-                pluginVersionValue: pluginVersion.data.version_id,
-                assetUrl: layout.metadata.small_icon_asset_url,
-                artifactId: plugin.artifact_id,
-                isLoading: false,
-              });
-            } else {
-              this.setState({
-                feedTitle: plugin.artifact_id,
-                artifactId: plugin.artifact_id,
-                pluginVersionValue: pluginVersion.data.version_id,
-                isLoading: false,
-              });
-            }
-          });
+        this._pluginService.getPluginVersion(plugin.id, pluginVersionId).then(pluginVersion => {
+          if (layout) {
+            this.setState({
+              feedTitle: layout.metadata.display_name,
+              pluginVersionValue: pluginVersion.data.version_id,
+              assetUrl: layout.metadata.small_icon_asset_url,
+              artifactId: plugin.artifact_id,
+              isLoading: false,
+            });
+          } else {
+            this.setState({
+              feedTitle: plugin.artifact_id,
+              artifactId: plugin.artifact_id,
+              pluginVersionValue: pluginVersion.data.version_id,
+              isLoading: false,
+            });
+          }
+        });
       })
       .catch(err => {
         notifyError(err);
@@ -140,7 +133,7 @@ class AudienceFeedsOverviewCard extends React.Component<Props, State> {
     const params = {
       artifactId: [artifactId],
       status: [status],
-      feedType: [feedType]
+      feedType: [feedType],
     };
 
     const nextLocation = {
@@ -167,39 +160,33 @@ class AudienceFeedsOverviewCard extends React.Component<Props, State> {
   render() {
     const { aggregatesByStatus, pluginVersionId, feedType } = this.props;
 
-    const {
-      artifactId,
-      assetUrl,
-      feedTitle,
-      isLoading,
-      pluginVersionValue,
-    } = this.state;
+    const { artifactId, assetUrl, feedTitle, isLoading, pluginVersionValue } = this.state;
 
     return (
-      <Card className="feed-overview-card-content">
+      <Card className='feed-overview-card-content'>
         {isLoading ? (
-          <div className="wrapper loading">
-            <Spin size="large" />
+          <div className='wrapper loading'>
+            <Spin size='large' />
           </div>
         ) : (
-          <div className="wrapper">
-            <div className="card-header">
+          <div className='wrapper'>
+            <div className='card-header'>
               {assetUrl ? (
                 <img
-                  className="image-title"
+                  className='image-title'
                   src={`${(window as any).MCS_CONSTANTS.ASSETS_URL}${assetUrl}`}
                 />
               ) : (
-                <i className="image-title placeholder" />
+                <i className='image-title placeholder' />
               )}
             </div>
 
-            <div className="feed-infos">
-              <div className="feed-title">{feedTitle}</div>
-              <div className="feed-version">{pluginVersionValue}</div>
+            <div className='feed-infos'>
+              <div className='feed-title'>{feedTitle}</div>
+              <div className='feed-version'>{pluginVersionValue}</div>
             </div>
 
-            <div className="feed-metrics">
+            <div className='feed-metrics'>
               {['ACTIVE', 'PAUSED', 'INITIAL'].map(status => {
                 const typedStatus = status as IconColor;
                 return (

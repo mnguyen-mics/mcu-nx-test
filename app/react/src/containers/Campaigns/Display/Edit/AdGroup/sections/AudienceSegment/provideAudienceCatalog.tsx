@@ -8,9 +8,7 @@ import {
   AudienceSegmentServiceItemPublicResource,
 } from '../../../../../../../models/servicemanagement/PublicServiceItemResource';
 import { EditAdGroupRouteMatchParam } from '../../domain';
-import injectDatamart, {
-  InjectedDatamartProps,
-} from '../../../../../../Datamart/injectDatamart';
+import injectDatamart, { InjectedDatamartProps } from '../../../../../../Datamart/injectDatamart';
 import { IAudienceSegmentService } from '../../../../../../../services/AudienceSegmentService';
 import { TYPES } from '../../../../../../../constants/types';
 import { lazyInject } from '../../../../../../../config/inversify.config';
@@ -22,25 +20,17 @@ export interface DataLoadingContainer<T> {
 
 export interface InjectedAudienceCatalogProps {
   audienceCategoryTree: DataLoadingContainer<ServiceCategoryTree[]>;
-  genderServiceItems: DataLoadingContainer<
-    AudienceSegmentServiceItemPublicResource[]
-  >;
-  ageServiceItems: DataLoadingContainer<
-    AudienceSegmentServiceItemPublicResource[]
-  >;
+  genderServiceItems: DataLoadingContainer<AudienceSegmentServiceItemPublicResource[]>;
+  ageServiceItems: DataLoadingContainer<AudienceSegmentServiceItemPublicResource[]>;
   audienceSegments: DataLoadingContainer<AudienceSegmentResource[]>;
 }
 
 type State = InjectedAudienceCatalogProps;
 
-type Props = InjectedDatamartProps &
-  RouteComponentProps<EditAdGroupRouteMatchParam>;
+type Props = InjectedDatamartProps & RouteComponentProps<EditAdGroupRouteMatchParam>;
 
-const provideAudienceCatalog = (
-  Component: React.ComponentClass<InjectedAudienceCatalogProps>,
-) => {
+const provideAudienceCatalog = (Component: React.ComponentClass<InjectedAudienceCatalogProps>) => {
   class ProvidedComponent extends React.Component<Props, State> {
-
     @lazyInject(TYPES.IAudienceSegmentService)
     private _audienceSegmentService: IAudienceSegmentService;
 
@@ -90,13 +80,12 @@ const provideAudienceCatalog = (
         },
       }));
 
-      this._catalogService.getCategoryTree(organisationId, {
-        serviceType: ['AUDIENCE_DATA.AUDIENCE_SEGMENT'],
-      })
+      this._catalogService
+        .getCategoryTree(organisationId, {
+          serviceType: ['AUDIENCE_DATA.AUDIENCE_SEGMENT'],
+        })
         .then(categoryTree => {
-          const fetchServices = (
-            category: ServiceCategoryTree,
-          ): Promise<ServiceCategoryTree> => {
+          const fetchServices = (category: ServiceCategoryTree): Promise<ServiceCategoryTree> => {
             const servicesP = this._catalogService.getServices(organisationId, {
               parentCategoryId: category.node.id,
             });
@@ -119,7 +108,7 @@ const provideAudienceCatalog = (
                 };
               },
             );
-          }
+          };
 
           return Promise.all(
             categoryTree.map(category => {
@@ -131,10 +120,7 @@ const provideAudienceCatalog = (
           this.setState(prevState => ({
             audienceCategoryTree: {
               // if 1 catalog only, hide root
-              data:
-                categoryTree.length === 1
-                  ? categoryTree[0].children
-                  : categoryTree,
+              data: categoryTree.length === 1 ? categoryTree[0].children : categoryTree,
               loading: false,
             },
           }));
@@ -155,9 +141,10 @@ const provideAudienceCatalog = (
         },
       }));
 
-      this._catalogService.getAudienceSegmentServices(organisationId, {
-        categorySubtype: ['AUDIENCE.GENDER'],
-      })
+      this._catalogService
+        .getAudienceSegmentServices(organisationId, {
+          categorySubtype: ['AUDIENCE.GENDER'],
+        })
         .then(res => res.data)
         .then(genderServiceItems => {
           this.setState(prevState => ({
@@ -183,9 +170,10 @@ const provideAudienceCatalog = (
         },
       }));
 
-      this._catalogService.getAudienceSegmentServices(organisationId, {
-        categorySubtype: ['AUDIENCE.AGE'],
-      })
+      this._catalogService
+        .getAudienceSegmentServices(organisationId, {
+          categorySubtype: ['AUDIENCE.AGE'],
+        })
         .then(res => res.data)
         .then(ageServiceItems => {
           this.setState(prevState => ({

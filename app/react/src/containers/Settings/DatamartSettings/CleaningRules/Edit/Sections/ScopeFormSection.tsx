@@ -14,10 +14,7 @@ import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
 import { getFormValues } from 'redux-form';
 import { connect } from 'react-redux';
 import { FORM_ID } from '../CleaningRuleEditForm';
-import {
-  CleaningRuleFormData,
-  isUserEventCleaningRuleFormData,
-} from '../domain';
+import { CleaningRuleFormData, isUserEventCleaningRuleFormData } from '../domain';
 import { UserActivityType } from '../../../../../../models/datamart/graphdb/RuntimeSchema';
 import { DefaultOptionProps } from '../../../../../../components/Form/FormSelect/DefaultSelect';
 
@@ -88,7 +85,7 @@ class ScopeFormSection extends React.Component<Props, State> {
           title={messages.sectionScopeTitle}
         />
         <FormSelectField
-          name="activityTypeFilter"
+          name='activityTypeFilter'
           component={DefaultSelect}
           formItemProps={{
             label: formatMessage(messages.sectionScopeActivityTypeLabel),
@@ -114,7 +111,7 @@ class ScopeFormSection extends React.Component<Props, State> {
         />
         {displayChannelFilter && (
           <FormSelectField
-            name="channelFilter"
+            name='channelFilter'
             component={DefaultSelect}
             formItemProps={{
               label: formatMessage(messages.sectionScopeChannelLabel),
@@ -127,7 +124,7 @@ class ScopeFormSection extends React.Component<Props, State> {
           />
         )}
         <FormInputField
-          name="eventNameFilter"
+          name='eventNameFilter'
           component={FormInput}
           formItemProps={{
             label: formatMessage(messages.sectionScopeEventNameLabel),
@@ -145,7 +142,7 @@ class ScopeFormSection extends React.Component<Props, State> {
           title={messages.sectionScopeTitle}
         />
         <FormSelectField
-          name="userProfileCleaningRule.compartment_filter"
+          name='userProfileCleaningRule.compartment_filter'
           component={DefaultSelect}
           formItemProps={{
             label: formatMessage(messages.sectionScopeCompartmentLabel),

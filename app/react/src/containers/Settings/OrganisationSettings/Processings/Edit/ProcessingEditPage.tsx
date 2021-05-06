@@ -52,27 +52,29 @@ class ProcessingEditPage extends React.Component<Props, State> {
       match: {
         params: { processingId },
       },
-      notifyError
+      notifyError,
     } = this.props;
 
     if (processingId) {
       this.setState({ loading: true }, () => {
-        this._organisationService.getProcessing(processingId).then(resp => {
-          const processingData = resp.data;
-          this.setState({
-            loading: false,
-            processingFormData: processingData,
-            showLegalBasisSelector: false,
+        this._organisationService
+          .getProcessing(processingId)
+          .then(resp => {
+            const processingData = resp.data;
+            this.setState({
+              loading: false,
+              processingFormData: processingData,
+              showLegalBasisSelector: false,
+            });
+          })
+          .catch(err => {
+            this.setState({
+              loading: false,
+              processingFormData: {},
+              showLegalBasisSelector: false,
+            });
+            notifyError(err);
           });
-        })
-        .catch(err => {
-          this.setState({
-            loading: false,
-            processingFormData: {},
-            showLegalBasisSelector: false,
-          });
-          notifyError(err);
-        });
       });
     }
   }
@@ -105,7 +107,7 @@ class ProcessingEditPage extends React.Component<Props, State> {
       match: {
         params: { processingId, organisationId },
       },
-      notifyError
+      notifyError,
     } = this.props;
 
     if (processingId) {
@@ -171,7 +173,7 @@ class ProcessingEditPage extends React.Component<Props, State> {
       : formatMessage(messages.newProcessing);
 
     const breadCrumbPaths = [
-      <Link key="1" to={`/v2/o/${organisationId}/settings/organisation/processings`}>
+      <Link key='1' to={`/v2/o/${organisationId}/settings/organisation/processings`}>
         {formatMessage(messages.processingActivities)}
       </Link>,
       newOrEditProcessing,
@@ -199,7 +201,7 @@ class ProcessingEditPage extends React.Component<Props, State> {
         goToLegalBasisSelector={goToLegalBasisSelector}
       />
     ) : (
-      <Layout className="edit-layout">
+      <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
         <LegalBasisSelector onSelect={this.onLegalBasisSelect} />
       </Layout>
@@ -207,8 +209,4 @@ class ProcessingEditPage extends React.Component<Props, State> {
   }
 }
 
-export default compose(
-  withRouter,
-  injectIntl,
-  injectNotifications,
-)(ProcessingEditPage);
+export default compose(withRouter, injectIntl, injectNotifications)(ProcessingEditPage);

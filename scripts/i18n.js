@@ -26,9 +26,7 @@ const compareKeys = (currentLang, otherLang) => {
   const size = files[otherLangKey].length;
 
   if (size) {
-    console.log(
-      `${size} missing ${size > 1 ? 'keys' : 'key'} in ${otherLangKey}:`,
-    );
+    console.log(`${size} missing ${size > 1 ? 'keys' : 'key'} in ${otherLangKey}:`);
     console.log('');
     files[otherLangKey].map(key => console.log(key));
   } else {
@@ -54,9 +52,7 @@ const compareWithOtherLang = (currentLang, otherLang) => {
 };
 
 const processFile = (dir, currentFile) => {
-  console.log(
-    '===================================================================',
-  );
+  console.log('===================================================================');
   console.log('\n');
   console.log(`Comparison of ${currentFile} with other files`);
   console.log('\n');

@@ -51,11 +51,15 @@ interface ImportEditPageState {
 }
 
 type Props = InjectedDrawerProps &
-  RouteComponentProps<{
-    organisationId: string;
-    datamartId: string;
-    importId: string;
-  }, StaticContext, { from?: string }> &
+  RouteComponentProps<
+    {
+      organisationId: string;
+      datamartId: string;
+      importId: string;
+    },
+    StaticContext,
+    { from?: string }
+  > &
   InjectedIntlProps;
 
 class ImportEditPage extends React.Component<Props, ImportEditPageState> {
@@ -150,10 +154,7 @@ class ImportEditPage extends React.Component<Props, ImportEditPageState> {
       loading: true,
     });
 
-    const hideSaveInProgress = message.loading(
-      intl.formatMessage(messages.savingInProgress),
-      0,
-    );
+    const hideSaveInProgress = message.loading(intl.formatMessage(messages.savingInProgress), 0);
 
     if (importId && importData.datamart_id) {
       this._importService
@@ -192,11 +193,7 @@ class ImportEditPage extends React.Component<Props, ImportEditPageState> {
           loading: false,
         });
         if (customErrorMessage) {
-          message.error(
-            `${intl.formatMessage(
-              messages.updateError,
-            )}: ${customErrorMessage}`,
-          );
+          message.error(`${intl.formatMessage(messages.updateError)}: ${customErrorMessage}`);
         } else {
           message.error(intl.formatMessage(messages.updateError));
         }
@@ -230,9 +227,11 @@ class ImportEditPage extends React.Component<Props, ImportEditPageState> {
             : formatMessage(messages.imports),
         })
       : formatMessage(messages.newImports);
-      
+
     const breadcrumbPaths = [
-      <Link key='1' to={`/v2/o/${organisationId}/datastudio/imports`}>{formatMessage(messages.imports)}</Link>,
+      <Link key='1' to={`/v2/o/${organisationId}/datastudio/imports`}>
+        {formatMessage(messages.imports)}
+      </Link>,
       importName,
     ];
 
@@ -271,8 +270,4 @@ class ImportEditPage extends React.Component<Props, ImportEditPageState> {
   }
 }
 
-export default compose<Props, {}>(
-  withRouter,
-  injectIntl,
-  injectDrawer,
-)(ImportEditPage);
+export default compose<Props, {}>(withRouter, injectIntl, injectDrawer)(ImportEditPage);

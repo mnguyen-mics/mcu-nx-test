@@ -2,8 +2,15 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
-import GenericPluginContent, { PluginContentOuterProps } from '../../../../Plugin/Edit/GenericPluginContent';
-import { AttributionModel, PluginResource, PluginInstance, PluginProperty } from '../../../../../models/Plugins';
+import GenericPluginContent, {
+  PluginContentOuterProps,
+} from '../../../../Plugin/Edit/GenericPluginContent';
+import {
+  AttributionModel,
+  PluginResource,
+  PluginInstance,
+  PluginProperty,
+} from '../../../../../models/Plugins';
 import { Omit } from '../../../../../utils/Types';
 import { DefaultSelect, FormSelectField } from '../../../../../components/Form';
 import { lazyInject } from '../../../../../config/inversify.config';
@@ -11,7 +18,9 @@ import { TYPES } from '../../../../../constants/types';
 import { IAttributionModelService } from '../../../../../services/AttributionModelService';
 import { Link } from 'react-router-dom';
 
-const AttributionModelPluginContent = GenericPluginContent as React.ComponentClass<PluginContentOuterProps<AttributionModel>>
+const AttributionModelPluginContent = GenericPluginContent as React.ComponentClass<
+  PluginContentOuterProps<AttributionModel>
+>;
 
 const messages = defineMessages({
   listTitle: {
@@ -44,7 +53,8 @@ const messages = defineMessages({
   },
   attributionModelModeTooltip: {
     id: 'settings.attributionmodel.mode.tooltip',
-    defaultMessage: "'Strict' mode allows you to attribute only the campaigns that are linked to your goal, whereas 'discovery' helps your attribute the latest matching campaigns. By default disovery will be applied",
+    defaultMessage:
+      "'Strict' mode allows you to attribute only the campaigns that are linked to your goal, whereas 'discovery' helps your attribute the latest matching campaigns. By default disovery will be applied",
   },
 });
 
@@ -53,31 +63,32 @@ interface AttributionModelRouteParam {
   attributionModelId?: string;
 }
 
-type Props = RouteComponentProps<AttributionModelRouteParam> &
-  InjectedIntlProps;
+type Props = RouteComponentProps<AttributionModelRouteParam> & InjectedIntlProps;
 
 class EditAttributionModelPage extends React.Component<Props> {
   @lazyInject(TYPES.IAttributionModelService)
   private _attributionModelService: IAttributionModelService;
 
   redirect = () => {
-    const { history, match: { params: { organisationId } } } = this.props;
+    const {
+      history,
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
     const attributionModelUrl = `/v2/o/${organisationId}/settings/campaigns/attribution_models`;
     history.push(attributionModelUrl);
   };
 
-  saveOrCreatePluginInstance = (
-    plugin: AttributionModel,
-    properties: PluginProperty[],
-  ) => {
+  saveOrCreatePluginInstance = (plugin: AttributionModel, properties: PluginProperty[]) => {
     const {
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       history,
     } = this.props;
 
     history.push(`/v2/o/${organisationId}/settings/campaigns/attribution_models`);
-
-
   };
 
   createPluginInstance = (
@@ -85,7 +96,7 @@ class EditAttributionModelPage extends React.Component<Props> {
     plugin: PluginResource,
     pluginInstance: AttributionModel,
   ): PluginInstance => {
-    const result: Omit<AttributionModel, "id"> = {
+    const result: Omit<AttributionModel, 'id'> = {
       // ...pluginInstance,
       version_id: pluginInstance.version_id,
       version_value: pluginInstance.version_value,
@@ -94,26 +105,27 @@ class EditAttributionModelPage extends React.Component<Props> {
       artifact_id: plugin.artifact_id,
       group_id: plugin.group_id,
       organisation_id: organisationId,
-      name: pluginInstance.name
-    }
-    return result
-  }
+      name: pluginInstance.name,
+    };
+    return result;
+  };
 
   render() {
     const {
       intl: { formatMessage },
-      match: { params: { attributionModelId, organisationId } },
+      match: {
+        params: { attributionModelId, organisationId },
+      },
     } = this.props;
 
     const breadcrumbPaths = (attributionModel?: AttributionModel) => [
-      <Link key="1" to={`/v2/o/${organisationId}/settings/campaigns/attribution_models`}>
+      <Link key='1' to={`/v2/o/${organisationId}/settings/campaigns/attribution_models`}>
         {formatMessage(messages.listTitle)}
       </Link>,
-      attributionModel ?
-        formatMessage(messages.attributionModelEditBreadcrumb, { name: attributionModel.name })
-        : formatMessage(messages.attributionModelNewBreadcrumb)
+      attributionModel
+        ? formatMessage(messages.attributionModelEditBreadcrumb, { name: attributionModel.name })
+        : formatMessage(messages.attributionModelNewBreadcrumb),
     ];
-
 
     const renderSpecificFields = (disabled: boolean, prefix: string) => {
       return (
@@ -137,8 +149,9 @@ class EditAttributionModelPage extends React.Component<Props> {
             },
           ]}
           disabled={disabled}
-        />)
-    }
+        />
+      );
+    };
 
     return (
       <AttributionModelPluginContent
@@ -157,6 +170,4 @@ class EditAttributionModelPage extends React.Component<Props> {
   }
 }
 
-export default compose(withRouter, injectIntl)(
-  EditAttributionModelPage,
-);
+export default compose(withRouter, injectIntl)(EditAttributionModelPage);

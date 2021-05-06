@@ -1,4 +1,4 @@
-import { defineMessages } from "react-intl";
+import { defineMessages } from 'react-intl';
 
 export default defineMessages({
   mlFunction: {
@@ -11,8 +11,7 @@ export default defineMessages({
   },
   empty: {
     id: 'settings.mlFunction.list.empty',
-    defaultMessage:
-      'There is no Ml Function List created yet! Click on New to get started',
+    defaultMessage: 'There is no Ml Function List created yet! Click on New to get started',
   },
   edit: {
     id: 'settings.mlFunction.list.actionColumn.edit',
@@ -43,4 +42,4 @@ export default defineMessages({
     id: 'settings.mlFunction.list.column.name',
     defaultMessage: 'Name',
   },
-})
+});

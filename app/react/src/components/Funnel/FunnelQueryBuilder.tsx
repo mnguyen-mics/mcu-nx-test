@@ -1,28 +1,43 @@
 import * as React from 'react';
-import { Card, Select, Button, Switch, Input, Tag } from "antd";
+import { Card, Select, Button, Switch, Input, Tag } from 'antd';
 import messages from '../../containers/Campaigns/Display/Edit/messages';
-import { ArrowUpOutlined, ArrowDownOutlined, CloseOutlined, CalendarOutlined, FlagOutlined } from '@ant-design/icons';
+import {
+  ArrowUpOutlined,
+  ArrowDownOutlined,
+  CloseOutlined,
+  CalendarOutlined,
+  FlagOutlined,
+} from '@ant-design/icons';
 import cuid from 'cuid';
 import { TYPES } from '../../constants/types';
 import { lazyInject } from '../../config/inversify.config';
 import { IUsersAnalyticsService } from '../../services/UsersAnalyticsService';
 import { DimensionsList } from '../../models/datamartUsersAnalytics/datamartUsersAnalytics';
 import { compose } from 'recompose';
-import injectNotifications, { InjectedNotificationProps } from '../../containers/Notifications/injectNotifications';
-import { booleanOperator, FUNNEL_SEARCH_SETTING, FilterOperatorLabel, funnelMessages } from './Constants';
-import { BooleanOperator, DimensionFilterClause, DimensionFilterOperator } from '../../models/ReportRequestBody';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../containers/Notifications/injectNotifications';
+import {
+  booleanOperator,
+  FUNNEL_SEARCH_SETTING,
+  FilterOperatorLabel,
+  funnelMessages,
+} from './Constants';
+import {
+  BooleanOperator,
+  DimensionFilterClause,
+  DimensionFilterOperator,
+} from '../../models/ReportRequestBody';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { updateSearch, isSearchValid } from '../../utils/LocationSearchHelper';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
-import {
-  FormattedMessage, InjectedIntlProps, injectIntl,
-} from 'react-intl';
+import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import FunnelExpressionInput from './FunnelExpressionInput';
 import { FunnelFilter } from '../../models/datamart/UserActivitiesFunnel';
 import { IDatamartUsersAnalyticsService } from '../../services/DatamartUsersAnalyticsService';
 import { ReportViewResponse } from '../../services/ReportService';
-import { shouldUpdateFunnelQueryBuilder, getDefaultStep, checkExpressionsNotEmpty } from './Utils'
+import { shouldUpdateFunnelQueryBuilder, getDefaultStep, checkExpressionsNotEmpty } from './Utils';
 
 const Option = Select.Option;
 
@@ -48,7 +63,6 @@ interface FunnelQueryBuilderProps {
   dateRange: McsDateRangeValue;
 }
 
-
 type Props = FunnelQueryBuilderProps &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }> &
@@ -67,26 +81,26 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     this.state = {
       steps: [],
       dimensionsList: {
-        dimensions: []
+        dimensions: [],
       },
-      isLoading: false
+      isLoading: false,
     };
   }
 
   componentDidMount() {
     const { datamartId } = this.props;
-    this.setInitialParams()
+    this.setInitialParams();
     this.fetchDimensions(datamartId);
-    this.props.liftFunctionsCallback(this.handleExecuteQueryButtonClick)
+    this.props.liftFunctionsCallback(this.handleExecuteQueryButtonClick);
   }
 
   componentDidUpdate(prevProps: Props) {
     const {
       location: { search },
-      filter
+      filter,
     } = this.props;
 
-    if ((prevProps.location.search !== search) && filter.length > 0) {
+    if (prevProps.location.search !== search && filter.length > 0) {
       this.setInitialParams();
     }
   }
@@ -95,23 +109,16 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
    * This component should not update if the queries are only different in group_by_dimension
    */
   shouldComponentUpdate(nextProps: Props, nextState: State) {
-    const {
-      steps: prevFilter,
-      dimensionsList: previousDimensionsList
-    } = this.state
+    const { steps: prevFilter, dimensionsList: previousDimensionsList } = this.state;
 
-    const {
-      steps: nextFilter,
-      dimensionsList: nextDimensionsList
-    } = nextState
+    const { steps: nextFilter, dimensionsList: nextDimensionsList } = nextState;
 
-    const {
-      filter: nextPropsFilter
-    } = this.props
+    const { filter: nextPropsFilter } = this.props;
 
-    const shouldUpdate = shouldUpdateFunnelQueryBuilder(prevFilter, nextFilter) || 
-      shouldUpdateFunnelQueryBuilder(prevFilter, nextPropsFilter) || 
-      nextDimensionsList !== previousDimensionsList
+    const shouldUpdate =
+      shouldUpdateFunnelQueryBuilder(prevFilter, nextFilter) ||
+      shouldUpdateFunnelQueryBuilder(prevFilter, nextPropsFilter) ||
+      nextDimensionsList !== previousDimensionsList;
 
     return shouldUpdate;
   }
@@ -121,45 +128,46 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
       location: { search, pathname },
       history,
       filter,
-      dateRange
+      dateRange,
     } = this.props;
 
     try {
       const identifiedSteps = filter.map((step: Step) => {
         step.filter_clause.filters.forEach(f => {
-          const newFilterId = f.id ? f.id : this._cuid()
-          f.id = newFilterId
+          const newFilterId = f.id ? f.id : this._cuid();
+          f.id = newFilterId;
         });
-        const newId = step.id ? step.id : this._cuid()
+        const newId = step.id ? step.id : this._cuid();
         return {
           ...step,
-          id: newId
-        }
-      })
+          id: newId,
+        };
+      });
 
       this.setState({
-        steps: identifiedSteps
-      })
+        steps: identifiedSteps,
+      });
     } catch (error) {
       this.setState({
-        steps: [{
-          id: this._cuid(),
-          name: "Step 1",
-          filter_clause: {
-            operator: 'OR',
-            filters: [
-              {
-                'dimension_name': 'DATE_TIME',
-                'not': false,
-                'operator': 'EXACT' as DimensionFilterOperator,
-                'expressions': [
-                ],
-                'case_sensitive': false
-              }
-            ]
-          }
-        }]
-      })
+        steps: [
+          {
+            id: this._cuid(),
+            name: 'Step 1',
+            filter_clause: {
+              operator: 'OR',
+              filters: [
+                {
+                  dimension_name: 'DATE_TIME',
+                  not: false,
+                  operator: 'EXACT' as DimensionFilterOperator,
+                  expressions: [],
+                  case_sensitive: false,
+                },
+              ],
+            },
+          },
+        ],
+      });
     }
 
     const queryParams = {
@@ -179,15 +187,16 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
 
   fetchDimensions = (datamartId: string) => {
     this.setState({
-      isLoading: true
+      isLoading: true,
     });
     return this._usersAnalyticsService
-      .getDimensions(datamartId, true).then((response) => {
+      .getDimensions(datamartId, true)
+      .then(response => {
         this.setState({
           isLoading: false,
           dimensionsList: {
-            dimensions: response.data.dimensions
-          }
+            dimensions: response.data.dimensions,
+          },
         });
       })
       .catch(e => {
@@ -196,7 +205,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
           isLoading: false,
         });
       });
-  }
+  };
 
   addStep = () => {
     const { steps } = this.state;
@@ -205,107 +214,117 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     newSteps.push(getDefaultStep());
 
     newSteps.forEach((step, index) => {
-      step.name = `Step ${index + 1}`
-    })
+      step.name = `Step ${index + 1}`;
+    });
 
     this.setState({ steps: newSteps });
-  }
+  };
 
   addDimensionToStep = (stepId: string) => {
     const { steps } = this.state;
-    const newSteps: Step[] = JSON.parse(JSON.stringify(steps))
+    const newSteps: Step[] = JSON.parse(JSON.stringify(steps));
     newSteps.forEach(step => {
       if (step.id === stepId) {
         step.filter_clause.operator = 'AND';
-        step.filter_clause.filters.push(
-          {
-            id: this._cuid(),
-            dimension_name: 'DATE_TIME',
-            not: false,
-            operator: 'EXACT' as DimensionFilterOperator,
-            expressions: [
-            ],
-            case_sensitive: false
-          }
-        );
+        step.filter_clause.filters.push({
+          id: this._cuid(),
+          dimension_name: 'DATE_TIME',
+          not: false,
+          operator: 'EXACT' as DimensionFilterOperator,
+          expressions: [],
+          case_sensitive: false,
+        });
       }
     });
     this.setState({ steps: newSteps });
-  }
+  };
 
   handleNotSwitcherChange(dimensionIndex: number, stepId: string, value: boolean) {
     const { steps } = this.state;
-    const newSteps: Step[] = JSON.parse(JSON.stringify(steps))
+    const newSteps: Step[] = JSON.parse(JSON.stringify(steps));
     newSteps.forEach(step => {
       if (step.id === stepId) {
         step.filter_clause.filters.forEach((filter, index) => {
           if (dimensionIndex === index) {
-            filter.not = !value
+            filter.not = !value;
           }
         });
       }
     });
     this.setState({
-      steps: newSteps
+      steps: newSteps,
     });
   }
 
   handleDimensionNameChange(dimensionIndex: number, stepId: string, value: string) {
-
     if (value.toLocaleLowerCase() === 'event_type') {
       const { datamartId, dateRange } = this.props;
-      this._datamartUsersAnalyticsService.getAnalytics(datamartId, [], dateRange.from, dateRange.to, ['event_type'])
+      this._datamartUsersAnalyticsService
+        .getAnalytics(datamartId, [], dateRange.from, dateRange.to, ['event_type'])
         .then((reportView: ReportViewResponse) => {
-          this.updateStepWithDimensionName(dimensionIndex, stepId, value, reportView.data.report_view.rows.length === 0);
+          this.updateStepWithDimensionName(
+            dimensionIndex,
+            stepId,
+            value,
+            reportView.data.report_view.rows.length === 0,
+          );
         });
     } else {
       this.updateStepWithDimensionName(dimensionIndex, stepId, value);
     }
   }
 
-  updateStepWithDimensionName(dimensionIndex: number, stepId: string, value: string, displayEventTypeWarning?: boolean) {
+  updateStepWithDimensionName(
+    dimensionIndex: number,
+    stepId: string,
+    value: string,
+    displayEventTypeWarning?: boolean,
+  ) {
     const { steps } = this.state;
     // make deep copy of data for comparison in shouldComponentUpdate
-    const newSteps: Step[] = JSON.parse(JSON.stringify(steps))
+    const newSteps: Step[] = JSON.parse(JSON.stringify(steps));
     newSteps.forEach(step => {
       if (step.id === stepId) {
         step.displayEventTypeWarning = displayEventTypeWarning;
         step.filter_clause.filters.forEach((filter, index) => {
           if (dimensionIndex === index) {
-            filter.dimension_name = value
-            filter.expressions = []
+            filter.dimension_name = value;
+            filter.expressions = [];
           }
         });
       }
     });
     this.setState({
-      steps: newSteps
+      steps: newSteps,
     });
   }
 
   handleFilterOperatorChange(stepId: string, value: BooleanOperator) {
     const { steps } = this.state;
-    const newSteps: Step[] = JSON.parse(JSON.stringify(steps))
+    const newSteps: Step[] = JSON.parse(JSON.stringify(steps));
     newSteps.forEach(step => {
       if (step.id === stepId) step.filter_clause.operator = value;
     });
     this.setState({
-      steps: newSteps
+      steps: newSteps,
     });
-  };
+  }
 
-  handleDimensionExpressionForSelectorChange(dimensionIndex: number, stepId: string, value: string[]) {
+  handleDimensionExpressionForSelectorChange(
+    dimensionIndex: number,
+    stepId: string,
+    value: string[],
+  ) {
     const { steps } = this.state;
-    const newSteps: Step[] = JSON.parse(JSON.stringify(steps))
+    const newSteps: Step[] = JSON.parse(JSON.stringify(steps));
     newSteps.forEach(step => {
       if (step.id === stepId) {
         step.filter_clause.filters.forEach((filter, index) => {
           if (dimensionIndex === index) {
-            filter.expressions = value.map(v => v.trim())
+            filter.expressions = value.map(v => v.trim());
             if (filter.expressions.length > 1)
-              filter.operator = 'IN_LIST' as DimensionFilterOperator
-            else
-              filter.operator = 'EXACT' as DimensionFilterOperator
+              filter.operator = 'IN_LIST' as DimensionFilterOperator;
+            else filter.operator = 'EXACT' as DimensionFilterOperator;
           }
         });
       }
@@ -315,7 +334,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
 
   handleMaximumDaysAfterStepChange(stepId: string, value: any) {
     const { steps } = this.state;
-    const newSteps: Step[] = JSON.parse(JSON.stringify(steps))
+    const newSteps: Step[] = JSON.parse(JSON.stringify(steps));
     newSteps.forEach(step => {
       if (step.id === stepId) {
         step.max_days_after_previous_step = parseInt(value.target.value, 10);
@@ -325,21 +344,17 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     this.setState({ steps: newSteps });
   }
 
-
-
-
   checkDimensionsNotEmpty = () => {
     let result = true;
     const { steps } = this.state;
     steps.forEach(step => {
       step.filter_clause.filters.forEach(filter => {
-        if (!filter.dimension_name || filter.dimension_name.length === 0)
-          result = false;
-      })
+        if (!filter.dimension_name || filter.dimension_name.length === 0) result = false;
+      });
     });
 
-    return result
-  }
+    return result;
+  };
 
   handleExecuteQueryButtonClick = () => {
     const { steps } = this.state;
@@ -348,22 +363,20 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     } else {
       this.props.notifyWarning({
         message: messages.errorFormMessage.defaultMessage,
-        description: "",
+        description: '',
       });
     }
-  }
+  };
 
   showFilterSymbol(filterIndex: number, stepId?: string): FilterOperatorLabel {
     const { steps } = this.state;
-    let result = "equals" as FilterOperatorLabel;
+    let result = 'equals' as FilterOperatorLabel;
     steps.forEach(step => {
       if (step.id === stepId) {
         step.filter_clause.filters.forEach((filter, index) => {
           if (filterIndex === index) {
-            if (filter.operator === 'EXACT')
-              result = "equals" as FilterOperatorLabel;
-            else if (filter.operator === 'IN_LIST')
-              result = "in" as FilterOperatorLabel
+            if (filter.operator === 'EXACT') result = 'equals' as FilterOperatorLabel;
+            else if (filter.operator === 'IN_LIST') result = 'in' as FilterOperatorLabel;
           }
         });
       }
@@ -373,31 +386,29 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
 
   updateFilterQueryStringParams() {
     const { steps } = this.state;
-    const {
-      history
-    } = this.props;
+    const { history } = this.props;
 
     const {
-      location: { search: currentSearch, pathname }
+      location: { search: currentSearch, pathname },
     } = history;
 
     // deep copy
     const stepsCopy = JSON.parse(JSON.stringify(steps));
     stepsCopy.forEach((step: Step) => {
       // step.id = undefined;
-      
+
       if (step.max_days_after_previous_step === 0) {
         step.max_days_after_previous_step = undefined;
       }
-      // step.filter_clause.filters.forEach(filter => { 
+      // step.filter_clause.filters.forEach(filter => {
       //   filter.id = undefined
       // });
     });
 
-    const stepsFormated = stepsCopy.filter((s: Step) => s.filter_clause.filters.length > 0)
+    const stepsFormated = stepsCopy.filter((s: Step) => s.filter_clause.filters.length > 0);
     const queryParams = {
       filter: [JSON.stringify(stepsFormated)],
-      template: undefined
+      template: undefined,
     };
 
     const nextLocation = {
@@ -410,32 +421,38 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
 
   removeDimensionFromStep = (stepId: string, filterId: string) => {
     const { steps } = this.state;
-    const newSteps: Step[] = JSON.parse(JSON.stringify(steps))
-    
+    const newSteps: Step[] = JSON.parse(JSON.stringify(steps));
+
     newSteps.forEach(step => {
       if (step.id === stepId) {
-        const filterStepDimensions = step.filter_clause.filters.filter((filter) => filter.id !== filterId)
+        const filterStepDimensions = step.filter_clause.filters.filter(
+          filter => filter.id !== filterId,
+        );
         step.filter_clause.filters = filterStepDimensions;
       }
     });
 
     this.setState({ steps: newSteps });
-  }
+  };
 
   removeStep = (stepId: string) => {
     const { steps } = this.state;
     const newSteps = steps.filter(step => step.id !== stepId);
     newSteps.forEach((step, index) => {
-      step.name = `Step ${index + 1}`
-    })
+      step.name = `Step ${index + 1}`;
+    });
 
     this.setState({ steps: newSteps });
-  }
+  };
 
   getDimensionNameSelect = () => {
     const { dimensionsList } = this.state;
-    return dimensionsList.dimensions.map(d => <Option key={this._cuid()} value={d.value}>{d.label}</Option>)
-  }
+    return dimensionsList.dimensions.map(d => (
+      <Option key={this._cuid()} value={d.value}>
+        {d.label}
+      </Option>
+    ));
+  };
 
   sortStep = (index: number, direction: 'up' | 'down') => {
     const { steps } = this.state;
@@ -450,102 +467,153 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
       this.setState({ steps });
     }
 
-    if (direction === 'down' && (index + 1 < steps.length)) {
+    if (direction === 'down' && index + 1 < steps.length) {
       steps[index] = steps[index + 1];
       steps[index].name = `Step ${index + 1}`;
       steps[index + 1] = temp;
       steps[index + 1].name = `Step ${index + 2}`;
       this.setState({ steps });
     }
-  }
+  };
 
   popupContainer() {
-    return document.getElementById("mcs-funnelQueryBuilder_step_dimensions") as HTMLElement
+    return document.getElementById('mcs-funnelQueryBuilder_step_dimensions') as HTMLElement;
   }
 
   render() {
     const { steps } = this.state;
     const { datamartId, intl, dateRange } = this.props;
-    const { from, to } = dateRange
+    const { from, to } = dateRange;
 
-    return (<div className={"mcs-funnelQueryBuilder"} >
-
-      <div className={"mcs-funnelQueryBuilder_steps"}>
-        <div className={"mcs-funnelQueryBuilder_step_timelineStart"}>
-          {from && <p className={"mcs-funnelQueryBuilder_timeline_date"}>{from.toMoment().format('DD/MM/YYYY 00:00')}</p>}
-          <CalendarOutlined className={"mcs-funnelQueryBuilder_timeline_icon"} />
-        </div>
-        {
-          steps.map((step, index) => {
+    return (
+      <div className={'mcs-funnelQueryBuilder'}>
+        <div className={'mcs-funnelQueryBuilder_steps'}>
+          <div className={'mcs-funnelQueryBuilder_step_timelineStart'}>
+            {from && (
+              <p className={'mcs-funnelQueryBuilder_timeline_date'}>
+                {from.toMoment().format('DD/MM/YYYY 00:00')}
+              </p>
+            )}
+            <CalendarOutlined className={'mcs-funnelQueryBuilder_timeline_icon'} />
+          </div>
+          {steps.map((step, index) => {
             return (
-              <Card key={step.id} className={"mcs-funnelQueryBuilder_step"} bordered={false}>
-                <div className={"mcs-funnelQueryBuilder_step_body"}>
-                  {steps.length > 1 && <div className={"mcs-funnelQueryBuilder_step_reorderBtn"}>
-                    {index > 0 && <ArrowUpOutlined className={"mcs-funnelQueryBuilder_sortBtn mcs-funnelQueryBuilder_sortBtn--up"} onClick={this.sortStep.bind(this, index, "up")} />}
-                    {index + 1 < steps.length && <ArrowDownOutlined className={"mcs-funnelQueryBuilder_sortBtn"} onClick={this.sortStep.bind(this, index, "down")} />}
-                  </div>}
-                  <div className={"mcs-funnelQueryBuilder_step_content"}>
-                    <div className={"mcs-funnelQueryBuilder_stepHeader"}>
-                      <div className="mcs-funnelQueryBuilder_stepName_title">{step.name}</div>
+              <Card key={step.id} className={'mcs-funnelQueryBuilder_step'} bordered={false}>
+                <div className={'mcs-funnelQueryBuilder_step_body'}>
+                  {steps.length > 1 && (
+                    <div className={'mcs-funnelQueryBuilder_step_reorderBtn'}>
+                      {index > 0 && (
+                        <ArrowUpOutlined
+                          className={
+                            'mcs-funnelQueryBuilder_sortBtn mcs-funnelQueryBuilder_sortBtn--up'
+                          }
+                          onClick={this.sortStep.bind(this, index, 'up')}
+                        />
+                      )}
+                      {index + 1 < steps.length && (
+                        <ArrowDownOutlined
+                          className={'mcs-funnelQueryBuilder_sortBtn'}
+                          onClick={this.sortStep.bind(this, index, 'down')}
+                        />
+                      )}
+                    </div>
+                  )}
+                  <div className={'mcs-funnelQueryBuilder_step_content'}>
+                    <div className={'mcs-funnelQueryBuilder_stepHeader'}>
+                      <div className='mcs-funnelQueryBuilder_stepName_title'>{step.name}</div>
                       <Button
-                        shape="circle"
+                        shape='circle'
                         icon={<CloseOutlined />}
-                        className={"mcs-funnelQueryBuilder_removeStepBtn"}
-                        onClick={this.removeStep.bind(this, step.id)} />
+                        className={'mcs-funnelQueryBuilder_removeStepBtn'}
+                        onClick={this.removeStep.bind(this, step.id)}
+                      />
                     </div>
 
-                    {index > 0 && <div className={"mcs-funnelQueryBuilder_maximumDaysAfterStep"}>
-                      <Input
-                        type="number"
-                        className={"mcs-funnelQueryBuilder_maximumDaysAfterStep_input"}
-                        min="0"
-                        value={step.max_days_after_previous_step}
-                        onChange={this.handleMaximumDaysAfterStepChange.bind(this, step.id)} />
-                      <p className={"mcs-funnelQueryBuilder_maximumDaysAfterStep_desc"}>
-                        {step.max_days_after_previous_step && step.max_days_after_previous_step > 1 ? "days" : "day"} maximum after previous step
-                      </p>
-                    </div>}
+                    {index > 0 && (
+                      <div className={'mcs-funnelQueryBuilder_maximumDaysAfterStep'}>
+                        <Input
+                          type='number'
+                          className={'mcs-funnelQueryBuilder_maximumDaysAfterStep_input'}
+                          min='0'
+                          value={step.max_days_after_previous_step}
+                          onChange={this.handleMaximumDaysAfterStepChange.bind(this, step.id)}
+                        />
+                        <p className={'mcs-funnelQueryBuilder_maximumDaysAfterStep_desc'}>
+                          {step.max_days_after_previous_step &&
+                          step.max_days_after_previous_step > 1
+                            ? 'days'
+                            : 'day'}{' '}
+                          maximum after previous step
+                        </p>
+                      </div>
+                    )}
                     {step.filter_clause.filters.map((filter, filterIndex) => {
                       return (
                         <div key={filter.id}>
-                          {filterIndex > 0 && <Select
-                            showArrow={false}
-                            defaultValue={"AND"}
-                            className={"mcs-funnelQueryBuilder_select mcs-funnelQueryBuilder_select--booleanOperators"}
-                            onChange={this.handleFilterOperatorChange.bind(this, step.id)}
-                            value={step.filter_clause.operator}>
-                            {booleanOperator.map(bo => {
-                              return (
-                                <Option key={this._cuid()} value={bo}>
-                                  {bo}
-                                </Option>)
-                            })}
-                          </Select>}
-                          <div className={"mcs-funnelQueryBuilder_step_dimensions"} id="mcs-funnelQueryBuilder_step_dimensions">
+                          {filterIndex > 0 && (
+                            <Select
+                              showArrow={false}
+                              defaultValue={'AND'}
+                              className={
+                                'mcs-funnelQueryBuilder_select mcs-funnelQueryBuilder_select--booleanOperators'
+                              }
+                              onChange={this.handleFilterOperatorChange.bind(this, step.id)}
+                              value={step.filter_clause.operator}
+                            >
+                              {booleanOperator.map(bo => {
+                                return (
+                                  <Option key={this._cuid()} value={bo}>
+                                    {bo}
+                                  </Option>
+                                );
+                              })}
+                            </Select>
+                          )}
+                          <div
+                            className={'mcs-funnelQueryBuilder_step_dimensions'}
+                            id='mcs-funnelQueryBuilder_step_dimensions'
+                          >
                             <Select
                               value={filter.dimension_name}
                               showSearch={true}
                               showArrow={false}
-                              placeholder="Dimension name"
+                              placeholder='Dimension name'
                               getPopupContainer={this.popupContainer}
-                              className={"mcs-funnelQueryBuilder_select mcs-funnelQueryBuilder_select--dimensions"}
-                              onChange={this.handleDimensionNameChange.bind(this, filterIndex, step.id)}>
+                              className={
+                                'mcs-funnelQueryBuilder_select mcs-funnelQueryBuilder_select--dimensions'
+                              }
+                              onChange={this.handleDimensionNameChange.bind(
+                                this,
+                                filterIndex,
+                                step.id,
+                              )}
+                            >
                               {this.getDimensionNameSelect()}
                             </Select>
-                            <div className="mcs-funnelQueryBuilder_switch">
+                            <div className='mcs-funnelQueryBuilder_switch'>
                               <Switch
                                 defaultChecked={!filter.not}
-                                unCheckedChildren="NOT"
-                                className={"mcs-funnelQueryBuilder_switch_btn"}
-                                onChange={this.handleNotSwitcherChange.bind(this, filterIndex, step.id)}
+                                unCheckedChildren='NOT'
+                                className={'mcs-funnelQueryBuilder_switch_btn'}
+                                onChange={this.handleNotSwitcherChange.bind(
+                                  this,
+                                  filterIndex,
+                                  step.id,
+                                )}
                               />
-                              {filter.not && <McsIcon
-                                type="info"
-                                className="mcs-funnelQueryBuilder_notInfo_notSwitcherIcon"
-                                title={"This will filter only activities that have the selected criteria filled with another value than the one(s) selected"} />}
+                              {filter.not && (
+                                <McsIcon
+                                  type='info'
+                                  className='mcs-funnelQueryBuilder_notInfo_notSwitcherIcon'
+                                  title={
+                                    'This will filter only activities that have the selected criteria filled with another value than the one(s) selected'
+                                  }
+                                />
+                              )}
                             </div>
-                            <div className="mcs-funnelQueryBuilder_step_dimensionFilter_operator">
-                              <span className="mcs-funnelQueryBuilder_step_dimensionFilter_operator_text">{this.showFilterSymbol(filterIndex, step.id)}
+                            <div className='mcs-funnelQueryBuilder_step_dimensionFilter_operator'>
+                              <span className='mcs-funnelQueryBuilder_step_dimensionFilter_operator_text'>
+                                {this.showFilterSymbol(filterIndex, step.id)}
                               </span>
                             </div>
                             <FunnelExpressionInput
@@ -556,56 +624,75 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
                               from={from}
                               to={to}
                               stepId={step.id}
-                              handleDimensionExpressionForSelectorChange={this.handleDimensionExpressionForSelectorChange.bind(this, filterIndex, step.id)}
+                              handleDimensionExpressionForSelectorChange={this.handleDimensionExpressionForSelectorChange.bind(
+                                this,
+                                filterIndex,
+                                step.id,
+                              )}
                             />
                             <Button
-                              shape="circle"
+                              shape='circle'
                               icon={<CloseOutlined />}
-                              className={"mcs-funnelQueryBuilder_removeFilterBtn"}
-                              onClick={this.removeDimensionFromStep.bind(this, step.id, filter.id)} />
+                              className={'mcs-funnelQueryBuilder_removeFilterBtn'}
+                              onClick={this.removeDimensionFromStep.bind(this, step.id, filter.id)}
+                            />
                           </div>
-                        </div>)
+                        </div>
+                      );
                     })}
-                    {<Button className="mcs-funnelQueryBuilder_addDimensionBtn" onClick={this.addDimensionToStep.bind(this, step.id)}>
-                      <FormattedMessage
-                        id="audience.funnel.querybuilder.newFilter"
-                        defaultMessage="Add a filter"
-                      />
-                    </Button>}
+                    {
+                      <Button
+                        className='mcs-funnelQueryBuilder_addDimensionBtn'
+                        onClick={this.addDimensionToStep.bind(this, step.id)}
+                      >
+                        <FormattedMessage
+                          id='audience.funnel.querybuilder.newFilter'
+                          defaultMessage='Add a filter'
+                        />
+                      </Button>
+                    }
                   </div>
                 </div>
-                <div className={"mcs-funnelQueryBuilder_step_bullet"}>
-                  <div className={"mcs-funnelQueryBuilder_step_bullet_icon"} />
+                <div className={'mcs-funnelQueryBuilder_step_bullet'}>
+                  <div className={'mcs-funnelQueryBuilder_step_bullet_icon'} />
                 </div>
-                {step.displayEventTypeWarning && <div className={"mcs-funnelQueryBuilder_step_warning"}>
-                  <CloseOutlined className={"mcs-funnelQueryBuilder_step_warning_icon"} />
-                  <Tag className={"mcs-funnelQueryBuilder_step_warning_desc"}>
-                    {intl.formatMessage(funnelMessages.eventsWarning)}
-                  </Tag>
-                </div>}
+                {step.displayEventTypeWarning && (
+                  <div className={'mcs-funnelQueryBuilder_step_warning'}>
+                    <CloseOutlined className={'mcs-funnelQueryBuilder_step_warning_icon'} />
+                    <Tag className={'mcs-funnelQueryBuilder_step_warning_desc'}>
+                      {intl.formatMessage(funnelMessages.eventsWarning)}
+                    </Tag>
+                  </div>
+                )}
               </Card>
-            )
-          })
-        }
-        <div className={"mcs-funnelQueryBuilder_addStepBlock"}>
-          <div className={"mcs-funnelQueryBuilder_step_timelineEnd"}>
-            <FlagOutlined className={"mcs-funnelQueryBuilder_timeline_icon"} />
-            {to && <p className={"mcs-funnelQueryBuilder_timeline_date"}>{to.toMoment().format('DD/MM/YYYY 23:59')}</p>}
+            );
+          })}
+          <div className={'mcs-funnelQueryBuilder_addStepBlock'}>
+            <div className={'mcs-funnelQueryBuilder_step_timelineEnd'}>
+              <FlagOutlined className={'mcs-funnelQueryBuilder_timeline_icon'} />
+              {to && (
+                <p className={'mcs-funnelQueryBuilder_timeline_date'}>
+                  {to.toMoment().format('DD/MM/YYYY 23:59')}
+                </p>
+              )}
+            </div>
+            {steps.length < 4 && (
+              <Button className={'mcs-funnelQueryBuilder_addStepBtn'} onClick={this.addStep}>
+                <FormattedMessage
+                  id='audience.funnel.querybuilder.newStep'
+                  defaultMessage='Add a step'
+                />
+              </Button>
+            )}
           </div>
-          {steps.length < 4 && <Button className={"mcs-funnelQueryBuilder_addStepBtn"} onClick={this.addStep}>
-            <FormattedMessage
-              id="audience.funnel.querybuilder.newStep"
-              defaultMessage="Add a step"
-            />
-          </Button>}
         </div>
       </div>
-    </div >)
+    );
   }
 }
 
 export default compose<FunnelQueryBuilderProps, FunnelQueryBuilderProps>(
   injectNotifications,
   injectIntl,
-  withRouter
+  withRouter,
 )(FunnelQueryBuilder);

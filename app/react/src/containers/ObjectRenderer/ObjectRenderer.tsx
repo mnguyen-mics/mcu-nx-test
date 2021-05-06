@@ -5,7 +5,7 @@ import { DataResponse } from '../../services/ApiService';
 interface ObjectRendererProps<T> {
   id: string;
   renderMethod: (object: T) => JSX.Element;
-  fetchingMethod: (...args: any[]) => Promise<DataResponse<T>>
+  fetchingMethod: (...args: any[]) => Promise<DataResponse<T>>;
 }
 
 interface ObjectRendererState<T> {
@@ -41,9 +41,7 @@ export default class ObjectRenderer<T> extends React.Component<
   }
 
   fetchObject = (id: string) => {
-    this.cancelablePromise = makeCancelable(
-      this.props.fetchingMethod(id).then(res => res.data),
-    );
+    this.cancelablePromise = makeCancelable(this.props.fetchingMethod(id).then(res => res.data));
 
     return this.cancelablePromise.promise.then(object => {
       this.setState({

@@ -5,10 +5,7 @@ import { defineMessages, injectIntl, InjectedIntlProps } from 'react-intl';
 import { FormTitle } from '../../../components/Form';
 import { injectFeatures, InjectedFeaturesProps } from '../../Features';
 import { AutomationSelectedType } from './AutomationBuilderPage';
-import {
-  MenuList,
-  Actionbar,
-} from '@mediarithmics-private/mcs-components-library';
+import { MenuList, Actionbar } from '@mediarithmics-private/mcs-components-library';
 import { ActionbarProps } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar';
 
 export interface AutomationTemplateSelectorProps {
@@ -17,9 +14,7 @@ export interface AutomationTemplateSelectorProps {
   disableReactToEvent: boolean;
 }
 
-type Props = AutomationTemplateSelectorProps &
-  InjectedIntlProps &
-  InjectedFeaturesProps;
+type Props = AutomationTemplateSelectorProps & InjectedIntlProps & InjectedFeaturesProps;
 
 class AutomationTemplateSelector extends React.Component<Props> {
   renderSelectionAutomationType = () => {
@@ -34,14 +29,12 @@ class AutomationTemplateSelector extends React.Component<Props> {
     const onClicOnSegmentExit = () => onSelectTemplate('ON_SEGMENT_EXIT');
 
     return (
-      <Row className="mcs-selector_container">
-        <Row className="menu">
+      <Row className='mcs-selector_container'>
+        <Row className='menu'>
           <MenuList
             title={formatMessage(messages.reactToAnEvent)}
             subtitles={
-              disableReactToEvent
-                ? [formatMessage(messages.reactToAnEventDisabled)]
-                : undefined
+              disableReactToEvent ? [formatMessage(messages.reactToAnEventDisabled)] : undefined
             }
             select={onClickOnReactToEvent}
             disabled={disableReactToEvent}
@@ -53,10 +46,7 @@ class AutomationTemplateSelector extends React.Component<Props> {
             />
           )}
           {this.props.hasFeature('automations-on-segment-exit') && (
-            <MenuList
-              title={formatMessage(messages.onSegmentExit)}
-              select={onClicOnSegmentExit}
-            />
+            <MenuList title={formatMessage(messages.onSegmentExit)} select={onClicOnSegmentExit} />
           )}
         </Row>
       </Row>
@@ -69,7 +59,7 @@ class AutomationTemplateSelector extends React.Component<Props> {
     return (
       <Layout>
         <Actionbar {...actionbarProps} />
-        <Layout.Content className="mcs-content-container mcs-form-container text-center">
+        <Layout.Content className='mcs-content-container mcs-form-container text-center'>
           <FormTitle title={messages.title} subtitle={messages.subTitle} />
           {this.renderSelectionAutomationType()}
         </Layout.Content>
@@ -106,7 +96,6 @@ const messages = defineMessages({
   },
   reactToAnEventDisabled: {
     id: 'automations-template-selector-reactToAnEvent-disabled',
-    defaultMessage:
-      'Invalid configured schema - Please contact your support contact to enable it.',
+    defaultMessage: 'Invalid configured schema - Please contact your support contact to enable it.',
   },
 });

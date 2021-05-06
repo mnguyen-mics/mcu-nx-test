@@ -3,11 +3,7 @@ import { reduxForm, InjectedFormProps, ConfigProps } from 'redux-form';
 import { compose } from 'recompose';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 
-import {
-  DisplayCreativeFormData,
-  DISPLAY_CREATIVE_FORM,
-  isExistingCreative,
-} from './domain';
+import { DisplayCreativeFormData, DISPLAY_CREATIVE_FORM, isExistingCreative } from './domain';
 import messages from './messages';
 import CustomLoaderPlaceholder from './CustomLoaders/CustomLoaderPlaceholder';
 import NotSupportedPlaceholder from './CustomLoaders/NotSupportedPlaceholder';
@@ -21,7 +17,6 @@ import { Omit } from '../../../../utils/Types';
 import { McsFormSection } from '../../../../utils/FormHelper';
 import DisplayCreativeFormLayout from './DisplayCreativeFormLayout';
 
-
 export interface DisplayCreativeFormProps
   extends Omit<ConfigProps<DisplayCreativeFormData>, 'form'> {
   close: () => void;
@@ -31,14 +26,13 @@ export interface DisplayCreativeFormProps
 }
 
 type Props = DisplayCreativeFormProps &
-  InjectedFormProps<DisplayCreativeFormData, DisplayCreativeFormProps> & InjectedIntlProps;
+  InjectedFormProps<DisplayCreativeFormData, DisplayCreativeFormProps> &
+  InjectedIntlProps;
 
 class DisplayCreativeForm extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
   }
-
-  
 
   buildFormSections = () => {
     const { initialValues } = this.props;
@@ -62,9 +56,7 @@ class DisplayCreativeForm extends React.Component<Props> {
       });
     }
 
-
     if (initialValues.pluginLayout === undefined) {
-
       rightFormSections.push({
         id: 'properties',
         title: messages.creativeSectionPropertyTitle,
@@ -75,18 +67,22 @@ class DisplayCreativeForm extends React.Component<Props> {
         rightFormSections.push({
           id: section.title,
           title: section.title,
-          component: <PropertiesFormSection sectionTitle={section.title} small={true}/>,
+          component: <PropertiesFormSection sectionTitle={section.title} small={true} />,
         });
-      })
+      });
     }
 
     if (existingCreative) {
-      leftFormSections.push(
-        {
-          id: 'preview',
-          title: messages.creativeSectionPreviewTitle,
-          component: initialValues.rendererPlugin && initialValues.rendererPlugin.archived ? <NotSupportedPlaceholder /> : <PreviewFormSection />,
-        });
+      leftFormSections.push({
+        id: 'preview',
+        title: messages.creativeSectionPreviewTitle,
+        component:
+          initialValues.rendererPlugin && initialValues.rendererPlugin.archived ? (
+            <NotSupportedPlaceholder />
+          ) : (
+            <PreviewFormSection />
+          ),
+      });
     }
 
     if (!existingCreative) {
@@ -99,19 +95,14 @@ class DisplayCreativeForm extends React.Component<Props> {
 
     return {
       leftPanel: leftFormSections,
-      rightPanel: rightFormSections
+      rightPanel: rightFormSections,
     };
-  }; 
+  };
 
   render() {
-    const {
-      actionBarButtonText,
-      breadCrumbPaths,
-      pristine,
-      close
-    } = this.props;
+    const { actionBarButtonText, breadCrumbPaths, pristine, close } = this.props;
 
-    const sections = this.buildFormSections()
+    const sections = this.buildFormSections();
     return (
       <DisplayCreativeFormLayout
         actionBarButtonText={actionBarButtonText}
@@ -130,5 +121,5 @@ export default compose<Props, DisplayCreativeFormProps>(
     form: DISPLAY_CREATIVE_FORM,
     enableReinitialize: true,
   }),
-  injectIntl
+  injectIntl,
 )(DisplayCreativeForm);

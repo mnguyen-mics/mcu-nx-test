@@ -96,8 +96,8 @@ class AudienceFeatureVariable extends React.Component<Props> {
   }
 
   private formatLabel = (label: string): string => {
-    return label + ':'
-  }
+    return label + ':';
+  };
 
   // The singleStringValue will make FormSearchObjectField component handle only one string value
   // The matchValue will make FormSearchObjectField component handle multiple values grouped in one string
@@ -123,16 +123,13 @@ class AudienceFeatureVariable extends React.Component<Props> {
       wrapperCol: { span: 18 },
     };
 
-    const userPointObject = objectTypes.find((o) => o.name === 'UserPoint')!;
+    const userPointObject = objectTypes.find(o => o.name === 'UserPoint')!;
     const foundField =
-      userPointObject &&
-      userPointObject.fields.find((f) => f.name === variable.path[0]);
+      userPointObject && userPointObject.fields.find(f => f.name === variable.path[0]);
     const schemaType = foundField
-      ? objectTypes.find((ot) => foundField.field_type.includes(ot.name))
+      ? objectTypes.find(ot => foundField.field_type.includes(ot.name))
       : undefined;
-    const field = schemaType?.fields.find(
-      (f) => f.name === variable.field_name,
-    );
+    const field = schemaType?.fields.find(f => f.name === variable.field_name);
     const fieldDirectives = field ? field.directives : undefined;
     let selectProps = {};
     let loadOnlyOnce = false;
@@ -140,9 +137,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
 
     let fetchListMethod = (
       keywords: string,
-    ): Promise<
-      Array<{ key: string; label: JSX.Element | string; value: string }>
-    > => {
+    ): Promise<Array<{ key: string; label: JSX.Element | string; value: string }>> => {
       if (variable.field_name && foundField) {
         return this._referenceTableService
           .getReferenceTable(
@@ -151,8 +146,8 @@ class AudienceFeatureVariable extends React.Component<Props> {
             foundField.name,
             variable.field_name,
           )
-          .then((res) =>
-            res.data.map((r) => ({
+          .then(res =>
+            res.data.map(r => ({
               key: r.value,
               label: r.display_value,
               value: r.value,
@@ -162,11 +157,9 @@ class AudienceFeatureVariable extends React.Component<Props> {
       return Promise.resolve([]);
     };
 
-    let fetchSingleMethod = (id: string) =>
-      Promise.resolve({ key: id, label: id, value: id });
+    let fetchSingleMethod = (id: string) => Promise.resolve({ key: id, label: id, value: id });
 
-    const modelAndType =
-      fieldDirectives && getCoreReferenceTypeAndModel(fieldDirectives);
+    const modelAndType = fieldDirectives && getCoreReferenceTypeAndModel(fieldDirectives);
 
     if (fieldDirectives && modelAndType) {
       if (modelAndType.type && modelAndType.type === 'CORE_OBJECT') {
@@ -175,8 +168,8 @@ class AudienceFeatureVariable extends React.Component<Props> {
             fetchListMethod = (keywords: string) => {
               return this._datamartService
                 .getUserAccountCompartmentDatamartSelectionResources(datamartId)
-                .then((res) =>
-                  res.data.map((r) => ({
+                .then(res =>
+                  res.data.map(r => ({
                     key: r.compartment_id,
                     label: r.name ? r.name : r.token,
                     value: r.compartment_id,
@@ -184,7 +177,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
                 );
             };
             fetchSingleMethod = (id: string) =>
-              this._compartmentService.getCompartment(id).then((res) => ({
+              this._compartmentService.getCompartment(id).then(res => ({
                 key: res.data.id,
                 label: res.data.name,
                 value: res.data.id,
@@ -194,13 +187,12 @@ class AudienceFeatureVariable extends React.Component<Props> {
             fetchListMethod = (keywords: string) => {
               return this._channelService
                 .getChannelsByOrganisation(organisationId, {
-                  community_id:
-                    organisationId === community_id ? community_id : undefined,
+                  community_id: organisationId === community_id ? community_id : undefined,
                   keywords: keywords,
                   with_source_datamarts: true,
                 })
-                .then((res) =>
-                  res.data.map((r) => ({
+                .then(res =>
+                  res.data.map(r => ({
                     key: r.id,
                     label: r.name,
                     value: r.id,
@@ -208,7 +200,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
                 );
             };
             fetchSingleMethod = (id: string) =>
-              this._channelService.getChannel(datamartId, id).then((res) => ({
+              this._channelService.getChannel(datamartId, id).then(res => ({
                 key: res.data.id,
                 label: res.data.name,
                 value: res.data.id,
@@ -221,8 +213,8 @@ class AudienceFeatureVariable extends React.Component<Props> {
                   keywords: keywords,
                   datamart_id: datamartId,
                 })
-                .then((res) =>
-                  res.data.map((r) => ({
+                .then(res =>
+                  res.data.map(r => ({
                     key: r.id,
                     label: <SegmentNameDisplay audienceSegmentResource={r} />,
                     value: r.id,
@@ -230,7 +222,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
                 );
             };
             fetchSingleMethod = (id: string) =>
-              this._audienceSegmentService.getSegment(id).then((res) => ({
+              this._audienceSegmentService.getSegment(id).then(res => ({
                 key: res.data.id,
                 label: res.data.name,
                 value: res.data.id,
@@ -241,11 +233,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
     } else {
       fetchListMethod = (k: string) => {
         const queryStart = 'SELECT';
-        const buildQuery = () => (
-          acc: string,
-          pathValue: string,
-          index: number,
-        ) => {
+        const buildQuery = () => (acc: string, pathValue: string, index: number) => {
           const qq = `{ ${pathValue} ${acc} }`;
           return qq;
         };
@@ -259,15 +247,13 @@ class AudienceFeatureVariable extends React.Component<Props> {
           .runOTQLQuery(datamartId, query, {
             use_cache: true,
           })
-          .then((otqlResultResp) => {
-            return otqlResultResp.data.rows[0].aggregations.buckets[0].buckets.map(
-              (b: any) => {
-                return {
-                  key: b.key,
-                  label: b.key,
-                };
-              },
-            );
+          .then(otqlResultResp => {
+            return otqlResultResp.data.rows[0].aggregations.buckets[0].buckets.map((b: any) => {
+              return {
+                key: b.key,
+                label: b.key,
+              };
+            });
           });
       };
       selectProps = {
@@ -480,9 +466,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
               name={name}
               component={FormMultiTag}
               selectProps={{
-                options: (builtinEnumTypeOptions[
-                  variable.type
-                ] as string[]).map((t) => {
+                options: (builtinEnumTypeOptions[variable.type] as string[]).map(t => {
                   return {
                     label: t,
                     value: t,

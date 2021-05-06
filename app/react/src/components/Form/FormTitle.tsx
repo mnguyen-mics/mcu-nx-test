@@ -7,22 +7,17 @@ export interface FormTitleProps {
   subtitle?: FormattedMessage.MessageDescriptor;
 }
 
-const FormTitle: React.SFC<FormTitleProps> = ({ title, subtitle}) => {
-
+const FormTitle: React.SFC<FormTitleProps> = ({ title, subtitle }) => {
   return (
-    <div className="title-container">
-      <div className="title">
-      <FormattedMessage
-        {...title}
-      />
+    <div className='title-container'>
+      <div className='title'>
+        <FormattedMessage {...title} />
       </div>
-      {!!subtitle &&
-        <div className="subtitle">
-        <FormattedMessage
-          {...subtitle}
-        />
+      {!!subtitle && (
+        <div className='subtitle'>
+          <FormattedMessage {...subtitle} />
         </div>
-      }
+      )}
     </div>
   );
 };

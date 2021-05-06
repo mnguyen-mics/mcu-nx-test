@@ -96,8 +96,7 @@ export class ResourceHistoryService implements IResourceHistoryService {
       const ids = lodash
         .flatMap(response.data, rhr => {
           return rhr.events.map(event =>
-            isHistoryLinkEvent(event) &&
-            event.resource_type === linkedResourceType
+            isHistoryLinkEvent(event) && event.resource_type === linkedResourceType
               ? event.resource_id
               : '',
           );

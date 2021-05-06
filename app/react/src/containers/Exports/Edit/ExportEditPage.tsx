@@ -11,10 +11,7 @@ import { injectDrawer } from '../../../components/Drawer/index';
 import { InjectedDrawerProps } from '../../../components/Drawer/injectDrawer';
 import { notifyError } from '../../../redux/Notifications/actions';
 import { Loading } from '../../../components/index';
-import {
-  QueryResource,
-  DatamartResource,
-} from '../../../models/datamart/DatamartResource';
+import { QueryResource, DatamartResource } from '../../../models/datamart/DatamartResource';
 import { IDatamartService } from '../../../services/DatamartService';
 import DatamartSelector from '../../Datamart/DatamartSelector';
 import { Export } from '../../../models/exports/exports';
@@ -185,21 +182,14 @@ class ExportEditPage extends React.Component<Props, ExportEditPageState> {
         : message.error(intl.formatMessage(messages.updateError));
     };
 
-    const hideSaveInProgress = message.loading(
-      intl.formatMessage(messages.savingInProgress),
-      0,
-    );
+    const hideSaveInProgress = message.loading(intl.formatMessage(messages.savingInProgress), 0);
 
     const generatesSaveMethod = (): Promise<DataResponse<Export>> => {
       if (exportId) {
         const generateQuerySaveMethod = () => {
           return this._queryService
-                .updateQuery(
-                  selectedDatamart!.id,
-                  this.state.export.query.id,
-                  formData.query,
-                )
-                .then(res => res.data);
+            .updateQuery(selectedDatamart!.id, this.state.export.query.id, formData.query)
+            .then(res => res.data);
         };
 
         return generateQuerySaveMethod().then((res: QueryResource) => {
@@ -208,12 +198,12 @@ class ExportEditPage extends React.Component<Props, ExportEditPageState> {
       } else {
         const generateQuerySaveMethod = () => {
           return this._queryService
-                .createQuery(selectedDatamart!.id, {
-                  ...formData.query,
-                  datamart_id: selectedDatamart!.id,
-                  query_language: 'OTQL',
-                })
-                .then(res => res.data);
+            .createQuery(selectedDatamart!.id, {
+              ...formData.query,
+              datamart_id: selectedDatamart!.id,
+              query_language: 'OTQL',
+            })
+            .then(res => res.data);
         };
         return generateQuerySaveMethod().then((res: QueryResource) => {
           return this._exportService.createExport(organisationId, {
@@ -266,7 +256,9 @@ class ExportEditPage extends React.Component<Props, ExportEditPageState> {
       : formatMessage(messages.newExports);
 
     const breadcrumbPaths = [
-      <Link key='1' to={`/v2/o/${organisationId}/datastudio/exports`}>{formatMessage(messages.exports)}</Link>,
+      <Link key='1' to={`/v2/o/${organisationId}/datastudio/exports`}>
+        {formatMessage(messages.exports)}
+      </Link>,
       exportName,
     ];
 

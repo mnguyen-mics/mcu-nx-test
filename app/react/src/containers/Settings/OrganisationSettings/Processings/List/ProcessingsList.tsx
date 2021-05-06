@@ -8,10 +8,7 @@ import { PAGINATION_SEARCH_SETTINGS } from '../../../../../utils/LocationSearchH
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { IOrganisationService } from '../../../../../services/OrganisationService';
 import { TYPES } from '../../../../../constants/types';
-import {
-  DataListResponse,
-  DataResponse,
-} from '../../../../../services/ApiService';
+import { DataListResponse, DataResponse } from '../../../../../services/ApiService';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { OrganisationResource } from '../../../../../models/organisation/organisation';
 import { lazyInject } from '../../../../../config/inversify.config';
@@ -96,7 +93,7 @@ class ProcessingsList extends React.Component<Props, ProcessingPageState> {
         : this.fetchCommunityId(organisationId);
 
       communityIdF
-        .then((comId) => {
+        .then(comId => {
           const options = {
             ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
           };
@@ -111,7 +108,7 @@ class ProcessingsList extends React.Component<Props, ProcessingPageState> {
               return results;
             });
         })
-        .catch((err) => {
+        .catch(err => {
           this.setState({
             loading: false,
             data: [],
@@ -161,11 +158,9 @@ class ProcessingsList extends React.Component<Props, ProcessingPageState> {
       this._organisationService
         .archiveProcessing(processing.community_id, processing.id)
         .then(() => {
-          history.push(
-            `/v2/o/${organisationId}/settings/organisation/processings`,
-          );
+          history.push(`/v2/o/${organisationId}/settings/organisation/processings`);
         })
-        .catch((err) => {
+        .catch(err => {
           notifyError(err);
         });
     }
@@ -196,11 +191,9 @@ class ProcessingsList extends React.Component<Props, ProcessingPageState> {
         .deleteProcessing(organisationId, processingIdToBeDeleted)
         .then(() => {
           this.closeDeleteModal();
-          history.push(
-            `/v2/o/${organisationId}/settings/organisation/processings`,
-          );
+          history.push(`/v2/o/${organisationId}/settings/organisation/processings`);
         })
-        .catch((err) => {
+        .catch(err => {
           this.closeDeleteModal();
           notifyError(err);
         });
@@ -238,17 +231,11 @@ class ProcessingsList extends React.Component<Props, ProcessingPageState> {
       intl: { formatMessage },
     } = this.props;
 
-    const {
-      isVisibleCommunityModal,
-      isVisibleDeleteModal,
-      processingIdToBeDeleted,
-    } = this.state;
+    const { isVisibleCommunityModal, isVisibleDeleteModal, processingIdToBeDeleted } = this.state;
 
     const authorizeEditActions = this.authorizeEditActions();
 
-    const dataColumnsDefinition: Array<
-      DataColumnDefinition<ProcessingResource>
-    > = [
+    const dataColumnsDefinition: Array<DataColumnDefinition<ProcessingResource>> = [
       {
         title: formatMessage(messages.id),
         key: 'id',
@@ -315,15 +302,13 @@ class ProcessingsList extends React.Component<Props, ProcessingPageState> {
 
     const createProcessing = () => {
       if (this.hasRightToPerformActionsOnProcessing()) {
-        history.push(
-          `/v2/o/${organisationId}/settings/organisation/processings/create`,
-        );
+        history.push(`/v2/o/${organisationId}/settings/organisation/processings/create`);
       }
     };
 
     const button = authorizeEditActions ? (
-      <span className="mcs-card-button">
-        <Button key="create" type="primary" onClick={createProcessing}>
+      <span className='mcs-card-button'>
+        <Button key='create' type='primary' onClick={createProcessing}>
           <FormattedMessage {...messages.newProcessing} />
         </Button>
       </span>
@@ -331,19 +316,19 @@ class ProcessingsList extends React.Component<Props, ProcessingPageState> {
 
     const additionnalComponent = (
       <div>
-        <div className="mcs-card-header mcs-card-title">
-          <span className="mcs-card-title">
+        <div className='mcs-card-header mcs-card-title'>
+          <span className='mcs-card-title'>
             <FormattedMessage {...settingsMessages.processingActivities} />
           </span>
           {button}
         </div>
-        <hr className="mcs-separator" />
+        <hr className='mcs-separator' />
       </div>
     );
 
     return (
-      <div className="ant-layout">
-        <Content className="mcs-content-container">
+      <div className='ant-layout'>
+        <Content className='mcs-content-container'>
           <ItemList
             fetchList={this.fetchProcessings}
             dataSource={this.state.data}
@@ -361,16 +346,14 @@ class ProcessingsList extends React.Component<Props, ProcessingPageState> {
           onOk={this.onClickCommunityModal}
           onCancel={this.closeCommunityModal}
         >
-          {isVisibleCommunityModal &&
-            formatMessage(messages.communityModalMessage)}
+          {isVisibleCommunityModal && formatMessage(messages.communityModalMessage)}
         </Modal>
         <Modal // Confirm delete modal
           visible={isVisibleDeleteModal}
           onOk={this.deleteProcessingConfirmed}
           onCancel={this.closeDeleteModal}
         >
-          {formatMessage(messages.deleteModalMessage)}{' '}
-          {`${processingIdToBeDeleted}.`}
+          {formatMessage(messages.deleteModalMessage)} {`${processingIdToBeDeleted}.`}
         </Modal>
       </div>
     );

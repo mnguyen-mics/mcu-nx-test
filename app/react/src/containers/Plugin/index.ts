@@ -1,5 +1,3 @@
 import PluginFieldGenerator from './PluginFieldGenerator';
 
-export {
-  PluginFieldGenerator,
-};
+export { PluginFieldGenerator };

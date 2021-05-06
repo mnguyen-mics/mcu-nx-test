@@ -49,24 +49,21 @@ const messages = defineMessages({
 });
 
 function updateErrorMessage(err: ErrorResponse) {
-  if(err.error_code === "EMAIL_ALREADY_EXISTS")
-    return messages.emailAlreadyExists;
-  else
-    return messages.updateError;
+  if (err.error_code === 'EMAIL_ALREADY_EXISTS') return messages.emailAlreadyExists;
+  else return messages.updateError;
 }
 
 const INITIAL_USER_FORM_DATA: Partial<UserResource> = {
   first_name: '',
-  email: ''
-}
+  email: '',
+};
 
 interface State {
   loading: boolean;
   userData: Partial<UserResource>;
 }
 
-type Props = InjectedIntlProps &
-  RouteComponentProps<{ organisationId: string; userId: string }>;
+type Props = InjectedIntlProps & RouteComponentProps<{ organisationId: string; userId: string }>;
 
 class EditUserPage extends React.Component<Props, State> {
   @lazyInject(TYPES.IUsersService)
@@ -121,11 +118,8 @@ class EditUserPage extends React.Component<Props, State> {
     this.setState({
       loading: true,
     });
-    const hideSaveInProgress = message.loading(
-      intl.formatMessage(messages.savingInProgress),
-      0,
-    );
-    const redirectAndNotify = (err: ErrorResponse | null = null) => {
+    const hideSaveInProgress = message.loading(intl.formatMessage(messages.savingInProgress), 0);
+    const redirectAndNotify = (err: ErrorResponse | null = null) => {
       this.setState({
         loading: false,
       });
@@ -137,16 +131,9 @@ class EditUserPage extends React.Component<Props, State> {
     };
     let createOrUpdateUserPromise;
     if (userId) {
-      createOrUpdateUserPromise = this._usersService.updateUser(
-        userId,
-        organisationId,
-        formData,
-      );
+      createOrUpdateUserPromise = this._usersService.updateUser(userId, organisationId, formData);
     } else {
-      createOrUpdateUserPromise = this._usersService.createUser(
-        organisationId,
-        formData,
-      );
+      createOrUpdateUserPromise = this._usersService.createUser(organisationId, formData);
     }
 
     createOrUpdateUserPromise
@@ -170,13 +157,11 @@ class EditUserPage extends React.Component<Props, State> {
 
     const userName = userId
       ? formatMessage(messages.editUser, {
-          name: userData.first_name
-            ? userData.first_name
-            : formatMessage(messages.user),
+          name: userData.first_name ? userData.first_name : formatMessage(messages.user),
         })
       : formatMessage(messages.newUser);
     const breadcrumbPaths = [
-      <Link key="1" to={`/v2/o/${organisationId}/settings/organisation/users`}>
+      <Link key='1' to={`/v2/o/${organisationId}/settings/organisation/users`}>
         {formatMessage(messages.users)}
       </Link>,
       userName,

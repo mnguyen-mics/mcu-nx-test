@@ -8,9 +8,7 @@ import { DATAMART_USERS_ANALYTICS_SETTING } from '../Segments/Dashboard/constant
 import { withRouter, RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
 import chroma from 'chroma-js';
-import injectThemeColors, {
-  InjectedThemeColorsProps,
-} from '../../Helpers/injectThemeColors';
+import injectThemeColors, { InjectedThemeColorsProps } from '../../Helpers/injectThemeColors';
 import { isEqual, difference } from 'lodash';
 import cuid from 'cuid';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
@@ -96,16 +94,8 @@ class DatamartUsersAnalyticsContent extends React.Component<
     this.setState({
       allUsersConfig: configItemCopy.filter(item => !item.segments),
       formattedConfig: configItemCopy,
-      filterColors: chroma
-        .scale([colors['mcs-info'], lastFilterColor])
-        .mode('lch')
-        .colors(3),
-      generatedDom: this.generateDOM(
-        configItemCopy,
-        datamartId,
-        dateRange,
-        onChange,
-      ),
+      filterColors: chroma.scale([colors['mcs-info'], lastFilterColor]).mode('lch').colors(3),
+      generatedDom: this.generateDOM(configItemCopy, datamartId, dateRange, onChange),
     });
   }
 
@@ -169,9 +159,7 @@ class DatamartUsersAnalyticsContent extends React.Component<
             segments: {
               baseSegmentId,
             },
-            color: usedColors.includes(filterColors[0])
-              ? filterColors[1]
-              : filterColors[0],
+            color: usedColors.includes(filterColors[0]) ? filterColors[1] : filterColors[0],
           };
 
           tmpDashboardConfig.push(currentConfigItem);
@@ -182,12 +170,9 @@ class DatamartUsersAnalyticsContent extends React.Component<
         // Remove segment filter
         newDashboardConfig = currentFormattedConfig.filter(
           item =>
-            !item.segments ||
-            (item.segments && item.segments.baseSegmentId !== thedifference[0]),
+            !item.segments || (item.segments && item.segments.baseSegmentId !== thedifference[0]),
         );
-        const newDashboardConfigKeys = newDashboardConfig.map(
-          item => item.layout.i,
-        );
+        const newDashboardConfigKeys = newDashboardConfig.map(item => item.layout.i);
         newGeneratedDom.concat(
           generatedDom.filter((item: JSX.Element) =>
             newDashboardConfigKeys.includes(item.key as string),
@@ -201,12 +186,7 @@ class DatamartUsersAnalyticsContent extends React.Component<
         generatedDom:
           newGeneratedDom.length > 0
             ? newGeneratedDom
-            : this.generateDOM(
-                newDashboardConfig,
-                datamartId,
-                dateRange,
-                onChange,
-              ),
+            : this.generateDOM(newDashboardConfig, datamartId, dateRange, onChange),
       });
     }
 
@@ -216,17 +196,10 @@ class DatamartUsersAnalyticsContent extends React.Component<
         const newDashboardConfig = !filter.allusers
           ? currentFormattedConfig.filter(item => item.segments)
           : currentFormattedConfig.concat(allUsersConfig);
-        const newDashboardConfigKeys = newDashboardConfig.map(
-          item => item.layout.i,
-        );
+        const newDashboardConfigKeys = newDashboardConfig.map(item => item.layout.i);
 
         const newGeneratedDom = filter.allusers
-          ? this.generateDOM(
-              newDashboardConfig,
-              datamartId,
-              dateRange,
-              onChange,
-            )
+          ? this.generateDOM(newDashboardConfig, datamartId, dateRange, onChange)
           : state.generatedDom.filter((item: JSX.Element) =>
               newDashboardConfigKeys.includes(item.key as string),
             );
@@ -245,12 +218,7 @@ class DatamartUsersAnalyticsContent extends React.Component<
         prevProps.dateRange.to.value !== dateRange.to.value)
     ) {
       this.setState({
-        generatedDom: this.generateDOM(
-          formattedConfig,
-          datamartId,
-          dateRange,
-          onChange,
-        ),
+        generatedDom: this.generateDOM(formattedConfig, datamartId, dateRange, onChange),
       });
     }
 
@@ -277,11 +245,7 @@ class DatamartUsersAnalyticsContent extends React.Component<
               ? 'static mcs-datamartUsersAnalytics_card'
               : 'mcs-datamartUsersAnalytics_card'
           }
-          style={
-            !comp.tabMode
-              ? { borderLeft: `5px solid ${comp.color}` }
-              : { boxShadow: 'none' }
-          }
+          style={!comp.tabMode ? { borderLeft: `5px solid ${comp.color}` } : { boxShadow: 'none' }}
         >
           {comp.charts.map((chart: Chart) => {
             return (
@@ -291,21 +255,13 @@ class DatamartUsersAnalyticsContent extends React.Component<
                 datamartId={datamartId}
                 dateRange={dateRange}
                 onChange={onChange}
-                segmentId={
-                  comp.segments ? comp.segments.baseSegmentId : undefined
-                }
-                segmentName={
-                  comp.segments ? comp.segments.baseSegmentName : undefined
-                }
+                segmentId={comp.segments ? comp.segments.baseSegmentId : undefined}
+                segmentName={comp.segments ? comp.segments.baseSegmentName : undefined}
                 compareWithSegmentName={
-                  comp.segments
-                    ? comp.segments.segmentToCompareWithName
-                    : undefined
+                  comp.segments ? comp.segments.segmentToCompareWithName : undefined
                 }
                 compareWithSegmentId={
-                  comp.segments
-                    ? comp.segments.segmentIdToCompareWith
-                    : undefined
+                  comp.segments ? comp.segments.segmentIdToCompareWith : undefined
                 }
                 segmentToAggregate={this.props.segmentToAggregate}
               />
@@ -322,7 +278,7 @@ class DatamartUsersAnalyticsContent extends React.Component<
 
     return (
       <ResponsiveGridLayout
-        className="layout mcs-datamartUsersAnalytics_components"
+        className='layout mcs-datamartUsersAnalytics_components'
         layouts={{ lg: layouts }}
         cols={{ lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 }}
         isDraggable={false}
@@ -336,10 +292,7 @@ class DatamartUsersAnalyticsContent extends React.Component<
   }
 }
 
-export default compose<
-  DatamartUsersAnalyticsContentProps,
-  DatamartUsersAnalyticsContentProps
->(
+export default compose<DatamartUsersAnalyticsContentProps, DatamartUsersAnalyticsContentProps>(
   withRouter,
   injectThemeColors,
 )(DatamartUsersAnalyticsContent);

@@ -12,12 +12,12 @@ type Props = MyServiceCatalogPageProps;
 class MyServiceCatalogPage extends React.Component<Props> {
   render() {
     return (
-      <div className="ant-layout">
-        <Content className="mcs-content-container">
+      <div className='ant-layout'>
+        <Content className='mcs-content-container'>
           <br />
           <Card>
-            <div className="mcs-card-header mcs-card-title">
-              <span className="mcs-card-title">
+            <div className='mcs-card-header mcs-card-title'>
+              <span className='mcs-card-title'>
                 <FormattedMessage {...messages.myServiceCatalogTitle} />
               </span>
             </div>

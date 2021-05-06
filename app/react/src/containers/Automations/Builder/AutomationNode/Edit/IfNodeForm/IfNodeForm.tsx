@@ -2,12 +2,7 @@ import * as React from 'react';
 import { Layout, Row, Button, Alert } from 'antd';
 import { Form } from '@ant-design/compatible';
 import { compose } from 'recompose';
-import {
-  injectIntl,
-  InjectedIntlProps,
-  defineMessages,
-  FormattedMessage,
-} from 'react-intl';
+import { injectIntl, InjectedIntlProps, defineMessages, FormattedMessage } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { FORM_ID, QueryInputAutomationFormData } from '../domain';
 import { QueryLanguage } from '../../../../../../models/datamart/DatamartResource';
@@ -33,9 +28,7 @@ export interface IfNodeFormProps {
   disabled?: boolean;
 }
 
-type Props = IfNodeFormProps &
-  InjectedIntlProps &
-  RouteComponentProps<{ organisationId: string }>;
+type Props = IfNodeFormProps & InjectedIntlProps & RouteComponentProps<{ organisationId: string }>;
 
 interface State {
   queryLanguage?: QueryLanguage;
@@ -70,14 +63,13 @@ class IfNodeForm extends React.Component<Props, State> {
     };
 
     if (!queryLanguage) {
-      const onSelect = (q: QueryLanguage) => () =>
-        this.setState({ queryLanguage: q });
+      const onSelect = (q: QueryLanguage) => () => this.setState({ queryLanguage: q });
 
       const descriptionSubtitle = {
         ...localMessages.descriptionSubtitle,
         values: {
           if: (
-            <span className="mcs-automation_nodeName">
+            <span className='mcs-automation_nodeName'>
               <FormattedMessage {...localMessages.if} />
             </span>
           ),
@@ -86,41 +78,38 @@ class IfNodeForm extends React.Component<Props, State> {
 
       return (
         <Layout>
-          <div className="edit-layout ant-layout">
+          <div className='edit-layout ant-layout'>
             <Actionbar edition={true} pathItems={breadCrumbPaths}>
               <McsIcon
-                type="close"
-                className="close-icon"
+                type='close'
+                className='close-icon'
                 style={{ cursor: 'pointer' }}
                 onClick={close}
               />
             </Actionbar>
             <Layout>
-              <Content className="mcs-content-container mcs-form-container">
+              <Content className='mcs-content-container mcs-form-container'>
                 <FormSection
                   subtitle={descriptionSubtitle}
                   title={localMessages.descriptionTitle}
                 />
                 <FormSection title={localMessages.configurationTitle} />
-                <Content className="text-center">
-                  <FormTitle
-                    title={localMessages.title}
-                    subtitle={localMessages.subtitle}
-                  />
-                  <Row className="mcs-selector_container">
-                    <Row className="menu">
-                      <div className="presentation">
+                <Content className='text-center'>
+                  <FormTitle title={localMessages.title} subtitle={localMessages.subtitle} />
+                  <Row className='mcs-selector_container'>
+                    <Row className='menu'>
+                      <div className='presentation'>
                         <MenuPresentational
                           title={'Query Builder'}
-                          type="data"
+                          type='data'
                           select={onSelect('JSON_OTQL')}
                         />
-                        <div className="separator">
+                        <div className='separator'>
                           <FormattedMessage {...localMessages.or} />
                         </div>
                         <MenuPresentational
                           title={'Expert Mode'}
-                          type="code"
+                          type='code'
                           select={onSelect('OTQL')}
                         />
                       </div>
@@ -135,12 +124,7 @@ class IfNodeForm extends React.Component<Props, State> {
     }
 
     if (queryLanguage === 'SELECTORQL') {
-      return (
-        <Alert
-          message={intl.formatMessage(localMessages.noMoreSupported)}
-          type="warning"
-        />
-      );
+      return <Alert message={intl.formatMessage(localMessages.noMoreSupported)} type='warning' />;
     }
 
     const node = storylineNodeModel.node as IfNodeResource;
@@ -162,14 +146,14 @@ class IfNodeForm extends React.Component<Props, State> {
         return (
           <Actionbar edition={true} pathItems={breadCrumbPaths}>
             {!disabled && (
-              <Button onClick={onSave} type="primary" className={'mcs-primary'}>
+              <Button onClick={onSave} type='primary' className={'mcs-primary'}>
                 Save
               </Button>
             )}
 
             <McsIcon
-              type="close"
-              className="close-icon"
+              type='close'
+              className='close-icon'
               style={{ cursor: 'pointer' }}
               onClick={close}
             />
@@ -180,16 +164,12 @@ class IfNodeForm extends React.Component<Props, State> {
       return (
         <JSONQLBuilderContainer
           datamartId={
-            node.formData.datamart_id
-              ? node.formData.datamart_id
-              : initialValues.datamart_id!
+            node.formData.datamart_id ? node.formData.datamart_id : initialValues.datamart_id!
           }
           renderActionBar={actionBar}
           editionLayout={true}
           queryDocument={
-            node.formData.query_text!
-              ? JSON.parse(node.formData.query_text!)
-              : undefined
+            node.formData.query_text! ? JSON.parse(node.formData.query_text!) : undefined
           }
           {...isDisabled}
           hideCounterAndTimeline={true}
@@ -209,36 +189,32 @@ class IfNodeForm extends React.Component<Props, State> {
     };
 
     return (
-      <Layout className="edit-layout">
+      <Layout className='edit-layout'>
         <Layout className={'ant-layout'}>
           <Actionbar edition={true} pathItems={breadCrumbPaths}>
-            <Button
-              onClick={onOtqlSave}
-              type="primary"
-              className={'mcs-primary'}
-            >
+            <Button onClick={onOtqlSave} type='primary' className={'mcs-primary'}>
               Save
             </Button>
 
             <McsIcon
-              type="close"
-              className="close-icon"
+              type='close'
+              className='close-icon'
               style={{ cursor: 'pointer' }}
               onClick={close}
             />
           </Actionbar>
-          <Form className="edit-layout ant-layout" layout="vertical">
+          <Form className='edit-layout ant-layout' layout='vertical'>
             <Content
               id={FORM_ID}
-              className="mcs-content-container mcs-form-container automation-form"
+              className='mcs-content-container mcs-form-container automation-form'
             >
               <OtqlConsole
                 value={this.state.queryText ? this.state.queryText : ''}
                 datamartId={datamartId}
                 onChange={onChange}
                 showPrintMargin={false}
-                height="250px"
-                width="100%"
+                height='250px'
+                width='100%'
                 enableBasicAutocompletion={true}
                 enableLiveAutocompletion={true}
                 {...isDisabled}
@@ -251,31 +227,24 @@ class IfNodeForm extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, IfNodeFormProps>(
-  injectIntl,
-  withRouter,
-)(IfNodeForm);
+export default compose<Props, IfNodeFormProps>(injectIntl, withRouter)(IfNodeForm);
 
 const localMessages = defineMessages({
   descriptionTitle: {
-    id:
-      'automation.builder.node.edition.form.query.presentation.description.title',
+    id: 'automation.builder.node.edition.form.query.presentation.description.title',
     defaultMessage: 'Description',
   },
   descriptionSubtitle: {
-    id:
-      'automation.builder.node.edition.form.query.presentation.description.subtitle',
+    id: 'automation.builder.node.edition.form.query.presentation.description.subtitle',
     defaultMessage:
       'Using {if}, you can add a check whether the user should proceed to the next step of the automation.',
   },
   if: {
-    id:
-      'automation.builder.node.edition.form.query.presentation.description.subtitle.if',
+    id: 'automation.builder.node.edition.form.query.presentation.description.subtitle.if',
     defaultMessage: 'If',
   },
   configurationTitle: {
-    id:
-      'automation.builder.node.edition.form.query.presentation.configuration.title',
+    id: 'automation.builder.node.edition.form.query.presentation.configuration.title',
     defaultMessage: 'Configuration',
   },
   save: {
@@ -295,8 +264,7 @@ const localMessages = defineMessages({
     defaultMessage: 'Language Selection.',
   },
   noMoreSupported: {
-    id:
-      'automation.builder.node.edition.form.query.legacyComponent.noMoreSupported',
+    id: 'automation.builder.node.edition.form.query.legacyComponent.noMoreSupported',
     defaultMessage:
       'The query language related to this datamart is no more supported. Please select another datamart or create a new resource based on another datamart.',
   },

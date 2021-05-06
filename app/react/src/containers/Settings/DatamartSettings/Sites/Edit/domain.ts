@@ -1,10 +1,7 @@
 import { ProcessingSelectionResource } from './../../../../../models/processing';
 import { ProcessingActivityFieldModel } from './../../Common/domain';
 import { SiteResource, Aliases } from '../../../../../models/settings/settings';
-import {
-  VisitAnalyzerFieldModel,
-  EventRuleFieldModel,
-} from '../../Common/domain';
+import { VisitAnalyzerFieldModel, EventRuleFieldModel } from '../../Common/domain';
 import { FieldArrayModel } from '../../../../../utils/FormHelper';
 
 export interface SiteFormData {

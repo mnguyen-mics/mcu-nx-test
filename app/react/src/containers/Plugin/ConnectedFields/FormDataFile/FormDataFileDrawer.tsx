@@ -2,10 +2,7 @@ import * as React from 'react';
 import { Layout, Button, Select, Upload, Input } from 'antd';
 import { FormattedMessage } from 'react-intl';
 import { UploadProps, UploadFile } from 'antd/lib/upload/interface';
-import {
-  Actionbar,
-  McsIcon,
-} from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { FormTitle } from '../../../../components/Form';
 import messages from '../../messages';
 import { Content } from './HtmlEditor/ContentArea';
@@ -78,10 +75,7 @@ interface FormDataFileDrawerState {
   iframeHeight: number;
 }
 
-class FormDataFileDrawer extends React.Component<
-  FormDataFileDrawerProps,
-  FormDataFileDrawerState
-> {
+class FormDataFileDrawer extends React.Component<FormDataFileDrawerProps, FormDataFileDrawerState> {
   @lazyInject(TYPES.IDataFileService)
   private _dataFileService: IDataFileService;
 
@@ -174,9 +168,7 @@ class FormDataFileDrawer extends React.Component<
       this.setState({ fileName: e.target.value });
     };
 
-    const onFileSelectorValueChange = (
-      e: React.ChangeEvent<HTMLInputElement>,
-    ) => {
+    const onFileSelectorValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       this.setState({ fileSelectorValue: e.target.value });
     };
 
@@ -203,8 +195,8 @@ class FormDataFileDrawer extends React.Component<
     };
 
     const FileSelectionRendered = (
-      <div className="text-center">
-        <div className="m-t-20 m-b-20">
+      <div className='text-center'>
+        <div className='m-t-20 m-b-20'>
           <FormTitle title={messages.datafileDrawerUpload} />
         </div>
         <Upload {...uploadDetailProps}>
@@ -212,16 +204,13 @@ class FormDataFileDrawer extends React.Component<
             <FormattedMessage {...messages.datafileDrawerUpload} />
           </Button>
         </Upload>
-        <div className="m-t-20 m-b-20">
+        <div className='m-t-20 m-b-20'>
           <FormTitle title={messages.datafileDrawerSelect} />
         </div>
         <div>
-          <Input
-            style={{ maxWidth: 300 }}
-            onChange={onFileSelectorValueChange}
-          />
+          <Input style={{ maxWidth: 300 }} onChange={onFileSelectorValueChange} />
         </div>
-        <div className="m-t-20">
+        <div className='m-t-20'>
           <Button onClick={onFileSelectorValidate}>
             <FormattedMessage {...messages.datafileDrawerSelectOk} />
           </Button>
@@ -232,8 +221,8 @@ class FormDataFileDrawer extends React.Component<
     const EditorRendered = (
       <AceEditor
         mode={this.state.type}
-        theme="monokai"
-        name="blah2"
+        theme='monokai'
+        name='blah2'
         onChange={this.onChange}
         fontSize={14}
         showPrintMargin={true}
@@ -279,36 +268,28 @@ class FormDataFileDrawer extends React.Component<
     );
 
     const EditModeHtmlFile = (
-      <HtmlEditor
-        onChange={this.onChange}
-        content={this.state.updatedContent}
-      />
+      <HtmlEditor onChange={this.onChange} content={this.state.updatedContent} />
     );
 
-    const RenderedEditMode =
-      this.props.accept === 'text/html' ? EditModeHtmlFile : EditModeAnyFile;
+    const RenderedEditMode = this.props.accept === 'text/html' ? EditModeHtmlFile : EditModeAnyFile;
 
     return (
       <Layout>
-        <div className="edit-layout ant-layout">
+        <div className='edit-layout ant-layout'>
           <Actionbar pathItems={['Add a Data File']} edition={true}>
-            <Button
-              type="primary"
-              className="mcs-primary"
-              onClick={this.handleAdd}
-            >
-              <McsIcon type="plus" />
+            <Button type='primary' className='mcs-primary' onClick={this.handleAdd}>
+              <McsIcon type='plus' />
               <span>Update</span>
             </Button>
             <McsIcon
-              type="close"
-              className="close-icon"
+              type='close'
+              className='close-icon'
               style={{ cursor: 'pointer' }}
               onClick={this.props.close}
             />
           </Actionbar>
           <Layout>
-            <Content className="mcs-table-edit-container">
+            <Content className='mcs-table-edit-container'>
               {editMode ? RenderedEditMode : FileSelectionRendered}
             </Content>
           </Layout>

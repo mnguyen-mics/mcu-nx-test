@@ -25,11 +25,11 @@ class CustomActionInstanceFormSection extends React.Component<Props> {
     } = this.props;
 
     return (
-      <div className="mcs-customActionInstanceFormSection_pluginSettings">
-        <div className="mcs-customActionInstanceFormSection_pluginSettings_title">
+      <div className='mcs-customActionInstanceFormSection_pluginSettings'>
+        <div className='mcs-customActionInstanceFormSection_pluginSettings_title'>
           {formatMessage(messages.sectionPluginSettingsSubtitleFirstPart)}
           &nbsp;
-          <a href="https://developer.mediarithmics.com/" target="_blank">
+          <a href='https://developer.mediarithmics.com/' target='_blank'>
             {formatMessage(messages.developerDocumentation)}
           </a>
           &nbsp;
@@ -54,30 +54,23 @@ class CustomActionInstanceFormSection extends React.Component<Props> {
     }
 
     if (customActionId) {
-      const extendedCustomActionInformation = extendedCustomActionsInformation.find(
-        (info) => {
-          return info.customAction.id === customActionId;
-        },
-      );
+      const extendedCustomActionInformation = extendedCustomActionsInformation.find(info => {
+        return info.customAction.id === customActionId;
+      });
 
       if (extendedCustomActionInformation) {
         const customActionProperties =
-          extendedCustomActionInformation.layoutInformation
-            ?.customActionProperties || [];
-        const pluginLayout =
-          extendedCustomActionInformation.layoutInformation?.pluginLayout;
-        const pluginVersionId =
-          extendedCustomActionInformation.customAction.version_id;
+          extendedCustomActionInformation.layoutInformation?.customActionProperties || [];
+        const pluginLayout = extendedCustomActionInformation.layoutInformation?.pluginLayout;
+        const pluginVersionId = extendedCustomActionInformation.customAction.version_id;
 
         if (pluginVersionId) {
           if (pluginLayout) {
             const subSections = pluginLayout.sections.map((section, index) => {
               const indexCondition = index !== pluginLayout.sections.length - 1;
-              const fieldsCondition =
-                section.fields !== null && section.fields.length !== 0;
+              const fieldsCondition = section.fields !== null && section.fields.length !== 0;
               const advancedFieldsCondition =
-                section.advanced_fields !== null &&
-                section.advanced_fields.length !== 0;
+                section.advanced_fields !== null && section.advanced_fields.length !== 0;
               const hrBooleanCondition =
                 indexCondition && (fieldsCondition || advancedFieldsCondition);
               return (
@@ -94,26 +87,20 @@ class CustomActionInstanceFormSection extends React.Component<Props> {
                 </div>
               );
             });
-            return this.displayPluginInstanceFormSection(
-              <div>{subSections}</div>,
-            );
+            return this.displayPluginInstanceFormSection(<div>{subSections}</div>);
           } else {
-            const subElements = customActionProperties.map(
-              (fieldDef: PropertyResourceShape) => {
-                return (
-                  <PluginFieldGenerator
-                    key={`${fieldDef.technical_name}`}
-                    definition={fieldDef}
-                    disabled={disabled}
-                    pluginVersionId={pluginVersionId}
-                    organisationId={organisationId}
-                  />
-                );
-              },
-            );
-            return this.displayPluginInstanceFormSection(
-              <div>{subElements}</div>,
-            );
+            const subElements = customActionProperties.map((fieldDef: PropertyResourceShape) => {
+              return (
+                <PluginFieldGenerator
+                  key={`${fieldDef.technical_name}`}
+                  definition={fieldDef}
+                  disabled={disabled}
+                  pluginVersionId={pluginVersionId}
+                  organisationId={organisationId}
+                />
+              );
+            });
+            return this.displayPluginInstanceFormSection(<div>{subElements}</div>);
           }
         }
       }

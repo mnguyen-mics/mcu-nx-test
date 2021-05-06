@@ -1,7 +1,4 @@
-import {
-  PublicJobExecutionResource,
-  JobExecutionStatus,
-} from '../Job/JobResource';
+import { PublicJobExecutionResource, JobExecutionStatus } from '../Job/JobResource';
 
 export interface AudienceSegmentResource {
   id: string;
@@ -43,16 +40,9 @@ export type UserQueryEvaluationMode = 'REAL_TIME' | 'AUTOMATIC' | 'ON_DEMAND';
 
 export type FeedType = 'FILE_IMPORT' | 'TAG' | 'SCENARIO' | 'SCENARIO_FEED';
 
-export type LookAlikeAlgorithm =
-  | 'CLUSTER_OVERLAP'
-  | 'FIELD_SCORE'
-  | 'MULTI_VARIATE_DISTANCE';
+export type LookAlikeAlgorithm = 'CLUSTER_OVERLAP' | 'FIELD_SCORE' | 'MULTI_VARIATE_DISTANCE';
 
-export type AudienceLookalikeStatus =
-  | 'DRAFT'
-  | 'CALIBRATING'
-  | 'CALIBRATION_ERROR'
-  | 'CALIBRATED';
+export type AudienceLookalikeStatus = 'DRAFT' | 'CALIBRATING' | 'CALIBRATION_ERROR' | 'CALIBRATED';
 
 export interface UserListSegment extends AudienceSegmentResource {
   feed_type: FeedType;

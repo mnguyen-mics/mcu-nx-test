@@ -11,8 +11,7 @@ export default defineMessages({
   },
   errorFormMessage: {
     id: 'settings.cleaningRules.userEvent.form.errorMessage',
-    defaultMessage:
-      'There is an error with the data you have inputed. Please check.',
+    defaultMessage: 'There is an error with the data you have inputed. Please check.',
   },
   sectionActionTitle: {
     id: 'settings.cleaningRules.form.action.title',
@@ -53,8 +52,7 @@ export default defineMessages({
   },
   sectionScopeUserProfileSubTitle: {
     id: 'settings.cleaningRules.userProfile.form.scope.subtitle',
-    defaultMessage:
-      'Define the scope of the Cleaning Rule using an optional Compartment filter.',
+    defaultMessage: 'Define the scope of the Cleaning Rule using an optional Compartment filter.',
   },
   sectionScopeActivityTypeLabel: {
     id: 'settings.cleaningRules.userEvent.form.scope.activityType.label',
@@ -118,6 +116,6 @@ export default defineMessages({
   },
   noFilter: {
     id: 'settings.cleaningRules.form.noFilter',
-    defaultMessage: 'No filter'
-  }
+    defaultMessage: 'No filter',
+  },
 });

@@ -40,9 +40,7 @@ const messageMap = defineMessages({
   },
 });
 
-const AdGroupsInfosFieldArray = FieldArray as new () => GenericFieldArray<
-  Field
->;
+const AdGroupsInfosFieldArray = FieldArray as new () => GenericFieldArray<Field>;
 
 export interface EditAdGroupsFormData {
   [key: string]: Array<{ [property in keyof AdGroupsInfosFieldModel]: any }>;
@@ -65,14 +63,9 @@ type JoinedProps = EditAdGroupsFormProps &
   RouteComponentProps<{ campaignId: string }> &
   InjectedFormProps<EditAdGroupsFormData>;
 
-const Content = Layout.Content  as unknown as React.ComponentClass<
-  BasicProps & { id: string }
->;
+const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
 
-class EditAdGroupsForm extends React.Component<
-  JoinedProps,
-  EditAdGroupsFormState
-> {
+class EditAdGroupsForm extends React.Component<JoinedProps, EditAdGroupsFormState> {
   @lazyInject(TYPES.IDisplayCampaignService)
   private _displayCampaignService: IDisplayCampaignService;
 
@@ -99,11 +92,7 @@ class EditAdGroupsForm extends React.Component<
     const { selectedRowKeys, intl } = this.props;
     const { selectedRowKeys: previousSelectedRowKeys } = previousProps;
     const { adGroupNames } = this.state;
-    if (
-      selectedRowKeys &&
-      previousSelectedRowKeys &&
-      selectedRowKeys !== previousSelectedRowKeys
-    ) {
+    if (selectedRowKeys && previousSelectedRowKeys && selectedRowKeys !== previousSelectedRowKeys) {
       this.fetchData(selectedRowKeys);
     } else if (
       !(
@@ -144,14 +133,8 @@ class EditAdGroupsForm extends React.Component<
     const startDateField = formData.fields.filter(
       field => field.adGroupProperty === 'start_date',
     )[0];
-    const endDateField = formData.fields.filter(
-      field => field.adGroupProperty === 'end_date',
-    )[0];
-    if (
-      startDateField &&
-      endDateField &&
-      startDateField.value > endDateField.value
-    ) {
+    const endDateField = formData.fields.filter(field => field.adGroupProperty === 'end_date')[0];
+    if (startDateField && endDateField && startDateField.value > endDateField.value) {
       return message.warning(intl.formatMessage(messageMap.dateError));
     } else {
       this.setState({
@@ -174,9 +157,7 @@ class EditAdGroupsForm extends React.Component<
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
-      pathItems: [
-        formatMessage(messages.editAdGroups),
-      ],
+      pathItems: [formatMessage(messages.editAdGroups)],
       message: messages.saveAdGroup,
       onClose: close,
     };
@@ -191,31 +172,25 @@ class EditAdGroupsForm extends React.Component<
     }
 
     return (
-      <Layout className="edit-layout">
+      <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
           <Form
-            className="edit-layout ant-layout edit-adgroups-form"
+            className='edit-layout ant-layout edit-adgroups-form'
             onSubmit={handleSubmit(this.save)}
           >
-            <Content
-              id={FORM_ID}
-              className="mcs-content-container mcs-form-container"
-            >
-              <FormSection
-                subtitle={multiEditSubtitle}
-                title={messages.multiEditAdGroupsTitle}
-              />
+            <Content id={FORM_ID} className='mcs-content-container mcs-form-container'>
+              <FormSection subtitle={multiEditSubtitle} title={messages.multiEditAdGroupsTitle} />
               <Row style={{ marginBottom: '3em' }}>
                 {this.state.adGroupNames.map((AdGroupName, index) => (
                   <Tag key={index}>{AdGroupName}</Tag>
                 ))}
               </Row>
 
-              <div className="ant-col-4 content" />
-              <div className="ant-col-16 content">
+              <div className='ant-col-4 content' />
+              <div className='ant-col-16 content'>
                 <AdGroupsInfosFieldArray
-                  name="fields"
+                  name='fields'
                   component={AdGroupsInfos}
                   rerenderOnEveryChange={true}
                 />

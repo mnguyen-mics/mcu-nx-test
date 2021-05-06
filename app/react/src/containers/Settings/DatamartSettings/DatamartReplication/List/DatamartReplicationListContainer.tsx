@@ -32,10 +32,7 @@ interface DatamartReplicationListContainerProps {
   noReplication: boolean;
   onFilterChange: (newFilter: Index<string | number>) => void;
   deleteReplication: (resource: DatamartReplicationResourceShape) => void;
-  updateReplication: (
-    resource: DatamartReplicationResourceShape,
-    status: boolean
-  ) => void;
+  updateReplication: (resource: DatamartReplicationResourceShape, status: boolean) => void;
   lastExecutionIsRunning: boolean;
 }
 
@@ -72,11 +69,7 @@ class DatamartReplicationListContainer extends React.Component<Props> {
       });
     };
     return (
-      <Button
-        key={messages.newDatamartReplication.id}
-        type="primary"
-        onClick={onClick}
-      >
+      <Button key={messages.newDatamartReplication.id} type='primary' onClick={onClick}>
         <FormattedMessage {...messages.newDatamartReplication} />
       </Button>
     );
@@ -91,23 +84,23 @@ class DatamartReplicationListContainer extends React.Component<Props> {
       onFilterChange,
       deleteReplication,
       updateReplication,
-      lastExecutionIsRunning
+      lastExecutionIsRunning,
     } = this.props;
 
     return (
-      <div className="ant-layout">
-        <Content className="mcs-content-container">
-          <Row className="mcs-table-container">
+      <div className='ant-layout'>
+        <Content className='mcs-content-container'>
+          <Row className='mcs-table-container'>
             <div>
-              <div className="mcs-card-header mcs-card-title">
-                <span className="mcs-card-title">
+              <div className='mcs-card-header mcs-card-title'>
+                <span className='mcs-card-title'>
                   <FormattedMessage {...messages.datamartReplications} />
                 </span>
-                <span className="mcs-card-button mcs-replicationNew_button">
+                <span className='mcs-card-button mcs-replicationNew_button'>
                   {this.buildNewActionElement()}
                 </span>
               </div>
-              <hr className="mcs-separator" />
+              <hr className='mcs-separator' />
               <DatamartReplicationTable
                 dataSource={replications}
                 total={totalReplications}

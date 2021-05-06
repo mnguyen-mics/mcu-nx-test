@@ -4,23 +4,18 @@ import PluginInstanceService from '../PluginInstanceService';
 import { VisitAnalyzer } from '../../models/Plugins';
 import { PluginLayout } from '../../models/plugin/PluginLayout';
 
-export interface IVisitAnalyzerService
-  extends PluginInstanceService<VisitAnalyzer> {
+export interface IVisitAnalyzerService extends PluginInstanceService<VisitAnalyzer> {
   getVisitAnalyzers: (
     organisationId: string,
     options: object,
   ) => Promise<DataListResponse<VisitAnalyzer>>;
-  deleteVisitAnalyzerProperty: (
-    id: string,
-    options?: object,
-  ) => Promise<DataResponse<any>>;
-  getLocalizedPluginLayout: (
-    pInstanceId: string,
-  ) => Promise<PluginLayout | null>;
+  deleteVisitAnalyzerProperty: (id: string, options?: object) => Promise<DataResponse<any>>;
+  getLocalizedPluginLayout: (pInstanceId: string) => Promise<PluginLayout | null>;
 }
 
 @injectable()
-export class VisitAnalyzerService extends PluginInstanceService<VisitAnalyzer>
+export class VisitAnalyzerService
+  extends PluginInstanceService<VisitAnalyzer>
   implements IVisitAnalyzerService {
   constructor() {
     super('visit_analyzer_models');
@@ -40,10 +35,7 @@ export class VisitAnalyzerService extends PluginInstanceService<VisitAnalyzer>
     return ApiService.getRequest(endpoint, params);
   }
 
-  deleteVisitAnalyzerProperty(
-    id: string,
-    options: object = {},
-  ): Promise<DataResponse<any>> {
+  deleteVisitAnalyzerProperty(id: string, options: object = {}): Promise<DataResponse<any>> {
     const endpoint = `visit_analyzer_models/${id}`;
 
     return ApiService.deleteRequest(endpoint, options);

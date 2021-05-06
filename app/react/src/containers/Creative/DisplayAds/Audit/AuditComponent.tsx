@@ -1,12 +1,7 @@
 import * as React from 'react';
 import { Button, Modal, Row, Col } from 'antd';
 import moment from 'moment';
-import {
-  FormattedMessage,
-  defineMessages,
-  injectIntl,
-  InjectedIntlProps,
-} from 'react-intl';
+import { FormattedMessage, defineMessages, injectIntl, InjectedIntlProps } from 'react-intl';
 import {
   AuditStatusResource,
   CreativeAuditAction,
@@ -47,13 +42,13 @@ class AuditComponent extends React.Component<Props, State> {
 
     const auditDetailsMessage = (
       <FormattedMessage
-        id="creatives.audit.status.details.button-label"
-        defaultMessage="Audit Details"
+        id='creatives.audit.status.details.button-label'
+        defaultMessage='Audit Details'
       />
     );
 
     const auditDetailsButton = auditStatuses.length > 0 && (
-      <div className="float-right m-l-10">
+      <div className='float-right m-l-10'>
         <Button onClick={this.toggleDisplayModal}>{auditDetailsMessage}</Button>
       </div>
     );
@@ -64,14 +59,13 @@ class AuditComponent extends React.Component<Props, State> {
           <div className={'float-left'} style={{ lineHeight: '59px' }}>
             <AuditStatusRenderer auditStatus={creative.audit_status} />
           </div>
-          <div className="left-part-margin">
+          <div className='left-part-margin'>
             <AuditActionButtonList
               auditActions={creative.available_user_audit_actions}
               confirmAuditAction={onMakeAuditAction}
             />
             {auditDetailsButton}
           </div>
-          
         </div>
         <Modal
           title={auditDetailsMessage}
@@ -84,15 +78,9 @@ class AuditComponent extends React.Component<Props, State> {
               <Row key={auditStatus.date}>
                 <Col span={auditStatus.feedback ? 8 : 12}>
                   {auditStatus.display_network}:{' '}
-                  <span>
-                    {intl.formatMessage(
-                      auditStatusMessageMap[auditStatus.status],
-                    )}
-                  </span>
+                  <span>{intl.formatMessage(auditStatusMessageMap[auditStatus.status])}</span>
                 </Col>
-                {auditStatus.feedback ? (
-                  <Col span={8}>{auditStatus.feedback}</Col>
-                ) : null}
+                {auditStatus.feedback ? <Col span={8}>{auditStatus.feedback}</Col> : null}
                 <Col span={auditStatus.feedback ? 8 : 12}>
                   {moment(auditStatus.date).format('DD/MM/YYYY HH:mm:ss')}
                 </Col>
@@ -108,7 +96,7 @@ class AuditComponent extends React.Component<Props, State> {
 export default injectIntl(AuditComponent);
 
 export const auditStatusMessageMap: {
-  [key in AuditStatus]: FormattedMessage.MessageDescriptor
+  [key in AuditStatus]: FormattedMessage.MessageDescriptor;
 } = defineMessages({
   AUDIT_PENDING: {
     id: 'creatives.display.audit.status.pending',

@@ -1,8 +1,5 @@
 import * as React from 'react';
-import {
-  FormLayoutActionbar,
-  ScrollspySider,
-} from '../../../../../components/Layout';
+import { FormLayoutActionbar, ScrollspySider } from '../../../../../components/Layout';
 import { Layout } from 'antd';
 import { Form } from '@ant-design/compatible';
 import { FormLayoutActionbarProps } from '../../../../../components/Layout/FormLayoutActionbar';
@@ -19,12 +16,9 @@ import GeneralFormSection from './Sections/GeneralFormSection';
 import { Omit } from '../../../../../utils/Types';
 import { SidebarWrapperProps } from '../../../../../components/Layout/ScrollspySider';
 
-const Content = Layout.Content as unknown as React.ComponentClass<
-  BasicProps & { id: string }
->;
+const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
 
-export interface ProcessingEditFormProps
-  extends Omit<ConfigProps<ProcessingFormData>, 'form'> {
+export interface ProcessingEditFormProps extends Omit<ConfigProps<ProcessingFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: React.ReactNode[];
   goToLegalBasisSelector?: () => void;
@@ -39,12 +33,7 @@ export const FORM_ID = 'processingForm';
 
 class ProcessingEditForm extends React.Component<Props> {
   render() {
-    const {
-      handleSubmit,
-      breadCrumbPaths,
-      close,
-      goToLegalBasisSelector,
-    } = this.props;
+    const { handleSubmit, breadCrumbPaths, close, goToLegalBasisSelector } = this.props;
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
@@ -86,17 +75,14 @@ class ProcessingEditForm extends React.Component<Props> {
     });
 
     return (
-      <Layout className="edit-layout">
+      <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
-        <Layout className="ant-layout-has-sider">
+        <Layout className='ant-layout-has-sider'>
           <ScrollspySider {...sideBarProps} />
-          <Form className="edit-layout ant-layout" onSubmit={handleSubmit}>
+          <Form className='edit-layout ant-layout' onSubmit={handleSubmit}>
             {/* this button enables submit on enter */}
-            <button type="submit" style={{ display: 'none' }} />
-            <Content
-              id={FORM_ID}
-              className="mcs-content-container mcs-form-container"
-            >
+            <button type='submit' style={{ display: 'none' }} />
+            <Content id={FORM_ID} className='mcs-content-container mcs-form-container'>
               {renderedSections}
             </Content>
           </Form>

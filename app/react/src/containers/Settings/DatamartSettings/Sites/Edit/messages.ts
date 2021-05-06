@@ -3,8 +3,7 @@ import { defineMessages } from 'react-intl';
 export default defineMessages({
   errorFormMessage: {
     id: 'settings.site.form.errorMessage',
-    defaultMessage:
-      'There is an error with the data you have inputed, please check',
+    defaultMessage: 'There is an error with the data you have inputed, please check',
   },
   savingInProgress: {
     id: 'settings.site.form.savingInProgress',
@@ -32,8 +31,7 @@ export default defineMessages({
   },
   sectionGeneralSubTitle: {
     id: 'settings.site.form.section.general.subtitle',
-    defaultMessage:
-      'Please fill the basic information for your website so we can generate a Tag.',
+    defaultMessage: 'Please fill the basic information for your website so we can generate a Tag.',
   },
   sectionAliasesTitle: {
     id: 'settings.site.form.section.aliases.title',

@@ -12,10 +12,7 @@ import {
   CustomActionAutomationFormData,
 } from '../../containers/Automations/Builder/AutomationNode/Edit/domain';
 
-import {
-  QueryResource,
-  QueryCreateRequest,
-} from './../datamart/DatamartResource';
+import { QueryResource, QueryCreateRequest } from './../datamart/DatamartResource';
 import { AutomationSimpleFormData } from './../../containers/Automations/Builder/ActionBar/AutomationSimpleForm';
 import { WeekDay } from '../../utils/DateHelper';
 export interface AutomationResource {
@@ -33,11 +30,7 @@ export function isAutomationResource(
 }
 
 export type AutomationStatus = 'NEW' | 'ACTIVE' | 'PAUSED';
-export const automationStatuses: AutomationStatus[] = [
-  'NEW',
-  'ACTIVE',
-  'PAUSED',
-];
+export const automationStatuses: AutomationStatus[] = ['NEW', 'ACTIVE', 'PAUSED'];
 
 export interface AutomationCreateResource {
   name: string;
@@ -92,16 +85,9 @@ export interface DeleteFromSegmentNodeResource extends ScenarioNodeResource {
   initialFormData: DeleteFromSegmentAutomationFormData;
 }
 
-export type QueryInputEvaluationPeriodUnit =
-  | 'MINUTE'
-  | 'HOUR'
-  | 'DAY'
-  | 'WEEK'
-  | 'MONTH';
+export type QueryInputEvaluationPeriodUnit = 'MINUTE' | 'HOUR' | 'DAY' | 'WEEK' | 'MONTH';
 
-export type QueryInputUiCreationMode =
-  | 'REACT_TO_EVENT_STANDARD'
-  | 'REACT_TO_EVENT_ADVANCED';
+export type QueryInputUiCreationMode = 'REACT_TO_EVENT_STANDARD' | 'REACT_TO_EVENT_ADVANCED';
 
 export interface QueryInputNodeResource extends ScenarioNodeResource {
   type: 'QUERY_INPUT';
@@ -124,7 +110,10 @@ export interface OnSegmentExitInputNodeResource extends ScenarioNodeResource {
   initialFormData: OnSegmentExitInputAutomationFormData;
 }
 
-export type InputNodeResource = QueryInputNodeResource | OnSegmentEntryInputNodeResource | OnSegmentExitInputNodeResource;
+export type InputNodeResource =
+  | QueryInputNodeResource
+  | OnSegmentEntryInputNodeResource
+  | OnSegmentExitInputNodeResource;
 
 export type EdgeSelection = { [edgeId: string]: { min: number; max: number } };
 
@@ -217,17 +206,14 @@ export interface ScenarioExitConditionCreateResource {
   query_id: string;
 }
 
-export interface ScenarioExitConditionResource
-  extends ScenarioExitConditionCreateResource {
+export interface ScenarioExitConditionResource extends ScenarioExitConditionCreateResource {
   id: string;
   scenario_id: string;
 }
 
-export interface ScenarioExitConditionFormData
-  extends Partial<QueryCreateRequest> {}
+export interface ScenarioExitConditionFormData extends Partial<QueryCreateRequest> {}
 
-export interface ScenarioExitConditionFormResource
-  extends ScenarioExitConditionResource {
+export interface ScenarioExitConditionFormResource extends ScenarioExitConditionResource {
   formData: ScenarioExitConditionFormData;
   initialFormData: ScenarioExitConditionFormData;
 }

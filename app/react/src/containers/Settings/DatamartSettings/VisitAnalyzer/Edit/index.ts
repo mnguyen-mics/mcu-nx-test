@@ -1,5 +1,3 @@
 import CreateEditVisitAnalyzer from './EditVisitAnalyzerPage';
 
-export {
-    CreateEditVisitAnalyzer,
-};
+export { CreateEditVisitAnalyzer };

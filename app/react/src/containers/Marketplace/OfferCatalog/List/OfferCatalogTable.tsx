@@ -45,9 +45,7 @@ interface OfferCatalogTableProps {
   organisationId: string;
 }
 
-type Props = InjectedIntlProps &
-  OfferCatalogTableProps &
-  InjectedNotificationProps;
+type Props = InjectedIntlProps & OfferCatalogTableProps & InjectedNotificationProps;
 
 const processPrice = (data: ServiceItemConditionShape) => {
   if (isProvidedServiceItemConditionResource(data)) {
@@ -68,7 +66,7 @@ const processPrice = (data: ServiceItemConditionShape) => {
 const displayServiceItemType = (type: string) => {
   return type
     .split('_')
-    .map((s) => {
+    .map(s => {
       return `${s.charAt(0).toUpperCase()}${s.slice(1)}`;
     })
     .join(' ');
@@ -136,18 +134,17 @@ class OfferCatalogTable extends React.Component<Props, State> {
     const serviceTypes =
       selectedLabels.length === 0
         ? undefined
-        : { service_types: selectedLabels.map((label) => label.type) };
+        : { service_types: selectedLabels.map(label => label.type) };
 
     this.setState({ loading: true });
     this.cancelableCombinedIdPromise = makeCancelable(
-      this._catalogService.findAvailableCombinedServiceItemsIds(
-        organisationId,
-        { ...serviceTypes },
-      ),
+      this._catalogService.findAvailableCombinedServiceItemsIds(organisationId, {
+        ...serviceTypes,
+      }),
     );
 
     this.cancelableCombinedIdPromise.promise
-      .then((idList) => {
+      .then(idList => {
         if (idList.data === undefined || idList.data.length === 0) {
           this.setState({
             loading: false,
@@ -160,9 +157,7 @@ class OfferCatalogTable extends React.Component<Props, State> {
             'service_item_conditions_id',
             'service_item_id',
           ];
-          const fieldsMultiIds = idFieldNames.map((field) =>
-            uniq(map(idList.data, field)),
-          );
+          const fieldsMultiIds = idFieldNames.map(field => uniq(map(idList.data, field)));
           this.cancelableServiceItemIds = makeCancelable(
             Promise.all([
               this._catalogService.findAvailableServiceProvidersMultiId(
@@ -184,46 +179,42 @@ class OfferCatalogTable extends React.Component<Props, State> {
             ]),
           );
           this.cancelableServiceItemIds.promise
-            .then((item) => {
-              const metaDataSource: CombinedServiceItemData[] = idList.data.map(
-                (ids) => {
-                  const serviceProvider = item[0].data.find(
-                    (provider) => provider.id === ids.provider_id.toString(),
-                  );
-                  const serviceOffer = item[1].data.find(
-                    (offer) => offer.id === ids.service_offer_id.toString(),
-                  );
-                  const serviceCondition = item[2].data.find(
-                    (condition) =>
-                      condition.id ===
-                      ids.service_item_conditions_id.toString(),
-                  );
-                  const serviceItem = item[3].data.find(
-                    (sItem) => sItem.id === ids.service_item_id.toString(),
-                  );
+            .then(item => {
+              const metaDataSource: CombinedServiceItemData[] = idList.data.map(ids => {
+                const serviceProvider = item[0].data.find(
+                  provider => provider.id === ids.provider_id.toString(),
+                );
+                const serviceOffer = item[1].data.find(
+                  offer => offer.id === ids.service_offer_id.toString(),
+                );
+                const serviceCondition = item[2].data.find(
+                  condition => condition.id === ids.service_item_conditions_id.toString(),
+                );
+                const serviceItem = item[3].data.find(
+                  sItem => sItem.id === ids.service_item_id.toString(),
+                );
 
-                  if (
-                    serviceProvider === undefined ||
-                    serviceOffer === undefined ||
-                    serviceCondition === undefined ||
-                    serviceItem === undefined
-                  ) {
-                    throw new Error('Error while fetching data');
-                  }
-                  return {
-                    serviceProvider,
-                    serviceOffer,
-                    serviceCondition,
-                    serviceItem,
-                  };
-                },
-              );
+                if (
+                  serviceProvider === undefined ||
+                  serviceOffer === undefined ||
+                  serviceCondition === undefined ||
+                  serviceItem === undefined
+                ) {
+                  throw new Error('Error while fetching data');
+                }
+                return {
+                  serviceProvider,
+                  serviceOffer,
+                  serviceCondition,
+                  serviceItem,
+                };
+              });
               this.setState({
                 loading: false,
                 dataSource: metaDataSource,
               });
             })
-            .catch((err) => {
+            .catch(err => {
               this.setState({ loading: false });
               this.props.notifyError(err);
             });
@@ -245,8 +236,7 @@ class OfferCatalogTable extends React.Component<Props, State> {
   }
 
   componentWillUnmount() {
-    if (this.cancelableCombinedIdPromise)
-      this.cancelableCombinedIdPromise.cancel();
+    if (this.cancelableCombinedIdPromise) this.cancelableCombinedIdPromise.cancel();
     if (this.cancelableServiceItemIds) this.cancelableServiceItemIds.cancel();
   }
 
@@ -299,8 +289,8 @@ class OfferCatalogTable extends React.Component<Props, State> {
     // TO
     const labelsOptions: any = {
       labels: labels,
-      selectedLabels: labels.filter((label) => {
-        return selectedLabels.find((l) => l.id === label.id) ? true : false;
+      selectedLabels: labels.filter(label => {
+        return selectedLabels.find(l => l.id === label.id) ? true : false;
       }),
       onChange: (newLabels: ServiceTypeLabel[]) => {
         this.updateLabels(newLabels);
@@ -309,7 +299,7 @@ class OfferCatalogTable extends React.Component<Props, State> {
     };
 
     return (
-      <div className="mcs-table-container mcs-offerCatalogTable">
+      <div className='mcs-table-container mcs-offerCatalogTable'>
         <TableViewFilters
           columns={dataColumns}
           dataSource={dataSource}

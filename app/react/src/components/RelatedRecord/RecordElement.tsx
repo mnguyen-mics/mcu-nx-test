@@ -24,14 +24,10 @@ interface RecordElementProps<T> {
   editable?: boolean;
 }
 
-class RecordElement<T> extends React.Component<
-  RecordElementProps<T> & InjectedIntlProps
-> {
-  editTableField = () =>
-    this.props.onEdit && this.props.onEdit(this.props.record);
+class RecordElement<T> extends React.Component<RecordElementProps<T> & InjectedIntlProps> {
+  editTableField = () => this.props.onEdit && this.props.onEdit(this.props.record);
 
-  removeTableField = () =>
-    this.props.onRemove && this.props.onRemove(this.props.record);
+  removeTableField = () => this.props.onRemove && this.props.onRemove(this.props.record);
 
   computeDataClass = () => {
     const { additionalData, additionalActionButtons } = this.props;
@@ -65,9 +61,7 @@ class RecordElement<T> extends React.Component<
       nonEditable ? 'non-editable-related-record' : 'related-record'
     } row-height`;
 
-    const additionalElements = nonEditable ? (
-      undefined
-    ) : (
+    const additionalElements = nonEditable ? undefined : (
       <React.Fragment>
         {additionalActionButtons && (
           <Col className={`${this.computeDataClass()} text-right m-r-20`}>
@@ -75,22 +69,19 @@ class RecordElement<T> extends React.Component<
           </Col>
         )}
         {onEdit && (
-          <Button
-            className="action-button"
-            onClick={this.editTableField}
-          >
-            <McsIcon type="pen" className="big" />
+          <Button className='action-button' onClick={this.editTableField}>
+            <McsIcon type='pen' className='big' />
           </Button>
         )}
         {onRemove && (
           <Popconfirm
             title={intl.formatMessage(messages.removeRecordElement)}
             onConfirm={this.removeTableField}
-            okText="Yes"
-            cancelText="No"
+            okText='Yes'
+            cancelText='No'
           >
-            <div className="action-button" style={{ cursor: 'pointer' }}>
-              <McsIcon type="delete" className="big" />
+            <div className='action-button' style={{ cursor: 'pointer' }}>
+              <McsIcon type='delete' className='big' />
             </div>
           </Popconfirm>
         )}
@@ -101,18 +92,14 @@ class RecordElement<T> extends React.Component<
       <Row className={className}>
         {recordIconType && (
           <Col style={{ width: 60 }}>
-            <div className="icon-round-border">
+            <div className='icon-round-border'>
               <McsIcon type={recordIconType} />
             </div>
           </Col>
         )}
 
         <Col className={this.computeDataClass()}>{title(record)}</Col>
-        {additionalData && (
-          <Col className={this.computeDataClass()}>
-            {additionalData(record)}
-          </Col>
-        )}
+        {additionalData && <Col className={this.computeDataClass()}>{additionalData(record)}</Col>}
         {additionalElements}
       </Row>
     );

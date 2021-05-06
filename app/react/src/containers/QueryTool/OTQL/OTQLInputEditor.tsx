@@ -15,7 +15,11 @@ export interface Props {
   precision: QueryPrecisionMode;
   evaluateGraphQl: boolean;
   useCache: boolean;
-  handleChange: (evaluateGraphQl: boolean, useCache: boolean, precision: QueryPrecisionMode) => void;
+  handleChange: (
+    evaluateGraphQl: boolean,
+    useCache: boolean,
+    precision: QueryPrecisionMode,
+  ) => void;
   queryEditorClassName?: string;
 }
 
@@ -28,14 +32,12 @@ class OTQLInputEditor extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      query: props.defaultValue || '',
+      query: props.defaultValue || '',
       visible: false,
     };
   }
 
-  updateQuery = (
-    value: string /*event: React.ChangeEvent<HTMLTextAreaElement>*/,
-  ) => {
+  updateQuery = (value: string /*event: React.ChangeEvent<HTMLTextAreaElement>*/) => {
     this.setState({ query: value });
     this.props.onQueryChange(value);
   };
@@ -56,40 +58,26 @@ class OTQLInputEditor extends React.Component<Props, State> {
     const { query } = this.state;
     const clearButton = (
       <Button onClick={this.clearQuery}>
-        <FormattedMessage
-          id="queryTool.otql.edit.clear.label"
-          defaultMessage="Clear Query"
-        />
+        <FormattedMessage id='queryTool.otql.edit.clear.label' defaultMessage='Clear Query' />
       </Button>
     );
 
     const abortButton = (
-      <Button type="primary" className="m-l-10" onClick={onAbortQuery}>
-        <FormattedMessage
-          id="queryTool.otql.edit.abort.label"
-          defaultMessage="Abort Query"
-        />
+      <Button type='primary' className='m-l-10' onClick={onAbortQuery}>
+        <FormattedMessage id='queryTool.otql.edit.abort.label' defaultMessage='Abort Query' />
       </Button>
     );
 
     const handleOnRunButtonClick = () => onRunQuery(query);
     const runButton = (
-      <Button
-        type="primary"
-        className="m-l-10"
-        disabled={!query}
-        onClick={handleOnRunButtonClick}
-      >
-        <FormattedMessage
-          id="queryTool.otql.edit.run.label"
-          defaultMessage="Run Query"
-        />
+      <Button type='primary' className='m-l-10' disabled={!query} onClick={handleOnRunButtonClick}>
+        <FormattedMessage id='queryTool.otql.edit.run.label' defaultMessage='Run Query' />
       </Button>
     );
 
     const params = (
-      <a className="m-l-10" onClick={this.showModal}>
-        <McsIcon type="gears" />
+      <a className='m-l-10' onClick={this.showModal}>
+        <McsIcon type='gears' />
       </a>
     );
 
@@ -118,26 +106,20 @@ class OTQLInputEditor extends React.Component<Props, State> {
       evaluateGraphQl,
       precision,
       handleChange,
-      queryEditorClassName
+      queryEditorClassName,
     } = this.props;
 
     const onCacheChange = (a: boolean) => handleChange(evaluateGraphQl, a, precision);
     const onEvaluateGraphQlChange = (a: boolean) => handleChange(a, useCache, precision);
-    const onPrecisionChange = (a: QueryPrecisionMode) =>
-      handleChange(evaluateGraphQl, useCache, a);
+    const onPrecisionChange = (a: QueryPrecisionMode) => handleChange(evaluateGraphQl, useCache, a);
 
     return (
       <Card
-        title={
-          <FormattedMessage
-            id="queryTool.otql.card.title"
-            defaultMessage="OTQL Query"
-          />
-        }
+        title={<FormattedMessage id='queryTool.otql.card.title' defaultMessage='OTQL Query' />}
         buttons={this.buildEditorActions()}
       >
         <Modal
-          title="Query Settings"
+          title='Query Settings'
           visible={this.state.visible}
           onOk={this.handleOk}
           onCancel={this.handleOk}
@@ -149,40 +131,33 @@ class OTQLInputEditor extends React.Component<Props, State> {
         >
           <div style={{ marginBottom: 10 }}>
             <FormattedMessage
-              id="queryTool.otql.modal.evaluate.graphql"
-              defaultMessage="Evaluate SELECT clause in GraphQL"
+              id='queryTool.otql.modal.evaluate.graphql'
+              defaultMessage='Evaluate SELECT clause in GraphQL'
             />
             : <Switch checked={evaluateGraphQl} onChange={onEvaluateGraphQlChange} />
           </div>
           <div style={{ marginBottom: 10 }}>
-            <FormattedMessage
-              id="queryTool.otql.modal.use.cache"
-              defaultMessage="Use Cache"
-            />
+            <FormattedMessage id='queryTool.otql.modal.use.cache' defaultMessage='Use Cache' />
             : <Switch checked={useCache} onChange={onCacheChange} />
           </div>
           <div>
-            <Select
-              value={precision}
-              style={{ width: '100%' }}
-              onChange={onPrecisionChange}
-            >
-              <Select.Option value="FULL_PRECISION">
+            <Select value={precision} style={{ width: '100%' }} onChange={onPrecisionChange}>
+              <Select.Option value='FULL_PRECISION'>
                 <FormattedMessage
-                  id="queryTool.otql.modal.full.precision"
-                  defaultMessage="Full Precision"
+                  id='queryTool.otql.modal.full.precision'
+                  defaultMessage='Full Precision'
                 />
               </Select.Option>
-              <Select.Option value="MEDIUM_PRECISION">
+              <Select.Option value='MEDIUM_PRECISION'>
                 <FormattedMessage
-                  id="queryTool.otql.modal.medium.precision"
-                  defaultMessage="Medium Precision"
+                  id='queryTool.otql.modal.medium.precision'
+                  defaultMessage='Medium Precision'
                 />
               </Select.Option>
-              <Select.Option value="LOWER_PRECISION">
+              <Select.Option value='LOWER_PRECISION'>
                 <FormattedMessage
-                  id="queryTool.otql.modal.low.precision"
-                  defaultMessage="Low Precision"
+                  id='queryTool.otql.modal.low.precision'
+                  defaultMessage='Low Precision'
                 />
               </Select.Option>
             </Select>
@@ -193,7 +168,7 @@ class OTQLInputEditor extends React.Component<Props, State> {
           datamartId={datamartId}
           value={query}
           showPrintMargin={false}
-          height="250px"
+          height='250px'
           enableBasicAutocompletion={true}
           enableLiveAutocompletion={false}
           className={queryEditorClassName ? queryEditorClassName : ''}

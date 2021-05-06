@@ -16,29 +16,22 @@ interface BlastFormSectionProps {
 type Props = InjectedIntlProps & ValidatorProps & BlastFormSectionProps;
 
 class BlastFormSection extends React.Component<Props> {
-
   static defaultProps = {
-    fieldName: 'blast'
-  }
+    fieldName: 'blast',
+  };
 
   render() {
-
     const {
       intl: { formatMessage },
-      fieldValidators: {
-        isRequired,
-        isValidEmail,
-      },
+      fieldValidators: { isRequired, isValidEmail },
       small,
       fieldName,
-      disabled
+      disabled,
     } = this.props;
 
     return (
       <div>
-        <FormSection
-          title={messages.emailBlastEditorStepTitleBlastInformation}
-        />
+        <FormSection title={messages.emailBlastEditorStepTitleBlastInformation} />
         <FormInputField
           name={`${fieldName}.subject_line`}
           component={FormInput}
@@ -49,7 +42,7 @@ class BlastFormSection extends React.Component<Props> {
           }}
           inputProps={{
             placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderSubjectLine),
-            disabled: disabled
+            disabled: disabled,
           }}
           helpToolTipProps={{
             title: formatMessage(messages.emailBlastEditorInputHelperSubjectLine),
@@ -66,7 +59,7 @@ class BlastFormSection extends React.Component<Props> {
           }}
           inputProps={{
             placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderFromEmail),
-            disabled: disabled
+            disabled: disabled,
           }}
           helpToolTipProps={{
             title: formatMessage(messages.emailBlastEditorInputHelperFromEmail),
@@ -83,7 +76,7 @@ class BlastFormSection extends React.Component<Props> {
           }}
           inputProps={{
             placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderFromName),
-            disabled: disabled
+            disabled: disabled,
           }}
           helpToolTipProps={{
             title: formatMessage(messages.emailBlastEditorInputHelperFromName),
@@ -100,7 +93,7 @@ class BlastFormSection extends React.Component<Props> {
           }}
           inputProps={{
             placeholder: formatMessage(messages.emailBlastEditorInputPlaceholderReplyTo),
-            disabled: disabled
+            disabled: disabled,
           }}
           helpToolTipProps={{
             title: formatMessage(messages.emailBlastEditorInputHelperReplyTo),
@@ -112,7 +105,4 @@ class BlastFormSection extends React.Component<Props> {
   }
 }
 
-export default compose<Props, BlastFormSectionProps>(
-  injectIntl,
-  withValidators,
-)(BlastFormSection);
+export default compose<Props, BlastFormSectionProps>(injectIntl, withValidators)(BlastFormSection);

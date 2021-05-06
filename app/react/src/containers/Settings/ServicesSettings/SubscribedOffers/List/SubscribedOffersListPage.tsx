@@ -3,12 +3,7 @@ import { compose } from 'recompose';
 import { Layout, Row, Breadcrumb } from 'antd';
 import { Link } from 'react-router-dom';
 import { withRouter, RouteComponentProps } from 'react-router';
-import {
-  injectIntl,
-  InjectedIntlProps,
-  FormattedMessage,
-  defineMessages,
-} from 'react-intl';
+import { injectIntl, InjectedIntlProps, FormattedMessage, defineMessages } from 'react-intl';
 import { PAGINATION_SEARCH_SETTINGS } from '../../../../../utils/LocationSearchHelper';
 import { ICatalogService } from '../../../../../services/CatalogService';
 import ItemList, { Filters } from '../../../../../components/ItemList';
@@ -35,8 +30,7 @@ export const messages = defineMessages({
     defaultMessage: 'Name',
   },
   creditedAccount: {
-    id:
-      'settings.services.subscribed.service.offers.list.column.credited.account',
+    id: 'settings.services.subscribed.service.offers.list.column.credited.account',
     defaultMessage: 'Credited Account',
   },
   providerName: {
@@ -73,8 +67,7 @@ export const messages = defineMessages({
       'In order to simulate your service price, please enter an impression cost value.',
   },
   serviceItemPriceSimulatorInputPlaceholder: {
-    id:
-      'settings.subscribedOffers.service.item.price.simulator.input.placeholder',
+    id: 'settings.subscribedOffers.service.item.price.simulator.input.placeholder',
     defaultMessage: 'Usage cost (€)',
   },
   serviceItemPrice: {
@@ -113,9 +106,7 @@ interface State {
   total: number;
 }
 
-type Props = RouteComponentProps<RouterProps> &
-  InjectedIntlProps &
-  InjectedNotificationProps;
+type Props = RouteComponentProps<RouterProps> & InjectedIntlProps & InjectedNotificationProps;
 
 class SubscribedOffersListPage extends React.Component<Props, State> {
   @lazyInject(TYPES.ICatalogService)
@@ -139,14 +130,14 @@ class SubscribedOffersListPage extends React.Component<Props, State> {
     };
     this._catalogService
       .getSubscribedOffers(organisationId, options)
-      .then((resp) => {
+      .then(resp => {
         this.setState({
           loading: false,
           data: resp.data,
           total: resp.total || resp.count,
         });
       })
-      .catch((err) => {
+      .catch(err => {
         this.setState({
           loading: false,
         });
@@ -164,16 +155,14 @@ class SubscribedOffersListPage extends React.Component<Props, State> {
       intl: { formatMessage },
     } = this.props;
 
-    const dataColumnsDefinition: Array<
-      DataColumnDefinition<ServiceItemOfferResource>
-    > = [
+    const dataColumnsDefinition: Array<DataColumnDefinition<ServiceItemOfferResource>> = [
       {
         title: formatMessage(messages.name),
         key: 'name',
         isHideable: false,
         render: (text: string, record: ServiceItemOfferResource) => (
           <Link
-            className="mcs-campaigns-link"
+            className='mcs-campaigns-link'
             to={`/v2/o/${organisationId}/settings/services/subscribed_offers/${record.id}/service_item_conditions`}
           >
             {text}
@@ -207,13 +196,10 @@ class SubscribedOffersListPage extends React.Component<Props, State> {
     };
 
     return (
-      <div className="ant-layout">
-        <Content className="mcs-content-container">
-          <Row className="mcs-table-container">
-            <Breadcrumb
-              className={'mcs-breadcrumb'}
-              separator={<McsIcon type="chevron-right" />}
-            >
+      <div className='ant-layout'>
+        <Content className='mcs-content-container'>
+          <Row className='mcs-table-container'>
+            <Breadcrumb className={'mcs-breadcrumb'} separator={<McsIcon type='chevron-right' />}>
               <Breadcrumb.Item>
                 <FormattedMessage {...messages.subscribedOffersTitle} />
               </Breadcrumb.Item>
@@ -234,8 +220,4 @@ class SubscribedOffersListPage extends React.Component<Props, State> {
   }
 }
 
-export default compose(
-  withRouter,
-  injectIntl,
-  injectNotifications,
-)(SubscribedOffersListPage);
+export default compose(withRouter, injectIntl, injectNotifications)(SubscribedOffersListPage);

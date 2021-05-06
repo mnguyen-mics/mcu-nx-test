@@ -13,8 +13,7 @@ export interface PublicJobExecutionResource {
   external_model_name: ExternalModelName;
 }
 
-export interface BaseExecutionResource<I, R>
-  extends PublicJobExecutionResource {
+export interface BaseExecutionResource<I, R> extends PublicJobExecutionResource {
   parameters?: I;
   result?: R;
   error?: {

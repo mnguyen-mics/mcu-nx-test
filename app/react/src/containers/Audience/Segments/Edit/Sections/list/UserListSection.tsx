@@ -4,10 +4,7 @@ import { Field, GenericField } from 'redux-form';
 import XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 import { FormDragAndDropProps } from '../../../../../../components/Form/FormDragAndDrop';
-import {
-  FormDragAndDrop,
-  FormSection,
-} from '../../../../../../components/Form';
+import { FormDragAndDrop, FormSection } from '../../../../../../components/Form';
 
 import messages from '../../messages';
 
@@ -107,16 +104,14 @@ class UserListSection extends React.Component<Props> {
   };
 
   render() {
-    const FormDragAndDropField = Field as new () => GenericField<
-      FormDragAndDropProps
-    >;
+    const FormDragAndDropField = Field as new () => GenericField<FormDragAndDropProps>;
 
     const formDragAndDropProps: FormDragAndDropProps = {
       maxFileSize: maxFileSize,
       uploadTitle: messages.uploadTitle,
       uploadMessage: messages.uploadMessage,
       uploadError: messages.uploadError,
-      fileMasks: '.csv,.tsv'
+      fileMasks: '.csv,.tsv',
     };
 
     return (
@@ -133,7 +128,7 @@ class UserListSection extends React.Component<Props> {
           subtitle={messages.audienceSegmentSectionImportSubTitle}
         />
         <FormDragAndDropField
-          name="userListFiles"
+          name='userListFiles'
           component={FormDragAndDrop}
           {...formDragAndDropProps}
         />

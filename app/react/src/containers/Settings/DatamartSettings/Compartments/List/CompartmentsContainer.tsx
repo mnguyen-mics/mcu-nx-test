@@ -9,7 +9,9 @@ import { IDatamartService } from '../../../../../services/DatamartService';
 import { PaginationSearchSettings } from '../../../../../utils/LocationSearchHelper';
 import { Layout, Row } from 'antd';
 import { UserAccountCompartmentDatamartSelectionResource } from '../../../../../models/datamart/DatamartResource';
-import injectNotifications, { InjectedNotificationProps } from '../../../../Notifications/injectNotifications';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../../Notifications/injectNotifications';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
 
@@ -29,10 +31,10 @@ export interface CompartmentsContainerProps {
 
 type Props = CompartmentsContainerProps &
   RouteComponentProps<{ organisationId: string }> &
-  InjectedIntlProps & InjectedNotificationProps;
+  InjectedIntlProps &
+  InjectedNotificationProps;
 
 class CompartmentsContainer extends React.Component<Props, CompartmentsContainerState> {
-  
   @lazyInject(TYPES.IDatamartService)
   private _datamartService: IDatamartService;
 
@@ -46,79 +48,62 @@ class CompartmentsContainer extends React.Component<Props, CompartmentsContainer
   }
 
   componentDidMount() {
-    const {
-      datamartId,
-      filter
-    } = this.props;
+    const { datamartId, filter } = this.props;
 
     this.fetchCompartments(datamartId, filter);
   }
 
   componentDidUpdate(previousProps: Props) {
-    const {
-      datamartId,
-      filter,
-    } = this.props;
+    const { datamartId, filter } = this.props;
 
-    const {
-      datamartId: previousDatamartId,
-      filter: previousFilter,
-    } = previousProps;
+    const { datamartId: previousDatamartId, filter: previousFilter } = previousProps;
 
-    if (
-      (filter !== previousFilter) ||
-      (datamartId !== previousDatamartId)
-    ) {
+    if (filter !== previousFilter || datamartId !== previousDatamartId) {
       this.fetchCompartments(datamartId, filter);
     }
   }
 
   fetchCompartments = (datamartId: string, filter: PaginationSearchSettings) => {
-    this.setState({ loading: true, }, () => {
+    this.setState({ loading: true }, () => {
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      this._datamartService.getUserAccountCompartmentDatamartSelectionResources(datamartId, options).then(results => {
-        this.setState({
-          loading: false,
-          data: results.data,
-          total: results.total || results.count,
+      this._datamartService
+        .getUserAccountCompartmentDatamartSelectionResources(datamartId, options)
+        .then(results => {
+          this.setState({
+            loading: false,
+            data: results.data,
+            total: results.total || results.count,
+          });
+        })
+        .catch(err => {
+          this.setState({ loading: false });
+          this.props.notifyError(err);
         });
-      })
-      .catch(err => {
-        this.setState({ loading: false })
-        this.props.notifyError(err);
-      });;
     });
-  }
+  };
 
   render() {
+    const { filter, onFilterChange } = this.props;
 
-    const {
-      filter,
-      onFilterChange,
-    } = this.props;
-
-    const {
-      data,
-      loading,
-    } = this.state;
+    const { data, loading } = this.state;
 
     const dataColumns = [
       {
         intlMessage: messages.compartment_id,
         key: 'compartment_id',
         isHideable: false,
-        render: (text: string, record: UserAccountCompartmentDatamartSelectionResource) => (<span>{text}</span>),
+        render: (text: string, record: UserAccountCompartmentDatamartSelectionResource) => (
+          <span>{text}</span>
+        ),
       },
       {
         intlMessage: messages.default,
         key: 'default',
         isHideable: false,
         render: (text: string, record: UserAccountCompartmentDatamartSelectionResource) => (
-          <span>
-            {record.default ? 'yes' : 'no'}
-          </span>
+          <span>{record.default ? 'yes' : 'no'}</span>
         ),
       },
       {
@@ -126,9 +111,7 @@ class CompartmentsContainer extends React.Component<Props, CompartmentsContainer
         key: 'name',
         isHideable: false,
         render: (text: string, record: UserAccountCompartmentDatamartSelectionResource) => (
-          <span>
-            {text}
-          </span>
+          <span>{text}</span>
         ),
       },
       {
@@ -136,9 +119,7 @@ class CompartmentsContainer extends React.Component<Props, CompartmentsContainer
         key: 'token',
         isHideable: false,
         render: (text: string, record: UserAccountCompartmentDatamartSelectionResource) => (
-          <span>
-            {text}
-          </span>
+          <span>{text}</span>
         ),
       },
     ];
@@ -160,16 +141,16 @@ class CompartmentsContainer extends React.Component<Props, CompartmentsContainer
     };
 
     return (
-      <div className="ant-layout">
-        <Content className="mcs-content-container">
-          <Row className="mcs-table-container">
+      <div className='ant-layout'>
+        <Content className='mcs-content-container'>
+          <Row className='mcs-table-container'>
             <div>
-              <div className="mcs-card-header mcs-card-title">
-                <span className="mcs-card-title">
+              <div className='mcs-card-header mcs-card-title'>
+                <span className='mcs-card-title'>
                   <FormattedMessage {...messages.compartments} />
                 </span>
               </div>
-              <hr className="mcs-separator" />
+              <hr className='mcs-separator' />
               <TableViewFilters
                 columns={dataColumns}
                 dataSource={data}
@@ -180,12 +161,12 @@ class CompartmentsContainer extends React.Component<Props, CompartmentsContainer
           </Row>
         </Content>
       </div>
-    )
+    );
   }
 }
 
 export default compose<Props, CompartmentsContainerProps>(
   withRouter,
   injectIntl,
-  injectNotifications
+  injectNotifications,
 )(CompartmentsContainer);

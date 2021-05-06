@@ -9,13 +9,9 @@ import { compose } from 'recompose';
 import { Tooltip, Progress } from 'antd';
 import { messages } from './messages';
 import { DatamartReplicationJobExecutionResource } from '../../../../../models/settings/settings';
-import {
-  TableViewFilters,
-} from '../../../../../components/TableView';
+import { TableViewFilters } from '../../../../../components/TableView';
 import { getExecutionInfo } from '../../../../../utils/JobHelpers';
-import injectThemeColors, {
-  InjectedThemeColorsProps,
-} from '../../../../Helpers/injectThemeColors';
+import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
 import {
   parseSearch,
   PAGINATION_SEARCH_SETTINGS,
@@ -59,21 +55,16 @@ class DatamartReplicationJobTable extends React.Component<Props> {
         return (
           <div>
             {record.status}{' '}
-            {record.result &&
-              record.result.total_failure &&
-              record.result.total_failure > 0 && (
-                <span>
-                  - with errors{' '}
-                  {record.error && record.error.message && (
-                    <Tooltip
-                      placement="top"
-                      title={record.error && record.error.message}
-                    >
-                      <McsIcon type="question" />
-                    </Tooltip>
-                  )}
-                </span>
-              )}
+            {record.result && record.result.total_failure && record.result.total_failure > 0 && (
+              <span>
+                - with errors{' '}
+                {record.error && record.error.message && (
+                  <Tooltip placement='top' title={record.error && record.error.message}>
+                    <McsIcon type='question' />
+                  </Tooltip>
+                )}
+              </span>
+            )}
           </div>
         );
       default:
@@ -98,27 +89,19 @@ class DatamartReplicationJobTable extends React.Component<Props> {
         intlMessage: messages.executionStatus,
         key: 'status',
         isHideable: false,
-        render: (
-          text: string,
-          record: DatamartReplicationJobExecutionResource,
-        ) => this.renderStatuColumn(record),
+        render: (text: string, record: DatamartReplicationJobExecutionResource) =>
+          this.renderStatuColumn(record),
       },
       {
         intlMessage: messages.executionProgress,
         key: 'progress',
         isHideable: false,
-        render: (
-          text: string,
-          record: DatamartReplicationJobExecutionResource,
-        ) => (
+        render: (text: string, record: DatamartReplicationJobExecutionResource) => (
           // we should update ant design in order to have strokeColor prop
           // currently we can't pass color
           // https://github.com/ant-design/ant-design/blob/master/components/progress/progress.tsx
           <div>
-            <Progress
-              showInfo={false}
-              percent={getExecutionInfo(record, colors).percent * 100}
-            />
+            <Progress showInfo={false} percent={getExecutionInfo(record, colors).percent * 100} />
           </div>
         ),
       },
@@ -135,14 +118,9 @@ class DatamartReplicationJobTable extends React.Component<Props> {
         intlMessage: messages.executionEndDate,
         key: 'end_date',
         isHideable: false,
-        render: (
-          text: string,
-          record: DatamartReplicationJobExecutionResource,
-        ) =>
+        render: (text: string, record: DatamartReplicationJobExecutionResource) =>
           record.start_date && record.duration
-            ? moment(record.start_date + record.duration).format(
-                'DD/MM/YYYY HH:mm:ss',
-              )
+            ? moment(record.start_date + record.duration).format('DD/MM/YYYY HH:mm:ss')
             : formatMessage(messages.executionNotEnded),
       },
       {
@@ -178,7 +156,7 @@ class DatamartReplicationJobTable extends React.Component<Props> {
       isLoading,
       dataSource,
       noItem,
-      intl
+      intl,
     } = this.props;
 
     const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
@@ -198,9 +176,9 @@ class DatamartReplicationJobTable extends React.Component<Props> {
 
     return noItem && !isLoading ? (
       <EmptyTableView
-        iconType="settings"
+        iconType='settings'
         message={intl.formatMessage(messages.emptyInitialSynchronizationList)}
-        className="mcs-table-view-empty mcs-empty-card"
+        className='mcs-table-view-empty mcs-empty-card'
       />
     ) : (
       <TableViewFilters

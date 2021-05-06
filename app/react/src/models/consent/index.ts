@@ -5,9 +5,4 @@ import {
   ConsentSelectionCreateRequest,
 } from './ConsentResource';
 
-export {
-  ConsentResource,
-  ConsentPurpose,
-  ConsentSelectionResource,
-  ConsentSelectionCreateRequest,
-};
+export { ConsentResource, ConsentPurpose, ConsentSelectionResource, ConsentSelectionCreateRequest };

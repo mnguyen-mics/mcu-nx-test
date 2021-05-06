@@ -14,15 +14,9 @@ import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
 import { Layout } from 'antd';
-import {
-  FormLayoutActionbar,
-  ScrollspySider,
-} from '../../../../../components/Layout';
+import { FormLayoutActionbar, ScrollspySider } from '../../../../../components/Layout';
 import { BasicProps } from 'antd/lib/layout/layout';
-import {
-  SidebarWrapperProps,
-  SideBarItem,
-} from '../../../../../components/Layout/ScrollspySider';
+import { SidebarWrapperProps, SideBarItem } from '../../../../../components/Layout/ScrollspySider';
 import { McsFormSection } from '../../../../../utils/FormHelper';
 import messages from './messages';
 import { FormLayoutActionbarProps } from '../../../../../components/Layout/FormLayoutActionbar';
@@ -35,17 +29,14 @@ import ProcessingActivitiesFormSection, {
 
 export const FORM_ID = 'compartmentForm';
 
-const Content = Layout.Content as unknown as React.ComponentClass<
-  BasicProps & { id: string }
->;
+const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
 
 const ProcessingActivitiesFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
   ProcessingActivitiesFormSectionProps
 >;
 
-export interface CompartmentEditFormProps
-  extends Omit<ConfigProps<CompartmentFormData>, 'form'> {
+export interface CompartmentEditFormProps extends Omit<ConfigProps<CompartmentFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: React.ReactNode[];
   datamartId: string;
@@ -97,11 +88,9 @@ class CompartmentEditForm extends React.Component<Props> {
         title: messages.sectionProcessingActivitiesTitle,
         component: (
           <ProcessingActivitiesFieldArray
-            name="processingActivities"
+            name='processingActivities'
             component={ProcessingActivitiesFormSection}
-            initialProcessingSelectionsForWarning={
-              initialProcessingSelectionsForWarning
-            }
+            initialProcessingSelectionsForWarning={initialProcessingSelectionsForWarning}
             processingsAssociatedType={'COMPARTMENT'}
             {...genericFieldArrayProps}
           />
@@ -138,20 +127,14 @@ class CompartmentEditForm extends React.Component<Props> {
     });
 
     return (
-      <Layout className="edit-layout">
+      <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
-        <Layout className="ant-layout-has-sider">
+        <Layout className='ant-layout-has-sider'>
           <ScrollspySider {...sideBarProps} />
-          <Form
-            className="edit-layout ant-layout"
-            onSubmit={handleSubmit as any}
-          >
+          <Form className='edit-layout ant-layout' onSubmit={handleSubmit as any}>
             {/* This button enables submit on enter */}
-            <button type="submit" style={{ display: 'none' }} />
-            <Content
-              id={FORM_ID}
-              className="mcs-content-container mcs-form-container"
-            >
+            <button type='submit' style={{ display: 'none' }} />
+            <Content id={FORM_ID} className='mcs-content-container mcs-form-container'>
               {renderedSections}
             </Content>
           </Form>

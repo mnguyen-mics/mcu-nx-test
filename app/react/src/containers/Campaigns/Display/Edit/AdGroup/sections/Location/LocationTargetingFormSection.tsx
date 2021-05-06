@@ -3,7 +3,6 @@ import { Checkbox, Modal } from 'antd';
 import { WrappedFieldArrayProps } from 'redux-form';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 
-
 import { FormSection, FormFieldWrapper } from '../../../../../../../components/Form';
 import messages from '../../../messages';
 import LocationSelectionRenderer from './LocationSelectionRenderer';
@@ -17,11 +16,10 @@ import { IGeonameService, Geoname } from '../../../../../../../services/GeonameS
 
 const confirm = Modal.confirm;
 
-export interface LocationTargetingFormSectionProps
-  extends ReduxFormChangeProps {
-    small?: boolean;
-    disabled?: boolean;
-  }
+export interface LocationTargetingFormSectionProps extends ReduxFormChangeProps {
+  small?: boolean;
+  disabled?: boolean;
+}
 
 interface State {
   locationTargetingDisplayed: boolean;
@@ -32,7 +30,6 @@ type JoinedProps = LocationTargetingFormSectionProps &
   WrappedFieldArrayProps<LocationFieldModel>;
 
 class LocationTargetingFormSection extends React.Component<JoinedProps, State> {
-
   @lazyInject(TYPES.IGeonameService)
   private _geonameService: IGeonameService;
 
@@ -47,7 +44,11 @@ class LocationTargetingFormSection extends React.Component<JoinedProps, State> {
     const currentFields = this.props.fields;
     const previousFields = previousProps.fields;
     const { locationTargetingDisplayed } = this.state;
-    if (currentFields.length === 0 && currentFields.length !== previousFields.length && locationTargetingDisplayed !== false) {
+    if (
+      currentFields.length === 0 &&
+      currentFields.length !== previousFields.length &&
+      locationTargetingDisplayed !== false
+    ) {
       this.setState({ locationTargetingDisplayed: false });
     }
   }
@@ -59,7 +60,11 @@ class LocationTargetingFormSection extends React.Component<JoinedProps, State> {
   };
 
   handleCheckbox = () => {
-    const { intl: { formatMessage }, fields, formChange } = this.props;
+    const {
+      intl: { formatMessage },
+      fields,
+      formChange,
+    } = this.props;
 
     if (fields.length > 0) {
       confirm({
@@ -81,7 +86,11 @@ class LocationTargetingFormSection extends React.Component<JoinedProps, State> {
   };
 
   addLocationField = (locationField: LocationFieldModel) => {
-    const { fields, formChange, intl: { formatMessage } } = this.props;
+    const {
+      fields,
+      formChange,
+      intl: { formatMessage },
+    } = this.props;
 
     const allFields = fields.getAll();
 
@@ -171,9 +180,7 @@ class LocationTargetingFormSection extends React.Component<JoinedProps, State> {
         title: formatMessage(messages.contentSectionLocationModal2Title),
         content: content,
         onOk: () => {
-          const newFields = allFields.filter(
-            field => !keysToRemove.includes(field.key),
-          );
+          const newFields = allFields.filter(field => !keysToRemove.includes(field.key));
           formChange((fields as any).name, newFields.concat([locationField]));
         },
       });
@@ -183,26 +190,26 @@ class LocationTargetingFormSection extends React.Component<JoinedProps, State> {
   };
 
   render() {
-    const { fields, intl: { formatMessage }, disabled } = this.props;
+    const {
+      fields,
+      intl: { formatMessage },
+      disabled,
+    } = this.props;
 
     const { locationTargetingDisplayed } = this.state;
 
-    const showLocationTargeting =
-      locationTargetingDisplayed || fields.length > 0;
+    const showLocationTargeting = locationTargetingDisplayed || fields.length > 0;
 
     const allFields = fields.getAll();
 
-    const alreadySelectedGeonameIds: string[] = allFields.map(
-      f => f.model.geoname_id,
-    );
+    const alreadySelectedGeonameIds: string[] = allFields.map(f => f.model.geoname_id);
 
-    const removeField = (field: LocationFieldModel, index: number) =>
-      fields.remove(index);
+    const removeField = (field: LocationFieldModel, index: number) => fields.remove(index);
 
     const flexAlign = allFields.length > 0 ? 'top' : 'middle';
 
     return (
-      <div className="locationTargeting">
+      <div className='locationTargeting'>
         <FormSection
           subtitle={messages.sectionSubtitleLocation}
           title={messages.sectionTitleLocationTargeting}
@@ -210,26 +217,26 @@ class LocationTargetingFormSection extends React.Component<JoinedProps, State> {
 
         <Checkbox
           checked={showLocationTargeting}
-          className="field-label checkbox-location-section"
+          className='field-label checkbox-location-section'
           onChange={this.handleCheckbox}
           disabled={!!disabled}
         >
           <FormattedMessage
-            id="display.campaign.edit.adGroup.locationTargetingSection.checkboxMessage"
-            defaultMessage="I want to target a specific location"
+            id='display.campaign.edit.adGroup.locationTargetingSection.checkboxMessage'
+            defaultMessage='I want to target a specific location'
           />
         </Checkbox>
         <div className={showLocationTargeting ? '' : 'hide-section'}>
           <FormFieldWrapper
-            label={<FormattedMessage
-              id="display.campaign.edit.adGroup.locationTargetingSection.label"
-              defaultMessage="Location"
-            />}
+            label={
+              <FormattedMessage
+                id='display.campaign.edit.adGroup.locationTargetingSection.label'
+                defaultMessage='Location'
+              />
+            }
             rowProps={{ align: flexAlign }}
             helpToolTipProps={{
-              title: formatMessage(
-                messages.contentSectionLocationTooltipMessage,
-              )
+              title: formatMessage(messages.contentSectionLocationTooltipMessage),
             }}
             small={this.props.small}
           >
@@ -239,12 +246,11 @@ class LocationTargetingFormSection extends React.Component<JoinedProps, State> {
               disabled={disabled}
             />
             <SelectGeoname
-                onGeonameSelect={this.addLocationField}
-                hiddenGeonameIds={alreadySelectedGeonameIds}
-                disabled={disabled}
-              />
+              onGeonameSelect={this.addLocationField}
+              hiddenGeonameIds={alreadySelectedGeonameIds}
+              disabled={disabled}
+            />
           </FormFieldWrapper>
-          
         </div>
       </div>
     );

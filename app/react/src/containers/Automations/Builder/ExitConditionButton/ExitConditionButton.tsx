@@ -1,12 +1,7 @@
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { Popconfirm } from 'antd';
 import * as React from 'react';
-import {
-  defineMessages,
-  FormattedMessage,
-  InjectedIntlProps,
-  injectIntl,
-} from 'react-intl';
+import { defineMessages, FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import {
   ScenarioExitConditionFormData,
@@ -16,9 +11,7 @@ import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 import { INITIAL_AUTOMATION_DATA } from '../../Edit/domain';
 import { StorylineNodeModel } from '../domain';
 import UsersCounter from '../UsersCounter';
-import injectDrawer, {
-  InjectedDrawerProps,
-} from '../../../../components/Drawer/injectDrawer';
+import injectDrawer, { InjectedDrawerProps } from '../../../../components/Drawer/injectDrawer';
 import ScenarioExitConditionAutomationForm from '../ScenarioExitConditionAutomationForm';
 import ExitConditionAutomationDashboardStats, {
   ExitConditionAutomationDashboardStatsProps,
@@ -54,21 +47,9 @@ class ExitConditionButton extends React.Component<Props, State> {
     };
   }
 
-  updateExitCondition = (
-    exitConditionFormData: ScenarioExitConditionFormData,
-  ): void => {
-    const {
-      automationTreeData,
-      exitCondition,
-      viewer,
-      updateAutomationData,
-    } = this.props;
-    if (
-      !viewer &&
-      automationTreeData &&
-      exitCondition &&
-      updateAutomationData
-    ) {
+  updateExitCondition = (exitConditionFormData: ScenarioExitConditionFormData): void => {
+    const { automationTreeData, exitCondition, viewer, updateAutomationData } = this.props;
+    if (!viewer && automationTreeData && exitCondition && updateAutomationData) {
       updateAutomationData(automationTreeData, {
         ...exitCondition,
         formData: exitConditionFormData,
@@ -77,19 +58,11 @@ class ExitConditionButton extends React.Component<Props, State> {
   };
 
   onGlobalExitConditionDelete = () => {
-    this.updateExitCondition(
-      INITIAL_AUTOMATION_DATA.exitCondition.initialFormData,
-    );
+    this.updateExitCondition(INITIAL_AUTOMATION_DATA.exitCondition.initialFormData);
   };
 
   onGlobalExitConditionSelectConfig = () => {
-    const {
-      openNextDrawer,
-      closeNextDrawer,
-      exitCondition,
-      datamartId,
-      viewer,
-    } = this.props;
+    const { openNextDrawer, closeNextDrawer, exitCondition, datamartId, viewer } = this.props;
 
     const { viewSubmenus } = this.state;
 
@@ -117,21 +90,13 @@ class ExitConditionButton extends React.Component<Props, State> {
       };
 
       viewer
-        ? this.setState(
-            { viewSubmenus: !viewSubmenus },
-            openNextDrawerExitCondition,
-          )
+        ? this.setState({ viewSubmenus: !viewSubmenus }, openNextDrawerExitCondition)
         : openNextDrawerExitCondition();
     }
   };
 
   onGlobalExitConditionSelectStats = () => {
-    const {
-      openNextDrawer,
-      closeNextDrawer,
-      exitCondition,
-      datamartId,
-    } = this.props;
+    const { openNextDrawer, closeNextDrawer, exitCondition, datamartId } = this.props;
     const { viewSubmenus } = this.state;
     if (exitCondition) {
       this.setState({ viewSubmenus: !viewSubmenus }, () => {
@@ -153,20 +118,20 @@ class ExitConditionButton extends React.Component<Props, State> {
   buildExitConditionMenu = () => {
     const { hasFeature } = this.props;
     return (
-      <div className="mcs-exitConditionAutomation_menu">
+      <div className='mcs-exitConditionAutomation_menu'>
         {hasFeature('automations-analytics') ? (
           <div
-            key="stats"
+            key='stats'
             onClick={this.onGlobalExitConditionSelectStats}
-            className="mcs-exitConditionAutomation_menuItem"
+            className='mcs-exitConditionAutomation_menuItem'
           >
             <FormattedMessage {...messages.exitConditionStats} />
           </div>
         ) : null}
         <div
-          key="config"
+          key='config'
           onClick={this.onGlobalExitConditionSelectConfig}
-          className="mcs-exitConditionAutomation_menuItem"
+          className='mcs-exitConditionAutomation_menuItem'
         >
           <FormattedMessage {...messages.exitConditionconfig} />
         </div>
@@ -208,8 +173,7 @@ class ExitConditionButton extends React.Component<Props, State> {
   getNumberOfUsers = (): number | undefined => {
     const { scenarioCountersData } = this.props;
 
-    const userPointsCount =
-      scenarioCountersData?.exitConditionCounterData?.[0]?.userPointsCount;
+    const userPointsCount = scenarioCountersData?.exitConditionCounterData?.[0]?.userPointsCount;
     return userPointsCount ? +userPointsCount : undefined;
   };
 
@@ -231,30 +195,23 @@ class ExitConditionButton extends React.Component<Props, State> {
       exitCondition &&
       exitCondition.formData.query_text &&
       viewer ? (
-        <UsersCounter
-          iconName={'user'}
-          numberOfUsers={this.getNumberOfUsers()}
-        />
+        <UsersCounter iconName={'user'} numberOfUsers={this.getNumberOfUsers()} />
       ) : null;
 
     return (
-      <div className="button-helpers bottom exit-condition-container">
+      <div className='button-helpers bottom exit-condition-container'>
         {subMenu}
 
-        <div className="exit-condition">
-          <div className="helper exit-condition-buttons">
+        <div className='exit-condition'>
+          <div className='helper exit-condition-buttons'>
             {exitConditionBaseButton}
             {!viewer && exitCondition && exitCondition.formData.query_text && (
               <Popconfirm
                 title={formatMessage(messages.deleteGlobalExitConditionTitle)}
                 onConfirm={this.onGlobalExitConditionDelete}
                 placement={'topRight'}
-                okText={formatMessage(
-                  messages.deleteGlobalExitConditionConfirm,
-                )}
-                cancelText={formatMessage(
-                  messages.deleteGlobalExitConditionCancel,
-                )}
+                okText={formatMessage(messages.deleteGlobalExitConditionConfirm)}
+                cancelText={formatMessage(messages.deleteGlobalExitConditionCancel)}
               >
                 <div className={'delete'}>
                   <McsIcon type={'close'} />

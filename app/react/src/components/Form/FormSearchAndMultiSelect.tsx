@@ -1,7 +1,11 @@
 import * as React from 'react';
 import { Col, Spin } from 'antd';
 import { TooltipPropsWithTitle } from 'antd/lib/tooltip';
-import { Button, McsIcon, SearchAndMultiSelect } from '@mediarithmics-private/mcs-components-library';
+import {
+  Button,
+  McsIcon,
+  SearchAndMultiSelect,
+} from '@mediarithmics-private/mcs-components-library';
 import { MenuItemProps } from '@mediarithmics-private/mcs-components-library/lib/components/search-multi-select/SearchAndMultiSelect';
 import FormFieldWrapper, { FormFieldWrapperProps } from './FormFieldWrapper';
 
@@ -33,8 +37,8 @@ const FormSearchAndMultiSelect: React.SFC<
   } = props;
 
   const selectedItemsView = loading ? (
-    <div className="text-center">
-      <Spin size="small" />
+    <div className='text-center'>
+      <Spin size='small' />
     </div>
   ) : (
     value.map(key => {
@@ -43,10 +47,10 @@ const FormSearchAndMultiSelect: React.SFC<
         handleClickOnRemove(key);
       };
       return (
-        <div key={key} className="audience-service-item">
+        <div key={key} className='audience-service-item'>
           {foundData ? foundData.label : ''}
-          <Button className="remove-button" onClick={handleClick}>
-            <McsIcon type="close" />
+          <Button className='remove-button' onClick={handleClick}>
+            <McsIcon type='close' />
           </Button>
         </div>
       );
@@ -63,13 +67,7 @@ const FormSearchAndMultiSelect: React.SFC<
       small={small}
     >
       <Col span={24}>
-        <div
-          className={
-            value.length || loading
-              ? 'selected-audience-services-container'
-              : ''
-          }
-        >
+        <div className={value.length || loading ? 'selected-audience-services-container' : ''}>
           {selectedItemsView}
         </div>
         <SearchAndMultiSelect

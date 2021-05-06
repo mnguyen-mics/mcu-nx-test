@@ -31,15 +31,15 @@ const messages = defineMessages({
   },
   datamartType: {
     id: 'settings.datamart.type',
-    defaultMessage: 'Type'
+    defaultMessage: 'Type',
   },
   typeStandard: {
     id: 'settings.datamart.type.standard',
-    defaultMessage: 'Standard Datamart'
+    defaultMessage: 'Standard Datamart',
   },
   typeXDatamart: {
     id: 'settings.datamart.type.xdatamart',
-    defaultMessage: 'Cross-Datamart'
+    defaultMessage: 'Cross-Datamart',
   },
   serviceUsageReport: {
     id: 'settings.datamart.service_usage_report',

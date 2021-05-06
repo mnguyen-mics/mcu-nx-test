@@ -2,11 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
-import {
-  CampaignStatData,
-  CreativeStatData,
-  SourceStatData,
-} from './GoalAttribution';
+import { CampaignStatData, CreativeStatData, SourceStatData } from './GoalAttribution';
 import messages from './messages';
 import { Link } from 'react-router-dom';
 import ObjectRenderer from '../../../ObjectRenderer/ObjectRenderer';
@@ -34,9 +30,7 @@ interface Record {
   id: string;
 }
 
-type JoinedProps = GoalAttributionTableProps &
-  RouteComponentProps<Router> &
-  InjectedIntlProps;
+type JoinedProps = GoalAttributionTableProps & RouteComponentProps<Router> & InjectedIntlProps;
 
 class GoalAttributionTable extends React.Component<JoinedProps> {
   @lazyInject(TYPES.ICreativeService)
@@ -51,7 +45,7 @@ class GoalAttributionTable extends React.Component<JoinedProps> {
       match: {
         params: { organisationId },
       },
-      intl: {formatMessage}
+      intl: { formatMessage },
     } = this.props;
 
     let columns: Array<DataColumnDefinition<Record>> = [];
@@ -80,25 +74,17 @@ class GoalAttributionTable extends React.Component<JoinedProps> {
           title: formatMessage(messages.campaignName),
           key: 'marketingChannel',
           render: (text: string, record: Record, index: number) => {
-            const campaignStat = dataSource.dataSource.find(
-              item => item.campaign_id === record.id,
-            );
+            const campaignStat = dataSource.dataSource.find(item => item.campaign_id === record.id);
             const name = campaignStat && campaignStat.campaign_name;
-            const link = `/v2/o/${organisationId}/campaigns/display/${
-              record.id
-            }`;
-            const renderName = (c: DisplayCampaignResource) => (
-              <span>{c.name}</span>
-            );
+            const link = `/v2/o/${organisationId}/campaigns/display/${record.id}`;
+            const renderName = (c: DisplayCampaignResource) => <span>{c.name}</span>;
             return (
               <Link to={link}>
                 {name ? (
                   name
                 ) : (
                   <ObjectRenderer
-                    fetchingMethod={
-                      this._displayCampaignService.getCampaignDisplay
-                    }
+                    fetchingMethod={this._displayCampaignService.getCampaignDisplay}
                     id={record.id}
                     renderMethod={renderName}
                   />
@@ -114,16 +100,10 @@ class GoalAttributionTable extends React.Component<JoinedProps> {
           title: formatMessage(messages.creativeName),
           key: 'marketingChannel',
           render: (text: string, record: Record, index: number) => {
-            const creativeName = dataSource.dataSource.find(
-              item => item.creative_id === record.id,
-            );
+            const creativeName = dataSource.dataSource.find(item => item.creative_id === record.id);
             const name = creativeName && creativeName.creative_name;
-            const link = `/v2/o/${organisationId}/creatives/display/edit/${
-              record.id
-            }`;
-            const renderName = (c: GenericCreativeResource) => (
-              <span>{c.name}</span>
-            );
+            const link = `/v2/o/${organisationId}/creatives/display/edit/${record.id}`;
+            const renderName = (c: GenericCreativeResource) => <span>{c.name}</span>;
             return (
               <Link to={link}>
                 {name ? (
@@ -149,69 +129,71 @@ class GoalAttributionTable extends React.Component<JoinedProps> {
     const { dataSource } = this.props;
     switch (dataSource.viewType) {
       case 'SOURCE':
-        return (
-          dataSource.dataSource.filter(item => item.marketing_channel === id) ||
-          []
-        ).reduce((acc: number, item) => {
-          switch (reduceFunction) {
-            case 'weightedConversions':
-              return acc + parseInt(item.weighted_conversions, 10);
-            case 'weightedValue':
-              return acc + parseInt(item.weighted_value, 10);
-            case 'postViewWeightedConversions':
-              return item.interaction_type === 'POST_VIEW'
-                ? acc + item.weighted_conversions
-                : acc;
-            case 'postClickWeightedConversions':
-              return item.interaction_type === 'POST_CLICK'
-                ? acc + item.weighted_conversions
-                : acc;
-            default:
-              return 0;
-          }
-        }, 0);
+        return (dataSource.dataSource.filter(item => item.marketing_channel === id) || []).reduce(
+          (acc: number, item) => {
+            switch (reduceFunction) {
+              case 'weightedConversions':
+                return acc + parseInt(item.weighted_conversions, 10);
+              case 'weightedValue':
+                return acc + parseInt(item.weighted_value, 10);
+              case 'postViewWeightedConversions':
+                return item.interaction_type === 'POST_VIEW'
+                  ? acc + item.weighted_conversions
+                  : acc;
+              case 'postClickWeightedConversions':
+                return item.interaction_type === 'POST_CLICK'
+                  ? acc + item.weighted_conversions
+                  : acc;
+              default:
+                return 0;
+            }
+          },
+          0,
+        );
       case 'CAMPAIGN':
-        return (
-          dataSource.dataSource.filter(item => item.campaign_id === id) || []
-        ).reduce((acc: number, item) => {
-          switch (reduceFunction) {
-            case 'weightedConversions':
-              return acc + parseInt(item.weighted_conversions, 10);
-            case 'weightedValue':
-              return acc + parseInt(item.weighted_value, 10);
-            case 'postViewWeightedConversions':
-              return item.interaction_type === 'POST_VIEW'
-                ? acc + item.weighted_conversions
-                : acc;
-            case 'postClickWeightedConversions':
-              return item.interaction_type === 'POST_CLICK'
-                ? acc + item.weighted_conversions
-                : acc;
-            default:
-              return 0;
-          }
-        }, 0);
+        return (dataSource.dataSource.filter(item => item.campaign_id === id) || []).reduce(
+          (acc: number, item) => {
+            switch (reduceFunction) {
+              case 'weightedConversions':
+                return acc + parseInt(item.weighted_conversions, 10);
+              case 'weightedValue':
+                return acc + parseInt(item.weighted_value, 10);
+              case 'postViewWeightedConversions':
+                return item.interaction_type === 'POST_VIEW'
+                  ? acc + item.weighted_conversions
+                  : acc;
+              case 'postClickWeightedConversions':
+                return item.interaction_type === 'POST_CLICK'
+                  ? acc + item.weighted_conversions
+                  : acc;
+              default:
+                return 0;
+            }
+          },
+          0,
+        );
       case 'CREATIVES':
-        return (
-          dataSource.dataSource.filter(item => item.creative_id === id) || []
-        ).reduce((acc: number, item) => {
-          switch (reduceFunction) {
-            case 'weightedConversions':
-              return acc + parseInt(item.weighted_conversions, 10);
-            case 'weightedValue':
-              return acc + parseInt(item.weighted_value, 10);
-            case 'postViewWeightedConversions':
-              return item.interaction_type === 'POST_VIEW'
-                ? acc + item.weighted_conversions
-                : acc;
-            case 'postClickWeightedConversions':
-              return item.interaction_type === 'POST_CLICK'
-                ? acc + item.weighted_conversions
-                : acc;
-            default:
-              return 0;
-          }
-        }, 0);
+        return (dataSource.dataSource.filter(item => item.creative_id === id) || []).reduce(
+          (acc: number, item) => {
+            switch (reduceFunction) {
+              case 'weightedConversions':
+                return acc + parseInt(item.weighted_conversions, 10);
+              case 'weightedValue':
+                return acc + parseInt(item.weighted_value, 10);
+              case 'postViewWeightedConversions':
+                return item.interaction_type === 'POST_VIEW'
+                  ? acc + item.weighted_conversions
+                  : acc;
+              case 'postClickWeightedConversions':
+                return item.interaction_type === 'POST_CLICK'
+                  ? acc + item.weighted_conversions
+                  : acc;
+              default:
+                return 0;
+            }
+          },
+          0,
+        );
     }
   };
 
@@ -235,20 +217,14 @@ class GoalAttributionTable extends React.Component<JoinedProps> {
         intlMessage: messages.postViewWeightedConversions,
         key: 'postViewWeightedConversions',
         render: (text: string, record: any, index: number) => {
-          return this.returnListOfItemFromId(
-            record.id,
-            'postViewWeightedConversions',
-          );
+          return this.returnListOfItemFromId(record.id, 'postViewWeightedConversions');
         },
       },
       {
         intlMessage: messages.postClickWeightedConversions,
         key: 'postClickWeightedConversions',
         render: (text: string, record: any, index: number) => {
-          return this.returnListOfItemFromId(
-            record.id,
-            'postClickWeightedConversions',
-          );
+          return this.returnListOfItemFromId(record.id, 'postClickWeightedConversions');
         },
       },
     ];

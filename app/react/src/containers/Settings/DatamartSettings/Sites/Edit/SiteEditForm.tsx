@@ -29,9 +29,7 @@ import VisitAnalyzerSection, {
   VisitAnalyzerSectionProps,
 } from '../../Common/VisitAnalyzerFormSection';
 
-import EventRulesSection, {
-  EventRulesSectionProps,
-} from '../../Common/EventRulesSection';
+import EventRulesSection, { EventRulesSectionProps } from '../../Common/EventRulesSection';
 
 import DomainsField, { DomainFieldProps } from './Sections/DomainsField';
 import ProcessingActivitiesFormSection, {
@@ -40,13 +38,9 @@ import ProcessingActivitiesFormSection, {
 import { ProcessingSelectionResource } from '../../../../../models/processing';
 import { InjectedFeaturesProps, injectFeatures } from '../../../../Features';
 
-const FormDomainFields = FieldArray as new () => GenericFieldArray<
-  DomainFieldProps
->;
+const FormDomainFields = FieldArray as new () => GenericFieldArray<DomainFieldProps>;
 
-const Content = Layout.Content as unknown as React.ComponentClass<
-  BasicProps & { id: string }
->;
+const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
 
 const ProcessingActivitiesFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
@@ -63,8 +57,7 @@ const EventRulesFieldArray = FieldArray as new () => GenericFieldArray<
   EventRulesSectionProps
 >;
 
-export interface SiteEditFormProps
-  extends Omit<ConfigProps<SiteFormData>, 'form'> {
+export interface SiteEditFormProps extends Omit<ConfigProps<SiteFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: React.ReactNode[];
   datamartId: string;
@@ -125,7 +118,7 @@ class SiteEditForm extends React.Component<Props> {
         title: messages.sectionProcessingActivitiesTitle,
         component: (
           <ProcessingActivitiesFieldArray
-            name="processingActivities"
+            name='processingActivities'
             component={ProcessingActivitiesFormSection}
             processingsAssociatedType={'CHANNEL'}
             {...propsForProcessingActivities}
@@ -138,11 +131,7 @@ class SiteEditForm extends React.Component<Props> {
       id: 'aliases',
       title: messages.sectionAliasesTitle,
       component: (
-        <FormDomainFields
-          name={'aliases'}
-          component={DomainsField}
-          {...genericFieldArrayProps}
-        />
+        <FormDomainFields name={'aliases'} component={DomainsField} {...genericFieldArrayProps} />
       ),
     });
 
@@ -151,7 +140,7 @@ class SiteEditForm extends React.Component<Props> {
       title: messages.sectionEventRulesTitle,
       component: (
         <EventRulesFieldArray
-          name="eventRulesFields"
+          name='eventRulesFields'
           component={EventRulesSection}
           datamartId={this.props.datamartId}
           {...genericFieldArrayProps}
@@ -164,7 +153,7 @@ class SiteEditForm extends React.Component<Props> {
       title: messages.sectionVisitAnalyzer,
       component: (
         <VisitAnalyzerFieldArray
-          name="visitAnalyzerFields"
+          name='visitAnalyzerFields'
           component={VisitAnalyzerSection}
           {...genericFieldArrayProps}
         />
@@ -188,20 +177,14 @@ class SiteEditForm extends React.Component<Props> {
     });
 
     return (
-      <Layout className="edit-layout">
+      <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
           <ScrollspySider {...sideBarProps} />
-          <Form
-            className="edit-layout ant-layout"
-            onSubmit={handleSubmit as any}
-          >
+          <Form className='edit-layout ant-layout' onSubmit={handleSubmit as any}>
             {/* this button enables submit on enter */}
-            <button type="submit" style={{ display: 'none' }} />
-            <Content
-              id={FORM_ID}
-              className="mcs-content-container mcs-form-container"
-            >
+            <button type='submit' style={{ display: 'none' }} />
+            <Content id={FORM_ID} className='mcs-content-container mcs-form-container'>
               {renderedSections}
             </Content>
           </Form>

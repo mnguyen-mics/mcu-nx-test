@@ -1,5 +1,3 @@
-import UserListSection from './UserListSection'
+import UserListSection from './UserListSection';
 
-export {
-  UserListSection,
-}
+export { UserListSection };

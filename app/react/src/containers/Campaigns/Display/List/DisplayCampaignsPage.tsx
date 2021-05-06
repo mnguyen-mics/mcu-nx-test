@@ -4,9 +4,7 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import { Layout, message, Button, Modal } from 'antd';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import DisplayCampaignsActionbar, {
-  FilterParams,
-} from './DisplayCampaignsActionbar';
+import DisplayCampaignsActionbar, { FilterParams } from './DisplayCampaignsActionbar';
 import DisplayCampaignsTable from './DisplayCampaignsTable';
 import { injectDrawer } from '../../../../components/Drawer';
 import {
@@ -136,10 +134,7 @@ class DisplayCampaignsPage extends React.Component<Props, State> {
       },
     } = previousProps;
 
-    if (
-      !compareSearches(search, previousSearch) ||
-      organisationId !== previousOrganisationId
-    ) {
+    if (!compareSearches(search, previousSearch) || organisationId !== previousOrganisationId) {
       if (!isSearchValid(search, DISPLAY_SEARCH_SETTINGS)) {
         history.replace({
           pathname: pathname,
@@ -147,10 +142,7 @@ class DisplayCampaignsPage extends React.Component<Props, State> {
           state: { reloadDataSource: organisationId !== previousOrganisationId },
         });
       } else {
-        const filter = parseSearch<FilterParams>(
-          search,
-          DISPLAY_SEARCH_SETTINGS,
-        );
+        const filter = parseSearch<FilterParams>(search, DISPLAY_SEARCH_SETTINGS);
         this.loadDisplayCampaignsDataSource(organisationId, filter);
       }
     }
@@ -180,9 +172,7 @@ class DisplayCampaignsPage extends React.Component<Props, State> {
       options.label_id = filter.label_id;
     }
 
-    const apiStatuses = filter.statuses.filter(
-      (status: string) => status !== 'ARCHIVED',
-    );
+    const apiStatuses = filter.statuses.filter((status: string) => status !== 'ARCHIVED');
 
     if (filter.keywords) {
       options.keywords = filter.keywords;
@@ -207,12 +197,9 @@ class DisplayCampaignsPage extends React.Component<Props, State> {
           hasCampaigns: init ? result.count !== 0 : true,
         });
 
-        ReportService.getDisplayCampaignPerformanceReport(
-          organisationId,
-          filter.from,
-          filter.to,
-          ['campaign_id'],
-        )
+        ReportService.getDisplayCampaignPerformanceReport(organisationId, filter.from, filter.to, [
+          'campaign_id',
+        ])
           .then(statsResult => {
             const statsByCampaignlId = normalizeArrayOfObject(
               normalizeReportView(statsResult.data.report_view),
@@ -260,9 +247,7 @@ class DisplayCampaignsPage extends React.Component<Props, State> {
     };
     return this._displayCampaignService
       .getDisplayCampaigns(organisationId, 'DISPLAY', options)
-      .then(apiResp =>
-        apiResp.data.map(campaignResource => campaignResource.id),
-      )
+      .then(apiResp => apiResp.data.map(campaignResource => campaignResource.id))
 
       .catch(err => {
         notifyError(err);
@@ -399,10 +384,7 @@ class DisplayCampaignsPage extends React.Component<Props, State> {
     });
   };
 
-  makeEditAction = (
-    campaignsIds: string[],
-    formData: EditCampaignsFormData,
-  ) => {
+  makeEditAction = (campaignsIds: string[], formData: EditCampaignsFormData) => {
     const { notifyError, intl } = this.props;
     return this._displayCampaignFormService
       .saveCampaigns(campaignsIds, formData)
@@ -453,10 +435,7 @@ class DisplayCampaignsPage extends React.Component<Props, State> {
     const options = {
       additionalProps: additionalProps,
     };
-    this.props.openNextDrawer<EditCampaignsFormProps>(
-      EditCampaignsForm,
-      options,
-    );
+    this.props.openNextDrawer<EditCampaignsFormProps>(EditCampaignsForm, options);
   };
 
   updateCampaignStatus = (
@@ -484,11 +463,9 @@ class DisplayCampaignsPage extends React.Component<Props, State> {
       .then(response => {
         if (successMessage) {
           const undo = () => {
-            this._displayCampaignService
-              .updateCampaign(campaignId, campaignUndoBody)
-              .then(() => {
-                removeNotification(campaignId);
-              });
+            this._displayCampaignService.updateCampaign(campaignId, campaignUndoBody).then(() => {
+              removeNotification(campaignId);
+            });
           };
 
           notifySuccess({
@@ -496,7 +473,7 @@ class DisplayCampaignsPage extends React.Component<Props, State> {
             message: successMessage.title,
             description: successMessage.body,
             btn: (
-              <Button type="primary" size="small" onClick={undo}>
+              <Button type='primary' size='small' onClick={undo}>
                 <span>Undo</span>
               </Button>
             ),
@@ -585,10 +562,7 @@ class DisplayCampaignsPage extends React.Component<Props, State> {
             isUpdatingStatuses: false,
           },
           () => {
-            const filter = parseSearch<FilterParams>(
-              search,
-              DISPLAY_SEARCH_SETTINGS,
-            );
+            const filter = parseSearch<FilterParams>(search, DISPLAY_SEARCH_SETTINGS);
             this.loadDisplayCampaignsDataSource(organisationId, filter);
           },
         );
@@ -636,13 +610,10 @@ class DisplayCampaignsPage extends React.Component<Props, State> {
     };
 
     return (
-      <div className="ant-layout">
-        <DisplayCampaignsActionbar
-          rowSelection={rowSelection}
-          multiEditProps={multiEditProps}
-        />
-        <div className="ant-layout">
-          <Content className="mcs-content-container">
+      <div className='ant-layout'>
+        <DisplayCampaignsActionbar rowSelection={rowSelection} multiEditProps={multiEditProps} />
+        <div className='ant-layout'>
+          <Content className='mcs-content-container'>
             <DisplayCampaignsTable
               dataSource={dataSource}
               archiveCampaign={this.archiveCampaign}

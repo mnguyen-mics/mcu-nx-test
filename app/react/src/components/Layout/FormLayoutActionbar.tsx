@@ -9,14 +9,10 @@ import { Omit } from '../../utils/Types';
 import { DataResponse } from '../../services/ApiService';
 import { QueryResource } from '../../models/datamart/DatamartResource';
 import Convert2Otql from '../../containers/QueryTool/SaveAs/Convet2Otql';
-import {
-  Actionbar,
-  McsIcon,
-} from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { ActionbarProps } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar';
 
-export interface FormLayoutActionbarProps
-  extends Omit<ActionbarProps, 'edition'> {
+export interface FormLayoutActionbarProps extends Omit<ActionbarProps, 'edition'> {
   formId?: string;
   message?: FormattedMessage.MessageDescriptor;
   onClose?: React.MouseEventHandler<HTMLSpanElement>;
@@ -46,15 +42,7 @@ class FormLayoutActionbar extends React.Component<Props, State> {
   }
 
   render() {
-    const {
-      dispatch,
-      formId,
-      message,
-      onClose,
-      submitting,
-      disabled,
-      convert2Otql,
-    } = this.props;
+    const { dispatch, formId, message, onClose, submitting, disabled, convert2Otql } = this.props;
 
     const submitButtonProps: ButtonProps = {
       disabled: submitting,
@@ -64,21 +52,17 @@ class FormLayoutActionbar extends React.Component<Props, State> {
       className: `mcs-form_saveButton_${formId}`,
     };
 
-    const openConversionModal = () =>
-      this.setState({ conversionModalVisible: true });
-    const closeConversionModal = () =>
-      this.setState({ conversionModalVisible: false });
+    const openConversionModal = () => this.setState({ conversionModalVisible: true });
+    const closeConversionModal = () => this.setState({ conversionModalVisible: false });
 
     return (
       <Actionbar edition={true} {...this.props}>
         {message && !disabled ? (
           <Button
             {...submitButtonProps}
-            className={`mcs-primary ${
-              formId ? `mcs-form_saveButton_${formId}` : ''
-            }`}
+            className={`mcs-primary ${formId ? `mcs-form_saveButton_${formId}` : ''}`}
           >
-            <McsIcon type="plus" />
+            <McsIcon type='plus' />
             <FormattedMessage {...message} />
           </Button>
         ) : null}
@@ -86,8 +70,8 @@ class FormLayoutActionbar extends React.Component<Props, State> {
         {convert2Otql && (
           <Button onClick={openConversionModal}>
             <FormattedMessage
-              id="queryTool.query-builder.actionbar.convert"
-              defaultMessage="Convert to OTQL"
+              id='queryTool.query-builder.actionbar.convert'
+              defaultMessage='Convert to OTQL'
             />
           </Button>
         )}
@@ -101,8 +85,8 @@ class FormLayoutActionbar extends React.Component<Props, State> {
           />
         )}
         <McsIcon
-          type="close"
-          className="close-icon"
+          type='close'
+          className='close-icon'
           style={{ cursor: 'pointer' }}
           onClick={onClose}
         />

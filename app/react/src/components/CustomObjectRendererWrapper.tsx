@@ -1,11 +1,6 @@
 import * as React from 'react';
 import CustomObjectRenderer from './CustomObjectRenderer';
-import {
-  FormattedMessage,
-  InjectedIntlProps,
-  injectIntl,
-  defineMessages,
-} from 'react-intl';
+import { FormattedMessage, InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import { Row } from 'antd';
 import { AnyJson } from '../models/datamart/UserActivityResource';
 
@@ -40,10 +35,7 @@ interface CustomObjectRendererWrapperProps {
 
 type Props = CustomObjectRendererWrapperProps & InjectedIntlProps;
 
-export type ExpandAllStatus =
-  | 'INIT_OR_NOT_NEEDED'
-  | 'EXPAND_ALL'
-  | 'COLLAPSE_ALL';
+export type ExpandAllStatus = 'INIT_OR_NOT_NEEDED' | 'EXPAND_ALL' | 'COLLAPSE_ALL';
 
 interface State {
   expandAllStatus: ExpandAllStatus;
@@ -83,14 +75,11 @@ class CustomObjectRendererWrapper extends React.Component<Props, State> {
     const { expandAllStatus } = this.state;
 
     if (expandAllStatus !== 'INIT_OR_NOT_NEEDED') {
-      const message =
-        expandAllStatus === 'EXPAND_ALL'
-          ? messages.expandAll
-          : messages.collapseAll;
+      const message = expandAllStatus === 'EXPAND_ALL' ? messages.expandAll : messages.collapseAll;
 
       return (
-        <Row className="button-expand-all">
-          <button className="button-sm" onClick={this.invertDisplayExpandAll}>
+        <Row className='button-expand-all'>
+          <button className='button-sm' onClick={this.invertDisplayExpandAll}>
             <FormattedMessage {...message} />
           </button>
         </Row>
@@ -110,7 +99,7 @@ class CustomObjectRendererWrapper extends React.Component<Props, State> {
     const buttonExpandAll = this.getButtonExpandAll();
 
     return (
-      <div className="custom-object-renderer">
+      <div className='custom-object-renderer'>
         {buttonExpandAll}
         <CustomObjectRenderer
           objectToBeRendered={customObject}

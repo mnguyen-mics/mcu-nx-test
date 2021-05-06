@@ -48,9 +48,7 @@ interface State {
   loading: boolean;
 }
 
-type Props = DateAggregationChartProps &
-  InjectedThemeColorsProps &
-  InjectedIntlProps;
+type Props = DateAggregationChartProps & InjectedThemeColorsProps & InjectedIntlProps;
 
 class DateAggregationChart extends React.Component<Props, State> {
   identifier = cuid();
@@ -216,14 +214,10 @@ class DateAggregationChart extends React.Component<Props, State> {
     };
 
     const computeChartColors = () => {
-      const availableColors = Object.keys(colors).filter(
-        c => c !== 'mcs-normal',
-      );
+      const availableColors = Object.keys(colors).filter(c => c !== 'mcs-normal');
       return queryIds.map((q, i) => {
         return colors[
-          availableColors[
-            i % (availableColors.length - 1)
-          ] as keyof ThemeColorsShape
+          availableColors[i % (availableColors.length - 1)] as keyof ThemeColorsShape
         ] as string;
       });
     };
@@ -238,22 +232,9 @@ class DateAggregationChart extends React.Component<Props, State> {
       if (this.state.loading) {
         return <LoadingChart />;
       } else if (this.state.error) {
-        return (
-          <EmptyChart
-            title={intl.formatMessage(messages.error)}
-            icon={'close-big'}
-          />
-        );
-      } else if (
-        this.state.queryResult &&
-        this.state.queryResult.length === 0
-      ) {
-        return (
-          <EmptyChart
-            title={intl.formatMessage(messages.noData)}
-            icon="warning"
-          />
-        );
+        return <EmptyChart title={intl.formatMessage(messages.error)} icon={'close-big'} />;
+      } else if (this.state.queryResult && this.state.queryResult.length === 0) {
+        return <EmptyChart title={intl.formatMessage(messages.noData)} icon='warning' />;
       } else {
         return (
           this.state.queryResult &&
@@ -268,11 +249,7 @@ class DateAggregationChart extends React.Component<Props, State> {
       }
     };
 
-    return (
-      <CardFlex title={title}>
-        {generateChart()}
-      </CardFlex>
-    );
+    return <CardFlex title={title}>{generateChart()}</CardFlex>;
   }
 }
 

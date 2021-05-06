@@ -1,13 +1,14 @@
-import {
-  APP_STARTUP,
-} from '../action-types';
+import { APP_STARTUP } from '../action-types';
 import { Action } from 'redux-actions';
 import { Payload } from '../../utils/ReduxHelper';
 
-const app = (state = {
-  initialized: false,
-  initializationError: false,
-}, action: Action<Payload>) => {
+const app = (
+  state = {
+    initialized: false,
+    initializationError: false,
+  },
+  action: Action<Payload>,
+) => {
   switch (action.type) {
     case APP_STARTUP.SUCCESS:
       return {

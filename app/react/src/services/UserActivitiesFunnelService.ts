@@ -1,10 +1,10 @@
 import ApiService from './ApiService';
 import { injectable } from 'inversify';
-import { 
-  FunnelFilter, 
-  FunnelTimeRange, 
-  FunnelRequestBody, 
-  FunnelResponse
+import {
+  FunnelFilter,
+  FunnelTimeRange,
+  FunnelRequestBody,
+  FunnelResponse,
 } from '../models/datamart/UserActivitiesFunnel';
 import { buildUserActivitiesFunnelRequestBody } from '../utils/UserActivitiesFunnelReportHelper';
 
@@ -13,7 +13,7 @@ export interface IUserActivitiesFunnelService {
     datamartId: string,
     funnelFilter: FunnelFilter[],
     funnelTimeRange: FunnelTimeRange,
-    limit?: number
+    limit?: number,
   ) => Promise<FunnelResponse>;
 }
 
@@ -23,9 +23,13 @@ export class UserActivitiesFunnelService implements IUserActivitiesFunnelService
     datamartId: string,
     funnelFilter: FunnelFilter[],
     funnelTimeRange: FunnelTimeRange,
-    limit?: number
+    limit?: number,
   ): Promise<FunnelResponse> {
-    const report: FunnelRequestBody = buildUserActivitiesFunnelRequestBody(funnelFilter, funnelTimeRange, limit);
+    const report: FunnelRequestBody = buildUserActivitiesFunnelRequestBody(
+      funnelFilter,
+      funnelTimeRange,
+      limit,
+    );
     const endpoint = `datamarts/${datamartId}/user_activities_funnel`;
     return ApiService.postRequest(endpoint, report);
   }

@@ -2,13 +2,7 @@ import * as React from 'react';
 import { Layout, Row, Col } from 'antd';
 import { FormLayoutActionbar } from '../../../../../components/Layout';
 import { AUDIENCE_FEATURE_FORM_ID, AudienceFeatureFormData } from './domain';
-import {
-  ConfigProps,
-  Form,
-  InjectedFormProps,
-  reduxForm,
-  getFormValues,
-} from 'redux-form';
+import { ConfigProps, Form, InjectedFormProps, reduxForm, getFormValues } from 'redux-form';
 import { FormLayoutActionbarProps } from '../../../../../components/Layout/FormLayoutActionbar';
 import { McsFormSection } from '../../../../../utils/FormHelper';
 import AudienceFeatureGeneralSection from './Sections/AudienceFeatureGeneralSection';
@@ -34,10 +28,7 @@ interface MapStateToProps {
   formValues?: AudienceFeatureFormData;
 }
 
-type Props = InjectedFormProps<
-  AudienceFeatureFormData,
-  AudienceFeatureFormProps
-> &
+type Props = InjectedFormProps<AudienceFeatureFormData, AudienceFeatureFormProps> &
   AudienceFeatureFormProps &
   MapStateToProps &
   InjectedIntlProps;
@@ -49,14 +40,7 @@ class AudienceFeatureForm extends React.Component<Props> {
   }
 
   render() {
-    const {
-      handleSubmit,
-      breadCrumbPaths,
-      close,
-      change,
-      schema,
-      formValues,
-    } = this.props;
+    const { handleSubmit, breadCrumbPaths, close, change, schema, formValues } = this.props;
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: AUDIENCE_FEATURE_FORM_ID,
@@ -70,10 +54,7 @@ class AudienceFeatureForm extends React.Component<Props> {
       id: 'general',
       title: messages.audienceFeatureSectionGeneralTitle,
       component: (
-        <AudienceFeatureGeneralSection
-          displayAdvancedSection={false}
-          audienceFeatureFolders={[]}
-        />
+        <AudienceFeatureGeneralSection displayAdvancedSection={false} audienceFeatureFolders={[]} />
       ),
     });
 
@@ -100,28 +81,22 @@ class AudienceFeatureForm extends React.Component<Props> {
     });
 
     return (
-      <Layout className="edit-layout">
+      <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
-          <Form
-            className="edit-layout ant-layout"
-            onSubmit={handleSubmit as any}
-          >
+          <Form className='edit-layout ant-layout' onSubmit={handleSubmit as any}>
             {/* this button enables submit on enter */}
-            <button type="submit" style={{ display: 'none' }} />
+            <button type='submit' style={{ display: 'none' }} />
             <Content
               id={AUDIENCE_FEATURE_FORM_ID}
-              className="mcs-content-container mcs-form-container"
+              className='mcs-content-container mcs-form-container'
             >
               <Row>
-                <Col className="mcs-audienceFeature_formColumn" span={12}>
+                <Col className='mcs-audienceFeature_formColumn' span={12}>
                   {renderedSections}
                 </Col>
-                <Col className="mcs-audienceFeature_formColumn" span={12}>
-                  <AudienceFeaturePreview
-                    schema={schema}
-                    formValues={formValues}
-                  />
+                <Col className='mcs-audienceFeature_formColumn' span={12}>
+                  <AudienceFeaturePreview schema={schema} formValues={formValues} />
                 </Col>
               </Row>
             </Content>

@@ -44,10 +44,7 @@ interface AdGroupProps {
     adGroups: Items<OverallStat>;
     overallPerformance: Items<OverallStat>;
   };
-  updateAdGroup: (
-    adGroupId: string,
-    body: Partial<AdGroupResource>,
-  ) => Promise<any>;
+  updateAdGroup: (adGroupId: string, body: Partial<AdGroupResource>) => Promise<any>;
   updateAd: (
     adId: string,
     body: Partial<AdResource>,
@@ -57,9 +54,7 @@ interface AdGroupProps {
   ) => Promise<any>;
 }
 
-type JoinedProps = AdGroupProps &
-  InjectedIntlProps &
-  RouteComponentProps<CampaignRouteParams>;
+type JoinedProps = AdGroupProps & InjectedIntlProps & RouteComponentProps<CampaignRouteParams>;
 
 class AdGroup extends React.Component<JoinedProps> {
   archiveAdGroup = () => {
@@ -83,7 +78,7 @@ class AdGroup extends React.Component<JoinedProps> {
     const adButtons = (
       <span>
         <Link to={`/v2/o/${organisationId}/creatives/display/create`}>
-          <Button className="m-r-10" type="primary">
+          <Button className='m-r-10' type='primary'>
             <FormattedMessage {...messages.newCreatives} />
           </Button>
         </Link>
@@ -91,28 +86,26 @@ class AdGroup extends React.Component<JoinedProps> {
     );
 
     return (
-      <div className="ant-layout">
+      <div className='ant-layout'>
         <AdGroupActionbar
           adGroup={adGroups.data.items[0]}
           displayCampaign={campaign.data.items[0]}
           updateAdGroup={updateAdGroup}
           archiveAdGroup={this.archiveAdGroup}
         />
-        <Content className="mcs-content-container">
+        <Content className='mcs-content-container'>
           <CampaignDashboardHeader
             campaign={
-              adGroups.data.items && adGroups.data.items[0]
-                ? adGroups.data.items[0]
-                : undefined
+              adGroups.data.items && adGroups.data.items[0] ? adGroups.data.items[0] : undefined
             }
           />
           {campaign.data.items &&
           campaign.data.items[0] &&
           campaign.data.items[0].model_version === 'V2014_06' ? (
             <Alert
-              className="m-b-20"
+              className='m-b-20'
               message={intl.formatMessage(messages.editionNotAllowed)}
-              type="warning"
+              type='warning'
             />
           ) : null}
           <AdGroupsDashboard
@@ -120,9 +113,7 @@ class AdGroup extends React.Component<JoinedProps> {
             mediaStat={dashboardPerformance.media.items}
             adGroupStat={dashboardPerformance.adGroups.items}
             isFetchingAdGroupStat={dashboardPerformance.adGroups.isLoading}
-            isFetchingOverallStat={
-              dashboardPerformance.overallPerformance.isLoading
-            }
+            isFetchingOverallStat={dashboardPerformance.overallPerformance.isLoading}
             overallStat={dashboardPerformance.overallPerformance.items}
           />
           <AdCard
@@ -139,7 +130,4 @@ class AdGroup extends React.Component<JoinedProps> {
   }
 }
 
-export default compose<JoinedProps, AdGroupProps>(
-  withRouter,
-  injectIntl
-)(AdGroup);
+export default compose<JoinedProps, AdGroupProps>(withRouter, injectIntl)(AdGroup);

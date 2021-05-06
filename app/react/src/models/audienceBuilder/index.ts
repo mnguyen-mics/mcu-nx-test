@@ -1,6 +1,2 @@
-import {
-  AudienceBuilderResource,
-} from './AudienceBuilderResource';
-export {
-  AudienceBuilderResource,
-};
+import { AudienceBuilderResource } from './AudienceBuilderResource';
+export { AudienceBuilderResource };

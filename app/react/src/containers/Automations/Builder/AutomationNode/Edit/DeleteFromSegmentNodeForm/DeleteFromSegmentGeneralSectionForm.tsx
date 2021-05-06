@@ -1,17 +1,12 @@
 import * as React from 'react';
-import {
-  DeleteFromSegmentAutomationFormData,
-  isAddToSegmentNode,
-} from '../domain';
+import { DeleteFromSegmentAutomationFormData, isAddToSegmentNode } from '../domain';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import { ValidatorProps } from '../../../../../../components/Form/withValidators';
 import { TYPES } from '../../../../../../constants/types';
 import { lazyInject } from '../../../../../../config/inversify.config';
 import { IAudienceSegmentService } from '../../../../../../services/AudienceSegmentService';
 import { compose } from 'recompose';
-import withNormalizer, {
-  NormalizerProps,
-} from '../../../../../../components/Form/withNormalizer';
+import withNormalizer, { NormalizerProps } from '../../../../../../components/Form/withNormalizer';
 import { withValidators, FormSection } from '../../../../../../components/Form';
 import { FormSearchObjectField } from '../../../../../QueryTool/JSONOTQL/Edit/Sections/Field/FieldNodeForm';
 import FormSearchObject from '../../../../../../components/Form/FormSelect/FormSearchObject';
@@ -37,10 +32,7 @@ type Props = DeleteFromSegmentGeneralSectionFormProps &
   RouteComponentProps<{ organisationId: string }> &
   NormalizerProps;
 
-class DeleteFromSegmentGeneralSectionForm extends React.Component<
-  Props,
-  State
-> {
+class DeleteFromSegmentGeneralSectionForm extends React.Component<Props, State> {
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
 
@@ -126,29 +118,21 @@ class DeleteFromSegmentGeneralSectionForm extends React.Component<
         });
       });
     } else {
-      return this._audienceSegmentService
-        .getSegment(id)
-        .then(({ data: segment }) => ({
-          key: segment.id,
-          label: <SegmentNameDisplay audienceSegmentResource={segment} />,
-          value: segment.id,
-        }));
+      return this._audienceSegmentService.getSegment(id).then(({ data: segment }) => ({
+        key: segment.id,
+        label: <SegmentNameDisplay audienceSegmentResource={segment} />,
+        value: segment.id,
+      }));
     }
   };
 
-  findSegmentName = (
-    audienceSegmentId: string,
-    scenarioNodes: StorylineNodeModel[],
-  ) => {
+  findSegmentName = (audienceSegmentId: string, scenarioNodes: StorylineNodeModel[]) => {
     const addToSegmentStoryLine = scenarioNodes.find(
       storylineNode =>
         isAddToSegmentNode(storylineNode.node) &&
         audienceSegmentId === storylineNode.node.formData.audienceSegmentId,
     );
-    if (
-      addToSegmentStoryLine &&
-      isAddToSegmentNode(addToSegmentStoryLine.node)
-    ) {
+    if (addToSegmentStoryLine && isAddToSegmentNode(addToSegmentStoryLine.node)) {
       return addToSegmentStoryLine.node.formData.audienceSegmentName || '';
     }
     return '';
@@ -167,11 +151,9 @@ class DeleteFromSegmentGeneralSectionForm extends React.Component<
           subtitle={messages.sectionGeneralSubtitle}
           title={messages.sectionGeneralTitle}
         />
-        <FormSection
-          title={messages.sectionGeneralConfigurationTitle}
-        />
+        <FormSection title={messages.sectionGeneralConfigurationTitle} />
         <FormSearchObjectField
-          name="segmentId"
+          name='segmentId'
           component={FormSearchObject}
           validate={[isRequired]}
           formItemProps={{
@@ -185,7 +167,7 @@ class DeleteFromSegmentGeneralSectionForm extends React.Component<
             mode: undefined,
             showSearch: true,
           }}
-          type="Audience"
+          type='Audience'
           small={true}
         />
       </div>
@@ -202,8 +184,7 @@ export default compose<Props, DeleteFromSegmentGeneralSectionFormProps>(
 
 export const messages = defineMessages({
   sectionGeneralTitle: {
-    id:
-      'automation.builder.node.deleteFromSegmentForm.generalInfoSection.title',
+    id: 'automation.builder.node.deleteFromSegmentForm.generalInfoSection.title',
     defaultMessage: 'Description',
   },
   sectionGeneralSubtitle: {
@@ -212,9 +193,8 @@ export const messages = defineMessages({
       "This action allows you to delete users from a segment. If the users are not in the segment, there won't be any action and the automation will continue.",
   },
   sectionGeneralConfigurationTitle: {
-    id:
-    'automation.builder.node.deleteFromSegmentForm.generalInfoSection.configuration.title',
-  defaultMessage: 'Configuration',
+    id: 'automation.builder.node.deleteFromSegmentForm.generalInfoSection.configuration.title',
+    defaultMessage: 'Configuration',
   },
   automationNodeName: {
     id: 'automation.builder.node.deleteFromSegmentForm.name',

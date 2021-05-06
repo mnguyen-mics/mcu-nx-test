@@ -27,9 +27,7 @@ class GraphQLInputEditor extends React.Component<Props, State> {
     };
   }
 
-  updateQuery = (
-    value: string /*event: React.ChangeEvent<HTMLTextAreaElement>*/,
-  ) => {
+  updateQuery = (value: string /*event: React.ChangeEvent<HTMLTextAreaElement>*/) => {
     this.setState({ query: value });
     this.props.onQueryChange(value);
   };
@@ -50,34 +48,20 @@ class GraphQLInputEditor extends React.Component<Props, State> {
     const { query } = this.state;
     const clearButton = (
       <Button onClick={this.clearQuery}>
-        <FormattedMessage
-          id="queryTool.otql.edit.clear.label"
-          defaultMessage="Clear Query"
-        />
+        <FormattedMessage id='queryTool.otql.edit.clear.label' defaultMessage='Clear Query' />
       </Button>
     );
 
     const abortButton = (
-      <Button type="primary" className="m-l-10" onClick={onAbortQuery}>
-        <FormattedMessage
-          id="queryTool.otql.edit.abort.label"
-          defaultMessage="Abort Query"
-        />
+      <Button type='primary' className='m-l-10' onClick={onAbortQuery}>
+        <FormattedMessage id='queryTool.otql.edit.abort.label' defaultMessage='Abort Query' />
       </Button>
     );
 
     const handleOnRunButtonClick = () => onRunQuery(query!);
     const runButton = (
-      <Button
-        type="primary"
-        className="m-l-10"
-        disabled={!query}
-        onClick={handleOnRunButtonClick}
-      >
-        <FormattedMessage
-          id="queryTool.otql.edit.run.label"
-          defaultMessage="Run Query"
-        />
+      <Button type='primary' className='m-l-10' disabled={!query} onClick={handleOnRunButtonClick}>
+        <FormattedMessage id='queryTool.otql.edit.run.label' defaultMessage='Run Query' />
       </Button>
     );
 
@@ -99,40 +83,32 @@ class GraphQLInputEditor extends React.Component<Props, State> {
 
   render() {
     const { query } = this.state;
-    const {
-      defaultValue,
-    } = this.props;
-
+    const { defaultValue } = this.props;
 
     return (
       <Card
         title={
-          <FormattedMessage
-            id="queryTool.graphql.card.title"
-            defaultMessage="GraphQL Query"
-          />
+          <FormattedMessage id='queryTool.graphql.card.title' defaultMessage='GraphQL Query' />
         }
         buttons={this.buildEditorActions()}
       >
-
-
-      <div>
-        <AceEditor
-          value={query}
-          showPrintMargin={false}
-          height="250px"
-          enableBasicAutocompletion={true}
-          enableLiveAutocompletion={false}
-          defaultValue={defaultValue}
-          onChange={this.updateQuery}
-          mode="otql"
-          theme="otql"
-          width="100%"
-          setOptions={{
-            showGutter: true
-          }}
-        />
-      </div>
+        <div>
+          <AceEditor
+            value={query}
+            showPrintMargin={false}
+            height='250px'
+            enableBasicAutocompletion={true}
+            enableLiveAutocompletion={false}
+            defaultValue={defaultValue}
+            onChange={this.updateQuery}
+            mode='otql'
+            theme='otql'
+            width='100%'
+            setOptions={{
+              showGutter: true,
+            }}
+          />
+        </div>
       </Card>
     );
   }

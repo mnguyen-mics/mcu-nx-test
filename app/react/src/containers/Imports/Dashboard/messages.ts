@@ -51,8 +51,7 @@ export default defineMessages({
   },
   importRunningDownload: {
     id: 'imports.dashboard.actionbar.running.download',
-    defaultMessage:
-      'This import is being created, please try again when the import is succeeded.',
+    defaultMessage: 'This import is being created, please try again when the import is succeeded.',
   },
   wait: {
     id: 'imports.dashboard.actionbar.wait',
@@ -104,10 +103,10 @@ export default defineMessages({
   },
   downloadErrorFile: {
     id: 'imports.execution.result.error.download',
-    defaultMessage: 'Download error file'
+    defaultMessage: 'Download error file',
   },
   downloadInputFile: {
     id: 'imports.execution.result.input.download',
-    defaultMessage: 'Download input file'
-  }
+    defaultMessage: 'Download input file',
+  },
 });

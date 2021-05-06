@@ -39,11 +39,13 @@ export default defineMessages({
   },
   creativeSectionGeneralSubTitle: {
     id: 'creatives.create.section.general.subtitle',
-    defaultMessage: 'Give your Creative a name, a format and a destination domain to make it usable.',
+    defaultMessage:
+      'Give your Creative a name, a format and a destination domain to make it usable.',
   },
   creativeSectionGeneralMultipleSubTitle: {
     id: 'creatives.create.section.general.multiple.subtitle',
-    defaultMessage: 'Give your Creative a destination domain. You can change your creative name in the left panel.',
+    defaultMessage:
+      'Give your Creative a destination domain. You can change your creative name in the left panel.',
   },
   creativeSectionPropertyTitle: {
     id: 'creatives.create.section.properties.title',
@@ -59,7 +61,8 @@ export default defineMessages({
   },
   creativeSectionAuditSubTitle: {
     id: 'creatives.create.section.audit.subtitle',
-    defaultMessage: 'If you want to advertise through adechanges you need to pass an audit first. Click on the start audit button to get started.',
+    defaultMessage:
+      'If you want to advertise through adechanges you need to pass an audit first. Click on the start audit button to get started.',
   },
   creativeSectionPreviewTitle: {
     id: 'creatives.create.section.preview.title',
@@ -67,7 +70,8 @@ export default defineMessages({
   },
   creativeSectionPreviewSubTitle: {
     id: 'creatives.create.section.preview.subtitle',
-    defaultMessage: 'This is how you creative will render on a publisher website. Please note that the tracker won\'t be visible here',
+    defaultMessage:
+      "This is how you creative will render on a publisher website. Please note that the tracker won't be visible here",
   },
   creativeCreationSaveButton: {
     id: 'creatives.create.actionbar.button.saveRefresh',
@@ -115,7 +119,8 @@ export default defineMessages({
   },
   creativeCreationGeneralFormatFieldHelper: {
     id: 'creatives.create.section.general.field.format.helper',
-    defaultMessage: 'The format of the creative will be used in campaign by the platform. The format is as follow: width x height',
+    defaultMessage:
+      'The format of the creative will be used in campaign by the platform. The format is as follow: width x height',
   },
   creativeCreationGeneralDomainFieldTitle: {
     id: 'creatives.create.section.general.field.domain.title',
@@ -127,71 +132,73 @@ export default defineMessages({
   },
   creativeCreationGeneralDomainFieldHelper: {
     id: 'creatives.create.section.general.field.domain.helper',
-    defaultMessage: 'This is the domain of the Advertiser (without http or params) eg: mybrand.com.\n It\'ll be checked during Creative Audit and for the creative whitelisting/blacklisting by Publishers on SSPs.',
+    defaultMessage:
+      "This is the domain of the Advertiser (without http or params) eg: mybrand.com.\n It'll be checked during Creative Audit and for the creative whitelisting/blacklisting by Publishers on SSPs.",
   },
   creativeSiderMenuCreativeType: {
     id: 'creatives.sider.menu.creativeType',
-    defaultMessage: 'Creative Type'
+    defaultMessage: 'Creative Type',
   },
   creativeSiderMenuGeneralInformation: {
     id: 'creatives.sider.menu.generalInformation',
-    defaultMessage: 'General Information'
+    defaultMessage: 'General Information',
   },
   creativeSiderMenuProperties: {
     id: 'creatives.sider.menu.properties',
-    defaultMessage: 'Properties'
+    defaultMessage: 'Properties',
   },
   creativeSiderMenuPreview: {
     id: 'creatives.sider.menu.preview',
-    defaultMessage: 'Preview'
+    defaultMessage: 'Preview',
   },
   creativeSiderMenuAudit: {
     id: 'creatives.sider.menu.audit',
-    defaultMessage: 'Audit Information'
+    defaultMessage: 'Audit Information',
   },
   creativeTypeQuantum: {
     id: 'creatives.type.quantum',
-    defaultMessage: 'Quantum'
+    defaultMessage: 'Quantum',
   },
   creativeTypeIvidence: {
     id: 'creatives.type.ividence',
-    defaultMessage: 'Ividence'
+    defaultMessage: 'Ividence',
   },
   creativeTypeAgency: {
     id: 'creatives.type.agency',
-    defaultMessage: 'Agency Script'
+    defaultMessage: 'Agency Script',
   },
   creativeTypeImage: {
     id: 'creatives.type.image',
-    defaultMessage: 'Banner'
+    defaultMessage: 'Banner',
   },
   creativeTypeHtml: {
     id: 'creatives.type.html',
-    defaultMessage: 'Html'
+    defaultMessage: 'Html',
   },
   creativeTypeSkin: {
     id: 'creatives.type.skin',
-    defaultMessage: 'Skins'
+    defaultMessage: 'Skins',
   },
   allRendererList: {
     id: 'creatives.type.all.renderer.list',
-    defaultMessage: 'All Ad Renderer'
+    defaultMessage: 'All Ad Renderer',
   },
   allRendererListSubtitle: {
     id: 'creatives.type.all.renderer.list.subtitle',
-    defaultMessage: 'List of all available ad renderer.'
+    defaultMessage: 'List of all available ad renderer.',
   },
   creativeTypeOr: {
     id: 'creatives.type.or',
-    defaultMessage: 'Or'
+    defaultMessage: 'Or',
   },
   creativeTypeAdvanced: {
     id: 'creatives.type.advanced',
-    defaultMessage: 'Advanced'
+    defaultMessage: 'Advanced',
   },
   errorFormMessage: {
     id: 'creatives.display.edit.generic.errorMessage',
-    defaultMessage: 'There is an error with some fields in your form. Please review the data you entered.',
+    defaultMessage:
+      'There is an error with some fields in your form. Please review the data you entered.',
   },
   savingInProgress: {
     id: 'creatives.display.edit.savingInProgress',
@@ -216,7 +223,8 @@ export default defineMessages({
   },
   creativeCreationAdvancedTechnicalFieldTooltip: {
     id: 'creatives.create.section.advanced.field.technical.tooltip',
-    defaultMessage: 'Give your creative a technical name to leverage integrations such as external click tracking.',
+    defaultMessage:
+      'Give your creative a technical name to leverage integrations such as external click tracking.',
   },
   invalidFormat: {
     id: 'creatives.create.section.general.invalidFormat',
@@ -224,22 +232,22 @@ export default defineMessages({
   },
   modalConfirmTitle: {
     id: 'creatives.create.modal.confirm.title',
-    defaultMessage: 'Warning'
+    defaultMessage: 'Warning',
   },
   modalConfirmContent: {
     id: 'creatives.create.modal.confirm.content',
-    defaultMessage: 'You have changes that are not saved. Do you want to proceed ?'
+    defaultMessage: 'You have changes that are not saved. Do you want to proceed ?',
   },
   modalConfirmOk: {
     id: 'creatives.create.modal.confirm.Ok',
-    defaultMessage: 'Close Without Saving'
+    defaultMessage: 'Close Without Saving',
   },
   modalConfirmCancel: {
     id: 'creatives.create.modal.confirm.cancel',
-    defaultMessage: 'Cancel'
+    defaultMessage: 'Cancel',
   },
   successfulSaving: {
     id: 'creatives.create.modal.save.successful',
-    defaultMessage: 'Your Creative has been successfully saved!'
-  }
+    defaultMessage: 'Your Creative has been successfully saved!',
+  },
 });

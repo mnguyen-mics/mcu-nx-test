@@ -10,9 +10,7 @@ import {
   FormAlertInputField,
   FormAlertInput,
 } from '../../../../../../components/Form';
-import withValidators, {
-  ValidatorProps,
-} from '../../../../../../components/Form/withValidators';
+import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
 import messages from '../../messages';
 import { EditEmailBlastRouteMatchParam } from '../../domain';
 
@@ -34,7 +32,7 @@ class GeneralFormSection extends React.Component<Props> {
           title={messages.emailBlastEditorStepTitleGeneralInformation}
         />
         <FormInputField
-          name="campaign.name"
+          name='campaign.name'
           component={FormInput}
           validate={[isRequired]}
           formItemProps={{
@@ -42,30 +40,26 @@ class GeneralFormSection extends React.Component<Props> {
             required: true,
           }}
           inputProps={{
-            placeholder: formatMessage(
-              messages.emailEditorNameInputPlaceholder,
-            ),
+            placeholder: formatMessage(messages.emailEditorNameInputPlaceholder),
           }}
           helpToolTipProps={{
             title: formatMessage(messages.emailEditorNameInputHelper),
           }}
         />
         <FormAlertInputField
-          name="campaign.technical_name"
+          name='campaign.technical_name'
           component={FormAlertInput}
           formItemProps={{
             label: formatMessage(messages.emailEditorTechnicalNameInputLabel),
           }}
           inputProps={{
-            placeholder: formatMessage(
-              messages.emailEditorTechnicalNameInputPlaceholder,
-            ),
+            placeholder: formatMessage(messages.emailEditorTechnicalNameInputPlaceholder),
           }}
           helpToolTipProps={{
             title: formatMessage(messages.emailEditorTechnicalNameInputHelper),
           }}
-          iconType="warning"
-          type="warning"
+          iconType='warning'
+          type='warning'
           message={formatMessage(messages.warningOnTokenEdition)}
         />
       </div>
@@ -73,8 +67,4 @@ class GeneralFormSection extends React.Component<Props> {
   }
 }
 
-export default compose(
-  injectIntl,
-  withRouter,
-  withValidators,
-)(GeneralFormSection);
+export default compose(injectIntl, withRouter, withValidators)(GeneralFormSection);

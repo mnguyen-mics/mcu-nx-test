@@ -18,9 +18,7 @@ type JoinedProps = InjectedIntlProps &
   FormLinkedSelectInputProps &
   WrappedFieldArrayProps<FormLinkedSelectInputModel>;
 
-const FormLinkedSelectInputField = Field as new () => GenericField<
-  FormLinkedSelectInputProps
->;
+const FormLinkedSelectInputField = Field as new () => GenericField<FormLinkedSelectInputProps>;
 
 class ReportFilterFields extends React.Component<JoinedProps> {
   render() {
@@ -32,7 +30,7 @@ class ReportFilterFields extends React.Component<JoinedProps> {
       const handleRemove = () => fields.remove(index);
       const removeButton = () => (
         <div onClick={handleRemove}>
-          <McsIcon type="close" />
+          <McsIcon type='close' />
         </div>
       );
       return (
@@ -63,9 +61,9 @@ class ReportFilterFields extends React.Component<JoinedProps> {
         <Row>
           <Col span={15} offset={4}>
             <div onClick={handleOnClick}>
-              <Col span={20} className="report-AddFilterButton">
+              <Col span={20} className='report-AddFilterButton'>
                 <p>
-                  <McsIcon type="plus" />
+                  <McsIcon type='plus' />
                   {intl.formatMessage(messages.AddFilterButtonText)}
                 </p>
               </Col>

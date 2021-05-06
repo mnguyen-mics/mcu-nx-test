@@ -35,11 +35,7 @@ import { IRuntimeSchemaService } from '../../../services/RuntimeSchemaService';
 import { IQueryService } from '../../../services/QueryService';
 import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/RuntimeSchema';
 import { QueryDocument as GraphDbQueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
-import {
-  McsIcon,
-  Button,
-  Loading,
-} from '@mediarithmics-private/mcs-components-library';
+import { McsIcon, Button, Loading } from '@mediarithmics-private/mcs-components-library';
 import { IAudienceFeatureService } from '../../../services/AudienceFeatureService';
 import { AudienceFeatureResource } from '../../../models/audienceFeature';
 import injectNotifications, {
@@ -64,10 +60,7 @@ interface MapStateToProps {
   formValues: AudienceBuilderFormData;
 }
 
-type Props = InjectedFormProps<
-  AudienceBuilderFormData,
-  AudienceBuilderContainerProps
-> &
+type Props = InjectedFormProps<AudienceBuilderFormData, AudienceBuilderContainerProps> &
   MapStateToProps &
   AudienceBuilderContainerProps &
   InjectedNotificationProps &
@@ -110,23 +103,18 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
     const { audienceBuilder, formValues } = this.props;
     this.runQuery(formValues);
 
-    this._runtimeSchemaService
-      .getRuntimeSchemas(audienceBuilder.datamart_id)
-      .then(schemaRes => {
-        const liveSchema = schemaRes.data.find(s => s.status === 'LIVE');
-        if (!liveSchema) return;
-        return this._runtimeSchemaService
-          .getObjectTypeInfoResources(
-            audienceBuilder.datamart_id,
-            liveSchema.id,
-          )
-          .then(objectTypes => {
-            this.setState({
-              objectTypes: objectTypes,
-              isLoadingObjectTypes: false,
-            });
+    this._runtimeSchemaService.getRuntimeSchemas(audienceBuilder.datamart_id).then(schemaRes => {
+      const liveSchema = schemaRes.data.find(s => s.status === 'LIVE');
+      if (!liveSchema) return;
+      return this._runtimeSchemaService
+        .getObjectTypeInfoResources(audienceBuilder.datamart_id, liveSchema.id)
+        .then(objectTypes => {
+          this.setState({
+            objectTypes: objectTypes,
+            isLoadingObjectTypes: false,
           });
-      });
+        });
+    });
 
     const audienceFeatureIds: string[] = [];
     formValues.where.expressions.forEach(exp => {
@@ -137,10 +125,7 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
       });
     });
     const promises = audienceFeatureIds.map(id => {
-      return this._audienceFeatureService.getAudienceFeature(
-        audienceBuilder.datamart_id,
-        id,
-      );
+      return this._audienceFeatureService.getAudienceFeature(audienceBuilder.datamart_id, id);
     });
 
     Promise.all(promises).then(res => {
@@ -230,20 +215,20 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
     // QueryFragmentForm selection
     let queryFragmentForm;
     if (!isLoadingObjectTypes) {
-      queryFragmentForm = <QueryFragmentFieldArray
-        name={`where.expressions`}
-        component={QueryFragmentFormSection}
-        datamartId={audienceBuilder.datamart_id}
-        formChange={change}
-        demographicsFeaturesIds={
-          audienceBuilder.demographics_features_ids
-        }
-        audienceFeatures={audienceFeatures}
-        objectTypes={objectTypes}
-        {...genericFieldArrayProps}
-      />
+      queryFragmentForm = (
+        <QueryFragmentFieldArray
+          name={`where.expressions`}
+          component={QueryFragmentFormSection}
+          datamartId={audienceBuilder.datamart_id}
+          formChange={change}
+          demographicsFeaturesIds={audienceBuilder.demographics_features_ids}
+          audienceFeatures={audienceFeatures}
+          objectTypes={objectTypes}
+          {...genericFieldArrayProps}
+        />
+      );
     } else {
-      queryFragmentForm = <Loading className="m-t-40" isFullScreen={true} />
+      queryFragmentForm = <Loading className='m-t-40' isFullScreen={true} />;
     }
 
     return (
@@ -258,29 +243,31 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
         )}
 
         <Layout>
-          <Row className="ant-layout-content mcs-audienceBuilder_container">
+          <Row className='ant-layout-content mcs-audienceBuilder_container'>
             <Col span={isDashboardToggled ? 1 : 12}>
-              <div
-                className={`${isDashboardToggled && 'mcs-audienceBuilder_hiddenForm'}`}
-              >
+              <div className={`${isDashboardToggled && 'mcs-audienceBuilder_hiddenForm'}`}>
                 {queryFragmentForm}
               </div>
             </Col>
 
             <Col
               span={isDashboardToggled ? 23 : 12}
-              className="mcs-audienceBuilder_liveDashboardContainer"
+              className='mcs-audienceBuilder_liveDashboardContainer'
             >
               <Button
-                className={`mcs-audienceBuilder_sizeButton ${isDashboardToggled &&
-                  'mcs-audienceBuilder_rightChevron'}`}
+                className={`mcs-audienceBuilder_sizeButton ${
+                  isDashboardToggled && 'mcs-audienceBuilder_rightChevron'
+                }`}
                 onClick={this.toggleDashboard}
               >
-                <McsIcon type="chevron-right" />
+                <McsIcon type='chevron-right' />
               </Button>
               {!!isMaskVisible && (
-                <div className="mcs-audienceBuilder_liveDashboardMask">
-                  <Button onClick={this.refreshDashboard} className="mcs-audienceBuilder_dashboard_refresh_button">
+                <div className='mcs-audienceBuilder_liveDashboardMask'>
+                  <Button
+                    onClick={this.refreshDashboard}
+                    className='mcs-audienceBuilder_dashboard_refresh_button'
+                  >
                     {intl.formatMessage(messages.refreshMessage)}
                   </Button>
                 </div>

@@ -1,24 +1,10 @@
 /* eslint-disable no-constant-condition */
 /* eslint-disable camelcase */
 import { delay } from 'redux-saga';
-import {
-  getContext,
-  call,
-  put,
-  take,
-  race,
-  fork,
-  all,
-  select,
-} from 'redux-saga/effects';
+import { getContext, call, put, take, race, fork, all, select } from 'redux-saga/effects';
 import { SplitFactory } from '@splitsoftware/splitio';
 import log from '../../utils/Logger';
-import {
-  LOG_IN,
-  LOG_OUT,
-  CONNECTED_USER,
-  STORE_ORG_FEATURES,
-} from '../action-types';
+import { LOG_IN, LOG_OUT, CONNECTED_USER, STORE_ORG_FEATURES } from '../action-types';
 import { logIn } from './actions';
 import { getConnectedUser } from '../Session/actions';
 import { setOrgFeature, setClientFeature } from '../Features/actions';
@@ -27,10 +13,7 @@ import { UserProfileResource } from '../../models/directory/UserProfileResource'
 
 function* authorize(credentialsOrRefreshToken: any) {
   const _authService = yield getContext('authService');
-  const response = yield call(
-    _authService.createAccessToken,
-    credentialsOrRefreshToken,
-  );
+  const response = yield call(_authService.createAccessToken, credentialsOrRefreshToken);
   const { access_token, expires_in, refresh_token } = response.data;
   yield call(_authService.setAccessToken, access_token);
   yield call(_authService.setAccessTokenExpirationDate, expires_in);
@@ -66,10 +49,7 @@ function* authorizeLoop(
       refreshToken = yield call(_authService.getRefreshToken);
     } else if (isNewLogin) {
       try {
-        refreshToken = yield call(
-          _authService.createRefreshToken,
-          credentialsOrRefreshToken,
-        );
+        refreshToken = yield call(_authService.createRefreshToken, credentialsOrRefreshToken);
       } catch (error) {
         // if expired password we catch the 401 error
         if (error.error_code === 'EXPIRED_PASSWORD_ERROR') {
@@ -96,16 +76,13 @@ function* authorizeLoop(
     if (connectedUser) {
       const filteredConnectedUser = {
         ...connectedUser,
-        workspaces: connectedUser.workspaces.map((w) => {
+        workspaces: connectedUser.workspaces.map(w => {
           if (w.datamarts && w.datamarts.length) {
-            w.datamarts.forEach((d) => {
+            w.datamarts.forEach(d => {
               const formatted = d;
-              if (
-                d.audience_segment_metrics &&
-                d.audience_segment_metrics.length
-              ) {
+              if (d.audience_segment_metrics && d.audience_segment_metrics.length) {
                 formatted.audience_segment_metrics = d.audience_segment_metrics.filter(
-                  (a) => a.status === 'LIVE',
+                  a => a.status === 'LIVE',
                 );
               }
               return formatted;
@@ -138,9 +115,7 @@ function* authorizeLoop(
       const clientAction = yield call(clientPromise);
       yield put(setClientFeature(clientAction));
       // OVH Crisis code
-      const communityId = connectedUser.workspaces[
-        connectedUser.default_workspace
-      ].community_id;
+      const communityId = connectedUser.workspaces[connectedUser.default_workspace].community_id;
       if (communityId) {
         // We set it in the window object because we will need it in ApiService.ts
         (window as any).communityId = communityId;
@@ -152,16 +127,12 @@ function* authorizeLoop(
       // This variable is used in index.html
       (window as any).userId = connectedUser.id;
       (window as any).organisationId =
-        connectedUser.workspaces[
-          connectedUser.default_workspace
-        ].organisation_id; // eslint-disable-line no-undef
+        connectedUser.workspaces[connectedUser.default_workspace].organisation_id; // eslint-disable-line no-undef
 
       while (true) {
         let expiresIn;
         // check expirein variable
-        expiresIn = _authService.tokenExpiresIn(
-          _authService.getAccessTokenExpirationDate(),
-        );
+        expiresIn = _authService.tokenExpiresIn(_authService.getAccessTokenExpirationDate());
         log.debug(`Will refresh access token in ${expiresIn} ms`);
         yield call(delay, expiresIn);
         const storedRefreshToken = yield call(_authService.getRefreshToken);

@@ -1,6 +1,4 @@
-import {
-  ProcessingResource,
-} from './../../../../models/processing';
+import { ProcessingResource } from './../../../../models/processing';
 import {
   PaginationSearchSettings,
   KeywordSearchSettings,

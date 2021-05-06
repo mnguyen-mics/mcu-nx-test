@@ -5,14 +5,9 @@ import { compose } from 'recompose';
 import { Button, Alert } from 'antd';
 import { injectDrawer } from '../../../components/Drawer';
 import { InjectedDrawerProps } from '../../../components/Drawer/injectDrawer';
-import JSONQLBuilderContainer, {
-  JSONQLBuilderContainerProps,
-} from './JSONQLBuilderContainer';
+import JSONQLBuilderContainer, { JSONQLBuilderContainerProps } from './JSONQLBuilderContainer';
 import { messages } from './messages';
-import {
-  Actionbar,
-  McsIcon,
-} from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import AudienceBuilderContainer, {
   AudienceBuilderContainerProps,
 } from '../../Audience/AudienceBuilder/AudienceBuilderContainer';
@@ -41,11 +36,7 @@ class JSONQLPreview extends React.Component<Props> {
   openEditor = () => {
     const { intl, value, segmentEditor, audienceBuilder } = this.props;
 
-    const createActionBar = (
-      onSave: () => void,
-      onClose: () => void,
-      query: any,
-    ) => {
+    const createActionBar = (onSave: () => void, onClose: () => void, query: any) => {
       return (
         <Actionbar
           edition={true}
@@ -56,20 +47,15 @@ class JSONQLPreview extends React.Component<Props> {
             }),
           ]}
         >
-          <Button
-            disabled={!query}
-            className="mcs-primary"
-            type="primary"
-            onClick={onSave}
-          >
+          <Button disabled={!query} className='mcs-primary' type='primary' onClick={onSave}>
             <FormattedMessage
-              id="queryTool.jsonql.querytool.query.edit.update"
-              defaultMessage="Update"
+              id='queryTool.jsonql.querytool.query.edit.update'
+              defaultMessage='Update'
             />
           </Button>
           <McsIcon
-            type="close"
-            className="close-icon"
+            type='close'
+            className='close-icon'
             style={{ cursor: 'pointer' }}
             onClick={onClose}
           />
@@ -89,16 +75,13 @@ class JSONQLPreview extends React.Component<Props> {
 
       return (
         audienceBuilder &&
-        this.props.openNextDrawer<AudienceBuilderContainerProps>(
-          AudienceBuilderContainer,
-          {
-            additionalProps: {
-              renderActionBar: actionbar,
-              initialValues: value ? JSON.parse(value) : undefined,
-              audienceBuilder: audienceBuilder,
-            },
+        this.props.openNextDrawer<AudienceBuilderContainerProps>(AudienceBuilderContainer, {
+          additionalProps: {
+            renderActionBar: actionbar,
+            initialValues: value ? JSON.parse(value) : undefined,
+            audienceBuilder: audienceBuilder,
           },
-        )
+        })
       );
     } else {
       const actionbar = (query: GraphdbQueryDocument, datamartId: string) => {
@@ -110,19 +93,16 @@ class JSONQLPreview extends React.Component<Props> {
         return createActionBar(onSave, onClose, query);
       };
 
-      this.props.openNextDrawer<JSONQLBuilderContainerProps>(
-        JSONQLBuilderContainer,
-        {
-          additionalProps: {
-            datamartId: this.props.datamartId,
-            renderActionBar: actionbar,
-            editionLayout: true,
-            queryDocument: value ? JSON.parse(value) : undefined,
-            isTrigger: this.props.isTrigger,
-            isEdge: this.props.isEdge,
-          },
+      this.props.openNextDrawer<JSONQLBuilderContainerProps>(JSONQLBuilderContainer, {
+        additionalProps: {
+          datamartId: this.props.datamartId,
+          renderActionBar: actionbar,
+          editionLayout: true,
+          queryDocument: value ? JSON.parse(value) : undefined,
+          isTrigger: this.props.isTrigger,
+          isEdge: this.props.isEdge,
         },
-      );
+      });
     }
   };
 
@@ -130,38 +110,35 @@ class JSONQLPreview extends React.Component<Props> {
     const { context, queryHasChanged, intl } = this.props;
 
     return context === 'AUTOMATION_BUILDER' ? (
-      <div onClick={this.openEditor} className="boolean-menu-item">
+      <div onClick={this.openEditor} className='boolean-menu-item'>
         {this.props.intl.formatMessage({
           id: 'jsonql.button.query.edit',
           defaultMessage: 'Edit Query',
         })}
       </div>
     ) : (
-        <div className="text-center m-t-20">
-          {queryHasChanged && (
-            <Alert
-              message={
-                <div>
-                  <McsIcon type={'warning'} />
-                  {intl.formatMessage(messages.queryHasChanged)}
-                </div>
-              }
-              type={'warning'}
-            />
-          )}
-          <br />
-          <Button onClick={this.openEditor}>
-            {this.props.intl.formatMessage({
-              id: 'jsonql.button.query.edit',
-              defaultMessage: 'Edit Query',
-            })}
-          </Button>
-        </div>
-      );
+      <div className='text-center m-t-20'>
+        {queryHasChanged && (
+          <Alert
+            message={
+              <div>
+                <McsIcon type={'warning'} />
+                {intl.formatMessage(messages.queryHasChanged)}
+              </div>
+            }
+            type={'warning'}
+          />
+        )}
+        <br />
+        <Button onClick={this.openEditor}>
+          {this.props.intl.formatMessage({
+            id: 'jsonql.button.query.edit',
+            defaultMessage: 'Edit Query',
+          })}
+        </Button>
+      </div>
+    );
   }
 }
 
-export default compose<Props, JSONQLPreviewProps>(
-  injectIntl,
-  injectDrawer,
-)(JSONQLPreview);
+export default compose<Props, JSONQLPreviewProps>(injectIntl, injectDrawer)(JSONQLPreview);

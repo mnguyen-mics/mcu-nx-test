@@ -16,9 +16,9 @@ class ImportHeader extends React.Component<ImportHeaderProps> {
         title={(object && object.name) || ''}
         subTitle={
           (object &&
-            `${formatDocumentTypeText(
-              object.document_type,
-            )} / ${formatMimeTypeText(object.mime_type)}`) ||
+            `${formatDocumentTypeText(object.document_type)} / ${formatMimeTypeText(
+              object.mime_type,
+            )}`) ||
           ''
         }
         loading={!(object && object.name)}

@@ -1,12 +1,7 @@
 import * as React from 'react';
 import { Button, message, Modal, Menu } from 'antd';
 import { Link, withRouter } from 'react-router-dom';
-import {
-  FormattedMessage,
-  InjectedIntlProps,
-  injectIntl,
-  defineMessages,
-} from 'react-intl';
+import { FormattedMessage, InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { Dropdown } from '../../../../components/PopupContainers';
@@ -28,10 +23,7 @@ import {
 } from '../../../../utils/LocationSearchHelper';
 import { RouteComponentProps } from 'react-router';
 import messages from './messages';
-import {
-  DrawableContent,
-  injectDrawer,
-} from '../../../../components/Drawer/index';
+import { DrawableContent, injectDrawer } from '../../../../components/Drawer/index';
 import { CampaignStatus } from '../../../../models/campaign/constants/index';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -119,9 +111,7 @@ class DisplayCampaignsActionbar extends React.Component<
         max_results: 2000,
       };
 
-      const apiStatuses = filter.statuses.filter(
-        status => status !== 'ARCHIVED',
-      );
+      const apiStatuses = filter.statuses.filter(status => status !== 'ARCHIVED');
 
       if (filter.keywords) {
         options.keywords = filter.keywords;
@@ -175,10 +165,7 @@ class DisplayCampaignsActionbar extends React.Component<
       intl,
     } = this.props;
 
-    const filter = parseSearch<FilterParams>(
-      this.props.location.search,
-      DISPLAY_SEARCH_SETTINGS,
-    );
+    const filter = parseSearch<FilterParams>(this.props.location.search, DISPLAY_SEARCH_SETTINGS);
 
     this.setState({ exportIsRunning: true });
 
@@ -189,12 +176,7 @@ class DisplayCampaignsActionbar extends React.Component<
 
     this.fetchExportData(organisationId, filter)
       .then(data => {
-        ExportService.exportDisplayCampaigns(
-          organisationId,
-          data,
-          filter,
-          intl.formatMessage,
-        );
+        ExportService.exportDisplayCampaigns(organisationId, data, filter, intl.formatMessage);
         this.setState({ exportIsRunning: false });
         hideExportLoadingMsg();
       })
@@ -222,10 +204,10 @@ class DisplayCampaignsActionbar extends React.Component<
 
     return (
       <Menu onClick={onClick}>
-        <Menu.Item key="pause">
+        <Menu.Item key='pause'>
           <FormattedMessage {...messagesMap.pauseAll} />
         </Menu.Item>
-        <Menu.Item key="activate">
+        <Menu.Item key='activate'>
           <FormattedMessage {...messagesMap.activeAll} />
         </Menu.Item>
       </Menu>
@@ -253,14 +235,16 @@ class DisplayCampaignsActionbar extends React.Component<
     const hasSelected = !!(selectedRowKeys && selectedRowKeys.length > 0);
 
     const breadcrumbPaths = [
-      <Link key='1' to={`/v2/o/${organisationId}/campaigns/display`}>{intl.formatMessage(messagesMap.breadCrumbPath)}</Link>,
+      <Link key='1' to={`/v2/o/${organisationId}/campaigns/display`}>
+        {intl.formatMessage(messagesMap.breadCrumbPath)}
+      </Link>,
     ];
 
     const buildActionElement = () => {
       return (
         <Dropdown overlay={this.buildMenu()} trigger={['click']}>
-          <Button className="button-glow">
-            <McsIcon type="chevron" />
+          <Button className='button-glow'>
+            <McsIcon type='chevron' />
             <FormattedMessage {...messagesMap.setStatus} />
           </Button>
         </Dropdown>
@@ -270,20 +254,20 @@ class DisplayCampaignsActionbar extends React.Component<
     return (
       <Actionbar pathItems={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/campaigns/display/create`}>
-          <Button className="mcs-primary" type="primary">
-            <McsIcon type="plus" />{' '}
+          <Button className='mcs-primary' type='primary'>
+            <McsIcon type='plus' />{' '}
             <FormattedMessage
-              id="display.campaigns.list.actionbar.newCampaignButton"
-              defaultMessage="New Campaign"
+              id='display.campaigns.list.actionbar.newCampaignButton'
+              defaultMessage='New Campaign'
             />
           </Button>
         </Link>
 
         <Button onClick={this.handleRunExport} loading={exportIsRunning}>
-          {!exportIsRunning && <McsIcon type="download" />}
+          {!exportIsRunning && <McsIcon type='download' />}
           <FormattedMessage
-            id="display.campaigns.list.actionbar.newExportButton"
-            defaultMessage="Export"
+            id='display.campaigns.list.actionbar.newExportButton'
+            defaultMessage='Export'
           />
         </Button>
 
@@ -291,14 +275,11 @@ class DisplayCampaignsActionbar extends React.Component<
           toShow={hasSelected}
           horizontal={true}
           content={
-            <Button
-              onClick={archiveCampaigns}
-              className="button-slider button-glow"
-            >
-              <McsIcon type="delete" />
+            <Button onClick={archiveCampaigns} className='button-slider button-glow'>
+              <McsIcon type='delete' />
               <FormattedMessage
-                id="display.campaigns.list.actionbar.archiveButton"
-                defaultMessage="Archive"
+                id='display.campaigns.list.actionbar.archiveButton'
+                defaultMessage='Archive'
               />
             </Button>
           }
@@ -306,9 +287,7 @@ class DisplayCampaignsActionbar extends React.Component<
 
         {hasSelected ? (
           <Modal
-            title={
-              <FormattedMessage {...messages.archiveCampaignsModalTitle} />
-            }
+            title={<FormattedMessage {...messages.archiveCampaignsModalTitle} />}
             visible={visible}
             onOk={handleOk}
             onCancel={handleCancel}
@@ -322,24 +301,17 @@ class DisplayCampaignsActionbar extends React.Component<
           toShow={hasSelected}
           horizontal={true}
           content={
-            <Button
-              onClick={openEditCampaignsDrawer}
-              className="button-slider button-glow"
-            >
-              <McsIcon type="pen" />
+            <Button onClick={openEditCampaignsDrawer} className='button-slider button-glow'>
+              <McsIcon type='pen' />
               <FormattedMessage
-                id="display.campaigns.list.actionbar.editCampaignButton"
-                defaultMessage="Edit"
+                id='display.campaigns.list.actionbar.editCampaignButton'
+                defaultMessage='Edit'
               />
             </Button>
           }
         />
 
-        <Slide
-          toShow={hasSelected}
-          horizontal={true}
-          content={buildActionElement()}
-        />
+        <Slide toShow={hasSelected} horizontal={true} content={buildActionElement()} />
       </Actionbar>
     );
   }

@@ -9,10 +9,7 @@ export interface FormSearchObjectListProps extends FormSearchObjectProps {
 
 type Props = FormSearchObjectListProps & WrappedFieldProps;
 
-class FormSearchObjectList extends React.Component<
-  Props,
-  FormSearchObjectListProps
-> {
+class FormSearchObjectList extends React.Component<Props, FormSearchObjectListProps> {
   handleValue = (value: LabeledValue[], inputName?: string) => {
     const { handleNoValue } = this.props;
     if (value.length === 0) {

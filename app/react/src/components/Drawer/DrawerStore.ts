@@ -26,11 +26,7 @@ interface DrawerEscapeKeyDown {
   type: DRAWER_ESCAPE_KEY_DOWN;
 }
 
-type Action<T> =
-  | CloseDrawer
-  | OpenDrawer<T>
-  | DrawerClickOnBackground
-  | DrawerEscapeKeyDown;
+type Action<T> = CloseDrawer | OpenDrawer<T> | DrawerClickOnBackground | DrawerEscapeKeyDown;
 
 const OPEN_NEXT_DRAWER = 'OPEN_NEXT_DRAWER';
 type OPEN_NEXT_DRAWER = typeof OPEN_NEXT_DRAWER;
@@ -72,10 +68,7 @@ export const closeDrawerEscapeKeyDown = (): DrawerEscapeKeyDown => {
   };
 };
 
-const drawableContents = (
-  state: DrawableContent[] = [],
-  action: Action<any>,
-) => {
+const drawableContents = (state: DrawableContent[] = [], action: Action<any>) => {
   switch (action.type) {
     case OPEN_NEXT_DRAWER:
       const { component, options } = action.payload;

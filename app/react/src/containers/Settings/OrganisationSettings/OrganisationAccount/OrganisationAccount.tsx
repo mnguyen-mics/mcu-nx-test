@@ -1,12 +1,7 @@
 import * as React from 'react';
 import { Layout } from 'antd';
 import { Form } from '@ant-design/compatible';
-import {
-  FormattedMessage,
-  injectIntl,
-  InjectedIntlProps,
-  defineMessages,
-} from 'react-intl';
+import { FormattedMessage, injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { FormInput } from '../../../../components/Form/';
 import LogoInput from './LogoInput';
 import { connect } from 'react-redux';
@@ -47,18 +42,18 @@ class OrganisationAccount extends React.Component<Props> {
     };
 
     return (
-      <div className="ant-layout">
-        <Content className="mcs-content-container">
+      <div className='ant-layout'>
+        <Content className='mcs-content-container'>
           <Form className={'edit-top'}>
-            <div className="mcs-card-header mcs-card-title">
-              <span className="mcs-card-title">
+            <div className='mcs-card-header mcs-card-title'>
+              <span className='mcs-card-title'>
                 <FormattedMessage
-                  id="settings.organisation.organisationAccount.organisationProfile"
-                  defaultMessage="Organisation Profile"
+                  id='settings.organisation.organisationAccount.organisationProfile'
+                  defaultMessage='Organisation Profile'
                 />
               </span>
             </div>
-            <hr className="mcs-separator" />
+            <hr className='mcs-separator' />
             <Field
               name={'organisation_name'}
               component={FormInput}

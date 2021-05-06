@@ -2,12 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { Modal, Button, message, Menu } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
-import {
-  InjectedIntlProps,
-  injectIntl,
-  FormattedMessage,
-  defineMessages,
-} from 'react-intl';
+import { InjectedIntlProps, injectIntl, FormattedMessage, defineMessages } from 'react-intl';
 import { Dropdown } from '../../../../../components/PopupContainers';
 import { AdInfoResource } from '../../../../../models/campaign/display/DisplayCampaignInfoResource';
 import { AdResource } from '../../../../../models/campaign/display/AdResource';
@@ -19,21 +14,15 @@ import {
   Card,
   McsIcon,
   McsDateRangePicker,
-  Slide
+  Slide,
 } from '@mediarithmics-private/mcs-components-library';
 import { CardProps } from '@mediarithmics-private/mcs-components-library/lib/components/card';
-import {
-  parseSearch,
-  updateSearch,
-} from '../../../../../utils/LocationSearchHelper';
+import { parseSearch, updateSearch } from '../../../../../utils/LocationSearchHelper';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import { injectDrawer } from '../../../../../components/Drawer/index';
-import {
-  executeTasksInSequence,
-  Task,
-} from '../../../../../utils/PromiseHelper';
+import { executeTasksInSequence, Task } from '../../../../../utils/PromiseHelper';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
@@ -124,11 +113,7 @@ class AdCard extends React.Component<JoinedProps, AdCardState> {
 
     const nextLocation = {
       pathname,
-      search: updateSearch(
-        currentSearch,
-        params,
-        DISPLAY_DASHBOARD_SEARCH_SETTINGS,
-      ),
+      search: updateSearch(currentSearch, params, DISPLAY_DASHBOARD_SEARCH_SETTINGS),
     };
 
     history.push(nextLocation);
@@ -289,10 +274,10 @@ class AdCard extends React.Component<JoinedProps, AdCardState> {
 
     return (
       <Menu onClick={onClick}>
-        <Menu.Item key="pause">
+        <Menu.Item key='pause'>
           <FormattedMessage {...messagesMap.pauseAll} />
         </Menu.Item>
-        <Menu.Item key="activate">
+        <Menu.Item key='activate'>
           <FormattedMessage {...messagesMap.activeAll} />
         </Menu.Item>
       </Menu>
@@ -313,10 +298,10 @@ class AdCard extends React.Component<JoinedProps, AdCardState> {
 
     return (
       <Menu onClick={onClick}>
-        <Menu.Item key="start">
+        <Menu.Item key='start'>
           <FormattedMessage {...messagesMap.startAll} />
         </Menu.Item>
-        <Menu.Item key="reset">
+        <Menu.Item key='reset'>
           <FormattedMessage {...messagesMap.resetAll} />
         </Menu.Item>
       </Menu>
@@ -324,28 +309,17 @@ class AdCard extends React.Component<JoinedProps, AdCardState> {
   };
 
   render() {
-    const {
-      title,
-      isFetching,
-      isFetchingStat,
-      dataSet,
-      updateAd,
-      additionalButtons,
-    } = this.props;
+    const { title, isFetching, isFetchingStat, dataSet, updateAd, additionalButtons } = this.props;
 
-    const {
-      selectedRowKeys,
-      allRowsAreSelected,
-      isUpdatingStatuses,
-    } = this.state;
+    const { selectedRowKeys, allRowsAreSelected, isUpdatingStatuses } = this.state;
 
     const hasAdsSelected = !!(selectedRowKeys && selectedRowKeys.length > 0);
 
     const buildActionAdsElement = () => {
       return (
         <Dropdown overlay={this.buildMenu()} trigger={['click']}>
-          <Button className="button-glow">
-            <McsIcon type="chevron" />
+          <Button className='button-glow'>
+            <McsIcon type='chevron' />
             <FormattedMessage {...messagesMap.setStatus} />
           </Button>
         </Dropdown>
@@ -355,8 +329,8 @@ class AdCard extends React.Component<JoinedProps, AdCardState> {
     const buildAuditActionAdsElement = () => {
       return (
         <Dropdown overlay={this.buildAuditMenu()} trigger={['click']}>
-          <Button className="button-glow" style={{ marginRight: '20px' }}>
-            <McsIcon type="chevron" />
+          <Button className='button-glow' style={{ marginRight: '20px' }}>
+            <McsIcon type='chevron' />
             <FormattedMessage {...messagesMap.auditAction} />
           </Button>
         </Dropdown>
@@ -385,25 +359,14 @@ class AdCard extends React.Component<JoinedProps, AdCardState> {
           toShow={hasAdsSelected}
           horizontal={true}
           content={
-            <Button
-              className="m-r-10 button-slider button-glow"
-              onClick={this.archiveAds}
-            >
-              <McsIcon type="delete" />
+            <Button className='m-r-10 button-slider button-glow' onClick={this.archiveAds}>
+              <McsIcon type='delete' />
               <FormattedMessage {...messages.archiveAdGroup} />
             </Button>
           }
         />
-        <Slide
-          toShow={hasAdsSelected}
-          horizontal={true}
-          content={buildActionAdsElement()}
-        />
-        <Slide
-          toShow={hasAdsSelected}
-          horizontal={true}
-          content={buildAuditActionAdsElement()}
-        />
+        <Slide toShow={hasAdsSelected} horizontal={true} content={buildActionAdsElement()} />
+        <Slide toShow={hasAdsSelected} horizontal={true} content={buildAuditActionAdsElement()} />
       </span>
     );
 

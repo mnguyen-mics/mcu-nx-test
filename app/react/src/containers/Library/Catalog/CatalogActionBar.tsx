@@ -20,7 +20,9 @@ class CatalogActionBar extends React.Component<
     } = this.props;
 
     const breadcrumbPaths = [
-      <Link key='1' to={`/v2/o/${organisationId}/library/catalog`}>{formatMessage(messages.catalog)}</Link>
+      <Link key='1' to={`/v2/o/${organisationId}/library/catalog`}>
+        {formatMessage(messages.catalog)}
+      </Link>,
     ];
 
     return <Actionbar pathItems={breadcrumbPaths} />;

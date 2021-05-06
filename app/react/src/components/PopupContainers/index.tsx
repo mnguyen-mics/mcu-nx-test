@@ -45,15 +45,11 @@ function withCalendarContainer<T>(Component: React.ComponentClass<any>) {
   };
 }
 
-
-
 export const Popover = withPopupContainer<PopoverProps>(Antd.Popover as any);
-export const FormSelectField = withPopupContainer<
-  GenericField<DefaultSelectProps>
->(Form.FormSelectField);
+export const FormSelectField = withPopupContainer<GenericField<DefaultSelectProps>>(
+  Form.FormSelectField,
+);
 export const Dropdown = withPopupContainer<DropDownProps>(Antd.Dropdown as any);
 
 export const Select = withPopupContainer<SelectProps<any>>(Antd.Select as any);
-export const DatePicker = withCalendarContainer<PickerProps<any>>(
-  Antd.DatePicker,
-);
+export const DatePicker = withCalendarContainer<PickerProps<any>>(Antd.DatePicker);

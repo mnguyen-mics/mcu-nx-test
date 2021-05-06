@@ -15,4 +15,4 @@ export interface MlFunctionResource {
   expiration_period: string;
 }
 
-export type MlFunctionStatus = "INITIAL" | "ACTIVE" | "PAUSED" | "ERROR"
+export type MlFunctionStatus = 'INITIAL' | 'ACTIVE' | 'PAUSED' | 'ERROR';

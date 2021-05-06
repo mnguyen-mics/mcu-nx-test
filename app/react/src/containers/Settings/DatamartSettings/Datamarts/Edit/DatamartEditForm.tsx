@@ -25,21 +25,16 @@ import { Omit } from '../../../../../utils/Types';
 import GeneralFormSection from './Sections/GeneralSectionForm';
 import { McsFormSection } from '../../../../../utils/FormHelper';
 
-import EventRulesSection, {
-  EventRulesSectionProps,
-} from '../../Common/EventRulesSection';
+import EventRulesSection, { EventRulesSectionProps } from '../../Common/EventRulesSection';
 
-const Content = Layout.Content as unknown as React.ComponentClass<
-  BasicProps & { id: string }
->;
+const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
 
 const EventRulesFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
   EventRulesSectionProps
 >;
 
-export interface DatamartEditFormProps
-  extends Omit<ConfigProps<DatamartFormData>, 'form'> {
+export interface DatamartEditFormProps extends Omit<ConfigProps<DatamartFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: React.ReactNode[];
   datamartId: string;
@@ -74,7 +69,7 @@ class DatamartEditForm extends React.Component<Props> {
         title: messages.sectionEventRulesTitle,
         component: (
           <EventRulesFieldArray
-            name="eventRulesFields"
+            name='eventRulesFields'
             component={EventRulesSection}
             datamartId={this.props.datamartId}
             {...genericFieldArrayProps}
@@ -86,12 +81,7 @@ class DatamartEditForm extends React.Component<Props> {
   };
 
   render() {
-    const {
-      handleSubmit,
-      breadCrumbPaths,
-      close,
-      isCrossDatamart,
-    } = this.props;
+    const { handleSubmit, breadCrumbPaths, close, isCrossDatamart } = this.props;
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
@@ -119,18 +109,12 @@ class DatamartEditForm extends React.Component<Props> {
     });
 
     return (
-      <Layout className="edit-layout">
+      <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
           <ScrollspySider {...sideBarProps} />
-          <Form
-            className="edit-layout ant-layout"
-            onSubmit={handleSubmit as any}
-          >
-            <Content
-              id={FORM_ID}
-              className="mcs-content-container mcs-form-container"
-            >
+          <Form className='edit-layout ant-layout' onSubmit={handleSubmit as any}>
+            <Content id={FORM_ID} className='mcs-content-container mcs-form-container'>
               {renderedSections}
             </Content>
           </Form>

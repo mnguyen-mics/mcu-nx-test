@@ -59,15 +59,13 @@ class EmailRoutersList extends React.Component<
       const options = {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
       };
-      this._emailRouterService
-        .getEmailRouters(organisationId, options)
-        .then((results) => {
-          this.setState({
-            loading: false,
-            data: results.data,
-            total: results.total || results.count,
-          });
+      this._emailRouterService.getEmailRouters(organisationId, options).then(results => {
+        this.setState({
+          loading: false,
+          data: results.data,
+          total: results.total || results.count,
         });
+      });
     });
   };
 
@@ -122,9 +120,7 @@ class EmailRoutersList extends React.Component<
       },
     } = this.props;
 
-    history.push(
-      `/v2/o/${organisationId}/settings/campaigns/email_routers/${router.id}/edit`,
-    );
+    history.push(`/v2/o/${organisationId}/settings/campaigns/email_routers/${router.id}/edit`);
   };
 
   render() {
@@ -136,9 +132,7 @@ class EmailRoutersList extends React.Component<
       intl: { formatMessage },
     } = this.props;
 
-    const actionsColumnsDefinition: Array<
-      ActionsColumnDefinition<EmailRouter>
-    > = [
+    const actionsColumnsDefinition: Array<ActionsColumnDefinition<EmailRouter>> = [
       {
         key: 'action',
         actions: () => [
@@ -161,7 +155,7 @@ class EmailRoutersList extends React.Component<
         isHideable: false,
         render: (text: string, record: EmailRouter) => (
           <Link
-            className="mcs-campaigns-link"
+            className='mcs-campaigns-link'
             to={`/v2/o/${organisationId}/settings/campaigns/email_routers/${record.id}/edit`}
           >
             {text}
@@ -179,31 +173,29 @@ class EmailRoutersList extends React.Component<
     };
 
     const onClick = () =>
-      history.push(
-        `/v2/o/${organisationId}/settings/campaigns/email_routers/create`,
-      );
+      history.push(`/v2/o/${organisationId}/settings/campaigns/email_routers/create`);
 
     const buttons = [
-      <Button key="create" type="primary" onClick={onClick}>
+      <Button key='create' type='primary' onClick={onClick}>
         <FormattedMessage {...messages.newEmailRouter} />
       </Button>,
     ];
 
     const additionnalComponent = (
       <div>
-        <div className="mcs-card-header mcs-card-title">
-          <span className="mcs-card-title">
+        <div className='mcs-card-header mcs-card-title'>
+          <span className='mcs-card-title'>
             <FormattedMessage {...messages.emailrouter} />
           </span>
-          <span className="mcs-card-button">{buttons}</span>
+          <span className='mcs-card-button'>{buttons}</span>
         </div>
-        <hr className="mcs-separator" />
+        <hr className='mcs-separator' />
       </div>
     );
 
     return (
-      <div className="ant-layout">
-        <Content className="mcs-content-container">
+      <div className='ant-layout'>
+        <Content className='mcs-content-container'>
           <ItemList
             fetchList={this.fetchEmailRouter}
             dataSource={this.state.data}

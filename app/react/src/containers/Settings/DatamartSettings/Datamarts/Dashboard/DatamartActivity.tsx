@@ -5,9 +5,7 @@ import ImportsContentContainer from '../../../../Imports/List/ImportsContentCont
 export interface DatamartConfigTabProps {
   datamartId: string;
 }
-export default class DatamartConfigTab extends React.Component<
-  DatamartConfigTabProps
-> {
+export default class DatamartConfigTab extends React.Component<DatamartConfigTabProps> {
   constructor(props: DatamartConfigTabProps) {
     super(props);
     this.state = {};
@@ -18,12 +16,9 @@ export default class DatamartConfigTab extends React.Component<
 
     return (
       <div>
-        <Row className="ant-layout">
-          <Col className="mcs-content-container ant-layout-content">
-            <ImportsContentContainer
-              datamartId={datamartId}
-              noFilterDatamart={true}
-            />
+        <Row className='ant-layout'>
+          <Col className='mcs-content-container ant-layout-content'>
+            <ImportsContentContainer datamartId={datamartId} noFilterDatamart={true} />
           </Col>
         </Row>
       </div>

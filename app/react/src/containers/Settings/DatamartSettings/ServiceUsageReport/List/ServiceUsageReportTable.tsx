@@ -145,8 +145,8 @@ class ServiceUsageReportTable extends React.Component<Props, State> {
     };
 
     return (
-      <div className="ant-layout">
-        <Content className="mcs-content-container">
+      <div className='ant-layout'>
+        <Content className='mcs-content-container'>
           <ItemList
             fetchList={this.props.fetchList}
             dataSource={dataSource}

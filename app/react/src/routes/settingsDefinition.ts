@@ -1,9 +1,6 @@
 import { settingsDefinition } from './settingsRoutes';
 import messages from '../containers/Menu/messages';
-import {
-  NavigatorMenuDefinition,
-  generateMissingdefinitionItemFromRoute,
-} from './domain';
+import { NavigatorMenuDefinition, generateMissingdefinitionItemFromRoute } from './domain';
 
 const accountSettingsDefinition: NavigatorMenuDefinition = {
   iconType: 'users',
@@ -11,15 +8,11 @@ const accountSettingsDefinition: NavigatorMenuDefinition = {
   type: 'multi',
   subMenuItems: [
     {
-      ...generateMissingdefinitionItemFromRoute(
-        settingsDefinition.settingsAccountProfileList,
-      ),
+      ...generateMissingdefinitionItemFromRoute(settingsDefinition.settingsAccountProfileList),
       translation: messages.accountSettingsProfile,
     },
     {
-      ...generateMissingdefinitionItemFromRoute(
-        settingsDefinition.settingsAccountApiTokenList,
-      ),
+      ...generateMissingdefinitionItemFromRoute(settingsDefinition.settingsAccountApiTokenList),
       translation: messages.accountSettingsApiToken,
     },
   ],
@@ -37,15 +30,11 @@ const datamartSettingsDefinition: NavigatorMenuDefinition = {
       translation: messages.audiencePartitionsSettingsTitle,
     },
     {
-      ...generateMissingdefinitionItemFromRoute(
-        settingsDefinition.settingsDatamartChannelsList,
-      ),
+      ...generateMissingdefinitionItemFromRoute(settingsDefinition.settingsDatamartChannelsList),
       translation: messages.channelsSettingsTitle,
     },
     {
-      ...generateMissingdefinitionItemFromRoute(
-        settingsDefinition.settingsDatamartCompartments,
-      ),
+      ...generateMissingdefinitionItemFromRoute(settingsDefinition.settingsDatamartCompartments),
       translation: messages.compartmentsSettingsTitle,
     },
     {
@@ -55,15 +44,11 @@ const datamartSettingsDefinition: NavigatorMenuDefinition = {
       translation: messages.visitAnalyzerSettingsTitle,
     },
     {
-      ...generateMissingdefinitionItemFromRoute(
-        settingsDefinition.settingsDatamartMlFunctionList,
-      ),
+      ...generateMissingdefinitionItemFromRoute(settingsDefinition.settingsDatamartMlFunctionList),
       translation: messages.mlFunctionSettingsTitle,
     },
     {
-      ...generateMissingdefinitionItemFromRoute(
-        settingsDefinition.settingsDatamartMlAlgorithmList,
-      ),
+      ...generateMissingdefinitionItemFromRoute(settingsDefinition.settingsDatamartMlAlgorithmList),
       translation: messages.mlAlgorithmsSettingsTitle,
     },
     {
@@ -73,9 +58,7 @@ const datamartSettingsDefinition: NavigatorMenuDefinition = {
       translation: messages.cleaningRulesSettingsTitle,
     },
     {
-      ...generateMissingdefinitionItemFromRoute(
-        settingsDefinition.settingsDatamartDatamartList,
-      ),
+      ...generateMissingdefinitionItemFromRoute(settingsDefinition.settingsDatamartDatamartList),
       translation: messages.myDatamartSettingsTitle,
     },
   ],
@@ -87,21 +70,15 @@ const organisationSettingsDefinition: NavigatorMenuDefinition = {
   type: 'multi',
   subMenuItems: [
     {
-      ...generateMissingdefinitionItemFromRoute(
-        settingsDefinition.settingsOrganisationLabelsList,
-      ),
+      ...generateMissingdefinitionItemFromRoute(settingsDefinition.settingsOrganisationLabelsList),
       translation: messages.labelsSettingsTitle,
     },
     {
-      ...generateMissingdefinitionItemFromRoute(
-        settingsDefinition.settingsOrganisationProfileList,
-      ),
+      ...generateMissingdefinitionItemFromRoute(settingsDefinition.settingsOrganisationProfileList),
       translation: messages.orgSettingsTitle,
     },
     {
-      ...generateMissingdefinitionItemFromRoute(
-        settingsDefinition.settingsOrganisationUserList,
-      ),
+      ...generateMissingdefinitionItemFromRoute(settingsDefinition.settingsOrganisationUserList),
       translation: messages.usersSettingsTitle,
     },
     {
@@ -131,15 +108,11 @@ const campaignSettingsDefinition: NavigatorMenuDefinition = {
       translation: messages.campaignSettingsAttributionModels,
     },
     {
-      ...generateMissingdefinitionItemFromRoute(
-        settingsDefinition.settingsCampaignEmailRouterList,
-      ),
+      ...generateMissingdefinitionItemFromRoute(settingsDefinition.settingsCampaignEmailRouterList),
       translation: messages.campaignSettingsEmailRouters,
     },
     {
-      ...generateMissingdefinitionItemFromRoute(
-        settingsDefinition.settingsCampaignRecommenderList,
-      ),
+      ...generateMissingdefinitionItemFromRoute(settingsDefinition.settingsCampaignRecommenderList),
       translation: messages.campaignSettingsRecommenders,
     },
   ],
@@ -151,15 +124,11 @@ const serviceSettingsDefinition: NavigatorMenuDefinition = {
   type: 'multi',
   subMenuItems: [
     {
-      ...generateMissingdefinitionItemFromRoute(
-        settingsDefinition.settingsSubscribedOffersList,
-      ),
+      ...generateMissingdefinitionItemFromRoute(settingsDefinition.settingsSubscribedOffersList),
       translation: messages.subscribedOffersSettingsList,
     },
     {
-      ...generateMissingdefinitionItemFromRoute(
-        settingsDefinition.settingsMyOffersList,
-      ),
+      ...generateMissingdefinitionItemFromRoute(settingsDefinition.settingsMyOffersList),
       translation: messages.myOffersSettingsList,
     },
     // {

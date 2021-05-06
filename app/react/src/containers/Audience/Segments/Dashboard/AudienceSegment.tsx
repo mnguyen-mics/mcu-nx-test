@@ -53,12 +53,7 @@ class AudienceSegment extends React.Component<Props> {
   }
 
   buildExperimentationItems = (segment: UserQuerySegment) => {
-    const {
-      intl,
-      isLoading,
-      datamarts,
-      controlGroupSegment,
-    } = this.props;
+    const { intl, isLoading, datamarts, controlGroupSegment } = this.props;
     return [
       {
         title: intl.formatMessage(messages.ABComparison),
@@ -81,31 +76,19 @@ class AudienceSegment extends React.Component<Props> {
       {
         title: intl.formatMessage(messages.experimentation),
         display: (
-          <AudienceSegmentDashboard
-            segment={segment}
-            isLoading={isLoading}
-            datamarts={datamarts}
-          />
+          <AudienceSegmentDashboard segment={segment} isLoading={isLoading} datamarts={datamarts} />
         ),
-      }
+      },
     ];
   };
 
   renderDashboard = () => {
     const { datamarts, segment, isLoading } = this.props;
-    if (
-      segment &&
-      isUserQuerySegment(segment) &&
-      segment.subtype === 'AB_TESTING_EXPERIMENT'
-    ) {
+    if (segment && isUserQuerySegment(segment) && segment.subtype === 'AB_TESTING_EXPERIMENT') {
       return <McsTabs items={this.buildExperimentationItems(segment)} />;
     }
     return (
-      <AudienceSegmentDashboard
-        segment={segment}
-        isLoading={isLoading}
-        datamarts={datamarts}
-      />
+      <AudienceSegmentDashboard segment={segment} isLoading={isLoading} datamarts={datamarts} />
     );
   };
 
@@ -121,13 +104,9 @@ class AudienceSegment extends React.Component<Props> {
     return (
       <div>
         <AudienceSegmentHeader isLoading={isLoading} segment={segment} />
-        <Labels
-          labellableId={segmentId}
-          labellableType="SEGMENT"
-          organisationId={organisationId}
-        />
+        <Labels labellableId={segmentId} labellableType='SEGMENT' organisationId={organisationId} />
         {segment && segment.short_description && (
-          <div className="mcs-audienceSegmentDashboard_description">
+          <div className='mcs-audienceSegmentDashboard_description'>
             {segment.short_description}
           </div>
         )}
@@ -138,7 +117,4 @@ class AudienceSegment extends React.Component<Props> {
   }
 }
 
-export default compose<Props, AudienceSegmentProps>(
-  withRouter,
-  injectIntl,
-)(AudienceSegment);
+export default compose<Props, AudienceSegmentProps>(withRouter, injectIntl)(AudienceSegment);

@@ -6,14 +6,12 @@ import injectNotifications, {
 } from '../../Notifications/injectNotifications';
 import ComponentPropsAdapter from './ComponentPropsAdapter';
 
-interface DimensionNameDisplayProps { 
+interface DimensionNameDisplayProps {
   resource: NamedResource;
   showId?: boolean;
 }
 
-type Props = DimensionNameDisplayProps &
-  InjectedNotificationProps &
-  InjectedIntlProps;
+type Props = DimensionNameDisplayProps & InjectedNotificationProps & InjectedIntlProps;
 
 interface NamedResource {
   id: string;
@@ -21,34 +19,34 @@ interface NamedResource {
 }
 
 function resourceAdapter<T extends NamedResource>(s: T): DimensionNameDisplayProps {
-  return { resource: s }
+  return { resource: s };
 }
 
 function displayNameAdapted<T extends NamedResource>() {
-  return ComponentPropsAdapter(DimensionNameDisplay, (x: T) => resourceAdapter(x))
+  return ComponentPropsAdapter(DimensionNameDisplay, (x: T) => resourceAdapter(x));
 }
 
 class DimensionNameDisplayWrapped extends React.Component<Props> {
   ellipsizeResourceName = (name: string) => {
-    return name.length > 100
-      ? `${name.substring(0, 100)}...`
-      : name;
+    return name.length > 100 ? `${name.substring(0, 100)}...` : name;
   };
 
   displayId = () => {
     const { resource } = this.props;
     return resource.name === resource.id ? <span /> : <span> {resource.id} - </span>;
-  }
+  };
 
   render() {
     const { resource, showId } = this.props;
-    return <span title={resource.name}>
-      {showId && this.displayId()} {this.ellipsizeResourceName(resource.name)} 
-    </span>
+    return (
+      <span title={resource.name}>
+        {showId && this.displayId()} {this.ellipsizeResourceName(resource.name)}
+      </span>
+    );
   }
 }
 const DimensionNameDisplay = compose<Props, DimensionNameDisplayProps>(
   injectIntl,
   injectNotifications,
-)(DimensionNameDisplayWrapped)
-export { displayNameAdapted }
+)(DimensionNameDisplayWrapped);
+export { displayNameAdapted };

@@ -93,9 +93,7 @@ class AudienceCounters extends React.Component<Props, State> {
   ) => {
     const { counter } = this.state;
     const value =
-      !counter.isLoading && counter.report
-        ? counter.report[this.adaptKey(key)]
-        : undefined;
+      !counter.isLoading && counter.report ? counter.report[this.adaptKey(key)] : undefined;
     return {
       value,
       loading: counter.isLoading,
@@ -150,12 +148,10 @@ class AudienceCounters extends React.Component<Props, State> {
   render() {
     const { datamarts } = this.props;
     const getCounters = () => {
-      return datamarts.length > 1
-        ? this.getCounters()
-        : this.getKnownCounters();
+      return datamarts.length > 1 ? this.getCounters() : this.getKnownCounters();
     };
     return (
-      <div className="audience-statistic">
+      <div className='audience-statistic'>
         <CounterDashboard counters={getCounters()} invertedColor={true} />
       </div>
     );

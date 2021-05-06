@@ -87,11 +87,12 @@ class ActivitiesTimeline extends React.Component<Props, State> {
       userIdentifier: prevUserIdentifier,
     } = prevProps;
 
-    if (!!userIdentifier.id && !!userIdentifier.type && (
-      userIdentifier.id !== prevUserIdentifier.id ||
-      selectedDatamart.id !== prevSelectedDatamart.id ||
-      userIdentifier.type !== prevUserIdentifier.type
-      )
+    if (
+      !!userIdentifier.id &&
+      !!userIdentifier.type &&
+      (userIdentifier.id !== prevUserIdentifier.id ||
+        selectedDatamart.id !== prevSelectedDatamart.id ||
+        userIdentifier.type !== prevUserIdentifier.type)
     ) {
       this.fetchActivities(selectedDatamart, userIdentifier, true);
       this.fetchUserAgents(selectedDatamart, userIdentifier);
@@ -99,18 +100,10 @@ class ActivitiesTimeline extends React.Component<Props, State> {
   }
 
   fetchUserAgents = (datamart: DatamartResource, userIdentifier: Identifier) => {
-
     this._userDataService
-      .getIdentifiers(
-        datamart.organisation_id,
-        datamart.id,
-        userIdentifier.type,
-        userIdentifier.id,
-      )
+      .getIdentifiers(datamart.organisation_id, datamart.id, userIdentifier.type, userIdentifier.id)
       .then(response => {
-        const userAgentsIdentifierInfo = response.data.filter(
-          isUserAgentIdentifier,
-        );
+        const userAgentsIdentifierInfo = response.data.filter(isUserAgentIdentifier);
 
         this.setState({
           userAgentsIdentifierInfo: userAgentsIdentifierInfo,
@@ -124,10 +117,7 @@ class ActivitiesTimeline extends React.Component<Props, State> {
     });
   };
 
-  removeDuplicatesFromResponse = (
-    data: Activity[],
-    prevActivities: Activity[],
-  ) => {
+  removeDuplicatesFromResponse = (data: Activity[], prevActivities: Activity[]) => {
     const sortedData = data.map(activity => {
       return {
         ...activity,
@@ -147,32 +137,27 @@ class ActivitiesTimeline extends React.Component<Props, State> {
 
   generateScenarioMovementActivities(activities: Activity[]) {
     const nodeEnterActivities = activities.filter(
-      a =>
-        a.$type === 'USER_SCENARIO_NODE_ENTER' &&
-        a.$previous_node_name !== 'None',
+      a => a.$type === 'USER_SCENARIO_NODE_ENTER' && a.$previous_node_name !== 'None',
     );
 
-    const userScenarioActivities = lodash.flatMap(
-      nodeEnterActivities,
-      nodeEnterActivity => {
-        const sameTsActivity = activities.filter(
-          a =>
-            a.$ts === nodeEnterActivity.$ts &&
-            a.$type === 'USER_SCENARIO_NODE_EXIT' &&
-            a.$node_name === nodeEnterActivity.$previous_node_name,
-        );
-        return sameTsActivity.map(nodeExitActivity => {
-          return {
-            scenarioActivity: {
-              ...nodeEnterActivity,
-              $type: 'USER_SCENARIO_NODE_MOVEMENT',
-            },
-            nodeEnterActivity: nodeEnterActivity,
-            nodeExitActivity: nodeExitActivity,
-          };
-        });
-      },
-    );
+    const userScenarioActivities = lodash.flatMap(nodeEnterActivities, nodeEnterActivity => {
+      const sameTsActivity = activities.filter(
+        a =>
+          a.$ts === nodeEnterActivity.$ts &&
+          a.$type === 'USER_SCENARIO_NODE_EXIT' &&
+          a.$node_name === nodeEnterActivity.$previous_node_name,
+      );
+      return sameTsActivity.map(nodeExitActivity => {
+        return {
+          scenarioActivity: {
+            ...nodeEnterActivity,
+            $type: 'USER_SCENARIO_NODE_MOVEMENT',
+          },
+          nodeEnterActivity: nodeEnterActivity,
+          nodeExitActivity: nodeExitActivity,
+        };
+      });
+    });
 
     const {
       scenarioActivities,
@@ -181,10 +166,7 @@ class ActivitiesTimeline extends React.Component<Props, State> {
     } = userScenarioActivities.reduce(
       (acc, current) => {
         return {
-          scenarioActivities: [
-            ...acc.scenarioActivities,
-            current.scenarioActivity,
-          ],
+          scenarioActivities: [...acc.scenarioActivities, current.scenarioActivity],
           nodeEnterActivitiesToBeRemoved: [
             ...acc.nodeEnterActivitiesToBeRemoved,
             current.nodeEnterActivity,
@@ -210,13 +192,8 @@ class ActivitiesTimeline extends React.Component<Props, State> {
 
   orderScenarioActivities(a: Activity, b: Activity): number {
     if (b.$ts - a.$ts === 0) {
-      if (a.$type === 'USER_SCENARIO_START' || b.$type === 'USER_SCENARIO_STOP')
-        return 1;
-      else if (
-        b.$type === 'USER_SCENARIO_START' ||
-        a.$type === 'USER_SCENARIO_STOP'
-      )
-        return -1;
+      if (a.$type === 'USER_SCENARIO_START' || b.$type === 'USER_SCENARIO_STOP') return 1;
+      else if (b.$type === 'USER_SCENARIO_START' || a.$type === 'USER_SCENARIO_STOP') return -1;
       else return b.$ts - a.$ts;
     } else return b.$ts - a.$ts;
   }
@@ -226,7 +203,6 @@ class ActivitiesTimeline extends React.Component<Props, State> {
     userIdentifier: Identifier,
     dataSourceHasChanged: boolean = false,
   ) => {
-
     const { nextDate, activityCountOnOldestDate } = this.state;
     const params =
       nextDate && !dataSourceHasChanged
@@ -243,28 +219,17 @@ class ActivitiesTimeline extends React.Component<Props, State> {
         return nextState;
       },
       () =>
-        takeLatest(this._userDataService.getActivities)(
-          datamart.id,
-          userIdentifier,
-          params,
-        )
+        takeLatest(this._userDataService.getActivities)(datamart.id, userIdentifier, params)
           .then(response => {
-            takeLatest(this._userDataService.getActivities)(
-              datamart.id,
-              userIdentifier,
-              {
-                ...params,
-                limit: params.limit + 1,
-              },
-            ).then(extendedResponse => {
+            takeLatest(this._userDataService.getActivities)(datamart.id, userIdentifier, {
+              ...params,
+              limit: params.limit + 1,
+            }).then(extendedResponse => {
               this.setState(prevState => {
                 const newData = dataSourceHasChanged
                   ? response.data
                   : prevState.activities.items.concat(
-                      this.removeDuplicatesFromResponse(
-                        response.data,
-                        prevState.activities.items,
-                      ),
+                      this.removeDuplicatesFromResponse(response.data, prevState.activities.items),
                     );
                 const activitiesToDisplay = this.generateScenarioMovementActivities(
                   newData.slice(0),
@@ -323,10 +288,10 @@ class ActivitiesTimeline extends React.Component<Props, State> {
   renderPendingTimeline = (activities: Activities) => {
     if (activities.hasItems && activities.items.length > 0) {
       return activities.isLoading ? (
-        <Spin size="small" />
+        <Spin size='small' />
       ) : (
         <button
-          className="mcs-card-inner-action mcs-monitoring_seeMoreBtn"
+          className='mcs-card-inner-action mcs-monitoring_seeMoreBtn'
           onClick={this.fetchNewActivities}
         >
           <FormattedMessage {...messages.seeMore} />
@@ -334,7 +299,7 @@ class ActivitiesTimeline extends React.Component<Props, State> {
       );
     } else {
       return (
-        <div className="mcs-title">
+        <div className='mcs-title'>
           {activities.hasItems ? (
             <FormattedMessage {...messages.noActivities} />
           ) : (
@@ -352,9 +317,7 @@ class ActivitiesTimeline extends React.Component<Props, State> {
     switch (day) {
       case moment().format('YYYY-MM-DD'):
         return formatMessage(messages.today);
-      case moment()
-        .subtract(1, 'days')
-        .format('YYYY-MM-DD'):
+      case moment().subtract(1, 'days').format('YYYY-MM-DD'):
         return formatMessage(messages.yesterday);
       default:
         return day;
@@ -388,12 +351,10 @@ class ActivitiesTimeline extends React.Component<Props, State> {
   renderType(activity: Activity) {
     switch (activity.$type) {
       case 'USER_SCENARIO_START':
-        return <FlagOutlined className="mcs-timeline-dot live" />;
+        return <FlagOutlined className='mcs-timeline-dot live' />;
       default:
         const mcsType = this.findMcsType(activity);
-        return (
-          <McsIcon type={mcsType} className={this.findClassName(activity)} />
-        );
+        return <McsIcon type={mcsType} className={this.findClassName(activity)} />;
     }
   }
 
@@ -403,23 +364,21 @@ class ActivitiesTimeline extends React.Component<Props, State> {
 
     const keys = Object.keys(activities.byDay);
     return activities.isLoading === true && activities.items.length === 0 ? (
-      <Col span={24} className="text-center">
+      <Col span={24} className='text-center'>
         <Spin />
       </Col>
     ) : (
       <Timeline
         pending={this.renderPendingTimeline(activities)}
-        pendingDot={<McsIcon type="status" className="mcs-timeline-last-dot" />}
+        pendingDot={<McsIcon type='status' className='mcs-timeline-last-dot' />}
       >
         {keys.map(day => {
           const activityOnDay = activities.byDay[day];
           const dayToFormattedMessage = this.renderDate(day);
           return (
-            <div className="mcs-timeline" key={cuid()}>
-              <Timeline.Item
-                dot={<FlagOutlined className="mcs-timeline-dot" />}
-              >
-                <div className="mcs-title">{dayToFormattedMessage}</div>
+            <div className='mcs-timeline' key={cuid()}>
+              <Timeline.Item dot={<FlagOutlined className='mcs-timeline-dot' />}>
+                <div className='mcs-title'>{dayToFormattedMessage}</div>
               </Timeline.Item>
               {activityOnDay.length !== 0 &&
                 activityOnDay.map((activity: Activity) => {

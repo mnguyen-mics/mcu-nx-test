@@ -1,10 +1,5 @@
 import * as React from 'react';
-import {
-  injectIntl,
-  InjectedIntlProps,
-  FormattedMessage,
-  defineMessages,
-} from 'react-intl';
+import { injectIntl, InjectedIntlProps, FormattedMessage, defineMessages } from 'react-intl';
 import { Layout, Row, Col } from 'antd';
 import PluginCard from './PluginCard';
 import { LayoutablePlugin } from '../../../../models/Plugins';
@@ -56,12 +51,10 @@ class PluginCardSelector<T extends LayoutablePlugin> extends React.Component<
             <Col
               key={
                 layoutablePlugin.id +
-                (layoutablePlugin.plugin_preset
-                  ? '-' + layoutablePlugin.plugin_preset.id
-                  : '')
+                (layoutablePlugin.plugin_preset ? '-' + layoutablePlugin.plugin_preset.id : '')
               }
               span={4}
-              className="text-center"
+              className='text-center'
             >
               <PluginCard
                 plugin={layoutablePlugin}
@@ -104,26 +97,20 @@ class PluginCardSelector<T extends LayoutablePlugin> extends React.Component<
 
     return (
       <Layout>
-        <div className="edit-layout ant-layout">
+        <div className='edit-layout ant-layout'>
           <Layout>
-            <Content className="mcs-content-container mcs-form-container">
-              {availablePresetLayouts.length > 0 &&
-                this.props.hasFeature('plugins-presets') && (
-                  <div>
-                    <FormTitle
-                      title={pluginPresetListTitle || titleMessages.presetTitle}
-                      subtitle={
-                        pluginPresetListSubTitle || titleMessages.presetSubtitle
-                      }
-                    />
-                    {this.renderPluginCards(availablePresetLayouts)}
-                  </div>
-                )}
+            <Content className='mcs-content-container mcs-form-container'>
+              {availablePresetLayouts.length > 0 && this.props.hasFeature('plugins-presets') && (
+                <div>
+                  <FormTitle
+                    title={pluginPresetListTitle || titleMessages.presetTitle}
+                    subtitle={pluginPresetListSubTitle || titleMessages.presetSubtitle}
+                  />
+                  {this.renderPluginCards(availablePresetLayouts)}
+                </div>
+              )}
               <div>
-                <FormTitle
-                  title={pluginListTitle}
-                  subtitle={pluginListSubTitle}
-                />
+                <FormTitle title={pluginListTitle} subtitle={pluginListSubTitle} />
               </div>
               {this.renderPluginCards(availablePluginLayouts)}
             </Content>
@@ -134,10 +121,7 @@ class PluginCardSelector<T extends LayoutablePlugin> extends React.Component<
   }
 }
 
-export default compose<
-  Props<LayoutablePlugin>,
-  PluginCardSelectorProps<LayoutablePlugin>
->(
+export default compose<Props<LayoutablePlugin>, PluginCardSelectorProps<LayoutablePlugin>>(
   injectIntl,
   withRouter,
   injectFeatures,

@@ -1,5 +1,7 @@
 import {
-  QueryResource, QueryLanguage, QueryCreateRequest,
+  QueryResource,
+  QueryLanguage,
+  QueryCreateRequest,
 } from './../../../../models/datamart/DatamartResource';
 import { FieldArrayModelWithMeta } from './../../../../utils/FormHelper';
 import {
@@ -22,7 +24,7 @@ export const INITIAL_GOAL_FORM_DATA: GoalFormData = {
     status: 'PAUSED',
     name: '',
     datamart_id: '',
-    archived: false
+    archived: false,
   },
   attributionModels: [],
   triggerType: 'QUERY',
@@ -31,7 +33,7 @@ export const INITIAL_GOAL_FORM_DATA: GoalFormData = {
     datamart_id: '',
     query_language: 'JSON_OTQL',
     query_text: '',
-  }
+  },
 };
 
 ///////////////////////////
@@ -76,13 +78,11 @@ export function isAttributionModelCreateRequest(
   model: AttributionModelShape,
 ): model is AttributionSelectionCreateRequest {
   return (
-    (model as AttributionSelectionCreateRequest).attribution_model_id !==
-      undefined && (model as AttributionSelectionResource).id === undefined
+    (model as AttributionSelectionCreateRequest).attribution_model_id !== undefined &&
+    (model as AttributionSelectionResource).id === undefined
   );
 }
 
-export function isExistingGoal(
-  model: GoalResourceShape,
-): model is GoalResource {
+export function isExistingGoal(model: GoalResourceShape): model is GoalResource {
   return (model as GoalResource).id !== undefined;
 }

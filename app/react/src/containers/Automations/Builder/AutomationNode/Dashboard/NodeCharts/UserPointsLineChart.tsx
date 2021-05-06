@@ -1,8 +1,4 @@
-import {
-  Loading,
-  StackedAreaPlot,
-  Card,
-} from '@mediarithmics-private/mcs-components-library';
+import { Loading, StackedAreaPlot, Card } from '@mediarithmics-private/mcs-components-library';
 import * as React from 'react';
 import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
@@ -86,8 +82,7 @@ class UserPointsLineChart extends React.Component<Props, State> {
     const { isLoading } = this.state;
 
     if (
-      (analyticsEntity !== previousAnalyticsEntity ||
-        dateRange !== previousDateRange) &&
+      (analyticsEntity !== previousAnalyticsEntity || dateRange !== previousDateRange) &&
       !isLoading
     )
       this.fetchAndComputeData();
@@ -100,17 +95,13 @@ class UserPointsLineChart extends React.Component<Props, State> {
       this.setState({ isLoading: true }, () => {
         const now = new McsMoment('now');
         const isDateRangeToday =
-          dateRange.from.value === now.value &&
-          dateRange.to.value === now.value;
+          dateRange.from.value === now.value && dateRange.to.value === now.value;
         const formatedInclusiveDateRange = formatMcsDate(dateRange, true);
 
         const formatedNonInclusiveDateRange = formatMcsDate(dateRange);
 
         const timeUnit =
-          formatedNonInclusiveDateRange.from ===
-          formatedNonInclusiveDateRange.to
-            ? 'HOUR'
-            : 'DAY';
+          formatedNonInclusiveDateRange.from === formatedNonInclusiveDateRange.to ? 'HOUR' : 'DAY';
 
         const allDates = getAllDates(timeUnit, formatedNonInclusiveDateRange);
 
@@ -119,18 +110,14 @@ class UserPointsLineChart extends React.Component<Props, State> {
         const metrics: ScenarioAnalyticsMetric[] = ['user_points_count'];
         const dimensions: ScenarioAnalyticsDimension[] = [
           xKey,
-          analyticsEntity.analyticsEntityType === 'NODE'
-            ? 'node_id'
-            : 'exit_condition_id',
+          analyticsEntity.analyticsEntityType === 'NODE' ? 'node_id' : 'exit_condition_id',
         ];
         const dimensionFilterClauses: DimensionFilterClause = {
           operator: 'OR',
           filters: [
             {
               dimension_name:
-                analyticsEntity.analyticsEntityType === 'NODE'
-                  ? 'NODE_ID'
-                  : 'EXIT_CONDITION_ID',
+                analyticsEntity.analyticsEntityType === 'NODE' ? 'NODE_ID' : 'EXIT_CONDITION_ID',
               operator: 'EXACT',
               expressions: [analyticsEntity.entityId],
             },
@@ -147,26 +134,19 @@ class UserPointsLineChart extends React.Component<Props, State> {
         );
 
         reportViewResourceP
-          .then((reportViewResource) => {
-            const data = normalizeReportView(
-              reportViewResource.data.report_view,
-            ).map((dataLine) => {
+          .then(reportViewResource => {
+            const data = normalizeReportView(reportViewResource.data.report_view).map(dataLine => {
               return {
                 timeUnit: timeUnit,
-                date_yyyymmddhh:
-                  timeUnit === 'HOUR' ? dataLine.date_yyyymmddhh : undefined,
-                date_yyyymmdd:
-                  timeUnit === 'DAY' ? dataLine.date_yyyymmdd : undefined,
+                date_yyyymmddhh: timeUnit === 'HOUR' ? dataLine.date_yyyymmddhh : undefined,
+                date_yyyymmdd: timeUnit === 'DAY' ? dataLine.date_yyyymmdd : undefined,
                 user_points_count: dataLine.user_points_count,
               };
             });
 
-            const enrichedData: LineData[] = allDates.map((day) => {
+            const enrichedData: LineData[] = allDates.map(day => {
               const foundData = data.find(
-                (d) =>
-                  (timeUnit === 'HOUR'
-                    ? d.date_yyyymmddhh
-                    : d.date_yyyymmdd) === day,
+                d => (timeUnit === 'HOUR' ? d.date_yyyymmddhh : d.date_yyyymmdd) === day,
               );
 
               return {
@@ -192,13 +172,11 @@ class UserPointsLineChart extends React.Component<Props, State> {
 
             this.setState({
               isLoading: false,
-              data: isDateRangeToday
-                ? filterZerosForToday(enrichedData)
-                : enrichedData,
+              data: isDateRangeToday ? filterZerosForToday(enrichedData) : enrichedData,
               mode: timeUnit,
             });
           })
-          .catch((err) => {
+          .catch(err => {
             notifyError(err);
             this.setState({
               isLoading: false,
@@ -238,11 +216,7 @@ class UserPointsLineChart extends React.Component<Props, State> {
     const { isLoading } = this.state;
 
     const cardContent =
-      isLoading || !dateRange ? (
-        <Loading isFullScreen={true} />
-      ) : (
-        this.renderStackedAreaChart()
-      );
+      isLoading || !dateRange ? <Loading isFullScreen={true} /> : this.renderStackedAreaChart();
 
     return <Card title={graphTitle}>{cardContent}</Card>;
   }

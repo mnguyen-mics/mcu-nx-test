@@ -2,12 +2,7 @@ import * as React from 'react';
 import { Button } from 'antd';
 import { compose } from 'recompose';
 import { RouteComponentProps, withRouter } from 'react-router';
-import {
-  FormattedMessage,
-  defineMessages,
-  InjectedIntlProps,
-  injectIntl,
-} from 'react-intl';
+import { FormattedMessage, defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
 
 import {
   parseSearch,
@@ -46,8 +41,7 @@ interface State {
   total: number;
 }
 
-type Props = InjectedIntlProps &
-  RouteComponentProps<{ organisationId: string }>;
+type Props = InjectedIntlProps & RouteComponentProps<{ organisationId: string }>;
 
 class ServiceUsageReportListPage extends React.Component<Props, State> {
   @lazyInject(TYPES.IServiceUsageReportService)
@@ -153,12 +147,7 @@ class ServiceUsageReportListPage extends React.Component<Props, State> {
           };
         }),
       ).then(data => {
-        ExportService.exportServiceUsageReportList(
-          organisationId,
-          data,
-          filter,
-          formatMessage,
-        );
+        ExportService.exportServiceUsageReportList(organisationId, data, filter, formatMessage);
         this.setState({
           exportIsRunning: false,
         });
@@ -170,7 +159,7 @@ class ServiceUsageReportListPage extends React.Component<Props, State> {
     const { exportIsRunning } = this.state;
     return (
       <div>
-        <span className="mcs-card-title">
+        <span className='mcs-card-title'>
           <FormattedMessage {...messages.serviceUsageReportTitle} />
         </span>
         <Button
@@ -178,14 +167,14 @@ class ServiceUsageReportListPage extends React.Component<Props, State> {
           loading={exportIsRunning}
           style={{ float: 'right', bottom: '10px' }}
         >
-          {!exportIsRunning && <McsIcon type="download" />}
+          {!exportIsRunning && <McsIcon type='download' />}
           <FormattedMessage
-            id="settings.datamart.serviceUsageReport.list.export"
-            defaultMessage="Export"
+            id='settings.datamart.serviceUsageReport.list.export'
+            defaultMessage='Export'
           />
         </Button>
 
-        <hr className="mcs-separator" />
+        <hr className='mcs-separator' />
       </div>
     );
   };
@@ -205,7 +194,4 @@ class ServiceUsageReportListPage extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, {}>(
-  injectIntl,
-  withRouter,
-)(ServiceUsageReportListPage);
+export default compose<Props, {}>(injectIntl, withRouter)(ServiceUsageReportListPage);

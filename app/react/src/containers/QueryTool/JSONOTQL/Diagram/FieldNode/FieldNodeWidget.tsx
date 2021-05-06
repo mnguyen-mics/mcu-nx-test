@@ -4,11 +4,7 @@ import FieldNodeModel from './FieldNodeModel';
 import FieldNodeComparisonRenderer from './FieldNodeComparisonRenderer';
 import { WindowBodyPortal } from '../../../../../components';
 import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
-import {
-  TreeNodeOperations,
-  MicsDiagramEngine,
-  FieldProposalLookup,
-} from '../../domain';
+import { TreeNodeOperations, MicsDiagramEngine, FieldProposalLookup } from '../../domain';
 import FieldNodeFormWrapper from '../../Edit/Sections/Field/FieldNodeFormWrapper';
 import { ObjectLikeTypeInfoResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
 import { FieldNodeFormDataValues, FORM_ID } from '../../Edit/domain';
@@ -102,12 +98,7 @@ class FieldNodeWidget extends React.Component<Props, State> {
   };
 
   handleClickOutside = (event: any) => {
-    const {
-      formValues,
-      treeNodeOperations,
-      node,
-      lockGlobalInteraction,
-    } = this.props;
+    const { formValues, treeNodeOperations, node, lockGlobalInteraction } = this.props;
     if (
       !this.isDragging &&
       this.wrapperRef &&
@@ -117,10 +108,7 @@ class FieldNodeWidget extends React.Component<Props, State> {
       this.state.edit
     ) {
       this.editNode(false);
-      treeNodeOperations.updateNode(
-        node.treeNodePath,
-        formValues.fieldNodeForm,
-      );
+      treeNodeOperations.updateNode(node.treeNodePath, formValues.fieldNodeForm);
       lockGlobalInteraction(false);
     } else {
       this.isDragging = false;
@@ -137,9 +125,7 @@ class FieldNodeWidget extends React.Component<Props, State> {
     this.top = viewportOffset ? viewportOffset.top + bodyPosition.top : 0;
     this.left = viewportOffset ? viewportOffset.left + bodyPosition.left : 0;
     this.right = viewportOffset ? bodyPosition.right - viewportOffset.right : 0;
-    this.bottom = viewportOffset
-      ? bodyPosition.bottom - viewportOffset.bottom
-      : 0;
+    this.bottom = viewportOffset ? bodyPosition.bottom - viewportOffset.bottom : 0;
   };
 
   copyNode = () => {
@@ -186,12 +172,7 @@ class FieldNodeWidget extends React.Component<Props, State> {
   };
 
   renderEditNode = () => {
-    const {
-      node,
-      treeNodeOperations,
-      datamartId,
-      runFieldProposal,
-    } = this.props;
+    const { node, treeNodeOperations, datamartId, runFieldProposal } = this.props;
 
     const onSubmit = (val: FieldNodeFormDataValues) => {
       treeNodeOperations.updateNode(node.treeNodePath, val.fieldNodeForm);
@@ -215,7 +196,7 @@ class FieldNodeWidget extends React.Component<Props, State> {
             borderRadius: 4,
             width: EDIT_FIELD_SIZE,
           }}
-          className="mcs-form-container no-padding"
+          className='mcs-form-container no-padding'
           onMouseOver={onMouseOver}
           onMouseLeave={onMouseLeave}
         >
@@ -234,11 +215,8 @@ class FieldNodeWidget extends React.Component<Props, State> {
             }}
           />
 
-          <Button
-            className="mcs-fieldNodeFormWrapper_closeButton"
-            onClick={closeEdit}
-          >
-            <McsIcon type="close" />
+          <Button className='mcs-fieldNodeFormWrapper_closeButton' onClick={closeEdit}>
+            <McsIcon type='close' />
           </Button>
 
           <FieldNodeFormWrapper
@@ -278,26 +256,26 @@ class FieldNodeWidget extends React.Component<Props, State> {
     const triggerEdit = () => this.editNode(true);
 
     const editMenu = [
-      <div onClick={triggerEdit} className="boolean-menu-item" key="EDIT">
+      <div onClick={triggerEdit} className='boolean-menu-item' key='EDIT'>
         <FormattedMessage {...messages.edit} />
       </div>,
     ];
 
     if (!this.props.diagramEngine.isCopying()) {
       editMenu.push(
-        <div onClick={this.copyNode} className="boolean-menu-item" key="COPY">
+        <div onClick={this.copyNode} className='boolean-menu-item' key='COPY'>
           <FormattedMessage {...messages.copy} />
         </div>,
       );
       editMenu.push(
-        <div onClick={this.cutNode} className="boolean-menu-item" key="CUT">
+        <div onClick={this.cutNode} className='boolean-menu-item' key='CUT'>
           <FormattedMessage {...messages.cut} />
         </div>,
       );
     }
 
     editMenu.push(
-      <div onClick={this.removeNode} className="boolean-menu-item" key="REMOVE">
+      <div onClick={this.removeNode} className='boolean-menu-item' key='REMOVE'>
         <FormattedMessage {...messages.remove} />
       </div>,
     );
@@ -305,7 +283,7 @@ class FieldNodeWidget extends React.Component<Props, State> {
     return (
       <div
         id={this.id}
-        className="field-node"
+        className='field-node'
         onClick={onFocus}
         style={{
           ...node.getSize(),
@@ -317,13 +295,13 @@ class FieldNodeWidget extends React.Component<Props, State> {
         onMouseEnter={onHover('enter')}
         onMouseLeave={onHover('leave')}
       >
-        <div className="field">
+        <div className='field'>
           <FieldNodeComparisonRenderer node={node} datamartId={datamartId} />
         </div>
         <FourAnchorPortWidget node={node} />
         {this.state.focus && (
           <WindowBodyPortal>
-            <div className="query-builder full-screen">
+            <div className='query-builder full-screen'>
               <div
                 onClick={onFocus}
                 style={{
@@ -338,7 +316,7 @@ class FieldNodeWidget extends React.Component<Props, State> {
                 }}
               />
               <span
-                className="object-node no-hover"
+                className='object-node no-hover'
                 style={{
                   ...node.getSize(),
                   backgroundColor: '#ffffff',
@@ -346,8 +324,7 @@ class FieldNodeWidget extends React.Component<Props, State> {
                   color: node.getColor(),
                   borderColor: node.getColor(),
                   top: this.top - node.getSize().height * ((1 - zoomRatio) / 2),
-                  left:
-                    this.left - node.getSize().width * ((1 - zoomRatio) / 2),
+                  left: this.left - node.getSize().width * ((1 - zoomRatio) / 2),
 
                   position: 'absolute',
                   zIndex: 1002,
@@ -355,15 +332,12 @@ class FieldNodeWidget extends React.Component<Props, State> {
                 }}
                 onClick={onFocus}
               >
-                <div className="field">
-                  <FieldNodeComparisonRenderer
-                    node={node}
-                    datamartId={datamartId}
-                  />
+                <div className='field'>
+                  <FieldNodeComparisonRenderer node={node} datamartId={datamartId} />
                 </div>
               </span>
               <div
-                className="boolean-menu"
+                className='boolean-menu'
                 style={{
                   top: this.top,
                   left: this.left + node.getSize().width * zoomRatio,

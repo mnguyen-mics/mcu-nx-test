@@ -15,10 +15,7 @@ interface State {
   loading: boolean;
 }
 
-export default class ChannelNameDisplay extends React.Component<
-  ChannelNameDisplayProps,
-  State
-> {
+export default class ChannelNameDisplay extends React.Component<ChannelNameDisplayProps, State> {
   @lazyInject(TYPES.IChannelService)
   private _channelService: IChannelService;
 

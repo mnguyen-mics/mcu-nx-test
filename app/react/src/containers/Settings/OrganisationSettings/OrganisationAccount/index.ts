@@ -1,5 +1,3 @@
 import OrganisationAccount from './OrganisationAccount';
 
-export {
-  OrganisationAccount,
-};
+export { OrganisationAccount };

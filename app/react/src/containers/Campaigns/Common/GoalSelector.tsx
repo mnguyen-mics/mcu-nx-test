@@ -13,9 +13,7 @@ import { IGoalService } from '../../../services/GoalService';
 import { TYPES } from '../../../constants/types';
 import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
-const GoalTableSelector: React.ComponentClass<
-  TableSelectorProps<GoalResource>
-> = TableSelector;
+const GoalTableSelector: React.ComponentClass<TableSelectorProps<GoalResource>> = TableSelector;
 
 const messages = defineMessages({
   goalSelectorTitle: {
@@ -90,9 +88,7 @@ class GoalSelector extends React.Component<Props> {
       <GoalTableSelector
         actionBarTitle={formatMessage(messages.goalSelectorTitle)}
         displayFiltering={true}
-        searchPlaceholder={formatMessage(
-          messages.goalSelectorSearchPlaceholder,
-        )}
+        searchPlaceholder={formatMessage(messages.goalSelectorSearchPlaceholder)}
         selectedIds={selectedGoalIds}
         fetchDataList={this.fetchGoals}
         fetchData={fetchGoal}
@@ -104,7 +100,4 @@ class GoalSelector extends React.Component<Props> {
   }
 }
 
-export default compose<Props, GoalSelectorProps>(
-  withRouter,
-  injectIntl,
-)(GoalSelector);
+export default compose<Props, GoalSelectorProps>(withRouter, injectIntl)(GoalSelector);

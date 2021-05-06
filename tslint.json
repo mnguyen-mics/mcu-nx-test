@@ -1,4 +1,3 @@
-
 {
   "extends": ["tslint:latest", "tslint-react", "tslint-eslint-rules", "tslint-config-prettier"],
   "rules": {
@@ -18,9 +17,12 @@
     "no-null-keyword": false,
     "no-require-imports": false,
     "no-switch-case-fall-through": true,
-    "no-this-assignment": [true, {
-      "allow-destructuring": true
-    }],
+    "no-this-assignment": [
+      true,
+      {
+        "allow-destructuring": true
+      }
+    ],
     "object-literal-sort-keys": false,
     "object-literal-shorthand": false,
     "one-variable-per-declaration": [false],
@@ -29,8 +31,14 @@
     "prefer-method-signature": false,
     "prefer-template": [true, "allow-single-concat"],
     "triple-equals": [true, "allow-null-check"],
-    "typedef": [true,"parameter", "property-declaration"],
-    "variable-name": [true, "ban-keywords", "check-format", "allow-pascal-case", "allow-leading-underscore"],
+    "typedef": [true, "parameter", "property-declaration"],
+    "variable-name": [
+      true,
+      "ban-keywords",
+      "check-format",
+      "allow-pascal-case",
+      "allow-leading-underscore"
+    ],
     "interface-name": false,
     "jsx-no-multiline-js": false,
     "curly": false,

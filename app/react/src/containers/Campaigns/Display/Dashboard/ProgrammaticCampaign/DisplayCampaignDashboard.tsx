@@ -4,11 +4,7 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 
 import { Card, McsTabs } from '@mediarithmics-private/mcs-components-library';
-import {
-  DisplayStackedAreaChart,
-  MediaPerformanceTable,
-  GoalStackedAreaChart,
-} from '../Charts';
+import { DisplayStackedAreaChart, MediaPerformanceTable, GoalStackedAreaChart } from '../Charts';
 
 import messages from '../messages';
 import { GoalsCampaignRessource } from './domain';
@@ -66,10 +62,7 @@ class DisplayCampaignDashboard extends React.Component<Props> {
       {
         title: intl.formatMessage(messages.dashboardTopSites),
         display: (
-          <MediaPerformanceTable
-            isFetchingMediaStat={isFetchingMediaStat}
-            dataSet={mediaStat}
-          />
+          <MediaPerformanceTable isFetchingMediaStat={isFetchingMediaStat} dataSet={mediaStat} />
         ),
       },
       ...goalsItems,

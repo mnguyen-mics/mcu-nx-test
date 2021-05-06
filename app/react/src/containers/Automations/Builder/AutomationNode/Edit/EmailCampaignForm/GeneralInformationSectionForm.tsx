@@ -1,11 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import {
-  InjectedIntlProps,
-  injectIntl,
-  defineMessages,
-  FormattedMessage,
-} from 'react-intl';
+import { InjectedIntlProps, injectIntl, defineMessages, FormattedMessage } from 'react-intl';
 import {
   FormInput,
   FormSection,
@@ -13,12 +8,8 @@ import {
   FormSelectField,
   DefaultSelect,
 } from '../../../../../../components/Form';
-import withValidators, {
-  ValidatorProps,
-} from '../../../../../../components/Form/withValidators';
-import withNormalizer, {
-  NormalizerProps,
-} from '../../../../../../components/Form/withNormalizer';
+import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
+import withNormalizer, { NormalizerProps } from '../../../../../../components/Form/withNormalizer';
 import { formatDisplayCampaignProperty } from '../../../../../Campaigns/Display/messages';
 import messages from '../../../../../Campaigns/Display/Edit/messages';
 import { Spin } from 'antd';
@@ -38,12 +29,10 @@ export const formMessages = defineMessages({
   },
   sectionGeneralSubtitle: {
     id: 'automation.builder.node.emailCampaignForm.general.subtitle',
-    defaultMessage:
-      'This action allows you to send an email to the user who goes through it.',
+    defaultMessage: 'This action allows you to send an email to the user who goes through it.',
   },
   sectionGeneralConfigurationTitle: {
-    id:
-      'automation.builder.node.emailCampaignForm.generalInfoSection.configuration.title',
+    id: 'automation.builder.node.emailCampaignForm.generalInfoSection.configuration.title',
     defaultMessage: 'Configuration',
   },
   automationNodeName: {
@@ -60,8 +49,7 @@ export const formMessages = defineMessages({
       'Choose a router for your campaign. A Router is basically a channel through which you will send your email. You can configure your email routers in your {campaignSettings}.',
   },
   campaignSettings: {
-    id:
-      'automation.builder.emailEditor.step.select.helper.router.campaignSettings',
+    id: 'automation.builder.emailEditor.step.select.helper.router.campaignSettings',
     defaultMessage: 'campaigns settings',
   },
   emailEditorProviderSelectLabel: {
@@ -111,20 +99,16 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
 
   componentDidMount() {
     this.setState({ fetchingRouters: true, fetchingConsents: true });
-    this._emailRouterService
-      .getEmailRouters(this.props.organisationId)
-      .then(routersResponse => {
-        this._consentService
-          .getConsents(this.props.organisationId)
-          .then(consentResponse => {
-            this.setState({
-              fetchingRouters: false,
-              routers: routersResponse.data,
-              fetchingConsents: false,
-              consents: consentResponse.data,
-            });
-          });
+    this._emailRouterService.getEmailRouters(this.props.organisationId).then(routersResponse => {
+      this._consentService.getConsents(this.props.organisationId).then(consentResponse => {
+        this.setState({
+          fetchingRouters: false,
+          routers: routersResponse.data,
+          fetchingConsents: false,
+          consents: consentResponse.data,
+        });
       });
+    });
   }
 
   render() {
@@ -140,10 +124,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
         {...formMessages.emailEditorRouterSelectHelper}
         values={{
           campaignSettings: (
-            <Link
-              to={`/v2/o/${organisationId}/settings/campaigns/email_routers`}
-              target="_blank"
-            >
+            <Link to={`/v2/o/${organisationId}/settings/campaigns/email_routers`} target='_blank'>
               <FormattedMessage {...formMessages.campaignSettings} />
             </Link>
           ),
@@ -161,19 +142,15 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
 
         <div>
           <FormInputField
-            name="campaign.name"
+            name='campaign.name'
             component={FormInput}
             validate={[isRequired]}
             formItemProps={{
-              label: formatMessage(
-                formatDisplayCampaignProperty('name').message,
-              ),
+              label: formatMessage(formatDisplayCampaignProperty('name').message),
               required: true,
             }}
             inputProps={{
-              placeholder: formatMessage(
-                messages.campaignFormPlaceholderCampaignName,
-              ),
+              placeholder: formatMessage(messages.campaignFormPlaceholderCampaignName),
               disabled: !!disabled,
             }}
             helpToolTipProps={{
@@ -183,7 +160,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
           />
 
           <FormSelectField
-            name="routerFields[0].model.email_router_id"
+            name='routerFields[0].model.email_router_id'
             component={DefaultSelect}
             validate={[isRequired]}
             formItemProps={{
@@ -191,9 +168,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
               required: true,
             }}
             selectProps={{
-              notFoundContent: this.state.fetchingRouters ? (
-                <Spin size="small" />
-              ) : null,
+              notFoundContent: this.state.fetchingRouters ? <Spin size='small' /> : null,
             }}
             options={this.state.routers.map(router => ({
               value: router.id,
@@ -207,7 +182,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
           />
 
           <FormSelectField
-            name="blastFields[0].model.consentFields[0].model.consent_id"
+            name='blastFields[0].model.consentFields[0].model.consent_id'
             component={DefaultSelect}
             validate={[isRequired]}
             formItemProps={{
@@ -215,9 +190,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
               required: true,
             }}
             selectProps={{
-              notFoundContent: this.state.fetchingConsents ? (
-                <Spin size="small" />
-              ) : null,
+              notFoundContent: this.state.fetchingConsents ? <Spin size='small' /> : null,
               disabled: !!disabled,
             }}
             options={this.state.consents.map(consent => ({
@@ -225,9 +198,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
               title: consent.technical_name,
             }))}
             helpToolTipProps={{
-              title: formatMessage(
-                formMessages.emailEditorProviderSelectHelper,
-              ),
+              title: formatMessage(formMessages.emailEditorProviderSelectHelper),
             }}
             small={true}
             disabled={!!disabled}

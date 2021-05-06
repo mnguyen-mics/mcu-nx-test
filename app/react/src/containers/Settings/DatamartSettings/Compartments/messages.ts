@@ -7,6 +7,6 @@ export default defineMessages({
   },
   newCompartment: {
     id: 'settings.datamart.compartments.new',
-    defaultMessage: 'New Compartment'
-  }
+    defaultMessage: 'New Compartment',
+  },
 });

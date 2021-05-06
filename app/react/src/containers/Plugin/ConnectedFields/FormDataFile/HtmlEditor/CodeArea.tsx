@@ -2,20 +2,9 @@ import * as React from 'react';
 import { defineMessages } from 'react-intl';
 import { Layout } from 'antd';
 import { compose } from 'recompose';
-import {
-  FieldCtor,
-  FormSection,
-  FormCodeEdit,
-} from '../../../../../components/Form';
+import { FieldCtor, FormSection, FormCodeEdit } from '../../../../../components/Form';
 import { FormCodeEditProps } from '../../../../../components/Form/FormCodeEdit';
-import {
-  reduxForm,
-  InjectedFormProps,
-  Field,
-  Form,
-  ConfigProps,
-  GenericField,
-} from 'redux-form';
+import { reduxForm, InjectedFormProps, Field, Form, ConfigProps, GenericField } from 'redux-form';
 import { EditContentLayout } from '../../../../../components/Layout';
 import { Omit } from '../../../../../utils/Types';
 import { injectDrawer } from '../../../../../components/Drawer/index';
@@ -26,9 +15,7 @@ const FormCodeField: FieldCtor<FormCodeEditProps> = Field as new () => GenericFi
 
 export interface CodeAreaProps extends Omit<ConfigProps<any>, 'form'> {}
 
-type Props = InjectedFormProps<any, CodeAreaProps> &
-  CodeAreaProps &
-  InjectedDrawerProps;
+type Props = InjectedFormProps<any, CodeAreaProps> & CodeAreaProps & InjectedDrawerProps;
 
 const messages = defineMessages({
   quickEdit: {
@@ -54,7 +41,7 @@ class CodeArea extends React.Component<Props> {
   render() {
     const { handleSubmit } = this.props;
 
-    const breadcrumbPaths = [ 'Code Edit' ];
+    const breadcrumbPaths = ['Code Edit'];
 
     const actionbarProps = {
       formId: 'codeAreaForm',
@@ -65,11 +52,8 @@ class CodeArea extends React.Component<Props> {
     return (
       <EditContentLayout pathItems={breadcrumbPaths} {...actionbarProps}>
         <Layout>
-          <Form
-            onSubmit={handleSubmit as any}
-            className={'edit-layout ant-layout'}
-          >
-            <Content className="mcs-content-container mcs-form-container ad-group-form">
+          <Form onSubmit={handleSubmit as any} className={'edit-layout ant-layout'}>
+            <Content className='mcs-content-container mcs-form-container ad-group-form'>
               <FormSection title={messages.formTitle} />
               <FormCodeField
                 name={'code'}
@@ -107,6 +91,4 @@ class CodeArea extends React.Component<Props> {
   }
 }
 
-export default compose(reduxForm<{}, CodeAreaProps>({}), injectDrawer)(
-  CodeArea,
-);
+export default compose(reduxForm<{}, CodeAreaProps>({}), injectDrawer)(CodeArea);

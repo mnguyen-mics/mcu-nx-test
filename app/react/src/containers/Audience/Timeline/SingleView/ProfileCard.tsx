@@ -29,23 +29,18 @@ class ProfileCard extends React.Component<Props> {
   }
 
   renderProfile = (dataSource: UserProfileGlobal) => {
-    if (
-      dataSource.type === 'pionus' &&
-      Object.keys(dataSource.profile).length > 0
-    ) {
+    if (dataSource.type === 'pionus' && Object.keys(dataSource.profile).length > 0) {
       return Object.keys(dataSource.profile).map(key => {
         return (
-          <div key={cuid()} className="table-line border-top">
-            <div className="sub-title">
-              {dataSource.profile[key].compartmentName}
-            </div>
+          <div key={cuid()} className='table-line border-top'>
+            <div className='sub-title'>{dataSource.profile[key].compartmentName}</div>
             <ProfileInfo profiles={dataSource.profile[key].profiles} />
           </div>
         );
       });
     } else if (dataSource.type === 'legacy') {
       return (
-        <div key={cuid()} className="table-line border-top">
+        <div key={cuid()} className='table-line border-top'>
           <SingleProfileInfo profileGlobal={dataSource.profile} />
         </div>
       );
@@ -64,7 +59,8 @@ class ProfileCard extends React.Component<Props> {
       <Card
         title={intl.formatMessage(messages.profileTitle)}
         isLoading={isLoading}
-        className={'mcs-profileCard'}>
+        className={'mcs-profileCard'}
+      >
         {this.renderProfile(dataSource)}
       </Card>
     );

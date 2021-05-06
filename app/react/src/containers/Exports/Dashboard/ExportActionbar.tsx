@@ -13,7 +13,9 @@ import messages, { formatExportProperty } from './messages';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IExportService } from '../../../services/Library/ExportService';
-import ResourceTimelinePage, { ResourceTimelinePageProps } from '../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
+import ResourceTimelinePage, {
+  ResourceTimelinePageProps,
+} from '../../ResourceHistory/ResourceTimeline/ResourceTimelinePage';
 import resourceHistoryMessages from '../../ResourceHistory/ResourceTimeline/messages';
 import injectDrawer, { InjectedDrawerProps } from '../../../components/Drawer/injectDrawer';
 import { Link } from 'react-router-dom';
@@ -34,10 +36,7 @@ type JoinedProps = ExportActionbarProps &
   InjectedIntlProps &
   InjectedDrawerProps;
 
-class ExportsActionbar extends React.Component<
-  JoinedProps,
-  ExportActionbarState
-> {
+class ExportsActionbar extends React.Component<JoinedProps, ExportActionbarState> {
   @lazyInject(TYPES.IExportService)
   private _exportService: IExportService;
 
@@ -49,9 +48,7 @@ class ExportsActionbar extends React.Component<
   componentDidUpdate(previousProps: JoinedProps) {
     const { isExportExecutionRunning } = this.props;
 
-    const {
-      isExportExecutionRunning: previousIsExportExecutionRunning,
-    } = previousProps;
+    const { isExportExecutionRunning: previousIsExportExecutionRunning } = previousProps;
 
     if (isExportExecutionRunning !== previousIsExportExecutionRunning) {
       this.setState({ exportIsRunning: isExportExecutionRunning });
@@ -100,27 +97,21 @@ class ExportsActionbar extends React.Component<
     const menu = this.buildMenu();
 
     const breadcrumbPaths = [
-      <Link key='1' to={`/v2/o/${organisationId}/datastudio/exports`}>Exports</Link>,
+      <Link key='1' to={`/v2/o/${organisationId}/datastudio/exports`}>
+        Exports
+      </Link>,
       exportObject && exportObject.name ? exportObject.name : '',
     ];
 
     return (
       <Actionbar pathItems={breadcrumbPaths}>
-        <Button
-          className="mcs-primary"
-          type="primary"
-          onClick={this.runExecution}
-        >
-          {this.state.exportIsRunning ? (
-            <LoadingOutlined spin={true} />
-          ) : (
-            <McsIcon type="plus" />
-          )}
+        <Button className='mcs-primary' type='primary' onClick={this.runExecution}>
+          {this.state.exportIsRunning ? <LoadingOutlined spin={true} /> : <McsIcon type='plus' />}
           <FormattedMessage {...messages.newExecution} />
         </Button>
 
         <Button onClick={this.editExport}>
-          <McsIcon type="pen" />
+          <McsIcon type='pen' />
           <FormattedMessage {...messages.edit} />
         </Button>
 
@@ -163,43 +154,32 @@ class ExportsActionbar extends React.Component<
       switch (event.key) {
         case 'ARCHIVED':
           return handleArchiveGoal();
-          case 'HISTORY':
-          return this.props.openNextDrawer<ResourceTimelinePageProps>(
-            ResourceTimelinePage,
-            {
-              additionalProps: {
-                resourceType: 'QUERY_EXPORT',
-                resourceId: exportId,
-                handleClose: () => this.props.closeNextDrawer(),
-                formatProperty: formatExportProperty,
-                resourceLinkHelper: {
-                  QUERY_EXPORT: {
-                    direction: 'CHILD',
-                    getType: () => {
-                      return (
-                        <FormattedMessage
-                          {...resourceHistoryMessages.exportResourceType}
-                        />
-                      );
-                    },
-                    getName: (id: string) => {
-                      return this._exportService
-                        .getExport(id)
-                        .then(response => {
-                          return response.data.name || id;
-                        });
-                    },
-                    goToResource: (id: string) => {
-                      history.push(
-                        `/v2/o/${organisationId}/datastudio/exports/${id}`,
-                      );
-                    },
+        case 'HISTORY':
+          return this.props.openNextDrawer<ResourceTimelinePageProps>(ResourceTimelinePage, {
+            additionalProps: {
+              resourceType: 'QUERY_EXPORT',
+              resourceId: exportId,
+              handleClose: () => this.props.closeNextDrawer(),
+              formatProperty: formatExportProperty,
+              resourceLinkHelper: {
+                QUERY_EXPORT: {
+                  direction: 'CHILD',
+                  getType: () => {
+                    return <FormattedMessage {...resourceHistoryMessages.exportResourceType} />;
+                  },
+                  getName: (id: string) => {
+                    return this._exportService.getExport(id).then(response => {
+                      return response.data.name || id;
+                    });
+                  },
+                  goToResource: (id: string) => {
+                    history.push(`/v2/o/${organisationId}/datastudio/exports/${id}`);
                   },
                 },
               },
-              size: 'small',
             },
-          );
+            size: 'small',
+          });
         default:
           return () => {
             log.error('onclick error');
@@ -209,10 +189,10 @@ class ExportsActionbar extends React.Component<
 
     return (
       <Menu onClick={onClick}>
-        <Menu.Item key="HISTORY">
+        <Menu.Item key='HISTORY'>
           <FormattedMessage {...messages.history} />
         </Menu.Item>
-        <Menu.Item key="ARCHIVED">
+        <Menu.Item key='ARCHIVED'>
           <FormattedMessage {...messages.archive} />
         </Menu.Item>
       </Menu>

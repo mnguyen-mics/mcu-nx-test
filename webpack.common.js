@@ -67,9 +67,7 @@ module.exports = {
           {
             loader: 'file-loader',
             query: {
-              name: `${
-                true ? '/src/assets/images/' : ''
-              }[name].[ext]`,
+              name: `${true ? '/src/assets/images/' : ''}[name].[ext]`,
             },
           },
           {

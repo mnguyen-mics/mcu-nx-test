@@ -15,7 +15,8 @@ export default defineMessages({
   },
   importsDeleteMessage: {
     id: 'imports.modal.delete.message',
-    defaultMessage: 'By deleting this Import, all its executions and associated files will be unavailable.',
+    defaultMessage:
+      'By deleting this Import, all its executions and associated files will be unavailable.',
   },
   importsDeleteOk: {
     id: 'imports.modal.delete.ok',
@@ -79,7 +80,6 @@ export default defineMessages({
   },
   filterByLabel: {
     id: 'imports.table.labelFilter.placeholder',
-    defaultMessage: 'Filter By Label', 
-  }
-})
-;
+    defaultMessage: 'Filter By Label',
+  },
+});

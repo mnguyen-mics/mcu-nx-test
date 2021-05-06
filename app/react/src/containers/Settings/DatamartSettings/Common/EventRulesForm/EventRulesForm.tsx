@@ -1,10 +1,5 @@
 import * as React from 'react';
-import {
-  Form,
-  reduxForm,
-  InjectedFormProps,
-  ConfigProps,
-} from 'redux-form';
+import { Form, reduxForm, InjectedFormProps, ConfigProps } from 'redux-form';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { Layout } from 'antd';
@@ -17,7 +12,7 @@ import FormLayoutActionbar, {
 import { EventRulesFormData } from '../domain';
 import { Omit } from '../../../../../utils/Types';
 import CatalogAutoMatch from './Sections/CatalogAutoMatch';
-import UserIdentifierinsertion from './Sections/UserIdentifierInsertion'; 
+import UserIdentifierinsertion from './Sections/UserIdentifierInsertion';
 import UriMatch from './Sections/UriMatch';
 import PropertyToOriginCopy from './Sections/PropertyToOriginCopy';
 import * as SessionSelectors from '../../../../../redux/Session/selectors';
@@ -34,17 +29,13 @@ const messages = defineMessages({
   },
   error: {
     id: 'settings.form.eventRules.errorType',
-    defaultMessage: 'Please specify a known type'
-  }
-})
+    defaultMessage: 'Please specify a known type',
+  },
+});
 
-const Content = Layout.Content as unknown as React.ComponentClass<
-  BasicProps & { id: string }
->;
+const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
 
-
-export interface EventRulesFormProps
-  extends Omit<ConfigProps<EventRulesFormData>, 'form'> {
+export interface EventRulesFormProps extends Omit<ConfigProps<EventRulesFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: React.ReactNode[];
   datamartId: string;
@@ -54,10 +45,7 @@ interface MapStateToProps {
   hasDatamarts: (organisationId: string) => boolean;
 }
 
-type Props = InjectedFormProps<
-  EventRulesFormData,
-  EventRulesFormProps
-> &
+type Props = InjectedFormProps<EventRulesFormData, EventRulesFormProps> &
   EventRulesFormProps &
   MapStateToProps &
   InjectedIntlProps &
@@ -70,7 +58,6 @@ interface State {
 }
 
 class EventRulesForm extends React.Component<Props, State> {
-
   @lazyInject(TYPES.IDatamartService)
   private _datamartService: IDatamartService;
 
@@ -80,20 +67,15 @@ class EventRulesForm extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    this._datamartService.getUserAccountCompartmentDatamartSelectionResources(this.props.datamartId).then(res => {
-      this.setState({ compartments: res.data });
-    })
+    this._datamartService
+      .getUserAccountCompartmentDatamartSelectionResources(this.props.datamartId)
+      .then(res => {
+        this.setState({ compartments: res.data });
+      });
   }
 
   render() {
-    const {
-      handleSubmit,
-      breadCrumbPaths,
-      close,
-      initialValues,
-      intl,
-    } = this.props;
-
+    const { handleSubmit, breadCrumbPaths, close, initialValues, intl } = this.props;
 
     const actionBarProps: FormLayoutActionbarProps = {
       formId: FORM_ID,
@@ -102,37 +84,29 @@ class EventRulesForm extends React.Component<Props, State> {
       onClose: close,
     };
 
-
     const renderConditionnaly = () => {
       if (initialValues.model) {
         switch (initialValues.model.type) {
           case 'CATALOG_AUTO_MATCH':
-            return <CatalogAutoMatch />
+            return <CatalogAutoMatch />;
           case 'PROPERTY_TO_ORIGIN_COPY':
-            return <PropertyToOriginCopy />
+            return <PropertyToOriginCopy />;
           case 'URL_MATCH':
-            return <UriMatch />
+            return <UriMatch />;
           case 'USER_IDENTIFIER_INSERTION':
-            return <UserIdentifierinsertion datamartId={this.props.datamartId}/>
+            return <UserIdentifierinsertion datamartId={this.props.datamartId} />;
         }
       }
-      return <div>{intl.formatMessage(messages.error)}</div>
-      
-    }
+      return <div>{intl.formatMessage(messages.error)}</div>;
+    };
 
     return (
-      <Layout className="edit-layout">
+      <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
-          <Form
-            className="edit-layout ant-layout"
-            onSubmit={handleSubmit as any}
-          >
-            <Content
-              id={FORM_ID}
-              className="mcs-content-container mcs-form-container"
-            >
-              { renderConditionnaly() }
+          <Form className='edit-layout ant-layout' onSubmit={handleSubmit as any}>
+            <Content id={FORM_ID} className='mcs-content-container mcs-form-container'>
+              {renderConditionnaly()}
             </Content>
           </Form>
         </Layout>

@@ -10,8 +10,7 @@ import { ObjectLikeTypeInfoResource } from '../../../../models/datamart/graphdb/
 import { Card } from '@mediarithmics-private/mcs-components-library';
 import { AudienceFeatureResource } from '../../../../models/audienceFeature';
 
-export interface NewAudienceFeatureFormSectionProps
-  extends ReduxFormChangeProps {
+export interface NewAudienceFeatureFormSectionProps extends ReduxFormChangeProps {
   isDemographicsSection: boolean;
   datamartId: string;
   removeGroup: () => void;
@@ -32,7 +31,7 @@ class NewAudienceFeatureFormSection extends React.Component<Props> {
       objectTypes,
       removeGroup,
       audienceFeatures,
-      formChange
+      formChange,
     } = this.props;
 
     const removeFieldOrGroup = (index: number) => () => {
@@ -45,10 +44,7 @@ class NewAudienceFeatureFormSection extends React.Component<Props> {
 
     return fields.map((name, index) => {
       return (
-        <Card
-          key={`${index}_${fields.length}`}
-          className={'mcs-audienceBuilder_audienceFeature-2'}
-        >
+        <Card key={`${index}_${fields.length}`} className={'mcs-audienceBuilder_audienceFeature-2'}>
           <Row
             key={`${index}_${fields.length}`}
             className={'mcs-audienceBuilder_audienceFeatureContent'}

@@ -4,10 +4,9 @@ import { QueryBuilderNode } from '../../domain';
 import { ObjectNode, GroupNode } from '../../../../../models/datamart/graphdb/QueryDocument';
 
 export default class BooleanOperatorNodeModel extends NodeModel implements QueryBuilderNode {
-
   collapsed = false;
   negation = false;
-  treeNodePath: number[] = [];  
+  treeNodePath: number[] = [];
 
   objectOrGroupNode: ObjectNode | GroupNode;
 
@@ -40,5 +39,5 @@ export default class BooleanOperatorNodeModel extends NodeModel implements Query
       return '#ff5959';
     }
     return this.objectOrGroupNode.type === 'GROUP' ? '#00a1df' : '#00ad68';
-  }
+  };
 }

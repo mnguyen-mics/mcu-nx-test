@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, Row, Menu, Col } from 'antd';
 import { FormattedMessage } from 'react-intl';
 import FormTitle, { FormTitleProps } from './FormTitle';
-import { MenuInfo } from '../../../../../node_modules/antd/node_modules/rc-menu/lib/interface'
+import { MenuInfo } from '../../../../../node_modules/antd/node_modules/rc-menu/lib/interface';
 import { Dropdown } from '../../components/PopupContainers';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
@@ -35,13 +35,12 @@ class FormSection extends React.Component<FormSectionProps> {
       ));
 
     const handleClick = (param: MenuInfo) => {
-      const currentItem =
-        dropdownItems && dropdownItems.find(item => item.id === param.key);
+      const currentItem = dropdownItems && dropdownItems.find(item => item.id === param.key);
       currentItem!.onClick();
     };
 
     const overlay = (
-      <Menu className="mcs-dropdown-actions" onClick={handleClick}>
+      <Menu className='mcs-dropdown-actions' onClick={handleClick}>
         {displayOptions}
       </Menu>
     );
@@ -49,8 +48,8 @@ class FormSection extends React.Component<FormSectionProps> {
     return (
       <Dropdown overlay={overlay} trigger={['click']}>
         <Button>
-          <McsIcon type="pen" />
-          <McsIcon type="chevron" />
+          <McsIcon type='pen' />
+          <McsIcon type='chevron' />
         </Button>
       </Dropdown>
     );
@@ -58,12 +57,11 @@ class FormSection extends React.Component<FormSectionProps> {
 
   render() {
     const { title, subtitle, button, dropdownItems } = this.props;
-    const titleColSpan =
-      24 - 3 * ((!!button ? 1 : 0) + (!!dropdownItems ? 1 : 0));
+    const titleColSpan = 24 - 3 * ((!!button ? 1 : 0) + (!!dropdownItems ? 1 : 0));
 
     const hasRestCol = !!button || !!dropdownItems;
     const restCol = hasRestCol && (
-      <Col span={24 - titleColSpan} className="section-header-buttons">
+      <Col span={24 - titleColSpan} className='section-header-buttons'>
         {button && (
           <Button onClick={button.onClick} disabled={button.disabled}>
             {button.message}
@@ -75,11 +73,7 @@ class FormSection extends React.Component<FormSectionProps> {
     );
 
     return (
-      <Row
-        align="middle"
-        justify="space-between"
-        className="section-header"
-      >
+      <Row align='middle' justify='space-between' className='section-header'>
         <Col span={titleColSpan}>
           <FormTitle title={title} subtitle={subtitle} />
         </Col>

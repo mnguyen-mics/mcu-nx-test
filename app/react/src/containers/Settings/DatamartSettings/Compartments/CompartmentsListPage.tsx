@@ -52,14 +52,10 @@ interface CompartmentsListPageState {
   filter: Filter;
 }
 
-class CompartmentsListPage extends React.Component<
-  Props,
-  CompartmentsListPageState
-> {
-
+class CompartmentsListPage extends React.Component<Props, CompartmentsListPageState> {
   @lazyInject(TYPES.IDatamartService)
   private _datamartService: IDatamartService;
-  
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -82,9 +78,7 @@ class CompartmentsListPage extends React.Component<
     } = this.props;
     const { filter: stateFilter } = this.state;
     const filter = parseSearch(search, this.getSearchSetting());
-    const calculatedDatamartId = filter.datamartId
-      ? filter.datamartId
-      : datamart.id;
+    const calculatedDatamartId = filter.datamartId ? filter.datamartId : datamart.id;
     this.setState({
       isFetchingCompartments: true,
     });
@@ -109,12 +103,8 @@ class CompartmentsListPage extends React.Component<
 
     const { filter } = this.state;
 
-    if (
-      previousOrganisationId !== organisationId ||
-      !compareSearches(search, previousSearch)
-    ) {
-      const selectedDatamartId =
-        queryString.parse(search).datamartId || datamart.id;
+    if (previousOrganisationId !== organisationId || !compareSearches(search, previousSearch)) {
+      const selectedDatamartId = queryString.parse(search).datamartId || datamart.id;
 
       this.setState(
         {
@@ -138,10 +128,7 @@ class CompartmentsListPage extends React.Component<
     } = this.props;
     this.setState({ filter: newFilter });
     const filters = parseSearch(search, this.getSearchSetting());
-    this.fetchCompartments(
-      filters.datamartId ? filters.datamartId : datamart.id,
-      newFilter,
-    );
+    this.fetchCompartments(filters.datamartId ? filters.datamartId : datamart.id, newFilter);
   };
 
   fetchCompartments = (datamartId: string, filter: Filter) => {
@@ -150,10 +137,8 @@ class CompartmentsListPage extends React.Component<
     const options = {
       ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
     };
-    return this._datamartService.getUserAccountCompartmentDatamartSelectionResources(
-      datamartId,
-      options,
-    )
+    return this._datamartService
+      .getUserAccountCompartmentDatamartSelectionResources(datamartId, options)
       .then(results => {
         this.setState({
           isFetchingCompartments: false,
@@ -190,9 +175,7 @@ class CompartmentsListPage extends React.Component<
       },
     } = this.props;
 
-    history.push(
-      `/v2/o/${organisationId}/settings/datamart/compartments/create`,
-    );
+    history.push(`/v2/o/${organisationId}/settings/datamart/compartments/create`);
   };
 
   render() {
@@ -236,8 +219,7 @@ class CompartmentsListPage extends React.Component<
         display: (item: any) => item.value,
         handleItemClick: (datamartItem: { key: string; value: string }) => {
           this.updateLocationSearch({
-            datamartId:
-              datamartItem && datamartItem.key ? datamartItem.key : undefined,
+            datamartId: datamartItem && datamartItem.key ? datamartItem.key : undefined,
             currentPage: 1,
           });
         },
@@ -246,27 +228,23 @@ class CompartmentsListPage extends React.Component<
     }
 
     const button = (
-      <Button
-        key={messages.newCompartment.id}
-        type="primary"
-        onClick={this.onClick}
-      >
+      <Button key={messages.newCompartment.id} type='primary' onClick={this.onClick}>
         <FormattedMessage {...messages.newCompartment} />
       </Button>
     );
 
     return (
-      <div className="ant-layout">
-        <Content className="mcs-content-container">
-          <Row className="mcs-table-container">
+      <div className='ant-layout'>
+        <Content className='mcs-content-container'>
+          <Row className='mcs-table-container'>
             <div>
-              <div className="mcs-card-header mcs-card-title">
-                <span className="mcs-card-title">
+              <div className='mcs-card-header mcs-card-title'>
+                <span className='mcs-card-title'>
                   <FormattedMessage {...settingsMessages.compartments} />
                 </span>
-                <span className="mcs-card-button">{button}</span>
+                <span className='mcs-card-button'>{button}</span>
               </div>
-              <hr className="mcs-separator" />
+              <hr className='mcs-separator' />
               <CompartmentsTable
                 isFetchingCompartments={isFetchingCompartments}
                 dataSource={compartments}

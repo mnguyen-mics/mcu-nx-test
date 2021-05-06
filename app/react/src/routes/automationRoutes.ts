@@ -1,9 +1,5 @@
 import EditAutomationPage from '../containers/Automations/Edit/EditAutomationPage';
-import {
-  NavigatorRoute,
-  NavigatorDefinition,
-  generateRoutesFromDefinition,
-} from './domain';
+import { NavigatorRoute, NavigatorDefinition, generateRoutesFromDefinition } from './domain';
 import AutomationBuilderPage from '../containers/Automations/Builder/AutomationBuilderPage';
 import AutomationListPage from '../containers/Automations/List/AutomationListPage';
 import AutomationDashboardPage from '../containers/Automations/Dashboard/AutomationDashboardPage';

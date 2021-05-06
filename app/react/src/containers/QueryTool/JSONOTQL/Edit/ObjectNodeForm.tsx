@@ -24,16 +24,13 @@ import messages from './messages';
 import ObjectNodeSection from './Sections/ObjectNodeSection';
 import { QueryBooleanOperator } from '../../../../models/datamart/graphdb/QueryDocument';
 import { ObjectLikeTypeInfoResource } from '../../../../models/datamart/graphdb/RuntimeSchema';
-import FieldNodeSection, {
-  FieldNodeSectionProps,
-} from './Sections/FieldNodeSection';
+import FieldNodeSection, { FieldNodeSectionProps } from './Sections/FieldNodeSection';
 import { typesTrigger } from '../domain';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
 
 const { Content } = Layout;
 
-export interface ObjectNodeFormProps
-  extends Omit<ConfigProps<ObjectNodeFormData>, 'form'> {
+export interface ObjectNodeFormProps extends Omit<ConfigProps<ObjectNodeFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: React.ReactNode[];
   objectType: ObjectLikeTypeInfoResource;
@@ -71,9 +68,7 @@ class ObjectNodeForm extends React.Component<Props> {
     return lodash
       .flatMap(objectType.directives, d =>
         d.arguments.map(a =>
-          Object.values(typesTrigger).includes(
-            a.value.replace(/[^a-zA-Z]+/g, ''),
-          ),
+          Object.values(typesTrigger).includes(a.value.replace(/[^a-zA-Z]+/g, '')),
         ),
       )
       .reduce((acc: boolean, val: boolean) => {
@@ -85,9 +80,7 @@ class ObjectNodeForm extends React.Component<Props> {
     const { objectType, objectTypes } = this.props;
 
     if (isTrigger && objectType.name === 'UserPoint') {
-      const filteredObjectTypes = objectTypes.filter(o =>
-        this.filterAvailableFields(o),
-      );
+      const filteredObjectTypes = objectTypes.filter(o => this.filterAvailableFields(o));
       return objectType.fields.filter(field => {
         const found = filteredObjectTypes.find(ot => {
           const match = field.field_type.match(/\w+/);
@@ -105,7 +98,9 @@ class ObjectNodeForm extends React.Component<Props> {
       const hasIndexedField =
         !!found &&
         !!found.fields.find(
-          f => !!f.directives.find(dir => dir.name === 'TreeIndex') && (isEdge ? !!f.directives.find(dir => dir.name === 'EdgeAvailability') : true),
+          f =>
+            !!f.directives.find(dir => dir.name === 'TreeIndex') &&
+            (isEdge ? !!f.directives.find(dir => dir.name === 'EdgeAvailability') : true),
         );
       return !!found && hasIndexedField;
     });
@@ -134,7 +129,9 @@ class ObjectNodeForm extends React.Component<Props> {
         !objectTypes.find(ot => {
           const match = f.field_type.match(/\w+/);
           return !!(match && match[0] === ot.name);
-        }) && f.directives.find(dir => dir.name === 'TreeIndex') && (isEdge ? f.directives.find(dir => dir.name === 'EdgeAvailability') : true),
+        }) &&
+        f.directives.find(dir => dir.name === 'TreeIndex') &&
+        (isEdge ? f.directives.find(dir => dir.name === 'EdgeAvailability') : true),
     );
   };
 
@@ -179,9 +176,7 @@ class ObjectNodeForm extends React.Component<Props> {
         <ObjectNodeSection
           objectTypeFields={this.getQueryableObjectTypes(isTrigger, isEdge)}
           objectType={objectType}
-          selectedObjectType={
-            hasField ? this.getSelectedObjectType() : undefined
-          }
+          selectedObjectType={hasField ? this.getSelectedObjectType() : undefined}
           onSelect={resetFieldNodeForm}
           isTrigger={isTrigger}
         />
@@ -197,7 +192,7 @@ class ObjectNodeForm extends React.Component<Props> {
         title: messages.objectNodeTitle,
         component: (
           <FieldNodeListFieldArray
-            name="fieldNodeForm"
+            name='fieldNodeForm'
             component={FieldNodeSection}
             availableFields={this.getQueryableFields()}
             formChange={change}
@@ -227,18 +222,11 @@ class ObjectNodeForm extends React.Component<Props> {
     });
 
     return (
-      <Layout className="edit-layout">
+      <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
-          <Form
-            className="edit-layout ant-layout"
-            onSubmit={handleSubmit}
-            layout="vertical"
-          >
-            <Content
-              id={FORM_ID}
-              className="mcs-content-container mcs-form-container"
-            >
+          <Form className='edit-layout ant-layout' onSubmit={handleSubmit} layout='vertical'>
+            <Content id={FORM_ID} className='mcs-content-container mcs-form-container'>
               {renderedSections}
             </Content>
           </Form>

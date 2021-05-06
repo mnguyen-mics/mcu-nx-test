@@ -4,14 +4,15 @@ import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { connect } from 'react-redux';
 import { getFormValues } from 'redux-form';
 import messages from '../messages';
-import { DefaultSelect, FormSelectField, FormInputField, FormInput } from '../../../../../../components/Form';
-import withValidators, {
-  ValidatorProps,
-} from '../../../../../../components/Form/withValidators';
-import withNormalizer, {
-  NormalizerProps,
-} from '../../../../../../components/Form/withNormalizer';
-import { FORM_ID } from '../EventRulesForm'
+import {
+  DefaultSelect,
+  FormSelectField,
+  FormInputField,
+  FormInput,
+} from '../../../../../../components/Form';
+import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
+import withNormalizer, { NormalizerProps } from '../../../../../../components/Form/withNormalizer';
+import { FORM_ID } from '../EventRulesForm';
 import { EventRulesFormData } from '../../domain';
 import { IDatamartService } from '../../../../../../services/DatamartService';
 import { UserAccountCompartmentDatamartSelectionResource } from '../../../../../../models/datamart/DatamartResource';
@@ -28,26 +29,31 @@ interface MapStateToProps {
 }
 
 interface State {
-  compartments: UserAccountCompartmentDatamartSelectionResource[]
+  compartments: UserAccountCompartmentDatamartSelectionResource[];
 }
 
-type Props = UserIdentifierInsertionProps & InjectedIntlProps & ValidatorProps & NormalizerProps & MapStateToProps;
+type Props = UserIdentifierInsertionProps &
+  InjectedIntlProps &
+  ValidatorProps &
+  NormalizerProps &
+  MapStateToProps;
 
 class UserIdentifierInsertion extends React.Component<Props, State> {
-
   @lazyInject(TYPES.IDatamartService)
   private _datamartService: IDatamartService;
 
   constructor(props: Props) {
     super(props);
-    this.state = { compartments: [] }
+    this.state = { compartments: [] };
   }
 
   componentDidMount() {
     const { datamartId } = this.props;
-    this._datamartService.getUserAccountCompartmentDatamartSelectionResources(datamartId).then(res => {
-      this.setState({ compartments: res.data })
-    })
+    this._datamartService
+      .getUserAccountCompartmentDatamartSelectionResources(datamartId)
+      .then(res => {
+        this.setState({ compartments: res.data });
+      });
   }
 
   render() {
@@ -73,13 +79,14 @@ class UserIdentifierInsertion extends React.Component<Props, State> {
     ];
 
     const compartmentOptions = this.state.compartments.map(compartment => ({
-      title: compartment.compartment_id, value: compartment.compartment_id
+      title: compartment.compartment_id,
+      value: compartment.compartment_id,
     }));
 
     return (
       <div>
         <FormSelectField
-          name="model.identifier_creation"
+          name='model.identifier_creation'
           component={DefaultSelect}
           validate={[isRequired]}
           formItemProps={{
@@ -91,42 +98,40 @@ class UserIdentifierInsertion extends React.Component<Props, State> {
             title: formatMessage(messages.contentAutoMatchTooltip),
           }}
         />
-        { formValues.model.type === 'USER_IDENTIFIER_INSERTION' && 
-            formValues.model.identifier_creation === 'USER_ACCOUNT' &&
-          <FormSelectField
-            name="model.compartment_id"
-            component={DefaultSelect}
-            formItemProps={{
-              label: formatMessage(messages.userIdInsertRuleCompartmentSelectLabel),
-              required: true,
-            }}
-            options={compartmentOptions}
-            helpToolTipProps={{
-              title: formatMessage(messages.userIdInsertRuleCompartmentSelectTooltip),
-            }}
-            autoSetDefaultValue={false}
-            defaultValueTitle={formatMessage(messages.userIdInsertRuleCompartmentSelectDefault)}
-          />
-        }
+        {formValues.model.type === 'USER_IDENTIFIER_INSERTION' &&
+          formValues.model.identifier_creation === 'USER_ACCOUNT' && (
+            <FormSelectField
+              name='model.compartment_id'
+              component={DefaultSelect}
+              formItemProps={{
+                label: formatMessage(messages.userIdInsertRuleCompartmentSelectLabel),
+                required: true,
+              }}
+              options={compartmentOptions}
+              helpToolTipProps={{
+                title: formatMessage(messages.userIdInsertRuleCompartmentSelectTooltip),
+              }}
+              autoSetDefaultValue={false}
+              defaultValueTitle={formatMessage(messages.userIdInsertRuleCompartmentSelectDefault)}
+            />
+          )}
         <FormInputField
-            name="model.property_source"
-            component={FormInput}
-            validate={[isRequired]}
-            formItemProps={{
-              label: formatMessage(messages.contentUserIdentifierLabel),
-              required: true,
-            }}
-            inputProps={{
-              placeholder: formatMessage(
-                messages.contentUserIdentifierPlaceholder,
-              ),
-            }}
-            helpToolTipProps={{
-              title: formatMessage(messages.contentUserIdentifierTooltip),
-            }}
-          />
+          name='model.property_source'
+          component={FormInput}
+          validate={[isRequired]}
+          formItemProps={{
+            label: formatMessage(messages.contentUserIdentifierLabel),
+            required: true,
+          }}
+          inputProps={{
+            placeholder: formatMessage(messages.contentUserIdentifierPlaceholder),
+          }}
+          helpToolTipProps={{
+            title: formatMessage(messages.contentUserIdentifierTooltip),
+          }}
+        />
         <FormSelectField
-          name="model.hash_function"
+          name='model.hash_function'
           component={DefaultSelect}
           validate={[isRequired]}
           formItemProps={{
@@ -137,7 +142,7 @@ class UserIdentifierInsertion extends React.Component<Props, State> {
           helpToolTipProps={{
             title: formatMessage(messages.userIdInsertRuleHashFunctionSelectTooltop),
           }}
-        />        
+        />
       </div>
     );
   }
@@ -148,8 +153,8 @@ const mapStateToProps = (state: MicsReduxState) => ({
 });
 
 export default compose<Props, UserIdentifierInsertionProps>(
-  injectIntl, 
-  withValidators, 
+  injectIntl,
+  withValidators,
   withNormalizer,
   connect(mapStateToProps),
 )(UserIdentifierInsertion);

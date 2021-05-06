@@ -8,10 +8,7 @@ import {
   FILTERS_SEARCH_SETTINGS,
   KEYWORD_SEARCH_SETTINGS,
 } from '../utils/LocationSearchHelper';
-import {
-  DashboardType,
-  DashboardResource,
-} from '../models/dashboards/dashboards';
+import { DashboardType, DashboardResource } from '../models/dashboards/dashboards';
 import { TYPES } from '../constants/types';
 import { IDataFileService } from './DataFileService';
 import cuid from 'cuid';
@@ -35,7 +32,7 @@ export interface IDashboardService {
   getDashboards: (
     organisationId: string,
     datamartId: string,
-    type: 'HOME' | 'SEGMENT' ,
+    type: 'HOME' | 'SEGMENT',
     options?: GetDashboardsOptions,
   ) => Promise<DataListResponse<DashboardResource>>;
 
@@ -53,9 +50,7 @@ export interface IDashboardService {
     options?: GetDashboardsOptions,
   ) => Promise<DataListResponse<DashboardResource>>;
 
-  getDashboard: (
-    dashboardId: string,
-  ) => Promise<DataResponse<DashboardResource>>;
+  getDashboard: (dashboardId: string) => Promise<DataResponse<DashboardResource>>;
 }
 
 const readFile = (b: Blob): Promise<string> =>
@@ -70,27 +65,50 @@ const readFile = (b: Blob): Promise<string> =>
     reader.readAsText(b);
   });
 
-const dashboardsSchema = yup.array().of(yup.object().shape({
-  id: yup.string().required(),
-  type: yup.string().required(),
-  datamart_id: yup.string().required(),
-  name: yup.string().required(),
-  components: yup.array(yup.object().shape({
-    layout: yup.object().shape({
-      i: yup.string(),
-      x: yup.number().required(),
-      y: yup.number().required(),
-      w: yup.number().required(),
-      h: yup.number().required(),
-    }),
-    component: yup.object().required().shape({
-      id: yup.string().required(),
-      component_type: yup.string().required().oneOf(['MAP_BAR_CHART', 'MAP_PIE_CHART', 'DATE_AGGREGATION_CHART', 'COUNT', 'PERCENTAGE', 'GAUGE_PIE_CHART', 'MAP_STACKED_BAR_CHART', 'WORLD_MAP_CHART', 'COUNT_BAR_CHART', 'COUNT_PIE_CHART', 'TOP_INFO_COMPONENT', 'MAP_RADAR_CHART']),
-      title: yup.string().required(),
-      description: yup.string(),
-    })
-  }))
-}));
+const dashboardsSchema = yup.array().of(
+  yup.object().shape({
+    id: yup.string().required(),
+    type: yup.string().required(),
+    datamart_id: yup.string().required(),
+    name: yup.string().required(),
+    components: yup.array(
+      yup.object().shape({
+        layout: yup.object().shape({
+          i: yup.string(),
+          x: yup.number().required(),
+          y: yup.number().required(),
+          w: yup.number().required(),
+          h: yup.number().required(),
+        }),
+        component: yup
+          .object()
+          .required()
+          .shape({
+            id: yup.string().required(),
+            component_type: yup
+              .string()
+              .required()
+              .oneOf([
+                'MAP_BAR_CHART',
+                'MAP_PIE_CHART',
+                'DATE_AGGREGATION_CHART',
+                'COUNT',
+                'PERCENTAGE',
+                'GAUGE_PIE_CHART',
+                'MAP_STACKED_BAR_CHART',
+                'WORLD_MAP_CHART',
+                'COUNT_BAR_CHART',
+                'COUNT_PIE_CHART',
+                'TOP_INFO_COMPONENT',
+                'MAP_RADAR_CHART',
+              ]),
+            title: yup.string().required(),
+            description: yup.string(),
+          }),
+      }),
+    ),
+  }),
+);
 
 @injectable()
 export class DashboardService implements IDashboardService {
@@ -104,9 +122,7 @@ export class DashboardService implements IDashboardService {
     options: GetDashboardsOptions = {},
   ): Promise<DataListResponse<DashboardResource>> {
     const hardcodedDashboards = myDashboards.filter(
-      d =>
-        d.datamart_id === datamartId &&
-        (d.type === type),
+      d => d.datamart_id === datamartId && d.type === type,
     );
 
     return new Promise((resolve, reject) => {
@@ -124,26 +140,24 @@ export class DashboardService implements IDashboardService {
         .then((s: object) => {
           return dashboardsSchema.validate(s).then(v => {
             if ((v as any).name === 'ValidationError') {
-              throw new Error((v as any).message)
+              throw new Error((v as any).message);
             }
-            return v as any
-          })
+            return v as any;
+          });
         })
         .then(s => {
           return resolve({
             status: 'ok' as any,
             data: s as DashboardResource[],
-            count: hardcodedDashboards.filter(d => d.datamart_id === datamartId)
-              .length,
+            count: hardcodedDashboards.filter(d => d.datamart_id === datamartId).length,
           });
         })
         .catch(e => {
-          log.debug(e)
+          log.debug(e);
           return resolve({
             status: 'ok' as any,
             data: hardcodedDashboards as DashboardResource[],
-            count: hardcodedDashboards.filter(d => d.datamart_id === datamartId)
-              .length,
+            count: hardcodedDashboards.filter(d => d.datamart_id === datamartId).length,
           });
         });
     });
@@ -156,18 +170,20 @@ export class DashboardService implements IDashboardService {
     options: GetDashboardsOptions = {},
   ): Promise<DataListResponse<DashboardResource>> {
     const hardcodedDashboards = myDashboards.filter(
-      d =>
-        d.datamart_id === datamartId &&
-        (d.type === 'SEGMENT'),
+      d => d.datamart_id === datamartId && d.type === 'SEGMENT',
     );
 
     return new Promise((resolve, reject) => {
       return this._datafileService
         .getDatafileData(
           `mics://data_file/tenants/${organisationId}/dashboards/${datamartId}/SEGMENT-${segmentId}.json`,
-        ).then(
-          (d) => d, 
-          () => this._datafileService.getDatafileData(`mics://data_file/tenants/${organisationId}/dashboards/${datamartId}/SEGMENT.json`)
+        )
+        .then(
+          d => d,
+          () =>
+            this._datafileService.getDatafileData(
+              `mics://data_file/tenants/${organisationId}/dashboards/${datamartId}/SEGMENT.json`,
+            ),
         )
         .then((b: Blob) => {
           return readFile(b);
@@ -179,17 +195,16 @@ export class DashboardService implements IDashboardService {
         .then((s: object) => {
           return dashboardsSchema.validate(s).then(v => {
             if ((v as any).name === 'ValidationError') {
-              throw new Error((v as any).message)
+              throw new Error((v as any).message);
             }
-            return v as any
-          })
+            return v as any;
+          });
         })
         .then(s => {
           return resolve({
             status: 'ok' as any,
             data: s as DashboardResource[],
-            count: hardcodedDashboards.filter(d => d.datamart_id === datamartId)
-              .length,
+            count: hardcodedDashboards.filter(d => d.datamart_id === datamartId).length,
           });
         })
         .catch(e => {
@@ -197,8 +212,7 @@ export class DashboardService implements IDashboardService {
           return resolve({
             status: 'ok' as any,
             data: hardcodedDashboards as DashboardResource[],
-            count: hardcodedDashboards.filter(d => d.datamart_id === datamartId)
-              .length,
+            count: hardcodedDashboards.filter(d => d.datamart_id === datamartId).length,
           });
         });
     });
@@ -211,18 +225,20 @@ export class DashboardService implements IDashboardService {
     options: GetDashboardsOptions = {},
   ): Promise<DataListResponse<DashboardResource>> {
     const hardcodedDashboards = myDashboards.filter(
-      d =>
-        d.datamart_id === datamartId &&
-        (d.type === 'AUDIENCE_BUILDER'),
+      d => d.datamart_id === datamartId && d.type === 'AUDIENCE_BUILDER',
     );
 
     return new Promise((resolve, reject) => {
       return this._datafileService
         .getDatafileData(
           `mics://data_file/tenants/${organisationId}/dashboards/${datamartId}/AUDIENCE_BUILDER-${audienceBuilderId}.json`,
-        ).then(
-          (d) => d, 
-          () => this._datafileService.getDatafileData(`mics://data_file/tenants/${organisationId}/dashboards/${datamartId}/AUDIENCE_BUILDER.json`)
+        )
+        .then(
+          d => d,
+          () =>
+            this._datafileService.getDatafileData(
+              `mics://data_file/tenants/${organisationId}/dashboards/${datamartId}/AUDIENCE_BUILDER.json`,
+            ),
         )
         .then((b: Blob) => {
           return readFile(b);
@@ -234,17 +250,16 @@ export class DashboardService implements IDashboardService {
         .then((s: object) => {
           return dashboardsSchema.validate(s).then(v => {
             if ((v as any).name === 'ValidationError') {
-              throw new Error((v as any).message)
+              throw new Error((v as any).message);
             }
-            return v as any
-          })
+            return v as any;
+          });
         })
         .then(s => {
           return resolve({
             status: 'ok' as any,
             data: s as DashboardResource[],
-            count: hardcodedDashboards.filter(d => d.datamart_id === datamartId)
-              .length,
+            count: hardcodedDashboards.filter(d => d.datamart_id === datamartId).length,
           });
         })
         .catch(e => {
@@ -252,8 +267,7 @@ export class DashboardService implements IDashboardService {
           return resolve({
             status: 'ok' as any,
             data: hardcodedDashboards as DashboardResource[],
-            count: hardcodedDashboards.filter(d => d.datamart_id === datamartId)
-              .length,
+            count: hardcodedDashboards.filter(d => d.datamart_id === datamartId).length,
           });
         });
     });
@@ -279,7 +293,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -296,7 +310,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -312,7 +326,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -328,7 +342,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -344,7 +358,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -361,7 +375,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -380,7 +394,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -392,20 +406,14 @@ const myDashboards: DashboardResource[] = [
           component_type: 'COUNT_PIE_CHART',
           query_ids: ['25352', '25353', '25354', '25355', '25356'],
           labels_enabled: true,
-          plot_labels: [
-            'Page View',
-            'Basket View',
-            'Purchase',
-            'Search',
-            'Email Click',
-          ],
+          plot_labels: ['Page View', 'Basket View', 'Purchase', 'Search', 'Email Click'],
           title: "Nombre d'évènements web par typologie (30j)",
           show_legend: false,
         },
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -417,17 +425,14 @@ const myDashboards: DashboardResource[] = [
           component_type: 'COUNT_PIE_CHART',
           query_ids: ['25357', '25358'],
           labels_enabled: true,
-          plot_labels: [
-            'Contact CRM avec activités',
-            'Contact CRM sans activités',
-          ],
+          plot_labels: ['Contact CRM avec activités', 'Contact CRM sans activités'],
           title: 'Activité web des contacts CRM ',
           show_legend: false,
         },
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 12,
@@ -446,7 +451,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 12,
@@ -465,7 +470,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 12,
@@ -492,7 +497,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -509,7 +514,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -525,7 +530,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -541,7 +546,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -557,7 +562,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -574,7 +579,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -593,7 +598,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -605,20 +610,14 @@ const myDashboards: DashboardResource[] = [
           component_type: 'COUNT_PIE_CHART',
           query_ids: ['27836', '27837', '27838', '27839', '27840'],
           labels_enabled: true,
-          plot_labels: [
-            'Page View',
-            'Basket View',
-            'Purchase',
-            'Search',
-            'Email Click',
-          ],
+          plot_labels: ['Page View', 'Basket View', 'Purchase', 'Search', 'Email Click'],
           title: "Nombre d'évènements web par typologie (30j)",
           show_legend: false,
         },
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -630,17 +629,14 @@ const myDashboards: DashboardResource[] = [
           component_type: 'COUNT_PIE_CHART',
           query_ids: ['27841', '27842'],
           labels_enabled: true,
-          plot_labels: [
-            'Contact CRM avec activités',
-            'Contact CRM sans activités',
-          ],
+          plot_labels: ['Contact CRM avec activités', 'Contact CRM sans activités'],
           title: 'Activité web des contacts CRM ',
           show_legend: false,
         },
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 12,
@@ -659,7 +655,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 12,
@@ -678,7 +674,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 12,
@@ -705,7 +701,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -722,7 +718,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -738,7 +734,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -754,7 +750,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -770,7 +766,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -787,7 +783,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -806,7 +802,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -818,20 +814,14 @@ const myDashboards: DashboardResource[] = [
           component_type: 'COUNT_PIE_CHART',
           query_ids: ['27878', '27879', '27880', '27881', '27882'],
           labels_enabled: true,
-          plot_labels: [
-            'Page View',
-            'Basket View',
-            'Purchase',
-            'Search',
-            'Email Click',
-          ],
+          plot_labels: ['Page View', 'Basket View', 'Purchase', 'Search', 'Email Click'],
           title: "Nombre d'évènements web par typologie (30j)",
           show_legend: false,
         },
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -843,17 +833,14 @@ const myDashboards: DashboardResource[] = [
           component_type: 'COUNT_PIE_CHART',
           query_ids: ['27883', '27884'],
           labels_enabled: true,
-          plot_labels: [
-            'Contact CRM avec activités',
-            'Contact CRM sans activités',
-          ],
+          plot_labels: ['Contact CRM avec activités', 'Contact CRM sans activités'],
           title: 'Activité web des contacts CRM ',
           show_legend: false,
         },
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 12,
@@ -872,7 +859,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 12,
@@ -891,7 +878,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 12,
@@ -917,7 +904,13 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
-          i: cuid(),  h: 1, static: false, w: 3, x: 0, y: 0 },
+          i: cuid(),
+          h: 1,
+          static: false,
+          w: 3,
+          x: 0,
+          y: 0,
+        },
         component: {
           id: 1,
           component_type: 'PERCENTAGE',
@@ -928,7 +921,13 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(),  h: 1, static: false, w: 3, x: 3, y: 0 },
+          i: cuid(),
+          h: 1,
+          static: false,
+          w: 3,
+          x: 3,
+          y: 0,
+        },
         component: {
           id: 2,
           component_type: 'COUNT',
@@ -938,7 +937,13 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(),  h: 1, static: false, w: 3, x: 6, y: 0 },
+          i: cuid(),
+          h: 1,
+          static: false,
+          w: 3,
+          x: 6,
+          y: 0,
+        },
         component: {
           id: 3,
           component_type: 'COUNT',
@@ -948,7 +953,13 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(),  h: 1, static: false, w: 3, x: 9, y: 0 },
+          i: cuid(),
+          h: 1,
+          static: false,
+          w: 3,
+          x: 9,
+          y: 0,
+        },
         component: {
           id: 4,
           component_type: 'COUNT',
@@ -958,7 +969,13 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(),  h: 3, static: false, w: 6, x: 0, y: 1 },
+          i: cuid(),
+          h: 3,
+          static: false,
+          w: 6,
+          x: 0,
+          y: 1,
+        },
         component: {
           id: 5,
           component_type: 'MAP_PIE_CHART',
@@ -969,7 +986,13 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(),  h: 3, static: false, w: 6, x: 6, y: 1 },
+          i: cuid(),
+          h: 3,
+          static: false,
+          w: 6,
+          x: 6,
+          y: 1,
+        },
         component: {
           id: 5,
           component_type: 'COUNT_PIE_CHART',
@@ -982,18 +1005,18 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(),  h: 3, static: false, w: 6, x: 0, y: 4 },
+          i: cuid(),
+          h: 3,
+          static: false,
+          w: 6,
+          x: 0,
+          y: 4,
+        },
         component: {
           id: 5,
           component_type: 'COUNT_PIE_CHART',
           labels_enabled: true,
-          plot_labels: [
-            'Page View',
-            'Basket View',
-            'Purchase',
-            'Search',
-            'Email Click',
-          ],
+          plot_labels: ['Page View', 'Basket View', 'Purchase', 'Search', 'Email Click'],
           title: "Nombre d'évènements web par typologie (30j)",
           show_legend: false,
           query_ids: ['29527', '29528', '29530', '29533', '29534'],
@@ -1001,15 +1024,18 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(),  h: 3, static: false, w: 6, x: 6, y: 4 },
+          i: cuid(),
+          h: 3,
+          static: false,
+          w: 6,
+          x: 6,
+          y: 4,
+        },
         component: {
           id: 5,
           component_type: 'COUNT_PIE_CHART',
           labels_enabled: true,
-          plot_labels: [
-            'Contact CRM avec activités',
-            'Contact CRM sans activités',
-          ],
+          plot_labels: ['Contact CRM avec activités', 'Contact CRM sans activités'],
           title: 'Activité web des contacts CRM ',
           show_legend: false,
           query_ids: ['29535', '29537'],
@@ -1017,7 +1043,13 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(),  h: 3, static: false, w: 12, x: 0, y: 7 },
+          i: cuid(),
+          h: 3,
+          static: false,
+          w: 12,
+          x: 0,
+          y: 7,
+        },
         component: {
           id: 5,
           component_type: 'DATE_AGGREGATION_CHART',
@@ -1030,7 +1062,13 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(),  h: 3, static: false, w: 12, x: 0, y: 10 },
+          i: cuid(),
+          h: 3,
+          static: false,
+          w: 12,
+          x: 0,
+          y: 10,
+        },
         component: {
           id: 5,
           component_type: 'DATE_AGGREGATION_CHART',
@@ -1043,7 +1081,13 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(),  h: 3, static: false, w: 12, x: 0, y: 13 },
+          i: cuid(),
+          h: 3,
+          static: false,
+          w: 12,
+          x: 0,
+          y: 13,
+        },
         component: {
           id: 5,
           component_type: 'DATE_AGGREGATION_CHART',
@@ -1064,7 +1108,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -1081,7 +1125,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -1097,7 +1141,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -1113,7 +1157,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -1129,7 +1173,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -1146,7 +1190,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -1165,7 +1209,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -1176,13 +1220,7 @@ const myDashboards: DashboardResource[] = [
           id: 5,
           component_type: 'COUNT_PIE_CHART',
           labels_enabled: true,
-          plot_labels: [
-            'Page View',
-            'Basket View',
-            'Purchase',
-            'Search',
-            'Email Click',
-          ],
+          plot_labels: ['Page View', 'Basket View', 'Purchase', 'Search', 'Email Click'],
           title: "Nombre d'évènements web par typologie (30j)",
           show_legend: false,
           query_ids: ['29697', '29693', '29702', '29699', '29698'],
@@ -1190,7 +1228,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -1201,10 +1239,7 @@ const myDashboards: DashboardResource[] = [
           id: 5,
           component_type: 'COUNT_PIE_CHART',
           labels_enabled: true,
-          plot_labels: [
-            'Contact CRM avec activités',
-            'Contact CRM sans activités',
-          ],
+          plot_labels: ['Contact CRM avec activités', 'Contact CRM sans activités'],
           title: 'Activité web des contacts CRM ',
           show_legend: false,
           query_ids: ['29701', '29703'],
@@ -1212,7 +1247,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 12,
@@ -1231,7 +1266,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 12,
@@ -1250,7 +1285,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 12,
@@ -1277,7 +1312,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -1294,7 +1329,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -1310,7 +1345,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -1326,7 +1361,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -1342,7 +1377,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -1359,7 +1394,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -1378,7 +1413,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -1389,13 +1424,7 @@ const myDashboards: DashboardResource[] = [
           id: 5,
           component_type: 'COUNT_PIE_CHART',
           labels_enabled: true,
-          plot_labels: [
-            'Page View',
-            'Basket View',
-            'Purchase',
-            'Search',
-            'Email Click',
-          ],
+          plot_labels: ['Page View', 'Basket View', 'Purchase', 'Search', 'Email Click'],
           title: "Nombre d'évènements web par typologie (30j)",
           show_legend: false,
           query_ids: ['29722', '29721', '29719', '29726', '29723'],
@@ -1403,7 +1432,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -1414,10 +1443,7 @@ const myDashboards: DashboardResource[] = [
           id: 5,
           component_type: 'COUNT_PIE_CHART',
           labels_enabled: true,
-          plot_labels: [
-            'Contact CRM avec activités',
-            'Contact CRM sans activités',
-          ],
+          plot_labels: ['Contact CRM avec activités', 'Contact CRM sans activités'],
           title: 'Activité web des contacts CRM ',
           show_legend: false,
           query_ids: ['29724', '29728'],
@@ -1425,7 +1451,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 12,
@@ -1444,7 +1470,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 12,
@@ -1463,7 +1489,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 12,
@@ -1490,7 +1516,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -1507,7 +1533,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -1523,7 +1549,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -1539,7 +1565,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -1555,7 +1581,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -1572,7 +1598,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -1591,7 +1617,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -1602,13 +1628,7 @@ const myDashboards: DashboardResource[] = [
           id: 5,
           component_type: 'COUNT_PIE_CHART',
           labels_enabled: true,
-          plot_labels: [
-            'Page View',
-            'Basket View',
-            'Purchase',
-            'Search',
-            'Email Click',
-          ],
+          plot_labels: ['Page View', 'Basket View', 'Purchase', 'Search', 'Email Click'],
           title: "Nombre d'évènements web par typologie (30j)",
           show_legend: false,
           query_ids: ['29859', '29863', '29860', '29865', '29866'],
@@ -1616,7 +1636,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -1627,10 +1647,7 @@ const myDashboards: DashboardResource[] = [
           id: 5,
           component_type: 'COUNT_PIE_CHART',
           labels_enabled: true,
-          plot_labels: [
-            'Contact CRM avec activités',
-            'Contact CRM sans activités',
-          ],
+          plot_labels: ['Contact CRM avec activités', 'Contact CRM sans activités'],
           title: 'Activité web des contacts CRM ',
           show_legend: false,
           query_ids: ['29864', '29868'],
@@ -1638,7 +1655,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 12,
@@ -1657,7 +1674,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 12,
@@ -1676,7 +1693,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 12,
@@ -1703,7 +1720,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -1720,7 +1737,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -1736,7 +1753,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -1752,7 +1769,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -1768,7 +1785,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -1785,7 +1802,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -1804,7 +1821,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -1815,13 +1832,7 @@ const myDashboards: DashboardResource[] = [
           id: 5,
           component_type: 'COUNT_PIE_CHART',
           labels_enabled: true,
-          plot_labels: [
-            'Page View',
-            'Basket View',
-            'Purchase',
-            'Search',
-            'Email Click',
-          ],
+          plot_labels: ['Page View', 'Basket View', 'Purchase', 'Search', 'Email Click'],
           title: "Nombre d'évènements web par typologie (30j)",
           show_legend: false,
           query_ids: ['29765', '29770', '29769', '29768', '29771'],
@@ -1829,7 +1840,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -1840,10 +1851,7 @@ const myDashboards: DashboardResource[] = [
           id: 5,
           component_type: 'COUNT_PIE_CHART',
           labels_enabled: true,
-          plot_labels: [
-            'Contact CRM avec activités',
-            'Contact CRM sans activités',
-          ],
+          plot_labels: ['Contact CRM avec activités', 'Contact CRM sans activités'],
           title: 'Activité web des contacts CRM ',
           show_legend: false,
           query_ids: ['29772', '29773'],
@@ -1851,7 +1859,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 12,
@@ -1870,7 +1878,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 12,
@@ -1889,7 +1897,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 12,
@@ -1916,7 +1924,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -1933,7 +1941,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -1949,7 +1957,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -1965,7 +1973,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -1981,7 +1989,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -1998,7 +2006,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -2017,7 +2025,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -2028,13 +2036,7 @@ const myDashboards: DashboardResource[] = [
           id: 5,
           component_type: 'COUNT_PIE_CHART',
           labels_enabled: true,
-          plot_labels: [
-            'Page View',
-            'Basket View',
-            'Purchase',
-            'Search',
-            'Email Click',
-          ],
+          plot_labels: ['Page View', 'Basket View', 'Purchase', 'Search', 'Email Click'],
           title: "Nombre d'évènements web par typologie (30j)",
           show_legend: false,
           query_ids: ['29789', '29791', '29793', '29796', '29797'],
@@ -2042,7 +2044,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -2053,10 +2055,7 @@ const myDashboards: DashboardResource[] = [
           id: 5,
           component_type: 'COUNT_PIE_CHART',
           labels_enabled: true,
-          plot_labels: [
-            'Contact CRM avec activités',
-            'Contact CRM sans activités',
-          ],
+          plot_labels: ['Contact CRM avec activités', 'Contact CRM sans activités'],
           title: 'Activité web des contacts CRM ',
           show_legend: false,
           query_ids: ['29795', '29794'],
@@ -2064,7 +2063,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 12,
@@ -2083,7 +2082,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 12,
@@ -2102,7 +2101,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 12,
@@ -2129,7 +2128,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -2146,7 +2145,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -2162,7 +2161,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -2178,7 +2177,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -2194,7 +2193,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -2211,7 +2210,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -2230,7 +2229,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -2241,13 +2240,7 @@ const myDashboards: DashboardResource[] = [
           id: 5,
           component_type: 'COUNT_PIE_CHART',
           labels_enabled: true,
-          plot_labels: [
-            'Page View',
-            'Basket View',
-            'Purchase',
-            'Search',
-            'Email Click',
-          ],
+          plot_labels: ['Page View', 'Basket View', 'Purchase', 'Search', 'Email Click'],
           title: "Nombre d'évènements web par typologie (30j)",
           show_legend: false,
           query_ids: ['29811', '29812', '29815', '29818', '29821'],
@@ -2255,7 +2248,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -2266,10 +2259,7 @@ const myDashboards: DashboardResource[] = [
           id: 5,
           component_type: 'COUNT_PIE_CHART',
           labels_enabled: true,
-          plot_labels: [
-            'Contact CRM avec activités',
-            'Contact CRM sans activités',
-          ],
+          plot_labels: ['Contact CRM avec activités', 'Contact CRM sans activités'],
           title: 'Activité web des contacts CRM ',
           show_legend: false,
           query_ids: ['29817', '29820'],
@@ -2277,7 +2267,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 12,
@@ -2296,7 +2286,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 12,
@@ -2315,7 +2305,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 12,
@@ -2342,7 +2332,13 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
-          i: cuid(),  h: 1, static: false, w: 3, x: 0, y: 0 },
+          i: cuid(),
+          h: 1,
+          static: false,
+          w: 3,
+          x: 0,
+          y: 0,
+        },
         component: {
           id: 1,
           component_type: 'PERCENTAGE',
@@ -2353,7 +2349,13 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(),  h: 1, static: false, w: 3, x: 3, y: 0 },
+          i: cuid(),
+          h: 1,
+          static: false,
+          w: 3,
+          x: 3,
+          y: 0,
+        },
         component: {
           id: 2,
           component_type: 'COUNT',
@@ -2363,7 +2365,13 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(),  h: 1, static: false, w: 3, x: 6, y: 0 },
+          i: cuid(),
+          h: 1,
+          static: false,
+          w: 3,
+          x: 6,
+          y: 0,
+        },
         component: {
           id: 3,
           component_type: 'COUNT',
@@ -2373,7 +2381,13 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(),  h: 1, static: false, w: 3, x: 9, y: 0 },
+          i: cuid(),
+          h: 1,
+          static: false,
+          w: 3,
+          x: 9,
+          y: 0,
+        },
         component: {
           id: 4,
           component_type: 'COUNT',
@@ -2383,7 +2397,13 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(),  h: 3, static: false, w: 6, x: 0, y: 1 },
+          i: cuid(),
+          h: 3,
+          static: false,
+          w: 6,
+          x: 0,
+          y: 1,
+        },
         component: {
           id: 5,
           component_type: 'MAP_PIE_CHART',
@@ -2394,7 +2414,13 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(),  h: 3, static: false, w: 6, x: 6, y: 1 },
+          i: cuid(),
+          h: 3,
+          static: false,
+          w: 6,
+          x: 6,
+          y: 1,
+        },
         component: {
           id: 5,
           component_type: 'COUNT_PIE_CHART',
@@ -2407,18 +2433,18 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(),  h: 3, static: false, w: 6, x: 0, y: 4 },
+          i: cuid(),
+          h: 3,
+          static: false,
+          w: 6,
+          x: 0,
+          y: 4,
+        },
         component: {
           id: 5,
           component_type: 'COUNT_PIE_CHART',
           labels_enabled: true,
-          plot_labels: [
-            'Page View',
-            'Basket View',
-            'Purchase',
-            'Search',
-            'Email Click',
-          ],
+          plot_labels: ['Page View', 'Basket View', 'Purchase', 'Search', 'Email Click'],
           title: "Nombre d'évènements web par typologie (30j)",
           show_legend: false,
           query_ids: ['32033', '32036', '32035', '32037', '32034'],
@@ -2426,15 +2452,18 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(),  h: 3, static: false, w: 6, x: 6, y: 4 },
+          i: cuid(),
+          h: 3,
+          static: false,
+          w: 6,
+          x: 6,
+          y: 4,
+        },
         component: {
           id: 5,
           component_type: 'COUNT_PIE_CHART',
           labels_enabled: true,
-          plot_labels: [
-            'Contact CRM avec activités',
-            'Contact CRM sans activités',
-          ],
+          plot_labels: ['Contact CRM avec activités', 'Contact CRM sans activités'],
           title: 'Activité web des contacts CRM ',
           show_legend: false,
           query_ids: ['32038', '32039'],
@@ -2442,7 +2471,13 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(),  h: 3, static: false, w: 12, x: 0, y: 7 },
+          i: cuid(),
+          h: 3,
+          static: false,
+          w: 12,
+          x: 0,
+          y: 7,
+        },
         component: {
           id: 5,
           component_type: 'DATE_AGGREGATION_CHART',
@@ -2455,7 +2490,13 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(),  h: 3, static: false, w: 12, x: 0, y: 10 },
+          i: cuid(),
+          h: 3,
+          static: false,
+          w: 12,
+          x: 0,
+          y: 10,
+        },
         component: {
           id: 5,
           component_type: 'DATE_AGGREGATION_CHART',
@@ -2468,7 +2509,13 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(),  h: 3, static: false, w: 12, x: 0, y: 13 },
+          i: cuid(),
+          h: 3,
+          static: false,
+          w: 12,
+          x: 0,
+          y: 13,
+        },
         component: {
           id: 5,
           component_type: 'DATE_AGGREGATION_CHART',
@@ -2490,7 +2537,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -2506,7 +2553,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -2522,7 +2569,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -2538,7 +2585,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -2554,7 +2601,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -2571,7 +2618,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -2588,7 +2635,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 4,
@@ -2605,7 +2652,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 4,
@@ -2624,7 +2671,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 4,
@@ -2649,7 +2696,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 4,
@@ -2665,7 +2712,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 4,
@@ -2681,7 +2728,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 4,
@@ -2697,7 +2744,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -2714,7 +2761,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -2731,7 +2778,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 4,
@@ -2748,7 +2795,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 4,
@@ -2767,7 +2814,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 4,
@@ -2792,7 +2839,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -2808,7 +2855,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -2824,7 +2871,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -2840,7 +2887,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 3,
@@ -2856,7 +2903,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -2873,7 +2920,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -2890,7 +2937,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 4,
@@ -2907,7 +2954,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 4,
@@ -2926,7 +2973,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 4,
@@ -2951,7 +2998,7 @@ const myDashboards: DashboardResource[] = [
     components: [
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 4,
@@ -2967,7 +3014,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 4,
@@ -2983,7 +3030,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 1,
           static: false,
           w: 4,
@@ -2999,7 +3046,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -3016,7 +3063,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -3033,7 +3080,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 4,
@@ -3050,7 +3097,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 4,
@@ -3069,7 +3116,7 @@ const myDashboards: DashboardResource[] = [
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 4,
@@ -3087,764 +3134,626 @@ const myDashboards: DashboardResource[] = [
     ],
   },
   {
-    "id": "16",
-    "name": "Home",
-    "type": "HOME",
-    "components": [
-      {
-        "layout": {
-          "i": cuid(),
-          "h": 1,
-          "static": false,
-          "w": 3,
-          "x": 0,
-          "y": 0
-        },
-        "component": {
-          "id": 1,
-          "component_type": "PERCENTAGE",
-          "title": "Pourcentage de visites reconnues (30j)",
-          "query_id": "33033",
-          "total_query_id": "33037"
-        }
-      },
-      {
-        "layout": {
-          "i": cuid(),
-          "h": 1,
-          "static": false,
-          "w": 3,
-          "x": 3,
-          "y": 0
-        },
-        "component": {
-          "id": 2,
-          "component_type": "COUNT",
-          "title": "Nombre de tickets global",
-          "query_id": "33032"
-        }
-      },
-      {
-        "layout": {
-          "i": cuid(),
-          "h": 1,
-          "static": false,
-          "w": 3,
-          "x": 6,
-          "y": 0
-        },
-        "component": {
-          "id": 3,
-          "component_type": "COUNT",
-          "title": "Nombre de contacts CRM",
-          "query_id": "33034"
-        }
-      },
-      {
-        "layout": {
-          "i": cuid(),
-          "h": 1,
-          "static": false,
-          "w": 3,
-          "x": 9,
-          "y": 0
-        },
-        "component": {
-          "id": 4,
-          "component_type": "COUNT",
-          "title": "Nombre de UserPoints web",
-          "query_id": "33036"
-        }
-      },
-      {
-        "layout": {
-          "i": cuid(),
-          "h": 3,
-          "static": false,
-          "w": 6,
-          "x": 0,
-          "y": 1
-        },
-        "component": {
-          "id": 5,
-          "component_type": "MAP_PIE_CHART",
-          "title": "Répartion des visites par type de profil matching (30j)",
-          "show_legend": true,
-          "query_id": "33035"
-        }
-      },
-      {
-        "layout": {
-          "i": cuid(),
-          "h": 3,
-          "static": false,
-          "w": 6,
-          "x": 6,
-          "y": 1
-        },
-        "component": {
-          "id": 5,
-          "component_type": "COUNT_PIE_CHART",
-          "labels_enabled": true,
-          "plot_labels": [
-            "2nd",
-            "1st_email_click",
-            "1st logged"
-          ],
-          "title": "Nombre de user par type de profil matching (30j)",
-          "show_legend": false,
-          "query_ids": [
-            "33039",
-            "33041",
-            "33040"
-          ]
-        }
-      },
-      {
-        "layout": {
-          "i": cuid(),
-          "h": 3,
-          "static": false,
-          "w": 6,
-          "x": 0,
-          "y": 4
-        },
-        "component": {
-          "id": 5,
-          "component_type": "COUNT_PIE_CHART",
-          "labels_enabled": true,
-          "plot_labels": [
-            "Page View",
-            "Basket View",
-            "Purchase",
-            "Search",
-            "Email Click"
-          ],
-          "title": "Nombre d'évènements web par typologie (30j)",
-          "show_legend": false,
-          "query_ids": [
-            "33042",
-            "33038",
-            "33043",
-            "33045",
-            "33047"
-          ]
-        }
-      },
-      {
-        "layout": {
-          "i": cuid(),
-          "h": 3,
-          "static": false,
-          "w": 6,
-          "x": 6,
-          "y": 4
-        },
-        "component": {
-          "id": 5,
-          "component_type": "COUNT_PIE_CHART",
-          "labels_enabled": true,
-          "plot_labels": [
-            "Contact CRM avec activités",
-            "Contact CRM sans activités"
-          ],
-          "title": "Activité web des contacts CRM ",
-          "show_legend": false,
-          "query_ids": [
-            "33044",
-            "33046"
-          ]
-        }
-      },
-      {
-        "layout": {
-          "i": cuid(),
-          "h": 3,
-          "static": false,
-          "w": 12,
-          "x": 0,
-          "y": 7
-        },
-        "component": {
-          "id": 5,
-          "component_type": "DATE_AGGREGATION_CHART",
-          "plot_labels": [
-            "email clicks",
-            "basket view",
-            "purchase",
-            "search"
-          ],
-          "title": "Nombre d'évènements web par jour par typologie (30j)",
-          "labels_enabled": true,
-          "format": "YYYY/MM/DD",
-          "query_ids": [
-            "33048",
-            "33049",
-            "33050",
-            "33052"
-          ]
-        }
-      },
-      {
-        "layout": {
-          "i": cuid(),
-          "h": 3,
-          "static": false,
-          "w": 12,
-          "x": 0,
-          "y": 10
-        },
-        "component": {
-          "id": 5,
-          "component_type": "DATE_AGGREGATION_CHART",
-          "plot_labels": [
-            "1st",
-            "2nd"
-          ],
-          "title": "Nombre de visites par jour par type de profil matching (30j)",
-          "labels_enabled": true,
-          "format": "YYYY/MM/DD",
-          "query_ids": [
-            "33053",
-            "33051"
-          ]
-        }
-      },
-      {
-        "layout": {
-          "i": cuid(),
-          "h": 3,
-          "static": false,
-          "w": 12,
-          "x": 0,
-          "y": 13
-        },
-        "component": {
-          "id": 5,
-          "component_type": "DATE_AGGREGATION_CHART",
-          "plot_labels": [
-            "tickets"
-          ],
-          "title": "Nombre de tickets réalisés par les contacts CRM",
-          "labels_enabled": true,
-          "format": "YYYY/MM/DD",
-          "query_ids": [
-            "33054"
-          ]
-        }
-      }
-    ],
-    "datamart_id": "1433"
-  },
-  {
-    "id": "17",
-    "name": "Home",
-    "type": "HOME",
-    "components": [
-      {
-        "layout": {
-          "i": cuid(),
-          "h": 1,
-          "static": false,
-          "w": 3,
-          "x": 0,
-          "y": 0
-        },
-        "component": {
-          "id": 1,
-          "component_type": "PERCENTAGE",
-          "title": "Pourcentage de visites reconnues (30j)",
-          "query_id": "36419",
-          "total_query_id": "36415"
-        }
-      },
-      {
-        "layout": {
-          "i": cuid(),
-          "h": 1,
-          "static": false,
-          "w": 3,
-          "x": 3,
-          "y": 0
-        },
-        "component": {
-          "id": 2,
-          "component_type": "COUNT",
-          "title": "Nombre de tickets global",
-          "query_id": "36416"
-        }
-      },
-      {
-        "layout": {
-          "i": cuid(),
-          "h": 1,
-          "static": false,
-          "w": 3,
-          "x": 6,
-          "y": 0
-        },
-        "component": {
-          "id": 3,
-          "component_type": "COUNT",
-          "title": "Nombre de contacts CRM",
-          "query_id": "36414"
-        }
-      },
-      {
-        "layout": {
-          "i": cuid(),
-          "h": 1,
-          "static": false,
-          "w": 3,
-          "x": 9,
-          "y": 0
-        },
-        "component": {
-          "id": 4,
-          "component_type": "COUNT",
-          "title": "Nombre de UserPoints web",
-          "query_id": "36413"
-        }
-      },
-      {
-        "layout": {
-          "i": cuid(),
-          "h": 3,
-          "static": false,
-          "w": 6,
-          "x": 0,
-          "y": 1
-        },
-        "component": {
-          "id": 5,
-          "component_type": "MAP_PIE_CHART",
-          "title": "Répartition des visites par type de profil matching (30j)",
-          "show_legend": true,
-          "query_id": "36417"
-        }
-      },
-      {
-        "layout": {
-          "i": cuid(),
-          "h": 3,
-          "static": false,
-          "w": 6,
-          "x": 6,
-          "y": 1
-        },
-        "component": {
-          "id": 5,
-          "component_type": "COUNT_PIE_CHART",
-          "labels_enabled": true,
-          "plot_labels": [
-            "2nd",
-            "1st_email_click",
-            "1st logged"
-          ],
-          "title": "Nombre de users par type de profil matching (30j)",
-          "show_legend": false,
-          "query_ids": [
-            "36420",
-            "36418",
-            "36423"
-          ]
-        }
-      },
-      {
-        "layout": {
-          "i": cuid(),
-          "h": 3,
-          "static": false,
-          "w": 6,
-          "x": 0,
-          "y": 4
-        },
-        "component": {
-          "id": 5,
-          "component_type": "COUNT_PIE_CHART",
-          "labels_enabled": true,
-          "plot_labels": [
-            "Page View",
-            "Basket View",
-            "Purchase",
-            "Search",
-            "Email Click"
-          ],
-          "title": "Nombre d'évènements web par typologie (30j)",
-          "show_legend": false,
-          "query_ids": [
-            "36421",
-            "36422",
-            "36424",
-            "36429",
-            "36425"
-          ]
-        }
-      },
-      {
-        "layout": {
-          "i": cuid(),
-          "h": 3,
-          "static": false,
-          "w": 6,
-          "x": 6,
-          "y": 4
-        },
-        "component": {
-          "id": 5,
-          "component_type": "COUNT_PIE_CHART",
-          "labels_enabled": true,
-          "plot_labels": [
-            "Contact CRM avec activités",
-            "Contact CRM sans activités"
-          ],
-          "title": "Activité web des contacts CRM ",
-          "show_legend": false,
-          "query_ids": [
-            "36426",
-            "36427"
-          ]
-        }
-      },
-      {
-        "layout": {
-          "i": cuid(),
-          "h": 3,
-          "static": false,
-          "w": 12,
-          "x": 0,
-          "y": 7
-        },
-        "component": {
-          "id": 5,
-          "component_type": "DATE_AGGREGATION_CHART",
-          "plot_labels": [
-            "email clicks",
-            "basket view",
-            "purchase",
-            "search"
-          ],
-          "title": "Nombre d'évènements web par jour par typologie (30j)",
-          "labels_enabled": true,
-          "format": "YYYY/MM/DD",
-          "query_ids": [
-            "36428",
-            "36430",
-            "36433",
-            "36431"
-          ]
-        }
-      },
-      {
-        "layout": {
-          "i": cuid(),
-          "h": 3,
-          "static": false,
-          "w": 12,
-          "x": 0,
-          "y": 10
-        },
-        "component": {
-          "id": 5,
-          "component_type": "DATE_AGGREGATION_CHART",
-          "plot_labels": [
-            "1st",
-            "2nd"
-          ],
-          "title": "Nombre de visites par jour par type de profil matching (30j)",
-          "labels_enabled": true,
-          "format": "YYYY/MM/DD",
-          "query_ids": [
-            "36432",
-            "36434"
-          ]
-        }
-      },
-      {
-        "layout": {
-          "i": cuid(),
-          "h": 3,
-          "static": false,
-          "w": 12,
-          "x": 0,
-          "y": 13
-        },
-        "component": {
-          "id": 5,
-          "component_type": "DATE_AGGREGATION_CHART",
-          "plot_labels": [
-            "tickets"
-          ],
-          "title": "Nombre de tickets réalisés par les contacts CRM",
-          "labels_enabled": true,
-          "format": "YYYY/MM/DD",
-          "query_ids": [
-            "36435"
-          ]
-        }
-      }
-    ],
-    "datamart_id": "1458"
-  },
-  {
-    "id": "18",
-    "name": "Home",
-    "type": "HOME",
-    "components": [
-      {
-        "layout": {
-          "i": cuid(),
-          "h": 1,
-          "static": false,
-          "w": 3,
-          "x": 0,
-          "y": 0
-        },
-        "component": {
-          "id": 1,
-          "component_type": "PERCENTAGE",
-          "title": "Pourcentage de visites reconnues (30j)",
-          "query_id": "37756",
-          "total_query_id": "37760"
-        }
-      },
-      {
-        "layout": {
-          "i": cuid(),
-          "h": 1,
-          "static": false,
-          "w": 3,
-          "x": 3,
-          "y": 0
-        },
-        "component": {
-          "id": 2,
-          "component_type": "COUNT",
-          "title": "Nombre de tickets global",
-          "query_id": "37758"
-        }
-      },
-      {
-        "layout": {
-          "i": cuid(),
-          "h": 1,
-          "static": false,
-          "w": 3,
-          "x": 6,
-          "y": 0
-        },
-        "component": {
-          "id": 3,
-          "component_type": "COUNT",
-          "title": "Nombre de contacts CRM",
-          "query_id": "37759"
-        }
-      },
-      {
-        "layout": {
-          "i": cuid(),
-          "h": 1,
-          "static": false,
-          "w": 3,
-          "x": 9,
-          "y": 0
-        },
-        "component": {
-          "id": 4,
-          "component_type": "COUNT",
-          "title": "Nombre de UserPoints web",
-          "query_id": "37757"
-        }
-      },
-      {
-        "layout": {
-          "i": cuid(),
-          "h": 3,
-          "static": false,
-          "w": 6,
-          "x": 0,
-          "y": 1
-        },
-        "component": {
-          "id": 5,
-          "component_type": "MAP_PIE_CHART",
-          "title": "Répartition des visites par type de profil matching (30j)",
-          "show_legend": true,
-          "query_id": "37761"
-        }
-      },
-      {
-        "layout": {
-          "i": cuid(),
-          "h": 3,
-          "static": false,
-          "w": 6,
-          "x": 6,
-          "y": 1
-        },
-        "component": {
-          "id": 5,
-          "component_type": "COUNT_PIE_CHART",
-          "labels_enabled": true,
-          "plot_labels": [
-            "2nd",
-            "1st_email_click",
-            "1st logged"
-          ],
-          "title": "Nombre de users par type de profil matching (30j)",
-          "show_legend": false,
-          "query_ids": [
-            "37762",
-            "37764",
-            "37763"
-          ]
-        }
-      },
-      {
-        "layout": {
-          "i": cuid(),
-          "h": 3,
-          "static": false,
-          "w": 6,
-          "x": 0,
-          "y": 4
-        },
-        "component": {
-          "id": 5,
-          "component_type": "COUNT_PIE_CHART",
-          "labels_enabled": true,
-          "plot_labels": [
-            "Page View",
-            "Basket View",
-            "Purchase",
-            "Search",
-            "Email Click"
-          ],
-          "title": "Nombre d'évènements web par typologie (30j)",
-          "show_legend": false,
-          "query_ids": [
-            "37765",
-            "37766",
-            "37767",
-            "37768",
-            "37771"
-          ]
-        }
-      },
-      {
-        "layout": {
-          "i": cuid(),
-          "h": 3,
-          "static": false,
-          "w": 6,
-          "x": 6,
-          "y": 4
-        },
-        "component": {
-          "id": 5,
-          "component_type": "COUNT_PIE_CHART",
-          "labels_enabled": true,
-          "plot_labels": [
-            "Contact CRM avec activités",
-            "Contact CRM sans activités"
-          ],
-          "title": "Activité web des contacts CRM ",
-          "show_legend": false,
-          "query_ids": [
-            "37772",
-            "37769"
-          ]
-        }
-      },
-      {
-        "layout": {
-          "i": cuid(),
-          "h": 3,
-          "static": false,
-          "w": 12,
-          "x": 0,
-          "y": 7
-        },
-        "component": {
-          "id": 5,
-          "component_type": "DATE_AGGREGATION_CHART",
-          "plot_labels": [
-            "email clicks",
-            "basket view",
-            "purchase",
-            "search"
-          ],
-          "title": "Nombre d'évènements web par jour par typologie (30j)",
-          "labels_enabled": true,
-          "format": "YYYY/MM/DD",
-          "query_ids": [
-            "37770",
-            "37774",
-            "37773",
-            "37776"
-          ]
-        }
-      },
-      {
-        "layout": {
-          "i": cuid(),
-          "h": 3,
-          "static": false,
-          "w": 12,
-          "x": 0,
-          "y": 10
-        },
-        "component": {
-          "id": 5,
-          "component_type": "DATE_AGGREGATION_CHART",
-          "plot_labels": [
-            "1st",
-            "2nd"
-          ],
-          "title": "Nombre de visites par jour par type de profil matching (30j)",
-          "labels_enabled": true,
-          "format": "YYYY/MM/DD",
-          "query_ids": [
-            "37775",
-            "37778"
-          ]
-        }
-      },
-      {
-        "layout": {
-          "i": cuid(),
-          "h": 3,
-          "static": false,
-          "w": 12,
-          "x": 0,
-          "y": 13
-        },
-        "component": {
-          "id": 5,
-          "component_type": "DATE_AGGREGATION_CHART",
-          "plot_labels": [
-            "tickets"
-          ],
-          "title": "Nombre de tickets réalisés par les contacts CRM",
-          "labels_enabled": true,
-          "format": "YYYY/MM/DD",
-          "query_ids": [
-            "37777"
-          ]
-        }
-      }
-    ],
-    "datamart_id": "1309"
-  },
-  {
-    "id": "19",
-    "name": "Demographics",
-    "type": "HOME",
-    "datamart_id": "1459",
+    id: '16',
+    name: 'Home',
+    type: 'HOME',
     components: [
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
+          h: 1,
+          static: false,
+          w: 3,
+          x: 0,
+          y: 0,
+        },
+        component: {
+          id: 1,
+          component_type: 'PERCENTAGE',
+          title: 'Pourcentage de visites reconnues (30j)',
+          query_id: '33033',
+          total_query_id: '33037',
+        },
+      },
+      {
+        layout: {
+          i: cuid(),
+          h: 1,
+          static: false,
+          w: 3,
+          x: 3,
+          y: 0,
+        },
+        component: {
+          id: 2,
+          component_type: 'COUNT',
+          title: 'Nombre de tickets global',
+          query_id: '33032',
+        },
+      },
+      {
+        layout: {
+          i: cuid(),
+          h: 1,
+          static: false,
+          w: 3,
+          x: 6,
+          y: 0,
+        },
+        component: {
+          id: 3,
+          component_type: 'COUNT',
+          title: 'Nombre de contacts CRM',
+          query_id: '33034',
+        },
+      },
+      {
+        layout: {
+          i: cuid(),
+          h: 1,
+          static: false,
+          w: 3,
+          x: 9,
+          y: 0,
+        },
+        component: {
+          id: 4,
+          component_type: 'COUNT',
+          title: 'Nombre de UserPoints web',
+          query_id: '33036',
+        },
+      },
+      {
+        layout: {
+          i: cuid(),
+          h: 3,
+          static: false,
+          w: 6,
+          x: 0,
+          y: 1,
+        },
+        component: {
+          id: 5,
+          component_type: 'MAP_PIE_CHART',
+          title: 'Répartion des visites par type de profil matching (30j)',
+          show_legend: true,
+          query_id: '33035',
+        },
+      },
+      {
+        layout: {
+          i: cuid(),
+          h: 3,
+          static: false,
+          w: 6,
+          x: 6,
+          y: 1,
+        },
+        component: {
+          id: 5,
+          component_type: 'COUNT_PIE_CHART',
+          labels_enabled: true,
+          plot_labels: ['2nd', '1st_email_click', '1st logged'],
+          title: 'Nombre de user par type de profil matching (30j)',
+          show_legend: false,
+          query_ids: ['33039', '33041', '33040'],
+        },
+      },
+      {
+        layout: {
+          i: cuid(),
+          h: 3,
+          static: false,
+          w: 6,
+          x: 0,
+          y: 4,
+        },
+        component: {
+          id: 5,
+          component_type: 'COUNT_PIE_CHART',
+          labels_enabled: true,
+          plot_labels: ['Page View', 'Basket View', 'Purchase', 'Search', 'Email Click'],
+          title: "Nombre d'évènements web par typologie (30j)",
+          show_legend: false,
+          query_ids: ['33042', '33038', '33043', '33045', '33047'],
+        },
+      },
+      {
+        layout: {
+          i: cuid(),
+          h: 3,
+          static: false,
+          w: 6,
+          x: 6,
+          y: 4,
+        },
+        component: {
+          id: 5,
+          component_type: 'COUNT_PIE_CHART',
+          labels_enabled: true,
+          plot_labels: ['Contact CRM avec activités', 'Contact CRM sans activités'],
+          title: 'Activité web des contacts CRM ',
+          show_legend: false,
+          query_ids: ['33044', '33046'],
+        },
+      },
+      {
+        layout: {
+          i: cuid(),
+          h: 3,
+          static: false,
+          w: 12,
+          x: 0,
+          y: 7,
+        },
+        component: {
+          id: 5,
+          component_type: 'DATE_AGGREGATION_CHART',
+          plot_labels: ['email clicks', 'basket view', 'purchase', 'search'],
+          title: "Nombre d'évènements web par jour par typologie (30j)",
+          labels_enabled: true,
+          format: 'YYYY/MM/DD',
+          query_ids: ['33048', '33049', '33050', '33052'],
+        },
+      },
+      {
+        layout: {
+          i: cuid(),
+          h: 3,
+          static: false,
+          w: 12,
+          x: 0,
+          y: 10,
+        },
+        component: {
+          id: 5,
+          component_type: 'DATE_AGGREGATION_CHART',
+          plot_labels: ['1st', '2nd'],
+          title: 'Nombre de visites par jour par type de profil matching (30j)',
+          labels_enabled: true,
+          format: 'YYYY/MM/DD',
+          query_ids: ['33053', '33051'],
+        },
+      },
+      {
+        layout: {
+          i: cuid(),
+          h: 3,
+          static: false,
+          w: 12,
+          x: 0,
+          y: 13,
+        },
+        component: {
+          id: 5,
+          component_type: 'DATE_AGGREGATION_CHART',
+          plot_labels: ['tickets'],
+          title: 'Nombre de tickets réalisés par les contacts CRM',
+          labels_enabled: true,
+          format: 'YYYY/MM/DD',
+          query_ids: ['33054'],
+        },
+      },
+    ],
+    datamart_id: '1433',
+  },
+  {
+    id: '17',
+    name: 'Home',
+    type: 'HOME',
+    components: [
+      {
+        layout: {
+          i: cuid(),
+          h: 1,
+          static: false,
+          w: 3,
+          x: 0,
+          y: 0,
+        },
+        component: {
+          id: 1,
+          component_type: 'PERCENTAGE',
+          title: 'Pourcentage de visites reconnues (30j)',
+          query_id: '36419',
+          total_query_id: '36415',
+        },
+      },
+      {
+        layout: {
+          i: cuid(),
+          h: 1,
+          static: false,
+          w: 3,
+          x: 3,
+          y: 0,
+        },
+        component: {
+          id: 2,
+          component_type: 'COUNT',
+          title: 'Nombre de tickets global',
+          query_id: '36416',
+        },
+      },
+      {
+        layout: {
+          i: cuid(),
+          h: 1,
+          static: false,
+          w: 3,
+          x: 6,
+          y: 0,
+        },
+        component: {
+          id: 3,
+          component_type: 'COUNT',
+          title: 'Nombre de contacts CRM',
+          query_id: '36414',
+        },
+      },
+      {
+        layout: {
+          i: cuid(),
+          h: 1,
+          static: false,
+          w: 3,
+          x: 9,
+          y: 0,
+        },
+        component: {
+          id: 4,
+          component_type: 'COUNT',
+          title: 'Nombre de UserPoints web',
+          query_id: '36413',
+        },
+      },
+      {
+        layout: {
+          i: cuid(),
+          h: 3,
+          static: false,
+          w: 6,
+          x: 0,
+          y: 1,
+        },
+        component: {
+          id: 5,
+          component_type: 'MAP_PIE_CHART',
+          title: 'Répartition des visites par type de profil matching (30j)',
+          show_legend: true,
+          query_id: '36417',
+        },
+      },
+      {
+        layout: {
+          i: cuid(),
+          h: 3,
+          static: false,
+          w: 6,
+          x: 6,
+          y: 1,
+        },
+        component: {
+          id: 5,
+          component_type: 'COUNT_PIE_CHART',
+          labels_enabled: true,
+          plot_labels: ['2nd', '1st_email_click', '1st logged'],
+          title: 'Nombre de users par type de profil matching (30j)',
+          show_legend: false,
+          query_ids: ['36420', '36418', '36423'],
+        },
+      },
+      {
+        layout: {
+          i: cuid(),
+          h: 3,
+          static: false,
+          w: 6,
+          x: 0,
+          y: 4,
+        },
+        component: {
+          id: 5,
+          component_type: 'COUNT_PIE_CHART',
+          labels_enabled: true,
+          plot_labels: ['Page View', 'Basket View', 'Purchase', 'Search', 'Email Click'],
+          title: "Nombre d'évènements web par typologie (30j)",
+          show_legend: false,
+          query_ids: ['36421', '36422', '36424', '36429', '36425'],
+        },
+      },
+      {
+        layout: {
+          i: cuid(),
+          h: 3,
+          static: false,
+          w: 6,
+          x: 6,
+          y: 4,
+        },
+        component: {
+          id: 5,
+          component_type: 'COUNT_PIE_CHART',
+          labels_enabled: true,
+          plot_labels: ['Contact CRM avec activités', 'Contact CRM sans activités'],
+          title: 'Activité web des contacts CRM ',
+          show_legend: false,
+          query_ids: ['36426', '36427'],
+        },
+      },
+      {
+        layout: {
+          i: cuid(),
+          h: 3,
+          static: false,
+          w: 12,
+          x: 0,
+          y: 7,
+        },
+        component: {
+          id: 5,
+          component_type: 'DATE_AGGREGATION_CHART',
+          plot_labels: ['email clicks', 'basket view', 'purchase', 'search'],
+          title: "Nombre d'évènements web par jour par typologie (30j)",
+          labels_enabled: true,
+          format: 'YYYY/MM/DD',
+          query_ids: ['36428', '36430', '36433', '36431'],
+        },
+      },
+      {
+        layout: {
+          i: cuid(),
+          h: 3,
+          static: false,
+          w: 12,
+          x: 0,
+          y: 10,
+        },
+        component: {
+          id: 5,
+          component_type: 'DATE_AGGREGATION_CHART',
+          plot_labels: ['1st', '2nd'],
+          title: 'Nombre de visites par jour par type de profil matching (30j)',
+          labels_enabled: true,
+          format: 'YYYY/MM/DD',
+          query_ids: ['36432', '36434'],
+        },
+      },
+      {
+        layout: {
+          i: cuid(),
+          h: 3,
+          static: false,
+          w: 12,
+          x: 0,
+          y: 13,
+        },
+        component: {
+          id: 5,
+          component_type: 'DATE_AGGREGATION_CHART',
+          plot_labels: ['tickets'],
+          title: 'Nombre de tickets réalisés par les contacts CRM',
+          labels_enabled: true,
+          format: 'YYYY/MM/DD',
+          query_ids: ['36435'],
+        },
+      },
+    ],
+    datamart_id: '1458',
+  },
+  {
+    id: '18',
+    name: 'Home',
+    type: 'HOME',
+    components: [
+      {
+        layout: {
+          i: cuid(),
+          h: 1,
+          static: false,
+          w: 3,
+          x: 0,
+          y: 0,
+        },
+        component: {
+          id: 1,
+          component_type: 'PERCENTAGE',
+          title: 'Pourcentage de visites reconnues (30j)',
+          query_id: '37756',
+          total_query_id: '37760',
+        },
+      },
+      {
+        layout: {
+          i: cuid(),
+          h: 1,
+          static: false,
+          w: 3,
+          x: 3,
+          y: 0,
+        },
+        component: {
+          id: 2,
+          component_type: 'COUNT',
+          title: 'Nombre de tickets global',
+          query_id: '37758',
+        },
+      },
+      {
+        layout: {
+          i: cuid(),
+          h: 1,
+          static: false,
+          w: 3,
+          x: 6,
+          y: 0,
+        },
+        component: {
+          id: 3,
+          component_type: 'COUNT',
+          title: 'Nombre de contacts CRM',
+          query_id: '37759',
+        },
+      },
+      {
+        layout: {
+          i: cuid(),
+          h: 1,
+          static: false,
+          w: 3,
+          x: 9,
+          y: 0,
+        },
+        component: {
+          id: 4,
+          component_type: 'COUNT',
+          title: 'Nombre de UserPoints web',
+          query_id: '37757',
+        },
+      },
+      {
+        layout: {
+          i: cuid(),
+          h: 3,
+          static: false,
+          w: 6,
+          x: 0,
+          y: 1,
+        },
+        component: {
+          id: 5,
+          component_type: 'MAP_PIE_CHART',
+          title: 'Répartition des visites par type de profil matching (30j)',
+          show_legend: true,
+          query_id: '37761',
+        },
+      },
+      {
+        layout: {
+          i: cuid(),
+          h: 3,
+          static: false,
+          w: 6,
+          x: 6,
+          y: 1,
+        },
+        component: {
+          id: 5,
+          component_type: 'COUNT_PIE_CHART',
+          labels_enabled: true,
+          plot_labels: ['2nd', '1st_email_click', '1st logged'],
+          title: 'Nombre de users par type de profil matching (30j)',
+          show_legend: false,
+          query_ids: ['37762', '37764', '37763'],
+        },
+      },
+      {
+        layout: {
+          i: cuid(),
+          h: 3,
+          static: false,
+          w: 6,
+          x: 0,
+          y: 4,
+        },
+        component: {
+          id: 5,
+          component_type: 'COUNT_PIE_CHART',
+          labels_enabled: true,
+          plot_labels: ['Page View', 'Basket View', 'Purchase', 'Search', 'Email Click'],
+          title: "Nombre d'évènements web par typologie (30j)",
+          show_legend: false,
+          query_ids: ['37765', '37766', '37767', '37768', '37771'],
+        },
+      },
+      {
+        layout: {
+          i: cuid(),
+          h: 3,
+          static: false,
+          w: 6,
+          x: 6,
+          y: 4,
+        },
+        component: {
+          id: 5,
+          component_type: 'COUNT_PIE_CHART',
+          labels_enabled: true,
+          plot_labels: ['Contact CRM avec activités', 'Contact CRM sans activités'],
+          title: 'Activité web des contacts CRM ',
+          show_legend: false,
+          query_ids: ['37772', '37769'],
+        },
+      },
+      {
+        layout: {
+          i: cuid(),
+          h: 3,
+          static: false,
+          w: 12,
+          x: 0,
+          y: 7,
+        },
+        component: {
+          id: 5,
+          component_type: 'DATE_AGGREGATION_CHART',
+          plot_labels: ['email clicks', 'basket view', 'purchase', 'search'],
+          title: "Nombre d'évènements web par jour par typologie (30j)",
+          labels_enabled: true,
+          format: 'YYYY/MM/DD',
+          query_ids: ['37770', '37774', '37773', '37776'],
+        },
+      },
+      {
+        layout: {
+          i: cuid(),
+          h: 3,
+          static: false,
+          w: 12,
+          x: 0,
+          y: 10,
+        },
+        component: {
+          id: 5,
+          component_type: 'DATE_AGGREGATION_CHART',
+          plot_labels: ['1st', '2nd'],
+          title: 'Nombre de visites par jour par type de profil matching (30j)',
+          labels_enabled: true,
+          format: 'YYYY/MM/DD',
+          query_ids: ['37775', '37778'],
+        },
+      },
+      {
+        layout: {
+          i: cuid(),
+          h: 3,
+          static: false,
+          w: 12,
+          x: 0,
+          y: 13,
+        },
+        component: {
+          id: 5,
+          component_type: 'DATE_AGGREGATION_CHART',
+          plot_labels: ['tickets'],
+          title: 'Nombre de tickets réalisés par les contacts CRM',
+          labels_enabled: true,
+          format: 'YYYY/MM/DD',
+          query_ids: ['37777'],
+        },
+      },
+    ],
+    datamart_id: '1309',
+  },
+  {
+    id: '19',
+    name: 'Demographics',
+    type: 'HOME',
+    datamart_id: '1459',
+    components: [
+      {
+        layout: {
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -3860,20 +3769,20 @@ const myDashboards: DashboardResource[] = [
           // compared_query_id: '37513',
           percentage: true,
           show_legend: true,
-          sortKey:"A-Z",
+          sortKey: 'A-Z',
           labels: {
             enable: true,
             filterValue: 0,
-            format: "{point.y}%"
+            format: '{point.y}%',
           },
           tooltip: {
-            formatter: "{point.y}% ({point.count})"
-          }
+            formatter: '{point.y}% ({point.count})',
+          },
         },
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -3889,20 +3798,20 @@ const myDashboards: DashboardResource[] = [
           // compared_query_id: '37513',
           percentage: true,
           show_legend: true,
-          sortKey:"A-Z",
+          sortKey: 'A-Z',
           labels: {
             enable: true,
             filterValue: 0,
-            format: "{point.y}%"
+            format: '{point.y}%',
           },
           tooltip: {
-            formatter: "{point.y}% ({point.count})"
-          }
+            formatter: '{point.y}% ({point.count})',
+          },
         },
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 4,
@@ -3922,16 +3831,16 @@ const myDashboards: DashboardResource[] = [
           labels: {
             enable: true,
             filterValue: 0,
-            format: "{point.y}%"
+            format: '{point.y}%',
           },
           tooltip: {
-            formatter: "{point.y}% ({point.count})"
-          }
+            formatter: '{point.y}% ({point.count})',
+          },
         },
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 4,
@@ -3951,16 +3860,16 @@ const myDashboards: DashboardResource[] = [
           labels: {
             enable: true,
             filterValue: 0,
-            format: "{point.y}%"
+            format: '{point.y}%',
           },
           tooltip: {
-            formatter: "{point.y}% ({point.count})"
-          }
+            formatter: '{point.y}% ({point.count})',
+          },
         },
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 4,
@@ -3980,24 +3889,24 @@ const myDashboards: DashboardResource[] = [
           labels: {
             enable: true,
             filterValue: 0,
-            format: "{point.y}%"
+            format: '{point.y}%',
           },
           tooltip: {
-            formatter: "{point.y}% ({point.count})"
-          }
+            formatter: '{point.y}% ({point.count})',
+          },
         },
-      }
-    ]
+      },
+    ],
   },
   {
-    "id": "20",
-    "name": "Psychographics",
-    "type": "HOME",
-    "datamart_id": "1459",
+    id: '20',
+    name: 'Psychographics',
+    type: 'HOME',
+    datamart_id: '1459',
     components: [
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 12,
@@ -4014,21 +3923,21 @@ const myDashboards: DashboardResource[] = [
           percentage: true,
           show_legend: true,
           tooltip: {
-            formatter: "{point.y}% ({point.count})"
-          }
+            formatter: '{point.y}% ({point.count})',
+          },
         },
-      }
-    ]
+      },
+    ],
   },
   {
-    "id": "21",
-    "name": "Behavioral",
-    "type": "HOME",
-    "datamart_id": "1459",
+    id: '21',
+    name: 'Behavioral',
+    type: 'HOME',
+    datamart_id: '1459',
     components: [
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 12,
@@ -4047,24 +3956,24 @@ const myDashboards: DashboardResource[] = [
           labels: {
             enable: true,
             filterValue: 0,
-            format: "{point.y}%"
+            format: '{point.y}%',
           },
           tooltip: {
-            formatter: "{point.y}% ({point.count})"
-          }
+            formatter: '{point.y}% ({point.count})',
+          },
         },
-      }
-    ]
+      },
+    ],
   },
   {
-    "id": "22",
-    "name": "Media Touch Points",
-    "type": "HOME",
-    "datamart_id": "1459",
+    id: '22',
+    name: 'Media Touch Points',
+    type: 'HOME',
+    datamart_id: '1459',
     components: [
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -4084,16 +3993,16 @@ const myDashboards: DashboardResource[] = [
           labels: {
             enable: true,
             filterValue: 0,
-            format: "{point.y}%"
+            format: '{point.y}%',
           },
           tooltip: {
-            formatter: "{point.y}% ({point.count})"
-          }
+            formatter: '{point.y}% ({point.count})',
+          },
         },
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -4113,24 +4022,24 @@ const myDashboards: DashboardResource[] = [
           labels: {
             enable: true,
             filterValue: 0,
-            format: "{point.y}%"
+            format: '{point.y}%',
           },
           tooltip: {
-            formatter: "{point.y}% ({point.count})"
-          }
+            formatter: '{point.y}% ({point.count})',
+          },
         },
-      }
-    ]
+      },
+    ],
   },
   {
-    "id": "23",
-    "name": "Demographics",
-    "type": "SEGMENT",
-    "datamart_id": "1459",
+    id: '23',
+    name: 'Demographics',
+    type: 'SEGMENT',
+    datamart_id: '1459',
     components: [
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -4146,20 +4055,20 @@ const myDashboards: DashboardResource[] = [
           shouldCompare: true,
           percentage: true,
           show_legend: true,
-          sortKey:"A-Z",
+          sortKey: 'A-Z',
           labels: {
             enable: true,
             filterValue: 0,
-            format: "{point.y}%"
+            format: '{point.y}%',
           },
           tooltip: {
-            formatter: "{point.y}% ({point.count})"
-          }
+            formatter: '{point.y}% ({point.count})',
+          },
         },
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -4175,20 +4084,20 @@ const myDashboards: DashboardResource[] = [
           shouldCompare: true,
           percentage: true,
           show_legend: true,
-          sortKey:"A-Z",
+          sortKey: 'A-Z',
           labels: {
             enable: true,
             filterValue: 0,
-            format: "{point.y}%"
+            format: '{point.y}%',
           },
           tooltip: {
-            formatter: "{point.y}% ({point.count})"
-          }
+            formatter: '{point.y}% ({point.count})',
+          },
         },
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 4,
@@ -4208,16 +4117,16 @@ const myDashboards: DashboardResource[] = [
           labels: {
             enable: true,
             filterValue: 0,
-            format: "{point.y}%"
+            format: '{point.y}%',
           },
           tooltip: {
-            formatter: "{point.y}% ({point.count})"
-          }
+            formatter: '{point.y}% ({point.count})',
+          },
         },
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 4,
@@ -4237,16 +4146,16 @@ const myDashboards: DashboardResource[] = [
           labels: {
             enable: true,
             filterValue: 0,
-            format: "{point.y}%"
+            format: '{point.y}%',
           },
           tooltip: {
-            formatter: "{point.y}% ({point.count})"
-          }
+            formatter: '{point.y}% ({point.count})',
+          },
         },
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 4,
@@ -4266,24 +4175,24 @@ const myDashboards: DashboardResource[] = [
           labels: {
             enable: true,
             filterValue: 0,
-            format: "{point.y}%"
+            format: '{point.y}%',
           },
           tooltip: {
-            formatter: "{point.y}% ({point.count})"
-          }
+            formatter: '{point.y}% ({point.count})',
+          },
         },
-      }
-    ]
+      },
+    ],
   },
   {
-    "id": "24",
-    "name": "Psychographics",
-    "type": "SEGMENT",
-    "datamart_id": "1459",
+    id: '24',
+    name: 'Psychographics',
+    type: 'SEGMENT',
+    datamart_id: '1459',
     components: [
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 12,
@@ -4300,21 +4209,21 @@ const myDashboards: DashboardResource[] = [
           percentage: true,
           show_legend: true,
           tooltip: {
-            formatter: "{point.y}% ({point.count})"
-          }
+            formatter: '{point.y}% ({point.count})',
+          },
         },
-      }
-    ]
+      },
+    ],
   },
   {
-    "id": "25",
-    "name": "Behavioral",
-    "type": "SEGMENT",
-    "datamart_id": "1459",
+    id: '25',
+    name: 'Behavioral',
+    type: 'SEGMENT',
+    datamart_id: '1459',
     components: [
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 12,
@@ -4333,24 +4242,24 @@ const myDashboards: DashboardResource[] = [
           labels: {
             enable: true,
             filterValue: 0,
-            format: "{point.y}%"
+            format: '{point.y}%',
           },
           tooltip: {
-            formatter: "{point.y}% ({point.count})"
-          }
+            formatter: '{point.y}% ({point.count})',
+          },
         },
-      }
-    ]
+      },
+    ],
   },
   {
-    "id": "26",
-    "name": "Media Touch Points",
-    "type": "SEGMENT",
-    "datamart_id": "1459",
+    id: '26',
+    name: 'Media Touch Points',
+    type: 'SEGMENT',
+    datamart_id: '1459',
     components: [
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -4370,16 +4279,16 @@ const myDashboards: DashboardResource[] = [
           labels: {
             enable: true,
             filterValue: 0,
-            format: "{point.y}%"
+            format: '{point.y}%',
           },
           tooltip: {
-            formatter: "{point.y}% ({point.count})"
-          }
+            formatter: '{point.y}% ({point.count})',
+          },
         },
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -4399,27 +4308,27 @@ const myDashboards: DashboardResource[] = [
           labels: {
             enable: true,
             filterValue: 0,
-            format: "{point.y}%"
+            format: '{point.y}%',
           },
           tooltip: {
-            formatter: "{point.y}% ({point.count})"
-          }
+            formatter: '{point.y}% ({point.count})',
+          },
         },
-      }
-    ]
+      },
+    ],
   },
 
   // converged poland
 
   {
-    "id": "27",
-    "name": "Demographics",
-    "type": "HOME",
-    "datamart_id": "1466",
+    id: '27',
+    name: 'Demographics',
+    type: 'HOME',
+    datamart_id: '1466',
     components: [
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -4435,20 +4344,20 @@ const myDashboards: DashboardResource[] = [
           // compared_query_id: '37513',
           percentage: true,
           show_legend: true,
-          sortKey:"A-Z",
+          sortKey: 'A-Z',
           labels: {
             enable: true,
             filterValue: 0,
-            format: "{point.y}%"
+            format: '{point.y}%',
           },
           tooltip: {
-            formatter: "{point.y}% ({point.count})"
-          }
+            formatter: '{point.y}% ({point.count})',
+          },
         },
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -4464,20 +4373,20 @@ const myDashboards: DashboardResource[] = [
           // compared_query_id: '37513',
           percentage: true,
           show_legend: true,
-          sortKey:"A-Z",
+          sortKey: 'A-Z',
           labels: {
             enable: true,
             filterValue: 0,
-            format: "{point.y}%"
+            format: '{point.y}%',
           },
           tooltip: {
-            formatter: "{point.y}% ({point.count})"
-          }
+            formatter: '{point.y}% ({point.count})',
+          },
         },
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 4,
@@ -4498,16 +4407,16 @@ const myDashboards: DashboardResource[] = [
           labels: {
             enable: true,
             filterValue: 0,
-            format: "{point.y}%"
+            format: '{point.y}%',
           },
           tooltip: {
-            formatter: "{point.y}% ({point.count})"
-          }
+            formatter: '{point.y}% ({point.count})',
+          },
         },
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 4,
@@ -4528,16 +4437,16 @@ const myDashboards: DashboardResource[] = [
           labels: {
             enable: true,
             filterValue: 0,
-            format: "{point.y}%"
+            format: '{point.y}%',
           },
           tooltip: {
-            formatter: "{point.y}% ({point.count})"
-          }
+            formatter: '{point.y}% ({point.count})',
+          },
         },
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 4,
@@ -4558,24 +4467,24 @@ const myDashboards: DashboardResource[] = [
           labels: {
             enable: true,
             filterValue: 0,
-            format: "{point.y}%"
+            format: '{point.y}%',
           },
           tooltip: {
-            formatter: "{point.y}% ({point.count})"
-          }
+            formatter: '{point.y}% ({point.count})',
+          },
         },
-      }
-    ]
+      },
+    ],
   },
   {
-    "id": "28",
-    "name": "Psychographics",
-    "type": "HOME",
-    "datamart_id": "1466",
+    id: '28',
+    name: 'Psychographics',
+    type: 'HOME',
+    datamart_id: '1466',
     components: [
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 12,
@@ -4593,21 +4502,21 @@ const myDashboards: DashboardResource[] = [
           percentage: true,
           show_legend: true,
           tooltip: {
-            formatter: "{point.y}% ({point.count})"
-          }
+            formatter: '{point.y}% ({point.count})',
+          },
         },
-      }
-    ]
+      },
+    ],
   },
   {
-    "id": "29",
-    "name": "Behavioral",
-    "type": "HOME",
-    "datamart_id": "1466",
+    id: '29',
+    name: 'Behavioral',
+    type: 'HOME',
+    datamart_id: '1466',
     components: [
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 12,
@@ -4626,24 +4535,24 @@ const myDashboards: DashboardResource[] = [
           labels: {
             enable: true,
             filterValue: 0,
-            format: "{point.y}%"
+            format: '{point.y}%',
           },
           tooltip: {
-            formatter: "{point.y}% ({point.count})"
-          }
+            formatter: '{point.y}% ({point.count})',
+          },
         },
-      }
-    ]
+      },
+    ],
   },
   {
-    "id": "30",
-    "name": "Media Touch Points",
-    "type": "HOME",
-    "datamart_id": "1466",
+    id: '30',
+    name: 'Media Touch Points',
+    type: 'HOME',
+    datamart_id: '1466',
     components: [
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -4664,16 +4573,16 @@ const myDashboards: DashboardResource[] = [
           labels: {
             enable: true,
             filterValue: 0,
-            format: "{point.y}%"
+            format: '{point.y}%',
           },
           tooltip: {
-            formatter: "{point.y}% ({point.count})"
-          }
+            formatter: '{point.y}% ({point.count})',
+          },
         },
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -4694,24 +4603,24 @@ const myDashboards: DashboardResource[] = [
           labels: {
             enable: true,
             filterValue: 0,
-            format: "{point.y}%"
+            format: '{point.y}%',
           },
           tooltip: {
-            formatter: "{point.y}% ({point.count})"
-          }
+            formatter: '{point.y}% ({point.count})',
+          },
         },
-      }
-    ]
+      },
+    ],
   },
   {
-    "id": "31",
-    "name": "Demographics",
-    "type": "SEGMENT",
-    "datamart_id": "1500",
+    id: '31',
+    name: 'Demographics',
+    type: 'SEGMENT',
+    datamart_id: '1500',
     components: [
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -4727,20 +4636,20 @@ const myDashboards: DashboardResource[] = [
           shouldCompare: true,
           percentage: true,
           show_legend: true,
-          sortKey:"A-Z",
+          sortKey: 'A-Z',
           labels: {
             enable: true,
             filterValue: 0,
-            format: "{point.y}%"
+            format: '{point.y}%',
           },
           tooltip: {
-            formatter: "{point.y}% ({point.count})"
-          }
+            formatter: '{point.y}% ({point.count})',
+          },
         },
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -4756,20 +4665,20 @@ const myDashboards: DashboardResource[] = [
           shouldCompare: true,
           percentage: true,
           show_legend: true,
-          sortKey:"A-Z",
+          sortKey: 'A-Z',
           labels: {
             enable: true,
             filterValue: 0,
-            format: "{point.y}%"
+            format: '{point.y}%',
           },
           tooltip: {
-            formatter: "{point.y}% ({point.count})"
-          }
+            formatter: '{point.y}% ({point.count})',
+          },
         },
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 4,
@@ -4789,16 +4698,16 @@ const myDashboards: DashboardResource[] = [
           labels: {
             enable: true,
             filterValue: 0,
-            format: "{point.y}%"
+            format: '{point.y}%',
           },
           tooltip: {
-            formatter: "{point.y}% ({point.count})"
-          }
+            formatter: '{point.y}% ({point.count})',
+          },
         },
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 4,
@@ -4818,16 +4727,16 @@ const myDashboards: DashboardResource[] = [
           labels: {
             enable: true,
             filterValue: 0,
-            format: "{point.y}%"
+            format: '{point.y}%',
           },
           tooltip: {
-            formatter: "{point.y}% ({point.count})"
-          }
+            formatter: '{point.y}% ({point.count})',
+          },
         },
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 4,
@@ -4847,24 +4756,24 @@ const myDashboards: DashboardResource[] = [
           labels: {
             enable: true,
             filterValue: 0,
-            format: "{point.y}%"
+            format: '{point.y}%',
           },
           tooltip: {
-            formatter: "{point.y}% ({point.count})"
-          }
+            formatter: '{point.y}% ({point.count})',
+          },
         },
-      }
-    ]
+      },
+    ],
   },
   {
-    "id": "32",
-    "name": "Psychographics",
-    "type": "SEGMENT",
-    "datamart_id": "1466",
+    id: '32',
+    name: 'Psychographics',
+    type: 'SEGMENT',
+    datamart_id: '1466',
     components: [
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 12,
@@ -4881,21 +4790,21 @@ const myDashboards: DashboardResource[] = [
           percentage: true,
           show_legend: true,
           tooltip: {
-            formatter: "{point.y}% ({point.count})"
-          }
+            formatter: '{point.y}% ({point.count})',
+          },
         },
-      }
-    ]
+      },
+    ],
   },
   {
-    "id": "33",
-    "name": "Behavioral",
-    "type": "SEGMENT",
-    "datamart_id": "1466",
+    id: '33',
+    name: 'Behavioral',
+    type: 'SEGMENT',
+    datamart_id: '1466',
     components: [
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 12,
@@ -4914,24 +4823,24 @@ const myDashboards: DashboardResource[] = [
           labels: {
             enable: true,
             filterValue: 0,
-            format: "{point.y}%"
+            format: '{point.y}%',
           },
           tooltip: {
-            formatter: "{point.y}% ({point.count})"
-          }
+            formatter: '{point.y}% ({point.count})',
+          },
         },
-      }
-    ]
+      },
+    ],
   },
   {
-    "id": "34",
-    "name": "Media Touch Points",
-    "type": "SEGMENT",
-    "datamart_id": "1466",
+    id: '34',
+    name: 'Media Touch Points',
+    type: 'SEGMENT',
+    datamart_id: '1466',
     components: [
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -4951,16 +4860,16 @@ const myDashboards: DashboardResource[] = [
           labels: {
             enable: true,
             filterValue: 0,
-            format: "{point.y}%"
+            format: '{point.y}%',
           },
           tooltip: {
-            formatter: "{point.y}% ({point.count})"
-          }
+            formatter: '{point.y}% ({point.count})',
+          },
         },
       },
       {
         layout: {
-          i: cuid(), 
+          i: cuid(),
           h: 3,
           static: false,
           w: 6,
@@ -4980,13 +4889,13 @@ const myDashboards: DashboardResource[] = [
           labels: {
             enable: true,
             filterValue: 0,
-            format: "{point.y}%"
+            format: '{point.y}%',
           },
           tooltip: {
-            formatter: "{point.y}% ({point.count})"
-          }
+            formatter: '{point.y}% ({point.count})',
+          },
         },
-      }
-    ]
-  }
+      },
+    ],
+  },
 ];

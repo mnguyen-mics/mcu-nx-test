@@ -25,9 +25,7 @@ describe('Timeline', () => {
 
       cy.contains('Monitoring').click();
       cy.request({
-        url: `${Cypress.env('apiDomain')}/v1/datamarts/${
-          data.datamartId
-        }/compartments`,
+        url: `${Cypress.env('apiDomain')}/v1/datamarts/${data.datamartId}/compartments`,
         method: 'GET',
         headers: { Authorization: data.accessToken },
       }).then(compartmentResponse => {
@@ -57,9 +55,7 @@ describe('Timeline', () => {
   before(() => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.request({
-        url: `${Cypress.env('apiDomain')}/v1/datamarts/${
-          data.datamartId
-        }/channels`,
+        url: `${Cypress.env('apiDomain')}/v1/datamarts/${data.datamartId}/channels`,
         method: 'POST',
         headers: { Authorization: data.accessToken },
         body: {
@@ -96,9 +92,7 @@ describe('Timeline', () => {
           },
         }).then(() => {
           cy.request({
-            url: `${Cypress.env('apiDomain')}/v1/datamarts/${
-              data.datamartId
-            }/compartments`,
+            url: `${Cypress.env('apiDomain')}/v1/datamarts/${data.datamartId}/compartments`,
             method: 'GET',
             headers: { Authorization: data.accessToken },
           }).then(compartmentResponse => {
@@ -154,10 +148,7 @@ describe('Timeline', () => {
 
   it('Check timeline', () => {
     goToMonitoring();
-    cy.get('.mcs-activityCard').should(
-      'contain',
-      '$set_user_profile_properties',
-    );
+    cy.get('.mcs-activityCard').should('contain', '$set_user_profile_properties');
     cy.contains('Details').click();
     cy.get('.mcs-activityCard').should('contain', `${userAccountId}`);
     cy.get('.mcs-activityCard').should('contain', firstName);
@@ -172,14 +163,10 @@ describe('Timeline', () => {
       .find('.mcs-card-inner-action')
       .first()
       .as('view_json_source');
-    cy.get('@view_json_source')
-      .should('have.text', 'View JSON source')
-      .click();
+    cy.get('@view_json_source').should('have.text', 'View JSON source').click();
     cy.get('.ant-modal-content').should('be.visible');
     cy.get('.ant-modal-confirm-title').should('have.text', 'Activity JSON');
-    cy.get('.ant-modal-confirm-btns .ant-btn')
-      .should('have.text', 'Close')
-      .click();
+    cy.get('.ant-modal-confirm-btns .ant-btn').should('have.text', 'Close').click();
     cy.get('.ant-modal-content').should('not.be.visible');
   });
 });

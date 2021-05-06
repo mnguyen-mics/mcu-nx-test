@@ -104,37 +104,37 @@ class DisplayCreativeRendererSelector extends React.Component<Props, State> {
 
     return (
       <Layout>
-        <div className="edit-layout ant-layout">
+        <div className='edit-layout ant-layout'>
           <FormLayoutActionbar {...actionBarProps} />
           <Layout>
-            <Content className="mcs-content-container mcs-form-container text-center">
+            <Content className='mcs-content-container mcs-form-container text-center'>
               <FormTitle
                 title={messages.creativesTypePickerTitle}
                 subtitle={messages.creativesTypePickerSubTitle}
               />
 
-              <Row className="mcs-selector_container">
-                <Row className="menu">
-                  <div className="presentation">
+              <Row className='mcs-selector_container'>
+                <Row className='menu'>
+                  <div className='presentation'>
                     <MenuPresentational
                       title={formatMessage(messages.creativeTypeImage)}
-                      type="image"
+                      type='image'
                       select={onTypeSelect(imageAdRendererId)}
                     />
-                    <div className="separator">
+                    <div className='separator'>
                       <FormattedMessage {...messages.creativeTypeOr} />
                     </div>
                     <MenuPresentational
                       title={formatMessage(messages.creativeTypeHtml)}
-                      type="code"
+                      type='code'
                       select={onTypeSelect(htmlAdRendererId)}
                     />
                   </div>
                 </Row>
-                <Row className="intermediate-title">
+                <Row className='intermediate-title'>
                   <FormattedMessage {...messages.creativeTypeAdvanced} />
                 </Row>
-                <Row className="menu">
+                <Row className='menu'>
                   <MenuList
                     title={formatMessage(messages.creativeTypeAgency)}
                     select={onTypeSelect(externalAdRendererId)}
@@ -145,9 +145,7 @@ class DisplayCreativeRendererSelector extends React.Component<Props, State> {
                   />
                   <MenuSubList
                     title={formatMessage(messages.allRendererList)}
-                    subtitles={[
-                      formatMessage(messages.allRendererListSubtitle),
-                    ]}
+                    subtitles={[formatMessage(messages.allRendererListSubtitle)]}
                     submenu={this.renderAdRendererSubmenu}
                   />
                 </Row>

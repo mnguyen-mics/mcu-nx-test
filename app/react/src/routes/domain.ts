@@ -1,12 +1,12 @@
-import { McsIconType } from "@mediarithmics-private/mcs-components-library/lib/components/mcs-icon";
-import { Mention } from "@mediarithmics-private/mcs-components-library/lib/components/mention-tag/MentionTag";
-import { FormattedMessage } from "react-intl";
-import { Omit } from "../utils/Types";
+import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
+import { Mention } from '@mediarithmics-private/mcs-components-library/lib/components/mention-tag/MentionTag';
+import { FormattedMessage } from 'react-intl';
+import { Omit } from '../utils/Types';
 
 export type LayoutTypes = 'main' | 'edit' | 'settings';
 
 export interface DataLayerDefinition {
-  [key: string]: any
+  [key: string]: any;
 }
 export interface RouteDef {
   path: string;
@@ -14,7 +14,7 @@ export interface RouteDef {
   requiredFeature?: string | string[];
   requireDatamart?: boolean;
   legacyPath?: boolean;
-  datalayer?: DataLayerDefinition
+  datalayer?: DataLayerDefinition;
 }
 
 export interface RouteEdit extends RouteDef {
@@ -48,7 +48,9 @@ interface NavigatorBaseMenuDefinition {
   mention?: Mention;
 }
 
-interface NavigatorSingleLevelMenuDefinition extends NavigatorBaseMenuDefinition, Omit<RouteDef, 'layout'> {
+interface NavigatorSingleLevelMenuDefinition
+  extends NavigatorBaseMenuDefinition,
+    Omit<RouteDef, 'layout'> {
   type: 'simple';
 }
 
@@ -63,18 +65,20 @@ export interface NavigatorMultipleLevelMenuDefinition extends NavigatorBaseMenuD
   subMenuItems: NavigatorSubMenuDefinition[];
 }
 
-export type NavigatorMenuDefinition = NavigatorSingleLevelMenuDefinition | NavigatorMultipleLevelMenuDefinition
+export type NavigatorMenuDefinition =
+  | NavigatorSingleLevelMenuDefinition
+  | NavigatorMultipleLevelMenuDefinition;
 
-export function generateRoutesFromDefinition(
-  definition: NavigatorDefinition,
-): NavigatorRoute[] {
+export function generateRoutesFromDefinition(definition: NavigatorDefinition): NavigatorRoute[] {
   return Object.keys(definition).map(key => definition[key]);
 }
 
-export function generateMissingdefinitionItemFromRoute(route: NavigatorRoute): Omit<RouteDef, 'layout'> {
-    return {
-      path: route.path,
-      requiredFeature: route.requiredFeature,
-      requireDatamart: route.requireDatamart,
-    }
-  }
+export function generateMissingdefinitionItemFromRoute(
+  route: NavigatorRoute,
+): Omit<RouteDef, 'layout'> {
+  return {
+    path: route.path,
+    requiredFeature: route.requiredFeature,
+    requireDatamart: route.requireDatamart,
+  };
+}

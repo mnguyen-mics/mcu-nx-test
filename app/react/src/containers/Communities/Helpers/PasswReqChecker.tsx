@@ -1,7 +1,4 @@
-import {
-  PasswordRequirementResource,
-  PasswordValidityResource,
-} from '../../../models/communities';
+import { PasswordRequirementResource, PasswordValidityResource } from '../../../models/communities';
 import React from 'react';
 import { defineMessages } from 'react-intl';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
@@ -53,9 +50,9 @@ class PasswReqChecker extends React.Component<Props> {
 
   checkOrWarning(selector: boolean) {
     return selector ? (
-      <McsIcon type="check" className="check-logo" />
+      <McsIcon type='check' className='check-logo' />
     ) : (
-      <McsIcon type="warning" className="warning-logo" />
+      <McsIcon type='warning' className='warning-logo' />
     );
   }
 
@@ -63,17 +60,15 @@ class PasswReqChecker extends React.Component<Props> {
     const { req, val, p1, p2 } = this.props;
     return (
       <div>
-        <p className="requirement-list">
-          {messages.passwordMustContain.defaultMessage}
-        </p>
+        <p className='requirement-list'>{messages.passwordMustContain.defaultMessage}</p>
         {req.min_length > 0 ? (
-          <p className="requirement-list">
+          <p className='requirement-list'>
             {val ? (
               this.checkOrWarning(val.is_long_enough)
             ) : (
-              <McsIcon type="info" className="icon" />
+              <McsIcon type='info' className='icon' />
             )}{' '}
-            <span className="req-text">
+            <span className='req-text'>
               {req.min_length} {messages.characters.defaultMessage}
             </span>
           </p>
@@ -81,13 +76,13 @@ class PasswReqChecker extends React.Component<Props> {
           ''
         )}
         {req.min_digit_count > 0 ? (
-          <p className="requirement-list">
+          <p className='requirement-list'>
             {val ? (
               this.checkOrWarning(val.has_enough_digits)
             ) : (
-              <McsIcon type="info" className="icon" />
+              <McsIcon type='info' className='icon' />
             )}{' '}
-            <span className="req-text">
+            <span className='req-text'>
               {req.min_digit_count} {messages.digits.defaultMessage}
             </span>
           </p>
@@ -95,57 +90,46 @@ class PasswReqChecker extends React.Component<Props> {
           ''
         )}
         {req.min_special_chars_count > 0 ? (
-          <p className="requirement-list">
+          <p className='requirement-list'>
             {val ? (
               this.checkOrWarning(val.has_enough_special_chars)
             ) : (
-              <McsIcon type="info" className="icon" />
+              <McsIcon type='info' className='icon' />
             )}{' '}
-            <span className="req-text">
-              {req.min_special_chars_count}{' '}
-              {messages.specialCharacters.defaultMessage}
+            <span className='req-text'>
+              {req.min_special_chars_count} {messages.specialCharacters.defaultMessage}
             </span>
           </p>
         ) : (
           ''
         )}
         {req.different_letter_case_needed ? (
-          <p className="requirement-list">
+          <p className='requirement-list'>
             {val ? (
               this.checkOrWarning(val.has_upper_and_lower_cases)
             ) : (
-              <McsIcon type="info" className="icon" />
+              <McsIcon type='info' className='icon' />
             )}{' '}
-            <span className="req-text">
-              {messages.lowerAndUpperCase.defaultMessage}
-            </span>
+            <span className='req-text'>{messages.lowerAndUpperCase.defaultMessage}</span>
           </p>
         ) : (
           ''
         )}
         {req.forbid_popular_passwords ? (
-          <p className="requirement-list">
+          <p className='requirement-list'>
             {val ? (
               this.checkOrWarning(val.is_not_popular)
             ) : (
-              <McsIcon type="info" className="icon" />
+              <McsIcon type='info' className='icon' />
             )}{' '}
-            <span className="req-text">
-              {messages.easyPasswords.defaultMessage}
-            </span>
+            <span className='req-text'>{messages.easyPasswords.defaultMessage}</span>
           </p>
         ) : (
           ''
         )}
-        <p className="requirement-list">
-          {p2 ? (
-            this.checkOrWarning(p1 === p2)
-          ) : (
-            <McsIcon type="info" className="icon" />
-          )}{' '}
-          <span className="req-text">
-            {messages.passwordMatch.defaultMessage}
-          </span>
+        <p className='requirement-list'>
+          {p2 ? this.checkOrWarning(p1 === p2) : <McsIcon type='info' className='icon' />}{' '}
+          <span className='req-text'>{messages.passwordMatch.defaultMessage}</span>
         </p>
       </div>
     );

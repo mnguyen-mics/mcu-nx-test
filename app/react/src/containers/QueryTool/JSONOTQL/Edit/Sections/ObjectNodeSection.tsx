@@ -10,12 +10,8 @@ import {
   FormCheckbox,
   FormCheckboxField,
 } from '../../../../../components/Form';
-import withNormalizer, {
-  NormalizerProps,
-} from '../../../../../components/Form/withNormalizer';
-import withValidators, {
-  ValidatorProps,
-} from '../../../../../components/Form/withValidators';
+import withNormalizer, { NormalizerProps } from '../../../../../components/Form/withNormalizer';
+import withValidators, { ValidatorProps } from '../../../../../components/Form/withValidators';
 import { compose } from 'recompose';
 import messages from '../messages';
 import { getFormValues } from 'redux-form';
@@ -65,9 +61,7 @@ class ObjectNodeSection extends React.Component<Props> {
       return !lodash
         .flatMap(selectedObjectType.directives, d => {
           return d.arguments.map(a =>
-            Object.values(typesTrigger).includes(
-              a.value.replace(/[^a-zA-Z]+/g, ''),
-            ),
+            Object.values(typesTrigger).includes(a.value.replace(/[^a-zA-Z]+/g, '')),
           );
         })
         .reduce((acc: boolean, val: boolean) => acc || val, false);
@@ -88,8 +82,7 @@ class ObjectNodeSection extends React.Component<Props> {
     } = this.props;
 
     const showFrenquencyTrigger = isTrigger
-      ? selectedObjectType &&
-        this.triggerModeFrequency(objectType, selectedObjectType)
+      ? selectedObjectType && this.triggerModeFrequency(objectType, selectedObjectType)
       : true;
 
     const showEnableFrequency = !!(
@@ -103,14 +96,11 @@ class ObjectNodeSection extends React.Component<Props> {
 
     return (
       <div>
-        <FormSection
-          subtitle={messages.objectNodeSubTitle}
-          title={messages.objectNodeTitle}
-        />
+        <FormSection subtitle={messages.objectNodeSubTitle} title={messages.objectNodeTitle} />
 
         <div>
           <FormSelectField
-            name="objectNodeForm.field"
+            name='objectNodeForm.field'
             component={DefaultSelect}
             validate={[isRequired]}
             options={this.buildOptions()}
@@ -129,37 +119,33 @@ class ObjectNodeSection extends React.Component<Props> {
         </div>
         {showEnableFrequency && (
           <FormCheckboxField
-            name="frequency.enabled"
+            name='frequency.enabled'
             component={FormCheckbox}
-            className="field-label m-b-20"
+            className='field-label m-b-20'
           >
             <FormattedMessage
-              id="queryTool.queryDocument.objectNode.frequency.enabled"
-              defaultMessage="I want to add a frequency"
+              id='queryTool.queryDocument.objectNode.frequency.enabled'
+              defaultMessage='I want to add a frequency'
             />
           </FormCheckboxField>
         )}
         {showFrequency ? (
           <div>
             <FormInputField
-              name="frequency.value"
+              name='frequency.value'
               component={FormInput}
               validate={[isValidInteger]}
               formItemProps={{
                 label: formatMessage(messages.objectNodeMinScoreLabel),
               }}
               inputProps={{
-                placeholder: formatMessage(
-                  messages.objectNodeMinScorePlaceholder,
-                ),
+                placeholder: formatMessage(messages.objectNodeMinScorePlaceholder),
                 type: 'number',
-                addonBefore: (
-                  <FormattedMessage {...frequencyModeMessageMap.AT_LEAST}/>
-                ),
+                addonBefore: <FormattedMessage {...frequencyModeMessageMap.AT_LEAST} />,
                 addonAfter: (
                   <FormattedMessage
-                    id="queryTool.queryDocument.objectNode.freqency.time"
-                    defaultMessage="times"
+                    id='queryTool.queryDocument.objectNode.freqency.time'
+                    defaultMessage='times'
                   />
                 ),
               }}

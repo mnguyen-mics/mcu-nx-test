@@ -34,29 +34,19 @@ import {
   FieldDirectiveResource,
   BuitinEnumerationType,
 } from '../../../../../../models/datamart/graphdb/RuntimeSchema';
-import {
-  FORM_ID,
-  FieldNodeFormData,
-  SUPPORTED_FIELD_TYPES,
-} from '../../domain';
+import { FORM_ID, FieldNodeFormData, SUPPORTED_FIELD_TYPES } from '../../domain';
 import messages from '../../messages';
 import FormRelativeAbsoluteDate, {
   FormRelativeAbsoluteDateProps,
 } from './Comparison/FormRelativeAbsoluteDate';
-import constants, {
-  ComparisonValues,
-  builtinEnumTypeOptions,
-} from './contants';
+import constants, { ComparisonValues, builtinEnumTypeOptions } from './contants';
 import { IAudienceSegmentService } from '../../../../../../services/AudienceSegmentService';
 import { TYPES } from '../../../../../../constants/types';
 import { lazyInject } from '../../../../../../config/inversify.config';
 import { SegmentNameDisplay } from '../../../../../Audience/Common/SegmentNameDisplay';
 import { IDatamartService } from '../../../../../../services/DatamartService';
 import { IComparmentService } from '../../../../../../services/CompartmentService';
-import {
-  getCoreReferenceTypeAndModel,
-  FieldProposalLookup,
-} from '../../../domain';
+import { getCoreReferenceTypeAndModel, FieldProposalLookup } from '../../../domain';
 import { IChannelService } from '../../../../../../services/ChannelService';
 import { MicsReduxState } from '../../../../../../utils/ReduxHelper';
 import { IReferenceTableService } from '../../../../../../services/ReferenceTableService';
@@ -64,18 +54,10 @@ import { injectWorkspace, InjectedWorkspaceProps } from '../../../../../Datamart
 import { FormInfiniteSearchObjectProps } from '../../../../../../components/Form/FormSelect/FormInfiniteSearchObject';
 import { DefaultOptionProps } from '../../../../../../components/Form/FormSelect/DefaultSelect';
 
-export const FormTagSelectField = Field as new () => GenericField<
-  FormTagSelectProps
->;
-export const FormRelativeAbsoluteDateField = Field as new () => GenericField<
-  FormRelativeAbsoluteDateProps
->;
-export const FormSearchObjectField = Field as new () => GenericField<
-  FormSearchObjectProps
->;
-export const FormInfiniteSearchObjectField = Field as new () => GenericField<
-  FormInfiniteSearchObjectProps
->;
+export const FormTagSelectField = Field as new () => GenericField<FormTagSelectProps>;
+export const FormRelativeAbsoluteDateField = Field as new () => GenericField<FormRelativeAbsoluteDateProps>;
+export const FormSearchObjectField = Field as new () => GenericField<FormSearchObjectProps>;
+export const FormInfiniteSearchObjectField = Field as new () => GenericField<FormInfiniteSearchObjectProps>;
 
 export interface FieldNodeFormProps {
   expressionIndex?: number;
@@ -152,14 +134,7 @@ class FieldNodeForm extends React.Component<Props, State> {
 
   componentDidMount() {
     // if no default value compute it
-    const {
-      formValues,
-      expressionIndex,
-      formChange,
-      name,
-      treeNodePath,
-      isEdge,
-    } = this.props;
+    const { formValues, expressionIndex, formChange, name, treeNodePath, isEdge } = this.props;
 
     if (treeNodePath) {
       this._computedTreeNodePath = treeNodePath;
@@ -174,12 +149,8 @@ class FieldNodeForm extends React.Component<Props, State> {
       const fieldIndexDataType = this.getSelectedFieldIndexDataType(fieldName);
       formChange(
         name ? `${name}.comparison` : 'comparison',
-        this.generateAvailableConditionOptions(
-          fieldType,
-          fieldIndexDataType,
-          directive,
-          isEdge,
-        ).defaultValue,
+        this.generateAvailableConditionOptions(fieldType, fieldIndexDataType, directive, isEdge)
+          .defaultValue,
       );
     }
   }
@@ -214,20 +185,13 @@ class FieldNodeForm extends React.Component<Props, State> {
 
       formChange(
         name ? `${name}.comparison` : 'comparison',
-        this.generateAvailableConditionOptions(
-          fieldType,
-          fieldIndexDataType,
-          directive,
-          isEdge,
-        ).defaultValue,
+        this.generateAvailableConditionOptions(fieldType, fieldIndexDataType, directive, isEdge)
+          .defaultValue,
       );
     }
   }
 
-  getField = (
-    formValues: FormValues,
-    index?: number,
-  ): FieldNodeFormData | undefined => {
+  getField = (formValues: FormValues, index?: number): FieldNodeFormData | undefined => {
     const { fieldNodeForm } = formValues;
 
     if (Array.isArray(fieldNodeForm)) {
@@ -243,15 +207,10 @@ class FieldNodeForm extends React.Component<Props, State> {
   getAvailableFields = (): DefaultOptionProps[] => {
     const { availableFields } = this.props;
     return availableFields
-      .filter(field =>
-        SUPPORTED_FIELD_TYPES.find(t => field.field_type.indexOf(t) > -1),
-      )
+      .filter(field => SUPPORTED_FIELD_TYPES.find(t => field.field_type.indexOf(t) > -1))
       .map(i => ({
         value: i.name,
-        title:
-          i.decorator && i.decorator.hidden === false
-            ? i.decorator.label
-            : i.name,
+        title: i.decorator && i.decorator.hidden === false ? i.decorator.label : i.name,
       }));
   };
 
@@ -269,9 +228,7 @@ class FieldNodeForm extends React.Component<Props, State> {
 
   getSelectedIndex = (fieldName: string | undefined) => {
     const { availableFields } = this.props;
-    const possibleFieldIndex = availableFields.findIndex(
-      i => i.name === fieldName,
-    );
+    const possibleFieldIndex = availableFields.findIndex(i => i.name === fieldName);
     if (possibleFieldIndex > -1) {
       return possibleFieldIndex;
     }
@@ -283,13 +240,9 @@ class FieldNodeForm extends React.Component<Props, State> {
 
     const possibleFieldType = availableFields.find(i => i.name === fieldName);
     if (possibleFieldType) {
-      const indexDirective = possibleFieldType.directives.find(
-        d => d.name === 'TreeIndex',
-      );
+      const indexDirective = possibleFieldType.directives.find(d => d.name === 'TreeIndex');
       if (indexDirective) {
-        const dataTypeDirArg = indexDirective.arguments.find(
-          arg => arg.name === 'data_type',
-        );
+        const dataTypeDirArg = indexDirective.arguments.find(arg => arg.name === 'data_type');
         if (dataTypeDirArg) {
           const match = dataTypeDirArg.value.match(/\w+/);
           return match && match[0];
@@ -305,7 +258,7 @@ class FieldNodeForm extends React.Component<Props, State> {
     fieldType: string | null,
     fieldIndexDataType: string | null,
     directives?: FieldDirectiveResource[],
-    isEdge?: boolean
+    isEdge?: boolean,
   ): FieldComparisonGenerator => {
     const { intl } = this.props;
 
@@ -333,9 +286,7 @@ class FieldNodeForm extends React.Component<Props, State> {
       case 'Date':
         return {
           ...constants.generateTimeComparisonOperator(intl),
-          component: shouldRenderDirective(
-            this.generateTimestampComparisonField(),
-          ),
+          component: shouldRenderDirective(this.generateTimestampComparisonField()),
         };
       case 'String':
         return {
@@ -344,19 +295,14 @@ class FieldNodeForm extends React.Component<Props, State> {
             fieldIndexDataType || undefined,
             isEdge,
           ),
-          component: shouldRenderDirective(
-            this.generateStringComparisonField(),
-            true,
-          ),
+          component: shouldRenderDirective(this.generateStringComparisonField(), true),
           fetchPredicate: undefined,
         };
       case 'Bool':
       case 'Boolean':
         return {
           ...constants.generateBooleanComparisonOperator(intl),
-          component: shouldRenderDirective(
-            this.generateBooleanComparisonField(),
-          ),
+          component: shouldRenderDirective(this.generateBooleanComparisonField()),
         };
       case 'Enum':
         return {
@@ -370,9 +316,7 @@ class FieldNodeForm extends React.Component<Props, State> {
       case 'BigDecimal':
         return {
           ...constants.generateNumericComparisonOperator(intl),
-          component: shouldRenderDirective(
-            this.generateNumericComparisonField(),
-          ),
+          component: shouldRenderDirective(this.generateNumericComparisonField()),
         };
       case 'ID':
         return {
@@ -390,9 +334,10 @@ class FieldNodeForm extends React.Component<Props, State> {
           ...constants.generateEnumComparisonOperator(intl),
           component: shouldRenderDirective(
             this.generateTagSelectComparisonField(
-              (builtinEnumTypeOptions[
-                fieldType as BuitinEnumerationType
-              ] as string[]).map(v => ({ label: v, value: v })),
+              (builtinEnumTypeOptions[fieldType as BuitinEnumerationType] as string[]).map(v => ({
+                label: v,
+                value: v,
+              })),
             ),
           ),
         };
@@ -412,8 +357,7 @@ class FieldNodeForm extends React.Component<Props, State> {
 
     if (idToAttachDropDowns) {
       popUpProps = {
-        getCalendarContainer: (e: HTMLElement) =>
-          document.getElementById(idToAttachDropDowns)!,
+        getCalendarContainer: (e: HTMLElement) => document.getElementById(idToAttachDropDowns)!,
       };
     }
 
@@ -446,8 +390,7 @@ class FieldNodeForm extends React.Component<Props, State> {
 
     if (idToAttachDropDowns) {
       popUpProps = {
-        getCalendarContainer: (e: HTMLElement) =>
-          document.getElementById(idToAttachDropDowns)!,
+        getCalendarContainer: (e: HTMLElement) => document.getElementById(idToAttachDropDowns)!,
       };
     }
 
@@ -487,17 +430,14 @@ class FieldNodeForm extends React.Component<Props, State> {
     );
   }
 
-  generateTagSelectComparisonField(
-    options: Array<{ label: string; value: string }>,
-  ) {
+  generateTagSelectComparisonField(options: Array<{ label: string; value: string }>) {
     const { intl, name, idToAttachDropDowns, fieldValidators } = this.props;
 
     let popUpProps = {};
 
     if (idToAttachDropDowns) {
       popUpProps = {
-        getPopupContainer: (e: HTMLElement) =>
-          document.getElementById(idToAttachDropDowns)!,
+        getPopupContainer: (e: HTMLElement) => document.getElementById(idToAttachDropDowns)!,
       };
     }
 
@@ -542,8 +482,7 @@ class FieldNodeForm extends React.Component<Props, State> {
 
     if (idToAttachDropDowns) {
       popUpProps = {
-        getPopupContainer: (e: HTMLElement) =>
-          document.getElementById(idToAttachDropDowns)!,
+        getPopupContainer: (e: HTMLElement) => document.getElementById(idToAttachDropDowns)!,
       };
     }
 
@@ -552,10 +491,7 @@ class FieldNodeForm extends React.Component<Props, State> {
       <FormMultiTagField
         name={name ? `${name}.comparison.values` : 'comparison.values'}
         component={FormMultiTag}
-        validate={[
-          fieldValidators.isRequired,
-          fieldValidators.isValidArrayOfNumber,
-        ]}
+        validate={[fieldValidators.isRequired, fieldValidators.isValidArrayOfNumber]}
         formItemProps={{
           label: intl.formatMessage(messages.fieldConditionValuesNumberLabel),
           required: true,
@@ -608,8 +544,7 @@ class FieldNodeForm extends React.Component<Props, State> {
 
     if (idToAttachDropDowns) {
       popUpProps = {
-        getPopupContainer: (e: HTMLElement) =>
-          document.getElementById(idToAttachDropDowns)!,
+        getPopupContainer: (e: HTMLElement) => document.getElementById(idToAttachDropDowns)!,
       };
     }
 
@@ -652,9 +587,7 @@ class FieldNodeForm extends React.Component<Props, State> {
       match: {
         params: { organisationId },
       },
-      workspace : {
-        community_id
-      },
+      workspace: { community_id },
     } = this.props;
 
     const field = this.getField(formValues, expressionIndex);
@@ -664,12 +597,7 @@ class FieldNodeForm extends React.Component<Props, State> {
     ): Promise<Array<{ key: string; label: JSX.Element | string; value: string }>> => {
       if (field) {
         return this._referenceTableService
-          .getReferenceTable(
-            datamartId,
-            runtimeSchemaId,
-            objectType.name,
-            field.field,
-          )
+          .getReferenceTable(datamartId, runtimeSchemaId, objectType.name, field.field)
           .then(res =>
             res.data.map(r => ({ key: r.value, label: r.display_value, value: r.value })),
           );
@@ -677,8 +605,7 @@ class FieldNodeForm extends React.Component<Props, State> {
       return Promise.resolve([]);
     };
 
-    let fetchSingleMethod = (id: string) =>
-      Promise.resolve({ key: id, label: id, value: id });
+    let fetchSingleMethod = (id: string) => Promise.resolve({ key: id, label: id, value: id });
     let selectProps = {};
     let loadOnlyOnce = false;
     let shouldFilterData = false;
@@ -694,7 +621,7 @@ class FieldNodeForm extends React.Component<Props, State> {
                   res.data.map(r => ({
                     key: r.compartment_id,
                     label: r.name ? r.name : r.token,
-                    value: r.compartment_id
+                    value: r.compartment_id,
                   })),
                 );
             };
@@ -707,8 +634,7 @@ class FieldNodeForm extends React.Component<Props, State> {
             fetchListMethod = (keywords: string) => {
               return this._channelService
                 .getChannelsByOrganisation(organisationId, {
-                  community_id:
-                    organisationId === community_id ? community_id : undefined,
+                  community_id: organisationId === community_id ? community_id : undefined,
                   keywords: keywords,
                   with_source_datamarts: true,
                 })
@@ -730,7 +656,7 @@ class FieldNodeForm extends React.Component<Props, State> {
                   res.data.map(r => ({
                     key: r.id,
                     label: <SegmentNameDisplay audienceSegmentResource={r} />,
-                    value: r.id
+                    value: r.id,
                   })),
                 );
             };
@@ -743,10 +669,9 @@ class FieldNodeForm extends React.Component<Props, State> {
       }
     } else if (type && type === 'COMPUTED') {
       fetchListMethod = (keywords: string) =>
-        this.fetchPredicates(
-          this._computedTreeNodePath,
-          field ? field.field : '',
-        ).then(r => r.map(e => ({ key: e, label: e, value: e })));
+        this.fetchPredicates(this._computedTreeNodePath, field ? field.field : '').then(r =>
+          r.map(e => ({ key: e, label: e, value: e })),
+        );
       selectProps = {
         ...selectProps,
         mode: 'tags',
@@ -758,8 +683,7 @@ class FieldNodeForm extends React.Component<Props, State> {
     if (idToAttachDropDowns) {
       selectProps = {
         ...selectProps,
-        getPopupContainer: (e: HTMLElement) =>
-          document.getElementById(idToAttachDropDowns)!,
+        getPopupContainer: (e: HTMLElement) => document.getElementById(idToAttachDropDowns)!,
       };
     }
 
@@ -822,8 +746,7 @@ class FieldNodeForm extends React.Component<Props, State> {
 
     if (idToAttachDropDowns) {
       popUpProps = {
-        getPopupContainer: (e: HTMLElement) =>
-          document.getElementById(idToAttachDropDowns)!,
+        getPopupContainer: (e: HTMLElement) => document.getElementById(idToAttachDropDowns)!,
       };
     }
 
@@ -868,18 +791,13 @@ class FieldNodeForm extends React.Component<Props, State> {
           small={true}
           disabled={!hasSelectedAField || disabled}
         />
-        {fieldName &&
-          fieldCondition &&
-          generatedAvailableConditionOptions.component}
+        {fieldName && fieldCondition && generatedAvailableConditionOptions.component}
       </div>
     );
   }
 }
 
-const mapStateToProps = (
-  state: MicsReduxState,
-  ownProps: FieldNodeFormProps,
-) => ({
+const mapStateToProps = (state: MicsReduxState, ownProps: FieldNodeFormProps) => ({
   formValues: getFormValues(ownProps.formName || FORM_ID)(state),
 });
 

@@ -105,18 +105,16 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
       if (audienceFeaturesByFolder) {
         this._audienceFeatureService
           .getAudienceFeatures(datamartId, options)
-          .then((res) => {
+          .then(res => {
             this.setState({
               selectedFolder: {
                 ...audienceFeaturesByFolder,
-                audience_features: !!keywords
-                  ? res.data
-                  : res.data.filter((f) => !f.folder_id),
+                audience_features: !!keywords ? res.data : res.data.filter(f => !f.folder_id),
               },
               isLoading: false,
             });
           })
-          .catch((err) => {
+          .catch(err => {
             notifyError(err);
             this.setState({
               isLoading: false,
@@ -184,7 +182,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
               }),
             });
           })
-          .catch((err) => {
+          .catch(err => {
             notifyError(err);
           });
       },
@@ -204,10 +202,10 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
       .updateAudienceFeatureFolder(datamartId, folderId, {
         name: newName,
       })
-      .catch((err) => {
+      .catch(err => {
         this.props.notifyError(err);
       })
-      .then((_) => this.fetchFoldersAndFeatures(datamartId));
+      .then(_ => this.fetchFoldersAndFeatures(datamartId));
   };
 
   createFolder = () => {
@@ -223,7 +221,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
         datamart_id: datamartId,
         parent_id: selectedFolder?.id,
       })
-      .catch((err) => {
+      .catch(err => {
         this.props.notifyError(err);
       });
   };
@@ -248,7 +246,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
           .then(() => {
             this.fetchFoldersAndFeatures(datamartId);
           })
-          .catch((err) => {
+          .catch(err => {
             notifyError(err);
           });
       },
@@ -261,10 +259,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
   onSelectFolder = (id?: string) => () => {
     const { audienceFeaturesByFolder } = this.state;
     this.setState({
-      selectedFolder: this._audienceFeatureService.getFolderContent(
-        id,
-        audienceFeaturesByFolder,
-      ),
+      selectedFolder: this._audienceFeatureService.getFolderContent(id, audienceFeaturesByFolder),
     });
   };
 
@@ -287,12 +282,10 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
         };
         pathLoop(selectedFolder);
 
-        return path.map((elt) => {
+        return path.map(elt => {
           return (
             <Breadcrumb.Item key={elt.id ? elt.id : 'root_key'}>
-              <McsButton onClick={this.onSelectFolder(elt.id)}>
-                {elt.name}
-              </McsButton>
+              <McsButton onClick={this.onSelectFolder(elt.id)}>{elt.name}</McsButton>
             </Breadcrumb.Item>
           );
         });
@@ -300,7 +293,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
       return;
     };
     return (
-      <Breadcrumb className="mcs-audienceFeatureSettings_breadCrumb">
+      <Breadcrumb className='mcs-audienceFeatureSettings_breadCrumb'>
         {buildBreadCrumbs()}
       </Breadcrumb>
     );
@@ -311,17 +304,14 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
     const {
       location: { search },
     } = this.props;
-    const filter = parseSearch<SearchFilter>(
-      search,
-      AUDIENCE_FEATURE_SEARCH_SETTINGS,
-    );
+    const filter = parseSearch<SearchFilter>(search, AUDIENCE_FEATURE_SEARCH_SETTINGS);
 
     return filter.keywords ? undefined : (
       <div>
         {this.getBreadCrumb()}
-        <div className="mcs-audienceFeatureSettings_folderTable">
+        <div className='mcs-audienceFeatureSettings_folderTable'>
           {!!selectedFolder &&
-            selectedFolder.children.map((folder) => {
+            selectedFolder.children.map(folder => {
               return (
                 <AudienceFeatureFolder
                   key={folder.id ? folder.id : 'root_key'}
@@ -379,7 +369,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
     };
 
     const onOk = () => {
-      this.createFolder().then((_) => {
+      this.createFolder().then(_ => {
         this.fetchFoldersAndFeatures(datamartId);
         this.setState({
           displayFolderInput: false,
@@ -395,17 +385,15 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
     };
 
     return displayFolderInput ? (
-      <div className="mcs-audienceFeatureSettings-folderForm">
+      <div className='mcs-audienceFeatureSettings-folderForm'>
         <Input
           value={inputValue}
           onChange={this.handleInputChange}
-          className="mcs-audienceFeatureSettings-folderInput"
-          placeholder={intl.formatMessage(
-            messages.audienceFeaturePlaceholderFolderInput,
-          )}
+          className='mcs-audienceFeatureSettings-folderInput'
+          placeholder={intl.formatMessage(messages.audienceFeaturePlaceholderFolderInput)}
         />
 
-        <Button type="primary" onClick={onOk}>
+        <Button type='primary' onClick={onOk}>
           <FormattedMessage {...messages.audienceFeatureAddButton} />
         </Button>
 
@@ -416,16 +404,13 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
     ) : (
       <div>
         <Button
-          type="primary"
+          type='primary'
           onClick={addNewFeature}
-          className="mcs-audienceFeature_creation_button"
+          className='mcs-audienceFeature_creation_button'
         >
           <FormattedMessage {...messages.audienceFeatureNew} />
         </Button>
-        <Button
-          className="mcs-audienceFeatureSettings-addFolderButton"
-          onClick={addFolder}
-        >
+        <Button className='mcs-audienceFeatureSettings-addFolderButton' onClick={addFolder}>
           <FormattedMessage {...messages.audienceFeatureAddFolder} />
         </Button>
       </div>
@@ -438,20 +423,17 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
     } = this.props;
     const { isLoading, selectedFolder } = this.state;
 
-    const filter = parseSearch<SearchFilter>(
-      search,
-      AUDIENCE_FEATURE_SEARCH_SETTINGS,
-    );
+    const filter = parseSearch<SearchFilter>(search, AUDIENCE_FEATURE_SEARCH_SETTINGS);
 
     return (
-      <div className="ant-layout">
-        <Content className="mcs-content-container">
-          <div className="mcs-audienceFeatureSettings-table">
-            <div className="mcs-card-header mcs-card-title">
-              <span className="mcs-card-title">
+      <div className='ant-layout'>
+        <Content className='mcs-content-container'>
+          <div className='mcs-audienceFeatureSettings-table'>
+            <div className='mcs-card-header mcs-card-title'>
+              <span className='mcs-card-title'>
                 <FormattedMessage {...messages.audienceFeatures} />
               </span>
-              <div className="mcs-card-button">{this.buildActionButtons()}</div>
+              <div className='mcs-card-button'>{this.buildActionButtons()}</div>
             </div>
 
             {!!selectedFolder && (

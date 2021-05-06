@@ -29,7 +29,7 @@ type FeedsStatsMetric =
   | 'UNIQ_TAG_KEYS'
   | 'UNIQ_TAG_VALUES';
 
-export type FeedStatsUnit = "USER_POINTS" | "USER_IDENTIFIERS";
+export type FeedStatsUnit = 'USER_POINTS' | 'USER_IDENTIFIERS';
 
 export interface FeedStatsCounts {
   exportedUserPointsCount?: number;
@@ -40,9 +40,7 @@ export interface FeedStatsDimensionFilter extends DimensionFilter {
   dimension_name: FeedsStatsDimension;
 }
 
-export function buildFeedCardStatsRequestBody(
-  segmentId: string,
-): ReportRequestBody {
+export function buildFeedCardStatsRequestBody(segmentId: string): ReportRequestBody {
   const dimensionsList: FeedsStatsDimension[] = ['FEED_ID'];
   const metricsList: FeedsStatsMetric[] = ['UNIQ_USER_POINTS_COUNT', 'UNIQ_USER_IDENTIFIERS_COUNT'];
 
@@ -80,7 +78,7 @@ export function buildFeedStatsByFeedRequestBody(
   feedId: string,
   dateRange: DateRange,
   timeUnitDimension: 'DAY' | 'HOUR',
-  metrics?: FeedsStatsMetric[]
+  metrics?: FeedsStatsMetric[],
 ): ReportRequestBody {
   const dimensionsList: FeedsStatsDimension[] = ['FEED_ID', timeUnitDimension, 'SYNC_TYPE'];
   const metricsList: FeedsStatsMetric[] = metrics ? metrics : ['UNIQ_USER_POINTS_COUNT'];
@@ -96,12 +94,7 @@ export function buildFeedStatsByFeedRequestBody(
     filters: [dimensionFilter],
   };
 
-  return buildReport(
-    dateRange,
-    dimensionsList,
-    dimensionsFilterClauses,
-    metricsList,
-  );
+  return buildReport(dateRange, dimensionsList, dimensionsFilterClauses, metricsList);
 }
 
 function buildReport(
@@ -132,23 +125,23 @@ function buildReport(
 }
 
 export function getFeedStatsUnit(feed: AudienceFeedTyped): FeedStatsUnit {
-
   // For Google and AppNexus external feeds, we display the count of identifiers
-  if (feed.group_id === "com.mediarithmics.audience.externalfeed"
-    && (feed.artifact_id === "google-ddp-connector"
-      || feed.artifact_id === "appnexus-audience-segment-feed-direct"
-      || feed.artifact_id === "appnexus-audience-segment-feed")) {
-    return "USER_IDENTIFIERS";
+  if (
+    feed.group_id === 'com.mediarithmics.audience.externalfeed' &&
+    (feed.artifact_id === 'google-ddp-connector' ||
+      feed.artifact_id === 'appnexus-audience-segment-feed-direct' ||
+      feed.artifact_id === 'appnexus-audience-segment-feed')
+  ) {
+    return 'USER_IDENTIFIERS';
   }
 
   // For TAG_FEED, we display the count of identifiers
-  else if (feed.type === "TAG_FEED") {
-    return "USER_IDENTIFIERS";
+  else if (feed.type === 'TAG_FEED') {
+    return 'USER_IDENTIFIERS';
   }
 
   // Otherwise, we display the count of User Points
   else {
-    return "USER_POINTS";
+    return 'USER_POINTS';
   }
-
 }

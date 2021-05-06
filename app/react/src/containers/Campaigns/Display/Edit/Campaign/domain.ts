@@ -15,10 +15,7 @@ const operationMap = {
     propertyValue - propertyValue * percentValue * 0.01,
 };
 
-const operation = (chosenOperation: operationType,
-  propertyValue: number,
-  targetValue: number,
-) => {
+const operation = (chosenOperation: operationType, propertyValue: number, targetValue: number) => {
   return operationMap[chosenOperation](propertyValue, targetValue);
 };
 

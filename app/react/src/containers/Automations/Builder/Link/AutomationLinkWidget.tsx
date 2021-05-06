@@ -22,48 +22,45 @@ class AutomationLinkWidget extends React.Component<Props> {
   generateLabel() {
     return this.props.link.labels.map(label => {
       return (
-        <foreignObject 
-          key={label.type} 
-          className="link-label" 
-          width='100%' 
-          height='100%' 
-          style={{overflow: 'visible'}}>
+        <foreignObject
+          key={label.type}
+          className='link-label'
+          width='100%'
+          height='100%'
+          style={{ overflow: 'visible' }}
+        >
           <div ref={lab => (this.refLabel = lab)}>{label.type}</div>
-        </foreignObject>	
+        </foreignObject>
       );
     });
-	}
+  }
 
   updateLabelPosition() {
     if (this.refLabel !== null && this.refLabel !== undefined) {
-      this.refLabel.setAttribute("style" , `position: relative; top: ${this.props.link.points[0].y - 20}px; left: ${this.props.link.points[0].x + 10}px;`);
+      this.refLabel.setAttribute(
+        'style',
+        `position: relative; top: ${this.props.link.points[0].y - 20}px; left: ${
+          this.props.link.points[0].x + 10
+        }px;`,
+      );
     }
   }
 
   componentDidUpdate() {
-    this.updateLabelPosition()
-	}
-
-	componentDidMount() {
-   this.updateLabelPosition()
+    this.updateLabelPosition();
   }
 
-  generateLink(
-    path: string,
-    extraProps: any,
-    id: string | number,
-  ): JSX.Element {
+  componentDidMount() {
+    this.updateLabelPosition();
+  }
+
+  generateLink(path: string, extraProps: any, id: string | number): JSX.Element {
     const props = this.props;
 
     const Bottom = React.cloneElement(
       (props.diagramEngine.getFactoryForLink(
         this.props.link,
-      ) as AutomationLinkFactory).generateLinkSegment(
-        this.props.link,
-        this,
-        false,
-        path,
-      ),
+      ) as AutomationLinkFactory).generateLinkSegment(this.props.link, this, false, path),
       {
         ref: (ref: any) => ref && this.refPaths.push(ref),
       },
@@ -115,13 +112,12 @@ class AutomationLinkWidget extends React.Component<Props> {
         ),
       );
     }
-      
+
     return (
-      
-			<g>
+      <g>
         {paths}
         {this.generateLabel()}
-			</g>
+      </g>
     );
   }
 }

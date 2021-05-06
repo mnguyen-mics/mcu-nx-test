@@ -1,8 +1,6 @@
 import { Aliases } from '../../../../../models/settings/settings';
-import { DatamartResource } from '../../../../../models/datamart/DatamartResource'
-import {
-  EventRuleFieldModel,
-} from '../../Common/domain';
+import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
+import { EventRuleFieldModel } from '../../Common/domain';
 import { FieldArrayModel } from '../../../../../utils/FormHelper';
 
 export interface DatamartFormData {
@@ -13,8 +11,7 @@ export interface DatamartFormData {
 export type AliasesFieldModel = FieldArrayModel<Aliases>;
 
 export const INITIAL_DATAMART_FORM_DATA: DatamartFormData = {
-  datamart: {
-  },
+  datamart: {},
   eventRulesFields: [],
 };
 

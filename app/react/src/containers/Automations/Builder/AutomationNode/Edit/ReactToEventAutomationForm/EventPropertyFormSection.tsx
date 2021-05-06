@@ -5,7 +5,10 @@ import { Row, Col } from 'antd';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { FormItemProps } from 'antd/lib/form';
 import { QueryBooleanOperator } from '../../../../../../models/datamart/graphdb/QueryDocument';
-import EventPropertyForm, { EventPropertyFormData, EventPropertyFormProps } from './EventPropertyForm';
+import EventPropertyForm, {
+  EventPropertyFormData,
+  EventPropertyFormProps,
+} from './EventPropertyForm';
 import { FormSection } from '../../../../../../components/Form';
 
 export type EventPropertyFormSectionProps = {
@@ -54,7 +57,7 @@ class EventPropertyFormSection extends React.Component<Props> {
         <div className={'form-input-group'} key={index}>
           {!disabled && (
             <div className={'action-buttons'} onClick={handleRemove}>
-              <McsIcon type="close" />
+              <McsIcon type='close' />
             </div>
           )}
           <div>
@@ -80,21 +83,16 @@ class EventPropertyFormSection extends React.Component<Props> {
     const generateOperator = (key: string) => {
       return (
         <div key={key} className={'form-input-group-separator'}>
-          <div className="wrapper">
+          <div className='wrapper'>
             <div className={'item'}>
               <input
                 id={key}
-                className="tgl tgl-operator"
-                type="checkbox"
+                className='tgl tgl-operator'
+                type='checkbox'
                 checked={booleanOperator === 'OR' ? true : false}
                 onChange={onClick}
               />
-              <label
-                className="tgl-btn"
-                data-tg-off="AND"
-                data-tg-on="OR"
-                htmlFor={key}
-              />
+              <label className='tgl-btn' data-tg-off='AND' data-tg-on='OR' htmlFor={key} />
             </div>
           </div>
         </div>
@@ -112,14 +110,14 @@ class EventPropertyFormSection extends React.Component<Props> {
     return (
       <div>
         <FormSection title={title} subtitle={subtitle} />
-        <div className="form-field-wrapper">{renderedFields}</div>
+        <div className='form-field-wrapper'>{renderedFields}</div>
         {!disabled && (
           <Row>
             <Col span={24}>
               <div onClick={handleOnClick}>
-                <Col span={24} className="add-field-button">
+                <Col span={24} className='add-field-button'>
                   <p>
-                    <McsIcon type="plus" />
+                    <McsIcon type='plus' />
                     {intl.formatMessage(messages.fieldConditionAdditionButton)}
                   </p>
                 </Col>
@@ -137,6 +135,6 @@ export default injectIntl(EventPropertyFormSection);
 const messages = defineMessages({
   fieldConditionAdditionButton: {
     id: 'eventPropertyFormSection.additionButton',
-    defaultMessage: 'Add a Field Condition'
+    defaultMessage: 'Add a Field Condition',
   },
 });

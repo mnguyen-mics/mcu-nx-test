@@ -72,22 +72,20 @@ class CustomMultipleImageLoader extends React.Component<JoinedProps, State> {
       });
     };
     return (
-      <div className="content">
-        <div className="image">
+      <div className='content'>
+        <div className='image'>
           <img src={`${url}`} />
         </div>
-        <div className="text">{file.name}</div>
-        <div className="overlay">
+        <div className='text'>{file.name}</div>
+        <div className='overlay'>
           <div>
-            <div className="tets">
+            <div className='tets'>
               <Button onClick={onClick}>
-                <McsIcon type="close" />
+                <McsIcon type='close' />
               </Button>
             </div>
             <div>
-              <Button onClick={openModal}>
-                {intl.formatMessage(messages.editName)}
-              </Button>
+              <Button onClick={openModal}>{intl.formatMessage(messages.editName)}</Button>
             </div>
           </div>
         </div>
@@ -112,10 +110,7 @@ class CustomMultipleImageLoader extends React.Component<JoinedProps, State> {
 
     const newFields: MultipleImageField[] = [];
     fields.getAll().forEach(f => {
-      if (
-        this.state.selectedFile &&
-        f.file.uid === this.state.selectedFile.file.uid
-      ) {
+      if (this.state.selectedFile && f.file.uid === this.state.selectedFile.file.uid) {
         newFields.push({
           file: this.state.selectedFile.file,
           name: this.state.inputValue,
@@ -161,10 +156,7 @@ class CustomMultipleImageLoader extends React.Component<JoinedProps, State> {
               file: info.file,
             });
           } else {
-            message.error(
-              `${info.file.name} ${intl.formatMessage(messages.uploadMessage)}`,
-              2,
-            );
+            message.error(`${info.file.name} ${intl.formatMessage(messages.uploadMessage)}`, 2);
           }
 
           formChange((fields as any).name, newFields);
@@ -178,23 +170,24 @@ class CustomMultipleImageLoader extends React.Component<JoinedProps, State> {
     const fileList = fields.getAll();
 
     return (
-      <div className="mcs-custom-loader image-loader">
-        <div className="square-container">
+      <div className='mcs-custom-loader image-loader'>
+        <div className='square-container'>
           {fileList &&
             fileList.map(f => {
               return (
-                <div key={f.file.uid} className="square">
+                <div key={f.file.uid} className='square'>
                   {this.renderImageEditor(f)}
                 </div>
               );
             })}
 
-          <div className="square">
-            <span className="content">
+          <div className='square'>
+            <span className='content'>
               <Upload.Dragger
                 fileList={fileList.map(f => f.file)}
                 {...inputProps}
-                {...uploadDetailProps}>
+                {...uploadDetailProps}
+              >
                 <div>{intl.formatMessage(messages.uploadText)}</div>
               </Upload.Dragger>
             </span>
@@ -203,11 +196,9 @@ class CustomMultipleImageLoader extends React.Component<JoinedProps, State> {
             title={intl.formatMessage(messages.modalTitle)}
             visible={this.state.modalVisible}
             onOk={this.handleOk}
-            onCancel={this.handleCancel}>
-            <Input
-              value={this.state.inputValue}
-              onChange={this.handleInputChange}
-            />
+            onCancel={this.handleCancel}
+          >
+            <Input value={this.state.inputValue} onChange={this.handleInputChange} />
           </Modal>
         </div>
       </div>

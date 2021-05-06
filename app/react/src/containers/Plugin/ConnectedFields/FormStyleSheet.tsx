@@ -24,19 +24,9 @@ class FormStyleSheet extends React.Component<Props> {
   }
 
   render() {
-    const {
-      meta,
-      formItemProps,
-      helpToolTipProps,
-      input,
-      options,
-    } = this.props;
+    const { meta, formItemProps, helpToolTipProps, input, options } = this.props;
 
-    let validateStatus = 'success' as
-      | 'success'
-      | 'warning'
-      | 'error'
-      | 'validating';
+    let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
     if (meta.touched && meta.invalid) validateStatus = 'error';
     if (meta.touched && meta.warning) validateStatus = 'warning';
 
@@ -49,7 +39,7 @@ class FormStyleSheet extends React.Component<Props> {
         validateStatus={validateStatus}
         {...formItemProps}
       >
-        <PluginSelectModal input={input} type="stylesheet" options={options} />
+        <PluginSelectModal input={input} type='stylesheet' options={options} />
       </FormFieldWrapper>
     );
   }

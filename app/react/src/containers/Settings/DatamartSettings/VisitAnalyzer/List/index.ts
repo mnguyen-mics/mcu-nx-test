@@ -1,5 +1,3 @@
 import VisitAnalyzerContent from './VisitAnalyzersList';
 
-export {
-  VisitAnalyzerContent,
-};
+export { VisitAnalyzerContent };

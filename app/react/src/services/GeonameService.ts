@@ -18,9 +18,7 @@ export interface IGeonameService {
     country: string,
   ) => Promise<DataListResponse<Geoname>>;
 
-  getGeoname: (
-    geonameId: string,
-  ) => Promise<DataResponse<Geoname>>;
+  getGeoname: (geonameId: string) => Promise<DataResponse<Geoname>>;
 }
 
 @injectable()
@@ -39,11 +37,8 @@ export class GeonameService implements IGeonameService {
     return ApiService.getRequest(endpoint, params);
   }
 
-  getGeoname(
-    geonameId: string,
-  ): Promise<DataResponse<Geoname>> {
+  getGeoname(geonameId: string): Promise<DataResponse<Geoname>> {
     const endpoint = `geonames/${geonameId}`;
     return ApiService.getRequest(endpoint);
   }
-};
-
+}

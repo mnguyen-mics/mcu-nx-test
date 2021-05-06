@@ -1,5 +1,3 @@
 import GeneralFormSection from './GeneralFormSection';
 
-export {
-  GeneralFormSection,
-};
+export { GeneralFormSection };

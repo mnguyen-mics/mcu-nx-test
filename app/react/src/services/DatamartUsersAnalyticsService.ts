@@ -2,10 +2,10 @@ import ApiService from './ApiService';
 import { injectable } from 'inversify';
 import { ReportViewResponse } from './ReportService';
 import { ReportRequestBody, DimensionFilterClause } from '../models/ReportRequestBody';
-import { 
-  buildDatamartUsersAnalyticsRequestBody, 
-  DatamartUsersAnalyticsDimension, 
-  DatamartUsersAnalyticsMetric 
+import {
+  buildDatamartUsersAnalyticsRequestBody,
+  DatamartUsersAnalyticsDimension,
+  DatamartUsersAnalyticsMetric,
 } from '../utils/DatamartUsersAnalyticsReportHelper';
 import McsMoment from '../utils/McsMoment';
 
@@ -19,7 +19,7 @@ export interface IDatamartUsersAnalyticsService {
     dimensionFilterClauses?: DimensionFilterClause,
     segmentId?: string,
     segmentIdToAdd?: string,
-    sampling?: number
+    sampling?: number,
   ) => Promise<ReportViewResponse>;
 }
 
@@ -34,9 +34,19 @@ export class DatamartUsersAnalyticsService implements IDatamartUsersAnalyticsSer
     dimensionFilterClauses?: DimensionFilterClause,
     segmentId?: string,
     segmentIdToAggregate?: string,
-    sampling?: number
+    sampling?: number,
   ): Promise<ReportViewResponse> {
-    const report: ReportRequestBody = buildDatamartUsersAnalyticsRequestBody(datamartId, metrics, from, to, dimensions, dimensionFilterClauses, segmentId, segmentIdToAggregate, sampling);
+    const report: ReportRequestBody = buildDatamartUsersAnalyticsRequestBody(
+      datamartId,
+      metrics,
+      from,
+      to,
+      dimensions,
+      dimensionFilterClauses,
+      segmentId,
+      segmentIdToAggregate,
+      sampling,
+    );
     const endpoint = `datamarts/${datamartId}/user_activities_analytics`;
     return ApiService.postRequest(endpoint, report);
   }

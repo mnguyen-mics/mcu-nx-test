@@ -22,8 +22,8 @@ export interface IAudienceBuilderService {
 
   loadAudienceBuilder: (
     datamartId: string,
-    audienceBuilderId: string
-  ) => Promise<AudienceBuilderFormData>
+    audienceBuilderId: string,
+  ) => Promise<AudienceBuilderFormData>;
 
   getAudienceBuilder: (
     datamartId: string,
@@ -36,10 +36,7 @@ export interface IAudienceBuilderService {
     body: Partial<AudienceBuilderResource>,
   ) => Promise<DataResponse<AudienceBuilderResource>>;
 
-  deleteAudienceBuilder(
-    datamartId: string,
-    audienceBuilderId: string,
-  ): Promise<DataResponse<any>>;
+  deleteAudienceBuilder(datamartId: string, audienceBuilderId: string): Promise<DataResponse<any>>;
 }
 
 @injectable()
@@ -73,26 +70,25 @@ export default class AudienceBuilderService implements IAudienceBuilderService {
 
   loadAudienceBuilder(
     datamartId: string,
-    audienceBuilderId: string
+    audienceBuilderId: string,
   ): Promise<AudienceBuilderFormData> {
-   return this.getAudienceBuilder(datamartId, audienceBuilderId).then(builder => {
+    return this.getAudienceBuilder(datamartId, audienceBuilderId).then(builder => {
       return Promise.all(
         builder.data.demographics_features_ids.map(id => {
           return this._audienceFeatureService
-           .getAudienceFeature(datamartId, id)
-           .then(feature => feature.data)
-        }
-      )).then(audienceFeatures => {
-          return {
-            audienceBuilder: builder.data,
-            audienceFeatureDemographics: audienceFeatures.map(feature => {
-              return createFieldArrayModelWithMeta(feature, { name: feature.name })
-            })
-          }
-      })
-    })
+            .getAudienceFeature(datamartId, id)
+            .then(feature => feature.data);
+        }),
+      ).then(audienceFeatures => {
+        return {
+          audienceBuilder: builder.data,
+          audienceFeatureDemographics: audienceFeatures.map(feature => {
+            return createFieldArrayModelWithMeta(feature, { name: feature.name });
+          }),
+        };
+      });
+    });
   }
-
 
   updateAudienceBuilder(
     datamartId: string,
@@ -103,10 +99,7 @@ export default class AudienceBuilderService implements IAudienceBuilderService {
     return ApiService.putRequest(endpoint, body);
   }
 
-  deleteAudienceBuilder(
-    datamartId: string,
-    audienceBuilderId: string,
-  ): Promise<DataResponse<any>> {
+  deleteAudienceBuilder(datamartId: string, audienceBuilderId: string): Promise<DataResponse<any>> {
     const endpoint = `datamarts/${datamartId}/audience_builders/${audienceBuilderId}`;
     return ApiService.deleteRequest(endpoint);
   }

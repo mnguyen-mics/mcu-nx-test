@@ -15,10 +15,7 @@ export type Props<T> = PluginCardProps<T> & InjectedWorkspaceProps;
 
 interface State {}
 
-class PluginCard<T extends LayoutablePlugin> extends React.Component<
-  Props<T>,
-  State
-> {
+class PluginCard<T extends LayoutablePlugin> extends React.Component<Props<T>, State> {
   onClick = (e: React.MouseEvent) => {
     const { onPresetDelete } = this.props;
     e.stopPropagation();
@@ -30,11 +27,7 @@ class PluginCard<T extends LayoutablePlugin> extends React.Component<
       workspace: { role },
     } = this.props;
 
-    if (
-      role === 'ORGANISATION_ADMIN' ||
-      role === 'COMMUNITY_ADMIN' ||
-      role === 'CUSTOMER_ADMIN'
-    )
+    if (role === 'ORGANISATION_ADMIN' || role === 'COMMUNITY_ADMIN' || role === 'CUSTOMER_ADMIN')
       return true;
 
     return false;
@@ -49,18 +42,13 @@ class PluginCard<T extends LayoutablePlugin> extends React.Component<
 
     return (
       !!plugin.plugin_layout && (
-        <div
-          onClick={hoverable ? onSelect : undefined}
-          className={'plugin-card'}
-        >
+        <div onClick={hoverable ? onSelect : undefined} className={'plugin-card'}>
           <Card
-            className={`plugin-card ${plugin.id} ${
-              hoverable ? 'hoverable' : ''
-            }`}
+            className={`plugin-card ${plugin.id} ${hoverable ? 'hoverable' : ''}`}
             onClick={hoverable ? onSelect : undefined}
-            type="flex"
+            type='flex'
           >
-            <div className="image-placehodlder">
+            <div className='image-placehodlder'>
               <img
                 src={
                   plugin.plugin_layout !== undefined
@@ -69,28 +57,24 @@ class PluginCard<T extends LayoutablePlugin> extends React.Component<
                     : undefined
                 }
               />
-              {plugin.plugin_preset &&
-                this.hasRightToDeletePreset() &&
-                onPresetDelete && (
-                  <div className="delete-preset" onClick={this.onClick}>
-                    <McsIcon style={{ marginRight: 0 }} type={'close'} />
-                  </div>
+              {plugin.plugin_preset && this.hasRightToDeletePreset() && onPresetDelete && (
+                <div className='delete-preset' onClick={this.onClick}>
+                  <McsIcon style={{ marginRight: 0 }} type={'close'} />
+                </div>
               )}
             </div>
-            <div className="plugin-title">
+            <div className='plugin-title'>
               {plugin.plugin_preset
                 ? plugin.plugin_preset.name
                 : plugin.plugin_layout.metadata.display_name}
             </div>
-            <div className="plugin-description">
+            <div className='plugin-description'>
               {plugin.plugin_preset && plugin.plugin_preset.description
                 ? this.truncateDescription(plugin.plugin_preset.description)
-                : this.truncateDescription(
-                    plugin.plugin_layout.metadata.description,
-                  )}
+                : this.truncateDescription(plugin.plugin_layout.metadata.description)}
             </div>
-            <div className="select-button">
-              <Button className="button" onClick={onSelect}>
+            <div className='select-button'>
+              <Button className='button' onClick={onSelect}>
                 Select
               </Button>
             </div>

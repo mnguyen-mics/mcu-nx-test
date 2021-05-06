@@ -14,8 +14,7 @@ const messages = defineMessages({
     defaultMessage: 'This action allows you to trigger a custom action.',
   },
   sectionGeneralConfigurationTitle: {
-    id:
-      'automation.builder.node.customActionForm.generalInfoSection.configuration.title',
+    id: 'automation.builder.node.customActionForm.generalInfoSection.configuration.title',
     defaultMessage: 'Configuration',
   },
   customActionNameTitle: {
@@ -37,8 +36,7 @@ const messages = defineMessages({
   },
   developerDocumentation: {
     id: 'automation.builder.node.customActionForm.pluginInstance.developerDocumentation',
-    defaultMessage:
-      'developer documentation',
+    defaultMessage: 'developer documentation',
   },
   sectionPluginSettingsTitle: {
     id: 'automation.builder.node.customActionForm.pluginSettings.title',
@@ -46,17 +44,14 @@ const messages = defineMessages({
   },
   sectionPluginSettingsSubtitleFirstPart: {
     id: 'automation.builder.node.customActionForm.pluginSettings.subtitle.firstPart',
-    defaultMessage:
-      'The following properties are attached to your custom action. Check our',
+    defaultMessage: 'The following properties are attached to your custom action. Check our',
   },
   sectionPluginSettingsSubtitleSecondPart: {
     id: 'automation.builder.node.customActionForm.pluginSettings.subtitle.secondPart',
-    defaultMessage:
-      'to see how to change their values.',
+    defaultMessage: 'to see how to change their values.',
   },
   noInformationOnPlugin: {
-    id:
-      'automation.builder.node.customActionForm.pluginSettings.noInformationOnPlugin',
+    id: 'automation.builder.node.customActionForm.pluginSettings.noInformationOnPlugin',
     defaultMessage: 'No information was found on this plugin',
   },
 });

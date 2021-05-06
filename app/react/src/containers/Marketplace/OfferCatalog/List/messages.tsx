@@ -36,5 +36,5 @@ export default defineMessages({
   filterLabel: {
     id: 'marketplace.offercatalog.filterByType',
     defaultMessage: 'Filter by type',
-  }
+  },
 });

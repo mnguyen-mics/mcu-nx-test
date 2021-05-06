@@ -1,4 +1,4 @@
-import { postRequest } from "./ApiHelper";
+import { postRequest } from './ApiHelper';
 
 export type AudienceSegmentType =
   | 'USER_LIST'
@@ -48,18 +48,22 @@ export interface UserQuerySegment extends AudienceSegmentResource {
   target_metric: Engagement;
 }
 
-export async function createUserQuery(datamartId: number, organisationId: number, queryId: string, segmentName: string): Promise<UserQuerySegment> {
+export async function createUserQuery(
+  datamartId: number,
+  organisationId: number,
+  queryId: string,
+  segmentName: string,
+): Promise<UserQuerySegment> {
   const endpoint = `audience_segments?organisation_id=${organisationId}`;
   const body = {
-    type: "USER_QUERY",
+    type: 'USER_QUERY',
     datamart_id: datamartId,
     organisation_id: organisationId,
     query_id: queryId,
     name: segmentName,
     persisted: true,
-  }
-  return postRequest(endpoint, body)
-    .then(({ data: segment }) => {
-      return segment;
-    });
+  };
+  return postRequest(endpoint, body).then(({ data: segment }) => {
+    return segment;
+  });
 }

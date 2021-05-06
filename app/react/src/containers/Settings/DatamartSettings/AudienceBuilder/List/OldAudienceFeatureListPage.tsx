@@ -189,7 +189,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
       });
     };
     return (
-      <Button type="primary" onClick={onClick} className="mcs-audienceFeature_creation_button">
+      <Button type='primary' onClick={onClick} className='mcs-audienceFeature_creation_button'>
         <FormattedMessage {...messages.audienceFeatureNew} />
       </Button>
     );
@@ -205,19 +205,17 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
     } = this.state;
 
     return (
-      <div className="ant-layout">
-        <Content className="mcs-content-container">
-          <div className="mcs-table-container">
+      <div className='ant-layout'>
+        <Content className='mcs-content-container'>
+          <div className='mcs-table-container'>
             <div>
-              <div className="mcs-card-header mcs-card-title">
-                <span className="mcs-card-title">
+              <div className='mcs-card-header mcs-card-title'>
+                <span className='mcs-card-title'>
                   <FormattedMessage {...messages.audienceFeatures} />
                 </span>
-                <span className="mcs-card-button">
-                  {this.buildNewActionElement()}
-                </span>
+                <span className='mcs-card-button'>{this.buildNewActionElement()}</span>
               </div>
-              <hr className="mcs-separator" />
+              <hr className='mcs-separator' />
               <AudienceFeatureTable
                 dataSource={audienceFeatures}
                 total={totalAudienceFeature}

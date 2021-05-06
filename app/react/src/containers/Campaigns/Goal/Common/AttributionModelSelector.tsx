@@ -3,10 +3,7 @@ import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { SearchFilter } from '../../../../components/ElementSelector';
-import {
-  getPaginatedApiParam,
-  PaginatedApiParam,
-} from '../../../../utils/ApiHelper';
+import { getPaginatedApiParam, PaginatedApiParam } from '../../../../utils/ApiHelper';
 import { TableSelectorProps } from '../../../../components/ElementSelector/TableSelector';
 import { TableSelector } from '../../../../components/index';
 import { AttributionModel } from '../../../../models/Plugins';
@@ -60,16 +57,11 @@ class AttributionModelSelector extends React.Component<Props> {
     const options: PaginatedApiParam = {
       ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
     };
-    return this._attributionModelService.getAttributionModels(
-      organisationId,
-      options,
-    );
+    return this._attributionModelService.getAttributionModels(organisationId, options);
   };
 
   fetchAttributionModel = (attributionModelId: string) => {
-    return this._attributionModelService.getAttributionModel(
-      attributionModelId,
-    );
+    return this._attributionModelService.getAttributionModel(attributionModelId);
   };
 
   saveAttributionModels = (
@@ -107,9 +99,7 @@ class AttributionModelSelector extends React.Component<Props> {
       <AttributionModelTableSelector
         actionBarTitle={formatMessage(messages.attributionModelSelectorTitle)}
         displayFiltering={true}
-        searchPlaceholder={formatMessage(
-          messages.attributionModelSelectorSearchPlaceholder,
-        )}
+        searchPlaceholder={formatMessage(messages.attributionModelSelectorSearchPlaceholder)}
         selectedIds={selectedAttributionModelIds}
         fetchDataList={this.fetchAttributionModels}
         fetchData={this.fetchAttributionModel}

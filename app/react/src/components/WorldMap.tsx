@@ -40,12 +40,7 @@ class WorldMap extends React.Component<Props> {
     //   this.value = this.value < 1 ? 1 : this.value;
     // });
 
-    Highcharts.createElement(
-      'link',
-      {},
-      undefined,
-      document.getElementsByTagName('head')[0],
-    );
+    Highcharts.createElement('link', {}, undefined, document.getElementsByTagName('head')[0]);
 
     (Highcharts as any).theme = {
       colors: ['#003056'],

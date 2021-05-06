@@ -37,9 +37,7 @@ import AdFormSection, { AdFormSectionProps } from './sections/AdFormSection';
 import DeviceFormSection from './sections/DeviceFormSection';
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 
-const Content = (Layout.Content as unknown) as React.ComponentClass<
-  BasicProps & { id: string }
->;
+const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
 
 const AudienceSegmentFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
@@ -51,13 +49,9 @@ export const LocationTargetingFieldArray = FieldArray as new () => GenericFieldA
   LocationTargetingFormSectionProps
 >;
 
-export const AdFieldArray = FieldArray as new () => GenericFieldArray<
-  Field,
-  AdFormSectionProps
->;
+export const AdFieldArray = FieldArray as new () => GenericFieldArray<Field, AdFormSectionProps>;
 
-export interface AdGroupFormProps
-  extends Omit<ConfigProps<AdGroupFormData>, 'form'> {
+export interface AdGroupFormProps extends Omit<ConfigProps<AdGroupFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: React.ReactNode[];
 }
@@ -89,9 +83,7 @@ class AdGroupForm extends React.Component<Props> {
       rerenderOnEveryChange: true,
     };
 
-    const displaySummaryFirst = !!(
-      initialValues.adGroup && initialValues.adGroup.name
-    );
+    const displaySummaryFirst = !!(initialValues.adGroup && initialValues.adGroup.name);
 
     const sections: McsFormSection[] = [];
 
@@ -110,7 +102,7 @@ class AdGroupForm extends React.Component<Props> {
       title: messages.sectionTitleAudience,
       component: (
         <AudienceSegmentFieldArray
-          name="segmentFields"
+          name='segmentFields'
           component={AudienceSegmentFormSection}
           {...genericFieldArrayProps}
         />
@@ -121,7 +113,7 @@ class AdGroupForm extends React.Component<Props> {
       title: messages.sectionTitleLocationTargeting,
       component: (
         <LocationTargetingFieldArray
-          name="locationFields"
+          name='locationFields'
           component={LocationTargetingFormSection}
           {...genericFieldArrayProps}
         />
@@ -141,11 +133,7 @@ class AdGroupForm extends React.Component<Props> {
       id: 'display',
       title: messages.sectionTitleAds,
       component: (
-        <AdFieldArray
-          name="adFields"
-          component={AdFormSection}
-          {...genericFieldArrayProps}
-        />
+        <AdFieldArray name='adFields' component={AdFormSection} {...genericFieldArrayProps} />
       ),
     };
 
@@ -174,7 +162,7 @@ class AdGroupForm extends React.Component<Props> {
     const sections = this.buildFormSections();
 
     const sideBarProps: SidebarWrapperProps = {
-      items: sections.map((s) => ({ sectionId: s.id, title: s.title })),
+      items: sections.map(s => ({ sectionId: s.id, title: s.title })),
       scrollId: FORM_ID,
     };
 
@@ -190,21 +178,15 @@ class AdGroupForm extends React.Component<Props> {
     });
 
     return (
-      <Layout className="edit-layout">
+      <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
           <ScrollspySider {...sideBarProps} />
-          <Form
-            className="edit-layout ant-layout"
-            onSubmit={handleSubmit as any}
-          >
+          <Form className='edit-layout ant-layout' onSubmit={handleSubmit as any}>
             {/* this button enables submit on enter */}
-            <button type="submit" style={{ display: 'none' }} />
-            <Content
-              id={FORM_ID}
-              className="mcs-content-container mcs-form-container"
-            >
-              <div className="ad-group-form">{renderedSections}</div>
+            <button type='submit' style={{ display: 'none' }} />
+            <Content id={FORM_ID} className='mcs-content-container mcs-form-container'>
+              <div className='ad-group-form'>{renderedSections}</div>
             </Content>
           </Form>
         </Layout>

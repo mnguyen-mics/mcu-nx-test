@@ -1,5 +1,3 @@
 import ProfileSettingsPage from './ProfileSettingsEditPage';
 
-export {
-  ProfileSettingsPage,
-};
+export { ProfileSettingsPage };

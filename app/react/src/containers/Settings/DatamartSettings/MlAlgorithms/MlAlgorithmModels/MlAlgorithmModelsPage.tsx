@@ -9,18 +9,13 @@ import { compose } from 'recompose';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { IMlAlgorithmModelService } from '../../../../../services/MlAlgorithmModelService';
-import {
-  PAGINATION_SEARCH_SETTINGS,
-  parseSearch,
-} from '../../../../../utils/LocationSearchHelper';
+import { PAGINATION_SEARCH_SETTINGS, parseSearch } from '../../../../../utils/LocationSearchHelper';
 import ItemList, { Filters } from '../../../../../components/ItemList';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import messages from './messages';
 import moment from 'moment';
 import { UploadFile } from 'antd/lib/upload/interface';
-import withValidators, {
-  ValidatorProps,
-} from '../../../../../components/Form/withValidators';
+import withValidators, { ValidatorProps } from '../../../../../components/Form/withValidators';
 import LocalStorage from '../../../../../services/LocalStorage';
 import log from '../../../../../utils/Logger';
 import NotebookResultPreviewModal from './NotebookResultPreviewModal';
@@ -69,10 +64,7 @@ type JoinedProps = RouteComponentProps<RouterProps> &
   InjectedThemeColorsProps &
   InjectedNotificationProps;
 
-class MlAlgorithmModelList extends React.Component<
-  JoinedProps,
-  MlAlgorithmModelsListState
-> {
+class MlAlgorithmModelList extends React.Component<JoinedProps, MlAlgorithmModelsListState> {
   @lazyInject(TYPES.IMlAlgorithmModelService)
   private _mlAlgorithmModelService: IMlAlgorithmModelService;
 
@@ -90,11 +82,7 @@ class MlAlgorithmModelList extends React.Component<
         params: { mlAlgorithmId },
       },
     } = this.props;
-    this.fetchMlAlgorithmModelsWithMlAlgorithmId(
-      organisationId,
-      mlAlgorithmId,
-      filter,
-    );
+    this.fetchMlAlgorithmModelsWithMlAlgorithmId(organisationId, mlAlgorithmId, filter);
   };
 
   fetchMlAlgorithmModelsWithMlAlgorithmId = (
@@ -109,14 +97,14 @@ class MlAlgorithmModelList extends React.Component<
       };
       this._mlAlgorithmModelService
         .getMlAlgorithmModels(organisationId, mlAlgorithmId, options)
-        .then((results) => {
+        .then(results => {
           this.setState({
             loading: false,
             data: results.data,
             total: results.total || results.count,
           });
         })
-        .catch((err) => {
+        .catch(err => {
           message.error(intl.formatMessage(messages.modelsLoadingError));
         });
     });
@@ -144,8 +132,7 @@ class MlAlgorithmModelList extends React.Component<
         title: formatMessage(messages.status),
         key: 'status',
         isHideable: false,
-        render: (text: string, record: MlAlgorithmModelResource) =>
-          record.status,
+        render: (text: string, record: MlAlgorithmModelResource) => record.status,
       },
       {
         title: formatMessage(messages.lastUpdatedDate),
@@ -180,12 +167,12 @@ class MlAlgorithmModelList extends React.Component<
   formatFormData = (file: UploadFile, isBinary: boolean): Promise<FormData> => {
     const formData = new FormData();
     return this.onFileUpdate(file, isBinary)
-      .then((fileContent) => {
+      .then(fileContent => {
         const formattedFile = new Blob([fileContent as any], {});
         formData.append('file', formattedFile, file.name);
         return formData;
       })
-      .catch((e) => {
+      .catch(e => {
         this.props.notifyError(e);
         return formData;
       });
@@ -213,7 +200,7 @@ class MlAlgorithmModelList extends React.Component<
         this.formatFormData(resultFile[0], false),
         this.formatFormData(notebookFile[0], false),
       ])
-        .then((responses) => {
+        .then(responses => {
           const modelFormData = responses[0];
           const resultFormData = responses[1];
           const notebookFormData = responses[2];
@@ -224,16 +211,16 @@ class MlAlgorithmModelList extends React.Component<
           };
           this._mlAlgorithmModelService
             .createMlAlgorithmModel(mlAlgorithmId, mlAlgorithmModel)
-            .then((res) => res.data)
-            .then((model) => {
+            .then(res => res.data)
+            .then(model => {
               return this._mlAlgorithmModelService.uploadNotebook(
                 mlAlgorithmId,
                 model.id,
                 notebookFormData,
               );
             })
-            .then((res) => res.data)
-            .then((modelWithNotebook) => {
+            .then(res => res.data)
+            .then(modelWithNotebook => {
               return this._mlAlgorithmModelService.uploadBinary(
                 mlAlgorithmId,
                 modelWithNotebook.id,
@@ -241,15 +228,15 @@ class MlAlgorithmModelList extends React.Component<
               );
             })
 
-            .then((res) => res.data)
-            .then((modelWithModel) => {
+            .then(res => res.data)
+            .then(modelWithModel => {
               return this._mlAlgorithmModelService.uploadResult(
                 mlAlgorithmId,
                 modelWithModel.id,
                 resultFormData,
               );
             })
-            .then((values) => {
+            .then(values => {
               const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
               this.fetchMlAlgorithmModels(organisationId, filter);
               this.setState({
@@ -260,18 +247,16 @@ class MlAlgorithmModelList extends React.Component<
                 notebookFile: [],
               });
             })
-            .catch((err) => {
+            .catch(err => {
               this.setState({ loading: false });
-              let errorMessage = intl.formatMessage(
-                messages.modelCreationError,
-              );
+              let errorMessage = intl.formatMessage(messages.modelCreationError);
               if (err.error) {
                 errorMessage += `: ${err.error}`;
               }
               message.error(errorMessage);
             });
         })
-        .catch((err) => {
+        .catch(err => {
           this.setState({ loading: false });
           this.props.notifyError(err);
         });
@@ -281,13 +266,9 @@ class MlAlgorithmModelList extends React.Component<
   download = (uri: string) => {
     try {
       (window as any).open(
-        `${
-          (window as any).MCS_CONSTANTS.API_URL
-        }/v1/data_file/data?uri=${encodeURIComponent(
+        `${(window as any).MCS_CONSTANTS.API_URL}/v1/data_file/data?uri=${encodeURIComponent(
           uri,
-        )}&access_token=${encodeURIComponent(
-          LocalStorage.getItem('access_token')!,
-        )}`,
+        )}&access_token=${encodeURIComponent(LocalStorage.getItem('access_token')!)}`,
       );
     } catch (err) {
       log.error(err);
@@ -316,10 +297,10 @@ class MlAlgorithmModelList extends React.Component<
     if (mlAlgorithmModel.html_notebook_result_uri) {
       this._dataFileService
         .getDatafileData(mlAlgorithmModel.html_notebook_result_uri)
-        .then((blob) => {
+        .then(blob => {
           return new Response(blob).text();
         })
-        .then((data) => {
+        .then(data => {
           this.setState({ previewModalHtml: data, isPreviewModalOpened: true });
         });
     }
@@ -346,18 +327,14 @@ class MlAlgorithmModelList extends React.Component<
       mlAlgorithmModel.status = 'PAUSED';
     }
     this._mlAlgorithmModelService
-      .updateMlAlgorithmModel(
-        mlAlgorithmId,
-        mlAlgorithmModel.id,
-        mlAlgorithmModel,
-      )
-      .then((res) => res.data)
-      .then((model) => {
+      .updateMlAlgorithmModel(mlAlgorithmId, mlAlgorithmModel.id, mlAlgorithmModel)
+      .then(res => res.data)
+      .then(model => {
         const filter = parseSearch(search, PAGINATION_SEARCH_SETTINGS);
         this.fetchMlAlgorithmModels(organisationId, filter);
         message.success(intl.formatMessage(messages.updateSuccess));
       })
-      .catch((err) => {
+      .catch(err => {
         message.error(intl.formatMessage(messages.updateError));
       });
   };
@@ -371,13 +348,7 @@ class MlAlgorithmModelList extends React.Component<
       intl: { formatMessage },
     } = this.props;
 
-    const {
-      loading,
-      isModalOpen,
-      resultFile,
-      modelFile,
-      notebookFile,
-    } = this.state;
+    const { loading, isModalOpen, resultFile, modelFile, notebookFile } = this.state;
 
     const modelUploadProps = {
       name: 'file',
@@ -447,27 +418,21 @@ class MlAlgorithmModelList extends React.Component<
           <Input
             defaultValue={this.state.newModelName}
             onChange={onChange}
-            placeholder="Name"
+            placeholder='Name'
             required={true}
           />
           <br />
           <br />
           <Dragger {...notebookUploadProps}>
-            <p className="ant-upload-hint">
-              {formatMessage(messages.uploadMessageNotebook)}
-            </p>
+            <p className='ant-upload-hint'>{formatMessage(messages.uploadMessageNotebook)}</p>
           </Dragger>
           <br />
           <Dragger {...modelUploadProps}>
-            <p className="ant-upload-hint">
-              {formatMessage(messages.uploadMessageModel)}
-            </p>
+            <p className='ant-upload-hint'>{formatMessage(messages.uploadMessageModel)}</p>
           </Dragger>
           <br />
           <Dragger {...resultUploadProps}>
-            <p className="ant-upload-hint">
-              {formatMessage(messages.uploadMessageResult)}
-            </p>
+            <p className='ant-upload-hint'>{formatMessage(messages.uploadMessageResult)}</p>
           </Dragger>
         </Spin>
       </Modal>
@@ -486,9 +451,7 @@ class MlAlgorithmModelList extends React.Component<
       message: formatMessage(messages.empty),
     };
 
-    const actionsColumnsDefinition: Array<
-      ActionsColumnDefinition<MlAlgorithmModelResource>
-    > = [
+    const actionsColumnsDefinition: Array<ActionsColumnDefinition<MlAlgorithmModelResource>> = [
       {
         key: 'action',
         actions: (mlAlgorithmModel: MlAlgorithmModelResource) => [
@@ -529,28 +492,28 @@ class MlAlgorithmModelList extends React.Component<
     };
 
     const buttons = [
-      <Button key="create" type="primary" onClick={onClick}>
+      <Button key='create' type='primary' onClick={onClick}>
         <FormattedMessage {...messages.newMlAlgorithmModel} />
       </Button>,
     ];
 
     const additionnalComponent = (
       <div>
-        <div className="mcs-card-header mcs-card-title">
-          <span className="mcs-card-title">
+        <div className='mcs-card-header mcs-card-title'>
+          <span className='mcs-card-title'>
             <FormattedMessage {...messages.mlAlgorithmModels} />
           </span>
-          <span className="mcs-card-button">{buttons}</span>
+          <span className='mcs-card-button'>{buttons}</span>
         </div>
-        <hr className="mcs-separator" />
+        <hr className='mcs-separator' />
       </div>
     );
 
     const { isPreviewModalOpened, previewModalHtml } = this.state;
 
     return (
-      <div className="ant-layout">
-        <Content className="mcs-content-container">
+      <div className='ant-layout'>
+        <Content className='mcs-content-container'>
           {this.renderModal()}
           <NotebookResultPreviewModal
             opened={isPreviewModalOpened}
@@ -574,8 +537,4 @@ class MlAlgorithmModelList extends React.Component<
   }
 }
 
-export default compose(
-  withRouter,
-  injectIntl,
-  withValidators,
-)(MlAlgorithmModelList);
+export default compose(withRouter, injectIntl, withValidators)(MlAlgorithmModelList);

@@ -3,12 +3,8 @@ import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { getFormValues } from 'redux-form';
 import { connect } from 'react-redux';
-import withValidators, {
-  ValidatorProps,
-} from '../../../../components/Form/withValidators';
-import withNormalizer, {
-  NormalizerProps,
-} from '../../../../components/Form/withNormalizer';
+import withValidators, { ValidatorProps } from '../../../../components/Form/withValidators';
+import withNormalizer, { NormalizerProps } from '../../../../components/Form/withNormalizer';
 import {
   FormInput,
   FormSection,
@@ -35,8 +31,7 @@ const messages = defineMessages({
   },
   tootltipImportName: {
     id: 'edit.import.general.infos.tooltip.name',
-    defaultMessage:
-      'Give your Import a Name so you can find it back in the different screens.',
+    defaultMessage: 'Give your Import a Name so you can find it back in the different screens.',
   },
   labelImportEnconding: {
     id: 'edit.import.general.infos.label.encoding',
@@ -76,10 +71,7 @@ interface MapStateToProps {
   formValues: Partial<Import>;
 }
 
-type Props = InjectedIntlProps &
-  ValidatorProps &
-  NormalizerProps &
-  MapStateToProps;
+type Props = InjectedIntlProps & ValidatorProps & NormalizerProps & MapStateToProps;
 
 interface State {
   displayAdvancedSection: boolean;
@@ -155,7 +147,7 @@ class GeneralFormSection extends React.Component<Props, State> {
 
         <div>
           <FormInputField
-            name="name"
+            name='name'
             component={FormInput}
             validate={[isRequired]}
             formItemProps={{
@@ -170,7 +162,7 @@ class GeneralFormSection extends React.Component<Props, State> {
             }}
           />
           <DefaultSelectField
-            name="document_type"
+            name='document_type'
             component={DefaultSelect}
             validate={[isRequired]}
             options={
@@ -191,7 +183,7 @@ class GeneralFormSection extends React.Component<Props, State> {
             }}
           />
           <DefaultSelectField
-            name="mime_type"
+            name='mime_type'
             component={DefaultSelect}
             validate={[isRequired]}
             options={
@@ -209,7 +201,7 @@ class GeneralFormSection extends React.Component<Props, State> {
             }}
           />
           <DefaultSelectField
-            name="encoding"
+            name='encoding'
             component={DefaultSelect}
             validate={[isRequired]}
             options={[
@@ -228,7 +220,7 @@ class GeneralFormSection extends React.Component<Props, State> {
             }}
           />
           <DefaultSelectField
-            name="priority"
+            name='priority'
             component={DefaultSelect}
             validate={[isRequired]}
             options={[

@@ -88,10 +88,7 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
     // 100Mo
     const isSizeOK = file.size / 1024 / 1024 < 100;
     if (!isSizeOK) {
-      message.error(
-        `${file.name} ${formatMessage(messages.uploadErrorTooBig)}`,
-        3,
-      );
+      message.error(`${file.name} ${formatMessage(messages.uploadErrorTooBig)}`, 3);
       return false;
     }
     return true;
@@ -130,10 +127,7 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
         this.onFileUpdate(file)
           .then(fileContent => {
             const formattedFile = new Blob([fileContent as any], {
-              type:
-                importObject.mime_type === 'TEXT_CSV'
-                  ? 'text/csv'
-                  : 'application/x-ndjson',
+              type: importObject.mime_type === 'TEXT_CSV' ? 'text/csv' : 'application/x-ndjson',
             });
 
             formData.append('file', formattedFile, file.name);
@@ -211,7 +205,7 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
       >
         <Spin spinning={isLoading}>
           <Dragger {...props}>
-            <p className="ant-upload-hint">
+            <p className='ant-upload-hint'>
               {formatMessage(messages.uploadMessage)}
               <br />
               {formatMessage(messages.uploadMessage2)}
@@ -233,7 +227,9 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
     const menu = this.buildMenu();
 
     const breadcrumbPaths = [
-      <Link key='1' to={`/v2/o/${organisationId}/datastudio/imports`}>Imports</Link>,
+      <Link key='1' to={`/v2/o/${organisationId}/datastudio/imports`}>
+        Imports
+      </Link>,
       importObject && importObject.name ? importObject.name : '',
     ];
 
@@ -241,20 +237,16 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
       <Actionbar pathItems={breadcrumbPaths}>
         {this.renderModal()}
         <Button
-          className="mcs-primary mcs-importExecution_newExecution"
-          type="primary"
+          className='mcs-primary mcs-importExecution_newExecution'
+          type='primary'
           onClick={this.handleOpenClose}
         >
-          {this.state.importIsRunning ? (
-            <LoadingOutlined spin={true} />
-          ) : (
-            <McsIcon type="plus" />
-          )}
+          {this.state.importIsRunning ? <LoadingOutlined spin={true} /> : <McsIcon type='plus' />}
           <FormattedMessage {...messages.newExecution} />
         </Button>
 
         <Button onClick={this.editImport}>
-          <McsIcon type="pen" />
+          <McsIcon type='pen' />
           <FormattedMessage {...messages.edit} />
         </Button>
 
@@ -310,10 +302,7 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
       if (importObject) {
         switch (event.key) {
           case 'DELETE':
-            return handleDeleteImport(
-              importObject.datamart_id,
-              importObject.id,
-            );
+            return handleDeleteImport(importObject.datamart_id, importObject.id);
           default:
             return () => {
               log.error('onclick error');
@@ -324,7 +313,7 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
 
     return (
       <Menu onClick={onClick}>
-        <Menu.Item key="DELETE">
+        <Menu.Item key='DELETE'>
           <FormattedMessage {...messages.delete} />
         </Menu.Item>
       </Menu>

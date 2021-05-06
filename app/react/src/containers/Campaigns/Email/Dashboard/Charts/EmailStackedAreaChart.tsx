@@ -3,9 +3,7 @@ import { Row, Col } from 'antd';
 import { compose } from 'recompose';
 import { LegendChart } from '../../../../../components/LegendChart';
 import messages from '../messages';
-import injectThemeColors, {
-  InjectedThemeColorsProps,
-} from '../../../../Helpers/injectThemeColors';
+import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
 import { Index } from '../../../../../utils';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { messagesMap } from '../BlastTable';
@@ -25,9 +23,7 @@ export interface EmailStackedAreaChartProps {
   emailReport: Array<Index<any>>;
 }
 
-type Props = EmailStackedAreaChartProps &
-  InjectedIntlProps &
-  InjectedThemeColorsProps;
+type Props = EmailStackedAreaChartProps & InjectedIntlProps & InjectedThemeColorsProps;
 
 class EmailStackedAreaChart extends React.Component<Props> {
   renderStackedAreaCharts() {
@@ -62,22 +58,11 @@ class EmailStackedAreaChart extends React.Component<Props> {
         ],
       },
     };
-    return !isLoading ? (
-      <StackedAreaPlot {...stackedAreaPlotProps} />
-    ) : (
-      <LoadingChart />
-    );
+    return !isLoading ? <StackedAreaPlot {...stackedAreaPlotProps} /> : <LoadingChart />;
   }
 
   render() {
-    const {
-      emailReport,
-      isLoading,
-      colors,
-      dateRangeValue,
-      onDateRangeChange,
-      intl,
-    } = this.props;
+    const { emailReport, isLoading, colors, dateRangeValue, onDateRangeChange, intl } = this.props;
 
     const options = [
       {
@@ -100,28 +85,22 @@ class EmailStackedAreaChart extends React.Component<Props> {
 
     const chartArea = (
       <div>
-        <Row className="mcs-chart-header">
+        <Row className='mcs-chart-header'>
           <Col span={12}>
             {emailReport.length === 0 && isLoading ? (
               <div />
             ) : (
-              <LegendChart identifier="chartLegend" options={options} />
+              <LegendChart identifier='chartLegend' options={options} />
             )}
           </Col>
           <Col span={12}>
-            <span className="mcs-card-button">
-              <McsDateRangePicker
-                values={dateRangeValue}
-                onChange={onDateRangeChange}
-              />
+            <span className='mcs-card-button'>
+              <McsDateRangePicker values={dateRangeValue} onChange={onDateRangeChange} />
             </span>
           </Col>
         </Row>
         {emailReport.length === 0 && isLoading ? (
-          <EmptyChart
-            title={intl.formatMessage(messagesMap.noEmailStats)}
-            icon="warning"
-          />
+          <EmptyChart title={intl.formatMessage(messagesMap.noEmailStats)} icon='warning' />
         ) : (
           this.renderStackedAreaCharts()
         )}

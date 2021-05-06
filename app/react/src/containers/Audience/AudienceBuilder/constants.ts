@@ -42,8 +42,7 @@ export const messages: {
   },
   refreshMessage: {
     id: 'audienceBuilder.liveDashboard.refreshMessage',
-    defaultMessage:
-      'Your query has been modified, please click here to refresh',
+    defaultMessage: 'Your query has been modified, please click here to refresh',
   },
   audienceFeatures: {
     id: 'audienceBuilder.audienceFeature.card.title',
@@ -104,7 +103,7 @@ export const messages: {
   noAvailableFilters: {
     id: 'audienceBuilder.audienceFeatureSelector.noAvailableFilters',
     defaultMessage: 'There is no filter for this audience feature.',
-  }, 
+  },
   audienceBuilderInclude: {
     id: 'audienceBuilder.include',
     defaultMessage: 'Include',
@@ -164,10 +163,10 @@ export const NEW_FORM_ID = 'newAudienceBuilderFormData';
 
 export const NEW_INITIAL_AUDIENCE_BUILDER_FORM_DATA: NewAudienceBuilderFormData = {
   include: [],
-  exclude: []
+  exclude: [],
 };
 
-// TODO Remove along with AudienceBuilderQueryService 
+// TODO Remove along with AudienceBuilderQueryService
 export const buildQueryDocument = (formData: AudienceBuilderFormData) => {
   let query: QueryDocument = {
     language_version: 'JSON_OTQL',

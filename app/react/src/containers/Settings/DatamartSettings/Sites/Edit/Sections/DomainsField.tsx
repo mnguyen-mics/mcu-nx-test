@@ -59,7 +59,10 @@ class DomainField extends React.Component<Props> {
   };
 
   render() {
-    const { intl, fieldValidators: { isValidDomain }, } = this.props;
+    const {
+      intl,
+      fieldValidators: { isValidDomain },
+    } = this.props;
 
     return (
       <div>
@@ -67,29 +70,23 @@ class DomainField extends React.Component<Props> {
           subtitle={messages.sectionAliasesSubTitle}
           title={messages.sectionAliasesTitle}
         />
-        <div className="audience-catalog">
-            <FormMultiValueInput
-              {...this.props}
-              values={this.getStringValues()}
-              handleClickOnRemove={this.markAsDeleted}
-              handleClickOnItem={this.addItem}
-              validate={[isValidDomain]}
-              formItemProps={{
-                label: intl.formatMessage(
-                  messages.contentSectionAliasesNameLabel,
-                ),
-              }}
-              inputProps={{
-                placeholder: intl.formatMessage(
-                  messages.contentSectionAliasesNamePlaceholder,
-                ),
-              }}
-              helpToolTipProps={{
-                title: intl.formatMessage(
-                  messages.contentSectionGAliasesNameTooltip,
-                ),
-              }}
-            />
+        <div className='audience-catalog'>
+          <FormMultiValueInput
+            {...this.props}
+            values={this.getStringValues()}
+            handleClickOnRemove={this.markAsDeleted}
+            handleClickOnItem={this.addItem}
+            validate={[isValidDomain]}
+            formItemProps={{
+              label: intl.formatMessage(messages.contentSectionAliasesNameLabel),
+            }}
+            inputProps={{
+              placeholder: intl.formatMessage(messages.contentSectionAliasesNamePlaceholder),
+            }}
+            helpToolTipProps={{
+              title: intl.formatMessage(messages.contentSectionGAliasesNameTooltip),
+            }}
+          />
         </div>
       </div>
     );

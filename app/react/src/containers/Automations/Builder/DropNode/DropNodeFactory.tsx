@@ -4,9 +4,7 @@ import DropNodeWidget from './DropNodeWidget';
 import DropNodeModel from './DropNodeModel';
 import { TreeNodeOperations } from '../domain';
 
-export default class DropNodeFactory extends AbstractNodeFactory<
-  DropNodeModel
-> {
+export default class DropNodeFactory extends AbstractNodeFactory<DropNodeModel> {
   treeNodeOperations: TreeNodeOperations;
 
   constructor(_treeNodeOperations: TreeNodeOperations) {
@@ -14,10 +12,7 @@ export default class DropNodeFactory extends AbstractNodeFactory<
     this.treeNodeOperations = _treeNodeOperations;
   }
 
-  generateReactWidget(
-    diagramEngine: DiagramEngine,
-    node: DropNodeModel,
-  ): JSX.Element {
+  generateReactWidget(diagramEngine: DiagramEngine, node: DropNodeModel): JSX.Element {
     if (node.extras.collapsed) {
       return <div />;
     }

@@ -5,7 +5,7 @@ import { DimensionsList } from '../models/datamartUsersAnalytics/datamartUsersAn
 export interface IUsersAnalyticsService {
   getDimensions: (
     datamartId: string,
-    isAvailableForFunnel: boolean 
+    isAvailableForFunnel: boolean,
   ) => Promise<DataResponse<DimensionsList>>;
 }
 
@@ -13,7 +13,7 @@ export interface IUsersAnalyticsService {
 export class UsersAnalyticsService implements IUsersAnalyticsService {
   getDimensions(
     datamartId: string,
-    isAvailableForFunnel: boolean 
+    isAvailableForFunnel: boolean,
   ): Promise<DataResponse<DimensionsList>> {
     const endpoint = `datamarts/${datamartId}/user_activities_analytics/dimensions?is_available_for_funnel=${isAvailableForFunnel}`;
 

@@ -10,11 +10,8 @@ const GoalHeader: React.SFC<GoalHeaderProps> = props => {
   const { goal } = props;
 
   return (
-    <div className="mcs-campaign-header">
-      <ContentHeader
-        title={goal ? goal.name : ''}
-        loading={goal && goal.name ? false : true}
-      />
+    <div className='mcs-campaign-header'>
+      <ContentHeader title={goal ? goal.name : ''} loading={goal && goal.name ? false : true} />
     </div>
   );
 };

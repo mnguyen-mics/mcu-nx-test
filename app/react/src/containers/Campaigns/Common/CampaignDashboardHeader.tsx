@@ -20,9 +20,7 @@ class CampaignDashboardHeader extends React.Component<Props> {
   render() {
     const { campaign, showStatus } = this.props;
 
-    const campaignStatus = campaign && (
-      <CampaignStatusIndicator status={campaign.status} />
-    );
+    const campaignStatus = campaign && <CampaignStatusIndicator status={campaign.status} />;
 
     return (
       <ContentHeader

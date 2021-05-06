@@ -24,12 +24,11 @@ interface State {
   error?: Error;
 }
 
-class CreativeCard<
-  T extends GenericCreativeResource & { id?: string }
-> extends React.Component<CreativeCardProps<T>, State> {
-  cancelablePromise: CancelablePromise<
-    DataResponse<CreativeScreenshotResource>
-  >;
+class CreativeCard<T extends GenericCreativeResource & { id?: string }> extends React.Component<
+  CreativeCardProps<T>,
+  State
+> {
+  cancelablePromise: CancelablePromise<DataResponse<CreativeScreenshotResource>>;
 
   @lazyInject(TYPES.ICreativeService)
   private _creativeService: ICreativeService;
@@ -75,13 +74,10 @@ class CreativeCard<
     const { creativeScreenshot } = this.state;
 
     if (creativeScreenshot) {
-      if (
-        creativeScreenshot.status === 'PENDING' ||
-        creativeScreenshot.status === 'PROCESSING'
-      ) {
+      if (creativeScreenshot.status === 'PENDING' || creativeScreenshot.status === 'PROCESSING') {
         return (
           <div
-            className="text-center"
+            className='text-center'
             style={{
               lineHeight: '200px',
               textAlign: 'center',
@@ -97,20 +93,16 @@ class CreativeCard<
         return (
           <div>
             <div
-              className="background-image"
+              className='background-image'
               style={{
-                backgroundImage: `url('https://ads.mediarithmics.com/ads/screenshot?rid=${
-                  creative.id
-                }')`,
+                backgroundImage: `url('https://ads.mediarithmics.com/ads/screenshot?rid=${creative.id}')`,
               }}
             />
-            <div className="image-container">
-              <div className="helper" />
+            <div className='image-container'>
+              <div className='helper' />
               <img
-                className="image"
-                src={`https://ads.mediarithmics.com/ads/screenshot?rid=${
-                  creative.id
-                }`}
+                className='image'
+                src={`https://ads.mediarithmics.com/ads/screenshot?rid=${creative.id}`}
                 alt={creative.name}
               />
             </div>
@@ -121,14 +113,14 @@ class CreativeCard<
 
     return (
       <div
-        className="text-center"
+        className='text-center'
         style={{
           lineHeight: '210px',
           textAlign: 'center',
           backgroundColor: '#bdbdbd',
         }}
       >
-        <McsIcon className="mcs-icon-3x" type="close-big" />
+        <McsIcon className='mcs-icon-3x' type='close-big' />
       </div>
     );
   };
@@ -144,21 +136,21 @@ class CreativeCard<
       : 'No title';
 
     return (
-      <div className="mcs-creative-card">
-        <div className="creative-cover">{this.renderScreenshot()}</div>
-        <div className="creative-details">
-          <div className="title">
+      <div className='mcs-creative-card'>
+        <div className='creative-cover'>{this.renderScreenshot()}</div>
+        <div className='creative-details'>
+          <div className='title'>
             <strong>{renderedTitle}</strong>
           </div>
           {renderSubtitles &&
             renderSubtitles.length > 0 &&
             renderSubtitles.map(renderSubtitle => (
-              <div key={cuid()} className="subtitle">
+              <div key={cuid()} className='subtitle'>
                 <span>{renderSubtitle(creative)}</span>
               </div>
             ))}
         </div>
-        <div className="creative-footer">{renderFooter(creative)}</div>
+        <div className='creative-footer'>{renderFooter(creative)}</div>
       </div>
     );
   }

@@ -23,16 +23,10 @@ import * as NotificationActions from '../../../../../redux/Notifications/actions
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
-import {
-  initialAdGroupPageState,
-  AdGroupPageState,
-} from '../ProgrammaticCampaign/domain';
+import { initialAdGroupPageState, AdGroupPageState } from '../ProgrammaticCampaign/domain';
 import { ReportView } from '../../../../../models/ReportView';
 import { CancelablePromise } from '../../../../../services/ApiService';
-import {
-  AdGroupResource,
-  AdResource,
-} from '../../../../../models/campaign/display';
+import { AdGroupResource, AdResource } from '../../../../../models/campaign/display';
 import { UpdateMessage } from '../ProgrammaticCampaign/DisplayCampaignAdGroupTable';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
@@ -73,10 +67,7 @@ class AdGroupPage extends React.Component<Props, AdGroupPageState> {
         search: buildDefaultSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS),
       });
     } else {
-      const filter = parseSearch<DateSearchSettings>(
-        search,
-        DISPLAY_DASHBOARD_SEARCH_SETTINGS,
-      );
+      const filter = parseSearch<DateSearchSettings>(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
       this.fetchAllData(organisationId, campaignId, adGroupId, filter);
     }
   }
@@ -110,22 +101,11 @@ class AdGroupPage extends React.Component<Props, AdGroupPageState> {
       if (!isSearchValid(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS)) {
         history.replace({
           pathname: pathname,
-          search: buildDefaultSearch(
-            search,
-            DISPLAY_DASHBOARD_SEARCH_SETTINGS,
-          ),
+          search: buildDefaultSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS),
         });
       } else {
-        const filter = parseSearch<DateSearchSettings>(
-          search,
-          DISPLAY_DASHBOARD_SEARCH_SETTINGS,
-        );
-        this.fetchAllData(
-          organisationId,
-          campaignId,
-          adGroupId,
-          filter,
-        );
+        const filter = parseSearch<DateSearchSettings>(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
+        this.fetchAllData(organisationId, campaignId, adGroupId, filter);
       }
     }
   }
@@ -145,8 +125,7 @@ class AdGroupPage extends React.Component<Props, AdGroupPageState> {
     adGroupId: string,
     filter: DateSearchSettings,
   ) {
-    const lookbackWindow =
-      filter.to.toMoment().unix() - filter.from.toMoment().unix();
+    const lookbackWindow = filter.to.toMoment().unix() - filter.from.toMoment().unix();
     const dimensions = lookbackWindow > 172800 ? ['day'] : ['day,hour_of_day'];
     const getCampaignAdGroupAndAd = () =>
       this._displayCampaignService.getCampaignDisplayViewDeep(campaignId, {
@@ -196,12 +175,7 @@ class AdGroupPage extends React.Component<Props, AdGroupPageState> {
       ),
     );
 
-    this.cancelablePromises.push(
-      getAdGroupPerf,
-      getAdPerf,
-      getMediaPerf,
-      getOverallAdGroupPerf,
-    );
+    this.cancelablePromises.push(getAdGroupPerf, getAdPerf, getMediaPerf, getOverallAdGroupPerf);
 
     this.setState(prevState => {
       const nextState = {
@@ -247,9 +221,7 @@ class AdGroupPage extends React.Component<Props, AdGroupPageState> {
           normalizeReportView(response.data.report_view),
         );
       })
-      .catch(err =>
-        this.catchCancellablePromises(err, 'adGroups', 'overallPerformance'),
-      );
+      .catch(err => this.catchCancellablePromises(err, 'adGroups', 'overallPerformance'));
 
     getAdGroupPerf.promise
       .then(response => {
@@ -260,9 +232,7 @@ class AdGroupPage extends React.Component<Props, AdGroupPageState> {
           normalizeReportView(response.data.report_view),
         );
       })
-      .catch(err =>
-        this.catchCancellablePromises(err, 'adGroups', 'performance'),
-      );
+      .catch(err => this.catchCancellablePromises(err, 'adGroups', 'performance'));
 
     getAdPerf.promise
       .then(response => {
@@ -288,9 +258,7 @@ class AdGroupPage extends React.Component<Props, AdGroupPageState> {
           normalizeReportView(formattedResponse),
         );
       })
-      .catch(err =>
-        this.catchCancellablePromises(err, 'adGroups', 'mediaPerformance'),
-      );
+      .catch(err => this.catchCancellablePromises(err, 'adGroups', 'mediaPerformance'));
   }
 
   // Ugly AF
@@ -306,9 +274,7 @@ class AdGroupPage extends React.Component<Props, AdGroupPageState> {
       };
       (nextState[firstLevelKey] as any)[secondLevelKey].isLoading = false;
       (nextState[firstLevelKey] as any)[secondLevelKey].hasFetched = true;
-      (nextState[firstLevelKey] as any)[secondLevelKey][
-        thirdLevel
-      ] = performanceReport;
+      (nextState[firstLevelKey] as any)[secondLevelKey][thirdLevel] = performanceReport;
 
       return nextState;
     });
@@ -381,18 +347,9 @@ class AdGroupPage extends React.Component<Props, AdGroupPageState> {
       if (body.status) nextState.ads.data.items[adId].status = body.status;
       return nextState;
     });
-    if (
-      campaign.data.items[0].id &&
-      adGroups.data.items &&
-      adGroups.data.items[0].id
-    ) {
+    if (campaign.data.items[0].id && adGroups.data.items && adGroups.data.items[0].id) {
       return this._displayCampaignService
-        .updateAd(
-          adId,
-          campaign.data.items[0].id,
-          adGroups.data.items[0].id,
-          body,
-        )
+        .updateAd(adId, campaign.data.items[0].id, adGroups.data.items[0].id, body)
         .then(response => {
           this.setState(prevState => {
             const nextState = {
@@ -414,7 +371,7 @@ class AdGroupPage extends React.Component<Props, AdGroupPageState> {
               message: successMessage.title,
               description: successMessage.body,
               btn: (
-                <Button type="primary" size="small" onClick={undo}>
+                <Button type='primary' size='small' onClick={undo}>
                   <span>{formatMessage(messages.undo)}</span>
                 </Button>
               ),

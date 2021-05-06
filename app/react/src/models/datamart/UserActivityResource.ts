@@ -1,6 +1,10 @@
-export type UserActivityResourceShape = VisitUserActivityResource
+export type UserActivityResourceShape = VisitUserActivityResource;
 
-export type ActivitySessionStatus = 'IN_SESSION' | 'SESSION_SNAPSHOT' | 'CLOSED_SESSION' | 'NO_SESSION';
+export type ActivitySessionStatus =
+  | 'IN_SESSION'
+  | 'SESSION_SNAPSHOT'
+  | 'CLOSED_SESSION'
+  | 'NO_SESSION';
 
 export interface UserActivityOrigin {
   $ts?: number;
@@ -43,14 +47,16 @@ export interface UserActivityLocation {
   [key: string]: any;
 }
 
-export type AnyJson =  boolean | number | string | null | JsonArray | JsonMap;
-interface JsonMap {  [key: string]: AnyJson; }
+export type AnyJson = boolean | number | string | null | JsonArray | JsonMap;
+interface JsonMap {
+  [key: string]: AnyJson;
+}
 interface JsonArray extends Array<AnyJson> {}
 
 export interface UserActivityEventResource {
   $ts?: number;
   $event_name: string;
-  $properties?: AnyJson
+  $properties?: AnyJson;
   [key: string]: any;
 }
 
@@ -68,7 +74,7 @@ interface UserActivityResource {
 }
 
 export interface VisitUserActivityResource extends UserActivityResource {
-  $type: 'SITE_VISIT'
+  $type: 'SITE_VISIT';
   $session_duration?: number;
-  $topics?: { [key: string]: { [key: string]: number; } }
+  $topics?: { [key: string]: { [key: string]: number } };
 }

@@ -2,12 +2,8 @@ import * as React from 'react';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import messages from '../../messages';
-import withValidators, {
-  ValidatorProps,
-} from '../../../../../../components/Form/withValidators';
-import withNormalizer, {
-  NormalizerProps,
-} from '../../../../../../components/Form/withNormalizer';
+import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
+import withNormalizer, { NormalizerProps } from '../../../../../../components/Form/withNormalizer';
 import {
   FormInput,
   FormAlertInput,
@@ -56,7 +52,7 @@ class GeneralFormSection extends React.Component<Props, State> {
 
         <div>
           <FormInputField
-            name="adGroup.name"
+            name='adGroup.name'
             component={FormInput}
             validate={[isRequired]}
             formItemProps={{
@@ -64,9 +60,7 @@ class GeneralFormSection extends React.Component<Props, State> {
               required: true,
             }}
             inputProps={{
-              placeholder: formatMessage(
-                messages.contentSectionGeneralRow1Placeholder,
-              ),
+              placeholder: formatMessage(messages.contentSectionGeneralRow1Placeholder),
             }}
             helpToolTipProps={{
               title: formatMessage(messages.contentSectionGeneralRow1Tooltip),
@@ -74,19 +68,15 @@ class GeneralFormSection extends React.Component<Props, State> {
           />
 
           <FormInputField
-            name="adGroup.total_budget"
+            name='adGroup.total_budget'
             component={FormInput}
             validate={[isValidFloat, isNotZero]}
             formItemProps={{
-              label: formatMessage(
-                formatAdGroupProperty('total_budget').message,
-              ),
+              label: formatMessage(formatAdGroupProperty('total_budget').message),
             }}
             inputProps={{
               suffix: <span>€</span>,
-              placeholder: formatMessage(
-                messages.contentSectionGeneralRow3Placeholder,
-              ),
+              placeholder: formatMessage(messages.contentSectionGeneralRow3Placeholder),
             }}
             helpToolTipProps={{
               title: formatMessage(messages.contentSectionGeneralRow3Tooltip),
@@ -94,51 +84,38 @@ class GeneralFormSection extends React.Component<Props, State> {
           />
 
           <FormInputField
-            name="adGroup.max_budget_per_period"
+            name='adGroup.max_budget_per_period'
             component={FormInput}
             validate={[isValidFloat, isNotZero]}
             formItemProps={{
-              label: formatMessage(
-                formatAdGroupProperty('max_budget_per_period').message,
-              ),
+              label: formatMessage(formatAdGroupProperty('max_budget_per_period').message),
             }}
             inputProps={{
               suffix: <span>€</span>,
               addonAfter: (
                 <FormAddonSelectField
-                  name="adGroup.max_budget_period"
+                  name='adGroup.max_budget_period'
                   component={AddonSelect}
                   options={[
                     {
                       value: 'DAY',
                       title: 'DAY',
-                      children: formatAdGroupProperty(
-                        'max_budget_period',
-                        'DAY',
-                      ).formattedValue,
+                      children: formatAdGroupProperty('max_budget_period', 'DAY').formattedValue,
                     },
                     {
                       value: 'WEEK',
                       title: 'WEEK',
-                      children: formatAdGroupProperty(
-                        'max_budget_period',
-                        'WEEK',
-                      ).formattedValue,
+                      children: formatAdGroupProperty('max_budget_period', 'WEEK').formattedValue,
                     },
                     {
                       value: 'MONTH',
                       title: 'MONTH',
-                      children: formatAdGroupProperty(
-                        'max_budget_period',
-                        'MONTH',
-                      ).formattedValue,
+                      children: formatAdGroupProperty('max_budget_period', 'MONTH').formattedValue,
                     },
                   ]}
                 />
               ),
-              placeholder: formatMessage(
-                messages.contentSectionGeneralRow2Placeholder,
-              ),
+              placeholder: formatMessage(messages.contentSectionGeneralRow2Placeholder),
               style: { width: '100%' },
             }}
             helpToolTipProps={{
@@ -147,17 +124,16 @@ class GeneralFormSection extends React.Component<Props, State> {
           />
 
           <FormDateRangePickerField
-            name="adGroup"
+            name='adGroup'
             component={FormDateRangePicker}
-            startDateFieldName="start_date"
-            endDateFieldName="end_date"
+            startDateFieldName='start_date'
+            endDateFieldName='end_date'
             unixTimestamp={true}
             allowPastDate={false}
             formItemProps={{
               label: formatMessage(formatAdGroupProperty('duration').message),
             }}
             startDatePickerProps={{
-              
               // placeholder: formatMessage(
               //   formatAdGroupProperty('start_date').message,
               // ),
@@ -176,19 +152,15 @@ class GeneralFormSection extends React.Component<Props, State> {
           />
 
           <FormInputField
-            name="adGroup.max_bid_price"
+            name='adGroup.max_bid_price'
             component={FormInput}
             validate={[isValidFloat, isNotZero]}
             formItemProps={{
-              label: formatMessage(
-                formatAdGroupProperty('max_bid_price').message,
-              ),
+              label: formatMessage(formatAdGroupProperty('max_bid_price').message),
             }}
             inputProps={{
               suffix: <span>€</span>,
-              placeholder: formatMessage(
-                messages.contentSectionGeneralRow5Placeholder,
-              ),
+              placeholder: formatMessage(messages.contentSectionGeneralRow5Placeholder),
             }}
             helpToolTipProps={{
               title: formatMessage(messages.contentSectionGeneralRow5Tooltip),
@@ -198,58 +170,48 @@ class GeneralFormSection extends React.Component<Props, State> {
 
         <div>
           <Button
-            className="optional-section-title clickable-on-hover"
+            className='optional-section-title clickable-on-hover'
             onClick={this.toggleAdvancedSection}
           >
-            <McsIcon type="settings" />
-            <span className="step-title">
+            <McsIcon type='settings' />
+            <span className='step-title'>
               {formatMessage(messages.contentSectionGeneralAdvancedPartTitle)}
             </span>
-            <McsIcon type="chevron" />
+            <McsIcon type='chevron' />
           </Button>
 
           <div
             className={
-              !this.state.displayAdvancedSection
-                ? 'hide-section'
-                : 'optional-section-content'
+              !this.state.displayAdvancedSection ? 'hide-section' : 'optional-section-content'
             }
           >
             <FormAlertInputField
-              name="adGroup.technical_name"
+              name='adGroup.technical_name'
               component={FormAlertInput}
               formItemProps={{
-                label: formatMessage(
-                  formatAdGroupProperty('technical_name').message,
-                ),
+                label: formatMessage(formatAdGroupProperty('technical_name').message),
               }}
               inputProps={{
-                placeholder: formatMessage(
-                  messages.contentSectionGeneralRow8Placeholder,
-                ),
+                placeholder: formatMessage(messages.contentSectionGeneralRow8Placeholder),
               }}
               helpToolTipProps={{
                 title: formatMessage(messages.contentSectionGeneralRow8Tooltip),
               }}
-              iconType="warning"
-              type="warning"
+              iconType='warning'
+              type='warning'
               message={formatMessage(messages.warningOnTokenEdition)}
             />
 
             <FormInputField
-              name="adGroup.total_impression_capping"
+              name='adGroup.total_impression_capping'
               component={FormInput}
               normalize={normalizeInteger}
               validate={[isValidInteger]}
               formItemProps={{
-                label: formatMessage(
-                  formatAdGroupProperty('total_impression_capping').message,
-                ),
+                label: formatMessage(formatAdGroupProperty('total_impression_capping').message),
               }}
               inputProps={{
-                placeholder: formatMessage(
-                  messages.contentSectionGeneralRow6Placeholder,
-                ),
+                placeholder: formatMessage(messages.contentSectionGeneralRow6Placeholder),
               }}
               helpToolTipProps={{
                 title: formatMessage(messages.contentSectionGeneralRow6Tooltip),
@@ -257,19 +219,15 @@ class GeneralFormSection extends React.Component<Props, State> {
             />
 
             <FormInputField
-              name="adGroup.per_day_impression_capping"
+              name='adGroup.per_day_impression_capping'
               component={FormInput}
               normalize={normalizeInteger}
               validate={[isValidInteger]}
               formItemProps={{
-                label: formatMessage(
-                  formatAdGroupProperty('per_day_impression_capping').message,
-                ),
+                label: formatMessage(formatAdGroupProperty('per_day_impression_capping').message),
               }}
               inputProps={{
-                placeholder: formatMessage(
-                  messages.contentSectionGeneralRow7Placeholder,
-                ),
+                placeholder: formatMessage(messages.contentSectionGeneralRow7Placeholder),
               }}
               helpToolTipProps={{
                 title: formatMessage(messages.contentSectionGeneralRow7Tooltip),
@@ -282,8 +240,4 @@ class GeneralFormSection extends React.Component<Props, State> {
   }
 }
 
-export default compose(
-  injectIntl,
-  withValidators,
-  withNormalizer,
-)(GeneralFormSection);
+export default compose(injectIntl, withValidators, withNormalizer)(GeneralFormSection);

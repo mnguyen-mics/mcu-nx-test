@@ -6,10 +6,7 @@ import {
   UserQuerySegmentSubtype,
   FeedType,
 } from '../../../../models/audiencesegment/AudienceSegmentResource';
-import {
-  HistoryKeys,
-  formatToFormattingFunction,
-} from '../../../ResourceHistory/utils';
+import { HistoryKeys, formatToFormattingFunction } from '../../../ResourceHistory/utils';
 
 export default defineMessages({
   // Segment
@@ -73,8 +70,7 @@ export default defineMessages({
   },
   overlapFetchingError: {
     id: 'audience.segments.overlap.error',
-    defaultMessage:
-      'An unexpected error happened running your overlap. Please retry.',
+    defaultMessage: 'An unexpected error happened running your overlap. Please retry.',
   },
   experimentationCreation: {
     id: 'audience.segments.experimentation.creation',

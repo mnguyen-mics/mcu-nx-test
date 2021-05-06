@@ -29,7 +29,7 @@ class SegmentsTag extends React.Component<Props, State> {
   }
 
   fetchSegmentData = (segmentId: string) => {
-    this._audienceSegmentService.getSegment(segmentId).then((response) => {
+    this._audienceSegmentService.getSegment(segmentId).then(response => {
       this.setState({
         segment: response.data,
       });
@@ -56,12 +56,11 @@ class SegmentsTag extends React.Component<Props, State> {
     // A segment that was automatically created by a feed node in a scenario
     // shouldn't be displayed.
     const shouldDisplaySegment =
-      segment &&
-      !(segment.type === 'USER_LIST' && segment.feed_type === 'SCENARIO_FEED');
+      segment && !(segment.type === 'USER_LIST' && segment.feed_type === 'SCENARIO_FEED');
 
     return shouldDisplaySegment ? (
       <Tooltip title={segment ? segment.name : ''}>
-        <Tag className="card-tag alone">
+        <Tag className='card-tag alone'>
           <SegmentNameDisplay audienceSegmentResource={segment} />
         </Tag>
       </Tooltip>

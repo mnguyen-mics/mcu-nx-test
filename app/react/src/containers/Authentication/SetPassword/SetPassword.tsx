@@ -3,19 +3,11 @@ import * as React from 'react';
 import { Input, Button, Alert, Row, Col } from 'antd';
 import { Form } from '@ant-design/compatible';
 import FormItem from 'antd/lib/form/FormItem';
-import {
-  injectIntl,
-  InjectedIntlProps,
-  FormattedMessage,
-  defineMessages,
-} from 'react-intl';
+import { injectIntl, InjectedIntlProps, FormattedMessage, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { FormComponentProps } from '@ant-design/compatible/lib/form';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
-import {
-  SET_PASSWORD_SEARCH_SETTINGS,
-  parseSearch,
-} from '../../../utils/LocationSearchHelper';
+import { SET_PASSWORD_SEARCH_SETTINGS, parseSearch } from '../../../utils/LocationSearchHelper';
 import { defaultErrorMessages } from '../../../components/Form/withValidators';
 import { lazyInject } from '../../../config/inversify.config';
 import { IAuthService } from '../../../services/AuthService';
@@ -110,7 +102,7 @@ class SetPassword extends React.Component<Props, State> {
 
     const errorMsg = isError ? (
       <Alert
-        type="error"
+        type='error'
         style={{ marginBottom: 24 }}
         message={
           this.state.errorMessage === '' ? (
@@ -119,22 +111,26 @@ class SetPassword extends React.Component<Props, State> {
             this.state.errorMessage
           )
         }
-        className="login-error-message"
+        className='login-error-message'
       />
     ) : null;
 
     return (
-      <div className="mcs-reset-password-container">
-        <div className="image-wrapper">
-          <img alt="mics-logo" className="reset-password-logo" src={'/react/src/assets/images/logo.png'} />
+      <div className='mcs-reset-password-container'>
+        <div className='image-wrapper'>
+          <img
+            alt='mics-logo'
+            className='reset-password-logo'
+            src={'/react/src/assets/images/logo.png'}
+          />
         </div>
-        <div className="reset-password-title">
+        <div className='reset-password-title'>
           <FormattedMessage {...messages.setPassword} />
         </div>
-        <div className="reset-password-container-frame">
-          <Form onSubmit={this.handleSubmit} className="login-form">
+        <div className='reset-password-container-frame'>
+          <Form onSubmit={this.handleSubmit} className='login-form'>
             {errorMsg}
-            <div className="password-text">
+            <div className='password-text'>
               <FormattedMessage {...messages.passwordFormTitle} />
             </div>
             {
@@ -143,21 +139,13 @@ class SetPassword extends React.Component<Props, State> {
                   rules: [
                     {
                       required: true,
-                      message: intl.formatMessage(
-                        defaultErrorMessages.required,
-                      ),
+                      message: intl.formatMessage(defaultErrorMessages.required),
                     },
                   ],
-                })(
-                  <Input
-                    type="password"
-                    className="reset-password-input"
-                    autoComplete="off"
-                  />,
-                )}
+                })(<Input type='password' className='reset-password-input' autoComplete='off' />)}
               </FormItem>
             }
-            <div className="password-text">
+            <div className='password-text'>
               <FormattedMessage {...messages.passwordFormTitle} />
             </div>
             <FormItem>
@@ -168,27 +156,23 @@ class SetPassword extends React.Component<Props, State> {
                     message: intl.formatMessage(defaultErrorMessages.required),
                   },
                 ],
-              })(
-                <Input
-                  type="password"
-                  className="reset-password-input"
-                  autoComplete="off"
-                />,
-              )}
+              })(<Input type='password' className='reset-password-input' autoComplete='off' />)}
             </FormItem>
             <Row
-            //  type="flex"
-             align="middle" justify="center">
-              <Col span={12} className="reset-password-back-to-login">
+              //  type="flex"
+              align='middle'
+              justify='center'
+            >
+              <Col span={12} className='reset-password-back-to-login'>
                 <Link to={'/login'}>
                   <FormattedMessage {...messages.revertologin} />
                 </Link>
               </Col>
               <Col span={12}>
                 <Button
-                  type="primary"
-                  htmlType="submit"
-                  className="mcs-primary reset-password-button"
+                  type='primary'
+                  htmlType='submit'
+                  className='mcs-primary reset-password-button'
                 >
                   <FormattedMessage {...messages.setPassword} />
                 </Button>
@@ -201,7 +185,4 @@ class SetPassword extends React.Component<Props, State> {
   }
 }
 
-export default Form.create()(compose<Props, {}>(
-  withRouter,
-  injectIntl,
-)(SetPassword));
+export default Form.create()(compose<Props, {}>(withRouter, injectIntl)(SetPassword));

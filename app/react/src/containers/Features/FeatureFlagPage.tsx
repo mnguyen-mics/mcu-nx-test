@@ -3,8 +3,7 @@ import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 
-type Props = RouteComponentProps<{ organisationId: string; token?: string }> &
-  InjectedIntlProps;
+type Props = RouteComponentProps<{ organisationId: string; token?: string }> & InjectedIntlProps;
 
 interface State {}
 
@@ -41,7 +40,7 @@ class FeatureFlagPage extends React.Component<Props, State> {
     setTimeout(redirect, 5000);
 
     return (
-      <div className="mcs-centered-container page-error">
+      <div className='mcs-centered-container page-error'>
         <p>{diplayMessage}</p>
       </div>
     );

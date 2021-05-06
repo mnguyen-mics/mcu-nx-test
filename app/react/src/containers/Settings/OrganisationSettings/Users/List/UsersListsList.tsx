@@ -45,9 +45,7 @@ interface RouterProps {
   organisationId: string;
 }
 
-type Props = RouteComponentProps<RouterProps> &
-  InjectedIntlProps &
-  InjectedNotificationProps;
+type Props = RouteComponentProps<RouterProps> & InjectedIntlProps & InjectedNotificationProps;
 
 class UserListsList extends React.Component<Props, UserListState> {
   state = initialState;
@@ -72,25 +70,16 @@ class UserListsList extends React.Component<Props, UserListState> {
       };
       this._organisationService
         .getOrganisation(organisationId)
-        .then((response) =>
-          this._communityService.getCommunityUsers(
-            response.data.community_id,
-            options,
-          ),
+        .then(response =>
+          this._communityService.getCommunityUsers(response.data.community_id, options),
         )
-        .then(
-          (results: {
-            data: UserResource[];
-            total?: number;
-            count: number;
-          }) => {
-            this.setState({
-              loading: false,
-              data: results.data,
-              total: results.total || results.count,
-            });
-          },
-        );
+        .then((results: { data: UserResource[]; total?: number; count: number }) => {
+          this.setState({
+            loading: false,
+            data: results.data,
+            total: results.total || results.count,
+          });
+        });
     });
   };
 
@@ -102,9 +91,7 @@ class UserListsList extends React.Component<Props, UserListState> {
       },
     } = this.props;
 
-    history.push(
-      `/v2/o/${organisationId}/settings/organisation/users/${user.id}/edit`,
-    );
+    history.push(`/v2/o/${organisationId}/settings/organisation/users/${user.id}/edit`);
   };
 
   redirect = () => {
@@ -128,11 +115,7 @@ class UserListsList extends React.Component<Props, UserListState> {
 
       const nextLocation = {
         pathname,
-        search: updateSearch(
-          currentSearch,
-          computedFilter,
-          PAGINATION_SEARCH_SETTINGS,
-        ),
+        search: updateSearch(currentSearch, computedFilter, PAGINATION_SEARCH_SETTINGS),
       };
 
       history.push(nextLocation);
@@ -147,7 +130,7 @@ class UserListsList extends React.Component<Props, UserListState> {
     this._usersService
       .deleteUser(user.id, user.organisation_id)
       .then(this.redirect)
-      .catch((err) => {
+      .catch(err => {
         notifyError(err);
       });
   };
@@ -160,9 +143,7 @@ class UserListsList extends React.Component<Props, UserListState> {
       intl: { formatMessage },
     } = this.props;
 
-    const actionsColumnsDefinition: Array<
-      ActionsColumnDefinition<UserResource>
-    > = [
+    const actionsColumnsDefinition: Array<ActionsColumnDefinition<UserResource>> = [
       {
         key: 'action',
         actions: () => [
@@ -185,7 +166,7 @@ class UserListsList extends React.Component<Props, UserListState> {
         isHideable: false,
         render: (text: string, record: UserResource) => (
           <Link
-            className="mcs-campaigns-link"
+            className='mcs-campaigns-link'
             to={`/v2/o/${organisationId}/settings/organisation/users/${record.id}/edit`}
           >
             {text} {record.last_name}
@@ -213,31 +194,29 @@ class UserListsList extends React.Component<Props, UserListState> {
     };
 
     const onClick = () =>
-      this.props.history.push(
-        `/v2/o/${organisationId}/settings/organisation/users/create`,
-      );
+      this.props.history.push(`/v2/o/${organisationId}/settings/organisation/users/create`);
 
     const buttons = (
-      <Button key="create" type="primary" onClick={onClick}>
+      <Button key='create' type='primary' onClick={onClick}>
         <FormattedMessage {...messages.newUser} />
       </Button>
     );
 
     const additionnalComponent = (
       <div>
-        <div className="mcs-card-header mcs-card-title">
-          <span className="mcs-card-title">
+        <div className='mcs-card-header mcs-card-title'>
+          <span className='mcs-card-title'>
             <FormattedMessage {...messages.users} />
           </span>
-          <span className="mcs-card-button">{buttons}</span>
+          <span className='mcs-card-button'>{buttons}</span>
         </div>
-        <hr className="mcs-separator" />
+        <hr className='mcs-separator' />
       </div>
     );
 
     return (
-      <div className="ant-layout">
-        <Content className="mcs-content-container">
+      <div className='ant-layout'>
+        <Content className='mcs-content-container'>
           <ItemList
             fetchList={this.fetchUsers}
             dataSource={this.state.data}
@@ -255,8 +234,4 @@ class UserListsList extends React.Component<Props, UserListState> {
   }
 }
 
-export default compose<Props, {}>(
-  withRouter,
-  injectIntl,
-  injectNotifications,
-)(UserListsList);
+export default compose<Props, {}>(withRouter, injectIntl, injectNotifications)(UserListsList);

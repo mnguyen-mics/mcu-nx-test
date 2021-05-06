@@ -16,7 +16,12 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { computeFinalSchemaItem, computeSchemaPathFromQueryPath, SchemaItem, FieldProposalLookup } from './domain';
+import {
+  computeFinalSchemaItem,
+  computeSchemaPathFromQueryPath,
+  SchemaItem,
+  FieldProposalLookup,
+} from './domain';
 import { JSONQLBuilderContext } from './JSONQLBuilderContext';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
@@ -29,10 +34,7 @@ export interface JSONQLBuilderContainerProps {
   datamartId: string;
   queryId?: string;
   queryDocument?: QueryDocument;
-  renderActionBar: (
-    queryDocument: QueryDocument,
-    datamartId: string,
-  ) => React.ReactNode;
+  renderActionBar: (queryDocument: QueryDocument, datamartId: string) => React.ReactNode;
   editionLayout?: boolean;
   isTrigger?: boolean;
   isEdge?: boolean;
@@ -54,8 +56,8 @@ interface State {
 type Props = JSONQLBuilderContainerProps &
   InjectedIntlProps &
   InjectedNotificationProps &
-  RouteComponentProps<{ organisationId: string }> & InjectedFeaturesProps;
-
+  RouteComponentProps<{ organisationId: string }> &
+  InjectedFeaturesProps;
 
 class JSONQLBuilderContainer extends React.Component<Props, State> {
   @lazyInject(TYPES.IQueryService)
@@ -109,18 +111,16 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
           prevState => ({
             fetchingObjectTypes: false,
             objectTypes: objectTypes
-            .map(oType => ({
-              ...oType,
-              fields: oType.fields.sort((fieldA, fieldB) =>
-                fieldA.name.localeCompare(fieldB.name),
-              ),
-            }))
-            .sort((otypeA, oTypeB) => otypeA.name.localeCompare(oTypeB.name)),
+              .map(oType => ({
+                ...oType,
+                fields: oType.fields.sort((fieldA, fieldB) =>
+                  fieldA.name.localeCompare(fieldB.name),
+                ),
+              }))
+              .sort((otypeA, oTypeB) => otypeA.name.localeCompare(oTypeB.name)),
             queryHistory: {
               past: [],
-              present: this.props.queryDocument
-                ? this.props.queryDocument.where
-                : undefined,
+              present: this.props.queryDocument ? this.props.queryDocument.where : undefined,
               future: [],
             },
           }),
@@ -135,19 +135,12 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
       });
   }
 
-  fetchObjectTypes = (
-    datamartId: string,
-  ): Promise<ObjectLikeTypeInfoResource[]> => {
-    return this._runtimeSchemaService.getRuntimeSchemas(datamartId).then(
-      schemaRes => {
-        const liveSchema = schemaRes.data.find(s => s.status === 'LIVE');
-        if (!liveSchema) return [];
-        return this._runtimeSchemaService.getObjectTypeInfoResources(
-          datamartId,
-          liveSchema.id,
-        );
-      },
-    );
+  fetchObjectTypes = (datamartId: string): Promise<ObjectLikeTypeInfoResource[]> => {
+    return this._runtimeSchemaService.getRuntimeSchemas(datamartId).then(schemaRes => {
+      const liveSchema = schemaRes.data.find(s => s.status === 'LIVE');
+      if (!liveSchema) return [];
+      return this._runtimeSchemaService.getObjectTypeInfoResources(datamartId, liveSchema.id);
+    });
   };
 
   handleUpdateQuery = (query: ObjectTreeExpressionNodeShape | undefined) => {
@@ -155,10 +148,7 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
       const newPresent = query;
       return {
         queryHistory: {
-          past: [
-            ...prevState.queryHistory.past,
-            prevState.queryHistory.present,
-          ],
+          past: [...prevState.queryHistory.past, prevState.queryHistory.present],
           present: newPresent,
           future: [],
         },
@@ -216,13 +206,16 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
   };
 
   runFieldProposal: FieldProposalLookup = (treenodePath, fieldName) => {
-    const {datamartId, isTrigger, hasFeature, isEdge} = this.props;
-    const {queryHistory: {present: query}, objectTypes} = this.state;
+    const { datamartId, isTrigger, hasFeature, isEdge } = this.props;
+    const {
+      queryHistory: { present: query },
+      objectTypes,
+    } = this.state;
 
     if (!hasFeature('audience-segment_builder-reference_table')) {
       return Promise.resolve([]);
     }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+
     const computedSchema = objectTypes.length
       ? computeFinalSchemaItem(
           objectTypes,
@@ -232,13 +225,12 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
           isEdge ? isEdge : false,
         )
       : undefined;
-    
 
     const computedSchemaPathFromQueryPath = computeSchemaPathFromQueryPath(
       query,
       treenodePath,
       computedSchema,
-      fieldName
+      fieldName,
     );
 
     const computedSelectQuery = (path: number[], schema?: SchemaItem): SelectionField[] => {
@@ -247,12 +239,12 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
       }
       if (path.length === 1) {
         const [currentP] = path;
-        return [{ name: schema.fields[currentP].name, directives: [{ name: "map" }] }]
+        return [{ name: schema.fields[currentP].name, directives: [{ name: 'map' }] }];
       }
       const [currentPath, ...remainingPaths] = path;
       const newSchema = schema.fields[currentPath] as SchemaItem;
-      return [{ name: newSchema.name,selections: computedSelectQuery(remainingPaths, newSchema) }]
-    }
+      return [{ name: newSchema.name, selections: computedSelectQuery(remainingPaths, newSchema) }];
+    };
 
     const computedOtqlSelectQuery = (path: number[], schema?: SchemaItem): string => {
       if (!schema) {
@@ -260,43 +252,42 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
       }
       if (path.length === 1) {
         const [currentP] = path;
-        return `{ ${schema.fields[currentP].name} @map(limit:10000) }`
+        return `{ ${schema.fields[currentP].name} @map(limit:10000) }`;
       }
       const [currentPath, ...remainingPaths] = path;
       const newSchema = schema.fields[currentPath] as SchemaItem;
-      return `{ ${newSchema.name} ${computedOtqlSelectQuery(remainingPaths, newSchema)} }`
-    }
+      return `{ ${newSchema.name} ${computedOtqlSelectQuery(remainingPaths, newSchema)} }`;
+    };
 
+    const otqlQuery = `SELECT ${computedOtqlSelectQuery(
+      computedSchemaPathFromQueryPath,
+      computedSchema,
+    )} FROM UserPoint`;
 
-    const otqlQuery = `SELECT ${computedOtqlSelectQuery(computedSchemaPathFromQueryPath, computedSchema)} FROM UserPoint`;
-
-    return this._queryService.runOTQLQuery(
-      datamartId,
-      otqlQuery,
-      { use_cache: true }
-    ).then(d => {
-      if (isAggregateResult(d.data.rows)) {
-        return d.data.rows[0]
-      } else {
-        throw new Error('err')
-      }
-    })
-    .then(d => {
-      return d.aggregations.buckets[0]
-    })
-    .then(d => d.buckets.map(e => e.key))
-    .catch(() => ([]))
-  }
+    return this._queryService
+      .runOTQLQuery(datamartId, otqlQuery, { use_cache: true })
+      .then(d => {
+        if (isAggregateResult(d.data.rows)) {
+          return d.data.rows[0];
+        } else {
+          throw new Error('err');
+        }
+      })
+      .then(d => {
+        return d.aggregations.buckets[0];
+      })
+      .then(d => d.buckets.map(e => e.key))
+      .catch(() => []);
+  };
 
   handleCopy = (copying: ObjectTreeExpressionNodeShape) => {
     this.setState(prevState => {
       return {
         ...prevState,
-        copyQuery: copying
-      }
-    })
-  }
-
+        copyQuery: copying,
+      };
+    });
+  };
 
   runQuery = (_datamartId?: string) => {
     const { datamartId } = this.props;
@@ -341,7 +332,7 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
       },
       isTrigger,
       isEdge,
-      hideCounterAndTimeline
+      hideCounterAndTimeline,
     } = this.props;
     const {
       fetchingObjectTypes,
@@ -364,10 +355,10 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
           'UserPoint',
           !isTrigger,
           isTrigger ? isTrigger : false,
-          isEdge ? isEdge: false,
+          isEdge ? isEdge : false,
         )
       : undefined;
-    
+
     return (
       <Layout className={editionLayout ? 'edit-layout' : ''}>
         {renderActionBar(
@@ -379,9 +370,7 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
           datamartId,
         )}
         <Layout.Content
-          className={`mcs-content-container ${
-            editionLayout ? 'flex-basic' : ''
-          }`}
+          className={`mcs-content-container ${editionLayout ? 'flex-basic' : ''}`}
           style={{ padding: 0, overflow: 'hidden' }}
         >
           <JSONQLBuilderContext.Provider
@@ -390,7 +379,7 @@ class JSONQLBuilderContainer extends React.Component<Props, State> {
               schema: computedSchema,
               isTrigger: !!this.props.isTrigger,
               isEdge: !!this.props.isEdge,
-              runFieldProposal: this.runFieldProposal
+              runFieldProposal: this.runFieldProposal,
             }}
           >
             <JSONQLBuilder
@@ -426,5 +415,4 @@ export default compose<Props, JSONQLBuilderContainerProps>(
   connect(state => ({
     getWorkspace: SessionHelper.getWorkspace,
   })),
-  
 )(JSONQLBuilderContainer);

@@ -11,18 +11,13 @@ import {
   INITIAL_MOBILE_APP_FORM_DATA,
 } from './domain';
 import messages from './messages';
-import MobileApplicationEditForm, {
-  FORM_ID,
-} from './MobileApplicationEditForm';
+import MobileApplicationEditForm, { FORM_ID } from './MobileApplicationEditForm';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
 import { injectDatamart, InjectedDatamartProps } from '../../../../Datamart';
 import { createFieldArrayModel } from '../../../../../utils/FormHelper';
-import {
-  ChannelResource,
-  EventRules,
-} from '../../../../../models/settings/settings';
+import { ChannelResource, EventRules } from '../../../../../models/settings/settings';
 import { VisitAnalyzerFieldModel } from '../../Common/domain';
 import DatamartSelector from '../../../../../containers/Datamart/DatamartSelector';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
@@ -50,7 +45,11 @@ interface MapStateToProps {
 
 type Props = InjectedIntlProps &
   InjectedNotificationProps &
-  RouteComponentProps<EditMobileAppRouteMatchParam, StaticContext, { from?: string, mobileApplicationId?: string }> &
+  RouteComponentProps<
+    EditMobileAppRouteMatchParam,
+    StaticContext,
+    { from?: string; mobileApplicationId?: string }
+  > &
   MapStateToProps &
   InjectedDatamartProps;
 
@@ -74,21 +73,16 @@ class EditMobileAppPage extends React.Component<Props, State> {
   componentDidMount() {
     const {
       match: {
-        params: {
-          mobileApplicationId: mobileApplicationIdFromURLParam,
-          organisationId,
-        },
+        params: { mobileApplicationId: mobileApplicationIdFromURLParam, organisationId },
       },
       location,
       datamart,
       notifyError,
     } = this.props;
 
-    const mobileApplicationIdFromLocState =
-      location.state && location.state.mobileApplicationId;
+    const mobileApplicationIdFromLocState = location.state && location.state.mobileApplicationId;
 
-    const mobileApplicationId =
-      mobileApplicationIdFromURLParam || mobileApplicationIdFromLocState;
+    const mobileApplicationId = mobileApplicationIdFromURLParam || mobileApplicationIdFromLocState;
 
     if (mobileApplicationId) {
       const getMobileApplication = this._channelService.getChannel(
@@ -120,17 +114,12 @@ class EditMobileAppPage extends React.Component<Props, State> {
           );
         });
 
-      Promise.all([
-        getMobileApplication,
-        getEventRules,
-        getProcessingSelections,
-      ])
+      Promise.all([getMobileApplication, getEventRules, getProcessingSelections])
         .then(res => {
           const formData = {
             mobileapplication: res[0].data,
             initialProcessingSelectionResources: res[2].map(
-              processingAndSelection =>
-                processingAndSelection.processingSelectionResource,
+              processingAndSelection => processingAndSelection.processingSelectionResource,
             ),
             processingActivities: res[2].map(processingAndSelection =>
               createFieldArrayModel(processingAndSelection.processingResource),
@@ -138,14 +127,11 @@ class EditMobileAppPage extends React.Component<Props, State> {
             visitAnalyzerFields: res[0].data.visit_analyzer_model_id
               ? [
                   createFieldArrayModel({
-                    visit_analyzer_model_id:
-                      res[0].data.visit_analyzer_model_id,
+                    visit_analyzer_model_id: res[0].data.visit_analyzer_model_id,
                   }),
                 ]
               : [],
-            eventRulesFields: res[1].data.map((er: EventRules) =>
-              createFieldArrayModel(er),
-            ),
+            eventRulesFields: res[1].data.map((er: EventRules) => createFieldArrayModel(er)),
           };
           return formData;
         })
@@ -192,9 +178,7 @@ class EditMobileAppPage extends React.Component<Props, State> {
     return datamartId;
   };
 
-  shouldWarnProcessings = (
-    mobileApplicationFormData: MobileApplicationFormData,
-  ): boolean => {
+  shouldWarnProcessings = (mobileApplicationFormData: MobileApplicationFormData): boolean => {
     const initialProcessingSelectionResources =
       mobileApplicationFormData.initialProcessingSelectionResources;
     const processingActivities = mobileApplicationFormData.processingActivities;
@@ -215,9 +199,7 @@ class EditMobileAppPage extends React.Component<Props, State> {
     );
   };
 
-  checkProcessingsAndSave = (
-    mobileApplicationFormData: MobileApplicationFormData,
-  ) => {
+  checkProcessingsAndSave = (mobileApplicationFormData: MobileApplicationFormData) => {
     const {
       intl: { formatMessage },
     } = this.props;
@@ -257,18 +239,13 @@ class EditMobileAppPage extends React.Component<Props, State> {
 
     const datamartId = this.getDatamartId();
 
-    const hideSaveInProgress = message.loading(
-      intl.formatMessage(messages.savingInProgress),
-      0,
-    );
+    const hideSaveInProgress = message.loading(intl.formatMessage(messages.savingInProgress), 0);
 
     this.setState({
       loading: true,
     });
 
-    const getVisitAnalyzerId = (
-      visitAnalyzerFields: VisitAnalyzerFieldModel[],
-    ) => {
+    const getVisitAnalyzerId = (visitAnalyzerFields: VisitAnalyzerFieldModel[]) => {
       if (
         visitAnalyzerFields.length &&
         visitAnalyzerFields[0].model &&
@@ -279,58 +256,43 @@ class EditMobileAppPage extends React.Component<Props, State> {
       return null;
     };
 
-    const generateEventRulesTasks = (
-      channel: ChannelResource,
-    ): Array<Promise<any>> => {
-      const startIds = this.state.mobileApplicationData.eventRulesFields.map(
-        erf => erf.model.id,
-      );
+    const generateEventRulesTasks = (channel: ChannelResource): Array<Promise<any>> => {
+      const startIds = this.state.mobileApplicationData.eventRulesFields.map(erf => erf.model.id);
       const savedIds: string[] = [];
-      const saveCreatePromises = mobileApplicationFormData.eventRulesFields.map(
-        erf => {
-          if (!erf.model.id) {
-            return this._channelService.createEventRules(
-              datamartId,
-              channel.id,
-              {
-                ...erf.model,
-                datamart_id: datamartId,
-                site_id: channel.id,
-              },
-            );
-          } else if (startIds.includes(erf.model.id)) {
-            savedIds.push(erf.model.id);
-            const eventRuleBody = {
-              ...erf.model,
-              datamart_id: datamartId,
-              site_id: channel.id,
-            };
-            if (
-              eventRuleBody.type === 'USER_IDENTIFIER_INSERTION' &&
-              eventRuleBody.identifier_creation === 'USER_ACCOUNT' &&
-              !eventRuleBody.compartment_id
-            ) {
-              eventRuleBody.compartment_id = null;
-            }
-            return this._channelService.updateEventRules(
-              datamartId,
-              channel.id,
-              organisationId,
-              erf.model.id,
-              eventRuleBody,
-            );
+      const saveCreatePromises = mobileApplicationFormData.eventRulesFields.map(erf => {
+        if (!erf.model.id) {
+          return this._channelService.createEventRules(datamartId, channel.id, {
+            ...erf.model,
+            datamart_id: datamartId,
+            site_id: channel.id,
+          });
+        } else if (startIds.includes(erf.model.id)) {
+          savedIds.push(erf.model.id);
+          const eventRuleBody = {
+            ...erf.model,
+            datamart_id: datamartId,
+            site_id: channel.id,
+          };
+          if (
+            eventRuleBody.type === 'USER_IDENTIFIER_INSERTION' &&
+            eventRuleBody.identifier_creation === 'USER_ACCOUNT' &&
+            !eventRuleBody.compartment_id
+          ) {
+            eventRuleBody.compartment_id = null;
           }
-          return Promise.resolve();
-        },
-      );
+          return this._channelService.updateEventRules(
+            datamartId,
+            channel.id,
+            organisationId,
+            erf.model.id,
+            eventRuleBody,
+          );
+        }
+        return Promise.resolve();
+      });
       const deletePromises = startIds.map(sid =>
         sid && !savedIds.includes(sid)
-          ? this._channelService.deleteEventRules(
-              datamartId,
-              channel.id,
-              organisationId,
-              sid,
-            )
+          ? this._channelService.deleteEventRules(datamartId, channel.id, organisationId, sid)
           : Promise.resolve(),
       );
       return [...saveCreatePromises, ...deletePromises];
@@ -341,8 +303,7 @@ class EditMobileAppPage extends React.Component<Props, State> {
     ): Array<Promise<any>> => {
       const initialProcessingSelectionResources =
         mobileApplicationFormData.initialProcessingSelectionResources;
-      const processingActivities =
-        mobileApplicationFormData.processingActivities;
+      const processingActivities = mobileApplicationFormData.processingActivities;
 
       const initialProcessingIds = initialProcessingSelectionResources.map(
         processingSelection => processingSelection.processing_id,
@@ -398,13 +359,8 @@ class EditMobileAppPage extends React.Component<Props, State> {
       return [...savePromises, ...deletePromises];
     };
 
-    const generateAllPromises = (
-      channel: ChannelResource,
-    ): Array<Promise<any>> => {
-      return [
-        ...generateEventRulesTasks(channel),
-        ...generateProcessingSelectionsTasks(channel),
-      ];
+    const generateAllPromises = (channel: ChannelResource): Array<Promise<any>> => {
+      return [...generateEventRulesTasks(channel), ...generateProcessingSelectionsTasks(channel)];
     };
 
     const generateSavingPromise = (): Promise<any> => {
@@ -494,15 +450,14 @@ class EditMobileAppPage extends React.Component<Props, State> {
     }
 
     const mobileName =
-      mobileApplicationData.mobileapplication &&
-      mobileApplicationData.mobileapplication.name
+      mobileApplicationData.mobileapplication && mobileApplicationData.mobileapplication.name
         ? formatMessage(messages.editMobileApplicationTitle, {
             name: mobileApplicationData.mobileapplication.name,
           })
         : formatMessage(messages.createMobileApplicationTitle);
 
     const breadcrumbPaths = [
-      <Link key="1" to={`/v2/o/${organisationId}/settings/datamart/channels`}>
+      <Link key='1' to={`/v2/o/${organisationId}/settings/datamart/channels`}>
         {formatMessage(messages.breadcrumbTitle1)}
       </Link>,
       mobileName,
@@ -516,8 +471,7 @@ class EditMobileAppPage extends React.Component<Props, State> {
 
     const datamartId = this.getDatamartId();
 
-    const initialProcessingSelectionsForWarning = mobileApplicationData
-      .mobileapplication.id
+    const initialProcessingSelectionsForWarning = mobileApplicationData.mobileapplication.id
       ? mobileApplicationData.initialProcessingSelectionResources
       : undefined;
 
@@ -529,15 +483,10 @@ class EditMobileAppPage extends React.Component<Props, State> {
         breadCrumbPaths={breadcrumbPaths}
         onSubmitFail={this.onSubmitFail}
         datamartId={datamartId}
-        initialProcessingSelectionsForWarning={
-          initialProcessingSelectionsForWarning
-        }
+        initialProcessingSelectionsForWarning={initialProcessingSelectionsForWarning}
       />
     ) : (
-      <DatamartSelector
-        onSelect={this.onDatamartSelect}
-        actionbarProps={actionBarProps}
-      />
+      <DatamartSelector onSelect={this.onDatamartSelect} actionbarProps={actionBarProps} />
     );
   }
 }

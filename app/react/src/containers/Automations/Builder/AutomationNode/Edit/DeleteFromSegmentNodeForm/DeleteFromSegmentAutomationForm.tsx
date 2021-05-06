@@ -1,9 +1,4 @@
-import {
-  ConfigProps,
-  InjectedFormProps,
-  getFormValues,
-  reduxForm,
-} from 'redux-form';
+import { ConfigProps, InjectedFormProps, getFormValues, reduxForm } from 'redux-form';
 import { FORM_ID, DeleteFromSegmentAutomationFormData } from '../domain';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import * as React from 'react';
@@ -101,17 +96,13 @@ class DeleteFromSegmentAutomationForm extends React.Component<Props> {
     });
 
     return (
-      <Layout className="edit-layout">
+      <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
-          <Form
-            className="edit-layout ant-layout"
-            onSubmit={handleSubmit}
-            layout="vertical"
-          >
+          <Form className='edit-layout ant-layout' onSubmit={handleSubmit} layout='vertical'>
             <Content
               id={FORM_ID}
-              className="mcs-content-container mcs-form-container automation-form"
+              className='mcs-content-container mcs-form-container automation-form'
             >
               {renderedSections}
             </Content>

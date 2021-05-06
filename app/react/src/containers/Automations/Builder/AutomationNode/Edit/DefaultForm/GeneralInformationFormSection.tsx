@@ -1,17 +1,9 @@
 import * as React from 'react';
 import { compose } from 'recompose';
 import { InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
-import {
-  FormInput,
-  FormSection,
-  FormInputField,
-} from '../../../../../../components/Form';
-import withValidators, {
-  ValidatorProps,
-} from '../../../../../../components/Form/withValidators';
-import withNormalizer, {
-  NormalizerProps,
-} from '../../../../../../components/Form/withNormalizer';
+import { FormInput, FormSection, FormInputField } from '../../../../../../components/Form';
+import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
+import withNormalizer, { NormalizerProps } from '../../../../../../components/Form/withNormalizer';
 import { DefaultFormData } from '../domain';
 
 export const messages = defineMessages({
@@ -63,7 +55,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
     const {
       fieldValidators: { isRequired },
       intl: { formatMessage },
-      disabled
+      disabled,
     } = this.props;
 
     return (
@@ -74,7 +66,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
         />
 
         <FormInputField
-          name="name"
+          name='name'
           component={FormInput}
           validate={[isRequired]}
           formItemProps={{
@@ -83,7 +75,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
           }}
           inputProps={{
             placeholder: formatMessage(messages.automationNodeName),
-            disabled: !!disabled
+            disabled: !!disabled,
           }}
           small={true}
         />

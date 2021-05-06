@@ -7,9 +7,7 @@ import {
   isCountResult,
   OTQLResult,
 } from '../../../../models/datamart/graphdb/OTQLResult';
-import injectThemeColors, {
-  InjectedThemeColorsProps,
-} from '../../../Helpers/injectThemeColors';
+import injectThemeColors, { InjectedThemeColorsProps } from '../../../Helpers/injectThemeColors';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import messages from './messages';
@@ -68,9 +66,9 @@ class MapPieChart extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { source, queryId, datamartId,  data } = this.props;
+    const { source, queryId, datamartId, data } = this.props;
     if (data) {
-      this.formatOtqlQueryResult(data)
+      this.formatOtqlQueryResult(data);
     } else {
       this.fetchData(queryId, datamartId, source);
     }
@@ -82,11 +80,11 @@ class MapPieChart extends React.Component<Props, State> {
       source: previousSource,
       queryId: previousChartQueryId,
       datamartId: previousDatamartId,
-      data: previousData
+      data: previousData,
     } = previousProps;
 
     if (
-      !_.isEqual(previousSource, source) || 
+      !_.isEqual(previousSource, source) ||
       queryId !== previousChartQueryId ||
       datamartId !== previousDatamartId ||
       !_.isEqual(data, previousData)
@@ -201,12 +199,7 @@ class MapPieChart extends React.Component<Props, State> {
       if (this.state.loading) {
         return <LoadingChart />;
       } else if (this.state.error) {
-        return (
-          <EmptyChart
-            title={intl.formatMessage(messages.error)}
-            icon={'close-big'}
-          />
-        );
+        return <EmptyChart title={intl.formatMessage(messages.error)} icon={'close-big'} />;
       } else if (
         (this.state.queryResult && this.state.queryResult.length === 0) ||
         !this.state.queryResult
@@ -214,24 +207,13 @@ class MapPieChart extends React.Component<Props, State> {
         return <EmptyChart title={intl.formatMessage(messages.noData)} icon='warning' />;
       } else {
         return (
-          <PiePlot
-            dataset={this.state.queryResult}
-            options={pieChartsOptions}
-            height={height}
-          />
+          <PiePlot dataset={this.state.queryResult} options={pieChartsOptions} height={height} />
         );
       }
     };
 
-    return (
-      <CardFlex title={this.props.title}>
-        {generateChart()}
-      </CardFlex>
-    );
+    return <CardFlex title={this.props.title}>{generateChart()}</CardFlex>;
   }
 }
 
-export default compose<Props, MapPieChartProps>(
-  injectThemeColors,
-  injectIntl,
-)(MapPieChart);
+export default compose<Props, MapPieChartProps>(injectThemeColors, injectIntl)(MapPieChart);

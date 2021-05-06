@@ -11,9 +11,7 @@ import { compose } from 'recompose';
 import { injectDatamart, InjectedDatamartProps } from '../Datamart';
 import { UserWorkspaceResource } from '../../models/directory/UserProfileResource';
 import { MicsReduxState } from '../../utils/ReduxHelper';
-import {
-  McsIcon,
-} from '@mediarithmics-private/mcs-components-library';
+import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { InjectedFeaturesProps, injectFeatures } from '../Features';
 import { ProductionApiEnvironment } from '../Navigator/Layout/LayoutHelper';
 
@@ -51,11 +49,11 @@ class NavigatorHeader extends React.Component<Props> {
 
     const accountMenu = (
       <Menu>
-        <Menu.Item key="email" disabled={true}>
+        <Menu.Item key='email' disabled={true}>
           {userEmail}
         </Menu.Item>
         <Menu.Divider />
-        <Menu.Item key="account">
+        <Menu.Item key='account'>
           <Link
             to={{
               pathname: `/v2/o/${organisationId}/settings/account/my_profile`,
@@ -64,56 +62,46 @@ class NavigatorHeader extends React.Component<Props> {
             <FormattedMessage {...messages.account} />
           </Link>
         </Menu.Item>
-        <Menu.Item key="logout">
-          <Link to="/logout">
-            <FormattedMessage
-              id="components.header.logOut"
-              defaultMessage="Log out"
-            />
+        <Menu.Item key='logout'>
+          <Link to='/logout'>
+            <FormattedMessage id='components.header.logOut' defaultMessage='Log out' />
           </Link>
         </Menu.Item>
       </Menu>
     );
 
     return (
-      <Header className="mcs-navigator-header">
-        <div className="mcs-navigator-header-title">
-          <span className="left-component">
+      <Header className='mcs-navigator-header'>
+        <div className='mcs-navigator-header-title'>
+          <span className='left-component'>
             {menu ? (
-              <span className="launcher">
+              <span className='launcher'>
                 <Dropdown overlay={menu} trigger={['click']}>
                   <a>
-                    <AppstoreFilled className="menu-icon" />
+                    <AppstoreFilled className='menu-icon' />
                   </a>
                 </Dropdown>
               </span>
             ) : null}
             {!hasFeature('new-navigation-system') && (
-              <Link
-                to={`/v2/o/${organisationId}/campaigns/display`}
-                className="organisation-name"
-              >
+              <Link to={`/v2/o/${organisationId}/campaigns/display`} className='organisation-name'>
                 {organisationName}
               </Link>
             )}
           </span>
           {process.env.API_ENV === 'prod' ? ProductionApiEnvironment : null}
         </div>
-        <div className="mcs-navigator-header-actions">
+        <div className='mcs-navigator-header-actions'>
           <Link
-            className="mcs-navigator-header-actions-settings"
+            className='mcs-navigator-header-actions-settings'
             to={`/v2/o/${organisationId}/settings/organisation/labels`}
           >
-            <McsIcon type="options" className="menu-icon" />
+            <McsIcon type='options' className='menu-icon' />
           </Link>
-          <div className="mcs-navigator-header-actions-account">
-            <Dropdown
-              overlay={accountMenu}
-              trigger={['click']}
-              placement="bottomRight"
-            >
+          <div className='mcs-navigator-header-actions-account'>
+            <Dropdown overlay={accountMenu} trigger={['click']} placement='bottomRight'>
               <a>
-                <McsIcon type="user" className="menu-icon" />
+                <McsIcon type='user' className='menu-icon' />
               </a>
             </Dropdown>
           </div>

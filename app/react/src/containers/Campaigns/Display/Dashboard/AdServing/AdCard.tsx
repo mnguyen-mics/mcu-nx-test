@@ -18,9 +18,7 @@ import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import McsMoment from '../../../../../utils/McsMoment';
-import injectThemeColors, {
-  InjectedThemeColorsProps,
-} from '../../../../Helpers/injectThemeColors';
+import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
 import { LegendChart } from '../../../../../components/LegendChart';
 import ReportService from '../../../../../services/ReportService';
 import { makeCancelable } from '../../../../../utils/ApiHelper';
@@ -73,13 +71,7 @@ class AdCard extends React.Component<Props, State> {
     } = this.props;
     const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
 
-    this.fetchData(
-      organisationId,
-      ad.creative_id,
-      filter.from,
-      filter.to,
-      campaignId,
-    );
+    this.fetchData(organisationId, ad.creative_id, filter.from, filter.to, campaignId);
   }
 
   componentDidUpdate(previousProps: Props) {
@@ -94,10 +86,7 @@ class AdCard extends React.Component<Props, State> {
     const {
       ad: previousAd,
       match: {
-        params: {
-          organisationId: previousOrganisationId,
-          campaignId: previousCampaignId,
-        },
+        params: { organisationId: previousOrganisationId, campaignId: previousCampaignId },
       },
       location: { search: previousSearch },
     } = previousProps;
@@ -109,23 +98,12 @@ class AdCard extends React.Component<Props, State> {
       campaignId !== previousCampaignId
     ) {
       const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
-      this.fetchData(
-        organisationId,
-        ad.creative_id,
-        filter.from,
-        filter.to,
-        campaignId,
-      );
+      this.fetchData(organisationId, ad.creative_id, filter.from, filter.to, campaignId);
     }
   }
 
-  filterValueForCampaign = (
-    normalizedReport: Index<any>,
-    campaignId: string,
-  ) => {
-    return normalizedReport.filter(
-      (item: any) => item.campaign_id === campaignId,
-    );
+  filterValueForCampaign = (normalizedReport: Index<any>, campaignId: string) => {
+    return normalizedReport.filter((item: any) => item.campaign_id === campaignId);
   };
 
   fetchData = (
@@ -138,9 +116,7 @@ class AdCard extends React.Component<Props, State> {
     const { adGroupId } = this.props;
     const lookbackWindow = to.toMoment().unix() - from.toMoment().unix();
     const dimensions =
-      lookbackWindow > 172800
-        ? ['day', 'campaign_id']
-        : ['day,hour_of_day', 'campaign_id'];
+      lookbackWindow > 172800 ? ['day', 'campaign_id'] : ['day,hour_of_day', 'campaign_id'];
     const getAdPerf = makeCancelable(
       ReportService.getAdDeliveryReport(
         organisationId,
@@ -160,10 +136,7 @@ class AdCard extends React.Component<Props, State> {
     this.setState({ loading: true });
     getAdPerf.promise
       .then(res =>
-        this.filterValueForCampaign(
-          normalizeReportView(res.data.report_view),
-          campaignId,
-        ),
+        this.filterValueForCampaign(normalizeReportView(res.data.report_view), campaignId),
       )
       .then(res => {
         const t = res as any;
@@ -182,11 +155,7 @@ class AdCard extends React.Component<Props, State> {
 
     const nextLocation = {
       pathname,
-      search: updateSearch(
-        currentSearch,
-        params,
-        DISPLAY_DASHBOARD_SEARCH_SETTINGS,
-      ),
+      search: updateSearch(currentSearch, params, DISPLAY_DASHBOARD_SEARCH_SETTINGS),
     };
 
     history.push(nextLocation);
@@ -288,7 +257,7 @@ class AdCard extends React.Component<Props, State> {
     return (
       <Card title={title} buttons={<span>{this.renderDatePicker()}</span>}>
         <hr />
-        <Row className="mcs-chart-header">
+        <Row className='mcs-chart-header'>
           <Col span={12}>
             {dataSource && dataSource.length === 0 && loading ? (
               <div />
@@ -303,10 +272,7 @@ class AdCard extends React.Component<Props, State> {
         </Row>
         {loading ? <LoadingChart /> : null}
         {!dataSource.length && !loading ? (
-          <EmptyChart
-            title={formatMessage(messages.noStatAvailable)}
-            icon="warning"
-          />
+          <EmptyChart title={formatMessage(messages.noStatAvailable)} icon='warning' />
         ) : null}
         {dataSource.length && !loading ? this.renderChart() : null}
       </Card>
@@ -314,8 +280,4 @@ class AdCard extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, AdCardProps>(
-  withRouter,
-  injectIntl,
-  injectThemeColors,
-)(AdCard);
+export default compose<Props, AdCardProps>(withRouter, injectIntl, injectThemeColors)(AdCard);

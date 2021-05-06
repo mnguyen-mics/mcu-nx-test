@@ -17,8 +17,7 @@ const statusSearchSetting = {
     return [];
   },
   serialize: (value: string[]) => value.join(','),
-  isValid: (query: Index<string>) =>
-    !query.type || query.type.split(',').length > 0,
+  isValid: (query: Index<string>) => !query.type || query.type.split(',').length > 0,
 };
 
 export const IMPORTS_SEARCH_SETTINGS: SearchSetting[] = [

@@ -102,10 +102,7 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
     };
   }
 
-  computeFilter = (
-    search: string,
-    fixedDatamartOpt: string | undefined,
-  ): ChannelFilter => {
+  computeFilter = (search: string, fixedDatamartOpt: string | undefined): ChannelFilter => {
     if (!fixedDatamartOpt) {
       const parsedFilter = parseSearch(search, this.getSearchSettings());
       const computedFilter: ChannelFilter = {
@@ -149,18 +146,12 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
       fixedDatamartOpt,
     } = this.props;
 
-    const computedFilter: ChannelFilter = this.computeFilter(
-      search,
-      fixedDatamartOpt,
-    );
+    const computedFilter: ChannelFilter = this.computeFilter(search, fixedDatamartOpt);
 
     this.fetchChannels(organisationId, computedFilter);
   }
 
-  componentDidUpdate(
-    previousProps: Props,
-    previousState: ChannelsListPageState,
-  ) {
+  componentDidUpdate(previousProps: Props, previousState: ChannelsListPageState) {
     const {
       match: {
         params: { organisationId },
@@ -188,18 +179,12 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
         fixedDatamartOpt !== previousFixedDatamartOpt) &&
       !isFetchingChannels
     ) {
-      const computedFilter: ChannelFilter = this.computeFilter(
-        search,
-        fixedDatamartOpt,
-      );
+      const computedFilter: ChannelFilter = this.computeFilter(search, fixedDatamartOpt);
       this.fetchChannels(organisationId, computedFilter);
     }
   }
 
-  compareFilters = (
-    filter: ChannelFilter,
-    previousFilter: ChannelFilter,
-  ): boolean => {
+  compareFilters = (filter: ChannelFilter, previousFilter: ChannelFilter): boolean => {
     const comparedTypes =
       filter.types.every(type => previousFilter.types.includes(type)) &&
       filter.types.length === previousFilter.types.length;
@@ -216,8 +201,7 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
   fetchChannels = (organisationId: string, filter: ChannelFilter) => {
     const { notifyError } = this.props;
     const buildChannelsOptions = () => {
-      const filterType =
-        filter.types && filter.types.length === 1 ? filter.types[0] : undefined;
+      const filterType = filter.types && filter.types.length === 1 ? filter.types[0] : undefined;
 
       return {
         ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
@@ -233,9 +217,7 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
         .then(responseChannels => {
           const channelsWithTotal: ChannelsWithTotal = {
             channels: responseChannels.data,
-            total: responseChannels.total
-              ? responseChannels.total
-              : responseChannels.count,
+            total: responseChannels.total ? responseChannels.total : responseChannels.count,
           };
           return channelsWithTotal;
         })
@@ -286,11 +268,7 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
             }),
           ).then(table => {
             const analyticsByChannel = flatten(
-              table.map(t =>
-                normalizeReportView<ChannelAnalyticsResource>(
-                  t.data.report_view,
-                ),
-              ),
+              table.map(t => normalizeReportView<ChannelAnalyticsResource>(t.data.report_view)),
             );
             return analyticsByChannel;
           });
@@ -312,8 +290,7 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
             channel => {
               const analytics = analyticsByChannel.find(
                 analyticsItem =>
-                  analyticsItem.channel_id &&
-                  analyticsItem.channel_id.toString() === channel.id,
+                  analyticsItem.channel_id && analyticsItem.channel_id.toString() === channel.id,
               );
 
               return { ...channel, ...analytics };
@@ -374,10 +351,7 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
         const deletePromise: Promise<DataResponse<ChannelResourceShape>> =
           channel.type === 'SITE'
             ? this._channelService.deleteSite(channel.datamart_id, channel.id)
-            : this._channelService.deleteMobileApplication(
-                channel.datamart_id,
-                channel.id,
-              );
+            : this._channelService.deleteMobileApplication(channel.datamart_id, channel.id);
 
         deletePromise
           .then((dataResponseChannel: DataResponse<ChannelResourceShape>) => {
@@ -400,16 +374,12 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
     return channelType.toLowerCase() + (channelType === 'SITE' ? 's' : '');
   };
 
-  buildNewActionElement = (
-    organisationId: string,
-    channelType: ChannelType,
-  ) => {
+  buildNewActionElement = (organisationId: string, channelType: ChannelType) => {
     const channelTypeInUrl = this.getChannelTypeInUrl(channelType);
 
     const url = `/v2/o/${organisationId}/settings/datamart/${channelTypeInUrl}/create`;
 
-    const message =
-      channelType === 'SITE' ? messages.newSite : messages.newMobileApplication;
+    const message = channelType === 'SITE' ? messages.newSite : messages.newMobileApplication;
 
     return (
       <Link key={message.id} to={url}>
@@ -458,29 +428,20 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
       fixedDatamartOpt,
     } = this.props;
 
-    const {
-      isFetchingChannels,
-      totalChannels,
-      channels,
-      noChannelYet,
-    } = this.state;
+    const { isFetchingChannels, totalChannels, channels, noChannelYet } = this.state;
 
     const computedFilter = this.computeFilter(search, fixedDatamartOpt);
 
     const menu = (
       <Menu>
-        <Menu.Item>
-          {this.buildNewActionElement(organisationId, 'SITE')}
-        </Menu.Item>
-        <Menu.Item>
-          {this.buildNewActionElement(organisationId, 'MOBILE_APPLICATION')}
-        </Menu.Item>
+        <Menu.Item>{this.buildNewActionElement(organisationId, 'SITE')}</Menu.Item>
+        <Menu.Item>{this.buildNewActionElement(organisationId, 'MOBILE_APPLICATION')}</Menu.Item>
       </Menu>
     );
 
     const dropdownButton = (
       <Dropdown overlay={menu} trigger={['click']}>
-        <Button type="primary">
+        <Button type='primary'>
           <FormattedMessage {...messages.newChannel} />
           <DownOutlined />
         </Button>
@@ -523,17 +484,17 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
     const filtersOptions: Array<MultiSelectProps<any>> = [filterChannelType];
 
     return (
-      <div className="ant-layout">
-        <Content className="mcs-content-container">
-          <Row className="mcs-table-container">
+      <div className='ant-layout'>
+        <Content className='mcs-content-container'>
+          <Row className='mcs-table-container'>
             <div>
-              <div className="mcs-card-header mcs-card-title">
-                <span className="mcs-card-title">
+              <div className='mcs-card-header mcs-card-title'>
+                <span className='mcs-card-title'>
                   <FormattedMessage {...messages.channels} />
                 </span>
-                <span className="mcs-card-button">{newButtonsList}</span>
+                <span className='mcs-card-button'>{newButtonsList}</span>
               </div>
-              <hr className="mcs-separator" />
+              <hr className='mcs-separator' />
               <ChannelsTable
                 dataSource={channels}
                 totalChannels={totalChannels}

@@ -10,9 +10,7 @@ import {
 import { QueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
 
 export interface IAudienceBuilderQueryService {
-  buildQueryDocument: (
-    formData: NewAudienceBuilderFormData,
-  ) => AudienceBuilderQueryDocument;
+  buildQueryDocument: (formData: NewAudienceBuilderFormData) => AudienceBuilderQueryDocument;
   runQuery: (
     datamartId: string,
     formData: NewAudienceBuilderFormData,
@@ -23,35 +21,28 @@ export interface IAudienceBuilderQueryService {
 }
 
 @injectable()
-export class AudienceBuilderQueryService
-  implements IAudienceBuilderQueryService {
+export class AudienceBuilderQueryService implements IAudienceBuilderQueryService {
   @inject(TYPES.IQueryService)
   private _queryService: IQueryService;
 
-  buildQueryDocument = (
-    formData: NewAudienceBuilderFormData,
-  ): AudienceBuilderQueryDocument => {
-    const includeGroup: AudienceBuilderGroupNode[] = formData.include.map(
-      (group) => {
-        return {
-          type: 'GROUP',
-          boolean_operator: 'OR',
-          negation: false,
-          expressions: group.expressions,
-        };
-      },
-    );
+  buildQueryDocument = (formData: NewAudienceBuilderFormData): AudienceBuilderQueryDocument => {
+    const includeGroup: AudienceBuilderGroupNode[] = formData.include.map(group => {
+      return {
+        type: 'GROUP',
+        boolean_operator: 'OR',
+        negation: false,
+        expressions: group.expressions,
+      };
+    });
 
-    const excludeGroup: AudienceBuilderGroupNode[] = formData.exclude.map(
-      (group) => {
-        return {
-          type: 'GROUP',
-          boolean_operator: 'OR',
-          negation: true,
-          expressions: group.expressions,
-        };
-      },
-    );
+    const excludeGroup: AudienceBuilderGroupNode[] = formData.exclude.map(group => {
+      return {
+        type: 'GROUP',
+        boolean_operator: 'OR',
+        negation: true,
+        expressions: group.expressions,
+      };
+    });
 
     const expressions = includeGroup.concat(excludeGroup);
 
@@ -87,13 +78,12 @@ export class AudienceBuilderQueryService
     success: (result: OTQLResult) => void,
     failure: (err: any) => void,
   ) => {
-
     this._queryService
       .runJSONOTQLQuery(datamartId, queryDocument)
-      .then((queryResult) => {
+      .then(queryResult => {
         success(queryResult.data);
       })
-      .catch((err) => {
+      .catch(err => {
         failure(err);
       });
   };

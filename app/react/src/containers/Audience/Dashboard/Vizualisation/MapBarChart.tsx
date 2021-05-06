@@ -7,9 +7,7 @@ import {
   isCountResult,
   OTQLResult,
 } from '../../../../models/datamart/graphdb/OTQLResult';
-import injectThemeColors, {
-  InjectedThemeColorsProps,
-} from '../../../Helpers/injectThemeColors';
+import injectThemeColors, { InjectedThemeColorsProps } from '../../../Helpers/injectThemeColors';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import messages from './messages';
@@ -20,10 +18,7 @@ import CardFlex from '../Components/CardFlex';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { getFormattedQuery } from '../domain';
 import { QueryResource } from '../../../../models/datamart/DatamartResource';
-import {
-  DataLabel,
-  TooltipChart,
-} from '../../../../models/dashboards/dashboards';
+import { DataLabel, TooltipChart } from '../../../../models/dashboards/dashboards';
 import {
   EmptyChart,
   LoadingChart,
@@ -131,10 +126,7 @@ class MapBarChart extends React.Component<Props, State> {
     return this.setState({ error: true, loading: false });
   };
 
-  formatData = (
-    queryResult: OTQLAggregationResult[],
-    key: string,
-  ): QueryResult[] => {
+  formatData = (queryResult: OTQLAggregationResult[], key: string): QueryResult[] => {
     const { percentage } = this.props;
     if (
       queryResult.length &&
@@ -148,21 +140,14 @@ class MapBarChart extends React.Component<Props, State> {
         : undefined;
       return queryResult[0].aggregations.buckets[0].buckets.map((data, i) => ({
         [`${key}-count`]: data.count,
-        [key]: total
-          ? Math.round((data.count / total) * 10000) / 100
-          : data.count,
+        [key]: total ? Math.round((data.count / total) * 10000) / 100 : data.count,
         xKey: data.key,
       }));
     }
     return [];
   };
 
-  mergeData = (
-    d0: QueryResult[],
-    yKey0: string,
-    d1: QueryResult[],
-    yKey1: string,
-  ) => {
+  mergeData = (d0: QueryResult[], yKey0: string, d1: QueryResult[], yKey1: string) => {
     // filter and unique the keys;
     const xKeys = d0
       .map(d => d.xKey)
@@ -199,9 +184,7 @@ class MapBarChart extends React.Component<Props, State> {
           })
       : Promise.resolve();
 
-    const getResultPromise = (
-      q?: QueryResource | void,
-    ): Promise<void | OTQLResult> =>
+    const getResultPromise = (q?: QueryResource | void): Promise<void | OTQLResult> =>
       q
         ? this._queryService
             .runOTQLQuery(datamartId, (q as QueryResource).query_text, {
@@ -235,12 +218,7 @@ class MapBarChart extends React.Component<Props, State> {
           getResultPromise(q1),
         ])
           .then(([r0, r1]) => {
-            if (
-              r0 &&
-              !r1 &&
-              isAggregateResult(r0.rows) &&
-              !isCountResult(r0.rows)
-            ) {
+            if (r0 && !r1 && isAggregateResult(r0.rows) && !isCountResult(r0.rows)) {
               this.setState({
                 queryResult: this.formatData(r0.rows, BASE_YKEY),
                 loading: false,
@@ -292,9 +270,7 @@ class MapBarChart extends React.Component<Props, State> {
     const optionsForChart = {
       xKey: 'xKey',
       yKeys: [{ key: BASE_YKEY, message: '' }].concat(restKey),
-      colors: [colors['mcs-info']].concat(
-        shouldCompare ? [colors['mcs-normal']] : [],
-      ),
+      colors: [colors['mcs-info']].concat(shouldCompare ? [colors['mcs-normal']] : []),
       labelsEnabled: this.props.labelsEnabled,
       vertical,
       sort: sortKey,
@@ -306,22 +282,12 @@ class MapBarChart extends React.Component<Props, State> {
       if (this.state.loading) {
         return <LoadingChart />;
       } else if (this.state.error) {
-        return (
-          <EmptyChart
-            title={intl.formatMessage(messages.error)}
-            icon={'close-big'}
-          />
-        );
+        return <EmptyChart title={intl.formatMessage(messages.error)} icon={'close-big'} />;
       } else if (
         (this.state.queryResult && this.state.queryResult.length === 0) ||
         !this.state.queryResult
       ) {
-        return (
-          <EmptyChart
-            title={intl.formatMessage(messages.noData)}
-            icon="warning"
-          />
-        );
+        return <EmptyChart title={intl.formatMessage(messages.noData)} icon='warning' />;
       } else {
         return (
           this.state.queryResult &&
@@ -340,7 +306,4 @@ class MapBarChart extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, MapBarChartProps>(
-  injectThemeColors,
-  injectIntl,
-)(MapBarChart);
+export default compose<Props, MapBarChartProps>(injectThemeColors, injectIntl)(MapBarChart);

@@ -39,9 +39,7 @@ export interface ICreativeService {
     options: CreativesOptions,
   ) => Promise<DataListResponse<T>>;
 
-  getCreative: (
-    creativeId: string,
-  ) => Promise<DataResponse<CreativeResourceShape>>;
+  getCreative: (creativeId: string) => Promise<DataResponse<CreativeResourceShape>>;
   getDisplayAds: (
     organisationId: string,
     options: CreativesOptions,
@@ -51,13 +49,9 @@ export interface ICreativeService {
     options: CreativesOptions,
   ) => Promise<DataListResponse<EmailTemplateResource>>;
 
-  getEmailTemplate: (
-    templateId: string,
-  ) => Promise<DataResponse<EmailTemplateResource>>;
+  getEmailTemplate: (templateId: string) => Promise<DataResponse<EmailTemplateResource>>;
 
-  getDisplayAd: (
-    displayAdId: string,
-  ) => Promise<DataResponse<DisplayAdResource>>;
+  getDisplayAd: (displayAdId: string) => Promise<DataResponse<DisplayAdResource>>;
   getCreativeFormats: (
     organisationId: string,
     options: {
@@ -107,13 +101,8 @@ export interface ICreativeService {
     locale: string,
   ) => Promise<DataResponse<PluginLayout> | null>;
 
-  getAuditStatus: (
-    creativeId: string,
-  ) => Promise<DataListResponse<AuditStatusResource>>;
-  makeAuditAction: (
-    creativeId: string,
-    auditAction: CreativeAuditAction,
-  ) => Promise<any>;
+  getAuditStatus: (creativeId: string) => Promise<DataListResponse<AuditStatusResource>>;
+  makeAuditAction: (creativeId: string, auditAction: CreativeAuditAction) => Promise<any>;
   takeScreenshot: (
     creativeId: string,
     options?: Array<Partial<CreativeScreenshotResource>>,
@@ -121,11 +110,7 @@ export interface ICreativeService {
   getCreativeScreenshotStatus: (
     creativeId: string,
   ) => Promise<DataResponse<CreativeScreenshotResource>>;
-  sendTestBlast: (
-    creativeId: string,
-    organisationId: string,
-    email: string,
-  ) => Promise<any>;
+  sendTestBlast: (creativeId: string, organisationId: string, email: string) => Promise<any>;
 }
 
 @injectable()
@@ -145,9 +130,7 @@ export class CreativeService implements ICreativeService {
     return ApiService.getRequest(endpoint, params);
   }
 
-  getCreative(
-    creativeId: string,
-  ): Promise<DataResponse<CreativeResourceShape>> {
+  getCreative(creativeId: string): Promise<DataResponse<CreativeResourceShape>> {
     const endpoint = `creatives/${creativeId}`;
     return ApiService.getRequest(endpoint);
   }
@@ -171,18 +154,12 @@ export class CreativeService implements ICreativeService {
     });
   }
 
-  getEmailTemplate(
-    templateId: string,
-  ): Promise<DataResponse<EmailTemplateResource>> {
-    return this.getCreative(templateId) as Promise<
-      DataResponse<EmailTemplateResource>
-    >;
+  getEmailTemplate(templateId: string): Promise<DataResponse<EmailTemplateResource>> {
+    return this.getCreative(templateId) as Promise<DataResponse<EmailTemplateResource>>;
   }
 
   getDisplayAd(displayAdId: string): Promise<DataResponse<DisplayAdResource>> {
-    return this.getCreative(displayAdId) as Promise<
-      DataResponse<DisplayAdResource>
-    >;
+    return this.getCreative(displayAdId) as Promise<DataResponse<DisplayAdResource>>;
   }
 
   getCreativeFormats(
@@ -282,9 +259,7 @@ export class CreativeService implements ICreativeService {
     return ApiService.getRequest(endpoint);
   }
 
-  getEmailTemplateProperties(
-    creativeId: string,
-  ): Promise<DataListResponse<PropertyResourceShape>> {
+  getEmailTemplateProperties(creativeId: string): Promise<DataListResponse<PropertyResourceShape>> {
     const endpoint = `email_templates/${creativeId}/renderer_properties`;
     return ApiService.getRequest(endpoint);
   }
@@ -294,25 +269,18 @@ export class CreativeService implements ICreativeService {
     locale: string = 'en-US',
   ): Promise<DataResponse<PluginLayout> | null> {
     const endpoint = `email_templates/${creativeId}/properties_layout?locale=${locale}`;
-    return ApiService.getRequest<DataResponse<PluginLayout>>(endpoint).catch(
-      err => {
-        log.warn('Cannot retrieve plugin layout', err);
-        return null;
-      },
-    );
+    return ApiService.getRequest<DataResponse<PluginLayout>>(endpoint).catch(err => {
+      log.warn('Cannot retrieve plugin layout', err);
+      return null;
+    });
   }
 
-  getAuditStatus(
-    creativeId: string,
-  ): Promise<DataListResponse<AuditStatusResource>> {
+  getAuditStatus(creativeId: string): Promise<DataListResponse<AuditStatusResource>> {
     const endpoint = `display_ads/${creativeId}/audits`;
     return ApiService.getRequest(endpoint);
   }
 
-  makeAuditAction(
-    creativeId: string,
-    auditAction: CreativeAuditAction,
-  ): Promise<any> {
+  makeAuditAction(creativeId: string, auditAction: CreativeAuditAction): Promise<any> {
     const endpoint = `display_ads/${creativeId}/action`;
     return ApiService.postRequest(endpoint, { audit_action: auditAction });
   }
@@ -332,11 +300,7 @@ export class CreativeService implements ICreativeService {
     return ApiService.getRequest(endpoint);
   }
 
-  sendTestBlast(
-    creativeId: string,
-    organisationId: string,
-    email: string,
-  ): Promise<any> {
+  sendTestBlast(creativeId: string, organisationId: string, email: string): Promise<any> {
     const endpoint = `email_templates/${creativeId}/send_test`;
     const options = {
       organisation_id: organisationId,
@@ -345,4 +309,3 @@ export class CreativeService implements ICreativeService {
     return ApiService.postRequest(endpoint, options);
   }
 }
-

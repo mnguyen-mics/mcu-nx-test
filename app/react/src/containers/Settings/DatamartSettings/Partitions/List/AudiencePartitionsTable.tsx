@@ -2,12 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { DownOutlined } from '@ant-design/icons';
 import { compose } from 'recompose';
-import {
-  FormattedMessage,
-  defineMessages,
-  InjectedIntlProps,
-  injectIntl,
-} from 'react-intl';
+import { FormattedMessage, defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
 import { TableViewFilters } from '../../../../../components/TableView/index';
 import { AudiencePartitionResource } from '../../../../../models/audiencePartition/AudiencePartitionResource';
 import { DataListResponse } from '../../../../../services/ApiService';
@@ -39,7 +34,7 @@ class AudiencePartitionsTable extends React.Component<Props> {
 
     if (datamarts.length > 1) {
       const datamartItems = datamarts
-        .map((d) => ({
+        .map(d => ({
           key: d.id,
           value: d.name || d.token,
         }))
@@ -55,14 +50,14 @@ class AudiencePartitionsTable extends React.Component<Props> {
           displayElement: (
             <div>
               <FormattedMessage
-                id="audience.partitions.list.datamartFilter"
-                defaultMessage="Datamart"
+                id='audience.partitions.list.datamartFilter'
+                defaultMessage='Datamart'
               />{' '}
               <DownOutlined />
             </div>
           ),
           selectedItems: filter.datamartId
-            ? [datamartItems.find((di) => di.key === filter.datamartId)]
+            ? [datamartItems.find(di => di.key === filter.datamartId)]
             : [datamartItems],
           items: datamartItems,
           singleSelectOnly: true,
@@ -70,8 +65,7 @@ class AudiencePartitionsTable extends React.Component<Props> {
           display: (item: any) => item.value,
           handleItemClick: (datamartItem: { key: string; value: string }) => {
             onChange({
-              datamartId:
-                datamartItem && datamartItem.key ? datamartItem.key : undefined,
+              datamartId: datamartItem && datamartItem.key ? datamartItem.key : undefined,
             });
           },
         },
@@ -103,9 +97,7 @@ class AudiencePartitionsTable extends React.Component<Props> {
     const pagination = {
       current: filter.currentPage,
       pageSize: filter.pageSize,
-      total: audiencePartitions
-        ? audiencePartitions.total || audiencePartitions.count || 0
-        : 0,
+      total: audiencePartitions ? audiencePartitions.total || audiencePartitions.count || 0 : 0,
       onChange: (page: number) =>
         onChange({
           currentPage: page,
@@ -117,15 +109,13 @@ class AudiencePartitionsTable extends React.Component<Props> {
         }),
     };
 
-    const dataColumns: Array<
-      DataColumnDefinition<AudiencePartitionResource>
-    > = [
+    const dataColumns: Array<DataColumnDefinition<AudiencePartitionResource>> = [
       {
         title: formatMessage(messageMap.columnName),
         key: 'name',
         render: (text, partition) => (
           <Link
-            className="mcs-campaigns-link"
+            className='mcs-campaigns-link'
             to={`/v2/o/${organisationId}/settings/datamart/audience/partitions/${partition.id}`}
           >
             {text}
@@ -136,9 +126,7 @@ class AudiencePartitionsTable extends React.Component<Props> {
         title: formatMessage(messageMap.columnType),
         key: 'audience_partition_type',
         isHideable: false,
-        render: (text, partition) => (
-          <span>{partition.audience_partition_type}</span>
-        ),
+        render: (text, partition) => <span>{partition.audience_partition_type}</span>,
       },
       {
         title: formatMessage(messageMap.columnPartCount),
@@ -152,9 +140,7 @@ class AudiencePartitionsTable extends React.Component<Props> {
       },
     ];
 
-    const actionColumns: Array<
-      ActionsColumnDefinition<AudiencePartitionResource>
-    > = [
+    const actionColumns: Array<ActionsColumnDefinition<AudiencePartitionResource>> = [
       {
         key: 'action',
         actions: () => [
@@ -172,7 +158,7 @@ class AudiencePartitionsTable extends React.Component<Props> {
     ];
 
     return (
-      <div className="mcs-table-container">
+      <div className='mcs-table-container'>
         <AudiencePartitionTable
           columns={dataColumns}
           actionsColumnsDefinition={actionColumns}
@@ -187,9 +173,7 @@ class AudiencePartitionsTable extends React.Component<Props> {
   }
 }
 
-export default compose<Props, AudiencePartitionsTableProps>(injectIntl)(
-  AudiencePartitionsTable,
-);
+export default compose<Props, AudiencePartitionsTableProps>(injectIntl)(AudiencePartitionsTable);
 
 const messageMap = defineMessages({
   columnName: {

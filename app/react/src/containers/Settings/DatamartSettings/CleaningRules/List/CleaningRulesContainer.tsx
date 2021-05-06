@@ -2,10 +2,7 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
-import {
-  Button as McsButton,
-  McsIcon,
-} from '@mediarithmics-private/mcs-components-library';
+import { Button as McsButton, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { TableViewFilters } from '../../../../../components/TableView';
 import messages from './messages';
 import {
@@ -26,7 +23,7 @@ import injectNotifications, {
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 import { connect } from 'react-redux';
 import { CleaningRulesFilter } from '../domain';
-import { MultiSelectProps } from '@mediarithmics-private/mcs-components-library/lib/components/multi-select';;
+import { MultiSelectProps } from '@mediarithmics-private/mcs-components-library/lib/components/multi-select';
 import { getWorkspace } from '../../../../../redux/Session/selectors';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
@@ -92,7 +89,7 @@ class CleaningRulesContainer extends React.Component<Props, State> {
   getDatamartItemsFromOrganisationId = (organisationId: string) => {
     const { workspace } = this.props;
 
-    return workspace(organisationId).datamarts.map((d) => ({
+    return workspace(organisationId).datamarts.map(d => ({
       key: d.id,
       value: d.name || d.token,
     }));
@@ -129,9 +126,7 @@ class CleaningRulesContainer extends React.Component<Props, State> {
     } = this.props;
 
     const cleaningRuleType =
-      filter.type === 'USER_EVENT_CLEANING_RULE'
-        ? 'user_event'
-        : 'user_profile';
+      filter.type === 'USER_EVENT_CLEANING_RULE' ? 'user_event' : 'user_profile';
 
     history.push({
       pathname: `/v2/o/${organisationId}/settings/datamart/${cleaningRule.datamart_id}/cleaning_rules/${cleaningRuleType}/${cleaningRule.id}/edit`,
@@ -157,7 +152,7 @@ class CleaningRulesContainer extends React.Component<Props, State> {
           .then(() => {
             onCleaningRuleUpdate();
           })
-          .catch((err) => {
+          .catch(err => {
             notifyError(err);
           });
       },
@@ -171,15 +166,13 @@ class CleaningRulesContainer extends React.Component<Props, State> {
     const { filter } = this.props;
 
     const cleaningRuleType =
-      filter.type === 'USER_EVENT_CLEANING_RULE'
-        ? 'user_event'
-        : 'user_profile';
+      filter.type === 'USER_EVENT_CLEANING_RULE' ? 'user_event' : 'user_profile';
 
     const url = `/v2/o/${organisationId}/settings/datamart/cleaning_rules/${cleaningRuleType}/create`;
 
     return (
       <Link key={messages.newCleaningRule.id} to={url}>
-        <Button key={messages.newCleaningRule.id} type="primary">
+        <Button key={messages.newCleaningRule.id} type='primary'>
           <FormattedMessage {...messages.newCleaningRule} />
         </Button>
       </Link>
@@ -210,7 +203,7 @@ class CleaningRulesContainer extends React.Component<Props, State> {
             this.setState({ isLoading: false });
             onCleaningRuleUpdate();
           })
-          .catch((err) => {
+          .catch(err => {
             this.setState({ isLoading: false });
             notifyError(err);
           });
@@ -236,9 +229,7 @@ class CleaningRulesContainer extends React.Component<Props, State> {
     const filtersOptions: Array<MultiSelectProps<any>> = [];
 
     const button = (
-      <span className="mcs-card-button">
-        {this.buildNewActionElement(organisationId)}
-      </span>
+      <span className='mcs-card-button'>{this.buildNewActionElement(organisationId)}</span>
     );
 
     if (datamartItems.length > 1) {
@@ -250,7 +241,7 @@ class CleaningRulesContainer extends React.Component<Props, State> {
           </div>
         ),
         selectedItems: filter.datamartId
-          ? [datamartItems.find((di) => di.key === filter.datamartId)]
+          ? [datamartItems.find(di => di.key === filter.datamartId)]
           : [datamartItems[0]],
         items: datamartItems,
         singleSelectOnly: true,
@@ -267,32 +258,20 @@ class CleaningRulesContainer extends React.Component<Props, State> {
       filtersOptions.push(datamartFilter);
     }
 
-    const eventBasedAddedDataColumns: Array<
-      DataColumnDefinition<ExtendedCleaningRuleResource>
-    > = [
+    const eventBasedAddedDataColumns: Array<DataColumnDefinition<ExtendedCleaningRuleResource>> = [
       {
         title: formatMessage(messages.channelFilter),
         key: 'channel_filter',
         isHideable: false,
-        render: (
-          text: string,
-          record: UserEventCleaningRuleResourceWithFilter,
-        ) => (
-          <span>
-            {record.channel_filter
-              ? record.channel_filter
-              : formatMessage(messages.all)}
-          </span>
+        render: (text: string, record: UserEventCleaningRuleResourceWithFilter) => (
+          <span>{record.channel_filter ? record.channel_filter : formatMessage(messages.all)}</span>
         ),
       },
       {
         title: formatMessage(messages.activityTypeFilter),
         key: 'activity_type_filter',
         isHideable: false,
-        render: (
-          text: string,
-          record: UserEventCleaningRuleResourceWithFilter,
-        ) => (
+        render: (text: string, record: UserEventCleaningRuleResourceWithFilter) => (
           <span>
             {record.activity_type_filter
               ? record.activity_type_filter
@@ -305,13 +284,8 @@ class CleaningRulesContainer extends React.Component<Props, State> {
         title: formatMessage(messages.contentFilterValue),
         key: 'filter',
         isHideable: false,
-        render: (
-          text: string,
-          record: UserEventCleaningRuleResourceWithFilter,
-        ) => (
-          <span>
-            {record.filter ? record.filter : formatMessage(messages.noFilter)}
-          </span>
+        render: (text: string, record: UserEventCleaningRuleResourceWithFilter) => (
+          <span>{record.filter ? record.filter : formatMessage(messages.noFilter)}</span>
         ),
       },
     ];
@@ -325,17 +299,13 @@ class CleaningRulesContainer extends React.Component<Props, State> {
         isHideable: false,
         render: (text: string, record: UserProfileCleaningRuleResource) => (
           <span>
-            {record.compartment_filter
-              ? record.compartment_filter
-              : formatMessage(messages.all)}
+            {record.compartment_filter ? record.compartment_filter : formatMessage(messages.all)}
           </span>
         ),
       },
     ];
 
-    const baseDataColumns: Array<
-      DataColumnDefinition<ExtendedCleaningRuleResource>
-    > = [
+    const baseDataColumns: Array<DataColumnDefinition<ExtendedCleaningRuleResource>> = [
       {
         title: formatMessage(messages.status),
         key: 'status',
@@ -344,10 +314,7 @@ class CleaningRulesContainer extends React.Component<Props, State> {
           const updateStatusButton = this.getUpdateStatusButton(record);
           return (
             <span>
-              <McsIcon
-                type="status"
-                className={this.getStatusColor(record.status)}
-              />
+              <McsIcon type='status' className={this.getStatusColor(record.status)} />
               <span>{record.status}</span>
               {updateStatusButton !== undefined ? updateStatusButton : ''}
             </span>
@@ -375,19 +342,14 @@ class CleaningRulesContainer extends React.Component<Props, State> {
               { number: duration.days(), unit: 'day' },
             ];
 
-            const durationStr = durationList.reduce(
-              (accumulator, currentValue) => {
-                if (currentValue.number !== 0) {
-                  const prefixCurrentValue =
-                    accumulator !== undefined ? `${accumulator}, ` : '';
-                  const strCurrentValue = `${currentValue.number} ${currentValue.unit}`;
-                  const suffixCurrentValue =
-                    currentValue.number === 1 ? '' : 's';
-                  return `${prefixCurrentValue}${strCurrentValue}${suffixCurrentValue}`;
-                } else return accumulator;
-              },
-              undefined,
-            );
+            const durationStr = durationList.reduce((accumulator, currentValue) => {
+              if (currentValue.number !== 0) {
+                const prefixCurrentValue = accumulator !== undefined ? `${accumulator}, ` : '';
+                const strCurrentValue = `${currentValue.number} ${currentValue.unit}`;
+                const suffixCurrentValue = currentValue.number === 1 ? '' : 's';
+                return `${prefixCurrentValue}${strCurrentValue}${suffixCurrentValue}`;
+              } else return accumulator;
+            }, undefined);
 
             return <span>{durationStr}</span>;
           }
@@ -402,9 +364,7 @@ class CleaningRulesContainer extends React.Component<Props, State> {
         : profileBasedAddedDataColumns,
     );
 
-    const actionColumns: Array<
-      ActionsColumnDefinition<ExtendedCleaningRuleResource>
-    > = [
+    const actionColumns: Array<ActionsColumnDefinition<ExtendedCleaningRuleResource>> = [
       {
         key: 'action',
         actions: (record: ExtendedCleaningRuleResource) => [
@@ -442,17 +402,17 @@ class CleaningRulesContainer extends React.Component<Props, State> {
       return <Loading isFullScreen={true} />;
     } else
       return (
-        <div className="ant-layout">
-          <Content className="mcs-content-container">
-            <Row className="mcs-table-container">
+        <div className='ant-layout'>
+          <Content className='mcs-content-container'>
+            <Row className='mcs-table-container'>
               <div>
-                <div className="mcs-card-header mcs-card-title">
-                  <span className="mcs-card-title">
+                <div className='mcs-card-header mcs-card-title'>
+                  <span className='mcs-card-title'>
                     <FormattedMessage {...messages.cleaningRules} />
                   </span>
                   {button}
                 </div>
-                <hr className="mcs-separator" />
+                <hr className='mcs-separator' />
                 <TableViewFilters
                   columns={dataColumns}
                   actionsColumnsDefinition={actionColumns}
@@ -510,10 +470,7 @@ class CleaningRulesContainer extends React.Component<Props, State> {
       const buttonText = this.getButtonText(record.status);
       const displayModal = () => this.renderModal(record);
       return (
-        <McsButton
-          className="update-cleaning-rule-status"
-          onClick={displayModal}
-        >
+        <McsButton className='update-cleaning-rule-status' onClick={displayModal}>
           {buttonText}
         </McsButton>
       );

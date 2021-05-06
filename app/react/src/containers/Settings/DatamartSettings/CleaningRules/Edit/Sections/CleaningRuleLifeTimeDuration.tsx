@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { WrappedFieldProps } from 'redux-form';
-import FormFieldWrapper, { FormFieldWrapperProps } from '../../../../../../components/Form/FormFieldWrapper';
+import FormFieldWrapper, {
+  FormFieldWrapperProps,
+} from '../../../../../../components/Form/FormFieldWrapper';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import Select, { SelectProps } from 'antd/lib/select';
 import { Col, InputNumber, Row } from 'antd';
@@ -13,8 +15,7 @@ export interface OptionsAndSeparatorProps {
   separator: string;
 }
 
-export interface CleaningRuleLifeTimeDurationProps
-  extends FormFieldWrapperProps {
+export interface CleaningRuleLifeTimeDurationProps extends FormFieldWrapperProps {
   formItemProps: FormItemProps;
   selectProps?: SelectProps<string>;
   optionsAndSeparators: OptionsAndSeparatorProps[];
@@ -47,35 +48,19 @@ class CleaningRuleLifeTimeDuration extends React.Component<Props> {
   createSeparator = () => {
     const { optionsAndSeparators, input } = this.props;
 
-    const optionAndSeparatorOpt = optionsAndSeparators.find(
-      optionAndSeparator => {
-        return optionAndSeparator.value === input.value.selectedValue;
-      },
-    );
+    const optionAndSeparatorOpt = optionsAndSeparators.find(optionAndSeparator => {
+      return optionAndSeparator.value === input.value.selectedValue;
+    });
 
     const defaultSeparator = optionsAndSeparators[0].separator;
 
-    return optionAndSeparatorOpt
-      ? optionAndSeparatorOpt.separator
-      : defaultSeparator;
+    return optionAndSeparatorOpt ? optionAndSeparatorOpt.separator : defaultSeparator;
   };
 
   render() {
-    const {
-      input,
-      helpToolTipProps,
-      small,
-      formItemProps,
-      selectProps,
-      meta,
-      intl
-    } = this.props;
+    const { input, helpToolTipProps, small, formItemProps, selectProps, meta, intl } = this.props;
 
-    let validateStatus = 'success' as
-      | 'success'
-      | 'warning'
-      | 'error'
-      | 'validating';
+    let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
 
     if (meta.touched && meta.invalid) validateStatus = 'error';
     if (meta.touched && meta.warning) validateStatus = 'warning';
@@ -94,24 +79,17 @@ class CleaningRuleLifeTimeDuration extends React.Component<Props> {
       >
         <Row>
           <Col span={6}>
-            <Select
-              value={input.value.selectedValue}
-              onChange={this.updateSelect}
-              {...selectProps}
-            >
+            <Select value={input.value.selectedValue} onChange={this.updateSelect} {...selectProps}>
               {options}
             </Select>
           </Col>
-          <Col span={3} className={'text-center'}>{separator}</Col>
+          <Col span={3} className={'text-center'}>
+            {separator}
+          </Col>
           <Col span={5}>
-            <InputNumber
-              value={input.value.periodNumber}
-              onChange={this.updatePeriodNumber}
-            />
+            <InputNumber value={input.value.periodNumber} onChange={this.updatePeriodNumber} />
           </Col>
-          <Col span={3}>
-            { intl.formatMessage(messages.cleaningRuleLifeDurationDays) }
-          </Col>
+          <Col span={3}>{intl.formatMessage(messages.cleaningRuleLifeDurationDays)}</Col>
         </Row>
       </FormFieldWrapper>
     );

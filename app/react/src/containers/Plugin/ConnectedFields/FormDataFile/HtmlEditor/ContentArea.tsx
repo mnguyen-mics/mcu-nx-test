@@ -4,27 +4,14 @@ import { Layout, Row } from 'antd';
 import { compose } from 'recompose';
 
 import { FieldCtor, FormSection } from '../../../../../components/Form';
-import FormInput, {
-  FormInputProps,
-} from '../../../../../components/Form/FormInput';
-import {
-  reduxForm,
-  InjectedFormProps,
-  Field,
-  Form,
-  GenericField,
-  ConfigProps,
-} from 'redux-form';
+import FormInput, { FormInputProps } from '../../../../../components/Form/FormInput';
+import { reduxForm, InjectedFormProps, Field, Form, GenericField, ConfigProps } from 'redux-form';
 import { generateFakeId } from '../../../../../utils/FakeIdHelper';
 
-
-import FormTextArea, {
-  FormTextAreaProps,
-} from '../../../../../components/Form/FormTextArea';
+import FormTextArea, { FormTextAreaProps } from '../../../../../components/Form/FormTextArea';
 import QuickAssetUpload, { QuickAssetUploadProps } from './QuickAssetUpload';
 import { injectDrawer } from '../../../../../components/Drawer/index';
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
-
 
 const { Content } = Layout;
 
@@ -49,9 +36,7 @@ const fieldGridConfig = {
   wrapperCol: { span: 19, offset: 1 },
 };
 
-type Props = InjectedFormProps<{}, ContentAreaProps> &
-  ContentAreaProps &
-  InjectedDrawerProps;
+type Props = InjectedFormProps<{}, ContentAreaProps> & ContentAreaProps & InjectedDrawerProps;
 
 const messages = defineMessages({
   quickEdit: {
@@ -123,7 +108,7 @@ class ContentArea extends React.Component<Props> {
                 inputProps: {
                   placeholder: content.name,
                   defaultValue: content.content,
-                  rows: 5
+                  rows: 5,
                 },
               }}
             />
@@ -149,10 +134,12 @@ class ContentArea extends React.Component<Props> {
   render() {
     const { content, handleSubmit } = this.props;
 
-
     return (
       <Form onSubmit={handleSubmit as any} className={'edit-layout ant-layout'}>
-        <Content className="mcs-content-container mcs-form-container ad-group-form" style={{ overflowY: 'initial' }}>
+        <Content
+          className='mcs-content-container mcs-form-container ad-group-form'
+          style={{ overflowY: 'initial' }}
+        >
           <FormSection title={messages.formTitle} />
           {content.map(item => {
             return this.buildItems(item);

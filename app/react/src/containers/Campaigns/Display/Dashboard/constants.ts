@@ -1,7 +1,3 @@
-import {
-  DATE_SEARCH_SETTINGS,
-} from '../../../../utils/LocationSearchHelper';
+import { DATE_SEARCH_SETTINGS } from '../../../../utils/LocationSearchHelper';
 
-export const DISPLAY_DASHBOARD_SEARCH_SETTINGS = [
-  ...DATE_SEARCH_SETTINGS,
-];
+export const DISPLAY_DASHBOARD_SEARCH_SETTINGS = [...DATE_SEARCH_SETTINGS];

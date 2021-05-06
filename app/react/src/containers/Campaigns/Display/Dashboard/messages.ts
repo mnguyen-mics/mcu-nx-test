@@ -134,8 +134,7 @@ const messages: {
   },
   notificationAdGroupActivationError: {
     id: 'display.notifications.adgroup.activation.error',
-    defaultMessage:
-      'There was an error activating your Ad Group {name}... Please try again...',
+    defaultMessage: 'There was an error activating your Ad Group {name}... Please try again...',
   },
   notificationAdGroupPauseSuccess: {
     id: 'display.notifications.adgroup.pause.success',
@@ -143,8 +142,7 @@ const messages: {
   },
   notificationAdGroupPauseError: {
     id: 'display.notifications.adgroup.pause.error',
-    defaultMessage:
-      'There was an error pausing your Ad Group {name}... Please try again...',
+    defaultMessage: 'There was an error pausing your Ad Group {name}... Please try again...',
   },
   notificationAdActivationSuccess: {
     id: 'display.notifications.ad.activation.success',
@@ -152,8 +150,7 @@ const messages: {
   },
   notificationAdActivationError: {
     id: 'display.notifications.ad.activation.error',
-    defaultMessage:
-      'There was an error activating your Ad {name}... Please try again...',
+    defaultMessage: 'There was an error activating your Ad {name}... Please try again...',
   },
   notificationAdPauseSuccess: {
     id: 'display.notifications.ad.pause.success',
@@ -161,8 +158,7 @@ const messages: {
   },
   notificationAdPauseError: {
     id: 'display.notifications.ad.pause.error',
-    defaultMessage:
-      'There was an error pausing your Ad {name}... Please try again...',
+    defaultMessage: 'There was an error pausing your Ad {name}... Please try again...',
   },
   adAuditSuccess: {
     id: 'display.ad.audit.success',
@@ -219,7 +215,7 @@ const messages: {
   },
   displayNetworkNameUncategorized: {
     id: 'display.metrics.displayNetworkNameUncategorized',
-    defaultMessage: 'Uncategorized'
+    defaultMessage: 'Uncategorized',
   },
   format: {
     id: 'campaign.chart.format',
@@ -276,8 +272,7 @@ const messages: {
   },
   creativeModalConfirmArchivedContent: {
     id: 'creative.modal.confirm.archived.content',
-    defaultMessage:
-      "You will still be able to get back your creative in the 'Archive' category.",
+    defaultMessage: "You will still be able to get back your creative in the 'Archive' category.",
   },
   creativeModalConfirmArchivedOk: {
     id: 'creative.modal.confirm.ok',

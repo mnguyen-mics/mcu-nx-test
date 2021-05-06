@@ -1,11 +1,6 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import {
-  InjectedIntlProps,
-  injectIntl,
-  defineMessages,
-  FormattedMessage,
-} from 'react-intl';
+import { InjectedIntlProps, injectIntl, defineMessages, FormattedMessage } from 'react-intl';
 import {
   FormInput,
   FormSection,
@@ -30,10 +25,7 @@ import { WeekDay } from '../../../../../../../utils/DateHelper';
 import { DispatchProp, connect } from 'react-redux';
 import { MicsReduxState } from '../../../../../../../utils/ReduxHelper';
 import { getFormValues, change } from 'redux-form';
-import {
-  injectFeatures,
-  InjectedFeaturesProps,
-} from '../../../../../../Features';
+import { injectFeatures, InjectedFeaturesProps } from '../../../../../../Features';
 
 export const messages: {
   [key: string]: FormattedMessage.MessageDescriptor;
@@ -89,8 +81,7 @@ export const messages: {
     defaultMessage: 'and',
   },
   startTimeRequired: {
-    id:
-      'automation.builder.node.waitNodeForm.timeWindow.error.startTimeRequired',
+    id: 'automation.builder.node.waitNodeForm.timeWindow.error.startTimeRequired',
     defaultMessage: 'Required when end time set',
   },
   endTimeRequired: {
@@ -98,13 +89,11 @@ export const messages: {
     defaultMessage: 'Required when start time set',
   },
   startTimeInvalidValue: {
-    id:
-      'automation.builder.node.waitNodeForm.timeWindow.error.startTimeInvalidValue',
+    id: 'automation.builder.node.waitNodeForm.timeWindow.error.startTimeInvalidValue',
     defaultMessage: 'Start time cannot be equal to 23:00',
   },
   endTimeInvalidValue: {
-    id:
-      'automation.builder.node.waitNodeForm.timeWindow.error.endTimeInvalidValue',
+    id: 'automation.builder.node.waitNodeForm.timeWindow.error.endTimeInvalidValue',
     defaultMessage: 'End time cannot be equal to 00:00',
   },
   dayWindowTitle: {
@@ -183,12 +172,8 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      enableTimeWindow: this.isTimeSwitchInitiallyChecked(
-        props.initialValues as WaitFormData,
-      ),
-      enableDayWindow: this.isDaySwitchInitiallyChecked(
-        props.initialValues as WaitFormData,
-      ),
+      enableTimeWindow: this.isTimeSwitchInitiallyChecked(props.initialValues as WaitFormData),
+      enableDayWindow: this.isDaySwitchInitiallyChecked(props.initialValues as WaitFormData),
     };
   }
 
@@ -204,12 +189,8 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
     const { dispatch } = this.props;
     if (dispatch) {
       if (checked) {
-        dispatch(
-          change(FORM_ID, 'time_window_start', moment('09:00', TIME_FORMAT)),
-        );
-        dispatch(
-          change(FORM_ID, 'time_window_end', moment('18:00', TIME_FORMAT)),
-        );
+        dispatch(change(FORM_ID, 'time_window_start', moment('09:00', TIME_FORMAT)));
+        dispatch(change(FORM_ID, 'time_window_end', moment('18:00', TIME_FORMAT)));
       } else {
         dispatch(change(FORM_ID, 'time_window_start', null));
         dispatch(change(FORM_ID, 'time_window_end', null));
@@ -285,9 +266,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
       intl: { formatMessage },
     } = this.props;
 
-    return value && value.hours() === 0
-      ? formatMessage(messages.endTimeInvalidValue)
-      : undefined;
+    return value && value.hours() === 0 ? formatMessage(messages.endTimeInvalidValue) : undefined;
   };
 
   validateNotEmpty = (value: any) => {
@@ -312,7 +291,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
       ...messages.sectionGeneralSubtitle,
       values: {
         wait: (
-          <span className="mcs-automation_nodeName">
+          <span className='mcs-automation_nodeName'>
             <FormattedMessage {...messages.wait} />
           </span>
         ),
@@ -320,14 +299,11 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
     };
 
     return (
-      <div className="mcs-automationWaitNodeForm">
-        <FormSection
-          subtitle={sectionGeneralSubtitle}
-          title={messages.sectionGeneralTitle}
-        />
+      <div className='mcs-automationWaitNodeForm'>
+        <FormSection subtitle={sectionGeneralSubtitle} title={messages.sectionGeneralTitle} />
         <FormSection title={messages.sectionGeneralConfigurationTitle} />
         <FormInputField
-          name="wait_duration.value"
+          name='wait_duration.value'
           component={FormInput}
           validate={[isRequired, isValidInteger, isNotZero]}
           formItemProps={{
@@ -339,7 +315,7 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
             placeholder: formatMessage(messages.durationPlaceholder),
             addonAfter: (
               <FormAddonSelectField
-                name="wait_duration.unit"
+                name='wait_duration.unit'
                 component={AddonSelect}
                 disabled={disabled}
                 options={[
@@ -374,39 +350,38 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
           </div>
         )}
 
-        {enableTimeWindow &&
-          hasFeature('automations-wait-node-day-and-time-window') && (
-            <div>
-              <div className={'mcs-automationWaitNodeForm_sectionDescription'}>
-                {formatMessage(messages.timeWindowTitle)}
-              </div>
-              <div className={'mcs-automationWaitNodeForm_timeSection'}>
-                <FormTimePickerField
-                  name="time_window_start"
-                  component={FormTimePicker}
-                  timeFormat={TIME_FORMAT}
-                  allowClear={false}
-                  minuteStep={60}
-                  validate={[isRequired, this.validateStartTime]}
-                  onChange={this.onStartTimeChange}
-                  disabled={disabled}
-                />
-                <div className={'mcs-automationWaitNodeForm_timeSection_label'}>
-                  {formatMessage(messages.betweenTime)}
-                </div>
-                <FormTimePickerField
-                  name="time_window_end"
-                  component={FormTimePicker}
-                  timeFormat={TIME_FORMAT}
-                  allowClear={false}
-                  minuteStep={60}
-                  validate={[isRequired, this.validateEndTime]}
-                  onChange={this.onEndTimeChange}
-                  disabled={disabled}
-                />
-              </div>
+        {enableTimeWindow && hasFeature('automations-wait-node-day-and-time-window') && (
+          <div>
+            <div className={'mcs-automationWaitNodeForm_sectionDescription'}>
+              {formatMessage(messages.timeWindowTitle)}
             </div>
-          )}
+            <div className={'mcs-automationWaitNodeForm_timeSection'}>
+              <FormTimePickerField
+                name='time_window_start'
+                component={FormTimePicker}
+                timeFormat={TIME_FORMAT}
+                allowClear={false}
+                minuteStep={60}
+                validate={[isRequired, this.validateStartTime]}
+                onChange={this.onStartTimeChange}
+                disabled={disabled}
+              />
+              <div className={'mcs-automationWaitNodeForm_timeSection_label'}>
+                {formatMessage(messages.betweenTime)}
+              </div>
+              <FormTimePickerField
+                name='time_window_end'
+                component={FormTimePicker}
+                timeFormat={TIME_FORMAT}
+                allowClear={false}
+                minuteStep={60}
+                validate={[isRequired, this.validateEndTime]}
+                onChange={this.onEndTimeChange}
+                disabled={disabled}
+              />
+            </div>
+          </div>
+        )}
 
         {hasFeature('automations-wait-node-day-and-time-window') && (
           <div className={'mcs-automationWaitNodeForm_switchSection'}>
@@ -421,27 +396,26 @@ class GeneralInformationFormSection extends React.Component<Props, State> {
           </div>
         )}
 
-        {enableDayWindow &&
-          hasFeature('automations-wait-node-day-and-time-window') && (
-            <div>
-              <div className={'mcs-automationWaitNodeForm_sectionDescription'}>
-                {formatMessage(messages.dayWindowTitle)}
-              </div>
-              <FormCheckboxGroupField
-                name="day_window"
-                className="mcs-automationWaitNodeForm_checkBoxGroup"
-                component={FormCheckboxGroup}
-                validate={this.validateNotEmpty}
-                disabled={disabled}
-                options={weekDays.map(day => {
-                  return {
-                    label: formatMessage(messages[day.toLowerCase()]),
-                    value: day,
-                  };
-                })}
-              />
+        {enableDayWindow && hasFeature('automations-wait-node-day-and-time-window') && (
+          <div>
+            <div className={'mcs-automationWaitNodeForm_sectionDescription'}>
+              {formatMessage(messages.dayWindowTitle)}
             </div>
-          )}
+            <FormCheckboxGroupField
+              name='day_window'
+              className='mcs-automationWaitNodeForm_checkBoxGroup'
+              component={FormCheckboxGroup}
+              validate={this.validateNotEmpty}
+              disabled={disabled}
+              options={weekDays.map(day => {
+                return {
+                  label: formatMessage(messages[day.toLowerCase()]),
+                  value: day,
+                };
+              })}
+            />
+          </div>
+        )}
       </div>
     );
   }

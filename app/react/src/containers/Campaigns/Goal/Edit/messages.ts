@@ -34,7 +34,7 @@ export default defineMessages({
   goalFormSiderMenuTriggerType: {
     id: 'goal.form.sider.menu.trigger.type',
     defaultMessage: 'Trigger Type',
-   },
+  },
   sectionTitle1: {
     id: 'goalSimpleEditor.section.title1',
     defaultMessage: 'General Information',
@@ -83,10 +83,11 @@ export default defineMessages({
   },
   contentSectionGeneralRow1Tooltip: {
     id: 'goalSimpleEditor.section.general.row1.tooltip',
-    defaultMessage: 'The Goal\'s name will help you identify it on the different screens. Make it as memorable as you want your results to be!',
+    defaultMessage:
+      "The Goal's name will help you identify it on the different screens. Make it as memorable as you want your results to be!",
   },
 
-   /* Advanced part */
+  /* Advanced part */
 
   contentSectionGeneralAdvancedPartTitle: {
     id: 'goalSimpleEditor.section.general.advancedPart.title',

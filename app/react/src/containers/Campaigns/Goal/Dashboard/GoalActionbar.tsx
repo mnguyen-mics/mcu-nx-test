@@ -64,10 +64,7 @@ const reportTypeExportOptions = [
   },
 ];
 
-class ExportsActionbar extends React.Component<
-  JoinedProps,
-  ExportActionbarState
-> {
+class ExportsActionbar extends React.Component<JoinedProps, ExportActionbarState> {
   @lazyInject(TYPES.IDisplayCampaignService)
   private _displayCampaignService: IDisplayCampaignService;
 
@@ -85,11 +82,7 @@ class ExportsActionbar extends React.Component<
     };
   }
 
-  fetchExportData = (
-    organisationId: string,
-    goalId: string,
-    filter: Index<any>,
-  ) => {
+  fetchExportData = (organisationId: string, goalId: string, filter: Index<any>) => {
     const startDate = filter.from;
     const endDate = filter.to;
 
@@ -105,61 +98,46 @@ class ExportsActionbar extends React.Component<
     const attributionPerformancePromises = this._goalService
       .getAttributionModels(goalId)
       .then(response => {
-        const promises = lodash.flatMap(
-          response.data,
-          attributionSelectionResource => {
-            return reportTypeExportOptions.map(reportTypeOptions => {
-              return ReportService.getConversionAttributionPerformance(
-                organisationId,
-                startDate,
-                endDate,
-                [],
-                reportTypeOptions.dimensions,
-                [
-                  'weighted_conversions',
-                  'weighted_value',
-                  'interaction_to_conversion_duration',
-                ],
-                [
-                  { name: 'goal_id', value: goalId },
-                  {
-                    name: 'attribution_model_id',
-                    value: attributionSelectionResource.id,
-                  },
-                ],
-              ).then(result => ({
-                ...result,
-                attribution_model_id:
-                  attributionSelectionResource.attribution_model_id,
-                attribution_model_name:
-                  attributionSelectionResource.attribution_model_name,
-                report_type: reportTypeOptions.reportType,
-              }));
-            });
-          },
-        );
+        const promises = lodash.flatMap(response.data, attributionSelectionResource => {
+          return reportTypeExportOptions.map(reportTypeOptions => {
+            return ReportService.getConversionAttributionPerformance(
+              organisationId,
+              startDate,
+              endDate,
+              [],
+              reportTypeOptions.dimensions,
+              ['weighted_conversions', 'weighted_value', 'interaction_to_conversion_duration'],
+              [
+                { name: 'goal_id', value: goalId },
+                {
+                  name: 'attribution_model_id',
+                  value: attributionSelectionResource.id,
+                },
+              ],
+            ).then(result => ({
+              ...result,
+              attribution_model_id: attributionSelectionResource.attribution_model_id,
+              attribution_model_name: attributionSelectionResource.attribution_model_name,
+              report_type: reportTypeOptions.reportType,
+            }));
+          });
+        });
 
         return Promise.all(promises);
       });
 
     return conversionPerformancePromise.then(conversionPerformanceResult => {
-      return attributionPerformancePromises.then(
-        attributionPerformanceResult => {
-          return {
-            goalData: normalizeReportView(
-              conversionPerformanceResult.data.report_view,
-            ),
-            attributionsData: attributionPerformanceResult.map(attribution => ({
-              attribution_model_id: attribution.attribution_model_id,
-              attribution_model_name: attribution.attribution_model_name,
-              report_type: attribution.report_type,
-              normalized_report_view: normalizeReportView(
-                attribution.data.report_view,
-              ),
-            })),
-          };
-        },
-      );
+      return attributionPerformancePromises.then(attributionPerformanceResult => {
+        return {
+          goalData: normalizeReportView(conversionPerformanceResult.data.report_view),
+          attributionsData: attributionPerformanceResult.map(attribution => ({
+            attribution_model_id: attribution.attribution_model_id,
+            attribution_model_name: attribution.attribution_model_name,
+            report_type: attribution.report_type,
+            normalized_report_view: normalizeReportView(attribution.data.report_view),
+          })),
+        };
+      });
     });
   };
 
@@ -174,16 +152,10 @@ class ExportsActionbar extends React.Component<
 
     if (!goal) return;
 
-    const filter = parseSearch(
-      this.props.location.search,
-      GOAL_SEARCH_SETTINGS,
-    );
+    const filter = parseSearch(this.props.location.search, GOAL_SEARCH_SETTINGS);
 
     this.setState({ exportIsRunning: true });
-    const hideExportLoadingMsg = message.loading(
-      intl.formatMessage(messages.exportInProgress),
-      0,
-    );
+    const hideExportLoadingMsg = message.loading(intl.formatMessage(messages.exportInProgress), 0);
 
     this.fetchExportData(organisationId, goal.id, filter)
       .then(exportData => {
@@ -255,26 +227,24 @@ class ExportsActionbar extends React.Component<
     const menu = this.buildMenu();
 
     const breadcrumbPaths = [
-      <Link key='1' to={`/v2/o/${organisationId}/campaigns/goals`}>{intl.formatMessage(messages.goals)}</Link>,
+      <Link key='1' to={`/v2/o/${organisationId}/campaigns/goals`}>
+        {intl.formatMessage(messages.goals)}
+      </Link>,
       goal && goal.name ? goal.name : '',
     ];
 
     return (
       <Actionbar pathItems={breadcrumbPaths}>
         {goal && (
-          <Button
-            type="primary"
-            className="mcs-primary"
-            onClick={this.changeCampaignStatus}
-          >
+          <Button type='primary' className='mcs-primary' onClick={this.changeCampaignStatus}>
             {goal.status === 'ACTIVE' ? (
               <div>
-                <McsIcon type="pause" />
+                <McsIcon type='pause' />
                 <FormattedMessage {...messages.pause} />
               </div>
             ) : (
               <div>
-                <McsIcon type="play" />
+                <McsIcon type='play' />
                 <FormattedMessage {...messages.activate} />
               </div>
             )}
@@ -282,15 +252,12 @@ class ExportsActionbar extends React.Component<
         )}
 
         <Button onClick={this.handleRunExport} loading={exportIsRunning}>
-          {!exportIsRunning && <McsIcon type="download" />}
-          <FormattedMessage
-            id="goal.dashboard.actionbar.export"
-            defaultMessage="Export"
-          />
+          {!exportIsRunning && <McsIcon type='download' />}
+          <FormattedMessage id='goal.dashboard.actionbar.export' defaultMessage='Export' />
         </Button>
 
         <Button onClick={this.editCampaign}>
-          <McsIcon type="pen" />
+          <McsIcon type='pen' />
           <FormattedMessage {...messages.edit} />
         </Button>
 
@@ -351,60 +318,55 @@ class ExportsActionbar extends React.Component<
           case 'ARCHIVED':
             return handleArchiveGoal(goal.id);
           case 'HISTORY':
-            return this.props.openNextDrawer<ResourceTimelinePageProps>(
-              ResourceTimelinePage,
-              {
-                additionalProps: {
-                  resourceType: 'GOAL',
-                  resourceId: goalId,
-                  handleClose: () => this.props.closeNextDrawer(),
-                  formatProperty: formatGoalProperty,
-                  resourceLinkHelper: {
-                    GOAL_SELECTION: {
-                      direction: 'PARENT',
-                      getType: () => {
-                        return (
-                          <FormattedMessage
-                            {...resourceHistoryMessages.displayCampaignResourceType}
-                          />
-                        );
-                      },
-                      getName: (id: string) => {
-                        return this._resourceHistoryService
-                          .getLinkedResourceIdInSelection(
-                            organisationId,
-                            'GOAL_SELECTION',
-                            id,
-                            'CAMPAIGN',
-                          )
-                          .then(campaignId => {
-                            return this._displayCampaignService
-                              .getCampaignName(campaignId)
-                              .then(response => {
-                                return response;
-                              });
-                          });
-                      },
-                      goToResource: (id: string) => {
-                        this._resourceHistoryService
-                          .getLinkedResourceIdInSelection(
-                            organisationId,
-                            'GOAL_SELECTION',
-                            id,
-                            'CAMPAIGN',
-                          )
-                          .then(campaignId => {
-                            history.push(
-                              `/v2/o/${organisationId}/campaigns/display/${campaignId}`,
-                            );
-                          });
-                      },
+            return this.props.openNextDrawer<ResourceTimelinePageProps>(ResourceTimelinePage, {
+              additionalProps: {
+                resourceType: 'GOAL',
+                resourceId: goalId,
+                handleClose: () => this.props.closeNextDrawer(),
+                formatProperty: formatGoalProperty,
+                resourceLinkHelper: {
+                  GOAL_SELECTION: {
+                    direction: 'PARENT',
+                    getType: () => {
+                      return (
+                        <FormattedMessage
+                          {...resourceHistoryMessages.displayCampaignResourceType}
+                        />
+                      );
+                    },
+                    getName: (id: string) => {
+                      return this._resourceHistoryService
+                        .getLinkedResourceIdInSelection(
+                          organisationId,
+                          'GOAL_SELECTION',
+                          id,
+                          'CAMPAIGN',
+                        )
+                        .then(campaignId => {
+                          return this._displayCampaignService
+                            .getCampaignName(campaignId)
+                            .then(response => {
+                              return response;
+                            });
+                        });
+                    },
+                    goToResource: (id: string) => {
+                      this._resourceHistoryService
+                        .getLinkedResourceIdInSelection(
+                          organisationId,
+                          'GOAL_SELECTION',
+                          id,
+                          'CAMPAIGN',
+                        )
+                        .then(campaignId => {
+                          history.push(`/v2/o/${organisationId}/campaigns/display/${campaignId}`);
+                        });
                     },
                   },
                 },
-                size: 'small',
               },
-            );
+              size: 'small',
+            });
           default:
             return () => {
               log.error('onclick error');
@@ -414,10 +376,10 @@ class ExportsActionbar extends React.Component<
 
     return (
       <Menu onClick={onClick}>
-        <Menu.Item key="HISTORY">
+        <Menu.Item key='HISTORY'>
           <FormattedMessage {...messages.history} />
         </Menu.Item>
-        <Menu.Item key="ARCHIVED">
+        <Menu.Item key='ARCHIVED'>
           <FormattedMessage {...messages.archive} />
         </Menu.Item>
       </Menu>

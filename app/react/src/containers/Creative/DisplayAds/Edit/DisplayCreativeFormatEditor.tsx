@@ -73,8 +73,7 @@ class DisplayCreativeFormatEditor extends React.Component<JoinedProps, State> {
     } = this.props;
     const { standardFormat, availableFormats } = this.state;
 
-    let validateStatus: 'error' | 'success' | 'warning' | 'validating' =
-      'success';
+    let validateStatus: 'error' | 'success' | 'warning' | 'validating' = 'success';
     if (meta.invalid) validateStatus = 'error';
     if (meta.warning) validateStatus = 'warning';
 
@@ -95,16 +94,12 @@ class DisplayCreativeFormatEditor extends React.Component<JoinedProps, State> {
     const width = dimensions[0] ? dimensions[0] : '';
     const height = dimensions[1] ? dimensions[1] : '';
 
-    const onDimensionChange = (type: string) => (
-      e: React.ChangeEvent<HTMLInputElement>,
-    ) => {
+    const onDimensionChange = (type: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
       const { value } = e.target;
       const isDimension = !value || (/^\d+$/i.test(value) && value.length < 15);
 
       if (isDimension) {
-        input.onChange(
-          type === 'width' ? `${value}x${height}` : `${width}x${value}`,
-        );
+        input.onChange(type === 'width' ? `${value}x${height}` : `${width}x${value}`);
       }
     };
 
@@ -113,17 +108,15 @@ class DisplayCreativeFormatEditor extends React.Component<JoinedProps, State> {
     return (
       <FormFieldWrapper
         helpToolTipProps={{
-          title: formatMessage(
-            messages.creativeCreationGeneralFormatFieldHelper,
-          ),
+          title: formatMessage(messages.creativeCreationGeneralFormatFieldHelper),
         }}
         label={formatMessage(messages.creativeCreationGeneralFormatFieldTitle)}
         required={true}
         validateStatus={validateStatus}
         small={small}
       >
-        <div className="creative-format">
-          <div className="field">
+        <div className='creative-format'>
+          <div className='field'>
             {standardFormat ? (
               <Select
                 onBlur={handleOnBlur}
@@ -139,16 +132,12 @@ class DisplayCreativeFormatEditor extends React.Component<JoinedProps, State> {
                 ))}
               </Select>
             ) : (
-              <div className="custom">
-                <div className="input">
-                  <Input
-                    value={width}
-                    onChange={onDimensionChange('width')}
-                    disabled={disabled}
-                  />
+              <div className='custom'>
+                <div className='input'>
+                  <Input value={width} onChange={onDimensionChange('width')} disabled={disabled} />
                 </div>
-                <div className="separator">x</div>
-                <div className="input">
+                <div className='separator'>x</div>
+                <div className='input'>
                   <Input
                     value={height}
                     onChange={onDimensionChange('height')}
@@ -159,11 +148,8 @@ class DisplayCreativeFormatEditor extends React.Component<JoinedProps, State> {
             )}
           </div>
 
-          <div className="button">
-            <Button
-              className="clickable-on-hover"
-              onClick={buttonOnClick}
-            >
+          <div className='button'>
+            <Button className='clickable-on-hover' onClick={buttonOnClick}>
               {buttonLabel}
             </Button>
           </div>

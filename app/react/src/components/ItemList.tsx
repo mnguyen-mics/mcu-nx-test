@@ -47,16 +47,17 @@ export interface ItemListProps<T = any> extends ViewComponentWithFiltersProps<T>
   additionnalComponent?: React.ReactNode;
 }
 
-type Props<T = any> = ItemListProps<T> & RouteComponentProps<RouterParams>
+type Props<T = any> = ItemListProps<T> & RouteComponentProps<RouterParams>;
 
 class ItemList<T> extends React.Component<Props<T>> {
-
   componentDidMount() {
     const {
       fetchList,
       history,
       location: { search, pathname },
-      match: { params: { organisationId } },
+      match: {
+        params: { organisationId },
+      },
       pageSettings,
     } = this.props;
 
@@ -77,26 +78,17 @@ class ItemList<T> extends React.Component<Props<T>> {
     const {
       fetchList,
       history,
-      location: {
-        pathname,
-        search,
-      },
+      location: { pathname, search },
       match: {
-        params: {
-          organisationId,
-        },
+        params: { organisationId },
       },
-      pageSettings
+      pageSettings,
     } = this.props;
 
     const {
-      location: {
-        search: previousSearch,
-      },
+      location: { search: previousSearch },
       match: {
-        params: {
-          organisationId: previousOrganisationId,
-        },
+        params: { organisationId: previousOrganisationId },
       },
     } = previousProps;
 
@@ -127,17 +119,14 @@ class ItemList<T> extends React.Component<Props<T>> {
     };
 
     history.push(nextLocation);
-  }
+  };
 
   render() {
     const {
       total,
       location: { search },
       pageSettings,
-      emptyTable: {
-        iconType,
-        message,
-      },
+      emptyTable: { iconType, message },
       additionnalComponent,
       ...rest
     } = this.props;
@@ -164,13 +153,15 @@ class ItemList<T> extends React.Component<Props<T>> {
     };
 
     return (
-      <div className="mcs-table-container">
+      <div className='mcs-table-container'>
         {additionnalComponent}
         {!rest.dataSource.length && !rest.loading ? (
           <EmptyTableView
             iconType={iconType}
             message={message}
-            className={`mcs-table-view-empty mcs-empty-card ${rest?.className ? rest.className : ''}`}
+            className={`mcs-table-view-empty mcs-empty-card ${
+              rest?.className ? rest.className : ''
+            }`}
           />
         ) : (
           <TableViewFilters pagination={pagination} {...rest} />
@@ -180,6 +171,4 @@ class ItemList<T> extends React.Component<Props<T>> {
   }
 }
 
-export default compose<Props, ItemListProps>(
-  withRouter,
-)(ItemList);
+export default compose<Props, ItemListProps>(withRouter)(ItemList);

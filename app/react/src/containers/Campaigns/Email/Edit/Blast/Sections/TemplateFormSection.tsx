@@ -9,10 +9,7 @@ import { FormSection } from '../../../../../../components/Form';
 import CreativeCardSelector, {
   CreativeCardSelectorProps,
 } from '../../../../Common/CreativeCardSelector';
-import {
-  RelatedRecords,
-  RecordElement,
-} from '../../../../../../components/RelatedRecord';
+import { RelatedRecords, RecordElement } from '../../../../../../components/RelatedRecord';
 import { CreativeResourceShape } from '../../../../../../models/creative/CreativeResource';
 import messages from '../../messages';
 import { TemplateFieldModel } from '../../domain';
@@ -21,7 +18,7 @@ import { injectDrawer } from '../../../../../../components/Drawer/index';
 import { InjectedDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
 
 export interface TemplateFormSectionProps extends ReduxFormChangeProps {
-  disabled?: boolean
+  disabled?: boolean;
 }
 
 type Props = InjectedIntlProps &
@@ -34,9 +31,7 @@ class TemplateFormSection extends React.Component<Props> {
   updateTemplates = (creatives: CreativeResourceShape[]) => {
     const { fields, formChange, closeNextDrawer } = this.props;
     const creativeIds = creatives.map(s => s.id);
-    const fieldCreativeIds = fields
-      .getAll()
-      .map(field => field.model.email_template_id);
+    const fieldCreativeIds = fields.getAll().map(field => field.model.email_template_id);
 
     const keptCreatives = fields
       .getAll()
@@ -58,9 +53,7 @@ class TemplateFormSection extends React.Component<Props> {
   openCreativeCardSelector = () => {
     const { openNextDrawer, closeNextDrawer, fields } = this.props;
 
-    const selectedCreativeIds = fields
-      .getAll()
-      .map(field => field.model.email_template_id);
+    const selectedCreativeIds = fields.getAll().map(field => field.model.email_template_id);
 
     const creativeCardSelectorProps: CreativeCardSelectorProps = {
       selectedCreativeIds,
@@ -80,8 +73,7 @@ class TemplateFormSection extends React.Component<Props> {
   getEmailTemplateRecords = () => {
     const { fields } = this.props;
 
-    const getTemplateName = (templateField: TemplateFieldModel) =>
-      templateField.meta.name;
+    const getTemplateName = (templateField: TemplateFieldModel) => templateField.meta.name;
 
     return fields.getAll().map(templateField => {
       return (
@@ -96,7 +88,11 @@ class TemplateFormSection extends React.Component<Props> {
   };
 
   render() {
-    const { meta, intl: { formatMessage } ,disabled } = this.props;
+    const {
+      meta,
+      intl: { formatMessage },
+      disabled,
+    } = this.props;
 
     const showError = meta.error;
 
@@ -106,7 +102,7 @@ class TemplateFormSection extends React.Component<Props> {
           button={{
             message: formatMessage(messages.blastTemplateSelectionSelectButton),
             onClick: this.openCreativeCardSelector,
-            disabled: !!disabled
+            disabled: !!disabled,
           }}
           subtitle={messages.emailBlastEditorStepSubTitleTemplateSelection}
           title={messages.emailBlastEditorStepTitleTemplateSelection}

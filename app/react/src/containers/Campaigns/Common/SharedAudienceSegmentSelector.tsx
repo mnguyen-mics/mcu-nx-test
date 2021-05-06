@@ -8,10 +8,7 @@ import TableSelector, {
 import { SearchFilter } from '../../../components/ElementSelector';
 import { injectDatamart, InjectedDatamartProps } from '../../Datamart';
 import { UserWorkspaceResource } from '../../../models/directory/UserProfileResource';
-import {
-  GetServiceOptions,
-  ICatalogService,
-} from '../../../services/CatalogService';
+import { GetServiceOptions, ICatalogService } from '../../../services/CatalogService';
 import { AudienceSegmentServiceItemPublicResource } from '../../../models/servicemanagement/PublicServiceItemResource';
 import { DataResponse } from '../../../services/ApiService';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
@@ -67,10 +64,7 @@ class SharedAudienceSegmentSelector extends React.Component<Props> {
   @lazyInject(TYPES.ICatalogService)
   private _catalogService: ICatalogService;
 
-  saveSegments = (
-    segmentIds: string[],
-    segments: AudienceSegmentServiceItemPublicResource[],
-  ) => {
+  saveSegments = (segmentIds: string[], segments: AudienceSegmentServiceItemPublicResource[]) => {
     this.props.save(segments);
   };
 
@@ -89,10 +83,7 @@ class SharedAudienceSegmentSelector extends React.Component<Props> {
       options.keywords = filter.keywords;
     }
 
-    return this._catalogService.getAudienceSegmentServices(
-      organisationId,
-      options,
-    );
+    return this._catalogService.getAudienceSegmentServices(organisationId, options);
   };
 
   fetchSegment = (segmentId: string) => {
@@ -108,9 +99,7 @@ class SharedAudienceSegmentSelector extends React.Component<Props> {
       intl: { formatMessage },
     } = this.props;
 
-    const columns: Array<
-      DataColumnDefinition<AudienceSegmentServiceItemPublicResource>
-    > = [
+    const columns: Array<DataColumnDefinition<AudienceSegmentServiceItemPublicResource>> = [
       {
         title: formatMessage(messages.segmentSelectorColumnName),
         key: 'name',
@@ -122,9 +111,7 @@ class SharedAudienceSegmentSelector extends React.Component<Props> {
       <SegmentTableSelector
         actionBarTitle={formatMessage(messages.segmentSelectorTitle)}
         displayFiltering={true}
-        searchPlaceholder={formatMessage(
-          messages.segmentSelectorSearchPlaceholder,
-        )}
+        searchPlaceholder={formatMessage(messages.segmentSelectorSearchPlaceholder)}
         selectedIds={selectedSegmentIds}
         defaultSelectedKey={'segment_id'}
         fetchDataList={this.fetchSegments}

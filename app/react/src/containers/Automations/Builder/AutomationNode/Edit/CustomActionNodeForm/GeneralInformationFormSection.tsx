@@ -1,15 +1,9 @@
 import * as React from 'react';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
-import withValidators, {
-  ValidatorProps,
-} from '../../../../../../components/Form/withValidators';
+import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
 import messages from './messages';
 import { CustomActionAutomationFormData } from '../domain';
-import {
-  DefaultSelect,
-  FormSelectField,
-  FormSection,
-} from '../../../../../../components/Form';
+import { DefaultSelect, FormSelectField, FormSection } from '../../../../../../components/Form';
 import { compose } from 'recompose';
 import { ExtendedCustomActionInformation } from './CustomActionAutomationForm';
 import { DefaultOptionProps } from '../../../../../../components/Form/FormSelect/DefaultSelect';
@@ -21,9 +15,7 @@ interface GeneralInformationFormSectionProps {
   disabled?: boolean;
 }
 
-type Props = GeneralInformationFormSectionProps &
-  InjectedIntlProps &
-  ValidatorProps;
+type Props = GeneralInformationFormSectionProps & InjectedIntlProps & ValidatorProps;
 
 class GeneralInformationFormSection extends React.Component<Props> {
   render() {
@@ -35,7 +27,7 @@ class GeneralInformationFormSection extends React.Component<Props> {
     } = this.props;
 
     const options: DefaultOptionProps[] = extendedCustomActionsInformation.map(
-      (extendedCustomActionInformation) => ({
+      extendedCustomActionInformation => ({
         value: extendedCustomActionInformation.customAction.id,
         title: extendedCustomActionInformation.customAction.name,
       }),
@@ -45,7 +37,7 @@ class GeneralInformationFormSection extends React.Component<Props> {
       <span>
         {formatMessage(messages.pluginInstanceTooltip)}
         &nbsp;
-        <a href="https://developer.mediarithmics.com/" target="_blank">
+        <a href='https://developer.mediarithmics.com/' target='_blank'>
           {formatMessage(messages.developerDocumentation)}
         </a>
         . &nbsp;
@@ -57,7 +49,7 @@ class GeneralInformationFormSection extends React.Component<Props> {
         <FormSection title={messages.sectionGeneralConfigurationTitle} />
         <div>
           <FormSelectField
-            name="customActionId"
+            name='customActionId'
             component={DefaultSelect}
             validate={[isRequired]}
             formItemProps={{

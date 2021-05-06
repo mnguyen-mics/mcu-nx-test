@@ -105,19 +105,11 @@ class AudienceBuilderPage extends React.Component<Props, State> {
     } = prevProps;
     const audienceBuilderId = queryString.parse(search).audienceBuilderId;
     const datamartId = queryString.parse(search).datamartId;
-    const prevAudienceBuilderId = queryString.parse(prevSearch)
-      .audienceBuilderId;
+    const prevAudienceBuilderId = queryString.parse(prevSearch).audienceBuilderId;
     const prevDatamartId = queryString.parse(prevSearch).datamartId;
-    if (
-      !audienceBuilderId ||
-      !datamartId ||
-      organisationId !== prevOrganisationId
-    ) {
+    if (!audienceBuilderId || !datamartId || organisationId !== prevOrganisationId) {
       history.push(`/v2/o/${organisationId}/audience/segment-builder-selector`);
-    } else if (
-      datamartId !== prevDatamartId ||
-      audienceBuilderId !== prevAudienceBuilderId
-    ) {
+    } else if (datamartId !== prevDatamartId || audienceBuilderId !== prevAudienceBuilderId) {
       this.setAudienceBuilder(datamartId, audienceBuilderId);
     }
   }
@@ -125,21 +117,16 @@ class AudienceBuilderPage extends React.Component<Props, State> {
   setAudienceBuilder = (datamartId: string, audienceBuilderId: string) => {
     this._audienceBuilderService
       .getAudienceBuilder(datamartId, audienceBuilderId)
-      .then((res) => {
+      .then(res => {
         this.setState({
           selectedAudienceBuilder: res.data,
         });
         return res.data;
       })
-      .then((audienceBuilder) => {
-        const demographicsFeaturePromises = audienceBuilder.demographics_features_ids.map(
-          (id) => {
-            return this._audienceFeatureService.getAudienceFeature(
-              datamartId,
-              id,
-            );
-          },
-        );
+      .then(audienceBuilder => {
+        const demographicsFeaturePromises = audienceBuilder.demographics_features_ids.map(id => {
+          return this._audienceFeatureService.getAudienceFeature(datamartId, id);
+        });
 
         const setUpPredicate = (
           feature: AudienceFeatureResource,
@@ -154,7 +141,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
         const setUpPredicates = (
           features: AudienceFeatureResource[],
         ): AudienceBuilderParametricPredicateNode[] => {
-          return features.map((feature) => {
+          return features.map(feature => {
             return setUpPredicate(feature);
           });
         };
@@ -162,16 +149,16 @@ class AudienceBuilderPage extends React.Component<Props, State> {
         const setUpDefaultPredicates = (
           features: AudienceFeatureResource[],
         ): AudienceBuilderParametricPredicateGroupNode[] => {
-          return features.map((feature) => {
+          return features.map(feature => {
             return {
-              expressions: [setUpPredicate(feature)]
+              expressions: [setUpPredicate(feature)],
             };
           });
         };
 
         Promise.all(demographicsFeaturePromises)
-          .then((resp) => {
-            const defaultFeatures = resp.map((r) => {
+          .then(resp => {
+            const defaultFeatures = resp.map(r => {
               return r.data;
             });
 
@@ -197,7 +184,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
               isLoading: false,
             });
           })
-          .catch((err) => {
+          .catch(err => {
             this.setState({
               selectedAudienceBuilder: audienceBuilder,
               newFormData: NEW_INITIAL_AUDIENCE_BUILDER_FORM_DATA,
@@ -207,7 +194,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
             notifyError(err);
           });
       })
-      .catch((error) => {
+      .catch(error => {
         this.setState({
           isLoading: false,
         });
@@ -215,10 +202,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
       });
   };
 
-  audienceBuilderActionbar = (
-    query: AudienceBuilderQueryDocument,
-    datamartId: string,
-  ) => {
+  audienceBuilderActionbar = (query: AudienceBuilderQueryDocument, datamartId: string) => {
     const { match, history } = this.props;
     const { selectedAudienceBuilder } = this.state;
     const saveAudience = (userQueryFormData: NewUserQuerySimpleFormData) => {
@@ -229,7 +213,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
           query_language: 'JSON_OTQL',
           query_text: JSON.stringify(query),
         })
-        .then((res) => {
+        .then(res => {
           const userQuerySegment: Partial<UserQuerySegment> = {
             datamart_id: datamartId,
             type: 'USER_QUERY',
@@ -246,19 +230,14 @@ class AudienceBuilderPage extends React.Component<Props, State> {
             userQuerySegment,
           );
         })
-        .then((res) => {
-          this._tagService.sendEvent("create_segment", "Segment Builder", "Save Segment");
-          history.push(
-            `/v2/o/${match.params.organisationId}/audience/segments/${res.data.id}`,
-          );
+        .then(res => {
+          this._tagService.sendEvent('create_segment', 'Segment Builder', 'Save Segment');
+          history.push(`/v2/o/${match.params.organisationId}/audience/segments/${res.data.id}`);
         });
     };
 
     return (
-      <AudienceBuilderActionbar
-        save={saveAudience}
-        audienceBuilder={selectedAudienceBuilder}
-      />
+      <AudienceBuilderActionbar save={saveAudience} audienceBuilder={selectedAudienceBuilder} />
     );
   };
 
@@ -293,9 +272,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
       return <Loading isFullScreen={true} />;
     }
 
-    return selectedAudienceBuilder
-      ? this.selectBuilderContainer(selectedAudienceBuilder)
-      : null;
+    return selectedAudienceBuilder ? this.selectBuilderContainer(selectedAudienceBuilder) : null;
   }
 }
 

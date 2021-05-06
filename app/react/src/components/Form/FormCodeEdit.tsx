@@ -4,8 +4,8 @@ import * as React from 'react';
 import AceEditor from 'react-ace';
 import { FormItemProps } from 'antd/lib/form/FormItem';
 import { TooltipPropsWithTitle } from 'antd/lib/tooltip';
-import { AceEditorProps } from 'react-ace/types'
-import 'brace/ext/searchbox'
+import { AceEditorProps } from 'react-ace/types';
+import 'brace/ext/searchbox';
 import { WrappedFieldProps } from 'redux-form';
 import 'brace/theme/github';
 
@@ -20,7 +20,6 @@ export interface FormCodeEditProps extends FormFieldWrapperProps {
 }
 
 const FormCodeEdit: React.SFC<FormCodeEditProps & WrappedFieldProps> = props => {
-
   let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
 
   if (props.meta.touched && props.meta.invalid) validateStatus = 'error';
@@ -35,12 +34,12 @@ const FormCodeEdit: React.SFC<FormCodeEditProps & WrappedFieldProps> = props => 
       validateStatus={validateStatus}
       small={props.small}
       {...props.formItemProps}
-      className="mcs-formFieldWrapper_codeEdit"
+      className='mcs-formFieldWrapper_codeEdit'
     >
       <AceEditor
         value={props.input.value}
         {...props.inputProps}
-        theme="github"
+        theme='github'
         name={props.input.name}
         onBlur={onBlur}
         onFocus={onFocus}
@@ -52,6 +51,5 @@ const FormCodeEdit: React.SFC<FormCodeEditProps & WrappedFieldProps> = props => 
     </FormFieldWrapper>
   );
 };
-
 
 export default FormCodeEdit;

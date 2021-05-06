@@ -1,12 +1,7 @@
 import * as React from 'react';
 import { Layout } from 'antd';
 import { compose } from 'recompose';
-import {
-  Form,
-  reduxForm,
-  InjectedFormProps,
-  ConfigProps,
-} from 'redux-form';
+import { Form, reduxForm, InjectedFormProps, ConfigProps } from 'redux-form';
 import { BasicProps } from 'antd/lib/layout/layout';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { InjectedIntlProps, defineMessages, injectIntl } from 'react-intl';
@@ -17,9 +12,7 @@ import FormLayoutActionbar, {
 import ScrollspySider, {
   SidebarWrapperProps,
 } from '../../../../../components/Layout/ScrollspySider';
-import {
-  McsFormSection,
-} from '../../../../../utils/FormHelper';
+import { McsFormSection } from '../../../../../utils/FormHelper';
 import { Omit } from '../../../../../utils/Types';
 import UserResource from '../../../../../models/directory/UserResource';
 import { UserWithRole } from '../domain';
@@ -28,9 +21,7 @@ import RoleInfoFormSection from './Sections/RoleInfoFormSection';
 
 const FORM_ID = 'userRoleForm';
 
-const Content = Layout.Content as unknown as React.ComponentClass<
-  BasicProps & { id: string }
->;
+const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
 
 const messages = defineMessages({
   sectionTitleUserInfo: {
@@ -74,11 +65,12 @@ class EditUserRoleForm extends React.Component<Props> {
         id: 'userInfo',
         title: messages.sectionTitleUserInfo,
         component: <UserInfoFormSection />,
-      },{
+      },
+      {
         id: 'roleInfo',
         title: messages.sectionTitleRoleInfo,
         component: <RoleInfoFormSection />,
-      }
+      },
     ];
 
     const sideBarProps: SidebarWrapperProps = {
@@ -97,21 +89,15 @@ class EditUserRoleForm extends React.Component<Props> {
       );
     });
     return (
-      <Layout className="edit-layout">
+      <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
           <ScrollspySider {...sideBarProps} />
-          <Form
-            className="edit-layout ant-layout"
-            onSubmit={handleSubmit(onSave) as any}
-          >
+          <Form className='edit-layout ant-layout' onSubmit={handleSubmit(onSave) as any}>
             {/* this button enables submit on enter */}
-            <button type="submit" style={{ display: 'none' }} />
-            <Content
-              id={FORM_ID}
-              className="mcs-content-container mcs-form-container"
-            >
-              <div className="placement-list-form">{renderedSections}</div>
+            <button type='submit' style={{ display: 'none' }} />
+            <Content id={FORM_ID} className='mcs-content-container mcs-form-container'>
+              <div className='placement-list-form'>{renderedSections}</div>
             </Content>
           </Form>
         </Layout>

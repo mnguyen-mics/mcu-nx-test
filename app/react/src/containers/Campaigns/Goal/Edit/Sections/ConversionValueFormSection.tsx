@@ -1,20 +1,9 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import {
-  injectIntl,
-  InjectedIntlProps,
-  defineMessages,
-  FormattedMessage,
-} from 'react-intl';
+import { injectIntl, InjectedIntlProps, defineMessages, FormattedMessage } from 'react-intl';
 import { Checkbox } from 'antd';
-import {
-  FormSection,
-  FormInputField,
-  FormAddonSelectField,
-} from '../../../../../components/Form';
-import withValidators, {
-  ValidatorProps,
-} from '../../../../../components/Form/withValidators';
+import { FormSection, FormInputField, FormAddonSelectField } from '../../../../../components/Form';
+import withValidators, { ValidatorProps } from '../../../../../components/Form/withValidators';
 import FormInput from '../../../../../components/Form/FormInput';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { ReduxFormChangeProps } from '../../../../../utils/FormHelper';
@@ -59,10 +48,11 @@ type Props = ConversionValueFormSectionProps &
   RouteComponentProps<{ goalId: string }>;
 
 class ConversionValueFormSection extends React.Component<Props, State> {
-  isDefaultGoalValue = this.props.initialValues &&
-  this.props.initialValues.goal &&
-  this.props.initialValues.goal.default_goal_value &&
-  this.props.initialValues.goal.default_goal_value !== 0;
+  isDefaultGoalValue =
+    this.props.initialValues &&
+    this.props.initialValues.goal &&
+    this.props.initialValues.goal.default_goal_value &&
+    this.props.initialValues.goal.default_goal_value !== 0;
 
   constructor(props: Props) {
     super(props);
@@ -84,30 +74,25 @@ class ConversionValueFormSection extends React.Component<Props, State> {
 
     return (
       <div>
-        <FormSection
-          subtitle={messages.sectionSubtitle1}
-          title={messages.sectionTitle1}
-        />
+        <FormSection subtitle={messages.sectionSubtitle1} title={messages.sectionTitle1} />
 
         <Checkbox
           checked={this.state.displayConversionValueSection}
           onChange={this.toggleConversionValueSection}
         >
           <FormattedMessage
-            id="goal.edit.conversionValueSection.checkbox-message"
-            defaultMessage="Add a conversion value"
+            id='goal.edit.conversionValueSection.checkbox-message'
+            defaultMessage='Add a conversion value'
           />
         </Checkbox>
 
         <div
           className={
-            !this.state.displayConversionValueSection
-              ? 'hide-section'
-              : 'optional-section-content'
+            !this.state.displayConversionValueSection ? 'hide-section' : 'optional-section-content'
           }
         >
           <FormInputField
-            name="goal.default_goal_value"
+            name='goal.default_goal_value'
             component={FormInput}
             validate={[isValidDouble]}
             formItemProps={{
@@ -117,7 +102,7 @@ class ConversionValueFormSection extends React.Component<Props, State> {
               placeholder: formatMessage(messages.defaultGoalValuePlaceholder),
               addonAfter: (
                 <FormAddonSelectField
-                  name="goal.goal_value_currency"
+                  name='goal.goal_value_currency'
                   component={AddonSelect}
                   options={[
                     {

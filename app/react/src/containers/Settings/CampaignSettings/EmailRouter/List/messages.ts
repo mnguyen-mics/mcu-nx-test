@@ -15,8 +15,7 @@ export default defineMessages({
   },
   emailRouterArchiveMessage: {
     id: 'settings.emailrouter.modal.archive.message',
-    defaultMessage:
-      'By archiving this Email Router it will stop campaigns using it. Are you sure?',
+    defaultMessage: 'By archiving this Email Router it will stop campaigns using it. Are you sure?',
   },
   emailRouterArchiveOk: {
     id: 'settings.emailrouter.modal.archive.ok',
@@ -40,8 +39,7 @@ export default defineMessages({
   },
   empty: {
     id: 'settings.emailrouter.list.empty',
-    defaultMessage:
-      'There is no Email Routers created yet! Click on New to get started',
+    defaultMessage: 'There is no Email Routers created yet! Click on New to get started',
   },
   edit: {
     id: 'settings.emailrouter.list.actionColumn.edit',

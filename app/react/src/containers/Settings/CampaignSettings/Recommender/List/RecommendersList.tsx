@@ -12,11 +12,7 @@ import {
   updateSearch,
 } from '../../../../../utils/LocationSearchHelper';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
-import {
-  PluginProperty,
-  Recommender,
-  PluginVersionResource,
-} from '../../../../../models/Plugins';
+import { PluginProperty, Recommender, PluginVersionResource } from '../../../../../models/Plugins';
 import messages from './messages';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
@@ -73,35 +69,31 @@ class RecommendersList extends React.Component<
       };
       this._recommenderService
         .getRecommenders(organisationId, options)
-        .then(
-          (results: { data: Recommender[]; total?: number; count: number }) => {
-            const promises = results.data.map((va) => {
-              return new Promise((resolve, reject) => {
-                this._pluginService
-                  .getEngineVersion(va.version_id)
-                  .then((recommender: PluginVersionResource) => {
-                    return this._pluginService.getEngineProperties(
-                      recommender.id,
-                    );
-                  })
-                  .then((v: PluginProperty[]) => resolve(v));
-              });
+        .then((results: { data: Recommender[]; total?: number; count: number }) => {
+          const promises = results.data.map(va => {
+            return new Promise((resolve, reject) => {
+              this._pluginService
+                .getEngineVersion(va.version_id)
+                .then((recommender: PluginVersionResource) => {
+                  return this._pluginService.getEngineProperties(recommender.id);
+                })
+                .then((v: PluginProperty[]) => resolve(v));
             });
-            Promise.all(promises).then((vaProperties: PluginProperty[]) => {
-              const formattedResults: any = results.data.map((va, i) => {
-                return {
-                  ...va,
-                  properties: vaProperties[i],
-                };
-              });
-              this.setState({
-                loading: false,
-                data: formattedResults,
-                total: results.total || results.count,
-              });
+          });
+          Promise.all(promises).then((vaProperties: PluginProperty[]) => {
+            const formattedResults: any = results.data.map((va, i) => {
+              return {
+                ...va,
+                properties: vaProperties[i],
+              };
             });
-          },
-        );
+            this.setState({
+              loading: false,
+              data: formattedResults,
+              total: results.total || results.count,
+            });
+          });
+        });
     });
   };
 
@@ -170,9 +162,7 @@ class RecommendersList extends React.Component<
       intl: { formatMessage },
     } = this.props;
 
-    const actionsColumnsDefinition: Array<
-      ActionsColumnDefinition<RecommenderInterface>
-    > = [
+    const actionsColumnsDefinition: Array<ActionsColumnDefinition<RecommenderInterface>> = [
       {
         key: 'action',
         actions: () => [
@@ -188,16 +178,14 @@ class RecommendersList extends React.Component<
       },
     ];
 
-    const dataColumnsDefinition: Array<
-      DataColumnDefinition<RecommenderInterface>
-    > = [
+    const dataColumnsDefinition: Array<DataColumnDefinition<RecommenderInterface>> = [
       {
         title: formatMessage(messages.processor),
         key: 'name',
         isHideable: false,
         render: (text: string, record: RecommenderInterface) => (
           <Link
-            className="mcs-campaigns-link"
+            className='mcs-campaigns-link'
             to={`/v2/o/${organisationId}/settings/campaigns/recommenders/${record.id}/edit`}
           >
             {text}
@@ -212,11 +200,9 @@ class RecommendersList extends React.Component<
           const property =
             record &&
             record.properties &&
-            record.properties.find((item) => item.technical_name === 'name');
+            record.properties.find(item => item.technical_name === 'name');
           const render =
-            property && property.value && property.value.value
-              ? property.value.value
-              : null;
+            property && property.value && property.value.value ? property.value.value : null;
           return <span>{render}</span>;
         },
       },
@@ -228,13 +214,9 @@ class RecommendersList extends React.Component<
           const property =
             record &&
             record.properties &&
-            record.properties.find(
-              (item) => item.technical_name === 'provider',
-            );
+            record.properties.find(item => item.technical_name === 'provider');
           const render =
-            property && property.value && property.value.value
-              ? property.value.value
-              : null;
+            property && property.value && property.value.value ? property.value.value : null;
           return <span>{render}</span>;
         },
       },
@@ -249,31 +231,29 @@ class RecommendersList extends React.Component<
     };
 
     const onClick = () =>
-      history.push(
-        `/v2/o/${organisationId}/settings/campaigns/recommenders/create`,
-      );
+      history.push(`/v2/o/${organisationId}/settings/campaigns/recommenders/create`);
 
     const buttons = [
-      <Button key="create" type="primary" onClick={onClick}>
+      <Button key='create' type='primary' onClick={onClick}>
         <FormattedMessage {...messages.newRecommender} />
       </Button>,
     ];
 
     const additionnalComponent = (
       <div>
-        <div className="mcs-card-header mcs-card-title">
-          <span className="mcs-card-title">
+        <div className='mcs-card-header mcs-card-title'>
+          <span className='mcs-card-title'>
             <FormattedMessage {...messages.recommender} />
           </span>
-          <span className="mcs-card-button">{buttons}</span>
+          <span className='mcs-card-button'>{buttons}</span>
         </div>
-        <hr className="mcs-separator" />
+        <hr className='mcs-separator' />
       </div>
     );
 
     return (
-      <div className="ant-layout">
-        <Content className="mcs-content-container">
+      <div className='ant-layout'>
+        <Content className='mcs-content-container'>
           <ItemList
             fetchList={this.fetchRecommender}
             dataSource={this.state.data}

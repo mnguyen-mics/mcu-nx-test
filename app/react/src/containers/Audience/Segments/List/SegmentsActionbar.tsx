@@ -1,17 +1,9 @@
 import * as React from 'react';
 import { Button, message } from 'antd';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
-import {
-  FormattedMessage,
-  InjectedIntlProps,
-  defineMessages,
-  injectIntl,
-} from 'react-intl';
+import { FormattedMessage, InjectedIntlProps, defineMessages, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
-import {
-  Actionbar,
-  McsIcon,
-} from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import ExportService from '../../../../services/ExportService';
 import { SEGMENTS_SEARCH_SETTINGS } from './constants';
 import { parseSearch } from '../../../../utils/LocationSearchHelper';
@@ -102,11 +94,7 @@ class SegmentsActionbar extends React.Component<Props, State> {
     }
   };
 
-  fetchExportData = (
-    organisationId: string,
-    datamartId: string,
-    filter: Index<any>,
-  ) => {
+  fetchExportData = (organisationId: string, datamartId: string, filter: Index<any>) => {
     const buildOptions = () => {
       const options: Index<any> = {
         first_result: 0,
@@ -128,7 +116,7 @@ class SegmentsActionbar extends React.Component<Props, State> {
       if (filter.orderBy && filter.orderBy.length) {
         options.order_by = filter.orderBy;
       }
-      
+
       return options;
     };
 
@@ -139,9 +127,7 @@ class SegmentsActionbar extends React.Component<Props, State> {
 
         return result.map(res => {
           const name =
-            res.type === 'USER_ACTIVATION'
-              ? this.formatUserActivationSegmentName(res)
-              : res.name;
+            res.type === 'USER_ACTIVATION' ? this.formatUserActivationSegmentName(res) : res.name;
           return { ...res, name };
         });
       })
@@ -159,16 +145,10 @@ class SegmentsActionbar extends React.Component<Props, State> {
       notifyError,
     } = this.props;
 
-    const filter = parseSearch(
-      this.props.location.search,
-      this.getSearchSetting(),
-    );
+    const filter = parseSearch(this.props.location.search, this.getSearchSetting());
 
     this.setState({ exportIsRunning: true });
-    const hideExportLoadingMsg = message.loading(
-      formatMessage(messages.exportRunning),
-      0,
-    );
+    const hideExportLoadingMsg = message.loading(formatMessage(messages.exportRunning), 0);
 
     const datamartId = filter.datamartId ? filter.datamartId : undefined;
 
@@ -204,7 +184,9 @@ class SegmentsActionbar extends React.Component<Props, State> {
     const exportIsRunning = this.state.exportIsRunning;
 
     const breadcrumbPaths = [
-      <Link key='1' to={`/v2/o/${organisationId}/audience/segments`}>{intl.formatMessage(messages.audienceSegment)}</Link>
+      <Link key='1' to={`/v2/o/${organisationId}/audience/segments`}>
+        {intl.formatMessage(messages.audienceSegment)}
+      </Link>,
     ];
 
     return (
@@ -212,14 +194,14 @@ class SegmentsActionbar extends React.Component<Props, State> {
         <Link
           to={{
             pathname: `/v2/o/${organisationId}/audience/segments/create`,
-          }}>
-          <Button className="mcs-primary" type="primary">
-            <McsIcon type="plus" />{' '}
-            <FormattedMessage {...messages.newSegment} />
+          }}
+        >
+          <Button className='mcs-primary' type='primary'>
+            <McsIcon type='plus' /> <FormattedMessage {...messages.newSegment} />
           </Button>
         </Link>
         <Button onClick={this.handleRunExport} loading={exportIsRunning}>
-          {!exportIsRunning && <McsIcon type="download" />}
+          {!exportIsRunning && <McsIcon type='download' />}
           <FormattedMessage {...messages.export} />
         </Button>
       </Actionbar>

@@ -53,12 +53,7 @@ class RadarSpiderPlot extends React.Component<Props, {}> {
       });
   };
 
-  formatSerieData = (
-    dataset: Dataset,
-    y: yKey,
-    xKey: string,
-    sort?: SerieSortType,
-  ) => {
+  formatSerieData = (dataset: Dataset, y: yKey, xKey: string, sort?: SerieSortType) => {
     return (sort
       ? dataset.sort((a, b) => {
           return (a[xKey] as string).localeCompare(b[xKey] as string);
@@ -84,8 +79,7 @@ class RadarSpiderPlot extends React.Component<Props, {}> {
     } = this.props;
     return yKeys.map(y => {
       return {
-        name:
-          typeof y.message === 'string' ? y.message : formatMessage(y.message),
+        name: typeof y.message === 'string' ? y.message : formatMessage(y.message),
         data: this.formatSerieData(dataset, y, xKey, sort),
         pointPlacement: 'on',
         dataLabels: labels
@@ -151,16 +145,8 @@ class RadarSpiderPlot extends React.Component<Props, {}> {
         enabled: showLegend === undefined ? false : showLegend,
       },
     };
-    return (
-      <HighchartsReact
-        highcharts={Highcharts}
-        options={options}
-        style={{ width: '100%' }}
-      />
-    );
+    return <HighchartsReact highcharts={Highcharts} options={options} style={{ width: '100%' }} />;
   }
 }
 
-export default compose<Props, RadarSpiderPlotProps>(injectIntl)(
-  RadarSpiderPlot,
-);
+export default compose<Props, RadarSpiderPlotProps>(injectIntl)(RadarSpiderPlot);

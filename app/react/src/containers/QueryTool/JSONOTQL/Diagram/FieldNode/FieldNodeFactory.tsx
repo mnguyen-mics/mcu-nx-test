@@ -6,9 +6,7 @@ import { TreeNodeOperations, MicsDiagramEngine } from '../../domain';
 import { ObjectLikeTypeInfoResource } from '../../../../../models/datamart/graphdb/RuntimeSchema';
 import { JSONQLBuilderContext } from '../../JSONQLBuilderContext';
 
-export default class FieldNodeFactory extends AbstractNodeFactory<
-  FieldNodeModel
-> {
+export default class FieldNodeFactory extends AbstractNodeFactory<FieldNodeModel> {
   treeNodeOperations: TreeNodeOperations;
   objectTypes: ObjectLikeTypeInfoResource[];
   lockGlobalInteraction: (lock: boolean) => void;
@@ -30,10 +28,7 @@ export default class FieldNodeFactory extends AbstractNodeFactory<
     this.datamartId = datamartId;
   }
 
-  generateReactWidget(
-    diagramEngine: MicsDiagramEngine,
-    node: FieldNodeModel,
-  ): JSX.Element {
+  generateReactWidget(diagramEngine: MicsDiagramEngine, node: FieldNodeModel): JSX.Element {
     if (node.extras.collapsed) {
       return <div />;
     }

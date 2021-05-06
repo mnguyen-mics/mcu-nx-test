@@ -1,11 +1,6 @@
 import * as React from 'react';
 import { Omit, connect } from 'react-redux';
-import {
-  reduxForm,
-  InjectedFormProps,
-  ConfigProps,
-  getFormValues,
-} from 'redux-form';
+import { reduxForm, InjectedFormProps, ConfigProps, getFormValues } from 'redux-form';
 import { Layout } from 'antd';
 import { Form } from '@ant-design/compatible';
 import FormLayoutActionbar, {
@@ -33,8 +28,7 @@ const localMessages = defineMessages({
   },
 });
 
-export interface WaitAutomationFormProps
-  extends Omit<ConfigProps<DefaultFormData>, 'form'> {
+export interface WaitAutomationFormProps extends Omit<ConfigProps<DefaultFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: React.ReactNode[];
   storylineNodeModel: StorylineNodeModel;
@@ -94,17 +88,13 @@ class WaitAutomationForm extends React.Component<Props> {
     });
 
     return (
-      <Layout className="edit-layout">
+      <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
-          <Form
-            className="edit-layout ant-layout"
-            onSubmit={handleSubmit}
-            layout="vertical"
-          >
+          <Form className='edit-layout ant-layout' onSubmit={handleSubmit} layout='vertical'>
             <Content
               id={FORM_ID}
-              className="mcs-content-container mcs-form-container automation-form"
+              className='mcs-content-container mcs-form-container automation-form'
             >
               {renderedSections}
             </Content>

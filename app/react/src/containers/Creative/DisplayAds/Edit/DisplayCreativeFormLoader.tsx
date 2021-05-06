@@ -13,8 +13,7 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IDisplayCreativeFormService } from './DisplayCreativeFormService';
 
-export interface DisplayCreativeFormLoaderProps
-  extends DisplayCreativeFormProps {
+export interface DisplayCreativeFormLoaderProps extends DisplayCreativeFormProps {
   creativeId: string;
 }
 
@@ -83,12 +82,7 @@ class DisplayCreativeFormLoader extends React.Component<
       return <Loading isFullScreen={true} />;
     }
 
-    return (
-      <DisplayCreativeForm
-        {...rest}
-        initialValues={this.state.creativeFormData}
-      />
-    );
+    return <DisplayCreativeForm {...rest} initialValues={this.state.creativeFormData} />;
   }
 }
 

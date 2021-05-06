@@ -11,8 +11,7 @@ const messages = defineMessages({
   },
   upGraphTitle: {
     id: 'automation.exitCondition.dashboard.stats.graphs.upLineGraph.title',
-    defaultMessage:
-      'Number of users leaving the scenario because of the exit condition',
+    defaultMessage: 'Number of users leaving the scenario because of the exit condition',
   },
 });
 
@@ -51,6 +50,6 @@ class ExitConditionAutomationDashboardStats extends React.Component<Props> {
   }
 }
 
-export default compose<Props, ExitConditionAutomationDashboardStatsProps>(
-  injectIntl,
-)(ExitConditionAutomationDashboardStats);
+export default compose<Props, ExitConditionAutomationDashboardStatsProps>(injectIntl)(
+  ExitConditionAutomationDashboardStats,
+);

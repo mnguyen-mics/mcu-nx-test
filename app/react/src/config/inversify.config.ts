@@ -1,4 +1,7 @@
-import { ScenarioAnalyticsService, IScenarioAnalyticsService } from './../services/ScenarioAnalyticsService';
+import {
+  ScenarioAnalyticsService,
+  IScenarioAnalyticsService,
+} from './../services/ScenarioAnalyticsService';
 import { CustomActionService, ICustomActionService } from './../services/CustomActionService';
 import {
   AudienceFeatureService,
@@ -8,13 +11,8 @@ import AudienceBuilderService, {
   IAudienceBuilderService,
 } from './../services/AudienceBuilderService';
 import { RecommenderService } from './../services/Library/RecommenderService';
-import {
-  IReferenceTableService,
-  ReferenceTableService,
-} from './../services/ReferenceTableService';
-import DataFileService, {
-  IDataFileService,
-} from './../services/DataFileService';
+import { IReferenceTableService, ReferenceTableService } from './../services/ReferenceTableService';
+import DataFileService, { IDataFileService } from './../services/DataFileService';
 import { DatamartReplicationService } from './../services/DatamartReplicationService';
 import { Container, interfaces } from 'inversify';
 import { ITagService, TagService } from '../services/TagService';
@@ -43,19 +41,11 @@ import {
   IDisplayCreativeFormService,
   DisplayCreativeFormService,
 } from './../containers/Creative/DisplayAds/Edit/DisplayCreativeFormService';
-import {
-  NavigatorService,
-  INavigatorService,
-} from './../services/NavigatorService';
+import { NavigatorService, INavigatorService } from './../services/NavigatorService';
 import { GeonameService, IGeonameService } from './../services/GeonameService';
 import { ConsentService, IConsentService } from './../services/ConsentService';
-import {
-  CommunityService,
-  ICommunityService,
-} from './../services/CommunityServices';
-import UserDataService, {
-  IUserDataService,
-} from './../services/UserDataService';
+import { CommunityService, ICommunityService } from './../services/CommunityServices';
+import UserDataService, { IUserDataService } from './../services/UserDataService';
 import { QueryService, IQueryService } from './../services/QueryService';
 import { AutomationFormService } from './../containers/Automations/Edit/AutomationFormService';
 import {
@@ -91,32 +81,21 @@ import {
   IAudienceTagFeedService,
   AudienceTagFeedService,
 } from '../services/AudienceTagFeedService';
-import {
-  IDisplayNetworkService,
-  DisplayNetworkService,
-} from '../services/DisplayNetworkService';
-import CompartmentService, {
-  IComparmentService,
-} from '../services/CompartmentService';
+import { IDisplayNetworkService, DisplayNetworkService } from '../services/DisplayNetworkService';
+import CompartmentService, { IComparmentService } from '../services/CompartmentService';
 import { IScenarioService, ScenarioService } from '../services/ScenarioService';
 import { IAutomationFormService } from '../containers/Automations/Edit/AutomationFormService';
 import {
   IGoalFormService,
   GoalFormService,
 } from '../containers/Campaigns/Goal/Edit/GoalFormService';
-import {
-  IExportService,
-  ExportService,
-} from '../services/Library/ExportService';
+import { IExportService, ExportService } from '../services/Library/ExportService';
 import { IUsersService, UsersService } from '../services/UsersService';
 import {
   IMonitoringService,
   MonitoringService,
 } from '../containers/Audience/Timeline/MonitoringService';
-import {
-  MlAlgorithmService,
-  IMlAlgorithmService,
-} from '../services/MlAlgorithmService';
+import { MlAlgorithmService, IMlAlgorithmService } from '../services/MlAlgorithmService';
 import {
   IMlAlgorithmModelService,
   MlAlgorithmModelService,
@@ -125,31 +104,17 @@ import {
   IMlAlgorithmVariableService,
   MlAlgorithmVariableService,
 } from '../services/MlAlgorithmVariableService';
-import {
-  IMlFunctionService,
-  MlFunctionService,
-} from '../services/MlFunctionService';
+import { IMlFunctionService, MlFunctionService } from '../services/MlFunctionService';
 import { ApiTokenService, IApiTokenService } from '../services/ApiTokenService';
 import { ChannelService, IChannelService } from './../services/ChannelService';
 import { ISettingsService, SettingsService } from '../services/SettingsService';
-import {
-  IDashboardService,
-  DashboardService,
-} from '../services/DashboardServices';
+import { IDashboardService, DashboardService } from '../services/DashboardServices';
 import { ILabelService, LabelService } from '../services/LabelsService';
-import OrganisationService, {
-  IOrganisationService,
-} from '../services/OrganisationService';
+import OrganisationService, { IOrganisationService } from '../services/OrganisationService';
 import { IAuthService, AuthService } from '../services/AuthService';
 import { IDatamartService, DatamartService } from '../services/DatamartService';
-import {
-  IFeedsStatsService,
-  FeedsStatsService,
-} from '../services/FeedsStatsService';
-import {
-  IAssetFileService,
-  AssetFileService,
-} from '../services/Library/AssetFileService';
+import { IFeedsStatsService, FeedsStatsService } from '../services/FeedsStatsService';
+import { IAssetFileService, AssetFileService } from '../services/Library/AssetFileService';
 import { IEmailRouterService } from '../services/Library/EmailRoutersService';
 import { CreativeService, ICreativeService } from '../services/CreativeService';
 import PluginService, { IPluginService } from '../services/PluginService';
@@ -167,10 +132,7 @@ import {
   IServiceUsageReportService,
   ServiceUsageReportService,
 } from '../services/ServiceUsageReportService';
-import {
-  IRuntimeSchemaService,
-  RuntimeSchemaService,
-} from '../services/RuntimeSchemaService';
+import { IRuntimeSchemaService, RuntimeSchemaService } from '../services/RuntimeSchemaService';
 import {
   IResourceHistoryService,
   ResourceHistoryService,
@@ -180,9 +142,7 @@ import {
   IDatamartUsersAnalyticsService,
   DatamartUsersAnalyticsService,
 } from '../services/DatamartUsersAnalyticsService';
-import EmailCampaignService, {
-  IEmailCampaignService,
-} from '../services/EmailCampaignService';
+import EmailCampaignService, { IEmailCampaignService } from '../services/EmailCampaignService';
 import {
   IEmailCampaignFormService,
   EmailCampaignFormService,
@@ -196,31 +156,21 @@ import {
   IUserActivitiesFunnelService,
   UserActivitiesFunnelService,
 } from '../services/UserActivitiesFunnelService';
-import {
-  IUsersAnalyticsService,
-  UsersAnalyticsService,
-} from '../services/UsersAnalyticsService';
+import { IUsersAnalyticsService, UsersAnalyticsService } from '../services/UsersAnalyticsService';
 import { IUserRolesService, UserRolesService } from '../services/UserRolesService';
 import {
   IAudienceBuilderQueryService,
-  AudienceBuilderQueryService
+  AudienceBuilderQueryService,
 } from '../containers/Audience/AudienceBuilder/AudienceBuilderQueryService';
-
 
 export const container = new Container();
 
-container
-  .bind<IAudienceBuilderService>(TYPES.IAudienceBuilderService)
-  .to(AudienceBuilderService);
-container
-  .bind<IEmailCampaignService>(TYPES.IEmailCampaignService)
-  .to(EmailCampaignService);
+container.bind<IAudienceBuilderService>(TYPES.IAudienceBuilderService).to(AudienceBuilderService);
+container.bind<IEmailCampaignService>(TYPES.IEmailCampaignService).to(EmailCampaignService);
 container
   .bind<IEmailCampaignFormService>(TYPES.IEmailCampaignFormService)
   .to(EmailCampaignFormService);
-container
-  .bind<IAudienceSegmentService>(TYPES.IAudienceSegmentService)
-  .to(AudienceSegmentService);
+container.bind<IAudienceSegmentService>(TYPES.IAudienceSegmentService).to(AudienceSegmentService);
 container
   .bind<IAudienceFeedFormService>(TYPES.IAudienceFeedFormService)
   .to(AudienceFeedFormService);
@@ -252,30 +202,18 @@ container
   .bind<IScenarioExitConditionService>(TYPES.IScenarioExitConditionService)
   .to(ScenarioExitConditionService);
 container.bind<IDatamartService>(TYPES.IDatamartService).to(DatamartService);
-container
-  .bind<IDisplayNetworkService>(TYPES.IDisplayNetworkService)
-  .to(DisplayNetworkService);
-container
-  .bind<IComparmentService>(TYPES.ICompartmentService)
-  .to(CompartmentService);
-container
-  .bind<IAutomationFormService>(TYPES.IAutomationFormService)
-  .to(AutomationFormService);
+container.bind<IDisplayNetworkService>(TYPES.IDisplayNetworkService).to(DisplayNetworkService);
+container.bind<IComparmentService>(TYPES.ICompartmentService).to(CompartmentService);
+container.bind<IAutomationFormService>(TYPES.IAutomationFormService).to(AutomationFormService);
 container.bind<IQueryService>(TYPES.IQueryService).to(QueryService);
 container.bind<IGoalFormService>(TYPES.IGoalFormService).to(GoalFormService);
 container.bind<IGoalService>(TYPES.IGoalService).to(GoalService);
 container.bind<IUserDataService>(TYPES.IUserDataService).to(UserDataService);
 container.bind<IUsersService>(TYPES.IUsersService).to(UsersService);
-container
-  .bind<IMonitoringService>(TYPES.IMonitoringService)
-  .to(MonitoringService);
-container
-  .bind<IMlFunctionService>(TYPES.IMlFunctionService)
-  .to(MlFunctionService);
+container.bind<IMonitoringService>(TYPES.IMonitoringService).to(MonitoringService);
+container.bind<IMlFunctionService>(TYPES.IMlFunctionService).to(MlFunctionService);
 
-container
-  .bind<IMlAlgorithmService>(TYPES.IMlAlgorithmService)
-  .to(MlAlgorithmService);
+container.bind<IMlAlgorithmService>(TYPES.IMlAlgorithmService).to(MlAlgorithmService);
 container
   .bind<IMlAlgorithmModelService>(TYPES.IMlAlgorithmModelService)
   .to(MlAlgorithmModelService);
@@ -291,15 +229,11 @@ container.bind<IGeonameService>(TYPES.IGeonameService).to(GeonameService);
 container.bind<ISettingsService>(TYPES.ISettingsService).to(SettingsService);
 container.bind<IDashboardService>(TYPES.IDashboardService).to(DashboardService);
 container.bind<ICatalogService>(TYPES.ICatalogService).to(CatalogService);
-container
-  .bind<ILibraryCatalogService>(TYPES.ILibraryCatalogService)
-  .to(LibraryCatalogService);
+container.bind<ILibraryCatalogService>(TYPES.ILibraryCatalogService).to(LibraryCatalogService);
 container
   .bind<IServiceOfferPageService>(TYPES.IServiceOfferPageService)
   .to(ServiceOfferPageService);
-container
-  .bind<IFeedsStatsService>(TYPES.IFeedsStatsService)
-  .to(FeedsStatsService);
+container.bind<IFeedsStatsService>(TYPES.IFeedsStatsService).to(FeedsStatsService);
 container.bind<ITagService>(TYPES.ITagService).to(TagService);
 container.bind<IAuthService>(TYPES.IAuthService).to(AuthService);
 container.bind<ILabelService>(TYPES.ILabelService).to(LabelService);
@@ -313,72 +247,48 @@ container.bind<ICreativeService>(TYPES.ICreativeService).to(CreativeService);
 container
   .bind<IDisplayCreativeFormService>(TYPES.IDisplayCreativeFormService)
   .to(DisplayCreativeFormService);
-container
-  .bind<IAdGroupFormService>(TYPES.IAdGroupFormService)
-  .to(AdGroupFormService);
-container
-  .bind<IDisplayCampaignService>(TYPES.IDisplayCampaignService)
-  .to(DisplayCampaignService);
-container
-  .bind<IVisitAnalyzerService>(TYPES.IVisitAnalyzerService)
-  .to(VisitAnalyzerService);
-container
-  .bind<IRecommenderService>(TYPES.IRecommenderService)
-  .to(RecommenderService);
-container
-  .bind<IEmailRouterService>(TYPES.IEmailRouterService)
-  .to(EmailRouterService);
+container.bind<IAdGroupFormService>(TYPES.IAdGroupFormService).to(AdGroupFormService);
+container.bind<IDisplayCampaignService>(TYPES.IDisplayCampaignService).to(DisplayCampaignService);
+container.bind<IVisitAnalyzerService>(TYPES.IVisitAnalyzerService).to(VisitAnalyzerService);
+container.bind<IRecommenderService>(TYPES.IRecommenderService).to(RecommenderService);
+container.bind<IEmailRouterService>(TYPES.IEmailRouterService).to(EmailRouterService);
 container
   .bind<IServiceUsageReportService>(TYPES.IServiceUsageReportService)
   .to(ServiceUsageReportService);
-container
-  .bind<IRuntimeSchemaService>(TYPES.IRuntimeSchemaService)
-  .to(RuntimeSchemaService);
+container.bind<IRuntimeSchemaService>(TYPES.IRuntimeSchemaService).to(RuntimeSchemaService);
 container
   .bind<IDatamartReplicationService>(TYPES.IDatamartReplicationService)
   .to(DatamartReplicationService);
-container
-  .bind<IResourceHistoryService>(TYPES.IResourceHistoryService)
-  .to(ResourceHistoryService);
-container
-  .bind<IReferenceTableService>(TYPES.IReferenceTableService)
-  .to(ReferenceTableService);
+container.bind<IResourceHistoryService>(TYPES.IResourceHistoryService).to(ResourceHistoryService);
+container.bind<IReferenceTableService>(TYPES.IReferenceTableService).to(ReferenceTableService);
 container.bind<IDataFileService>(TYPES.IDataFileService).to(DataFileService);
 container
-  .bind<interfaces.Factory<IAudienceExternalFeedService>>(
-    TYPES.IAudienceExternalFeedServiceFactory,
-  )
+  .bind<interfaces.Factory<IAudienceExternalFeedService>>(TYPES.IAudienceExternalFeedServiceFactory)
   .toFactory<IAudienceExternalFeedService>((context: interfaces.Context) => {
     return (segmentId: string) => {
-      const audienceExternalFeedService = context.container.get<
-        IAudienceExternalFeedService
-      >(TYPES.IAudienceExternalFeedService);
+      const audienceExternalFeedService = context.container.get<IAudienceExternalFeedService>(
+        TYPES.IAudienceExternalFeedService,
+      );
       audienceExternalFeedService.segmentId = segmentId;
       return audienceExternalFeedService;
     };
   });
 container
-  .bind<interfaces.Factory<IAudienceTagFeedService>>(
-    TYPES.IAudienceTagFeedServiceFactory,
-  )
+  .bind<interfaces.Factory<IAudienceTagFeedService>>(TYPES.IAudienceTagFeedServiceFactory)
   .toFactory<IAudienceTagFeedService>((context: interfaces.Context) => {
     return (segmentId: string) => {
-      const audienceTagFeedService = context.container.get<
-        IAudienceTagFeedService
-      >(TYPES.IAudienceTagFeedService);
+      const audienceTagFeedService = context.container.get<IAudienceTagFeedService>(
+        TYPES.IAudienceTagFeedService,
+      );
       audienceTagFeedService.segmentId = segmentId;
       return audienceTagFeedService;
     };
   });
 container
-  .bind<interfaces.Factory<IAudienceSegmentFeedService>>(
-    TYPES.IAudienceSegmentFeedServiceFactory,
-  )
+  .bind<interfaces.Factory<IAudienceSegmentFeedService>>(TYPES.IAudienceSegmentFeedServiceFactory)
   .toFactory<IAudienceSegmentFeedService>((context: interfaces.Context) => {
     return (feedType: AudienceFeedType) => (segmentId: string) => {
-      const audienceSegmentFeedService = context.container.getNamed<
-        IAudienceSegmentFeedService
-      >(
+      const audienceSegmentFeedService = context.container.getNamed<IAudienceSegmentFeedService>(
         feedType === 'EXTERNAL_FEED'
           ? TYPES.IAudienceExternalFeedService
           : TYPES.IAudienceTagFeedService,
@@ -393,15 +303,11 @@ container
 container
   .bind<IDatamartUsersAnalyticsService>(TYPES.IDatamartUsersAnalyticsService)
   .to(DatamartUsersAnalyticsService);
-container
-  .bind<IAudienceFeatureService>(TYPES.IAudienceFeatureService)
-  .to(AudienceFeatureService);
+container.bind<IAudienceFeatureService>(TYPES.IAudienceFeatureService).to(AudienceFeatureService);
 container
   .bind<IUserActivitiesFunnelService>(TYPES.IUserActivitiesFunnelService)
   .to(UserActivitiesFunnelService);
-container
-  .bind<IUsersAnalyticsService>(TYPES.IUsersAnalyticsService)
-  .to(UsersAnalyticsService);
+container.bind<IUsersAnalyticsService>(TYPES.IUsersAnalyticsService).to(UsersAnalyticsService);
 container.bind<IUserRolesService>(TYPES.IUserRolesService).to(UserRolesService);
 container.bind<ICustomActionService>(TYPES.ICustomActionService).to(CustomActionService);
 container

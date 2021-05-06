@@ -1,83 +1,82 @@
 .mcs-creative-card {
+  width: 100%;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  background-color: #ffffff;
+  border: solid 1px #e8e8e8;
+
+  .creative-cover {
     width: 100%;
-    border-radius: 4px;
-    margin-bottom: 20px;
-    background-color: #ffffff;
-    border: solid 1px #e8e8e8;
+    height: 200px;
+    overflow: hidden;
 
-    .creative-cover {
-        width: 100%;
-        height: 200px;
-        overflow: hidden;
-
-        .background-image {
-            width: 100%;
-            height: 200px;
-            -webkit-filter: blur(10px) brightness(70%);
-            -moz-filter: blur(10px) brightness(70%);
-            -o-filter: blur(10px) brightness(70%);
-            -ms-filter: blur(10px) brightness(70%);
-            filter: blur(10px) brightness(70%);
-            -webkit-background-size: cover;
-            -moz-background-size: cover;
-            -o-background-size: cover;
-            background-size: cover;
-        }
-        .image-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-
-            height: 200px;
-            width: 100%;
-            padding: 20px;
-            text-align: center;
-
-            .helper {
-                display: inline-block;
-                height: 100%;
-                vertical-align: middle;
-            }
-
-            .image {
-                max-height: 100%;
-                max-width: 100%;
-                text-align: center;
-            }
-        }
+    .background-image {
+      width: 100%;
+      height: 200px;
+      -webkit-filter: blur(10px) brightness(70%);
+      -moz-filter: blur(10px) brightness(70%);
+      -o-filter: blur(10px) brightness(70%);
+      -ms-filter: blur(10px) brightness(70%);
+      filter: blur(10px) brightness(70%);
+      -webkit-background-size: cover;
+      -moz-background-size: cover;
+      -o-background-size: cover;
+      background-size: cover;
     }
+    .image-container {
+      position: absolute;
+      top: 0;
+      left: 0;
 
-    .creative-details {
-        width: 100%;
-        
+      height: 200px;
+      width: 100%;
+      padding: 20px;
+      text-align: center;
 
-        .title {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: block;
-            padding: 10px 5px 0;
-            font-weight: 500;
-        }
-        .subtitle {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: block;
-            padding: 5px 0;
-            color: #919191;
-            font-weight: 500;
-        }
+      .helper {
+        display: inline-block;
+        height: 100%;
+        vertical-align: middle;
+      }
+
+      .image {
+        max-height: 100%;
+        max-width: 100%;
+        text-align: center;
+      }
     }
+  }
 
-    .creative-footer {
-        text-align: right;
-        padding: 0 5px;
-        margin: 10px 0;
-        
-        .creativecard-audit-button {
-            border: 0px solid transparent;
-            padding: 0px;
-        }
+  .creative-details {
+    width: 100%;
+
+    .title {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: block;
+      padding: 10px 5px 0;
+      font-weight: 500;
     }
+    .subtitle {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: block;
+      padding: 5px 0;
+      color: #919191;
+      font-weight: 500;
+    }
+  }
+
+  .creative-footer {
+    text-align: right;
+    padding: 0 5px;
+    margin: 10px 0;
+
+    .creativecard-audit-button {
+      border: 0px solid transparent;
+      padding: 0px;
+    }
+  }
 }

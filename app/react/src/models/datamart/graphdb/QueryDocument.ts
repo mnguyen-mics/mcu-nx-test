@@ -8,11 +8,7 @@ export type StringComparisonOperator =
   | 'CONTAINS'
   | 'DOES_NOT_CONTAIN';
 
-export type TimeComparisonOperator =
-  | 'BEFORE'
-  | 'BEFORE_OR_EQUAL'
-  | 'AFTER'
-  | 'AFTER_OR_EQUAL';
+export type TimeComparisonOperator = 'BEFORE' | 'BEFORE_OR_EQUAL' | 'AFTER' | 'AFTER_OR_EQUAL';
 
 export type QueryFieldComparisonType =
   | 'NUMERIC'
@@ -27,13 +23,7 @@ export type EnumComparisonOperator = 'EQUAL' | 'NOT_EQUAL';
 
 export type BooleanComparisonOperator = 'EQUAL' | 'NOT_EQUAL';
 
-export type NumericComparisonOperator =
-  | 'EQUAL'
-  | 'NOT_EQUAL'
-  | 'LT'
-  | 'LTE'
-  | 'GT'
-  | 'GTE';
+export type NumericComparisonOperator = 'EQUAL' | 'NOT_EQUAL' | 'LT' | 'LTE' | 'GT' | 'GTE';
 
 export type QueryFieldComparisonShape =
   | StringFieldComparison
@@ -86,27 +76,17 @@ export interface TimeFieldComparison {
   values: string[];
 }
 
-export type ObjectTreeExpressionNodeShape =
-  | FieldNode
-  | GroupNode
-  | ObjectNode
-  | TaxonomyObjectNode;
+export type ObjectTreeExpressionNodeShape = FieldNode | GroupNode | ObjectNode | TaxonomyObjectNode;
 
-export function isFieldNode(
-  node: ObjectTreeExpressionNodeShape,
-): node is FieldNode {
+export function isFieldNode(node: ObjectTreeExpressionNodeShape): node is FieldNode {
   return node.type === 'FIELD';
 }
 
-export function isObjectNode(
-  node: ObjectTreeExpressionNodeShape,
-): node is ObjectNode {
+export function isObjectNode(node: ObjectTreeExpressionNodeShape): node is ObjectNode {
   return node.type === 'OBJECT';
 }
 
-export function isGroupNode(
-  node: ObjectTreeExpressionNodeShape,
-): node is GroupNode {
+export function isGroupNode(node: ObjectTreeExpressionNodeShape): node is GroupNode {
   return node.type === 'GROUP';
 }
 
@@ -147,7 +127,7 @@ export type QueryFieldExistence = 'EXISTS' | 'DOES_NOT_EXIST';
 
 export interface SelectionField {
   name: string;
-  selections?: SelectionField[]
+  selections?: SelectionField[];
   directives?: DirectiveField[];
 }
 
@@ -165,5 +145,5 @@ export interface QueryDocument {
   operations: SelectionOperation[];
   // aggregations: Aggregation[],
   from: string;
-  where?: ObjectTreeExpressionNodeShape
+  where?: ObjectTreeExpressionNodeShape;
 }

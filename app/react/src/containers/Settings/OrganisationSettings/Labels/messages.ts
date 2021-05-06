@@ -27,11 +27,12 @@ const messages = defineMessages({
   },
   emptyLabels: {
     id: 'settings.organisation.labels.empty',
-    defaultMessage: 'There are no Labels set up. Click on \'New Label\' to create one.',
+    defaultMessage: "There are no Labels set up. Click on 'New Label' to create one.",
   },
   labelAlreadyExists: {
     id: 'settings.organisation.label.already_exists',
-    defaultMessage: 'This Label name is already taken and a Label\'s name must be unique, please select another one.',
+    defaultMessage:
+      "This Label name is already taken and a Label's name must be unique, please select another one.",
   },
   saveLabel: {
     id: 'settings.organisation.label.saveLabel',
@@ -52,7 +53,7 @@ const messages = defineMessages({
   archiveModalTitle: {
     id: 'settings.organisation.labels.archiveModal.title',
     defaultMessage: 'Do you want to delete this item ?',
-  }
+  },
 });
 
 export default messages;

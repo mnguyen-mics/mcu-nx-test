@@ -2,12 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Menu, Button } from 'antd';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
-import {
-  FormattedMessage,
-  defineMessages,
-  InjectedIntlProps,
-  injectIntl,
-} from 'react-intl';
+import { FormattedMessage, defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { Dropdown } from '../../../../../components/PopupContainers/index';
 
@@ -27,9 +22,7 @@ interface MapStateToProps {
   defaultDatamart: (organisationId: string) => DatamartResource;
 }
 
-type Props = MapStateToProps &
-  InjectedIntlProps &
-  RouteComponentProps<{ organisationId: string }>;
+type Props = MapStateToProps & InjectedIntlProps & RouteComponentProps<{ organisationId: string }>;
 
 class AudiencePartitionsActionbar extends React.Component<Props> {
   render() {
@@ -44,13 +37,13 @@ class AudiencePartitionsActionbar extends React.Component<Props> {
     const datamartId = defaultDatamart(organisationId).id;
     const addMenu = (
       <Menu>
-        <Menu.Item key="RANDOM_SPLIT">
+        <Menu.Item key='RANDOM_SPLIT'>
           <Link
             to={`/v2/o/${organisationId}/settings/datamart/audience/partitions/create?datamarts=${datamartId}&type=RANDOM_SPLIT`}
           >
             <FormattedMessage
-              id="audience.partitions.list.actionbar.menu.randomSplit"
-              defaultMessage="Random Split"
+              id='audience.partitions.list.actionbar.menu.randomSplit'
+              defaultMessage='Random Split'
             />
           </Link>
         </Menu.Item>
@@ -70,17 +63,19 @@ class AudiencePartitionsActionbar extends React.Component<Props> {
     );
 
     const breadcrumbPaths = [
-      <Link key="1" to={`/v2/o/${organisationId}/settings/datamart/audience/partitions`}>{intl.formatMessage(messages.AUDIENCE_PARTITIONS)}</Link>
+      <Link key='1' to={`/v2/o/${organisationId}/settings/datamart/audience/partitions`}>
+        {intl.formatMessage(messages.AUDIENCE_PARTITIONS)}
+      </Link>,
     ];
 
     return (
       <Actionbar pathItems={breadcrumbPaths}>
         <Dropdown overlay={addMenu} trigger={['click']}>
-          <Button className="mcs-primary" type="primary">
-            <McsIcon type="plus" />{' '}
+          <Button className='mcs-primary' type='primary'>
+            <McsIcon type='plus' />{' '}
             <FormattedMessage
-              id="audience.partitions.list.actionbar.newPartition"
-              defaultMessage="New Partition"
+              id='audience.partitions.list.actionbar.newPartition'
+              defaultMessage='New Partition'
             />
           </Button>
         </Dropdown>
@@ -96,8 +91,5 @@ const mapStateToProps = (state: MicsReduxState) => ({
 export default compose(
   withRouter,
   injectIntl,
-  connect(
-    mapStateToProps,
-    undefined,
-  ),
+  connect(mapStateToProps, undefined),
 )(AudiencePartitionsActionbar);

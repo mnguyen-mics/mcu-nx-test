@@ -5,9 +5,8 @@ import { creativesDefinition } from './creativeRoutes';
 import { libraryDefinition } from './libraryRoutes';
 import { datastudioDefinition } from './datastudioRoutes';
 import { NavigatorMenuDefinition, generateMissingdefinitionItemFromRoute } from './domain';
-import messages from '../containers/Menu/messages'
+import messages from '../containers/Menu/messages';
 import { marketplaceDefinition } from './marketplaceRoutes';
-
 
 const audienceMenuDefinition: NavigatorMenuDefinition = {
   iconType: 'users',
@@ -16,19 +15,19 @@ const audienceMenuDefinition: NavigatorMenuDefinition = {
   subMenuItems: [
     {
       ...generateMissingdefinitionItemFromRoute(audienceDefinition.audienceHome),
-      translation: messages.audienceHome
+      translation: messages.audienceHome,
     },
     {
       ...generateMissingdefinitionItemFromRoute(audienceDefinition.audienceSegmentList),
-      translation: messages.audienceSegment
+      translation: messages.audienceSegment,
     },
     {
       ...generateMissingdefinitionItemFromRoute(audienceDefinition.audienceFeedOverview),
-      translation: messages.audienceFeeds
+      translation: messages.audienceFeeds,
     },
     {
       ...generateMissingdefinitionItemFromRoute(audienceDefinition.segmentBuilder),
-      translation: messages.segmentBuilder
+      translation: messages.segmentBuilder,
     },
     {
       ...generateMissingdefinitionItemFromRoute(audienceDefinition.segmentBuilderSelector),
@@ -37,10 +36,10 @@ const audienceMenuDefinition: NavigatorMenuDefinition = {
     },
     {
       ...generateMissingdefinitionItemFromRoute(audienceDefinition.audienceTimelineHome),
-      translation: messages.audienceMonitoring
+      translation: messages.audienceMonitoring,
     },
-  ]
-}
+  ],
+};
 
 const campaignsMenuDefinition: NavigatorMenuDefinition = {
   iconType: 'display',
@@ -49,18 +48,18 @@ const campaignsMenuDefinition: NavigatorMenuDefinition = {
   subMenuItems: [
     {
       ...generateMissingdefinitionItemFromRoute(campaignsDefinition.campaignDisplayList),
-      translation: messages.campaignDisplay
+      translation: messages.campaignDisplay,
     },
     {
       ...generateMissingdefinitionItemFromRoute(campaignsDefinition.campaignEmailList),
-      translation: messages.campaignEmail
+      translation: messages.campaignEmail,
     },
     {
       ...generateMissingdefinitionItemFromRoute(campaignsDefinition.campaignGoalList),
-      translation: messages.campaignGoals
+      translation: messages.campaignGoals,
     },
-  ]
-}
+  ],
+};
 
 const automationsMenuDefinition: NavigatorMenuDefinition = {
   iconType: 'automation',
@@ -70,14 +69,14 @@ const automationsMenuDefinition: NavigatorMenuDefinition = {
   subMenuItems: [
     {
       ...generateMissingdefinitionItemFromRoute(automationDefinition.automationsList),
-      translation: messages.automationList
+      translation: messages.automationList,
     },
     {
       ...generateMissingdefinitionItemFromRoute(automationDefinition.automationBuilder),
-      translation: messages.automationBuilder
+      translation: messages.automationBuilder,
     },
-  ]
-}
+  ],
+};
 
 const creativesMenuDefinition: NavigatorMenuDefinition = {
   iconType: 'creative',
@@ -92,8 +91,8 @@ const creativesMenuDefinition: NavigatorMenuDefinition = {
       ...generateMissingdefinitionItemFromRoute(creativesDefinition.creativeEmailList),
       translation: messages.creativesEmails,
     },
-  ]
-}
+  ],
+};
 
 const libraryMenuDefinition: NavigatorMenuDefinition = {
   iconType: 'library',
@@ -116,8 +115,8 @@ const libraryMenuDefinition: NavigatorMenuDefinition = {
       ...generateMissingdefinitionItemFromRoute(libraryDefinition.libraryAssetList),
       translation: messages.libraryAssets,
     },
-  ]
-}
+  ],
+};
 
 const datastudioMenuDefinition: NavigatorMenuDefinition = {
   iconType: 'data',
@@ -131,7 +130,7 @@ const datastudioMenuDefinition: NavigatorMenuDefinition = {
     {
       ...generateMissingdefinitionItemFromRoute(datastudioDefinition.datastudioFunnel),
       translation: messages.dataStudioFunnel,
-      mention: 'BETA'
+      mention: 'BETA',
     },
     {
       ...generateMissingdefinitionItemFromRoute(datastudioDefinition.datastudioReport),
@@ -145,8 +144,8 @@ const datastudioMenuDefinition: NavigatorMenuDefinition = {
       ...generateMissingdefinitionItemFromRoute(datastudioDefinition.datastudioImportList),
       translation: messages.libraryImports,
     },
-  ]
-}
+  ],
+};
 
 const marketplaceMenuDefinition: NavigatorMenuDefinition = {
   iconType: 'warning',
@@ -157,11 +156,8 @@ const marketplaceMenuDefinition: NavigatorMenuDefinition = {
       ...generateMissingdefinitionItemFromRoute(marketplaceDefinition.marketplaceOfferCatalogList),
       translation: messages.marketplaceOfferCatalog,
     },
-  ]
-}
-
-
-
+  ],
+};
 
 export const menuDefinitions: NavigatorMenuDefinition[] = [
   audienceMenuDefinition,
@@ -170,5 +166,5 @@ export const menuDefinitions: NavigatorMenuDefinition[] = [
   creativesMenuDefinition,
   libraryMenuDefinition,
   datastudioMenuDefinition,
-  marketplaceMenuDefinition
+  marketplaceMenuDefinition,
 ];

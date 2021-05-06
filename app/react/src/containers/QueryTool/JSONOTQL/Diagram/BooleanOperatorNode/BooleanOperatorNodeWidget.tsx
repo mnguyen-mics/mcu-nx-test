@@ -6,13 +6,14 @@ import { TreeNodeOperations, MicsDiagramEngine } from '../../domain';
 import WindowBodyPortal from '../../../../../components/WindowBodyPortal';
 import { DropTarget, ConnectDropTarget } from 'react-dnd';
 import { compose } from 'recompose';
-import injectThemeColors, {
-  InjectedThemeColorsProps,
-} from '../../../../Helpers/injectThemeColors';
+import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
 import FourAnchorPortWidget from '../Common/FourAnchorPortWidget';
 import { FormattedMessage } from 'react-intl';
 import messages from '../Common/messages';
-import { QueryBooleanOperator, ObjectTreeExpressionNodeShape } from '../../../../../models/datamart/graphdb/QueryDocument';
+import {
+  QueryBooleanOperator,
+  ObjectTreeExpressionNodeShape,
+} from '../../../../../models/datamart/graphdb/QueryDocument';
 
 const addinTarget = {
   canDrop() {
@@ -34,9 +35,7 @@ interface BooleanOperatorNodeWidgetProps {
 
 type OperatorName = 'AND' | 'OR' | 'AND_NOT' | 'OR_NOT';
 
-type Props = DroppedItemProps &
-  BooleanOperatorNodeWidgetProps &
-  InjectedThemeColorsProps;
+type Props = DroppedItemProps & BooleanOperatorNodeWidgetProps & InjectedThemeColorsProps;
 interface State {
   hover: boolean;
   focus: boolean;
@@ -105,8 +104,8 @@ class BooleanOperatorNodeWidget extends React.Component<Props, State> {
 
   pasteNode = () => {
     const { node, treeNodeOperations, lockGlobalInteraction } = this.props;
-    const canPaste = this.canPasteHere()
-    const objectTree = canPaste ? {...canPaste} : undefined;
+    const canPaste = this.canPasteHere();
+    const objectTree = canPaste ? { ...canPaste } : undefined;
     if (objectTree) {
       this.setState({ focus: false }, () => {
         lockGlobalInteraction(false);
@@ -115,17 +114,17 @@ class BooleanOperatorNodeWidget extends React.Component<Props, State> {
             ...node.objectOrGroupNode,
           };
           const newObjectTree = {
-            ...objectTree
-          }
-          newObject.expressions.push(newObjectTree)
+            ...objectTree,
+          };
+          newObject.expressions.push(newObjectTree);
           treeNodeOperations.updateNode(node.treeNodePath, newObject);
         }
-        this.props.diagramEngine.emptyClipboard()
+        this.props.diagramEngine.emptyClipboard();
       });
     }
   };
 
-  canPasteHere = (): ObjectTreeExpressionNodeShape | undefined => {
+  canPasteHere = (): ObjectTreeExpressionNodeShape | undefined => {
     if (
       this.props.node.objectOrGroupNode.type === 'GROUP' &&
       this.props.diagramEngine.isCopying()
@@ -170,7 +169,7 @@ class BooleanOperatorNodeWidget extends React.Component<Props, State> {
       readonly [key in OperatorName]: {
         booleanOperator: QueryBooleanOperator;
         negation: boolean;
-      }
+      };
     } = {
       AND: { booleanOperator: 'AND', negation: false },
       AND_NOT: { booleanOperator: 'AND', negation: true },
@@ -183,7 +182,7 @@ class BooleanOperatorNodeWidget extends React.Component<Props, State> {
     if (this.props.diagramEngine.isCopying()) {
       if (this.canPasteHere()) {
         editMenu.push(
-          <div onClick={this.pasteNode} className="boolean-menu-item">
+          <div onClick={this.pasteNode} className='boolean-menu-item'>
             <FormattedMessage {...messages.paste} />
           </div>,
         );
@@ -191,12 +190,12 @@ class BooleanOperatorNodeWidget extends React.Component<Props, State> {
     } else {
       if (this.props.node.objectOrGroupNode.type === 'GROUP') {
         editMenu.push(
-          <div onClick={this.copyNode} className="boolean-menu-item">
+          <div onClick={this.copyNode} className='boolean-menu-item'>
             <FormattedMessage {...messages.copy} />
           </div>,
         );
         editMenu.push(
-          <div onClick={this.cutNode} className="boolean-menu-item">
+          <div onClick={this.cutNode} className='boolean-menu-item'>
             <FormattedMessage {...messages.cut} />
           </div>,
         );
@@ -204,7 +203,7 @@ class BooleanOperatorNodeWidget extends React.Component<Props, State> {
     }
 
     editMenu.push(
-      <div onClick={this.removeGroup} className="boolean-menu-item">
+      <div onClick={this.removeGroup} className='boolean-menu-item'>
         <FormattedMessage {...messages.remove} />
       </div>,
     );
@@ -214,7 +213,7 @@ class BooleanOperatorNodeWidget extends React.Component<Props, State> {
       connectDropTarget(
         <div id={this.id} ref={setRef} style={{ opacity }}>
           <span
-            className="boolean-node"
+            className='boolean-node'
             style={{
               ...node.getSize(),
               backgroundColor: backgroundColor,
@@ -232,7 +231,7 @@ class BooleanOperatorNodeWidget extends React.Component<Props, State> {
 
           {this.state.focus && (
             <WindowBodyPortal>
-              <div className="query-builder">
+              <div className='query-builder'>
                 <div
                   onClick={onClick}
                   style={{
@@ -247,16 +246,14 @@ class BooleanOperatorNodeWidget extends React.Component<Props, State> {
                   }}
                 />
                 <span
-                  className="boolean-node"
+                  className='boolean-node'
                   style={{
                     ...node.getSize(),
                     backgroundColor: node.getColor(),
                     color: '#ffffff',
                     borderColor: node.getColor(),
-                    top:
-                      this.top - node.getSize().height * ((1 - zoomRatio) / 2),
-                    left:
-                      this.left - node.getSize().width * ((1 - zoomRatio) / 2),
+                    top: this.top - node.getSize().height * ((1 - zoomRatio) / 2),
+                    left: this.left - node.getSize().width * ((1 - zoomRatio) / 2),
                     position: 'absolute',
                     zIndex: 1002,
                     transform: `scale(${zoomRatio})`,
@@ -264,13 +261,9 @@ class BooleanOperatorNodeWidget extends React.Component<Props, State> {
                 >
                   {node.objectOrGroupNode.boolean_operator}
                 </span>
-                <CSSTransition
-                  timeout={500}
-                  classNames={'fade'}
-                  in={this.state.focus}
-                >
+                <CSSTransition timeout={500} classNames={'fade'} in={this.state.focus}>
                   <div
-                    className="boolean-menu"
+                    className='boolean-menu'
                     style={{
                       top: this.top,
                       left: this.left + node.getSize().width * zoomRatio,
@@ -281,27 +274,23 @@ class BooleanOperatorNodeWidget extends React.Component<Props, State> {
                       .filter((opName: OperatorName) => {
                         return (
                           operators[opName].booleanOperator !==
-                            this.props.node.objectOrGroupNode
-                              .boolean_operator ||
+                            this.props.node.objectOrGroupNode.boolean_operator ||
                           operators[opName].negation !==
-                            (this.props.node.objectOrGroupNode.negation ||
-                              false)
+                            (this.props.node.objectOrGroupNode.negation || false)
                         );
                       })
                       .map((opName: OperatorName) => {
                         return (
                           <div
-                            onClick={this.changeBooleanOperator(
-                              operators[opName],
-                            )}
-                            className="boolean-menu-item"
+                            onClick={this.changeBooleanOperator(operators[opName])}
+                            className='boolean-menu-item'
                             key={opName}
                           >
                             <FormattedMessage {...messages[opName]} />
                           </div>
                         );
                       })}
-                   {editMenu}
+                    {editMenu}
                   </div>
                 </CSSTransition>
               </div>

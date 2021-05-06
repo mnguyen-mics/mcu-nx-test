@@ -1,5 +1,3 @@
 import MlFunctionsContent from './MlFunctionsContent';
 
-export {
-  MlFunctionsContent,
-};
+export { MlFunctionsContent };

@@ -1,5 +1,3 @@
 import EmailRouterContent from './EmailRoutersList';
 
-export {
-  EmailRouterContent,
-};
+export { EmailRouterContent };

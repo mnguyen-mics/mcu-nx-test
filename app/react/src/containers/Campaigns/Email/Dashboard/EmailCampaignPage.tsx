@@ -53,8 +53,7 @@ const messageMap = defineMessages({
   },
   statusUpdateFailure: {
     id: 'email.campaigns.page.status-update-failure',
-    defaultMessage:
-      'There was an error updating your campaign... Please try again...',
+    defaultMessage: 'There was an error updating your campaign... Please try again...',
   },
   notifSuccess: {
     id: 'email.campaigns.page.notification-success',
@@ -129,10 +128,7 @@ class EmailCampaign extends React.Component<Props, State> {
       },
     } = previousProps;
 
-    if (
-      !compareSearches(search, previousSearch) ||
-      campaignId !== previousCampaignId
-    ) {
+    if (!compareSearches(search, previousSearch) || campaignId !== previousCampaignId) {
       if (!isSearchValid(search, EMAIL_DASHBOARD_SEARCH_SETTINGS)) {
         history.replace({
           pathname: pathname,
@@ -179,13 +175,9 @@ class EmailCampaign extends React.Component<Props, State> {
       isLoadingCampaignStatReport: true,
     });
 
-    ReportService.getSingleEmailDeliveryReport(
-      organisationId,
-      campaignId,
-      filter.from,
-      filter.to,
-      ['day'],
-    )
+    ReportService.getSingleEmailDeliveryReport(organisationId, campaignId, filter.from, filter.to, [
+      'day',
+    ])
       .then(res => {
         this.setState({
           isLoadingCampaignStatReport: false,
@@ -209,11 +201,7 @@ class EmailCampaign extends React.Component<Props, State> {
 
     const nextLocation = {
       pathname,
-      search: updateSearch(
-        currentSearch,
-        params,
-        EMAIL_DASHBOARD_SEARCH_SETTINGS,
-      ),
+      search: updateSearch(currentSearch, params, EMAIL_DASHBOARD_SEARCH_SETTINGS),
     };
 
     history.push(nextLocation);
@@ -274,8 +262,7 @@ class EmailCampaign extends React.Component<Props, State> {
       EMAIL_DASHBOARD_SEARCH_SETTINGS,
     ) as EmailDashboardSearchSettings;
 
-    const handleDateRangeChange = (values: McsDateRangeValue) =>
-      this.updateLocationSearch(values);
+    const handleDateRangeChange = (values: McsDateRangeValue) => this.updateLocationSearch(values);
 
     const items = [
       {
@@ -302,19 +289,19 @@ class EmailCampaign extends React.Component<Props, State> {
     };
 
     return (
-      <div className="ant-layout">
+      <div className='ant-layout'>
         <EmailCampaignActionbar
           campaign={campaign}
           activateCampaign={handleActivate}
           pauseCampaign={handlePause}
           archiveCampaign={handleArchive}
         />
-        <div className="ant-layout">
-          <Content className="mcs-content-container">
+        <div className='ant-layout'>
+          <Content className='mcs-content-container'>
             <CampaignDashboardHeader campaign={campaign} />
             <Labels
               labellableId={campaignId}
-              labellableType="EMAIL_CAMPAIGN"
+              labellableType='EMAIL_CAMPAIGN'
               organisationId={organisationId}
             />
             <Card>
@@ -328,8 +315,4 @@ class EmailCampaign extends React.Component<Props, State> {
   }
 }
 
-export default compose(
-  withRouter,
-  injectIntl,
-  injectNotifications,
-)(EmailCampaign);
+export default compose(withRouter, injectIntl, injectNotifications)(EmailCampaign);

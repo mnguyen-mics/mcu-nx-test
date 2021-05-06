@@ -47,7 +47,8 @@ export default defineMessages({
   },
   warningOnTokenEdition: {
     id: 'settings.compartments.form.general.token.warning',
-    defaultMessage: 'Danger Zone: Editing this token may cause any web site data collection tag to fail if not updated properly. Please make sure you have updated all your tags before saving.',
+    defaultMessage:
+      'Danger Zone: Editing this token may cause any web site data collection tag to fail if not updated properly. Please make sure you have updated all your tags before saving.',
   },
   sectionGeneralAdvancedTitle: {
     id: 'settings.compartments.form.general.advanced.title',

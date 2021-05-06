@@ -13,20 +13,21 @@ interface ReduxStateProps {
   hasFeature: (featureName: string) => boolean;
 }
 
-const FeatureSwitch: React.SFC<FeatureSwitchProps & ReduxStateProps> = (
-  { featureName, enabledComponent, disabledComponent, hasFeature },
-) => {
-
+const FeatureSwitch: React.SFC<FeatureSwitchProps & ReduxStateProps> = ({
+  featureName,
+  enabledComponent,
+  disabledComponent,
+  hasFeature,
+}) => {
   const componentIsEnabled = hasFeature(featureName);
 
-  return componentIsEnabled ?
-    enabledComponent : disabledComponent!;
+  return componentIsEnabled ? enabledComponent : disabledComponent!;
 };
 
 FeatureSwitch.defaultProps = {
   disabledComponent: null,
 };
 
-export default connect(
-  (state: MicsReduxState) => ({ hasFeature: FeatureSelectors.hasFeature(state) }),
-)(FeatureSwitch);
+export default connect((state: MicsReduxState) => ({
+  hasFeature: FeatureSelectors.hasFeature(state),
+}))(FeatureSwitch);

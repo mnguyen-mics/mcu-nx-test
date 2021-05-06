@@ -16,8 +16,7 @@ const typeSearchSetting = {
     return [];
   },
   serialize: (value: AudiencePartitionType[]) => value.join(','),
-  isValid: (query: Index<string>) =>
-    !query.type || query.type.split(',').length > 0,
+  isValid: (query: Index<string>) => !query.type || query.type.split(',').length > 0,
 };
 
 export interface PartitionTypeSearchSettings {

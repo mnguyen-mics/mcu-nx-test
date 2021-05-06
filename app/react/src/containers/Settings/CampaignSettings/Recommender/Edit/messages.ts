@@ -17,5 +17,4 @@ export default defineMessages({
     id: 'recommenders.create.breadcrumb.edititle',
     defaultMessage: 'Edit {name}',
   },
-})
-;
+});

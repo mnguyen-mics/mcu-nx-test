@@ -20,8 +20,7 @@ const typeSearchSetting = {
     return [];
   },
   serialize: (value: AudienceSegmentType[]) => value.join(','),
-  isValid: (query: Index<string>) =>
-    !query.type || query.type.split(',').length > 0,
+  isValid: (query: Index<string>) => !query.type || query.type.split(',').length > 0,
 };
 
 const feedTypeSearchSetting = {
@@ -34,8 +33,7 @@ const feedTypeSearchSetting = {
     return [];
   },
   serialize: (value: FeedType[]) => value.join(','),
-  isValid: (query: Index<string>) =>
-    !query.feed_type || query.feed_type.split(',').length > 0,
+  isValid: (query: Index<string>) => !query.feed_type || query.feed_type.split(',').length > 0,
 };
 
 export interface SegmentTypeSearchSettings {
@@ -52,6 +50,4 @@ export const SEGMENTS_SEARCH_SETTINGS: SearchSetting[] = [
   feedTypeSearchSetting,
 ];
 
-export const SEGMENT_SETTINGS: SearchSetting[] = [
-  ...DATE_SEARCH_SETTINGS,
-];
+export const SEGMENT_SETTINGS: SearchSetting[] = [...DATE_SEARCH_SETTINGS];

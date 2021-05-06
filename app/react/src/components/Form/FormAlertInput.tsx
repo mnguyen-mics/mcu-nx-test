@@ -7,10 +7,7 @@ import { FormInputProps } from './FormInput';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 
-export interface FormAlertInputProps
-  extends FormFieldWrapperProps,
-    FormInputProps,
-    AlertProps {
+export interface FormAlertInputProps extends FormFieldWrapperProps, FormInputProps, AlertProps {
   name: string;
   message: React.ReactNode;
   iconType: McsIconType;
@@ -49,14 +46,10 @@ class FormAlertInput extends React.Component<JoinedProps, State> {
       type,
       input,
       meta,
-      small
+      small,
     } = this.props;
 
-    let validateStatus = 'success' as
-      | 'success'
-      | 'warning'
-      | 'error'
-      | 'validating';
+    let validateStatus = 'success' as 'success' | 'warning' | 'error' | 'validating';
 
     if (meta.touched && meta.invalid) validateStatus = 'error';
     if (meta.touched && meta.warning) validateStatus = 'warning';
@@ -73,7 +66,7 @@ class FormAlertInput extends React.Component<JoinedProps, State> {
       <div>
         {displayWarning && (
           <Row>
-            <Col offset={4} className="modificationWarning">
+            <Col offset={4} className='modificationWarning'>
               <Row>
                 <Col span={15}>
                   <Alert

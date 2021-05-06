@@ -53,10 +53,7 @@ interface PluginSectionGeneratorState {
   descriptionFieldValue?: string;
 }
 
-class PluginSectionGenerator extends React.Component<
-  JoinedProps,
-  PluginSectionGeneratorState
-> {
+class PluginSectionGenerator extends React.Component<JoinedProps, PluginSectionGeneratorState> {
   constructor(props: JoinedProps) {
     super(props);
 
@@ -80,9 +77,7 @@ class PluginSectionGenerator extends React.Component<
       prop => prop.technical_name === field.property_technical_name,
     );
     const pluginPresetProperty = pluginPresetProperties
-      ? pluginPresetProperties.find(
-          prop => prop.technical_name === field.property_technical_name,
-        )
+      ? pluginPresetProperties.find(prop => prop.technical_name === field.property_technical_name)
       : undefined;
 
     if (currentPluginProperty !== undefined) {
@@ -120,10 +115,10 @@ class PluginSectionGenerator extends React.Component<
 
     if (nameField && nameField.display) {
       inputs.push(
-        <div key="nameField">
+        <div key='nameField'>
           <Row>
             <FormInputField
-              key="name"
+              key='name'
               name={`plugin.name`}
               component={FormInput}
               formItemProps={{ label: nameField.label, required: true }}
@@ -150,11 +145,11 @@ class PluginSectionGenerator extends React.Component<
 
     if (descriptionField && descriptionField.display)
       inputs.push(
-        <div key="descriptionField">
+        <div key='descriptionField'>
           <Row>
             <FormTextAreaField
-              key="description"
-              name="description"
+              key='description'
+              name='description'
               component={FormTextArea}
               formItemProps={{ label: descriptionField.label, required: true }}
               inputProps={
@@ -176,9 +171,7 @@ class PluginSectionGenerator extends React.Component<
               }
               small={true}
               helpToolTipProps={{ title: descriptionField.title }}
-              validate={
-                !descriptionField.disabled ? descriptionField.validator : []
-              }
+              validate={!descriptionField.disabled ? descriptionField.validator : []}
             />
           </Row>
         </div>,
@@ -196,29 +189,20 @@ class PluginSectionGenerator extends React.Component<
     } = this.props;
 
     const nameAndDescriptionFields = this.generateNameAndDescriptionFields();
-    const returnedFields = pluginLayoutSection.fields.map(
-      this.generateFormField,
-    );
+    const returnedFields = pluginLayoutSection.fields.map(this.generateFormField);
     const advancedFields =
       pluginLayoutSection.advanced_fields !== null &&
       pluginLayoutSection.advanced_fields.length !== 0 ? (
         <div>
-          <Button
-            className="optional-section-title"
-            onClick={this.toggleAdvancedFields}
-          >
-            <McsIcon type="settings" />
-            <span className="step-title">
-              {formatMessage(messages.advanced)}
-            </span>
-            <McsIcon type="chevron" />
+          <Button className='optional-section-title' onClick={this.toggleAdvancedFields}>
+            <McsIcon type='settings' />
+            <span className='step-title'>{formatMessage(messages.advanced)}</span>
+            <McsIcon type='chevron' />
           </Button>
 
           <div
             className={
-              !this.state.displayAdvancedFields
-                ? 'hide-section'
-                : 'optional-section-content'
+              !this.state.displayAdvancedFields ? 'hide-section' : 'optional-section-content'
             }
           >
             {pluginLayoutSection.advanced_fields.map(this.generateFormField)}
@@ -226,16 +210,9 @@ class PluginSectionGenerator extends React.Component<
         </div>
       ) : null;
 
-    return returnedFields.length > 0 ||
-      advancedFields ||
-      nameField ||
-      descriptionField ? (
+    return returnedFields.length > 0 || advancedFields || nameField || descriptionField ? (
       <div id={pluginLayoutSection.title}>
-        <Row
-          align="middle"
-          justify="space-between"
-          className="section-header"
-        >
+        <Row align='middle' justify='space-between' className='section-header'>
           <FormTitle
             title={{
               id: `section.${pluginLayoutSection.title}.title`,

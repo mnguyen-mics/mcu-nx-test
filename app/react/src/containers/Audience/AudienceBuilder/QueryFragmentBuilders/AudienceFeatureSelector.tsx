@@ -18,9 +18,9 @@ import { SearchFilter } from '../../../../components/ElementSelector';
 import { AudienceFeatureResource } from '../../../../models/audienceFeature';
 import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
-const AudienceFeatureTableSelector: React.ComponentClass<TableSelectorProps<
-  AudienceFeatureResource
->> = TableSelector;
+const AudienceFeatureTableSelector: React.ComponentClass<
+  TableSelectorProps<AudienceFeatureResource>
+> = TableSelector;
 
 interface MapStateToProps {
   formValues: AudienceBuilderFormData;
@@ -70,10 +70,7 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
       options.exclude = demographicIds;
     }
 
-    return this._audienceFeatureService.getAudienceFeatures(
-      datamartId,
-      options,
-    );
+    return this._audienceFeatureService.getAudienceFeatures(datamartId, options);
   };
 
   saveAudienceFeatures = (
@@ -122,6 +119,4 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, AudienceFeatureSelectorProps>(injectIntl)(
-  AudienceFeatureSelector,
-);
+export default compose<Props, AudienceFeatureSelectorProps>(injectIntl)(AudienceFeatureSelector);

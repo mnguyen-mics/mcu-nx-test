@@ -19,11 +19,7 @@ import {
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
-import {
-  initialPageState,
-  DisplayCampaignPageState,
-  GoalsCampaignRessource,
-} from './domain';
+import { initialPageState, DisplayCampaignPageState, GoalsCampaignRessource } from './domain';
 import { CancelablePromise } from '../../../../../services/ApiService';
 import {
   AdInfoResource,
@@ -44,10 +40,7 @@ type Props = RouteComponentProps<{
 }> &
   InjectedNotificationProps;
 
-class DisplayCampaignPage extends React.Component<
-  Props,
-  DisplayCampaignPageState
-> {
+class DisplayCampaignPage extends React.Component<Props, DisplayCampaignPageState> {
   cancelablePromises: Array<CancelablePromise<any>> = [];
 
   @lazyInject(TYPES.IDisplayCampaignService)
@@ -77,10 +70,7 @@ class DisplayCampaignPage extends React.Component<
         search: buildDefaultSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS),
       });
     } else {
-      const filter = parseSearch<DateSearchSettings>(
-        search,
-        DISPLAY_DASHBOARD_SEARCH_SETTINGS,
-      );
+      const filter = parseSearch<DateSearchSettings>(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
 
       this.fetchAllData(organisationId, campaignId, filter);
     }
@@ -98,9 +88,7 @@ class DisplayCampaignPage extends React.Component<
     const {
       location: { search: previousSearch },
       match: {
-        params: {
-          campaignId: previousCampaignId,
-        },
+        params: { campaignId: previousCampaignId },
       },
     } = previousProps;
 
@@ -108,16 +96,10 @@ class DisplayCampaignPage extends React.Component<
       if (!isSearchValid(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS)) {
         history.replace({
           pathname: pathname,
-          search: buildDefaultSearch(
-            search,
-            DISPLAY_DASHBOARD_SEARCH_SETTINGS,
-          ),
+          search: buildDefaultSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS),
         });
       } else {
-        const filter = parseSearch<DateSearchSettings>(
-          search,
-          DISPLAY_DASHBOARD_SEARCH_SETTINGS,
-        );
+        const filter = parseSearch<DateSearchSettings>(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
 
         this.fetchAllData(organisationId, campaignId, filter);
       }
@@ -133,13 +115,8 @@ class DisplayCampaignPage extends React.Component<
     return normalizeArrayOfObject(format, key);
   }
 
-  fetchAllData = (
-    organisationId: string,
-    campaignId: string,
-    filter: DateSearchSettings,
-  ) => {
-    const lookbackWindow =
-      filter.to.toMoment().unix() - filter.from.toMoment().unix();
+  fetchAllData = (organisationId: string, campaignId: string, filter: DateSearchSettings) => {
+    const lookbackWindow = filter.to.toMoment().unix() - filter.from.toMoment().unix();
     const dimensions = lookbackWindow > 172800 ? ['day'] : ['day,hour_of_day'];
     const getCampaignAdGroupAndAd = () =>
       this._displayCampaignService.getCampaignDisplayViewDeep(campaignId, {
@@ -230,8 +207,8 @@ class DisplayCampaignPage extends React.Component<
       const formattedAdGroups: Array<Omit<AdGroupInfoResource, 'ads'>> = adGroups.map(adGroup => {
         const { ads: unusedAds, ...adGroupWithoutAds } = adGroup;
         return adGroupWithoutAds;
-      })
-      
+      });
+
       const adGroupCampaign = adGroups.map(item => {
         return {
           ad_group_id: item.id,
@@ -266,19 +243,13 @@ class DisplayCampaignPage extends React.Component<
         nextState.adGroups.data.isLoading = false;
         nextState.ads.data.isLoading = false;
         nextState.campaign.data.items = [campaign];
-        nextState.adGroups.data.items = normalizeArrayOfObject(
-          formattedAdGroups,
-          'id',
-        );
+        nextState.adGroups.data.items = normalizeArrayOfObject(formattedAdGroups, 'id');
         nextState.adGroups.data.adGroupCampaign = normalizeArrayOfObject(
           adGroupCampaign,
           'ad_group_id',
         );
         nextState.ads.data.items = normalizeArrayOfObject(ads, 'id');
-        nextState.ads.data.adAdGroup = normalizeArrayOfObject(
-          adAdGroup,
-          'ad_id',
-        );
+        nextState.ads.data.adAdGroup = normalizeArrayOfObject(adAdGroup, 'ad_id');
 
         return nextState;
       });
@@ -289,15 +260,13 @@ class DisplayCampaignPage extends React.Component<
       .then(goals => goals.data)
       .then(goals => {
         const promises = goals.map(goal => {
-          return this._goalService.getAttributionModels(goal.goal_id).then(
-            attribution => {
-              const goalCampaign: GoalsCampaignRessource = {
-                ...goal,
-                attribution: attribution.data,
-              };
-              return goalCampaign;
-            },
-          );
+          return this._goalService.getAttributionModels(goal.goal_id).then(attribution => {
+            const goalCampaign: GoalsCampaignRessource = {
+              ...goal,
+              attribution: attribution.data,
+            };
+            return goalCampaign;
+          });
         });
         return Promise.all(promises);
       })
@@ -321,9 +290,7 @@ class DisplayCampaignPage extends React.Component<
           normalizeReportView(response.data.report_view),
         );
       })
-      .catch(err =>
-        this.catchCancellablePromises(err, 'campaign', 'performance'),
-      );
+      .catch(err => this.catchCancellablePromises(err, 'campaign', 'performance'));
 
     getAdGroupPerf.promise
       .then(response => {
@@ -334,9 +301,7 @@ class DisplayCampaignPage extends React.Component<
           this.formatReportView(response.data.report_view, 'sub_campaign_id'),
         );
       })
-      .catch(err =>
-        this.catchCancellablePromises(err, 'adGroups', 'performance'),
-      );
+      .catch(err => this.catchCancellablePromises(err, 'adGroups', 'performance'));
 
     getAdPerf.promise
       .then(response => {
@@ -362,9 +327,7 @@ class DisplayCampaignPage extends React.Component<
           normalizeReportView(formattedReportView),
         );
       })
-      .catch(err =>
-        this.catchCancellablePromises(err, 'campaign', 'mediaPerformance'),
-      );
+      .catch(err => this.catchCancellablePromises(err, 'campaign', 'mediaPerformance'));
 
     getOverallCampaignPerf.promise
       .then(response => {
@@ -375,9 +338,7 @@ class DisplayCampaignPage extends React.Component<
           normalizeReportView(response.data.report_view),
         );
       })
-      .catch(err =>
-        this.catchCancellablePromises(err, 'campaign', 'overallPerformance'),
-      );
+      .catch(err => this.catchCancellablePromises(err, 'campaign', 'overallPerformance'));
   };
 
   updateStateOnPerf(
@@ -392,9 +353,7 @@ class DisplayCampaignPage extends React.Component<
       };
       (nextState[firstLevelKey] as any)[secondLevelKey].isLoading = false;
       (nextState[firstLevelKey] as any)[secondLevelKey].hasFetched = true;
-      (nextState[firstLevelKey] as any)[secondLevelKey][
-        thirdLevel
-      ] = performanceReport;
+      (nextState[firstLevelKey] as any)[secondLevelKey][thirdLevel] = performanceReport;
 
       return nextState;
     });
@@ -429,8 +388,7 @@ class DisplayCampaignPage extends React.Component<
   ): Promise<any> => {
     const { notifySuccess, notifyError, removeNotification } = this.props;
 
-    const adAdGroup =
-      this.state.ads.data.adAdGroup && this.state.ads.data.adAdGroup[adId];
+    const adAdGroup = this.state.ads.data.adAdGroup && this.state.ads.data.adAdGroup[adId];
     const campaignId = adAdGroup ? adAdGroup.campaign_id : undefined;
     const adGroupId = adAdGroup ? adAdGroup.ad_group_id : undefined;
 
@@ -459,7 +417,7 @@ class DisplayCampaignPage extends React.Component<
                   message: successMessage.title,
                   description: successMessage.body,
                   btn: (
-                    <Button type="primary" size="small" onClick={undo}>
+                    <Button type='primary' size='small' onClick={undo}>
                       <span>Undo</span>
                     </Button>
                   ),
@@ -524,7 +482,7 @@ class DisplayCampaignPage extends React.Component<
                   message: successMessage.title,
                   description: successMessage.body,
                   btn: (
-                    <Button type="primary" size="small" onClick={undo}>
+                    <Button type='primary' size='small' onClick={undo}>
                       <span>Undo</span>
                     </Button>
                   ),
@@ -556,9 +514,7 @@ class DisplayCampaignPage extends React.Component<
 
     return this._displayCampaignService
       .updateCampaign(campaignId, body)
-      .then(() =>
-        this._displayCampaignService.getCampaignDisplayViewDeep(campaignId),
-      )
+      .then(() => this._displayCampaignService.getCampaignDisplayViewDeep(campaignId))
       .then(response => {
         this.setState(prevState => {
           const nextState = {
@@ -617,7 +573,4 @@ class DisplayCampaignPage extends React.Component<
   }
 }
 
-export default compose(
-  withRouter,
-  injectNotifications,
-)(DisplayCampaignPage);
+export default compose(withRouter, injectNotifications)(DisplayCampaignPage);

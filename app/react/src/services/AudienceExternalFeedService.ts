@@ -3,9 +3,7 @@ import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import { AudienceExternalFeed } from '../models/Plugins';
 import { PluginLayout } from '../models/plugin/PluginLayout';
 import { PropertyResourceShape } from '../models/plugin';
-import AudienceSegmentFeedService, {
-  GetFeeds,
-} from './AudienceSegmentFeedService';
+import AudienceSegmentFeedService, { GetFeeds } from './AudienceSegmentFeedService';
 import {
   FeedAggregationResponse,
   FeedAggregationRequest,
@@ -14,9 +12,7 @@ import {
 export interface IAudienceExternalFeedService {
   segmentId: string;
 
-  getFeeds: (
-    options: GetFeeds,
-  ) => Promise<DataListResponse<AudienceExternalFeed>>;
+  getFeeds: (options: GetFeeds) => Promise<DataListResponse<AudienceExternalFeed>>;
 
   getFeedsAggregationMetrics: (
     body: FeedAggregationRequest,
@@ -27,15 +23,9 @@ export interface IAudienceExternalFeedService {
     options: object,
   ) => Promise<DataListResponse<AudienceExternalFeed>>;
 
-  deleteAudienceFeed: (
-    id: string,
-    options: object,
-  ) => Promise<DataResponse<any>>;
+  deleteAudienceFeed: (id: string, options: object) => Promise<DataResponse<any>>;
 
-  getInstanceById: (
-    id: string,
-    options: object,
-  ) => Promise<DataResponse<AudienceExternalFeed>>;
+  getInstanceById: (id: string, options: object) => Promise<DataResponse<AudienceExternalFeed>>;
 
   getInstanceProperties: (
     id: string,
@@ -94,10 +84,7 @@ export class AudienceExternalFeedService
     return ApiService.getRequest(endpoint, params);
   }
 
-  deleteAudienceFeed(
-    id: string,
-    options: object = {},
-  ): Promise<DataResponse<any>> {
+  deleteAudienceFeed(id: string, options: object = {}): Promise<DataResponse<any>> {
     const endpoint = `audience_segments/${this.segmentId}/external_feeds/${id}`;
 
     return ApiService.deleteRequest(endpoint, options);

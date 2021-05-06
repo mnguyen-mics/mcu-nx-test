@@ -14,12 +14,8 @@ import {
 } from '../../../../../../components/Form';
 import { Field, GenericField } from 'redux-form';
 import { FormSearchObjectProps } from '../../../../../../components/Form/FormSelect/FormSearchObject';
-import withValidators, {
-  ValidatorProps,
-} from '../../../../../../components/Form/withValidators';
-import withNormalizer, {
-  NormalizerProps,
-} from '../../../../../../components/Form/withNormalizer';
+import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
+import withNormalizer, { NormalizerProps } from '../../../../../../components/Form/withNormalizer';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { AudienceFeatureFolderResource } from '../../../../../../models/audienceFeature';
 
@@ -50,13 +46,11 @@ class AudienceFeatureGeneralSection extends React.Component<Props, State> {
         params: { datamartId },
       },
     } = this.props;
-    this._audienceFeatureService
-      .getAudienceFeatureFolders(datamartId)
-      .then((folders) =>
-        this.setState({
-          audienceFeatureFolders: folders.data,
-        }),
-      );
+    this._audienceFeatureService.getAudienceFeatureFolders(datamartId).then(folders =>
+      this.setState({
+        audienceFeatureFolders: folders.data,
+      }),
+    );
   }
 
   render() {
@@ -70,7 +64,7 @@ class AudienceFeatureGeneralSection extends React.Component<Props, State> {
         <FormSection title={messages.audienceFeatureSectionGeneralTitle} />
 
         <FormInputField
-          name="name"
+          name='name'
           component={FormInput}
           validate={[isRequired]}
           formItemProps={{
@@ -85,25 +79,23 @@ class AudienceFeatureGeneralSection extends React.Component<Props, State> {
           }}
         />
         <FormInputField
-          name="description"
+          name='description'
           component={FormInput}
           formItemProps={{
             label: formatMessage(messages.audienceFeatureDescriptionLabel),
             required: false,
           }}
           inputProps={{
-            placeholder: formatMessage(
-              messages.audienceFeatureDescriptionPlaceholder,
-            ),
+            placeholder: formatMessage(messages.audienceFeatureDescriptionPlaceholder),
           }}
           helpToolTipProps={{
             title: formatMessage(messages.audienceFeatureDescriptionTooltip),
           }}
         />
         <FormSelectField
-          name="folder_id"
+          name='folder_id'
           component={DefaultSelect}
-          options={audienceFeatureFolders.map((folder) => {
+          options={audienceFeatureFolders.map(folder => {
             return { title: folder.name, value: folder.id };
           })}
           formItemProps={{

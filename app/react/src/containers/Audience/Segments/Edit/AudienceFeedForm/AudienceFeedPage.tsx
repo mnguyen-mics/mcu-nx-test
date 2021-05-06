@@ -32,10 +32,7 @@ interface AudienceFeedPageState {
   type?: FeedAction;
 }
 
-class AudienceFeedPage extends React.Component<
-  JoinedProps,
-  AudienceFeedPageState
-  > {
+class AudienceFeedPage extends React.Component<JoinedProps, AudienceFeedPageState> {
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
   @lazyInject(TYPES.IAudienceFeedFormService)
@@ -149,9 +146,7 @@ class AudienceFeedPage extends React.Component<
       },
     } = this.props;
 
-    return history.push(
-      `/v2/o/${organisationId}/audience/segments/${segmentId}`,
-    );
+    return history.push(`/v2/o/${organisationId}/audience/segments/${segmentId}`);
   };
 
   onSelectFeedType = (feedType: FeedAction) => {
@@ -184,7 +179,7 @@ class AudienceFeedPage extends React.Component<
       match: {
         params: { feedType, organisationId, segmentId, feedId },
       },
-      intl: { formatMessage }
+      intl: { formatMessage },
     } = this.props;
 
     const { loading, type } = this.state;
@@ -194,7 +189,9 @@ class AudienceFeedPage extends React.Component<
     }
 
     const breadcrumbPaths: React.ReactNode[] = [
-      <Link key='1' to={`/v2/o/${organisationId}/audience/segments`}>{formatMessage(messages.actionBarSegmentTitle)}</Link>,
+      <Link key='1' to={`/v2/o/${organisationId}/audience/segments`}>
+        {formatMessage(messages.actionBarSegmentTitle)}
+      </Link>,
       <Link key='2' to={`/v2/o/${organisationId}/audience/segments/${segmentId}`}>
         {this.state.audienceSegment && this.state.audienceSegment.name
           ? this.state.audienceSegment.name
@@ -223,14 +220,12 @@ class AudienceFeedPage extends React.Component<
 
     if (type === 'create_external_preset' || type === 'create_tag_preset') {
       const presetBreadcrumbPaths: React.ReactNode[] = breadcrumbPaths.concat(
-        formatMessage(messages.actionBarSegmentPresetCreate)
+        formatMessage(messages.actionBarSegmentPresetCreate),
       );
 
       return (
         <CreateFeedPresetSelectionPage
-          feedType={
-            type === 'create_external_preset' ? 'EXTERNAL_FEED' : 'TAG_FEED'
-          }
+          feedType={type === 'create_external_preset' ? 'EXTERNAL_FEED' : 'TAG_FEED'}
           breadcrumbPaths={presetBreadcrumbPaths}
           onClose={this.onClose}
           onPresetSave={this.onPresetSave}

@@ -5,12 +5,7 @@ import { Field, reduxForm, InjectedFormProps } from 'redux-form';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Form } from '@ant-design/compatible';
 import { Button, Layout } from 'antd';
-import {
-  injectIntl,
-  FormattedMessage,
-  defineMessages,
-  InjectedIntlProps,
-} from 'react-intl';
+import { injectIntl, FormattedMessage, defineMessages, InjectedIntlProps } from 'react-intl';
 import * as SessionActions from '../../../../redux/Session/actions';
 
 import { FormInput } from '../../../../components/Form';
@@ -56,11 +51,7 @@ type Props = ProfileSettingsEditPageProps &
   RouteComponentProps<{ organisationId: string }> &
   InjectedNotificationProps;
 
-class ProfileSettingsEditPage extends React.Component<
-  Props,
-  ProfileSettingsPageState
-> {
-
+class ProfileSettingsEditPage extends React.Component<Props, ProfileSettingsPageState> {
   @lazyInject(TYPES.ISettingsService)
   private _settingsService: ISettingsService;
 
@@ -74,13 +65,8 @@ class ProfileSettingsEditPage extends React.Component<
   buildSaveActionElement() {
     const { dirty, valid } = this.props;
     return (
-      <Button
-        key="SAVE"
-        type="primary"
-        htmlType="submit"
-        disabled={!(dirty && valid)}
-      >
-        <FormattedMessage id="settings.profile.edit.save" defaultMessage="Save" />{' '}
+      <Button key='SAVE' type='primary' htmlType='submit' disabled={!(dirty && valid)}>
+        <FormattedMessage id='settings.profile.edit.save' defaultMessage='Save' />{' '}
         {this.state.loading ? <LoadingOutlined /> : null}
       </Button>
     );
@@ -98,7 +84,8 @@ class ProfileSettingsEditPage extends React.Component<
     } = this.props;
 
     this.setState({ loading: true });
-    this._settingsService.putProfile(organisationId, e)
+    this._settingsService
+      .putProfile(organisationId, e)
       .then(res => {
         refreshConnectedUser();
         notifySuccess({
@@ -191,22 +178,19 @@ class ProfileSettingsEditPage extends React.Component<
     ];
 
     return (
-      <div className="ant-layout">
-        <Content className="mcs-content-container">
-          <Form
-            onSubmit={handleSubmit(this.updateUserProfile)}
-            className={'edit-top'}
-          >
-            <div className="mcs-card-header mcs-card-title">
-              <span className="mcs-card-title">
+      <div className='ant-layout'>
+        <Content className='mcs-content-container'>
+          <Form onSubmit={handleSubmit(this.updateUserProfile)} className={'edit-top'}>
+            <div className='mcs-card-header mcs-card-title'>
+              <span className='mcs-card-title'>
                 <FormattedMessage
-                  id="settings.profile.edit.userProfile"
-                  defaultMessage="User Profile"
+                  id='settings.profile.edit.userProfile'
+                  defaultMessage='User Profile'
                 />
               </span>
-              <span className="mcs-card-button">{buttons}</span>
+              <span className='mcs-card-button'>{buttons}</span>
             </div>
-            <hr className="mcs-separator" />
+            <hr className='mcs-separator' />
             {userFields.map(userField => {
               return (
                 <Field
@@ -248,10 +232,7 @@ export default compose(
   injectIntl,
   injectNotifications,
   withRouter,
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   reduxForm({
     form: 'userAccountEdit',
   }),

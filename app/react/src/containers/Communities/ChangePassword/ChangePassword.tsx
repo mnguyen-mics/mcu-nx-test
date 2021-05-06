@@ -2,24 +2,13 @@ import * as React from 'react';
 import { Row, Col, Input, Button, Alert, Spin } from 'antd';
 import { Form } from '@ant-design/compatible';
 import FormItem from 'antd/lib/form/FormItem';
-import {
-  injectIntl,
-  InjectedIntlProps,
-  FormattedMessage,
-  defineMessages,
-} from 'react-intl';
+import { injectIntl, InjectedIntlProps, FormattedMessage, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { FormComponentProps } from '@ant-design/compatible/lib/form';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import {
-  SET_PASSWORD_SEARCH_SETTINGS,
-  parseSearch,
-} from '../../../utils/LocationSearchHelper';
+import { SET_PASSWORD_SEARCH_SETTINGS, parseSearch } from '../../../utils/LocationSearchHelper';
 import { defaultErrorMessages } from '../../../components/Form/withValidators';
-import {
-  PasswordRequirementResource,
-  PasswordValidityResource,
-} from '../../../models/communities';
+import { PasswordRequirementResource, PasswordValidityResource } from '../../../models/communities';
 import PasswReqChecker from '../Helpers/PasswReqChecker';
 import { takeLatest } from '../../../utils/ApiHelper';
 import { lazyInject } from '../../../config/inversify.config';
@@ -88,14 +77,9 @@ class CommunityChangePassword extends React.Component<Props, State> {
   }
 
   requestValidity = (handler: any) => {
-    const getLatestValidityCall = takeLatest(
-      this._communityService.getCommunityPasswordValidity,
-    );
+    const getLatestValidityCall = takeLatest(this._communityService.getCommunityPasswordValidity);
 
-    getLatestValidityCall(
-      this.props.match.params.communityToken,
-      handler.target.value,
-    )
+    getLatestValidityCall(this.props.match.params.communityToken, handler.target.value)
       .then(response => {
         this.setState({ passVal: response.data });
       })
@@ -144,11 +128,7 @@ class CommunityChangePassword extends React.Component<Props, State> {
       if (
         !err &&
         !this.state.fetchingPasswReqFailure &&
-        this.passwordValidity(
-          this.state.passVal,
-          values.password1,
-          values.password2,
-        )
+        this.passwordValidity(this.state.passVal, values.password1, values.password2)
       ) {
         // validate
         this._authService
@@ -177,26 +157,18 @@ class CommunityChangePassword extends React.Component<Props, State> {
       intl,
     } = this.props;
 
-    const {
-      isError,
-      errorMessage,
-      fetchingPasswReq,
-      passReq,
-      passVal,
-    } = this.state;
+    const { isError, errorMessage, fetchingPasswReq, passReq, passVal } = this.state;
     const errorMsg =
       isError && errorMessage ? (
         <Alert
-          type="error"
-          className="login-error-message"
+          type='error'
+          className='login-error-message'
           style={{ marginBottom: 15, paddingLeft: 5 }}
           message={errorMessage}
         />
       ) : null;
 
-    const pageType = this.props.location.pathname.includes(
-      '/change-password',
-    ) ? (
+    const pageType = this.props.location.pathname.includes('/change-password') ? (
       <FormattedMessage {...messages.changePassword} />
     ) : (
       <FormattedMessage {...messages.setPassword} />
@@ -206,26 +178,23 @@ class CommunityChangePassword extends React.Component<Props, State> {
     const p2 = this.props.form.getFieldValue('password2');
 
     return (
-      <div className="mcs-reset-password-container">
-        <div className="image-wrapper">
-          <img alt="mics-logo" className="reset-password-logo" src={'/react/src/assets/images/logo.png'} />
+      <div className='mcs-reset-password-container'>
+        <div className='image-wrapper'>
+          <img
+            alt='mics-logo'
+            className='reset-password-logo'
+            src={'/react/src/assets/images/logo.png'}
+          />
         </div>
-        <div className="reset-password-title">{pageType}</div>
-        <div className="reset-password-container-frame">
-          {fetchingPasswReq && <Spin size="large" />}
+        <div className='reset-password-title'>{pageType}</div>
+        <div className='reset-password-container-frame'>
+          {fetchingPasswReq && <Spin size='large' />}
           {!fetchingPasswReq && !passReq && (
             <div>
               {errorMsg}
-              <Row
-                
-                align="middle"
-                justify="center">
+              <Row align='middle' justify='center'>
                 <Col span={24}>
-                  <Button
-                    type="ghost"
-                    className="reset-password-button"
-                    href="/"
-                  >
+                  <Button type='ghost' className='reset-password-button' href='/'>
                     <FormattedMessage {...messages.revertTologin} />
                   </Button>
                 </Col>
@@ -233,12 +202,12 @@ class CommunityChangePassword extends React.Component<Props, State> {
             </div>
           )}
           {!fetchingPasswReq && passReq !== undefined && (
-            <Form onSubmit={this.handleSubmit} className="login-form">
+            <Form onSubmit={this.handleSubmit} className='login-form'>
               {errorMsg}
-              <div className="reset-password-requirements">
+              <div className='reset-password-requirements'>
                 <PasswReqChecker req={passReq} val={passVal} p1={p1} p2={p2} />
               </div>
-              <div className="password-text">
+              <div className='password-text'>
                 <FormattedMessage {...messages.passwordFormTitle} />
               </div>
               {
@@ -247,22 +216,20 @@ class CommunityChangePassword extends React.Component<Props, State> {
                     rules: [
                       {
                         required: true,
-                        message: intl.formatMessage(
-                          defaultErrorMessages.required,
-                        ),
+                        message: intl.formatMessage(defaultErrorMessages.required),
                       },
                     ],
                   })(
                     <Input
-                      type="password"
-                      className="reset-password-input"
+                      type='password'
+                      className='reset-password-input'
                       onChange={this.requestValidity}
-                      autoComplete="off"
+                      autoComplete='off'
                     />,
                   )}
                 </FormItem>
               }
-              <div className="password-text">
+              <div className='password-text'>
                 <FormattedMessage {...messages.secondPasswordFormTitle} />
               </div>
               <FormItem>
@@ -270,36 +237,22 @@ class CommunityChangePassword extends React.Component<Props, State> {
                   rules: [
                     {
                       required: true,
-                      message: intl.formatMessage(
-                        defaultErrorMessages.required,
-                      ),
+                      message: intl.formatMessage(defaultErrorMessages.required),
                     },
                   ],
-                })(
-                  <Input
-                    type="password"
-                    className="reset-password-input"
-                    autoComplete="off"
-                  />,
-                )}
+                })(<Input type='password' className='reset-password-input' autoComplete='off' />)}
               </FormItem>
-              <Row 
-              
-              align="middle" justify="center">
+              <Row align='middle' justify='center'>
                 <Col span={12}>
-                  <Button
-                    type="ghost"
-                    className="reset-password-button"
-                    href="/"
-                  >
+                  <Button type='ghost' className='reset-password-button' href='/'>
                     <FormattedMessage {...messages.revertTologin} />
                   </Button>
                 </Col>
                 <Col span={12}>
                   <Button
-                    type="primary"
-                    htmlType="submit"
-                    className="mcs-primary reset-password-button"
+                    type='primary'
+                    htmlType='submit'
+                    className='mcs-primary reset-password-button'
                     disabled={!this.passwordValidity(passVal, p1, p2)}
                   >
                     {pageType}
@@ -314,7 +267,4 @@ class CommunityChangePassword extends React.Component<Props, State> {
   }
 }
 
-export default Form.create()(compose<Props, {}>(
-  withRouter,
-  injectIntl,
-)(CommunityChangePassword));
+export default Form.create()(compose<Props, {}>(withRouter, injectIntl)(CommunityChangePassword));

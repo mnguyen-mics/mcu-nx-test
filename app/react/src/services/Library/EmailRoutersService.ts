@@ -9,21 +9,14 @@ export interface IEmailRouterService {
     organisationId: string,
     options?: object,
   ) => Promise<DataListResponse<EmailRouter>>;
-  getEmailRouter: (
-    id: string,
-    options?: object,
-  ) => Promise<DataResponse<EmailRouter>>;
-  deleteEmailRouter: (
-    id: string,
-    options?: object,
-  ) => Promise<DataResponse<any>>;
-  getLocalizedPluginLayout: (
-    pInstanceId: string,
-  ) => Promise<PluginLayout | null>;
+  getEmailRouter: (id: string, options?: object) => Promise<DataResponse<EmailRouter>>;
+  deleteEmailRouter: (id: string, options?: object) => Promise<DataResponse<any>>;
+  getLocalizedPluginLayout: (pInstanceId: string) => Promise<PluginLayout | null>;
 }
 
 @injectable()
-export class EmailRouterService extends PluginInstanceService<EmailRouter>
+export class EmailRouterService
+  extends PluginInstanceService<EmailRouter>
   implements IEmailRouterService {
   constructor() {
     super('email_routers');
@@ -43,10 +36,7 @@ export class EmailRouterService extends PluginInstanceService<EmailRouter>
     return ApiService.getRequest(endpoint, params);
   }
 
-  getEmailRouter(
-    id: string,
-    options: object = {},
-  ): Promise<DataResponse<EmailRouter>> {
+  getEmailRouter(id: string, options: object = {}): Promise<DataResponse<EmailRouter>> {
     const endpoint = `email_routers/${id}`;
 
     const params = {
@@ -55,10 +45,7 @@ export class EmailRouterService extends PluginInstanceService<EmailRouter>
     return ApiService.getRequest(endpoint, params);
   }
 
-  deleteEmailRouter(
-    id: string,
-    options: object = {},
-  ): Promise<DataResponse<any>> {
+  deleteEmailRouter(id: string, options: object = {}): Promise<DataResponse<any>> {
     const endpoint = `email_routers/${id}`;
 
     const params = {

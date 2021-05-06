@@ -30,16 +30,10 @@ class SwitchByList extends React.Component<Props, SwitchByListState> {
   renderOrg = (org: UserWorkspaceResource, isACommunity: boolean) => {
     return (
       <a onClick={this.handleOrgClick(org)}>
-        <span
-          className={
-            isACommunity ? 'mcs-organisationListSwitcher-community' : ''
-          }
-        >
+        <span className={isACommunity ? 'mcs-organisationListSwitcher-community' : ''}>
           {org.organisation_name}
         </span>
-        <span className="mcs-organisationListSwitcher_orgId_searchView">
-          {org.organisation_id}
-        </span>
+        <span className='mcs-organisationListSwitcher_orgId_searchView'>{org.organisation_id}</span>
       </a>
     );
   };
@@ -50,7 +44,7 @@ class SwitchByList extends React.Component<Props, SwitchByListState> {
       const hasChildren = children.length > 0;
       return (
         <React.Fragment key={index}>
-          <Menu.Item key={node.organisation_id} className="item">
+          <Menu.Item key={node.organisation_id} className='item'>
             <div className={`mcs-organisationListSwitcher_indent-${level}`}>
               {this.renderOrg(node, isACommunity)}
             </div>
@@ -64,19 +58,17 @@ class SwitchByList extends React.Component<Props, SwitchByListState> {
   getChildren = (workspace: UserWorkspaceResource): UserWorkspaceResource[] => {
     const { workspaces } = this.props;
     const c = workspaces.filter(
-      (w) =>
-        w.administrator_id === workspace.organisation_id &&
-        w.organisation_id !== w.community_id,
+      w => w.administrator_id === workspace.organisation_id && w.organisation_id !== w.community_id,
     );
     return c;
   };
 
   render() {
     const { workspaces } = this.props;
-    const [communities, otherLevels] = partition(workspaces, (w) => isCommunity(w));
-    const [firstLevelOrgs] = partition(otherLevels, (w) => !isAChild(w, workspaces))
+    const [communities, otherLevels] = partition(workspaces, w => isCommunity(w));
+    const [firstLevelOrgs] = partition(otherLevels, w => !isAChild(w, workspaces));
     return (
-      <Menu className="mcs-organisationListSwitcher_orgList" mode="vertical">
+      <Menu className='mcs-organisationListSwitcher_orgList' mode='vertical'>
         {this.renderNodeFlat(communities, 0, true)}
         {this.renderNodeFlat(firstLevelOrgs, 0, false)}
       </Menu>
@@ -84,7 +76,4 @@ class SwitchByList extends React.Component<Props, SwitchByListState> {
   }
 }
 
-export default compose<Props, SwitchByListProps>(
-  withRouter,
-  injectIntl,
-)(SwitchByList);
+export default compose<Props, SwitchByListProps>(withRouter, injectIntl)(SwitchByList);

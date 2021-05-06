@@ -3,10 +3,7 @@ import ApiService, { DataResponse, DataListResponse } from './ApiService';
 import { injectable } from 'inversify';
 
 export interface ILabelService {
-  getLabels: (
-    organisationId: string,
-    options?: object,
-  ) => Promise<DataListResponse<Label>>;
+  getLabels: (organisationId: string, options?: object) => Promise<DataListResponse<Label>>;
 
   updateLabel: (
     labelId: string,
@@ -22,24 +19,13 @@ export interface ILabelService {
 
   deleteLabel: (labelId: string) => Promise<DataResponse<Label>>;
 
-  pairLabels: (
-    labelId: string,
-    labelableType: string,
-    labelableId: string,
-  ) => Promise<void>;
+  pairLabels: (labelId: string, labelableType: string, labelableId: string) => Promise<void>;
 
-  unPairLabels: (
-    labelId: string,
-    labelableType: string,
-    labelableId: string,
-  ) => Promise<void>;
+  unPairLabels: (labelId: string, labelableType: string, labelableId: string) => Promise<void>;
 }
 @injectable()
 export class LabelService implements ILabelService {
-  getLabels(
-    organisationId: string,
-    options: object = {},
-  ): Promise<DataListResponse<Label>> {
+  getLabels(organisationId: string, options: object = {}): Promise<DataListResponse<Label>> {
     const endpoint = 'labels';
 
     const params = {
@@ -50,11 +36,7 @@ export class LabelService implements ILabelService {
     return ApiService.getRequest(endpoint, params);
   }
 
-  updateLabel(
-    labelId: string,
-    name: string,
-    organisationId: string,
-  ): Promise<DataResponse<Label>> {
+  updateLabel(labelId: string, name: string, organisationId: string): Promise<DataResponse<Label>> {
     const endpoint = `labels/${labelId}`;
     const body = {
       id: labelId,
@@ -83,20 +65,12 @@ export class LabelService implements ILabelService {
     return ApiService.deleteRequest(endpoint);
   }
 
-  pairLabels(
-    labelId: string,
-    labelableType: string,
-    labelableId: string,
-  ): Promise<void> {
+  pairLabels(labelId: string, labelableType: string, labelableId: string): Promise<void> {
     const endpoint = `labels/${labelId}/links/${labelableType}/${labelableId}`;
     return ApiService.postRequest(endpoint, {});
   }
 
-  unPairLabels(
-    labelId: string,
-    labelableType: string,
-    labelableId: string,
-  ): Promise<void> {
+  unPairLabels(labelId: string, labelableType: string, labelableId: string): Promise<void> {
     const endpoint = `labels/${labelId}/links/${labelableType}/${labelableId}`;
     return ApiService.deleteRequest(endpoint, {});
   }

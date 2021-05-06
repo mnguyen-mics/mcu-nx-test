@@ -1,15 +1,8 @@
 import * as React from 'react';
 import { Row, Col } from 'antd';
-import injectThemeColors, {
-  InjectedThemeColorsProps,
-} from '../../../../Helpers/injectThemeColors';
+import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
 import { compose } from 'recompose';
-import {
-  FormattedMessage,
-  defineMessages,
-  InjectedIntlProps,
-  injectIntl,
-} from 'react-intl';
+import { FormattedMessage, defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
 import { PiePlot, EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
 
 const messageMap: {
@@ -81,10 +74,7 @@ class EmailPieCharts extends React.Component<Props> {
             },
             {
               key: 'rest',
-              value:
-                emailDelivered === 0
-                  ? 100
-                  : Math.abs(emailSent - emailDelivered),
+              value: emailDelivered === 0 ? 100 : Math.abs(emailSent - emailDelivered),
               color: '#eaeaea',
             },
           ];
@@ -97,8 +87,7 @@ class EmailPieCharts extends React.Component<Props> {
             },
             {
               key: 'rest',
-              value:
-                emailOpened === 0 ? 100 : Math.abs(emailSent - emailOpened),
+              value: emailOpened === 0 ? 100 : Math.abs(emailSent - emailOpened),
               color: '#eaeaea',
             },
           ];
@@ -111,8 +100,7 @@ class EmailPieCharts extends React.Component<Props> {
             },
             {
               key: 'rest',
-              value:
-                emailClicks === 0 ? 100 : Math.abs(emailOpened - emailClicks),
+              value: emailClicks === 0 ? 100 : Math.abs(emailOpened - emailClicks),
               color: '#eaeaea',
             },
           ];
@@ -125,8 +113,7 @@ class EmailPieCharts extends React.Component<Props> {
             },
             {
               key: 'rest',
-              value:
-                emailClicks === 0 ? 100 : Math.abs(emailSent - emailClicks),
+              value: emailClicks === 0 ? 100 : Math.abs(emailSent - emailClicks),
               color: '#eaeaea',
             },
           ];
@@ -139,10 +126,7 @@ class EmailPieCharts extends React.Component<Props> {
             },
             {
               key: 'rest',
-              value:
-                emailUnsubscribed === 0
-                  ? 100
-                  : Math.abs(emailSent - emailUnsubscribed),
+              value: emailUnsubscribed === 0 ? 100 : Math.abs(emailSent - emailUnsubscribed),
               color: '#eaeaea',
             },
           ];
@@ -185,15 +169,9 @@ class EmailPieCharts extends React.Component<Props> {
       <div>
         <Row>
           <Col span={7}>
-            <PiePlot 
+            <PiePlot
               dataset={generateData('delivered')}
-              options={generateOptions(
-                false,
-                'orange',
-                'DELIVERED',
-                emailDelivered,
-                emailSent,
-              )}
+              options={generateOptions(false, 'orange', 'DELIVERED', emailDelivered, emailSent)}
             />
           </Col>
           <Col span={17}>
@@ -201,25 +179,13 @@ class EmailPieCharts extends React.Component<Props> {
               <Col span={12}>
                 <PiePlot
                   dataset={generateData('opens')}
-                  options={generateOptions(
-                    true,
-                    'blue',
-                    'OPENS',
-                    emailOpened,
-                    emailSent,
-                  )}
+                  options={generateOptions(true, 'blue', 'OPENS', emailOpened, emailSent)}
                 />
               </Col>
               <Col span={12}>
                 <PiePlot
                   dataset={generateData('clicks')}
-                  options={generateOptions(
-                    true,
-                    'blue',
-                    'CLICKS',
-                    emailClicks,
-                    emailSent,
-                  )}
+                  options={generateOptions(true, 'blue', 'CLICKS', emailClicks, emailSent)}
                 />
               </Col>
             </Row>
@@ -265,8 +231,8 @@ class EmailPieCharts extends React.Component<Props> {
         <EmptyChart
           title={
             <FormattedMessage
-              id="email.campaign.dashboard.charts.noData"
-              defaultMessage="No Data"
+              id='email.campaign.dashboard.charts.noData'
+              defaultMessage='No Data'
             />
           }
           icon='warning'
@@ -277,7 +243,4 @@ class EmailPieCharts extends React.Component<Props> {
   }
 }
 
-export default compose<Props, EmailPieChartsProps>(
-  injectThemeColors,
-  injectIntl,
-)(EmailPieCharts);
+export default compose<Props, EmailPieChartsProps>(injectThemeColors, injectIntl)(EmailPieCharts);

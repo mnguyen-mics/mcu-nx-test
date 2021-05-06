@@ -9,7 +9,6 @@ export interface GenericWorldMapProps {
 }
 
 class GenericWorldMap extends React.Component<GenericWorldMapProps> {
-
   cuid: string;
 
   constructor(props: GenericWorldMapProps) {
@@ -24,28 +23,23 @@ class GenericWorldMap extends React.Component<GenericWorldMapProps> {
 
   generateMap = (options: Highcharts.Options, dataset: MapSeriesDataOptions[]) => {
     if (dataset[0].code3) {
-      Highcharts.createElement(
-        'link',
-        {},
-        undefined,
-        document.getElementsByTagName('head')[0],
-      );
+      Highcharts.createElement('link', {}, undefined, document.getElementsByTagName('head')[0]);
 
-      options.series = [{
-        data: dataset,
-        mapData: (Highcharts as any).maps['custom/world'],
-        joinBy: ['iso-a3', 'code3'] as any,
-        type: 'map'
-      }];
+      options.series = [
+        {
+          data: dataset,
+          mapData: (Highcharts as any).maps['custom/world'],
+          joinBy: ['iso-a3', 'code3'] as any,
+          type: 'map',
+        },
+      ];
 
       Highcharts.mapChart(this.cuid, options);
-
-    };
-  }
+    }
+  };
   render() {
     return <div id={this.cuid} />;
   }
-
 }
 
 export default GenericWorldMap;

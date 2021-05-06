@@ -5,7 +5,15 @@ import { compose } from 'recompose';
 import { OfferType } from './EditOfferPage';
 import { Layout } from 'antd';
 import { FormLayoutActionbar, ScrollspySider } from '../../../../components/Layout';
-import { Form, InjectedFormProps, reduxForm, ConfigProps, FieldArray, GenericFieldArray, Field } from 'redux-form';
+import {
+  Form,
+  InjectedFormProps,
+  reduxForm,
+  ConfigProps,
+  FieldArray,
+  GenericFieldArray,
+  Field,
+} from 'redux-form';
 import { BasicProps } from 'antd/lib/layout/layout';
 import { FormLayoutActionbarProps } from '../../../../components/Layout/FormLayoutActionbar';
 import messages from '../../messages';
@@ -13,13 +21,19 @@ import { SidebarWrapperProps } from '../../../../components/Layout/ScrollspySide
 import { McsFormSection } from '../../../../utils/FormHelper';
 import { Omit } from '../../../../utils/Types';
 import { OfferFormData } from '../domain';
-import { FormSection, FormInputField, FormInput, FormSelectField, DefaultSelect } from '../../../../components/Form';
+import {
+  FormSection,
+  FormInputField,
+  FormInput,
+  FormSelectField,
+  DefaultSelect,
+} from '../../../../components/Form';
 import withValidators, { ValidatorProps } from '../../../../components/Form/withValidators';
-import ServiceItemsFormSection, { ServiceItemsFormSectionProps } from './sections/ServiceItemsFormSection';
+import ServiceItemsFormSection, {
+  ServiceItemsFormSectionProps,
+} from './sections/ServiceItemsFormSection';
 
-const Content = Layout.Content as unknown as React.ComponentClass<
-  BasicProps & { id: string }
-  >;
+const Content = (Layout.Content as unknown) as React.ComponentClass<BasicProps & { id: string }>;
 
 export interface OfferFormProps extends Omit<ConfigProps<OfferFormData>, 'form'> {
   close: () => void;
@@ -31,7 +45,7 @@ export interface OfferFormProps extends Omit<ConfigProps<OfferFormData>, 'form'>
 const ServiceItemsFieldArray = FieldArray as new () => GenericFieldArray<
   Field,
   ServiceItemsFormSectionProps
-  >;
+>;
 
 type Props = InjectedFormProps<OfferFormData, OfferFormProps> &
   RouteComponentProps<{ organisationId: string; offerId?: string }> &
@@ -42,7 +56,6 @@ type Props = InjectedFormProps<OfferFormData, OfferFormProps> &
 export const FORM_ID = 'offerForm';
 
 class CreateOfferForm extends React.Component<Props> {
-
   render() {
     const {
       handleSubmit,
@@ -53,7 +66,9 @@ class CreateOfferForm extends React.Component<Props> {
       change,
       fieldValidators: { isRequired },
       intl: { formatMessage },
-      match: { params: { offerId } }
+      match: {
+        params: { offerId },
+      },
     } = this.props;
 
     const actionBarProps: FormLayoutActionbarProps = {
@@ -81,7 +96,7 @@ class CreateOfferForm extends React.Component<Props> {
 
           <div>
             <FormInputField
-              name="offer.name"
+              name='offer.name'
               component={FormInput}
               validate={[isRequired]}
               formItemProps={{
@@ -89,10 +104,8 @@ class CreateOfferForm extends React.Component<Props> {
                 required: true,
               }}
               inputProps={{
-                disabled: (offerId !== undefined),
-                placeholder: formatMessage(
-                  messages.sectionNewOfferNamePlaceholder,
-                ),
+                disabled: offerId !== undefined,
+                placeholder: formatMessage(messages.sectionNewOfferNamePlaceholder),
               }}
             />
           </div>
@@ -100,12 +113,11 @@ class CreateOfferForm extends React.Component<Props> {
       ),
     });
     if (offerType === OfferType.Automatic) {
-
       const optionsAutomaticOn = [
         {
-          value: "AUDIENCE_SEGMENT",
-          title: "AUDIENCE_SEGMENT",
-        }
+          value: 'AUDIENCE_SEGMENT',
+          title: 'AUDIENCE_SEGMENT',
+        },
       ];
 
       sections.push({
@@ -120,15 +132,13 @@ class CreateOfferForm extends React.Component<Props> {
 
             <div>
               <FormSelectField
-                name="offer.automatic_on"
+                name='offer.automatic_on'
                 component={DefaultSelect}
                 validate={[isRequired]}
                 formItemProps={{
-                  label: formatMessage(
-                    messages.sectionNewOfferAutomaticOnLabel,
-                  ),
+                  label: formatMessage(messages.sectionNewOfferAutomaticOnLabel),
                 }}
-                disabled={(offerId !== undefined)}
+                disabled={offerId !== undefined}
                 options={optionsAutomaticOn}
               />
             </div>
@@ -141,15 +151,13 @@ class CreateOfferForm extends React.Component<Props> {
         title: messages.serviceItemsSection,
         component: (
           <ServiceItemsFieldArray
-            name="serviceConditionFields"
+            name='serviceConditionFields'
             component={ServiceItemsFormSection}
             {...genericFieldArrayProps}
           />
         ),
       });
     }
-
-
 
     const sideBarProps: SidebarWrapperProps = {
       items: sections.map(s => ({ sectionId: s.id, title: s.title })),
@@ -158,13 +166,12 @@ class CreateOfferForm extends React.Component<Props> {
 
     if (goToOfferTypeSelection) {
       sideBarProps.items.unshift({
-        sectionId: "type",
+        sectionId: 'type',
         title: messages.offerFormTypeSelection,
         onClick: goToOfferTypeSelection,
         type: 'validated',
       });
     }
-
 
     const renderedSections = sections.map((section, index) => {
       return (
@@ -178,18 +185,12 @@ class CreateOfferForm extends React.Component<Props> {
     });
 
     return (
-      <Layout className="edit-layout">
+      <Layout className='edit-layout'>
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
           <ScrollspySider {...sideBarProps} />
-          <Form
-            className="edit-layout ant-layout"
-            onSubmit={handleSubmit as any}
-          >
-            <Content
-              id={FORM_ID}
-              className="mcs-content-container mcs-form-container"
-            >
+          <Form className='edit-layout ant-layout' onSubmit={handleSubmit as any}>
+            <Content id={FORM_ID} className='mcs-content-container mcs-form-container'>
               {renderedSections}
             </Content>
           </Form>

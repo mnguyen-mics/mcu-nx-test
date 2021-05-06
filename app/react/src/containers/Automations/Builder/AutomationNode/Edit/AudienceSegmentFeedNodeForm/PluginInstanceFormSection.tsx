@@ -2,9 +2,7 @@ import * as React from 'react';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
 import { FormSection } from '../../../../../../components/Form';
-import withValidators, {
-  ValidatorProps,
-} from '../../../../../../components/Form/withValidators';
+import withValidators, { ValidatorProps } from '../../../../../../components/Form/withValidators';
 import { StrictlyLayoutablePlugin } from '../../../../../../models/Plugins';
 import PluginSectionGenerator, {
   PluginExtraField,
@@ -17,9 +15,7 @@ interface PluginInstanceFormSectionProps {
   disabled?: boolean;
 }
 
-type Props = PluginInstanceFormSectionProps &
-  InjectedIntlProps &
-  ValidatorProps;
+type Props = PluginInstanceFormSectionProps & InjectedIntlProps & ValidatorProps;
 
 class PluginInstanceFormSection extends React.Component<Props> {
   render() {
@@ -35,9 +31,7 @@ class PluginInstanceFormSection extends React.Component<Props> {
     const presetProperties = preset ? preset.properties : [];
     const pluginProperties = strictlyLayoutablePlugin.plugin_version_properties;
 
-    const nameValue = strictlyLayoutablePlugin.name
-      ? strictlyLayoutablePlugin.name
-      : preset?.name;
+    const nameValue = strictlyLayoutablePlugin.name ? strictlyLayoutablePlugin.name : preset?.name;
 
     const nameField: PluginExtraField | undefined = nameValue
       ? {
@@ -71,13 +65,10 @@ class PluginInstanceFormSection extends React.Component<Props> {
 
     const layoutSections = pluginLayout.sections.map((section, index) => {
       const indexCondition = index !== pluginLayout.sections.length - 1;
-      const fieldsCondition =
-        section.fields !== null && section.fields.length !== 0;
+      const fieldsCondition = section.fields !== null && section.fields.length !== 0;
       const advancedFieldsCondition =
-        section.advanced_fields !== null &&
-        section.advanced_fields.length !== 0;
-      const hrBooleanCondition =
-        indexCondition && (fieldsCondition || advancedFieldsCondition);
+        section.advanced_fields !== null && section.advanced_fields.length !== 0;
+      const hrBooleanCondition = indexCondition && (fieldsCondition || advancedFieldsCondition);
       return (
         <div key={section.title}>
           <PluginSectionGenerator

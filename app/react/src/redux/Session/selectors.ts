@@ -27,9 +27,7 @@ const getDefaultWorkspace = createSelector(
   state => state.session.connectedUser.workspaces,
   getDefaultWorkspaceIndex,
   (userWorkspaces, defaultWorkspaceIndex) =>
-    userWorkspaces &&
-    userWorkspaces.length &&
-    userWorkspaces[defaultWorkspaceIndex],
+    userWorkspaces && userWorkspaces.length && userWorkspaces[defaultWorkspaceIndex],
 );
 
 // Improve typing here
@@ -50,13 +48,10 @@ const getWorkspace = (state: MicsReduxState) => (organisationId: string) => {
   return workspaces[organisationId];
 };
 
-const getDefaultWorkspaceOrganisationId = createSelector(
-  getDefaultWorkspace,
-  defaultWorkspace => {
-    if (defaultWorkspace) return defaultWorkspace.organisation_id;
-    return 'none';
-  },
-);
+const getDefaultWorkspaceOrganisationId = createSelector(getDefaultWorkspace, defaultWorkspace => {
+  if (defaultWorkspace) return defaultWorkspace.organisation_id;
+  return 'none';
+});
 
 const getDefaultWorkspaceOrganisationName = createSelector(
   getDefaultWorkspace,
@@ -66,9 +61,7 @@ const getDefaultWorkspaceOrganisationName = createSelector(
   },
 );
 
-const getDefaultDatamart = (state: MicsReduxState) => (
-  organisationId: string,
-) => {
+const getDefaultDatamart = (state: MicsReduxState) => (organisationId: string) => {
   const workspaces = getWorkspaces(state);
   return (
     workspaces &&
@@ -81,9 +74,7 @@ const getDefaultDatamart = (state: MicsReduxState) => (
 const hasDatamarts = (state: MicsReduxState) => (organisationId: string) => {
   const workspaces = getWorkspaces(state);
   return (
-    workspaces &&
-    workspaces[organisationId] &&
-    workspaces[organisationId].datamarts.length > 0
+    workspaces && workspaces[organisationId] && workspaces[organisationId].datamarts.length > 0
   );
 };
 
@@ -92,9 +83,7 @@ const hasWorkspace = (state: MicsReduxState) => (organisationId: string) => {
   return !!workspaces[organisationId];
 };
 
-const hasAccessToOrganisation = (state: MicsReduxState) => (
-  organisationId: string,
-) => {
+const hasAccessToOrganisation = (state: MicsReduxState) => (organisationId: string) => {
   const workspaces = getWorkspaces(state);
   return !!workspaces[organisationId];
 };

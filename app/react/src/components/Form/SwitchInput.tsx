@@ -3,12 +3,7 @@ import { Switch } from 'antd';
 import { WrappedFieldProps } from 'redux-form';
 
 const SwitchInput: React.SFC<{ className?: string } & WrappedFieldProps> = props => {
-  return (
-    <Switch
-      {...props.input}
-      className={props.className}
-    />
-  );
+  return <Switch {...props.input} className={props.className} />;
 };
 
 SwitchInput.defaultProps = {

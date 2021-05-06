@@ -1,6 +1,3 @@
 import injectFeatures, { InjectedFeaturesProps } from './injectFeatures';
 
-export {
-  injectFeatures,
-  InjectedFeaturesProps,
-}
+export { injectFeatures, InjectedFeaturesProps };

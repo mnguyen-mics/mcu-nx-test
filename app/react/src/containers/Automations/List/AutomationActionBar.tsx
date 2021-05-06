@@ -2,11 +2,7 @@ import React from 'react';
 import { Button } from 'antd';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
-import {
-  Actionbar,
-  McsIcon,
-  Slide,
-} from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, McsIcon, Slide } from '@mediarithmics-private/mcs-components-library';
 import { compose } from 'recompose';
 import Menu from 'antd/lib/menu';
 import { AutomationStatus } from '../../../models/automations/automations';
@@ -28,9 +24,7 @@ interface AutomationActionbarProps {
   };
 }
 
-export interface FilterParams
-  extends PaginationSearchSettings,
-    KeywordSearchSettings {
+export interface FilterParams extends PaginationSearchSettings, KeywordSearchSettings {
   statuses: AutomationStatus[];
 }
 
@@ -44,10 +38,7 @@ interface AutomationActionbarState {
   allAutomationsActivated: boolean;
   allAutomationsPaused: boolean;
 }
-class AutomationActionBar extends React.Component<
-  JoinedProps,
-  AutomationActionbarState
-> {
+class AutomationActionBar extends React.Component<JoinedProps, AutomationActionbarState> {
   constructor(props: JoinedProps) {
     super(props);
     this.state = {
@@ -74,10 +65,10 @@ class AutomationActionBar extends React.Component<
 
     return (
       <Menu onClick={onClick}>
-        <Menu.Item key="pause">
+        <Menu.Item key='pause'>
           <FormattedMessage {...messages.pauseAll} />
         </Menu.Item>
-        <Menu.Item key="activate">
+        <Menu.Item key='activate'>
           <FormattedMessage {...messages.activeAll} />
         </Menu.Item>
       </Menu>
@@ -92,14 +83,16 @@ class AutomationActionBar extends React.Component<
     } = this.props;
 
     const breadcrumbPaths = [
-      <Link key='1' to={`/v2/o/${organisationId}/automations`}>{intl.formatMessage(messages.automationListTitle)}</Link>,
+      <Link key='1' to={`/v2/o/${organisationId}/automations`}>
+        {intl.formatMessage(messages.automationListTitle)}
+      </Link>,
     ];
 
     const buildActionElement = () => {
       return (
         <Dropdown overlay={this.buildMenu()} trigger={['click']}>
-          <Button className="button-glow">
-            <McsIcon type="chevron" />
+          <Button className='button-glow'>
+            <McsIcon type='chevron' />
             <FormattedMessage {...messages.setStatus} />
           </Button>
         </Dropdown>
@@ -109,19 +102,15 @@ class AutomationActionBar extends React.Component<
     return (
       <Actionbar pathItems={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/automation-builder`}>
-          <Button className="mcs-primary" type="primary">
-            <McsIcon type="plus" />{' '}
+          <Button className='mcs-primary' type='primary'>
+            <McsIcon type='plus' />{' '}
             <FormattedMessage
-              id="automations.list.actionbar.newAutomation"
-              defaultMessage="New Automation"
+              id='automations.list.actionbar.newAutomation'
+              defaultMessage='New Automation'
             />
           </Button>
         </Link>
-        <Slide
-          toShow={visible}
-          horizontal={true}
-          content={buildActionElement()}
-        />
+        <Slide toShow={visible} horizontal={true} content={buildActionElement()} />
       </Actionbar>
     );
   }

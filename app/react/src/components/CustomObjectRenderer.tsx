@@ -1,12 +1,7 @@
 import * as React from 'react';
 import CustomPropertyRenderer from './CustomPropertyRenderer';
 import { Tooltip, Tag } from 'antd';
-import {
-  injectIntl,
-  FormattedMessage,
-  InjectedIntlProps,
-  defineMessages,
-} from 'react-intl';
+import { injectIntl, FormattedMessage, InjectedIntlProps, defineMessages } from 'react-intl';
 import {
   TemplateDefinitions,
   ExtendedTemplates,
@@ -76,20 +71,14 @@ class CustomObjectRenderer extends React.Component<Props, State> {
   };
 
   // Function used to create extended templates from other extended templates, relatively (using key)
-  createRecLocalTemplates = (
-    localTemplates: ExtendedTemplates,
-    key: string,
-  ): ExtendedTemplates => {
+  createRecLocalTemplates = (localTemplates: ExtendedTemplates, key: string): ExtendedTemplates => {
     const recTemplates: ExtendedTemplates = {
       absoluteTemplates: {},
       transformedTemplates: {},
       relativeTemplates: localTemplates.relativeTemplates,
     };
 
-    const transformLayer = (
-      inLayer: TemplateDefinitions,
-      outLayer: TemplateDefinitions,
-    ) => {
+    const transformLayer = (inLayer: TemplateDefinitions, outLayer: TemplateDefinitions) => {
       Object.entries(inLayer).forEach(
         (entry: [string, (value: AnyJson) => AnyJson | JSX.Element]) => {
           const completeVarName = entry[0];
@@ -104,18 +93,9 @@ class CustomObjectRenderer extends React.Component<Props, State> {
       );
     };
 
-    transformLayer(
-      localTemplates.absoluteTemplates,
-      recTemplates.absoluteTemplates,
-    );
-    transformLayer(
-      localTemplates.transformedTemplates,
-      recTemplates.transformedTemplates,
-    );
-    transformLayer(
-      localTemplates.relativeTemplates,
-      recTemplates.transformedTemplates,
-    );
+    transformLayer(localTemplates.absoluteTemplates, recTemplates.absoluteTemplates);
+    transformLayer(localTemplates.transformedTemplates, recTemplates.transformedTemplates);
+    transformLayer(localTemplates.relativeTemplates, recTemplates.transformedTemplates);
 
     return recTemplates;
   };
@@ -123,20 +103,17 @@ class CustomObjectRenderer extends React.Component<Props, State> {
   // Used to add a left border to the object
   createDisplayedObject = (
     leftBorder: boolean,
-    valueToBeDisplayed: AnyJson | JSX.Element,
+    valueToBeDisplayed: AnyJson | JSX.Element,
   ): JSX.Element => {
     return leftBorder ? (
-      <div className="left-border-object">{valueToBeDisplayed}</div>
+      <div className='left-border-object'>{valueToBeDisplayed}</div>
     ) : (
-      <span className="object">{valueToBeDisplayed}</span>
+      <span className='object'>{valueToBeDisplayed}</span>
     );
   };
 
   // Same as createDisplayedObject, but with a CustomPropertyRenderer as value
-  createDisplayedObjectWithProperty = (
-    leftBorder: boolean,
-    value: AnyJson,
-  ): JSX.Element => {
+  createDisplayedObjectWithProperty = (leftBorder: boolean, value: AnyJson): JSX.Element => {
     const valueToBeDisplayed = <CustomPropertyRenderer value={value} />;
     return this.createDisplayedObject(leftBorder, valueToBeDisplayed);
   };
@@ -161,7 +138,7 @@ class CustomObjectRenderer extends React.Component<Props, State> {
     const viewMoreButton = (plus: boolean) => {
       const message = plus ? messages.viewMore : messages.viewLess;
       return (
-        <button className="button-sm" onClick={invertViewMoreStatus}>
+        <button className='button-sm' onClick={invertViewMoreStatus}>
           <FormattedMessage {...message} />
         </button>
       );
@@ -227,10 +204,7 @@ class CustomObjectRenderer extends React.Component<Props, State> {
         );
       case 'string':
       case 'number':
-        return this.createDisplayedObjectWithProperty(
-          leftBorder,
-          objectToBeRendered,
-        );
+        return this.createDisplayedObjectWithProperty(leftBorder, objectToBeRendered);
     }
 
     // First complex case : Array
@@ -259,17 +233,16 @@ class CustomObjectRenderer extends React.Component<Props, State> {
           : // Empty list case
             this.createDisplayedObject(
               leftBorder,
-              <span className="EmptyListPropertyValue">
-                <Tooltip title="Empty list">
-                  <Tag className="card-tag">[]</Tag>
+              <span className='EmptyListPropertyValue'>
+                <Tooltip title='Empty list'>
+                  <Tag className='card-tag'>[]</Tag>
                 </Tooltip>
               </span>,
             );
       return (
-        <span className="PropertyList">
+        <span className='PropertyList'>
           {renderedElements}
-          {viewMoreButtonForList &&
-            this.createDisplayedObject(true, viewMoreButtonForList)}
+          {viewMoreButtonForList && this.createDisplayedObject(true, viewMoreButtonForList)}
         </span>
       );
     }
@@ -284,9 +257,9 @@ class CustomObjectRenderer extends React.Component<Props, State> {
     if (nonNullPropertiesOfTheObject.length === 0) {
       return this.createDisplayedObject(
         leftBorder,
-        <span className="EmptyObjectPropertyValue">
-          <Tooltip title="Empty object">
-            <Tag className="card-tag">{'{}'}</Tag>
+        <span className='EmptyObjectPropertyValue'>
+          <Tooltip title='Empty object'>
+            <Tag className='card-tag'>{'{}'}</Tag>
           </Tooltip>
         </span>,
       );

@@ -68,7 +68,7 @@ export type MicsReduxState = {
     mode: string;
   };
   DrawableContents: DrawableContent[];
-}
+};
 
 export type Payload = { [key: string]: any };
 
@@ -95,9 +95,10 @@ const defaultMetadata = {
   total: 0,
 };
 
-export const createRequestMetadataReducer = (
-  requestTypes: CreateRequestType,
-) => (state = defaultMetadata, action: Action<Payload>) => {
+export const createRequestMetadataReducer = (requestTypes: CreateRequestType) => (
+  state = defaultMetadata,
+  action: Action<Payload>,
+) => {
   switch (action.type) {
     case requestTypes.REQUEST:
       return {

@@ -25,35 +25,23 @@ export default class Counter extends React.Component<CounterProps, State> {
   }
 
   render() {
-    const {
-      name,
-      value,
-      loading,
-      error,
-      stale,
-      onRefresh,
-      width,
-      hideValue,
-    } = this.props;
+    const { name, value, loading, error, stale, onRefresh, width, hideValue } = this.props;
 
     const onHover = (type: 'enter' | 'leave') => () =>
       this.setState({ hover: type === 'enter' ? true : false });
 
     const restOfCounter = !hideValue && (
       <React.Fragment>
-        <div className="view-value">
+        <div className='view-value'>
           {loading ? (
-            <i
-              className="mcs-table-cell-loading"
-              style={{ maxWidth: '100%' }}
-            />
+            <i className='mcs-table-cell-loading' style={{ maxWidth: '100%' }} />
           ) : (
             formatMetric(value, '0,0')
           )}
         </div>
         {loading && <div className={'refresh-overlay'} onClick={onRefresh} />}
         {loading && (
-          <div className="refresh-text">
+          <div className='refresh-text'>
             <LoadingOutlined />
           </div>
         )}
@@ -61,16 +49,14 @@ export default class Counter extends React.Component<CounterProps, State> {
           <div className={'refresh-overlay'} onClick={onRefresh} />
         )}
         {(stale || this.state.hover) && !loading && (
-          <div className="refresh-text" onClick={onRefresh}>
-            <McsIcon type="refresh" />
+          <div className='refresh-text' onClick={onRefresh}>
+            <McsIcon type='refresh' />
           </div>
         )}
+        {error && !loading && <div className={'refresh-overlay error'} onClick={onRefresh} />}
         {error && !loading && (
-          <div className={'refresh-overlay error'} onClick={onRefresh} />
-        )}
-        {error && !loading && (
-          <div className="refresh-text error" onClick={onRefresh}>
-            <McsIcon type="refresh" />
+          <div className='refresh-text error' onClick={onRefresh}>
+            <McsIcon type='refresh' />
           </div>
         )}
       </React.Fragment>
@@ -78,7 +64,7 @@ export default class Counter extends React.Component<CounterProps, State> {
 
     return (
       <div
-        className="m-t-20"
+        className='m-t-20'
         style={{
           float: 'left',
           width: width,
@@ -88,8 +74,8 @@ export default class Counter extends React.Component<CounterProps, State> {
         onMouseEnter={onHover('enter')}
         onMouseLeave={onHover('leave')}
       >
-        <div className="mcs-card no-margin-bottom result-view">
-          <div className="view-name">{name}</div>
+        <div className='mcs-card no-margin-bottom result-view'>
+          <div className='view-name'>{name}</div>
           {restOfCounter}
         </div>
       </div>

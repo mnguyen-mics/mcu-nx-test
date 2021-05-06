@@ -5,10 +5,7 @@ import {
   AdInfoResource,
   AdGroupResource,
 } from '../../../../../models/campaign/display';
-import {
-  AttributionSelectionResource,
-  GoalSelectionResource,
-} from '../../../../../models/goal';
+import { AttributionSelectionResource, GoalSelectionResource } from '../../../../../models/goal';
 
 export const initialPageState: DisplayCampaignPageState = {
   campaign: {

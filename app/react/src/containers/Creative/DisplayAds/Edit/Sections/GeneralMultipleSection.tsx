@@ -10,9 +10,7 @@ import {
 } from '../../../../../components/Form';
 import messages from '../messages';
 import { ValidatorProps } from '../../../../../components/Form/withValidators';
-import {
-  EditDisplayCreativeRouteMatchParams,
-} from '../domain';
+import { EditDisplayCreativeRouteMatchParams } from '../domain';
 import { RouteComponentProps } from 'react-router';
 
 export interface GeneralFormSectionProps {
@@ -38,7 +36,7 @@ class GeneralFormSection extends React.Component<Props, State> {
     const {
       intl: { formatMessage },
       fieldValidators: { isRequired },
-      small
+      small,
     } = this.props;
 
     return (
@@ -49,28 +47,21 @@ class GeneralFormSection extends React.Component<Props, State> {
         />
 
         <FormInputField
-          name="creative.destination_domain"
+          name='creative.destination_domain'
           component={FormInput}
           validate={[isRequired]}
           formItemProps={{
-            label: formatMessage(
-              messages.creativeCreationGeneralDomainFieldTitle,
-            ),
+            label: formatMessage(messages.creativeCreationGeneralDomainFieldTitle),
             required: small,
           }}
           inputProps={{
-            placeholder: formatMessage(
-              messages.creativeCreationGeneralDomainFieldPlaceHolder,
-            ),
+            placeholder: formatMessage(messages.creativeCreationGeneralDomainFieldPlaceHolder),
           }}
           helpToolTipProps={{
-            title: formatMessage(
-              messages.creativeCreationGeneralDomainFieldHelper,
-            ),
+            title: formatMessage(messages.creativeCreationGeneralDomainFieldHelper),
           }}
           small={small}
         />
-        
       </div>
     );
   }

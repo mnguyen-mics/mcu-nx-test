@@ -1,15 +1,15 @@
-import { Layout } from "react-grid-layout";
-import { OTQLResult } from "../datamart/graphdb/OTQLResult";
+import { Layout } from 'react-grid-layout';
+import { OTQLResult } from '../datamart/graphdb/OTQLResult';
 
 export interface DashboardResource {
-  id: string,
+  id: string;
   type: DashboardType;
   datamart_id: string;
   name: string;
-  components: ComponentLayout[]
+  components: ComponentLayout[];
 }
 
-export type DashboardType = "HOME" | "SEGMENT" | "AUDIENCE_BUILDER"
+export type DashboardType = 'HOME' | 'SEGMENT' | 'AUDIENCE_BUILDER';
 
 export interface ComponentLayout {
   layout: Layout;
@@ -24,7 +24,7 @@ export interface BaseComponent {
 }
 
 export interface ComponentChart extends BaseComponent {
-  component_type: 'MAP_PIE_CHART' | 'TOP_INFO_COMPONENT';
+  component_type: 'MAP_PIE_CHART' | 'TOP_INFO_COMPONENT';
   show_legend: boolean;
   query_id: string;
   data?: OTQLResult;
@@ -38,7 +38,7 @@ export interface DataLabel {
 }
 
 export interface TooltipChart {
-  formatter: string
+  formatter: string;
 }
 
 export interface MapBarComponent extends BaseComponent {
@@ -50,9 +50,9 @@ export interface MapBarComponent extends BaseComponent {
   percentage?: boolean;
   labels_enabled?: boolean;
   vertical?: boolean;
-  sortKey?: 'A-Z' | 'Z-A'
+  sortKey?: 'A-Z' | 'Z-A';
   labels?: DataLabel;
-  tooltip?: TooltipChart
+  tooltip?: TooltipChart;
 }
 
 export interface MapRadarChart extends BaseComponent {
@@ -65,8 +65,8 @@ export interface MapRadarChart extends BaseComponent {
   labels_enabled?: boolean;
   vertical?: boolean;
   labels?: DataLabel;
-  sortKey?: 'A-Z' | 'Z-A'
-  tooltip?: TooltipChart
+  sortKey?: 'A-Z' | 'Z-A';
+  tooltip?: TooltipChart;
 }
 
 export interface DateAggregationComponent extends BaseComponent {
@@ -100,7 +100,6 @@ export interface ComponentCount extends BaseComponent {
   suffix?: string;
 }
 
-
 export interface ComponentPercentage extends BaseComponent {
   component_type: 'PERCENTAGE';
   query_id: string;
@@ -133,9 +132,9 @@ export type Component =
   | MapStackedBarChart
   | WorldMapChart
   | ComponentCountBar
-  | ComponentPercentage
+  | ComponentPercentage
   | DateAggregationComponent
-  | CountPieComponent
+  | CountPieComponent
   | MapBarComponent
   | MapRadarChart;
 
@@ -144,7 +143,7 @@ export type ComponentType =
   | 'MAP_PIE_CHART'
   | 'DATE_AGGREGATION_CHART'
   | 'COUNT'
-  | 'PERCENTAGE'
+  | 'PERCENTAGE'
   | 'GAUGE_PIE_CHART'
   | 'MAP_STACKED_BAR_CHART'
   | 'WORLD_MAP_CHART'

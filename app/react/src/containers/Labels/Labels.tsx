@@ -61,11 +61,7 @@ class Labels extends React.Component<LabelsProps, LabelsState> {
       organisationId !== previousOrganisationId ||
       labellableType !== previousLabellableType
     ) {
-      this.fetchLabbellableLables(
-        organisationId,
-        labellableId,
-        labellableType,
-      );
+      this.fetchLabbellableLables(organisationId, labellableId, labellableType);
     }
   }
 
@@ -87,9 +83,7 @@ class Labels extends React.Component<LabelsProps, LabelsState> {
     if (newLabels.length > this.state.labels.length) {
       const diffToAdd = newLabels
         .map(newLabel => {
-          return this.state.labels.find(label => newLabel.id === label.id)
-            ? null
-            : newLabel;
+          return this.state.labels.find(label => newLabel.id === label.id) ? null : newLabel;
         })
         .filter(item => item && item.id)[0];
       if (diffToAdd) {
@@ -105,9 +99,7 @@ class Labels extends React.Component<LabelsProps, LabelsState> {
     if (newLabels.length < this.state.labels.length) {
       const diffToRemove = this.state.labels
         .map(label => {
-          return newLabels.find(newLabel => newLabel.id === label.id)
-            ? null
-            : label;
+          return newLabels.find(newLabel => newLabel.id === label.id) ? null : label;
         })
         .filter(item => item && item.id)[0];
 
