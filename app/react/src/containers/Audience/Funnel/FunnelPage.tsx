@@ -61,13 +61,20 @@ class FunnelPage extends React.Component<JoinedProps, State> {
 
   constructor(props: JoinedProps) {
     super(props);
+    const routeParams = parseSearch(props.history.location.search, FUNNEL_SEARCH_SETTING);
     this.state = {
       exportIsRunning: false,
       isLoading: false,
-      dateRange: {
-        from: new McsMoment(`now-7d`),
-        to: new McsMoment('now'),
-      },
+      dateRange:
+        routeParams.from && routeParams.to && routeParams.from.value && routeParams.to.value
+          ? {
+              from: new McsMoment(routeParams.from.value),
+              to: new McsMoment(routeParams.to.value),
+            }
+          : {
+              from: new McsMoment(`now-7d`),
+              to: new McsMoment('now'),
+            },
     };
   }
 
@@ -283,6 +290,7 @@ class FunnelPage extends React.Component<JoinedProps, State> {
           <FunnelWrapper
             datamartId={selectedDatamartId}
             parentCallback={this.handleFunnelWrapperCallback}
+            dateRange={dateRange}
           />
         </Content>
       </div>

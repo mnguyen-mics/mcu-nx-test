@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
+import { Spin } from 'antd';
 import { PropertyResourceShape } from '../../../../../../models/plugin';
 import { PluginFieldGenerator } from '../../../../../Plugin';
 import PluginSectionGenerator from '../../../../../Plugin/PluginSectionGenerator';
@@ -10,6 +11,7 @@ import messages from './messages';
 interface CustomActionInstanceFormSectionProps {
   customActionId: string;
   extendedCustomActionsInformation: ExtendedCustomActionInformation[];
+  isFetchingCustomActionProperties: boolean;
   organisationId: string;
   disabled?: boolean;
 }
@@ -43,8 +45,13 @@ class CustomActionInstanceFormSection extends React.Component<Props> {
       customActionId,
       organisationId,
       extendedCustomActionsInformation,
+      isFetchingCustomActionProperties,
       disabled,
     } = this.props;
+
+    if (isFetchingCustomActionProperties) {
+      return <Spin />;
+    }
 
     if (customActionId) {
       const extendedCustomActionInformation = extendedCustomActionsInformation.find(info => {
