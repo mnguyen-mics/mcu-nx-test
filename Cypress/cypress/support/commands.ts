@@ -231,6 +231,7 @@ Cypress.Commands.add('initTestContext', () => {
                   'callback_ts:Timestamp @TreeIndex(index:"USER_INDEX")\n' +
                   'start_ts:Timestamp! @TreeIndex(index:"USER_INDEX")\n' +
                   'node_start_ts:Timestamp! @TreeIndex(index:"USER_INDEX")\n' +
+                  'active: Boolean @TreeIndex(index:"USER_INDEX")\n' +
                   '}\n' +
                   '######\n' +
                   'type UserAgent  {\n' +
