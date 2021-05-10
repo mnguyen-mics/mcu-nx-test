@@ -18,7 +18,7 @@ import { FORM_ID, buildQueryDocument, messages } from './constants';
 import { Omit } from '../../../utils/Types';
 import {
   AudienceBuilderFormData,
-  QueryDocument as AudienceBuilderQueryDocument,
+  AudienceBuilderQueryDocument,
   AudienceBuilderGroupNode,
   isAudienceBuilderParametricPredicateNode,
   AudienceBuilderResource,
@@ -34,7 +34,6 @@ import { TYPES } from '../../../constants/types';
 import { IRuntimeSchemaService } from '../../../services/RuntimeSchemaService';
 import { IQueryService } from '../../../services/QueryService';
 import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/RuntimeSchema';
-import { QueryDocument as GraphDbQueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
 import { McsIcon, Button, Loading } from '@mediarithmics-private/mcs-components-library';
 import { IAudienceFeatureService } from '../../../services/AudienceFeatureService';
 import { AudienceFeatureResource } from '../../../models/audienceFeature';
@@ -69,7 +68,7 @@ type Props = InjectedFormProps<AudienceBuilderFormData, AudienceBuilderContainer
 
 interface State {
   isLoadingObjectTypes: boolean;
-  queryDocument?: GraphDbQueryDocument;
+  queryDocument?: AudienceBuilderQueryDocument;
   objectTypes: ObjectLikeTypeInfoResource[];
   queryResult?: OTQLResult;
   isQueryRunning: boolean;
@@ -155,7 +154,7 @@ class AudienceBuilderContainer extends React.Component<Props, State> {
       queryDocument: queryDocument,
     });
     this._queryService
-      .runJSONOTQLQuery(audienceBuilder.datamart_id, queryDocument)
+      .runJSONOTQLQuery(audienceBuilder.datamart_id, queryDocument, { parameterized: true })
       .then(queryResult => {
         this.setState({
           queryResult: queryResult.data,

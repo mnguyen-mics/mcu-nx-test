@@ -14,7 +14,7 @@ import Percentage from './Vizualisation/Percentage';
 import CountPieChart from './Vizualisation/CountPieChart';
 import TopInfo from './Vizualisation/TopInfo';
 import MapRadarChart from './Vizualisation/MapRadarChart';
-import { QueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
+import { AudienceBuilderQueryDocument } from '../../../models/audienceBuilder/AudienceBuilderResource';
 
 const BASE_FRAMEWORK_HEIGHT = 96;
 const BASE_PADDING = 5;
@@ -24,7 +24,7 @@ const ResponsiveReactGridLayout = WidthProvider(Responsive);
 interface Props {
   layout: ComponentLayout[];
   onLayoutChange: (layout: Layout[], allLayouts: Layouts) => void;
-  source?: AudienceSegmentShape | QueryDocument;
+  source?: AudienceSegmentShape | AudienceBuilderQueryDocument;
   datamartId: string;
 }
 

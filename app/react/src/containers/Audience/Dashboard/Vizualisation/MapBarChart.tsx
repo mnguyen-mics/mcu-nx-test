@@ -24,11 +24,11 @@ import {
   LoadingChart,
   StackedBarPlot,
 } from '@mediarithmics-private/mcs-components-library';
-import { QueryDocument } from '../../../../models/datamart/graphdb/QueryDocument';
+import { AudienceBuilderQueryDocument } from '../../../../models/audienceBuilder/AudienceBuilderResource';
 
 export interface MapBarChartProps {
   title?: string;
-  source?: AudienceSegmentShape | QueryDocument;
+  source?: AudienceSegmentShape | AudienceBuilderQueryDocument;
   data?: OTQLResult;
   queryId: string;
   datamartId: string;
@@ -170,7 +170,7 @@ class MapBarChart extends React.Component<Props, State> {
     chartQueryId: string,
     datamartId: string,
     shouldCompare?: boolean,
-    source?: AudienceSegmentShape | QueryDocument,
+    source?: AudienceSegmentShape | AudienceBuilderQueryDocument,
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
     const promise: Promise<void | QueryResource> = shouldCompare
@@ -187,7 +187,7 @@ class MapBarChart extends React.Component<Props, State> {
     const getResultPromise = (q?: QueryResource | void): Promise<void | OTQLResult> =>
       q
         ? this._queryService
-            .runOTQLQuery(datamartId, (q as QueryResource).query_text, {
+            .runOTQLQuery(datamartId, q.query_text, {
               use_cache: true,
             })
             .then(resp => {
@@ -209,7 +209,7 @@ class MapBarChart extends React.Component<Props, State> {
       .then(([q0, q1]) => {
         return Promise.all([
           this._queryService
-            .runOTQLQuery(datamartId, (q0 as QueryResource).query_text, {
+            .runOTQLQuery(datamartId, q0.query_text, {
               use_cache: true,
             })
             .then(resp => {

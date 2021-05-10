@@ -12,7 +12,7 @@ import AudienceBuilderContainer, {
   AudienceBuilderContainerProps,
 } from '../../Audience/AudienceBuilder/AudienceBuilderContainer';
 import {
-  QueryDocument as AudienceQueryDocument,
+  AudienceBuilderQueryDocument,
   AudienceBuilderResource,
 } from '../../../models/audienceBuilder/AudienceBuilderResource';
 
@@ -64,7 +64,7 @@ class JSONQLPreview extends React.Component<Props> {
     };
 
     if (segmentEditor === 'AUDIENCE_BUILDER') {
-      const actionbar = (query: AudienceQueryDocument, datamartId: string) => {
+      const actionbar = (query: AudienceBuilderQueryDocument, datamartId: string) => {
         const onSave = () => {
           if (this.props.onChange) this.props.onChange(JSON.stringify(query));
           this.props.closeNextDrawer();

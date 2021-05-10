@@ -18,7 +18,7 @@ import { NEW_FORM_ID, messages } from './constants';
 import { Omit } from '../../../utils/Types';
 import {
   NewAudienceBuilderFormData,
-  QueryDocument as AudienceBuilderQueryDocument,
+  AudienceBuilderQueryDocument,
   AudienceBuilderResource,
   AudienceBuilderParametricPredicateNode,
   isAudienceBuilderParametricPredicateNode,
@@ -34,7 +34,6 @@ import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IRuntimeSchemaService } from '../../../services/RuntimeSchemaService';
 import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/RuntimeSchema';
-import { QueryDocument as GraphDbQueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
 import { McsIcon, Button, Loading } from '@mediarithmics-private/mcs-components-library';
 import { IAudienceFeatureService } from '../../../services/AudienceFeatureService';
 import { IAudienceBuilderQueryService } from './AudienceBuilderQueryService';
@@ -81,7 +80,7 @@ type Props = InjectedFormProps<NewAudienceBuilderFormData, NewAudienceBuilderCon
 
 interface State {
   isLoadingObjectTypes: boolean;
-  queryDocument?: GraphDbQueryDocument;
+  queryDocument?: AudienceBuilderQueryDocument;
   objectTypes: ObjectLikeTypeInfoResource[];
   queryResult?: OTQLResult;
   isQueryRunning: boolean;
@@ -170,9 +169,7 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
   private runQuery = () => {
     const { audienceBuilder, formValues } = this.props;
 
-    // TODO Remove `as any` hack
-    // AudienceBuilderQueryDocument and GraphDBQueryDocument could inherit from the same abstraction.
-    const queryDocument = this._audienceBuilderQueryService.buildQueryDocument(formValues) as any;
+    const queryDocument = this._audienceBuilderQueryService.buildQueryDocument(formValues);
 
     this.setState({
       isQueryRunning: true,
@@ -196,7 +193,6 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
 
     this._audienceBuilderQueryService.runQuery(
       audienceBuilder.datamart_id,
-      formValues,
       queryDocument,
       success,
       failure,

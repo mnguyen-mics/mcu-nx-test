@@ -1,9 +1,9 @@
-import { QueryDocument } from './../../../models/datamart/graphdb/QueryDocument';
 import { UserPartitionSegment } from './../../../models/audiencesegment/AudienceSegmentResource';
 import { AudienceSegmentShape } from '../../../models/audiencesegment';
 import { isUserQuerySegment, isAudienceSegmentShape } from '../Segments/Edit/domain';
 import { QueryResource } from '../../../models/datamart/DatamartResource';
 import { IQueryService } from '../../../services/QueryService';
+import { AudienceBuilderQueryDocument } from '../../../models/audienceBuilder/AudienceBuilderResource';
 
 export const getFormattedExperimentationQuery = (
   datamartId: string,
@@ -43,11 +43,12 @@ export const getFormattedExperimentationQuery = (
     }
   });
 };
+
 export const getFormattedQuery = (
   datamartId: string,
   queryService: IQueryService,
   dashboardQuery: QueryResource,
-  source?: AudienceSegmentShape | QueryDocument,
+  source?: AudienceSegmentShape | AudienceBuilderQueryDocument,
 ): Promise<QueryResource> => {
   if (isAudienceSegmentShape(source)) {
     if (isUserQuerySegment(source) && source.query_id) {
@@ -75,7 +76,7 @@ export const getFormattedQuery = (
         });
     }
     return Promise.resolve(formatQuery(dashboardQuery, `segments { id = \"${source.id}\"}`));
-  } else if (isQueryDocument(source) && source.language_version === 'JSON_OTQL') {
+  } else if (isAudienceBuilderQueryDocument(source) && source.language_version === 'JSON_OTQL') {
     const queryResource = {
       datamart_id: datamartId,
       query_language: 'JSON_OTQL',
@@ -83,7 +84,7 @@ export const getFormattedQuery = (
     };
 
     return queryService
-      .convertJsonOtql2Otql(datamartId, queryResource as QueryResource)
+      .convertJsonOtql2Otql(datamartId, queryResource as QueryResource, { parameterized: true })
       .then(otqlQ => otqlQ.data)
       .then(otqlQ => {
         return Promise.resolve(
@@ -121,6 +122,10 @@ export const hasWhereClause = (text: string) => {
   return text.toLowerCase().indexOf('where') > -1;
 };
 
-function isQueryDocument(source?: AudienceSegmentShape | QueryDocument): source is QueryDocument {
-  return source !== undefined && (source as QueryDocument).language_version !== undefined;
+function isAudienceBuilderQueryDocument(
+  source?: AudienceSegmentShape | AudienceBuilderQueryDocument,
+): source is AudienceBuilderQueryDocument {
+  return (
+    source !== undefined && (source as AudienceBuilderQueryDocument).language_version !== undefined
+  );
 }

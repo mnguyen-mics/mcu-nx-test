@@ -24,11 +24,11 @@ import {
   LoadingChart,
   StackedBarPlot,
 } from '@mediarithmics-private/mcs-components-library';
-import { QueryDocument } from '../../../../models/datamart/graphdb/QueryDocument';
+import { AudienceBuilderQueryDocument } from '../../../../models/audienceBuilder/AudienceBuilderResource';
 
 export interface DateAggregationChartProps {
   title?: string;
-  source?: AudienceSegmentShape | QueryDocument;
+  source?: AudienceSegmentShape | AudienceBuilderQueryDocument;
   queryIds: string[];
   datamartId: string;
   plotLabels: string[];
@@ -135,7 +135,7 @@ class DateAggregationChart extends React.Component<Props, State> {
   fetchData = (
     chartQueryIds: string[],
     datamartId: string,
-    source?: AudienceSegmentShape | QueryDocument,
+    source?: AudienceSegmentShape | AudienceBuilderQueryDocument,
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
     return Promise.all(
@@ -158,7 +158,7 @@ class DateAggregationChart extends React.Component<Props, State> {
     chartQueryId: string,
     datamartId: string,
     plotLabelIndex: number,
-    source?: AudienceSegmentShape | QueryDocument,
+    source?: AudienceSegmentShape | AudienceBuilderQueryDocument,
   ): Promise<QueryResult[]> => {
     return this._queryService
       .getQuery(datamartId, chartQueryId)
