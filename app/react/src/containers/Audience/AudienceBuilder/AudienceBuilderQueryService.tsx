@@ -6,6 +6,7 @@ import {
   NewAudienceBuilderFormData,
   AudienceBuilderGroupNode,
   AudienceBuilderQueryDocument,
+  AudienceBuilderParametricPredicateNode,
 } from '../../../models/audienceBuilder/AudienceBuilderResource';
 import { QueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
 
@@ -68,7 +69,7 @@ export class AudienceBuilderQueryService implements IAudienceBuilderQueryService
       };
     }
 
-    return queryDocument;
+    return this.formatQuery(queryDocument);
   };
 
   runQuery = (
@@ -87,5 +88,31 @@ export class AudienceBuilderQueryService implements IAudienceBuilderQueryService
       .catch(err => {
         failure(err);
       });
+  };
+
+  formatQuery = (query: AudienceBuilderQueryDocument) => {
+    if (query.where) {
+      return {
+        ...query,
+        where: {
+          ...query.where,
+          expressions: (query.where as AudienceBuilderGroupNode).expressions.map(
+            (exp: AudienceBuilderGroupNode) => {
+              return {
+                ...exp,
+                expressions: exp.expressions.map((e: AudienceBuilderParametricPredicateNode) => {
+                  if (!e.parameters || Object.keys(e.parameters).length === 0) {
+                    return {
+                      ...e,
+                      parameters: {},
+                    };
+                  } else return e;
+                }),
+              };
+            },
+          ),
+        },
+      };
+    } else return query;
   };
 }
