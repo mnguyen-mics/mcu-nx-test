@@ -7,6 +7,8 @@ import {
   AudienceBuilderGroupNode,
   AudienceBuilderQueryDocument,
   AudienceBuilderParametricPredicateNode,
+  AudienceBuilderParametricPredicateGroupNode,
+  isAudienceBuilderParametricPredicateNode,
 } from '../../../models/audienceBuilder/AudienceBuilderResource';
 import { QueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
 
@@ -19,6 +21,10 @@ export interface IAudienceBuilderQueryService {
     success: (result: OTQLResult) => void,
     failure: (err: any) => void,
   ) => void;
+
+  generateAudienceBuilderFormData: (
+    initialFormData: AudienceBuilderGroupNode[],
+  ) => NewAudienceBuilderFormData;
 }
 
 @injectable()
@@ -114,5 +120,33 @@ export class AudienceBuilderQueryService implements IAudienceBuilderQueryService
         },
       };
     } else return query;
+  };
+
+  generateAudienceBuilderFormData = (
+    initialFormData: AudienceBuilderGroupNode[],
+  ): NewAudienceBuilderFormData => {
+    const includeNodes: AudienceBuilderParametricPredicateGroupNode[] = [];
+    const excludeNodes: AudienceBuilderParametricPredicateGroupNode[] = [];
+
+    const parseAudienceBuilderGroupNode = (node: AudienceBuilderGroupNode) => {
+      const parametricPredicateNode: AudienceBuilderParametricPredicateGroupNode = {
+        expressions: [],
+      };
+      node.expressions.forEach(expression => {
+        if (isAudienceBuilderParametricPredicateNode(expression))
+          parametricPredicateNode.expressions.push(expression);
+        else throw new Error(`Expression ${expression} don't match a parametric predicate node`);
+      });
+      if (node.negation) {
+        excludeNodes.push(parametricPredicateNode);
+      } else includeNodes.push(parametricPredicateNode);
+    };
+
+    initialFormData.forEach(node => parseAudienceBuilderGroupNode(node));
+
+    return {
+      include: includeNodes,
+      exclude: excludeNodes,
+    };
   };
 }

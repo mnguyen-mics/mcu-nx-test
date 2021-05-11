@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { TYPES } from '../../../constants/types';
 import { QueryDocument as GraphdbQueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
@@ -8,16 +9,17 @@ import { InjectedDrawerProps } from '../../../components/Drawer/injectDrawer';
 import JSONQLBuilderContainer, { JSONQLBuilderContainerProps } from './JSONQLBuilderContainer';
 import { messages } from './messages';
 import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
-import AudienceBuilderContainer, {
-  AudienceBuilderContainerProps,
-} from '../../Audience/AudienceBuilder/AudienceBuilderContainer';
+import { IAudienceBuilderQueryService } from '../../Audience/AudienceBuilder/AudienceBuilderQueryService';
+import { lazyInject } from '../../../config/inversify.config';
+import NewAudienceBuilderContainer, {
+  NewAudienceBuilderContainerProps,
+} from '../../Audience/AudienceBuilder/NewAudienceBuilderContainer';
 import {
   AudienceBuilderQueryDocument,
   AudienceBuilderResource,
 } from '../../../models/audienceBuilder/AudienceBuilderResource';
 
 export type JSONQLPreviewContext = 'GOALS' | 'AUTOMATION_BUILDER';
-
 export interface JSONQLPreviewProps {
   value?: string | void;
   queryHasChanged?: boolean;
@@ -33,6 +35,9 @@ export interface JSONQLPreviewProps {
 type Props = JSONQLPreviewProps & InjectedIntlProps & InjectedDrawerProps;
 
 class JSONQLPreview extends React.Component<Props> {
+  @lazyInject(TYPES.IAudienceBuilderQueryService)
+  private _audienceBuilderQueryService: IAudienceBuilderQueryService;
+
   openEditor = () => {
     const { intl, value, segmentEditor, audienceBuilder } = this.props;
 
@@ -75,10 +80,14 @@ class JSONQLPreview extends React.Component<Props> {
 
       return (
         audienceBuilder &&
-        this.props.openNextDrawer<AudienceBuilderContainerProps>(AudienceBuilderContainer, {
+        this.props.openNextDrawer<NewAudienceBuilderContainerProps>(NewAudienceBuilderContainer, {
           additionalProps: {
             renderActionBar: actionbar,
-            initialValues: value ? JSON.parse(value) : undefined,
+            initialValues: value
+              ? this._audienceBuilderQueryService.generateAudienceBuilderFormData(
+                  JSON.parse(value).where.expressions,
+                )
+              : undefined,
             audienceBuilder: audienceBuilder,
           },
         })
