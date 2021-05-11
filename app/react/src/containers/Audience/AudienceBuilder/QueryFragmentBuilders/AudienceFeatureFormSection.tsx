@@ -4,15 +4,16 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { ReduxFormChangeProps } from '../../../../utils/FormHelper';
 import { WrappedFieldArrayProps } from 'redux-form';
 import { AudienceBuilderParametricPredicateNode } from '../../../../models/audienceBuilder/AudienceBuilderResource';
-import { Row, Col, Button } from 'antd';
-import AudienceFeatureLayout from './AudienceFeatureLayout';
+import { Row, Col } from 'antd';
+import NewAudienceFeatureLayout from './AudienceFeatureLayout';
 import { ObjectLikeTypeInfoResource } from '../../../../models/datamart/graphdb/RuntimeSchema';
-import { McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { Card } from '@mediarithmics-private/mcs-components-library';
 import { AudienceFeatureResource } from '../../../../models/audienceFeature';
 
 export interface AudienceFeatureFormSectionProps extends ReduxFormChangeProps {
   isDemographicsSection: boolean;
   datamartId: string;
+  removeGroup: () => void;
   objectTypes: ObjectLikeTypeInfoResource[];
   audienceFeatures?: AudienceFeatureResource[];
   formChange(field: string, value: any): void;
@@ -26,45 +27,41 @@ class AudienceFeatureFormSection extends React.Component<Props> {
   render() {
     const {
       fields,
-      isDemographicsSection,
       datamartId,
       objectTypes,
+      removeGroup,
       audienceFeatures,
       formChange,
     } = this.props;
 
-    return fields.map((name, index) => {
-      const handleRemove = () => fields.remove(index);
-      return (
-        <Row
-          key={`${index}_${fields.length}`}
-          className={
-            isDemographicsSection
-              ? 'mcs-audienceBuilder_demographicFeature'
-              : 'mcs-audienceBuilder_audienceFeature'
-          }
-        >
-          <Col span={isDemographicsSection ? 24 : 22}>
-            <AudienceFeatureLayout
-              formPath={`${name}`}
-              datamartId={datamartId}
-              parametricPredicateResource={fields.get(index)}
-              objectTypes={objectTypes}
-              audienceFeatures={audienceFeatures}
-              formChange={formChange}
-            />
-          </Col>
+    const removeFieldOrGroup = (index: number) => () => {
+      if (fields.getAll().length === 1) {
+        removeGroup();
+      } else {
+        fields.remove(index);
+      }
+    };
 
-          {!isDemographicsSection && (
-            <React.Fragment>
-              <Col span={2}>
-                <Button className='mcs-audienceBuilder_closeButton' onClick={handleRemove}>
-                  <McsIcon type='close' />
-                </Button>
-              </Col>
-            </React.Fragment>
-          )}
-        </Row>
+    return fields.map((name, index) => {
+      return (
+        <Card key={`${index}_${fields.length}`} className={'mcs-audienceBuilder_audienceFeature'}>
+          <Row
+            key={`${index}_${fields.length}`}
+            className={'mcs-audienceBuilder_audienceFeatureContent'}
+          >
+            <Col span={24}>
+              <NewAudienceFeatureLayout
+                onClose={removeFieldOrGroup(index)}
+                formPath={`${name}`}
+                datamartId={datamartId}
+                parametricPredicateResource={fields.get(index)}
+                objectTypes={objectTypes}
+                audienceFeatures={audienceFeatures}
+                formChange={formChange}
+              />
+            </Col>
+          </Row>
+        </Card>
       );
     });
   }

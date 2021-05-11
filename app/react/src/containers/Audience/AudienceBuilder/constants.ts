@@ -1,8 +1,4 @@
-import {
-  AudienceBuilderFormData,
-  AudienceBuilderQueryDocument,
-  NewAudienceBuilderFormData,
-} from './../../../models/audienceBuilder/AudienceBuilderResource';
+import { AudienceBuilderFormData } from './../../../models/audienceBuilder/AudienceBuilderResource';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
 export const messages: {
@@ -145,50 +141,9 @@ export const fieldGridConfig = {
 
 export const FORM_ID = 'segmentBuilderFormData';
 
-export const INITIAL_AUDIENCE_BUILDER_FORM_DATA: AudienceBuilderFormData = {
-  where: {
-    type: 'GROUP',
-    boolean_operator: 'AND',
-    expressions: [
-      {
-        type: 'GROUP',
-        boolean_operator: 'OR',
-        expressions: [],
-      },
-    ],
-  },
-};
-
 export const NEW_FORM_ID = 'newAudienceBuilderFormData';
 
-export const NEW_INITIAL_AUDIENCE_BUILDER_FORM_DATA: NewAudienceBuilderFormData = {
+export const INITIAL_AUDIENCE_BUILDER_FORM_DATA: AudienceBuilderFormData = {
   include: [],
   exclude: [],
-};
-
-// TODO Remove along with AudienceBuilderQueryService
-export const buildQueryDocument = (formData: AudienceBuilderFormData) => {
-  let query: AudienceBuilderQueryDocument = {
-    language_version: 'JSON_OTQL',
-    operations: [
-      {
-        directives: [
-          {
-            name: 'count',
-          },
-        ],
-        selections: [],
-      },
-    ],
-    from: 'UserPoint',
-  };
-  const clauseWhere = formData?.where;
-
-  if (clauseWhere) {
-    query = {
-      ...query,
-      where: clauseWhere,
-    };
-  }
-  return query as any;
 };

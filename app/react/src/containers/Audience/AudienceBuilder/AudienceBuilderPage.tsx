@@ -4,11 +4,9 @@ import { compose } from 'recompose';
 import queryString from 'query-string';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { Loading } from '@mediarithmics-private/mcs-components-library';
-import AudienceBuilderContainer from './AudienceBuilderContainer';
-import NewAudienceBuilderContainer from './NewAudienceBuilderContainer';
+import NewAudienceBuilderContainer from './AudienceBuilderContainer';
 import {
   AudienceBuilderFormData,
-  NewAudienceBuilderFormData,
   AudienceBuilderParametricPredicateNode,
   AudienceBuilderQueryDocument,
   AudienceBuilderResource,
@@ -21,10 +19,7 @@ import { TYPES } from '../../../constants/types';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
-import {
-  INITIAL_AUDIENCE_BUILDER_FORM_DATA,
-  NEW_INITIAL_AUDIENCE_BUILDER_FORM_DATA,
-} from './constants';
+import { INITIAL_AUDIENCE_BUILDER_FORM_DATA } from './constants';
 import { IQueryService } from '../../../services/QueryService';
 import { IAudienceFeatureService } from '../../../services/AudienceFeatureService';
 import { IAudienceSegmentService } from '../../../services/AudienceSegmentService';
@@ -33,7 +28,6 @@ import { NewUserQuerySimpleFormData } from '../../QueryTool/SaveAs/NewUserQueryS
 import AudienceBuilderActionbar from './AudienceBuilderActionbar';
 import { calculateDefaultTtl } from '../Segments/Edit/domain';
 import { InjectedWorkspaceProps, injectWorkspace } from '../../Datamart';
-import { injectFeatures, InjectedFeaturesProps } from '../../Features';
 import { AudienceFeatureResource } from '../../../models/audienceFeature';
 import { notifyError } from '../../../redux/Notifications/actions';
 import { ITagService } from '../../../services/TagService';
@@ -41,13 +35,11 @@ import { ITagService } from '../../../services/TagService';
 interface State {
   selectedAudienceBuilder?: AudienceBuilderResource;
   formData: AudienceBuilderFormData;
-  newFormData: NewAudienceBuilderFormData;
   isLoading: boolean;
 }
 
 type Props = InjectedIntlProps &
   InjectedNotificationProps &
-  InjectedFeaturesProps &
   InjectedWorkspaceProps &
   RouteComponentProps<{ organisationId: string }>;
 
@@ -72,7 +64,6 @@ class AudienceBuilderPage extends React.Component<Props, State> {
 
     this.state = {
       isLoading: true,
-      newFormData: NEW_INITIAL_AUDIENCE_BUILDER_FORM_DATA,
       formData: INITIAL_AUDIENCE_BUILDER_FORM_DATA,
     };
   }
@@ -138,14 +129,6 @@ class AudienceBuilderPage extends React.Component<Props, State> {
           };
         };
 
-        const setUpPredicates = (
-          features: AudienceFeatureResource[],
-        ): AudienceBuilderParametricPredicateNode[] => {
-          return features.map(feature => {
-            return setUpPredicate(feature);
-          });
-        };
-
         const setUpDefaultPredicates = (
           features: AudienceFeatureResource[],
         ): AudienceBuilderParametricPredicateGroupNode[] => {
@@ -165,19 +148,6 @@ class AudienceBuilderPage extends React.Component<Props, State> {
             this.setState({
               selectedAudienceBuilder: audienceBuilder,
               formData: {
-                where: {
-                  type: 'GROUP',
-                  boolean_operator: 'AND',
-                  expressions: [
-                    {
-                      type: 'GROUP',
-                      boolean_operator: 'AND',
-                      expressions: setUpPredicates(defaultFeatures),
-                    },
-                  ],
-                },
-              },
-              newFormData: {
                 include: setUpDefaultPredicates(defaultFeatures),
                 exclude: [],
               },
@@ -187,7 +157,6 @@ class AudienceBuilderPage extends React.Component<Props, State> {
           .catch(err => {
             this.setState({
               selectedAudienceBuilder: audienceBuilder,
-              newFormData: NEW_INITIAL_AUDIENCE_BUILDER_FORM_DATA,
               formData: INITIAL_AUDIENCE_BUILDER_FORM_DATA,
               isLoading: false,
             });
@@ -246,27 +215,15 @@ class AudienceBuilderPage extends React.Component<Props, State> {
   };
 
   selectBuilderContainer(audienceBuilder: AudienceBuilderResource) {
-    const { hasFeature } = this.props;
+    const { formData } = this.state;
 
-    const { formData, newFormData } = this.state;
-
-    if (hasFeature('audience-builder-new_design')) {
-      return (
-        <NewAudienceBuilderContainer
-          initialValues={newFormData}
-          audienceBuilder={audienceBuilder}
-          renderActionBar={this.audienceBuilderActionbar}
-        />
-      );
-    } else {
-      return (
-        <AudienceBuilderContainer
-          initialValues={formData}
-          audienceBuilder={audienceBuilder}
-          renderActionBar={this.audienceBuilderActionbar}
-        />
-      );
-    }
+    return (
+      <NewAudienceBuilderContainer
+        initialValues={formData}
+        audienceBuilder={audienceBuilder}
+        renderActionBar={this.audienceBuilderActionbar}
+      />
+    );
   }
 
   render() {
@@ -283,7 +240,6 @@ class AudienceBuilderPage extends React.Component<Props, State> {
 export default compose(
   withRouter,
   injectIntl,
-  injectFeatures,
   injectNotifications,
   injectWorkspace,
 )(AudienceBuilderPage);

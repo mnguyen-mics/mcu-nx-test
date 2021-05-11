@@ -13,10 +13,10 @@ import { RelatedRecords, RecordElement } from '../../../../../../components/Rela
 import { WrappedFieldArrayProps } from 'redux-form';
 import { AudienceFeatureModel } from '../domain';
 import { ReduxFormChangeProps } from '../../../../../../utils/FormHelper';
+import { InfoCircleFilled } from '@ant-design/icons';
 import AudienceFeatureSelector, {
   AudienceFeatureSelectorProps,
 } from '../../../../../Audience/AudienceBuilder/QueryFragmentBuilders/AudienceFeatureSelector';
-import { InfoCircleFilled } from '@ant-design/icons';
 
 export interface DemographicsFormSectionProps extends ReduxFormChangeProps {}
 

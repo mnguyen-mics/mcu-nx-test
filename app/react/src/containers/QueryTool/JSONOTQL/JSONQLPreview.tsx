@@ -11,9 +11,9 @@ import { messages } from './messages';
 import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { IAudienceBuilderQueryService } from '../../Audience/AudienceBuilder/AudienceBuilderQueryService';
 import { lazyInject } from '../../../config/inversify.config';
-import NewAudienceBuilderContainer, {
-  NewAudienceBuilderContainerProps,
-} from '../../Audience/AudienceBuilder/NewAudienceBuilderContainer';
+import AudienceBuilderContainer, {
+  AudienceBuilderContainerProps,
+} from '../../Audience/AudienceBuilder/AudienceBuilderContainer';
 import {
   AudienceBuilderQueryDocument,
   AudienceBuilderResource,
@@ -80,7 +80,7 @@ class JSONQLPreview extends React.Component<Props> {
 
       return (
         audienceBuilder &&
-        this.props.openNextDrawer<NewAudienceBuilderContainerProps>(NewAudienceBuilderContainer, {
+        this.props.openNextDrawer<AudienceBuilderContainerProps>(AudienceBuilderContainer, {
           additionalProps: {
             renderActionBar: actionbar,
             initialValues: value

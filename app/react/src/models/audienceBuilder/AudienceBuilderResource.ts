@@ -41,16 +41,8 @@ export type AudienceBuilderNodeShape =
   | AudienceBuilderGroupNode
   | AudienceBuilderParametricPredicateNode;
 
-export interface AudienceBuilderFormData {
-  where: {
-    type: 'GROUP';
-    boolean_operator: QueryBooleanOperator;
-    negation?: boolean;
-    expressions: AudienceBuilderNodeShape[];
-  };
-}
 
-export interface NewAudienceBuilderFormData {
+export interface AudienceBuilderFormData {
   include: AudienceBuilderParametricPredicateGroupNode[];
   exclude: AudienceBuilderParametricPredicateGroupNode[];
 }

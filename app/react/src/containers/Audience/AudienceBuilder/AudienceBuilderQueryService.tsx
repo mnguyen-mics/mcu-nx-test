@@ -3,7 +3,7 @@ import { TYPES } from '../../../constants/types';
 import { IQueryService } from '../../../services/QueryService';
 import { OTQLResult } from '../../../models/datamart/graphdb/OTQLResult';
 import {
-  NewAudienceBuilderFormData,
+  AudienceBuilderFormData,
   AudienceBuilderGroupNode,
   AudienceBuilderQueryDocument,
   AudienceBuilderParametricPredicateNode,
@@ -13,7 +13,7 @@ import {
 import { QueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
 
 export interface IAudienceBuilderQueryService {
-  buildQueryDocument: (formData: NewAudienceBuilderFormData) => AudienceBuilderQueryDocument;
+  buildQueryDocument: (formData: AudienceBuilderFormData) => AudienceBuilderQueryDocument;
 
   runQuery: (
     datamartId: string,
@@ -32,7 +32,7 @@ export class AudienceBuilderQueryService implements IAudienceBuilderQueryService
   @inject(TYPES.IQueryService)
   private _queryService: IQueryService;
 
-  buildQueryDocument = (formData: NewAudienceBuilderFormData): AudienceBuilderQueryDocument => {
+  buildQueryDocument = (formData: AudienceBuilderFormData): AudienceBuilderQueryDocument => {
     const includeGroup: AudienceBuilderGroupNode[] = formData.include.map(group => {
       return {
         type: 'GROUP',
