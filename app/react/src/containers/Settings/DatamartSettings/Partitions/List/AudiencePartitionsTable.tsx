@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { DownOutlined } from '@ant-design/icons';
 import { compose } from 'recompose';
 import { FormattedMessage, defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
-import { TableViewFilters } from '../../../../../components/TableView/index';
 import { AudiencePartitionResource } from '../../../../../models/audiencePartition/AudiencePartitionResource';
 import { DataListResponse } from '../../../../../services/ApiService';
 import { PartitionFilterParams } from './AudiencePartitionsPage';
@@ -12,6 +11,7 @@ import {
   ActionsColumnDefinition,
   DataColumnDefinition,
 } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import { TableViewFilters } from '@mediarithmics-private/mcs-components-library';
 
 export interface AudiencePartitionsTableProps {
   organisationId: string;

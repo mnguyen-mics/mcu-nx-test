@@ -16,7 +16,7 @@ import {
   DataColumnDefinition,
   ExtendedTableRowSelection,
 } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
-import { TableViewWrapper } from '../../../../../components/TableView';
+import { TableViewWithSelectionNotifyerMessages } from '../../../../../components/TableView';
 
 export interface UpdateMessage {
   title: string;
@@ -293,7 +293,7 @@ class DisplayCampaignAdGroupTable extends React.Component<
     };
 
     return (
-      <TableViewWrapper
+      <TableViewWithSelectionNotifyerMessages
         columns={dataColumns}
         actionsColumnsDefinition={actionColumns}
         dataSource={dataSet}

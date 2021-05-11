@@ -2,7 +2,6 @@ import * as React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { InjectedIntlProps, injectIntl, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
-import { TableViewFilters } from '../../../../components/TableView';
 import {
   parseSearch,
   updateSearch,
@@ -35,7 +34,7 @@ import EditPluginModal from './EditPluginModal';
 import { PluginCardModalTab } from '../../../Plugin/Edit/PluginCard/PluginCardModalContent';
 import messages from '../messages';
 import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
-import { McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { McsIcon, TableViewFilters } from '@mediarithmics-private/mcs-components-library';
 import { AutomationResource } from '../../../../models/automations/automations';
 import { IScenarioService } from '../../../../services/ScenarioService';
 import {

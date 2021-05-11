@@ -22,9 +22,11 @@ import { IDatamartService } from '../../../../services/DatamartService';
 import { Filters } from '../../../../components/ItemList';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
-import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
-import { TableViewWrapper } from '../../../../components/TableView';
-import { PartialTableViewProps } from '../../../../components/TableView/TableViewWrapper';
+import {
+  DataColumnDefinition,
+  TableViewProps,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import { TableViewWithSelectionNotifyerMessages } from '../../../../components/TableView';
 
 const InputGroup = Input.Group;
 const Option = Select.Option;
@@ -56,8 +58,8 @@ interface State {
   filter: Filters;
 }
 
-const AudienceSegmentExportJobTableView = TableViewWrapper as React.ComponentClass<
-  PartialTableViewProps<AudienceSegmentExportJobExecutionResource>
+const AudienceSegmentExportJobTableView = TableViewWithSelectionNotifyerMessages as React.ComponentClass<
+  TableViewProps<AudienceSegmentExportJobExecutionResource>
 >;
 
 const messages = defineMessages({

@@ -3,7 +3,6 @@ import { Link, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { RouteComponentProps } from 'react-router';
-import { TableViewFilters } from '../../../../components/TableView/index';
 import EmailTestModal from './EmailTestModal';
 import { CREATIVE_EMAIL_SEARCH_SETTINGS } from './constants';
 import { updateSearch, parseSearch } from '../../../../utils/LocationSearchHelper';
@@ -18,6 +17,7 @@ import {
   DataColumnDefinition,
   ExtendedTableRowSelection,
 } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import { TableViewFiltersWithSelectionNotifyerMessages } from '../../../../components/TableView';
 
 interface EmailTemplatesTableProps {
   rowSelection: ExtendedTableRowSelection;
@@ -193,7 +193,7 @@ class EmailTemplatesTable extends React.Component<JoinedProps, State> {
           selectedtemplateId={this.state.selectedtemplateId}
           handleCancel={this.handleCancel}
         />
-        <TableViewFilters
+        <TableViewFiltersWithSelectionNotifyerMessages
           columns={dataColumns}
           actionsColumnsDefinition={actionColumns}
           dataSource={dataSource}

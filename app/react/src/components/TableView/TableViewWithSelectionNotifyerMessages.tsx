@@ -5,13 +5,9 @@ import messages from './messages';
 import { TableViewProps } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 import { TableView } from '@mediarithmics-private/mcs-components-library';
 
-const TableViewFromLibrary = TableView.TableView;
+type Props<T> = TableViewProps<T> & InjectedIntlProps;
 
-export type PartialTableViewProps<T> = Partial<TableViewProps<T>>;
-
-type Props<T> = PartialTableViewProps<T> & InjectedIntlProps;
-
-class TableViewWrapper<T> extends React.Component<Props<T>> {
+class TableViewWithSelectionNotifyerMessages<T> extends React.Component<Props<T>> {
   render() {
     const {
       intl: { formatMessage },
@@ -27,7 +23,7 @@ class TableViewWrapper<T> extends React.Component<Props<T>> {
     };
 
     return (
-      <TableViewFromLibrary
+      <TableView.TableView
         {...tableViewProps}
         selectionNotifyerMessages={selectionNotifyerMessages}
       />
@@ -35,4 +31,6 @@ class TableViewWrapper<T> extends React.Component<Props<T>> {
   }
 }
 
-export default compose<Props<any>, PartialTableViewProps<any>>(injectIntl)(TableViewWrapper);
+export default compose<Props<any>, TableViewProps<any>>(injectIntl)(
+  TableViewWithSelectionNotifyerMessages,
+);

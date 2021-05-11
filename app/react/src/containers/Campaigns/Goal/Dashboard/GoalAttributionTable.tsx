@@ -13,7 +13,7 @@ import { TYPES } from '../../../../constants/types';
 import { ICreativeService } from '../../../../services/CreativeService';
 import { IDisplayCampaignService } from '../../../../services/DisplayCampaignService';
 import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
-import { TableViewWrapper } from '../../../../components/TableView';
+import { TableViewWithSelectionNotifyerMessages } from '../../../../components/TableView';
 
 export interface GoalAttributionTableProps {
   dataSource: CampaignStatData | CreativeStatData | SourceStatData;
@@ -243,7 +243,7 @@ class GoalAttributionTable extends React.Component<JoinedProps> {
       return { id: item };
     });
     return (
-      <TableViewWrapper
+      <TableViewWithSelectionNotifyerMessages
         loading={this.props.isLoading}
         columns={this.buildColumnDefinition().dataColumnsDefinition}
         dataSource={uniq}

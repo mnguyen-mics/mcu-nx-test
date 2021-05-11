@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import { TableViewFilters } from '../../../../../components/TableView';
 import { messages } from '../messages';
 import { Filter } from '../../Common/domain';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { compose } from 'recompose';
-import { EmptyTableView } from '@mediarithmics-private/mcs-components-library';
+import { EmptyTableView, TableViewFilters } from '@mediarithmics-private/mcs-components-library';
 import { AudienceFeatureResource } from '../../../../../models/audienceFeature';
 import injectNotifications, {
   InjectedNotificationProps,

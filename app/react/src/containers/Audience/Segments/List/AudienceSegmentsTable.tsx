@@ -18,7 +18,6 @@ import {
 } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import { FormattedMessage, defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
-import { TableViewFilters } from '../../../../components/TableView';
 import { SEGMENTS_SEARCH_SETTINGS } from './constants';
 import {
   updateSearch,
@@ -33,7 +32,12 @@ import {
   DatamartSearchSettings,
   compareSearches,
 } from '../../../../utils/LocationSearchHelper';
-import { Button, EmptyTableView, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import {
+  Button,
+  EmptyTableView,
+  McsIcon,
+  TableViewFilters,
+} from '@mediarithmics-private/mcs-components-library';
 import { formatMetric } from '../../../../utils/MetricHelper';
 import { compose } from 'recompose';
 import {
@@ -914,7 +918,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
           currentPage: 1,
         });
       },
-      buttonMessage: messages.filterByLabel,
+      buttonMessage: intl.formatMessage(messages.filterByLabel),
     };
 
     return hasItems ? (

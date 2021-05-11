@@ -9,7 +9,6 @@ import { compose } from 'recompose';
 import { Tooltip, Progress } from 'antd';
 import { messages } from './messages';
 import { DatamartReplicationJobExecutionResource } from '../../../../../models/settings/settings';
-import { TableViewFilters } from '../../../../../components/TableView';
 import { getExecutionInfo } from '../../../../../utils/JobHelpers';
 import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
 import {
@@ -19,7 +18,11 @@ import {
 } from '../../../../../utils/LocationSearchHelper';
 import { Filters } from '../../../../../components/ItemList';
 import { Index } from '../../../../../utils';
-import { EmptyTableView, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import {
+  EmptyTableView,
+  McsIcon,
+  TableViewFilters,
+} from '@mediarithmics-private/mcs-components-library';
 
 interface DatamartReplicationJobTableProps {
   dataSource: DatamartReplicationJobExecutionResource[];

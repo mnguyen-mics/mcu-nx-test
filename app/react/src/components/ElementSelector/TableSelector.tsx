@@ -6,7 +6,6 @@ import { omit } from 'lodash';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { PaginationProps } from 'antd/lib/pagination';
-import { TableViewFilters } from '../TableView';
 import { normalizeArrayOfObject } from '../../utils/Normalizer';
 import { DataListResponse, DataResponse } from '../../services/ApiService';
 import { SearchFilter, SelectableItem } from './';
@@ -21,9 +20,9 @@ import {
   TypeSearchSettings,
 } from '../../utils/LocationSearchHelper';
 import { MicsReduxState } from '../../utils/ReduxHelper';
-import { SelectorLayout } from '@mediarithmics-private/mcs-components-library';
+import { SelectorLayout, TableViewFilters } from '@mediarithmics-private/mcs-components-library';
 import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
-import TableViewWrapper, { PartialTableViewProps } from '../TableView/TableViewWrapper';
+import TableViewWithSelectionNotifyerMessages from '../TableView/TableViewWithSelectionNotifyerMessages';
 
 const messages = defineMessages({
   audienceSegment: {
@@ -380,11 +379,11 @@ class TableSelector<T extends SelectableItem> extends React.Component<Props<T>, 
       onShowSizeChange: (current, size) => this.setState({ currentPage: 1, pageSize: size }),
     };
 
-    const tableViewProps: PartialTableViewProps<T> = {
+    const tableViewProps = {
       columns: this.getColumnsDefinitions(),
       dataSource: allElementIds.map(id => elementsById[id]),
       loading: isLoading,
-      onRow: record => ({
+      onRow: (record: any) => ({
         onClick: () => this.toggleElementSelection(record),
       }),
       pagination: pagination,
@@ -398,7 +397,7 @@ class TableSelector<T extends SelectableItem> extends React.Component<Props<T>, 
           filtersOptions={filtersOptions !== undefined ? filtersOptions : this.getFiltersOptions()}
         />
       ) : (
-        <TableViewWrapper {...(tableViewProps as any)} />
+        <TableViewWithSelectionNotifyerMessages {...(tableViewProps as any)} />
       );
 
     return (

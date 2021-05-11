@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
-import { TableViewFilters } from './TableView';
 import {
   buildDefaultSearch,
   compareSearches,
@@ -9,9 +8,9 @@ import {
   parseSearch,
   updateSearch,
 } from '../utils/LocationSearchHelper';
-import { ViewComponentWithFiltersProps } from './TableView/TableViewFilters';
-import { EmptyTableView } from '@mediarithmics-private/mcs-components-library';
+import { EmptyTableView, TableViewFilters } from '@mediarithmics-private/mcs-components-library';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
+import { ViewComponentWithFiltersProps } from '@mediarithmics-private/mcs-components-library/lib/components/table-view-filters';
 
 export interface Filters {
   currentPage?: number;

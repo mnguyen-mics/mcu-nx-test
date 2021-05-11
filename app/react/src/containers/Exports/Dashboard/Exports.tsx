@@ -25,7 +25,7 @@ import { TYPES } from '../../../constants/types';
 import { IExportService } from '../../../services/Library/ExportService';
 import { Labels } from '../../Labels';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
-import { TableViewWrapper } from '../../../components/TableView';
+import { TableViewWithSelectionNotifyerMessages } from '../../../components/TableView';
 import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 const { Content } = Layout;
@@ -316,7 +316,7 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
             )}
             <Card title={formatMessage(messages.exportExecutionsTitle)}>
               <hr />
-              <TableViewWrapper
+              <TableViewWithSelectionNotifyerMessages
                 dataSource={exportExecutions.items}
                 columns={this.buildColumnDefinition().dataColumnsDefinition}
                 pagination={pagination}

@@ -8,7 +8,7 @@ import {
   ActionsColumnDefinition,
   DataColumnDefinition,
 } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
-import { TableViewWrapper } from '../../../../components/TableView';
+import { TableViewWithSelectionNotifyerMessages } from '../../../../components/TableView';
 
 export interface Filters {
   currentPage?: number;
@@ -89,7 +89,7 @@ function LabelsTable(props: LabelsTableProps & InjectedIntlProps) {
   return noLabelYet ? (
     <EmptyTableView iconType='full-users' message={formatMessage(messages.emptyLabels)} />
   ) : (
-    <TableViewWrapper
+    <TableViewWithSelectionNotifyerMessages
       actionsColumnsDefinition={actionColumns}
       columns={dataColumns}
       dataSource={dataSource}

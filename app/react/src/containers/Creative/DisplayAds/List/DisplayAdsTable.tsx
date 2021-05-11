@@ -3,7 +3,6 @@ import { InjectedIntlProps, injectIntl } from 'react-intl';
 import { Link, withRouter } from 'react-router-dom';
 import { RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
-import { TableViewFilters } from '../../../../components/TableView';
 import { CREATIVE_DISPLAY_SEARCH_SETTINGS } from './constants';
 import { updateSearch, parseSearch } from '../../../../utils/LocationSearchHelper';
 import CreativeScreenshot from '../../CreativeScreenshot';
@@ -16,6 +15,7 @@ import {
   DataColumnDefinition,
   ExtendedTableRowSelection,
 } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import { TableViewFiltersWithSelectionNotifyerMessages } from '../../../../components/TableView';
 
 interface DisplayAdsTableProps {
   rowSelection: ExtendedTableRowSelection;
@@ -162,7 +162,7 @@ class DisplayAdsTable extends React.Component<JoinedProps> {
 
     return hasDisplayAds ? (
       <div className='mcs-table-container'>
-        <TableViewFilters
+        <TableViewFiltersWithSelectionNotifyerMessages
           columns={dataColumns}
           actionsColumnsDefinition={actionColumns}
           dataSource={dataSource}

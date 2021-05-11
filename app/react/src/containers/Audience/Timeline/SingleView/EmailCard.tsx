@@ -5,7 +5,7 @@ import moment from 'moment';
 import { Card, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import messages from '../messages';
 import { UserEmailIdentifierInfo } from '../../../../models/timeline/timeline';
-import { TableViewWrapper } from '../../../../components/TableView';
+import { TableViewWithSelectionNotifyerMessages } from '../../../../components/TableView';
 import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 import { UserEmailIdentifierProviderResource } from '@mediarithmics-private/mcs-components-library/lib/models/timeline/timeline';
 
@@ -145,7 +145,7 @@ class EmailCard extends React.Component<Props, State> {
                   <FormattedMessage {...messages.emailConsent} />
                 </Col>
                 <Col span={24}>
-                  <TableViewWrapper
+                  <TableViewWithSelectionNotifyerMessages
                     dataSource={dataSource}
                     columns={columnsDefinitions}
                     loading={false}

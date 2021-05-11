@@ -16,7 +16,6 @@ import {
   buildDefaultSearch,
   parseSearch,
 } from '../../../utils/LocationSearchHelper';
-import { TableViewFilters } from '../../../components/TableView';
 import { MapDispatchToProps } from './AutomationListPage';
 import { FilterParams } from '../../Campaigns/Display/List/DisplayCampaignsActionbar';
 import messages from './messages';
@@ -29,7 +28,7 @@ import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IDatamartService } from '../../../services/DatamartService';
-import { McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { McsIcon, TableViewFilters } from '@mediarithmics-private/mcs-components-library';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';

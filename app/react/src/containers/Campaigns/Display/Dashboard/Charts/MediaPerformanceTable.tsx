@@ -10,7 +10,7 @@ import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import { parseSearch, updateSearch } from '../../../../../utils/LocationSearchHelper';
 import { McsDateRangePicker } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
-import { TableViewWrapper } from '../../../../../components/TableView';
+import { TableViewWithSelectionNotifyerMessages } from '../../../../../components/TableView';
 import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 export interface MediaPerformance {
@@ -198,7 +198,7 @@ class MediaPerformanceTable extends React.Component<JoinedProps> {
           <div className='mcs-card-button'>{this.renderDatePicker()}</div>
         </Col>
         <Col span={24}>
-          <TableViewWrapper
+          <TableViewWithSelectionNotifyerMessages
             columns={dataColumns}
             dataSource={dataSet}
             loading={isFetchingMediaStat}

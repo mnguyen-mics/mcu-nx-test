@@ -4,7 +4,6 @@ import { Link, withRouter } from 'react-router-dom';
 import { DownOutlined } from '@ant-design/icons';
 import { Tooltip, message } from 'antd';
 import { FormattedMessage, InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
-import { TableViewFilters } from '../../../../components/TableView/index';
 import { DISPLAY_SEARCH_SETTINGS } from './constants';
 import { parseSearch, updateSearch } from '../../../../utils/LocationSearchHelper';
 import { formatMetric } from '../../../../utils/MetricHelper';
@@ -25,6 +24,7 @@ import {
   DataColumnDefinition,
   ExtendedTableRowSelection,
 } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import { TableViewFiltersWithSelectionNotifyerMessages } from '../../../../components/TableView';
 
 const messagesMap: {
   [key: string]: FormattedMessage.MessageDescriptor;
@@ -342,12 +342,12 @@ class DisplayCampaignsTable extends React.Component<JoinedProps> {
         const formattedLabels = newLabels.map(label => label.id);
         this.updateLocationSearch({ label_id: formattedLabels });
       },
-      buttonMessage: messages.filterByLabel,
+      buttonMessage: formatMessage(messages.filterByLabel),
     };
 
     return hasCampaigns ? (
       <div className='mcs-table-container'>
-        <TableViewFilters
+        <TableViewFiltersWithSelectionNotifyerMessages
           columns={dataColumns}
           actionsColumnsDefinition={actionColumns}
           searchOptions={searchOptions}
