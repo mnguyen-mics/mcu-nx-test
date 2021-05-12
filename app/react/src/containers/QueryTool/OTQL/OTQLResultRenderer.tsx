@@ -11,6 +11,7 @@ import { Card } from '@mediarithmics-private/mcs-components-library';
 import AggregationRenderer from './AggregationRenderer';
 import injectThemeColors, { InjectedThemeColorsProps } from '../../Helpers/injectThemeColors';
 import { compose } from 'recompose';
+import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 
 export interface OTQLResultRendererProps {
   result: OTQLResult | null;
@@ -18,11 +19,11 @@ export interface OTQLResultRendererProps {
   aborted?: boolean;
 }
 
-type Props = OTQLResultRendererProps & InjectedThemeColorsProps;
+type Props = OTQLResultRendererProps & InjectedThemeColorsProps & InjectedFeaturesProps;
 
 class OTQLResultRenderer extends React.Component<Props> {
   render() {
-    const { result, loading, aborted, colors } = this.props;
+    const { result, loading, aborted, colors, hasFeature } = this.props;
 
     let content: React.ReactNode;
     if (loading) {
@@ -71,7 +72,7 @@ class OTQLResultRenderer extends React.Component<Props> {
       );
     }
 
-    return (
+    return !hasFeature('query-tool-graphs') ? (
       <Card
         title={
           <FormattedMessage
@@ -103,8 +104,34 @@ class OTQLResultRenderer extends React.Component<Props> {
       >
         {content}
       </Card>
+    ) : (
+      <div className='mcs-otqlQuery_result'>
+        {result ? (
+          <React.Fragment>
+            <Tag color='blue' className='mcs-otqlQuery_result_tag'>
+              <FormattedMessage
+                id='otql-result-renderer-card-subtitle-duration'
+                defaultMessage='Took {duration}ms'
+                values={{ duration: result.took }}
+              />
+            </Tag>
+            {result.cache_hit && (
+              <Tag color={colors['mcs-success']}>
+                <FormattedMessage
+                  id='otql-result-renderer-card-subtitle-cache'
+                  defaultMessage='From Cache'
+                />
+              </Tag>
+            )}
+          </React.Fragment>
+        ) : undefined}
+        {content}
+      </div>
     );
   }
 }
 
-export default compose<Props, OTQLResultRendererProps>(injectThemeColors)(OTQLResultRenderer);
+export default compose<Props, OTQLResultRendererProps>(
+  injectThemeColors,
+  injectFeatures,
+)(OTQLResultRenderer);

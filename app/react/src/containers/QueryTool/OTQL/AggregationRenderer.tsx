@@ -7,25 +7,30 @@ import {
   OTQLBucket,
   OTQLBuckets,
 } from '../../../models/datamart/graphdb/OTQLResult';
-import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { compose } from 'recompose';
+import { Button, McsIcon, McsTabs } from '@mediarithmics-private/mcs-components-library';
 import { FormattedMessage } from 'react-intl';
+import { InjectedFeaturesProps, injectFeatures } from '../../Features';
+import HighchartsReact from 'highcharts-react-official';
+import Highcharts from 'highcharts';
+import { BASE_CHART_HEIGHT } from '../../../components/Charts/domain';
 
 interface BucketPath {
   aggregationBucket: OTQLBuckets;
   bucket: OTQLBucket;
 }
 
-export interface Props {
+export interface AggregationRendererProps {
   rootAggregations: OTQLAggregations;
 }
-
+type Props = AggregationRendererProps & InjectedFeaturesProps;
 interface State {
   aggregationsPath: BucketPath[];
   // can be a bucket or metrics
   selectedView: string;
 }
 
-export default class AggregationRenderer extends React.Component<Props, State> {
+class AggregationRenderer extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -61,6 +66,7 @@ export default class AggregationRenderer extends React.Component<Props, State> {
   };
 
   getBuckets = (buckets: OTQLBuckets) => {
+    const { hasFeature } = this.props;
     if (buckets.buckets.length === 0)
       return (
         <FormattedMessage
@@ -95,6 +101,96 @@ export default class AggregationRenderer extends React.Component<Props, State> {
       if (bucketHasData(record)) return 'mcs-table-cursor';
       return '';
     };
+
+    if (hasFeature('query-tool-graphs')) {
+      const xAxis = buckets.buckets.map(bucket => bucket.key);
+      const values = buckets.buckets.map(bucket => bucket.count);
+      const options: Highcharts.Options = {
+        chart: {
+          polar: true,
+          type: 'area',
+          height: BASE_CHART_HEIGHT,
+        },
+        colors: ['#00a1df'],
+        title: {
+          text: '',
+        },
+        xAxis: {
+          categories: xAxis,
+          tickmarkPlacement: 'on',
+          lineWidth: 0,
+          gridLineDashStyle: 'Dash',
+        },
+        yAxis: {
+          gridLineInterpolation: 'polygon',
+          gridLineDashStyle: 'Dash',
+          lineWidth: 0,
+          min: 0,
+        },
+        series: [{ name: 'count', type: 'area', data: values }],
+        credits: {
+          enabled: false,
+        },
+        plotOptions: {
+          area: {
+            fillOpacity: 0.2,
+            lineWidth: 1,
+          },
+        },
+        legend: {
+          enabled: false,
+        },
+      };
+      const tabs = [
+        {
+          title: 'Table',
+          display: (
+            <Table<OTQLBucket>
+              columns={[
+                {
+                  title: 'Key',
+                  dataIndex: 'key',
+                  sorter: (a, b) => a.key.length - b.key.length,
+                },
+                {
+                  title: 'Count',
+                  dataIndex: 'count',
+                  sorter: (a, b) => a.count - b.count,
+                },
+                {
+                  render: (text, record) => {
+                    if (bucketHasData(record)) {
+                      return (
+                        <div className='float-right'>
+                          <McsIcon type='chevron-right' />
+                        </div>
+                      );
+                    }
+                    return null;
+                  },
+                },
+              ]}
+              className='mcs-aggregationRendered_table'
+              onRow={handleOnRow}
+              rowClassName={getRowClassName}
+              dataSource={buckets.buckets}
+              pagination={{
+                size: 'small',
+                showSizeChanger: true,
+                hideOnSinglePage: true,
+              }}
+            />
+          ),
+        },
+        {
+          title: 'Chart',
+          display: (
+            <HighchartsReact highcharts={Highcharts} options={options} style={{ width: '100%' }} />
+          ),
+        },
+      ];
+      return <McsTabs items={tabs} />;
+    }
 
     return (
       <Table<OTQLBucket>
@@ -247,3 +343,5 @@ export default class AggregationRenderer extends React.Component<Props, State> {
     );
   }
 }
+
+export default compose<{}, AggregationRendererProps>(injectFeatures)(AggregationRenderer);
