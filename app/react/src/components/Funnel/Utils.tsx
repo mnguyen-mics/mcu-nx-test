@@ -41,6 +41,12 @@ export const shouldUpdateFunnelQueryBuilder = (
   return !lodash.isEqual(nextFilterPruned, previousFilterPruned);
 };
 
+export const hasEmptyExpressions = (filter: FunnelFilter[]) => {
+  return !!filter.find(
+    x => !!x.filter_clause.filters.find(y => !y.expressions || y.expressions.length === 0),
+  );
+};
+
 export const shouldRefetchFunnelData = (
   previousRouteParams: any,
   nextRouteParams: any,
@@ -53,7 +59,11 @@ export const shouldRefetchFunnelData = (
   previousFunnelFilter.forEach(x => delete x.group_by_dimension);
   previousRouteParams.filter = previousFunnelFilter;
   nextRouteParams.filter = nextFunnelFilter;
-  return !lodash.isEqual(previousRouteParams, nextRouteParams);
+
+  return (
+    !lodash.isEqual(previousRouteParams, nextRouteParams) &&
+    !hasEmptyExpressions(nextRouteParams.filter)
+  );
 };
 
 export const getDefaultStep = () => {
