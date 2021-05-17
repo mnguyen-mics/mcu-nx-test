@@ -40,6 +40,15 @@ class NewAudienceFeatureLayout extends React.Component<Props, State> {
     this.getAudienceFeature();
   }
 
+  componentDidUpdate(prevProps: Props) {
+    const { audienceFeatures } = this.props;
+    if (audienceFeatures && audienceFeatures !== prevProps.audienceFeatures) {
+      this.setState({
+        audienceFeature: audienceFeatures[0],
+      });
+    }
+  }
+
   getAudienceFeature = () => {
     const { parametricPredicateResource, audienceFeatures } = this.props;
     if (audienceFeatures) {
