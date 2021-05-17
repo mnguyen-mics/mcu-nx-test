@@ -118,7 +118,7 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
       } else if (objectTreeExpression.includes('WHERE')) {
         objectTreeExpression = objectTreeExpression.split('WHERE')[1];
       }
-      newFormData.object_tree_expression = objectTreeExpression.toLowerCase();
+      newFormData.object_tree_expression = objectTreeExpression;
     }
 
     const promise = audienceFeatureId
