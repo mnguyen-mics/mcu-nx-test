@@ -24,7 +24,7 @@ export interface IAudienceBuilderQueryService {
 
   generateAudienceBuilderFormData: (
     initialFormData: AudienceBuilderGroupNode[],
-  ) => NewAudienceBuilderFormData;
+  ) => AudienceBuilderFormData;
 }
 
 @injectable()
@@ -124,7 +124,7 @@ export class AudienceBuilderQueryService implements IAudienceBuilderQueryService
 
   generateAudienceBuilderFormData = (
     initialFormData: AudienceBuilderGroupNode[],
-  ): NewAudienceBuilderFormData => {
+  ): AudienceBuilderFormData => {
     const includeNodes: AudienceBuilderParametricPredicateGroupNode[] = [];
     const excludeNodes: AudienceBuilderParametricPredicateGroupNode[] = [];
 

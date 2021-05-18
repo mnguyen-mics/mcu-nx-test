@@ -41,7 +41,6 @@ export type AudienceBuilderNodeShape =
   | AudienceBuilderGroupNode
   | AudienceBuilderParametricPredicateNode;
 
-
 export interface AudienceBuilderFormData {
   include: AudienceBuilderParametricPredicateGroupNode[];
   exclude: AudienceBuilderParametricPredicateGroupNode[];

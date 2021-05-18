@@ -5,7 +5,7 @@ import { ReduxFormChangeProps } from '../../../../utils/FormHelper';
 import { WrappedFieldArrayProps } from 'redux-form';
 import { AudienceBuilderParametricPredicateNode } from '../../../../models/audienceBuilder/AudienceBuilderResource';
 import { Row, Col } from 'antd';
-import NewAudienceFeatureLayout from './AudienceFeatureLayout';
+import AudienceFeatureLayout from './AudienceFeatureLayout';
 import { ObjectLikeTypeInfoResource } from '../../../../models/datamart/graphdb/RuntimeSchema';
 import { Card } from '@mediarithmics-private/mcs-components-library';
 import { AudienceFeatureResource } from '../../../../models/audienceFeature';
@@ -50,7 +50,7 @@ class AudienceFeatureFormSection extends React.Component<Props> {
             className={'mcs-audienceBuilder_audienceFeatureContent'}
           >
             <Col span={24}>
-              <NewAudienceFeatureLayout
+              <AudienceFeatureLayout
                 onClose={removeFieldOrGroup(index)}
                 formPath={`${name}`}
                 datamartId={datamartId}

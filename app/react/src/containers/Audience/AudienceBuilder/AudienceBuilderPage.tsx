@@ -4,7 +4,7 @@ import { compose } from 'recompose';
 import queryString from 'query-string';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { Loading } from '@mediarithmics-private/mcs-components-library';
-import NewAudienceBuilderContainer from './AudienceBuilderContainer';
+import AudienceBuilderContainer from './AudienceBuilderContainer';
 import {
   AudienceBuilderFormData,
   AudienceBuilderParametricPredicateNode,
@@ -218,7 +218,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
     const { formData } = this.state;
 
     return (
-      <NewAudienceBuilderContainer
+      <AudienceBuilderContainer
         initialValues={formData}
         audienceBuilder={audienceBuilder}
         renderActionBar={this.audienceBuilderActionbar}
