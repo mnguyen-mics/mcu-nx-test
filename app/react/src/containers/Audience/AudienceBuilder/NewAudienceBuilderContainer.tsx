@@ -261,10 +261,6 @@ class NewAudienceBuilderContainer extends React.Component<Props, State> {
       datamartId: audienceBuilder.datamart_id,
       close: this.props.closeNextDrawer,
       save: onSelect,
-      demographicIds:
-        audienceBuilder.demographics_features_ids.length >= 1
-          ? audienceBuilder.demographics_features_ids
-          : undefined,
     };
 
     hasFeature('new-audienceFeatureSelector')

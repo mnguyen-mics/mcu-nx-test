@@ -28,7 +28,6 @@ interface MapStateToProps {
 
 export interface AudienceFeatureSelectorProps {
   datamartId: string;
-  demographicIds?: string[];
   save: (audienceFeatures: AudienceFeatureResource[]) => void;
   close: () => void;
 }
@@ -56,7 +55,7 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
   }
 
   fetchAudienceFeatures = (filter: SearchFilter) => {
-    const { datamartId, demographicIds } = this.props;
+    const { datamartId } = this.props;
 
     const options: AudienceFeatureOptions = {
       ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
@@ -64,10 +63,6 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
 
     if (filter.keywords) {
       options.keywords = [filter.keywords];
-    }
-
-    if (demographicIds && demographicIds.length >= 1) {
-      options.exclude = demographicIds;
     }
 
     return this._audienceFeatureService.getAudienceFeatures(datamartId, options);

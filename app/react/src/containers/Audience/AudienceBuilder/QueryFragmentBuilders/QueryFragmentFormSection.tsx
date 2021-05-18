@@ -122,13 +122,12 @@ class QueryFragmentFormSection extends React.Component<Props, State> {
   };
 
   addFeature = (index: number) => () => {
-    const { openNextDrawer, datamartId, demographicsFeaturesIds, hasFeature } = this.props;
+    const { openNextDrawer, datamartId, hasFeature } = this.props;
 
     const props: AudienceFeatureSelectorProps = {
       datamartId: datamartId,
       close: this.props.closeNextDrawer,
       save: this.addAudienceFeature(index),
-      demographicIds: demographicsFeaturesIds.length >= 1 ? demographicsFeaturesIds : undefined,
     };
     hasFeature('new-audienceFeatureSelector')
       ? openNextDrawer<NewAudienceFeatureSelectorProps>(NewAudienceFeatureSelector, {

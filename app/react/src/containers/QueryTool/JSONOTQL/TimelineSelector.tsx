@@ -18,6 +18,7 @@ export interface TimelineSelectorProps {
   organisationId: string;
   stale: boolean;
   parameterizedQuery?: boolean;
+  isLoading?: boolean;
 }
 
 interface State {
@@ -97,6 +98,7 @@ class TimelineSelector extends React.Component<Props, State> {
   render() {
     const {
       intl: { formatMessage },
+      isLoading,
     } = this.props;
     const onClick = () => this.runQuery();
     return (
@@ -108,7 +110,7 @@ class TimelineSelector extends React.Component<Props, State> {
           position: 'relative',
         }}
       >
-        {this.state.loading ? (
+        {this.state.loading || isLoading ? (
           <Spin size={'small'} />
         ) : (
           <Button onClick={onClick}>{formatMessage(messages.buttonLabel)}</Button>

@@ -75,16 +75,12 @@ class AudienceBuilderDemographicsSection extends React.Component<Props> {
       match: {
         params: { datamartId },
       },
-      fields,
     } = this.props;
 
     const props: AudienceFeatureSelectorProps = {
       datamartId: datamartId,
       close: this.props.closeNextDrawer,
       save: this.addAudienceFeature,
-      demographicIds: fields.map((_, index) => {
-        return fields.get(index).model.id;
-      }),
     };
 
     openNextDrawer<AudienceFeatureSelectorProps>(AudienceFeatureSelector, {
