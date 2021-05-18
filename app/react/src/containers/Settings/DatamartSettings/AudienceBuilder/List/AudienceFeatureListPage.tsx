@@ -168,6 +168,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
       icon: <ExclamationCircleOutlined />,
       title: formatMessage(messages.audienceFeatureDeleteListModalTitle),
       okText: formatMessage(messages.audienceFeatureDeleteListModalOk),
+      className: 'mcs-audienceFeatureDeletePopUp',
       cancelText: formatMessage(messages.audienceFeatureDeleteListModalCancel),
       onOk: () => {
         this._audienceFeatureService
