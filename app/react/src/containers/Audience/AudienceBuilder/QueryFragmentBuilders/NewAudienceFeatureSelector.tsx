@@ -37,7 +37,6 @@ interface MapStateToProps {
 
 export interface NewAudienceFeatureSelectorProps {
   datamartId: string;
-  demographicIds?: string[];
   save: (audienceFeatures: AudienceFeatureResource[]) => void;
   close: () => void;
 }
@@ -77,14 +76,13 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
   componentDidUpdate(prevProps: Props, prevState: State) {
     const { keywords: prevKeywords } = prevState;
     const { keywords, audienceFeaturesByFolder } = this.state;
-    const { datamartId, demographicIds, notifyError } = this.props;
+    const { datamartId, notifyError } = this.props;
     if (keywords !== prevKeywords) {
       this.setState({
         isLoading: true,
       });
       const options: AudienceFeatureOptions = {
         keywords: keywords ? [keywords] : undefined,
-        exclude: demographicIds,
       };
 
       if (!keywords) {
@@ -132,14 +130,13 @@ class NewAudienceFeatureSelector extends React.Component<Props, State> {
   };
 
   fetchFoldersAndFeatures = (filter?: AudienceFeatureSearchSettings) => {
-    const { datamartId, demographicIds, intl } = this.props;
+    const { datamartId, intl } = this.props;
     this._audienceFeatureService.fetchFoldersAndFeatures(
       datamartId,
       intl.formatMessage(messages.audienceFeatures),
       this.setBaseFolder,
       this.onFailure,
       filter,
-      demographicIds,
     );
   };
 

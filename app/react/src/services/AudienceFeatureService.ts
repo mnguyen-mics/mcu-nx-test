@@ -77,7 +77,6 @@ export interface IAudienceFeatureService {
     setBaseFolder: (features: AudienceFeaturesByFolder) => void,
     onFailure: (err: any) => void,
     filter?: AudienceFeatureSearchSettings,
-    demographicIds?: string[],
   ) => void;
   getFolderContent: (
     id?: string,
@@ -202,7 +201,6 @@ export class AudienceFeatureService implements IAudienceFeatureService {
     setBaseFolder: (baseFolder: AudienceFeaturesByFolder) => void,
     onFailure: (err: any) => void,
     filter?: AudienceFeatureSearchSettings,
-    demographicIds?: string[],
   ) => {
     const options: AudienceFeatureOptions = {
       ...getPaginatedApiParam(filter?.currentPage, filter?.pageSize),
@@ -212,9 +210,6 @@ export class AudienceFeatureService implements IAudienceFeatureService {
       options.keywords = [filter.keywords];
     }
 
-    if (demographicIds && demographicIds.length >= 1) {
-      options.exclude = demographicIds;
-    }
     const res: [
       Promise<AudienceFeatureFolderResource[]>,
       Promise<DataListResponse<AudienceFeatureResource>>,

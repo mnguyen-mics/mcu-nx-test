@@ -118,6 +118,7 @@ class AudienceBuilderDashboard extends React.Component<Props, State> {
               query={(queryDocument as QueryDocument)?.where}
               organisationId={organisationId}
               parameterizedQuery={true}
+              isLoading={isQueryRunning}
             />
           </div>
         </React.Fragment>
