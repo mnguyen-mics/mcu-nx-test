@@ -1,4 +1,4 @@
-import TableViewFilters from './TableViewFilters';
-import TableViewWrapper from './TableViewWrapper';
+import TableViewWithSelectionNotifyerMessages from './TableViewWithSelectionNotifyerMessages';
+import TableViewFiltersWithSelectionNotifyerMessages from './TableViewFiltersWithSelectionNotifyerMessages';
 
-export { TableViewFilters, TableViewWrapper };
+export { TableViewWithSelectionNotifyerMessages, TableViewFiltersWithSelectionNotifyerMessages };

@@ -3,7 +3,6 @@ import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import { DownOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
-import { TableViewFilters } from '../../../../components/TableView/index';
 import messages from './messages';
 import {
   EmailCampaignResourceWithStats,
@@ -12,12 +11,16 @@ import {
 import { formatMetric } from '../../../../utils/MetricHelper';
 import { campaignStatuses } from '../../constants';
 import { Index } from '../../../../utils';
-import { LabelsSelectorProps } from '../../../../components/LabelsSelector';
 import { parseSearch } from '../../../../utils/LocationSearchHelper';
 import { EMAIL_SEARCH_SETTINGS } from './constants';
 import { compose } from 'recompose';
 import { CampaignStatus } from '../../../../models/campaign/constants';
-import { EmptyTableView, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import {
+  EmptyTableView,
+  McsIcon,
+  TableViewFilters,
+} from '@mediarithmics-private/mcs-components-library';
+import { LabelsSelectorProps } from '@mediarithmics-private/mcs-components-library/lib/components/labels-selector/LabelsSelector';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import {
   ActionsColumnDefinition,

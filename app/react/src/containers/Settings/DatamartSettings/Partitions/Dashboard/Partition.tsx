@@ -25,9 +25,11 @@ import { IAudienceSegmentService } from '../../../../../services/AudienceSegment
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { IQueryService } from '../../../../../services/QueryService';
-import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
-import { TableViewWrapper } from '../../../../../components/TableView';
-import { PartialTableViewProps } from '../../../../../components/TableView/TableViewWrapper';
+import {
+  DataColumnDefinition,
+  TableViewProps,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import { TableViewWithSelectionNotifyerMessages } from '../../../../../components/TableView';
 
 const { Content } = Layout;
 
@@ -90,8 +92,8 @@ type JoinedProps = InjectedWorkspaceProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string; partitionId: string }>;
 
-const PartitionTable = TableViewWrapper as React.ComponentClass<
-  PartialTableViewProps<UserPartitionSegment>
+const PartitionTable = TableViewWithSelectionNotifyerMessages as React.ComponentClass<
+  TableViewProps<UserPartitionSegment>
 >;
 
 class Partition extends React.Component<JoinedProps, PartitionState> {

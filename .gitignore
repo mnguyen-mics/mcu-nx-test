@@ -19,5 +19,6 @@ Icon?
 .eslintcache
 build/
 ts-build
-.history
 .scannerwork
+# vscode plugin local history
+.history

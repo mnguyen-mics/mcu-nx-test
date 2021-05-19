@@ -20,12 +20,12 @@ import { IAudienceSegmentService } from '../../../../services/AudienceSegmentSer
 import { ICreativeService } from '../../../../services/CreativeService';
 import { IResourceHistoryService } from '../../../../services/ResourceHistoryService';
 import { IEmailCampaignService } from '../../../../services/EmailCampaignService';
-import { TableViewWrapper } from '../../../../components/TableView';
+import { TableViewWithSelectionNotifyerMessages } from '../../../../components/TableView';
 import {
   ActionsColumnDefinition,
   DataColumnDefinition,
+  TableViewProps,
 } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
-import { PartialTableViewProps } from '../../../../components/TableView/TableViewWrapper';
 
 const blastStatusMessageMap: {
   [key in EmailBlastStatus]: FormattedMessage.MessageDescriptor;
@@ -131,7 +131,9 @@ type Props = BlastTableProps &
   RouteComponentProps<EmailCampaignDashboardRouteMatchParam> &
   InjectedDrawerProps;
 
-const BlastTableView = TableViewWrapper as React.ComponentClass<PartialTableViewProps<BlastData>>;
+const BlastTableView = TableViewWithSelectionNotifyerMessages as React.ComponentClass<
+  TableViewProps<BlastData>
+>;
 
 class BlastTable extends React.Component<Props> {
   @lazyInject(TYPES.IAudienceSegmentService)

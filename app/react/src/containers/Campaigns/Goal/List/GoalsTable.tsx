@@ -5,7 +5,6 @@ import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Modal, Tooltip } from 'antd';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
-import { TableViewFilters } from '../../../../components/TableView/index';
 import { GOAL_SEARCH_SETTINGS } from './constants';
 import {
   updateSearch,
@@ -38,7 +37,11 @@ import { normalizeArrayOfObject } from '../../../../utils/Normalizer';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
-import { EmptyTableView, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import {
+  EmptyTableView,
+  McsIcon,
+  TableViewFilters,
+} from '@mediarithmics-private/mcs-components-library';
 import { StaticContext } from 'react-router';
 import {
   ActionsColumnDefinition,
@@ -468,7 +471,7 @@ class GoalsTable extends React.Component<Props, State> {
         const formattedLabels = newLabels.map(label => label.id);
         this.updateLocationSearch({ label_id: formattedLabels });
       },
-      buttonMessage: messages.labelFilterBy,
+      buttonMessage: formatMessage(messages.labelFilterBy),
     };
 
     return hasGoals ? (

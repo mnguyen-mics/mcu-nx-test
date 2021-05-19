@@ -2,7 +2,6 @@ import * as React from 'react';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/styles/hljs';
-import { TableViewFilters } from '../../../../../components/TableView';
 import messages from './messages';
 import { DatamartReplicationResourceShape } from '../../../../../models/settings/settings';
 import { Filter } from '../../Common/domain';
@@ -11,7 +10,11 @@ import { compose } from 'recompose';
 import { parseSearch } from '../../../../../utils/LocationSearchHelper';
 import { DATAMART_REPLICATION_SEARCH_SETTINGS } from './DatamartReplicationListContainer';
 import { Modal, Switch, Tooltip } from 'antd';
-import { EmptyTableView, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import {
+  EmptyTableView,
+  McsIcon,
+  TableViewFilters,
+} from '@mediarithmics-private/mcs-components-library';
 import {
   ActionsColumnDefinition,
   DataColumnDefinition,

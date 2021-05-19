@@ -10,9 +10,12 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
 import { TablePaginationConfig } from 'antd/lib/table';
 import messages from './messages';
-import { Button, EmptyTableView } from '@mediarithmics-private/mcs-components-library';
+import {
+  Button,
+  EmptyTableView,
+  TableViewFilters,
+} from '@mediarithmics-private/mcs-components-library';
 import moment from 'moment';
-import { TableViewFilters } from '../../../../../components/TableView';
 import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
 import { getWorkspace } from '../../../../../redux/Session/selectors';

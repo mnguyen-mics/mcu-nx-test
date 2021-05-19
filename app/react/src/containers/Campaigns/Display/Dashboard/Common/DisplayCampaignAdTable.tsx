@@ -17,7 +17,7 @@ import {
   DataColumnDefinition,
   ExtendedTableRowSelection,
 } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
-import { TableViewWrapper } from '../../../../../components/TableView';
+import { TableViewWithSelectionNotifyerMessages } from '../../../../../components/TableView';
 
 interface DisplayCampaignAdTableProps {
   isFetching: boolean;
@@ -338,7 +338,7 @@ class DisplayCampaignAdTable extends React.Component<JoinedProps, DisplayCampaig
     };
 
     return (
-      <TableViewWrapper
+      <TableViewWithSelectionNotifyerMessages
         columns={dataColumns}
         actionsColumnsDefinition={actionColumns}
         dataSource={dataSet}

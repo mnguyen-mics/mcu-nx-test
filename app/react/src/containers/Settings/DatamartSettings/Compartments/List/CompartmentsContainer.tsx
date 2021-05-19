@@ -2,7 +2,6 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
-import { TableViewFilters } from '../../../../../components/TableView';
 import messages from './messages';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { IDatamartService } from '../../../../../services/DatamartService';
@@ -14,6 +13,7 @@ import injectNotifications, {
 } from '../../../../Notifications/injectNotifications';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
+import { TableViewFilters } from '@mediarithmics-private/mcs-components-library';
 
 const { Content } = Layout;
 

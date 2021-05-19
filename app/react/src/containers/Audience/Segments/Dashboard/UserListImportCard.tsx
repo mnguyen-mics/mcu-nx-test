@@ -16,9 +16,11 @@ import log from '../../../../utils/Logger';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
 import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
-import { TableViewWrapper } from '../../../../components/TableView';
-import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
-import { PartialTableViewProps } from '../../../../components/TableView/TableViewWrapper';
+import { TableViewWithSelectionNotifyerMessages } from '../../../../components/TableView';
+import {
+  DataColumnDefinition,
+  TableViewProps,
+} from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 export interface UserListImportCardProps {
   datamartId: string;
@@ -42,8 +44,8 @@ export interface ImportExecutionsData {
   totalUserSegmentImported?: number;
 }
 
-const ImportJobTableView = TableViewWrapper as React.ComponentClass<
-  PartialTableViewProps<ImportExecutionsData>
+const ImportJobTableView = TableViewWithSelectionNotifyerMessages as React.ComponentClass<
+  TableViewProps<ImportExecutionsData>
 >;
 
 const messages = defineMessages({

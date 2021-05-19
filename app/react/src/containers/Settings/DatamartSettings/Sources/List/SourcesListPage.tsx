@@ -18,7 +18,7 @@ import { Link } from 'react-router-dom';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { EmptyTableView, McsIcon } from '@mediarithmics-private/mcs-components-library';
-import { TableViewWrapper } from '../../../../../components/TableView';
+import { TableViewWithSelectionNotifyerMessages } from '../../../../../components/TableView';
 import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 
 const { Content } = Layout;
@@ -225,7 +225,7 @@ class SourcesListPage extends React.Component<Props, State> {
                 className='mcs-table-view-empty mcs-empty-card'
               />
             ) : (
-              <TableViewWrapper
+              <TableViewWithSelectionNotifyerMessages
                 dataSource={dataSource}
                 loading={loading}
                 columns={dataColumns}

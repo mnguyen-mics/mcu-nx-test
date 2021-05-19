@@ -20,7 +20,6 @@ import {
 } from '../../../utils/LocationSearchHelper';
 import { Export } from '../../../models/exports/exports';
 import messages from './messages';
-import { TableViewFilters } from '../../../components/TableView';
 import { Index } from '../../../utils';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
@@ -32,6 +31,7 @@ import {
   ActionsColumnDefinition,
   DataColumnDefinition,
 } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import { TableViewFilters } from '@mediarithmics-private/mcs-components-library';
 
 const initialState = {
   loading: false,
@@ -302,7 +302,7 @@ class ExportContent extends React.Component<Props, ExportContentState> {
           currentPage: 1,
         });
       },
-      buttonMessage: messages.filterByLabel,
+      buttonMessage: formatMessage(messages.filterByLabel),
     };
 
     return (

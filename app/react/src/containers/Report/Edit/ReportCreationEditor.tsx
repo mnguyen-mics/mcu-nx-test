@@ -42,7 +42,7 @@ import {
 } from './constants';
 import * as NotificationActions from '../../../redux/Notifications/actions';
 import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
-import { TableViewWrapper } from '../../../components/TableView';
+import { TableViewWithSelectionNotifyerMessages } from '../../../components/TableView';
 
 const { Content, Sider } = Layout;
 
@@ -146,7 +146,7 @@ class ReportCreationEditor extends React.Component<JoinedProps, State> {
     if (this.state.dataSource.length !== 0) {
       tablePreviewData = (
         <div className='mcs-table-container'>
-          <TableViewWrapper
+          <TableViewWithSelectionNotifyerMessages
             columns={this.state.columns}
             loading={this.state.loadingData}
             dataSource={this.state.dataSource}

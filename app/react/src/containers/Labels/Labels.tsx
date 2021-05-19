@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import LabelsSelector from '../../components/LabelsSelector';
 import messages from './messages';
 import { lazyInject } from '../../config/inversify.config';
 import { TYPES } from '../../constants/types';
 import { ILabelService } from '../../services/LabelsService';
 import { MicsReduxState } from '../../utils/ReduxHelper';
+import { LabelsSelector } from '@mediarithmics-private/mcs-components-library';
+import { compose } from 'recompose';
+import { InjectedIntlProps, injectIntl } from 'react-intl';
 
 export interface Label {
   id: string;
@@ -18,7 +20,6 @@ interface LabelsProps {
   labellableId: string;
   labellableType: string;
   organisationId: string;
-  orgLabels: Label[];
 }
 
 interface LabelsState {
@@ -28,11 +29,16 @@ interface LabelsState {
   input?: HTMLInputElement;
 }
 
-class Labels extends React.Component<LabelsProps, LabelsState> {
+type Props = LabelsProps &
+  InjectedIntlProps & {
+    orgLabels: Label[];
+  };
+
+class Labels extends React.Component<Props, LabelsState> {
   @lazyInject(TYPES.ILabelService)
   private _labelService: ILabelService;
 
-  constructor(props: LabelsProps) {
+  constructor(props: Props) {
     super(props);
     this.state = {
       labels: [],
@@ -123,12 +129,14 @@ class Labels extends React.Component<LabelsProps, LabelsState> {
         labels={orgLabels}
         selectedLabels={labels}
         onChange={this.onChange}
-        buttonMessage={messages.labelButton}
+        buttonMessage={this.props.intl.formatMessage(messages.labelButton)}
       />
     );
   }
 }
 
-export default connect((state: MicsReduxState) => ({
+const mapStateToProps = (state: MicsReduxState) => ({
   orgLabels: state.labels.labelsApi.data,
-}))(Labels);
+});
+
+export default compose<Props, LabelsProps>(connect(mapStateToProps), injectIntl)(Labels);

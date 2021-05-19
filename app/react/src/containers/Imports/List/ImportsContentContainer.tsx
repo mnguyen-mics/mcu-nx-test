@@ -2,7 +2,6 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
-import { TableViewFilters } from '../../../components/TableView';
 import { MultiSelectProps } from '@mediarithmics-private/mcs-components-library/lib/components/multi-select';
 import messages from './messages';
 import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
@@ -37,6 +36,7 @@ import {
   ActionsColumnDefinition,
   DataColumnDefinition,
 } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import { TableViewFilters } from '@mediarithmics-private/mcs-components-library';
 
 interface MapStateToProps {
   labels: Label[];
@@ -413,7 +413,7 @@ class ImportsContentContainer extends React.Component<Props, State> {
           currentPage: 1,
         });
       },
-      buttonMessage: messages.filterByLabel,
+      buttonMessage: formatMessage(messages.filterByLabel),
     };
 
     return (

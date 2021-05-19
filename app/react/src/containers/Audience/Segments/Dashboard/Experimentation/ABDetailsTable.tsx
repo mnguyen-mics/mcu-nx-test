@@ -1,6 +1,10 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import { Card, McsDateRangePicker } from '@mediarithmics-private/mcs-components-library';
+import {
+  Card,
+  McsDateRangePicker,
+  TableViewFilters,
+} from '@mediarithmics-private/mcs-components-library';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { Button } from 'antd';
 import injectNotifications, {
@@ -8,7 +12,6 @@ import injectNotifications, {
 } from '../../../../Notifications/injectNotifications';
 import { InjectedIntlProps, injectIntl, defineMessages, FormattedMessage } from 'react-intl';
 import { UserQuerySegment } from '../../../../../models/audiencesegment/AudienceSegmentResource';
-import { TableViewFilters } from '../../../../../components/TableView';
 import { messagesMap } from './AudienceExperimentationForm';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';

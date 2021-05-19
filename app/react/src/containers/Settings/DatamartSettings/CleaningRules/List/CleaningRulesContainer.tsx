@@ -2,8 +2,11 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
-import { Button as McsButton, McsIcon } from '@mediarithmics-private/mcs-components-library';
-import { TableViewFilters } from '../../../../../components/TableView';
+import {
+  Button as McsButton,
+  McsIcon,
+  TableViewFilters,
+} from '@mediarithmics-private/mcs-components-library';
 import messages from './messages';
 import {
   ExtendedCleaningRuleResource,

@@ -2,7 +2,6 @@ import * as React from 'react';
 
 import messages from './messages';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
-import { TableViewFilters } from '../../../../components/TableView/index';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
@@ -27,6 +26,7 @@ import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
 import { ICatalogService } from '../../../../services/CatalogService';
 import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import { TableViewFilters } from '@mediarithmics-private/mcs-components-library';
 
 interface ServiceTypeLabel {
   id: string;

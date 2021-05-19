@@ -13,7 +13,7 @@ import {
   ActionsColumnDefinition,
   DataColumnDefinition,
 } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
-import { TableViewWrapper } from '../../../../../components/TableView';
+import { TableViewWithSelectionNotifyerMessages } from '../../../../../components/TableView';
 
 export interface AudienceBuilderTableProps {
   isLoading: boolean;
@@ -127,7 +127,7 @@ class AudienceBuilderTable extends React.Component<Props> {
         className='mcs-table-view-empty mcs-empty-card'
       />
     ) : (
-      <TableViewWrapper
+      <TableViewWithSelectionNotifyerMessages
         columns={dataColumns}
         actionsColumnsDefinition={actionColumns}
         dataSource={dataSource}

@@ -5,12 +5,12 @@ import { UserAccountCompartmentDatamartSelectionResource } from '../../../../../
 import { compose } from 'recompose';
 import { Filter } from '../../Common/domain';
 import { MultiSelectProps } from '@mediarithmics-private/mcs-components-library/lib/components/multi-select';
-import { TableViewFilters } from '../../../../../components/TableView';
 import messages from './messages';
 import {
   ActionsColumnDefinition,
   DataColumnDefinition,
 } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import { TableViewFilters } from '@mediarithmics-private/mcs-components-library';
 
 export interface CompartmentsTableProps {
   isFetchingCompartments: boolean;

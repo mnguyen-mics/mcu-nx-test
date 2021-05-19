@@ -295,7 +295,7 @@ class EmailCampaignListPage extends React.Component<Props, State> {
         const formattedLabels = newLabels.map(label => label.id);
         this.handleFilterChange({ label_id: formattedLabels });
       },
-      buttonMessage: messages.filterByLabel,
+      buttonMessage: this.props.intl.formatMessage(messages.filterByLabel),
     };
 
     return (
