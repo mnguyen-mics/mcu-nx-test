@@ -483,7 +483,10 @@ class Funnel extends React.Component<Props, State> {
     const { dimensionsList } = this.state;
     const dimensionLabelValue = dimensionsList.dimensions.find(d => d.value === dimensionValue);
     return (
-      (dimensionValue === 'CHANNEL_ID' || dimensionValue === 'DEVICE_FORM_FACTOR') && (
+      (dimensionValue === 'CHANNEL_ID' ||
+        dimensionValue === 'DEVICE_FORM_FACTOR' ||
+        dimensionValue === 'BRAND' ||
+        dimensionValue === 'PRODUCT_ID') && (
         <Select.Option
           className='mcs-funnelSplitBy_option'
           key={this._cuid()}
@@ -589,7 +592,11 @@ class Funnel extends React.Component<Props, State> {
 
   displaySplitByDropdown = (filter: FunnelFilter) => {
     return filter.filter_clause.filters.find(
-      f => f.dimension_name === 'CHANNEL_ID' || f.dimension_name === 'DEVICE_FORM_FACTOR',
+      f =>
+        f.dimension_name === 'CHANNEL_ID' ||
+        f.dimension_name === 'DEVICE_FORM_FACTOR' ||
+        f.dimension_name === 'BRAND' ||
+        f.dimension_name === 'PRODUCT_ID',
     );
   };
 
