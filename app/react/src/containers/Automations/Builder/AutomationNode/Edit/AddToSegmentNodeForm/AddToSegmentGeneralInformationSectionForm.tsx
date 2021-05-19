@@ -39,7 +39,7 @@ class AddToSegmentGeneralInformationFormSection extends React.Component<Props> {
           title={messages.sectionGeneralTitle}
         />
         <FormSection title={messages.sectionGeneralConfigurationTitle} />
-        <div>
+        <div className='mcs-addToSegmentSectionForm'>
           <FormInputField
             name='audienceSegmentName'
             component={FormInput}
@@ -51,6 +51,7 @@ class AddToSegmentGeneralInformationFormSection extends React.Component<Props> {
             inputProps={{
               placeholder: formatMessage(messages.audienceSegmentNamePlaceholder),
               disabled: !!disabled,
+              className: 'mcs-audienceSegmentName',
             }}
             helpToolTipProps={{
               title: formatMessage(messages.audienceSegmentNameSubtitle),
@@ -67,6 +68,7 @@ class AddToSegmentGeneralInformationFormSection extends React.Component<Props> {
             inputProps={{
               disabled: disabled,
               placeholder: formatMessage(messages.audienceSegmentTTLPlaceholder),
+              className: 'mcs-ttlValue',
               addonAfter: (
                 <FormAddonSelectField
                   name='ttl.unit'

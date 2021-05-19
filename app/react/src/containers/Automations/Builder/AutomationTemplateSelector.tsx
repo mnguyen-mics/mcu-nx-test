@@ -32,6 +32,7 @@ class AutomationTemplateSelector extends React.Component<Props> {
       <Row className='mcs-selector_container'>
         <Row className='menu'>
           <MenuList
+            className='mcs-menu-list-reactToEvent'
             title={formatMessage(messages.reactToAnEvent)}
             subtitles={
               disableReactToEvent ? [formatMessage(messages.reactToAnEventDisabled)] : undefined
@@ -41,12 +42,17 @@ class AutomationTemplateSelector extends React.Component<Props> {
           />
           {this.props.hasFeature('automations-on-segment-entry') && (
             <MenuList
+              className='mcs-menu-list-onSegmentEntry'
               title={formatMessage(messages.onSegmentEntry)}
               select={onClicOnSegmentEntry}
             />
           )}
           {this.props.hasFeature('automations-on-segment-exit') && (
-            <MenuList title={formatMessage(messages.onSegmentExit)} select={onClicOnSegmentExit} />
+            <MenuList
+              className='mcs-menu-list-onSegmentExit'
+              title={formatMessage(messages.onSegmentExit)}
+              select={onClicOnSegmentExit}
+            />
           )}
         </Row>
       </Row>
