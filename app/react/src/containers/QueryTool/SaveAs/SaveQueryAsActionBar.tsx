@@ -12,6 +12,7 @@ import { DataResponse } from '../../../services/ApiService';
 import { QueryResource } from '../../../models/datamart/DatamartResource';
 import Convert2Otql from './Convet2Otql';
 import { Actionbar } from '@mediarithmics-private/mcs-components-library';
+import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 
 export interface SaveQueryAsActionBarProps {
   saveAsUserQuery?: (formData: NewUserQuerySimpleFormData) => Promise<any>;
@@ -29,7 +30,10 @@ interface State {
   conversionModalVisible: boolean;
 }
 
-type Props = SaveQueryAsActionBarProps & InjectedIntlProps & InjectedNotificationProps;
+type Props = SaveQueryAsActionBarProps &
+  InjectedIntlProps &
+  InjectedNotificationProps &
+  InjectedFeaturesProps;
 
 class SaveQueryAsActionBar extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -50,6 +54,7 @@ class SaveQueryAsActionBar extends React.Component<Props, State> {
       convertToOtql,
       breadcrumb,
       csvExportDisabled,
+      hasFeature,
     } = this.props;
     const handleMenuClick = (e: any) => {
       if (e.key === 'USER_QUERY') {
@@ -118,7 +123,10 @@ class SaveQueryAsActionBar extends React.Component<Props, State> {
     return (
       <Actionbar pathItems={breadcrumb}>
         <Dropdown overlay={saveAsMenu} trigger={['click']}>
-          <Button className='mcs-primary' type='primary'>
+          <Button
+            className={hasFeature('query-tool-graphs') ? '' : 'mcs-primary'}
+            type={hasFeature('query-tool-graphs') ? undefined : 'primary'}
+          >
             <FormattedMessage
               id='queryTool.query-builder.actionbar.save'
               defaultMessage='Save As'
@@ -163,4 +171,5 @@ class SaveQueryAsActionBar extends React.Component<Props, State> {
 export default compose<Props, SaveQueryAsActionBarProps>(
   injectIntl,
   injectNotifications,
+  injectFeatures,
 )(SaveQueryAsActionBar);

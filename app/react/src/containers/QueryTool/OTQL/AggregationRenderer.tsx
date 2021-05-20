@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { HomeOutlined } from '@ant-design/icons';
-import { Breadcrumb, Table, Select } from 'antd';
+import { AreaChartOutlined, DownOutlined, HomeOutlined, TableOutlined } from '@ant-design/icons';
+import { Breadcrumb, Table, Select, Input } from 'antd';
 import {
   OTQLMetric,
   OTQLAggregations,
@@ -28,6 +28,7 @@ interface State {
   aggregationsPath: BucketPath[];
   // can be a bucket or metrics
   selectedView: string;
+  numberItems: number;
 }
 
 class AggregationRenderer extends React.Component<Props, State> {
@@ -36,6 +37,7 @@ class AggregationRenderer extends React.Component<Props, State> {
     this.state = {
       aggregationsPath: [],
       selectedView: this.getDefaultView(props.rootAggregations),
+      numberItems: 6,
     };
   }
 
@@ -67,6 +69,7 @@ class AggregationRenderer extends React.Component<Props, State> {
 
   getBuckets = (buckets: OTQLBuckets) => {
     const { hasFeature } = this.props;
+    const { numberItems } = this.state;
     if (buckets.buckets.length === 0)
       return (
         <FormattedMessage
@@ -103,8 +106,16 @@ class AggregationRenderer extends React.Component<Props, State> {
     };
 
     if (hasFeature('query-tool-graphs')) {
-      const xAxis = buckets.buckets.map(bucket => bucket.key);
-      const values = buckets.buckets.map(bucket => bucket.count);
+      const showedItems = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = parseInt(e.target.value, 10);
+        if (value < 1) this.setState({ numberItems: 1 });
+        else if (value > buckets.buckets.length)
+          this.setState({ numberItems: buckets.buckets.length });
+        else this.setState({ numberItems: parseInt(e.target.value, 10) });
+      };
+      const sortedBuckets = buckets.buckets.sort((a, b) => b.count - a.count);
+      const xAxis = sortedBuckets.slice(0, numberItems).map(bucket => bucket.key);
+      const values = sortedBuckets.slice(0, numberItems).map(bucket => bucket.count);
       const options: Highcharts.Options = {
         chart: {
           polar: true,
@@ -143,7 +154,12 @@ class AggregationRenderer extends React.Component<Props, State> {
       };
       const tabs = [
         {
-          title: 'Table',
+          title: (
+            <div>
+              <TableOutlined />
+              Table
+            </div>
+          ),
           display: (
             <Table<OTQLBucket>
               columns={[
@@ -183,9 +199,36 @@ class AggregationRenderer extends React.Component<Props, State> {
           ),
         },
         {
-          title: 'Chart',
+          title: (
+            <div>
+              <AreaChartOutlined />
+              Chart
+            </div>
+          ),
           display: (
-            <HighchartsReact highcharts={Highcharts} options={options} style={{ width: '100%' }} />
+            <div className='mcs-otqlChart_container'>
+              <div className='mcs-otqlChart_container--inner'>
+                <div className='mcs-otqlChart_radar'>
+                  Radar
+                  <DownOutlined className='m-l-10' />
+                </div>
+                <div className='mcs-otqlChart_items'>
+                  Show top{' '}
+                  <Input
+                    type='number'
+                    className='mcs-otqlChart_items_input'
+                    value={numberItems}
+                    onChange={showedItems}
+                  />{' '}
+                  / {buckets.buckets.length}
+                </div>
+                <HighchartsReact
+                  highcharts={Highcharts}
+                  options={options}
+                  style={{ width: '100%' }}
+                />
+              </div>
+            </div>
           ),
         },
       ];

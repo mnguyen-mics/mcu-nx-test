@@ -518,3 +518,70 @@
     }
   }
 }
+
+.mcs-otqlInputEditor_card {
+  .mcs-card-header {
+    margin-top: -10px;
+  }
+  .mcs-otqlInputEditor_settings_button {
+    font-size: 15px;
+    position: absolute;
+    left: 116px;
+  }
+  .mcs-otqlInputEditor_clear_button {
+    opacity: 0;
+    border: 0px;
+    transition: 0.3s;
+    height: 32px;
+    vertical-align: middle;
+    padding: 0px 15px 0px 15px;
+  }
+  .mcs-card-header:hover {
+    .mcs-otqlInputEditor_clear_button {
+      opacity: 1;
+    }
+  }
+
+  .mcs-otqlInputEditor_run_button {
+    padding: 0px 15px 0px 15px;
+    height: 32px;
+    vertical-align: middle;
+  }
+  .mcs-otqlInputEditor_abort_button {
+    padding: 0px 15px 0px 15px;
+    height: 32px;
+    vertical-align: middle;
+  }
+}
+
+.mcs-otqlChart_container--inner {
+  padding: 20px;
+}
+
+.mcs-otqlChart_container {
+  background-color: white;
+}
+
+.mcs-otqlChart_radar {
+  position: absolute;
+  top: 12px;
+  left: 230px;
+}
+
+.mcs-otqlChart_items {
+  position: absolute;
+  top: 10px;
+  left: 300px;
+}
+
+.mcs-otqlChart_items_input {
+  width: 30px;
+  height: 25px;
+}
+.mcs-otqlQuery_result {
+  input[type='number'] {
+    -webkit-appearance: none;
+    margin: 0;
+    -moz-appearance: textfield;
+  }
+}
