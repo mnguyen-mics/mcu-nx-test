@@ -73,6 +73,7 @@ class AudienceFeatureGeneralSection extends React.Component<Props, State> {
           }}
           inputProps={{
             placeholder: formatMessage(messages.audienceFeatureNamePlaceholder),
+            className: 'mcs-audienceFeatureName',
           }}
           helpToolTipProps={{
             title: formatMessage(messages.audienceFeatureNameTooltip),
@@ -87,6 +88,7 @@ class AudienceFeatureGeneralSection extends React.Component<Props, State> {
           }}
           inputProps={{
             placeholder: formatMessage(messages.audienceFeatureDescriptionPlaceholder),
+            className: 'mcs-audienceFeatureDescription',
           }}
           helpToolTipProps={{
             title: formatMessage(messages.audienceFeatureDescriptionTooltip),
@@ -101,6 +103,7 @@ class AudienceFeatureGeneralSection extends React.Component<Props, State> {
           formItemProps={{
             label: formatMessage(messages.audienceFeatureFolderLabel),
             required: false,
+            className: 'mcs-audienceFeatureFolder',
           }}
           helpToolTipProps={{
             title: formatMessage(messages.audienceFeatureFolderTooltip),

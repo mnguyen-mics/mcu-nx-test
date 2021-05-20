@@ -16,10 +16,10 @@ describe('This test should check that the audience feature forms are working pro
       cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
       cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.myDatamart').click();
       cy.contains(data.datamartName).click();
-      cy.contains('Audience Builder').click();
+      cy.contains('Audience Features').click();
       cy.get('.mcs-audienceFeature_creation_button').click();
-      cy.get('#name').type('Test Audience Feature Form');
-      cy.get('#description').type('Test Audience Feature Form');
+      cy.get('.mcs-audienceFeatureName').type('Test Audience Feature Form');
+      cy.get('.mcs-audienceFeatureDescription').type('Test Audience Feature Form');
       cy.get('.mcs-audienceFeature_edit_query_button').click();
       cy.wait(5000);
       cy.get('.mcs-audienceFeature_edit_form_query_builder > textarea').type(
@@ -38,16 +38,20 @@ describe('This test should check that the audience feature forms are working pro
       );
       cy.get('.mcs-audienceFeature_update_query').click();
       cy.get('.mcs-form_saveButton_audienceFeatureForm').click();
-      cy.contains('Audience Builder').click();
+      cy.contains('Audience Features').click();
       cy.get('.mcs-audienceFeature_table')
         .should('contain', 'creation_date = $test')
         .and('contain', 'Test Audience Feature Form');
       cy.get('.mcs-audienceFeature_table').within($table => {
-        cy.get('.mcs-tableActions_dropdown').first().click();
+        cy.get('.mcs-chevron').first().click();
       });
-      cy.get('.mcs-tableActions_settings\\.datamart\\.audienceFeatures\\.edit').first().click();
-      cy.get('#name').type('Test Audience Feature Form - Edit');
-      cy.get('#description').type('Test Audience Feature Form - Edit');
+      cy.get('.mcs-dropdown-actions').contains('Edit').click();
+      cy.get('.mcs-audienceFeatureName').type(
+        '{selectall}{backspace}Test Audience Feature Form - Edit',
+      );
+      cy.get('.mcs-audienceFeatureDescription').type(
+        '{selectall}{backspace}Test Audience Feature Form - Edit',
+      );
       cy.get('.mcs-audienceFeature_edit_query_button').click();
       cy.wait(5000);
       cy.get('.mcs-audienceFeature_edit_form_query_builder > textarea').type(
@@ -66,14 +70,19 @@ describe('This test should check that the audience feature forms are working pro
       );
       cy.get('.mcs-audienceFeature_update_query').click();
       cy.get('.mcs-form_saveButton_audienceFeatureForm').click();
-      cy.contains('Audience Builder').click();
+      cy.contains('Audience Features').click();
       cy.get('.mcs-audienceFeature_table')
         .should('contain', 'creation_date > $test and creation_date < $test2')
         .and('contain', 'Test Audience Feature Form - Edit');
       cy.get('.mcs-audienceFeature_table').within($table => {
-        cy.get('.mcs-tableActions_dropdown').first().click();
+        cy.get('.mcs-chevron').first().click();
       });
-      cy.get('.mcs-tableActions_settings\\.datamart\\.audienceFeatures\\.delete').first().click();
+      cy.get('.mcs-dropdown-actions').contains('Delete').click();
+      cy.get('.mcs-audienceFeatureDeletePopUp').contains('Delete').click();
+      cy.get('.mcs-audienceFeature_table').should(
+        'not.contain',
+        'Test Audience Feature Form - Edit',
+      );
     });
   });
 
@@ -83,10 +92,10 @@ describe('This test should check that the audience feature forms are working pro
       cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
       cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.myDatamart').click();
       cy.contains(data.datamartName).click();
-      cy.contains('Audience Builder').click();
+      cy.contains('Audience Features').click();
       cy.get('.mcs-audienceFeature_creation_button').click();
-      cy.get('#name').type('Test Audience Feature Form');
-      cy.get('#description').type('Test Audience Feature Form');
+      cy.get('.mcs-audienceFeatureName').type('Test Audience Feature Form');
+      cy.get('.mcs-audienceFeatureDescription').type('Test Audience Feature Form');
       cy.get('.mcs-audienceFeature_edit_query_button').click();
       cy.wait(5000);
       cy.get('.mcs-audienceFeature_edit_form_query_builder > textarea').type(
@@ -103,8 +112,8 @@ describe('This test should check that the audience feature forms are working pro
           parseSpecialCharSequences: false,
         },
       );
-      cy.get('.mcs-audienceFeature_update_query').click();
-      cy.get('.mcs-form_saveButton_audienceFeatureForm').click();
+      cy.get('.mcs-audienceFeature_update_query').click({ force: true });
+      cy.get('.mcs-form_saveButton_audienceFeatureForm').click({ force: true });
       cy.wait(2000);
       cy.url().should('contain', '/create');
     });
