@@ -34,6 +34,7 @@ class AudienceBuilderGeneralSection extends React.Component<Props> {
           }}
           inputProps={{
             placeholder: formatMessage(messages.audienceBuilderNamePlaceholder),
+            className: 'mcs-audienceBuilderName',
           }}
           helpToolTipProps={{
             title: formatMessage(messages.audienceBuilderNameTooltip),
