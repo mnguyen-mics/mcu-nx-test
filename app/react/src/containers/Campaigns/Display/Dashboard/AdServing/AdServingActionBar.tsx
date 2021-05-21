@@ -215,7 +215,7 @@ class AdServingActionBar extends React.Component<Props, AdServingActionBarState>
   };
 
   filterValueForCampaign = (normalizedReport: Index<any>, campaignId: string) => {
-    return normalizedReport.filter((item: any) => item.campaign_id === campaignId);
+    return normalizedReport.filter((item: any) => item.campaign_id.toString() === campaignId);
   };
 
   handleRunExport = (e: React.MouseEvent) => {
