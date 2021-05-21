@@ -103,7 +103,7 @@ class AdCard extends React.Component<Props, State> {
   }
 
   filterValueForCampaign = (normalizedReport: Index<any>, campaignId: string) => {
-    return normalizedReport.filter((item: any) => item.campaign_id === campaignId);
+    return normalizedReport.filter((item: any) => item.campaign_id.toString() === campaignId);
   };
 
   fetchData = (
