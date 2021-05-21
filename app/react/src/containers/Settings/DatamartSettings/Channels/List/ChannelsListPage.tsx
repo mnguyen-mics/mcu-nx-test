@@ -199,7 +199,7 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
   };
 
   fetchChannels = (organisationId: string, filter: ChannelFilter) => {
-    const { notifyError } = this.props;
+    const { notifyError, fixedDatamartOpt } = this.props;
     const buildChannelsOptions = () => {
       const filterType = filter.types && filter.types.length === 1 ? filter.types[0] : undefined;
 
@@ -230,14 +230,17 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
           return emptyChannels;
         });
 
-      const analyticsPromise = this._datamartService
-        .getDatamarts(organisationId, {
-          allow_administrator: true,
-          archived: false,
-        })
-        .then(datamartsResponse => {
-          const datamartIds = datamartsResponse.data.map(_ => _.id);
+      const datamartIdsPromise = fixedDatamartOpt
+        ? Promise.resolve([fixedDatamartOpt])
+        : this._datamartService
+            .getDatamarts(organisationId, {
+              allow_administrator: true,
+              archived: false,
+            })
+            .then(datamarts => datamarts.data.map(_ => _.id));
 
+      const analyticsPromise = datamartIdsPromise
+        .then(datamartIds => {
           const metrics: DatamartUsersAnalyticsMetric[] = ['sessions', 'users'];
           const from = new McsMoment('now-8d');
           const to = new McsMoment('now-1d');
