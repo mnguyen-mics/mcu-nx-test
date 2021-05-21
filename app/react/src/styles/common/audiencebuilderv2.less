@@ -13,13 +13,6 @@
       padding-left: 15px;
       border-bottom: 1px solid #d3dbe1;
     }
-    .mcs-audienceBuilder_closeButton {
-      border: none;
-      font-size: 20px;
-      padding: 0 5px;
-      float: right;
-      line-height: 50px;
-    }
     .ant-select {
       width: 100%;
     }
@@ -131,17 +124,8 @@
       }
     }
   }
-
-  .mcs-audienceBuilder_audienceFeature:not(:first-child) {
-    padding-top: 15px;
-  }
-  .mcs-audienceBuilder_demographicFeature,
-  .mcs-audienceBuilder_audienceFeature {
+  .mcs-audienceBuilder_demographicFeature {
     padding: 20px;
-    .mcs-audienceBuilder_audienceFeatureName {
-      font-size: 12px;
-      font-weight: 500;
-    }
   }
   .mcs-audienceBuilder_demographicFeature {
     .ant-legacy-form-item-label {
@@ -150,32 +134,6 @@
 
     .ant-legacy-form-item-label label:after {
       content: none;
-    }
-  }
-  .mcs-audienceBuilder_audienceFeature {
-    border-bottom: 1px solid @border-color-split;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #d3dbe1;
-    .mcs-audienceBuilder_audienceFeatureName {
-      color: @primary-color;
-      line-height: 20px;
-    }
-    .mcs-audienceBuilder_audienceFeatureDescription {
-      margin-bottom: 20px;
-    }
-    .mcs-audienceBuilder_closeButton {
-      font-size: 15px;
-    }
-    .mcs-audienceBuilder_audienceFeatureInput {
-      margin: 10px 0;
-
-      .ant-legacy-form-item-label {
-        text-align: left;
-      }
-
-      .ant-legacy-form-item-label label:after {
-        content: none;
-      }
     }
   }
 
@@ -188,8 +146,7 @@
   // Audience Builder aka 'Standard Segment Builder'
   // -----------------------------------------------
 
-  // TODO rename to mcs-audienceBuilder_audienceFeature after cleanup
-  .mcs-audienceBuilder_audienceFeature-2 {
+  .mcs-audienceBuilder_audienceFeature {
     margin: 10px 40px 10px 0px;
     padding: 0;
   }
@@ -322,14 +279,13 @@
 }
 
 // Audience Feature Card Content (Builder & Settings)
-// TODO remove -2's after cleanup
 
 .mcs-audienceBuilder_audienceFeatureContent,
 .mcs-audienceFeature-preview {
   padding: 15px 20px 20px 20px;
   font-family: @font-family;
 
-  .mcs-audienceBuilder_audienceFeatureName-2 {
+  .mcs-audienceBuilder_audienceFeatureName {
     font-family: @font-family-medium;
     color: @text-color;
     line-height: 18px;
@@ -337,14 +293,14 @@
     font-weight: 500;
   }
 
-  .mcs-audienceBuilder_audienceFeatureDescription-2 {
+  .mcs-audienceBuilder_audienceFeatureDescription {
     color: @input-placeholder-color;
     font-size: 10px;
     font-style: italic;
     margin-bottom: 10px;
   }
 
-  .mcs-audienceBuilder_closeButton-2 {
+  .mcs-audienceBuilder_closeButton {
     line-height: 18px;
     color: @text-color-secondary;
     font-size: 14px;
@@ -357,7 +313,7 @@
     }
   }
 
-  .mcs-audienceBuilder_audienceFeatureInput-2 {
+  .mcs-audienceBuilder_audienceFeatureInput {
     margin-top: 15px;
 
     .mcs-relativeAbsoluteDateForm_picker {

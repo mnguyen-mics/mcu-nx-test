@@ -21,7 +21,7 @@ import { sessionInTimeJsonConfig } from '../../../../Audience/DatamartUsersAnaly
 import { DashboardConfig } from '../../../../Audience/DatamartUsersAnalytics/DatamartUsersAnalyticsContent';
 import DatamartReplicationTab from './DatamartReplicationTab';
 import SegmentBuildersTab from './SegmentBuildersTab';
-import AudienceFeaturesTab from './AudienceFeaturesTab';
+import AudienceFeatureListPage from '../../AudienceBuilder/List/AudienceFeatureListPage';
 
 interface McsTabsItem {
   title: string;
@@ -201,7 +201,7 @@ class DatamartDashboardPage extends React.Component<Props, State> {
     if (hasFeature('audience-segment_builder_v2')) {
       items.push({
         title: intl.formatMessage(messages.audienceFeatures),
-        display: <AudienceFeaturesTab />,
+        display: <AudienceFeatureListPage />,
         key: 'audience_features',
       });
       items.push({

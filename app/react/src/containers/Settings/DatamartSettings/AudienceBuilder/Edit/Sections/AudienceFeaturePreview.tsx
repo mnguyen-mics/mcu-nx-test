@@ -6,7 +6,7 @@ import { messages } from '../../messages';
 import { FormSection } from '../../../../../../components/Form';
 import { SchemaItem } from '../../../../../QueryTool/JSONOTQL/domain';
 import { Card } from '@mediarithmics-private/mcs-components-library';
-import NewAudienceFeatureLayout from '../../../../../Audience/AudienceBuilder/QueryFragmentBuilders/NewAudienceFeatureLayout';
+import AudienceFeatureLayout from '../../../../../Audience/AudienceBuilder/QueryFragmentBuilders/AudienceFeatureLayout';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { AudienceFeatureFormData } from '../domain';
 import { AudienceFeatureResource } from '../../../../../../models/audienceFeature';
@@ -39,11 +39,12 @@ class AudienceFeaturePreview extends React.Component<Props> {
       <div className='mcs-audienceFeature-preview'>
         <FormSection title={messages.audienceFeaturePreview} />
         <Card className='mcs-audienceFeature_card'>
-          <NewAudienceFeatureLayout
+          <AudienceFeatureLayout
             formPath={''}
             datamartId={datamartId}
             objectTypes={[]}
             audienceFeatures={audienceFeature}
+            disabled={true}
           />
         </Card>
       </div>
