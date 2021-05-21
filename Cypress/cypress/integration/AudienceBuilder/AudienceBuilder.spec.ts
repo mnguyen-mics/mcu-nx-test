@@ -19,7 +19,7 @@ describe('This test should check that the audience feature forms are working pro
     cy.contains(datamartName).click();
     cy.contains('Segment Builders').click();
     cy.get('.mcs-audienceBuilder_creation_button').click();
-    cy.get('#audienceBuilder\\.name').type(audienceBuilderName);
+    cy.get('.mcs-audienceBuilderName').type(audienceBuilderName);
     cy.get('.mcs-form_saveButton_audienceBuilderForm').click();
   };
 
@@ -72,18 +72,15 @@ describe('This test should check that the audience feature forms are working pro
             cy.wait(3000);
             cy.url().then(url => {
               if (url.match(/.*segment-builder-selector$/g))
-                cy.get('.mcs-segmentBuilderSelector_item').eq(0).trigger('mouseover');
-              cy.contains(audienceBuilderName).click();
+                cy.get('.mcs-standardSegmentBuilder_dropdownContainer').click();
             });
             cy.get('.mcs-audienceBuilder_totalAudience').should('not.contain', '0');
             cy.get('.mcs-timelineButton_left').click();
             cy.get('.mcs-audienceBuilder_featureCard').contains(audienceFeatureName).click();
-            cy.get('.add-button').click();
             cy.get('.mcs-audienceBuilder_dashboard_refresh_button').click();
             cy.get('.mcs-audienceBuilder_totalAudience').should('not.contain', '0');
             cy.get('.mcs-timelineButton_right').click();
             cy.get('.mcs-audienceBuilder_featureCard').contains(audienceFeatureName).click();
-            cy.get('.add-button').click();
             cy.get('.mcs-audienceBuilder_dashboard_refresh_button').click();
             cy.get('.mcs-audienceBuilder_totalAudience').should('contain', '0');
           });
@@ -141,20 +138,18 @@ describe('This test should check that the audience feature forms are working pro
             cy.wait(3000);
             cy.url().then(url => {
               if (url.match(/.*segment-builder-selector$/g))
-                cy.get('.mcs-segmentBuilderSelector_item').eq(0).trigger('mouseover');
+                cy.get('.mcs-standardSegmentBuilder_dropdownContainer').trigger('mouseover');
               cy.contains(audienceBuilderName).click();
             });
             cy.get('.mcs-audienceBuilder_totalAudience').should('not.contain', '0');
             cy.get('.mcs-timelineButton_left').click();
             cy.get('.mcs-audienceBuilder_featureCard').contains(audienceFeatureName).click();
-            cy.get('.add-button').click();
-            cy.get('.mcs-timeline_actionDot').eq(0).click();
+            cy.get('.mcs-timeline_actionDot').first().click();
             cy.get('.mcs-audienceBuilder_featureCard').contains(audienceFeatureName).click();
-            cy.get('.add-button').click();
             cy.get('.mcs-audienceBuilder_audienceFeatureContent')
               .first()
               .within(() => {
-                cy.get('input').type('test_match_audience_builder');
+                cy.get('.mcs-formSearchInput').type('test_match_audience_builder');
               });
             cy.get('.mcs-audienceBuilder_dashboard_refresh_button').click();
             cy.get('.mcs-audienceBuilder_totalAudience').should('not.contain', '0');
@@ -184,7 +179,7 @@ describe('This test should check that the audience feature forms are working pro
           cy.contains(audienceBuilderName).click();
           cy.get('.mcs-audienceBuilder_formColumn').contains('Add from library').click();
           cy.contains(audienceFeatureName).click();
-          cy.get('.mcs-actionbar-edit').find('button').first().click();
+          cy.get('.mcs-actionbar-edit').find('.mcs-plus').first().click();
           cy.get('.mcs-form_saveButton_audienceBuilderForm').click();
         })
         .then(() => {
@@ -225,7 +220,7 @@ describe('This test should check that the audience feature forms are working pro
           cy.wait(3000);
           cy.url().then(url => {
             if (url.match(/.*segment-builder-selector$/g))
-              cy.get('.mcs-segmentBuilderSelector_item').eq(0).trigger('mouseover');
+              cy.get('.mcs-standardSegmentBuilder_dropdownContainer').trigger('mouseover');
             cy.contains(audienceBuilderName).click();
           });
 
@@ -242,7 +237,7 @@ describe('This test should check that the audience feature forms are working pro
           );
 
           cy.get('.mcs-audienceBuilder_audienceFeatureContent').within(() => {
-            cy.get('input').type('test_match_audience_builder{enter}');
+            cy.get('.mcs-formSearchInput').type('test_match_audience_builder{enter}');
           });
 
           cy.get('.mcs-audienceBuilder_dashboard_refresh_button').click();
