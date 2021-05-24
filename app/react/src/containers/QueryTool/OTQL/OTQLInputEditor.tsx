@@ -4,8 +4,11 @@ import { FormattedMessage } from 'react-intl';
 import { Card, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { OtqlConsole } from '../../../components/index';
 import { QueryPrecisionMode } from '../../../models/datamart/graphdb/OTQLResult';
+import { InjectedFeaturesProps, injectFeatures } from '../../Features';
+import { compose } from 'recompose';
+import { SettingOutlined } from '@ant-design/icons';
 
-export interface Props {
+export interface OtqlInputEditorProps {
   onRunQuery: (query: string) => void;
   onAbortQuery: () => void;
   runningQuery: boolean;
@@ -22,6 +25,8 @@ export interface Props {
   ) => void;
   queryEditorClassName?: string;
 }
+
+type Props = OtqlInputEditorProps & InjectedFeaturesProps;
 
 interface State {
   query: string;
@@ -54,11 +59,17 @@ class OTQLInputEditor extends React.Component<Props, State> {
   };
 
   buildEditorActions = () => {
-    const { onRunQuery, onAbortQuery, runningQuery } = this.props;
+    const { onRunQuery, onAbortQuery, runningQuery, hasFeature } = this.props;
     const { query } = this.state;
     const clearButton = (
       <Button onClick={this.clearQuery}>
         <FormattedMessage id='queryTool.otql.edit.clear.label' defaultMessage='Clear Query' />
+      </Button>
+    );
+
+    const newClearButton = (
+      <Button onClick={this.clearQuery} className='mcs-otqlInputEditor_clear_button'>
+        <FormattedMessage id='queryTool.otql.edit.new.clear.label' defaultMessage='Clear' />
       </Button>
     );
 
@@ -75,17 +86,50 @@ class OTQLInputEditor extends React.Component<Props, State> {
       </Button>
     );
 
+    const newRunButton = (
+      <Button
+        type='primary'
+        className='m-l-10 mcs-otqlInputEditor_run_button'
+        disabled={!query}
+        onClick={handleOnRunButtonClick}
+      >
+        <FormattedMessage id='queryTool.otql.edit.new.run.label' defaultMessage='Run' />
+      </Button>
+    );
+
+    const newAbortButton = (
+      <Button
+        type='primary'
+        className='m-l-10 mcs-otqlInputEditor_abort_button'
+        onClick={onAbortQuery}
+      >
+        <FormattedMessage id='queryTool.otql.edit.new.abort.label' defaultMessage='Abort' />
+      </Button>
+    );
+
     const params = (
       <a className='m-l-10' onClick={this.showModal}>
         <McsIcon type='gears' />
       </a>
     );
 
-    return (
+    const newParams = (
+      <a className='mcs-otqlInputEditor_settings_button' onClick={this.showModal}>
+        <SettingOutlined />
+      </a>
+    );
+
+    return !hasFeature('query-tool-graphs') ? (
       <div>
         {query && clearButton}
         {runningQuery ? abortButton : runButton}
         {params}
+      </div>
+    ) : (
+      <div>
+        {newParams}
+        {query && newClearButton}
+        {runningQuery ? newAbortButton : newRunButton}
       </div>
     );
   };
@@ -107,6 +151,7 @@ class OTQLInputEditor extends React.Component<Props, State> {
       precision,
       handleChange,
       queryEditorClassName,
+      hasFeature,
     } = this.props;
 
     const onCacheChange = (a: boolean) => handleChange(evaluateGraphQl, a, precision);
@@ -117,6 +162,7 @@ class OTQLInputEditor extends React.Component<Props, State> {
       <Card
         title={<FormattedMessage id='queryTool.otql.card.title' defaultMessage='OTQL Query' />}
         buttons={this.buildEditorActions()}
+        className={hasFeature('query-tool-graphs') ? 'mcs-otqlInputEditor_card' : ''}
       >
         <Modal
           title='Query Settings'
@@ -178,4 +224,4 @@ class OTQLInputEditor extends React.Component<Props, State> {
   }
 }
 
-export default OTQLInputEditor;
+export default compose<{}, OtqlInputEditorProps>(injectFeatures)(OTQLInputEditor);
