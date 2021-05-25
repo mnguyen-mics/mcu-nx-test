@@ -72,7 +72,7 @@ class OTQLResultRenderer extends React.Component<Props> {
       );
     }
 
-    return !hasFeature('query-tool-graphs') ? (
+    return !hasFeature('query-tool-graphs') || !(result && isAggregateResult(result.rows)) ? (
       <Card
         title={
           <FormattedMessage
