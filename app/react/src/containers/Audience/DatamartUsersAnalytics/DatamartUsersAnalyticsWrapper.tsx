@@ -11,7 +11,6 @@ import {
   SegmentsSearchSettings,
   AllUsersSettings,
   isSearchValid,
-  buildDefaultSearch,
   convertTimestampToDayNumber,
 } from '../../../utils/LocationSearchHelper';
 import SegmentFilter from './components/SegmentFilter';
@@ -60,22 +59,6 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
     this.setInitialParams();
   }
 
-  componentDidUpdate(prevProps: JoinedProp) {
-    const {
-      location: { search, pathname },
-      history,
-    } = this.props;
-
-    if (prevProps.location.search !== search) {
-      if (!isSearchValid(search, DATAMART_USERS_ANALYTICS_SETTING)) {
-        history.replace({
-          pathname: pathname,
-          search: buildDefaultSearch(search, DATAMART_USERS_ANALYTICS_SETTING),
-        });
-      }
-    }
-  }
-
   setInitialParams = () => {
     const {
       location: { search, pathname },
@@ -88,19 +71,15 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
     const queryParms = {
       allusers: disableAllUserFilter ? false : true,
       segments: defaultSegment ? [defaultSegment.key] : [],
+      from: comparisonStartDate
+        ? new McsMoment(`now-${convertTimestampToDayNumber(comparisonStartDate)}d`)
+        : new McsMoment('now-8d'),
+      to: new McsMoment('now-1d'),
     };
-
-    const queryParamsWithDate = comparisonStartDate
-      ? {
-          ...queryParms,
-          from: new McsMoment(`now-${convertTimestampToDayNumber(comparisonStartDate)}d`),
-          to: new McsMoment('now-1d'),
-        }
-      : undefined;
 
     const nextLocation = {
       pathname: pathname,
-      search: updateSearch(search, queryParamsWithDate || queryParms),
+      search: updateSearch(search, queryParms),
     };
 
     if (!isSearchValid(search, DATAMART_USERS_ANALYTICS_SETTING)) {
