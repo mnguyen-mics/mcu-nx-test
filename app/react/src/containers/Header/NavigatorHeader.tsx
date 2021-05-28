@@ -48,7 +48,7 @@ class NavigatorHeader extends React.Component<Props> {
     const organisationName = workspace(organisationId).organisation_name;
 
     const accountMenu = (
-      <Menu className='mcs-menu-antd-customized'>
+      <Menu>
         <Menu.Item key='email' disabled={true}>
           {userEmail}
         </Menu.Item>

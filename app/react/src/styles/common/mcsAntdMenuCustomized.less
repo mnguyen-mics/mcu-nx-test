@@ -25,6 +25,13 @@
     }
   }
 
+  .mcs-antd-menu-item {
+    border-right: 0px;
+    &:after {
+      border-right: none;
+    }
+  }
+
   .ant-menu-horizontal {
     .ant-menu-item-selected,
     .ant-menu-item:hover {
@@ -32,8 +39,8 @@
     }
   }
 
-  .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
-    background-color: @layout-sider-background;
+  .ant-menu-item-selected {
+    background-color: @layout-sider-background !important ;
   }
 
   .ant-menu-item:hover,

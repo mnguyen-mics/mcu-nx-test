@@ -150,7 +150,7 @@ class NavigatorSettingsSideMenu extends React.Component<Props, NavigatorSettings
       currentOpenMenu.subMenuItems &&
       currentOpenMenu.subMenuItems.map(itemDef => {
         return hasFeature(itemDef.requiredFeature, itemDef.requireDatamart) ? (
-          <Menu.Item key={itemDef.path}>
+          <Menu.Item key={itemDef.path} className={'mcs-antd-menu-item'}>
             <Link
               to={`${baseUrl}${itemDef.path}`}
               className={`mcs-settingsSideMenu_${itemDef.translation.id}`}
