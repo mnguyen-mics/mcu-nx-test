@@ -64,7 +64,7 @@ class AutomationActionBar extends React.Component<JoinedProps, AutomationActionb
     };
 
     return (
-      <Menu onClick={onClick}>
+      <Menu onClick={onClick} className='mcs-menu-antd-customized'>
         <Menu.Item key='pause'>
           <FormattedMessage {...messages.pauseAll} />
         </Menu.Item>

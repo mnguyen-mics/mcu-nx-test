@@ -40,7 +40,7 @@ class FormSection extends React.Component<FormSectionProps> {
     };
 
     const overlay = (
-      <Menu className='mcs-dropdown-actions' onClick={handleClick}>
+      <Menu className='mcs-dropdown-actions mcs-menu-antd-customized' onClick={handleClick}>
         {displayOptions}
       </Menu>
     );

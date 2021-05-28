@@ -92,7 +92,7 @@ class DisplayAdsActionBar extends React.Component<JoinedProps> {
       };
 
       return (
-        <Menu onClick={onClick}>
+        <Menu onClick={onClick} className='mcs-menu-antd-customized'>
           <Menu.Item key='start'>
             <FormattedMessage {...messagesMap.startAll} />
           </Menu.Item>

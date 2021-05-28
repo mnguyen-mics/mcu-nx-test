@@ -464,7 +464,7 @@ class FeedCard extends React.Component<Props, FeedCardState> {
     };
 
     const menu = (
-      <Menu>
+      <Menu className='mcs-menu-antd-customized'>
         <Menu.Item key='0'>
           <a onClick={openModal('configuration')}>{intl.formatMessage(messages.edit)}</a>
         </Menu.Item>

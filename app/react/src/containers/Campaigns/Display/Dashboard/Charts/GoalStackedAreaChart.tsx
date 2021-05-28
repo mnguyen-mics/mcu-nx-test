@@ -312,7 +312,7 @@ class GoalStackedAreaChart extends React.Component<JoinedProps, GoalStackedAreaC
     };
 
     const menu = (
-      <Menu onClick={handleClick}>
+      <Menu onClick={handleClick} className='mcs-menu-antd-customized'>
         {goal.attribution.map(attribution => {
           return this.state.selectedAttributionModel &&
             attribution.id !== this.state.selectedAttributionModel.id ? (

@@ -150,6 +150,7 @@ class NavigatorSettingsMainMenu extends React.Component<Props, State> {
         selectedKeys={[this.state.current]}
         mode='horizontal'
         style={{ padding: '0 40px' }}
+        className='mcs-menu-antd-customized'
       >
         {this.generateMenuItems()}
       </Menu>

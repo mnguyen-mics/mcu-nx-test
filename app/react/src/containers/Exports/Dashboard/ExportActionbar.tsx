@@ -188,7 +188,7 @@ class ExportsActionbar extends React.Component<JoinedProps, ExportActionbarState
     };
 
     return (
-      <Menu onClick={onClick}>
+      <Menu onClick={onClick} className='mcs-menu-antd-customized'>
         <Menu.Item key='HISTORY'>
           <FormattedMessage {...messages.history} />
         </Menu.Item>

@@ -186,7 +186,11 @@ class BlastTable extends React.Component<Props> {
     const handleOnClick = (param: any) =>
       updateBlastStatus(blast.id, param.key as EmailBlastStatus);
 
-    return <Menu onClick={handleOnClick}>{menuItems}</Menu>;
+    return (
+      <Menu onClick={handleOnClick} className='mcs-menu-antd-customized'>
+        {menuItems}
+      </Menu>
+    );
   };
 
   openHistoryDrawer = (record: BlastData) => {

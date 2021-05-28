@@ -60,7 +60,7 @@ class AudienceFeatureFolder extends React.Component<Props, State> {
         deleteFolder(id);
       };
       return (
-        <Menu>
+        <Menu className='mcs-menu-antd-customized'>
           <Menu.Item key='0'>
             <div onClick={displayForm}>{intl.formatMessage(messages.audienceFeatureRename)}</div>
           </Menu.Item>

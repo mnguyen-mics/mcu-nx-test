@@ -229,6 +229,7 @@ class NavigatorSettingsSideMenu extends React.Component<Props, NavigatorSettings
         openKeys={getOpenKeysInMode()}
         onOpenChange={this.onOpenChange}
         onClick={this.onClick}
+        className='mcs-menu-antd-customized'
       >
         {this.buildItems()}
       </Menu>

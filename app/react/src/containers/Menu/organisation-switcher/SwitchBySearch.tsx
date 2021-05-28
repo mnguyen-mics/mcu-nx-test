@@ -266,7 +266,7 @@ class SwitchBySearch extends React.Component<Props, SwitchBySearchState> {
     const savedCommunities = this.buildWorkspacesFromIds(savedCommunitiesIds, workspaces);
 
     return (
-      <Menu mode='vertical' className='mcs-organisationListSwitcher_menu'>
+      <Menu mode='vertical' className='mcs-organisationListSwitcher_menu mcs-menu-antd-customized'>
         <div className='mcs-organisationListSwitcher_search'>
           <Search
             ref={this.inputRef}
