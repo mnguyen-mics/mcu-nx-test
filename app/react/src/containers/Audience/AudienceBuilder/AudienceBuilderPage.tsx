@@ -182,6 +182,7 @@ class AudienceBuilderPage extends React.Component<Props, State> {
           datamartId,
           {
             query_language: 'JSON_OTQL',
+            query_language_subtype: 'PARAMETRIC',
             query_text: JSON.stringify(query),
           },
           { parameterized: true },
