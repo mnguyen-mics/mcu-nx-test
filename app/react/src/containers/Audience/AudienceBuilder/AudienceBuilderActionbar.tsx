@@ -64,7 +64,7 @@ class AudienceBuilderActionbar extends React.Component<Props, State> {
       }
     };
     const saveAsMenu = (
-      <Menu onClick={handleMenuClick}>
+      <Menu onClick={handleMenuClick} className='mcs-menu-antd-customized'>
         <Menu.Item key='USER_QUERY'>
           <FormattedMessage
             id='audience.audienceBuilder.actionbar.saveAsButton.userQuerySegment'

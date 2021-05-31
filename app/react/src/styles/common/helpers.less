@@ -1,85 +1,3 @@
-// TODO mcs-menu not used anymore, check relevance.
-// see navigatormenu.less for current menu styling
-.ant-menu-root.ant-menu-inline.mcs-menu {
-  height: 100%;
-  padding-top: 10px;
-}
-
-// .mcs-menu,
-// .mcs-layout-content {
-//     border-top: @border-width-base @border-style-base @border-color-split;
-// }
-
-.ant-menu-inline.mcs-menu-inline .ant-menu-item,
-.ant-menu-vertical .ant-menu-item {
-  border-left: 5px solid transparent;
-  margin-left: -1px;
-  left: 1px;
-  position: relative;
-  z-index: 1;
-}
-
-.ant-menu-inline.mcs-menu-inline .ant-menu-selected,
-.ant-menu-inline .ant-menu-item-selected {
-  border-left-color: @info-color!important;
-  border-right: @border-width-base @border-style-base @border-color-split;
-  transform: translateZ(0);
-  &:after {
-    border-right: none;
-  }
-}
-
-.ant-menu-item-selected {
-  a,
-  a:hover {
-    font-weight: bold;
-  }
-}
-
-.ant-menu-horizontal {
-  .ant-menu-item-selected,
-  .ant-menu-item:hover {
-    border-bottom: 4px @border-style-base @info-color;
-  }
-}
-
-.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
-  background-color: @layout-sider-background;
-}
-
-.ant-menu-item:hover,
-.ant-menu-item-active,
-.ant-menu:not(.ant-menu-inline) .ant-menu-submenu-open,
-.ant-menu-submenu-active,
-.ant-menu-submenu-title:hover {
-  color: @info-color!important;
-}
-
-// .mcs-menu-inline .ant-menu-item > a:hover {
-//     color: @info-color!important;
-// }
-
-// .mcs-menu-inline .ant-menu-item-disabled.ant-menu-item.mcs-footer {
-//     position: absolute;
-//     bottom: 0;
-//     left: 0;
-//     height: 95px;
-//     width: 100%;
-//     cursor: default;
-//     padding: 0 24px;
-// }
-
-// TODO not in use, check relevance
-// .mcs-footer-img {
-//     width: 100%;
-//     margin-top:24px;
-// }
-
-// TODO not in use, check relevance
-// .mcs-main-layout {
-//     height: '100%';
-// }
-
 .mcs-centered-container {
   display: flex;
   justify-content: center;
@@ -87,19 +5,6 @@
   background-color: @layout-content-background;
   flex: 1;
 }
-
-// TODO not in use, check relevance
-// .mcs-sider-container {
-//     width:200px;
-//     background: #fff;
-//     box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
-//     z-index: 2;
-// }
-
-// TODO not in use, check relevance
-// .mcs-input-label {
-//     width: 78px;
-// }
 
 .text-right {
   text-align: right;
@@ -111,10 +16,6 @@
 
 .cursor-pointer {
   cursor: pointer;
-}
-
-.ant-breadcrumb-separator {
-  font-size: 0.8em;
 }
 
 .ant-btn-primary.mcs-primary {
@@ -133,10 +34,6 @@
     border-color: @btn-default-border;
     background-color: @disabled-color;
   }
-}
-
-.ant-menu.ant-menu-vertical.ant-menu-sub.ant-menu-open {
-  overflow-y: scroll;
 }
 
 .mcs-invisible-button {
@@ -235,10 +132,6 @@
   vertical-align: middle;
   top: 0;
   text-align: left;
-}
-
-.m-b-20 {
-  margin-bottom: 20px;
 }
 
 .full-width {

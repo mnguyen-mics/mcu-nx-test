@@ -436,7 +436,7 @@ class ChannelsListPage extends React.Component<Props, ChannelsListPageState> {
     const computedFilter = this.computeFilter(search, fixedDatamartOpt);
 
     const menu = (
-      <Menu>
+      <Menu className='mcs-menu-antd-customized'>
         <Menu.Item>{this.buildNewActionElement(organisationId, 'SITE')}</Menu.Item>
         <Menu.Item>{this.buildNewActionElement(organisationId, 'MOBILE_APPLICATION')}</Menu.Item>
       </Menu>

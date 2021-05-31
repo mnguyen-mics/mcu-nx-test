@@ -102,7 +102,7 @@ class SaveQueryAsActionBar extends React.Component<Props, State> {
     };
 
     const saveAsMenu = (
-      <Menu onClick={handleMenuClick}>
+      <Menu onClick={handleMenuClick} className='mcs-menu-antd-customized'>
         <Menu.Item key='USER_QUERY' disabled={!saveAsUserQuery}>
           <FormattedMessage
             id='queryTool.query-builder-page-actionbar-saveas-segment'

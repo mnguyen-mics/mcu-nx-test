@@ -312,7 +312,7 @@ class ImportsActionbar extends React.Component<JoinedProps, State> {
     };
 
     return (
-      <Menu onClick={onClick}>
+      <Menu onClick={onClick} className='mcs-menu-antd-customized'>
         <Menu.Item key='DELETE'>
           <FormattedMessage {...messages.delete} />
         </Menu.Item>

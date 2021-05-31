@@ -273,7 +273,7 @@ class CatalogContent extends React.Component<Props, CatalogContentState> {
     };
 
     return (
-      <Breadcrumb style={{ marginBottom: 14 }}>
+      <Breadcrumb style={{ marginBottom: 14 }} className='mcs-breadcrumb'>
         <Breadcrumb.Item>
           <Button onClick={onHomeClick}>
             <HomeOutlined /> {this.state.catalogs.selectedId}

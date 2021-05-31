@@ -306,7 +306,7 @@ class AggregationRenderer extends React.Component<Props, State> {
       });
 
     return (
-      <Breadcrumb style={{ marginBottom: 14 }}>
+      <Breadcrumb style={{ marginBottom: 14 }} className='mcs-breadcrumb'>
         <Breadcrumb.Item>
           <Button onClick={goToRoot}>
             <HomeOutlined />

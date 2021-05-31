@@ -301,7 +301,7 @@ class NavigatorMenu extends React.Component<Props, NavigatorMenuState> {
         openKeys={getOpenKeysInMode()}
         onOpenChange={this.onOpenChange}
         onClick={this.onClick}
-        className={this.props.className}
+        className={this.props.className + ' mcs-menu-antd-customized'}
       >
         {this.buildItems()}
       </Menu>

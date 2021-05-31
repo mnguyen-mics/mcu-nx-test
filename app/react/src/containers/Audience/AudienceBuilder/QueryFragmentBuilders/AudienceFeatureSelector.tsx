@@ -177,7 +177,11 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
       }
       return;
     };
-    return <Breadcrumb className='mcs-audienceBuilder_breadCrumb'>{buildBreadCrumbs()}</Breadcrumb>;
+    return (
+      <Breadcrumb className='mcs-audienceBuilder_breadCrumb mcs-breadcrumb'>
+        {buildBreadCrumbs()}
+      </Breadcrumb>
+    );
   };
 
   onSelectFolder = (id?: string) => () => {

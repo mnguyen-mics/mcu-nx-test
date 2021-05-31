@@ -273,7 +273,7 @@ class AdCard extends React.Component<JoinedProps, AdCardState> {
     };
 
     return (
-      <Menu onClick={onClick}>
+      <Menu onClick={onClick} className='mcs-menu-antd-customized'>
         <Menu.Item key='pause'>
           <FormattedMessage {...messagesMap.pauseAll} />
         </Menu.Item>

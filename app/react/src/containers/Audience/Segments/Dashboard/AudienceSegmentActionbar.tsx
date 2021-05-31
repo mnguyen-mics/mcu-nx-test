@@ -373,7 +373,7 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
     };
 
     const dropdowMenu = (
-      <Menu onClick={onMenuClick}>
+      <Menu onClick={onMenuClick} className='mcs-menu-antd-customized'>
         <Menu.Item key='HISTORY'>
           <FormattedMessage {...segmentMessages.history} />
         </Menu.Item>
