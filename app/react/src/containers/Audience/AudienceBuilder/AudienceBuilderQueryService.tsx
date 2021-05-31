@@ -10,7 +10,7 @@ import {
   AudienceBuilderParametricPredicateGroupNode,
   isAudienceBuilderParametricPredicateNode,
 } from '../../../models/audienceBuilder/AudienceBuilderResource';
-import { QueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
+import { QueryResource } from '../../../models/datamart/DatamartResource';
 
 export interface IAudienceBuilderQueryService {
   buildQueryDocument: (formData: AudienceBuilderFormData) => AudienceBuilderQueryDocument;
@@ -84,15 +84,28 @@ export class AudienceBuilderQueryService implements IAudienceBuilderQueryService
     success: (result: OTQLResult) => void,
     failure: (err: any) => void,
   ) => {
-    // TODO Remove `as QueryDocument` hack
-    // AudienceBuilderQueryDocument and QueryDocument could inherit from the same abstraction.
+    // TODO Make conversion without need of existing query resource. convertJsonOtql2Otql doens't check id anyway.
+    const queryResource: QueryResource = {
+      id: '123',
+      datamart_id: datamartId,
+      query_language: 'JSON_OTQL',
+      query_language_subtype: 'PARAMETRIC',
+      // TODO AudienceBuilderQueryDocument and QueryDocument could inherit from the same abstraction.
+      query_text: JSON.stringify(queryDocument),
+    };
+
     this._queryService
-      .runJSONOTQLQuery(datamartId, queryDocument as QueryDocument, { parameterized: true })
-      .then(queryResult => {
-        success(queryResult.data);
-      })
-      .catch(err => {
-        failure(err);
+      .convertJsonOtql2Otql(datamartId, queryResource, { parameterized: true })
+      .then(otqlQ => otqlQ.data.query_text)
+      .then(queryText => {
+        this._queryService
+          .runOTQLQuery(datamartId, queryText)
+          .then(queryResult => {
+            success(queryResult.data);
+          })
+          .catch(err => {
+            failure(err);
+          });
       });
   };
 
