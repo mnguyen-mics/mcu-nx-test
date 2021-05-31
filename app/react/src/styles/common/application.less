@@ -74,6 +74,20 @@ hr {
 }
 
 .mcs-sider {
+  /* Remove the trigger height to fix the scroll height */
+  height: calc(100% - @layout-trigger-height);
+  overflow-y: scroll;
+  /* Hide scrollbar for IE, Edge and Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.new-mcs-sider {
   height: 100%;
   overflow-y: scroll;
   /* Hide scrollbar for IE, Edge and Firefox */
