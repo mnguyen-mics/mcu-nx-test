@@ -87,6 +87,7 @@ class CreativeCardSelector extends React.Component<Props> {
 
     const options: CreativesOptions = {
       ...getPaginatedApiParam(filter.currentPage, filter.pageSize),
+      archived: false,
     };
 
     if (filter.keywords) {
@@ -94,7 +95,6 @@ class CreativeCardSelector extends React.Component<Props> {
     }
 
     if (creativeType === 'EMAIL_TEMPLATE') {
-      options.archived = false;
       return this._creativeService.getEmailTemplates(organisationId, options);
     }
     return this._creativeService.getDisplayAds(organisationId, options);
