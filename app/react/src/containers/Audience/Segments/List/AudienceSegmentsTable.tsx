@@ -545,18 +545,20 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
     const searchOnClick = () => this.columnStatSort(columnName);
     return (
       <Button onClick={searchOnClick}>
-        <FormattedMessage {...messageMap[columnName]} />
-        <div className='mcs-table-header-icons'>
-          <McsIcon
-            type='chevron'
-            className={`${isAsc && sortField === columnName ? 'mcs-table-header-icon' : ''}`}
-          />
-          <McsIcon
-            type='chevron'
-            className={`${
-              isAsc === false && sortField === columnName ? 'mcs-table-header-icon' : ''
-            }`}
-          />
+        <div className='mcs-table-header-with-icons'>
+          <FormattedMessage {...messageMap[columnName]} />
+          <div className='mcs-table-header-icons'>
+            <McsIcon
+              type='chevron'
+              className={`${isAsc && sortField === columnName ? 'mcs-table-header-icon' : ''}`}
+            />
+            <McsIcon
+              type='chevron'
+              className={`${
+                isAsc === false && sortField === columnName ? 'mcs-table-header-icon' : ''
+              }`}
+            />
+          </div>
         </div>
       </Button>
     );
