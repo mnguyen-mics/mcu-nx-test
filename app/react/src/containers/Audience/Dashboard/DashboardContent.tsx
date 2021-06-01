@@ -158,6 +158,7 @@ export default class DashboardContent extends React.Component<Props, State> {
             labelsEnabled={true}
             height={height}
             plotLabels={comp.plot_labels}
+            source={source}
           />
         );
       case 'COUNT_PIE_CHART':

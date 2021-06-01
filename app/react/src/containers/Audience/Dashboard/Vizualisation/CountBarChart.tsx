@@ -1,5 +1,6 @@
 import * as React from 'react';
 import cuid from 'cuid';
+import _ from 'lodash';
 import { OTQLCountResult, isCountResult } from '../../../../models/datamart/graphdb/OTQLResult';
 import injectThemeColors, { InjectedThemeColorsProps } from '../../../Helpers/injectThemeColors';
 import { compose } from 'recompose';
@@ -15,6 +16,8 @@ import {
   LoadingChart,
   StackedBarPlot,
 } from '@mediarithmics-private/mcs-components-library';
+import { AudienceSegmentShape } from '../../../../models/audiencesegment';
+import { AudienceBuilderQueryDocument } from '../../../../models/audienceBuilder/AudienceBuilderResource';
 
 export interface CountBarChartProps {
   title?: string;
@@ -23,6 +26,7 @@ export interface CountBarChartProps {
   height: number;
   labelsEnabled?: boolean;
   plotLabels: string[];
+  source?: AudienceSegmentShape | AudienceBuilderQueryDocument;
 }
 
 interface QueryResult {
@@ -66,17 +70,25 @@ class CountBarChart extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { queryIds, datamartId } = this.props;
+    const { queryIds, datamartId, source } = this.props;
 
-    this.fetchData(queryIds, datamartId);
+    this.fetchData(queryIds, datamartId, source);
   }
 
   componentDidUpdate(previousProps: CountBarChartProps) {
-    const { queryIds, datamartId } = this.props;
-    const { queryIds: previousChartQueryIds, datamartId: previousDatamartId } = previousProps;
+    const { queryIds, datamartId, source } = this.props;
+    const {
+      queryIds: previousChartQueryIds,
+      datamartId: previousDatamartId,
+      source: previousSource,
+    } = previousProps;
 
-    if (queryIds !== previousChartQueryIds || datamartId !== previousDatamartId) {
-      this.fetchData(queryIds, datamartId);
+    if (
+      !_.isEqual(source, previousSource) ||
+      queryIds !== previousChartQueryIds ||
+      datamartId !== previousDatamartId
+    ) {
+      this.fetchData(queryIds, datamartId, source);
     }
   }
 
@@ -102,9 +114,14 @@ class CountBarChart extends React.Component<Props, State> {
     return [];
   };
 
-  fetchData = (chartQueryIds: string[], datamartId: string): Promise<void> => {
+  fetchData = (
+    chartQueryIds: string[],
+    datamartId: string,
+    source?: AudienceSegmentShape | AudienceBuilderQueryDocument,
+  ): Promise<void> => {
+    this.setState({ error: false, loading: true });
     const promises = chartQueryIds.map((chartQueryId, i) => {
-      return this.fetchQuery(chartQueryId, datamartId, i);
+      return this.fetchQuery(chartQueryId, datamartId, i, source);
     });
     return Promise.all(promises)
       .then(queryListResp => {
@@ -128,6 +145,7 @@ class CountBarChart extends React.Component<Props, State> {
     chartQueryId: string,
     datamartId: string,
     plotLabelIndex: number,
+    source?: AudienceSegmentShape | AudienceBuilderQueryDocument,
   ): Promise<QueryResult[]> => {
     return this._queryService
       .getQuery(datamartId, chartQueryId)
@@ -135,7 +153,7 @@ class CountBarChart extends React.Component<Props, State> {
         return queryResp.data;
       })
       .then(q => {
-        return getFormattedQuery(datamartId, this._queryService, q);
+        return getFormattedQuery(datamartId, this._queryService, q, source);
       })
       .then(q => {
         return this._queryService
