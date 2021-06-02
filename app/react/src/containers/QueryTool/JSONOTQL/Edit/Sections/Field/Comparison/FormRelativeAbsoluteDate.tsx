@@ -71,9 +71,19 @@ export default class FormRelativeAbsoluteDate extends React.Component<
 > {
   constructor(props: Props) {
     super(props);
+    const { input, noListValue } = props;
+    const datePickerType = this.getValueType(input.value);
+    let relativePeriod: DateRelativePeriodType = 'd';
+    if ((input.value || input.value.length !== 0) && datePickerType === 'RELATIVE') {
+      if (noListValue) {
+        relativePeriod = this.getRelativePeriodValue(input.value);
+      } else {
+        relativePeriod = this.getRelativePeriodValue(input.value[0]);
+      }
+    }
     this.state = {
-      datePickerType: this.getValueType(props.input.value),
-      relativePeriod: 'd',
+      datePickerType: datePickerType,
+      relativePeriod: relativePeriod,
     };
   }
 
@@ -144,6 +154,10 @@ export default class FormRelativeAbsoluteDate extends React.Component<
         ? `now-${value}${this.state.relativePeriod}/${this.state.relativePeriod}`
         : [`now-${value}${this.state.relativePeriod}/${this.state.relativePeriod}`],
     );
+  };
+
+  getRelativePeriodValue = (value: string): DateRelativePeriodType => {
+    return value[value.length - 1] as DateRelativePeriodType;
   };
 
   getAdjustedAbsoluteTimestamp = (date?: moment.Moment) => {
