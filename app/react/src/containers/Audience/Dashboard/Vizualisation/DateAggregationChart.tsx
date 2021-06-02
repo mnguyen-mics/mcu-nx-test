@@ -1,4 +1,5 @@
 import * as React from 'react';
+import _ from 'lodash';
 import cuid from 'cuid';
 import {
   OTQLAggregationResult,
@@ -89,7 +90,7 @@ class DateAggregationChart extends React.Component<Props, State> {
     } = previousProps;
 
     if (
-      source !== previousSource ||
+      !_.isEqual(source, previousSource) ||
       queryIds !== previousChartQueryIds ||
       datamartId !== previousDatamartId
     ) {
