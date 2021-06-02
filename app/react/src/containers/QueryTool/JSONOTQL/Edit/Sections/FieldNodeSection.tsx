@@ -118,14 +118,14 @@ class FieldNodeSection extends React.Component<JoinedProps> {
     );
 
     return (
-      <div>
+      <div className='mcs-fieldNodeSection'>
         <FormSection title={title} subtitle={subtitle} />
         <div className='form-field-wrapper'>{renderedFields}</div>
         {!disabled && (
           <Row>
             <Col span={24}>
               <div onClick={handleOnClick}>
-                <Col span={24} className='add-field-button'>
+                <Col span={24} className='add-field-button mcs-fieldNodeSection_add_field_button'>
                   <p>
                     <McsIcon type='plus' />
                     {intl.formatMessage(messages.fieldConditionAdditionButton)}

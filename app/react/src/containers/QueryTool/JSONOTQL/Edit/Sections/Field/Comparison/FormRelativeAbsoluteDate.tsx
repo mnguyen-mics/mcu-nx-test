@@ -273,10 +273,18 @@ export default class FormRelativeAbsoluteDate extends React.Component<
             onChange={onRadioChange}
             disabled={disabled}
           >
-            <RadioButton style={{ width: '50%' }} value='ABSOLUTE'>
+            <RadioButton
+              className='mcs-relativeAbsoluteForm_absolute'
+              style={{ width: '50%' }}
+              value='ABSOLUTE'
+            >
               <FormattedMessage {...messages.absolute} />
             </RadioButton>
-            <RadioButton style={{ width: '50%' }} value='RELATIVE'>
+            <RadioButton
+              className='mcs-relativeAbsoluteForm_relative'
+              style={{ width: '50%' }}
+              value='RELATIVE'
+            >
               <FormattedMessage {...messages.relative} />
             </RadioButton>
           </RadioGroup>
@@ -297,6 +305,7 @@ export default class FormRelativeAbsoluteDate extends React.Component<
               <InputGroup compact={true}>
                 <Col span={15}>
                   <InputNumber
+                    className='mcs-relativeAbsoluteForm_dateValue'
                     style={{ width: '100%' }}
                     defaultValue={1}
                     value={value as number}
@@ -306,6 +315,7 @@ export default class FormRelativeAbsoluteDate extends React.Component<
                 </Col>
                 <Col span={7}>
                   <Select
+                    className='mcs-relativeAbsoluteForm_period_select'
                     defaultValue={this.state.relativePeriod}
                     onChange={onPeriodChange}
                     getPopupContainer={
@@ -313,13 +323,13 @@ export default class FormRelativeAbsoluteDate extends React.Component<
                     }
                     disabled={disabled}
                   >
-                    <Select.Option value='d'>
+                    <Select.Option className='mcs-relativeAbsoluteForm_day_select' value='d'>
                       <FormattedMessage {...messages.days} />
                     </Select.Option>
-                    <Select.Option value='M'>
+                    <Select.Option className='mcs-relativeAbsoluteForm_month_select' value='M'>
                       <FormattedMessage {...messages.month} />
                     </Select.Option>
-                    <Select.Option value='y'>
+                    <Select.Option className='mcs-relativeAbsoluteForm_year_select' value='y'>
                       <FormattedMessage {...messages.year} />
                     </Select.Option>
                   </Select>
