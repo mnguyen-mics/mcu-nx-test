@@ -42,8 +42,10 @@ class AudienceFeatureLayout extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { audienceFeatures } = this.props;
-    if (audienceFeatures && audienceFeatures !== prevProps.audienceFeatures) {
+    const { audienceFeatures, disabled } = this.props;
+    // Disabled prop is true when we don't want to use the input = when we are in audience feature form preview
+    // We don't want this didUpdate function in the audience builder
+    if (audienceFeatures && audienceFeatures !== prevProps.audienceFeatures && disabled) {
       this.setState({
         audienceFeature: audienceFeatures[0],
       });
