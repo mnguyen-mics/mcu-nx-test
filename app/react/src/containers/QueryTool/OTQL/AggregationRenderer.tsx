@@ -156,7 +156,7 @@ class AggregationRenderer extends React.Component<Props, State> {
         {
           title: (
             <div>
-              <TableOutlined />
+              <TableOutlined className='mcs-otqlChart_icons' />
               Table
             </div>
           ),
@@ -201,7 +201,7 @@ class AggregationRenderer extends React.Component<Props, State> {
         {
           title: (
             <div>
-              <AreaChartOutlined />
+              <AreaChartOutlined className='mcs-otqlChart_icons' />
               Chart
             </div>
           ),
