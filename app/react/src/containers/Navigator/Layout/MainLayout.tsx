@@ -64,7 +64,6 @@ interface MainLayoutState {
 type Props = MainLayoutProps &
   InjectedFeaturesProps &
   RouteComponentProps<{ organisationId: string }> &
-  InjectedFeaturesProps &
   MainLayoutStoreProps;
 
 const LayoutId = Layout as any;
