@@ -158,7 +158,9 @@ export class AuthService implements IAuthService {
 
   setRefreshTokenExpirationDate = (expireIn: number) => {
     let expirationDate = moment().add(expireIn, 'seconds');
-    if (this.getRememberMe()) expirationDate = moment().add(7, 'days');
+    if (this.getRememberMe() === 'true') {
+      expirationDate = moment().add(7, 'days');
+    }
     LocalStorage.setItem({
       [REFRESH_TOKEN_EXPIRATION_DATE]: expirationDate.format('x'),
     });
