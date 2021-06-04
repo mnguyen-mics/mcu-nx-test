@@ -1,7 +1,7 @@
 import React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
-import { Layout, Tooltip, Modal } from 'antd';
+import { Tooltip, Modal } from 'antd';
 import { compose } from 'recompose';
 import { InjectedIntlProps, injectIntl, FormattedMessage, defineMessages } from 'react-intl';
 import {
@@ -37,8 +37,6 @@ import {
   DataColumnDefinition,
   ExtendedTableRowSelection,
 } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
-
-const { Content } = Layout;
 
 const messagesMap: {
   [key: string]: FormattedMessage.MessageDescriptor;
@@ -445,21 +443,17 @@ class AutomationsListTable extends React.Component<JoinedProps, State> {
     ];
 
     return (
-      <div className='ant-layout'>
-        <Content className='mcs-content-container'>
-          <div className='mcs-table-container'>
-            <TableViewFilters
-              columns={dataColumns}
-              actionsColumnsDefinition={actionColumns}
-              searchOptions={searchOptions}
-              filtersOptions={filtersOptions}
-              dataSource={dataSource}
-              loading={isLoading}
-              pagination={pagination}
-              rowSelection={rowSelection}
-            />
-          </div>
-        </Content>
+      <div className='mcs-table-container'>
+        <TableViewFilters
+          columns={dataColumns}
+          actionsColumnsDefinition={actionColumns}
+          searchOptions={searchOptions}
+          filtersOptions={filtersOptions}
+          dataSource={dataSource}
+          loading={isLoading}
+          pagination={pagination}
+          rowSelection={rowSelection}
+        />
       </div>
     );
   }
