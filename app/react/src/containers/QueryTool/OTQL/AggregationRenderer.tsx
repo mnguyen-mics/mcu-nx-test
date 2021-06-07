@@ -166,7 +166,13 @@ class AggregationRenderer extends React.Component<Props, State> {
                 {
                   title: 'Key',
                   dataIndex: 'key',
-                  sorter: (a, b) => a.key.length - b.key.length,
+                  sorter: (a, b) =>
+                    typeof a.key === 'string' &&
+                    typeof b.key === 'string' &&
+                    !isNaN(Date.parse(a.key)) &&
+                    !isNaN(Date.parse(b.key))
+                      ? Date.parse(a.key) - Date.parse(b.key)
+                      : a.key.length - b.key.length,
                 },
                 {
                   title: 'Count',
