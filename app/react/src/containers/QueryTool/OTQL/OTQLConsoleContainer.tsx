@@ -20,6 +20,7 @@ import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IQueryService } from '../../../services/QueryService';
 import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/RuntimeSchema';
+import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 
 const { Content, Sider } = Layout;
 
@@ -48,7 +49,8 @@ interface State {
 type Props = OTQLConsoleContainerProps &
   InjectedIntlProps &
   RouteComponentProps<{ organisationId: string }> &
-  InjectedNotificationProps;
+  InjectedNotificationProps &
+  InjectedFeaturesProps;
 
 class OTQLConsoleContainer extends React.Component<Props, State> {
   asyncQuery: CancelablePromise<DataResponse<OTQLResult>>;
@@ -151,7 +153,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
   dismissError = () => this.setState({ error: null });
 
   render() {
-    const { intl, datamartId, queryEditorClassName } = this.props;
+    const { intl, datamartId, queryEditorClassName, hasFeature } = this.props;
     const {
       error,
       queryResult,
@@ -229,14 +231,16 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
         <Layout>
           <Layout>
             <Content className='mcs-content-container'>
-              <ContentHeader
-                title={
-                  <FormattedMessage
-                    id='queryTool.query-tool-page-title'
-                    defaultMessage='Query Tool'
-                  />
-                }
-              />
+              {!hasFeature('query-tool-graphs') && (
+                <ContentHeader
+                  title={
+                    <FormattedMessage
+                      id='queryTool.query-tool-page-title'
+                      defaultMessage='Query Tool'
+                    />
+                  }
+                />
+              )}
               {errorMsg}
               {noLiveSchemaErrorMsg}
               <OTQLInputEditor
@@ -277,6 +281,7 @@ export default compose<Props, OTQLConsoleContainerProps>(
   injectIntl,
   withRouter,
   injectNotifications,
+  injectFeatures,
 )(OTQLConsoleContainer);
 
 const messages = defineMessages({
