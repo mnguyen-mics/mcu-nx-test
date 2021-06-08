@@ -390,7 +390,7 @@ class Funnel extends React.Component<Props, State> {
     funnelData.global.steps.forEach((steps, i) => {
       dimensionMetrics.push([]);
       funnelData.grouped_by?.forEach((dimension, j) => {
-        if (dimension.dimension_value !== null) {
+        if (dimension.dimension_value !== null && dimension.funnel.steps[i]) {
           dimensionMetrics[i].push({
             userPoints: {
               value: dimension.funnel.steps[i].count,
