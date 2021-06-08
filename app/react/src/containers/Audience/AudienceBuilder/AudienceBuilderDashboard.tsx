@@ -117,7 +117,6 @@ class AudienceBuilderDashboard extends React.Component<Props, State> {
               // AudienceBuilderQueryDocument and QueryDocument could inherit from the same abstraction.
               query={(queryDocument as QueryDocument)?.where}
               organisationId={organisationId}
-              parameterizedQuery={true}
               isLoading={isQueryRunning}
             />
           </div>

@@ -81,10 +81,11 @@ export const getFormattedQuery = (
       datamart_id: datamartId,
       query_language: 'JSON_OTQL',
       query_text: JSON.stringify(source),
+      query_language_subtype: 'PARAMETRIC',
     };
 
     return queryService
-      .convertJsonOtql2Otql(datamartId, queryResource as QueryResource, { parameterized: true })
+      .convertJsonOtql2Otql(datamartId, queryResource as QueryResource)
       .then(otqlQ => otqlQ.data)
       .then(otqlQ => {
         return Promise.resolve(

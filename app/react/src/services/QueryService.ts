@@ -19,7 +19,6 @@ export interface IQueryService {
   createQuery: (
     datamartId: string,
     query: Partial<QueryResource>,
-    options?: { parameterized?: boolean },
   ) => Promise<DataResponse<QueryResource>>;
 
   updateQuery: (
@@ -61,7 +60,6 @@ export interface IQueryService {
       offset?: number;
       precision?: QueryPrecisionMode;
       use_cache?: boolean;
-      parameterized?: boolean;
     },
   ) => Promise<DataResponse<OTQLResult>>;
 
@@ -79,9 +77,6 @@ export interface IQueryService {
   convertJsonOtql2Otql: (
     datamartId: string,
     query: QueryResource,
-    options?: {
-      parameterized?: boolean;
-    },
   ) => Promise<DataResponse<QueryResource>>;
 
   getWhereClause: (datamartId: string, queryId: string) => Promise<DataResponse<string>>;
@@ -97,10 +92,9 @@ export class QueryService implements IQueryService {
   createQuery(
     datamartId: string,
     query: Partial<QueryResource>,
-    options: { parameterized: boolean },
   ): Promise<DataResponse<QueryResource>> {
     const endpoint = `datamarts/${datamartId}/queries`;
-    return ApiService.postRequest(endpoint, query, options);
+    return ApiService.postRequest(endpoint, query);
   }
 
   updateQuery(
@@ -158,7 +152,6 @@ export class QueryService implements IQueryService {
       offset?: number;
       use_cache?: boolean;
       precision?: QueryPrecisionMode;
-      parameterized?: boolean;
     } = {},
   ): Promise<DataResponse<OTQLResult>> {
     const endpoint = `datamarts/${datamartId}/query_executions/jsonotql`;
@@ -202,15 +195,8 @@ export class QueryService implements IQueryService {
   convertJsonOtql2Otql(
     datamartId: string,
     query: QueryResource,
-    options: {
-      parameterized?: boolean;
-    },
   ): Promise<DataResponse<QueryResource>> {
-    return ApiService.postRequest(
-      `datamarts/${datamartId}/query_translations/to/otql`,
-      query,
-      options,
-    );
+    return ApiService.postRequest(`datamarts/${datamartId}/query_translations/to/otql`, query);
   }
 
   getWhereClause(datamartId: string, queryId: string): Promise<DataResponse<any>> {

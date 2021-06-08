@@ -95,7 +95,7 @@ export class AudienceBuilderQueryService implements IAudienceBuilderQueryService
     };
 
     this._queryService
-      .convertJsonOtql2Otql(datamartId, queryResource, { parameterized: true })
+      .convertJsonOtql2Otql(datamartId, queryResource)
       .then(otqlQ => otqlQ.data.query_text)
       .then(queryText => {
         this._queryService
