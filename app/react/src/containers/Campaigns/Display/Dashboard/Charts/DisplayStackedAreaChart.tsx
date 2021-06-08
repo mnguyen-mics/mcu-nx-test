@@ -13,8 +13,8 @@ import { updateSearch, parseSearch } from '../../../../../utils/LocationSearchHe
 import { formatMetric } from '../../../../../utils/MetricHelper';
 import McsMoment from '../../../../../utils/McsMoment';
 import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
-import DoubleStackedAreaPlot from '../../../../../components/Charts/TimeBased/DoubleStackedAreaPlot';
 import {
+  DoubleStackedAreaPlot,
   EmptyChart,
   LoadingChart,
   MetricsColumn,
@@ -153,8 +153,8 @@ class DisplayStackedAreaChart<T> extends React.Component<
     const optionsForChart = {
       xKey: 'day',
       yKeys: [
-        { key: key1, message: messages[key1] },
-        { key: key2, message: messages[key2] },
+        { key: key1, message: messages[key1].defaultMessage || '' },
+        { key: key2, message: messages[key2].defaultMessage || '' },
       ],
       colors: [colors['mcs-warning'], colors['mcs-info']],
       isDraggable: true,

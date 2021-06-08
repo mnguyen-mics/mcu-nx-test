@@ -4,6 +4,7 @@ import {
   Card,
   EmptyChart,
   LoadingChart,
+  DoubleStackedAreaPlot,
   McsDateRangePicker,
 } from '@mediarithmics-private/mcs-components-library';
 import { AdInfoResource } from '../../../../../models/campaign/display';
@@ -25,7 +26,6 @@ import { makeCancelable } from '../../../../../utils/ApiHelper';
 import { CancelablePromise } from '../../../../../services/ApiService';
 import { normalizeReportView } from '../../../../../utils/MetricHelper';
 import { Index } from '../../../../../utils';
-import DoubleStackedAreaPlot from '../../../../../components/Charts/TimeBased/DoubleStackedAreaPlot';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 
 const LegendChartTS = LegendChart as any;
@@ -207,8 +207,8 @@ class AdCard extends React.Component<Props, State> {
     const optionsForChart = {
       xKey: 'day',
       yKeys: [
-        { key: 'clicks', message: messages.clicks },
-        { key: 'impressions', message: messages.impressions },
+        { key: 'clicks', message: messages.clicks.defaultMessage || '' },
+        { key: 'impressions', message: messages.impressions.defaultMessage || '' },
       ],
       colors: [colors['mcs-warning'], colors['mcs-info']],
       isDraggable: true,

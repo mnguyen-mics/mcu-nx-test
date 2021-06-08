@@ -10,9 +10,6 @@ export const CROSSHAIR_COLOR = (Highcharts as any).Color(GRAY_COLOR).setOpacity(
 export const AREA_OPACITY = 0.15;
 export const BASE_CHART_HEIGHT = 400;
 
-const HOUR_MILLIS = 3600 * 1000;
-const DAY_MILLIS = 24 * HOUR_MILLIS;
-
 export type OnDragEnd = (a: [string, string]) => void;
 
 // LINEAR CHART
@@ -35,41 +32,6 @@ export const generateYAxisGridLine = (): Partial<Highcharts.YAxisOptions> => {
     gridLineColor: LINE_COLOR,
     gridLineDashStyle: 'ShortDash',
   };
-};
-
-export const generateDragEvents = (
-  onDragEnd?: OnDragEnd,
-): Highcharts.ChartSelectionCallbackFunction => {
-  const a = (b: Highcharts.Chart) => {
-    const startDragDate = moment(b.xAxis[0].min as number);
-    const endDragDate = moment(b.xAxis[0].max as number);
-    const min = startDragDate;
-    const duration: number = endDragDate.diff(min, 'milliseconds');
-    const max = duration > DAY_MILLIS ? endDragDate : endDragDate.add(1, 'days');
-
-    if (onDragEnd) {
-      onDragEnd([min as any, max as any]);
-    }
-
-    return false;
-  };
-  return a as any;
-};
-
-export const generateDraggable = (onDragEnd?: OnDragEnd): Partial<Highcharts.ChartOptions> => {
-  return {
-    zoomType: 'x',
-    events: {
-      selection: generateDragEvents(onDragEnd),
-    },
-  };
-};
-
-// PIE CHARTS
-
-// COMMON
-export const generateLegend = (): Partial<Highcharts.LegendOptions> => {
-  return {};
 };
 
 export const generateTooltip = (

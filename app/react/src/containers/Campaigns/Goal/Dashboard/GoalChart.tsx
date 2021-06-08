@@ -23,9 +23,9 @@ import injectThemeColors, { InjectedThemeColorsProps } from '../../../Helpers/in
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import DoubleStackedAreaPlot from '../../../../components/Charts/TimeBased/DoubleStackedAreaPlot';
 import {
   EmptyChart,
+  DoubleStackedAreaPlot,
   LoadingChart,
   MetricsColumn,
   McsDateRangePicker,
@@ -251,8 +251,8 @@ class GoalStackedAreaChart extends React.Component<JoinedProps, GoalStackedAreaC
     const optionsForChart = {
       xKey: 'day',
       yKeys: [
-        { key: key1, message: messages[key1] },
-        { key: key2, message: messages[key2] },
+        { key: key1, message: messages[key1].defaultMessage || '' },
+        { key: key2, message: messages[key2].defaultMessage || '' },
       ],
       colors: [colors['mcs-warning'], colors['mcs-info']],
       isDraggable: true,
