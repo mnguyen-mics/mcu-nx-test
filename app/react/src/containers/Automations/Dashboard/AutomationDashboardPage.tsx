@@ -344,7 +344,11 @@ class AutomationDashboardPage extends React.Component<Props, State> {
       <Link key='1' to={`/v2/o/${organisationId}/automations`}>
         Automations
       </Link>,
-      automationFormData.automation.name ? automationFormData.automation.name : '',
+      automationFormData.automation.name
+        ? automationFormData.automation.name.length > 55
+          ? automationFormData.automation.name.substring(0, 55) + '...'
+          : automationFormData.automation.name
+        : '',
     ];
 
     const automationStatus = automationFormData.automation.status;
