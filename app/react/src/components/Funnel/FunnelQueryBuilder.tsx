@@ -448,7 +448,11 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
   getDimensionNameSelect = () => {
     const { dimensionsList } = this.state;
     return dimensionsList.dimensions.map(d => (
-      <Option key={this._cuid()} value={d.value}>
+      <Option
+        key={this._cuid()}
+        value={d.value}
+        className={`mcs-funnelQueryBuilder_select--dimensions--${d.value}`}
+      >
         {d.label}
       </Option>
     ));
