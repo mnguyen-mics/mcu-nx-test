@@ -18,9 +18,12 @@ import CardFlex from '../Components/CardFlex';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { getFormattedQuery } from '../domain';
 import { QueryResource } from '../../../../models/datamart/DatamartResource';
-import RadarSpiderPlot from '../../../../components/Charts/CategoryBased/RadarSpiderPlot';
 import { TooltipChart, DataLabel } from '../../../../models/dashboards/dashboards';
-import { EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
+import {
+  EmptyChart,
+  LoadingChart,
+  RadarSpiderPlot,
+} from '@mediarithmics-private/mcs-components-library';
 import { SerieSortType } from '../../../../components/Charts/domain';
 import { AudienceBuilderQueryDocument } from '../../../../models/audienceBuilder/AudienceBuilderResource';
 
