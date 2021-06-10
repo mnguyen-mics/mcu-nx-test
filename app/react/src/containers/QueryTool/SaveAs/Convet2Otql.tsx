@@ -52,6 +52,7 @@ class Convert2Otql extends React.Component<Props, State> {
 
     return (
       <Modal
+        className='mcs-convert2Otql'
         {...modalProps}
         visible={visible}
         onOk={onOk}

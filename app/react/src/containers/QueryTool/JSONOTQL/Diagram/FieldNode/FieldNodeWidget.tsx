@@ -256,26 +256,42 @@ class FieldNodeWidget extends React.Component<Props, State> {
     const triggerEdit = () => this.editNode(true);
 
     const editMenu = [
-      <div onClick={triggerEdit} className='boolean-menu-item' key='EDIT'>
+      <div
+        onClick={triggerEdit}
+        className='boolean-menu-item mcs-fieldNodeWidget_menu_edit'
+        key='EDIT'
+      >
         <FormattedMessage {...messages.edit} />
       </div>,
     ];
 
     if (!this.props.diagramEngine.isCopying()) {
       editMenu.push(
-        <div onClick={this.copyNode} className='boolean-menu-item' key='COPY'>
+        <div
+          onClick={this.copyNode}
+          className='boolean-menu-item mcs-fieldNodeWidget_menu_copy'
+          key='COPY'
+        >
           <FormattedMessage {...messages.copy} />
         </div>,
       );
       editMenu.push(
-        <div onClick={this.cutNode} className='boolean-menu-item' key='CUT'>
+        <div
+          onClick={this.cutNode}
+          className='boolean-menu-item mcs-fieldNodeWidget_menu_cut'
+          key='CUT'
+        >
           <FormattedMessage {...messages.cut} />
         </div>,
       );
     }
 
     editMenu.push(
-      <div onClick={this.removeNode} className='boolean-menu-item' key='REMOVE'>
+      <div
+        onClick={this.removeNode}
+        className='boolean-menu-item mcs-fieldNodeWidget_menu_remove'
+        key='REMOVE'
+      >
         <FormattedMessage {...messages.remove} />
       </div>,
     );
@@ -283,7 +299,7 @@ class FieldNodeWidget extends React.Component<Props, State> {
     return (
       <div
         id={this.id}
-        className='field-node'
+        className='field-node mcs-fieldNodeWidget'
         onClick={onFocus}
         style={{
           ...node.getSize(),
@@ -337,7 +353,7 @@ class FieldNodeWidget extends React.Component<Props, State> {
                 </div>
               </span>
               <div
-                className='boolean-menu'
+                className='boolean-menu mcs-fieldNodeWidget_menu'
                 style={{
                   top: this.top,
                   left: this.left + node.getSize().width * zoomRatio,

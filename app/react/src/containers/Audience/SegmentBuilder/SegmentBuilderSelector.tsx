@@ -180,6 +180,7 @@ class SegmentBuilderSelector extends React.Component<Props, State> {
 
           <Row className='mcs-segmentBuilderSelector_container' gutter={60}>
             <Col
+              className='mcs-standardSegmentBuilder'
               span={6}
               offset={3}
               onClick={
@@ -227,7 +228,7 @@ class SegmentBuilderSelector extends React.Component<Props, State> {
               )}
             </Col>
 
-            <Col span={6}>
+            <Col className='mcs-advancedSegmentBuilder' span={6}>
               <div className='mcs-segmentBuilderSelector_item' onClick={onTypeSelect('advanced')}>
                 <img src='https://assets.mediarithmics.io/504/public/assets/1617024854221-SdHpCYce/advancedsegmentbuilder-icon.png' />
                 <div className='mcs-segmentBuilderSelector_itemTitle'>
@@ -238,7 +239,7 @@ class SegmentBuilderSelector extends React.Component<Props, State> {
                 </div>
               </div>
             </Col>
-            <Col span={6}>
+            <Col className='mcs-expertSegmentBuilder' span={6}>
               <div className='mcs-segmentBuilderSelector_item' onClick={onTypeSelect('expert')}>
                 <img src='https://assets.mediarithmics.io/504/public/assets/1617024867713-wyQSumrW/otqlquery-icon.png' />
                 <div className='mcs-segmentBuilderSelector_itemTitle'>

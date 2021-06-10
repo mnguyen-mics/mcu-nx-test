@@ -95,7 +95,7 @@ class ObjectNodeSection extends React.Component<Props> {
     const showFrequency = formValues.frequency.enabled;
 
     return (
-      <div>
+      <div className='mcs-objectNodeSection'>
         <FormSection subtitle={messages.objectNodeSubTitle} title={messages.objectNodeTitle} />
 
         <div>
@@ -113,6 +113,7 @@ class ObjectNodeSection extends React.Component<Props> {
             }}
             selectProps={{
               onSelect,
+              className: 'mcs-objectNodeSection_select',
             }}
             small={true}
           />
@@ -121,7 +122,7 @@ class ObjectNodeSection extends React.Component<Props> {
           <FormCheckboxField
             name='frequency.enabled'
             component={FormCheckbox}
-            className='field-label m-b-20'
+            className='field-label m-b-20 mcs-objectNodeSection_checkbox'
           >
             <FormattedMessage
               id='queryTool.queryDocument.objectNode.frequency.enabled'
@@ -139,6 +140,7 @@ class ObjectNodeSection extends React.Component<Props> {
                 label: formatMessage(messages.objectNodeMinScoreLabel),
               }}
               inputProps={{
+                className: 'mcs-objectNodeSection_frequency_value',
                 placeholder: formatMessage(messages.objectNodeMinScorePlaceholder),
                 type: 'number',
                 addonBefore: <FormattedMessage {...frequencyModeMessageMap.AT_LEAST} />,

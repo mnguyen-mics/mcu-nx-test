@@ -229,7 +229,11 @@ class PlusNodeWidget extends React.Component<Props & InjectedDrawerProps, State>
     return (
       connectDropTarget &&
       connectDropTarget(
-        <div className='plus-node noFocus' style={{ opacity }} ref={ref => this.setPosition(ref)}>
+        <div
+          className='plus-node noFocus mcs-plusNodeWidget'
+          style={{ opacity }}
+          ref={ref => this.setPosition(ref)}
+        >
           <div
             style={{
               width: node.getSize().width,
@@ -243,7 +247,9 @@ class PlusNodeWidget extends React.Component<Props & InjectedDrawerProps, State>
             onClick={handleClickOnPlus}
             onMouseEnter={onHover('enter')}
             onMouseLeave={onHover('leave')}
-            className={`plus-button ${this.state.focus ? 'plus-clicked' : ''}`}
+            className={`plus-button mcs-plusNodeWidget_button ${
+              this.state.focus ? 'plus-clicked' : ''
+            }`}
           >
             <McsIcon type='plus' />
           </div>
@@ -284,7 +290,7 @@ class PlusNodeWidget extends React.Component<Props & InjectedDrawerProps, State>
                   <McsIcon type='plus' />
                 </span>
                 <div
-                  className='boolean-menu'
+                  className='boolean-menu mcs-plusNodeWidget_menu'
                   style={{
                     top: this.top,
                     left: this.left + node.getSize().width,
@@ -293,13 +299,19 @@ class PlusNodeWidget extends React.Component<Props & InjectedDrawerProps, State>
                 >
                   {(!node.root ||
                     Object.keys(this.props.diagramEngine.diagramModel.nodes).length === 1) && (
-                    <div onClick={this.addObjectNode} className='boolean-menu-item'>
+                    <div
+                      onClick={this.addObjectNode}
+                      className='boolean-menu-item mcs-plusNodeWidget_menu_object'
+                    >
                       <FormattedMessage {...messages.object} />
                     </div>
                   )}
                   {(node.root ||
                     (node.objectOrGroupNode && node.objectOrGroupNode.type === 'GROUP')) && (
-                    <div onClick={this.addGroup} className='boolean-menu-item'>
+                    <div
+                      onClick={this.addGroup}
+                      className='boolean-menu-item mcs-plusNodeWidget_menu_group'
+                    >
                       <FormattedMessage {...messages.group} />
                     </div>
                   )}

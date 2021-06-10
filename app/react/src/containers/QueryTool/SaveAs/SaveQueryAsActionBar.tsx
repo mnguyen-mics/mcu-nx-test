@@ -134,7 +134,7 @@ class SaveQueryAsActionBar extends React.Component<Props, State> {
           </Button>
         </Dropdown>
         {convertToOtql && (
-          <Button onClick={openConversionModal}>
+          <Button onClick={openConversionModal} className='mcs-saveQueryAsActionBar_convert2Otql'>
             <FormattedMessage
               id='queryTool.query-builder.actionbar.convert'
               defaultMessage='Convert to OTQL'

@@ -771,6 +771,7 @@ class FieldNodeForm extends React.Component<Props, State> {
           selectProps={{
             ...popUpProps,
             disabled,
+            className: 'mcs-fieldNodeForm_select',
           }}
           disabled={disabled}
           small={true}
