@@ -99,7 +99,7 @@ class TimelineSelector extends React.Component<Props, State> {
     const onClick = () => this.runQuery();
     return (
       <div
-        className='m-t-5 timeline-selector'
+        className='m-t-5 timeline-selector mcs-timelineSelector'
         style={{
           float: 'left',
           padding: '0 8px',
