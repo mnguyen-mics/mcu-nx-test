@@ -82,7 +82,12 @@ type Props = MapStateToProps &
   RouteComponentProps<{}, StaticContext, { from?: string }>;
 
 const Login = (props: Props) => {
+  const getRememberMe = () => {
+    const rememberMe = LocalStorage.getItem('remember_me');
+    return rememberMe === 'true';
+  };
   const [isRequesting, setIsRequesting] = useState(false);
+  const [isChecked, setCheck] = useState(getRememberMe());
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -112,7 +117,7 @@ const Login = (props: Props) => {
         {
           email: values.email,
           password: values.password,
-          remember: values.remember,
+          remember: isChecked,
         },
         { redirect },
       );
@@ -121,12 +126,11 @@ const Login = (props: Props) => {
     });
   };
 
-  const { hasError, error, intl, connectedUser } = props;
-
-  const getRememberMe = () => {
-    const rememberMe = LocalStorage.getItem('remember_me');
-    return rememberMe === 'true';
+  const onSwitchChange = (checked: boolean, event: MouseEvent) => {
+    setCheck(checked);
   };
+
+  const { hasError, error, intl, connectedUser } = props;
 
   const hasFetchedConnectedUser = connectedUser && connectedUser.id;
 
@@ -184,8 +188,8 @@ const Login = (props: Props) => {
               </Button>
             </FormItem>
             <Divider />
-            <FormItem initialValue={getRememberMe()}>
-              <Switch size='small' />
+            <FormItem name='remember' initialValue={getRememberMe()}>
+              <Switch size='small' checked={isChecked} onChange={onSwitchChange} />
               <div className='login-text-remember-me'>
                 <FormattedMessage {...messages.rememberMe} />
               </div>

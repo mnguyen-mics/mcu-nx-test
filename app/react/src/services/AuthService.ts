@@ -40,7 +40,7 @@ export interface IAuthService {
 
   revokeRefreshToken: () => Promise<any>;
 
-  getRememberMe: () => string | undefined;
+  getRememberMe: () => boolean;
 
   setAccessToken: (token: string) => void;
 
@@ -121,7 +121,8 @@ export class AuthService implements IAuthService {
   };
 
   getRememberMe = () => {
-    return LocalStorage.getItem(REMEMBER_ME);
+    const rememberMe = LocalStorage.getItem(REMEMBER_ME);
+    return rememberMe === 'true';
   };
 
   setAccessToken = (token: string) => {
@@ -158,7 +159,9 @@ export class AuthService implements IAuthService {
 
   setRefreshTokenExpirationDate = (expireIn: number) => {
     let expirationDate = moment().add(expireIn, 'seconds');
-    if (this.getRememberMe()) expirationDate = moment().add(7, 'days');
+    if (this.getRememberMe()) {
+      expirationDate = moment().add(7, 'days');
+    }
     LocalStorage.setItem({
       [REFRESH_TOKEN_EXPIRATION_DATE]: expirationDate.format('x'),
     });
