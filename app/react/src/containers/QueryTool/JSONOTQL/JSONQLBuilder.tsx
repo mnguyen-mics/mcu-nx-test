@@ -1,6 +1,10 @@
 import * as React from 'react';
 import { DiagramWidget, DiagramModel } from 'storm-react-diagrams';
-import { ObjectTreeExpressionNodeShape } from '../../../models/datamart/graphdb/QueryDocument';
+import {
+  QueryDocument,
+  ObjectTreeExpressionNodeShape,
+} from '../../../models/datamart/graphdb/QueryDocument';
+import { QueryResource } from '../../../models/datamart/DatamartResource';
 import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/RuntimeSchema';
 import { BooleanOperatorNodeFactory } from './Diagram/BooleanOperatorNode';
 import { FieldNodeFactory } from './Diagram/FieldNode';
@@ -35,6 +39,9 @@ import SchemaVizualizer from './SchemaVisualizer/SchemaVizualizer';
 import { JSONQLBuilderContext } from './JSONQLBuilderContext';
 import withDragDropContext from '../../../common/Diagram/withDragDropContext';
 import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { lazyInject } from '../../../config/inversify.config';
+import { TYPES } from '../../../constants/types';
+import { IQueryService } from '../../../services/QueryService';
 
 export interface QueryResult {
   loading: boolean;
@@ -66,6 +73,9 @@ interface State {
 type Props = JSONQLBuilderProps;
 
 class JSONQLBuilder extends React.Component<Props, State> {
+  @lazyInject(TYPES.IQueryService)
+  private _queryService: IQueryService;
+
   engine = new MicsDiagramEngine();
   nodeBTreeCache?: NodeModelBTree;
   div: React.RefObject<HTMLDivElement>;
@@ -346,6 +356,25 @@ class JSONQLBuilder extends React.Component<Props, State> {
 
     const onSchemaSelectorClick = () => this.setState({ viewSchema: !viewSchema });
 
+    const getTimelineSelectorOTQLQuery = (): Promise<string> => {
+      const queryDocument: QueryDocument = {
+        operations: [{ directives: [], selections: [{ name: 'id' }] }],
+        from: 'UserPoint',
+        where: query,
+      };
+
+      const queryResource: QueryResource = {
+        id: '123',
+        datamart_id: datamartId,
+        query_language: 'JSON_OTQL',
+        query_text: JSON.stringify(queryDocument),
+      };
+
+      return this._queryService.convertJsonOtql2Otql(datamartId, queryResource).then(res => {
+        return res.data.query_text;
+      });
+    };
+
     return (
       <div className={`query-builder ${this.props.edition ? 'edition-mode' : ''}`} ref={this.div}>
         <CounterList
@@ -354,7 +383,7 @@ class JSONQLBuilder extends React.Component<Props, State> {
           onRefresh={runQuery}
           datamartId={datamartId}
           organisationId={organisationId}
-          query={query}
+          getQuery={getTimelineSelectorOTQLQuery}
           editionLayout={this.props.edition}
           hideCounterAndTimeline={hideCounterAndTimeline}
         />
