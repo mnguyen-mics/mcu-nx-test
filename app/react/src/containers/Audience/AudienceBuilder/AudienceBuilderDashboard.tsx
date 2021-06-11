@@ -6,6 +6,7 @@ import { DashboardResource } from '../../../models/dashboards/dashboards';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IDashboardService } from '../../../services/DashboardServices';
+import { IQueryService } from '../../../services/QueryService';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
@@ -15,7 +16,7 @@ import CardFlex from '../Dashboard/Components/CardFlex';
 import { AudienceBuilderQueryDocument } from '../../../models/audienceBuilder/AudienceBuilderResource';
 import TimelineSelector from '../../QueryTool/JSONOTQL/TimelineSelector';
 import { formatMetric } from '../../../utils/MetricHelper';
-import { QueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
+import { QueryResource } from '../../../models/datamart/DatamartResource';
 
 interface AudienceBuilderDashboardProps {
   organisationId: string;
@@ -36,6 +37,8 @@ interface State {
 class AudienceBuilderDashboard extends React.Component<Props, State> {
   @lazyInject(TYPES.IDashboardService)
   private _dashboardService: IDashboardService;
+  @lazyInject(TYPES.IQueryService)
+  private _queryService: IQueryService;
 
   constructor(props: Props) {
     super(props);
@@ -77,6 +80,21 @@ class AudienceBuilderDashboard extends React.Component<Props, State> {
       organisationId,
     } = this.props;
     const { isDashboardLoading, dashboards } = this.state;
+
+    const getTimelineSelectorOTQLQuery = (): Promise<string> => {
+      const queryResource: QueryResource = {
+        id: '123',
+        datamart_id: datamartId,
+        query_language: 'JSON_OTQL',
+        query_language_subtype: 'PARAMETRIC',
+        query_text: JSON.stringify(queryDocument),
+      };
+
+      return this._queryService.convertJsonOtql2Otql(datamartId, queryResource).then(res => {
+        return res.data.query_text;
+      });
+    };
+
     return (
       <div className='mcs-audienceBuilder_liveDashboard'>
         <React.Fragment>
@@ -113,9 +131,7 @@ class AudienceBuilderDashboard extends React.Component<Props, State> {
             <TimelineSelector
               stale={false}
               datamartId={datamartId}
-              // TODO Remove `as QueryDocument` hack
-              // AudienceBuilderQueryDocument and QueryDocument could inherit from the same abstraction.
-              query={(queryDocument as QueryDocument)?.where}
+              getQuery={getTimelineSelectorOTQLQuery}
               organisationId={organisationId}
               isLoading={isQueryRunning}
             />
