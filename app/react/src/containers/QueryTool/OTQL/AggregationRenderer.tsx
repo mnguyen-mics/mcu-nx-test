@@ -11,9 +11,9 @@ import { compose } from 'recompose';
 import { Button, McsIcon, McsTabs } from '@mediarithmics-private/mcs-components-library';
 import { FormattedMessage } from 'react-intl';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
-import HighchartsReact from 'highcharts-react-official';
 import Highcharts from 'highcharts';
 import { BASE_CHART_HEIGHT } from '../../../components/Charts/domain';
+import RadarChart from '../../../components/Charts/RadarChart';
 
 interface BucketPath {
   aggregationBucket: OTQLBuckets;
@@ -37,7 +37,11 @@ class AggregationRenderer extends React.Component<Props, State> {
     this.state = {
       aggregationsPath: [],
       selectedView: this.getDefaultView(props.rootAggregations),
-      numberItems: 6,
+      numberItems:
+        props.rootAggregations.buckets[0].buckets &&
+        props.rootAggregations.buckets[0].buckets.length > 6
+          ? 6
+          : props.rootAggregations.buckets[0].buckets.length,
     };
   }
 
@@ -107,8 +111,13 @@ class AggregationRenderer extends React.Component<Props, State> {
 
     if (hasFeature('query-tool-graphs')) {
       const showedItems = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const RADAR_MAX_ELEMENTS = 999;
         const value = parseInt(e.target.value, 10);
         if (value < 1) this.setState({ numberItems: 1 });
+        else if (value > RADAR_MAX_ELEMENTS && buckets.buckets.length < RADAR_MAX_ELEMENTS)
+          this.setState({ numberItems: buckets.buckets.length });
+        else if (value > RADAR_MAX_ELEMENTS && buckets.buckets.length > RADAR_MAX_ELEMENTS)
+          this.setState({ numberItems: RADAR_MAX_ELEMENTS });
         else if (value > buckets.buckets.length)
           this.setState({ numberItems: buckets.buckets.length });
         else this.setState({ numberItems: parseInt(e.target.value, 10) });
@@ -228,11 +237,7 @@ class AggregationRenderer extends React.Component<Props, State> {
                   />{' '}
                   / {buckets.buckets.length}
                 </div>
-                <HighchartsReact
-                  highcharts={Highcharts}
-                  options={options}
-                  style={{ width: '100%' }}
-                />
+                <RadarChart options={options} />
               </div>
             </div>
           ),
