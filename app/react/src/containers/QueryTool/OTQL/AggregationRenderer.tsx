@@ -38,10 +38,13 @@ class AggregationRenderer extends React.Component<Props, State> {
       aggregationsPath: [],
       selectedView: this.getDefaultView(props.rootAggregations),
       numberItems:
+        props.rootAggregations &&
+        props.rootAggregations.buckets &&
+        props.rootAggregations.buckets[0] &&
         props.rootAggregations.buckets[0].buckets &&
-        props.rootAggregations.buckets[0].buckets.length > 6
-          ? 6
-          : props.rootAggregations.buckets[0].buckets.length,
+        props.rootAggregations.buckets[0].buckets.length <= 6
+          ? props.rootAggregations.buckets[0].buckets.length
+          : 6,
     };
   }
 
