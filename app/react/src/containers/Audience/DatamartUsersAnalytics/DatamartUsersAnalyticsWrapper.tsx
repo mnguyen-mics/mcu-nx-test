@@ -11,6 +11,7 @@ import {
   SegmentsSearchSettings,
   AllUsersSettings,
   isSearchValid,
+  buildDefaultSearch,
   convertTimestampToDayNumber,
 } from '../../../utils/LocationSearchHelper';
 import SegmentFilter from './components/SegmentFilter';
@@ -86,6 +87,22 @@ class DatamartUsersAnalyticsWrapper extends React.Component<JoinedProp, State> {
       history.replace(nextLocation);
     }
   };
+
+  componentDidUpdate(prevProps: JoinedProp) {
+    const {
+      location: { search, pathname },
+      history,
+    } = this.props;
+
+    if (prevProps.location.search !== search) {
+      if (!isSearchValid(search, DATAMART_USERS_ANALYTICS_SETTING)) {
+        history.replace({
+          pathname: pathname,
+          search: buildDefaultSearch(search, DATAMART_USERS_ANALYTICS_SETTING),
+        });
+      }
+    }
+  }
 
   updateLocationSearch = (params: FILTERS) => {
     const {
