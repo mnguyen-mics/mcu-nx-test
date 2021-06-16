@@ -13,11 +13,11 @@ import {
   EmptyChart,
   LoadingChart,
   McsDateRangePicker,
-  StackedAreaPlot,
+  StackedAreaChart,
 } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import chroma from 'chroma-js';
-import { StackedAreaPlotProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/time-based-charts/stacked-area-plot';
+import { StackedAreaChartProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/stacked-area-chart';
 
 interface OverviewProps {
   isFetching: boolean;
@@ -105,7 +105,7 @@ class Overview extends React.Component<Props> {
       }
     }
 
-    const stackedAreaPlotProps: StackedAreaPlotProps = {
+    const stackedAreaPlotProps: StackedAreaChartProps = {
       dataset: dataSource as any,
       options: {
         xKey: { key: 'day', mode: 'DAY' },
@@ -119,7 +119,7 @@ class Overview extends React.Component<Props> {
         colors: chartColors,
       },
     };
-    return !isFetching ? <StackedAreaPlot {...stackedAreaPlotProps} /> : <LoadingChart />;
+    return !isFetching ? <StackedAreaChart {...stackedAreaPlotProps} /> : <LoadingChart />;
   }
 
   getMetricsDisplayName = (metric: string, datamart?: DatamartWithMetricResource) => {

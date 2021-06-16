@@ -14,7 +14,7 @@ import { formatMetric } from '../../../../../utils/MetricHelper';
 import McsMoment from '../../../../../utils/McsMoment';
 import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
 import {
-  DoubleStackedAreaPlot,
+  DoubleStackedAreaChart,
   EmptyChart,
   LoadingChart,
   MetricsColumn,
@@ -213,7 +213,7 @@ class DisplayStackedAreaChart<T> extends React.Component<
           />
         </div>
         {dataSource && (
-          <DoubleStackedAreaPlot
+          <DoubleStackedAreaChart
             dataset={dataSource as any}
             options={optionsForChart}
             style={{ flex: '1' }}

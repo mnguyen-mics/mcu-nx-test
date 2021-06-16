@@ -4,7 +4,7 @@ import {
   Card,
   EmptyChart,
   LoadingChart,
-  DoubleStackedAreaPlot,
+  DoubleStackedAreaChart,
   McsDateRangePicker,
 } from '@mediarithmics-private/mcs-components-library';
 import { AdInfoResource } from '../../../../../models/campaign/display';
@@ -222,7 +222,7 @@ class AdCard extends React.Component<Props, State> {
 
     return (
       <div style={{ display: 'flex' }}>
-        <DoubleStackedAreaPlot
+        <DoubleStackedAreaChart
           dataset={dataSource as any}
           options={optionsForChart}
           style={{ flex: '1' }}

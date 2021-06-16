@@ -1,4 +1,4 @@
-import { Loading, StackedAreaPlot, Card } from '@mediarithmics-private/mcs-components-library';
+import { Loading, StackedAreaChart, Card } from '@mediarithmics-private/mcs-components-library';
 import * as React from 'react';
 import { defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
@@ -23,7 +23,7 @@ import { getAllDates } from '../../../../../../utils/DateHelper';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../../Notifications/injectNotifications';
-import { StackedAreaPlotProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/time-based-charts/stacked-area-plot';
+import { StackedAreaChartProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/stacked-area-chart';
 
 const messages = defineMessages({
   users: {
@@ -194,7 +194,7 @@ class UserPointsLineChart extends React.Component<Props, State> {
     } = this.props;
     const { data, mode } = this.state;
 
-    const stackedAreaPlotProps: StackedAreaPlotProps = {
+    const stackedAreaPlotProps: StackedAreaChartProps = {
       dataset: data,
       options: {
         xKey: { key: 'day', mode: mode },
@@ -208,7 +208,7 @@ class UserPointsLineChart extends React.Component<Props, State> {
       },
     };
 
-    return <StackedAreaPlot {...stackedAreaPlotProps} />;
+    return <StackedAreaChart {...stackedAreaPlotProps} />;
   };
 
   render() {

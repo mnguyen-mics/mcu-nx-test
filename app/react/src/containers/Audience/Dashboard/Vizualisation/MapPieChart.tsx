@@ -17,8 +17,12 @@ import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { getFormattedQuery } from '../domain';
-import { PiePlot, EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
-import { DatasetProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/category-based-charts/pie-plot/PiePlot';
+import {
+  DonutChart,
+  EmptyChart,
+  LoadingChart,
+} from '@mediarithmics-private/mcs-components-library';
+import { DatasetProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/donut-chart/DonutChart';
 import { AudienceBuilderQueryDocument } from '../../../../models/audienceBuilder/AudienceBuilderResource';
 
 export interface MapPieChartProps {
@@ -207,7 +211,7 @@ class MapPieChart extends React.Component<Props, State> {
         return <EmptyChart title={intl.formatMessage(messages.noData)} icon='warning' />;
       } else {
         return (
-          <PiePlot dataset={this.state.queryResult} options={pieChartsOptions} height={height} />
+          <DonutChart dataset={this.state.queryResult} options={pieChartsOptions} height={height} />
         );
       }
     };

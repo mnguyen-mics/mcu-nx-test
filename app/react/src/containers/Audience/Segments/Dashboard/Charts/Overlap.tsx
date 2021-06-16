@@ -18,9 +18,9 @@ import {
   EmptyChart,
   LoadingChart,
   McsIcon,
-  StackedBarPlot,
+  StackedBarChart,
 } from '@mediarithmics-private/mcs-components-library';
-import { StackedBarPlotOptions } from '@mediarithmics-private/mcs-components-library/lib/components/charts/category-based-charts/stacked-bar-plot/StackedBarPlot';
+import { StackedBarChartOptions } from '@mediarithmics-private/mcs-components-library/lib/components/charts/stacked-bar-chart/StackedBarChart';
 
 interface State {
   data: OverlapData;
@@ -111,7 +111,7 @@ class Overlap extends React.Component<Props, State> {
       });
     }
 
-    const optionsForChart: StackedBarPlotOptions = {
+    const optionsForChart: StackedBarChartOptions = {
       xKey: 'xKey',
       yKeys: [
         {
@@ -124,7 +124,7 @@ class Overlap extends React.Component<Props, State> {
     };
 
     return !isFetchingOverlap ? (
-      <StackedBarPlot
+      <StackedBarChart
         dataset={dataSource.sort((a, b) => b.yKey - a.yKey).slice(0, 20)}
         options={optionsForChart}
       />

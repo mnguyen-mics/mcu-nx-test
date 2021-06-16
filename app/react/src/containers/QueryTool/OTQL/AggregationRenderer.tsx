@@ -8,12 +8,16 @@ import {
   OTQLBuckets,
 } from '../../../models/datamart/graphdb/OTQLResult';
 import { compose } from 'recompose';
-import { Button, McsIcon, McsTabs } from '@mediarithmics-private/mcs-components-library';
+import {
+  Button,
+  McsIcon,
+  McsTabs,
+  RadarChart,
+} from '@mediarithmics-private/mcs-components-library';
 import { FormattedMessage } from 'react-intl';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import Highcharts from 'highcharts';
 import { BASE_CHART_HEIGHT } from '../../../components/Charts/domain';
-import RadarChart from '../../../components/Charts/RadarChart';
 
 interface BucketPath {
   aggregationBucket: OTQLBuckets;

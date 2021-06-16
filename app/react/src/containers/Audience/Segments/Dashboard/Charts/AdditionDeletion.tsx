@@ -12,7 +12,7 @@ import {
   EmptyChart,
   LoadingChart,
   McsDateRangePicker,
-  StackedBarPlot,
+  StackedBarChart,
 } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 
@@ -94,7 +94,7 @@ class AdditionDeletion extends React.Component<Props> {
       colors: [colors['mcs-success'], colors['mcs-error']],
     };
     return !isFetching ? (
-      <StackedBarPlot dataset={formattedDataSource} options={optionsForChart} />
+      <StackedBarChart dataset={formattedDataSource} options={optionsForChart} />
     ) : (
       <LoadingChart />
     );

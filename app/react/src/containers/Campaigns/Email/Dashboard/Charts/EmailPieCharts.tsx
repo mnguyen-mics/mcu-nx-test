@@ -3,7 +3,11 @@ import { Row, Col } from 'antd';
 import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
 import { compose } from 'recompose';
 import { FormattedMessage, defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
-import { PiePlot, EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
+import {
+  DonutChart,
+  EmptyChart,
+  LoadingChart,
+} from '@mediarithmics-private/mcs-components-library';
 
 const messageMap: {
   [key: string]: FormattedMessage.MessageDescriptor;
@@ -169,7 +173,7 @@ class EmailPieCharts extends React.Component<Props> {
       <div>
         <Row>
           <Col span={7}>
-            <PiePlot
+            <DonutChart
               dataset={generateData('delivered')}
               options={generateOptions(false, 'orange', 'DELIVERED', emailDelivered, emailSent)}
             />
@@ -177,13 +181,13 @@ class EmailPieCharts extends React.Component<Props> {
           <Col span={17}>
             <Row>
               <Col span={12}>
-                <PiePlot
+                <DonutChart
                   dataset={generateData('opens')}
                   options={generateOptions(true, 'blue', 'OPENS', emailOpened, emailSent)}
                 />
               </Col>
               <Col span={12}>
-                <PiePlot
+                <DonutChart
                   dataset={generateData('clicks')}
                   options={generateOptions(true, 'blue', 'CLICKS', emailClicks, emailSent)}
                 />
@@ -191,7 +195,7 @@ class EmailPieCharts extends React.Component<Props> {
             </Row>
             <Row>
               <Col span={12}>
-                <PiePlot
+                <DonutChart
                   dataset={generateData('clicks2open')}
                   options={generateOptions(
                     true,
@@ -203,7 +207,7 @@ class EmailPieCharts extends React.Component<Props> {
                 />
               </Col>
               <Col span={12}>
-                <PiePlot
+                <DonutChart
                   dataset={generateData('unsubscribe')}
                   options={generateOptions(
                     true,

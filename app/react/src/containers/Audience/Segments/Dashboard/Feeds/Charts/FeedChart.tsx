@@ -14,7 +14,7 @@ import injectThemeColors, {
 } from '../../../../../Helpers/injectThemeColors';
 import { formatMcsDate } from '../../../../../../utils/McsMoment';
 import { Card } from 'antd';
-import { StackedBarPlot, LoadingChart } from '@mediarithmics-private/mcs-components-library';
+import { StackedBarChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
 import moment from 'moment';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import { getAllDates } from '../../../../../../utils/DateHelper';
@@ -215,7 +215,7 @@ class FeedChart extends React.Component<Props, State> {
           <LoadingChart />
         ) : (
           <Card className='compact' title={title}>
-            <StackedBarPlot dataset={dataSource as any} options={optionsForChart} />
+            <StackedBarChart dataset={dataSource as any} options={optionsForChart} />
           </Card>
         )}
       </div>

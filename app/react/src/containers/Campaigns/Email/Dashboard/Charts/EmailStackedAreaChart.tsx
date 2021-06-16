@@ -11,10 +11,10 @@ import {
   EmptyChart,
   LoadingChart,
   McsDateRangePicker,
-  StackedAreaPlot,
+  StackedAreaChart,
 } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
-import { StackedAreaPlotProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/time-based-charts/stacked-area-plot';
+import { StackedAreaChartProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/stacked-area-chart';
 
 export interface EmailStackedAreaChartProps {
   dateRangeValue: McsDateRangeValue;
@@ -34,7 +34,7 @@ class EmailStackedAreaChart extends React.Component<Props> {
       intl: { formatMessage },
     } = this.props;
 
-    const stackedAreaPlotProps: StackedAreaPlotProps = {
+    const stackedAreaPlotProps: StackedAreaChartProps = {
       dataset: emailReport,
       options: {
         xKey: { key: 'day', mode: 'DAY' },
@@ -58,7 +58,7 @@ class EmailStackedAreaChart extends React.Component<Props> {
         ],
       },
     };
-    return !isLoading ? <StackedAreaPlot {...stackedAreaPlotProps} /> : <LoadingChart />;
+    return !isLoading ? <StackedAreaChart {...stackedAreaPlotProps} /> : <LoadingChart />;
   }
 
   render() {
