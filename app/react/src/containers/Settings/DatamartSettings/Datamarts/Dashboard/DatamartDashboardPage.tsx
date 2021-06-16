@@ -223,6 +223,7 @@ class DatamartDashboardPage extends React.Component<Props, State> {
             </div>
             <div>
               <McsTabs
+                destroyInactiveTabPane={true}
                 items={items}
                 tabBarStyle={{ margin: '0 40px' }}
                 defaultActiveKey={
