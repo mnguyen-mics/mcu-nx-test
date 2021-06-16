@@ -28,10 +28,10 @@ import {
   EmptyChart,
   LoadingChart,
   McsDateRangePicker,
-  StackedAreaPlot,
+  StackedAreaChart,
 } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
-import { StackedAreaPlotProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/time-based-charts/stacked-area-plot';
+import { StackedAreaChartProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/stacked-area-chart';
 
 const LegendChartTS = LegendChart as any;
 
@@ -260,7 +260,7 @@ class GoalStackedAreaChart extends React.Component<JoinedProps, GoalStackedAreaC
 
     const { performance, isFetchingPerformance } = this.state;
 
-    const stackedAreaPlotProps: StackedAreaPlotProps = {
+    const stackedAreaPlotProps: StackedAreaChartProps = {
       dataset: performance as any,
       options: {
         xKey: { key: 'day', mode: 'DAY' },
@@ -276,7 +276,7 @@ class GoalStackedAreaChart extends React.Component<JoinedProps, GoalStackedAreaC
     };
 
     return !isFetchingPerformance && performance.length !== 0 ? (
-      <StackedAreaPlot {...stackedAreaPlotProps} />
+      <StackedAreaChart {...stackedAreaPlotProps} />
     ) : (
       <LoadingChart />
     );

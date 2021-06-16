@@ -22,7 +22,7 @@ import { DataLabel, TooltipChart } from '../../../../models/dashboards/dashboard
 import {
   EmptyChart,
   LoadingChart,
-  StackedBarPlot,
+  StackedBarChart,
 } from '@mediarithmics-private/mcs-components-library';
 import { AudienceBuilderQueryDocument } from '../../../../models/audienceBuilder/AudienceBuilderResource';
 
@@ -292,7 +292,7 @@ class MapBarChart extends React.Component<Props, State> {
         return (
           this.state.queryResult &&
           this.state.queryResult.length && (
-            <StackedBarPlot
+            <StackedBarChart
               dataset={this.state.queryResult as any}
               options={optionsForChart}
               height={height}

@@ -25,7 +25,7 @@ import injectNotifications, {
 } from '../../../Notifications/injectNotifications';
 import {
   EmptyChart,
-  DoubleStackedAreaPlot,
+  DoubleStackedAreaChart,
   LoadingChart,
   MetricsColumn,
   McsDateRangePicker,
@@ -288,7 +288,7 @@ class GoalStackedAreaChart extends React.Component<JoinedProps, GoalStackedAreaC
         <div style={{ float: 'left' }}>
           <MetricsColumn metrics={metrics} isLoading={isLoading} />
         </div>
-        <DoubleStackedAreaPlot
+        <DoubleStackedAreaChart
           dataset={items as any}
           options={optionsForChart}
           style={{ flex: '1' }}

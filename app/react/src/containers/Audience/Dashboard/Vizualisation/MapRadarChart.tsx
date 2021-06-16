@@ -22,7 +22,7 @@ import { TooltipChart, DataLabel } from '../../../../models/dashboards/dashboard
 import {
   EmptyChart,
   LoadingChart,
-  RadarSpiderPlot,
+  RadarSpiderChart,
 } from '@mediarithmics-private/mcs-components-library';
 import { SerieSortType } from '../../../../components/Charts/domain';
 import { AudienceBuilderQueryDocument } from '../../../../models/audienceBuilder/AudienceBuilderResource';
@@ -284,7 +284,7 @@ class MapBarChart extends React.Component<Props, State> {
         return (
           this.state.queryResult &&
           this.state.queryResult.length && (
-            <RadarSpiderPlot dataset={this.state.queryResult as any} options={optionsForChart} />
+            <RadarSpiderChart dataset={this.state.queryResult as any} options={optionsForChart} />
           )
         );
       }

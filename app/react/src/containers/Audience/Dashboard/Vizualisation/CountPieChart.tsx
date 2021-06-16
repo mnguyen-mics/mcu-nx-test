@@ -16,9 +16,13 @@ import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { getFormattedQuery } from '../domain';
 import {
   DatasetProps,
-  PiePlotOptionsProps,
-} from '@mediarithmics-private/mcs-components-library/lib/components/charts/category-based-charts/pie-plot/PiePlot';
-import { PiePlot, EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
+  DonutChartOptionsProps,
+} from '@mediarithmics-private/mcs-components-library/lib/components/charts/donut-chart/DonutChart';
+import {
+  DonutChart,
+  EmptyChart,
+  LoadingChart,
+} from '@mediarithmics-private/mcs-components-library';
 
 export interface CountPieChartProps {
   title?: string;
@@ -173,7 +177,7 @@ class CountPieChart extends React.Component<Props, State> {
       });
     };
 
-    const optionsForChart: PiePlotOptionsProps = {
+    const optionsForChart: DonutChartOptionsProps = {
       colors: computeChartColors(),
       showLabels: this.props.labelsEnabled,
       showTooltip: true,
@@ -193,7 +197,7 @@ class CountPieChart extends React.Component<Props, State> {
         return <EmptyChart title={intl.formatMessage(messages.noData)} icon='warning' />;
       } else {
         return (
-          <PiePlot
+          <DonutChart
             dataset={this.state.queryResult as DatasetProps[]}
             options={optionsForChart}
             height={height}

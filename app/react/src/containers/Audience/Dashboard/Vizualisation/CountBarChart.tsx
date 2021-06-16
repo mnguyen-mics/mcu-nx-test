@@ -14,7 +14,7 @@ import { getFormattedQuery } from '../domain';
 import {
   EmptyChart,
   LoadingChart,
-  StackedBarPlot,
+  StackedBarChart,
 } from '@mediarithmics-private/mcs-components-library';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { AudienceBuilderQueryDocument } from '../../../../models/audienceBuilder/AudienceBuilderResource';
@@ -212,7 +212,7 @@ class CountBarChart extends React.Component<Props, State> {
         return <EmptyChart title={intl.formatMessage(messages.noData)} icon='warning' />;
       } else {
         return (
-          <StackedBarPlot
+          <StackedBarChart
             dataset={this.state.queryResult as any}
             options={optionsForChart}
             height={height}
