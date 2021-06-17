@@ -137,24 +137,7 @@ class SwitchBySearch extends React.Component<Props, SwitchBySearchState> {
   };
 
   renderChildrenMenu = (children: UserWorkspaceResource[]) => {
-    const {
-      intl: { formatMessage },
-      maxOrgOrCommunity,
-    } = this.props;
-    return (
-      <React.Fragment>
-        {children.slice(0, maxOrgOrCommunity * 3).map(child => this.renderNodeMenu(child))}
-        {children.length > maxOrgOrCommunity * 3 && (
-          <SubMenu
-            key={cuid()}
-            title={formatMessage(messages.more)}
-            popupClassName='mcs-organisationListSwitcher_popOverMenu'
-          >
-            {this.renderChildrenMenu(children.slice(maxOrgOrCommunity * 3))}
-          </SubMenu>
-        )}
-      </React.Fragment>
-    );
+    return <React.Fragment>{children.map(child => this.renderNodeMenu(child))}</React.Fragment>;
   };
 
   renderNodeMenu = (node: UserWorkspaceResource) => {
@@ -197,23 +180,13 @@ class SwitchBySearch extends React.Component<Props, SwitchBySearchState> {
   };
 
   renderOrgMenuGroup = (title: string, orgs: UserWorkspaceResource[]) => {
-    const { maxOrgOrCommunity } = this.props;
     return (
       <React.Fragment>
         <Menu.ItemGroup title={title} className='mcs-organisationListSwitcher_subtitle'>
-          {orgs.slice(0, maxOrgOrCommunity).map(org => {
+          {orgs.map(org => {
             return this.renderNodeMenu(org);
           })}
         </Menu.ItemGroup>
-        {orgs.length > maxOrgOrCommunity && (
-          <SubMenu
-            key={cuid()}
-            title={'More ...'}
-            popupClassName='mcs-organisationListSwitcher_popOverMenu'
-          >
-            {this.renderChildrenMenu(orgs.slice(maxOrgOrCommunity))}
-          </SubMenu>
-        )}
       </React.Fragment>
     );
   };
@@ -266,7 +239,7 @@ class SwitchBySearch extends React.Component<Props, SwitchBySearchState> {
     const savedCommunities = this.buildWorkspacesFromIds(savedCommunitiesIds, workspaces);
 
     return (
-      <Menu mode='vertical' className='mcs-organisationListSwitcher_menu mcs-menu-antd-customized'>
+      <Menu mode='vertical' className='mcs-organisationListSwitcher_menu'>
         <div className='mcs-organisationListSwitcher_search'>
           <Search
             ref={this.inputRef}

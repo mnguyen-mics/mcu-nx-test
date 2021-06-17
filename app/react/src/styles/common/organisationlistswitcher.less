@@ -15,6 +15,7 @@
   .mcs-organisationListSwitcher_orgName {
     font-size: 12px;
     color: white;
+    margin-bottom: 0;
   }
 }
 
@@ -76,7 +77,7 @@
   position: relative;
   left: 24px;
   top: -10px;
-  padding: 11px 15px 20px;
+  padding: 11px 0 20px 15px;
   box-shadow: @list-switcher-box-shadow;
   border: solid 1px #d3dbe1;
   border-radius: 6px;
@@ -122,33 +123,17 @@
         font-weight: normal;
       }
     }
+
+    .ant-menu-item-group-list {
+      max-height: 300px;
+      overflow: auto;
+      padding-right: 15px;
+    }
   }
 
   .mcs-organisationListSwitcher_fallback {
     padding-top: 25px;
     color: rgba(0, 0, 0, 0.65);
-  }
-}
-
-.mcs-organisationListSwitcher_popOverMenu {
-  .ant-menu-sub {
-    padding: 11px 15px 20px;
-    border-radius: 6px;
-  }
-  .ant-dropdown-menu {
-    background-clip: unset;
-  }
-  .ant-menu-item {
-    padding: 0;
-    margin: 0;
-    height: 25px;
-    line-height: 25px;
-    border-left: none;
-    a {
-      color: rgba(0, 0, 0, 0.65);
-      font-family: 'LLCircularWeb-Book';
-      font-weight: normal;
-    }
   }
 }
 
@@ -177,4 +162,71 @@
   margin-right: 15px;
   font-size: 13px;
   color: white;
+}
+
+.ant-menu.mcs-organisationListSwitcher_popOverMenu {
+  font-family: 'LLCircularWeb-Medium';
+  font-size: 12px;
+  min-width: 270px;
+  .ant-menu-item-group-title {
+    color: rgba(0, 0, 0, 0.78);
+    padding: 16px 0px 5px 0px;
+  }
+  .ant-menu-submenu-title {
+    padding: 0;
+    margin: 0;
+    height: 25px;
+    line-height: 25px;
+    .ant-menu-submenu-arrow {
+      right: 0px;
+    }
+    a {
+      font-family: 'LLCircularWeb-Book';
+      font-weight: normal;
+      color: rgba(0, 0, 0, 0.65);
+    }
+  }
+
+  .ant-menu-item {
+    padding: 0;
+    margin: 0;
+    height: 25px;
+    line-height: 25px;
+    border-left: none;
+    a {
+      color: rgba(0, 0, 0, 0.65);
+      font-family: 'LLCircularWeb-Book';
+      font-weight: normal;
+    }
+  }
+
+  .mcs-organisationListSwitcher_fallback {
+    padding-top: 25px;
+    color: rgba(0, 0, 0, 0.65);
+  }
+
+  .ant-menu-sub {
+    padding: 11px 15px 20px;
+    border-radius: 6px;
+  }
+  .ant-dropdown-menu {
+    background-clip: unset;
+  }
+  .ant-menu-item {
+    padding: 0;
+    margin: 0;
+    height: 25px;
+    line-height: 25px;
+    border-left: none;
+    a {
+      color: rgba(0, 0, 0, 0.65);
+      font-family: 'LLCircularWeb-Book';
+      font-weight: normal;
+    }
+  }
+}
+
+.mcs-organisationListSwitcher_search,
+.mcs-organisationListSwitcher_fallback {
+  padding-right: 15px;
 }
