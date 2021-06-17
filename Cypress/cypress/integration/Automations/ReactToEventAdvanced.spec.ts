@@ -1,55 +1,61 @@
+import faker from 'faker';
+
 describe('React To Event Advanced test', () => {
-  before(() => {
-    cy.login();
-  });
   beforeEach(() => {
-    cy.restoreLocalStorageCache();
+    cy.login();
   });
 
   afterEach(() => {
-    cy.saveLocalStorageCache();
+    cy.clearLocalStorage();
   });
 
   it('Should test the creation of an automation with React to Event Advanced', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(async data => {
       cy.switchOrg(data.organisationName);
       // Automation Creation
-
-      cy.contains('Automations').click();
-      cy.contains('Builder').click();
-      cy.contains('React to an Event').click();
-
-      cy.wait(7500);
-      cy.get('.mcs-reactToEventAutomation')
-        .find('[value=REACT_TO_EVENT_ADVANCED]')
-        .click({ force: true });
-
+      cy.get('.mcs-sideBar-subMenu_menu\\.automation\\.title').click();
+      cy.get('.mcs-sideBar-subMenuItem_menu\\.automation\\.builder').click();
+      cy.get('.mcs-menu-list-reactToEvent').click();
+      // Wait for the button to be enabled
+      cy.get('.mcs-reactToEventAutomation_buttonSwitchMode_reactToEventAdvanced')
+        .children()
+        .first()
+        .children()
+        .first()
+        .should('not.have.attr', 'disabled');
+      cy.get('.mcs-reactToEventAutomation_buttonSwitchMode_reactToEventAdvanced').click();
       const eventName = 'test_event_name';
-      cy.get('.mcs-reactToEventAutomation')
-        .contains('Search')
-        .click()
-        .type(eventName + '{enter}');
-
-      cy.get('.drawer').find('[type=submit]').click();
-      cy.get('.mcs-actionbar').find('[type=button]').click();
-
+      cy.get('.mcs-formSearchInput').type(eventName + '{enter}');
+      cy.get('.mcs-form_saveButton_reactToEventForm').click();
+      cy.get('.mcs-actionbar').find('.mcs-primary').click();
       const automationName = 'React to an Event Advanced';
-
-      cy.get('.mcs-form-modal-container').find('#name').type(automationName);
-      cy.get('.mcs-form-modal-container').find('[type=submit]').click();
+      cy.get('.mcs-automationName').click().type(automationName);
+      cy.get('.mcs-form-modal-container').find('.mcs-primary').click();
 
       // Automation viewer
-
-      cy.get('.mcs-actionbar').contains(automationName);
+      // Wait for the automation to save
+      cy.get('.mcs-breadcrumb', { timeout: 50000 }).should('be.visible');
+      cy.get('.mcs-breadcrumb').should('contain', automationName);
 
       // Edit
-
-      cy.get('.mcs-actionbar').find('[type=button]').contains('Edit').click({ force: true });
-      cy.get('.node-body').contains('React to an event').click({ force: true });
-      cy.get('.boolean-menu').contains('Edit').click();
-
-      cy.wait(5000);
-      cy.get('.mcs-reactToEventAutomation').find(`[title=${eventName}]`);
+      const newEventName = faker.random.words(1);
+      cy.get('.mcs-automationDashboardPage_editButton').click();
+      cy.get('.mcs-automationNodeWidget_StartAutomation').parent().click();
+      cy.get('.mcs-automationNodeWidget_booleanMenu_item_queryEdit').click();
+      cy.get('.mcs-formSearchInput').should('contain', eventName);
+      cy.get('.mcs-formSearchInput').type('{selectall}{backspace}' + newEventName + '{enter}');
+      cy.get('.mcs-form_saveButton_reactToEventForm').click();
+      cy.get('.mcs-actionbar').find('.mcs-primary').click();
+      const newAutomationName = faker.random.words(2);
+      cy.get('.mcs-automationName').click().type(newAutomationName);
+      cy.get('.mcs-form-modal-container').find('.mcs-primary').click();
+      // Wait for the automation to save
+      cy.get('.mcs-breadcrumb', { timeout: 50000 }).should('be.visible');
+      cy.get('.mcs-breadcrumb').should('contain', newAutomationName);
+      cy.get('.mcs-automationDashboardPage_editButton').click();
+      cy.get('.mcs-automationNodeWidget_StartAutomation').parent().click();
+      cy.get('.mcs-automationNodeWidget_booleanMenu_item_queryEdit').click();
+      cy.get('.mcs-formSearchInput').should('contain', newEventName);
     });
   });
 });

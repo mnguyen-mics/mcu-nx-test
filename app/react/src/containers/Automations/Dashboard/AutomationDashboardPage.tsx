@@ -390,7 +390,7 @@ class AutomationDashboardPage extends React.Component<Props, State> {
               )}
             </Button>
           ) : null}
-          <Button onClick={this.onEditClick}>
+          <Button className='mcs-automationDashboardPage_editButton' onClick={this.onEditClick}>
             <McsIcon type={'pen'} /> Edit
           </Button>
           {testButton}

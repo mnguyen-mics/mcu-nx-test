@@ -550,10 +550,16 @@ class ReactToEventAutomationForm extends React.Component<Props, State> {
               buttonStyle='solid'
               disabled={isLoading}
             >
-              <Radio.Button value='REACT_TO_EVENT_STANDARD'>
+              <Radio.Button
+                className='mcs-reactToEventAutomation_buttonSwitchMode_reactToEventStandard'
+                value='REACT_TO_EVENT_STANDARD'
+              >
                 {formatMessage(messages.standardEvents)}
               </Radio.Button>
-              <Radio.Button value='REACT_TO_EVENT_ADVANCED'>
+              <Radio.Button
+                className='mcs-reactToEventAutomation_buttonSwitchMode_reactToEventAdvanced'
+                value='REACT_TO_EVENT_ADVANCED'
+              >
                 {formatMessage(messages.advanced)}
               </Radio.Button>
             </Radio.Group>

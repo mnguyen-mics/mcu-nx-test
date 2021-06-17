@@ -18,7 +18,8 @@ describe('Test Automations', () => {
       cy.get('.mcs-sideBar-subMenu_menu\\.automation\\.title').click();
       cy.get('.mcs-sideBar-subMenuItem_menu\\.automation\\.list').click();
       cy.get('.mcs-automation-link').first().click();
-      cy.get('.mcs-actionbar').find('.mcs-gears').click();
+      //Waiting for automation view page to load
+      cy.get('.mcs-gears', { timeout: 50000 }).should('be.visible').click();
       cy.get('.mcs-content-container').should('contain', 'Test your automation');
     });
   });
@@ -31,6 +32,8 @@ describe('Test Automations', () => {
       cy.get('.mcs-sideBar-subMenu_menu\\.automation\\.title').click();
       cy.get('.mcs-sideBar-subMenuItem_menu\\.automation\\.list').click();
       cy.get('.mcs-automation-link').first().click();
+      //Waiting for automation view page to load
+      cy.get('.mcs-breadcrumb', { timeout: 50000 }).should('be.visible');
       cy.get('.mcs-automation-userCounter').should('have.length', 5);
     });
   });
