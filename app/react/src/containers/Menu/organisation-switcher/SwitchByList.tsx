@@ -68,10 +68,7 @@ class SwitchByList extends React.Component<Props, SwitchByListState> {
     const [communities, otherLevels] = partition(workspaces, w => isCommunity(w));
     const [firstLevelOrgs] = partition(otherLevels, w => !isAChild(w, workspaces));
     return (
-      <Menu
-        className='mcs-organisationListSwitcher_orgList mcs-menu-antd-customized'
-        mode='vertical'
-      >
+      <Menu className='mcs-organisationListSwitcher_orgList' mode='vertical'>
         {this.renderNodeFlat(communities, 0, true)}
         {this.renderNodeFlat(firstLevelOrgs, 0, false)}
       </Menu>

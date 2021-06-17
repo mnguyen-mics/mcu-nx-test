@@ -4,8 +4,11 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import {
   AppstoreOutlined,
   BarsOutlined,
+  BookFilled,
   CodeSandboxCircleFilled,
+  CompassFilled,
   LeftOutlined,
+  ReadOutlined,
   RightOutlined,
 } from '@ant-design/icons';
 import { Layout } from 'antd';
@@ -22,7 +25,7 @@ import { MicsReduxState } from '../../../utils/ReduxHelper';
 import { Button, AppsMenu, McsHeader } from '@mediarithmics-private/mcs-components-library';
 import { UserProfileResource } from '../../../models/directory/UserProfileResource';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
-import { AppsMenuSection } from '@mediarithmics-private/mcs-components-library/lib/components/apps-navigation/apps-menu/AppsMenu';
+import { AppsMenuSections } from '@mediarithmics-private/mcs-components-library/lib/components/apps-navigation/apps-menu/AppsMenu';
 import { buildAccountsMenu, buildSettingsButton, ProductionApiEnvironment } from './LayoutHelper';
 import OrganisationListSwitcher from '../../Menu/organisation-switcher/OrganisationListSwitcher';
 
@@ -189,39 +192,48 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
       </Row>
     );
   };
-
-  getAppMenuSections(): AppsMenuSection[] {
+  getAppMenuSections(): AppsMenuSections {
     const { connectedUser } = this.props;
 
     const isFromMics =
       connectedUser.workspaces.filter(workspace => workspace.organisation_id === '1').length > 0;
 
-    if (isFromMics) {
-      return [
+    const menuSections: AppsMenuSections = {
+      userLinks: [
         {
-          items: [
-            {
-              name: 'Platform Admin',
-              url: 'https://admin.mediarithmics.com:8493',
-            },
-          ],
+          name: 'Navigator',
+          icon: <CompassFilled className='mcs-app_icon mcs-app_navigatorIcon' />,
+          url: 'https://navigator.mediarithmics.com',
         },
         {
-          items: [
-            {
-              name: 'Developer Console',
-              icon: (
-                <CodeSandboxCircleFilled className='mcs-app_icon mcs-app_icon_developer_console' />
-              ),
-              url:
-                'https://computing-console-mics.francecentral.cloudapp.azure.com/frontprod/login',
-            },
-          ],
+          name: 'Developer Documentation',
+          icon: <BookFilled className='mcs-app_icon mcs-app_documentationIcon ' />,
+          url: 'https://developer.mediarithmics.com',
+        },
+
+        {
+          name: 'User Guide',
+          icon: <ReadOutlined className='mcs-app_icon mcs-app_documentationIcon' />,
+          url: 'https://userguides.mediarithmics.com',
+        },
+      ],
+      adminLinks: [],
+    };
+
+    if (isFromMics) {
+      menuSections.adminLinks = [
+        {
+          name: 'Platform Admin',
+          url: 'https://admin.mediarithmics.com:8493',
+        },
+        {
+          name: 'Computing Console',
+          icon: <CodeSandboxCircleFilled className='mcs-app_icon mcs-app_developerConsoleIcon' />,
+          url: 'https://computing-console-mics.francecentral.cloudapp.azure.com/frontprod/login',
         },
       ];
-    } else {
-      return [];
     }
+    return menuSections;
   }
 
   render() {
@@ -244,10 +256,10 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
     const onStateChange = (state: State) => this.setState({ isSelectorOpen: state.isOpen });
     const onClick = () => this.setState({ isSelectorOpen: false });
 
-    const appMenuSections: AppsMenuSection[] = this.getAppMenuSections();
+    const appMenuSections: AppsMenuSections = this.getAppMenuSections();
 
     const appMenu =
-      appMenuSections.length > 0 ? (
+      appMenuSections.userLinks.length > 0 || appMenuSections.adminLinks.length > 0 ? (
         <AppsMenu
           className='mcs-app-menu-main-layout'
           sections={appMenuSections}
