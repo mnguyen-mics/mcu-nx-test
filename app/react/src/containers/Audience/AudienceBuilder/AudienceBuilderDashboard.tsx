@@ -82,12 +82,18 @@ class AudienceBuilderDashboard extends React.Component<Props, State> {
     const { isDashboardLoading, dashboards } = this.state;
 
     const getTimelineSelectorOTQLQuery = (): Promise<string> => {
+      const selectionQueryDocument = {
+        operations: [{ directives: [], selections: [{ name: 'id' }] }],
+        from: 'UserPoint',
+        where: queryDocument?.where,
+      };
+
       const queryResource: QueryResource = {
         id: '123',
         datamart_id: datamartId,
         query_language: 'JSON_OTQL',
         query_language_subtype: 'PARAMETRIC',
-        query_text: JSON.stringify(queryDocument),
+        query_text: JSON.stringify(selectionQueryDocument),
       };
 
       return this._queryService.convertJsonOtql2Otql(datamartId, queryResource).then(res => {
