@@ -426,7 +426,11 @@ class AutomationNodeWidget extends React.Component<Props, State> {
 
     if (!viewer) {
       content.push(
-        <div key='edit' onClick={this.editNode} className='boolean-menu-item'>
+        <div
+          key='edit'
+          onClick={this.editNode}
+          className='boolean-menu-item mcs-automationNodeWidget_booleanMenu_item_onSegmentInputEdit'
+        >
           <FormattedMessage {...messages.edit} />
         </div>,
       );
@@ -504,7 +508,11 @@ class AutomationNodeWidget extends React.Component<Props, State> {
 
     if (!viewer) {
       content.push(
-        <div key='edit' onClick={this.editNode} className='boolean-menu-item'>
+        <div
+          key='edit'
+          onClick={this.editNode}
+          className='boolean-menu-item mcs-automationNodeWidget_booleanMenu_item_queryEdit'
+        >
           <FormattedMessage {...messages.edit} />
         </div>,
       );
@@ -703,7 +711,9 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     const NODE_NAME_MAX_SIZE = 20;
     const renderedAutomationNode = (
       <div
-        className='node-body'
+        className={`node-body mcs-automationNodeWidget${
+          nodeTitleToDisplayed ? '_' + nodeTitleToDisplayed.replace(/ +/g, '') : ''
+        }`}
         style={{
           width: `${node.getNodeSize().width}px`,
           height: `${node.getNodeSize().height}px`,
@@ -797,7 +807,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
                 {renderedAutomationNode}
               </span>
               <div
-                className='boolean-menu'
+                className='boolean-menu mcs-automationNodeWidget_booleanMenu'
                 style={{
                   top: this.top + booleanMenuTop * zoomRatio,
                   left: this.left + node.getNodeSize().width * zoomRatio,

@@ -9,7 +9,7 @@ describe('The purpose of this test is to check the creation of a segment with th
   afterEach(() => {
     cy.clearLocalStorage();
   });
-  it('Should test the creation of a segment with a frequency parameter', () => {
+  it('Should test the date attribute', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       //Go to Advanced Segment Builder
       cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();

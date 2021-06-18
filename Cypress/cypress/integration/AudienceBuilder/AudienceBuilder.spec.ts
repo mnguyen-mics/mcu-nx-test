@@ -179,7 +179,6 @@ describe('This test should check that the audience feature forms are working pro
           cy.contains(audienceBuilderName).click();
           cy.get('.mcs-audienceBuilder_formColumn').contains('Add from library').click();
           cy.contains(audienceFeatureName).click();
-          cy.get('.mcs-actionbar-edit').find('.mcs-plus').first().click();
           cy.get('.mcs-form_saveButton_audienceBuilderForm').click();
         })
         .then(() => {
