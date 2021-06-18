@@ -84,8 +84,19 @@ class SegmentBuilderSelector extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { selectedDatamartId, notifyError } = this.props;
+    this.getAudienceBuilders();
+  }
 
+  componentDidUpdate(prevProps: Props) {
+    const { selectedDatamartId: prevSelectedDatamartId } = prevProps;
+    const { selectedDatamartId } = this.props;
+    if (prevSelectedDatamartId !== selectedDatamartId) {
+      this.getAudienceBuilders();
+    }
+  }
+
+  getAudienceBuilders() {
+    const { selectedDatamartId, notifyError } = this.props;
     this._audienceBuilderService
       .getAudienceBuilders(selectedDatamartId)
       .then(res => {
