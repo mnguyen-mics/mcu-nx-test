@@ -752,6 +752,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       maxTagCount: 2,
       tree: [
         {
+          className: 'mcs-audienceSegmentTable-typeFilter_userList',
           title: formatMessage(audienceSegmentTypeMessages.USER_LIST),
           value: 'USER_LIST',
           childrenFilterName: 'feed_type',
@@ -767,26 +768,32 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
           ],
         },
         {
+          className: 'mcs-audienceSegmentTable-typeFilter_userQuery',
           title: formatMessage(audienceSegmentTypeMessages.USER_QUERY),
           value: 'USER_QUERY',
         },
         {
+          className: 'mcs-audienceSegmentTable-typeFilter_userActivation',
           title: formatMessage(audienceSegmentTypeMessages.USER_ACTIVATION),
           value: 'USER_ACTIVATION',
         },
         {
+          className: 'mcs-audienceSegmentTable-typeFilter_userPartition',
           title: formatMessage(audienceSegmentTypeMessages.USER_PARTITION),
           value: 'USER_PARTITION',
         },
         {
+          className: 'mcs-audienceSegmentTable-typeFilter_userLookalike',
           title: formatMessage(audienceSegmentTypeMessages.USER_LOOKALIKE),
           value: 'USER_LOOKALIKE',
         },
         {
+          className: 'mcs-audienceSegmentTable-typeFilter_userPixel',
           title: formatMessage(audienceSegmentTypeMessages.USER_PIXEL),
           value: 'USER_PIXEL',
         },
         {
+          className: 'mcs-audienceSegmentTable-typeFilter_edge',
           title: formatMessage(audienceSegmentTypeMessages.EDGE),
           value: 'EDGE',
         },

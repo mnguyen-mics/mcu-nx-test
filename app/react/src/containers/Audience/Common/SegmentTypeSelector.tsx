@@ -74,6 +74,7 @@ class SegmentTypeSelector extends React.Component<Props> {
                       {segmentTypesToDisplay.map(item => {
                         return (
                           <MenuList
+                            className={`mcs-segmentTypeSelector_${item.title.replace(/\s/g, '')}`}
                             key={item.value}
                             title={item.title}
                             select={this.onSelect(item.value, true)}

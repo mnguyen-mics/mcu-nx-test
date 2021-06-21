@@ -106,20 +106,22 @@ Cypress.Commands.add('createSegmentFromUI', type => {
 });
 
 Cypress.Commands.add('fillExpertQuerySegmentForm', (segmentName: string, queryText: string) => {
-  cy.contains('Save', { timeout: 5000 });
-  cy.get('input[name="audienceSegment.name"]').clear().type(segmentName);
-  cy.get('textarea[name="audienceSegment.short_description"]').clear().type(faker.random.words(6));
-  cy.contains('Advanced').click();
-  cy.get('input[name="audienceSegment.technical_name"]').clear().type(faker.random.words(2));
-  cy.get('input[name="defaultLifetime"]').clear().type('1');
-  cy.get('[id="defaultLifetimeUnit"]').click();
-  cy.contains('Days').click();
-  cy.get('[id="properties"').within(() => {
-    cy.get('[id="brace-editor"]').get('textarea[class="ace_text-input"]').type(queryText, {
-      force: true,
-      parseSpecialCharSequences: false,
-      delay: 0,
-    });
+  cy.get('.mcs-form_saveButton_audienceSegmentForm', { timeout: 5000 });
+  cy.get('.mcs-generalFormSection_name').type('{selectall}{backspace}' + segmentName);
+  cy.get('.mcs-generalFormSection_description').type(
+    '{selectall}{backspace}' + faker.random.words(6),
+  );
+  cy.get('.mcs-form-container').find('.mcs-button').click();
+  cy.get('.mcs-generalFormSection_technicalName').type(
+    '{selectall}{backspace}' + faker.random.words(2),
+  );
+  cy.get('.mcs-generalFormSection_defaultLifeTime').type('{selectall}{backspace}1');
+  cy.get('.mcs-addonSelect').click();
+  cy.get('.mcs-generalFormSection_defaultLifeTimeUnit_days').click();
+  cy.get('.mcs-otql').children().first().type(queryText, {
+    force: true,
+    parseSpecialCharSequences: false,
+    delay: 0,
   });
 });
 

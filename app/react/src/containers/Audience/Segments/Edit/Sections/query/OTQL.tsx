@@ -16,6 +16,7 @@ class OTQLInputEditor extends React.Component<OTQLInputEditorProps & WrappedFiel
   render() {
     return (
       <OtqlConsole
+        className='mcs-otql'
         value={this.props.input.value}
         datamartId={this.props.datamartId}
         {...this.props.inputProps}
