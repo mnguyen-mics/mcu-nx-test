@@ -47,7 +47,9 @@ describe('React To Event Advanced test', () => {
       cy.get('.mcs-form_saveButton_reactToEventForm').click();
       cy.get('.mcs-actionbar').find('.mcs-primary').click();
       const newAutomationName = faker.random.words(2);
-      cy.get('.mcs-automationName').click().type(newAutomationName);
+      cy.get('.mcs-automationName')
+        .click()
+        .type('{selectall}{backspace}' + newAutomationName);
       cy.get('.mcs-form-modal-container').find('.mcs-primary').click();
       // Wait for the automation to save
       cy.get('.mcs-breadcrumb', { timeout: 50000 }).should('be.visible');
