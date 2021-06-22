@@ -322,6 +322,7 @@ class AudienceLookalikeCreation extends React.Component<Props, AudienceLookalike
                         ...fieldGridConfig,
                       },
                       inputProps: {
+                        className: 'mcs-audienceLookAlikeCreation_segmentName',
                         placeholder: intl.formatMessage(messages.lookAlikeModalNameLabel),
                       },
                     }}

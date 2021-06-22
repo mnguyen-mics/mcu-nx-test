@@ -3,6 +3,7 @@ describe('Segments lookalike tests', () => {
   before(() => {
     cy.login();
   });
+
   beforeEach(() => {
     cy.restoreLocalStorageCache();
   });
@@ -15,15 +16,15 @@ describe('Segments lookalike tests', () => {
     const segmentDescription = faker.random.words(3);
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.switchOrg(data.organisationName);
-      cy.contains('Audience').click();
-      cy.contains('Segments').click();
+      cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
+      cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.segments').click();
       cy.createSegmentFromUI('User List');
       cy.get('.mcs-dots').click({ force: true });
-      cy.contains('Create Lookalike').click();
-      cy.contains('Partition based lookalike').click();
-      cy.get('[id="name"]').type(faker.random.words(2));
-      cy.get('[class="ant-slider"]').click();
-      cy.get('[type="submit"]').click();
+      cy.get('.mcs-menu-antd-customized_item--lookalike').click();
+      cy.get('.mcs-menu-list').first().click();
+      cy.get('.mcs-audienceLookAlikeCreation_segmentName').type(faker.random.words(2));
+      cy.get('.mcs-formSlider').click();
+      cy.get('.mcs-form_saveButton_lookalikeForm').click();
       cy.url().should('match', /.*segments\/[0-9]+/);
       // Wait for backend processing
       cy.wait(1500);
@@ -39,10 +40,10 @@ describe('Segments lookalike tests', () => {
         }).then(responseSegment => {
           expect(responseSegment.body.data.type).to.eq('USER_LOOKALIKE');
           cy.get('.mcs-pen').click({ force: true });
-          cy.get('[id="audienceSegment.short_description"]').type(segmentDescription);
-          cy.get('[class="mcs-button optional-section-title"]').click();
-          cy.get('[id="defaultLifetime"]').clear().type('1');
-          cy.contains('Save').click();
+          cy.get('.mcs-generalFormSection_description').type(segmentDescription);
+          cy.get('.mcs-form-container').find('.mcs-button').click();
+          cy.get('.mcs-generalFormSection_defaultLifeTime').type('{selectall}{backspace}1');
+          cy.get('.mcs-form_saveButton_audienceSegmentForm').click();
           cy.url().should('match', /.*segments\/[0-9]+/);
           // Wait for backend processing
           cy.wait(1500);
@@ -62,17 +63,16 @@ describe('Segments lookalike tests', () => {
 
   it('should create a user lookalike segment from user pixel segment', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
-      cy.switchOrg(data.organisationName);
-      cy.contains('Audience').click();
-      cy.contains('Segments').click();
+      cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
+      cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.segments').click();
       cy.createSegmentFromUI('User Pixel');
-      cy.contains('Save').click();
+      cy.get('.mcs-form_saveButton_audienceSegmentForm').click();
       cy.get('.mcs-dots').click({ force: true });
-      cy.contains('Create Lookalike').click();
-      cy.contains('Partition based lookalike').click();
-      cy.get('[id="name"]').type(faker.random.words(2));
-      cy.get('[class="ant-slider"]').click();
-      cy.get('[type="submit"]').click();
+      cy.get('.mcs-menu-antd-customized_item--lookalike').click();
+      cy.get('.mcs-menu-list').first().click();
+      cy.get('.mcs-audienceLookAlikeCreation_segmentName').type(faker.random.words(2));
+      cy.get('.mcs-formSlider').click();
+      cy.get('.mcs-form_saveButton_lookalikeForm').click();
       cy.url().should('match', /.*segments\/[0-9]+/);
       // Wait for backend processing
       cy.wait(1500);
@@ -94,16 +94,15 @@ describe('Segments lookalike tests', () => {
 
   it('should create a user lookalike segment from user expert query segment', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
-      cy.switchOrg(data.organisationName);
-      cy.contains('Audience').click();
-      cy.contains('Segments').click();
+      cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
+      cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.segments').click();
       cy.createSegmentFromUI('User Expert Query');
       cy.get('.mcs-dots').click({ force: true });
-      cy.contains('Create Lookalike').click();
-      cy.contains('Partition based lookalike').click();
-      cy.get('[id="name"]').type(faker.random.words(2));
-      cy.get('[class="ant-slider"]').click();
-      cy.get('[type="submit"]').click();
+      cy.get('.mcs-menu-antd-customized_item--lookalike').click();
+      cy.get('.mcs-menu-list').first().click();
+      cy.get('.mcs-audienceLookAlikeCreation_segmentName').type(faker.random.words(2));
+      cy.get('.mcs-formSlider').click();
+      cy.get('.mcs-form_saveButton_lookalikeForm').click();
       cy.url().should('match', /.*segments\/[0-9]+/);
       // Wait for backend processing
       cy.wait(1500);
@@ -125,16 +124,15 @@ describe('Segments lookalike tests', () => {
 
   it('should create a user lookalike segment from user query segment', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
-      cy.switchOrg(data.organisationName);
-      cy.contains('Audience').click();
-      cy.contains('Segments').click();
+      cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
+      cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.segments').click();
       cy.createSegmentFromUI('User Query');
       cy.get('.mcs-dots').click({ force: true });
-      cy.contains('Create Lookalike').click();
-      cy.contains('Partition based lookalike').click();
-      cy.get('[id="name"]').type(faker.random.words(2));
-      cy.get('[class="ant-slider"]').click();
-      cy.get('[type="submit"]').click();
+      cy.get('.mcs-menu-antd-customized_item--lookalike').click();
+      cy.get('.mcs-menu-list').first().click();
+      cy.get('.mcs-audienceLookAlikeCreation_segmentName').type(faker.random.words(2));
+      cy.get('.mcs-formSlider').click();
+      cy.get('.mcs-form_saveButton_lookalikeForm').click();
       cy.url().should('match', /.*segments\/[0-9]+/);
       // Wait for backend processing
       cy.wait(1500);
@@ -153,6 +151,5 @@ describe('Segments lookalike tests', () => {
       });
     });
   });
-
   // TODO Add a test where we calibrate the segment(We probably need to have user points on our datamart)
 });
