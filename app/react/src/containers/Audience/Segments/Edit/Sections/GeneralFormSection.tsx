@@ -84,6 +84,7 @@ class GeneralFormSection extends React.Component<Props, State> {
           label: formatMessage(messages.contentSectionGeneralAdvancedPartRow1Label),
         }}
         inputProps={{
+          className: 'mcs-generalFormSection_technicalName',
           placeholder: formatMessage(messages.contentSectionGeneralAdvancedPartRow1Placeholder),
         }}
         helpToolTipProps={{
@@ -144,6 +145,7 @@ class GeneralFormSection extends React.Component<Props, State> {
                 required: true,
               }}
               inputProps={{
+                className: 'mcs-generalFormSection_name',
                 placeholder: formatMessage(
                   messages.audienceSegmentCreationGeneralNameFieldPlaceHolder,
                 ),
@@ -162,6 +164,7 @@ class GeneralFormSection extends React.Component<Props, State> {
                 label: formatMessage(messages.audienceSegmentCreationGeneralDescriptionFieldTitle),
               }}
               inputProps={{
+                className: 'mcs-generalFormSection_description',
                 placeholder: formatMessage(
                   messages.audienceSegmentCreationGeneralDescriptionFieldPlaceHolder,
                 ),
@@ -196,6 +199,7 @@ class GeneralFormSection extends React.Component<Props, State> {
                       label: formatMessage(messages.contentSectionGeneralAdvancedPartRow2Label),
                     }}
                     inputProps={{
+                      className: 'mcs-generalFormSection_defaultLifeTime',
                       disabled: this.state.neverExpire,
                       addonAfter: (
                         <div>
@@ -206,16 +210,19 @@ class GeneralFormSection extends React.Component<Props, State> {
                               disabled={this.state.neverExpire}
                               options={[
                                 {
+                                  className: 'mcs-generalFormSection_defaultLifeTimeUnit_days',
                                   value: 'days',
                                   title: formatMessage(messages.contentSectionGeneralRow5OptionDAY),
                                 },
                                 {
+                                  className: 'mcs-generalFormSection_defaultLifeTimeUnit_weeks',
                                   value: 'weeks',
                                   title: formatMessage(
                                     messages.contentSectionGeneralRow5OptionWEEK,
                                   ),
                                 },
                                 {
+                                  className: 'mcs-generalFormSection_defaultLifeTimeUnit_months',
                                   value: 'months',
                                   title: formatMessage(
                                     messages.contentSectionGeneralRow5OptionMONTH,

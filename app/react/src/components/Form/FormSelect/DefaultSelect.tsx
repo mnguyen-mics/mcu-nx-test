@@ -16,6 +16,7 @@ export type RestrictedSelectProps = Omit<
 >;
 
 export interface DefaultOptionProps {
+  className?: string;
   value: string;
   title?: string;
   key?: string;

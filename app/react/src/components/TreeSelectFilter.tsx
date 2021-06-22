@@ -3,6 +3,7 @@ import { TreeSelect } from 'antd';
 import cuid from 'cuid';
 
 export interface TreeDataParent {
+  className?: string;
   value: string;
   title: string;
   childrenFilterName?: string;
@@ -103,6 +104,7 @@ class TreeSelectFilter extends React.Component<TreeSelectFilterProps, State> {
     // We prefix children value with parent value, as value must be unique in all tree
     const treeData = tree.map(parent => {
       return {
+        className: parent.className,
         value: parent.value,
         title: parent.title,
         key: parent.value,
