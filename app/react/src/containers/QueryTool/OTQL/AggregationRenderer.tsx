@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AreaChartOutlined, DownOutlined, HomeOutlined, TableOutlined } from '@ant-design/icons';
+import { AreaChartOutlined, HomeOutlined, TableOutlined } from '@ant-design/icons';
 import { Breadcrumb, Table, Select, Input } from 'antd';
 import {
   OTQLMetric,
@@ -13,11 +13,14 @@ import {
   McsIcon,
   McsTabs,
   RadarChart,
+  StackedBarChart,
 } from '@mediarithmics-private/mcs-components-library';
 import { FormattedMessage } from 'react-intl';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import Highcharts from 'highcharts';
 import { BASE_CHART_HEIGHT } from '../../../components/Charts/domain';
+import { Option } from 'antd/lib/mentions';
+import { Dataset } from '@mediarithmics-private/mcs-components-library/lib/components/charts/double-stacked-area-chart/DoubleStackedAreaChart';
 
 interface BucketPath {
   aggregationBucket: OTQLBuckets;
@@ -28,11 +31,14 @@ export interface AggregationRendererProps {
   rootAggregations: OTQLAggregations;
 }
 type Props = AggregationRendererProps & InjectedFeaturesProps;
+
+type chartType = 'RADAR' | 'BAR';
 interface State {
   aggregationsPath: BucketPath[];
   // can be a bucket or metrics
   selectedView: string;
   numberItems: number;
+  selectedChart: chartType;
 }
 
 class AggregationRenderer extends React.Component<Props, State> {
@@ -49,6 +55,7 @@ class AggregationRenderer extends React.Component<Props, State> {
         props.rootAggregations.buckets[0].buckets.length <= 6
           ? props.rootAggregations.buckets[0].buckets.length
           : 6,
+      selectedChart: 'RADAR',
     };
   }
 
@@ -78,9 +85,15 @@ class AggregationRenderer extends React.Component<Props, State> {
     );
   };
 
+  handleChartTypeChange = (value: chartType) => {
+    this.setState({
+      selectedChart: value,
+    });
+  };
+
   getBuckets = (buckets: OTQLBuckets) => {
     const { hasFeature } = this.props;
-    const { numberItems } = this.state;
+    const { numberItems, selectedChart } = this.state;
     if (buckets.buckets.length === 0)
       return (
         <FormattedMessage
@@ -129,9 +142,31 @@ class AggregationRenderer extends React.Component<Props, State> {
           this.setState({ numberItems: buckets.buckets.length });
         else this.setState({ numberItems: parseInt(e.target.value, 10) });
       };
-      const sortedBuckets = buckets.buckets.sort((a, b) => b.count - a.count);
-      const xAxis = sortedBuckets.slice(0, numberItems).map(bucket => bucket.key);
-      const values = sortedBuckets.slice(0, numberItems).map(bucket => bucket.count);
+      const currentBuckets = buckets.buckets.slice(0, numberItems);
+      const stackedBarChartDataset: Dataset = currentBuckets.map(bucket => {
+        return { key: bucket.key, count: bucket.count };
+      });
+      const xAxis = currentBuckets.map(bucket => bucket.key);
+      const values = currentBuckets.map(bucket => bucket.count);
+
+      const optionsForBarChart = {
+        xKey: 'key',
+        yKeys: [
+          {
+            key: 'count',
+            message: 'count',
+          },
+        ],
+        xAxis: { title: { text: '' } },
+        chartOptions: {
+          yAxis: { title: { text: '' } },
+        },
+        colors: ['#00a1df'],
+        legend: {
+          enabled: true,
+        },
+      };
+
       const options: Highcharts.Options = {
         chart: {
           polar: true,
@@ -231,9 +266,17 @@ class AggregationRenderer extends React.Component<Props, State> {
             <div className='mcs-otqlChart_container'>
               <div className='mcs-otqlChart_container--inner'>
                 <div className='mcs-otqlChart_radar'>
-                  Radar
-                  <DownOutlined className='m-l-10' />
+                  <Select
+                    className={'otqlChart_radar_selector'}
+                    defaultValue={'RADAR'}
+                    onChange={this.handleChartTypeChange}
+                    value={selectedChart}
+                  >
+                    <Option value='RADAR'>Radar</Option>
+                    <Option value='BAR'>Bar</Option>
+                  </Select>
                 </div>
+
                 <div className='mcs-otqlChart_items'>
                   Show top{' '}
                   <Input
@@ -244,7 +287,14 @@ class AggregationRenderer extends React.Component<Props, State> {
                   />{' '}
                   / {buckets.buckets.length}
                 </div>
-                <RadarChart options={options} />
+                {selectedChart === 'RADAR' && <RadarChart options={options} />}
+                {selectedChart === 'BAR' && (
+                  <StackedBarChart
+                    dataset={stackedBarChartDataset}
+                    options={optionsForBarChart}
+                    reducePadding={true}
+                  />
+                )}
               </div>
             </div>
           ),
