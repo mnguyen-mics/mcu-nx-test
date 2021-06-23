@@ -21,10 +21,10 @@ export const buildAccountsMenu = (organisationId: string) => [
 
 export const buildSettingsButton = (organisationId: string) => (
   <Link
-    className='mcs-header_menu-link'
+    className='mcs-header_menu_link'
     to={`/v2/o/${organisationId}/settings/organisation/labels`}
   >
-    <McsIcon type='options' className='menu-icon-settings' />
+    <McsIcon type='options' className='mcs-header_menuIcon' />
   </Link>
 );
 

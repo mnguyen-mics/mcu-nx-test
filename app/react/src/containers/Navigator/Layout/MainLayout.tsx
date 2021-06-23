@@ -2,7 +2,6 @@ import * as React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import {
-  AppstoreOutlined,
   BarsOutlined,
   BookFilled,
   CodeSandboxCircleFilled,
@@ -22,12 +21,12 @@ import * as MenuActions from '../../../redux/Menu/actions';
 import { compose } from 'recompose';
 import { MenuMode } from 'antd/lib/menu';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
-import { Button, AppsMenu, McsHeader } from '@mediarithmics-private/mcs-components-library';
+import { Button } from '@mediarithmics-private/mcs-components-library';
 import { UserProfileResource } from '../../../models/directory/UserProfileResource';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import { AppsMenuSections } from '@mediarithmics-private/mcs-components-library/lib/components/apps-navigation/apps-menu/AppsMenu';
-import { buildAccountsMenu, buildSettingsButton, ProductionApiEnvironment } from './LayoutHelper';
-import OrganisationListSwitcher from '../../Menu/organisation-switcher/OrganisationListSwitcher';
+import { buildAccountsMenu, buildSettingsButton } from './LayoutHelper';
+import { TopBar } from '@mediarithmics-private/advanced-components';
 
 const { Content, Sider } = Layout;
 
@@ -245,7 +244,6 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
       mode,
       orgSelectorSize,
       hasFeature,
-      userEmail,
       match: {
         params: { organisationId },
       },
@@ -255,18 +253,6 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
 
     const onStateChange = (state: State) => this.setState({ isSelectorOpen: state.isOpen });
     const onClick = () => this.setState({ isSelectorOpen: false });
-
-    const appMenuSections: AppsMenuSections = this.getAppMenuSections();
-
-    const appMenu =
-      appMenuSections.userLinks.length > 0 || appMenuSections.adminLinks.length > 0 ? (
-        <AppsMenu
-          className='mcs-app-menu-main-layout'
-          sections={appMenuSections}
-          logo={<Logo mode='inline' />}
-        />
-      ) : undefined;
-
     const accounts = buildAccountsMenu(organisationId);
     const settings = buildSettingsButton(organisationId);
 
@@ -285,15 +271,12 @@ class MainLayout extends React.Component<Props, MainLayoutState> {
         </PushMenu>
         {hasFeature('new-navigation-system') ? (
           <LayoutId id='mcs-main-layout' className='mcs-fullscreen'>
-            <McsHeader
-              className='mcs-header-main-layout'
-              userEmail={userEmail}
-              accountContent={accounts}
+            <TopBar
+              organisationId={organisationId}
+              userAccount={accounts}
               headerSettings={settings}
-              menu={appMenu}
-              devAlert={process.env.API_ENV === 'prod' ? ProductionApiEnvironment : undefined}
-              menuIcon={<AppstoreOutlined className='mcs-header_menu-icon' />}
-              organisationSwitcher={listOrganizationSwitcher && <OrganisationListSwitcher />}
+              linkPath={`/v2/o/${organisationId}/campaigns/display`}
+              prodEnv={process.env.API_ENV === 'prod'}
             />
             <Layout>
               <Sider
