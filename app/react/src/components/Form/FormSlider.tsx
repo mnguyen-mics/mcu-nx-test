@@ -46,7 +46,7 @@ class FormSlider extends React.Component<FormSliderProps & WrappedFieldProps> {
         small={small}
         {...formItemProps}
       >
-        <Slider {...input} {...inputProps} />
+        <Slider className='mcs-formSlider' {...input} {...inputProps} />
       </FormFieldWrapper>
     );
   }

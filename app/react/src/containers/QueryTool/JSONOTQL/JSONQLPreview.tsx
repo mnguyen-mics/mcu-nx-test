@@ -52,7 +52,12 @@ class JSONQLPreview extends React.Component<Props> {
             }),
           ]}
         >
-          <Button disabled={!query} className='mcs-primary' type='primary' onClick={onSave}>
+          <Button
+            disabled={!query}
+            className='mcs-primary mcs-actionBar_updateQueryButton'
+            type='primary'
+            onClick={onSave}
+          >
             <FormattedMessage
               id='queryTool.jsonql.querytool.query.edit.update'
               defaultMessage='Update'
@@ -139,7 +144,7 @@ class JSONQLPreview extends React.Component<Props> {
           />
         )}
         <br />
-        <Button onClick={this.openEditor}>
+        <Button className='mcs-editAudienceSegmentForm_editQueryButton' onClick={this.openEditor}>
           {this.props.intl.formatMessage({
             id: 'jsonql.button.query.edit',
             defaultMessage: 'Edit Query',

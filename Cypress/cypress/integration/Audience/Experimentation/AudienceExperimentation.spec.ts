@@ -1,5 +1,4 @@
 import faker from 'faker';
-
 describe('AudienceExperimentation Form Test', () => {
   before(() => {
     cy.login();
@@ -17,21 +16,21 @@ describe('AudienceExperimentation Form Test', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       const segmentName = `${Date.now()}-${faker.random.words(2)}`;
       cy.switchOrg(data.organisationName);
-      cy.contains('Audience').click();
-      cy.contains('Segments').click();
-      cy.contains('New Segment').click();
-      cy.contains('User Expert Query').click();
+      cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
+      cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.segments').click();
+      cy.get('.mcs-actionbar').find('.mcs-primary').click();
+      cy.get('.mcs-segmentTypeSelector_UserExpertQuery').click();
       cy.fillExpertQuerySegmentForm(segmentName, 'SELECT {id} FROM UserPoint');
-      cy.contains('Save').click();
+      cy.get('.mcs-form_saveButton_audienceSegmentForm').click();
       cy.url({ timeout: 10000 }).should('match', /.*audience\/segments\/\d*\?/);
-      cy.contains('Segments').click();
-      cy.get('[placeholder="Search Segments"]').type(segmentName).type('{enter}');
+      cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.segments').click();
+      cy.get('.mcs-search-input').type(segmentName + '{enter}');
       cy.get('.mcs-campaigns-link').should('have.length', 1).click();
-      cy.get('.ant-dropdown-trigger > .compact').click({ force: true });
-      cy.contains('Create Experimentation').click();
+      cy.get('.mcs-dots').click();
+      cy.get('.mcs-menu-antd-customized_item--experimentation').click();
       cy.get('.mcs-menu-list').first().click();
-      cy.get('[class="ant-slider"]').click();
-      cy.get('[type="submit"]').click();
+      cy.get('.mcs-formSlider').click();
+      cy.get('.mcs-form_saveButton_experimentationForm').click();
       cy.url().should('contain', `${data.organisationId}/audience/segments/`);
     });
   });

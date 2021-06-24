@@ -59,48 +59,49 @@ Cypress.Commands.add('goToHome', organisationId => {
 
 Cypress.Commands.add('createSegmentFromUI', type => {
   // Click on "new Segment"
-  cy.contains('New Segment').click();
+  cy.get('.mcs-actionbar').find('.mcs-primary').click();
 
   // Select Segment Types
   cy.contains(type).click();
 
   // Fill the name of the segement
-  cy.get('[id="audienceSegment.name"]').type('Test Audience Segment Form - Test ' + type);
+  cy.get('.mcs-generalFormSection_name').type('Test Audience Segment Form - Test ' + type);
 
   // Fill the descritpion
-  cy.get('[id="audienceSegment.short_description"]').type(
+  cy.get('.mcs-generalFormSection_description').type(
     'This segment was created to test the creation of segment.',
   );
 
   // click on advanced
-  cy.get('[class="mcs-button optional-section-title"]').click();
+  cy.get('.mcs-form-container').find('.mcs-button').click();
 
   // Fill the technical name
-  cy.get('[id="audienceSegment.technical_name"]').type(faker.lorem.word());
+  cy.get('.mcs-generalFormSection_technicalName').type(faker.lorem.word());
 
   // Fill the default life time
-  cy.get('[id="defaultLifetime"]').type('1');
+  cy.get('.mcs-generalFormSection_defaultLifeTime').type('1');
 
   // Choose day as the lifetime
-  cy.get('[class ="mcs-addonSelect"]').click();
+  cy.get('.mcs-addonSelect').click();
 
-  cy.contains('Days').click();
+  cy.get('.mcs-generalFormSection_defaultLifeTimeUnit_days').click();
 
   // In the case that we are in user expert query, we have to write a mock query to validate
   if (type === 'User Expert Query') {
-    cy.get('[id="brace-editor"]')
-      .find('[class="ace_text-input"]')
+    cy.get('.mcs-otql')
+      .children()
+      .first()
       .type(`SELECT {id} FROM UserPoint WHERE creation_date <= "now-120d/d"`, {
         force: true,
         parseSpecialCharSequences: false,
       });
   } else if (type === 'User Query') {
-    cy.contains('Edit Query').click();
-    cy.contains('Update').click();
+    cy.get('.mcs-editAudienceSegmentForm_editQueryButton').click();
+    cy.get('.mcs-actionBar_updateQueryButton').click();
   }
 
   // Save the new segment
-  cy.contains('Save').click();
+  cy.get('.mcs-form_saveButton_audienceSegmentForm').click();
 
   cy.url({ timeout: 20000 }).should('not.contain', 'create');
 });

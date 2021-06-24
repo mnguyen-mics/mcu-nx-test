@@ -374,17 +374,20 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
 
     const dropdowMenu = (
       <Menu onClick={onMenuClick} className='mcs-menu-antd-customized'>
-        <Menu.Item key='HISTORY'>
+        <Menu.Item key='HISTORY' className='mcs-menu-antd-customized_item--history'>
           <FormattedMessage {...segmentMessages.history} />
         </Menu.Item>
-        <Menu.Item key='LOOKALIKE'>
+        <Menu.Item key='LOOKALIKE' className='mcs-menu-antd-customized_item--lookalike'>
           <FormattedMessage {...segmentMessages.lookAlikeCreation} />
         </Menu.Item>
         {segment &&
           segment.type === 'USER_QUERY' &&
           hasFeature('audience-segment_uplift') &&
           segment.subtype === 'STANDARD' && (
-            <Menu.Item key='EXPERIMENTATION'>
+            <Menu.Item
+              key='EXPERIMENTATION'
+              className='mcs-menu-antd-customized_item--experimentation'
+            >
               <FormattedMessage {...segmentMessages.experimentationCreation} />
             </Menu.Item>
           )}
