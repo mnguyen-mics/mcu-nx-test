@@ -110,7 +110,11 @@ class DefaultSelect extends React.Component<Props, State> {
     if (meta && meta.touched && meta.warning) validateStatus = 'warning';
 
     const optionsToDisplay = options!.map(option => (
-      <Option className={`mcs-select_${option.value}`} key={cuid()} value={option.value}>
+      <Option
+        className={`mcs-select_itemOption--${option.value.toLowerCase().replace(/_/g, '-')}`}
+        key={cuid()}
+        value={option.value}
+      >
         {option.title || option.value}
       </Option>
     ));

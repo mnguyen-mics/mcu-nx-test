@@ -19,11 +19,11 @@ describe('The purpose of this test is to check the creation of a segment with th
       cy.get('.mcs-plusNodeWidget_button').click();
       cy.get('.mcs-plusNodeWidget_menu_object').click();
       cy.get('.mcs-objectNodeSection_select').click();
-      cy.get('.mcs-select_activity_events').click();
+      cy.get('.mcs-select_itemOption--activity-events').click();
       //Add Field Condition
       cy.get('.mcs-fieldNodeSection_add_field_button').click();
       cy.get('.mcs-fieldNodeForm_select').click();
-      cy.get('.mcs-select_date').click();
+      cy.get('.mcs-select_itemOption--date').click();
       cy.get('.mcs-relativeAbsoluteForm_relative').click();
       cy.get('.mcs-relativeAbsoluteForm_dateValue').click().type('{selectall}{backspace}3');
       cy.get('.mcs-relativeAbsoluteForm_period_select').click();
@@ -49,7 +49,7 @@ describe('The purpose of this test is to check the creation of a segment with th
       cy.get('.mcs-plusNodeWidget_button').click();
       cy.get('.mcs-plusNodeWidget_menu_object').click();
       cy.get('.mcs-objectNodeSection_select').click();
-      cy.get('.mcs-select_accounts').click();
+      cy.get('.mcs-select_itemOption--accounts').click();
       cy.get('.mcs-objectNodeSection_checkbox').click();
       const frequency_value = faker.random.number().toString();
       cy.get('.mcs-objectNodeSection_frequency_value').click().type(frequency_value);

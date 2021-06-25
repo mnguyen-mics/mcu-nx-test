@@ -22,33 +22,39 @@ describe('New activities import and execution', () => {
   it('Generate import from files', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       // Go to data Studio menu
-      cy.contains('Data Studio').click();
+      cy.get('.mcs-sideBar-subMenu_menu\\.dataStudio\\.title').click();
 
       // Go to data Studio menu
-      cy.contains('Imports').click();
+      cy.get('.mcs-sideBar-subMenuItem_menu\\.library\\.Imports').click();
 
       // Create New Imports
-      cy.contains('New Import').click();
+      cy.get('.mcs-imports_creationButton').click();
 
       // Select the datamart
 
       cy.contains(data.datamartName).click();
 
       // Fill the name
-      cy.get('[id="name"]').type('Test import Activities');
+      cy.get('.mcs-imports_nameField').type('Test import Activities');
 
       // Select the right document type
-      cy.get('[class="ant-select-selection__rendered"').first().click();
+      cy.get(
+        '.mcs-imports_selectField_edit\\.import\\.general\\.infos\\.tooltip\\.documentType',
+      ).click();
 
-      cy.contains('User Activity').click();
+      cy.get('.mcs-select_itemOption--user-activity').click();
 
       // Priority
-      cy.get('[class="ant-select-selection__rendered"').eq(3).click();
+      cy.get(
+        '.mcs-imports_selectField_edit\\.import\\.general\\.infos\\.tooltip\\.priority',
+      ).click();
 
-      cy.contains('LOW').click();
+      cy.get('.mcs-select_itemOption--low').click();
 
       // Save the import
-      cy.get('[class="ant-btn mcs-primary ant-btn-primary"').first().click();
+      cy.get('.mcs-form_saveButton_importForm').click();
+
+      cy.get('.mcs-contentHeader_title--large').should('contain', 'Test import Activities');
     });
   });
 });
