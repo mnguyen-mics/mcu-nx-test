@@ -155,6 +155,7 @@ class GeneralFormSection extends React.Component<Props, State> {
               required: true,
             }}
             inputProps={{
+              className: 'mcs-imports_nameField',
               placeholder: formatMessage(messages.labelImportName),
             }}
             helpToolTipProps={{
