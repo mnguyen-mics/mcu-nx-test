@@ -32,7 +32,12 @@ const FormInputNumber: React.FunctionComponent<
       small={props.small}
       {...props.formItemProps}
     >
-      <InputNumber id={props.input.name} {...props.input} {...props.inputNumberProps} />
+      <InputNumber
+        className='mcs-formInputNumber'
+        id={props.input.name}
+        {...props.input}
+        {...props.inputNumberProps}
+      />
     </FormFieldWrapper>
   );
 };
