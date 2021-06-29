@@ -19,23 +19,20 @@ describe('Compartments test', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.goToHome(data.organisationId);
 
-      cy.get('[class="mcs-options"]').click();
-      cy.contains('Datamart').click();
-      cy.contains('Compartments').click();
+      cy.get('.mcs-navigator-header-actions-settings').click();
+      cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
+      cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.compartments').click();
 
       // check columns
-      cy.contains('Compartment ID');
-      cy.contains('Name');
-      cy.contains('Token');
+      cy.get('.mcs-table-view').should('contain', 'Compartment ID');
+      cy.get('.mcs-table-view').should('contain', 'Name');
+      cy.get('.mcs-table-view').should('contain', 'Token');
 
       // check buttons
-      cy.contains('New Compartment');
-      cy.contains('Datamart');
+      cy.get('.mcs-card-header').find('.mcs-card-button').should('contain', 'New Compartment');
 
       // check default compartment existence
-      cy.get('tbody').within(() => {
-        cy.get('tr').should('have.length', 1);
-      });
+      cy.get('.mcs-table-body').should('contain', 'Default');
     });
   });
 
@@ -43,22 +40,16 @@ describe('Compartments test', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.goToHome(data.organisationId);
 
-      cy.get('[class="mcs-options"]').click();
-      cy.contains('Datamart').click();
-      cy.contains('Compartments').click();
+      cy.get('.mcs-navigator-header-actions-settings').click();
+      cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
+      cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.compartments').click();
 
-      cy.contains('New Compartment').click();
+      cy.get('.mcs-card-header').find('.mcs-card-button').click();
       cy.contains(`${data.datamartName}`).click();
 
-      cy.get('form').submit();
-
-      cy.get('[class="ant-form-item-control has-error"]').as('required-items');
-
-      cy.get('@required-items').should('have.length', 2);
-      cy.get('@required-items').within(() => {
-        cy.contains('required');
-      });
-      cy.get('[class="mcs-close"]').click();
+      cy.get('.mcs-form_saveButton_compartmentForm').click();
+      cy.wait(3000);
+      cy.url().should('contain', '/compartments/create');
     });
   });
 
@@ -66,30 +57,26 @@ describe('Compartments test', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.goToHome(data.organisationId);
 
-      cy.get('[class="mcs-options"]').click();
-      cy.contains('Datamart').click();
-      cy.contains('Compartments').click();
+      cy.get('.mcs-navigator-header-actions-settings').click();
+      cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
+      cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.compartments').click();
 
-      cy.contains('New Compartment').click();
+      cy.get('.mcs-card-header').find('.mcs-card-button').click();
       cy.contains(`${data.datamartName}`).click();
 
       const compartmentName = faker.random.words(6);
       const compartmentToken = faker.random.words(2).replace(' ', '-');
-      cy.get('[id="compartment.name"]').type(compartmentName);
-      cy.get('[id="compartment.token"]').type(compartmentToken);
+      cy.get('.mcs-compartments_nameField').type(compartmentName);
+      cy.get('.mcs-compartments_tokenField').type(compartmentToken);
 
-      cy.contains('Advanced').click();
-      cy.get('[name="compartment.default"').click();
+      cy.get('.mcs-form-container').find('.mcs-button').click();
+      cy.get('.mcs-compartments_switchField').click();
 
-      cy.get('form').submit();
+      cy.get('.mcs-form_saveButton_compartmentForm').click();
 
-      cy.contains(compartmentName)
-        .parents('tr')
-        .within(() => {
-          cy.get('td').eq(0).contains('Default');
-          cy.get('td').eq(1).contains(compartmentName);
-          cy.get('td').eq(2).contains(compartmentToken);
-        });
+      cy.get('.mcs-compartmentsTable_compartmentId').first().should('contain', 'Default');
+      cy.get('.mcs-compartmentsTable_compartmentName').first().should('contain', compartmentName);
+      cy.get('.mcs-compartmentsTable_compartmentToken').first().should('contain', compartmentToken);
     });
   });
 
@@ -97,17 +84,17 @@ describe('Compartments test', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.goToHome(data.organisationId);
 
-      cy.get('[class="mcs-options"]').click();
-      cy.contains('Datamart').click();
-      cy.contains('Compartments').click();
+      cy.get('.mcs-navigator-header-actions-settings').click();
+      cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
+      cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.compartments').click();
 
-      cy.get('[class="mcs-chevron"]').first().click();
-      cy.contains('Edit').click();
+      cy.get('.mcs-compartmentsTable_dropDownMenu').first().click();
+      cy.get('.mcs-compartmentsTable_dropDownMenu--edit').click();
 
       const compartmentName = faker.random.words(6);
-      cy.get('[id="compartment.name"]').clear().type(compartmentName);
-      cy.get('form').submit();
-      cy.contains(compartmentName);
+      cy.get('.mcs-compartments_nameField').clear().type(compartmentName);
+      cy.get('.mcs-form_saveButton_compartmentForm').click();
+      cy.get('.mcs-table-view').should('contain', compartmentName);
     });
   });
 });

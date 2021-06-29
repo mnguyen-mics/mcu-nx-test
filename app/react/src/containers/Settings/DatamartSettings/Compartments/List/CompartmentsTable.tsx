@@ -86,7 +86,7 @@ class CompartmentsTable extends React.Component<Props> {
         key: 'compartment_id',
         isHideable: false,
         render: (text: string, record: UserAccountCompartmentDatamartSelectionResource) => (
-          <span>
+          <span className='mcs-compartmentsTable_compartmentId'>
             {text} {record.default && ' (Default)'}
           </span>
         ),
@@ -96,7 +96,7 @@ class CompartmentsTable extends React.Component<Props> {
         key: 'name',
         isHideable: false,
         render: (text: string, record: UserAccountCompartmentDatamartSelectionResource) => (
-          <span>{text}</span>
+          <span className='mcs-compartmentsTable_compartmentName'>{text}</span>
         ),
       },
       {
@@ -104,7 +104,7 @@ class CompartmentsTable extends React.Component<Props> {
         key: 'token',
         isHideable: false,
         render: (text: string, record: UserAccountCompartmentDatamartSelectionResource) => (
-          <span>{text}</span>
+          <span className='mcs-compartmentsTable_compartmentToken'>{text}</span>
         ),
       },
     ];
@@ -113,18 +113,22 @@ class CompartmentsTable extends React.Component<Props> {
       ActionsColumnDefinition<UserAccountCompartmentDatamartSelectionResource>
     > = [
       {
+        className: 'mcs-compartmentsTable_dropDownMenu',
         key: 'action',
         actions: () => [
           {
+            className: 'mcs-compartmentsTable_dropDownMenu--edit',
             message: formatMessage(messages.editCompartment),
             callback: this.editCompartment,
           },
           {
+            className: 'mcs-compartmentsTable_dropDownMenu--archive',
             message: formatMessage(messages.archiveCompartment),
             disabled: true,
             callback: this.voidFunction,
           },
           {
+            className: 'mcs-compartmentsTable_dropDownMenu--delete',
             message: formatMessage(messages.deleteCompartment),
             disabled: true,
             callback: this.voidFunction,

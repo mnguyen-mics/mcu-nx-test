@@ -152,13 +152,16 @@ class UserRolesList extends React.Component<Props, UserListState> {
 
     const actionsColumnsDefinition: Array<ActionsColumnDefinition<UserWithRole>> = [
       {
+        className: 'mcs-userRoleList_dropDownMenu',
         key: 'action',
         actions: () => [
           {
+            className: 'mcs-userRoleList_dropDownMenu--edit',
             message: formatMessage(messages.editUserRole),
             callback: this.onClickEdit,
           },
           {
+            className: 'mcs-userRoleList_dropDownMenu--delete',
             message: formatMessage(messages.deleteUserRole),
             callback: this.onClickDelete,
           },
