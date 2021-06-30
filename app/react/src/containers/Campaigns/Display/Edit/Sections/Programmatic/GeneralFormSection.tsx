@@ -65,6 +65,7 @@ class GeneralFormSection extends React.Component<Props, State> {
               required: true,
             }}
             inputProps={{
+              className: 'mcs-campaignDisplay_creationForm_campaign_name',
               placeholder: formatMessage(messages.campaignFormPlaceholderCampaignName),
             }}
             helpToolTipProps={{
@@ -83,6 +84,7 @@ class GeneralFormSection extends React.Component<Props, State> {
               ),
             }}
             inputProps={{
+              className: 'mcs-campaignDisplay_creationForm_campaign_total_impression_capping',
               placeholder: formatMessage(messages.contentSectionGeneralAdvancedPartRow2Placeholder),
             }}
             helpToolTipProps={{
@@ -101,6 +103,7 @@ class GeneralFormSection extends React.Component<Props, State> {
               ),
             }}
             inputProps={{
+              className: 'mcs-campaignDisplay_creationForm_campaign_per_day_impression_capping',
               placeholder: formatMessage(messages.contentSectionGeneralAdvancedPartRow3Placeholder),
             }}
             helpToolTipProps={{
@@ -117,6 +120,7 @@ class GeneralFormSection extends React.Component<Props, State> {
             }}
             inputProps={{
               suffix: <span>€</span>,
+              className: 'mcs-campaignDisplay_creationForm_campaign_total_budget',
               placeholder: formatMessage(messages.contentSectionGeneralAdvancedPartRow4Placeholder),
             }}
             helpToolTipProps={{
@@ -129,6 +133,7 @@ class GeneralFormSection extends React.Component<Props, State> {
             component={FormInput}
             validate={[isValidFloat, isNotZero]}
             formItemProps={{
+              className: 'mcs-campaignDisplay_creationForm_campaign_max_budget_per_period',
               label: formatMessage(formatDisplayCampaignProperty('max_budget_per_period').message),
             }}
             inputProps={{
@@ -189,6 +194,7 @@ class GeneralFormSection extends React.Component<Props, State> {
                 label: formatMessage(formatDisplayCampaignProperty('technical_name').message),
               }}
               inputProps={{
+                className: 'mcs-campaignDisplay_creationForm_campaign_technical_name',
                 placeholder: formatMessage(
                   messages.contentSectionGeneralAdvancedPartRow1Placeholder,
                 ),
