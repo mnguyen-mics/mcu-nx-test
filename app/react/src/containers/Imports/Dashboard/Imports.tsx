@@ -357,12 +357,14 @@ class Imports extends React.Component<JoinedProps, State> {
     const pagination = {
       current: filter.currentPage,
       pageSize: filter.pageSize,
-      onChange: (page: number) =>
+      onChange: (page: number, size: number) =>
         this.updateLocationSearch({
           currentPage: page,
+          pageSize: size,
         }),
       onShowSizeChange: (current: number, size: number) =>
         this.updateLocationSearch({
+          currentPage: 1,
           pageSize: size,
         }),
       total: this.state.importExecutions.total,

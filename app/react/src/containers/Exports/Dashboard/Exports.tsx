@@ -264,14 +264,15 @@ class Exports extends React.Component<JoinedProps, ExportsState> {
     const pagination = {
       current: filter.currentPage,
       pageSize: filter.pageSize,
-      onChange: (page: number) =>
+      onChange: (page: number, size: number) =>
         this.updateLocationSearch({
           currentPage: page,
+          pageSize: size,
         }),
       onShowSizeChange: (current: number, size: number) =>
         this.updateLocationSearch({
-          pageSize: size,
           currentPage: 1,
+          pageSize: size,
         }),
       total: exportExecutions.total,
     };
