@@ -81,7 +81,7 @@ class EditUserRoleForm extends React.Component<Props> {
     const renderedSections = sections.map((section, index) => {
       return (
         <div key={section.id}>
-          <div key={section.id} id={section.id}>
+          <div className={`mcs-editUserRoleForm_${section.id}`} key={section.id} id={section.id}>
             {section.component}
           </div>
           {index !== sections.length - 1 && <hr />}

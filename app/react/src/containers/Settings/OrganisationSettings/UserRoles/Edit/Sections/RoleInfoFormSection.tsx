@@ -50,6 +50,7 @@ class RoleFormSection extends React.Component<Props> {
             options={roleOptions}
             defaultValueTitle={'None'}
             formItemProps={{
+              className: 'mcs-roleInfoFormSection_selectField',
               label: formatMessage(messages.labelRoleTitle),
               required: true,
             }}

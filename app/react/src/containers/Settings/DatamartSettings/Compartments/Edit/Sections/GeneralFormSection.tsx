@@ -57,6 +57,7 @@ class GeneralFormSection extends React.Component<Props, State> {
             required: true,
           }}
           inputProps={{
+            className: 'mcs-compartments_nameField',
             placeholder: formatMessage(messages.sectionGeneralNamePlaceholder),
           }}
           helpToolTipProps={{
@@ -72,6 +73,7 @@ class GeneralFormSection extends React.Component<Props, State> {
             required: true,
           }}
           inputProps={{
+            className: 'mcs-compartments_tokenField',
             placeholder: formatMessage(messages.sectionGeneralTokenPlaceholder),
           }}
           helpToolTipProps={{
@@ -99,7 +101,11 @@ class GeneralFormSection extends React.Component<Props, State> {
                 title: formatMessage(messages.sectionGeneralDefaultTooltip),
               }}
             >
-              <FormSwitchField name='compartment.default' component={FormSwitch} />
+              <FormSwitchField
+                className='mcs-compartments_switchField'
+                name='compartment.default'
+                component={FormSwitch}
+              />
             </FormFieldWrapper>
           </div>
         </div>
