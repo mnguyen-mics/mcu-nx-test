@@ -57,3 +57,11 @@ export interface AudienceFeaturesByFolder {
   parent_id?: string;
   children: AudienceFeaturesByFolder[];
 }
+
+export interface NewAudienceFeaturesByFolder {
+  id: string;
+  name: string;
+  audience_features_ids?: string[];
+  parent_id?: string;
+  children: NewAudienceFeaturesByFolder[];
+}
