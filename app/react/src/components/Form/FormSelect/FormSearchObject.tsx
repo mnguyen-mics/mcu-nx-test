@@ -179,7 +179,7 @@ class FormSearchObject extends React.Component<Props, FormSearchObjectState> {
       const typedValue = getLatestTypedValue();
       const opts = this.state.data
         .filter(v => {
-          return v.key?.toLocaleLowerCase().startsWith(typedValue);
+          return v.key?.toLocaleLowerCase().startsWith(typedValue.toLocaleLowerCase());
         })
         .slice(0, 100);
       this.setState({ filteredData: opts });
