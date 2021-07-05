@@ -86,7 +86,13 @@ export class AuthService implements IAuthService {
   };
 
   tokenExpiresIn = (tokenExpirationDate: moment.MomentInput) => {
-    return moment(tokenExpirationDate).subtract('10', 'minutes').diff(moment(), 'ms');
+    // creation of expiration date which is randomly set between 9 and 11 minutes before API token (real) expiration date.
+    const randomExpirationDate = Math.floor(
+      Math.random() * (11 * 60 - 9 * 60 + 1) + 9 * 60,
+    ).toString();
+    return moment(tokenExpirationDate)
+      .subtract(randomExpirationDate, 'seconds')
+      .diff(moment(), 'ms');
   };
 
   isTokenExpired = (token: moment.MomentInput) => {
