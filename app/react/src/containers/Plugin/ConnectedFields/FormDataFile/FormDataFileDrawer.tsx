@@ -200,7 +200,7 @@ class FormDataFileDrawer extends React.Component<FormDataFileDrawerProps, FormDa
           <FormTitle title={messages.datafileDrawerUpload} />
         </div>
         <Upload {...uploadDetailProps}>
-          <Button>
+          <Button className='mcs-formDataFileDrawer--uploadFile'>
             <FormattedMessage {...messages.datafileDrawerUpload} />
           </Button>
         </Upload>
@@ -277,7 +277,11 @@ class FormDataFileDrawer extends React.Component<FormDataFileDrawerProps, FormDa
       <Layout>
         <div className='edit-layout ant-layout'>
           <Actionbar pathItems={['Add a Data File']} edition={true}>
-            <Button type='primary' className='mcs-primary' onClick={this.handleAdd}>
+            <Button
+              type='primary'
+              className='mcs-primary mcs-formDataFileDrawer_updateDataFileButton'
+              onClick={this.handleAdd}
+            >
               <McsIcon type='plus' />
               <span>Update</span>
             </Button>

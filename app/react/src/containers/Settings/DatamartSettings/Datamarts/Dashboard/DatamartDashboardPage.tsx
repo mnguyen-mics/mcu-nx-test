@@ -24,6 +24,7 @@ import SegmentBuildersTab from './SegmentBuildersTab';
 import AudienceFeatureListPage from '../../AudienceBuilder/List/AudienceFeatureListPage';
 
 interface McsTabsItem {
+  className?: string;
   title: string;
   display?: JSX.Element;
   forceRender?: boolean;
@@ -151,11 +152,13 @@ class DatamartDashboardPage extends React.Component<Props, State> {
 
     const items: McsTabsItem[] = [
       {
+        className: 'mcs-tabs_tab--configuration',
         title: intl.formatMessage(messages.datamartConfiguration),
         display: <DatamartConfigTab datamartId={datamartId} />,
         key: 'configuration',
       },
       {
+        className: 'mcs-tabs_tab--activity',
         title: intl.formatMessage(messages.datamartActivity),
         display: <DatamartActivity datamartId={datamartId} />,
         key: 'activity',
@@ -164,6 +167,7 @@ class DatamartDashboardPage extends React.Component<Props, State> {
 
     if (hasFeature('datamartSettings-datamart_replication')) {
       items.push({
+        className: 'mcs-tabs_tab--replications',
         title: intl.formatMessage(messages.datamartReplications),
         display: <DatamartReplicationTab />,
         key: 'replications',
@@ -176,6 +180,7 @@ class DatamartDashboardPage extends React.Component<Props, State> {
       datamart.storage_model_version !== 'v201506'
     ) {
       items.push({
+        className: 'mcs-tabs_tab--object-view-configuration',
         title: intl.formatMessage(messages.objectViewConfiguration),
         display: <DatamartObjectViewTab datamartId={datamartId} />,
         key: 'object_view_configuration',

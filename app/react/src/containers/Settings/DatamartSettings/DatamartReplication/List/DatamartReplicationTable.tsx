@@ -170,17 +170,21 @@ class DatamartReplicationTable extends React.Component<Props> {
 
     const actionColumns: Array<ActionsColumnDefinition<DatamartReplicationResourceShape>> = [
       {
+        className: 'mcs-datamartReplicationTable_dropDownMenu',
         key: 'action',
         actions: () => [
           {
+            className: 'mcs-datamartReplicationTable_dropDownMenu--edit',
             message: formatMessage(messages.editDatamartReplication),
             callback: this.onEditDatamartReplication,
           },
           {
+            className: 'mcs-datamartReplicationTable_dropDownMenu--delete',
             message: formatMessage(messages.deleteDatamartReplication),
             callback: this.onDeleteDatamartReplication,
           },
           {
+            className: 'mcs-datamartReplicationTable_dropDownMenu--seeReplicationProperties',
             message: formatMessage(messages.seeReplicationProperties),
             callback: this.handleModal,
           },
@@ -205,6 +209,7 @@ class DatamartReplicationTable extends React.Component<Props> {
       />
     ) : (
       <TableViewFilters
+        className='mcs-datamartReplicationTable'
         columns={dataColumns}
         actionsColumnsDefinition={actionColumns}
         searchOptions={searchOptions}
