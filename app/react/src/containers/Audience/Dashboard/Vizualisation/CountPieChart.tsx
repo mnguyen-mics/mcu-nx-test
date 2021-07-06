@@ -1,5 +1,6 @@
 import * as React from 'react';
 import cuid from 'cuid';
+import _ from 'lodash';
 import { OTQLCountResult, isCountResult } from '../../../../models/datamart/graphdb/OTQLResult';
 import injectThemeColors, {
   InjectedThemeColorsProps,
@@ -13,6 +14,7 @@ import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
+import { AudienceBuilderQueryDocument } from '../../../../models/audienceBuilder/AudienceBuilderResource';
 import { getFormattedQuery } from '../domain';
 import {
   DatasetProps,
@@ -26,12 +28,12 @@ import {
 
 export interface CountPieChartProps {
   title?: string;
-  segment?: AudienceSegmentShape;
   queryIds: string[];
   datamartId: string;
   height: number;
   labelsEnabled?: boolean;
   plotLabels: string[];
+  source?: AudienceSegmentShape | AudienceBuilderQueryDocument;
 }
 
 interface State {
@@ -57,25 +59,25 @@ class CountPieChart extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { segment, queryIds, datamartId } = this.props;
+    const { queryIds, datamartId, source } = this.props;
 
-    this.fetchData(queryIds, datamartId, segment);
+    this.fetchData(queryIds, datamartId, source);
   }
 
   componentDidUpdate(previousProps: CountPieChartProps) {
-    const { segment, queryIds, datamartId } = this.props;
+    const { queryIds, datamartId, source } = this.props;
     const {
-      segment: previousSegment,
       queryIds: previousChartQueryIds,
       datamartId: previousDatamartId,
+      source: previousSource,
     } = previousProps;
 
     if (
-      segment !== previousSegment ||
       queryIds !== previousChartQueryIds ||
-      datamartId !== previousDatamartId
+      datamartId !== previousDatamartId ||
+      !_.isEqual(source, previousSource)
     ) {
-      this.fetchData(queryIds, datamartId, segment);
+      this.fetchData(queryIds, datamartId, source);
     }
   }
 
@@ -104,11 +106,11 @@ class CountPieChart extends React.Component<Props, State> {
   fetchData = (
     chartQueryIds: string[],
     datamartId: string,
-    segment?: AudienceSegmentShape,
+    source?: AudienceSegmentShape | AudienceBuilderQueryDocument,
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
     const promises = chartQueryIds.map((chartQueryId, i) => {
-      return this.fetchQuery(chartQueryId, datamartId, i);
+      return this.fetchQuery(chartQueryId, datamartId, i, source);
     });
     return Promise.all(promises)
       .then(queryListResp => {
@@ -132,7 +134,7 @@ class CountPieChart extends React.Component<Props, State> {
     chartQueryId: string,
     datamartId: string,
     plotLabelIndex: number,
-    segment?: AudienceSegmentShape,
+    source?: AudienceSegmentShape | AudienceBuilderQueryDocument,
   ): Promise<DatasetProps[]> => {
     return this._queryService
       .getQuery(datamartId, chartQueryId)
@@ -140,7 +142,7 @@ class CountPieChart extends React.Component<Props, State> {
         return queryResp.data;
       })
       .then(q => {
-        return getFormattedQuery(datamartId, this._queryService, q, segment);
+        return getFormattedQuery(datamartId, this._queryService, q, source);
       })
       .then(q => {
         return this._queryService

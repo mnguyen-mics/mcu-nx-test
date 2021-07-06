@@ -170,6 +170,7 @@ export default class DashboardContent extends React.Component<Props, State> {
             plotLabels={comp.plot_labels}
             queryIds={comp.query_ids}
             title={comp.title}
+            source={source}
           />
         );
       case 'TOP_INFO_COMPONENT':
