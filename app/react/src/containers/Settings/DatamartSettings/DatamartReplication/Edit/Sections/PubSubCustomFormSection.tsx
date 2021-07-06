@@ -63,6 +63,7 @@ class PubSubCustomFormSection extends React.Component<Props> {
             required: true,
           }}
           inputProps={{
+            className: 'mcs-pubSubCustomFormSection_projectIdField',
             placeholder: formatMessage(messages.datamartReplicationPubSubProjectIdPlaceholder),
             disabled: !!datamartReplicationId,
           }}
@@ -79,6 +80,7 @@ class PubSubCustomFormSection extends React.Component<Props> {
             required: true,
           }}
           inputProps={{
+            className: 'mcs-pubSubCustomFormSection_topicIdField',
             placeholder: formatMessage(messages.datamartReplicationPubSubTopicIdPlaceHolder),
             disabled: !!datamartReplicationId,
           }}

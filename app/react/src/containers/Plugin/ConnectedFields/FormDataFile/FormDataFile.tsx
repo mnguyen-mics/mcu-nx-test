@@ -228,7 +228,11 @@ class FormDataFile extends React.Component<JoinedProps, FormDataFileState> {
         <Col span={24}>
           {!canEdit ? (
             <span>
-              <Button onClick={click} disabled={disabled}>
+              <Button
+                className='mcs-dataFileForm--selectDataFile'
+                onClick={click}
+                disabled={disabled}
+              >
                 <FormattedMessage {...messages.datafileFileSelect} />
               </Button>
             </span>

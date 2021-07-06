@@ -87,6 +87,7 @@ class DatamartReplicationJobListContainer extends React.Component<Props> {
           return this.props.createJobExecution(datamartId);
         };
         Modal.confirm({
+          className: 'mcs-modal--confirmDialog',
           icon: <ExclamationCircleOutlined />,
           title: formatMessage(messages.executionModalTitle),
           content: (

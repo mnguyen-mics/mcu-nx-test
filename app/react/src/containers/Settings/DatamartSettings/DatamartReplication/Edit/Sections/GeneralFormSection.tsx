@@ -36,6 +36,7 @@ class GeneralFormSection extends React.Component<Props> {
             required: true,
           }}
           inputProps={{
+            className: 'mcs-replications_nameField',
             placeholder: formatMessage(messages.datamartReplicationNamePlaceHolder),
           }}
           helpToolTipProps={{
