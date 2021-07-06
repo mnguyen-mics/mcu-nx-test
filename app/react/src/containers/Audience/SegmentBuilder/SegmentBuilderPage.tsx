@@ -24,6 +24,7 @@ import { UserProfileResource } from '../../../models/directory/UserProfileResour
 import { calculateDefaultTtl } from '../Segments/Edit/domain';
 import { injectFeatures, InjectedFeaturesProps } from '../../Features';
 import { ITagService } from '../../../services/TagService';
+import { ProcessingSelectionResource } from '../../../models/processing';
 
 export interface QueryBuilderPageRouteParams {
   organisationId: string;
@@ -97,7 +98,6 @@ class SegmentBuilderPage extends React.Component<Props> {
     const jsonQLActionbar = (query: QueryDocument, datamartId: string) => {
       const saveAsUserQuery = (segmentFormData: NewUserQuerySimpleFormData) => {
         const { name, technical_name, persisted } = segmentFormData;
-
         return this._queryService
           .createQuery(datamartId, {
             query_language: 'JSON_OTQL',
@@ -118,6 +118,26 @@ class SegmentBuilderPage extends React.Component<Props> {
               match.params.organisationId,
               userQuerySegment,
             );
+          })
+          .then(res => {
+            const savePromises = segmentFormData.processingActivities.map(
+              processingActivityField => {
+                const processingActivity = processingActivityField.model;
+                const processingSelectionResource: Partial<ProcessingSelectionResource> = {
+                  processing_id: processingActivity.id,
+                  processing_name: processingActivity.name,
+                };
+
+                return this._audienceSegmentService.createProcessingSelectionForAudienceSegment(
+                  res.data.id,
+                  processingSelectionResource,
+                );
+              },
+            );
+
+            return Promise.all(savePromises).then(_returnedProcessingActivities => {
+              return res;
+            });
           })
           .then(res => {
             this._tagService.sendEvent(

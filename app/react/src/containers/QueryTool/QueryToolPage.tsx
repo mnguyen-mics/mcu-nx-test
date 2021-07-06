@@ -20,6 +20,7 @@ import QueryToolSelector from '../QueryTool/QueryToolSelector';
 import { MicsReduxState } from '../../utils/ReduxHelper';
 import { Alert } from 'antd';
 import { ITagService } from '../../services/TagService';
+import { ProcessingSelectionResource } from '../../models/processing';
 
 export interface QueryToolPageRouteParams {
   organisationId: string;
@@ -109,14 +110,34 @@ class QueryToolPage extends React.Component<Props> {
               default_ttl: calculateDefaultTtl(segmentFormData),
               query_id: queryResource.id,
             };
-            return this._audienceSegmentService
-              .saveSegment(match.params.organisationId, userQuerySegment)
-              .then(res => {
-                this._tagService.sendEvent('create_segment', 'Query Tool', 'Save Segment');
-                history.push(
-                  `/v2/o/${match.params.organisationId}/audience/segments/${res.data.id}`,
+            return this._audienceSegmentService.saveSegment(
+              match.params.organisationId,
+              userQuerySegment,
+            );
+          })
+          .then(res => {
+            const savePromises = segmentFormData.processingActivities.map(
+              processingActivityField => {
+                const processingActivity = processingActivityField.model;
+                const processingSelectionResource: Partial<ProcessingSelectionResource> = {
+                  processing_id: processingActivity.id,
+                  processing_name: processingActivity.name,
+                };
+
+                return this._audienceSegmentService.createProcessingSelectionForAudienceSegment(
+                  res.data.id,
+                  processingSelectionResource,
                 );
-              });
+              },
+            );
+
+            return Promise.all(savePromises).then(_returnedProcessingActivities => {
+              return res;
+            });
+          })
+          .then(res => {
+            this._tagService.sendEvent('create_segment', 'Query Tool', 'Save Segment');
+            history.push(`/v2/o/${match.params.organisationId}/audience/segments/${res.data.id}`);
           });
       };
       const saveAsExport = (exportFormData: NewExportSimpleFormData) => {
