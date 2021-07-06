@@ -6,11 +6,9 @@ import { compose } from 'recompose';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/styles/hljs';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
-import { Activity, UserAgentIdentifierInfo } from '../../../../models/timeline/timeline';
-import { Card, Button } from '@mediarithmics-private/mcs-components-library';
+import { Activity } from '../../../../models/timeline/timeline';
+import { Card, Button, Device, Origin } from '@mediarithmics-private/mcs-components-library';
 import EventActivity from './EventActivity';
-import Device from './Device';
-import Origin from './Origin';
 import Location from './Location';
 import Topics from './Topics';
 import messages from '../messages';
@@ -24,6 +22,10 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IUserDataService } from '../../../../services/UserDataService';
 import { injectWorkspace, InjectedWorkspaceProps } from '../../../Datamart';
+import {
+  UserAgentIdentifierInfo,
+  UserAgentInfo,
+} from '@mediarithmics-private/mcs-components-library/lib/models/timeline/timeline';
 
 const needToDisplayDurationFor = ['SITE_VISIT', 'APP_VISIT'];
 enum scenarioActivityTypes {
@@ -181,9 +183,25 @@ class ActivityCard extends React.Component<Props, State> {
     return `${secs} ${formatMessage(messages.seconds)}`;
   };
 
+  getDevice(userAgentInfo: UserAgentInfo) {
+    return {
+      brand: userAgentInfo.brand ? userAgentInfo.brand : undefined,
+      browser_family: userAgentInfo.browser_family,
+      browser_version: userAgentInfo.browser_version ? userAgentInfo.browser_version : undefined,
+      carrier: userAgentInfo.carrier ? userAgentInfo.carrier : undefined,
+      form_factor: userAgentInfo.form_factor,
+      model: userAgentInfo.model ? userAgentInfo.model : undefined,
+      os_family: userAgentInfo.os_family,
+      os_version: userAgentInfo.os_version ? userAgentInfo.os_version : undefined,
+      raw_value: userAgentInfo.raw_value ? userAgentInfo.raw_value : undefined,
+    };
+  }
+
   generateCardContent(activity: Activity) {
+    const { intl } = this.props;
+
     const agent = this.getAgentInfoFromAgentId(activity.$user_agent_id);
-    const device = agent && agent.device ? agent.device : undefined;
+    const device = agent && agent.device ? this.getDevice(agent.device) : undefined;
     const longitude =
       activity && activity.$location && activity.$location.$latlon
         ? parseInt(activity.$location.$latlon[1], 10)
@@ -195,7 +213,11 @@ class ActivityCard extends React.Component<Props, State> {
     return (
       <Row style={{ display: 'block' }}>
         <Device vectorId={activity.$user_agent_id} device={device} />
-        <Origin origin={activity.$origin} />
+        <Origin
+          title={intl.formatMessage(messages.origin)}
+          noOriginText={intl.formatMessage(messages.direct)}
+          origin={activity.$origin}
+        />
         <Location longitude={longitude} latitude={latitude} />
         <Topics topics={activity.$topics} />
         <div>

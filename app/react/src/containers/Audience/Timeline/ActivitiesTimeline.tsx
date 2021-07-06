@@ -6,11 +6,7 @@ import moment from 'moment';
 import cuid from 'cuid';
 import { compose } from 'recompose';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
-import {
-  Activity,
-  isUserAgentIdentifier,
-  UserAgentIdentifierInfo,
-} from '../../../models/timeline/timeline';
+import { Activity, isUserAgentIdentifier } from '../../../models/timeline/timeline';
 import { Identifier } from './Monitoring';
 import messages from './messages';
 import { RouteComponentProps, withRouter } from 'react-router';
@@ -26,6 +22,7 @@ import { TYPES } from '../../../constants/types';
 import { IUserDataService } from '../../../services/UserDataService';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
+import { UserAgentIdentifierInfo } from '@mediarithmics-private/mcs-components-library/lib/models/timeline/timeline';
 
 export interface Activities {
   isLoading: boolean;

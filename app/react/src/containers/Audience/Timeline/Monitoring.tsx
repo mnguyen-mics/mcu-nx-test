@@ -9,7 +9,6 @@ import MonitoringActionbar from './MonitoringActionBar';
 import ProfileCard from './SingleView/ProfileCard';
 import SegmentsCard from './SingleView/SegmentsCard';
 import AccountIdCard from './SingleView/AccountIdCard';
-import DeviceCard from './SingleView/DeviceCard';
 import EmailCard from './SingleView/EmailCard';
 import UserChoicesCard from './SingleView/UserChoicesCard';
 import TimelineHeader from './TimelineHeader';
@@ -23,7 +22,7 @@ import { TYPES } from '../../../constants/types';
 import { IMonitoringService } from './MonitoringService';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
 import { Loading } from '../../../components';
-import { EmptyTableView } from '@mediarithmics-private/mcs-components-library';
+import { EmptyTableView, DeviceCard } from '@mediarithmics-private/mcs-components-library';
 
 const { Content } = Layout;
 
@@ -255,7 +254,11 @@ class Monitoring extends React.Component<Props, State> {
                         userAccountsByCompartmentId={monitoringData.userAccountsByCompartmentId}
                         isLoading={isLoading}
                       />
-                      <DeviceCard dataSource={monitoringData.userAgentList} isLoading={isLoading} />
+                      <DeviceCard
+                        messages={messages}
+                        dataSource={monitoringData.userAgentList}
+                        isLoading={isLoading}
+                      />
                       <EmailCard dataSource={monitoringData.userEmailList} isLoading={isLoading} />
                       <UserChoicesCard
                         dataSource={monitoringData.userChoices}
