@@ -94,10 +94,6 @@ class AudienceFeatureVariable extends React.Component<Props> {
     this.state = {};
   }
 
-  private formatLabel = (label: string): string => {
-    return label + ':';
-  };
-
   // The singleStringValue will make FormSearchObjectField component handle only one string value
   // The matchValue will make FormSearchObjectField component handle multiple values grouped in one string
   // (example: "val1 val2 val3" see 'JSONOTQL data_type=text' specs for details)
@@ -373,7 +369,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
               name={name}
               component={DefaultSelect}
               formItemProps={{
-                label: this.formatLabel(variable.parameter_name),
+                label: variable.parameter_name,
                 ...fieldGridConfig,
               }}
               disabled={!!disabled}
@@ -399,7 +395,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
               component={FormInputNumber}
               validate={[isValidInteger]}
               formItemProps={{
-                label: this.formatLabel(variable.parameter_name),
+                label: variable.parameter_name,
                 ...fieldGridConfig,
               }}
               inputNumberProps={{
@@ -418,7 +414,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
               component={FormInputNumber}
               validate={[isValidFloat]}
               formItemProps={{
-                label: this.formatLabel(variable.parameter_name),
+                label: variable.parameter_name,
                 ...fieldGridConfig,
               }}
               inputNumberProps={{
@@ -443,7 +439,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
               name={name}
               component={FormRelativeAbsoluteDate}
               formItemProps={{
-                label: this.formatLabel(variable.parameter_name),
+                label: variable.parameter_name,
                 ...fieldGridConfig,
               }}
               unixTimstamp={true}
@@ -474,7 +470,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
                 disabled: !!disabled,
               }}
               formItemProps={{
-                label: this.formatLabel(variable.parameter_name),
+                label: variable.parameter_name,
                 ...fieldGridConfig,
               }}
             />
