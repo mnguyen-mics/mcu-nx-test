@@ -424,6 +424,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
           );
 
         case 'String':
+        case 'ID':
           return this.renderSelectField(true, false);
         case 'Timestamp':
         case 'Date':

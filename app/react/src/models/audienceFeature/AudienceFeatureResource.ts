@@ -4,6 +4,7 @@ export type AudienceFeatureType =
   | 'Enum'
   | 'Boolean'
   | 'String'
+  | 'ID'
   | 'Date'
   | 'Timestamp'
   | AdditionalAudienceFeatureType
