@@ -38,6 +38,9 @@ class SaveAsUserQuerySegmentModal extends React.Component<Props> {
         {...modalProps}
         visible={visible}
         onOk={handleOnOk}
+        okButtonProps={{
+          className: 'mcs-saveAsUserQuerySegmentModal_ok_button',
+        }}
         title={
           <FormattedMessage
             id='queryTool.queryTool.query-tool-modal-saveas-export'
