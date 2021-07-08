@@ -20,7 +20,7 @@ import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import Highcharts from 'highcharts';
 import { BASE_CHART_HEIGHT } from '../../../components/Charts/domain';
 import { Option } from 'antd/lib/mentions';
-import { Dataset } from '@mediarithmics-private/mcs-components-library/lib/components/charts/double-stacked-area-chart/DoubleStackedAreaChart';
+import { Dataset } from '@mediarithmics-private/mcs-components-library/lib/components/charts/stacked-bar-chart/StackedBarChart';
 
 interface BucketPath {
   aggregationBucket: OTQLBuckets;
@@ -91,6 +91,20 @@ class AggregationRenderer extends React.Component<Props, State> {
     });
   };
 
+  formatDataset(buckets: OTQLBucket[]): Dataset | undefined {
+    if (!buckets || buckets.length === 0) return undefined;
+    else {
+      const dataset: any = buckets.map(buck => {
+        return {
+          key: buck.key,
+          count: buck.count,
+          buckets: this.formatDataset(buck.aggregations?.buckets[0].buckets || []),
+        };
+      });
+      return dataset;
+    }
+  }
+
   getBuckets = (buckets: OTQLBuckets) => {
     const { hasFeature } = this.props;
     const { numberItems, selectedChart } = this.state;
@@ -143,9 +157,7 @@ class AggregationRenderer extends React.Component<Props, State> {
         else this.setState({ numberItems: parseInt(e.target.value, 10) });
       };
       const currentBuckets = buckets.buckets.slice(0, numberItems);
-      const stackedBarChartDataset: Dataset = currentBuckets.map(bucket => {
-        return { key: bucket.key, count: bucket.count };
-      });
+      const stackedBarChartDataset: Dataset = this.formatDataset(currentBuckets) as Dataset;
       const xAxis = currentBuckets.map(bucket => bucket.key);
       const values = currentBuckets.map(bucket => bucket.count);
 
@@ -291,6 +303,7 @@ class AggregationRenderer extends React.Component<Props, State> {
                 {selectedChart === 'BAR' && (
                   <StackedBarChart
                     dataset={stackedBarChartDataset}
+                    enableDrilldown={true}
                     options={optionsForBarChart}
                     reducePadding={true}
                   />
