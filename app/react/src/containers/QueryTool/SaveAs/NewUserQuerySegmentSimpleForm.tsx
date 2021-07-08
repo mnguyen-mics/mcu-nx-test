@@ -117,6 +117,7 @@ class NewUserQuerySegmentSimleForm extends React.Component<
               required: true,
             }}
             inputProps={{
+              className: 'mcs-newUserQuerySegmentSimpleForm_name_input',
               placeholder: intl.formatMessage(messages.segmentNamePlaceHolder),
             }}
             helpToolTipProps={{

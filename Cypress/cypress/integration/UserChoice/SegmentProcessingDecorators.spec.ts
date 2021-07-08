@@ -271,5 +271,50 @@ describe('User Processing on segments tests', () => {
       );
     });
   });
-  // TODO add test for scenario segments
+
+  it('should test the processing decorators through advanced segment builder', () => {
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      cy.goToHome(data.organisationId);
+      cy.request({
+        url: `${Cypress.env('apiDomain')}/v1/processings`,
+        method: 'POST',
+        headers: { Authorization: data.accessToken },
+        body: {
+          community_id: data.organisationId,
+          legal_basis: 'CONSENT',
+          name: 'test_segment_builder_user_query',
+          purpose: 'test_segment_builder_user_query',
+        },
+      }).then(() => {
+        cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
+        cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.builder').click();
+        cy.get('.mcs-advancedSegmentBuilder').click();
+        cy.get('.mcs-saveQueryAsActionBar_button').click();
+        cy.get('.mcs-saveQueryAsActionBar_menu_userQuery').click();
+        cy.get('.mcs-newUserQuerySegmentSimpleForm_name_input').type('test');
+        cy.get('.mcs-processingActivitiesFormSection_modalSearchBar').click();
+        cy.contains('test_segment_builder_user_query').click();
+        cy.get('.mcs-saveAsUserQuerySegmentModal_ok_button').click();
+        cy.url().should('match', /.*segments\/[0-9]+/);
+        cy.url().then(url => {
+          const segmentId: number = parseInt(
+            url.substring(url.indexOf('segments') + 9, url.length),
+            10,
+          );
+          // Wait for the backend update
+          cy.wait(5000);
+          // Check that it's been deleted
+          cy.request({
+            url: `${Cypress.env(
+              'apiDomain',
+            )}/v1/audience_segments/${segmentId}/processing_selections`,
+            method: 'GET',
+            headers: { Authorization: data.accessToken },
+          }).then(responseSegment => {
+            expect(responseSegment.body.data.length).to.eq(1);
+          });
+        });
+      });
+    });
+  });
 });
