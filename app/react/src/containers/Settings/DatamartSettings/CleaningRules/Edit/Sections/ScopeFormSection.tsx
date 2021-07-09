@@ -93,17 +93,39 @@ class ScopeFormSection extends React.Component<Props, State> {
           }}
           selectProps={{
             onSelect: this.onActivityTypeFilterChange,
+            className: 'mcs-scopeFormSection_activityTypeFilter_select',
           }}
           options={[
             {
               value: '',
               title: formatMessage(messages.sectionScopeActivityTypeAllTypes),
+              className: 'mcs-scopeFormSection_activityTypeFilter_option--DEFAULT',
             },
-            { value: 'SITE_VISIT', title: 'SITE_VISIT' },
-            { value: 'APP_VISIT', title: 'APP_VISIT' },
-            { value: 'TOUCH', title: 'TOUCH' },
-            { value: 'DISPLAY_AD', title: 'DISPLAY_AD' },
-            { value: 'EMAIL', title: 'EMAIL' },
+            {
+              value: 'SITE_VISIT',
+              title: 'SITE_VISIT',
+              className: 'mcs-scopeFormSection_activityTypeFilter_option--SITE_VISIT',
+            },
+            {
+              value: 'APP_VISIT',
+              title: 'APP_VISIT',
+              className: 'mcs-scopeFormSection_activityTypeFilter_option--APP_VISIT',
+            },
+            {
+              value: 'TOUCH',
+              title: 'TOUCH',
+              className: 'mcs-scopeFormSection_activityTypeFilter_option--TOUCH',
+            },
+            {
+              value: 'DISPLAY_AD',
+              title: 'DISPLAY_AD',
+              className: 'mcs-scopeFormSection_activityTypeFilter_option--DISPLAY_AD',
+            },
+            {
+              value: 'EMAIL',
+              title: 'EMAIL',
+              className: 'mcs-scopeFormSection_activityTypeFilter_option--EMAIL',
+            },
           ]}
           helpToolTipProps={{
             title: formatMessage(messages.sectionScopeActivityTypeHelper),
@@ -117,6 +139,9 @@ class ScopeFormSection extends React.Component<Props, State> {
               label: formatMessage(messages.sectionScopeChannelLabel),
               required: false,
             }}
+            selectProps={{
+              className: 'mcs-scopeFormSection_channelFilter_select',
+            }}
             options={options}
             helpToolTipProps={{
               title: formatMessage(messages.sectionScopeChannelHelper),
@@ -126,6 +151,9 @@ class ScopeFormSection extends React.Component<Props, State> {
         <FormInputField
           name='eventNameFilter'
           component={FormInput}
+          inputProps={{
+            className: 'mcs-scopeFormSection_eventNameFilter_input',
+          }}
           formItemProps={{
             label: formatMessage(messages.sectionScopeEventNameLabel),
             required: false,

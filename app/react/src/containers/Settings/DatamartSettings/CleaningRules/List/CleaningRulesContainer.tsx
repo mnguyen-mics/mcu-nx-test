@@ -149,6 +149,7 @@ class CleaningRulesContainer extends React.Component<Props, State> {
       title: formatMessage(messages.deleteCleaningRuleModalTitle),
       okText: formatMessage(messages.deleteCleaningRuleModalOk),
       cancelText: formatMessage(messages.deleteCleaningRuleModalCancel),
+      okButtonProps: { className: 'mcs-cleaningRulesContainer_confirm_delete' },
       onOk: () => {
         this._datamartService
           .deleteCleaningRule(cleaningRule.datamart_id, cleaningRule.id)
@@ -175,7 +176,11 @@ class CleaningRulesContainer extends React.Component<Props, State> {
 
     return (
       <Link key={messages.newCleaningRule.id} to={url}>
-        <Button key={messages.newCleaningRule.id} type='primary'>
+        <Button
+          key={messages.newCleaningRule.id}
+          className='mcs-cleaningRules_creation_button'
+          type='primary'
+        >
           <FormattedMessage {...messages.newCleaningRule} />
         </Button>
       </Link>
@@ -196,6 +201,7 @@ class CleaningRulesContainer extends React.Component<Props, State> {
       title: formatMessage(messages.updateStatusModalTitle),
       content: contentText,
       okText: formatMessage(messages.updateStatusModalConfirm),
+      okButtonProps: { className: 'mcs-cleaningRulesContainer_status_confirm_modal' },
       cancelText: formatMessage(messages.updateCleaningRuleModalCancel),
       onOk: () => {
         this.setState({ isLoading: true });
@@ -375,11 +381,13 @@ class CleaningRulesContainer extends React.Component<Props, State> {
             message: formatMessage(messages.editCleaningRule),
             disabled: record.status !== 'DRAFT',
             callback: this.onEditCleaningRule,
+            className: 'mcs-cleaningRulesActions_EDIT',
           },
           {
             message: formatMessage(messages.deleteCleaningRule),
             disabled: record.status !== 'DRAFT',
             callback: this.onDeleteCleaningRule,
+            className: 'mcs-cleaningRulesActions_DELETE',
           },
         ],
       },
@@ -423,6 +431,7 @@ class CleaningRulesContainer extends React.Component<Props, State> {
                   loading={isFetchingCleaningRules}
                   pagination={pagination}
                   filtersOptions={filtersOptions}
+                  className='mcs-cleaningRules_table'
                 />
               </div>
             </Row>
@@ -473,7 +482,10 @@ class CleaningRulesContainer extends React.Component<Props, State> {
       const buttonText = this.getButtonText(record.status);
       const displayModal = () => this.renderModal(record);
       return (
-        <McsButton className='update-cleaning-rule-status' onClick={displayModal}>
+        <McsButton
+          className='update-cleaning-rule-status mcs-cleaningRulesContainer_update_status'
+          onClick={displayModal}
+        >
           {buttonText}
         </McsButton>
       );
