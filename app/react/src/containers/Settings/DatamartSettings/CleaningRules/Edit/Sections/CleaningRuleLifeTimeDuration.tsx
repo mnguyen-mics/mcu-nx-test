@@ -39,7 +39,11 @@ class CleaningRuleLifeTimeDuration extends React.Component<Props> {
     const { optionsAndSeparators } = this.props;
 
     return optionsAndSeparators.map(optionAndSeparator => (
-      <Select.Option key={optionAndSeparator.value} value={optionAndSeparator.value}>
+      <Select.Option
+        key={optionAndSeparator.value}
+        value={optionAndSeparator.value}
+        className={`mcs-cleaningRuleLifeTime_select_action_${optionAndSeparator.label}`}
+      >
         {optionAndSeparator.label}
       </Select.Option>
     ));
@@ -79,15 +83,24 @@ class CleaningRuleLifeTimeDuration extends React.Component<Props> {
       >
         <Row>
           <Col span={6}>
-            <Select value={input.value.selectedValue} onChange={this.updateSelect} {...selectProps}>
+            <Select
+              value={input.value.selectedValue}
+              onChange={this.updateSelect}
+              {...selectProps}
+              className='mcs-cleaningRuleLifeTime_select'
+            >
               {options}
             </Select>
           </Col>
-          <Col span={3} className={'text-center'}>
+          <Col span={3} className={'text-center mcs-cleaningRules_seperator'}>
             {separator}
           </Col>
           <Col span={5}>
-            <InputNumber value={input.value.periodNumber} onChange={this.updatePeriodNumber} />
+            <InputNumber
+              value={input.value.periodNumber}
+              onChange={this.updatePeriodNumber}
+              className='mcs-cleaningRuleLifeTime_input'
+            />
           </Col>
           <Col span={3}>{intl.formatMessage(messages.cleaningRuleLifeDurationDays)}</Col>
         </Row>
