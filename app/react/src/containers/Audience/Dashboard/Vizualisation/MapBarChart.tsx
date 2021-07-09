@@ -2,10 +2,10 @@ import * as React from 'react';
 import _ from 'lodash';
 import cuid from 'cuid';
 import {
-  OTQLAggregationResult,
   isAggregateResult,
   isCountResult,
   OTQLResult,
+  OTQLBucket,
 } from '../../../../models/datamart/graphdb/OTQLResult';
 import injectThemeColors, { InjectedThemeColorsProps } from '../../../Helpers/injectThemeColors';
 import { compose } from 'recompose';
@@ -25,6 +25,7 @@ import {
   StackedBarChart,
 } from '@mediarithmics-private/mcs-components-library';
 import { AudienceBuilderQueryDocument } from '../../../../models/audienceBuilder/AudienceBuilderResource';
+import { Dataset } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 
 export interface MapBarChartProps {
   title?: string;
@@ -42,13 +43,8 @@ export interface MapBarChartProps {
   tooltip?: TooltipChart;
 }
 
-interface QueryResult {
-  xKey: number | string;
-  [key: string]: number | string;
-}
-
 interface State {
-  queryResult?: QueryResult[];
+  queryResult?: Dataset;
   colors: string[];
   error: boolean;
   loading: boolean;
@@ -118,36 +114,37 @@ class MapBarChart extends React.Component<Props, State> {
 
   public formatOtqlQueryResult = (r: OTQLResult) => {
     if (r && isAggregateResult(r.rows) && !isCountResult(r.rows)) {
+      const queryResult = this.formatDataset(
+        r.rows[0]?.aggregations.buckets[0].buckets || [],
+        BASE_YKEY,
+      );
       return this.setState({
-        queryResult: this.formatData(r.rows, BASE_YKEY),
+        queryResult: queryResult,
         loading: false,
       });
     }
     return this.setState({ error: true, loading: false });
   };
 
-  formatData = (queryResult: OTQLAggregationResult[], key: string): QueryResult[] => {
+  formatDataset(buckets: OTQLBucket[], key: string): Dataset | undefined {
     const { percentage } = this.props;
-    if (
-      queryResult.length &&
-      queryResult[0].aggregations.buckets.length &&
-      queryResult[0].aggregations.buckets[0].buckets.length
-    ) {
-      const total = percentage
-        ? queryResult[0].aggregations.buckets[0].buckets.reduce((acc, data) => {
-            return acc + data.count;
-          }, 0)
-        : undefined;
-      return queryResult[0].aggregations.buckets[0].buckets.map((data, i) => ({
-        [`${key}-count`]: data.count,
-        [key]: total ? Math.round((data.count / total) * 10000) / 100 : data.count,
-        xKey: data.key,
-      }));
-    }
-    return [];
-  };
 
-  mergeData = (d0: QueryResult[], yKey0: string, d1: QueryResult[], yKey1: string) => {
+    if (!buckets || buckets.length === 0) return undefined;
+    else {
+      const total = percentage ? buckets.reduce((acc, b) => acc + b.count, 0) : undefined;
+      const dataset: any = buckets.map(buck => {
+        return {
+          [`${key}-count`]: buck.count,
+          [key]: total ? Math.round((buck.count / total) * 10000) / 100 : buck.count,
+          buckets: this.formatDataset(buck.aggregations?.buckets[0]?.buckets || [], key),
+          xKey: buck.key,
+        };
+      });
+      return dataset;
+    }
+  }
+
+  mergeData = (d0: Dataset, yKey0: string, d1: Dataset, yKey1: string) => {
     // filter and unique the keys;
     const xKeys = d0
       .map(d => d.xKey)
@@ -220,7 +217,11 @@ class MapBarChart extends React.Component<Props, State> {
           .then(([r0, r1]) => {
             if (r0 && !r1 && isAggregateResult(r0.rows) && !isCountResult(r0.rows)) {
               this.setState({
-                queryResult: this.formatData(r0.rows, BASE_YKEY),
+                queryResult:
+                  this.formatDataset(
+                    r0.rows[0]?.aggregations?.buckets[0]?.buckets || [],
+                    BASE_YKEY,
+                  ) || [],
                 loading: false,
               });
               return Promise.resolve();
@@ -235,9 +236,15 @@ class MapBarChart extends React.Component<Props, State> {
             ) {
               this.setState({
                 queryResult: this.mergeData(
-                  this.formatData(r0.rows, BASE_YKEY),
+                  this.formatDataset(
+                    r0.rows[0]?.aggregations?.buckets[0]?.buckets || [],
+                    BASE_YKEY,
+                  ) || [],
                   BASE_YKEY,
-                  this.formatData(r1.rows, COMPARED_YKEY),
+                  this.formatDataset(
+                    r1.rows[0]?.aggregations?.buckets[0]?.buckets || [],
+                    COMPARED_YKEY,
+                  ) || [],
                   COMPARED_YKEY,
                 ),
                 loading: false,
@@ -295,6 +302,7 @@ class MapBarChart extends React.Component<Props, State> {
             <StackedBarChart
               dataset={this.state.queryResult as any}
               options={optionsForChart}
+              enableDrilldown={true}
               height={height}
             />
           )

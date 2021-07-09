@@ -20,7 +20,7 @@ import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import Highcharts from 'highcharts';
 import { BASE_CHART_HEIGHT } from '../../../components/Charts/domain';
 import { Option } from 'antd/lib/mentions';
-import { Dataset } from '@mediarithmics-private/mcs-components-library/lib/components/charts/stacked-bar-chart/StackedBarChart';
+import { Dataset } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 
 interface BucketPath {
   aggregationBucket: OTQLBuckets;

@@ -2,10 +2,10 @@ import * as React from 'react';
 import cuid from 'cuid';
 import _ from 'lodash';
 import {
-  OTQLAggregationResult,
   isAggregateResult,
   isCountResult,
   OTQLResult,
+  OTQLBucket,
 } from '../../../../models/datamart/graphdb/OTQLResult';
 import injectThemeColors, { InjectedThemeColorsProps } from '../../../Helpers/injectThemeColors';
 import { compose } from 'recompose';
@@ -22,7 +22,7 @@ import {
   EmptyChart,
   LoadingChart,
 } from '@mediarithmics-private/mcs-components-library';
-import { DatasetProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/donut-chart/DonutChart';
+import { Dataset } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 import { AudienceBuilderQueryDocument } from '../../../../models/audienceBuilder/AudienceBuilderResource';
 
 export interface MapPieChartProps {
@@ -37,8 +37,7 @@ export interface MapPieChartProps {
 }
 
 interface State {
-  queryResult?: DatasetProps[];
-  colors: string[];
+  queryResult?: Dataset;
   error: boolean;
   loading: boolean;
 }
@@ -53,19 +52,9 @@ class MapPieChart extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    const { colors } = props;
-    const usedColors: string[] = [
-      colors['mcs-warning'],
-      colors['mcs-info'],
-      colors['mcs-highlight'],
-      colors['mcs-success'],
-      colors['mcs-primary'],
-      colors['mcs-error'],
-    ];
     this.state = {
       error: false,
       loading: true,
-      colors: usedColors,
     };
   }
 
@@ -104,34 +93,26 @@ class MapPieChart extends React.Component<Props, State> {
   public formatOtqlQueryResult = (r: OTQLResult) => {
     if (r && isAggregateResult(r.rows) && !isCountResult(r.rows)) {
       return this.setState({
-        queryResult: this.formatData(r.rows),
+        queryResult: this.formatDataset(r.rows[0]?.aggregations?.buckets[0]?.buckets || []),
         loading: false,
       });
     }
     return this.setState({ error: true, loading: false });
   };
 
-  formatData = (queryResult: OTQLAggregationResult[]): DatasetProps[] => {
-    const generateColorIndex = (currentIndex: number) => {
-      const { colors } = this.state;
-      if (currentIndex < colors.length) {
-        return currentIndex;
-      } else {
-        const times = Math.floor(currentIndex / colors.length);
-        return currentIndex - times * colors.length;
-      }
-    };
-
-    return queryResult.length &&
-      queryResult[0].aggregations.buckets.length &&
-      queryResult[0].aggregations.buckets[0].buckets.length
-      ? queryResult[0].aggregations.buckets[0].buckets.map((data, i) => ({
-          key: data.key,
-          value: data.count,
-          color: this.state.colors[generateColorIndex(i)],
-        }))
-      : [];
-  };
+  formatDataset(buckets: OTQLBucket[]): Dataset | undefined {
+    if (!buckets || buckets.length === 0) return undefined;
+    else {
+      const dataset: any = buckets.map(buck => {
+        return {
+          key: buck.key as string,
+          value: buck.count as number,
+          buckets: this.formatDataset(buck.aggregations?.buckets[0]?.buckets || []),
+        };
+      });
+      return dataset;
+    }
+  }
 
   fetchData = (
     chartQueryId: string,
@@ -161,7 +142,7 @@ class MapPieChart extends React.Component<Props, State> {
           .then(r => {
             if (isAggregateResult(r.rows) && !isCountResult(r.rows)) {
               this.setState({
-                queryResult: this.formatData(r.rows),
+                queryResult: this.formatDataset(r.rows[0]?.aggregations?.buckets[0]?.buckets || []),
                 loading: false,
               });
               return Promise.resolve();
@@ -179,6 +160,16 @@ class MapPieChart extends React.Component<Props, State> {
   };
 
   generateOptions = () => {
+    const { colors } = this.props;
+    const usedColors: string[] = [
+      colors['mcs-warning'],
+      colors['mcs-info'],
+      colors['mcs-highlight'],
+      colors['mcs-success'],
+      colors['mcs-primary'],
+      colors['mcs-error'],
+    ];
+
     const options = {
       innerRadius: true,
       isHalf: false,
@@ -186,7 +177,7 @@ class MapPieChart extends React.Component<Props, State> {
         text: '',
         value: '',
       },
-      colors: this.state.colors,
+      colors: usedColors,
       showTooltip: true,
       height: 300,
       showLabels: this.props.labelsEnabled,
@@ -211,7 +202,12 @@ class MapPieChart extends React.Component<Props, State> {
         return <EmptyChart title={intl.formatMessage(messages.noData)} icon='warning' />;
       } else {
         return (
-          <DonutChart dataset={this.state.queryResult} options={pieChartsOptions} height={height} />
+          <DonutChart
+            dataset={this.state.queryResult}
+            enableDrilldown={true}
+            options={pieChartsOptions}
+            height={height}
+          />
         );
       }
     };
