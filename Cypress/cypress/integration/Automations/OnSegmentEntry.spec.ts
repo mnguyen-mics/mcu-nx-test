@@ -49,7 +49,7 @@ describe('OnSegmentEntry test', () => {
 
       // Open the drawer
       cy.get('.mcs-automationNodeWidget_StartAutomation').parent().click();
-      cy.get('.mcs-automationNodeWidget_booleanMenu_item_onSegmentInputEdit').click();
+      cy.get('.mcs-automationNodeWidget_booleanMenu--edit').click();
 
       // Check if the segment name in input is the one we had select on creation
       cy.get('.mcs-formSearchInput').should('contain', userQuery.name);

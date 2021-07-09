@@ -343,14 +343,22 @@ class AutomationNodeWidget extends React.Component<Props, State> {
 
     if (!viewer) {
       content.push(
-        <div key='edit' onClick={this.editNode} className='boolean-menu-item'>
+        <div
+          key='edit'
+          onClick={this.editNode}
+          className='boolean-menu-item mcs-automationNodeWidget_booleanMenu--edit'
+        >
           <FormattedMessage {...messages.edit} />
         </div>,
       );
 
       if (!node.isFirstNode) {
         content.push(
-          <div key='remove' onClick={this.removeNode} className='boolean-menu-item'>
+          <div
+            key='remove'
+            onClick={this.removeNode}
+            className='boolean-menu-item mcs-automationNodeWidget_booleanMenu--remove'
+          >
             <FormattedMessage {...messages.remove} />
           </div>,
         );
@@ -374,14 +382,22 @@ class AutomationNodeWidget extends React.Component<Props, State> {
 
     if (!viewer) {
       content.push(
-        <div key='edit' onClick={this.editNode} className='boolean-menu-item'>
+        <div
+          key='edit'
+          onClick={this.editNode}
+          className='boolean-menu-item mcs-automationNodeWidget_booleanMenu--edit'
+        >
           <FormattedMessage {...messages.edit} />
         </div>,
       );
 
       if (!node.isFirstNode) {
         content.push(
-          <div key='remove' onClick={this.removeNode} className='boolean-menu-item'>
+          <div
+            key='remove'
+            onClick={this.removeNode}
+            className='boolean-menu-item mcs-automationNodeWidget_booleanMenu--remove'
+          >
             <FormattedMessage {...messages.remove} />
           </div>,
         );
@@ -397,13 +413,21 @@ class AutomationNodeWidget extends React.Component<Props, State> {
           );
       };
       content.push(
-        <div key='stats' onClick={gotToSegment} className='boolean-menu-item'>
+        <div
+          key='stats'
+          onClick={gotToSegment}
+          className='boolean-menu-item mcs-automationNodeWidget_booleanMenu--view-stats'
+        >
           <FormattedMessage {...messages.goToSegment} />
         </div>,
       );
 
       content.push(
-        <div key='view' onClick={this.editNode} className='boolean-menu-item'>
+        <div
+          key='view'
+          onClick={this.editNode}
+          className='boolean-menu-item mcs-automationNodeWidget_booleanMenu--view-node-config'
+        >
           <FormattedMessage {...messages.view} />
         </div>,
       );
@@ -429,7 +453,7 @@ class AutomationNodeWidget extends React.Component<Props, State> {
         <div
           key='edit'
           onClick={this.editNode}
-          className='boolean-menu-item mcs-automationNodeWidget_booleanMenu_item_onSegmentInputEdit'
+          className='boolean-menu-item mcs-automationNodeWidget_booleanMenu--edit'
         >
           <FormattedMessage {...messages.edit} />
         </div>,
@@ -437,7 +461,11 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     } else {
       if (hasFeature('automations-analytics')) {
         content.push(
-          <div key='stats' onClick={this.viewStats} className='boolean-menu-item'>
+          <div
+            key='stats'
+            onClick={this.viewStats}
+            className='boolean-menu-item mcs-automationNodeWidget_booleanMenu--view-stats'
+          >
             <FormattedMessage {...messages.stats} />
           </div>,
         );
@@ -453,12 +481,20 @@ class AutomationNodeWidget extends React.Component<Props, State> {
           );
       };
       content.push(
-        <div key='segment' onClick={gotToSegment} className='boolean-menu-item'>
+        <div
+          key='segment'
+          onClick={gotToSegment}
+          className='boolean-menu-item mcs-automationNodeWidget_booleanMenu--got-to-segment'
+        >
           <FormattedMessage {...messages.goToSegment} />
         </div>,
       );
       content.push(
-        <div key='view' onClick={this.editNode} className='boolean-menu-item'>
+        <div
+          key='view'
+          onClick={this.editNode}
+          className='boolean-menu-item mcs-automationNodeWidget_booleanMenu--view-node-config'
+        >
           <FormattedMessage {...messages.view} />
         </div>,
       );
@@ -473,27 +509,43 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     const content: React.ReactNodeArray = [];
     if (!viewer) {
       content.push(
-        <div key='edit' onClick={this.editNode} className='boolean-menu-item'>
+        <div
+          key='edit'
+          onClick={this.editNode}
+          className='boolean-menu-item mcs-automationNodeWidget_booleanMenu--edit'
+        >
           <FormattedMessage {...messages.edit} />
         </div>,
       );
 
       if (!node.isFirstNode) {
         content.push(
-          <div key='remove' onClick={this.removeNode} className='boolean-menu-item'>
+          <div
+            key='remove'
+            onClick={this.removeNode}
+            className='boolean-menu-item mcs-automationNodeWidget_booleanMenu--remove'
+          >
             <FormattedMessage {...messages.remove} />
           </div>,
         );
       }
     } else {
       content.push(
-        <div key='stats' onClick={this.viewStats} className='boolean-menu-item'>
+        <div
+          key='stats'
+          onClick={this.viewStats}
+          className='boolean-menu-item mcs-automationNodeWidget_booleanMenu--view-stats'
+        >
           <FormattedMessage {...messages.stats} />
         </div>,
       );
 
       content.push(
-        <div key='view' onClick={this.editNode} className='boolean-menu-item'>
+        <div
+          key='view'
+          onClick={this.editNode}
+          className='boolean-menu-item mcs-automationNodeWidget_booleanMenu--view-node-config'
+        >
           <FormattedMessage {...messages.view} />
         </div>,
       );
@@ -519,7 +571,11 @@ class AutomationNodeWidget extends React.Component<Props, State> {
 
       if (!node.isFirstNode) {
         content.push(
-          <div key='remove' onClick={this.removeNode} className='boolean-menu-item'>
+          <div
+            key='remove'
+            onClick={this.removeNode}
+            className='boolean-menu-item mcs-automationNodeWidget_booleanMenu--remove'
+          >
             <FormattedMessage {...messages.remove} />
           </div>,
         );
@@ -527,14 +583,22 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     } else {
       if (hasFeature('automations-analytics')) {
         content.push(
-          <div key='stats' onClick={this.viewStats} className='boolean-menu-item'>
+          <div
+            key='stats'
+            onClick={this.viewStats}
+            className='boolean-menu-item mcs-automationNodeWidget_booleanMenu--view-stats'
+          >
             <FormattedMessage {...messages.stats} />
           </div>,
         );
       }
 
       content.push(
-        <div key='view' onClick={this.editNode} className='boolean-menu-item'>
+        <div
+          key='view'
+          onClick={this.editNode}
+          className='boolean-menu-item mcs-automationNodeWidget_booleanMenu--view-node-config'
+        >
           <FormattedMessage {...messages.view} />
         </div>,
       );
@@ -549,7 +613,11 @@ class AutomationNodeWidget extends React.Component<Props, State> {
 
     if (viewer && hasFeature('automations-analytics')) {
       content.push(
-        <div key='stats' onClick={this.viewStats} className='boolean-menu-item'>
+        <div
+          key='stats'
+          onClick={this.viewStats}
+          className='boolean-menu-item mcs-automationNodeWidget_booleanMenu--view-stats'
+        >
           <FormattedMessage {...messages.stats} />
         </div>,
       );
@@ -564,21 +632,33 @@ class AutomationNodeWidget extends React.Component<Props, State> {
     const content: React.ReactNodeArray = [];
     if (!viewer) {
       content.push(
-        <div key='edit' onClick={this.editNode} className='boolean-menu-item'>
+        <div
+          key='edit'
+          onClick={this.editNode}
+          className='boolean-menu-item mcs-automationNodeWidget_booleanMenu--edit'
+        >
           <FormattedMessage {...messages.edit} />
         </div>,
       );
 
       if (!node.isFirstNode) {
         content.push(
-          <div key='remove' onClick={this.removeNode} className='boolean-menu-item'>
+          <div
+            key='remove'
+            onClick={this.removeNode}
+            className='boolean-menu-item mcs-automationNodeWidget_booleanMenu--remove'
+          >
             <FormattedMessage {...messages.remove} />
           </div>,
         );
       }
     } else {
       content.push(
-        <div key='view' onClick={this.editNode} className='boolean-menu-item'>
+        <div
+          key='view'
+          onClick={this.editNode}
+          className='boolean-menu-item mcs-automationNodeWidget_booleanMenu--view-node-config'
+        >
           <FormattedMessage {...messages.view} />
         </div>,
       );
