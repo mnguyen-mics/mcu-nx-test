@@ -266,8 +266,10 @@ class AdServingActionBar extends React.Component<Props, AdServingActionBarState>
       });
       campaign.ad_groups.forEach((adgroup, i) => {
         adgroup.ads.forEach(ad => {
-          if (formatedApiResults[i][0].message_id === ad.id) {
-            formatedApiResults[i].forEach((report: any) => (report.adName = ad.name));
+          if (formatedApiResults[i].length > 0) {
+            if (formatedApiResults[i][0].message_id.toString() === ad.id.toString()) {
+              formatedApiResults[i].forEach((report: any) => (report.adName = ad.name));
+            }
           }
         });
       });
