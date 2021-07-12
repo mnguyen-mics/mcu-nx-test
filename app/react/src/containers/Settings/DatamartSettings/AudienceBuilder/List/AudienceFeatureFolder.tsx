@@ -4,17 +4,14 @@ import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { McsIcon } from '@mediarithmics-private/mcs-components-library';
 
-import {
-  AudienceFeaturesByFolder,
-  AudienceFeatureFolderResource,
-} from '../../../../../models/audienceFeature/AudienceFeatureResource';
+import { AudienceFeatureFolderResource } from '../../../../../models/audienceFeature/AudienceFeatureResource';
 import { messages } from '../messages';
 import { DataResponse } from '../../../../../services/ApiService';
 import { FolderOutlined } from '@ant-design/icons';
 
 export interface AudienceFeatureFolderProps {
-  folder: AudienceFeaturesByFolder;
-  onSelectFolder: (id?: string) => () => void;
+  folder: AudienceFeatureFolderResource;
+  onSelectFolder: (folderId?: string) => () => void;
   renameFolder: (
     id: string,
     name: string,

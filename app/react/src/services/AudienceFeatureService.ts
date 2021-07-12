@@ -1,7 +1,5 @@
 import {
   AudienceFeatureFolderResource,
-  AudienceFeaturesByFolder,
-  NewAudienceFeaturesByFolder,
   AudienceFeatureVariableResource,
 } from './../models/audienceFeature/AudienceFeatureResource';
 import { AudienceFeatureResource } from '../models/audienceFeature';
@@ -73,34 +71,18 @@ export interface IAudienceFeatureService {
   ) => Promise<DataResponse<AudienceFeatureFolderResource>>;
   fetchFoldersAndFeatures: (
     datamartId: string,
-    baseFolderName: string,
-    setBaseFolder: (features: AudienceFeaturesByFolder) => void,
-    onFailure: (err: any) => void,
-    filter?: AudienceFeatureSearchSettings,
-  ) => void;
-  fetchBaseFoldersAndFeatures: (
-    datamartId: string,
-    baseFolderName: string,
-    setBaseFolderAndFeatures: (
-      baseFolder: NewAudienceFeaturesByFolder,
+    setFoldersAndFeatures: (
+      folders: AudienceFeatureFolderResource[],
       baseFeatures: AudienceFeatureResource[],
       total?: number,
     ) => void,
     onFailure: (err: any) => void,
     filter?: AudienceFeatureSearchSettings,
   ) => void;
-  findParentFolder: (
-    currentFolder: NewAudienceFeaturesByFolder,
-    folderId: string,
-  ) => NewAudienceFeaturesByFolder | undefined;
   buildAudienceFeatureOptions: (
     filter?: AudienceFeatureSearchSettings,
     folderId?: string,
   ) => AudienceFeatureOptions;
-  getFolderContent: (
-    id?: string,
-    audienceFeaturesByFolder?: AudienceFeaturesByFolder,
-  ) => AudienceFeaturesByFolder | undefined;
 }
 
 @injectable()
@@ -216,106 +198,15 @@ export class AudienceFeatureService implements IAudienceFeatureService {
 
   fetchFoldersAndFeatures = (
     datamartId: string,
-    baseFolderName: string,
-    setBaseFolder: (baseFolder: AudienceFeaturesByFolder) => void,
-    onFailure: (err: any) => void,
-    filter?: AudienceFeatureSearchSettings,
-  ) => {
-    const options = filter ? this.buildAudienceFeatureOptions(filter) : undefined;
-
-    const res: [
-      Promise<AudienceFeatureFolderResource[]>,
-      Promise<DataListResponse<AudienceFeatureResource>>,
-    ] = [this._fetchFolders(datamartId), this.getAudienceFeatures(datamartId, options)];
-    return Promise.all(res)
-      .then((results: any[]) => {
-        const audienceFeatureFolders: AudienceFeatureFolderResource[] = results[0];
-        const features: DataListResponse<AudienceFeatureResource> = results[1];
-        const baseFolder = this._createBaseFolder(
-          baseFolderName,
-          audienceFeatureFolders,
-          features.data,
-        );
-        setBaseFolder(baseFolder);
-      })
-      .catch(err => {
-        onFailure(err);
-      });
-  };
-
-  private _folderLoop = (
-    folders: AudienceFeatureFolderResource[],
-    features: AudienceFeatureResource[],
-  ): AudienceFeaturesByFolder[] => {
-    return folders.map(folder => {
-      if (!folder.parent_id) {
-        folder.parent_id = undefined;
-      }
-      return {
-        id: folder.id,
-        name: folder.name,
-        parent_id: folder.parent_id,
-        audience_features: features.filter((f: AudienceFeatureResource) =>
-          folder.audience_features_ids?.includes(f.id),
-        ),
-        children: this._folderLoop(
-          folders.filter(
-            (f: AudienceFeatureFolderResource) => f.id && folder.children_ids?.includes(f.id),
-          ),
-          features,
-        ),
-      };
-    });
-  };
-
-  private _createBaseFolder = (
-    name: string,
-    folders: AudienceFeatureFolderResource[],
-    features: AudienceFeatureResource[],
-  ): AudienceFeaturesByFolder => {
-    return {
-      id: undefined,
-      name: name,
-      parent_id: 'root',
-      children: this._folderLoop(
-        folders.filter((f: AudienceFeatureFolderResource) => !f.parent_id),
-        features,
-      ),
-      audience_features: features.filter((f: AudienceFeatureResource) => !f.folder_id),
-    };
-  };
-
-  getFolderContent = (id?: string, audienceFeaturesByFolder?: AudienceFeaturesByFolder) => {
-    let selectedFolder: AudienceFeaturesByFolder | undefined;
-    const loop = (folder: AudienceFeaturesByFolder) => {
-      if (!id) {
-        selectedFolder = audienceFeaturesByFolder;
-      } else {
-        folder.children.forEach(f => {
-          if (f.id === id) {
-            selectedFolder = f;
-          } else {
-            loop(f);
-          }
-        });
-      }
-    };
-    if (audienceFeaturesByFolder) loop(audienceFeaturesByFolder);
-    return selectedFolder;
-  };
-
-  fetchBaseFoldersAndFeatures = (
-    datamartId: string,
-    baseFolderName: string,
-    setBaseFolderAndFeatures: (
-      baseFolder: NewAudienceFeaturesByFolder,
+    setFoldersAndFeatures: (
+      folders: AudienceFeatureFolderResource[],
       baseFeatures: AudienceFeatureResource[],
       total?: number,
     ) => void,
     onFailure: (err: any) => void,
     filter?: AudienceFeatureSearchSettings,
   ) => {
-    const options = this.buildAudienceFeatureOptions(filter, 'none');
+    const options = this.buildAudienceFeatureOptions(filter);
 
     const res: [
       Promise<AudienceFeatureFolderResource[]>,
@@ -323,77 +214,24 @@ export class AudienceFeatureService implements IAudienceFeatureService {
     ] = [this._fetchFolders(datamartId), this.getAudienceFeatures(datamartId, options)];
     return Promise.all(res)
       .then((results: any[]) => {
-        const audienceFeatureFolders: AudienceFeatureFolderResource[] = results[0];
+        const folders: AudienceFeatureFolderResource[] = results[0];
         const features: DataListResponse<AudienceFeatureResource> = results[1];
-        const baseFolder = this._newCreateBaseFolder(
-          baseFolderName,
-          audienceFeatureFolders,
-          features.data.map(audienceFeature => audienceFeature.id),
-        );
-        setBaseFolderAndFeatures(baseFolder, features.data, features.total);
+        setFoldersAndFeatures(folders, features.data, features.total);
       })
       .catch(err => {
         onFailure(err);
       });
   };
 
-  private _newCreateBaseFolder = (
-    name: string,
-    folders: AudienceFeatureFolderResource[],
-    audienceFeatureIds: string[],
-  ): NewAudienceFeaturesByFolder => {
-    return {
-      id: 'none',
-      name: name,
-      parent_id: undefined,
-      children: this._newFolderLoop(
-        folders.filter((f: AudienceFeatureFolderResource) => !f.parent_id),
-      ),
-      audience_features_ids: audienceFeatureIds,
-    };
-  };
-
-  private _newFolderLoop = (
-    folders: AudienceFeatureFolderResource[],
-  ): NewAudienceFeaturesByFolder[] => {
-    return folders.map(folder => {
-      if (!folder.parent_id) {
-        folder.parent_id = 'none';
-      }
-      return {
-        id: folder.id,
-        name: folder.name,
-        parent_id: folder.parent_id,
-        audience_features_ids: folder.audience_features_ids,
-        children: this._newFolderLoop(
-          folders.filter(
-            (f: AudienceFeatureFolderResource) => f.id && folder.children_ids?.includes(f.id),
-          ),
-        ),
-      };
-    });
-  };
-
-  findParentFolder = (
-    currentFolder: NewAudienceFeaturesByFolder,
-    folderId: string,
-  ): NewAudienceFeaturesByFolder | undefined => {
-    if (currentFolder.id === folderId) return currentFolder;
-    else if (!currentFolder.children) return undefined;
-    else
-      return currentFolder.children
-        .map(folder => this.findParentFolder(folder, folderId))
-        .find(folder => folder?.id === folderId) as NewAudienceFeaturesByFolder;
-  };
-
   buildAudienceFeatureOptions = (filter?: AudienceFeatureSearchSettings, folderId?: string) => {
     const options: AudienceFeatureOptions = {
       ...getPaginatedApiParam(filter?.currentPage, filter?.pageSize),
-      folder_id: folderId,
     };
 
     if (filter?.keywords) {
       options.keywords = [filter.keywords];
+    } else {
+      options.folder_id = folderId ? folderId : 'none';
     }
     return options;
   };

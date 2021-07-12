@@ -15,7 +15,7 @@ import { AudienceFeatureResource } from '../../../../models/audienceFeature';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import { NewAudienceFeaturesByFolder } from '../../../../models/audienceFeature/AudienceFeatureResource';
+import { AudienceFeatureFolderResource } from '../../../../models/audienceFeature/AudienceFeatureResource';
 import {
   Button,
   Actionbar,
@@ -46,9 +46,9 @@ export interface AudienceFeatureSelectorProps {
 
 interface State {
   isLoading: boolean;
-  audienceFeaturesByFolder?: NewAudienceFeaturesByFolder;
+  audienceFeatureFolders?: AudienceFeatureFolderResource[];
   selectedAudienceFeature?: AudienceFeatureResource;
-  selectedFolder?: NewAudienceFeaturesByFolder;
+  currentAudienceFeatureFolder?: AudienceFeatureFolderResource;
   currentAudienceFeatures?: AudienceFeatureResource[];
   hideFolder?: boolean;
   searchSettings: AudienceFeatureSearchSettings;
@@ -86,7 +86,7 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
 
   componentDidUpdate(prevProps: Props, prevState: State) {
     const { searchSettings: prevSearchSettings } = prevState;
-    const { searchSettings, selectedFolder } = this.state;
+    const { searchSettings, currentAudienceFeatureFolder } = this.state;
     const { datamartId } = this.props;
     if (searchSettings !== prevSearchSettings) {
       this.setState({
@@ -94,7 +94,7 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
       });
       const options = this._audienceFeatureService.buildAudienceFeatureOptions(
         searchSettings,
-        selectedFolder?.id,
+        currentAudienceFeatureFolder?.id,
       );
       this._audienceFeatureService.getAudienceFeatures(datamartId, options).then(response =>
         this.setState({
@@ -107,13 +107,13 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
   }
 
   setBaseFolderAndFeatures = (
-    baseFolder: NewAudienceFeaturesByFolder,
+    folders: AudienceFeatureFolderResource[],
     baseFeatures: AudienceFeatureResource[],
     total?: number,
   ) => {
     this.setState({
-      audienceFeaturesByFolder: baseFolder,
-      selectedFolder: baseFolder,
+      audienceFeatureFolders: folders,
+      currentAudienceFeatureFolder: undefined,
       currentAudienceFeatures: baseFeatures,
       total: total,
       isLoading: false,
@@ -128,11 +128,10 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
   };
 
   fetchBaseFoldersAndFeatures = () => {
-    const { datamartId, intl } = this.props;
+    const { datamartId } = this.props;
     const { searchSettings } = this.state;
-    this._audienceFeatureService.fetchBaseFoldersAndFeatures(
+    this._audienceFeatureService.fetchFoldersAndFeatures(
       datamartId,
-      intl.formatMessage(messages.audienceFeatures),
       this.setBaseFolderAndFeatures,
       this.onFailure,
       searchSettings,
@@ -141,7 +140,7 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
 
   getSearchOptions = () => {
     const { intl } = this.props;
-    const { searchSettings, audienceFeaturesByFolder } = this.state;
+    const { searchSettings } = this.state;
     return {
       placeholder: intl.formatMessage(messages.searchAudienceFeature),
       onSearch: (value: string) => {
@@ -152,36 +151,44 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
             currentPage: 1,
           },
           hideFolder: !!value,
-          selectedFolder: value ? undefined : audienceFeaturesByFolder,
+          currentAudienceFeatureFolder: undefined,
         });
       },
     };
   };
 
   getBreadCrumb = () => {
-    const { selectedFolder, audienceFeaturesByFolder } = this.state;
+    const { currentAudienceFeatureFolder, audienceFeatureFolders } = this.state;
+    const { intl } = this.props;
     const buildBreadCrumbs = () => {
-      if (selectedFolder && audienceFeaturesByFolder) {
-        const path: NewAudienceFeaturesByFolder[] = [];
-        const pathLoop = (folder: NewAudienceFeaturesByFolder) => {
+      if (audienceFeatureFolders) {
+        const path: AudienceFeatureFolderResource[] = [];
+        const pathLoop = (folder: AudienceFeatureFolderResource) => {
           path.unshift(folder);
           if (folder.parent_id) {
-            const parent = this._audienceFeatureService.findParentFolder(
-              audienceFeaturesByFolder,
-              folder.parent_id,
-            );
+            const parent = audienceFeatureFolders.find(f => f.id === folder.parent_id);
             pathLoop(parent!);
           }
         };
-        pathLoop(selectedFolder);
+        if (currentAudienceFeatureFolder) {
+          pathLoop(currentAudienceFeatureFolder);
+        }
 
-        return path.map(elt => {
+        const breadcrmb = path.map(elt => {
           return (
             <Breadcrumb.Item key={elt.id}>
-              <Button onClick={this.onSelectFolder(elt)}>{elt.name}</Button>
+              <Button onClick={this.onSelectFolder(elt.id)}>{elt.name}</Button>
             </Breadcrumb.Item>
           );
         });
+        breadcrmb.unshift(
+          <Breadcrumb.Item key={'root_folder'}>
+            <Button onClick={this.onSelectFolder()}>
+              {intl.formatMessage(messages.audienceFeatures)}
+            </Button>
+          </Breadcrumb.Item>,
+        );
+        return breadcrmb;
       }
       return;
     };
@@ -192,14 +199,17 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
     );
   };
 
-  onSelectFolder = (folder?: NewAudienceFeaturesByFolder) => () => {
-    const { searchSettings } = this.state;
+  onSelectFolder = (folderId?: string) => () => {
+    const { searchSettings, audienceFeatureFolders } = this.state;
     this.setState({
       searchSettings: {
         ...searchSettings,
+        currentPage: 1,
       },
-      hideFolder: folder?.id !== 'none',
-      selectedFolder: folder,
+      hideFolder: !!folderId,
+      currentAudienceFeatureFolder: folderId
+        ? audienceFeatureFolders?.find(f => f.id === folderId)
+        : undefined,
     });
   };
 
@@ -232,19 +242,18 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
 
   renderSelector = () => {
     const {
-      audienceFeaturesByFolder,
+      audienceFeatureFolders,
       selectedAudienceFeature,
       currentAudienceFeatures,
-      selectedFolder,
+      currentAudienceFeatureFolder,
       searchSettings,
       hideFolder,
       isLoading,
       total,
     } = this.state;
     const disabled =
-      !!audienceFeaturesByFolder &&
-      audienceFeaturesByFolder.children.length === 0 &&
-      audienceFeaturesByFolder.audience_features_ids?.length === 0;
+      (!audienceFeatureFolders || audienceFeatureFolders.length === 0) &&
+      (!currentAudienceFeatures || currentAudienceFeatures.length === 0);
 
     if (disabled) {
       return <EmptyTableView iconType='warning' message={''} />;
@@ -287,22 +296,30 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
         {!searchSettings.keywords && this.getBreadCrumb()}
         <Row gutter={16}>
           {!hideFolder &&
-            !!selectedFolder &&
-            selectedFolder.children.map(folder => {
-              return (
-                <Col key={folder.id ? folder.id : 'root_key'} span={4}>
-                  <div className='mcs-audienceBuilder_folder' onClick={this.onSelectFolder(folder)}>
-                    <FolderOutlined className='mcs-audienceBuilder_folderIcon' />
-                    <br />
-                    <span>{folder.name}</span>
-                    <br />
-                    <span className='mcs-audienceBuilder_folderChildNumber'>
-                      {folder.audience_features_ids?.length} features
-                    </span>
-                  </div>
-                </Col>
-              );
-            })}
+            audienceFeatureFolders
+              ?.filter(f =>
+                currentAudienceFeatureFolder
+                  ? currentAudienceFeatureFolder?.id === f.parent_id
+                  : f.parent_id === null,
+              )
+              ?.map(folder => {
+                return (
+                  <Col key={folder.id ? folder.id : 'root_key'} span={4}>
+                    <div
+                      className='mcs-audienceBuilder_folder'
+                      onClick={this.onSelectFolder(folder.id)}
+                    >
+                      <FolderOutlined className='mcs-audienceBuilder_folderIcon' />
+                      <br />
+                      <span>{folder.name}</span>
+                      <br />
+                      <span className='mcs-audienceBuilder_folderChildNumber'>
+                        {folder.audience_features_ids?.length} features
+                      </span>
+                    </div>
+                  </Col>
+                );
+              })}
         </Row>
         <div className='mcs-audienceBuilder_featureCardContainer'>
           <CollectionView
