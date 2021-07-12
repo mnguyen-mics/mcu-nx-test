@@ -16,10 +16,8 @@ import CardFlex from '../Components/CardFlex';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { AudienceBuilderQueryDocument } from '../../../../models/audienceBuilder/AudienceBuilderResource';
 import { getFormattedQuery } from '../domain';
-import {
-  DatasetProps,
-  DonutChartOptionsProps,
-} from '@mediarithmics-private/mcs-components-library/lib/components/charts/donut-chart/DonutChart';
+import { DonutChartOptionsProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/donut-chart/DonutChart';
+import { Dataset } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 import {
   DonutChart,
   EmptyChart,
@@ -37,7 +35,7 @@ export interface CountPieChartProps {
 }
 
 interface State {
-  queryResult?: DatasetProps[];
+  queryResult?: Dataset;
   error: boolean;
   loading: boolean;
 }
@@ -81,11 +79,7 @@ class CountPieChart extends React.Component<Props, State> {
     }
   }
 
-  formatDataQuery = (
-    otqlResults: OTQLCountResult[],
-    plotLabelName: string,
-    i: number,
-  ): DatasetProps[] => {
+  formatDataQuery = (otqlResults: OTQLCountResult[], plotLabelName: string, i: number): Dataset => {
     const { colors } = this.props;
 
     if (otqlResults.length && otqlResults[0].count) {
@@ -135,7 +129,7 @@ class CountPieChart extends React.Component<Props, State> {
     datamartId: string,
     plotLabelIndex: number,
     source?: AudienceSegmentShape | AudienceBuilderQueryDocument,
-  ): Promise<DatasetProps[]> => {
+  ): Promise<Dataset> => {
     return this._queryService
       .getQuery(datamartId, chartQueryId)
       .then(queryResp => {
@@ -200,7 +194,7 @@ class CountPieChart extends React.Component<Props, State> {
       } else {
         return (
           <DonutChart
-            dataset={this.state.queryResult as DatasetProps[]}
+            dataset={this.state.queryResult as Dataset}
             options={optionsForChart}
             height={height}
           />

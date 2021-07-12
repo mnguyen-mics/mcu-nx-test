@@ -18,7 +18,7 @@ import {
   EmptyChart,
   LoadingChart,
 } from '@mediarithmics-private/mcs-components-library';
-import { DatasetProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/donut-chart/DonutChart';
+import { Dataset } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 
 export interface GaugePieChartProps {
   title?: string;
@@ -28,7 +28,7 @@ export interface GaugePieChartProps {
 }
 
 interface State {
-  queryResult?: DatasetProps[];
+  queryResult?: Dataset;
   colors: string[];
   error: boolean;
   loading: boolean;
@@ -77,7 +77,7 @@ class GaugePieChart extends React.Component<Props, State> {
     }
   }
 
-  formatData = (result0: OTQLCountResult[], result1: OTQLCountResult[]): DatasetProps[] => {
+  formatData = (result0: OTQLCountResult[], result1: OTQLCountResult[]): Dataset => {
     const { colors } = this.state;
     return [
       {
