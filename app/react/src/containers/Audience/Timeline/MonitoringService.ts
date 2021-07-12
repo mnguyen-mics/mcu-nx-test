@@ -18,7 +18,6 @@ import {
   MonitoringData,
   isUserAgentIdentifier,
   isUserEmailIdentifier,
-  UserAgentIdentifierInfo,
   UserEmailIdentifierInfo,
   UserSegmentResource,
   UserProfilePerCompartmentAndUserAccountId,
@@ -29,6 +28,7 @@ import {
 } from '../../../models/timeline/timeline';
 import { IOrganisationService } from '../../../services/OrganisationService';
 import { IDatamartService } from '../../../services/DatamartService';
+import { UserAgentIdentifierInfo } from '@mediarithmics-private/mcs-components-library/lib/models/timeline/timeline';
 
 export interface IMonitoringService {
   fetchProfileData: (

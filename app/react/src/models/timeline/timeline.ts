@@ -6,6 +6,7 @@ import { Dictionary } from 'lodash';
 import { UserAccountCompartmentDatamartSelectionResource } from '../datamart/DatamartResource';
 import UserChoiceResource from '../userchoice/UserChoiceResource';
 import { ProcessingResource } from '../processing';
+import { UserAgentIdentifierInfo } from '@mediarithmics-private/mcs-components-library/lib/models/timeline/timeline';
 
 export interface Activity {
   $email_hash: string | object;
@@ -109,16 +110,6 @@ export interface UserAccountIdentifierInfo {
   creation_ts: number;
   compartment_id?: number;
   type: 'USER_ACCOUNT';
-}
-
-export interface UserAgentIdentifierInfo {
-  vector_id: string;
-  device?: UserAgentInfo;
-  creation_ts: number;
-  last_activity_ts: number;
-  providers: UserAgentIdentifierProviderResource[];
-  mappings: UserAgentIdMappingResource[];
-  type: 'USER_AGENT';
 }
 
 export type UserIdentifierInfo =
