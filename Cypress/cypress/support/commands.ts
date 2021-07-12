@@ -14,6 +14,10 @@ import 'cypress-file-upload';
 import LoginPage from '../integration/components/LoginPage';
 
 before(() => {
+  cy.exec(`yes | ssh -A -T ${Cypress.env('virtualPlatformName')}.mics-sandbox.com <<eof
+ssh -o StrictHostKeyChecking=no 10.0.1.3 "sudo systemctl restart haproxy.service"
+eof`);
+  cy.wait(10000);
   cy.initTestContext();
 });
 

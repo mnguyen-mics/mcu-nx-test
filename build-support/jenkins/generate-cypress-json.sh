@@ -59,6 +59,7 @@ cat << EOF
 
   "defaultCommandTimeout": 15000,
   "responseTimeout": 300000,
+  "pageLoadTimeout": 120000,
 
   "video": ${RECORD_VIDEO},
   "viewportHeight": 1080,
