@@ -4,7 +4,7 @@ pipeline {
     options { disableConcurrentBuilds() }
 	parameters {
 	    string(name: 'END_TO_END_CHECK',
-	    defaultValue: 'false',
+	    defaultValue: 'true',
 	    description: 'set to false to bypass the virtual platform creation and the cypress tests')
         string(name: 'GIVEN_VIRTUAL_PLATFORM_NAME',
         defaultValue: '',
