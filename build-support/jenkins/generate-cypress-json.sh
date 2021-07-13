@@ -57,7 +57,7 @@ cat << EOF
   },
   "watchForFileChanges": false,
 
-  "defaultCommandTimeout": 15000,
+  "defaultCommandTimeout": 120000,
   "responseTimeout": 300000,
   "pageLoadTimeout": 120000,
 
