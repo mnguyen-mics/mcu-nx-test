@@ -1,5 +1,5 @@
 import * as React from 'react';
-import queryString from 'query-string';
+
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
@@ -475,25 +475,6 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
     history.push(nextLocation);
   };
 
-  isPionusDatamart = (dmId?: string) => {
-    const {
-      location: { search },
-      match: {
-        params: { organisationId },
-      },
-      workspace,
-    } = this.props;
-    const datamartId = dmId || queryString.parse(search).datamartId;
-    const datamarts = workspace(organisationId).datamarts;
-    const datamart = datamarts.find(d => d.id === datamartId);
-    // case where there is only one Pionus datamart in the organisation,
-    // and there is no datamartFilter and no datamartId in URL
-    if (datamarts.length === 1 && datamarts[0].storage_model_version !== 'v201506') {
-      return true;
-    }
-    return datamart && datamart.storage_model_version !== 'v201506';
-  };
-
   renderMetricData = (value: string | number, numeralFormat: string, currency: string = '') => {
     if (this.state.list.isLoading) {
       return <i className='mcs-table-cell-loading' />;
@@ -703,38 +684,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         render: (text: string) => this.renderMetricData(text, '0,0'),
       },
     ];
-
-    const additionalColumns = [
-      {
-        intlMessage: messages.addition,
-        key: 'user_point_additions',
-        isVisibleByDefault: true,
-        isHideable: true,
-        render: (text: string, record: AudienceSegmentShape) => {
-          // When all segments from different datamarts are displayed
-          // we can't remove addition or deletion columns
-          // so we return '-' if the segment is from a pionus datamart
-          return this.isPionusDatamart(record.datamart_id)
-            ? '-'
-            : this.renderMetricData(text, '0,0');
-        },
-      },
-      {
-        intlMessage: messages.deletion,
-        key: 'user_point_deletions',
-        isVisibleByDefault: true,
-        isHideable: true,
-        render: (text: string, record: AudienceSegmentShape) => {
-          // When all segments from different datamarts are displayed
-          // we can't remove addition or deletion columns
-          // so we return '-' if the segment is from a pionus datamart
-          return this.isPionusDatamart(record.datamart_id)
-            ? '-'
-            : this.renderMetricData(text, '0,0');
-        },
-      },
-    ];
-    return this.isPionusDatamart() ? dataColumns : dataColumns.concat(additionalColumns);
+    return dataColumns;
   };
 
   renderTreeSelectFilter = (): React.ReactElement<TreeSelectFilter> => {
