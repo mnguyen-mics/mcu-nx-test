@@ -94,11 +94,10 @@ class FunnelWrapper extends React.Component<JoinedProp, State> {
     filterWithoutGroupBy.forEach(x => delete x.group_by_dimension);
     const { launchExecutionAskedTime, cancelQueryAskedTime } = this.state;
     return (
-      <div key={`${dateRange.from.toString().toString()}${dateRange.to.toString().toString()}`}>
+      <div>
         <FunnelQueryBuilder
           datamartId={datamartId}
           filter={filterWithoutGroupBy}
-          parentCallback={this.funnelQueryBuilderCallbackFunction}
           liftFunctionsCallback={this.storeAndLiftFunctions}
           dateRange={dateRange}
         />

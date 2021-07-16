@@ -38,6 +38,7 @@ import { FunnelFilter } from '../../models/datamart/UserActivitiesFunnel';
 import { IDatamartUsersAnalyticsService } from '../../services/DatamartUsersAnalyticsService';
 import { ReportViewResponse } from '../../services/ReportService';
 import { shouldUpdateFunnelQueryBuilder, getDefaultStep, checkExpressionsNotEmpty } from './Utils';
+import _ from 'lodash';
 
 const Option = Select.Option;
 
@@ -58,7 +59,6 @@ interface State {
 interface FunnelQueryBuilderProps {
   datamartId: string;
   filter: FunnelFilter[];
-  parentCallback: (timestampInSec: number) => void;
   liftFunctionsCallback: (executeQueryFunction: () => void) => void;
   dateRange: McsDateRangeValue;
 }
@@ -100,7 +100,22 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
       filter,
     } = this.props;
 
-    if (prevProps.location.search !== search && filter.length > 0) {
+    const DEFAULT_FILTER_LENGTH = 1;
+
+    if (
+      prevProps.location.search !== search &&
+      filter.length > 0 &&
+      /**
+       * These next conditions prevent the funnel query builder from updating if the steps change
+       * but the query isn't executed yet
+       */
+      !(
+        (filter.length === DEFAULT_FILTER_LENGTH &&
+          filter[0].filter_clause &&
+          _.isEqual(filter[0].filter_clause, getDefaultStep().filter_clause)) ||
+        !_.isEqual(this.state.steps, filter)
+      )
+    ) {
       this.setInitialParams();
     }
   }
@@ -113,12 +128,13 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
 
     const { steps: nextFilter, dimensionsList: nextDimensionsList } = nextState;
 
-    const { filter: nextPropsFilter } = this.props;
+    const { filter: nextPropsFilter, dateRange } = this.props;
 
     const shouldUpdate =
       shouldUpdateFunnelQueryBuilder(prevFilter, nextFilter) ||
       shouldUpdateFunnelQueryBuilder(prevFilter, nextPropsFilter) ||
-      nextDimensionsList !== previousDimensionsList;
+      nextDimensionsList !== previousDimensionsList ||
+      dateRange !== nextProps.dateRange;
 
     return shouldUpdate;
   }
