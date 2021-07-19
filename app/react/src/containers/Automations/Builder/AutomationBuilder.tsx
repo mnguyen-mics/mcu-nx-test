@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { DiagramEngine, DiagramWidget, DiagramModel, LabelModel } from 'storm-react-diagrams';
-import { ROOT_NODE_POSITION } from '../../QueryTool/JSONOTQL/domain';
+import { ROOT_NODE_POSITION } from '../../Audience/AdvancedSegmentBuilder/domain';
 import { Col } from 'antd';
 import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
-import SimplePortFactory from '../../QueryTool/JSONOTQL/Diagram/Port/SimplePortFactory';
+import SimplePortFactory from '../../Audience/AdvancedSegmentBuilder/Diagram/Port/SimplePortFactory';
 import AutomationNodeFactory from './AutomationNode/AutomationNodeFactory';
 import AutomationNodeModel from './AutomationNode/AutomationNodeModel';
 import AutomationLinkFactory from './Link/AutomationLinkFactory';

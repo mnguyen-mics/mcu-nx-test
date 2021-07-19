@@ -14,7 +14,7 @@ import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
-import { AudienceBuilderQueryDocument } from '../../../../models/audienceBuilder/AudienceBuilderResource';
+import { StandardSegmentBuilderQueryDocument } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 import { getFormattedQuery } from '../domain';
 import { DonutChartOptionsProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/donut-chart/DonutChart';
 import { Dataset } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
@@ -31,7 +31,7 @@ export interface CountPieChartProps {
   height: number;
   labelsEnabled?: boolean;
   plotLabels: string[];
-  source?: AudienceSegmentShape | AudienceBuilderQueryDocument;
+  source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument;
 }
 
 interface State {
@@ -100,7 +100,7 @@ class CountPieChart extends React.Component<Props, State> {
   fetchData = (
     chartQueryIds: string[],
     datamartId: string,
-    source?: AudienceSegmentShape | AudienceBuilderQueryDocument,
+    source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument,
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
     const promises = chartQueryIds.map((chartQueryId, i) => {
@@ -128,7 +128,7 @@ class CountPieChart extends React.Component<Props, State> {
     chartQueryId: string,
     datamartId: string,
     plotLabelIndex: number,
-    source?: AudienceSegmentShape | AudienceBuilderQueryDocument,
+    source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument,
   ): Promise<Dataset> => {
     return this._queryService
       .getQuery(datamartId, chartQueryId)

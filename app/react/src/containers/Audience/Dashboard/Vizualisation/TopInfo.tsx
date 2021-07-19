@@ -11,13 +11,13 @@ import messages from './messages';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import { EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
-import { AudienceBuilderQueryDocument } from '../../../../models/audienceBuilder/AudienceBuilderResource';
+import { StandardSegmentBuilderQueryDocument } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 
 export interface TopInfoProps {
   queryId: string;
   datamartId: string;
   title: string;
-  source?: AudienceSegmentShape | AudienceBuilderQueryDocument;
+  source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument;
 }
 
 interface State {
@@ -65,7 +65,7 @@ class TopInfo extends React.Component<Props, State> {
   fetchData = (
     chartQueryId: string,
     datamartId: string,
-    source?: AudienceSegmentShape | AudienceBuilderQueryDocument,
+    source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument,
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
     return this._queryService

@@ -23,11 +23,11 @@ import {
   LoadingChart,
 } from '@mediarithmics-private/mcs-components-library';
 import { Dataset } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
-import { AudienceBuilderQueryDocument } from '../../../../models/audienceBuilder/AudienceBuilderResource';
+import { StandardSegmentBuilderQueryDocument } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 
 export interface MapPieChartProps {
   title?: string;
-  source?: AudienceSegmentShape | AudienceBuilderQueryDocument;
+  source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument;
   queryId: string;
   data?: OTQLResult;
   datamartId: string;
@@ -117,7 +117,7 @@ class MapPieChart extends React.Component<Props, State> {
   fetchData = (
     chartQueryId: string,
     datamartId: string,
-    source?: AudienceSegmentShape | AudienceBuilderQueryDocument,
+    source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument,
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
 

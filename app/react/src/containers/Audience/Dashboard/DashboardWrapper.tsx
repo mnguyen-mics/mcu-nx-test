@@ -4,13 +4,13 @@ import { Layout, Layouts } from 'react-grid-layout';
 import { ContentHeader } from '@mediarithmics-private/mcs-components-library';
 import { ComponentLayout } from '../../../models/dashboards/dashboards';
 import { AudienceSegmentShape } from '../../../models/audiencesegment';
-import { AudienceBuilderQueryDocument } from '../../../models/audienceBuilder/AudienceBuilderResource';
+import { StandardSegmentBuilderQueryDocument } from '../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 
 interface DashboardWrapperProps {
   key?: any;
   layout: ComponentLayout[];
   title?: string;
-  source?: AudienceSegmentShape | AudienceBuilderQueryDocument;
+  source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument;
   datamartId: string;
 }
 

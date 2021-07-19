@@ -3,7 +3,7 @@ import cuid from 'cuid';
 import { DiagramEngine, PortWidget } from 'storm-react-diagrams';
 import AutomationNodeModel from './AutomationNodeModel';
 import { WindowBodyPortal } from '../../../../components';
-import { ROOT_NODE_POSITION } from '../../../QueryTool/JSONOTQL/domain';
+import { ROOT_NODE_POSITION } from '../../../Audience/AdvancedSegmentBuilder/domain';
 import { injectIntl, FormattedMessage, defineMessages, InjectedIntlProps } from 'react-intl';
 import { injectDrawer } from '../../../../components/Drawer';
 import { compose } from 'recompose';

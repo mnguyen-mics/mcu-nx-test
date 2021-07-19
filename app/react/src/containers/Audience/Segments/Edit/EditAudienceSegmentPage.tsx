@@ -33,8 +33,8 @@ import { IAudienceSegmentFormService } from './AudienceSegmentFormService';
 import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
 import { ProcessingSelectionResource } from '../../../../models/processing';
-import { IAudienceBuilderService } from '../../../../services/AudienceBuilderService';
-import { AudienceBuilderResource } from '../../../../models/audienceBuilder/AudienceBuilderResource';
+import { IStandardSegmentBuilderService } from '../../../../services/StandardSegmentBuilderService';
+import { StandardSegmentBuilderResource } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 import { Link } from 'react-router-dom';
 
 const messagesMap = defineMessages({
@@ -62,7 +62,7 @@ interface State {
   loading: boolean;
   selectedDatamart?: DatamartResource;
   displayDatamartSelector: boolean;
-  audienceBuilder?: AudienceBuilderResource;
+  StandardSegmentBuilder?: StandardSegmentBuilderResource;
 }
 
 interface MapStateToProps {
@@ -82,8 +82,8 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
   @lazyInject(TYPES.IDatamartService)
   private _datamartService: IDatamartService;
 
-  @lazyInject(TYPES.IAudienceBuilderService)
-  private _audienceBuilderService: IAudienceBuilderService;
+  @lazyInject(TYPES.IStandardSegmentBuilderService)
+  private _StandardSegmentBuilderService: IStandardSegmentBuilderService;
 
   constructor(props: Props) {
     super(props);
@@ -161,13 +161,13 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
                 newState.queryLanguage = initialData.query.query_language;
                 const audienceSegment = initialData.audienceSegment as UserQuerySegment;
                 if (audienceSegment.audience_builder_id) {
-                  this._audienceBuilderService
-                    .getAudienceBuilder(
+                  this._StandardSegmentBuilderService
+                    .getStandardSegmentBuilder(
                       audienceSegment.datamart_id,
                       audienceSegment.audience_builder_id,
                     )
                     .then(res => {
-                      newState.audienceBuilder = res.data;
+                      newState.StandardSegmentBuilder = res.data;
                       this.setState(newState as State);
                     });
                 } else {
@@ -539,7 +539,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       loading,
       displayDatamartSelector,
       queryLanguage,
-      audienceBuilder,
+      StandardSegmentBuilder,
     } = this.state;
 
     const audienceSegmentName =
@@ -611,7 +611,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         segmentType={selectedSegmentType}
         goToSegmentTypeSelection={resetFormData}
         initialProcessingSelectionsForWarning={initialProcessingSelectionsForWarning}
-        audienceBuilder={audienceBuilder}
+        StandardSegmentBuilder={StandardSegmentBuilder}
       />
     ) : displayDatamartSelector ? (
       <DatamartSelector

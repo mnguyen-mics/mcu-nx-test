@@ -25,11 +25,11 @@ import {
   RadarSpiderChart,
 } from '@mediarithmics-private/mcs-components-library';
 import { SerieSortType } from '../../../../components/Charts/domain';
-import { AudienceBuilderQueryDocument } from '../../../../models/audienceBuilder/AudienceBuilderResource';
+import { StandardSegmentBuilderQueryDocument } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 
 export interface MapBarChartProps {
   title?: string;
-  source?: AudienceSegmentShape | AudienceBuilderQueryDocument;
+  source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument;
   queryId: string;
   data?: OTQLResult;
   datamartId: string;
@@ -171,7 +171,7 @@ class MapBarChart extends React.Component<Props, State> {
     chartQueryId: string,
     datamartId: string,
     shouldCompare?: boolean,
-    source?: AudienceSegmentShape | AudienceBuilderQueryDocument,
+    source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument,
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
 

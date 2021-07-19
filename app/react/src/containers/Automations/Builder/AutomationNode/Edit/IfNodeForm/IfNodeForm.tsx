@@ -12,7 +12,7 @@ import {
   McsIcon,
 } from '@mediarithmics-private/mcs-components-library';
 import { FormSection, FormTitle } from '../../../../../../components/Form';
-import JSONQLBuilderContainer from '../../../../../QueryTool/JSONOTQL/JSONQLBuilderContainer';
+import JSONQLBuilderContainer from '../../../../../Audience/AdvancedSegmentBuilder/AdvancedSegmentBuilderContainer';
 import { OtqlConsole } from '../../../../../../components';
 import { QueryDocument } from '../../../../../../models/datamart/graphdb/QueryDocument';
 import { StorylineNodeModel } from '../../../domain';

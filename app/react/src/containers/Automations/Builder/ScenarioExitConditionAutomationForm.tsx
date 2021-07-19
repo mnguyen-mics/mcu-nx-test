@@ -26,7 +26,7 @@ import FormLayoutActionbar, {
   FormLayoutActionbarProps,
 } from '../../../components/Layout/FormLayoutActionbar';
 import { QueryLanguage } from '../../../models/datamart/DatamartResource';
-import { FormSearchObjectField } from '../../QueryTool/JSONOTQL/Edit/Sections/Field/FieldNodeForm';
+import { FormSearchObjectField } from '../../Audience/AdvancedSegmentBuilder/Edit/Sections/Field/FieldNodeForm';
 import FormSearchObject from '../../../components/Form/FormSelect/FormSearchObject';
 import { IQueryService } from '../../../services/QueryService';
 

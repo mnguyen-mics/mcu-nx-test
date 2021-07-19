@@ -1,5 +1,5 @@
 import * as React from 'react';
-import AudienceBuilderListPage from '../../AudienceBuilder/List/AudienceBuilderListPage';
+import AudienceBuilderListPage from '../../StandardSegmentBuilder/List/StandardSegmentBuilderListPage';
 import { injectFeatures, InjectedFeaturesProps } from '../../../../Features';
 import { compose } from 'recompose';
 

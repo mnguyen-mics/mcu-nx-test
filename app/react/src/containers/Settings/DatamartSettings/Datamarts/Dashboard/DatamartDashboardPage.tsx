@@ -21,7 +21,7 @@ import { sessionInTimeJsonConfig } from '../../../../Audience/DatamartUsersAnaly
 import { DashboardConfig } from '../../../../Audience/DatamartUsersAnalytics/DatamartUsersAnalyticsContent';
 import DatamartReplicationTab from './DatamartReplicationTab';
 import SegmentBuildersTab from './SegmentBuildersTab';
-import AudienceFeatureListPage from '../../AudienceBuilder/List/AudienceFeatureListPage';
+import AudienceFeatureListPage from '../../StandardSegmentBuilder/List/AudienceFeatureListPage';
 
 interface McsTabsItem {
   className?: string;
@@ -64,7 +64,7 @@ const messages = defineMessages({
   },
   segmentBuilder: {
     id: 'settings.datamart.segmentBuilder',
-    defaultMessage: 'Segment Builders',
+    defaultMessage: 'Standard Segment Builders',
   },
 });
 

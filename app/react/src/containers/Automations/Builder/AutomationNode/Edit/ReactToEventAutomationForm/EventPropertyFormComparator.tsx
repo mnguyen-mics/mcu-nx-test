@@ -17,17 +17,17 @@ import {
 import constants, {
   builtinEnumTypeOptions,
   ComparisonValues,
-} from '../../../../../QueryTool/JSONOTQL/Edit/Sections/Field/contants';
+} from '../../../../../Audience/AdvancedSegmentBuilder/Edit/Sections/Field/contants';
 import {
   FieldProposalLookup,
   getCoreReferenceTypeAndModel,
-} from '../../../../../QueryTool/JSONOTQL/domain';
+} from '../../../../../Audience/AdvancedSegmentBuilder/domain';
 import {
   FormRelativeAbsoluteDateField,
   FormSearchObjectField,
   FormTagSelectField,
-} from '../../../../../QueryTool/JSONOTQL/Edit/Sections/Field/FieldNodeForm';
-import FormRelativeAbsoluteDate from '../../../../../QueryTool/JSONOTQL/Edit/Sections/Field/Comparison/FormRelativeAbsoluteDate';
+} from '../../../../../Audience/AdvancedSegmentBuilder/Edit/Sections/Field/FieldNodeForm';
+import FormRelativeAbsoluteDate from '../../../../../Audience/AdvancedSegmentBuilder/Edit/Sections/Field/Comparison/FormRelativeAbsoluteDate';
 import FormMultiTag from '../../../../../../components/Form/FormSelect/FormMultiTag';
 import { SegmentNameDisplay } from '../../../../../Audience/Common/SegmentNameDisplay';
 import FormSearchObject from '../../../../../../components/Form/FormSelect/FormSearchObject';

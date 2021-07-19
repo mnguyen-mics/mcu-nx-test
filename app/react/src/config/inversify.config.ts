@@ -7,9 +7,9 @@ import {
   AudienceFeatureService,
   IAudienceFeatureService,
 } from '../services/AudienceFeatureService';
-import AudienceBuilderService, {
-  IAudienceBuilderService,
-} from './../services/AudienceBuilderService';
+import StandardSegmentBuilderService, {
+  IStandardSegmentBuilderService,
+} from '../services/StandardSegmentBuilderService';
 import { RecommenderService } from './../services/Library/RecommenderService';
 import { IReferenceTableService, ReferenceTableService } from './../services/ReferenceTableService';
 import DataFileService, { IDataFileService } from './../services/DataFileService';
@@ -159,13 +159,13 @@ import {
 import { IUsersAnalyticsService, UsersAnalyticsService } from '../services/UsersAnalyticsService';
 import { IUserRolesService, UserRolesService } from '../services/UserRolesService';
 import {
-  IAudienceBuilderQueryService,
-  AudienceBuilderQueryService,
-} from '../containers/Audience/AudienceBuilder/AudienceBuilderQueryService';
+  IStandardSegmentBuilderQueryService,
+  StandardSegmentBuilderQueryService,
+} from '../containers/Audience/StandardSegmentBuilder/StandardSegmentBuilderQueryService';
 
 export const container = new Container();
 
-container.bind<IAudienceBuilderService>(TYPES.IAudienceBuilderService).to(AudienceBuilderService);
+container.bind<IStandardSegmentBuilderService>(TYPES.IStandardSegmentBuilderService).to(StandardSegmentBuilderService);
 container.bind<IEmailCampaignService>(TYPES.IEmailCampaignService).to(EmailCampaignService);
 container
   .bind<IEmailCampaignFormService>(TYPES.IEmailCampaignFormService)
@@ -314,8 +314,8 @@ container
   .bind<IScenarioAnalyticsService>(TYPES.IScenarioAnalyticsService)
   .to(ScenarioAnalyticsService);
 container
-  .bind<IAudienceBuilderQueryService>(TYPES.IAudienceBuilderQueryService)
-  .to(AudienceBuilderQueryService);
+  .bind<IStandardSegmentBuilderQueryService>(TYPES.IStandardSegmentBuilderQueryService)
+  .to(StandardSegmentBuilderQueryService);
 
 export const { lazyInject } = getDecorators(container, false);
 
