@@ -24,7 +24,7 @@ import {
   isStandardSegmentBuilderParametricPredicateNode,
   StandardSegmentBuilderParametricPredicateGroupNode,
 } from '../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
-import AudienceBuilderDashboard from './StandardSegmentBuilderDashboard';
+import StandardSegmentBuilderDashboard from './StandardSegmentBuilderDashboard';
 import QueryFragmentFormSection, {
   QueryFragmentFormSectionProps,
 } from './QueryFragmentBuilders/QueryFragmentFormSection';
@@ -54,7 +54,7 @@ export const QueryFragmentFieldArray = FieldArray as new () => GenericFieldArray
 
 export interface StandardSegmentBuilderContainerProps
   extends Omit<ConfigProps<StandardSegmentBuilderFormData>, 'form'> {
-  StandardSegmentBuilder: StandardSegmentBuilderResource;
+  standardSegmentBuilder: StandardSegmentBuilderResource;
   renderActionBar: (
     queryDocument: StandardSegmentBuilderQueryDocument,
     datamartId: string,
@@ -92,7 +92,7 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
   private _audienceFeatureService: IAudienceFeatureService;
 
   @lazyInject(TYPES.IStandardSegmentBuilderQueryService)
-  private _StandardSegmentBuilderQueryService: IStandardSegmentBuilderQueryService;
+  private _standardSegmentBuilderQueryService: IStandardSegmentBuilderQueryService;
 
   // ----------------------------------
   // Component setup
@@ -109,15 +109,15 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { StandardSegmentBuilder, formValues } = this.props;
+    const { standardSegmentBuilder, formValues } = this.props;
 
     this.runQuery();
 
-    this._runtimeSchemaService.getRuntimeSchemas(StandardSegmentBuilder.datamart_id).then(schemaRes => {
+    this._runtimeSchemaService.getRuntimeSchemas(standardSegmentBuilder.datamart_id).then(schemaRes => {
       const liveSchema = schemaRes.data.find(s => s.status === 'LIVE');
       if (!liveSchema) return;
       return this._runtimeSchemaService
-        .getObjectTypeInfoResources(StandardSegmentBuilder.datamart_id, liveSchema.id)
+        .getObjectTypeInfoResources(standardSegmentBuilder.datamart_id, liveSchema.id)
         .then(objectTypes => {
           this.setState({
             objectTypes: objectTypes,
@@ -137,7 +137,7 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
     });
 
     const promises = audienceFeatureIds.map(id => {
-      return this._audienceFeatureService.getAudienceFeature(StandardSegmentBuilder.datamart_id, id);
+      return this._audienceFeatureService.getAudienceFeature(standardSegmentBuilder.datamart_id, id);
     });
 
     Promise.all(promises).then(res => {
@@ -162,9 +162,9 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
   // Utilities
 
   private runQuery = () => {
-    const { StandardSegmentBuilder, formValues } = this.props;
+    const {standardSegmentBuilder, formValues } = this.props;
 
-    const queryDocument = this._StandardSegmentBuilderQueryService.buildQueryDocument(formValues);
+    const queryDocument = this._standardSegmentBuilderQueryService.buildQueryDocument(formValues);
 
     this.setState({
       isQueryRunning: true,
@@ -186,8 +186,8 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
       this.props.notifyError(err);
     };
 
-    this._StandardSegmentBuilderQueryService.runQuery(
-      StandardSegmentBuilder.datamart_id,
+    this._standardSegmentBuilderQueryService.runQuery(
+      standardSegmentBuilder.datamart_id,
       queryDocument,
       success,
       failure,
@@ -250,10 +250,10 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
   };
 
   private selectNewAudienceFeature = (onSelect: (_: AudienceFeatureResource[]) => void) => {
-    const { openNextDrawer, StandardSegmentBuilder } = this.props;
+    const { openNextDrawer, standardSegmentBuilder } = this.props;
 
     const props: AudienceFeatureSelectorProps = {
-      datamartId: StandardSegmentBuilder.datamart_id,
+      datamartId: standardSegmentBuilder.datamart_id,
       close: this.props.closeNextDrawer,
       save: onSelect,
     };
@@ -286,14 +286,14 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
     const { formValues, intl } = this.props;
 
     return (
-      <div className='mcs-audienceBuilder_timelineButtons'>
+      <div className='mcs-standardSegmentBuilder_timelineButtons'>
         <Button
           className='mcs-timelineButton_left'
           onClick={this.selectAndAddFeature(
             this.addToNewGroup(this.saveGroup(formValues.include, 'include')),
           )}
         >
-          {intl.formatMessage(messages.audienceBuilderInclude)}
+          {intl.formatMessage(messages.standardSegmentBuilderInclude)}
         </Button>
 
         {formValues.exclude.length === 0 && (
@@ -305,7 +305,7 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
                 this.addToNewGroup(this.saveGroup(formValues.exclude, 'exclude')),
               )}
             >
-              {intl.formatMessage(messages.audienceBuilderExclude)}
+              {intl.formatMessage(messages.standardSegmentBuilderExclude)}
             </Button>
           </span>
         )}
@@ -320,7 +320,7 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
 
     const { objectTypes, audienceFeatures } = this.state;
 
-    const { StandardSegmentBuilder, change } = this.props;
+    const { standardSegmentBuilder, change } = this.props;
 
     return (
       <div>
@@ -328,13 +328,13 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
         <QueryFragmentFieldArray
           name={`include`}
           timelineConfiguration={{
-            titlePart1: messages.audienceBuilderTimelineMatchingCriterias1,
-            titlePart2: messages.audienceBuilderTimelineMatchingCriterias2,
+            titlePart1: messages.standardSegmentBuilderTimelineMatchingCriterias1,
+            titlePart2: messages.standardSegmentBuilderTimelineMatchingCriterias2,
             initialDotColor: 'mcs-timeline_initialDot_color1',
             actionDotColor: 'mcs-timeline_actionDot_color1',
           }}
           component={QueryFragmentFormSection}
-          datamartId={StandardSegmentBuilder.datamart_id}
+          datamartId={standardSegmentBuilder.datamart_id}
           selectAndAddFeature={this.selectAndAddFeature}
           change={change}
           audienceFeatures={audienceFeatures}
@@ -347,14 +347,14 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
         <QueryFragmentFieldArray
           name={`exclude`}
           timelineConfiguration={{
-            titlePart1: messages.audienceBuilderTimelineExcludingCriterias1,
-            titlePart2: messages.audienceBuilderTimelineExcludingCriterias2,
+            titlePart1: messages.standardSegmentBuilderTimelineExcludingCriterias1,
+            titlePart2: messages.standardSegmentBuilderTimelineExcludingCriterias2,
             initialDotColor: 'mcs-timeline_initialDot_color2',
             actionDotColor: 'mcs-timeline_actionDot_color2',
           }}
           component={QueryFragmentFormSection}
           change={change}
-          datamartId={StandardSegmentBuilder.datamart_id}
+          datamartId={standardSegmentBuilder.datamart_id}
           selectAndAddFeature={this.selectAndAddFeature}
           audienceFeatures={audienceFeatures}
           objectTypes={objectTypes}
@@ -372,7 +372,7 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
         params: { organisationId },
       },
       intl,
-      StandardSegmentBuilder,
+      standardSegmentBuilder,
     } = this.props;
 
     const {
@@ -400,45 +400,45 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
           {
             operations: [{ directives: [], selections: [{ name: 'id' }] }],
             from: 'UserPoint',
-            where: this._StandardSegmentBuilderQueryService.buildQueryDocument(formValues)?.where,
+            where: this._standardSegmentBuilderQueryService.buildQueryDocument(formValues)?.where,
           },
-          StandardSegmentBuilder.datamart_id,
+          standardSegmentBuilder.datamart_id,
         )}
 
         <Layout>
-          <Row className='ant-layout-content mcs-audienceBuilder_container'>
+          <Row className='ant-layout-content mcs-standardSegmentBuilder_container'>
             <Col span={isDashboardToggled ? 1 : 12}>
-              <div className={`${isDashboardToggled && 'mcs-audienceBuilder_hiddenForm'}`}>
+              <div className={`${isDashboardToggled && 'mcs-standardSegmentBuilder_hiddenForm'}`}>
                 {queryFragmentForm}
               </div>
             </Col>
 
             <Col
               span={isDashboardToggled ? 23 : 12}
-              className='mcs-audienceBuilder_liveDashboardContainer'
+              className='mcs-standardSegmentBuilder_liveDashboardContainer'
             >
               <Button
-                className={`mcs-audienceBuilder_sizeButton ${
-                  isDashboardToggled && 'mcs-audienceBuilder_rightChevron'
+                className={`mcs-standardSegmentBuilder_sizeButton ${
+                  isDashboardToggled && 'mcs-standardSegmentBuilder_rightChevron'
                 }`}
                 onClick={this.toggleDashboard}
               >
                 <McsIcon type='chevron-right' />
               </Button>
               {!!isMaskVisible && (
-                <div className='mcs-audienceBuilder_liveDashboardMask'>
+                <div className='mcs-standardSegmentBuilder_liveDashboardMask'>
                   <Button
                     onClick={this.runQuery}
-                    className='mcs-audienceBuilder_dashboard_refresh_button'
+                    className='mcs-standardSegmentBuilder_dashboard_refresh_button'
                   >
                     {intl.formatMessage(messages.refreshMessage)}
                   </Button>
                 </div>
               )}
-              <AudienceBuilderDashboard
+              <StandardSegmentBuilderDashboard
                 organisationId={organisationId}
-                datamartId={StandardSegmentBuilder.datamart_id}
-                StandardSegmentBuilderId={StandardSegmentBuilder.id}
+                datamartId={standardSegmentBuilder.datamart_id}
+                standardSegmentBuilderId={standardSegmentBuilder.id}
                 totalAudience={queryResult && queryResult.rows[0].count}
                 isQueryRunning={isQueryRunning}
                 queryDocument={queryDocument}

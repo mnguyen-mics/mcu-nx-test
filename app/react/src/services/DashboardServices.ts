@@ -43,10 +43,10 @@ export interface IDashboardService {
     options?: GetDashboardsOptions,
   ) => Promise<DataListResponse<DashboardResource>>;
 
-  getAudienceBuilderDashboards: (
+  getStandardSegmentBuilderDashboards: (
     organisationId: string,
     datamartId: string,
-    audienceBuilderId: string,
+    standardSegmentBuilderId: string,
     options?: GetDashboardsOptions,
   ) => Promise<DataListResponse<DashboardResource>>;
 
@@ -219,10 +219,10 @@ export class DashboardService implements IDashboardService {
     });
   }
 
-  getAudienceBuilderDashboards(
+  getStandardSegmentBuilderDashboards(
     organisationId: string,
     datamartId: string,
-    audienceBuilderId: string,
+    standardSegmentBuilderId: string,
     options: GetDashboardsOptions = {},
   ): Promise<DataListResponse<DashboardResource>> {
     const hardcodedDashboards = myDashboards.filter(
@@ -232,7 +232,7 @@ export class DashboardService implements IDashboardService {
     return new Promise((resolve, reject) => {
       return this._datafileService
         .getDatafileData(
-          `mics://data_file/tenants/${organisationId}/dashboards/${datamartId}/AUDIENCE_BUILDER-${audienceBuilderId}.json`,
+          `mics://data_file/tenants/${organisationId}/dashboards/${datamartId}/AUDIENCE_BUILDER-${standardSegmentBuilderId}.json`,
         )
         .then(
           d => d,

@@ -79,7 +79,7 @@ export interface AudienceSegmentFormProps
   segmentType?: AudienceSegmentType;
   goToSegmentTypeSelection?: () => void;
   initialProcessingSelectionsForWarning?: ProcessingSelectionResource[];
-  StandardSegmentBuilder?: StandardSegmentBuilderResource;
+  standardSegmentBuilder?: StandardSegmentBuilderResource;
 }
 
 type Props = InjectedFormProps<AudienceSegmentFormProps> &
@@ -114,7 +114,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       initialValues,
       segmentType,
       audienceSegmentFormData,
-      StandardSegmentBuilder,
+      standardSegmentBuilder,
     } = this.props;
     const type = segmentType
       ? segmentType
@@ -185,7 +185,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
                 context: 'GOALS',
                 queryHasChanged: this.hasQueryChanged(),
                 segmentEditor: (initialValues.audienceSegment as UserQuerySegment).segment_editor,
-                StandardSegmentBuilder: StandardSegmentBuilder,
+                standardSegmentBuilder: standardSegmentBuilder,
               }}
             />,
           )
@@ -223,7 +223,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
       initialProcessingSelectionsForWarning,
       audienceSegmentFormData,
       queryLanguage,
-      StandardSegmentBuilder,
+      standardSegmentBuilder,
     } = this.props;
 
     const type = segmentType
@@ -242,7 +242,7 @@ class EditAudienceSegmentForm extends React.Component<Props> {
     const query = audienceSegmentFormData.query;
     if (type === 'USER_QUERY' && queryLanguage === 'JSON_OTQL' && datamart && query) {
       actionBarProps.convert2Otql = () => {
-        return StandardSegmentBuilder
+        return standardSegmentBuilder
           ? this._queryService.convertJsonOtql2Otql(datamart.id, {
               ...query,
               query_language_subtype: 'PARAMETRIC',

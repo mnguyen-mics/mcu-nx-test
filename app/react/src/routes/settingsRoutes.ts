@@ -202,7 +202,7 @@ export const settingsDefinition: NavigatorDefinition = {
     requireDatamart: true,
   },
 
-  // Audience Builder and audience feature
+  // Standard Segment Builder and Audience Feature
   settingsDatamartAudienceFeatureEdition: {
     path: '/settings/datamart/:datamartId/audience_feature/:audienceFeatureId/edit',
     layout: 'edit',

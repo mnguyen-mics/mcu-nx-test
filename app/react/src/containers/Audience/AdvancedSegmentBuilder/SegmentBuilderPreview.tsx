@@ -11,7 +11,7 @@ import { messages } from './messages';
 import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { IStandardSegmentBuilderQueryService } from '../StandardSegmentBuilder/StandardSegmentBuilderQueryService';
 import { lazyInject } from '../../../config/inversify.config';
-import AudienceBuilderContainer, {
+import StandardSegmentBuilderContainer, {
   StandardSegmentBuilderContainerProps,
 } from '../StandardSegmentBuilder/StandardSegmentBuilderContainer';
 import {
@@ -20,7 +20,7 @@ import {
 } from '../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 
 export type JSONQLPreviewContext = 'GOALS' | 'AUTOMATION_BUILDER';
-export interface AdvancedSegmentBuilderPreviewProps {
+export interface SegmentBuilderPreviewProps {
   value?: string | void;
   queryHasChanged?: boolean;
   onChange?: (e: string) => void;
@@ -29,17 +29,17 @@ export interface AdvancedSegmentBuilderPreviewProps {
   isTrigger?: boolean;
   isEdge?: boolean;
   segmentEditor?: string;
-  StandardSegmentBuilder?: StandardSegmentBuilderResource;
+  standardSegmentBuilder?: StandardSegmentBuilderResource;
 }
 
-type Props = AdvancedSegmentBuilderPreviewProps & InjectedIntlProps & InjectedDrawerProps;
+type Props = SegmentBuilderPreviewProps & InjectedIntlProps & InjectedDrawerProps;
 
-class AdvancedSegmentBuilderPreview extends React.Component<Props> {
+class SegmentBuilderPreview extends React.Component<Props> {
   @lazyInject(TYPES.IStandardSegmentBuilderQueryService)
-  private _StandardSegmentBuilderQueryService: IStandardSegmentBuilderQueryService;
+  private _standardSegmentBuilderQueryService: IStandardSegmentBuilderQueryService;
 
   openEditor = () => {
-    const { intl, value, segmentEditor, StandardSegmentBuilder } = this.props;
+    const { intl, value, segmentEditor, standardSegmentBuilder } = this.props;
 
     const createActionBar = (onSave: () => void, onClose: () => void, query: any) => {
       return (
@@ -84,16 +84,16 @@ class AdvancedSegmentBuilderPreview extends React.Component<Props> {
       };
 
       return (
-        StandardSegmentBuilder &&
-        this.props.openNextDrawer<StandardSegmentBuilderContainerProps>(AudienceBuilderContainer, {
+        standardSegmentBuilder &&
+        this.props.openNextDrawer<StandardSegmentBuilderContainerProps>(StandardSegmentBuilderContainer, {
           additionalProps: {
             renderActionBar: actionbar,
             initialValues: value
-              ? this._StandardSegmentBuilderQueryService.generateStandardSegmentBuilderFormData(
+              ? this._standardSegmentBuilderQueryService.generateStandardSegmentBuilderFormData(
                   JSON.parse(value).where.expressions,
                 )
               : undefined,
-            StandardSegmentBuilder: StandardSegmentBuilder,
+            standardSegmentBuilder: standardSegmentBuilder,
           },
         })
       );
@@ -155,4 +155,4 @@ class AdvancedSegmentBuilderPreview extends React.Component<Props> {
   }
 }
 
-export default compose<Props, AdvancedSegmentBuilderPreviewProps>(injectIntl, injectDrawer)(AdvancedSegmentBuilderPreview);
+export default compose<Props, SegmentBuilderPreviewProps>(injectIntl, injectDrawer)(SegmentBuilderPreview);

@@ -44,7 +44,7 @@ class AudienceFeatureLayout extends React.Component<Props, State> {
   componentDidUpdate(prevProps: Props) {
     const { audienceFeatures, disabled } = this.props;
     // Disabled prop is true when we don't want to use the input = when we are in audience feature form preview
-    // We don't want this didUpdate function in the audience builder
+    // We don't want this didUpdate function in the standard segment builder
     if (audienceFeatures && audienceFeatures !== prevProps.audienceFeatures && disabled) {
       this.setState({
         audienceFeature: audienceFeatures[0],
@@ -77,11 +77,11 @@ class AudienceFeatureLayout extends React.Component<Props, State> {
         {/* Title + Close button */}
         <Row>
           <Col span={23}>
-            <div className='mcs-audienceBuilder_audienceFeatureName'>{`${audienceFeature.name}`}</div>
+            <div className='mcs-standardSegmentBuilder_audienceFeatureName'>{`${audienceFeature.name}`}</div>
           </Col>
           <Col span={1}>
             {onClose && (
-              <Button className='mcs-audienceBuilder_closeButton' onClick={onClose}>
+              <Button className='mcs-standardSegmentBuilder_closeButton' onClick={onClose}>
                 <McsIcon type='close' />
               </Button>
             )}
@@ -92,7 +92,7 @@ class AudienceFeatureLayout extends React.Component<Props, State> {
         <Row>
           <Col span={24}>
             {!!audienceFeature.description && (
-              <i className='mcs-audienceBuilder_audienceFeatureDescription'>{`${audienceFeature.description} `}</i>
+              <i className='mcs-standardSegmentBuilder_audienceFeatureDescription'>{`${audienceFeature.description} `}</i>
             )}
           </Col>
         </Row>

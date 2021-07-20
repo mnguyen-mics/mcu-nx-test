@@ -13,7 +13,7 @@ import { Link } from 'react-router-dom';
 
 interface StandardSegmentBuilderActionbarProps {
   save: (formData: NewUserQuerySimpleFormData) => Promise<any>;
-  audienceBuilder?: StandardSegmentBuilderResource;
+  standardSegmentBuilder?: StandardSegmentBuilderResource;
 }
 
 interface State {
@@ -53,7 +53,7 @@ class StandardSegmentBuilderActionbar extends React.Component<Props, State> {
   render() {
     const {
       intl,
-      audienceBuilder,
+      standardSegmentBuilder,
       match: {
         params: { organisationId, segmentId },
       },
@@ -67,7 +67,7 @@ class StandardSegmentBuilderActionbar extends React.Component<Props, State> {
       <Menu onClick={handleMenuClick} className='mcs-menu-antd-customized'>
         <Menu.Item key='USER_QUERY'>
           <FormattedMessage
-            id='audience.audienceBuilder.actionbar.saveAsButton.userQuerySegment'
+            id='audience.standardSegmentBuilder.actionbar.saveAsButton.userQuerySegment'
             defaultMessage='User Query Segment'
           />
         </Menu.Item>
@@ -79,8 +79,8 @@ class StandardSegmentBuilderActionbar extends React.Component<Props, State> {
       </Link>,
       intl.formatMessage(messages.title),
     ];
-    if (audienceBuilder) {
-      paths = paths.concat(audienceBuilder.name);
+    if (standardSegmentBuilder) {
+      paths = paths.concat(standardSegmentBuilder.name);
       if (!segmentId) {
         paths = paths.concat(intl.formatMessage(messages.newAudienceSegment));
       }
@@ -91,7 +91,7 @@ class StandardSegmentBuilderActionbar extends React.Component<Props, State> {
         <Dropdown overlay={saveAsMenu} trigger={['click']}>
           <Button className='mcs-primary' type='primary'>
             <FormattedMessage
-              id='audience.audienceBuilder.actionBar.saveAsButton'
+              id='audience.standardSegmentBuilder.actionBar.saveAsButton'
               defaultMessage='Save As'
             />
           </Button>

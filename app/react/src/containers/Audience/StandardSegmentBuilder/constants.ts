@@ -5,131 +5,131 @@ export const messages: {
   [key: string]: FormattedMessage.MessageDescriptor;
 } = defineMessages({
   title: {
-    id: 'audienceBuilder.title',
+    id: 'standardSegmentBuilder.title',
     defaultMessage: 'Standard Segment Builder',
   },
   demographics: {
-    id: 'audienceBuilder.category.demographics',
+    id: 'standardSegmentBuilder.category.demographics',
     defaultMessage: 'Initial Audience Features',
   },
   selectedAudience: {
-    id: 'audienceBuilder.selectedAudience',
+    id: 'standardSegmentBuilder.selectedAudience',
     defaultMessage: 'users selected',
   },
   tooltipGender: {
-    id: 'audienceBuilder.category.demographics.tooltiptGender',
+    id: 'standardSegmentBuilder.category.demographics.tooltiptGender',
     defaultMessage: 'Select the gender of your audience.',
   },
   tooltipAge: {
-    id: 'audienceBuilder.category.demographics.tooltiptAge',
+    id: 'standardSegmentBuilder.category.demographics.tooltiptAge',
     defaultMessage: 'Select the age of your audience.',
   },
   tooltipLanguage: {
-    id: 'audienceBuilder.category.demographics.tooltiptLanguage',
+    id: 'standardSegmentBuilder.category.demographics.tooltiptLanguage',
     defaultMessage: 'Select the language of your audience.',
   },
   narrowingWith: {
-    id: 'audienceBuilder.category.narrowingWith',
+    id: 'standardSegmentBuilder.category.narrowingWith',
     defaultMessage: 'narrowing with',
   },
   excludingWith: {
-    id: 'audienceBuilder.category.excludingWith',
+    id: 'standardSegmentBuilder.category.excludingWith',
     defaultMessage: 'excluding',
   },
   refreshMessage: {
-    id: 'audienceBuilder.liveDashboard.refreshMessage',
+    id: 'standardSegmentBuilder.liveDashboard.refreshMessage',
     defaultMessage: 'Your query has been modified, please click here to refresh',
   },
   audienceFeatures: {
-    id: 'audienceBuilder.audienceFeature.card.title',
+    id: 'standardSegmentBuilder.audienceFeature.card.title',
     defaultMessage: 'Audience Features',
   },
   addAudienceFeature: {
-    id: 'audienceBuilder.audienceFeatureSelector.actionBarTitle',
+    id: 'standardSegmentBuilder.audienceFeatureSelector.actionBarTitle',
     defaultMessage: 'Add more audience features',
   },
   addAudienceFeatureButton: {
-    id: 'audienceBuilder.audienceFeatureSelector.addButton',
+    id: 'standardSegmentBuilder.audienceFeatureSelector.addButton',
     defaultMessage: 'Add',
   },
   noDemographicExpressions: {
-    id: 'audienceBuilder.category.demographics.noDemographicExpressions',
+    id: 'standardSegmentBuilder.category.demographics.noDemographicExpressions',
     defaultMessage: 'No Demographic Expressions',
   },
   generalSectionTitle: {
-    id: 'audienceBuilder.parametricPredicateForm.generalSectionTitle',
+    id: 'standardSegmentBuilder.parametricPredicateForm.generalSectionTitle',
     defaultMessage: 'Audience Feature',
   },
   generalSectionSubtitle: {
-    id: 'audienceBuilder.parametricPredicateForm.generalSectionSubtitle',
+    id: 'standardSegmentBuilder.parametricPredicateForm.generalSectionSubtitle',
     defaultMessage: 'Select your audience features',
   },
   audienceFeatureId: {
-    id: 'audienceBuilder.audienceFeatureSelector.id',
+    id: 'standardSegmentBuilder.audienceFeatureSelector.id',
     defaultMessage: 'ID',
   },
   audienceFeatureName: {
-    id: 'audienceBuilder.audienceFeatureSelector.name',
+    id: 'standardSegmentBuilder.audienceFeatureSelector.name',
     defaultMessage: 'Name',
   },
   audienceFeatureDescription: {
-    id: 'audienceBuilder.audienceFeatureSelector.description',
+    id: 'standardSegmentBuilder.audienceFeatureSelector.description',
     defaultMessage: 'Description',
   },
   searchAudienceFeature: {
-    id: 'audienceBuilder.audienceFeatureSelector.searchPlaceholder',
+    id: 'standardSegmentBuilder.audienceFeatureSelector.searchPlaceholder',
     defaultMessage: 'Search an audience feature',
   },
   audienceFeatureAdressableObject: {
-    id: 'audienceBuilder.audienceFeatureSelector.adressableObject',
+    id: 'standardSegmentBuilder.audienceFeatureSelector.adressableObject',
     defaultMessage: 'Adressable Object',
   },
   audienceFeatureObjectTreeExpression: {
-    id: 'audienceBuilder.audienceFeatureSelector.objectTreeExpression',
+    id: 'standardSegmentBuilder.audienceFeatureSelector.objectTreeExpression',
     defaultMessage: 'Object Tree Expression',
   },
   newAudienceSegment: {
-    id: 'audienceBuilder.newSegmentName',
+    id: 'standardSegmentBuilder.newSegmentName',
     defaultMessage: 'New Audience Segment',
   },
   availableFilters: {
-    id: 'audienceBuilder.audienceFeatureSelector.availableFilters',
+    id: 'standardSegmentBuilder.audienceFeatureSelector.availableFilters',
     defaultMessage: 'Available Filters',
   },
   noAvailableFilters: {
-    id: 'audienceBuilder.audienceFeatureSelector.noAvailableFilters',
+    id: 'standardSegmentBuilder.audienceFeatureSelector.noAvailableFilters',
     defaultMessage: 'There is no filter for this audience feature.',
   },
-  audienceBuilderInclude: {
-    id: 'audienceBuilder.include',
+  standardSegmentBuilderInclude: {
+    id: 'standardSegmentBuilder.include',
     defaultMessage: 'Include',
   },
-  audienceBuilderExclude: {
-    id: 'audienceBuilder.exclude',
+  standardSegmentBuilderExclude: {
+    id: 'standardSegmentBuilder.exclude',
     defaultMessage: 'Exclude',
   },
-  audienceBuilderTimelineMatchingCriterias0: {
-    id: 'audienceBuilder.timeline.matchingCriterias.and',
+  standardSegmentBuilderTimelineMatchingCriterias0: {
+    id: 'standardSegmentBuilder.timeline.matchingCriterias.and',
     defaultMessage: 'AND',
   },
-  audienceBuilderTimelineMatchingCriterias1: {
-    id: 'audienceBuilder.timeline.matchingCriterias.include',
+  standardSegmentBuilderTimelineMatchingCriterias1: {
+    id: 'standardSegmentBuilder.timeline.matchingCriterias.include',
     defaultMessage: 'People should match',
   },
-  audienceBuilderTimelineMatchingCriterias2: {
-    id: 'audienceBuilder.timeline.matchingCriterias.one',
+  standardSegmentBuilderTimelineMatchingCriterias2: {
+    id: 'standardSegmentBuilder.timeline.matchingCriterias.one',
     defaultMessage: 'one of these criterias',
   },
-  audienceBuilderTimelineExcludingCriterias1: {
-    id: 'audienceBuilder.timeline.excludingCriterias.exclude',
+  standardSegmentBuilderTimelineExcludingCriterias1: {
+    id: 'standardSegmentBuilder.timeline.excludingCriterias.exclude',
     defaultMessage: 'Exclude people matching',
   },
-  audienceBuilderTimelineExcludingCriterias2: {
-    id: 'audienceBuilder.timeline.excludingCriterias.one',
+  standardSegmentBuilderTimelineExcludingCriterias2: {
+    id: 'standardSegmentBuilder.timeline.excludingCriterias.one',
     defaultMessage: 'one of these criterias',
   },
-  audienceBuilderTimelineAddCriteria: {
-    id: 'audienceBuilder.timeline.addCriteria',
+  standardSegmentBuilderTimelineAddCriteria: {
+    id: 'standardSegmentBuilder.timeline.addCriteria',
     defaultMessage: 'add criteria',
   },
 });

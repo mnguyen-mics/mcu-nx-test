@@ -2,20 +2,20 @@ import * as React from 'react';
 import { FormItemProps } from 'antd/lib/form';
 import { TooltipPropsWithTitle } from 'antd/lib/tooltip';
 import { WrappedFieldProps } from 'redux-form';
-import AdvancedSegmentBuilderPreview, {
-  AdvancedSegmentBuilderPreviewProps,
-} from '../../../../AdvancedSegmentBuilder/AdvancedSegmentBuilderPreview';
+import SegmentBuilderPreview, {
+  SegmentBuilderPreviewProps,
+} from '../../../../AdvancedSegmentBuilder/SegmentBuilderPreview';
 
 export interface JSONQLInputEditorProps {
   formItemProps?: FormItemProps;
-  inputProps: AdvancedSegmentBuilderPreviewProps;
+  inputProps: SegmentBuilderPreviewProps;
   helpToolTipProps?: TooltipPropsWithTitle;
 }
 
 class JSONQLInputEditor extends React.Component<JSONQLInputEditorProps & WrappedFieldProps> {
   render() {
     return (
-      <AdvancedSegmentBuilderPreview
+      <SegmentBuilderPreview
         value={this.props.input.value}
         {...this.props.inputProps}
         onChange={this.props.input.onChange}

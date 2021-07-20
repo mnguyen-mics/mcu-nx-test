@@ -44,10 +44,10 @@ class AudienceFeatureFormSection extends React.Component<Props> {
 
     return fields.map((name, index) => {
       return (
-        <Card key={`${index}_${fields.length}`} className={'mcs-audienceBuilder_audienceFeature'}>
+        <Card key={`${index}_${fields.length}`} className={'mcs-standardSegmentBuilder_audienceFeature'}>
           <Row
             key={`${index}_${fields.length}`}
-            className={'mcs-audienceBuilder_audienceFeatureContent'}
+            className={'mcs-standardSegmentBuilder_audienceFeatureContent'}
           >
             <Col span={24}>
               <AudienceFeatureLayout

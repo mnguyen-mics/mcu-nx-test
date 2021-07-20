@@ -62,7 +62,7 @@ interface State {
   loading: boolean;
   selectedDatamart?: DatamartResource;
   displayDatamartSelector: boolean;
-  StandardSegmentBuilder?: StandardSegmentBuilderResource;
+  standardSegmentBuilder?: StandardSegmentBuilderResource;
 }
 
 interface MapStateToProps {
@@ -83,7 +83,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
   private _datamartService: IDatamartService;
 
   @lazyInject(TYPES.IStandardSegmentBuilderService)
-  private _StandardSegmentBuilderService: IStandardSegmentBuilderService;
+  private _standardSegmentBuilderService: IStandardSegmentBuilderService;
 
   constructor(props: Props) {
     super(props);
@@ -161,13 +161,13 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
                 newState.queryLanguage = initialData.query.query_language;
                 const audienceSegment = initialData.audienceSegment as UserQuerySegment;
                 if (audienceSegment.audience_builder_id) {
-                  this._StandardSegmentBuilderService
+                  this._standardSegmentBuilderService
                     .getStandardSegmentBuilder(
                       audienceSegment.datamart_id,
                       audienceSegment.audience_builder_id,
                     )
                     .then(res => {
-                      newState.StandardSegmentBuilder = res.data;
+                      newState.standardSegmentBuilder = res.data;
                       this.setState(newState as State);
                     });
                 } else {
@@ -539,7 +539,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       loading,
       displayDatamartSelector,
       queryLanguage,
-      StandardSegmentBuilder,
+      standardSegmentBuilder,
     } = this.state;
 
     const audienceSegmentName =
@@ -611,7 +611,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         segmentType={selectedSegmentType}
         goToSegmentTypeSelection={resetFormData}
         initialProcessingSelectionsForWarning={initialProcessingSelectionsForWarning}
-        StandardSegmentBuilder={StandardSegmentBuilder}
+        standardSegmentBuilder={standardSegmentBuilder}
       />
     ) : displayDatamartSelector ? (
       <DatamartSelector

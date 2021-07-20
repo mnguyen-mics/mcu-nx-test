@@ -12,29 +12,29 @@ describe('This test should check the view matching timeline button', () => {
     cy.clearLocalStorage();
   });
 
-  const createAudienceBuilder = (datamartName: string, audienceBuilderName: string) => {
+  const createStandardSegmentBuilder = (datamartName: string, standardSegmentBuilderName: string) => {
     cy.get('.mcs-navigator-header-actions-settings').click();
     cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
     cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.myDatamart').click();
     cy.contains(datamartName).click();
     cy.contains('Segment Builders').click();
-    cy.get('.mcs-audienceBuilder_creation_button').click();
-    cy.get('.mcs-audienceBuilderName').type(audienceBuilderName);
-    cy.get('.mcs-form_saveButton_audienceBuilderForm').click();
+    cy.get('.mcs-standardSegmentBuilder_creation_button').click();
+    cy.get('.mcs-standardSegmentBuilderName').type(standardSegmentBuilderName);
+    cy.get('.mcs-form_saveButton_standardSegmentBuilderForm').click();
   };
 
   it('Should test the view matching timeline button on standard segment builder', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
-      const audienceBuilderName = faker.random.words(2);
+      const standardSegmentBuilderName = faker.random.words(2);
       const audienceFeatureName = faker.random.words(2);
-      createAudienceBuilder(data.datamartName, audienceBuilderName);
+      createStandardSegmentBuilder(data.datamartName, standardSegmentBuilderName);
       cy.request({
         url: `${Cypress.env('apiDomain')}/v1/datamarts/${data.datamartId}/audience_features`,
         method: 'POST',
         headers: { Authorization: data.accessToken },
         body: {
           name: audienceFeatureName,
-          description: 'Test - Audience Builder - Cypress',
+          description: 'Test - Standard Segment Builder - Cypress',
           object_tree_expression: 'accounts{compartment_id = $id}',
           addressable_object: 'UserPoint',
         },
@@ -74,7 +74,7 @@ describe('This test should check the view matching timeline button', () => {
               if (url.match(/.*segment-builder-selector$/g))
                 cy.get('.mcs-standardSegmentBuilder_dropdownContainer').click();
             });
-            cy.get('.mcs-audienceBuilder_totalAudience').should('not.contain', '0');
+            cy.get('.mcs-standardSegmentBuilder_totalAudience').should('not.contain', '0');
             cy.window().then(win => {
               cy.stub(win, 'open').as('timelinePage');
             });
@@ -91,16 +91,16 @@ describe('This test should check the view matching timeline button', () => {
 
   it('Should test the view matching timeline button on advanced segment builder', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
-      const audienceBuilderName = faker.random.words(2);
+      const standardSegmentBuilderName = faker.random.words(2);
       const audienceFeatureName = faker.random.words(2);
-      createAudienceBuilder(data.datamartName, audienceBuilderName);
+      createStandardSegmentBuilder(data.datamartName, standardSegmentBuilderName);
       cy.request({
         url: `${Cypress.env('apiDomain')}/v1/datamarts/${data.datamartId}/audience_features`,
         method: 'POST',
         headers: { Authorization: data.accessToken },
         body: {
           name: audienceFeatureName,
-          description: 'Test - Audience Builder - Cypress',
+          description: 'Test - Standard Segment Builder - Cypress',
           object_tree_expression: 'accounts{compartment_id = $id}',
           addressable_object: 'UserPoint',
         },

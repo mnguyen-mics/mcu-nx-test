@@ -27,7 +27,6 @@ type Props = StandardSegmentBuilderInitialFeatureSectionProps &
   RouteComponentProps<{
     datamartId: string;
     organisationId: string;
-    audienceBuilderId: string;
   }>;
 
 class StandardSegmentBuilderInitialFeatureSection extends React.Component<Props> {
@@ -97,17 +96,17 @@ class StandardSegmentBuilderInitialFeatureSection extends React.Component<Props>
       <div>
         <FormSection
           button={{
-            message: formatMessage(messages.audienceBuilderSectionDemographicsAddButton),
+            message: formatMessage(messages.standardSegmentBuilderSectionDemographicsAddButton),
             onClick: this.openDemographicsSelector,
           }}
-          title={messages.audienceBuilderSectionDemographicsTitle}
-          subtitle={messages.audienceBuilderSectionDemographicsSubtitle}
+          title={messages.standardSegmentBuilderSectionDemographicsTitle}
+          subtitle={messages.standardSegmentBuilderSectionDemographicsSubtitle}
         />
 
         <RelatedRecords
           emptyOption={{
-            genericIconProps: <InfoCircleFilled className='mcs-audienceBuilderSettings-records' />,
-            message: formatMessage(messages.audienceBuilderSectionDemographicsSubtitle),
+            genericIconProps: <InfoCircleFilled className='mcs-standardSegmentBuilderSettings-records' />,
+            message: formatMessage(messages.standardSegmentBuilderSectionDemographicsSubtitle),
           }}
         >
           {this.getDemographicsRecords()}

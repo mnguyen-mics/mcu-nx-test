@@ -86,7 +86,7 @@ class QueryFragmentFormSection extends React.Component<Props> {
       <div className='mcs-timeline_title'>
         {index !== 0 && (
           <span className='mcs-timeline_title_highlight'>
-            {intl.formatMessage(messages.audienceBuilderTimelineMatchingCriterias0)}&nbsp;
+            {intl.formatMessage(messages.standardSegmentBuilderTimelineMatchingCriterias0)}&nbsp;
           </span>
         )}
         {intl.formatMessage(titlePart1)}&nbsp;
@@ -152,7 +152,7 @@ class QueryFragmentFormSection extends React.Component<Props> {
                   >
                     {showCriteriaHelper(index) ? (
                       <div className='mcs-timeline_dotTitle'>
-                        {intl.formatMessage(messages.audienceBuilderTimelineAddCriteria)}
+                        {intl.formatMessage(messages.standardSegmentBuilderTimelineAddCriteria)}
                       </div>
                     ) : (
                       <div className='mcs-timeline_dotNoTitle' />

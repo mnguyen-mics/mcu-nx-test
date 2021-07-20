@@ -21,7 +21,7 @@ import { QueryResource } from '../../../models/datamart/DatamartResource';
 interface StandardSegmentBuilderDashboardProps {
   organisationId: string;
   datamartId: string;
-  StandardSegmentBuilderId: string;
+  standardSegmentBuilderId: string;
   totalAudience?: number;
   queryDocument?: StandardSegmentBuilderQueryDocument;
   isQueryRunning: boolean;
@@ -49,14 +49,14 @@ class StandardSegmentBuilderDashboard extends React.Component<Props, State> {
     };
   }
   componentDidMount() {
-    const { organisationId, datamartId, StandardSegmentBuilderId } = this.props;
-    this.loadData(organisationId, datamartId, StandardSegmentBuilderId);
+    const { organisationId, datamartId, standardSegmentBuilderId } = this.props;
+    this.loadData(organisationId, datamartId, standardSegmentBuilderId);
   }
 
-  loadData = (organisationId: string, selectedDatamartId: string, audienceBuilderId: string) => {
+  loadData = (organisationId: string, selectedDatamartId: string, standardSegmentBuilderId: string) => {
     this.setState({ isDashboardLoading: true });
     this._dashboardService
-      .getAudienceBuilderDashboards(organisationId, selectedDatamartId, audienceBuilderId, {})
+      .getStandardSegmentBuilderDashboards(organisationId, selectedDatamartId, standardSegmentBuilderId, {})
       .then(d => {
         this.setState({ dashboards: d.status === 'ok' ? d.data : [] });
       })
@@ -102,18 +102,18 @@ class StandardSegmentBuilderDashboard extends React.Component<Props, State> {
     };
 
     return (
-      <div className='mcs-audienceBuilder_liveDashboard'>
+      <div className='mcs-standardSegmentBuilder_liveDashboard'>
         <React.Fragment>
-          <CardFlex className='mcs-audienceBuilder_totalAudience'>
+          <CardFlex className='mcs-standardSegmentBuilder_totalAudience'>
             <McsIcon type='full-users' />
             {isQueryRunning ? (
               <span />
             ) : !!totalAudience || totalAudience === 0 ? (
               <span>
-                <span className='mcs-audienceBuilder_totalValue'>
+                <span className='mcs-standardSegmentBuilder_totalValue'>
                   {formatMetric(totalAudience, '0,0')}
                 </span>
-                <span className='mcs-audienceBuilder_selectedAudience'>
+                <span className='mcs-standardSegmentBuilder_selectedAudience'>
                   {intl.formatMessage(messages.selectedAudience)}
                 </span>
               </span>
@@ -133,7 +133,7 @@ class StandardSegmentBuilderDashboard extends React.Component<Props, State> {
               />
             ))
           )}
-          <div className='mcs-audienceBuilder_timelineSelector'>
+          <div className='mcs-standardSegmentBuilder_timelineSelector'>
             <TimelineSelector
               stale={false}
               datamartId={datamartId}

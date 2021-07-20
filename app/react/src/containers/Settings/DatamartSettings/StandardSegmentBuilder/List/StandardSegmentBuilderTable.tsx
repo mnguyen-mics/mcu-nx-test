@@ -22,7 +22,7 @@ export interface StandardSegmentBuilderTableProps {
   noItem: boolean;
   onFilterChange: (newFilter: Partial<Filter>) => void;
   filter: Filter;
-  deleteAudienceBuilder: (audienceBuilder: StandardSegmentBuilderResource) => void;
+  deleteStandardSegmentBuilder: (standardSegmentBuilder: StandardSegmentBuilderResource) => void;
 }
 
 type Props = StandardSegmentBuilderTableProps &
@@ -31,7 +31,7 @@ type Props = StandardSegmentBuilderTableProps &
   RouteComponentProps<{ organisationId: string; datamartId: string }>;
 
 class StandardSegmentBuilderTable extends React.Component<Props> {
-  onEditAudienceBuilder = (record: StandardSegmentBuilderResource) => {
+  onEditStandardSegmentBuilder = (record: StandardSegmentBuilderResource) => {
     const {
       match: {
         params: { organisationId, datamartId },
@@ -56,7 +56,7 @@ class StandardSegmentBuilderTable extends React.Component<Props> {
         params: { organisationId, datamartId },
       },
       filter,
-      deleteAudienceBuilder,
+      deleteStandardSegmentBuilder,
     } = this.props;
 
     const pagination = {
@@ -84,7 +84,7 @@ class StandardSegmentBuilderTable extends React.Component<Props> {
         render: (text: string) => text,
       },
       {
-        title: formatMessage(messages.audienceBuilderName),
+        title: formatMessage(messages.standardSegmentBuilderName),
         key: 'name',
         isHideable: false,
         render: (text: string, record: StandardSegmentBuilderResource) => {
@@ -109,12 +109,12 @@ class StandardSegmentBuilderTable extends React.Component<Props> {
         key: 'action',
         actions: () => [
           {
-            message: formatMessage(messages.audienceBuilderEdit),
-            callback: this.onEditAudienceBuilder,
+            message: formatMessage(messages.standardSegmentBuilderEdit),
+            callback: this.onEditStandardSegmentBuilder,
           },
           {
-            message: formatMessage(messages.audienceBuilderDelete),
-            callback: deleteAudienceBuilder,
+            message: formatMessage(messages.standardSegmentBuilderDelete),
+            callback: deleteStandardSegmentBuilder,
           },
         ],
       },
@@ -123,7 +123,7 @@ class StandardSegmentBuilderTable extends React.Component<Props> {
     return noItem && !isLoading ? (
       <EmptyTableView
         iconType='settings'
-        message={formatMessage(messages.audienceBuilderEmptyList)}
+        message={formatMessage(messages.standardSegmentBuilderEmptyList)}
         className='mcs-table-view-empty mcs-empty-card'
       />
     ) : (

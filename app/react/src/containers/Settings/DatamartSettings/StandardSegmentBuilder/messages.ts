@@ -1,87 +1,87 @@
 import { defineMessages } from 'react-intl';
 
 export const messages = defineMessages({
-  // AUDIENCE BUILDER
+  // STANDARD SEGMENT BUILDER
 
-  audienceBuilderNew: {
-    id: 'settings.datamart.audienceBuilder.newAudienceBuilder',
+  standardSegmentBuilderNew: {
+    id: 'settings.datamart.standardSegmentBuilder.newStandardSegmentBuilder',
     defaultMessage: 'New Standard Segment Builder',
   },
-  audienceBuilders: {
-    id: 'settings.datamart.audienceBuilders',
+  standardSegmentBuilders: {
+    id: 'settings.datamart.standardSegmentBuilders',
     defaultMessage: 'Standard Segment Builders',
   },
-  audienceBuilderName: {
-    id: 'settings.datamart.audienceBuilders.name',
+  standardSegmentBuilderName: {
+    id: 'settings.datamart.standardSegmentBuilders.name',
     defaultMessage: 'Name',
   },
-  audienceBuilderEdit: {
-    id: 'settings.datamart.audienceBuilders.edit',
+  standardSegmentBuilderEdit: {
+    id: 'settings.datamart.standardSegmentBuilders.edit',
     defaultMessage: 'Edit',
   },
-  audienceBuilderSave: {
-    id: 'settings.datamart.audienceBuilders.save',
+  standardSegmentBuilderSave: {
+    id: 'settings.datamart.standardSegmentBuilders.save',
     defaultMessage: 'Save',
   },
-  audienceBuilderDelete: {
-    id: 'settings.datamart.audienceBuilders.delete',
+  standardSegmentBuilderDelete: {
+    id: 'settings.datamart.standardSegmentBuilders.delete',
     defaultMessage: 'Delete',
   },
-  audienceBuilderEmptyList: {
-    id: 'settings.datamart.audienceBuilders.emptyList',
+  standardSegmentBuilderEmptyList: {
+    id: 'settings.datamart.standardSegmentBuilders.emptyList',
     defaultMessage: 'There are no Standard Segment Builder.',
   },
-  audienceBuilderSectionGeneralSubtitle: {
-    id: 'settings.datamart.audienceBuilders.edit.subtitle',
+  standardSegmentBuilderSectionGeneralSubtitle: {
+    id: 'settings.datamart.standardSegmentBuilders.edit.subtitle',
     defaultMessage: 'Enter your parameters for the following inputs',
   },
-  audienceBuilderSectionGeneralTitle: {
-    id: 'settings.datamart.audienceBuilders.edit.general.title',
+  standardSegmentBuilderSectionGeneralTitle: {
+    id: 'settings.datamart.standardSegmentBuilders.edit.general.title',
     defaultMessage: 'General Information',
   },
-  audienceBuilderSectionDemographicsTitle: {
-    id: 'settings.datamart.audienceBuilders.edit.demographics.title',
+  standardSegmentBuilderSectionDemographicsTitle: {
+    id: 'settings.datamart.standardSegmentBuilders.edit.demographics.title',
     defaultMessage: 'Initial Audience Features',
   },
-  audienceBuilderSectionDemographicsSubtitle: {
-    id: 'settings.datamart.audienceBuilders.edit.demographics.subtitle',
+  standardSegmentBuilderSectionDemographicsSubtitle: {
+    id: 'settings.datamart.standardSegmentBuilders.edit.demographics.subtitle',
     defaultMessage: 'Audience Features that will always be used when building an audience',
   },
-  audienceBuilderSectionDemographicsAddButton: {
-    id: 'settings.datamart.audienceBuilders.edit.demographics.add',
+  standardSegmentBuilderSectionDemographicsAddButton: {
+    id: 'settings.datamart.standardSegmentBuilders.edit.demographics.add',
     defaultMessage: 'Add from library',
   },
-  audienceBuilderNameLabel: {
-    id: 'settings.datamart.audienceBuilders.edit.name.label',
+  standardSegmentBuilderNameLabel: {
+    id: 'settings.datamart.standardSegmentBuilders.edit.name.label',
     defaultMessage: 'Name',
   },
-  audienceBuilderNamePlaceholder: {
-    id: 'settings.datamart.audienceBuilders.edit.name.placeholder',
+  standardSegmentBuilderNamePlaceholder: {
+    id: 'settings.datamart.standardSegmentBuilders.edit.name.placeholder',
     defaultMessage: 'Name',
   },
-  audienceBuilderNameTooltip: {
-    id: 'settings.datamart.audienceBuilders.edit.name.tooltip',
+  standardSegmentBuilderNameTooltip: {
+    id: 'settings.datamart.standardSegmentBuilders.edit.name.tooltip',
     defaultMessage: 'Enter a name for your Standard Segment builder',
   },
-  audienceBuilderPreview: {
-    id: 'settings.datamart.audienceBuilders.edit.preview',
+  standardSegmentBuilderPreview: {
+    id: 'settings.datamart.standardSegmentBuilders.edit.preview',
     defaultMessage: 'Preview',
   },
-  audienceBuilderSavingInProgress: {
-    id: 'settings.datamart.audienceBuilders.edit.savingInProgress',
+  standardSegmentBuilderSavingInProgress: {
+    id: 'settings.datamart.standardSegmentBuilders.edit.savingInProgress',
     defaultMessage: 'Saving in progress...',
   },
-  audienceBuilderDeleteListModalTitle: {
-    id: 'settings.datamart.audienceBuilders.list.deleteModal.title',
+  standardSegmentBuilderDeleteListModalTitle: {
+    id: 'settings.datamart.standardSegmentBuilders.list.deleteModal.title',
     defaultMessage:
-      'You are about to delete an Audience Builder from your datamart. This action cannot be undone. Do you want to proceed anyway ?',
+      'You are about to delete a Standard Segment Builder from your datamart. This action cannot be undone. Do you want to proceed anyway ?',
   },
-  audienceBuilderDeleteListModalOk: {
-    id: 'settings.datamart.audienceBuilders.list.deleteModal.ok',
+  standardSegmentBuilderDeleteListModalOk: {
+    id: 'settings.datamart.standardSegmentBuilders.list.deleteModal.ok',
     defaultMessage: 'Delete',
   },
-  audienceBuilderDeleteListModalCancel: {
-    id: 'settings.datamart.audienceBuilders.list.deleteModal.cancel',
+  standardSegmentBuilderDeleteListModalCancel: {
+    id: 'settings.datamart.standardSegmentBuilders.list.deleteModal.cancel',
     defaultMessage: 'Cancel',
   },
 

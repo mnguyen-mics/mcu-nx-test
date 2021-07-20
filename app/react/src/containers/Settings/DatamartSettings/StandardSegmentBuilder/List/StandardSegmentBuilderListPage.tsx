@@ -4,7 +4,7 @@ import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { Button, Layout, Modal } from 'antd';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
 import { messages } from '../messages';
-import AudienceBuilderTable from './StandardSegmentBuilderTable';
+import StandardSegmentBuilderTable from './StandardSegmentBuilderTable';
 import { injectDrawer } from '../../../../../components/Drawer';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -47,7 +47,7 @@ type Props = RouteComponentProps<{
 
 class StandardSegmentBuilderListPage extends React.Component<Props, State> {
   @lazyInject(TYPES.IStandardSegmentBuilderService)
-  private _StandardSegmentBuilderService: IStandardSegmentBuilderService;
+  private _standardSegmentBuilderService: IStandardSegmentBuilderService;
 
   constructor(props: Props) {
     super(props);
@@ -94,7 +94,7 @@ class StandardSegmentBuilderListPage extends React.Component<Props, State> {
       return options;
     };
 
-    this._StandardSegmentBuilderService
+    this._standardSegmentBuilderService
       .getStandardSegmentBuilders(datamartId, buildOptions())
       .then(res => {
         this.setState({
@@ -112,7 +112,7 @@ class StandardSegmentBuilderListPage extends React.Component<Props, State> {
       });
   };
 
-  deleteAudienceBuilder = (resource: StandardSegmentBuilderResource) => {
+  deleteStandardSegmentBuilder = (resource: StandardSegmentBuilderResource) => {
     const {
       match: {
         params: { datamartId },
@@ -129,11 +129,11 @@ class StandardSegmentBuilderListPage extends React.Component<Props, State> {
 
     Modal.confirm({
       icon: 'exclamation-circle',
-      title: formatMessage(messages.audienceBuilderDeleteListModalTitle),
-      okText: formatMessage(messages.audienceBuilderDeleteListModalOk),
-      cancelText: formatMessage(messages.audienceBuilderDeleteListModalCancel),
+      title: formatMessage(messages.standardSegmentBuilderDeleteListModalTitle),
+      okText: formatMessage(messages.standardSegmentBuilderDeleteListModalOk),
+      cancelText: formatMessage(messages.standardSegmentBuilderDeleteListModalCancel),
       onOk: () => {
-        this._StandardSegmentBuilderService
+        this._standardSegmentBuilderService
           .deleteStandardSegmentBuilder(resource.datamart_id, resource.id)
           .then(() => {
             if (StandardSegmentBuilders.length === 1 && filter.currentPage !== 1) {
@@ -177,8 +177,8 @@ class StandardSegmentBuilderListPage extends React.Component<Props, State> {
       });
     };
     return (
-      <Button type='primary' className='mcs-audienceBuilder_creation_button' onClick={onClick}>
-        <FormattedMessage {...messages.audienceBuilderNew} />
+      <Button type='primary' className='mcs-standardSegmentBuilder_creation_button' onClick={onClick}>
+        <FormattedMessage {...messages.standardSegmentBuilderNew} />
       </Button>
     );
   };
@@ -208,19 +208,19 @@ class StandardSegmentBuilderListPage extends React.Component<Props, State> {
             <div>
               <div className='mcs-card-header mcs-card-title'>
                 <span className='mcs-card-title'>
-                  <FormattedMessage {...messages.audienceBuilders} />
+                  <FormattedMessage {...messages.standardSegmentBuilders} />
                 </span>
                 <span className='mcs-card-button'>{this.buildNewActionElement()}</span>
               </div>
               <hr className='mcs-separator' />
-              <AudienceBuilderTable
+              <StandardSegmentBuilderTable
                 dataSource={StandardSegmentBuilders}
                 total={totalStandardSegmentBuilder}
                 isLoading={isLoading}
                 noItem={noStandardSegmentBuilder}
                 onFilterChange={this.onFilterChange}
                 filter={filter}
-                deleteAudienceBuilder={this.deleteAudienceBuilder}
+                deleteStandardSegmentBuilder={this.deleteStandardSegmentBuilder}
               />
             </div>
           </div>

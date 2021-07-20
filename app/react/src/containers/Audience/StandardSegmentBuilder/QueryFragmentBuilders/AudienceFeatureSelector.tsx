@@ -193,7 +193,7 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
       return;
     };
     return (
-      <Breadcrumb className='mcs-audienceBuilder_breadCrumb mcs-breadcrumb'>
+      <Breadcrumb className='mcs-standardSegmentBuilder_breadCrumb mcs-breadcrumb'>
         {buildBreadCrumbs()}
       </Breadcrumb>
     );
@@ -306,14 +306,14 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
                 return (
                   <Col key={folder.id ? folder.id : 'root_key'} span={4}>
                     <div
-                      className='mcs-audienceBuilder_folder'
+                      className='mcs-standardSegmentBuilder_folder'
                       onClick={this.onSelectFolder(folder.id)}
                     >
-                      <FolderOutlined className='mcs-audienceBuilder_folderIcon' />
+                      <FolderOutlined className='mcs-standardSegmentBuilder_folderIcon' />
                       <br />
                       <span>{folder.name}</span>
                       <br />
-                      <span className='mcs-audienceBuilder_folderChildNumber'>
+                      <span className='mcs-standardSegmentBuilder_folderChildNumber'>
                         {folder.audience_features_ids?.length} features
                       </span>
                     </div>
@@ -321,7 +321,7 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
                 );
               })}
         </Row>
-        <div className='mcs-audienceBuilder_featureCardContainer'>
+        <div className='mcs-standardSegmentBuilder_featureCardContainer'>
           <CollectionView
             collectionItems={audienceFeatures!}
             pagination={pagination}
@@ -344,7 +344,7 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
         <Actionbar pathItems={[formatMessage(messages.addAudienceFeature)]} edition={true}>
           <McsIcon type='close' className='close-icon mcs-table-cursor' onClick={close} />
         </Actionbar>
-        <Layout className={`mcs-edit-container mcs-audienceBuilder_featureSelector`}>
+        <Layout className={`mcs-edit-container mcs-standardSegmentBuilder_featureSelector`}>
           {this.renderSelector()}
         </Layout>
       </Layout>

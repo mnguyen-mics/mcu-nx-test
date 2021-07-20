@@ -66,7 +66,7 @@ type Props = RouteComponentProps<{ organisationId: string }> &
 
 interface State {
   isLoadingBuilders: boolean;
-  audienceBuilders?: StandardSegmentBuilderResource[];
+  standardSegmentBuilders?: StandardSegmentBuilderResource[];
 }
 
 class SegmentBuilderSelector extends React.Component<Props, State> {
@@ -74,7 +74,7 @@ class SegmentBuilderSelector extends React.Component<Props, State> {
   // private _audienceSegmentService: IAudienceSegmentService;
 
   @lazyInject(TYPES.IStandardSegmentBuilderService)
-  private _StandardSegmentBuilderService: IStandardSegmentBuilderService;
+  private _standardSegmentBuilderService: IStandardSegmentBuilderService;
 
   constructor(props: Props) {
     super(props);
@@ -84,24 +84,24 @@ class SegmentBuilderSelector extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    this.getAudienceBuilders();
+    this.getstandardSegmentBuilders();
   }
 
   componentDidUpdate(prevProps: Props) {
     const { selectedDatamartId: prevSelectedDatamartId } = prevProps;
     const { selectedDatamartId } = this.props;
     if (prevSelectedDatamartId !== selectedDatamartId) {
-      this.getAudienceBuilders();
+      this.getstandardSegmentBuilders();
     }
   }
 
-  getAudienceBuilders() {
+  getstandardSegmentBuilders() {
     const { selectedDatamartId, notifyError } = this.props;
-    this._StandardSegmentBuilderService
+    this._standardSegmentBuilderService
       .getStandardSegmentBuilders(selectedDatamartId)
       .then(res => {
         this.setState({
-          audienceBuilders: res.data,
+          standardSegmentBuilders: res.data,
           isLoadingBuilders: false,
         });
       })
@@ -120,17 +120,17 @@ class SegmentBuilderSelector extends React.Component<Props, State> {
       },
       selectedDatamartId,
     } = this.props;
-    const { audienceBuilders, isLoadingBuilders } = this.state;
+    const { standardSegmentBuilders, isLoadingBuilders } = this.state;
 
     return isLoadingBuilders ? (
       <Loading isFullScreen={true} />
-    ) : audienceBuilders?.length === 1 ? (
+    ) : standardSegmentBuilders?.length === 1 ? (
       <div />
     ) : (
       <React.Fragment>
-        {audienceBuilders?.map(b => {
+        {standardSegmentBuilders?.map(b => {
           const handleSelect = (builderId: string) => {
-            return this.makeStandardBuilderRedirection(
+            return this.makeStandardSegmentBuilderRedirection(
               organisationId,
               selectedDatamartId,
               builderId,
@@ -142,13 +142,13 @@ class SegmentBuilderSelector extends React.Component<Props, State> {
     );
   };
 
-  makeStandardBuilderRedirection = (
+  makeStandardSegmentBuilderRedirection = (
     organisationId: string,
     datamartId: string,
     builderId: string,
   ) => () => {
     return this.props.history.push(
-      `/v2/o/${organisationId}/audience/segment-builder/standard?datamartId=${datamartId}&audienceBuilderId=${builderId}`,
+      `/v2/o/${organisationId}/audience/segment-builder/standard?datamartId=${datamartId}&standardSegmentBuilderId=${builderId}`,
     );
   };
 
@@ -162,7 +162,7 @@ class SegmentBuilderSelector extends React.Component<Props, State> {
       intl: { formatMessage },
     } = this.props;
 
-    const { audienceBuilders } = this.state;
+    const { standardSegmentBuilders } = this.state;
 
     const onTypeSelect = (type: 'standard' | 'advanced' | 'expert') => () => {
       if (type === 'expert') {
@@ -195,16 +195,16 @@ class SegmentBuilderSelector extends React.Component<Props, State> {
               span={6}
               offset={3}
               onClick={
-                audienceBuilders?.length === 1
-                  ? this.makeStandardBuilderRedirection(
+                standardSegmentBuilders?.length === 1
+                  ? this.makeStandardSegmentBuilderRedirection(
                       organisationId,
                       selectedDatamartId,
-                      audienceBuilders[0].id,
+                      standardSegmentBuilders[0].id,
                     )
                   : undefined
               }
             >
-              {audienceBuilders?.length === 0 ? (
+              {standardSegmentBuilders?.length === 0 ? (
                 <div className='mcs-segmentBuilderSelector_item'>
                   <span>{formatMessage(messages.noStandardBuilders)}</span>
                 </div>

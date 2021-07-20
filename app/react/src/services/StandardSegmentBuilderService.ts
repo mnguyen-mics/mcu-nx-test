@@ -94,15 +94,15 @@ export default class StandardSegmentBuilderService implements IStandardSegmentBu
 
   updateStandardSegmentBuilder(
     datamartId: string,
-    audienceBuilderId: string,
+    standardSegmentBuilderId: string,
     body: Partial<StandardSegmentBuilderResource>,
   ): Promise<DataResponse<StandardSegmentBuilderResource>> {
-    const endpoint = `datamarts/${datamartId}/audience_builders/${audienceBuilderId}`;
+    const endpoint = `datamarts/${datamartId}/audience_builders/${standardSegmentBuilderId}`;
     return ApiService.putRequest(endpoint, body);
   }
 
-  deleteStandardSegmentBuilder(datamartId: string, audienceBuilderId: string): Promise<DataResponse<any>> {
-    const endpoint = `datamarts/${datamartId}/audience_builders/${audienceBuilderId}`;
+  deleteStandardSegmentBuilder(datamartId: string, standardSegmentBuilderId: string): Promise<DataResponse<any>> {
+    const endpoint = `datamarts/${datamartId}/audience_builders/${standardSegmentBuilderId}`;
     return ApiService.deleteRequest(endpoint);
   }
 }

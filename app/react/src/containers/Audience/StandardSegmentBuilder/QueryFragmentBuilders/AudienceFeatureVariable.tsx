@@ -484,7 +484,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
   };
 
   render() {
-    return <div className={'mcs-audienceBuilder_audienceFeatureInput'}>{this.renderField()}</div>;
+    return <div className={'mcs-standardSegmentBuilder_audienceFeatureInput'}>{this.renderField()}</div>;
   }
 }
 

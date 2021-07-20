@@ -326,7 +326,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
       return;
     };
     return (
-      <Breadcrumb className='mcs-audienceBuilder_breadCrumb mcs-breadcrumb'>
+      <Breadcrumb className='mcs-standardSegmentBuilder_breadCrumb mcs-breadcrumb'>
         {buildBreadCrumbs()}
       </Breadcrumb>
     );

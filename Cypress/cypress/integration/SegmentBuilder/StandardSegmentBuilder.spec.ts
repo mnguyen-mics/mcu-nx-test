@@ -12,29 +12,29 @@ describe('This test should check that the audience feature forms are working pro
     cy.clearLocalStorage();
   });
 
-  const createAudienceBuilder = (datamartName: string, audienceBuilderName: string) => {
+  const createStandardSegmentBuilder = (datamartName: string, standardSegmentBuilderName: string) => {
     cy.get('.mcs-navigator-header-actions-settings').click();
     cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
     cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.myDatamart').click();
     cy.contains(datamartName).click();
     cy.contains('Segment Builders').click();
-    cy.get('.mcs-audienceBuilder_creation_button').click();
-    cy.get('.mcs-audienceBuilderName').type(audienceBuilderName);
-    cy.get('.mcs-form_saveButton_audienceBuilderForm').click();
+    cy.get('.mcs-standardSegmentBuilder_creation_button').click();
+    cy.get('.mcs-standardSegmentBuilderName').type(standardSegmentBuilderName);
+    cy.get('.mcs-form_saveButton_standardSegmentBuilderForm').click();
   };
 
-  it('Should test the audience builder', () => {
+  it('Should test the standard segment builder', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
-      const audienceBuilderName = faker.random.words(2);
+      const standardSegmentBuilderName = faker.random.words(2);
       const audienceFeatureName = faker.random.words(2);
-      createAudienceBuilder(data.datamartName, audienceBuilderName);
+      createStandardSegmentBuilder(data.datamartName, standardSegmentBuilderName);
       cy.request({
         url: `${Cypress.env('apiDomain')}/v1/datamarts/${data.datamartId}/audience_features`,
         method: 'POST',
         headers: { Authorization: data.accessToken },
         body: {
           name: audienceFeatureName,
-          description: 'Test - Audience Builder - Cypress',
+          description: 'Test - Standard Segment Builder - Cypress',
           object_tree_expression: 'creation_ts > $date1',
           addressable_object: 'UserPoint',
         },
@@ -74,33 +74,33 @@ describe('This test should check that the audience feature forms are working pro
               if (url.match(/.*segment-builder-selector$/g))
                 cy.get('.mcs-standardSegmentBuilder_dropdownContainer').click();
             });
-            cy.get('.mcs-audienceBuilder_totalAudience').should('not.contain', '0');
+            cy.get('.mcs-standardSegmentBuilder_totalAudience').should('not.contain', '0');
             cy.get('.mcs-timelineButton_left').click();
-            cy.get('.mcs-audienceBuilder_featureCard').contains(audienceFeatureName).click();
-            cy.get('.mcs-audienceBuilder_dashboard_refresh_button').click();
-            cy.get('.mcs-audienceBuilder_totalAudience').should('not.contain', '0');
+            cy.get('.mcs-standardSegmentBuilder_featureCard').contains(audienceFeatureName).click();
+            cy.get('.mcs-standardSegmentBuilder_dashboard_refresh_button').click();
+            cy.get('.mcs-standardSegmentBuilder_totalAudience').should('not.contain', '0');
             cy.get('.mcs-timelineButton_right').click();
-            cy.get('.mcs-audienceBuilder_featureCard').contains(audienceFeatureName).click();
-            cy.get('.mcs-audienceBuilder_dashboard_refresh_button').click();
-            cy.get('.mcs-audienceBuilder_totalAudience').should('contain', '0');
+            cy.get('.mcs-standardSegmentBuilder_featureCard').contains(audienceFeatureName).click();
+            cy.get('.mcs-standardSegmentBuilder_dashboard_refresh_button').click();
+            cy.get('.mcs-standardSegmentBuilder_totalAudience').should('contain', '0');
           });
         });
       });
     });
   });
 
-  it('should test the audience builder using match clause', () => {
+  it('should test the standard segment builder using match clause', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
-      const audienceBuilderName = faker.random.words(2);
+      const standardSegmentBuilderName = faker.random.words(2);
       const audienceFeatureName = faker.random.words(2);
-      createAudienceBuilder(data.datamartName, audienceBuilderName);
+      createStandardSegmentBuilder(data.datamartName, standardSegmentBuilderName);
       cy.request({
         url: `${Cypress.env('apiDomain')}/v1/datamarts/${data.datamartId}/audience_features`,
         method: 'POST',
         headers: { Authorization: data.accessToken },
         body: {
           name: audienceFeatureName,
-          description: 'Test - Audience Builder - Cypress',
+          description: 'Test - Standard Segment Builder - Cypress',
           object_tree_expression: 'accounts{match (user_account_id,$id)}',
           addressable_object: 'UserPoint',
         },
@@ -139,47 +139,47 @@ describe('This test should check that the audience feature forms are working pro
             cy.url().then(url => {
               if (url.match(/.*segment-builder-selector$/g))
                 cy.get('.mcs-standardSegmentBuilder_dropdownContainer').trigger('mouseover');
-              cy.contains(audienceBuilderName).click();
+              cy.contains(standardSegmentBuilderName).click();
             });
-            cy.get('.mcs-audienceBuilder_totalAudience').should('not.contain', '0');
+            cy.get('.mcs-standardSegmentBuilder_totalAudience').should('not.contain', '0');
             cy.get('.mcs-timelineButton_left').click();
-            cy.get('.mcs-audienceBuilder_featureCard').contains(audienceFeatureName).click();
+            cy.get('.mcs-standardSegmentBuilder_featureCard').contains(audienceFeatureName).click();
             cy.get('.mcs-timeline_actionDot').first().click();
-            cy.get('.mcs-audienceBuilder_featureCard').contains(audienceFeatureName).click();
-            cy.get('.mcs-audienceBuilder_audienceFeatureContent')
+            cy.get('.mcs-standardSegmentBuilder_featureCard').contains(audienceFeatureName).click();
+            cy.get('.mcs-standardSegmentBuilder_audienceFeatureContent')
               .first()
               .within(() => {
                 cy.get('.mcs-formSearchInput').type('test_match_audience_builder');
               });
-            cy.get('.mcs-audienceBuilder_dashboard_refresh_button').click();
-            cy.get('.mcs-audienceBuilder_totalAudience').should('not.contain', '0');
+            cy.get('.mcs-standardSegmentBuilder_dashboard_refresh_button').click();
+            cy.get('.mcs-standardSegmentBuilder_totalAudience').should('not.contain', '0');
           });
         });
       });
     });
   });
 
-  it('should test to add an audience feature from library to an audience builder on creation', () => {
+  it('should test to add an audience feature from library to a standard segment builder on creation', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
-      const audienceBuilderName = faker.random.words(2);
+      const standardSegmentBuilderName = faker.random.words(2);
       const audienceFeatureName = faker.random.words(2);
-      createAudienceBuilder(data.datamartName, audienceBuilderName);
+      createStandardSegmentBuilder(data.datamartName, standardSegmentBuilderName);
       cy.request({
         url: `${Cypress.env('apiDomain')}/v1/datamarts/${data.datamartId}/audience_features`,
         method: 'POST',
         headers: { Authorization: data.accessToken },
         body: {
           name: audienceFeatureName,
-          description: 'Test - Audience Builder - Cypress',
+          description: 'Test - Standard Segment Builder - Cypress',
           object_tree_expression: 'accounts{match (user_account_id,$id)}',
           addressable_object: 'UserPoint',
         },
       })
         .then(() => {
-          cy.contains(audienceBuilderName).click();
-          cy.get('.mcs-audienceBuilder_formColumn').contains('Add from library').click();
+          cy.contains(standardSegmentBuilderName).click();
+          cy.get('.mcs-standardSegmentBuilder_formColumn').contains('Add from library').click();
           cy.contains(audienceFeatureName).click();
-          cy.get('.mcs-form_saveButton_audienceBuilderForm').click();
+          cy.get('.mcs-form_saveButton_standardSegmentBuilderForm').click();
         })
         .then(() => {
           cy.request({
@@ -220,43 +220,43 @@ describe('This test should check that the audience feature forms are working pro
           cy.url().then(url => {
             if (url.match(/.*segment-builder-selector$/g))
               cy.get('.mcs-standardSegmentBuilder_dropdownContainer').trigger('mouseover');
-            cy.contains(audienceBuilderName).click();
+            cy.contains(standardSegmentBuilderName).click();
           });
 
-          cy.get('.mcs-audienceBuilder_totalAudience').should('not.contain', '0');
+          cy.get('.mcs-standardSegmentBuilder_totalAudience').should('not.contain', '0');
 
-          cy.get('.mcs-audienceBuilder_audienceFeatureContent').should(
+          cy.get('.mcs-standardSegmentBuilder_audienceFeatureContent').should(
             'contain',
             audienceFeatureName,
           );
 
-          cy.get('.mcs-audienceBuilder_audienceFeatureContent').should(
+          cy.get('.mcs-standardSegmentBuilder_audienceFeatureContent').should(
             'contain',
-            'Test - Audience Builder - Cypress',
+            'Test - Standard Segment Builder - Cypress',
           );
 
-          cy.get('.mcs-audienceBuilder_audienceFeatureContent').within(() => {
+          cy.get('.mcs-standardSegmentBuilder_audienceFeatureContent').within(() => {
             cy.get('.mcs-formSearchInput').type('test_match_audience_builder{enter}');
           });
 
-          cy.get('.mcs-audienceBuilder_dashboard_refresh_button').click();
-          cy.get('.mcs-audienceBuilder_totalAudience').should('not.contain', '0');
+          cy.get('.mcs-standardSegmentBuilder_dashboard_refresh_button').click();
+          cy.get('.mcs-standardSegmentBuilder_totalAudience').should('not.contain', '0');
         });
     });
   });
 
-  it('should test the audience builder using scoreSum', () => {
+  it('should test the standard segment builder using scoreSum', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
-      const audienceBuilderName = faker.random.words(2);
+      const standardSegmentBuilderName = faker.random.words(2);
       const audienceFeatureName = faker.random.words(2);
-      createAudienceBuilder(data.datamartName, audienceBuilderName);
+      createStandardSegmentBuilder(data.datamartName, standardSegmentBuilderName);
       cy.request({
         url: `${Cypress.env('apiDomain')}/v1/datamarts/${data.datamartId}/audience_features`,
         method: 'POST',
         headers: { Authorization: data.accessToken },
         body: {
           name: audienceFeatureName,
-          description: 'Test - Audience Builder - Cypress',
+          description: 'Test - Standard Segment Builder - Cypress',
           object_tree_expression:
             'activity_events @ScoreSum(min : $frequency) {nature=$event_name}',
           addressable_object: 'UserPoint',
@@ -324,20 +324,20 @@ describe('This test should check that the audience feature forms are working pro
               cy.url().then(url => {
                 if (url.match(/.*segment-builder-selector$/g))
                   cy.get('.mcs-standardSegmentBuilder_dropdownContainer').trigger('mouseover');
-                cy.contains(audienceBuilderName).click();
+                cy.contains(standardSegmentBuilderName).click();
               });
-              cy.get('.mcs-audienceBuilder_totalAudience').should('not.contain', '0');
+              cy.get('.mcs-standardSegmentBuilder_totalAudience').should('not.contain', '0');
               cy.get('.mcs-timelineButton_left').click();
-              cy.get('.mcs-audienceBuilder_featureCard').contains(audienceFeatureName).click();
-              cy.get('.mcs-audienceBuilder_audienceFeatureContent')
+              cy.get('.mcs-standardSegmentBuilder_featureCard').contains(audienceFeatureName).click();
+              cy.get('.mcs-standardSegmentBuilder_audienceFeatureContent')
                 .first()
                 .within(() => {
                   cy.get('.mcs-formSearchInput').type('$item_view{enter}');
-                  cy.get('.mcs-audienceBuilder_audienceFeatureName').click();
+                  cy.get('.mcs-standardSegmentBuilder_audienceFeatureName').click();
                   cy.get('.mcs-formInputNumber').type('2{enter}');
                 });
-              cy.get('.mcs-audienceBuilder_dashboard_refresh_button').click();
-              cy.get('.mcs-audienceBuilder_totalAudience').should('contain', '1');
+              cy.get('.mcs-standardSegmentBuilder_dashboard_refresh_button').click();
+              cy.get('.mcs-standardSegmentBuilder_totalAudience').should('contain', '1');
             });
         });
       });

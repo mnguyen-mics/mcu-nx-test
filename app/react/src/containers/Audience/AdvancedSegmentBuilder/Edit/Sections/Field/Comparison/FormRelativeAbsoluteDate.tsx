@@ -50,7 +50,7 @@ export interface FormRelativeAbsoluteDateProps extends FormFieldWrapperProps {
   small?: boolean;
   disabled?: boolean;
   dateComparisonOperator?: any; // here it should be only a TimeComparisonOperator
-  // The new Audience Builder doesn't handle list values for Date input
+  // The Standard Segment Builder doesn't handle list values for Date input
   noListValue?: boolean;
   handleStringValue?: (value: any) => void;
 }

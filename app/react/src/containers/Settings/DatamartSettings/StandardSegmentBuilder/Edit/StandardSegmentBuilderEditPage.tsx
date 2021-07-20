@@ -20,7 +20,7 @@ type Props = InjectedNotificationProps &
   RouteComponentProps<{
     datamartId: string;
     organisationId: string;
-    StandardSegmentBuilderId: string;
+    standardSegmentBuilderId: string;
   }>;
 
 interface State {
@@ -30,7 +30,7 @@ interface State {
 
 class StandardSegmentBuilderEditPage extends React.Component<Props, State> {
   @lazyInject(TYPES.IStandardSegmentBuilderService)
-  private _audienceBuilderService: IStandardSegmentBuilderService;
+  private _standardSegmentBuilderService: IStandardSegmentBuilderService;
 
   constructor(props: Props) {
     super(props);
@@ -43,17 +43,17 @@ class StandardSegmentBuilderEditPage extends React.Component<Props, State> {
   componentDidMount() {
     const {
       match: {
-        params: { datamartId, StandardSegmentBuilderId },
+        params: { datamartId, standardSegmentBuilderId },
       },
       notifyError,
     } = this.props;
 
-    if (StandardSegmentBuilderId) {
+    if (standardSegmentBuilderId) {
       this.setState({
         isLoading: true,
       });
-      this._audienceBuilderService
-        .loadStandardSegmentBuilder(datamartId, StandardSegmentBuilderId)
+      this._standardSegmentBuilderService
+        .loadStandardSegmentBuilder(datamartId, standardSegmentBuilderId)
         .then((formData: StandardSegmentBuilderFormData) => {
           this.setState({
             builderFormData: formData,
@@ -72,7 +72,7 @@ class StandardSegmentBuilderEditPage extends React.Component<Props, State> {
   save = (formData: StandardSegmentBuilderFormData) => {
     const {
       match: {
-        params: { organisationId, StandardSegmentBuilderId, datamartId },
+        params: { organisationId, standardSegmentBuilderId, datamartId },
       },
       notifyError,
       history,
@@ -80,7 +80,7 @@ class StandardSegmentBuilderEditPage extends React.Component<Props, State> {
     } = this.props;
 
     const hideSaveInProgress = message.loading(
-      intl.formatMessage(messages.audienceBuilderSavingInProgress),
+      intl.formatMessage(messages.standardSegmentBuilderSavingInProgress),
       0,
     );
 
@@ -98,13 +98,13 @@ class StandardSegmentBuilderEditPage extends React.Component<Props, State> {
       newFormData.demographics_features_ids = demographics.map(d => d.model.id);
     }
 
-    const promise = StandardSegmentBuilderId
-      ? this._audienceBuilderService.updateStandardSegmentBuilder(
+    const promise = standardSegmentBuilderId
+      ? this._standardSegmentBuilderService.updateStandardSegmentBuilder(
           datamartId,
-          StandardSegmentBuilderId,
+          standardSegmentBuilderId,
           newFormData,
         )
-      : this._audienceBuilderService.createStandardSegmentBuilder(datamartId, newFormData);
+      : this._standardSegmentBuilderService.createStandardSegmentBuilder(datamartId, newFormData);
     promise
       .then(() => {
         hideSaveInProgress();
@@ -144,16 +144,16 @@ class StandardSegmentBuilderEditPage extends React.Component<Props, State> {
     const {
       intl: { formatMessage },
       match: {
-        params: { organisationId, datamartId, StandardSegmentBuilderId },
+        params: { organisationId, datamartId, standardSegmentBuilderId },
       },
     } = this.props;
 
     const existingBuilderName = builderFormData.standardSegmentBuilder.name;
 
     const builderName =
-      StandardSegmentBuilderId && existingBuilderName
+      standardSegmentBuilderId && existingBuilderName
         ? existingBuilderName
-        : formatMessage(messages.audienceBuilderNew);
+        : formatMessage(messages.standardSegmentBuilderNew);
 
     const breadcrumbPaths = [
       <Link
@@ -163,7 +163,7 @@ class StandardSegmentBuilderEditPage extends React.Component<Props, State> {
           state: { activeTab: 'segment_builder' },
         }}
       >
-        {formatMessage(messages.audienceBuilders)}
+        {formatMessage(messages.standardSegmentBuilders)}
       </Link>,
       builderName,
     ];

@@ -37,7 +37,7 @@ class AudienceFeatureCard extends React.Component<Props, State> {
     const { cardToggled } = this.state;
     return (
       <div
-        className={`mcs-audienceBuilder_featureCard ${
+        className={`mcs-standardSegmentBuilder_featureCard ${
           selectedAudienceFeature && selectedAudienceFeature.id === audienceFeature.id && 'selected'
         } ${!!cardToggled && 'toggled'}`}
       >
@@ -49,10 +49,10 @@ class AudienceFeatureCard extends React.Component<Props, State> {
         <div onClick={onSelectFeature(audienceFeature.id)}>
           {cardToggled ? (
             <React.Fragment>
-              <span className='mcs-audienceBuilder_featureCardToggledTitle'>
+              <span className='mcs-standardSegmentBuilder_featureCardToggledTitle'>
                 {intl.formatMessage(messages.availableFilters)}
               </span>
-              <div className='mcs-audienceBuilder_featureCardDescritpion'>
+              <div className='mcs-standardSegmentBuilder_featureCardDescritpion'>
                 {audienceFeature.variables
                   ? audienceFeature.variables.map(v => {
                       return (
@@ -68,9 +68,9 @@ class AudienceFeatureCard extends React.Component<Props, State> {
             </React.Fragment>
           ) : (
             <React.Fragment>
-              <span className='mcs-audienceBuilder_featureCardTitle'>{audienceFeature.name}</span>
+              <span className='mcs-standardSegmentBuilder_featureCardTitle'>{audienceFeature.name}</span>
 
-              <div className='mcs-audienceBuilder_featureCardDescritpion'>
+              <div className='mcs-standardSegmentBuilder_featureCardDescritpion'>
                 {audienceFeature.description}
               </div>
             </React.Fragment>

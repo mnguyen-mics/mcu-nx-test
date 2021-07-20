@@ -90,7 +90,7 @@ export class StandardSegmentBuilderQueryService implements IStandardSegmentBuild
       datamart_id: datamartId,
       query_language: 'JSON_OTQL',
       query_language_subtype: 'PARAMETRIC',
-      // TODO AudienceBuilderQueryDocument and QueryDocument could inherit from the same abstraction.
+      // TODO StandardSegmentBuilderQueryDocument and QueryDocument could inherit from the same abstraction.
       query_text: JSON.stringify(queryDocument),
     };
 

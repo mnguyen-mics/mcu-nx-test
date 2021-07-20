@@ -1,8 +1,8 @@
-.mcs-audienceBuilder_container {
+.mcs-standardSegmentBuilder_container {
   min-height: auto;
   height: auto;
 
-  .mcs-audienceBuilder_categoryCard {
+  .mcs-standardSegmentBuilder_categoryCard {
     .mcs-card-title {
       font-size: 15px;
       line-height: 50px;
@@ -18,17 +18,17 @@
     }
   }
 
-  .mcs-audienceBuilder_hiddenForm {
+  .mcs-standardSegmentBuilder_hiddenForm {
     display: none;
   }
 
-  .mcs-audienceBuilder_queryButtons {
+  .mcs-standardSegmentBuilder_queryButtons {
     text-align: center;
   }
 
-  .mcs-audienceBuilder_narrowWithButton,
-  .mcs-audienceBuilder_excludeButton,
-  .mcs-audienceBuilder_moreButton {
+  .mcs-standardSegmentBuilder_narrowWithButton,
+  .mcs-standardSegmentBuilder_excludeButton,
+  .mcs-standardSegmentBuilder_moreButton {
     color: @info-color;
     font-size: 1.2em;
     font-weight: bold;
@@ -37,10 +37,10 @@
     box-shadow: none;
   }
 
-  .mcs-audienceBuilder_liveDashboardContainer {
+  .mcs-standardSegmentBuilder_liveDashboardContainer {
     height: 100%;
     border-left: 1px solid @border-color-split;
-    .mcs-audienceBuilder_sizeButton {
+    .mcs-standardSegmentBuilder_sizeButton {
       position: sticky;
       background-color: #fff;
       z-index: 3;
@@ -57,10 +57,10 @@
         margin-right: 0px;
       }
     }
-    .mcs-audienceBuilder_rightChevron {
+    .mcs-standardSegmentBuilder_rightChevron {
       transform: rotate(0deg);
     }
-    .mcs-audienceBuilder_liveDashboardMask {
+    .mcs-standardSegmentBuilder_liveDashboardMask {
       width: 100%;
       height: inherit;
       background: rgba(0, 0, 0, 0.5);
@@ -81,16 +81,16 @@
         }
       }
     }
-    .mcs-audienceBuilder_liveDashboard {
+    .mcs-standardSegmentBuilder_liveDashboard {
       padding: 0px 40px;
       text-align: center;
-      .mcs-audienceBuilder_totalAudience {
+      .mcs-standardSegmentBuilder_totalAudience {
         background-color: @primary-color;
         padding: 15px 20px;
         margin-bottom: 30px;
         height: 90px;
         text-align: left;
-        .mcs-audienceBuilder_totalValue {
+        .mcs-standardSegmentBuilder_totalValue {
           display: inline-block;
           vertical-align: middle;
           font-size: 36px;
@@ -98,7 +98,7 @@
           color: white;
           margin-left: 15px;
         }
-        .mcs-audienceBuilder_selectedAudience {
+        .mcs-standardSegmentBuilder_selectedAudience {
           display: inline-block;
           vertical-align: bottom;
           color: white;
@@ -112,7 +112,7 @@
           color: @info-color;
         }
       }
-      .mcs-audienceBuilder_timelineSelector {
+      .mcs-standardSegmentBuilder_timelineSelector {
         font-weight: bold;
         color: @info-color;
         font-size: 0.9em;
@@ -124,10 +124,10 @@
       }
     }
   }
-  .mcs-audienceBuilder_demographicFeature {
+  .mcs-standardSegmentBuilder_demographicFeature {
     padding: 20px;
   }
-  .mcs-audienceBuilder_demographicFeature {
+  .mcs-standardSegmentBuilder_demographicFeature {
     .ant-legacy-form-item-label {
       text-align: left;
     }
@@ -137,24 +137,20 @@
     }
   }
 
-  .mcs-audienceBuilder_categoryCardFooter {
+  .mcs-standardSegmentBuilder_categoryCardFooter {
     text-align: center;
     padding: 20px 25px 25px 25px;
   }
 
-  // -----------------------------------------------
-  // Audience Builder aka 'Standard Segment Builder'
-  // -----------------------------------------------
-
-  .mcs-audienceBuilder_audienceFeature {
+  .mcs-standardSegmentBuilder_audienceFeature {
     margin: 10px 40px 10px 0px;
     padding: 0;
   }
 
   // ------------------------------------
-  // Audience Builder Timeline
+  // Standard Segment Builder Timeline
 
-  .mcs-audienceBuilder_timelineButtons {
+  .mcs-standardSegmentBuilder_timelineButtons {
     font-family: @font-family-medium;
     text-align: center;
     border: 1px solid @border-color-split;
@@ -280,12 +276,12 @@
 
 // Audience Feature Card Content (Builder & Settings)
 
-.mcs-audienceBuilder_audienceFeatureContent,
+.mcs-standardSegmentBuilder_audienceFeatureContent,
 .mcs-audienceFeature-preview {
   padding: 15px 20px 20px 20px;
   font-family: @font-family;
 
-  .mcs-audienceBuilder_audienceFeatureName {
+  .mcs-standardSegmentBuilder_audienceFeatureName {
     font-family: @font-family-medium;
     color: @text-color;
     line-height: 18px;
@@ -293,14 +289,14 @@
     font-weight: 500;
   }
 
-  .mcs-audienceBuilder_audienceFeatureDescription {
+  .mcs-standardSegmentBuilder_audienceFeatureDescription {
     color: @input-placeholder-color;
     font-size: 10px;
     font-style: italic;
     margin-bottom: 10px;
   }
 
-  .mcs-audienceBuilder_closeButton {
+  .mcs-standardSegmentBuilder_closeButton {
     line-height: 18px;
     color: @text-color-secondary;
     font-size: 14px;
@@ -313,7 +309,7 @@
     }
   }
 
-  .mcs-audienceBuilder_audienceFeatureInput {
+  .mcs-standardSegmentBuilder_audienceFeatureInput {
     margin-top: 15px;
 
     .mcs-relativeAbsoluteDateForm_picker {
@@ -362,16 +358,16 @@
   margin-top: 20px;
 }
 
-.mcs-audienceBuilder_featureSelector {
+.mcs-standardSegmentBuilder_featureSelector {
   background-color: @layout-body-background;
   .mcs-search-input {
     width: 400px;
   }
-  .mcs-audienceBuilder_breadCrumb {
+  .mcs-standardSegmentBuilder_breadCrumb {
     margin: 15px 0px;
   }
-  .mcs-audienceBuilder_folder,
-  .mcs-audienceBuilder_featureCard {
+  .mcs-standardSegmentBuilder_folder,
+  .mcs-standardSegmentBuilder_featureCard {
     height: 100px;
     border: 1px solid @border-color-split;
     border-radius: 3px;
@@ -387,7 +383,7 @@
       border: 1px solid @primary-color;
       color: @primary-color;
     }
-    .mcs-audienceBuilder_folderChildNumber {
+    .mcs-standardSegmentBuilder_folderChildNumber {
       font-weight: initial;
       font-size: 12px;
       margin-top: 5px;
@@ -395,7 +391,7 @@
       position: absolute;
       bottom: 20px;
     }
-    .mcs-audienceBuilder_folderIcon {
+    .mcs-standardSegmentBuilder_folderIcon {
       font-size: 20px;
     }
   }
@@ -411,14 +407,14 @@
       color: white;
     }
   }
-  .mcs-audienceBuilder_featureCardContainer {
+  .mcs-standardSegmentBuilder_featureCardContainer {
     margin-top: 30px;
-    .mcs-audienceBuilder_featureCard {
+    .mcs-standardSegmentBuilder_featureCard {
       background-color: #fafafa;
       .mcs-icon {
         float: right;
       }
-      .mcs-audienceBuilder_featureCardDescritpion {
+      .mcs-standardSegmentBuilder_featureCardDescritpion {
         font-weight: initial;
         font-size: 10px;
         margin-top: 10px;
@@ -432,10 +428,10 @@
           display: none;
         }
       }
-      .mcs-audienceBuilder_featureCardToggledTitle {
+      .mcs-standardSegmentBuilder_featureCardToggledTitle {
         color: rgba(255, 255, 255, 0.65);
       }
-      .mcs-audienceBuilder_featureCardTitle {
+      .mcs-standardSegmentBuilder_featureCardTitle {
         font-size: 12px;
         font-weight: 500;
         display: block;
@@ -495,7 +491,7 @@
   }
 }
 
-.mcs-audienceBuilderSettings-records {
+.mcs-standardSegmentBuilderSettings-records {
   font-size: 40px;
 }
 

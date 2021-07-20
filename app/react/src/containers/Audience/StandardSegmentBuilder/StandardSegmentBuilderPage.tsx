@@ -25,7 +25,7 @@ import { IAudienceFeatureService } from '../../../services/AudienceFeatureServic
 import { IAudienceSegmentService } from '../../../services/AudienceSegmentService';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { NewUserQuerySimpleFormData } from '../../QueryTool/SaveAs/NewUserQuerySegmentSimpleForm';
-import AudienceBuilderActionbar from './StandardSegmentBuilderActionbar';
+import StandardSegmentBuilderActionbar from './StandardSegmentBuilderActionbar';
 import { calculateDefaultTtl } from '../Segments/Edit/domain';
 import { InjectedWorkspaceProps, injectWorkspace } from '../../Datamart';
 import { AudienceFeatureResource } from '../../../models/audienceFeature';
@@ -54,7 +54,7 @@ class StandardSegmentBuilderPage extends React.Component<Props, State> {
   private _queryService: IQueryService;
 
   @lazyInject(TYPES.IStandardSegmentBuilderService)
-  private _StandardSegmentBuilderService: IStandardSegmentBuilderService;
+  private _standardSegmentBuilderService: IStandardSegmentBuilderService;
 
   @lazyInject(TYPES.ITagService)
   private _tagService: ITagService;
@@ -73,10 +73,10 @@ class StandardSegmentBuilderPage extends React.Component<Props, State> {
       location: { search },
     } = this.props;
 
-    const audienceBuilderId = queryString.parse(search).audienceBuilderId;
+    const standardSegmentBuilderId = queryString.parse(search).standardSegmentBuilderId;
     const datamartId = queryString.parse(search).datamartId;
-    if (audienceBuilderId) {
-      this.setAudienceBuilder(datamartId, audienceBuilderId);
+    if (standardSegmentBuilderId) {
+      this.setStandardSegmentBuilder(datamartId, standardSegmentBuilderId);
     }
   }
 
@@ -94,28 +94,28 @@ class StandardSegmentBuilderPage extends React.Component<Props, State> {
       },
       location: { search: prevSearch },
     } = prevProps;
-    const audienceBuilderId = queryString.parse(search).audienceBuilderId;
+    const standardSegmentBuilderId = queryString.parse(search).standardSegmentBuilderId;
     const datamartId = queryString.parse(search).datamartId;
-    const prevAudienceBuilderId = queryString.parse(prevSearch).audienceBuilderId;
+    const prevStandardSegmentBuilderId = queryString.parse(prevSearch).standardSegmentBuilderId;
     const prevDatamartId = queryString.parse(prevSearch).datamartId;
-    if (!audienceBuilderId || !datamartId || organisationId !== prevOrganisationId) {
+    if (!standardSegmentBuilderId || !datamartId || organisationId !== prevOrganisationId) {
       history.push(`/v2/o/${organisationId}/audience/segment-builder-selector`);
-    } else if (datamartId !== prevDatamartId || audienceBuilderId !== prevAudienceBuilderId) {
-      this.setAudienceBuilder(datamartId, audienceBuilderId);
+    } else if (datamartId !== prevDatamartId || standardSegmentBuilderId !== prevStandardSegmentBuilderId) {
+      this.setStandardSegmentBuilder(datamartId, standardSegmentBuilderId);
     }
   }
 
-  setAudienceBuilder = (datamartId: string, audienceBuilderId: string) => {
-    this._StandardSegmentBuilderService
-      .getStandardSegmentBuilder(datamartId, audienceBuilderId)
+  setStandardSegmentBuilder = (datamartId: string, standardSegmentBuilderId: string) => {
+    this._standardSegmentBuilderService
+      .getStandardSegmentBuilder(datamartId, standardSegmentBuilderId)
       .then(res => {
         this.setState({
           selectedStandardSegmentBuilder: res.data,
         });
         return res.data;
       })
-      .then(audienceBuilder => {
-        const demographicsFeaturePromises = audienceBuilder.demographics_features_ids.map(id => {
+      .then(standardSegmentBuilder => {
+        const demographicsFeaturePromises = standardSegmentBuilder.demographics_features_ids.map(id => {
           return this._audienceFeatureService.getAudienceFeature(datamartId, id);
         });
 
@@ -146,7 +146,7 @@ class StandardSegmentBuilderPage extends React.Component<Props, State> {
             });
 
             this.setState({
-              selectedStandardSegmentBuilder: audienceBuilder,
+              selectedStandardSegmentBuilder: standardSegmentBuilder,
               formData: {
                 include: setUpDefaultPredicates(defaultFeatures),
                 exclude: [],
@@ -156,7 +156,7 @@ class StandardSegmentBuilderPage extends React.Component<Props, State> {
           })
           .catch(err => {
             this.setState({
-              selectedStandardSegmentBuilder: audienceBuilder,
+              selectedStandardSegmentBuilder: standardSegmentBuilder,
               formData: INITIAL_STANDARD_SEGMENT_BUILDER_FORM_DATA,
               isLoading: false,
             });
@@ -171,7 +171,7 @@ class StandardSegmentBuilderPage extends React.Component<Props, State> {
       });
   };
 
-  audienceBuilderActionbar = (query: StandardSegmentBuilderQueryDocument, datamartId: string) => {
+  standardSegmentBuilderActionbar = (query: StandardSegmentBuilderQueryDocument, datamartId: string) => {
     const { match, history } = this.props;
     const { selectedStandardSegmentBuilder } = this.state;
     const saveAudience = (userQueryFormData: NewUserQuerySimpleFormData) => {
@@ -207,18 +207,18 @@ class StandardSegmentBuilderPage extends React.Component<Props, State> {
     };
 
     return (
-      <AudienceBuilderActionbar save={saveAudience} audienceBuilder={selectedStandardSegmentBuilder} />
+      <StandardSegmentBuilderActionbar save={saveAudience} standardSegmentBuilder={selectedStandardSegmentBuilder} />
     );
   };
 
-  selectBuilderContainer(audienceBuilder: StandardSegmentBuilderResource) {
+  selectBuilderContainer(standardSegmentBuilder: StandardSegmentBuilderResource) {
     const { formData } = this.state;
 
     return (
       <StandardSegmentBuilderContainer
         initialValues={formData}
-        StandardSegmentBuilder={audienceBuilder}
-        renderActionBar={this.audienceBuilderActionbar}
+        standardSegmentBuilder={standardSegmentBuilder}
+        renderActionBar={this.standardSegmentBuilderActionbar}
       />
     );
   }

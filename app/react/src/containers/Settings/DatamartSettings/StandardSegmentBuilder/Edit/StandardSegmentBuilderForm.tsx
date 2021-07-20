@@ -25,7 +25,7 @@ import { SidebarWrapperProps } from '../../../../../components/Layout/ScrollspyS
 
 const Content = Layout.Content;
 
-export interface AudienceBuilderFormProps
+export interface StandardSegmentBuilderFormProps
   extends Omit<ConfigProps<StandardSegmentBuilderFormData>, 'form'> {
   close: () => void;
   breadCrumbPaths: React.ReactNode[];
@@ -40,8 +40,8 @@ interface MapStateToProps {
   formValues?: StandardSegmentBuilderFormData;
 }
 
-type Props = InjectedFormProps<StandardSegmentBuilderFormData, AudienceBuilderFormProps> &
-  AudienceBuilderFormProps &
+type Props = InjectedFormProps<StandardSegmentBuilderFormData, StandardSegmentBuilderFormProps> &
+  StandardSegmentBuilderFormProps &
   MapStateToProps &
   InjectedIntlProps;
 
@@ -62,7 +62,7 @@ class StandardSegmentBuilderForm extends React.Component<Props> {
     const actionBarProps: FormLayoutActionbarProps = {
       formId: STANDARD_SEGMENT_BUILDER_FORM_ID,
       pathItems: breadCrumbPaths,
-      message: messages.audienceBuilderSave,
+      message: messages.standardSegmentBuilderSave,
       onClose: close,
     };
 
@@ -70,13 +70,13 @@ class StandardSegmentBuilderForm extends React.Component<Props> {
 
     sections.push({
       id: 'general',
-      title: messages.audienceBuilderSectionGeneralTitle,
+      title: messages.standardSegmentBuilderSectionGeneralTitle,
       component: <StandardSegmentBuilderGeneralSection />,
     });
 
     sections.push({
       id: 'demographics',
-      title: messages.audienceBuilderSectionDemographicsTitle,
+      title: messages.standardSegmentBuilderSectionDemographicsTitle,
       component: (
         <InitialAudienceFeaturesFieldArray
           name='initialAudienceFeatures'
@@ -114,7 +114,7 @@ class StandardSegmentBuilderForm extends React.Component<Props> {
               id={STANDARD_SEGMENT_BUILDER_FORM_ID}
               className='mcs-content-container mcs-form-container'
             >
-              <div className='mcs-audienceBuilder_formColumn'>{renderedSections}</div>
+              <div className='mcs-standardSegmentBuilder_formColumn'>{renderedSections}</div>
             </Content>
           </Form>
         </Layout>
@@ -123,7 +123,7 @@ class StandardSegmentBuilderForm extends React.Component<Props> {
   }
 }
 
-export default compose<Props, AudienceBuilderFormProps>(
+export default compose<Props, StandardSegmentBuilderFormProps>(
   injectIntl,
   withRouter,
   reduxForm({

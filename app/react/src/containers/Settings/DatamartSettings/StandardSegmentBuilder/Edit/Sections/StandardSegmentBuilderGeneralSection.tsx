@@ -22,22 +22,22 @@ class StandardSegmentBuilderGeneralSection extends React.Component<Props> {
 
     return (
       <div>
-        <FormSection title={messages.audienceBuilderSectionGeneralTitle} />
+        <FormSection title={messages.standardSegmentBuilderSectionGeneralTitle} />
 
         <FormInputField
-          name='StandardSegmentBuilder.name'
+          name='standardSegmentBuilder.name'
           component={FormInput}
           validate={[isRequired]}
           formItemProps={{
-            label: formatMessage(messages.audienceBuilderNameLabel),
+            label: formatMessage(messages.standardSegmentBuilderNameLabel),
             required: true,
           }}
           inputProps={{
-            placeholder: formatMessage(messages.audienceBuilderNamePlaceholder),
-            className: 'mcs-audienceBuilderName',
+            placeholder: formatMessage(messages.standardSegmentBuilderNamePlaceholder),
+            className: 'mcs-standardSegmentBuilderName',
           }}
           helpToolTipProps={{
-            title: formatMessage(messages.audienceBuilderNameTooltip),
+            title: formatMessage(messages.standardSegmentBuilderNameTooltip),
           }}
         />
       </div>
