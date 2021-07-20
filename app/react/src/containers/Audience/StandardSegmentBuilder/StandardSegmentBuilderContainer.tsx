@@ -65,7 +65,10 @@ interface MapStateToProps {
   formValues: StandardSegmentBuilderFormData;
 }
 
-type Props = InjectedFormProps<StandardSegmentBuilderFormData, StandardSegmentBuilderContainerProps> &
+type Props = InjectedFormProps<
+  StandardSegmentBuilderFormData,
+  StandardSegmentBuilderContainerProps
+> &
   MapStateToProps &
   StandardSegmentBuilderContainerProps &
   InjectedNotificationProps &
@@ -113,18 +116,20 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
 
     this.runQuery();
 
-    this._runtimeSchemaService.getRuntimeSchemas(standardSegmentBuilder.datamart_id).then(schemaRes => {
-      const liveSchema = schemaRes.data.find(s => s.status === 'LIVE');
-      if (!liveSchema) return;
-      return this._runtimeSchemaService
-        .getObjectTypeInfoResources(standardSegmentBuilder.datamart_id, liveSchema.id)
-        .then(objectTypes => {
-          this.setState({
-            objectTypes: objectTypes,
-            isLoadingObjectTypes: false,
+    this._runtimeSchemaService
+      .getRuntimeSchemas(standardSegmentBuilder.datamart_id)
+      .then(schemaRes => {
+        const liveSchema = schemaRes.data.find(s => s.status === 'LIVE');
+        if (!liveSchema) return;
+        return this._runtimeSchemaService
+          .getObjectTypeInfoResources(standardSegmentBuilder.datamart_id, liveSchema.id)
+          .then(objectTypes => {
+            this.setState({
+              objectTypes: objectTypes,
+              isLoadingObjectTypes: false,
+            });
           });
-        });
-    });
+      });
 
     const audienceFeatureIds: string[] = [];
 
@@ -137,7 +142,10 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
     });
 
     const promises = audienceFeatureIds.map(id => {
-      return this._audienceFeatureService.getAudienceFeature(standardSegmentBuilder.datamart_id, id);
+      return this._audienceFeatureService.getAudienceFeature(
+        standardSegmentBuilder.datamart_id,
+        id,
+      );
     });
 
     Promise.all(promises).then(res => {
@@ -162,7 +170,7 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
   // Utilities
 
   private runQuery = () => {
-    const {standardSegmentBuilder, formValues } = this.props;
+    const { standardSegmentBuilder, formValues } = this.props;
 
     const queryDocument = this._standardSegmentBuilderQueryService.buildQueryDocument(formValues);
 
@@ -203,9 +211,9 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
     change(groupsLocation, groups.concat(newGroup));
   };
 
-  private addToNewGroup = (save: (_: StandardSegmentBuilderParametricPredicateGroupNode) => void) => (
-    predicate: StandardSegmentBuilderParametricPredicateNode,
-  ) => {
+  private addToNewGroup = (
+    save: (_: StandardSegmentBuilderParametricPredicateGroupNode) => void,
+  ) => (predicate: StandardSegmentBuilderParametricPredicateNode) => {
     const newGroup: StandardSegmentBuilderParametricPredicateGroupNode = {
       expressions: [predicate],
     };

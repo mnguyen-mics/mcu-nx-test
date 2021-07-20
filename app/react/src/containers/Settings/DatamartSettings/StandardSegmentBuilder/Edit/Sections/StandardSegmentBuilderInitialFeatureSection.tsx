@@ -105,7 +105,9 @@ class StandardSegmentBuilderInitialFeatureSection extends React.Component<Props>
 
         <RelatedRecords
           emptyOption={{
-            genericIconProps: <InfoCircleFilled className='mcs-standardSegmentBuilderSettings-records' />,
+            genericIconProps: (
+              <InfoCircleFilled className='mcs-standardSegmentBuilderSettings-records' />
+            ),
             message: formatMessage(messages.standardSegmentBuilderSectionDemographicsSubtitle),
           }}
         >

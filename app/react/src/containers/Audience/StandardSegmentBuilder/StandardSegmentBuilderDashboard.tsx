@@ -53,10 +53,19 @@ class StandardSegmentBuilderDashboard extends React.Component<Props, State> {
     this.loadData(organisationId, datamartId, standardSegmentBuilderId);
   }
 
-  loadData = (organisationId: string, selectedDatamartId: string, standardSegmentBuilderId: string) => {
+  loadData = (
+    organisationId: string,
+    selectedDatamartId: string,
+    standardSegmentBuilderId: string,
+  ) => {
     this.setState({ isDashboardLoading: true });
     this._dashboardService
-      .getStandardSegmentBuilderDashboards(organisationId, selectedDatamartId, standardSegmentBuilderId, {})
+      .getStandardSegmentBuilderDashboards(
+        organisationId,
+        selectedDatamartId,
+        standardSegmentBuilderId,
+        {},
+      )
       .then(d => {
         this.setState({ dashboards: d.status === 'ok' ? d.data : [] });
       })

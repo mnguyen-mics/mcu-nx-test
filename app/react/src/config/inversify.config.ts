@@ -165,7 +165,9 @@ import {
 
 export const container = new Container();
 
-container.bind<IStandardSegmentBuilderService>(TYPES.IStandardSegmentBuilderService).to(StandardSegmentBuilderService);
+container
+  .bind<IStandardSegmentBuilderService>(TYPES.IStandardSegmentBuilderService)
+  .to(StandardSegmentBuilderService);
 container.bind<IEmailCampaignService>(TYPES.IEmailCampaignService).to(EmailCampaignService);
 container
   .bind<IEmailCampaignFormService>(TYPES.IEmailCampaignFormService)

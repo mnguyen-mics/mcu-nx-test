@@ -1,4 +1,4 @@
-import {StandardSegmentBuilderResource } from '../models/standardSegmentBuilder/StandardSegmentBuilderResource';
+import { StandardSegmentBuilderResource } from '../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import { injectable, inject } from 'inversify';
 import { PaginatedApiParam } from '../utils/ApiHelper';
@@ -13,7 +13,7 @@ export interface IStandardSegmentBuilderService {
   createStandardSegmentBuilder: (
     datamartId: string,
     body: Partial<StandardSegmentBuilderResource>,
-  ) => Promise<DataResponse<StandardSegmentBuilderResource>>; 
+  ) => Promise<DataResponse<StandardSegmentBuilderResource>>;
 
   getStandardSegmentBuilders: (
     datamartId: string,
@@ -36,7 +36,10 @@ export interface IStandardSegmentBuilderService {
     body: Partial<StandardSegmentBuilderResource>,
   ) => Promise<DataResponse<StandardSegmentBuilderResource>>;
 
-  deleteStandardSegmentBuilder(datamartId: string, segmentBuilderId: string): Promise<DataResponse<any>>;
+  deleteStandardSegmentBuilder(
+    datamartId: string,
+    segmentBuilderId: string,
+  ): Promise<DataResponse<any>>;
 }
 
 @injectable()
@@ -101,7 +104,10 @@ export default class StandardSegmentBuilderService implements IStandardSegmentBu
     return ApiService.putRequest(endpoint, body);
   }
 
-  deleteStandardSegmentBuilder(datamartId: string, standardSegmentBuilderId: string): Promise<DataResponse<any>> {
+  deleteStandardSegmentBuilder(
+    datamartId: string,
+    standardSegmentBuilderId: string,
+  ): Promise<DataResponse<any>> {
     const endpoint = `datamarts/${datamartId}/audience_builders/${standardSegmentBuilderId}`;
     return ApiService.deleteRequest(endpoint);
   }

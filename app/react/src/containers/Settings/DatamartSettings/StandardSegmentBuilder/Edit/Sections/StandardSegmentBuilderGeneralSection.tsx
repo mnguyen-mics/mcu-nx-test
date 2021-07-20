@@ -45,4 +45,8 @@ class StandardSegmentBuilderGeneralSection extends React.Component<Props> {
   }
 }
 
-export default compose(injectIntl, withValidators, withNormalizer)(StandardSegmentBuilderGeneralSection);
+export default compose(
+  injectIntl,
+  withValidators,
+  withNormalizer,
+)(StandardSegmentBuilderGeneralSection);

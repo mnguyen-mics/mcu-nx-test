@@ -10,7 +10,10 @@ import injectNotifications, {
 } from '../../../../Notifications/injectNotifications';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { messages } from '../messages';
-import { StandardSegmentBuilderFormData, INITIAL_STANDARD_SEGMENT_BUILDER_FORM_DATA } from './domain';
+import {
+  StandardSegmentBuilderFormData,
+  INITIAL_STANDARD_SEGMENT_BUILDER_FORM_DATA,
+} from './domain';
 import { message } from 'antd';
 import { Loading } from '../../../../../components';
 import { Link } from 'react-router-dom';

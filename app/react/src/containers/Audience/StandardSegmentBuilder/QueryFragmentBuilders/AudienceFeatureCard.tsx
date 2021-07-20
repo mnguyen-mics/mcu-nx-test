@@ -68,7 +68,9 @@ class AudienceFeatureCard extends React.Component<Props, State> {
             </React.Fragment>
           ) : (
             <React.Fragment>
-              <span className='mcs-standardSegmentBuilder_featureCardTitle'>{audienceFeature.name}</span>
+              <span className='mcs-standardSegmentBuilder_featureCardTitle'>
+                {audienceFeature.name}
+              </span>
 
               <div className='mcs-standardSegmentBuilder_featureCardDescritpion'>
                 {audienceFeature.description}

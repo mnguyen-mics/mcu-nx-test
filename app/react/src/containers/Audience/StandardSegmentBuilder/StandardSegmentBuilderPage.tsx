@@ -100,7 +100,10 @@ class StandardSegmentBuilderPage extends React.Component<Props, State> {
     const prevDatamartId = queryString.parse(prevSearch).datamartId;
     if (!standardSegmentBuilderId || !datamartId || organisationId !== prevOrganisationId) {
       history.push(`/v2/o/${organisationId}/audience/segment-builder-selector`);
-    } else if (datamartId !== prevDatamartId || standardSegmentBuilderId !== prevStandardSegmentBuilderId) {
+    } else if (
+      datamartId !== prevDatamartId ||
+      standardSegmentBuilderId !== prevStandardSegmentBuilderId
+    ) {
       this.setStandardSegmentBuilder(datamartId, standardSegmentBuilderId);
     }
   }
@@ -115,9 +118,11 @@ class StandardSegmentBuilderPage extends React.Component<Props, State> {
         return res.data;
       })
       .then(standardSegmentBuilder => {
-        const demographicsFeaturePromises = standardSegmentBuilder.demographics_features_ids.map(id => {
-          return this._audienceFeatureService.getAudienceFeature(datamartId, id);
-        });
+        const demographicsFeaturePromises = standardSegmentBuilder.demographics_features_ids.map(
+          id => {
+            return this._audienceFeatureService.getAudienceFeature(datamartId, id);
+          },
+        );
 
         const setUpPredicate = (
           feature: AudienceFeatureResource,
@@ -171,7 +176,10 @@ class StandardSegmentBuilderPage extends React.Component<Props, State> {
       });
   };
 
-  standardSegmentBuilderActionbar = (query: StandardSegmentBuilderQueryDocument, datamartId: string) => {
+  standardSegmentBuilderActionbar = (
+    query: StandardSegmentBuilderQueryDocument,
+    datamartId: string,
+  ) => {
     const { match, history } = this.props;
     const { selectedStandardSegmentBuilder } = this.state;
     const saveAudience = (userQueryFormData: NewUserQuerySimpleFormData) => {
@@ -207,7 +215,10 @@ class StandardSegmentBuilderPage extends React.Component<Props, State> {
     };
 
     return (
-      <StandardSegmentBuilderActionbar save={saveAudience} standardSegmentBuilder={selectedStandardSegmentBuilder} />
+      <StandardSegmentBuilderActionbar
+        save={saveAudience}
+        standardSegmentBuilder={selectedStandardSegmentBuilder}
+      />
     );
   };
 
@@ -230,7 +241,9 @@ class StandardSegmentBuilderPage extends React.Component<Props, State> {
       return <Loading isFullScreen={true} />;
     }
 
-    return selectedStandardSegmentBuilder ? this.selectBuilderContainer(selectedStandardSegmentBuilder) : null;
+    return selectedStandardSegmentBuilder
+      ? this.selectBuilderContainer(selectedStandardSegmentBuilder)
+      : null;
   }
 }
 

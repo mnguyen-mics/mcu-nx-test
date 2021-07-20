@@ -177,7 +177,11 @@ class StandardSegmentBuilderListPage extends React.Component<Props, State> {
       });
     };
     return (
-      <Button type='primary' className='mcs-standardSegmentBuilder_creation_button' onClick={onClick}>
+      <Button
+        type='primary'
+        className='mcs-standardSegmentBuilder_creation_button'
+        onClick={onClick}
+      >
         <FormattedMessage {...messages.standardSegmentBuilderNew} />
       </Button>
     );

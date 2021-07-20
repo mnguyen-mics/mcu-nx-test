@@ -12,7 +12,10 @@ describe('This test should check that the audience feature forms are working pro
     cy.clearLocalStorage();
   });
 
-  const createStandardSegmentBuilder = (datamartName: string, standardSegmentBuilderName: string) => {
+  const createStandardSegmentBuilder = (
+    datamartName: string,
+    standardSegmentBuilderName: string,
+  ) => {
     cy.get('.mcs-navigator-header-actions-settings').click();
     cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
     cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.myDatamart').click();
@@ -328,7 +331,9 @@ describe('This test should check that the audience feature forms are working pro
               });
               cy.get('.mcs-standardSegmentBuilder_totalAudience').should('not.contain', '0');
               cy.get('.mcs-timelineButton_left').click();
-              cy.get('.mcs-standardSegmentBuilder_featureCard').contains(audienceFeatureName).click();
+              cy.get('.mcs-standardSegmentBuilder_featureCard')
+                .contains(audienceFeatureName)
+                .click();
               cy.get('.mcs-standardSegmentBuilder_audienceFeatureContent')
                 .first()
                 .within(() => {

@@ -12,7 +12,10 @@ describe('This test should check the view matching timeline button', () => {
     cy.clearLocalStorage();
   });
 
-  const createStandardSegmentBuilder = (datamartName: string, standardSegmentBuilderName: string) => {
+  const createStandardSegmentBuilder = (
+    datamartName: string,
+    standardSegmentBuilderName: string,
+  ) => {
     cy.get('.mcs-navigator-header-actions-settings').click();
     cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
     cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.myDatamart').click();

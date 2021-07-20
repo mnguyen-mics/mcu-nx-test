@@ -6,7 +6,9 @@ import { compose } from 'recompose';
 import { Button, Alert } from 'antd';
 import { injectDrawer } from '../../../components/Drawer';
 import { InjectedDrawerProps } from '../../../components/Drawer/injectDrawer';
-import JSONQLBuilderContainer, { AdvancedSegmentBuilderContainerProps } from './AdvancedSegmentBuilderContainer';
+import JSONQLBuilderContainer, {
+  AdvancedSegmentBuilderContainerProps,
+} from './AdvancedSegmentBuilderContainer';
 import { messages } from './messages';
 import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { IStandardSegmentBuilderQueryService } from '../StandardSegmentBuilder/StandardSegmentBuilderQueryService';
@@ -85,17 +87,20 @@ class SegmentBuilderPreview extends React.Component<Props> {
 
       return (
         standardSegmentBuilder &&
-        this.props.openNextDrawer<StandardSegmentBuilderContainerProps>(StandardSegmentBuilderContainer, {
-          additionalProps: {
-            renderActionBar: actionbar,
-            initialValues: value
-              ? this._standardSegmentBuilderQueryService.generateStandardSegmentBuilderFormData(
-                  JSON.parse(value).where.expressions,
-                )
-              : undefined,
-            standardSegmentBuilder: standardSegmentBuilder,
+        this.props.openNextDrawer<StandardSegmentBuilderContainerProps>(
+          StandardSegmentBuilderContainer,
+          {
+            additionalProps: {
+              renderActionBar: actionbar,
+              initialValues: value
+                ? this._standardSegmentBuilderQueryService.generateStandardSegmentBuilderFormData(
+                    JSON.parse(value).where.expressions,
+                  )
+                : undefined,
+              standardSegmentBuilder: standardSegmentBuilder,
+            },
           },
-        })
+        )
       );
     } else {
       const actionbar = (query: GraphdbQueryDocument, datamartId: string) => {
@@ -155,4 +160,7 @@ class SegmentBuilderPreview extends React.Component<Props> {
   }
 }
 
-export default compose<Props, SegmentBuilderPreviewProps>(injectIntl, injectDrawer)(SegmentBuilderPreview);
+export default compose<Props, SegmentBuilderPreviewProps>(
+  injectIntl,
+  injectDrawer,
+)(SegmentBuilderPreview);

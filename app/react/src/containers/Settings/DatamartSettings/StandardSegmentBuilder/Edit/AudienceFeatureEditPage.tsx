@@ -12,7 +12,10 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { messages } from '../messages';
 import { AudienceFeatureFormData } from './domain';
 import { IRuntimeSchemaService } from '../../../../../services/RuntimeSchemaService';
-import { computeFinalSchemaItem, SchemaItem } from '../../../../Audience/AdvancedSegmentBuilder/domain';
+import {
+  computeFinalSchemaItem,
+  SchemaItem,
+} from '../../../../Audience/AdvancedSegmentBuilder/domain';
 import { message } from 'antd';
 import { Loading } from '../../../../../components';
 import { Link } from 'react-router-dom';

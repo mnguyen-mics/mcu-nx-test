@@ -76,7 +76,10 @@ export const getFormattedQuery = (
         });
     }
     return Promise.resolve(formatQuery(dashboardQuery, `segments { id = \"${source.id}\"}`));
-  } else if (isStandardSegmentBuilderQueryDocument(source) && source.language_version === 'JSON_OTQL') {
+  } else if (
+    isStandardSegmentBuilderQueryDocument(source) &&
+    source.language_version === 'JSON_OTQL'
+  ) {
     const queryResource = {
       datamart_id: datamartId,
       query_language: 'JSON_OTQL',
@@ -127,6 +130,7 @@ function isStandardSegmentBuilderQueryDocument(
   source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument,
 ): source is StandardSegmentBuilderQueryDocument {
   return (
-    source !== undefined && (source as StandardSegmentBuilderQueryDocument).language_version !== undefined
+    source !== undefined &&
+    (source as StandardSegmentBuilderQueryDocument).language_version !== undefined
   );
 }

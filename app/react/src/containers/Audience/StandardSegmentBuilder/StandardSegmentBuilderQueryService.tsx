@@ -13,7 +13,9 @@ import {
 import { QueryResource } from '../../../models/datamart/DatamartResource';
 
 export interface IStandardSegmentBuilderQueryService {
-  buildQueryDocument: (formData: StandardSegmentBuilderFormData) => StandardSegmentBuilderQueryDocument;
+  buildQueryDocument: (
+    formData: StandardSegmentBuilderFormData,
+  ) => StandardSegmentBuilderQueryDocument;
 
   runQuery: (
     datamartId: string,
@@ -32,7 +34,9 @@ export class StandardSegmentBuilderQueryService implements IStandardSegmentBuild
   @inject(TYPES.IQueryService)
   private _queryService: IQueryService;
 
-  buildQueryDocument = (formData: StandardSegmentBuilderFormData): StandardSegmentBuilderQueryDocument => {
+  buildQueryDocument = (
+    formData: StandardSegmentBuilderFormData,
+  ): StandardSegmentBuilderQueryDocument => {
     const includeGroup: StandardSegmentBuilderGroupNode[] = formData.include.map(group => {
       return {
         type: 'GROUP',
@@ -119,14 +123,16 @@ export class StandardSegmentBuilderQueryService implements IStandardSegmentBuild
             (exp: StandardSegmentBuilderGroupNode) => {
               return {
                 ...exp,
-                expressions: exp.expressions.map((e: StandardSegmentBuilderParametricPredicateNode) => {
-                  if (!e.parameters || Object.keys(e.parameters).length === 0) {
-                    return {
-                      ...e,
-                      parameters: {},
-                    };
-                  } else return e;
-                }),
+                expressions: exp.expressions.map(
+                  (e: StandardSegmentBuilderParametricPredicateNode) => {
+                    if (!e.parameters || Object.keys(e.parameters).length === 0) {
+                      return {
+                        ...e,
+                        parameters: {},
+                      };
+                    } else return e;
+                  },
+                ),
               };
             },
           ),
