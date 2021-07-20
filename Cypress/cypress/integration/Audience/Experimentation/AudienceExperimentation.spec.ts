@@ -22,7 +22,7 @@ describe('AudienceExperimentation Form Test', () => {
       cy.get('.mcs-segmentTypeSelector_UserExpertQuery').click();
       cy.fillExpertQuerySegmentForm(segmentName, 'SELECT {id} FROM UserPoint');
       cy.get('.mcs-form_saveButton_audienceSegmentForm').click();
-      cy.url({ timeout: 10000 }).should('match', /.*audience\/segments\/\d*\?/);
+      cy.url().should('match', /.*audience\/segments\/\d*\?/);
       cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.segments').click();
       cy.get('.mcs-search-input').type(segmentName + '{enter}');
       cy.get('.mcs-campaigns-link').should('have.length', 1).click();
