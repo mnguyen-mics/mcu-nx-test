@@ -145,7 +145,7 @@ class Notifications extends React.Component<Props> {
       if (notification.error.error_id) {
         if (!notifcationConfig.description) {
           notifcationConfig.description = notification.error.error ? (
-            <span>
+            <span className='mcs-notifications_errorDescription'>
               {formatMessage(messages.errorDescriptionWithErrorId)}&nbsp;
               <code>{notification.error.error_id}</code>&nbsp;
               {formatMessage(messages.errorDescriptionReason)}&nbsp;

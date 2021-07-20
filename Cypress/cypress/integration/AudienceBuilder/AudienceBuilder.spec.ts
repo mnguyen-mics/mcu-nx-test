@@ -343,4 +343,17 @@ describe('This test should check that the audience feature forms are working pro
       });
     });
   });
+  it('Should test the creation limit of 20 audience builders', () => {
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      const audienceBuilderName = faker.random.words(2);
+      for (let index = 0; index < 20; index++) {
+        createAudienceBuilder(data.datamartName, audienceBuilderName);
+        cy.wait(2000);
+      }
+      createAudienceBuilder(data.datamartName, audienceBuilderName);
+      cy.get('.mcs-notifications_errorDescription')
+        .should('be.visible')
+        .and('contain', 'The limit of 20 authorized audience builders has been reached');
+    });
+  });
 });
