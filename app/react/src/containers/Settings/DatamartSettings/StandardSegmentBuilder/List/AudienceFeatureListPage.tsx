@@ -2,7 +2,7 @@ import * as React from 'react';
 import _ from 'lodash';
 import queryString from 'query-string';
 import { compose } from 'recompose';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { Button, Layout, Modal, Input, Breadcrumb } from 'antd';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
@@ -249,26 +249,36 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
       intl: { formatMessage },
       notifyError,
     } = this.props;
+    const {
+      audienceFeatureFolders,
+    } = this.state;
+    const audienceFeatureFolder = audienceFeatureFolders?.find(folder => folder.id === folderId);
+    const folderHasFeatures = audienceFeatureFolder && audienceFeatureFolder.audience_features_ids && audienceFeatureFolder.audience_features_ids.length >= 1;
+    if (folderHasFeatures) {
+      Modal.error({
+        icon: <CloseCircleOutlined />,
+        title: formatMessage(messages.audienceFolderWithFeaturesDeleteListModalTitle),
+        content: formatMessage(messages.audienceFolderWithFeaturesDeleteListModalContent),
+      });
+    } else {
+      Modal.confirm({
+        icon: <ExclamationCircleOutlined />,
+        title: formatMessage(messages.audienceFolderDeleteListModalTitle),
+        okText: formatMessage(messages.audienceFeatureDeleteListModalOk),
+        cancelText: formatMessage(messages.audienceFeatureDeleteListModalCancel),
+        onOk: () => {
+          this._audienceFeatureService
+            .deleteAudienceFeatureFolder(datamartId, folderId)
+            .then(() => {
+              this.fetchBaseFoldersAndFeatures(datamartId);
+            })
+            .catch(err => {
+              notifyError(err);
+            });
+        },
+      });
+    }
 
-    Modal.confirm({
-      icon: <ExclamationCircleOutlined />,
-      title: formatMessage(messages.audienceFolderDeleteListModalTitle),
-      okText: formatMessage(messages.audienceFeatureDeleteListModalOk),
-      cancelText: formatMessage(messages.audienceFeatureDeleteListModalCancel),
-      onOk: () => {
-        this._audienceFeatureService
-          .deleteAudienceFeatureFolder(datamartId, folderId)
-          .then(() => {
-            this.fetchBaseFoldersAndFeatures(datamartId);
-          })
-          .catch(err => {
-            notifyError(err);
-          });
-      },
-      onCancel: () => {
-        // cancel,
-      },
-    });
   };
 
   onSelectFolder = (folderId?: string) => () => {

@@ -216,11 +216,21 @@ export const messages = defineMessages({
   audienceFolderDeleteListModalTitle: {
     id: 'settings.datamart.audienceFolders.list.deleteModal.title',
     defaultMessage:
-      'You are about to delete a folder from your datamart. It will delete every audience feature inside. This action cannot be undone. Do you want to proceed anyway?',
+      'You are about to delete a folder from your datamart. Are you sure ?',
+  },
+  audienceFolderWithFeaturesDeleteListModalTitle: {
+    id: 'settings.datamart.audienceFolders.list.deleteModalWithFeatures.title',
+    defaultMessage:
+      'This folder contains audience features',
+  },
+  audienceFolderWithFeaturesDeleteListModalContent: {
+    id: 'settings.datamart.audienceFolders.list.deleteModalWithFeatures.content',
+    defaultMessage:
+      'You cannot delete a folder when there are audience features inside.',
   },
   audienceFeatureDeleteListModalOk: {
     id: 'settings.datamart.audienceFeatures.list.deleteModal.ok',
-    defaultMessage: 'Delete',
+    defaultMessage: 'Ok',
   },
   audienceFeatureDeleteListModalCancel: {
     id: 'settings.datamart.audienceFeatures.list.deleteModal.cancel',

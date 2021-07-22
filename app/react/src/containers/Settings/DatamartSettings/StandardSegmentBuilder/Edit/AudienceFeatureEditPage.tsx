@@ -189,7 +189,7 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
       }
       if (audienceFeature.object_tree_expression !== objectTreeExpression) {
         this._audienceFeatureService.getAudienceFeatureSegmentsMapping(datamartId, audienceFeatureId).then(res => {
-          let segmentsIds = res.data.segments_ids;
+          const segmentsIds = res.data.segments_ids;
           if (segmentsIds.length >= 1) {
             const redirect = () => {
               Modal.destroyAll();
@@ -232,12 +232,10 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
               okText: intl.formatMessage(messages.audienceFeatureDeleteListModalOk),
               cancelText: intl.formatMessage(messages.audienceFeatureDeleteListModalCancel),
               onOk: () => {
-                console.log("A")
                 saveProcess(getPromise())
               }
             });
           } else {
-            console.log("B")
             saveProcess(getPromise());
           }
         }).catch(err => {
@@ -247,12 +245,10 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
           })
         })
       } else {
-        console.log("C")
         saveProcess(getPromise())
       }
     } else {
       const getPromise = () => { return this._audienceFeatureService.createAudienceFeature(datamartId, newFormData); }
-      console.log("D")
       saveProcess(getPromise());
     }
 
