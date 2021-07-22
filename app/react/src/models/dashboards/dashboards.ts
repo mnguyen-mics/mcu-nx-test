@@ -133,9 +133,8 @@ export interface MapIndexChart extends BaseComponent {
   labels?: DataLabel;
   tooltip?: TooltipChart;
   showTop?: number;
-  minimumPercentage?: number
+  minimumPercentage?: number;
 }
-
 
 export interface WorldMapChart extends BaseComponent {
   component_type: 'WORLD_MAP_CHART';

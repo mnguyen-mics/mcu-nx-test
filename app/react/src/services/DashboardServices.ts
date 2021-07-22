@@ -306,7 +306,7 @@ const myDashboards: DashboardResource[] = [
           component_type: 'PERCENTAGE',
           query_id: '25344',
           total_query_id: '25345',
-          title: 'Pourcentage de visites reconnues (30j) 1',
+          title: 'Pourcentage de visites reconnues (30j)',
         },
       },
       {
@@ -1303,24 +1303,6 @@ const myDashboards: DashboardResource[] = [
           query_ids: ['29710'],
         },
       },
-      {
-        layout: {
-          h: 5,
-          static: false,
-          w: 7,
-          x: 0,
-          y: 0,
-        },
-        component: {
-          id: 1,
-          component_type: 'MAP_INDEX_CHART',
-          title: 'Top 10 Interests by index',
-          show_legend: true,
-          query_id: '59687',
-          showTop: 10,
-          minimumPercentage: 1
-        },
-      },
     ],
     datamart_id: '1277',
   },
@@ -1341,7 +1323,7 @@ const myDashboards: DashboardResource[] = [
         component: {
           id: 1,
           component_type: 'PERCENTAGE',
-          title: 'Pourcentage de visites reconnues (30j) 1',
+          title: 'Pourcentage de visites reconnues (30j)',
           query_id: '29714',
           total_query_id: '29712',
         },
@@ -1519,7 +1501,7 @@ const myDashboards: DashboardResource[] = [
           id: 5,
           component_type: 'DATE_AGGREGATION_CHART',
           plot_labels: ['tickets'],
-          title: 'Nombre de tickets réalisés par les contacts CRM 1',
+          title: 'Nombre de tickets réalisés par les contacts CRM',
           labels_enabled: true,
           format: 'YYYY/MM/DD',
           query_ids: ['29733'],
@@ -3351,35 +3333,6 @@ const myDashboards: DashboardResource[] = [
           labels_enabled: true,
           format: 'YYYY/MM/DD',
           query_ids: ['33054'],
-        },
-      },
-      {
-        layout: {
-          i: cuid(),
-          h: 3,
-          static: false,
-          w: 12,
-          x: 0,
-          y: 13,
-        },
-        component: {
-          // select {profiles{demographic{personal_attributes{age_range @map}}}} from UserPoint
-          id: 5,
-          component_type: 'MAP_INDEX_CHART',
-          title: 'Categories',
-          query_id: '33054',
-          shouldCompare: true,
-          percentage: true,
-          show_legend: true,
-          vertical: false,
-          labels: {
-            enable: true,
-            filterValue: 0,
-            format: '{point.y}%',
-          },
-          tooltip: {
-            formatter: '{point.y}% ({point.count})',
-          },
         },
       },
     ],

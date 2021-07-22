@@ -103,24 +103,26 @@ export default class DashboardContent extends React.Component<Props, State> {
             height={height}
           />
         );
-        case 'MAP_INDEX_CHART':
-          return (
-            <MapIndexChart
-              source={source}
-              datamartId={datamartId}
-              queryId={comp.query_id}
-              title={comp.title}
-              labelsEnabled={comp.labels_enabled}
-              shouldCompare={comp.shouldCompare}
-              percentage={comp.percentage}
-              vertical={comp.vertical}
-              sortKey={comp.sortKey}
-              data={comp.data}
-              labels={comp.labels}
-              tooltip={comp.tooltip}
-              height={height}
-            />
-          );
+      case 'MAP_INDEX_CHART':
+        return (
+          <MapIndexChart
+            source={source}
+            datamartId={datamartId}
+            queryId={comp.query_id}
+            title={comp.title}
+            labelsEnabled={comp.labels_enabled}
+            shouldCompare={comp.shouldCompare}
+            percentage={comp.percentage}
+            vertical={comp.vertical}
+            sortKey={comp.sortKey}
+            data={comp.data}
+            labels={comp.labels}
+            tooltip={comp.tooltip}
+            showTop={comp.showTop}
+            minimumPercentage={comp.minimumPercentage}
+            height={height}
+          />
+        );
       case 'MAP_RADAR_CHART':
         return (
           <MapRadarChart

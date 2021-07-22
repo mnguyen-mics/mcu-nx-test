@@ -1,6 +1,5 @@
 import * as React from 'react';
 import _ from 'lodash';
-import cuid from 'cuid';
 import {
   isAggregateResult,
   isCountResult,
@@ -25,6 +24,7 @@ import {
 } from '@mediarithmics-private/mcs-components-library';
 import { AudienceBuilderQueryDocument } from '../../../../models/audienceBuilder/AudienceBuilderResource';
 import { Dataset } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
+import { StackedBarChartOptions } from '@mediarithmics-private/mcs-components-library/lib/components/charts/stacked-bar-chart/StackedBarChart';
 
 export interface MapIndexChartProps {
   title?: string;
@@ -57,8 +57,6 @@ const COMPARED_YKEY = 'comparedYKey';
 type Props = MapIndexChartProps & InjectedThemeColorsProps & InjectedIntlProps;
 
 class MapIndexChart extends React.Component<Props, State> {
-  identifier = cuid();
-
   @lazyInject(TYPES.IQueryService)
   private _queryService: IQueryService;
 
@@ -181,10 +179,7 @@ class MapIndexChart extends React.Component<Props, State> {
     return queryWithoutWhere;
   };
 
-  fetchData = (
-    chartQueryId: string,
-    datamartId: string,
-  ): any => {
+  fetchData = (chartQueryId: string, datamartId: string): any => {
     const { showTop, minimumPercentage } = this.props;
     this.setState({ error: false, loading: true });
     this._queryService
@@ -222,11 +217,6 @@ class MapIndexChart extends React.Component<Props, State> {
                 ) || [],
                 COMPARED_YKEY,
               );
-              // const mergedData = [
-              //   { comparedYKey: 4, yKey: 2, xKey: 'auto' },
-              //   { comparedYKey: 5, yKey: 3, xKey: 'moto' },
-              //   { comparedYKey: 10, yKey: 4, xKey: 'plane' },
-              // ];
 
               const totalQueryResult = mergedData.reduce((a, b) => {
                 return a + (b as any).yKey;
@@ -243,17 +233,20 @@ class MapIndexChart extends React.Component<Props, State> {
                   comparedYKey: ((d.comparedYKey as number) * 100) / totalqueryReferenceResult,
                 };
               });
-              
-              let computedData = mergedDataInPourcentage.map(d => {
-                return {
-                  xKey: d.xKey,
-                  yKey: (d.yKey / d.comparedYKey) * 100,
-                };
-              }).filter(cd => cd.yKey >= (minimumPercentage || 1));
-              const sortedComputedData = _.sortBy(computedData, ['yKey']).reverse().slice(0, showTop || 40);
+
+              const computedData = mergedDataInPourcentage
+                .map(d => {
+                  const yKeyValue = ((d.yKey / d.comparedYKey) * 100).toFixed(2);
+                  return {
+                    xKey: d.xKey,
+                    yKey: parseFloat(yKeyValue),
+                  };
+                })
+                .filter(cd => cd.yKey >= (minimumPercentage || 1));
+              const sortedComputedData = _.sortBy(computedData, ['yKey']).reverse();
 
               this.setState({
-                queryResult: sortedComputedData,
+                queryResult: sortedComputedData.slice(0, showTop),
                 loading: false,
               });
               return Promise.resolve();
@@ -267,7 +260,6 @@ class MapIndexChart extends React.Component<Props, State> {
   };
 
   public render() {
-    debugger
     const {
       title,
       colors,
@@ -280,31 +272,34 @@ class MapIndexChart extends React.Component<Props, State> {
       height,
     } = this.props;
 
-    const optionsForChart = {
-      xKey: 'xKey',
-      yKeys: [{ key: BASE_YKEY, message: '' }],
-      colors: [colors['mcs-info']].concat(shouldCompare ? [colors['mcs-normal']] : []),
-      labelsEnabled: this.props.labelsEnabled,
-      vertical,
-      sort: sortKey,
-      labels,
-      tooltip,
-      type: 'bar',
-      chartOptions: {
-        yAxis: {
-          plotLines: [
-            {
-              color: '#3c3c3c',
-              width: 2,
-              value: 100,
-            },
-          ],
+    const optionsForChart = _.omitBy(
+      {
+        xKey: 'xKey',
+        yKeys: [{ key: BASE_YKEY, message: '' }],
+        colors: [colors['mcs-info']].concat(shouldCompare ? [colors['mcs-normal']] : []),
+        labelsEnabled: this.props.labelsEnabled,
+        vertical,
+        sort: sortKey,
+        labels,
+        tooltip,
+        type: 'bar',
+        chartOptions: {
+          yAxis: {
+            plotLines: [
+              {
+                color: '#3c3c3c',
+                width: 2,
+                value: 100,
+              },
+            ],
+          },
+        },
+        chart: {
+          type: 'bar',
         },
       },
-      chart: {
-        type: 'bar',
-      },
-    };
+      _.isUndefined,
+    );
 
     const generateChart = () => {
       if (this.state.loading) {
@@ -322,7 +317,7 @@ class MapIndexChart extends React.Component<Props, State> {
           this.state.queryResult.length && (
             <StackedBarChart
               dataset={this.state.queryResult as any}
-              options={optionsForChart}
+              options={optionsForChart as StackedBarChartOptions}
               enableDrilldown={true}
               height={height}
             />
