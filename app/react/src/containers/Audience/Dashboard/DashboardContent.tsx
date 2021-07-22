@@ -4,7 +4,7 @@ import { Responsive, WidthProvider, Layout, Layouts } from 'react-grid-layout';
 import Count from './Vizualisation/Count';
 import MapPieChart from './Vizualisation/MapPieChart';
 import MapBarChart from './Vizualisation/MapBarChart';
-import MapIndexChart from './Vizualisation/MApIndexChart';
+import MapIndexChart from './Vizualisation/MapIndexChart';
 import DateAggregationChart from './Vizualisation/DateAggregationChart';
 import GaugePieChart from './Vizualisation/GaugePieChart';
 import WorldMapChart from './Vizualisation/WorldMapChart';
@@ -15,7 +15,7 @@ import Percentage from './Vizualisation/Percentage';
 import CountPieChart from './Vizualisation/CountPieChart';
 import TopInfo from './Vizualisation/TopInfo';
 import MapRadarChart from './Vizualisation/MapRadarChart';
-import { AudienceBuilderQueryDocument } from '../../../models/audienceBuilder/AudienceBuilderResource';
+import { StandardSegmentBuilderQueryDocument } from '../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 
 const BASE_FRAMEWORK_HEIGHT = 96;
 const BASE_PADDING = 5;
@@ -25,7 +25,7 @@ const ResponsiveReactGridLayout = WidthProvider(Responsive);
 interface Props {
   layout: ComponentLayout[];
   onLayoutChange: (layout: Layout[], allLayouts: Layouts) => void;
-  source?: AudienceSegmentShape | AudienceBuilderQueryDocument;
+  source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument;
   datamartId: string;
 }
 

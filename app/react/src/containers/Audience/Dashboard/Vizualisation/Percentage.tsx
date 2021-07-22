@@ -8,14 +8,14 @@ import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import { getFormattedQuery } from '../domain';
-import { AudienceBuilderQueryDocument } from '../../../../models/audienceBuilder/AudienceBuilderResource';
+import { StandardSegmentBuilderQueryDocument } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 
 export interface PercentageProps {
   queryId: string;
   totalQueryId: string;
   datamartId: string;
   title: string;
-  source?: AudienceSegmentShape | AudienceBuilderQueryDocument;
+  source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument;
 }
 
 interface State {
@@ -64,7 +64,7 @@ export default class Percentage extends React.Component<PercentageProps, State> 
     chartQueryId: string,
     totalQueryId: string,
     datamartId: string,
-    source?: AudienceSegmentShape | AudienceBuilderQueryDocument,
+    source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument,
   ): Promise<void> => {
     return Promise.all([
       this.fetchQuery(chartQueryId, datamartId, source),
@@ -92,7 +92,7 @@ export default class Percentage extends React.Component<PercentageProps, State> 
   fetchQuery = (
     chartQueryId: string,
     datamartId: string,
-    source?: AudienceSegmentShape | AudienceBuilderQueryDocument,
+    source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument,
   ): Promise<number | void> => {
     this.setState({ error: false, loading: true });
 

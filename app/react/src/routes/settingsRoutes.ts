@@ -52,8 +52,8 @@ import AudiencePartitionPage from '../containers/Settings/DatamartSettings/Parti
 import CleaningRulesDashboardPage from '../containers/Settings/DatamartSettings/CleaningRules/Dashboard/CleaningRulesDashboardPage';
 import CleaningRuleEditPage from '../containers/Settings/DatamartSettings/CleaningRules/Edit/CleaningRuleEditPage';
 import EditUserRolePage from '../containers/Settings/OrganisationSettings/UserRoles/Edit/EditUserRolePage';
-import AudienceFeatureEditPage from '../containers/Settings/DatamartSettings/AudienceBuilder/Edit/AudienceFeatureEditPage';
-import AudienceBuilderEditPage from '../containers/Settings/DatamartSettings/AudienceBuilder/Edit/AudienceBuilderEditPage';
+import AudienceFeatureEditPage from '../containers/Settings/DatamartSettings/StandardSegmentBuilder/Edit/AudienceFeatureEditPage';
+import StandardSegmentBuilderEditPage from '../containers/Settings/DatamartSettings/StandardSegmentBuilder/Edit/StandardSegmentBuilderEditPage';
 
 export const settingsDefinition: NavigatorDefinition = {
   /*
@@ -202,7 +202,7 @@ export const settingsDefinition: NavigatorDefinition = {
     requireDatamart: true,
   },
 
-  // Audience Builder and audience feature
+  // Standard Segment Builder and Audience Feature
   settingsDatamartAudienceFeatureEdition: {
     path: '/settings/datamart/:datamartId/audience_feature/:audienceFeatureId/edit',
     layout: 'edit',
@@ -218,17 +218,17 @@ export const settingsDefinition: NavigatorDefinition = {
     requireDatamart: true,
   },
 
-  settingsDatamartAudienceBuilderEdition: {
-    path: '/settings/datamart/:datamartId/audience_builder/:audienceBuilderId/edit',
+  settingsDatamartStandardSegmentBuilderEdition: {
+    path: '/settings/datamart/:datamartId/standard_segment_builder/:standardSegmentBuilderId/edit',
     layout: 'edit',
-    editComponent: AudienceBuilderEditPage,
+    editComponent: StandardSegmentBuilderEditPage,
     requiredFeature: 'audience-segment_builder_v2',
     requireDatamart: true,
   },
-  settingsDatamartAudienceBuilderCreation: {
-    path: '/settings/datamart/:datamartId/audience_builder/create',
+  settingsDatamartStandardSegmentBuilderCreation: {
+    path: '/settings/datamart/:datamartId/standard_segment_builder/create',
     layout: 'edit',
-    editComponent: AudienceBuilderEditPage,
+    editComponent: StandardSegmentBuilderEditPage,
     requiredFeature: 'audience-segment_builder_v2',
     requireDatamart: true,
   },

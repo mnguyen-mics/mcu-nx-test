@@ -17,7 +17,7 @@ import {
   StackedBarChart,
 } from '@mediarithmics-private/mcs-components-library';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
-import { AudienceBuilderQueryDocument } from '../../../../models/audienceBuilder/AudienceBuilderResource';
+import { StandardSegmentBuilderQueryDocument } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 
 export interface CountBarChartProps {
   title?: string;
@@ -26,7 +26,7 @@ export interface CountBarChartProps {
   height: number;
   labelsEnabled?: boolean;
   plotLabels: string[];
-  source?: AudienceSegmentShape | AudienceBuilderQueryDocument;
+  source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument;
 }
 
 interface QueryResult {
@@ -117,7 +117,7 @@ class CountBarChart extends React.Component<Props, State> {
   fetchData = (
     chartQueryIds: string[],
     datamartId: string,
-    source?: AudienceSegmentShape | AudienceBuilderQueryDocument,
+    source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument,
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
     const promises = chartQueryIds.map((chartQueryId, i) => {
@@ -145,7 +145,7 @@ class CountBarChart extends React.Component<Props, State> {
     chartQueryId: string,
     datamartId: string,
     plotLabelIndex: number,
-    source?: AudienceSegmentShape | AudienceBuilderQueryDocument,
+    source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument,
   ): Promise<QueryResult[]> => {
     return this._queryService
       .getQuery(datamartId, chartQueryId)

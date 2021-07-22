@@ -24,12 +24,12 @@ import {
   LoadingChart,
   StackedBarChart,
 } from '@mediarithmics-private/mcs-components-library';
-import { AudienceBuilderQueryDocument } from '../../../../models/audienceBuilder/AudienceBuilderResource';
+import { StandardSegmentBuilderQueryDocument } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 import { Dataset } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 
 export interface MapBarChartProps {
   title?: string;
-  source?: AudienceSegmentShape | AudienceBuilderQueryDocument;
+  source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument;
   data?: OTQLResult;
   queryId: string;
   datamartId: string;
@@ -167,7 +167,7 @@ class MapBarChart extends React.Component<Props, State> {
     chartQueryId: string,
     datamartId: string,
     shouldCompare?: boolean,
-    source?: AudienceSegmentShape | AudienceBuilderQueryDocument,
+    source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument,
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
     const promise: Promise<void | QueryResource> = shouldCompare

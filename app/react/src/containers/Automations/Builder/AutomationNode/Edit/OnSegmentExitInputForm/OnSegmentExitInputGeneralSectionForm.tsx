@@ -8,7 +8,7 @@ import { IAudienceSegmentService } from '../../../../../../services/AudienceSegm
 import { compose } from 'recompose';
 import withNormalizer, { NormalizerProps } from '../../../../../../components/Form/withNormalizer';
 import { withValidators, FormSection } from '../../../../../../components/Form';
-import { FormInfiniteSearchObjectField } from '../../../../../QueryTool/JSONOTQL/Edit/Sections/Field/FieldNodeForm';
+import { FormInfiniteSearchObjectField } from '../../../../../Audience/AdvancedSegmentBuilder/Edit/Sections/Field/FieldNodeForm';
 import { SegmentNameDisplay } from '../../../../../Audience/Common/SegmentNameDisplay';
 import { RouteComponentProps, withRouter } from 'react-router';
 import injectNotifications, {

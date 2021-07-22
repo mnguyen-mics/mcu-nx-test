@@ -3,7 +3,7 @@ import { AudienceSegmentShape } from '../../../models/audiencesegment';
 import { isUserQuerySegment, isAudienceSegmentShape } from '../Segments/Edit/domain';
 import { QueryResource } from '../../../models/datamart/DatamartResource';
 import { IQueryService } from '../../../services/QueryService';
-import { AudienceBuilderQueryDocument } from '../../../models/audienceBuilder/AudienceBuilderResource';
+import { StandardSegmentBuilderQueryDocument } from '../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 
 export const getFormattedExperimentationQuery = (
   datamartId: string,
@@ -48,7 +48,7 @@ export const getFormattedQuery = (
   datamartId: string,
   queryService: IQueryService,
   dashboardQuery: QueryResource,
-  source?: AudienceSegmentShape | AudienceBuilderQueryDocument,
+  source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument,
 ): Promise<QueryResource> => {
   if (isAudienceSegmentShape(source)) {
     if (isUserQuerySegment(source) && source.query_id) {
@@ -76,7 +76,10 @@ export const getFormattedQuery = (
         });
     }
     return Promise.resolve(formatQuery(dashboardQuery, `segments { id = \"${source.id}\"}`));
-  } else if (isAudienceBuilderQueryDocument(source) && source.language_version === 'JSON_OTQL') {
+  } else if (
+    isStandardSegmentBuilderQueryDocument(source) &&
+    source.language_version === 'JSON_OTQL'
+  ) {
     const queryResource = {
       datamart_id: datamartId,
       query_language: 'JSON_OTQL',
@@ -123,10 +126,11 @@ export const hasWhereClause = (text: string) => {
   return text.toLowerCase().indexOf('where') > -1;
 };
 
-function isAudienceBuilderQueryDocument(
-  source?: AudienceSegmentShape | AudienceBuilderQueryDocument,
-): source is AudienceBuilderQueryDocument {
+function isStandardSegmentBuilderQueryDocument(
+  source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument,
+): source is StandardSegmentBuilderQueryDocument {
   return (
-    source !== undefined && (source as AudienceBuilderQueryDocument).language_version !== undefined
+    source !== undefined &&
+    (source as StandardSegmentBuilderQueryDocument).language_version !== undefined
   );
 }

@@ -4,14 +4,14 @@ import { AudienceSegmentPage } from '../containers/Audience/Segments/Dashboard';
 import AudienceFeedPage from '../containers/Audience/Segments/Edit/AudienceFeedForm/AudienceFeedPage';
 import TimelinePage from '../containers/Audience/Timeline/TimelinePage';
 import { NavigatorRoute, NavigatorDefinition, generateRoutesFromDefinition } from './domain';
-import { AudienceBuilderPage } from '../containers/Audience/AudienceBuilder';
+import { StandardSegmentBuilderPage } from '../containers/Audience/StandardSegmentBuilder';
 import HomePage from '../containers/Audience/Home/Dashboard/HomePage';
 import AudienceFeedsActionBar from '../containers/Audience/Feeds/List/AudienceFeedsActionBar';
 import { AudienceFeedsTable } from '../containers/Audience/Feeds/List';
 import FeedsOverviewActionbar from '../containers/Audience/Feeds/Overview/FeedsOverviewActionbar';
 import { AudienceFeedsOverview } from '../containers/Audience/Feeds/Overview';
-import SegmentBuilderSelector from '../containers/Audience/SegmentBuilder/SegmentBuilderSelector';
-import { SegmentBuilderPage } from '../containers/Audience/SegmentBuilder';
+import SegmentBuilderSelector from '../containers/Audience/StandardSegmentBuilder/SegmentBuilderSelector';
+import { AdvancedSegmentBuilderPage } from '../containers/Audience/AdvancedSegmentBuilder';
 
 export const audienceDefinition: NavigatorDefinition = {
   audienceHome: {
@@ -90,21 +90,21 @@ export const audienceDefinition: NavigatorDefinition = {
   segmentBuilder: {
     path: '/audience/segment-builder',
     layout: 'main',
-    contentComponent: SegmentBuilderPage,
+    contentComponent: AdvancedSegmentBuilderPage,
     requiredFeature: 'audience-segment_builder',
     requireDatamart: true,
   },
   standardSegmentBuilder: {
     path: '/audience/segment-builder/standard',
     layout: 'main',
-    contentComponent: AudienceBuilderPage,
+    contentComponent: StandardSegmentBuilderPage,
     requiredFeature: 'audience-segment_builder_v2',
     requireDatamart: true,
   },
   advancedSegmentBuilder: {
     path: '/audience/segment-builder/advanced',
     layout: 'main',
-    contentComponent: SegmentBuilderPage,
+    contentComponent: AdvancedSegmentBuilderPage,
     requiredFeature: 'audience-segment_builder_v2',
     requireDatamart: true,
   },

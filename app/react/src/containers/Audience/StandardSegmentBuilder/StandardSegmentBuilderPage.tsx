@@ -1,0 +1,255 @@
+import * as React from 'react';
+import _ from 'lodash';
+import { compose } from 'recompose';
+import queryString from 'query-string';
+import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { Loading } from '@mediarithmics-private/mcs-components-library';
+import StandardSegmentBuilderContainer from './StandardSegmentBuilderContainer';
+import {
+  StandardSegmentBuilderFormData,
+  StandardSegmentBuilderParametricPredicateNode,
+  StandardSegmentBuilderQueryDocument,
+  StandardSegmentBuilderResource,
+  StandardSegmentBuilderParametricPredicateGroupNode,
+} from '../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
+import { UserQuerySegment } from '../../../models/audiencesegment/AudienceSegmentResource';
+import { lazyInject } from '../../../config/inversify.config';
+import { IStandardSegmentBuilderService } from '../../../services/StandardSegmentBuilderService';
+import { TYPES } from '../../../constants/types';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../Notifications/injectNotifications';
+import { INITIAL_STANDARD_SEGMENT_BUILDER_FORM_DATA } from './constants';
+import { IQueryService } from '../../../services/QueryService';
+import { IAudienceFeatureService } from '../../../services/AudienceFeatureService';
+import { IAudienceSegmentService } from '../../../services/AudienceSegmentService';
+import { withRouter, RouteComponentProps } from 'react-router';
+import { NewUserQuerySimpleFormData } from '../../QueryTool/SaveAs/NewUserQuerySegmentSimpleForm';
+import StandardSegmentBuilderActionbar from './StandardSegmentBuilderActionbar';
+import { calculateDefaultTtl } from '../Segments/Edit/domain';
+import { InjectedWorkspaceProps, injectWorkspace } from '../../Datamart';
+import { AudienceFeatureResource } from '../../../models/audienceFeature';
+import { notifyError } from '../../../redux/Notifications/actions';
+import { ITagService } from '../../../services/TagService';
+
+interface State {
+  selectedStandardSegmentBuilder?: StandardSegmentBuilderResource;
+  formData: StandardSegmentBuilderFormData;
+  isLoading: boolean;
+}
+
+type Props = InjectedIntlProps &
+  InjectedNotificationProps &
+  InjectedWorkspaceProps &
+  RouteComponentProps<{ organisationId: string }>;
+
+class StandardSegmentBuilderPage extends React.Component<Props, State> {
+  @lazyInject(TYPES.IAudienceFeatureService)
+  private _audienceFeatureService: IAudienceFeatureService;
+
+  @lazyInject(TYPES.IAudienceSegmentService)
+  private _audienceSegmentService: IAudienceSegmentService;
+
+  @lazyInject(TYPES.IQueryService)
+  private _queryService: IQueryService;
+
+  @lazyInject(TYPES.IStandardSegmentBuilderService)
+  private _standardSegmentBuilderService: IStandardSegmentBuilderService;
+
+  @lazyInject(TYPES.ITagService)
+  private _tagService: ITagService;
+
+  constructor(props: Props) {
+    super(props);
+
+    this.state = {
+      isLoading: true,
+      formData: INITIAL_STANDARD_SEGMENT_BUILDER_FORM_DATA,
+    };
+  }
+
+  componentDidMount() {
+    const {
+      location: { search },
+    } = this.props;
+
+    const standardSegmentBuilderId = queryString.parse(search).standardSegmentBuilderId;
+    const datamartId = queryString.parse(search).datamartId;
+    if (standardSegmentBuilderId) {
+      this.setStandardSegmentBuilder(datamartId, standardSegmentBuilderId);
+    }
+  }
+
+  componentDidUpdate(prevProps: Props, prevState: State) {
+    const {
+      match: {
+        params: { organisationId },
+      },
+      location: { search },
+      history,
+    } = this.props;
+    const {
+      match: {
+        params: { organisationId: prevOrganisationId },
+      },
+      location: { search: prevSearch },
+    } = prevProps;
+    const standardSegmentBuilderId = queryString.parse(search).standardSegmentBuilderId;
+    const datamartId = queryString.parse(search).datamartId;
+    const prevStandardSegmentBuilderId = queryString.parse(prevSearch).standardSegmentBuilderId;
+    const prevDatamartId = queryString.parse(prevSearch).datamartId;
+    if (!standardSegmentBuilderId || !datamartId || organisationId !== prevOrganisationId) {
+      history.push(`/v2/o/${organisationId}/audience/segment-builder-selector`);
+    } else if (
+      datamartId !== prevDatamartId ||
+      standardSegmentBuilderId !== prevStandardSegmentBuilderId
+    ) {
+      this.setStandardSegmentBuilder(datamartId, standardSegmentBuilderId);
+    }
+  }
+
+  setStandardSegmentBuilder = (datamartId: string, standardSegmentBuilderId: string) => {
+    this._standardSegmentBuilderService
+      .getStandardSegmentBuilder(datamartId, standardSegmentBuilderId)
+      .then(res => {
+        this.setState({
+          selectedStandardSegmentBuilder: res.data,
+        });
+        return res.data;
+      })
+      .then(standardSegmentBuilder => {
+        const demographicsFeaturePromises = standardSegmentBuilder.demographics_features_ids.map(
+          id => {
+            return this._audienceFeatureService.getAudienceFeature(datamartId, id);
+          },
+        );
+
+        const setUpPredicate = (
+          feature: AudienceFeatureResource,
+        ): StandardSegmentBuilderParametricPredicateNode => {
+          return {
+            type: 'PARAMETRIC_PREDICATE',
+            parametric_predicate_id: feature.id,
+            parameters: {},
+          };
+        };
+
+        const setUpDefaultPredicates = (
+          features: AudienceFeatureResource[],
+        ): StandardSegmentBuilderParametricPredicateGroupNode[] => {
+          return features.map(feature => {
+            return {
+              expressions: [setUpPredicate(feature)],
+            };
+          });
+        };
+
+        Promise.all(demographicsFeaturePromises)
+          .then(resp => {
+            const defaultFeatures = resp.map(r => {
+              return r.data;
+            });
+
+            this.setState({
+              selectedStandardSegmentBuilder: standardSegmentBuilder,
+              formData: {
+                include: setUpDefaultPredicates(defaultFeatures),
+                exclude: [],
+              },
+              isLoading: false,
+            });
+          })
+          .catch(err => {
+            this.setState({
+              selectedStandardSegmentBuilder: standardSegmentBuilder,
+              formData: INITIAL_STANDARD_SEGMENT_BUILDER_FORM_DATA,
+              isLoading: false,
+            });
+            notifyError(err);
+          });
+      })
+      .catch(error => {
+        this.setState({
+          isLoading: false,
+        });
+        this.props.notifyError(error);
+      });
+  };
+
+  standardSegmentBuilderActionbar = (
+    query: StandardSegmentBuilderQueryDocument,
+    datamartId: string,
+  ) => {
+    const { match, history } = this.props;
+    const { selectedStandardSegmentBuilder } = this.state;
+    const saveAudience = (userQueryFormData: NewUserQuerySimpleFormData) => {
+      const { name, technical_name, persisted } = userQueryFormData;
+
+      return this._queryService
+        .createQuery(datamartId, {
+          query_language: 'JSON_OTQL',
+          query_language_subtype: 'PARAMETRIC',
+          query_text: JSON.stringify(query),
+        })
+        .then(res => {
+          const userQuerySegment: Partial<UserQuerySegment> = {
+            datamart_id: datamartId,
+            type: 'USER_QUERY',
+            name,
+            technical_name,
+            persisted,
+            default_ttl: calculateDefaultTtl(userQueryFormData),
+            query_id: res.data.id,
+            segment_editor: 'AUDIENCE_BUILDER',
+            audience_builder_id: selectedStandardSegmentBuilder?.id,
+          };
+          return this._audienceSegmentService.saveSegment(
+            match.params.organisationId,
+            userQuerySegment,
+          );
+        })
+        .then(res => {
+          this._tagService.sendEvent('create_segment', 'Segment Builder', 'Save Segment');
+          history.push(`/v2/o/${match.params.organisationId}/audience/segments/${res.data.id}`);
+        });
+    };
+
+    return (
+      <StandardSegmentBuilderActionbar
+        save={saveAudience}
+        standardSegmentBuilder={selectedStandardSegmentBuilder}
+      />
+    );
+  };
+
+  selectBuilderContainer(standardSegmentBuilder: StandardSegmentBuilderResource) {
+    const { formData } = this.state;
+
+    return (
+      <StandardSegmentBuilderContainer
+        initialValues={formData}
+        standardSegmentBuilder={standardSegmentBuilder}
+        renderActionBar={this.standardSegmentBuilderActionbar}
+      />
+    );
+  }
+
+  render() {
+    const { selectedStandardSegmentBuilder, isLoading } = this.state;
+
+    if (isLoading) {
+      return <Loading isFullScreen={true} />;
+    }
+
+    return selectedStandardSegmentBuilder
+      ? this.selectBuilderContainer(selectedStandardSegmentBuilder)
+      : null;
+  }
+}
+
+export default compose(
+  withRouter,
+  injectIntl,
+  injectNotifications,
+  injectWorkspace,
+)(StandardSegmentBuilderPage);

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import AudienceBuilderListPage from '../../AudienceBuilder/List/AudienceBuilderListPage';
+import StandardSegmentBuilderListPage from '../../StandardSegmentBuilder/List/StandardSegmentBuilderListPage';
 import { injectFeatures, InjectedFeaturesProps } from '../../../../Features';
 import { compose } from 'recompose';
 
@@ -7,7 +7,7 @@ class SegmentBuildersTab extends React.Component<InjectedFeaturesProps> {
   public render() {
     return (
       <div>
-        <AudienceBuilderListPage />
+        <StandardSegmentBuilderListPage />
       </div>
     );
   }

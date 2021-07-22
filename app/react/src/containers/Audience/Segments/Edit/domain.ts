@@ -12,7 +12,7 @@ import {
 } from '../../../../models/audiencesegment/AudienceSegmentResource';
 import { NewUserQuerySimpleFormData } from '../../../QueryTool/SaveAs/NewUserQuerySegmentSimpleForm';
 import * as moment from 'moment';
-import { AudienceBuilderQueryDocument } from '../../../../models/audienceBuilder/AudienceBuilderResource';
+import { StandardSegmentBuilderQueryDocument } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 
 export interface EditAudienceSegmentParam {
   organisationId: string;
@@ -64,7 +64,7 @@ export const INITIAL_AUDIENCE_SEGMENT_FORM_DATA: AudienceSegmentFormData = {
 };
 
 export function isAudienceSegmentShape(
-  source?: AudienceSegmentShape | AudienceBuilderQueryDocument,
+  source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument,
 ): source is AudienceSegmentShape {
   return source !== undefined && (source as AudienceSegmentShape).type !== undefined;
 }

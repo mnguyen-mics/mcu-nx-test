@@ -12,8 +12,8 @@ import injectNotifications, {
 import OTQLResultRenderer from './OTQLResultRenderer';
 import OTQLInputEditor from './OTQLInputEditor';
 import { DataResponse } from '../../../services/ApiService';
-import SchemaVizualizer from '../JSONOTQL/SchemaVisualizer/SchemaVizualizer';
-import { computeFinalSchemaItem } from '../JSONOTQL/domain';
+import SchemaVizualizer from '../../Audience/AdvancedSegmentBuilder/SchemaVisualizer/SchemaVizualizer';
+import { computeFinalSchemaItem } from '../../Audience/AdvancedSegmentBuilder/domain';
 import { IRuntimeSchemaService } from '../../../services/RuntimeSchemaService';
 import { Loading } from '../../../components';
 import { lazyInject } from '../../../config/inversify.config';

@@ -1,5 +1,5 @@
 import { NodeModel } from 'storm-react-diagrams';
-import SimplePortModel from '../../../QueryTool/JSONOTQL/Diagram/Port/SimplePortModel';
+import SimplePortModel from '../../../Audience/AdvancedSegmentBuilder/Diagram/Port/SimplePortModel';
 import { StorylineNodeModel } from '../domain';
 import ABNAutomationForm from './Edit/ABNAutomationForm/ABNAutomationForm';
 import DefaultAutomationForm from './Edit/DefaultForm/DefaultAutomationForm';

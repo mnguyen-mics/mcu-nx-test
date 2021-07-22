@@ -1,5 +1,5 @@
 import { NodeModel } from 'storm-react-diagrams';
-import SimplePortModel from '../../../QueryTool/JSONOTQL/Diagram/Port/SimplePortModel';
+import SimplePortModel from '../../../Audience/AdvancedSegmentBuilder/Diagram/Port/SimplePortModel';
 import { DropNode } from '../domain';
 
 export default class DropNodeModel extends NodeModel {

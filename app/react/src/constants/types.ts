@@ -64,14 +64,14 @@ const TYPES = {
   IDatamartUsersAnalyticsService: Symbol.for('datamartUsersAnalyticsService'),
   IEmailCampaignService: Symbol.for('emailCampaignService'),
   IEmailCampaignFormService: Symbol.for('emailCampaignFormService'),
-  IAudienceBuilderService: Symbol.for('audienceBuilderService'),
+  IStandardSegmentBuilderService: Symbol.for('StandardSegmentBuilderService'),
   IAudienceFeatureService: Symbol.for('audienceFeatureService'),
   IUserActivitiesFunnelService: Symbol.for('userActivitiesFunnelService'),
   IUsersAnalyticsService: Symbol.for('usersAnalyticsService'),
   IUserRolesService: Symbol.for('userRolesService'),
   ICustomActionService: Symbol.for('customActionService'),
   IScenarioAnalyticsService: Symbol.for('scenarioAnalyticsService'),
-  IAudienceBuilderQueryService: Symbol.for('audienceBuilderQueryService'),
+  IStandardSegmentBuilderQueryService: Symbol.for('StandardSegmentBuilderQueryService'),
 };
 
 export { TYPES };
