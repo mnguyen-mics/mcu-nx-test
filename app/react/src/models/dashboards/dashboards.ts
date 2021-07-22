@@ -120,6 +120,22 @@ export interface MapStackedBarChart extends BaseComponent {
   labels_enabled?: boolean;
 }
 
+export interface MapIndexChart extends BaseComponent {
+  component_type: 'MAP_INDEX_CHART';
+  show_legend: boolean;
+  query_id: string;
+  shouldCompare?: boolean;
+  data?: OTQLResult;
+  percentage?: boolean;
+  labels_enabled?: boolean;
+  vertical?: boolean;
+  sortKey?: 'A-Z' | 'Z-A';
+  labels?: DataLabel;
+  tooltip?: TooltipChart;
+  showTop?: number;
+  minimumPercentage?: number;
+}
+
 export interface WorldMapChart extends BaseComponent {
   component_type: 'WORLD_MAP_CHART';
   query_id: string;
@@ -136,7 +152,8 @@ export type Component =
   | DateAggregationComponent
   | CountPieComponent
   | MapBarComponent
-  | MapRadarChart;
+  | MapRadarChart
+  | MapIndexChart;
 
 export type ComponentType =
   | 'MAP_BAR_CHART'
@@ -150,4 +167,5 @@ export type ComponentType =
   | 'COUNT_BAR_CHART'
   | 'COUNT_PIE_CHART'
   | 'TOP_INFO_COMPONENT'
-  | 'MAP_RADAR_CHART';
+  | 'MAP_RADAR_CHART'
+  | 'MAP_INDEX_CHART';

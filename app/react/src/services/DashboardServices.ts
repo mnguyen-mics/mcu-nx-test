@@ -96,6 +96,7 @@ const dashboardsSchema = yup.array().of(
                 'PERCENTAGE',
                 'GAUGE_PIE_CHART',
                 'MAP_STACKED_BAR_CHART',
+                'MAP_INDEX_CHART',
                 'WORLD_MAP_CHART',
                 'COUNT_BAR_CHART',
                 'COUNT_PIE_CHART',
