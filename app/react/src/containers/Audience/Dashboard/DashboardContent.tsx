@@ -4,7 +4,7 @@ import { Responsive, WidthProvider, Layout, Layouts } from 'react-grid-layout';
 import Count from './Vizualisation/Count';
 import MapPieChart from './Vizualisation/MapPieChart';
 import MapBarChart from './Vizualisation/MapBarChart';
-import MapIndexChart from './Vizualisation/MApIndexChart';
+import MapIndexChart from './Vizualisation/MapIndexChart';
 import DateAggregationChart from './Vizualisation/DateAggregationChart';
 import GaugePieChart from './Vizualisation/GaugePieChart';
 import WorldMapChart from './Vizualisation/WorldMapChart';

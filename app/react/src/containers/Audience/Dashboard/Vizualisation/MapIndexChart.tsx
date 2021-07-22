@@ -22,13 +22,13 @@ import {
   LoadingChart,
   StackedBarChart,
 } from '@mediarithmics-private/mcs-components-library';
-import { AudienceBuilderQueryDocument } from '../../../../models/audienceBuilder/AudienceBuilderResource';
+import { StandardSegmentBuilderQueryDocument } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 import { Dataset } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 import { StackedBarChartOptions } from '@mediarithmics-private/mcs-components-library/lib/components/charts/stacked-bar-chart/StackedBarChart';
 
 export interface MapIndexChartProps {
   title?: string;
-  source?: AudienceSegmentShape | AudienceBuilderQueryDocument;
+  source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument;
   data?: OTQLResult;
   queryId: string;
   datamartId: string;
