@@ -1,5 +1,6 @@
 import {
   AudienceFeatureFolderResource,
+  AudienceFeatureSegmentsMappingResource,
   AudienceFeatureVariableResource,
 } from './../models/audienceFeature/AudienceFeatureResource';
 import { AudienceFeatureResource } from '../models/audienceFeature';
@@ -83,6 +84,10 @@ export interface IAudienceFeatureService {
     filter?: AudienceFeatureSearchSettings,
     folderId?: string,
   ) => AudienceFeatureOptions;
+  getAudienceFeatureSegmentsMapping: (
+    datamartId: string,
+    audienceFeatureId: string
+  ) => Promise<DataResponse<AudienceFeatureSegmentsMappingResource>>;
 }
 
 @injectable()
@@ -235,4 +240,12 @@ export class AudienceFeatureService implements IAudienceFeatureService {
     }
     return options;
   };
+
+  getAudienceFeatureSegmentsMapping = (
+    datamartId: string,
+    audienceFeatureId: string
+  ): Promise<DataResponse<AudienceFeatureSegmentsMappingResource>> => {
+    const endpoint = `datamarts/${datamartId}/audience_features/${audienceFeatureId}/segments_mapping`
+    return ApiService.getRequest(endpoint);
+  }
 }

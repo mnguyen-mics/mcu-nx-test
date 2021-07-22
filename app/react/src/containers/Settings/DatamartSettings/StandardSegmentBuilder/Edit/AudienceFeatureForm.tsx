@@ -47,6 +47,7 @@ class AudienceFeatureForm extends React.Component<Props> {
       pathItems: breadCrumbPaths,
       message: messages.audienceFeatureSave,
       onClose: close,
+      buttonHTMLType: 'button'
     };
 
     const sections: McsFormSection[] = [];
@@ -85,8 +86,6 @@ class AudienceFeatureForm extends React.Component<Props> {
         <FormLayoutActionbar {...actionBarProps} />
         <Layout className={'ant-layout-has-sider'}>
           <Form className='edit-layout ant-layout' onSubmit={handleSubmit as any}>
-            {/* this button enables submit on enter */}
-            <button type='submit' style={{ display: 'none' }} />
             <Content
               id={AUDIENCE_FEATURE_FORM_ID}
               className='mcs-content-container mcs-form-container'

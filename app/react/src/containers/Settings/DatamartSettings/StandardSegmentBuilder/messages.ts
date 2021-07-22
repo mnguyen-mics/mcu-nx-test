@@ -226,4 +226,24 @@ export const messages = defineMessages({
     id: 'settings.datamart.audienceFeatures.list.deleteModal.cancel',
     defaultMessage: 'Cancel',
   },
+  audienceFeatureSegmentsMappingModalTitle: {
+    id: 'settings.datamart.audienceFeatures.edit.segmentsMappingModal.title',
+    defaultMessage: 'This Audience Feature is used in segments',
+  },
+  audienceFeatureSegmentsMappingModalContent: {
+    id: 'settings.datamart.audienceFeatures.edit.segmentsMappingModal.content',
+    defaultMessage: 'The following segments will be updated: ',
+  },
+  audienceFeatureSegmentsMappingContentModalOthers: {
+    id: 'settings.datamart.audienceFeatures.edit.segmentsMappingModal.contentOthers',
+    defaultMessage: ' and others.',
+  },
+  audienceFeatureSegmentsMappingModalOk: {
+    id: 'settings.datamart.audienceFeatures.edit.segmentsMappingModal.ok',
+    defaultMessage: 'Update',
+  },
+  audienceFeatureSegmentsMappingModalCancel: {
+    id: 'settings.datamart.audienceFeatures.edit.segmentsMappingModal.cancel',
+    defaultMessage: 'Cancel',
+  }
 });
