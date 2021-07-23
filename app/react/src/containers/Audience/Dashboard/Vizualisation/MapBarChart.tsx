@@ -41,6 +41,9 @@ export interface MapBarChartProps {
   sortKey?: 'A-Z' | 'Z-A';
   labels?: DataLabel;
   tooltip?: TooltipChart;
+  drilldown?: boolean;
+  stacking?: boolean;
+  reducePadding?: boolean;
 }
 
 interface State {
@@ -270,6 +273,9 @@ class MapBarChart extends React.Component<Props, State> {
       labels,
       tooltip,
       height,
+      stacking,
+      drilldown,
+      reducePadding,
     } = this.props;
 
     const restKey = shouldCompare ? [{ key: COMPARED_YKEY, message: '' }] : [];
@@ -302,8 +308,10 @@ class MapBarChart extends React.Component<Props, State> {
             <StackedBarChart
               dataset={this.state.queryResult as any}
               options={optionsForChart}
-              enableDrilldown={true}
+              enableDrilldown={drilldown}
+              stacking={stacking}
               height={height}
+              reducePadding={reducePadding}
             />
           )
         );
