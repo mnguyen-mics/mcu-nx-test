@@ -53,6 +53,9 @@ export interface MapBarComponent extends BaseComponent {
   sortKey?: 'A-Z' | 'Z-A';
   labels?: DataLabel;
   tooltip?: TooltipChart;
+  drilldown?: boolean;
+  stacking?: boolean;
+  reducePadding?: boolean;
 }
 
 export interface MapRadarChart extends BaseComponent {

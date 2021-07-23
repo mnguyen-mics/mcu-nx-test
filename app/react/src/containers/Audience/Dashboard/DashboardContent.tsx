@@ -101,6 +101,9 @@ export default class DashboardContent extends React.Component<Props, State> {
             labels={comp.labels}
             tooltip={comp.tooltip}
             height={height}
+            stacking={comp.stacking}
+            drilldown={comp.drilldown}
+            reducePadding={comp.reducePadding}
           />
         );
       case 'MAP_INDEX_CHART':
