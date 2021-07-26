@@ -25,6 +25,7 @@ import {
 import { StandardSegmentBuilderQueryDocument } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 import { Dataset } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 import { StackedBarChartOptions } from '@mediarithmics-private/mcs-components-library/lib/components/charts/stacked-bar-chart/StackedBarChart';
+import { getFormattedQuery } from '../domain';
 
 export interface MapIndexChartProps {
   title?: string;
@@ -80,11 +81,11 @@ class MapIndexChart extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { queryId, datamartId, data } = this.props;
+    const { queryId, datamartId, data, source } = this.props;
     if (data) {
       this.formatOtqlQueryResult(data);
     } else {
-      this.fetchData(queryId, datamartId);
+      this.fetchData(queryId, datamartId, source);
     }
   }
 
@@ -179,7 +180,11 @@ class MapIndexChart extends React.Component<Props, State> {
     return queryWithoutWhere;
   };
 
-  fetchData = (chartQueryId: string, datamartId: string): any => {
+  fetchData = (
+    chartQueryId: string,
+    datamartId: string,
+    source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument,
+  ): any => {
     const { showTop, minimumPercentage } = this.props;
     this.setState({ error: false, loading: true });
     this._queryService
@@ -188,13 +193,18 @@ class MapIndexChart extends React.Component<Props, State> {
         return queryResp.data;
       })
       .then(q => {
+        if (source) {
+          return getFormattedQuery(datamartId, this._queryService, q, source).then(qForSource => {
+            return [q, qForSource];
+          });
+        }
         const queryWithoutWhere = this.getQueryWithoutWhere(q);
         return [q, queryWithoutWhere];
       })
-      .then(([query, queryWithoutWhere]) => {
+      .then(([query, formattedQuery]) => {
         return Promise.all([
           this.getResultPromise(datamartId, query),
-          this.getResultPromise(datamartId, queryWithoutWhere),
+          this.getResultPromise(datamartId, formattedQuery),
         ])
           .then(([queryResult, queryReferenceResult]) => {
             if (
