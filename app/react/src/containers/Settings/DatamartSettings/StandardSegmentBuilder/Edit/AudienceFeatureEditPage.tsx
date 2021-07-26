@@ -58,7 +58,7 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
       },
     } = this.props;
     if (audienceFeatureId) {
-      this.fetchAudienceFeature()
+      this.fetchAudienceFeature();
     }
     this._runtimeSchemaService.getRuntimeSchemas(datamartId).then(schemaRes => {
       const liveSchema = schemaRes.data.find(s => s.status === 'LIVE');
@@ -88,10 +88,10 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
     if (audienceFeatureId !== prevAudienceFeatureId) {
       if (!audienceFeatureId) {
         this.setState({
-          audienceFeature: {}
-        })
+          audienceFeature: {},
+        });
       } else {
-        this.fetchAudienceFeature()
+        this.fetchAudienceFeature();
       }
     }
   }
@@ -121,7 +121,7 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
           isLoading: false,
         });
       });
-  }
+  };
 
   save = (formData: AudienceFeatureFormData) => {
     const {
@@ -133,9 +133,7 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
       intl,
     } = this.props;
 
-    const {
-      audienceFeature
-    } = this.state;
+    const { audienceFeature } = this.state;
 
     const newFormData = {
       ...formData,
@@ -177,7 +175,7 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
             isLoading: false,
           });
         });
-    }
+    };
 
     if (audienceFeatureId) {
       const getPromise = () => {
@@ -186,73 +184,86 @@ class AudienceFeatureEditPage extends React.Component<Props, State> {
           audienceFeatureId,
           newFormData,
         );
-      }
+      };
       if (audienceFeature.object_tree_expression !== objectTreeExpression) {
-        this._audienceFeatureService.getAudienceFeatureSegmentsMapping(datamartId, audienceFeatureId).then(res => {
-          const segmentsIds = res.data.segments_ids;
-          if (segmentsIds.length >= 1) {
-            const redirect = () => {
-              Modal.destroyAll();
-              history.push({
-                pathname: `/v2/o/${organisationId}/settings/datamart/${datamartId}/audience_feature/create`,
-                state: { from: `${location.pathname}${location.search}` },
-              });
-            }
-            Modal.confirm({
-              className: 'mcs-modal--confirmDialog',
-              icon: <ExclamationCircleOutlined />,
-              title: intl.formatMessage(messages.audienceFeatureSegmentsMappingModalTitle),
-              content: (
-                <React.Fragment>
-                  <FormattedMessage
-                    id="settings.datamart.audienceFeatures.edit.segmentsMappingModal.content"
-                    defaultMessage="This Audience Feature is used in {segmentNumber} segments."
-                    values={{
-                      segmentNumber: segmentsIds.length
-                    }}
-                  />
-                  <br />
-                  {intl.formatMessage(messages.audienceFeatureSegmentsMappingModalContent)}
-                  {segmentsIds.length <= 10 ? segmentsIds.map((id, i) => {
-                    return i === segmentsIds.length - 1 ? `${id}.` : `${id}, `
-                  }) : segmentsIds.slice(0, 11).map((id, i) => {
-                    return i === 10 ? intl.formatMessage(messages.audienceFeatureSegmentsMappingContentModalOthers) : `${id}, `
-                  })}
-                  <br />
-                  <FormattedMessage
-                    id="settings.datamart.audienceFeatures.edit.segmentsMappingModal.newFeature"
-                    defaultMessage="If you don't want to edit existing segments, you can create a {newFeatureButton}."
-                    values={{
-                      newFeatureButton: <a onClick={redirect}>{intl.formatMessage(messages.audienceFeatureNew)}</a>
-                    }}
-                  />
-                </React.Fragment>
-              ),
+        this._audienceFeatureService
+          .getAudienceFeatureSegmentsMapping(datamartId, audienceFeatureId)
+          .then(res => {
+            const segmentsIds = res.data.segments_ids;
+            if (segmentsIds.length >= 1) {
+              const redirect = () => {
+                Modal.destroyAll();
+                history.push({
+                  pathname: `/v2/o/${organisationId}/settings/datamart/${datamartId}/audience_feature/create`,
+                  state: { from: `${location.pathname}${location.search}` },
+                });
+              };
+              Modal.confirm({
+                className: 'mcs-modal--confirmDialog',
+                icon: <ExclamationCircleOutlined />,
+                title: intl.formatMessage(messages.audienceFeatureSegmentsMappingModalTitle),
+                content: (
+                  <React.Fragment>
+                    <FormattedMessage
+                      id='settings.datamart.audienceFeatures.edit.segmentsMappingModal.content'
+                      defaultMessage='This Audience Feature is used in {segmentNumber} segments.'
+                      values={{
+                        segmentNumber: segmentsIds.length,
+                      }}
+                    />
+                    <br />
+                    {intl.formatMessage(messages.audienceFeatureSegmentsMappingModalContent)}
+                    {segmentsIds.length <= 10
+                      ? segmentsIds.map((id, i) => {
+                          return i === segmentsIds.length - 1 ? `${id}.` : `${id}, `;
+                        })
+                      : segmentsIds.slice(0, 11).map((id, i) => {
+                          return i === 10
+                            ? intl.formatMessage(
+                                messages.audienceFeatureSegmentsMappingContentModalOthers,
+                              )
+                            : `${id}, `;
+                        })}
+                    <br />
+                    <FormattedMessage
+                      id='settings.datamart.audienceFeatures.edit.segmentsMappingModal.newFeature'
+                      defaultMessage="If you don't want to edit existing segments, you can create a {newFeatureButton}."
+                      values={{
+                        newFeatureButton: (
+                          <a onClick={redirect}>
+                            {intl.formatMessage(messages.audienceFeatureNew)}
+                          </a>
+                        ),
+                      }}
+                    />
+                  </React.Fragment>
+                ),
 
-              okText: intl.formatMessage(messages.audienceFeatureDeleteListModalOk),
-              cancelText: intl.formatMessage(messages.audienceFeatureDeleteListModalCancel),
-              onOk: () => {
-                saveProcess(getPromise())
-              }
-            });
-          } else {
-            saveProcess(getPromise());
-          }
-        }).catch(err => {
-          notifyError(err);
-          this.setState({
-            isLoading: false
+                okText: intl.formatMessage(messages.audienceFeatureDeleteListModalOk),
+                cancelText: intl.formatMessage(messages.audienceFeatureDeleteListModalCancel),
+                onOk: () => {
+                  saveProcess(getPromise());
+                },
+              });
+            } else {
+              saveProcess(getPromise());
+            }
           })
-        })
+          .catch(err => {
+            notifyError(err);
+            this.setState({
+              isLoading: false,
+            });
+          });
       } else {
-        saveProcess(getPromise())
+        saveProcess(getPromise());
       }
     } else {
-      const getPromise = () => { return this._audienceFeatureService.createAudienceFeature(datamartId, newFormData); }
+      const getPromise = () => {
+        return this._audienceFeatureService.createAudienceFeature(datamartId, newFormData);
+      };
       saveProcess(getPromise());
     }
-
-
   };
 
   onClose = () => {

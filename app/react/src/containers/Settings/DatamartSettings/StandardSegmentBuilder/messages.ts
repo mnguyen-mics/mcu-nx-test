@@ -215,18 +215,15 @@ export const messages = defineMessages({
   },
   audienceFolderDeleteListModalTitle: {
     id: 'settings.datamart.audienceFolders.list.deleteModal.title',
-    defaultMessage:
-      'You are about to delete a folder from your datamart. Are you sure ?',
+    defaultMessage: 'You are about to delete a folder from your datamart. Are you sure ?',
   },
   audienceFolderWithFeaturesDeleteListModalTitle: {
     id: 'settings.datamart.audienceFolders.list.deleteModalWithFeatures.title',
-    defaultMessage:
-      'This folder contains audience features',
+    defaultMessage: 'This folder contains audience features',
   },
   audienceFolderWithFeaturesDeleteListModalContent: {
     id: 'settings.datamart.audienceFolders.list.deleteModalWithFeatures.content',
-    defaultMessage:
-      'You cannot delete a folder when there are audience features inside.',
+    defaultMessage: 'You cannot delete a folder when there are audience features inside.',
   },
   audienceFeatureDeleteListModalOk: {
     id: 'settings.datamart.audienceFeatures.list.deleteModal.ok',
@@ -255,5 +252,9 @@ export const messages = defineMessages({
   audienceFeatureSegmentsMappingModalCancel: {
     id: 'settings.datamart.audienceFeatures.edit.segmentsMappingModal.cancel',
     defaultMessage: 'Cancel',
-  }
+  },
+  audienceFeatureUsedInSegmentsDeleteModal: {
+    id: 'settings.datamart.audienceFeatures.list.usedInSegmentsDeleteModal.content',
+    defaultMessage: 'Please remove audience features from these segments before you delete it.',
+  },
 });

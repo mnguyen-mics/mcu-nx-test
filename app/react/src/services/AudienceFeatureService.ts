@@ -86,7 +86,7 @@ export interface IAudienceFeatureService {
   ) => AudienceFeatureOptions;
   getAudienceFeatureSegmentsMapping: (
     datamartId: string,
-    audienceFeatureId: string
+    audienceFeatureId: string,
   ) => Promise<DataResponse<AudienceFeatureSegmentsMappingResource>>;
 }
 
@@ -243,9 +243,9 @@ export class AudienceFeatureService implements IAudienceFeatureService {
 
   getAudienceFeatureSegmentsMapping = (
     datamartId: string,
-    audienceFeatureId: string
+    audienceFeatureId: string,
   ): Promise<DataResponse<AudienceFeatureSegmentsMappingResource>> => {
-    const endpoint = `datamarts/${datamartId}/audience_features/${audienceFeatureId}/segments_mapping`
+    const endpoint = `datamarts/${datamartId}/audience_features/${audienceFeatureId}/segments_mapping`;
     return ApiService.getRequest(endpoint);
-  }
+  };
 }

@@ -47,7 +47,7 @@ class AudienceFeatureForm extends React.Component<Props> {
       pathItems: breadCrumbPaths,
       message: messages.audienceFeatureSave,
       onClose: close,
-      buttonHTMLType: 'button'
+      buttonHTMLType: 'button',
     };
 
     const sections: McsFormSection[] = [];

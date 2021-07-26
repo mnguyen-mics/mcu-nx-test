@@ -54,4 +54,4 @@ export interface AudienceFeatureFolderResource {
 export interface AudienceFeatureSegmentsMappingResource {
   audience_feature_id: string;
   segments_ids: string[];
-};
+}

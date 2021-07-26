@@ -18,7 +18,7 @@ export interface FormLayoutActionbarProps extends Omit<ActionbarProps, 'edition'
   onClose?: React.MouseEventHandler<HTMLSpanElement>;
   disabled?: boolean;
   convert2Otql?: () => Promise<DataResponse<QueryResource>>;
-  buttonHTMLType?: 'submit'|'button'|'reset';
+  buttonHTMLType?: 'submit' | 'button' | 'reset';
 }
 
 type Props = FormLayoutActionbarProps &
@@ -43,7 +43,16 @@ class FormLayoutActionbar extends React.Component<Props, State> {
   }
 
   render() {
-    const { dispatch, formId, message, onClose, submitting, disabled, convert2Otql, buttonHTMLType } = this.props;
+    const {
+      dispatch,
+      formId,
+      message,
+      onClose,
+      submitting,
+      disabled,
+      convert2Otql,
+      buttonHTMLType,
+    } = this.props;
 
     const submitButtonProps: ButtonProps = {
       disabled: submitting,
