@@ -246,7 +246,9 @@ class MapIndexChart extends React.Component<Props, State> {
 
               const computedData = mergedDataInPourcentage
                 .map(d => {
-                  const yKeyValue = ((d.yKey / d.comparedYKey) * 100).toFixed(2);
+                  const yKeyValue = (
+                    (source ? d.comparedYKey / d.yKey : d.yKey / d.comparedYKey) * 100
+                  ).toFixed(2);
                   return {
                     xKey: d.xKey,
                     yKey: parseFloat(yKeyValue),
