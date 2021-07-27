@@ -41,11 +41,11 @@ export const messages = defineMessages({
   },
   standardSegmentBuilderSectionDemographicsTitle: {
     id: 'settings.datamart.standardSegmentBuilders.edit.demographics.title',
-    defaultMessage: 'Initial Audience Features',
+    defaultMessage: 'Initial audience features',
   },
   standardSegmentBuilderSectionDemographicsSubtitle: {
     id: 'settings.datamart.standardSegmentBuilders.edit.demographics.subtitle',
-    defaultMessage: 'Audience Features that will always be used when building an audience',
+    defaultMessage: 'Audience features that will always be used when building an audience.',
   },
   standardSegmentBuilderSectionDemographicsAddButton: {
     id: 'settings.datamart.standardSegmentBuilders.edit.demographics.add',
@@ -89,7 +89,7 @@ export const messages = defineMessages({
 
   audienceFeatureNew: {
     id: 'settings.datamart.audienceFeature.newAudienceFeature',
-    defaultMessage: 'New Audience Feature',
+    defaultMessage: 'New audience feature',
   },
   audienceFeatureAddFolder: {
     id: 'settings.datamart.audienceFeature.addFolder',
@@ -211,19 +211,50 @@ export const messages = defineMessages({
   audienceFeatureDeleteListModalTitle: {
     id: 'settings.datamart.audienceFeatures.list.deleteModal.title',
     defaultMessage:
-      'You are about to delete an Audience Feature from your datamart. This action cannot be undone. Do you want to proceed anyway ?',
+      'You are about to delete an audience feature from your datamart. This action cannot be undone. Do you want to proceed anyway ?',
   },
   audienceFolderDeleteListModalTitle: {
     id: 'settings.datamart.audienceFolders.list.deleteModal.title',
-    defaultMessage:
-      'You are about to delete a folder from your datamart. It will delete every audience feature inside. This action cannot be undone. Do you want to proceed anyway?',
+    defaultMessage: 'You are about to delete a folder from your datamart. Are you sure ?',
+  },
+  audienceFolderWithFeaturesDeleteListModalTitle: {
+    id: 'settings.datamart.audienceFolders.list.deleteModalWithFeatures.title',
+    defaultMessage: 'This folder contains audience features',
+  },
+  audienceFolderWithFeaturesDeleteListModalContent: {
+    id: 'settings.datamart.audienceFolders.list.deleteModalWithFeatures.content',
+    defaultMessage: 'You cannot delete a folder when there are audience features inside.',
   },
   audienceFeatureDeleteListModalOk: {
     id: 'settings.datamart.audienceFeatures.list.deleteModal.ok',
-    defaultMessage: 'Delete',
+    defaultMessage: 'Ok',
   },
   audienceFeatureDeleteListModalCancel: {
     id: 'settings.datamart.audienceFeatures.list.deleteModal.cancel',
     defaultMessage: 'Cancel',
+  },
+  audienceFeatureSegmentsMappingModalTitle: {
+    id: 'settings.datamart.audienceFeatures.edit.segmentsMappingModal.title',
+    defaultMessage: 'This audience feature is used in segments',
+  },
+  audienceFeatureSegmentsMappingModalContent: {
+    id: 'settings.datamart.audienceFeatures.edit.segmentsMappingModal.content',
+    defaultMessage: 'The following segments will be updated: ',
+  },
+  audienceFeatureSegmentsMappingContentModalOthers: {
+    id: 'settings.datamart.audienceFeatures.edit.segmentsMappingModal.contentOthers',
+    defaultMessage: ' and others.',
+  },
+  audienceFeatureSegmentsMappingModalOk: {
+    id: 'settings.datamart.audienceFeatures.edit.segmentsMappingModal.ok',
+    defaultMessage: 'Update',
+  },
+  audienceFeatureSegmentsMappingModalCancel: {
+    id: 'settings.datamart.audienceFeatures.edit.segmentsMappingModal.cancel',
+    defaultMessage: 'Cancel',
+  },
+  audienceFeatureUsedInSegmentsDeleteModal: {
+    id: 'settings.datamart.audienceFeatures.list.usedInSegmentsDeleteModal.content',
+    defaultMessage: 'Please remove audience features from these segments before you delete it.',
   },
 });

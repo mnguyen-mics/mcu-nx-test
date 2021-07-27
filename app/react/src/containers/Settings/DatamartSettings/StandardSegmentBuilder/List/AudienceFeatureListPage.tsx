@@ -2,7 +2,7 @@ import * as React from 'react';
 import _ from 'lodash';
 import queryString from 'query-string';
 import { compose } from 'recompose';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { Button, Layout, Modal, Input, Breadcrumb } from 'antd';
 import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
@@ -176,35 +176,75 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
     const {
       location: { search },
       history,
-      intl: { formatMessage },
+      intl,
       notifyError,
     } = this.props;
 
-    Modal.confirm({
-      icon: <ExclamationCircleOutlined />,
-      title: formatMessage(messages.audienceFeatureDeleteListModalTitle),
-      okText: formatMessage(messages.audienceFeatureDeleteListModalOk),
-      className: 'mcs-audienceFeatureDeletePopUp',
-      cancelText: formatMessage(messages.audienceFeatureDeleteListModalCancel),
-      onOk: () => {
-        this._audienceFeatureService
-          .deleteAudienceFeature(resource.datamart_id, resource.id)
-          .then(() => {
-            this.fetchBaseFoldersAndFeatures(resource.datamart_id);
-            history.replace({
-              search: updateSearch(search, {
-                currentPage: 1,
-              }),
-            });
-          })
-          .catch(err => {
-            notifyError(err);
+    const datamartId = resource.datamart_id;
+    this._audienceFeatureService
+      .getAudienceFeatureSegmentsMapping(datamartId, resource.id)
+      .then(res => {
+        const segmentsIds = res.data.segments_ids;
+        if (segmentsIds.length >= 1) {
+          Modal.error({
+            className: 'mcs-modal--confirmDialog',
+            icon: <ExclamationCircleOutlined />,
+            title: intl.formatMessage(messages.audienceFeatureSegmentsMappingModalTitle),
+            content: (
+              <React.Fragment>
+                <FormattedMessage
+                  id='settings.datamart.audienceFeatures.edit.segmentsMappingModal.content'
+                  defaultMessage='This audience feature is used in the following segments:'
+                />
+                <br />
+                {segmentsIds.length <= 10
+                  ? segmentsIds.map((id, i) => {
+                      return i === segmentsIds.length - 1 ? `${id}.` : `${id}, `;
+                    })
+                  : segmentsIds.slice(0, 11).map((id, i) => {
+                      return i === 10
+                        ? intl.formatMessage(
+                            messages.audienceFeatureSegmentsMappingContentModalOthers,
+                          )
+                        : `${id}, `;
+                    })}
+                <br />
+                {intl.formatMessage(messages.audienceFeatureUsedInSegmentsDeleteModal)}
+              </React.Fragment>
+            ),
+            okText: intl.formatMessage(messages.audienceFeatureDeleteListModalOk),
           });
-      },
-      onCancel: () => {
-        // cancel,
-      },
-    });
+        } else {
+          Modal.confirm({
+            icon: <ExclamationCircleOutlined />,
+            title: intl.formatMessage(messages.audienceFeatureDeleteListModalTitle),
+            okText: intl.formatMessage(messages.audienceFeatureDeleteListModalOk),
+            className: 'mcs-audienceFeatureDeletePopUp',
+            cancelText: intl.formatMessage(messages.audienceFeatureDeleteListModalCancel),
+            onOk: () => {
+              this._audienceFeatureService
+                .deleteAudienceFeature(datamartId, resource.id)
+                .then(() => {
+                  this.fetchBaseFoldersAndFeatures(resource.datamart_id);
+                  history.replace({
+                    search: updateSearch(search, {
+                      currentPage: 1,
+                    }),
+                  });
+                })
+                .catch(err => {
+                  notifyError(err);
+                });
+            },
+          });
+        }
+      })
+      .catch(err => {
+        notifyError(err);
+        this.setState({
+          isLoading: false,
+        });
+      });
   };
 
   renameFolder = (folderId: string, newName: string) => {
@@ -249,26 +289,36 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
       intl: { formatMessage },
       notifyError,
     } = this.props;
-
-    Modal.confirm({
-      icon: <ExclamationCircleOutlined />,
-      title: formatMessage(messages.audienceFolderDeleteListModalTitle),
-      okText: formatMessage(messages.audienceFeatureDeleteListModalOk),
-      cancelText: formatMessage(messages.audienceFeatureDeleteListModalCancel),
-      onOk: () => {
-        this._audienceFeatureService
-          .deleteAudienceFeatureFolder(datamartId, folderId)
-          .then(() => {
-            this.fetchBaseFoldersAndFeatures(datamartId);
-          })
-          .catch(err => {
-            notifyError(err);
-          });
-      },
-      onCancel: () => {
-        // cancel,
-      },
-    });
+    const { audienceFeatureFolders } = this.state;
+    const audienceFeatureFolder = audienceFeatureFolders?.find(folder => folder.id === folderId);
+    const folderHasFeatures =
+      audienceFeatureFolder &&
+      audienceFeatureFolder.audience_features_ids &&
+      audienceFeatureFolder.audience_features_ids.length >= 1;
+    if (folderHasFeatures) {
+      Modal.error({
+        icon: <CloseCircleOutlined />,
+        title: formatMessage(messages.audienceFolderWithFeaturesDeleteListModalTitle),
+        content: formatMessage(messages.audienceFolderWithFeaturesDeleteListModalContent),
+      });
+    } else {
+      Modal.confirm({
+        icon: <ExclamationCircleOutlined />,
+        title: formatMessage(messages.audienceFolderDeleteListModalTitle),
+        okText: formatMessage(messages.audienceFeatureDeleteListModalOk),
+        cancelText: formatMessage(messages.audienceFeatureDeleteListModalCancel),
+        onOk: () => {
+          this._audienceFeatureService
+            .deleteAudienceFeatureFolder(datamartId, folderId)
+            .then(() => {
+              this.fetchBaseFoldersAndFeatures(datamartId);
+            })
+            .catch(err => {
+              notifyError(err);
+            });
+        },
+      });
+    }
   };
 
   onSelectFolder = (folderId?: string) => () => {

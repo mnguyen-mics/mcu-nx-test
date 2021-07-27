@@ -50,3 +50,8 @@ export interface AudienceFeatureFolderResource {
   parent_id?: string | null;
   children_ids?: string[];
 }
+
+export interface AudienceFeatureSegmentsMappingResource {
+  audience_feature_id: string;
+  segments_ids: string[];
+}
