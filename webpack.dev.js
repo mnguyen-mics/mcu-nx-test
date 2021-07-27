@@ -66,6 +66,8 @@ module.exports = merge(common, {
               /'API_URL'\ *:\ *'.*'/,
               process.env.API_ENV === 'prod'
                 ? "'API_URL' : 'https://api.mediarithmics.com'"
+                : process.env.API_ENV === 'vp'
+                ? `'API_URL' : 'https://api.${process.env.VP_NAME}.mics-sandbox.com'`
                 : "'API_URL' : 'https://api.mediarithmics.local'",
             );
         },
