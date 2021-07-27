@@ -503,6 +503,22 @@
 .mcs-otqlQuery_result {
   position: relative;
   margin-bottom: 40px;
+
+  .ant-tabs-nav-list > .ant-tabs-tab {
+    background-color: inherit;
+    font-weight: normal;
+    .ant-tabs-tab-btn {
+      color: rgba(0, 0, 0, 0.65);
+    }
+    &-active {
+      background-color: inherit;
+
+      .ant-tabs-tab-btn {
+        font-weight: normal;
+        color: #003056;
+      }
+    }
+  }
   .mcs-otqlQuery_result_tag {
     position: absolute;
     right: 0;
@@ -528,14 +544,13 @@
   }
 }
 .mcs-otqlInputEditor_card {
-  margin-top: 40px;
   .mcs-card-header {
     margin-top: -10px;
   }
   .mcs-otqlInputEditor_settings_button {
     font-size: 15px;
     position: absolute;
-    left: 116px;
+    left: 60px;
   }
   .mcs-otqlInputEditor_clear_button {
     opacity: 0;
@@ -627,5 +642,36 @@
     -webkit-appearance: none;
     margin: 0;
     -moz-appearance: textfield;
+  }
+}
+
+.mcs-OTQLConsoleContainer_tabs {
+  margin-top: 40px;
+  padding: 0 2px;
+}
+
+.mcs-OTQLConsoleContainer_tabs > .ant-tabs-nav {
+  margin: 0;
+
+  .ant-tabs-nav-list {
+    .ant-tabs-tab,
+    .ant-tabs-nav-add {
+      background-color: @layout-content-background;
+      font-weight: bold;
+      .ant-tabs-tab-remove {
+        padding: 0;
+      }
+      .ant-tabs-tab-btn {
+        color: rgba(0, 0, 0, 0.65);
+      }
+      &-active {
+        background-color: #fff;
+  
+        .ant-tabs-tab-btn {
+          font-weight: bold;
+          color: @info-color;
+        }
+      }
+    }
   }
 }
