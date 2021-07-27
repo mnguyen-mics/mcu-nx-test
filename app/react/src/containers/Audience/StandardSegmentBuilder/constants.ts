@@ -10,7 +10,7 @@ export const messages: {
   },
   demographics: {
     id: 'standardSegmentBuilder.category.demographics',
-    defaultMessage: 'Initial Audience Features',
+    defaultMessage: 'Initial audience features',
   },
   selectedAudience: {
     id: 'standardSegmentBuilder.selectedAudience',

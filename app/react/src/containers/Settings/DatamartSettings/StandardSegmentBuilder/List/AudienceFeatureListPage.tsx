@@ -194,7 +194,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
               <React.Fragment>
                 <FormattedMessage
                   id='settings.datamart.audienceFeatures.edit.segmentsMappingModal.content'
-                  defaultMessage='This Audience Feature is used in the following segments:'
+                  defaultMessage='This audience feature is used in the following segments:'
                 />
                 <br />
                 {segmentsIds.length <= 10

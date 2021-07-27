@@ -41,11 +41,11 @@ export const messages = defineMessages({
   },
   standardSegmentBuilderSectionDemographicsTitle: {
     id: 'settings.datamart.standardSegmentBuilders.edit.demographics.title',
-    defaultMessage: 'Initial Audience Features',
+    defaultMessage: 'Initial audience features',
   },
   standardSegmentBuilderSectionDemographicsSubtitle: {
     id: 'settings.datamart.standardSegmentBuilders.edit.demographics.subtitle',
-    defaultMessage: 'Audience Features that will always be used when building an audience',
+    defaultMessage: 'Audience features that will always be used when building an audience.',
   },
   standardSegmentBuilderSectionDemographicsAddButton: {
     id: 'settings.datamart.standardSegmentBuilders.edit.demographics.add',
@@ -89,7 +89,7 @@ export const messages = defineMessages({
 
   audienceFeatureNew: {
     id: 'settings.datamart.audienceFeature.newAudienceFeature',
-    defaultMessage: 'New Audience Feature',
+    defaultMessage: 'New audience feature',
   },
   audienceFeatureAddFolder: {
     id: 'settings.datamart.audienceFeature.addFolder',
@@ -211,7 +211,7 @@ export const messages = defineMessages({
   audienceFeatureDeleteListModalTitle: {
     id: 'settings.datamart.audienceFeatures.list.deleteModal.title',
     defaultMessage:
-      'You are about to delete an Audience Feature from your datamart. This action cannot be undone. Do you want to proceed anyway ?',
+      'You are about to delete an audience feature from your datamart. This action cannot be undone. Do you want to proceed anyway ?',
   },
   audienceFolderDeleteListModalTitle: {
     id: 'settings.datamart.audienceFolders.list.deleteModal.title',
@@ -235,7 +235,7 @@ export const messages = defineMessages({
   },
   audienceFeatureSegmentsMappingModalTitle: {
     id: 'settings.datamart.audienceFeatures.edit.segmentsMappingModal.title',
-    defaultMessage: 'This Audience Feature is used in segments',
+    defaultMessage: 'This audience feature is used in segments',
   },
   audienceFeatureSegmentsMappingModalContent: {
     id: 'settings.datamart.audienceFeatures.edit.segmentsMappingModal.content',
