@@ -59,10 +59,14 @@ class AudienceFeatureFolder extends React.Component<Props, State> {
       return (
         <Menu className='mcs-menu-antd-customized'>
           <Menu.Item key='0'>
-            <div onClick={displayForm}>{intl.formatMessage(messages.audienceFeatureRename)}</div>
+            <div className='mcs-audienceFeatureFolder_dropDownMenu--rename' onClick={displayForm}>
+              {intl.formatMessage(messages.audienceFeatureRename)}
+            </div>
           </Menu.Item>
           <Menu.Item key='1'>
-            <div onClick={onDelete}>{intl.formatMessage(messages.audienceFeatureDelete)}</div>
+            <div className='mcs-audienceFeatureFolder_dropDownMenu--delete' onClick={onDelete}>
+              {intl.formatMessage(messages.audienceFeatureDelete)}
+            </div>
           </Menu.Item>
         </Menu>
       );
@@ -119,7 +123,11 @@ class AudienceFeatureFolder extends React.Component<Props, State> {
           )}
         </Col>
         <Col span={1}>
-          <Dropdown overlay={this.getMenu(folder.id)} trigger={['click']}>
+          <Dropdown
+            className='mcs-audienceFeatureFolder_dropDownMenu'
+            overlay={this.getMenu(folder.id)}
+            trigger={['click']}
+          >
             <McsIcon type='chevron' />
           </Dropdown>
         </Col>

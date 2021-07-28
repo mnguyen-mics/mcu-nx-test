@@ -65,7 +65,7 @@ class StandardSegmentBuilderActionbar extends React.Component<Props, State> {
     };
     const saveAsMenu = (
       <Menu onClick={handleMenuClick} className='mcs-menu-antd-customized'>
-        <Menu.Item key='USER_QUERY'>
+        <Menu.Item className='mcs-standardSegmentBuilderActionBar_menuItem' key='USER_QUERY'>
           <FormattedMessage
             id='audience.standardSegmentBuilder.actionbar.saveAsButton.userQuerySegment'
             defaultMessage='User Query Segment'
@@ -89,7 +89,10 @@ class StandardSegmentBuilderActionbar extends React.Component<Props, State> {
     return (
       <Actionbar pathItems={paths}>
         <Dropdown overlay={saveAsMenu} trigger={['click']}>
-          <Button className='mcs-primary' type='primary'>
+          <Button
+            className='mcs-primary mcs-standardSegmentBuilderActionBar_saveUserQuerySegmentButton'
+            type='primary'
+          >
             <FormattedMessage
               id='audience.standardSegmentBuilder.actionBar.saveAsButton'
               defaultMessage='Save As'
