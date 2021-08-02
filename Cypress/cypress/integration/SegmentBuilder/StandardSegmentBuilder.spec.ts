@@ -91,7 +91,6 @@ describe('This test should check that the audience feature forms are working pro
       });
     });
   });
-
   it('should test the standard segment builder using match clause', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       const standardSegmentBuilderName = faker.random.words(2);
@@ -348,14 +347,125 @@ describe('This test should check that the audience feature forms are working pro
       });
     });
   });
+  it('Should have a pop up message when trying to delete an audience feature used in a segment or editing the object_tree_expression', () => {
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      const standardSegmentBuilderName = faker.random.words(2);
+      const audienceFeatureName = faker.random.words(2);
+      createStandardSegmentBuilder(data.datamartName, standardSegmentBuilderName);
+      cy.request({
+        url: `${Cypress.env('apiDomain')}/v1/datamarts/${data.datamartId}/audience_features`,
+        method: 'POST',
+        headers: { Authorization: data.accessToken },
+        body: {
+          name: audienceFeatureName,
+          description: 'Test - Standard Segment Builder - Cypress',
+          object_tree_expression: 'creation_ts > $date',
+          addressable_object: 'UserPoint',
+        },
+      }).then(() => {
+        cy.goToHome(data.organisationId);
+        cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
+        cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.builder').click();
+        cy.wait(3000);
+        cy.url().then(url => {
+          if (url.match(/.*segment-builder-selector$/g)) {
+            cy.get('.mcs-standardSegmentBuilder_dropdownContainer').trigger('mouseover');
+            cy.get('.mcs-standardSegmentBuilder_dropdownContainer').click();
+            cy.contains(standardSegmentBuilderName).click();
+          }
+          cy.get('.mcs-timelineButton_left').click();
+          cy.contains(audienceFeatureName).click();
+          cy.get('.mcs-standardSegmentBuilderActionBar_saveUserQuerySegmentButton').click();
+          cy.get('.mcs-standardSegmentBuilderActionBar_menuItem').click();
+          cy.get('.mcs-newUserQuerySegmentSimpleForm_name_input').type('UserQuery Segment');
+          cy.get('.mcs-saveAsUserQuerySegmentModal_ok_button').click();
+        });
+        cy.get('.mcs-navigator-header-actions-settings').click();
+        cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
+        cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.myDatamart').click();
+        cy.contains(data.datamartName).click();
+        cy.contains('Audience Features').click();
+        cy.get('.mcs-audienceFeatureTable_dropDownMenu').last().click();
+        cy.get('.mcs-audienceFeatureTable_dropDownMenu--delete').click();
+        cy.get('.mcs-modal--confirmDialog')
+          .should('be.visible')
+          .and('contain', 'This audience feature is used in the following segments');
+        cy.get('.mcs-modal--confirmDialog').within(() => {
+          cy.contains('Ok').click();
+        });
+        cy.get('.mcs-audienceFeature_table').should('contain', audienceFeatureName);
+        cy.get('.mcs-audienceFeatureTable_dropDownMenu').last().click();
+        cy.get('.mcs-audienceFeatureTable_dropDownMenu--edit').click();
+        cy.get('.mcs-audienceFeature_edit_query_button').click();
+        cy.get('.mcs-audienceFeature_edit_form_query_builder').type(
+          '{selectall}{backspace}SELECT @count{} FROM UserPoint where id > $id',
+        );
+        cy.get('.mcs-audienceFeature_update_query').click();
+        cy.get('.mcs-form_saveButton_audienceFeatureForm').click();
+        cy.get('.mcs-modal--confirmDialog')
+          .should('be.visible')
+          .and('contain', 'This audience feature is used in segments');
+        cy.get('.mcs-modal--confirmDialog').within(() => {
+          cy.contains('Ok').click();
+        });
+        cy.get('.mcs-audienceFeature_table').should('contain', 'id > $id');
+      });
+    });
+  });
+  it('Should have a pop up message when trying to delete a folder that contains auidence features', () => {
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      const standardSegmentBuilderName = faker.random.words(2);
+      const audienceFeatureName = faker.random.words(2);
+      createStandardSegmentBuilder(data.datamartName, standardSegmentBuilderName);
+      cy.request({
+        url: `${Cypress.env('apiDomain')}/v1/datamarts/${data.datamartId}/audience_features`,
+        method: 'POST',
+        headers: { Authorization: data.accessToken },
+        body: {
+          name: audienceFeatureName,
+          description: 'Test - Standard Segment Builder - Cypress',
+          object_tree_expression: 'creation_ts > $date',
+          addressable_object: 'UserPoint',
+        },
+      }).then(() => {
+        cy.goToHome(data.organisationId);
+        cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
+        cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.builder').click();
+        cy.wait(3000);
+        cy.get('.mcs-navigator-header-actions-settings').click();
+        cy.get('.mcs-settingsMainMenu_menu\\.datamart\\.title').click();
+        cy.get('.mcs-settingsSideMenu_menu\\.datamart\\.myDatamart').click();
+        cy.contains(data.datamartName).click();
+        cy.contains('Audience Features').click();
+        cy.get('.mcs-audienceFeatureSettings-addFolderButton').click();
+        const audienceFeaturesFolderName = faker.random.word();
+        cy.get('.mcs-audienceFeatureSettings-folderInput').type(audienceFeaturesFolderName);
+        cy.get('.mcs-audienceFeatureSettings_addButton--addAudienceFeatureFolder').click();
+        cy.get('.mcs-audienceFeatureTable_dropDownMenu').last().click();
+        cy.get('.mcs-audienceFeatureTable_dropDownMenu--edit').click();
+        cy.get('.mcs-audienceFeatureFolder').click();
+        cy.contains(audienceFeaturesFolderName).click();
+        cy.get('.mcs-form_saveButton_audienceFeatureForm').click();
+        cy.get('.mcs-audienceFeatureFolder_dropDownMenu').click();
+        cy.get('.mcs-audienceFeatureFolder_dropDownMenu--delete').click();
+        cy.get('.mcs-modal--errorDialog')
+          .should('be.visible')
+          .and('contain', 'You cannot delete a folder when there are audience features inside');
+        cy.get('.mcs-modal--errorDialog').within(() => {
+          cy.contains('OK').click();
+        });
+        cy.get('.mcs-audienceFeatureSettings_folder').should('have.length', 1);
+      });
+    });
+  });
   it('Should test the creation limit of 20 audience builders', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       const audienceBuilderName = faker.random.words(2);
       for (let index = 0; index < 20; index++) {
-        createAudienceBuilder(data.datamartName, audienceBuilderName);
+        createStandardSegmentBuilder(data.datamartName, audienceBuilderName);
         cy.wait(2000);
       }
-      createAudienceBuilder(data.datamartName, audienceBuilderName);
+      createStandardSegmentBuilder(data.datamartName, audienceBuilderName);
       cy.get('.mcs-notifications_errorDescription')
         .should('be.visible')
         .and('contain', 'The limit of 20 authorized audience builders has been reached');

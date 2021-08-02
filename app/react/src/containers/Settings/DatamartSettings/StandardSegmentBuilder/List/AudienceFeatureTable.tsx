@@ -122,13 +122,16 @@ class AudienceFeatureTable extends React.Component<Props> {
 
     const actionColumns: Array<ActionsColumnDefinition<AudienceFeatureResource>> = [
       {
+        className: 'mcs-audienceFeatureTable_dropDownMenu',
         key: 'action',
         actions: () => [
           {
+            className: 'mcs-audienceFeatureTable_dropDownMenu--edit',
             message: formatMessage(messages.audienceFeatureEdit),
             callback: this.onEditAudienceFeature,
           },
           {
+            className: 'mcs-audienceFeatureTable_dropDownMenu--delete',
             message: formatMessage(messages.audienceFeatureDelete),
             callback: deleteAudienceFeature,
           },

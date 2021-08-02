@@ -297,6 +297,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
       audienceFeatureFolder.audience_features_ids.length >= 1;
     if (folderHasFeatures) {
       Modal.error({
+        className: 'mcs-modal--errorDialog',
         icon: <CloseCircleOutlined />,
         title: formatMessage(messages.audienceFolderWithFeaturesDeleteListModalTitle),
         content: formatMessage(messages.audienceFolderWithFeaturesDeleteListModalContent),
@@ -480,7 +481,11 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
           placeholder={intl.formatMessage(messages.audienceFeaturePlaceholderFolderInput)}
         />
 
-        <Button type='primary' onClick={onOk}>
+        <Button
+          className='mcs-audienceFeatureSettings_addButton--addAudienceFeatureFolder'
+          type='primary'
+          onClick={onOk}
+        >
           <FormattedMessage {...messages.audienceFeatureAddButton} />
         </Button>
 
