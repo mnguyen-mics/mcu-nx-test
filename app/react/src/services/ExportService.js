@@ -1117,7 +1117,7 @@ const exportAudienceSegments = (organisationId, datamartId, dataSource, filter, 
 
   const dataSheet = [];
 
-  dataSheet.push(titleLine);
+  dataSheet.push([titleLine]);
   dataSheet.push([
     `${formatMessage(exportServiceMessages.from)} ${new McsMoment('now')
       .toMoment()
