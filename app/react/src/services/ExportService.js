@@ -1170,6 +1170,14 @@ const exportAudienceSegments = (organisationId, datamartId, dataSource, filter, 
       translation: formatMessage(segmentMessages.emails)
     },
     {
+      name: 'mobile_cookie_ids_count',
+      translation: formatMessage(segmentMessages.mobile_cookie_ids)
+    },
+    {
+      name: 'mobile_ad_ids_count',
+      translation: formatMessage(segmentMessages.mobile_ad_ids)
+    },
+    {
       name: 'user_point_additions',
       translation: formatMessage(segmentMessages.addition)
     },

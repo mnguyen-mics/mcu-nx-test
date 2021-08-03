@@ -139,6 +139,8 @@ class AudienceSegmentActionbar extends React.Component<Props, State> {
         'user_accounts',
         'emails',
         'desktop_cookie_ids',
+        'mobile_cookie_ids',
+        'mobile_ad_ids',
         'user_point_additions',
         'user_point_deletions',
       ],
