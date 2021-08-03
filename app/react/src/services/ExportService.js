@@ -1118,13 +1118,7 @@ const exportAudienceSegments = (organisationId, datamartId, dataSource, filter, 
   const dataSheet = [];
 
   dataSheet.push([titleLine]);
-  dataSheet.push([
-    `${formatMessage(exportServiceMessages.from)} ${new McsMoment('now')
-      .toMoment()
-      .format('YYYY-MM-DD')} ${formatMessage(exportServiceMessages.to)} ${new McsMoment('now')
-      .toMoment()
-      .format('YYYY-MM-DD')}`,
-  ]);
+  dataSheet.push([getFromToText(formatMessage, new McsMoment('now'), new McsMoment('now'))]);
   dataSheet.push(blankLine);
 
   if (filter.keywords) {
