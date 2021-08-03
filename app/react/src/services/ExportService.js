@@ -60,17 +60,21 @@ const s2ab = s => {
   return buf;
 };
 
+function getFromToText(formatMessage, from, to) {
+  return `${formatMessage(exportServiceMessages.from)} ${from
+    .toMoment()
+    .format('YYYY-MM-DD')} ${formatMessage(
+    exportServiceMessages.to,
+  )} ${to.toMoment().format('YYYY-MM-DD')}`
+}
+
 function buildSheet(title, data, headers, filter, formatMessage, otherInfos, otherInfosToDisplay) {
   const titleLine = typeof title === 'string' ? [title] : [formatMessage(title)];
   const sheet = [];
   const blankLine = [];
   sheet.push(titleLine);
   if (filter && filter.from && filter.to) {
-    sheet.push([
-      `${formatMessage(dateMessages.from)} ${filter.from} ${formatMessage(dateMessages.to)} ${
-        filter.to
-      }`,
-    ]);
+    sheet.push([getFromToText(formatMessage, filter.from, filter.to)]);
   }
   if (otherInfos) {
     otherInfosToDisplay.forEach((infoColumn) => {
@@ -256,13 +260,7 @@ const exportDisplayCampaigns = (organisationId, dataSource, filter, formatMessag
   const dataSheet = [];
 
   dataSheet.push(titleLine);
-  dataSheet.push([
-    `${formatMessage(exportServiceMessages.from)} ${filter.from
-      .toMoment()
-      .format('YYYY-MM-DD')} ${formatMessage(
-      exportServiceMessages.to,
-    )} ${filter.to.toMoment().format('YYYY-MM-DD')}`,
-  ]);
+  dataSheet.push([getFromToText(formatMessage, filter.from, filter.to)],);
   dataSheet.push(blankLine);
 
   if (filter.keywords) {
