@@ -1148,6 +1148,14 @@ const exportAudienceSegments = (organisationId, datamartId, dataSource, filter, 
       translation: formatMessage(segmentMessages.technicalName)
     },
     {
+      name: 'creation_ts',
+      translation: formatMessage(segmentMessages.creation_ts)
+    },
+    {
+      name: 'short_description',
+      translation: formatMessage(segmentMessages.short_description)
+    },
+    {
       name: 'user_points_count',
       translation: formatMessage(segmentMessages.userPoints)
     },
@@ -1187,7 +1195,11 @@ const exportAudienceSegments = (organisationId, datamartId, dataSource, filter, 
 
   dataSource.forEach(row => {
     const dataLine = headersMap.map(header => {
-      return row[header.name];
+      if (header.name === 'creation_ts') {
+        return new Date(row[header.name]).toISOString()
+      } else {
+        return row[header.name];
+      }
     });
     dataSheet.push(dataLine);
   });
