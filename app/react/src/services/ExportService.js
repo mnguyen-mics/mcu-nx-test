@@ -60,7 +60,7 @@ const s2ab = s => {
   return buf;
 };
 
-function buildSheet(title, data, headers, filter, formatMessage, otherInfos) {
+function buildSheet(title, data, headers, filter, formatMessage, otherInfos, otherInfosToDisplay) {
   const titleLine = typeof title === 'string' ? [title] : [formatMessage(title)];
   const sheet = [];
   const blankLine = [];
@@ -73,9 +73,13 @@ function buildSheet(title, data, headers, filter, formatMessage, otherInfos) {
     ]);
   }
   if (otherInfos) {
-    sheet.push([otherInfos.name]);
-    sheet.push([otherInfos.id]);
-    sheet.push([otherInfos.technical_name]);
+    otherInfosToDisplay.forEach((infoColumn) => {
+      if (infoColumn.endsWith("_ts")) {
+        sheet.push([new Date(otherInfos[infoColumn]).toISOString()]);
+      } else {
+        sheet.push([otherInfos[infoColumn]]);
+      }
+    })
   }
   sheet.push(blankLine);
   sheet.push(headers.map(h => h.translation));
@@ -100,9 +104,19 @@ function buildSheet(title, data, headers, filter, formatMessage, otherInfos) {
  * @param formatMessage Internationalization method
  * @param title         [OPTIONAL] Title at the top of the page, if undefined use tabTitle
  * @param otherInfos
+ * @param otherInfosToDisplay
  * @returns {*}
  */
-function addSheet(tabTitle, data, headers, filter, formatMessage, title, otherInfos) {
+function addSheet(
+  tabTitle,
+  data,
+  headers,
+  filter,
+  formatMessage,
+  title,
+  otherInfos,
+  otherInfosToDisplay = ["name", "id", "technical_name"]
+) {
   let formattedTabTitle;
   if (typeof tabTitle === 'string') {
     formattedTabTitle = tabTitle.substring(0, 30);
@@ -111,7 +125,7 @@ function addSheet(tabTitle, data, headers, filter, formatMessage, title, otherIn
   }
   const sheetTitle = title ? title : tabTitle;
   if (data && data.length) {
-    const sheet = buildSheet(sheetTitle, data, headers, filter, formatMessage, otherInfos);
+    const sheet = buildSheet(sheetTitle, data, headers, filter, formatMessage, otherInfos, otherInfosToDisplay);
     return {
       name: formattedTabTitle,
       data: sheet,
@@ -1247,6 +1261,7 @@ const exportAudienceSegmentDashboard = (
 
   const otherInfos = segment ? segment : null;
   const title = '';
+  const otherInfosToDisplay = ["name", "id", "technical_name", "short_description", "creation_ts"]
 
   const sheets = [
     addSheet(
@@ -1257,6 +1272,7 @@ const exportAudienceSegmentDashboard = (
       formatMessage,
       title,
       otherInfos,
+      otherInfosToDisplay,
     ),
     addSheet(
       exportMessages.audienceSegmentAdditionsDeletionsExportTitle,
@@ -1266,6 +1282,7 @@ const exportAudienceSegmentDashboard = (
       formatMessage,
       title,
       otherInfos,
+      otherInfosToDisplay,
     ),
     addSheet(
       exportMessages.overlapExportTitle,
@@ -1275,6 +1292,7 @@ const exportAudienceSegmentDashboard = (
       formatMessage,
       title,
       otherInfos,
+      otherInfosToDisplay,
     ),
   ].filter(x => x);
 
