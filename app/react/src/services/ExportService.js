@@ -60,22 +60,30 @@ const s2ab = s => {
   return buf;
 };
 
-function buildSheet(title, data, headers, filter, formatMessage, otherInfos) {
+function getFromToText(formatMessage, from, to) {
+  return `${formatMessage(exportServiceMessages.from)} ${from
+    .toMoment()
+    .format('YYYY-MM-DD')} ${formatMessage(
+    exportServiceMessages.to,
+  )} ${to.toMoment().format('YYYY-MM-DD')}`
+}
+
+function buildSheet(title, data, headers, filter, formatMessage, otherInfos, otherInfosToDisplay) {
   const titleLine = typeof title === 'string' ? [title] : [formatMessage(title)];
   const sheet = [];
   const blankLine = [];
   sheet.push(titleLine);
   if (filter && filter.from && filter.to) {
-    sheet.push([
-      `${formatMessage(dateMessages.from)} ${filter.from} ${formatMessage(dateMessages.to)} ${
-        filter.to
-      }`,
-    ]);
+    sheet.push([getFromToText(formatMessage, filter.from, filter.to)]);
   }
   if (otherInfos) {
-    sheet.push([otherInfos.name]);
-    sheet.push([otherInfos.id]);
-    sheet.push([otherInfos.technical_name]);
+    otherInfosToDisplay.forEach((infoColumn) => {
+      if (infoColumn.endsWith("_ts")) {
+        sheet.push([new Date(otherInfos[infoColumn]).toISOString()]);
+      } else {
+        sheet.push([otherInfos[infoColumn]]);
+      }
+    })
   }
   sheet.push(blankLine);
   sheet.push(headers.map(h => h.translation));
@@ -100,9 +108,19 @@ function buildSheet(title, data, headers, filter, formatMessage, otherInfos) {
  * @param formatMessage Internationalization method
  * @param title         [OPTIONAL] Title at the top of the page, if undefined use tabTitle
  * @param otherInfos
+ * @param otherInfosToDisplay
  * @returns {*}
  */
-function addSheet(tabTitle, data, headers, filter, formatMessage, title, otherInfos) {
+function addSheet(
+  tabTitle,
+  data,
+  headers,
+  filter,
+  formatMessage,
+  title,
+  otherInfos,
+  otherInfosToDisplay = ["name", "id", "technical_name"]
+) {
   let formattedTabTitle;
   if (typeof tabTitle === 'string') {
     formattedTabTitle = tabTitle.substring(0, 30);
@@ -111,7 +129,7 @@ function addSheet(tabTitle, data, headers, filter, formatMessage, title, otherIn
   }
   const sheetTitle = title ? title : tabTitle;
   if (data && data.length) {
-    const sheet = buildSheet(sheetTitle, data, headers, filter, formatMessage, otherInfos);
+    const sheet = buildSheet(sheetTitle, data, headers, filter, formatMessage, otherInfos, otherInfosToDisplay);
     return {
       name: formattedTabTitle,
       data: sheet,
@@ -242,13 +260,7 @@ const exportDisplayCampaigns = (organisationId, dataSource, filter, formatMessag
   const dataSheet = [];
 
   dataSheet.push(titleLine);
-  dataSheet.push([
-    `${formatMessage(exportServiceMessages.from)} ${filter.from
-      .toMoment()
-      .format('YYYY-MM-DD')} ${formatMessage(
-      exportServiceMessages.to,
-    )} ${filter.to.toMoment().format('YYYY-MM-DD')}`,
-  ]);
+  dataSheet.push([getFromToText(formatMessage, filter.from, filter.to)],);
   dataSheet.push(blankLine);
 
   if (filter.keywords) {
@@ -1105,14 +1117,8 @@ const exportAudienceSegments = (organisationId, datamartId, dataSource, filter, 
 
   const dataSheet = [];
 
-  dataSheet.push(titleLine);
-  dataSheet.push([
-    `${formatMessage(exportServiceMessages.from)} ${new McsMoment('now')
-      .toMoment()
-      .format('YYYY-MM-DD')} ${formatMessage(exportServiceMessages.to)} ${new McsMoment('now')
-      .toMoment()
-      .format('YYYY-MM-DD')}`,
-  ]);
+  dataSheet.push([titleLine]);
+  dataSheet.push([getFromToText(formatMessage, new McsMoment('now'), new McsMoment('now'))]);
   dataSheet.push(blankLine);
 
   if (filter.keywords) {
@@ -1142,6 +1148,14 @@ const exportAudienceSegments = (organisationId, datamartId, dataSource, filter, 
       translation: formatMessage(segmentMessages.technicalName)
     },
     {
+      name: 'creation_ts',
+      translation: formatMessage(segmentMessages.creation_ts)
+    },
+    {
+      name: 'short_description',
+      translation: formatMessage(segmentMessages.short_description)
+    },
+    {
       name: 'user_points_count',
       translation: formatMessage(segmentMessages.userPoints)
     },
@@ -1156,6 +1170,14 @@ const exportAudienceSegments = (organisationId, datamartId, dataSource, filter, 
     {
       name: 'emails_count',
       translation: formatMessage(segmentMessages.emails)
+    },
+    {
+      name: 'mobile_cookie_ids_count',
+      translation: formatMessage(segmentMessages.mobile_cookie_ids)
+    },
+    {
+      name: 'mobile_ad_ids_count',
+      translation: formatMessage(segmentMessages.mobile_ad_ids)
     },
     {
       name: 'user_point_additions',
@@ -1173,7 +1195,11 @@ const exportAudienceSegments = (organisationId, datamartId, dataSource, filter, 
 
   dataSource.forEach(row => {
     const dataLine = headersMap.map(header => {
-      return row[header.name];
+      if (header.name === 'creation_ts') {
+        return new Date(row[header.name]).toISOString()
+      } else {
+        return row[header.name];
+      }
     });
     dataSheet.push(dataLine);
   });
@@ -1247,6 +1273,7 @@ const exportAudienceSegmentDashboard = (
 
   const otherInfos = segment ? segment : null;
   const title = '';
+  const otherInfosToDisplay = ["name", "id", "technical_name", "short_description", "creation_ts"]
 
   const sheets = [
     addSheet(
@@ -1257,6 +1284,7 @@ const exportAudienceSegmentDashboard = (
       formatMessage,
       title,
       otherInfos,
+      otherInfosToDisplay,
     ),
     addSheet(
       exportMessages.audienceSegmentAdditionsDeletionsExportTitle,
@@ -1266,6 +1294,7 @@ const exportAudienceSegmentDashboard = (
       formatMessage,
       title,
       otherInfos,
+      otherInfosToDisplay,
     ),
     addSheet(
       exportMessages.overlapExportTitle,
@@ -1275,6 +1304,7 @@ const exportAudienceSegmentDashboard = (
       formatMessage,
       title,
       otherInfos,
+      otherInfosToDisplay,
     ),
   ].filter(x => x);
 

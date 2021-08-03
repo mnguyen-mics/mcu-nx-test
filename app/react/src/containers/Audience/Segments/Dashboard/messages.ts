@@ -26,6 +26,22 @@ export default defineMessages({
     id: 'audience.segments.emails',
     defaultMessage: 'Emails',
   },
+  mobile_cookie_ids: {
+    id: 'audience.segments.mobile_cookie_ids',
+    defaultMessage: 'Mobile Cookies',
+  },
+  mobile_ad_ids: {
+    id: 'audience.segments.mobile_ad_ids',
+    defaultMessage: 'Mobile IDs',
+  },
+  creation_ts: {
+    id: 'audience.segments.creation_ts',
+    defaultMessage: 'Creation date',
+  },
+  short_description: {
+    id: 'audience.segments.short_description',
+    defaultMessage: 'Short Description',
+  },
   desktopCookieId: {
     id: 'audience.segments.desktop_cookie_ids',
     defaultMessage: 'Display Cookies',
