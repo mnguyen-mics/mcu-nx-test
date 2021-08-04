@@ -187,6 +187,10 @@ const messages = defineMessages({
 const messageMap: {
   [key: string]: FormattedMessage.MessageDescriptor;
 } = defineMessages({
+  creation_ts: {
+    id: 'audience.segments.list.column.creation_ts',
+    defaultMessage: 'Creation Date',
+  },
   user_accounts_count: {
     id: 'audience.segments.list.column.userAccounts',
     defaultMessage: 'User Accounts',
@@ -483,6 +487,17 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
     return formatMetric(value, numeralFormat, unlocalizedMoneyPrefix);
   };
 
+  renderDateData = (value: string | number) => {
+    if (this.state.list.isLoading) {
+      return <i className='mcs-table-cell-loading' />;
+    }
+    if (typeof value === 'string') {
+      value = parseInt(value, 10);
+    }
+
+    return `${new Date(value).toISOString()}`;
+  };
+
   columnStatSort = (key: string, a?: number, b?: number) => {
     const getUrlString = (colunmKey: string, urlString?: string): string | undefined => {
       if (urlString) {
@@ -640,6 +655,13 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
             {text}
           </Link>
         ),
+      },
+      {
+        title: this.getColumnButton('creation_ts'),
+        key: 'creation_ts',
+        isVisibleByDefault: false,
+        isHideable: true,
+        render: (text: string) => this.renderDateData(text),
       },
       {
         title: this.getColumnButton('user_points_count'),
