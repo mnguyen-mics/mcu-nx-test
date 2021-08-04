@@ -189,7 +189,7 @@ const messageMap: {
 } = defineMessages({
   creation_ts: {
     id: 'audience.segments.list.column.creation_ts',
-    defaultMessage: 'Created Date',
+    defaultMessage: 'Creation Date',
   },
   user_accounts_count: {
     id: 'audience.segments.list.column.userAccounts',
