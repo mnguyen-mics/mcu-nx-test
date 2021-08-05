@@ -40,7 +40,7 @@ else
 fi
 
 DEV_MAIL="dev@mediarithmics.com"
-DEV_PWD='k&JXpQeQK6Ra#$49kLFM5A5CD3RFXM7NX9ir$aJrz4JzGYbtz8'
+DEV_PWD='7c2iUuStU6RE+kPngKV01wYZ80zdo3GIxpULw9dZTAnXDqhsFcpykoJp'
 
 set -u
 cat << EOF
