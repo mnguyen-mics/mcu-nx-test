@@ -180,6 +180,12 @@ export class OverlapInterval implements IOverlapInterval {
         const segmentSourceSize = overlapResult.segments.find(
           seg => seg.segment_id.toString() === segmentId,
         )!.segment_size;
+        const segmentSourceSizeAlt = overlapResult.overlaps.find(
+          ovl =>
+            ovl.segment_intersect_with.toString() === segmentId &&
+            ovl.segment_source_id.toString() === segmentId,
+        )!.overlap_number;
+
         topOverlaps.forEach(to => {
           const isInOverlap = segmentResources.find(sr =>
             sr ? sr.id === to.segment_intersect_with.toString() : false,
@@ -192,7 +198,7 @@ export class OverlapInterval implements IOverlapInterval {
             formattedvalues.push({
               ...to,
               segment_source_id: to.segment_source_id.toString(),
-              segment_source_size: segmentSourceSize,
+              segment_source_size: segmentSourceSize || segmentSourceSizeAlt,
               segment_intersect_with: {
                 id: to.segment_intersect_with.toString(),
                 name: formatSegmentName(isInOverlap),
