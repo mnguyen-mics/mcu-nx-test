@@ -129,7 +129,7 @@ describe('Timeline', () => {
     cy.get('.mcs-profileCard').should('be.visible');
     cy.get('.mcs-accountIdCard').should('be.visible');
     cy.get('.mcs-segmentCard').should('be.visible');
-    cy.get('.mcs-deviceCard').should('be.visible');
+    cy.get('.mcs-device-card').should('be.visible');
     cy.get('.mcs-emailCard').should('be.visible');
     cy.get('.mcs-userChoicesCard').should('be.visible');
   });

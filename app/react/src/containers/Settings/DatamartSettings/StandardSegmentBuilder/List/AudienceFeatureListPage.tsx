@@ -220,6 +220,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
             title: intl.formatMessage(messages.audienceFeatureDeleteListModalTitle),
             okText: intl.formatMessage(messages.audienceFeatureDeleteListModalOk),
             className: 'mcs-audienceFeatureDeletePopUp',
+            okButtonProps: { className: 'mcs-audienceFeatureDeletePopUp_ok_button' },
             cancelText: intl.formatMessage(messages.audienceFeatureDeleteListModalCancel),
             onOk: () => {
               this._audienceFeatureService

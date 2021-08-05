@@ -443,7 +443,7 @@ describe('Should test the funnel', () => {
                 }).then(() => {
                   cy.wait(5000);
                   goToFunnelAndClickOnDimensions(data.organisationName);
-                  cy.get('.mcs-date-range-picker').click();
+                  cy.get('.mcs-dateRangePicker').click();
                   cy.contains('Today').click({ force: true });
                   cy.get('.mcs-funnelQueryBuilder_select--dimensions').click().type('product');
                   cy.get('.mcs-funnelQueryBuilder_select--dimensions--PRODUCT_ID').debug().click();
@@ -524,7 +524,7 @@ describe('Should test the funnel', () => {
   it('should send the right request on today datepicker', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       goToFunnelAndClickOnDimensions(data.organisationName);
-      cy.get('.mcs-date-range-picker').click();
+      cy.get('.mcs-dateRangePicker').click();
       cy.contains('Today').click({ force: true });
       cy.get('.mcs-funnelQueryBuilder_select--dimensions').click();
       cy.get('.mcs-funnelQueryBuilder_select--dimensions--CHANNEL_ID').click();
@@ -555,7 +555,7 @@ describe('Should test the funnel', () => {
   it('should send the right request on 30 days datepicker', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       goToFunnelAndClickOnDimensions(data.organisationName);
-      cy.get('.mcs-date-range-picker').click();
+      cy.get('.mcs-dateRangePicker').click();
       cy.contains('Last 30 days').click({ force: true });
       cy.get('.mcs-funnelQueryBuilder_select--dimensions').click();
       cy.get('.mcs-funnelQueryBuilder_select--dimensions--CHANNEL_ID').click();
@@ -585,11 +585,10 @@ describe('Should test the funnel', () => {
   it('should send the right request on custom datepicker', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       goToFunnelAndClickOnDimensions(data.organisationName);
-      cy.get('.mcs-date-range-picker').click();
-      cy.contains('Custom').click({ force: true });
+      cy.get('.mcs-dateRangePicker').click();
       cy.get('.ant-picker-input').eq(0).find('input').clear({ force: true }).type(getDate(0, -3));
       cy.get('.ant-picker-input').eq(1).find('input').clear({ force: true }).type(getDate(0, -2));
-      cy.get('.mcs-funnelQueryBuilder_select--dimensions').dblclick();
+      cy.get('.mcs-funnelQueryBuilder_select--dimensions').click();
       cy.get('.mcs-funnelQueryBuilder_select--dimensions--CHANNEL_ID').click();
       cy.get('.mcs-funnelQueryBuilder_dimensionValue').type(createdChannelId + '{enter}');
       cy.get('.mcs-funnelQueryBuilder_executeQueryBtn').click();
@@ -617,11 +616,10 @@ describe('Should test the funnel', () => {
   it('should display the amount and conversion when available', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       goToFunnelAndClickOnDimensions(data.organisationName);
-      cy.get('.mcs-date-range-picker').click();
-      cy.contains('Custom').click({ force: true });
+      cy.get('.mcs-dateRangePicker').click();
       cy.get('.ant-picker-input').eq(0).find('input').clear({ force: true }).type(getDate(0, -3));
       cy.get('.ant-picker-input').eq(1).find('input').clear({ force: true }).type(getDate(0, -2));
-      cy.get('.mcs-funnelQueryBuilder_select--dimensions').dblclick();
+      cy.get('.mcs-funnelQueryBuilder_select--dimensions').click();
       cy.get('.mcs-funnelQueryBuilder_select--dimensions--CHANNEL_ID').click();
       cy.get('.mcs-funnelQueryBuilder_dimensionValue').type(createdChannelId + '{enter}');
       cy.get('.mcs-funnelQueryBuilder_executeQueryBtn').click();
@@ -645,11 +643,10 @@ describe('Should test the funnel', () => {
   it('should test the mathematical notation for percentages', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       goToFunnelAndClickOnDimensions(data.organisationName);
-      cy.get('.mcs-date-range-picker').click();
-      cy.contains('Custom').click({ force: true });
+      cy.get('.mcs-dateRangePicker').click();
       cy.get('.ant-picker-input').eq(0).find('input').clear({ force: true }).type(getDate(0, -3));
       cy.get('.ant-picker-input').eq(1).find('input').clear({ force: true }).type(getDate(0, -2));
-      cy.get('.mcs-funnelQueryBuilder_select--dimensions').dblclick();
+      cy.get('.mcs-funnelQueryBuilder_select--dimensions').click();
       cy.get('.mcs-funnelQueryBuilder_select--dimensions--CHANNEL_ID').click();
       cy.get('.mcs-funnelQueryBuilder_dimensionValue').type(createdChannelId + '{enter}');
       cy.get('.mcs-funnelQueryBuilder_executeQueryBtn').click();

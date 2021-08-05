@@ -78,7 +78,7 @@ describe('This test should check that the audience feature forms are working pro
         cy.get('.mcs-chevron').first().click();
       });
       cy.get('.mcs-dropdown-actions').contains('Delete').click();
-      cy.get('.mcs-audienceFeatureDeletePopUp').contains('Delete').click();
+      cy.get('.mcs-audienceFeatureDeletePopUp_ok_button').click();
       cy.get('.mcs-audienceFeature_table').should(
         'not.contain',
         'Test Audience Feature Form - Edit',

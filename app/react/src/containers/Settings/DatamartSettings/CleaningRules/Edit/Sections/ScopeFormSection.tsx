@@ -176,6 +176,7 @@ class ScopeFormSection extends React.Component<Props, State> {
             label: formatMessage(messages.sectionScopeCompartmentLabel),
             required: false,
           }}
+          selectProps={{ className: 'mcs-scopeFormSection_compartment_select' }}
           options={options}
           helpToolTipProps={{
             title: formatMessage(messages.sectionScopeCompartmentHelper),

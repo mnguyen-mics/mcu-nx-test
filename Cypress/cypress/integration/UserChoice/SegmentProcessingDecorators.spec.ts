@@ -53,7 +53,7 @@ describe('User Processing on segments tests', () => {
       cy.contains('Update').click();
       cy.contains('Save').click();
       // Wait for backend addition
-      cy.wait(2000);
+      cy.wait(5000);
       cy.contains('Edit').click();
       cy.get('.mcs-delete').click();
       cy.contains('Yes').click();
