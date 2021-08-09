@@ -1236,12 +1236,15 @@ const exportAudienceSegmentDashboard = (
     },
   );
 
-  const overviewHeaders = Object.keys(overviewHeadersMap).map(tn => {
+  const overviewHeaders = [{
+    name: 'day',
+    translation: dateMessages.day.defaultMessage
+  }].concat(Object.keys(overviewHeadersMap).map(tn => {
     return {
       name: tn,
       translation: overviewHeadersMap[tn],
     };
-  });
+  }));
 
   const additionDeletionHeaders = [{
       name: 'day',
