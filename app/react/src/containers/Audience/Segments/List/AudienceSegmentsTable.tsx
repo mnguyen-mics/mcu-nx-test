@@ -64,6 +64,7 @@ import {
   ActionsColumnDefinition,
   DataColumnDefinition,
 } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import { PermanentFilters, SegmentsColumnKey, SegmentsColumnsList } from './PermanentFilters';
 
 const messages = defineMessages({
   filterByLabel: {
@@ -245,6 +246,7 @@ interface State {
     isLoading: boolean;
   };
   hasItems: boolean;
+  visibleColumns: Array<DataColumnDefinition<AudienceSegmentShape>>;
   isAsc?: boolean;
   sortField?: string;
 }
@@ -256,6 +258,8 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
+
+    const permanentFilter = new PermanentFilters(this.props.datamart.organisation_id);
     this.state = {
       list: {
         isLoading: true,
@@ -263,6 +267,8 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
         segments: [],
       },
       hasItems: true,
+      visibleColumns: permanentFilter.getVisibleColumns().map(key => ({ key: key, value: key })),
+      ...permanentFilter.getOrderBy(),
     };
   }
 
@@ -275,14 +281,22 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       },
     } = this.props;
 
+    const permanentFilter = new PermanentFilters(this.props.datamart.organisation_id);
+    const realSearch = search || permanentFilter.getSearch();
+    if (!this.state.sortField) {
+      this.setState(previous => ({
+        ...previous,
+        ...permanentFilter.getOrderBy(),
+      }));
+    }
     if (!isSearchValid(search, this.getSearchSetting())) {
       history.replace({
         pathname: pathname,
-        search: buildDefaultSearch(search, this.getSearchSetting()),
+        search: buildDefaultSearch(realSearch, this.getSearchSetting()),
         state: { reloadDataSource: true },
       });
     } else {
-      const filter = parseSearch(search, this.getSearchSetting());
+      const filter = parseSearch(realSearch, this.getSearchSetting());
       const datamartId = filter.datamartId;
       this.fetchAudienceSegments(organisationId, datamartId, filter);
       this.checkIfHasItem(organisationId);
@@ -305,7 +319,17 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       location: { search: prevSearch },
     } = prevProps;
 
-    const filter = parseSearch<AudienceSegmentsFilterParams>(search, this.getSearchSetting());
+    const permanentFilter = new PermanentFilters(this.props.datamart.organisation_id);
+    const theoreticalVisibleColumns = permanentFilter.getVisibleColumns();
+    const actualVisibleColumns = this.state.visibleColumns.map(column => column.key);
+    if (!_.isEqual(theoreticalVisibleColumns, actualVisibleColumns)) {
+      this.setState({
+        visibleColumns: theoreticalVisibleColumns.map(key => ({ key: key, value: key })),
+      });
+    }
+    const realSearch = search || permanentFilter.getSearch();
+
+    const filter = parseSearch<AudienceSegmentsFilterParams>(realSearch, this.getSearchSetting());
 
     const prevFilter = parseSearch<AudienceSegmentsFilterParams>(
       prevSearch,
@@ -317,17 +341,22 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
     if (!isSearchValid(search, this.getSearchSetting())) {
       history.replace({
         pathname: pathname,
-        search: buildDefaultSearch(search, this.getSearchSetting()),
+        search: buildDefaultSearch(realSearch, this.getSearchSetting()),
         state: { reloadDataSource: true },
       });
     } else if (
       // Changing the sort field : new API call with current
-      !compareSearches(prevSearch, search) ||
+      !compareSearches(prevSearch, realSearch) ||
       prevOrganisationId !== organisationId ||
       !_.isEqual(prevFilter, filter) ||
       (prevFilter.orderBy !== filter.orderBy && filter.pageSize < this.state.list.total)
     ) {
+      permanentFilter.updateSearch(realSearch);
       this.fetchAudienceSegments(organisationId, datamartId, filter);
+      const orderBy = permanentFilter.getOrderBy();
+      if (orderBy.sortField !== this.state.sortField) {
+        this.setState(previous => ({ ...previous, ...orderBy }));
+      }
     }
   }
 
@@ -471,6 +500,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       location: { search: currentSearch, pathname },
     } = this.props;
 
+    new PermanentFilters(this.props.datamart.organisation_id).updateSearch(currentSearch);
     const nextLocation = {
       pathname,
       search: updateSearch(currentSearch, params, this.getSearchSetting()),
@@ -568,6 +598,9 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       intl: { formatMessage },
     } = this.props;
 
+    const permanentFilter = new PermanentFilters(this.props.datamart.organisation_id);
+    const columnsVisibility = permanentFilter.getColumnsVisibility();
+
     const dataColumns: Array<DataColumnDefinition<AudienceSegmentShape>> = [
       {
         title: formatMessage(messages.type),
@@ -644,7 +677,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       },
       {
         title: formatMessage(messages.technicalName),
-        isVisibleByDefault: false,
+        isVisibleByDefault: columnsVisibility.get('technical_name'),
         key: 'technical_name',
         isHideable: true,
         render: (text: string, record: AudienceSegmentResource) => (
@@ -659,49 +692,49 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       {
         title: this.getColumnButton('creation_ts'),
         key: 'creation_ts',
-        isVisibleByDefault: false,
+        isVisibleByDefault: columnsVisibility.get('creation_ts'),
         isHideable: true,
         render: (text: string) => this.renderDateData(text),
       },
       {
         title: this.getColumnButton('user_points_count'),
         key: 'user_points_count',
-        isVisibleByDefault: true,
+        isVisibleByDefault: columnsVisibility.get('user_points_count'),
         isHideable: true,
         render: (text: string) => this.renderMetricData(text, '0,0'),
       },
       {
         title: () => this.getColumnButton('user_accounts_count'),
         key: 'user_accounts_count',
-        isVisibleByDefault: true,
+        isVisibleByDefault: columnsVisibility.get('user_accounts_count'),
         isHideable: true,
         render: (text: string) => this.renderMetricData(text, '0,0'),
       },
       {
         title: () => this.getColumnButton('emails_count'),
         key: 'emails_count',
-        isVisibleByDefault: true,
+        isVisibleByDefault: columnsVisibility.get('emails_count'),
         isHideable: true,
         render: (text: string) => this.renderMetricData(text, '0,0'),
       },
       {
         title: () => this.getColumnButton('desktop_cookie_ids_count'),
         key: 'desktop_cookie_ids_count',
-        isVisibleByDefault: true,
+        isVisibleByDefault: columnsVisibility.get('desktop_cookie_ids_count'),
         isHideable: true,
         render: (text: string) => this.renderMetricData(text, '0,0'),
       },
       {
         title: () => this.getColumnButton('mobile_cookie_ids_count'),
         key: 'mobile_cookie_ids_count',
-        isVisibleByDefault: true,
+        isVisibleByDefault: columnsVisibility.get('mobile_cookie_ids_count'),
         isHideable: true,
         render: (text: string) => this.renderMetricData(text, '0,0'),
       },
       {
         title: () => this.getColumnButton('mobile_ad_ids_count'),
         key: 'mobile_ad_ids_count',
-        isVisibleByDefault: true,
+        isVisibleByDefault: columnsVisibility.get('mobile_cookie_ids_count'),
         isHideable: true,
         render: (text: string) => this.renderMetricData(text, '0,0'),
       },
@@ -782,6 +815,17 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
     return <TreeSelectFilter {...treeSelectFilterProps} />;
   };
 
+  onVisibilityChange = (columns: Array<DataColumnDefinition<AudienceSegmentShape>>) => {
+    new PermanentFilters(this.props.datamart.organisation_id).updateColumnsVisibility(
+      columns
+        .map(column => column.key as SegmentsColumnKey)
+        .reduce((acc, key) => [...acc, key], [] as SegmentsColumnsList),
+    );
+    if (this.state.visibleColumns !== columns) {
+      this.setState({ visibleColumns: columns });
+    }
+  };
+
   render() {
     const {
       match: {
@@ -793,9 +837,10 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       workspace,
     } = this.props;
 
+    const realSearch = search || new PermanentFilters(organisationId).getSearch();
     const { hasItems, list } = this.state;
 
-    const filter = parseSearch(search, this.getSearchSetting());
+    const filter = parseSearch(realSearch, this.getSearchSetting());
 
     const searchOptions = {
       placeholder: intl.formatMessage(messages.searchTitle),
@@ -906,6 +951,8 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
       <div className='mcs-table-container mcs-audienceSegmentTable'>
         <TableViewFilters
           columns={this.buildDataColumns()}
+          onVisibilityChange={this.onVisibilityChange}
+          controlledVisibilitySelectedColumns={this.state.visibleColumns}
           actionsColumnsDefinition={actionColumns}
           searchOptions={searchOptions}
           filtersOptions={filtersOptions}

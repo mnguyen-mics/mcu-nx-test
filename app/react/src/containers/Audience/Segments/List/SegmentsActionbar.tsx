@@ -16,6 +16,7 @@ import { IAudienceSegmentService } from '../../../../services/AudienceSegmentSer
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { UserActivationSegment } from '../../../../models/audiencesegment';
+import { PermanentFilters } from './PermanentFilters';
 
 const messages = defineMessages({
   exportRunning: {
@@ -33,6 +34,10 @@ const messages = defineMessages({
   export: {
     id: 'audiencesegment.actionbar.export',
     defaultMessage: 'Export stats',
+  },
+  clearFilters: {
+    id: 'audiencesegment.actionbar.clearFilters',
+    defaultMessage: 'Clear filters',
   },
   userQuery: {
     id: 'audiencesegment.actionbar.userQuery',
@@ -172,6 +177,12 @@ class SegmentsActionbar extends React.Component<Props, State> {
       });
   };
 
+  clearFilters = () => {
+    const permanentFilter = new PermanentFilters(this.props.datamart.organisation_id);
+    permanentFilter.clear();
+    this.props.history.push(this.props.location.pathname);
+  };
+
   render() {
     const {
       match: {
@@ -203,6 +214,10 @@ class SegmentsActionbar extends React.Component<Props, State> {
         <Button onClick={this.handleRunExport} loading={exportIsRunning}>
           {!exportIsRunning && <McsIcon type='download' />}
           <FormattedMessage {...messages.export} />
+        </Button>
+        <Button onClick={this.clearFilters}>
+          {!exportIsRunning && <McsIcon type='refresh' />}
+          <FormattedMessage {...messages.clearFilters} />
         </Button>
       </Actionbar>
     );
