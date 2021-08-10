@@ -240,6 +240,7 @@ class AutomationDashboardPage extends React.Component<Props, State> {
   };
 
   onStatusClick = (automationId: string, status: AutomationStatus) => () => {
+    const { notifyError } = this.props;
     const newStatus: AutomationStatus =
       status === 'PAUSED' || status === 'NEW' ? 'ACTIVE' : 'PAUSED';
     const payload = {
@@ -248,15 +249,21 @@ class AutomationDashboardPage extends React.Component<Props, State> {
     };
 
     this.setState({ updating: true });
-    return this._scenarioService.updateScenario(automationId, payload).then(r =>
-      this.setState({
-        automationFormData: {
-          ...this.state.automationFormData,
-          automation: r.data,
-        },
-        updating: false,
-      }),
-    );
+    return this._scenarioService
+      .updateScenario(automationId, payload)
+      .then(r =>
+        this.setState({
+          automationFormData: {
+            ...this.state.automationFormData,
+            automation: r.data,
+          },
+          updating: false,
+        }),
+      )
+      .catch(err => {
+        notifyError(err);
+        this.setState({ updating: false });
+      });
   };
 
   onEditClick = () => {
