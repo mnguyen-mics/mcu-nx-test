@@ -97,7 +97,7 @@ export interface IAudienceFeatureService {
   getFinalValues: (
     datamartId: string,
     runtimeSchemaId: string,
-    options?: { keywords: string }
+    options?: { keywords: string },
   ) => Promise<DataResponse<ReferenceTableValue>>;
 }
 
@@ -250,7 +250,7 @@ export class AudienceFeatureService implements IAudienceFeatureService {
       options.folder_id = folderId ? folderId : 'none';
     }
     if (filter?.finalValue) {
-      options.final_value = filter.finalValue
+      options.final_value = filter.finalValue;
     }
     return options;
   };
@@ -265,7 +265,7 @@ export class AudienceFeatureService implements IAudienceFeatureService {
 
   getFinalValues(
     datamartId: string,
-    keywords?: string
+    keywords?: string,
   ): Promise<DataResponse<ReferenceTableValue>> {
     // return ApiService.getRequest(
     //   `datamarts/${datamartId}/reference_table?keywords=${keywords}`,
@@ -274,15 +274,14 @@ export class AudienceFeatureService implements IAudienceFeatureService {
 
     let data = ['gardening', 'gaming', 'male', 'female', '15-25', '26-35', '36-45'];
 
-
     if (keywords) {
       data = data.filter(elt => elt.includes(keywords));
-    } else data = []
+    } else data = [];
 
     return Promise.resolve({
       status: 'ok' as StatusCode,
       count: data.length,
-      data: { values: data }
-    })
+      data: { values: data },
+    });
   }
 }

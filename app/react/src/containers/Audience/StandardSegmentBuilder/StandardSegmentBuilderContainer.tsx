@@ -227,30 +227,30 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
     const newParametricPredicate = (
       audienceFeature: AudienceFeatureResource,
     ): StandardSegmentBuilderParametricPredicateNode => {
-
       const generateParameters = () => {
-        let parameters: { [key: string]: string | string[] | number | number[] | undefined } = {};
+        const parameters: { [key: string]: string | string[] | number | number[] | undefined } = {};
 
         if (audienceFeature.variables) {
           audienceFeature.variables.forEach(v => {
-
             if (finalValue && v.final_values?.includes(finalValue)) {
               const insertFinalValue = (typeList: boolean) => {
                 switch (v.type) {
                   case 'Int':
                   case 'Float':
                   case 'ID':
-                    parameters[v.parameter_name] = typeList ? [parseInt(finalValue)] : parseInt(finalValue);
+                    parameters[v.parameter_name] = typeList
+                      ? [parseInt(finalValue, 10)]
+                      : parseInt(finalValue, 10);
                     break;
                   default:
                     parameters[v.parameter_name] = typeList ? [finalValue] : finalValue;
                     break;
                 }
-              }
+              };
               if (v.container_type === 'List') {
-                insertFinalValue(true)
+                insertFinalValue(true);
               } else {
-                insertFinalValue(false)
+                insertFinalValue(false);
               }
             } else {
               parameters[v.parameter_name] = undefined;
@@ -258,7 +258,7 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
           });
         }
         return parameters;
-      }
+      };
       return {
         type: 'PARAMETRIC_PREDICATE',
         parametric_predicate_id: audienceFeature.id,
@@ -279,7 +279,9 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
     }
   };
 
-  private selectNewAudienceFeature = (onSelect: (_: AudienceFeatureResource[], finalValue?: string) => void) => {
+  private selectNewAudienceFeature = (
+    onSelect: (_: AudienceFeatureResource[], finalValue?: string) => void,
+  ) => {
     const { openNextDrawer, standardSegmentBuilder } = this.props;
 
     const props: AudienceFeatureSelectorProps = {
@@ -448,8 +450,9 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
               className='mcs-standardSegmentBuilder_liveDashboardContainer'
             >
               <Button
-                className={`mcs-standardSegmentBuilder_sizeButton ${isDashboardToggled && 'mcs-standardSegmentBuilder_rightChevron'
-                  }`}
+                className={`mcs-standardSegmentBuilder_sizeButton ${
+                  isDashboardToggled && 'mcs-standardSegmentBuilder_rightChevron'
+                }`}
                 onClick={this.toggleDashboard}
               >
                 <McsIcon type='chevron-right' />

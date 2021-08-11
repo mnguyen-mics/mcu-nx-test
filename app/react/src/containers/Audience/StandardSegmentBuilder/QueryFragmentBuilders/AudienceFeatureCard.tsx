@@ -35,18 +35,31 @@ class AudienceFeatureCard extends React.Component<Props, State> {
   };
 
   render() {
-    const { audienceFeature, selectedAudienceFeature, onSelectFeature, intl, hasFeature } = this.props;
+    const {
+      audienceFeature,
+      selectedAudienceFeature,
+      onSelectFeature,
+      intl,
+      hasFeature,
+    } = this.props;
     const { cardToggled } = this.state;
-    let finalValues = _.flattenDeep(audienceFeature.variables?.map(v => {
-      return v.final_values
-    }));
+    const finalValues = _.flattenDeep(
+      audienceFeature.variables?.map(v => {
+        return v.final_values;
+      }),
+    );
     return (
       <div
-        className={`${hasFeature('audience-feature-search')
-          ? 'mcs-standardSegmentBuilder_featureCard_2'
-          : 'mcs-standardSegmentBuilder_featureCard'} 
-            ${selectedAudienceFeature && selectedAudienceFeature.id === audienceFeature.id && 'selected'
-          } ${!!cardToggled && 'toggled'}`}
+        className={`${
+          hasFeature('audience-feature-search')
+            ? 'mcs-standardSegmentBuilder_featureCard_2'
+            : 'mcs-standardSegmentBuilder_featureCard'
+        } 
+            ${
+              selectedAudienceFeature &&
+              selectedAudienceFeature.id === audienceFeature.id &&
+              'selected'
+            } ${!!cardToggled && 'toggled'}`}
       >
         {cardToggled ? (
           <McsIcon type='close' onClick={this.toggleCard} />
@@ -62,14 +75,14 @@ class AudienceFeatureCard extends React.Component<Props, State> {
               <div className='mcs-standardSegmentBuilder_featureCardDescritpion'>
                 {audienceFeature.variables
                   ? audienceFeature.variables.map(v => {
-                    return (
-                      <div key={v.parameter_name}>
-                        <CalendarOutlined />
-                        &nbsp;
-                        {v.parameter_name}
-                      </div>
-                    );
-                  })
+                      return (
+                        <div key={v.parameter_name}>
+                          <CalendarOutlined />
+                          &nbsp;
+                          {v.parameter_name}
+                        </div>
+                      );
+                    })
                   : intl.formatMessage(messages.noAvailableFilters)}
               </div>
             </React.Fragment>
@@ -82,18 +95,20 @@ class AudienceFeatureCard extends React.Component<Props, State> {
               <div className='mcs-standardSegmentBuilder_featureCardDescritpion'>
                 {audienceFeature.description}
               </div>
-              {hasFeature('audience-feature-search') &&
+              {hasFeature('audience-feature-search') && (
                 <div className='mcs-standardSegmentBuilder_featureCardFinalValues'>
-                  {audienceFeature.variables
-                    && audienceFeature.variables.map(v => {
+                  {audienceFeature.variables &&
+                    audienceFeature.variables.map(v => {
                       return v.final_values?.map((value, index, values) => {
-                        return <span key={value} onClick={onSelectFeature(audienceFeature.id, value)}>
-                          {index === values.length - 1 ? value : `${value}, `}
-                        </span>
-                      })
+                        return (
+                          <span key={value} onClick={onSelectFeature(audienceFeature.id, value)}>
+                            {index === values.length - 1 ? value : `${value}, `}
+                          </span>
+                        );
+                      });
                     })}
                 </div>
-              }
+              )}
             </React.Fragment>
           )}
         </div>
@@ -102,4 +117,7 @@ class AudienceFeatureCard extends React.Component<Props, State> {
   }
 }
 
-export default compose<Props, AudienceFeatureCardProps>(injectIntl, injectFeatures)(AudienceFeatureCard);
+export default compose<Props, AudienceFeatureCardProps>(
+  injectIntl,
+  injectFeatures,
+)(AudienceFeatureCard);

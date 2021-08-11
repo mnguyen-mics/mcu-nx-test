@@ -81,7 +81,7 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
       },
       hideFolder: false,
       searchOptions: [],
-      isLoadingFinalValues: false
+      isLoadingFinalValues: false,
     };
   }
 
@@ -249,12 +249,7 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
   };
 
   renderSelector = () => {
-    const {
-      intl,
-      hasFeature,
-      datamartId,
-      notifyError
-    } = this.props;
+    const { intl, hasFeature, datamartId, notifyError } = this.props;
     const {
       audienceFeatureFolders,
       selectedAudienceFeature,
@@ -266,7 +261,7 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
       total,
       searchValue,
       searchOptions,
-      isLoadingFinalValues
+      isLoadingFinalValues,
     } = this.state;
     const noData =
       (!audienceFeatureFolders || audienceFeatureFolders.length === 0) &&
@@ -280,15 +275,15 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
 
     const audienceFeatures = currentAudienceFeatures
       ? currentAudienceFeatures.map(feature => {
-        return (
-          <AudienceFeatureCard
-            key={'audience_feature-card-' + feature.id}
-            audienceFeature={feature}
-            selectedAudienceFeature={selectedAudienceFeature}
-            onSelectFeature={this.onSelectFeature}
-          />
-        );
-      })
+          return (
+            <AudienceFeatureCard
+              key={'audience_feature-card-' + feature.id}
+              audienceFeature={feature}
+              selectedAudienceFeature={selectedAudienceFeature}
+              onSelectFeature={this.onSelectFeature}
+            />
+          );
+        })
       : [];
     const pagination: PaginationProps = {
       className: 'ant-table-pagination mini float-right',
@@ -312,29 +307,28 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
 
     const onSearch = (searchText: string) => {
       this.setState({
-        isLoadingFinalValues: true
-      })
-      this._audienceFeatureService.getFinalValues(
-        datamartId,
-        searchText
-
-      ).then(res => {
-        const finalValuesObject = res.data;
-        this.setState({
-          searchOptions: finalValuesObject.values.map(val => {
-            return {
-              value: val
-            }
-          }),
-          isLoadingFinalValues: false
-        });
-      }).catch(error => {
-        notifyError(error);
-        this.setState({
-          searchOptions: [],
-          isLoadingFinalValues: false
+        isLoadingFinalValues: true,
+      });
+      this._audienceFeatureService
+        .getFinalValues(datamartId, searchText)
+        .then(res => {
+          const finalValuesObject = res.data;
+          this.setState({
+            searchOptions: finalValuesObject.values.map(val => {
+              return {
+                value: val,
+              };
+            }),
+            isLoadingFinalValues: false,
+          });
         })
-      })
+        .catch(error => {
+          notifyError(error);
+          this.setState({
+            searchOptions: [],
+            isLoadingFinalValues: false,
+          });
+        });
     };
     const onSelect = (searchText: string) => {
       this.setState({
@@ -350,15 +344,19 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
 
     return (
       <React.Fragment>
-        {hasFeature('audience-feature-search') ? <AutoComplete
-          value={searchValue}
-          options={searchOptions}
-          style={{ width: 400 }}
-          onSelect={onSelect}
-          onSearch={onSearch}
-          placeholder={intl.formatMessage(messages.searchAudienceFeature)}
-          notFoundContent={isLoadingFinalValues && <Spin />}
-        /> : <Search className='mcs-search-input' {...this.getSearchOptions()} />}
+        {hasFeature('audience-feature-search') ? (
+          <AutoComplete
+            value={searchValue}
+            options={searchOptions}
+            style={{ width: 400 }}
+            onSelect={onSelect}
+            onSearch={onSearch}
+            placeholder={intl.formatMessage(messages.searchAudienceFeature)}
+            notFoundContent={isLoadingFinalValues && <Spin />}
+          />
+        ) : (
+          <Search className='mcs-search-input' {...this.getSearchOptions()} />
+        )}
 
         {!searchSettings.keywords && this.getBreadCrumb()}
         <Row gutter={16}>
