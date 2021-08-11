@@ -207,7 +207,6 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
     groupsLocation: 'include' | 'exclude',
   ) => (newGroup: StandardSegmentBuilderParametricPredicateGroupNode) => {
     const { change } = this.props;
-
     change(groupsLocation, groups.concat(newGroup));
   };
 
@@ -217,30 +216,53 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
     const newGroup: StandardSegmentBuilderParametricPredicateGroupNode = {
       expressions: [predicate],
     };
-
     save(newGroup);
   };
 
   private addAudienceFeature = (
     processPredicate: (_: StandardSegmentBuilderParametricPredicateNode) => void,
-  ) => (audienceFeatures: AudienceFeatureResource[]) => {
+  ) => (audienceFeatures: AudienceFeatureResource[], finalValue?: string) => {
     const { closeNextDrawer } = this.props;
 
     const newParametricPredicate = (
       audienceFeature: AudienceFeatureResource,
     ): StandardSegmentBuilderParametricPredicateNode => {
-      const parameters: { [key: string]: string[] | undefined } = {};
 
-      if (audienceFeature.variables) {
-        audienceFeature.variables.forEach(v => {
-          parameters[v.field_name] = undefined;
-        });
+      const generateParameters = () => {
+        let parameters: { [key: string]: string | string[] | number | number[] | undefined } = {};
+
+        if (audienceFeature.variables) {
+          audienceFeature.variables.forEach(v => {
+
+            if (finalValue && v.final_values?.includes(finalValue)) {
+              const insertFinalValue = (typeList: boolean) => {
+                switch (v.type) {
+                  case 'Int':
+                  case 'Float':
+                  case 'ID':
+                    parameters[v.parameter_name] = typeList ? [parseInt(finalValue)] : parseInt(finalValue);
+                    break;
+                  default:
+                    parameters[v.parameter_name] = typeList ? [finalValue] : finalValue;
+                    break;
+                }
+              }
+              if (v.container_type === 'List') {
+                insertFinalValue(true)
+              } else {
+                insertFinalValue(false)
+              }
+            } else {
+              parameters[v.parameter_name] = undefined;
+            }
+          });
+        }
+        return parameters;
       }
-
       return {
         type: 'PARAMETRIC_PREDICATE',
         parametric_predicate_id: audienceFeature.id,
-        parameters: parameters,
+        parameters: generateParameters(),
       };
     };
 
@@ -257,7 +279,7 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
     }
   };
 
-  private selectNewAudienceFeature = (onSelect: (_: AudienceFeatureResource[]) => void) => {
+  private selectNewAudienceFeature = (onSelect: (_: AudienceFeatureResource[], finalValue?: string) => void) => {
     const { openNextDrawer, standardSegmentBuilder } = this.props;
 
     const props: AudienceFeatureSelectorProps = {
@@ -426,9 +448,8 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
               className='mcs-standardSegmentBuilder_liveDashboardContainer'
             >
               <Button
-                className={`mcs-standardSegmentBuilder_sizeButton ${
-                  isDashboardToggled && 'mcs-standardSegmentBuilder_rightChevron'
-                }`}
+                className={`mcs-standardSegmentBuilder_sizeButton ${isDashboardToggled && 'mcs-standardSegmentBuilder_rightChevron'
+                  }`}
                 onClick={this.toggleDashboard}
               >
                 <McsIcon type='chevron-right' />

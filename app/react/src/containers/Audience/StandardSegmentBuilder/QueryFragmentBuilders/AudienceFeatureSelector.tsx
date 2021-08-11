@@ -1,6 +1,6 @@
 import * as React from 'react';
 import _ from 'lodash';
-import { Input, Row, Col, Breadcrumb } from 'antd';
+import { Input, Row, Col, Breadcrumb, AutoComplete, Spin } from 'antd';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { RouteComponentProps } from 'react-router';
@@ -22,12 +22,14 @@ import {
   McsIcon,
   EmptyTableView,
   CollectionView,
+  Loading,
 } from '@mediarithmics-private/mcs-components-library';
 import AudienceFeatureCard from './AudienceFeatureCard';
 import { FolderOutlined } from '@ant-design/icons';
 import { messages } from '../constants';
 import Layout from 'antd/lib/layout/layout';
 import { PaginationProps } from 'antd/lib/pagination';
+import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 
 const Search = Input.Search;
 export interface Filter {
@@ -40,7 +42,7 @@ interface MapStateToProps {
 
 export interface AudienceFeatureSelectorProps {
   datamartId: string;
-  save: (audienceFeatures: AudienceFeatureResource[]) => void;
+  save: (audienceFeatures: AudienceFeatureResource[], finalValue?: string) => void;
   close: () => void;
 }
 
@@ -53,11 +55,15 @@ interface State {
   hideFolder?: boolean;
   searchSettings: AudienceFeatureSearchSettings;
   total?: number;
+  searchValue?: string;
+  searchOptions: Array<{ value: string }>;
+  isLoadingFinalValues: boolean;
 }
 
 type Props = MapStateToProps &
   AudienceFeatureSelectorProps &
   InjectedIntlProps &
+  InjectedFeaturesProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }>;
 
@@ -74,6 +80,8 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
         pageSize: 12,
       },
       hideFolder: false,
+      searchOptions: [],
+      isLoadingFinalValues: false
     };
   }
 
@@ -213,18 +221,18 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
     });
   };
 
-  onSelectFeature = (id: string) => () => {
+  onSelectFeature = (featureId: string, finalValue?: string) => () => {
     const { save } = this.props;
     const { currentAudienceFeatures } = this.state;
     const selectedAudienceFeature = currentAudienceFeatures?.find(
-      audienceFeature => audienceFeature.id === id,
+      audienceFeature => audienceFeature.id === featureId,
     );
     this.setState(
       {
         selectedAudienceFeature,
       },
       () => {
-        if (selectedAudienceFeature) save([selectedAudienceFeature]);
+        if (selectedAudienceFeature) save([selectedAudienceFeature], finalValue);
       },
     );
   };
@@ -242,6 +250,12 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
 
   renderSelector = () => {
     const {
+      intl,
+      hasFeature,
+      datamartId,
+      notifyError
+    } = this.props;
+    const {
       audienceFeatureFolders,
       selectedAudienceFeature,
       currentAudienceFeatures,
@@ -250,26 +264,31 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
       hideFolder,
       isLoading,
       total,
+      searchValue,
+      searchOptions,
+      isLoadingFinalValues
     } = this.state;
-    const disabled =
+    const noData =
       (!audienceFeatureFolders || audienceFeatureFolders.length === 0) &&
       (!currentAudienceFeatures || currentAudienceFeatures.length === 0);
 
-    if (disabled) {
+    if (isLoading) {
+      return <Loading isFullScreen={true} />;
+    } else if (noData) {
       return <EmptyTableView iconType='warning' message={''} />;
     }
 
     const audienceFeatures = currentAudienceFeatures
       ? currentAudienceFeatures.map(feature => {
-          return (
-            <AudienceFeatureCard
-              key={'audience_feature-card-' + feature.id}
-              audienceFeature={feature}
-              selectedAudienceFeature={selectedAudienceFeature}
-              onSelectFeature={this.onSelectFeature}
-            />
-          );
-        })
+        return (
+          <AudienceFeatureCard
+            key={'audience_feature-card-' + feature.id}
+            audienceFeature={feature}
+            selectedAudienceFeature={selectedAudienceFeature}
+            onSelectFeature={this.onSelectFeature}
+          />
+        );
+      })
       : [];
     const pagination: PaginationProps = {
       className: 'ant-table-pagination mini float-right',
@@ -290,9 +309,57 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
           currentPage: 1,
         }),
     };
+
+    const onSearch = (searchText: string) => {
+      this.setState({
+        isLoadingFinalValues: true
+      })
+      this._audienceFeatureService.getFinalValues(
+        datamartId,
+        searchText
+
+      ).then(res => {
+        const finalValuesObject = res.data;
+        this.setState({
+          searchOptions: finalValuesObject.values.map(val => {
+            return {
+              value: val
+            }
+          }),
+          isLoadingFinalValues: false
+        });
+      }).catch(error => {
+        notifyError(error);
+        this.setState({
+          searchOptions: [],
+          isLoadingFinalValues: false
+        })
+      })
+    };
+    const onSelect = (searchText: string) => {
+      this.setState({
+        searchSettings: {
+          ...searchSettings,
+          finalValue: searchText,
+          currentPage: 1,
+        },
+        hideFolder: !!searchText,
+        currentAudienceFeatureFolder: undefined,
+      });
+    };
+
     return (
       <React.Fragment>
-        <Search className='mcs-search-input' {...this.getSearchOptions()} />
+        {hasFeature('audience-feature-search') ? <AutoComplete
+          value={searchValue}
+          options={searchOptions}
+          style={{ width: 400 }}
+          onSelect={onSelect}
+          onSearch={onSearch}
+          placeholder={intl.formatMessage(messages.searchAudienceFeature)}
+          notFoundContent={isLoadingFinalValues && <Spin />}
+        /> : <Search className='mcs-search-input' {...this.getSearchOptions()} />}
+
         {!searchSettings.keywords && this.getBreadCrumb()}
         <Row gutter={16}>
           {!hideFolder &&
@@ -354,5 +421,6 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
 
 export default compose<Props, AudienceFeatureSelectorProps>(
   injectIntl,
+  injectFeatures,
   injectNotifications,
 )(AudienceFeatureSelector);

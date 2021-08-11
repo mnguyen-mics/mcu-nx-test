@@ -7,18 +7,23 @@ import { AudienceFeatureResource } from '../models/audienceFeature';
 import { injectable } from 'inversify';
 import { PaginatedApiParam, getPaginatedApiParam } from '../utils/ApiHelper';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
-
+import { StatusCode } from '@mediarithmics-private/mcs-components-library/lib/utils/ApiResponses';
+export interface ReferenceTableValue {
+  values: string[];
+}
 export interface AudienceFeatureSearchSettings {
   currentPage?: number;
   pageSize?: number;
   keywords?: string;
   exclude?: string[];
+  finalValue?: string;
 }
 
 export interface AudienceFeatureOptions extends PaginatedApiParam {
   keywords?: string[];
   exclude?: string[];
   folder_id?: string;
+  final_value?: string;
 }
 
 export interface IAudienceFeatureService {
@@ -88,6 +93,12 @@ export interface IAudienceFeatureService {
     datamartId: string,
     audienceFeatureId: string,
   ) => Promise<DataResponse<AudienceFeatureSegmentsMappingResource>>;
+
+  getFinalValues: (
+    datamartId: string,
+    runtimeSchemaId: string,
+    options?: { keywords: string }
+  ) => Promise<DataResponse<ReferenceTableValue>>;
 }
 
 @injectable()
@@ -238,6 +249,9 @@ export class AudienceFeatureService implements IAudienceFeatureService {
     } else {
       options.folder_id = folderId ? folderId : 'none';
     }
+    if (filter?.finalValue) {
+      options.final_value = filter.finalValue
+    }
     return options;
   };
 
@@ -248,4 +262,27 @@ export class AudienceFeatureService implements IAudienceFeatureService {
     const endpoint = `datamarts/${datamartId}/audience_features/${audienceFeatureId}/segments_mapping`;
     return ApiService.getRequest(endpoint);
   };
+
+  getFinalValues(
+    datamartId: string,
+    keywords?: string
+  ): Promise<DataResponse<ReferenceTableValue>> {
+    // return ApiService.getRequest(
+    //   `datamarts/${datamartId}/reference_table?keywords=${keywords}`,
+    //   options
+    // );
+
+    let data = ['gardening', 'gaming', 'male', 'female', '15-25', '26-35', '36-45'];
+
+
+    if (keywords) {
+      data = data.filter(elt => elt.includes(keywords));
+    } else data = []
+
+    return Promise.resolve({
+      status: 'ok' as StatusCode,
+      count: data.length,
+      data: { values: data }
+    })
+  }
 }
