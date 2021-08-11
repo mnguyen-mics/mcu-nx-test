@@ -61,7 +61,7 @@ class SiteEditPage extends React.Component<Props, State> {
       loading: true, // default true to avoid render x2 on mounting
       siteData: INITIAL_SITE_FORM_DATA,
       selectedDatamartId:
-        queryString.parse(props.location.search).selectedDatamartId ||
+        (queryString.parse(props.location.search).selectedDatamartId as string) ||
         props.match.params.datamartId,
     };
   }

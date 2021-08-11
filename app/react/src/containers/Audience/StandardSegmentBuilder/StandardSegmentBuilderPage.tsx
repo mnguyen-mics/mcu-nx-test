@@ -73,8 +73,8 @@ class StandardSegmentBuilderPage extends React.Component<Props, State> {
       location: { search },
     } = this.props;
 
-    const standardSegmentBuilderId = queryString.parse(search).standardSegmentBuilderId;
-    const datamartId = queryString.parse(search).datamartId;
+    const standardSegmentBuilderId = queryString.parse(search).standardSegmentBuilderId as string;
+    const datamartId = queryString.parse(search).datamartId as string;
     if (standardSegmentBuilderId) {
       this.setStandardSegmentBuilder(datamartId, standardSegmentBuilderId);
     }
@@ -94,8 +94,8 @@ class StandardSegmentBuilderPage extends React.Component<Props, State> {
       },
       location: { search: prevSearch },
     } = prevProps;
-    const standardSegmentBuilderId = queryString.parse(search).standardSegmentBuilderId;
-    const datamartId = queryString.parse(search).datamartId;
+    const standardSegmentBuilderId = queryString.parse(search).standardSegmentBuilderId as string;
+    const datamartId = queryString.parse(search).datamartId as string;
     const prevStandardSegmentBuilderId = queryString.parse(prevSearch).standardSegmentBuilderId;
     const prevDatamartId = queryString.parse(prevSearch).datamartId;
     if (!standardSegmentBuilderId || !datamartId || organisationId !== prevOrganisationId) {
