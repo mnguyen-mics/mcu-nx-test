@@ -850,6 +850,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
           currentPage: 1,
         }),
       defaultValue: filter.keywords,
+      className: 'mcs-audienceSegmentsTable_search_bar',
     };
 
     const columnsVisibilityOptions = {
