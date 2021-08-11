@@ -110,11 +110,18 @@ class AudienceFeatureFolder extends React.Component<Props, State> {
                 placeholder={intl.formatMessage(messages.audienceFeaturePlaceholderFolderInput)}
               />
 
-              <Button type='primary' onClick={this.renameFolder(folder.id)}>
+              <Button
+                className='mcs-audienceFeatureSettings_renameButton--renameAudienceFeatureFolder'
+                type='primary'
+                onClick={this.renameFolder(folder.id)}
+              >
                 <FormattedMessage {...messages.audienceFeatureRename} />
               </Button>
 
-              <Button onClick={this.cancelEdition}>
+              <Button
+                className='mcs-audienceFeatureSettings_cancelButton--cancelAudienceFeatureFolderEdition'
+                onClick={this.cancelEdition}
+              >
                 <FormattedMessage {...messages.audienceFeatureCancelButton} />
               </Button>
             </div>

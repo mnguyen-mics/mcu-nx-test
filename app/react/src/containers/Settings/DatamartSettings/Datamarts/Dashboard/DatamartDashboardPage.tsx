@@ -189,6 +189,7 @@ class DatamartDashboardPage extends React.Component<Props, State> {
 
     if (hasFeature('audience-dashboards-datamart_users_analytics') && datamart) {
       items.push({
+        className: 'mcs-tabs_tab--statistics',
         title: intl.formatMessage(messages.statistics),
         display: (
           <Content className='mcs-content-container'>
@@ -205,11 +206,13 @@ class DatamartDashboardPage extends React.Component<Props, State> {
 
     if (hasFeature('audience-segment_builder_v2')) {
       items.push({
+        className: 'mcs-tabs_tab--audienceFeatures',
         title: intl.formatMessage(messages.audienceFeatures),
         display: <AudienceFeatureListPage />,
         key: 'audience_features',
       });
       items.push({
+        className: 'mcs-tabs_tab--segmentBuilder',
         title: intl.formatMessage(messages.segmentBuilder),
         display: <SegmentBuildersTab />,
         key: 'segment_builder',

@@ -299,14 +299,17 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
     if (folderHasFeatures) {
       Modal.error({
         className: 'mcs-modal--errorDialog',
+        okButtonProps: { className: 'mcs-audienceFeatureFolderErrorDeletePopUp_ok_button' },
         icon: <CloseCircleOutlined />,
         title: formatMessage(messages.audienceFolderWithFeaturesDeleteListModalTitle),
         content: formatMessage(messages.audienceFolderWithFeaturesDeleteListModalContent),
       });
     } else {
       Modal.confirm({
+        className: 'mcs-audienceFeatureFolderDeletePopup',
         icon: <ExclamationCircleOutlined />,
         title: formatMessage(messages.audienceFolderDeleteListModalTitle),
+        okButtonProps: { className: 'mcs-audienceFeatureFolderDeletePopUp_ok_button' },
         okText: formatMessage(messages.audienceFeatureDeleteListModalOk),
         cancelText: formatMessage(messages.audienceFeatureDeleteListModalCancel),
         onOk: () => {
