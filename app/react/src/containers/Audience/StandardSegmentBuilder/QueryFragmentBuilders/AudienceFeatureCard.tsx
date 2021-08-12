@@ -12,6 +12,7 @@ export interface AudienceFeatureCardProps {
   audienceFeature: AudienceFeatureResource;
   selectedAudienceFeature?: AudienceFeatureResource;
   onSelectFeature: (featureId: string, finalValue?: string) => () => void;
+  searchValue?: string;
 }
 
 type Props = AudienceFeatureCardProps & InjectedIntlProps & InjectedFeaturesProps;
@@ -41,13 +42,14 @@ class AudienceFeatureCard extends React.Component<Props, State> {
       onSelectFeature,
       intl,
       hasFeature,
+      searchValue,
     } = this.props;
     const { cardToggled } = this.state;
     const finalValues = _.flattenDeep(
       audienceFeature.variables?.map(v => {
         return v.final_values;
       }),
-    );
+    ).filter(v => !!v);
     return (
       <div
         className={`${
@@ -95,7 +97,7 @@ class AudienceFeatureCard extends React.Component<Props, State> {
               <div className='mcs-standardSegmentBuilder_featureCardDescritpion'>
                 {audienceFeature.description}
               </div>
-              {hasFeature('audience-feature-search') && (
+              {hasFeature('audience-feature-search') && searchValue && (
                 <div className='mcs-standardSegmentBuilder_featureCardFinalValues'>
                   {audienceFeature.variables &&
                     audienceFeature.variables.map(v => {

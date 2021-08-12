@@ -281,6 +281,7 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
               audienceFeature={feature}
               selectedAudienceFeature={selectedAudienceFeature}
               onSelectFeature={this.onSelectFeature}
+              searchValue={searchValue}
             />
           );
         })
@@ -339,6 +340,7 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
         },
         hideFolder: !!searchText,
         currentAudienceFeatureFolder: undefined,
+        searchValue: searchText,
       });
     };
 
