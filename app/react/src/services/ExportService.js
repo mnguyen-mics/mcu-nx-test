@@ -61,11 +61,13 @@ const s2ab = s => {
 };
 
 function getFromToText(formatMessage, from, to) {
-  return `${formatMessage(exportServiceMessages.from)} ${from
-    .toMoment()
-    .format('YYYY-MM-DD')} ${formatMessage(
-    exportServiceMessages.to,
-  )} ${to.toMoment().format('YYYY-MM-DD')}`
+  if (from.constructor.name === "McsMoment") {
+    from = from.toMoment().format('YYYY-MM-DD')
+  }
+  if (to.constructor.name === "McsMoment") {
+    to = to.toMoment().format('YYYY-MM-DD')
+  }
+  return `${formatMessage(exportServiceMessages.from)} ${from} ${formatMessage(exportServiceMessages.to)} ${to}`
 }
 
 function buildSheet(title, data, headers, filter, formatMessage, otherInfos, otherInfosToDisplay) {
