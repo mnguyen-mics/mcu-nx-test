@@ -336,7 +336,8 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
       this.setState({
         searchSettings: {
           ...searchSettings,
-          finalValue: searchText,
+          finalValues: searchText,
+          keywords: searchText,
           currentPage: 1,
         },
         hideFolder: !!searchText,
@@ -349,7 +350,8 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
       this.setState({
         searchSettings: {
           ...searchSettings,
-          finalValue: this.state.searchValue,
+          finalValues: this.state.searchValue,
+          keywords: this.state.searchValue,
           currentPage: 1,
         },
         hideFolder: !!this.state.searchValue,

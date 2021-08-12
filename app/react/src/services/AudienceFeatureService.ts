@@ -16,14 +16,14 @@ export interface AudienceFeatureSearchSettings {
   pageSize?: number;
   keywords?: string;
   exclude?: string[];
-  finalValue?: string;
+  finalValues?: string;
 }
 
 export interface AudienceFeatureOptions extends PaginatedApiParam {
   keywords?: string[];
   exclude?: string[];
   folder_id?: string;
-  final_value?: string;
+  final_values?: string[];
 }
 
 export interface IAudienceFeatureService {
@@ -249,8 +249,8 @@ export class AudienceFeatureService implements IAudienceFeatureService {
     } else {
       options.folder_id = folderId ? folderId : 'none';
     }
-    if (filter?.finalValue) {
-      options.final_value = filter.finalValue;
+    if (filter?.finalValues) {
+      options.final_values = [filter.finalValues];
     }
     return options;
   };
@@ -268,7 +268,7 @@ export class AudienceFeatureService implements IAudienceFeatureService {
     keywords?: string,
   ): Promise<DataResponse<ReferenceTableValue>> {
     // return ApiService.getRequest(
-    //   `datamarts/${datamartId}/reference_table?keywords=${keywords}`,
+    //   `datamarts/${datamartId}/reference_table_values?keywords=${keywords}`,
     //   options
     // );
 
