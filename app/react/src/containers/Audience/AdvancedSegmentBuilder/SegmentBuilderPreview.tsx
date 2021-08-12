@@ -6,7 +6,7 @@ import { compose } from 'recompose';
 import { Button, Alert } from 'antd';
 import { injectDrawer } from '../../../components/Drawer';
 import { InjectedDrawerProps } from '../../../components/Drawer/injectDrawer';
-import JSONQLBuilderContainer, {
+import AdvancedSegmentBuilderContainer, {
   AdvancedSegmentBuilderContainerProps,
 } from './AdvancedSegmentBuilderContainer';
 import { messages } from './messages';
@@ -112,16 +112,19 @@ class SegmentBuilderPreview extends React.Component<Props> {
         return createActionBar(onSave, onClose, query);
       };
 
-      this.props.openNextDrawer<AdvancedSegmentBuilderContainerProps>(JSONQLBuilderContainer, {
-        additionalProps: {
-          datamartId: this.props.datamartId,
-          renderActionBar: actionbar,
-          editionLayout: true,
-          queryDocument: value ? JSON.parse(value) : undefined,
-          isTrigger: this.props.isTrigger,
-          isEdge: this.props.isEdge,
+      this.props.openNextDrawer<AdvancedSegmentBuilderContainerProps>(
+        AdvancedSegmentBuilderContainer,
+        {
+          additionalProps: {
+            datamartId: this.props.datamartId,
+            renderActionBar: actionbar,
+            editionLayout: true,
+            queryDocument: value ? JSON.parse(value) : undefined,
+            isTrigger: this.props.isTrigger,
+            isEdge: this.props.isEdge,
+          },
         },
-      });
+      );
     }
   };
 

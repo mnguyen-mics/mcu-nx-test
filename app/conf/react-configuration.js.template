@@ -52,6 +52,7 @@
     'funnel-analytics',
     'automations-analytics',
     'audience-segment_builder_v2',
+    'audience-feature-search'
   ];
 
  const gravityFeatures = [

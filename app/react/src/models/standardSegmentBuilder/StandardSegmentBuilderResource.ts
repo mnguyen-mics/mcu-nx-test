@@ -22,7 +22,7 @@ export interface StandardSegmentBuilderParametricPredicateNode {
   type: 'PARAMETRIC_PREDICATE';
   parametric_predicate_id: string;
   parameters: {
-    [key: string]: string[] | string | number | undefined;
+    [key: string]: string[] | string | number | number[] | undefined;
   };
 }
 
