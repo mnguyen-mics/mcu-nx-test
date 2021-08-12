@@ -98,7 +98,7 @@ class Monitoring extends React.Component<Props, State> {
           selectedDatamart,
           identifierType,
           identifierId,
-          queryString.parse(search).compartmentId,
+          queryString.parse(search).compartmentId as string,
         )
         .then(monitoringData => {
           this.setState({
@@ -144,7 +144,7 @@ class Monitoring extends React.Component<Props, State> {
             selectedDatamart,
             identifierType,
             identifierId,
-            queryString.parse(search).compartmentId,
+            queryString.parse(search).compartmentId as string,
           )
           .then(monitoringData => {
             this.setState({

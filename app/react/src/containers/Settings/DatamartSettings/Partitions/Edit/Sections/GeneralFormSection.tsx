@@ -123,8 +123,8 @@ class GeneralFormSection extends React.Component<Props, State> {
           }}
           options={[
             {
-              title: query.type,
-              value: query.type,
+              title: query.type as string,
+              value: query.type as string,
             },
           ]}
           disabled={true}

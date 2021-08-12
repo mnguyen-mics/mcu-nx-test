@@ -61,7 +61,7 @@ class CompartmentEditPage extends React.Component<Props, State> {
       loading: true,
       compartmentFormData: INITIAL_COMPARTMENT_FORM_DATA,
       selectedDatamartId:
-        queryString.parse(props.location.search).selectedDatamartId ||
+        (queryString.parse(props.location.search).selectedDatamartId as string) ||
         props.match.params.datamartId,
     };
   }

@@ -98,7 +98,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
     } = this.props;
     const { currentAudienceFeatureFolder } = this.state;
     const { currentAudienceFeatureFolder: prevAudienceFeatureFolder } = prevState;
-    const keywords = queryString.parse(search).keywords;
+    const keywords = queryString.parse(search).keywords as string;
     const options = this._audienceFeatureService.buildAudienceFeatureOptions(
       {
         ...parseSearch<SearchFilter>(search, AUDIENCE_FEATURE_SEARCH_SETTINGS),
@@ -106,7 +106,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
       },
       currentAudienceFeatureFolder?.id,
     );
-    const prevKeywords = queryString.parse(prevSearch).keywords;
+    const prevKeywords = queryString.parse(prevSearch).keywords as string;
     const prevOptions = this._audienceFeatureService.buildAudienceFeatureOptions(
       {
         ...parseSearch<SearchFilter>(prevSearch, AUDIENCE_FEATURE_SEARCH_SETTINGS),

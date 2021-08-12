@@ -104,7 +104,7 @@ class CompartmentsListPage extends React.Component<Props, CompartmentsListPageSt
     const { filter } = this.state;
 
     if (previousOrganisationId !== organisationId || !compareSearches(search, previousSearch)) {
-      const selectedDatamartId = queryString.parse(search).datamartId || datamart.id;
+      const selectedDatamartId = (queryString.parse(search).datamartId as string) || datamart.id;
 
       this.setState(
         {

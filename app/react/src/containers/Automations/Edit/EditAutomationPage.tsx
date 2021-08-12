@@ -62,7 +62,7 @@ class EditAutomationPage extends React.Component<Props, State> {
       },
       location: { search },
     } = this.props;
-    const datamartId = queryString.parse(search).datamartId;
+    const datamartId = queryString.parse(search).datamartId as string;
 
     if (automationId) {
       this.loadData(automationId);
@@ -90,7 +90,7 @@ class EditAutomationPage extends React.Component<Props, State> {
     if (automationId && automationId !== prevAutomationId) {
       this.loadData(automationId);
     }
-    const datamartId = queryString.parse(search).datamartId;
+    const datamartId = queryString.parse(search).datamartId as string;
     const preDatamartId = queryString.parse(prevSearch).datamartId;
     if (!automationId && automationId !== prevAutomationId && datamartId !== preDatamartId) {
       this.fetchDatamart(datamartId);
