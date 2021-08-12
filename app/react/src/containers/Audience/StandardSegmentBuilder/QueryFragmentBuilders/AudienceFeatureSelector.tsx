@@ -321,6 +321,7 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
               };
             }),
             isLoadingFinalValues: false,
+            searchValue: searchText,
           });
         })
         .catch(error => {
@@ -344,18 +345,38 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
       });
     };
 
+    const onPressEnter = () => {
+      this.setState({
+        searchSettings: {
+          ...searchSettings,
+          finalValue: this.state.searchValue,
+          currentPage: 1,
+        },
+        hideFolder: !!this.state.searchValue,
+        currentAudienceFeatureFolder: undefined,
+        searchValue: this.state.searchValue,
+      });
+    };
+
     return (
       <React.Fragment>
         {hasFeature('audience-feature-search') ? (
           <AutoComplete
             value={searchValue}
             options={searchOptions}
+            dropdownMatchSelectWidth={352}
             style={{ width: 400 }}
             onSelect={onSelect}
             onSearch={onSearch}
-            placeholder={intl.formatMessage(messages.searchAudienceFeature)}
             notFoundContent={isLoadingFinalValues && <Spin />}
-          />
+          >
+            <Input.Search
+              size='large'
+              placeholder={intl.formatMessage(messages.searchAudienceFeature)}
+              onPressEnter={onPressEnter}
+              onSearch={onPressEnter}
+            />
+          </AutoComplete>
         ) : (
           <Search className='mcs-search-input' {...this.getSearchOptions()} />
         )}
