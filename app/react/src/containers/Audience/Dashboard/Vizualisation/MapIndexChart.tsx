@@ -97,7 +97,6 @@ class MapIndexChart extends React.Component<Props, State> {
       datamartId: previousDatamartId,
       data: previousData,
     } = previousProps;
-
     if (
       !_.isEqual(previousSource, source) ||
       queryId !== previousChartQueryId ||
@@ -107,7 +106,7 @@ class MapIndexChart extends React.Component<Props, State> {
       if (data) {
         this.formatOtqlQueryResult(data);
       } else {
-        this.fetchData(queryId, datamartId);
+        this.fetchData(queryId, datamartId, source);
       }
     }
   }
