@@ -193,13 +193,16 @@ class DisplayCampaignActionbar extends React.Component<JoinedProps, DisplayCampa
     return (
       <Actionbar pathItems={breadcrumbPaths}>
         {actionElement}
-        <Button onClick={exportIsRunning ? this.exportIsRunningModal : this.handleRunExport}>
+        <Button
+          onClick={exportIsRunning ? this.exportIsRunningModal : this.handleRunExport}
+          className='mcs-displayCampaign_actionBar_export'
+        >
           <McsIcon type='download' />
           <FormattedMessage id='display.campaign.actionbar.exportButton' defaultMessage='Export' />
         </Button>
 
         {campaign && campaign.model_version !== 'V2014_06' && (
-          <Button onClick={this.editCampaign}>
+          <Button onClick={this.editCampaign} className='mcs-displayCampaign_actionBar_edit'>
             <McsIcon type='pen' />
             <FormattedMessage {...messages.editCampaign} />
           </Button>
@@ -226,13 +229,21 @@ class DisplayCampaignActionbar extends React.Component<JoinedProps, DisplayCampa
         : null;
 
     const activeCampaignElement = (
-      <Button className='mcs-primary' type='primary' onClick={onClickElement('ACTIVE')}>
+      <Button
+        className='mcs-primary mcs-displayCampaign_actionBar_activate'
+        type='primary'
+        onClick={onClickElement('ACTIVE')}
+      >
         <McsIcon type='play' />
         <FormattedMessage {...messages.activateCampaign} />
       </Button>
     );
     const pauseCampaignElement = (
-      <Button className='mcs-primary' type='primary' onClick={onClickElement('PAUSED')}>
+      <Button
+        className='mcs-primary mcs-displayCampaign_actionBar_pause'
+        type='primary'
+        onClick={onClickElement('PAUSED')}
+      >
         <McsIcon type='pause' />
         <FormattedMessage {...messages.pauseCampaign} />
       </Button>
