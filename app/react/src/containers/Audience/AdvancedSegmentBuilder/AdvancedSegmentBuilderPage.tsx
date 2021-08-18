@@ -5,7 +5,10 @@ import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'recompose';
 import { UserQuerySegment } from '../../../models/audiencesegment/AudienceSegmentResource';
-import { DatamartResource } from '../../../models/datamart/DatamartResource';
+import {
+  DatamartResource,
+  QueryTranslationRequest,
+} from '../../../models/datamart/DatamartResource';
 import { QueryDocument } from '../../../models/datamart/graphdb/QueryDocument';
 import { DatamartSelector } from '../../Datamart';
 import injectNotifications, {
@@ -150,15 +153,12 @@ class AdvancedSegmentBuilderPage extends React.Component<Props> {
       };
 
       const convert2Otql = () => {
-        return this._queryService
-          .createQuery(datamartId, {
-            query_language: 'JSON_OTQL',
-            query_text: JSON.stringify(query),
-          })
-          .then(d => d.data)
-          .then(d => {
-            return this._queryService.convertJsonOtql2Otql(datamartId, d);
-          });
+        const queryTranslationRequest: QueryTranslationRequest = {
+          input_query_language: 'JSON_OTQL',
+          input_query_text: JSON.stringify(query),
+          output_query_language: 'OTQL',
+        };
+        return this._queryService.translateQuery(datamartId, queryTranslationRequest);
       };
 
       return (

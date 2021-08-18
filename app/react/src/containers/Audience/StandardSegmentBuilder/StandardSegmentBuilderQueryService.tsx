@@ -10,7 +10,7 @@ import {
   StandardSegmentBuilderParametricPredicateGroupNode,
   isStandardSegmentBuilderParametricPredicateNode,
 } from '../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
-import { QueryResource } from '../../../models/datamart/DatamartResource';
+import { QueryTranslationRequest } from '../../../models/datamart/DatamartResource';
 
 export interface IStandardSegmentBuilderQueryService {
   buildQueryDocument: (
@@ -88,19 +88,17 @@ export class StandardSegmentBuilderQueryService implements IStandardSegmentBuild
     success: (result: OTQLResult) => void,
     failure: (err: any) => void,
   ) => {
-    // TODO Make conversion without need of existing query resource. convertJsonOtql2Otql doens't check id anyway.
-    const queryResource: QueryResource = {
-      id: '123',
-      datamart_id: datamartId,
-      query_language: 'JSON_OTQL',
-      query_language_subtype: 'PARAMETRIC',
+    const queryTranslationRequest: QueryTranslationRequest = {
+      input_query_language: 'JSON_OTQL',
+      input_query_language_subtype: 'PARAMETRIC',
       // TODO StandardSegmentBuilderQueryDocument and QueryDocument could inherit from the same abstraction.
-      query_text: JSON.stringify(queryDocument),
+      input_query_text: JSON.stringify(queryDocument),
+      output_query_language: 'OTQL',
     };
 
     this._queryService
-      .convertJsonOtql2Otql(datamartId, queryResource)
-      .then(otqlQ => otqlQ.data.query_text)
+      .translateQuery(datamartId, queryTranslationRequest)
+      .then(otqlQ => otqlQ.data.output_query_text)
       .then(queryText => {
         this._queryService
           .runOTQLQuery(datamartId, queryText)
