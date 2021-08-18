@@ -7,7 +7,7 @@ import { compose } from 'recompose';
 import { injectDrawer } from '../../../../components/Drawer/index';
 import { EventRuleFieldModel } from './domain';
 import FormSection from '../../../../components/Form/FormSection';
-import RelatedRecords from '../../../../components/RelatedRecord/RelatedRecords';
+import { RelatedRecords } from '@mediarithmics-private/mcs-components-library';
 import RecordElement from '../../../../components/RelatedRecord/RecordElement';
 
 import { ReduxFormChangeProps } from '../../../../utils/FormHelper';

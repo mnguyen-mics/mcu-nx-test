@@ -25,11 +25,10 @@ import {
   isDisplayAdResource,
 } from '../../../../../Creative/DisplayAds/Edit/domain';
 import { computeDimensionsByRatio } from '../../../../../../utils/ShapeHelper';
-import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { Button, McsIcon, EmptyRecords } from '@mediarithmics-private/mcs-components-library';
 import AuditStatusRenderer from '../../../../../Creative/DisplayAds/Audit/AuditStatusRenderer';
 import CreativeCard from '../../../../Common/CreativeCard';
 import FormSection from '../../../../../../components/Form/FormSection';
-import EmptyRecords from '../../../../../../components/RelatedRecord/EmptyRecords';
 import { makeCancelable, CancelablePromise } from '../../../../../../utils/ApiHelper';
 import { InjectedDrawerProps } from '../../../../../../components/Drawer/injectDrawer';
 import { lazyInject } from '../../../../../../config/inversify.config';
