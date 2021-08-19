@@ -31,7 +31,7 @@ export interface OTQLMetric {
 
 export interface OTQLBuckets {
   name: string;
-  fieldName: string;
+  field_name: string;
   path: string | null;
   type: string;
   buckets: OTQLBucket[];
