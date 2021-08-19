@@ -317,7 +317,7 @@ class AutomationBuilderPage extends React.Component<Props, State> {
       pathItems: [
         <span className='mcs-pathItem' key='1'>
           {intl.formatMessage(messages.automationBuilder)}
-          <MentionTag className='mcs-pathItem_mentionTag' mention='ALPHA' />
+          <MentionTag className='mcs-pathItem_mentionTag' mention='BETA' />
         </span>,
       ],
     };
