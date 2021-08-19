@@ -65,7 +65,7 @@ const automationsMenuDefinition: NavigatorMenuDefinition = {
   iconType: 'automation',
   translation: messages.automationTitle,
   type: 'multi',
-  mention: 'ALPHA',
+  mention: 'BETA',
   subMenuItems: [
     {
       ...generateMissingdefinitionItemFromRoute(automationDefinition.automationsList),

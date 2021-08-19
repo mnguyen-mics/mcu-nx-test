@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { submit as rxfSubmit, getFormValues } from 'redux-form';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { messages, AutomationBuilderPageRouteParams } from '../AutomationBuilderPage';
-import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, McsIcon, MentionTag } from '@mediarithmics-private/mcs-components-library';
 import { Button } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import AutomationSimpleForm, { FORM_ID, AutomationSimpleFormData } from './AutomationSimpleForm';
@@ -105,9 +105,12 @@ class AutomationActionBar extends React.Component<Props, State> {
       <Actionbar
         pathItems={[
           intl.formatMessage(messages.automationBuilder),
-          automationData && automationData.automation && automationData.automation.name
-            ? automationData.automation.name
-            : intl.formatMessage(messages.newAutomation),
+          <span className='mcs-pathItem' key='automationNameBreadcrumb'>
+            {automationData && automationData.automation && automationData.automation.name
+              ? automationData.automation.name
+              : intl.formatMessage(messages.newAutomation)}
+            <MentionTag className='mcs-pathItem_mentionTag' mention='BETA' />
+          </span>,
         ]}
       >
         <Button className='mcs-primary' type='primary' onClick={this.onClick}>

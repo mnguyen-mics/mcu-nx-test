@@ -2,7 +2,12 @@ import React from 'react';
 import { Button } from 'antd';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
-import { Actionbar, McsIcon, Slide } from '@mediarithmics-private/mcs-components-library';
+import {
+  Actionbar,
+  McsIcon,
+  MentionTag,
+  Slide,
+} from '@mediarithmics-private/mcs-components-library';
 import { compose } from 'recompose';
 import Menu from 'antd/lib/menu';
 import { AutomationStatus } from '../../../models/automations/automations';
@@ -83,9 +88,12 @@ class AutomationActionBar extends React.Component<JoinedProps, AutomationActionb
     } = this.props;
 
     const breadcrumbPaths = [
-      <Link key='1' to={`/v2/o/${organisationId}/automations`}>
-        {intl.formatMessage(messages.automationListTitle)}
-      </Link>,
+      <span className='mcs-pathItem' key='automationListBreadcrumb'>
+        <Link key='1' to={`/v2/o/${organisationId}/automations`}>
+          {intl.formatMessage(messages.automationListTitle)}
+        </Link>
+        <MentionTag className='mcs-pathItem_mentionTag' mention='BETA' />
+      </span>,
     ];
 
     const buildActionElement = () => {
