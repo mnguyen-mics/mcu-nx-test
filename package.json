@@ -9,10 +9,10 @@
     "start": "npm run start:local",
     "prettier-check": "prettier -c .",
     "prettier-fix": "prettier -w .",
-    "start:local": "cross-env NODE_ENV=local API_ENV=local BABEL_ENV=dev NODE_OPTIONS=--max_old_space_size=4000 webpack-dev-server --config webpack.dev.js",
-    "start:prod": "cross-env NODE_ENV=local API_ENV=prod BABEL_ENV=dev NODE_OPTIONS=--max_old_space_size=4000 webpack-dev-server --config webpack.dev.js",
-    "start:vp": "cross-env VP_NAME=$VP_NAME NODE_ENV=local API_ENV=vp BABEL_ENV=test NODE_OPTIONS=--max_old_space_size=4000 webpack-dev-server --config webpack.dev.js",
-    "build": "cross-env NODE_ENV=production BABEL_ENV=production NODE_OPTIONS=--max_old_space_size=4000 webpack --config webpack.prod.js && cd dist && zip -r navigator.zip . && mv navigator.zip ./.. && cd ..",
+    "start:local": "cross-env NODE_ENV=local API_ENV=local BABEL_ENV=dev NODE_OPTIONS=--max_old_space_size=8192 webpack-dev-server --config webpack.dev.js",
+    "start:prod": "cross-env NODE_ENV=local API_ENV=prod BABEL_ENV=dev NODE_OPTIONS=--max_old_space_size=8192 webpack-dev-server --config webpack.dev.js",
+    "start:vp": "cross-env VP_NAME=$VP_NAME NODE_ENV=local API_ENV=vp BABEL_ENV=test NODE_OPTIONS=--max_old_space_size=8192 webpack-dev-server --config webpack.dev.js",
+    "build": "cross-env NODE_ENV=production BABEL_ENV=production NODE_OPTIONS=--max_old_space_size=8192 webpack --config webpack.prod.js && cd dist && zip -r navigator.zip . && mv navigator.zip ./.. && cd ..",
     "translation-file": "npm run build && node scripts/translate.js"
   },
   "dependencies": {
@@ -50,7 +50,7 @@
     "react-dimensions": "^1.3.1",
     "react-dnd": "^5.0.0",
     "react-dnd-html5-backend": "^5.0.1",
-    "react-dom": "^16.6.3",
+    "react-dom": "16.13.1",
     "react-grid-layout": "^1.2.0",
     "react-hot-loader": "^4.13.0",
     "react-intl": "^2.7.2",
