@@ -232,7 +232,7 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
 
         if (audienceFeature.variables) {
           audienceFeature.variables.forEach(v => {
-            if (finalValue && v.final_values?.includes(finalValue)) {
+            if (finalValue && v.values?.includes(finalValue)) {
               const insertFinalValue = (typeList: boolean) => {
                 switch (v.type) {
                   case 'Int':

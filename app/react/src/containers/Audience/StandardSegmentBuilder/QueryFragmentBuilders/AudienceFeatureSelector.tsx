@@ -309,20 +309,22 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
     const onSearch = (searchText: string) => {
       this.setState({
         isLoadingFinalValues: true,
+        searchValue: searchText,
       });
       this._audienceFeatureService
         .getFinalValues(datamartId, searchText)
         .then(res => {
           const finalValuesObject = res.data;
-          this.setState({
-            searchOptions: finalValuesObject.values.map(val => {
-              return {
-                value: val,
-              };
-            }),
-            isLoadingFinalValues: false,
-            searchValue: searchText,
-          });
+          const { searchValue } = this.state;
+          if (searchValue == searchText)
+            this.setState({
+              searchOptions: finalValuesObject.values.map(val => {
+                return {
+                  value: val,
+                };
+              }),
+              isLoadingFinalValues: false,
+            });
         })
         .catch(error => {
           notifyError(error);
@@ -342,7 +344,6 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
         },
         hideFolder: !!searchText,
         currentAudienceFeatureFolder: undefined,
-        searchValue: searchText,
       });
     };
 
