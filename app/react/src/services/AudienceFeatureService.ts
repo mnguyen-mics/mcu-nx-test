@@ -267,7 +267,7 @@ export class AudienceFeatureService implements IAudienceFeatureService {
     keywords?: string,
   ): Promise<DataResponse<ReferenceTableValue>> {
     return ApiService.getRequest(
-      `datamarts/${datamartId}/reference_table_values?keywords=${keywords}`
+      `datamarts/${datamartId}/reference_table_values?keywords=${keywords}`,
     );
   }
 }

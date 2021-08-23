@@ -103,16 +103,15 @@ class AudienceFeatureCard extends React.Component<Props, State> {
                     audienceFeature.variables.map(v => {
                       return v.values?.map((value, index, values) => {
                         return (
-                          <span>
+                          <React.Fragment key={value}>
                             <span
-                              key={value}
                               onClick={onSelectFeature(audienceFeature.id, value)}
                               className='mcs-standardSegmentBuilder_featureCardFinalValue'
                             >
                               {index === values.length - 1 ? value : `${value}`}
                             </span>
                             {', '}
-                          </span>
+                          </React.Fragment>
                         );
                       });
                     })}
