@@ -91,14 +91,17 @@ class AggregationRenderer extends React.Component<Props, State> {
     });
   };
 
-  formatDataset(buckets: OTQLBucket[]): Dataset | undefined {
+  formatDataset(buckets: OTQLBucket[], limit: number): Dataset | undefined {
     if (!buckets || buckets.length === 0) return undefined;
     else {
       const dataset: any = buckets.map(buck => {
         return {
           key: buck.key,
           count: buck.count,
-          buckets: this.formatDataset(buck.aggregations?.buckets[0].buckets || []),
+          buckets: this.formatDataset(
+            buck.aggregations?.buckets[0].buckets.slice(0, limit) || [],
+            limit,
+          ),
         };
       });
       return dataset;
@@ -107,7 +110,7 @@ class AggregationRenderer extends React.Component<Props, State> {
 
   getBuckets = (buckets: OTQLBuckets) => {
     const { hasFeature } = this.props;
-    const { numberItems, selectedChart } = this.state;
+    const { numberItems, selectedChart, aggregationsPath } = this.state;
     if (buckets.buckets.length === 0)
       return (
         <FormattedMessage
@@ -157,7 +160,10 @@ class AggregationRenderer extends React.Component<Props, State> {
         else this.setState({ numberItems: parseInt(e.target.value, 10) });
       };
       const currentBuckets = buckets.buckets.slice(0, numberItems);
-      const stackedBarChartDataset: Dataset = this.formatDataset(currentBuckets) as Dataset;
+      const stackedBarChartDataset: Dataset = this.formatDataset(
+        currentBuckets,
+        this.state.numberItems,
+      ) as Dataset;
       const xAxis = currentBuckets.map(bucket => bucket.key);
       const values = currentBuckets.map(bucket => bucket.count);
 
@@ -277,7 +283,13 @@ class AggregationRenderer extends React.Component<Props, State> {
           display: (
             <div className='mcs-otqlChart_container'>
               <div className='mcs-otqlChart_container--inner'>
-                <div className='mcs-otqlChart_radar'>
+                <div
+                  className={
+                    aggregationsPath.length === 0
+                      ? 'mcs-otqlChart_radar'
+                      : 'mcs-otqlChart_radar--aggregations'
+                  }
+                >
                   <Select
                     className={'otqlChart_radar_selector'}
                     defaultValue={'RADAR'}
@@ -289,7 +301,13 @@ class AggregationRenderer extends React.Component<Props, State> {
                   </Select>
                 </div>
 
-                <div className='mcs-otqlChart_items'>
+                <div
+                  className={
+                    aggregationsPath.length === 0
+                      ? 'mcs-otqlChart_items'
+                      : 'mcs-otqlChart_items--aggregations'
+                  }
+                >
                   Show top{' '}
                   <Input
                     type='number'
@@ -302,7 +320,7 @@ class AggregationRenderer extends React.Component<Props, State> {
                 {selectedChart === 'RADAR' && <RadarChart options={options} />}
                 {selectedChart === 'BAR' && (
                   <StackedBarChart
-                    dataset={stackedBarChartDataset}
+                    dataset={stackedBarChartDataset ? stackedBarChartDataset : []}
                     enableDrilldown={true}
                     options={optionsForBarChart}
                     reducePadding={true}
@@ -395,7 +413,7 @@ class AggregationRenderer extends React.Component<Props, State> {
         </Breadcrumb.Item>
         {aggregationsPath.map((path, index) => {
           const isLast = index === aggregationsPath.length - 1;
-          const pathToStr = `${path.aggregationBucket.fieldName} @${path.aggregationBucket.type} { ${path.bucket.key} }`;
+          const pathToStr = `${path.aggregationBucket.field_name} @${path.aggregationBucket.type} { ${path.bucket.key} }`;
           const goToPath = () => {
             this.setState({
               aggregationsPath: aggregationsPath.slice(0, index + 1),
@@ -451,7 +469,7 @@ class AggregationRenderer extends React.Component<Props, State> {
                       <Select.Option
                         key={index.toString()}
                         value={index.toString()}
-                      >{`${bucket.fieldName} @${bucket.type}`}</Select.Option>
+                      >{`${bucket.field_name} @${bucket.type}`}</Select.Option>
                     ))}
                   </Select.OptGroup>
                 )}
