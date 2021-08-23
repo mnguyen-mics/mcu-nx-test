@@ -47,7 +47,7 @@ class AudienceFeatureCard extends React.Component<Props, State> {
     const { cardToggled } = this.state;
     const finalValues = _.flattenDeep(
       audienceFeature.variables?.map(v => {
-        return v.final_values;
+        return v.values;
       }),
     ).filter(v => !!v);
     return (
@@ -101,11 +101,17 @@ class AudienceFeatureCard extends React.Component<Props, State> {
                 <div className='mcs-standardSegmentBuilder_featureCardFinalValues'>
                   {audienceFeature.variables &&
                     audienceFeature.variables.map(v => {
-                      return v.final_values?.map((value, index, values) => {
+                      return v.values?.map((value, index, values) => {
                         return (
-                          <span key={value} onClick={onSelectFeature(audienceFeature.id, value)}>
-                            {index === values.length - 1 ? value : `${value}, `}
-                          </span>
+                          <React.Fragment key={value}>
+                            <span
+                              onClick={onSelectFeature(audienceFeature.id, value)}
+                              className='mcs-standardSegmentBuilder_featureCardFinalValue'
+                            >
+                              {index === values.length - 1 ? value : `${value}`}
+                            </span>
+                            {', '}
+                          </React.Fragment>
                         );
                       });
                     })}

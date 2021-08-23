@@ -104,13 +104,23 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
         searchSettings,
         currentAudienceFeatureFolder?.id,
       );
-      this._audienceFeatureService.getAudienceFeatures(datamartId, options).then(response =>
-        this.setState({
-          isLoading: false,
-          currentAudienceFeatures: response.data,
-          total: response.total,
-        }),
-      );
+      this._audienceFeatureService
+        .getAudienceFeatures(datamartId, options)
+        .then(response =>
+          this.setState({
+            isLoading: false,
+            currentAudienceFeatures: response.data,
+            total: response.total,
+          }),
+        )
+        .catch(err => {
+          this.setState({
+            isLoading: false,
+            currentAudienceFeatures: [],
+            total: 0,
+            audienceFeatureFolders: [],
+          });
+        });
     }
   }
 
@@ -270,7 +280,7 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
     if (isLoading) {
       return <Loading isFullScreen={true} />;
     } else if (noData) {
-      return <EmptyTableView iconType='warning' message={''} />;
+      return <EmptyTableView iconType='warning' message={intl.formatMessage(messages.noData)} />;
     }
 
     const audienceFeatures = currentAudienceFeatures
@@ -309,20 +319,21 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
     const onSearch = (searchText: string) => {
       this.setState({
         isLoadingFinalValues: true,
+        searchValue: searchText,
       });
       this._audienceFeatureService
         .getFinalValues(datamartId, searchText)
         .then(res => {
           const finalValuesObject = res.data;
-          this.setState({
-            searchOptions: finalValuesObject.values.map(val => {
-              return {
-                value: val,
-              };
-            }),
-            isLoadingFinalValues: false,
-            searchValue: searchText,
-          });
+          if (searchValue === searchText)
+            this.setState({
+              searchOptions: finalValuesObject.values.map(val => {
+                return {
+                  value: val,
+                };
+              }),
+              isLoadingFinalValues: false,
+            });
         })
         .catch(error => {
           notifyError(error);
@@ -342,7 +353,6 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
         },
         hideFolder: !!searchText,
         currentAudienceFeatureFolder: undefined,
-        searchValue: searchText,
       });
     };
 

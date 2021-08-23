@@ -24,7 +24,7 @@ export interface AudienceFeatureVariableResource {
   parameter_name: string;
   path: string[];
   type: AudienceFeatureType;
-  final_values?: string[];
+  values?: string[];
   data_type?: string;
   reference_type?: string;
   container_type?: string;

@@ -132,6 +132,10 @@ export const messages: {
     id: 'standardSegmentBuilder.timeline.addCriteria',
     defaultMessage: 'add criteria',
   },
+  noData: {
+    id: 'standardSegmentBuilder.audienceFeatureSelector.noData',
+    defaultMessage: 'No data',
+  },
 });
 
 export const fieldGridConfig = {

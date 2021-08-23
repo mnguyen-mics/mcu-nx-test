@@ -7,7 +7,6 @@ import { AudienceFeatureResource } from '../models/audienceFeature';
 import { injectable } from 'inversify';
 import { PaginatedApiParam, getPaginatedApiParam } from '../utils/ApiHelper';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
-import { StatusCode } from '@mediarithmics-private/mcs-components-library/lib/utils/ApiResponses';
 export interface ReferenceTableValue {
   values: string[];
 }
@@ -23,7 +22,7 @@ export interface AudienceFeatureOptions extends PaginatedApiParam {
   keywords?: string[];
   exclude?: string[];
   folder_id?: string;
-  final_values?: string[];
+  values?: string[];
 }
 
 export interface IAudienceFeatureService {
@@ -250,7 +249,7 @@ export class AudienceFeatureService implements IAudienceFeatureService {
       options.folder_id = folderId ? folderId : 'none';
     }
     if (filter?.finalValues) {
-      options.final_values = [filter.finalValues];
+      options.values = [filter.finalValues];
     }
     return options;
   };
@@ -267,21 +266,8 @@ export class AudienceFeatureService implements IAudienceFeatureService {
     datamartId: string,
     keywords?: string,
   ): Promise<DataResponse<ReferenceTableValue>> {
-    // return ApiService.getRequest(
-    //   `datamarts/${datamartId}/reference_table_values?keywords=${keywords}`,
-    //   options
-    // );
-
-    let data = ['gardening', 'gaming', 'male', 'female', '15-25', '26-35', '36-45'];
-
-    if (keywords) {
-      data = data.filter(elt => elt.includes(keywords));
-    } else data = [];
-
-    return Promise.resolve({
-      status: 'ok' as StatusCode,
-      count: data.length,
-      data: { values: data },
-    });
+    return ApiService.getRequest(
+      `datamarts/${datamartId}/reference_table_values?keywords=${keywords}`,
+    );
   }
 }
