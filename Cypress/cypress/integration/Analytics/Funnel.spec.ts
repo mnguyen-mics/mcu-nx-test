@@ -171,17 +171,17 @@ describe('Should test the funnel', () => {
       cy.get('.mcs-funnelQueryBuilder_addStepBtn').click();
       cy.get('.mcs-funnelQueryBuilder_addStepBtn').click();
       cy.get('.mcs-funnelQueryBuilder_select--dimensions').first().click();
-      cy.get('.mcs-funnelQueryBuilder_select--dimensions--DATE_TIME').click();
+      cy.get('.mcs-funnelQueryBuilder_select--dimensions--TYPE').click();
       cy.get('.mcs-funnelQueryBuilder_select--dimensions')
         .first()
-        .should('contain', 'Activity Date');
+        .should('contain', 'Activity Type');
       cy.get('.mcs-funnelQueryBuilder_sortBtn').first().click();
       cy.get('.mcs-funnelQueryBuilder_sortBtn').eq(2).click();
       cy.get('.mcs-funnelQueryBuilder_sortBtn').eq(3).click();
       cy.get('.mcs-funnelQueryBuilder_sortBtn').eq(1).click();
       cy.get('.mcs-funnelQueryBuilder_select--dimensions')
         .first()
-        .should('contain', 'Activity Date');
+        .should('contain', 'Activity Type');
     });
   });
 

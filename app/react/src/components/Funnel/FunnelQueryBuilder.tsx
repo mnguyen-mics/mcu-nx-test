@@ -173,7 +173,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
               operator: 'OR',
               filters: [
                 {
-                  dimension_name: 'DATE_TIME',
+                  dimension_name: 'TYPE',
                   not: false,
                   operator: 'EXACT' as DimensionFilterOperator,
                   expressions: [],
@@ -244,7 +244,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
         step.filter_clause.operator = 'AND';
         step.filter_clause.filters.push({
           id: this._cuid(),
-          dimension_name: 'DATE_TIME',
+          dimension_name: 'TYPE',
           not: false,
           operator: 'EXACT' as DimensionFilterOperator,
           expressions: [],
