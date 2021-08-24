@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Modal } from 'antd';
 import _ from 'lodash';
 import { compose } from 'recompose';
 import queryString from 'query-string';
@@ -26,11 +27,16 @@ import { IAudienceSegmentService } from '../../../services/AudienceSegmentServic
 import { withRouter, RouteComponentProps } from 'react-router';
 import { NewUserQuerySimpleFormData } from '../../QueryTool/SaveAs/NewUserQuerySegmentSimpleForm';
 import StandardSegmentBuilderActionbar from './StandardSegmentBuilderActionbar';
-import { calculateDefaultTtl } from '../Segments/Edit/domain';
+import {
+  AudienceSegmentFormData,
+  calculateDefaultTtl,
+  checkProcessingsAndSave,
+  generateProcessingSelectionsTasks,
+} from '../Segments/Edit/domain';
 import { InjectedWorkspaceProps, injectWorkspace } from '../../Datamart';
 import { AudienceFeatureResource } from '../../../models/audienceFeature';
-import { notifyError } from '../../../redux/Notifications/actions';
 import { ITagService } from '../../../services/TagService';
+import { IAudienceSegmentFormService } from '../Segments/Edit/AudienceSegmentFormService';
 
 interface State {
   selectedStandardSegmentBuilder?: StandardSegmentBuilderResource;
@@ -49,6 +55,9 @@ class StandardSegmentBuilderPage extends React.Component<Props, State> {
 
   @lazyInject(TYPES.IAudienceSegmentService)
   private _audienceSegmentService: IAudienceSegmentService;
+
+  @lazyInject(TYPES.IAudienceSegmentFormService)
+  private _audienceSegmentFormService: IAudienceSegmentFormService;
 
   @lazyInject(TYPES.IQueryService)
   private _queryService: IQueryService;
@@ -165,7 +174,7 @@ class StandardSegmentBuilderPage extends React.Component<Props, State> {
               formData: INITIAL_STANDARD_SEGMENT_BUILDER_FORM_DATA,
               isLoading: false,
             });
-            notifyError(err);
+            this.props.notifyError(err);
           });
       })
       .catch(error => {
@@ -175,15 +184,18 @@ class StandardSegmentBuilderPage extends React.Component<Props, State> {
         this.props.notifyError(error);
       });
   };
-
   standardSegmentBuilderActionbar = (
     query: StandardSegmentBuilderQueryDocument,
     datamartId: string,
   ) => {
-    const { match, history } = this.props;
+    const { match, history, intl, notifyError } = this.props;
     const { selectedStandardSegmentBuilder } = this.state;
-    const saveAudience = (userQueryFormData: NewUserQuerySimpleFormData) => {
-      const { name, technical_name, persisted } = userQueryFormData;
+    const saveAudienceSegment = (audienceSegmentFormData: AudienceSegmentFormData) => {
+      const {
+        audienceSegment: { name, technical_name, persisted },
+        defaultLifetime,
+        defaultLifetimeUnit,
+      } = audienceSegmentFormData;
 
       return this._queryService
         .createQuery(datamartId, {
@@ -198,7 +210,10 @@ class StandardSegmentBuilderPage extends React.Component<Props, State> {
             name,
             technical_name,
             persisted,
-            default_ttl: calculateDefaultTtl(userQueryFormData),
+            default_ttl: calculateDefaultTtl({
+              defaultLifetimeUnit: defaultLifetimeUnit,
+              defaultLifetime: defaultLifetime,
+            }),
             query_id: res.data.id,
             segment_editor: 'AUDIENCE_BUILDER',
             audience_builder_id: selectedStandardSegmentBuilder?.id,
@@ -208,15 +223,44 @@ class StandardSegmentBuilderPage extends React.Component<Props, State> {
             userQuerySegment,
           );
         })
+        .then(response => {
+          if (!!response) {
+            Promise.all([
+              ...generateProcessingSelectionsTasks(
+                response.data.id,
+                audienceSegmentFormData,
+                this._audienceSegmentFormService,
+              ),
+            ]);
+          }
+          return response;
+        })
         .then(res => {
           this._tagService.sendEvent('create_segment', 'Segment Builder', 'Save Segment');
           history.push(`/v2/o/${match.params.organisationId}/audience/segments/${res.data.id}`);
+        })
+        .catch(err => {
+          Modal.destroyAll();
+          notifyError(err);
         });
+    };
+
+    const onSubmit = (userQueryFormData: NewUserQuerySimpleFormData) => {
+      const { name, technical_name, persisted, ...rest } = userQueryFormData;
+      const audienceSegmentFormData: AudienceSegmentFormData = {
+        audienceSegment: {
+          name: name,
+          technical_name: technical_name,
+          persisted: persisted,
+        },
+        ...rest,
+      };
+      checkProcessingsAndSave(audienceSegmentFormData, saveAudienceSegment, intl);
     };
 
     return (
       <StandardSegmentBuilderActionbar
-        save={saveAudience}
+        save={onSubmit}
         standardSegmentBuilder={selectedStandardSegmentBuilder}
       />
     );
