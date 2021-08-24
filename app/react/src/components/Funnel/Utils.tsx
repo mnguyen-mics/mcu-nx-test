@@ -72,7 +72,7 @@ export const getDefaultStep = () => {
     name: 'Step 1',
     max_days_after_previous_step: 0,
     filter_clause: {
-      operator: 'OR' as BooleanOperator,
+      operator: 'AND' as BooleanOperator,
       filters: [
         {
           dimension_name: 'DATE_TIME',
