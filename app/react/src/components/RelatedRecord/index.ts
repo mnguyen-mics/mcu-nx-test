@@ -1,5 +1,4 @@
 import RecordElement from './RecordElement';
-import RelatedRecords from './RelatedRecords';
-import EmptyRecords from './EmptyRecords';
+import { RelatedRecords, EmptyRecords } from '@mediarithmics-private/mcs-components-library';
 
 export { RecordElement, RelatedRecords, EmptyRecords };

@@ -13,13 +13,18 @@ import injectNotifications, {
 import { UserWorkspaceResource } from '../../../models/directory/UserProfileResource';
 import { DatamartSelector } from '../../Datamart';
 import { Cookies } from '../../../models/timeline/timeline';
-import ErrorBoundary from '../../../components/ErrorBoundary';
+import { ErrorBoundary } from '@mediarithmics-private/mcs-components-library';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
+import { notifyError } from '../../../redux/Notifications/actions';
 
 const messages = defineMessages({
   selectMonitoringDatamart: {
     id: 'audience.monitoring.select.datamart.breadcrumb.title',
     defaultMessage: 'Select Monitoring Datamart',
+  },
+  errorBoundaryMessage: {
+    id: 'audience.monitoring.errorBoundary.hasError',
+    defaultMessage: 'Something went wrong',
   },
 });
 
@@ -114,7 +119,10 @@ class TimelinePage extends React.Component<JoinedProps> {
     }
 
     return selectedDatamart ? (
-      <ErrorBoundary>
+      <ErrorBoundary
+        errorMessage={intl.formatMessage(messages.errorBoundaryMessage)}
+        onError={notifyError}
+      >
         <Monitoring selectedDatamart={selectedDatamart} />
       </ErrorBoundary>
     ) : (

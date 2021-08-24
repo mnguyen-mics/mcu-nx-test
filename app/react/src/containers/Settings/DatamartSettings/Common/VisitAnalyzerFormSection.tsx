@@ -6,7 +6,7 @@ import { compose } from 'recompose';
 import { injectDrawer } from '../../../../components/Drawer/index';
 import { VisitAnalyzerFieldModel } from './domain';
 import FormSection from '../../../../components/Form/FormSection';
-import RelatedRecords from '../../../../components/RelatedRecord/RelatedRecords';
+import { RelatedRecords } from '@mediarithmics-private/mcs-components-library';
 import RecordElement from '../../../../components/RelatedRecord/RecordElement';
 import VisitAnalyzerSelector, { VisitAnalyzerSelectorProps } from '../Common/VisitAnalyzerSelector';
 import { VisitAnalyzer } from '../../../../models/Plugins';

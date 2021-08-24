@@ -1,5 +1,4 @@
-import { Button, Loading } from '@mediarithmics-private/mcs-components-library';
-import EmptyRecords from './RelatedRecord/EmptyRecords';
+import { Button, Loading, EmptyRecords } from '@mediarithmics-private/mcs-components-library';
 import Form from './Form';
 import TableSelector from './ElementSelector/TableSelector';
 import OtqlConsole from './OtqlConsole';
