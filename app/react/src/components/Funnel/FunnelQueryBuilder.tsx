@@ -170,7 +170,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
             id: this._cuid(),
             name: 'Step 1',
             filter_clause: {
-              operator: 'OR',
+              operator: 'AND',
               filters: [
                 {
                   dimension_name: 'DATE_TIME',
