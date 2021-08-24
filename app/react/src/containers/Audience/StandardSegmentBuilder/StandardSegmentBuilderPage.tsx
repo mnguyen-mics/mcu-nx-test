@@ -27,12 +27,7 @@ import { IAudienceSegmentService } from '../../../services/AudienceSegmentServic
 import { withRouter, RouteComponentProps } from 'react-router';
 import { NewUserQuerySimpleFormData } from '../../QueryTool/SaveAs/NewUserQuerySegmentSimpleForm';
 import StandardSegmentBuilderActionbar from './StandardSegmentBuilderActionbar';
-import {
-  AudienceSegmentFormData,
-  calculateDefaultTtl,
-  checkProcessingsAndSave,
-  generateProcessingSelectionsTasks,
-} from '../Segments/Edit/domain';
+import { AudienceSegmentFormData, calculateDefaultTtl } from '../Segments/Edit/domain';
 import { InjectedWorkspaceProps, injectWorkspace } from '../../Datamart';
 import { AudienceFeatureResource } from '../../../models/audienceFeature';
 import { ITagService } from '../../../services/TagService';
@@ -226,10 +221,9 @@ class StandardSegmentBuilderPage extends React.Component<Props, State> {
         .then(response => {
           if (!!response) {
             Promise.all([
-              ...generateProcessingSelectionsTasks(
+              ...this._audienceSegmentFormService.generateProcessingSelectionsTasks(
                 response.data.id,
                 audienceSegmentFormData,
-                this._audienceSegmentFormService,
               ),
             ]);
           }
@@ -255,7 +249,11 @@ class StandardSegmentBuilderPage extends React.Component<Props, State> {
         },
         ...rest,
       };
-      checkProcessingsAndSave(audienceSegmentFormData, saveAudienceSegment, intl);
+      this._audienceSegmentFormService.checkProcessingsAndSave(
+        audienceSegmentFormData,
+        saveAudienceSegment,
+        intl,
+      );
     };
 
     return (

@@ -1,9 +1,12 @@
+import moment from 'moment';
+import { InjectedIntl } from 'react-intl';
+import { Modal } from 'antd';
 import { IOrganisationService } from './../../../../services/OrganisationService';
 import { ProcessingSelectionResource } from './../../../../models/processing';
 import { DataListResponse } from './../../../../services/ApiService';
 import { IAudienceSegmentService } from './../../../../services/AudienceSegmentService';
-import moment from 'moment';
 import { AudienceSegmentFormData } from './domain';
+import messages from './messages';
 import { QueryResource, QueryLanguage } from '../../../../models/datamart/DatamartResource';
 import {
   UserQuerySegment,
@@ -39,6 +42,16 @@ export interface IAudienceSegmentFormService {
     segmentId: string,
     processingSelectionId: string,
   ) => Promise<DataResponse<ProcessingSelectionResource>>;
+  shouldWarnProcessings: (audienceSegmentFormData: AudienceSegmentFormData) => boolean;
+  checkProcessingsAndSave: (
+    audienceSegmentFormData: AudienceSegmentFormData,
+    save: (audienceSegmentFormData: AudienceSegmentFormData) => void,
+    intl: InjectedIntl,
+  ) => void;
+  generateProcessingSelectionsTasks: (
+    segmentId: string,
+    audienceSegmentFormData: AudienceSegmentFormData,
+  ) => Array<Promise<any>>;
 }
 
 @injectable()
@@ -254,4 +267,105 @@ export class AudienceSegmentFormService implements IAudienceSegmentFormService {
       processingSelectionId,
     );
   }
+  shouldWarnProcessings = (audienceSegmentFormData: AudienceSegmentFormData) => {
+    const initialProcessingSelectionResources =
+      audienceSegmentFormData.initialProcessingSelectionResources;
+    const processingActivities = audienceSegmentFormData.processingActivities;
+
+    const initialProcessingIds = initialProcessingSelectionResources.map(
+      processingSelection => processingSelection.processing_id,
+    );
+    const processingActivityIds = processingActivities.map(
+      processingResource => processingResource.model.id,
+    );
+
+    return (
+      audienceSegmentFormData.audienceSegment.id !== undefined &&
+      !(
+        initialProcessingSelectionResources.length === processingActivityIds.length &&
+        initialProcessingIds.every(pId => processingActivityIds.includes(pId))
+      )
+    );
+  };
+
+  checkProcessingsAndSave = (
+    audienceSegmentFormData: AudienceSegmentFormData,
+    save: (audienceSegmentFormData: AudienceSegmentFormData) => void,
+    intl: InjectedIntl,
+  ) => {
+    const warn = this.shouldWarnProcessings(audienceSegmentFormData);
+
+    const saveFunction = () => {
+      save(audienceSegmentFormData);
+    };
+
+    if (warn) {
+      Modal.confirm({
+        content: intl.formatMessage(messages.processingsWarningModalContent),
+        okText: intl.formatMessage(messages.processingsWarningModalOk),
+        cancelText: intl.formatMessage(messages.processingsWarningModalCancel),
+        onOk() {
+          return saveFunction();
+        },
+      });
+    } else {
+      saveFunction();
+    }
+  };
+
+  generateProcessingSelectionsTasks = (
+    segmentId: string,
+    audienceSegmentFormData: AudienceSegmentFormData,
+  ) => {
+    const initialProcessingSelectionResources =
+      audienceSegmentFormData.initialProcessingSelectionResources;
+    const processingActivities = audienceSegmentFormData.processingActivities;
+
+    const initialProcessingIds = initialProcessingSelectionResources.map(
+      processingSelection => processingSelection.processing_id,
+    );
+    const processingAcitivityIds = processingActivities.map(
+      processingResource => processingResource.model.id,
+    );
+
+    const processingIdsToBeAdded = processingAcitivityIds.filter(
+      pId => !initialProcessingIds.includes(pId),
+    );
+    const processingsIdsToBeDeleted = initialProcessingIds.filter(
+      pId => !processingAcitivityIds.includes(pId),
+    );
+
+    const savePromises = processingIdsToBeAdded.map(pId => {
+      const processingActivityFieldModel = processingActivities.find(
+        processingActivity => processingActivity.model.id === pId,
+      );
+      if (processingActivityFieldModel) {
+        const processingResource = processingActivityFieldModel.model;
+        const processingSelectionResource: Partial<ProcessingSelectionResource> = {
+          processing_id: processingResource.id,
+          processing_name: processingResource.name,
+        };
+        return this.createProcessingSelectionForAudienceSegment(
+          segmentId,
+          processingSelectionResource,
+        );
+      } else {
+        return Promise.resolve({});
+      }
+    });
+
+    const deletePromises = processingsIdsToBeDeleted.map(pId => {
+      const processingSelectionResource = initialProcessingSelectionResources.find(
+        pSelectionResource => pSelectionResource.processing_id === pId,
+      );
+      if (processingSelectionResource) {
+        const processingSelectionId = processingSelectionResource.id;
+        return this.deleteAudienceSegmentProcessingSelection(segmentId, processingSelectionId);
+      } else {
+        return Promise.resolve();
+      }
+    });
+
+    return [...savePromises, ...deletePromises];
+  };
 }

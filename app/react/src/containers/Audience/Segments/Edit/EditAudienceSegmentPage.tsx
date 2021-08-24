@@ -5,13 +5,7 @@ import { withRouter, RouteComponentProps, StaticContext } from 'react-router';
 import { message } from 'antd';
 import moment from 'moment';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
-import {
-  EditAudienceSegmentParam,
-  AudienceSegmentFormData,
-  DefaultLiftimeUnit,
-  checkProcessingsAndSave,
-  generateProcessingSelectionsTasks,
-} from './domain';
+import { EditAudienceSegmentParam, AudienceSegmentFormData, DefaultLiftimeUnit } from './domain';
 import { INITIAL_AUDIENCE_SEGMENT_FORM_DATA } from '../Edit/domain';
 import { UserListSegment } from '../../../../models/audiencesegment';
 import messages from './messages';
@@ -239,7 +233,11 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
 
   onSubmit = (audienceSegmentFormData: AudienceSegmentFormData) => {
     const { intl } = this.props;
-    checkProcessingsAndSave(audienceSegmentFormData, this.save, intl);
+    this._audienceSegmentFormService.checkProcessingsAndSave(
+      audienceSegmentFormData,
+      this.save,
+      intl,
+    );
   };
 
   save = (audienceSegmentFormData: AudienceSegmentFormData) => {
@@ -302,10 +300,9 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
         .then(response => {
           if (!!response) {
             Promise.all([
-              ...generateProcessingSelectionsTasks(
+              ...this._audienceSegmentFormService.generateProcessingSelectionsTasks(
                 response.data.id,
                 audienceSegmentFormData,
-                this._audienceSegmentFormService,
               ),
             ]);
           }
