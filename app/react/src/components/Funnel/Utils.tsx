@@ -75,7 +75,7 @@ export const getDefaultStep = () => {
       operator: 'AND' as BooleanOperator,
       filters: [
         {
-          dimension_name: 'DATE_TIME',
+          dimension_name: 'TYPE',
           not: false,
           operator: 'EXACT' as DimensionFilterOperator,
           expressions: [],
