@@ -100,7 +100,7 @@ export function isEdgeSegment(segment: AudienceSegmentShape): segment is UserLis
   );
 }
 
-export function calculateDefaultTtl(formData: NewUserQuerySimpleFormData) {
+export function calculateDefaultTtl(formData: Partial<NewUserQuerySimpleFormData>) {
   if (formData.defaultLifetime && formData.defaultLifetimeUnit) {
     return moment
       .duration(Number(formData.defaultLifetime), formData.defaultLifetimeUnit)

@@ -2,14 +2,13 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps, StaticContext } from 'react-router';
-import { message, Modal } from 'antd';
+import { message } from 'antd';
 import moment from 'moment';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { EditAudienceSegmentParam, AudienceSegmentFormData, DefaultLiftimeUnit } from './domain';
 import { INITIAL_AUDIENCE_SEGMENT_FORM_DATA } from '../Edit/domain';
 import { UserListSegment } from '../../../../models/audiencesegment';
 import messages from './messages';
-
 import EditAudienceSegmentForm from './EditAudienceSegmentForm';
 import injectNotifications, {
   InjectedNotificationProps,
@@ -32,7 +31,6 @@ import { TYPES } from '../../../../constants/types';
 import { IAudienceSegmentFormService } from './AudienceSegmentFormService';
 import { injectFeatures, InjectedFeaturesProps } from '../../../Features';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
-import { ProcessingSelectionResource } from '../../../../models/processing';
 import { IStandardSegmentBuilderService } from '../../../../services/StandardSegmentBuilderService';
 import { StandardSegmentBuilderResource } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 import { Link } from 'react-router-dom';
@@ -233,50 +231,13 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       : history.push(defaultRedirectUrl);
   };
 
-  shouldWarnProcessings = (audienceSegmentFormData: AudienceSegmentFormData): boolean => {
-    const initialProcessingSelectionResources =
-      audienceSegmentFormData.initialProcessingSelectionResources;
-    const processingActivities = audienceSegmentFormData.processingActivities;
-
-    const initialProcessingIds = initialProcessingSelectionResources.map(
-      processingSelection => processingSelection.processing_id,
+  onSubmit = (audienceSegmentFormData: AudienceSegmentFormData) => {
+    const { intl } = this.props;
+    this._audienceSegmentFormService.checkProcessingsAndSave(
+      audienceSegmentFormData,
+      this.save,
+      intl,
     );
-    const processingActivityIds = processingActivities.map(
-      processingResource => processingResource.model.id,
-    );
-
-    return (
-      audienceSegmentFormData.audienceSegment.id !== undefined &&
-      !(
-        initialProcessingSelectionResources.length === processingActivityIds.length &&
-        initialProcessingIds.every(pId => processingActivityIds.includes(pId))
-      )
-    );
-  };
-
-  checkProcessingsAndSave = (audienceSegmentFormData: AudienceSegmentFormData) => {
-    const {
-      intl: { formatMessage },
-    } = this.props;
-
-    const warn = this.shouldWarnProcessings(audienceSegmentFormData);
-
-    const saveFunction = () => {
-      this.save(audienceSegmentFormData);
-    };
-
-    if (warn) {
-      Modal.confirm({
-        content: formatMessage(messages.processingsWarningModalContent),
-        okText: formatMessage(messages.processingsWarningModalOk),
-        cancelText: formatMessage(messages.processingsWarningModalCancel),
-        onOk() {
-          return saveFunction();
-        },
-      });
-    } else {
-      saveFunction();
-    }
   };
 
   save = (audienceSegmentFormData: AudienceSegmentFormData) => {
@@ -334,69 +295,16 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
 
       const hideSaveInProgress = message.loading(intl.formatMessage(messages.savingInProgress), 0);
 
-      const generateProcessingSelectionsTasks = (segmentId: string): Array<Promise<any>> => {
-        const initialProcessingSelectionResources =
-          audienceSegmentFormData.initialProcessingSelectionResources;
-        const processingActivities = audienceSegmentFormData.processingActivities;
-
-        const initialProcessingIds = initialProcessingSelectionResources.map(
-          processingSelection => processingSelection.processing_id,
-        );
-        const processingAcitivityIds = processingActivities.map(
-          processingResource => processingResource.model.id,
-        );
-
-        const processingIdsToBeAdded = processingAcitivityIds.filter(
-          pId => !initialProcessingIds.includes(pId),
-        );
-        const processingsIdsToBeDeleted = initialProcessingIds.filter(
-          pId => !processingAcitivityIds.includes(pId),
-        );
-
-        const savePromises = processingIdsToBeAdded.map(pId => {
-          const processingActivityFieldModel = processingActivities.find(
-            processingActivity => processingActivity.model.id === pId,
-          );
-
-          if (processingActivityFieldModel) {
-            const processingResource = processingActivityFieldModel.model;
-            const processingSelectionResource: Partial<ProcessingSelectionResource> = {
-              processing_id: processingResource.id,
-              processing_name: processingResource.name,
-            };
-            return this._audienceSegmentFormService.createProcessingSelectionForAudienceSegment(
-              segmentId,
-              processingSelectionResource,
-            );
-          } else {
-            return Promise.resolve({});
-          }
-        });
-
-        const deletePromises = processingsIdsToBeDeleted.map(pId => {
-          const processingSelectionResource = initialProcessingSelectionResources.find(
-            pSelectionResource => pSelectionResource.processing_id === pId,
-          );
-
-          if (processingSelectionResource) {
-            const processingSelectionId = processingSelectionResource.id;
-            return this._audienceSegmentFormService.deleteAudienceSegmentProcessingSelection(
-              segmentId,
-              processingSelectionId,
-            );
-          } else {
-            return Promise.resolve();
-          }
-        });
-
-        return [...savePromises, ...deletePromises];
-      };
-
       this._audienceSegmentFormService
         .saveOrCreateAudienceSegment(organisationId, audienceSegmentFormData, queryLanguage)
         .then(response => {
           if (!!response) {
-            Promise.all([...generateProcessingSelectionsTasks(response.data.id)]);
+            Promise.all([
+              ...this._audienceSegmentFormService.generateProcessingSelectionsTasks(
+                response.data.id,
+                audienceSegmentFormData,
+              ),
+            ]);
           }
           return response;
         })
@@ -602,7 +510,7 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
       <EditAudienceSegmentForm
         initialValues={this.state.audienceSegmentFormData}
         close={this.onClose}
-        onSubmit={this.checkProcessingsAndSave}
+        onSubmit={this.onSubmit}
         breadCrumbPaths={breadcrumbPaths}
         audienceSegmentFormData={this.state.audienceSegmentFormData}
         datamart={selectedDatamart}

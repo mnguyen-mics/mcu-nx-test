@@ -12,7 +12,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 
 interface StandardSegmentBuilderActionbarProps {
-  save: (formData: NewUserQuerySimpleFormData) => Promise<any>;
+  save: (formData: NewUserQuerySimpleFormData) => void;
   standardSegmentBuilder?: StandardSegmentBuilderResource;
 }
 
@@ -42,12 +42,7 @@ class StandardSegmentBuilderActionbar extends React.Component<Props, State> {
 
   handleSaveAsUserQuery = (formData: NewUserQuerySimpleFormData) => {
     this.setState({ segmentModalLoading: true });
-    this.props.save(formData).catch(_ => {
-      this.setState({
-        segmentModalVisible: false,
-        segmentModalLoading: false,
-      });
-    });
+    this.props.save(formData);
   };
 
   render() {

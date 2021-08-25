@@ -29,13 +29,16 @@ import ProcessingActivitiesFormSection, {
 } from '../../Settings/DatamartSettings/Common/ProcessingActivitiesFormSection';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import { ProcessingActivityFieldModel } from '../../Settings/DatamartSettings/Common/domain';
+import { ProcessingSelectionResource } from '../../../models/processing';
+import { DefaultLiftimeUnit } from '../../Audience/Segments/Edit/domain';
 
 export interface NewUserQuerySimpleFormData {
   name: string;
   technical_name?: string;
-  defaultLifetime?: string;
-  defaultLifetimeUnit: 'days' | 'weeks' | 'months';
+  defaultLifetime?: number | null;
+  defaultLifetimeUnit?: DefaultLiftimeUnit;
   persisted: boolean;
+  initialProcessingSelectionResources: ProcessingSelectionResource[];
   processingActivities: ProcessingActivityFieldModel[];
 }
 
@@ -43,6 +46,7 @@ const initialFormData: Partial<NewUserQuerySimpleFormData> = {
   defaultLifetimeUnit: 'days',
   persisted: true,
   processingActivities: [],
+  initialProcessingSelectionResources: [],
 };
 
 export const FORM_ID = 'userQuerySegmentSimpleForm';
