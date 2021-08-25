@@ -14,6 +14,7 @@ export interface OtqlConsoleProps extends AceEditorProps {
 
 interface State {
   annotations: Annotation[];
+  editorWidth: string;
 }
 
 export default class OtqlConsole extends React.Component<OtqlConsoleProps, State> {
@@ -27,6 +28,7 @@ export default class OtqlConsole extends React.Component<OtqlConsoleProps, State
     super(props);
     this.state = {
       annotations: [],
+      editorWidth: '100%',
     };
   }
 
@@ -45,6 +47,10 @@ export default class OtqlConsole extends React.Component<OtqlConsoleProps, State
 
   onChange = (value: string, event?: any) => {
     const editor = this.aceEditor.editor;
+    const { editorWidth } = this.state;
+
+    // this fixes a display bug on the query tool editor MICS-10327
+    if (editorWidth === '100%') this.setState({ editorWidth: '99.99%' });
 
     if (this.props.onChange) {
       this.props.onChange(value, event);
@@ -108,6 +114,7 @@ export default class OtqlConsole extends React.Component<OtqlConsoleProps, State
 
   render() {
     const setAceEditorRef = (aceEditorRef: any) => (this.aceEditor = aceEditorRef);
+    const { editorWidth } = this.state;
 
     defineAce();
 
@@ -120,7 +127,7 @@ export default class OtqlConsole extends React.Component<OtqlConsoleProps, State
           mode='otql'
           theme='otql'
           ref={setAceEditorRef}
-          width='100%'
+          width={editorWidth}
           setOptions={{
             showGutter: true,
           }}
