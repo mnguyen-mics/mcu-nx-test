@@ -58,6 +58,7 @@ interface State {
   searchValue?: string;
   searchOptions: Array<{ value: string }>;
   isLoadingFinalValues: boolean;
+  isJobExecutionExisting?: boolean;
 }
 
 type Props = MapStateToProps &
@@ -128,6 +129,7 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
     folders: AudienceFeatureFolderResource[],
     baseFeatures: AudienceFeatureResource[],
     total?: number,
+    isJobExecutionExisting?: boolean,
   ) => {
     this.setState({
       audienceFeatureFolders: folders,
@@ -135,6 +137,7 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
       currentAudienceFeatures: baseFeatures,
       total: total,
       isLoading: false,
+      isJobExecutionExisting: isJobExecutionExisting,
     });
   };
 
@@ -153,6 +156,7 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
       this.setBaseFolderAndFeatures,
       this.onFailure,
       searchSettings,
+      true,
     );
   };
 
@@ -272,6 +276,7 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
       searchValue,
       searchOptions,
       isLoadingFinalValues,
+      isJobExecutionExisting,
     } = this.state;
     const noData =
       (!audienceFeatureFolders || audienceFeatureFolders.length === 0) &&
@@ -318,36 +323,41 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
 
     const onSearch = (searchText: string) => {
       this.setState({
-        isLoadingFinalValues: true,
         searchValue: searchText,
       });
-      this._audienceFeatureService
-        .getFinalValues(datamartId, searchText)
-        .then(res => {
-          const finalValuesObject = res.data;
-          if (searchValue === searchText)
+      if (this.state.isJobExecutionExisting) {
+        this.setState({
+          isLoadingFinalValues: true,
+        });
+        this._audienceFeatureService
+          .getFinalValues(datamartId, searchText)
+          .then(res => {
+            const finalValuesObject = res.data;
+            if (searchValue === searchText)
+              this.setState({
+                searchOptions: finalValuesObject.values.map(val => {
+                  return {
+                    value: val,
+                  };
+                }),
+                isLoadingFinalValues: false,
+              });
+          })
+          .catch(error => {
+            notifyError(error);
             this.setState({
-              searchOptions: finalValuesObject.values.map(val => {
-                return {
-                  value: val,
-                };
-              }),
+              searchOptions: [],
               isLoadingFinalValues: false,
             });
-        })
-        .catch(error => {
-          notifyError(error);
-          this.setState({
-            searchOptions: [],
-            isLoadingFinalValues: false,
           });
-        });
+      }
     };
+
     const onSelect = (searchText: string) => {
       this.setState({
         searchSettings: {
           ...searchSettings,
-          finalValues: searchText,
+          finalValues: isJobExecutionExisting ? searchText : undefined,
           keywords: searchText,
           currentPage: 1,
         },
@@ -360,13 +370,13 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
       this.setState({
         searchSettings: {
           ...searchSettings,
-          finalValues: this.state.searchValue,
-          keywords: this.state.searchValue,
+          finalValues: isJobExecutionExisting ? searchValue : undefined,
+          keywords: searchValue,
           currentPage: 1,
         },
-        hideFolder: !!this.state.searchValue,
+        hideFolder: !!searchValue,
         currentAudienceFeatureFolder: undefined,
-        searchValue: this.state.searchValue,
+        searchValue: searchValue,
       });
     };
 
