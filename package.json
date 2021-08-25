@@ -18,7 +18,7 @@
   "dependencies": {
     "@ant-design/compatible": "^1.0.8",
     "@ant-design/icons": "^4.2.2",
-    "@mediarithmics-private/mcs-components-library": "6.2.4",
+    "@mediarithmics-private/mcs-components-library": "6.2.6",
     "@mediarithmics-private/advanced-components": "1.2.18",
     "@splitsoftware/splitio": "^10.15.9",
     "antd": "^4.9.4",
@@ -42,7 +42,7 @@
     "plottable": "^3.9.0",
     "prop-types": "^15.6.2",
     "query-string": "^7.0.1",
-    "react": "16.13.1",
+    "react": "16.14.0",
     "react-ace": "^5.10.0",
     "react-burger-menu": "^2.7.1",
     "react-copy-to-clipboard": "^5.0.1",

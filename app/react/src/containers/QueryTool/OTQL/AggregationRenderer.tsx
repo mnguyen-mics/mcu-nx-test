@@ -13,7 +13,7 @@ import {
   McsIcon,
   McsTabs,
   RadarChart,
-  StackedBarChart,
+  BarChart,
 } from '@mediarithmics-private/mcs-components-library';
 import { FormattedMessage } from 'react-intl';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
@@ -319,7 +319,7 @@ class AggregationRenderer extends React.Component<Props, State> {
                 </div>
                 {selectedChart === 'RADAR' && <RadarChart options={options} />}
                 {selectedChart === 'BAR' && (
-                  <StackedBarChart
+                  <BarChart
                     dataset={stackedBarChartDataset ? stackedBarChartDataset : []}
                     enableDrilldown={true}
                     options={optionsForBarChart}

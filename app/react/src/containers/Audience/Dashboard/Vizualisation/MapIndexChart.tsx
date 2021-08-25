@@ -17,14 +17,10 @@ import CardFlex from '../Components/CardFlex';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { QueryResource } from '../../../../models/datamart/DatamartResource';
 import { DataLabel, TooltipChart } from '../../../../models/dashboards/dashboards';
-import {
-  EmptyChart,
-  LoadingChart,
-  StackedBarChart,
-} from '@mediarithmics-private/mcs-components-library';
+import { EmptyChart, LoadingChart, BarChart } from '@mediarithmics-private/mcs-components-library';
 import { StandardSegmentBuilderQueryDocument } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 import { Dataset } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
-import { StackedBarChartOptions } from '@mediarithmics-private/mcs-components-library/lib/components/charts/stacked-bar-chart/StackedBarChart';
+import { BarChartOptions } from '@mediarithmics-private/mcs-components-library/lib/components/charts/bar-chart/BarChart';
 import { getFormattedQuery } from '../domain';
 
 export interface MapIndexChartProps {
@@ -294,17 +290,6 @@ class MapIndexChart extends React.Component<Props, State> {
         labels,
         tooltip,
         type: 'bar',
-        chartOptions: {
-          yAxis: {
-            plotLines: [
-              {
-                color: '#3c3c3c',
-                width: 2,
-                value: 100,
-              },
-            ],
-          },
-        },
         chart: {
           type: 'bar',
         },
@@ -326,11 +311,12 @@ class MapIndexChart extends React.Component<Props, State> {
         return (
           this.state.queryResult &&
           this.state.queryResult.length && (
-            <StackedBarChart
+            <BarChart
               dataset={this.state.queryResult as any}
-              options={optionsForChart as StackedBarChartOptions}
+              options={optionsForChart as BarChartOptions}
               enableDrilldown={true}
               height={height}
+              plotLineValue={100}
             />
           )
         );

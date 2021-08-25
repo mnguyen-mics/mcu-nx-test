@@ -20,11 +20,7 @@ import { IQueryService } from '../../../../services/QueryService';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import CardFlex from '../Components/CardFlex';
 import { getFormattedQuery } from '../domain';
-import {
-  EmptyChart,
-  LoadingChart,
-  StackedBarChart,
-} from '@mediarithmics-private/mcs-components-library';
+import { EmptyChart, LoadingChart, BarChart } from '@mediarithmics-private/mcs-components-library';
 import { StandardSegmentBuilderQueryDocument } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 
 export interface DateAggregationChartProps {
@@ -240,7 +236,7 @@ class DateAggregationChart extends React.Component<Props, State> {
         return (
           this.state.queryResult &&
           this.state.queryResult.length && (
-            <StackedBarChart
+            <BarChart
               dataset={this.state.queryResult as any}
               options={optionsForChart}
               height={height}

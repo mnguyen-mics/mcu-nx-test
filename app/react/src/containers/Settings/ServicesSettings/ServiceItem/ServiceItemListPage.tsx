@@ -16,7 +16,7 @@ import {
   InfiniteList,
   Button as McsButton,
   McsIcon,
-  StackedBarChart,
+  BarChart,
 } from '@mediarithmics-private/mcs-components-library';
 import { InfiniteListFilters } from '@mediarithmics-private/mcs-components-library/lib/components/infinite-list';
 import {
@@ -216,7 +216,7 @@ class ServiceItemListPage extends React.Component<Props, State> {
     const dataset = generateDataSource();
 
     const priceChart = dataset ? (
-      <StackedBarChart dataset={dataset} options={optionsForChart} />
+      <BarChart dataset={dataset} options={optionsForChart} />
     ) : undefined;
 
     const hasPriceChart = priceChart !== undefined;
