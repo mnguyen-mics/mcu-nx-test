@@ -27,7 +27,7 @@ describe('User Expert Query Segment Form Test', () => {
     cy.get('.mcs-campaigns-link').should('have.length.gte', 1);
     cy.get('.mcs-audienceSegmentTable-typeFilter').click();
     cy.get('.mcs-audienceSegmentTable-typeFilter_userQuery').click();
-    cy.get('.mcs-search-input').type(segmentName + '{enter}');
+    cy.get('.mcs-audienceSegmentsTable_search_bar').type(segmentName + '{enter}');
     // pick the created segment
     cy.get('.mcs-campaigns-link').should('have.length', 1).click();
     cy.get('.mcs-actionbar').find('.mcs-pen').click();

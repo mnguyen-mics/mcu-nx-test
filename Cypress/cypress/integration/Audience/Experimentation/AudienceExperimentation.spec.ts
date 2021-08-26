@@ -24,7 +24,7 @@ describe('AudienceExperimentation Form Test', () => {
       cy.get('.mcs-form_saveButton_audienceSegmentForm').click();
       cy.url().should('match', /.*audience\/segments\/\d*\?/);
       cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.segments').click();
-      cy.get('.mcs-search-input').type(segmentName + '{enter}');
+      cy.get('.mcs-audienceSegmentsTable_search_bar').type(segmentName + '{enter}');
       cy.get('.mcs-campaigns-link').should('have.length', 1).click();
       cy.get('.mcs-dots').click();
       cy.get('.mcs-menu-antd-customized_item--experimentation').click();
