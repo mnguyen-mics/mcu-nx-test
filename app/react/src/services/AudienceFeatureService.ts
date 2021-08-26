@@ -7,6 +7,7 @@ import { AudienceFeatureResource } from '../models/audienceFeature';
 import { injectable } from 'inversify';
 import { PaginatedApiParam, getPaginatedApiParam } from '../utils/ApiHelper';
 import ApiService, { DataListResponse, DataResponse } from './ApiService';
+import { PublicJobExecutionResource } from '../models/Job/JobResource';
 export interface ReferenceTableValue {
   values: string[];
 }
@@ -80,10 +81,12 @@ export interface IAudienceFeatureService {
       folders: AudienceFeatureFolderResource[],
       baseFeatures: AudienceFeatureResource[],
       total?: number,
+      isJobExecutionExisting?: boolean,
     ) => void,
     onFailure: (err: any) => void,
     filter?: AudienceFeatureSearchSettings,
-  ) => void;
+    checkJobExecutions?: boolean,
+  ) => Promise<void>;
   buildAudienceFeatureOptions: (
     filter?: AudienceFeatureSearchSettings,
     folderId?: string,
@@ -98,6 +101,10 @@ export interface IAudienceFeatureService {
     runtimeSchemaId: string,
     options?: { keywords: string },
   ) => Promise<DataResponse<ReferenceTableValue>>;
+
+  getReferenceTableJobExecutions: (
+    datamartId: string,
+  ) => Promise<DataListResponse<PublicJobExecutionResource>>;
 }
 
 @injectable()
@@ -217,21 +224,32 @@ export class AudienceFeatureService implements IAudienceFeatureService {
       folders: AudienceFeatureFolderResource[],
       baseFeatures: AudienceFeatureResource[],
       total?: number,
+      isJobExecutionExisting?: boolean,
     ) => void,
     onFailure: (err: any) => void,
     filter?: AudienceFeatureSearchSettings,
+    checkJobExecutions?: boolean,
   ) => {
     const options = this.buildAudienceFeatureOptions(filter);
 
-    const res: [
-      Promise<AudienceFeatureFolderResource[]>,
-      Promise<DataListResponse<AudienceFeatureResource>>,
-    ] = [this._fetchFolders(datamartId), this.getAudienceFeatures(datamartId, options)];
+    const res: Array<Promise<any>> = [
+      this._fetchFolders(datamartId),
+      this.getAudienceFeatures(datamartId, options),
+    ];
+    if (checkJobExecutions) {
+      res.push(this.getReferenceTableJobExecutions(datamartId));
+    }
     return Promise.all(res)
       .then((results: any[]) => {
         const folders: AudienceFeatureFolderResource[] = results[0];
         const features: DataListResponse<AudienceFeatureResource> = results[1];
-        setFoldersAndFeatures(folders, features.data, features.total);
+        const jobExecutions: DataListResponse<PublicJobExecutionResource> = results[2];
+        setFoldersAndFeatures(
+          folders,
+          features.data,
+          features.total,
+          jobExecutions.data.length > 0,
+        );
       })
       .catch(err => {
         onFailure(err);
@@ -269,5 +287,11 @@ export class AudienceFeatureService implements IAudienceFeatureService {
     return ApiService.getRequest(
       `datamarts/${datamartId}/reference_table_values?keywords=${keywords}`,
     );
+  }
+
+  getReferenceTableJobExecutions(
+    datamartId: string,
+  ): Promise<DataListResponse<PublicJobExecutionResource>> {
+    return ApiService.getRequest(`datamarts/${datamartId}/reference_table_job_executions`);
   }
 }
