@@ -322,35 +322,40 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
     };
 
     const onSearch = (searchText: string) => {
-      this.setState({
-        searchValue: searchText,
-      });
-      if (this.state.isJobExecutionExisting) {
-        this.setState({
-          isLoadingFinalValues: true,
-        });
-        this._audienceFeatureService
-          .getFinalValues(datamartId, searchText)
-          .then(res => {
-            const finalValuesObject = res.data;
-            if (searchValue === searchText)
-              this.setState({
-                searchOptions: finalValuesObject.values.map(val => {
-                  return {
-                    value: val,
-                  };
-                }),
-                isLoadingFinalValues: false,
-              });
-          })
-          .catch(error => {
-            notifyError(error);
+      this.setState(
+        {
+          searchValue: searchText,
+        },
+        () => {
+          if (this.state.isJobExecutionExisting) {
             this.setState({
-              searchOptions: [],
-              isLoadingFinalValues: false,
+              isLoadingFinalValues: true,
             });
-          });
-      }
+            this._audienceFeatureService
+              .getFinalValues(datamartId, searchText)
+              .then(res => {
+                const finalValuesObject = res.data;
+                if (searchText === this.state.searchValue) {
+                  this.setState({
+                    searchOptions: finalValuesObject.values.map(val => {
+                      return {
+                        value: val,
+                      };
+                    }),
+                    isLoadingFinalValues: false,
+                  });
+                }
+              })
+              .catch(error => {
+                notifyError(error);
+                this.setState({
+                  searchOptions: [],
+                  isLoadingFinalValues: false,
+                });
+              });
+          }
+        },
+      );
     };
 
     const onSelect = (searchText: string) => {

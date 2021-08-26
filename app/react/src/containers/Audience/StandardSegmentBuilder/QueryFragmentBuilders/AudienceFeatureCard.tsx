@@ -108,9 +108,9 @@ class AudienceFeatureCard extends React.Component<Props, State> {
                               onClick={onSelectFeature(audienceFeature.id, value)}
                               className='mcs-standardSegmentBuilder_featureCardFinalValue'
                             >
-                              {index === values.length - 1 ? value : `${value}`}
+                              {value}
                             </span>
-                            {', '}
+                            {index === values.length - 1 ? '' : ', '}
                           </React.Fragment>
                         );
                       });
