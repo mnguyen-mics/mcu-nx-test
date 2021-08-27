@@ -19,11 +19,7 @@ import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { getFormattedQuery } from '../domain';
 import { QueryResource } from '../../../../models/datamart/DatamartResource';
 import { DataLabel, TooltipChart } from '../../../../models/dashboards/dashboards';
-import {
-  EmptyChart,
-  LoadingChart,
-  StackedBarChart,
-} from '@mediarithmics-private/mcs-components-library';
+import { EmptyChart, LoadingChart, BarChart } from '@mediarithmics-private/mcs-components-library';
 import { StandardSegmentBuilderQueryDocument } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 import { Dataset } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 
@@ -48,7 +44,6 @@ export interface MapBarChartProps {
 
 interface State {
   queryResult?: Dataset;
-  colors: string[];
   error: boolean;
   loading: boolean;
 }
@@ -66,20 +61,9 @@ class MapBarChart extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    const { colors } = props;
-    const usedColors: string[] = [
-      colors['mcs-warning'],
-      colors['mcs-info'],
-      colors['mcs-highlight'],
-      colors['mcs-success'],
-      colors['mcs-normal'],
-      colors['mcs-primary'],
-      colors['mcs-error'],
-    ];
     this.state = {
       error: false,
       loading: true,
-      colors: usedColors,
     };
   }
 
@@ -280,10 +264,20 @@ class MapBarChart extends React.Component<Props, State> {
 
     const restKey = shouldCompare ? [{ key: COMPARED_YKEY, message: '' }] : [];
 
+    const usedColors: string[] = [
+      colors['mcs-info'],
+      colors['mcs-normal'],
+      colors['mcs-warning'],
+      colors['mcs-highlight'],
+      colors['mcs-success'],
+      colors['mcs-primary'],
+      colors['mcs-error'],
+    ];
+
     const optionsForChart = {
       xKey: 'xKey',
       yKeys: [{ key: BASE_YKEY, message: '' }].concat(restKey),
-      colors: [colors['mcs-info']].concat(shouldCompare ? [colors['mcs-normal']] : []),
+      colors: usedColors,
       labelsEnabled: this.props.labelsEnabled,
       vertical,
       sort: sortKey,
@@ -305,7 +299,7 @@ class MapBarChart extends React.Component<Props, State> {
         return (
           this.state.queryResult &&
           this.state.queryResult.length && (
-            <StackedBarChart
+            <BarChart
               dataset={this.state.queryResult as any}
               options={optionsForChart}
               enableDrilldown={drilldown}

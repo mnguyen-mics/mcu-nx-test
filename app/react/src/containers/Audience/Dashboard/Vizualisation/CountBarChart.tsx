@@ -11,11 +11,7 @@ import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
 import { getFormattedQuery } from '../domain';
-import {
-  EmptyChart,
-  LoadingChart,
-  StackedBarChart,
-} from '@mediarithmics-private/mcs-components-library';
+import { EmptyChart, LoadingChart, BarChart } from '@mediarithmics-private/mcs-components-library';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { StandardSegmentBuilderQueryDocument } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 
@@ -212,7 +208,7 @@ class CountBarChart extends React.Component<Props, State> {
         return <EmptyChart title={intl.formatMessage(messages.noData)} icon='warning' />;
       } else {
         return (
-          <StackedBarChart
+          <BarChart
             dataset={this.state.queryResult as any}
             options={optionsForChart}
             height={height}
