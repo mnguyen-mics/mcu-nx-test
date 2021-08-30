@@ -7,7 +7,15 @@ export interface ChannelResource {
   name: string;
   organisation_id: string;
   token: string;
-  visit_analyzer_model_id: string | null;
+}
+
+export interface ChannelVisitAnalyzerSelectionResource {
+  id: string;
+  channel_id: string;
+  visit_analyzer_model_id: string;
+  execution_order: number;
+  creation_ts: string;
+  created_by: string;
 }
 
 export interface ChannelAnalyticsResource {

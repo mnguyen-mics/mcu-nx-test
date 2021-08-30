@@ -18,7 +18,6 @@ type ChannelResource = {
   organisation_id: string;
   token: string;
   type: string;
-  visit_analyzer_model_id: string;
 };
 
 export interface IUserDataService {
