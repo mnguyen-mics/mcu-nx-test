@@ -80,7 +80,7 @@ class FormLayoutActionbar extends React.Component<Props, State> {
         {convert2Otql && (
           <Button onClick={openConversionModal}>
             <FormattedMessage
-              id='queryTool.query-builder.actionbar.convert'
+              id='form.layout.queryTool.query-builder.actionbar.convert'
               defaultMessage='Convert to OTQL'
             />
           </Button>

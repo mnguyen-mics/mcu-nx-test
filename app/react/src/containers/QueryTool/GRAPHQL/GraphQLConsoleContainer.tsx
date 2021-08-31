@@ -175,7 +175,7 @@ class GraphQLConsoleContainer extends React.Component<Props, State> {
               <ContentHeader
                 title={
                   <FormattedMessage
-                    id='queryTool.query-tool-page-title'
+                    id='queryTool.graphQL.query-tool-page-title'
                     defaultMessage='Query Tool'
                   />
                 }

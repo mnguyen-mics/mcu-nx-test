@@ -9,7 +9,7 @@ import { roleOptions } from '../../messages';
 
 const messages = defineMessages({
   sectionSubtitleGeneral: {
-    id: 'settings.organisation.users.edit.generalInfoSection.subtitle',
+    id: 'settings.organisation.users.edit.roleInfoSection.subtitle',
     defaultMessage: "Modify your User's role.",
   },
   sectionTitleGeneral: {

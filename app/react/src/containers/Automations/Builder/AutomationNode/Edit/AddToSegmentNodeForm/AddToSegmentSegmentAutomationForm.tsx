@@ -39,7 +39,7 @@ const messages = defineMessages({
     defaultMessage: 'Update',
   },
   sectionGeneralTitle: {
-    id: 'automation.builder.node.addToSegmentForm.general.title',
+    id: 'automation.builder.node.addToSegmentForm.general.information.title',
     defaultMessage: 'General Information',
   },
 });

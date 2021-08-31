@@ -330,7 +330,7 @@ class AdServingActionBar extends React.Component<Props, AdServingActionBarState>
       <Actionbar pathItems={breadcrumbPaths}>
         <Button onClick={exportIsRunning ? this.exportIsRunningModal : this.handleRunExport}>
           <McsIcon type='download' />
-          <FormattedMessage id='display.campaign.actionbar.exportButton' defaultMessage='Export' />
+          <FormattedMessage id='ad.serving.actionbar.exportButton' defaultMessage='Export' />
         </Button>
         <Dropdown overlay={downloadMenu} trigger={['click']}>
           <Button className='mcs-primary' type='primary'>

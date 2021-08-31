@@ -112,7 +112,7 @@ export const messages = defineMessages({
     defaultMessage: 'Rename',
   },
   audienceFeatures: {
-    id: 'settings.datamart.audienceFeatures',
+    id: 'settings.datamart.audienceFeatures.title',
     defaultMessage: 'Audience Features',
   },
   audienceFeatureName: {
@@ -238,7 +238,7 @@ export const messages = defineMessages({
     defaultMessage: 'This audience feature is used in segments',
   },
   audienceFeatureSegmentsMappingModalContent: {
-    id: 'settings.datamart.audienceFeatures.edit.segmentsMappingModal.content',
+    id: 'settings.datamart.audienceFeatures.edit.segments.mapping.modal.content',
     defaultMessage: 'The following segments will be updated: ',
   },
   audienceFeatureSegmentsMappingContentModalOthers: {

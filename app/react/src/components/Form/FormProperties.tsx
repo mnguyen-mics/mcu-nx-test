@@ -12,7 +12,7 @@ export interface FormLinkedTextInputModel {
 
 const messages = defineMessages({
   AddFilterButtonText: {
-    id: 'settings.form.eventRules.uriMatch.eventName.addProperty',
+    id: 'settings.form.properties.eventRules.uriMatch.eventName.addProperty',
     defaultMessage: 'Add Property',
   },
 });

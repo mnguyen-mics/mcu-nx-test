@@ -58,7 +58,7 @@ class Convert2Otql extends React.Component<Props, State> {
         onOk={onOk}
         title={
           <FormattedMessage
-            id='queryTool.query-tool-modal-saveas-export-title'
+            id='queryTool.convert.query-tool-modal-saveas-export-title'
             defaultMessage='Save As Export'
           />
         }
