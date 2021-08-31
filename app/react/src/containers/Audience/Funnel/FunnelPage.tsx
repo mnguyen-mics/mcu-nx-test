@@ -325,7 +325,7 @@ class FunnelPage extends React.Component<JoinedProps, State> {
           </Button>
           <CopyToClipboard text={window.location.href} onCopy={this.handleAfterFunnelLinkCopy}>
             <Button icon={<CopyOutlined />}>
-              <FormattedMessage id='funnel.share' defaultMessage='Share' />
+              <FormattedMessage id='funnel.share.button' defaultMessage='Share' />
             </Button>
           </CopyToClipboard>
         </Actionbar>

@@ -235,7 +235,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
                 <ContentHeader
                   title={
                     <FormattedMessage
-                      id='queryTool.query-tool-page-title'
+                      id='queryTool.OTQL.query-tool-page-title'
                       defaultMessage='Query Tool'
                     />
                   }

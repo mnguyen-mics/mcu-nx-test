@@ -29,7 +29,7 @@ class GraphQLResultRenderer extends React.Component<Props> {
       content = (
         <div className='text-center'>
           <FormattedMessage
-            id='queryTool.otql-result-renderer-aborted'
+            id='queryTool.graphql-result-renderer-aborted'
             defaultMessage='Aborted...'
           />
         </div>
@@ -44,7 +44,7 @@ class GraphQLResultRenderer extends React.Component<Props> {
       content = (
         <div className='text-center'>
           <FormattedMessage
-            id='queryTool.otql-result-renderer-empty'
+            id='queryTool.graphql-result-renderer-empty'
             defaultMessage='Empty Result'
           />
         </div>
@@ -55,7 +55,7 @@ class GraphQLResultRenderer extends React.Component<Props> {
       <Card
         title={
           <FormattedMessage
-            id='queryTool.otql-result-renderer-card-title'
+            id='queryTool.graphql-result-renderer-card-title'
             defaultMessage='Result'
           />
         }
@@ -64,7 +64,7 @@ class GraphQLResultRenderer extends React.Component<Props> {
             <React.Fragment>
               <Tag color={colors['mcs-info']}>
                 <FormattedMessage
-                  id='otql-result-renderer-card-subtitle-duration'
+                  id='graphql-result-renderer-card-subtitle-duration'
                   defaultMessage='Took {duration}ms'
                   values={{ duration: result.took }}
                 />
@@ -72,7 +72,7 @@ class GraphQLResultRenderer extends React.Component<Props> {
               {result.cache_hit && (
                 <Tag color={colors['mcs-success']}>
                   <FormattedMessage
-                    id='otql-result-renderer-card-subtitle-cache'
+                    id='graphql-result-renderer-card-subtitle-cache'
                     defaultMessage='From Cache'
                   />
                 </Tag>

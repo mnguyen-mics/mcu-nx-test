@@ -48,20 +48,20 @@ class GraphQLInputEditor extends React.Component<Props, State> {
     const { query } = this.state;
     const clearButton = (
       <Button onClick={this.clearQuery}>
-        <FormattedMessage id='queryTool.otql.edit.clear.label' defaultMessage='Clear Query' />
+        <FormattedMessage id='queryTool.graphql.edit.clear.label' defaultMessage='Clear Query' />
       </Button>
     );
 
     const abortButton = (
       <Button type='primary' className='m-l-10' onClick={onAbortQuery}>
-        <FormattedMessage id='queryTool.otql.edit.abort.label' defaultMessage='Abort Query' />
+        <FormattedMessage id='queryTool.graphql.edit.abort.label' defaultMessage='Abort Query' />
       </Button>
     );
 
     const handleOnRunButtonClick = () => onRunQuery(query!);
     const runButton = (
       <Button type='primary' className='m-l-10' disabled={!query} onClick={handleOnRunButtonClick}>
-        <FormattedMessage id='queryTool.otql.edit.run.label' defaultMessage='Run Query' />
+        <FormattedMessage id='queryTool.graphql.edit.run.label' defaultMessage='Run Query' />
       </Button>
     );
 

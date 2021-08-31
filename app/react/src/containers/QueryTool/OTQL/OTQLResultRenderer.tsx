@@ -110,7 +110,7 @@ class OTQLResultRenderer extends React.Component<Props> {
           <React.Fragment>
             <Tag color='blue' className='mcs-otqlQuery_result_tag'>
               <FormattedMessage
-                id='otql-result-renderer-card-subtitle-duration'
+                id='otql-result-renderer-card-subtitle-duration2'
                 defaultMessage='Took {duration}ms'
                 values={{ duration: result.took }}
               />
@@ -118,7 +118,7 @@ class OTQLResultRenderer extends React.Component<Props> {
             {result.cache_hit && (
               <Tag color={colors['mcs-success']}>
                 <FormattedMessage
-                  id='otql-result-renderer-card-subtitle-cache'
+                  id='otql-result-renderer-card-subtitle-cache2'
                   defaultMessage='From Cache'
                 />
               </Tag>
