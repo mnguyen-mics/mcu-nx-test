@@ -38,7 +38,7 @@ jobs:
             }
 
             const sizeLabelNames = ['S', 'M', 'L'];
-            const typeLabelNames = ['feature', 'bugfix'];
+            const typeLabelNames = ['feature', 'bugfix', 'dependencies'];
 
             atLeastOneLabel(labels, sizeLabelNames);
             atLeastOneLabel(labels, typeLabelNames);
