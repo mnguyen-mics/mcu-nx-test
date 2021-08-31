@@ -1,6 +1,10 @@
 import { ProcessingSelectionResource } from './../../../../../models/processing';
 import { ProcessingActivityFieldModel } from './../../Common/domain';
-import { SiteResource, Aliases } from '../../../../../models/settings/settings';
+import {
+  SiteResource,
+  Aliases,
+  ChannelVisitAnalyzerSelectionResource,
+} from '../../../../../models/settings/settings';
 import { VisitAnalyzerFieldModel, EventRuleFieldModel } from '../../Common/domain';
 import { FieldArrayModel } from '../../../../../utils/FormHelper';
 
@@ -10,6 +14,7 @@ export interface SiteFormData {
   eventRulesFields: EventRuleFieldModel[];
   aliases: AliasesFieldModel[];
   initialProcessingSelectionResources: ProcessingSelectionResource[];
+  initialVisitAnalyzerSelections: ChannelVisitAnalyzerSelectionResource[];
   processingActivities: ProcessingActivityFieldModel[];
 }
 
@@ -23,6 +28,7 @@ export const INITIAL_SITE_FORM_DATA: SiteFormData = {
   eventRulesFields: [],
   aliases: [],
   initialProcessingSelectionResources: [],
+  initialVisitAnalyzerSelections: [],
   processingActivities: [],
 };
 

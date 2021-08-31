@@ -112,7 +112,15 @@ class SiteEditPage extends React.Component<Props, State> {
           );
         });
 
-      Promise.all([getSites, getEventRules, getAliases, getProcessingSelections])
+      const getVisitAnalyzerSelections = this._channelService.getVisitAnalyzerSelections(siteId);
+
+      Promise.all([
+        getSites,
+        getEventRules,
+        getAliases,
+        getProcessingSelections,
+        getVisitAnalyzerSelections,
+      ])
         .then(res => {
           const formData = {
             site: res[0].data,
@@ -122,13 +130,15 @@ class SiteEditPage extends React.Component<Props, State> {
             processingActivities: res[3].map(processingAndSelection =>
               createFieldArrayModel(processingAndSelection.processingResource),
             ),
-            visitAnalyzerFields: res[0].data.visit_analyzer_model_id
-              ? [
-                  createFieldArrayModel({
-                    visit_analyzer_model_id: res[0].data.visit_analyzer_model_id,
-                  }),
-                ]
-              : [],
+            visitAnalyzerFields:
+              res[4].data && res[4].data.length > 0 && res[4].data[0].visit_analyzer_model_id
+                ? [
+                    createFieldArrayModel({
+                      visit_analyzer_model_id: res[4].data[0].visit_analyzer_model_id,
+                    }),
+                  ]
+                : [],
+            initialVisitAnalyzerSelections: res[4].data,
             eventRulesFields: res[1].data.map((er: EventRules) => createFieldArrayModel(er)),
             aliases: res[2].data.map(al => createFieldArrayModel(al)),
           };
@@ -326,6 +336,50 @@ class SiteEditPage extends React.Component<Props, State> {
       return [...saveCreatePromises, ...deletePromises];
     };
 
+    const generateVisitAnalyzerSelectionsTasks = (
+      channel: ChannelResource,
+    ): Array<Promise<any>> => {
+      const initialVisitAnalyzerModelId =
+        (siteFormData.initialVisitAnalyzerSelections &&
+          siteFormData.initialVisitAnalyzerSelections.length > 0 &&
+          siteFormData.initialVisitAnalyzerSelections[0].visit_analyzer_model_id) ||
+        null;
+      const currentVisitAnalyzerModelId = getVisitAnalyzerId(siteFormData.visitAnalyzerFields);
+
+      if (currentVisitAnalyzerModelId && !initialVisitAnalyzerModelId) {
+        return [
+          this._channelService.createVisitAnalyzerSelection(
+            channel.id,
+            currentVisitAnalyzerModelId,
+          ),
+        ];
+      } else if (initialVisitAnalyzerModelId && !currentVisitAnalyzerModelId) {
+        return [
+          this._channelService.deleteVisitAnalyzerSelection(
+            channel.id,
+            siteFormData.initialVisitAnalyzerSelections[0].id,
+          ),
+        ];
+      } else if (
+        currentVisitAnalyzerModelId &&
+        initialVisitAnalyzerModelId &&
+        currentVisitAnalyzerModelId !== initialVisitAnalyzerModelId
+      ) {
+        return [
+          this._channelService.deleteVisitAnalyzerSelection(
+            channel.id,
+            siteFormData.initialVisitAnalyzerSelections[0].id,
+          ),
+          this._channelService.createVisitAnalyzerSelection(
+            channel.id,
+            currentVisitAnalyzerModelId,
+          ),
+        ];
+      } else {
+        return [Promise.resolve({})];
+      }
+    };
+
     const generateProcessingSelectionsTasks = (site: ChannelResource): Array<Promise<any>> => {
       const initialProcessingSelectionResources = siteFormData.initialProcessingSelectionResources;
       const processingActivities = siteFormData.processingActivities;
@@ -388,6 +442,7 @@ class SiteEditPage extends React.Component<Props, State> {
         ...generateEventRulesTasks(site),
         ...generateAliasesTasks(site),
         ...generateProcessingSelectionsTasks(site),
+        ...generateVisitAnalyzerSelectionsTasks(site),
       ];
     };
 
@@ -406,7 +461,6 @@ class SiteEditPage extends React.Component<Props, State> {
       return this._channelService
         .createChannel(this.props.match.params.organisationId, datamartId, {
           ...siteFormData.site,
-          visit_analyzer_model_id: getVisitAnalyzerId(siteFormData.visitAnalyzerFields),
           type: 'SITE',
         })
         .then(site => Promise.all(generateAllPromises(site.data)));

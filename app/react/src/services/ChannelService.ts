@@ -7,6 +7,7 @@ import {
   ChannelResourceShape,
   SiteResource,
   MobileApplicationResource,
+  ChannelVisitAnalyzerSelectionResource,
 } from '../models/settings/settings';
 import { injectable } from 'inversify';
 
@@ -102,6 +103,21 @@ export interface IChannelService {
     channelId: string,
     processingSelectionId: string,
   ) => Promise<DataResponse<ProcessingSelectionResource>>;
+  getVisitAnalyzerSelections: (
+    channelId: string,
+  ) => Promise<DataListResponse<ChannelVisitAnalyzerSelectionResource>>;
+  getVisitAnalyzerSelection: (
+    channelId: string,
+    visitAnalyzerSelectionId: string,
+  ) => Promise<DataResponse<ChannelVisitAnalyzerSelectionResource>>;
+  createVisitAnalyzerSelection: (
+    channelId: string,
+    visitAnalyzerModelId: string,
+  ) => Promise<DataResponse<ChannelVisitAnalyzerSelectionResource>>;
+  deleteVisitAnalyzerSelection: (
+    channelId: string,
+    visitAnalyzerSelectionId: string,
+  ) => Promise<void>;
 }
 
 @injectable()
@@ -276,6 +292,34 @@ export class ChannelService implements IChannelService {
     processingSelectionId: string,
   ): Promise<DataResponse<ProcessingSelectionResource>> {
     const endpoint = `channels/${channelId}/processing_selections/${processingSelectionId}`;
+    return ApiService.deleteRequest(endpoint);
+  }
+  getVisitAnalyzerSelections(
+    channelId: string,
+  ): Promise<DataListResponse<ChannelVisitAnalyzerSelectionResource>> {
+    const endpoint = `channels/${channelId}/visit_analyzer_models`;
+    return ApiService.getRequest(endpoint);
+  }
+  getVisitAnalyzerSelection(
+    channelId: string,
+    visitAnalyzerSelectionId: string,
+  ): Promise<DataResponse<ChannelVisitAnalyzerSelectionResource>> {
+    const endpoint = `channels/${channelId}/visit_analyzer_models/${visitAnalyzerSelectionId}`;
+    return ApiService.getRequest(endpoint);
+  }
+  createVisitAnalyzerSelection(
+    channelId: string,
+    visitAnalyzerModelId: string,
+  ): Promise<DataResponse<ChannelVisitAnalyzerSelectionResource>> {
+    const endpoint = `channels/${channelId}/visit_analyzer_models`;
+    const body: Partial<ChannelVisitAnalyzerSelectionResource> = {
+      channel_id: channelId,
+      visit_analyzer_model_id: visitAnalyzerModelId,
+    };
+    return ApiService.postRequest(endpoint, body);
+  }
+  deleteVisitAnalyzerSelection(channelId: string, visitAnalyzerSelectionId: string): Promise<void> {
+    const endpoint = `channels/${channelId}/visit_analyzer_models/${visitAnalyzerSelectionId}`;
     return ApiService.deleteRequest(endpoint);
   }
 }

@@ -1,6 +1,9 @@
 import { ProcessingActivityFieldModel } from './../../Common/domain';
 import { ProcessingSelectionResource } from './../../../../../models/processing';
-import { MobileApplicationResource } from '../../../../../models/settings/settings';
+import {
+  ChannelVisitAnalyzerSelectionResource,
+  MobileApplicationResource,
+} from '../../../../../models/settings/settings';
 import { VisitAnalyzerFieldModel, EventRuleFieldModel } from '../../Common/domain';
 
 export interface MobileApplicationFormData {
@@ -8,6 +11,7 @@ export interface MobileApplicationFormData {
   visitAnalyzerFields: VisitAnalyzerFieldModel[];
   eventRulesFields: EventRuleFieldModel[];
   initialProcessingSelectionResources: ProcessingSelectionResource[];
+  initialVisitAnalyzerSelections: ChannelVisitAnalyzerSelectionResource[];
   processingActivities: ProcessingActivityFieldModel[];
 }
 
@@ -18,6 +22,7 @@ export const INITIAL_MOBILE_APP_FORM_DATA: MobileApplicationFormData = {
   visitAnalyzerFields: [],
   eventRulesFields: [],
   initialProcessingSelectionResources: [],
+  initialVisitAnalyzerSelections: [],
   processingActivities: [],
 };
 
