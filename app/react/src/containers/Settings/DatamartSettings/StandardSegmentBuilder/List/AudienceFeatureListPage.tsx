@@ -169,6 +169,7 @@ class AudienceFeatureListPage extends React.Component<Props, State> {
       this.setBaseFolderAndFeatures,
       this.onFailure,
       searchFilter,
+      false,
     );
   };
 

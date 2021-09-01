@@ -243,12 +243,12 @@ export class AudienceFeatureService implements IAudienceFeatureService {
       .then((results: any[]) => {
         const folders: AudienceFeatureFolderResource[] = results[0];
         const features: DataListResponse<AudienceFeatureResource> = results[1];
-        const jobExecutions: DataListResponse<PublicJobExecutionResource> = results[2];
+        const jobExecutions: DataListResponse<PublicJobExecutionResource> | undefined = results[2];
         setFoldersAndFeatures(
           folders,
           features.data,
           features.total,
-          jobExecutions.data.length > 0,
+          jobExecutions && jobExecutions.data ? jobExecutions.data.length > 0 : false,
         );
       })
       .catch(err => {
