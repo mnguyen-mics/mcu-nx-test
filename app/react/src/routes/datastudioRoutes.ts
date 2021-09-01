@@ -21,7 +21,6 @@ export const datastudioDefinition: NavigatorDefinition = {
     path: '/datastudio/funnel',
     layout: 'main',
     contentComponent: FunnelPage,
-    requiredFeature: 'funnel-analytics',
     requireDatamart: true,
   },
   datastudioReport: {
