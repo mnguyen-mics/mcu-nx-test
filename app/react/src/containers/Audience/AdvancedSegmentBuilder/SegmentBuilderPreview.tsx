@@ -85,6 +85,12 @@ class SegmentBuilderPreview extends React.Component<Props> {
         return createActionBar(onSave, onClose, query);
       };
 
+      const jsonParsedValue = value && JSON.parse(value);
+
+      const whereExpressionsFromValue = jsonParsedValue?.where?.expressions
+        ? jsonParsedValue.where.expressions
+        : [];
+
       return (
         standardSegmentBuilder &&
         this.props.openNextDrawer<StandardSegmentBuilderContainerProps>(
@@ -92,9 +98,9 @@ class SegmentBuilderPreview extends React.Component<Props> {
           {
             additionalProps: {
               renderActionBar: actionbar,
-              initialValues: value
+              initialValues: jsonParsedValue
                 ? this._standardSegmentBuilderQueryService.generateStandardSegmentBuilderFormData(
-                    JSON.parse(value).where.expressions,
+                    whereExpressionsFromValue,
                   )
                 : undefined,
               standardSegmentBuilder: standardSegmentBuilder,
