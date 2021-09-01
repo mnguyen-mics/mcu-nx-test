@@ -130,7 +130,6 @@ const datastudioMenuDefinition: NavigatorMenuDefinition = {
     {
       ...generateMissingdefinitionItemFromRoute(datastudioDefinition.datastudioFunnel),
       translation: messages.dataStudioFunnel,
-      mention: 'BETA',
     },
     {
       ...generateMissingdefinitionItemFromRoute(datastudioDefinition.datastudioReport),
