@@ -284,8 +284,6 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
 
     if (isLoading) {
       return <Loading isFullScreen={true} />;
-    } else if (noData) {
-      return <EmptyTableView iconType='warning' message={intl.formatMessage(messages.noData)} />;
     }
 
     const audienceFeatures = currentAudienceFeatures
@@ -368,6 +366,7 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
         },
         hideFolder: !!searchText,
         currentAudienceFeatureFolder: undefined,
+        searchValue: searchText,
       });
     };
 
@@ -396,6 +395,7 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
             onSelect={onSelect}
             onSearch={onSearch}
             notFoundContent={isLoadingFinalValues && <Spin />}
+            autoFocus={true}
           >
             <Input.Search
               size='large'
@@ -437,12 +437,16 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
               })}
         </Row>
         <div className='mcs-standardSegmentBuilder_featureCardContainer'>
-          <CollectionView
-            collectionItems={audienceFeatures!}
-            pagination={pagination}
-            loading={isLoading}
-            gutter={16}
-          />
+          {noData ? (
+            <EmptyTableView iconType='warning' message={intl.formatMessage(messages.noData)} />
+          ) : (
+            <CollectionView
+              collectionItems={audienceFeatures!}
+              pagination={pagination}
+              loading={isLoading}
+              gutter={16}
+            />
+          )}
         </div>
       </React.Fragment>
     );
