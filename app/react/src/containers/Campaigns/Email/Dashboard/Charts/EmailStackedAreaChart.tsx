@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Row, Col } from 'antd';
 import { compose } from 'recompose';
-import { LegendChart } from '../../../../../components/LegendChart';
 import messages from '../messages';
 import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
 import { Index } from '../../../../../utils';
@@ -12,6 +11,7 @@ import {
   LoadingChart,
   McsDateRangePicker,
   StackedAreaChart,
+  LegendChart
 } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import { StackedAreaChartProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/stacked-area-chart';

@@ -3,10 +3,7 @@ import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Row, Col } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import { LegendChartWithModal } from '../../../../components/LegendChart';
-
 import messages from './messages';
-
 import {
   DATE_SEARCH_SETTINGS,
   updateSearch,
@@ -29,6 +26,7 @@ import {
   LoadingChart,
   MetricsColumn,
   McsDateRangePicker,
+  LegendChartWithModal
 } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 
@@ -335,7 +333,6 @@ class GoalStackedAreaChart extends React.Component<JoinedProps, GoalStackedAreaC
               <div />
             ) : (
               <LegendChartWithModal
-                identifier='chartLegend'
                 options={legendOptions}
                 legends={legends}
                 onLegendChange={onLegendChange}
