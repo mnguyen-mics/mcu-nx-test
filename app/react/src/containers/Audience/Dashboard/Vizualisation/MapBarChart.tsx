@@ -21,7 +21,10 @@ import { QueryResource } from '../../../../models/datamart/DatamartResource';
 import { DataLabel, TooltipChart } from '../../../../models/dashboards/dashboards';
 import { EmptyChart, LoadingChart, BarChart } from '@mediarithmics-private/mcs-components-library';
 import { StandardSegmentBuilderQueryDocument } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
-import { Dataset } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
+import {
+  Dataset,
+  Format,
+} from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 
 export interface MapBarChartProps {
   title?: string;
@@ -283,6 +286,7 @@ class MapBarChart extends React.Component<Props, State> {
       sort: sortKey,
       labels,
       tooltip,
+      format: 'percentage' as Format,
     };
 
     const generateChart = () => {

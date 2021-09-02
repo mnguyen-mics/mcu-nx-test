@@ -20,7 +20,10 @@ import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import Highcharts from 'highcharts';
 import { BASE_CHART_HEIGHT } from '../../../components/Charts/domain';
 import { Option } from 'antd/lib/mentions';
-import { Dataset } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
+import {
+  Dataset,
+  Format,
+} from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 
 interface BucketPath {
   aggregationBucket: OTQLBuckets;
@@ -33,6 +36,7 @@ export interface AggregationRendererProps {
 type Props = AggregationRendererProps & InjectedFeaturesProps;
 
 type chartType = 'RADAR' | 'BAR';
+
 interface State {
   aggregationsPath: BucketPath[];
   // can be a bucket or metrics
@@ -183,6 +187,7 @@ class AggregationRenderer extends React.Component<Props, State> {
         legend: {
           enabled: true,
         },
+        format: 'count' as Format,
       };
 
       const options: Highcharts.Options = {

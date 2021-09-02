@@ -145,10 +145,20 @@ class FormatDataToChart extends React.Component<JoinedProp, {}> {
           if (acc.length === 0) {
             acc.push({
               type: 'bar',
-              data: [d[chart.metricNames[0]]] as number[],
+              data: [
+                {
+                  name: '0',
+                  y: d[chart.metricNames[0]] as number,
+                  count: 0,
+                },
+              ],
             });
           } else {
-            acc[0].data.push(d[chart.metricNames[0]] as number);
+            acc[0].data.push({
+              name: '0',
+              y: d[chart.metricNames[0]] as number,
+              count: 0,
+            });
           }
           return acc;
         }, []);

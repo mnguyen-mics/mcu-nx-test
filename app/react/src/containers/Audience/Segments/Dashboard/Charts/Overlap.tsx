@@ -21,6 +21,7 @@ import {
   BarChart,
 } from '@mediarithmics-private/mcs-components-library';
 import { BarChartOptions } from '@mediarithmics-private/mcs-components-library/lib/components/charts/bar-chart/BarChart';
+import { Format } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 
 interface State {
   data: OverlapData;
@@ -121,6 +122,7 @@ class Overlap extends React.Component<Props, State> {
       ],
       colors: [colors['mcs-info']],
       showLegend: false,
+      format: 'count' as Format,
     };
 
     return !isFetchingOverlap ? (
