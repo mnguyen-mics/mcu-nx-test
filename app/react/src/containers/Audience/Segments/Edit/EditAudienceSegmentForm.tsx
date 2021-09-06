@@ -30,7 +30,11 @@ import {
 import GeneralFormSection from './Sections/GeneralFormSection';
 import { UserListSection } from './Sections/list';
 import { McsFormSection } from '../../../../utils/FormHelper';
-import { QueryLanguage, DatamartResource } from '../../../../models/datamart/DatamartResource';
+import {
+  QueryLanguage,
+  DatamartResource,
+  QueryTranslationRequest,
+} from '../../../../models/datamart/DatamartResource';
 import { FormSection, FieldCtor } from '../../../../components/Form';
 import FormCodeSnippet from '../../../../components/Form/FormCodeSnippet';
 import OTQLInputEditor, { OTQLInputEditorProps } from './Sections/query/OTQL';
@@ -242,12 +246,13 @@ class EditAudienceSegmentForm extends React.Component<Props> {
     const query = audienceSegmentFormData.query;
     if (type === 'USER_QUERY' && queryLanguage === 'JSON_OTQL' && datamart && query) {
       actionBarProps.convert2Otql = () => {
-        return standardSegmentBuilder
-          ? this._queryService.convertJsonOtql2Otql(datamart.id, {
-              ...query,
-              query_language_subtype: 'PARAMETRIC',
-            })
-          : this._queryService.convertJsonOtql2Otql(datamart.id, query);
+        const queryTranslationRequest: QueryTranslationRequest = {
+          input_query_language: query.query_language,
+          input_query_language_subtype: standardSegmentBuilder ? 'PARAMETRIC' : undefined,
+          input_query_text: query.query_text,
+          output_query_language: 'OTQL',
+        };
+        return this._queryService.translateQuery(datamart.id, queryTranslationRequest);
       };
     }
 

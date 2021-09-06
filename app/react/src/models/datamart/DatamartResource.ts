@@ -22,6 +22,18 @@ export type QueryLanguage = 'SELECTORQL' | 'OTQL' | 'JSON_OTQL';
 
 export type QueryLanguageSubtype = 'PARAMETRIC';
 
+export interface QueryTranslationRequest {
+  input_query_language: QueryLanguage;
+  input_query_language_subtype?: QueryLanguageSubtype;
+  input_query_text: string;
+  output_query_language: QueryLanguage;
+  output_query_language_subtype?: QueryLanguageSubtype;
+}
+
+export interface QueryTranslationResource extends QueryTranslationRequest {
+  readonly output_query_text: string;
+}
+
 export interface QueryCreateRequest {
   datamart_id: string;
   major_version?: string;

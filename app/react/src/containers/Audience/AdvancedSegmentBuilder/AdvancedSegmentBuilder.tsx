@@ -4,7 +4,7 @@ import {
   QueryDocument,
   ObjectTreeExpressionNodeShape,
 } from '../../../models/datamart/graphdb/QueryDocument';
-import { QueryResource } from '../../../models/datamart/DatamartResource';
+import { QueryTranslationRequest } from '../../../models/datamart/DatamartResource';
 import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/RuntimeSchema';
 import { BooleanOperatorNodeFactory } from './Diagram/BooleanOperatorNode';
 import { FieldNodeFactory } from './Diagram/FieldNode';
@@ -363,15 +363,14 @@ class AdvancedSegmentBuilder extends React.Component<Props, State> {
         where: query,
       };
 
-      const queryResource: QueryResource = {
-        id: '123',
-        datamart_id: datamartId,
-        query_language: 'JSON_OTQL',
-        query_text: JSON.stringify(queryDocument),
+      const queryTranslationRequest: QueryTranslationRequest = {
+        input_query_language: 'JSON_OTQL',
+        input_query_text: JSON.stringify(queryDocument),
+        output_query_language: 'OTQL',
       };
 
-      return this._queryService.convertJsonOtql2Otql(datamartId, queryResource).then(res => {
-        return res.data.query_text;
+      return this._queryService.translateQuery(datamartId, queryTranslationRequest).then(res => {
+        return res.data.output_query_text;
       });
     };
 

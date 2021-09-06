@@ -16,7 +16,7 @@ import CardFlex from '../Dashboard/Components/CardFlex';
 import { StandardSegmentBuilderQueryDocument } from '../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 import TimelineSelector from '../AdvancedSegmentBuilder/TimelineSelector';
 import { formatMetric } from '../../../utils/MetricHelper';
-import { QueryResource } from '../../../models/datamart/DatamartResource';
+import { QueryTranslationRequest } from '../../../models/datamart/DatamartResource';
 
 interface StandardSegmentBuilderDashboardProps {
   organisationId: string;
@@ -97,16 +97,15 @@ class StandardSegmentBuilderDashboard extends React.Component<Props, State> {
         where: queryDocument?.where,
       };
 
-      const queryResource: QueryResource = {
-        id: '123',
-        datamart_id: datamartId,
-        query_language: 'JSON_OTQL',
-        query_language_subtype: 'PARAMETRIC',
-        query_text: JSON.stringify(selectionQueryDocument),
+      const queryTranslationRequest: QueryTranslationRequest = {
+        input_query_language: 'JSON_OTQL',
+        input_query_language_subtype: 'PARAMETRIC',
+        input_query_text: JSON.stringify(selectionQueryDocument),
+        output_query_language: 'OTQL',
       };
 
-      return this._queryService.convertJsonOtql2Otql(datamartId, queryResource).then(res => {
-        return res.data.query_text;
+      return this._queryService.translateQuery(datamartId, queryTranslationRequest).then(res => {
+        return res.data.output_query_text;
       });
     };
 

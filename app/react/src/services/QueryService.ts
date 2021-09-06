@@ -1,6 +1,8 @@
 import ApiService, { DataResponse, DataListResponse } from './ApiService';
 import {
   QueryResource,
+  QueryTranslationResource,
+  QueryTranslationRequest,
   AutoCompleteResource,
   ErrorQueryResource,
 } from '../models/datamart/DatamartResource';
@@ -74,10 +76,10 @@ export interface IQueryService {
 
   checkOtqlQuery: (datamartId: string, query: string) => Promise<DataResponse<ErrorQueryResource>>;
 
-  convertJsonOtql2Otql: (
+  translateQuery: (
     datamartId: string,
-    query: QueryResource,
-  ) => Promise<DataResponse<QueryResource>>;
+    query: QueryTranslationRequest,
+  ) => Promise<DataResponse<QueryTranslationResource>>;
 
   getWhereClause: (datamartId: string, queryId: string) => Promise<DataResponse<string>>;
 }
@@ -192,11 +194,12 @@ export class QueryService implements IQueryService {
     return ApiService.postRequest(`datamarts/${datamartId}/query_check/otql`, payload);
   }
 
-  convertJsonOtql2Otql(
+  translateQuery(
     datamartId: string,
-    query: QueryResource,
-  ): Promise<DataResponse<QueryResource>> {
-    return ApiService.postRequest(`datamarts/${datamartId}/query_translations/to/otql`, query);
+    query: QueryTranslationRequest,
+  ): Promise<DataResponse<QueryTranslationResource>> {
+    const endpoint = `datamarts/${datamartId}/query_translations`;
+    return ApiService.postRequest(endpoint, query);
   }
 
   getWhereClause(datamartId: string, queryId: string): Promise<DataResponse<any>> {

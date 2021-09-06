@@ -7,7 +7,7 @@ import { ButtonProps } from 'antd/lib/button/button';
 import { compose } from 'recompose';
 import { Omit } from '../../utils/Types';
 import { DataResponse } from '../../services/ApiService';
-import { QueryResource } from '../../models/datamart/DatamartResource';
+import { QueryTranslationResource } from '../../models/datamart/DatamartResource';
 import Convert2Otql from '../../containers/QueryTool/SaveAs/Convet2Otql';
 import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
 import { ActionbarProps } from '@mediarithmics-private/mcs-components-library/lib/components/action-bar';
@@ -17,7 +17,7 @@ export interface FormLayoutActionbarProps extends Omit<ActionbarProps, 'edition'
   message?: FormattedMessage.MessageDescriptor;
   onClose?: React.MouseEventHandler<HTMLSpanElement>;
   disabled?: boolean;
-  convert2Otql?: () => Promise<DataResponse<QueryResource>>;
+  convert2Otql?: () => Promise<DataResponse<QueryTranslationResource>>;
   buttonHTMLType?: 'submit' | 'button' | 'reset';
 }
 

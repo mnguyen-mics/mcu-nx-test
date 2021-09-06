@@ -1,7 +1,7 @@
 import { UserPartitionSegment } from './../../../models/audiencesegment/AudienceSegmentResource';
 import { AudienceSegmentShape } from '../../../models/audiencesegment';
 import { isUserQuerySegment, isAudienceSegmentShape } from '../Segments/Edit/domain';
-import { QueryResource } from '../../../models/datamart/DatamartResource';
+import { QueryResource, QueryTranslationRequest } from '../../../models/datamart/DatamartResource';
 import { IQueryService } from '../../../services/QueryService';
 import { StandardSegmentBuilderQueryDocument } from '../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 
@@ -32,11 +32,30 @@ export const getFormattedExperimentationQuery = (
         return Promise.resolve(formatQuery(queryResource, buildAdditionnalQuery(innerQuery)));
 
       case 'JSON_OTQL':
+        const queryTranslationRequest: QueryTranslationRequest = {
+          input_query_language: queryResource.query_language,
+          input_query_language_subtype: queryResource.query_language_subtype,
+          input_query_text: queryResource.query_text,
+          output_query_language: 'OTQL',
+        };
         return queryService
-          .convertJsonOtql2Otql(datamartId, queryResource)
+          .translateQuery(datamartId, queryTranslationRequest)
           .then(otqlQ => otqlQ.data)
           .then(otqlQ => {
-            return Promise.resolve(formatQuery(otqlQ, buildAdditionnalQuery(innerQuery)));
+            return Promise.resolve(
+              formatQuery(
+                {
+                  id: queryResource.id,
+                  datamart_id: queryResource.datamart_id,
+                  major_version: queryResource.major_version,
+                  minor_version: queryResource.minor_version,
+                  query_language: otqlQ.output_query_language,
+                  query_language_subtype: otqlQ.output_query_language_subtype,
+                  query_text: otqlQ.output_query_text,
+                },
+                buildAdditionnalQuery(innerQuery),
+              ),
+            );
           });
       default:
         return queryResource;
@@ -63,11 +82,16 @@ export const getFormattedQuery = (
               );
             case 'JSON_OTQL':
               return queryService
-                .convertJsonOtql2Otql(datamartId, q)
+                .translateQuery(datamartId, {
+                  input_query_language: q.query_language,
+                  input_query_language_subtype: q.query_language_subtype,
+                  input_query_text: q.query_text,
+                  output_query_language: 'OTQL',
+                })
                 .then(otqlQ => otqlQ.data)
                 .then(otqlQ => {
                   return Promise.resolve(
-                    formatQuery(dashboardQuery, extractOtqlWhereClause(otqlQ.query_text)),
+                    formatQuery(dashboardQuery, extractOtqlWhereClause(otqlQ.output_query_text)),
                   );
                 });
             default:
@@ -80,19 +104,19 @@ export const getFormattedQuery = (
     isStandardSegmentBuilderQueryDocument(source) &&
     source.language_version === 'JSON_OTQL'
   ) {
-    const queryResource = {
-      datamart_id: datamartId,
-      query_language: 'JSON_OTQL',
-      query_text: JSON.stringify(source),
-      query_language_subtype: 'PARAMETRIC',
+    const queryTranslationRequest: QueryTranslationRequest = {
+      input_query_language: 'JSON_OTQL',
+      input_query_language_subtype: 'PARAMETRIC',
+      input_query_text: JSON.stringify(source),
+      output_query_language: 'OTQL',
     };
 
     return queryService
-      .convertJsonOtql2Otql(datamartId, queryResource as QueryResource)
+      .translateQuery(datamartId, queryTranslationRequest)
       .then(otqlQ => otqlQ.data)
       .then(otqlQ => {
         return Promise.resolve(
-          formatQuery(dashboardQuery, extractOtqlWhereClause(otqlQ.query_text)),
+          formatQuery(dashboardQuery, extractOtqlWhereClause(otqlQ.output_query_text)),
         );
       });
   } else {

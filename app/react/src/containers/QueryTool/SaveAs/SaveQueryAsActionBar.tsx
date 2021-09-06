@@ -9,7 +9,7 @@ import injectNotifications, {
 import { NewExportSimpleFormData } from './NewExportSimpleForm';
 import { NewUserQuerySimpleFormData } from './NewUserQuerySegmentSimpleForm';
 import { DataResponse } from '../../../services/ApiService';
-import { QueryResource } from '../../../models/datamart/DatamartResource';
+import { QueryTranslationResource } from '../../../models/datamart/DatamartResource';
 import Convert2Otql from './Convet2Otql';
 import { Actionbar } from '@mediarithmics-private/mcs-components-library';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
@@ -17,7 +17,7 @@ import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 export interface SaveQueryAsActionBarProps {
   saveAsUserQuery?: (formData: NewUserQuerySimpleFormData) => Promise<any>;
   saveAsExort?: (formData: NewExportSimpleFormData) => Promise<any>;
-  convertToOtql?: () => Promise<DataResponse<QueryResource>>;
+  convertToOtql?: () => Promise<DataResponse<QueryTranslationResource>>;
   breadcrumb: React.ReactNode[];
   csvExportDisabled?: boolean;
 }
