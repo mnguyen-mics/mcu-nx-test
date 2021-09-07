@@ -66,7 +66,11 @@ class AudienceFeatureCard extends React.Component<Props, State> {
         {cardToggled ? (
           <McsIcon type='close' onClick={this.toggleCard} />
         ) : (
-          <McsIcon type='info' onClick={this.toggleCard} />
+          <McsIcon
+            className='mcs-standardSegmentBuilder_featureCardClose'
+            type='info'
+            onClick={this.toggleCard}
+          />
         )}
         <div onClick={finalValues.length === 0 ? onSelectFeature(audienceFeature.id) : undefined}>
           {cardToggled ? (

@@ -366,6 +366,9 @@
   .mcs-standardSegmentBuilder_breadCrumb {
     margin: 15px 0px;
   }
+  .mcs-standardSegmentBuilder_featureCardClose {
+    visibility: hidden;
+  }
   .mcs-standardSegmentBuilder_folder,
   .mcs-standardSegmentBuilder_featureCard {
     height: 100px;
@@ -382,6 +385,9 @@
       cursor: pointer;
       border: 1px solid @primary-color;
       color: @primary-color;
+      .mcs-standardSegmentBuilder_featureCardClose {
+        visibility: visible;
+      }
     }
     .mcs-standardSegmentBuilder_folderChildNumber {
       font-weight: initial;
@@ -410,6 +416,9 @@
       cursor: pointer;
       border: 1px solid @primary-color;
       color: @primary-color;
+      .mcs-standardSegmentBuilder_featureCardClose {
+        visibility: visible;
+      }
     }
     .mcs-standardSegmentBuilder_folderChildNumber {
       font-weight: initial;
@@ -433,6 +442,11 @@
     color: white;
     &:hover {
       color: white;
+    }
+    .mcs-standardSegmentBuilder_featureCardDescritpion {
+      div {
+        color: white;
+      }
     }
   }
   .mcs-standardSegmentBuilder_featureCardContainer {
@@ -473,6 +487,7 @@
         font-size: 12px;
         font-weight: 500;
         display: block;
+        overflow: hidden;
       }
     }
   }
