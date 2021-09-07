@@ -248,7 +248,10 @@ export class AudienceFeatureService implements IAudienceFeatureService {
           folders,
           features.data,
           features.total,
-          jobExecutions && jobExecutions.data ? jobExecutions.data.length > 0 : false,
+          jobExecutions && jobExecutions.data
+            ? jobExecutions.data.length > 0 &&
+                jobExecutions.data.map(job => job.status).includes('SUCCEEDED')
+            : false,
         );
       })
       .catch(err => {

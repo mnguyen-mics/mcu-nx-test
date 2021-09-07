@@ -325,33 +325,39 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
           searchValue: searchText,
         },
         () => {
-          if (this.state.isJobExecutionExisting) {
-            this.setState({
-              isLoadingFinalValues: true,
-            });
-            this._audienceFeatureService
-              .getFinalValues(datamartId, searchText)
-              .then(res => {
-                const finalValuesObject = res.data;
-                if (searchText === this.state.searchValue) {
-                  this.setState({
-                    searchOptions: finalValuesObject.values.map(val => {
-                      return {
-                        value: val,
-                      };
-                    }),
-                    isLoadingFinalValues: false,
-                  });
-                }
-              })
-              .catch(error => {
-                notifyError(error);
+          setTimeout(() => {
+            if (this.state.isJobExecutionExisting && searchText === this.state.searchValue) {
+              if (searchText.length > 2) {
                 this.setState({
-                  searchOptions: [],
-                  isLoadingFinalValues: false,
+                  isLoadingFinalValues: true,
                 });
-              });
-          }
+                this._audienceFeatureService
+                  .getFinalValues(datamartId, searchText)
+                  .then(res => {
+                    const finalValuesObject = res.data;
+                    if (searchText === this.state.searchValue) {
+                      this.setState({
+                        searchOptions: finalValuesObject.values.map(val => {
+                          return {
+                            value: val,
+                          };
+                        }),
+                        isLoadingFinalValues: false,
+                      });
+                    }
+                  })
+                  .catch(error => {
+                    notifyError(error);
+                    this.setState({
+                      searchOptions: [],
+                      isLoadingFinalValues: false,
+                    });
+                  });
+              } else {
+                this.setState({ searchOptions: [] });
+              }
+            }
+          }, 500);
         },
       );
     };
