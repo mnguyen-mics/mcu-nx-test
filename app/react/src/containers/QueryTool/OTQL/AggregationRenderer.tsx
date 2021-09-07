@@ -17,13 +17,13 @@ import {
 } from '@mediarithmics-private/mcs-components-library';
 import { FormattedMessage } from 'react-intl';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
-import Highcharts from 'highcharts';
 import { BASE_CHART_HEIGHT } from '../../../components/Charts/domain';
 import { Option } from 'antd/lib/mentions';
 import {
   Dataset,
   Format,
 } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
+import { RadarChartProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/radar-chart';
 
 interface BucketPath {
   aggregationBucket: OTQLBuckets;
@@ -168,8 +168,9 @@ class AggregationRenderer extends React.Component<Props, State> {
         currentBuckets,
         this.state.numberItems,
       ) as Dataset;
-      const xAxis = currentBuckets.map(bucket => bucket.key);
-      const values = currentBuckets.map(bucket => bucket.count);
+      const radarChartDataset = currentBuckets.map(bucket => {
+        return { xKey: bucket.key, value: bucket.count };
+      });
 
       const optionsForBarChart = {
         xKey: 'key',
@@ -190,39 +191,17 @@ class AggregationRenderer extends React.Component<Props, State> {
         format: 'count' as Format,
       };
 
-      const options: Highcharts.Options = {
-        chart: {
-          polar: true,
-          type: 'area',
-          height: BASE_CHART_HEIGHT,
-        },
-        colors: ['#00a1df'],
-        title: {
-          text: '',
-        },
-        xAxis: {
-          categories: xAxis,
-          tickmarkPlacement: 'on',
-          lineWidth: 0,
-          gridLineDashStyle: 'Dash',
-        },
-        yAxis: {
-          gridLineInterpolation: 'polygon',
-          gridLineDashStyle: 'Dash',
-          lineWidth: 0,
-          min: 0,
-        },
-        series: [{ name: 'count', type: 'area', data: values }],
-        credits: {
-          enabled: false,
-        },
-        plotOptions: {
-          area: {
-            fillOpacity: 0.2,
-            lineWidth: 1,
+      const radarChartProps: RadarChartProps = {
+        dataset: radarChartDataset,
+        height: BASE_CHART_HEIGHT,
+        xKey: 'xKey',
+        yKeys: [
+          {
+            key: 'value',
+            message: 'count',
           },
-        },
-        legend: {
+        ],
+        dataLabels: {
           enabled: false,
         },
       };
@@ -322,7 +301,7 @@ class AggregationRenderer extends React.Component<Props, State> {
                   />{' '}
                   / {buckets.buckets.length}
                 </div>
-                {selectedChart === 'RADAR' && <RadarChart options={options} />}
+                {selectedChart === 'RADAR' && <RadarChart {...radarChartProps} />}
                 {selectedChart === 'BAR' && (
                   <BarChart
                     dataset={stackedBarChartDataset ? stackedBarChartDataset : []}
