@@ -22,10 +22,11 @@ import { TooltipChart, DataLabel } from '../../../../models/dashboards/dashboard
 import {
   EmptyChart,
   LoadingChart,
-  RadarSpiderChart,
+  RadarChart,
 } from '@mediarithmics-private/mcs-components-library';
-import { SerieSortType } from '../../../../components/Charts/domain';
+import { BASE_CHART_HEIGHT, SerieSortType } from '../../../../components/Charts/domain';
 import { StandardSegmentBuilderQueryDocument } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
+import { RadarChartProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/radar-chart';
 
 export interface MapBarChartProps {
   title?: string;
@@ -255,19 +256,19 @@ class MapBarChart extends React.Component<Props, State> {
   };
 
   public render() {
-    const { title, colors, intl, shouldCompare, vertical, labels, tooltip, sortKey } = this.props;
+    const { title, colors, intl, shouldCompare, labels, tooltip, percentage } = this.props;
 
     const restKey = shouldCompare ? [{ key: COMPARED_YKEY, message: '' }] : [];
 
-    const optionsForChart = {
+    const optionsForChart: RadarChartProps = {
+      dataset: this.state.queryResult as any,
+      height: BASE_CHART_HEIGHT,
       xKey: 'xKey',
-      yKeys: [{ key: BASE_YKEY, message: '' }].concat(restKey),
       colors: [colors['mcs-info']].concat(shouldCompare ? [colors['mcs-normal']] : []),
-      labelsEnabled: this.props.labelsEnabled,
-      vertical,
-      labels,
-      sort: sortKey,
-      tooltip,
+      yKeys: [{ key: BASE_YKEY, message: '' }].concat(restKey),
+      dataLabels: labels,
+      tooltip: { format: tooltip?.formatter },
+      format: percentage ? 'percentage' : 'count',
     };
 
     const generateChart = () => {
@@ -283,9 +284,7 @@ class MapBarChart extends React.Component<Props, State> {
       } else {
         return (
           this.state.queryResult &&
-          this.state.queryResult.length && (
-            <RadarSpiderChart dataset={this.state.queryResult as any} options={optionsForChart} />
-          )
+          this.state.queryResult.length && <RadarChart {...optionsForChart} />
         );
       }
     };
