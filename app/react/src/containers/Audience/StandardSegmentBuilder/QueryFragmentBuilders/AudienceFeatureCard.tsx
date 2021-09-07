@@ -1,5 +1,4 @@
 import * as React from 'react';
-import _ from 'lodash';
 import { compose } from 'recompose';
 import { messages } from '../constants';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
@@ -45,11 +44,13 @@ class AudienceFeatureCard extends React.Component<Props, State> {
       searchValue,
     } = this.props;
     const { cardToggled } = this.state;
-    const finalValues = _.flattenDeep(
-      audienceFeature.variables?.map(v => {
-        return v.values;
-      }),
-    ).filter(v => !!v);
+    const onCardClick = (e: any) => {
+      if (e.target.className === 'mcs-standardSegmentBuilder_featureCardFinalValue') {
+        e.stopPropagation();
+      } else {
+        onSelectFeature(audienceFeature.id)();
+      }
+    };
     return (
       <div
         className={`${
@@ -72,7 +73,7 @@ class AudienceFeatureCard extends React.Component<Props, State> {
             onClick={this.toggleCard}
           />
         )}
-        <div onClick={finalValues.length === 0 ? onSelectFeature(audienceFeature.id) : undefined}>
+        <div onClick={onCardClick}>
           {cardToggled ? (
             <React.Fragment>
               <span className='mcs-standardSegmentBuilder_featureCardToggledTitle'>
