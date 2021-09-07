@@ -22,6 +22,7 @@ import CardFlex from '../Components/CardFlex';
 import { getFormattedQuery } from '../domain';
 import { EmptyChart, LoadingChart, BarChart } from '@mediarithmics-private/mcs-components-library';
 import { StandardSegmentBuilderQueryDocument } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
+import { Format } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 
 export interface DateAggregationChartProps {
   title?: string;
@@ -194,6 +195,7 @@ class DateAggregationChart extends React.Component<Props, State> {
       text: {},
       colors: this.state.colors,
       showTooltip: true,
+      format: 'count' as Format,
     };
     return options;
   };
@@ -223,6 +225,7 @@ class DateAggregationChart extends React.Component<Props, State> {
       xKey: 'xKey',
       yKeys: computeChartLabels(),
       colors: computeChartColors(),
+      format: 'count' as Format,
     };
 
     const generateChart = () => {

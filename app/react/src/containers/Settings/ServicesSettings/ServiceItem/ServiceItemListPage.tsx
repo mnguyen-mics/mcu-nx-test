@@ -32,6 +32,7 @@ import { offerType } from '../domain';
 import { ButtonProps } from 'antd/lib/button';
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
+import { Format } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 
 const { Content } = Layout;
 
@@ -174,7 +175,6 @@ class ServiceItemListPage extends React.Component<Props, State> {
 
   render() {
     const { serviceItem, offer, serviceItemCondition } = this.state;
-
     const {
       match: {
         params: { organisationId, offerId },
@@ -190,6 +190,7 @@ class ServiceItemListPage extends React.Component<Props, State> {
       xLabel: formatMessage(messages.usageCost),
       yKeys: [{ key: 'usage_price', message: formatMessage(messages.usagePrice) }],
       colors: [colors['mcs-primary']],
+      format: 'count' as Format,
     };
 
     const servicePrice = (usageCost: number) => {

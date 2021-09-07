@@ -18,7 +18,10 @@ import {
   EmptyChart,
   LoadingChart,
 } from '@mediarithmics-private/mcs-components-library';
-import { Dataset } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
+import {
+  Dataset,
+  Format,
+} from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 
 export interface GaugePieChartProps {
   title?: string;
@@ -156,6 +159,7 @@ class GaugePieChart extends React.Component<Props, State> {
       colors: this.state.colors,
       showTooltip: true,
       height: 300,
+      format: 'percentage' as Format,
     };
     return options;
   };

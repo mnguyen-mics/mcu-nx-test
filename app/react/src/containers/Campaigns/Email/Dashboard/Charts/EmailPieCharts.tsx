@@ -8,6 +8,7 @@ import {
   EmptyChart,
   LoadingChart,
 } from '@mediarithmics-private/mcs-components-library';
+import { Format } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 
 const messageMap: {
   [key: string]: FormattedMessage.MessageDescriptor;
@@ -164,6 +165,7 @@ class EmailPieCharts extends React.Component<Props> {
           text: intl.formatMessage(messageMap[translationKey]),
         },
         colors: [colorFormated, gray],
+        format: 'count' as Format,
       };
 
       return options;

@@ -18,6 +18,7 @@ import { BarChart, LoadingChart } from '@mediarithmics-private/mcs-components-li
 import moment from 'moment';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import { getAllDates } from '../../../../../../utils/DateHelper';
+import { Format } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 
 interface FeedChartProps {
   title?: React.ReactNode;
@@ -207,6 +208,7 @@ class FeedChart extends React.Component<Props, State> {
       }),
       colors: [colors['mcs-info'], colors['mcs-error']],
       showLegend: true,
+      format: 'count' as Format,
     };
 
     return (

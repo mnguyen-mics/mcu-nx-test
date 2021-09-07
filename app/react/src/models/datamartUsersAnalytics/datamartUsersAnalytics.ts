@@ -58,8 +58,14 @@ export interface AreaSeriesDataOptions {
   color?: string;
 }
 
+export interface BarDatapoint {
+  name: string;
+  y: number;
+  count?: number;
+}
+
 export interface BarSeriesDataOptions {
-  data: number[];
+  data: BarDatapoint[];
   type: 'bar';
 }
 

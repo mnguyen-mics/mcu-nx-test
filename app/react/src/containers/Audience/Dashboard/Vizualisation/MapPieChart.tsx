@@ -22,7 +22,10 @@ import {
   EmptyChart,
   LoadingChart,
 } from '@mediarithmics-private/mcs-components-library';
-import { Dataset } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
+import {
+  Dataset,
+  Format,
+} from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 import { StandardSegmentBuilderQueryDocument } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 
 export interface MapPieChartProps {
@@ -181,6 +184,7 @@ class MapPieChart extends React.Component<Props, State> {
       showTooltip: true,
       height: 300,
       showLabels: this.props.labelsEnabled,
+      format: 'count' as Format,
     };
     return options;
   };

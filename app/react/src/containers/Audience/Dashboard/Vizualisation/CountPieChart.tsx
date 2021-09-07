@@ -17,7 +17,10 @@ import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { StandardSegmentBuilderQueryDocument } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 import { getFormattedQuery } from '../domain';
 import { DonutChartOptionsProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/donut-chart/DonutChart';
-import { Dataset } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
+import {
+  Dataset,
+  Format,
+} from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 import {
   DonutChart,
   EmptyChart,
@@ -179,6 +182,7 @@ class CountPieChart extends React.Component<Props, State> {
       showTooltip: true,
       isHalf: false,
       innerRadius: true,
+      format: 'count' as Format,
     };
 
     const generateChart = () => {

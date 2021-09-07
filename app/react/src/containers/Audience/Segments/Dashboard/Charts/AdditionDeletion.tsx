@@ -15,6 +15,7 @@ import {
   BarChart,
 } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
+import { Format } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 
 interface AdditionDeletionProps {
   isFetching: boolean;
@@ -92,6 +93,7 @@ class AdditionDeletion extends React.Component<Props> {
         },
       ],
       colors: [colors['mcs-success'], colors['mcs-error']],
+      format: 'count' as Format,
     };
     return !isFetching ? (
       <BarChart dataset={formattedDataSource} options={optionsForChart} />

@@ -14,6 +14,7 @@ import { getFormattedQuery } from '../domain';
 import { EmptyChart, LoadingChart, BarChart } from '@mediarithmics-private/mcs-components-library';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { StandardSegmentBuilderQueryDocument } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
+import { Format } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 
 export interface CountBarChartProps {
   title?: string;
@@ -194,6 +195,7 @@ class CountBarChart extends React.Component<Props, State> {
       colors: [colors['mcs-info']],
       labelsEnabled: this.props.labelsEnabled,
       showTooltip: true,
+      format: 'count' as Format,
     };
 
     const generateChart = () => {
