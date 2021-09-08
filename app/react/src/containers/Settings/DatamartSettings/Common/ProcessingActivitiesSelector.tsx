@@ -2,14 +2,10 @@ import * as React from 'react';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import TableSelector, {
-  TableSelectorProps,
-} from '../../../../components/ElementSelector/TableSelector';
 import messages from './messages';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IOrganisationService } from '../../../../services/OrganisationService';
-import { SearchFilter } from '../../../../components/ElementSelector';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { OrganisationResource } from '../../../../models/organisation/organisation';
 import { DataResponse, DataListResponse } from '../../../../services/ApiService';
@@ -18,6 +14,13 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
 import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import { SearchFilter } from '@mediarithmics-private/mcs-components-library/lib/utils';
+import { TableSelector } from '@mediarithmics-private/mcs-components-library';
+import { TableSelectorProps } from '@mediarithmics-private/mcs-components-library/lib/components/table-selector';
+import { getWorkspace } from '../../../../redux/Session/selectors';
+import { MicsReduxState } from '../../../../utils/ReduxHelper';
+import { connect } from 'react-redux';
+import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 
 const ProcessingActivitiesTableSelector: React.ComponentClass<
   TableSelectorProps<ProcessingResource>
@@ -29,8 +32,13 @@ export interface ProcessingActivitiesSelectorProps {
   close: () => void;
 }
 
+interface MapStateProps {
+  workspace: (organisationId: string) => UserWorkspaceResource;
+}
+
 type Props = ProcessingActivitiesSelectorProps &
   InjectedIntlProps &
+  MapStateProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }>;
 
@@ -123,7 +131,15 @@ class ProcessingActivitiesSelector extends React.Component<Props, State> {
       intl: { formatMessage },
       selectedProcessingActivityIds,
       close,
+      workspace,
+      match: {
+        params: {
+          organisationId
+        }
+      }
     } = this.props;
+
+    const datamarts = workspace(organisationId).datamarts;
 
     const columnsDefinition: Array<DataColumnDefinition<ProcessingResource>> = [
       {
@@ -152,12 +168,24 @@ class ProcessingActivitiesSelector extends React.Component<Props, State> {
         columnsDefinitions={columnsDefinition}
         save={this.saveProcessingActivities}
         close={close}
+        datamarts={datamarts}
+        messages={{
+          audienceSegment: formatMessage(messages.audienceSegment),
+          userAccountCompartment: formatMessage(messages.userAccountCompartment),
+          serviceType: formatMessage(messages.serviceType),
+          addElementText: formatMessage(messages.addElementText),
+        }}
       />
     );
   }
 }
 
+const mapStateToProps = (state: MicsReduxState) => ({
+  workspace: getWorkspace(state),
+});
+
 export default compose<Props, ProcessingActivitiesSelectorProps>(
+  connect(mapStateToProps, undefined),
   withRouter,
   injectIntl,
   injectNotifications,

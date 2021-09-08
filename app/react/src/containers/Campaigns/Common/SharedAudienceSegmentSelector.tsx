@@ -1,11 +1,8 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
-import TableSelector, {
-  TableSelectorProps,
-} from '../../../components/ElementSelector/TableSelector';
-import { SearchFilter } from '../../../components/ElementSelector';
 import { injectDatamart, InjectedDatamartProps } from '../../Datamart';
 import { UserWorkspaceResource } from '../../../models/directory/UserProfileResource';
 import { GetServiceOptions, ICatalogService } from '../../../services/CatalogService';
@@ -14,7 +11,12 @@ import { DataResponse } from '../../../services/ApiService';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 import { TYPES } from '../../../constants/types';
 import { lazyInject } from '../../../config/inversify.config';
+import { TableSelector } from '@mediarithmics-private/mcs-components-library';
 import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import { getWorkspace } from '../../../redux/Session/selectors';
+import { MicsReduxState } from '../../../utils/ReduxHelper';
+import { TableSelectorProps } from '@mediarithmics-private/mcs-components-library/lib/components/table-selector';
+import { SearchFilter } from '@mediarithmics-private/mcs-components-library/lib/utils';
 
 const SegmentTableSelector: React.ComponentClass<
   TableSelectorProps<AudienceSegmentServiceItemPublicResource>
@@ -41,6 +43,22 @@ const messages = defineMessages({
     id: 'shared-segment-selector.column-cookieIds',
     defaultMessage: 'Desktop Cookie Ids',
   },
+  audienceSegment: {
+    id: 'segment-selector.table.audience-segment',
+    defaultMessage: 'Audience Segment',
+  },
+  userAccountCompartment: {
+    id: 'shared-segment-selector.table.user-account-compartment',
+    defaultMessage: 'User Account Compartment',
+  },
+  serviceType: {
+    id: 'shared-segment-selector.table.service-type',
+    defaultMessage: 'Service Type',
+  },
+  addElementText: {
+    id: 'shared-segment-selector.table.add-element-text',
+    defaultMessage: 'Add',
+  },
 });
 
 export interface SharedAudienceSegmentSelectorProps {
@@ -50,7 +68,6 @@ export interface SharedAudienceSegmentSelectorProps {
 }
 
 interface MapStateProps {
-  defaultDatamart: (organisationId: string) => { id: string };
   workspace: (organisationId: string) => UserWorkspaceResource;
 }
 
@@ -97,7 +114,13 @@ class SharedAudienceSegmentSelector extends React.Component<Props> {
       selectedSegmentIds,
       close,
       intl: { formatMessage },
+      workspace,
+      match: {
+        params: { organisationId },
+      },
     } = this.props;
+
+    const datamarts = workspace(organisationId).datamarts;
 
     const columns: Array<DataColumnDefinition<AudienceSegmentServiceItemPublicResource>> = [
       {
@@ -120,12 +143,24 @@ class SharedAudienceSegmentSelector extends React.Component<Props> {
         save={this.saveSegments}
         close={close}
         displayDatamartSelector={false}
+        datamarts={datamarts}
+        messages={{
+          audienceSegment: formatMessage(messages.audienceSegment),
+          userAccountCompartment: formatMessage(messages.userAccountCompartment),
+          serviceType: formatMessage(messages.serviceType),
+          addElementText: formatMessage(messages.addElementText),
+        }}
       />
     );
   }
 }
 
+const mapStateToProps = (state: MicsReduxState) => ({
+  workspace: getWorkspace(state),
+});
+
 export default compose<Props, SharedAudienceSegmentSelectorProps>(
+  connect(mapStateToProps, undefined),
   withRouter,
   injectIntl,
   injectDatamart,

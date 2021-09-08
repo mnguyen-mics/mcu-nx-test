@@ -1,11 +1,8 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
-import TableSelector, {
-  TableSelectorProps,
-} from '../../../components/ElementSelector/TableSelector';
-import { SearchFilter } from '../../../components/ElementSelector';
 import {
   GetSegmentsOption,
   IAudienceSegmentService,
@@ -23,6 +20,11 @@ import { TYPES } from '../../../constants/types';
 import { lazyInject } from '../../../config/inversify.config';
 import { SegmentNameDisplay } from '../../Audience/Common/SegmentNameDisplay';
 import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import { TableSelector } from '@mediarithmics-private/mcs-components-library';
+import { TableSelectorProps } from '@mediarithmics-private/mcs-components-library/lib/components/table-selector';
+import { SearchFilter } from '@mediarithmics-private/mcs-components-library/lib/utils';
+import { MicsReduxState } from '../../../utils/ReduxHelper';
+import { getWorkspace } from '../../../redux/Session/selectors';
 
 const SegmentTableSelector: React.ComponentClass<
   TableSelectorProps<AudienceSegmentShape>
@@ -49,6 +51,22 @@ const messages = defineMessages({
     id: 'segment-selector.column-cookieIds',
     defaultMessage: 'Desktop Cookie Ids',
   },
+  audienceSegment: {
+    id: 'segment-selector.table.audience-segment',
+    defaultMessage: 'Audience Segment',
+  },
+  userAccountCompartment: {
+    id: 'segment-selector.table.user-account-compartment',
+    defaultMessage: 'User Account Compartment',
+  },
+  serviceType: {
+    id: 'segment-selector.table.service-type',
+    defaultMessage: 'Service Type',
+  },
+  addElementText: {
+    id: 'segment-selector.table.add-element-text',
+    defaultMessage: 'Add',
+  },
 });
 
 export interface AudienceSegmentSelectorProps {
@@ -58,7 +76,6 @@ export interface AudienceSegmentSelectorProps {
 }
 
 interface MapStateProps {
-  defaultDatamart: (organisationId: string) => { id: string };
   workspace: (organisationId: string) => UserWorkspaceResource;
 }
 interface State {
@@ -66,10 +83,15 @@ interface State {
   fetchingReport: boolean;
 }
 
+interface MapStateToProps {
+  workspace: (organisationId: string) => UserWorkspaceResource;
+}
+
 type Props = AudienceSegmentSelectorProps &
   InjectedIntlProps &
   MapStateProps &
   InjectedDatamartProps &
+  MapStateToProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class AudienceSegmentSelector extends React.Component<Props, State> {
@@ -143,9 +165,16 @@ class AudienceSegmentSelector extends React.Component<Props, State> {
       selectedSegmentIds,
       close,
       intl: { formatMessage },
+      workspace,
+      match: {
+        params: { organisationId },
+      },
+      intl,
     } = this.props;
 
     const { fetchingReport, reportBySegmentId } = this.state;
+
+    const datamarts = workspace(organisationId).datamarts;
 
     const getMetric = (segmentId: string, metricName: string) => {
       if (fetchingReport) {
@@ -186,12 +215,24 @@ class AudienceSegmentSelector extends React.Component<Props, State> {
         save={this.saveSegments}
         close={close}
         displayDatamartSelector={true}
+        datamarts={datamarts}
+        messages={{
+          audienceSegment: intl.formatMessage(messages.audienceSegment),
+          userAccountCompartment: intl.formatMessage(messages.userAccountCompartment),
+          serviceType: intl.formatMessage(messages.serviceType),
+          addElementText: intl.formatMessage(messages.addElementText),
+        }}
       />
     );
   }
 }
 
+const mapStateToProps = (state: MicsReduxState) => ({
+  workspace: getWorkspace(state),
+});
+
 export default compose<Props, AudienceSegmentSelectorProps>(
+  connect(mapStateToProps, undefined),
   withRouter,
   injectIntl,
   injectDatamart,

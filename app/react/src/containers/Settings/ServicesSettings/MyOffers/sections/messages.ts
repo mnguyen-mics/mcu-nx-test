@@ -41,6 +41,22 @@ const messages = defineMessages({
     id: 'serviceItemSelector.search.placeholder',
     defaultMessage: 'Search service items',
   },
+  audienceSegment: {
+    id: 'serviceItemSelector.audience-segment',
+    defaultMessage: 'Audience Segment',
+  },
+  userAccountCompartment: {
+    id: 'serviceItemSelector.user-account-compartment',
+    defaultMessage: 'User Account Compartment',
+  },
+  serviceType: {
+    id: 'serviceItemSelector.service-type',
+    defaultMessage: 'Service Type',
+  },
+  addElementText: {
+    id: 'serviceItemSelector.add-element-text',
+    defaultMessage: 'Add',
+  },
 });
 
 export default messages;

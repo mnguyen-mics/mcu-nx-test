@@ -3,7 +3,7 @@ import { compose } from 'recompose';
 import Button, { ButtonProps } from 'antd/lib/button/button';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { FormattedMessage, injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
-import { SearchFilter } from '../../../components/ElementSelector';
+import { SearchFilter } from '@mediarithmics-private/mcs-components-library/lib/utils';
 import { CreativesOptions, ICreativeService } from '../../../services/CreativeService';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 import { CreativeType, CreativeResourceShape } from '../../../models/creative/CreativeResource';

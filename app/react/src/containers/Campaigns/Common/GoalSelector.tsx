@@ -2,16 +2,19 @@ import * as React from 'react';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
-import TableSelector, {
-  TableSelectorProps,
-} from '../../../components/ElementSelector/TableSelector';
-import { SearchFilter } from '../../../components/ElementSelector';
 import { GoalResource } from '../../../models/goal';
 import { getPaginatedApiParam } from '../../../utils/ApiHelper';
 import { lazyInject } from '../../../config/inversify.config';
 import { IGoalService } from '../../../services/GoalService';
 import { TYPES } from '../../../constants/types';
+import { TableSelector } from '@mediarithmics-private/mcs-components-library';
 import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import { connect } from 'react-redux';
+import { TableSelectorProps } from '@mediarithmics-private/mcs-components-library/lib/components/table-selector';
+import { getWorkspace } from '../../../redux/Session/selectors';
+import { MicsReduxState } from '../../../utils/ReduxHelper';
+import { UserWorkspaceResource } from '../../../models/directory/UserProfileResource';
+import { SearchFilter } from '@mediarithmics-private/mcs-components-library/lib/utils';
 
 const GoalTableSelector: React.ComponentClass<TableSelectorProps<GoalResource>> = TableSelector;
 
@@ -28,7 +31,27 @@ const messages = defineMessages({
     id: 'goal-selector-column-name',
     defaultMessage: 'Name',
   },
+  audienceSegment: {
+    id: 'goal-selector.table.audience-segment',
+    defaultMessage: 'Audience Segment',
+  },
+  userAccountCompartment: {
+    id: 'goal-selector.table.user-account-compartment',
+    defaultMessage: 'User Account Compartment',
+  },
+  serviceType: {
+    id: 'goal-selector.table.service-type',
+    defaultMessage: 'Service Type',
+  },
+  addElementText: {
+    id: 'goal-selector.table.add-element-text',
+    defaultMessage: 'Add',
+  },
 });
+
+interface MapStateToProps {
+  workspace: (organisationId: string) => UserWorkspaceResource;
+}
 
 export interface GoalSelectorProps {
   selectedGoalIds: string[];
@@ -38,6 +61,7 @@ export interface GoalSelectorProps {
 
 type Props = GoalSelectorProps &
   InjectedIntlProps &
+  MapStateToProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class GoalSelector extends React.Component<Props> {
@@ -71,7 +95,12 @@ class GoalSelector extends React.Component<Props> {
     const {
       selectedGoalIds,
       close,
+      workspace,
       intl: { formatMessage },
+      match: {
+        params: { organisationId },
+      },
+      intl,
     } = this.props;
 
     const columns: Array<DataColumnDefinition<GoalResource>> = [
@@ -81,6 +110,8 @@ class GoalSelector extends React.Component<Props> {
         render: (text, record) => <span>{record.name}</span>,
       },
     ];
+
+    const datamarts = workspace(organisationId).datamarts;
 
     const fetchGoal = (goalId: string) => this._goalService.getGoal(goalId);
 
@@ -95,9 +126,24 @@ class GoalSelector extends React.Component<Props> {
         columnsDefinitions={columns}
         save={this.saveGoals}
         close={close}
+        datamarts={datamarts}
+        messages={{
+          audienceSegment: intl.formatMessage(messages.audienceSegment),
+          userAccountCompartment: intl.formatMessage(messages.userAccountCompartment),
+          serviceType: intl.formatMessage(messages.serviceType),
+          addElementText: intl.formatMessage(messages.addElementText),
+        }}
       />
     );
   }
 }
 
-export default compose<Props, GoalSelectorProps>(withRouter, injectIntl)(GoalSelector);
+const mapStateToProps = (state: MicsReduxState) => ({
+  workspace: getWorkspace(state),
+});
+
+export default compose<Props, GoalSelectorProps>(
+  connect(mapStateToProps, undefined),
+  withRouter,
+  injectIntl,
+)(GoalSelector);

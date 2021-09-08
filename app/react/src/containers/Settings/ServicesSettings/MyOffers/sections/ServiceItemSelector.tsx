@@ -1,19 +1,22 @@
 import * as React from 'react';
 import { GetServiceItemsOptions, ICatalogService } from '../../../../../services/CatalogService';
 import { ServiceItemShape } from '../../../../../models/servicemanagement/PublicServiceItemResource';
-import TableSelector, {
-  TableSelectorProps,
-} from '../../../../../components/ElementSelector/TableSelector';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { withRouter, RouteComponentProps } from 'react-router';
 import messages from './messages';
 import { compose } from 'recompose';
-import { SearchFilter } from '../../../../../components/ElementSelector';
+import { TableSelector } from '@mediarithmics-private/mcs-components-library';
+import { TableSelectorProps } from '@mediarithmics-private/mcs-components-library/lib/components/table-selector';
+import { SearchFilter } from '@mediarithmics-private/mcs-components-library/lib/utils';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { IServiceOfferPageService } from '../../ServiceOfferPageService';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import { connect } from 'react-redux';
+import { getWorkspace } from '../../../../../redux/Session/selectors';
+import { MicsReduxState } from '../../../../../utils/ReduxHelper';
+import { UserWorkspaceResource } from '../../../../../models/directory/UserProfileResource';
 
 const ServiceItemTableSelector: React.ComponentClass<
   TableSelectorProps<ServiceItemShape>
@@ -27,10 +30,15 @@ export interface ServiceItemSelectorProps {
 
 type Props = ServiceItemSelectorProps &
   InjectedIntlProps &
+  MapStateProps &
   RouteComponentProps<{ organisationId: string }>;
 
 interface State {
   searchFilter: SearchFilter;
+}
+
+interface MapStateProps {
+  workspace: (organisationId: string) => UserWorkspaceResource;
 }
 
 class ServiceItemSelector extends React.Component<Props, State> {
@@ -71,6 +79,12 @@ class ServiceItemSelector extends React.Component<Props, State> {
       selectedServiceItemIds,
       close,
       intl: { formatMessage },
+      workspace,
+      match: {
+        params: {
+          organisationId
+        }
+      }
     } = this.props;
 
     const columns: Array<DataColumnDefinition<ServiceItemShape>> = [
@@ -90,6 +104,8 @@ class ServiceItemSelector extends React.Component<Props, State> {
       },
     ];
 
+    const datamarts = workspace(organisationId).datamarts;
+
     const fetchServiceItem = (serviceItemId: string) =>
       this._catalogService.findServiceItem(serviceItemId);
 
@@ -105,12 +121,24 @@ class ServiceItemSelector extends React.Component<Props, State> {
         columnsDefinitions={columns}
         save={this.saveServiceItems}
         close={close}
+        datamarts={datamarts}
+        messages={{
+          audienceSegment: formatMessage(messages.audienceSegment),
+          userAccountCompartment: formatMessage(messages.userAccountCompartment),
+          serviceType: formatMessage(messages.serviceType),
+          addElementText: formatMessage(messages.addElementText),
+        }}
       />
     );
   }
 }
 
+const mapStateToProps = (state: MicsReduxState) => ({
+  workspace: getWorkspace(state),
+});
+
 export default compose<Props, ServiceItemSelectorProps>(
+  connect(mapStateToProps, undefined),
   withRouter,
   injectIntl,
 )(ServiceItemSelector);
