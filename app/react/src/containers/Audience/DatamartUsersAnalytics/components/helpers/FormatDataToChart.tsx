@@ -228,11 +228,15 @@ class FormatDataToChart extends React.Component<JoinedProp, {}> {
         ) as Highcharts.SeriesOptionsType[];
         return <LineChart options={chart.options} />;
       case 'PIE':
-        chart.options.series = this.formatSeriesForChart(
-          chart,
-          data,
-        ) as Highcharts.SeriesOptionsType[];
-        return <PieChart options={chart.options} />;
+        if (!chart.dimensions || chart.dimensions.length === 0) return null;
+        const formatedData = data.map(d => {
+          return {
+            key: chart.dimensions && d[chart.dimensions[0]],
+            value: d[chart.metricNames[0]],
+          };
+        });
+
+        return <PieChart colors={chart.options.colors} dataset={formatedData} innerRadius={true} />;
       case 'COUNT':
         chart.counterFormatedProps = this.formatSeriesForCounters(chart, data);
         return <CounterDashboard counters={chart.counterFormatedProps} />;

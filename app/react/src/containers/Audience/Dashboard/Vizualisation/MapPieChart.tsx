@@ -17,14 +17,10 @@ import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { getFormattedQuery } from '../domain';
-import {
-  DonutChart,
-  EmptyChart,
-  LoadingChart,
-} from '@mediarithmics-private/mcs-components-library';
+import { PieChart, EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
 import {
   Dataset,
-  Format,
+  PieChartFormat,
 } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 import { StandardSegmentBuilderQueryDocument } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 
@@ -184,7 +180,7 @@ class MapPieChart extends React.Component<Props, State> {
       showTooltip: true,
       height: 300,
       showLabels: this.props.labelsEnabled,
-      format: 'count' as Format,
+      format: 'count' as PieChartFormat,
     };
     return options;
   };
@@ -206,10 +202,10 @@ class MapPieChart extends React.Component<Props, State> {
         return <EmptyChart title={intl.formatMessage(messages.noData)} icon='warning' />;
       } else {
         return (
-          <DonutChart
+          <PieChart
             dataset={this.state.queryResult}
-            enableDrilldown={true}
-            options={pieChartsOptions}
+            drilldown={true}
+            {...pieChartsOptions}
             height={height}
           />
         );

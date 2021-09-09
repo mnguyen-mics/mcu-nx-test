@@ -16,16 +16,12 @@ import CardFlex from '../Components/CardFlex';
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { StandardSegmentBuilderQueryDocument } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 import { getFormattedQuery } from '../domain';
-import { DonutChartOptionsProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/donut-chart/DonutChart';
+import { PieChartProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/pie-chart/PieChart';
 import {
   Dataset,
-  Format,
+  PieChartFormat,
 } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
-import {
-  DonutChart,
-  EmptyChart,
-  LoadingChart,
-} from '@mediarithmics-private/mcs-components-library';
+import { PieChart, EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
 
 export interface CountPieChartProps {
   title?: string;
@@ -176,13 +172,15 @@ class CountPieChart extends React.Component<Props, State> {
       });
     };
 
-    const optionsForChart: DonutChartOptionsProps = {
+    const optionsForChart: PieChartProps = {
+      dataset: this.state.queryResult as Dataset,
       colors: computeChartColors(),
-      showLabels: this.props.labelsEnabled,
-      showTooltip: true,
+      dataLabels: {
+        enabled: !!this.props.labelsEnabled,
+      },
       isHalf: false,
       innerRadius: true,
-      format: 'count' as Format,
+      format: 'count' as PieChartFormat,
     };
 
     const generateChart = () => {
@@ -196,13 +194,7 @@ class CountPieChart extends React.Component<Props, State> {
       ) {
         return <EmptyChart title={intl.formatMessage(messages.noData)} icon='warning' />;
       } else {
-        return (
-          <DonutChart
-            dataset={this.state.queryResult as Dataset}
-            options={optionsForChart}
-            height={height}
-          />
-        );
+        return <PieChart {...optionsForChart} height={height} />;
       }
     };
 
