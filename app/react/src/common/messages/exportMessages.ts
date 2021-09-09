@@ -23,10 +23,6 @@ export default defineMessages({
     id: 'export.title.segment.overview',
     defaultMessage: 'Audience Segment Overview',
   },
-  audienceSegmentAdditionsDeletionsExportTitle: {
-    id: 'export.title.segment.additions_deletions',
-    defaultMessage: 'Audience Segment Add Del',
-  },
   overlapExportTitle: {
     id: 'segment.overlap.export_title',
     defaultMessage: 'Audience Segment Overlap',
