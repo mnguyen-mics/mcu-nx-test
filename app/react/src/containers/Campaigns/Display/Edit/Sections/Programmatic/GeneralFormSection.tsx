@@ -133,11 +133,11 @@ class GeneralFormSection extends React.Component<Props, State> {
             component={FormInput}
             validate={[isValidFloat, isNotZero]}
             formItemProps={{
-              className: 'mcs-campaignDisplay_creationForm_campaign_max_budget_per_period',
               label: formatMessage(formatDisplayCampaignProperty('max_budget_per_period').message),
             }}
             inputProps={{
               suffix: <span>€</span>,
+              className: 'mcs-campaignDisplay_creationForm_campaign_max_budget_per_period',
               addonAfter: (
                 <FormAddonSelectField
                   name='campaign.max_budget_period'
