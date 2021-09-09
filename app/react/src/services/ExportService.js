@@ -1248,20 +1248,6 @@ const exportAudienceSegmentDashboard = (
     };
   }));
 
-  const additionDeletionHeaders = [{
-      name: 'day',
-      translation: dateMessages.day.defaultMessage
-    },
-    {
-      name: 'user_point_additions',
-      translation: formatMessage(segmentMessages.userPointAddition)
-    },
-    {
-      name: 'user_point_deletions',
-      translation: formatMessage(segmentMessages.userPointDeletion)
-    },
-  ];
-
   const overlapHeaders = [{
       name: 'xKey',
       translation: formatMessage(segmentMessages.overlap)
@@ -1285,16 +1271,6 @@ const exportAudienceSegmentDashboard = (
       exportMessages.audienceSegmentOverviewExportTitle,
       segmentData,
       overviewHeaders,
-      filter,
-      formatMessage,
-      title,
-      otherInfos,
-      otherInfosToDisplay,
-    ),
-    addSheet(
-      exportMessages.audienceSegmentAdditionsDeletionsExportTitle,
-      segmentData,
-      additionDeletionHeaders,
       filter,
       formatMessage,
       title,
