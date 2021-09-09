@@ -690,7 +690,6 @@ class Funnel extends React.Component<Props, State> {
                       {index > 0 && filter[index - 1] && index === splitIndex && !isStepLoading
                         ? this.getStepHover(index, dimensionMetrics[index - 1], filter[index - 1])
                         : undefined}
-
                       {stepsDelta[index] &&
                       stepsDelta[index].passThroughPercentage &&
                       (index !== splitIndex - 1 || isStepLoading) &&
