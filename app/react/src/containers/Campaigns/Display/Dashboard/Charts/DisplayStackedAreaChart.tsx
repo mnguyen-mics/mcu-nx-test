@@ -3,12 +3,9 @@ import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Row, Col } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
-import { LegendChartWithModal } from '../../../../../components/LegendChart';
 import CampaignDisplayProgress from './CampaignDisplayProgress';
-
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';
-
 import { updateSearch, parseSearch } from '../../../../../utils/LocationSearchHelper';
 import { formatMetric } from '../../../../../utils/MetricHelper';
 import McsMoment from '../../../../../utils/McsMoment';
@@ -19,6 +16,7 @@ import {
   LoadingChart,
   MetricsColumn,
   McsDateRangePicker,
+  LegendChartWithModal,
 } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 

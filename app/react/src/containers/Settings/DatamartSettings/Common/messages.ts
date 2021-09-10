@@ -67,4 +67,20 @@ export default defineMessages({
       'settings.datamart.processings.forAddToSegmentAutomationNode.section.subtitle.organisationSettings',
     defaultMessage: 'organisation settings',
   },
+  audienceSegment: {
+    id: 'settings.datamart.processings.tableSelector.audience-segment',
+    defaultMessage: 'Audience Segment',
+  },
+  userAccountCompartment: {
+    id: 'settings.datamart.processings.tableSelector.user-account-compartment',
+    defaultMessage: 'User Account Compartment',
+  },
+  serviceType: {
+    id: 'settings.datamart.processings.tableSelector.service-type',
+    defaultMessage: 'Service Type',
+  },
+  addElementText: {
+    id: 'settings.datamart.processings.tableSelector.add-element-text',
+    defaultMessage: 'Add',
+  },
 });

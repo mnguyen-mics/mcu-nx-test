@@ -1,16 +1,20 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
-import { SearchFilter } from '../../../../components/ElementSelector';
 import { getPaginatedApiParam, PaginatedApiParam } from '../../../../utils/ApiHelper';
-import { TableSelectorProps } from '../../../../components/ElementSelector/TableSelector';
-import { TableSelector } from '../../../../components/index';
 import { AttributionModel } from '../../../../models/Plugins';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IAttributionModelService } from '../../../../services/AttributionModelService';
 import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import { TableSelector } from '@mediarithmics-private/mcs-components-library';
+import { TableSelectorProps } from '@mediarithmics-private/mcs-components-library/lib/components/table-selector';
+import { SearchFilter } from '@mediarithmics-private/mcs-components-library/lib/utils';
+import { getWorkspace } from '../../../../redux/Session/selectors';
+import { MicsReduxState } from '../../../../utils/ReduxHelper';
+import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 
 const AttributionModelTableSelector: React.ComponentClass<
   TableSelectorProps<AttributionModel>
@@ -32,6 +36,22 @@ const messages = defineMessages({
     id: 'attributionModel.selector.search.placeholder',
     defaultMessage: 'Search an attribution model',
   },
+  audienceSegment: {
+    id: 'attributionModel.tableSelector.audience-segment',
+    defaultMessage: 'Audience Segment',
+  },
+  userAccountCompartment: {
+    id: 'attributionModel.tableSelector.user-account-compartment',
+    defaultMessage: 'User Account Compartment',
+  },
+  serviceType: {
+    id: 'attributionModel.tableSelector.service-type',
+    defaultMessage: 'Service Type',
+  },
+  addElementText: {
+    id: 'attributionModel.TableSelector.add-element-text',
+    defaultMessage: 'Add',
+  },
 });
 
 export interface AttributionModelSelectorProps {
@@ -40,8 +60,13 @@ export interface AttributionModelSelectorProps {
   close: () => void;
 }
 
+interface MapStateProps {
+  workspace: (organisationId: string) => UserWorkspaceResource;
+}
+
 type Props = AttributionModelSelectorProps &
   InjectedIntlProps &
+  MapStateProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class AttributionModelSelector extends React.Component<Props> {
@@ -76,6 +101,11 @@ class AttributionModelSelector extends React.Component<Props> {
       selectedAttributionModelIds,
       intl: { formatMessage },
       close,
+      workspace,
+      match: {
+        params: { organisationId },
+      },
+      intl,
     } = this.props;
 
     const columns: Array<DataColumnDefinition<AttributionModel>> = [
@@ -95,6 +125,8 @@ class AttributionModelSelector extends React.Component<Props> {
       },
     ];
 
+    const datamarts = workspace(organisationId).datamarts;
+
     return (
       <AttributionModelTableSelector
         actionBarTitle={formatMessage(messages.attributionModelSelectorTitle)}
@@ -106,12 +138,24 @@ class AttributionModelSelector extends React.Component<Props> {
         columnsDefinitions={columns}
         save={this.saveAttributionModels}
         close={close}
+        datamarts={datamarts}
+        messages={{
+          audienceSegment: intl.formatMessage(messages.audienceSegment),
+          userAccountCompartment: intl.formatMessage(messages.userAccountCompartment),
+          serviceType: intl.formatMessage(messages.serviceType),
+          addElementText: intl.formatMessage(messages.addElementText),
+        }}
       />
     );
   }
 }
 
+const mapStateToProps = (state: MicsReduxState) => ({
+  workspace: getWorkspace(state),
+});
+
 export default compose<Props, AttributionModelSelectorProps>(
+  connect(mapStateToProps, undefined),
   injectIntl,
   withRouter,
 )(AttributionModelSelector);

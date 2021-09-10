@@ -6,6 +6,7 @@ import {
   LoadingChart,
   DoubleStackedAreaChart,
   McsDateRangePicker,
+  LegendChart,
 } from '@mediarithmics-private/mcs-components-library';
 import { AdInfoResource } from '../../../../../models/campaign/display';
 import { compose } from 'recompose';
@@ -20,7 +21,6 @@ import messages from '../messages';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import McsMoment from '../../../../../utils/McsMoment';
 import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
-import { LegendChart } from '../../../../../components/LegendChart';
 import ReportService from '../../../../../services/ReportService';
 import { makeCancelable } from '../../../../../utils/ApiHelper';
 import { CancelablePromise } from '../../../../../services/ApiService';

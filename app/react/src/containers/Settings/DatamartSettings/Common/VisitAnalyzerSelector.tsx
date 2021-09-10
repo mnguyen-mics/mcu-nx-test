@@ -2,10 +2,9 @@ import * as React from 'react';
 import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { withRouter, RouteComponentProps } from 'react-router';
-import TableSelector, {
-  TableSelectorProps,
-} from '../../../../components/ElementSelector/TableSelector';
-import { SearchFilter } from '../../../../components/ElementSelector';
+import { TableSelector } from '@mediarithmics-private/mcs-components-library';
+import { TableSelectorProps } from '@mediarithmics-private/mcs-components-library/lib/components/table-selector';
+import { SearchFilter } from '@mediarithmics-private/mcs-components-library/lib/utils';
 import { StringPropertyResource } from '../../../../models/plugin';
 import { getPaginatedApiParam } from '../../../../utils/ApiHelper';
 import { VisitAnalyzer } from '../../../../models/Plugins';
@@ -13,6 +12,10 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IVisitAnalyzerService } from '../../../../services/Library/VisitAnalyzerService';
 import { DataColumnDefinition } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import { connect } from 'react-redux';
+import { getWorkspace } from '../../../../redux/Session/selectors';
+import { MicsReduxState } from '../../../../utils/ReduxHelper';
+import { UserWorkspaceResource } from '../../../../models/directory/UserProfileResource';
 
 const VisitAnalyzerTableSelector: React.ComponentClass<
   TableSelectorProps<VisitAnalyzer>
@@ -20,20 +23,36 @@ const VisitAnalyzerTableSelector: React.ComponentClass<
 
 const messages = defineMessages({
   visitAnalyzerSelectorTitle: {
-    id: 'visit-analyzer-selector-title',
+    id: 'settings.visitAnalyzers.tableSelector.title',
     defaultMessage: 'Add a Visit Analyzer',
   },
   visitAnalyzerSelectorColumnName: {
-    id: 'visit-analyzer-selector-column-name',
+    id: 'settings.visitAnalyzers.tableSelector.column.name',
     defaultMessage: 'Name',
   },
   visitAnalyzerSelectorColumnType: {
-    id: 'visit-analyzer-selector-column-type',
+    id: 'settings.visitAnalyzers.tableSelector.column.type',
     defaultMessage: 'Type',
   },
   visitAnalyzerSelectorColumnProvider: {
-    id: 'visit-analyzer-selector-column-provider',
+    id: 'settings.visitAnalyzers.tableSelector.column.provider',
     defaultMessage: 'Provider',
+  },
+  audienceSegment: {
+    id: 'settings.visitAnalyzers.tableSelector.audience-segment',
+    defaultMessage: 'Audience Segment',
+  },
+  userAccountCompartment: {
+    id: 'settings.visitAnalyzers.tableSelector.user-account-compartment',
+    defaultMessage: 'User Account Compartment',
+  },
+  serviceType: {
+    id: 'settings.visitAnalyzers.tableSelector.service-type',
+    defaultMessage: 'Service Type',
+  },
+  addElementText: {
+    id: 'settings.visitAnalyzers.tableSelector.add-element-text',
+    defaultMessage: 'Add',
   },
 });
 
@@ -41,6 +60,10 @@ export interface VisitAnalyzerSelectorProps {
   selectedVisitAnalyzerIds: string[];
   save: (visitAnalyzers: VisitAnalyzer[]) => void;
   close: () => void;
+}
+
+interface MapStateProps {
+  workspace: (organisationId: string) => UserWorkspaceResource;
 }
 
 interface State {
@@ -51,6 +74,7 @@ interface State {
 
 type Props = VisitAnalyzerSelectorProps &
   InjectedIntlProps &
+  MapStateProps &
   RouteComponentProps<{ organisationId: string }>;
 
 class VisitAnalyzerSelector extends React.Component<Props, State> {
@@ -127,8 +151,14 @@ class VisitAnalyzerSelector extends React.Component<Props, State> {
       selectedVisitAnalyzerIds,
       close,
       intl: { formatMessage },
+      workspace,
+      match: {
+        params: { organisationId },
+      },
     } = this.props;
     const { metadataByBidOptmizerId } = this.state;
+
+    const datamarts = workspace(organisationId).datamarts;
 
     const columns: Array<DataColumnDefinition<VisitAnalyzer>> = [
       {
@@ -169,12 +199,24 @@ class VisitAnalyzerSelector extends React.Component<Props, State> {
         columnsDefinitions={columns}
         save={this.saveVisitAnalyzers}
         close={close}
+        datamarts={datamarts}
+        messages={{
+          audienceSegment: formatMessage(messages.audienceSegment),
+          userAccountCompartment: formatMessage(messages.userAccountCompartment),
+          serviceType: formatMessage(messages.serviceType),
+          addElementText: formatMessage(messages.addElementText),
+        }}
       />
     );
   }
 }
 
+const mapStateToProps = (state: MicsReduxState) => ({
+  workspace: getWorkspace(state),
+});
+
 export default compose<Props, VisitAnalyzerSelectorProps>(
+  connect(mapStateToProps, undefined),
   withRouter,
   injectIntl,
 )(VisitAnalyzerSelector);

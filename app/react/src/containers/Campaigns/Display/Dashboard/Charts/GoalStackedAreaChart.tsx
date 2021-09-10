@@ -6,12 +6,9 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import { MenuInfo } from '../../../../../../../../node_modules/antd/node_modules/rc-menu/lib/interface';
 import { Dropdown } from '../../../../../components/PopupContainers';
-import { LegendChart } from '../../../../../components/LegendChart';
-
 import { GoalSelectionResource, AttributionSelectionResource } from '../../../../../models/goal';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';
-
 import {
   updateSearch,
   parseSearch,
@@ -26,6 +23,7 @@ import log from '../../../../../utils/Logger';
 import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
 import {
   EmptyChart,
+  LegendChart,
   LoadingChart,
   McsDateRangePicker,
   StackedAreaChart,
