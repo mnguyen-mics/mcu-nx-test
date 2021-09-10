@@ -63,12 +63,15 @@ class StandardSegmentBuilderTable extends React.Component<Props> {
       current: filter.currentPage,
       pageSize: filter.pageSize,
       total: total,
-      onChange: (page: number, size: number) =>
-        onFilterChange({
-          currentPage: page,
-          pageSize: size,
-        }),
-      onShowSizeChange: (current: number, size: number) =>
+      onChange: (page: number, size: number) => {
+        if (filter.currentPage !== page)
+          onFilterChange({
+            currentPage: page,
+            pageSize: size,
+          });
+      },
+
+      onShowSizeChange: (page: number, size: number) =>
         onFilterChange({
           pageSize: size,
           currentPage: 1,

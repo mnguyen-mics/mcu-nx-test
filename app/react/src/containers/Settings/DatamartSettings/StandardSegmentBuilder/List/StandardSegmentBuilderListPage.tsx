@@ -9,12 +9,6 @@ import { injectDrawer } from '../../../../../components/Drawer';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../../Notifications/injectNotifications';
-import {
-  KEYWORD_SEARCH_SETTINGS,
-  PAGINATION_SEARCH_SETTINGS,
-  parseSearch,
-  updateSearch,
-} from '../../../../../utils/LocationSearchHelper';
 import { TYPES } from '../../../../../constants/types';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { IStandardSegmentBuilderService } from '../../../../../services/StandardSegmentBuilderService';
@@ -24,11 +18,6 @@ import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { Filter } from '../../Common/domain';
 
 const { Content } = Layout;
-
-export const STANDARD_SEGMENT_BUILDER_SEARCH_SETTINGS = [
-  ...KEYWORD_SEARCH_SETTINGS,
-  ...PAGINATION_SEARCH_SETTINGS,
-];
 
 interface State {
   isLoading: boolean;
@@ -69,11 +58,19 @@ class StandardSegmentBuilderListPage extends React.Component<Props, State> {
       match: {
         params: { datamartId },
       },
-      location: { search },
+      history,
+      location: { pathname },
     } = this.props;
-    const filter = parseSearch(search, STANDARD_SEGMENT_BUILDER_SEARCH_SETTINGS);
-
-    this.fetchStandardSegmentBuilders(datamartId, filter);
+    const defaultFilter = {
+      pageSize: 10,
+      currentPage: 1,
+      keywords: '',
+    };
+    this.setState({
+      filter: defaultFilter,
+    });
+    history.replace(pathname);
+    this.fetchStandardSegmentBuilders(datamartId, defaultFilter);
   }
 
   fetchStandardSegmentBuilders = (datamartId: string, filter: Index<any>) => {
@@ -117,15 +114,11 @@ class StandardSegmentBuilderListPage extends React.Component<Props, State> {
       match: {
         params: { datamartId },
       },
-      location: { search, pathname, state },
-      history,
       intl: { formatMessage },
       notifyError,
     } = this.props;
 
-    const { StandardSegmentBuilders } = this.state;
-
-    const filter = parseSearch(search, STANDARD_SEGMENT_BUILDER_SEARCH_SETTINGS);
+    const { StandardSegmentBuilders, filter } = this.state;
 
     Modal.confirm({
       icon: 'exclamation-circle',
@@ -142,10 +135,8 @@ class StandardSegmentBuilderListPage extends React.Component<Props, State> {
                 currentPage: filter.currentPage - 1,
               };
               this.fetchStandardSegmentBuilders(datamartId, filter);
-              history.replace({
-                pathname: pathname,
-                search: updateSearch(search, newFilter),
-                state: state,
+              this.setState({
+                filter: newFilter,
               });
             } else {
               this.fetchStandardSegmentBuilders(datamartId, filter);
@@ -193,6 +184,14 @@ class StandardSegmentBuilderListPage extends React.Component<Props, State> {
         params: { datamartId },
       },
     } = this.props;
+    this.setState({
+      filter: {
+        pageSize: newFilter.pageSize,
+        currentPage: newFilter.currentPage,
+        keywords: newFilter.keywords,
+      },
+    });
+
     this.fetchStandardSegmentBuilders(datamartId, newFilter);
   };
 
