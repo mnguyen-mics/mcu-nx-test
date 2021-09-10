@@ -1,20 +1,19 @@
 import faker from 'faker';
 describe('User Processing on segments tests', () => {
-  before(() => {
-    cy.login();
-  });
   beforeEach(() => {
-    cy.restoreLocalStorageCache();
+    cy.login();
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      cy.switchOrg(data.organisationName);
+    });
   });
 
   afterEach(() => {
-    cy.saveLocalStorageCache();
+    cy.clearLocalStorage();
   });
 
   it('should create User Query segments with processing selections and edit it', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       // Create processing
-      cy.switchOrg(data.organisationName);
       cy.get('[class="mcs-options"]').click();
       cy.contains('Organisation').click();
       cy.get(`[href="#/v2/o/${data.organisationId}/settings/organisation/processings"]`).click();
@@ -265,7 +264,7 @@ describe('User Processing on segments tests', () => {
       cy.contains('New Segment').click();
       // Select Segment Types
       cy.contains('Edge').click();
-      cy.get('.empty-related-records').should(
+      cy.get('.mcs_emptyRelatedRecords').should(
         'contain',
         'This feature is not available for Edge segments.',
       );
