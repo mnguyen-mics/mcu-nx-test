@@ -66,17 +66,15 @@ describe('The purpose of this test is to check if display campaign CRUD is prope
         'have.value',
         dailyCapping,
       );
-      cy.get('.mcs-campaignDisplay_creationForm_campaign_total_budget').should(
-        'have.value',
-        totalBudget,
-      );
-      cy.get('.mcs-campaignDisplay_creationForm_campaign_max_budget_per_period').should(
-        'have.value',
-        dailyBudget,
-      );
+      cy.get('.mcs-campaignDisplay_creationForm_campaign_total_budget')
+        .children()
+        .should('have.value', totalBudget);
+      cy.get('.mcs-campaignDisplay_creationForm_campaign_max_budget_per_period')
+        .find('input')
+        .should('have.value', dailyBudget);
 
       // Update campaign name
-      cy.get('.mcs-campaignDisplay_creationForm_campaign.name').clear().type(updatedCampaignName);
+      cy.get('.mcs-campaignDisplay_creationForm_campaign_name').clear().type(updatedCampaignName);
 
       // Submit form
       cy.get('.mcs-form_saveButton_campaignForm').click();
