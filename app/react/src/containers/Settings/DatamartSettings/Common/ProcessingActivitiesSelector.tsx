@@ -133,10 +133,8 @@ class ProcessingActivitiesSelector extends React.Component<Props, State> {
       close,
       workspace,
       match: {
-        params: {
-          organisationId
-        }
-      }
+        params: { organisationId },
+      },
     } = this.props;
 
     const datamarts = workspace(organisationId).datamarts;

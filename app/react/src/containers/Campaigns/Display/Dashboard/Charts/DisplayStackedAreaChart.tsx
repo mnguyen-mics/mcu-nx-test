@@ -16,7 +16,7 @@ import {
   LoadingChart,
   MetricsColumn,
   McsDateRangePicker,
-  LegendChartWithModal
+  LegendChartWithModal,
 } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 

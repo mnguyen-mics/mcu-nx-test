@@ -81,10 +81,8 @@ class ServiceItemSelector extends React.Component<Props, State> {
       intl: { formatMessage },
       workspace,
       match: {
-        params: {
-          organisationId
-        }
-      }
+        params: { organisationId },
+      },
     } = this.props;
 
     const columns: Array<DataColumnDefinition<ServiceItemShape>> = [

@@ -11,7 +11,7 @@ import {
   LoadingChart,
   McsDateRangePicker,
   StackedAreaChart,
-  LegendChart
+  LegendChart,
 } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import { StackedAreaChartProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/stacked-area-chart';

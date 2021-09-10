@@ -6,7 +6,7 @@ import {
   LoadingChart,
   DoubleStackedAreaChart,
   McsDateRangePicker,
-  LegendChart
+  LegendChart,
 } from '@mediarithmics-private/mcs-components-library';
 import { AdInfoResource } from '../../../../../models/campaign/display';
 import { compose } from 'recompose';

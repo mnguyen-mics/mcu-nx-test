@@ -153,10 +153,8 @@ class VisitAnalyzerSelector extends React.Component<Props, State> {
       intl: { formatMessage },
       workspace,
       match: {
-        params: {
-          organisationId
-        }
-      }
+        params: { organisationId },
+      },
     } = this.props;
     const { metadataByBidOptmizerId } = this.state;
 
@@ -216,7 +214,6 @@ class VisitAnalyzerSelector extends React.Component<Props, State> {
 const mapStateToProps = (state: MicsReduxState) => ({
   workspace: getWorkspace(state),
 });
-
 
 export default compose<Props, VisitAnalyzerSelectorProps>(
   connect(mapStateToProps, undefined),
