@@ -366,8 +366,12 @@
   .mcs-standardSegmentBuilder_breadCrumb {
     margin: 15px 0px;
   }
-  .mcs-standardSegmentBuilder_featureCardClose {
+  .mcs-standardSegmentBuilder_featureCardInfo {
     visibility: hidden;
+  }
+  .mcs-standardSegmentBuilder_featureCardClose {
+    font-size: 16px;
+    color: white;
   }
   .mcs-standardSegmentBuilder_folder,
   .mcs-standardSegmentBuilder_featureCard {
@@ -385,7 +389,7 @@
       cursor: pointer;
       border: 1px solid @primary-color;
       color: @primary-color;
-      .mcs-standardSegmentBuilder_featureCardClose {
+      .mcs-standardSegmentBuilder_featureCardInfo {
         visibility: visible;
       }
     }
@@ -409,14 +413,15 @@
     font-size: 12px;
     font-weight: bold;
     margin: 8px 0px;
-    .mcs-icon {
+    .mcs-standardSegmentBuilder_featureCardInfo {
       font-size: 16px;
+      &:hover {
+        color: @primary-color;
+      }
     }
     &:hover {
       cursor: pointer;
-      border: 1px solid @primary-color;
-      color: @primary-color;
-      .mcs-standardSegmentBuilder_featureCardClose {
+      .mcs-standardSegmentBuilder_featureCardInfo {
         visibility: visible;
       }
     }
@@ -443,7 +448,7 @@
     &:hover {
       color: white;
     }
-    .mcs-standardSegmentBuilder_featureCardDescritpion {
+    .mcs-standardSegmentBuilder_featureCardDescription {
       div {
         color: white;
       }
@@ -457,7 +462,7 @@
       .mcs-icon {
         float: right;
       }
-      .mcs-standardSegmentBuilder_featureCardDescritpion {
+      .mcs-standardSegmentBuilder_featureCardDescription {
         font-weight: initial;
         font-size: 10px;
         margin-top: 10px;
@@ -474,8 +479,18 @@
       .mcs-standardSegmentBuilder_featureCardFinalValues {
         white-space: nowrap;
         overflow: hidden;
+        padding-left: 1px;
         .mcs-standardSegmentBuilder_featureCardFinalValue {
           color: @info-color;
+          &:hover {
+            border: 1px solid @info-color;
+            padding: 0px 7px;
+            border-radius: 2px;
+            white-space: nowrap;
+            line-height: 20px;
+            margin: 0px 2px 0px 0px;
+            background-color: #e6f7ff;
+          }
         }
       }
       .mcs-standardSegmentBuilder_featureCardToggledTitle {
@@ -488,6 +503,9 @@
         font-weight: 500;
         display: block;
         overflow: hidden;
+        &:hover {
+          color: @primary-color;
+        }
       }
     }
   }
