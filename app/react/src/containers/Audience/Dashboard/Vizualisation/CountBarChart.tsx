@@ -210,11 +210,7 @@ class CountBarChart extends React.Component<Props, State> {
         return <EmptyChart title={intl.formatMessage(messages.noData)} icon='warning' />;
       } else {
         return (
-          <BarChart
-            dataset={this.state.queryResult as any}
-            options={optionsForChart}
-            height={height}
-          />
+          <BarChart {...optionsForChart} dataset={this.state.queryResult as any} height={height} />
         );
       }
     };

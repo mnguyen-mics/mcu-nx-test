@@ -96,7 +96,7 @@ class AdditionDeletion extends React.Component<Props> {
       format: 'count' as Format,
     };
     return !isFetching ? (
-      <BarChart dataset={formattedDataSource} options={optionsForChart} />
+      <BarChart {...optionsForChart} dataset={formattedDataSource} />
     ) : (
       <LoadingChart />
     );

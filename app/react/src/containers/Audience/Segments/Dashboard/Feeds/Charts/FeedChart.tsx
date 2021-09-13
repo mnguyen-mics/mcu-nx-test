@@ -217,7 +217,7 @@ class FeedChart extends React.Component<Props, State> {
           <LoadingChart />
         ) : (
           <Card className='compact' title={title}>
-            <BarChart dataset={dataSource as any} options={optionsForChart} />
+            <BarChart {...optionsForChart} dataset={dataSource as any} />
           </Card>
         )}
       </div>

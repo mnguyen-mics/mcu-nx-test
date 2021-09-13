@@ -304,12 +304,12 @@ class MapBarChart extends React.Component<Props, State> {
           this.state.queryResult &&
           this.state.queryResult.length && (
             <BarChart
+              {...optionsForChart}
               dataset={this.state.queryResult as any}
-              options={optionsForChart}
-              enableDrilldown={drilldown}
+              drilldown={drilldown}
               stacking={stacking}
               height={height}
-              reducePadding={reducePadding}
+              bigBars={reducePadding}
             />
           )
         );

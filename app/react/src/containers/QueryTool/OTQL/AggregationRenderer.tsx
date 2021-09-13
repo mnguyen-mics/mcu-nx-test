@@ -304,10 +304,10 @@ class AggregationRenderer extends React.Component<Props, State> {
                 {selectedChart === 'RADAR' && <RadarChart {...radarChartProps} />}
                 {selectedChart === 'BAR' && (
                   <BarChart
+                    {...optionsForBarChart}
                     dataset={stackedBarChartDataset ? stackedBarChartDataset : []}
-                    enableDrilldown={true}
-                    options={optionsForBarChart}
-                    reducePadding={true}
+                    drilldown={true}
+                    bigBars={true}
                   />
                 )}
               </div>
