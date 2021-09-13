@@ -23,6 +23,7 @@ import {
   PieChartFormat,
 } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 import { StandardSegmentBuilderQueryDocument } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
+import { chartColors } from '../../../../components/Funnel/Utils';
 
 export interface MapPieChartProps {
   title?: string;
@@ -160,14 +161,7 @@ class MapPieChart extends React.Component<Props, State> {
 
   generateOptions = () => {
     const { colors } = this.props;
-    const usedColors: string[] = [
-      colors['mcs-warning'],
-      colors['mcs-info'],
-      colors['mcs-highlight'],
-      colors['mcs-success'],
-      colors['mcs-primary'],
-      colors['mcs-error'],
-    ];
+    const usedColors: string[] = chartColors.map(chartColor => colors[chartColor]);
 
     const options = {
       innerRadius: true,

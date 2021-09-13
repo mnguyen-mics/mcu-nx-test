@@ -829,7 +829,6 @@ export const channelEngagementConfig: DashboardConfig[] = [
         type: 'PIE',
         options: {
           title: undefined,
-          colors: chroma.scale(['#003056', '#00a1df']).mode('lch').colors(7),
           plotOptions: {
             pie: {
               dataLabels: {
@@ -881,7 +880,6 @@ export const channelEngagementConfig: DashboardConfig[] = [
         type: 'PIE',
         options: {
           title: undefined,
-          colors: chroma.scale(['#003056', '#00a1df']).mode('lch').colors(7),
           plotOptions: {
             pie: {
               dataLabels: {
@@ -933,7 +931,6 @@ export const channelEngagementConfig: DashboardConfig[] = [
         type: 'PIE',
         options: {
           title: undefined,
-          colors: chroma.scale(['#003056', '#00a1df']).mode('lch').colors(7),
           plotOptions: {
             pie: {
               dataLabels: {

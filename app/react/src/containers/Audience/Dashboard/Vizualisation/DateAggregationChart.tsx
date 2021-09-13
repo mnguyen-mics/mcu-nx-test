@@ -23,6 +23,7 @@ import { getFormattedQuery } from '../domain';
 import { EmptyChart, LoadingChart, BarChart } from '@mediarithmics-private/mcs-components-library';
 import { StandardSegmentBuilderQueryDocument } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 import { Format } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
+import { chartColors } from '../../../../components/Funnel/Utils';
 
 export interface DateAggregationChartProps {
   title?: string;
@@ -57,15 +58,7 @@ class DateAggregationChart extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     const { colors } = props;
-    const usedColors: string[] = [
-      colors['mcs-error'],
-      colors['mcs-highlight'],
-      colors['mcs-info'],
-      colors['mcs-normal'],
-      colors['mcs-primary'],
-      colors['mcs-success'],
-      colors['mcs-warning'],
-    ];
+    const usedColors: string[] = chartColors.map(chartColor => colors[chartColor]);
     this.state = {
       error: false,
       loading: true,

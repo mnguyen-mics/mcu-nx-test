@@ -5,6 +5,7 @@ import lodash from 'lodash';
 import { BooleanOperator, DimensionFilterOperator } from '../../models/ReportRequestBody';
 import cuid from 'cuid';
 import { Step } from './FunnelQueryBuilder';
+import { ThemeColorsShape } from '../../containers/Helpers/injectThemeColors';
 
 interface FormattedDates {
   from: string;
@@ -85,6 +86,16 @@ export const getDefaultStep = () => {
     },
   };
 };
+
+export const chartColors: Array<keyof ThemeColorsShape> = [
+  'mcs-chart-1',
+  'mcs-chart-2',
+  'mcs-chart-3',
+  'mcs-chart-4',
+  'mcs-chart-5',
+  'mcs-chart-6',
+  'mcs-chart-7',
+];
 
 export const checkExpressionsNotEmpty = (steps: Step[]) => {
   let result = true;
