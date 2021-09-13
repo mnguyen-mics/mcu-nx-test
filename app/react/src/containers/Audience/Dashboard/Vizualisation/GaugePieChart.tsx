@@ -13,14 +13,10 @@ import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
 import CardFlex from '../Components/CardFlex';
-import {
-  DonutChart,
-  EmptyChart,
-  LoadingChart,
-} from '@mediarithmics-private/mcs-components-library';
+import { PieChart, EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
 import {
   Dataset,
-  Format,
+  PieChartFormat,
 } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 
 export interface GaugePieChartProps {
@@ -146,20 +142,19 @@ class GaugePieChart extends React.Component<Props, State> {
     const options = {
       innerRadius: true,
       isHalf: false,
-      text:
-        totalNumber2 && totalNumber1
-          ? {
-              value:
-                totalNumber1 - totalNumber2 > 0
-                  ? `${((totalNumber1 / (totalNumber1 + totalNumber2)) * 100).toFixed(2)}% Female`
-                  : `${((totalNumber2 / (totalNumber1 + totalNumber2)) * 100).toFixed(2)}% Male`,
-              text: '',
-            }
-          : {},
+      // text:
+      //   totalNumber2 && totalNumber1
+      //     ? {
+      //         value:
+      //           totalNumber1 - totalNumber2 > 0
+      //             ? `${((totalNumber1 / (totalNumber1 + totalNumber2)) * 100).toFixed(2)}% Female`
+      //             : `${((totalNumber2 / (totalNumber1 + totalNumber2)) * 100).toFixed(2)}% Male`,
+      //         text: '',
+      //       }
+      //     : {}, , // Deprecated by this spec: https://docs.google.com/presentation/d/1bs18HSKzW4g1DpHej4WhVcmswffUN0s-lJxgPp1p_kA/edit#slide=id.ge81274b9a1_0_0
       colors: this.state.colors,
-      showTooltip: true,
-      height: 300,
-      format: 'percentage' as Format,
+      dataset: this.state.queryResult as Dataset,
+      format: 'percentage' as PieChartFormat,
     };
     return options;
   };
@@ -181,9 +176,7 @@ class GaugePieChart extends React.Component<Props, State> {
       ) {
         return <EmptyChart title={intl.formatMessage(messages.noData)} icon='warning' />;
       } else {
-        return (
-          <DonutChart dataset={this.state.queryResult} options={pieChartsOptions} height={height} />
-        );
+        return <PieChart {...pieChartsOptions} height={height} />;
       }
     };
 

@@ -2,38 +2,9 @@ import * as React from 'react';
 import { Row, Col } from 'antd';
 import injectThemeColors, { InjectedThemeColorsProps } from '../../../../Helpers/injectThemeColors';
 import { compose } from 'recompose';
-import { FormattedMessage, defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
-import {
-  DonutChart,
-  EmptyChart,
-  LoadingChart,
-} from '@mediarithmics-private/mcs-components-library';
-import { Format } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
-
-const messageMap: {
-  [key: string]: FormattedMessage.MessageDescriptor;
-} = defineMessages({
-  DELIVERED: {
-    id: 'email.campaigns.dashboard.charts.delivered',
-    defaultMessage: 'Delivered',
-  },
-  OPENS: {
-    id: 'email.campaigns.dashboard.charts.opened',
-    defaultMessage: 'Opened',
-  },
-  CLICKS: {
-    id: 'email.campaigns.dashboard.charts.clicks',
-    defaultMessage: 'Clicks',
-  },
-  CLICKS_TO_OPENS: {
-    id: 'email.campaigns.dashboard.charts.openingCLicks',
-    defaultMessage: 'Opening Clicks',
-  },
-  UNSUBSCRIBE: {
-    id: 'email.campaigns.dashboard.charts.Unsubscribed',
-    defaultMessage: 'Unsubscribed',
-  },
-});
+import { FormattedMessage, InjectedIntlProps, injectIntl } from 'react-intl';
+import { PieChart, EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
+import { PieChartFormat } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 
 export interface EmailDeliveryReport {
   emailDelivered: number;
@@ -59,12 +30,6 @@ class EmailPieCharts extends React.Component<Props> {
       emailUnsubscribed,
       emailSent,
     } = deliveryReport;
-
-    const generateRatio = (a: number, b: number) => {
-      if (a === 0 || b === 0) return '0%';
-      const ratio = (a / b) * 100;
-      return `${Math.round(ratio)}%`;
-    };
 
     const generateData = (type: string) => {
       const { colors } = this.props;
@@ -140,14 +105,8 @@ class EmailPieCharts extends React.Component<Props> {
       }
     };
 
-    const generateOptions = (
-      isHalf: boolean,
-      color: string,
-      translationKey: string,
-      ratioValeA: number,
-      ratioValeB: number,
-    ) => {
-      const { colors, intl } = this.props;
+    const generateOptions = (isHalf: boolean, color: string) => {
+      const { colors } = this.props;
 
       let colorFormated = '';
       if (color === 'blue') {
@@ -160,12 +119,12 @@ class EmailPieCharts extends React.Component<Props> {
       const options = {
         innerRadius: true,
         isHalf: isHalf,
-        text: {
-          value: generateRatio(ratioValeA, ratioValeB),
-          text: intl.formatMessage(messageMap[translationKey]),
-        },
+        // text: {
+        //   value: generateRatio(ratioValeA, ratioValeB),
+        //   text: intl.formatMessage(messageMap[translationKey]),
+        // }, // Deprecated by this spec: https://docs.google.com/presentation/d/1bs18HSKzW4g1DpHej4WhVcmswffUN0s-lJxgPp1p_kA/edit#slide=id.ge81274b9a1_0_0
         colors: [colorFormated, gray],
-        format: 'count' as Format,
+        format: 'count' as PieChartFormat,
       };
 
       return options;
@@ -175,49 +134,28 @@ class EmailPieCharts extends React.Component<Props> {
       <div>
         <Row>
           <Col span={7}>
-            <DonutChart
-              dataset={generateData('delivered')}
-              options={generateOptions(false, 'orange', 'DELIVERED', emailDelivered, emailSent)}
-            />
+            <PieChart dataset={generateData('delivered')} {...generateOptions(false, 'orange')} />
           </Col>
           <Col span={17}>
             <Row>
               <Col span={12}>
-                <DonutChart
-                  dataset={generateData('opens')}
-                  options={generateOptions(true, 'blue', 'OPENS', emailOpened, emailSent)}
-                />
+                <PieChart dataset={generateData('opens')} {...generateOptions(true, 'blue')} />
               </Col>
               <Col span={12}>
-                <DonutChart
-                  dataset={generateData('clicks')}
-                  options={generateOptions(true, 'blue', 'CLICKS', emailClicks, emailSent)}
-                />
+                <PieChart dataset={generateData('clicks')} {...generateOptions(true, 'blue')} />
               </Col>
             </Row>
             <Row>
               <Col span={12}>
-                <DonutChart
+                <PieChart
                   dataset={generateData('clicks2open')}
-                  options={generateOptions(
-                    true,
-                    'blue',
-                    'CLICKS_TO_OPENS',
-                    emailClicks,
-                    emailOpened,
-                  )}
+                  {...generateOptions(true, 'blue')}
                 />
               </Col>
               <Col span={12}>
-                <DonutChart
+                <PieChart
                   dataset={generateData('unsubscribe')}
-                  options={generateOptions(
-                    true,
-                    'blue',
-                    'UNSUBSCRIBE',
-                    emailUnsubscribed,
-                    emailSent,
-                  )}
+                  {...generateOptions(true, 'blue')}
                 />
               </Col>
             </Row>
