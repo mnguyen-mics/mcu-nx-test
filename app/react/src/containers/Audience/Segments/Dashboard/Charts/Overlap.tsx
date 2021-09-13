@@ -20,7 +20,6 @@ import {
   McsIcon,
   BarChart,
 } from '@mediarithmics-private/mcs-components-library';
-import { BarChartOptions } from '@mediarithmics-private/mcs-components-library/lib/components/charts/bar-chart/BarChart';
 import { Format } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 
 interface State {
@@ -112,7 +111,7 @@ class Overlap extends React.Component<Props, State> {
       });
     }
 
-    const optionsForChart: BarChartOptions = {
+    const optionsForChart = {
       xKey: 'xKey',
       yKeys: [
         {
@@ -127,8 +126,8 @@ class Overlap extends React.Component<Props, State> {
 
     return !isFetchingOverlap ? (
       <BarChart
+        {...optionsForChart}
         dataset={dataSource.sort((a, b) => b.yKey - a.yKey).slice(0, 20)}
-        options={optionsForChart}
       />
     ) : (
       <LoadingChart />

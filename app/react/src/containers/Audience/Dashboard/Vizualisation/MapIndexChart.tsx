@@ -19,8 +19,10 @@ import { QueryResource } from '../../../../models/datamart/DatamartResource';
 import { DataLabel, TooltipChart } from '../../../../models/dashboards/dashboards';
 import { EmptyChart, LoadingChart, BarChart } from '@mediarithmics-private/mcs-components-library';
 import { StandardSegmentBuilderQueryDocument } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
-import { Dataset } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
-import { BarChartOptions } from '@mediarithmics-private/mcs-components-library/lib/components/charts/bar-chart/BarChart';
+import {
+  Dataset,
+  Format,
+} from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 import { getFormattedQuery } from '../domain';
 
 export interface MapIndexChartProps {
@@ -279,23 +281,21 @@ class MapIndexChart extends React.Component<Props, State> {
       height,
     } = this.props;
 
-    const optionsForChart = _.omitBy(
-      {
-        xKey: 'xKey',
-        yKeys: [{ key: BASE_YKEY, message: '' }],
-        colors: [colors['mcs-info']].concat(shouldCompare ? [colors['mcs-normal']] : []),
-        labelsEnabled: this.props.labelsEnabled,
-        vertical,
-        sort: sortKey,
-        labels,
-        tooltip,
+    const optionsForChart = {
+      xKey: 'xKey',
+      yKeys: [{ key: BASE_YKEY, message: '' }],
+      colors: [colors['mcs-info']].concat(shouldCompare ? [colors['mcs-normal']] : []),
+      labelsEnabled: this.props.labelsEnabled,
+      vertical,
+      sort: sortKey,
+      labels,
+      tooltip,
+      type: 'bar',
+      chart: {
         type: 'bar',
-        chart: {
-          type: 'bar',
-        },
       },
-      _.isUndefined,
-    );
+      format: 'count' as Format,
+    };
 
     const generateChart = () => {
       if (this.state.loading) {
@@ -312,9 +312,9 @@ class MapIndexChart extends React.Component<Props, State> {
           this.state.queryResult &&
           this.state.queryResult.length && (
             <BarChart
+              {...optionsForChart}
               dataset={this.state.queryResult as any}
-              options={optionsForChart as BarChartOptions}
-              enableDrilldown={true}
+              drilldown={true}
               height={height}
               plotLineValue={100}
             />

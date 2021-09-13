@@ -240,8 +240,8 @@ class DateAggregationChart extends React.Component<Props, State> {
           this.state.queryResult &&
           this.state.queryResult.length && (
             <BarChart
+              {...optionsForChart}
               dataset={this.state.queryResult as any}
-              options={optionsForChart}
               height={height}
             />
           )

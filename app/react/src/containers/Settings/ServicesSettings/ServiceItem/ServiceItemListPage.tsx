@@ -185,14 +185,6 @@ class ServiceItemListPage extends React.Component<Props, State> {
       intl: { formatMessage },
     } = this.props;
 
-    const optionsForChart = {
-      xKey: 'cost',
-      xLabel: formatMessage(messages.usageCost),
-      yKeys: [{ key: 'usage_price', message: formatMessage(messages.usagePrice) }],
-      colors: [colors['mcs-primary']],
-      format: 'count' as Format,
-    };
-
     const servicePrice = (usageCost: number) => {
       if (serviceItemCondition && isLinearServiceItemConditionsResource(serviceItemCondition)) {
         return serviceItemCondition.percent_value * usageCost + serviceItemCondition.fixed_value;
@@ -217,7 +209,13 @@ class ServiceItemListPage extends React.Component<Props, State> {
     const dataset = generateDataSource();
 
     const priceChart = dataset ? (
-      <BarChart dataset={dataset} options={optionsForChart} />
+      <BarChart
+        dataset={dataset}
+        xKey={'cost'}
+        yKeys={[{ key: 'usage_price', message: formatMessage(messages.usagePrice) }]}
+        colors={[colors['mcs-primary']]}
+        format={'count' as Format}
+      />
     ) : undefined;
 
     const hasPriceChart = priceChart !== undefined;
