@@ -1,8 +1,10 @@
 import * as React from 'react';
 import numeral from 'numeral';
 import cuid from 'cuid';
+import { injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { compose } from 'recompose';
 import FunnelStepMetric from './FunnelStepMetric';
-import { Tag } from 'antd';
+import { Alert, Tag } from 'antd';
 import { FunnelIdByDimension } from '../../models/datamart/UserActivitiesFunnel';
 
 interface Metrics {
@@ -31,7 +33,14 @@ interface FunnelStepHoverProps {
   hasTransactionConfirmed: boolean;
 }
 
-type Props = FunnelStepHoverProps;
+const messages = defineMessages({
+  funnelNumberOfElementsShownWarning: {
+    id: 'funnel.funnel-hover.number-of-elements-shown-warning',
+    defaultMessage: 'Only top 5 elements are displayed. Export the result to see everything !',
+  },
+});
+
+type Props = FunnelStepHoverProps & InjectedIntlProps;
 
 class FunnelStepHover extends React.Component<Props> {
   private _cuid = cuid;
@@ -87,6 +96,12 @@ class FunnelStepHover extends React.Component<Props> {
     if (!dimensionMetrics) return <div />;
     return (
       <div className={'mcs-funnelStepHover'}>
+        <p className={'mcs-funnelStepHover_desc'}>
+          <Alert
+            className={'mcs-funnelStepHover_message'}
+            message={this.props.intl.formatMessage(messages.funnelNumberOfElementsShownWarning)}
+          />
+        </p>
         <p className={'mcs-funnelStepHover_desc'}>
           <span className={'mcs-funnelStepHover_metric'}>
             {numeral(globalMetrics.userPoints).format('0,0')}
@@ -159,4 +174,4 @@ class FunnelStepHover extends React.Component<Props> {
   }
 }
 
-export default FunnelStepHover;
+export default compose<Props, FunnelStepHoverProps>(injectIntl)(FunnelStepHover);
