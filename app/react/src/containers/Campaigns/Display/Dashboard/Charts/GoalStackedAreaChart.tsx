@@ -268,7 +268,7 @@ class GoalStackedAreaChart extends React.Component<JoinedProps, GoalStackedAreaC
             message: formatMessage(messages.weightedConversion),
           },
         ],
-        colors: [colors['mcs-success']],
+        colors: [colors['mcs-chart-3']],
         isDraggable: false,
       },
     };
@@ -343,7 +343,7 @@ class GoalStackedAreaChart extends React.Component<JoinedProps, GoalStackedAreaC
 
     const legendOptions = [
       {
-        color: colors['mcs-success'],
+        color: colors['mcs-chart-3'],
         domain: formatMessage(messages.weightedConversion),
       },
     ];

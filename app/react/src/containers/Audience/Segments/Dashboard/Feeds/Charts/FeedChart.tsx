@@ -206,7 +206,7 @@ class FeedChart extends React.Component<Props, State> {
           throw new Error(`Unsupported unit: ${dataSource[0].unit}`);
         }
       }),
-      colors: [colors['mcs-info'], colors['mcs-error']],
+      colors: [colors['mcs-chart-1'], colors['mcs-chart-5']],
       showLegend: true,
       format: 'count' as Format,
     };

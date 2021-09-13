@@ -24,6 +24,7 @@ import {
   Format,
 } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 import { getFormattedQuery } from '../domain';
+import { chartColors } from '../../../../components/Funnel/Utils';
 
 export interface MapIndexChartProps {
   title?: string;
@@ -62,15 +63,7 @@ class MapIndexChart extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     const { colors } = props;
-    const usedColors: string[] = [
-      colors['mcs-warning'],
-      colors['mcs-info'],
-      colors['mcs-highlight'],
-      colors['mcs-success'],
-      colors['mcs-normal'],
-      colors['mcs-primary'],
-      colors['mcs-error'],
-    ];
+    const usedColors: string[] = chartColors.map(chartColor => colors[chartColor]);
     this.state = {
       error: false,
       loading: true,
@@ -284,7 +277,7 @@ class MapIndexChart extends React.Component<Props, State> {
     const optionsForChart = {
       xKey: 'xKey',
       yKeys: [{ key: BASE_YKEY, message: '' }],
-      colors: [colors['mcs-info']].concat(shouldCompare ? [colors['mcs-normal']] : []),
+      colors: [colors['mcs-chart-1']].concat(shouldCompare ? [colors['mcs-chart-7']] : []),
       labelsEnabled: this.props.labelsEnabled,
       vertical,
       sort: sortKey,

@@ -33,6 +33,7 @@ import {
 import { CounterProps } from '@mediarithmics-private/mcs-components-library/lib/components/counters/counter';
 import { McsIconType } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-icon';
 import { CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons';
+import { chartColors } from '../../../../../components/Funnel/Utils';
 
 const messages = defineMessages({
   noData: {
@@ -226,6 +227,8 @@ class FormatDataToChart extends React.Component<JoinedProp, {}> {
           chart,
           data,
         ) as Highcharts.SeriesOptionsType[];
+        chart.options.colors = chartColors.map(chartColor => colors[chartColor]);
+
         return <LineChart options={chart.options} />;
       case 'PIE':
         if (!chart.dimensions || chart.dimensions.length === 0) return null;
@@ -235,8 +238,16 @@ class FormatDataToChart extends React.Component<JoinedProp, {}> {
             value: d[chart.metricNames[0]],
           };
         });
+        const chartsColors = chartColors.map(chartColor => colors[chartColor]);
 
-        return <PieChart colors={chart.options.colors} dataset={formatedData} innerRadius={true} />;
+        return (
+          <PieChart
+            colors={chart.options.colors || chartsColors}
+            dataset={formatedData}
+            innerRadius={true}
+          />
+        );
+
       case 'COUNT':
         chart.counterFormatedProps = this.formatSeriesForCounters(chart, data);
         return <CounterDashboard counters={chart.counterFormatedProps} />;
@@ -253,6 +264,8 @@ class FormatDataToChart extends React.Component<JoinedProp, {}> {
           chart,
           data,
         ) as Highcharts.SeriesMapOptions[];
+        chart.options.colors = chartColors.map(chartColor => colors[chartColor]);
+
         return <GenericStackedBar options={chart.options} />;
       case 'COLUMN':
         if (!chart.dimensions) return null;
@@ -263,6 +276,7 @@ class FormatDataToChart extends React.Component<JoinedProp, {}> {
         chart.options.xAxis = {
           categories: this.getXAxisValues(data, dimensionName),
         };
+        chart.options.colors = chartColors.map(chartColor => colors[chartColor]);
 
         return <GenericColumn options={chart.options} />;
       case 'TABS':

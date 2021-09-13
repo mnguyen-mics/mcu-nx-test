@@ -252,7 +252,7 @@ class GoalStackedAreaChart extends React.Component<JoinedProps, GoalStackedAreaC
         { key: key1, message: messages[key1].defaultMessage || '' },
         { key: key2, message: messages[key2].defaultMessage || '' },
       ],
-      colors: [colors['mcs-warning'], colors['mcs-info']],
+      colors: [colors['mcs-chart-2'], colors['mcs-chart-1']],
       isDraggable: true,
       onDragEnd: (values: string[]) => {
         this.updateLocationSearch({
@@ -312,12 +312,12 @@ class GoalStackedAreaChart extends React.Component<JoinedProps, GoalStackedAreaC
       {
         key: key1,
         domain: formatMessage(messages[key1]),
-        color: colors['mcs-warning'],
+        color: colors['mcs-chart-2'],
       },
       {
         key: key2,
         domain: formatMessage(messages[key2]),
-        color: colors['mcs-info'],
+        color: colors['mcs-chart-1'],
       },
     ];
     const legends = this.createLegend();

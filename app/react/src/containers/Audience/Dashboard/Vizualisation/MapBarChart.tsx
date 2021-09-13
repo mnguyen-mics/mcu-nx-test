@@ -268,13 +268,13 @@ class MapBarChart extends React.Component<Props, State> {
     const restKey = shouldCompare ? [{ key: COMPARED_YKEY, message: '' }] : [];
 
     const usedColors: string[] = [
-      colors['mcs-info'],
-      colors['mcs-normal'],
-      colors['mcs-warning'],
-      colors['mcs-highlight'],
-      colors['mcs-success'],
-      colors['mcs-primary'],
-      colors['mcs-error'],
+      colors['mcs-chart-1'],
+      colors['mcs-chart-7'],
+      colors['mcs-chart-2'],
+      colors['mcs-chart-3'],
+      colors['mcs-chart-4'],
+      colors['mcs-chart-5'],
+      colors['mcs-chart-6'],
     ];
 
     const optionsForChart = {

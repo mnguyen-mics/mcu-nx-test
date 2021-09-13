@@ -15,6 +15,7 @@ import { EmptyChart, LoadingChart, BarChart } from '@mediarithmics-private/mcs-c
 import { AudienceSegmentShape } from '../../../../models/audiencesegment';
 import { StandardSegmentBuilderQueryDocument } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 import { Format } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
+import { chartColors } from '../../../../components/Funnel/Utils';
 
 export interface CountBarChartProps {
   title?: string;
@@ -50,15 +51,7 @@ class CountBarChart extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     const { colors } = props;
-    const usedColors: string[] = [
-      colors['mcs-warning'],
-      colors['mcs-info'],
-      colors['mcs-highlight'],
-      colors['mcs-success'],
-      colors['mcs-normal'],
-      colors['mcs-primary'],
-      colors['mcs-error'],
-    ];
+    const usedColors: string[] = chartColors.map(chartColor => colors[chartColor]);
     this.state = {
       error: false,
       loading: true,
@@ -192,7 +185,7 @@ class CountBarChart extends React.Component<Props, State> {
     const optionsForChart = {
       xKey: 'xKey',
       yKeys: [{ key: 'yKey', message: '' }],
-      colors: [colors['mcs-info']],
+      colors: [colors['mcs-chart-1']],
       labelsEnabled: this.props.labelsEnabled,
       showTooltip: true,
       format: 'count' as Format,

@@ -51,10 +51,10 @@ class EmailStackedAreaChart extends React.Component<Props> {
           },
         ],
         colors: [
-          colors['mcs-warning'],
-          colors['mcs-info'],
-          colors['mcs-success'],
-          colors['mcs-error'],
+          colors['mcs-chart-2'],
+          colors['mcs-chart-1'],
+          colors['mcs-chart-3'],
+          colors['mcs-chart-5'],
         ],
       },
     };
@@ -67,19 +67,19 @@ class EmailStackedAreaChart extends React.Component<Props> {
     const options = [
       {
         domain: intl.formatHTMLMessage(messagesMap.emailSent),
-        color: colors['mcs-warning'],
+        color: colors['mcs-chart-2'],
       },
       {
         domain: intl.formatHTMLMessage(messagesMap.clicks),
-        color: colors['mcs-info'],
+        color: colors['mcs-chart-1'],
       },
       {
         domain: intl.formatHTMLMessage(messagesMap.impressions),
-        color: colors['mcs-success'],
+        color: colors['mcs-chart-3'],
       },
       {
         domain: intl.formatHTMLMessage(messagesMap.emailHardBounced),
-        color: colors['mcs-error'],
+        color: colors['mcs-chart-5'],
       },
     ];
 

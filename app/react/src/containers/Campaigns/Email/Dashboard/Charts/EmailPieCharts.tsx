@@ -40,7 +40,7 @@ class EmailPieCharts extends React.Component<Props> {
             {
               key: 'delivered',
               value: emailDelivered ? emailDelivered : 0,
-              color: colors['mcs-warning'],
+              color: colors['mcs-chart-2'],
             },
             {
               key: 'rest',
@@ -53,7 +53,7 @@ class EmailPieCharts extends React.Component<Props> {
             {
               key: 'opened',
               value: emailOpened ? emailOpened : 0,
-              color: colors['mcs-info'],
+              color: colors['mcs-chart-1'],
             },
             {
               key: 'rest',
@@ -66,7 +66,7 @@ class EmailPieCharts extends React.Component<Props> {
             {
               key: 'clicks',
               value: emailClicks ? emailClicks : 0,
-              color: colors['mcs-info'],
+              color: colors['mcs-chart-1'],
             },
             {
               key: 'rest',
@@ -79,7 +79,7 @@ class EmailPieCharts extends React.Component<Props> {
             {
               key: 'clicks',
               value: emailClicks ? emailClicks : 0,
-              color: colors['mcs-info'],
+              color: colors['mcs-chart-1'],
             },
             {
               key: 'rest',
@@ -92,7 +92,7 @@ class EmailPieCharts extends React.Component<Props> {
             {
               key: 'unsubscribe',
               value: emailUnsubscribed ? emailUnsubscribed : 0,
-              color: colors['mcs-info'],
+              color: colors['mcs-chart-1'],
             },
             {
               key: 'rest',
@@ -110,9 +110,9 @@ class EmailPieCharts extends React.Component<Props> {
 
       let colorFormated = '';
       if (color === 'blue') {
-        colorFormated = colors['mcs-info'];
+        colorFormated = colors['mcs-chart-1'];
       } else {
-        colorFormated = colors['mcs-warning'];
+        colorFormated = colors['mcs-chart-2'];
       }
       const gray = '#eaeaea';
 

@@ -18,6 +18,7 @@ import {
   Dataset,
   PieChartFormat,
 } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
+import { chartColors } from '../../../../components/Funnel/Utils';
 
 export interface GaugePieChartProps {
   title?: string;
@@ -46,14 +47,7 @@ class GaugePieChart extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     const { colors } = props;
-    const usedColors: string[] = [
-      colors['mcs-warning'],
-      colors['mcs-info'],
-      colors['mcs-highlight'],
-      colors['mcs-success'],
-      colors['mcs-primary'],
-      colors['mcs-error'],
-    ];
+    const usedColors: string[] = chartColors.map(chartColor => colors[chartColor]);
     this.state = {
       error: false,
       loading: true,

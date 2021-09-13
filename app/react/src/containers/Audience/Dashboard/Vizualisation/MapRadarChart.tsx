@@ -27,6 +27,7 @@ import {
 import { BASE_CHART_HEIGHT, SerieSortType } from '../../../../components/Charts/domain';
 import { StandardSegmentBuilderQueryDocument } from '../../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
 import { RadarChartProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/radar-chart';
+import { chartColors } from '../../../../components/Funnel/Utils';
 
 export interface MapBarChartProps {
   title?: string;
@@ -70,15 +71,7 @@ class MapBarChart extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     const { colors } = props;
-    const usedColors: string[] = [
-      colors['mcs-warning'],
-      colors['mcs-info'],
-      colors['mcs-highlight'],
-      colors['mcs-success'],
-      colors['mcs-normal'],
-      colors['mcs-primary'],
-      colors['mcs-error'],
-    ];
+    const usedColors: string[] = chartColors.map(chartColor => colors[chartColor]);
     this.state = {
       error: false,
       loading: true,
@@ -264,9 +257,19 @@ class MapBarChart extends React.Component<Props, State> {
       dataset: this.state.queryResult as any,
       height: BASE_CHART_HEIGHT,
       xKey: 'xKey',
-      colors: [colors['mcs-info']].concat(shouldCompare ? [colors['mcs-normal']] : []),
+      colors: [colors['mcs-chart-1']].concat(shouldCompare ? [colors['mcs-chart-7']] : []),
       yKeys: [{ key: BASE_YKEY, message: '' }].concat(restKey),
-      dataLabels: labels,
+      dataLabels: {
+        enabled: labels?.enable,
+        filter: labels?.filterValue
+          ? {
+              operator: '>',
+              property: 'y',
+              value: labels.filterValue,
+            }
+          : undefined,
+        format: labels?.format,
+      },
       tooltip: { format: tooltip?.formatter },
       format: percentage ? 'percentage' : 'count',
     };
