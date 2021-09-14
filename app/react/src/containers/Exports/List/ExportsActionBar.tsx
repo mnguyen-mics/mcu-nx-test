@@ -32,7 +32,7 @@ class ExportsActionbar extends React.Component<
     return (
       <Actionbar pathItems={breadcrumbPaths}>
         <Link to={`/v2/o/${organisationId}/datastudio/exports/create`}>
-          <Button className='mcs-primary' type='primary'>
+          <Button className='mcs-primary mcs-exports_creationButton' type='primary'>
             <McsIcon type='plus' /> <FormattedMessage {...messages.newExport} />
           </Button>
         </Link>
