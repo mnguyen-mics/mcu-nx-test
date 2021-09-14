@@ -66,7 +66,7 @@ class GeneralFormSection extends React.Component<Props, State> {
               required: true,
             }}
             inputProps={{
-              className : 'mcs-exports_exportName',
+              className: 'mcs-exports_exportName',
               placeholder: formatMessage(messages.labelExportName),
             }}
             helpToolTipProps={{

@@ -22,7 +22,7 @@ describe('Check DataStudio Export Page', () => {
   it('Create an export', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       const exportName = `Test Export Activities`;
-      
+
       // Go to data Studio menu
       cy.get('.mcs-sideBar-subMenu_menu\\.dataStudio\\.title').click();
 
@@ -39,7 +39,9 @@ describe('Check DataStudio Export Page', () => {
       cy.get('.mcs-exports_exportName').type(exportName);
 
       // Click on otql area
-      cy.get('.mcs-otql').type('select {id} from UserProfile',{parseSpecialCharSequences: false });
+      cy.get('.mcs-otql').type('select {id} from UserProfile', {
+        parseSpecialCharSequences: false,
+      });
 
       // Save the query export
       cy.get('.mcs-form_saveButton_exportForm').click();
@@ -52,7 +54,7 @@ describe('Check DataStudio Export Page', () => {
 
       // Type enter on text field
       cy.get('.mcs-search-input').type('{enter}');
-      
+
       // Click on the link of the export created
       cy.get('.mcs-campaigns-link').click();
     });
