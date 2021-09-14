@@ -4,18 +4,18 @@ import { withRouter, Link, RouteComponentProps } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import { AppstoreFilled } from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
-import { Dropdown } from '../../components/PopupContainers';
 import * as SessionHelper from '../../redux/Session/selectors';
 import messages from './messages';
 import { compose } from 'recompose';
 import { injectDatamart, InjectedDatamartProps } from '../Datamart';
 import { UserWorkspaceResource } from '../../models/directory/UserProfileResource';
 import { MicsReduxState } from '../../utils/ReduxHelper';
-import { McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { McsIcon, PopupContainer } from '@mediarithmics-private/mcs-components-library';
 import { InjectedFeaturesProps, injectFeatures } from '../Features';
 import { ProductionApiEnvironment } from '../Navigator/Layout/LayoutHelper';
 
 const { Header } = Layout;
+const { Dropdown } = PopupContainer;
 
 interface NavigatorHeaderStoreProps {
   workspace: (organisationId: string) => UserWorkspaceResource;

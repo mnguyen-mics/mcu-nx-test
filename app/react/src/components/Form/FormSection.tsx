@@ -3,8 +3,9 @@ import { Button, Row, Menu, Col } from 'antd';
 import { FormattedMessage } from 'react-intl';
 import FormTitle, { FormTitleProps } from './FormTitle';
 import { MenuInfo } from '../../../../../node_modules/antd/node_modules/rc-menu/lib/interface';
-import { Dropdown } from '../../components/PopupContainers';
-import { McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { McsIcon, PopupContainer } from '@mediarithmics-private/mcs-components-library';
+
+const { Dropdown } = PopupContainer;
 
 interface DropdownButtonItemProps {
   id: string;

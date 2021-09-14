@@ -4,8 +4,12 @@ import { Link, withRouter } from 'react-router-dom';
 import { FormattedMessage, InjectedIntlProps, injectIntl, defineMessages } from 'react-intl';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { Dropdown } from '../../../../components/PopupContainers';
-import { Actionbar, McsIcon, Slide } from '@mediarithmics-private/mcs-components-library';
+import {
+  Actionbar,
+  McsIcon,
+  Slide,
+  PopupContainer,
+} from '@mediarithmics-private/mcs-components-library';
 import ExportService from '../../../../services/ExportService';
 import {
   CampaignsOptions,
@@ -31,6 +35,8 @@ import injectNotifications, {
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { ExtendedTableRowSelection } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+
+const { Dropdown } = PopupContainer;
 
 const messagesMap = defineMessages({
   setStatus: {

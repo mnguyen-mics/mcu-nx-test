@@ -4,12 +4,13 @@ import { Menu, Button } from 'antd';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import { FormattedMessage, defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
 import { compose } from 'recompose';
-import { Dropdown } from '../../../../../components/PopupContainers/index';
 
-import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, McsIcon, PopupContainer } from '@mediarithmics-private/mcs-components-library';
 import { getDefaultDatamart } from '../../../../../redux/Session/selectors';
 import { DatamartResource } from '../../../../../models/datamart/DatamartResource';
 import { MicsReduxState } from '../../../../../utils/ReduxHelper';
+
+const { Dropdown } = PopupContainer;
 
 const messages = defineMessages({
   AUDIENCE_PARTITIONS: {
