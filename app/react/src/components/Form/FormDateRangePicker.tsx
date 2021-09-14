@@ -5,8 +5,10 @@ import { FormItemProps } from 'antd/lib/form/FormItem';
 
 import FormFieldWrapper, { FormFieldWrapperProps } from './FormFieldWrapper';
 import { DEFAULT_DATE_FORMAT } from '../../utils/DateHelper';
-import { DatePicker } from '../../components/PopupContainers';
+import { PopupContainer } from '@mediarithmics-private/mcs-components-library';
 import { PickerPanelDateProps } from 'antd/lib/calendar/generateCalendar';
+
+const { DatePicker } = PopupContainer;
 
 export interface FormDateRangePickerProps extends FormFieldWrapperProps {
   formItemProps: FormItemProps;

@@ -4,8 +4,7 @@ import { Button, Menu, Modal } from 'antd';
 import { withRouter, Link } from 'react-router-dom';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
-import { Dropdown } from '../../../../../components/PopupContainers';
-import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, McsIcon, PopupContainer } from '@mediarithmics-private/mcs-components-library';
 import messages from '../messages';
 import { RouteComponentProps } from 'react-router';
 import { AdGroupResource } from '../../../../../models/campaign/display/AdGroupResource';
@@ -29,6 +28,8 @@ import { ICatalogService } from '../../../../../services/CatalogService';
 import { ICreativeService } from '../../../../../services/CreativeService';
 import { IDisplayCampaignService } from '../../../../../services/DisplayCampaignService';
 import { IResourceHistoryService } from '../../../../../services/ResourceHistoryService';
+
+const { Dropdown } = PopupContainer;
 
 interface AdGroupActionbarProps {
   adGroup?: AdGroupResource;

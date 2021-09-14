@@ -5,10 +5,9 @@ import { Switch, Modal } from 'antd';
 import { compose } from 'recompose';
 import { RouteComponentProps } from 'react-router';
 import { formatMetric } from '../../../../../utils/MetricHelper';
-import { Button, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { Button, McsIcon, PopupContainer } from '@mediarithmics-private/mcs-components-library';
 import messages from '../messages';
 import { AdResource, AdInfoResource } from '../../../../../models/campaign/display/index';
-import { Popover } from '../../../../../components/PopupContainers/index';
 import { UpdateMessage } from '../ProgrammaticCampaign/DisplayCampaignAdGroupTable';
 import { InjectedDrawerProps } from '../../../../../components/Drawer/injectDrawer';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
@@ -18,6 +17,8 @@ import {
   ExtendedTableRowSelection,
 } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 import { TableViewWithSelectionNotifyerMessages } from '../../../../../components/TableView';
+
+const { Popover } = PopupContainer;
 
 interface DisplayCampaignAdTableProps {
   isFetching: boolean;

@@ -3,13 +3,13 @@ import { compose } from 'recompose';
 import { Button, Modal, message, Menu } from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { InjectedIntlProps, injectIntl, FormattedMessage, defineMessages } from 'react-intl';
-import { Dropdown } from '../../../../../components/PopupContainers';
 import messages from '../messages';
 import {
   Card,
   McsIcon,
   McsDateRangePicker,
   Slide,
+  PopupContainer,
 } from '@mediarithmics-private/mcs-components-library';
 import { CardProps } from '@mediarithmics-private/mcs-components-library/lib/components/card/Card';
 import { AdGroupResource } from '../../../../../models/campaign/display/AdGroupResource';
@@ -33,6 +33,8 @@ import { lazyInject } from '../../../../../config/inversify.config';
 import { IAdGroupFormService } from '../../Edit/AdGroup/AdGroupFormService';
 import { TYPES } from '../../../../../constants/types';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
+
+const { Dropdown } = PopupContainer;
 
 const messagesMap = defineMessages({
   setStatus: {

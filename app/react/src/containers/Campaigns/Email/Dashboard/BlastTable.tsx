@@ -4,7 +4,6 @@ import { defineMessages, FormattedMessage, InjectedIntlProps, injectIntl } from 
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import { DownOutlined } from '@ant-design/icons';
 import { Menu } from 'antd';
-import { Dropdown } from '../../../../components/PopupContainers';
 import { formatMetric } from '../../../../utils/MetricHelper';
 import { EmailBlastStatus } from '../../../../models/campaign/email';
 import { EmailCampaignDashboardRouteMatchParam } from './constants';
@@ -26,6 +25,9 @@ import {
   DataColumnDefinition,
   TableViewProps,
 } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
+import { PopupContainer } from '@mediarithmics-private/mcs-components-library';
+
+const { Dropdown } = PopupContainer;
 
 const blastStatusMessageMap: {
   [key in EmailBlastStatus]: FormattedMessage.MessageDescriptor;

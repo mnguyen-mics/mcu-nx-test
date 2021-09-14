@@ -2,12 +2,11 @@ import * as React from 'react';
 import { EllipsisOutlined, ExclamationCircleOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Button, Menu, Modal, message, Upload, Spin } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { Dropdown } from '../../../components/PopupContainers';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 import { Import } from '../../../models/imports/imports';
 import modalMessages from '../../../common/messages/modalMessages';
-import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, McsIcon, PopupContainer } from '@mediarithmics-private/mcs-components-library';
 import log from '../../../utils/Logger';
 import messages from './messages';
 import { lazyInject } from '../../../config/inversify.config';
@@ -20,6 +19,7 @@ import injectNotifications, {
 import { Link } from 'react-router-dom';
 
 const Dragger = Upload.Dragger;
+const { Dropdown } = PopupContainer;
 
 interface ImportActionbarProps {
   importObject?: Import;

@@ -5,7 +5,6 @@ import { Row, Col, Menu, Button } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import { MenuInfo } from '../../../../../../../../node_modules/antd/node_modules/rc-menu/lib/interface';
-import { Dropdown } from '../../../../../components/PopupContainers';
 import { GoalSelectionResource, AttributionSelectionResource } from '../../../../../models/goal';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';
@@ -27,10 +26,12 @@ import {
   LoadingChart,
   McsDateRangePicker,
   StackedAreaChart,
+  PopupContainer,
 } from '@mediarithmics-private/mcs-components-library';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
 import { StackedAreaChartProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/stacked-area-chart';
 
+const { Dropdown } = PopupContainer;
 const LegendChartTS = LegendChart as any;
 
 interface RouterMatchParams {

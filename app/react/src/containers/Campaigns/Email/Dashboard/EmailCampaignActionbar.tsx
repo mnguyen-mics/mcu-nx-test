@@ -4,7 +4,6 @@ import { Button, Menu, Modal, message } from 'antd';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
-import { Dropdown } from '../../../../components/PopupContainers';
 import messages from '../messages';
 import modalMessages from '../../../../common/messages/modalMessages';
 import exportMessages from '../../../../common/messages/exportMessages';
@@ -18,7 +17,7 @@ import { EmailCampaignResource } from '../../../../models/campaign/email';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../../Notifications/injectNotifications';
-import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, McsIcon, PopupContainer } from '@mediarithmics-private/mcs-components-library';
 import ReportService from '../../../../services/ReportService';
 import { normalizeReportView } from '../../../../utils/MetricHelper';
 import log from '../../../../utils/Logger';
@@ -33,6 +32,8 @@ import { IEmailRouterService } from '../../../../services/Library/EmailRoutersSe
 import { TYPES } from '../../../../constants/types';
 import { IResourceHistoryService } from '../../../../services/ResourceHistoryService';
 import { IEmailCampaignService } from '../../../../services/EmailCampaignService';
+
+const { Dropdown } = PopupContainer;
 
 export interface EmailCampaignActionbarProps {
   campaign?: EmailCampaignResource;

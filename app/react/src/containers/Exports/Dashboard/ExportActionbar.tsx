@@ -2,12 +2,11 @@ import * as React from 'react';
 import { EllipsisOutlined, ExclamationCircleOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Button, Menu, Modal, message } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { Dropdown } from '../../../components/PopupContainers';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 import { Export } from '../../../models/exports/exports';
 import modalMessages from '../../../common/messages/modalMessages';
-import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, McsIcon, PopupContainer } from '@mediarithmics-private/mcs-components-library';
 import log from '../../../utils/Logger';
 import messages, { formatExportProperty } from './messages';
 import { lazyInject } from '../../../config/inversify.config';
@@ -19,6 +18,8 @@ import ResourceTimelinePage, {
 import resourceHistoryMessages from '../../ResourceHistory/ResourceTimeline/messages';
 import injectDrawer, { InjectedDrawerProps } from '../../../components/Drawer/injectDrawer';
 import { Link } from 'react-router-dom';
+
+const { Dropdown } = PopupContainer;
 
 interface ExportActionbarProps {
   exportObject?: Export;

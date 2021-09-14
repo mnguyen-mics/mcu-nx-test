@@ -2,7 +2,6 @@ import * as React from 'react';
 import { EllipsisOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Button, Menu, Modal, message } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { Dropdown } from '../../../../../components/PopupContainers';
 import { injectIntl, FormattedMessage, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
 import messages from '../messages';
@@ -13,7 +12,7 @@ import {
   AdGroupInfoResource,
 } from '../../../../../models/campaign/display/DisplayCampaignInfoResource';
 import modalMessages from '../../../../../common/messages/modalMessages';
-import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, McsIcon, PopupContainer } from '@mediarithmics-private/mcs-components-library';
 import ExportService from '../../../../../services/ExportService';
 import ReportService from '../../../../../services/ReportService';
 import log from '../../../../../utils/Logger';
@@ -37,6 +36,8 @@ import { IDisplayCampaignService } from '../../../../../services/DisplayCampaign
 import { IResourceHistoryService } from '../../../../../services/ResourceHistoryService';
 import { IGoalService } from '../../../../../services/GoalService';
 import { Link } from 'react-router-dom';
+
+const { Dropdown } = PopupContainer;
 
 interface DisplayCampaignActionBarProps {
   campaign: Omit<DisplayCampaignInfoResource, 'ad_groups'>;

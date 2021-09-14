@@ -3,7 +3,6 @@ import { compose } from 'recompose';
 import { Modal, Button, message, Menu } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { InjectedIntlProps, injectIntl, FormattedMessage, defineMessages } from 'react-intl';
-import { Dropdown } from '../../../../../components/PopupContainers';
 import { AdInfoResource } from '../../../../../models/campaign/display/DisplayCampaignInfoResource';
 import { AdResource } from '../../../../../models/campaign/display/AdResource';
 import { UpdateMessage } from './DisplayCampaignAdGroupTable';
@@ -15,6 +14,7 @@ import {
   McsIcon,
   McsDateRangePicker,
   Slide,
+  PopupContainer,
 } from '@mediarithmics-private/mcs-components-library';
 import { CardProps } from '@mediarithmics-private/mcs-components-library/lib/components/card';
 import { parseSearch, updateSearch } from '../../../../../utils/LocationSearchHelper';
@@ -31,6 +31,8 @@ import { ICreativeService } from '../../../../../services/CreativeService';
 import { lazyInject } from '../../../../../config/inversify.config';
 import { TYPES } from '../../../../../constants/types';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
+
+const { Dropdown } = PopupContainer;
 
 const messagesMap = defineMessages({
   setStatus: {

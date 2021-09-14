@@ -5,14 +5,14 @@ import * as Antd from 'antd';
 import messages from '../../../messages';
 import { Geoname, IGeonameService } from '../../../../../../../services/GeonameService';
 import { LocationFieldModel } from '../../domain';
-import { Select } from '../../../../../../../components/PopupContainers';
 import { lazyInject } from '../../../../../../../config/inversify.config';
 import { TYPES } from '../../../../../../../constants/types';
-import { McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { McsIcon, PopupContainer } from '@mediarithmics-private/mcs-components-library';
 
 const InputGroup = Antd.Input.Group;
 const Option = Antd.Select.Option;
 const Spin = Antd.Spin;
+const { Select } = PopupContainer;
 
 const allCountries = [
   // { name: 'Afghanistan', code: 'AF' },

@@ -3,12 +3,11 @@ import lodash from 'lodash';
 import { EllipsisOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Button, Menu, Modal, message } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
-import { Dropdown } from '../../../../components/PopupContainers';
 import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { compose } from 'recompose';
 import { GoalResource } from '../../../../models/goal/index';
 import modalMessages from '../../../../common/messages/modalMessages';
-import { Actionbar, McsIcon } from '@mediarithmics-private/mcs-components-library';
+import { Actionbar, McsIcon, PopupContainer } from '@mediarithmics-private/mcs-components-library';
 import log from '../../../../utils/Logger';
 import messages from './messages';
 import ReportService from '../../../../services/ReportService';
@@ -33,6 +32,8 @@ import { TYPES } from '../../../../constants/types';
 import { IResourceHistoryService } from '../../../../services/ResourceHistoryService';
 import { IGoalService } from '../../../../services/GoalService';
 import { Link } from 'react-router-dom';
+
+const { Dropdown } = PopupContainer;
 
 interface ExportActionbarProps {
   goal?: GoalResource;
