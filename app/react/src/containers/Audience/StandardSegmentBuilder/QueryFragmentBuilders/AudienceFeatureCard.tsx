@@ -51,6 +51,9 @@ class AudienceFeatureCard extends React.Component<Props, State> {
         onSelectFeature(audienceFeature.id)();
       }
     };
+    const returnNoFilterMessage = () => {
+      return <div>{intl.formatMessage(messages.noAvailableFilters)}</div>;
+    };
     return (
       <div
         className={`${
@@ -65,10 +68,14 @@ class AudienceFeatureCard extends React.Component<Props, State> {
             } ${!!cardToggled && 'toggled'}`}
       >
         {cardToggled ? (
-          <McsIcon type='close' onClick={this.toggleCard} />
-        ) : (
           <McsIcon
             className='mcs-standardSegmentBuilder_featureCardClose'
+            type='close'
+            onClick={this.toggleCard}
+          />
+        ) : (
+          <McsIcon
+            className='mcs-standardSegmentBuilder_featureCardInfo'
             type='info'
             onClick={this.toggleCard}
           />
@@ -79,7 +86,7 @@ class AudienceFeatureCard extends React.Component<Props, State> {
               <span className='mcs-standardSegmentBuilder_featureCardToggledTitle'>
                 {intl.formatMessage(messages.availableFilters)}
               </span>
-              <div className='mcs-standardSegmentBuilder_featureCardDescritpion'>
+              <div className='mcs-standardSegmentBuilder_featureCardDescription'>
                 {audienceFeature.variables
                   ? audienceFeature.variables.map(v => {
                       return (
@@ -90,7 +97,7 @@ class AudienceFeatureCard extends React.Component<Props, State> {
                         </div>
                       );
                     })
-                  : intl.formatMessage(messages.noAvailableFilters)}
+                  : returnNoFilterMessage()}
               </div>
             </React.Fragment>
           ) : (
@@ -99,7 +106,7 @@ class AudienceFeatureCard extends React.Component<Props, State> {
                 {audienceFeature.name}
               </span>
 
-              <div className='mcs-standardSegmentBuilder_featureCardDescritpion'>
+              <div className='mcs-standardSegmentBuilder_featureCardDescription'>
                 {audienceFeature.description}
               </div>
               {hasFeature('audience-feature-search') && searchValue && (
