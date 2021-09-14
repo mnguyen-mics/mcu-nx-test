@@ -165,10 +165,9 @@ class CountPieChart extends React.Component<Props, State> {
     const { title, colors, intl, height, queryIds } = this.props;
 
     const computeChartColors = () => {
-      const availableColors = chartColors.map(chartColor => colors[chartColor]);
       return queryIds.map((q, i) => {
         return colors[
-          availableColors[i % (availableColors.length - 1)] as keyof ThemeColorsShape
+          chartColors[i % (chartColors.length - 1)] as keyof ThemeColorsShape
         ] as string;
       });
     };
