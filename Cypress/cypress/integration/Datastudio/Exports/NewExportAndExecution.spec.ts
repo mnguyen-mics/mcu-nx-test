@@ -17,6 +17,10 @@ describe('Check DataStudio Export Page', () => {
     Cypress.Cookies.preserveOnce('access_token', 'access_token_expiration_date');
   });
 
+  afterEach(() => {
+    cy.clearLocalStorage();
+  });
+
   it('Create an export', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       const exportName = `Test Export Activities`;
@@ -57,8 +61,5 @@ describe('Check DataStudio Export Page', () => {
       cy.get('.mcs-campaigns-link').click();
     });
   });
-
-  afterEach(() => {
-    cy.clearLocalStorage();
-  });
+  
 });
