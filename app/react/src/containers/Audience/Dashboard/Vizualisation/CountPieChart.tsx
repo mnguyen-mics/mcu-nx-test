@@ -180,7 +180,7 @@ class CountPieChart extends React.Component<Props, State> {
       },
       isHalf: false,
       innerRadius: true,
-      format: 'count' as PieChartFormat,
+      format: 'percentage' as PieChartFormat,
     };
 
     const generateChart = () => {
