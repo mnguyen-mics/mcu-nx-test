@@ -61,5 +61,4 @@ describe('Check DataStudio Export Page', () => {
       cy.get('.mcs-campaigns-link').click();
     });
   });
-  
 });
