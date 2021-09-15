@@ -1,12 +1,12 @@
 import faker from 'faker';
 
 describe('User Profile Import Test', () => {
-  const second = 1000;
-  const minutes = 60 * second;
+  const millisecond = 1000;
+  const minutes = 60 * millisecond;
 
   const loginAndInitiateDocImportCreation = () => {
     cy.login();
-    cy.url({ timeout: 10 * second }).should(
+    cy.url({ timeout: 10 * millisecond }).should(
       'contain',
       Cypress.config().baseUrl + '/#/v2/o/1/campaigns/display',
     );
@@ -54,8 +54,8 @@ describe('User Profile Import Test', () => {
     importTypeFunc('User Profile');
     uploadFile('00-testProfiles.ndjson');
     cy.contains('Ok').click();
-    cy.get('.mcs-importExecution_table', { timeout: 1 * minutes }).should('contain', 'RUNNING');
-    cy.get('.mcs-importExecution_table', { timeout: 1 * minutes }).should('contain', 'SUCCEEDED');
+    cy.get('.mcs-importExecution_table', { timeout: 2 * minutes }).should('contain', 'RUNNING');
+    cy.get('.mcs-importExecution_table', { timeout: 2 * minutes }).should('contain', 'SUCCEEDED');
   });
 
   it('should succeed if import activites input file is valid', () => {
@@ -63,8 +63,8 @@ describe('User Profile Import Test', () => {
     importTypeFunc('User Activity');
     uploadFile('01-testActivities.ndjson');
     cy.contains('Ok').click();
-    cy.get('.mcs-importExecution_table', { timeout: 1 * minutes }).should('contain', 'RUNNING');
-    cy.get('.mcs-importExecution_table', { timeout: 1 * minutes }).should('contain', 'SUCCEEDED');
+    cy.get('.mcs-importExecution_table', { timeout: 2 * minutes }).should('contain', 'RUNNING');
+    cy.get('.mcs-importExecution_table', { timeout: 2 * minutes }).should('contain', 'SUCCEEDED');
   });
 
   it('should fail if import profile input file does not match user profile resource', () => {
