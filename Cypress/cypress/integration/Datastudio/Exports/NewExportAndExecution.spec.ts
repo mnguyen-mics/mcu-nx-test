@@ -1,7 +1,7 @@
 describe('Check DataStudio Export Page', () => {
   const second = 1000;
 
-  before(() => {
+  beforeEach(() => {
     // Login
     cy.login();
     cy.url({ timeout: 10 * second }).should(
@@ -13,9 +13,7 @@ describe('Check DataStudio Export Page', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       cy.switchOrg(data.organisationName);
     });
-  });
 
-  beforeEach(() => {
     Cypress.Cookies.preserveOnce('access_token', 'access_token_expiration_date');
   });
 
@@ -58,5 +56,9 @@ describe('Check DataStudio Export Page', () => {
       // Click on the link of the export created
       cy.get('.mcs-campaigns-link').click();
     });
+  });
+
+  afterEach(() => {
+    cy.clearLocalStorage();
   });
 });
