@@ -499,13 +499,13 @@ class GoalAttribution extends React.Component<JoinedProps, GoalAttributionState>
             </div>
           </div>
         </Row>
-        <Row>
+        <div>
           <GoalAttributionTable
             dataSource={this.state.detailled.data}
             uniq={this.state.detailled.uniq}
             isLoading={this.state.detailled.isLoading}
           />
-        </Row>
+        </div>
       </div>
     );
   }
