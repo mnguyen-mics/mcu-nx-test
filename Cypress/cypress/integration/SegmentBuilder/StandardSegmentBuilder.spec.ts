@@ -25,7 +25,6 @@ describe('This test should check that the audience feature forms are working pro
     cy.get('.mcs-standardSegmentBuilderName').type(standardSegmentBuilderName);
     cy.get('.mcs-form_saveButton_standardSegmentBuilderForm').click();
   };
-
   it('Should test the standard segment builder', () => {
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
       const standardSegmentBuilderName = faker.random.words(2);
@@ -409,6 +408,53 @@ describe('This test should check that the audience feature forms are working pro
           cy.contains('Ok').click();
         });
         cy.get('.mcs-audienceFeature_table').should('contain', 'id > $id');
+      });
+    });
+  });
+  it('Should be able to edit an empty UserQuerySegment saved by using the standard_segment_builder drawer', () => {
+    cy.readFile('cypress/fixtures/init_infos.json').then(data => {
+      const standardSegmentBuilderName = faker.random.words(2);
+      const audienceFeatureName = faker.random.words(2);
+      createStandardSegmentBuilder(data.datamartName, standardSegmentBuilderName);
+      cy.request({
+        url: `${Cypress.env('apiDomain')}/v1/datamarts/${data.datamartId}/audience_features`,
+        method: 'POST',
+        headers: { Authorization: data.accessToken },
+        body: {
+          name: audienceFeatureName,
+          description: 'Test - Standard Segment Builder - Cypress',
+          object_tree_expression: 'creation_ts > $date',
+          addressable_object: 'UserPoint',
+        },
+      }).then(() => {
+        cy.goToHome(data.organisationId);
+        cy.get('.mcs-sideBar-subMenu_menu\\.audience\\.title').click();
+        cy.get('.mcs-sideBar-subMenuItem_menu\\.audience\\.builder').click();
+        cy.wait(3000);
+        cy.url().then(url => {
+          if (url.match(/.*segment-builder-selector$/g)) {
+            cy.get('.mcs-standardSegmentBuilder_dropdownContainer').trigger('mouseover');
+            cy.get('.mcs-standardSegmentBuilder_dropdownContainer').click();
+            cy.contains(standardSegmentBuilderName).click();
+          }
+          cy.get('.mcs-standardSegmentBuilderActionBar_saveUserQuerySegmentButton').click();
+          cy.get('.mcs-standardSegmentBuilderActionBar_menuItem').click();
+          cy.get('.mcs-newUserQuerySegmentSimpleForm_name_input').type('Empty UserQuery Segment');
+          cy.get('.mcs-saveAsUserQuerySegmentModal_ok_button').click();
+        });
+        cy.get('.mcs-contentHeader_title--large')
+          .should('be.visible')
+          .and('contain', 'Empty UserQuery Segment');
+        cy.get('.mcs-pen').click();
+        cy.get('.mcs-editAudienceSegmentForm_editQueryButton').click();
+        cy.get('.mcs-timelineButton_left').click();
+        cy.contains(audienceFeatureName).click();
+        cy.get('.mcs-actionBar_updateQueryButton').click();
+        cy.get('.mcs-form_saveButton_audienceSegmentForm').click();
+        cy.get('.mcs-contentHeader_title--large')
+          .should('be.visible')
+          .and('contain', 'Empty UserQuery Segment');
+        cy.get('.mcs-contentHeader_subtitle').should('be.visible').and('contain', 'User Query');
       });
     });
   });
