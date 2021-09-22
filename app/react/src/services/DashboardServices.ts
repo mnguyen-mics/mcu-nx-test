@@ -1,14 +1,20 @@
 import * as yup from 'yup';
 import log from '../utils/Logger';
 import { injectable, inject } from 'inversify';
-import { DataListResponse, DataResponse } from './ApiService';
+import ApiService, { DataListResponse, DataResponse } from './ApiService';
 import { PaginatedApiParam } from '../utils/ApiHelper';
 import {
   PAGINATION_SEARCH_SETTINGS,
   FILTERS_SEARCH_SETTINGS,
   KEYWORD_SEARCH_SETTINGS,
 } from '../utils/LocationSearchHelper';
-import { DashboardType, DashboardResource } from '../models/dashboards/dashboards';
+import {
+  DashboardContentResource,
+  DashboardResource,
+  DashboardsOptions,
+  DashboardType,
+  DataFileDashboardResource,
+} from '../models/dashboards/dashboards';
 import { TYPES } from '../constants/types';
 import { IDataFileService } from './DataFileService';
 import cuid from 'cuid';
@@ -29,28 +35,39 @@ export const SCENARIOS_SEARCH_SETTINGS = [
 
 export interface IDashboardService {
   /*****   DASHBOARD RESOURCE   *****/
+
   getDashboards: (
+    datamartId: string,
+    options?: DashboardsOptions,
+  ) => Promise<DataListResponse<DashboardResource>>;
+
+  getDashboardContent: (
+    datamartId: string,
+    dashboardId: string,
+  ) => Promise<DashboardContentResource>;
+
+  getDataFileDashboards: (
     organisationId: string,
     datamartId: string,
     type: 'HOME' | 'SEGMENT',
     options?: GetDashboardsOptions,
-  ) => Promise<DataListResponse<DashboardResource>>;
+  ) => Promise<DataListResponse<DataFileDashboardResource>>;
 
-  getSegmentDashboards: (
+  getDataFileSegmentDashboards: (
     organisationId: string,
     datamartId: string,
     segmentId: string,
     options?: GetDashboardsOptions,
-  ) => Promise<DataListResponse<DashboardResource>>;
+  ) => Promise<DataListResponse<DataFileDashboardResource>>;
 
-  getStandardSegmentBuilderDashboards: (
+  getDataFileStandardSegmentBuilderDashboards: (
     organisationId: string,
     datamartId: string,
     standardSegmentBuilderId: string,
     options?: GetDashboardsOptions,
-  ) => Promise<DataListResponse<DashboardResource>>;
+  ) => Promise<DataListResponse<DataFileDashboardResource>>;
 
-  getDashboard: (dashboardId: string) => Promise<DataResponse<DashboardResource>>;
+  getDefaultDashboard: (dashboardId: string) => Promise<DataResponse<DataFileDashboardResource>>;
 }
 
 const readFile = (b: Blob): Promise<string> =>
@@ -117,11 +134,27 @@ export class DashboardService implements IDashboardService {
   private _datafileService!: IDataFileService;
 
   getDashboards(
+    datamartId: string,
+    options?: DashboardsOptions,
+  ): Promise<DataListResponse<DashboardResource>> {
+    const endpoint = `datamarts/${datamartId}/dashboards`;
+    const params = {
+      archived: options?.archived,
+    };
+    return ApiService.getRequest(endpoint, params);
+  }
+
+  getDashboardContent(datamartId: string, dashboardId: string): Promise<any> {
+    const endpoint = `datamarts/${datamartId}/dashboards/${dashboardId}/content`;
+    return ApiService.getRequest(endpoint);
+  }
+
+  getDataFileDashboards(
     organisationId: string,
     datamartId: string,
     type: 'HOME' | 'SEGMENT' | 'AUDIENCE_BUILDER',
     options: GetDashboardsOptions = {},
-  ): Promise<DataListResponse<DashboardResource>> {
+  ): Promise<DataListResponse<DataFileDashboardResource>> {
     const hardcodedDashboards = myDashboards.filter(
       d => d.datamart_id === datamartId && d.type === type,
     );
@@ -149,7 +182,7 @@ export class DashboardService implements IDashboardService {
         .then(s => {
           return resolve({
             status: 'ok' as any,
-            data: s as DashboardResource[],
+            data: s as DataFileDashboardResource[],
             count: hardcodedDashboards.filter(d => d.datamart_id === datamartId).length,
           });
         })
@@ -157,19 +190,19 @@ export class DashboardService implements IDashboardService {
           log.debug(e);
           return resolve({
             status: 'ok' as any,
-            data: hardcodedDashboards as DashboardResource[],
+            data: hardcodedDashboards as DataFileDashboardResource[],
             count: hardcodedDashboards.filter(d => d.datamart_id === datamartId).length,
           });
         });
     });
   }
 
-  getSegmentDashboards(
+  getDataFileSegmentDashboards(
     organisationId: string,
     datamartId: string,
     segmentId: string,
     options: GetDashboardsOptions = {},
-  ): Promise<DataListResponse<DashboardResource>> {
+  ): Promise<DataListResponse<DataFileDashboardResource>> {
     const hardcodedDashboards = myDashboards.filter(
       d => d.datamart_id === datamartId && d.type === 'SEGMENT',
     );
@@ -204,7 +237,7 @@ export class DashboardService implements IDashboardService {
         .then(s => {
           return resolve({
             status: 'ok' as any,
-            data: s as DashboardResource[],
+            data: s as DataFileDashboardResource[],
             count: hardcodedDashboards.filter(d => d.datamart_id === datamartId).length,
           });
         })
@@ -212,19 +245,19 @@ export class DashboardService implements IDashboardService {
           log.debug(e);
           return resolve({
             status: 'ok' as any,
-            data: hardcodedDashboards as DashboardResource[],
+            data: hardcodedDashboards as DataFileDashboardResource[],
             count: hardcodedDashboards.filter(d => d.datamart_id === datamartId).length,
           });
         });
     });
   }
 
-  getStandardSegmentBuilderDashboards(
+  getDataFileStandardSegmentBuilderDashboards(
     organisationId: string,
     datamartId: string,
     standardSegmentBuilderId: string,
     options: GetDashboardsOptions = {},
-  ): Promise<DataListResponse<DashboardResource>> {
+  ): Promise<DataListResponse<DataFileDashboardResource>> {
     const hardcodedDashboards = myDashboards.filter(
       d => d.datamart_id === datamartId && d.type === 'AUDIENCE_BUILDER',
     );
@@ -259,7 +292,7 @@ export class DashboardService implements IDashboardService {
         .then(s => {
           return resolve({
             status: 'ok' as any,
-            data: s as DashboardResource[],
+            data: s as DataFileDashboardResource[],
             count: hardcodedDashboards.filter(d => d.datamart_id === datamartId).length,
           });
         })
@@ -267,14 +300,14 @@ export class DashboardService implements IDashboardService {
           log.debug(e);
           return resolve({
             status: 'ok' as any,
-            data: hardcodedDashboards as DashboardResource[],
+            data: hardcodedDashboards as DataFileDashboardResource[],
             count: hardcodedDashboards.filter(d => d.datamart_id === datamartId).length,
           });
         });
     });
   }
 
-  getDashboard(dashboardId: string): Promise<DataResponse<DashboardResource>> {
+  getDefaultDashboard(dashboardId: string): Promise<DataResponse<DataFileDashboardResource>> {
     // const endpoint = `dashboards/${dashboardId}`;
     // return ApiService.getRequest(endpoint);
     const foundDashboard = myDashboards.find(d => d.id === dashboardId);
@@ -285,7 +318,7 @@ export class DashboardService implements IDashboardService {
   }
 }
 
-const myDashboards: DashboardResource[] = [
+const myDashboards: DataFileDashboardResource[] = [
   {
     datamart_id: '1265',
     id: '1',

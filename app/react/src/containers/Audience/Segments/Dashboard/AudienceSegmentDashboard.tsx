@@ -28,7 +28,7 @@ import AudienceSegmentExportsCard from './AudienceSegmentExportsCard';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IDashboardService } from '../../../../services/DashboardServices';
-import { DashboardResource } from '../../../../models/dashboards/dashboards';
+import { DataFileDashboardResource } from '../../../../models/dashboards/dashboards';
 import DashboardWrapper from '../../Dashboard/DashboardWrapper';
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 import DatamartUsersAnalyticsWrapper, {
@@ -46,7 +46,7 @@ interface State {
     reports: AudienceReport;
     isLoading: boolean;
   };
-  charts: DashboardResource[];
+  charts: DataFileDashboardResource[];
   datamartAnalyticsDashboardConfig: DatamartUsersAnalyticsWrapperProps[];
 }
 export interface AudienceSegmentDashboardProps {
@@ -182,7 +182,7 @@ class AudienceSegmentDashboard extends React.Component<Props, State> {
     segmentId: string,
   ) => {
     this._dashboardService
-      .getSegmentDashboards(organisationId, selectedDatamartId, segmentId)
+      .getDataFileSegmentDashboards(organisationId, selectedDatamartId, segmentId)
       .then(d => {
         this.setState({ charts: d.data });
       })

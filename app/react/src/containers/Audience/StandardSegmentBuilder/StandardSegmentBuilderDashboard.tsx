@@ -2,7 +2,7 @@ import * as React from 'react';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { messages } from './constants';
 import { compose } from 'recompose';
-import { DashboardResource } from '../../../models/dashboards/dashboards';
+import { DataFileDashboardResource } from '../../../models/dashboards/dashboards';
 import { lazyInject } from '../../../config/inversify.config';
 import { TYPES } from '../../../constants/types';
 import { IDashboardService } from '../../../services/DashboardServices';
@@ -31,7 +31,7 @@ type Props = InjectedIntlProps & InjectedNotificationProps & StandardSegmentBuil
 
 interface State {
   isDashboardLoading: boolean;
-  dashboards: DashboardResource[];
+  dashboards: DataFileDashboardResource[];
 }
 
 class StandardSegmentBuilderDashboard extends React.Component<Props, State> {
@@ -60,7 +60,7 @@ class StandardSegmentBuilderDashboard extends React.Component<Props, State> {
   ) => {
     this.setState({ isDashboardLoading: true });
     this._dashboardService
-      .getStandardSegmentBuilderDashboards(
+      .getDataFileStandardSegmentBuilderDashboards(
         organisationId,
         selectedDatamartId,
         standardSegmentBuilderId,

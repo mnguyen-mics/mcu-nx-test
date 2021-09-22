@@ -1,4 +1,4 @@
-import { Layout } from 'antd';
+import { Breadcrumb, Layout } from 'antd';
 import * as React from 'react';
 import { InjectedIntlProps, injectIntl, defineMessages, InjectedIntl } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
@@ -10,16 +10,17 @@ import injectNotifications, {
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
 import { IDashboardService } from '../../../../services/DashboardServices';
-import { DashboardResource } from '../../../../models/dashboards/dashboards';
+import {
+  DashboardPageContent,
+  DashboardResource,
+  DataFileDashboardResource,
+} from '../../../../models/dashboards/dashboards';
 import {
   withDatamartSelector,
   WithDatamartSelectorProps,
 } from '../../../Datamart/WithDatamartSelector';
 import { Loading } from '../../../../components';
-import DashboardWrapper from '../../Dashboard/DashboardWrapper';
-import DatamartUsersAnalyticsWrapper, {
-  DatamartUsersAnalyticsWrapperProps,
-} from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
+import { DatamartUsersAnalyticsWrapperProps } from '../../DatamartUsersAnalytics/DatamartUsersAnalyticsWrapper';
 import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
 import {
   averageSessionDurationConfig,
@@ -27,7 +28,10 @@ import {
   acquisitionEngagementConfig,
   ecommerceEngagementConfig,
 } from '../../DatamartUsersAnalytics/config/AnalyticsConfigJson';
-import { Error } from '@mediarithmics-private/mcs-components-library';
+import { Error, MentionTag } from '@mediarithmics-private/mcs-components-library';
+import DashboardPage from '../../Dashboard/DashboardPage';
+import { DataListResponse } from '../../../../services/ApiService';
+import { defaultDashboardContent } from '../../DatamartUsersAnalytics/config/DefaultDashboardContentJson';
 
 const { Content } = Layout;
 
@@ -52,12 +56,18 @@ const messages = defineMessages({
     id: 'audience.home.acquisitionEngagementTitle',
     defaultMessage: 'Acquisition Engagement',
   },
+  mentionTagTooltip: {
+    id: 'audience.home.mentionTagTooltip',
+    defaultMessage:
+      'You can see new engine dashboards and old dashboards in tabs. All users don’t have access to this feature yet.',
+  },
 });
 
 interface HomeState {
-  dashboards: DashboardResource[];
+  dataFileDashboards: DataFileDashboardResource[];
   isLoading: boolean;
   datamartAnalyticsDashboardConfig: DatamartUsersAnalyticsWrapperProps[];
+  apiDashboards: DashboardPageContent[];
 }
 
 type JoinedProps = InjectedWorkspaceProps &
@@ -75,9 +85,10 @@ class Partition extends React.Component<JoinedProps, HomeState> {
     super(props);
 
     this.state = {
-      dashboards: [],
+      dataFileDashboards: [],
       isLoading: true,
       datamartAnalyticsDashboardConfig: [],
+      apiDashboards: [],
     };
   }
 
@@ -88,6 +99,7 @@ class Partition extends React.Component<JoinedProps, HomeState> {
       match: {
         params: { organisationId },
       },
+      hasFeature,
     } = this.props;
     this.setState({
       datamartAnalyticsDashboardConfig: this.getDatamartAnaylicsDashboardConfig(
@@ -96,7 +108,9 @@ class Partition extends React.Component<JoinedProps, HomeState> {
         intl,
       ),
     });
-    this.loadData(organisationId, selectedDatamartId);
+    if (hasFeature('dashboards-new-engine'))
+      this.fetchDashboards(organisationId, selectedDatamartId);
+    else this.loadData(organisationId, selectedDatamartId);
   }
 
   componentDidUpdate(prevProps: JoinedProps) {
@@ -106,12 +120,15 @@ class Partition extends React.Component<JoinedProps, HomeState> {
       match: {
         params: { organisationId },
       },
+      hasFeature,
     } = this.props;
 
     const { selectedDatamartId: prevSelectedDatamart } = prevProps;
 
     if (selectedDatamartId !== prevSelectedDatamart) {
-      this.loadData(organisationId, selectedDatamartId);
+      if (hasFeature('dashboards-new-engine'))
+        this.fetchDashboards(organisationId, selectedDatamartId);
+      else this.loadData(organisationId, selectedDatamartId);
       this.setState({
         datamartAnalyticsDashboardConfig: this.getDatamartAnaylicsDashboardConfig(
           organisationId,
@@ -159,15 +176,72 @@ class Partition extends React.Component<JoinedProps, HomeState> {
     return config;
   };
 
+  fetchDashboards = (organisationId: string, selectedDatamartId: string) => {
+    this.setState({ isLoading: true });
+    const promises: Array<
+      Promise<DataListResponse<DataFileDashboardResource | DashboardResource>>
+    > = [];
+    promises.push(
+      this._dashboardService.getDataFileDashboards(organisationId, selectedDatamartId, 'HOME', {}),
+    );
+    promises.push(this._dashboardService.getDashboards(selectedDatamartId, { archived: false }));
+    Promise.all(promises)
+      .then(res => {
+        this.setState({
+          dataFileDashboards: res[0].data as DataFileDashboardResource[],
+          apiDashboards: [],
+        });
+        const apiDashboards: DashboardResource[] = res[1].data as DashboardResource[];
+        if (apiDashboards && apiDashboards.length === 0) this.setState({ isLoading: false });
+        else
+          apiDashboards
+            .filter(dashboard => dashboard.scopes.some(scope => scope === 'home'))
+            .map(dashboard => {
+              this._dashboardService
+                .getDashboardContent(selectedDatamartId, dashboard.id)
+                .then(resContent => {
+                  this.setState({
+                    apiDashboards: this.state.apiDashboards.concat({
+                      title: dashboard.title,
+                      dashboardContent: JSON.parse(resContent.data.content),
+                    }),
+                  });
+                })
+                .catch(err => {
+                  this.props.notifyError(err);
+                  if (selectedDatamartId === '1500') {
+                    this.setState({
+                      isLoading: false,
+                      apiDashboards: this.state.apiDashboards.concat({
+                        title: dashboard.title,
+                        dashboardContent: defaultDashboardContent,
+                      }),
+                    });
+                  } else
+                    this.setState({
+                      isLoading: false,
+                      apiDashboards: [],
+                    });
+                });
+            });
+      })
+      .catch(err => {
+        this.props.notifyError(err);
+        this.setState({
+          isLoading: false,
+        });
+      });
+  };
+
   loadData = (organisationId: string, selectedDatamartId: string) => {
     this.setState({ isLoading: true });
     this._dashboardService
-      .getDashboards(organisationId, selectedDatamartId, 'HOME', {})
+      .getDataFileDashboards(organisationId, selectedDatamartId, 'HOME', {})
       .then(d => {
         return d.data;
       })
       .then(d => {
-        this.setState({ isLoading: false, dashboards: d });
+        this.setState({ isLoading: false, dataFileDashboards: d });
       })
       .catch(err => {
         this.props.notifyError(err);
@@ -178,9 +252,14 @@ class Partition extends React.Component<JoinedProps, HomeState> {
   };
 
   render() {
-    const { hasFeature, intl } = this.props;
+    const { hasFeature, intl, selectedDatamartId } = this.props;
 
-    const { isLoading, dashboards, datamartAnalyticsDashboardConfig } = this.state;
+    const {
+      isLoading,
+      dataFileDashboards,
+      datamartAnalyticsDashboardConfig,
+      apiDashboards,
+    } = this.state;
 
     if (isLoading) {
       return <Loading isFullScreen={false} />;
@@ -190,7 +269,7 @@ class Partition extends React.Component<JoinedProps, HomeState> {
       'audience-dashboards-datamart_users_analytics',
     );
 
-    if (!isLoading && dashboards.length === 0 && !shouldDisplayAnalyticsFeature) {
+    if (!isLoading && dataFileDashboards.length === 0 && !shouldDisplayAnalyticsFeature) {
       return <Error message={intl.formatMessage(messages.comingSoon)} />;
     }
 
@@ -198,31 +277,35 @@ class Partition extends React.Component<JoinedProps, HomeState> {
       <div className='ant-layout'>
         <div className='ant-layout'>
           <Content className='mcs-content-container'>
-            {dashboards.map(d => (
-              <DashboardWrapper
-                key={d.id}
-                layout={d.components}
-                title={d.name}
-                datamartId={d.datamart_id}
-              />
-            ))}
-            {shouldDisplayAnalyticsFeature &&
-              dashboards.length === 0 &&
-              datamartAnalyticsDashboardConfig.map((conf, i) => {
-                return (
-                  <DatamartUsersAnalyticsWrapper
-                    key={i.toString()}
-                    title={conf.title}
-                    subTitle={conf.subTitle}
-                    datamartId={conf.datamartId}
-                    organisationId={conf.organisationId}
-                    config={conf.config}
-                    showFilter={conf.showFilter}
-                    showDateRangePicker={conf.showDateRangePicker}
-                    pageTitle={conf.pageTitle}
+            <Breadcrumb separator='>' className='mcs-homePage_breadcrumb'>
+              <Breadcrumb.Item>Audience</Breadcrumb.Item>
+              <Breadcrumb.Item>
+                Home
+                {hasFeature('dashboards-new-engine') && (
+                  <MentionTag
+                    mention={'BETA'}
+                    customContent={'DASHBOARDS-NEW-ENGINE'}
+                    tooltip={intl.formatMessage(messages.mentionTagTooltip)}
+                    className='m-l-10'
                   />
-                );
-              })}
+                )}
+              </Breadcrumb.Item>
+            </Breadcrumb>
+            {hasFeature('dashboards-new-engine') && (
+              <DashboardPage
+                datamartId={selectedDatamartId}
+                apiDashboards={apiDashboards}
+                dataFileDashboards={dataFileDashboards}
+                datamartAnalyticsConfig={datamartAnalyticsDashboardConfig}
+              />
+            )}
+            {!hasFeature('dashboards-new-engine') && (
+              <DashboardPage
+                datamartId={selectedDatamartId}
+                dataFileDashboards={dataFileDashboards}
+                datamartAnalyticsConfig={datamartAnalyticsDashboardConfig}
+              />
+            )}
           </Content>
         </div>
       </div>
