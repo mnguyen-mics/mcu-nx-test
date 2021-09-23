@@ -459,7 +459,7 @@ class EditMobileAppPage extends React.Component<Props, State> {
     generateSavingPromise()
       .then(() => {
         hideSaveInProgress();
-        const channelsUrl = `/v2/o/${organisationId}/settings/channels`;
+        const channelsUrl = `/v2/o/${organisationId}/settings/datamart/channels`;
         history.push(channelsUrl);
       })
       .catch(err => {
