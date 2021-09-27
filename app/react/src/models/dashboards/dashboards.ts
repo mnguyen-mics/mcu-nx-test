@@ -1,12 +1,66 @@
+import { ChartConfig } from '@mediarithmics-private/advanced-components/lib/components/chart-engine/ChartDataFetcher';
 import { Layout } from 'react-grid-layout';
 import { OTQLResult } from '../datamart/graphdb/OTQLResult';
 
-export interface DashboardResource {
+export interface DataFileDashboardResource {
   id: string;
   type: DashboardType;
   datamart_id: string;
   name: string;
   components: ComponentLayout[];
+}
+
+export interface DashboardResource {
+  id: string;
+  title: string;
+  scopes: DashoboardScope[];
+  segments_id: number[];
+  builders_id: number[];
+  archived: boolean;
+}
+
+export interface DashboardContentSectionsContent {
+  title: string;
+  cards: DashboardContentCard[];
+}
+
+export interface DashboardContentResource {
+  data: DashboardContent;
+}
+
+export interface DashboardContent {
+  content: string;
+}
+
+export interface DashboardContentSections {
+  sections: DashboardContentSectionsContent[];
+}
+
+export interface DashboardPageContent {
+  title: string;
+  dashboardContent: DashboardContentSections;
+}
+export interface DashboardContentCard {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  layout?: string;
+  charts: ChartConfig[];
+}
+export interface DashboardContentDataset {
+  type: ChartDatasetType;
+  query_id: string;
+}
+
+export type ChartDatasetType = 'otql';
+
+export type DashboardContentChartType = 'PIE' | 'BARS' | 'RADAR' | 'METRIC';
+
+export type DashoboardScope = 'home' | 'segments' | 'builders';
+
+export interface DashboardsOptions {
+  archived?: boolean;
 }
 
 export type DashboardType = 'HOME' | 'SEGMENT' | 'AUDIENCE_BUILDER';
