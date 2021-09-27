@@ -283,9 +283,11 @@ Cypress.Commands.add('initTestContext', () => {
                   'user_account_id:String @TreeIndex(index:"USER_INDEX")\n' +
                   'creation_ts:Timestamp! @TreeIndex(index:"USER_INDEX")\n' +
                   'last_modified_ts:Timestamp! @TreeIndex(index:"USER_INDEX")\n' +
+                  'country:String! @TreeIndex(index:"USER_INDEX")\n' +
                   '}\n' +
                   '######\n' +
                   'type ActivityEvent  @Mirror(object_type:"UserEvent") {\n' +
+                  'page:Page @Property(path:"$properties.page")\n' +
                   'url:String @Property(path:"$properties.$url") @TreeIndex(index:"USER_INDEX")\n' +
                   'referrer:String @Property(path:"$properties.$referrer") @TreeIndex(index:"USER_INDEX")\n' +
                   'date:Date! @Function(name:"ISODate", params:["ts"]) @TreeIndex(index:"USER_INDEX")\n' +
@@ -295,6 +297,10 @@ Cypress.Commands.add('initTestContext', () => {
                   'test:String @Property(paths:["$properties.universe", "$properties.site_id"]) @TreeIndex(index:"USER_INDEX")\n' +
                   'site_id:String @Property(path:"$properties.site_id") @TreeIndex(index:"USER_INDEX")\n' +
                   'app_id:String @Property(path:"$properties.app_id") @TreeIndex(index:"USER_INDEX")\n' +
+                  '}\n' +
+                  '#############\n' +
+                  'type Page  {\n' +
+                  'page_name:String @TreeIndex(index:"USER_INDEX")\n' +
                   '}\n',
               }).then(() => {
                 cy.request({
