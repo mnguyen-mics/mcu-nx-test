@@ -394,6 +394,7 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
       <React.Fragment>
         {hasFeature('audience-feature-search') ? (
           <AutoComplete
+            className='mcs-standardSegmentBuilder_featureSelector--searchAudienceFeature'
             value={searchValue}
             options={searchOptions}
             dropdownMatchSelectWidth={352}
