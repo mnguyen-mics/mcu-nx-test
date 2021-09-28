@@ -193,7 +193,7 @@ class Partition extends React.Component<JoinedProps, HomeState> {
         });
         const apiDashboards: DashboardResource[] = res[1].data as DashboardResource[];
         if (apiDashboards && apiDashboards.length === 0) this.setState({ isLoading: false });
-        else
+        else {
           apiDashboards
             .filter(dashboard => dashboard.scopes.some(scope => scope === 'home'))
             .map(dashboard => {
@@ -224,6 +224,8 @@ class Partition extends React.Component<JoinedProps, HomeState> {
                     });
                 });
             });
+          this.setState({ isLoading: false });
+        }
       })
       .catch(err => {
         this.props.notifyError(err);
