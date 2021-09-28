@@ -13,6 +13,10 @@ export const messages = defineMessages({
     id: 'settings.organisation.users.list.last.name',
     defaultMessage: 'Last Name',
   },
+  usersName: {
+    id: 'settings.organisation.users.list.name',
+    defaultMessage: 'Name',
+  },
   usersEmail: {
     id: 'settings.organisation.users.list.email',
     defaultMessage: 'Email',
