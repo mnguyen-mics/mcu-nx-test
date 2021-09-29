@@ -161,7 +161,7 @@ class UserListsList extends React.Component<Props, UserListState> {
 
     const dataColumnsDefinition: Array<DataColumnDefinition<UserResource>> = [
       {
-        title: formatMessage(messages.usersFirstName),
+        title: formatMessage(messages.usersName),
         key: 'first_name',
         isHideable: false,
         render: (text: string, record: UserResource) => (
@@ -172,11 +172,6 @@ class UserListsList extends React.Component<Props, UserListState> {
             {text} {record.last_name}
           </Link>
         ),
-      },
-      {
-        title: formatMessage(messages.usersLastName),
-        key: 'last_name',
-        isHideable: false,
       },
       {
         title: formatMessage(messages.usersEmail),
