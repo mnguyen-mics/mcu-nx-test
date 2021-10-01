@@ -322,13 +322,12 @@ class Funnel extends React.Component<Props, State> {
     const stepStart = drawerHeight && valueFromPercentage(percentageStart, drawerHeight);
     const stepEnd = drawerHeight && valueFromPercentage(percentageEnd, drawerHeight);
 
-    ctx.beginPath();
-
-    ctx.lineWidth = 2;
-    ctx.moveTo(0, stepStart);
-    ctx.lineTo(drawWidth, stepEnd);
-    ctx.strokeStyle = strokeColors[0];
-    ctx.stroke();
+    // ctx.beginPath();
+    // ctx.lineWidth = 2;
+    // ctx.moveTo(0, stepStart);
+    // ctx.lineTo(drawWidth, stepEnd);
+    // ctx.strokeStyle = strokeColors[0];
+    // ctx.stroke();
 
     ctx.beginPath();
     ctx.moveTo(0, stepStart);
@@ -342,6 +341,15 @@ class Funnel extends React.Component<Props, State> {
     gradient.addColorStop(1, '#0ba6e126');
     ctx.fillStyle = gradient;
     ctx.fillStyle = gradient;
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.lineWidth = 10;
+    ctx.strokeStyle = '#00a1df';
+    ctx.rect(0, stepStart, 30, drawerHeight);
+    ctx.stroke();
+    ctx.closePath();
+    ctx.fillStyle = '#00a1df';
     ctx.fill();
   };
 
