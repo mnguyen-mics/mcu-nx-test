@@ -210,4 +210,32 @@ export const funnelMessages = defineMessages({
     defaultMessage:
       "You don't seem to have compatible events. You need to bind your custom event names.",
   },
+  exposedUserPoints: {
+    id: 'funnel.exposedUserPoints',
+    defaultMessage: 'exposed user points',
+  },
+  userPointsAtStep: {
+    id: 'funnel.userPointsAtStep',
+    defaultMessage: 'user points at step',
+  },
+  upHadAnActivity: {
+    id: 'funnel.upHadAnActivity',
+    defaultMessage: 'user points had an activity',
+  },
+  hasSucceeded: {
+    id: 'funnel.hasSucceeded',
+    defaultMessage: 'have succeeded',
+  },
+  in: {
+    id: 'funnel.in',
+    defaultMessage: 'in',
+  },
+  didntComplete: {
+    id: 'funnel.didntComplete',
+    defaultMessage: 'didn’t complete this step',
+  },
+  conversions: {
+    id: 'funnel.conversions',
+    defaultMessage: 'conversions',
+  },
 });
