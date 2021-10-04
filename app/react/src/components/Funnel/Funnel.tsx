@@ -3,12 +3,8 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import { Card, Select, Button, Tag } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import moment from 'moment';
-import { IUserActivitiesFunnelService } from '../../services/UserActivitiesFunnelService';
-import { TYPES } from '../../constants/types';
-import { lazyInject } from '../../config/inversify.config';
 import {
   FunnelFilter,
-  FunnelTimeRange,
   Steps,
   GroupedByFunnel,
   FunnelIdByDimension,
@@ -17,16 +13,13 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../containers/Notifications/injectNotifications';
 import { compose } from 'recompose';
-import { debounce, uniqBy } from 'lodash';
+import { uniqBy } from 'lodash';
 import { EmptyChart, LoadingChart } from '@mediarithmics-private/mcs-components-library';
 import { InjectedIntlProps, injectIntl } from 'react-intl';
-import { updateSearch, parseSearch } from '../../utils/LocationSearchHelper';
-import { funnelMessages, FUNNEL_SEARCH_SETTING } from './Constants';
-import { shouldRefetchFunnelData, extractDatesFromProps, checkExpressionsNotEmpty } from './Utils';
+import { funnelMessages } from './Constants';
 import numeral from 'numeral';
 import FunnelStepHover, { DimensionMetrics, GlobalMetrics } from './FunnelStepHover';
 import cuid from 'cuid';
-import { IUsersAnalyticsService } from '../../services/UsersAnalyticsService';
 import { DimensionsList } from '../../models/datamartUsersAnalytics/datamartUsersAnalytics';
 import FunnelEmptyState from './FunnelEmptyState';
 
@@ -36,23 +29,21 @@ interface StepDelta {
 }
 
 interface State {
-  isLoading: boolean;
-  isStepLoading: boolean;
-  funnelData: GroupedByFunnel;
-  stepsDelta: StepDelta[];
-  dimensionMetrics: DimensionMetrics[][];
   lastExecutedQueryAskedTime: number;
-  dimensionsList: DimensionsList;
   initialState: boolean;
 }
 
 type FunnelProps = {
+  funnelId: string;
+  startIndex: number;
+  isLoading: boolean;
   datamartId: string;
   filter: FunnelFilter[];
-  title: string;
-  parentCallback: (isLoading: boolean) => void;
-  launchExecutionAskedTime: number;
-  cancelQueryAskedTime: number;
+  funnelData: GroupedByFunnel;
+  dimensionsList: DimensionsList;
+  closeGroupBy: () => void;
+  openGroupBy: (index: number, dimensionName: string) => void;
+  isStepLoading: boolean;
 };
 
 type Props = FunnelProps &
@@ -62,10 +53,6 @@ type Props = FunnelProps &
 
 const getPercentage = (nbr: number, total: number): number => {
   return (nbr * 100) / total;
-};
-
-const deepCopy = (value: any) => {
-  return JSON.parse(JSON.stringify(value));
 };
 
 const valueFromPercentage = (percentage: number, drawerAreaHeight: number): number => {
@@ -81,135 +68,14 @@ const colors = [
 ];
 
 class Funnel extends React.Component<Props, State> {
-  @lazyInject(TYPES.IUsersAnalyticsService)
-  private _usersAnalyticsService: IUsersAnalyticsService;
-  @lazyInject(TYPES.IUserActivitiesFunnelService)
-  private _userActivitiesFunnelService: IUserActivitiesFunnelService;
-  private _debounce = debounce;
   private _cuid = cuid;
-
-  updateLocationSearch = (params: any) => {
-    const {
-      history,
-      location: { search: currentSearch, pathname },
-    } = this.props;
-
-    const nextLocation = {
-      pathname,
-      search: updateSearch(currentSearch, params, FUNNEL_SEARCH_SETTING),
-    };
-    history.push(nextLocation);
-  };
 
   constructor(props: Props) {
     super(props);
     this.state = {
-      isLoading: false,
-      isStepLoading: false,
       initialState: true,
-      funnelData: {
-        global: {
-          total: 0,
-          steps: [],
-        },
-        grouped_by: undefined,
-      },
-      stepsDelta: [],
-      dimensionMetrics: [],
       lastExecutedQueryAskedTime: 0,
-      dimensionsList: {
-        dimensions: [],
-      },
     };
-
-    this.fetchData = this._debounce(this.fetchData.bind(this), 800);
-  }
-
-  private splitIndex(filter: FunnelFilter[]): number {
-    return filter.findIndex(x => !!x.group_by_dimension);
-  }
-
-  componentDidMount() {
-    const {
-      datamartId,
-      filter,
-      history: {
-        location: { search },
-      },
-    } = this.props;
-    const timeRange = extractDatesFromProps(search);
-    if (filter.length > 0 && checkExpressionsNotEmpty(filter)) {
-      const splitIndex = this.splitIndex(filter);
-      this.fetchData(datamartId, filter, timeRange, splitIndex);
-    }
-    this.fetchDimensions(datamartId);
-    window.addEventListener('resize', this.drawSteps.bind(this));
-  }
-
-  fetchDimensions = (datamartId: string) => {
-    this.setState({
-      isLoading: true,
-    });
-    return this._usersAnalyticsService
-      .getDimensions(datamartId, true)
-      .then(response => {
-        this.setState({
-          isLoading: false,
-          dimensionsList: {
-            dimensions: response.data.dimensions,
-          },
-        });
-      })
-      .catch(e => {
-        this.props.notifyError(e);
-        this.setState({
-          isLoading: false,
-        });
-      });
-  };
-
-  componentDidUpdate(prevProps: Props) {
-    const {
-      datamartId,
-      location: { search },
-      launchExecutionAskedTime,
-      cancelQueryAskedTime,
-    } = this.props;
-
-    const {
-      location: { search: prevSearch },
-    } = prevProps;
-
-    const lastExecutedQueryAskedTime = this.state.lastExecutedQueryAskedTime;
-    const timeRange = extractDatesFromProps(search);
-    const routeParams = parseSearch(search, FUNNEL_SEARCH_SETTING);
-    const prevRouteParams = parseSearch(prevSearch, FUNNEL_SEARCH_SETTING);
-    const funnelFilter = routeParams.filter.length > 0 ? JSON.parse(routeParams.filter) : [];
-    const shouldRefetch = shouldRefetchFunnelData(prevRouteParams, routeParams);
-    if (
-      (prevProps.location.search !== search ||
-        lastExecutedQueryAskedTime !== launchExecutionAskedTime) &&
-      funnelFilter.length > 0 &&
-      shouldRefetch
-    ) {
-      this.setState({ lastExecutedQueryAskedTime: launchExecutionAskedTime });
-      const splitIndex = this.splitIndex(funnelFilter);
-      this.fetchData(datamartId, funnelFilter, timeRange, splitIndex);
-    }
-
-    if (prevProps.cancelQueryAskedTime !== cancelQueryAskedTime) {
-      this.setState({
-        isLoading: false,
-        funnelData: {
-          global: {
-            total: 0,
-            steps: [],
-          },
-          grouped_by: undefined,
-        },
-        stepsDelta: [],
-      });
-    }
   }
 
   // listener cleanup
@@ -217,135 +83,91 @@ class Funnel extends React.Component<Props, State> {
     window.removeEventListener('resize', this.drawSteps.bind(this));
   }
 
-  fetchData = (
-    datamartId: string,
-    filter: FunnelFilter[],
-    timeRange: FunnelTimeRange,
-    splitIndex: number,
-  ) => {
-    const { parentCallback, notifyError } = this.props;
-    const { isStepLoading } = this.state;
-    const splitBy = splitIndex !== -1;
-    this.setState(
-      {
-        isLoading: !isStepLoading,
-        initialState: false,
-      },
-      () => {
-        parentCallback(this.state.isLoading);
-      },
-    );
+  componentDidMount() {
+    window.addEventListener('resize', this.drawSteps.bind(this));
+  }
 
-    return this._userActivitiesFunnelService
-      .getUserActivitiesFunnel(datamartId, filter, timeRange, 5)
-      .then(response => {
-        response.data.global.steps.push(
-          deepCopy(response.data.global.steps[response.data.global.steps.length - 1]),
-        );
-        response.data.grouped_by?.map(dimension =>
-          dimension.funnel.steps.push(
-            deepCopy(dimension.funnel.steps[dimension.funnel.steps.length - 1]),
-          ),
-        );
-        this.setState(
-          {
-            isLoading: false,
-            isStepLoading: false,
-            funnelData: response.data,
-          },
-          () => {
-            setTimeout(() => {
-              const upCountsPerStep = response.data.global.steps.map(step => step.count);
-              upCountsPerStep.unshift(response.data.global.total);
-              upCountsPerStep.pop();
-              this.computeStepDelta(upCountsPerStep);
-              this.drawSteps();
-              if (response.data.grouped_by && splitBy) {
-                this.computeDimensionMetrics(splitIndex);
-              }
-            });
-            parentCallback(this.state.isLoading);
-          },
-        );
-      })
-      .catch(e => {
-        notifyError(e);
-        this.setState(
-          {
-            isLoading: false,
-          },
-          () => {
-            parentCallback(false);
-          },
-        );
-      });
+  draw = (startIndex: number, stepsDelta: StepDelta[]) => {
+    this.drawSteps(startIndex, stepsDelta);
   };
 
-  drawSteps = () => {
-    const { funnelData } = this.state;
+  drawSteps = (startIndex: number, stepsDelta: StepDelta[]) => {
+    const { funnelData } = this.props;
+    const steps = funnelData.global.steps.slice(startIndex);
+    const total = funnelData.global.total;
 
-    funnelData.global.steps.forEach((step: Steps, index: number) => {
+    steps.forEach((step: Steps, index: number) => {
       const start =
-        index === 0 ? funnelData.global.total : funnelData.global.steps[index - 1].count;
-      this.drawCanvas(
-        funnelData.global.total - start,
-        funnelData.global.total - step.count,
-        index,
-        funnelData.global.steps.length,
-      );
+        index === 0 && startIndex === 0
+          ? total
+          : funnelData.global.steps[startIndex + index - 1].count;
+      this.drawCanvas(total, start, step.count, index + 1 + startIndex, steps.length, stepsDelta);
     });
   };
 
-  drawCanvas = (startCount: number, endCount: number, stepIndex: number, totalSteps: number) => {
-    const { stepsDelta, funnelData } = this.state;
-    const container = document.getElementById('container');
-    const canvas = document.getElementById(`canvas_${stepIndex + 1}`) as HTMLCanvasElement;
-    const drawWidth = container && container.offsetWidth / totalSteps;
+  drawCanvas = (
+    total: number,
+    startCount: number,
+    endCount: number,
+    stepIndex: number,
+    totalSteps: number,
+    stepsDelta: StepDelta[],
+  ) => {
+    const { funnelId, funnelData } = this.props;
+    const container = document.getElementById(`container_${funnelId}`);
+    const canvas = document.getElementById(`canvas_${funnelId}_${stepIndex}`) as HTMLCanvasElement;
 
-    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-    const dpi = window.devicePixelRatio;
-    canvas.width = (drawWidth || 0) * dpi;
-    canvas.height = 370 * dpi;
+    if (canvas) {
+      const drawWidth = container && container.offsetWidth / totalSteps;
+      canvas.width = drawWidth || 0;
 
-    canvas.style.width = (drawWidth || 0).toString() + 'px';
-    canvas.style.height = 370 + 'px';
+      const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+      const dpi = window.devicePixelRatio;
+      canvas.width = (drawWidth || 0) * dpi;
+      canvas.height = 370 * dpi;
 
-    ctx.scale(dpi, dpi);
+      canvas.style.width = (drawWidth || 0).toString() + 'px';
+      canvas.style.height = 370 + 'px';
 
-    const passThroughPercentage = stepsDelta[stepIndex - 1]
-      ? stepsDelta[stepIndex - 1].passThroughPercentage
-      : undefined;
+      ctx.scale(dpi, dpi);
 
-    const steps = funnelData.global.steps;
-    const passThroughTime = this.isLastStep(stepIndex + 1)
-      ? moment
-          .duration(steps[stepIndex - 1].interaction_duration, 'second')
-          .format('d [day] h [hour] m [minute]')
-      : undefined;
+      const passThroughPercentage = stepsDelta[stepIndex - 2]
+        ? stepsDelta[stepIndex - 2].passThroughPercentage
+        : undefined;
 
-    this.drawChart(
-      ctx,
-      startCount,
-      endCount,
-      drawWidth || 0,
-      passThroughPercentage,
-      passThroughTime,
-    );
+      const steps = funnelData.global.steps;
+      const passThroughTime = this.isLastStep(stepIndex)
+        ? moment
+            .duration(steps[stepIndex - 1].interaction_duration, 'second')
+            .format('d [day] h [hour] m [minute]')
+        : undefined;
+
+      this.drawChart(
+        ctx,
+        total,
+        startCount,
+        endCount,
+        drawWidth || 0,
+        passThroughPercentage,
+        passThroughTime,
+      );
+    }
   };
 
   drawChart = (
     ctx: CanvasRenderingContext2D,
+    total: number,
     startCount: number,
     endCount: number,
     drawWidth: number,
     passThroughPercentage?: string,
     passThroughTime?: string,
   ) => {
-    const { funnelData } = this.state;
     const { intl } = this.props;
     const drawerHeight = 370;
-    const percentageStart = getPercentage(startCount, funnelData.global.total);
-    const percentageEnd = getPercentage(endCount, funnelData.global.total);
+
+    const percentageStart = getPercentage(total - startCount, total);
+    const percentageEnd = getPercentage(total - endCount, total);
     const stepStart = drawerHeight && valueFromPercentage(percentageStart, drawerHeight);
     const stepEnd = drawerHeight && valueFromPercentage(percentageEnd, drawerHeight);
 
@@ -375,13 +197,14 @@ class Funnel extends React.Component<Props, State> {
     ctx.fillStyle = '#003056';
     ctx.font = '14px LLCircularWeb-Medium';
     ctx.fillText(`${passThroughPercentage}%`, 7, stepStart - 20);
+    const textMeasure = ctx.measureText(`${passThroughPercentage}%`);
 
     ctx.font = '12px LLCircularWeb-Book';
     ctx.fillText(
       `${intl.formatMessage(funnelMessages.hasSucceeded)} ${
         passThroughTime ? `${intl.formatMessage(funnelMessages.in)} ${passThroughTime}` : ''
       }`,
-      65,
+      textMeasure.width + 9,
       stepStart - 20,
     );
   };
@@ -420,13 +243,11 @@ class Funnel extends React.Component<Props, State> {
       }
     });
 
-    this.setState({
-      stepsDelta,
-    });
+    return stepsDelta;
   };
 
   computeDimensionMetrics = (index: number) => {
-    const { funnelData } = this.state;
+    const { funnelData } = this.props;
     const dimensionMetrics: DimensionMetrics[][] = [];
     funnelData.global.steps.forEach((steps, i) => {
       dimensionMetrics.push([]);
@@ -464,55 +285,21 @@ class Funnel extends React.Component<Props, State> {
         }
       });
     });
-    this.setState({
-      funnelData,
-      dimensionMetrics,
-    });
+    return dimensionMetrics;
   };
 
   handleSplitByDimension = (index: number, value: string) => {
-    const {
-      location: { search },
-    } = this.props;
-
-    const routeParams = parseSearch(search, FUNNEL_SEARCH_SETTING);
-    const funnelFilter = routeParams.filter.length > 0 ? JSON.parse(routeParams.filter) : {};
-    funnelFilter.forEach((element: FunnelFilter) => {
-      element.group_by_dimension = undefined;
-    });
-    funnelFilter[index - 1].group_by_dimension = value.toLocaleLowerCase();
-    this.setState({
-      isStepLoading: true,
-    });
-    this.updateLocationSearch({
-      filter: [JSON.stringify(funnelFilter)],
-    });
+    const { openGroupBy } = this.props;
+    openGroupBy(index, value);
   };
 
   closeSplitByHover = () => {
-    const {
-      location: { search },
-    } = this.props;
-    const { funnelData } = this.state;
-
-    const routeParams = parseSearch(search, FUNNEL_SEARCH_SETTING);
-    const funnelFilter = routeParams.filter.length > 0 ? JSON.parse(routeParams.filter) : {};
-    funnelFilter.forEach((element: FunnelFilter) => {
-      element.group_by_dimension = undefined;
-    });
-    this.setState({
-      funnelData: {
-        ...funnelData,
-        grouped_by: undefined,
-      },
-    });
-    this.updateLocationSearch({
-      filter: [JSON.stringify(funnelFilter)],
-    });
+    const { closeGroupBy } = this.props;
+    closeGroupBy();
   };
 
   isLastStep = (stepNumber: number) => {
-    const { funnelData } = this.state;
+    const { funnelData } = this.props;
     return funnelData.global.steps.length === stepNumber;
   };
 
@@ -521,7 +308,7 @@ class Funnel extends React.Component<Props, State> {
   };
 
   getLabelValueForDimension = (dimensionValue: string) => {
-    const { dimensionsList } = this.state;
+    const { dimensionsList } = this.props;
     const dimensionLabelValue = dimensionsList.dimensions.find(d => d.value === dimensionValue);
     return (
       (dimensionValue === 'CHANNEL_ID' ||
@@ -544,7 +331,7 @@ class Funnel extends React.Component<Props, State> {
     dimensionMetrics: DimensionMetrics[],
     filter: FunnelFilter,
   ) => {
-    const { funnelData } = this.state;
+    const { funnelData } = this.props;
     const globalMetrics: GlobalMetrics = {
       userPoints: funnelData.global.steps[index - 1].count,
       conversions: funnelData.global.steps[index - 1].conversion,
@@ -632,8 +419,7 @@ class Funnel extends React.Component<Props, State> {
   };
 
   getStepTitle = (index: number, totalOfUserPoints?: number) => {
-    const { funnelData } = this.state;
-    const { filter, intl } = this.props;
+    const { funnelData, filter, intl } = this.props;
     const total = funnelData.global.total;
     return (
       <p className={'mcs-funnel_stepInfo_desc'}>
@@ -649,117 +435,145 @@ class Funnel extends React.Component<Props, State> {
     );
   };
 
-  render() {
-    const {
-      funnelData,
-      stepsDelta,
-      dimensionMetrics,
-      isLoading,
-      initialState,
-      isStepLoading,
-    } = this.state;
-    const { filter, intl } = this.props;
-    const steps = funnelData.global.steps;
-    if (isLoading) return <LoadingChart />;
-    const total = funnelData.global.total;
-    let splitIndex = filter.findIndex(x => !!x.group_by_dimension);
-    splitIndex = splitIndex === -1 ? splitIndex : splitIndex + 1;
+  private splitIndex(filter: FunnelFilter[]): number {
+    return filter.findIndex(x => !!x.group_by_dimension);
+  }
+
+  renderStep(index: number, steps: Steps[], stepsDelta: StepDelta[], dimensionMetrics: any) {
+    const { funnelId, intl, filter, isStepLoading } = this.props;
     const getPopupContainer = () => document.getElementById('mcs-funnel_splitBy')!;
+
+    const conversion =
+      index > 0 && steps[index - 1].hasOwnProperty('conversion')
+        ? numeral(steps[index - 1].conversion).format('0,0')
+        : undefined;
+    const amount =
+      index > 0 && steps[index - 1].hasOwnProperty('amount')
+        ? `${numeral(steps[index - 1].amount).format('0,0')}€`
+        : undefined;
+
+    let splitIndex = this.splitIndex(filter);
+    splitIndex = splitIndex === -1 ? splitIndex : splitIndex + 1;
+
     return (
-      <Card className='mcs-funnel' bordered={false}>
-        <div id='container'>
-          {steps.length === 0 || total === 0 ? (
-            <div className='mcs-funnel_empty'>
-              {filter.length > 0 && !initialState ? (
-                <EmptyChart title={intl.formatMessage(funnelMessages.noData)} icon='warning' />
+      <div key={index.toString()} className={'mcs-funnel_chart'}>
+        <div className={'mcs-funnel_stepInfo'}>
+          {this.getStepTitle(index, steps[index - 1]?.count)}
+
+          {index > 0 && filter[index - 1]
+            ? this.getConversionDescription(filter[index - 1], conversion, amount)
+            : undefined}
+
+          <div className={'mcs-funnel_splitBy'} id='mcs-funnel_splitBy'>
+            {index > 0 &&
+            steps[index - 1] &&
+            steps[index - 1].count > 0 &&
+            filter[index - 1] &&
+            this.displaySplitByDropdown(filter[index - 1]) ? (
+              <Select
+                key={this._cuid()}
+                disabled={splitIndex === index && isStepLoading}
+                loading={splitIndex === index && isStepLoading}
+                className='mcs-funnel_splitBy_select'
+                value={filter[index - 1].group_by_dimension}
+                placeholder='Split by'
+                onChange={this.handleSplitByDimension.bind(this, index)}
+                getPopupContainer={getPopupContainer}
+              >
+                {uniqBy(filter[index - 1].filter_clause.filters, 'dimension_name').map(dimension =>
+                  this.getLabelValueForDimension(dimension.dimension_name),
+                )}
+              </Select>
+            ) : undefined}
+          </div>
+        </div>
+        {this.isLastStep(index + 1) && stepsDelta[index] && (
+          <Tag className={'mcs-funnel_conversions'}>
+            {stepsDelta[index].dropOff}% {intl.formatMessage(funnelMessages.conversions)}
+          </Tag>
+        )}
+        {index > 0 && index === splitIndex && !isStepLoading ? (
+          <Button
+            shape='circle'
+            icon={<CloseOutlined />}
+            className={'mcs-funnel_disableStepHover'}
+            onClick={this.closeSplitByHover}
+          />
+        ) : undefined}
+        {index > 0 && filter[index - 1] && index === splitIndex && !isStepLoading
+          ? this.getStepHover(index, dimensionMetrics[index - 1], filter[index - 1])
+          : undefined}
+        <canvas
+          id={`canvas_${funnelId}_${index + 1}`}
+          className={'mcs-funnel_canvas'}
+          height='370'
+        />
+        {index > 0 && (
+          <div className='mcs-funnel_conversionInfo'>
+            <div className={'mcs-funnel_arrow  mcs-funnel_arrow--failed'} />
+            <p className='mcs-funnel_deltaInfo'>
+              <b>{stepsDelta[index - 1] && `${stepsDelta[index - 1].dropOff}%`}</b>{' '}
+              {intl.formatMessage(funnelMessages.didntComplete)}
+            </p>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  render() {
+    const { initialState } = this.state;
+
+    const { startIndex, funnelData, filter, intl, isLoading, funnelId } = this.props;
+
+    let splitIndex = this.splitIndex(filter);
+    splitIndex = splitIndex === -1 ? splitIndex : splitIndex + 1;
+
+    const steps = funnelData.global.steps;
+
+    splitIndex = splitIndex === -1 ? splitIndex : splitIndex + 1;
+    const splitBy = splitIndex !== -1;
+
+    const total = funnelData.global.total;
+
+    const upCountsPerStep = funnelData.global.steps.map(step => step.count);
+    upCountsPerStep.unshift(funnelData.global.total);
+    upCountsPerStep.pop();
+    const stepsDelta = this.computeStepDelta(upCountsPerStep);
+    const dimensionMetrics =
+      funnelData.grouped_by && splitBy ? this.computeDimensionMetrics(splitIndex) : [];
+
+    this.draw(startIndex, stepsDelta);
+
+    if (isLoading) return <LoadingChart />;
+
+    return (
+      <div id='outerContainer' style={{ display: 'flex', flexFlow: 'row' }}>
+        <div style={{ flexBasis: 1, flexGrow: startIndex, position: 'relative' }} />
+        <div style={{ flexBasis: 1, flexGrow: steps.length - startIndex, position: 'relative' }}>
+          <Card className='mcs-funnel' bordered={false}>
+            <div id={`container_${funnelId}`}>
+              {steps.length === 0 || total === 0 ? (
+                <div className='mcs-funnel_empty'>
+                  {filter.length > 0 && !initialState ? (
+                    <EmptyChart title={intl.formatMessage(funnelMessages.noData)} icon='warning' />
+                  ) : (
+                    <FunnelEmptyState />
+                  )}
+                </div>
               ) : (
-                <FunnelEmptyState />
+                <div className='mcs-funnel_steps'>
+                  {steps.map((step, index) => {
+                    return index >= startIndex
+                      ? this.renderStep(index, steps, stepsDelta, dimensionMetrics)
+                      : undefined;
+                  })}
+                </div>
               )}
             </div>
-          ) : (
-            <div className='mcs-funnel_steps'>
-              {steps.map((step, index) => {
-                const conversion =
-                  index > 0 && steps[index - 1].hasOwnProperty('conversion')
-                    ? numeral(steps[index - 1].conversion).format('0,0')
-                    : undefined;
-                const amount =
-                  index > 0 && steps[index - 1].hasOwnProperty('amount')
-                    ? `${numeral(steps[index - 1].amount).format('0,0')}€`
-                    : undefined;
-                return (
-                  <div key={index.toString()} className={'mcs-funnel_chart'}>
-                    <div className={'mcs-funnel_stepInfo'}>
-                      {this.getStepTitle(index, steps[index - 1]?.count)}
-
-                      {index > 0 && filter[index - 1]
-                        ? this.getConversionDescription(filter[index - 1], conversion, amount)
-                        : undefined}
-
-                      <div className={'mcs-funnel_splitBy'} id='mcs-funnel_splitBy'>
-                        {index > 0 &&
-                        steps[index - 1] &&
-                        steps[index - 1].count > 0 &&
-                        filter[index - 1] &&
-                        this.displaySplitByDropdown(filter[index - 1]) ? (
-                          <Select
-                            key={this._cuid()}
-                            disabled={splitIndex === index && isStepLoading}
-                            loading={splitIndex === index && isStepLoading}
-                            className='mcs-funnel_splitBy_select'
-                            value={filter[index - 1].group_by_dimension}
-                            placeholder='Split by'
-                            onChange={this.handleSplitByDimension.bind(this, index)}
-                            getPopupContainer={getPopupContainer}
-                          >
-                            {uniqBy(
-                              filter[index - 1].filter_clause.filters,
-                              'dimension_name',
-                            ).map(dimension =>
-                              this.getLabelValueForDimension(dimension.dimension_name),
-                            )}
-                          </Select>
-                        ) : undefined}
-                      </div>
-                    </div>
-                    {this.isLastStep(index + 1) && stepsDelta[index] && (
-                      <Tag className={'mcs-funnel_conversions'} color='blue'>
-                        {stepsDelta[index].dropOff}%{' '}
-                        {intl.formatMessage(funnelMessages.conversions)}
-                      </Tag>
-                    )}
-                    {index > 0 && index === splitIndex && !isStepLoading ? (
-                      <Button
-                        shape='circle'
-                        icon={<CloseOutlined />}
-                        className={'mcs-funnel_disableStepHover'}
-                        onClick={this.closeSplitByHover}
-                      />
-                    ) : undefined}
-                    {index > 0 && filter[index - 1] && index === splitIndex && !isStepLoading
-                      ? this.getStepHover(index, dimensionMetrics[index - 1], filter[index - 1])
-                      : undefined}
-                    <canvas
-                      id={`canvas_${index + 1}`}
-                      className={'mcs-funnel_canvas'}
-                      height='370'
-                    />
-                    {index > 0 && (
-                      <div className='mcs-funnel_conversionInfo'>
-                        <div className={'mcs-funnel_arrow  mcs-funnel_arrow--failed'} />
-                        <p className='mcs-funnel_deltaInfo'>
-                          <b>{stepsDelta[index - 1] && `${stepsDelta[index - 1].dropOff}%`}</b>{' '}
-                          {intl.formatMessage(funnelMessages.didntComplete)}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          )}
+          </Card>
         </div>
-      </Card>
+      </div>
     );
   }
 }
