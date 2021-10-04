@@ -65,12 +65,16 @@ class DashboardPage extends React.Component<Props> {
     );
 
     if (apiDashboards && apiDashboards.length > 0) {
-      const dashboardTabs = apiDashboards.map(dashboard => {
-        return {
-          title: dashboard.title,
-          display: <DashboardLayout datamart_id={datamartId} schema={dashboard.dashboardContent} />,
-        };
-      });
+      const dashboardTabs = apiDashboards
+        .sort((a, b) => a.title.localeCompare(b.title))
+        .map(dashboard => {
+          return {
+            title: dashboard.title,
+            display: (
+              <DashboardLayout datamart_id={datamartId} schema={dashboard.dashboardContent} />
+            ),
+          };
+        });
       dashboardTabs.push({
         title: 'Old OTQL dashboard',
         display: defaultContent,
