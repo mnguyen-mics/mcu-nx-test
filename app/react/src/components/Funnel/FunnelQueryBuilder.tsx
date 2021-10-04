@@ -54,6 +54,7 @@ interface State {
   steps: Step[];
   isLoading: boolean;
   dimensionsList: DimensionsList;
+  lastFilter?: string;
 }
 
 interface FunnelQueryBuilderProps {
@@ -100,22 +101,41 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
       filter,
     } = this.props;
 
+    const { lastFilter } = this.state;
+
     const DEFAULT_FILTER_LENGTH = 1;
 
-    if (
-      prevProps.location.search !== search &&
-      filter.length > 0 &&
-      /**
-       * These next conditions prevent the funnel query builder from updating if the steps change
-       * but the query isn't executed yet
-       */
-      !(
-        (filter.length === DEFAULT_FILTER_LENGTH &&
-          filter[0].filter_clause &&
-          _.isEqual(filter[0].filter_clause, getDefaultStep().filter_clause)) ||
-        !_.isEqual(this.state.steps, filter)
-      )
-    ) {
+    const isSearchChanged = prevProps.location.search !== search;
+
+    const actualFilter = JSON.stringify(filter);
+
+    const isUrlFilterChanged = lastFilter !== actualFilter;
+    const isFilterNotZero = filter.length > 0;
+
+    const isFilterFirstStepEqualToDefaultFirstStep = _.isEqual(
+      filter[0].filter_clause,
+      getDefaultStep().filter_clause,
+    );
+    const isStepsNotEqualToFilter = !_.isEqual(this.state.steps, filter);
+
+    /**
+     * These next conditions prevent the funnel query builder from updating if the steps change
+     * but the query isn't executed yet
+     */
+    const isQueryExecuted = !(
+      (filter.length === DEFAULT_FILTER_LENGTH &&
+        filter[0].filter_clause &&
+        isFilterFirstStepEqualToDefaultFirstStep) ||
+      isStepsNotEqualToFilter
+    );
+
+    if (isUrlFilterChanged) {
+      this.setState({
+        lastFilter: actualFilter,
+      });
+    }
+
+    if (isSearchChanged && isFilterNotZero && (isQueryExecuted || isUrlFilterChanged)) {
       this.setInitialParams();
     }
   }
