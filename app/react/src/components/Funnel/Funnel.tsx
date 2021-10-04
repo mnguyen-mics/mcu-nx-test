@@ -299,13 +299,18 @@ class Funnel extends React.Component<Props, State> {
   drawCanvas = (startCount: number, endCount: number, StepIndex: number, totalSteps: number) => {
     const container = document.getElementById('container');
     const canvas = document.getElementById(`canvas_${StepIndex + 1}`) as HTMLCanvasElement;
-
     const drawWidth = container && container.offsetWidth / totalSteps;
-    canvas.width = drawWidth || 0;
 
     const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+    const dpi = window.devicePixelRatio;
+    canvas.width = (drawWidth || 0) * dpi;
+    canvas.height = 370 * dpi;
 
-    this.drawChart(ctx, startCount, endCount, canvas.width, colors[0]);
+    canvas.style.width = (drawWidth || 0).toString() + 'px';
+    canvas.style.height = 370 + 'px';
+
+    ctx.scale(dpi, dpi);
+    this.drawChart(ctx, startCount, endCount, drawWidth || 0);
   };
 
   drawChart = (
@@ -313,7 +318,6 @@ class Funnel extends React.Component<Props, State> {
     startCount: number,
     endCount: number,
     drawWidth: number,
-    strokeColors: string[],
   ) => {
     const { funnelData } = this.state;
     const drawerHeight = 370;
@@ -321,13 +325,6 @@ class Funnel extends React.Component<Props, State> {
     const percentageEnd = getPercentage(endCount, funnelData.global.total);
     const stepStart = drawerHeight && valueFromPercentage(percentageStart, drawerHeight);
     const stepEnd = drawerHeight && valueFromPercentage(percentageEnd, drawerHeight);
-
-    // ctx.beginPath();
-    // ctx.lineWidth = 2;
-    // ctx.moveTo(0, stepStart);
-    // ctx.lineTo(drawWidth, stepEnd);
-    // ctx.strokeStyle = strokeColors[0];
-    // ctx.stroke();
 
     ctx.beginPath();
     ctx.moveTo(0, stepStart);
@@ -346,11 +343,18 @@ class Funnel extends React.Component<Props, State> {
     ctx.beginPath();
     ctx.lineWidth = 10;
     ctx.strokeStyle = '#00a1df';
-    ctx.rect(0, stepStart, 30, drawerHeight);
+    ctx.rect(0, stepStart + 5, 30, drawerHeight);
     ctx.stroke();
     ctx.closePath();
     ctx.fillStyle = '#00a1df';
     ctx.fill();
+
+    ctx.fillStyle = '#003056';
+    ctx.font = '14px LLCircularWeb-Medium';
+    ctx.fillText('100%', 7, stepStart - 20);
+
+    ctx.font = '12px LLCircularWeb-Book';
+    ctx.fillText('have succeeded', 45, stepStart - 20);
   };
 
   formatPercentageValue = (value: number) => {
@@ -703,7 +707,6 @@ class Funnel extends React.Component<Props, State> {
                       (index !== splitIndex - 1 || isStepLoading) &&
                       index < steps.length - 1 ? (
                         <div className='mcs-funnel_percentageOfSucceeded'>
-                          <div className='mcs-funnel_arrow mcs_funnel_arrowStep' />
                           <p className='mcs-funnel_deltaInfo'>
                             <span
                               className={'mcs-funnel_metric'}
@@ -729,7 +732,7 @@ class Funnel extends React.Component<Props, State> {
                         <div className='mcs-funnel_deltaInfo'>
                           <b>{stepsDelta[index] && `${stepsDelta[index].dropOff}%`}</b>
                           <br />
-                          <p>{this.isLastStep(index + 1) ? 'Conversions' : 'Dropoffs'}</p>
+                          <p> didn’t complete this step</p>
                         </div>
                       </div>
                     </div>
