@@ -257,7 +257,10 @@ class DatamartObjectViewTab extends React.Component<Props, State> {
       return this._runtimeSchemaService
         .publishRuntimeSchema(selectedSchema.datamart_id, selectedSchema.id)
         .then(r => this.fetchSchemas(r.data.datamart_id, true))
-        .catch(() => this.setState({ loadingSingle: false, loadingList: false }));
+        .catch(err => {
+          this.props.notifyError(err);
+          this.setState({ loadingSingle: false, loadingList: false });
+        });
     }
     return Promise.resolve();
   };
