@@ -34,40 +34,32 @@
     position: absolute;
     content: '';
     border: none;
-    height: 60%;
-    width: 45%;
-    top: 50%;
-    left: 28%;
+    height: 22px;
+    width: 15px;
+    bottom: 0;
+    left: 50%;
+    margin-left: -7.5px;
   }
 
   &:after {
+    position: absolute;
     content: '';
     border-color: transparent;
     border-style: solid;
-    position: absolute;
-    left: 0;
-    top: -50%;
-    border-width: 30px 30px;
-  }
-}
-
-.mcs-funnel_arrow--success {
-  &:before {
-    background-color: #67c79f;
-  }
-
-  &:after {
-    border-bottom-color: #67c79f;
+    left: 50%;
+    bottom: 22px;
+    border-width: 15px 15px;
+    margin-left: -15px;
   }
 }
 
 .mcs-funnel_arrow--failed {
   &:before {
-    background-color: #f8939b;
+    background-color: #fc3f48;
   }
 
   &:after {
-    border-bottom-color: #f8939b;
+    border-bottom-color: #fc3f48;
   }
 }
 
@@ -102,26 +94,11 @@
 }
 
 .mcs-funnel_conversionInfo {
-  position: relative;
-  z-index: 3;
-  margin-top: -45px;
-  text-align: center;
-  padding-bottom: 16px;
-}
-
-.mcs-funnel_percentageOfSucceeded {
   position: absolute;
-  top: 32%;
-  right: -370px;
-  z-index: 1;
-  width: 400px;
-
-  .mcs-funnel_deltaInfo {
-    display: inline-block;
-    vertical-align: middle;
-    width: 50%;
-    margin-left: 3%;
-  }
+  bottom: -14px;
+  z-index: 3;
+  margin-left: -30px;
+  display: flex;
 }
 
 .mcs-funnel_stepName,
@@ -131,9 +108,8 @@
 }
 
 .mcs-funnel_stepName,
-.mcs-funnel_chart {
-  border-right: 1px solid @border-color-split;
-  border-bottom: 1px solid @border-color-split;
+.mcs-funnel_chart:not(:first-of-type) {
+  border-left: 1px solid @border-color-split;
 }
 
 .mcs-funnel_metricsBlock {
@@ -141,6 +117,10 @@
   display: flex;
   justify-content: space-between;
   border-right: 1px solid #d3dbe1;
+}
+
+.mcs-funnel_deltaInfo {
+  margin-left: -16px;
 }
 
 .mcs-funnelQueryBuilder_header_title,
@@ -184,6 +164,7 @@
 
 .mcs-funnel_chart {
   position: relative;
+  padding-bottom: 49px;
 }
 
 .mcs-funnelQueryBuilder_header {
@@ -507,8 +488,8 @@
 }
 
 .mcs-funnel_canvas {
-  height: 370px;
   margin-top: 126px;
+  image-rendering: pixelated;
 }
 
 .mcs-funnelStepHover_totalsByDimension {
@@ -671,4 +652,16 @@
     padding: 0px 6px;
     margin-left: 10px;
   }
+}
+
+.mcs-funnel_conversions {
+  position: absolute;
+  right: 15px;
+  top: 20px;
+  margin: 0;
+  font-family: 'LLCircularWeb-Book';
+  font-size: 12px;
+  color: #00a1df;
+  background-color: #e8f7fc;
+  border-color: #00a1df;
 }

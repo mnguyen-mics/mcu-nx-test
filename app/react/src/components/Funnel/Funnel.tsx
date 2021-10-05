@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { Card, Select, Button } from 'antd';
+import { Card, Select, Button, Tag } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import { IUserActivitiesFunnelService } from '../../services/UserActivitiesFunnelService';
@@ -255,11 +255,11 @@ class Funnel extends React.Component<Props, State> {
           },
           () => {
             setTimeout(() => {
-              this.drawSteps();
               const upCountsPerStep = response.data.global.steps.map(step => step.count);
               upCountsPerStep.unshift(response.data.global.total);
               upCountsPerStep.pop();
               this.computeStepDelta(upCountsPerStep);
+              this.drawSteps();
               if (response.data.grouped_by && splitBy) {
                 this.computeDimensionMetrics(splitIndex);
               }
@@ -296,16 +296,41 @@ class Funnel extends React.Component<Props, State> {
     });
   };
 
-  drawCanvas = (startCount: number, endCount: number, StepIndex: number, totalSteps: number) => {
+  drawCanvas = (startCount: number, endCount: number, stepIndex: number, totalSteps: number) => {
+    const { stepsDelta, funnelData } = this.state;
     const container = document.getElementById('container');
-    const canvas = document.getElementById(`canvas_${StepIndex + 1}`) as HTMLCanvasElement;
-
+    const canvas = document.getElementById(`canvas_${stepIndex + 1}`) as HTMLCanvasElement;
     const drawWidth = container && container.offsetWidth / totalSteps;
-    canvas.width = drawWidth || 0;
 
     const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+    const dpi = window.devicePixelRatio;
+    canvas.width = (drawWidth || 0) * dpi;
+    canvas.height = 370 * dpi;
 
-    this.drawChart(ctx, startCount, endCount, canvas.width, colors[0]);
+    canvas.style.width = (drawWidth || 0).toString() + 'px';
+    canvas.style.height = 370 + 'px';
+
+    ctx.scale(dpi, dpi);
+
+    const passThroughPercentage = stepsDelta[stepIndex - 1]
+      ? stepsDelta[stepIndex - 1].passThroughPercentage
+      : undefined;
+
+    const steps = funnelData.global.steps;
+    const passThroughTime = this.isLastStep(stepIndex + 1)
+      ? moment
+          .duration(steps[stepIndex - 1].interaction_duration, 'second')
+          .format('d [day] h [hour] m [minute]')
+      : undefined;
+
+    this.drawChart(
+      ctx,
+      startCount,
+      endCount,
+      drawWidth || 0,
+      passThroughPercentage,
+      passThroughTime,
+    );
   };
 
   drawChart = (
@@ -313,22 +338,16 @@ class Funnel extends React.Component<Props, State> {
     startCount: number,
     endCount: number,
     drawWidth: number,
-    strokeColors: string[],
+    passThroughPercentage?: string,
+    passThroughTime?: string,
   ) => {
     const { funnelData } = this.state;
+    const { intl } = this.props;
     const drawerHeight = 370;
     const percentageStart = getPercentage(startCount, funnelData.global.total);
     const percentageEnd = getPercentage(endCount, funnelData.global.total);
     const stepStart = drawerHeight && valueFromPercentage(percentageStart, drawerHeight);
     const stepEnd = drawerHeight && valueFromPercentage(percentageEnd, drawerHeight);
-
-    ctx.beginPath();
-
-    ctx.lineWidth = 2;
-    ctx.moveTo(0, stepStart);
-    ctx.lineTo(drawWidth, stepEnd);
-    ctx.strokeStyle = strokeColors[0];
-    ctx.stroke();
 
     ctx.beginPath();
     ctx.moveTo(0, stepStart);
@@ -343,6 +362,28 @@ class Funnel extends React.Component<Props, State> {
     ctx.fillStyle = gradient;
     ctx.fillStyle = gradient;
     ctx.fill();
+
+    ctx.beginPath();
+    ctx.lineWidth = 10;
+    ctx.strokeStyle = '#00a1df';
+    ctx.rect(0, stepStart + 5, 30, drawerHeight);
+    ctx.stroke();
+    ctx.closePath();
+    ctx.fillStyle = '#00a1df';
+    ctx.fill();
+
+    ctx.fillStyle = '#003056';
+    ctx.font = '14px LLCircularWeb-Medium';
+    ctx.fillText(`${passThroughPercentage}%`, 7, stepStart - 20);
+
+    ctx.font = '12px LLCircularWeb-Book';
+    ctx.fillText(
+      `${intl.formatMessage(funnelMessages.hasSucceeded)} ${
+        passThroughTime ? `${intl.formatMessage(funnelMessages.in)} ${passThroughTime}` : ''
+      }`,
+      65,
+      stepStart - 20,
+    );
   };
 
   formatPercentageValue = (value: number) => {
@@ -498,20 +539,6 @@ class Funnel extends React.Component<Props, State> {
     );
   };
 
-  private getDurationMessage(stepIndex: number, seconds: number) {
-    return this.isFirstStep(stepIndex) ? (
-      <span />
-    ) : (
-      <span>
-        {' '}
-        in{' '}
-        <span className={'mcs-funnel_metric'}>
-          {moment.duration(seconds, 'second').format('d [day] h [hour] m [minute]')}
-        </span>
-      </span>
-    );
-  }
-
   private getStepHover = (
     index: number,
     dimensionMetrics: DimensionMetrics[],
@@ -600,6 +627,28 @@ class Funnel extends React.Component<Props, State> {
     );
   };
 
+  isDisplayAdStep = (filter: FunnelFilter) => {
+    return filter.filter_clause.filters.find(f => f.expressions.includes('DISPLAY_AD'));
+  };
+
+  getStepTitle = (index: number, totalOfUserPoints?: number) => {
+    const { funnelData } = this.state;
+    const { filter, intl } = this.props;
+    const total = funnelData.global.total;
+    return (
+      <p className={'mcs-funnel_stepInfo_desc'}>
+        <span className={'mcs-funnel_stepInfo_metric'}>
+          {numeral(index === 0 ? total : totalOfUserPoints).format('0,0')}{' '}
+        </span>
+        {index > 0
+          ? filter[index - 1] && this.isDisplayAdStep(filter[index - 1])
+            ? intl.formatMessage(funnelMessages.exposedUserPoints)
+            : `${intl.formatMessage(funnelMessages.userPointsAtStep)} ${index}`
+          : intl.formatMessage(funnelMessages.upHadAnActivity)}
+      </p>
+    );
+  };
+
   render() {
     const {
       funnelData,
@@ -639,92 +688,71 @@ class Funnel extends React.Component<Props, State> {
                     ? `${numeral(steps[index - 1].amount).format('0,0')}€`
                     : undefined;
                 return (
-                  <div key={index.toString()} style={{ flex: 1, position: 'relative' }}>
-                    <div className={'mcs-funnel_chart'}>
-                      <div className={'mcs-funnel_stepInfo'}>
-                        <p className={'mcs-funnel_stepInfo_desc'}>
-                          <span className={'mcs-funnel_stepInfo_metric'}>
-                            {numeral(index === 0 ? total : steps[index - 1].count).format('0,0')}{' '}
-                          </span>
-                          {index > 0 ? `user points at step ${index}` : 'total user points'}
-                        </p>
-                        {index > 0 && filter[index - 1]
-                          ? this.getConversionDescription(filter[index - 1], conversion, amount)
-                          : undefined}
+                  <div key={index.toString()} className={'mcs-funnel_chart'}>
+                    <div className={'mcs-funnel_stepInfo'}>
+                      {this.getStepTitle(index, steps[index - 1]?.count)}
 
-                        <div className={'mcs-funnel_splitBy'} id='mcs-funnel_splitBy'>
-                          {index > 0 &&
-                          steps[index - 1] &&
-                          steps[index - 1].count > 0 &&
-                          filter[index - 1] &&
-                          this.displaySplitByDropdown(filter[index - 1]) ? (
-                            <Select
-                              key={this._cuid()}
-                              disabled={splitIndex === index && isStepLoading}
-                              loading={splitIndex === index && isStepLoading}
-                              className='mcs-funnel_splitBy_select'
-                              value={filter[index - 1].group_by_dimension}
-                              placeholder='Split by'
-                              onChange={this.handleSplitByDimension.bind(this, index)}
-                              getPopupContainer={getPopupContainer}
-                            >
-                              {uniqBy(
-                                filter[index - 1].filter_clause.filters,
-                                'dimension_name',
-                              ).map(dimension =>
-                                this.getLabelValueForDimension(dimension.dimension_name),
-                              )}
-                            </Select>
-                          ) : undefined}
-                        </div>
-                      </div>
-
-                      {index > 0 && index === splitIndex && !isStepLoading ? (
-                        <Button
-                          shape='circle'
-                          icon={<CloseOutlined />}
-                          className={'mcs-funnel_disableStepHover'}
-                          onClick={this.closeSplitByHover}
-                        />
-                      ) : undefined}
-                      {index > 0 && filter[index - 1] && index === splitIndex && !isStepLoading
-                        ? this.getStepHover(index, dimensionMetrics[index - 1], filter[index - 1])
+                      {index > 0 && filter[index - 1]
+                        ? this.getConversionDescription(filter[index - 1], conversion, amount)
                         : undefined}
-                      {stepsDelta[index] &&
-                      stepsDelta[index].passThroughPercentage &&
-                      (index !== splitIndex - 1 || isStepLoading) &&
-                      index < steps.length - 1 ? (
-                        <div className='mcs-funnel_percentageOfSucceeded'>
-                          <div className='mcs-funnel_arrow mcs_funnel_arrowStep' />
-                          <p className='mcs-funnel_deltaInfo'>
-                            <span
-                              className={'mcs-funnel_metric'}
-                            >{`${stepsDelta[index].passThroughPercentage}%`}</span>{' '}
-                            have succeeded{' '}
-                            {this.getDurationMessage(index, steps[index + 1].interaction_duration)}
-                          </p>
-                        </div>
-                      ) : undefined}
-                      <canvas
-                        id={`canvas_${index + 1}`}
-                        className={'mcs-funnel_canvas'}
-                        height='370'
-                      />
-                      <div className='mcs-funnel_conversionInfo'>
-                        <div
-                          className={
-                            this.isLastStep(index + 1)
-                              ? 'mcs-funnel_arrow mcs-funnel_arrow--success'
-                              : 'mcs-funnel_arrow  mcs-funnel_arrow--failed'
-                          }
-                        />
-                        <div className='mcs-funnel_deltaInfo'>
-                          <b>{stepsDelta[index] && `${stepsDelta[index].dropOff}%`}</b>
-                          <br />
-                          <p>{this.isLastStep(index + 1) ? 'Conversions' : 'Dropoffs'}</p>
-                        </div>
+
+                      <div className={'mcs-funnel_splitBy'} id='mcs-funnel_splitBy'>
+                        {index > 0 &&
+                        steps[index - 1] &&
+                        steps[index - 1].count > 0 &&
+                        filter[index - 1] &&
+                        this.displaySplitByDropdown(filter[index - 1]) ? (
+                          <Select
+                            key={this._cuid()}
+                            disabled={splitIndex === index && isStepLoading}
+                            loading={splitIndex === index && isStepLoading}
+                            className='mcs-funnel_splitBy_select'
+                            value={filter[index - 1].group_by_dimension}
+                            placeholder='Split by'
+                            onChange={this.handleSplitByDimension.bind(this, index)}
+                            getPopupContainer={getPopupContainer}
+                          >
+                            {uniqBy(
+                              filter[index - 1].filter_clause.filters,
+                              'dimension_name',
+                            ).map(dimension =>
+                              this.getLabelValueForDimension(dimension.dimension_name),
+                            )}
+                          </Select>
+                        ) : undefined}
                       </div>
                     </div>
+                    {this.isLastStep(index + 1) && stepsDelta[index] && (
+                      <Tag className={'mcs-funnel_conversions'} color='blue'>
+                        {stepsDelta[index].dropOff}%{' '}
+                        {intl.formatMessage(funnelMessages.conversions)}
+                      </Tag>
+                    )}
+                    {index > 0 && index === splitIndex && !isStepLoading ? (
+                      <Button
+                        shape='circle'
+                        icon={<CloseOutlined />}
+                        className={'mcs-funnel_disableStepHover'}
+                        onClick={this.closeSplitByHover}
+                      />
+                    ) : undefined}
+                    {index > 0 && filter[index - 1] && index === splitIndex && !isStepLoading
+                      ? this.getStepHover(index, dimensionMetrics[index - 1], filter[index - 1])
+                      : undefined}
+                    <canvas
+                      id={`canvas_${index + 1}`}
+                      className={'mcs-funnel_canvas'}
+                      height='370'
+                    />
+                    {index > 0 && (
+                      <div className='mcs-funnel_conversionInfo'>
+                        <div className={'mcs-funnel_arrow  mcs-funnel_arrow--failed'} />
+                        <p className='mcs-funnel_deltaInfo'>
+                          <b>{stepsDelta[index - 1] && `${stepsDelta[index - 1].dropOff}%`}</b>{' '}
+                          {intl.formatMessage(funnelMessages.didntComplete)}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 );
               })}
