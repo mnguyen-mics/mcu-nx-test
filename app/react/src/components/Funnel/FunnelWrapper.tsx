@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { compose } from 'recompose';
-import Funnel from './Funnel';
 import FunnelQueryBuilder from './FunnelQueryBuilder';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { buildDefaultSearch, parseSearch, isSearchValid } from '../../utils/LocationSearchHelper';
@@ -8,6 +7,7 @@ import { FUNNEL_SEARCH_SETTING } from './Constants';
 import { FunnelFilter } from '../../models/datamart/UserActivitiesFunnel';
 import { getDefaultStep } from './Utils';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
+import FunnelDataFetcher from './FunnelDataFetcher';
 
 interface FunnelWrapperProps {
   datamartId: string;
@@ -101,9 +101,9 @@ class FunnelWrapper extends React.Component<JoinedProp, State> {
           liftFunctionsCallback={this.storeAndLiftFunctions}
           dateRange={dateRange}
         />
-        <Funnel
+        <FunnelDataFetcher
           datamartId={datamartId}
-          title={'Funnel demo'}
+          funnelId={'1'}
           filter={funnelFilter}
           parentCallback={this.funnelCallbackFunction}
           launchExecutionAskedTime={launchExecutionAskedTime}
