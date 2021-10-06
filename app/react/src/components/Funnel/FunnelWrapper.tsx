@@ -44,8 +44,9 @@ class FunnelWrapper extends React.Component<JoinedProp, State> {
       isLoading: loading,
     });
     const { executeQueryFunction } = this.state;
-    if (executeQueryFunction)
+    if (executeQueryFunction) {
       this.props.parentCallback(executeQueryFunction, this.cancelQueryFunction, loading);
+    }
   };
 
   storeAndLiftFunctions = (executeQueryFunction: () => void) => {
