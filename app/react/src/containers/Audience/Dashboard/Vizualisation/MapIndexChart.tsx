@@ -310,6 +310,9 @@ class MapIndexChart extends React.Component<Props, State> {
               drilldown={true}
               height={height}
               plotLineValue={100}
+              tooltip={{
+                format: tooltip?.formatter,
+              }}
             />
           )
         );

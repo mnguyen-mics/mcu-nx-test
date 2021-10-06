@@ -310,6 +310,9 @@ class MapBarChart extends React.Component<Props, State> {
               stacking={stacking}
               height={height}
               bigBars={reducePadding}
+              tooltip={{
+                format: tooltip?.formatter,
+              }}
             />
           )
         );
