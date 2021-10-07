@@ -44,6 +44,8 @@ import { injectWorkspace, InjectedWorkspaceProps } from '../../../Datamart';
 import { IAudienceSegmentService } from '../../../../services/AudienceSegmentService';
 import { SegmentNameDisplay } from '../../Common/SegmentNameDisplay';
 import { FORM_ID } from '../constants';
+import { Tooltip } from 'antd';
+import { truncate } from './AudienceFeatureSelectionTag';
 
 export const FormRelativeAbsoluteDateField = Field as new () => GenericField<FormRelativeAbsoluteDateProps>;
 
@@ -263,7 +265,9 @@ class AudienceFeatureVariable extends React.Component<Props> {
     const formProps = {
       name: name,
       formItemProps: {
-        label: variable.parameter_name,
+        label: (
+          <Tooltip title={variable.parameter_name}>{truncate(variable.parameter_name)}</Tooltip>
+        ),
 
         ...fieldGridConfig,
       },
@@ -320,7 +324,9 @@ class AudienceFeatureVariable extends React.Component<Props> {
           name={name}
           component={FormSearchObject}
           formItemProps={{
-            label: variable.parameter_name,
+            label: (
+              <Tooltip title={variable.parameter_name}>{truncate(variable.parameter_name)}</Tooltip>
+            ),
             ...fieldGridConfig,
           }}
           fetchListMethod={fetchListMethod}
@@ -369,7 +375,11 @@ class AudienceFeatureVariable extends React.Component<Props> {
               name={name}
               component={DefaultSelect}
               formItemProps={{
-                label: variable.parameter_name,
+                label: (
+                  <Tooltip title={variable.parameter_name}>
+                    {truncate(variable.parameter_name)}
+                  </Tooltip>
+                ),
                 ...fieldGridConfig,
               }}
               disabled={!!disabled}
@@ -395,7 +405,11 @@ class AudienceFeatureVariable extends React.Component<Props> {
               component={FormInputNumber}
               validate={[isValidInteger]}
               formItemProps={{
-                label: variable.parameter_name,
+                label: (
+                  <Tooltip title={variable.parameter_name}>
+                    {truncate(variable.parameter_name)}
+                  </Tooltip>
+                ),
                 ...fieldGridConfig,
               }}
               inputNumberProps={{
@@ -414,7 +428,11 @@ class AudienceFeatureVariable extends React.Component<Props> {
               component={FormInputNumber}
               validate={[isValidFloat]}
               formItemProps={{
-                label: variable.parameter_name,
+                label: (
+                  <Tooltip title={variable.parameter_name}>
+                    {truncate(variable.parameter_name)}
+                  </Tooltip>
+                ),
                 ...fieldGridConfig,
               }}
               inputNumberProps={{
@@ -440,7 +458,11 @@ class AudienceFeatureVariable extends React.Component<Props> {
               name={name}
               component={FormRelativeAbsoluteDate}
               formItemProps={{
-                label: variable.parameter_name,
+                label: (
+                  <Tooltip title={variable.parameter_name}>
+                    {truncate(variable.parameter_name)}
+                  </Tooltip>
+                ),
                 ...fieldGridConfig,
               }}
               unixTimstamp={true}
@@ -471,7 +493,11 @@ class AudienceFeatureVariable extends React.Component<Props> {
                 disabled: !!disabled,
               }}
               formItemProps={{
-                label: variable.parameter_name,
+                label: (
+                  <Tooltip title={variable.parameter_name}>
+                    {truncate(variable.parameter_name)}
+                  </Tooltip>
+                ),
                 ...fieldGridConfig,
               }}
             />

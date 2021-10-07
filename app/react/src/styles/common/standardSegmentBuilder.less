@@ -345,6 +345,14 @@
   }
 }
 
+.mcs-standardSegmentBuilder_tagsContainer {
+  margin-top: 15px;
+  .ant-tag {
+    width: min-content;
+    margin-top: 5px;
+  }
+}
+
 //  Audience Features Management
 
 .mcs-audienceFeature_formColumn {
@@ -372,41 +380,14 @@
   .mcs-standardSegmentBuilder_featureCardClose {
     font-size: 16px;
     color: white;
+    &:hover {
+      cursor: pointer;
+    }
   }
   .mcs-standardSegmentBuilder_folder,
   .mcs-standardSegmentBuilder_featureCard {
-    height: 100px;
-    border: 1px solid @border-color-split;
-    border-radius: 3px;
-    padding: 10px;
-    font-size: 12px;
-    font-weight: bold;
-    margin: 8px 0px;
-    .mcs-icon {
-      font-size: 16px;
-    }
-    &:hover {
-      cursor: pointer;
-      border: 1px solid @primary-color;
-      color: @primary-color;
-      .mcs-standardSegmentBuilder_featureCardInfo {
-        visibility: visible;
-      }
-    }
-    .mcs-standardSegmentBuilder_folderChildNumber {
-      font-weight: initial;
-      font-size: 12px;
-      margin-top: 5px;
-      color: @text-color-secondary;
-      position: absolute;
-      bottom: 20px;
-    }
-    .mcs-standardSegmentBuilder_folderIcon {
-      font-size: 20px;
-    }
-  }
-  .mcs-standardSegmentBuilder_featureCard_2 {
-    height: 122px;
+    height: 155px;
+    position: relative;
     border: 1px solid @border-color-split;
     border-radius: 3px;
     padding: 10px;
@@ -416,11 +397,11 @@
     .mcs-standardSegmentBuilder_featureCardInfo {
       font-size: 16px;
       &:hover {
+        cursor: pointer;
         color: @primary-color;
       }
     }
     &:hover {
-      cursor: pointer;
       .mcs-standardSegmentBuilder_featureCardInfo {
         visibility: visible;
       }
@@ -437,10 +418,14 @@
       font-size: 20px;
     }
   }
+  .mcs-standardSegmentBuilder_folder {
+    &:hover {
+      cursor: pointer;
+      border: 1px solid @primary-color;
+    }
+  }
   .selected {
-    cursor: pointer;
     border: 1px solid @primary-color;
-    color: @primary-color;
   }
   .toggled {
     background-color: @primary-color !important;
@@ -456,8 +441,7 @@
   }
   .mcs-standardSegmentBuilder_featureCardContainer {
     margin-top: 30px;
-    .mcs-standardSegmentBuilder_featureCard,
-    .mcs-standardSegmentBuilder_featureCard_2 {
+    .mcs-standardSegmentBuilder_featureCard {
       background-color: #fafafa;
       .mcs-icon {
         float: right;
@@ -477,20 +461,17 @@
         }
       }
       .mcs-standardSegmentBuilder_featureCardFinalValues {
-        white-space: nowrap;
-        overflow: hidden;
         padding-left: 1px;
-        .mcs-standardSegmentBuilder_featureCardFinalValue {
-          color: @info-color;
-          &:hover {
-            border: 1px solid @info-color;
-            padding: 0px 7px;
-            border-radius: 2px;
-            white-space: nowrap;
-            line-height: 20px;
-            margin: 0px 2px 0px 0px;
-            background-color: #e6f7ff;
-          }
+      }
+      .mcs-standardSegmentBuilder_featureCardMore {
+        float: right;
+        margin-top: 5px;
+        color: @info-color;
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        &:hover {
+          cursor: pointer;
         }
       }
       .mcs-standardSegmentBuilder_featureCardToggledTitle {
@@ -504,10 +485,39 @@
         display: block;
         overflow: hidden;
         &:hover {
+          cursor: pointer;
           color: @primary-color;
+          text-decoration: underline;
         }
       }
     }
+  }
+}
+
+.mcs-standardSegmentBuilder_featureCardFinalValue {
+  color: @info-color;
+  &:hover {
+    cursor: pointer;
+    border: 1px solid @info-color;
+    padding: 0px 7px;
+    border-radius: 2px;
+    line-height: 20px;
+    margin: 0px 2px 0px 0px;
+    background-color: #e6f7ff;
+  }
+}
+.mcs-standardSegmentBuilder_featureCardSelectedFinalValue {
+  cursor: pointer;
+  border: 1px solid @info-color;
+  padding: 0px 7px;
+  border-radius: 2px;
+  line-height: 20px;
+  margin: 0px 2px 0px 0px;
+  background-color: #e6f7ff;
+}
+.notAllowed {
+  &:hover {
+    cursor: not-allowed;
   }
 }
 
@@ -622,7 +632,7 @@
   .mcs-processingActivitiesFormSection_modalSearchBar {
     margin-bottom: 30px;
   }
-  .empty-related-records {
+  .mcs_emptyRelatedRecords {
     font-size: 1.5em;
   }
 }
