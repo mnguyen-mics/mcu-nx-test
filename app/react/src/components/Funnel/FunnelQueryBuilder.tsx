@@ -529,12 +529,12 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
       <div className={'mcs-funnelQueryBuilder'}>
         <div className={'mcs-funnelQueryBuilder_steps'}>
           <div className={'mcs-funnelQueryBuilder_step_timelineStart'}>
+            <CalendarOutlined className={'mcs-funnelQueryBuilder_timeline_icon'} />
             {from && (
               <p className={'mcs-funnelQueryBuilder_timeline_date'}>
                 {from.toMoment().format('DD/MM/YYYY 00:00')}
               </p>
             )}
-            <CalendarOutlined className={'mcs-funnelQueryBuilder_timeline_icon'} />
           </div>
           {steps.map((step, index) => {
             return (
