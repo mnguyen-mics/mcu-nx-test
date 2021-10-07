@@ -282,10 +282,10 @@ class MapBarChart extends React.Component<Props, State> {
       yKeys: [{ key: BASE_YKEY, message: '' }].concat(restKey),
       colors: usedColors,
       labelsEnabled: this.props.labelsEnabled,
+      tooltip: { format: tooltip?.formatter },
       vertical,
       sort: sortKey,
       labels,
-      tooltip,
       format: 'percentage' as Format,
     };
 
