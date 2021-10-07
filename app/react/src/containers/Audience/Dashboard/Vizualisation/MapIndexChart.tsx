@@ -281,8 +281,8 @@ class MapIndexChart extends React.Component<Props, State> {
       labelsEnabled: this.props.labelsEnabled,
       vertical,
       sort: sortKey,
+      tooltip: { format: tooltip?.formatter },
       labels,
-      tooltip,
       type: 'bar',
       chart: {
         type: 'bar',
