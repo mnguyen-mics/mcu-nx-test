@@ -30,7 +30,6 @@ interface StepDelta {
 
 interface State {
   lastExecutedQueryAskedTime: number;
-  initialState: boolean;
 }
 
 type FunnelProps = {
@@ -39,11 +38,12 @@ type FunnelProps = {
   isLoading: boolean;
   datamartId: string;
   filter: FunnelFilter[];
-  funnelData: GroupedByFunnel;
+  funnelData?: GroupedByFunnel;
   dimensionsList: DimensionsList;
   closeGroupBy: () => void;
   openGroupBy: (index: number, dimensionName: string) => void;
   isStepLoading: boolean;
+  initialState: boolean;
 };
 
 type Props = FunnelProps &
@@ -73,7 +73,6 @@ class Funnel extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      initialState: true,
       lastExecutedQueryAskedTime: 0,
     };
   }
@@ -87,12 +86,11 @@ class Funnel extends React.Component<Props, State> {
     window.addEventListener('resize', this.drawSteps.bind(this));
   }
 
-  draw = (startIndex: number, stepsDelta: StepDelta[]) => {
-    this.drawSteps(startIndex, stepsDelta);
+  draw = (funnelData: GroupedByFunnel, startIndex: number, stepsDelta: StepDelta[]) => {
+    this.drawSteps(funnelData, startIndex, stepsDelta);
   };
 
-  drawSteps = (startIndex: number, stepsDelta: StepDelta[]) => {
-    const { funnelData } = this.props;
+  drawSteps = (funnelData: GroupedByFunnel, startIndex: number, stepsDelta: StepDelta[]) => {
     const steps = funnelData.global.steps.slice(startIndex);
     const total = funnelData.global.total;
 
@@ -101,11 +99,20 @@ class Funnel extends React.Component<Props, State> {
         index === 0 && startIndex === 0
           ? total
           : funnelData.global.steps[startIndex + index - 1].count;
-      this.drawCanvas(total, start, step.count, index + 1 + startIndex, steps.length, stepsDelta);
+      this.drawCanvas(
+        funnelData,
+        total,
+        start,
+        step.count,
+        index + 1 + startIndex,
+        steps.length,
+        stepsDelta,
+      );
     });
   };
 
   drawCanvas = (
+    funnelData: GroupedByFunnel,
     total: number,
     startCount: number,
     endCount: number,
@@ -113,7 +120,7 @@ class Funnel extends React.Component<Props, State> {
     totalSteps: number,
     stepsDelta: StepDelta[],
   ) => {
-    const { funnelId, funnelData } = this.props;
+    const { funnelId } = this.props;
     const container = document.getElementById(`container_${funnelId}`);
     const canvas = document.getElementById(`canvas_${funnelId}_${stepIndex}`) as HTMLCanvasElement;
 
@@ -136,7 +143,7 @@ class Funnel extends React.Component<Props, State> {
         : undefined;
 
       const steps = funnelData.global.steps;
-      const passThroughTime = this.isLastStep(stepIndex)
+      const passThroughTime = this.isLastStep(funnelData, stepIndex)
         ? moment
             .duration(steps[stepIndex - 1].interaction_duration, 'second')
             .format('d [day] h [hour] m [minute]')
@@ -246,8 +253,7 @@ class Funnel extends React.Component<Props, State> {
     return stepsDelta;
   };
 
-  computeDimensionMetrics = (index: number) => {
-    const { funnelData } = this.props;
+  computeDimensionMetrics = (funnelData: GroupedByFunnel, index: number) => {
     const dimensionMetrics: DimensionMetrics[][] = [];
     funnelData.global.steps.forEach((steps, i) => {
       dimensionMetrics.push([]);
@@ -298,8 +304,7 @@ class Funnel extends React.Component<Props, State> {
     closeGroupBy();
   };
 
-  isLastStep = (stepNumber: number) => {
-    const { funnelData } = this.props;
+  isLastStep = (funnelData: GroupedByFunnel, stepNumber: number) => {
     return funnelData.global.steps.length === stepNumber;
   };
 
@@ -327,11 +332,11 @@ class Funnel extends React.Component<Props, State> {
   };
 
   private getStepHover = (
+    funnelData: GroupedByFunnel,
     index: number,
     dimensionMetrics: DimensionMetrics[],
     filter: FunnelFilter,
   ) => {
-    const { funnelData } = this.props;
     const globalMetrics: GlobalMetrics = {
       userPoints: funnelData.global.steps[index - 1].count,
       conversions: funnelData.global.steps[index - 1].conversion,
@@ -418,8 +423,8 @@ class Funnel extends React.Component<Props, State> {
     return filter.filter_clause.filters.find(f => f.expressions.includes('DISPLAY_AD'));
   };
 
-  getStepTitle = (index: number, totalOfUserPoints?: number) => {
-    const { funnelData, filter, intl } = this.props;
+  getStepTitle = (funnelData: GroupedByFunnel, index: number, totalOfUserPoints?: number) => {
+    const { filter, intl } = this.props;
     const total = funnelData.global.total;
     return (
       <p className={'mcs-funnel_stepInfo_desc'}>
@@ -439,7 +444,13 @@ class Funnel extends React.Component<Props, State> {
     return filter.findIndex(x => !!x.group_by_dimension);
   }
 
-  renderStep(index: number, steps: Steps[], stepsDelta: StepDelta[], dimensionMetrics: any) {
+  renderStep(
+    funnelData: GroupedByFunnel,
+    index: number,
+    steps: Steps[],
+    stepsDelta: StepDelta[],
+    dimensionMetrics: any,
+  ) {
     const { funnelId, intl, filter, isStepLoading } = this.props;
     const getPopupContainer = () => document.getElementById('mcs-funnel_splitBy')!;
 
@@ -458,7 +469,7 @@ class Funnel extends React.Component<Props, State> {
     return (
       <div key={index.toString()} className={'mcs-funnel_chart'}>
         <div className={'mcs-funnel_stepInfo'}>
-          {this.getStepTitle(index, steps[index - 1]?.count)}
+          {this.getStepTitle(funnelData, index, steps[index - 1]?.count)}
 
           {index > 0 && filter[index - 1]
             ? this.getConversionDescription(filter[index - 1], conversion, amount)
@@ -487,7 +498,7 @@ class Funnel extends React.Component<Props, State> {
             ) : undefined}
           </div>
         </div>
-        {this.isLastStep(index + 1) && stepsDelta[index] && (
+        {this.isLastStep(funnelData, index + 1) && stepsDelta[index] && (
           <Tag className={'mcs-funnel_conversions'}>
             {stepsDelta[index].dropOff}% {intl.formatMessage(funnelMessages.conversions)}
           </Tag>
@@ -501,7 +512,7 @@ class Funnel extends React.Component<Props, State> {
           />
         ) : undefined}
         {index > 0 && filter[index - 1] && index === splitIndex && !isStepLoading
-          ? this.getStepHover(index, dimensionMetrics[index - 1], filter[index - 1])
+          ? this.getStepHover(funnelData, index, dimensionMetrics[index - 1], filter[index - 1])
           : undefined}
         <canvas
           id={`canvas_${funnelId}_${index + 1}`}
@@ -521,10 +532,8 @@ class Funnel extends React.Component<Props, State> {
     );
   }
 
-  render() {
-    const { initialState } = this.state;
-
-    const { startIndex, funnelData, filter, intl, isLoading, funnelId } = this.props;
+  renderSteps(funnelData: GroupedByFunnel) {
+    const { startIndex, filter } = this.props;
 
     let splitIndex = this.splitIndex(filter);
     splitIndex = splitIndex === -1 ? splitIndex : splitIndex + 1;
@@ -534,26 +543,39 @@ class Funnel extends React.Component<Props, State> {
     splitIndex = splitIndex === -1 ? splitIndex : splitIndex + 1;
     const splitBy = splitIndex !== -1;
 
-    const total = funnelData.global.total;
-
     const upCountsPerStep = funnelData.global.steps.map(step => step.count);
     upCountsPerStep.unshift(funnelData.global.total);
     upCountsPerStep.pop();
     const stepsDelta = this.computeStepDelta(upCountsPerStep);
     const dimensionMetrics =
-      funnelData.grouped_by && splitBy ? this.computeDimensionMetrics(splitIndex) : [];
+      funnelData.grouped_by && splitBy ? this.computeDimensionMetrics(funnelData, splitIndex) : [];
 
-    this.draw(startIndex, stepsDelta);
+    this.draw(funnelData, startIndex, stepsDelta);
 
+    return (
+      <div className='mcs-funnel_steps'>
+        {steps.map((step, index) => {
+          return index >= startIndex
+            ? this.renderStep(funnelData, index, steps, stepsDelta, dimensionMetrics)
+            : undefined;
+        })}
+      </div>
+    );
+  }
+
+  render() {
+    const { startIndex, funnelData, filter, intl, isLoading, funnelId, initialState } = this.props;
     if (isLoading) return <LoadingChart />;
 
     return (
       <div id='outerContainer' style={{ display: 'flex', flexFlow: 'row' }}>
         <div style={{ flexBasis: 1, flexGrow: startIndex, position: 'relative' }} />
-        <div style={{ flexBasis: 1, flexGrow: steps.length - startIndex, position: 'relative' }}>
+        <div style={{ flexBasis: 1, flexGrow: filter.length - startIndex, position: 'relative' }}>
           <Card className='mcs-funnel' bordered={false}>
             <div id={`container_${funnelId}`}>
-              {steps.length === 0 || total === 0 ? (
+              {!funnelData ||
+              funnelData.global.steps.length === 0 ||
+              funnelData.global.total === 0 ? (
                 <div className='mcs-funnel_empty'>
                   {filter.length > 0 && !initialState ? (
                     <EmptyChart title={intl.formatMessage(funnelMessages.noData)} icon='warning' />
@@ -562,13 +584,7 @@ class Funnel extends React.Component<Props, State> {
                   )}
                 </div>
               ) : (
-                <div className='mcs-funnel_steps'>
-                  {steps.map((step, index) => {
-                    return index >= startIndex
-                      ? this.renderStep(index, steps, stepsDelta, dimensionMetrics)
-                      : undefined;
-                  })}
-                </div>
+                this.renderSteps(funnelData)
               )}
             </div>
           </Card>
