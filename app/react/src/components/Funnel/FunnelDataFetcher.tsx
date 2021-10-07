@@ -19,7 +19,6 @@ import Funnel from './Funnel';
 import { shouldRefetchFunnelData, extractDatesFromProps, checkExpressionsNotEmpty } from './Utils';
 import { updateSearch, parseSearch } from '../../utils/LocationSearchHelper';
 import { FUNNEL_SEARCH_SETTING } from './Constants';
-import FunnelEmptyState from './FunnelEmptyState';
 
 interface FunnelDataFetcherProps {
   datamartId: string;
@@ -42,6 +41,7 @@ interface State {
   isLoading: boolean;
   isStepLoading: boolean;
   lastExecutedQueryAskedTime: number;
+  initialState: boolean;
 }
 
 const deepCopy = (value: any) => {
@@ -60,6 +60,7 @@ class FunnelDataFetcher extends React.Component<Props, State> {
     this.state = {
       funnelData: undefined,
       isStepLoading: false,
+      initialState: true,
       dimensionsList: {
         dimensions: [],
       },
@@ -144,11 +145,10 @@ class FunnelDataFetcher extends React.Component<Props, State> {
   fetchData = (datamartId: string, filter: FunnelFilter[], timeRange: FunnelTimeRange) => {
     const { parentCallback, notifyError } = this.props;
     const { isStepLoading } = this.state;
-    if (!isStepLoading) {
-      this.setState({
-        isLoading: true,
-      });
-    }
+    this.setState({
+      isLoading: !isStepLoading,
+      initialState: false,
+    });
     return this._userActivitiesFunnelService
       .getUserActivitiesFunnel(datamartId, filter, timeRange, 5)
       .then(response => {
@@ -200,7 +200,7 @@ class FunnelDataFetcher extends React.Component<Props, State> {
 
   render() {
     const { filter, datamartId, funnelId, startIndex } = this.props;
-    const { funnelData, dimensionsList, isStepLoading, isLoading } = this.state;
+    const { funnelData, dimensionsList, isStepLoading, isLoading, initialState } = this.state;
 
     const _startIndex = startIndex ? startIndex : 0;
 
@@ -233,7 +233,7 @@ class FunnelDataFetcher extends React.Component<Props, State> {
       });
     };
 
-    return funnelData ? (
+    return (
       <Funnel
         closeGroupBy={close}
         openGroupBy={open}
@@ -245,10 +245,9 @@ class FunnelDataFetcher extends React.Component<Props, State> {
         isLoading={isLoading}
         startIndex={_startIndex}
         funnelId={funnelId}
+        initialState={initialState}
       />
-    ) : (
-      <FunnelEmptyState />
-    );
+    )
   }
 }
 
