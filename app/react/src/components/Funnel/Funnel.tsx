@@ -172,10 +172,10 @@ class Funnel extends React.Component<Props, State> {
     const stepEnd = drawerHeight && valueFromPercentage(percentageEnd, drawerHeight);
 
     ctx.beginPath();
-    ctx.moveTo(0, stepStart);
+    ctx.moveTo(30, stepStart);
     ctx.lineTo(drawWidth, stepEnd);
     ctx.lineTo(drawWidth, 1000);
-    ctx.lineTo(0, 1000);
+    ctx.lineTo(30, 1000);
     ctx.closePath();
 
     const gradient = ctx.createLinearGradient(0, 0, 0, 350);

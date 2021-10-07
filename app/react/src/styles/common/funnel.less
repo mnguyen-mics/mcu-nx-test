@@ -1,5 +1,5 @@
 .mcs-funnel {
-  margin-top: 15px;
+  margin-top: 55px;
   box-sizing: content-box;
   .ant-card-body {
     padding: 0;
@@ -11,11 +11,11 @@
 
 .mcs-funnelQueryBuilder_steps {
   position: relative;
+  display: inline-block;
   margin-top: 15px;
-  width: 60%;
-  min-width: 627px;
-  padding: 17px 20px 17px 0;
-  border-right: 1px dotted #d3dbe1;
+  min-width: 707px;
+  padding: 17px 0px 17px 46px;
+  border-left: 1px dotted #d3dbe1;
 }
 
 .mcs-funnelQueryBuilder_step {
@@ -156,10 +156,9 @@
 
 .mcs-funnelQueryBuilder_stepName_title {
   font-size: 14px;
-  font-family: @font-family-medium;
-  font-weight: 500;
+  font-family: 'LLCircularWeb-medium';
   letter-spacing: normal;
-  color: @primary-color;
+  color: rgba(0, 0, 0, 0.65);
 }
 
 .mcs-funnel_chart {
@@ -205,7 +204,6 @@
 .mcs-funnelQueryBuilder_stepHeader {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 30px;
 }
 
 .mcs-funnelQueryBuilder_step_body {
@@ -245,10 +243,6 @@
   border-radius: 3px;
   color: rgb(0, 48, 86);
   border: none;
-}
-
-#mcs-funnel_expression_select_anchor {
-  min-width: 217px;
 }
 
 .mcs-funnelQueryBuilder_step_dimensions {
@@ -313,16 +307,18 @@
   border: 0;
   box-shadow: none;
   font-size: 16px;
-  width: 16px;
   height: 16px;
   color: rgba(0, 0, 0, 0.43);
+
+  .anticon {
+    font-size: 16px;
+  }
 
   &:hover,
   &:focus,
   &:active {
     color: rgba(0, 0, 0, 0.43);
     background: #fff;
-    border-color: none;
   }
 }
 
@@ -360,7 +356,7 @@
   border: none;
   color: @info-color;
   background: none;
-  padding: 40px 236px;
+  padding: 10px 236px;
   border-radius: 3px;
   border: solid 1px #d3dbe1;
   width: 100%;
@@ -388,6 +384,7 @@
   &_btn {
     top: 10px;
     width: 55px;
+    background-color: @info-color;
   }
 }
 
@@ -446,6 +443,8 @@
   font-size: 12px;
   color: #003056;
   margin-right: 45px;
+  background-color: #e8f7fc;
+  border-color: @info-color;
 }
 
 .mcs-funnelStepHover_metric {
@@ -511,7 +510,7 @@
 
 .mcs-funnelQueryBuilder_step_bullet {
   position: absolute;
-  right: -31px;
+  left: -56px;
   bottom: -10px;
   padding: 10px 0;
   background: @layout-content-background;
@@ -527,17 +526,17 @@
 .mcs-funnelQueryBuilder_step_timelineStart {
   position: absolute;
   top: -30px;
-  right: -10px;
+  left: -10px;
 
   .mcs-funnelQueryBuilder_timeline_icon {
-    margin-left: 10px;
+    margin-right: 10px;
   }
 }
 
 .mcs-funnelQueryBuilder_step_timelineEnd {
   position: absolute;
-  top: 20px;
-  right: -164px;
+  top: 66px;
+  left: -56px;
   padding: 10px 0 70px;
   min-width: 150px;
   background: @layout-content-background;
@@ -661,7 +660,7 @@
   margin: 0;
   font-family: 'LLCircularWeb-Book';
   font-size: 12px;
-  color: #00a1df;
+  color: @info-color;
   background-color: #e8f7fc;
-  border-color: #00a1df;
+  border-color: @info-color;
 }
