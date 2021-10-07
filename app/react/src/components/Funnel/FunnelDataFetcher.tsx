@@ -247,7 +247,7 @@ class FunnelDataFetcher extends React.Component<Props, State> {
         funnelId={funnelId}
         initialState={initialState}
       />
-    )
+    );
   }
 }
 

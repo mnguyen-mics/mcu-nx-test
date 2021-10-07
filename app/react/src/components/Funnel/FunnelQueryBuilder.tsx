@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Card, Select, Button, Switch, Input, Tag } from 'antd';
+import { Card, Select, Button, Switch, Input } from 'antd';
 import messages from '../../containers/Campaigns/Display/Edit/messages';
 import {
   ArrowUpOutlined,
@@ -17,12 +17,7 @@ import { compose } from 'recompose';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../containers/Notifications/injectNotifications';
-import {
-  booleanOperator,
-  FUNNEL_SEARCH_SETTING,
-  FilterOperatorLabel,
-  funnelMessages,
-} from './Constants';
+import { booleanOperator, FUNNEL_SEARCH_SETTING, FilterOperatorLabel } from './Constants';
 import {
   BooleanOperator,
   DimensionFilterClause,
@@ -110,6 +105,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
     const actualFilter = JSON.stringify(filter);
 
     const isUrlFilterChanged = lastFilter !== actualFilter;
+
     const isFilterNotZero = filter.length > 0;
 
     const isFilterFirstStepEqualToDefaultFirstStep = _.isEqual(
@@ -522,7 +518,7 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
 
   render() {
     const { steps } = this.state;
-    const { datamartId, intl, dateRange } = this.props;
+    const { datamartId, dateRange } = this.props;
     const { from, to } = dateRange;
 
     return (
@@ -698,10 +694,10 @@ class FunnelQueryBuilder extends React.Component<Props, State> {
                 </div>
                 {step.displayEventTypeWarning && (
                   <div className={'mcs-funnelQueryBuilder_step_warning'}>
-                    <CloseOutlined className={'mcs-funnelQueryBuilder_step_warning_icon'} />
+                    {/* <CloseOutlined className={'mcs-funnelQueryBuilder_step_warning_icon'} />
                     <Tag className={'mcs-funnelQueryBuilder_step_warning_desc'}>
                       {intl.formatMessage(funnelMessages.eventsWarning)}
-                    </Tag>
+                    </Tag> */}
                   </div>
                 )}
               </Card>

@@ -99,7 +99,15 @@ class Funnel extends React.Component<Props, State> {
         index === 0 && startIndex === 0
           ? total
           : funnelData.global.steps[startIndex + index - 1].count;
-      this.drawCanvas(funnelData, total, start, step.count, index + 1 + startIndex, steps.length, stepsDelta);
+      this.drawCanvas(
+        funnelData,
+        total,
+        start,
+        step.count,
+        index + 1 + startIndex,
+        steps.length,
+        stepsDelta,
+      );
     });
   };
 
@@ -436,7 +444,13 @@ class Funnel extends React.Component<Props, State> {
     return filter.findIndex(x => !!x.group_by_dimension);
   }
 
-  renderStep(funnelData: GroupedByFunnel, index: number, steps: Steps[], stepsDelta: StepDelta[], dimensionMetrics: any) {
+  renderStep(
+    funnelData: GroupedByFunnel,
+    index: number,
+    steps: Steps[],
+    stepsDelta: StepDelta[],
+    dimensionMetrics: any,
+  ) {
     const { funnelId, intl, filter, isStepLoading } = this.props;
     const getPopupContainer = () => document.getElementById('mcs-funnel_splitBy')!;
 
