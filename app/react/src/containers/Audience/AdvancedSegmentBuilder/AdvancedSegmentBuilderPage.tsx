@@ -115,7 +115,7 @@ class AdvancedSegmentBuilderPage extends React.Component<Props> {
               persisted,
               default_ttl: calculateDefaultTtl(segmentFormData),
               query_id: res.data.id,
-              segment_editor: 'SEGMENT_BUILDER',
+              segment_editor: 'ADVANCED_SEGMENT_BUILDER',
             };
             return this._audienceSegmentService.saveSegment(
               match.params.organisationId,

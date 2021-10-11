@@ -122,7 +122,7 @@ class StandardSegmentBuilderPage extends React.Component<Props, State> {
         return res.data;
       })
       .then(standardSegmentBuilder => {
-        const demographicsFeaturePromises = standardSegmentBuilder.demographics_features_ids.map(
+        const demographicsFeaturePromises = standardSegmentBuilder.initial_audience_feature_ids.map(
           id => {
             return this._audienceFeatureService.getAudienceFeature(datamartId, id);
           },
@@ -210,8 +210,8 @@ class StandardSegmentBuilderPage extends React.Component<Props, State> {
               defaultLifetime: defaultLifetime,
             }),
             query_id: res.data.id,
-            segment_editor: 'AUDIENCE_BUILDER',
-            audience_builder_id: selectedStandardSegmentBuilder?.id,
+            segment_editor: 'STANDARD_SEGMENT_BUILDER',
+            standard_segment_builder_id: selectedStandardSegmentBuilder?.id,
           };
           return this._audienceSegmentService.saveSegment(
             match.params.organisationId,

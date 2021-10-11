@@ -158,11 +158,11 @@ class EditAudienceSegmentPage extends React.Component<Props, State> {
               if (initialData.query) {
                 newState.queryLanguage = initialData.query.query_language;
                 const audienceSegment = initialData.audienceSegment as UserQuerySegment;
-                if (audienceSegment.audience_builder_id) {
+                if (audienceSegment.standard_segment_builder_id) {
                   this._standardSegmentBuilderService
                     .getStandardSegmentBuilder(
                       audienceSegment.datamart_id,
-                      audienceSegment.audience_builder_id,
+                      audienceSegment.standard_segment_builder_id,
                     )
                     .then(res => {
                       newState.standardSegmentBuilder = res.data;

@@ -3,8 +3,7 @@ export interface StandardSegmentBuilderResource {
   id: string;
   name: string;
   datamart_id: string;
-  // TODO: rename to initial_audience_feature_ids (do backend part before)
-  demographics_features_ids: string[];
+  initial_audience_feature_ids: string[];
 }
 
 export interface StandardSegmentBuilderGroupNode {

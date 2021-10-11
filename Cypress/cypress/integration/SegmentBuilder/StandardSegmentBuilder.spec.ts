@@ -124,7 +124,7 @@ describe('This test should check that the audience feature forms are working pro
             method: 'POST',
             headers: { Authorization: data.accessToken },
             body: {
-              $user_account_id: 'test_match_audience_builder',
+              $user_account_id: 'test_match_standard_segment_builder',
               $type: 'APP_VISIT',
               $site_id: `${responseChannel.body.data.id}`,
               $session_status: 'NO_SESSION',
@@ -150,7 +150,7 @@ describe('This test should check that the audience feature forms are working pro
             cy.get('.mcs-standardSegmentBuilder_audienceFeatureContent')
               .first()
               .within(() => {
-                cy.get('.mcs-formSearchInput').type('test_match_audience_builder');
+                cy.get('.mcs-formSearchInput').type('test_match_standard_segment_builder');
               });
             cy.get('.mcs-standardSegmentBuilder_dashboard_refresh_button').click();
             cy.get('.mcs-standardSegmentBuilder_totalAudience').should('not.contain', '0');
@@ -203,7 +203,7 @@ describe('This test should check that the audience feature forms are working pro
             method: 'POST',
             headers: { Authorization: data.accessToken },
             body: {
-              $user_account_id: 'test_match_audience_builder',
+              $user_account_id: 'test_match_standard_segment_builder',
               $type: 'APP_VISIT',
               $site_id: `${responseChannel.body.data.id}`,
               $session_status: 'NO_SESSION',
@@ -237,7 +237,7 @@ describe('This test should check that the audience feature forms are working pro
           );
 
           cy.get('.mcs-standardSegmentBuilder_audienceFeatureContent').within(() => {
-            cy.get('.mcs-formSearchInput').type('test_match_audience_builder{enter}');
+            cy.get('.mcs-formSearchInput').type('test_match_standard_segment_builder{enter}');
           });
 
           cy.get('.mcs-standardSegmentBuilder_dashboard_refresh_button').click();
