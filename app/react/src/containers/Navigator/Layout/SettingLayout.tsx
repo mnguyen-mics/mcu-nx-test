@@ -11,7 +11,7 @@ import { NavigatorSettingsMainMenu, NavigatorSettingsSideMenu, NavigatorMenu } f
 import * as MenuActions from '../../../redux/Menu/actions';
 import { Button } from '@mediarithmics-private/mcs-components-library';
 import { compose } from 'recompose';
-import { MenuMode } from 'antd/lib/menu';
+import { MenuMode } from 'rc-menu/lib/interface';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
 
 const { Sider } = Layout;

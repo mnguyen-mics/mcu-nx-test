@@ -4,7 +4,7 @@ import { DownOutlined } from '@ant-design/icons';
 import { Row, Col, Menu, Button } from 'antd';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { compose } from 'recompose';
-import { MenuInfo } from '../../../../../../../../node_modules/antd/node_modules/rc-menu/lib/interface';
+import { MenuInfo } from 'rc-menu/lib/interface';
 import { GoalSelectionResource, AttributionSelectionResource } from '../../../../../models/goal';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';

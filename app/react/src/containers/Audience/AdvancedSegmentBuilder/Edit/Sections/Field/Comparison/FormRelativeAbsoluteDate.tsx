@@ -15,6 +15,7 @@ import { RadioChangeEvent } from 'antd/lib/radio';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { TimeComparisonOperator } from '../../../../../../../models/datamart/graphdb/QueryDocument';
 import { DatePickerProps } from 'antd/lib/date-picker';
+import { valueType } from 'antd/lib/statistic/utils';
 
 const messages = defineMessages({
   absolute: {
@@ -141,13 +142,13 @@ export default class FormRelativeAbsoluteDate extends React.Component<
     return 0;
   };
 
-  onValueChange = (e: number | undefined) => {
+  onValueChange = (e: valueType) => {
     if (!isNaN(e as number)) {
       return this.generateRelativeValue(e);
     }
   };
 
-  generateRelativeValue = (value: number | undefined) => {
+  generateRelativeValue = (value: valueType) => {
     const { noListValue } = this.props;
     return this.props.input.onChange(
       noListValue

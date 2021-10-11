@@ -3,14 +3,13 @@ import { connect } from 'react-redux';
 import { Link, withRouter, matchPath } from 'react-router-dom';
 import { Menu } from 'antd';
 import { FormattedMessage } from 'react-intl';
-import { MenuInfo } from '../../../../../node_modules/antd/node_modules/rc-menu/lib/interface';
+import { MenuInfo, MenuMode } from 'rc-menu/lib/interface';
 import { getDefaultDatamart } from '../../redux/Session/selectors';
 
 import { menuDefinitions } from '../../routes/menuDefinition';
 
 import { compose } from 'recompose';
 import { RouteComponentProps } from 'react-router';
-import { MenuMode } from 'antd/lib/menu';
 import { injectFeatures, InjectedFeaturesProps } from '../Features';
 import { NavigatorMenuDefinition, NavigatorSubMenuDefinition } from '../../routes/domain';
 import { DatamartResource } from '../../models/datamart/DatamartResource';

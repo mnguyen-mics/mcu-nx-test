@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { OTQLCountResult } from '../../../models/datamart/graphdb/OTQLResult';
 import { QueryResult } from './AdvancedSegmentBuilder';
 import Counter from './Counter';
 import TimelineSelector from './TimelineSelector';
@@ -65,7 +66,9 @@ export default class CounterList extends React.Component<CounterListProps, any> 
         >
           {queryResults.map((v, i) => {
             const value =
-              v.otqlResult && v.otqlResult.rows.length > 0 ? v.otqlResult.rows[0].count : undefined;
+              v.otqlResult && v.otqlResult.rows.length > 0
+                ? (v.otqlResult.rows[0] as OTQLCountResult).count
+                : undefined;
             const error = v.error || (v.otqlResult ? v.otqlResult.timed_out : undefined);
             return (
               <Counter

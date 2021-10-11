@@ -108,7 +108,7 @@ class AssetsActionbar extends React.Component<Props, AssetsActionbarState> {
     const {
       intl: { formatMessage },
     } = this.props;
-    const isSizeOK = file.size < maxFileSize;
+    const isSizeOK = file.size && file.size < maxFileSize;
     if (!isSizeOK) {
       message.error(`${file.name} ${formatMessage(messages.uploadError)}`, 2);
     }
@@ -116,7 +116,7 @@ class AssetsActionbar extends React.Component<Props, AssetsActionbarState> {
 
   filterFileList = (fileList: UploadFile[]) => {
     return fileList.filter(item => {
-      return item.size < maxFileSize;
+      return item.size && item.size < maxFileSize;
     });
   };
 

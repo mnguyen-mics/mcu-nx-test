@@ -19,7 +19,7 @@ import { NavigatorMenu } from '../../../containers/Menu';
 import { Logo } from '../../../containers/Logo';
 import * as MenuActions from '../../../redux/Menu/actions';
 import { compose } from 'recompose';
-import { MenuMode } from 'antd/lib/menu';
+import { MenuMode } from 'rc-menu/lib/interface';
 import { MicsReduxState } from '../../../utils/ReduxHelper';
 import { Button } from '@mediarithmics-private/mcs-components-library';
 import { UserProfileResource } from '../../../models/directory/UserProfileResource';
