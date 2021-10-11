@@ -76,7 +76,7 @@ class AudienceFeatureCard extends React.Component<Props, State> {
     };
 
     const menu = (
-      <Menu>
+      <Menu className='mcs-standardSegmentBuilder_finalValuesMenu'>
         {finalValues.slice(5, finalValues.length).map((value, i) => {
           const isSelected = isFinaValueSelected(audienceFeature.id, value);
           return (
@@ -131,8 +131,8 @@ class AudienceFeatureCard extends React.Component<Props, State> {
                       <div key={v.parameter_name}>
                         <CalendarOutlined />
                         &nbsp;
-                        <Tooltip color='#bce1e6' title={v.parameter_name}>
-                          {truncate(v.parameter_name)}
+                        <Tooltip color='#E8F7FC' title={v.parameter_name}>
+                          {truncate(50, v.parameter_name)}
                         </Tooltip>
                       </div>
                     );
@@ -165,7 +165,7 @@ class AudienceFeatureCard extends React.Component<Props, State> {
                             : ''
                         } ${isSettingsMode ? 'notAllowed' : ''}`}
                       >
-                        {truncate(value)}
+                        {truncate(18, value)}
                       </span>
                       {index === values.length - 1 ? '' : ', '}
                     </Tooltip>

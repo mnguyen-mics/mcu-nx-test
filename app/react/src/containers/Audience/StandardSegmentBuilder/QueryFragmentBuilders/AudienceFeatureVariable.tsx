@@ -266,7 +266,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
       name: name,
       formItemProps: {
         label: (
-          <Tooltip title={variable.parameter_name}>{truncate(variable.parameter_name)}</Tooltip>
+          <Tooltip title={variable.parameter_name}>{truncate(18, variable.parameter_name)}</Tooltip>
         ),
 
         ...fieldGridConfig,
@@ -325,7 +325,9 @@ class AudienceFeatureVariable extends React.Component<Props> {
           component={FormSearchObject}
           formItemProps={{
             label: (
-              <Tooltip title={variable.parameter_name}>{truncate(variable.parameter_name)}</Tooltip>
+              <Tooltip title={variable.parameter_name}>
+                {truncate(18, variable.parameter_name)}
+              </Tooltip>
             ),
             ...fieldGridConfig,
           }}
@@ -377,7 +379,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
               formItemProps={{
                 label: (
                   <Tooltip title={variable.parameter_name}>
-                    {truncate(variable.parameter_name)}
+                    {truncate(18, variable.parameter_name)}
                   </Tooltip>
                 ),
                 ...fieldGridConfig,
@@ -407,7 +409,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
               formItemProps={{
                 label: (
                   <Tooltip title={variable.parameter_name}>
-                    {truncate(variable.parameter_name)}
+                    {truncate(18, variable.parameter_name)}
                   </Tooltip>
                 ),
                 ...fieldGridConfig,
@@ -430,7 +432,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
               formItemProps={{
                 label: (
                   <Tooltip title={variable.parameter_name}>
-                    {truncate(variable.parameter_name)}
+                    {truncate(18, variable.parameter_name)}
                   </Tooltip>
                 ),
                 ...fieldGridConfig,
@@ -460,7 +462,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
               formItemProps={{
                 label: (
                   <Tooltip title={variable.parameter_name}>
-                    {truncate(variable.parameter_name)}
+                    {truncate(18, variable.parameter_name)}
                   </Tooltip>
                 ),
                 ...fieldGridConfig,
@@ -495,7 +497,7 @@ class AudienceFeatureVariable extends React.Component<Props> {
               formItemProps={{
                 label: (
                   <Tooltip title={variable.parameter_name}>
-                    {truncate(variable.parameter_name)}
+                    {truncate(18, variable.parameter_name)}
                   </Tooltip>
                 ),
                 ...fieldGridConfig,

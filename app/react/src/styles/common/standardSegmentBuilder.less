@@ -459,6 +459,9 @@
         &::-webkit-scrollbar {
           display: none;
         }
+        .ant-tooltip-inner {
+          color: black;
+        }
       }
       .mcs-standardSegmentBuilder_featureCardFinalValues {
         padding-left: 1px;
@@ -518,6 +521,17 @@
 .notAllowed {
   &:hover {
     cursor: not-allowed;
+  }
+}
+
+.mcs-standardSegmentBuilder_finalValuesMenu {
+  max-height: 250px;
+  overflow-y: scroll;
+  -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  &::-webkit-scrollbar {
+    display: none;
   }
 }
 

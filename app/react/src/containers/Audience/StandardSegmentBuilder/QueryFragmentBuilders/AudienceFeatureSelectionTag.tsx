@@ -16,9 +16,11 @@ export interface AudienceFeatureSelectionTagProps {
   onClose: (featureId: string) => () => void;
 }
 
-export const truncate = (stringValue?: string) => {
+export const truncate = (stringLimit: number, stringValue?: string) => {
   if (!stringValue) return;
-  return stringValue.length > 18 ? stringValue.substring(0, 15) + '...' : stringValue;
+  return stringValue.length > stringLimit
+    ? stringValue.substring(0, stringLimit - 3) + '...'
+    : stringValue;
 };
 
 interface State {
@@ -75,10 +77,10 @@ class AudienceFeatureSelectionTag extends React.Component<Props, State> {
         }`}
       >
         <Tag closable={true} onClose={onClose(audienceFeatureId)}>
-          {truncate(audienceFeature?.name)}
+          {truncate(18, audienceFeature?.name)}
           {finalValues && finalValues.length > 0 && ': '}
           {finalValues?.slice(0, 3).map((v, i) => {
-            return finalValues.length === 1 ? truncate(v) : truncate(v) + ', ';
+            return finalValues.length === 1 ? truncate(18, v) : truncate(18, v) + ', ';
           })}
           {finalValues && finalValues.length > 3 ? ` +${finalValues.length - 3}` : ''}
         </Tag>

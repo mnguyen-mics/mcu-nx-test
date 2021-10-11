@@ -229,11 +229,13 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
       audienceFeature: AudienceFeatureResource,
     ): StandardSegmentBuilderParametricPredicateNode => {
       const generateParameters = () => {
-        const parameters: { [key: string]: string | string[] | number | number[] | undefined } = {};
-
+        const parameters: { [key: string]: any } = {};
+        const concatenateOrNot = (newValue: any, existingValue?: any) => {
+          return existingValue ? existingValue.concat(newValue) : [newValue];
+        };
+        const finalValues = audienceFeatureSelection[audienceFeature.id].finalValues;
         if (audienceFeature.variables) {
           audienceFeature.variables.forEach(v => {
-            const finalValues = audienceFeatureSelection[audienceFeature.id].finalValues;
             if (finalValues) {
               finalValues.forEach(val => {
                 if (v.values?.includes(val)) {
@@ -243,11 +245,13 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
                       case 'Float':
                       case 'ID':
                         parameters[v.parameter_name] = typeList
-                          ? [parseInt(val, 10)]
+                          ? concatenateOrNot(parseInt(val, 10), parameters[v.parameter_name])
                           : parseInt(val, 10);
                         break;
                       default:
-                        parameters[v.parameter_name] = typeList ? [val] : val;
+                        parameters[v.parameter_name] = typeList
+                          ? concatenateOrNot(val, parameters[v.parameter_name])
+                          : val;
                         break;
                     }
                   };
