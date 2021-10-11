@@ -37,7 +37,9 @@ import {
   EmptyTableView,
   McsIcon,
   TableViewFilters,
+  TreeSelectFilter,
 } from '@mediarithmics-private/mcs-components-library';
+import { TreeSelectFilterProps } from '@mediarithmics-private/mcs-components-library/lib/components/tree-select-filter';
 import { formatMetric } from '../../../../utils/MetricHelper';
 import { compose } from 'recompose';
 import {
@@ -59,7 +61,6 @@ import { notifyError } from '../../../../redux/Notifications/actions';
 import { Label } from '../../../Labels/Labels';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
 import { audienceSegmentTypeMessages, userListFeedTypeMessages } from '../Dashboard/messages';
-import TreeSelectFilter, { TreeSelectFilterProps } from '../../../../components/TreeSelectFilter';
 import {
   ActionsColumnDefinition,
   DataColumnDefinition,
