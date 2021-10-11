@@ -103,6 +103,12 @@ export type UserQuerySegmentSubtype =
   | 'AB_TESTING_CONTROL_GROUP'
   | 'AB_TESTING_EXPERIMENT';
 
+export type UserQuerySegmentEditor =
+  | 'SEGMENT_BUILDER' // TODO to be deleted, new one is ADVANCED_SEGMENT_BUILDER
+  | 'ADVANCED_SEGMENT_BUILDER'
+  | 'AUDIENCE_BUILDER' // TODO to be deleted, new one is STANDARD_SEGMENT_BUILDER
+  | 'STANDARD_SEGMENT_BUILDER';
+
 export interface UserQuerySegment extends AudienceSegmentResource {
   query_id?: string;
   type: 'USER_QUERY';
@@ -111,8 +117,8 @@ export interface UserQuerySegment extends AudienceSegmentResource {
   control_group_id?: string;
   control_group?: boolean;
   target_metric: Engagement;
-  segment_editor?: string;
-  audience_builder_id?: string;
+  segment_editor?: UserQuerySegmentEditor;
+  standard_segment_builder_id?: string;
 }
 
 export type Engagement = 'E_COMMERCE_ENGAGEMENT' | 'CHANNEL_ENGAGEMENT';

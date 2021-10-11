@@ -20,6 +20,7 @@ import {
   StandardSegmentBuilderQueryDocument,
   StandardSegmentBuilderResource,
 } from '../../../models/standardSegmentBuilder/StandardSegmentBuilderResource';
+import { UserQuerySegmentEditor } from '../../../models/audiencesegment/AudienceSegmentResource';
 
 export type JSONQLPreviewContext = 'GOALS' | 'AUTOMATION_BUILDER';
 export interface SegmentBuilderPreviewProps {
@@ -30,7 +31,7 @@ export interface SegmentBuilderPreviewProps {
   context: JSONQLPreviewContext;
   isTrigger?: boolean;
   isEdge?: boolean;
-  segmentEditor?: string;
+  segmentEditor?: UserQuerySegmentEditor;
   standardSegmentBuilder?: StandardSegmentBuilderResource;
 }
 
@@ -75,7 +76,7 @@ class SegmentBuilderPreview extends React.Component<Props> {
       );
     };
 
-    if (segmentEditor === 'AUDIENCE_BUILDER') {
+    if (segmentEditor === 'STANDARD_SEGMENT_BUILDER' || segmentEditor === 'AUDIENCE_BUILDER') {
       const actionbar = (query: StandardSegmentBuilderQueryDocument, datamartId: string) => {
         const onSave = () => {
           if (this.props.onChange) this.props.onChange(JSON.stringify(query));

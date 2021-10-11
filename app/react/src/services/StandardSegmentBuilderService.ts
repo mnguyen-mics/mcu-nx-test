@@ -47,13 +47,11 @@ export default class StandardSegmentBuilderService implements IStandardSegmentBu
   @inject(TYPES.IAudienceFeatureService)
   private _audienceFeatureService: IAudienceFeatureService;
 
-  // TODO: rename all endpoints with /standard_segment_builders
-
   createStandardSegmentBuilder(
     datamartId: string,
     body: Partial<StandardSegmentBuilderResource>,
   ): Promise<DataResponse<StandardSegmentBuilderResource>> {
-    const endpoint = `datamarts/${datamartId}/audience_builders`;
+    const endpoint = `datamarts/${datamartId}/standard_segment_builders`;
     return ApiService.postRequest(endpoint, body);
   }
 
@@ -61,7 +59,7 @@ export default class StandardSegmentBuilderService implements IStandardSegmentBu
     datamartId: string,
     options?: StandardSegmentBuilderOptions,
   ): Promise<DataListResponse<StandardSegmentBuilderResource>> {
-    const endpoint = `datamarts/${datamartId}/audience_builders`;
+    const endpoint = `datamarts/${datamartId}/standard_segment_builders`;
     return ApiService.getRequest(endpoint, options);
   }
 
@@ -69,7 +67,7 @@ export default class StandardSegmentBuilderService implements IStandardSegmentBu
     datamartId: string,
     segmentBuilderId: string,
   ): Promise<DataResponse<StandardSegmentBuilderResource>> {
-    const endpoint = `datamarts/${datamartId}/audience_builders/${segmentBuilderId}`;
+    const endpoint = `datamarts/${datamartId}/standard_segment_builders/${segmentBuilderId}`;
     return ApiService.getRequest(endpoint);
   }
 
@@ -79,7 +77,7 @@ export default class StandardSegmentBuilderService implements IStandardSegmentBu
   ): Promise<StandardSegmentBuilderFormData> {
     return this.getStandardSegmentBuilder(datamartId, segmentBuilderId).then(builder => {
       return Promise.all(
-        builder.data.demographics_features_ids.map(id => {
+        builder.data.initial_audience_feature_ids.map(id => {
           return this._audienceFeatureService
             .getAudienceFeature(datamartId, id)
             .then(feature => feature.data);
@@ -100,7 +98,7 @@ export default class StandardSegmentBuilderService implements IStandardSegmentBu
     standardSegmentBuilderId: string,
     body: Partial<StandardSegmentBuilderResource>,
   ): Promise<DataResponse<StandardSegmentBuilderResource>> {
-    const endpoint = `datamarts/${datamartId}/audience_builders/${standardSegmentBuilderId}`;
+    const endpoint = `datamarts/${datamartId}/standard_segment_builders/${standardSegmentBuilderId}`;
     return ApiService.putRequest(endpoint, body);
   }
 
@@ -108,7 +106,7 @@ export default class StandardSegmentBuilderService implements IStandardSegmentBu
     datamartId: string,
     standardSegmentBuilderId: string,
   ): Promise<DataResponse<any>> {
-    const endpoint = `datamarts/${datamartId}/audience_builders/${standardSegmentBuilderId}`;
+    const endpoint = `datamarts/${datamartId}/standard_segment_builders/${standardSegmentBuilderId}`;
     return ApiService.deleteRequest(endpoint);
   }
 }

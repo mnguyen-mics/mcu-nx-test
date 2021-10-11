@@ -95,10 +95,10 @@ class StandardSegmentBuilderEditPage extends React.Component<Props, State> {
       ...formData.standardSegmentBuilder,
     };
 
-    const demographics = formData.initialAudienceFeatures;
+    const initialAudienceFeatures = formData.initialAudienceFeatures;
 
-    if (demographics) {
-      newFormData.demographics_features_ids = demographics.map(d => d.model.id);
+    if (initialAudienceFeatures) {
+      newFormData.initial_audience_feature_ids = initialAudienceFeatures.map(d => d.model.id);
     }
 
     const promise = standardSegmentBuilderId
