@@ -15,6 +15,8 @@ import {
   updateSearch,
   parseSearch,
   compareSearches,
+  isSearchValid,
+  buildDefaultSearch,
 } from '../../../../../utils/LocationSearchHelper';
 import { DISPLAY_DASHBOARD_SEARCH_SETTINGS } from '../constants';
 import messages from '../messages';
@@ -33,6 +35,7 @@ const LegendChartTS = LegendChart as any;
 export interface AdCardProps {
   ad: AdInfoResource;
   adGroupId: string;
+  dateRange?: McsDateRangeValue;
 }
 
 interface Stats {
@@ -67,11 +70,23 @@ class AdCard extends React.Component<Props, State> {
       match: {
         params: { organisationId, campaignId },
       },
-      location: { search },
+      history,
+      location: { search, pathname },
+      dateRange,
     } = this.props;
-    const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
 
-    this.fetchData(organisationId, ad.creative_id, filter.from, filter.to, campaignId);
+    if (dateRange) {
+      this.fetchData(organisationId, ad.creative_id, dateRange.from, dateRange.to, campaignId);
+    } else if (!isSearchValid(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS)) {
+      history.replace({
+        pathname: pathname,
+        search: buildDefaultSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS),
+        state: { reloadDataSource: true },
+      });
+    } else {
+      const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
+      this.fetchData(organisationId, ad.creative_id, filter.from, filter.to, campaignId);
+    }
   }
 
   componentDidUpdate(previousProps: Props) {
