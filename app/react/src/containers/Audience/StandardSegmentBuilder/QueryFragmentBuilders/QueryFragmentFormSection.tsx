@@ -33,7 +33,7 @@ export interface QueryFragmentFormSectionProps {
   datamartId: string;
   timelineConfiguration: TimelineConfiguration;
   selectAndAddFeature: (
-    addToGroup: (_: StandardSegmentBuilderParametricPredicateNode) => void,
+    addToGroup: (_: StandardSegmentBuilderParametricPredicateNode[]) => void,
   ) => () => void;
   change: (field: string, value: any) => void;
   objectTypes: ObjectLikeTypeInfoResource[];
@@ -55,7 +55,7 @@ class QueryFragmentFormSection extends React.Component<Props> {
   // Utilities
 
   private addToGroup = (groupIndex: number) => (
-    predicate: StandardSegmentBuilderParametricPredicateNode,
+    predicates: StandardSegmentBuilderParametricPredicateNode[],
   ) => {
     const { fields, change } = this.props;
 
@@ -63,7 +63,7 @@ class QueryFragmentFormSection extends React.Component<Props> {
       if (i === groupIndex) {
         return {
           ...field,
-          expressions: field.expressions.concat(predicate),
+          expressions: field.expressions.concat(predicates),
         };
       } else {
         return field;

@@ -136,6 +136,10 @@ export const messages: {
     id: 'standardSegmentBuilder.audienceFeatureSelector.noData',
     defaultMessage: 'No data',
   },
+  more: {
+    id: 'standardSegmentBuilder.audienceFeatureSelector.moreFinalValues',
+    defaultMessage: 'More',
+  },
 });
 
 export const fieldGridConfig = {

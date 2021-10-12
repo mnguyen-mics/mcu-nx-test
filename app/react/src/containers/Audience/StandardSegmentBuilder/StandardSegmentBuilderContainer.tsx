@@ -42,6 +42,7 @@ import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
 import AudienceFeatureSelector, {
+  AudienceFeatureSelection,
   AudienceFeatureSelectorProps,
 } from './QueryFragmentBuilders/AudienceFeatureSelector';
 
@@ -212,48 +213,57 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
 
   private addToNewGroup = (
     save: (_: StandardSegmentBuilderParametricPredicateGroupNode) => void,
-  ) => (predicate: StandardSegmentBuilderParametricPredicateNode) => {
+  ) => (predicates: StandardSegmentBuilderParametricPredicateNode[]) => {
     const newGroup: StandardSegmentBuilderParametricPredicateGroupNode = {
-      expressions: [predicate],
+      expressions: predicates,
     };
     save(newGroup);
   };
 
   private addAudienceFeature = (
-    processPredicate: (_: StandardSegmentBuilderParametricPredicateNode) => void,
-  ) => (audienceFeatures: AudienceFeatureResource[], finalValue?: string) => {
+    processPredicate: (_: StandardSegmentBuilderParametricPredicateNode[]) => void,
+  ) => (audienceFeatureSelection: AudienceFeatureSelection) => {
     const { closeNextDrawer } = this.props;
 
     const newParametricPredicate = (
       audienceFeature: AudienceFeatureResource,
     ): StandardSegmentBuilderParametricPredicateNode => {
       const generateParameters = () => {
-        const parameters: { [key: string]: string | string[] | number | number[] | undefined } = {};
-
+        const parameters: { [key: string]: any } = {};
+        const concatenateOrNot = (newValue: any, existingValue?: any) => {
+          return existingValue ? existingValue.concat(newValue) : [newValue];
+        };
+        const finalValues = audienceFeatureSelection[audienceFeature.id].finalValues;
         if (audienceFeature.variables) {
           audienceFeature.variables.forEach(v => {
-            if (finalValue && v.values?.includes(finalValue)) {
-              const insertFinalValue = (typeList: boolean) => {
-                switch (v.type) {
-                  case 'Int':
-                  case 'Float':
-                  case 'ID':
-                    parameters[v.parameter_name] = typeList
-                      ? [parseInt(finalValue, 10)]
-                      : parseInt(finalValue, 10);
-                    break;
-                  default:
-                    parameters[v.parameter_name] = typeList ? [finalValue] : finalValue;
-                    break;
+            if (finalValues) {
+              finalValues.forEach(val => {
+                if (v.values?.includes(val)) {
+                  const insertFinalValue = (typeList: boolean) => {
+                    switch (v.type) {
+                      case 'Int':
+                      case 'Float':
+                      case 'ID':
+                        parameters[v.parameter_name] = typeList
+                          ? concatenateOrNot(parseInt(val, 10), parameters[v.parameter_name])
+                          : parseInt(val, 10);
+                        break;
+                      default:
+                        parameters[v.parameter_name] = typeList
+                          ? concatenateOrNot(val, parameters[v.parameter_name])
+                          : val;
+                        break;
+                    }
+                  };
+                  if (v.container_type === 'List') {
+                    insertFinalValue(true);
+                  } else {
+                    insertFinalValue(false);
+                  }
+                } else {
+                  parameters[v.parameter_name] = undefined;
                 }
-              };
-              if (v.container_type === 'List') {
-                insertFinalValue(true);
-              } else {
-                insertFinalValue(false);
-              }
-            } else {
-              parameters[v.parameter_name] = undefined;
+              });
             }
           });
         }
@@ -265,22 +275,25 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
         parameters: generateParameters(),
       };
     };
+    const predicates: StandardSegmentBuilderParametricPredicateNode[] = Object.keys(
+      audienceFeatureSelection,
+    ).map(featureKey => {
+      return newParametricPredicate(audienceFeatureSelection[featureKey].audienceFeature);
+    });
 
-    if (audienceFeatures[0]) {
-      const predicate = newParametricPredicate(audienceFeatures[0]);
-      processPredicate(predicate);
+    processPredicate(predicates);
 
-      // TODO put in processPredicate ?
-      this.setState({
-        audienceFeatures: this.state.audienceFeatures?.concat(audienceFeatures[0]),
-      });
-
-      closeNextDrawer();
-    }
+    const newAudienceFeatures = Object.keys(audienceFeatureSelection).map(id => {
+      return audienceFeatureSelection[id].audienceFeature;
+    });
+    this.setState({
+      audienceFeatures: this.state.audienceFeatures?.concat(newAudienceFeatures),
+    });
+    closeNextDrawer();
   };
 
   private selectNewAudienceFeature = (
-    onSelect: (_: AudienceFeatureResource[], finalValue?: string) => void,
+    onSelect: (audienceFeatureSelection: AudienceFeatureSelection) => void,
   ) => {
     const { openNextDrawer, standardSegmentBuilder } = this.props;
 
@@ -296,7 +309,7 @@ class StandardSegmentBuilderContainer extends React.Component<Props, State> {
   };
 
   private selectAndAddFeature = (
-    processPredicate: (_: StandardSegmentBuilderParametricPredicateNode) => void,
+    processPredicate: (_: StandardSegmentBuilderParametricPredicateNode[]) => void,
   ) => () => {
     this.selectNewAudienceFeature(this.addAudienceFeature(processPredicate));
   };

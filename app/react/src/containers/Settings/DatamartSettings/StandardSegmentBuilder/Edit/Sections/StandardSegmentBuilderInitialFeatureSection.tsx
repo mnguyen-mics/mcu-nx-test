@@ -5,7 +5,6 @@ import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router';
 import cuid from 'cuid';
 import { FormSection } from '../../../../../../components/Form';
-import { AudienceFeatureResource } from '../../../../../../models/audienceFeature';
 import injectDrawer, {
   InjectedDrawerProps,
 } from '../../../../../../components/Drawer/injectDrawer';
@@ -15,6 +14,7 @@ import { AudienceFeatureModel } from '../domain';
 import { ReduxFormChangeProps } from '../../../../../../utils/FormHelper';
 import { InfoCircleFilled } from '@ant-design/icons';
 import AudienceFeatureSelector, {
+  AudienceFeatureSelection,
   AudienceFeatureSelectorProps,
 } from '../../../../../Audience/StandardSegmentBuilder/QueryFragmentBuilders/AudienceFeatureSelector';
 
@@ -54,14 +54,16 @@ class StandardSegmentBuilderInitialFeatureSection extends React.Component<Props>
     });
   };
 
-  addAudienceFeature = (audienceFeatures: AudienceFeatureResource[]) => {
+  addAudienceFeature = (audienceFeatureSelection: AudienceFeatureSelection) => {
     const { fields, formChange, closeNextDrawer } = this.props;
 
     const newFields: AudienceFeatureModel[] = [];
     newFields.push(...fields.getAll());
-    newFields.push({
-      key: cuid(),
-      model: audienceFeatures[0],
+    Object.keys(audienceFeatureSelection).forEach(featureId => {
+      newFields.push({
+        key: cuid(),
+        model: audienceFeatureSelection[featureId].audienceFeature,
+      });
     });
 
     formChange((fields as any).name, newFields);
@@ -80,6 +82,7 @@ class StandardSegmentBuilderInitialFeatureSection extends React.Component<Props>
       datamartId: datamartId,
       close: this.props.closeNextDrawer,
       save: this.addAudienceFeature,
+      isSettingsMode: true,
     };
 
     openNextDrawer<AudienceFeatureSelectorProps>(AudienceFeatureSelector, {

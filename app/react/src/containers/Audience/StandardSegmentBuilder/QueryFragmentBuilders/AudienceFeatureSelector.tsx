@@ -1,8 +1,8 @@
 import * as React from 'react';
 import _ from 'lodash';
-import { Input, Row, Col, Breadcrumb, AutoComplete, Spin } from 'antd';
+import { Input, Row, Col, Breadcrumb, AutoComplete, Spin, Button as AntButton } from 'antd';
 import { compose } from 'recompose';
-import { injectIntl, InjectedIntlProps } from 'react-intl';
+import { injectIntl, InjectedIntlProps, FormattedMessage } from 'react-intl';
 import { RouteComponentProps } from 'react-router';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
@@ -29,9 +29,7 @@ import { FolderOutlined } from '@ant-design/icons';
 import { messages } from '../constants';
 import Layout from 'antd/lib/layout/layout';
 import { PaginationProps } from 'antd/lib/pagination';
-import { InjectedFeaturesProps, injectFeatures } from '../../../Features';
-
-const Search = Input.Search;
+import AudienceFeatureSelectionTag from './AudienceFeatureSelectionTag';
 export interface Filter {
   currentPage: number;
   pageSize: number;
@@ -40,16 +38,23 @@ interface MapStateToProps {
   formValues: StandardSegmentBuilderFormData;
 }
 
+export interface AudienceFeatureSelection {
+  [key: string]: {
+    audienceFeature: AudienceFeatureResource;
+    finalValues: string[] | undefined;
+  };
+}
+
 export interface AudienceFeatureSelectorProps {
   datamartId: string;
-  save: (audienceFeatures: AudienceFeatureResource[], finalValue?: string) => void;
+  save: (audienceFeatureSelection: AudienceFeatureSelection) => void;
   close: () => void;
+  isSettingsMode?: boolean;
 }
 
 interface State {
   isLoading: boolean;
   audienceFeatureFolders?: AudienceFeatureFolderResource[];
-  selectedAudienceFeature?: AudienceFeatureResource;
   currentAudienceFeatureFolder?: AudienceFeatureFolderResource;
   currentAudienceFeatures?: AudienceFeatureResource[];
   hideFolder?: boolean;
@@ -59,12 +64,12 @@ interface State {
   searchOptions: Array<{ value: string }>;
   isLoadingFinalValues: boolean;
   isJobExecutionExisting?: boolean;
+  audienceFeatureSelection: AudienceFeatureSelection;
 }
 
 type Props = MapStateToProps &
   AudienceFeatureSelectorProps &
   InjectedIntlProps &
-  InjectedFeaturesProps &
   InjectedNotificationProps &
   RouteComponentProps<{ organisationId: string }>;
 
@@ -83,6 +88,7 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
       hideFolder: false,
       searchOptions: [],
       isLoadingFinalValues: false,
+      audienceFeatureSelection: {},
     };
   }
 
@@ -199,13 +205,13 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
         const breadcrmb = path.map(elt => {
           return (
             <Breadcrumb.Item key={elt.id}>
-              <Button onClick={this.onSelectFolder(elt.id)}>{elt.name}</Button>
+              <Button onClick={this.onSelectFolder(elt.id, true)}>{elt.name}</Button>
             </Breadcrumb.Item>
           );
         });
         breadcrmb.unshift(
           <Breadcrumb.Item key={'root_folder'}>
-            <Button onClick={this.onSelectFolder()}>
+            <Button onClick={this.onSelectFolder(undefined, true)}>
               {intl.formatMessage(messages.audienceFeatures)}
             </Button>
           </Breadcrumb.Item>,
@@ -221,13 +227,15 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
     );
   };
 
-  onSelectFolder = (folderId?: string) => () => {
+  onSelectFolder = (folderId?: string, resetKeywords?: boolean) => () => {
     const { searchSettings, audienceFeatureFolders } = this.state;
     this.setState({
       searchSettings: {
         ...searchSettings,
+        keywords: resetKeywords ? '' : searchSettings.keywords,
         currentPage: 1,
       },
+      searchValue: '',
       hideFolder: !!folderId,
       currentAudienceFeatureFolder: folderId
         ? audienceFeatureFolders?.find(f => f.id === folderId)
@@ -235,20 +243,46 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
     });
   };
 
-  onSelectFeature = (featureId: string, finalValue?: string) => () => {
-    const { save } = this.props;
-    const { currentAudienceFeatures } = this.state;
-    const selectedAudienceFeature = currentAudienceFeatures?.find(
-      audienceFeature => audienceFeature.id === featureId,
-    );
-    this.setState(
-      {
-        selectedAudienceFeature,
-      },
-      () => {
-        if (selectedAudienceFeature) save([selectedAudienceFeature], finalValue);
-      },
-    );
+  onSelectFeature = (audienceFeature: AudienceFeatureResource, finalValue?: string) => () => {
+    const { audienceFeatureSelection } = this.state;
+
+    const newAudienceFeatureSelection = audienceFeatureSelection;
+    const featureId = audienceFeature.id;
+    if (Object.keys(audienceFeatureSelection).includes(featureId)) {
+      const addOrDeleteValue = (val?: string) => {
+        const values = audienceFeatureSelection[featureId].finalValues;
+        if (!val) return undefined;
+        return values?.includes(val) ? values.filter(v => v !== finalValue) : values?.concat(val);
+      };
+      newAudienceFeatureSelection[featureId] = {
+        finalValues: !!audienceFeatureSelection[featureId].finalValues
+          ? addOrDeleteValue(finalValue)
+          : !!finalValue
+          ? [finalValue]
+          : undefined,
+        audienceFeature: audienceFeature,
+      };
+    } else {
+      newAudienceFeatureSelection[`${featureId}`] = {
+        finalValues: finalValue ? [finalValue] : undefined,
+        audienceFeature: audienceFeature,
+      };
+    }
+    this.setState({
+      audienceFeatureSelection: newAudienceFeatureSelection,
+    });
+  };
+
+  onTagClose = (featureId: string) => () => {
+    const { audienceFeatureSelection } = this.state;
+    const newAudienceFeatureSelection = audienceFeatureSelection;
+    const keyToRemove = Object.keys(newAudienceFeatureSelection).find(key => key === featureId);
+    if (keyToRemove) {
+      delete newAudienceFeatureSelection[keyToRemove];
+      this.setState({
+        audienceFeatureSelection: newAudienceFeatureSelection,
+      });
+    }
   };
 
   onFilterChange = (newFilter: Filter) => {
@@ -262,11 +296,16 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
     });
   };
 
+  onAddButtonClick = () => {
+    const { audienceFeatureSelection } = this.state;
+    const { save } = this.props;
+    save(audienceFeatureSelection);
+  };
+
   renderSelector = () => {
-    const { intl, hasFeature, datamartId, notifyError } = this.props;
+    const { intl, datamartId, notifyError, isSettingsMode } = this.props;
     const {
       audienceFeatureFolders,
-      selectedAudienceFeature,
       currentAudienceFeatures,
       currentAudienceFeatureFolder,
       searchSettings,
@@ -277,7 +316,9 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
       searchOptions,
       isLoadingFinalValues,
       isJobExecutionExisting,
+      audienceFeatureSelection,
     } = this.state;
+
     const noData =
       (!audienceFeatureFolders || audienceFeatureFolders.length === 0) &&
       (!currentAudienceFeatures || currentAudienceFeatures.length === 0);
@@ -288,13 +329,24 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
 
     const audienceFeatures = currentAudienceFeatures
       ? currentAudienceFeatures.map(feature => {
+          const variables = feature.variables || [];
+          const finalValues = _.flattenDeep(
+            variables.map(v => {
+              const values = v.values || [];
+              return values.map(value => {
+                return value;
+              });
+            }),
+          );
           return (
             <AudienceFeatureCard
               key={'audience_feature-card-' + feature.id}
               audienceFeature={feature}
-              selectedAudienceFeature={selectedAudienceFeature}
               onSelectFeature={this.onSelectFeature}
               searchValue={searchValue}
+              audienceFeatureSelection={audienceFeatureSelection}
+              finalValues={finalValues}
+              isSettingsMode={isSettingsMode}
             />
           );
         })
@@ -392,30 +444,39 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
 
     return (
       <React.Fragment>
-        {hasFeature('audience-feature-search') ? (
-          <AutoComplete
-            className='mcs-standardSegmentBuilder_featureSelector--searchAudienceFeature'
-            value={searchValue}
-            options={searchOptions}
-            dropdownMatchSelectWidth={352}
-            style={{ width: 400 }}
-            onSelect={onSelect}
-            onSearch={onSearch}
-            notFoundContent={isLoadingFinalValues && <Spin />}
-            autoFocus={true}
-          >
-            <Input.Search
-              size='large'
-              placeholder={intl.formatMessage(messages.searchAudienceFeature)}
-              onPressEnter={onPressEnter}
-              onSearch={onPressEnter}
-            />
-          </AutoComplete>
-        ) : (
-          <Search className='mcs-search-input' {...this.getSearchOptions()} />
-        )}
+        <AutoComplete
+          className='mcs-standardSegmentBuilder_featureSelector--searchAudienceFeature'
+          value={searchValue}
+          options={searchOptions}
+          dropdownMatchSelectWidth={352}
+          style={{ width: 400 }}
+          onSelect={onSelect}
+          onSearch={onSearch}
+          notFoundContent={isLoadingFinalValues && <Spin />}
+          autoFocus={true}
+        >
+          <Input.Search
+            size='large'
+            placeholder={intl.formatMessage(messages.searchAudienceFeature)}
+            onPressEnter={onPressEnter}
+            onSearch={onPressEnter}
+          />
+        </AutoComplete>
 
-        {!searchSettings.keywords && this.getBreadCrumb()}
+        <div className='mcs-standardSegmentBuilder_tagsContainer'>
+          {Object.keys(audienceFeatureSelection).map(featureId => {
+            return (
+              <AudienceFeatureSelectionTag
+                key={featureId}
+                datamartId={datamartId}
+                audienceFeatureId={featureId}
+                finalValues={audienceFeatureSelection[`${featureId}`].finalValues}
+                onClose={this.onTagClose}
+              />
+            );
+          })}
+        </div>
+        {this.getBreadCrumb()}
         <Row gutter={16}>
           {!hideFolder &&
             audienceFeatureFolders
@@ -468,6 +529,14 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
     return (
       <Layout className={'mcs-selector-layout'}>
         <Actionbar pathItems={[formatMessage(messages.addAudienceFeature)]} edition={true}>
+          <AntButton
+            type='primary'
+            className='mcs-primary mcs-standardSegmentBuilder_AddFeatureButton'
+            onClick={this.onAddButtonClick}
+          >
+            <McsIcon type='plus' />
+            <FormattedMessage {...messages.addAudienceFeatureButton} />
+          </AntButton>
           <McsIcon type='close' className='close-icon mcs-table-cursor' onClick={close} />
         </Actionbar>
         <Layout className={`mcs-edit-container mcs-standardSegmentBuilder_featureSelector`}>
@@ -480,6 +549,5 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
 
 export default compose<Props, AudienceFeatureSelectorProps>(
   injectIntl,
-  injectFeatures,
   injectNotifications,
 )(AudienceFeatureSelector);
