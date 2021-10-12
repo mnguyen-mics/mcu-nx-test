@@ -3,7 +3,6 @@ const common = require('./webpack.common.js');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const HtmlWebpackExcludeAssetsPlugin = require('html-webpack-exclude-assets-plugin');
 const paths = require('./paths');
 
 module.exports = merge(common, {
@@ -20,10 +19,6 @@ module.exports = merge(common, {
     filename: '[name].[hash].js',
     path: paths.appDistPath,
     publicPath: paths.publicDistPath,
-  },
-
-  node: {
-    fs: 'empty',
   },
 
   module: {
@@ -50,11 +45,16 @@ module.exports = merge(common, {
       inject: true,
       template: paths.appHtml,
       filename: '../index.html',
-      excludeAssets: [/(plateforme|app|console|converged-ww2).*\/style.*.(css|js)/],
+      excludeChunks: [
+        'plateforme.alliancegravity.com/style-less',
+        'converged-ww2.havas.com/style-less',
+        'app.teamjoin.fr/style-less',
+        'console.valiuz.com/style-less',
+      ],
     }),
-    new HtmlWebpackExcludeAssetsPlugin(),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('production'),
+      'process.env.API_ENV': JSON.stringify(process.env.API_ENV),
     }),
   ],
 });

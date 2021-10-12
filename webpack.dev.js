@@ -13,7 +13,7 @@ module.exports = merge(common, {
   devtool: 'eval-source-map',
   devServer: {
     port: 9000,
-    contentBase: paths.appPath,
+    static: paths.appPath,
     liveReload: false,
   },
   output: {
@@ -28,10 +28,6 @@ module.exports = merge(common, {
       'react-dom': path.resolve('./node_modules/react-dom'),
       '@ant-design/icons': path.resolve('./node_modules/@ant-design/icons'),
     },
-  },
-
-  node: {
-    fs: 'empty',
   },
 
   module: {
@@ -61,7 +57,7 @@ module.exports = merge(common, {
       template: paths.appHtml,
     }),
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify('dev'),
+      'process.env.NODE_ENV': JSON.stringify('development'),
       'process.env.API_ENV': JSON.stringify(process.env.API_ENV),
     }),
     new CopyWebpackPlugin([

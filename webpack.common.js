@@ -11,6 +11,7 @@ module.exports = {
     'style-less': paths.appStyleLess,
     'react-vendors': Object.keys(pkg.dependencies),
   },
+  target: 'web',
   module: {
     rules: [
       {
@@ -18,7 +19,7 @@ module.exports = {
         include: paths.reactAppSrc,
         use: {
           loader: 'eslint-loader',
-          query: {
+          options: {
             failOnError: true,
           },
         },
@@ -29,7 +30,7 @@ module.exports = {
         include: paths.reactAppSrc,
         use: {
           loader: 'tslint-loader',
-          query: {
+          options: {
             failOnError: true,
           },
         },
@@ -66,13 +67,13 @@ module.exports = {
         use: [
           {
             loader: 'file-loader',
-            query: {
+            options: {
               name: `${true ? '/src/assets/images/' : ''}[name].[ext]`,
             },
           },
           {
             loader: 'image-webpack-loader',
-            query: {
+            options: {
               bypassOnDebug: true,
               gifsicle: {
                 interlaced: false,
@@ -89,18 +90,6 @@ module.exports = {
         use: 'url-loader',
       },
     ],
-  },
-
-  optimization: {
-    splitChunks: {
-      cacheGroups: {
-        vendor: {
-          test: /[\\/]node_modules[\\/]/,
-          name: 'react-vendors',
-          chunks: 'all',
-        },
-      },
-    },
   },
 
   resolve: {
