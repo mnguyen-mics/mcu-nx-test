@@ -142,14 +142,9 @@ class AdGroupPage extends React.Component<Props, AdGroupPageState> {
       ),
     );
     const getAdPerf = makeCancelable(
-      ReportService.getAdDeliveryReport(
-        organisationId,
-        'ad_group_id',
-        adGroupId,
-        filter.from,
-        filter.to,
-        undefined,
-      ),
+      ReportService.getAdDeliveryReport(organisationId, filter.from, filter.to, [
+        ['sub_campaign_id', adGroupId],
+      ]),
     );
     const getMediaPerf = makeCancelable(
       ReportService.getMediaDeliveryReport(

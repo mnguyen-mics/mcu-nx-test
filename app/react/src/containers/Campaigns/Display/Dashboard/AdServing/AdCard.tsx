@@ -67,6 +67,7 @@ class AdCard extends React.Component<Props, State> {
   componentDidMount() {
     const {
       ad,
+      adGroupId,
       match: {
         params: { organisationId, campaignId },
       },
@@ -76,7 +77,7 @@ class AdCard extends React.Component<Props, State> {
     } = this.props;
 
     if (dateRange) {
-      this.fetchData(organisationId, ad.creative_id, dateRange.from, dateRange.to, campaignId);
+      this.fetchData(organisationId, campaignId, adGroupId, ad.id, dateRange.from, dateRange.to);
     } else if (!isSearchValid(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS)) {
       history.replace({
         pathname: pathname,
@@ -85,13 +86,14 @@ class AdCard extends React.Component<Props, State> {
       });
     } else {
       const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
-      this.fetchData(organisationId, ad.creative_id, filter.from, filter.to, campaignId);
+      this.fetchData(organisationId, campaignId, adGroupId, ad.id, filter.from, filter.to);
     }
   }
 
   componentDidUpdate(previousProps: Props) {
     const {
       ad,
+      adGroupId,
       match: {
         params: { organisationId, campaignId },
       },
@@ -113,7 +115,7 @@ class AdCard extends React.Component<Props, State> {
       campaignId !== previousCampaignId
     ) {
       const filter = parseSearch(search, DISPLAY_DASHBOARD_SEARCH_SETTINGS);
-      this.fetchData(organisationId, ad.creative_id, filter.from, filter.to, campaignId);
+      this.fetchData(organisationId, campaignId, adGroupId, ad.id, filter.from, filter.to);
     }
   }
 
@@ -123,28 +125,26 @@ class AdCard extends React.Component<Props, State> {
 
   fetchData = (
     organisationId: string,
-    creativeId: string,
+    campaignId: string,
+    adGroupId: string,
+    adId: string,
     from: McsMoment,
     to: McsMoment,
-    campaignId: string,
   ) => {
-    const { adGroupId } = this.props;
     const lookbackWindow = to.toMoment().unix() - from.toMoment().unix();
     const dimensions =
       lookbackWindow > 172800 ? ['day', 'campaign_id'] : ['day,hour_of_day', 'campaign_id'];
     const getAdPerf = makeCancelable(
       ReportService.getAdDeliveryReport(
         organisationId,
-        'creative_id',
-        creativeId,
         from,
         to,
+        [
+          ['campaign_id', campaignId],
+          ['sub_campaign_id', adGroupId],
+          ['message_id', adId],
+        ],
         dimensions,
-        undefined,
-        {
-          campaign_id: campaignId,
-          ad_group_id: adGroupId,
-        },
       ),
     );
     this.cancelablePromises.push(getAdPerf);
