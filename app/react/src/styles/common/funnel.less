@@ -469,6 +469,22 @@
   }
 }
 
+.mcs-funnel_closeFunnel {
+  position: absolute;
+  right: 0px;
+  top: 10px;
+  z-index: 5;
+  border: none;
+  font-size: 16px;
+  color: grey;
+  background-color: #fff0;
+  padding: 0;
+  cursor: hand;
+  &:hover {
+    color: grey;
+  }
+}
+
 .mcs-funnel_stepInfo {
   position: absolute;
   padding: 20px 15px;
@@ -655,6 +671,7 @@
 
 .mcs-funnel_conversions {
   position: absolute;
+  float: right;
   right: 15px;
   top: 20px;
   margin: 0;
@@ -663,4 +680,14 @@
   color: @info-color;
   background-color: #e8f7fc;
   border-color: @info-color;
+}
+
+.mcs-funnel_title {
+  font-size: 14px;
+  font-family: 'LLCircularWeb-Book';
+  font-weight: 400;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.65);
+  margin-bottom: -40px;
+  margin-top: 15px;
 }

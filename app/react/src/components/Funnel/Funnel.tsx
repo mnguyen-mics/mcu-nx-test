@@ -22,28 +22,34 @@ import FunnelStepHover, { DimensionMetrics, GlobalMetrics } from './FunnelStepHo
 import cuid from 'cuid';
 import { DimensionsList } from '../../models/datamartUsersAnalytics/datamartUsersAnalytics';
 import FunnelEmptyState from './FunnelEmptyState';
-
-interface StepDelta {
-  dropOff?: string;
-  passThroughPercentage?: string;
-}
+import { ComplementaryInfo } from './FunnelWrapper';
+import { FunnelData, StepDelta } from './FunnelDataFetcher';
 
 interface State {
   lastExecutedQueryAskedTime: number;
 }
 
+const FULL_HEIGHT = 370;
+const REDUCED_HEIGHT = 260;
+
 type FunnelProps = {
   funnelId: string;
+  title?: string;
   startIndex: number;
   isLoading: boolean;
   datamartId: string;
   filter: FunnelFilter[];
-  funnelData?: GroupedByFunnel;
+  funnelData?: FunnelData;
   dimensionsList: DimensionsList;
-  closeGroupBy: () => void;
-  openGroupBy: (index: number, dimensionName: string) => void;
   isStepLoading: boolean;
   initialState: boolean;
+  stepsNumber?: number;
+  fullHeight: boolean;
+  shouldRenderHeader: boolean;
+  closeGroupBy: () => void;
+  openGroupBy: (index: number, dimensionName: string) => void;
+  openComplementaryFunnel?: (complementaryInfo: ComplementaryInfo) => void;
+  closeFunnel?: () => void;
 };
 
 type Props = FunnelProps &
@@ -79,36 +85,42 @@ class Funnel extends React.Component<Props, State> {
 
   // listener cleanup
   componentWillUnmount() {
-    window.removeEventListener('resize', this.drawSteps.bind(this));
+    // window.removeEventListener('resize', this.draw.bind(this));
   }
 
   componentDidMount() {
-    window.addEventListener('resize', this.drawSteps.bind(this));
+    // window.addEventListener('resize', this.draw.bind(this));
   }
 
-  draw = (funnelData: GroupedByFunnel, startIndex: number, stepsDelta: StepDelta[]) => {
-    this.drawSteps(funnelData, startIndex, stepsDelta);
+  draw = () => {
+    const { funnelData, startIndex } = this.props;
+    if (funnelData) this.drawSteps(funnelData, startIndex);
   };
 
-  drawSteps = (funnelData: GroupedByFunnel, startIndex: number, stepsDelta: StepDelta[]) => {
-    const steps = funnelData.global.steps.slice(startIndex);
-    const total = funnelData.global.total;
+  drawSteps = (funnelData: FunnelData, startIndex: number) => {
+    const {} = this.props;
+    if (!!funnelData) {
+      const funnelResult = funnelData.groupedFunnel;
+      const stepsDelta = funnelData.stepsDelta;
+      const steps = funnelResult.global.steps.slice(startIndex);
+      const total = funnelResult.global.total;
 
-    steps.forEach((step: Steps, index: number) => {
-      const start =
-        index === 0 && startIndex === 0
-          ? total
-          : funnelData.global.steps[startIndex + index - 1].count;
-      this.drawCanvas(
-        funnelData,
-        total,
-        start,
-        step.count,
-        index + 1 + startIndex,
-        steps.length,
-        stepsDelta,
-      );
-    });
+      steps.forEach((step: Steps, index: number) => {
+        const start =
+          index === 0 && startIndex === 0
+            ? total
+            : funnelResult.global.steps[startIndex + index - 1].count;
+        this.drawCanvas(
+          funnelResult,
+          total,
+          start,
+          step.count,
+          index + 1 + startIndex,
+          steps.length,
+          stepsDelta,
+        );
+      });
+    }
   };
 
   drawCanvas = (
@@ -120,9 +132,10 @@ class Funnel extends React.Component<Props, State> {
     totalSteps: number,
     stepsDelta: StepDelta[],
   ) => {
-    const { funnelId } = this.props;
+    const { funnelId, fullHeight } = this.props;
     const container = document.getElementById(`container_${funnelId}`);
     const canvas = document.getElementById(`canvas_${funnelId}_${stepIndex}`) as HTMLCanvasElement;
+    const pxHeight = fullHeight ? FULL_HEIGHT : REDUCED_HEIGHT;
 
     if (canvas) {
       const drawWidth = container && container.offsetWidth / totalSteps;
@@ -131,10 +144,10 @@ class Funnel extends React.Component<Props, State> {
       const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
       const dpi = window.devicePixelRatio;
       canvas.width = (drawWidth || 0) * dpi;
-      canvas.height = 370 * dpi;
+      canvas.height = pxHeight * dpi;
 
       canvas.style.width = (drawWidth || 0).toString() + 'px';
-      canvas.style.height = 370 + 'px';
+      canvas.style.height = pxHeight + 'px';
 
       ctx.scale(dpi, dpi);
 
@@ -170,8 +183,8 @@ class Funnel extends React.Component<Props, State> {
     passThroughPercentage?: string,
     passThroughTime?: string,
   ) => {
-    const { intl } = this.props;
-    const drawerHeight = 370;
+    const { intl, fullHeight } = this.props;
+    const drawerHeight = fullHeight ? FULL_HEIGHT : REDUCED_HEIGHT;
 
     const percentageStart = getPercentage(total - startCount, total);
     const percentageEnd = getPercentage(total - endCount, total);
@@ -214,43 +227,6 @@ class Funnel extends React.Component<Props, State> {
       textMeasure.width + 9,
       stepStart - 20,
     );
-  };
-
-  formatPercentageValue = (value: number) => {
-    if (value >= 0.01) {
-      return value.toFixed(2);
-    } else if (value >= 0.0001) {
-      return value.toFixed(4);
-    } else if (value === 0) {
-      return value.toString();
-    } else {
-      const exponentialDigits = 2;
-      return value.toExponential(exponentialDigits);
-    }
-  };
-
-  computeStepDelta = (upCountsPerStep: number[]) => {
-    const stepsDelta: StepDelta[] = upCountsPerStep.map((step, i) => {
-      let dropOff;
-
-      if (i < upCountsPerStep.length - 1) {
-        const nextStep = upCountsPerStep[i + 1];
-        const passThroughPercentage = nextStep > 0 && step > 0 ? (nextStep / step) * 100 : 0;
-        dropOff = 100 - passThroughPercentage;
-        return {
-          passThroughPercentage: this.formatPercentageValue(passThroughPercentage),
-          dropOff: this.formatPercentageValue(dropOff),
-        };
-      } else {
-        return {
-          dropOff: this.formatPercentageValue(
-            step > 0 && upCountsPerStep[0] > 0 ? (step / upCountsPerStep[0]) * 100 : 0,
-          ),
-        };
-      }
-    });
-
-    return stepsDelta;
   };
 
   computeDimensionMetrics = (funnelData: GroupedByFunnel, index: number) => {
@@ -451,7 +427,15 @@ class Funnel extends React.Component<Props, State> {
     stepsDelta: StepDelta[],
     dimensionMetrics: any,
   ) {
-    const { funnelId, intl, filter, isStepLoading } = this.props;
+    const {
+      funnelId,
+      intl,
+      filter,
+      isStepLoading,
+      fullHeight,
+      startIndex,
+      shouldRenderHeader,
+    } = this.props;
     const getPopupContainer = () => document.getElementById('mcs-funnel_splitBy')!;
 
     const conversion =
@@ -469,9 +453,11 @@ class Funnel extends React.Component<Props, State> {
     return (
       <div key={index.toString()} className={'mcs-funnel_chart'}>
         <div className={'mcs-funnel_stepInfo'}>
-          {this.getStepTitle(funnelData, index, steps[index - 1]?.count)}
+          {shouldRenderHeader
+            ? this.getStepTitle(funnelData, index, steps[index - 1]?.count)
+            : undefined}
 
-          {index > 0 && filter[index - 1]
+          {index > 0 && filter[index - 1] && shouldRenderHeader
             ? this.getConversionDescription(filter[index - 1], conversion, amount)
             : undefined}
 
@@ -517,9 +503,9 @@ class Funnel extends React.Component<Props, State> {
         <canvas
           id={`canvas_${funnelId}_${index + 1}`}
           className={'mcs-funnel_canvas'}
-          height='370'
+          height={fullHeight ? `${FULL_HEIGHT}` : `${REDUCED_HEIGHT}`}
         />
-        {index > 0 && (
+        {index > startIndex && (
           <div className='mcs-funnel_conversionInfo'>
             <div className={'mcs-funnel_arrow  mcs-funnel_arrow--failed'} />
             <p className='mcs-funnel_deltaInfo'>
@@ -532,63 +518,141 @@ class Funnel extends React.Component<Props, State> {
     );
   }
 
-  renderSteps(funnelData: GroupedByFunnel) {
+  renderSteps(funnelData: FunnelData) {
     const { startIndex, filter } = this.props;
+    const funnelResult = funnelData.groupedFunnel;
+    const stepsDelta = funnelData.stepsDelta;
 
     let splitIndex = this.splitIndex(filter);
     splitIndex = splitIndex === -1 ? splitIndex : splitIndex + 1;
 
-    const steps = funnelData.global.steps;
+    const steps = funnelResult.global.steps;
 
     splitIndex = splitIndex === -1 ? splitIndex : splitIndex + 1;
     const splitBy = splitIndex !== -1;
 
-    const upCountsPerStep = funnelData.global.steps.map(step => step.count);
-    upCountsPerStep.unshift(funnelData.global.total);
-    upCountsPerStep.pop();
-    const stepsDelta = this.computeStepDelta(upCountsPerStep);
     const dimensionMetrics =
-      funnelData.grouped_by && splitBy ? this.computeDimensionMetrics(funnelData, splitIndex) : [];
+      funnelResult.grouped_by && splitBy
+        ? this.computeDimensionMetrics(funnelResult, splitIndex)
+        : [];
 
-    this.draw(funnelData, startIndex, stepsDelta);
-
+    this.draw();
     return (
       <div className='mcs-funnel_steps'>
         {steps.map((step, index) => {
-          return index >= startIndex
-            ? this.renderStep(funnelData, index, steps, stepsDelta, dimensionMetrics)
+          return index >= startIndex && stepsDelta
+            ? this.renderStep(funnelResult, index, steps, stepsDelta, dimensionMetrics)
             : undefined;
         })}
       </div>
     );
   }
 
-  render() {
-    const { startIndex, funnelData, filter, intl, isLoading, funnelId, initialState } = this.props;
-    if (isLoading) return <LoadingChart />;
+  renderShowComplementaryFunnelButtons(
+    stepsNumber: number,
+    startIndex: number,
+    showComplementaryFunnel: (index: number) => void,
+  ) {
+    const buttonIndices = new Array(stepsNumber + 1).fill(0);
+    const buttons = buttonIndices.map((step, index) => {
+      const onClick = () => showComplementaryFunnel(index);
+      return (
+        <div key={index} style={{ flexGrow: 1 }}>
+          <Button
+            style={{
+              visibility: index === 0 || index === buttonIndices.length - 1 ? 'hidden' : undefined,
+            }}
+            disabled={index === 0 || index === buttonIndices.length - 1}
+            onClick={onClick}
+          >
+            See funnel for others
+          </Button>
+        </div>
+      );
+    });
 
     return (
       <div id='outerContainer' style={{ display: 'flex', flexFlow: 'row' }}>
         <div style={{ flexBasis: 1, flexGrow: startIndex, position: 'relative' }} />
-        <div style={{ flexBasis: 1, flexGrow: filter.length - startIndex, position: 'relative' }}>
-          <Card className='mcs-funnel' bordered={false}>
-            <div id={`container_${funnelId}`}>
-              {!funnelData ||
-              funnelData.global.steps.length === 0 ||
-              funnelData.global.total === 0 ? (
-                <div className='mcs-funnel_empty'>
-                  {filter.length > 0 && !initialState ? (
-                    <EmptyChart title={intl.formatMessage(funnelMessages.noData)} icon='warning' />
-                  ) : (
-                    <FunnelEmptyState />
-                  )}
-                </div>
-              ) : (
-                this.renderSteps(funnelData)
-              )}
-            </div>
-          </Card>
+        <div style={{ flexBasis: 1, flexGrow: stepsNumber - startIndex, position: 'relative' }}>
+          <div className='mcs-funnel_steps' style={{ display: 'flex' }}>
+            {buttons}
+          </div>
         </div>
+      </div>
+    );
+  }
+
+  render() {
+    const {
+      title,
+      startIndex,
+      funnelData,
+      filter,
+      intl,
+      isLoading,
+      funnelId,
+      stepsNumber,
+      initialState,
+      closeFunnel,
+      openComplementaryFunnel,
+    } = this.props;
+    if (isLoading) return <LoadingChart />;
+
+    const _stepsNumber = stepsNumber ? stepsNumber : Math.max(filter.length, 1);
+    const funnelResult = funnelData?.groupedFunnel;
+
+    const showComplementaryFunnel = openComplementaryFunnel
+      ? (index: number, newFunnelResult: GroupedByFunnel) => {
+          const complementaryInfo = {
+            index: index,
+            funnelData: newFunnelResult,
+          };
+          openComplementaryFunnel(complementaryInfo);
+        }
+      : undefined;
+
+    return (
+      <div>
+        <div id='outerContainer' style={{ display: 'flex', flexFlow: 'row' }}>
+          <div style={{ flexBasis: 1, flexGrow: startIndex, position: 'relative' }} />
+          <div style={{ flexBasis: 1, flexGrow: _stepsNumber - startIndex, position: 'relative' }}>
+            {title ? <div className={'mcs-funnel_title'}>{title}</div> : undefined}
+            {closeFunnel ? (
+              <Button
+                shape='circle'
+                icon={<CloseOutlined />}
+                className={'mcs-funnel_closeFunnel'}
+                onClick={closeFunnel}
+              />
+            ) : undefined}
+            <Card className='mcs-funnel' bordered={false}>
+              <div id={`container_${funnelId}`}>
+                {!funnelResult ||
+                funnelResult.global.steps.length === 0 ||
+                funnelResult.global.total === 0 ? (
+                  <div className='mcs-funnel_empty'>
+                    {funnelResult && funnelResult.global.steps.length === 0 && !initialState ? (
+                      <EmptyChart
+                        title={intl.formatMessage(funnelMessages.noData)}
+                        icon='warning'
+                      />
+                    ) : (
+                      <FunnelEmptyState />
+                    )}
+                  </div>
+                ) : (
+                  funnelData && this.renderSteps(funnelData)
+                )}
+              </div>
+            </Card>
+          </div>
+        </div>
+        {showComplementaryFunnel && !!funnelResult
+          ? this.renderShowComplementaryFunnelButtons(_stepsNumber, startIndex, index =>
+              showComplementaryFunnel(index, funnelResult),
+            )
+          : undefined}
       </div>
     );
   }

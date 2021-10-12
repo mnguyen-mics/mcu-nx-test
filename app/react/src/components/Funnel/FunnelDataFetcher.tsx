@@ -19,15 +19,34 @@ import Funnel from './Funnel';
 import { shouldRefetchFunnelData, extractDatesFromProps, checkExpressionsNotEmpty } from './Utils';
 import { updateSearch, parseSearch } from '../../utils/LocationSearchHelper';
 import { FUNNEL_SEARCH_SETTING } from './Constants';
+import { ComplementaryInfo } from './FunnelWrapper';
+
+export interface StepDelta {
+  dropOff?: string;
+  passThroughPercentage?: string;
+}
+
+export interface FunnelData {
+  groupedFunnel: GroupedByFunnel;
+  stepsDelta: StepDelta[];
+}
 
 interface FunnelDataFetcherProps {
   datamartId: string;
   funnelId: string;
+  title?: string;
   startIndex?: number;
+  stepsNumber?: number;
   launchExecutionAskedTime: number;
   cancelQueryAskedTime: number;
   filter: FunnelFilter[];
+  fullHeight: boolean;
+  shouldRenderHeader: boolean;
+  withInitializationHelper: boolean;
   parentCallback: (isLoading: boolean) => void;
+  transformFunnel?: (funnelData: GroupedByFunnel) => GroupedByFunnel;
+  openComplementaryFunnel?: (complementaryInfo: ComplementaryInfo) => void;
+  closeFunnel?: () => void;
 }
 
 type Props = FunnelDataFetcherProps &
@@ -36,7 +55,7 @@ type Props = FunnelDataFetcherProps &
   RouteComponentProps<void>;
 
 interface State {
-  funnelData?: GroupedByFunnel;
+  funnelData?: FunnelData;
   dimensionsList: DimensionsList;
   isLoading: boolean;
   isStepLoading: boolean;
@@ -60,11 +79,11 @@ class FunnelDataFetcher extends React.Component<Props, State> {
     this.state = {
       funnelData: undefined,
       isStepLoading: false,
-      initialState: true,
+      initialState: !props.withInitializationHelper,
       dimensionsList: {
         dimensions: [],
       },
-      isLoading: false,
+      isLoading: true,
       lastExecutedQueryAskedTime: 0,
     };
     this.fetchData = this._debounce(this.fetchData.bind(this), 800);
@@ -142,9 +161,48 @@ class FunnelDataFetcher extends React.Component<Props, State> {
     }
   }
 
+  formatPercentageValue = (value: number) => {
+    if (value >= 0.01) {
+      return value.toFixed(2);
+    } else if (value >= 0.0001) {
+      return value.toFixed(4);
+    } else if (value === 0) {
+      return value.toString();
+    } else {
+      const exponentialDigits = 2;
+      return value.toExponential(exponentialDigits);
+    }
+  };
+
+  computeStepDelta = (upCountsPerStep: number[]) => {
+    const stepsDelta: StepDelta[] = upCountsPerStep.map((step, i) => {
+      let dropOff;
+
+      if (i < upCountsPerStep.length - 1) {
+        const nextStep = upCountsPerStep[i + 1];
+        const passThroughPercentage = nextStep > 0 && step > 0 ? (nextStep / step) * 100 : 0;
+        dropOff = 100 - passThroughPercentage;
+        return {
+          passThroughPercentage: this.formatPercentageValue(passThroughPercentage),
+          dropOff: this.formatPercentageValue(dropOff),
+        };
+      } else {
+        return {
+          dropOff: this.formatPercentageValue(
+            step > 0 && upCountsPerStep[0] > 0 ? (step / upCountsPerStep[0]) * 100 : 0,
+          ),
+        };
+      }
+    });
+
+    return stepsDelta;
+  };
+
   fetchData = (datamartId: string, filter: FunnelFilter[], timeRange: FunnelTimeRange) => {
-    const { parentCallback, notifyError } = this.props;
+    const { parentCallback, notifyError, transformFunnel } = this.props;
     const { isStepLoading } = this.state;
+    const _transformFunnel = transformFunnel ? transformFunnel : (g: GroupedByFunnel) => g;
+
     this.setState({
       isLoading: !isStepLoading,
       initialState: false,
@@ -160,10 +218,18 @@ class FunnelDataFetcher extends React.Component<Props, State> {
             deepCopy(dimension.funnel.steps[dimension.funnel.steps.length - 1]),
           ),
         );
+        const funnelResult = _transformFunnel(response.data);
+        const upCountsPerStep = funnelResult.global.steps.map(step => step.count);
+        upCountsPerStep.unshift(funnelResult.global.total);
+        upCountsPerStep.pop();
+        const stepsDelta = this.computeStepDelta(upCountsPerStep);
         this.setState(
           {
             isLoading: false,
-            funnelData: response.data,
+            funnelData: {
+              groupedFunnel: funnelResult,
+              stepsDelta: stepsDelta,
+            },
             isStepLoading: false,
           },
           () => {
@@ -199,9 +265,19 @@ class FunnelDataFetcher extends React.Component<Props, State> {
   };
 
   render() {
-    const { filter, datamartId, funnelId, startIndex } = this.props;
+    const {
+      filter,
+      datamartId,
+      funnelId,
+      startIndex,
+      stepsNumber,
+      fullHeight,
+      shouldRenderHeader,
+      title,
+      openComplementaryFunnel,
+      closeFunnel,
+    } = this.props;
     const { funnelData, dimensionsList, isStepLoading, isLoading, initialState } = this.state;
-
     const _startIndex = startIndex ? startIndex : 0;
 
     const close = () => {
@@ -211,13 +287,20 @@ class FunnelDataFetcher extends React.Component<Props, State> {
       this.updateLocationSearch({
         filter: [JSON.stringify(filter)],
       });
-      if (funnelData)
+      if (funnelData) {
+        const newFunnelData = {
+          groupedFunnel: {
+            ...funnelData.groupedFunnel,
+            grouped_by: undefined,
+          },
+        };
         this.setState({
           funnelData: {
             ...funnelData,
-            grouped_by: undefined,
+            ...newFunnelData,
           },
         });
+      }
     };
 
     const open = (index: number, dimensionName: string) => {
@@ -241,11 +324,17 @@ class FunnelDataFetcher extends React.Component<Props, State> {
         funnelData={funnelData}
         dimensionsList={dimensionsList}
         filter={filter}
+        title={title}
         isStepLoading={isStepLoading}
         isLoading={isLoading}
         startIndex={_startIndex}
         funnelId={funnelId}
         initialState={initialState}
+        stepsNumber={stepsNumber}
+        fullHeight={fullHeight}
+        shouldRenderHeader={shouldRenderHeader}
+        openComplementaryFunnel={openComplementaryFunnel}
+        closeFunnel={closeFunnel}
       />
     );
   }
