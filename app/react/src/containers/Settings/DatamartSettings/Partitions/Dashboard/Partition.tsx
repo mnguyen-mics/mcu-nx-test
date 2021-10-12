@@ -30,6 +30,7 @@ import {
   TableViewProps,
 } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 import { TableViewWithSelectionNotifyerMessages } from '../../../../../components/TableView';
+import { OTQLCountResult } from '../../../../../models/datamart/graphdb/OTQLResult';
 
 const { Content } = Layout;
 
@@ -220,7 +221,7 @@ class Partition extends React.Component<JoinedProps, PartitionState> {
         return this._queryService
           .runOTQLQuery(datamart.id, 'select @count {} from UserPoint')
           .then(res => {
-            return res.data ? res.data.rows[0].count : 0;
+            return res.data ? (res.data.rows[0] as OTQLCountResult).count : 0;
           });
       case 'v201506':
         return this._queryService.runSelectorQLQuery(datamart.id).then(res => res.data.total);

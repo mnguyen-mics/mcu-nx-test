@@ -7,7 +7,7 @@ import { settingsDefinitions } from '../../routes/settingsDefinition';
 
 import { compose } from 'recompose';
 import { RouteComponentProps } from 'react-router';
-import { MenuMode } from 'antd/lib/menu';
+import { MenuMode } from 'rc-menu/lib/interface';
 import { injectFeatures, InjectedFeaturesProps } from '../Features';
 import {
   NavigatorMultipleLevelMenuDefinition,

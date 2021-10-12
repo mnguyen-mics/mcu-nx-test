@@ -51,7 +51,7 @@ class QuickAssetUpload extends React.Component<JoinedProps, QuickAssetUploadStat
   }
 
   beforeUpload = (file: UploadFile) => {
-    const isLt2M = file.size / 1024 < 200;
+    const isLt2M = file.size && file.size / 1024 < 200;
     if (!isLt2M) {
       message.error('Image must smaller than 200kb!');
       return false;
