@@ -79,10 +79,12 @@ describe('This test should check that the audience feature forms are working pro
             cy.get('.mcs-standardSegmentBuilder_totalAudience').should('not.contain', '0');
             cy.get('.mcs-timelineButton_left').click();
             cy.get('.mcs-standardSegmentBuilder_featureCard').contains(audienceFeatureName).click();
+            cy.get('.mcs-standardSegmentBuilder_AddFeatureButton').click();
             cy.get('.mcs-standardSegmentBuilder_dashboard_refresh_button').click();
             cy.get('.mcs-standardSegmentBuilder_totalAudience').should('not.contain', '0');
             cy.get('.mcs-timelineButton_right').click();
             cy.get('.mcs-standardSegmentBuilder_featureCard').contains(audienceFeatureName).click();
+            cy.get('.mcs-standardSegmentBuilder_AddFeatureButton').click();
             cy.get('.mcs-standardSegmentBuilder_dashboard_refresh_button').click();
             cy.get('.mcs-standardSegmentBuilder_totalAudience').should('contain', '0');
           });
@@ -145,8 +147,10 @@ describe('This test should check that the audience feature forms are working pro
             cy.get('.mcs-standardSegmentBuilder_totalAudience').should('not.contain', '0');
             cy.get('.mcs-timelineButton_left').click();
             cy.get('.mcs-standardSegmentBuilder_featureCard').contains(audienceFeatureName).click();
+            cy.get('.mcs-standardSegmentBuilder_AddFeatureButton').click();
             cy.get('.mcs-timeline_actionDot').first().click();
             cy.get('.mcs-standardSegmentBuilder_featureCard').contains(audienceFeatureName).click();
+            cy.get('.mcs-standardSegmentBuilder_AddFeatureButton').click();
             cy.get('.mcs-standardSegmentBuilder_audienceFeatureContent')
               .first()
               .within(() => {
@@ -180,6 +184,7 @@ describe('This test should check that the audience feature forms are working pro
           cy.contains(standardSegmentBuilderName).click();
           cy.get('.mcs-standardSegmentBuilder_formColumn').contains('Add from library').click();
           cy.contains(audienceFeatureName).click();
+          cy.get('.mcs-standardSegmentBuilder_AddFeatureButton').click();
           cy.get('.mcs-form_saveButton_standardSegmentBuilderForm').click();
         })
         .then(() => {
@@ -332,6 +337,7 @@ describe('This test should check that the audience feature forms are working pro
               cy.get('.mcs-standardSegmentBuilder_featureCard')
                 .contains(audienceFeatureName)
                 .click();
+              cy.get('.mcs-standardSegmentBuilder_AddFeatureButton').click();
               cy.get('.mcs-standardSegmentBuilder_audienceFeatureContent')
                 .first()
                 .within(() => {
@@ -374,6 +380,7 @@ describe('This test should check that the audience feature forms are working pro
           }
           cy.get('.mcs-timelineButton_left').click();
           cy.contains(audienceFeatureName).click();
+          cy.get('.mcs-standardSegmentBuilder_AddFeatureButton').click();
           cy.get('.mcs-standardSegmentBuilderActionBar_saveUserQuerySegmentButton').click();
           cy.get('.mcs-standardSegmentBuilderActionBar_menuItem').click();
           cy.get('.mcs-newUserQuerySegmentSimpleForm_name_input').type('UserQuery Segment');
@@ -449,6 +456,7 @@ describe('This test should check that the audience feature forms are working pro
         cy.get('.mcs-editAudienceSegmentForm_editQueryButton').click();
         cy.get('.mcs-timelineButton_left').click();
         cy.contains(audienceFeatureName).click();
+        cy.get('.mcs-standardSegmentBuilder_AddFeatureButton').click();
         cy.get('.mcs-actionBar_updateQueryButton').click();
         cy.get('.mcs-form_saveButton_audienceSegmentForm').click();
         cy.get('.mcs-contentHeader_title--large')

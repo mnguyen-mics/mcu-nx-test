@@ -106,8 +106,12 @@ describe('This test should check that the audience feature folders work properly
         .click();
       cy.get('.mcs-audienceFeatureFolder_dropDownMenu--rename').click();
       const audienceFeaturesFolderRenamed = faker.random.word();
-      cy.get('.mcs-audienceFeatureSettings-folderInput').type(audienceFeaturesFolderRenamed);
+      cy.get('.mcs-audienceFeatureSettings-folderInput').type(
+        '{selectall}{backspace}' + audienceFeaturesFolderRenamed,
+      );
       cy.get('.mcs-audienceFeatureSettings_renameButton--renameAudienceFeatureFolder').click();
+      //Wait for the folder to be renamed
+      cy.wait(4000);
       cy.get('.mcs-audienceFeatureSettings_folderTable').should(
         'not.contain',
         audienceFeaturesFolderName,
@@ -155,6 +159,7 @@ describe('This test should check that the audience feature folders work properly
         cy.get('.mcs-timelineButton_left').click();
         cy.contains(audienceFeaturesFolderName).click();
         cy.contains(audienceFeatureName).click();
+        cy.get('.mcs-standardSegmentBuilder_AddFeatureButton').click();
         cy.get('.mcs-standardSegmentBuilder_audienceFeature')
           .should('be.visible')
           .within(() => {
