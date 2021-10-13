@@ -349,11 +349,9 @@ class DisplayCampaignActionbar extends React.Component<JoinedProps, DisplayCampa
       ),
       ReportService.getAdDeliveryReport(
         organisationId,
-        'campaign_id',
-        campaignId,
         filter.from,
         filter.to,
-        undefined,
+        [['campaign_id', campaignId]],
         defaultMetrics,
       ),
       ReportService.getAdGroupDeliveryReport(

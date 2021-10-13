@@ -239,20 +239,18 @@ class AdServingActionBar extends React.Component<Props, AdServingActionBarState>
 
     const promiseArray: Array<Promise<ReportViewResponse>> = [];
     campaign.ad_groups.forEach(adgroup => {
-      adgroup.ads.map(ad =>
+      adgroup.ads.forEach(ad =>
         promiseArray.push(
           ReportService.getAdDeliveryReport(
             organisationId,
-            'creative_id',
-            ad.creative_id,
             filter.from,
             filter.to,
+            [
+              ['campaign_id', campaignId],
+              ['sub_campaign_id', adgroup.id],
+              ['message_id', ad.id],
+            ],
             dimensions,
-            undefined,
-            {
-              campaign_id: campaignId,
-              ad_group_id: adgroup.id,
-            },
           ),
         ),
       );

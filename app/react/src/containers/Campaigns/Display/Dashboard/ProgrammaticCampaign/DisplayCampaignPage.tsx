@@ -152,14 +152,9 @@ class DisplayCampaignPage extends React.Component<Props, DisplayCampaignPageStat
       ),
     );
     const getAdPerf = makeCancelable(
-      ReportService.getAdDeliveryReport(
-        organisationId,
-        'campaign_id',
-        campaignId,
-        filter.from,
-        filter.to,
-        undefined,
-      ),
+      ReportService.getAdDeliveryReport(organisationId, filter.from, filter.to, [
+        ['campaign_id', campaignId],
+      ]),
     );
     const getMediaPerf = makeCancelable(
       ReportService.getMediaDeliveryReport(
