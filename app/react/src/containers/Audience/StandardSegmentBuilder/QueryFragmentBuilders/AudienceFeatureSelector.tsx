@@ -61,6 +61,8 @@ interface State {
   searchSettings: AudienceFeatureSearchSettings;
   total?: number;
   searchValue?: string;
+  searchIsTooLong?: boolean;
+  searchIsForbidden?: boolean;
   searchOptions: Array<{ value: string }>;
   isLoadingFinalValues: boolean;
   isJobExecutionExisting?: boolean;
@@ -317,6 +319,8 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
       isLoadingFinalValues,
       isJobExecutionExisting,
       audienceFeatureSelection,
+      searchIsTooLong,
+      searchIsForbidden,
     } = this.state;
 
     const noData =
@@ -372,13 +376,24 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
     };
 
     const onSearch = (searchText: string) => {
+      const isMoreThan5Words = searchText.split(' ').length > 5;
+      const regexp = /^[\w\.éèç/'à@-\s]*$/;
+      const hasSpecialCharacters = !searchText.match(regexp);
+
       this.setState(
         {
           searchValue: searchText,
+          searchIsTooLong: isMoreThan5Words,
+          searchIsForbidden: hasSpecialCharacters,
         },
         () => {
           setTimeout(() => {
-            if (this.state.isJobExecutionExisting && searchText === this.state.searchValue) {
+            if (
+              this.state.isJobExecutionExisting &&
+              searchText === this.state.searchValue &&
+              !isMoreThan5Words &&
+              !hasSpecialCharacters
+            ) {
               if (searchText.length > 2) {
                 this.setState({
                   isLoadingFinalValues: true,
@@ -429,23 +444,29 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
     };
 
     const onPressEnter = () => {
-      this.setState({
-        searchSettings: {
-          ...searchSettings,
-          finalValues: isJobExecutionExisting ? searchValue : undefined,
-          keywords: searchValue,
-          currentPage: 1,
-        },
-        hideFolder: !!searchValue,
-        currentAudienceFeatureFolder: undefined,
-        searchValue: searchValue,
-      });
+      if (!searchIsTooLong && !searchIsForbidden) {
+        this.setState({
+          searchSettings: {
+            ...searchSettings,
+            finalValues: isJobExecutionExisting ? searchValue : undefined,
+            keywords: searchValue,
+            currentPage: 1,
+          },
+          hideFolder: !!searchValue,
+          currentAudienceFeatureFolder: undefined,
+          searchValue: searchValue,
+        });
+      }
     };
 
     return (
       <React.Fragment>
         <AutoComplete
-          className='mcs-standardSegmentBuilder_featureSelector--searchAudienceFeature'
+          className={`mcs-standardSegmentBuilder_featureSelector--searchAudienceFeature ${
+            searchIsTooLong || searchIsForbidden
+              ? ' mcs-standardSegmentBuilder_searchInputError'
+              : ''
+          }`}
           value={searchValue}
           options={searchOptions}
           dropdownMatchSelectWidth={352}
@@ -460,9 +481,19 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
             placeholder={intl.formatMessage(messages.searchAudienceFeature)}
             onPressEnter={onPressEnter}
             onSearch={onPressEnter}
+            disabled={searchIsTooLong || searchIsForbidden}
           />
         </AutoComplete>
 
+        <span
+          className={`mcs-standardSegmentBuilder_searchInputErrorMessage ${
+            searchIsTooLong || searchIsForbidden ? 'visible' : ''
+          }`}
+        >
+          {searchIsTooLong
+            ? intl.formatMessage(messages.searchIsTooLong)
+            : intl.formatMessage(messages.searchIsForbidden)}
+        </span>
         <div className='mcs-standardSegmentBuilder_tagsContainer'>
           {Object.keys(audienceFeatureSelection).map(featureId => {
             return (
@@ -476,7 +507,7 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
             );
           })}
         </div>
-        {this.getBreadCrumb()}
+        {!searchSettings.keywords && this.getBreadCrumb()}
         <Row gutter={16}>
           {!hideFolder &&
             audienceFeatureFolders

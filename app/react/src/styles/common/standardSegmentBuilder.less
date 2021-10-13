@@ -371,6 +371,25 @@
   .mcs-search-input {
     width: 400px;
   }
+  .mcs-standardSegmentBuilder_searchInputError {
+    .ant-input-group {
+      border: 1px solid @error-color;
+      border-radius: 3px;
+      box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.2);
+    }
+    .ant-input,
+    .ant-btn {
+      border: none;
+    }
+  }
+  .mcs-standardSegmentBuilder_searchInputErrorMessage {
+    color: @error-color;
+    font-size: 14px;
+    visibility: hidden;
+  }
+  .visible {
+    visibility: visible;
+  }
   .mcs-standardSegmentBuilder_breadCrumb {
     margin: 15px 0px;
   }
