@@ -98,7 +98,11 @@ class ExportsActionbar extends React.Component<JoinedProps, ExportActionbarState
     const menu = this.buildMenu();
 
     const breadcrumbPaths = [
-      <Link key='1' to={`/v2/o/${organisationId}/datastudio/exports`}>
+      <Link
+        className='mcs-breadcrumb_exportsLink'
+        key='1'
+        to={`/v2/o/${organisationId}/datastudio/exports`}
+      >
         Exports
       </Link>,
       exportObject && exportObject.name ? exportObject.name : '',

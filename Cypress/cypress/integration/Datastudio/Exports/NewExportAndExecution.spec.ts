@@ -49,7 +49,7 @@ describe('Check DataStudio Export Page', () => {
       cy.get('.mcs-form_saveButton_exportForm').click();
 
       // Click on the link Export
-      cy.get('.mcs-breadcrumb').click();
+      cy.get('.mcs-breadcrumb_exportsLink').click();
 
       // Search the export created
       cy.get('.mcs-search-input').type(exportName);
