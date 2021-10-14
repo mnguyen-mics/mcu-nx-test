@@ -140,14 +140,15 @@ class Funnel extends React.Component<Props, State> {
 
     if (canvas) {
       const drawWidth = container && container.offsetWidth / totalSteps;
-      canvas.width = drawWidth || 0;
+      const adjustedWidth = (drawWidth || 0) - 1;
+      canvas.width = adjustedWidth;
 
       const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
       const dpi = window.devicePixelRatio;
-      canvas.width = (drawWidth || 0) * dpi;
+      canvas.width = adjustedWidth * dpi;
       canvas.height = pxHeight * dpi;
 
-      canvas.style.width = (drawWidth || 0).toString() + 'px';
+      canvas.style.width = adjustedWidth.toString() + 'px';
       canvas.style.height = pxHeight + 'px';
 
       ctx.scale(dpi, dpi);
@@ -170,7 +171,7 @@ class Funnel extends React.Component<Props, State> {
         total,
         startCount,
         endCount,
-        drawWidth || 0,
+        adjustedWidth,
         passThroughPercentage,
         passThroughTime,
       );
@@ -195,8 +196,11 @@ class Funnel extends React.Component<Props, State> {
     const percentageStart = getPercentage(total - startCount, total);
     const percentageEnd = getPercentage(total - endCount, total);
     const stepStart =
-      drawerHeight && valueFromPercentage(percentageStart, drawerHeight) + heightOffset;
-    const stepEnd = drawerHeight && valueFromPercentage(percentageEnd, drawerHeight) + heightOffset;
+      drawerHeight &&
+      valueFromPercentage(percentageStart, drawerHeight - heightOffset) + heightOffset;
+    const stepEnd =
+      drawerHeight &&
+      valueFromPercentage(percentageEnd, drawerHeight - heightOffset) + heightOffset;
 
     ctx.beginPath();
     ctx.moveTo(30, stepStart);
@@ -352,12 +356,13 @@ class Funnel extends React.Component<Props, State> {
     );
   };
 
-  private hasTransactionConfirmed = (filter: FunnelFilter) =>
-    filter.filter_clause &&
+  private hasTransactionConfirmed = (filter?: FunnelFilter) =>
+    !!filter &&
+    !!filter.filter_clause &&
     !!filter.filter_clause.filters.find(f => f.expressions.includes('$transaction_confirmed'));
 
   private getConversionDescription = (
-    filter: FunnelFilter,
+    filter?: FunnelFilter,
     conversion?: string,
     amount?: string,
   ) => {
@@ -467,7 +472,7 @@ class Funnel extends React.Component<Props, State> {
             ? this.getStepTitle(funnelData, index, steps[index - 1]?.count)
             : undefined}
 
-          {index > 0 && filter[index - 1] && shouldRenderHeader
+          {index > 0 && shouldRenderHeader
             ? this.getConversionDescription(filter[index - 1], conversion, amount)
             : undefined}
 
