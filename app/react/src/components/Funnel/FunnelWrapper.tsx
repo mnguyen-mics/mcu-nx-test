@@ -125,12 +125,12 @@ class FunnelWrapper extends React.Component<JoinedProp, State> {
       .slice(0, index - 1)
       .concat(step, funnelData.global.steps.slice(index - 1));
     funnelData.global.steps = newSteps.map((newStep, i) => {
-      if (i === index - 1)
+      if (i >= index - 1) {
         return {
           ...newStep,
-          count: newStep.count - previousFunnelData.global.steps[index - 1].count,
+          count: newStep.count - previousFunnelData.global.steps[i].count,
         };
-      else return newStep;
+      } else return newStep;
     });
     return funnelData;
   }
@@ -217,7 +217,7 @@ class FunnelWrapper extends React.Component<JoinedProp, State> {
             stepsNumber={complementaryInfo.funnelData.global.steps.length}
             fullHeight={false}
             withInitializationHelper={false}
-            shouldRenderHeader={false}
+            shouldRenderHeader={true}
             enableSplitBy={false}
             closeFunnel={closeFunnel}
           />
