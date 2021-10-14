@@ -238,4 +238,12 @@ export const funnelMessages = defineMessages({
     id: 'funnel.conversions',
     defaultMessage: 'conversions',
   },
+  funnelForDropoutTitle: {
+    id: 'funnel.dropoutTitle',
+    defaultMessage: "User points who didn't complete step",
+  },
+  showDropoutFunnel: {
+    id: 'funnel.dropout.show',
+    defaultMessage: 'See funnel for others',
+  },
 });

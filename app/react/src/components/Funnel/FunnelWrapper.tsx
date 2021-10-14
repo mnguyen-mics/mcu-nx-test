@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { compose } from 'recompose';
+import { injectIntl, InjectedIntlProps } from 'react-intl';
 import FunnelQueryBuilder from './FunnelQueryBuilder';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { buildDefaultSearch, parseSearch, isSearchValid } from '../../utils/LocationSearchHelper';
-import { FUNNEL_SEARCH_SETTING } from './Constants';
+import { funnelMessages, FUNNEL_SEARCH_SETTING } from './Constants';
 import { FunnelFilter, GroupedByFunnel, Steps } from '../../models/datamart/UserActivitiesFunnel';
 import { getDefaultStep } from './Utils';
 import { McsDateRangeValue } from '@mediarithmics-private/mcs-components-library/lib/components/mcs-date-range-picker/McsDateRangePicker';
@@ -33,7 +34,11 @@ interface State {
   isComplementaryFunnelOpen: boolean;
 }
 
-type JoinedProp = RouteComponentProps & FunnelWrapperProps;
+type JoinedProp = RouteComponentProps & FunnelWrapperProps & InjectedIntlProps;
+
+const deepCopy = (value: any) => {
+  return JSON.parse(JSON.stringify(value));
+};
 
 class FunnelWrapper extends React.Component<JoinedProp, State> {
   constructor(props: JoinedProp) {
@@ -98,7 +103,7 @@ class FunnelWrapper extends React.Component<JoinedProp, State> {
 
   prepareComplementaryFunnel(funnelFilter: FunnelFilter[]): FunnelFilter[] {
     const { complementaryInfo } = this.state;
-    const funnelFilterCopy = funnelFilter.splice(0);
+    const funnelFilterCopy = deepCopy(funnelFilter);
 
     // Splice modifies the original array
     if (complementaryInfo && complementaryInfo.index && complementaryInfo.index > 0)
@@ -139,7 +144,7 @@ class FunnelWrapper extends React.Component<JoinedProp, State> {
   }
 
   render() {
-    const { datamartId, dateRange } = this.props;
+    const { datamartId, dateRange, intl } = this.props;
     const {
       location: { search },
     } = this.props;
@@ -148,8 +153,13 @@ class FunnelWrapper extends React.Component<JoinedProp, State> {
     const routeParams = parseSearch(search, FUNNEL_SEARCH_SETTING);
     const funnelFilter: FunnelFilter[] =
       routeParams.filter.length > 0 ? JSON.parse(routeParams.filter) : [getDefaultStep()];
-    const filterWithoutGroupBy: FunnelFilter[] = JSON.parse(JSON.stringify(funnelFilter));
+    const filterWithoutGroupBy: FunnelFilter[] = deepCopy(funnelFilter);
     filterWithoutGroupBy.forEach(x => delete x.group_by_dimension);
+
+    // Make copies for display in Funnel
+    const funnelFilterCopy = deepCopy(funnelFilter);
+    const filterWithoutGroupByCopy = deepCopy(filterWithoutGroupBy);
+
     const { launchExecutionAskedTime, cancelQueryAskedTime } = this.state;
 
     const openComplementaryFunnel = !isComplementaryFunnelOpen
@@ -181,7 +191,7 @@ class FunnelWrapper extends React.Component<JoinedProp, State> {
         <FunnelDataFetcher
           datamartId={datamartId}
           funnelId={'1'}
-          filter={JSON.parse(routeParams.filter)}
+          filter={funnelFilterCopy}
           parentCallback={this.funnelCallbackFunction}
           launchExecutionAskedTime={launchExecutionAskedTime}
           cancelQueryAskedTime={cancelQueryAskedTime}
@@ -189,13 +199,16 @@ class FunnelWrapper extends React.Component<JoinedProp, State> {
           fullHeight={true}
           withInitializationHelper={true}
           shouldRenderHeader={true}
+          enableSplitBy={true}
         />
         {isComplementaryFunnelOpen && complementaryInfo ? (
           <FunnelDataFetcher
             datamartId={datamartId}
             funnelId={'2'}
-            title={`USER POINTS WHO DIDN'T COMPLETE STEP ${complementaryInfo.index}`}
-            filter={prepareComplementaryFunnel(funnelFilter)}
+            title={`${intl.formatMessage(funnelMessages.funnelForDropoutTitle)} ${
+              complementaryInfo.index
+            }`}
+            filter={prepareComplementaryFunnel(filterWithoutGroupByCopy)}
             parentCallback={this.funnelCallbackFunction}
             launchExecutionAskedTime={launchExecutionAskedTime}
             cancelQueryAskedTime={cancelQueryAskedTime}
@@ -205,6 +218,7 @@ class FunnelWrapper extends React.Component<JoinedProp, State> {
             fullHeight={false}
             withInitializationHelper={false}
             shouldRenderHeader={false}
+            enableSplitBy={false}
             closeFunnel={closeFunnel}
           />
         ) : undefined}
@@ -213,4 +227,7 @@ class FunnelWrapper extends React.Component<JoinedProp, State> {
   }
 }
 
-export default compose<FunnelWrapperProps, FunnelWrapperProps>(withRouter)(FunnelWrapper);
+export default compose<FunnelWrapperProps, FunnelWrapperProps>(
+  injectIntl,
+  withRouter,
+)(FunnelWrapper);

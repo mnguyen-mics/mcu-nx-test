@@ -42,6 +42,7 @@ interface FunnelDataFetcherProps {
   filter: FunnelFilter[];
   fullHeight: boolean;
   shouldRenderHeader: boolean;
+  enableSplitBy: boolean;
   withInitializationHelper: boolean;
   parentCallback: (isLoading: boolean) => void;
   transformFunnel?: (funnelData: GroupedByFunnel) => GroupedByFunnel;
@@ -273,6 +274,7 @@ class FunnelDataFetcher extends React.Component<Props, State> {
       stepsNumber,
       fullHeight,
       shouldRenderHeader,
+      enableSplitBy,
       title,
       openComplementaryFunnel,
       closeFunnel,
@@ -333,6 +335,7 @@ class FunnelDataFetcher extends React.Component<Props, State> {
         stepsNumber={stepsNumber}
         fullHeight={fullHeight}
         shouldRenderHeader={shouldRenderHeader}
+        enableSplitBy={enableSplitBy}
         openComplementaryFunnel={openComplementaryFunnel}
         closeFunnel={closeFunnel}
       />

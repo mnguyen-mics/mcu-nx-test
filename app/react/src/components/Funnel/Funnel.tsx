@@ -46,6 +46,7 @@ type FunnelProps = {
   stepsNumber?: number;
   fullHeight: boolean;
   shouldRenderHeader: boolean;
+  enableSplitBy: boolean;
   closeGroupBy: () => void;
   openGroupBy: (index: number, dimensionName: string) => void;
   openComplementaryFunnel?: (complementaryInfo: ComplementaryInfo) => void;
@@ -85,11 +86,11 @@ class Funnel extends React.Component<Props, State> {
 
   // listener cleanup
   componentWillUnmount() {
-    // window.removeEventListener('resize', this.draw.bind(this));
+    window.removeEventListener('resize', this.draw.bind(this));
   }
 
   componentDidMount() {
-    // window.addEventListener('resize', this.draw.bind(this));
+    window.addEventListener('resize', this.draw.bind(this));
   }
 
   draw = () => {
@@ -132,7 +133,7 @@ class Funnel extends React.Component<Props, State> {
     totalSteps: number,
     stepsDelta: StepDelta[],
   ) => {
-    const { funnelId, fullHeight } = this.props;
+    const { funnelId, fullHeight, startIndex } = this.props;
     const container = document.getElementById(`container_${funnelId}`);
     const canvas = document.getElementById(`canvas_${funnelId}_${stepIndex}`) as HTMLCanvasElement;
     const pxHeight = fullHeight ? FULL_HEIGHT : REDUCED_HEIGHT;
@@ -163,6 +164,8 @@ class Funnel extends React.Component<Props, State> {
         : undefined;
 
       this.drawChart(
+        stepIndex,
+        startIndex,
         ctx,
         total,
         startCount,
@@ -175,6 +178,8 @@ class Funnel extends React.Component<Props, State> {
   };
 
   drawChart = (
+    stepIndex: number,
+    startIndex: number,
     ctx: CanvasRenderingContext2D,
     total: number,
     startCount: number,
@@ -185,11 +190,13 @@ class Funnel extends React.Component<Props, State> {
   ) => {
     const { intl, fullHeight } = this.props;
     const drawerHeight = fullHeight ? FULL_HEIGHT : REDUCED_HEIGHT;
+    const heightOffset = 40;
 
     const percentageStart = getPercentage(total - startCount, total);
     const percentageEnd = getPercentage(total - endCount, total);
-    const stepStart = drawerHeight && valueFromPercentage(percentageStart, drawerHeight);
-    const stepEnd = drawerHeight && valueFromPercentage(percentageEnd, drawerHeight);
+    const stepStart =
+      drawerHeight && valueFromPercentage(percentageStart, drawerHeight) + heightOffset;
+    const stepEnd = drawerHeight && valueFromPercentage(percentageEnd, drawerHeight) + heightOffset;
 
     ctx.beginPath();
     ctx.moveTo(30, stepStart);
@@ -216,17 +223,19 @@ class Funnel extends React.Component<Props, State> {
 
     ctx.fillStyle = '#003056';
     ctx.font = '14px LLCircularWeb-Medium';
-    ctx.fillText(`${passThroughPercentage}%`, 7, stepStart - 20);
+    if (stepIndex > 1) ctx.fillText(`${passThroughPercentage}%`, 7, stepStart - 20);
     const textMeasure = ctx.measureText(`${passThroughPercentage}%`);
 
     ctx.font = '12px LLCircularWeb-Book';
-    ctx.fillText(
-      `${intl.formatMessage(funnelMessages.hasSucceeded)} ${
-        passThroughTime ? `${intl.formatMessage(funnelMessages.in)} ${passThroughTime}` : ''
-      }`,
-      textMeasure.width + 9,
-      stepStart - 20,
-    );
+    if (stepIndex > 1 && stepIndex > startIndex + 1) {
+      ctx.fillText(
+        `${intl.formatMessage(funnelMessages.hasSucceeded)} ${
+          passThroughTime ? `${intl.formatMessage(funnelMessages.in)} ${passThroughTime}` : ''
+        }`,
+        textMeasure.width + 9,
+        stepStart - 20,
+      );
+    }
   };
 
   computeDimensionMetrics = (funnelData: GroupedByFunnel, index: number) => {
@@ -435,6 +444,7 @@ class Funnel extends React.Component<Props, State> {
       fullHeight,
       startIndex,
       shouldRenderHeader,
+      enableSplitBy,
     } = this.props;
     const getPopupContainer = () => document.getElementById('mcs-funnel_splitBy')!;
 
@@ -466,7 +476,8 @@ class Funnel extends React.Component<Props, State> {
             steps[index - 1] &&
             steps[index - 1].count > 0 &&
             filter[index - 1] &&
-            this.displaySplitByDropdown(filter[index - 1]) ? (
+            this.displaySplitByDropdown(filter[index - 1]) &&
+            enableSplitBy ? (
               <Select
                 key={this._cuid()}
                 disabled={splitIndex === index && isStepLoading}
@@ -553,31 +564,32 @@ class Funnel extends React.Component<Props, State> {
     startIndex: number,
     showComplementaryFunnel: (index: number) => void,
   ) {
+    const { intl } = this.props;
     const buttonIndices = new Array(stepsNumber + 1).fill(0);
     const buttons = buttonIndices.map((step, index) => {
       const onClick = () => showComplementaryFunnel(index);
+      const className =
+        index === 0 || index === buttonIndices.length - 1
+          ? 'mcs-funnel_complementaryButton_hidden'
+          : undefined;
       return (
-        <div key={index} style={{ flexGrow: 1 }}>
+        <div key={index} className='mcs-funnel_complementaryButton'>
           <Button
-            style={{
-              visibility: index === 0 || index === buttonIndices.length - 1 ? 'hidden' : undefined,
-            }}
+            className={className}
             disabled={index === 0 || index === buttonIndices.length - 1}
             onClick={onClick}
           >
-            See funnel for others
+            {intl.formatMessage(funnelMessages.showDropoutFunnel)}
           </Button>
         </div>
       );
     });
 
     return (
-      <div id='outerContainer' style={{ display: 'flex', flexFlow: 'row' }}>
-        <div style={{ flexBasis: 1, flexGrow: startIndex, position: 'relative' }} />
-        <div style={{ flexBasis: 1, flexGrow: stepsNumber - startIndex, position: 'relative' }}>
-          <div className='mcs-funnel_steps' style={{ display: 'flex' }}>
-            {buttons}
-          </div>
+      <div id='outerContainer' className='mcs-funnel_container'>
+        <div className='mcs-funnel_element' style={{ flexGrow: startIndex }} />
+        <div className='mcs-funnel_element' style={{ flexGrow: stepsNumber - startIndex }}>
+          <div className='mcs-funnel_steps mcs-funnel_complementaryButtonsContainer'>{buttons}</div>
         </div>
       </div>
     );
@@ -614,9 +626,16 @@ class Funnel extends React.Component<Props, State> {
 
     return (
       <div>
-        <div id='outerContainer' style={{ display: 'flex', flexFlow: 'row' }}>
-          <div style={{ flexBasis: 1, flexGrow: startIndex, position: 'relative' }} />
-          <div style={{ flexBasis: 1, flexGrow: _stepsNumber - startIndex, position: 'relative' }}>
+        <div
+          id='outerContainer'
+          className='mcs-funnel_container'
+          style={{ display: 'flex', flexFlow: 'row' }}
+        >
+          <div className='mcs-funnel_element' style={{ flexGrow: startIndex }} />
+          <div
+            className='mcs-funnel_element'
+            style={{ flexGrow: _stepsNumber - startIndex, position: 'relative' }}
+          >
             {title ? <div className={'mcs-funnel_title'}>{title}</div> : undefined}
             {closeFunnel ? (
               <Button
