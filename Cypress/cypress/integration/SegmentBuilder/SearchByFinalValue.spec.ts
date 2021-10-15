@@ -1,6 +1,11 @@
 import faker from 'faker';
 
-describe('This test should check that the audience feature forms are working properly', () => {
+describe('This test should check that the search by final value feature is working properly', () => {
+  //TODO delete the before method when search by final value is not feature flagged anymore
+  before(() => {
+    window.localStorage.setItem('features', '["audience-feature-search"]');
+  });
+
   beforeEach(() => {
     cy.login();
     cy.readFile('cypress/fixtures/init_infos.json').then(data => {
