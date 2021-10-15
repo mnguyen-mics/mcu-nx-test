@@ -31,4 +31,3 @@ declare module 'file-saver';
 
 declare module 'react-dimensions';
 declare module 'chroma-js';
-declare module '@mediarithmics-private/advanced-components';
