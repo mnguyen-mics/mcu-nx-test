@@ -144,7 +144,9 @@ describe('This test should check that the audience feature folders work properly
         cy.get('.mcs-audienceFeatureTable_dropDownMenu').last().click();
         cy.get('.mcs-audienceFeatureTable_dropDownMenu--edit').click();
         cy.get('.mcs-audienceFeatureFolder').click();
-        cy.contains(audienceFeaturesFolderName).click();
+        cy.get('.mcs-audienceFeatureFolder').within(() => {
+          cy.contains(audienceFeaturesFolderName).click();
+        });
         cy.get('.mcs-form_saveButton_audienceFeatureForm').click();
         cy.wait(1000);
         cy.goToHome(data.organisationId);

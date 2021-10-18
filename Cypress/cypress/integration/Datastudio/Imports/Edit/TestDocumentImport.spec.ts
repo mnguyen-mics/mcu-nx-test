@@ -26,7 +26,6 @@ describe('User Profile Import Test', () => {
   const uploadFile = (fileName: string) => {
     cy.fixture(fileName).then(() => {
       cy.get('[type="file"]').attachFile(fileName, {
-        force: true,
         subjectType: 'drag-n-drop',
       });
     });
@@ -46,9 +45,9 @@ describe('User Profile Import Test', () => {
   it('should succeed if import profile input file is valid', () => {
     loginAndInitiateDocImportCreation();
     importTypeFunc('User Profile');
-    // Wait between the click of the new execution button and the upload of the file so that the interface can catch up
-    cy.wait(4000);
     uploadFile('00-testProfiles.ndjson');
+    // Wait between the click of the Ok button and the upload of the file so that the interface can catch up
+    cy.wait(4000);
     cy.contains('Ok').click();
     cy.get('.mcs-importExecution_table').should('contain', 'RUNNING');
     cy.get('.mcs-importExecution_table').should('contain', 'SUCCEEDED');
@@ -57,9 +56,9 @@ describe('User Profile Import Test', () => {
   it('should succeed if import activites input file is valid', () => {
     loginAndInitiateDocImportCreation();
     importTypeFunc('User Activity');
-    // Wait between the click of the new execution button and the upload of the file so that the interface can catch up
-    cy.wait(4000);
     uploadFile('01-testActivities.ndjson');
+    // Wait between the click of the Ok button and the upload of the file so that the interface can catch up
+    cy.wait(4000);
     cy.contains('Ok').click();
     cy.get('.mcs-importExecution_table').should('contain', 'RUNNING');
     cy.get('.mcs-importExecution_table').should('contain', 'SUCCEEDED');
@@ -68,9 +67,9 @@ describe('User Profile Import Test', () => {
   it('should fail if import profile input file does not match user profile resource', () => {
     loginAndInitiateDocImportCreation();
     importTypeFunc('User Profile');
-    // Wait between the click of the new execution button and the upload of the file so that the interface can catch up
-    cy.wait(4000);
     uploadFile('02-wrongData.ndjson');
+    // Wait between the click of the Ok button and the upload of the file so that the interface can catch up
+    cy.wait(4000);
     cy.contains('Ok').click();
     cy.get('.ant-notification-notice-with-icon')
       .should('contain', 'Something went wrong')
