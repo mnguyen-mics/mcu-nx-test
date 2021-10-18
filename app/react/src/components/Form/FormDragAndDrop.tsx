@@ -58,7 +58,7 @@ class FormDragAndDrop extends React.Component<JoinedProps> {
           input.onChange(newFileList);
           return false;
         },
-        fileList: input.value,
+        fileList: input.value.length > 0 ? input.value : undefined,
         onRemove: (file: UploadFile) => {
           input.onChange(input.value.filter((item: UploadFile) => item.uid !== file.uid));
         },
