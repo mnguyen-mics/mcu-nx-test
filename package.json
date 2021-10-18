@@ -69,7 +69,7 @@
     "redux-saga": "^0.16.2",
     "redux-thunk": "^2.3.0",
     "reflect-metadata": "^0.1.12",
-    "regenerator-runtime": "^0.13.7",
+    "regenerator-runtime": "^0.13.9",
     "reselect": "^4.0.0",
     "rc-menu": "~9.0.12",
     "storm-react-diagrams": "^5.2.1",
