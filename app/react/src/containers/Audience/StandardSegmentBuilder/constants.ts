@@ -140,6 +140,14 @@ export const messages: {
     id: 'standardSegmentBuilder.audienceFeatureSelector.moreFinalValues',
     defaultMessage: 'More',
   },
+  searchIsTooLong: {
+    id: 'standardSegmentBuilder.audienceFeatureSelector.searchIsTooLong',
+    defaultMessage: "You can't specify more than 5 keywords",
+  },
+  searchIsForbidden: {
+    id: 'standardSegmentBuilder.audienceFeatureSelector.searchIsForbidden',
+    defaultMessage: "Only these special characters are authorized: é, è, ç, à, _, -, @, ', .",
+  },
 });
 
 export const fieldGridConfig = {
