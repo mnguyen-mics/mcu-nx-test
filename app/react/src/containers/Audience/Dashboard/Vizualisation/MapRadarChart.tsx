@@ -6,6 +6,7 @@ import {
   isAggregateResult,
   isCountResult,
   OTQLResult,
+  QueryPrecisionMode,
 } from '../../../../models/datamart/graphdb/OTQLResult';
 import injectThemeColors, { InjectedThemeColorsProps } from '../../../Helpers/injectThemeColors';
 import { compose } from 'recompose';
@@ -43,6 +44,7 @@ export interface MapBarChartProps {
   tooltip?: TooltipChart;
   labels?: DataLabel;
   sortKey?: SerieSortType;
+  precision?: QueryPrecisionMode;
 }
 
 interface QueryResult {
@@ -168,7 +170,7 @@ class MapBarChart extends React.Component<Props, State> {
     source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument,
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
-
+    const { precision } = this.props;
     const promise: Promise<void | QueryResource> = shouldCompare
       ? this._queryService
           .getQuery(datamartId, chartQueryId)
@@ -185,6 +187,7 @@ class MapBarChart extends React.Component<Props, State> {
         ? this._queryService
             .runOTQLQuery(datamartId, q.query_text, {
               use_cache: true,
+              precision: precision,
             })
             .then(resp => {
               return resp.data;
@@ -207,6 +210,7 @@ class MapBarChart extends React.Component<Props, State> {
           this._queryService
             .runOTQLQuery(datamartId, q0.query_text, {
               use_cache: true,
+              precision: precision,
             })
             .then(resp => {
               return resp.data;

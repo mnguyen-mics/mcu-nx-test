@@ -6,6 +6,7 @@ import {
   isCountResult,
   OTQLResult,
   OTQLBucket,
+  QueryPrecisionMode,
 } from '../../../../models/datamart/graphdb/OTQLResult';
 import injectThemeColors, { InjectedThemeColorsProps } from '../../../Helpers/injectThemeColors';
 import { compose } from 'recompose';
@@ -34,6 +35,7 @@ export interface MapPieChartProps {
   showLegend?: boolean;
   labelsEnabled?: boolean;
   height: number;
+  precision?: QueryPrecisionMode;
 }
 
 interface State {
@@ -120,7 +122,7 @@ class MapPieChart extends React.Component<Props, State> {
     source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument,
   ): Promise<void> => {
     this.setState({ error: false, loading: true });
-
+    const { precision } = this.props;
     return this._queryService
       .getQuery(datamartId, chartQueryId)
 
@@ -135,6 +137,7 @@ class MapPieChart extends React.Component<Props, State> {
         return this._queryService
           .runOTQLQuery(datamartId, query, {
             use_cache: true,
+            precision: precision,
           })
           .then(otqlResultResp => {
             return otqlResultResp.data;

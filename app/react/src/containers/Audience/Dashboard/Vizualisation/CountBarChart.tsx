@@ -1,7 +1,11 @@
 import * as React from 'react';
 import cuid from 'cuid';
 import _ from 'lodash';
-import { OTQLCountResult, isCountResult } from '../../../../models/datamart/graphdb/OTQLResult';
+import {
+  OTQLCountResult,
+  isCountResult,
+  QueryPrecisionMode,
+} from '../../../../models/datamart/graphdb/OTQLResult';
 import injectThemeColors, { InjectedThemeColorsProps } from '../../../Helpers/injectThemeColors';
 import { compose } from 'recompose';
 import { injectIntl, InjectedIntlProps } from 'react-intl';
@@ -25,6 +29,7 @@ export interface CountBarChartProps {
   labelsEnabled?: boolean;
   plotLabels: string[];
   source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument;
+  precision?: QueryPrecisionMode;
 }
 
 interface QueryResult {
@@ -137,6 +142,7 @@ class CountBarChart extends React.Component<Props, State> {
     plotLabelIndex: number,
     source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument,
   ): Promise<QueryResult[]> => {
+    const { precision } = this.props;
     return this._queryService
       .getQuery(datamartId, chartQueryId)
       .then(queryResp => {
@@ -149,6 +155,7 @@ class CountBarChart extends React.Component<Props, State> {
         return this._queryService
           .runOTQLQuery(datamartId, q.query_text, {
             use_cache: true,
+            precision: precision,
           })
           .then(r => r.data)
           .then(r => {

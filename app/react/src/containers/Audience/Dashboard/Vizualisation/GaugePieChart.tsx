@@ -4,6 +4,7 @@ import {
   isAggregateResult,
   isCountResult,
   OTQLCountResult,
+  QueryPrecisionMode,
 } from '../../../../models/datamart/graphdb/OTQLResult';
 import injectThemeColors, { InjectedThemeColorsProps } from '../../../Helpers/injectThemeColors';
 import { compose } from 'recompose';
@@ -25,6 +26,7 @@ export interface GaugePieChartProps {
   queryIds: string[];
   datamartId: string;
   height: number;
+  precision?: QueryPrecisionMode;
 }
 
 interface State {
@@ -88,6 +90,7 @@ class GaugePieChart extends React.Component<Props, State> {
 
   fetchData = (chartQueryIds: string[], datamartId: string): Promise<void> => {
     this.setState({ error: false, loading: true });
+    const { precision } = this.props;
     const promises = chartQueryIds.map(chartQueryId => {
       return this._queryService.getQuery(datamartId, chartQueryId);
     });
@@ -99,6 +102,7 @@ class GaugePieChart extends React.Component<Props, State> {
         const queryListPromises = queryList.map(q => {
           return this._queryService.runOTQLQuery(datamartId, q.query_text, {
             use_cache: true,
+            precision: precision,
           });
         });
         return Promise.all(queryListPromises)

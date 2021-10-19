@@ -1,6 +1,10 @@
 import * as React from 'react';
 import _ from 'lodash';
-import { isAggregateResult, OTQLBucket } from '../../../../models/datamart/graphdb/OTQLResult';
+import {
+  isAggregateResult,
+  OTQLBucket,
+  QueryPrecisionMode,
+} from '../../../../models/datamart/graphdb/OTQLResult';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
 import { IQueryService } from '../../../../services/QueryService';
@@ -18,6 +22,7 @@ export interface TopInfoProps {
   datamartId: string;
   title: string;
   source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument;
+  precision?: QueryPrecisionMode;
 }
 
 interface State {
@@ -67,6 +72,7 @@ class TopInfo extends React.Component<Props, State> {
     datamartId: string,
     source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument,
   ): Promise<void> => {
+    const { precision } = this.props;
     this.setState({ error: false, loading: true });
     return this._queryService
       .getQuery(datamartId, chartQueryId)
@@ -82,6 +88,7 @@ class TopInfo extends React.Component<Props, State> {
         return this._queryService
           .runOTQLQuery(datamartId, query, {
             use_cache: true,
+            precision: precision,
           })
 
           .then(otqlResultResp => {
