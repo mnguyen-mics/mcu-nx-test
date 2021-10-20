@@ -1,4 +1,4 @@
-import { ChartConfig } from '@mediarithmics-private/advanced-components/lib/components/chart-engine/ChartDataFetcher';
+import { ChartConfig } from '@mediarithmics-private/advanced-components/lib/services/ChartDatasetService';
 import { Layout } from 'react-grid-layout';
 import { OTQLResult } from '../datamart/graphdb/OTQLResult';
 
