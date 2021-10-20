@@ -125,6 +125,8 @@ class StandardSegmentBuilderListPage extends React.Component<Props, State> {
       title: formatMessage(messages.standardSegmentBuilderDeleteListModalTitle),
       okText: formatMessage(messages.standardSegmentBuilderDeleteListModalOk),
       cancelText: formatMessage(messages.standardSegmentBuilderDeleteListModalCancel),
+      className: 'mcs-standardSegmentBuilderDeletePopUp',
+      okButtonProps: { className: 'mcs-standardSegmentBuilderDeletePopUp_delete_button' },
       onOk: () => {
         this._standardSegmentBuilderService
           .deleteStandardSegmentBuilder(resource.datamart_id, resource.id)
