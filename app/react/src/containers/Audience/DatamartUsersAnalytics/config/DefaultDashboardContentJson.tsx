@@ -18,7 +18,7 @@ export const defaultDashboardContent: DashboardContentSections = {
               dataset: {
                 type: 'otql',
                 query_id: '50171',
-              },
+              } as any,
               options: {
                 xKey: 'key',
                 format: 'count',
@@ -49,7 +49,7 @@ export const defaultDashboardContent: DashboardContentSections = {
               dataset: {
                 type: 'otql',
                 query_id: '50168',
-              },
+              } as any,
               options: {
                 legend: {
                   enabled: true,
@@ -79,7 +79,7 @@ export const defaultDashboardContent: DashboardContentSections = {
               dataset: {
                 type: 'otql',
                 query_id: '50172',
-              },
+              } as any,
             },
           ],
         },
@@ -95,7 +95,7 @@ export const defaultDashboardContent: DashboardContentSections = {
               dataset: {
                 type: 'otql',
                 query_id: '50169',
-              },
+              } as any,
               options: {
                 type: 'bar',
                 xKey: 'key',
@@ -127,7 +127,7 @@ export const defaultDashboardContent: DashboardContentSections = {
               dataset: {
                 type: 'otql',
                 query_id: '50167',
-              },
+              } as any,
               options: {
                 xKey: 'key',
                 format: 'count',
@@ -153,7 +153,7 @@ export const defaultDashboardContent: DashboardContentSections = {
               dataset: {
                 type: 'otql',
                 query_id: '50173',
-              },
+              } as any,
               options: {
                 xKey: 'key',
                 format: 'count',
