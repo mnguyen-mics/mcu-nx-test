@@ -109,15 +109,18 @@ class StandardSegmentBuilderTable extends React.Component<Props> {
 
     const actionColumns: Array<ActionsColumnDefinition<StandardSegmentBuilderResource>> = [
       {
+        className: 'mcs-standardSegmentBuilderTable_dropDownMenu',
         key: 'action',
         actions: () => [
           {
             message: formatMessage(messages.standardSegmentBuilderEdit),
             callback: this.onEditStandardSegmentBuilder,
+            className: 'mcs-standardSegmentBuilderTable_dropDownMenu--edit',
           },
           {
             message: formatMessage(messages.standardSegmentBuilderDelete),
             callback: deleteStandardSegmentBuilder,
+            className: 'mcs-standardSegmentBuilderTable_dropDownMenu--delete',
           },
         ],
       },
