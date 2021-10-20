@@ -286,9 +286,9 @@ class Partition extends React.Component<JoinedProps, HomeState> {
                 {hasFeature('dashboards-new-engine') && (
                   <MentionTag
                     mention={'BETA'}
-                    customContent={'DASHBOARDS-NEW-ENGINE'}
+                    customContent={'dashboards-new-engine'}
                     tooltip={intl.formatMessage(messages.mentionTagTooltip)}
-                    className='m-l-10'
+                    className='mcs-homePage_mentionTag'
                   />
                 )}
               </Breadcrumb.Item>
