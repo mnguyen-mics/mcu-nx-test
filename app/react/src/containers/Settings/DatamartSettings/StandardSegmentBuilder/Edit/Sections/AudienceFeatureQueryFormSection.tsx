@@ -77,7 +77,13 @@ class AudienceFeatureQueryFormSection extends React.Component<Props> {
     };
     const actionbar = (query: string) => {
       const onSave = () => {
-        const objectTreeExpression = query.split('where ').pop();
+        let objectTreeExpression = query;
+        if (query.includes('where')) {
+          objectTreeExpression = query.split('where')[1];
+        } else if (query.includes('WHERE')) {
+          objectTreeExpression = query.split('WHERE')[1];
+        }
+
         this._audienceFeatureService
           .extractAudienceFeatureVariables(
             this.props.match.params.datamartId,
