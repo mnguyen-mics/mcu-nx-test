@@ -1,6 +1,11 @@
 import * as React from 'react';
-import { AreaChartOutlined, HomeOutlined, TableOutlined } from '@ant-design/icons';
-import { Breadcrumb, Table, Select, Input } from 'antd';
+import {
+  BarChartOutlined,
+  HomeOutlined,
+  RadarChartOutlined,
+  TableOutlined,
+} from '@ant-design/icons';
+import { Breadcrumb, Table, Select, Input, Card } from 'antd';
 import {
   OTQLMetric,
   OTQLAggregations,
@@ -18,13 +23,12 @@ import {
 import { FormattedMessage } from 'react-intl';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import { BASE_CHART_HEIGHT } from '../../../components/Charts/domain';
-import { Option } from 'antd/lib/mentions';
 import {
   Dataset,
   Format,
 } from '@mediarithmics-private/mcs-components-library/lib/components/charts/utils';
 import { RadarChartProps } from '@mediarithmics-private/mcs-components-library/lib/components/charts/radar-chart';
-
+const MAX_ELEMENTS = 999;
 interface BucketPath {
   aggregationBucket: OTQLBuckets;
   bucket: OTQLBucket;
@@ -32,6 +36,7 @@ interface BucketPath {
 
 export interface AggregationRendererProps {
   rootAggregations: OTQLAggregations;
+  query?: string;
 }
 type Props = AggregationRendererProps & InjectedFeaturesProps;
 
@@ -63,6 +68,10 @@ class AggregationRenderer extends React.Component<Props, State> {
     };
   }
 
+  componentDidMount() {
+    if (this.hasDateHistogram()) this.setNbrOfShowedItems();
+  }
+
   getDefaultView = (aggregations: OTQLAggregations) => {
     if (aggregations.buckets.length > 0) {
       return '0';
@@ -87,6 +96,23 @@ class AggregationRenderer extends React.Component<Props, State> {
         }}
       />
     );
+  };
+
+  setNbrOfShowedItems = (e?: React.ChangeEvent<HTMLInputElement>) => {
+    const { rootAggregations } = this.props;
+    const { aggregationsPath, selectedView } = this.state;
+
+    const aggregations = this.findAggregations(rootAggregations, aggregationsPath)!;
+    const buckets: OTQLBuckets = aggregations.buckets[parseInt(selectedView, 0)];
+    const value = e ? parseInt(e.target.value, 10) : MAX_ELEMENTS;
+    this.setState({
+      numberItems: Math.min(MAX_ELEMENTS, buckets.buckets.length, value),
+    });
+  };
+
+  hasDateHistogram = () => {
+    const { query } = this.props;
+    return query && query.indexOf('@date_histogram') > -1;
   };
 
   handleChartTypeChange = (value: chartType) => {
@@ -114,7 +140,7 @@ class AggregationRenderer extends React.Component<Props, State> {
 
   getBuckets = (buckets: OTQLBuckets) => {
     const { hasFeature } = this.props;
-    const { numberItems, selectedChart, aggregationsPath } = this.state;
+    const { numberItems } = this.state;
     if (buckets.buckets.length === 0)
       return (
         <FormattedMessage
@@ -151,18 +177,6 @@ class AggregationRenderer extends React.Component<Props, State> {
     };
 
     if (hasFeature('query-tool-graphs')) {
-      const showedItems = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const RADAR_MAX_ELEMENTS = 999;
-        const value = parseInt(e.target.value, 10);
-        if (value < 1) this.setState({ numberItems: 1 });
-        else if (value > RADAR_MAX_ELEMENTS && buckets.buckets.length < RADAR_MAX_ELEMENTS)
-          this.setState({ numberItems: buckets.buckets.length });
-        else if (value > RADAR_MAX_ELEMENTS && buckets.buckets.length > RADAR_MAX_ELEMENTS)
-          this.setState({ numberItems: RADAR_MAX_ELEMENTS });
-        else if (value > buckets.buckets.length)
-          this.setState({ numberItems: buckets.buckets.length });
-        else this.setState({ numberItems: parseInt(e.target.value, 10) });
-      };
       const currentBuckets = buckets.buckets.slice(0, numberItems);
       const stackedBarChartDataset: Dataset = this.formatDataset(
         currentBuckets,
@@ -205,117 +219,107 @@ class AggregationRenderer extends React.Component<Props, State> {
           enabled: false,
         },
       };
+
+      const renderShowTop = () => {
+        return (
+          <div className={'mcs-otqlChart_items'}>
+            Show top{' '}
+            <Input
+              type='number'
+              className='mcs-otqlChart_items_input'
+              value={numberItems}
+              onChange={this.setNbrOfShowedItems}
+            />{' '}
+            / {buckets.buckets.length}
+          </div>
+        );
+      };
+
       const tabs = [
         {
-          title: (
-            <div>
-              <TableOutlined className='mcs-otqlChart_icons' />
-              Table
-            </div>
-          ),
+          title: <TableOutlined className='mcs-otqlChart_icons' />,
+          key: 'table',
           display: (
-            <Table<OTQLBucket>
-              columns={[
-                {
-                  title: 'Key',
-                  dataIndex: 'key',
-                  sorter: (a, b) =>
-                    typeof a.key === 'string' &&
-                    typeof b.key === 'string' &&
-                    !isNaN(Date.parse(a.key)) &&
-                    !isNaN(Date.parse(b.key))
-                      ? Date.parse(a.key) - Date.parse(b.key)
-                      : a.key.length - b.key.length,
-                },
-                {
-                  title: 'Count',
-                  dataIndex: 'count',
-                  sorter: (a, b) => a.count - b.count,
-                },
-                {
-                  render: (text, record) => {
-                    if (bucketHasData(record)) {
-                      return (
-                        <div className='float-right'>
-                          <McsIcon type='chevron-right' />
-                        </div>
-                      );
-                    }
-                    return null;
+            <Card bordered={false}>
+              <Table<OTQLBucket>
+                columns={[
+                  {
+                    title: 'Key',
+                    dataIndex: 'key',
+                    sorter: (a, b) =>
+                      typeof a.key === 'string' &&
+                      typeof b.key === 'string' &&
+                      !isNaN(Date.parse(a.key)) &&
+                      !isNaN(Date.parse(b.key))
+                        ? Date.parse(a.key) - Date.parse(b.key)
+                        : a.key.length - b.key.length,
                   },
-                },
-              ]}
-              className='mcs-aggregationRendered_table'
-              onRow={handleOnRow}
-              rowClassName={getRowClassName}
-              dataSource={buckets.buckets}
-              pagination={{
-                size: 'small',
-                showSizeChanger: true,
-                hideOnSinglePage: true,
-              }}
-            />
+                  {
+                    title: 'Count',
+                    dataIndex: 'count',
+                    sorter: (a, b) => a.count - b.count,
+                  },
+                  {
+                    render: (text, record) => {
+                      if (bucketHasData(record)) {
+                        return (
+                          <div className='float-right'>
+                            <McsIcon type='chevron-right' />
+                          </div>
+                        );
+                      }
+                      return null;
+                    },
+                  },
+                ]}
+                className='mcs-aggregationRendered_table'
+                onRow={handleOnRow}
+                rowClassName={getRowClassName}
+                dataSource={buckets.buckets}
+                pagination={{
+                  size: 'small',
+                  showSizeChanger: true,
+                  hideOnSinglePage: true,
+                }}
+              />
+            </Card>
           ),
         },
         {
-          title: (
-            <div>
-              <AreaChartOutlined className='mcs-otqlChart_icons' />
-              Chart
-            </div>
-          ),
+          title: <BarChartOutlined className='mcs-otqlChart_icons' />,
+          key: 'bar',
           display: (
-            <div className='mcs-otqlChart_container'>
-              <div className='mcs-otqlChart_container--inner'>
-                <div
-                  className={
-                    aggregationsPath.length === 0
-                      ? 'mcs-otqlChart_radar'
-                      : 'mcs-otqlChart_radar--aggregations'
-                  }
-                >
-                  <Select
-                    className={'otqlChart_radar_selector'}
-                    defaultValue={'RADAR'}
-                    onChange={this.handleChartTypeChange}
-                    value={selectedChart}
-                  >
-                    <Option value='RADAR'>Radar</Option>
-                    <Option value='BAR'>Bar</Option>
-                  </Select>
-                </div>
-
-                <div
-                  className={
-                    aggregationsPath.length === 0
-                      ? 'mcs-otqlChart_items'
-                      : 'mcs-otqlChart_items--aggregations'
-                  }
-                >
-                  Show top{' '}
-                  <Input
-                    type='number'
-                    className='mcs-otqlChart_items_input'
-                    value={numberItems}
-                    onChange={showedItems}
-                  />{' '}
-                  / {buckets.buckets.length}
-                </div>
-                {selectedChart === 'RADAR' && <RadarChart {...radarChartProps} />}
-                {selectedChart === 'BAR' && (
-                  <BarChart
-                    {...optionsForBarChart}
-                    dataset={stackedBarChartDataset ? stackedBarChartDataset : []}
-                    drilldown={true}
-                    bigBars={true}
-                  />
-                )}
-              </div>
-            </div>
+            <Card bordered={false}>
+              <BarChart
+                {...optionsForBarChart}
+                dataset={stackedBarChartDataset ? stackedBarChartDataset : []}
+                drilldown={true}
+                bigBars={true}
+              />
+            </Card>
+          ),
+        },
+        {
+          title: <RadarChartOutlined className='mcs-otqlChart_icons' />,
+          key: 'radar',
+          display: (
+            <Card bordered={false}>
+              <RadarChart {...radarChartProps} />
+            </Card>
           ),
         },
       ];
-      return <McsTabs items={tabs} />;
+      return (
+        <div>
+          <McsTabs
+            items={tabs}
+            animated={false}
+            className='mcs-otqlChart_tabs'
+            defaultActiveKey={this.hasDateHistogram() ? 'bar' : 'table'}
+          />
+          {renderShowTop()}
+        </div>
+      );
     }
 
     return (

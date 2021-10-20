@@ -20,8 +20,22 @@ import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/Run
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
 import OTQLRequest from './OTQLRequest';
 
-const { Content, Sider } = Layout;
+const { Content } = Layout;
 const { TabPane } = Tabs;
+
+interface McsTabsItem {
+  className?: string;
+  title: React.ReactChild;
+  display?: JSX.Element;
+  key: string;
+  content: JSX.Element;
+  closable: boolean;
+}
+
+interface TabQuery {
+  id: string;
+  query: string;
+}
 
 export interface OTQLConsoleContainerProps {
   datamartId: string;
@@ -43,8 +57,9 @@ interface State {
   evaluateGraphQl: boolean;
   useCache: boolean;
   noLiveSchemaFound: boolean;
-  panes: any[];
+  panes: McsTabsItem[];
   activeKey: string;
+  tabQueries: TabQuery[];
 }
 
 type Props = OTQLConsoleContainerProps &
@@ -61,7 +76,6 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
 
   @lazyInject(TYPES.IRuntimeSchemaService)
   private _runtimeSchemaService: IRuntimeSchemaService;
-  private newTabIndex = 0;
 
   constructor(props: Props) {
     super(props);
@@ -81,13 +95,41 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
       panes: [
         {
           title: 'Query 1',
-          content: <OTQLRequest datamartId={this.props.datamartId} />,
+          content: (
+            <OTQLRequest
+              datamartId={this.props.datamartId}
+              setQuery={this.getCurrentTabQuery.bind(this, '1')}
+            />
+          ),
           key: '1',
           closable: false,
         },
       ],
+      tabQueries: [],
     };
   }
+
+  getCurrentTabQuery = (tabIndex: string, query: string) => {
+    const { tabQueries } = this.state;
+
+    const existingQuery = tabQueries.find((tabQ: TabQuery) => tabQ.id === tabIndex);
+    if (existingQuery) {
+      tabQueries.forEach((tabQ: TabQuery, i: number) => {
+        if (tabQ.id === tabIndex) {
+          tabQueries[i].query = query;
+        }
+      });
+    } else {
+      tabQueries.push({
+        id: tabIndex,
+        query,
+      });
+    }
+
+    this.setState({
+      tabQueries,
+    });
+  };
 
   componentDidMount() {
     const { datamartId } = this.props;
@@ -174,14 +216,22 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
 
   add = () => {
     const { panes } = this.state;
-    const activeKey = `newTab${this.newTabIndex++}`;
+
     const newPanes = [...panes];
+    const newKey = newPanes.length > 0 ? parseInt(newPanes[newPanes.length - 1].key, 10) + 1 : 1;
+    const activeKey = newKey.toString();
     newPanes.push({
-      title: `Query ${panes.length + 1}`,
-      content: <OTQLRequest datamartId={this.props.datamartId} />,
+      title: `Query ${newKey}`,
+      content: (
+        <OTQLRequest
+          datamartId={this.props.datamartId}
+          setQuery={this.getCurrentTabQuery.bind(this, activeKey)}
+        />
+      ),
       key: activeKey,
       closable: true,
     });
+
     this.setState({
       panes: newPanes,
       activeKey,
@@ -189,15 +239,21 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
   };
 
   remove = (targetKey: string) => {
-    const { panes, activeKey } = this.state;
+    const { panes, activeKey, tabQueries } = this.state;
     let newActiveKey = activeKey;
     let lastIndex;
+
+    const newTabQueries = tabQueries;
     panes.forEach((pane, i) => {
       if (pane.key === targetKey) {
         lastIndex = i - 1;
       }
     });
+
     const newPanes = panes.filter(pane => pane.key !== targetKey);
+
+    newTabQueries.filter((tabQuery: TabQuery) => tabQuery.id !== targetKey);
+
     if (newPanes.length && newActiveKey === targetKey) {
       if (lastIndex && lastIndex >= 0) {
         newActiveKey = newPanes[lastIndex].key;
@@ -205,15 +261,17 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
         newActiveKey = newPanes[0].key;
       }
     }
+
     this.setState({
       panes: newPanes,
       activeKey: newActiveKey,
+      tabQueries: newTabQueries,
     });
   };
 
   render() {
     const { datamartId } = this.props;
-    const { schemaVizOpen, schemaLoading, rawSchema, query, activeKey, panes } = this.state;
+    const { schemaLoading, rawSchema, query, activeKey, panes, tabQueries } = this.state;
 
     if (schemaLoading) {
       return <Loading isFullScreen={true} />;
@@ -230,44 +288,49 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
       }
     }
 
+    const currentQuery =
+      tabQueries.length > 0
+        ? tabQueries.find((tabQ: TabQuery) => tabQ.id === activeKey)
+        : undefined;
+
+    const exportQuery = currentQuery ? currentQuery.query : this.state.query;
+
     return (
       <Layout>
-        {this.props.renderActionBar(this.state.query, datamartId)}
+        {this.state.query && this.props.renderActionBar(exportQuery, datamartId)}
         <Layout>
-          <Layout>
-            <Content className='mcs-content-container'>
-              <Tabs
-                className={'mcs-OTQLConsoleContainer_tabs'}
-                type='editable-card'
-                onChange={this.onChange}
-                activeKey={activeKey}
-                onEdit={this.onEdit}
-              >
-                {panes.map(pane => (
-                  <TabPane
-                    className={'mcs-OTQLConsoleContainer_tabs_tab'}
-                    tab={pane.title}
-                    key={pane.key}
-                    closable={pane.closable}
-                  >
+          <Content className='mcs-content-container'>
+            <Tabs
+              className={'mcs-OTQLConsoleContainer_tabs'}
+              type='editable-card'
+              onChange={this.onChange}
+              activeKey={activeKey}
+              onEdit={this.onEdit}
+            >
+              {panes.map(pane => (
+                <TabPane
+                  className={'mcs-OTQLConsoleContainer_tabs_tab'}
+                  tab={pane.title}
+                  key={pane.key}
+                  closable={pane.closable}
+                >
+                  <div className={'mcs-OTQLConsoleContainer_tab_content'}>
                     {pane.content}
-                  </TabPane>
-                ))}
-              </Tabs>
-            </Content>
-          </Layout>
-          <Sider width={schemaVizOpen ? 250 : 0}>
-            <div className='schema-visualizer'>
-              <SchemaVizualizer
-                schema={
-                  rawSchema && rawSchema.length > 0
-                    ? computeFinalSchemaItem(rawSchema, startType, false, false, false)
-                    : undefined
-                }
-                disableDragAndDrop={true}
-              />
-            </div>
-          </Sider>
+                    <div className='schema-visualizer'>
+                      <SchemaVizualizer
+                        schema={
+                          rawSchema && rawSchema.length > 0
+                            ? computeFinalSchemaItem(rawSchema, startType, false, false, false)
+                            : undefined
+                        }
+                        disableDragAndDrop={true}
+                      />
+                    </div>
+                  </div>
+                </TabPane>
+              ))}
+            </Tabs>
+          </Content>
         </Layout>
       </Layout>
     );

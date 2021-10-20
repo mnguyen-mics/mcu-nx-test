@@ -22,6 +22,7 @@ export interface OTQLRequestProps {
   datamartId: string;
   query?: string;
   queryEditorClassName?: string;
+  setQuery?: (query: string) => void;
 }
 
 interface State {
@@ -148,16 +149,27 @@ class OTQLRequest extends React.Component<Props, State> {
     );
 
     const queryResultRenderer: React.ReactNode = (runningQuery || queryAborted || queryResult) && (
-      <OTQLResultRenderer loading={runningQuery} result={queryResult} aborted={queryAborted} />
+      <OTQLResultRenderer
+        loading={runningQuery}
+        result={queryResult}
+        aborted={queryAborted}
+        query={query}
+      />
     );
 
-    const onChange = (q: string) => this.setState({ query: q });
+    const onChange = (q: string) => {
+      if (this.props.setQuery) {
+        this.props.setQuery(q);
+      }
+
+      this.setState({ query: q });
+    };
 
     const handleChange = (eg: boolean, c: boolean, p: QueryPrecisionMode) =>
       this.setState({ evaluateGraphQl: eg, useCache: c, precision: p });
 
     return (
-      <span>
+      <span className='mcs-otqlQuery_container'>
         {!hasFeature('query-tool-graphs') && (
           <ContentHeader
             title={
