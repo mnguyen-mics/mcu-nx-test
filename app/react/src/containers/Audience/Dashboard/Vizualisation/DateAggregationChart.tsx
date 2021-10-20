@@ -5,6 +5,7 @@ import {
   OTQLAggregationResult,
   isAggregateResult,
   isCountResult,
+  QueryPrecisionMode,
 } from '../../../../models/datamart/graphdb/OTQLResult';
 import injectThemeColors, {
   InjectedThemeColorsProps,
@@ -33,6 +34,7 @@ export interface DateAggregationChartProps {
   plotLabels: string[];
   height?: number;
   format?: string;
+  precision?: QueryPrecisionMode;
 }
 
 interface QueryResult {
@@ -151,6 +153,7 @@ class DateAggregationChart extends React.Component<Props, State> {
     plotLabelIndex: number,
     source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument,
   ): Promise<QueryResult[]> => {
+    const { precision } = this.props;
     return this._queryService
       .getQuery(datamartId, chartQueryId)
       .then(queryResp => {
@@ -163,6 +166,7 @@ class DateAggregationChart extends React.Component<Props, State> {
         return this._queryService
           .runOTQLQuery(datamartId, q.query_text, {
             use_cache: true,
+            precision: precision,
           })
           .then(r => r.data)
           .then(r => {

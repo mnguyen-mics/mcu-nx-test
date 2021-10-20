@@ -5,6 +5,7 @@ import {
   isCountResult,
   OTQLResult,
   OTQLBucket,
+  QueryPrecisionMode,
 } from '../../../../models/datamart/graphdb/OTQLResult';
 import injectThemeColors, { InjectedThemeColorsProps } from '../../../Helpers/injectThemeColors';
 import { compose } from 'recompose';
@@ -42,6 +43,7 @@ export interface MapIndexChartProps {
   tooltip?: TooltipChart;
   showTop?: number;
   minimumPercentage?: number;
+  precision?: QueryPrecisionMode;
 }
 
 interface State {
@@ -157,6 +159,7 @@ class MapIndexChart extends React.Component<Props, State> {
     this._queryService
       .runOTQLQuery(datamartId, q.query_text, {
         use_cache: true,
+        precision: this.props.precision,
       })
       .then(resp => {
         return resp.data;

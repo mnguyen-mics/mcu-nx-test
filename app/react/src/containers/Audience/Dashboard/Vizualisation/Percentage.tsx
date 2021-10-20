@@ -1,6 +1,6 @@
 import * as React from 'react';
 import _ from 'lodash';
-import { isCountResult } from '../../../../models/datamart/graphdb/OTQLResult';
+import { isCountResult, QueryPrecisionMode } from '../../../../models/datamart/graphdb/OTQLResult';
 import { formatMetric } from '../../../../utils/MetricHelper';
 import { lazyInject } from '../../../../config/inversify.config';
 import { TYPES } from '../../../../constants/types';
@@ -16,6 +16,7 @@ export interface PercentageProps {
   datamartId: string;
   title: string;
   source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument;
+  precision?: QueryPrecisionMode;
 }
 
 interface State {
@@ -95,7 +96,7 @@ export default class Percentage extends React.Component<PercentageProps, State> 
     source?: AudienceSegmentShape | StandardSegmentBuilderQueryDocument,
   ): Promise<number | void> => {
     this.setState({ error: false, loading: true });
-
+    const { precision } = this.props;
     return this._queryService
       .getQuery(datamartId, chartQueryId)
 
@@ -110,6 +111,7 @@ export default class Percentage extends React.Component<PercentageProps, State> 
         return this._queryService
           .runOTQLQuery(datamartId, query, {
             use_cache: true,
+            precision: precision,
           })
 
           .then(otqlResultResp => {

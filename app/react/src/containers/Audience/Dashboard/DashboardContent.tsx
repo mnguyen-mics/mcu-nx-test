@@ -62,6 +62,7 @@ export default class DashboardContent extends React.Component<Props, State> {
             datamartId={datamartId}
             title={comp.title}
             queryId={comp.query_id}
+            precision={comp.precision}
           />
         );
       case 'PERCENTAGE':
@@ -72,6 +73,7 @@ export default class DashboardContent extends React.Component<Props, State> {
             title={comp.title}
             queryId={comp.query_id}
             totalQueryId={comp.total_query_id}
+            precision={comp.precision}
           />
         );
       case 'MAP_PIE_CHART':
@@ -84,6 +86,7 @@ export default class DashboardContent extends React.Component<Props, State> {
             datamartId={datamartId}
             labelsEnabled={comp.show_legend}
             height={height}
+            precision={comp.precision}
           />
         );
       case 'MAP_BAR_CHART':
@@ -105,6 +108,7 @@ export default class DashboardContent extends React.Component<Props, State> {
             stacking={comp.stacking}
             drilldown={comp.drilldown}
             reducePadding={comp.reducePadding}
+            precision={comp.precision}
           />
         );
       case 'MAP_INDEX_CHART':
@@ -125,6 +129,7 @@ export default class DashboardContent extends React.Component<Props, State> {
             showTop={comp.showTop}
             minimumPercentage={comp.minimumPercentage}
             height={height}
+            precision={comp.precision}
           />
         );
       case 'MAP_RADAR_CHART':
@@ -142,6 +147,7 @@ export default class DashboardContent extends React.Component<Props, State> {
             labels={comp.labels}
             data={comp.data}
             tooltip={comp.tooltip}
+            precision={comp.precision}
           />
         );
       case 'DATE_AGGREGATION_CHART':
@@ -154,6 +160,7 @@ export default class DashboardContent extends React.Component<Props, State> {
             datamartId={datamartId}
             height={height}
             format={comp.format}
+            precision={comp.precision}
           />
         );
       case 'GAUGE_PIE_CHART':
@@ -163,6 +170,7 @@ export default class DashboardContent extends React.Component<Props, State> {
             title={comp.title}
             queryIds={comp.query_ids}
             height={height}
+            precision={comp.precision}
           />
         );
       case 'WORLD_MAP_CHART':
@@ -172,6 +180,7 @@ export default class DashboardContent extends React.Component<Props, State> {
             datamartId={datamartId}
             queryId={comp.query_id}
             height={height}
+            precision={comp.precision}
           />
         );
       case 'COUNT_BAR_CHART':
@@ -184,6 +193,7 @@ export default class DashboardContent extends React.Component<Props, State> {
             height={height}
             plotLabels={comp.plot_labels}
             source={source}
+            precision={comp.precision}
           />
         );
       case 'COUNT_PIE_CHART':
@@ -196,6 +206,7 @@ export default class DashboardContent extends React.Component<Props, State> {
             queryIds={comp.query_ids}
             title={comp.title}
             source={source}
+            precision={comp.precision}
           />
         );
       case 'TOP_INFO_COMPONENT':
@@ -205,6 +216,7 @@ export default class DashboardContent extends React.Component<Props, State> {
             title={comp.title}
             queryId={comp.query_id}
             source={source}
+            precision={comp.precision}
           />
         );
       default:

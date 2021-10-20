@@ -1,6 +1,6 @@
 import { ChartConfig } from '@mediarithmics-private/advanced-components/lib/components/chart-engine/ChartDataFetcher';
 import { Layout } from 'react-grid-layout';
-import { OTQLResult } from '../datamart/graphdb/OTQLResult';
+import { OTQLResult, QueryPrecisionMode } from '../datamart/graphdb/OTQLResult';
 
 export interface DataFileDashboardResource {
   id: string;
@@ -75,6 +75,7 @@ export interface BaseComponent {
   component_type: ComponentType;
   title: string;
   description?: string;
+  precision?: QueryPrecisionMode;
 }
 
 export interface ComponentChart extends BaseComponent {

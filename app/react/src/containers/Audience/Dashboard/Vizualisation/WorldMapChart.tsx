@@ -8,6 +8,7 @@ import {
   isAggregateResult,
   isCountResult,
   OTQLAggregationResult,
+  QueryPrecisionMode,
 } from '../../../../models/datamart/graphdb/OTQLResult';
 import { mapData2 } from '../mapData';
 
@@ -16,6 +17,7 @@ export interface WorldMapChartProps {
   queryId: string;
   datamartId: string;
   height: number;
+  precision?: QueryPrecisionMode;
 }
 
 interface State {
@@ -69,6 +71,7 @@ export default class WorldMapChart extends React.Component<WorldMapChartProps, S
 
   fetchData = (chartQueryId: string, datamartId: string): Promise<void> => {
     this.setState({ error: false });
+    const { precision } = this.props;
     return this._queryService
       .getQuery(datamartId, chartQueryId)
 
@@ -79,6 +82,7 @@ export default class WorldMapChart extends React.Component<WorldMapChartProps, S
         return this._queryService
           .runOTQLQuery(datamartId, q.query_text, {
             use_cache: true,
+            precision: precision,
           })
 
           .then(otqlResultResp => {
