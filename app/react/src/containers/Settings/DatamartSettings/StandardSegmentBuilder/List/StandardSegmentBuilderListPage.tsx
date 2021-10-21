@@ -16,6 +16,7 @@ import { StandardSegmentBuilderResource } from '../../../../../models/standardSe
 import { Index } from '@mediarithmics-private/mcs-components-library/lib/utils';
 import { getPaginatedApiParam } from '../../../../../utils/ApiHelper';
 import { Filter } from '../../Common/domain';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 const { Content } = Layout;
 
@@ -121,7 +122,7 @@ class StandardSegmentBuilderListPage extends React.Component<Props, State> {
     const { StandardSegmentBuilders, filter } = this.state;
 
     Modal.confirm({
-      icon: 'exclamation-circle',
+      icon: <ExclamationCircleOutlined />,
       title: formatMessage(messages.standardSegmentBuilderDeleteListModalTitle),
       okText: formatMessage(messages.standardSegmentBuilderDeleteListModalOk),
       cancelText: formatMessage(messages.standardSegmentBuilderDeleteListModalCancel),
