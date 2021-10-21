@@ -173,15 +173,16 @@ export class UserDataService implements IUserDataService {
     identifierId: string,
     compartmentId?: string,
   ): string {
+    const uriEncIdentifierId = encodeURIComponent(identifierId);
     switch (identifierType) {
       case 'user_point_id':
-        return `datamarts/${datamartId}/user_identifiers/${identifierId}`;
+        return `datamarts/${datamartId}/user_identifiers/${uriEncIdentifierId}`;
       case 'user_account_id':
         return compartmentId
-          ? `datamarts/${datamartId}/user_identifiers/compartment_id=${compartmentId}/${identifierType}=${identifierId}`
-          : `datamarts/${datamartId}/user_identifiers/${identifierType}=${identifierId}`;
+          ? `datamarts/${datamartId}/user_identifiers/compartment_id=${compartmentId}/${identifierType}=${uriEncIdentifierId}`
+          : `datamarts/${datamartId}/user_identifiers/${identifierType}=${uriEncIdentifierId}`;
       default:
-        return `datamarts/${datamartId}/user_identifiers/${identifierType}=${identifierId}`;
+        return `datamarts/${datamartId}/user_identifiers/${identifierType}=${uriEncIdentifierId}`;
     }
   }
 
