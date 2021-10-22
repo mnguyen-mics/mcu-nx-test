@@ -38,11 +38,13 @@ export interface IDashboardService {
 
   getDashboards: (
     datamartId: string,
+    organisationId: string,
     options?: DashboardsOptions,
   ) => Promise<DataListResponse<DashboardResource>>;
 
   getDashboardContent: (
     datamartId: string,
+    organisationId: string,
     dashboardId: string,
   ) => Promise<DashboardContentResource>;
 
@@ -135,18 +137,64 @@ export class DashboardService implements IDashboardService {
 
   getDashboards(
     datamartId: string,
+    organisationId: string,
     options?: DashboardsOptions,
-  ): Promise<DataListResponse<DashboardResource>> {
-    const endpoint = `datamarts/${datamartId}/dashboards`;
-    const params = {
+  ): Promise<any> {
+    const endpointLegacy = `datamarts/${datamartId}/dashboards`;
+    const endpoint = `dashboards`;
+    const paramsLegacy = {
       archived: options?.archived,
     };
-    return ApiService.getRequest(endpoint, params);
+    const params = {
+      archived: options?.archived,
+      searching_organisation_id: organisationId,
+    };
+    return (
+      ApiService.getRequest(endpoint, params)
+        // TODO: remove this logic after the complete delivery of MICS-10725
+        .then(result => {
+          return result;
+        })
+        .catch(err => {
+          if (err.error && err.error.includes('Route') && err.error.includes('Not Found')) {
+            return ApiService.getRequest(endpointLegacy, paramsLegacy).then(result => {
+              return result;
+            });
+          } else throw err;
+        })
+    );
   }
 
-  getDashboardContent(datamartId: string, dashboardId: string): Promise<any> {
-    const endpoint = `datamarts/${datamartId}/dashboards/${dashboardId}/content`;
-    return ApiService.getRequest(endpoint);
+  getDashboardContent(
+    datamartId: string,
+    organisationId: string,
+    dashboardId: string,
+  ): Promise<any> {
+    const endpointLegacy = `datamarts/${datamartId}/dashboards/${dashboardId}/content`;
+    const endpoint = `dashboards/${dashboardId}/content`;
+
+    const params = {
+      organisation_id: organisationId,
+    };
+
+    return (
+      ApiService.getRequest(endpoint, params)
+        // TODO: remove this logic after the complete delivery of MICS-10725
+        .then(result => {
+          return result;
+        })
+        .catch(err => {
+          if (err.error && err.error.includes('Route') && err.error.includes('Not Found')) {
+            return ApiService.getRequest(endpointLegacy)
+              .then(result => {
+                return result;
+              })
+              .catch(err2 => {
+                throw err2;
+              });
+          } else throw err;
+        })
+    );
   }
 
   getDataFileDashboards(

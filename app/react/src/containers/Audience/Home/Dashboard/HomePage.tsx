@@ -184,7 +184,9 @@ class Partition extends React.Component<JoinedProps, HomeState> {
     promises.push(
       this._dashboardService.getDataFileDashboards(organisationId, selectedDatamartId, 'HOME', {}),
     );
-    promises.push(this._dashboardService.getDashboards(selectedDatamartId, { archived: false }));
+    promises.push(
+      this._dashboardService.getDashboards(selectedDatamartId, organisationId, { archived: false }),
+    );
     Promise.all(promises)
       .then(res => {
         this.setState({
@@ -198,7 +200,7 @@ class Partition extends React.Component<JoinedProps, HomeState> {
             .filter(dashboard => dashboard.scopes.some(scope => scope === 'home'))
             .map(dashboard => {
               this._dashboardService
-                .getDashboardContent(selectedDatamartId, dashboard.id)
+                .getDashboardContent(selectedDatamartId, organisationId, dashboard.id)
                 .then(resContent => {
                   this.setState({
                     apiDashboards: this.state.apiDashboards.concat({
