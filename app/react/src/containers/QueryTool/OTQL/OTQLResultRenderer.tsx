@@ -17,13 +17,14 @@ export interface OTQLResultRendererProps {
   result: OTQLResult | null;
   loading?: boolean;
   aborted?: boolean;
+  query?: string;
 }
 
 type Props = OTQLResultRendererProps & InjectedThemeColorsProps & InjectedFeaturesProps;
 
 class OTQLResultRenderer extends React.Component<Props> {
   render() {
-    const { result, loading, aborted, colors, hasFeature } = this.props;
+    const { result, loading, aborted, colors, hasFeature, query } = this.props;
 
     let content: React.ReactNode;
     if (loading) {
@@ -52,7 +53,7 @@ class OTQLResultRenderer extends React.Component<Props> {
       const aggregations = result.rows[0].aggregations;
       content = (
         <div>
-          <AggregationRenderer rootAggregations={aggregations} />
+          <AggregationRenderer rootAggregations={aggregations} query={query} />
         </div>
       );
     } else if (result) {
@@ -108,7 +109,7 @@ class OTQLResultRenderer extends React.Component<Props> {
       <div className='mcs-otqlQuery_result'>
         {result ? (
           <React.Fragment>
-            <Tag color='blue' className='mcs-otqlQuery_result_tag'>
+            <Tag className='mcs-otqlQuery_result_tag'>
               <FormattedMessage
                 id='otql-result-renderer-card-subtitle-duration2'
                 defaultMessage='Took {duration}ms'

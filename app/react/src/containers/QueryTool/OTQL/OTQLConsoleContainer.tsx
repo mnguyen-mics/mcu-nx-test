@@ -1,16 +1,13 @@
 import * as React from 'react';
-import { Layout, Alert } from 'antd';
+import { Layout, Tabs } from 'antd';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { compose } from 'recompose';
-import { FormattedMessage, injectIntl, InjectedIntlProps, defineMessages } from 'react-intl';
+import { injectIntl, InjectedIntlProps } from 'react-intl';
 import { makeCancelable, CancelablePromise } from '../../../utils/ApiHelper';
-import { ContentHeader } from '@mediarithmics-private/mcs-components-library';
 import { OTQLResult, QueryPrecisionMode } from '../../../models/datamart/graphdb/OTQLResult';
 import injectNotifications, {
   InjectedNotificationProps,
 } from '../../Notifications/injectNotifications';
-import OTQLResultRenderer from './OTQLResultRenderer';
-import OTQLInputEditor from './OTQLInputEditor';
 import { DataResponse } from '../../../services/ApiService';
 import SchemaVizualizer from '../../Audience/AdvancedSegmentBuilder/SchemaVisualizer/SchemaVizualizer';
 import { computeFinalSchemaItem } from '../../Audience/AdvancedSegmentBuilder/domain';
@@ -21,8 +18,24 @@ import { TYPES } from '../../../constants/types';
 import { IQueryService } from '../../../services/QueryService';
 import { ObjectLikeTypeInfoResource } from '../../../models/datamart/graphdb/RuntimeSchema';
 import { InjectedFeaturesProps, injectFeatures } from '../../Features';
+import OTQLRequest from './OTQLRequest';
 
-const { Content, Sider } = Layout;
+const { Content } = Layout;
+const { TabPane } = Tabs;
+
+interface McsTabsItem {
+  className?: string;
+  title: React.ReactChild;
+  display?: JSX.Element;
+  key: string;
+  content: JSX.Element;
+  closable: boolean;
+}
+
+interface TabQuery {
+  id: string;
+  query: string;
+}
 
 export interface OTQLConsoleContainerProps {
   datamartId: string;
@@ -44,6 +57,9 @@ interface State {
   evaluateGraphQl: boolean;
   useCache: boolean;
   noLiveSchemaFound: boolean;
+  panes: McsTabsItem[];
+  activeKey: string;
+  tabQueries: TabQuery[];
 }
 
 type Props = OTQLConsoleContainerProps &
@@ -70,13 +86,50 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
       error: null,
       query: props.query || 'SELECT @count{} FROM UserPoint',
       schemaVizOpen: true,
-      schemaLoading: true,
+      schemaLoading: false,
       precision: 'FULL_PRECISION',
       evaluateGraphQl: true,
       useCache: false,
       noLiveSchemaFound: false,
+      activeKey: '1',
+      panes: [
+        {
+          title: 'Query 1',
+          content: (
+            <OTQLRequest
+              datamartId={this.props.datamartId}
+              setQuery={this.getCurrentTabQuery.bind(this, '1')}
+            />
+          ),
+          key: '1',
+          closable: false,
+        },
+      ],
+      tabQueries: [],
     };
   }
+
+  getCurrentTabQuery = (tabIndex: string, query: string) => {
+    const { tabQueries } = this.state;
+
+    const existingQuery = tabQueries.find((tabQ: TabQuery) => tabQ.id === tabIndex);
+    if (existingQuery) {
+      tabQueries.forEach((tabQ: TabQuery, i: number) => {
+        if (tabQ.id === tabIndex) {
+          tabQueries[i].query = query;
+        }
+      });
+    } else {
+      tabQueries.push({
+        id: tabIndex,
+        query,
+      });
+    }
+
+    this.setState({
+      tabQueries,
+    });
+  };
 
   componentDidMount() {
     const { datamartId } = this.props;
@@ -152,64 +205,77 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
 
   dismissError = () => this.setState({ error: null });
 
+  onChange = (activeKey: string) => {
+    this.setState({ activeKey });
+  };
+
+  onEdit = (targetKey: string, action: string) => {
+    // @ts-expect-error
+    this[action](targetKey);
+  };
+
+  add = () => {
+    const { panes } = this.state;
+
+    const newPanes = [...panes];
+    const newKey = newPanes.length > 0 ? parseInt(newPanes[newPanes.length - 1].key, 10) + 1 : 1;
+    const activeKey = newKey.toString();
+    newPanes.push({
+      title: `Query ${newKey}`,
+      content: (
+        <OTQLRequest
+          datamartId={this.props.datamartId}
+          setQuery={this.getCurrentTabQuery.bind(this, activeKey)}
+        />
+      ),
+      key: activeKey,
+      closable: true,
+    });
+
+    this.setState({
+      panes: newPanes,
+      activeKey,
+    });
+  };
+
+  remove = (targetKey: string) => {
+    const { panes, activeKey, tabQueries } = this.state;
+    let newActiveKey = activeKey;
+    let lastIndex;
+
+    const newTabQueries = tabQueries;
+    panes.forEach((pane, i) => {
+      if (pane.key === targetKey) {
+        lastIndex = i - 1;
+      }
+    });
+
+    const newPanes = panes.filter(pane => pane.key !== targetKey);
+
+    newTabQueries.filter((tabQuery: TabQuery) => tabQuery.id !== targetKey);
+
+    if (newPanes.length && newActiveKey === targetKey) {
+      if (lastIndex && lastIndex >= 0) {
+        newActiveKey = newPanes[lastIndex].key;
+      } else {
+        newActiveKey = newPanes[0].key;
+      }
+    }
+
+    this.setState({
+      panes: newPanes,
+      activeKey: newActiveKey,
+      tabQueries: newTabQueries,
+    });
+  };
+
   render() {
-    const { intl, datamartId, queryEditorClassName, hasFeature } = this.props;
-    const {
-      error,
-      queryResult,
-      runningQuery,
-      queryAborted,
-      schemaVizOpen,
-      schemaLoading,
-      rawSchema,
-      query,
-      precision,
-      evaluateGraphQl,
-      useCache,
-      noLiveSchemaFound,
-    } = this.state;
+    const { datamartId } = this.props;
+    const { schemaLoading, rawSchema, query, activeKey, panes, tabQueries } = this.state;
 
     if (schemaLoading) {
       return <Loading isFullScreen={true} />;
     }
-
-    const errorMsg = error && (
-      <Alert
-        message='Error'
-        style={{ marginBottom: 40 }}
-        description={
-          error.error_id ? (
-            <span>
-              {error.error}
-              <br />
-              <code>{error.error_id}</code>
-            </span>
-          ) : (
-            intl.formatMessage(messages.queryErrorDefaultMsg)
-          )
-        }
-        type='error'
-        showIcon={true}
-        closable={true}
-        onClose={this.dismissError}
-      />
-    );
-
-    const noLiveSchemaErrorMsg = noLiveSchemaFound && (
-      <Alert
-        message='Error'
-        style={{ marginBottom: 40 }}
-        description={intl.formatMessage(messages.noLiveSchemaFound)}
-        type='error'
-        showIcon={true}
-      />
-    );
-
-    const queryResultRenderer: React.ReactNode = (runningQuery || queryAborted || queryResult) && (
-      <OTQLResultRenderer loading={runningQuery} result={queryResult} aborted={queryAborted} />
-    );
-
-    const onChange = (q: string) => this.setState({ query: q });
 
     let startType = 'UserPoint';
 
@@ -222,55 +288,49 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
       }
     }
 
-    const handleChange = (eg: boolean, c: boolean, p: QueryPrecisionMode) =>
-      this.setState({ evaluateGraphQl: eg, useCache: c, precision: p });
+    const currentQuery =
+      tabQueries.length > 0
+        ? tabQueries.find((tabQ: TabQuery) => tabQ.id === activeKey)
+        : undefined;
+
+    const exportQuery = currentQuery ? currentQuery.query : this.state.query;
 
     return (
       <Layout>
-        {this.props.renderActionBar(this.state.query, datamartId)}
+        {this.state.query && this.props.renderActionBar(exportQuery, datamartId)}
         <Layout>
-          <Layout>
-            <Content className='mcs-content-container'>
-              {!hasFeature('query-tool-graphs') && (
-                <ContentHeader
-                  title={
-                    <FormattedMessage
-                      id='queryTool.OTQL.query-tool-page-title'
-                      defaultMessage='Query Tool'
-                    />
-                  }
-                />
-              )}
-              {errorMsg}
-              {noLiveSchemaErrorMsg}
-              <OTQLInputEditor
-                onRunQuery={this.runQuery}
-                onAbortQuery={this.abortQuery}
-                runningQuery={runningQuery}
-                datamartId={datamartId}
-                onQueryChange={onChange}
-                defaultValue={query}
-                handleChange={handleChange}
-                precision={precision}
-                evaluateGraphQl={evaluateGraphQl}
-                useCache={useCache}
-                queryEditorClassName={queryEditorClassName}
-              />
-              {queryResultRenderer}
-            </Content>
-          </Layout>
-          <Sider width={schemaVizOpen ? 250 : 0}>
-            <div className='schema-visualizer'>
-              <SchemaVizualizer
-                schema={
-                  rawSchema && rawSchema.length > 0
-                    ? computeFinalSchemaItem(rawSchema, startType, false, false, false)
-                    : undefined
-                }
-                disableDragAndDrop={true}
-              />
-            </div>
-          </Sider>
+          <Content className='mcs-content-container'>
+            <Tabs
+              className={'mcs-OTQLConsoleContainer_tabs'}
+              type='editable-card'
+              onChange={this.onChange}
+              activeKey={activeKey}
+              onEdit={this.onEdit}
+            >
+              {panes.map(pane => (
+                <TabPane
+                  className={'mcs-OTQLConsoleContainer_tabs_tab'}
+                  tab={pane.title}
+                  key={pane.key}
+                  closable={pane.closable}
+                >
+                  <div className={'mcs-OTQLConsoleContainer_tab_content'}>
+                    {pane.content}
+                    <div className='schema-visualizer'>
+                      <SchemaVizualizer
+                        schema={
+                          rawSchema && rawSchema.length > 0
+                            ? computeFinalSchemaItem(rawSchema, startType, false, false, false)
+                            : undefined
+                        }
+                        disableDragAndDrop={true}
+                      />
+                    </div>
+                  </div>
+                </TabPane>
+              ))}
+            </Tabs>
+          </Content>
         </Layout>
       </Layout>
     );
@@ -283,18 +343,3 @@ export default compose<Props, OTQLConsoleContainerProps>(
   injectNotifications,
   injectFeatures,
 )(OTQLConsoleContainer);
-
-const messages = defineMessages({
-  queryToolBreadcrumbLabel: {
-    id: 'query-tool.action-bar.breadcrumb.label.query-tool',
-    defaultMessage: 'Query Tool',
-  },
-  queryErrorDefaultMsg: {
-    id: 'query-tool.error.default-message',
-    defaultMessage: 'An error occured',
-  },
-  noLiveSchemaFound: {
-    id: 'query-tool.error.no-live-schena',
-    defaultMessage: "This datamart can't be queried as there is no LIVE schema associated to it",
-  },
-});

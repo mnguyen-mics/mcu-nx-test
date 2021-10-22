@@ -421,12 +421,21 @@
 }
 
 .schema-visualizer {
+  flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  height: inherit;
+  height: 70vh;
   transition: max-width 0.3s ease;
-  box-shadow: -2px 0px 4px 0 rgba(200, 200, 200, 0.14);
-  background-color: white;
+  margin-left: 10px;
+  .ant-input,
+  .mcs-schemaVizualize_content .ant-input-search .ant-input-group-addon,
+  .mcs-schemaVizualize_content .ant-input-group-addon .ant-btn.ant-input-search-button {
+    background: transparent;
+  }
+
+  .ant-tree {
+    background: none;
+  }
 
   .ant-tree-list-holder-inner {
     .ant-tree-treenode {
@@ -451,9 +460,6 @@
     .ant-tree-child-tree {
       > .ant-tree-treenode {
         border-top: @border-width-base @border-style-base @border-color-base;
-        // &:hover {
-        //   background-color: @hover-color;
-        // }
       }
     }
 
@@ -503,11 +509,45 @@
 .mcs-otqlQuery_result {
   position: relative;
   margin-bottom: 40px;
+
+  .ant-tabs-tab + .ant-tabs-tab {
+    margin: 0 0 0 5px;
+  }
+
+  .ant-tabs-nav::before {
+    border: none;
+  }
+
+  .ant-tabs-nav-list > .ant-tabs-tab {
+    background-color: inherit;
+    font-weight: normal;
+    padding-bottom: 0;
+
+    .ant-tabs-tab-btn {
+      color: rgba(0, 0, 0, 0.65);
+    }
+
+    &-active {
+      background-color: inherit;
+
+      .ant-tabs-tab-btn {
+        font-weight: normal;
+        color: @info-color;
+      }
+
+      .mcs-otqlChart_icons {
+        border: 1px solid @info-color;
+      }
+    }
+  }
   .mcs-otqlQuery_result_tag {
     position: absolute;
     right: 0;
     margin-right: -1px;
-    top: 11px;
+    top: 17px;
+    color: @info-color;
+    border-color: @info-color;
+    background: #e8f7fc;
   }
   .ant-tabs-content-holder {
     margin-top: -15px;
@@ -519,6 +559,11 @@
   }
   .mcs-otqlChart_icons {
     font-size: 16px;
+    background: #fff;
+    margin: 0;
+    padding: 4px;
+    border-radius: 2px;
+    border: 1px solid #d3dbe1;
   }
 }
 
@@ -528,14 +573,13 @@
   }
 }
 .mcs-otqlInputEditor_card {
-  margin-top: 40px;
   .mcs-card-header {
     margin-top: -10px;
   }
   .mcs-otqlInputEditor_settings_button {
     font-size: 15px;
     position: absolute;
-    left: 116px;
+    left: 60px;
   }
   .mcs-otqlInputEditor_clear_button {
     opacity: 0;
@@ -550,20 +594,22 @@
     padding: 0px 15px 0px 15px;
     height: 32px;
     vertical-align: middle;
+    background: @info-color;
+    border: none;
+  }
+
+  .mcs-otqlInputEditor_run_button.ant-btn-primary[disabled] {
+    color: rgba(0, 0, 0, 0.25);
+    border-color: #e0e1e1;
+    background: #dcdcdc;
   }
   .mcs-otqlInputEditor_abort_button {
     padding: 0px 15px 0px 15px;
     height: 32px;
     vertical-align: middle;
+    background: @info-color;
+    border: none;
   }
-}
-
-.mcs-otqlChart_container--inner {
-  padding: 40px;
-}
-
-.mcs-otqlChart_container {
-  background-color: white;
 }
 
 .mcs-otqlChart_radar {
@@ -608,8 +654,8 @@
 
 .mcs-otqlChart_items {
   position: absolute;
-  top: 8px;
-  left: 275px;
+  top: 14px;
+  left: 117px;
 }
 
 .mcs-otqlChart_items--aggregations {
@@ -628,4 +674,59 @@
     margin: 0;
     -moz-appearance: textfield;
   }
+}
+
+.mcs-OTQLConsoleContainer_tabs {
+  flex: 4;
+  margin-top: 40px;
+  padding: 0 2px;
+
+  .ant-tabs-ink-bar {
+    display: none;
+  }
+
+  .mcs-tabs_tab {
+    padding: 2px 0;
+  }
+}
+
+.mcs-OTQLConsoleContainer_tabs > .ant-tabs-nav {
+  margin-bottom: 30px;
+
+  .ant-tabs-nav-list {
+    .ant-tabs-nav-add {
+      font-size: 14px;
+    }
+    .ant-tabs-tab,
+    .ant-tabs-nav-add {
+      background-color: @layout-content-background;
+      font-family: 'LLCircularWeb-medium';
+      .ant-tabs-tab-remove {
+        padding: 0;
+      }
+      .ant-tabs-tab-btn {
+        color: rgba(0, 0, 0, 0.65);
+      }
+      &-active {
+        background-color: #fff;
+
+        .ant-tabs-tab-btn {
+          color: @info-color;
+        }
+      }
+    }
+  }
+}
+
+.mcs-OTQLConsoleContainer_tab_content {
+  display: flex;
+
+  .mcs-schemaVizualizer_search_bar {
+    margin: 0 10px 20px 10px;
+  }
+}
+
+.mcs-otqlQuery_container {
+  flex: 4;
+  width: 80%;
 }
