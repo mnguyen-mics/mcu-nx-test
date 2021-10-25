@@ -424,18 +424,10 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  height: 70vh;
+  height: inherit;
   transition: max-width 0.3s ease;
   margin-left: 10px;
-  .ant-input,
-  .mcs-schemaVizualize_content .ant-input-search .ant-input-group-addon,
-  .mcs-schemaVizualize_content .ant-input-group-addon .ant-btn.ant-input-search-button {
-    background: transparent;
-  }
-
-  .ant-tree {
-    background: none;
-  }
+  background-color: #fff;
 
   .ant-tree-list-holder-inner {
     .ant-tree-treenode {
@@ -500,6 +492,7 @@
     }
   }
 }
+
 .srd-node {
   > div {
     opacity: 1 !important;
@@ -720,6 +713,11 @@
 
 .mcs-OTQLConsoleContainer_tab_content {
   display: flex;
+
+  .schema-visualizer {
+    height: 70vh;
+    padding-top: 10px;
+  }
 
   .mcs-schemaVizualizer_search_bar {
     margin: 0 10px 20px 10px;

@@ -92,19 +92,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
       useCache: false,
       noLiveSchemaFound: false,
       activeKey: '1',
-      panes: [
-        {
-          title: 'Query 1',
-          content: (
-            <OTQLRequest
-              datamartId={this.props.datamartId}
-              setQuery={this.getCurrentTabQuery.bind(this, '1')}
-            />
-          ),
-          key: '1',
-          closable: false,
-        },
-      ],
+      panes: [],
       tabQueries: [],
     };
   }
@@ -133,6 +121,7 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
 
   componentDidMount() {
     const { datamartId } = this.props;
+    this.add();
     this.fetchObjectTypes(datamartId);
   }
 
@@ -217,6 +206,10 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
   add = () => {
     const { panes } = this.state;
 
+    if (panes.length === 1) {
+      panes[0].closable = true;
+    }
+
     const newPanes = [...panes];
     const newKey = newPanes.length > 0 ? parseInt(newPanes[newPanes.length - 1].key, 10) + 1 : 1;
     const activeKey = newKey.toString();
@@ -229,9 +222,8 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
         />
       ),
       key: activeKey,
-      closable: true,
+      closable: !!(this.state.panes.length > 0),
     });
-
     this.setState({
       panes: newPanes,
       activeKey,
@@ -261,6 +253,9 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
         newActiveKey = newPanes[0].key;
       }
     }
+    if (newPanes.length === 1) {
+      newPanes[0].closable = false;
+    }
 
     this.setState({
       panes: newPanes,
@@ -271,21 +266,10 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
 
   render() {
     const { datamartId } = this.props;
-    const { schemaLoading, rawSchema, query, activeKey, panes, tabQueries } = this.state;
+    const { schemaLoading, rawSchema, activeKey, panes, tabQueries } = this.state;
 
     if (schemaLoading) {
       return <Loading isFullScreen={true} />;
-    }
-
-    let startType = 'UserPoint';
-
-    if (rawSchema) {
-      const foundType = rawSchema.find(ot => {
-        return !!query.includes(ot.name);
-      });
-      if (foundType) {
-        startType = foundType.name;
-      }
     }
 
     const currentQuery =
@@ -295,6 +279,16 @@ class OTQLConsoleContainer extends React.Component<Props, State> {
 
     const exportQuery = currentQuery ? currentQuery.query : this.state.query;
 
+    let startType = 'UserPoint';
+
+    if (rawSchema) {
+      const foundType = rawSchema.find(ot => {
+        return !!exportQuery.includes(ot.name);
+      });
+      if (foundType) {
+        startType = foundType.name;
+      }
+    }
     return (
       <Layout>
         {this.state.query && this.props.renderActionBar(exportQuery, datamartId)}
