@@ -104,7 +104,7 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
   componentDidUpdate(prevProps: Props, prevState: State) {
     const { searchSettings: prevSearchSettings } = prevState;
     const { searchSettings, currentAudienceFeatureFolder } = this.state;
-    const { datamartId } = this.props;
+    const { datamartId, intl } = this.props;
     if (searchSettings !== prevSearchSettings) {
       this.setState({
         isLoading: true,
@@ -114,14 +114,24 @@ class AudienceFeatureSelector extends React.Component<Props, State> {
         currentAudienceFeatureFolder?.id,
       );
       this._audienceFeatureService
-        .getAudienceFeatures(datamartId, options)
-        .then(response =>
+        .searchAudienceFeatures(datamartId, options)
+        .then(response => {
           this.setState({
             isLoading: false,
-            currentAudienceFeatures: response.data,
-            total: response.total,
-          }),
-        )
+            currentAudienceFeatures: response.data.data.elements,
+            total: response.data.data.totalResults,
+          });
+          if (
+            response.data.infos.find(
+              info => info.info_name === 'maxFinalValueReach' && info.info_value === 'true',
+            )
+          ) {
+            this.props.notifyWarning({
+              message: intl.formatMessage(messages.maxFinalValueReachWarningTitle),
+              description: intl.formatMessage(messages.maxFinalValueReachWarningBody),
+            });
+          }
+        })
         .catch(err => {
           this.setState({
             isLoading: false,

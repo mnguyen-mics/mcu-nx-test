@@ -56,3 +56,20 @@ export interface AudienceFeatureSegmentsMappingResource {
   audience_feature_id: string;
   segments_ids: string[];
 }
+
+export interface AudienceFeatureSearchResponseResource {
+  data: AudienceFeaturePagedResultResource;
+  infos: AudienceFeatureSearchContextInfoResource[];
+}
+
+export interface AudienceFeaturePagedResultResource {
+  elements: AudienceFeatureResource[];
+  limit?: number;
+  offset?: number;
+  totalResults?: number;
+}
+
+export interface AudienceFeatureSearchContextInfoResource {
+  info_name: string;
+  info_value: string;
+}

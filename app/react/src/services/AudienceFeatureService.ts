@@ -1,5 +1,6 @@
 import {
   AudienceFeatureFolderResource,
+  AudienceFeatureSearchResponseResource,
   AudienceFeatureSegmentsMappingResource,
   AudienceFeatureVariableResource,
 } from './../models/audienceFeature/AudienceFeatureResource';
@@ -49,6 +50,10 @@ export interface IAudienceFeatureService {
     datamartId: string,
     audienceFeatureId: string,
   ) => Promise<DataResponse<AudienceFeatureResource>>;
+  searchAudienceFeatures: (
+    datamartId: string,
+    options?: AudienceFeatureOptions,
+  ) => Promise<DataResponse<AudienceFeatureSearchResponseResource>>;
   extractAudienceFeatureVariables: (
     datamartId: string,
     objectTreeExpression: string,
@@ -151,6 +156,14 @@ export class AudienceFeatureService implements IAudienceFeatureService {
   ): Promise<DataResponse<AudienceFeatureResource>> {
     const endpoint = `datamarts/${datamartId}/audience_features/${audienceFeatureId}`;
     return ApiService.deleteRequest(endpoint);
+  }
+
+  searchAudienceFeatures(
+    datamartId: string,
+    options?: AudienceFeatureOptions,
+  ): Promise<DataResponse<AudienceFeatureSearchResponseResource>> {
+    const endpoint = `datamarts/${datamartId}/audience_features/search`;
+    return ApiService.getRequest(endpoint, options);
   }
 
   extractAudienceFeatureVariables(

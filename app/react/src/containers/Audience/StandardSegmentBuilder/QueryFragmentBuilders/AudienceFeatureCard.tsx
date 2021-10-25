@@ -171,7 +171,7 @@ class AudienceFeatureCard extends React.Component<Props, State> {
                     </Tooltip>
                   );
                 })}
-                {finalValues.length > 4 && (
+                {finalValues.length > 5 && (
                   <Dropdown overlay={menu} trigger={['click']}>
                     <div
                       className='ant-dropdown-link mcs-standardSegmentBuilder_featureCardMore'

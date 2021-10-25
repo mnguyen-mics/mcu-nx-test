@@ -148,6 +148,15 @@ export const messages: {
     id: 'standardSegmentBuilder.audienceFeatureSelector.searchIsForbidden',
     defaultMessage: "Only these special characters are authorized: é, è, ç, à, _, -, @, ', .",
   },
+  maxFinalValueReachWarningTitle: {
+    id: 'standardSegmentBuilder.audienceFeatureSelector.maxFinalValueReachWarning.Title',
+    defaultMessage: 'Warning',
+  },
+  maxFinalValueReachWarningBody: {
+    id: 'standardSegmentBuilder.audienceFeatureSelector.maxFinalValueReachWarning.Body',
+    defaultMessage:
+      '500 and more final values match your keyword. All results are not displayed, you might want to specify your request.',
+  },
 });
 
 export const fieldGridConfig = {
