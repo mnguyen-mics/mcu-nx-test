@@ -207,6 +207,7 @@ class Partition extends React.Component<JoinedProps, HomeState> {
                       title: dashboard.title,
                       dashboardContent: JSON.parse(resContent.data.content),
                     }),
+                    isLoading: false,
                   });
                 })
                 .catch(err => {
@@ -226,7 +227,6 @@ class Partition extends React.Component<JoinedProps, HomeState> {
                     });
                 });
             });
-          this.setState({ isLoading: false });
         }
       })
       .catch(err => {
