@@ -76,7 +76,7 @@ class SegmentBuilderPreview extends React.Component<Props> {
       );
     };
 
-    if (segmentEditor === 'STANDARD_SEGMENT_BUILDER' || segmentEditor === 'AUDIENCE_BUILDER') {
+    if (segmentEditor === 'STANDARD_SEGMENT_BUILDER') {
       const actionbar = (query: StandardSegmentBuilderQueryDocument, datamartId: string) => {
         const onSave = () => {
           if (this.props.onChange) this.props.onChange(JSON.stringify(query));

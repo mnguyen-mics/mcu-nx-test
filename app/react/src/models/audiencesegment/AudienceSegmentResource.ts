@@ -103,11 +103,7 @@ export type UserQuerySegmentSubtype =
   | 'AB_TESTING_CONTROL_GROUP'
   | 'AB_TESTING_EXPERIMENT';
 
-export type UserQuerySegmentEditor =
-  | 'SEGMENT_BUILDER' // TODO to be deleted, new one is ADVANCED_SEGMENT_BUILDER
-  | 'ADVANCED_SEGMENT_BUILDER'
-  | 'AUDIENCE_BUILDER' // TODO to be deleted, new one is STANDARD_SEGMENT_BUILDER
-  | 'STANDARD_SEGMENT_BUILDER';
+export type UserQuerySegmentEditor = 'ADVANCED_SEGMENT_BUILDER' | 'STANDARD_SEGMENT_BUILDER';
 
 export interface UserQuerySegment extends AudienceSegmentResource {
   query_id?: string;
