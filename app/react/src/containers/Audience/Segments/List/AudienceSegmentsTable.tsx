@@ -8,6 +8,7 @@ import {
   ApiOutlined,
   DatabaseOutlined,
   DownOutlined,
+  ExclamationCircleOutlined,
   FileImageOutlined,
   FileOutlined,
   GlobalOutlined,
@@ -16,7 +17,7 @@ import {
   SolutionOutlined,
   UsergroupAddOutlined,
 } from '@ant-design/icons';
-import { Tooltip } from 'antd';
+import { Tooltip, Modal } from 'antd';
 import { FormattedMessage, defineMessages, InjectedIntlProps, injectIntl } from 'react-intl';
 import { SEGMENTS_SEARCH_SETTINGS } from './constants';
 import {
@@ -57,7 +58,6 @@ import { IAudienceSegmentService } from '../../../../services/AudienceSegmentSer
 import { TYPES } from '../../../../constants/types';
 import { lazyInject } from '../../../../config/inversify.config';
 import { SegmentNameDisplay } from '../../Common/SegmentNameDisplay';
-import { notifyError } from '../../../../redux/Notifications/actions';
 import { Label } from '../../../Labels/Labels';
 import { MicsReduxState } from '../../../../utils/ReduxHelper';
 import { audienceSegmentTypeMessages, userListFeedTypeMessages } from '../Dashboard/messages';
@@ -66,27 +66,14 @@ import {
   DataColumnDefinition,
 } from '@mediarithmics-private/mcs-components-library/lib/components/table-view/table-view/TableView';
 import { PermanentFilters, SegmentsColumnKey, SegmentsColumnsList } from './PermanentFilters';
+import injectNotifications, {
+  InjectedNotificationProps,
+} from '../../../Notifications/injectNotifications';
 
 const messages = defineMessages({
   filterByLabel: {
     id: 'audience.segments.list.label.filterBy',
     defaultMessage: 'Filter By Label',
-  },
-  modalTitle: {
-    id: 'audience.segments.list.archive.modal.title',
-    defaultMessage: 'Are you sure you want to archive this Segment?',
-  },
-  modalText: {
-    id: 'audience.segments.list.archive.modal.text',
-    defaultMessage: 'By archiving this Segment all it will stop campaign using it. Are you sure?',
-  },
-  modalOk: {
-    id: 'audience.segments.list.archive.modal.ok',
-    defaultMessage: 'Ok',
-  },
-  modalCancel: {
-    id: 'audience.segments.list.archive.modal.cancel',
-    defaultMessage: 'Cancel',
   },
   searchTitle: {
     id: 'audience.segments.list.search.title',
@@ -140,18 +127,6 @@ const messages = defineMessages({
     id: 'audience.segments.list.type.edge',
     defaultMessage: 'EDGE',
   },
-  filterType: {
-    id: 'audience.segments.list.filter.type',
-    defaultMessage: 'Type',
-  },
-  userActivationClickers: {
-    id: 'audience.segments.list.useractivation.clickers',
-    defaultMessage: '{audienceSegmentName} - Clickers',
-  },
-  userActivationExposed: {
-    id: 'audience.segments.list.useractivation.exposed',
-    defaultMessage: '{audienceSegmentName} - Exposed',
-  },
   name: {
     id: 'audience.segments.list.column.name',
     defaultMessage: 'Name',
@@ -164,13 +139,9 @@ const messages = defineMessages({
     id: 'audience.segments.list.column.type',
     defaultMessage: 'Type',
   },
-  addition: {
-    id: 'audience.segments.list.column.addition',
-    defaultMessage: 'Addition',
-  },
-  deletion: {
-    id: 'audience.segments.list.column.deletion',
-    defaultMessage: 'Deletion',
+  deleteSegment: {
+    id: 'audience.segments.list.deleteSegment',
+    defaultMessage: 'Delete',
   },
   editSegment: {
     id: 'audience.segments.list.editSegment',
@@ -183,6 +154,23 @@ const messages = defineMessages({
   emptySegments: {
     id: 'audience.segments.list.emptyList',
     defaultMessage: 'No segments',
+  },
+  modalTitle: {
+    id: 'audience.segments.list.deleteSegment.modal.title',
+    defaultMessage: 'Are you sure you want to delete this Segment?',
+  },
+  modalText: {
+    id: 'audience.segments.list.deleteSegment.modal.text',
+    defaultMessage:
+      'You are about to definitively delete this segment : {name}. Are you sure you want to continue?',
+  },
+  modalOk: {
+    id: 'audience.segments.list.deleteSegment.modal.ok',
+    defaultMessage: 'Delete',
+  },
+  modalCancel: {
+    id: 'audience.segments.list.deleteSegment.modal.cancel',
+    defaultMessage: 'Cancel',
   },
 });
 
@@ -229,6 +217,7 @@ interface MapStateToProps {
 type Props = RouteComponentProps<{ organisationId: string }> &
   MapStateToProps &
   InjectedIntlProps &
+  InjectedNotificationProps &
   InjectedDatamartProps;
 
 interface AudienceSegmentsFilterParams
@@ -274,34 +263,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const {
-      history,
-      location: { search, pathname },
-      match: {
-        params: { organisationId },
-      },
-    } = this.props;
-
-    const permanentFilter = new PermanentFilters(this.props.datamart.organisation_id);
-    const realSearch = search || permanentFilter.getSearch();
-    if (!this.state.sortField) {
-      this.setState(previous => ({
-        ...previous,
-        ...permanentFilter.getOrderBy(),
-      }));
-    }
-    if (!isSearchValid(search, this.getSearchSetting())) {
-      history.replace({
-        pathname: pathname,
-        search: buildDefaultSearch(realSearch, this.getSearchSetting()),
-        state: { reloadDataSource: true },
-      });
-    } else {
-      const filter = parseSearch(realSearch, this.getSearchSetting());
-      const datamartId = filter.datamartId;
-      this.fetchAudienceSegments(organisationId, datamartId, filter);
-      this.checkIfHasItem(organisationId);
-    }
+    this.searchAudienceSegmentsWithFilter();
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -367,6 +329,37 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
     });
   }
 
+  searchAudienceSegmentsWithFilter = () => {
+    const {
+      history,
+      location: { search, pathname },
+      match: {
+        params: { organisationId },
+      },
+    } = this.props;
+
+    const permanentFilter = new PermanentFilters(this.props.datamart.organisation_id);
+    const realSearch = search || permanentFilter.getSearch();
+    if (!this.state.sortField) {
+      this.setState(previous => ({
+        ...previous,
+        ...permanentFilter.getOrderBy(),
+      }));
+    }
+    if (!isSearchValid(search, this.getSearchSetting())) {
+      history.replace({
+        pathname: pathname,
+        search: buildDefaultSearch(realSearch, this.getSearchSetting()),
+        state: { reloadDataSource: true },
+      });
+    } else {
+      const filter = parseSearch(realSearch, this.getSearchSetting());
+      const datamartId = filter.datamartId;
+      this.fetchAudienceSegments(organisationId, datamartId, filter);
+      this.checkIfHasItem(organisationId);
+    }
+  };
+
   checkIfHasItem = (organisationId: string) => {
     const newFilters = {
       with_third_parties: true,
@@ -382,6 +375,7 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
     datamartId: string | undefined,
     filter: Index<any>,
   ) => {
+    const { notifyError } = this.props;
     return this._audienceSegmentService
       .getSegments(organisationId, this.buildApiSearchFilters(filter, datamartId))
       .then(res => {
@@ -489,6 +483,36 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
     const editUrl = `/v2/o/${organisationId}/audience/segments/${segment.id}/edit`;
 
     history.push(editUrl);
+  };
+
+  deleteSegment = (segment: AudienceSegmentResource) => {
+    const { intl, notifyError } = this.props;
+
+    const deleteSeg = () => this._audienceSegmentService.deleteAudienceSegment(segment.id);
+    const refreshSearch = () => this.searchAudienceSegmentsWithFilter();
+
+    Modal.confirm({
+      className: 'mcs-audienceSegmentDeletePopup',
+      title: intl.formatMessage(messages.modalTitle),
+      content: intl.formatMessage(messages.modalText, { name: segment.name }),
+      icon: <ExclamationCircleOutlined />,
+      okText: intl.formatMessage(messages.modalOk),
+      cancelText: intl.formatMessage(messages.modalCancel),
+      okButtonProps: { className: 'mcs-audienceSegmentDeletePopup_ok_button' },
+      cancelButtonProps: { className: 'mcs-audienceSegmentDeletePopup_cancel_button' },
+      onOk() {
+        return deleteSeg()
+          .then(() => {
+            refreshSearch();
+          })
+          .catch(err => {
+            notifyError(err);
+          });
+      },
+      onCancel() {
+        //
+      },
+    });
   };
 
   getSearchSetting(): SearchSetting[] {
@@ -876,16 +900,19 @@ class AudienceSegmentsTable extends React.Component<Props, State> {
 
     const actionColumns: Array<ActionsColumnDefinition<AudienceSegmentShape>> = [
       {
+        className: 'mcs-audienceSegmentTable_dropDownMenu',
         key: 'action',
         actions: () => [
           {
             message: intl.formatMessage(messages.editSegment),
             callback: this.editSegment,
+            className: 'mcs-audienceSegmentTable_dropDownMenu--edit',
           },
-          // {
-          //   title: messageMap.archive,
-          //   callback: this.archiveSegment,
-          // },
+          {
+            message: intl.formatMessage(messages.deleteSegment),
+            callback: this.deleteSegment,
+            className: 'mcs-audienceSegmentTable_dropDownMenu--delete',
+          },
         ],
       },
     ];
@@ -980,6 +1007,7 @@ const mapStateToProps = (state: MicsReduxState) => ({
 export default compose<Props, {}>(
   withRouter,
   injectIntl,
+  injectNotifications,
   injectDatamart,
   connect(mapStateToProps),
 )(AudienceSegmentsTable);
